@@ -23,8 +23,7 @@ from msrest.serialization import Model
 
 
 class AutoHealCustomAction(Model):
-    """
-    AutoHealCustomAction - Describes the custom action to be executed
+    """AutoHealCustomAction - Describes the custom action to be executed
     when an auto heal rule is triggered.
 
     :param exe: Executable to be run

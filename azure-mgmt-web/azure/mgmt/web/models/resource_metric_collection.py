@@ -23,8 +23,7 @@ from msrest.serialization import Model
 
 
 class ResourceMetricCollection(Model):
-    """
-    Collection of metric responses
+    """Collection of metric responses.
 
     :param value: Collection of resources
     :type value: list of :class:`ResourceMetric

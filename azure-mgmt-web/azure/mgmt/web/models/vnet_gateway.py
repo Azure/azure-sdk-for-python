@@ -23,8 +23,7 @@ from .resource import Resource
 
 
 class VnetGateway(Resource):
-    """
-    The VnetGateway contract. This is used to give the vnet gateway access to
+    """The VnetGateway contract. This is used to give the vnet gateway access to
     the VPN package.
 
     :param id: Resource Id

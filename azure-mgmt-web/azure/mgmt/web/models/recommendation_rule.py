@@ -23,8 +23,8 @@ from msrest.serialization import Model
 
 
 class RecommendationRule(Model):
-    """
-    Represents a recommendation rule that the recommendation engine can perform
+    """Represents a recommendation rule that the recommendation engine can
+    perform.
 
     :param name: Unique name of the rule
     :type name: str

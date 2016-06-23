@@ -23,8 +23,7 @@ from msrest.serialization import Model
 
 
 class AutoHealRules(Model):
-    """
-    AutoHealRules - describes the rules which can be defined for auto-heal
+    """AutoHealRules - describes the rules which can be defined for auto-heal.
 
     :param triggers: Triggers - Conditions that describe when to execute the
      auto-heal actions

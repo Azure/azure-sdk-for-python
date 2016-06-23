@@ -45,8 +45,7 @@ class WorkflowVersionsOperations(object):
 
     def get(
             self, resource_group_name, workflow_name, version_id, custom_headers=None, raw=False, **operation_config):
-        """
-        Gets a workflow version.
+        """Gets a workflow version.
 
         :param resource_group_name: The resource group name.
         :type resource_group_name: str

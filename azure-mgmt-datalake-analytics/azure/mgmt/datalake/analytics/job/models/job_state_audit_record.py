@@ -23,8 +23,7 @@ from msrest.serialization import Model
 
 
 class JobStateAuditRecord(Model):
-    """
-    The Data Lake Analytics U-SQL job state audit records for tracking the
+    """The Data Lake Analytics U-SQL job state audit records for tracking the
     lifecycle of a job.
 
     Variables are only populated by the server, and will be ignored when

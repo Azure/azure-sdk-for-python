@@ -23,8 +23,7 @@ from msrest.serialization import Model
 
 
 class FileGetNodeFilePropertiesFromComputeNodeOptions(Model):
-    """
-    Additional parameters for the File_GetNodeFilePropertiesFromComputeNode
+    """Additional parameters for the File_GetNodeFilePropertiesFromComputeNode
     operation.
 
     :param timeout: The maximum time that the server can spend processing the

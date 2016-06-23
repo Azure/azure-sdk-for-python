@@ -23,8 +23,7 @@ from msrest.serialization import Model
 
 
 class GcmCredential(Model):
-    """
-    Description of a NotificationHub GcmCredential.
+    """Description of a NotificationHub GcmCredential.
 
     :param properties: Gets or sets properties of NotificationHub
      GcmCredential.

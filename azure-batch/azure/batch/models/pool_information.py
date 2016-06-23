@@ -23,8 +23,7 @@ from msrest.serialization import Model
 
 
 class PoolInformation(Model):
-    """
-    Specifies how a job should be assigned to a pool.
+    """Specifies how a job should be assigned to a pool.
 
     :param pool_id: The id of an existing pool. All the tasks of the job will
      run on the specified pool. You must specify either PoolId or

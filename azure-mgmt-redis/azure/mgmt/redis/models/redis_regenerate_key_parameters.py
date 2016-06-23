@@ -23,8 +23,7 @@ from msrest.serialization import Model
 
 
 class RedisRegenerateKeyParameters(Model):
-    """
-    Specifies which redis access keys to reset.
+    """Specifies which redis access keys to reset.
 
     :param key_type: Which redis access key to reset. Possible values
      include: 'Primary', 'Secondary'

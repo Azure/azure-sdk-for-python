@@ -23,7 +23,7 @@ from msrest.serialization import Model
 
 
 class SubResource(Model):
-    """SubResource
+    """SubResource.
 
     :param id: Gets or sets the resource id.
     :type id: str

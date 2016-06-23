@@ -23,8 +23,7 @@ from msrest.serialization import Model
 
 
 class BatchAccountUpdateParameters(Model):
-    """
-    Parameters supplied to the Update operation.
+    """Parameters supplied to the Update operation.
 
     :param tags: The user specified tags associated with the account.
     :type tags: dict

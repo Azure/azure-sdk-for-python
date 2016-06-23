@@ -23,8 +23,7 @@ from msrest.serialization import Model
 
 
 class ServicePrincipal(Model):
-    """
-    Active Directory service principal information
+    """Active Directory service principal information.
 
     :param object_id: Gets or sets object Id
     :type object_id: str

@@ -23,8 +23,7 @@ from msrest.serialization import Model
 
 
 class CloningInfo(Model):
-    """
-    Represents information needed for cloning operation
+    """Represents information needed for cloning operation.
 
     :param correlation_id: Correlation Id of cloning operation. This id ties
      multiple cloning operations

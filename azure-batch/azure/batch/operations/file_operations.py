@@ -44,8 +44,7 @@ class FileOperations(object):
 
     def delete_from_task(
             self, job_id, task_id, file_name, recursive=None, file_delete_from_task_options=None, custom_headers=None, raw=False, **operation_config):
-        """
-        Deletes the specified task file from the compute node where the task
+        """Deletes the specified task file from the compute node where the task
         ran.
 
         :param job_id: The id of the job that contains the task.
@@ -107,7 +106,7 @@ class FileOperations(object):
         header_parameters = {}
         header_parameters['Content-Type'] = 'application/json; odata=minimalmetadata; charset=utf-8'
         if self.config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+            header_parameters['client-request-id'] = str(uuid.uuid1())
         if custom_headers:
             header_parameters.update(custom_headers)
         if self.config.accept_language is not None:
@@ -136,8 +135,7 @@ class FileOperations(object):
 
     def get_from_task(
             self, job_id, task_id, file_name, file_get_from_task_options=None, custom_headers=None, raw=False, callback=None, **operation_config):
-        """
-        Returns the content of the specified task file.
+        """Returns the content of the specified task file.
 
         :param job_id: The id of the job that contains the task.
         :type job_id: str
@@ -205,7 +203,7 @@ class FileOperations(object):
         header_parameters = {}
         header_parameters['Content-Type'] = 'application/json; odata=minimalmetadata; charset=utf-8'
         if self.config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+            header_parameters['client-request-id'] = str(uuid.uuid1())
         if custom_headers:
             header_parameters.update(custom_headers)
         if self.config.accept_language is not None:
@@ -257,8 +255,7 @@ class FileOperations(object):
 
     def get_node_file_properties_from_task(
             self, job_id, task_id, file_name, file_get_node_file_properties_from_task_options=None, custom_headers=None, raw=False, **operation_config):
-        """
-        Gets the properties of the specified task file.
+        """Gets the properties of the specified task file.
 
         :param job_id: The id of the job that contains the task.
         :type job_id: str
@@ -320,7 +317,7 @@ class FileOperations(object):
         header_parameters = {}
         header_parameters['Content-Type'] = 'application/json; odata=minimalmetadata; charset=utf-8'
         if self.config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+            header_parameters['client-request-id'] = str(uuid.uuid1())
         if custom_headers:
             header_parameters.update(custom_headers)
         if self.config.accept_language is not None:
@@ -361,8 +358,7 @@ class FileOperations(object):
 
     def delete_from_compute_node(
             self, pool_id, node_id, file_name, recursive=None, file_delete_from_compute_node_options=None, custom_headers=None, raw=False, **operation_config):
-        """
-        Deletes the specified task file from the compute node.
+        """Deletes the specified task file from the compute node.
 
         :param pool_id: The id of the pool that contains the compute node.
         :type pool_id: str
@@ -425,7 +421,7 @@ class FileOperations(object):
         header_parameters = {}
         header_parameters['Content-Type'] = 'application/json; odata=minimalmetadata; charset=utf-8'
         if self.config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+            header_parameters['client-request-id'] = str(uuid.uuid1())
         if custom_headers:
             header_parameters.update(custom_headers)
         if self.config.accept_language is not None:
@@ -454,8 +450,7 @@ class FileOperations(object):
 
     def get_from_compute_node(
             self, pool_id, node_id, file_name, file_get_from_compute_node_options=None, custom_headers=None, raw=False, callback=None, **operation_config):
-        """
-        Returns the content of the specified task file.
+        """Returns the content of the specified task file.
 
         :param pool_id: The id of the pool that contains the compute node.
         :type pool_id: str
@@ -524,7 +519,7 @@ class FileOperations(object):
         header_parameters = {}
         header_parameters['Content-Type'] = 'application/json; odata=minimalmetadata; charset=utf-8'
         if self.config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+            header_parameters['client-request-id'] = str(uuid.uuid1())
         if custom_headers:
             header_parameters.update(custom_headers)
         if self.config.accept_language is not None:
@@ -576,8 +571,7 @@ class FileOperations(object):
 
     def get_node_file_properties_from_compute_node(
             self, pool_id, node_id, file_name, file_get_node_file_properties_from_compute_node_options=None, custom_headers=None, raw=False, **operation_config):
-        """
-        Gets the properties of the specified compute node file.
+        """Gets the properties of the specified compute node file.
 
         :param pool_id: The id of the pool that contains the compute node.
         :type pool_id: str
@@ -638,7 +632,7 @@ class FileOperations(object):
         header_parameters = {}
         header_parameters['Content-Type'] = 'application/json; odata=minimalmetadata; charset=utf-8'
         if self.config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+            header_parameters['client-request-id'] = str(uuid.uuid1())
         if custom_headers:
             header_parameters.update(custom_headers)
         if self.config.accept_language is not None:
@@ -679,8 +673,7 @@ class FileOperations(object):
 
     def list_from_task(
             self, job_id, task_id, recursive=None, file_list_from_task_options=None, custom_headers=None, raw=False, **operation_config):
-        """
-        Lists the files in a task's directory on its compute node.
+        """Lists the files in a task's directory on its compute node.
 
         :param job_id: The id of the job that contains the task.
         :type job_id: str
@@ -749,7 +742,7 @@ class FileOperations(object):
             header_parameters = {}
             header_parameters['Content-Type'] = 'application/json; odata=minimalmetadata; charset=utf-8'
             if self.config.generate_client_request_id:
-                header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+                header_parameters['client-request-id'] = str(uuid.uuid1())
             if custom_headers:
                 header_parameters.update(custom_headers)
             if self.config.accept_language is not None:
@@ -783,8 +776,7 @@ class FileOperations(object):
 
     def list_from_compute_node(
             self, pool_id, node_id, recursive=None, file_list_from_compute_node_options=None, custom_headers=None, raw=False, **operation_config):
-        """
-        Lists all of the files in task directories on the specified compute
+        """Lists all of the files in task directories on the specified compute
         node.
 
         :param pool_id: The id of the pool that contains the compute node.
@@ -856,7 +848,7 @@ class FileOperations(object):
             header_parameters = {}
             header_parameters['Content-Type'] = 'application/json; odata=minimalmetadata; charset=utf-8'
             if self.config.generate_client_request_id:
-                header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+                header_parameters['client-request-id'] = str(uuid.uuid1())
             if custom_headers:
                 header_parameters.update(custom_headers)
             if self.config.accept_language is not None:

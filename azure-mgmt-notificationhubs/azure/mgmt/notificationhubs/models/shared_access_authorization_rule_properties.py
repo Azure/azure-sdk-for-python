@@ -23,8 +23,7 @@ from msrest.serialization import Model
 
 
 class SharedAccessAuthorizationRuleProperties(Model):
-    """
-    SharedAccessAuthorizationRule properties.
+    """SharedAccessAuthorizationRule properties.
 
     :param primary_key: The primary key that was used.
     :type primary_key: str

@@ -23,13 +23,12 @@ from msrest.serialization import Model
 
 
 class ContentSummaryResult(Model):
-    """
-    Data Lake Store filesystem content summary information response.
+    """Data Lake Store filesystem content summary information response.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar content_summary: Gets the content summary for the specified path
+    :ivar content_summary: the content summary for the specified path
     :vartype content_summary: :class:`ContentSummary
      <azure.mgmt.datalake.store.filesystem.models.ContentSummary>`
     """ 

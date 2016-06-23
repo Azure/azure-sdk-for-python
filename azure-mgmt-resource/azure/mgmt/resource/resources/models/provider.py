@@ -23,8 +23,7 @@ from msrest.serialization import Model
 
 
 class Provider(Model):
-    """
-    Resource provider information.
+    """Resource provider information.
 
     :param id: Gets or sets the provider id.
     :type id: str

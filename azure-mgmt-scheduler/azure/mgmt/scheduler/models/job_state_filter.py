@@ -23,7 +23,7 @@ from msrest.serialization import Model
 
 
 class JobStateFilter(Model):
-    """JobStateFilter
+    """JobStateFilter.
 
     :param state: Gets or sets the job state. Possible values include:
      'Enabled', 'Disabled', 'Faulted', 'Completed'

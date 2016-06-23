@@ -45,8 +45,7 @@ class GlobalCertificateOrderOperations(object):
 
     def get_all_certificate_orders(
             self, custom_headers=None, raw=False, **operation_config):
-        """
-        Lists all domains in a subscription
+        """Lists all domains in a subscription.
 
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -101,8 +100,7 @@ class GlobalCertificateOrderOperations(object):
 
     def validate_certificate_purchase_information(
             self, certificate_order, custom_headers=None, raw=False, **operation_config):
-        """
-        Validate certificate purchase information
+        """Validate certificate purchase information.
 
         :param certificate_order: Certificate order
         :type certificate_order: :class:`CertificateOrder

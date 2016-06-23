@@ -23,8 +23,7 @@ from .resource import Resource
 
 
 class GeoRegion(Resource):
-    """
-    Geographical region
+    """Geographical region.
 
     :param id: Resource Id
     :type id: str

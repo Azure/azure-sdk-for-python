@@ -23,8 +23,7 @@ from .resource_model import ResourceModel
 
 
 class GenericResource(ResourceModel):
-    """
-    Resource information.
+    """Resource information.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -35,6 +34,10 @@ class GenericResource(ResourceModel):
     :vartype name: str
     :ivar type: Resource type
     :vartype type: str
+    :ivar created_time: Created time of the resource.
+    :vartype created_time: datetime
+    :ivar changed_time: Changed time of the resource.
+    :vartype changed_time: datetime
     :param location: Resource location
     :type location: str
     :param tags: Resource tags
@@ -43,12 +46,23 @@ class GenericResource(ResourceModel):
     :type plan: :class:`Plan <azure.mgmt.resource.resources.models.Plan>`
     :param properties: Gets or sets the resource properties.
     :type properties: object
+    :param kind: Gets or sets the kind of the resource.
+    :type kind: str
+    :param managed_by: Gets or sets the managedBy property of the resource.
+    :type managed_by: str
+    :param sku: Gets or sets the sku of the resource.
+    :type sku: :class:`Sku <azure.mgmt.resource.resources.models.Sku>`
+    :param identity: Gets or sets the identity of the resource.
+    :type identity: :class:`Identity
+     <azure.mgmt.resource.resources.models.Identity>`
     """ 
 
     _validation = {
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
+        'created_time': {'readonly': True},
+        'changed_time': {'readonly': True},
         'location': {'required': True},
     }
 
@@ -56,13 +70,23 @@ class GenericResource(ResourceModel):
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
+        'created_time': {'key': 'createdTime', 'type': 'iso-8601'},
+        'changed_time': {'key': 'changedTime', 'type': 'iso-8601'},
         'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
         'plan': {'key': 'plan', 'type': 'Plan'},
         'properties': {'key': 'properties', 'type': 'object'},
+        'kind': {'key': 'kind', 'type': 'str'},
+        'managed_by': {'key': 'managedBy', 'type': 'str'},
+        'sku': {'key': 'sku', 'type': 'Sku'},
+        'identity': {'key': 'identity', 'type': 'Identity'},
     }
 
-    def __init__(self, location, tags=None, plan=None, properties=None):
+    def __init__(self, location, tags=None, plan=None, properties=None, kind=None, managed_by=None, sku=None, identity=None):
         super(GenericResource, self).__init__(location=location, tags=tags)
         self.plan = plan
         self.properties = properties
+        self.kind = kind
+        self.managed_by = managed_by
+        self.sku = sku
+        self.identity = identity

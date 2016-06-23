@@ -23,8 +23,7 @@ from msrest.serialization import Model
 
 
 class JobExecutionInformation(Model):
-    """
-    Contains information about the execution of a job in the Azure Batch
+    """Contains information about the execution of a job in the Azure Batch
     service.
 
     :param start_time: The start time of the job.

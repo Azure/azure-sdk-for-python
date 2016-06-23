@@ -23,9 +23,8 @@ from msrest.serialization import Model
 
 
 class HostingEnvironmentProfile(Model):
-    """
-    Specification for a hostingEnvironment (App Service Environment) to use
-    for this resource
+    """Specification for a hostingEnvironment (App Service Environment) to use
+    for this resource.
 
     :param id: Resource id of the hostingEnvironment (App Service Environment)
     :type id: str

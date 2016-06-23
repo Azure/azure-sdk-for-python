@@ -23,8 +23,7 @@ from msrest.serialization import Model
 
 
 class CsmSlotEntity(Model):
-    """
-    Class containing deployment slot parameters
+    """Class containing deployment slot parameters.
 
     :param target_slot: Set the destination deployment slot during swap
      operation

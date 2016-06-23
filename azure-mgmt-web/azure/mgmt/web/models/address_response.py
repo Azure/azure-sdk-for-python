@@ -23,8 +23,7 @@ from msrest.serialization import Model
 
 
 class AddressResponse(Model):
-    """
-    Describes main public ip address and any extra vips
+    """Describes main public ip address and any extra vips.
 
     :param service_ip_address: Main public vip
     :type service_ip_address: str

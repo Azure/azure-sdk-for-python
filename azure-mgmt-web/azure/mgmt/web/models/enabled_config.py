@@ -23,8 +23,7 @@ from msrest.serialization import Model
 
 
 class EnabledConfig(Model):
-    """
-    Enabled configuration
+    """Enabled configuration.
 
     :param enabled: Enabled
     :type enabled: bool

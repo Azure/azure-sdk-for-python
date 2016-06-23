@@ -23,7 +23,7 @@ from msrest.serialization import Model
 
 
 class StorageQueueMessage(Model):
-    """StorageQueueMessage
+    """StorageQueueMessage.
 
     :param storage_account: Gets or sets the storage account name.
     :type storage_account: str

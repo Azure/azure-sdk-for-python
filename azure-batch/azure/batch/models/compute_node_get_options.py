@@ -23,8 +23,7 @@ from msrest.serialization import Model
 
 
 class ComputeNodeGetOptions(Model):
-    """
-    Additional parameters for the ComputeNode_Get operation.
+    """Additional parameters for the ComputeNode_Get operation.
 
     :param select: An OData $select clause.
     :type select: str

@@ -45,8 +45,7 @@ class ClassicMobileServicesOperations(object):
 
     def get_classic_mobile_services(
             self, resource_group_name, custom_headers=None, raw=False, **operation_config):
-        """
-        Get all mobile services in a resource group.
+        """Get all mobile services in a resource group.
 
         :param resource_group_name: Name of resource group
         :type resource_group_name: str
@@ -104,8 +103,7 @@ class ClassicMobileServicesOperations(object):
 
     def get_classic_mobile_service(
             self, resource_group_name, name, custom_headers=None, raw=False, **operation_config):
-        """
-        Get a mobile service.
+        """Get a mobile service.
 
         :param resource_group_name: Name of resource group
         :type resource_group_name: str
@@ -166,8 +164,7 @@ class ClassicMobileServicesOperations(object):
 
     def delete_classic_mobile_service(
             self, resource_group_name, name, custom_headers=None, raw=False, **operation_config):
-        """
-        Delete a mobile service.
+        """Delete a mobile service.
 
         :param resource_group_name: Name of resource group
         :type resource_group_name: str

@@ -23,8 +23,7 @@ from msrest.serialization import Model
 
 
 class BaiduCredential(Model):
-    """
-    Description of a NotificationHub BaiduCredential.
+    """Description of a NotificationHub BaiduCredential.
 
     :param properties: Gets or sets properties of NotificationHub
      BaiduCredential.

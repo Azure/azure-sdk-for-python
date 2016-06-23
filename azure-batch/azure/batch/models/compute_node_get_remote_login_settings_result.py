@@ -23,8 +23,7 @@ from msrest.serialization import Model
 
 
 class ComputeNodeGetRemoteLoginSettingsResult(Model):
-    """
-    Response to a ComputeNodeOperation.GetRemoteLoginSettings request.
+    """Response to a ComputeNodeOperation.GetRemoteLoginSettings request.
 
     :param remote_login_ip_address: The IP address used for remote login to
      the compute node.

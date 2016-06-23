@@ -45,8 +45,7 @@ class CustomDomainsOperations(object):
 
     def list_by_endpoint(
             self, endpoint_name, profile_name, resource_group_name, custom_headers=None, raw=False, **operation_config):
-        """
-        Lists the existing CDN custom domains within an endpoint.
+        """Lists the existing CDN custom domains within an endpoint.
 
         :param endpoint_name: Name of the endpoint within the CDN profile.
         :type endpoint_name: str
@@ -117,8 +116,7 @@ class CustomDomainsOperations(object):
 
     def get(
             self, custom_domain_name, endpoint_name, profile_name, resource_group_name, custom_headers=None, raw=False, **operation_config):
-        """
-        Gets an existing CDN custom domain within an endpoint.
+        """Gets an existing CDN custom domain within an endpoint.
 
         :param custom_domain_name: Name of the custom domain within an
          endpoint.
@@ -185,8 +183,7 @@ class CustomDomainsOperations(object):
 
     def create(
             self, custom_domain_name, endpoint_name, profile_name, resource_group_name, host_name, custom_headers=None, raw=False, **operation_config):
-        """
-        Creates a new CDN custom domain within an endpoint.
+        """Creates a new CDN custom domain within an endpoint.
 
         :param custom_domain_name: Name of the custom domain within an
          endpoint.
@@ -290,8 +287,7 @@ class CustomDomainsOperations(object):
 
     def update(
             self, custom_domain_name, endpoint_name, profile_name, resource_group_name, host_name, custom_headers=None, raw=False, **operation_config):
-        """
-        Updates an existing CDN custom domain within an endpoint.
+        """Updates an existing CDN custom domain within an endpoint.
 
         :param custom_domain_name: Name of the custom domain within an
          endpoint.
@@ -360,8 +356,7 @@ class CustomDomainsOperations(object):
 
     def delete_if_exists(
             self, custom_domain_name, endpoint_name, profile_name, resource_group_name, custom_headers=None, raw=False, **operation_config):
-        """
-        Deletes an existing CDN custom domain within an endpoint.
+        """Deletes an existing CDN custom domain within an endpoint.
 
         :param custom_domain_name: Name of the custom domain within an
          endpoint.

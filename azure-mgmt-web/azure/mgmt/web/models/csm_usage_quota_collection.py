@@ -23,8 +23,7 @@ from msrest.serialization import Model
 
 
 class CsmUsageQuotaCollection(Model):
-    """
-    Collection of csm usage quotas
+    """Collection of csm usage quotas.
 
     :param value: Collection of resources
     :type value: list of :class:`CsmUsageQuota

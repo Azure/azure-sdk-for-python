@@ -23,8 +23,7 @@ from .resource import Resource
 
 
 class RedisResource(Resource):
-    """
-    A single redis item in List or Get Operation.
+    """A single redis item in List or Get Operation.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -80,6 +79,8 @@ class RedisResource(Resource):
         'type': {'readonly': True},
         'location': {'required': True},
         'sku': {'required': True},
+        'subnet_id': {'pattern': '^/subscriptions/[^/]*/resourceGroups/[^/]*/providers/Microsoft.(ClassicNetwork|Network)/virtualNetworks/[^/]*/subnets/[^/]*$'},
+        'static_ip': {'pattern': '^\d+\.\d+\.\d+\.\d+$'},
     }
 
     _attribute_map = {

@@ -23,8 +23,7 @@ from msrest.serialization import Model
 
 
 class PasswordCredential(Model):
-    """
-    Active Directory service principal Password Credential information
+    """Active Directory service principal Password Credential information.
 
     :param start_date: Gets or sets start date
     :type start_date: datetime

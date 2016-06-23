@@ -23,8 +23,7 @@ from .resource import Resource
 
 
 class SiteSourceControl(Resource):
-    """
-    Describes the source control configuration for web app
+    """Describes the source control configuration for web app.
 
     :param id: Resource Id
     :type id: str

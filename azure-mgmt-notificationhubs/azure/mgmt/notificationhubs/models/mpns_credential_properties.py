@@ -23,8 +23,7 @@ from msrest.serialization import Model
 
 
 class MpnsCredentialProperties(Model):
-    """
-    Description of a NotificationHub MpnsCredential.
+    """Description of a NotificationHub MpnsCredential.
 
     :param mpns_certificate: Gets or sets the MPNS certificate.
     :type mpns_certificate: str

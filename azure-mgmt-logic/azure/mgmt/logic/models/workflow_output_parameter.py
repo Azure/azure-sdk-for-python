@@ -23,7 +23,7 @@ from .workflow_parameter import WorkflowParameter
 
 
 class WorkflowOutputParameter(WorkflowParameter):
-    """WorkflowOutputParameter
+    """WorkflowOutputParameter.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.

@@ -25,7 +25,6 @@ from .resource_groups_operations import ResourceGroupsOperations
 from .resources_operations import ResourcesOperations
 from .tags_operations import TagsOperations
 from .deployment_operations_operations import DeploymentOperationsOperations
-from .resource_provider_operation_details_operations import ResourceProviderOperationDetailsOperations
 
 __all__ = [
     'DeploymentsOperations',
@@ -34,5 +33,4 @@ __all__ = [
     'ResourcesOperations',
     'TagsOperations',
     'DeploymentOperationsOperations',
-    'ResourceProviderOperationDetailsOperations',
 ]

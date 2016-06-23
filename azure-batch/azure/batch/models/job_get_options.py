@@ -23,8 +23,7 @@ from msrest.serialization import Model
 
 
 class JobGetOptions(Model):
-    """
-    Additional parameters for the Job_Get operation.
+    """Additional parameters for the Job_Get operation.
 
     :param select: An OData $select clause.
     :type select: str

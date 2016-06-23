@@ -23,8 +23,7 @@ from msrest.serialization import Model
 
 
 class ResourceFile(Model):
-    """
-    A file to be downloaded from Azure blob storage to a compute node.
+    """A file to be downloaded from Azure blob storage to a compute node.
 
     :param blob_source: The URL of the file within Azure Blob Storage. This
      URL should include a shared access signature if the blob is not publicly

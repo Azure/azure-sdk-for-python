@@ -23,7 +23,7 @@ from .resource import Resource
 
 
 class WorkflowVersion(Resource):
-    """WorkflowVersion
+    """WorkflowVersion.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.

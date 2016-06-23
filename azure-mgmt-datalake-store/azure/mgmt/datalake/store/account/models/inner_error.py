@@ -23,15 +23,14 @@ from msrest.serialization import Model
 
 
 class InnerError(Model):
-    """
-    Data Lake Store inner error information
+    """Data Lake Store inner error information.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar trace: Gets the stack trace for the error
+    :ivar trace: the stack trace for the error
     :vartype trace: str
-    :ivar context: Gets the context for the error message
+    :ivar context: the context for the error message
     :vartype context: str
     """ 
 

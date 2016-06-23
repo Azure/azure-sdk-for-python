@@ -23,8 +23,7 @@ from msrest.serialization import Model
 
 
 class TaskExecutionInformation(Model):
-    """
-    Information about the execution of a task.
+    """Information about the execution of a task.
 
     :param start_time: The time at which the task started running. If the
      task has been restarted or retried, this is the most recent time at

@@ -23,8 +23,7 @@ from msrest.serialization import Model
 
 
 class JobAddParameter(Model):
-    """
-    An Azure Batch job to add.
+    """An Azure Batch job to add.
 
     :param id: A string that uniquely identifies the job within the account.
      The id can contain any combination of alphanumeric characters including

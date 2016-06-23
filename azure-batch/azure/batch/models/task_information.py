@@ -23,8 +23,7 @@ from msrest.serialization import Model
 
 
 class TaskInformation(Model):
-    """
-    Information about a task running on a compute node.
+    """Information about a task running on a compute node.
 
     :param task_url: The URL of the task.
     :type task_url: str

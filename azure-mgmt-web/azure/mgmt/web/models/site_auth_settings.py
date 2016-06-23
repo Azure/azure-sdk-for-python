@@ -23,8 +23,7 @@ from msrest.serialization import Model
 
 
 class SiteAuthSettings(Model):
-    """
-    Configuration settings for the Azure App Service Authentication /
+    """Configuration settings for the Azure App Service Authentication /
     Authorization feature.
 
     :param enabled: Gets or sets a value indicating whether the

@@ -46,8 +46,7 @@ class AccountOperations(object):
 
     def get_storage_account(
             self, resource_group_name, account_name, storage_account_name, custom_headers=None, raw=False, **operation_config):
-        """
-        Gets the specified Azure Storage account linked to the given Data Lake
+        """Gets the specified Azure Storage account linked to the given Data Lake
         Analytics account.
 
         :param resource_group_name: The name of the Azure resource group that
@@ -115,8 +114,7 @@ class AccountOperations(object):
 
     def delete_storage_account(
             self, resource_group_name, account_name, storage_account_name, custom_headers=None, raw=False, **operation_config):
-        """
-        Updates the specified Data Lake Analytics account to remove an Azure
+        """Updates the specified Data Lake Analytics account to remove an Azure
         Storage account.
 
         :param resource_group_name: The name of the Azure resource group that
@@ -176,8 +174,7 @@ class AccountOperations(object):
 
     def update_storage_account(
             self, resource_group_name, account_name, storage_account_name, properties, custom_headers=None, raw=False, **operation_config):
-        """
-        Updates the Data Lake Analytics account to replace Azure Storage blob
+        """Updates the Data Lake Analytics account to replace Azure Storage blob
         account details, such as the access key and/or suffix.
 
         :param resource_group_name: The name of the Azure resource group that
@@ -188,8 +185,8 @@ class AccountOperations(object):
         :type account_name: str
         :param storage_account_name: The Azure Storage account to modify
         :type storage_account_name: str
-        :param properties: Gets or sets the properties for the Azure Storage
-         account being added.
+        :param properties: the properties for the Azure Storage account being
+         added.
         :type properties: :class:`StorageAccountProperties
          <azure.mgmt.datalake.analytics.account.models.StorageAccountProperties>`
         :param dict custom_headers: headers that will be added to the request
@@ -246,8 +243,7 @@ class AccountOperations(object):
 
     def add_storage_account(
             self, resource_group_name, account_name, storage_account_name, properties, custom_headers=None, raw=False, **operation_config):
-        """
-        Updates the specified Data Lake Analytics account to add an Azure
+        """Updates the specified Data Lake Analytics account to add an Azure
         Storage account.
 
         :param resource_group_name: The name of the Azure resource group that
@@ -259,8 +255,8 @@ class AccountOperations(object):
         :param storage_account_name: The name of the Azure Storage account to
          add
         :type storage_account_name: str
-        :param properties: Gets or sets the properties for the Azure Storage
-         account being added.
+        :param properties: the properties for the Azure Storage account being
+         added.
         :type properties: :class:`StorageAccountProperties
          <azure.mgmt.datalake.analytics.account.models.StorageAccountProperties>`
         :param dict custom_headers: headers that will be added to the request
@@ -317,8 +313,7 @@ class AccountOperations(object):
 
     def get_storage_container(
             self, resource_group_name, account_name, storage_account_name, container_name, custom_headers=None, raw=False, **operation_config):
-        """
-        Gets the specified Azure Storage container associated with the given
+        """Gets the specified Azure Storage container associated with the given
         Data Lake Analytics and Azure Storage accounts.
 
         :param resource_group_name: The name of the Azure resource group that
@@ -390,8 +385,7 @@ class AccountOperations(object):
 
     def list_storage_containers(
             self, resource_group_name, account_name, storage_account_name, custom_headers=None, raw=False, **operation_config):
-        """
-        Lists the Azure Storage containers, if any, associated with the
+        """Lists the Azure Storage containers, if any, associated with the
         specified Data Lake Analytics and Azure Storage account combination.
         The response includes a link to the next page of results, if any.
 
@@ -467,8 +461,7 @@ class AccountOperations(object):
 
     def list_sas_tokens(
             self, resource_group_name, account_name, storage_account_name, container_name, custom_headers=None, raw=False, **operation_config):
-        """
-        Gets the SAS token associated with the specified Data Lake Analytics
+        """Gets the SAS token associated with the specified Data Lake Analytics
         and Azure Storage account and container combination.
 
         :param resource_group_name: The name of the Azure resource group that
@@ -547,8 +540,7 @@ class AccountOperations(object):
 
     def get_data_lake_store_account(
             self, resource_group_name, account_name, data_lake_store_account_name, custom_headers=None, raw=False, **operation_config):
-        """
-        Gets the specified Data Lake Store account details in the specified
+        """Gets the specified Data Lake Store account details in the specified
         Data Lake Analytics account.
 
         :param resource_group_name: The name of the Azure resource group that
@@ -616,8 +608,7 @@ class AccountOperations(object):
 
     def delete_data_lake_store_account(
             self, resource_group_name, account_name, data_lake_store_account_name, custom_headers=None, raw=False, **operation_config):
-        """
-        Updates the Data Lake Analytics account specified to remove the
+        """Updates the Data Lake Analytics account specified to remove the
         specified Data Lake Store account.
 
         :param resource_group_name: The name of the Azure resource group that
@@ -677,8 +668,7 @@ class AccountOperations(object):
 
     def add_data_lake_store_account(
             self, resource_group_name, account_name, data_lake_store_account_name, properties, custom_headers=None, raw=False, **operation_config):
-        """
-        Updates the specified Data Lake Analytics account to include the
+        """Updates the specified Data Lake Analytics account to include the
         additional Data Lake Store account.
 
         :param resource_group_name: The name of the Azure resource group that
@@ -690,8 +680,8 @@ class AccountOperations(object):
         :param data_lake_store_account_name: The name of the Data Lake Store
          account to add.
         :type data_lake_store_account_name: str
-        :param properties: Gets or sets the properties for the Data Lake
-         Store account being added.
+        :param properties: the properties for the Data Lake Store account
+         being added.
         :type properties: :class:`DataLakeStoreAccountInfoProperties
          <azure.mgmt.datalake.analytics.account.models.DataLakeStoreAccountInfoProperties>`
         :param dict custom_headers: headers that will be added to the request
@@ -748,8 +738,7 @@ class AccountOperations(object):
 
     def list_storage_accounts(
             self, resource_group_name, account_name, filter=None, top=None, skip=None, expand=None, select=None, orderby=None, count=None, search=None, format=None, custom_headers=None, raw=False, **operation_config):
-        """
-        Gets the first page of Azure Storage accounts, if any, linked to the
+        """Gets the first page of Azure Storage accounts, if any, linked to the
         specified Data Lake Analytics account. The response includes a link
         to the next page, if any.
 
@@ -871,8 +860,7 @@ class AccountOperations(object):
 
     def list_data_lake_store_accounts(
             self, resource_group_name, account_name, filter=None, top=None, skip=None, expand=None, select=None, orderby=None, count=None, search=None, format=None, custom_headers=None, raw=False, **operation_config):
-        """
-        Gets the first page of Data Lake Store accounts linked to the
+        """Gets the first page of Data Lake Store accounts linked to the
         specified Data Lake Analytics account. The response includes a link
         to the next page, if any.
 
@@ -994,8 +982,7 @@ class AccountOperations(object):
 
     def list_by_resource_group(
             self, resource_group_name, filter=None, top=None, skip=None, expand=None, select=None, orderby=None, count=None, search=None, format=None, custom_headers=None, raw=False, **operation_config):
-        """
-        Gets the first page of Data Lake Analytics accounts, if any, within a
+        """Gets the first page of Data Lake Analytics accounts, if any, within a
         specific resource group. This includes a link to the next page, if
         any.
 
@@ -1113,8 +1100,7 @@ class AccountOperations(object):
 
     def list(
             self, filter=None, top=None, skip=None, expand=None, select=None, orderby=None, count=None, search=None, format=None, custom_headers=None, raw=False, **operation_config):
-        """
-        Gets the first page of Data Lake Analytics accounts, if any, within
+        """Gets the first page of Data Lake Analytics accounts, if any, within
         the current subscription. This includes a link to the next page, if
         any.
 
@@ -1228,8 +1214,7 @@ class AccountOperations(object):
 
     def get(
             self, resource_group_name, account_name, custom_headers=None, raw=False, **operation_config):
-        """
-        Gets details of the specified Data Lake Analytics account.
+        """Gets details of the specified Data Lake Analytics account.
 
         :param resource_group_name: The name of the Azure resource group that
          contains the Data Lake Analytics account.
@@ -1292,8 +1277,7 @@ class AccountOperations(object):
 
     def delete(
             self, resource_group_name, account_name, custom_headers=None, raw=False, **operation_config):
-        """
-        Begins the delete delete process for the Data Lake Analytics account
+        """Begins the delete delete process for the Data Lake Analytics account
         object specified by the account name.
 
         :param resource_group_name: The name of the Azure resource group that
@@ -1372,9 +1356,8 @@ class AccountOperations(object):
 
     def create(
             self, resource_group_name, name, parameters, custom_headers=None, raw=False, **operation_config):
-        """
-        Creates the specified Data Lake Analytics account. This supplies the
-        user with computation services for Data Lake Analytics workloads
+        """Creates the specified Data Lake Analytics account. This supplies the
+        user with computation services for Data Lake Analytics workloads.
 
         :param resource_group_name: The name of the Azure resource group that
          contains the Data Lake Analytics account.the account will be
@@ -1470,8 +1453,7 @@ class AccountOperations(object):
 
     def update(
             self, resource_group_name, name, parameters, custom_headers=None, raw=False, **operation_config):
-        """
-        Updates the Data Lake Analytics account object specified by the
+        """Updates the Data Lake Analytics account object specified by the
         accountName with the contents of the account object.
 
         :param resource_group_name: The name of the Azure resource group that

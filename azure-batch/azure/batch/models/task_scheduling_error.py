@@ -23,8 +23,7 @@ from msrest.serialization import Model
 
 
 class TaskSchedulingError(Model):
-    """
-    Information about an error when scheduling a task.
+    """Information about an error when scheduling a task.
 
     :param category: The category of the task scheduling error. Possible
      values include: 'usererror', 'servererror', 'unmapped'

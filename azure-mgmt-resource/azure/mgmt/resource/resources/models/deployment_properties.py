@@ -23,8 +23,7 @@ from msrest.serialization import Model
 
 
 class DeploymentProperties(Model):
-    """
-    Deployment properties.
+    """Deployment properties.
 
     :param template: Gets or sets the template content. Use only one of
      Template or TemplateLink.
@@ -49,6 +48,10 @@ class DeploymentProperties(Model):
      <azure.mgmt.resource.resources.models.DebugSetting>`
     """ 
 
+    _validation = {
+        'mode': {'required': True},
+    }
+
     _attribute_map = {
         'template': {'key': 'template', 'type': 'object'},
         'template_link': {'key': 'templateLink', 'type': 'TemplateLink'},
@@ -58,7 +61,7 @@ class DeploymentProperties(Model):
         'debug_setting': {'key': 'debugSetting', 'type': 'DebugSetting'},
     }
 
-    def __init__(self, template=None, template_link=None, parameters=None, parameters_link=None, mode=None, debug_setting=None):
+    def __init__(self, mode, template=None, template_link=None, parameters=None, parameters_link=None, debug_setting=None):
         self.template = template
         self.template_link = template_link
         self.parameters = parameters

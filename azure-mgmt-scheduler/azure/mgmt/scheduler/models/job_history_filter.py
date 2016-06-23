@@ -23,7 +23,7 @@ from msrest.serialization import Model
 
 
 class JobHistoryFilter(Model):
-    """JobHistoryFilter
+    """JobHistoryFilter.
 
     :param status: Gets or sets the job execution status. Possible values
      include: 'Completed', 'Failed', 'Postponed'

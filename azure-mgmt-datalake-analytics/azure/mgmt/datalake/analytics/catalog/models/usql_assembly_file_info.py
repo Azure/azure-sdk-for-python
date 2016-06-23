@@ -23,18 +23,15 @@ from msrest.serialization import Model
 
 
 class USqlAssemblyFileInfo(Model):
-    """
-    A Data Lake Analytics catalog U-SQL assembly file information item.
+    """A Data Lake Analytics catalog U-SQL assembly file information item.
 
-    :param type: Gets or sets the assembly file type. Possible values
-     include: 'Assembly', 'Resource'
+    :param type: the assembly file type. Possible values include: 'Assembly',
+     'Resource'
     :type type: str or :class:`FileType
      <azure.mgmt.datalake.analytics.catalog.models.FileType>`
-    :param original_path: Gets or sets the the original path to the assembly
-     file.
+    :param original_path: the the original path to the assembly file.
     :type original_path: str
-    :param content_path: Gets or sets the the content path to the assembly
-     file.
+    :param content_path: the the content path to the assembly file.
     :type content_path: str
     """ 
 

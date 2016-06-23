@@ -23,8 +23,7 @@ from msrest.serialization import Model
 
 
 class NodeRemoveParameter(Model):
-    """
-    Parameters for a ComputeNodeOperations.Remove request.
+    """Parameters for a ComputeNodeOperations.Remove request.
 
     :param node_list: A list containing the id of the compute nodes to be
      removed from the specified pool.

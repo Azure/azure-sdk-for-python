@@ -23,7 +23,7 @@ from .sub_resource import SubResource
 
 
 class WorkflowTriggerHistory(SubResource):
-    """WorkflowTriggerHistory
+    """WorkflowTriggerHistory.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.

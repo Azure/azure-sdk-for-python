@@ -44,9 +44,8 @@ class WorkflowTriggerHistoriesOperations(object):
         self.config = config
 
     def list(
-            self, resource_group_name, workflow_name, trigger_name, top=None, custom_headers=None, raw=False, **operation_config):
-        """
-        Gets a list of workflow trigger histories.
+            self, resource_group_name, workflow_name, trigger_name, top=None, filter=None, custom_headers=None, raw=False, **operation_config):
+        """Gets a list of workflow trigger histories.
 
         :param resource_group_name: The resource group name.
         :type resource_group_name: str
@@ -56,6 +55,8 @@ class WorkflowTriggerHistoriesOperations(object):
         :type trigger_name: str
         :param top: The number of items to be included in the result.
         :type top: int
+        :param filter: The filter to apply on the operation.
+        :type filter: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -82,6 +83,8 @@ class WorkflowTriggerHistoriesOperations(object):
                 query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
                 if top is not None:
                     query_parameters['$top'] = self._serialize.query("top", top, 'int')
+                if filter is not None:
+                    query_parameters['$filter'] = self._serialize.query("filter", filter, 'str')
 
             else:
                 url = next_link
@@ -121,8 +124,7 @@ class WorkflowTriggerHistoriesOperations(object):
 
     def get(
             self, resource_group_name, workflow_name, trigger_name, history_name, custom_headers=None, raw=False, **operation_config):
-        """
-        Gets a workflow trigger history.
+        """Gets a workflow trigger history.
 
         :param resource_group_name: The resource group name.
         :type resource_group_name: str

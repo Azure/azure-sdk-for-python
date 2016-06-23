@@ -23,7 +23,7 @@ from msrest.serialization import Model
 
 
 class JobMaxRecurrence(Model):
-    """JobMaxRecurrence
+    """JobMaxRecurrence.
 
     :param frequency: Gets or sets the frequency of recurrence (second,
      minute, hour, day, week, month). Possible values include: 'Minute',

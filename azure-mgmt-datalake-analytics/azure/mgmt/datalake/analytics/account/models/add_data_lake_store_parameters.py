@@ -23,11 +23,10 @@ from msrest.serialization import Model
 
 
 class AddDataLakeStoreParameters(Model):
-    """
-    Additional Data Lake Store parameters.
+    """Additional Data Lake Store parameters.
 
-    :param properties: Gets or sets the properties for the Data Lake Store
-     account being added.
+    :param properties: the properties for the Data Lake Store account being
+     added.
     :type properties: :class:`DataLakeStoreAccountInfoProperties
      <azure.mgmt.datalake.analytics.account.models.DataLakeStoreAccountInfoProperties>`
     """ 

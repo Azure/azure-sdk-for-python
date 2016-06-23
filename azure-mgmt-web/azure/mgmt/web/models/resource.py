@@ -23,7 +23,7 @@ from msrest.serialization import Model
 
 
 class Resource(Model):
-    """Resource
+    """Resource.
 
     :param id: Resource Id
     :type id: str

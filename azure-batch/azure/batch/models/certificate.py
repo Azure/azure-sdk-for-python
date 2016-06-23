@@ -23,8 +23,7 @@ from msrest.serialization import Model
 
 
 class Certificate(Model):
-    """
-    A certificate that can be installed on compute nodes and can be used to
+    """A certificate that can be installed on compute nodes and can be used to
     authenticate operations on the machine.
 
     :param thumbprint: The X.509 thumbprint of the certificate. This is a

@@ -23,8 +23,7 @@ from msrest.serialization import Model
 
 
 class CsmPublishingProfileOptions(Model):
-    """
-    Publishing options for requested profile
+    """Publishing options for requested profile.
 
     :param format: Name of the format. Valid values are:
      FileZilla3

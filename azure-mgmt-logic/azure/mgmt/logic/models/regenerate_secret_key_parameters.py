@@ -23,7 +23,7 @@ from msrest.serialization import Model
 
 
 class RegenerateSecretKeyParameters(Model):
-    """RegenerateSecretKeyParameters
+    """RegenerateSecretKeyParameters.
 
     :param key_type: Gets or sets the key type. Possible values include:
      'NotSpecified', 'Primary', 'Secondary'

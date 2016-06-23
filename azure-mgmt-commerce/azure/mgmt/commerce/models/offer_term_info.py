@@ -23,8 +23,7 @@ from msrest.serialization import Model
 
 
 class OfferTermInfo(Model):
-    """
-    Describes the offer term.
+    """Describes the offer term.
 
     :param effective_date: Indicates the date from which the meter rate or
      offer term is effective.

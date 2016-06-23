@@ -23,19 +23,17 @@ from .catalog_item import CatalogItem
 
 
 class USqlAssemblyClr(CatalogItem):
-    """
-    A Data Lake Analytics catalog U-SQL assembly CLR item.
+    """A Data Lake Analytics catalog U-SQL assembly CLR item.
 
-    :param compute_account_name: Gets or sets the name of the Data Lake
-     Analytics account.
+    :param compute_account_name: the name of the Data Lake Analytics account.
     :type compute_account_name: str
-    :param version: Gets or sets the version of the catalog item.
+    :param version: the version of the catalog item.
     :type version: str
-    :param database_name: Gets or sets the name of the database.
+    :param database_name: the name of the database.
     :type database_name: str
-    :param name: Gets or sets the name of the assembly.
+    :param name: the name of the assembly.
     :type name: str
-    :param clr_name: Gets or sets the name of the CLR.
+    :param clr_name: the name of the CLR.
     :type clr_name: str
     """ 
 

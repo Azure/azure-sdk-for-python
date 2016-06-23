@@ -23,8 +23,7 @@ from msrest.serialization import Model
 
 
 class ResourceNameAvailability(Model):
-    """
-    Describes if a resource name is available
+    """Describes if a resource name is available.
 
     :param name_available: True indicates name is valid and available.  False
      indicates the name is invalid, unavailable, or both.

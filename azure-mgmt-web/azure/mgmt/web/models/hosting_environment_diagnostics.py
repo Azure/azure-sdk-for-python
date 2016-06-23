@@ -23,8 +23,7 @@ from msrest.serialization import Model
 
 
 class HostingEnvironmentDiagnostics(Model):
-    """
-    Diagnostics for a hosting environment (App Service Environment)
+    """Diagnostics for a hosting environment (App Service Environment).
 
     :param name: Name/identifier of the diagnostics
     :type name: str

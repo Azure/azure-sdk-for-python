@@ -23,8 +23,7 @@ from msrest.serialization import Model
 
 
 class TaskAddParameter(Model):
-    """
-    An Azure Batch task to add.
+    """An Azure Batch task to add.
 
     :param id: A string that uniquely identifies the task within the job. The
      id can contain any combination of alphanumeric characters including

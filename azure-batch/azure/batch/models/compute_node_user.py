@@ -23,8 +23,7 @@ from msrest.serialization import Model
 
 
 class ComputeNodeUser(Model):
-    """
-    An user account on a compute node.
+    """An user account on a compute node.
 
     :param name: The user name of the account.
     :type name: str

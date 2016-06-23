@@ -23,8 +23,7 @@ from .resource import Resource
 
 
 class Certificate(Resource):
-    """
-    App certificate
+    """App certificate.
 
     :param id: Resource Id
     :type id: str

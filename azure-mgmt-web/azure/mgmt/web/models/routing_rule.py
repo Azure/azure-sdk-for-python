@@ -23,8 +23,7 @@ from msrest.serialization import Model
 
 
 class RoutingRule(Model):
-    """
-    Routing rules for TiP
+    """Routing rules for TiP.
 
     :param name: Name of the routing rule. The recommended name would be to
      point to the slot which will receive the traffic in the experiment.

@@ -23,7 +23,7 @@ from msrest.serialization import Model
 
 
 class Sku(Model):
-    """Sku
+    """Sku.
 
     :param name: Gets or set the SKU. Possible values include: 'Standard',
      'Free', 'Premium'

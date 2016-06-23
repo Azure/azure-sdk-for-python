@@ -23,8 +23,7 @@ from msrest.serialization import Model
 
 
 class SubscriptionQuotasGetResult(Model):
-    """
-    Values returned by the Get Subscription Quotas operation.
+    """Values returned by the Get Subscription Quotas operation.
 
     :param account_quota: The number of Batch accounts that may be created
      under the subscription in the specified region.

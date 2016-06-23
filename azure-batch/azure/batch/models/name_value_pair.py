@@ -23,8 +23,7 @@ from msrest.serialization import Model
 
 
 class NameValuePair(Model):
-    """
-    Represents a name-value pair.
+    """Represents a name-value pair.
 
     :param name: The name in the name-value pair.
     :type name: str

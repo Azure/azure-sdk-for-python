@@ -23,8 +23,7 @@ from msrest.serialization import Model
 
 
 class TemplateLink(Model):
-    """
-    Entity representing the reference to the template.
+    """Entity representing the reference to the template.
 
     :param uri: URI referencing the template.
     :type uri: str

@@ -23,8 +23,7 @@ from msrest.serialization import Model
 
 
 class NotificationHubProperties(Model):
-    """
-    NotificationHub properties.
+    """NotificationHub properties.
 
     :param name: The NotificationHub name.
     :type name: str

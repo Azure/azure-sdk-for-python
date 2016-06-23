@@ -23,8 +23,7 @@ from msrest.serialization import Model
 
 
 class VirtualMachineConfiguration(Model):
-    """
-    The configuration for compute nodes in a pool based on the Azure Virtual
+    """The configuration for compute nodes in a pool based on the Azure Virtual
     Machines infrastructure.
 
     :param image_reference: A reference to the Azure Virtual Machines

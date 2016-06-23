@@ -23,14 +23,13 @@ from msrest.serialization import Model
 
 
 class FileStatusResult(Model):
-    """
-    Data Lake Store filesystem file status information response.
+    """Data Lake Store filesystem file status information response.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar file_status: Gets the file status object associated with the
-     specified path.
+    :ivar file_status: the file status object associated with the specified
+     path.
     :vartype file_status: :class:`FileStatusProperties
      <azure.mgmt.datalake.store.filesystem.models.FileStatusProperties>`
     """ 

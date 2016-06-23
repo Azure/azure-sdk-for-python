@@ -23,8 +23,7 @@ from msrest.serialization import Model
 
 
 class ConnStringInfo(Model):
-    """
-    Represents database connection string information
+    """Represents database connection string information.
 
     :param name: Name of connection string
     :type name: str

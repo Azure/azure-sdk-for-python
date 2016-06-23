@@ -23,7 +23,7 @@ from msrest.serialization import Model
 
 
 class WorkflowRunActionFilter(Model):
-    """WorkflowRunActionFilter
+    """WorkflowRunActionFilter.
 
     :param status: Gets or sets the status of workflow run action. Possible
      values include: 'NotSpecified', 'Paused', 'Running', 'Waiting',

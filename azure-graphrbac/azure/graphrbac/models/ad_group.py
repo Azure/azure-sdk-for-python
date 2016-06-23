@@ -23,8 +23,7 @@ from msrest.serialization import Model
 
 
 class ADGroup(Model):
-    """
-    Active Directory group information
+    """Active Directory group information.
 
     :param object_id: Gets or sets object Id
     :type object_id: str

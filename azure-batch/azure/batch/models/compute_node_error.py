@@ -23,8 +23,7 @@ from msrest.serialization import Model
 
 
 class ComputeNodeError(Model):
-    """
-    An error encountered by a compute node.
+    """An error encountered by a compute node.
 
     :param code: An identifier for the compute node error. Codes are
      invariant and are intended to be consumed programmatically.

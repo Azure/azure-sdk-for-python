@@ -23,8 +23,7 @@ from msrest.serialization import Model
 
 
 class InfoField(Model):
-    """
-    Key-value pairs of instance details in the legacy format.
+    """Key-value pairs of instance details in the legacy format.
 
     :param project: Identifies the name of the instance provisioned by the
      user.

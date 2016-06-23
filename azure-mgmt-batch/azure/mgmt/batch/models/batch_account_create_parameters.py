@@ -23,8 +23,7 @@ from msrest.serialization import Model
 
 
 class BatchAccountCreateParameters(Model):
-    """
-    Parameters supplied to the Create operation.
+    """Parameters supplied to the Create operation.
 
     :param location: The region in which the account is created.
     :type location: str

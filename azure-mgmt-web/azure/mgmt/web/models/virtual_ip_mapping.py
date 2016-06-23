@@ -23,8 +23,7 @@ from msrest.serialization import Model
 
 
 class VirtualIPMapping(Model):
-    """
-    Class that represents a VIP mapping
+    """Class that represents a VIP mapping.
 
     :param virtual_ip: Virtual IP address
     :type virtual_ip: str

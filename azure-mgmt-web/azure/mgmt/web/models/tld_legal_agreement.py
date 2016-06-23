@@ -23,8 +23,7 @@ from msrest.serialization import Model
 
 
 class TldLegalAgreement(Model):
-    """
-    Represents a legal agreement for top level domain
+    """Represents a legal agreement for top level domain.
 
     :param agreement_key: Unique identifier for the agreement
     :type agreement_key: str
