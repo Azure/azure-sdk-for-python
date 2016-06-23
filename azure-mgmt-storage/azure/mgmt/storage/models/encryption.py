@@ -23,8 +23,7 @@ from msrest.serialization import Model
 
 
 class Encryption(Model):
-    """
-    The encryption settings on the account.
+    """The encryption settings on the account.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.

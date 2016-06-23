@@ -23,8 +23,7 @@ from msrest.serialization import Model
 
 
 class StorageAccountListKeysResult(Model):
-    """
-    The ListKeys operation response.
+    """The ListKeys operation response.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.

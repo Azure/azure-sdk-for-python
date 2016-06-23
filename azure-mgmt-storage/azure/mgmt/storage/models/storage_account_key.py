@@ -23,8 +23,7 @@ from msrest.serialization import Model
 
 
 class StorageAccountKey(Model):
-    """
-    An access key for the storage account.
+    """An access key for the storage account.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
