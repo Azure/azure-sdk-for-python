@@ -10,6 +10,7 @@ https://github.com/Azure/azure-sdk-for-python/commit/b03cae526d9ac46d1b477840f15
 
 Bug fixes:
 * Each package has now a correct `__version__` attribute which contains the package version.
+* Fixed serialization of continuation tokens containing '.' (batch libraries)
 
 New:
 * New PowerBI Embeddeded preview client
