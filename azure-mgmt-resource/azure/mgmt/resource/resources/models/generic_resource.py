@@ -34,10 +34,6 @@ class GenericResource(ResourceModel):
     :vartype name: str
     :ivar type: Resource type
     :vartype type: str
-    :ivar created_time: Created time of the resource.
-    :vartype created_time: datetime
-    :ivar changed_time: Changed time of the resource.
-    :vartype changed_time: datetime
     :param location: Resource location
     :type location: str
     :param tags: Resource tags
@@ -61,8 +57,6 @@ class GenericResource(ResourceModel):
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
-        'created_time': {'readonly': True},
-        'changed_time': {'readonly': True},
         'location': {'required': True},
     }
 
@@ -70,8 +64,6 @@ class GenericResource(ResourceModel):
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'created_time': {'key': 'createdTime', 'type': 'iso-8601'},
-        'changed_time': {'key': 'changedTime', 'type': 'iso-8601'},
         'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
         'plan': {'key': 'plan', 'type': 'Plan'},
