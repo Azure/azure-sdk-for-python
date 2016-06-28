@@ -30,6 +30,11 @@ class MgmtStorageTest(AzureMgmtTestCase):
         )
 
     @record
+    def test_storage_usage(self):
+        usages = self.storage_client.usage.list().value
+        self.assertGreater(len(usages), 0)
+
+    @record
     def test_storage_accounts(self):
         self.create_resource_group()
 
@@ -95,6 +100,14 @@ class MgmtStorageTest(AzureMgmtTestCase):
         result_list = self.storage_client.storage_accounts.list()
         result_list = list(result_list)
         self.assertGreater(len(result_list), 0)
+
+        storage_account = self.storage_client.storage_accounts.update(
+            self.group_name,
+            account_name,
+            azure.mgmt.storage.models.StorageAccountUpdateParameters(
+                sku=azure.mgmt.storage.models.Sku(azure.mgmt.storage.models.SkuName.standard_grs)
+            )
+        )
 
         self.storage_client.storage_accounts.delete(
             self.group_name,
