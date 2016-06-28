@@ -191,7 +191,6 @@ class MgmtNetworkTest(AzureMgmtTestCase):
             params_create,
         )
         result_create.wait() # AzureOperationPoller
-        #self.assertEqual(result_create.status_code, HttpStatusCode.OK)
 
         params_create = azure.mgmt.network.models.Subnet(
             name=subnet2_name,
@@ -204,13 +203,11 @@ class MgmtNetworkTest(AzureMgmtTestCase):
             params_create,
         )
         result_create.wait() # AzureOperationPoller
-        #self.assertEqual(result_create.status_code, HttpStatusCode.OK)
 
         result_get = self.network_client.virtual_networks.get(
             self.group_name,
             network_name,
         )
-        #self.assertEqual(result_get.status_code, HttpStatusCode.OK)
         self.assertEqual(len(result_get.subnets), 2)
 
         result_get = self.network_client.subnets.get(
@@ -218,13 +215,12 @@ class MgmtNetworkTest(AzureMgmtTestCase):
             network_name,
             subnet2_name,
         )
-        #self.assertEqual(result_get.status_code, HttpStatusCode.OK)
 
         result_list = self.network_client.subnets.list(
             self.group_name,
             network_name,
         )
-        #self.assertEqual(result_list.status_code, HttpStatusCode.OK)
+        subnets = list(result_list)
 
         result_delete = self.network_client.subnets.delete(
             self.group_name,
@@ -232,7 +228,6 @@ class MgmtNetworkTest(AzureMgmtTestCase):
             subnet2_name,
         )
         result_delete.wait()
-        #self.assertEqual(result_delete.status_code, HttpStatusCode.OK)
 
     @record
     def test_network_security_groups(self):
