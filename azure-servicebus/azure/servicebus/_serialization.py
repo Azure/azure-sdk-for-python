@@ -92,15 +92,18 @@ def _create_message(response, service_instance):
                 except ValueError:
                     custom_properties[name] = value
             else:  # only int, float or boolean
-                if value.lower() == 'true':
-                    custom_properties[name] = True
-                elif value.lower() == 'false':
-                    custom_properties[name] = False
-                # int('3.1') doesn't work so need to get float('3.14') first
-                elif str(int(float(value))) == value:
-                    custom_properties[name] = int(value)
-                else:
-                    custom_properties[name] = float(value)
+                try:
+                    if value.lower() == 'true':
+                        custom_properties[name] = True
+                    elif value.lower() == 'false':
+                        custom_properties[name] = False
+                    # int('3.1') doesn't work so need to get float('3.14') first
+                    elif str(int(float(value))) == value:
+                        custom_properties[name] = int(value)
+                    else:
+                        custom_properties[name] = float(value)
+                except ValueError:
+                    custom_properties[name] = value
 
     if message_type == None:
         message = Message(
