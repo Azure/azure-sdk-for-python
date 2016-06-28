@@ -43,7 +43,7 @@ class DataLakeAnalyticsAccountProperties(Model):
      account associated with this Data Lake Analytics account.
     :type default_data_lake_store_account: str
     :param max_degree_of_parallelism: the maximum supported degree of
-     parallelism for this acocunt.
+     parallelism for this account.
     :type max_degree_of_parallelism: int
     :param max_job_count: the maximum supported jobs running under the
      account at the same time.
