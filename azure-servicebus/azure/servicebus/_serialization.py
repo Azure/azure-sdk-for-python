@@ -83,7 +83,8 @@ def _create_message(response, service_instance):
                                   'transfer-encoding',
                                   'server',
                                   'location',
-                                  'date']:
+                                  'date'
+                                  'strict-transport-security']:
             if '"' in value:
                 value = value[1:-1]
                 try:
