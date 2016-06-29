@@ -46,8 +46,7 @@ class ContainerServiceOperations(object):
 
     def create_or_update(
             self, resource_group_name, container_service_name, parameters, api_version="2016-03-30", custom_headers=None, raw=False, **operation_config):
-        """
-        The operation to create or update a container service.
+        """The operation to create or update a container service.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
@@ -146,8 +145,7 @@ class ContainerServiceOperations(object):
 
     def get(
             self, resource_group_name, container_service_name, api_version="2016-03-30", custom_headers=None, raw=False, **operation_config):
-        """
-        The operation to get a container service.
+        """The operation to get a container service.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
@@ -211,8 +209,7 @@ class ContainerServiceOperations(object):
 
     def delete(
             self, resource_group_name, container_service_name, api_version="2016-03-30", custom_headers=None, raw=False, **operation_config):
-        """
-        The operation to delete a container service.
+        """The operation to delete a container service.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
@@ -291,8 +288,7 @@ class ContainerServiceOperations(object):
 
     def list(
             self, resource_group_name, api_version="2016-03-30", custom_headers=None, raw=False, **operation_config):
-        """
-        The operation to list container services.
+        """The operation to list container services.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str

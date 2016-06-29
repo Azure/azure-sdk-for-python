@@ -23,16 +23,15 @@ from msrest.serialization import Model
 
 
 class Plan(Model):
-    """
-    Plan for the resource.
+    """Plan for the resource.
 
-    :param name: Gets or sets the plan ID.
+    :param name: the plan ID.
     :type name: str
-    :param publisher: Gets or sets the publisher ID.
+    :param publisher: the publisher ID.
     :type publisher: str
-    :param product: Gets or sets the offer ID.
+    :param product: the offer ID.
     :type product: str
-    :param promotion_code: Gets or sets the promotion code.
+    :param promotion_code: the promotion code.
     :type promotion_code: str
     """ 
 

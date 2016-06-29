@@ -23,14 +23,13 @@ from msrest.serialization import Model
 
 
 class ApiErrorBase(Model):
-    """
-    Api error base.
+    """Api error base.
 
-    :param code: Gets or sets the error code.
+    :param code: the error code.
     :type code: str
-    :param target: Gets or sets the target of the particular error.
+    :param target: the target of the particular error.
     :type target: str
-    :param message: Gets or sets the error message.
+    :param message: the error message.
     :type message: str
     """ 
 

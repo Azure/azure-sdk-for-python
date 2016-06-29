@@ -23,11 +23,10 @@ from msrest.serialization import Model
 
 
 class UpgradePolicy(Model):
-    """
-    Describes an upgrade policy - automatic or manual.
+    """Describes an upgrade policy - automatic or manual.
 
-    :param mode: Gets or sets the upgrade mode. Possible values include:
-     'Automatic', 'Manual'
+    :param mode: the upgrade mode. Possible values include: 'Automatic',
+     'Manual'
     :type mode: str or :class:`UpgradeMode
      <azure.mgmt.compute.models.UpgradeMode>`
     """ 

@@ -23,16 +23,15 @@ from msrest.serialization import Model
 
 
 class ImageReference(Model):
-    """
-    The image reference.
+    """The image reference.
 
-    :param publisher: Gets or sets the image publisher.
+    :param publisher: the image publisher.
     :type publisher: str
-    :param offer: Gets or sets the image offer.
+    :param offer: the image offer.
     :type offer: str
-    :param sku: Gets or sets the image sku.
+    :param sku: the image sku.
     :type sku: str
-    :param version: Gets or sets the image version. The allowed formats are
+    :param version: the image version. The allowed formats are
      Major.Minor.Build or 'latest'. Major, Minor and Build being decimal
      numbers. Specify 'latest' to use the latest version of image.
     :type version: str

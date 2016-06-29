@@ -23,29 +23,27 @@ from msrest.serialization import Model
 
 
 class VirtualMachineInstanceView(Model):
-    """
-    The instance view of a virtual machine.
+    """The instance view of a virtual machine.
 
-    :param platform_update_domain: Gets or sets the Update Domain count.
+    :param platform_update_domain: the Update Domain count.
     :type platform_update_domain: int
-    :param platform_fault_domain: Gets or sets the Fault Domain count.
+    :param platform_fault_domain: the Fault Domain count.
     :type platform_fault_domain: int
-    :param rdp_thumb_print: Gets or sets the Remote desktop certificate
-     thumbprint.
+    :param rdp_thumb_print: the Remote desktop certificate thumbprint.
     :type rdp_thumb_print: str
-    :param vm_agent: Gets or sets the VM Agent running on the virtual machine.
+    :param vm_agent: the VM Agent running on the virtual machine.
     :type vm_agent: :class:`VirtualMachineAgentInstanceView
      <azure.mgmt.compute.models.VirtualMachineAgentInstanceView>`
-    :param disks: Gets or sets the disks information.
+    :param disks: the disks information.
     :type disks: list of :class:`DiskInstanceView
      <azure.mgmt.compute.models.DiskInstanceView>`
-    :param extensions: Gets or sets the extensions information.
+    :param extensions: the extensions information.
     :type extensions: list of :class:`VirtualMachineExtensionInstanceView
      <azure.mgmt.compute.models.VirtualMachineExtensionInstanceView>`
-    :param boot_diagnostics: Gets or sets the boot diagnostics.
+    :param boot_diagnostics: the boot diagnostics.
     :type boot_diagnostics: :class:`BootDiagnosticsInstanceView
      <azure.mgmt.compute.models.BootDiagnosticsInstanceView>`
-    :param statuses: Gets or sets the resource status information.
+    :param statuses: the resource status information.
     :type statuses: list of :class:`InstanceViewStatus
      <azure.mgmt.compute.models.InstanceViewStatus>`
     """ 

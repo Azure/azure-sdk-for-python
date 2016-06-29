@@ -23,10 +23,9 @@ from msrest.serialization import Model
 
 
 class NetworkProfile(Model):
-    """
-    Describes a network profile.
+    """Describes a network profile.
 
-    :param network_interfaces: Gets or sets the network interfaces.
+    :param network_interfaces: the network interfaces.
     :type network_interfaces: list of :class:`NetworkInterfaceReference
      <azure.mgmt.compute.models.NetworkInterfaceReference>`
     """ 

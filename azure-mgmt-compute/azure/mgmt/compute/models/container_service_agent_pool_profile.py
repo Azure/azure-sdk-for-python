@@ -23,8 +23,7 @@ from msrest.serialization import Model
 
 
 class ContainerServiceAgentPoolProfile(Model):
-    """
-    Profile for container service agent pool
+    """Profile for container service agent pool.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.

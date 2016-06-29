@@ -23,25 +23,22 @@ from msrest.serialization import Model
 
 
 class WindowsConfiguration(Model):
-    """
-    Describes Windows Configuration of the OS Profile.
+    """Describes Windows Configuration of the OS Profile.
 
-    :param provision_vm_agent: Gets or sets whether VM Agent should be
-     provisioned on the Virtual Machine.
+    :param provision_vm_agent: whether VM Agent should be provisioned on the
+     Virtual Machine.
     :type provision_vm_agent: bool
-    :param enable_automatic_updates: Gets or sets whether Windows updates are
+    :param enable_automatic_updates: whether Windows updates are
      automatically installed on the VM
     :type enable_automatic_updates: bool
-    :param time_zone: Gets or sets the Time Zone of the VM
+    :param time_zone: the Time Zone of the VM
     :type time_zone: str
-    :param additional_unattend_content: Gets or sets the additional base-64
-     encoded XML formatted information that can be included in the
-     Unattend.xml file.
+    :param additional_unattend_content: the additional base-64 encoded XML
+     formatted information that can be included in the Unattend.xml file.
     :type additional_unattend_content: list of
      :class:`AdditionalUnattendContent
      <azure.mgmt.compute.models.AdditionalUnattendContent>`
-    :param win_rm: Gets or sets the Windows Remote Management configuration
-     of the VM
+    :param win_rm: the Windows Remote Management configuration of the VM
     :type win_rm: :class:`WinRMConfiguration
      <azure.mgmt.compute.models.WinRMConfiguration>`
     """ 

@@ -23,19 +23,16 @@ from .sub_resource import SubResource
 
 
 class VirtualMachineScaleSetNetworkConfiguration(SubResource):
-    """
-    Describes a virtual machine scale set network profile's network
+    """Describes a virtual machine scale set network profile's network
     configurations.
 
     :param id: Resource Id
     :type id: str
-    :param name: Gets or sets the network configuration name.
+    :param name: the network configuration name.
     :type name: str
-    :param primary: Gets or sets whether this is a primary NIC on a virtual
-     machine.
+    :param primary: whether this is a primary NIC on a virtual machine.
     :type primary: bool
-    :param ip_configurations: Gets or sets the virtual machine scale set IP
-     Configuration.
+    :param ip_configurations: the virtual machine scale set IP Configuration.
     :type ip_configurations: list of
      :class:`VirtualMachineScaleSetIPConfiguration
      <azure.mgmt.compute.models.VirtualMachineScaleSetIPConfiguration>`

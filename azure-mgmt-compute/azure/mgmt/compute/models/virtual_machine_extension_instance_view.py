@@ -23,21 +23,19 @@ from msrest.serialization import Model
 
 
 class VirtualMachineExtensionInstanceView(Model):
-    """
-    The instance view of a virtual machine extension.
+    """The instance view of a virtual machine extension.
 
-    :param name: Gets or sets the virtual machine extension name.
+    :param name: the virtual machine extension name.
     :type name: str
-    :param type: Gets or sets the full type of the extension handler which
-     includes both publisher and type.
+    :param type: the full type of the extension handler which includes both
+     publisher and type.
     :type type: str
-    :param type_handler_version: Gets or sets the type version of the
-     extension handler.
+    :param type_handler_version: the type version of the extension handler.
     :type type_handler_version: str
-    :param substatuses: Gets or sets the resource status information.
+    :param substatuses: the resource status information.
     :type substatuses: list of :class:`InstanceViewStatus
      <azure.mgmt.compute.models.InstanceViewStatus>`
-    :param statuses: Gets or sets the resource status information.
+    :param statuses: the resource status information.
     :type statuses: list of :class:`InstanceViewStatus
      <azure.mgmt.compute.models.InstanceViewStatus>`
     """ 

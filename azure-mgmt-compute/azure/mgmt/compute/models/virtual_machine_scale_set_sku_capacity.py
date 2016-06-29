@@ -23,20 +23,19 @@ from msrest.serialization import Model
 
 
 class VirtualMachineScaleSetSkuCapacity(Model):
-    """
-    Describes scaling information of a sku.
+    """Describes scaling information of a sku.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar minimum: Gets the minimum capacity.
+    :ivar minimum: the minimum capacity.
     :vartype minimum: long
-    :ivar maximum: Gets the maximum capacity that can be set.
+    :ivar maximum: the maximum capacity that can be set.
     :vartype maximum: long
-    :ivar default_capacity: Gets the default capacity.
+    :ivar default_capacity: the default capacity.
     :vartype default_capacity: long
-    :ivar scale_type: Gets the scale type applicable to the sku. Possible
-     values include: 'Automatic', 'None'
+    :ivar scale_type: the scale type applicable to the sku. Possible values
+     include: 'Automatic', 'None'
     :vartype scale_type: str or :class:`VirtualMachineScaleSetSkuScaleType
      <azure.mgmt.compute.models.VirtualMachineScaleSetSkuScaleType>`
     """ 

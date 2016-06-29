@@ -23,7 +23,7 @@ from msrest.serialization import Model
 
 
 class ContainerServiceDiagnosticsProfile(Model):
-    """ContainerServiceDiagnosticsProfile
+    """ContainerServiceDiagnosticsProfile.
 
     :param vm_diagnostics: Profile for container service VM diagnostic agent
     :type vm_diagnostics: :class:`ContainerServiceVMDiagnostics
