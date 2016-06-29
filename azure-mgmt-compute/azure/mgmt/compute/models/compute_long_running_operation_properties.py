@@ -23,8 +23,7 @@ from msrest.serialization import Model
 
 
 class ComputeLongRunningOperationProperties(Model):
-    """
-    Compute-specific operation properties, including output
+    """Compute-specific operation properties, including output.
 
     :param output: Operation output data (raw JSON)
     :type output: object

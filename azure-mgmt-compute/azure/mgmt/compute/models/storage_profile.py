@@ -23,15 +23,14 @@ from msrest.serialization import Model
 
 
 class StorageProfile(Model):
-    """
-    Describes a storage profile.
+    """Describes a storage profile.
 
-    :param image_reference: Gets or sets the image reference.
+    :param image_reference: the image reference.
     :type image_reference: :class:`ImageReference
      <azure.mgmt.compute.models.ImageReference>`
-    :param os_disk: Gets or sets the OS disk.
+    :param os_disk: the OS disk.
     :type os_disk: :class:`OSDisk <azure.mgmt.compute.models.OSDisk>`
-    :param data_disks: Gets or sets the data disks.
+    :param data_disks: the data disks.
     :type data_disks: list of :class:`DataDisk
      <azure.mgmt.compute.models.DataDisk>`
     """ 

@@ -23,8 +23,7 @@ from .resource import Resource
 
 
 class VirtualMachineScaleSetVM(Resource):
-    """
-    Describes a virtual machine scale set virtual machine.
+    """Describes a virtual machine scale set virtual machine.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -39,44 +38,44 @@ class VirtualMachineScaleSetVM(Resource):
     :type location: str
     :param tags: Resource tags
     :type tags: dict
-    :ivar instance_id: Gets the virtual machine instance id.
+    :ivar instance_id: the virtual machine instance id.
     :vartype instance_id: str
-    :ivar sku: Gets the virtual machine sku.
+    :ivar sku: the virtual machine sku.
     :vartype sku: :class:`Sku <azure.mgmt.compute.models.Sku>`
     :ivar latest_model_applied: Specifies whether the latest model has been
      applied to the virtual machine.
     :vartype latest_model_applied: bool
-    :ivar instance_view: Gets the virtual machine instance view.
+    :ivar instance_view: the virtual machine instance view.
     :vartype instance_view: :class:`VirtualMachineInstanceView
      <azure.mgmt.compute.models.VirtualMachineInstanceView>`
-    :param hardware_profile: Gets or sets the hardware profile.
+    :param hardware_profile: the hardware profile.
     :type hardware_profile: :class:`HardwareProfile
      <azure.mgmt.compute.models.HardwareProfile>`
-    :param storage_profile: Gets or sets the storage profile.
+    :param storage_profile: the storage profile.
     :type storage_profile: :class:`StorageProfile
      <azure.mgmt.compute.models.StorageProfile>`
-    :param os_profile: Gets or sets the OS profile.
+    :param os_profile: the OS profile.
     :type os_profile: :class:`OSProfile <azure.mgmt.compute.models.OSProfile>`
-    :param network_profile: Gets or sets the network profile.
+    :param network_profile: the network profile.
     :type network_profile: :class:`NetworkProfile
      <azure.mgmt.compute.models.NetworkProfile>`
-    :param diagnostics_profile: Gets or sets the diagnostics profile.
+    :param diagnostics_profile: the diagnostics profile.
     :type diagnostics_profile: :class:`DiagnosticsProfile
      <azure.mgmt.compute.models.DiagnosticsProfile>`
-    :param availability_set: Gets or sets the reference Id of the
-     availability set to which this virtual machine belongs.
+    :param availability_set: the reference Id of the availability set to
+     which this virtual machine belongs.
     :type availability_set: :class:`SubResource
      <azure.mgmt.compute.models.SubResource>`
-    :param provisioning_state: Gets or sets the provisioning state, which
-     only appears in the response.
-    :type provisioning_state: str
-    :param license_type: Gets or sets the license type, which is for bring
-     your own license scenario.
+    :ivar provisioning_state: the provisioning state, which only appears in
+     the response.
+    :vartype provisioning_state: str
+    :param license_type: the license type, which is for bring your own
+     license scenario.
     :type license_type: str
-    :param plan: Gets or sets the purchase plan when deploying virtual
-     machine from VM Marketplace images.
+    :param plan: the purchase plan when deploying virtual machine from VM
+     Marketplace images.
     :type plan: :class:`Plan <azure.mgmt.compute.models.Plan>`
-    :ivar resources: Gets the virtual machine child extension resources.
+    :ivar resources: the virtual machine child extension resources.
     :vartype resources: list of :class:`VirtualMachineExtension
      <azure.mgmt.compute.models.VirtualMachineExtension>`
     """ 
@@ -90,6 +89,7 @@ class VirtualMachineScaleSetVM(Resource):
         'sku': {'readonly': True},
         'latest_model_applied': {'readonly': True},
         'instance_view': {'readonly': True},
+        'provisioning_state': {'readonly': True},
         'resources': {'readonly': True},
     }
 
@@ -115,7 +115,7 @@ class VirtualMachineScaleSetVM(Resource):
         'resources': {'key': 'resources', 'type': '[VirtualMachineExtension]'},
     }
 
-    def __init__(self, location, tags=None, hardware_profile=None, storage_profile=None, os_profile=None, network_profile=None, diagnostics_profile=None, availability_set=None, provisioning_state=None, license_type=None, plan=None):
+    def __init__(self, location, tags=None, hardware_profile=None, storage_profile=None, os_profile=None, network_profile=None, diagnostics_profile=None, availability_set=None, license_type=None, plan=None):
         super(VirtualMachineScaleSetVM, self).__init__(location=location, tags=tags)
         self.instance_id = None
         self.sku = None
@@ -127,7 +127,7 @@ class VirtualMachineScaleSetVM(Resource):
         self.network_profile = network_profile
         self.diagnostics_profile = diagnostics_profile
         self.availability_set = availability_set
-        self.provisioning_state = provisioning_state
+        self.provisioning_state = None
         self.license_type = license_type
         self.plan = plan
         self.resources = None

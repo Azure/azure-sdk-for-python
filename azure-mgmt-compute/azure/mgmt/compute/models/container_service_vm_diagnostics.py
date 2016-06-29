@@ -23,17 +23,16 @@ from msrest.serialization import Model
 
 
 class ContainerServiceVMDiagnostics(Model):
-    """
-    Describes VM Diagnostics.
+    """Describes VM Diagnostics.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :param enabled: Gets or sets whether VM Diagnostic Agent should be
-     provisioned on the Virtual Machine.
+    :param enabled: whether VM Diagnostic Agent should be provisioned on the
+     Virtual Machine.
     :type enabled: bool
-    :ivar storage_uri: Gets or sets whether VM Diagnostic Agent should be
-     provisioned on the Virtual Machine.
+    :ivar storage_uri: whether VM Diagnostic Agent should be provisioned on
+     the Virtual Machine.
     :vartype storage_uri: str
     """ 
 

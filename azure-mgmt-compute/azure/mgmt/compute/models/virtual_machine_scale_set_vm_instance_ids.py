@@ -23,11 +23,9 @@ from msrest.serialization import Model
 
 
 class VirtualMachineScaleSetVMInstanceIDs(Model):
-    """
-    Specifies the list of virtual machine scale set instance IDs.
+    """Specifies the list of virtual machine scale set instance IDs.
 
-    :param instance_ids: Gets or sets the virtual machine scale set instance
-     ids.
+    :param instance_ids: the virtual machine scale set instance ids.
     :type instance_ids: list of str
     """ 
 

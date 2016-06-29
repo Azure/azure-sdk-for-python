@@ -23,35 +23,31 @@ from .sub_resource import SubResource
 
 
 class VirtualMachineScaleSetExtension(SubResource):
-    """
-    Describes a Virtual Machine Scale Set Extension.
+    """Describes a Virtual Machine Scale Set Extension.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
     :param id: Resource Id
     :type id: str
-    :param name: Gets or sets the name of the extension.
+    :param name: the name of the extension.
     :type name: str
-    :param publisher: Gets or sets the name of the extension handler
-     publisher.
+    :param publisher: the name of the extension handler publisher.
     :type publisher: str
-    :param type: Gets or sets the type of the extension handler.
+    :param type: the type of the extension handler.
     :type type: str
-    :param type_handler_version: Gets or sets the type version of the
-     extension handler.
+    :param type_handler_version: the type version of the extension handler.
     :type type_handler_version: str
-    :param auto_upgrade_minor_version: Gets or sets whether the extension
-     handler should be automatically upgraded across minor versions.
+    :param auto_upgrade_minor_version: whether the extension handler should
+     be automatically upgraded across minor versions.
     :type auto_upgrade_minor_version: bool
-    :param settings: Gets or sets Json formatted public settings for the
-     extension.
+    :param settings: Json formatted public settings for the extension.
     :type settings: object
-    :param protected_settings: Gets or sets Json formatted protected settings
-     for the extension.
+    :param protected_settings: Json formatted protected settings for the
+     extension.
     :type protected_settings: object
-    :ivar provisioning_state: Gets the provisioning state, which only appears
-     in the response.
+    :ivar provisioning_state: the provisioning state, which only appears in
+     the response.
     :vartype provisioning_state: str
     """ 
 

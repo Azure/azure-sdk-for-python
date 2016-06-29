@@ -23,31 +23,29 @@ from msrest.serialization import Model
 
 
 class VirtualMachineScaleSetOSDisk(Model):
-    """
-    Describes a virtual machine scale set operating system disk.
+    """Describes a virtual machine scale set operating system disk.
 
-    :param name: Gets or sets the disk name.
+    :param name: the disk name.
     :type name: str
-    :param caching: Gets or sets the caching type. Possible values include:
-     'None', 'ReadOnly', 'ReadWrite'
+    :param caching: the caching type. Possible values include: 'None',
+     'ReadOnly', 'ReadWrite'
     :type caching: str or :class:`CachingTypes
      <azure.mgmt.compute.models.CachingTypes>`
-    :param create_option: Gets or sets the create option. Possible values
-     include: 'fromImage', 'empty', 'attach'
+    :param create_option: the create option. Possible values include:
+     'fromImage', 'empty', 'attach'
     :type create_option: str or :class:`DiskCreateOptionTypes
      <azure.mgmt.compute.models.DiskCreateOptionTypes>`
-    :param os_type: Gets or sets the Operating System type. Possible values
-     include: 'Windows', 'Linux'
+    :param os_type: the Operating System type. Possible values include:
+     'Windows', 'Linux'
     :type os_type: str or :class:`OperatingSystemTypes
      <azure.mgmt.compute.models.OperatingSystemTypes>`
-    :param image: Gets or sets the Source User Image VirtualHardDisk. This
-     VirtualHardDisk will be copied before using it to attach to the Virtual
-     Machine.If SourceImage is provided, the destination VirtualHardDisk
-     should not exist.
+    :param image: the Source User Image VirtualHardDisk. This VirtualHardDisk
+     will be copied before using it to attach to the Virtual Machine.If
+     SourceImage is provided, the destination VirtualHardDisk should not
+     exist.
     :type image: :class:`VirtualHardDisk
      <azure.mgmt.compute.models.VirtualHardDisk>`
-    :param vhd_containers: Gets or sets the list of virtual hard disk
-     container uris.
+    :param vhd_containers: the list of virtual hard disk container uris.
     :type vhd_containers: list of str
     """ 
 

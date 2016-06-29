@@ -46,8 +46,7 @@ class VirtualMachinesOperations(object):
 
     def capture(
             self, resource_group_name, vm_name, parameters, api_version="2016-03-30", custom_headers=None, raw=False, **operation_config):
-        """
-        Captures the VM by copying virtual hard disks of the VM and outputs a
+        """Captures the VM by copying virtual hard disks of the VM and outputs a
         template that can be used to create similar VMs.
 
         :param resource_group_name: The name of the resource group.
@@ -142,8 +141,7 @@ class VirtualMachinesOperations(object):
 
     def create_or_update(
             self, resource_group_name, vm_name, parameters, api_version="2016-03-30", custom_headers=None, raw=False, **operation_config):
-        """
-        The operation to create or update a virtual machine.
+        """The operation to create or update a virtual machine.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
@@ -239,8 +237,7 @@ class VirtualMachinesOperations(object):
 
     def delete(
             self, resource_group_name, vm_name, api_version="2016-03-30", custom_headers=None, raw=False, **operation_config):
-        """
-        The operation to delete a virtual machine.
+        """The operation to delete a virtual machine.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
@@ -318,8 +315,7 @@ class VirtualMachinesOperations(object):
 
     def get(
             self, resource_group_name, vm_name, api_version="2016-03-30", expand=None, custom_headers=None, raw=False, **operation_config):
-        """
-        The operation to get a virtual machine.
+        """The operation to get a virtual machine.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
@@ -388,8 +384,7 @@ class VirtualMachinesOperations(object):
 
     def deallocate(
             self, resource_group_name, vm_name, api_version="2016-03-30", custom_headers=None, raw=False, **operation_config):
-        """
-        Shuts down the Virtual Machine and releases the compute resources. You
+        """Shuts down the Virtual Machine and releases the compute resources. You
         are not billed for the compute resources that this Virtual Machine
         uses.
 
@@ -469,8 +464,7 @@ class VirtualMachinesOperations(object):
 
     def generalize(
             self, resource_group_name, vm_name, api_version="2016-03-30", custom_headers=None, raw=False, **operation_config):
-        """
-        Sets the state of the VM as Generalized.
+        """Sets the state of the VM as Generalized.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
@@ -525,8 +519,7 @@ class VirtualMachinesOperations(object):
 
     def list(
             self, resource_group_name, api_version="2016-03-30", custom_headers=None, raw=False, **operation_config):
-        """
-        The operation to list virtual machines under a resource group.
+        """The operation to list virtual machines under a resource group.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
@@ -593,8 +586,7 @@ class VirtualMachinesOperations(object):
 
     def list_all(
             self, api_version="2016-03-30", custom_headers=None, raw=False, **operation_config):
-        """
-        Gets the list of Virtual Machines in the subscription. Use nextLink
+        """Gets the list of Virtual Machines in the subscription. Use nextLink
         property in the response to get the next page of Virtual Machines. Do
         this till nextLink is not null to fetch all the Virtual Machines.
 
@@ -660,8 +652,7 @@ class VirtualMachinesOperations(object):
 
     def list_available_sizes(
             self, resource_group_name, vm_name, api_version="2016-03-30", custom_headers=None, raw=False, **operation_config):
-        """
-        Lists all available virtual machine sizes it can be resized to for a
+        """Lists all available virtual machine sizes it can be resized to for a
         virtual machine.
 
         :param resource_group_name: The name of the resource group.
@@ -732,8 +723,7 @@ class VirtualMachinesOperations(object):
 
     def power_off(
             self, resource_group_name, vm_name, api_version="2016-03-30", custom_headers=None, raw=False, **operation_config):
-        """
-        The operation to power off (stop) a virtual machine.
+        """The operation to power off (stop) a virtual machine.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
@@ -811,8 +801,7 @@ class VirtualMachinesOperations(object):
 
     def restart(
             self, resource_group_name, vm_name, api_version="2016-03-30", custom_headers=None, raw=False, **operation_config):
-        """
-        The operation to restart a virtual machine.
+        """The operation to restart a virtual machine.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
@@ -890,8 +879,7 @@ class VirtualMachinesOperations(object):
 
     def start(
             self, resource_group_name, vm_name, api_version="2016-03-30", custom_headers=None, raw=False, **operation_config):
-        """
-        The operation to start a virtual machine.
+        """The operation to start a virtual machine.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
@@ -969,8 +957,7 @@ class VirtualMachinesOperations(object):
 
     def redeploy(
             self, resource_group_name, vm_name, api_version="2016-03-30", custom_headers=None, raw=False, **operation_config):
-        """
-        The operation to redeploy a virtual machine.
+        """The operation to redeploy a virtual machine.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str

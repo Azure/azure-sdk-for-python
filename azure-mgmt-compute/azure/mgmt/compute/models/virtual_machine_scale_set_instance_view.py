@@ -23,22 +23,21 @@ from msrest.serialization import Model
 
 
 class VirtualMachineScaleSetInstanceView(Model):
-    """
-    The instance view of a virtual machine scale set.
+    """The instance view of a virtual machine scale set.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar virtual_machine: Gets the instance view status summary for the
-     virtual machine scale set.
+    :ivar virtual_machine: the instance view status summary for the virtual
+     machine scale set.
     :vartype virtual_machine:
      :class:`VirtualMachineScaleSetInstanceViewStatusesSummary
      <azure.mgmt.compute.models.VirtualMachineScaleSetInstanceViewStatusesSummary>`
-    :ivar extensions: Gets the extensions information.
+    :ivar extensions: the extensions information.
     :vartype extensions: list of
      :class:`VirtualMachineScaleSetVMExtensionsSummary
      <azure.mgmt.compute.models.VirtualMachineScaleSetVMExtensionsSummary>`
-    :param statuses: Gets or sets the resource status information.
+    :param statuses: the resource status information.
     :type statuses: list of :class:`InstanceViewStatus
      <azure.mgmt.compute.models.InstanceViewStatus>`
     """ 

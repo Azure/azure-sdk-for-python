@@ -23,17 +23,16 @@ from msrest.serialization import Model
 
 
 class VirtualMachineAgentInstanceView(Model):
-    """
-    The instance view of the VM Agent running on the virtual machine.
+    """The instance view of the VM Agent running on the virtual machine.
 
-    :param vm_agent_version: Gets or sets the VM Agent full version.
+    :param vm_agent_version: the VM Agent full version.
     :type vm_agent_version: str
-    :param extension_handlers: Gets or sets the virtual machine extension
-     handler instance view.
+    :param extension_handlers: the virtual machine extension handler instance
+     view.
     :type extension_handlers: list of
      :class:`VirtualMachineExtensionHandlerInstanceView
      <azure.mgmt.compute.models.VirtualMachineExtensionHandlerInstanceView>`
-    :param statuses: Gets or sets the resource status information.
+    :param statuses: the resource status information.
     :type statuses: list of :class:`InstanceViewStatus
      <azure.mgmt.compute.models.InstanceViewStatus>`
     """ 

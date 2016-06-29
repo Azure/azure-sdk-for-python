@@ -23,13 +23,11 @@ from .sub_resource import SubResource
 
 
 class NetworkInterfaceReference(SubResource):
-    """
-    Describes a network interface reference.
+    """Describes a network interface reference.
 
     :param id: Resource Id
     :type id: str
-    :param primary: Gets or sets whether this is a primary NIC on a virtual
-     machine
+    :param primary: whether this is a primary NIC on a virtual machine
     :type primary: bool
     """ 
 

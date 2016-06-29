@@ -23,8 +23,7 @@ from msrest.serialization import Model
 
 
 class ContainerServiceOrchestratorProfile(Model):
-    """
-    Profile for Orchestrator
+    """Profile for Orchestrator.
 
     :param orchestrator_type: Specifies what orchestrator will be used to
      manage container cluster resources. Possible values include: 'Swarm',

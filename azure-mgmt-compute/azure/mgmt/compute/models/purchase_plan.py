@@ -23,15 +23,14 @@ from msrest.serialization import Model
 
 
 class PurchasePlan(Model):
-    """
-    Used for establishing the purchase context of any 3rd Party artifact
+    """Used for establishing the purchase context of any 3rd Party artifact
     through MarketPlace.
 
-    :param publisher: Gets or sets the publisher ID.
+    :param publisher: the publisher ID.
     :type publisher: str
-    :param name: Gets or sets the plan ID.
+    :param name: the plan ID.
     :type name: str
-    :param product: Gets or sets the product ID.
+    :param product: the product ID.
     :type product: str
     """ 
 
