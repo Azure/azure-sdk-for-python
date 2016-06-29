@@ -33,7 +33,7 @@ class UsageManagementClientConfiguration(AzureConfiguration):
     Note that all parameters used to create this instance are saved as instance
     attributes.
 
-    :param credentials: Gets Azure subscription credentials.
+    :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
      object<msrestazure.azure_active_directory>`
     :param subscription_id: It uniquely identifes Microsoft Azure
@@ -96,7 +96,7 @@ class UsageManagementClient(object):
     :ivar rate_card: RateCard operations
     :vartype rate_card: .operations.RateCardOperations
 
-    :param credentials: Gets Azure subscription credentials.
+    :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
      object<msrestazure.azure_active_directory>`
     :param subscription_id: It uniquely identifes Microsoft Azure
