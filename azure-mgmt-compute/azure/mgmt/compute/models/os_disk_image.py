@@ -23,11 +23,10 @@ from msrest.serialization import Model
 
 
 class OSDiskImage(Model):
-    """
-    Contains the os disk image information.
+    """Contains the os disk image information.
 
-    :param operating_system: Gets or sets the operating system of the
-     osDiskImage. Possible values include: 'Windows', 'Linux'
+    :param operating_system: the operating system of the osDiskImage.
+     Possible values include: 'Windows', 'Linux'
     :type operating_system: str or :class:`OperatingSystemTypes
      <azure.mgmt.compute.models.OperatingSystemTypes>`
     """ 

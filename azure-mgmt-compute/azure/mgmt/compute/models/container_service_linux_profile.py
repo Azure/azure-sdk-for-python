@@ -23,8 +23,7 @@ from msrest.serialization import Model
 
 
 class ContainerServiceLinuxProfile(Model):
-    """
-    Profile for Linux VMs
+    """Profile for Linux VMs.
 
     :param admin_username: The administrator username to use for all Linux VMs
     :type admin_username: str

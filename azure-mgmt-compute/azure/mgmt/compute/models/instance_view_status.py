@@ -23,22 +23,20 @@ from msrest.serialization import Model
 
 
 class InstanceViewStatus(Model):
-    """
-    Instance view status.
+    """Instance view status.
 
-    :param code: Gets the status Code.
+    :param code: the status Code.
     :type code: str
-    :param level: Gets or sets the level Code. Possible values include:
-     'Info', 'Warning', 'Error'
+    :param level: the level Code. Possible values include: 'Info', 'Warning',
+     'Error'
     :type level: str or :class:`StatusLevelTypes
      <azure.mgmt.compute.models.StatusLevelTypes>`
-    :param display_status: Gets or sets the short localizable label for the
-     status.
+    :param display_status: the short localizable label for the status.
     :type display_status: str
-    :param message: Gets or sets the detailed Message, including for alerts
-     and error messages.
+    :param message: the detailed Message, including for alerts and error
+     messages.
     :type message: str
-    :param time: Gets or sets the time of the status.
+    :param time: the time of the status.
     :type time: datetime
     """ 
 

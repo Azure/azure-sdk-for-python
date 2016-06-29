@@ -23,8 +23,7 @@ from .resource import Resource
 
 
 class VirtualMachineScaleSet(Resource):
-    """
-    Describes a Virtual Machine Scale Set.
+    """Describes a Virtual Machine Scale Set.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -39,17 +38,17 @@ class VirtualMachineScaleSet(Resource):
     :type location: str
     :param tags: Resource tags
     :type tags: dict
-    :param sku: Gets or sets the virtual machine scale set sku.
+    :param sku: the virtual machine scale set sku.
     :type sku: :class:`Sku <azure.mgmt.compute.models.Sku>`
-    :param upgrade_policy: Gets or sets the upgrade policy.
+    :param upgrade_policy: the upgrade policy.
     :type upgrade_policy: :class:`UpgradePolicy
      <azure.mgmt.compute.models.UpgradePolicy>`
-    :param virtual_machine_profile: Gets or sets the virtual machine profile.
+    :param virtual_machine_profile: the virtual machine profile.
     :type virtual_machine_profile: :class:`VirtualMachineScaleSetVMProfile
      <azure.mgmt.compute.models.VirtualMachineScaleSetVMProfile>`
-    :param provisioning_state: Gets or sets the provisioning state, which
-     only appears in the response.
-    :type provisioning_state: str
+    :ivar provisioning_state: the provisioning state, which only appears in
+     the response.
+    :vartype provisioning_state: str
     :param over_provision: Specifies whether the Virtual Machine Scale Set
      should be overprovisioned.
     :type over_provision: bool
@@ -60,6 +59,7 @@ class VirtualMachineScaleSet(Resource):
         'name': {'readonly': True},
         'type': {'readonly': True},
         'location': {'required': True},
+        'provisioning_state': {'readonly': True},
     }
 
     _attribute_map = {
@@ -75,10 +75,10 @@ class VirtualMachineScaleSet(Resource):
         'over_provision': {'key': 'properties.overProvision', 'type': 'bool'},
     }
 
-    def __init__(self, location, tags=None, sku=None, upgrade_policy=None, virtual_machine_profile=None, provisioning_state=None, over_provision=None):
+    def __init__(self, location, tags=None, sku=None, upgrade_policy=None, virtual_machine_profile=None, over_provision=None):
         super(VirtualMachineScaleSet, self).__init__(location=location, tags=tags)
         self.sku = sku
         self.upgrade_policy = upgrade_policy
         self.virtual_machine_profile = virtual_machine_profile
-        self.provisioning_state = provisioning_state
+        self.provisioning_state = None
         self.over_provision = over_provision

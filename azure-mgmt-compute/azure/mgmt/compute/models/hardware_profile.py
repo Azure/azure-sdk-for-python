@@ -23,8 +23,7 @@ from msrest.serialization import Model
 
 
 class HardwareProfile(Model):
-    """
-    Describes a hardware profile.
+    """Describes a hardware profile.
 
     :param vm_size: The virtual machine size name. Possible values include:
      'Basic_A0', 'Basic_A1', 'Basic_A2', 'Basic_A3', 'Basic_A4',

@@ -45,8 +45,7 @@ class AvailabilitySetsOperations(object):
 
     def create_or_update(
             self, resource_group_name, name, parameters, api_version="2016-03-30", custom_headers=None, raw=False, **operation_config):
-        """
-        The operation to create or update the availability set.
+        """The operation to create or update the availability set.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
@@ -118,8 +117,7 @@ class AvailabilitySetsOperations(object):
 
     def delete(
             self, resource_group_name, availability_set_name, api_version="2016-03-30", custom_headers=None, raw=False, **operation_config):
-        """
-        The operation to delete the availability set.
+        """The operation to delete the availability set.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
@@ -174,8 +172,7 @@ class AvailabilitySetsOperations(object):
 
     def get(
             self, resource_group_name, availability_set_name, api_version="2016-03-30", custom_headers=None, raw=False, **operation_config):
-        """
-        The operation to get the availability set.
+        """The operation to get the availability set.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
@@ -238,8 +235,7 @@ class AvailabilitySetsOperations(object):
 
     def list(
             self, resource_group_name, api_version="2016-03-30", custom_headers=None, raw=False, **operation_config):
-        """
-        The operation to list the availability sets.
+        """The operation to list the availability sets.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
@@ -306,8 +302,7 @@ class AvailabilitySetsOperations(object):
 
     def list_available_sizes(
             self, resource_group_name, availability_set_name, api_version="2016-03-30", custom_headers=None, raw=False, **operation_config):
-        """
-        Lists all available virtual machine sizes that can be used to create a
+        """Lists all available virtual machine sizes that can be used to create a
         new virtual machine in an existing availability set.
 
         :param resource_group_name: The name of the resource group.

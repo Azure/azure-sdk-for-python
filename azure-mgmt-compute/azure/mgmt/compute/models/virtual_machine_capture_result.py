@@ -23,8 +23,7 @@ from .sub_resource import SubResource
 
 
 class VirtualMachineCaptureResult(SubResource):
-    """
-    Resource Id.
+    """Resource Id.
 
     :param id: Resource Id
     :type id: str

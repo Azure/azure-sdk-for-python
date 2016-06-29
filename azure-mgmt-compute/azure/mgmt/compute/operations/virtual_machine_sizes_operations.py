@@ -45,8 +45,7 @@ class VirtualMachineSizesOperations(object):
 
     def list(
             self, location, api_version="2016-03-30", custom_headers=None, raw=False, **operation_config):
-        """
-        Lists all available virtual machine sizes for a subscription in a
+        """Lists all available virtual machine sizes for a subscription in a
         location.
 
         :param location: The location upon which virtual-machine-sizes is

@@ -46,8 +46,7 @@ class VirtualMachineScaleSetVMsOperations(object):
 
     def reimage(
             self, resource_group_name, vm_scale_set_name, instance_id, api_version="2016-03-30", custom_headers=None, raw=False, **operation_config):
-        """
-        Allows you to re-image(update the version of the installed operating
+        """Allows you to re-image(update the version of the installed operating
         system) a virtual machine scale set instance.
 
         :param resource_group_name: The name of the resource group.
@@ -129,11 +128,10 @@ class VirtualMachineScaleSetVMsOperations(object):
 
     def deallocate(
             self, resource_group_name, vm_scale_set_name, instance_id, api_version="2016-03-30", custom_headers=None, raw=False, **operation_config):
-        """
-        Allows you to deallocate a virtual machine virtual machine scale
-        set.Shuts down the virtual machine and releases the compute
-        resources. You are not billed for the compute resources that this
-        virtual machine uses.
+        """Allows you to deallocate a virtual machine scale set virtual machine.
+        Shuts down the virtual machine and releases the compute resources.
+        You are not billed for the compute resources that this virtual
+        machine uses.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
@@ -214,8 +212,7 @@ class VirtualMachineScaleSetVMsOperations(object):
 
     def delete(
             self, resource_group_name, vm_scale_set_name, instance_id, api_version="2016-03-30", custom_headers=None, raw=False, **operation_config):
-        """
-        Allows you to delete a virtual machine scale set.
+        """Allows you to delete a virtual machine scale set.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
@@ -296,8 +293,7 @@ class VirtualMachineScaleSetVMsOperations(object):
 
     def get(
             self, resource_group_name, vm_scale_set_name, instance_id, api_version="2016-03-30", custom_headers=None, raw=False, **operation_config):
-        """
-        Displays information about a virtual machine scale set virtual machine.
+        """Displays information about a virtual machine scale set virtual machine.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
@@ -363,8 +359,7 @@ class VirtualMachineScaleSetVMsOperations(object):
 
     def get_instance_view(
             self, resource_group_name, vm_scale_set_name, instance_id, api_version="2016-03-30", custom_headers=None, raw=False, **operation_config):
-        """
-        Displays the status of a virtual machine scale set virtual machine.
+        """Displays the status of a virtual machine scale set virtual machine.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
@@ -430,8 +425,7 @@ class VirtualMachineScaleSetVMsOperations(object):
 
     def list(
             self, resource_group_name, virtual_machine_scale_set_name, api_version="2016-03-30", filter=None, select=None, expand=None, custom_headers=None, raw=False, **operation_config):
-        """
-        Lists all virtual machines in a VM scale sets.
+        """Lists all virtual machines in a VM scale sets.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
@@ -514,8 +508,7 @@ class VirtualMachineScaleSetVMsOperations(object):
 
     def power_off(
             self, resource_group_name, vm_scale_set_name, instance_id, api_version="2016-03-30", custom_headers=None, raw=False, **operation_config):
-        """
-        Allows you to power off (stop) a virtual machine in a VM scale set.
+        """Allows you to power off (stop) a virtual machine in a VM scale set.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
@@ -596,8 +589,7 @@ class VirtualMachineScaleSetVMsOperations(object):
 
     def restart(
             self, resource_group_name, vm_scale_set_name, instance_id, api_version="2016-03-30", custom_headers=None, raw=False, **operation_config):
-        """
-        Allows you to restart a virtual machine in a VM scale set.
+        """Allows you to restart a virtual machine in a VM scale set.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
@@ -678,8 +670,7 @@ class VirtualMachineScaleSetVMsOperations(object):
 
     def start(
             self, resource_group_name, vm_scale_set_name, instance_id, api_version="2016-03-30", custom_headers=None, raw=False, **operation_config):
-        """
-        Allows you to start a virtual machine in a VM scale set.
+        """Allows you to start a virtual machine in a VM scale set.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str

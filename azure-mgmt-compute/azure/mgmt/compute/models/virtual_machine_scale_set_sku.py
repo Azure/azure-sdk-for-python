@@ -23,17 +23,16 @@ from msrest.serialization import Model
 
 
 class VirtualMachineScaleSetSku(Model):
-    """
-    Describes an available virtual machine scale set sku.
+    """Describes an available virtual machine scale set sku.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar resource_type: Gets the type of resource the sku applies to.
+    :ivar resource_type: the type of resource the sku applies to.
     :vartype resource_type: str
-    :ivar sku: Gets the Sku.
+    :ivar sku: the Sku.
     :vartype sku: :class:`Sku <azure.mgmt.compute.models.Sku>`
-    :ivar capacity: Gets available scaling information.
+    :ivar capacity: available scaling information.
     :vartype capacity: :class:`VirtualMachineScaleSetSkuCapacity
      <azure.mgmt.compute.models.VirtualMachineScaleSetSkuCapacity>`
     """ 

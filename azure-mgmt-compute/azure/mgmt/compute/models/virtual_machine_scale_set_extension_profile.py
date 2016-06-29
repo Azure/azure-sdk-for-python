@@ -23,10 +23,9 @@ from msrest.serialization import Model
 
 
 class VirtualMachineScaleSetExtensionProfile(Model):
-    """
-    Describes a virtual machine scale set extension profile.
+    """Describes a virtual machine scale set extension profile.
 
-    :param extensions: Gets the virtual machine scale set child extension
+    :param extensions: the virtual machine scale set child extension
      resources.
     :type extensions: list of :class:`VirtualMachineScaleSetExtension
      <azure.mgmt.compute.models.VirtualMachineScaleSetExtension>`

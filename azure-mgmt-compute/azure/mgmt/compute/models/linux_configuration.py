@@ -23,13 +23,12 @@ from msrest.serialization import Model
 
 
 class LinuxConfiguration(Model):
-    """
-    Describes Windows Configuration of the OS Profile.
+    """Describes Windows Configuration of the OS Profile.
 
-    :param disable_password_authentication: Gets or sets whether
-     Authentication using user name and password is allowed or not
+    :param disable_password_authentication: whether Authentication using user
+     name and password is allowed or not
     :type disable_password_authentication: bool
-    :param ssh: Gets or sets the SSH configuration for linux VMs
+    :param ssh: the SSH configuration for linux VMs
     :type ssh: :class:`SshConfiguration
      <azure.mgmt.compute.models.SshConfiguration>`
     """ 

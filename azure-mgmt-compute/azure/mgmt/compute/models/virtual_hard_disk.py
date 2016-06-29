@@ -23,11 +23,10 @@ from msrest.serialization import Model
 
 
 class VirtualHardDisk(Model):
-    """
-    Describes the uri of a disk.
+    """Describes the uri of a disk.
 
-    :param uri: Gets or sets the virtual hard disk's uri. It should be a
-     valid Uri to a virtual hard disk.
+    :param uri: the virtual hard disk's uri. It should be a valid Uri to a
+     virtual hard disk.
     :type uri: str
     """ 
 

@@ -23,11 +23,9 @@ from msrest.serialization import Model
 
 
 class WinRMConfiguration(Model):
-    """
-    Describes Windows Remote Management configuration of the VM
+    """Describes Windows Remote Management configuration of the VM.
 
-    :param listeners: Gets or sets the list of Windows Remote Management
-     listeners
+    :param listeners: the list of Windows Remote Management listeners
     :type listeners: list of :class:`WinRMListener
      <azure.mgmt.compute.models.WinRMListener>`
     """ 

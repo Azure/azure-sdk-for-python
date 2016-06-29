@@ -23,10 +23,9 @@ from msrest.serialization import Model
 
 
 class VirtualMachineScaleSetNetworkProfile(Model):
-    """
-    Describes a virtual machine scale set network profile.
+    """Describes a virtual machine scale set network profile.
 
-    :param network_interface_configurations: Gets or sets the list of network
+    :param network_interface_configurations: the list of network
      configurations.
     :type network_interface_configurations: list of
      :class:`VirtualMachineScaleSetNetworkConfiguration

@@ -46,8 +46,7 @@ class VirtualMachineExtensionsOperations(object):
 
     def create_or_update(
             self, resource_group_name, vm_name, vm_extension_name, extension_parameters, api_version="2016-03-30", custom_headers=None, raw=False, **operation_config):
-        """
-        The operation to create or update the extension.
+        """The operation to create or update the extension.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
@@ -147,8 +146,7 @@ class VirtualMachineExtensionsOperations(object):
 
     def delete(
             self, resource_group_name, vm_name, vm_extension_name, api_version="2016-03-30", custom_headers=None, raw=False, **operation_config):
-        """
-        The operation to delete the extension.
+        """The operation to delete the extension.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
@@ -230,8 +228,7 @@ class VirtualMachineExtensionsOperations(object):
 
     def get(
             self, resource_group_name, vm_name, vm_extension_name, api_version="2016-03-30", expand=None, custom_headers=None, raw=False, **operation_config):
-        """
-        The operation to get the extension.
+        """The operation to get the extension.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
