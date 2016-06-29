@@ -23,8 +23,7 @@ from .resource import Resource
 
 
 class VirtualMachine(Resource):
-    """
-    Describes a Virtual Machine.
+    """Describes a Virtual Machine.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -39,39 +38,39 @@ class VirtualMachine(Resource):
     :type location: str
     :param tags: Resource tags
     :type tags: dict
-    :param plan: Gets or sets the purchase plan when deploying virtual
-     machine from VM Marketplace images.
+    :param plan: the purchase plan when deploying virtual machine from VM
+     Marketplace images.
     :type plan: :class:`Plan <azure.mgmt.compute.models.Plan>`
-    :param hardware_profile: Gets or sets the hardware profile.
+    :param hardware_profile: the hardware profile.
     :type hardware_profile: :class:`HardwareProfile
      <azure.mgmt.compute.models.HardwareProfile>`
-    :param storage_profile: Gets or sets the storage profile.
+    :param storage_profile: the storage profile.
     :type storage_profile: :class:`StorageProfile
      <azure.mgmt.compute.models.StorageProfile>`
-    :param os_profile: Gets or sets the OS profile.
+    :param os_profile: the OS profile.
     :type os_profile: :class:`OSProfile <azure.mgmt.compute.models.OSProfile>`
-    :param network_profile: Gets or sets the network profile.
+    :param network_profile: the network profile.
     :type network_profile: :class:`NetworkProfile
      <azure.mgmt.compute.models.NetworkProfile>`
-    :param diagnostics_profile: Gets or sets the diagnostics profile.
+    :param diagnostics_profile: the diagnostics profile.
     :type diagnostics_profile: :class:`DiagnosticsProfile
      <azure.mgmt.compute.models.DiagnosticsProfile>`
-    :param availability_set: Gets or sets the reference Id of the
-     availability set to which this virtual machine belongs.
+    :param availability_set: the reference Id of the availability set to
+     which this virtual machine belongs.
     :type availability_set: :class:`SubResource
      <azure.mgmt.compute.models.SubResource>`
-    :param provisioning_state: Gets or sets the provisioning state, which
-     only appears in the response.
-    :type provisioning_state: str
-    :ivar instance_view: Gets the virtual machine instance view.
+    :ivar provisioning_state: the provisioning state, which only appears in
+     the response.
+    :vartype provisioning_state: str
+    :ivar instance_view: the virtual machine instance view.
     :vartype instance_view: :class:`VirtualMachineInstanceView
      <azure.mgmt.compute.models.VirtualMachineInstanceView>`
-    :param license_type: Gets or sets the license type, which is for bring
-     your own license scenario.
+    :param license_type: the license type, which is for bring your own
+     license scenario.
     :type license_type: str
-    :param vm_id: Gets the virtual machine unique id.
-    :type vm_id: str
-    :ivar resources: Gets the virtual machine child extension resources.
+    :ivar vm_id: the virtual machine unique id.
+    :vartype vm_id: str
+    :ivar resources: the virtual machine child extension resources.
     :vartype resources: list of :class:`VirtualMachineExtension
      <azure.mgmt.compute.models.VirtualMachineExtension>`
     """ 
@@ -81,7 +80,9 @@ class VirtualMachine(Resource):
         'name': {'readonly': True},
         'type': {'readonly': True},
         'location': {'required': True},
+        'provisioning_state': {'readonly': True},
         'instance_view': {'readonly': True},
+        'vm_id': {'readonly': True},
         'resources': {'readonly': True},
     }
 
@@ -105,7 +106,7 @@ class VirtualMachine(Resource):
         'resources': {'key': 'resources', 'type': '[VirtualMachineExtension]'},
     }
 
-    def __init__(self, location, tags=None, plan=None, hardware_profile=None, storage_profile=None, os_profile=None, network_profile=None, diagnostics_profile=None, availability_set=None, provisioning_state=None, license_type=None, vm_id=None):
+    def __init__(self, location, tags=None, plan=None, hardware_profile=None, storage_profile=None, os_profile=None, network_profile=None, diagnostics_profile=None, availability_set=None, license_type=None):
         super(VirtualMachine, self).__init__(location=location, tags=tags)
         self.plan = plan
         self.hardware_profile = hardware_profile
@@ -114,8 +115,8 @@ class VirtualMachine(Resource):
         self.network_profile = network_profile
         self.diagnostics_profile = diagnostics_profile
         self.availability_set = availability_set
-        self.provisioning_state = provisioning_state
+        self.provisioning_state = None
         self.instance_view = None
         self.license_type = license_type
-        self.vm_id = vm_id
+        self.vm_id = None
         self.resources = None

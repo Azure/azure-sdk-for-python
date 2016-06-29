@@ -23,8 +23,7 @@ from .resource import Resource
 
 
 class VirtualMachineExtension(Resource):
-    """
-    Describes a Virtual Machine Extension.
+    """Describes a Virtual Machine Extension.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -39,32 +38,27 @@ class VirtualMachineExtension(Resource):
     :type location: str
     :param tags: Resource tags
     :type tags: dict
-    :param force_update_tag: Gets or sets how the extension handler should be
-     forced to update even if the extension configuration has not changed.
+    :param force_update_tag: how the extension handler should be forced to
+     update even if the extension configuration has not changed.
     :type force_update_tag: str
-    :param publisher: Gets or sets the name of the extension handler
-     publisher.
+    :param publisher: the name of the extension handler publisher.
     :type publisher: str
-    :param virtual_machine_extension_type: Gets or sets the type of the
-     extension handler.
+    :param virtual_machine_extension_type: the type of the extension handler.
     :type virtual_machine_extension_type: str
-    :param type_handler_version: Gets or sets the type version of the
-     extension handler.
+    :param type_handler_version: the type version of the extension handler.
     :type type_handler_version: str
-    :param auto_upgrade_minor_version: Gets or sets whether the extension
-     handler should be automatically upgraded across minor versions.
+    :param auto_upgrade_minor_version: whether the extension handler should
+     be automatically upgraded across minor versions.
     :type auto_upgrade_minor_version: bool
-    :param settings: Gets or sets Json formatted public settings for the
-     extension.
+    :param settings: Json formatted public settings for the extension.
     :type settings: object
-    :param protected_settings: Gets or sets Json formatted protected settings
-     for the extension.
+    :param protected_settings: Json formatted protected settings for the
+     extension.
     :type protected_settings: object
-    :param provisioning_state: Gets or sets the provisioning state, which
-     only appears in the response.
-    :type provisioning_state: str
-    :param instance_view: Gets or sets the virtual machine extension instance
-     view.
+    :ivar provisioning_state: the provisioning state, which only appears in
+     the response.
+    :vartype provisioning_state: str
+    :param instance_view: the virtual machine extension instance view.
     :type instance_view: :class:`VirtualMachineExtensionInstanceView
      <azure.mgmt.compute.models.VirtualMachineExtensionInstanceView>`
     """ 
@@ -74,6 +68,7 @@ class VirtualMachineExtension(Resource):
         'name': {'readonly': True},
         'type': {'readonly': True},
         'location': {'required': True},
+        'provisioning_state': {'readonly': True},
     }
 
     _attribute_map = {
@@ -93,7 +88,7 @@ class VirtualMachineExtension(Resource):
         'instance_view': {'key': 'properties.instanceView', 'type': 'VirtualMachineExtensionInstanceView'},
     }
 
-    def __init__(self, location, tags=None, force_update_tag=None, publisher=None, virtual_machine_extension_type=None, type_handler_version=None, auto_upgrade_minor_version=None, settings=None, protected_settings=None, provisioning_state=None, instance_view=None):
+    def __init__(self, location, tags=None, force_update_tag=None, publisher=None, virtual_machine_extension_type=None, type_handler_version=None, auto_upgrade_minor_version=None, settings=None, protected_settings=None, instance_view=None):
         super(VirtualMachineExtension, self).__init__(location=location, tags=tags)
         self.force_update_tag = force_update_tag
         self.publisher = publisher
@@ -102,5 +97,5 @@ class VirtualMachineExtension(Resource):
         self.auto_upgrade_minor_version = auto_upgrade_minor_version
         self.settings = settings
         self.protected_settings = protected_settings
-        self.provisioning_state = provisioning_state
+        self.provisioning_state = None
         self.instance_view = instance_view

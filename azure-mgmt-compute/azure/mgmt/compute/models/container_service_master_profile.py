@@ -23,8 +23,7 @@ from msrest.serialization import Model
 
 
 class ContainerServiceMasterProfile(Model):
-    """
-    Profile for container service master
+    """Profile for container service master.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.

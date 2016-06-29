@@ -23,10 +23,9 @@ from msrest.serialization import Model
 
 
 class ApiEntityReference(Model):
-    """
-    The API entity reference.
+    """The API entity reference.
 
-    :param id: Gets or sets the ARM resource id in the form of
+    :param id: the ARM resource id in the form of
      /subscriptions/{SubcriptionId}/resourceGroups/{ResourceGroupName}/...
     :type id: str
     """ 

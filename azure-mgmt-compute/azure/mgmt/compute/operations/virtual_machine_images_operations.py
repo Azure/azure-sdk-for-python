@@ -45,8 +45,7 @@ class VirtualMachineImagesOperations(object):
 
     def get(
             self, location, publisher_name, offer, skus, version, api_version="2016-03-30", custom_headers=None, raw=False, **operation_config):
-        """
-        Gets a virtual machine image.
+        """Gets a virtual machine image.
 
         :param location:
         :type location: str
@@ -118,8 +117,7 @@ class VirtualMachineImagesOperations(object):
 
     def list(
             self, location, publisher_name, offer, skus, api_version="2016-03-30", filter=None, top=None, orderby=None, custom_headers=None, raw=False, **operation_config):
-        """
-        Gets a list of virtual machine images.
+        """Gets a list of virtual machine images.
 
         :param location:
         :type location: str
@@ -200,8 +198,7 @@ class VirtualMachineImagesOperations(object):
 
     def list_offers(
             self, location, publisher_name, api_version="2016-03-30", custom_headers=None, raw=False, **operation_config):
-        """
-        Gets a list of virtual machine image offers.
+        """Gets a list of virtual machine image offers.
 
         :param location:
         :type location: str
@@ -264,8 +261,7 @@ class VirtualMachineImagesOperations(object):
 
     def list_publishers(
             self, location, api_version="2016-03-30", custom_headers=None, raw=False, **operation_config):
-        """
-        Gets a list of virtual machine image publishers.
+        """Gets a list of virtual machine image publishers.
 
         :param location:
         :type location: str
@@ -325,8 +321,7 @@ class VirtualMachineImagesOperations(object):
 
     def list_skus(
             self, location, publisher_name, offer, api_version="2016-03-30", custom_headers=None, raw=False, **operation_config):
-        """
-        Gets a list of virtual machine image skus.
+        """Gets a list of virtual machine image skus.
 
         :param location:
         :type location: str

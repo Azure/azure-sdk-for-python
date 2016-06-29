@@ -23,16 +23,14 @@ from msrest.serialization import Model
 
 
 class WinRMListener(Model):
-    """
-    Describes Protocol and thumbprint of Windows Remote Management listener
+    """Describes Protocol and thumbprint of Windows Remote Management listener.
 
-    :param protocol: Gets or sets the Protocol used by WinRM listener.
-     Currently only Http and Https are supported. Possible values include:
-     'Http', 'Https'
+    :param protocol: the Protocol used by WinRM listener. Currently only Http
+     and Https are supported. Possible values include: 'Http', 'Https'
     :type protocol: str or :class:`ProtocolTypes
      <azure.mgmt.compute.models.ProtocolTypes>`
-    :param certificate_url: Gets or sets the Certificate URL in KMS for Https
-     listeners. Should be null for Http listeners.
+    :param certificate_url: the Certificate URL in KMS for Https listeners.
+     Should be null for Http listeners.
     :type certificate_url: str
     """ 
 

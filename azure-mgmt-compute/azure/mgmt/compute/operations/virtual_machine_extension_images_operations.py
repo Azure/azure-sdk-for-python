@@ -45,8 +45,7 @@ class VirtualMachineExtensionImagesOperations(object):
 
     def get(
             self, location, publisher_name, type, version, api_version="2016-03-30", custom_headers=None, raw=False, **operation_config):
-        """
-        Gets a virtual machine extension image.
+        """Gets a virtual machine extension image.
 
         :param location:
         :type location: str
@@ -115,8 +114,7 @@ class VirtualMachineExtensionImagesOperations(object):
 
     def list_types(
             self, location, publisher_name, api_version="2016-03-30", custom_headers=None, raw=False, **operation_config):
-        """
-        Gets a list of virtual machine extension image types.
+        """Gets a list of virtual machine extension image types.
 
         :param location:
         :type location: str
@@ -179,8 +177,7 @@ class VirtualMachineExtensionImagesOperations(object):
 
     def list_versions(
             self, location, publisher_name, type, api_version="2016-03-30", filter=None, top=None, orderby=None, custom_headers=None, raw=False, **operation_config):
-        """
-        Gets a list of virtual machine extension image versions.
+        """Gets a list of virtual machine extension image versions.
 
         :param location:
         :type location: str

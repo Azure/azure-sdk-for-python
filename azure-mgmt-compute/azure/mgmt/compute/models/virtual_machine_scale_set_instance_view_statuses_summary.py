@@ -23,14 +23,13 @@ from msrest.serialization import Model
 
 
 class VirtualMachineScaleSetInstanceViewStatusesSummary(Model):
-    """
-    Instance view statuses summary for virtual machines of a virtual machine
+    """Instance view statuses summary for virtual machines of a virtual machine
     scale set.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar statuses_summary: Gets the extensions information.
+    :ivar statuses_summary: the extensions information.
     :vartype statuses_summary: list of :class:`VirtualMachineStatusCodeCount
      <azure.mgmt.compute.models.VirtualMachineStatusCodeCount>`
     """ 

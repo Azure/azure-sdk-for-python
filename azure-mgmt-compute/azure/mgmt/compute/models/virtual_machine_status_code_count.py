@@ -23,16 +23,15 @@ from msrest.serialization import Model
 
 
 class VirtualMachineStatusCodeCount(Model):
-    """
-    The status code and count of the virtual machine scale set instance view
+    """The status code and count of the virtual machine scale set instance view
     status summary.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar code: Gets the instance view status code.
+    :ivar code: the instance view status code.
     :vartype code: str
-    :ivar count: Gets the number of instances having a particular status code.
+    :ivar count: the number of instances having a particular status code.
     :vartype count: int
     """ 
 

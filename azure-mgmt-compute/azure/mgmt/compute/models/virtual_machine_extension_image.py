@@ -23,8 +23,7 @@ from .resource import Resource
 
 
 class VirtualMachineExtensionImage(Resource):
-    """
-    Describes a Virtual Machine Extension Image.
+    """Describes a Virtual Machine Extension Image.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -39,23 +38,21 @@ class VirtualMachineExtensionImage(Resource):
     :type location: str
     :param tags: Resource tags
     :type tags: dict
-    :param operating_system: Gets or sets the operating system this extension
-     supports.
+    :param operating_system: the operating system this extension supports.
     :type operating_system: str
-    :param compute_role: Gets or sets the type of role (IaaS or PaaS) this
-     extension supports.
+    :param compute_role: the type of role (IaaS or PaaS) this extension
+     supports.
     :type compute_role: str
-    :param handler_schema: Gets or sets the schema defined by publisher,
-     where extension consumers should provide settings in a matching schema.
+    :param handler_schema: the schema defined by publisher, where extension
+     consumers should provide settings in a matching schema.
     :type handler_schema: str
-    :param vm_scale_set_enabled: Gets or sets whether the extension can be
-     used on xRP VMScaleSets.By default existing extensions are usable on
-     scalesets, but there might be cases where a publisher wants to
-     explicitly indicate the extension is only enabled for CRP VMs but not
-     VMSS.
+    :param vm_scale_set_enabled: whether the extension can be used on xRP
+     VMScaleSets.By default existing extensions are usable on scalesets, but
+     there might be cases where a publisher wants to explicitly indicate the
+     extension is only enabled for CRP VMs but not VMSS.
     :type vm_scale_set_enabled: bool
-    :param supports_multiple_extensions: Gets or sets whether the handler can
-     support multiple extensions.
+    :param supports_multiple_extensions: whether the handler can support
+     multiple extensions.
     :type supports_multiple_extensions: bool
     """ 
 

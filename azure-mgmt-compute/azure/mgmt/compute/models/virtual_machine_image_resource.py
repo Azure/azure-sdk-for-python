@@ -23,16 +23,15 @@ from .sub_resource import SubResource
 
 
 class VirtualMachineImageResource(SubResource):
-    """
-    Virtual machine image resource information.
+    """Virtual machine image resource information.
 
     :param id: Resource Id
     :type id: str
-    :param name: Gets or sets the name of the resource.
+    :param name: the name of the resource.
     :type name: str
-    :param location: Gets or sets the location of the resource.
+    :param location: the location of the resource.
     :type location: str
-    :param tags: Gets or sets the tags attached to the resource.
+    :param tags: the tags attached to the resource.
     :type tags: dict
     """ 
 

@@ -23,26 +23,25 @@ from .sub_resource import SubResource
 
 
 class VirtualMachineScaleSetIPConfiguration(SubResource):
-    """
-    Describes a virtual machine scale set network profile's IP configuration.
+    """Describes a virtual machine scale set network profile's IP configuration.
 
     :param id: Resource Id
     :type id: str
-    :param name: Gets or sets the IP configuration name.
+    :param name: the IP configuration name.
     :type name: str
-    :param subnet: Gets or sets the subnet.
+    :param subnet: the subnet.
     :type subnet: :class:`ApiEntityReference
      <azure.mgmt.compute.models.ApiEntityReference>`
-    :param application_gateway_backend_address_pools: Gets or sets the
-     application gateway backend address pools.
+    :param application_gateway_backend_address_pools: the application gateway
+     backend address pools.
     :type application_gateway_backend_address_pools: list of
      :class:`SubResource <azure.mgmt.compute.models.SubResource>`
-    :param load_balancer_backend_address_pools: Gets or sets the load
-     balancer backend address pools.
+    :param load_balancer_backend_address_pools: the load balancer backend
+     address pools.
     :type load_balancer_backend_address_pools: list of :class:`SubResource
      <azure.mgmt.compute.models.SubResource>`
-    :param load_balancer_inbound_nat_pools: Gets or sets the load balancer
-     inbound nat pools.
+    :param load_balancer_inbound_nat_pools: the load balancer inbound nat
+     pools.
     :type load_balancer_inbound_nat_pools: list of :class:`SubResource
      <azure.mgmt.compute.models.SubResource>`
     """ 

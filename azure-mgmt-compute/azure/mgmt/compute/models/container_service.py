@@ -23,8 +23,7 @@ from .resource import Resource
 
 
 class ContainerService(Resource):
-    """
-    Container service
+    """Container service.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -39,8 +38,8 @@ class ContainerService(Resource):
     :type location: String
     :param tags: Resource tags
     :type tags: dict
-    :ivar provisioning_state: Gets the provisioning state, which only appears
-     in the response.
+    :ivar provisioning_state: the provisioning state, which only appears in
+     the response.
     :vartype provisioning_state: str
     :param orchestrator_profile: Properties of orchestrator
     :type orchestrator_profile: :class:`ContainerServiceOrchestratorProfile

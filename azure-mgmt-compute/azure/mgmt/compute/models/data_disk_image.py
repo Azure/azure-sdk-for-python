@@ -23,15 +23,14 @@ from msrest.serialization import Model
 
 
 class DataDiskImage(Model):
-    """
-    Contains the data disk images information.
+    """Contains the data disk images information.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar lun: Gets the LUN number for a data disk.This value is used to
-     identify data disk image inside the VMImage therefore it must be unique
-     for each data disk.The allowed character for the value is digit.
+    :ivar lun: the LUN number for a data disk.This value is used to identify
+     data disk image inside the VMImage therefore it must be unique for each
+     data disk.The allowed character for the value is digit.
     :vartype lun: int
     """ 
 

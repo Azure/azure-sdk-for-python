@@ -23,13 +23,11 @@ from msrest.serialization import Model
 
 
 class InnerError(Model):
-    """
-    Inner error details.
+    """Inner error details.
 
-    :param exceptiontype: Gets or sets the exception type.
+    :param exceptiontype: the exception type.
     :type exceptiontype: str
-    :param errordetail: Gets or sets the internal error message or exception
-     dump.
+    :param errordetail: the internal error message or exception dump.
     :type errordetail: str
     """ 
 

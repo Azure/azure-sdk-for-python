@@ -23,10 +23,9 @@ from msrest.serialization import Model
 
 
 class DiagnosticsProfile(Model):
-    """
-    Describes a diagnostics profile.
+    """Describes a diagnostics profile.
 
-    :param boot_diagnostics: Gets or sets the boot diagnostics.
+    :param boot_diagnostics: the boot diagnostics.
     :type boot_diagnostics: :class:`BootDiagnostics
      <azure.mgmt.compute.models.BootDiagnostics>`
     """ 

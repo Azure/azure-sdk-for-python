@@ -23,27 +23,23 @@ from msrest.serialization import Model
 
 
 class OSProfile(Model):
-    """
-    Describes an OS profile.
+    """Describes an OS profile.
 
-    :param computer_name: Gets or sets the computer name.
+    :param computer_name: the computer name.
     :type computer_name: str
-    :param admin_username: Gets or sets the admin user name.
+    :param admin_username: the admin user name.
     :type admin_username: str
-    :param admin_password: Gets or sets the admin user password.
+    :param admin_password: the admin user password.
     :type admin_password: str
-    :param custom_data: Gets or sets a base-64 encoded string of custom data.
+    :param custom_data: a base-64 encoded string of custom data.
     :type custom_data: str
-    :param windows_configuration: Gets or sets the Windows Configuration of
-     the OS profile.
+    :param windows_configuration: the Windows Configuration of the OS profile.
     :type windows_configuration: :class:`WindowsConfiguration
      <azure.mgmt.compute.models.WindowsConfiguration>`
-    :param linux_configuration: Gets or sets the Linux Configuration of the
-     OS profile.
+    :param linux_configuration: the Linux Configuration of the OS profile.
     :type linux_configuration: :class:`LinuxConfiguration
      <azure.mgmt.compute.models.LinuxConfiguration>`
-    :param secrets: Gets or sets the List of certificates for addition to the
-     VM.
+    :param secrets: the List of certificates for addition to the VM.
     :type secrets: list of :class:`VaultSecretGroup
      <azure.mgmt.compute.models.VaultSecretGroup>`
     """ 

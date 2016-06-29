@@ -23,11 +23,10 @@ from msrest.serialization import Model
 
 
 class ContainerServiceSshConfiguration(Model):
-    """
-    SSH configuration for Linux based VMs running on Azure
+    """SSH configuration for Linux based VMs running on Azure.
 
-    :param public_keys: Gets or sets the list of SSH public keys used to
-     authenticate with Linux based VMs
+    :param public_keys: the list of SSH public keys used to authenticate with
+     Linux based VMs
     :type public_keys: list of :class:`ContainerServiceSshPublicKey
      <azure.mgmt.compute.models.ContainerServiceSshPublicKey>`
     """ 
