@@ -29,6 +29,146 @@ class MgmtNetworkTest(AzureMgmtTestCase):
         )
 
     @record
+    def test_load_balancers(self):
+        self.create_resource_group()
+
+        public_ip_name = self.get_resource_name('pyipname')
+        frontend_ip_name = self.get_resource_name('pyfipname')
+        addr_pool_name = self.get_resource_name('pyapname')
+        probe_name = self.get_resource_name('pyprobename')
+        lb_name = self.get_resource_name('pylbname')
+
+        front_end_id = ('/subscriptions/{}'
+            '/resourceGroups/{}'
+            '/providers/Microsoft.Network'
+            '/loadBalancers/{}'
+            '/frontendIPConfigurations/{}').format(
+                self.settings.SUBSCRIPTION_ID,
+                self.group_name,
+                lb_name,
+                frontend_ip_name
+            )
+        back_end_id = ('/subscriptions/{}'
+            '/resourceGroups/{}'
+            '/providers/Microsoft.Network'
+            '/loadBalancers/{}'
+            '/backendAddressPools/{}').format(
+                self.settings.SUBSCRIPTION_ID,
+                self.group_name,
+                lb_name,
+                addr_pool_name
+            )
+
+        probe_id = ('/subscriptions/{}'
+            '/resourceGroups/{}'
+            '/providers/Microsoft.Network'
+            '/loadBalancers/{}'
+            '/probes/{}').format(
+                self.settings.SUBSCRIPTION_ID,
+                self.group_name,
+                lb_name,
+                probe_name
+            )
+
+        # Create PublicIP
+        public_ip_parameters = {
+            'location': self.region,
+            'public_ip_allocation_method': 'static',
+            'idle_timeout_in_minutes': 4
+        }
+        async_publicip_creation = self.network_client.public_ip_addresses.create_or_update(
+            self.group_name,
+            public_ip_name,
+            public_ip_parameters
+        )
+        public_ip_info = async_publicip_creation.result()
+
+        # Building a FrontEndIpPool
+        frontend_ip_configurations = [{
+            'name': frontend_ip_name,
+            'private_ip_allocation_method': 'Dynamic',
+            'public_ip_address': {
+                'id': public_ip_info.id
+            }
+        }]
+
+        # Building a BackEnd adress pool
+        backend_address_pools = [{
+            'name': addr_pool_name
+        }]
+
+        # Building a HealthProbe
+        probes = [{
+            'name': probe_name,
+            'protocol': 'Http',
+            'port': 80,
+            'interval_in_seconds': 15,
+            'number_of_probes': 4,
+            'request_path': 'healthprobe.aspx'
+        }]
+
+        # Building a LoadBalancer rule
+        load_balancing_rules = [{
+            'name': 'azure-sample-lb-rule',
+            'protocol': 'tcp',
+            'frontend_port': 80,
+            'backend_port': 80,
+            'idle_timeout_in_minutes': 4,
+            'enable_floating_ip': False,
+            'load_distribution': 'Default',
+            'frontend_ip_configuration': {
+                'id': front_end_id
+            },
+            'backend_address_pool': {
+                'id': back_end_id
+            },
+            'probe': {
+                'id': probe_id
+            }
+        }]
+
+        # Building InboundNATRule1
+        inbound_nat_rules = [{
+            'name': 'azure-sample-netrule1',
+            'protocol': 'tcp',
+            'frontend_port': 21,
+            'backend_port': 22,
+            'enable_floating_ip': False,
+            'idle_timeout_in_minutes': 4,
+            'frontend_ip_configuration': {
+                'id': front_end_id
+            }
+        }]
+
+        # Building InboundNATRule2
+        inbound_nat_rules.append({
+            'name': 'azure-sample-netrule2',
+            'protocol': 'tcp',
+            'frontend_port': 23,
+            'backend_port': 22,
+            'enable_floating_ip': False,
+            'idle_timeout_in_minutes': 4,
+            'frontend_ip_configuration': {
+                'id': front_end_id
+            }
+        })
+
+        # Creating Load Balancer
+        lb_async_creation = self.network_client.load_balancers.create_or_update(
+            self.group_name,
+            lb_name,
+            {
+                'location': self.region,
+                'frontend_ip_configurations': frontend_ip_configurations,
+                'backend_address_pools': backend_address_pools,
+                'probes': probes,
+                'load_balancing_rules': load_balancing_rules,
+                'inbound_nat_rules' :inbound_nat_rules
+            }
+        )
+        lb_info = lb_async_creation.result()
+
+    @record
     def test_public_ip_addresses(self):
         self.create_resource_group()
 
