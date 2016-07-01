@@ -23,8 +23,7 @@ from msrest.serialization import Model
 
 
 class PolicyAssignment(Model):
-    """
-    The policy definition.
+    """The policy definition.
 
     :param display_name: Gets or sets the policy assignment display name.
     :type display_name: str

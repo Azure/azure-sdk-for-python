@@ -23,8 +23,7 @@ from msrest.serialization import Model
 
 
 class Location(Model):
-    """
-    Location information.
+    """Location information.
 
     :param id: Gets or sets the ID of the resource
      (/subscriptions/SubscriptionId).

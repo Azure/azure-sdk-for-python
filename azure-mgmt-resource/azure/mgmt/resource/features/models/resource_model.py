@@ -23,7 +23,7 @@ from msrest.serialization import Model
 
 
 class ResourceModel(Model):
-    """ResourceModel
+    """ResourceModel.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
