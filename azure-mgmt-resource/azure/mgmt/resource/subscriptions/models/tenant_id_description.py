@@ -23,8 +23,7 @@ from msrest.serialization import Model
 
 
 class TenantIdDescription(Model):
-    """
-    Tenant Id information
+    """Tenant Id information.
 
     :param id: Gets or sets Id
     :type id: str

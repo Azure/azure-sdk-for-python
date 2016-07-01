@@ -23,8 +23,7 @@ from msrest.serialization import Model
 
 
 class GenericResourceFilter(Model):
-    """
-    Resource filter.
+    """Resource filter.
 
     :param resource_type: Gets or sets the resource type.
     :type resource_type: str

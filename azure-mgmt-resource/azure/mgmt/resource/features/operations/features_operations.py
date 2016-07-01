@@ -45,8 +45,7 @@ class FeaturesOperations(object):
 
     def list_all(
             self, custom_headers=None, raw=False, **operation_config):
-        """
-        Gets a list of previewed features for all the providers in the current
+        """Gets a list of previewed features for all the providers in the current
         subscription.
 
         :param dict custom_headers: headers that will be added to the request
@@ -109,8 +108,7 @@ class FeaturesOperations(object):
 
     def list(
             self, resource_provider_namespace, custom_headers=None, raw=False, **operation_config):
-        """
-        Gets a list of previewed features of a resource provider.
+        """Gets a list of previewed features of a resource provider.
 
         :param resource_provider_namespace: The namespace of the resource
          provider.
@@ -176,8 +174,7 @@ class FeaturesOperations(object):
 
     def get(
             self, resource_provider_namespace, feature_name, custom_headers=None, raw=False, **operation_config):
-        """
-        Get all features under the subscription.
+        """Get all features under the subscription.
 
         :param resource_provider_namespace: Namespace of the resource
          provider.
@@ -239,8 +236,7 @@ class FeaturesOperations(object):
 
     def register(
             self, resource_provider_namespace, feature_name, custom_headers=None, raw=False, **operation_config):
-        """
-        Registers for a previewed feature of a resource provider.
+        """Registers for a previewed feature of a resource provider.
 
         :param resource_provider_namespace: Namespace of the resource
          provider.

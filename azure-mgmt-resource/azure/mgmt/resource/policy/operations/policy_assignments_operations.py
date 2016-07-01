@@ -45,8 +45,7 @@ class PolicyAssignmentsOperations(object):
 
     def delete(
             self, scope, policy_assignment_name, custom_headers=None, raw=False, **operation_config):
-        """
-        Delete policy assignment.
+        """Delete policy assignment.
 
         :param scope: Scope of the policy assignment.
         :type scope: str
@@ -107,8 +106,7 @@ class PolicyAssignmentsOperations(object):
 
     def create(
             self, scope, policy_assignment_name, parameters, custom_headers=None, raw=False, **operation_config):
-        """
-        Create policy assignment.
+        """Create policy assignment.
 
         :param scope: Scope of the policy assignment.
         :type scope: str
@@ -176,8 +174,7 @@ class PolicyAssignmentsOperations(object):
 
     def get(
             self, scope, policy_assignment_name, custom_headers=None, raw=False, **operation_config):
-        """
-        Get single policy assignment.
+        """Get single policy assignment.
 
         :param scope: Scope of the policy assignment.
         :type scope: str
@@ -238,8 +235,7 @@ class PolicyAssignmentsOperations(object):
 
     def list_for_resource_group(
             self, resource_group_name, filter=None, custom_headers=None, raw=False, **operation_config):
-        """
-        Gets policy assignments of the resource group.
+        """Gets policy assignments of the resource group.
 
         :param resource_group_name: Resource group name.
         :type resource_group_name: str
@@ -308,8 +304,7 @@ class PolicyAssignmentsOperations(object):
 
     def list_for_resource(
             self, resource_group_name, resource_provider_namespace, parent_resource_path, resource_type, resource_name, filter=None, custom_headers=None, raw=False, **operation_config):
-        """
-        Gets policy assignments of the resource.
+        """Gets policy assignments of the resource.
 
         :param resource_group_name: The name of the resource group. The name
          is case insensitive.
@@ -391,8 +386,7 @@ class PolicyAssignmentsOperations(object):
 
     def list(
             self, filter=None, custom_headers=None, raw=False, **operation_config):
-        """
-        Gets all the policy assignments of a subscription.
+        """Gets all the policy assignments of a subscription.
 
         :param filter: The filter to apply on the operation.
         :type filter: str
@@ -458,8 +452,7 @@ class PolicyAssignmentsOperations(object):
 
     def delete_by_id(
             self, policy_assignment_id, custom_headers=None, raw=False, **operation_config):
-        """
-        Delete policy assignment.
+        """Delete policy assignment.
 
         :param policy_assignment_id: Policy assignment Id
         :type policy_assignment_id: str
@@ -517,8 +510,7 @@ class PolicyAssignmentsOperations(object):
 
     def create_by_id(
             self, policy_assignment_id, parameters, custom_headers=None, raw=False, **operation_config):
-        """
-        Create policy assignment by Id.
+        """Create policy assignment by Id.
 
         :param policy_assignment_id: Policy assignment Id
         :type policy_assignment_id: str
@@ -583,8 +575,7 @@ class PolicyAssignmentsOperations(object):
 
     def get_by_id(
             self, policy_assignment_id, custom_headers=None, raw=False, **operation_config):
-        """
-        Get single policy assignment.
+        """Get single policy assignment.
 
         :param policy_assignment_id: Policy assignment Id
         :type policy_assignment_id: str

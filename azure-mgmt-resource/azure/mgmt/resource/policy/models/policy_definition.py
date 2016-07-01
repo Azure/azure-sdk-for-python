@@ -23,8 +23,7 @@ from msrest.serialization import Model
 
 
 class PolicyDefinition(Model):
-    """
-    The policy definition.
+    """The policy definition.
 
     :param policy_type: Gets or sets policy definition policy type. Possible
      values include: 'NotSpecified', 'BuiltIn', 'Custom'
