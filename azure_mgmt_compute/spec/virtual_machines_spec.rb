@@ -178,8 +178,6 @@ end
 
 # VM helpers
 def build_virtual_machine_parameters
-  props = VirtualMachineProperties.new
-
   windows_config = WindowsConfiguration.new
   windows_config.provision_vmagent = true
   windows_config.enable_automatic_updates = true
@@ -190,32 +188,27 @@ def build_virtual_machine_parameters
   os_profile.admin_password = 'P@ssword1'
   os_profile.windows_configuration = windows_config
   os_profile.secrets = []
-  props.os_profile = os_profile
 
   hardware_profile = HardwareProfile.new
   hardware_profile.vm_size = 'Standard_A0'
-  props.hardware_profile = hardware_profile
-
-  props.storage_profile = create_storage_profile
-
-  props.network_profile = create_network_profile
 
   params = VirtualMachine.new
   params.type = 'Microsoft.Compute/virtualMachines'
-  params.properties = props
+  params.network_profile = create_network_profile
+  params.storage_profile = create_storage_profile
+  params.hardware_profile = hardware_profile
+  params.os_profile = os_profile
+
   params.location = @location
   params
 end
 
 def build_extension_parameter
-  vm_extension_properties = VirtualMachineExtensionProperties.new
-  vm_extension_properties.publisher = 'Microsoft.Compute'
-  vm_extension_properties.type = 'VMAccessAgent'
-  vm_extension_properties.type_handler_version = '2.0'
-  vm_extension_properties.auto_upgrade_minor_version = true
-
   vm_extension = VirtualMachineExtension.new
-  vm_extension.properties = vm_extension_properties
+  vm_extension.publisher = 'Microsoft.Compute'
+  vm_extension.type = 'VMAccessAgent'
+  vm_extension.type_handler_version = '2.0'
+  vm_extension.auto_upgrade_minor_version = true
   vm_extension.tags = Hash.new
   vm_extension.tags['extensionTag1'] = '1'
   vm_extension.tags['extensionTag2'] = '2'
@@ -241,14 +234,14 @@ end
 
 # Storage helpers
 def build_storage_account_create_parameters(name)
-  params = Azure::ARM::Storage::Models::StorageAccountCreateParameters.new
-  params.location = @location
-  props = Azure::ARM::Storage::Models::StorageAccountPropertiesCreateParameters.new
-  params.properties = props
   sku = Azure::ARM::Storage::Models::Sku.new
   sku.name = 'Standard_GRS'
+
+  params = Azure::ARM::Storage::Models::StorageAccountCreateParameters.new
+  params.location = @location
   params.sku = sku
   params.kind = Azure::ARM::Storage::Models::Kind::Storage
+
   params
 end
 
@@ -277,15 +270,15 @@ end
 
 # Network helpers
 def build_public_ip_params(location)
-  public_ip = PublicIPAddress.new
-  public_ip.location = location
-  props = PublicIPAddressPropertiesFormat.new
-  props.public_ipallocation_method = 'Dynamic'
-  public_ip.properties = props
   domain_name = 'testdomain53464'
   dns_settings = PublicIPAddressDnsSettings.new
   dns_settings.domain_name_label = domain_name
-  props.dns_settings = dns_settings
+
+  public_ip = PublicIPAddress.new
+  public_ip.location = location
+  public_ip.public_ipallocation_method = 'Dynamic'
+  public_ip.dns_settings = dns_settings
+
   public_ip
 end
 
@@ -297,21 +290,21 @@ end
 
 def build_virtual_network_params(location)
   params = VirtualNetwork.new
-  props = VirtualNetworkPropertiesFormat.new
   params.location = location
   address_space = AddressSpace.new
   address_space.address_prefixes = ['10.0.0.0/16']
-  props.address_space = address_space
+
   dhcp_options = DhcpOptions.new
   dhcp_options.dns_servers = %w(10.1.1.1 10.1.2.4)
-  props.dhcp_options = dhcp_options
+
   sub2 = Subnet.new
-  sub2_prop = SubnetPropertiesFormat.new
   sub2.name = 'subnet253464'
-  sub2_prop.address_prefix = '10.0.2.0/24'
-  sub2.properties = sub2_prop
-  props.subnets = [sub2]
-  params.properties = props
+  sub2.address_prefix = '10.0.2.0/24'
+
+  params.address_space = address_space
+  params.dhcp_options = dhcp_options
+  params.subnets = [sub2]
+
   params
 end
 
@@ -323,9 +316,7 @@ end
 
 def build_subnet_params
   params = Subnet.new
-  prop = SubnetPropertiesFormat.new
-  params.properties = prop
-  prop.address_prefix = '10.0.1.0/24'
+  params.address_prefix = '10.0.1.0/24'
   params
 end
 
@@ -347,16 +338,14 @@ def build_network_interface_param
   network_interface_name = 'testnic53464'
   ip_config_name = 'ip_name53464'
   params.name = network_interface_name
-  props = NetworkInterfacePropertiesFormat.new
+
   ip_configuration = NetworkInterfaceIPConfiguration.new
-  params.properties = props
-  props.ip_configurations = [ip_configuration]
-  ip_configuration_properties = NetworkInterfaceIPConfigurationPropertiesFormat.new
-  ip_configuration.properties = ip_configuration_properties
   ip_configuration.name = ip_config_name
-  ip_configuration_properties.private_ipallocation_method = 'Dynamic'
-  ip_configuration_properties.public_ipaddress = create_public_ip_address(@location, @resource_group)
-  ip_configuration_properties.subnet = @subnet
+  ip_configuration.private_ipallocation_method = IPAllocationMethod::Dynamic
+  ip_configuration.public_ipaddress = create_public_ip_address(@location, @resource_group)
+  ip_configuration.subnet = @subnet
+
+  params.ip_configurations = [ip_configuration]
   params
 end
 
