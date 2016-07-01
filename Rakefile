@@ -52,7 +52,7 @@ namespace :arm do
   desc 'Regen code for each of the Azure Resource Manager projects'
   task :regen do
     each_gem do |dir|
-      execute_and_stream(OS.windows? ? 'del /S /Q lib 2>nul' : 'rm -rf lib')
+      execute_and_stream(OS.windows? ? 'del /S /Q lib\generated 2>nul' : 'rm -rf lib/generated')
       puts "\nGenerating #{dir}\n"
       md = REGEN_METADATA[dir.to_sym]
       ar_base_command = "#{OS.windows? ? '' : 'mono '} #{REGEN_METADATA[:autorest_loc]}"
