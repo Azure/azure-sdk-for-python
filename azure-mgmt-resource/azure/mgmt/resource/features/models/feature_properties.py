@@ -23,8 +23,7 @@ from msrest.serialization import Model
 
 
 class FeatureProperties(Model):
-    """
-    Previewed feature information.
+    """Previewed feature information.
 
     :param state: Gets or sets the state of the previewed feature.
     :type state: str

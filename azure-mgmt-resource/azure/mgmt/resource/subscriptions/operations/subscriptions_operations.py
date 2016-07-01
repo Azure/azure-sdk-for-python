@@ -45,8 +45,7 @@ class SubscriptionsOperations(object):
 
     def list_locations(
             self, subscription_id, custom_headers=None, raw=False, **operation_config):
-        """
-        Gets a list of the subscription locations.
+        """Gets a list of the subscription locations.
 
         :param subscription_id: Id of the subscription
         :type subscription_id: str
@@ -110,8 +109,7 @@ class SubscriptionsOperations(object):
 
     def get(
             self, subscription_id, custom_headers=None, raw=False, **operation_config):
-        """
-        Gets details about particular subscription.
+        """Gets details about particular subscription.
 
         :param subscription_id: Id of the subscription.
         :type subscription_id: str
@@ -168,8 +166,7 @@ class SubscriptionsOperations(object):
 
     def list(
             self, custom_headers=None, raw=False, **operation_config):
-        """
-        Gets a list of the subscriptionIds.
+        """Gets a list of the subscriptionIds.
 
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the

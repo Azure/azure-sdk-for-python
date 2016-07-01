@@ -23,8 +23,7 @@ from msrest.serialization import Model
 
 
 class SubscriptionPolicies(Model):
-    """
-    Subscription policies.
+    """Subscription policies.
 
     :param location_placement_id: Gets or sets the subscription location
      placement Id.

@@ -23,8 +23,7 @@ from msrest.serialization import Model
 
 
 class FeatureResult(Model):
-    """
-    Previewed feature information.
+    """Previewed feature information.
 
     :param name: Gets or sets the name of the feature.
     :type name: str
