@@ -23,8 +23,7 @@ from msrest.serialization import Model
 
 
 class ManagementLockObject(Model):
-    """
-    Management lock information.
+    """Management lock information.
 
     :param level: Gets or sets the lock level of the management lock.
      Possible values include: 'NotSpecified', 'CanNotDelete', 'ReadOnly'

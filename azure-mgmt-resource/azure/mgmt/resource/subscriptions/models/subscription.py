@@ -23,8 +23,7 @@ from msrest.serialization import Model
 
 
 class Subscription(Model):
-    """
-    Subscription information.
+    """Subscription information.
 
     :param id: Gets or sets the ID of the resource
      (/subscriptions/SubscriptionId).

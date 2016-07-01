@@ -45,8 +45,7 @@ class ManagementLocksOperations(object):
 
     def create_or_update_at_resource_group_level(
             self, resource_group_name, lock_name, parameters, custom_headers=None, raw=False, **operation_config):
-        """
-        Create or update a management lock at the resource group level.
+        """Create or update a management lock at the resource group level.
 
         :param resource_group_name: The resource group name.
         :type resource_group_name: str
@@ -116,8 +115,7 @@ class ManagementLocksOperations(object):
 
     def create_or_update_at_resource_level(
             self, resource_group_name, resource_provider_namespace, parent_resource_path, resource_type, resource_name, lock_name, parameters, custom_headers=None, raw=False, **operation_config):
-        """
-        Create or update a management lock at the resource level or any level
+        """Create or update a management lock at the resource level or any level
         below resource.
 
         :param resource_group_name: The name of the resource group.
@@ -200,8 +198,7 @@ class ManagementLocksOperations(object):
 
     def delete_at_resource_level(
             self, resource_group_name, resource_provider_namespace, parent_resource_path, resource_type, resource_name, lock_name, custom_headers=None, raw=False, **operation_config):
-        """
-        Deletes the management lock of a resource or any level below resource.
+        """Deletes the management lock of a resource or any level below resource.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
@@ -266,8 +263,7 @@ class ManagementLocksOperations(object):
 
     def create_or_update_at_subscription_level(
             self, lock_name, parameters, custom_headers=None, raw=False, **operation_config):
-        """
-        Create or update a management lock at the subscription level.
+        """Create or update a management lock at the subscription level.
 
         :param lock_name: The name of lock.
         :type lock_name: str
@@ -334,8 +330,7 @@ class ManagementLocksOperations(object):
 
     def delete_at_subscription_level(
             self, lock_name, custom_headers=None, raw=False, **operation_config):
-        """
-        Deletes the management lock of a subscription.
+        """Deletes the management lock of a subscription.
 
         :param lock_name: The name of lock.
         :type lock_name: str
@@ -385,8 +380,7 @@ class ManagementLocksOperations(object):
 
     def get(
             self, lock_name, custom_headers=None, raw=False, **operation_config):
-        """
-        Gets the management lock of a scope.
+        """Gets the management lock of a scope.
 
         :param lock_name: Name of the management lock.
         :type lock_name: str
@@ -446,8 +440,7 @@ class ManagementLocksOperations(object):
 
     def delete_at_resource_group_level(
             self, resource_group, lock_name, custom_headers=None, raw=False, **operation_config):
-        """
-        Deletes the management lock of a resource group.
+        """Deletes the management lock of a resource group.
 
         :param resource_group: The resource group names.
         :type resource_group: str
@@ -500,8 +493,7 @@ class ManagementLocksOperations(object):
 
     def list_at_resource_group_level(
             self, resource_group_name, filter=None, custom_headers=None, raw=False, **operation_config):
-        """
-        Gets all the management locks of a resource group.
+        """Gets all the management locks of a resource group.
 
         :param resource_group_name: Resource group name.
         :type resource_group_name: str
@@ -570,8 +562,7 @@ class ManagementLocksOperations(object):
 
     def list_at_resource_level(
             self, resource_group_name, resource_provider_namespace, parent_resource_path, resource_type, resource_name, filter=None, custom_headers=None, raw=False, **operation_config):
-        """
-        Gets all the management locks of a resource or any level below
+        """Gets all the management locks of a resource or any level below
         resource.
 
         :param resource_group_name: The name of the resource group. The name
@@ -654,8 +645,7 @@ class ManagementLocksOperations(object):
 
     def list_next(
             self, next_link, custom_headers=None, raw=False, **operation_config):
-        """
-        Get a list of management locks at resource level or below.
+        """Get a list of management locks at resource level or below.
 
         :param next_link: NextLink from the previous successful call to List
          operation.
@@ -720,8 +710,7 @@ class ManagementLocksOperations(object):
 
     def list_at_subscription_level(
             self, filter=None, custom_headers=None, raw=False, **operation_config):
-        """
-        Gets all the management locks of a subscription.
+        """Gets all the management locks of a subscription.
 
         :param filter: The filter to apply on the operation.
         :type filter: str

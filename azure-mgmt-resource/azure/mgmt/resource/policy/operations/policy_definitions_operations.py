@@ -45,8 +45,7 @@ class PolicyDefinitionsOperations(object):
 
     def create_or_update(
             self, policy_definition_name, parameters, custom_headers=None, raw=False, **operation_config):
-        """
-        Create or update a policy definition.
+        """Create or update a policy definition.
 
         :param policy_definition_name: The policy definition name.
         :type policy_definition_name: str
@@ -111,8 +110,7 @@ class PolicyDefinitionsOperations(object):
 
     def delete(
             self, policy_definition_name, custom_headers=None, raw=False, **operation_config):
-        """
-        Deletes the policy definition.
+        """Deletes the policy definition.
 
         :param policy_definition_name: The policy definition name.
         :type policy_definition_name: str
@@ -162,8 +160,7 @@ class PolicyDefinitionsOperations(object):
 
     def get(
             self, policy_definition_name, custom_headers=None, raw=False, **operation_config):
-        """
-        Gets the policy definition.
+        """Gets the policy definition.
 
         :param policy_definition_name: The policy definition name.
         :type policy_definition_name: str
@@ -221,8 +218,7 @@ class PolicyDefinitionsOperations(object):
 
     def list(
             self, filter=None, custom_headers=None, raw=False, **operation_config):
-        """
-        Gets all the policy definitions of a subscription.
+        """Gets all the policy definitions of a subscription.
 
         :param filter: The filter to apply on the operation.
         :type filter: str

@@ -23,8 +23,7 @@ from msrest.serialization import Model
 
 
 class DeploymentExtendedFilter(Model):
-    """
-    Deployment filter.
+    """Deployment filter.
 
     :param provisioning_state: Gets or sets the provisioning state.
     :type provisioning_state: str
