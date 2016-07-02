@@ -63,7 +63,7 @@ class MgmtResourceTest(AzureMgmtTestCase):
 
         result_list_top = self.resource_client.resource_groups.list(top=2)
         result_list_top = result_list_top.next()
-        self.assertEquals(len(result_list_top), 2)
+        self.assertEqual(len(result_list_top), 2)
 
         params_patch = azure.mgmt.resource.resources.models.ResourceGroup(
             location=self.region,

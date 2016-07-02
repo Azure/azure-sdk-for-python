@@ -49,7 +49,7 @@ class MgmtRedisTest(AzureMgmtTestCase):
             self.group_name, 
             cache_name,
         )
-        self.assertEquals(result.name, cache_name)
+        self.assertEqual(result.name, cache_name)
 
 
 
