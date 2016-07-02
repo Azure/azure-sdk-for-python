@@ -1,0 +1,26 @@
+environment:
+  matrix:
+    - PYTHON: "C:\\Python27"
+    - PYTHON: "C:\\Python33"
+    - PYTHON: "C:\\Python34"
+    - PYTHON: "C:\\Python35"
+    - PYTHON: "C:\\Python27-x64"
+    - PYTHON: "C:\\Python35-x64"
+
+install:
+  - "%PYTHON%\\python.exe -m pip install -U pip"
+  - "%PYTHON%\\python.exe -m pip install -r requirements.txt"
+  - "%PYTHON%\\python.exe -m pip install azure-storage"
+  - "%PYTHON%\\python.exe -m pip uninstall -y azure-common"
+
+build: off
+
+test_script:
+  - cd azure-servicebus/tests
+  - run-servicebus.bat %PYTHON%
+  - cd ../..
+  - cd azure-servicemanagement-legacy/tests
+  - run-legacy-mgmt.bat %PYTHON%
+  - cd ../..
+  - cd azure-mgmt/tests
+  - run-mgmt.bat %PYTHON%
