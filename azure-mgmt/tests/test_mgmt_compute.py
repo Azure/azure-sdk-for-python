@@ -209,13 +209,13 @@ class MgmtComputeTest(AzureMgmtTestCase):
             params_create,
         )
         vm_result = result_create.result()
-        self.assertEquals(vm_result.name, names.vm)
+        self.assertEqual(vm_result.name, names.vm)
         
         result_get = self.compute_client.virtual_machines.get(
             self.group_name,
             names.vm
         )
-        self.assertEquals(result_get.name, names.vm)
+        self.assertEqual(result_get.name, names.vm)
         self.assertIsNone(result_get.instance_view)
         result_iv = self.compute_client.virtual_machines.get(
             self.group_name,
