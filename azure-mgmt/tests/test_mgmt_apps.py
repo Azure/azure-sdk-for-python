@@ -34,7 +34,51 @@ class MgmtAppsTest(AzureMgmtTestCase):
             azure.mgmt.web.WebSiteManagementClient
         )
 
-    @unittest.skipIf(msrest_version.startswith("0.1."), "Fixed in msrest 0.2.0")
+    @record
+    def test_webapp(self):
+        self.create_resource_group()
+
+        app_service_plan_name = self.get_resource_name('pyarmappserviceplan')
+        site_name = self.get_resource_name('pyarmsite')
+
+        server_farm_async_operation = self.web_client.server_farms.create_or_update_server_farm(
+            self.group_name,
+            app_service_plan_name,
+            azure.mgmt.web.models.ServerFarmWithRichSku(
+                location=self.region,
+                sku=azure.mgmt.web.models.SkuDescription(
+                    name='S1',
+                    capacity=1,
+                    tier='Standard'
+                )
+            )
+        )
+        server_farm = server_farm_async_operation.result()
+
+        # Create a Site to be hosted in the Server Farm
+        site_async_operation = self.web_client.sites.create_or_update_site(
+            self.group_name,
+            site_name,
+            azure.mgmt.web.models.Site(
+                location=self.region,
+                server_farm_id=server_farm.id
+            )
+        )
+        site = site_async_operation.result()
+        self.assertEquals(site.name, site_name)
+
+        # List Sites by Resource Group
+        for site in self.web_client.sites.get_sites(self.group_name).value:
+            self.assertIsNotNone(site)
+
+        # Get a single Site
+        site = self.web_client.sites.get_site(self.group_name, site_name)
+        self.assertIsNotNone(site)
+
+        # Delete a Site
+        self.web_client.sites.delete_site(self.group_name, site_name)
+
+
     @record
     def test_logic(self):
         self.create_resource_group()
