@@ -177,7 +177,7 @@ class MgmtComputeTest(AzureMgmtTestCase):
         )
 
     @record
-    def test_vms_with_image_reference(self):
+    def test_virtual_machines_operations(self):
         self.create_resource_group()
 
         names = self.get_resource_names('pyvmir')
@@ -191,8 +191,8 @@ class MgmtComputeTest(AzureMgmtTestCase):
         storage_profile.image_reference = azure.mgmt.compute.models.ImageReference(
             publisher='Canonical',
             offer='UbuntuServer',
-            sku='15.10',
-            version='15.10.201603150',
+            sku='16.04.0-LTS',
+            version='latest'
         )
 
         params_create = azure.mgmt.compute.models.VirtualMachine(
@@ -203,6 +203,7 @@ class MgmtComputeTest(AzureMgmtTestCase):
             storage_profile=storage_profile,
         )
 
+        # Create VM test
         result_create = self.compute_client.virtual_machines.create_or_update(
             self.group_name,
             names.vm,
@@ -211,12 +212,15 @@ class MgmtComputeTest(AzureMgmtTestCase):
         vm_result = result_create.result()
         self.assertEquals(vm_result.name, names.vm)
         
+        # Get by name
         result_get = self.compute_client.virtual_machines.get(
             self.group_name,
             names.vm
         )
         self.assertEquals(result_get.name, names.vm)
         self.assertIsNone(result_get.instance_view)
+
+        # Get instanceView
         result_iv = self.compute_client.virtual_machines.get(
             self.group_name,
             names.vm,
@@ -224,6 +228,29 @@ class MgmtComputeTest(AzureMgmtTestCase):
         )
         self.assertTrue(result_iv.instance_view)
 
+        # Deallocate
+        async_vm_deallocate = self.compute_client.virtual_machines.deallocate(self.group_name, names.vm)
+        async_vm_deallocate.wait()
+
+        # Start VM
+        async_vm_start =self.compute_client.virtual_machines.start(self.group_name, names.vm)
+        async_vm_start.wait()
+
+        # Restart VM
+        async_vm_restart = self.compute_client.virtual_machines.restart(self.group_name, names.vm)
+        async_vm_restart.wait()
+
+        # Stop VM
+        async_vm_stop = self.compute_client.virtual_machines.power_off(self.group_name, names.vm)
+        async_vm_stop.wait()
+
+        # List in resouce group
+        vms_rg = list(self.compute_client.virtual_machines.list(self.group_name))
+        self.assertEqual(len(vms_rg), 1)
+
+        # Delete
+        async_vm_delete = self.compute_client.virtual_machines.delete(self.group_name, names.vm)
+        async_vm_delete.wait()
 
     @unittest.skip("reference_uri seems to be not supported in new ARM")
     @record
