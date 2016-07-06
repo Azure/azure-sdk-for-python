@@ -63,16 +63,14 @@ describe 'Security Rules' do
   def build_security_rule_params
     params = SecurityRule.new
     params.name = 'sec_rule_7428'
-    props = SecurityRulePropertiesFormat.new
-    params.properties = props
-    props.access = 'Deny'
-    props.destination_address_prefix = '*'
-    props.destination_port_range = '123-3500'
-    props.direction = 'Outbound'
-    props.priority = 4095
-    props.protocol = 'Udp'
-    props.source_address_prefix = '*'
-    props.source_port_range = '656'
+    params.access = 'Deny'
+    params.destination_address_prefix = '*'
+    params.destination_port_range = '123-3500'
+    params.direction = 'Outbound'
+    params.priority = 4095
+    params.protocol = 'Udp'
+    params.source_address_prefix = '*'
+    params.source_port_range = '656'
     params
   end
 end

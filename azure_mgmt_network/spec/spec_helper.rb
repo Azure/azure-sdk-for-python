@@ -57,22 +57,22 @@ class ResourceHelper
   end
 
   def build_virtual_network_params(location)
-    params = VirtualNetwork.new
-    props = VirtualNetworkPropertiesFormat.new
-    params.location = location
     address_space = AddressSpace.new
     address_space.address_prefixes = ['10.0.0.0/16']
-    props.address_space = address_space
+
     dhcp_options = DhcpOptions.new
     dhcp_options.dns_servers = %w(10.1.1.1 10.1.2.4)
-    props.dhcp_options = dhcp_options
+
     sub2 = Subnet.new
-    sub2_prop = SubnetPropertiesFormat.new
     sub2.name = 'subnet1234'
-    sub2_prop.address_prefix = '10.0.2.0/24'
-    sub2.properties = sub2_prop
-    props.subnets = [sub2]
-    params.properties = props
+    sub2.address_prefix = '10.0.2.0/24'
+
+    params = VirtualNetwork.new
+    params.location = location
+    params.address_space = address_space
+    params.dhcp_options = dhcp_options
+    params.subnets = [sub2]
+
     params
   end
 
@@ -90,9 +90,7 @@ class ResourceHelper
 
   def build_subnet_params
     params = Subnet.new
-    prop = SubnetPropertiesFormat.new
-    params.properties = prop
-    prop.address_prefix = '10.0.1.0/24'
+    params.address_prefix = '10.0.1.0/24'
     params
   end
 
@@ -106,11 +104,9 @@ class ResourceHelper
     params = LocalNetworkGateway.new
     params.location = location
     params.name = 'local_gateway2579'
-    props = LocalNetworkGatewayPropertiesFormat.new
-    params.properties = props
-    props.gateway_ip_address = "192.168.3.7"
+    params.gateway_ip_address = "192.168.3.7"
     address_space = AddressSpace.new
-    props.local_network_address_space = address_space
+    params.local_network_address_space = address_space
     address_space.address_prefixes = %w(192.168.0.0/16)
     params
   end
@@ -162,13 +158,11 @@ class ResourceHelper
   def build_public_ip_params(location)
     public_ip = PublicIPAddress.new
     public_ip.location = location
-    props = PublicIPAddressPropertiesFormat.new
-    props.public_ipallocation_method = 'Dynamic'
-    public_ip.properties = props
+    public_ip.public_ipallocation_method = 'Dynamic'
     domain_name = 'domain734843'
     dns_settings = PublicIPAddressDnsSettings.new
     dns_settings.domain_name_label = domain_name
-    props.dns_settings = dns_settings
+    public_ip.dns_settings = dns_settings
     public_ip
   end
 
