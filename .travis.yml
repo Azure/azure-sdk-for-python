@@ -6,7 +6,7 @@ rvm:
 - 2.2.0
 - 2.3.0
 script:
-- cd resource_management && bundle install
+- bundle install
 - if [ "$INTEG_RECORDED" == "true" ] ; then rake arm:spec ; fi
 deploy:
   provider: script

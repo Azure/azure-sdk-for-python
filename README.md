@@ -3,7 +3,7 @@
 [![Build Status](https://travis-ci.org/Azure/azure-sdk-ruby.png?branch=master)](https://travis-ci.org/Azure/azure-sdk-ruby) [![Code Climate](https://codeclimate.com/github/Azure/azure-sdk-ruby/badges/gpa.svg)](https://codeclimate.com/github/Azure/azure-sdk-ruby)
 
 This project provides a Ruby package for Azure Resource Management (ARM).
-If you're looking for Azure Service Management (ASM) please refer to this [repo](https://github.com/Azure/azure-sdk-for-ruby/tree/master/service_management)
+If you're looking for Azure Service Management (ASM) please refer to this [repo](https://github.com/Azure/azure-sdk-for-ruby)
 
 Additional info on Azure deployment models [https://azure.microsoft.com/en-us/documentation/articles/azure-classic-rm/](https://azure.microsoft.com/en-us/documentation/articles/azure-classic-rm/)
 
@@ -26,12 +26,12 @@ Additional info on Azure deployment models [https://azure.microsoft.com/en-us/do
 * [WebApps](https://rubygems.org/gems/azure_mgmt_web) Manage WebApps, formally known as WebSites
 
 ## Azure Services
-* [Storage](https://github.com/Azure/azure-sdk-for-ruby/blob/master/service_management/README.md#storage)
+* [Storage](https://github.com/Azure/azure-sdk-for-ruby/blob/master/README.md#storage)
  Azure Storage is now availabe in its own preview gem and GitHub [repo](https://github.com/Azure/azure-storage-ruby)
-* [Service Bus](https://github.com/Azure/azure-sdk-for-ruby/blob/master/service_management/README.md#service-bus)
-    * [Relays](https://github.com/Azure/azure-sdk-for-ruby/blob/master/service_management/README.md#relays)
-    * [Queues](https://github.com/Azure/azure-sdk-for-ruby/blob/master/service_management/README.md#sb-queues)
-    * [Topics](https://github.com/Azure/azure-sdk-for-ruby/blob/master/service_management/README.md#topics)
+* [Service Bus](https://github.com/Azure/azure-sdk-for-ruby/blob/master/README.md#usage)
+    * [Relays](https://github.com/Azure/azure-sdk-for-ruby/blob/master/README.md#relays)
+    * [Topics](https://github.com/Azure/azure-sdk-for-ruby/blob/master/README.md#topics)
+    * Queues
 
 # Supported Ruby Versions
 
@@ -77,8 +77,8 @@ After creating the service principal, you should have three pieces of informatio
 
 ### Getting Started Samples
 The tests for the libraries should provide a good example of how to get started with the clients. You can also see the
-readme for each of the libraries [Compute](resource_management/azure_mgmt_compute),
-[Network](resource_management/azure_mgmt_network), [Storage](resource_management/azure_mgmt_storage), or [Resources](resource_management/azure_mgmt_resources).
+readme for each of the libraries [Compute](azure_mgmt_compute),
+[Network](azure_mgmt_network), [Storage](azure_mgmt_storage), or [Resources](azure_mgmt_resources).
 
 # Contribute Code or Provide Feedback
 
@@ -99,10 +99,6 @@ To get the source code of the SDK via **git** just type:
 git clone https://github.com/Azure/azure-sdk-ruby.git
 cd ./azure-sdk-ruby
 ```
-Move to the folder containing Gemfile
-```bash
-cd resource_management
-```
 Then, run bundler to install all the gem dependencies:
 
 ```bash
@@ -115,7 +111,6 @@ bundle install
 
 ### Re-Record Integration Tests
  * Set the environment variable ``INTEG_RECORDED = false`` or un-set it
- * Move into ``resource_management`` folder
  * Copy .env_sample to .env
  * Update .env with your Azure credentials **.env is in the .gitignore, so should only reside locally**
  * Run specific test using ``rspec``
