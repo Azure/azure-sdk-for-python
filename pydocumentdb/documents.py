@@ -3,6 +3,7 @@
 """AzureDocument classes and enums.
 """
 
+import pydocumentdb.retry_options as retry_options
 
 class DatabaseAccount(object):
     """Database account. A DatabaseAccount is the container for databases.
@@ -291,21 +292,9 @@ class ConnectionPolicy(object):
         self.MediaReadMode = MediaReadMode.Buffered
         self.SSLConfiguration = None
         self.ProxyConfiguration = None
-        self.EnableEndpointDiscovery = True;
+        self.EnableEndpointDiscovery = True
         self.PreferredLocations = []
-
-
-class RetryPolicy(object):
-    """The retry policy.
-
-    :Attributes:
-        - `MaxRetryAttemptsOnRequest`: int, the max retry attempts on request.
-        - `MaxRetryAttemptsOnQuery`: int, the max retry attempts on query.
-    """
-    def __init__(self):
-        self.MaxRetryAttemptsOnRequest = 0
-        self.MaxRetryAttemptsOnQuery = 3
-
+        self.RetryOptions = retry_options.RetryOptions()
 
 class Undefined(object):
     """Represents undefined value for partitionKey when it's mising.

@@ -3504,6 +3504,8 @@ class CRUDTests(unittest.TestCase):
         self.__ValidateOfferResponseBody(expected_offer, collection.get('_self'), None)
         # Replace the offer.
         offer_to_replace = dict(expected_offer)
+        # Now, by default the offerVersion is V2, so if we are replacing an offer if one of the legacy values, we need to update the offerVersion as well
+        offer_to_replace['offerVersion'] = 'V1'
         offer_to_replace['offerType'] = 'S2'
         replaced_offer = client.ReplaceOffer(offer_to_replace['_self'], offer_to_replace)
         self.__ValidateOfferResponseBody(replaced_offer, collection.get('_self'), 'S2')

@@ -25,20 +25,20 @@ Welcome to DocumentDB.
 
 2) Testing:
 
-Some of the test files such as [crud_tests.py](https://github.com/Azure/azure-documentdb-python/blob/master/test/crud_tests.py) require you to enter your Azure DocumentDB master key and host endpoint in that file: 
+Most of the test files under test sub-folder require you to enter your Azure DocumentDB master key and host endpoint: 
     
     masterKey = '[YOUR_KEY_HERE]'
     host = '[YOUR_ENDPOINT_HERE]'
 
 To run the tests:
 
-    $ python test/crud_tests.py 
+    $ python -m unittest discover -s .\test -p "*.py" 
 
     If you use Microsoft Visual Studio, open the project file python.pyproj,
-    and press F5. 
+    and run all the tests in Test Explorer.
 
 **Note:**  
-Test cases in [crud_tests.py](https://github.com/Azure/azure-documentdb-python/blob/master/test/crud_tests.py) create collections in your DocumentDB account. Collections are billing entities. By running these test cases, you may incur monetary costs on your account.
+Most of the test cases create collections in your DocumentDB account. Collections are billing entities. By running these test cases, you may incur monetary costs on your account.
   
 
 3) To generate documentations:

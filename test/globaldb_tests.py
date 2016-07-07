@@ -31,7 +31,7 @@ import pydocumentdb.http_constants as http_constants
 import pydocumentdb.constants as constants
 import pydocumentdb.global_endpoint_manager as global_endpoint_manager
 import pydocumentdb.endpoint_discovery_retry_policy as endpoint_discovery_retry_policy
-
+import pydocumentdb.retry_utility as retry_utility
 
 
 #IMPORTANT NOTES: 
@@ -346,8 +346,8 @@ class Test_globaldb_tests(unittest.TestCase):
     def test_globaldb_endpoint_discovery_retry_policy_mock(self):
         client = document_client.DocumentClient(Test_globaldb_tests.host, {'masterKey': Test_globaldb_tests.masterKey})
 
-        self.OriginalExecuteFunction = endpoint_discovery_retry_policy._ExecuteFunction
-        endpoint_discovery_retry_policy._ExecuteFunction = self._MockExecuteFunction
+        self.OriginalExecuteFunction = retry_utility._ExecuteFunction
+        retry_utility._ExecuteFunction = self._MockExecuteFunction
 
         self.OriginalGetDatabaseAccount = client.GetDatabaseAccount
         client.GetDatabaseAccount = self._MockGetDatabaseAccount
@@ -369,7 +369,7 @@ class Test_globaldb_tests(unittest.TestCase):
             self.test_coll['_self'],
             document_definition)
 
-        endpoint_discovery_retry_policy._ExecuteFunction = self.OriginalExecuteFunction
+        retry_utility._ExecuteFunction = self.OriginalExecuteFunction
 
     def _MockExecuteFunction(self, function, *args, **kwargs):
         raise errors.HTTPFailure(403, "Write Forbidden", {'x-ms-substatus' : 3})
