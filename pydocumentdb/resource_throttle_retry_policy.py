@@ -19,25 +19,17 @@
 #OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 #SOFTWARE.
 
-import logging
+import pydocumentdb.http_constants as http_constants
 
-class _EndpointDiscoveryRetryPolicy(object):
-    """The endpoint discovery retry policy class used for geo-replicated database accounts
-       to handle the write forbidden exceptions due to writable/readable location changes
-       (say, after a failover).
-    """
+class _ResourceThrottleRetryPolicy(object):
+    THROTTLE_STATUS_CODE = 429
 
-    Max_retry_attempt_count = 120
-    Retry_after_in_milliseconds = 1000
-    FORBIDDEN_STATUS_CODE = 403
-    WRITE_FORBIDDEN_SUB_STATUS_CODE = 3
-
-    def __init__(self, global_endpoint_manager):
-        self.global_endpoint_manager = global_endpoint_manager
-        self._max_retry_attempt_count = _EndpointDiscoveryRetryPolicy.Max_retry_attempt_count
+    def __init__(self, max_retry_attempt_count, fixed_retry_interval_in_milliseconds, max_wait_time_in_seconds):
+        self._max_retry_attempt_count = max_retry_attempt_count
+        self._fixed_retry_interval_in_milliseconds = fixed_retry_interval_in_milliseconds
+        self._max_wait_time_in_milliseconds = max_wait_time_in_seconds * 1000
         self.current_retry_attempt_count = 0
-        self.retry_after_in_milliseconds = _EndpointDiscoveryRetryPolicy.Retry_after_in_milliseconds
-        logging.basicConfig(format='%(levelname)s:%(message)s', level=logging.INFO)
+        self.cummulative_wait_time_in_milliseconds = 0
 
     def ShouldRetry(self, exception):
         """Returns true if should retry based on the passed-in exception.
@@ -49,12 +41,18 @@ class _EndpointDiscoveryRetryPolicy(object):
             boolean
 
         """
-        if self.current_retry_attempt_count < self._max_retry_attempt_count and self.global_endpoint_manager.EnableEndpointDiscovery:
+        if self.current_retry_attempt_count < self._max_retry_attempt_count:
             self.current_retry_attempt_count += 1
-            logging.info('Write location was changed, refreshing the locations list from database account and will retry the request.')
-
-            # Refresh the endpoint list to refresh the new writable and readable locations
-            self.global_endpoint_manager.RefreshEndpointList()
-            return True
-        else:
-            return False
+            self.retry_after_in_milliseconds = 0
+                
+            if self._fixed_retry_interval_in_milliseconds:
+                self.retry_after_in_milliseconds = self._fixed_retry_interval_in_milliseconds
+            elif http_constants.HttpHeaders.RetryAfterInMilliseconds in exception.headers:
+                self.retry_after_in_milliseconds = int(exception.headers[http_constants.HttpHeaders.RetryAfterInMilliseconds])
+                
+            if self.cummulative_wait_time_in_milliseconds < self._max_wait_time_in_milliseconds:
+                self.cummulative_wait_time_in_milliseconds += self.retry_after_in_milliseconds
+                return True
+            
+        return False
+    

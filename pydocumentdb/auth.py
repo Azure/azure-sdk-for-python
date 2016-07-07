@@ -103,7 +103,9 @@ def __GetAuthorizationTokenUsingResourceTokens(resource_tokens,
         if resource_tokens.get(resource_id_or_fullname):
             return resource_tokens[resource_id_or_fullname]
         else:
-            path_parts = path.split('/')
+            path_parts = []
+            if path:
+                path_parts = path.split('/')
             resource_types = ['dbs', 'colls', 'docs', 'sprocs', 'udfs', 'triggers',
                               'users', 'permissions', 'attachments', 'media',
                               'conflicts', 'offers']

@@ -80,8 +80,6 @@ class DocumentClient(object):
         self.connection_policy = (connection_policy or
                                   documents.ConnectionPolicy())
 
-        self.retry_policy = documents.RetryPolicy()
-        
         self.partition_resolvers = {}
 
         self.partition_key_definition_cache = {}
@@ -225,7 +223,7 @@ class DocumentClient(object):
                                     lambda _, b: b,
                                     query,
                                     options), self.last_response_headers
-        return query_iterable.QueryIterable(options, self.retry_policy, fetch_fn)
+        return query_iterable.QueryIterable(self, options, fetch_fn)
 
     def ReadCollections(self, database_link, options=None):
         """Reads all collections in a database.
@@ -268,7 +266,7 @@ class DocumentClient(object):
                                     lambda _, body: body,
                                     query,
                                     options), self.last_response_headers
-        return query_iterable.QueryIterable(options, self.retry_policy, fetch_fn)
+        return query_iterable.QueryIterable(self, options, fetch_fn)
 
     def CreateCollection(self, database_link, collection, options=None):
         """Creates a collection in a database.
@@ -453,7 +451,7 @@ class DocumentClient(object):
                                     lambda _, b: b,
                                     query,
                                     options), self.last_response_headers
-        return query_iterable.QueryIterable(options, self.retry_policy, fetch_fn)
+        return query_iterable.QueryIterable(self, options, fetch_fn)
 
     def DeleteDatabase(self, database_link, options=None):
         """Deletes a database.
@@ -593,7 +591,7 @@ class DocumentClient(object):
                                     lambda _, b: b,
                                     query,
                                     options), self.last_response_headers
-        return query_iterable.QueryIterable(options, self.retry_policy, fetch_fn)
+        return query_iterable.QueryIterable(self, options, fetch_fn)
 
     def ReplaceUser(self, user_link, user, options=None):
         """Replaces a user and return it.
@@ -723,7 +721,7 @@ class DocumentClient(object):
 
         if(base.IsDatabaseLink(database_or_collection_link)):
             # Python doesn't have a good way of specifying an overloaded constructor, and this is how it's generally overloaded constructors are specified(by calling a @classmethod) and returning the 'self' instance
-            return query_iterable.QueryIterable.PartitioningQueryIterable(self, options, self.retry_policy, database_or_collection_link, query, partition_key)
+            return query_iterable.QueryIterable.PartitioningQueryIterable(self, options, database_or_collection_link, query, partition_key)
         else:    
             path = base.GetPathFromLink(database_or_collection_link, 'docs')
             collection_id = base.GetResourceIdOrFullNameFromLink(database_or_collection_link)
@@ -735,7 +733,7 @@ class DocumentClient(object):
                                         lambda _, b: b,
                                         query,
                                         options), self.last_response_headers
-            return query_iterable.QueryIterable(options, self.retry_policy, fetch_fn)
+            return query_iterable.QueryIterable(self, options, fetch_fn)
 
     def CreateDocument(self, database_or_collection_link, document, options=None):
         """Creates a document in a collection.
@@ -899,7 +897,7 @@ class DocumentClient(object):
                                     lambda _, b: b,
                                     query,
                                     options), self.last_response_headers
-        return query_iterable.QueryIterable(options, self.retry_policy, fetch_fn)
+        return query_iterable.QueryIterable(self, options, fetch_fn)
 
     def CreateTrigger(self, collection_link, trigger, options=None):
         """Creates a trigger in a collection.
@@ -1019,7 +1017,7 @@ class DocumentClient(object):
                                     lambda _, b: b,
                                     query,
                                     options), self.last_response_headers
-        return query_iterable.QueryIterable(options, self.retry_policy, fetch_fn)
+        return query_iterable.QueryIterable(self, options, fetch_fn)
 
     def CreateUserDefinedFunction(self, collection_link, udf, options=None):
         """Creates a user defined function in a collection.
@@ -1139,7 +1137,7 @@ class DocumentClient(object):
                                     lambda _, b: b,
                                     query,
                                     options), self.last_response_headers
-        return query_iterable.QueryIterable(options, self.retry_policy, fetch_fn)
+        return query_iterable.QueryIterable(self, options, fetch_fn)
 
     def CreateStoredProcedure(self, collection_link, sproc, options=None):
         """Creates a stored procedure in a collection.
@@ -1258,7 +1256,7 @@ class DocumentClient(object):
                                     lambda _, b: b,
                                     query,
                                     options), self.last_response_headers
-        return query_iterable.QueryIterable(options, self.retry_policy, fetch_fn)
+        return query_iterable.QueryIterable(self, options, fetch_fn)
 
     def ReadConflict(self, conflict_link, options=None):
         """Reads a conflict.
@@ -1547,7 +1545,7 @@ class DocumentClient(object):
                                     lambda _, b: b,
                                     query,
                                     options), self.last_response_headers
-        return query_iterable.QueryIterable(options, self.retry_policy, fetch_fn)
+        return query_iterable.QueryIterable(self, options, fetch_fn)
 
 
     def ReadMedia(self, media_link):
@@ -1970,7 +1968,7 @@ class DocumentClient(object):
                                     lambda _, b: b,
                                     query,
                                     options), self.last_response_headers
-        return query_iterable.QueryIterable(options, self.retry_policy, fetch_fn)
+        return query_iterable.QueryIterable(self, options, fetch_fn)
 
     def GetDatabaseAccount(self, url_connection=None):
         """Gets database account info.
@@ -2197,7 +2195,8 @@ class DocumentClient(object):
             dicts
 
         """
-        return synchronized_request.SynchronizedRequest(self._global_endpoint_manager,
+        return synchronized_request.SynchronizedRequest(self,
+                                                        self._global_endpoint_manager,
                                                         self.connection_policy,
                                                         'GET',
                                                         url,
@@ -2220,7 +2219,8 @@ class DocumentClient(object):
             dicts
 
         """
-        return synchronized_request.SynchronizedRequest(self._global_endpoint_manager,
+        return synchronized_request.SynchronizedRequest(self,
+                                                        self._global_endpoint_manager,
                                                         self.connection_policy,
                                                         'POST',
                                                         url,
@@ -2243,7 +2243,8 @@ class DocumentClient(object):
             dicts
 
         """
-        return synchronized_request.SynchronizedRequest(self._global_endpoint_manager,
+        return synchronized_request.SynchronizedRequest(self,
+                                                        self._global_endpoint_manager,
                                                         self.connection_policy,
                                                         'PUT',
                                                         url,
@@ -2265,7 +2266,8 @@ class DocumentClient(object):
             dicts
 
         """
-        return synchronized_request.SynchronizedRequest(self._global_endpoint_manager,
+        return synchronized_request.SynchronizedRequest(self,
+                                                        self._global_endpoint_manager,
                                                         self.connection_policy,
                                                         'DELETE',
                                                         url,

@@ -9,7 +9,7 @@ import pydocumentdb.errors as errors
 import pydocumentdb.http_constants as http_constants
 import pydocumentdb.constants as constants
 import pydocumentdb.global_endpoint_manager as global_endpoint_manager
-import pydocumentdb.endpoint_discovery_retry_policy as endpoint_discovery_retry_policy
+import pydocumentdb.retry_utility as retry_utility
 
 location_changed = False
 
@@ -101,7 +101,7 @@ class Test_globaldb_mock_tests(unittest.TestCase):
         # Copying the original objects and functions before assigning the mock versions of them
         self.OriginalGetDatabaseAccountStub = global_endpoint_manager._GlobalEndpointManager._GetDatabaseAccountStub
         self.OriginalGlobalEndpointManager = global_endpoint_manager._GlobalEndpointManager
-        self.OriginalExecuteFunction = endpoint_discovery_retry_policy._ExecuteFunction
+        self.OriginalExecuteFunction = retry_utility._ExecuteFunction
 
         # Make pydocumentdb use the MockGlobalEndpointManager
         global_endpoint_manager._GlobalEndpointManager = MockGlobalEndpointManager
@@ -110,13 +110,13 @@ class Test_globaldb_mock_tests(unittest.TestCase):
         # Restoring the original objects and functions
         global_endpoint_manager._GlobalEndpointManager = self.OriginalGlobalEndpointManager
         global_endpoint_manager._GlobalEndpointManager._GetDatabaseAccountStub = self.OriginalGetDatabaseAccountStub
-        endpoint_discovery_retry_policy._ExecuteFunction = self.OriginalExecuteFunction
+        retry_utility._ExecuteFunction = self.OriginalExecuteFunction
     
     def MockExecuteFunction(self, function, *args, **kwargs):
         global location_changed
 
         if self.endpoint_discovery_retry_count == 2:
-            endpoint_discovery_retry_policy._ExecuteFunction = self.OriginalExecuteFunction
+            retry_utility._ExecuteFunction = self.OriginalExecuteFunction
             return (json.dumps([{ 'id': 'mock database' }]), None)
         else:
             self.endpoint_discovery_retry_count += 1
@@ -127,8 +127,8 @@ class Test_globaldb_mock_tests(unittest.TestCase):
         raise errors.HTTPFailure(503, "Service unavailable")
     
     def MockCreateDatabase(self, client, database):
-        self.OriginalExecuteFunction = endpoint_discovery_retry_policy._ExecuteFunction
-        endpoint_discovery_retry_policy._ExecuteFunction = self.MockExecuteFunction
+        self.OriginalExecuteFunction = retry_utility._ExecuteFunction
+        retry_utility._ExecuteFunction = self.MockExecuteFunction
         client.CreateDatabase(database)
 
     def test_globaldb_endpoint_discovery_retry_policy(self):

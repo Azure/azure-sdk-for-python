@@ -11,7 +11,7 @@ import pydocumentdb.documents as documents
 import pydocumentdb.errors as errors
 import pydocumentdb.http_constants as http_constants
 import pydocumentdb.https_connection as https_connection
-import pydocumentdb.endpoint_discovery_retry_policy as endpoint_discovery_retry_policy
+import pydocumentdb.retry_utility as retry_utility
 
 
 def _IsReadableStream(obj):
@@ -112,7 +112,8 @@ def _InternalRequest(connection_policy, request_options, request_body):
     return (result, headers)
 
 
-def SynchronizedRequest(global_endpoint_manager,
+def SynchronizedRequest(client,
+                        global_endpoint_manager,
                         connection_policy,
                         method,
                         base_url,
@@ -123,6 +124,7 @@ def SynchronizedRequest(global_endpoint_manager,
     """Performs one synchronized http request according to the parameters.
 
     :Parameters:
+        - `client`: object, document client instance
         - `global_endpoint_manager`: _GlobalEndpointManager
         - `connection_policy`: documents.ConnectionPolicy
         - `method`: str
@@ -162,7 +164,6 @@ def SynchronizedRequest(global_endpoint_manager,
             len(request_body))
     elif request_body == None:
         request_options['headers'][http_constants.HttpHeaders.ContentLength] = 0
-    # wrap the call to _InternalRequest with endpoint discovery retry policy that retries on write-forbidden exception(403.3)
-    retry_policy = endpoint_discovery_retry_policy._EndpointDiscoveryRetryPolicy(global_endpoint_manager)
-    return endpoint_discovery_retry_policy._Execute(retry_policy, _InternalRequest, connection_policy, request_options, request_body)
+    # Pass _InternalRequest function with it's parameters to retry_utility's Execute method that wraps the call with retries
+    return retry_utility._Execute(client, global_endpoint_manager, _InternalRequest, connection_policy, request_options, request_body)
 

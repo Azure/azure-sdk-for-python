@@ -147,6 +147,10 @@ class HttpHeaders:
     IndexTransformationProgress = 'x-ms-documentdb-collection-index-transformation-progress'
     LazyIndexingProgress = 'x-ms-documentdb-collection-lazy-indexing-progress'
 
+    # Client generated retry count response header
+    ThrottleRetryCount = 'x-ms-throttle-retry-count'
+    ThrottleRetryWaitTimeInMs = 'x-ms-throttle-retry-wait-time-ms'
+
 class HttpHeaderPreferenceTokens:
     """Constants of http header preference tokens.
     """
@@ -209,7 +213,7 @@ class Versions:
     """Constants of versions.
     """
     CurrentVersion = '2016-05-30'
-    UserAgent = 'documentdb-python-sdk-1.8.0'
+    UserAgent = 'documentdb-python-sdk-1.9.0'
 
 
 class Delimiters:

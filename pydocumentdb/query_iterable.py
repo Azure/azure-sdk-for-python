@@ -4,20 +4,19 @@
 """
 
 import pydocumentdb.base as base
-import pydocumentdb.backoff_retry_utility as backoff_retry_utility
-import pydocumentdb.errors as errors
 import pydocumentdb.http_constants as http_constants
+import pydocumentdb.retry_utility as retry_utility
 
 
 class QueryIterable(object):
     """Represents an iterable object of the query results.
     """
     
-    def __init__(self, options, retry_policy, fetch_function):
+    def __init__(self, client, options, fetch_function):
         """
         :Parameters:
+            - `client`: object, document client instance
             - `options`: dict, the request options for the request.
-            - `retry_policy`: documents.RetryPolicy, retry policy to be used
             - `fetch_function`: function, for executing the feed query
 
         Example of `fetch_function`:
@@ -26,26 +25,25 @@ class QueryIterable(object):
         >>>     return result['Databases']
 
         """
+        self._client = client
         self._options = options
         self._fetch_function = fetch_function
+        self.retry_options = client.connection_policy.RetryOptions;
         self._results = []
         self._continuation = None
         self._has_started = False
-        self._retry_policy = retry_policy
         
-        self._client = None
         self._current_collection_index = 0
         self._collection_links = []
         self._collection_links_length = 0
 
 
     @classmethod
-    def PartitioningQueryIterable(cls, client, options, retry_policy, database_link, query, partition_key):
+    def PartitioningQueryIterable(cls, client, options, database_link, query, partition_key):
         """
         :Parameters:
             - `client`: DocumentClient, instance of document client
             - `options`: dict, the request options for the request.
-            - `retry_policy`: documents.RetryPolicy, retry policy to be used
             - `database_link`: str, database self link or ID based link
             - `query`: str or dict
             - `partition_key`: str, partition key for the query
@@ -58,10 +56,9 @@ class QueryIterable(object):
         """
         
         # This will call the base constructor(__init__ method above)
-        self = cls(options, retry_policy, None)
+        self = cls(client, options, None)
 
         self._query = query
-        self._client = client
 
         partition_resolver = client.GetPartitionResolver(database_link)
         
@@ -104,9 +101,6 @@ class QueryIterable(object):
             self._iterable = iterable
             self._finished = False
             self._current = 0
-            self._resource_throttle_retry_policy = (
-                backoff_retry_utility.ResourceThrottleRetryPolicy(
-                    self._iterable._retry_policy.MaxRetryAttemptsOnQuery))
             self._iterable._results = []
             self._iterable._continuation = None
             self._iterable._has_started = False
@@ -126,8 +120,7 @@ class QueryIterable(object):
 
             if (self._current >= len(self._iterable._results) and
                     not self._finished):
-                backoff_retry_utility.Execute(
-                    callback, self._resource_throttle_retry_policy)
+                retry_utility._Execute(self._iterable._client, self._iterable._client._global_endpoint_manager, callback)
                 self._current = 0
 
             if self._finished:
