@@ -436,19 +436,6 @@ class MgmtComputeTest(AzureMgmtTestCase):
             availability_set_name,
         )
         self.assertEqual(result_get.name, availability_set_name)
-        #TODO: error, we get 0 back, not 2
-        #self.assertEqual(
-        #    len(result_get.statuses),
-        #    len(params_create.statuses),
-        #)
-        #self.assertEqual(
-        #    result_get.statuses[0].code,
-        #    view_status1.code,
-        #)
-        #self.assertEqual(
-        #    result_get.availability_set.statuses[1].code,
-        #    view_status2.code,
-        #)
         self.assertEqual(
             result_get.platform_fault_domain_count,
             params_create.platform_fault_domain_count,
@@ -461,21 +448,18 @@ class MgmtComputeTest(AzureMgmtTestCase):
         result_list = self.compute_client.availability_sets.list(
             self.group_name,
         )
-        #self.assertEqual(result_list.status_code, HttpStatusCode.OK)
-        self.assertIsNotNone(result_list)
+        result_list = list(result_list)
 
         result_list_sizes = self.compute_client.availability_sets.list_available_sizes(
             self.group_name,
             availability_set_name,
         )
-        #self.assertEqual(result_list_sizes.status_code, HttpStatusCode.OK)
-        self.assertIsNotNone(result_list_sizes)
+        result_list_sizes = list(result_list_sizes)
 
         self.compute_client.availability_sets.delete(
             self.group_name,
             availability_set_name,
         )
-        #self.assertEqual(result_delete.status_code, HttpStatusCode.OK)
 
     @record
     def test_usage(self):

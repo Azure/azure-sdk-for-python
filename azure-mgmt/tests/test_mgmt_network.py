@@ -168,6 +168,29 @@ class MgmtNetworkTest(AzureMgmtTestCase):
         )
         lb_info = lb_async_creation.result()
 
+        # Get it
+        lb_info = self.network_client.load_balancers.get(
+            self.group_name,
+            lb_name
+        )
+
+        # List all
+        lbs = self.network_client.load_balancers.list_all()
+        lbs = list(lbs)
+        self.assertGreater(len(lbs), 0)
+
+        # List RG
+        lbs = self.network_client.load_balancers.list(self.group_name)
+        lbs = list(lbs)
+        self.assertGreater(len(lbs), 0)
+
+        # Delete
+        async_lb_delete = self.network_client.load_balancers.delete(
+            self.group_name,
+            lb_name
+        )
+        async_lb_delete.wait()
+
     @record
     def test_public_ip_addresses(self):
         self.create_resource_group()
