@@ -1,3 +1,8 @@
+2016-06-28 Service Bus 0.20.2
+
+Bug fix:
+* New header in Rest API which breaks the SDK #658 #657
+
 2016-06-23 Version 2.0.0rc5 / 0.30.0rc5
 
 Disclaimer:

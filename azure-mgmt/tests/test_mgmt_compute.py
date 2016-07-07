@@ -204,7 +204,7 @@ class MgmtComputeTest(AzureMgmtTestCase):
             self.group_name,
             names.vm
         )
-        self.assertEquals(result_get.name, names.vm)
+        self.assertEqual(result_get.name, names.vm)
         self.assertIsNone(result_get.instance_view)
 
         # Get instanceView

@@ -71,7 +71,7 @@ class MgmtStorageTest(AzureMgmtTestCase):
             account_name,
         )
         keys = {v.key_name: (v.value, v.permissions) for v in result_list_keys.keys}
-        self.assertEquals(len(keys), 2)
+        self.assertEqual(len(keys), 2)
         self.assertGreater(len(keys['key1'][0]), 0)
         self.assertGreater(len(keys['key1'][0]), 0)
 
@@ -81,7 +81,7 @@ class MgmtStorageTest(AzureMgmtTestCase):
             "key1"
         )
         new_keys = {v.key_name: (v.value, v.permissions) for v in result_regen_keys.keys}
-        self.assertEquals(len(new_keys), 2)
+        self.assertEqual(len(new_keys), 2)
         self.assertNotEqual(
             new_keys['key1'][0],
             keys['key1'][0],
