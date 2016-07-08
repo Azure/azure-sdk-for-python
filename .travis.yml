@@ -25,19 +25,9 @@ install:
   - pip install -r requirements.txt
   - pip install azure-storage
   - pip install coveralls
+  - pip install nose
   - pip uninstall -y azure-common
 script: 
-  - cd azure-servicebus/tests
-  - bash run-servicebus
-  - cd ../..
-  - cd azure-servicemanagement-legacy/tests
-  - bash run-legacy-mgmt
-  - cd ../..
-  - cd azure-mgmt/tests
-  - bash run-mgmt
-  - cd ../..
-  - rm -f .coverage
-  - coverage combine azure-mgmt/tests/.coverage azure-servicebus/tests/.coverage azure-servicemanagement-legacy/tests/.coverage
-  - coverage report
+  - python ./azure_nosetests.py
 after_success:
   coveralls
