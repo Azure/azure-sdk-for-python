@@ -48,7 +48,7 @@ LOG = logging.getLogger('batch-python-tests')
 LOG.level = logging.WARNING
 LOG.addHandler(logging.StreamHandler())
 
-def init_test_mode(working_folder):
+def init_tst_mode(working_folder):
     try:
         path = os.path.join(working_folder, 'testsettings_local.json')
         with open(path) as testsettings_local_file:
@@ -121,7 +121,7 @@ class BatchMgmtTestCase(RecordingTestCase):
         LOG.debug("Setting up Batch tests:")
         cls.working_folder = os.path.dirname(__file__)
         try:
-            cls.test_mode = init_test_mode(cls.working_folder)
+            cls.test_mode = init_tst_mode(cls.working_folder)
             cls.fake_settings = fake_settings
             if TestMode.is_playback(cls.test_mode):
                 LOG.debug("    running in playback mode")

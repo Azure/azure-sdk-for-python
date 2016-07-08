@@ -1,3 +1,10 @@
+[run]
+include =
+	azure*
+omit =
+	*/test*
+	env*
+
 [report]
 exclude_lines =
 	pragma: no cover
