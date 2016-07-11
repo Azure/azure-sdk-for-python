@@ -1,5 +1,5 @@
 azure.mgmt.powerbiembedded package
-===========================
+==========================
 
 Submodules
 ----------

@@ -1,5 +1,5 @@
 azure.mgmt.cognitiveservices package
-===========================
+==========================
 
 Submodules
 ----------
