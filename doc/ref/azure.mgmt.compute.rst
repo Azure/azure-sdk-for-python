@@ -12,12 +12,7 @@ Submodules
 Module contents
 ---------------
 
-.. autoclass:: azure.mgmt.compute.ComputeManagementClientConfiguration
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-.. autoclass:: azure.mgmt.compute.ComputeManagementClient
+.. automodule:: azure.mgmt.compute
     :members:
     :undoc-members:
     :show-inheritance:
