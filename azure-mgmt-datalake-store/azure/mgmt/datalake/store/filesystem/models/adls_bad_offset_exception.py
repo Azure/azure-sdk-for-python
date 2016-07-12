@@ -19,12 +19,13 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.serialization import Model
+from .adls_remote_exception import AdlsRemoteException
 
 
-class AdlsRemoteException(Model):
-    """Data Lake Store filesystem exception based on the WebHDFS definition for
-    RemoteExceptions.
+class AdlsBadOffsetException(AdlsRemoteException):
+    """A WebHDFS exception thrown indicating the append or read is from a bad
+    offset. Thrown when a 400 error response code is returned for append and
+    open operations (Bad request).
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -45,17 +46,6 @@ class AdlsRemoteException(Model):
         'exception': {'required': True},
     }
 
-    _attribute_map = {
-        'java_class_name': {'key': 'javaClassName', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
-        'exception': {'key': 'exception', 'type': 'str'},
-    }
-
-    _subtype_map = {
-        'exception': {'IllegalArgumentException': 'AdlsIllegalArgumentException', 'UnsupportedOperationException': 'AdlsUnsupportedOperationException', 'SecurityException': 'AdlsSecurityException', 'IOException': 'AdlsIOException', 'FileNotFoundException': 'AdlsFileNotFoundException', 'FileAlreadyExistsException': 'AdlsFileAlreadyExistsException', 'BadOffsetException': 'AdlsBadOffsetException', 'RuntimeException': 'AdlsRuntimeException', 'AccessControlException': 'AdlsAccessControlException'}
-    }
-
     def __init__(self):
-        self.java_class_name = None
-        self.message = None
-        self.exception = None
+        super(AdlsBadOffsetException, self).__init__()
+        self.exception = 'BadOffsetException'

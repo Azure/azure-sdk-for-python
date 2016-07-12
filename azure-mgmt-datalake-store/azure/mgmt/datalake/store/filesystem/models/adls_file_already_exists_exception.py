@@ -19,12 +19,12 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.serialization import Model
+from .adls_remote_exception import AdlsRemoteException
 
 
-class AdlsRemoteException(Model):
-    """Data Lake Store filesystem exception based on the WebHDFS definition for
-    RemoteExceptions.
+class AdlsFileAlreadyExistsException(AdlsRemoteException):
+    """A WebHDFS exception thrown indicating the file or folder already exists.
+    Thrown when a 403 error response code is returned (forbidden).
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -45,17 +45,6 @@ class AdlsRemoteException(Model):
         'exception': {'required': True},
     }
 
-    _attribute_map = {
-        'java_class_name': {'key': 'javaClassName', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
-        'exception': {'key': 'exception', 'type': 'str'},
-    }
-
-    _subtype_map = {
-        'exception': {'IllegalArgumentException': 'AdlsIllegalArgumentException', 'UnsupportedOperationException': 'AdlsUnsupportedOperationException', 'SecurityException': 'AdlsSecurityException', 'IOException': 'AdlsIOException', 'FileNotFoundException': 'AdlsFileNotFoundException', 'FileAlreadyExistsException': 'AdlsFileAlreadyExistsException', 'BadOffsetException': 'AdlsBadOffsetException', 'RuntimeException': 'AdlsRuntimeException', 'AccessControlException': 'AdlsAccessControlException'}
-    }
-
     def __init__(self):
-        self.java_class_name = None
-        self.message = None
-        self.exception = None
+        super(AdlsFileAlreadyExistsException, self).__init__()
+        self.exception = 'FileAlreadyExistsException'

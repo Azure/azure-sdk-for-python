@@ -32,7 +32,7 @@ class DataLakeAnalyticsCatalogManagementClientConfiguration(AzureConfiguration):
     Note that all parameters used to create this instance are saved as instance
     attributes.
 
-    :param credentials: Gets Azure subscription credentials.
+    :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
      object<msrestazure.azure_active_directory>`
     :param api_version: Client Api Version.
@@ -90,7 +90,7 @@ class DataLakeAnalyticsCatalogManagementClient(object):
     :ivar catalog: Catalog operations
     :vartype catalog: .operations.CatalogOperations
 
-    :param credentials: Gets Azure subscription credentials.
+    :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
      object<msrestazure.azure_active_directory>`
     :param api_version: Client Api Version.
