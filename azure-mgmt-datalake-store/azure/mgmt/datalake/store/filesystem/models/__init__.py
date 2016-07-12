@@ -33,6 +33,8 @@ from .adls_unsupported_operation_exception import AdlsUnsupportedOperationExcept
 from .adls_security_exception import AdlsSecurityException
 from .adls_io_exception import AdlsIOException
 from .adls_file_not_found_exception import AdlsFileNotFoundException
+from .adls_file_already_exists_exception import AdlsFileAlreadyExistsException
+from .adls_bad_offset_exception import AdlsBadOffsetException
 from .adls_runtime_exception import AdlsRuntimeException
 from .adls_access_control_exception import AdlsAccessControlException
 from .adls_remote_exception import AdlsRemoteException
@@ -57,6 +59,8 @@ __all__ = [
     'AdlsSecurityException',
     'AdlsIOException',
     'AdlsFileNotFoundException',
+    'AdlsFileAlreadyExistsException',
+    'AdlsBadOffsetException',
     'AdlsRuntimeException',
     'AdlsAccessControlException',
     'AdlsRemoteException',
