@@ -609,7 +609,7 @@ class FileSystemOperations(object):
         return deserialized
 
     def append(
-            self, direct_file_path, stream_contents, account_name="\"\\"\\\"\\\\"\\\\\"\\\\\\"\\\\\\\"\\\\\\\\"\\\\\\\\\"\\\\\\\\\\"\\\\\\\\\\\"\\\\\\\\\\\\"\\\\\\\\\\\\\"\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\\"None\\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\"\\\\\\\\\\\\\"\\\\\\\\\\\\"\\\\\\\\\\\"\\\\\\\\\\"\\\\\\\\\"\\\\\\\\"\\\\\\\"\\\\\\"\\\\\"\\\\"\\\"\\"\"", op="APPEND", append="true", transfer_encoding="chunked", custom_headers=None, raw=False, callback=None, **operation_config):
+            self, direct_file_path, stream_contents, account_name="\"\\"\\\"\\\\"\\\\\"\\\\\\"\\\\\\\"\\\\\\\\"\\\\\\\\\"\\\\\\\\\\"\\\\\\\\\\\"\\\\\\\\\\\\"\\\\\\\\\\\\\"\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\\"None\\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\"\\\\\\\\\\\\\"\\\\\\\\\\\\"\\\\\\\\\\\"\\\\\\\\\\"\\\\\\\\\"\\\\\\\\"\\\\\\\"\\\\\\"\\\\\"\\\\"\\\"\\"\"", op="APPEND", append="true", transfer_encoding="chunked", offset=None, custom_headers=None, raw=False, callback=None, **operation_config):
         """Appends to the specified file. This method does not support multiple
         concurrent appends to the file. NOTE: Concurrent append and normal
         (serial) append CANNOT be used interchangeably. Once a file has been
@@ -633,6 +633,9 @@ class FileSystemOperations(object):
         :param transfer_encoding: Indicates the data being sent to the server
          is being streamed in chunks.
         :type transfer_encoding: str
+        :param offset: The optional offset in the stream to begin the append
+         operation. Default is to append at the end of the stream.
+        :type offset: long
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -658,6 +661,8 @@ class FileSystemOperations(object):
 
         # Construct parameters
         query_parameters = {}
+        if offset is not None:
+            query_parameters['offset'] = self._serialize.query("offset", offset, 'long')
         query_parameters['op'] = self._serialize.query("op", op, 'str')
         query_parameters['append'] = self._serialize.query("append", append, 'str')
         query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
