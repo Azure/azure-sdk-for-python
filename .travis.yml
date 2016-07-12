@@ -15,10 +15,9 @@ matrix:
       language: generic
 # Perform the manual steps on osx to install python3 and activate venv
 before_install:
-  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew update          ; fi
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew update; fi
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew install python3; fi
-  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then pip3 install virtualenv; fi
-  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then virtualenv venv -p python3; fi
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then python3 -m venv venv; fi
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then source venv/bin/activate; fi
 install:
   - pip install -U pip
@@ -26,7 +25,7 @@ install:
   - pip install azure-storage
   - pip install coveralls
   - pip install nose
-  - pip uninstall -y azure-common
+  - pip uninstall -y azure-common  # Use azure-common from this repo, not the PyPI version azure-storage pulls in.
 script: 
   - python ./azure_nosetests.py
 after_success:
