@@ -19,10 +19,8 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .key_vault_management_client import KeyVaultManagementClient
-from .version import VERSION
+from .vaults_operations import VaultsOperations
 
-__all__ = ['KeyVaultManagementClient']
-
-__version__ = VERSION
-
+__all__ = [
+    'VaultsOperations',
+]

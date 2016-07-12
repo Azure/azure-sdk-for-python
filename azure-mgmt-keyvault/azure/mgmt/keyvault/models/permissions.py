@@ -19,10 +19,23 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .key_vault_management_client import KeyVaultManagementClient
-from .version import VERSION
+from msrest.serialization import Model
 
-__all__ = ['KeyVaultManagementClient']
 
-__version__ = VERSION
+class Permissions(Model):
+    """Permissions the identity has for keys and secrets.
 
+    :param keys: Permissions to keys
+    :type keys: list of str
+    :param secrets: Permissions to secrets
+    :type secrets: list of str
+    """ 
+
+    _attribute_map = {
+        'keys': {'key': 'keys', 'type': '[str]'},
+        'secrets': {'key': 'secrets', 'type': '[str]'},
+    }
+
+    def __init__(self, keys=None, secrets=None):
+        self.keys = keys
+        self.secrets = secrets

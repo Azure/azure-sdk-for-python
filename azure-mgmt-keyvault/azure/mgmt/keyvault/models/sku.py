@@ -19,10 +19,28 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .key_vault_management_client import KeyVaultManagementClient
-from .version import VERSION
+from msrest.serialization import Model
 
-__all__ = ['KeyVaultManagementClient']
 
-__version__ = VERSION
+class Sku(Model):
+    """SKU details.
 
+    :param family: SKU family name. Possible values include: 'A'
+    :type family: str or :class:`SkuFamily <azure.keyvault.models.SkuFamily>`
+    :param name: SKU name to specify whether the key vault is a standard
+     vault or a premium vault. Possible values include: 'standard', 'premium'
+    :type name: str or :class:`SkuName <azure.keyvault.models.SkuName>`
+    """ 
+
+    _validation = {
+        'name': {'required': True},
+    }
+
+    _attribute_map = {
+        'family': {'key': 'family', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'SkuName'},
+    }
+
+    def __init__(self, name, family=None):
+        self.family = family
+        self.name = name
