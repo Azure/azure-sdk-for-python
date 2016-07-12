@@ -1,7 +1,7 @@
-azure.graphrbac.operations module
+azure.mgmt.resource.policy.models module
 ===========================================
 
-.. automodule:: azure.graphrbac.operations
+.. automodule:: azure.mgmt.resource.policy.models
     :members:
     :undoc-members:
     :show-inheritance:

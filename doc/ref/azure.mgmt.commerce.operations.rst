@@ -1,5 +1,5 @@
 azure.mgmt.commerce.operations module
-=====================================
+===========================================
 
 .. automodule:: azure.mgmt.commerce.operations
     :members:

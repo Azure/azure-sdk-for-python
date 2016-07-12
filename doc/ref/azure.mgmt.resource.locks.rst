@@ -1,5 +1,5 @@
 azure.mgmt.resource.locks package
-=================================
+==========================
 
 Submodules
 ----------

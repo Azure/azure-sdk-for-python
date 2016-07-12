@@ -1,7 +1,7 @@
-azure.graphrbac.operations module
+azure.mgmt.resource.feature.models module
 ===========================================
 
-.. automodule:: azure.graphrbac.operations
+.. automodule:: azure.mgmt.resource.feature.models
     :members:
     :undoc-members:
     :show-inheritance:

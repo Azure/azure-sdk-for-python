@@ -1,5 +1,5 @@
 azure.batch.models module
-=============================
+===========================================
 
 .. automodule:: azure.batch.models
     :members:
