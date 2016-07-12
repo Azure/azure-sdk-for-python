@@ -19,10 +19,28 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .key_vault_management_client import KeyVaultManagementClient
-from .version import VERSION
+from .sku import Sku
+from .access_policy_entry import AccessPolicyEntry
+from .permissions import Permissions
+from .vault_properties import VaultProperties
+from .vault_create_or_update_parameters import VaultCreateOrUpdateParameters
+from .vault import Vault
+from .resource import Resource
+from .vault_paged import VaultPaged
+from .key_vault_management_client_enums import (
+    SkuFamily,
+    SkuName,
+)
 
-__all__ = ['KeyVaultManagementClient']
-
-__version__ = VERSION
-
+__all__ = [
+    'Sku',
+    'AccessPolicyEntry',
+    'Permissions',
+    'VaultProperties',
+    'VaultCreateOrUpdateParameters',
+    'Vault',
+    'Resource',
+    'VaultPaged',
+    'SkuFamily',
+    'SkuName',
+]

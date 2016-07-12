@@ -19,10 +19,15 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .key_vault_management_client import KeyVaultManagementClient
-from .version import VERSION
+from enum import Enum
 
-__all__ = ['KeyVaultManagementClient']
 
-__version__ = VERSION
+class SkuFamily(Enum):
 
+    a = "A"
+
+
+class SkuName(Enum):
+
+    standard = "standard"
+    premium = "premium"

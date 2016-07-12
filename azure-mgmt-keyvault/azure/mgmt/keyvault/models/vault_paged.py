@@ -19,10 +19,19 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .key_vault_management_client import KeyVaultManagementClient
-from .version import VERSION
+from msrest.paging import Paged
 
-__all__ = ['KeyVaultManagementClient']
 
-__version__ = VERSION
+class VaultPaged(Paged):
+    """
+    A paging container for iterating over a list of Vault object
+    """
 
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[Vault]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(VaultPaged, self).__init__(*args, **kwargs)
