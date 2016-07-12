@@ -1,4 +1,4 @@
-azure.mgmt.commerce package
+azure.mgmt.resource.policy package
 ==========================
 
 Submodules
@@ -6,13 +6,13 @@ Submodules
 
 .. toctree::
 
-   azure.mgmt.commerce.models
-   azure.mgmt.commerce.operations
+   azure.mgmt.resource.policy.models
+   azure.mgmt.resource.policy.operations
 
 Module contents
 ---------------
 
-.. automodule:: azure.mgmt.commerce
+.. automodule:: azure.mgmt.resource.policy
     :members:
     :undoc-members:
     :show-inheritance:

@@ -1,5 +1,5 @@
 azure.mgmt.resource.subscriptions package
-=========================================
+==========================
 
 Submodules
 ----------
