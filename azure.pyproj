@@ -26,7 +26,7 @@
     <SccProvider>SAK</SccProvider>
     <SccAuxPath>SAK</SccAuxPath>
     <SccLocalPath>SAK</SccLocalPath>
-    <SearchPath>azure-common\;azure-servicebus\;azure-servicemanagement-legacy\;azure-mgmt-storage\;azure-mgmt-compute\;azure-mgmt-network\;azure-mgmt-resource\;azure-mgmt-redis\;azure-mgmt-authorization\;azure-mgmt-cdn\;azure-mgmt-logic\;azure-mgmt-notificationhubs\;azure-mgmt-scheduler\;azure-mgmt-web\;azure-graphrbac\;azure-mgmt\;azure-batch\;azure-mgmt-batch\;azure-mgmt-datalake-analytics\;azure-mgmt-datalake-store\</SearchPath>
+    <SearchPath>azure-common\;azure-servicebus\;azure-servicemanagement-legacy\;azure-mgmt-storage\;azure-mgmt-compute\;azure-mgmt-network\;azure-mgmt-resource\;azure-mgmt-redis\;azure-mgmt-authorization\;azure-mgmt-cdn\;azure-mgmt-logic\;azure-mgmt-notificationhubs\;azure-mgmt-scheduler\;azure-mgmt-web\;azure-graphrbac\;azure-mgmt\;azure-batch\;azure-mgmt-batch\;azure-mgmt-datalake-analytics\;azure-mgmt-datalake-store\;azure-mgmt-keyvault\</SearchPath>
     <EnableNativeCodeDebugging>False</EnableNativeCodeDebugging>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
@@ -644,6 +644,24 @@
     <Compile Include="azure-mgmt-datalake-store\azure\mgmt\__init__.py" />
     <Compile Include="azure-mgmt-datalake-store\azure\__init__.py" />
     <Compile Include="azure-mgmt-datalake-store\setup.py" />
+    <Compile Include="azure-mgmt-keyvault\azure\mgmt\keyvault\key_vault_management_client.py" />
+    <Compile Include="azure-mgmt-keyvault\azure\mgmt\keyvault\models\access_policy_entry.py" />
+    <Compile Include="azure-mgmt-keyvault\azure\mgmt\keyvault\models\key_vault_management_client_enums.py" />
+    <Compile Include="azure-mgmt-keyvault\azure\mgmt\keyvault\models\permissions.py" />
+    <Compile Include="azure-mgmt-keyvault\azure\mgmt\keyvault\models\resource.py" />
+    <Compile Include="azure-mgmt-keyvault\azure\mgmt\keyvault\models\sku.py" />
+    <Compile Include="azure-mgmt-keyvault\azure\mgmt\keyvault\models\vault.py" />
+    <Compile Include="azure-mgmt-keyvault\azure\mgmt\keyvault\models\vault_create_or_update_parameters.py" />
+    <Compile Include="azure-mgmt-keyvault\azure\mgmt\keyvault\models\vault_paged.py" />
+    <Compile Include="azure-mgmt-keyvault\azure\mgmt\keyvault\models\vault_properties.py" />
+    <Compile Include="azure-mgmt-keyvault\azure\mgmt\keyvault\models\__init__.py" />
+    <Compile Include="azure-mgmt-keyvault\azure\mgmt\keyvault\operations\vaults_operations.py" />
+    <Compile Include="azure-mgmt-keyvault\azure\mgmt\keyvault\operations\__init__.py" />
+    <Compile Include="azure-mgmt-keyvault\azure\mgmt\keyvault\version.py" />
+    <Compile Include="azure-mgmt-keyvault\azure\mgmt\keyvault\__init__.py" />
+    <Compile Include="azure-mgmt-keyvault\azure\mgmt\__init__.py" />
+    <Compile Include="azure-mgmt-keyvault\azure\__init__.py" />
+    <Compile Include="azure-mgmt-keyvault\setup.py" />
     <Compile Include="azure-mgmt-logic\azure\mgmt\logic\logic_management_client.py" />
     <Compile Include="azure-mgmt-logic\azure\mgmt\logic\models\content_hash.py" />
     <Compile Include="azure-mgmt-logic\azure\mgmt\logic\models\content_link.py" />
@@ -1214,6 +1232,7 @@
     <Compile Include="azure-mgmt\tests\test_mgmt_commerce.py" />
     <Compile Include="azure-mgmt\tests\test_mgmt_compute.py" />
     <Compile Include="azure-mgmt\tests\test_mgmt_apps.py" />
+    <Compile Include="azure-mgmt\tests\test_mgmt_keyvault.py" />
     <Compile Include="azure-mgmt\tests\test_mgmt_network.py" />
     <Compile Include="azure-mgmt\tests\test_mgmt_notificationhubs.py" />
     <Compile Include="azure-mgmt\tests\test_mgmt_redis.py" />
@@ -1381,6 +1400,12 @@
     <Folder Include="azure-mgmt-datalake-store\azure\mgmt\datalake\store\filesystem\" />
     <Folder Include="azure-mgmt-datalake-store\azure\mgmt\datalake\store\filesystem\models\" />
     <Folder Include="azure-mgmt-datalake-store\azure\mgmt\datalake\store\filesystem\operations\" />
+    <Folder Include="azure-mgmt-keyvault\" />
+    <Folder Include="azure-mgmt-keyvault\azure\" />
+    <Folder Include="azure-mgmt-keyvault\azure\mgmt\" />
+    <Folder Include="azure-mgmt-keyvault\azure\mgmt\keyvault\" />
+    <Folder Include="azure-mgmt-keyvault\azure\mgmt\keyvault\models\" />
+    <Folder Include="azure-mgmt-keyvault\azure\mgmt\keyvault\operations\" />
     <Folder Include="azure-mgmt-logic\" />
     <Folder Include="azure-mgmt-logic\azure\" />
     <Folder Include="azure-mgmt-logic\azure\mgmt\" />
@@ -1505,6 +1530,9 @@
     <Content Include="azure-mgmt-datalake-store\MANIFEST.in" />
     <Content Include="azure-mgmt-datalake-store\README.rst" />
     <Content Include="azure-mgmt-datalake-store\setup.cfg" />
+    <Content Include="azure-mgmt-keyvault\MANIFEST.in" />
+    <Content Include="azure-mgmt-keyvault\README.rst" />
+    <Content Include="azure-mgmt-keyvault\setup.cfg" />
     <Content Include="azure-mgmt-logic\MANIFEST.in" />
     <Content Include="azure-mgmt-logic\README.rst" />
     <Content Include="azure-mgmt-logic\setup.cfg" />
