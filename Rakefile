@@ -28,6 +28,13 @@ namespace :arm do
     execute_and_stream(OS.windows? ? 'del /S /Q pkg 2>nul' : 'rm -rf ./pkg')
   end
 
+  desc 'Delete ./lib/generated for each of the Azure Resource Manager projects'
+  task :clean_generated do
+    each_gem do
+      execute_and_stream(OS.windows? ? 'del /S /Q lib\generated 2>nul' : 'rm -rf lib/generated')
+    end
+  end
+
   desc 'Build gems for each of the Azure Resource Manager projects'
   task :build => :clean do
     each_gem do
@@ -50,13 +57,20 @@ namespace :arm do
   end
 
   desc 'Regen code for each of the Azure Resource Manager projects'
-  task :regen do
+  task :regen => :clean_generated do
     each_gem do |dir|
-      execute_and_stream(OS.windows? ? 'del /S /Q lib\generated 2>nul' : 'rm -rf lib/generated')
       puts "\nGenerating #{dir}\n"
       md = REGEN_METADATA[dir.to_sym]
       ar_base_command = "#{OS.windows? ? '' : 'mono '} #{REGEN_METADATA[:autorest_loc]}"
-      execute_and_stream("#{ar_base_command} -i #{md[:spec_uri]} -pv #{md[:version]} -n #{md[:ns]} -pn #{dir} -g Azure.Ruby -o lib")
+
+      if md.is_a?(Array)
+        md.each do |sub_md|
+          execute_and_stream("#{ar_base_command} -i #{sub_md[:spec_uri]} -pv #{sub_md[:version]} -n #{sub_md[:ns]} -pn #{sub_md[:pn].nil? ? dir : sub_md[:pn]} -g Azure.Ruby -o lib")
+        end
+      else
+        execute_and_stream("#{ar_base_command} -i #{md[:spec_uri]} -pv #{md[:version]} -n #{md[:ns]} -pn #{md[:pn].nil? ? dir : md[:pn]} -g Azure.Ruby -o lib")
+      end
+
     end
   end
 
@@ -219,5 +233,43 @@ REGEN_METADATA = {
         ns: 'Azure::ARM::Web',
         version: version,
         tag: 'arm_web'
-    }
+    },
+    azure_mgmt_datalake_store: [
+        {
+            spec_uri: 'https://raw.githubusercontent.com/Azure/azure-rest-api-specs/master/arm-datalake-store/filesystem/2015-10-01-preview/swagger/filesystem.json',
+            ns: 'Azure::ARM::DataLakeStore::FileSystem',
+            pn: 'azure_mgmt_datalake_store_filesystem',
+            tag: 'arm_datalake_store'
+        },
+        {
+            spec_uri: 'https://raw.githubusercontent.com/Azure/azure-rest-api-specs/master/arm-datalake-store/account/2015-10-01-preview/swagger/account.json',
+            ns: 'Azure::ARM::DataLakeStore::Account',
+            pn: 'azure_mgmt_datalake_store_account',
+            # Only the last generated swagger requires version parameter so that we do not override it on AutoRest regeneration code
+            version: version,
+            tag: 'arm_datalake_store'
+        }
+    ],
+    azure_mgmt_datalake_analytics: [
+        {
+            spec_uri: 'https://raw.githubusercontent.com/Azure/azure-rest-api-specs/master/arm-datalake-analytics/catalog/2015-10-01-preview/swagger/catalog.json',
+            ns: 'Azure::ARM::DataLakeAnalytics::Catalog',
+            pn: 'azure_mgmt_datalake_analytics_catalog',
+            tag: 'arm_datalake_analytics'
+        },
+        {
+            spec_uri: 'https://raw.githubusercontent.com/Azure/azure-rest-api-specs/master/arm-datalake-analytics/job/2016-03-20-preview/swagger/job.json',
+            ns: 'Azure::ARM::DataLakeAnalytics::Job',
+            pn: 'azure_mgmt_datalake_analytics_job',
+            tag: 'arm_datalake_analytics'
+        },
+        {
+            spec_uri: 'https://raw.githubusercontent.com/Azure/azure-rest-api-specs/master/arm-datalake-analytics/account/2015-10-01-preview/swagger/account.json',
+            ns: 'Azure::ARM::DataLakeAnalytics::Account',
+            pn: 'azure_mgmt_datalake_analytics_account',
+            # Only the last generated swagger requires version parameter so that we do not override it on AutoRest regeneration code
+            version: version,
+            tag: 'arm_datalake_analytics'
+        }
+    ],
 }

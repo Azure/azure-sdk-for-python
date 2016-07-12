@@ -1,0 +1,592 @@
+---
+http_interactions:
+- request:
+    method: get
+    uri: https://login.windows.net/<AZURE_TENANT_ID>/oauth2/token
+    body:
+      encoding: UTF-8
+      string: resource=https%3A%2F%2Fmanagement.core.windows.net%2F&client_id=<AZURE_CLIENT_ID>&client_secret=<AZURE_CLIENT_SECRET>&grant_type=client_credentials
+    headers:
+      User-Agent:
+      - Faraday v0.9.2
+      content-type:
+      - application/x-www-form-urlencoded
+  response:
+    status:
+      code: 200
+      message: 
+    headers:
+      cache-control:
+      - no-cache, no-store
+      pragma:
+      - no-cache
+      content-type:
+      - application/json; charset=utf-8
+      expires:
+      - "-1"
+      server:
+      - Microsoft-IIS/8.5
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      x-content-type-options:
+      - nosniff
+      x-ms-request-id:
+      - e303ebf2-b400-4ba6-9226-54caf12e80f5
+      client-request-id:
+      - 0d369ea9-54d0-4d05-967f-683db653296e
+      x-ms-responsehealth:
+      - TargetId=ESTSFE_IN_72;Action=None;Category=None;Health=0;Load=10;
+      p3p:
+      - CP="DSP CUR OTPi IND OTRi ONL FIN"
+      set-cookie:
+      - esctx=AAABAAAA0TWEUN3YUUq5vuCvmnaQiUPY3QEJVc03qn2pt0V8PhyyG_Wl6PLogTyWL7lx4r4lX76B_8HKozbKPnYRZoJTeJMcb8rxSXlAGGYh8PcQ-Bh8Ih0tS4czlIWvweISBAbG3d-WM-ds9RG6bdB0_LChI51HKNxsHeRIk1dlxmXoyWG3gUlrdMM1-5We3UQm5VBfIAA;
+        domain=.login.windows.net; path=/; secure; HttpOnly, x-ms-gateway-slice=productionb;
+        path=/; secure; HttpOnly, stsservicecookie=ests; path=/; secure; HttpOnly
+      x-powered-by:
+      - ASP.NET
+      date:
+      - Sun, 10 Jul 2016 02:15:04 GMT
+      connection:
+      - close
+      content-length:
+      - '1258'
+    body:
+      encoding: UTF-8
+      string: '{"token_type":"Bearer","expires_in":"3599","ext_expires_in":"3600","expires_on":"1468120504","not_before":"1468116604","resource":"https://management.core.windows.net/","access_token":"<ACCESS_TOKEN>"}'
+    http_version: 
+  recorded_at: Sun, 10 Jul 2016 02:15:05 GMT
+- request:
+    method: put
+    uri: https://management.azure.com/subscriptions/<AZURE_SUBSCRIPTION_ID>/resourcegroups/RubySDKTest_azure_mgmt_dl_analytics?api-version=2016-02-01
+    body:
+      encoding: UTF-8
+      string: '{"location":"East US 2"}'
+    headers:
+      User-Agent:
+      - Azure-SDK-For-Ruby/0.2.1/
+      x-ms-client-request-id:
+      - e815a40e-63fa-46fe-8efb-9349d0832027
+      accept-language:
+      - en-US
+      Content-Type:
+      - application/json; charset=utf-8
+  response:
+    status:
+      code: 201
+      message: 
+    headers:
+      cache-control:
+      - no-cache
+      pragma:
+      - no-cache
+      content-length:
+      - '224'
+      content-type:
+      - application/json; charset=utf-8
+      expires:
+      - "-1"
+      x-ms-ratelimit-remaining-subscription-writes:
+      - '1198'
+      x-ms-request-id:
+      - 7aee7101-cab1-489a-8970-2166fb1c47e0
+      x-ms-correlation-request-id:
+      - 7aee7101-cab1-489a-8970-2166fb1c47e0
+      x-ms-routing-request-id:
+      - WESTUS:20160710T021506Z:7aee7101-cab1-489a-8970-2166fb1c47e0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      date:
+      - Sun, 10 Jul 2016 02:15:06 GMT
+      connection:
+      - close
+    body:
+      encoding: UTF-8
+      string: '{"id":"/subscriptions/<AZURE_SUBSCRIPTION_ID>/resourceGroups/RubySDKTest_azure_mgmt_dl_analytics","name":"RubySDKTest_azure_mgmt_dl_analytics","location":"eastus2","properties":{"provisioningState":"Succeeded"}}'
+    http_version: 
+  recorded_at: Sun, 10 Jul 2016 02:15:06 GMT
+- request:
+    method: put
+    uri: https://management.azure.com/subscriptions/<AZURE_SUBSCRIPTION_ID>/resourceGroups/RubySDKTest_azure_mgmt_dl_analytics/providers/Microsoft.DataLakeStore/accounts/dlstoreacc?api-version=2015-10-01-preview
+    body:
+      encoding: UTF-8
+      string: '{"location":"East US 2","name":"dlstoreacc"}'
+    headers:
+      User-Agent:
+      - Azure-SDK-For-Ruby/0.2.1/
+      x-ms-client-request-id:
+      - f5a6eee9-d743-417d-a6cf-1bca64147408
+      accept-language:
+      - en-US
+      Content-Type:
+      - application/json; charset=utf-8
+  response:
+    status:
+      code: 201
+      message: 
+    headers:
+      cache-control:
+      - no-cache
+      pragma:
+      - no-cache
+      content-length:
+      - '432'
+      content-type:
+      - application/json
+      expires:
+      - "-1"
+      location:
+      - https://management.azure.com/subscriptions/<AZURE_SUBSCRIPTION_ID>/resourcegroups/RubySDKTest_azure_mgmt_dl_analytics/providers/Microsoft.DataLakeStore/accounts/dlstoreacc/operationresults/0?api-version=2015-10-01-preview
+      retry-after: '1'
+      azure-asyncoperation:
+      - https://management.azure.com/subscriptions/<AZURE_SUBSCRIPTION_ID>/providers/Microsoft.DataLakeStore/locations/EastUS2/operationResults/7a8b793c-50f0-4766-a776-0b28d05ddd730?api-version=2015-10-01-preview&expanded=true
+      x-ms-request-id:
+      - 8e134eb4-09ca-4163-a49f-89a905b6c536
+      server:
+      - Microsoft-IIS/8.5
+      x-aspnet-version:
+      - 4.0.30319
+      x-powered-by:
+      - ASP.NET
+      x-ms-ratelimit-remaining-subscription-writes:
+      - '1198'
+      x-ms-correlation-request-id:
+      - 131aaf9b-2f43-4337-bd8f-c708b1abf26d
+      x-ms-routing-request-id:
+      - WESTUS:20160710T021508Z:131aaf9b-2f43-4337-bd8f-c708b1abf26d
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      date:
+      - Sun, 10 Jul 2016 02:15:08 GMT
+      connection:
+      - close
+    body:
+      encoding: UTF-8
+      string: '{"properties":{"provisioningState":"Creating","state":null,"endpoint":null,"accountId":"7a8b793c-50f0-4766-a776-0b28d05ddd73","creationTime":null,"lastModifiedTime":null},"location":"East
+        US 2","tags":null,"id":"/subscriptions/<AZURE_SUBSCRIPTION_ID>/resourceGroups/RubySDKTest_azure_mgmt_dl_analytics/providers/Microsoft.DataLakeStore/accounts/dlstoreacc","name":"dlstoreacc","type":"Microsoft.DataLakeStore/accounts"}'
+    http_version: 
+  recorded_at: Sun, 10 Jul 2016 02:15:08 GMT
+- request:
+    method: get
+    uri: https://management.azure.com/subscriptions/<AZURE_SUBSCRIPTION_ID>/providers/Microsoft.DataLakeStore/locations/EastUS2/operationResults/7a8b793c-50f0-4766-a776-0b28d05ddd730?api-version=2015-10-01-preview&expanded=true
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      x-ms-client-request-id:
+      - f5a6eee9-d743-417d-a6cf-1bca64147408
+      accept-language:
+      - en-US
+      Content-Type:
+      - application/json; charset=utf-8
+      User-Agent:
+      - Azure-SDK-For-Ruby/0.2.1/
+  response:
+    status:
+      code: 200
+      message: 
+    headers:
+      cache-control:
+      - no-cache
+      pragma:
+      - no-cache
+      content-type:
+      - application/json
+      expires:
+      - "-1"
+      vary:
+      - Accept-Encoding
+      x-ms-request-id:
+      - 57a3334f-9ef6-42fd-b0e3-e4dac3a0dee2
+      server:
+      - Microsoft-IIS/8.5
+      x-aspnet-version:
+      - 4.0.30319
+      x-powered-by:
+      - ASP.NET
+      x-ms-ratelimit-remaining-subscription-reads:
+      - '14939'
+      x-ms-correlation-request-id:
+      - 2d5eb7fc-470e-4086-a0a3-f8d2e41df125
+      x-ms-routing-request-id:
+      - WESTUS:20160710T021539Z:2d5eb7fc-470e-4086-a0a3-f8d2e41df125
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      date:
+      - Sun, 10 Jul 2016 02:15:38 GMT
+      connection:
+      - close
+    body:
+      encoding: ASCII-8BIT
+      string: '{"status":"Succeeded"}'
+    http_version: 
+  recorded_at: Sun, 10 Jul 2016 02:15:39 GMT
+- request:
+    method: get
+    uri: https://management.azure.com/subscriptions/<AZURE_SUBSCRIPTION_ID>/resourceGroups/RubySDKTest_azure_mgmt_dl_analytics/providers/Microsoft.DataLakeStore/accounts/dlstoreacc?api-version=2015-10-01-preview
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Azure-SDK-For-Ruby/0.2.1/
+      x-ms-client-request-id:
+      - f5a6eee9-d743-417d-a6cf-1bca64147408
+      accept-language:
+      - en-US
+      Content-Type:
+      - application/json; charset=utf-8
+  response:
+    status:
+      code: 200
+      message: 
+    headers:
+      cache-control:
+      - no-cache
+      pragma:
+      - no-cache
+      content-type:
+      - application/json
+      expires:
+      - "-1"
+      vary:
+      - Accept-Encoding
+      x-ms-request-id:
+      - ff2ab09c-0185-4025-8089-6fbdecf3127e
+      server:
+      - Microsoft-IIS/8.5
+      x-aspnet-version:
+      - 4.0.30319
+      x-powered-by:
+      - ASP.NET
+      x-ms-ratelimit-remaining-subscription-reads:
+      - '14996'
+      x-ms-correlation-request-id:
+      - 18ce7db6-04df-44f4-b5b4-7597848ab485
+      x-ms-routing-request-id:
+      - WESTUS:20160710T021539Z:18ce7db6-04df-44f4-b5b4-7597848ab485
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      date:
+      - Sun, 10 Jul 2016 02:15:39 GMT
+      connection:
+      - close
+    body:
+      encoding: ASCII-8BIT
+      string: '{"properties":{"firewallState":"Disabled","firewallRules":[],"trustedIdProviderState":"Disabled","trustedIdProviders":[],"provisioningState":"Succeeded","state":"Active","endpoint":"dlstoreacc.azuredatalakestore.net","accountId":"7a8b793c-50f0-4766-a776-0b28d05ddd73","creationTime":"2016-07-10T02:15:16.1310989Z","lastModifiedTime":"2016-07-10T02:15:16.1310989Z"},"location":"East
+        US 2","tags":null,"id":"/subscriptions/<AZURE_SUBSCRIPTION_ID>/resourceGroups/RubySDKTest_azure_mgmt_dl_analytics/providers/Microsoft.DataLakeStore/accounts/dlstoreacc","name":"dlstoreacc","type":"Microsoft.DataLakeStore/accounts"}'
+    http_version: 
+  recorded_at: Sun, 10 Jul 2016 02:15:40 GMT
+- request:
+    method: put
+    uri: https://management.azure.com/subscriptions/<AZURE_SUBSCRIPTION_ID>/resourceGroups/RubySDKTest_azure_mgmt_dl_analytics/providers/Microsoft.DataLakeAnalytics/accounts/dlanalyticsacc?api-version=2015-10-01-preview
+    body:
+      encoding: UTF-8
+      string: '{"location":"East US 2","name":"dlanalyticsacc","properties":{"defaultDataLakeStoreAccount":"dlstoreacc","dataLakeStoreAccounts":[{"name":"dlstoreacc"}]}}'
+    headers:
+      User-Agent:
+      - Azure-SDK-For-Ruby/0.2.1/
+      x-ms-client-request-id:
+      - 30cdfd02-4047-426c-ac88-8df83e0eb66f
+      accept-language:
+      - en-US
+      Content-Type:
+      - application/json; charset=utf-8
+  response:
+    status:
+      code: 201
+      message: 
+    headers:
+      cache-control:
+      - no-cache
+      pragma:
+      - no-cache
+      content-length:
+      - '588'
+      content-type:
+      - application/json
+      expires:
+      - "-1"
+      location:
+      - https://management.azure.com/subscriptions/<AZURE_SUBSCRIPTION_ID>/resourcegroups/RubySDKTest_azure_mgmt_dl_analytics/providers/Microsoft.DataLakeAnalytics/accounts/dlanalyticsacc/operationresults/0?api-version=2015-10-01-preview
+      retry-after: '1'
+      azure-asyncoperation:
+      - https://management.azure.com/subscriptions/<AZURE_SUBSCRIPTION_ID>/providers/Microsoft.DataLakeAnalytics/locations/EastUS2/operationResults/d6945624-5651-4139-a174-e43d0d9053000?api-version=2015-10-01-preview&expanded=true
+      x-ms-request-id:
+      - 4af7cbc3-1965-4c76-a813-bdca9393508c
+      server:
+      - Microsoft-IIS/8.5
+      x-aspnet-version:
+      - 4.0.30319
+      x-powered-by:
+      - ASP.NET
+      x-ms-ratelimit-remaining-subscription-writes:
+      - '1197'
+      x-ms-correlation-request-id:
+      - 964c8e6a-d793-412b-97b8-614233e6fdca
+      x-ms-routing-request-id:
+      - WESTUS:20160710T021541Z:964c8e6a-d793-412b-97b8-614233e6fdca
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      date:
+      - Sun, 10 Jul 2016 02:15:40 GMT
+      connection:
+      - close
+    body:
+      encoding: UTF-8
+      string: '{"properties":{"defaultDataLakeStoreAccount":"dlstoreacc","dataLakeStoreAccounts":[{"properties":{"suffix":"azuredatalakestore.net"},"name":"dlstoreacc"}],"provisioningState":"Creating","state":null,"endpoint":null,"accountId":"d6945624-5651-4139-a174-e43d0d905300","creationTime":null,"lastModifiedTime":null},"location":"East
+        US 2","tags":null,"id":"/subscriptions/<AZURE_SUBSCRIPTION_ID>/resourceGroups/RubySDKTest_azure_mgmt_dl_analytics/providers/Microsoft.DataLakeAnalytics/accounts/dlanalyticsacc","name":"dlanalyticsacc","type":"Microsoft.DataLakeAnalytics/accounts"}'
+    http_version: 
+  recorded_at: Sun, 10 Jul 2016 02:15:41 GMT
+- request:
+    method: get
+    uri: https://management.azure.com/subscriptions/<AZURE_SUBSCRIPTION_ID>/providers/Microsoft.DataLakeAnalytics/locations/EastUS2/operationResults/d6945624-5651-4139-a174-e43d0d9053000?api-version=2015-10-01-preview&expanded=true
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      x-ms-client-request-id:
+      - 30cdfd02-4047-426c-ac88-8df83e0eb66f
+      accept-language:
+      - en-US
+      Content-Type:
+      - application/json; charset=utf-8
+      User-Agent:
+      - Azure-SDK-For-Ruby/0.2.1/
+  response:
+    status:
+      code: 200
+      message: 
+    headers:
+      cache-control:
+      - no-cache
+      pragma:
+      - no-cache
+      content-type:
+      - application/json
+      expires:
+      - "-1"
+      vary:
+      - Accept-Encoding
+      x-ms-request-id:
+      - 191d2f2c-cf4a-4c62-a1f9-353f48dd1116
+      server:
+      - Microsoft-IIS/8.5
+      x-aspnet-version:
+      - 4.0.30319
+      x-powered-by:
+      - ASP.NET
+      x-ms-ratelimit-remaining-subscription-reads:
+      - '14997'
+      x-ms-correlation-request-id:
+      - 30c865aa-b669-4d4b-86ef-1ec65f3aad9f
+      x-ms-routing-request-id:
+      - WESTUS:20160710T021612Z:30c865aa-b669-4d4b-86ef-1ec65f3aad9f
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      date:
+      - Sun, 10 Jul 2016 02:16:11 GMT
+      connection:
+      - close
+    body:
+      encoding: ASCII-8BIT
+      string: '{"status":"Succeeded"}'
+    http_version: 
+  recorded_at: Sun, 10 Jul 2016 02:16:12 GMT
+- request:
+    method: get
+    uri: https://management.azure.com/subscriptions/<AZURE_SUBSCRIPTION_ID>/resourceGroups/RubySDKTest_azure_mgmt_dl_analytics/providers/Microsoft.DataLakeAnalytics/accounts/dlanalyticsacc?api-version=2015-10-01-preview
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Azure-SDK-For-Ruby/0.2.1/
+      x-ms-client-request-id:
+      - 30cdfd02-4047-426c-ac88-8df83e0eb66f
+      accept-language:
+      - en-US
+      Content-Type:
+      - application/json; charset=utf-8
+  response:
+    status:
+      code: 200
+      message: 
+    headers:
+      cache-control:
+      - no-cache
+      pragma:
+      - no-cache
+      content-type:
+      - application/json
+      expires:
+      - "-1"
+      vary:
+      - Accept-Encoding
+      x-ms-request-id:
+      - 2fcf71a8-2e46-4a85-a4dc-414b8a8732e0
+      server:
+      - Microsoft-IIS/8.5
+      x-aspnet-version:
+      - 4.0.30319
+      x-powered-by:
+      - ASP.NET
+      x-ms-ratelimit-remaining-subscription-reads:
+      - '14995'
+      x-ms-correlation-request-id:
+      - dfc98040-fb82-447d-bff5-542be90e77a4
+      x-ms-routing-request-id:
+      - WESTUS:20160710T021612Z:dfc98040-fb82-447d-bff5-542be90e77a4
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      date:
+      - Sun, 10 Jul 2016 02:16:12 GMT
+      connection:
+      - close
+    body:
+      encoding: ASCII-8BIT
+      string: '{"properties":{"defaultDataLakeStoreAccount":"dlstoreacc","dataLakeStoreAccounts":[{"properties":{"suffix":"azuredatalakestore.net"},"name":"dlstoreacc"}],"storageAccounts":[],"maxDegreeOfParallelism":60,"maxJobCount":3,"hiveMetastores":[],"provisioningState":"Succeeded","state":"Active","endpoint":"dlanalyticsacc.azuredatalakeanalytics.net","accountId":"d6945624-5651-4139-a174-e43d0d905300","creationTime":"2016-07-10T02:15:44.5507057Z","lastModifiedTime":"2016-07-10T02:15:44.5507057Z"},"location":"East
+        US 2","tags":null,"id":"/subscriptions/<AZURE_SUBSCRIPTION_ID>/resourceGroups/RubySDKTest_azure_mgmt_dl_analytics/providers/Microsoft.DataLakeAnalytics/accounts/dlanalyticsacc","name":"dlanalyticsacc","type":"Microsoft.DataLakeAnalytics/accounts"}'
+    http_version: 
+  recorded_at: Sun, 10 Jul 2016 02:16:12 GMT
+- request:
+    method: put
+    uri: https://dlanalyticsacc.azuredatalakeanalytics.net/Jobs/68ef6b80-ec33-4c7e-b204-1e6a77e504a7?api-version=2016-03-20-preview
+    body:
+      encoding: UTF-8
+      string: '{"jobId":"68ef6b80-ec33-4c7e-b204-1e6a77e504a7","name":"testjob","type":"USql","properties":{"script":"DROP
+        DATABASE IF EXISTS FOO; CREATE DATABASE FOO; DROP DATABASE IF EXISTS FOO;","type":"USql"}}'
+    headers:
+      User-Agent:
+      - Azure-SDK-For-Ruby/0.2.1/
+      x-ms-client-request-id:
+      - a16dcae5-a22d-489c-a39c-efa71c052788
+      accept-language:
+      - en-US
+      Content-Type:
+      - application/json; charset=utf-8
+  response:
+    status:
+      code: 200
+      message: 
+    headers:
+      cache-control:
+      - private
+      pragma:
+      - no-cache
+      transfer-encoding:
+      - chunked
+      content-type:
+      - application/json; charset=utf-8
+      expires:
+      - "-1"
+      x-ms-request-id:
+      - 7ca39e6a-584f-4721-b4b8-5c15ddbfeea2
+      x-content-type-options:
+      - nosniff
+      strict-transport-security:
+      - max-age=15724800; includeSubDomains
+      date:
+      - Sun, 10 Jul 2016 02:16:14 GMT
+      connection:
+      - close
+    body:
+      encoding: UTF-8
+      string: '{"jobId":"68ef6b80-ec33-4c7e-b204-1e6a77e504a7","name":"testjob","type":"USql","submitter":"vshahliveapp@SPI","degreeOfParallelism":1,"priority":0,"submitTime":"2016-07-10T02:16:14.2177938+00:00","state":"Compiling","result":"Succeeded","stateAuditRecords":[{"newState":"New","timeStamp":"2016-07-10T02:16:14.2177938+00:00","details":"userName:vshahliveapp@SPI;submitMachine:N/A"}],"properties":{"owner":"vshahliveapp@SPI","resources":[],"runtimeVersion":"default","rootProcessNodeId":"00000000-0000-0000-0000-000000000000","algebraFilePath":"adl://dlstoreacc.azuredatalakestore.net/system/jobservice/jobs/Usql/2016/07/10/02/16/68ef6b80-ec33-4c7e-b204-1e6a77e504a7/algebra.xml","compileMode":"Semantic","errorSource":"Unknown","totalCompilationTime":"PT0S","totalPausedTime":"PT0S","totalQueuedTime":"PT0S","totalRunningTime":"PT0S","type":"USql"}}'
+    http_version: 
+  recorded_at: Sun, 10 Jul 2016 02:16:15 GMT
+- request:
+    method: delete
+    uri: https://management.azure.com/subscriptions/<AZURE_SUBSCRIPTION_ID>/resourcegroups/RubySDKTest_azure_mgmt_dl_analytics?api-version=2016-02-01
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Azure-SDK-For-Ruby/0.2.1/
+      x-ms-client-request-id:
+      - 06c0a173-cdef-47d1-a426-6db951889351
+      accept-language:
+      - en-US
+  response:
+    status:
+      code: 202
+      message: 
+    headers:
+      cache-control:
+      - no-cache
+      pragma:
+      - no-cache
+      expires:
+      - "-1"
+      location:
+      - https://management.azure.com/subscriptions/<AZURE_SUBSCRIPTION_ID>/operationresults/eyJqb2JJZCI6IlJFU09VUkNFR1JPVVBERUxFVElPTkpPQi1SVUJZU0RLVEVTVDo1RkFaVVJFOjVGTUdNVDo1RkRMOjVGQU5BTFlUSUNTLUVBU1RVUzIiLCJqb2JMb2NhdGlvbiI6ImVhc3R1czIifQ?api-version=2016-02-01
+      retry-after: '1'
+      x-ms-ratelimit-remaining-subscription-writes:
+      - '1197'
+      x-ms-request-id:
+      - eab2fcff-c368-4ad8-a5a9-ecff07f14257
+      x-ms-correlation-request-id:
+      - eab2fcff-c368-4ad8-a5a9-ecff07f14257
+      x-ms-routing-request-id:
+      - WESTUS:20160710T021616Z:eab2fcff-c368-4ad8-a5a9-ecff07f14257
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      date:
+      - Sun, 10 Jul 2016 02:16:16 GMT
+      connection:
+      - close
+      content-length:
+      - '0'
+    body:
+      encoding: UTF-8
+      string: ''
+    http_version: 
+  recorded_at: Sun, 10 Jul 2016 02:16:16 GMT
+- request:
+    method: get
+    uri: https://management.azure.com/subscriptions/<AZURE_SUBSCRIPTION_ID>/operationresults/eyJqb2JJZCI6IlJFU09VUkNFR1JPVVBERUxFVElPTkpPQi1SVUJZU0RLVEVTVDo1RkFaVVJFOjVGTUdNVDo1RkRMOjVGQU5BTFlUSUNTLUVBU1RVUzIiLCJqb2JMb2NhdGlvbiI6ImVhc3R1czIifQ?api-version=2016-02-01
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      x-ms-client-request-id:
+      - 06c0a173-cdef-47d1-a426-6db951889351
+      accept-language:
+      - en-US
+      User-Agent:
+      - Azure-SDK-For-Ruby/0.2.1/
+      Content-Type:
+      - application/json
+  response:
+    status:
+      code: 200
+      message: 
+    headers:
+      cache-control:
+      - no-cache
+      pragma:
+      - no-cache
+      expires:
+      - "-1"
+      x-ms-ratelimit-remaining-subscription-reads:
+      - '14969'
+      x-ms-request-id:
+      - 67d503b3-00cb-4030-9fdd-02fe40cbf743
+      x-ms-correlation-request-id:
+      - 67d503b3-00cb-4030-9fdd-02fe40cbf743
+      x-ms-routing-request-id:
+      - WESTUS:20160710T021819Z:67d503b3-00cb-4030-9fdd-02fe40cbf743
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      date:
+      - Sun, 10 Jul 2016 02:18:18 GMT
+      connection:
+      - close
+      content-length:
+      - '0'
+    body:
+      encoding: UTF-8
+      string: ''
+    http_version: 
+  recorded_at: Sun, 10 Jul 2016 02:18:19 GMT
+recorded_with: VCR 3.0.3

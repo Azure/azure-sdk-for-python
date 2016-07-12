@@ -15,6 +15,8 @@ end
 gem 'azure_mgmt_authorization',         path: 'azure_mgmt_authorization'
 gem 'azure_mgmt_cdn',                   path: 'azure_mgmt_cdn'
 gem 'azure_mgmt_compute',               path: 'azure_mgmt_compute'
+gem 'azure_mgmt_datalake_analytics',    path: 'azure_mgmt_datalake_analytics'
+gem 'azure_mgmt_datalake_store',        path: 'azure_mgmt_datalake_store'
 gem 'azure_mgmt_features',              path: 'azure_mgmt_features'
 gem 'azure_mgmt_graph',                 path: 'azure_mgmt_graph'
 gem 'azure_mgmt_locks',                 path: 'azure_mgmt_locks'
