@@ -27,6 +27,40 @@ class MgmtResourceTest(AzureMgmtTestCase):
         super(MgmtResourceTest, self).setUp()
 
     @record
+    def test_tag_operations(self):
+        tag_name = 'tag1'
+        tag_value = 'value1'
+
+        # Create or update
+        tag = self.resource_client.tags.create_or_update(
+            tag_name
+        )
+        self.assertEqual(tag.tag_name, tag_name)
+
+        # Create or update value
+        tag = self.resource_client.tags.create_or_update_value(
+            tag_name,
+            tag_value
+        )
+        self.assertEqual(tag.tag_value, tag_value)
+
+        # List
+        tags = list(self.resource_client.tags.list())
+        self.assertEqual(len(tags), 1)
+        self.assertTrue(all(hasattr(v, 'tag_name') for v in tags))
+
+        # Delete value
+        self.resource_client.tags.delete_value(
+            tag_name,
+            tag_value
+        )
+
+        # Delete tag
+        self.resource_client.tags.delete(
+            tag_name
+        )
+
+    @record
     def test_resource_groups(self):
         # Create or update
         params_create = azure.mgmt.resource.resources.models.ResourceGroup(
