@@ -136,10 +136,15 @@ class MgmtResourceTest(AzureMgmtTestCase):
 
         resource_name = self.get_resource_name("pytestavset")
 
-        create_params = azure.mgmt.resource.resources.models.GenericResource(
-            location = 'West US',
+        resource_exist = self.resource_client.resources.check_existence(
+            resource_group_name=self.group_name,
+            resource_provider_namespace="Microsoft.Compute",
+            parent_resource_path="",
+            resource_type="availabilitySets",
+            resource_name=resource_name,
+            api_version="2015-05-01-preview"
         )
-        #create_params.properties = {}
+        self.assertFalse(resource_exist)
 
         create_result = self.resource_client.resources.create_or_update(
             resource_group_name=self.group_name,
@@ -148,9 +153,8 @@ class MgmtResourceTest(AzureMgmtTestCase):
             resource_type="availabilitySets",
             resource_name=resource_name,
             api_version="2015-05-01-preview",
-            parameters=create_params
+            parameters={'location': self.region}
         )
-        #self.assertEqual(create_result.status_code, HttpStatusCode.OK)
 
         get_result = self.resource_client.resources.get(
             resource_group_name=self.group_name,
@@ -160,18 +164,40 @@ class MgmtResourceTest(AzureMgmtTestCase):
             resource_name=resource_name,
             api_version="2015-05-01-preview",
         )
-        #self.assertEqual(get_result.status_code, HttpStatusCode.OK)
         self.assertEqual(get_result.name, resource_name)
 
+        resources = list(self.resource_client.resources.list(
+            filter="name eq '{}'".format(resource_name)
+        ))
+        self.assertEqual(len(resources), 1)
+
+        new_group_name = self.get_resource_name("pynewgroup")
+        new_group = self.resource_client.resource_groups.create_or_update(
+            new_group_name,
+            {'location': self.region},
+        )
+
+        async_move = self.resource_client.resources.move_resources(
+            self.group_name,
+            [get_result.id],
+            new_group.id
+        )
+        async_move.wait()
+
         delete_result = self.resource_client.resources.delete(
-            resource_group_name=self.group_name,
+            resource_group_name=new_group_name,
             resource_provider_namespace="Microsoft.Compute",
             parent_resource_path="",
             resource_type="availabilitySets",
             resource_name=resource_name,
             api_version="2015-05-01-preview",
         )
-        #self.assertEqual(delete_result.status_code, HttpStatusCode.OK)
+
+        async_delete = self.resource_client.resource_groups.delete(
+            new_group_name
+        )
+        async_delete.wait()
+        
 
     @record
     def test_deployments(self):
