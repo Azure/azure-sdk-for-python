@@ -44,6 +44,7 @@ following packages. Follow the links for more information on each package.
 -  `azure-mgmt-cdn v0.30.0rc5 <https://pypi.python.org/pypi/azure-mgmt-cdn/0.30.0rc5>`__
 -  `azure-mgmt-cognitiveservices v0.30.0rc5 <https://pypi.python.org/pypi/azure-mgmt-cognitiveservices/0.30.0rc5>`__
 -  `azure-mgmt-compute v0.30.0rc5 <https://pypi.python.org/pypi/azure-mgmt-compute/0.30.0rc5>`__
+-  `azure-mgmt-keyvault v0.30.0rc5 <https://pypi.python.org/pypi/azure-mgmt-keyvault/0.30.0rc5>`__
 -  `azure-mgmt-logic v0.30.0rc5 <https://pypi.python.org/pypi/azure-mgmt-logic/0.30.0rc5>`__
 -  `azure-mgmt-network v0.30.0rc5 <https://pypi.python.org/pypi/azure-mgmt-network/0.30.0rc5>`__
 -  `azure-mgmt-notificationhubs v0.30.0rc5 <https://pypi.python.org/pypi/azure-mgmt-notificationhubs/0.30.0rc5>`__
