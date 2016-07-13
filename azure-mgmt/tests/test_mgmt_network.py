@@ -445,6 +445,68 @@ class MgmtNetworkTest(AzureMgmtTestCase):
         #self.assertEqual(result_delete.status_code, HttpStatusCode.OK)
 
     @record
+    def test_routes(self):
+        self.create_resource_group()
+
+        route_table_name = self.get_resource_name('pyroutetable')
+        route_name = self.get_resource_name('pyroute')
+
+        async_route_table = self.network_client.route_tables.create_or_update(
+            self.group_name,
+            route_table_name,
+            {'location': self.region}
+        )
+        route_table = async_route_table.result()
+
+        route_table = self.network_client.route_tables.get(
+            self.group_name,
+            route_table.name
+        )
+        self.assertEqual(route_table.name, route_table_name)
+
+        route_tables = list(self.network_client.route_tables.list(
+            self.group_name
+        ))
+        self.assertEqual(len(route_tables), 1)
+
+        async_route = self.network_client.routes.create_or_update(
+            self.group_name,
+            route_table.name,
+            route_name,
+            {
+                'address_prefix': '10.1.0.0/16',
+                'next_hop_type': 'None'
+            }
+        )
+        route = async_route.result()
+
+        route = self.network_client.routes.get(
+            self.group_name,
+            route_table.name,
+            route.name
+        )
+        self.assertEqual(route.name, route_name)
+
+        routes = list(self.network_client.routes.list(
+            self.group_name,
+            route_table.name
+        ))
+        self.assertEqual(len(routes), 1)
+
+        async_route_delete = self.network_client.routes.delete(
+            self.group_name,
+            route_table.name,
+            route.name
+        )
+        async_route_delete.wait()
+
+        async_route_table_delete = self.network_client.route_tables.delete(
+            self.group_name,
+            route_table_name
+        )
+        async_route_table_delete.wait()
+
+    @record
     def test_usages(self):
         usages = list(self.network_client.usages.list(self.region))
         self.assertGreater(len(usages), 1)
