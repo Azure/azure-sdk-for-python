@@ -275,7 +275,7 @@ class FileOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: None
+        :rtype: bool
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -337,11 +337,12 @@ class FileOperations(object):
         request = self._client.head(url, query_parameters)
         response = self._client.send(request, header_parameters, **operation_config)
 
-        if response.status_code not in [200]:
+        if response.status_code not in [200, 404]:
             raise models.BatchErrorException(self._deserialize, response)
 
+        deserialized = (response.status_code == 200)
         if raw:
-            client_raw_response = ClientRawResponse(None, response)
+            client_raw_response = ClientRawResponse(deserialized, response)
             client_raw_response.add_headers({
                 'client-request-id': 'str',
                 'request-id': 'str',
@@ -353,8 +354,9 @@ class FileOperations(object):
                 'ocp-batch-file-mode': 'str',
                 'Content-Type': 'str',
                 'Content-Length': 'long',
-            })
+                })
             return client_raw_response
+        return deserialized
 
     def delete_from_compute_node(
             self, pool_id, node_id, file_name, recursive=None, file_delete_from_compute_node_options=None, custom_headers=None, raw=False, **operation_config):
@@ -590,7 +592,7 @@ class FileOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: None
+        :rtype: bool
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -652,11 +654,12 @@ class FileOperations(object):
         request = self._client.head(url, query_parameters)
         response = self._client.send(request, header_parameters, **operation_config)
 
-        if response.status_code not in [200]:
+        if response.status_code not in [200, 404]:
             raise models.BatchErrorException(self._deserialize, response)
 
+        deserialized = (response.status_code == 200)
         if raw:
-            client_raw_response = ClientRawResponse(None, response)
+            client_raw_response = ClientRawResponse(deserialized, response)
             client_raw_response.add_headers({
                 'client-request-id': 'str',
                 'request-id': 'str',
@@ -668,8 +671,9 @@ class FileOperations(object):
                 'ocp-batch-file-mode': 'str',
                 'Content-Type': 'str',
                 'Content-Length': 'long',
-            })
+                })
             return client_raw_response
+        return deserialized
 
     def list_from_task(
             self, job_id, task_id, recursive=None, file_list_from_task_options=None, custom_headers=None, raw=False, **operation_config):
