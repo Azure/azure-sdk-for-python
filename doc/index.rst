@@ -37,6 +37,7 @@ Documentation:
    * Apps
       * :doc:`Logic Apps Resource Management<resourcemanagementapps>` -- (:doc:`API <ref/azure.mgmt.logic>`)
       * :doc:`Web Apps Management<resourcemanagementapps>` -- (:doc:`API <ref/azure.mgmt.web>`)
+   * :doc:`KeyVault Management<resourcemanagementkeyvault>` -- (:doc:`API <ref/azure.mgmt.keyvault>`)
    * :doc:`Network Resource Management<resourcemanagementcomputenetwork>` -- (:doc:`API <ref/azure.mgmt.network>`)
    * :doc:`Notification Hubs Resource Management<resourcemanagementnotificationhubs>` -- (:doc:`API <ref/azure.mgmt.notificationhubs>`)
    * :doc:`PowerBI Embedded Management<resourcemanagementpowerbiembedded>` -- (:doc:`API <ref/azure.mgmt.powerbiembedded>`)
