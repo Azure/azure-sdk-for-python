@@ -550,6 +550,13 @@ class MgmtNetworkTest(AzureMgmtTestCase):
         self.assertGreater(len(usages), 1)
         self.assertTrue(all(hasattr(u, 'name') for u in usages))
 
+    @record
+    def test_express_route_service_providers(self):
+        ersp = list(self.network_client.express_route_service_providers.list())
+        self.assertGreater(len(ersp), 0)
+        self.assertTrue(all(hasattr(u, 'bandwidths_offered') for u in ersp))
+
+
 #------------------------------------------------------------------------------
 if __name__ == '__main__':
     unittest.main()
