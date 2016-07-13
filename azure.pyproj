@@ -1287,6 +1287,7 @@
     <Compile Include="azure-mgmt\tests\test_mgmt_redis.py" />
     <Compile Include="azure-mgmt\tests\test_mgmt_resource.py" />
     <Compile Include="azure-mgmt\tests\test_mgmt_resource_features.py" />
+    <Compile Include="azure-mgmt\tests\test_mgmt_resource_locks.py" />
     <Compile Include="azure-mgmt\tests\test_mgmt_resource_subscriptions.py" />
     <Compile Include="azure-mgmt\tests\test_mgmt_scheduler.py" />
     <Compile Include="azure-mgmt\tests\test_mgmt_storage.py" />
