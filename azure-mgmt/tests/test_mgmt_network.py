@@ -444,6 +444,11 @@ class MgmtNetworkTest(AzureMgmtTestCase):
         )
         #self.assertEqual(result_delete.status_code, HttpStatusCode.OK)
 
+    @record
+    def test_usages(self):
+        usages = list(self.network_client.usages.list(self.region))
+        self.assertGreater(len(usages), 1)
+        self.assertTrue(all(hasattr(u, 'name') for u in usages))
 
 #------------------------------------------------------------------------------
 if __name__ == '__main__':
