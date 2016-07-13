@@ -28,6 +28,7 @@ class MgmtResourceTest(AzureMgmtTestCase):
 
     @record
     def test_resource_groups(self):
+        # Create or update
         params_create = azure.mgmt.resource.resources.models.ResourceGroup(
             location=self.region,
             tags={
@@ -38,25 +39,24 @@ class MgmtResourceTest(AzureMgmtTestCase):
             self.group_name,
             params_create,
         )
-        #self.assertEqual(result_create.status_code, HttpStatusCode.Created)
 
+        # Get
         result_get = self.resource_client.resource_groups.get(self.group_name)
-        #self.assertEqual(result_get.status_code, HttpStatusCode.OK)
         self.assertEqual(result_get.name, self.group_name)
         self.assertEqual(result_get.tags['tag1'], 'value1')
 
+        # Check existence
         result_check = self.resource_client.resource_groups.check_existence(
             self.group_name,
         )
-        #self.assertEqual(result_check.status_code, HttpStatusCode.NoContent)
         self.assertTrue(result_check)
 
         result_check = self.resource_client.resource_groups.check_existence(
             'unknowngroup',
         )
-        #self.assertEqual(result_check.status_code, HttpStatusCode.NotFound)
         self.assertFalse(result_check)
 
+        # List
         result_list = self.resource_client.resource_groups.list()
         result_list = list(result_list)
         self.assertGreater(len(result_list), 0)
@@ -65,6 +65,7 @@ class MgmtResourceTest(AzureMgmtTestCase):
         result_list_top = result_list_top.next()
         self.assertEqual(len(result_list_top), 2)
 
+        # Patch
         params_patch = azure.mgmt.resource.resources.models.ResourceGroup(
             location=self.region,
             tags={
@@ -76,12 +77,24 @@ class MgmtResourceTest(AzureMgmtTestCase):
             self.group_name,
             params_patch,
         )
-        #self.assertEqual(result_patch.status_code, HttpStatusCode.OK)
         self.assertEqual(result_patch.tags['tag1'], 'valueA')
         self.assertEqual(result_patch.tags['tag2'], 'valueB')
 
+        # List resources
+        resources = list(self.resource_client.resource_groups.list_resources(
+            self.group_name
+        ))
+
+        # Export template
+        template = self.resource_client.resource_groups.export_template(
+            self.group_name,
+            ['*']
+        )
+        self.assertTrue(hasattr(template, 'template'))
+
+        # Delete
         result_delete = self.resource_client.resource_groups.delete(self.group_name)
-        #self.assertEqual(result_get.status_code, HttpStatusCode.OK)
+        result_delete.wait()
 
     @record
     def test_resources(self):
