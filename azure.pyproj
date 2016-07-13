@@ -1286,6 +1286,7 @@
     <Compile Include="azure-mgmt\tests\test_mgmt_notificationhubs.py" />
     <Compile Include="azure-mgmt\tests\test_mgmt_redis.py" />
     <Compile Include="azure-mgmt\tests\test_mgmt_resource.py" />
+    <Compile Include="azure-mgmt\tests\test_mgmt_resource_subscriptions.py" />
     <Compile Include="azure-mgmt\tests\test_mgmt_scheduler.py" />
     <Compile Include="azure-mgmt\tests\test_mgmt_storage.py" />
     <Compile Include="azure-mgmt\tests\__init__.py" />
@@ -1669,6 +1670,7 @@
     <Content Include="azure-mgmt\tests\recordings\test_mgmt_resource.test_resource_groups.yaml" />
     <Content Include="azure-mgmt\tests\recordings\test_mgmt_scheduler.test_scheduler.yaml" />
     <Content Include="azure-mgmt\tests\recordings\test_mgmt_storage.test_storage_accounts.yaml" />
+    <Content Include="azure-mgmt\tests\testsettings_local.json" />
     <Content Include="azure-servicebus\MANIFEST.in" />
     <Content Include="azure-servicebus\README.rst" />
     <Content Include="azure-servicebus\setup.cfg" />
