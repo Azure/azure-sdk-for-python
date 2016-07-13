@@ -132,6 +132,11 @@ class MgmtResourceTest(AzureMgmtTestCase):
 
     @record
     def test_resources(self):
+        # WARNING: For some strange url parsing reason, this test has to be recorded twice:
+        # - Once in Python 2.7 for 2.7/3.3/3.4 (...Microsoft.Compute//availabilitySets...)
+        # - Once in Python 3.5 (...Microsoft.Compute/availabilitySets...)
+        # I don't know why 3.5 has one / and 2.7-3.4 two /
+        # I don't really care, being that Azure accept both URLs...
         self.create_resource_group()
 
         resource_name = self.get_resource_name("pytestavset")
