@@ -422,27 +422,65 @@ class MgmtNetworkTest(AzureMgmtTestCase):
             params_create,
         )
         result_create.wait() # AzureOperationPoller
-        #self.assertEqual(result_create.status_code, HttpStatusCode.OK)
 
         result_get = self.network_client.network_security_groups.get(
             self.group_name,
             security_group_name,
         )
-        #self.assertEqual(result_get.status_code, HttpStatusCode.OK)
 
-        result_list = self.network_client.network_security_groups.list(
+        result_list = list(self.network_client.network_security_groups.list(
             self.group_name,
+        ))
+        self.assertEqual(len(result_list), 1)
+
+        result_list_all = list(self.network_client.network_security_groups.list_all())
+
+        # Security Rules
+        new_security_rule_name = self.get_resource_name('pynewrule')
+        async_security_rule = self.network_client.security_rules.create_or_update(
+            self.group_name,
+            security_group_name,
+            new_security_rule_name,
+            {
+                    'access':azure.mgmt.network.models.SecurityRuleAccess.allow,
+                    'description':'New Test security rule',
+                    'destination_address_prefix':'*',
+                    'destination_port_range':'123-3500',
+                    'direction':azure.mgmt.network.models.SecurityRuleDirection.outbound,
+                    'priority':400,
+                    'protocol':azure.mgmt.network.models.SecurityRuleProtocol.tcp,
+                    'source_address_prefix':'*',
+                    'source_port_range':'655',
+            }
         )
-        #self.assertEqual(result_list.status_code, HttpStatusCode.OK)
+        security_rule = async_security_rule.result()
 
-        result_list_all = self.network_client.network_security_groups.list_all()
-        #self.assertEqual(result_list_all.status_code, HttpStatusCode.OK)
+        security_rule = self.network_client.security_rules.get(
+            self.group_name,
+            security_group_name,
+            security_rule.name
+        )
+        self.assertEqual(security_rule.name, new_security_rule_name)
 
+        new_security_rules = list(self.network_client.security_rules.list(
+            self.group_name,
+            security_group_name
+        ))
+        self.assertEqual(len(new_security_rules), 2)
+
+        result_delete = self.network_client.security_rules.delete(
+            self.group_name,
+            security_group_name,
+            new_security_rule_name
+        )
+        result_delete.wait()
+
+        # Delete NSG
         result_delete = self.network_client.network_security_groups.delete(
             self.group_name,
             security_group_name,
         )
-        #self.assertEqual(result_delete.status_code, HttpStatusCode.OK)
+        result_delete.wait()
 
     @record
     def test_routes(self):
