@@ -359,6 +359,9 @@ class MgmtResourceTest(AzureMgmtTestCase):
 
     @record
     def test_providers(self):
+        self.resource_client.providers.unregister('Microsoft.Batch')
+        self.resource_client.providers.get('Microsoft.Batch')
+
         result_list = self.resource_client.providers.list()
         for provider in result_list:
             self.resource_client.providers.register(provider.namespace)
