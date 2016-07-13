@@ -243,6 +243,20 @@ class MgmtResourceTest(AzureMgmtTestCase):
         )
         self.assertEqual(deployment_name, deployment_get_result.name)
 
+        deployment_operations = list(self.resource_client.deployment_operations.list(
+            self.group_name,
+            deployment_name
+        ))
+        self.assertGreater(len(deployment_operations), 1)
+
+        deployment_operation = deployment_operations[0]
+        deployment_operation_get = self.resource_client.deployment_operations.get(
+            self.group_name,
+            deployment_name,
+            deployment_operation.operation_id
+        )
+        self.assertEqual(deployment_operation_get.operation_id, deployment_operation.operation_id)
+
     @record
     def test_deployments_linked_template(self):
         self.create_resource_group()
