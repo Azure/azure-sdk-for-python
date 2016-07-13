@@ -10,7 +10,7 @@ interactions:
       User-Agent: [python/3.5.1 (Windows-10-10.0.14372-SP0) requests/2.10.0 msrest/0.4.0
           msrest_azure/0.4.1 resourcemanagementclient/0.30.0rc5 Azure-SDK-For-Python]
       accept-language: [en-US]
-      x-ms-client-request-id: [e7fd655c-4931-11e6-b084-ecb1d756380e]
+      x-ms-client-request-id: [691f1f82-493a-11e6-a714-ecb1d756380e]
     method: PUT
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_mgmt_resource_test_deployments69a0e9d?api-version=2016-02-01
   response:
@@ -19,25 +19,53 @@ interactions:
       Cache-Control: [no-cache]
       Content-Length: ['237']
       Content-Type: [application/json; charset=utf-8]
-      Date: ['Wed, 13 Jul 2016 19:42:14 GMT']
+      Date: ['Wed, 13 Jul 2016 20:43:07 GMT']
       Expires: ['-1']
       Pragma: [no-cache]
       Strict-Transport-Security: [max-age=31536000; includeSubDomains]
-      x-ms-correlation-request-id: [109d179c-cdce-4871-a0f2-6f40cccdc478]
-      x-ms-ratelimit-remaining-subscription-writes: ['1194']
-      x-ms-request-id: [109d179c-cdce-4871-a0f2-6f40cccdc478]
-      x-ms-routing-request-id: ['CENTRALUS:20160713T194215Z:109d179c-cdce-4871-a0f2-6f40cccdc478']
+      x-ms-correlation-request-id: [0dbbbb19-9058-482d-bbad-6f3110a9c4ff]
+      x-ms-ratelimit-remaining-subscription-writes: ['1199']
+      x-ms-request-id: [0dbbbb19-9058-482d-bbad-6f3110a9c4ff]
+      x-ms-routing-request-id: ['CENTRALUS:20160713T204307Z:0dbbbb19-9058-482d-bbad-6f3110a9c4ff']
     status: {code: 201, message: Created}
 - request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.5.1 (Windows-10-10.0.14372-SP0) requests/2.10.0 msrest/0.4.0
+          msrest_azure/0.4.1 resourcemanagementclient/0.30.0rc5 Azure-SDK-For-Python]
+      accept-language: [en-US]
+      x-ms-client-request-id: [69bb8bb8-493a-11e6-aeb9-ecb1d756380e]
+    method: HEAD
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_mgmt_resource_test_deployments69a0e9d/providers/Microsoft.Resources/deployments/pytestdeployment69a0e9d?api-version=2016-02-01
+  response:
+    body: {string: ''}
+    headers:
+      Cache-Control: [no-cache]
+      Content-Length: ['108']
+      Content-Type: [application/json; charset=utf-8]
+      Date: ['Wed, 13 Jul 2016 20:43:08 GMT']
+      Expires: ['-1']
+      Pragma: [no-cache]
+      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
+      x-ms-correlation-request-id: [9ef480bc-8ad5-4766-845e-d2bff07a7012]
+      x-ms-failure-cause: [gateway]
+      x-ms-ratelimit-remaining-subscription-reads: ['14998']
+      x-ms-request-id: [9ef480bc-8ad5-4766-845e-d2bff07a7012]
+      x-ms-routing-request-id: ['CENTRALUS:20160713T204308Z:9ef480bc-8ad5-4766-845e-d2bff07a7012']
+    status: {code: 404, message: Not Found}
+- request:
     body: '{"properties": {"parameters": {"location": {"value": "West US"}}, "template":
-      {"resources": [{"name": "availabilitySet1", "properties": {}, "location": "[parameters(''location'')]",
-      "type": "Microsoft.Compute/availabilitySets", "apiVersion": "2015-05-01-preview"}],
-      "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
-      "contentVersion": "1.0.0.0", "parameters": {"location": {"metadata": {"description":
-      "Location to deploy to"}, "allowedValues": ["East US", "West US", "West Europe",
-      "East Asia", "South East Asia"], "type": "string"}}, "outputs": {"myparameter":
-      {"type": "object", "value": "[reference(''Microsoft.Compute/availabilitySets/availabilitySet1'')]"}}},
-      "mode": "Incremental"}}'
+      {"contentVersion": "1.0.0.0", "parameters": {"location": {"metadata": {"description":
+      "Location to deploy to"}, "type": "string", "allowedValues": ["East US", "West
+      US", "West Europe", "East Asia", "South East Asia"]}}, "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+      "resources": [{"name": "availabilitySet1", "properties": {}, "apiVersion": "2015-05-01-preview",
+      "type": "Microsoft.Compute/availabilitySets", "location": "[parameters(''location'')]"}],
+      "outputs": {"myparameter": {"value": "[reference(''Microsoft.Compute/availabilitySets/availabilitySet1'')]",
+      "type": "object"}}}, "mode": "Incremental"}}'
     headers:
       Accept: [application/json]
       Accept-Encoding: ['gzip, deflate']
@@ -47,25 +75,25 @@ interactions:
       User-Agent: [python/3.5.1 (Windows-10-10.0.14372-SP0) requests/2.10.0 msrest/0.4.0
           msrest_azure/0.4.1 resourcemanagementclient/0.30.0rc5 Azure-SDK-For-Python]
       accept-language: [en-US]
-      x-ms-client-request-id: [e8b51cba-4931-11e6-8bd0-ecb1d756380e]
+      x-ms-client-request-id: [6a15208a-493a-11e6-8091-ecb1d756380e]
     method: PUT
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_mgmt_resource_test_deployments69a0e9d/providers/Microsoft.Resources/deployments/pytestdeployment69a0e9d?api-version=2016-02-01
   response:
     body: {string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_resource_test_deployments69a0e9d/providers/Microsoft.Resources/deployments/pytestdeployment69a0e9d","name":"pytestdeployment69a0e9d","properties":{"parameters":{"location":{"type":"String","value":"West
-        US"}},"mode":"Incremental","provisioningState":"Accepted","timestamp":"2016-07-13T19:42:17.072136Z","duration":"PT1.0859306S","correlationId":"f7f8d88e-f253-4643-a287-274cd1d1609e","providers":[{"namespace":"Microsoft.Compute","resourceTypes":[{"resourceType":"availabilitySets","locations":["westus"]}]}],"dependencies":[]}}'}
+        US"}},"mode":"Incremental","provisioningState":"Accepted","timestamp":"2016-07-13T20:43:09.7117467Z","duration":"PT0.7923169S","correlationId":"f077ddfc-2aab-4934-ae40-34dcedbbb837","providers":[{"namespace":"Microsoft.Compute","resourceTypes":[{"resourceType":"availabilitySets","locations":["westus"]}]}],"dependencies":[]}}'}
     headers:
-      Azure-AsyncOperation: ['https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_mgmt_resource_test_deployments69a0e9d/providers/Microsoft.Resources/deployments/pytestdeployment69a0e9d/operationStatuses/08587331679494914167?api-version=2016-02-01']
+      Azure-AsyncOperation: ['https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_mgmt_resource_test_deployments69a0e9d/providers/Microsoft.Resources/deployments/pytestdeployment69a0e9d/operationStatuses/08587331642965581921?api-version=2016-02-01']
       Cache-Control: [no-cache]
-      Content-Length: ['612']
+      Content-Length: ['613']
       Content-Type: [application/json; charset=utf-8]
-      Date: ['Wed, 13 Jul 2016 19:42:16 GMT']
+      Date: ['Wed, 13 Jul 2016 20:43:09 GMT']
       Expires: ['-1']
       Pragma: [no-cache]
       Strict-Transport-Security: [max-age=31536000; includeSubDomains]
-      x-ms-correlation-request-id: [f7f8d88e-f253-4643-a287-274cd1d1609e]
-      x-ms-ratelimit-remaining-subscription-writes: ['1197']
-      x-ms-request-id: [f7f8d88e-f253-4643-a287-274cd1d1609e]
-      x-ms-routing-request-id: ['CENTRALUS:20160713T194217Z:f7f8d88e-f253-4643-a287-274cd1d1609e']
+      x-ms-correlation-request-id: [f077ddfc-2aab-4934-ae40-34dcedbbb837]
+      x-ms-ratelimit-remaining-subscription-writes: ['1198']
+      x-ms-request-id: [f077ddfc-2aab-4934-ae40-34dcedbbb837]
+      x-ms-routing-request-id: ['CENTRALUS:20160713T204309Z:f077ddfc-2aab-4934-ae40-34dcedbbb837']
     status: {code: 201, message: Created}
 - request:
     body: null
@@ -77,24 +105,24 @@ interactions:
       User-Agent: [python/3.5.1 (Windows-10-10.0.14372-SP0) requests/2.10.0 msrest/0.4.0
           msrest_azure/0.4.1 resourcemanagementclient/0.30.0rc5 Azure-SDK-For-Python]
       accept-language: [en-US]
-      x-ms-client-request-id: [e8b51cba-4931-11e6-8bd0-ecb1d756380e]
+      x-ms-client-request-id: [6a15208a-493a-11e6-8091-ecb1d756380e]
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_mgmt_resource_test_deployments69a0e9d/providers/Microsoft.Resources/deployments/pytestdeployment69a0e9d/operationStatuses/08587331679494914167?api-version=2016-02-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_mgmt_resource_test_deployments69a0e9d/providers/Microsoft.Resources/deployments/pytestdeployment69a0e9d/operationStatuses/08587331642965581921?api-version=2016-02-01
   response:
     body: {string: '{"status":"Succeeded"}'}
     headers:
       Cache-Control: [no-cache]
       Content-Type: [application/json; charset=utf-8]
-      Date: ['Wed, 13 Jul 2016 19:42:47 GMT']
+      Date: ['Wed, 13 Jul 2016 20:43:39 GMT']
       Expires: ['-1']
       Pragma: [no-cache]
       Strict-Transport-Security: [max-age=31536000; includeSubDomains]
       Vary: [Accept-Encoding]
       content-length: ['22']
-      x-ms-correlation-request-id: [09fcb351-9d55-4cc5-87b7-1b52747f1b81]
-      x-ms-ratelimit-remaining-subscription-reads: ['14995']
-      x-ms-request-id: [09fcb351-9d55-4cc5-87b7-1b52747f1b81]
-      x-ms-routing-request-id: ['CENTRALUS:20160713T194247Z:09fcb351-9d55-4cc5-87b7-1b52747f1b81']
+      x-ms-correlation-request-id: [58251f2c-2918-4028-bfc0-77c5415b8aa2]
+      x-ms-ratelimit-remaining-subscription-reads: ['14997']
+      x-ms-request-id: [58251f2c-2918-4028-bfc0-77c5415b8aa2]
+      x-ms-routing-request-id: ['WESTUS:20160713T204340Z:58251f2c-2918-4028-bfc0-77c5415b8aa2']
     status: {code: 200, message: OK}
 - request:
     body: null
@@ -106,25 +134,25 @@ interactions:
       User-Agent: [python/3.5.1 (Windows-10-10.0.14372-SP0) requests/2.10.0 msrest/0.4.0
           msrest_azure/0.4.1 resourcemanagementclient/0.30.0rc5 Azure-SDK-For-Python]
       accept-language: [en-US]
-      x-ms-client-request-id: [e8b51cba-4931-11e6-8bd0-ecb1d756380e]
+      x-ms-client-request-id: [6a15208a-493a-11e6-8091-ecb1d756380e]
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_mgmt_resource_test_deployments69a0e9d/providers/Microsoft.Resources/deployments/pytestdeployment69a0e9d?api-version=2016-02-01
   response:
     body: {string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_resource_test_deployments69a0e9d/providers/Microsoft.Resources/deployments/pytestdeployment69a0e9d","name":"pytestdeployment69a0e9d","properties":{"parameters":{"location":{"type":"String","value":"West
-        US"}},"mode":"Incremental","provisioningState":"Succeeded","timestamp":"2016-07-13T19:42:25.4696558Z","duration":"PT9.4834504S","correlationId":"f7f8d88e-f253-4643-a287-274cd1d1609e","providers":[{"namespace":"Microsoft.Compute","resourceTypes":[{"resourceType":"availabilitySets","locations":["westus"]}]}],"dependencies":[],"outputs":{"myparameter":{"type":"Object","value":{"platformUpdateDomainCount":5,"platformFaultDomainCount":3}}},"outputResources":[{"id":"Microsoft.Compute/availabilitySets/availabilitySet1"}]}}'}
+        US"}},"mode":"Incremental","provisioningState":"Succeeded","timestamp":"2016-07-13T20:43:17.4895211Z","duration":"PT8.5700913S","correlationId":"f077ddfc-2aab-4934-ae40-34dcedbbb837","providers":[{"namespace":"Microsoft.Compute","resourceTypes":[{"resourceType":"availabilitySets","locations":["westus"]}]}],"dependencies":[],"outputs":{"myparameter":{"type":"Object","value":{"platformUpdateDomainCount":5,"platformFaultDomainCount":3}}},"outputResources":[{"id":"Microsoft.Compute/availabilitySets/availabilitySet1"}]}}'}
     headers:
       Cache-Control: [no-cache]
       Content-Type: [application/json; charset=utf-8]
-      Date: ['Wed, 13 Jul 2016 19:42:47 GMT']
+      Date: ['Wed, 13 Jul 2016 20:43:40 GMT']
       Expires: ['-1']
       Pragma: [no-cache]
       Strict-Transport-Security: [max-age=31536000; includeSubDomains]
       Vary: [Accept-Encoding]
       content-length: ['808']
-      x-ms-correlation-request-id: [080503a2-345c-42fc-942a-fae11f18731f]
-      x-ms-ratelimit-remaining-subscription-reads: ['14997']
-      x-ms-request-id: [080503a2-345c-42fc-942a-fae11f18731f]
-      x-ms-routing-request-id: ['CENTRALUS:20160713T194248Z:080503a2-345c-42fc-942a-fae11f18731f']
+      x-ms-correlation-request-id: [4542956c-3c0f-4193-85b0-c608919e73c4]
+      x-ms-ratelimit-remaining-subscription-reads: ['14994']
+      x-ms-request-id: [4542956c-3c0f-4193-85b0-c608919e73c4]
+      x-ms-routing-request-id: ['WESTUS:20160713T204340Z:4542956c-3c0f-4193-85b0-c608919e73c4']
     status: {code: 200, message: OK}
 - request:
     body: null
@@ -136,25 +164,25 @@ interactions:
       User-Agent: [python/3.5.1 (Windows-10-10.0.14372-SP0) requests/2.10.0 msrest/0.4.0
           msrest_azure/0.4.1 resourcemanagementclient/0.30.0rc5 Azure-SDK-For-Python]
       accept-language: [en-US]
-      x-ms-client-request-id: [fc4b3edc-4931-11e6-8d38-ecb1d756380e]
+      x-ms-client-request-id: [7d456294-493a-11e6-ae3a-ecb1d756380e]
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_mgmt_resource_test_deployments69a0e9d/providers/Microsoft.Resources/deployments/?api-version=2016-02-01
   response:
     body: {string: '{"value":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_resource_test_deployments69a0e9d/providers/Microsoft.Resources/deployments/pytestdeployment69a0e9d","name":"pytestdeployment69a0e9d","properties":{"parameters":{"location":{"type":"String","value":"West
-        US"}},"mode":"Incremental","provisioningState":"Succeeded","timestamp":"2016-07-13T19:42:25.4696558Z","duration":"PT9.4834504S","correlationId":"f7f8d88e-f253-4643-a287-274cd1d1609e","providers":[{"namespace":"Microsoft.Compute","resourceTypes":[{"resourceType":"availabilitySets","locations":["westus"]}]}],"dependencies":[],"outputs":{"myparameter":{"type":"Object","value":{"platformUpdateDomainCount":5,"platformFaultDomainCount":3}}},"outputResources":[{"id":"Microsoft.Compute/availabilitySets/availabilitySet1"}]}}]}'}
+        US"}},"mode":"Incremental","provisioningState":"Succeeded","timestamp":"2016-07-13T20:43:17.4895211Z","duration":"PT8.5700913S","correlationId":"f077ddfc-2aab-4934-ae40-34dcedbbb837","providers":[{"namespace":"Microsoft.Compute","resourceTypes":[{"resourceType":"availabilitySets","locations":["westus"]}]}],"dependencies":[],"outputs":{"myparameter":{"type":"Object","value":{"platformUpdateDomainCount":5,"platformFaultDomainCount":3}}},"outputResources":[{"id":"Microsoft.Compute/availabilitySets/availabilitySet1"}]}}]}'}
     headers:
       Cache-Control: [no-cache]
       Content-Type: [application/json; charset=utf-8]
-      Date: ['Wed, 13 Jul 2016 19:42:47 GMT']
+      Date: ['Wed, 13 Jul 2016 20:43:39 GMT']
       Expires: ['-1']
       Pragma: [no-cache]
       Strict-Transport-Security: [max-age=31536000; includeSubDomains]
       Vary: [Accept-Encoding]
       content-length: ['820']
-      x-ms-correlation-request-id: [9ee0da4b-1038-4590-861d-0d270c349a2c]
-      x-ms-ratelimit-remaining-subscription-reads: ['14994']
-      x-ms-request-id: [9ee0da4b-1038-4590-861d-0d270c349a2c]
-      x-ms-routing-request-id: ['CENTRALUS:20160713T194248Z:9ee0da4b-1038-4590-861d-0d270c349a2c']
+      x-ms-correlation-request-id: [67ab35ac-3080-4bcc-864e-383d05f70cba]
+      x-ms-ratelimit-remaining-subscription-reads: ['14996']
+      x-ms-request-id: [67ab35ac-3080-4bcc-864e-383d05f70cba]
+      x-ms-routing-request-id: ['WESTUS:20160713T204340Z:67ab35ac-3080-4bcc-864e-383d05f70cba']
     status: {code: 200, message: OK}
 - request:
     body: null
@@ -166,25 +194,25 @@ interactions:
       User-Agent: [python/3.5.1 (Windows-10-10.0.14372-SP0) requests/2.10.0 msrest/0.4.0
           msrest_azure/0.4.1 resourcemanagementclient/0.30.0rc5 Azure-SDK-For-Python]
       accept-language: [en-US]
-      x-ms-client-request-id: [fc851998-4931-11e6-a4f4-ecb1d756380e]
+      x-ms-client-request-id: [7d6bb5d2-493a-11e6-bf38-ecb1d756380e]
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_mgmt_resource_test_deployments69a0e9d/providers/Microsoft.Resources/deployments/pytestdeployment69a0e9d?api-version=2016-02-01
   response:
     body: {string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_resource_test_deployments69a0e9d/providers/Microsoft.Resources/deployments/pytestdeployment69a0e9d","name":"pytestdeployment69a0e9d","properties":{"parameters":{"location":{"type":"String","value":"West
-        US"}},"mode":"Incremental","provisioningState":"Succeeded","timestamp":"2016-07-13T19:42:25.4696558Z","duration":"PT9.4834504S","correlationId":"f7f8d88e-f253-4643-a287-274cd1d1609e","providers":[{"namespace":"Microsoft.Compute","resourceTypes":[{"resourceType":"availabilitySets","locations":["westus"]}]}],"dependencies":[],"outputs":{"myparameter":{"type":"Object","value":{"platformUpdateDomainCount":5,"platformFaultDomainCount":3}}},"outputResources":[{"id":"Microsoft.Compute/availabilitySets/availabilitySet1"}]}}'}
+        US"}},"mode":"Incremental","provisioningState":"Succeeded","timestamp":"2016-07-13T20:43:17.4895211Z","duration":"PT8.5700913S","correlationId":"f077ddfc-2aab-4934-ae40-34dcedbbb837","providers":[{"namespace":"Microsoft.Compute","resourceTypes":[{"resourceType":"availabilitySets","locations":["westus"]}]}],"dependencies":[],"outputs":{"myparameter":{"type":"Object","value":{"platformUpdateDomainCount":5,"platformFaultDomainCount":3}}},"outputResources":[{"id":"Microsoft.Compute/availabilitySets/availabilitySet1"}]}}'}
     headers:
       Cache-Control: [no-cache]
       Content-Type: [application/json; charset=utf-8]
-      Date: ['Wed, 13 Jul 2016 19:42:48 GMT']
+      Date: ['Wed, 13 Jul 2016 20:43:40 GMT']
       Expires: ['-1']
       Pragma: [no-cache]
       Strict-Transport-Security: [max-age=31536000; includeSubDomains]
       Vary: [Accept-Encoding]
       content-length: ['808']
-      x-ms-correlation-request-id: [dff4cdd3-4f32-49b3-b252-9fae2c15d421]
-      x-ms-ratelimit-remaining-subscription-reads: ['14996']
-      x-ms-request-id: [dff4cdd3-4f32-49b3-b252-9fae2c15d421]
-      x-ms-routing-request-id: ['CENTRALUS:20160713T194248Z:dff4cdd3-4f32-49b3-b252-9fae2c15d421']
+      x-ms-correlation-request-id: [a8022920-ebb7-4a4c-abcb-29897f8b27e1]
+      x-ms-ratelimit-remaining-subscription-reads: ['14998']
+      x-ms-request-id: [a8022920-ebb7-4a4c-abcb-29897f8b27e1]
+      x-ms-routing-request-id: ['WESTUS:20160713T204340Z:a8022920-ebb7-4a4c-abcb-29897f8b27e1']
     status: {code: 200, message: OK}
 - request:
     body: null
@@ -196,24 +224,24 @@ interactions:
       User-Agent: [python/3.5.1 (Windows-10-10.0.14372-SP0) requests/2.10.0 msrest/0.4.0
           msrest_azure/0.4.1 resourcemanagementclient/0.30.0rc5 Azure-SDK-For-Python]
       accept-language: [en-US]
-      x-ms-client-request-id: [fcbc2f34-4931-11e6-9505-ecb1d756380e]
+      x-ms-client-request-id: [7d8cde1c-493a-11e6-a104-ecb1d756380e]
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_mgmt_resource_test_deployments69a0e9d/deployments/pytestdeployment69a0e9d/operations?api-version=2016-02-01
   response:
-    body: {string: '{"value":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_resource_test_deployments69a0e9d/providers/Microsoft.Resources/deployments/pytestdeployment69a0e9d/operations/19AB96D8A67C63CF","operationId":"19AB96D8A67C63CF","properties":{"provisioningOperation":"Create","provisioningState":"Succeeded","timestamp":"2016-07-13T19:42:23.5755245Z","duration":"PT3.795885S","trackingId":"9d3c1df5-e67d-4f0f-b551-a451dffec1fc","serviceRequestId":"3a68ae8b-b95a-48d7-97c9-1ef3a35e98d3","statusCode":"OK","targetResource":{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_resource_test_deployments69a0e9d/providers/Microsoft.Compute/availabilitySets/availabilitySet1","resourceType":"Microsoft.Compute/availabilitySets","resourceName":"availabilitySet1"}}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_resource_test_deployments69a0e9d/providers/Microsoft.Resources/deployments/pytestdeployment69a0e9d/operations/08587331679494914167","operationId":"08587331679494914167","properties":{"provisioningOperation":"EvaluateDeploymentOutput","provisioningState":"Succeeded","timestamp":"2016-07-13T19:42:25.2433101Z","duration":"PT1.1524842S","trackingId":"a7acfd1e-be46-4e95-9e5f-76b458c148f5","statusCode":"OK","statusMessage":null}}]}'}
+    body: {string: '{"value":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_resource_test_deployments69a0e9d/providers/Microsoft.Resources/deployments/pytestdeployment69a0e9d/operations/19AB96D8A67C63CF","operationId":"19AB96D8A67C63CF","properties":{"provisioningOperation":"Create","provisioningState":"Succeeded","timestamp":"2016-07-13T20:43:15.2880218Z","duration":"PT3.5333383S","trackingId":"029f05d4-51aa-4c5e-940c-7be14ce21c91","serviceRequestId":"dffac315-277d-4b02-803c-9ab396fa69cb","statusCode":"OK","targetResource":{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_resource_test_deployments69a0e9d/providers/Microsoft.Compute/availabilitySets/availabilitySet1","resourceType":"Microsoft.Compute/availabilitySets","resourceName":"availabilitySet1"}}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_resource_test_deployments69a0e9d/providers/Microsoft.Resources/deployments/pytestdeployment69a0e9d/operations/08587331642965581921","operationId":"08587331642965581921","properties":{"provisioningOperation":"EvaluateDeploymentOutput","provisioningState":"Succeeded","timestamp":"2016-07-13T20:43:17.264386Z","duration":"PT1.4573105S","trackingId":"66f24d42-46c0-432b-a154-10d31c1bc7cd","statusCode":"OK","statusMessage":null}}]}'}
     headers:
       Cache-Control: [no-cache]
       Content-Type: [application/json; charset=utf-8]
-      Date: ['Wed, 13 Jul 2016 19:42:48 GMT']
+      Date: ['Wed, 13 Jul 2016 20:43:40 GMT']
       Expires: ['-1']
       Pragma: [no-cache]
       Strict-Transport-Security: [max-age=31536000; includeSubDomains]
       Vary: [Accept-Encoding]
       content-length: ['1329']
-      x-ms-correlation-request-id: [ea1924a6-8a41-4f84-8a7b-9e4394a2a5ec]
-      x-ms-ratelimit-remaining-subscription-reads: ['14997']
-      x-ms-request-id: [ea1924a6-8a41-4f84-8a7b-9e4394a2a5ec]
-      x-ms-routing-request-id: ['CENTRALUS:20160713T194249Z:ea1924a6-8a41-4f84-8a7b-9e4394a2a5ec']
+      x-ms-correlation-request-id: [1ec36bb3-a8f4-4a7c-8af4-ed8232cf259a]
+      x-ms-ratelimit-remaining-subscription-reads: ['14996']
+      x-ms-request-id: [1ec36bb3-a8f4-4a7c-8af4-ed8232cf259a]
+      x-ms-routing-request-id: ['WESTUS:20160713T204341Z:1ec36bb3-a8f4-4a7c-8af4-ed8232cf259a']
     status: {code: 200, message: OK}
 - request:
     body: null
@@ -225,23 +253,141 @@ interactions:
       User-Agent: [python/3.5.1 (Windows-10-10.0.14372-SP0) requests/2.10.0 msrest/0.4.0
           msrest_azure/0.4.1 resourcemanagementclient/0.30.0rc5 Azure-SDK-For-Python]
       accept-language: [en-US]
-      x-ms-client-request-id: [fd065aac-4931-11e6-8926-ecb1d756380e]
+      x-ms-client-request-id: [7db247cc-493a-11e6-9c91-ecb1d756380e]
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_mgmt_resource_test_deployments69a0e9d/deployments/pytestdeployment69a0e9d/operations/19AB96D8A67C63CF?api-version=2016-02-01
   response:
-    body: {string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_resource_test_deployments69a0e9d/providers/Microsoft.Resources/deployments/pytestdeployment69a0e9d/operations/19AB96D8A67C63CF","operationId":"19AB96D8A67C63CF","properties":{"provisioningOperation":"Create","provisioningState":"Succeeded","timestamp":"2016-07-13T19:42:23.5755245Z","duration":"PT3.795885S","trackingId":"9d3c1df5-e67d-4f0f-b551-a451dffec1fc","serviceRequestId":"3a68ae8b-b95a-48d7-97c9-1ef3a35e98d3","statusCode":"OK","targetResource":{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_resource_test_deployments69a0e9d/providers/Microsoft.Compute/availabilitySets/availabilitySet1","resourceType":"Microsoft.Compute/availabilitySets","resourceName":"availabilitySet1"}}}'}
+    body: {string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_resource_test_deployments69a0e9d/providers/Microsoft.Resources/deployments/pytestdeployment69a0e9d/operations/19AB96D8A67C63CF","operationId":"19AB96D8A67C63CF","properties":{"provisioningOperation":"Create","provisioningState":"Succeeded","timestamp":"2016-07-13T20:43:15.2880218Z","duration":"PT3.5333383S","trackingId":"029f05d4-51aa-4c5e-940c-7be14ce21c91","serviceRequestId":"dffac315-277d-4b02-803c-9ab396fa69cb","statusCode":"OK","targetResource":{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_resource_test_deployments69a0e9d/providers/Microsoft.Compute/availabilitySets/availabilitySet1","resourceType":"Microsoft.Compute/availabilitySets","resourceName":"availabilitySet1"}}}'}
     headers:
       Cache-Control: [no-cache]
       Content-Type: [application/json; charset=utf-8]
-      Date: ['Wed, 13 Jul 2016 19:42:48 GMT']
+      Date: ['Wed, 13 Jul 2016 20:43:40 GMT']
       Expires: ['-1']
       Pragma: [no-cache]
       Strict-Transport-Security: [max-age=31536000; includeSubDomains]
       Vary: [Accept-Encoding]
-      content-length: ['805']
-      x-ms-correlation-request-id: [8cfbeb0e-5896-40de-96ca-588c1b403168]
-      x-ms-ratelimit-remaining-subscription-reads: ['14996']
-      x-ms-request-id: [8cfbeb0e-5896-40de-96ca-588c1b403168]
-      x-ms-routing-request-id: ['CENTRALUS:20160713T194249Z:8cfbeb0e-5896-40de-96ca-588c1b403168']
+      content-length: ['806']
+      x-ms-correlation-request-id: [e3e51062-cb48-4d8a-9170-2ec7d48f2e7e]
+      x-ms-ratelimit-remaining-subscription-reads: ['14998']
+      x-ms-request-id: [e3e51062-cb48-4d8a-9170-2ec7d48f2e7e]
+      x-ms-routing-request-id: ['WESTUS:20160713T204341Z:e3e51062-cb48-4d8a-9170-2ec7d48f2e7e']
     status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['0']
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.5.1 (Windows-10-10.0.14372-SP0) requests/2.10.0 msrest/0.4.0
+          msrest_azure/0.4.1 resourcemanagementclient/0.30.0rc5 Azure-SDK-For-Python]
+      accept-language: [en-US]
+      x-ms-client-request-id: [7dd59f14-493a-11e6-9573-ecb1d756380e]
+    method: POST
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_mgmt_resource_test_deployments69a0e9d/providers/Microsoft.Resources/deployments/pytestdeployment69a0e9d/cancel?api-version=2016-02-01
+  response:
+    body: {string: '{"error":{"code":"DeploymentCannotBeCancelled","message":"The
+        deployment ''pytestdeployment69a0e9d'' cannot be cancelled because it has
+        provisioning state ''Succeeded'' or it has already expired (expiration time
+        is ''7/20/2016 8:43:08 PM'')."}}'}
+    headers:
+      Cache-Control: [no-cache]
+      Content-Length: ['238']
+      Content-Type: [application/json; charset=utf-8]
+      Date: ['Wed, 13 Jul 2016 20:43:41 GMT']
+      Expires: ['-1']
+      Pragma: [no-cache]
+      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
+      x-ms-correlation-request-id: [ddc0357c-4f9d-49ed-b025-a78be26791ec]
+      x-ms-failure-cause: [gateway]
+      x-ms-ratelimit-remaining-subscription-writes: ['1199']
+      x-ms-request-id: [ddc0357c-4f9d-49ed-b025-a78be26791ec]
+      x-ms-routing-request-id: ['WESTUS:20160713T204341Z:ddc0357c-4f9d-49ed-b025-a78be26791ec']
+    status: {code: 409, message: Conflict}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['0']
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.5.1 (Windows-10-10.0.14372-SP0) requests/2.10.0 msrest/0.4.0
+          msrest_azure/0.4.1 resourcemanagementclient/0.30.0rc5 Azure-SDK-For-Python]
+      accept-language: [en-US]
+      x-ms-client-request-id: [7dff8ac8-493a-11e6-8f25-ecb1d756380e]
+    method: DELETE
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_mgmt_resource_test_deployments69a0e9d/providers/Microsoft.Resources/deployments/pytestdeployment69a0e9d?api-version=2016-02-01
+  response:
+    body: {string: ''}
+    headers:
+      Cache-Control: [no-cache]
+      Content-Length: ['0']
+      Date: ['Wed, 13 Jul 2016 20:43:41 GMT']
+      Expires: ['-1']
+      Location: ['https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/operationresults/eyJqb2JJZCI6IkRlcGxveW1lbnREZWxldGlvbkpvYi1HTlMtVEVTVDo1Rk1HTVQ6NUZSRVNPVVJDRTo1RlRFU1Q6NUZERVBMT1lNRU5UUzY5QTBFOUQtUFlURVNUREVQTE9ZTUVOVDY5QTBFOUQtIiwiam9iTG9jYXRpb24iOiJ3ZXN0dXMifQ?api-version=2016-02-01']
+      Pragma: [no-cache]
+      Retry-After: ['0']
+      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
+      x-ms-correlation-request-id: [3ba2c732-5280-42b2-bfcf-3982324ebab8]
+      x-ms-ratelimit-remaining-subscription-writes: ['1198']
+      x-ms-request-id: [3ba2c732-5280-42b2-bfcf-3982324ebab8]
+      x-ms-routing-request-id: ['WESTUS:20160713T204342Z:3ba2c732-5280-42b2-bfcf-3982324ebab8']
+    status: {code: 202, message: Accepted}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.5.1 (Windows-10-10.0.14372-SP0) requests/2.10.0 msrest/0.4.0
+          msrest_azure/0.4.1 resourcemanagementclient/0.30.0rc5 Azure-SDK-For-Python]
+      accept-language: [en-US]
+      x-ms-client-request-id: [7dff8ac8-493a-11e6-8f25-ecb1d756380e]
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/operationresults/eyJqb2JJZCI6IkRlcGxveW1lbnREZWxldGlvbkpvYi1HTlMtVEVTVDo1Rk1HTVQ6NUZSRVNPVVJDRTo1RlRFU1Q6NUZERVBMT1lNRU5UUzY5QTBFOUQtUFlURVNUREVQTE9ZTUVOVDY5QTBFOUQtIiwiam9iTG9jYXRpb24iOiJ3ZXN0dXMifQ?api-version=2016-02-01
+  response:
+    body: {string: ''}
+    headers:
+      Cache-Control: [no-cache]
+      Content-Length: ['0']
+      Date: ['Wed, 13 Jul 2016 20:43:56 GMT']
+      Expires: ['-1']
+      Location: ['https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/operationresults/eyJqb2JJZCI6IkRlcGxveW1lbnREZWxldGlvbkpvYi1HTlMtVEVTVDo1Rk1HTVQ6NUZSRVNPVVJDRTo1RlRFU1Q6NUZERVBMT1lNRU5UUzY5QTBFOUQtUFlURVNUREVQTE9ZTUVOVDY5QTBFOUQtIiwiam9iTG9jYXRpb24iOiJ3ZXN0dXMifQ?api-version=2016-02-01']
+      Pragma: [no-cache]
+      Retry-After: ['0']
+      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
+      x-ms-correlation-request-id: [152b3e54-3989-43fe-a92c-3a8f9330ce41]
+      x-ms-ratelimit-remaining-subscription-reads: ['14997']
+      x-ms-request-id: [152b3e54-3989-43fe-a92c-3a8f9330ce41]
+      x-ms-routing-request-id: ['WESTUS:20160713T204357Z:152b3e54-3989-43fe-a92c-3a8f9330ce41']
+    status: {code: 202, message: Accepted}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.5.1 (Windows-10-10.0.14372-SP0) requests/2.10.0 msrest/0.4.0
+          msrest_azure/0.4.1 resourcemanagementclient/0.30.0rc5 Azure-SDK-For-Python]
+      accept-language: [en-US]
+      x-ms-client-request-id: [7dff8ac8-493a-11e6-8f25-ecb1d756380e]
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/operationresults/eyJqb2JJZCI6IkRlcGxveW1lbnREZWxldGlvbkpvYi1HTlMtVEVTVDo1Rk1HTVQ6NUZSRVNPVVJDRTo1RlRFU1Q6NUZERVBMT1lNRU5UUzY5QTBFOUQtUFlURVNUREVQTE9ZTUVOVDY5QTBFOUQtIiwiam9iTG9jYXRpb24iOiJ3ZXN0dXMifQ?api-version=2016-02-01
+  response:
+    body: {string: ''}
+    headers:
+      Cache-Control: [no-cache]
+      Date: ['Wed, 13 Jul 2016 20:44:11 GMT']
+      Expires: ['-1']
+      Pragma: [no-cache]
+      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
+      x-ms-correlation-request-id: [09fc59ff-929b-4a44-93c3-a0f78f9305c5]
+      x-ms-ratelimit-remaining-subscription-reads: ['14997']
+      x-ms-request-id: [09fc59ff-929b-4a44-93c3-a0f78f9305c5]
+      x-ms-routing-request-id: ['CENTRALUS:20160713T204412Z:09fc59ff-929b-4a44-93c3-a0f78f9305c5']
+    status: {code: 204, message: No Content}
 version: 1
