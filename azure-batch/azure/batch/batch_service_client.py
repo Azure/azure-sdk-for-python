@@ -40,7 +40,7 @@ class BatchServiceClientConfiguration(AzureConfiguration):
     Note that all parameters used to create this instance are saved as instance
     attributes.
 
-    :param credentials: Gets Azure subscription credentials.
+    :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
      object<msrestazure.azure_active_directory>`
     :param api_version: Client API Version.
@@ -108,7 +108,7 @@ class BatchServiceClient(object):
     :ivar compute_node: ComputeNode operations
     :vartype compute_node: .operations.ComputeNodeOperations
 
-    :param credentials: Gets Azure subscription credentials.
+    :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
      object<msrestazure.azure_active_directory>`
     :param api_version: Client API Version.
