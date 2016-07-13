@@ -179,6 +179,13 @@ class MgmtResourceTest(AzureMgmtTestCase):
 
         # for more sample templates, see https://github.com/Azure/azure-quickstart-templates
         deployment_name = self.get_resource_name("pytestdeployment")
+
+        deployment_exists = self.resource_client.deployments.check_existence(
+            self.group_name,
+            deployment_name
+        )
+        self.assertFalse(deployment_exists)
+
         template = {
   "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
   "contentVersion": "1.0.0.0",
@@ -256,6 +263,21 @@ class MgmtResourceTest(AzureMgmtTestCase):
             deployment_operation.operation_id
         )
         self.assertEqual(deployment_operation_get.operation_id, deployment_operation.operation_id)
+
+        # Should throw, since the deployment is done => cannot be cancelled
+        with self.assertRaises(azure.common.exceptions.CloudError) as cm:
+            self.resource_client.deployments.cancel(
+                self.group_name,
+                deployment_name
+            )
+        self.assertIn('cannot be cancelled', cm.exception.message)
+
+        # Delete the template
+        async_delete = self.resource_client.deployments.delete(
+            self.group_name,
+            deployment_name
+        )
+        async_delete.wait()
 
     @record
     def test_deployments_linked_template(self):
