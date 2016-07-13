@@ -17,8 +17,8 @@ module Azure::ARM::Network
       # address
       attr_accessor :subnet
 
-      # @return [String] Gets or sets Provisioning state of the application
-      # gateway subnet resource Updating/Deleting/Failed
+      # @return [String] Gets provisioning state of the application gateway
+      # subnet resource Updating/Deleting/Failed
       attr_accessor :provisioning_state
 
       # @return [String] Gets name of the resource that is unique within a

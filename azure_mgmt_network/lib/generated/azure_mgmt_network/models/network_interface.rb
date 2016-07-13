@@ -20,14 +20,14 @@ module Azure::ARM::Network
       attr_accessor :network_security_group
 
       # @return [Array<NetworkInterfaceIPConfiguration>] Gets or sets list of
-      # IPConfigurations of the NetworkInterface
+      # IPConfigurations of the network interface
       attr_accessor :ip_configurations
 
-      # @return [NetworkInterfaceDnsSettings] Gets or sets DNS Settings in
-      # NetworkInterface
+      # @return [NetworkInterfaceDnsSettings] Gets or sets DNS settings in
+      # network interface
       attr_accessor :dns_settings
 
-      # @return [String] Gets the MAC Address of the network interface
+      # @return [String] Gets the MAC address of the network interface
       attr_accessor :mac_address
 
       # @return [Boolean] Gets whether this is a primary NIC on a virtual
@@ -42,8 +42,8 @@ module Azure::ARM::Network
       # interface resource
       attr_accessor :resource_guid
 
-      # @return [String] Gets or sets Provisioning state of the PublicIP
-      # resource Updating/Deleting/Failed
+      # @return [String] Gets provisioning state of the PublicIP resource
+      # Updating/Deleting/Failed
       attr_accessor :provisioning_state
 
       # @return [String] Gets a unique read-only string that changes whenever

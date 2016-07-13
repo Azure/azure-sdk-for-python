@@ -46,8 +46,8 @@ module Azure::ARM::Network
       # Otherwise, it is not allowed. There is no default value
       attr_accessor :request_path
 
-      # @return [String] Gets or sets Provisioning state of the PublicIP
-      # resource Updating/Deleting/Failed
+      # @return [String] Gets provisioning state of the PublicIP resource
+      # Updating/Deleting/Failed
       attr_accessor :provisioning_state
 
       # @return [String] Gets name of the resource that is unique within a

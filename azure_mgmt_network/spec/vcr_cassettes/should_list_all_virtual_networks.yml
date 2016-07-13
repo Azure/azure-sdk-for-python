@@ -106,7 +106,7 @@ http_interactions:
   recorded_at: Thu, 19 May 2016 07:52:15 GMT
 - request:
     method: get
-    uri: https://management.azure.com/subscriptions/<AZURE_SUBSCRIPTION_ID>/providers/Microsoft.Network/virtualNetworks?api-version=2016-03-30
+    uri: https://management.azure.com/subscriptions/<AZURE_SUBSCRIPTION_ID>/providers/Microsoft.Network/virtualNetworks?api-version=2016-06-01
     body:
       encoding: US-ASCII
       string: ''

@@ -27,8 +27,8 @@ module Azure::ARM::Network
       # @return [String]
       attr_accessor :private_ipaddress
 
-      # @return [IPAllocationMethod] Gets or sets PrivateIP allocation method
-      # (Static/Dynamic). Possible values include: 'Static', 'Dynamic'
+      # @return [IPAllocationMethod] Gets or sets PrivateIP allocation method.
+      # Possible values include: 'Static', 'Dynamic'
       attr_accessor :private_ipallocation_method
 
       # @return [IPVersion] Gets or sets PrivateIP address version

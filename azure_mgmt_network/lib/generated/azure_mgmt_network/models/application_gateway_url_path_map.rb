@@ -24,8 +24,8 @@ module Azure::ARM::Network
       # URL path map resource
       attr_accessor :path_rules
 
-      # @return [String] Gets or sets Provisioning state of the backend http
-      # settings resource Updating/Deleting/Failed
+      # @return [String] Gets provisioning state of the backend http settings
+      # resource Updating/Deleting/Failed
       attr_accessor :provisioning_state
 
       # @return [String] Gets name of the resource that is unique within a

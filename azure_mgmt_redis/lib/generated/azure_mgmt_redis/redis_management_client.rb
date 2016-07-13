@@ -44,6 +44,9 @@ module Azure::ARM::Redis
     # @return [Redis] redis
     attr_reader :redis
 
+    # @return [PatchSchedules] patch_schedules
+    attr_reader :patch_schedules
+
     #
     # Creates initializes a new instance of the RedisManagementClient class.
     # @param credentials [MsRest::ServiceClientCredentials] credentials to authorize HTTP requests made by the service client.
@@ -59,7 +62,8 @@ module Azure::ARM::Redis
       @credentials = credentials
 
       @redis = Redis.new(self)
-      @api_version = '2015-08-01'
+      @patch_schedules = PatchSchedules.new(self)
+      @api_version = '2016-04-01'
       @accept_language = 'en-US'
       @long_running_operation_retry_timeout = 30
       @generate_client_request_id = true

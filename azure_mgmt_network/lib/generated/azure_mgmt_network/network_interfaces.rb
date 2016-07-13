@@ -885,6 +885,254 @@ module Azure::ARM::Network
     end
 
     #
+    # The get effective routetable operation retrieves all the route tables
+    # applied on a networkInterface.
+    #
+    # @param resource_group_name [String] The name of the resource group.
+    # @param network_interface_name [String] The name of the network interface.
+    # @return [Concurrent::Promise] promise which provides async access to http
+    # response.
+    #
+    def get_effective_route_table(resource_group_name, network_interface_name, custom_headers = nil)
+      # Send request
+      promise = begin_get_effective_route_table_async(resource_group_name, network_interface_name, custom_headers)
+
+      promise = promise.then do |response|
+        # Defining deserialization method.
+        deserialize_method = lambda do |parsed_response|
+          result_mapper = EffectiveRouteListResult.mapper()
+          parsed_response = @client.deserialize(result_mapper, parsed_response, 'parsed_response')
+        end
+
+       # Waiting for response.
+       @client.get_long_running_operation_result(response, deserialize_method)
+      end
+
+      promise
+    end
+
+    #
+    # The get effective routetable operation retrieves all the route tables
+    # applied on a networkInterface.
+    #
+    # @param resource_group_name [String] The name of the resource group.
+    # @param network_interface_name [String] The name of the network interface.
+    # @param custom_headers [Hash{String => String}] A hash of custom headers that
+    # will be added to the HTTP request.
+    #
+    # @return [EffectiveRouteListResult] operation results.
+    #
+    def begin_get_effective_route_table(resource_group_name, network_interface_name, custom_headers = nil)
+      response = begin_get_effective_route_table_async(resource_group_name, network_interface_name, custom_headers).value!
+      response.body unless response.nil?
+    end
+
+    #
+    # The get effective routetable operation retrieves all the route tables
+    # applied on a networkInterface.
+    #
+    # @param resource_group_name [String] The name of the resource group.
+    # @param network_interface_name [String] The name of the network interface.
+    # @param custom_headers [Hash{String => String}] A hash of custom headers that
+    # will be added to the HTTP request.
+    #
+    # @return [MsRestAzure::AzureOperationResponse] HTTP response information.
+    #
+    def begin_get_effective_route_table_with_http_info(resource_group_name, network_interface_name, custom_headers = nil)
+      begin_get_effective_route_table_async(resource_group_name, network_interface_name, custom_headers).value!
+    end
+
+    #
+    # The get effective routetable operation retrieves all the route tables
+    # applied on a networkInterface.
+    #
+    # @param resource_group_name [String] The name of the resource group.
+    # @param network_interface_name [String] The name of the network interface.
+    # @param [Hash{String => String}] A hash of custom headers that will be added
+    # to the HTTP request.
+    #
+    # @return [Concurrent::Promise] Promise object which holds the HTTP response.
+    #
+    def begin_get_effective_route_table_async(resource_group_name, network_interface_name, custom_headers = nil)
+      fail ArgumentError, 'resource_group_name is nil' if resource_group_name.nil?
+      fail ArgumentError, 'network_interface_name is nil' if network_interface_name.nil?
+      fail ArgumentError, '@client.api_version is nil' if @client.api_version.nil?
+      fail ArgumentError, '@client.subscription_id is nil' if @client.subscription_id.nil?
+
+
+      request_headers = {}
+
+      # Set Headers
+      request_headers['x-ms-client-request-id'] = SecureRandom.uuid
+      request_headers['accept-language'] = @client.accept_language unless @client.accept_language.nil?
+      path_template = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/networkInterfaces/{networkInterfaceName}/effectiveRouteTable'
+      options = {
+          middlewares: [[MsRest::RetryPolicyMiddleware, times: 3, retry: 0.02], [:cookie_jar]],
+          path_params: {'resourceGroupName' => resource_group_name,'networkInterfaceName' => network_interface_name,'subscriptionId' => @client.subscription_id},
+          query_params: {'api-version' => @client.api_version},
+          headers: request_headers.merge(custom_headers || {})
+      }
+
+      request_url = @base_url || @client.base_url
+
+      request = MsRest::HttpOperationRequest.new(request_url, path_template, :post, options)
+      promise = request.run_promise do |req|
+        @client.credentials.sign_request(req) unless @client.credentials.nil?
+      end
+
+      promise = promise.then do |http_response|
+        status_code = http_response.status
+        response_content = http_response.body
+        unless status_code == 200
+          error_model = JSON.load(response_content)
+          fail MsRestAzure::AzureOperationError.new(request, http_response, error_model)
+        end
+
+        # Create Result
+        result = MsRestAzure::AzureOperationResponse.new(request, http_response)
+        result.request_id = http_response['x-ms-request-id'] unless http_response['x-ms-request-id'].nil?
+        # Deserialize Response
+        if status_code == 200
+          begin
+            parsed_response = response_content.to_s.empty? ? nil : JSON.load(response_content)
+            result_mapper = EffectiveRouteListResult.mapper()
+            result.body = @client.deserialize(result_mapper, parsed_response, 'result.body')
+          rescue Exception => e
+            fail MsRest::DeserializationError.new('Error occurred in deserializing the response', e.message, e.backtrace, result)
+          end
+        end
+
+        result
+      end
+
+      promise.execute
+    end
+
+    #
+    # The list effective network security group operation retrieves all the
+    # network security groups applied on a networkInterface.
+    #
+    # @param resource_group_name [String] The name of the resource group.
+    # @param network_interface_name [String] The name of the network interface.
+    # @return [Concurrent::Promise] promise which provides async access to http
+    # response.
+    #
+    def list_effective_network_security_groups(resource_group_name, network_interface_name, custom_headers = nil)
+      # Send request
+      promise = begin_list_effective_network_security_groups_async(resource_group_name, network_interface_name, custom_headers)
+
+      promise = promise.then do |response|
+        # Defining deserialization method.
+        deserialize_method = lambda do |parsed_response|
+          result_mapper = EffectiveNetworkSecurityGroupListResult.mapper()
+          parsed_response = @client.deserialize(result_mapper, parsed_response, 'parsed_response')
+        end
+
+       # Waiting for response.
+       @client.get_long_running_operation_result(response, deserialize_method)
+      end
+
+      promise
+    end
+
+    #
+    # The list effective network security group operation retrieves all the
+    # network security groups applied on a networkInterface.
+    #
+    # @param resource_group_name [String] The name of the resource group.
+    # @param network_interface_name [String] The name of the network interface.
+    # @param custom_headers [Hash{String => String}] A hash of custom headers that
+    # will be added to the HTTP request.
+    #
+    # @return [EffectiveNetworkSecurityGroupListResult] operation results.
+    #
+    def begin_list_effective_network_security_groups(resource_group_name, network_interface_name, custom_headers = nil)
+      response = begin_list_effective_network_security_groups_async(resource_group_name, network_interface_name, custom_headers).value!
+      response.body unless response.nil?
+    end
+
+    #
+    # The list effective network security group operation retrieves all the
+    # network security groups applied on a networkInterface.
+    #
+    # @param resource_group_name [String] The name of the resource group.
+    # @param network_interface_name [String] The name of the network interface.
+    # @param custom_headers [Hash{String => String}] A hash of custom headers that
+    # will be added to the HTTP request.
+    #
+    # @return [MsRestAzure::AzureOperationResponse] HTTP response information.
+    #
+    def begin_list_effective_network_security_groups_with_http_info(resource_group_name, network_interface_name, custom_headers = nil)
+      begin_list_effective_network_security_groups_async(resource_group_name, network_interface_name, custom_headers).value!
+    end
+
+    #
+    # The list effective network security group operation retrieves all the
+    # network security groups applied on a networkInterface.
+    #
+    # @param resource_group_name [String] The name of the resource group.
+    # @param network_interface_name [String] The name of the network interface.
+    # @param [Hash{String => String}] A hash of custom headers that will be added
+    # to the HTTP request.
+    #
+    # @return [Concurrent::Promise] Promise object which holds the HTTP response.
+    #
+    def begin_list_effective_network_security_groups_async(resource_group_name, network_interface_name, custom_headers = nil)
+      fail ArgumentError, 'resource_group_name is nil' if resource_group_name.nil?
+      fail ArgumentError, 'network_interface_name is nil' if network_interface_name.nil?
+      fail ArgumentError, '@client.api_version is nil' if @client.api_version.nil?
+      fail ArgumentError, '@client.subscription_id is nil' if @client.subscription_id.nil?
+
+
+      request_headers = {}
+
+      # Set Headers
+      request_headers['x-ms-client-request-id'] = SecureRandom.uuid
+      request_headers['accept-language'] = @client.accept_language unless @client.accept_language.nil?
+      path_template = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/networkInterfaces/{networkInterfaceName}/effectiveNetworkSecurityGroups'
+      options = {
+          middlewares: [[MsRest::RetryPolicyMiddleware, times: 3, retry: 0.02], [:cookie_jar]],
+          path_params: {'resourceGroupName' => resource_group_name,'networkInterfaceName' => network_interface_name,'subscriptionId' => @client.subscription_id},
+          query_params: {'api-version' => @client.api_version},
+          headers: request_headers.merge(custom_headers || {})
+      }
+
+      request_url = @base_url || @client.base_url
+
+      request = MsRest::HttpOperationRequest.new(request_url, path_template, :post, options)
+      promise = request.run_promise do |req|
+        @client.credentials.sign_request(req) unless @client.credentials.nil?
+      end
+
+      promise = promise.then do |http_response|
+        status_code = http_response.status
+        response_content = http_response.body
+        unless status_code == 200
+          error_model = JSON.load(response_content)
+          fail MsRestAzure::AzureOperationError.new(request, http_response, error_model)
+        end
+
+        # Create Result
+        result = MsRestAzure::AzureOperationResponse.new(request, http_response)
+        result.request_id = http_response['x-ms-request-id'] unless http_response['x-ms-request-id'].nil?
+        # Deserialize Response
+        if status_code == 200
+          begin
+            parsed_response = response_content.to_s.empty? ? nil : JSON.load(response_content)
+            result_mapper = EffectiveNetworkSecurityGroupListResult.mapper()
+            result.body = @client.deserialize(result_mapper, parsed_response, 'result.body')
+          rescue Exception => e
+            fail MsRest::DeserializationError.new('Error occurred in deserializing the response', e.message, e.backtrace, result)
+          end
+        end
+
+        result
+      end
+
+      promise.execute
+    end
+
+    #
     # The list network interface operation retrieves information about all network
     # interfaces in a virtual machine from a virtual machine scale set.
     #
@@ -1244,6 +1492,246 @@ module Azure::ARM::Network
           begin
             parsed_response = response_content.to_s.empty? ? nil : JSON.load(response_content)
             result_mapper = NetworkInterfaceListResult.mapper()
+            result.body = @client.deserialize(result_mapper, parsed_response, 'result.body')
+          rescue Exception => e
+            fail MsRest::DeserializationError.new('Error occurred in deserializing the response', e.message, e.backtrace, result)
+          end
+        end
+
+        result
+      end
+
+      promise.execute
+    end
+
+    #
+    # The get effective routetable operation retrieves all the route tables
+    # applied on a networkInterface.
+    #
+    # @param next_page_link [String] The NextLink from the previous successful
+    # call to List operation.
+    # @return [Concurrent::Promise] promise which provides async access to http
+    # response.
+    #
+    def get_effective_route_table_next(next_page_link, custom_headers = nil)
+      # Send request
+      promise = begin_get_effective_route_table_next_async(next_page_link, custom_headers)
+
+      promise = promise.then do |response|
+        # Defining deserialization method.
+        deserialize_method = lambda do |parsed_response|
+          result_mapper = EffectiveRouteListResult.mapper()
+          parsed_response = @client.deserialize(result_mapper, parsed_response, 'parsed_response')
+        end
+
+       # Waiting for response.
+       @client.get_long_running_operation_result(response, deserialize_method)
+      end
+
+      promise
+    end
+
+    #
+    # The get effective routetable operation retrieves all the route tables
+    # applied on a networkInterface.
+    #
+    # @param next_page_link [String] The NextLink from the previous successful
+    # call to List operation.
+    # @param custom_headers [Hash{String => String}] A hash of custom headers that
+    # will be added to the HTTP request.
+    #
+    # @return [EffectiveRouteListResult] operation results.
+    #
+    def begin_get_effective_route_table_next(next_page_link, custom_headers = nil)
+      response = begin_get_effective_route_table_next_async(next_page_link, custom_headers).value!
+      response.body unless response.nil?
+    end
+
+    #
+    # The get effective routetable operation retrieves all the route tables
+    # applied on a networkInterface.
+    #
+    # @param next_page_link [String] The NextLink from the previous successful
+    # call to List operation.
+    # @param custom_headers [Hash{String => String}] A hash of custom headers that
+    # will be added to the HTTP request.
+    #
+    # @return [MsRestAzure::AzureOperationResponse] HTTP response information.
+    #
+    def begin_get_effective_route_table_next_with_http_info(next_page_link, custom_headers = nil)
+      begin_get_effective_route_table_next_async(next_page_link, custom_headers).value!
+    end
+
+    #
+    # The get effective routetable operation retrieves all the route tables
+    # applied on a networkInterface.
+    #
+    # @param next_page_link [String] The NextLink from the previous successful
+    # call to List operation.
+    # @param [Hash{String => String}] A hash of custom headers that will be added
+    # to the HTTP request.
+    #
+    # @return [Concurrent::Promise] Promise object which holds the HTTP response.
+    #
+    def begin_get_effective_route_table_next_async(next_page_link, custom_headers = nil)
+      fail ArgumentError, 'next_page_link is nil' if next_page_link.nil?
+
+
+      request_headers = {}
+
+      # Set Headers
+      request_headers['x-ms-client-request-id'] = SecureRandom.uuid
+      request_headers['accept-language'] = @client.accept_language unless @client.accept_language.nil?
+      path_template = '{nextLink}'
+      options = {
+          middlewares: [[MsRest::RetryPolicyMiddleware, times: 3, retry: 0.02], [:cookie_jar]],
+          skip_encoding_path_params: {'nextLink' => next_page_link},
+          headers: request_headers.merge(custom_headers || {})
+      }
+
+      request_url = @base_url || @client.base_url
+
+      request = MsRest::HttpOperationRequest.new(request_url, path_template, :post, options)
+      promise = request.run_promise do |req|
+        @client.credentials.sign_request(req) unless @client.credentials.nil?
+      end
+
+      promise = promise.then do |http_response|
+        status_code = http_response.status
+        response_content = http_response.body
+        unless status_code == 200
+          error_model = JSON.load(response_content)
+          fail MsRestAzure::AzureOperationError.new(request, http_response, error_model)
+        end
+
+        # Create Result
+        result = MsRestAzure::AzureOperationResponse.new(request, http_response)
+        result.request_id = http_response['x-ms-request-id'] unless http_response['x-ms-request-id'].nil?
+        # Deserialize Response
+        if status_code == 200
+          begin
+            parsed_response = response_content.to_s.empty? ? nil : JSON.load(response_content)
+            result_mapper = EffectiveRouteListResult.mapper()
+            result.body = @client.deserialize(result_mapper, parsed_response, 'result.body')
+          rescue Exception => e
+            fail MsRest::DeserializationError.new('Error occurred in deserializing the response', e.message, e.backtrace, result)
+          end
+        end
+
+        result
+      end
+
+      promise.execute
+    end
+
+    #
+    # The list effective network security group operation retrieves all the
+    # network security groups applied on a networkInterface.
+    #
+    # @param next_page_link [String] The NextLink from the previous successful
+    # call to List operation.
+    # @return [Concurrent::Promise] promise which provides async access to http
+    # response.
+    #
+    def list_effective_network_security_groups_next(next_page_link, custom_headers = nil)
+      # Send request
+      promise = begin_list_effective_network_security_groups_next_async(next_page_link, custom_headers)
+
+      promise = promise.then do |response|
+        # Defining deserialization method.
+        deserialize_method = lambda do |parsed_response|
+          result_mapper = EffectiveNetworkSecurityGroupListResult.mapper()
+          parsed_response = @client.deserialize(result_mapper, parsed_response, 'parsed_response')
+        end
+
+       # Waiting for response.
+       @client.get_long_running_operation_result(response, deserialize_method)
+      end
+
+      promise
+    end
+
+    #
+    # The list effective network security group operation retrieves all the
+    # network security groups applied on a networkInterface.
+    #
+    # @param next_page_link [String] The NextLink from the previous successful
+    # call to List operation.
+    # @param custom_headers [Hash{String => String}] A hash of custom headers that
+    # will be added to the HTTP request.
+    #
+    # @return [EffectiveNetworkSecurityGroupListResult] operation results.
+    #
+    def begin_list_effective_network_security_groups_next(next_page_link, custom_headers = nil)
+      response = begin_list_effective_network_security_groups_next_async(next_page_link, custom_headers).value!
+      response.body unless response.nil?
+    end
+
+    #
+    # The list effective network security group operation retrieves all the
+    # network security groups applied on a networkInterface.
+    #
+    # @param next_page_link [String] The NextLink from the previous successful
+    # call to List operation.
+    # @param custom_headers [Hash{String => String}] A hash of custom headers that
+    # will be added to the HTTP request.
+    #
+    # @return [MsRestAzure::AzureOperationResponse] HTTP response information.
+    #
+    def begin_list_effective_network_security_groups_next_with_http_info(next_page_link, custom_headers = nil)
+      begin_list_effective_network_security_groups_next_async(next_page_link, custom_headers).value!
+    end
+
+    #
+    # The list effective network security group operation retrieves all the
+    # network security groups applied on a networkInterface.
+    #
+    # @param next_page_link [String] The NextLink from the previous successful
+    # call to List operation.
+    # @param [Hash{String => String}] A hash of custom headers that will be added
+    # to the HTTP request.
+    #
+    # @return [Concurrent::Promise] Promise object which holds the HTTP response.
+    #
+    def begin_list_effective_network_security_groups_next_async(next_page_link, custom_headers = nil)
+      fail ArgumentError, 'next_page_link is nil' if next_page_link.nil?
+
+
+      request_headers = {}
+
+      # Set Headers
+      request_headers['x-ms-client-request-id'] = SecureRandom.uuid
+      request_headers['accept-language'] = @client.accept_language unless @client.accept_language.nil?
+      path_template = '{nextLink}'
+      options = {
+          middlewares: [[MsRest::RetryPolicyMiddleware, times: 3, retry: 0.02], [:cookie_jar]],
+          skip_encoding_path_params: {'nextLink' => next_page_link},
+          headers: request_headers.merge(custom_headers || {})
+      }
+
+      request_url = @base_url || @client.base_url
+
+      request = MsRest::HttpOperationRequest.new(request_url, path_template, :post, options)
+      promise = request.run_promise do |req|
+        @client.credentials.sign_request(req) unless @client.credentials.nil?
+      end
+
+      promise = promise.then do |http_response|
+        status_code = http_response.status
+        response_content = http_response.body
+        unless status_code == 200
+          error_model = JSON.load(response_content)
+          fail MsRestAzure::AzureOperationError.new(request, http_response, error_model)
+        end
+
+        # Create Result
+        result = MsRestAzure::AzureOperationResponse.new(request, http_response)
+        result.request_id = http_response['x-ms-request-id'] unless http_response['x-ms-request-id'].nil?
+        # Deserialize Response
+        if status_code == 200
+          begin
+            parsed_response = response_content.to_s.empty? ? nil : JSON.load(response_content)
+            result_mapper = EffectiveNetworkSecurityGroupListResult.mapper()
             result.body = @client.deserialize(result_mapper, parsed_response, 'result.body')
           rescue Exception => e
             fail MsRest::DeserializationError.new('Error occurred in deserializing the response', e.message, e.backtrace, result)

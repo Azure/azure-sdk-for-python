@@ -56,7 +56,7 @@ module Azure::ARM::Network
       # VirtualNetworkGatewayConnection resource
       attr_accessor :resource_guid
 
-      # @return [String] Gets or sets Provisioning state of the
+      # @return [String] Gets provisioning state of the
       # VirtualNetworkGatewayConnection resource Updating/Deleting/Failed
       attr_accessor :provisioning_state
 

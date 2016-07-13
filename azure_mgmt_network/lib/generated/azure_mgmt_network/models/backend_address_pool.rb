@@ -24,7 +24,7 @@ module Azure::ARM::Network
       # Address Pool
       attr_accessor :outbound_nat_rule
 
-      # @return [String] Provisioning state of the PublicIP resource
+      # @return [String] Get provisioning state of the PublicIP resource
       # Updating/Deleting/Failed
       attr_accessor :provisioning_state
 

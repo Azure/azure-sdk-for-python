@@ -13,7 +13,7 @@ module Azure::ARM::Network
 
       include MsRestAzure
 
-      # @return [Array<String>] Gets or sets List of address blocks reserved
+      # @return [Array<String>] Gets or sets list of address blocks reserved
       # for this virtual network in CIDR notation
       attr_accessor :address_prefixes
 

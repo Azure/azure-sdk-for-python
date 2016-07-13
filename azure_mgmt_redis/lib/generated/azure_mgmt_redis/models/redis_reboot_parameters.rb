@@ -38,8 +38,7 @@ module Azure::ARM::Redis
                 required: true,
                 serialized_name: 'rebootType',
                 type: {
-                  name: 'Enum',
-                  module: 'RebootType'
+                  name: 'String'
                 }
               },
               shard_id: {

@@ -36,14 +36,10 @@ module Azure::ARM::Redis
       # Cluster Cache.
       attr_accessor :shard_count
 
-      # @return [String] The exact ARM resource ID of the virtual network to
-      # deploy the redis cache in. Example format:
-      # /subscriptions/{subid}/resourceGroups/{resourceGroupName}/Microsoft.ClassicNetwork/VirtualNetworks/vnet1
-      attr_accessor :virtual_network
-
-      # @return [String] Required when deploying a redis cache inside an
-      # existing Azure Virtual Network.
-      attr_accessor :subnet
+      # @return [String] The full resource ID of a subnet in a virtual network
+      # to deploy the redis cache in. Example format:
+      # /subscriptions/{subid}/resourceGroups/{resourceGroupName}/Microsoft.{Network|ClassicNetwork}/VirtualNetworks/vnet1/subnets/subnet1
+      attr_accessor :subnet_id
 
       # @return [String] Required when deploying a redis cache inside an
       # existing Azure Virtual Network.
@@ -179,16 +175,12 @@ module Azure::ARM::Redis
                   name: 'Number'
                 }
               },
-              virtual_network: {
+              subnet_id: {
                 required: false,
-                serialized_name: 'properties.virtualNetwork',
-                type: {
-                  name: 'String'
-                }
-              },
-              subnet: {
-                required: false,
-                serialized_name: 'properties.subnet',
+                serialized_name: 'properties.subnetId',
+                constraints: {
+                  Pattern: '^/subscriptions/[^/]*/resourceGroups/[^/]*/providers/Microsoft.(ClassicNetwork|Network)/virtualNetworks/[^/]*/subnets/[^/]*$'
+                },
                 type: {
                   name: 'String'
                 }
@@ -196,6 +188,9 @@ module Azure::ARM::Redis
               static_ip: {
                 required: false,
                 serialized_name: 'properties.staticIP',
+                constraints: {
+                  Pattern: '^\d+\.\d+\.\d+\.\d+$'
+                },
                 type: {
                   name: 'String'
                 }

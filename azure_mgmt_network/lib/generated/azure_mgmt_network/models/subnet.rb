@@ -27,12 +27,11 @@ module Azure::ARM::Network
       # network interface IP configurations using subnet
       attr_accessor :ip_configurations
 
-      # @return [String] Gets or sets Provisioning state of the PublicIP
-      # resource Updating/Deleting/Failed
+      # @return [String] Gets provisioning state of the resource
       attr_accessor :provisioning_state
 
-      # @return [String] Gets name of the resource that is unique within a
-      # resource group. This name can be used to access the resource
+      # @return [String] Gets or sets the name of the resource that is unique
+      # within a resource group. This name can be used to access the resource
       attr_accessor :name
 
       # @return [String] A unique read-only string that changes whenever the

@@ -15,8 +15,8 @@ module Azure::ARM::Network
       # @return [String] Gets or sets the certificate public data
       attr_accessor :public_cert_data
 
-      # @return [String] Gets or sets Provisioning state of the VPN client
-      # root certificate resource Updating/Deleting/Failed
+      # @return [String] Gets provisioning state of the VPN client root
+      # certificate resource Updating/Deleting/Failed
       attr_accessor :provisioning_state
 
       # @return [String] Gets name of the resource that is unique within a

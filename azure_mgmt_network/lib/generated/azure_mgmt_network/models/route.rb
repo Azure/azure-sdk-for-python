@@ -27,7 +27,7 @@ module Azure::ARM::Network
       # next hop type is VirtualAppliance.
       attr_accessor :next_hop_ip_address
 
-      # @return [String] Gets or sets Provisioning state of the resource
+      # @return [String] Gets provisioning state of the resource
       # Updating/Deleting/Failed
       attr_accessor :provisioning_state
 

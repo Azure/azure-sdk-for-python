@@ -19,7 +19,7 @@ module Azure::ARM::Network
       # bandwidths offered
       attr_accessor :bandwidths_offered
 
-      # @return [String] Gets or sets Provisioning state of the resource
+      # @return [String] Gets provisioning state of the resource
       attr_accessor :provisioning_state
 
 

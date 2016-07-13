@@ -20,8 +20,8 @@ module Azure::ARM::Network
       # backend addresses
       attr_accessor :backend_addresses
 
-      # @return [String] Gets or sets Provisioning state of the backend
-      # address pool resource Updating/Deleting/Failed
+      # @return [String] Gets provisioning state of the backend address pool
+      # resource Updating/Deleting/Failed
       attr_accessor :provisioning_state
 
       # @return [String] Gets name of the resource that is unique within a

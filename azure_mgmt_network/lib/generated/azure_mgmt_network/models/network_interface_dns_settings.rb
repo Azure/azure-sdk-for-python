@@ -6,7 +6,7 @@
 module Azure::ARM::Network
   module Models
     #
-    # Dns Settings of a network interface
+    # Dns settings of a network interface
     #
     class NetworkInterfaceDnsSettings
 
@@ -19,7 +19,7 @@ module Azure::ARM::Network
       # addresses
       attr_accessor :applied_dns_servers
 
-      # @return [String] Gets or sets the Internal DNS name
+      # @return [String] Gets or sets the internal DNS name
       attr_accessor :internal_dns_name_label
 
       # @return [String] Gets or sets the internal fqdn.

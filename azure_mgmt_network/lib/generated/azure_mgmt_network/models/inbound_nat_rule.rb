@@ -22,8 +22,8 @@ module Azure::ARM::Network
       attr_accessor :backend_ipconfiguration
 
       # @return [TransportProtocol] Gets or sets the transport potocol for the
-      # external endpoint. Possible values are Udp or Tcp. Possible values
-      # include: 'Udp', 'Tcp'
+      # endpoint. Possible values are Udp or Tcp. Possible values include:
+      # 'Udp', 'Tcp'
       attr_accessor :protocol
 
       # @return [Integer] Gets or sets the port for the external endpoint. You
@@ -55,8 +55,8 @@ module Azure::ARM::Network
       # changed after you create the endpoint
       attr_accessor :enable_floating_ip
 
-      # @return [String] Gets or sets Provisioning state of the PublicIP
-      # resource Updating/Deleting/Failed
+      # @return [String] Gets provisioning state of the PublicIP resource
+      # Updating/Deleting/Failed
       attr_accessor :provisioning_state
 
       # @return [String] Gets name of the resource that is unique within a

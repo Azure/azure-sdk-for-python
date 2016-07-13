@@ -106,7 +106,7 @@ http_interactions:
   recorded_at: Thu, 19 May 2016 07:28:33 GMT
 - request:
     method: put
-    uri: https://management.azure.com/subscriptions/<AZURE_SUBSCRIPTION_ID>/resourceGroups/RubySDKTest_azure_mgmt_network/providers/Microsoft.Network/networkSecurityGroups/sec73484?api-version=2016-03-30
+    uri: https://management.azure.com/subscriptions/<AZURE_SUBSCRIPTION_ID>/resourceGroups/RubySDKTest_azure_mgmt_network/providers/Microsoft.Network/networkSecurityGroups/sec73484?api-version=2016-06-01
     body:
       encoding: UTF-8
       string: '{"name":"sec73484","location":"westus"}'
@@ -138,7 +138,7 @@ http_interactions:
       x-ms-request-id:
       - cfb344a1-82ec-4e58-9fc3-8f97e397a1cd
       azure-asyncoperation:
-      - https://management.azure.com/subscriptions/<AZURE_SUBSCRIPTION_ID>/providers/Microsoft.Network/locations/westus/operations/cfb344a1-82ec-4e58-9fc3-8f97e397a1cd?api-version=2016-03-30
+      - https://management.azure.com/subscriptions/<AZURE_SUBSCRIPTION_ID>/providers/Microsoft.Network/locations/westus/operations/cfb344a1-82ec-4e58-9fc3-8f97e397a1cd?api-version=2016-06-01
       strict-transport-security:
       - max-age=31536000; includeSubDomains
       server:
@@ -218,7 +218,7 @@ http_interactions:
   recorded_at: Thu, 19 May 2016 07:28:34 GMT
 - request:
     method: get
-    uri: https://management.azure.com/subscriptions/<AZURE_SUBSCRIPTION_ID>/providers/Microsoft.Network/locations/westus/operations/cfb344a1-82ec-4e58-9fc3-8f97e397a1cd?api-version=2016-03-30
+    uri: https://management.azure.com/subscriptions/<AZURE_SUBSCRIPTION_ID>/providers/Microsoft.Network/locations/westus/operations/cfb344a1-82ec-4e58-9fc3-8f97e397a1cd?api-version=2016-06-01
     body:
       encoding: US-ASCII
       string: ''
@@ -269,7 +269,7 @@ http_interactions:
   recorded_at: Thu, 19 May 2016 07:29:04 GMT
 - request:
     method: get
-    uri: https://management.azure.com/subscriptions/<AZURE_SUBSCRIPTION_ID>/resourceGroups/RubySDKTest_azure_mgmt_network/providers/Microsoft.Network/networkSecurityGroups/sec73484?api-version=2016-03-30
+    uri: https://management.azure.com/subscriptions/<AZURE_SUBSCRIPTION_ID>/resourceGroups/RubySDKTest_azure_mgmt_network/providers/Microsoft.Network/networkSecurityGroups/sec73484?api-version=2016-06-01
     body:
       encoding: US-ASCII
       string: ''
@@ -378,7 +378,7 @@ http_interactions:
   recorded_at: Thu, 19 May 2016 07:29:04 GMT
 - request:
     method: put
-    uri: https://management.azure.com/subscriptions/<AZURE_SUBSCRIPTION_ID>/resourceGroups/RubySDKTest_azure_mgmt_network/providers/Microsoft.Network/networkSecurityGroups/sec73484/securityRules/sec_rule_7428?api-version=2016-03-30
+    uri: https://management.azure.com/subscriptions/<AZURE_SUBSCRIPTION_ID>/resourceGroups/RubySDKTest_azure_mgmt_network/providers/Microsoft.Network/networkSecurityGroups/sec73484/securityRules/sec_rule_7428?api-version=2016-06-01
     body:
       encoding: UTF-8
       string: '{"properties":{"protocol":"Udp","sourceAddressPrefix":"*","destinationAddressPrefix":"*","access":"Deny","direction":"Outbound","sourcePortRange":"656","destinationPortRange":"123-3500","priority":4095},"name":"sec_rule_7428"}'
@@ -410,7 +410,7 @@ http_interactions:
       x-ms-request-id:
       - 705241a7-eb99-44ca-9e24-19e3e60fbeda
       azure-asyncoperation:
-      - https://management.azure.com/subscriptions/<AZURE_SUBSCRIPTION_ID>/providers/Microsoft.Network/locations/westus/operations/705241a7-eb99-44ca-9e24-19e3e60fbeda?api-version=2016-03-30
+      - https://management.azure.com/subscriptions/<AZURE_SUBSCRIPTION_ID>/providers/Microsoft.Network/locations/westus/operations/705241a7-eb99-44ca-9e24-19e3e60fbeda?api-version=2016-06-01
       strict-transport-security:
       - max-age=31536000; includeSubDomains
       server:
@@ -438,7 +438,7 @@ http_interactions:
   recorded_at: Thu, 19 May 2016 07:29:05 GMT
 - request:
     method: get
-    uri: https://management.azure.com/subscriptions/<AZURE_SUBSCRIPTION_ID>/providers/Microsoft.Network/locations/westus/operations/705241a7-eb99-44ca-9e24-19e3e60fbeda?api-version=2016-03-30
+    uri: https://management.azure.com/subscriptions/<AZURE_SUBSCRIPTION_ID>/providers/Microsoft.Network/locations/westus/operations/705241a7-eb99-44ca-9e24-19e3e60fbeda?api-version=2016-06-01
     body:
       encoding: US-ASCII
       string: ''
@@ -489,7 +489,7 @@ http_interactions:
   recorded_at: Thu, 19 May 2016 07:29:35 GMT
 - request:
     method: get
-    uri: https://management.azure.com/subscriptions/<AZURE_SUBSCRIPTION_ID>/resourceGroups/RubySDKTest_azure_mgmt_network/providers/Microsoft.Network/networkSecurityGroups/sec73484/securityRules/sec_rule_7428?api-version=2016-03-30
+    uri: https://management.azure.com/subscriptions/<AZURE_SUBSCRIPTION_ID>/resourceGroups/RubySDKTest_azure_mgmt_network/providers/Microsoft.Network/networkSecurityGroups/sec73484/securityRules/sec_rule_7428?api-version=2016-06-01
     body:
       encoding: US-ASCII
       string: ''
@@ -546,7 +546,7 @@ http_interactions:
   recorded_at: Thu, 19 May 2016 07:29:36 GMT
 - request:
     method: delete
-    uri: https://management.azure.com/subscriptions/<AZURE_SUBSCRIPTION_ID>/resourceGroups/RubySDKTest_azure_mgmt_network/providers/Microsoft.Network/networkSecurityGroups/sec73484/securityRules/sec_rule_7428?api-version=2016-03-30
+    uri: https://management.azure.com/subscriptions/<AZURE_SUBSCRIPTION_ID>/resourceGroups/RubySDKTest_azure_mgmt_network/providers/Microsoft.Network/networkSecurityGroups/sec73484/securityRules/sec_rule_7428?api-version=2016-06-01
     body:
       encoding: US-ASCII
       string: ''
@@ -571,12 +571,12 @@ http_interactions:
       expires:
       - "-1"
       location:
-      - https://management.azure.com/subscriptions/<AZURE_SUBSCRIPTION_ID>/providers/Microsoft.Network/locations/westus/operationResults/45f9bbcb-15e7-43e8-ba77-f587b56b766f?api-version=2016-03-30
+      - https://management.azure.com/subscriptions/<AZURE_SUBSCRIPTION_ID>/providers/Microsoft.Network/locations/westus/operationResults/45f9bbcb-15e7-43e8-ba77-f587b56b766f?api-version=2016-06-01
       retry-after: '1'
       x-ms-request-id:
       - 45f9bbcb-15e7-43e8-ba77-f587b56b766f
       azure-asyncoperation:
-      - https://management.azure.com/subscriptions/<AZURE_SUBSCRIPTION_ID>/providers/Microsoft.Network/locations/westus/operations/45f9bbcb-15e7-43e8-ba77-f587b56b766f?api-version=2016-03-30
+      - https://management.azure.com/subscriptions/<AZURE_SUBSCRIPTION_ID>/providers/Microsoft.Network/locations/westus/operations/45f9bbcb-15e7-43e8-ba77-f587b56b766f?api-version=2016-06-01
       strict-transport-security:
       - max-age=31536000; includeSubDomains
       server:
@@ -598,7 +598,7 @@ http_interactions:
   recorded_at: Thu, 19 May 2016 07:29:36 GMT
 - request:
     method: get
-    uri: https://management.azure.com/subscriptions/<AZURE_SUBSCRIPTION_ID>/providers/Microsoft.Network/locations/westus/operations/45f9bbcb-15e7-43e8-ba77-f587b56b766f?api-version=2016-03-30
+    uri: https://management.azure.com/subscriptions/<AZURE_SUBSCRIPTION_ID>/providers/Microsoft.Network/locations/westus/operations/45f9bbcb-15e7-43e8-ba77-f587b56b766f?api-version=2016-06-01
     body:
       encoding: US-ASCII
       string: ''

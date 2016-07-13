@@ -18,7 +18,7 @@ module Azure::ARM::Network
       # @return [Array<Subnet>] Gets collection of references to subnets
       attr_accessor :subnets
 
-      # @return [String] Gets or sets Provisioning state of the resource
+      # @return [String] Gets provisioning state of the resource
       # Updating/Deleting/Failed
       attr_accessor :provisioning_state
 

@@ -13,7 +13,7 @@ module Azure::ARM::Network
       include MsRestAzure
 
       # @return [Array<NetworkSecurityGroup>] Gets List of
-      # NetworkSecurityGroups in a resource group
+      # NetworkSecurityGroups
       attr_accessor :value
 
       # @return [String] Gets the URL to get the next set of results.

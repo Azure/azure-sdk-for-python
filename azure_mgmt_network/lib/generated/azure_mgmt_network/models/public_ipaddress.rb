@@ -37,8 +37,8 @@ module Azure::ARM::Network
       # resource
       attr_accessor :resource_guid
 
-      # @return [String] Gets or sets Provisioning state of the PublicIP
-      # resource Updating/Deleting/Failed
+      # @return [String] Gets provisioning state of the PublicIP resource
+      # Updating/Deleting/Failed
       attr_accessor :provisioning_state
 
       # @return [String] Gets a unique read-only string that changes whenever

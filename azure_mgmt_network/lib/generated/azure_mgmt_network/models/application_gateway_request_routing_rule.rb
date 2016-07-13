@@ -32,8 +32,8 @@ module Azure::ARM::Network
       # application gateway
       attr_accessor :url_path_map
 
-      # @return [String] Gets or sets Provisioning state of the request
-      # routing rule resource Updating/Deleting/Failed
+      # @return [String] Gets provisioning state of the request routing rule
+      # resource Updating/Deleting/Failed
       attr_accessor :provisioning_state
 
       # @return [String] Gets name of the resource that is unique within a

@@ -16,8 +16,8 @@ module Azure::ARM::Network
       # thumbprint
       attr_accessor :thumbprint
 
-      # @return [String] Gets or sets Provisioning state of the VPN client
-      # revoked certificate resource Updating/Deleting/Failed
+      # @return [String] Gets provisioning state of the VPN client revoked
+      # certificate resource Updating/Deleting/Failed
       attr_accessor :provisioning_state
 
       # @return [String] Gets name of the resource that is unique within a

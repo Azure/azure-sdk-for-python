@@ -106,7 +106,7 @@ http_interactions:
   recorded_at: Thu, 19 May 2016 06:35:42 GMT
 - request:
     method: put
-    uri: https://management.azure.com/subscriptions/<AZURE_SUBSCRIPTION_ID>/resourceGroups/RubySDKTest_azure_mgmt_network/providers/Microsoft.Network/loadBalancers/load_balancer_test?api-version=2016-03-30
+    uri: https://management.azure.com/subscriptions/<AZURE_SUBSCRIPTION_ID>/resourceGroups/RubySDKTest_azure_mgmt_network/providers/Microsoft.Network/loadBalancers/load_balancer_test?api-version=2016-06-01
     body:
       encoding: UTF-8
       string: '{"name":"load_balancer_test","location":"westus"}'
@@ -137,7 +137,7 @@ http_interactions:
       x-ms-request-id:
       - 39b6a95c-2c6d-4f1f-a1aa-a9496327f6d1
       azure-asyncoperation:
-      - https://management.azure.com/subscriptions/<AZURE_SUBSCRIPTION_ID>/providers/Microsoft.Network/locations/westus/operations/39b6a95c-2c6d-4f1f-a1aa-a9496327f6d1?api-version=2016-03-30
+      - https://management.azure.com/subscriptions/<AZURE_SUBSCRIPTION_ID>/providers/Microsoft.Network/locations/westus/operations/39b6a95c-2c6d-4f1f-a1aa-a9496327f6d1?api-version=2016-06-01
       strict-transport-security:
       - max-age=31536000; includeSubDomains
       server:
@@ -165,7 +165,7 @@ http_interactions:
   recorded_at: Thu, 19 May 2016 06:35:43 GMT
 - request:
     method: delete
-    uri: https://management.azure.com/subscriptions/<AZURE_SUBSCRIPTION_ID>/resourceGroups/RubySDKTest_azure_mgmt_network/providers/Microsoft.Network/loadBalancers/load_balancer_test?api-version=2016-03-30
+    uri: https://management.azure.com/subscriptions/<AZURE_SUBSCRIPTION_ID>/resourceGroups/RubySDKTest_azure_mgmt_network/providers/Microsoft.Network/loadBalancers/load_balancer_test?api-version=2016-06-01
     body:
       encoding: US-ASCII
       string: ''
@@ -190,12 +190,12 @@ http_interactions:
       expires:
       - "-1"
       location:
-      - https://management.azure.com/subscriptions/<AZURE_SUBSCRIPTION_ID>/providers/Microsoft.Network/locations/westus/operationResults/c414543c-ce85-4332-8575-02afc0903fe9?api-version=2016-03-30
+      - https://management.azure.com/subscriptions/<AZURE_SUBSCRIPTION_ID>/providers/Microsoft.Network/locations/westus/operationResults/c414543c-ce85-4332-8575-02afc0903fe9?api-version=2016-06-01
       retry-after: '1'
       x-ms-request-id:
       - c414543c-ce85-4332-8575-02afc0903fe9
       azure-asyncoperation:
-      - https://management.azure.com/subscriptions/<AZURE_SUBSCRIPTION_ID>/providers/Microsoft.Network/locations/westus/operations/c414543c-ce85-4332-8575-02afc0903fe9?api-version=2016-03-30
+      - https://management.azure.com/subscriptions/<AZURE_SUBSCRIPTION_ID>/providers/Microsoft.Network/locations/westus/operations/c414543c-ce85-4332-8575-02afc0903fe9?api-version=2016-06-01
       strict-transport-security:
       - max-age=31536000; includeSubDomains
       server:
@@ -217,7 +217,7 @@ http_interactions:
   recorded_at: Thu, 19 May 2016 06:35:44 GMT
 - request:
     method: get
-    uri: https://management.azure.com/subscriptions/<AZURE_SUBSCRIPTION_ID>/providers/Microsoft.Network/locations/westus/operations/c414543c-ce85-4332-8575-02afc0903fe9?api-version=2016-03-30
+    uri: https://management.azure.com/subscriptions/<AZURE_SUBSCRIPTION_ID>/providers/Microsoft.Network/locations/westus/operations/c414543c-ce85-4332-8575-02afc0903fe9?api-version=2016-06-01
     body:
       encoding: US-ASCII
       string: ''

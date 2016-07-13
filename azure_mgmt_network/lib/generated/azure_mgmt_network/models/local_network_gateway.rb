@@ -25,8 +25,8 @@ module Azure::ARM::Network
       # LocalNetworkGateway resource
       attr_accessor :resource_guid
 
-      # @return [String] Gets or sets Provisioning state of the
-      # LocalNetworkGateway resource Updating/Deleting/Failed
+      # @return [String] Gets provisioning state of the LocalNetworkGateway
+      # resource Updating/Deleting/Failed
       attr_accessor :provisioning_state
 
       # @return [String] Gets a unique read-only string that changes whenever

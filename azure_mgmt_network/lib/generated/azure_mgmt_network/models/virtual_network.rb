@@ -20,16 +20,20 @@ module Azure::ARM::Network
       # of DNS servers available to VMs deployed in the virtual network
       attr_accessor :dhcp_options
 
-      # @return [Array<Subnet>] Gets or sets List of subnets in a
+      # @return [Array<Subnet>] Gets or sets list of subnets in a
       # VirtualNetwork
       attr_accessor :subnets
+
+      # @return [Array<VirtualNetworkPeering>] Gets or sets list of peerings
+      # in a VirtualNetwork
+      attr_accessor :virtual_network_peerings
 
       # @return [String] Gets or sets resource guid property of the
       # VirtualNetwork resource
       attr_accessor :resource_guid
 
-      # @return [String] Gets or sets Provisioning state of the PublicIP
-      # resource Updating/Deleting/Failed
+      # @return [String] Gets provisioning state of the PublicIP resource
+      # Updating/Deleting/Failed
       attr_accessor :provisioning_state
 
       # @return [String] Gets a unique read-only string that changes whenever
@@ -120,6 +124,21 @@ module Azure::ARM::Network
                       type: {
                         name: 'Composite',
                         class_name: 'Subnet'
+                      }
+                  }
+                }
+              },
+              virtual_network_peerings: {
+                required: false,
+                serialized_name: 'properties.VirtualNetworkPeerings',
+                type: {
+                  name: 'Sequence',
+                  element: {
+                      required: false,
+                      serialized_name: 'VirtualNetworkPeeringElementType',
+                      type: {
+                        name: 'Composite',
+                        class_name: 'VirtualNetworkPeering'
                       }
                   }
                 }

@@ -163,7 +163,7 @@ REGEN_METADATA = {
         tag: 'arm_feat'
     },
     azure_mgmt_graph: {
-        spec_uri: 'https://raw.githubusercontent.com/Azure/azure-rest-api-specs/master/arm-graphrbac/1.6-internal/swagger/graphrbac.json',
+        spec_uri: 'https://raw.githubusercontent.com/Azure/azure-rest-api-specs/master/arm-graphrbac/1.6/swagger/graphrbac.json',
         ns: 'Azure::ARM::Graph',
         version: version,
         tag: 'arm_grap'
@@ -175,7 +175,7 @@ REGEN_METADATA = {
         tag: 'arm_lock'
     },
     azure_mgmt_network: {
-        spec_uri: 'https://raw.githubusercontent.com/Azure/azure-rest-api-specs/master/arm-network/2016-03-30/swagger/network.json',
+        spec_uri: 'https://raw.githubusercontent.com/Azure/azure-rest-api-specs/master/arm-network/2016-06-01/network.json',
         ns: 'Azure::ARM::Network',
         version: version,
         tag: 'arm_netw'
@@ -187,7 +187,7 @@ REGEN_METADATA = {
         tag: 'arm_noti'
     },
     azure_mgmt_redis: {
-        spec_uri: 'https://raw.githubusercontent.com/Azure/azure-rest-api-specs/master/arm-redis/2015-08-01/swagger/redis.json',
+        spec_uri: 'https://raw.githubusercontent.com/Azure/azure-rest-api-specs/master/arm-redis/2016-04-01/swagger/redis.json',
         ns: 'Azure::ARM::Redis',
         version: version,
         tag: 'arm_redi'

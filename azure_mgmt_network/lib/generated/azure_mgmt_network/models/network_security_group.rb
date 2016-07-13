@@ -12,11 +12,11 @@ module Azure::ARM::Network
 
       include MsRestAzure
 
-      # @return [Array<SecurityRule>] Gets or sets Security rules of network
+      # @return [Array<SecurityRule>] Gets or sets security rules of network
       # security group
       attr_accessor :security_rules
 
-      # @return [Array<SecurityRule>] Gets or sets Default security rules of
+      # @return [Array<SecurityRule>] Gets or default security rules of
       # network security group
       attr_accessor :default_security_rules
 
@@ -31,8 +31,8 @@ module Azure::ARM::Network
       # security group resource
       attr_accessor :resource_guid
 
-      # @return [String] Gets or sets Provisioning state of the PublicIP
-      # resource Updating/Deleting/Failed
+      # @return [String] Gets provisioning state of the PublicIP resource
+      # Updating/Deleting/Failed
       attr_accessor :provisioning_state
 
       # @return [String] Gets a unique read-only string that changes whenever

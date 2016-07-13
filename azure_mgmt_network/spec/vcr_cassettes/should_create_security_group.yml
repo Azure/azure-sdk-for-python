@@ -106,7 +106,7 @@ http_interactions:
   recorded_at: Thu, 19 May 2016 07:04:44 GMT
 - request:
     method: put
-    uri: https://management.azure.com/subscriptions/<AZURE_SUBSCRIPTION_ID>/resourceGroups/RubySDKTest_azure_mgmt_network/providers/Microsoft.Network/networkSecurityGroups/sec73484?api-version=2016-03-30
+    uri: https://management.azure.com/subscriptions/<AZURE_SUBSCRIPTION_ID>/resourceGroups/RubySDKTest_azure_mgmt_network/providers/Microsoft.Network/networkSecurityGroups/sec73484?api-version=2016-06-01
     body:
       encoding: UTF-8
       string: '{"name":"sec73484","location":"westus"}'
@@ -138,7 +138,7 @@ http_interactions:
       x-ms-request-id:
       - 9956f45f-dd98-4878-b7d1-02f776df44cc
       azure-asyncoperation:
-      - https://management.azure.com/subscriptions/<AZURE_SUBSCRIPTION_ID>/providers/Microsoft.Network/locations/westus/operations/9956f45f-dd98-4878-b7d1-02f776df44cc?api-version=2016-03-30
+      - https://management.azure.com/subscriptions/<AZURE_SUBSCRIPTION_ID>/providers/Microsoft.Network/locations/westus/operations/9956f45f-dd98-4878-b7d1-02f776df44cc?api-version=2016-06-01
       strict-transport-security:
       - max-age=31536000; includeSubDomains
       server:
@@ -218,7 +218,7 @@ http_interactions:
   recorded_at: Thu, 19 May 2016 07:04:45 GMT
 - request:
     method: get
-    uri: https://management.azure.com/subscriptions/<AZURE_SUBSCRIPTION_ID>/providers/Microsoft.Network/locations/westus/operations/9956f45f-dd98-4878-b7d1-02f776df44cc?api-version=2016-03-30
+    uri: https://management.azure.com/subscriptions/<AZURE_SUBSCRIPTION_ID>/providers/Microsoft.Network/locations/westus/operations/9956f45f-dd98-4878-b7d1-02f776df44cc?api-version=2016-06-01
     body:
       encoding: US-ASCII
       string: ''
@@ -269,7 +269,7 @@ http_interactions:
   recorded_at: Thu, 19 May 2016 07:05:15 GMT
 - request:
     method: get
-    uri: https://management.azure.com/subscriptions/<AZURE_SUBSCRIPTION_ID>/resourceGroups/RubySDKTest_azure_mgmt_network/providers/Microsoft.Network/networkSecurityGroups/sec73484?api-version=2016-03-30
+    uri: https://management.azure.com/subscriptions/<AZURE_SUBSCRIPTION_ID>/resourceGroups/RubySDKTest_azure_mgmt_network/providers/Microsoft.Network/networkSecurityGroups/sec73484?api-version=2016-06-01
     body:
       encoding: US-ASCII
       string: ''

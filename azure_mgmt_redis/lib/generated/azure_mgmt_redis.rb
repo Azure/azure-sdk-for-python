@@ -22,6 +22,7 @@ require 'ms_rest_azure'
 
 module Azure::ARM::Redis
   autoload :Redis,                                              'generated/azure_mgmt_redis/redis.rb'
+  autoload :PatchSchedules,                                     'generated/azure_mgmt_redis/patch_schedules.rb'
   autoload :RedisManagementClient,                              'generated/azure_mgmt_redis/redis_management_client.rb'
 
   module Models
@@ -32,6 +33,11 @@ module Azure::ARM::Redis
     autoload :RedisListKeysResult,                                'generated/azure_mgmt_redis/models/redis_list_keys_result.rb'
     autoload :RedisRegenerateKeyParameters,                       'generated/azure_mgmt_redis/models/redis_regenerate_key_parameters.rb'
     autoload :RedisRebootParameters,                              'generated/azure_mgmt_redis/models/redis_reboot_parameters.rb'
+    autoload :ExportRDBParameters,                                'generated/azure_mgmt_redis/models/export_rdbparameters.rb'
+    autoload :ImportRDBParameters,                                'generated/azure_mgmt_redis/models/import_rdbparameters.rb'
+    autoload :ScheduleEntry,                                      'generated/azure_mgmt_redis/models/schedule_entry.rb'
+    autoload :RedisPatchSchedulesRequest,                         'generated/azure_mgmt_redis/models/redis_patch_schedules_request.rb'
+    autoload :RedisPatchSchedulesResponse,                        'generated/azure_mgmt_redis/models/redis_patch_schedules_response.rb'
     autoload :RedisCreateOrUpdateParameters,                      'generated/azure_mgmt_redis/models/redis_create_or_update_parameters.rb'
     autoload :RedisResourceWithAccessKey,                         'generated/azure_mgmt_redis/models/redis_resource_with_access_key.rb'
     autoload :RedisResource,                                      'generated/azure_mgmt_redis/models/redis_resource.rb'
@@ -39,5 +45,6 @@ module Azure::ARM::Redis
     autoload :SkuFamily,                                          'generated/azure_mgmt_redis/models/sku_family.rb'
     autoload :RedisKeyType,                                       'generated/azure_mgmt_redis/models/redis_key_type.rb'
     autoload :RebootType,                                         'generated/azure_mgmt_redis/models/reboot_type.rb'
+    autoload :DayOfWeek,                                          'generated/azure_mgmt_redis/models/day_of_week.rb'
   end
 end

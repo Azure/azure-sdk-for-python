@@ -84,6 +84,9 @@ module Azure::ARM::Network
     # @return [Subnets] subnets
     attr_reader :subnets
 
+    # @return [VirtualNetworkPeerings] virtual_network_peerings
+    attr_reader :virtual_network_peerings
+
     # @return [Usages] usages
     attr_reader :usages
 
@@ -125,11 +128,12 @@ module Azure::ARM::Network
       @routes = Routes.new(self)
       @security_rules = SecurityRules.new(self)
       @subnets = Subnets.new(self)
+      @virtual_network_peerings = VirtualNetworkPeerings.new(self)
       @usages = Usages.new(self)
       @virtual_network_gateway_connections = VirtualNetworkGatewayConnections.new(self)
       @virtual_network_gateways = VirtualNetworkGateways.new(self)
       @virtual_networks = VirtualNetworks.new(self)
-      @api_version = '2016-03-30'
+      @api_version = '2016-06-01'
       @accept_language = 'en-US'
       @long_running_operation_retry_timeout = 30
       @generate_client_request_id = true

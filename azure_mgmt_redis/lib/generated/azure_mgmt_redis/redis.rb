@@ -5,8 +5,7 @@
 
 module Azure::ARM::Redis
   #
-  # .Net client wrapper for the REST API for Azure Redis Cache Management
-  # Service
+  # REST API for Azure Redis Cache Service
   #
   class Redis
     include Azure::ARM::Redis::Models
@@ -214,7 +213,7 @@ module Azure::ARM::Redis
       promise = promise.then do |http_response|
         status_code = http_response.status
         response_content = http_response.body
-        unless status_code == 200 || status_code == 202 || status_code == 404
+        unless status_code == 200 || status_code == 204
           error_model = JSON.load(response_content)
           fail MsRestAzure::AzureOperationError.new(request, http_response, error_model)
         end
@@ -796,7 +795,257 @@ module Azure::ARM::Redis
       promise = promise.then do |http_response|
         status_code = http_response.status
         response_content = http_response.body
-        unless status_code == 200 || status_code == 202 || status_code == 404
+        unless status_code == 200 || status_code == 204
+          error_model = JSON.load(response_content)
+          fail MsRestAzure::AzureOperationError.new(request, http_response, error_model)
+        end
+
+        # Create Result
+        result = MsRestAzure::AzureOperationResponse.new(request, http_response)
+        result.request_id = http_response['x-ms-request-id'] unless http_response['x-ms-request-id'].nil?
+
+        result
+      end
+
+      promise.execute
+    end
+
+    #
+    # Import data into redis cache.
+    #
+    # @param resource_group_name [String] The name of the resource group.
+    # @param name [String] The name of the redis cache.
+    # @param parameters [ImportRDBParameters] Parameters for redis import
+    # operation.
+    # @return [Concurrent::Promise] promise which provides async access to http
+    # response.
+    #
+    def import(resource_group_name, name, parameters, custom_headers = nil)
+      # Send request
+      promise = begin_import_async(resource_group_name, name, parameters, custom_headers)
+
+      promise = promise.then do |response|
+        # Defining deserialization method.
+        deserialize_method = lambda do |parsed_response|
+        end
+
+       # Waiting for response.
+       @client.get_long_running_operation_result(response, deserialize_method)
+      end
+
+      promise
+    end
+
+    #
+    # Import data into redis cache.
+    #
+    # @param resource_group_name [String] The name of the resource group.
+    # @param name [String] The name of the redis cache.
+    # @param parameters [ImportRDBParameters] Parameters for redis import
+    # operation.
+    # @param custom_headers [Hash{String => String}] A hash of custom headers that
+    # will be added to the HTTP request.
+    #
+    #
+    def begin_import(resource_group_name, name, parameters, custom_headers = nil)
+      response = begin_import_async(resource_group_name, name, parameters, custom_headers).value!
+      nil
+    end
+
+    #
+    # Import data into redis cache.
+    #
+    # @param resource_group_name [String] The name of the resource group.
+    # @param name [String] The name of the redis cache.
+    # @param parameters [ImportRDBParameters] Parameters for redis import
+    # operation.
+    # @param custom_headers [Hash{String => String}] A hash of custom headers that
+    # will be added to the HTTP request.
+    #
+    # @return [MsRestAzure::AzureOperationResponse] HTTP response information.
+    #
+    def begin_import_with_http_info(resource_group_name, name, parameters, custom_headers = nil)
+      begin_import_async(resource_group_name, name, parameters, custom_headers).value!
+    end
+
+    #
+    # Import data into redis cache.
+    #
+    # @param resource_group_name [String] The name of the resource group.
+    # @param name [String] The name of the redis cache.
+    # @param parameters [ImportRDBParameters] Parameters for redis import
+    # operation.
+    # @param [Hash{String => String}] A hash of custom headers that will be added
+    # to the HTTP request.
+    #
+    # @return [Concurrent::Promise] Promise object which holds the HTTP response.
+    #
+    def begin_import_async(resource_group_name, name, parameters, custom_headers = nil)
+      fail ArgumentError, 'resource_group_name is nil' if resource_group_name.nil?
+      fail ArgumentError, 'name is nil' if name.nil?
+      fail ArgumentError, 'parameters is nil' if parameters.nil?
+      fail ArgumentError, '@client.api_version is nil' if @client.api_version.nil?
+      fail ArgumentError, '@client.subscription_id is nil' if @client.subscription_id.nil?
+
+
+      request_headers = {}
+
+      # Set Headers
+      request_headers['x-ms-client-request-id'] = SecureRandom.uuid
+      request_headers['accept-language'] = @client.accept_language unless @client.accept_language.nil?
+
+      request_headers['Content-Type'] = 'application/json; charset=utf-8'
+
+      # Serialize Request
+      request_mapper = ImportRDBParameters.mapper()
+      request_content = @client.serialize(request_mapper,  parameters, 'parameters')
+      request_content = request_content != nil ? JSON.generate(request_content, quirks_mode: true) : nil
+
+      path_template = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cache/Redis/{name}/import'
+      options = {
+          middlewares: [[MsRest::RetryPolicyMiddleware, times: 3, retry: 0.02], [:cookie_jar]],
+          path_params: {'resourceGroupName' => resource_group_name,'name' => name,'subscriptionId' => @client.subscription_id},
+          query_params: {'api-version' => @client.api_version},
+          body: request_content,
+          headers: request_headers.merge(custom_headers || {})
+      }
+
+      request_url = @base_url || @client.base_url
+
+      request = MsRest::HttpOperationRequest.new(request_url, path_template, :post, options)
+      promise = request.run_promise do |req|
+        @client.credentials.sign_request(req) unless @client.credentials.nil?
+      end
+
+      promise = promise.then do |http_response|
+        status_code = http_response.status
+        response_content = http_response.body
+        unless status_code == 202
+          error_model = JSON.load(response_content)
+          fail MsRestAzure::AzureOperationError.new(request, http_response, error_model)
+        end
+
+        # Create Result
+        result = MsRestAzure::AzureOperationResponse.new(request, http_response)
+        result.request_id = http_response['x-ms-request-id'] unless http_response['x-ms-request-id'].nil?
+
+        result
+      end
+
+      promise.execute
+    end
+
+    #
+    # Import data into redis cache.
+    #
+    # @param resource_group_name [String] The name of the resource group.
+    # @param name [String] The name of the redis cache.
+    # @param parameters [ExportRDBParameters] Parameters for redis export
+    # operation.
+    # @return [Concurrent::Promise] promise which provides async access to http
+    # response.
+    #
+    def export(resource_group_name, name, parameters, custom_headers = nil)
+      # Send request
+      promise = begin_export_async(resource_group_name, name, parameters, custom_headers)
+
+      promise = promise.then do |response|
+        # Defining deserialization method.
+        deserialize_method = lambda do |parsed_response|
+        end
+
+       # Waiting for response.
+       @client.get_long_running_operation_result(response, deserialize_method)
+      end
+
+      promise
+    end
+
+    #
+    # Import data into redis cache.
+    #
+    # @param resource_group_name [String] The name of the resource group.
+    # @param name [String] The name of the redis cache.
+    # @param parameters [ExportRDBParameters] Parameters for redis export
+    # operation.
+    # @param custom_headers [Hash{String => String}] A hash of custom headers that
+    # will be added to the HTTP request.
+    #
+    #
+    def begin_export(resource_group_name, name, parameters, custom_headers = nil)
+      response = begin_export_async(resource_group_name, name, parameters, custom_headers).value!
+      nil
+    end
+
+    #
+    # Import data into redis cache.
+    #
+    # @param resource_group_name [String] The name of the resource group.
+    # @param name [String] The name of the redis cache.
+    # @param parameters [ExportRDBParameters] Parameters for redis export
+    # operation.
+    # @param custom_headers [Hash{String => String}] A hash of custom headers that
+    # will be added to the HTTP request.
+    #
+    # @return [MsRestAzure::AzureOperationResponse] HTTP response information.
+    #
+    def begin_export_with_http_info(resource_group_name, name, parameters, custom_headers = nil)
+      begin_export_async(resource_group_name, name, parameters, custom_headers).value!
+    end
+
+    #
+    # Import data into redis cache.
+    #
+    # @param resource_group_name [String] The name of the resource group.
+    # @param name [String] The name of the redis cache.
+    # @param parameters [ExportRDBParameters] Parameters for redis export
+    # operation.
+    # @param [Hash{String => String}] A hash of custom headers that will be added
+    # to the HTTP request.
+    #
+    # @return [Concurrent::Promise] Promise object which holds the HTTP response.
+    #
+    def begin_export_async(resource_group_name, name, parameters, custom_headers = nil)
+      fail ArgumentError, 'resource_group_name is nil' if resource_group_name.nil?
+      fail ArgumentError, 'name is nil' if name.nil?
+      fail ArgumentError, 'parameters is nil' if parameters.nil?
+      fail ArgumentError, '@client.api_version is nil' if @client.api_version.nil?
+      fail ArgumentError, '@client.subscription_id is nil' if @client.subscription_id.nil?
+
+
+      request_headers = {}
+
+      # Set Headers
+      request_headers['x-ms-client-request-id'] = SecureRandom.uuid
+      request_headers['accept-language'] = @client.accept_language unless @client.accept_language.nil?
+
+      request_headers['Content-Type'] = 'application/json; charset=utf-8'
+
+      # Serialize Request
+      request_mapper = ExportRDBParameters.mapper()
+      request_content = @client.serialize(request_mapper,  parameters, 'parameters')
+      request_content = request_content != nil ? JSON.generate(request_content, quirks_mode: true) : nil
+
+      path_template = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cache/Redis/{name}/export'
+      options = {
+          middlewares: [[MsRest::RetryPolicyMiddleware, times: 3, retry: 0.02], [:cookie_jar]],
+          path_params: {'resourceGroupName' => resource_group_name,'name' => name,'subscriptionId' => @client.subscription_id},
+          query_params: {'api-version' => @client.api_version},
+          body: request_content,
+          headers: request_headers.merge(custom_headers || {})
+      }
+
+      request_url = @base_url || @client.base_url
+
+      request = MsRest::HttpOperationRequest.new(request_url, path_template, :post, options)
+      promise = request.run_promise do |req|
+        @client.credentials.sign_request(req) unless @client.credentials.nil?
+      end
+
+      promise = promise.then do |http_response|
+        status_code = http_response.status
+        response_content = http_response.body
+        unless status_code == 202
           error_model = JSON.load(response_content)
           fail MsRestAzure::AzureOperationError.new(request, http_response, error_model)
         end

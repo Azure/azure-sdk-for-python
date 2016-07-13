@@ -106,7 +106,7 @@ http_interactions:
   recorded_at: Thu, 19 May 2016 06:46:04 GMT
 - request:
     method: get
-    uri: https://management.azure.com/subscriptions/<AZURE_SUBSCRIPTION_ID>/resourceGroups/RubySDKTest_azure_mgmt_network/providers/Microsoft.Network/localNetworkGateways?api-version=2016-03-30
+    uri: https://management.azure.com/subscriptions/<AZURE_SUBSCRIPTION_ID>/resourceGroups/RubySDKTest_azure_mgmt_network/providers/Microsoft.Network/localNetworkGateways?api-version=2016-06-01
     body:
       encoding: US-ASCII
       string: ''

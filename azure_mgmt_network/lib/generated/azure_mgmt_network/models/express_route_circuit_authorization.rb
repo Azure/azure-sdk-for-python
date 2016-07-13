@@ -19,8 +19,8 @@ module Azure::ARM::Network
       # Possible values include: 'Available', 'InUse'
       attr_accessor :authorization_use_status
 
-      # @return [String] Gets or sets Provisioning state of the PublicIP
-      # resource Updating/Deleting/Failed
+      # @return [String] Gets provisioning state of the PublicIP resource
+      # Updating/Deleting/Failed
       attr_accessor :provisioning_state
 
       # @return [String] Gets name of the resource that is unique within a

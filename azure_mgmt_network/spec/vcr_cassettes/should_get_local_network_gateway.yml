@@ -106,7 +106,7 @@ http_interactions:
   recorded_at: Thu, 19 May 2016 06:41:25 GMT
 - request:
     method: put
-    uri: https://management.azure.com/subscriptions/<AZURE_SUBSCRIPTION_ID>/resourceGroups/RubySDKTest_azure_mgmt_network/providers/Microsoft.Network/localNetworkGateways/local_gateway2579?api-version=2016-03-30
+    uri: https://management.azure.com/subscriptions/<AZURE_SUBSCRIPTION_ID>/resourceGroups/RubySDKTest_azure_mgmt_network/providers/Microsoft.Network/localNetworkGateways/local_gateway2579?api-version=2016-06-01
     body:
       encoding: UTF-8
       string: '{"name":"local_gateway2579","location":"westus","properties":{"localNetworkAddressSpace":{"addressPrefixes":["192.168.0.0/16"]},"gatewayIpAddress":"192.168.3.7"}}'
@@ -138,7 +138,7 @@ http_interactions:
       x-ms-request-id:
       - 1b97c875-b6ad-4f02-8654-9297b05eb5b4
       azure-asyncoperation:
-      - https://management.azure.com/subscriptions/<AZURE_SUBSCRIPTION_ID>/providers/Microsoft.Network/locations/westus/operations/1b97c875-b6ad-4f02-8654-9297b05eb5b4?api-version=2016-03-30
+      - https://management.azure.com/subscriptions/<AZURE_SUBSCRIPTION_ID>/providers/Microsoft.Network/locations/westus/operations/1b97c875-b6ad-4f02-8654-9297b05eb5b4?api-version=2016-06-01
       strict-transport-security:
       - max-age=31536000; includeSubDomains
       server:
@@ -166,7 +166,7 @@ http_interactions:
   recorded_at: Thu, 19 May 2016 06:41:26 GMT
 - request:
     method: get
-    uri: https://management.azure.com/subscriptions/<AZURE_SUBSCRIPTION_ID>/providers/Microsoft.Network/locations/westus/operations/1b97c875-b6ad-4f02-8654-9297b05eb5b4?api-version=2016-03-30
+    uri: https://management.azure.com/subscriptions/<AZURE_SUBSCRIPTION_ID>/providers/Microsoft.Network/locations/westus/operations/1b97c875-b6ad-4f02-8654-9297b05eb5b4?api-version=2016-06-01
     body:
       encoding: US-ASCII
       string: ''
@@ -217,7 +217,7 @@ http_interactions:
   recorded_at: Thu, 19 May 2016 06:41:57 GMT
 - request:
     method: get
-    uri: https://management.azure.com/subscriptions/<AZURE_SUBSCRIPTION_ID>/resourceGroups/RubySDKTest_azure_mgmt_network/providers/Microsoft.Network/localNetworkGateways/local_gateway2579?api-version=2016-03-30
+    uri: https://management.azure.com/subscriptions/<AZURE_SUBSCRIPTION_ID>/resourceGroups/RubySDKTest_azure_mgmt_network/providers/Microsoft.Network/localNetworkGateways/local_gateway2579?api-version=2016-06-01
     body:
       encoding: US-ASCII
       string: ''
@@ -274,7 +274,7 @@ http_interactions:
   recorded_at: Thu, 19 May 2016 06:41:57 GMT
 - request:
     method: get
-    uri: https://management.azure.com/subscriptions/<AZURE_SUBSCRIPTION_ID>/resourceGroups/RubySDKTest_azure_mgmt_network/providers/Microsoft.Network/localNetworkGateways/local_gateway2579?api-version=2016-03-30
+    uri: https://management.azure.com/subscriptions/<AZURE_SUBSCRIPTION_ID>/resourceGroups/RubySDKTest_azure_mgmt_network/providers/Microsoft.Network/localNetworkGateways/local_gateway2579?api-version=2016-06-01
     body:
       encoding: US-ASCII
       string: ''
