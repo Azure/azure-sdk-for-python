@@ -127,7 +127,7 @@ class VaultsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`Vault <azure.keyvault.models.Vault>`
+        :rtype: None
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -163,16 +163,9 @@ class VaultsOperations(object):
             exp.request_id = response.headers.get('x-ms-request-id')
             raise exp
 
-        deserialized = None
-
-        if response.status_code == 200:
-            deserialized = self._deserialize('Vault', response)
-
         if raw:
-            client_raw_response = ClientRawResponse(deserialized, response)
+            client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
-
-        return deserialized
 
     def get(
             self, resource_group_name, vault_name, custom_headers=None, raw=False, **operation_config):
