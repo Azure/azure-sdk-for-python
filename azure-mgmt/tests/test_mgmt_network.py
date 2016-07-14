@@ -556,6 +556,122 @@ class MgmtNetworkTest(AzureMgmtTestCase):
         self.assertGreater(len(ersp), 0)
         self.assertTrue(all(hasattr(u, 'bandwidths_offered') for u in ersp))
 
+    @record
+    def test_express_route_circuit(self):
+        self.create_resource_group()
+
+        express_route_name = self.get_resource_name('pyexpressroute')
+        async_express_route = self.network_client.express_route_circuits.create_or_update(
+            self.group_name,
+            express_route_name,
+            {
+                "location": self.region,
+                "sku": {
+                    "name": "Standard_MeteredData",
+                    "tier": "Standard",
+                    "family": "MeteredData"
+                },
+                "service_provider_properties": {
+                    "service_provider_name": "Comcast",
+                    "peering_location": "Chicago",
+                    "bandwidth_in_mbps": 100
+                }
+            }
+        )
+        express_route = async_express_route.result()
+
+        express_route = self.network_client.express_route_circuits.get(
+            self.group_name,
+            express_route_name
+        )
+
+        routes = list(self.network_client.express_route_circuits.list(
+            self.group_name
+        ))
+        self.assertEqual(len(routes), 1)
+
+        routes = list(self.network_client.express_route_circuits.list_all())
+        self.assertGreater(len(routes), 0)
+
+        stats = self.network_client.express_route_circuits.get_stats(
+            self.group_name,
+            express_route_name
+        )
+        self.assertIsNotNone(stats)
+
+        async_peering = self.network_client.express_route_circuit_peerings.create_or_update(
+            self.group_name,
+            express_route_name,
+            'AzurePublicPeering',
+            {
+                "peering_type": "AzurePublicPeering",
+                "peer_asn": 100, 
+                "primary_peer_address_prefix": "192.168.1.0/30",
+                "secondary_peer_address_prefix": "192.168.2.0/30",
+                "vlan_id": 200,
+            }
+        )
+        peering = async_peering.result()
+
+        peering = self.network_client.express_route_circuit_peerings.get(
+            self.group_name,
+            express_route_name,
+            'AzurePublicPeering'
+        )
+
+        peerings = list(self.network_client.express_route_circuit_peerings.list(
+            self.group_name,
+            express_route_name
+        ))
+        self.assertEqual(len(peerings), 1)
+
+        stats = self.network_client.express_route_circuits.get_peering_stats(
+            self.group_name,
+            express_route_name,
+            'AzurePublicPeering'
+        )
+        self.assertIsNotNone(stats)
+
+        auth_name = self.get_resource_name('pyauth')
+        async_auth = self.network_client.express_route_circuit_authorizations.create_or_update(
+            self.group_name,
+            express_route_name,
+            auth_name,
+            {}
+        )
+        auth = async_auth.result()
+
+        auth = self.network_client.express_route_circuit_authorizations.get(
+            self.group_name,
+            express_route_name,
+            auth_name
+        )
+
+        auths = list(self.network_client.express_route_circuit_authorizations.list(
+            self.group_name,
+            express_route_name
+        ))
+        self.assertEqual(len(auths), 1)
+
+        async_auth = self.network_client.express_route_circuit_authorizations.delete(
+            self.group_name,
+            express_route_name,
+            auth_name
+        )
+        async_auth.wait()
+
+        async_peering = self.network_client.express_route_circuit_peerings.delete(
+            self.group_name,
+            express_route_name,
+            'AzurePublicPeering'
+        )
+        async_peering.wait()
+
+        async_express_route = self.network_client.express_route_circuits.delete(
+            self.group_name,
+            express_route_name
+        )
+        async_express_route.wait()
 
 #------------------------------------------------------------------------------
 if __name__ == '__main__':
