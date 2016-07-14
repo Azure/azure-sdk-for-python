@@ -240,6 +240,62 @@ class MgmtComputeTest(AzureMgmtTestCase):
         async_vm_delete.wait()
 
     @record
+    def test_virtual_machine_capture(self):
+        self.create_resource_group()
+
+        names = self.get_resource_names('pyvmir')
+        os_vhd_uri = self.get_vhd_uri(names.storage, 'osdisk')
+
+        self.create_storage_account(names.storage)
+        subnet = self.create_virtual_network(names.network, names.subnet)
+        nic_id = self.create_network_interface(names.nic, subnet)
+
+        storage_profile = self.get_storage_profile(os_vhd_uri)
+        storage_profile.image_reference = azure.mgmt.compute.models.ImageReference(
+            publisher='Canonical',
+            offer='UbuntuServer',
+            sku='16.04.0-LTS',
+            version='latest'
+        )
+
+        params_create = azure.mgmt.compute.models.VirtualMachine(
+            location=self.region,
+            os_profile=self.get_os_profile(),
+            hardware_profile=self.get_hardware_profile(),
+            network_profile=self.get_network_profile(nic_id),
+            storage_profile=storage_profile,
+        )
+
+        # Create VM test
+        result_create = self.compute_client.virtual_machines.create_or_update(
+            self.group_name,
+            names.vm,
+            params_create,
+        )
+        vm_result = result_create.result()
+        self.assertEqual(vm_result.name, names.vm)
+
+        # Deallocate
+        async_vm_deallocate = self.compute_client.virtual_machines.deallocate(self.group_name, names.vm)
+        async_vm_deallocate.wait()
+
+        # Generalize (possible because deallocated)
+        self.compute_client.virtual_machines.generalize(self.group_name, names.vm)
+
+        # Capture VM (VM must be generalized before)
+        async_capture = self.compute_client.virtual_machines.capture(
+            self.group_name,
+            names.vm,
+            {
+               "vhd_prefix":"pslib",
+               "destination_container_name":"dest",
+               "overwrite_vhds": True
+            }
+        )
+        capture_result = async_capture.result()
+        self.assertTrue(hasattr(capture_result, 'output'))
+
+    @record
     def test_vm_extensions(self):
         #WARNING: this test may take 40 mins to complete against live server
         self.create_resource_group()
