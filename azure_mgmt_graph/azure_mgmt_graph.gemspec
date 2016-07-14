@@ -5,8 +5,8 @@
 lib = File.expand_path('../lib', __FILE__)
 $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
 
-require 'azure_mgmt_graph/module_definition'
-require 'azure_mgmt_graph/version'
+require 'generated/azure_mgmt_graph/module_definition'
+require 'generated/azure_mgmt_graph/version'
 
 Gem::Specification.new do |spec|
   spec.name          = 'azure_mgmt_graph'
@@ -31,5 +31,5 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'dotenv', '~> 2'
   spec.add_development_dependency 'azure_mgmt_resources', '~> 0.3'
 
-  spec.add_runtime_dependency 'ms_rest_azure', '~> 0.2.3'
+  spec.add_runtime_dependency 'ms_rest_azure', '~> 0.3.0'
 end

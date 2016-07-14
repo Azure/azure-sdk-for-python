@@ -86,8 +86,6 @@ class ResourceHelper
 
   def build_availability_set_parameters
     params = AvailabilitySet.new()
-    props = AvailabilitySetProperties.new()
-    params.properties = props
     params.location = 'westus'
 
     params

@@ -26,10 +26,7 @@ describe StorageAccounts do
 
   it 'create storage account' do
     name = 'storage56e236d65ef043378'
-    props = Models::StorageAccountPropertiesCreateParameters.new
-
     params = Models::StorageAccountCreateParameters.new
-    params.properties = props
     params.location = @account_location
     sku = Models::Sku.new
     sku.name = @account_type
@@ -39,8 +36,8 @@ describe StorageAccounts do
     result = @client.create(@resource_group.name, name, params).value!
     expect(result.response.status).to eq(200)
     expect(result.body).not_to be_nil
+    expect(result.body).to be_a(Models::StorageAccount)
     expect(result.body.location).to eq('westus')
-    expect(result.body.properties).to be_a(Models::StorageAccountProperties)
     expect(result.body.sku.name).to eq(sku.name)
   end
 
@@ -72,10 +69,10 @@ describe StorageAccounts do
     result = @client.get_properties_async(@resource_group.name, storage).value!
 
     expect(result.body).not_to be_nil
+    expect(result.body).to be_a(Models::StorageAccount)
     expect(result.body.location).to eq('westus')
     expect(result.body.name).to eq(storage)
     expect(result.body.type).to eq(@storage_type)
-    expect(result.body.properties).to be_a(Models::StorageAccountProperties)
     expect(result.body.sku.name).to eq(@account_type)
   end
 
@@ -126,12 +123,10 @@ describe StorageAccounts do
   def create_storage_account(acc_name)
     name = acc_name
 
-    props = Models::StorageAccountPropertiesCreateParameters.new
     params = Models::StorageAccountCreateParameters.new
     sku = Models::Sku.new
     sku.name = @account_type
 
-    params.properties = props
     params.location = @account_location
     params.sku = sku
     params.kind = Models::Kind::Storage

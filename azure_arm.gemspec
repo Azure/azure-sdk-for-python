@@ -24,6 +24,8 @@ Gem::Specification.new do |spec|
   spec.add_runtime_dependency 'azure_mgmt_authorization', version
   spec.add_runtime_dependency 'azure_mgmt_cdn', version
   spec.add_runtime_dependency 'azure_mgmt_compute', version
+  spec.add_runtime_dependency 'azure_mgmt_datalake_analytics', version
+  spec.add_runtime_dependency 'azure_mgmt_datalake_store', version
   spec.add_runtime_dependency 'azure_mgmt_features', version
   spec.add_runtime_dependency 'azure_mgmt_graph', version
   spec.add_runtime_dependency 'azure_mgmt_locks', version

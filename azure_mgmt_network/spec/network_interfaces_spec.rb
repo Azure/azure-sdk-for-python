@@ -79,16 +79,12 @@ describe 'Network Interfaces' do
     network_interface_name = 'nic8474'
     ip_config_name = 'ip_name_36282'
     params.name = network_interface_name
-    props = NetworkInterfacePropertiesFormat.new
     ip_configuration = NetworkInterfaceIPConfiguration.new
-    params.properties = props
-    props.ip_configurations = [ip_configuration]
-    ip_configuration_properties = NetworkInterfaceIPConfigurationPropertiesFormat.new
-    ip_configuration.properties = ip_configuration_properties
+    params.ip_configurations = [ip_configuration]
     ip_configuration.name = ip_config_name
-    ip_configuration_properties.private_ipallocation_method = 'Dynamic'
-    ip_configuration_properties.public_ipaddress = @resource_helper.create_public_ip_address(@location, @resource_group)
-    ip_configuration_properties.subnet = @subnet
+    ip_configuration.private_ipallocation_method = 'Dynamic'
+    ip_configuration.public_ipaddress = @resource_helper.create_public_ip_address(@location, @resource_group)
+    ip_configuration.subnet = @subnet
     params
   end
 end
