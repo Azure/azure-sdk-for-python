@@ -93,5 +93,5 @@ Get storage account keys
     group_name = 'myresourcegroup'
     account_name = 'mystorageaccountname'
     storage_account_keys = storage_client.storage_accounts.list_keys(group_name, account_name)
-    print(storage_account_keys.key1)
-    print(storage_account_keys.key2)
+    print(storage_account_keys['key1'])
+    print(storage_account_keys['key2'])
