@@ -29,6 +29,71 @@ class MgmtNetworkTest(AzureMgmtTestCase):
         )
 
     @record
+    def test_network_interface_card(self):
+        self.create_resource_group()
+
+        vnet_name = self.get_resource_name('pyvnet')
+        subnet_name = self.get_resource_name('pysubnet')
+        nic_name = self.get_resource_name('pynic')
+
+        # Create VNet
+        async_vnet_creation = self.network_client.virtual_networks.create_or_update(
+            self.group_name,
+            vnet_name,
+            {
+                'location': self.region,
+                'address_space': {
+                    'address_prefixes': ['10.0.0.0/16']
+                }
+            }
+        )
+        async_vnet_creation.wait()
+
+        # Create Subnet
+        async_subnet_creation = self.network_client.subnets.create_or_update(
+            self.group_name,
+            vnet_name,
+            subnet_name,
+            {'address_prefix': '10.0.0.0/24'}
+        )
+        subnet_info = async_subnet_creation.result()
+
+        # Create NIC
+        async_nic_creation = self.network_client.network_interfaces.create_or_update(
+            self.group_name,
+            nic_name,
+            {
+                'location': self.region,
+                'ip_configurations': [{
+                    'name': 'MyIpConfig',
+                    'subnet': {
+                        'id': subnet_info.id
+                    }
+                }]
+            }
+        )
+        nic_info = async_nic_creation.result()
+
+        nic_info = self.network_client.network_interfaces.get(
+            self.group_name,
+            nic_info.name
+        )
+         
+        nics = list(self.network_client.network_interfaces.list(
+            self.group_name
+        ))
+        self.assertEqual(len(nics), 1)
+
+        nics = list(self.network_client.network_interfaces.list_all())
+        self.assertGreater(len(nics), 0)
+
+        async_delete = self.network_client.network_interfaces.delete(
+            self.group_name,
+            nic_info.name
+        )
+        async_delete.wait()
+
+    @record
     def test_load_balancers(self):
         self.create_resource_group()
 
