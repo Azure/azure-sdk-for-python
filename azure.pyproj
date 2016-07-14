@@ -443,6 +443,17 @@
     <Compile Include="azure-mgmt-compute\azure\mgmt\compute\models\compute_long_running_operation_properties.py" />
     <Compile Include="azure-mgmt-compute\azure\mgmt\compute\models\compute_long_running_operation_result.py" />
     <Compile Include="azure-mgmt-compute\azure\mgmt\compute\models\compute_management_client_enums.py" />
+    <Compile Include="azure-mgmt-compute\azure\mgmt\compute\models\container_service.py" />
+    <Compile Include="azure-mgmt-compute\azure\mgmt\compute\models\container_service_agent_pool_profile.py" />
+    <Compile Include="azure-mgmt-compute\azure\mgmt\compute\models\container_service_diagnostics_profile.py" />
+    <Compile Include="azure-mgmt-compute\azure\mgmt\compute\models\container_service_linux_profile.py" />
+    <Compile Include="azure-mgmt-compute\azure\mgmt\compute\models\container_service_master_profile.py" />
+    <Compile Include="azure-mgmt-compute\azure\mgmt\compute\models\container_service_orchestrator_profile.py" />
+    <Compile Include="azure-mgmt-compute\azure\mgmt\compute\models\container_service_paged.py" />
+    <Compile Include="azure-mgmt-compute\azure\mgmt\compute\models\container_service_ssh_configuration.py" />
+    <Compile Include="azure-mgmt-compute\azure\mgmt\compute\models\container_service_ssh_public_key.py" />
+    <Compile Include="azure-mgmt-compute\azure\mgmt\compute\models\container_service_vm_diagnostics.py" />
+    <Compile Include="azure-mgmt-compute\azure\mgmt\compute\models\container_service_windows_profile.py" />
     <Compile Include="azure-mgmt-compute\azure\mgmt\compute\models\data_disk.py" />
     <Compile Include="azure-mgmt-compute\azure\mgmt\compute\models\data_disk_image.py" />
     <Compile Include="azure-mgmt-compute\azure\mgmt\compute\models\delete_operation_result.py" />
