@@ -19,10 +19,5 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .search_management_client import SearchManagementClient
-from .version import VERSION
-
-__all__ = ['SearchManagementClient']
-
-__version__ = VERSION
+VERSION = "0.30.0rc5"
 

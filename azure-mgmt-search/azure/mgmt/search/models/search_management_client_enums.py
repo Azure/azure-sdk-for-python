@@ -19,10 +19,28 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .search_management_client import SearchManagementClient
-from .version import VERSION
+from enum import Enum
 
-__all__ = ['SearchManagementClient']
 
-__version__ = VERSION
+class SkuType(Enum):
 
+    free = "free"
+    standard = "standard"
+    standard2 = "standard2"
+
+
+class SearchServiceStatus(Enum):
+
+    running = "running"
+    provisioning = "provisioning"
+    deleting = "deleting"
+    degraded = "degraded"
+    disabled = "disabled"
+    error = "error"
+
+
+class ProvisioningState(Enum):
+
+    succeeded = "succeeded"
+    provisioning = "provisioning"
+    failed = "failed"

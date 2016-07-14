@@ -19,10 +19,28 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .search_management_client import SearchManagementClient
-from .version import VERSION
+from msrest.serialization import Model
 
-__all__ = ['SearchManagementClient']
 
-__version__ = VERSION
+class SearchServiceListResult(Model):
+    """Response containing a list of Azure Search services for a given resource
+    group.
 
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar value: The Search services in the resource group.
+    :vartype value: list of :class:`SearchServiceResource
+     <azure.mgmt.search.models.SearchServiceResource>`
+    """ 
+
+    _validation = {
+        'value': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': '[SearchServiceResource]'},
+    }
+
+    def __init__(self):
+        self.value = None
