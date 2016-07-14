@@ -345,36 +345,25 @@ class MgmtNetworkTest(AzureMgmtTestCase):
             network_name,
             params_create,
         )
-        result_create.wait() # AzureOperationPoller
-        #self.assertEqual(result_create.status_code, HttpStatusCode.OK)
+        vnet = result_create.result()
 
         result_get = self.network_client.virtual_networks.get(
             self.group_name,
-            network_name,
+            vnet.name,
         )
-        #self.assertEqual(result_get.status_code, HttpStatusCode.OK)
 
-        result_list = self.network_client.virtual_networks.list(
+        result_list = list(self.network_client.virtual_networks.list(
             self.group_name,
-        )
-        #self.assertEqual(result_list.status_code, HttpStatusCode.OK)
+        ))
+        self.assertEqual(len(result_list), 1)
 
-        result_list_all = self.network_client.virtual_networks.list_all()
-        #self.assertEqual(result_list_all.status_code, HttpStatusCode.OK)
+        result_list_all = list(self.network_client.virtual_networks.list_all())
 
-        result_delete = self.network_client.virtual_networks.delete(
+        async_delete = self.network_client.virtual_networks.delete(
             self.group_name,
             network_name,
         )
-        result_delete.wait() # AzureOperationPoller
-        #self.assertEqual(result_delete.status_code, HttpStatusCode.OK)
-
-        result_list = self.network_client.virtual_networks.list(
-            self.group_name,
-        )
-        #self.assertEqual(result_list.status_code, HttpStatusCode.OK)
-        result_list = list(result_list)
-        self.assertEqual(len(result_list), 0)
+        async_delete.wait()
 
     @record
     def test_dns_availability(self):
