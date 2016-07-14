@@ -145,6 +145,13 @@
       },
       "output_dir": "azure-mgmt-resource/azure/mgmt/resource/policy"
     },
+    "search": {
+      "swagger": "arm-search/2015-02-28/swagger/search.json",
+      "autorest_options": {
+        "Namespace": "azure.mgmt.search"
+      },
+      "output_dir": "azure-mgmt-search/azure/mgmt/search"
+    },
     "scheduler": {
       "swagger": "arm-scheduler/2016-01-01/swagger/scheduler.json",
       "autorest_options": {
