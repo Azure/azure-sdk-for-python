@@ -19,10 +19,27 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .search_management_client import SearchManagementClient
-from .version import VERSION
+from msrest.serialization import Model
 
-__all__ = ['SearchManagementClient']
 
-__version__ = VERSION
+class ListQueryKeysResult(Model):
+    """Response containing the query API keys for a given Azure Search service.
 
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar value: The query keys for the Azure Search service.
+    :vartype value: list of :class:`QueryKey
+     <azure.mgmt.search.models.QueryKey>`
+    """ 
+
+    _validation = {
+        'value': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': '[QueryKey]'},
+    }
+
+    def __init__(self):
+        self.value = None

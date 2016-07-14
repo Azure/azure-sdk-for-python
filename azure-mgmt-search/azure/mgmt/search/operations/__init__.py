@@ -19,10 +19,12 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .search_management_client import SearchManagementClient
-from .version import VERSION
+from .admin_keys_operations import AdminKeysOperations
+from .query_keys_operations import QueryKeysOperations
+from .services_operations import ServicesOperations
 
-__all__ = ['SearchManagementClient']
-
-__version__ = VERSION
-
+__all__ = [
+    'AdminKeysOperations',
+    'QueryKeysOperations',
+    'ServicesOperations',
+]

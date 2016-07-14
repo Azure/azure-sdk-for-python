@@ -19,10 +19,32 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .search_management_client import SearchManagementClient
-from .version import VERSION
+from msrest.serialization import Model
 
-__all__ = ['SearchManagementClient']
 
-__version__ = VERSION
+class QueryKey(Model):
+    """Describes an API key for a given Azure Search service that has permissions
+    for query operations only.
 
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar name: The name of the query API key; may be empty.
+    :vartype name: str
+    :ivar key: The value of the query API key.
+    :vartype key: str
+    """ 
+
+    _validation = {
+        'name': {'readonly': True},
+        'key': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'name': {'key': 'name', 'type': 'str'},
+        'key': {'key': 'key', 'type': 'str'},
+    }
+
+    def __init__(self):
+        self.name = None
+        self.key = None
