@@ -10,3 +10,4 @@ Submodules
    azure.mgmt.resource.features
    azure.mgmt.resource.subscriptions
    azure.mgmt.resource.locks
+   azure.mgmt.resource.policy
