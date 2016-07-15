@@ -29,6 +29,71 @@ class MgmtNetworkTest(AzureMgmtTestCase):
         )
 
     @record
+    def test_network_interface_card(self):
+        self.create_resource_group()
+
+        vnet_name = self.get_resource_name('pyvnet')
+        subnet_name = self.get_resource_name('pysubnet')
+        nic_name = self.get_resource_name('pynic')
+
+        # Create VNet
+        async_vnet_creation = self.network_client.virtual_networks.create_or_update(
+            self.group_name,
+            vnet_name,
+            {
+                'location': self.region,
+                'address_space': {
+                    'address_prefixes': ['10.0.0.0/16']
+                }
+            }
+        )
+        async_vnet_creation.wait()
+
+        # Create Subnet
+        async_subnet_creation = self.network_client.subnets.create_or_update(
+            self.group_name,
+            vnet_name,
+            subnet_name,
+            {'address_prefix': '10.0.0.0/24'}
+        )
+        subnet_info = async_subnet_creation.result()
+
+        # Create NIC
+        async_nic_creation = self.network_client.network_interfaces.create_or_update(
+            self.group_name,
+            nic_name,
+            {
+                'location': self.region,
+                'ip_configurations': [{
+                    'name': 'MyIpConfig',
+                    'subnet': {
+                        'id': subnet_info.id
+                    }
+                }]
+            }
+        )
+        nic_info = async_nic_creation.result()
+
+        nic_info = self.network_client.network_interfaces.get(
+            self.group_name,
+            nic_info.name
+        )
+         
+        nics = list(self.network_client.network_interfaces.list(
+            self.group_name
+        ))
+        self.assertEqual(len(nics), 1)
+
+        nics = list(self.network_client.network_interfaces.list_all())
+        self.assertGreater(len(nics), 0)
+
+        async_delete = self.network_client.network_interfaces.delete(
+            self.group_name,
+            nic_info.name
+        )
+        async_delete.wait()
+
+    @record
     def test_load_balancers(self):
         self.create_resource_group()
 
@@ -280,36 +345,25 @@ class MgmtNetworkTest(AzureMgmtTestCase):
             network_name,
             params_create,
         )
-        result_create.wait() # AzureOperationPoller
-        #self.assertEqual(result_create.status_code, HttpStatusCode.OK)
+        vnet = result_create.result()
 
         result_get = self.network_client.virtual_networks.get(
             self.group_name,
-            network_name,
+            vnet.name,
         )
-        #self.assertEqual(result_get.status_code, HttpStatusCode.OK)
 
-        result_list = self.network_client.virtual_networks.list(
+        result_list = list(self.network_client.virtual_networks.list(
             self.group_name,
-        )
-        #self.assertEqual(result_list.status_code, HttpStatusCode.OK)
+        ))
+        self.assertEqual(len(result_list), 1)
 
-        result_list_all = self.network_client.virtual_networks.list_all()
-        #self.assertEqual(result_list_all.status_code, HttpStatusCode.OK)
+        result_list_all = list(self.network_client.virtual_networks.list_all())
 
-        result_delete = self.network_client.virtual_networks.delete(
+        async_delete = self.network_client.virtual_networks.delete(
             self.group_name,
             network_name,
         )
-        result_delete.wait() # AzureOperationPoller
-        #self.assertEqual(result_delete.status_code, HttpStatusCode.OK)
-
-        result_list = self.network_client.virtual_networks.list(
-            self.group_name,
-        )
-        #self.assertEqual(result_list.status_code, HttpStatusCode.OK)
-        result_list = list(result_list)
-        self.assertEqual(len(result_list), 0)
+        async_delete.wait()
 
     @record
     def test_dns_availability(self):
@@ -422,28 +476,256 @@ class MgmtNetworkTest(AzureMgmtTestCase):
             params_create,
         )
         result_create.wait() # AzureOperationPoller
-        #self.assertEqual(result_create.status_code, HttpStatusCode.OK)
 
         result_get = self.network_client.network_security_groups.get(
             self.group_name,
             security_group_name,
         )
-        #self.assertEqual(result_get.status_code, HttpStatusCode.OK)
 
-        result_list = self.network_client.network_security_groups.list(
+        result_list = list(self.network_client.network_security_groups.list(
             self.group_name,
+        ))
+        self.assertEqual(len(result_list), 1)
+
+        result_list_all = list(self.network_client.network_security_groups.list_all())
+
+        # Security Rules
+        new_security_rule_name = self.get_resource_name('pynewrule')
+        async_security_rule = self.network_client.security_rules.create_or_update(
+            self.group_name,
+            security_group_name,
+            new_security_rule_name,
+            {
+                    'access':azure.mgmt.network.models.SecurityRuleAccess.allow,
+                    'description':'New Test security rule',
+                    'destination_address_prefix':'*',
+                    'destination_port_range':'123-3500',
+                    'direction':azure.mgmt.network.models.SecurityRuleDirection.outbound,
+                    'priority':400,
+                    'protocol':azure.mgmt.network.models.SecurityRuleProtocol.tcp,
+                    'source_address_prefix':'*',
+                    'source_port_range':'655',
+            }
         )
-        #self.assertEqual(result_list.status_code, HttpStatusCode.OK)
+        security_rule = async_security_rule.result()
 
-        result_list_all = self.network_client.network_security_groups.list_all()
-        #self.assertEqual(result_list_all.status_code, HttpStatusCode.OK)
+        security_rule = self.network_client.security_rules.get(
+            self.group_name,
+            security_group_name,
+            security_rule.name
+        )
+        self.assertEqual(security_rule.name, new_security_rule_name)
 
+        new_security_rules = list(self.network_client.security_rules.list(
+            self.group_name,
+            security_group_name
+        ))
+        self.assertEqual(len(new_security_rules), 2)
+
+        result_delete = self.network_client.security_rules.delete(
+            self.group_name,
+            security_group_name,
+            new_security_rule_name
+        )
+        result_delete.wait()
+
+        # Delete NSG
         result_delete = self.network_client.network_security_groups.delete(
             self.group_name,
             security_group_name,
         )
-        #self.assertEqual(result_delete.status_code, HttpStatusCode.OK)
+        result_delete.wait()
 
+    @record
+    def test_routes(self):
+        self.create_resource_group()
+
+        route_table_name = self.get_resource_name('pyroutetable')
+        route_name = self.get_resource_name('pyroute')
+
+        async_route_table = self.network_client.route_tables.create_or_update(
+            self.group_name,
+            route_table_name,
+            {'location': self.region}
+        )
+        route_table = async_route_table.result()
+
+        route_table = self.network_client.route_tables.get(
+            self.group_name,
+            route_table.name
+        )
+        self.assertEqual(route_table.name, route_table_name)
+
+        route_tables = list(self.network_client.route_tables.list(
+            self.group_name
+        ))
+        self.assertEqual(len(route_tables), 1)
+
+        async_route = self.network_client.routes.create_or_update(
+            self.group_name,
+            route_table.name,
+            route_name,
+            {
+                'address_prefix': '10.1.0.0/16',
+                'next_hop_type': 'None'
+            }
+        )
+        route = async_route.result()
+
+        route = self.network_client.routes.get(
+            self.group_name,
+            route_table.name,
+            route.name
+        )
+        self.assertEqual(route.name, route_name)
+
+        routes = list(self.network_client.routes.list(
+            self.group_name,
+            route_table.name
+        ))
+        self.assertEqual(len(routes), 1)
+
+        async_route_delete = self.network_client.routes.delete(
+            self.group_name,
+            route_table.name,
+            route.name
+        )
+        async_route_delete.wait()
+
+        async_route_table_delete = self.network_client.route_tables.delete(
+            self.group_name,
+            route_table_name
+        )
+        async_route_table_delete.wait()
+
+    @record
+    def test_usages(self):
+        usages = list(self.network_client.usages.list(self.region))
+        self.assertGreater(len(usages), 1)
+        self.assertTrue(all(hasattr(u, 'name') for u in usages))
+
+    @record
+    def test_express_route_service_providers(self):
+        ersp = list(self.network_client.express_route_service_providers.list())
+        self.assertGreater(len(ersp), 0)
+        self.assertTrue(all(hasattr(u, 'bandwidths_offered') for u in ersp))
+
+    @record
+    def test_express_route_circuit(self):
+        self.create_resource_group()
+
+        express_route_name = self.get_resource_name('pyexpressroute')
+        async_express_route = self.network_client.express_route_circuits.create_or_update(
+            self.group_name,
+            express_route_name,
+            {
+                "location": self.region,
+                "sku": {
+                    "name": "Standard_MeteredData",
+                    "tier": "Standard",
+                    "family": "MeteredData"
+                },
+                "service_provider_properties": {
+                    "service_provider_name": "Comcast",
+                    "peering_location": "Chicago",
+                    "bandwidth_in_mbps": 100
+                }
+            }
+        )
+        express_route = async_express_route.result()
+
+        express_route = self.network_client.express_route_circuits.get(
+            self.group_name,
+            express_route_name
+        )
+
+        routes = list(self.network_client.express_route_circuits.list(
+            self.group_name
+        ))
+        self.assertEqual(len(routes), 1)
+
+        routes = list(self.network_client.express_route_circuits.list_all())
+        self.assertGreater(len(routes), 0)
+
+        stats = self.network_client.express_route_circuits.get_stats(
+            self.group_name,
+            express_route_name
+        )
+        self.assertIsNotNone(stats)
+
+        async_peering = self.network_client.express_route_circuit_peerings.create_or_update(
+            self.group_name,
+            express_route_name,
+            'AzurePublicPeering',
+            {
+                "peering_type": "AzurePublicPeering",
+                "peer_asn": 100, 
+                "primary_peer_address_prefix": "192.168.1.0/30",
+                "secondary_peer_address_prefix": "192.168.2.0/30",
+                "vlan_id": 200,
+            }
+        )
+        peering = async_peering.result()
+
+        peering = self.network_client.express_route_circuit_peerings.get(
+            self.group_name,
+            express_route_name,
+            'AzurePublicPeering'
+        )
+
+        peerings = list(self.network_client.express_route_circuit_peerings.list(
+            self.group_name,
+            express_route_name
+        ))
+        self.assertEqual(len(peerings), 1)
+
+        stats = self.network_client.express_route_circuits.get_peering_stats(
+            self.group_name,
+            express_route_name,
+            'AzurePublicPeering'
+        )
+        self.assertIsNotNone(stats)
+
+        auth_name = self.get_resource_name('pyauth')
+        async_auth = self.network_client.express_route_circuit_authorizations.create_or_update(
+            self.group_name,
+            express_route_name,
+            auth_name,
+            {}
+        )
+        auth = async_auth.result()
+
+        auth = self.network_client.express_route_circuit_authorizations.get(
+            self.group_name,
+            express_route_name,
+            auth_name
+        )
+
+        auths = list(self.network_client.express_route_circuit_authorizations.list(
+            self.group_name,
+            express_route_name
+        ))
+        self.assertEqual(len(auths), 1)
+
+        async_auth = self.network_client.express_route_circuit_authorizations.delete(
+            self.group_name,
+            express_route_name,
+            auth_name
+        )
+        async_auth.wait()
+
+        async_peering = self.network_client.express_route_circuit_peerings.delete(
+            self.group_name,
+            express_route_name,
+            'AzurePublicPeering'
+        )
+        async_peering.wait()
+
+        async_express_route = self.network_client.express_route_circuits.delete(
+            self.group_name,
+            express_route_name
+        )
+        async_express_route.wait()
 
 #------------------------------------------------------------------------------
 if __name__ == '__main__':

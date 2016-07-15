@@ -74,11 +74,11 @@ class ContainerService(Resource):
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'String'},
-        'name': {'key': 'name', 'type': 'String'},
-        'type': {'key': 'type', 'type': 'String'},
-        'location': {'key': 'location', 'type': 'String'},
-        'tags': {'key': 'tags', 'type': '{String}'},
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'location': {'key': 'location', 'type': 'str'},
+        'tags': {'key': 'tags', 'type': '{str}'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'orchestrator_profile': {'key': 'properties.orchestratorProfile', 'type': 'ContainerServiceOrchestratorProfile'},
         'master_profile': {'key': 'properties.masterProfile', 'type': 'ContainerServiceMasterProfile'},
