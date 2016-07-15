@@ -23,13 +23,15 @@ from .sub_resource import SubResource
 
 
 class Probe(SubResource):
-    """
-    Load balancer Probe
+    """Load balancer Probe.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
 
     :param id: Resource Id
     :type id: str
-    :param load_balancing_rules: Gets Load balancer rules that use this probe
-    :type load_balancing_rules: list of :class:`SubResource
+    :ivar load_balancing_rules: Gets Load balancer rules that use this probe
+    :vartype load_balancing_rules: list of :class:`SubResource
      <azure.mgmt.network.models.SubResource>`
     :param protocol: Gets or sets the protocol of the end point. Possible
      values are http pr Tcp. If Tcp is specified, a received ACK is required
@@ -56,8 +58,8 @@ class Probe(SubResource):
      status from the VM. Path is required if a protocol is set to http.
      Otherwise, it is not allowed. There is no default value
     :type request_path: str
-    :param provisioning_state: Gets or sets Provisioning state of the
-     PublicIP resource Updating/Deleting/Failed
+    :param provisioning_state: Gets provisioning state of the PublicIP
+     resource Updating/Deleting/Failed
     :type provisioning_state: str
     :param name: Gets name of the resource that is unique within a resource
      group. This name can be used to access the resource
@@ -68,6 +70,7 @@ class Probe(SubResource):
     """ 
 
     _validation = {
+        'load_balancing_rules': {'readonly': True},
         'protocol': {'required': True},
         'port': {'required': True},
     }
@@ -85,9 +88,9 @@ class Probe(SubResource):
         'etag': {'key': 'etag', 'type': 'str'},
     }
 
-    def __init__(self, protocol, port, id=None, load_balancing_rules=None, interval_in_seconds=None, number_of_probes=None, request_path=None, provisioning_state=None, name=None, etag=None):
+    def __init__(self, protocol, port, id=None, interval_in_seconds=None, number_of_probes=None, request_path=None, provisioning_state=None, name=None, etag=None):
         super(Probe, self).__init__(id=id)
-        self.load_balancing_rules = load_balancing_rules
+        self.load_balancing_rules = None
         self.protocol = protocol
         self.port = port
         self.interval_in_seconds = interval_in_seconds

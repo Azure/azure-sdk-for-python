@@ -22,28 +22,21 @@
 from msrest.serialization import Model
 
 
-class ExpressRouteCircuitArpTable(Model):
-    """The arp table associated with the ExpressRouteCircuit.
+class EffectiveNetworkSecurityGroupAssociation(Model):
+    """Effective NetworkSecurityGroup association.
 
-    :param age: Age.
-    :type age: int
-    :param interface: Interface.
-    :type interface: str
-    :param ip_address: Gets ipAddress.
-    :type ip_address: str
-    :param mac_address: Gets macAddress.
-    :type mac_address: str
+    :param subnet: Gets the id of subnet if assigned
+    :type subnet: :class:`SubResource <azure.mgmt.network.models.SubResource>`
+    :param network_interface: Gets the id of network interface if assigned
+    :type network_interface: :class:`SubResource
+     <azure.mgmt.network.models.SubResource>`
     """ 
 
     _attribute_map = {
-        'age': {'key': 'age', 'type': 'int'},
-        'interface': {'key': 'interface', 'type': 'str'},
-        'ip_address': {'key': 'ipAddress', 'type': 'str'},
-        'mac_address': {'key': 'macAddress', 'type': 'str'},
+        'subnet': {'key': 'subnet', 'type': 'SubResource'},
+        'network_interface': {'key': 'networkInterface', 'type': 'SubResource'},
     }
 
-    def __init__(self, age=None, interface=None, ip_address=None, mac_address=None):
-        self.age = age
-        self.interface = interface
-        self.ip_address = ip_address
-        self.mac_address = mac_address
+    def __init__(self, subnet=None, network_interface=None):
+        self.subnet = subnet
+        self.network_interface = network_interface

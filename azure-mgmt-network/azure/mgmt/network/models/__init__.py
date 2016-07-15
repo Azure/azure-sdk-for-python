@@ -71,6 +71,11 @@ from .load_balancer import LoadBalancer
 from .address_space import AddressSpace
 from .bgp_settings import BgpSettings
 from .local_network_gateway import LocalNetworkGateway
+from .effective_network_security_group import EffectiveNetworkSecurityGroup
+from .effective_network_security_group_association import EffectiveNetworkSecurityGroupAssociation
+from .effective_network_security_rules import EffectiveNetworkSecurityRules
+from .effective_route import EffectiveRoute
+from .virtual_network_peering import VirtualNetworkPeering
 from .usage_name import UsageName
 from .usage import Usage
 from .virtual_network_gateway_ip_configuration import VirtualNetworkGatewayIPConfiguration
@@ -99,12 +104,15 @@ from .express_route_service_provider_paged import ExpressRouteServiceProviderPag
 from .load_balancer_paged import LoadBalancerPaged
 from .local_network_gateway_paged import LocalNetworkGatewayPaged
 from .network_interface_paged import NetworkInterfacePaged
+from .effective_route_paged import EffectiveRoutePaged
+from .effective_network_security_group_paged import EffectiveNetworkSecurityGroupPaged
 from .network_security_group_paged import NetworkSecurityGroupPaged
 from .public_ip_address_paged import PublicIPAddressPaged
 from .route_table_paged import RouteTablePaged
 from .route_paged import RoutePaged
 from .security_rule_paged import SecurityRulePaged
 from .subnet_paged import SubnetPaged
+from .virtual_network_peering_paged import VirtualNetworkPeeringPaged
 from .usage_paged import UsagePaged
 from .virtual_network_gateway_connection_paged import VirtualNetworkGatewayConnectionPaged
 from .virtual_network_gateway_paged import VirtualNetworkGatewayPaged
@@ -132,6 +140,9 @@ from .network_management_client_enums import (
     ServiceProviderProvisioningState,
     LoadDistribution,
     ProbeProtocol,
+    EffectiveRouteSource,
+    EffectiveRouteState,
+    VirtualNetworkPeeringState,
     VirtualNetworkGatewayType,
     VpnType,
     VirtualNetworkGatewaySkuName,
@@ -195,6 +206,11 @@ __all__ = [
     'AddressSpace',
     'BgpSettings',
     'LocalNetworkGateway',
+    'EffectiveNetworkSecurityGroup',
+    'EffectiveNetworkSecurityGroupAssociation',
+    'EffectiveNetworkSecurityRules',
+    'EffectiveRoute',
+    'VirtualNetworkPeering',
     'UsageName',
     'Usage',
     'VirtualNetworkGatewayIPConfiguration',
@@ -223,12 +239,15 @@ __all__ = [
     'LoadBalancerPaged',
     'LocalNetworkGatewayPaged',
     'NetworkInterfacePaged',
+    'EffectiveRoutePaged',
+    'EffectiveNetworkSecurityGroupPaged',
     'NetworkSecurityGroupPaged',
     'PublicIPAddressPaged',
     'RouteTablePaged',
     'RoutePaged',
     'SecurityRulePaged',
     'SubnetPaged',
+    'VirtualNetworkPeeringPaged',
     'UsagePaged',
     'VirtualNetworkGatewayConnectionPaged',
     'VirtualNetworkGatewayPaged',
@@ -255,6 +274,9 @@ __all__ = [
     'ServiceProviderProvisioningState',
     'LoadDistribution',
     'ProbeProtocol',
+    'EffectiveRouteSource',
+    'EffectiveRouteState',
+    'VirtualNetworkPeeringState',
     'VirtualNetworkGatewayType',
     'VpnType',
     'VirtualNetworkGatewaySkuName',

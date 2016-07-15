@@ -19,31 +19,19 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.serialization import Model
+from msrest.paging import Paged
 
 
-class ExpressRouteCircuitArpTable(Model):
-    """The arp table associated with the ExpressRouteCircuit.
-
-    :param age: Age.
-    :type age: int
-    :param interface: Interface.
-    :type interface: str
-    :param ip_address: Gets ipAddress.
-    :type ip_address: str
-    :param mac_address: Gets macAddress.
-    :type mac_address: str
-    """ 
+class EffectiveNetworkSecurityGroupPaged(Paged):
+    """
+    A paging container for iterating over a list of EffectiveNetworkSecurityGroup object
+    """
 
     _attribute_map = {
-        'age': {'key': 'age', 'type': 'int'},
-        'interface': {'key': 'interface', 'type': 'str'},
-        'ip_address': {'key': 'ipAddress', 'type': 'str'},
-        'mac_address': {'key': 'macAddress', 'type': 'str'},
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[EffectiveNetworkSecurityGroup]'}
     }
 
-    def __init__(self, age=None, interface=None, ip_address=None, mac_address=None):
-        self.age = age
-        self.interface = interface
-        self.ip_address = ip_address
-        self.mac_address = mac_address
+    def __init__(self, *args, **kwargs):
+
+        super(EffectiveNetworkSecurityGroupPaged, self).__init__(*args, **kwargs)

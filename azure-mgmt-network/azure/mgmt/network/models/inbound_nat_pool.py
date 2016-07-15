@@ -23,8 +23,7 @@ from .sub_resource import SubResource
 
 
 class InboundNatPool(SubResource):
-    """
-    Inbound NAT pool of the loadbalancer
+    """Inbound NAT pool of the loadbalancer.
 
     :param id: Resource Id
     :type id: str
@@ -32,9 +31,8 @@ class InboundNatPool(SubResource):
      Addresses
     :type frontend_ip_configuration: :class:`SubResource
      <azure.mgmt.network.models.SubResource>`
-    :param protocol: Gets or sets the transport potocol for the external
-     endpoint. Possible values are Udp or Tcp. Possible values include:
-     'Udp', 'Tcp'
+    :param protocol: Gets or sets the transport potocol for the endpoint.
+     Possible values are Udp or Tcp. Possible values include: 'Udp', 'Tcp'
     :type protocol: str or :class:`TransportProtocol
      <azure.mgmt.network.models.TransportProtocol>`
     :param frontend_port_range_start: Gets or sets the starting port range
@@ -56,8 +54,8 @@ class InboundNatPool(SubResource):
      of localPort to '*' to automatically assign an unallocated port that is
      discoverable using the runtime API
     :type backend_port: int
-    :param provisioning_state: Gets or sets Provisioning state of the
-     PublicIP resource Updating/Deleting/Failed
+    :param provisioning_state: Gets provisioning state of the PublicIP
+     resource Updating/Deleting/Failed
     :type provisioning_state: str
     :param name: Gets name of the resource that is unique within a resource
      group. This name can be used to access the resource

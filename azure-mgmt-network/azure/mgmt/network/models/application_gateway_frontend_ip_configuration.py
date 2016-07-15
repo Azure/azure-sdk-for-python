@@ -23,8 +23,7 @@ from .sub_resource import SubResource
 
 
 class ApplicationGatewayFrontendIPConfiguration(SubResource):
-    """
-    Frontend IP configuration of application gateway
+    """Frontend IP configuration of application gateway.
 
     :param id: Resource Id
     :type id: str

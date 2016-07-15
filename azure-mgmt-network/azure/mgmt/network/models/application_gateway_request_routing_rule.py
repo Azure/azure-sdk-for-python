@@ -23,8 +23,7 @@ from .sub_resource import SubResource
 
 
 class ApplicationGatewayRequestRoutingRule(SubResource):
-    """
-    Request routing rule of application gateway
+    """Request routing rule of application gateway.
 
     :param id: Resource Id
     :type id: str
@@ -48,8 +47,8 @@ class ApplicationGatewayRequestRoutingRule(SubResource):
      gateway
     :type url_path_map: :class:`SubResource
      <azure.mgmt.network.models.SubResource>`
-    :param provisioning_state: Gets or sets Provisioning state of the request
-     routing rule resource Updating/Deleting/Failed
+    :param provisioning_state: Gets provisioning state of the request routing
+     rule resource Updating/Deleting/Failed
     :type provisioning_state: str
     :param name: Gets name of the resource that is unique within a resource
      group. This name can be used to access the resource

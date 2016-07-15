@@ -23,7 +23,7 @@ from msrest.serialization import Model
 
 
 class ErrorDetails(Model):
-    """ErrorDetails
+    """ErrorDetails.
 
     :param code:
     :type code: str

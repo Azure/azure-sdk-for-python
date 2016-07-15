@@ -23,8 +23,7 @@ from .sub_resource import SubResource
 
 
 class ApplicationGatewayBackendAddressPool(SubResource):
-    """
-    Backend Address Pool of application gateway
+    """Backend Address Pool of application gateway.
 
     :param id: Resource Id
     :type id: str
@@ -36,8 +35,8 @@ class ApplicationGatewayBackendAddressPool(SubResource):
     :param backend_addresses: Gets or sets the backend addresses
     :type backend_addresses: list of :class:`ApplicationGatewayBackendAddress
      <azure.mgmt.network.models.ApplicationGatewayBackendAddress>`
-    :param provisioning_state: Gets or sets Provisioning state of the backend
-     address pool resource Updating/Deleting/Failed
+    :param provisioning_state: Gets provisioning state of the backend address
+     pool resource Updating/Deleting/Failed
     :type provisioning_state: str
     :param name: Gets name of the resource that is unique within a resource
      group. This name can be used to access the resource

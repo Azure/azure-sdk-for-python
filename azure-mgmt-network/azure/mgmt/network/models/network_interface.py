@@ -23,8 +23,7 @@ from .resource import Resource
 
 
 class NetworkInterface(Resource):
-    """
-    A NetworkInterface in a resource group
+    """A NetworkInterface in a resource group.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -47,13 +46,13 @@ class NetworkInterface(Resource):
     :type network_security_group: :class:`NetworkSecurityGroup
      <azure.mgmt.network.models.NetworkSecurityGroup>`
     :param ip_configurations: Gets or sets list of IPConfigurations of the
-     NetworkInterface
+     network interface
     :type ip_configurations: list of :class:`NetworkInterfaceIPConfiguration
      <azure.mgmt.network.models.NetworkInterfaceIPConfiguration>`
-    :param dns_settings: Gets or sets DNS Settings in  NetworkInterface
+    :param dns_settings: Gets or sets DNS settings in network interface
     :type dns_settings: :class:`NetworkInterfaceDnsSettings
      <azure.mgmt.network.models.NetworkInterfaceDnsSettings>`
-    :param mac_address: Gets the MAC Address of the network interface
+    :param mac_address: Gets the MAC address of the network interface
     :type mac_address: str
     :param primary: Gets whether this is a primary NIC on a virtual machine
     :type primary: bool
@@ -63,8 +62,8 @@ class NetworkInterface(Resource):
     :param resource_guid: Gets or sets resource guid property of the network
      interface resource
     :type resource_guid: str
-    :param provisioning_state: Gets or sets Provisioning state of the
-     PublicIP resource Updating/Deleting/Failed
+    :param provisioning_state: Gets provisioning state of the PublicIP
+     resource Updating/Deleting/Failed
     :type provisioning_state: str
     :param etag: Gets a unique read-only string that changes whenever the
      resource is updated
