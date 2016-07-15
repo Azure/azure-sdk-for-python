@@ -23,8 +23,7 @@ from .resource import Resource
 
 
 class VirtualNetwork(Resource):
-    """
-    Virtual Network resource
+    """Virtual Network resource.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -47,13 +46,17 @@ class VirtualNetwork(Resource):
      DNS servers available to VMs deployed in the virtual network
     :type dhcp_options: :class:`DhcpOptions
      <azure.mgmt.network.models.DhcpOptions>`
-    :param subnets: Gets or sets List of subnets in a VirtualNetwork
+    :param subnets: Gets or sets list of subnets in a VirtualNetwork
     :type subnets: list of :class:`Subnet <azure.mgmt.network.models.Subnet>`
+    :param virtual_network_peerings: Gets or sets list of peerings in a
+     VirtualNetwork
+    :type virtual_network_peerings: list of :class:`VirtualNetworkPeering
+     <azure.mgmt.network.models.VirtualNetworkPeering>`
     :param resource_guid: Gets or sets resource guid property of the
      VirtualNetwork resource
     :type resource_guid: str
-    :param provisioning_state: Gets or sets Provisioning state of the
-     PublicIP resource Updating/Deleting/Failed
+    :param provisioning_state: Gets provisioning state of the PublicIP
+     resource Updating/Deleting/Failed
     :type provisioning_state: str
     :param etag: Gets a unique read-only string that changes whenever the
      resource is updated
@@ -74,16 +77,18 @@ class VirtualNetwork(Resource):
         'address_space': {'key': 'properties.addressSpace', 'type': 'AddressSpace'},
         'dhcp_options': {'key': 'properties.dhcpOptions', 'type': 'DhcpOptions'},
         'subnets': {'key': 'properties.subnets', 'type': '[Subnet]'},
+        'virtual_network_peerings': {'key': 'properties.VirtualNetworkPeerings', 'type': '[VirtualNetworkPeering]'},
         'resource_guid': {'key': 'properties.resourceGuid', 'type': 'str'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'etag': {'key': 'etag', 'type': 'str'},
     }
 
-    def __init__(self, id=None, location=None, tags=None, address_space=None, dhcp_options=None, subnets=None, resource_guid=None, provisioning_state=None, etag=None):
+    def __init__(self, id=None, location=None, tags=None, address_space=None, dhcp_options=None, subnets=None, virtual_network_peerings=None, resource_guid=None, provisioning_state=None, etag=None):
         super(VirtualNetwork, self).__init__(id=id, location=location, tags=tags)
         self.address_space = address_space
         self.dhcp_options = dhcp_options
         self.subnets = subnets
+        self.virtual_network_peerings = virtual_network_peerings
         self.resource_guid = resource_guid
         self.provisioning_state = provisioning_state
         self.etag = etag

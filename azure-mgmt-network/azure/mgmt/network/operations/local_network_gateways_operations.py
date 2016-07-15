@@ -46,8 +46,7 @@ class LocalNetworkGatewaysOperations(object):
 
     def create_or_update(
             self, resource_group_name, local_network_gateway_name, parameters, custom_headers=None, raw=False, **operation_config):
-        """
-        The Put LocalNetworkGateway operation creates/updates a local network
+        """The Put LocalNetworkGateway operation creates/updates a local network
         gateway in the specified resource group through Network resource
         provider.
 
@@ -144,8 +143,7 @@ class LocalNetworkGatewaysOperations(object):
 
     def get(
             self, resource_group_name, local_network_gateway_name, custom_headers=None, raw=False, **operation_config):
-        """
-        The Get LocalNetworkGateway operation retrieves information about the
+        """The Get LocalNetworkGateway operation retrieves information about the
         specified local network gateway through Network resource provider.
 
         :param resource_group_name: The name of the resource group.
@@ -208,8 +206,7 @@ class LocalNetworkGatewaysOperations(object):
 
     def delete(
             self, resource_group_name, local_network_gateway_name, custom_headers=None, raw=False, **operation_config):
-        """
-        The Delete LocalNetworkGateway operation deletes the specifed local
+        """The Delete LocalNetworkGateway operation deletes the specifed local
         network Gateway through Network resource provider.
 
         :param resource_group_name: The name of the resource group.
@@ -287,8 +284,7 @@ class LocalNetworkGatewaysOperations(object):
 
     def list(
             self, resource_group_name, custom_headers=None, raw=False, **operation_config):
-        """
-        The List LocalNetworkGateways opertion retrieves all the local network
+        """The List LocalNetworkGateways opertion retrieves all the local network
         gateways stored.
 
         :param resource_group_name: The name of the resource group.

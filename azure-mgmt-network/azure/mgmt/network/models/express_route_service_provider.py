@@ -23,8 +23,7 @@ from .resource import Resource
 
 
 class ExpressRouteServiceProvider(Resource):
-    """
-    ExpressRouteResourceProvider object
+    """ExpressRouteResourceProvider object.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -45,8 +44,7 @@ class ExpressRouteServiceProvider(Resource):
     :type bandwidths_offered: list of
      :class:`ExpressRouteServiceProviderBandwidthsOffered
      <azure.mgmt.network.models.ExpressRouteServiceProviderBandwidthsOffered>`
-    :param provisioning_state: Gets or sets Provisioning state of the
-     resource
+    :param provisioning_state: Gets provisioning state of the resource
     :type provisioning_state: str
     """ 
 

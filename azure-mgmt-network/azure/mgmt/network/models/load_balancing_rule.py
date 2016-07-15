@@ -23,8 +23,7 @@ from .sub_resource import SubResource
 
 
 class LoadBalancingRule(SubResource):
-    """
-    Rules of the load balancer
+    """Rules of the load balancer.
 
     :param id: Resource Id
     :type id: str
@@ -74,8 +73,8 @@ class LoadBalancingRule(SubResource):
      ON availability Groups in SQL server. This setting can't be changed
      after you create the endpoint
     :type enable_floating_ip: bool
-    :param provisioning_state: Gets or sets Provisioning state of the
-     PublicIP resource Updating/Deleting/Failed
+    :param provisioning_state: Gets provisioning state of the PublicIP
+     resource Updating/Deleting/Failed
     :type provisioning_state: str
     :param name: Gets name of the resource that is unique within a resource
      group. This name can be used to access the resource

@@ -33,6 +33,7 @@ from .route_tables_operations import RouteTablesOperations
 from .routes_operations import RoutesOperations
 from .security_rules_operations import SecurityRulesOperations
 from .subnets_operations import SubnetsOperations
+from .virtual_network_peerings_operations import VirtualNetworkPeeringsOperations
 from .usages_operations import UsagesOperations
 from .virtual_network_gateway_connections_operations import VirtualNetworkGatewayConnectionsOperations
 from .virtual_network_gateways_operations import VirtualNetworkGatewaysOperations
@@ -53,6 +54,7 @@ __all__ = [
     'RoutesOperations',
     'SecurityRulesOperations',
     'SubnetsOperations',
+    'VirtualNetworkPeeringsOperations',
     'UsagesOperations',
     'VirtualNetworkGatewayConnectionsOperations',
     'VirtualNetworkGatewaysOperations',

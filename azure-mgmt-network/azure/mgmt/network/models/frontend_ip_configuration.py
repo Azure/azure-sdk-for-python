@@ -23,32 +23,34 @@ from .sub_resource import SubResource
 
 
 class FrontendIPConfiguration(SubResource):
-    """
-    Frontend IP address of the load balancer
+    """Frontend IP address of the load balancer.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
 
     :param id: Resource Id
     :type id: str
-    :param inbound_nat_rules: Read only.Inbound rules URIs that use this
+    :ivar inbound_nat_rules: Read only. Inbound rules URIs that use this
      frontend IP
-    :type inbound_nat_rules: list of :class:`SubResource
+    :vartype inbound_nat_rules: list of :class:`SubResource
      <azure.mgmt.network.models.SubResource>`
-    :param inbound_nat_pools: Read only.Inbound pools URIs that use this
+    :ivar inbound_nat_pools: Read only. Inbound pools URIs that use this
      frontend IP
-    :type inbound_nat_pools: list of :class:`SubResource
+    :vartype inbound_nat_pools: list of :class:`SubResource
      <azure.mgmt.network.models.SubResource>`
-    :param outbound_nat_rules: Read only.Outbound rules URIs that use this
+    :ivar outbound_nat_rules: Read only. Outbound rules URIs that use this
      frontend IP
-    :type outbound_nat_rules: list of :class:`SubResource
+    :vartype outbound_nat_rules: list of :class:`SubResource
      <azure.mgmt.network.models.SubResource>`
-    :param load_balancing_rules: Gets Load Balancing rules URIs that use this
+    :ivar load_balancing_rules: Gets Load Balancing rules URIs that use this
      frontend IP
-    :type load_balancing_rules: list of :class:`SubResource
+    :vartype load_balancing_rules: list of :class:`SubResource
      <azure.mgmt.network.models.SubResource>`
     :param private_ip_address: Gets or sets the privateIPAddress of the IP
      Configuration
     :type private_ip_address: str
     :param private_ip_allocation_method: Gets or sets PrivateIP allocation
-     method (Static/Dynamic). Possible values include: 'Static', 'Dynamic'
+     method. Possible values include: 'Static', 'Dynamic'
     :type private_ip_allocation_method: str or :class:`IPAllocationMethod
      <azure.mgmt.network.models.IPAllocationMethod>`
     :param subnet: Gets or sets the reference of the subnet resource
@@ -57,8 +59,8 @@ class FrontendIPConfiguration(SubResource):
      resource
     :type public_ip_address: :class:`PublicIPAddress
      <azure.mgmt.network.models.PublicIPAddress>`
-    :param provisioning_state: Gets or sets Provisioning state of the
-     PublicIP resource Updating/Deleting/Failed
+    :param provisioning_state: Gets provisioning state of the PublicIP
+     resource Updating/Deleting/Failed
     :type provisioning_state: str
     :param name: Gets name of the resource that is unique within a resource
      group. This name can be used to access the resource
@@ -67,6 +69,13 @@ class FrontendIPConfiguration(SubResource):
      is updated
     :type etag: str
     """ 
+
+    _validation = {
+        'inbound_nat_rules': {'readonly': True},
+        'inbound_nat_pools': {'readonly': True},
+        'outbound_nat_rules': {'readonly': True},
+        'load_balancing_rules': {'readonly': True},
+    }
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
@@ -83,12 +92,12 @@ class FrontendIPConfiguration(SubResource):
         'etag': {'key': 'etag', 'type': 'str'},
     }
 
-    def __init__(self, id=None, inbound_nat_rules=None, inbound_nat_pools=None, outbound_nat_rules=None, load_balancing_rules=None, private_ip_address=None, private_ip_allocation_method=None, subnet=None, public_ip_address=None, provisioning_state=None, name=None, etag=None):
+    def __init__(self, id=None, private_ip_address=None, private_ip_allocation_method=None, subnet=None, public_ip_address=None, provisioning_state=None, name=None, etag=None):
         super(FrontendIPConfiguration, self).__init__(id=id)
-        self.inbound_nat_rules = inbound_nat_rules
-        self.inbound_nat_pools = inbound_nat_pools
-        self.outbound_nat_rules = outbound_nat_rules
-        self.load_balancing_rules = load_balancing_rules
+        self.inbound_nat_rules = None
+        self.inbound_nat_pools = None
+        self.outbound_nat_rules = None
+        self.load_balancing_rules = None
         self.private_ip_address = private_ip_address
         self.private_ip_allocation_method = private_ip_allocation_method
         self.subnet = subnet

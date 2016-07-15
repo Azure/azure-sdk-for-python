@@ -23,8 +23,7 @@ from .sub_resource import SubResource
 
 
 class ApplicationGatewayPathRule(SubResource):
-    """
-    Path rule of URL path map of application gateway
+    """Path rule of URL path map of application gateway.
 
     :param id: Resource Id
     :type id: str

@@ -23,8 +23,7 @@ from .sub_resource import SubResource
 
 
 class ApplicationGatewayProbe(SubResource):
-    """
-    Probe of application gateway
+    """Probe of application gateway.
 
     :param id: Resource Id
     :type id: str

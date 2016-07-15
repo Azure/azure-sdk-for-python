@@ -23,8 +23,7 @@ from .sub_resource import SubResource
 
 
 class ApplicationGatewaySslCertificate(SubResource):
-    """
-    SSL certificates of application gateway
+    """SSL certificates of application gateway.
 
     :param id: Resource Id
     :type id: str

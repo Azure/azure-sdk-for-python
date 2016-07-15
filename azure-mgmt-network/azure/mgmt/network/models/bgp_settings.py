@@ -23,7 +23,7 @@ from msrest.serialization import Model
 
 
 class BgpSettings(Model):
-    """BgpSettings
+    """BgpSettings.
 
     :param asn: Gets or sets this BGP speaker's ASN
     :type asn: long

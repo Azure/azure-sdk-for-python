@@ -166,6 +166,27 @@ class ProbeProtocol(Enum):
     tcp = "Tcp"
 
 
+class EffectiveRouteSource(Enum):
+
+    unknown = "Unknown"
+    user = "User"
+    virtual_network_gateway = "VirtualNetworkGateway"
+    default = "Default"
+
+
+class EffectiveRouteState(Enum):
+
+    active = "Active"
+    invalid = "Invalid"
+
+
+class VirtualNetworkPeeringState(Enum):
+
+    initiated = "Initiated"
+    connected = "Connected"
+    disconnected = "Disconnected"
+
+
 class VirtualNetworkGatewayType(Enum):
 
     vpn = "Vpn"

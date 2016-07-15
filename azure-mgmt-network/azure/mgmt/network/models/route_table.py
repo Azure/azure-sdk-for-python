@@ -23,8 +23,7 @@ from .resource import Resource
 
 
 class RouteTable(Resource):
-    """
-    RouteTable resource
+    """RouteTable resource.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -41,10 +40,11 @@ class RouteTable(Resource):
     :type tags: dict
     :param routes: Gets or sets Routes in a Route Table
     :type routes: list of :class:`Route <azure.mgmt.network.models.Route>`
-    :param subnets: Gets collection of references to subnets
-    :type subnets: list of :class:`Subnet <azure.mgmt.network.models.Subnet>`
-    :param provisioning_state: Gets or sets Provisioning state of the
-     resource Updating/Deleting/Failed
+    :ivar subnets: Gets collection of references to subnets
+    :vartype subnets: list of :class:`Subnet
+     <azure.mgmt.network.models.Subnet>`
+    :param provisioning_state: Gets provisioning state of the resource
+     Updating/Deleting/Failed
     :type provisioning_state: str
     :param etag: Gets a unique read-only string that changes whenever the
      resource is updated
@@ -54,6 +54,7 @@ class RouteTable(Resource):
     _validation = {
         'name': {'readonly': True},
         'type': {'readonly': True},
+        'subnets': {'readonly': True},
     }
 
     _attribute_map = {
@@ -68,9 +69,9 @@ class RouteTable(Resource):
         'etag': {'key': 'etag', 'type': 'str'},
     }
 
-    def __init__(self, id=None, location=None, tags=None, routes=None, subnets=None, provisioning_state=None, etag=None):
+    def __init__(self, id=None, location=None, tags=None, routes=None, provisioning_state=None, etag=None):
         super(RouteTable, self).__init__(id=id, location=location, tags=tags)
         self.routes = routes
-        self.subnets = subnets
+        self.subnets = None
         self.provisioning_state = provisioning_state
         self.etag = etag

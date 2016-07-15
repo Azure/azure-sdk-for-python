@@ -23,8 +23,7 @@ from .sub_resource import SubResource
 
 
 class SecurityRule(SubResource):
-    """
-    Network security rule
+    """Network security rule.
 
     :param id: Resource Id
     :type id: str
@@ -69,8 +68,8 @@ class SecurityRule(SubResource):
      or outcoming traffic. Possible values include: 'Inbound', 'Outbound'
     :type direction: str or :class:`SecurityRuleDirection
      <azure.mgmt.network.models.SecurityRuleDirection>`
-    :param provisioning_state: Gets or sets Provisioning state of the
-     PublicIP resource Updating/Deleting/Failed
+    :param provisioning_state: Gets provisioning state of the PublicIP
+     resource Updating/Deleting/Failed
     :type provisioning_state: str
     :param name: Gets name of the resource that is unique within a resource
      group. This name can be used to access the resource

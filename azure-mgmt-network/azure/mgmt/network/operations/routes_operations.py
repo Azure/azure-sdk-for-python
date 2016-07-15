@@ -46,8 +46,7 @@ class RoutesOperations(object):
 
     def delete(
             self, resource_group_name, route_table_name, route_name, custom_headers=None, raw=False, **operation_config):
-        """
-        The delete route operation deletes the specified route from a route
+        """The delete route operation deletes the specified route from a route
         table.
 
         :param resource_group_name: The name of the resource group.
@@ -127,8 +126,7 @@ class RoutesOperations(object):
 
     def get(
             self, resource_group_name, route_table_name, route_name, custom_headers=None, raw=False, **operation_config):
-        """
-        The Get route operation retreives information about the specified
+        """The Get route operation retreives information about the specified
         route from the route table.
 
         :param resource_group_name: The name of the resource group.
@@ -192,9 +190,8 @@ class RoutesOperations(object):
 
     def create_or_update(
             self, resource_group_name, route_table_name, route_name, route_parameters, custom_headers=None, raw=False, **operation_config):
-        """
-        The Put route operation creates/updates a route in the specified route
-        table
+        """The Put route operation creates/updates a route in the specified route
+        table.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
@@ -291,8 +288,7 @@ class RoutesOperations(object):
 
     def list(
             self, resource_group_name, route_table_name, custom_headers=None, raw=False, **operation_config):
-        """
-        The List network security rule opertion retrieves all the routes in a
+        """The List network security rule opertion retrieves all the routes in a
         route table.
 
         :param resource_group_name: The name of the resource group.
