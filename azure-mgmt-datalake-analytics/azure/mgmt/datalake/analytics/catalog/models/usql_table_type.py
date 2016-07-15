@@ -25,9 +25,6 @@ from .usql_type import USqlType
 class USqlTableType(USqlType):
     """A Data Lake Analytics catalog U-SQL table type item.
 
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
-
     :param compute_account_name: the name of the Data Lake Analytics account.
     :type compute_account_name: str
     :param version: the version of the catalog item.
@@ -67,14 +64,11 @@ class USqlTableType(USqlType):
     :param is_complex_type: the the switch indicating if this type is a
      complex type.
     :type is_complex_type: bool
-    :ivar columns: the type field information associated with this table type.
-    :vartype columns: list of :class:`TypeFieldInfo
+    :param columns: the type field information associated with this table
+     type.
+    :type columns: :class:`TypeFieldInfo
      <azure.mgmt.datalake.analytics.catalog.models.TypeFieldInfo>`
     """ 
-
-    _validation = {
-        'columns': {'readonly': True},
-    }
 
     _attribute_map = {
         'compute_account_name': {'key': 'computeAccountName', 'type': 'str'},
@@ -94,9 +88,9 @@ class USqlTableType(USqlType):
         'is_assembly_type': {'key': 'isAssemblyType', 'type': 'bool'},
         'is_table_type': {'key': 'isTableType', 'type': 'bool'},
         'is_complex_type': {'key': 'isComplexType', 'type': 'bool'},
-        'columns': {'key': 'columns', 'type': '[TypeFieldInfo]'},
+        'columns': {'key': 'columns', 'type': 'TypeFieldInfo'},
     }
 
-    def __init__(self, compute_account_name=None, version=None, database_name=None, schema_name=None, name=None, type_family=None, c_sharp_name=None, full_csharp_name=None, system_type_id=None, user_type_id=None, schema_id=None, principal_id=None, is_nullable=None, is_user_defined=None, is_assembly_type=None, is_table_type=None, is_complex_type=None):
+    def __init__(self, compute_account_name=None, version=None, database_name=None, schema_name=None, name=None, type_family=None, c_sharp_name=None, full_csharp_name=None, system_type_id=None, user_type_id=None, schema_id=None, principal_id=None, is_nullable=None, is_user_defined=None, is_assembly_type=None, is_table_type=None, is_complex_type=None, columns=None):
         super(USqlTableType, self).__init__(compute_account_name=compute_account_name, version=version, database_name=database_name, schema_name=schema_name, name=name, type_family=type_family, c_sharp_name=c_sharp_name, full_csharp_name=full_csharp_name, system_type_id=system_type_id, user_type_id=user_type_id, schema_id=schema_id, principal_id=principal_id, is_nullable=is_nullable, is_user_defined=is_user_defined, is_assembly_type=is_assembly_type, is_table_type=is_table_type, is_complex_type=is_complex_type)
-        self.columns = None
+        self.columns = columns

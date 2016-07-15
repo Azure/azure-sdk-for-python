@@ -38,7 +38,7 @@ class GroupCreateParameters(Model):
     :type mail_nickname: str
     :ivar security_enabled: Specifies whether the group is a security group.
      Must be true. This is because only pure security groups can be created
-     using the Graph API. Default value: False .
+     using the Graph API. Default value: True .
     :vartype security_enabled: bool
     """ 
 
@@ -58,7 +58,7 @@ class GroupCreateParameters(Model):
 
     mail_enabled = False
 
-    security_enabled = False
+    security_enabled = True
 
     def __init__(self, display_name, mail_nickname):
         self.display_name = display_name

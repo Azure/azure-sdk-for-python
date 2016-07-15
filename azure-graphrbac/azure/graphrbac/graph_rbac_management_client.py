@@ -36,7 +36,7 @@ class GraphRbacManagementClientConfiguration(AzureConfiguration):
     Note that all parameters used to create this instance are saved as instance
     attributes.
 
-    :param credentials: Gets Azure subscription credentials.
+    :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
      object<msrestazure.azure_active_directory>`
     :param tenant_id: Gets or sets the tenant Id.
@@ -98,7 +98,7 @@ class GraphRbacManagementClient(object):
     :ivar objects: Objects operations
     :vartype objects: .operations.ObjectsOperations
 
-    :param credentials: Gets Azure subscription credentials.
+    :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
      object<msrestazure.azure_active_directory>`
     :param tenant_id: Gets or sets the tenant Id.
