@@ -75,6 +75,15 @@ class MgmtAppsTest(AzureMgmtTestCase):
         site = self.web_client.sites.get_site(self.group_name, site_name)
         self.assertIsNotNone(site)
 
+        # Restart a site
+        self.web_client.sites.restart_site(self.group_name, site_name)
+
+        # Stop a site
+        self.web_client.sites.stop_site(self.group_name, site_name)
+
+        # Start a site
+        self.web_client.sites.start_site(self.group_name, site_name)
+
         # Delete a Site
         self.web_client.sites.delete_site(self.group_name, site_name)
 

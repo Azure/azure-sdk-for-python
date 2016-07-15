@@ -7,10 +7,10 @@ interactions:
       Connection: [keep-alive]
       Content-Length: ['22']
       Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.5.1 (Windows-10-10.0.14366-SP0) requests/2.10.0 msrest/0.4.0
+      User-Agent: [python/3.5.1 (Windows-10-10.0.14372-SP0) requests/2.10.0 msrest/0.4.0
           msrest_azure/0.4.1 resourcemanagementclient/0.30.0rc5 Azure-SDK-For-Python]
       accept-language: [en-US]
-      x-ms-client-request-id: [2a743c1a-3fe6-11e6-8eac-ecb1d756380e]
+      x-ms-client-request-id: [b0bde03a-4ad1-11e6-bcad-00155d4b0101]
     method: PUT
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_mgmt_apps_test_webapp91570ab4?api-version=2016-02-01
   response:
@@ -19,50 +19,38 @@ interactions:
       Cache-Control: [no-cache]
       Content-Length: ['221']
       Content-Type: [application/json; charset=utf-8]
-      Date: ['Fri, 01 Jul 2016 23:47:27 GMT']
+      Date: ['Fri, 15 Jul 2016 21:18:35 GMT']
       Expires: ['-1']
       Pragma: [no-cache]
       Strict-Transport-Security: [max-age=31536000; includeSubDomains]
-      x-ms-correlation-request-id: [41206ced-257b-4c98-9ae4-032f59fa61c0]
+      x-ms-correlation-request-id: [45f3253c-47bf-4b00-a34f-140d6e50e05d]
       x-ms-ratelimit-remaining-subscription-writes: ['1199']
-      x-ms-request-id: [41206ced-257b-4c98-9ae4-032f59fa61c0]
-      x-ms-routing-request-id: ['WESTUS:20160701T234727Z:41206ced-257b-4c98-9ae4-032f59fa61c0']
+      x-ms-request-id: [45f3253c-47bf-4b00-a34f-140d6e50e05d]
+      x-ms-routing-request-id: ['CENTRALUS:20160715T211836Z:45f3253c-47bf-4b00-a34f-140d6e50e05d']
     status: {code: 201, message: Created}
 - request:
-    body: '{"sku": {"name": "S1", "capacity": 1, "tier": "Standard"}, "location":
-      "westus"}'
+    body: '{"location": "westus", "sku": {"tier": "Standard", "name": "S1", "capacity":
+      1}}'
     headers:
       Accept: [application/json]
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
       Content-Length: ['80']
       Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.5.1 (Windows-10-10.0.14366-SP0) requests/2.10.0 msrest/0.4.0
+      User-Agent: [python/3.5.1 (Windows-10-10.0.14372-SP0) requests/2.10.0 msrest/0.4.0
           msrest_azure/0.4.1 websitemanagementclient/0.30.0rc5 Azure-SDK-For-Python]
       accept-language: [en-US]
-      x-ms-client-request-id: [2abc4164-3fe6-11e6-ab5d-ecb1d756380e]
+      x-ms-client-request-id: [b1727264-4ad1-11e6-b6f0-00155d4b0101]
     method: PUT
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_apps_test_webapp91570ab4/providers/Microsoft.Web/serverfarms/pyarmappserviceplan91570ab4?api-version=2015-08-01
   response:
-    body:
-      string: !!binary |
-        H4sIAAAAAAAEAO29B2AcSZYlJi9tynt/SvVK1+B0oQiAYBMk2JBAEOzBiM3mkuwdaUcjKasqgcpl
-        VmVdZhZAzO2dvPfee++999577733ujudTif33/8/XGZkAWz2zkrayZ4hgKrIHz9+fB8/In7xR8Xs
-        o0cf3W3Wk2ZaF6u2qJbN3fOHs4PdBw/z7f175zvb+59OJ9sPH05n2+cP9ibn2WQn+/Te5G6dN9W6
-        nuaf19V61dxt86b9/RcXi/b3z1ar5vfnP6/yCf3xcPf+g51ssn93VVeXxSyvm7tfFNO6aqrzdvzd
-        fHK3yevLvD7P6kVzd3VNP+glfFZM81WZLc37H40+WmaLnNDd3Ki9XqHRYB/UpKymGYZKzb5LiKZf
-        vaYP2+yi+ejRcl2Wo48I1VVet0VOn/zij+TlZ/TyGVFr55Z4XFX127x+XfyAmtI77k8FIh+8KfL6
-        BYOTnpfrxSSvvzz/Ln9L3e+OPpqu6zpftvIRIPD7vU8Vrn7+IgKoabN2Tb9SK5qb16tsSqA+4rna
-        OHXboNJXr+nDht8hSB7DEIjbcAy9lc0WxfJ10eb+iOdV0xbLi9PlZVFXywWhPvzNy7o6L0r76iJ7
-        VyzWi/5QaYCYDenmo58s6nadlU/zWUHzns9e0lcGm1frZVss8i5S02qxWrf5F9WMPiJoDX0vf8j3
-        F3n1Kr+QwYM4wkLEMwD0epqVhPdHj86zssndnOI7wo7A9UeGyRPQPh++LZb280DgqFuCdcO0ffRL
-        CPG3a7CwcuzrXcKS2LrG7222nGX1jD5piHvwCb49zxZFeY2/6I9pRvNdtPTn7i/5Jf8PFfWF3C0E
-        AAA=
+    body: {string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_apps_test_webapp91570ab4/providers/Microsoft.Web/serverfarms/pyarmappserviceplan91570ab4","name":"pyarmappserviceplan91570ab4","type":"Microsoft.Web/serverfarms","location":"West
+        US","tags":null,"properties":{"serverFarmId":0,"name":"pyarmappserviceplan91570ab4","workerSize":0,"workerSizeId":0,"workerTierName":null,"numberOfWorkers":1,"currentWorkerSize":0,"currentWorkerSizeId":0,"currentNumberOfWorkers":1,"status":0,"webSpace":"test_mgmt_apps_test_webapp91570ab4-WestUSwebspace","subscription":"00000000-0000-0000-0000-000000000000","adminSiteName":null,"hostingEnvironment":null,"hostingEnvironmentProfile":null,"maximumNumberOfWorkers":10,"planName":"VirtualDedicatedPlan","adminRuntimeSiteName":null,"computeMode":0,"siteMode":null,"geoRegion":"West
+        US","perSiteScaling":false,"numberOfSites":0,"hostingEnvironmentId":null,"tags":null,"kind":null,"resourceGroup":"test_mgmt_apps_test_webapp91570ab4","reserved":null},"sku":{"name":"S1","tier":"Standard","size":"S1","family":"S","capacity":1}}'}
     headers:
       Cache-Control: [no-cache]
-      Content-Encoding: [gzip]
       Content-Type: [application/json]
-      Date: ['Fri, 01 Jul 2016 23:47:31 GMT']
+      Date: ['Fri, 15 Jul 2016 21:18:44 GMT']
       Expires: ['-1']
       Pragma: [no-cache]
       Server: [Microsoft-IIS/8.0]
@@ -71,54 +59,32 @@ interactions:
       Vary: [Accept-Encoding]
       X-AspNet-Version: [4.0.30319]
       X-Powered-By: [ASP.NET]
-      x-ms-correlation-request-id: [ab1559cb-23e1-491b-b883-86b788937189]
-      x-ms-ratelimit-remaining-subscription-writes: ['1198']
-      x-ms-request-id: [7abcc50e-6dc2-4bbb-98ac-cec07664d28f]
-      x-ms-routing-request-id: ['WESTUS:20160701T234732Z:ab1559cb-23e1-491b-b883-86b788937189']
+      content-length: ['1085']
+      x-ms-correlation-request-id: [b3f7be3d-0ca3-4b19-b9b4-4b0885838251]
+      x-ms-ratelimit-remaining-subscription-writes: ['1199']
+      x-ms-request-id: [524c54cf-0e5d-465e-8870-8fd06d61b22b]
+      x-ms-routing-request-id: ['CENTRALUS:20160715T211845Z:b3f7be3d-0ca3-4b19-b9b4-4b0885838251']
     status: {code: 200, message: OK}
 - request:
-    body: '{"properties": {"serverFarmId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_apps_test_webapp91570ab4/providers/Microsoft.Web/serverfarms/pyarmappserviceplan91570ab4"},
-      "location": "westus"}'
+    body: '{"location": "westus", "properties": {"serverFarmId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_apps_test_webapp91570ab4/providers/Microsoft.Web/serverfarms/pyarmappserviceplan91570ab4"}}'
     headers:
       Accept: [application/json]
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
       Content-Length: ['223']
       Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.5.1 (Windows-10-10.0.14366-SP0) requests/2.10.0 msrest/0.4.0
+      User-Agent: [python/3.5.1 (Windows-10-10.0.14372-SP0) requests/2.10.0 msrest/0.4.0
           msrest_azure/0.4.1 websitemanagementclient/0.30.0rc5 Azure-SDK-For-Python]
       accept-language: [en-US]
-      x-ms-client-request-id: [2de222a8-3fe6-11e6-8aa4-ecb1d756380e]
+      x-ms-client-request-id: [b6a98b38-4ad1-11e6-a33c-00155d4b0101]
     method: PUT
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_apps_test_webapp91570ab4/providers/Microsoft.Web/sites/pyarmsite91570ab4?api-version=2015-08-01
   response:
-    body:
-      string: !!binary |
-        H4sIAAAAAAAEAO29B2AcSZYlJi9tynt/SvVK1+B0oQiAYBMk2JBAEOzBiM3mkuwdaUcjKasqgcpl
-        VmVdZhZAzO2dvPfee++999577733ujudTif33/8/XGZkAWz2zkrayZ4hgKrIHz9+fB8/In7xR8Xs
-        o0cf3W3Wk2ZaF6u2qJbN3fOHs4PdBw/z7f175zvb+59OJ9sPH05n2+cP9ibn2WQn+/Te5G6dN9W6
-        nuaf19V61dxt86b9/RcXi/b3z1ar5vfnP6/yCf3xcPf+g51ssn93VVeXxSyvm7tfFNO6aqrzdvzd
-        fHK3Kaj13dV1Vi/wq2n/0eijZbbICb3YV+31Cl9FINGXZTXNMBRqcEWIrPFZm100Hz1arsty9BFh
-        ssrrtqDGj37xpl6aNmvx3av1clksL+iTedW0L+gFevN7/VfG2Q/WdU7jxofNeJm3H31/RDhMXq+y
-        KQDRpzeQafu79NlXr+nDht8hJPLy/HmxfEuvz9t21Ty6e/cqu2q2aRSz7Ul2vb3z6e44WxWdzq+K
-        5ay6YiQe7d/fv/s15hiwgMRtpreDt8xFdFbrfFXRR1V9/Zq+ADFpZLGG1dUyr82crZvsIn8t87Ez
-        +ihfZpMyJ+Zt63U++iibLYrlafiZNvn2+84Y8UevVTNdRFrS3OKPlwE7LfI2m2VtZhCnabLffo/e
-        IJq9ztuW2Ik+QJNfQp9dZkWZTYqyaK/dGJumPMGb5wWxM15H69FH06am3wFqSsJkPgUiX1QzelP+
-        Noz6uikZIjX83jCvRwZHIPVVRqZYPcmafEbgXuXNumxNP5dF3a6z8uyl+aCdrxeTVV0sbZO2+mpF
-        FCE44d9nFqT5xnXiOsZA3rC07/yS0YYRxKfo/32j2P0lmLlqsVqHE9bk9WVeP6Nh9T85I6b+udbS
-        jMw5IaNSTS/hs2Kar8psad4ngpdZ09LAiG3z2ZtikX/VTgn7vZ3dT7d3Hmzv7L7Zu/do/8Gje/fH
-        n1LrhhQBSfarfFoR/Oun+XlG86KE8xTvtFq2+bI9jkpKvV621FP8SzDDSbU8Ly4MYWeEcnW9IHBM
-        WB4OWnmDaOvsnOTui2xJyNWeDhEIzds1vUh9LGdZPaP2qzpfFOvF8Wr1lIFDDWnT6QJ67rhsqtdt
-        tVrhm/OsbEhDtVl9kbevr7LV67KyjAZWoTGfLokpqyWwHP6GVM95UdI4pcECU/ZaZoXwo3lD1zB/
-        F0SNq8zTuPLCtCwIyjENdUk06yhQ+RIqyH6hiAMRgGmeFk34zaxaZMXyJ/Oapp+0FnHq2YyA0F/E
-        UqbXt2SazO/Vup1U6+XsbHU8mxG7NoTuo4/2d8a7uwfjvfv3x7v3Hoy8P/fu7bo/d8Z7uwfuz73x
-        vfs0VrAKIZHXr4sf0EiJBRbZuxckz3n95fl3q/qth8q8IhXZZosVddqzqoBVVmDAs+V55V7pzgK4
-        SL7zvQwajJM9Ak8TcYPwUX8z4X/DcPRajzsjWu6X/JL/B2YaJFfKCQAA
+    body: {string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_apps_test_webapp91570ab4/providers/Microsoft.Web/sites/pyarmsite91570ab4","name":"pyarmsite91570ab4","type":"Microsoft.Web/sites","location":"westus","tags":null,"properties":{"name":"pyarmsite91570ab4","state":"Running","hostNames":["pyarmsite91570ab4.azurewebsites.net"],"webSpace":"test_mgmt_apps_test_webapp91570ab4-WestUSwebspace","selfLink":"https://waws-prod-bay-057.api.azurewebsites.windows.net:454/subscriptions/00000000-0000-0000-0000-000000000000/webspaces/test_mgmt_apps_test_webapp91570ab4-WestUSwebspace/sites/pyarmsite91570ab4","repositorySiteName":"pyarmsite91570ab4","owner":null,"usageState":0,"enabled":true,"adminEnabled":true,"enabledHostNames":["pyarmsite91570ab4.azurewebsites.net","pyarmsite91570ab4.scm.azurewebsites.net"],"siteProperties":{"metadata":null,"properties":[],"appSettings":null},"availabilityState":0,"sslCertificates":null,"csrs":[],"cers":null,"siteMode":null,"hostNameSslStates":[{"name":"pyarmsite91570ab4.azurewebsites.net","sslState":0,"ipBasedSslResult":null,"virtualIP":null,"thumbprint":null,"toUpdate":null,"toUpdateIpBasedSsl":null,"ipBasedSslState":0,"hostType":0},{"name":"pyarmsite91570ab4.scm.azurewebsites.net","sslState":0,"ipBasedSslResult":null,"virtualIP":null,"thumbprint":null,"toUpdate":null,"toUpdateIpBasedSsl":null,"ipBasedSslState":0,"hostType":1}],"computeMode":null,"serverFarm":null,"serverFarmId":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_apps_test_webapp91570ab4/providers/Microsoft.Web/serverfarms/pyarmappserviceplan91570ab4","reserved":null,"lastModifiedTimeUtc":"2016-07-15T21:18:46.323","storageRecoveryDefaultState":"Running","contentAvailabilityState":0,"runtimeAvailabilityState":0,"siteConfig":null,"deploymentId":"pyarmsite91570ab4","trafficManagerHostNames":null,"sku":"Standard","premiumAppDeployed":null,"scmSiteAlsoStopped":false,"targetSwapSlot":null,"hostingEnvironment":null,"hostingEnvironmentProfile":null,"microService":"WebSites","gatewaySiteName":null,"clientAffinityEnabled":true,"clientCertEnabled":false,"hostNamesDisabled":false,"domainVerificationIdentifiers":null,"kind":null,"outboundIpAddresses":"13.91.42.207,13.91.44.111,13.91.40.156,13.91.41.150","containerSize":0,"maxNumberOfWorkers":null,"homeStamp":"waws-prod-bay-057","cloningInfo":null,"hostingEnvironmentId":null,"tags":null,"resourceGroup":"test_mgmt_apps_test_webapp91570ab4","defaultHostName":"pyarmsite91570ab4.azurewebsites.net"}}'}
     headers:
       Cache-Control: [no-cache]
-      Content-Encoding: [gzip]
       Content-Type: [application/json]
-      Date: ['Fri, 01 Jul 2016 23:47:36 GMT']
+      Date: ['Fri, 15 Jul 2016 21:18:48 GMT']
       Expires: ['-1']
       Pragma: [no-cache]
       Server: [Microsoft-IIS/8.0]
@@ -127,10 +93,11 @@ interactions:
       Vary: [Accept-Encoding]
       X-AspNet-Version: [4.0.30319]
       X-Powered-By: [ASP.NET]
-      x-ms-correlation-request-id: [2c0eaeba-7fdc-4dbc-9e97-77c6a3086bd5]
-      x-ms-ratelimit-remaining-subscription-writes: ['1197']
-      x-ms-request-id: [dedf1cd2-6e48-41ca-8048-081681c6395b]
-      x-ms-routing-request-id: ['WESTUS:20160701T234736Z:2c0eaeba-7fdc-4dbc-9e97-77c6a3086bd5']
+      content-length: ['2517']
+      x-ms-correlation-request-id: [809fd09a-699e-4cd8-be67-9558bdbf3f83]
+      x-ms-ratelimit-remaining-subscription-writes: ['1198']
+      x-ms-request-id: [a8d67dfe-ae59-4ab9-aec4-cae0d9594029]
+      x-ms-routing-request-id: ['CENTRALUS:20160715T211849Z:809fd09a-699e-4cd8-be67-9558bdbf3f83']
     status: {code: 200, message: OK}
 - request:
     body: null
@@ -139,41 +106,19 @@ interactions:
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
       Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.5.1 (Windows-10-10.0.14366-SP0) requests/2.10.0 msrest/0.4.0
+      User-Agent: [python/3.5.1 (Windows-10-10.0.14372-SP0) requests/2.10.0 msrest/0.4.0
           msrest_azure/0.4.1 websitemanagementclient/0.30.0rc5 Azure-SDK-For-Python]
       accept-language: [en-US]
-      x-ms-client-request-id: [301df394-3fe6-11e6-815e-ecb1d756380e]
+      x-ms-client-request-id: [b9042d68-4ad1-11e6-9d49-00155d4b0101]
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_apps_test_webapp91570ab4/providers/Microsoft.Web/sites?api-version=2015-08-01
   response:
-    body:
-      string: !!binary |
-        H4sIAAAAAAAEAO29B2AcSZYlJi9tynt/SvVK1+B0oQiAYBMk2JBAEOzBiM3mkuwdaUcjKasqgcpl
-        VmVdZhZAzO2dvPfee++999577733ujudTif33/8/XGZkAWz2zkrayZ4hgKrIHz9+fB8/In7xR5dZ
-        uc4/evS9X/xRMfvo0Ud3m/WkmdbFqi2qZXP3/OHsYPfBw3x7/975zvb+p9PJ9sOH09n2+YO9yXk2
-        2ck+vTe5W+dNta6n+ed1tV41d9u8aX//xcWi/f2z1ar5/fnPq3xCfzzcvf9gJ5vs313V1WUxy+vm
-        7hfFtK6a6rwdfzef3G0Kan13dZ3VC/xq2n80+miZLQjLj2JftdcrfBWBRF+W1TTDUKjBdwmR9KvX
-        9GGbXTQfPVquy3L0EaGyyuu2oNaPfvGmbpo2a/Hdq/VyWSwv6JN51bQv6AV683v9V8bZD9Z1TgPH
-        h814mbcffX/0Ef39epVNAYg+vYFO20D5q9f0YcPvEBJ5ef68WL6l1+dtu2oe3b17lV012zSK2fYk
-        u97e+XR3nK2KTudXxXJWXTESj/bv79/9GpMMWEDiNvPbwVsmIzqtdb6q6KOqvn5NX4CYNLJYw+pq
-        mddmztZNdpG/lvnYGX2UL7NJmRP3tvU6H32UzRbF8jT8TJt8+31njPij16qZLiItaW7xx8uAnRZ5
-        m82yNjOI0zTZb79HbxDNXudtS+xEH6DJL6HPLrOizCZFWbTXboxNU57gzfOC+Bmvo/Xoo2lT0+8A
-        NSVpMp8CkS+qGb0pfxtGfd2UDJEakrwP8XpkcARSX2VkitWTrMlnBO5V3qzL1vRzWdTtOivPXpoP
-        2vl6MVnVxdI2aauvVkQRghP+fWZBmm9cJ65jDOQNi/vOLxltGEF8iv7fN4rdX4KZqxardThhTV5f
-        5vUzGlb/kzNi6p9rNc3InBMyKtX0Ej4rpvmqzJbmfSJ4mTUtDYzYNp+9KRb5V+2UsN/b2f10e+fB
-        9s7um717j/YfPLp3f/zwPjVvSBOQaL/KpxV1cP00P89oYpRynuadVss2X7bHUVGp18uWuop/CW44
-        qZbnxYWh7Ixwrq4XBI4py+NBK28UbZ2dk+B9kS0JudpTIgKhebumF6mP5SyrZ9R+VeeLYr04Xq2e
-        MnDoIW06XUDRHZdN9bqtVit8c56VDamoNqsv8vb1VbZ6XVaW08ArNObTJXFltQSWw9+Q7jkvShqn
-        NFhgzl7LtBB+NHHoGkbxgqhxlXkqV16YlgVBOaahLolmHQ0qX0IH2S8UcSACMM3Togm/mVWLrFj+
-        ZF7T/JPaIlY9mxEQ+ot4yvT6lmyT+b1at5NqvZydrY5nM+LXhtB99NH+znh392C8d//+ePfeg5H3
-        5969Xffnznhv98D9uTe+B5YCqxASef26+AGNlFhgkb17QQKd11+ef7eq33qozCvSkW22WFGnPbMK
-        WGUFBjxbnlfule4sgIvkO9/NoME44SPwNBE3SB/1NxP+NwxHr/W4M6LmfgmUyjJ/14qjgP5/yf8D
-        g5Xy7egJAAA=
+    body: {string: '{"value":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_apps_test_webapp91570ab4/providers/Microsoft.Web/sites/pyarmsite91570ab4","name":"pyarmsite91570ab4","type":"Microsoft.Web/sites","location":"West
+        US","tags":null,"properties":{"name":"pyarmsite91570ab4","state":"Running","hostNames":["pyarmsite91570ab4.azurewebsites.net"],"webSpace":"test_mgmt_apps_test_webapp91570ab4-WestUSwebspace","selfLink":"https://waws-prod-bay-057.api.azurewebsites.windows.net:454/subscriptions/00000000-0000-0000-0000-000000000000/webspaces/test_mgmt_apps_test_webapp91570ab4-WestUSwebspace/sites/pyarmsite91570ab4","repositorySiteName":"pyarmsite91570ab4","owner":null,"usageState":0,"enabled":true,"adminEnabled":true,"enabledHostNames":["pyarmsite91570ab4.azurewebsites.net","pyarmsite91570ab4.scm.azurewebsites.net"],"siteProperties":{"metadata":null,"properties":[],"appSettings":null},"availabilityState":0,"sslCertificates":null,"csrs":[],"cers":null,"siteMode":null,"hostNameSslStates":[{"name":"pyarmsite91570ab4.azurewebsites.net","sslState":0,"ipBasedSslResult":null,"virtualIP":null,"thumbprint":null,"toUpdate":null,"toUpdateIpBasedSsl":null,"ipBasedSslState":0,"hostType":0},{"name":"pyarmsite91570ab4.scm.azurewebsites.net","sslState":0,"ipBasedSslResult":null,"virtualIP":null,"thumbprint":null,"toUpdate":null,"toUpdateIpBasedSsl":null,"ipBasedSslState":0,"hostType":1}],"computeMode":null,"serverFarm":null,"serverFarmId":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_apps_test_webapp91570ab4/providers/Microsoft.Web/serverfarms/pyarmappserviceplan91570ab4","reserved":null,"lastModifiedTimeUtc":"2016-07-15T21:18:46.4","storageRecoveryDefaultState":"Running","contentAvailabilityState":0,"runtimeAvailabilityState":0,"siteConfig":null,"deploymentId":"pyarmsite91570ab4","trafficManagerHostNames":null,"sku":"Standard","premiumAppDeployed":null,"scmSiteAlsoStopped":false,"targetSwapSlot":null,"hostingEnvironment":null,"hostingEnvironmentProfile":null,"microService":"WebSites","gatewaySiteName":null,"clientAffinityEnabled":true,"clientCertEnabled":false,"hostNamesDisabled":false,"domainVerificationIdentifiers":null,"kind":null,"outboundIpAddresses":"13.91.42.207,13.91.44.111,13.91.40.156,13.91.41.150","containerSize":0,"maxNumberOfWorkers":null,"homeStamp":"waws-prod-bay-057","cloningInfo":null,"hostingEnvironmentId":null,"tags":null,"resourceGroup":"test_mgmt_apps_test_webapp91570ab4","defaultHostName":"pyarmsite91570ab4.azurewebsites.net"}}],"nextLink":null}'}
     headers:
       Cache-Control: [no-cache]
-      Content-Encoding: [gzip]
       Content-Type: [application/json]
-      Date: ['Fri, 01 Jul 2016 23:47:37 GMT']
+      Date: ['Fri, 15 Jul 2016 21:18:49 GMT']
       Expires: ['-1']
       Pragma: [no-cache]
       Server: [Microsoft-IIS/8.0]
@@ -182,10 +127,11 @@ interactions:
       Vary: [Accept-Encoding]
       X-AspNet-Version: [4.0.30319]
       X-Powered-By: [ASP.NET]
-      x-ms-correlation-request-id: [ba308158-4332-4c51-bb71-d8083d239383]
-      x-ms-ratelimit-remaining-subscription-reads: ['14997']
-      x-ms-request-id: [8afde9e0-d021-4493-a735-e8cf77c1c168]
-      x-ms-routing-request-id: ['WESTUS:20160701T234737Z:ba308158-4332-4c51-bb71-d8083d239383']
+      content-length: ['2544']
+      x-ms-correlation-request-id: [2a5f2908-d612-4d21-ac4d-a4e830e691f8]
+      x-ms-ratelimit-remaining-subscription-reads: ['14999']
+      x-ms-request-id: [e84ad837-81a9-4df3-8902-f2d0cb071dd8]
+      x-ms-routing-request-id: ['CENTRALUS:20160715T211849Z:2a5f2908-d612-4d21-ac4d-a4e830e691f8']
     status: {code: 200, message: OK}
 - request:
     body: null
@@ -194,41 +140,20 @@ interactions:
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
       Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.5.1 (Windows-10-10.0.14366-SP0) requests/2.10.0 msrest/0.4.0
+      User-Agent: [python/3.5.1 (Windows-10-10.0.14372-SP0) requests/2.10.0 msrest/0.4.0
           msrest_azure/0.4.1 websitemanagementclient/0.30.0rc5 Azure-SDK-For-Python]
       accept-language: [en-US]
-      x-ms-client-request-id: [30bbd474-3fe6-11e6-8363-ecb1d756380e]
+      x-ms-client-request-id: [b969f77e-4ad1-11e6-87c1-00155d4b0101]
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_apps_test_webapp91570ab4/providers/Microsoft.Web/sites/pyarmsite91570ab4?api-version=2015-08-01
   response:
-    body:
-      string: !!binary |
-        H4sIAAAAAAAEAO29B2AcSZYlJi9tynt/SvVK1+B0oQiAYBMk2JBAEOzBiM3mkuwdaUcjKasqgcpl
-        VmVdZhZAzO2dvPfee++999577733ujudTif33/8/XGZkAWz2zkrayZ4hgKrIHz9+fB8/In7xR8Xs
-        o0cf3W3Wk2ZaF6u2qJbN3fOHs4PdBw/z7f175zvb+59OJ9sPH05n2+cP9ibn2WQn+/Te5G6dN9W6
-        nuaf19V61dxt86b9/RcXi/b3z1ar5vfnP6/yCf3xcPf+g51ssn93VVeXxSyvm7tfFNO6aqrzdvzd
-        fHK3Kaj13dV1Vi/wq2n/0eijZbbICb3YV+31Cl9FINGXZTXNMBRq8F1CJP3qNX3YZhfNR4+W67Ic
-        fUSorPK6Laj1o1+8qZumzVp892q9XBbLC/pkXjXtC3qB3vxe/5Vx9oN1ndPA8WEzXubtR98ffUR/
-        v15lUwCiT2+g0zZQ/uo1fdjwO4REXp4/L5Zv6fV5266aR3fvXmVXzTaNYrY9ya63dz7dHWerotP5
-        VbGcVVeMxKP9+/t3v8YkAxaQuM38dvCWyYhOa52vKvqoqq9f0xcgJo0s1rC6Wua1mbN1k13kr2U+
-        dkYf5ctsUubEvW29zkcfZbNFsTwNP9Mm337fGSP+6LVqpotIS5pb/PEyYKdF3mazrM0M4jRN9tvv
-        0RtEs9d52xI70Qdo8kvos8usKLNJURbttRtj05QnePO8IH7G62g9+mja1PQ7QE1JmsynQOSLakZv
-        yt+GUV83JUOkht8b5vXI4AikvsrIFKsnWZPPCNyrvFmXrennsqjbdVaevTQftPP1YrKqi6Vt0lZf
-        rYgiBCf8+8yCNN+4TlzHGMgbFvedXzLaMIL4FP2/bxS7vwQzVy1W63DCmry+zOtnNKz+J2fE1D/X
-        apqROSdkVKrpJXxWTPNVmS3N+0TwMmtaGhixbT57Uyzyr9opYb+3s/vp9s6D7Z3dN3v3Hu0/eHTv
-        /vjhfWrekCYg0X6VTyvq4Pppfp7RxCjlPM07rZZtvmyPo6JSr5ctdRX/EtxwUi3PiwtD2RnhXF0v
-        CBxTlseDVt4o2jo7J8H7IlsScrWnRARC83ZNL1Ify1lWz6j9qs4XxXpxvFo9ZeDQQ9p0uoCiOy6b
-        6nVbrVb45jwrG1JRbVZf5O3rq2z1uqwsp4FXaMynS+LKagksh78h3XNelDROabDAnL2WaSH8aOLQ
-        NYziBVHjKvNUrrwwLQuCckxDXRLNOhpUvoQOsl8o4kAEYJqnRRN+M6sWWbH8ybym+Se1Rax6NiMg
-        9BfxlOn1Ldkm83u1bifVejk7Wx3PZsSvDaH76KP9nfHu7sF47/798e69ByPvz717u+7PnfHe7oH7
-        c298DywFViEk8vp18QMaKbHAInv3ggQ6r788/25Vv/VQmVekI9tssaJOe2YVsMoKDHi2PK/cK91Z
-        ABfJd76bQYNxwkfgaSJukD7qbyb8bxiOXutxZ0TN/ZJf8v8AYeVXgswJAAA=
+    body: {string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_apps_test_webapp91570ab4/providers/Microsoft.Web/sites/pyarmsite91570ab4","name":"pyarmsite91570ab4","type":"Microsoft.Web/sites","location":"West
+        US","tags":null,"properties":{"name":"pyarmsite91570ab4","state":"Running","hostNames":["pyarmsite91570ab4.azurewebsites.net"],"webSpace":"test_mgmt_apps_test_webapp91570ab4-WestUSwebspace","selfLink":"https://waws-prod-bay-057.api.azurewebsites.windows.net:454/subscriptions/00000000-0000-0000-0000-000000000000/webspaces/test_mgmt_apps_test_webapp91570ab4-WestUSwebspace/sites/pyarmsite91570ab4","repositorySiteName":"pyarmsite91570ab4","owner":null,"usageState":0,"enabled":true,"adminEnabled":true,"enabledHostNames":["pyarmsite91570ab4.azurewebsites.net","pyarmsite91570ab4.scm.azurewebsites.net"],"siteProperties":{"metadata":null,"properties":[],"appSettings":null},"availabilityState":0,"sslCertificates":null,"csrs":[],"cers":null,"siteMode":null,"hostNameSslStates":[{"name":"pyarmsite91570ab4.azurewebsites.net","sslState":0,"ipBasedSslResult":null,"virtualIP":null,"thumbprint":null,"toUpdate":null,"toUpdateIpBasedSsl":null,"ipBasedSslState":0,"hostType":0},{"name":"pyarmsite91570ab4.scm.azurewebsites.net","sslState":0,"ipBasedSslResult":null,"virtualIP":null,"thumbprint":null,"toUpdate":null,"toUpdateIpBasedSsl":null,"ipBasedSslState":0,"hostType":1}],"computeMode":null,"serverFarm":null,"serverFarmId":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_apps_test_webapp91570ab4/providers/Microsoft.Web/serverfarms/pyarmappserviceplan91570ab4","reserved":null,"lastModifiedTimeUtc":"2016-07-15T21:18:46.4","storageRecoveryDefaultState":"Running","contentAvailabilityState":0,"runtimeAvailabilityState":0,"siteConfig":null,"deploymentId":"pyarmsite91570ab4","trafficManagerHostNames":null,"sku":"Standard","premiumAppDeployed":null,"scmSiteAlsoStopped":false,"targetSwapSlot":null,"hostingEnvironment":null,"hostingEnvironmentProfile":null,"microService":"WebSites","gatewaySiteName":null,"clientAffinityEnabled":true,"clientCertEnabled":false,"hostNamesDisabled":false,"domainVerificationIdentifiers":null,"kind":null,"outboundIpAddresses":"13.91.42.207,13.91.44.111,13.91.40.156,13.91.41.150","containerSize":0,"maxNumberOfWorkers":null,"homeStamp":"waws-prod-bay-057","cloningInfo":null,"hostingEnvironmentId":null,"tags":null,"resourceGroup":"test_mgmt_apps_test_webapp91570ab4","defaultHostName":"pyarmsite91570ab4.azurewebsites.net"}}'}
     headers:
       Cache-Control: [no-cache]
-      Content-Encoding: [gzip]
       Content-Type: [application/json]
-      Date: ['Fri, 01 Jul 2016 23:47:38 GMT']
-      ETag: ['"1D1D3F2F19B7AE0"']
+      Date: ['Fri, 15 Jul 2016 21:18:50 GMT']
+      ETag: ['"1D1DEDE78F6C800"']
       Expires: ['-1']
       Pragma: [no-cache]
       Server: [Microsoft-IIS/8.0]
@@ -237,10 +162,11 @@ interactions:
       Vary: [Accept-Encoding]
       X-AspNet-Version: [4.0.30319]
       X-Powered-By: [ASP.NET]
-      x-ms-correlation-request-id: [01edda5a-43eb-4e82-9511-f31ef2284336]
-      x-ms-ratelimit-remaining-subscription-reads: ['14995']
-      x-ms-request-id: [6902e252-8f75-470d-b928-5c2acb750cfd]
-      x-ms-routing-request-id: ['WESTUS:20160701T234738Z:01edda5a-43eb-4e82-9511-f31ef2284336']
+      content-length: ['2516']
+      x-ms-correlation-request-id: [c1df3be1-2b37-470e-a09b-a0e6737a928c]
+      x-ms-ratelimit-remaining-subscription-reads: ['14999']
+      x-ms-request-id: [c507a40f-b39e-4060-a70f-8694adb29319]
+      x-ms-routing-request-id: ['CENTRALUS:20160715T211850Z:c1df3be1-2b37-470e-a09b-a0e6737a928c']
     status: {code: 200, message: OK}
 - request:
     body: null
@@ -250,10 +176,103 @@ interactions:
       Connection: [keep-alive]
       Content-Length: ['0']
       Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.5.1 (Windows-10-10.0.14366-SP0) requests/2.10.0 msrest/0.4.0
+      User-Agent: [python/3.5.1 (Windows-10-10.0.14372-SP0) requests/2.10.0 msrest/0.4.0
           msrest_azure/0.4.1 websitemanagementclient/0.30.0rc5 Azure-SDK-For-Python]
       accept-language: [en-US]
-      x-ms-client-request-id: [31480834-3fe6-11e6-b6a4-ecb1d756380e]
+      x-ms-client-request-id: [b9ccf430-4ad1-11e6-9b84-00155d4b0101]
+    method: POST
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_apps_test_webapp91570ab4/providers/Microsoft.Web/sites/pyarmsite91570ab4/restart?api-version=2015-08-01
+  response:
+    body: {string: ''}
+    headers:
+      Cache-Control: [no-cache]
+      Content-Length: ['0']
+      Date: ['Fri, 15 Jul 2016 21:18:50 GMT']
+      Expires: ['-1']
+      Pragma: [no-cache]
+      Server: [Microsoft-IIS/8.0]
+      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
+      X-AspNet-Version: [4.0.30319]
+      X-Powered-By: [ASP.NET]
+      x-ms-correlation-request-id: [522e32c8-97b7-4b4f-a131-b6c923e81617]
+      x-ms-ratelimit-remaining-subscription-writes: ['1199']
+      x-ms-request-id: [19f36196-27fd-4502-b8b0-991187b48f80]
+      x-ms-routing-request-id: ['CENTRALUS:20160715T211851Z:522e32c8-97b7-4b4f-a131-b6c923e81617']
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['0']
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.5.1 (Windows-10-10.0.14372-SP0) requests/2.10.0 msrest/0.4.0
+          msrest_azure/0.4.1 websitemanagementclient/0.30.0rc5 Azure-SDK-For-Python]
+      accept-language: [en-US]
+      x-ms-client-request-id: [ba3651b6-4ad1-11e6-aa5e-00155d4b0101]
+    method: POST
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_apps_test_webapp91570ab4/providers/Microsoft.Web/sites/pyarmsite91570ab4/stop?api-version=2015-08-01
+  response:
+    body: {string: ''}
+    headers:
+      Cache-Control: [no-cache]
+      Content-Length: ['0']
+      Date: ['Fri, 15 Jul 2016 21:18:51 GMT']
+      Expires: ['-1']
+      Pragma: [no-cache]
+      Server: [Microsoft-IIS/8.0]
+      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
+      X-AspNet-Version: [4.0.30319]
+      X-Powered-By: [ASP.NET]
+      x-ms-correlation-request-id: [259ab885-4cdc-4516-a72c-44bc60aac189]
+      x-ms-ratelimit-remaining-subscription-writes: ['1199']
+      x-ms-request-id: [02a94d01-bd90-4e46-91fe-acdb4ab1a83c]
+      x-ms-routing-request-id: ['CENTRALUS:20160715T211852Z:259ab885-4cdc-4516-a72c-44bc60aac189']
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['0']
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.5.1 (Windows-10-10.0.14372-SP0) requests/2.10.0 msrest/0.4.0
+          msrest_azure/0.4.1 websitemanagementclient/0.30.0rc5 Azure-SDK-For-Python]
+      accept-language: [en-US]
+      x-ms-client-request-id: [baf11a2e-4ad1-11e6-8e70-00155d4b0101]
+    method: POST
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_apps_test_webapp91570ab4/providers/Microsoft.Web/sites/pyarmsite91570ab4/start?api-version=2015-08-01
+  response:
+    body: {string: ''}
+    headers:
+      Cache-Control: [no-cache]
+      Content-Length: ['0']
+      Date: ['Fri, 15 Jul 2016 21:18:53 GMT']
+      Expires: ['-1']
+      Pragma: [no-cache]
+      Server: [Microsoft-IIS/8.0]
+      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
+      X-AspNet-Version: [4.0.30319]
+      X-Powered-By: [ASP.NET]
+      x-ms-correlation-request-id: [567e49e9-5fa5-4ee9-97a8-10e44893f76a]
+      x-ms-ratelimit-remaining-subscription-writes: ['1199']
+      x-ms-request-id: [36ca4f3a-bc0c-484b-ae25-87174fc0df6f]
+      x-ms-routing-request-id: ['CENTRALUS:20160715T211853Z:567e49e9-5fa5-4ee9-97a8-10e44893f76a']
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['0']
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.5.1 (Windows-10-10.0.14372-SP0) requests/2.10.0 msrest/0.4.0
+          msrest_azure/0.4.1 websitemanagementclient/0.30.0rc5 Azure-SDK-For-Python]
+      accept-language: [en-US]
+      x-ms-client-request-id: [bb94445a-4ad1-11e6-af42-00155d4b0101]
     method: DELETE
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_apps_test_webapp91570ab4/providers/Microsoft.Web/sites/pyarmsite91570ab4?api-version=2015-08-01
   response:
@@ -261,17 +280,17 @@ interactions:
     headers:
       Cache-Control: [no-cache]
       Content-Length: ['0']
-      Date: ['Fri, 01 Jul 2016 23:47:40 GMT']
-      ETag: ['"1D1D3F2F19B7AE0"']
+      Date: ['Fri, 15 Jul 2016 21:18:55 GMT']
+      ETag: ['"1D1DEDE7C67ABD0"']
       Expires: ['-1']
       Pragma: [no-cache]
       Server: [Microsoft-IIS/8.0]
       Strict-Transport-Security: [max-age=31536000; includeSubDomains]
       X-AspNet-Version: [4.0.30319]
       X-Powered-By: [ASP.NET]
-      x-ms-correlation-request-id: [743c97f2-a8a8-4b11-a9f3-d65ac845ecc8]
-      x-ms-ratelimit-remaining-subscription-writes: ['1196']
-      x-ms-request-id: [660c58b9-0ae0-47ef-926b-ddca42b765cc]
-      x-ms-routing-request-id: ['WESTUS:20160701T234740Z:743c97f2-a8a8-4b11-a9f3-d65ac845ecc8']
+      x-ms-correlation-request-id: [9a0454af-bec9-47cf-b401-58ec113e4eb1]
+      x-ms-ratelimit-remaining-subscription-writes: ['1199']
+      x-ms-request-id: [5e12a3c3-352d-4562-bead-491c7b897d1a]
+      x-ms-routing-request-id: ['CENTRALUS:20160715T211856Z:9a0454af-bec9-47cf-b401-58ec113e4eb1']
     status: {code: 200, message: OK}
 version: 1
