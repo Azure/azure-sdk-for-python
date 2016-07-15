@@ -128,11 +128,33 @@ module Azure::ARM::Authorization
     # @param custom_headers [Hash{String => String}] A hash of custom headers that
     # will be added to the HTTP request.
     #
-    # @return [ProviderOperationsMetadataListResult] operation results.
+    # @return [ProviderOperationsMetadataListResult] which provide lazy access to
+    # pages of the response.
+    #
+    def list_as_lazy(api_version, expand = 'resourceTypes', custom_headers = nil)
+      response = list_async(api_version, expand, custom_headers).value!
+      unless response.nil?
+        page = response.body
+        page.next_method = Proc.new do |next_link|
+          list_next_async(next_link, custom_headers)
+        end
+        page
+      end
+    end
+
+    #
+    # Gets provider operations metadata list
+    #
+    # @param api_version [String]
+    # @param expand [String]
+    # @param custom_headers [Hash{String => String}] A hash of custom headers that
+    # will be added to the HTTP request.
+    #
+    # @return [Array<ProviderOperationsMetadata>] operation results.
     #
     def list(api_version, expand = 'resourceTypes', custom_headers = nil)
-      response = list_async(api_version, expand, custom_headers).value!
-      response.body unless response.nil?
+      first_page = list_as_lazy(api_version, expand, custom_headers)
+      first_page.get_all_items
     end
 
     #

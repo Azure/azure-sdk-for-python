@@ -118,6 +118,7 @@ module Azure::ARM::Network
               },
               ip_configuration: {
                 required: false,
+                read_only: true,
                 serialized_name: 'properties.ipConfiguration',
                 type: {
                   name: 'Composite',

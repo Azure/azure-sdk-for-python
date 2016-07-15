@@ -130,10 +130,8 @@ module Azure::ARM::Web
     # @param name [String] Name of managed hosting environment
     # @param managed_hosting_environment_envelope [HostingEnvironment] Properties
     # of managed hosting environment
-    # @param @client.subscription_id [String] Subscription Id
-    # @param @client.api_version [String] API Version
-    # @param @client.accept_language [String] Gets or sets the preferred language
-    # for the response.
+    # @param custom_headers [Hash{String => String}] A hash of custom headers that
+    # will be added to the HTTP request.
     #
     # @return [Concurrent::Promise] promise which provides async access to http
     # response.
@@ -273,6 +271,9 @@ module Azure::ARM::Web
     # @param name [String] Name of managed hosting environment
     # @param force_delete [Boolean] Delete even if the managed hosting environment
     # contains resources
+    # @param custom_headers [Hash{String => String}] A hash of custom headers that
+    # will be added to the HTTP request.
+    #
     # @return [Concurrent::Promise] promise which provides async access to http
     # response.
     #
@@ -293,8 +294,8 @@ module Azure::ARM::Web
           parsed_response = @client.deserialize(result_mapper, parsed_response, 'parsed_response')
         end
 
-       # Waiting for response.
-       @client.get_long_running_operation_result(response, deserialize_method)
+        # Waiting for response.
+        @client.get_long_running_operation_result(response, deserialize_method)
       end
 
       promise
@@ -675,8 +676,8 @@ module Azure::ARM::Web
     # @return [SiteCollection] operation results.
     #
     def get_managed_hosting_environment_sites(resource_group_name, name, properties_to_include = nil, custom_headers = nil)
-      response = get_managed_hosting_environment_sites_async(resource_group_name, name, properties_to_include, custom_headers).value!
-      response.body unless response.nil?
+      first_page = get_managed_hosting_environment_sites_as_lazy(resource_group_name, name, properties_to_include, custom_headers)
+      first_page.get_all_items
     end
 
     #

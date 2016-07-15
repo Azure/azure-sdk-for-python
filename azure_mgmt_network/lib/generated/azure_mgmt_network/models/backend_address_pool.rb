@@ -58,6 +58,7 @@ module Azure::ARM::Network
               },
               backend_ipconfigurations: {
                 required: false,
+                read_only: true,
                 serialized_name: 'properties.backendIPConfigurations',
                 type: {
                   name: 'Sequence',
@@ -73,6 +74,7 @@ module Azure::ARM::Network
               },
               load_balancing_rules: {
                 required: false,
+                read_only: true,
                 serialized_name: 'properties.loadBalancingRules',
                 type: {
                   name: 'Sequence',
@@ -88,6 +90,7 @@ module Azure::ARM::Network
               },
               outbound_nat_rule: {
                 required: false,
+                read_only: true,
                 serialized_name: 'properties.outboundNatRule',
                 type: {
                   name: 'Composite',

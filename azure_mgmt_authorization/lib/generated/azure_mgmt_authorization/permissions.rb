@@ -30,11 +30,33 @@ module Azure::ARM::Authorization
     # @param custom_headers [Hash{String => String}] A hash of custom headers that
     # will be added to the HTTP request.
     #
-    # @return [PermissionGetResult] operation results.
+    # @return [PermissionGetResult] which provide lazy access to pages of the
+    # response.
+    #
+    def list_for_resource_group_as_lazy(resource_group_name, custom_headers = nil)
+      response = list_for_resource_group_async(resource_group_name, custom_headers).value!
+      unless response.nil?
+        page = response.body
+        page.next_method = Proc.new do |next_link|
+          list_for_resource_group_next_async(next_link, custom_headers)
+        end
+        page
+      end
+    end
+
+    #
+    # Gets a resource group permissions.
+    #
+    # @param resource_group_name [String] Name of the resource group to get the
+    # permissions for.The name is case insensitive.
+    # @param custom_headers [Hash{String => String}] A hash of custom headers that
+    # will be added to the HTTP request.
+    #
+    # @return [Array<Permission>] operation results.
     #
     def list_for_resource_group(resource_group_name, custom_headers = nil)
-      response = list_for_resource_group_async(resource_group_name, custom_headers).value!
-      response.body unless response.nil?
+      first_page = list_for_resource_group_as_lazy(resource_group_name, custom_headers)
+      first_page.get_all_items
     end
 
     #
@@ -127,11 +149,37 @@ module Azure::ARM::Authorization
     # @param custom_headers [Hash{String => String}] A hash of custom headers that
     # will be added to the HTTP request.
     #
-    # @return [PermissionGetResult] operation results.
+    # @return [PermissionGetResult] which provide lazy access to pages of the
+    # response.
+    #
+    def list_for_resource_as_lazy(resource_group_name, resource_provider_namespace, parent_resource_path, resource_type, resource_name, custom_headers = nil)
+      response = list_for_resource_async(resource_group_name, resource_provider_namespace, parent_resource_path, resource_type, resource_name, custom_headers).value!
+      unless response.nil?
+        page = response.body
+        page.next_method = Proc.new do |next_link|
+          list_for_resource_next_async(next_link, custom_headers)
+        end
+        page
+      end
+    end
+
+    #
+    # Gets a resource permissions.
+    #
+    # @param resource_group_name [String] The name of the resource group. The name
+    # is case insensitive.
+    # @param resource_provider_namespace [String] Resource
+    # @param parent_resource_path [String] Resource
+    # @param resource_type [String] Resource
+    # @param resource_name [String] Resource
+    # @param custom_headers [Hash{String => String}] A hash of custom headers that
+    # will be added to the HTTP request.
+    #
+    # @return [Array<Permission>] operation results.
     #
     def list_for_resource(resource_group_name, resource_provider_namespace, parent_resource_path, resource_type, resource_name, custom_headers = nil)
-      response = list_for_resource_async(resource_group_name, resource_provider_namespace, parent_resource_path, resource_type, resource_name, custom_headers).value!
-      response.body unless response.nil?
+      first_page = list_for_resource_as_lazy(resource_group_name, resource_provider_namespace, parent_resource_path, resource_type, resource_name, custom_headers)
+      first_page.get_all_items
     end
 
     #

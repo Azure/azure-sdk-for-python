@@ -31,12 +31,8 @@ module Azure::ARM::Compute
     # @param vm_extension_name [String] The name of the virtual machine extension.
     # @param extension_parameters [VirtualMachineExtension] Parameters supplied to
     # the Create Virtual Machine Extension operation.
-    # @param @client.api_version [String] Client Api Version.
-    # @param @client.subscription_id [String] subscription credentials which
-    # uniquely identify Microsoft Azure subscription. The subscription ID forms
-    # part of the URI for every service call.
-    # @param @client.accept_language [String] Gets or sets the preferred language
-    # for the response.
+    # @param custom_headers [Hash{String => String}] A hash of custom headers that
+    # will be added to the HTTP request.
     #
     # @return [Concurrent::Promise] promise which provides async access to http
     # response.
@@ -193,6 +189,9 @@ module Azure::ARM::Compute
     # @param vm_name [String] The name of the virtual machine where the extension
     # should be deleted.
     # @param vm_extension_name [String] The name of the virtual machine extension.
+    # @param custom_headers [Hash{String => String}] A hash of custom headers that
+    # will be added to the HTTP request.
+    #
     # @return [Concurrent::Promise] promise which provides async access to http
     # response.
     #
@@ -205,8 +204,8 @@ module Azure::ARM::Compute
         deserialize_method = lambda do |parsed_response|
         end
 
-       # Waiting for response.
-       @client.get_long_running_operation_result(response, deserialize_method)
+        # Waiting for response.
+        @client.get_long_running_operation_result(response, deserialize_method)
       end
 
       promise

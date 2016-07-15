@@ -661,11 +661,57 @@ module Azure::ARM::DataLakeAnalytics::Job
     # @param custom_headers [Hash{String => String}] A hash of custom headers that
     # will be added to the HTTP request.
     #
-    # @return [JobInfoListResult] operation results.
+    # @return [JobInfoListResult] which provide lazy access to pages of the
+    # response.
+    #
+    def list_as_lazy(account_name, filter = nil, top = nil, skip = nil, expand = nil, select = nil, orderby = nil, count = nil, search = nil, format = nil, custom_headers = nil)
+      response = list_async(account_name, filter, top, skip, expand, select, orderby, count, search, format, custom_headers).value!
+      unless response.nil?
+        page = response.body
+        page.next_method = Proc.new do |next_link|
+          list_next_async(next_link, custom_headers)
+        end
+        page
+      end
+    end
+
+    #
+    # Lists the jobs, if any, associated with the specified Data Lake Analytics
+    # account. The response includes a link to the next page of results, if any.
+    #
+    # @param account_name [String] The Azure Data Lake Analytics account to
+    # execute job operations on.
+    # @param filter [String] OData filter. Optional.
+    # @param top [Integer] The number of items to return. Optional.
+    # @param skip [Integer] The number of items to skip over before returning
+    # elements. Optional.
+    # @param expand [String] OData expansion. Expand related resources in line
+    # with the retrieved resources, e.g. Categories?$expand=Products would expand
+    # Product data in line with each Category entry. Optional.
+    # @param select [String] OData Select statement. Limits the properties on each
+    # entry to just those requested, e.g.
+    # Categories?$select=CategoryName,Description. Optional.
+    # @param orderby [String] OrderBy clause. One or more comma-separated
+    # expressions with an optional "asc" (the default) or "desc" depending on the
+    # order you'd like the values sorted, e.g. Categories?$orderby=CategoryName
+    # desc. Optional.
+    # @param count [Boolean] The Boolean value of true or false to request a count
+    # of the matching resources included with the resources in the response, e.g.
+    # Categories?$count=true. Optional.
+    # @param search [String] A free form search. A free-text search expression to
+    # match for whether a particular entry should be included in the feed, e.g.
+    # Categories?$search=blue OR green. Optional.
+    # @param format [String] The return format. Return the response in particular
+    # formatxii without access to request headers for standard content-type
+    # negotiation (e.g Orders?$format=json). Optional.
+    # @param custom_headers [Hash{String => String}] A hash of custom headers that
+    # will be added to the HTTP request.
+    #
+    # @return [Array<JobInformation>] operation results.
     #
     def list(account_name, filter = nil, top = nil, skip = nil, expand = nil, select = nil, orderby = nil, count = nil, search = nil, format = nil, custom_headers = nil)
-      response = list_async(account_name, filter, top, skip, expand, select, orderby, count, search, format, custom_headers).value!
-      response.body unless response.nil?
+      first_page = list_as_lazy(account_name, filter, top, skip, expand, select, orderby, count, search, format, custom_headers)
+      first_page.get_all_items
     end
 
     #

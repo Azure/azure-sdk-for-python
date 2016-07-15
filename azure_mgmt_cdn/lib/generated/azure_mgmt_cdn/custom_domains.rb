@@ -253,11 +253,8 @@ module Azure::ARM::CDN
     # group.
     # @param resource_group_name [String] Name of the resource group within the
     # Azure subscription.
-    # @param @client.subscription_id [String] Azure Subscription ID.
-    # @param @client.api_version [String] Version of the API to be used with the
-    # client request. Current version is 2016-04-02
-    # @param @client.accept_language [String] Gets or sets the preferred language
-    # for the response.
+    # @param custom_headers [Hash{String => String}] A hash of custom headers that
+    # will be added to the HTTP request.
     #
     # @return [Concurrent::Promise] promise which provides async access to http
     # response.
@@ -561,6 +558,9 @@ module Azure::ARM::CDN
     # group.
     # @param resource_group_name [String] Name of the resource group within the
     # Azure subscription.
+    # @param custom_headers [Hash{String => String}] A hash of custom headers that
+    # will be added to the HTTP request.
+    #
     # @return [Concurrent::Promise] promise which provides async access to http
     # response.
     #
@@ -575,8 +575,8 @@ module Azure::ARM::CDN
           parsed_response = @client.deserialize(result_mapper, parsed_response, 'parsed_response')
         end
 
-       # Waiting for response.
-       @client.get_long_running_operation_result(response, deserialize_method)
+        # Waiting for response.
+        @client.get_long_running_operation_result(response, deserialize_method)
       end
 
       promise

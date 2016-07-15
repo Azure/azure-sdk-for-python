@@ -329,11 +329,31 @@ module Azure::ARM::Redis
     # @param custom_headers [Hash{String => String}] A hash of custom headers that
     # will be added to the HTTP request.
     #
-    # @return [RedisListResult] operation results.
+    # @return [RedisListResult] which provide lazy access to pages of the response.
+    #
+    def list_by_resource_group_as_lazy(resource_group_name, custom_headers = nil)
+      response = list_by_resource_group_async(resource_group_name, custom_headers).value!
+      unless response.nil?
+        page = response.body
+        page.next_method = Proc.new do |next_link|
+          list_by_resource_group_next_async(next_link, custom_headers)
+        end
+        page
+      end
+    end
+
+    #
+    # Gets all redis caches in a resource group.
+    #
+    # @param resource_group_name [String] The name of the resource group.
+    # @param custom_headers [Hash{String => String}] A hash of custom headers that
+    # will be added to the HTTP request.
+    #
+    # @return [Array<RedisResource>] operation results.
     #
     def list_by_resource_group(resource_group_name, custom_headers = nil)
-      response = list_by_resource_group_async(resource_group_name, custom_headers).value!
-      response.body unless response.nil?
+      first_page = list_by_resource_group_as_lazy(resource_group_name, custom_headers)
+      first_page.get_all_items
     end
 
     #
@@ -418,11 +438,30 @@ module Azure::ARM::Redis
     # @param custom_headers [Hash{String => String}] A hash of custom headers that
     # will be added to the HTTP request.
     #
-    # @return [RedisListResult] operation results.
+    # @return [RedisListResult] which provide lazy access to pages of the response.
+    #
+    def list_as_lazy(custom_headers = nil)
+      response = list_async(custom_headers).value!
+      unless response.nil?
+        page = response.body
+        page.next_method = Proc.new do |next_link|
+          list_next_async(next_link, custom_headers)
+        end
+        page
+      end
+    end
+
+    #
+    # Gets all redis caches in the specified subscription.
+    #
+    # @param custom_headers [Hash{String => String}] A hash of custom headers that
+    # will be added to the HTTP request.
+    #
+    # @return [Array<RedisResource>] operation results.
     #
     def list(custom_headers = nil)
-      response = list_async(custom_headers).value!
-      response.body unless response.nil?
+      first_page = list_as_lazy(custom_headers)
+      first_page.get_all_items
     end
 
     #
@@ -817,6 +856,9 @@ module Azure::ARM::Redis
     # @param name [String] The name of the redis cache.
     # @param parameters [ImportRDBParameters] Parameters for redis import
     # operation.
+    # @param custom_headers [Hash{String => String}] A hash of custom headers that
+    # will be added to the HTTP request.
+    #
     # @return [Concurrent::Promise] promise which provides async access to http
     # response.
     #
@@ -829,8 +871,8 @@ module Azure::ARM::Redis
         deserialize_method = lambda do |parsed_response|
         end
 
-       # Waiting for response.
-       @client.get_long_running_operation_result(response, deserialize_method)
+        # Waiting for response.
+        @client.get_long_running_operation_result(response, deserialize_method)
       end
 
       promise
@@ -942,6 +984,9 @@ module Azure::ARM::Redis
     # @param name [String] The name of the redis cache.
     # @param parameters [ExportRDBParameters] Parameters for redis export
     # operation.
+    # @param custom_headers [Hash{String => String}] A hash of custom headers that
+    # will be added to the HTTP request.
+    #
     # @return [Concurrent::Promise] promise which provides async access to http
     # response.
     #
@@ -954,8 +999,8 @@ module Azure::ARM::Redis
         deserialize_method = lambda do |parsed_response|
         end
 
-       # Waiting for response.
-       @client.get_long_running_operation_result(response, deserialize_method)
+        # Waiting for response.
+        @client.get_long_running_operation_result(response, deserialize_method)
       end
 
       promise

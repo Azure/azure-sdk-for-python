@@ -589,11 +589,39 @@ module Azure::ARM::DataLakeAnalytics::Account
     # @param custom_headers [Hash{String => String}] A hash of custom headers that
     # will be added to the HTTP request.
     #
-    # @return [ListBlobContainersResult] operation results.
+    # @return [ListBlobContainersResult] which provide lazy access to pages of the
+    # response.
+    #
+    def list_storage_containers_as_lazy(resource_group_name, account_name, storage_account_name, custom_headers = nil)
+      response = list_storage_containers_async(resource_group_name, account_name, storage_account_name, custom_headers).value!
+      unless response.nil?
+        page = response.body
+        page.next_method = Proc.new do |next_link|
+          list_storage_containers_next_async(next_link, custom_headers)
+        end
+        page
+      end
+    end
+
+    #
+    # Lists the Azure Storage containers, if any, associated with the specified
+    # Data Lake Analytics and Azure Storage account combination. The response
+    # includes a link to the next page of results, if any.
+    #
+    # @param resource_group_name [String] The name of the Azure resource group
+    # that contains the Data Lake Analytics account.
+    # @param account_name [String] The name of the Data Lake Analytics account for
+    # which to list Azure Storage blob containers.
+    # @param storage_account_name [String] The name of the Azure storage account
+    # from which to list blob containers.
+    # @param custom_headers [Hash{String => String}] A hash of custom headers that
+    # will be added to the HTTP request.
+    #
+    # @return [Array<BlobContainer>] operation results.
     #
     def list_storage_containers(resource_group_name, account_name, storage_account_name, custom_headers = nil)
-      response = list_storage_containers_async(resource_group_name, account_name, storage_account_name, custom_headers).value!
-      response.body unless response.nil?
+      first_page = list_storage_containers_as_lazy(resource_group_name, account_name, storage_account_name, custom_headers)
+      first_page.get_all_items
     end
 
     #
@@ -703,11 +731,40 @@ module Azure::ARM::DataLakeAnalytics::Account
     # @param custom_headers [Hash{String => String}] A hash of custom headers that
     # will be added to the HTTP request.
     #
-    # @return [ListSasTokensResult] operation results.
+    # @return [ListSasTokensResult] which provide lazy access to pages of the
+    # response.
+    #
+    def list_sas_tokens_as_lazy(resource_group_name, account_name, storage_account_name, container_name, custom_headers = nil)
+      response = list_sas_tokens_async(resource_group_name, account_name, storage_account_name, container_name, custom_headers).value!
+      unless response.nil?
+        page = response.body
+        page.next_method = Proc.new do |next_link|
+          list_sas_tokens_next_async(next_link, custom_headers)
+        end
+        page
+      end
+    end
+
+    #
+    # Gets the SAS token associated with the specified Data Lake Analytics and
+    # Azure Storage account and container combination.
+    #
+    # @param resource_group_name [String] The name of the Azure resource group
+    # that contains the Data Lake Analytics account.
+    # @param account_name [String] The name of the Data Lake Analytics account
+    # from which an Azure Storage account's SAS token is being requested.
+    # @param storage_account_name [String] The name of the Azure storage account
+    # for which the SAS token is being requested.
+    # @param container_name [String] The name of the Azure storage container for
+    # which the SAS token is being requested.
+    # @param custom_headers [Hash{String => String}] A hash of custom headers that
+    # will be added to the HTTP request.
+    #
+    # @return [Array<SasTokenInfo>] operation results.
     #
     def list_sas_tokens(resource_group_name, account_name, storage_account_name, container_name, custom_headers = nil)
-      response = list_sas_tokens_async(resource_group_name, account_name, storage_account_name, container_name, custom_headers).value!
-      response.body unless response.nil?
+      first_page = list_sas_tokens_as_lazy(resource_group_name, account_name, storage_account_name, container_name, custom_headers)
+      first_page.get_all_items
     end
 
     #
@@ -1164,12 +1221,60 @@ module Azure::ARM::DataLakeAnalytics::Account
     # @param custom_headers [Hash{String => String}] A hash of custom headers that
     # will be added to the HTTP request.
     #
-    # @return [DataLakeAnalyticsAccountListStorageAccountsResult] operation
-    # results.
+    # @return [DataLakeAnalyticsAccountListStorageAccountsResult] which provide
+    # lazy access to pages of the response.
+    #
+    def list_storage_accounts_as_lazy(resource_group_name, account_name, filter = nil, top = nil, skip = nil, expand = nil, select = nil, orderby = nil, count = nil, search = nil, format = nil, custom_headers = nil)
+      response = list_storage_accounts_async(resource_group_name, account_name, filter, top, skip, expand, select, orderby, count, search, format, custom_headers).value!
+      unless response.nil?
+        page = response.body
+        page.next_method = Proc.new do |next_link|
+          list_storage_accounts_next_async(next_link, custom_headers)
+        end
+        page
+      end
+    end
+
+    #
+    # Gets the first page of Azure Storage accounts, if any, linked to the
+    # specified Data Lake Analytics account. The response includes a link to the
+    # next page, if any.
+    #
+    # @param resource_group_name [String] The name of the Azure resource group
+    # that contains the Data Lake Analytics account.
+    # @param account_name [String] The name of the Data Lake Analytics account for
+    # which to list Azure Storage accounts.
+    # @param filter [String] The OData filter. Optional.
+    # @param top [Integer] The number of items to return. Optional.
+    # @param skip [Integer] The number of items to skip over before returning
+    # elements. Optional.
+    # @param expand [String] OData expansion. Expand related resources in line
+    # with the retrieved resources, e.g. Categories/$expand=Products would expand
+    # Product data in line with each Category entry. Optional.
+    # @param select [String] OData Select statement. Limits the properties on each
+    # entry to just those requested, e.g.
+    # Categories?$select=CategoryName,Description. Optional.
+    # @param orderby [String] OrderBy clause. One or more comma-separated
+    # expressions with an optional "asc" (the default) or "desc" depending on the
+    # order you'd like the values sorted, e.g. Categories?$orderby=CategoryName
+    # desc. Optional.
+    # @param count [Boolean] The Boolean value of true or false to request a count
+    # of the matching resources included with the resources in the response, e.g.
+    # Categories?$count=true. Optional.
+    # @param search [String] A free form search. A free-text search expression to
+    # match for whether a particular entry should be included in the feed, e.g.
+    # Categories?$search=blue OR green. Optional.
+    # @param format [String] The desired return format. Return the response in
+    # particular formatxii without access to request headers for standard
+    # content-type negotiation (e.g Orders?$format=json). Optional.
+    # @param custom_headers [Hash{String => String}] A hash of custom headers that
+    # will be added to the HTTP request.
+    #
+    # @return [Array<StorageAccountInfo>] operation results.
     #
     def list_storage_accounts(resource_group_name, account_name, filter = nil, top = nil, skip = nil, expand = nil, select = nil, orderby = nil, count = nil, search = nil, format = nil, custom_headers = nil)
-      response = list_storage_accounts_async(resource_group_name, account_name, filter, top, skip, expand, select, orderby, count, search, format, custom_headers).value!
-      response.body unless response.nil?
+      first_page = list_storage_accounts_as_lazy(resource_group_name, account_name, filter, top, skip, expand, select, orderby, count, search, format, custom_headers)
+      first_page.get_all_items
     end
 
     #
@@ -1340,11 +1445,60 @@ module Azure::ARM::DataLakeAnalytics::Account
     # @param custom_headers [Hash{String => String}] A hash of custom headers that
     # will be added to the HTTP request.
     #
-    # @return [DataLakeAnalyticsAccountListDataLakeStoreResult] operation results.
+    # @return [DataLakeAnalyticsAccountListDataLakeStoreResult] which provide lazy
+    # access to pages of the response.
+    #
+    def list_data_lake_store_accounts_as_lazy(resource_group_name, account_name, filter = nil, top = nil, skip = nil, expand = nil, select = nil, orderby = nil, count = nil, search = nil, format = nil, custom_headers = nil)
+      response = list_data_lake_store_accounts_async(resource_group_name, account_name, filter, top, skip, expand, select, orderby, count, search, format, custom_headers).value!
+      unless response.nil?
+        page = response.body
+        page.next_method = Proc.new do |next_link|
+          list_data_lake_store_accounts_next_async(next_link, custom_headers)
+        end
+        page
+      end
+    end
+
+    #
+    # Gets the first page of Data Lake Store accounts linked to the specified Data
+    # Lake Analytics account. The response includes a link to the next page, if
+    # any.
+    #
+    # @param resource_group_name [String] The name of the Azure resource group
+    # that contains the Data Lake Analytics account.
+    # @param account_name [String] The name of the Data Lake Analytics account for
+    # which to list Data Lake Store accounts.
+    # @param filter [String] OData filter. Optional.
+    # @param top [Integer] The number of items to return. Optional.
+    # @param skip [Integer] The number of items to skip over before returning
+    # elements. Optional.
+    # @param expand [String] OData expansion. Expand related resources in line
+    # with the retrieved resources, e.g. Categories/$expand=Products would expand
+    # Product data in line with each Category entry. Optional.
+    # @param select [String] OData Select statement. Limits the properties on each
+    # entry to just those requested, e.g.
+    # Categories?$select=CategoryName,Description. Optional.
+    # @param orderby [String] OrderBy clause. One or more comma-separated
+    # expressions with an optional "asc" (the default) or "desc" depending on the
+    # order you'd like the values sorted, e.g. Categories?$orderby=CategoryName
+    # desc. Optional.
+    # @param count [Boolean] The Boolean value of true or false to request a count
+    # of the matching resources included with the resources in the response, e.g.
+    # Categories?$count=true. Optional.
+    # @param search [String] A free form search. A free-text search expression to
+    # match for whether a particular entry should be included in the feed, e.g.
+    # Categories?$search=blue OR green. Optional.
+    # @param format [String] The desired return format. Return the response in
+    # particular formatxii without access to request headers for standard
+    # content-type negotiation (e.g Orders?$format=json). Optional.
+    # @param custom_headers [Hash{String => String}] A hash of custom headers that
+    # will be added to the HTTP request.
+    #
+    # @return [Array<DataLakeStoreAccountInfo>] operation results.
     #
     def list_data_lake_store_accounts(resource_group_name, account_name, filter = nil, top = nil, skip = nil, expand = nil, select = nil, orderby = nil, count = nil, search = nil, format = nil, custom_headers = nil)
-      response = list_data_lake_store_accounts_async(resource_group_name, account_name, filter, top, skip, expand, select, orderby, count, search, format, custom_headers).value!
-      response.body unless response.nil?
+      first_page = list_data_lake_store_accounts_as_lazy(resource_group_name, account_name, filter, top, skip, expand, select, orderby, count, search, format, custom_headers)
+      first_page.get_all_items
     end
 
     #
@@ -1512,11 +1666,57 @@ module Azure::ARM::DataLakeAnalytics::Account
     # @param custom_headers [Hash{String => String}] A hash of custom headers that
     # will be added to the HTTP request.
     #
-    # @return [DataLakeAnalyticsAccountListResult] operation results.
+    # @return [DataLakeAnalyticsAccountListResult] which provide lazy access to
+    # pages of the response.
+    #
+    def list_by_resource_group_as_lazy(resource_group_name, filter = nil, top = nil, skip = nil, expand = nil, select = nil, orderby = nil, count = nil, search = nil, format = nil, custom_headers = nil)
+      response = list_by_resource_group_async(resource_group_name, filter, top, skip, expand, select, orderby, count, search, format, custom_headers).value!
+      unless response.nil?
+        page = response.body
+        page.next_method = Proc.new do |next_link|
+          list_by_resource_group_next_async(next_link, custom_headers)
+        end
+        page
+      end
+    end
+
+    #
+    # Gets the first page of Data Lake Analytics accounts, if any, within a
+    # specific resource group. This includes a link to the next page, if any.
+    #
+    # @param resource_group_name [String] The name of the Azure resource group
+    # that contains the Data Lake Analytics account.
+    # @param filter [String] OData filter. Optional.
+    # @param top [Integer] The number of items to return. Optional.
+    # @param skip [Integer] The number of items to skip over before returning
+    # elements. Optional.
+    # @param expand [String] OData expansion. Expand related resources in line
+    # with the retrieved resources, e.g. Categories/$expand=Products would expand
+    # Product data in line with each Category entry. Optional.
+    # @param select [String] OData Select statement. Limits the properties on each
+    # entry to just those requested, e.g.
+    # Categories?$select=CategoryName,Description. Optional.
+    # @param orderby [String] OrderBy clause. One or more comma-separated
+    # expressions with an optional "asc" (the default) or "desc" depending on the
+    # order you'd like the values sorted, e.g. Categories?$orderby=CategoryName
+    # desc. Optional.
+    # @param count [Boolean] The Boolean value of true or false to request a count
+    # of the matching resources included with the resources in the response, e.g.
+    # Categories?$count=true. Optional.
+    # @param search [String] A free form search. A free-text search expression to
+    # match for whether a particular entry should be included in the feed, e.g.
+    # Categories?$search=blue OR green. Optional.
+    # @param format [String] The return format. Return the response in particular
+    # formatxii without access to request headers for standard content-type
+    # negotiation (e.g Orders?$format=json). Optional.
+    # @param custom_headers [Hash{String => String}] A hash of custom headers that
+    # will be added to the HTTP request.
+    #
+    # @return [Array<DataLakeAnalyticsAccount>] operation results.
     #
     def list_by_resource_group(resource_group_name, filter = nil, top = nil, skip = nil, expand = nil, select = nil, orderby = nil, count = nil, search = nil, format = nil, custom_headers = nil)
-      response = list_by_resource_group_async(resource_group_name, filter, top, skip, expand, select, orderby, count, search, format, custom_headers).value!
-      response.body unless response.nil?
+      first_page = list_by_resource_group_as_lazy(resource_group_name, filter, top, skip, expand, select, orderby, count, search, format, custom_headers)
+      first_page.get_all_items
     end
 
     #
@@ -1675,11 +1875,55 @@ module Azure::ARM::DataLakeAnalytics::Account
     # @param custom_headers [Hash{String => String}] A hash of custom headers that
     # will be added to the HTTP request.
     #
-    # @return [DataLakeAnalyticsAccountListResult] operation results.
+    # @return [DataLakeAnalyticsAccountListResult] which provide lazy access to
+    # pages of the response.
+    #
+    def list_as_lazy(filter = nil, top = nil, skip = nil, expand = nil, select = nil, orderby = nil, count = nil, search = nil, format = nil, custom_headers = nil)
+      response = list_async(filter, top, skip, expand, select, orderby, count, search, format, custom_headers).value!
+      unless response.nil?
+        page = response.body
+        page.next_method = Proc.new do |next_link|
+          list_next_async(next_link, custom_headers)
+        end
+        page
+      end
+    end
+
+    #
+    # Gets the first page of Data Lake Analytics accounts, if any, within the
+    # current subscription. This includes a link to the next page, if any.
+    #
+    # @param filter [String] OData filter. Optional.
+    # @param top [Integer] The number of items to return. Optional.
+    # @param skip [Integer] The number of items to skip over before returning
+    # elements. Optional.
+    # @param expand [String] OData expansion. Expand related resources in line
+    # with the retrieved resources, e.g. Categories/$expand=Products would expand
+    # Product data in line with each Category entry. Optional.
+    # @param select [String] OData Select statement. Limits the properties on each
+    # entry to just those requested, e.g.
+    # Categories?$select=CategoryName,Description. Optional.
+    # @param orderby [String] OrderBy clause. One or more comma-separated
+    # expressions with an optional "asc" (the default) or "desc" depending on the
+    # order you'd like the values sorted, e.g. Categories?$orderby=CategoryName
+    # desc. Optional.
+    # @param count [Boolean] The Boolean value of true or false to request a count
+    # of the matching resources included with the resources in the response, e.g.
+    # Categories?$count=true. Optional.
+    # @param search [String] A free form search. A free-text search expression to
+    # match for whether a particular entry should be included in the feed, e.g.
+    # Categories?$search=blue OR green. Optional.
+    # @param format [String] The desired return format. Return the response in
+    # particular formatxii without access to request headers for standard
+    # content-type negotiation (e.g Orders?$format=json). Optional.
+    # @param custom_headers [Hash{String => String}] A hash of custom headers that
+    # will be added to the HTTP request.
+    #
+    # @return [Array<DataLakeAnalyticsAccount>] operation results.
     #
     def list(filter = nil, top = nil, skip = nil, expand = nil, select = nil, orderby = nil, count = nil, search = nil, format = nil, custom_headers = nil)
-      response = list_async(filter, top, skip, expand, select, orderby, count, search, format, custom_headers).value!
-      response.body unless response.nil?
+      first_page = list_as_lazy(filter, top, skip, expand, select, orderby, count, search, format, custom_headers)
+      first_page.get_all_items
     end
 
     #
@@ -1911,6 +2155,9 @@ module Azure::ARM::DataLakeAnalytics::Account
     # that contains the Data Lake Analytics account.
     # @param account_name [String] The name of the Data Lake Analytics account to
     # delete
+    # @param custom_headers [Hash{String => String}] A hash of custom headers that
+    # will be added to the HTTP request.
+    #
     # @return [Concurrent::Promise] promise which provides async access to http
     # response.
     #
@@ -1923,8 +2170,8 @@ module Azure::ARM::DataLakeAnalytics::Account
         deserialize_method = lambda do |parsed_response|
         end
 
-       # Waiting for response.
-       @client.get_long_running_operation_result(response, deserialize_method)
+        # Waiting for response.
+        @client.get_long_running_operation_result(response, deserialize_method)
       end
 
       promise
@@ -2032,12 +2279,8 @@ module Azure::ARM::DataLakeAnalytics::Account
     # @param name [String] The name of the Data Lake Analytics account to create.
     # @param parameters [DataLakeAnalyticsAccount] Parameters supplied to the
     # create Data Lake Analytics account operation.
-    # @param @client.api_version [String] Client Api Version.
-    # @param @client.subscription_id [String] Get subscription credentials which
-    # uniquely identify Microsoft Azure subscription. The subscription ID forms
-    # part of the URI for every service call.
-    # @param @client.accept_language [String] Gets or sets the preferred language
-    # for the response.
+    # @param custom_headers [Hash{String => String}] A hash of custom headers that
+    # will be added to the HTTP request.
     #
     # @return [Concurrent::Promise] promise which provides async access to http
     # response.
@@ -2198,12 +2441,8 @@ module Azure::ARM::DataLakeAnalytics::Account
     # @param name [String] The name of the Data Lake Analytics account to update.
     # @param parameters [DataLakeAnalyticsAccount] Parameters supplied to the
     # update Data Lake Analytics account operation.
-    # @param @client.api_version [String] Client Api Version.
-    # @param @client.subscription_id [String] Get subscription credentials which
-    # uniquely identify Microsoft Azure subscription. The subscription ID forms
-    # part of the URI for every service call.
-    # @param @client.accept_language [String] Gets or sets the preferred language
-    # for the response.
+    # @param custom_headers [Hash{String => String}] A hash of custom headers that
+    # will be added to the HTTP request.
     #
     # @return [Concurrent::Promise] promise which provides async access to http
     # response.

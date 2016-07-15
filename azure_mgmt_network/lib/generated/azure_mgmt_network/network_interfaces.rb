@@ -30,6 +30,9 @@ module Azure::ARM::Network
     #
     # @param resource_group_name [String] The name of the resource group.
     # @param network_interface_name [String] The name of the network interface.
+    # @param custom_headers [Hash{String => String}] A hash of custom headers that
+    # will be added to the HTTP request.
+    #
     # @return [Concurrent::Promise] promise which provides async access to http
     # response.
     #
@@ -42,8 +45,8 @@ module Azure::ARM::Network
         deserialize_method = lambda do |parsed_response|
         end
 
-       # Waiting for response.
-       @client.get_long_running_operation_result(response, deserialize_method)
+        # Waiting for response.
+        @client.get_long_running_operation_result(response, deserialize_method)
       end
 
       promise
@@ -239,12 +242,8 @@ module Azure::ARM::Network
     # @param network_interface_name [String] The name of the network interface.
     # @param parameters [NetworkInterface] Parameters supplied to the
     # create/update NetworkInterface operation
-    # @param @client.api_version [String] Client Api Version.
-    # @param @client.subscription_id [String] Gets subscription credentials which
-    # uniquely identify Microsoft Azure subscription. The subscription ID forms
-    # part of the URI for every service call.
-    # @param @client.accept_language [String] Gets or sets the preferred language
-    # for the response.
+    # @param custom_headers [Hash{String => String}] A hash of custom headers that
+    # will be added to the HTTP request.
     #
     # @return [Concurrent::Promise] promise which provides async access to http
     # response.
@@ -398,11 +397,36 @@ module Azure::ARM::Network
     # @param custom_headers [Hash{String => String}] A hash of custom headers that
     # will be added to the HTTP request.
     #
-    # @return [NetworkInterfaceListResult] operation results.
+    # @return [NetworkInterfaceListResult] which provide lazy access to pages of
+    # the response.
+    #
+    def list_virtual_machine_scale_set_vmnetwork_interfaces_as_lazy(resource_group_name, virtual_machine_scale_set_name, virtualmachine_index, custom_headers = nil)
+      response = list_virtual_machine_scale_set_vmnetwork_interfaces_async(resource_group_name, virtual_machine_scale_set_name, virtualmachine_index, custom_headers).value!
+      unless response.nil?
+        page = response.body
+        page.next_method = Proc.new do |next_link|
+          list_virtual_machine_scale_set_vmnetwork_interfaces_next_async(next_link, custom_headers)
+        end
+        page
+      end
+    end
+
+    #
+    # The list network interface operation retrieves information about all network
+    # interfaces in a virtual machine from a virtual machine scale set.
+    #
+    # @param resource_group_name [String] The name of the resource group.
+    # @param virtual_machine_scale_set_name [String] The name of the virtual
+    # machine scale set.
+    # @param virtualmachine_index [String] The virtual machine index.
+    # @param custom_headers [Hash{String => String}] A hash of custom headers that
+    # will be added to the HTTP request.
+    #
+    # @return [Array<NetworkInterface>] operation results.
     #
     def list_virtual_machine_scale_set_vmnetwork_interfaces(resource_group_name, virtual_machine_scale_set_name, virtualmachine_index, custom_headers = nil)
-      response = list_virtual_machine_scale_set_vmnetwork_interfaces_async(resource_group_name, virtual_machine_scale_set_name, virtualmachine_index, custom_headers).value!
-      response.body unless response.nil?
+      first_page = list_virtual_machine_scale_set_vmnetwork_interfaces_as_lazy(resource_group_name, virtual_machine_scale_set_name, virtualmachine_index, custom_headers)
+      first_page.get_all_items
     end
 
     #
@@ -501,11 +525,35 @@ module Azure::ARM::Network
     # @param custom_headers [Hash{String => String}] A hash of custom headers that
     # will be added to the HTTP request.
     #
-    # @return [NetworkInterfaceListResult] operation results.
+    # @return [NetworkInterfaceListResult] which provide lazy access to pages of
+    # the response.
+    #
+    def list_virtual_machine_scale_set_network_interfaces_as_lazy(resource_group_name, virtual_machine_scale_set_name, custom_headers = nil)
+      response = list_virtual_machine_scale_set_network_interfaces_async(resource_group_name, virtual_machine_scale_set_name, custom_headers).value!
+      unless response.nil?
+        page = response.body
+        page.next_method = Proc.new do |next_link|
+          list_virtual_machine_scale_set_network_interfaces_next_async(next_link, custom_headers)
+        end
+        page
+      end
+    end
+
+    #
+    # The list network interface operation retrieves information about all network
+    # interfaces in a virtual machine scale set.
+    #
+    # @param resource_group_name [String] The name of the resource group.
+    # @param virtual_machine_scale_set_name [String] The name of the virtual
+    # machine scale set.
+    # @param custom_headers [Hash{String => String}] A hash of custom headers that
+    # will be added to the HTTP request.
+    #
+    # @return [Array<NetworkInterface>] operation results.
     #
     def list_virtual_machine_scale_set_network_interfaces(resource_group_name, virtual_machine_scale_set_name, custom_headers = nil)
-      response = list_virtual_machine_scale_set_network_interfaces_async(resource_group_name, virtual_machine_scale_set_name, custom_headers).value!
-      response.body unless response.nil?
+      first_page = list_virtual_machine_scale_set_network_interfaces_as_lazy(resource_group_name, virtual_machine_scale_set_name, custom_headers)
+      first_page.get_all_items
     end
 
     #
@@ -709,11 +757,32 @@ module Azure::ARM::Network
     # @param custom_headers [Hash{String => String}] A hash of custom headers that
     # will be added to the HTTP request.
     #
-    # @return [NetworkInterfaceListResult] operation results.
+    # @return [NetworkInterfaceListResult] which provide lazy access to pages of
+    # the response.
+    #
+    def list_all_as_lazy(custom_headers = nil)
+      response = list_all_async(custom_headers).value!
+      unless response.nil?
+        page = response.body
+        page.next_method = Proc.new do |next_link|
+          list_all_next_async(next_link, custom_headers)
+        end
+        page
+      end
+    end
+
+    #
+    # The List networkInterfaces opertion retrieves all the networkInterfaces in a
+    # subscription.
+    #
+    # @param custom_headers [Hash{String => String}] A hash of custom headers that
+    # will be added to the HTTP request.
+    #
+    # @return [Array<NetworkInterface>] operation results.
     #
     def list_all(custom_headers = nil)
-      response = list_all_async(custom_headers).value!
-      response.body unless response.nil?
+      first_page = list_all_as_lazy(custom_headers)
+      first_page.get_all_items
     end
 
     #
@@ -799,11 +868,33 @@ module Azure::ARM::Network
     # @param custom_headers [Hash{String => String}] A hash of custom headers that
     # will be added to the HTTP request.
     #
-    # @return [NetworkInterfaceListResult] operation results.
+    # @return [NetworkInterfaceListResult] which provide lazy access to pages of
+    # the response.
+    #
+    def list_as_lazy(resource_group_name, custom_headers = nil)
+      response = list_async(resource_group_name, custom_headers).value!
+      unless response.nil?
+        page = response.body
+        page.next_method = Proc.new do |next_link|
+          list_next_async(next_link, custom_headers)
+        end
+        page
+      end
+    end
+
+    #
+    # The List networkInterfaces opertion retrieves all the networkInterfaces in a
+    # resource group.
+    #
+    # @param resource_group_name [String] The name of the resource group.
+    # @param custom_headers [Hash{String => String}] A hash of custom headers that
+    # will be added to the HTTP request.
+    #
+    # @return [Array<NetworkInterface>] operation results.
     #
     def list(resource_group_name, custom_headers = nil)
-      response = list_async(resource_group_name, custom_headers).value!
-      response.body unless response.nil?
+      first_page = list_as_lazy(resource_group_name, custom_headers)
+      first_page.get_all_items
     end
 
     #
@@ -890,6 +981,9 @@ module Azure::ARM::Network
     #
     # @param resource_group_name [String] The name of the resource group.
     # @param network_interface_name [String] The name of the network interface.
+    # @param custom_headers [Hash{String => String}] A hash of custom headers that
+    # will be added to the HTTP request.
+    #
     # @return [Concurrent::Promise] promise which provides async access to http
     # response.
     #
@@ -904,8 +998,8 @@ module Azure::ARM::Network
           parsed_response = @client.deserialize(result_mapper, parsed_response, 'parsed_response')
         end
 
-       # Waiting for response.
-       @client.get_long_running_operation_result(response, deserialize_method)
+        # Waiting for response.
+        @client.get_long_running_operation_result(response, deserialize_method)
       end
 
       promise
@@ -920,11 +1014,64 @@ module Azure::ARM::Network
     # @param custom_headers [Hash{String => String}] A hash of custom headers that
     # will be added to the HTTP request.
     #
-    # @return [EffectiveRouteListResult] operation results.
+    # @return [Concurrent::Promise] promise which provides async access to http
+    # response.
+    #
+    def get_effective_route_table(resource_group_name, network_interface_name, custom_headers = nil)
+      # Send request
+      promise = begin_get_effective_route_table_async(resource_group_name, network_interface_name, custom_headers)
+
+      promise = promise.then do |response|
+        # Defining deserialization method.
+        deserialize_method = lambda do |parsed_response|
+          result_mapper = EffectiveRouteListResult.mapper()
+          parsed_response = @client.deserialize(result_mapper, parsed_response, 'parsed_response')
+        end
+
+        # Waiting for response.
+        @client.get_long_running_operation_result(response, deserialize_method)
+      end
+
+      promise
+    end
+
+    #
+    # The get effective routetable operation retrieves all the route tables
+    # applied on a networkInterface.
+    #
+    # @param resource_group_name [String] The name of the resource group.
+    # @param network_interface_name [String] The name of the network interface.
+    # @param custom_headers [Hash{String => String}] A hash of custom headers that
+    # will be added to the HTTP request.
+    #
+    # @return [EffectiveRouteListResult] which provide lazy access to pages of the
+    # response.
+    #
+    def begin_get_effective_route_table_as_lazy(resource_group_name, network_interface_name, custom_headers = nil)
+      response = begin_get_effective_route_table_async(resource_group_name, network_interface_name, custom_headers).value!
+      unless response.nil?
+        page = response.body
+        page.next_method = Proc.new do |next_link|
+          begin_get_effective_route_table_next_async(next_link, custom_headers)
+        end
+        page
+      end
+    end
+
+    #
+    # The get effective routetable operation retrieves all the route tables
+    # applied on a networkInterface.
+    #
+    # @param resource_group_name [String] The name of the resource group.
+    # @param network_interface_name [String] The name of the network interface.
+    # @param custom_headers [Hash{String => String}] A hash of custom headers that
+    # will be added to the HTTP request.
+    #
+    # @return [Array<EffectiveRoute>] operation results.
     #
     def begin_get_effective_route_table(resource_group_name, network_interface_name, custom_headers = nil)
-      response = begin_get_effective_route_table_async(resource_group_name, network_interface_name, custom_headers).value!
-      response.body unless response.nil?
+      first_page = begin_get_effective_route_table_as_lazy(resource_group_name, network_interface_name, custom_headers)
+      first_page.get_all_items
     end
 
     #
@@ -1014,6 +1161,9 @@ module Azure::ARM::Network
     #
     # @param resource_group_name [String] The name of the resource group.
     # @param network_interface_name [String] The name of the network interface.
+    # @param custom_headers [Hash{String => String}] A hash of custom headers that
+    # will be added to the HTTP request.
+    #
     # @return [Concurrent::Promise] promise which provides async access to http
     # response.
     #
@@ -1028,8 +1178,8 @@ module Azure::ARM::Network
           parsed_response = @client.deserialize(result_mapper, parsed_response, 'parsed_response')
         end
 
-       # Waiting for response.
-       @client.get_long_running_operation_result(response, deserialize_method)
+        # Waiting for response.
+        @client.get_long_running_operation_result(response, deserialize_method)
       end
 
       promise
@@ -1044,11 +1194,64 @@ module Azure::ARM::Network
     # @param custom_headers [Hash{String => String}] A hash of custom headers that
     # will be added to the HTTP request.
     #
-    # @return [EffectiveNetworkSecurityGroupListResult] operation results.
+    # @return [Concurrent::Promise] promise which provides async access to http
+    # response.
+    #
+    def list_effective_network_security_groups(resource_group_name, network_interface_name, custom_headers = nil)
+      # Send request
+      promise = begin_list_effective_network_security_groups_async(resource_group_name, network_interface_name, custom_headers)
+
+      promise = promise.then do |response|
+        # Defining deserialization method.
+        deserialize_method = lambda do |parsed_response|
+          result_mapper = EffectiveNetworkSecurityGroupListResult.mapper()
+          parsed_response = @client.deserialize(result_mapper, parsed_response, 'parsed_response')
+        end
+
+        # Waiting for response.
+        @client.get_long_running_operation_result(response, deserialize_method)
+      end
+
+      promise
+    end
+
+    #
+    # The list effective network security group operation retrieves all the
+    # network security groups applied on a networkInterface.
+    #
+    # @param resource_group_name [String] The name of the resource group.
+    # @param network_interface_name [String] The name of the network interface.
+    # @param custom_headers [Hash{String => String}] A hash of custom headers that
+    # will be added to the HTTP request.
+    #
+    # @return [EffectiveNetworkSecurityGroupListResult] which provide lazy access
+    # to pages of the response.
+    #
+    def begin_list_effective_network_security_groups_as_lazy(resource_group_name, network_interface_name, custom_headers = nil)
+      response = begin_list_effective_network_security_groups_async(resource_group_name, network_interface_name, custom_headers).value!
+      unless response.nil?
+        page = response.body
+        page.next_method = Proc.new do |next_link|
+          begin_list_effective_network_security_groups_next_async(next_link, custom_headers)
+        end
+        page
+      end
+    end
+
+    #
+    # The list effective network security group operation retrieves all the
+    # network security groups applied on a networkInterface.
+    #
+    # @param resource_group_name [String] The name of the resource group.
+    # @param network_interface_name [String] The name of the network interface.
+    # @param custom_headers [Hash{String => String}] A hash of custom headers that
+    # will be added to the HTTP request.
+    #
+    # @return [Array<EffectiveNetworkSecurityGroup>] operation results.
     #
     def begin_list_effective_network_security_groups(resource_group_name, network_interface_name, custom_headers = nil)
-      response = begin_list_effective_network_security_groups_async(resource_group_name, network_interface_name, custom_headers).value!
-      response.body unless response.nil?
+      first_page = begin_list_effective_network_security_groups_as_lazy(resource_group_name, network_interface_name, custom_headers)
+      first_page.get_all_items
     end
 
     #
@@ -1510,6 +1713,9 @@ module Azure::ARM::Network
     #
     # @param next_page_link [String] The NextLink from the previous successful
     # call to List operation.
+    # @param custom_headers [Hash{String => String}] A hash of custom headers that
+    # will be added to the HTTP request.
+    #
     # @return [Concurrent::Promise] promise which provides async access to http
     # response.
     #
@@ -1524,8 +1730,8 @@ module Azure::ARM::Network
           parsed_response = @client.deserialize(result_mapper, parsed_response, 'parsed_response')
         end
 
-       # Waiting for response.
-       @client.get_long_running_operation_result(response, deserialize_method)
+        # Waiting for response.
+        @client.get_long_running_operation_result(response, deserialize_method)
       end
 
       promise
@@ -1630,6 +1836,9 @@ module Azure::ARM::Network
     #
     # @param next_page_link [String] The NextLink from the previous successful
     # call to List operation.
+    # @param custom_headers [Hash{String => String}] A hash of custom headers that
+    # will be added to the HTTP request.
+    #
     # @return [Concurrent::Promise] promise which provides async access to http
     # response.
     #
@@ -1644,8 +1853,8 @@ module Azure::ARM::Network
           parsed_response = @client.deserialize(result_mapper, parsed_response, 'parsed_response')
         end
 
-       # Waiting for response.
-       @client.get_long_running_operation_result(response, deserialize_method)
+        # Waiting for response.
+        @client.get_long_running_operation_result(response, deserialize_method)
       end
 
       promise

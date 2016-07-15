@@ -762,11 +762,33 @@ module Azure::ARM::Locks
     # @param custom_headers [Hash{String => String}] A hash of custom headers that
     # will be added to the HTTP request.
     #
-    # @return [ManagementLockListResult] operation results.
+    # @return [ManagementLockListResult] which provide lazy access to pages of the
+    # response.
+    #
+    def list_at_resource_group_level_as_lazy(resource_group_name, filter = nil, custom_headers = nil)
+      response = list_at_resource_group_level_async(resource_group_name, filter, custom_headers).value!
+      unless response.nil?
+        page = response.body
+        page.next_method = Proc.new do |next_link|
+          list_at_resource_group_level_next_async(next_link, custom_headers)
+        end
+        page
+      end
+    end
+
+    #
+    # Gets all the management locks of a resource group.
+    #
+    # @param resource_group_name [String] Resource group name.
+    # @param filter [String] The filter to apply on the operation.
+    # @param custom_headers [Hash{String => String}] A hash of custom headers that
+    # will be added to the HTTP request.
+    #
+    # @return [Array<ManagementLockObject>] operation results.
     #
     def list_at_resource_group_level(resource_group_name, filter = nil, custom_headers = nil)
-      response = list_at_resource_group_level_async(resource_group_name, filter, custom_headers).value!
-      response.body unless response.nil?
+      first_page = list_at_resource_group_level_as_lazy(resource_group_name, filter, custom_headers)
+      first_page.get_all_items
     end
 
     #
@@ -860,11 +882,38 @@ module Azure::ARM::Locks
     # @param custom_headers [Hash{String => String}] A hash of custom headers that
     # will be added to the HTTP request.
     #
-    # @return [ManagementLockListResult] operation results.
+    # @return [ManagementLockListResult] which provide lazy access to pages of the
+    # response.
+    #
+    def list_at_resource_level_as_lazy(resource_group_name, resource_provider_namespace, parent_resource_path, resource_type, resource_name, filter = nil, custom_headers = nil)
+      response = list_at_resource_level_async(resource_group_name, resource_provider_namespace, parent_resource_path, resource_type, resource_name, filter, custom_headers).value!
+      unless response.nil?
+        page = response.body
+        page.next_method = Proc.new do |next_link|
+          list_at_resource_level_next_async(next_link, custom_headers)
+        end
+        page
+      end
+    end
+
+    #
+    # Gets all the management locks of a resource or any level below resource.
+    #
+    # @param resource_group_name [String] The name of the resource group. The name
+    # is case insensitive.
+    # @param resource_provider_namespace [String] Resource identity.
+    # @param parent_resource_path [String] Resource identity.
+    # @param resource_type [String] Resource identity.
+    # @param resource_name [String] Resource identity.
+    # @param filter [String] The filter to apply on the operation.
+    # @param custom_headers [Hash{String => String}] A hash of custom headers that
+    # will be added to the HTTP request.
+    #
+    # @return [Array<ManagementLockObject>] operation results.
     #
     def list_at_resource_level(resource_group_name, resource_provider_namespace, parent_resource_path, resource_type, resource_name, filter = nil, custom_headers = nil)
-      response = list_at_resource_level_async(resource_group_name, resource_provider_namespace, parent_resource_path, resource_type, resource_name, filter, custom_headers).value!
-      response.body unless response.nil?
+      first_page = list_at_resource_level_as_lazy(resource_group_name, resource_provider_namespace, parent_resource_path, resource_type, resource_name, filter, custom_headers)
+      first_page.get_all_items
     end
 
     #
@@ -968,11 +1017,33 @@ module Azure::ARM::Locks
     # @param custom_headers [Hash{String => String}] A hash of custom headers that
     # will be added to the HTTP request.
     #
-    # @return [ManagementLockListResult] operation results.
+    # @return [ManagementLockListResult] which provide lazy access to pages of the
+    # response.
+    #
+    def list_next_as_lazy(next_link, custom_headers = nil)
+      response = list_next_async(next_link, custom_headers).value!
+      unless response.nil?
+        page = response.body
+        page.next_method = Proc.new do |next_link|
+          list_next_next_async(next_link, custom_headers)
+        end
+        page
+      end
+    end
+
+    #
+    # Get a list of management locks at resource level or below.
+    #
+    # @param next_link [String] NextLink from the previous successful call to List
+    # operation.
+    # @param custom_headers [Hash{String => String}] A hash of custom headers that
+    # will be added to the HTTP request.
+    #
+    # @return [Array<ManagementLockObject>] operation results.
     #
     def list_next(next_link, custom_headers = nil)
-      response = list_next_async(next_link, custom_headers).value!
-      response.body unless response.nil?
+      first_page = list_next_as_lazy(next_link, custom_headers)
+      first_page.get_all_items
     end
 
     #
@@ -1059,11 +1130,32 @@ module Azure::ARM::Locks
     # @param custom_headers [Hash{String => String}] A hash of custom headers that
     # will be added to the HTTP request.
     #
-    # @return [ManagementLockListResult] operation results.
+    # @return [ManagementLockListResult] which provide lazy access to pages of the
+    # response.
+    #
+    def list_at_subscription_level_as_lazy(filter = nil, custom_headers = nil)
+      response = list_at_subscription_level_async(filter, custom_headers).value!
+      unless response.nil?
+        page = response.body
+        page.next_method = Proc.new do |next_link|
+          list_at_subscription_level_next_async(next_link, custom_headers)
+        end
+        page
+      end
+    end
+
+    #
+    # Gets all the management locks of a subscription.
+    #
+    # @param filter [String] The filter to apply on the operation.
+    # @param custom_headers [Hash{String => String}] A hash of custom headers that
+    # will be added to the HTTP request.
+    #
+    # @return [Array<ManagementLockObject>] operation results.
     #
     def list_at_subscription_level(filter = nil, custom_headers = nil)
-      response = list_at_subscription_level_async(filter, custom_headers).value!
-      response.body unless response.nil?
+      first_page = list_at_subscription_level_as_lazy(filter, custom_headers)
+      first_page.get_all_items
     end
 
     #

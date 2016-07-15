@@ -692,11 +692,53 @@ module Azure::ARM::DataLakeAnalytics::Catalog
     # @param custom_headers [Hash{String => String}] A hash of custom headers that
     # will be added to the HTTP request.
     #
-    # @return [USqlExternalDataSourceList] operation results.
+    # @return [USqlExternalDataSourceList] which provide lazy access to pages of
+    # the response.
+    #
+    def list_external_data_sources_as_lazy(account_name, database_name, filter = nil, top = nil, skip = nil, expand = nil, select = nil, orderby = nil, count = nil, custom_headers = nil)
+      response = list_external_data_sources_async(account_name, database_name, filter, top, skip, expand, select, orderby, count, custom_headers).value!
+      unless response.nil?
+        page = response.body
+        page.next_method = Proc.new do |next_link|
+          list_external_data_sources_next_async(next_link, custom_headers)
+        end
+        page
+      end
+    end
+
+    #
+    # Retrieves the list of external data sources from the Data Lake Analytics
+    # catalog.
+    #
+    # @param account_name [String] The Azure Data Lake Analytics account to
+    # execute catalog operations on.
+    # @param database_name [String] The name of the database containing the
+    # external data sources.
+    # @param filter [String] OData filter. Optional.
+    # @param top [Integer] The number of items to return. Optional.
+    # @param skip [Integer] The number of items to skip over before returning
+    # elements. Optional.
+    # @param expand [String] OData expansion. Expand related resources in line
+    # with the retrieved resources, e.g. Categories?$expand=Products would expand
+    # Product data in line with each Category entry. Optional.
+    # @param select [String] OData Select statement. Limits the properties on each
+    # entry to just those requested, e.g.
+    # Categories?$select=CategoryName,Description. Optional.
+    # @param orderby [String] OrderBy clause. One or more comma-separated
+    # expressions with an optional "asc" (the default) or "desc" depending on the
+    # order you'd like the values sorted, e.g. Categories?$orderby=CategoryName
+    # desc. Optional.
+    # @param count [Boolean] The Boolean value of true or false to request a count
+    # of the matching resources included with the resources in the response, e.g.
+    # Categories?$count=true. Optional.
+    # @param custom_headers [Hash{String => String}] A hash of custom headers that
+    # will be added to the HTTP request.
+    #
+    # @return [Array<USqlExternalDataSource>] operation results.
     #
     def list_external_data_sources(account_name, database_name, filter = nil, top = nil, skip = nil, expand = nil, select = nil, orderby = nil, count = nil, custom_headers = nil)
-      response = list_external_data_sources_async(account_name, database_name, filter, top, skip, expand, select, orderby, count, custom_headers).value!
-      response.body unless response.nil?
+      first_page = list_external_data_sources_as_lazy(account_name, database_name, filter, top, skip, expand, select, orderby, count, custom_headers)
+      first_page.get_all_items
     end
 
     #
@@ -949,11 +991,51 @@ module Azure::ARM::DataLakeAnalytics::Catalog
     # @param custom_headers [Hash{String => String}] A hash of custom headers that
     # will be added to the HTTP request.
     #
-    # @return [USqlCredentialList] operation results.
+    # @return [USqlCredentialList] which provide lazy access to pages of the
+    # response.
+    #
+    def list_credentials_as_lazy(account_name, database_name, filter = nil, top = nil, skip = nil, expand = nil, select = nil, orderby = nil, count = nil, custom_headers = nil)
+      response = list_credentials_async(account_name, database_name, filter, top, skip, expand, select, orderby, count, custom_headers).value!
+      unless response.nil?
+        page = response.body
+        page.next_method = Proc.new do |next_link|
+          list_credentials_next_async(next_link, custom_headers)
+        end
+        page
+      end
+    end
+
+    #
+    # Retrieves the list of credentials from the Data Lake Analytics catalog.
+    #
+    # @param account_name [String] The Azure Data Lake Analytics account to
+    # execute catalog operations on.
+    # @param database_name [String] The name of the database containing the schema.
+    # @param filter [String] OData filter. Optional.
+    # @param top [Integer] The number of items to return. Optional.
+    # @param skip [Integer] The number of items to skip over before returning
+    # elements. Optional.
+    # @param expand [String] OData expansion. Expand related resources in line
+    # with the retrieved resources, e.g. Categories?$expand=Products would expand
+    # Product data in line with each Category entry. Optional.
+    # @param select [String] OData Select statement. Limits the properties on each
+    # entry to just those requested, e.g.
+    # Categories?$select=CategoryName,Description. Optional.
+    # @param orderby [String] OrderBy clause. One or more comma-separated
+    # expressions with an optional "asc" (the default) or "desc" depending on the
+    # order you'd like the values sorted, e.g. Categories?$orderby=CategoryName
+    # desc. Optional.
+    # @param count [Boolean] The Boolean value of true or false to request a count
+    # of the matching resources included with the resources in the response, e.g.
+    # Categories?$count=true. Optional.
+    # @param custom_headers [Hash{String => String}] A hash of custom headers that
+    # will be added to the HTTP request.
+    #
+    # @return [Array<USqlCredential>] operation results.
     #
     def list_credentials(account_name, database_name, filter = nil, top = nil, skip = nil, expand = nil, select = nil, orderby = nil, count = nil, custom_headers = nil)
-      response = list_credentials_async(account_name, database_name, filter, top, skip, expand, select, orderby, count, custom_headers).value!
-      response.body unless response.nil?
+      first_page = list_credentials_as_lazy(account_name, database_name, filter, top, skip, expand, select, orderby, count, custom_headers)
+      first_page.get_all_items
     end
 
     #
@@ -1211,11 +1293,53 @@ module Azure::ARM::DataLakeAnalytics::Catalog
     # @param custom_headers [Hash{String => String}] A hash of custom headers that
     # will be added to the HTTP request.
     #
-    # @return [USqlProcedureList] operation results.
+    # @return [USqlProcedureList] which provide lazy access to pages of the
+    # response.
+    #
+    def list_procedures_as_lazy(account_name, database_name, schema_name, filter = nil, top = nil, skip = nil, expand = nil, select = nil, orderby = nil, count = nil, custom_headers = nil)
+      response = list_procedures_async(account_name, database_name, schema_name, filter, top, skip, expand, select, orderby, count, custom_headers).value!
+      unless response.nil?
+        page = response.body
+        page.next_method = Proc.new do |next_link|
+          list_procedures_next_async(next_link, custom_headers)
+        end
+        page
+      end
+    end
+
+    #
+    # Retrieves the list of procedures from the Data Lake Analytics catalog.
+    #
+    # @param account_name [String] The Azure Data Lake Analytics account to
+    # execute catalog operations on.
+    # @param database_name [String] The name of the database containing the
+    # procedures.
+    # @param schema_name [String] The name of the schema containing the procedures.
+    # @param filter [String] OData filter. Optional.
+    # @param top [Integer] The number of items to return. Optional.
+    # @param skip [Integer] The number of items to skip over before returning
+    # elements. Optional.
+    # @param expand [String] OData expansion. Expand related resources in line
+    # with the retrieved resources, e.g. Categories?$expand=Products would expand
+    # Product data in line with each Category entry. Optional.
+    # @param select [String] OData Select statement. Limits the properties on each
+    # entry to just those requested, e.g.
+    # Categories?$select=CategoryName,Description. Optional.
+    # @param orderby [String] OrderBy clause. One or more comma-separated
+    # expressions with an optional "asc" (the default) or "desc" depending on the
+    # order you'd like the values sorted, e.g. Categories?$orderby=CategoryName
+    # desc. Optional.
+    # @param count [Boolean] The Boolean value of true or false to request a count
+    # of the matching resources included with the resources in the response, e.g.
+    # Categories?$count=true. Optional.
+    # @param custom_headers [Hash{String => String}] A hash of custom headers that
+    # will be added to the HTTP request.
+    #
+    # @return [Array<USqlProcedure>] operation results.
     #
     def list_procedures(account_name, database_name, schema_name, filter = nil, top = nil, skip = nil, expand = nil, select = nil, orderby = nil, count = nil, custom_headers = nil)
-      response = list_procedures_async(account_name, database_name, schema_name, filter, top, skip, expand, select, orderby, count, custom_headers).value!
-      response.body unless response.nil?
+      first_page = list_procedures_as_lazy(account_name, database_name, schema_name, filter, top, skip, expand, select, orderby, count, custom_headers)
+      first_page.get_all_items
     end
 
     #
@@ -1474,11 +1598,51 @@ module Azure::ARM::DataLakeAnalytics::Catalog
     # @param custom_headers [Hash{String => String}] A hash of custom headers that
     # will be added to the HTTP request.
     #
-    # @return [USqlTableList] operation results.
+    # @return [USqlTableList] which provide lazy access to pages of the response.
+    #
+    def list_tables_as_lazy(account_name, database_name, schema_name, filter = nil, top = nil, skip = nil, expand = nil, select = nil, orderby = nil, count = nil, custom_headers = nil)
+      response = list_tables_async(account_name, database_name, schema_name, filter, top, skip, expand, select, orderby, count, custom_headers).value!
+      unless response.nil?
+        page = response.body
+        page.next_method = Proc.new do |next_link|
+          list_tables_next_async(next_link, custom_headers)
+        end
+        page
+      end
+    end
+
+    #
+    # Retrieves the list of tables from the Data Lake Analytics catalog.
+    #
+    # @param account_name [String] The Azure Data Lake Analytics account to
+    # execute catalog operations on.
+    # @param database_name [String] The name of the database containing the tables.
+    # @param schema_name [String] The name of the schema containing the tables.
+    # @param filter [String] OData filter. Optional.
+    # @param top [Integer] The number of items to return. Optional.
+    # @param skip [Integer] The number of items to skip over before returning
+    # elements. Optional.
+    # @param expand [String] OData expansion. Expand related resources in line
+    # with the retrieved resources, e.g. Categories?$expand=Products would expand
+    # Product data in line with each Category entry. Optional.
+    # @param select [String] OData Select statement. Limits the properties on each
+    # entry to just those requested, e.g.
+    # Categories?$select=CategoryName,Description. Optional.
+    # @param orderby [String] OrderBy clause. One or more comma-separated
+    # expressions with an optional "asc" (the default) or "desc" depending on the
+    # order you'd like the values sorted, e.g. Categories?$orderby=CategoryName
+    # desc. Optional.
+    # @param count [Boolean] The Boolean value of true or false to request a count
+    # of the matching resources included with the resources in the response, e.g.
+    # Categories?$count=true. Optional.
+    # @param custom_headers [Hash{String => String}] A hash of custom headers that
+    # will be added to the HTTP request.
+    #
+    # @return [Array<USqlTable>] operation results.
     #
     def list_tables(account_name, database_name, schema_name, filter = nil, top = nil, skip = nil, expand = nil, select = nil, orderby = nil, count = nil, custom_headers = nil)
-      response = list_tables_async(account_name, database_name, schema_name, filter, top, skip, expand, select, orderby, count, custom_headers).value!
-      response.body unless response.nil?
+      first_page = list_tables_as_lazy(account_name, database_name, schema_name, filter, top, skip, expand, select, orderby, count, custom_headers)
+      first_page.get_all_items
     end
 
     #
@@ -1740,11 +1904,54 @@ module Azure::ARM::DataLakeAnalytics::Catalog
     # @param custom_headers [Hash{String => String}] A hash of custom headers that
     # will be added to the HTTP request.
     #
-    # @return [USqlTableTypeList] operation results.
+    # @return [USqlTableTypeList] which provide lazy access to pages of the
+    # response.
+    #
+    def list_table_types_as_lazy(account_name, database_name, schema_name, filter = nil, top = nil, skip = nil, expand = nil, select = nil, orderby = nil, count = nil, custom_headers = nil)
+      response = list_table_types_async(account_name, database_name, schema_name, filter, top, skip, expand, select, orderby, count, custom_headers).value!
+      unless response.nil?
+        page = response.body
+        page.next_method = Proc.new do |next_link|
+          list_table_types_next_async(next_link, custom_headers)
+        end
+        page
+      end
+    end
+
+    #
+    # Retrieves the list of table types from the Data Lake Analytics catalog.
+    #
+    # @param account_name [String] The Azure Data Lake Analytics account to
+    # execute catalog operations on.
+    # @param database_name [String] The name of the database containing the table
+    # types.
+    # @param schema_name [String] The name of the schema containing the table
+    # types.
+    # @param filter [String] OData filter. Optional.
+    # @param top [Integer] The number of items to return. Optional.
+    # @param skip [Integer] The number of items to skip over before returning
+    # elements. Optional.
+    # @param expand [String] OData expansion. Expand related resources in line
+    # with the retrieved resources, e.g. Categories?$expand=Products would expand
+    # Product data in line with each Category entry. Optional.
+    # @param select [String] OData Select statement. Limits the properties on each
+    # entry to just those requested, e.g.
+    # Categories?$select=CategoryName,Description. Optional.
+    # @param orderby [String] OrderBy clause. One or more comma-separated
+    # expressions with an optional "asc" (the default) or "desc" depending on the
+    # order you'd like the values sorted, e.g. Categories?$orderby=CategoryName
+    # desc. Optional.
+    # @param count [Boolean] The Boolean value of true or false to request a count
+    # of the matching resources included with the resources in the response, e.g.
+    # Categories?$count=true. Optional.
+    # @param custom_headers [Hash{String => String}] A hash of custom headers that
+    # will be added to the HTTP request.
+    #
+    # @return [Array<USqlTableType>] operation results.
     #
     def list_table_types(account_name, database_name, schema_name, filter = nil, top = nil, skip = nil, expand = nil, select = nil, orderby = nil, count = nil, custom_headers = nil)
-      response = list_table_types_async(account_name, database_name, schema_name, filter, top, skip, expand, select, orderby, count, custom_headers).value!
-      response.body unless response.nil?
+      first_page = list_table_types_as_lazy(account_name, database_name, schema_name, filter, top, skip, expand, select, orderby, count, custom_headers)
+      first_page.get_all_items
     end
 
     #
@@ -2005,11 +2212,51 @@ module Azure::ARM::DataLakeAnalytics::Catalog
     # @param custom_headers [Hash{String => String}] A hash of custom headers that
     # will be added to the HTTP request.
     #
-    # @return [USqlViewList] operation results.
+    # @return [USqlViewList] which provide lazy access to pages of the response.
+    #
+    def list_views_as_lazy(account_name, database_name, schema_name, filter = nil, top = nil, skip = nil, expand = nil, select = nil, orderby = nil, count = nil, custom_headers = nil)
+      response = list_views_async(account_name, database_name, schema_name, filter, top, skip, expand, select, orderby, count, custom_headers).value!
+      unless response.nil?
+        page = response.body
+        page.next_method = Proc.new do |next_link|
+          list_views_next_async(next_link, custom_headers)
+        end
+        page
+      end
+    end
+
+    #
+    # Retrieves the list of views from the Data Lake Analytics catalog.
+    #
+    # @param account_name [String] The Azure Data Lake Analytics account to
+    # execute catalog operations on.
+    # @param database_name [String] The name of the database containing the views.
+    # @param schema_name [String] The name of the schema containing the views.
+    # @param filter [String] OData filter. Optional.
+    # @param top [Integer] The number of items to return. Optional.
+    # @param skip [Integer] The number of items to skip over before returning
+    # elements. Optional.
+    # @param expand [String] OData expansion. Expand related resources in line
+    # with the retrieved resources, e.g. Categories?$expand=Products would expand
+    # Product data in line with each Category entry. Optional.
+    # @param select [String] OData Select statement. Limits the properties on each
+    # entry to just those requested, e.g.
+    # Categories?$select=CategoryName,Description. Optional.
+    # @param orderby [String] OrderBy clause. One or more comma-separated
+    # expressions with an optional "asc" (the default) or "desc" depending on the
+    # order you'd like the values sorted, e.g. Categories?$orderby=CategoryName
+    # desc. Optional.
+    # @param count [Boolean] The Boolean value of true or false to request a count
+    # of the matching resources included with the resources in the response, e.g.
+    # Categories?$count=true. Optional.
+    # @param custom_headers [Hash{String => String}] A hash of custom headers that
+    # will be added to the HTTP request.
+    #
+    # @return [Array<USqlView>] operation results.
     #
     def list_views(account_name, database_name, schema_name, filter = nil, top = nil, skip = nil, expand = nil, select = nil, orderby = nil, count = nil, custom_headers = nil)
-      response = list_views_async(account_name, database_name, schema_name, filter, top, skip, expand, select, orderby, count, custom_headers).value!
-      response.body unless response.nil?
+      first_page = list_views_as_lazy(account_name, database_name, schema_name, filter, top, skip, expand, select, orderby, count, custom_headers)
+      first_page.get_all_items
     end
 
     #
@@ -2278,11 +2525,54 @@ module Azure::ARM::DataLakeAnalytics::Catalog
     # @param custom_headers [Hash{String => String}] A hash of custom headers that
     # will be added to the HTTP request.
     #
-    # @return [USqlTableStatisticsList] operation results.
+    # @return [USqlTableStatisticsList] which provide lazy access to pages of the
+    # response.
+    #
+    def list_table_statistics_as_lazy(account_name, database_name, schema_name, table_name, filter = nil, top = nil, skip = nil, expand = nil, select = nil, orderby = nil, count = nil, custom_headers = nil)
+      response = list_table_statistics_async(account_name, database_name, schema_name, table_name, filter, top, skip, expand, select, orderby, count, custom_headers).value!
+      unless response.nil?
+        page = response.body
+        page.next_method = Proc.new do |next_link|
+          list_table_statistics_next_async(next_link, custom_headers)
+        end
+        page
+      end
+    end
+
+    #
+    # Retrieves the list of table statistics from the Data Lake Analytics catalog.
+    #
+    # @param account_name [String] The Azure Data Lake Analytics account to
+    # execute catalog operations on.
+    # @param database_name [String] The name of the database containing the
+    # statistics.
+    # @param schema_name [String] The name of the schema containing the statistics.
+    # @param table_name [String] The name of the table containing the statistics.
+    # @param filter [String] OData filter. Optional.
+    # @param top [Integer] The number of items to return. Optional.
+    # @param skip [Integer] The number of items to skip over before returning
+    # elements. Optional.
+    # @param expand [String] OData expansion. Expand related resources in line
+    # with the retrieved resources, e.g. Categories?$expand=Products would expand
+    # Product data in line with each Category entry. Optional.
+    # @param select [String] OData Select statement. Limits the properties on each
+    # entry to just those requested, e.g.
+    # Categories?$select=CategoryName,Description. Optional.
+    # @param orderby [String] OrderBy clause. One or more comma-separated
+    # expressions with an optional "asc" (the default) or "desc" depending on the
+    # order you'd like the values sorted, e.g. Categories?$orderby=CategoryName
+    # desc. Optional.
+    # @param count [Boolean] The Boolean value of true or false to request a count
+    # of the matching resources included with the resources in the response, e.g.
+    # Categories?$count=true. Optional.
+    # @param custom_headers [Hash{String => String}] A hash of custom headers that
+    # will be added to the HTTP request.
+    #
+    # @return [Array<USqlTableStatistics>] operation results.
     #
     def list_table_statistics(account_name, database_name, schema_name, table_name, filter = nil, top = nil, skip = nil, expand = nil, select = nil, orderby = nil, count = nil, custom_headers = nil)
-      response = list_table_statistics_async(account_name, database_name, schema_name, table_name, filter, top, skip, expand, select, orderby, count, custom_headers).value!
-      response.body unless response.nil?
+      first_page = list_table_statistics_as_lazy(account_name, database_name, schema_name, table_name, filter, top, skip, expand, select, orderby, count, custom_headers)
+      first_page.get_all_items
     end
 
     #
@@ -2553,11 +2843,54 @@ module Azure::ARM::DataLakeAnalytics::Catalog
     # @param custom_headers [Hash{String => String}] A hash of custom headers that
     # will be added to the HTTP request.
     #
-    # @return [USqlTablePartitionList] operation results.
+    # @return [USqlTablePartitionList] which provide lazy access to pages of the
+    # response.
+    #
+    def list_table_partitions_as_lazy(account_name, database_name, schema_name, table_name, filter = nil, top = nil, skip = nil, expand = nil, select = nil, orderby = nil, count = nil, custom_headers = nil)
+      response = list_table_partitions_async(account_name, database_name, schema_name, table_name, filter, top, skip, expand, select, orderby, count, custom_headers).value!
+      unless response.nil?
+        page = response.body
+        page.next_method = Proc.new do |next_link|
+          list_table_partitions_next_async(next_link, custom_headers)
+        end
+        page
+      end
+    end
+
+    #
+    # Retrieves the list of table partitions from the Data Lake Analytics catalog.
+    #
+    # @param account_name [String] The Azure Data Lake Analytics account to
+    # execute catalog operations on.
+    # @param database_name [String] The name of the database containing the
+    # partitions.
+    # @param schema_name [String] The name of the schema containing the partitions.
+    # @param table_name [String] The name of the table containing the partitions.
+    # @param filter [String] OData filter. Optional.
+    # @param top [Integer] The number of items to return. Optional.
+    # @param skip [Integer] The number of items to skip over before returning
+    # elements. Optional.
+    # @param expand [String] OData expansion. Expand related resources in line
+    # with the retrieved resources, e.g. Categories?$expand=Products would expand
+    # Product data in line with each Category entry. Optional.
+    # @param select [String] OData Select statement. Limits the properties on each
+    # entry to just those requested, e.g.
+    # Categories?$select=CategoryName,Description. Optional.
+    # @param orderby [String] OrderBy clause. One or more comma-separated
+    # expressions with an optional "asc" (the default) or "desc" depending on the
+    # order you'd like the values sorted, e.g. Categories?$orderby=CategoryName
+    # desc. Optional.
+    # @param count [Boolean] The Boolean value of true or false to request a count
+    # of the matching resources included with the resources in the response, e.g.
+    # Categories?$count=true. Optional.
+    # @param custom_headers [Hash{String => String}] A hash of custom headers that
+    # will be added to the HTTP request.
+    #
+    # @return [Array<USqlTablePartition>] operation results.
     #
     def list_table_partitions(account_name, database_name, schema_name, table_name, filter = nil, top = nil, skip = nil, expand = nil, select = nil, orderby = nil, count = nil, custom_headers = nil)
-      response = list_table_partitions_async(account_name, database_name, schema_name, table_name, filter, top, skip, expand, select, orderby, count, custom_headers).value!
-      response.body unless response.nil?
+      first_page = list_table_partitions_as_lazy(account_name, database_name, schema_name, table_name, filter, top, skip, expand, select, orderby, count, custom_headers)
+      first_page.get_all_items
     end
 
     #
@@ -2713,11 +3046,52 @@ module Azure::ARM::DataLakeAnalytics::Catalog
     # @param custom_headers [Hash{String => String}] A hash of custom headers that
     # will be added to the HTTP request.
     #
-    # @return [USqlTypeList] operation results.
+    # @return [USqlTypeList] which provide lazy access to pages of the response.
+    #
+    def list_types_as_lazy(account_name, database_name, schema_name, filter = nil, top = nil, skip = nil, expand = nil, select = nil, orderby = nil, count = nil, custom_headers = nil)
+      response = list_types_async(account_name, database_name, schema_name, filter, top, skip, expand, select, orderby, count, custom_headers).value!
+      unless response.nil?
+        page = response.body
+        page.next_method = Proc.new do |next_link|
+          list_types_next_async(next_link, custom_headers)
+        end
+        page
+      end
+    end
+
+    #
+    # Retrieves the list of types within the specified database and schema from
+    # the Data Lake Analytics catalog.
+    #
+    # @param account_name [String] The Azure Data Lake Analytics account to
+    # execute catalog operations on.
+    # @param database_name [String] The name of the database containing the types.
+    # @param schema_name [String] The name of the schema containing the types.
+    # @param filter [String] OData filter. Optional.
+    # @param top [Integer] The number of items to return. Optional.
+    # @param skip [Integer] The number of items to skip over before returning
+    # elements. Optional.
+    # @param expand [String] OData expansion. Expand related resources in line
+    # with the retrieved resources, e.g. Categories?$expand=Products would expand
+    # Product data in line with each Category entry. Optional.
+    # @param select [String] OData Select statement. Limits the properties on each
+    # entry to just those requested, e.g.
+    # Categories?$select=CategoryName,Description. Optional.
+    # @param orderby [String] OrderBy clause. One or more comma-separated
+    # expressions with an optional "asc" (the default) or "desc" depending on the
+    # order you'd like the values sorted, e.g. Categories?$orderby=CategoryName
+    # desc. Optional.
+    # @param count [Boolean] The Boolean value of true or false to request a count
+    # of the matching resources included with the resources in the response, e.g.
+    # Categories?$count=true. Optional.
+    # @param custom_headers [Hash{String => String}] A hash of custom headers that
+    # will be added to the HTTP request.
+    #
+    # @return [Array<USqlType>] operation results.
     #
     def list_types(account_name, database_name, schema_name, filter = nil, top = nil, skip = nil, expand = nil, select = nil, orderby = nil, count = nil, custom_headers = nil)
-      response = list_types_async(account_name, database_name, schema_name, filter, top, skip, expand, select, orderby, count, custom_headers).value!
-      response.body unless response.nil?
+      first_page = list_types_as_lazy(account_name, database_name, schema_name, filter, top, skip, expand, select, orderby, count, custom_headers)
+      first_page.get_all_items
     end
 
     #
@@ -2991,11 +3365,55 @@ module Azure::ARM::DataLakeAnalytics::Catalog
     # @param custom_headers [Hash{String => String}] A hash of custom headers that
     # will be added to the HTTP request.
     #
-    # @return [USqlTableValuedFunctionList] operation results.
+    # @return [USqlTableValuedFunctionList] which provide lazy access to pages of
+    # the response.
+    #
+    def list_table_valued_functions_as_lazy(account_name, database_name, schema_name, filter = nil, top = nil, skip = nil, expand = nil, select = nil, orderby = nil, count = nil, custom_headers = nil)
+      response = list_table_valued_functions_async(account_name, database_name, schema_name, filter, top, skip, expand, select, orderby, count, custom_headers).value!
+      unless response.nil?
+        page = response.body
+        page.next_method = Proc.new do |next_link|
+          list_table_valued_functions_next_async(next_link, custom_headers)
+        end
+        page
+      end
+    end
+
+    #
+    # Retrieves the list of table valued functions from the Data Lake Analytics
+    # catalog.
+    #
+    # @param account_name [String] The Azure Data Lake Analytics account to
+    # execute catalog operations on.
+    # @param database_name [String] The name of the database containing the table
+    # valued functions.
+    # @param schema_name [String] The name of the schema containing the table
+    # valued functions.
+    # @param filter [String] OData filter. Optional.
+    # @param top [Integer] The number of items to return. Optional.
+    # @param skip [Integer] The number of items to skip over before returning
+    # elements. Optional.
+    # @param expand [String] OData expansion. Expand related resources in line
+    # with the retrieved resources, e.g. Categories?$expand=Products would expand
+    # Product data in line with each Category entry. Optional.
+    # @param select [String] OData Select statement. Limits the properties on each
+    # entry to just those requested, e.g.
+    # Categories?$select=CategoryName,Description. Optional.
+    # @param orderby [String] OrderBy clause. One or more comma-separated
+    # expressions with an optional "asc" (the default) or "desc" depending on the
+    # order you'd like the values sorted, e.g. Categories?$orderby=CategoryName
+    # desc. Optional.
+    # @param count [Boolean] The Boolean value of true or false to request a count
+    # of the matching resources included with the resources in the response, e.g.
+    # Categories?$count=true. Optional.
+    # @param custom_headers [Hash{String => String}] A hash of custom headers that
+    # will be added to the HTTP request.
+    #
+    # @return [Array<USqlTableValuedFunction>] operation results.
     #
     def list_table_valued_functions(account_name, database_name, schema_name, filter = nil, top = nil, skip = nil, expand = nil, select = nil, orderby = nil, count = nil, custom_headers = nil)
-      response = list_table_valued_functions_async(account_name, database_name, schema_name, filter, top, skip, expand, select, orderby, count, custom_headers).value!
-      response.body unless response.nil?
+      first_page = list_table_valued_functions_as_lazy(account_name, database_name, schema_name, filter, top, skip, expand, select, orderby, count, custom_headers)
+      first_page.get_all_items
     end
 
     #
@@ -3257,11 +3675,52 @@ module Azure::ARM::DataLakeAnalytics::Catalog
     # @param custom_headers [Hash{String => String}] A hash of custom headers that
     # will be added to the HTTP request.
     #
-    # @return [USqlAssemblyList] operation results.
+    # @return [USqlAssemblyList] which provide lazy access to pages of the
+    # response.
+    #
+    def list_assemblies_as_lazy(account_name, database_name, filter = nil, top = nil, skip = nil, expand = nil, select = nil, orderby = nil, count = nil, custom_headers = nil)
+      response = list_assemblies_async(account_name, database_name, filter, top, skip, expand, select, orderby, count, custom_headers).value!
+      unless response.nil?
+        page = response.body
+        page.next_method = Proc.new do |next_link|
+          list_assemblies_next_async(next_link, custom_headers)
+        end
+        page
+      end
+    end
+
+    #
+    # Retrieves the list of assemblies from the Data Lake Analytics catalog.
+    #
+    # @param account_name [String] The Azure Data Lake Analytics account to
+    # execute catalog operations on.
+    # @param database_name [String] The name of the database containing the
+    # assembly.
+    # @param filter [String] OData filter. Optional.
+    # @param top [Integer] The number of items to return. Optional.
+    # @param skip [Integer] The number of items to skip over before returning
+    # elements. Optional.
+    # @param expand [String] OData expansion. Expand related resources in line
+    # with the retrieved resources, e.g. Categories?$expand=Products would expand
+    # Product data in line with each Category entry. Optional.
+    # @param select [String] OData Select statement. Limits the properties on each
+    # entry to just those requested, e.g.
+    # Categories?$select=CategoryName,Description. Optional.
+    # @param orderby [String] OrderBy clause. One or more comma-separated
+    # expressions with an optional "asc" (the default) or "desc" depending on the
+    # order you'd like the values sorted, e.g. Categories?$orderby=CategoryName
+    # desc. Optional.
+    # @param count [Boolean] The Boolean value of true or false to request a count
+    # of the matching resources included with the resources in the response, e.g.
+    # Categories?$count=true. Optional.
+    # @param custom_headers [Hash{String => String}] A hash of custom headers that
+    # will be added to the HTTP request.
+    #
+    # @return [Array<USqlAssemblyClr>] operation results.
     #
     def list_assemblies(account_name, database_name, filter = nil, top = nil, skip = nil, expand = nil, select = nil, orderby = nil, count = nil, custom_headers = nil)
-      response = list_assemblies_async(account_name, database_name, filter, top, skip, expand, select, orderby, count, custom_headers).value!
-      response.body unless response.nil?
+      first_page = list_assemblies_as_lazy(account_name, database_name, filter, top, skip, expand, select, orderby, count, custom_headers)
+      first_page.get_all_items
     end
 
     #
@@ -3512,11 +3971,50 @@ module Azure::ARM::DataLakeAnalytics::Catalog
     # @param custom_headers [Hash{String => String}] A hash of custom headers that
     # will be added to the HTTP request.
     #
-    # @return [USqlSchemaList] operation results.
+    # @return [USqlSchemaList] which provide lazy access to pages of the response.
+    #
+    def list_schemas_as_lazy(account_name, database_name, filter = nil, top = nil, skip = nil, expand = nil, select = nil, orderby = nil, count = nil, custom_headers = nil)
+      response = list_schemas_async(account_name, database_name, filter, top, skip, expand, select, orderby, count, custom_headers).value!
+      unless response.nil?
+        page = response.body
+        page.next_method = Proc.new do |next_link|
+          list_schemas_next_async(next_link, custom_headers)
+        end
+        page
+      end
+    end
+
+    #
+    # Retrieves the list of schemas from the Data Lake Analytics catalog.
+    #
+    # @param account_name [String] The Azure Data Lake Analytics account to
+    # execute catalog operations on.
+    # @param database_name [String] The name of the database containing the schema.
+    # @param filter [String] OData filter. Optional.
+    # @param top [Integer] The number of items to return. Optional.
+    # @param skip [Integer] The number of items to skip over before returning
+    # elements. Optional.
+    # @param expand [String] OData expansion. Expand related resources in line
+    # with the retrieved resources, e.g. Categories?$expand=Products would expand
+    # Product data in line with each Category entry. Optional.
+    # @param select [String] OData Select statement. Limits the properties on each
+    # entry to just those requested, e.g.
+    # Categories?$select=CategoryName,Description. Optional.
+    # @param orderby [String] OrderBy clause. One or more comma-separated
+    # expressions with an optional "asc" (the default) or "desc" depending on the
+    # order you'd like the values sorted, e.g. Categories?$orderby=CategoryName
+    # desc. Optional.
+    # @param count [Boolean] The Boolean value of true or false to request a count
+    # of the matching resources included with the resources in the response, e.g.
+    # Categories?$count=true. Optional.
+    # @param custom_headers [Hash{String => String}] A hash of custom headers that
+    # will be added to the HTTP request.
+    #
+    # @return [Array<USqlSchema>] operation results.
     #
     def list_schemas(account_name, database_name, filter = nil, top = nil, skip = nil, expand = nil, select = nil, orderby = nil, count = nil, custom_headers = nil)
-      response = list_schemas_async(account_name, database_name, filter, top, skip, expand, select, orderby, count, custom_headers).value!
-      response.body unless response.nil?
+      first_page = list_schemas_as_lazy(account_name, database_name, filter, top, skip, expand, select, orderby, count, custom_headers)
+      first_page.get_all_items
     end
 
     #
@@ -3760,11 +4258,50 @@ module Azure::ARM::DataLakeAnalytics::Catalog
     # @param custom_headers [Hash{String => String}] A hash of custom headers that
     # will be added to the HTTP request.
     #
-    # @return [USqlDatabaseList] operation results.
+    # @return [USqlDatabaseList] which provide lazy access to pages of the
+    # response.
+    #
+    def list_databases_as_lazy(account_name, filter = nil, top = nil, skip = nil, expand = nil, select = nil, orderby = nil, count = nil, custom_headers = nil)
+      response = list_databases_async(account_name, filter, top, skip, expand, select, orderby, count, custom_headers).value!
+      unless response.nil?
+        page = response.body
+        page.next_method = Proc.new do |next_link|
+          list_databases_next_async(next_link, custom_headers)
+        end
+        page
+      end
+    end
+
+    #
+    # Retrieves the list of databases from the Data Lake Analytics catalog.
+    #
+    # @param account_name [String] The Azure Data Lake Analytics account to
+    # execute catalog operations on.
+    # @param filter [String] OData filter. Optional.
+    # @param top [Integer] The number of items to return. Optional.
+    # @param skip [Integer] The number of items to skip over before returning
+    # elements. Optional.
+    # @param expand [String] OData expansion. Expand related resources in line
+    # with the retrieved resources, e.g. Categories?$expand=Products would expand
+    # Product data in line with each Category entry. Optional.
+    # @param select [String] OData Select statement. Limits the properties on each
+    # entry to just those requested, e.g.
+    # Categories?$select=CategoryName,Description. Optional.
+    # @param orderby [String] OrderBy clause. One or more comma-separated
+    # expressions with an optional "asc" (the default) or "desc" depending on the
+    # order you'd like the values sorted, e.g. Categories?$orderby=CategoryName
+    # desc. Optional.
+    # @param count [Boolean] The Boolean value of true or false to request a count
+    # of the matching resources included with the resources in the response, e.g.
+    # Categories?$count=true. Optional.
+    # @param custom_headers [Hash{String => String}] A hash of custom headers that
+    # will be added to the HTTP request.
+    #
+    # @return [Array<USqlDatabase>] operation results.
     #
     def list_databases(account_name, filter = nil, top = nil, skip = nil, expand = nil, select = nil, orderby = nil, count = nil, custom_headers = nil)
-      response = list_databases_async(account_name, filter, top, skip, expand, select, orderby, count, custom_headers).value!
-      response.body unless response.nil?
+      first_page = list_databases_as_lazy(account_name, filter, top, skip, expand, select, orderby, count, custom_headers)
+      first_page.get_all_items
     end
 
     #

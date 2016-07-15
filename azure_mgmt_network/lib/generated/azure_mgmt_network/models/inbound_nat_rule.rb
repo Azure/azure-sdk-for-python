@@ -97,6 +97,7 @@ module Azure::ARM::Network
               },
               backend_ipconfiguration: {
                 required: false,
+                read_only: true,
                 serialized_name: 'properties.backendIPConfiguration',
                 type: {
                   name: 'Composite',

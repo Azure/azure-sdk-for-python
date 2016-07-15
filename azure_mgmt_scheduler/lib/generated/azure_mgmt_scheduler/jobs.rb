@@ -538,11 +538,36 @@ module Azure::ARM::Scheduler
     # @param custom_headers [Hash{String => String}] A hash of custom headers that
     # will be added to the HTTP request.
     #
-    # @return [JobListResult] operation results.
+    # @return [JobListResult] which provide lazy access to pages of the response.
+    #
+    def list_as_lazy(resource_group_name, job_collection_name, top = nil, skip = nil, filter = nil, custom_headers = nil)
+      response = list_async(resource_group_name, job_collection_name, top, skip, filter, custom_headers).value!
+      unless response.nil?
+        page = response.body
+        page.next_method = Proc.new do |next_link|
+          list_next_async(next_link, custom_headers)
+        end
+        page
+      end
+    end
+
+    #
+    # Lists all jobs under the specified job collection.
+    #
+    # @param resource_group_name [String] The resource group name.
+    # @param job_collection_name [String] The job collection name.
+    # @param top [Integer] The number of jobs to request, in the of range [1..100].
+    # @param skip [Integer] The (0-based) index of the job history list from which
+    # to begin requesting entries.
+    # @param filter [String] The filter to apply on the job state.
+    # @param custom_headers [Hash{String => String}] A hash of custom headers that
+    # will be added to the HTTP request.
+    #
+    # @return [Array<JobDefinition>] operation results.
     #
     def list(resource_group_name, job_collection_name, top = nil, skip = nil, filter = nil, custom_headers = nil)
-      response = list_async(resource_group_name, job_collection_name, top, skip, filter, custom_headers).value!
-      response.body unless response.nil?
+      first_page = list_as_lazy(resource_group_name, job_collection_name, top, skip, filter, custom_headers)
+      first_page.get_all_items
     end
 
     #
@@ -646,11 +671,39 @@ module Azure::ARM::Scheduler
     # @param custom_headers [Hash{String => String}] A hash of custom headers that
     # will be added to the HTTP request.
     #
-    # @return [JobHistoryListResult] operation results.
+    # @return [JobHistoryListResult] which provide lazy access to pages of the
+    # response.
+    #
+    def list_job_history_as_lazy(resource_group_name, job_collection_name, job_name, top = nil, skip = nil, filter = nil, custom_headers = nil)
+      response = list_job_history_async(resource_group_name, job_collection_name, job_name, top, skip, filter, custom_headers).value!
+      unless response.nil?
+        page = response.body
+        page.next_method = Proc.new do |next_link|
+          list_job_history_next_async(next_link, custom_headers)
+        end
+        page
+      end
+    end
+
+    #
+    # Lists job history.
+    #
+    # @param resource_group_name [String] The resource group name.
+    # @param job_collection_name [String] The job collection name.
+    # @param job_name [String] The job name.
+    # @param top [Integer] the number of job history to request, in the of range
+    # [1..100].
+    # @param skip [Integer] The (0-based) index of the job history list from which
+    # to begin requesting entries.
+    # @param filter [String] The filter to apply on the job state.
+    # @param custom_headers [Hash{String => String}] A hash of custom headers that
+    # will be added to the HTTP request.
+    #
+    # @return [Array<JobHistoryDefinition>] operation results.
     #
     def list_job_history(resource_group_name, job_collection_name, job_name, top = nil, skip = nil, filter = nil, custom_headers = nil)
-      response = list_job_history_async(resource_group_name, job_collection_name, job_name, top, skip, filter, custom_headers).value!
-      response.body unless response.nil?
+      first_page = list_job_history_as_lazy(resource_group_name, job_collection_name, job_name, top, skip, filter, custom_headers)
+      first_page.get_all_items
     end
 
     #

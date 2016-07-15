@@ -216,11 +216,33 @@ module Azure::ARM::Resources
     # @param custom_headers [Hash{String => String}] A hash of custom headers that
     # will be added to the HTTP request.
     #
-    # @return [ProviderListResult] operation results.
+    # @return [ProviderListResult] which provide lazy access to pages of the
+    # response.
+    #
+    def list_as_lazy(top = nil, custom_headers = nil)
+      response = list_async(top, custom_headers).value!
+      unless response.nil?
+        page = response.body
+        page.next_method = Proc.new do |next_link|
+          list_next_async(next_link, custom_headers)
+        end
+        page
+      end
+    end
+
+    #
+    # Gets a list of resource providers.
+    #
+    # @param top [Integer] Query parameters. If null is passed returns all
+    # deployments.
+    # @param custom_headers [Hash{String => String}] A hash of custom headers that
+    # will be added to the HTTP request.
+    #
+    # @return [Array<Provider>] operation results.
     #
     def list(top = nil, custom_headers = nil)
-      response = list_async(top, custom_headers).value!
-      response.body unless response.nil?
+      first_page = list_as_lazy(top, custom_headers)
+      first_page.get_all_items
     end
 
     #

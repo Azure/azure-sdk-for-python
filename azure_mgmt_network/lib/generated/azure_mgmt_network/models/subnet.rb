@@ -83,6 +83,7 @@ module Azure::ARM::Network
               },
               ip_configurations: {
                 required: false,
+                read_only: true,
                 serialized_name: 'properties.ipConfigurations',
                 type: {
                   name: 'Sequence',

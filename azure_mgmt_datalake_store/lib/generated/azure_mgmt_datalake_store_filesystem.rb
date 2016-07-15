@@ -40,6 +40,8 @@ module Azure::ARM::DataLakeStore::FileSystem
     autoload :AdlsSecurityException,                              'generated/azure_mgmt_datalake_store_filesystem/models/adls_security_exception.rb'
     autoload :AdlsIOException,                                    'generated/azure_mgmt_datalake_store_filesystem/models/adls_ioexception.rb'
     autoload :AdlsFileNotFoundException,                          'generated/azure_mgmt_datalake_store_filesystem/models/adls_file_not_found_exception.rb'
+    autoload :AdlsFileAlreadyExistsException,                     'generated/azure_mgmt_datalake_store_filesystem/models/adls_file_already_exists_exception.rb'
+    autoload :AdlsBadOffsetException,                             'generated/azure_mgmt_datalake_store_filesystem/models/adls_bad_offset_exception.rb'
     autoload :AdlsRuntimeException,                               'generated/azure_mgmt_datalake_store_filesystem/models/adls_runtime_exception.rb'
     autoload :AdlsAccessControlException,                         'generated/azure_mgmt_datalake_store_filesystem/models/adls_access_control_exception.rb'
     autoload :FileType,                                           'generated/azure_mgmt_datalake_store_filesystem/models/file_type.rb'

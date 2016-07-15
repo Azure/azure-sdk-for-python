@@ -14,14 +14,16 @@ module Azure::ARM::DataLakeStore::FileSystem
       include MsRestAzure
 
       @@discriminatorMap = Hash.new
-      @@discriminatorMap["AdlsRemoteException"] = "adlsremoteexception"
-      @@discriminatorMap["IllegalArgumentException"] = "adlsillegalargumentexception"
-      @@discriminatorMap["UnsupportedOperationException"] = "adlsunsupportedoperationexception"
-      @@discriminatorMap["SecurityException"] = "adlssecurityexception"
-      @@discriminatorMap["IOException"] = "adlsioexception"
-      @@discriminatorMap["FileNotFoundException"] = "adlsfilenotfoundexception"
-      @@discriminatorMap["RuntimeException"] = "adlsruntimeexception"
-      @@discriminatorMap["AccessControlException"] = "adlsaccesscontrolexception"
+      @@discriminatorMap["AdlsRemoteException"] = "AdlsRemoteException"
+      @@discriminatorMap["IllegalArgumentException"] = "AdlsIllegalArgumentException"
+      @@discriminatorMap["UnsupportedOperationException"] = "AdlsUnsupportedOperationException"
+      @@discriminatorMap["SecurityException"] = "AdlsSecurityException"
+      @@discriminatorMap["IOException"] = "AdlsIOException"
+      @@discriminatorMap["FileNotFoundException"] = "AdlsFileNotFoundException"
+      @@discriminatorMap["FileAlreadyExistsException"] = "AdlsFileAlreadyExistsException"
+      @@discriminatorMap["BadOffsetException"] = "AdlsBadOffsetException"
+      @@discriminatorMap["RuntimeException"] = "AdlsRuntimeException"
+      @@discriminatorMap["AccessControlException"] = "AdlsAccessControlException"
 
       def initialize
         @exception = "AdlsRemoteException"

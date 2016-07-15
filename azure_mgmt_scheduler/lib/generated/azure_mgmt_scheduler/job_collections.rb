@@ -28,11 +28,31 @@ module Azure::ARM::Scheduler
     # @param custom_headers [Hash{String => String}] A hash of custom headers that
     # will be added to the HTTP request.
     #
-    # @return [JobCollectionListResult] operation results.
+    # @return [JobCollectionListResult] which provide lazy access to pages of the
+    # response.
+    #
+    def list_by_subscription_as_lazy(custom_headers = nil)
+      response = list_by_subscription_async(custom_headers).value!
+      unless response.nil?
+        page = response.body
+        page.next_method = Proc.new do |next_link|
+          list_by_subscription_next_async(next_link, custom_headers)
+        end
+        page
+      end
+    end
+
+    #
+    # Gets all job collections under specified subscription.
+    #
+    # @param custom_headers [Hash{String => String}] A hash of custom headers that
+    # will be added to the HTTP request.
+    #
+    # @return [Array<JobCollectionDefinition>] operation results.
     #
     def list_by_subscription(custom_headers = nil)
-      response = list_by_subscription_async(custom_headers).value!
-      response.body unless response.nil?
+      first_page = list_by_subscription_as_lazy(custom_headers)
+      first_page.get_all_items
     end
 
     #
@@ -115,11 +135,32 @@ module Azure::ARM::Scheduler
     # @param custom_headers [Hash{String => String}] A hash of custom headers that
     # will be added to the HTTP request.
     #
-    # @return [JobCollectionListResult] operation results.
+    # @return [JobCollectionListResult] which provide lazy access to pages of the
+    # response.
+    #
+    def list_by_resource_group_as_lazy(resource_group_name, custom_headers = nil)
+      response = list_by_resource_group_async(resource_group_name, custom_headers).value!
+      unless response.nil?
+        page = response.body
+        page.next_method = Proc.new do |next_link|
+          list_by_resource_group_next_async(next_link, custom_headers)
+        end
+        page
+      end
+    end
+
+    #
+    # Gets all job collections under specified resource group.
+    #
+    # @param resource_group_name [String] The resource group name.
+    # @param custom_headers [Hash{String => String}] A hash of custom headers that
+    # will be added to the HTTP request.
+    #
+    # @return [Array<JobCollectionDefinition>] operation results.
     #
     def list_by_resource_group(resource_group_name, custom_headers = nil)
-      response = list_by_resource_group_async(resource_group_name, custom_headers).value!
-      response.body unless response.nil?
+      first_page = list_by_resource_group_as_lazy(resource_group_name, custom_headers)
+      first_page.get_all_items
     end
 
     #
@@ -527,6 +568,9 @@ module Azure::ARM::Scheduler
     #
     # @param resource_group_name [String] The resource group name.
     # @param job_collection_name [String] The job collection name.
+    # @param custom_headers [Hash{String => String}] A hash of custom headers that
+    # will be added to the HTTP request.
+    #
     # @return [Concurrent::Promise] promise which provides async access to http
     # response.
     #
@@ -539,8 +583,8 @@ module Azure::ARM::Scheduler
         deserialize_method = lambda do |parsed_response|
         end
 
-       # Waiting for response.
-       @client.get_long_running_operation_result(response, deserialize_method)
+        # Waiting for response.
+        @client.get_long_running_operation_result(response, deserialize_method)
       end
 
       promise
@@ -634,6 +678,9 @@ module Azure::ARM::Scheduler
     #
     # @param resource_group_name [String] The resource group name.
     # @param job_collection_name [String] The job collection name.
+    # @param custom_headers [Hash{String => String}] A hash of custom headers that
+    # will be added to the HTTP request.
+    #
     # @return [Concurrent::Promise] promise which provides async access to http
     # response.
     #
@@ -646,8 +693,8 @@ module Azure::ARM::Scheduler
         deserialize_method = lambda do |parsed_response|
         end
 
-       # Waiting for response.
-       @client.get_long_running_operation_result(response, deserialize_method)
+        # Waiting for response.
+        @client.get_long_running_operation_result(response, deserialize_method)
       end
 
       promise
@@ -741,6 +788,9 @@ module Azure::ARM::Scheduler
     #
     # @param resource_group_name [String] The resource group name.
     # @param job_collection_name [String] The job collection name.
+    # @param custom_headers [Hash{String => String}] A hash of custom headers that
+    # will be added to the HTTP request.
+    #
     # @return [Concurrent::Promise] promise which provides async access to http
     # response.
     #
@@ -753,8 +803,8 @@ module Azure::ARM::Scheduler
         deserialize_method = lambda do |parsed_response|
         end
 
-       # Waiting for response.
-       @client.get_long_running_operation_result(response, deserialize_method)
+        # Waiting for response.
+        @client.get_long_running_operation_result(response, deserialize_method)
       end
 
       promise

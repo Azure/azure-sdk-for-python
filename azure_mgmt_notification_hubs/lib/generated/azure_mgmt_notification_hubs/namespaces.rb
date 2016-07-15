@@ -256,6 +256,9 @@ module Azure::ARM::NotificationHubs
     #
     # @param resource_group_name [String] The name of the resource group.
     # @param namespace_name [String] The namespace name.
+    # @param custom_headers [Hash{String => String}] A hash of custom headers that
+    # will be added to the HTTP request.
+    #
     # @return [Concurrent::Promise] promise which provides async access to http
     # response.
     #
@@ -268,8 +271,8 @@ module Azure::ARM::NotificationHubs
         deserialize_method = lambda do |parsed_response|
         end
 
-       # Waiting for response.
-       @client.get_long_running_operation_result(response, deserialize_method)
+        # Waiting for response.
+        @client.get_long_running_operation_result(response, deserialize_method)
       end
 
       promise
@@ -851,11 +854,34 @@ module Azure::ARM::NotificationHubs
     # @param custom_headers [Hash{String => String}] A hash of custom headers that
     # will be added to the HTTP request.
     #
-    # @return [NamespaceListResult] operation results.
+    # @return [NamespaceListResult] which provide lazy access to pages of the
+    # response.
+    #
+    def list_as_lazy(resource_group_name, custom_headers = nil)
+      response = list_async(resource_group_name, custom_headers).value!
+      unless response.nil?
+        page = response.body
+        page.next_method = Proc.new do |next_link|
+          list_next_async(next_link, custom_headers)
+        end
+        page
+      end
+    end
+
+    #
+    # Lists the available namespaces within a resourceGroup.
+    #
+    # @param resource_group_name [String] The name of the resource group. If
+    # resourceGroupName value is null the method lists all the namespaces within
+    # subscription
+    # @param custom_headers [Hash{String => String}] A hash of custom headers that
+    # will be added to the HTTP request.
+    #
+    # @return [Array<NamespaceResource>] operation results.
     #
     def list(resource_group_name, custom_headers = nil)
-      response = list_async(resource_group_name, custom_headers).value!
-      response.body unless response.nil?
+      first_page = list_as_lazy(resource_group_name, custom_headers)
+      first_page.get_all_items
     end
 
     #
@@ -945,11 +971,32 @@ module Azure::ARM::NotificationHubs
     # @param custom_headers [Hash{String => String}] A hash of custom headers that
     # will be added to the HTTP request.
     #
-    # @return [NamespaceListResult] operation results.
+    # @return [NamespaceListResult] which provide lazy access to pages of the
+    # response.
+    #
+    def list_all_as_lazy(custom_headers = nil)
+      response = list_all_async(custom_headers).value!
+      unless response.nil?
+        page = response.body
+        page.next_method = Proc.new do |next_link|
+          list_all_next_async(next_link, custom_headers)
+        end
+        page
+      end
+    end
+
+    #
+    # Lists all the available namespaces within the subscription irrespective of
+    # the resourceGroups.
+    #
+    # @param custom_headers [Hash{String => String}] A hash of custom headers that
+    # will be added to the HTTP request.
+    #
+    # @return [Array<NamespaceResource>] operation results.
     #
     def list_all(custom_headers = nil)
-      response = list_all_async(custom_headers).value!
-      response.body unless response.nil?
+      first_page = list_all_as_lazy(custom_headers)
+      first_page.get_all_items
     end
 
     #
@@ -1035,11 +1082,33 @@ module Azure::ARM::NotificationHubs
     # @param custom_headers [Hash{String => String}] A hash of custom headers that
     # will be added to the HTTP request.
     #
-    # @return [SharedAccessAuthorizationRuleListResult] operation results.
+    # @return [SharedAccessAuthorizationRuleListResult] which provide lazy access
+    # to pages of the response.
+    #
+    def list_authorization_rules_as_lazy(resource_group_name, namespace_name, custom_headers = nil)
+      response = list_authorization_rules_async(resource_group_name, namespace_name, custom_headers).value!
+      unless response.nil?
+        page = response.body
+        page.next_method = Proc.new do |next_link|
+          list_authorization_rules_next_async(next_link, custom_headers)
+        end
+        page
+      end
+    end
+
+    #
+    # Gets the authorization rules for a namespace.
+    #
+    # @param resource_group_name [String] The name of the resource group.
+    # @param namespace_name [String] The namespace name
+    # @param custom_headers [Hash{String => String}] A hash of custom headers that
+    # will be added to the HTTP request.
+    #
+    # @return [Array<SharedAccessAuthorizationRuleResource>] operation results.
     #
     def list_authorization_rules(resource_group_name, namespace_name, custom_headers = nil)
-      response = list_authorization_rules_async(resource_group_name, namespace_name, custom_headers).value!
-      response.body unless response.nil?
+      first_page = list_authorization_rules_as_lazy(resource_group_name, namespace_name, custom_headers)
+      first_page.get_all_items
     end
 
     #

@@ -35,12 +35,8 @@ module Azure::ARM::Network
     # @param parameters [VirtualNetworkGateway] Parameters supplied to the Begin
     # Create or update Virtual Network Gateway operation through Network resource
     # provider.
-    # @param @client.api_version [String] Client Api Version.
-    # @param @client.subscription_id [String] Gets subscription credentials which
-    # uniquely identify Microsoft Azure subscription. The subscription ID forms
-    # part of the URI for every service call.
-    # @param @client.accept_language [String] Gets or sets the preferred language
-    # for the response.
+    # @param custom_headers [Hash{String => String}] A hash of custom headers that
+    # will be added to the HTTP request.
     #
     # @return [Concurrent::Promise] promise which provides async access to http
     # response.
@@ -299,6 +295,9 @@ module Azure::ARM::Network
     # @param resource_group_name [String] The name of the resource group.
     # @param virtual_network_gateway_name [String] The name of the virtual network
     # gateway.
+    # @param custom_headers [Hash{String => String}] A hash of custom headers that
+    # will be added to the HTTP request.
+    #
     # @return [Concurrent::Promise] promise which provides async access to http
     # response.
     #
@@ -311,8 +310,8 @@ module Azure::ARM::Network
         deserialize_method = lambda do |parsed_response|
         end
 
-       # Waiting for response.
-       @client.get_long_running_operation_result(response, deserialize_method)
+        # Waiting for response.
+        @client.get_long_running_operation_result(response, deserialize_method)
       end
 
       promise
@@ -415,11 +414,33 @@ module Azure::ARM::Network
     # @param custom_headers [Hash{String => String}] A hash of custom headers that
     # will be added to the HTTP request.
     #
-    # @return [VirtualNetworkGatewayListResult] operation results.
+    # @return [VirtualNetworkGatewayListResult] which provide lazy access to pages
+    # of the response.
+    #
+    def list_as_lazy(resource_group_name, custom_headers = nil)
+      response = list_async(resource_group_name, custom_headers).value!
+      unless response.nil?
+        page = response.body
+        page.next_method = Proc.new do |next_link|
+          list_next_async(next_link, custom_headers)
+        end
+        page
+      end
+    end
+
+    #
+    # The List VirtualNetworkGateways opertion retrieves all the virtual network
+    # gateways stored.
+    #
+    # @param resource_group_name [String] The name of the resource group.
+    # @param custom_headers [Hash{String => String}] A hash of custom headers that
+    # will be added to the HTTP request.
+    #
+    # @return [Array<VirtualNetworkGateway>] operation results.
     #
     def list(resource_group_name, custom_headers = nil)
-      response = list_async(resource_group_name, custom_headers).value!
-      response.body unless response.nil?
+      first_page = list_as_lazy(resource_group_name, custom_headers)
+      first_page.get_all_items
     end
 
     #
@@ -510,6 +531,9 @@ module Azure::ARM::Network
     # gateway.
     # @param parameters [VirtualNetworkGateway] Parameters supplied to the Begin
     # Reset Virtual Network Gateway operation through Network resource provider.
+    # @param custom_headers [Hash{String => String}] A hash of custom headers that
+    # will be added to the HTTP request.
+    #
     # @return [Concurrent::Promise] promise which provides async access to http
     # response.
     #
@@ -524,8 +548,8 @@ module Azure::ARM::Network
           parsed_response = @client.deserialize(result_mapper, parsed_response, 'parsed_response')
         end
 
-       # Waiting for response.
-       @client.get_long_running_operation_result(response, deserialize_method)
+        # Waiting for response.
+        @client.get_long_running_operation_result(response, deserialize_method)
       end
 
       promise

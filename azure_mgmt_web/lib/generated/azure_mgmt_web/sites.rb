@@ -1275,6 +1275,9 @@ module Azure::ARM::Web
     # @param name [String] Name of web app
     # @param slot_swap_entity [CsmSlotEntity] Request body that contains the
     # target slot name
+    # @param custom_headers [Hash{String => String}] A hash of custom headers that
+    # will be added to the HTTP request.
+    #
     # @return [Concurrent::Promise] promise which provides async access to http
     # response.
     #
@@ -1295,8 +1298,8 @@ module Azure::ARM::Web
           parsed_response = @client.deserialize(result_mapper, parsed_response, 'parsed_response')
         end
 
-       # Waiting for response.
-       @client.get_long_running_operation_result(response, deserialize_method)
+        # Waiting for response.
+        @client.get_long_running_operation_result(response, deserialize_method)
       end
 
       promise
@@ -1410,6 +1413,9 @@ module Azure::ARM::Web
     # @param slot_swap_entity [CsmSlotEntity] Request body that contains the
     # target slot name
     # @param slot [String] Name of source slot for the swap
+    # @param custom_headers [Hash{String => String}] A hash of custom headers that
+    # will be added to the HTTP request.
+    #
     # @return [Concurrent::Promise] promise which provides async access to http
     # response.
     #
@@ -1430,8 +1436,8 @@ module Azure::ARM::Web
           parsed_response = @client.deserialize(result_mapper, parsed_response, 'parsed_response')
         end
 
-       # Waiting for response.
-       @client.get_long_running_operation_result(response, deserialize_method)
+        # Waiting for response.
+        @client.get_long_running_operation_result(response, deserialize_method)
       end
 
       promise
@@ -2376,8 +2382,8 @@ module Azure::ARM::Web
     # @return [SiteCollection] operation results.
     #
     def get_site_slots(resource_group_name, name, properties_to_include = nil, custom_headers = nil)
-      response = get_site_slots_async(resource_group_name, name, properties_to_include, custom_headers).value!
-      response.body unless response.nil?
+      first_page = get_site_slots_as_lazy(resource_group_name, name, properties_to_include, custom_headers)
+      first_page.get_all_items
     end
 
     #
@@ -2478,8 +2484,8 @@ module Azure::ARM::Web
     # @return [SiteCollection] operation results.
     #
     def get_sites(resource_group_name, properties_to_include = nil, include_site_types = nil, include_slots = nil, custom_headers = nil)
-      response = get_sites_async(resource_group_name, properties_to_include, include_site_types, include_slots, custom_headers).value!
-      response.body unless response.nil?
+      first_page = get_sites_as_lazy(resource_group_name, properties_to_include, include_site_types, include_slots, custom_headers)
+      first_page.get_all_items
     end
 
     #
@@ -2683,10 +2689,8 @@ module Azure::ARM::Web
     # registered with DNS
     # @param ttl_in_seconds [String] Time to live in seconds for web app's default
     # domain name
-    # @param @client.subscription_id [String] Subscription Id
-    # @param @client.api_version [String] API Version
-    # @param @client.accept_language [String] Gets or sets the preferred language
-    # for the response.
+    # @param custom_headers [Hash{String => String}] A hash of custom headers that
+    # will be added to the HTTP request.
     #
     # @return [Concurrent::Promise] promise which provides async access to http
     # response.
@@ -3079,10 +3083,8 @@ module Azure::ARM::Web
     # registered with DNS
     # @param ttl_in_seconds [String] Time to live in seconds for web app's default
     # domain name
-    # @param @client.subscription_id [String] Subscription Id
-    # @param @client.api_version [String] API Version
-    # @param @client.accept_language [String] Gets or sets the preferred language
-    # for the response.
+    # @param custom_headers [Hash{String => String}] A hash of custom headers that
+    # will be added to the HTTP request.
     #
     # @return [Concurrent::Promise] promise which provides async access to http
     # response.
@@ -3568,6 +3570,9 @@ module Azure::ARM::Web
     # @param recovery_entity [CsmSiteRecoveryEntity] Snapshot data used for web
     # app recovery. Snapshot information can be obtained by calling
     # GetDeletedSites or GetSiteSnapshots API.
+    # @param custom_headers [Hash{String => String}] A hash of custom headers that
+    # will be added to the HTTP request.
+    #
     # @return [Concurrent::Promise] promise which provides async access to http
     # response.
     #
@@ -3582,8 +3587,8 @@ module Azure::ARM::Web
           parsed_response = @client.deserialize(result_mapper, parsed_response, 'parsed_response')
         end
 
-       # Waiting for response.
-       @client.get_long_running_operation_result(response, deserialize_method)
+        # Waiting for response.
+        @client.get_long_running_operation_result(response, deserialize_method)
       end
 
       promise
@@ -3712,6 +3717,9 @@ module Azure::ARM::Web
     # GetDeletedSites or GetSiteSnapshots API.
     # @param slot [String] Name of web app slot. If not specified then will
     # default to production slot.
+    # @param custom_headers [Hash{String => String}] A hash of custom headers that
+    # will be added to the HTTP request.
+    #
     # @return [Concurrent::Promise] promise which provides async access to http
     # response.
     #
@@ -3726,8 +3734,8 @@ module Azure::ARM::Web
           parsed_response = @client.deserialize(result_mapper, parsed_response, 'parsed_response')
         end
 
-       # Waiting for response.
-       @client.get_long_running_operation_result(response, deserialize_method)
+        # Waiting for response.
+        @client.get_long_running_operation_result(response, deserialize_method)
       end
 
       promise
@@ -9519,6 +9527,9 @@ module Azure::ARM::Web
     #
     # @param resource_group_name [String] Name of resource group
     # @param name [String] Name of web app
+    # @param custom_headers [Hash{String => String}] A hash of custom headers that
+    # will be added to the HTTP request.
+    #
     # @return [Concurrent::Promise] promise which provides async access to http
     # response.
     #
@@ -9533,8 +9544,8 @@ module Azure::ARM::Web
           parsed_response = @client.deserialize(result_mapper, parsed_response, 'parsed_response')
         end
 
-       # Waiting for response.
-       @client.get_long_running_operation_result(response, deserialize_method)
+        # Waiting for response.
+        @client.get_long_running_operation_result(response, deserialize_method)
       end
 
       promise
@@ -9641,6 +9652,9 @@ module Azure::ARM::Web
     # @param name [String] Name of web app
     # @param slot [String] Name of web app slot. If not specified then will
     # default to production slot.
+    # @param custom_headers [Hash{String => String}] A hash of custom headers that
+    # will be added to the HTTP request.
+    #
     # @return [Concurrent::Promise] promise which provides async access to http
     # response.
     #
@@ -9655,8 +9669,8 @@ module Azure::ARM::Web
           parsed_response = @client.deserialize(result_mapper, parsed_response, 'parsed_response')
         end
 
-       # Waiting for response.
-       @client.get_long_running_operation_result(response, deserialize_method)
+        # Waiting for response.
+        @client.get_long_running_operation_result(response, deserialize_method)
       end
 
       promise
@@ -12998,6 +13012,9 @@ module Azure::ARM::Web
     # @param name [String] Name of web app
     # @param backup_id [String] Id of backup to restore
     # @param request [RestoreRequest] Information on restore request
+    # @param custom_headers [Hash{String => String}] A hash of custom headers that
+    # will be added to the HTTP request.
+    #
     # @return [Concurrent::Promise] promise which provides async access to http
     # response.
     #
@@ -13012,8 +13029,8 @@ module Azure::ARM::Web
           parsed_response = @client.deserialize(result_mapper, parsed_response, 'parsed_response')
         end
 
-       # Waiting for response.
-       @client.get_long_running_operation_result(response, deserialize_method)
+        # Waiting for response.
+        @client.get_long_running_operation_result(response, deserialize_method)
       end
 
       promise
@@ -13139,6 +13156,9 @@ module Azure::ARM::Web
     # @param request [RestoreRequest] Information on restore request
     # @param slot [String] Name of web app slot. If not specified then will
     # default to production slot.
+    # @param custom_headers [Hash{String => String}] A hash of custom headers that
+    # will be added to the HTTP request.
+    #
     # @return [Concurrent::Promise] promise which provides async access to http
     # response.
     #
@@ -13153,8 +13173,8 @@ module Azure::ARM::Web
           parsed_response = @client.deserialize(result_mapper, parsed_response, 'parsed_response')
         end
 
-       # Waiting for response.
-       @client.get_long_running_operation_result(response, deserialize_method)
+        # Waiting for response.
+        @client.get_long_running_operation_result(response, deserialize_method)
       end
 
       promise

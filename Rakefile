@@ -144,17 +144,85 @@ REGEN_METADATA = {
         version: version,
         tag: 'arm_auth'
     },
+    azure_mgmt_batch: {
+        spec_uri: 'https://raw.githubusercontent.com/Azure/azure-rest-api-specs/master/arm-batch/2015-12-01/swagger/BatchManagement.json',
+        ns: 'Azure::ARM::Batch',
+        version: version,
+        tag: 'arm_batch'
+    },
     azure_mgmt_cdn: {
         spec_uri: 'https://raw.githubusercontent.com/Azure/azure-rest-api-specs/master/arm-cdn/2016-04-02/swagger/cdn.json',
         ns: 'Azure::ARM::CDN',
         version: version,
         tag: 'arm_cdn'
     },
+    azure_mgmt_cognitive_services: {
+        spec_uri: 'https://raw.githubusercontent.com/Azure/azure-rest-api-specs/master/arm-cognitiveservices/2016-02-01-preview/swagger/cognitiveservices.json',
+        ns: 'Azure::ARM::CognitiveServices',
+        version: version,
+        tag: 'arm_cogn'
+    },
+    azure_mgmt_commerce: {
+        spec_uri: 'https://raw.githubusercontent.com/Azure/azure-rest-api-specs/master/arm-commerce/2015-06-01-preview/swagger/commerce.json',
+        ns: 'Azure::ARM::Commerce',
+        version: version,
+        tag: 'arm_commerce'
+    },
     azure_mgmt_compute: {
         spec_uri: 'https://raw.githubusercontent.com/Azure/azure-rest-api-specs/master/arm-compute/2016-03-30/swagger/compute.json',
         ns: 'Azure::ARM::Compute',
         version: version,
         tag: 'arm_comp'
+    },
+    azure_mgmt_datalake_analytics: [
+        {
+            spec_uri: 'https://raw.githubusercontent.com/Azure/azure-rest-api-specs/master/arm-datalake-analytics/catalog/2015-10-01-preview/swagger/catalog.json',
+            ns: 'Azure::ARM::DataLakeAnalytics::Catalog',
+            pn: 'azure_mgmt_datalake_analytics_catalog',
+            tag: 'arm_datalake_analytics'
+        },
+        {
+            spec_uri: 'https://raw.githubusercontent.com/Azure/azure-rest-api-specs/master/arm-datalake-analytics/job/2016-03-20-preview/swagger/job.json',
+            ns: 'Azure::ARM::DataLakeAnalytics::Job',
+            pn: 'azure_mgmt_datalake_analytics_job',
+            tag: 'arm_datalake_analytics'
+        },
+        {
+            spec_uri: 'https://raw.githubusercontent.com/Azure/azure-rest-api-specs/master/arm-datalake-analytics/account/2015-10-01-preview/swagger/account.json',
+            ns: 'Azure::ARM::DataLakeAnalytics::Account',
+            pn: 'azure_mgmt_datalake_analytics_account',
+            # Only the last generated swagger requires version parameter so that we do not override it on AutoRest regeneration code
+            version: version,
+            tag: 'arm_datalake_analytics'
+        }
+    ],
+    azure_mgmt_datalake_store: [
+        {
+            spec_uri: 'https://raw.githubusercontent.com/Azure/azure-rest-api-specs/master/arm-datalake-store/filesystem/2015-10-01-preview/swagger/filesystem.json',
+            ns: 'Azure::ARM::DataLakeStore::FileSystem',
+            pn: 'azure_mgmt_datalake_store_filesystem',
+            tag: 'arm_datalake_store'
+        },
+        {
+            spec_uri: 'https://raw.githubusercontent.com/Azure/azure-rest-api-specs/master/arm-datalake-store/account/2015-10-01-preview/swagger/account.json',
+            ns: 'Azure::ARM::DataLakeStore::Account',
+            pn: 'azure_mgmt_datalake_store_account',
+            # Only the last generated swagger requires version parameter so that we do not override it on AutoRest regeneration code
+            version: version,
+            tag: 'arm_datalake_store'
+        }
+    ],
+    azure_mgmt_devtestlabs: {
+        spec_uri: 'https://raw.githubusercontent.com/Azure/azure-rest-api-specs/master/arm-devtestlabs/2016-05-15/swagger/DTL.json',
+        ns: 'Azure::ARM::DevTestLabs',
+        version: version,
+        tag: 'arm_dtl'
+    },
+    azure_mgmt_dns: {
+        spec_uri: 'https://raw.githubusercontent.com/Azure/azure-rest-api-specs/master/arm-dns/2016-04-01/swagger/dns.json',
+        ns: 'Azure::ARM::Dns',
+        version: version,
+        tag: 'arm_dns'
     },
     azure_mgmt_features: {
         spec_uri: 'https://raw.githubusercontent.com/Azure/azure-rest-api-specs/master/arm-resources/features/2015-12-01/swagger/features.json',
@@ -168,14 +236,44 @@ REGEN_METADATA = {
         version: version,
         tag: 'arm_grap'
     },
+    # azure_mgmt_intune: {
+    #     spec_uri: 'https://raw.githubusercontent.com/Azure/azure-rest-api-specs/master/arm-intune/2015-01-14-preview/swagger/intune.json',
+    #     ns: 'Azure::ARM::Intune',
+    #     version: version,
+    #     tag: 'arm_intune'
+    # },
     azure_mgmt_locks: {
         spec_uri: 'https://raw.githubusercontent.com/Azure/azure-rest-api-specs/master/arm-resources/locks/2015-01-01/swagger/locks.json',
         ns: 'Azure::ARM::Locks',
         version: version,
         tag: 'arm_lock'
     },
+    azure_mgmt_logic: {
+        spec_uri: 'https://raw.githubusercontent.com/Azure/azure-rest-api-specs/master/arm-logic/2015-08-01-preview/swagger/logic.json',
+        ns: 'Azure::ARM::Logic',
+        version: version,
+        tag: 'arm_logic'
+    },
+    azure_mgmt_machine_learning: {
+        spec_uri: 'https://raw.githubusercontent.com/Azure/azure-rest-api-specs/master/arm-machinelearning/2016-05-01-preview/swagger/webservices.json',
+        ns: 'Azure::ARM::MachineLearning',
+        version: version,
+        tag: 'arm_mach'
+    },
+    azure_mgmt_media_services: {
+        spec_uri: 'https://raw.githubusercontent.com/Azure/azure-rest-api-specs/master/arm-mediaservices/2015-10-01/swagger/media.json',
+        ns: 'Azure::ARM::MediaServices',
+        version: version,
+        tag: 'arm_media'
+    },
+    azure_mgmt_mobile_engagement: {
+        spec_uri: 'https://raw.githubusercontent.com/Azure/azure-rest-api-specs/master/arm-mobileengagement/2014-12-01/swagger/mobile-engagement.json',
+        ns: 'Azure::ARM::MobileEngagement',
+        version: version,
+        tag: 'arm_mobile'
+    },
     azure_mgmt_network: {
-        spec_uri: 'https://raw.githubusercontent.com/Azure/azure-rest-api-specs/master/arm-network/2016-06-01/network.json',
+        spec_uri: 'https://raw.githubusercontent.com/Azure/azure-rest-api-specs/master/arm-network/2016-06-01/swagger/network.json',
         ns: 'Azure::ARM::Network',
         version: version,
         tag: 'arm_netw'
@@ -185,6 +283,18 @@ REGEN_METADATA = {
         ns: 'Azure::ARM::NotificationHubs',
         version: version,
         tag: 'arm_noti'
+    },
+    azure_mgmt_policy: {
+        spec_uri: 'https://raw.githubusercontent.com/Azure/azure-rest-api-specs/master/arm-resources/policy/2016-04-01/swagger/policy.json',
+        ns: 'Azure::ARM::Policy',
+        version: version,
+        tag: 'arm_policy'
+    },
+    azure_mgmt_powerbi_embedded: {
+        spec_uri: 'https://raw.githubusercontent.com/Azure/azure-rest-api-specs/master/arm-powerbiembedded/2016-01-29/swagger/powerbiembedded.json',
+        ns: 'Azure::ARM::PowerBiEmbedded',
+        version: version,
+        tag: 'arm_powerbi'
     },
     azure_mgmt_redis: {
         spec_uri: 'https://raw.githubusercontent.com/Azure/azure-rest-api-specs/master/arm-redis/2016-04-01/swagger/redis.json',
@@ -210,6 +320,18 @@ REGEN_METADATA = {
         version: version,
         tag: 'arm_sear'
     },
+    azure_mgmt_server_management: {
+        spec_uri: 'https://raw.githubusercontent.com/Azure/azure-rest-api-specs/master/arm-servermanagement/2015-07-01-preview/servermanagement.json',
+        ns: 'Azure::ARM::ServerManagement',
+        version: version,
+        tag: 'arm_server'
+    },
+    azure_mgmt_service_bus: {
+        spec_uri: 'https://raw.githubusercontent.com/Azure/azure-rest-api-specs/master/arm-servicebus/2014-09-01/swagger/servicebus.json',
+        ns: 'Azure::ARM::ServiceBus',
+        version: version,
+        tag: 'arm_servicebus'
+    },
     azure_mgmt_sql: {
         spec_uri: 'https://raw.githubusercontent.com/Azure/azure-rest-api-specs/master/arm-sql/2015-05-01/swagger/sql.json',
         ns: 'Azure::ARM::SQL',
@@ -228,48 +350,16 @@ REGEN_METADATA = {
         version: version,
         tag: 'arm_subs'
     },
+    azure_mgmt_traffic_manager: {
+        spec_uri: 'https://raw.githubusercontent.com/Azure/azure-rest-api-specs/master/arm-trafficmanager/2015-11-01/trafficmanager.json',
+        ns: 'Azure::ARM::TrafficManager',
+        version: version,
+        tag: 'arm_trafficmgr'
+    },
     azure_mgmt_web: {
         spec_uri: 'https://raw.githubusercontent.com/Azure/azure-rest-api-specs/master/arm-web/2015-08-01/swagger/service.json',
         ns: 'Azure::ARM::Web',
         version: version,
         tag: 'arm_web'
     },
-    azure_mgmt_datalake_store: [
-        {
-            spec_uri: 'https://raw.githubusercontent.com/Azure/azure-rest-api-specs/master/arm-datalake-store/filesystem/2015-10-01-preview/swagger/filesystem.json',
-            ns: 'Azure::ARM::DataLakeStore::FileSystem',
-            pn: 'azure_mgmt_datalake_store_filesystem',
-            tag: 'arm_datalake_store'
-        },
-        {
-            spec_uri: 'https://raw.githubusercontent.com/Azure/azure-rest-api-specs/master/arm-datalake-store/account/2015-10-01-preview/swagger/account.json',
-            ns: 'Azure::ARM::DataLakeStore::Account',
-            pn: 'azure_mgmt_datalake_store_account',
-            # Only the last generated swagger requires version parameter so that we do not override it on AutoRest regeneration code
-            version: version,
-            tag: 'arm_datalake_store'
-        }
-    ],
-    azure_mgmt_datalake_analytics: [
-        {
-            spec_uri: 'https://raw.githubusercontent.com/Azure/azure-rest-api-specs/master/arm-datalake-analytics/catalog/2015-10-01-preview/swagger/catalog.json',
-            ns: 'Azure::ARM::DataLakeAnalytics::Catalog',
-            pn: 'azure_mgmt_datalake_analytics_catalog',
-            tag: 'arm_datalake_analytics'
-        },
-        {
-            spec_uri: 'https://raw.githubusercontent.com/Azure/azure-rest-api-specs/master/arm-datalake-analytics/job/2016-03-20-preview/swagger/job.json',
-            ns: 'Azure::ARM::DataLakeAnalytics::Job',
-            pn: 'azure_mgmt_datalake_analytics_job',
-            tag: 'arm_datalake_analytics'
-        },
-        {
-            spec_uri: 'https://raw.githubusercontent.com/Azure/azure-rest-api-specs/master/arm-datalake-analytics/account/2015-10-01-preview/swagger/account.json',
-            ns: 'Azure::ARM::DataLakeAnalytics::Account',
-            pn: 'azure_mgmt_datalake_analytics_account',
-            # Only the last generated swagger requires version parameter so that we do not override it on AutoRest regeneration code
-            version: version,
-            tag: 'arm_datalake_analytics'
-        }
-    ],
 }

@@ -225,10 +225,8 @@ module Azure::ARM::Web
     # Plan
     # @param allow_pending_state [Boolean] OBSOLETE: If true, allow pending state
     # for App Service Plan
-    # @param @client.subscription_id [String] Subscription Id
-    # @param @client.api_version [String] API Version
-    # @param @client.accept_language [String] Gets or sets the preferred language
-    # for the response.
+    # @param custom_headers [Hash{String => String}] A hash of custom headers that
+    # will be added to the HTTP request.
     #
     # @return [Concurrent::Promise] promise which provides async access to http
     # response.
@@ -1670,11 +1668,39 @@ module Azure::ARM::Web
     # @param custom_headers [Hash{String => String}] A hash of custom headers that
     # will be added to the HTTP request.
     #
-    # @return [SiteCollection] operation results.
+    # @return [SiteCollection] which provide lazy access to pages of the response.
+    #
+    def get_server_farm_sites_as_lazy(resource_group_name, name, skip_token = nil, filter = nil, top = nil, custom_headers = nil)
+      response = get_server_farm_sites_async(resource_group_name, name, skip_token, filter, top, custom_headers).value!
+      unless response.nil?
+        page = response.body
+        page.next_method = Proc.new do |next_link|
+          get_server_farm_sites_next_async(next_link, custom_headers)
+        end
+        page
+      end
+    end
+
+    #
+    # Gets list of Apps associated with an App Service Plan
+    #
+    # @param resource_group_name [String] Name of resource group
+    # @param name [String] Name of App Service Plan
+    # @param skip_token [String] Skip to of web apps in a list. If specified, the
+    # resulting list will contain web apps starting from (including) the
+    # skipToken. Else, the resulting list contains web apps from the start of the
+    # list
+    # @param filter [String] Supported filter: $filter=state eq running. Returns
+    # only web apps that are currently running
+    # @param top [String] List page size. If specified, results are paged.
+    # @param custom_headers [Hash{String => String}] A hash of custom headers that
+    # will be added to the HTTP request.
+    #
+    # @return [Array<Site>] operation results.
     #
     def get_server_farm_sites(resource_group_name, name, skip_token = nil, filter = nil, top = nil, custom_headers = nil)
-      response = get_server_farm_sites_async(resource_group_name, name, skip_token, filter, top, custom_headers).value!
-      response.body unless response.nil?
+      first_page = get_server_farm_sites_as_lazy(resource_group_name, name, skip_token, filter, top, custom_headers)
+      first_page.get_all_items
     end
 
     #

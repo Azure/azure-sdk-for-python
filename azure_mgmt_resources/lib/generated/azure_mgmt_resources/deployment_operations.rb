@@ -133,11 +133,35 @@ module Azure::ARM::Resources
     # @param custom_headers [Hash{String => String}] A hash of custom headers that
     # will be added to the HTTP request.
     #
-    # @return [DeploymentOperationsListResult] operation results.
+    # @return [DeploymentOperationsListResult] which provide lazy access to pages
+    # of the response.
+    #
+    def list_as_lazy(resource_group_name, deployment_name, top = nil, custom_headers = nil)
+      response = list_async(resource_group_name, deployment_name, top, custom_headers).value!
+      unless response.nil?
+        page = response.body
+        page.next_method = Proc.new do |next_link|
+          list_next_async(next_link, custom_headers)
+        end
+        page
+      end
+    end
+
+    #
+    # Gets a list of deployments operations.
+    #
+    # @param resource_group_name [String] The name of the resource group. The name
+    # is case insensitive.
+    # @param deployment_name [String] The name of the deployment.
+    # @param top [Integer] Query parameters.
+    # @param custom_headers [Hash{String => String}] A hash of custom headers that
+    # will be added to the HTTP request.
+    #
+    # @return [Array<DeploymentOperation>] operation results.
     #
     def list(resource_group_name, deployment_name, top = nil, custom_headers = nil)
-      response = list_async(resource_group_name, deployment_name, top, custom_headers).value!
-      response.body unless response.nil?
+      first_page = list_as_lazy(resource_group_name, deployment_name, top, custom_headers)
+      first_page.get_all_items
     end
 
     #

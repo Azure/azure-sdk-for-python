@@ -29,11 +29,32 @@ module Azure::ARM::Features
     # @param custom_headers [Hash{String => String}] A hash of custom headers that
     # will be added to the HTTP request.
     #
-    # @return [FeatureOperationsListResult] operation results.
+    # @return [FeatureOperationsListResult] which provide lazy access to pages of
+    # the response.
+    #
+    def list_all_as_lazy(custom_headers = nil)
+      response = list_all_async(custom_headers).value!
+      unless response.nil?
+        page = response.body
+        page.next_method = Proc.new do |next_link|
+          list_all_next_async(next_link, custom_headers)
+        end
+        page
+      end
+    end
+
+    #
+    # Gets a list of previewed features for all the providers in the current
+    # subscription.
+    #
+    # @param custom_headers [Hash{String => String}] A hash of custom headers that
+    # will be added to the HTTP request.
+    #
+    # @return [Array<FeatureResult>] operation results.
     #
     def list_all(custom_headers = nil)
-      response = list_all_async(custom_headers).value!
-      response.body unless response.nil?
+      first_page = list_all_as_lazy(custom_headers)
+      first_page.get_all_items
     end
 
     #
@@ -119,11 +140,33 @@ module Azure::ARM::Features
     # @param custom_headers [Hash{String => String}] A hash of custom headers that
     # will be added to the HTTP request.
     #
-    # @return [FeatureOperationsListResult] operation results.
+    # @return [FeatureOperationsListResult] which provide lazy access to pages of
+    # the response.
+    #
+    def list_as_lazy(resource_provider_namespace, custom_headers = nil)
+      response = list_async(resource_provider_namespace, custom_headers).value!
+      unless response.nil?
+        page = response.body
+        page.next_method = Proc.new do |next_link|
+          list_next_async(next_link, custom_headers)
+        end
+        page
+      end
+    end
+
+    #
+    # Gets a list of previewed features of a resource provider.
+    #
+    # @param resource_provider_namespace [String] The namespace of the resource
+    # provider.
+    # @param custom_headers [Hash{String => String}] A hash of custom headers that
+    # will be added to the HTTP request.
+    #
+    # @return [Array<FeatureResult>] operation results.
     #
     def list(resource_provider_namespace, custom_headers = nil)
-      response = list_async(resource_provider_namespace, custom_headers).value!
-      response.body unless response.nil?
+      first_page = list_as_lazy(resource_provider_namespace, custom_headers)
+      first_page.get_all_items
     end
 
     #

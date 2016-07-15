@@ -415,11 +415,34 @@ module Azure::ARM::Authorization
     # @param custom_headers [Hash{String => String}] A hash of custom headers that
     # will be added to the HTTP request.
     #
-    # @return [RoleDefinitionListResult] operation results.
+    # @return [RoleDefinitionListResult] which provide lazy access to pages of the
+    # response.
+    #
+    def list_as_lazy(scope, filter = nil, custom_headers = nil)
+      response = list_async(scope, filter, custom_headers).value!
+      unless response.nil?
+        page = response.body
+        page.next_method = Proc.new do |next_link|
+          list_next_async(next_link, custom_headers)
+        end
+        page
+      end
+    end
+
+    #
+    # Get all role definitions that are applicable at scope and above. Use
+    # atScopeAndBelow filter to search below the given scope as well
+    #
+    # @param scope [String] Scope
+    # @param filter [String] The filter to apply on the operation.
+    # @param custom_headers [Hash{String => String}] A hash of custom headers that
+    # will be added to the HTTP request.
+    #
+    # @return [Array<RoleDefinition>] operation results.
     #
     def list(scope, filter = nil, custom_headers = nil)
-      response = list_async(scope, filter, custom_headers).value!
-      response.body unless response.nil?
+      first_page = list_as_lazy(scope, filter, custom_headers)
+      first_page.get_all_items
     end
 
     #

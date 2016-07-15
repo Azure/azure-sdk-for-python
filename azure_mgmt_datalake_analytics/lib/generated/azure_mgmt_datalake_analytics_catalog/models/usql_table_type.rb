@@ -12,8 +12,8 @@ module Azure::ARM::DataLakeAnalytics::Catalog
 
       include MsRestAzure
 
-      # @return [TypeFieldInfo] the type field information associated with
-      # this table type.
+      # @return [Array<TypeFieldInfo>] the type field information associated
+      # with this table type.
       attr_accessor :columns
 
 
@@ -150,10 +150,18 @@ module Azure::ARM::DataLakeAnalytics::Catalog
               },
               columns: {
                 required: false,
+                read_only: true,
                 serialized_name: 'columns',
                 type: {
-                  name: 'Composite',
-                  class_name: 'TypeFieldInfo'
+                  name: 'Sequence',
+                  element: {
+                      required: false,
+                      serialized_name: 'TypeFieldInfoElementType',
+                      type: {
+                        name: 'Composite',
+                        class_name: 'TypeFieldInfo'
+                      }
+                  }
                 }
               }
             }

@@ -493,8 +493,8 @@ module Azure::ARM::Web
     # @return [SiteCollection] operation results.
     #
     def get_all_sites(custom_headers = nil)
-      response = get_all_sites_async(custom_headers).value!
-      response.body unless response.nil?
+      first_page = get_all_sites_as_lazy(custom_headers)
+      first_page.get_all_items
     end
 
     #

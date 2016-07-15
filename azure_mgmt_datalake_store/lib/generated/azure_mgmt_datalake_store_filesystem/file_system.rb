@@ -965,12 +965,14 @@ module Azure::ARM::DataLakeStore::FileSystem
     # '/') of the file to which to append.
     # @param stream_contents The file contents to include when appending to the
     # file.
+    # @param offset [Integer] The optional offset in the stream to begin the
+    # append operation. Default is to append at the end of the stream.
     # @param custom_headers [Hash{String => String}] A hash of custom headers that
     # will be added to the HTTP request.
     #
     #
-    def append(account_name, direct_file_path, stream_contents, custom_headers = nil)
-      response = append_async(account_name, direct_file_path, stream_contents, custom_headers).value!
+    def append(account_name, direct_file_path, stream_contents, offset = nil, custom_headers = nil)
+      response = append_async(account_name, direct_file_path, stream_contents, offset, custom_headers).value!
       nil
     end
 
@@ -988,13 +990,15 @@ module Azure::ARM::DataLakeStore::FileSystem
     # '/') of the file to which to append.
     # @param stream_contents The file contents to include when appending to the
     # file.
+    # @param offset [Integer] The optional offset in the stream to begin the
+    # append operation. Default is to append at the end of the stream.
     # @param custom_headers [Hash{String => String}] A hash of custom headers that
     # will be added to the HTTP request.
     #
     # @return [MsRestAzure::AzureOperationResponse] HTTP response information.
     #
-    def append_with_http_info(account_name, direct_file_path, stream_contents, custom_headers = nil)
-      append_async(account_name, direct_file_path, stream_contents, custom_headers).value!
+    def append_with_http_info(account_name, direct_file_path, stream_contents, offset = nil, custom_headers = nil)
+      append_async(account_name, direct_file_path, stream_contents, offset, custom_headers).value!
     end
 
     #
@@ -1011,12 +1015,14 @@ module Azure::ARM::DataLakeStore::FileSystem
     # '/') of the file to which to append.
     # @param stream_contents The file contents to include when appending to the
     # file.
+    # @param offset [Integer] The optional offset in the stream to begin the
+    # append operation. Default is to append at the end of the stream.
     # @param [Hash{String => String}] A hash of custom headers that will be added
     # to the HTTP request.
     #
     # @return [Concurrent::Promise] Promise object which holds the HTTP response.
     #
-    def append_async(account_name, direct_file_path, stream_contents, custom_headers = nil)
+    def append_async(account_name, direct_file_path, stream_contents, offset = nil, custom_headers = nil)
       fail ArgumentError, 'account_name is nil' if account_name.nil?
       fail ArgumentError, '@client.adls_file_system_dns_suffix is nil' if @client.adls_file_system_dns_suffix.nil?
       fail ArgumentError, 'direct_file_path is nil' if direct_file_path.nil?
@@ -1051,7 +1057,7 @@ module Azure::ARM::DataLakeStore::FileSystem
       options = {
           middlewares: [[MsRest::RetryPolicyMiddleware, times: 3, retry: 0.02], [:cookie_jar]],
           path_params: {'directFilePath' => direct_file_path},
-          query_params: {'op' => op,'append' => append,'api-version' => @client.api_version},
+          query_params: {'offset' => offset,'op' => op,'append' => append,'api-version' => @client.api_version},
           body: request_content,
           headers: request_headers.merge(custom_headers || {})
       }

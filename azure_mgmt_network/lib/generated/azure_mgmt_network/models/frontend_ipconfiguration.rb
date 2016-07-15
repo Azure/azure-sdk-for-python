@@ -12,15 +12,15 @@ module Azure::ARM::Network
 
       include MsRestAzure
 
-      # @return [Array<SubResource>] Read only.Inbound rules URIs that use
+      # @return [Array<SubResource>] Read only. Inbound rules URIs that use
       # this frontend IP
       attr_accessor :inbound_nat_rules
 
-      # @return [Array<SubResource>] Read only.Inbound pools URIs that use
+      # @return [Array<SubResource>] Read only. Inbound pools URIs that use
       # this frontend IP
       attr_accessor :inbound_nat_pools
 
-      # @return [Array<SubResource>] Read only.Outbound rules URIs that use
+      # @return [Array<SubResource>] Read only. Outbound rules URIs that use
       # this frontend IP
       attr_accessor :outbound_nat_rules
 
@@ -77,6 +77,7 @@ module Azure::ARM::Network
               },
               inbound_nat_rules: {
                 required: false,
+                read_only: true,
                 serialized_name: 'properties.inboundNatRules',
                 type: {
                   name: 'Sequence',
@@ -92,6 +93,7 @@ module Azure::ARM::Network
               },
               inbound_nat_pools: {
                 required: false,
+                read_only: true,
                 serialized_name: 'properties.inboundNatPools',
                 type: {
                   name: 'Sequence',
@@ -107,6 +109,7 @@ module Azure::ARM::Network
               },
               outbound_nat_rules: {
                 required: false,
+                read_only: true,
                 serialized_name: 'properties.outboundNatRules',
                 type: {
                   name: 'Sequence',
@@ -122,6 +125,7 @@ module Azure::ARM::Network
               },
               load_balancing_rules: {
                 required: false,
+                read_only: true,
                 serialized_name: 'properties.loadBalancingRules',
                 type: {
                   name: 'Sequence',

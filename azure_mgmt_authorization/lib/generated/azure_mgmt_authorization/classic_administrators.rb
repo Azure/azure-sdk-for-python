@@ -29,11 +29,32 @@ module Azure::ARM::Authorization
     # @param custom_headers [Hash{String => String}] A hash of custom headers that
     # will be added to the HTTP request.
     #
-    # @return [ClassicAdministratorListResult] operation results.
+    # @return [ClassicAdministratorListResult] which provide lazy access to pages
+    # of the response.
+    #
+    def list_as_lazy(api_version, custom_headers = nil)
+      response = list_async(api_version, custom_headers).value!
+      unless response.nil?
+        page = response.body
+        page.next_method = Proc.new do |next_link|
+          list_next_async(next_link, custom_headers)
+        end
+        page
+      end
+    end
+
+    #
+    # Gets a list of classic administrators for the subscription.
+    #
+    # @param api_version [String]
+    # @param custom_headers [Hash{String => String}] A hash of custom headers that
+    # will be added to the HTTP request.
+    #
+    # @return [Array<ClassicAdministrator>] operation results.
     #
     def list(api_version, custom_headers = nil)
-      response = list_async(api_version, custom_headers).value!
-      response.body unless response.nil?
+      first_page = list_as_lazy(api_version, custom_headers)
+      first_page.get_all_items
     end
 
     #

@@ -32,11 +32,32 @@ module Azure::ARM::Network
     # @param custom_headers [Hash{String => String}] A hash of custom headers that
     # will be added to the HTTP request.
     #
-    # @return [UsagesListResult] operation results.
+    # @return [UsagesListResult] which provide lazy access to pages of the
+    # response.
+    #
+    def list_as_lazy(location, custom_headers = nil)
+      response = list_async(location, custom_headers).value!
+      unless response.nil?
+        page = response.body
+        page.next_method = Proc.new do |next_link|
+          list_next_async(next_link, custom_headers)
+        end
+        page
+      end
+    end
+
+    #
+    # Lists compute usages for a subscription.
+    #
+    # @param location [String] The location upon which resource usage is queried.
+    # @param custom_headers [Hash{String => String}] A hash of custom headers that
+    # will be added to the HTTP request.
+    #
+    # @return [Array<Usage>] operation results.
     #
     def list(location, custom_headers = nil)
-      response = list_async(location, custom_headers).value!
-      response.body unless response.nil?
+      first_page = list_as_lazy(location, custom_headers)
+      first_page.get_all_items
     end
 
     #

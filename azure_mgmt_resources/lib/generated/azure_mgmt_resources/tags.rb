@@ -394,11 +394,30 @@ module Azure::ARM::Resources
     # @param custom_headers [Hash{String => String}] A hash of custom headers that
     # will be added to the HTTP request.
     #
-    # @return [TagsListResult] operation results.
+    # @return [TagsListResult] which provide lazy access to pages of the response.
+    #
+    def list_as_lazy(custom_headers = nil)
+      response = list_async(custom_headers).value!
+      unless response.nil?
+        page = response.body
+        page.next_method = Proc.new do |next_link|
+          list_next_async(next_link, custom_headers)
+        end
+        page
+      end
+    end
+
+    #
+    # Get a list of subscription resource tags.
+    #
+    # @param custom_headers [Hash{String => String}] A hash of custom headers that
+    # will be added to the HTTP request.
+    #
+    # @return [Array<TagDetails>] operation results.
     #
     def list(custom_headers = nil)
-      response = list_async(custom_headers).value!
-      response.body unless response.nil?
+      first_page = list_as_lazy(custom_headers)
+      first_page.get_all_items
     end
 
     #

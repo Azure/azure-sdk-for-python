@@ -33,11 +33,8 @@ module Azure::ARM::SQL
     # @param resource_group_name [String] The name of the Resource Group to which
     # the server belongs.
     # @param server_name [String] The name of the Azure SQL Server.
-    # @param @client.api_version [String] Client Api Version.
-    # @param @client.subscription_id [String] The subscription credentials which
-    # uniquely identify Microsoft Azure subscription.
-    # @param @client.accept_language [String] Gets or sets the preferred language
-    # for the response.
+    # @param custom_headers [Hash{String => String}] A hash of custom headers that
+    # will be added to the HTTP request.
     #
     # @return [Concurrent::Promise] promise which provides async access to http
     # response.

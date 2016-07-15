@@ -34,11 +34,37 @@ module Azure::ARM::Authorization
     # @param custom_headers [Hash{String => String}] A hash of custom headers that
     # will be added to the HTTP request.
     #
-    # @return [RoleAssignmentListResult] operation results.
+    # @return [RoleAssignmentListResult] which provide lazy access to pages of the
+    # response.
+    #
+    def list_for_resource_as_lazy(resource_group_name, resource_provider_namespace, parent_resource_path, resource_type, resource_name, filter = nil, custom_headers = nil)
+      response = list_for_resource_async(resource_group_name, resource_provider_namespace, parent_resource_path, resource_type, resource_name, filter, custom_headers).value!
+      unless response.nil?
+        page = response.body
+        page.next_method = Proc.new do |next_link|
+          list_for_resource_next_async(next_link, custom_headers)
+        end
+        page
+      end
+    end
+
+    #
+    # Gets role assignments of the resource.
+    #
+    # @param resource_group_name [String] The name of the resource group.
+    # @param resource_provider_namespace [String] Resource identity.
+    # @param parent_resource_path [String] Resource identity.
+    # @param resource_type [String] Resource identity.
+    # @param resource_name [String] Resource identity.
+    # @param filter [String] The filter to apply on the operation.
+    # @param custom_headers [Hash{String => String}] A hash of custom headers that
+    # will be added to the HTTP request.
+    #
+    # @return [Array<RoleAssignment>] operation results.
     #
     def list_for_resource(resource_group_name, resource_provider_namespace, parent_resource_path, resource_type, resource_name, filter = nil, custom_headers = nil)
-      response = list_for_resource_async(resource_group_name, resource_provider_namespace, parent_resource_path, resource_type, resource_name, filter, custom_headers).value!
-      response.body unless response.nil?
+      first_page = list_for_resource_as_lazy(resource_group_name, resource_provider_namespace, parent_resource_path, resource_type, resource_name, filter, custom_headers)
+      first_page.get_all_items
     end
 
     #
@@ -140,11 +166,33 @@ module Azure::ARM::Authorization
     # @param custom_headers [Hash{String => String}] A hash of custom headers that
     # will be added to the HTTP request.
     #
-    # @return [RoleAssignmentListResult] operation results.
+    # @return [RoleAssignmentListResult] which provide lazy access to pages of the
+    # response.
+    #
+    def list_for_resource_group_as_lazy(resource_group_name, filter = nil, custom_headers = nil)
+      response = list_for_resource_group_async(resource_group_name, filter, custom_headers).value!
+      unless response.nil?
+        page = response.body
+        page.next_method = Proc.new do |next_link|
+          list_for_resource_group_next_async(next_link, custom_headers)
+        end
+        page
+      end
+    end
+
+    #
+    # Gets role assignments of the resource group.
+    #
+    # @param resource_group_name [String] Resource group name.
+    # @param filter [String] The filter to apply on the operation.
+    # @param custom_headers [Hash{String => String}] A hash of custom headers that
+    # will be added to the HTTP request.
+    #
+    # @return [Array<RoleAssignment>] operation results.
     #
     def list_for_resource_group(resource_group_name, filter = nil, custom_headers = nil)
-      response = list_for_resource_group_async(resource_group_name, filter, custom_headers).value!
-      response.body unless response.nil?
+      first_page = list_for_resource_group_as_lazy(resource_group_name, filter, custom_headers)
+      first_page.get_all_items
     end
 
     #
@@ -807,11 +855,32 @@ module Azure::ARM::Authorization
     # @param custom_headers [Hash{String => String}] A hash of custom headers that
     # will be added to the HTTP request.
     #
-    # @return [RoleAssignmentListResult] operation results.
+    # @return [RoleAssignmentListResult] which provide lazy access to pages of the
+    # response.
+    #
+    def list_as_lazy(filter = nil, custom_headers = nil)
+      response = list_async(filter, custom_headers).value!
+      unless response.nil?
+        page = response.body
+        page.next_method = Proc.new do |next_link|
+          list_next_async(next_link, custom_headers)
+        end
+        page
+      end
+    end
+
+    #
+    # Gets role assignments of the subscription.
+    #
+    # @param filter [String] The filter to apply on the operation.
+    # @param custom_headers [Hash{String => String}] A hash of custom headers that
+    # will be added to the HTTP request.
+    #
+    # @return [Array<RoleAssignment>] operation results.
     #
     def list(filter = nil, custom_headers = nil)
-      response = list_async(filter, custom_headers).value!
-      response.body unless response.nil?
+      first_page = list_as_lazy(filter, custom_headers)
+      first_page.get_all_items
     end
 
     #
@@ -897,11 +966,33 @@ module Azure::ARM::Authorization
     # @param custom_headers [Hash{String => String}] A hash of custom headers that
     # will be added to the HTTP request.
     #
-    # @return [RoleAssignmentListResult] operation results.
+    # @return [RoleAssignmentListResult] which provide lazy access to pages of the
+    # response.
+    #
+    def list_for_scope_as_lazy(scope, filter = nil, custom_headers = nil)
+      response = list_for_scope_async(scope, filter, custom_headers).value!
+      unless response.nil?
+        page = response.body
+        page.next_method = Proc.new do |next_link|
+          list_for_scope_next_async(next_link, custom_headers)
+        end
+        page
+      end
+    end
+
+    #
+    # Gets role assignments of the scope.
+    #
+    # @param scope [String] Scope.
+    # @param filter [String] The filter to apply on the operation.
+    # @param custom_headers [Hash{String => String}] A hash of custom headers that
+    # will be added to the HTTP request.
+    #
+    # @return [Array<RoleAssignment>] operation results.
     #
     def list_for_scope(scope, filter = nil, custom_headers = nil)
-      response = list_for_scope_async(scope, filter, custom_headers).value!
-      response.body unless response.nil?
+      first_page = list_for_scope_as_lazy(scope, filter, custom_headers)
+      first_page.get_all_items
     end
 
     #

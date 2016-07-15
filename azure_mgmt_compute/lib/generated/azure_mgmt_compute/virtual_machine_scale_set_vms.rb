@@ -29,6 +29,9 @@ module Azure::ARM::Compute
     # @param resource_group_name [String] The name of the resource group.
     # @param vm_scale_set_name [String] The name of the virtual machine scale set.
     # @param instance_id [String] The instance id of the virtual machine.
+    # @param custom_headers [Hash{String => String}] A hash of custom headers that
+    # will be added to the HTTP request.
+    #
     # @return [Concurrent::Promise] promise which provides async access to http
     # response.
     #
@@ -41,8 +44,8 @@ module Azure::ARM::Compute
         deserialize_method = lambda do |parsed_response|
         end
 
-       # Waiting for response.
-       @client.get_long_running_operation_result(response, deserialize_method)
+        # Waiting for response.
+        @client.get_long_running_operation_result(response, deserialize_method)
       end
 
       promise
@@ -146,6 +149,9 @@ module Azure::ARM::Compute
     # @param resource_group_name [String] The name of the resource group.
     # @param vm_scale_set_name [String] The name of the virtual machine scale set.
     # @param instance_id [String] The instance id of the virtual machine.
+    # @param custom_headers [Hash{String => String}] A hash of custom headers that
+    # will be added to the HTTP request.
+    #
     # @return [Concurrent::Promise] promise which provides async access to http
     # response.
     #
@@ -158,8 +164,8 @@ module Azure::ARM::Compute
         deserialize_method = lambda do |parsed_response|
         end
 
-       # Waiting for response.
-       @client.get_long_running_operation_result(response, deserialize_method)
+        # Waiting for response.
+        @client.get_long_running_operation_result(response, deserialize_method)
       end
 
       promise
@@ -264,6 +270,9 @@ module Azure::ARM::Compute
     # @param resource_group_name [String] The name of the resource group.
     # @param vm_scale_set_name [String] The name of the virtual machine scale set.
     # @param instance_id [String] The instance id of the virtual machine.
+    # @param custom_headers [Hash{String => String}] A hash of custom headers that
+    # will be added to the HTTP request.
+    #
     # @return [Concurrent::Promise] promise which provides async access to http
     # response.
     #
@@ -276,8 +285,8 @@ module Azure::ARM::Compute
         deserialize_method = lambda do |parsed_response|
         end
 
-       # Waiting for response.
-       @client.get_long_running_operation_result(response, deserialize_method)
+        # Waiting for response.
+        @client.get_long_running_operation_result(response, deserialize_method)
       end
 
       promise
@@ -578,11 +587,37 @@ module Azure::ARM::Compute
     # @param custom_headers [Hash{String => String}] A hash of custom headers that
     # will be added to the HTTP request.
     #
-    # @return [VirtualMachineScaleSetVMListResult] operation results.
+    # @return [VirtualMachineScaleSetVMListResult] which provide lazy access to
+    # pages of the response.
+    #
+    def list_as_lazy(resource_group_name, virtual_machine_scale_set_name, filter = nil, select = nil, expand = nil, custom_headers = nil)
+      response = list_async(resource_group_name, virtual_machine_scale_set_name, filter, select, expand, custom_headers).value!
+      unless response.nil?
+        page = response.body
+        page.next_method = Proc.new do |next_link|
+          list_next_async(next_link, custom_headers)
+        end
+        page
+      end
+    end
+
+    #
+    # Lists all virtual machines in a VM scale sets.
+    #
+    # @param resource_group_name [String] The name of the resource group.
+    # @param virtual_machine_scale_set_name [String] The name of the virtual
+    # machine scale set.
+    # @param filter [String] The filter to apply on the operation.
+    # @param select [String] The list parameters.
+    # @param expand [String] The expand expression to apply on the operation.
+    # @param custom_headers [Hash{String => String}] A hash of custom headers that
+    # will be added to the HTTP request.
+    #
+    # @return [Array<VirtualMachineScaleSetVM>] operation results.
     #
     def list(resource_group_name, virtual_machine_scale_set_name, filter = nil, select = nil, expand = nil, custom_headers = nil)
-      response = list_async(resource_group_name, virtual_machine_scale_set_name, filter, select, expand, custom_headers).value!
-      response.body unless response.nil?
+      first_page = list_as_lazy(resource_group_name, virtual_machine_scale_set_name, filter, select, expand, custom_headers)
+      first_page.get_all_items
     end
 
     #
@@ -678,6 +713,9 @@ module Azure::ARM::Compute
     # @param resource_group_name [String] The name of the resource group.
     # @param vm_scale_set_name [String] The name of the virtual machine scale set.
     # @param instance_id [String] The instance id of the virtual machine.
+    # @param custom_headers [Hash{String => String}] A hash of custom headers that
+    # will be added to the HTTP request.
+    #
     # @return [Concurrent::Promise] promise which provides async access to http
     # response.
     #
@@ -690,8 +728,8 @@ module Azure::ARM::Compute
         deserialize_method = lambda do |parsed_response|
         end
 
-       # Waiting for response.
-       @client.get_long_running_operation_result(response, deserialize_method)
+        # Waiting for response.
+        @client.get_long_running_operation_result(response, deserialize_method)
       end
 
       promise
@@ -790,6 +828,9 @@ module Azure::ARM::Compute
     # @param resource_group_name [String] The name of the resource group.
     # @param vm_scale_set_name [String] The name of the virtual machine scale set.
     # @param instance_id [String] The instance id of the virtual machine.
+    # @param custom_headers [Hash{String => String}] A hash of custom headers that
+    # will be added to the HTTP request.
+    #
     # @return [Concurrent::Promise] promise which provides async access to http
     # response.
     #
@@ -802,8 +843,8 @@ module Azure::ARM::Compute
         deserialize_method = lambda do |parsed_response|
         end
 
-       # Waiting for response.
-       @client.get_long_running_operation_result(response, deserialize_method)
+        # Waiting for response.
+        @client.get_long_running_operation_result(response, deserialize_method)
       end
 
       promise
@@ -902,6 +943,9 @@ module Azure::ARM::Compute
     # @param resource_group_name [String] The name of the resource group.
     # @param vm_scale_set_name [String] The name of the virtual machine scale set.
     # @param instance_id [String] The instance id of the virtual machine.
+    # @param custom_headers [Hash{String => String}] A hash of custom headers that
+    # will be added to the HTTP request.
+    #
     # @return [Concurrent::Promise] promise which provides async access to http
     # response.
     #
@@ -914,8 +958,8 @@ module Azure::ARM::Compute
         deserialize_method = lambda do |parsed_response|
         end
 
-       # Waiting for response.
-       @client.get_long_running_operation_result(response, deserialize_method)
+        # Waiting for response.
+        @client.get_long_running_operation_result(response, deserialize_method)
       end
 
       promise

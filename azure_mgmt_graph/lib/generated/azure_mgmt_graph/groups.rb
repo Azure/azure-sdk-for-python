@@ -505,11 +505,31 @@ module Azure::ARM::Graph
     # @param custom_headers [Hash{String => String}] A hash of custom headers that
     # will be added to the HTTP request.
     #
+    # @return [GroupListResult] which provide lazy access to pages of the response.
+    #
+    def list_as_lazy(filter = nil, custom_headers = nil)
+      response = list_async(filter, custom_headers).value!
+      unless response.nil?
+        page = response.body
+        page.next_method = Proc.new do |next_link|
+          list_next_async(next_link, custom_headers)
+        end
+        page
+      end
+    end
+
+    #
+    # Gets list of groups for the current tenant.
+    #
+    # @param filter [String] The filter to apply on the operation.
+    # @param custom_headers [Hash{String => String}] A hash of custom headers that
+    # will be added to the HTTP request.
+    #
     # @return [GroupListResult] operation results.
     #
     def list(filter = nil, custom_headers = nil)
-      response = list_async(filter, custom_headers).value!
-      response.body unless response.nil?
+      first_page = list_as_lazy(filter, custom_headers)
+      first_page.get_all_items
     end
 
     #
@@ -594,11 +614,32 @@ module Azure::ARM::Graph
     # @param custom_headers [Hash{String => String}] A hash of custom headers that
     # will be added to the HTTP request.
     #
+    # @return [GetObjectsResult] which provide lazy access to pages of the
+    # response.
+    #
+    def get_group_members_as_lazy(object_id, custom_headers = nil)
+      response = get_group_members_async(object_id, custom_headers).value!
+      unless response.nil?
+        page = response.body
+        page.next_method = Proc.new do |next_link|
+          get_group_members_next_async(next_link, custom_headers)
+        end
+        page
+      end
+    end
+
+    #
+    # Gets the members of a group.
+    #
+    # @param object_id [String] Group object Id who's members should be retrieved.
+    # @param custom_headers [Hash{String => String}] A hash of custom headers that
+    # will be added to the HTTP request.
+    #
     # @return [GetObjectsResult] operation results.
     #
     def get_group_members(object_id, custom_headers = nil)
-      response = get_group_members_async(object_id, custom_headers).value!
-      response.body unless response.nil?
+      first_page = get_group_members_as_lazy(object_id, custom_headers)
+      first_page.get_all_items
     end
 
     #

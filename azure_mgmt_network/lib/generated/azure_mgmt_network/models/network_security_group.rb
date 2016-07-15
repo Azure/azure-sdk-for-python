@@ -128,6 +128,7 @@ module Azure::ARM::Network
               },
               network_interfaces: {
                 required: false,
+                read_only: true,
                 serialized_name: 'properties.networkInterfaces',
                 type: {
                   name: 'Sequence',
@@ -143,6 +144,7 @@ module Azure::ARM::Network
               },
               subnets: {
                 required: false,
+                read_only: true,
                 serialized_name: 'properties.subnets',
                 type: {
                   name: 'Sequence',
