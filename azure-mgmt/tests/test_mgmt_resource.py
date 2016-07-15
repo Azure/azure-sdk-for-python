@@ -303,6 +303,20 @@ class MgmtResourceTest(AzureMgmtTestCase):
             )
         self.assertIn('cannot be cancelled', cm.exception.message)
 
+        # Validate
+        validation =self.resource_client.deployments.validate(
+            self.group_name,
+            deployment_name
+        )
+        self.assertTrue(hasattr(validation, 'properties'))
+
+        # Export template
+        export =self.resource_client.deployments.export_template(
+            self.group_name,
+            deployment_name
+        )
+        self.assertTrue(hasattr(export, 'template'))
+
         # Delete the template
         async_delete = self.resource_client.deployments.delete(
             self.group_name,
