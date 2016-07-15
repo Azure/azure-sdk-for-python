@@ -561,6 +561,9 @@ class MgmtNetworkTest(AzureMgmtTestCase):
         ))
         self.assertEqual(len(route_tables), 1)
 
+        route_tables = list(self.network_client.route_tables.list_all())
+        self.assertGreater(len(route_tables), 0)
+
         async_route = self.network_client.routes.create_or_update(
             self.group_name,
             route_table.name,
