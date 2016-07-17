@@ -19,19 +19,19 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.serialization import Model
+from msrest.paging import Paged
 
 
-class UsageListResult(Model):
-    """The List Usages operation response.
-
-    :param value: Gets or sets the list Storage Resource Usages.
-    :type value: list of :class:`Usage <azure.mgmt.storage.models.Usage>`
-    """ 
+class UsagePaged(Paged):
+    """
+    A paging container for iterating over a list of Usage object
+    """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[Usage]'},
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[Usage]'}
     }
 
-    def __init__(self, value=None):
-        self.value = value
+    def __init__(self, *args, **kwargs):
+
+        super(UsagePaged, self).__init__(*args, **kwargs)
