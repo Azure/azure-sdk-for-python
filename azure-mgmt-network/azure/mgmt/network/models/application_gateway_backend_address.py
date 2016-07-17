@@ -23,8 +23,7 @@ from msrest.serialization import Model
 
 
 class ApplicationGatewayBackendAddress(Model):
-    """
-    Backend Address of application gateway
+    """Backend Address of application gateway.
 
     :param fqdn: Gets or sets the dns name
     :type fqdn: str

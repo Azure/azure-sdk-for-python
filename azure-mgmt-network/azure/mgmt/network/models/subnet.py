@@ -23,8 +23,7 @@ from .sub_resource import SubResource
 
 
 class Subnet(SubResource):
-    """
-    Subnet in a VirtualNework resource
+    """Subnet in a VirtualNework resource.
 
     :param id: Resource Id
     :type id: str

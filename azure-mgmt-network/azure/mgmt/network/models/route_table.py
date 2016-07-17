@@ -23,8 +23,7 @@ from .resource import Resource
 
 
 class RouteTable(Resource):
-    """
-    RouteTable resource
+    """RouteTable resource.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.

@@ -23,8 +23,7 @@ from .resource import Resource
 
 
 class ExpressRouteCircuit(Resource):
-    """
-    ExpressRouteCircuit resource
+    """ExpressRouteCircuit resource.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.

@@ -23,8 +23,7 @@ from .sub_resource import SubResource
 
 
 class VirtualNetworkGatewayIPConfiguration(SubResource):
-    """
-    IpConfiguration for Virtual network gateway
+    """IpConfiguration for Virtual network gateway.
 
     :param id: Resource Id
     :type id: str

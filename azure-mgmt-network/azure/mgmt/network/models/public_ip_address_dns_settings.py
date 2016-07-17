@@ -23,8 +23,7 @@ from msrest.serialization import Model
 
 
 class PublicIPAddressDnsSettings(Model):
-    """
-    Contains FQDN of the DNS record associated with the public IP address
+    """Contains FQDN of the DNS record associated with the public IP address.
 
     :param domain_name_label: Gets or sets the Domain name label.The
      concatenation of the domain name label and the regionalized DNS zone

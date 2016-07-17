@@ -23,8 +23,7 @@ from .sub_resource import SubResource
 
 
 class ExpressRouteCircuitPeering(SubResource):
-    """
-    Peering in a ExpressRouteCircuit resource
+    """Peering in a ExpressRouteCircuit resource.
 
     :param id: Resource Id
     :type id: str

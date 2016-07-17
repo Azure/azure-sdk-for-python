@@ -23,8 +23,7 @@ from .sub_resource import SubResource
 
 
 class LoadBalancingRule(SubResource):
-    """
-    Rules of the load balancer
+    """Rules of the load balancer.
 
     :param id: Resource Id
     :type id: str

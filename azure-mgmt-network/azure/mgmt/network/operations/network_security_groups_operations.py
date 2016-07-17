@@ -46,9 +46,8 @@ class NetworkSecurityGroupsOperations(object):
 
     def delete(
             self, resource_group_name, network_security_group_name, custom_headers=None, raw=False, **operation_config):
-        """
-        The Delete NetworkSecurityGroup operation deletes the specifed network
-        security group
+        """The Delete NetworkSecurityGroup operation deletes the specifed network
+        security group.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
@@ -125,8 +124,7 @@ class NetworkSecurityGroupsOperations(object):
 
     def get(
             self, resource_group_name, network_security_group_name, expand=None, custom_headers=None, raw=False, **operation_config):
-        """
-        The Get NetworkSecurityGroups operation retrieves information about
+        """The Get NetworkSecurityGroups operation retrieves information about
         the specified network security group.
 
         :param resource_group_name: The name of the resource group.
@@ -193,8 +191,7 @@ class NetworkSecurityGroupsOperations(object):
 
     def create_or_update(
             self, resource_group_name, network_security_group_name, parameters, custom_headers=None, raw=False, **operation_config):
-        """
-        The Put NetworkSecurityGroup operation creates/updates a network
+        """The Put NetworkSecurityGroup operation creates/updates a network
         security groupin the specified resource group.
 
         :param resource_group_name: The name of the resource group.
@@ -290,9 +287,8 @@ class NetworkSecurityGroupsOperations(object):
 
     def list_all(
             self, custom_headers=None, raw=False, **operation_config):
-        """
-        The list NetworkSecurityGroups returns all network security groups in
-        a subscription
+        """The list NetworkSecurityGroups returns all network security groups in
+        a subscription.
 
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -354,9 +350,8 @@ class NetworkSecurityGroupsOperations(object):
 
     def list(
             self, resource_group_name, custom_headers=None, raw=False, **operation_config):
-        """
-        The list NetworkSecurityGroups returns all network security groups in
-        a resource group
+        """The list NetworkSecurityGroups returns all network security groups in
+        a resource group.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str

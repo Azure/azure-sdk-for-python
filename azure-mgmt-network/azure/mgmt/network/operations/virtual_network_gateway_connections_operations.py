@@ -46,8 +46,7 @@ class VirtualNetworkGatewayConnectionsOperations(object):
 
     def create_or_update(
             self, resource_group_name, virtual_network_gateway_connection_name, parameters, custom_headers=None, raw=False, **operation_config):
-        """
-        The Put VirtualNetworkGatewayConnection operation creates/updates a
+        """The Put VirtualNetworkGatewayConnection operation creates/updates a
         virtual network gateway connection in the specified resource group
         through Network resource provider.
 
@@ -145,8 +144,7 @@ class VirtualNetworkGatewayConnectionsOperations(object):
 
     def get(
             self, resource_group_name, virtual_network_gateway_connection_name, custom_headers=None, raw=False, **operation_config):
-        """
-        The Get VirtualNetworkGatewayConnection operation retrieves
+        """The Get VirtualNetworkGatewayConnection operation retrieves
         information about the specified virtual network gateway connection
         through Network resource provider.
 
@@ -210,8 +208,7 @@ class VirtualNetworkGatewayConnectionsOperations(object):
 
     def delete(
             self, resource_group_name, virtual_network_gateway_connection_name, custom_headers=None, raw=False, **operation_config):
-        """
-        The Delete VirtualNetworkGatewayConnection operation deletes the
+        """The Delete VirtualNetworkGatewayConnection operation deletes the
         specifed virtual network Gateway connection through Network resource
         provider.
 
@@ -290,8 +287,7 @@ class VirtualNetworkGatewayConnectionsOperations(object):
 
     def get_shared_key(
             self, resource_group_name, connection_shared_key_name, custom_headers=None, raw=False, **operation_config):
-        """
-        The Get VirtualNetworkGatewayConnectionSharedKey operation retrieves
+        """The Get VirtualNetworkGatewayConnectionSharedKey operation retrieves
         information about the specified virtual network gateway connection
         shared key through Network resource provider.
 
@@ -355,8 +351,7 @@ class VirtualNetworkGatewayConnectionsOperations(object):
 
     def list(
             self, resource_group_name, custom_headers=None, raw=False, **operation_config):
-        """
-        The List VirtualNetworkGatewayConnections operation retrieves all the
+        """The List VirtualNetworkGatewayConnections operation retrieves all the
         virtual network gateways connections created.
 
         :param resource_group_name: The name of the resource group.
@@ -422,8 +417,7 @@ class VirtualNetworkGatewayConnectionsOperations(object):
 
     def reset_shared_key(
             self, resource_group_name, virtual_network_gateway_connection_name, key_length=None, custom_headers=None, raw=False, **operation_config):
-        """
-        The VirtualNetworkGatewayConnectionResetSharedKey operation resets the
+        """The VirtualNetworkGatewayConnectionResetSharedKey operation resets the
         virtual network gateway connection shared key for passed virtual
         network gateway connection in the specified resource group through
         Network resource provider.
@@ -520,8 +514,7 @@ class VirtualNetworkGatewayConnectionsOperations(object):
 
     def set_shared_key(
             self, resource_group_name, virtual_network_gateway_connection_name, value=None, custom_headers=None, raw=False, **operation_config):
-        """
-        The Put VirtualNetworkGatewayConnectionSharedKey operation sets the
+        """The Put VirtualNetworkGatewayConnectionSharedKey operation sets the
         virtual network gateway connection shared key for passed virtual
         network gateway connection in the specified resource group through
         Network resource provider.

@@ -23,8 +23,7 @@ from .sub_resource import SubResource
 
 
 class ApplicationGatewayUrlPathMap(SubResource):
-    """
-    UrlPathMap of application gateway
+    """UrlPathMap of application gateway.
 
     :param id: Resource Id
     :type id: str

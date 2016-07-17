@@ -23,8 +23,7 @@ from .resource import Resource
 
 
 class PublicIPAddress(Resource):
-    """
-    PublicIPAddress resource
+    """PublicIPAddress resource.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.

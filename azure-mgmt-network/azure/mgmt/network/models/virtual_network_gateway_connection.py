@@ -23,8 +23,7 @@ from .resource import Resource
 
 
 class VirtualNetworkGatewayConnection(Resource):
-    """
-    A common class for general resource information
+    """A common class for general resource information.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.

@@ -23,8 +23,7 @@ from .sub_resource import SubResource
 
 
 class Probe(SubResource):
-    """
-    Load balancer Probe
+    """Load balancer Probe.
 
     :param id: Resource Id
     :type id: str

@@ -23,8 +23,7 @@ from .sub_resource import SubResource
 
 
 class VpnClientRevokedCertificate(SubResource):
-    """
-    VPN client revoked certificate of virtual network gateway
+    """VPN client revoked certificate of virtual network gateway.
 
     :param id: Resource Id
     :type id: str

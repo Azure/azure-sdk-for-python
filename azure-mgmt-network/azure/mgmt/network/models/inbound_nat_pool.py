@@ -23,8 +23,7 @@ from .sub_resource import SubResource
 
 
 class InboundNatPool(SubResource):
-    """
-    Inbound NAT pool of the loadbalancer
+    """Inbound NAT pool of the loadbalancer.
 
     :param id: Resource Id
     :type id: str

@@ -23,8 +23,7 @@ from .sub_resource import SubResource
 
 
 class SecurityRule(SubResource):
-    """
-    Network security rule
+    """Network security rule.
 
     :param id: Resource Id
     :type id: str

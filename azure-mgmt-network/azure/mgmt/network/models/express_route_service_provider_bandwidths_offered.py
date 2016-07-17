@@ -23,8 +23,7 @@ from msrest.serialization import Model
 
 
 class ExpressRouteServiceProviderBandwidthsOffered(Model):
-    """
-    Contains Bandwidths offered in ExpressRouteServiceProviders
+    """Contains Bandwidths offered in ExpressRouteServiceProviders.
 
     :param offer_name: Gets the OfferName
     :type offer_name: str

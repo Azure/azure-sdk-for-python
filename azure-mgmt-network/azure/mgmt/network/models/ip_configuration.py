@@ -23,8 +23,7 @@ from .sub_resource import SubResource
 
 
 class IPConfiguration(SubResource):
-    """
-    IPConfiguration
+    """IPConfiguration.
 
     :param id: Resource Id
     :type id: str
