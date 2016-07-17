@@ -23,7 +23,7 @@ from msrest.serialization import Model
 
 
 class ConnectionResetSharedKey(Model):
-    """ConnectionResetSharedKey
+    """ConnectionResetSharedKey.
 
     :param key_length: The virtual network connection reset shared key length
     :type key_length: long

@@ -23,8 +23,7 @@ from msrest.serialization import Model
 
 
 class VpnClientConfiguration(Model):
-    """
-    VpnClientConfiguration for P2S client
+    """VpnClientConfiguration for P2S client.
 
     :param vpn_client_address_pool: Gets or sets the reference of the Address
      space resource which represents Address space for P2S VpnClient.

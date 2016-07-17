@@ -23,8 +23,7 @@ from msrest.serialization import Model
 
 
 class NetworkInterfaceDnsSettings(Model):
-    """
-    Dns Settings of a network interface
+    """Dns Settings of a network interface.
 
     :param dns_servers: Gets or sets list of DNS servers IP addresses
     :type dns_servers: list of str

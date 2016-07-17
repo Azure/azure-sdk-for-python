@@ -23,9 +23,8 @@ from msrest.serialization import Model
 
 
 class AddressSpace(Model):
-    """
-    AddressSpace contains an array of IP address ranges that can be used by
-    subnets
+    """AddressSpace contains an array of IP address ranges that can be used by
+    subnets.
 
     :param address_prefixes: Gets or sets List of address blocks reserved for
      this virtual network in CIDR notation

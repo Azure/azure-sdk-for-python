@@ -23,8 +23,7 @@ from .resource import Resource
 
 
 class NetworkSecurityGroup(Resource):
-    """
-    NetworkSecurityGroup resource
+    """NetworkSecurityGroup resource.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.

@@ -23,8 +23,7 @@ from .sub_resource import SubResource
 
 
 class FrontendIPConfiguration(SubResource):
-    """
-    Frontend IP address of the load balancer
+    """Frontend IP address of the load balancer.
 
     :param id: Resource Id
     :type id: str

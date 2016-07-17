@@ -52,7 +52,7 @@ class NetworkManagementClientConfiguration(AzureConfiguration):
     Note that all parameters used to create this instance are saved as instance
     attributes.
 
-    :param credentials: Gets Azure subscription credentials.
+    :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
      object<msrestazure.azure_active_directory>`
     :param subscription_id: Gets subscription credentials which uniquely
@@ -147,7 +147,7 @@ class NetworkManagementClient(object):
     :ivar virtual_networks: VirtualNetworks operations
     :vartype virtual_networks: .operations.VirtualNetworksOperations
 
-    :param credentials: Gets Azure subscription credentials.
+    :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
      object<msrestazure.azure_active_directory>`
     :param subscription_id: Gets subscription credentials which uniquely
@@ -219,8 +219,7 @@ class NetworkManagementClient(object):
 
     def check_dns_name_availability(
             self, location, domain_name_label=None, custom_headers=None, raw=False, **operation_config):
-        """
-        Checks whether a domain name in the cloudapp.net zone is available for
+        """Checks whether a domain name in the cloudapp.net zone is available for
         use.
 
         :param location: The location of the domain name

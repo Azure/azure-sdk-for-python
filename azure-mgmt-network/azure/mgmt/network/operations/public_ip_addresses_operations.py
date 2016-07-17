@@ -46,8 +46,7 @@ class PublicIPAddressesOperations(object):
 
     def delete(
             self, resource_group_name, public_ip_address_name, custom_headers=None, raw=False, **operation_config):
-        """
-        The delete publicIpAddress operation deletes the specified
+        """The delete publicIpAddress operation deletes the specified
         publicIpAddress.
 
         :param resource_group_name: The name of the resource group.
@@ -124,9 +123,8 @@ class PublicIPAddressesOperations(object):
 
     def get(
             self, resource_group_name, public_ip_address_name, expand=None, custom_headers=None, raw=False, **operation_config):
-        """
-        The Get publicIpAddress operation retreives information about the
-        specified pubicIpAddress
+        """The Get publicIpAddress operation retreives information about the
+        specified pubicIpAddress.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
@@ -191,9 +189,8 @@ class PublicIPAddressesOperations(object):
 
     def create_or_update(
             self, resource_group_name, public_ip_address_name, parameters, custom_headers=None, raw=False, **operation_config):
-        """
-        The Put PublicIPAddress operation creates/updates a stable/dynamic
-        PublicIP address
+        """The Put PublicIPAddress operation creates/updates a stable/dynamic
+        PublicIP address.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
@@ -287,8 +284,7 @@ class PublicIPAddressesOperations(object):
 
     def list_all(
             self, custom_headers=None, raw=False, **operation_config):
-        """
-        The List publicIpAddress opertion retrieves all the publicIpAddresses
+        """The List publicIpAddress opertion retrieves all the publicIpAddresses
         in a subscription.
 
         :param dict custom_headers: headers that will be added to the request
@@ -351,8 +347,7 @@ class PublicIPAddressesOperations(object):
 
     def list(
             self, resource_group_name, custom_headers=None, raw=False, **operation_config):
-        """
-        The List publicIpAddress opertion retrieves all the publicIpAddresses
+        """The List publicIpAddress opertion retrieves all the publicIpAddresses
         in a resource group.
 
         :param resource_group_name: The name of the resource group.

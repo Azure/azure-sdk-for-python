@@ -23,8 +23,7 @@ from .sub_resource import SubResource
 
 
 class ApplicationGatewayBackendAddressPool(SubResource):
-    """
-    Backend Address Pool of application gateway
+    """Backend Address Pool of application gateway.
 
     :param id: Resource Id
     :type id: str

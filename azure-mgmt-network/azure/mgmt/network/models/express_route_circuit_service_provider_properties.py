@@ -23,8 +23,7 @@ from msrest.serialization import Model
 
 
 class ExpressRouteCircuitServiceProviderProperties(Model):
-    """
-    Contains ServiceProviderProperties in an ExpressRouteCircuit
+    """Contains ServiceProviderProperties in an ExpressRouteCircuit.
 
     :param service_provider_name: Gets or sets serviceProviderName.
     :type service_provider_name: str

@@ -23,8 +23,7 @@ from .sub_resource import SubResource
 
 
 class VpnClientRootCertificate(SubResource):
-    """
-    VPN client root certificate of virtual network gateway
+    """VPN client root certificate of virtual network gateway.
 
     :param id: Resource Id
     :type id: str

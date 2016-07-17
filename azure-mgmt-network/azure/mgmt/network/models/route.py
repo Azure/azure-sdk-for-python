@@ -23,8 +23,7 @@ from .sub_resource import SubResource
 
 
 class Route(SubResource):
-    """
-    Route resource
+    """Route resource.
 
     :param id: Resource Id
     :type id: str

@@ -23,8 +23,7 @@ from .sub_resource import SubResource
 
 
 class ApplicationGatewayRequestRoutingRule(SubResource):
-    """
-    Request routing rule of application gateway
+    """Request routing rule of application gateway.
 
     :param id: Resource Id
     :type id: str

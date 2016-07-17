@@ -46,8 +46,7 @@ class ExpressRouteCircuitPeeringsOperations(object):
 
     def delete(
             self, resource_group_name, circuit_name, peering_name, custom_headers=None, raw=False, **operation_config):
-        """
-        The delete peering operation deletes the specified peering from the
+        """The delete peering operation deletes the specified peering from the
         ExpressRouteCircuit.
 
         :param resource_group_name: The name of the resource group.
@@ -127,8 +126,7 @@ class ExpressRouteCircuitPeeringsOperations(object):
 
     def get(
             self, resource_group_name, circuit_name, peering_name, custom_headers=None, raw=False, **operation_config):
-        """
-        The GET peering operation retrieves the specified authorization from
+        """The GET peering operation retrieves the specified authorization from
         the ExpressRouteCircuit.
 
         :param resource_group_name: The name of the resource group.
@@ -193,9 +191,8 @@ class ExpressRouteCircuitPeeringsOperations(object):
 
     def create_or_update(
             self, resource_group_name, circuit_name, peering_name, peering_parameters, custom_headers=None, raw=False, **operation_config):
-        """
-        The Put Pering operation creates/updates an peering in the specified
-        ExpressRouteCircuits
+        """The Put Pering operation creates/updates an peering in the specified
+        ExpressRouteCircuits.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
@@ -292,8 +289,7 @@ class ExpressRouteCircuitPeeringsOperations(object):
 
     def list(
             self, resource_group_name, circuit_name, custom_headers=None, raw=False, **operation_config):
-        """
-        The List peering operation retrieves all the peerings in an
+        """The List peering operation retrieves all the peerings in an
         ExpressRouteCircuit.
 
         :param resource_group_name: The name of the resource group.

@@ -23,8 +23,7 @@ from msrest.serialization import Model
 
 
 class ExpressRouteCircuitArpTable(Model):
-    """
-    The arp table associated with the ExpressRouteCircuit
+    """The arp table associated with the ExpressRouteCircuit.
 
     :param age: Age.
     :type age: int

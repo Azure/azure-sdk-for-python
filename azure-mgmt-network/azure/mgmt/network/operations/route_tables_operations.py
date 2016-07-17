@@ -46,8 +46,7 @@ class RouteTablesOperations(object):
 
     def delete(
             self, resource_group_name, route_table_name, custom_headers=None, raw=False, **operation_config):
-        """
-        The Delete RouteTable operation deletes the specifed Route Table
+        """The Delete RouteTable operation deletes the specifed Route Table.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
@@ -123,8 +122,7 @@ class RouteTablesOperations(object):
 
     def get(
             self, resource_group_name, route_table_name, expand=None, custom_headers=None, raw=False, **operation_config):
-        """
-        The Get RouteTables operation retrieves information about the
+        """The Get RouteTables operation retrieves information about the
         specified route table.
 
         :param resource_group_name: The name of the resource group.
@@ -189,8 +187,7 @@ class RouteTablesOperations(object):
 
     def create_or_update(
             self, resource_group_name, route_table_name, parameters, custom_headers=None, raw=False, **operation_config):
-        """
-        The Put RouteTable operation creates/updates a route tablein the
+        """The Put RouteTable operation creates/updates a route tablein the
         specified resource group.
 
         :param resource_group_name: The name of the resource group.
@@ -285,8 +282,7 @@ class RouteTablesOperations(object):
 
     def list(
             self, resource_group_name, custom_headers=None, raw=False, **operation_config):
-        """
-        The list RouteTables returns all route tables in a resource group
+        """The list RouteTables returns all route tables in a resource group.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
@@ -351,8 +347,7 @@ class RouteTablesOperations(object):
 
     def list_all(
             self, custom_headers=None, raw=False, **operation_config):
-        """
-        The list RouteTables returns all route tables in a subscription
+        """The list RouteTables returns all route tables in a subscription.
 
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the

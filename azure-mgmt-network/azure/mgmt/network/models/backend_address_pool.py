@@ -23,8 +23,7 @@ from .sub_resource import SubResource
 
 
 class BackendAddressPool(SubResource):
-    """
-    Pool of backend IP addresseses
+    """Pool of backend IP addresseses.
 
     :param id: Resource Id
     :type id: str

@@ -23,8 +23,7 @@ from .resource import Resource
 
 
 class NetworkInterface(Resource):
-    """
-    A NetworkInterface in a resource group
+    """A NetworkInterface in a resource group.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.

@@ -23,8 +23,7 @@ from .resource import Resource
 
 
 class LoadBalancer(Resource):
-    """
-    LoadBalancer resource
+    """LoadBalancer resource.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.

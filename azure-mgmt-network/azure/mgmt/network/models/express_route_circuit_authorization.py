@@ -23,8 +23,7 @@ from .sub_resource import SubResource
 
 
 class ExpressRouteCircuitAuthorization(SubResource):
-    """
-    Authorization in a ExpressRouteCircuit resource
+    """Authorization in a ExpressRouteCircuit resource.
 
     :param id: Resource Id
     :type id: str

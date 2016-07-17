@@ -46,8 +46,7 @@ class LoadBalancersOperations(object):
 
     def delete(
             self, resource_group_name, load_balancer_name, custom_headers=None, raw=False, **operation_config):
-        """
-        The delete loadbalancer operation deletes the specified loadbalancer.
+        """The delete loadbalancer operation deletes the specified loadbalancer.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
@@ -123,8 +122,7 @@ class LoadBalancersOperations(object):
 
     def get(
             self, resource_group_name, load_balancer_name, expand=None, custom_headers=None, raw=False, **operation_config):
-        """
-        The Get ntework interface operation retreives information about the
+        """The Get ntework interface operation retreives information about the
         specified network interface.
 
         :param resource_group_name: The name of the resource group.
@@ -189,8 +187,7 @@ class LoadBalancersOperations(object):
 
     def create_or_update(
             self, resource_group_name, load_balancer_name, parameters, custom_headers=None, raw=False, **operation_config):
-        """
-        The Put LoadBalancer operation creates/updates a LoadBalancer
+        """The Put LoadBalancer operation creates/updates a LoadBalancer.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
@@ -284,8 +281,7 @@ class LoadBalancersOperations(object):
 
     def list_all(
             self, custom_headers=None, raw=False, **operation_config):
-        """
-        The List loadBalancer opertion retrieves all the loadbalancers in a
+        """The List loadBalancer opertion retrieves all the loadbalancers in a
         subscription.
 
         :param dict custom_headers: headers that will be added to the request
@@ -348,8 +344,7 @@ class LoadBalancersOperations(object):
 
     def list(
             self, resource_group_name, custom_headers=None, raw=False, **operation_config):
-        """
-        The List loadBalancer opertion retrieves all the loadbalancers in a
+        """The List loadBalancer opertion retrieves all the loadbalancers in a
         resource group.
 
         :param resource_group_name: The name of the resource group.

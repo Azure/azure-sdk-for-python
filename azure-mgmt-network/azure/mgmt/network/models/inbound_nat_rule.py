@@ -23,8 +23,7 @@ from .sub_resource import SubResource
 
 
 class InboundNatRule(SubResource):
-    """
-    Inbound NAT rule of the loadbalancer
+    """Inbound NAT rule of the loadbalancer.
 
     :param id: Resource Id
     :type id: str
