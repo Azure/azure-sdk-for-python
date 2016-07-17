@@ -35,9 +35,9 @@ from .storage_account_regenerate_key_parameters import StorageAccountRegenerateK
 from .storage_account_update_parameters import StorageAccountUpdateParameters
 from .usage_name import UsageName
 from .usage import Usage
-from .usage_list_result import UsageListResult
 from .resource import Resource
 from .storage_account_paged import StorageAccountPaged
+from .usage_paged import UsagePaged
 from .storage_management_client_enums import (
     Reason,
     SkuName,
@@ -67,9 +67,9 @@ __all__ = [
     'StorageAccountUpdateParameters',
     'UsageName',
     'Usage',
-    'UsageListResult',
     'Resource',
     'StorageAccountPaged',
+    'UsagePaged',
     'Reason',
     'SkuName',
     'SkuTier',
