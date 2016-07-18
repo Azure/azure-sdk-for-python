@@ -60,15 +60,44 @@ class Test_retry_policy_tests(unittest.TestCase):
         except errors.HTTPFailure as inst:
             self.assertEqual(inst.status_code, status_code)
 
+    @classmethod
+    def setUpClass(cls):
+        if (cls.masterKey == '[YOUR_KEY_HERE]' or
+                cls.host == '[YOUR_ENDPOINT_HERE]'):
+            raise Exception(
+                "You must specify your Azure DocumentDB account values for "
+                "'masterKey' and 'host' at the top of this class to run the "
+                "tests.")
+
+    @classmethod
+    def tearDownClass(cls):
+        client = document_client.DocumentClient(cls.host, 
+                                                {'masterKey': cls.masterKey})
+        query_iterable = client.QueryDatabases('SELECT * FROM root r WHERE r.id=\'' + cls.test_db_name + '\'')
+        it = iter(query_iterable)
+        
+        test_db = next(it, None)
+        if test_db is not None:
+            client.DeleteDatabase(test_db['_self'])
+
     def setUp(self):
         self.client = document_client.DocumentClient(Test_retry_policy_tests.host, {'masterKey': Test_retry_policy_tests.masterKey})
 
-        databases = list(self.client.ReadDatabases())
-        for database in databases:
-            self.client.DeleteDatabase(database['_self'])
+        # Create the test database only when it's not already present
+        query_iterable = self.client.QueryDatabases('SELECT * FROM root r WHERE r.id=\'' + Test_retry_policy_tests.test_db_name + '\'')
+        it = iter(query_iterable)
+        
+        self.created_db = next(it, None)
+        if self.created_db is None:
+            self.created_db = self.client.CreateDatabase({'id' : Test_retry_policy_tests.test_db_name})
 
-        self.created_db = self.client.CreateDatabase({ 'id': Test_retry_policy_tests.test_db_name })
-        self.created_collection = self.client.CreateCollection(self.created_db['_self'], {'id' : Test_retry_policy_tests.test_coll_name })
+        # Create the test collection only when it's not already present
+        query_iterable = self.client.QueryCollections(self.created_db['_self'], 'SELECT * FROM root r WHERE r.id=\'' + Test_retry_policy_tests.test_coll_name + '\'')
+        it = iter(query_iterable)
+        
+        self.created_collection = next(it, None)
+        if self.created_collection is None:
+            self.created_collection = self.client.CreateCollection(self.created_db['_self'], {'id' : Test_retry_policy_tests.test_coll_name})
 
         self.retry_after_in_milliseconds = 1000
 
@@ -92,7 +121,7 @@ class Test_retry_policy_tests(unittest.TestCase):
             self.assertEqual(connection_policy.RetryOptions.MaxRetryAttemptCount, client.last_response_headers[http_constants.HttpHeaders.ThrottleRetryCount])
             self.assertGreaterEqual(client.last_response_headers[http_constants.HttpHeaders.ThrottleRetryWaitTimeInMs], connection_policy.RetryOptions.MaxRetryAttemptCount * self.retry_after_in_milliseconds)
 
-        resource_throttle_retry_policy._ExecuteFunction = self.OriginalExecuteFunction
+        retry_utility._ExecuteFunction = self.OriginalExecuteFunction
 
     def test_resource_throttle_retry_policy_fixed_retry_after(self):
         connection_policy = documents.ConnectionPolicy()
@@ -115,7 +144,7 @@ class Test_retry_policy_tests(unittest.TestCase):
             self.assertEqual(connection_policy.RetryOptions.MaxRetryAttemptCount, client.last_response_headers[http_constants.HttpHeaders.ThrottleRetryCount])
             self.assertGreaterEqual(client.last_response_headers[http_constants.HttpHeaders.ThrottleRetryWaitTimeInMs], connection_policy.RetryOptions.MaxRetryAttemptCount * connection_policy.RetryOptions.FixedRetryIntervalInMilliseconds)
 
-        resource_throttle_retry_policy._ExecuteFunction = self.OriginalExecuteFunction
+        retry_utility._ExecuteFunction = self.OriginalExecuteFunction
 
     def test_resource_throttle_retry_policy_max_wait_time(self):
         connection_policy = documents.ConnectionPolicy()
@@ -137,7 +166,7 @@ class Test_retry_policy_tests(unittest.TestCase):
             self.assertEqual(e.status_code, 429)
             self.assertGreaterEqual(client.last_response_headers[http_constants.HttpHeaders.ThrottleRetryWaitTimeInMs], connection_policy.RetryOptions.MaxWaitTimeInSeconds * 1000)
 
-        resource_throttle_retry_policy._ExecuteFunction = self.OriginalExecuteFunction
+        retry_utility._ExecuteFunction = self.OriginalExecuteFunction
 
     def test_resource_throttle_retry_policy_query(self):
         connection_policy = documents.ConnectionPolicy()
@@ -168,7 +197,7 @@ class Test_retry_policy_tests(unittest.TestCase):
             self.assertEqual(connection_policy.RetryOptions.MaxRetryAttemptCount, client.last_response_headers[http_constants.HttpHeaders.ThrottleRetryCount])
             self.assertGreaterEqual(client.last_response_headers[http_constants.HttpHeaders.ThrottleRetryWaitTimeInMs], connection_policy.RetryOptions.MaxRetryAttemptCount * self.retry_after_in_milliseconds)
 
-        resource_throttle_retry_policy._ExecuteFunction = self.OriginalExecuteFunction
+        retry_utility._ExecuteFunction = self.OriginalExecuteFunction
 
     def _MockExecuteFunction(self, function, *args, **kwargs):
         raise errors.HTTPFailure(429, "Request rate is too large", {http_constants.HttpHeaders.RetryAfterInMilliseconds: self.retry_after_in_milliseconds})

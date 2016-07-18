@@ -72,6 +72,15 @@ class Test_globaldb_tests(unittest.TestCase):
             self.assertEqual(inst.status_code, status_code)
             self.assertEqual(inst.sub_status, sub_status)
 
+    @classmethod
+    def setUpClass(cls):
+        if (cls.masterKey == '[YOUR_KEY_HERE]' or
+                cls.host == '[YOUR_GLOBAL_ENDPOINT_HERE]'):
+            raise Exception(
+                "You must specify your Azure DocumentDB account values for "
+                "'masterKey' and 'host' at the top of this class to run the "
+                "tests.")
+
     def setUp(self):
         self.client = document_client.DocumentClient(Test_globaldb_tests.host, {'masterKey': Test_globaldb_tests.masterKey})
         

@@ -48,7 +48,7 @@ def _Execute(client, global_endpoint_manager, function, *args, **kwargs):
             result = _ExecuteFunction(function, *args, **kwargs)
 
             if not client.last_response_headers:
-                    client.last_response_headers = {}
+                client.last_response_headers = {}
             
             # setting the throttle related response headers before returning the result
             client.last_response_headers[http_constants.HttpHeaders.ThrottleRetryCount] = resourceThrottle_retry_policy.current_retry_attempt_count
@@ -58,7 +58,8 @@ def _Execute(client, global_endpoint_manager, function, *args, **kwargs):
         except errors.HTTPFailure, e:
             retry_policy = None
 
-            if e.status_code == endpoint_discovery_retry_policy._EndpointDiscoveryRetryPolicy.FORBIDDEN_STATUS_CODE and e.sub_status == endpoint_discovery_retry_policy._EndpointDiscoveryRetryPolicy.WRITE_FORBIDDEN_SUB_STATUS_CODE:
+            if (e.status_code == endpoint_discovery_retry_policy._EndpointDiscoveryRetryPolicy.FORBIDDEN_STATUS_CODE
+                    and e.sub_status == endpoint_discovery_retry_policy._EndpointDiscoveryRetryPolicy.WRITE_FORBIDDEN_SUB_STATUS_CODE):
                 retry_policy = endpointDiscovery_retry_policy
             elif e.status_code == resource_throttle_retry_policy._ResourceThrottleRetryPolicy.THROTTLE_STATUS_CODE:
                 retry_policy = resourceThrottle_retry_policy
