@@ -31,7 +31,7 @@ class MgmtStorageTest(AzureMgmtTestCase):
 
     @record
     def test_storage_usage(self):
-        usages = self.storage_client.usage.list().value
+        usages = list(self.storage_client.usage.list())
         self.assertGreater(len(usages), 0)
 
     @record
