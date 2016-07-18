@@ -1385,6 +1385,71 @@ class LegacyMgmtMiscTest(LegacyMgmtTestCase):
             self._reserved_ip_address_exists(self.reserved_ip_address))
 
     @record
+    def test_associate_reserved_ip_address(self):
+        # Arrange
+        deployment_name = 'utdeployment'
+        self._create_hosted_service_with_deployment(
+            self.hosted_service_name, deployment_name)
+        update_result = self.sms.update_deployment_status(
+            self.hosted_service_name,
+            deployment_name,
+            'Running'
+        )
+        self._create_reserved_ip_address()
+        self._wait_for_async(update_result.request_id)
+
+        # Act
+        result = self.sms.associate_reserved_ip_address(
+            self.reserved_ip_address,
+            self.hosted_service_name,
+            deployment_name
+        )
+        self._wait_for_async(result.request_id)
+        result = self.sms.get_hosted_service_properties(
+            self.hosted_service_name, True
+        )
+
+        # Assert
+        self.assertTrue(
+            result.deployments[0].virtual_ips[0].is_reserved
+        )
+
+    @record
+    def test_disassociate_reserved_ip_address(self):
+        # Arrange
+        deployment_name = 'utdeployment'
+        self._create_hosted_service_with_deployment(
+            self.hosted_service_name, deployment_name)
+        self._create_reserved_ip_address()
+        update_result = self.sms.update_deployment_status(
+            self.hosted_service_name,
+            deployment_name,
+            'Running'
+        )
+        self._wait_for_async(update_result.request_id)
+        result = self.sms.associate_reserved_ip_address(
+            self.reserved_ip_address,
+            self.hosted_service_name,
+            deployment_name
+        )
+        self._wait_for_async(result.request_id)
+
+        # Assert
+        result = self.sms.disassociate_reserved_ip_address(
+            self.reserved_ip_address,
+            self.hosted_service_name,
+            deployment_name
+        )
+        self._wait_for_async(result.request_id)
+        result = self.sms.get_hosted_service_properties(
+            self.hosted_service_name, True
+        )
+        self.assertFalse(
+            result.deployments[0].virtual_ips[0].is_reserved
+        )
+
+
+    @record
     def test_get_reserved_ip_address(self):
         # Arrange
         self._create_reserved_ip_address()
