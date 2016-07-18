@@ -53,6 +53,17 @@ class CRUDTests(unittest.TestCase):
             self.assertEqual(inst.status_code, status_code)
 
     @classmethod
+    def cleanUpTestDatabase(cls):
+        client = document_client.DocumentClient(cls.host, 
+                                                {'masterKey': cls.masterKey})
+        query_iterable = client.QueryDatabases('SELECT * FROM root r WHERE r.id=\'' + cls.testDbName + '\'')
+        it = iter(query_iterable)
+        
+        test_db = next(it, None)
+        if test_db is not None:
+            client.DeleteDatabase(test_db['_self'])
+
+    @classmethod
     def setUpClass(cls):
         if (cls.masterKey == '[YOUR_KEY_HERE]' or
                 cls.host == '[YOUR_ENDPOINT_HERE]'):
@@ -61,15 +72,12 @@ class CRUDTests(unittest.TestCase):
                 "'masterKey' and 'host' at the top of this class to run the "
                 "tests.")
 
+    @classmethod
+    def tearDownClass(cls):
+        CRUDTests.cleanUpTestDatabase();
+
     def setUp(self):
-        client = document_client.DocumentClient(CRUDTests.host,
-                                                {'masterKey': CRUDTests.masterKey})
-        databases = list(client.ReadDatabases())
-        if not databases:
-            return
-        for database in databases:
-            if database['id'] == CRUDTests.testDbName:
-                client.DeleteDatabase(self.GetDatabaseLink(database, False))
+        CRUDTests.cleanUpTestDatabase();
 
     def test_database_crud_self_link(self):
         self._test_database_crud(False)
@@ -115,8 +123,8 @@ class CRUDTests(unittest.TestCase):
     def test_sql_query_crud(self):
         client = document_client.DocumentClient(CRUDTests.host, {'masterKey': CRUDTests.masterKey})
         # create two databases.
-        client.CreateDatabase({ 'id': 'database 1' })
-        client.CreateDatabase({ 'id': 'database 2' })
+        db1 = client.CreateDatabase({ 'id': 'database 1' })
+        db2 = client.CreateDatabase({ 'id': 'database 2' })
         # query with parameters.
         databases = list(client.QueryDatabases({
             'query': 'SELECT * FROM root r WHERE r.id=@id',
@@ -135,6 +143,9 @@ class CRUDTests(unittest.TestCase):
         # query with a string.
         databases = list(client.QueryDatabases('SELECT * FROM root r WHERE r.id="database 2"'))
         self.assertEqual(1, len(databases), 'Unexpected number of query results.')
+
+        client.DeleteDatabase(db1['_self'])
+        client.DeleteDatabase(db2['_self'])
 
     def test_collection_crud_self_link(self):
         self._test_collection_crud(False)
@@ -195,7 +206,7 @@ class CRUDTests(unittest.TestCase):
     def test_partitioned_collection(self):
         client = document_client.DocumentClient(CRUDTests.host, {'masterKey': CRUDTests.masterKey})
 
-        created_db = client.CreateDatabase({ 'id': 'sample database' })
+        created_db = client.CreateDatabase({ 'id': CRUDTests.testDbName })
 
         collection_definition = {   'id': 'sample collection', 
                                     'partitionKey': 
@@ -225,7 +236,7 @@ class CRUDTests(unittest.TestCase):
     def test_partitioned_collection_partition_key_extraction(self):
         client = document_client.DocumentClient(CRUDTests.host, {'masterKey': CRUDTests.masterKey})
 
-        created_db = client.CreateDatabase({ 'id': 'sample database' })
+        created_db = client.CreateDatabase({ 'id': CRUDTests.testDbName })
         
         collection_definition = {   'id': 'sample collection', 
                                     'partitionKey': 
@@ -1678,7 +1689,7 @@ class CRUDTests(unittest.TestCase):
         
     def _test_spatial_index(self, is_name_based):
         client = document_client.DocumentClient(CRUDTests.host, {'masterKey': CRUDTests.masterKey})
-        db = client.CreateDatabase({ 'id': 'sample database' })
+        db = client.CreateDatabase({ 'id': CRUDTests.testDbName })
         # partial policy specified
         collection = client.CreateCollection(
             self.GetDatabaseLink(db, is_name_based),
@@ -3144,7 +3155,7 @@ class CRUDTests(unittest.TestCase):
         # create database
         with self.assertRaises(Exception):
             # Will time out.
-            client.CreateDatabase({ 'id': "sample database" })
+            client.CreateDatabase({ 'id': CRUDTests.testDbName })
 
     def test_query_iterable_functionality(self):
         def __CreateResources(client):
@@ -3584,7 +3595,7 @@ class CRUDTests(unittest.TestCase):
         
     def _test_index_progress_headers(self, is_name_based):
         client = document_client.DocumentClient(CRUDTests.host, { 'masterKey': CRUDTests.masterKey })
-        created_db = client.CreateDatabase({ 'id': 'sample database' })
+        created_db = client.CreateDatabase({ 'id': CRUDTests.testDbName })
         consistent_coll = client.CreateCollection(self.GetDatabaseLink(created_db, is_name_based), { 'id': 'consistent_coll' })
         client.ReadCollection(self.GetDocumentCollectionLink(created_db, consistent_coll, is_name_based))
         self.assertFalse(http_constants.HttpHeaders.LazyIndexingProgress in client.last_response_headers)
@@ -3670,8 +3681,10 @@ class CRUDTests(unittest.TestCase):
 
         # Id can begin with space
         database_definition = { 'id': ' id_begin_space' }
-        client.CreateDatabase(database_definition)
+        db = client.CreateDatabase(database_definition)
         self.assertTrue(True)
+
+        client.DeleteDatabase(db['_self'])
 
     def test_id_case_validation(self):
         client = document_client.DocumentClient(CRUDTests.host, {'masterKey': CRUDTests.masterKey})

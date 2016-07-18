@@ -95,6 +95,15 @@ class Test_globaldb_mock_tests(unittest.TestCase):
     write_location = '[YOUR_WRITE_LOCATION_HERE]'
     read_location = '[YOUR_READ_LOCATION_HERE]'
 
+    @classmethod
+    def setUpClass(cls):
+        if (cls.masterKey == '[YOUR_KEY_HERE]' or
+                cls.host == '[YOUR_GLOBAL_ENDPOINT_HERE]'):
+            raise Exception(
+                "You must specify your Azure DocumentDB account values for "
+                "'masterKey' and 'host' at the top of this class to run the "
+                "tests.")
+
     def setUp(self):
         self.endpoint_discovery_retry_count = 0
         

@@ -65,12 +65,14 @@ class Test_ttl_tests(unittest.TestCase):
                 "tests.")
 
     def setUp(self):
-        client = document_client.DocumentClient(Test_ttl_tests.host, {'masterKey': Test_ttl_tests.masterKey})
-
-        databases = list(client.ReadDatabases())
-        for database in databases:
-            if database['id'] == Test_ttl_tests.testDbName:
-                client.DeleteDatabase(database['_self'])
+        client = document_client.DocumentClient(Test_ttl_tests.host, 
+                                                {'masterKey': Test_ttl_tests.masterKey})
+        query_iterable = client.QueryDatabases('SELECT * FROM root r WHERE r.id=\'' + Test_ttl_tests.testDbName + '\'')
+        it = iter(query_iterable)
+        
+        test_db = next(it, None)
+        if test_db is not None:
+            client.DeleteDatabase(test_db['_self'])
 
     def test_collection_and_document_ttl_values(self):
         client = document_client.DocumentClient(Test_ttl_tests.host, {'masterKey': Test_ttl_tests.masterKey})
