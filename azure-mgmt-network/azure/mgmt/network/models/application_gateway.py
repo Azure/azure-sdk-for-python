@@ -23,8 +23,7 @@ from .resource import Resource
 
 
 class ApplicationGateway(Resource):
-    """
-    ApplicationGateways resource
+    """ApplicationGateways resource.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -95,7 +94,7 @@ class ApplicationGateway(Resource):
     :param resource_guid: Gets or sets resource guid property of the
      ApplicationGateway resource
     :type resource_guid: str
-    :param provisioning_state: Gets or sets Provisioning state of the
+    :param provisioning_state: Gets provisioning state of the
      ApplicationGateway resource Updating/Deleting/Failed
     :type provisioning_state: str
     :param etag: Gets a unique read-only string that changes whenever the

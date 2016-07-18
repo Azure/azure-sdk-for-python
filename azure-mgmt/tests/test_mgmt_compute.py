@@ -302,7 +302,7 @@ class MgmtComputeTest(AzureMgmtTestCase):
 
         names = self.get_resource_names('pyvmext')
         os_vhd_uri = self.get_vhd_uri(names.storage, 'osdisk')
-        ext_name = names.vm + 'DockerExtension'
+        ext_name = names.vm + 'AccessAgent'
 
         self.create_storage_account(names.storage)
         subnet = self.create_virtual_network(names.network, names.subnet)

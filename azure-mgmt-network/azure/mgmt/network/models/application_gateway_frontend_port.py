@@ -23,8 +23,7 @@ from .sub_resource import SubResource
 
 
 class ApplicationGatewayFrontendPort(SubResource):
-    """
-    Frontend Port of application gateway
+    """Frontend Port of application gateway.
 
     :param id: Resource Id
     :type id: str

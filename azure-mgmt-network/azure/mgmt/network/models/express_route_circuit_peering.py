@@ -23,8 +23,7 @@ from .sub_resource import SubResource
 
 
 class ExpressRouteCircuitPeering(SubResource):
-    """
-    Peering in a ExpressRouteCircuit resource
+    """Peering in a ExpressRouteCircuit resource.
 
     :param id: Resource Id
     :type id: str
@@ -60,8 +59,8 @@ class ExpressRouteCircuitPeering(SubResource):
     :param stats: Gets or peering stats
     :type stats: :class:`ExpressRouteCircuitStats
      <azure.mgmt.network.models.ExpressRouteCircuitStats>`
-    :param provisioning_state: Gets or sets Provisioning state of the
-     PublicIP resource Updating/Deleting/Failed
+    :param provisioning_state: Gets provisioning state of the PublicIP
+     resource Updating/Deleting/Failed
     :type provisioning_state: str
     :param name: Gets name of the resource that is unique within a resource
      group. This name can be used to access the resource

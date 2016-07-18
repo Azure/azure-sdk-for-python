@@ -23,8 +23,7 @@ from msrest.serialization import Model
 
 
 class ExpressRouteCircuitSku(Model):
-    """
-    Contains sku in an ExpressRouteCircuit
+    """Contains sku in an ExpressRouteCircuit.
 
     :param name: Gets or sets name of the sku.
     :type name: str

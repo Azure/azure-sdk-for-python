@@ -23,16 +23,15 @@ from .sub_resource import SubResource
 
 
 class VpnClientRevokedCertificate(SubResource):
-    """
-    VPN client revoked certificate of virtual network gateway
+    """VPN client revoked certificate of virtual network gateway.
 
     :param id: Resource Id
     :type id: str
     :param thumbprint: Gets or sets the revoked Vpn client certificate
      thumbprint
     :type thumbprint: str
-    :param provisioning_state: Gets or sets Provisioning state of the VPN
-     client revoked certificate resource Updating/Deleting/Failed
+    :param provisioning_state: Gets provisioning state of the VPN client
+     revoked certificate resource Updating/Deleting/Failed
     :type provisioning_state: str
     :param name: Gets name of the resource that is unique within a resource
      group. This name can be used to access the resource

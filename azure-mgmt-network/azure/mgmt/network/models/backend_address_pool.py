@@ -23,26 +23,28 @@ from .sub_resource import SubResource
 
 
 class BackendAddressPool(SubResource):
-    """
-    Pool of backend IP addresseses
+    """Pool of backend IP addresseses.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
 
     :param id: Resource Id
     :type id: str
-    :param backend_ip_configurations: Gets collection of references to IPs
+    :ivar backend_ip_configurations: Gets collection of references to IPs
      defined in NICs
-    :type backend_ip_configurations: list of
+    :vartype backend_ip_configurations: list of
      :class:`NetworkInterfaceIPConfiguration
      <azure.mgmt.network.models.NetworkInterfaceIPConfiguration>`
-    :param load_balancing_rules: Gets Load Balancing rules that use this
+    :ivar load_balancing_rules: Gets Load Balancing rules that use this
      Backend Address Pool
-    :type load_balancing_rules: list of :class:`SubResource
+    :vartype load_balancing_rules: list of :class:`SubResource
      <azure.mgmt.network.models.SubResource>`
-    :param outbound_nat_rule: Gets outbound rules that use this Backend
+    :ivar outbound_nat_rule: Gets outbound rules that use this Backend
      Address Pool
-    :type outbound_nat_rule: :class:`SubResource
+    :vartype outbound_nat_rule: :class:`SubResource
      <azure.mgmt.network.models.SubResource>`
-    :param provisioning_state: Provisioning state of the PublicIP resource
-     Updating/Deleting/Failed
+    :param provisioning_state: Get provisioning state of the PublicIP
+     resource Updating/Deleting/Failed
     :type provisioning_state: str
     :param name: Gets name of the resource that is unique within a resource
      group. This name can be used to access the resource
@@ -51,6 +53,12 @@ class BackendAddressPool(SubResource):
      is updated
     :type etag: str
     """ 
+
+    _validation = {
+        'backend_ip_configurations': {'readonly': True},
+        'load_balancing_rules': {'readonly': True},
+        'outbound_nat_rule': {'readonly': True},
+    }
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
@@ -62,11 +70,11 @@ class BackendAddressPool(SubResource):
         'etag': {'key': 'etag', 'type': 'str'},
     }
 
-    def __init__(self, id=None, backend_ip_configurations=None, load_balancing_rules=None, outbound_nat_rule=None, provisioning_state=None, name=None, etag=None):
+    def __init__(self, id=None, provisioning_state=None, name=None, etag=None):
         super(BackendAddressPool, self).__init__(id=id)
-        self.backend_ip_configurations = backend_ip_configurations
-        self.load_balancing_rules = load_balancing_rules
-        self.outbound_nat_rule = outbound_nat_rule
+        self.backend_ip_configurations = None
+        self.load_balancing_rules = None
+        self.outbound_nat_rule = None
         self.provisioning_state = provisioning_state
         self.name = name
         self.etag = etag

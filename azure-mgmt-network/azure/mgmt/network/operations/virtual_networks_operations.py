@@ -46,9 +46,8 @@ class VirtualNetworksOperations(object):
 
     def delete(
             self, resource_group_name, virtual_network_name, custom_headers=None, raw=False, **operation_config):
-        """
-        The Delete VirtualNetwork operation deletes the specifed virtual
-        network
+        """The Delete VirtualNetwork operation deletes the specifed virtual
+        network.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
@@ -64,7 +63,7 @@ class VirtualNetworksOperations(object):
          if raw=true
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/virtualnetworks/{virtualNetworkName}'
+        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/virtualNetworks/{virtualNetworkName}'
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'virtualNetworkName': self._serialize.url("virtual_network_name", virtual_network_name, 'str'),
@@ -124,8 +123,7 @@ class VirtualNetworksOperations(object):
 
     def get(
             self, resource_group_name, virtual_network_name, expand=None, custom_headers=None, raw=False, **operation_config):
-        """
-        The Get VirtualNetwork operation retrieves information about the
+        """The Get VirtualNetwork operation retrieves information about the
         specified virtual network.
 
         :param resource_group_name: The name of the resource group.
@@ -145,7 +143,7 @@ class VirtualNetworksOperations(object):
          if raw=true
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/virtualnetworks/{virtualNetworkName}'
+        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/virtualNetworks/{virtualNetworkName}'
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'virtualNetworkName': self._serialize.url("virtual_network_name", virtual_network_name, 'str'),
@@ -191,8 +189,7 @@ class VirtualNetworksOperations(object):
 
     def create_or_update(
             self, resource_group_name, virtual_network_name, parameters, custom_headers=None, raw=False, **operation_config):
-        """
-        The Put VirtualNetwork operation creates/updates a virtual network in
+        """The Put VirtualNetwork operation creates/updates a virtual network in
         the specified resource group.
 
         :param resource_group_name: The name of the resource group.
@@ -214,7 +211,7 @@ class VirtualNetworksOperations(object):
          if raw=true
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/virtualnetworks/{virtualNetworkName}'
+        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/virtualNetworks/{virtualNetworkName}'
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'virtualNetworkName': self._serialize.url("virtual_network_name", virtual_network_name, 'str'),
@@ -287,8 +284,7 @@ class VirtualNetworksOperations(object):
 
     def list_all(
             self, custom_headers=None, raw=False, **operation_config):
-        """
-        The list VirtualNetwork returns all Virtual Networks in a subscription
+        """The list VirtualNetwork returns all Virtual Networks in a subscription.
 
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -302,7 +298,7 @@ class VirtualNetworksOperations(object):
 
             if not next_link:
                 # Construct URL
-                url = '/subscriptions/{subscriptionId}/providers/Microsoft.Network/virtualnetworks'
+                url = '/subscriptions/{subscriptionId}/providers/Microsoft.Network/virtualNetworks'
                 path_format_arguments = {
                     'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
                 }
@@ -350,9 +346,8 @@ class VirtualNetworksOperations(object):
 
     def list(
             self, resource_group_name, custom_headers=None, raw=False, **operation_config):
-        """
-        The list VirtualNetwork returns all Virtual Networks in a resource
-        group
+        """The list VirtualNetwork returns all Virtual Networks in a resource
+        group.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
@@ -368,7 +363,7 @@ class VirtualNetworksOperations(object):
 
             if not next_link:
                 # Construct URL
-                url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/virtualnetworks'
+                url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/virtualNetworks'
                 path_format_arguments = {
                     'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
                     'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')

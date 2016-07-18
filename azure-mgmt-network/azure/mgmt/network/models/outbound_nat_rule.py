@@ -23,8 +23,7 @@ from .sub_resource import SubResource
 
 
 class OutboundNatRule(SubResource):
-    """
-    Outbound NAT pool of the loadbalancer
+    """Outbound NAT pool of the loadbalancer.
 
     :param id: Resource Id
     :type id: str
@@ -39,8 +38,8 @@ class OutboundNatRule(SubResource):
      Outbound traffic is randomly load balanced across IPs in the backend IPs
     :type backend_address_pool: :class:`SubResource
      <azure.mgmt.network.models.SubResource>`
-    :param provisioning_state: Gets or sets Provisioning state of the
-     PublicIP resource Updating/Deleting/Failed
+    :param provisioning_state: Gets provisioning state of the PublicIP
+     resource Updating/Deleting/Failed
     :type provisioning_state: str
     :param name: Gets name of the resource that is unique within a resource
      group. This name can be used to access the resource

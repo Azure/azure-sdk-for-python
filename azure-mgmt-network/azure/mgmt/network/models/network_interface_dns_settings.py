@@ -23,15 +23,14 @@ from msrest.serialization import Model
 
 
 class NetworkInterfaceDnsSettings(Model):
-    """
-    Dns Settings of a network interface
+    """Dns settings of a network interface.
 
     :param dns_servers: Gets or sets list of DNS servers IP addresses
     :type dns_servers: list of str
     :param applied_dns_servers: Gets or sets list of Applied DNS servers IP
      addresses
     :type applied_dns_servers: list of str
-    :param internal_dns_name_label: Gets or sets the Internal DNS name
+    :param internal_dns_name_label: Gets or sets the internal DNS name
     :type internal_dns_name_label: str
     :param internal_fqdn: Gets or sets the internal fqdn.
     :type internal_fqdn: str

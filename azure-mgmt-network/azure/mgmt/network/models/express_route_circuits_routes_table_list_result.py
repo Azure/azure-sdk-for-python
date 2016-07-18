@@ -23,8 +23,8 @@ from msrest.serialization import Model
 
 
 class ExpressRouteCircuitsRoutesTableListResult(Model):
-    """
-    Response for ListRoutesTable associated with the Express Route Circuits Api
+    """Response for ListRoutesTable associated with the Express Route Circuits
+    Api.
 
     :param value: Gets List of RoutesTable
     :type value: list of :class:`ExpressRouteCircuitRoutesTable

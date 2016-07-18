@@ -23,8 +23,7 @@ from msrest.serialization import Model
 
 
 class ExpressRouteCircuitRoutesTableSummary(Model):
-    """
-    The routes table associated with the ExpressRouteCircuit
+    """The routes table associated with the ExpressRouteCircuit.
 
     :param neighbor: Neighbor.
     :type neighbor: str
