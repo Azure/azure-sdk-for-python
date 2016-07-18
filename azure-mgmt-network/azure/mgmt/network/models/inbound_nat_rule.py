@@ -23,8 +23,10 @@ from .sub_resource import SubResource
 
 
 class InboundNatRule(SubResource):
-    """
-    Inbound NAT rule of the loadbalancer
+    """Inbound NAT rule of the loadbalancer.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
 
     :param id: Resource Id
     :type id: str
@@ -32,15 +34,14 @@ class InboundNatRule(SubResource):
      Addresses
     :type frontend_ip_configuration: :class:`SubResource
      <azure.mgmt.network.models.SubResource>`
-    :param backend_ip_configuration: Gets or sets a reference to a private ip
+    :ivar backend_ip_configuration: Gets or sets a reference to a private ip
      address defined on a NetworkInterface of a VM. Traffic sent to
      frontendPort of each of the frontendIPConfigurations is forwarded to the
      backed IP
-    :type backend_ip_configuration: :class:`NetworkInterfaceIPConfiguration
-     <azure.mgmt.network.models.NetworkInterfaceIPConfiguration>`
-    :param protocol: Gets or sets the transport potocol for the external
-     endpoint. Possible values are Udp or Tcp. Possible values include:
-     'Udp', 'Tcp'
+    :vartype backend_ip_configuration:
+     :class:`NetworkInterfaceIPConfiguration <azure.mgmt.network.models.NetworkInterfaceIPConfiguration>`
+    :param protocol: Gets or sets the transport potocol for the endpoint.
+     Possible values are Udp or Tcp. Possible values include: 'Udp', 'Tcp'
     :type protocol: str or :class:`TransportProtocol
      <azure.mgmt.network.models.TransportProtocol>`
     :param frontend_port: Gets or sets the port for the external endpoint.
@@ -68,8 +69,8 @@ class InboundNatRule(SubResource):
      ON availability Groups in SQL server. This setting can't be changed
      after you create the endpoint
     :type enable_floating_ip: bool
-    :param provisioning_state: Gets or sets Provisioning state of the
-     PublicIP resource Updating/Deleting/Failed
+    :param provisioning_state: Gets provisioning state of the PublicIP
+     resource Updating/Deleting/Failed
     :type provisioning_state: str
     :param name: Gets name of the resource that is unique within a resource
      group. This name can be used to access the resource
@@ -78,6 +79,10 @@ class InboundNatRule(SubResource):
      is updated
     :type etag: str
     """ 
+
+    _validation = {
+        'backend_ip_configuration': {'readonly': True},
+    }
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
@@ -93,10 +98,10 @@ class InboundNatRule(SubResource):
         'etag': {'key': 'etag', 'type': 'str'},
     }
 
-    def __init__(self, id=None, frontend_ip_configuration=None, backend_ip_configuration=None, protocol=None, frontend_port=None, backend_port=None, idle_timeout_in_minutes=None, enable_floating_ip=None, provisioning_state=None, name=None, etag=None):
+    def __init__(self, id=None, frontend_ip_configuration=None, protocol=None, frontend_port=None, backend_port=None, idle_timeout_in_minutes=None, enable_floating_ip=None, provisioning_state=None, name=None, etag=None):
         super(InboundNatRule, self).__init__(id=id)
         self.frontend_ip_configuration = frontend_ip_configuration
-        self.backend_ip_configuration = backend_ip_configuration
+        self.backend_ip_configuration = None
         self.protocol = protocol
         self.frontend_port = frontend_port
         self.backend_port = backend_port

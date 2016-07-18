@@ -23,8 +23,7 @@ from msrest.serialization import Model
 
 
 class VirtualNetworkGatewaySku(Model):
-    """
-    VirtualNetworkGatewaySku details
+    """VirtualNetworkGatewaySku details.
 
     :param name: Gateway sku name -Basic/HighPerformance/Standard. Possible
      values include: 'Basic', 'HighPerformance', 'Standard'

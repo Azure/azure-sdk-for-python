@@ -46,8 +46,7 @@ class ExpressRouteCircuitAuthorizationsOperations(object):
 
     def delete(
             self, resource_group_name, circuit_name, authorization_name, custom_headers=None, raw=False, **operation_config):
-        """
-        The delete authorization operation deletes the specified authorization
+        """The delete authorization operation deletes the specified authorization
         from the specified ExpressRouteCircuit.
 
         :param resource_group_name: The name of the resource group.
@@ -127,8 +126,7 @@ class ExpressRouteCircuitAuthorizationsOperations(object):
 
     def get(
             self, resource_group_name, circuit_name, authorization_name, custom_headers=None, raw=False, **operation_config):
-        """
-        The GET authorization operation retrieves the specified authorization
+        """The GET authorization operation retrieves the specified authorization
         from the specified ExpressRouteCircuit.
 
         :param resource_group_name: The name of the resource group.
@@ -193,9 +191,8 @@ class ExpressRouteCircuitAuthorizationsOperations(object):
 
     def create_or_update(
             self, resource_group_name, circuit_name, authorization_name, authorization_parameters, custom_headers=None, raw=False, **operation_config):
-        """
-        The Put Authorization operation creates/updates an authorization in
-        thespecified ExpressRouteCircuits
+        """The Put Authorization operation creates/updates an authorization in
+        thespecified ExpressRouteCircuits.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
@@ -293,8 +290,7 @@ class ExpressRouteCircuitAuthorizationsOperations(object):
 
     def list(
             self, resource_group_name, circuit_name, custom_headers=None, raw=False, **operation_config):
-        """
-        The List authorization operation retrieves all the authorizations in
+        """The List authorization operation retrieves all the authorizations in
         an ExpressRouteCircuit.
 
         :param resource_group_name: The name of the resource group.

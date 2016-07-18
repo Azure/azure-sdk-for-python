@@ -23,8 +23,7 @@ from .sub_resource import SubResource
 
 
 class Route(SubResource):
-    """
-    Route resource
+    """Route resource.
 
     :param id: Resource Id
     :type id: str
@@ -40,8 +39,8 @@ class Route(SubResource):
      forwarded to. Next hop values are only allowed in routes where the next
      hop type is VirtualAppliance.
     :type next_hop_ip_address: str
-    :param provisioning_state: Gets or sets Provisioning state of the
-     resource Updating/Deleting/Failed
+    :param provisioning_state: Gets provisioning state of the resource
+     Updating/Deleting/Failed
     :type provisioning_state: str
     :param name: Gets name of the resource that is unique within a resource
      group. This name can be used to access the resource

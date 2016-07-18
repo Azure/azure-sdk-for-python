@@ -46,8 +46,7 @@ class VirtualNetworkGatewaysOperations(object):
 
     def create_or_update(
             self, resource_group_name, virtual_network_gateway_name, parameters, custom_headers=None, raw=False, **operation_config):
-        """
-        The Put VirtualNetworkGateway operation creates/updates a virtual
+        """The Put VirtualNetworkGateway operation creates/updates a virtual
         network gateway in the specified resource group through Network
         resource provider.
 
@@ -71,7 +70,7 @@ class VirtualNetworkGatewaysOperations(object):
          if raw=true
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/virtualnetworkgateways/{virtualNetworkGatewayName}'
+        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/virtualNetworkGateways/{virtualNetworkGatewayName}'
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'virtualNetworkGatewayName': self._serialize.url("virtual_network_gateway_name", virtual_network_gateway_name, 'str'),
@@ -144,8 +143,7 @@ class VirtualNetworkGatewaysOperations(object):
 
     def get(
             self, resource_group_name, virtual_network_gateway_name, custom_headers=None, raw=False, **operation_config):
-        """
-        The Get VirtualNetworkGateway operation retrieves information about
+        """The Get VirtualNetworkGateway operation retrieves information about
         the specified virtual network gateway through Network resource
         provider.
 
@@ -165,7 +163,7 @@ class VirtualNetworkGatewaysOperations(object):
          if raw=true
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/virtualnetworkgateways/{virtualNetworkGatewayName}'
+        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/virtualNetworkGateways/{virtualNetworkGatewayName}'
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'virtualNetworkGatewayName': self._serialize.url("virtual_network_gateway_name", virtual_network_gateway_name, 'str'),
@@ -209,8 +207,7 @@ class VirtualNetworkGatewaysOperations(object):
 
     def delete(
             self, resource_group_name, virtual_network_gateway_name, custom_headers=None, raw=False, **operation_config):
-        """
-        The Delete VirtualNetworkGateway operation deletes the specifed
+        """The Delete VirtualNetworkGateway operation deletes the specifed
         virtual network Gateway through Network resource provider.
 
         :param resource_group_name: The name of the resource group.
@@ -228,7 +225,7 @@ class VirtualNetworkGatewaysOperations(object):
          if raw=true
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/virtualnetworkgateways/{virtualNetworkGatewayName}'
+        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/virtualNetworkGateways/{virtualNetworkGatewayName}'
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'virtualNetworkGatewayName': self._serialize.url("virtual_network_gateway_name", virtual_network_gateway_name, 'str'),
@@ -288,8 +285,7 @@ class VirtualNetworkGatewaysOperations(object):
 
     def list(
             self, resource_group_name, custom_headers=None, raw=False, **operation_config):
-        """
-        The List VirtualNetworkGateways opertion retrieves all the virtual
+        """The List VirtualNetworkGateways opertion retrieves all the virtual
         network gateways stored.
 
         :param resource_group_name: The name of the resource group.
@@ -355,8 +351,7 @@ class VirtualNetworkGatewaysOperations(object):
 
     def reset(
             self, resource_group_name, virtual_network_gateway_name, parameters, custom_headers=None, raw=False, **operation_config):
-        """
-        The Reset VirtualNetworkGateway operation resets the primary of the
+        """The Reset VirtualNetworkGateway operation resets the primary of the
         virtual network gateway in the specified resource group through
         Network resource provider.
 
@@ -380,7 +375,7 @@ class VirtualNetworkGatewaysOperations(object):
          if raw=true
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/virtualnetworkgateways/{virtualNetworkGatewayName}/reset'
+        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/virtualNetworkGateways/{virtualNetworkGatewayName}/reset'
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'virtualNetworkGatewayName': self._serialize.url("virtual_network_gateway_name", virtual_network_gateway_name, 'str'),
@@ -451,8 +446,7 @@ class VirtualNetworkGatewaysOperations(object):
 
     def generatevpnclientpackage(
             self, resource_group_name, virtual_network_gateway_name, processor_architecture=None, custom_headers=None, raw=False, **operation_config):
-        """
-        The Generatevpnclientpackage operation generates Vpn client package
+        """The Generatevpnclientpackage operation generates Vpn client package
         for P2S client of the virtual network gateway in the specified
         resource group through Network resource provider.
 
@@ -477,7 +471,7 @@ class VirtualNetworkGatewaysOperations(object):
         parameters = models.VpnClientParameters(processor_architecture=processor_architecture)
 
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/virtualnetworkgateways/{virtualNetworkGatewayName}/generatevpnclientpackage'
+        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/virtualNetworkGateways/{virtualNetworkGatewayName}/generatevpnclientpackage'
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'virtualNetworkGatewayName': self._serialize.url("virtual_network_gateway_name", virtual_network_gateway_name, 'str'),

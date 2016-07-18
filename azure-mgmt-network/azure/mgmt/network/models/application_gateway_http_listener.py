@@ -23,8 +23,7 @@ from .sub_resource import SubResource
 
 
 class ApplicationGatewayHttpListener(SubResource):
-    """
-    Http listener of application gateway
+    """Http listener of application gateway.
 
     :param id: Resource Id
     :type id: str

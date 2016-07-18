@@ -23,8 +23,7 @@ from msrest.serialization import Model
 
 
 class DnsNameAvailabilityResult(Model):
-    """
-    Response for CheckDnsNameAvailability Api servive call
+    """Response for CheckDnsNameAvailability Api servive call.
 
     :param available: Domain availability (True/False)
     :type available: bool

@@ -23,16 +23,15 @@ from .sub_resource import SubResource
 
 
 class ApplicationGatewayIPConfiguration(SubResource):
-    """
-    IP configuration of application gateway
+    """IP configuration of application gateway.
 
     :param id: Resource Id
     :type id: str
     :param subnet: Gets or sets the reference of the subnet resource.A subnet
      from where appliation gateway gets its private address
     :type subnet: :class:`SubResource <azure.mgmt.network.models.SubResource>`
-    :param provisioning_state: Gets or sets Provisioning state of the
-     application gateway subnet resource Updating/Deleting/Failed
+    :param provisioning_state: Gets provisioning state of the application
+     gateway subnet resource Updating/Deleting/Failed
     :type provisioning_state: str
     :param name: Gets name of the resource that is unique within a resource
      group. This name can be used to access the resource

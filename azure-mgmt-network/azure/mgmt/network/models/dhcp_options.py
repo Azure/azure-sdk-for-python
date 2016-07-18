@@ -23,8 +23,7 @@ from msrest.serialization import Model
 
 
 class DhcpOptions(Model):
-    """
-    DHCPOptions contains an array of DNS servers available to VMs deployed in
+    """DHCPOptions contains an array of DNS servers available to VMs deployed in
     the virtual networkStandard DHCP option for a subnet overrides VNET DHCP
     options.
 

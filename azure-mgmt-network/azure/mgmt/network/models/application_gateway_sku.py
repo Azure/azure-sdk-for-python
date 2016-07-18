@@ -23,8 +23,7 @@ from msrest.serialization import Model
 
 
 class ApplicationGatewaySku(Model):
-    """
-    SKU of application gateway
+    """SKU of application gateway.
 
     :param name: Gets or sets name of application gateway SKU. Possible
      values include: 'Standard_Small', 'Standard_Medium', 'Standard_Large'

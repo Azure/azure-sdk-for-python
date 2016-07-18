@@ -83,7 +83,7 @@
       "output_dir": "azure-mgmt-logic/azure/mgmt/logic"
     },
     "network": {
-      "swagger": "arm-network/2016-03-30/swagger/network.json",
+      "swagger": "arm-network/2016-06-01/swagger/network.json",
       "autorest_options": {
         "Namespace": "azure.mgmt.network"
       },

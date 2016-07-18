@@ -23,8 +23,7 @@ from msrest.serialization import Model
 
 
 class ExpressRouteCircuitRoutesTable(Model):
-    """
-    The routes table associated with the ExpressRouteCircuit
+    """The routes table associated with the ExpressRouteCircuit.
 
     :param network: network.
     :type network: str

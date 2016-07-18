@@ -9,9 +9,9 @@ interactions:
       User-Agent: [python/3.5.1 (Windows-10-10.0.14372-SP0) requests/2.10.0 msrest/0.4.0
           msrest_azure/0.4.1 networkmanagementclient/0.30.0rc5 Azure-SDK-For-Python]
       accept-language: [en-US]
-      x-ms-client-request-id: [9b052468-4954-11e6-b9d3-ecb1d756380e]
+      x-ms-client-request-id: [0fe813b6-4ada-11e6-8861-00155d4b0101]
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/expressRouteServiceProviders?api-version=2016-03-30
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/expressRouteServiceProviders?api-version=2016-06-01
   response:
     body: {string: "{\r\n  \"value\": [\r\n    {\r\n      \"name\": \"Airtel\",\r\n\
         \      \"id\": \"/subscriptions//resourceGroups//providers/Microsoft.Network/expressRouteServiceProviders/\"\
@@ -722,7 +722,7 @@ interactions:
     headers:
       Cache-Control: [no-cache]
       Content-Type: [application/json; charset=utf-8]
-      Date: ['Wed, 13 Jul 2016 23:50:42 GMT']
+      Date: ['Fri, 15 Jul 2016 22:18:36 GMT']
       Expires: ['-1']
       Pragma: [no-cache]
       Server: [Microsoft-HTTPAPI/2.0, Microsoft-HTTPAPI/2.0]
@@ -730,9 +730,9 @@ interactions:
       Transfer-Encoding: [chunked]
       Vary: [Accept-Encoding]
       content-length: ['47763']
-      x-ms-correlation-request-id: [1e54329c-8d0f-4014-81fc-466f96b6e886]
-      x-ms-ratelimit-remaining-subscription-reads: ['14990']
-      x-ms-request-id: [8add08e7-ade2-4901-a347-9753216303d9]
-      x-ms-routing-request-id: ['WESTUS:20160713T235042Z:1e54329c-8d0f-4014-81fc-466f96b6e886']
+      x-ms-correlation-request-id: [cc88db01-fe9f-43c7-80be-58a988605b7e]
+      x-ms-ratelimit-remaining-subscription-reads: ['14998']
+      x-ms-request-id: [4a8a7876-f359-4c40-a967-3c87f613215d]
+      x-ms-routing-request-id: ['CENTRALUS:20160715T221836Z:cc88db01-fe9f-43c7-80be-58a988605b7e']
     status: {code: 200, message: OK}
 version: 1

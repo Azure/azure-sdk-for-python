@@ -23,8 +23,7 @@ from .sub_resource import SubResource
 
 
 class ApplicationGatewayUrlPathMap(SubResource):
-    """
-    UrlPathMap of application gateway
+    """UrlPathMap of application gateway.
 
     :param id: Resource Id
     :type id: str
@@ -39,8 +38,8 @@ class ApplicationGatewayUrlPathMap(SubResource):
     :param path_rules: Gets or sets path rule of URL path map resource
     :type path_rules: list of :class:`ApplicationGatewayPathRule
      <azure.mgmt.network.models.ApplicationGatewayPathRule>`
-    :param provisioning_state: Gets or sets Provisioning state of the backend
-     http settings resource Updating/Deleting/Failed
+    :param provisioning_state: Gets provisioning state of the backend http
+     settings resource Updating/Deleting/Failed
     :type provisioning_state: str
     :param name: Gets name of the resource that is unique within a resource
      group. This name can be used to access the resource

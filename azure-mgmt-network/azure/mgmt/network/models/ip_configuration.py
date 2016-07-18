@@ -23,8 +23,7 @@ from .sub_resource import SubResource
 
 
 class IPConfiguration(SubResource):
-    """
-    IPConfiguration
+    """IPConfiguration.
 
     :param id: Resource Id
     :type id: str
@@ -32,7 +31,7 @@ class IPConfiguration(SubResource):
      Configuration
     :type private_ip_address: str
     :param private_ip_allocation_method: Gets or sets PrivateIP allocation
-     method (Static/Dynamic). Possible values include: 'Static', 'Dynamic'
+     method. Possible values include: 'Static', 'Dynamic'
     :type private_ip_allocation_method: str or :class:`IPAllocationMethod
      <azure.mgmt.network.models.IPAllocationMethod>`
     :param subnet: Gets or sets the reference of the subnet resource
@@ -41,8 +40,8 @@ class IPConfiguration(SubResource):
      resource
     :type public_ip_address: :class:`PublicIPAddress
      <azure.mgmt.network.models.PublicIPAddress>`
-    :param provisioning_state: Gets or sets Provisioning state of the
-     PublicIP resource Updating/Deleting/Failed
+    :param provisioning_state: Gets provisioning state of the PublicIP
+     resource Updating/Deleting/Failed
     :type provisioning_state: str
     :param name: Gets name of the resource that is unique within a resource
      group. This name can be used to access the resource
