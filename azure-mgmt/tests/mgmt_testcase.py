@@ -90,6 +90,14 @@ class AzureMgmtTestCase(RecordingTestCase):
         return super(AzureMgmtTestCase, self).tearDown()
 
     def create_basic_client(self, client_class, **kwargs):
+        # Whatever the client, if credentials is None, fail
+        with self.assertRaises(ValueError):
+            client = client_class(
+                credentials=None,
+                **kwargs
+            )
+
+        # Real client creation
         client = client_class(
             credentials=self.settings.get_credentials(),
             **kwargs
@@ -99,6 +107,21 @@ class AzureMgmtTestCase(RecordingTestCase):
         return client
 
     def create_mgmt_client(self, client_class, **kwargs):
+        # Whatever the client, if subscription_id is None, fail
+        with self.assertRaises(ValueError):
+            self.create_basic_client(
+                client_class,
+                subscription_id=None,
+                **kwargs
+            )
+        # Whatever the client, if subscription_id is not a string, fail
+        with self.assertRaises(TypeError):
+            self.create_basic_client(
+                client_class,
+                subscription_id=42,
+                **kwargs
+            )
+
         return self.create_basic_client(
             client_class,
             subscription_id=self.settings.SUBSCRIPTION_ID,
