@@ -10,7 +10,7 @@ require 'generated/azure_mgmt_media_services/version'
 
 Gem::Specification.new do |spec|
   spec.name          = 'azure_mgmt_media_services'
-  spec.version       = Azure::ARM::MEdiaServices::VERSION
+  spec.version       = Azure::ARM::MediaServices::VERSION
   spec.authors       = 'Microsoft Corporation'
   spec.email         = 'azrubyteam@microsoft.com'
   spec.description   = 'Microsoft Azure Media Services Management Client Library for Ruby'
