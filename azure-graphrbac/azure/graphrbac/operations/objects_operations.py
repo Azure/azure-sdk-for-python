@@ -44,7 +44,7 @@ class ObjectsOperations(object):
         self.config = config
 
     def get_current_user(
-            self, api_version="1.6-internal", custom_headers=None, raw=False, **operation_config):
+            self, api_version="1.6", custom_headers=None, raw=False, **operation_config):
         """Gets the details for current logged in user.
 
         :param api_version: Client Api Version.

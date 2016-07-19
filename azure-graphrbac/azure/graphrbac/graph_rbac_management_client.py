@@ -23,11 +23,11 @@ from msrest.service_client import ServiceClient
 from msrest import Serializer, Deserializer
 from msrestazure import AzureConfiguration
 from .version import VERSION
+from .operations.objects_operations import ObjectsOperations
 from .operations.applications_operations import ApplicationsOperations
 from .operations.groups_operations import GroupsOperations
 from .operations.service_principals_operations import ServicePrincipalsOperations
 from .operations.users_operations import UsersOperations
-from .operations.objects_operations import ObjectsOperations
 from . import models
 
 
@@ -36,7 +36,7 @@ class GraphRbacManagementClientConfiguration(AzureConfiguration):
     Note that all parameters used to create this instance are saved as instance
     attributes.
 
-    :param credentials: Gets Azure subscription credentials.
+    :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
      object<msrestazure.azure_active_directory>`
     :param tenant_id: Gets or sets the tenant Id.
@@ -87,6 +87,8 @@ class GraphRbacManagementClient(object):
     :ivar config: Configuration for client.
     :vartype config: GraphRbacManagementClientConfiguration
 
+    :ivar objects: Objects operations
+    :vartype objects: .operations.ObjectsOperations
     :ivar applications: Applications operations
     :vartype applications: .operations.ApplicationsOperations
     :ivar groups: Groups operations
@@ -95,10 +97,8 @@ class GraphRbacManagementClient(object):
     :vartype service_principals: .operations.ServicePrincipalsOperations
     :ivar users: Users operations
     :vartype users: .operations.UsersOperations
-    :ivar objects: Objects operations
-    :vartype objects: .operations.ObjectsOperations
 
-    :param credentials: Gets Azure subscription credentials.
+    :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
      object<msrestazure.azure_active_directory>`
     :param tenant_id: Gets or sets the tenant Id.
@@ -127,6 +127,8 @@ class GraphRbacManagementClient(object):
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
 
+        self.objects = ObjectsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
         self.applications = ApplicationsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.groups = GroupsOperations(
@@ -134,6 +136,4 @@ class GraphRbacManagementClient(object):
         self.service_principals = ServicePrincipalsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.users = UsersOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.objects = ObjectsOperations(
             self._client, self.config, self._serialize, self._deserialize)
