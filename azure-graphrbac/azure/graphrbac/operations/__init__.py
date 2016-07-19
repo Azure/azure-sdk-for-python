@@ -19,16 +19,16 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
+from .objects_operations import ObjectsOperations
 from .applications_operations import ApplicationsOperations
 from .groups_operations import GroupsOperations
 from .service_principals_operations import ServicePrincipalsOperations
 from .users_operations import UsersOperations
-from .objects_operations import ObjectsOperations
 
 __all__ = [
+    'ObjectsOperations',
     'ApplicationsOperations',
     'GroupsOperations',
     'ServicePrincipalsOperations',
     'UsersOperations',
-    'ObjectsOperations',
 ]
