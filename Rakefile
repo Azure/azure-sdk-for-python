@@ -242,6 +242,12 @@ REGEN_METADATA = {
     #     version: version,
     #     tag: 'arm_intune'
     # },
+    azure_mgmt_key_vault: {
+        spec_uri: 'https://raw.githubusercontent.com/Azure/azure-rest-api-specs/master/arm-keyvault/2015-06-01/swagger/keyvault.json',
+        ns: 'Azure::ARM::KeyVault',
+        version: version,
+        tag: 'arm_key_vault'
+    },
     azure_mgmt_locks: {
         spec_uri: 'https://raw.githubusercontent.com/Azure/azure-rest-api-specs/master/arm-resources/locks/2015-01-01/swagger/locks.json',
         ns: 'Azure::ARM::Locks',
