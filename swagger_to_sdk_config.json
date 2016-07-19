@@ -4,7 +4,7 @@
     "language": "Python",
     "autorest": "latest",
     "autorest_options": {
-      "Header": "MICROSOFT_APACHE_NO_VERSION",
+      "Header": "MICROSOFT_MIT_NO_VERSION",
       "AddCredentials": true,
       "ft": 2,
       "PackageVersion": "0.30.0rc5"
