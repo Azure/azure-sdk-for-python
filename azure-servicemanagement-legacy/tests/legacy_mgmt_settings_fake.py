@@ -12,6 +12,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #--------------------------------------------------------------------------
+from azure.common.credentials import (
+    BasicTokenAuthentication,
+    UserPassCredentials
+)
 
 # NOTE: these keys are fake, but valid base-64 data, they were generated using:
 # base64.b64encode(os.urandom(64))
@@ -38,9 +42,21 @@ PROXY_PORT = "8118"
 PROXY_USER = ""
 PROXY_PASSWORD = ""
 
-def get_token():
-    return 'faked_token'
+# Read for details of this file:
+# https://github.com/Azure/azure-sdk-for-python/wiki/Contributing-to-the-tests
 
+def get_credentials():
+    # Put your credentials here in the "real" file
+    #return UserPassCredentials(
+    #    'user@myaddomain.onmicrosoft.com',
+    #    'Password'
+    #)
+    # Needed to play recorded tests
+    return BasicTokenAuthentication(
+        token = {
+            'access_token':'faked_token'
+        }
+    )
 # The easiest way to create a Linux OS vhd is to use the Azure management
 # portal to create a Linux VM, and have it store the VHD in the
 # storage account listed in the test settings file.  Then stop the VM,
