@@ -1925,8 +1925,6 @@
     <Content Include="azure-servicemanagement-legacy\tests\recordings\test_legacy_mgmt_website.test_list_web_spaces.yaml" />
     <Content Include="azure-servicemanagement-legacy\tests\recordings\test_legacy_mgmt_website.test_restart_site.yaml" />
     <Content Include="azure-servicemanagement-legacy\tests\recordings\test_legacy_mgmt_website.test_shutdown_start_site.yaml" />
-    <Content Include="azure-servicemanagement-legacy\tests\run-legacy-mgmt" />
-    <Content Include="azure-servicemanagement-legacy\tests\run-legacy-mgmt.bat" />
     <Content Include="azure-nspkg\README.rst" />
     <Content Include="azure-nspkg\setup.cfg" />
     <Content Include="azure\README.rst" />
