@@ -4,7 +4,7 @@
     "language": "Python",
     "autorest": "latest",
     "autorest_options": {
-      "Header": "MICROSOFT_APACHE_NO_VERSION",
+      "Header": "MICROSOFT_MIT_NO_VERSION",
       "AddCredentials": true,
       "ft": 2,
       "PackageVersion": "0.30.0rc5"
@@ -17,13 +17,6 @@
     "generated_relative_base_directory": "*client"
   },
   "projects": {
-    "authorization": {
-      "swagger": "arm-authorization/2015-07-01/swagger/authorization.json",
-      "autorest_options": {
-        "Namespace": "azure.mgmt.authorization"
-      },
-      "output_dir": "azure-mgmt-authorization/azure/mgmt/authorization"
-    },
     "batch.management": {
       "swagger": "arm-batch/2015-12-01/swagger/BatchManagement.json",
       "autorest_options": {
