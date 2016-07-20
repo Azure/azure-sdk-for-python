@@ -57,7 +57,8 @@ class LegacyMgmtTestCase(RecordingTestCase):
             if conn_type == 'requests_with_token':
                 import requests
                 session = requests.Session()
-                auth = 'Bearer {}'.format(self.settings.get_token())
+                credentials = self.settings.get_credentials()
+                auth = 'Bearer {}'.format(credentials.token['access_token'])
                 session.headers['authorization'] = auth
                 service = service_class(
                     self.settings.SUBSCRIPTION_ID,
