@@ -23,7 +23,6 @@ from .key_credential import KeyCredential
 from .password_credential import PasswordCredential
 from .application_create_parameters import ApplicationCreateParameters
 from .application_update_parameters import ApplicationUpdateParameters
-from .application_filter import ApplicationFilter
 from .application import Application
 from .aad_object import AADObject
 from .group_add_member_parameters import GroupAddMemberParameters
@@ -52,7 +51,6 @@ __all__ = [
     'PasswordCredential',
     'ApplicationCreateParameters',
     'ApplicationUpdateParameters',
-    'ApplicationFilter',
     'Application',
     'AADObject',
     'GroupAddMemberParameters',
