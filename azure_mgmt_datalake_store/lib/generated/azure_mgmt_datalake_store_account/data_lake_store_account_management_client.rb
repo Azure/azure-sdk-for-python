@@ -8,7 +8,6 @@ module Azure::ARM::DataLakeStore::Account
   # A service client - single point of access to the REST API.
   #
   class DataLakeStoreAccountManagementClient < MsRestAzure::AzureServiceClient
-    include Azure::ARM::DataLakeStore::Account::Models
     include MsRest::Serialization
     include MsRestAzure
 

@@ -31,10 +31,21 @@ module Azure::ARM::Resources
     # @param custom_headers [Hash{String => String}] A hash of custom headers that
     # will be added to the HTTP request.
     #
+    def move_resources(source_resource_group_name, parameters, custom_headers = nil)
+      response = move_resources_async(source_resource_group_name, parameters, custom_headers).value!
+      nil
+    end
+
+    #
+    # @param source_resource_group_name [String] Source resource group name.
+    # @param parameters [ResourcesMoveInfo] move resources' parameters.
+    # @param custom_headers [Hash{String => String}] A hash of custom headers that
+    # will be added to the HTTP request.
+    #
     # @return [Concurrent::Promise] promise which provides async access to http
     # response.
     #
-    def move_resources(source_resource_group_name, parameters, custom_headers = nil)
+    def move_resources_async(source_resource_group_name, parameters, custom_headers = nil)
       # Send request
       promise = begin_move_resources_async(source_resource_group_name, parameters, custom_headers)
 
@@ -149,6 +160,7 @@ module Azure::ARM::Resources
     # Get all of the resources under a subscription.
     #
     # @param filter [String] The filter to apply on the operation.
+    # @param expand [String] The $expand query parameter.
     # @param top [Integer] Query parameters. If null is passed returns all
     # resource groups.
     # @param custom_headers [Hash{String => String}] A hash of custom headers that
@@ -157,8 +169,8 @@ module Azure::ARM::Resources
     # @return [ResourceListResult] which provide lazy access to pages of the
     # response.
     #
-    def list_as_lazy(filter = nil, top = nil, custom_headers = nil)
-      response = list_async(filter, top, custom_headers).value!
+    def list_as_lazy(filter = nil, expand = nil, top = nil, custom_headers = nil)
+      response = list_async(filter, expand, top, custom_headers).value!
       unless response.nil?
         page = response.body
         page.next_method = Proc.new do |next_link|
@@ -172,6 +184,7 @@ module Azure::ARM::Resources
     # Get all of the resources under a subscription.
     #
     # @param filter [String] The filter to apply on the operation.
+    # @param expand [String] The $expand query parameter.
     # @param top [Integer] Query parameters. If null is passed returns all
     # resource groups.
     # @param custom_headers [Hash{String => String}] A hash of custom headers that
@@ -179,8 +192,8 @@ module Azure::ARM::Resources
     #
     # @return [Array<GenericResource>] operation results.
     #
-    def list(filter = nil, top = nil, custom_headers = nil)
-      first_page = list_as_lazy(filter, top, custom_headers)
+    def list(filter = nil, expand = nil, top = nil, custom_headers = nil)
+      first_page = list_as_lazy(filter, expand, top, custom_headers)
       first_page.get_all_items
     end
 
@@ -188,6 +201,7 @@ module Azure::ARM::Resources
     # Get all of the resources under a subscription.
     #
     # @param filter [String] The filter to apply on the operation.
+    # @param expand [String] The $expand query parameter.
     # @param top [Integer] Query parameters. If null is passed returns all
     # resource groups.
     # @param custom_headers [Hash{String => String}] A hash of custom headers that
@@ -195,14 +209,15 @@ module Azure::ARM::Resources
     #
     # @return [MsRestAzure::AzureOperationResponse] HTTP response information.
     #
-    def list_with_http_info(filter = nil, top = nil, custom_headers = nil)
-      list_async(filter, top, custom_headers).value!
+    def list_with_http_info(filter = nil, expand = nil, top = nil, custom_headers = nil)
+      list_async(filter, expand, top, custom_headers).value!
     end
 
     #
     # Get all of the resources under a subscription.
     #
     # @param filter [String] The filter to apply on the operation.
+    # @param expand [String] The $expand query parameter.
     # @param top [Integer] Query parameters. If null is passed returns all
     # resource groups.
     # @param [Hash{String => String}] A hash of custom headers that will be added
@@ -210,7 +225,7 @@ module Azure::ARM::Resources
     #
     # @return [Concurrent::Promise] Promise object which holds the HTTP response.
     #
-    def list_async(filter = nil, top = nil, custom_headers = nil)
+    def list_async(filter = nil, expand = nil, top = nil, custom_headers = nil)
       fail ArgumentError, '@client.api_version is nil' if @client.api_version.nil?
       fail ArgumentError, '@client.subscription_id is nil' if @client.subscription_id.nil?
 
@@ -224,7 +239,7 @@ module Azure::ARM::Resources
       options = {
           middlewares: [[MsRest::RetryPolicyMiddleware, times: 3, retry: 0.02], [:cookie_jar]],
           path_params: {'subscriptionId' => @client.subscription_id},
-          query_params: {'$filter' => filter,'$top' => top,'api-version' => @client.api_version},
+          query_params: {'$filter' => filter,'$expand' => expand,'$top' => top,'api-version' => @client.api_version},
           headers: request_headers.merge(custom_headers || {})
       }
 

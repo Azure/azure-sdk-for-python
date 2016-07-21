@@ -32,10 +32,22 @@ module Azure::ARM::Compute
     # @param custom_headers [Hash{String => String}] A hash of custom headers that
     # will be added to the HTTP request.
     #
+    def reimage(resource_group_name, vm_scale_set_name, instance_id, custom_headers = nil)
+      response = reimage_async(resource_group_name, vm_scale_set_name, instance_id, custom_headers).value!
+      nil
+    end
+
+    #
+    # @param resource_group_name [String] The name of the resource group.
+    # @param vm_scale_set_name [String] The name of the virtual machine scale set.
+    # @param instance_id [String] The instance id of the virtual machine.
+    # @param custom_headers [Hash{String => String}] A hash of custom headers that
+    # will be added to the HTTP request.
+    #
     # @return [Concurrent::Promise] promise which provides async access to http
     # response.
     #
-    def reimage(resource_group_name, vm_scale_set_name, instance_id, custom_headers = nil)
+    def reimage_async(resource_group_name, vm_scale_set_name, instance_id, custom_headers = nil)
       # Send request
       promise = begin_reimage_async(resource_group_name, vm_scale_set_name, instance_id, custom_headers)
 
@@ -152,10 +164,22 @@ module Azure::ARM::Compute
     # @param custom_headers [Hash{String => String}] A hash of custom headers that
     # will be added to the HTTP request.
     #
+    def deallocate(resource_group_name, vm_scale_set_name, instance_id, custom_headers = nil)
+      response = deallocate_async(resource_group_name, vm_scale_set_name, instance_id, custom_headers).value!
+      nil
+    end
+
+    #
+    # @param resource_group_name [String] The name of the resource group.
+    # @param vm_scale_set_name [String] The name of the virtual machine scale set.
+    # @param instance_id [String] The instance id of the virtual machine.
+    # @param custom_headers [Hash{String => String}] A hash of custom headers that
+    # will be added to the HTTP request.
+    #
     # @return [Concurrent::Promise] promise which provides async access to http
     # response.
     #
-    def deallocate(resource_group_name, vm_scale_set_name, instance_id, custom_headers = nil)
+    def deallocate_async(resource_group_name, vm_scale_set_name, instance_id, custom_headers = nil)
       # Send request
       promise = begin_deallocate_async(resource_group_name, vm_scale_set_name, instance_id, custom_headers)
 
@@ -273,10 +297,22 @@ module Azure::ARM::Compute
     # @param custom_headers [Hash{String => String}] A hash of custom headers that
     # will be added to the HTTP request.
     #
+    def delete(resource_group_name, vm_scale_set_name, instance_id, custom_headers = nil)
+      response = delete_async(resource_group_name, vm_scale_set_name, instance_id, custom_headers).value!
+      nil
+    end
+
+    #
+    # @param resource_group_name [String] The name of the resource group.
+    # @param vm_scale_set_name [String] The name of the virtual machine scale set.
+    # @param instance_id [String] The instance id of the virtual machine.
+    # @param custom_headers [Hash{String => String}] A hash of custom headers that
+    # will be added to the HTTP request.
+    #
     # @return [Concurrent::Promise] promise which provides async access to http
     # response.
     #
-    def delete(resource_group_name, vm_scale_set_name, instance_id, custom_headers = nil)
+    def delete_async(resource_group_name, vm_scale_set_name, instance_id, custom_headers = nil)
       # Send request
       promise = begin_delete_async(resource_group_name, vm_scale_set_name, instance_id, custom_headers)
 
@@ -716,10 +752,22 @@ module Azure::ARM::Compute
     # @param custom_headers [Hash{String => String}] A hash of custom headers that
     # will be added to the HTTP request.
     #
+    def power_off(resource_group_name, vm_scale_set_name, instance_id, custom_headers = nil)
+      response = power_off_async(resource_group_name, vm_scale_set_name, instance_id, custom_headers).value!
+      nil
+    end
+
+    #
+    # @param resource_group_name [String] The name of the resource group.
+    # @param vm_scale_set_name [String] The name of the virtual machine scale set.
+    # @param instance_id [String] The instance id of the virtual machine.
+    # @param custom_headers [Hash{String => String}] A hash of custom headers that
+    # will be added to the HTTP request.
+    #
     # @return [Concurrent::Promise] promise which provides async access to http
     # response.
     #
-    def power_off(resource_group_name, vm_scale_set_name, instance_id, custom_headers = nil)
+    def power_off_async(resource_group_name, vm_scale_set_name, instance_id, custom_headers = nil)
       # Send request
       promise = begin_power_off_async(resource_group_name, vm_scale_set_name, instance_id, custom_headers)
 
@@ -831,10 +879,22 @@ module Azure::ARM::Compute
     # @param custom_headers [Hash{String => String}] A hash of custom headers that
     # will be added to the HTTP request.
     #
+    def restart(resource_group_name, vm_scale_set_name, instance_id, custom_headers = nil)
+      response = restart_async(resource_group_name, vm_scale_set_name, instance_id, custom_headers).value!
+      nil
+    end
+
+    #
+    # @param resource_group_name [String] The name of the resource group.
+    # @param vm_scale_set_name [String] The name of the virtual machine scale set.
+    # @param instance_id [String] The instance id of the virtual machine.
+    # @param custom_headers [Hash{String => String}] A hash of custom headers that
+    # will be added to the HTTP request.
+    #
     # @return [Concurrent::Promise] promise which provides async access to http
     # response.
     #
-    def restart(resource_group_name, vm_scale_set_name, instance_id, custom_headers = nil)
+    def restart_async(resource_group_name, vm_scale_set_name, instance_id, custom_headers = nil)
       # Send request
       promise = begin_restart_async(resource_group_name, vm_scale_set_name, instance_id, custom_headers)
 
@@ -946,10 +1006,22 @@ module Azure::ARM::Compute
     # @param custom_headers [Hash{String => String}] A hash of custom headers that
     # will be added to the HTTP request.
     #
+    def start(resource_group_name, vm_scale_set_name, instance_id, custom_headers = nil)
+      response = start_async(resource_group_name, vm_scale_set_name, instance_id, custom_headers).value!
+      nil
+    end
+
+    #
+    # @param resource_group_name [String] The name of the resource group.
+    # @param vm_scale_set_name [String] The name of the virtual machine scale set.
+    # @param instance_id [String] The instance id of the virtual machine.
+    # @param custom_headers [Hash{String => String}] A hash of custom headers that
+    # will be added to the HTTP request.
+    #
     # @return [Concurrent::Promise] promise which provides async access to http
     # response.
     #
-    def start(resource_group_name, vm_scale_set_name, instance_id, custom_headers = nil)
+    def start_async(resource_group_name, vm_scale_set_name, instance_id, custom_headers = nil)
       # Send request
       promise = begin_start_async(resource_group_name, vm_scale_set_name, instance_id, custom_headers)
 

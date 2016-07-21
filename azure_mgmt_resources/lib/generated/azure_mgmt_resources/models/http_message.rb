@@ -12,7 +12,7 @@ module Azure::ARM::Resources
 
       include MsRestAzure
 
-      # @return Gets or sets HTTP message content.
+      # @return HTTP message content.
       attr_accessor :content
 
 

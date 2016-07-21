@@ -259,10 +259,21 @@ module Azure::ARM::NotificationHubs
     # @param custom_headers [Hash{String => String}] A hash of custom headers that
     # will be added to the HTTP request.
     #
+    def delete(resource_group_name, namespace_name, custom_headers = nil)
+      response = delete_async(resource_group_name, namespace_name, custom_headers).value!
+      nil
+    end
+
+    #
+    # @param resource_group_name [String] The name of the resource group.
+    # @param namespace_name [String] The namespace name.
+    # @param custom_headers [Hash{String => String}] A hash of custom headers that
+    # will be added to the HTTP request.
+    #
     # @return [Concurrent::Promise] promise which provides async access to http
     # response.
     #
-    def delete(resource_group_name, namespace_name, custom_headers = nil)
+    def delete_async(resource_group_name, namespace_name, custom_headers = nil)
       # Send request
       promise = begin_delete_async(resource_group_name, namespace_name, custom_headers)
 

@@ -12,13 +12,13 @@ module Azure::ARM::Resources
 
       include MsRestAzure
 
-      # @return [String] Gets or sets the ID of the resource.
+      # @return [String] The ID of the resource.
       attr_accessor :id
 
-      # @return [String] Gets or sets the name of the resource.
+      # @return [String] The name of the resource.
       attr_accessor :resource_name
 
-      # @return [String] Gets or sets the type of the resource.
+      # @return [String] The type of the resource.
       attr_accessor :resource_type
 
 

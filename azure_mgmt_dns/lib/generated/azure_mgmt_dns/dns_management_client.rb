@@ -8,7 +8,6 @@ module Azure::ARM::Dns
   # A service client - single point of access to the REST API.
   #
   class DnsManagementClient < MsRestAzure::AzureServiceClient
-    include Azure::ARM::Dns::Models
     include MsRest::Serialization
     include MsRestAzure
 

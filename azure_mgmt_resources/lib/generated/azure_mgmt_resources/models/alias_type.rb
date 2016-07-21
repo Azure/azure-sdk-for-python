@@ -3,58 +3,54 @@
 # Changes may cause incorrect behavior and will be lost if the code is
 # regenerated.
 
-module Azure::ARM::Logic
+module Azure::ARM::Resources
   module Models
     #
     # Model object.
     #
-    class ResourceReference
+    class AliasType
 
       include MsRestAzure
 
-      # @return [String] The resource id.
-      attr_accessor :id
-
-      # @return [String] The resource name.
+      # @return [String] The alias name.
       attr_accessor :name
 
-      # @return [String] The resource type.
-      attr_accessor :type
+      # @return [Array<AliasPathType>] The paths for an alias.
+      attr_accessor :paths
 
 
       #
-      # Mapper for ResourceReference class as Ruby Hash.
+      # Mapper for AliasType class as Ruby Hash.
       # This will be used for serialization/deserialization.
       #
       def self.mapper()
         {
           required: false,
-          serialized_name: 'ResourceReference',
+          serialized_name: 'AliasType',
           type: {
             name: 'Composite',
-            class_name: 'ResourceReference',
+            class_name: 'AliasType',
             model_properties: {
-              id: {
-                required: false,
-                serialized_name: 'id',
-                type: {
-                  name: 'String'
-                }
-              },
               name: {
                 required: false,
-                read_only: true,
                 serialized_name: 'name',
                 type: {
                   name: 'String'
                 }
               },
-              type: {
+              paths: {
                 required: false,
-                read_only: true,
-                serialized_name: 'type',
+                serialized_name: 'paths',
                 type: {
-                  name: 'String'
+                  name: 'Sequence',
+                  element: {
+                      required: false,
+                      serialized_name: 'AliasPathTypeElementType',
+                      type: {
+                        name: 'Composite',
+                        class_name: 'AliasPathType'
+                      }
+                  }
                 }
               }
             }

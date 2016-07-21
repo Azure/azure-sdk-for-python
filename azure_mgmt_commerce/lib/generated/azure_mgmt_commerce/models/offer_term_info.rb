@@ -13,7 +13,6 @@ module Azure::ARM::Commerce
       include MsRestAzure
 
       @@discriminatorMap = Hash.new
-      @@discriminatorMap["OfferTermInfo"] = "OfferTermInfo"
       @@discriminatorMap["Monetary Credit"] = "MonetaryCredit"
       @@discriminatorMap["Monetary Commitment"] = "MonetaryCommitment"
       @@discriminatorMap["Recurring Charge"] = "RecurringCharge"

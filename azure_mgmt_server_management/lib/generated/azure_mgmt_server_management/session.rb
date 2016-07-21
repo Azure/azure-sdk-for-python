@@ -34,10 +34,27 @@ module Azure::ARM::ServerManagement
     # @param custom_headers [Hash{String => String}] A hash of custom headers that
     # will be added to the HTTP request.
     #
+    # @return [SessionResource] operation results.
+    #
+    def create(resource_group_name, node_name, session, user_name = nil, password = nil, custom_headers = nil)
+      response = create_async(resource_group_name, node_name, session, user_name, password, custom_headers).value!
+      response.body unless response.nil?
+    end
+
+    #
+    # @param resource_group_name [String] The resource group name uniquely
+    # identifies the resource group within the user subscriptionId.
+    # @param node_name [String] The node name (256 characters maximum).
+    # @param session [String] The sessionId from the user
+    # @param user_name [String] User name to be used to connect to node
+    # @param password [String] Password associated with user name
+    # @param custom_headers [Hash{String => String}] A hash of custom headers that
+    # will be added to the HTTP request.
+    #
     # @return [Concurrent::Promise] promise which provides async access to http
     # response.
     #
-    def create(resource_group_name, node_name, session, user_name = nil, password = nil, custom_headers = nil)
+    def create_async(resource_group_name, node_name, session, user_name = nil, password = nil, custom_headers = nil)
       # Send request
       promise = begin_create_async(resource_group_name, node_name, session, user_name, password, custom_headers)
 

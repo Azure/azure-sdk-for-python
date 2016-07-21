@@ -13,7 +13,6 @@ module Azure::ARM::MobileEngagement
       include MsRestAzure
 
       @@discriminatorMap = Hash.new
-      @@discriminatorMap["Filter"] = "Filter"
       @@discriminatorMap["engage-subset"] = "EngageSubsetFilter"
       @@discriminatorMap["engage-old-users"] = "EngageOldUsersFilter"
       @@discriminatorMap["engage-new-users"] = "EngageNewUsersFilter"

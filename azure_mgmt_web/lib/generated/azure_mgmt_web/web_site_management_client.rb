@@ -8,7 +8,6 @@ module Azure::ARM::Web
   # A service client - single point of access to the REST API.
   #
   class WebSiteManagementClient < MsRestAzure::AzureServiceClient
-    include Azure::ARM::Web::Models
     include MsRest::Serialization
     include MsRestAzure
 

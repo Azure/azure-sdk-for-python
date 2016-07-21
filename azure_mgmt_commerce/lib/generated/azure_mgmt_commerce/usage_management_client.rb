@@ -8,7 +8,6 @@ module Azure::ARM::Commerce
   # A service client - single point of access to the REST API.
   #
   class UsageManagementClient < MsRestAzure::AzureServiceClient
-    include Azure::ARM::Commerce::Models
     include MsRest::Serialization
     include MsRestAzure
 

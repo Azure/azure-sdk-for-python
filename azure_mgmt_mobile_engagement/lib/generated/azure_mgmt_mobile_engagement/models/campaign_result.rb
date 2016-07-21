@@ -169,7 +169,7 @@ module Azure::ARM::MobileEngagement
               push_mode: {
                 required: false,
                 serialized_name: 'pushMode',
-                default_value: real-time,
+                default_value: 'real-time',
                 type: {
                   name: 'String'
                 }
@@ -226,7 +226,7 @@ module Azure::ARM::MobileEngagement
               notification_type: {
                 required: false,
                 serialized_name: 'notificationType',
-                default_value: popup,
+                default_value: 'popup',
                 type: {
                   name: 'String'
                 }

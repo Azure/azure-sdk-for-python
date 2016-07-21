@@ -37,10 +37,30 @@ module Azure::ARM::ServerManagement
     # @param custom_headers [Hash{String => String}] A hash of custom headers that
     # will be added to the HTTP request.
     #
+    # @return [GatewayResource] operation results.
+    #
+    def create(resource_group_name, gateway_name, location = nil, tags = nil, auto_upgrade = nil, custom_headers = nil)
+      response = create_async(resource_group_name, gateway_name, location, tags, auto_upgrade, custom_headers).value!
+      response.body unless response.nil?
+    end
+
+    #
+    # @param resource_group_name [String] The resource group name uniquely
+    # identifies the resource group within the user subscriptionId.
+    # @param gateway_name [String] The gateway name (256 characters maximum).
+    # @param location [String] location of the resource
+    # @param tags resource tags
+    # @param auto_upgrade [AutoUpgrade] The autoUpgrade property gives the
+    # flexibility to gateway to auto upgrade itself. If properties value not
+    # specified, then we assume autoUpgrade = Off. Possible values include: 'On',
+    # 'Off'
+    # @param custom_headers [Hash{String => String}] A hash of custom headers that
+    # will be added to the HTTP request.
+    #
     # @return [Concurrent::Promise] promise which provides async access to http
     # response.
     #
-    def create(resource_group_name, gateway_name, location = nil, tags = nil, auto_upgrade = nil, custom_headers = nil)
+    def create_async(resource_group_name, gateway_name, location = nil, tags = nil, auto_upgrade = nil, custom_headers = nil)
       # Send request
       promise = begin_create_async(resource_group_name, gateway_name, location, tags, auto_upgrade, custom_headers)
 
@@ -213,10 +233,30 @@ module Azure::ARM::ServerManagement
     # @param custom_headers [Hash{String => String}] A hash of custom headers that
     # will be added to the HTTP request.
     #
+    # @return [GatewayResource] operation results.
+    #
+    def update(resource_group_name, gateway_name, location = nil, tags = nil, auto_upgrade = nil, custom_headers = nil)
+      response = update_async(resource_group_name, gateway_name, location, tags, auto_upgrade, custom_headers).value!
+      response.body unless response.nil?
+    end
+
+    #
+    # @param resource_group_name [String] The resource group name uniquely
+    # identifies the resource group within the user subscriptionId.
+    # @param gateway_name [String] The gateway name (256 characters maximum).
+    # @param location [String] location of the resource
+    # @param tags resource tags
+    # @param auto_upgrade [AutoUpgrade] The autoUpgrade property gives the
+    # flexibility to gateway to auto upgrade itself. If properties value not
+    # specified, then we assume autoUpgrade = Off. Possible values include: 'On',
+    # 'Off'
+    # @param custom_headers [Hash{String => String}] A hash of custom headers that
+    # will be added to the HTTP request.
+    #
     # @return [Concurrent::Promise] promise which provides async access to http
     # response.
     #
-    def update(resource_group_name, gateway_name, location = nil, tags = nil, auto_upgrade = nil, custom_headers = nil)
+    def update_async(resource_group_name, gateway_name, location = nil, tags = nil, auto_upgrade = nil, custom_headers = nil)
       # Send request
       promise = begin_update_async(resource_group_name, gateway_name, location, tags, auto_upgrade, custom_headers)
 
@@ -786,10 +826,22 @@ module Azure::ARM::ServerManagement
     # @param custom_headers [Hash{String => String}] A hash of custom headers that
     # will be added to the HTTP request.
     #
+    def upgrade(resource_group_name, gateway_name, custom_headers = nil)
+      response = upgrade_async(resource_group_name, gateway_name, custom_headers).value!
+      nil
+    end
+
+    #
+    # @param resource_group_name [String] The resource group name uniquely
+    # identifies the resource group within the user subscriptionId.
+    # @param gateway_name [String] The gateway name (256 characters maximum).
+    # @param custom_headers [Hash{String => String}] A hash of custom headers that
+    # will be added to the HTTP request.
+    #
     # @return [Concurrent::Promise] promise which provides async access to http
     # response.
     #
-    def upgrade(resource_group_name, gateway_name, custom_headers = nil)
+    def upgrade_async(resource_group_name, gateway_name, custom_headers = nil)
       # Send request
       promise = begin_upgrade_async(resource_group_name, gateway_name, custom_headers)
 
@@ -900,10 +952,22 @@ module Azure::ARM::ServerManagement
     # @param custom_headers [Hash{String => String}] A hash of custom headers that
     # will be added to the HTTP request.
     #
+    def regenerate_profile(resource_group_name, gateway_name, custom_headers = nil)
+      response = regenerate_profile_async(resource_group_name, gateway_name, custom_headers).value!
+      nil
+    end
+
+    #
+    # @param resource_group_name [String] The resource group name uniquely
+    # identifies the resource group within the user subscriptionId.
+    # @param gateway_name [String] The gateway name (256 characters maximum).
+    # @param custom_headers [Hash{String => String}] A hash of custom headers that
+    # will be added to the HTTP request.
+    #
     # @return [Concurrent::Promise] promise which provides async access to http
     # response.
     #
-    def regenerate_profile(resource_group_name, gateway_name, custom_headers = nil)
+    def regenerate_profile_async(resource_group_name, gateway_name, custom_headers = nil)
       # Send request
       promise = begin_regenerate_profile_async(resource_group_name, gateway_name, custom_headers)
 
@@ -1014,10 +1078,24 @@ module Azure::ARM::ServerManagement
     # @param custom_headers [Hash{String => String}] A hash of custom headers that
     # will be added to the HTTP request.
     #
+    # @return [GatewayProfile] operation results.
+    #
+    def get_profile(resource_group_name, gateway_name, custom_headers = nil)
+      response = get_profile_async(resource_group_name, gateway_name, custom_headers).value!
+      response.body unless response.nil?
+    end
+
+    #
+    # @param resource_group_name [String] The resource group name uniquely
+    # identifies the resource group within the user subscriptionId.
+    # @param gateway_name [String] The gateway name (256 characters maximum).
+    # @param custom_headers [Hash{String => String}] A hash of custom headers that
+    # will be added to the HTTP request.
+    #
     # @return [Concurrent::Promise] promise which provides async access to http
     # response.
     #
-    def get_profile(resource_group_name, gateway_name, custom_headers = nil)
+    def get_profile_async(resource_group_name, gateway_name, custom_headers = nil)
       # Send request
       promise = begin_get_profile_async(resource_group_name, gateway_name, custom_headers)
 

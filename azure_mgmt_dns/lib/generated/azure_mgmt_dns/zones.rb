@@ -164,10 +164,29 @@ module Azure::ARM::Dns
     # @param custom_headers [Hash{String => String}] A hash of custom headers that
     # will be added to the HTTP request.
     #
+    # @return [ZoneDeleteResult] operation results.
+    #
+    def delete(resource_group_name, zone_name, if_match = nil, if_none_match = nil, custom_headers = nil)
+      response = delete_async(resource_group_name, zone_name, if_match, if_none_match, custom_headers).value!
+      response.body unless response.nil?
+    end
+
+    #
+    # @param resource_group_name [String] The name of the resource group.
+    # @param zone_name [String] The name of the zone without a terminating dot.
+    # @param if_match [String] Defines the If-Match condition. The delete
+    # operation will be performed only if the ETag of the zone on the server
+    # matches this value.
+    # @param if_none_match [String] Defines the If-None-Match condition. The
+    # delete operation will be performed only if the ETag of the zone on the
+    # server does not match this value.
+    # @param custom_headers [Hash{String => String}] A hash of custom headers that
+    # will be added to the HTTP request.
+    #
     # @return [Concurrent::Promise] promise which provides async access to http
     # response.
     #
-    def delete(resource_group_name, zone_name, if_match = nil, if_none_match = nil, custom_headers = nil)
+    def delete_async(resource_group_name, zone_name, if_match = nil, if_none_match = nil, custom_headers = nil)
       # Send request
       promise = begin_delete_async(resource_group_name, zone_name, if_match, if_none_match, custom_headers)
 

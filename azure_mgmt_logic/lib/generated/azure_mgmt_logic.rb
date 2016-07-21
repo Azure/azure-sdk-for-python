@@ -17,7 +17,6 @@ require 'faraday-cookie_jar'
 require 'concurrent'
 require 'ms_rest'
 require 'generated/azure_mgmt_logic/module_definition'
-require 'generated/azure_mgmt_logic/version'
 require 'ms_rest_azure'
 
 module Azure::ARM::Logic
@@ -31,7 +30,6 @@ module Azure::ARM::Logic
 
   module Models
     autoload :IntegrationAccountResource,                         'generated/azure_mgmt_logic/models/integration_account_resource.rb'
-    autoload :ResourceReference,                                  'generated/azure_mgmt_logic/models/resource_reference.rb'
     autoload :IntegrationAccountContentLink,                      'generated/azure_mgmt_logic/models/integration_account_content_link.rb'
     autoload :IntegrationAccountContentHash,                      'generated/azure_mgmt_logic/models/integration_account_content_hash.rb'
     autoload :IntegrationAccountSku,                              'generated/azure_mgmt_logic/models/integration_account_sku.rb'
@@ -91,6 +89,7 @@ module Azure::ARM::Logic
     autoload :IntegrationAccountAgreementFilter,                  'generated/azure_mgmt_logic/models/integration_account_agreement_filter.rb'
     autoload :IntegrationAccountCertificateListResult,            'generated/azure_mgmt_logic/models/integration_account_certificate_list_result.rb'
     autoload :KeyVaultKeyReference,                               'generated/azure_mgmt_logic/models/key_vault_key_reference.rb'
+    autoload :KeyVaultKeyReferenceKeyVault,                       'generated/azure_mgmt_logic/models/key_vault_key_reference_key_vault.rb'
     autoload :IntegrationAccount,                                 'generated/azure_mgmt_logic/models/integration_account.rb'
     autoload :IntegrationAccountSchema,                           'generated/azure_mgmt_logic/models/integration_account_schema.rb'
     autoload :IntegrationAccountMap,                              'generated/azure_mgmt_logic/models/integration_account_map.rb'

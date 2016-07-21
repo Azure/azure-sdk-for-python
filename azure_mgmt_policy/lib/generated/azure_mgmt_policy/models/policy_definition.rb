@@ -12,7 +12,7 @@ module Azure::ARM::Policy
 
       include MsRestAzure
 
-      # @return [policyType] Gets or sets policy definition policy type.
+      # @return [PolicyType] Gets or sets policy definition policy type.
       # Possible values include: 'NotSpecified', 'BuiltIn', 'Custom'
       attr_accessor :policy_type
 

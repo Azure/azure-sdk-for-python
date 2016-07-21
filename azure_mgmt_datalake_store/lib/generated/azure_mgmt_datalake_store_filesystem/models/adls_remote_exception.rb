@@ -14,7 +14,6 @@ module Azure::ARM::DataLakeStore::FileSystem
       include MsRestAzure
 
       @@discriminatorMap = Hash.new
-      @@discriminatorMap["AdlsRemoteException"] = "AdlsRemoteException"
       @@discriminatorMap["IllegalArgumentException"] = "AdlsIllegalArgumentException"
       @@discriminatorMap["UnsupportedOperationException"] = "AdlsUnsupportedOperationException"
       @@discriminatorMap["SecurityException"] = "AdlsSecurityException"

@@ -12,7 +12,7 @@ module Azure::ARM::Resources
 
       include MsRestAzure
 
-      # @return Gets or sets the template content.
+      # @return The template content.
       attr_accessor :template
 
 

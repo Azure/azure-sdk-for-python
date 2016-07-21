@@ -8,7 +8,6 @@ module Azure::ARM::DataLakeAnalytics::Job
   # A service client - single point of access to the REST API.
   #
   class DataLakeAnalyticsJobManagementClient < MsRestAzure::AzureServiceClient
-    include Azure::ARM::DataLakeAnalytics::Job::Models
     include MsRest::Serialization
     include MsRestAzure
 

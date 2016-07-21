@@ -12,9 +12,9 @@ module Azure::ARM::Resources
 
       include MsRestAzure
 
-      # @return [Array<String>] Gets or sets the ids of the resources. The
-      # only supported string currently is '*' (all resources). Future api
-      # updates will support exporting specific resources.
+      # @return [Array<String>] The ids of the resources. The only supported
+      # string currently is '*' (all resources). Future api updates will
+      # support exporting specific resources.
       attr_accessor :resources
 
       # @return [String] The export template options. Supported values include

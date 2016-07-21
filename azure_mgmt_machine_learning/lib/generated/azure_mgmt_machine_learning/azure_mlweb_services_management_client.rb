@@ -8,7 +8,6 @@ module Azure::ARM::MachineLearning
   # A service client - single point of access to the REST API.
   #
   class AzureMLWebServicesManagementClient < MsRestAzure::AzureServiceClient
-    include Azure::ARM::MachineLearning::Models
     include MsRest::Serialization
     include MsRestAzure
 

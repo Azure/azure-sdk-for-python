@@ -8,7 +8,6 @@ module Azure::ARM::Network
   # A service client - single point of access to the REST API.
   #
   class NetworkManagementClient < MsRestAzure::AzureServiceClient
-    include Azure::ARM::Network::Models
     include MsRest::Serialization
     include MsRestAzure
 

@@ -12,23 +12,23 @@ module Azure::ARM::Resources
 
       include MsRestAzure
 
-      # @return [String] Gets the ID of the resource group.
+      # @return [String] The ID of the resource group.
       attr_accessor :id
 
-      # @return [String] Gets or sets the Name of the resource group.
+      # @return [String] The Name of the resource group.
       attr_accessor :name
 
       # @return [ResourceGroupProperties]
       attr_accessor :properties
 
-      # @return [String] Gets or sets the location of the resource group. It
-      # cannot be changed after the resource group has been created. Has to
-      # be one of the supported Azure Locations, such as West US, East US,
-      # West Europe, East Asia, etc.
+      # @return [String] The location of the resource group. It cannot be
+      # changed after the resource group has been created. Has to be one of
+      # the supported Azure Locations, such as West US, East US, West Europe,
+      # East Asia, etc.
       attr_accessor :location
 
-      # @return [Hash{String => String}] Gets or sets the tags attached to the
-      # resource group.
+      # @return [Hash{String => String}] The tags attached to the resource
+      # group.
       attr_accessor :tags
 
 

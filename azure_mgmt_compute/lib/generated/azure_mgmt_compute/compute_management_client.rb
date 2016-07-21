@@ -8,7 +8,6 @@ module Azure::ARM::Compute
   # A service client - single point of access to the REST API.
   #
   class ComputeManagementClient < MsRestAzure::AzureServiceClient
-    include Azure::ARM::Compute::Models
     include MsRest::Serialization
     include MsRestAzure
 

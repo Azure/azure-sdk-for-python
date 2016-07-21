@@ -571,10 +571,21 @@ module Azure::ARM::Scheduler
     # @param custom_headers [Hash{String => String}] A hash of custom headers that
     # will be added to the HTTP request.
     #
+    def delete(resource_group_name, job_collection_name, custom_headers = nil)
+      response = delete_async(resource_group_name, job_collection_name, custom_headers).value!
+      nil
+    end
+
+    #
+    # @param resource_group_name [String] The resource group name.
+    # @param job_collection_name [String] The job collection name.
+    # @param custom_headers [Hash{String => String}] A hash of custom headers that
+    # will be added to the HTTP request.
+    #
     # @return [Concurrent::Promise] promise which provides async access to http
     # response.
     #
-    def delete(resource_group_name, job_collection_name, custom_headers = nil)
+    def delete_async(resource_group_name, job_collection_name, custom_headers = nil)
       # Send request
       promise = begin_delete_async(resource_group_name, job_collection_name, custom_headers)
 
@@ -681,10 +692,21 @@ module Azure::ARM::Scheduler
     # @param custom_headers [Hash{String => String}] A hash of custom headers that
     # will be added to the HTTP request.
     #
+    def enable(resource_group_name, job_collection_name, custom_headers = nil)
+      response = enable_async(resource_group_name, job_collection_name, custom_headers).value!
+      nil
+    end
+
+    #
+    # @param resource_group_name [String] The resource group name.
+    # @param job_collection_name [String] The job collection name.
+    # @param custom_headers [Hash{String => String}] A hash of custom headers that
+    # will be added to the HTTP request.
+    #
     # @return [Concurrent::Promise] promise which provides async access to http
     # response.
     #
-    def enable(resource_group_name, job_collection_name, custom_headers = nil)
+    def enable_async(resource_group_name, job_collection_name, custom_headers = nil)
       # Send request
       promise = begin_enable_async(resource_group_name, job_collection_name, custom_headers)
 
@@ -791,10 +813,21 @@ module Azure::ARM::Scheduler
     # @param custom_headers [Hash{String => String}] A hash of custom headers that
     # will be added to the HTTP request.
     #
+    def disable(resource_group_name, job_collection_name, custom_headers = nil)
+      response = disable_async(resource_group_name, job_collection_name, custom_headers).value!
+      nil
+    end
+
+    #
+    # @param resource_group_name [String] The resource group name.
+    # @param job_collection_name [String] The job collection name.
+    # @param custom_headers [Hash{String => String}] A hash of custom headers that
+    # will be added to the HTTP request.
+    #
     # @return [Concurrent::Promise] promise which provides async access to http
     # response.
     #
-    def disable(resource_group_name, job_collection_name, custom_headers = nil)
+    def disable_async(resource_group_name, job_collection_name, custom_headers = nil)
       # Send request
       promise = begin_disable_async(resource_group_name, job_collection_name, custom_headers)
 

@@ -12,18 +12,16 @@ module Azure::ARM::Resources
 
       include MsRestAzure
 
-      # @return [String] Gets or sets the error code returned from the server.
+      # @return [String] The error code returned from the server.
       attr_accessor :code
 
-      # @return [String] Gets or sets the error message returned from the
-      # server.
+      # @return [String] The error message returned from the server.
       attr_accessor :message
 
-      # @return [String] Gets or sets the target of the error.
+      # @return [String] The target of the error.
       attr_accessor :target
 
-      # @return [Array<ResourceManagementErrorWithDetails>] Gets or sets
-      # validation error.
+      # @return [Array<ResourceManagementErrorWithDetails>] Validation error.
       attr_accessor :details
 
 

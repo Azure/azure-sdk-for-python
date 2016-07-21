@@ -8,7 +8,6 @@ module Azure::ARM::Locks
   # A service client - single point of access to the REST API.
   #
   class ManagementLockClient < MsRestAzure::AzureServiceClient
-    include Azure::ARM::Locks::Models
     include MsRest::Serialization
     include MsRestAzure
 

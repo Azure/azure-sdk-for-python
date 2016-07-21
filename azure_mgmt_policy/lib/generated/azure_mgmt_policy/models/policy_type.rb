@@ -6,9 +6,9 @@
 module Azure::ARM::Policy
   module Models
     #
-    # Defines values for policyType
+    # Defines values for PolicyType
     #
-    module policyType
+    module PolicyType
       NotSpecified = "NotSpecified"
       BuiltIn = "BuiltIn"
       Custom = "Custom"

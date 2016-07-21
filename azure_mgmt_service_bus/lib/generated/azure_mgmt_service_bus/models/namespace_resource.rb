@@ -12,7 +12,7 @@ module Azure::ARM::ServiceBus
 
       include MsRestAzure
 
-      # @return [kind] Kind of the Namespace. Possible values include:
+      # @return [Kind] Kind of the Namespace. Possible values include:
       # 'Messaging', 'EventHub'
       attr_accessor :kind
 

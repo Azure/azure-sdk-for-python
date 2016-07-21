@@ -12,22 +12,22 @@ module Azure::ARM::Resources
 
       include MsRestAzure
 
-      # @return [String] Gets or sets the sku name.
+      # @return [String] The sku name.
       attr_accessor :name
 
-      # @return [String] Gets or sets the sku tier.
+      # @return [String] The sku tier.
       attr_accessor :tier
 
-      # @return [String] Gets or sets the sku size.
+      # @return [String] The sku size.
       attr_accessor :size
 
-      # @return [String] Gets or sets the sku family.
+      # @return [String] The sku family.
       attr_accessor :family
 
-      # @return [String] Gets or sets the sku model.
+      # @return [String] The sku model.
       attr_accessor :model
 
-      # @return [Integer] Gets or sets the sku capacity.
+      # @return [Integer] The sku capacity.
       attr_accessor :capacity
 
 

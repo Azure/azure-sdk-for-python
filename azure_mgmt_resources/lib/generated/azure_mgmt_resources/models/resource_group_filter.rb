@@ -12,10 +12,10 @@ module Azure::ARM::Resources
 
       include MsRestAzure
 
-      # @return [String] Gets or sets the tag name.
+      # @return [String] The tag name.
       attr_accessor :tag_name
 
-      # @return [String] Gets or sets the tag value.
+      # @return [String] The tag value.
       attr_accessor :tag_value
 
 

@@ -8,7 +8,6 @@ module Azure::ARM::Features
   # A service client - single point of access to the REST API.
   #
   class FeatureClient < MsRestAzure::AzureServiceClient
-    include Azure::ARM::Features::Models
     include MsRest::Serialization
     include MsRestAzure
 

@@ -8,7 +8,6 @@ module Azure::ARM::Redis
   # A service client - single point of access to the REST API.
   #
   class RedisManagementClient < MsRestAzure::AzureServiceClient
-    include Azure::ARM::Redis::Models
     include MsRest::Serialization
     include MsRestAzure
 

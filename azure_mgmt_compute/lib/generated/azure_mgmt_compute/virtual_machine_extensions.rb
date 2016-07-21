@@ -34,10 +34,27 @@ module Azure::ARM::Compute
     # @param custom_headers [Hash{String => String}] A hash of custom headers that
     # will be added to the HTTP request.
     #
+    # @return [VirtualMachineExtension] operation results.
+    #
+    def create_or_update(resource_group_name, vm_name, vm_extension_name, extension_parameters, custom_headers = nil)
+      response = create_or_update_async(resource_group_name, vm_name, vm_extension_name, extension_parameters, custom_headers).value!
+      response.body unless response.nil?
+    end
+
+    #
+    # @param resource_group_name [String] The name of the resource group.
+    # @param vm_name [String] The name of the virtual machine where the extension
+    # should be create or updated.
+    # @param vm_extension_name [String] The name of the virtual machine extension.
+    # @param extension_parameters [VirtualMachineExtension] Parameters supplied to
+    # the Create Virtual Machine Extension operation.
+    # @param custom_headers [Hash{String => String}] A hash of custom headers that
+    # will be added to the HTTP request.
+    #
     # @return [Concurrent::Promise] promise which provides async access to http
     # response.
     #
-    def create_or_update(resource_group_name, vm_name, vm_extension_name, extension_parameters, custom_headers = nil)
+    def create_or_update_async(resource_group_name, vm_name, vm_extension_name, extension_parameters, custom_headers = nil)
       # Send request
       promise = begin_create_or_update_async(resource_group_name, vm_name, vm_extension_name, extension_parameters, custom_headers)
 
@@ -192,10 +209,23 @@ module Azure::ARM::Compute
     # @param custom_headers [Hash{String => String}] A hash of custom headers that
     # will be added to the HTTP request.
     #
+    def delete(resource_group_name, vm_name, vm_extension_name, custom_headers = nil)
+      response = delete_async(resource_group_name, vm_name, vm_extension_name, custom_headers).value!
+      nil
+    end
+
+    #
+    # @param resource_group_name [String] The name of the resource group.
+    # @param vm_name [String] The name of the virtual machine where the extension
+    # should be deleted.
+    # @param vm_extension_name [String] The name of the virtual machine extension.
+    # @param custom_headers [Hash{String => String}] A hash of custom headers that
+    # will be added to the HTTP request.
+    #
     # @return [Concurrent::Promise] promise which provides async access to http
     # response.
     #
-    def delete(resource_group_name, vm_name, vm_extension_name, custom_headers = nil)
+    def delete_async(resource_group_name, vm_name, vm_extension_name, custom_headers = nil)
       # Send request
       promise = begin_delete_async(resource_group_name, vm_name, vm_extension_name, custom_headers)
 

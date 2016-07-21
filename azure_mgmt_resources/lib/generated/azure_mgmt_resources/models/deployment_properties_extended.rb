@@ -12,48 +12,45 @@ module Azure::ARM::Resources
 
       include MsRestAzure
 
-      # @return [String] Gets or sets the state of the provisioning.
+      # @return [String] The state of the provisioning.
       attr_accessor :provisioning_state
 
-      # @return [String] Gets or sets the correlation ID of the deployment.
+      # @return [String] The correlation ID of the deployment.
       attr_accessor :correlation_id
 
-      # @return [DateTime] Gets or sets the timestamp of the template
-      # deployment.
+      # @return [DateTime] The timestamp of the template deployment.
       attr_accessor :timestamp
 
-      # @return Gets or sets key/value pairs that represent deploymentoutput.
+      # @return Key/value pairs that represent deploymentoutput.
       attr_accessor :outputs
 
-      # @return [Array<Provider>] Gets the list of resource providers needed
-      # for the deployment.
+      # @return [Array<Provider>] The list of resource providers needed for
+      # the deployment.
       attr_accessor :providers
 
-      # @return [Array<Dependency>] Gets the list of deployment dependencies.
+      # @return [Array<Dependency>] The list of deployment dependencies.
       attr_accessor :dependencies
 
-      # @return Gets or sets the template content. Use only one of Template or
-      # TemplateLink.
+      # @return The template content. Use only one of Template or TemplateLink.
       attr_accessor :template
 
-      # @return [TemplateLink] Gets or sets the URI referencing the template.
-      # Use only one of Template or TemplateLink.
+      # @return [TemplateLink] The URI referencing the template. Use only one
+      # of Template or TemplateLink.
       attr_accessor :template_link
 
       # @return Deployment parameters. Use only one of Parameters or
       # ParametersLink.
       attr_accessor :parameters
 
-      # @return [ParametersLink] Gets or sets the URI referencing the
-      # parameters. Use only one of Parameters or ParametersLink.
+      # @return [ParametersLink] The URI referencing the parameters. Use only
+      # one of Parameters or ParametersLink.
       attr_accessor :parameters_link
 
-      # @return [DeploymentMode] Gets or sets the deployment mode. Possible
-      # values include: 'Incremental', 'Complete'
+      # @return [DeploymentMode] The deployment mode. Possible values include:
+      # 'Incremental', 'Complete'
       attr_accessor :mode
 
-      # @return [DebugSetting] Gets or sets the debug setting of the
-      # deployment.
+      # @return [DebugSetting] The debug setting of the deployment.
       attr_accessor :debug_setting
 
 

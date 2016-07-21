@@ -13,7 +13,6 @@ module Azure::ARM::MobileEngagement
       include MsRestAzure
 
       @@discriminatorMap = Hash.new
-      @@discriminatorMap["Criterion"] = "Criterion"
       @@discriminatorMap["carrier-name"] = "CarrierNameCriterion"
       @@discriminatorMap["carrier-country"] = "CarrierCountryCriterion"
       @@discriminatorMap["firmware-version"] = "FirmwareVersionCriterion"

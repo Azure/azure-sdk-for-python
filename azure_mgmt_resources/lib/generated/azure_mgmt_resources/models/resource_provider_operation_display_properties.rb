@@ -12,19 +12,19 @@ module Azure::ARM::Resources
 
       include MsRestAzure
 
-      # @return [String] Gets or sets operation description.
+      # @return [String] Operation description.
       attr_accessor :publisher
 
-      # @return [String] Gets or sets operation provider.
+      # @return [String] Operation provider.
       attr_accessor :provider
 
-      # @return [String] Gets or sets operation resource.
+      # @return [String] Operation resource.
       attr_accessor :resource
 
-      # @return [String] Gets or sets operation.
+      # @return [String] Operation.
       attr_accessor :operation
 
-      # @return [String] Gets or sets operation description.
+      # @return [String] Operation description.
       attr_accessor :description
 
 

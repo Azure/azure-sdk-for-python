@@ -8,7 +8,6 @@ module Azure::ARM::Resources
   # A service client - single point of access to the REST API.
   #
   class ResourceManagementClient < MsRestAzure::AzureServiceClient
-    include Azure::ARM::Resources::Models
     include MsRest::Serialization
     include MsRestAzure
 

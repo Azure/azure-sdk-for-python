@@ -8,7 +8,6 @@ module Azure::ARM::TrafficManager
   # A service client - single point of access to the REST API.
   #
   class TrafficManagerManagementClient < MsRestAzure::AzureServiceClient
-    include Azure::ARM::TrafficManager::Models
     include MsRest::Serialization
     include MsRestAzure
 

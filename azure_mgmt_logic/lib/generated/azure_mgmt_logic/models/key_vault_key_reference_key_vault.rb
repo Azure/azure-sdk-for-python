@@ -3,54 +3,56 @@
 # Changes may cause incorrect behavior and will be lost if the code is
 # regenerated.
 
-module Azure::ARM::Graph
+module Azure::ARM::Logic
   module Models
     #
-    # Filter parameters for listing applications
+    # The key vault reference.
     #
-    class ApplicationFilter
+    class KeyVaultKeyReferenceKeyVault
 
       include MsRestAzure
 
-      # @return [String] Application display name starts with
-      attr_accessor :display_name_starts_with
+      # @return [String] The resource id.
+      attr_accessor :id
 
-      # @return [String] ApplicationId
-      attr_accessor :app_id
+      # @return [String] The resource name.
+      attr_accessor :name
 
-      # @return [String] Identifier Uri
-      attr_accessor :identifier_uri
+      # @return [String] The resource type.
+      attr_accessor :type
 
 
       #
-      # Mapper for ApplicationFilter class as Ruby Hash.
+      # Mapper for KeyVaultKeyReferenceKeyVault class as Ruby Hash.
       # This will be used for serialization/deserialization.
       #
       def self.mapper()
         {
           required: false,
-          serialized_name: 'ApplicationFilter',
+          serialized_name: 'KeyVaultKeyReference_keyVault',
           type: {
             name: 'Composite',
-            class_name: 'ApplicationFilter',
+            class_name: 'KeyVaultKeyReferenceKeyVault',
             model_properties: {
-              display_name_starts_with: {
+              id: {
                 required: false,
-                serialized_name: 'displayNameStartsWith',
+                serialized_name: 'id',
                 type: {
                   name: 'String'
                 }
               },
-              app_id: {
+              name: {
                 required: false,
-                serialized_name: 'appId',
+                read_only: true,
+                serialized_name: 'name',
                 type: {
                   name: 'String'
                 }
               },
-              identifier_uri: {
+              type: {
                 required: false,
-                serialized_name: 'identifierUri',
+                read_only: true,
+                serialized_name: 'type',
                 type: {
                   name: 'String'
                 }

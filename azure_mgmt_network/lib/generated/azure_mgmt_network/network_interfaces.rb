@@ -33,10 +33,21 @@ module Azure::ARM::Network
     # @param custom_headers [Hash{String => String}] A hash of custom headers that
     # will be added to the HTTP request.
     #
+    def delete(resource_group_name, network_interface_name, custom_headers = nil)
+      response = delete_async(resource_group_name, network_interface_name, custom_headers).value!
+      nil
+    end
+
+    #
+    # @param resource_group_name [String] The name of the resource group.
+    # @param network_interface_name [String] The name of the network interface.
+    # @param custom_headers [Hash{String => String}] A hash of custom headers that
+    # will be added to the HTTP request.
+    #
     # @return [Concurrent::Promise] promise which provides async access to http
     # response.
     #
-    def delete(resource_group_name, network_interface_name, custom_headers = nil)
+    def delete_async(resource_group_name, network_interface_name, custom_headers = nil)
       # Send request
       promise = begin_delete_async(resource_group_name, network_interface_name, custom_headers)
 
@@ -245,10 +256,25 @@ module Azure::ARM::Network
     # @param custom_headers [Hash{String => String}] A hash of custom headers that
     # will be added to the HTTP request.
     #
+    # @return [NetworkInterface] operation results.
+    #
+    def create_or_update(resource_group_name, network_interface_name, parameters, custom_headers = nil)
+      response = create_or_update_async(resource_group_name, network_interface_name, parameters, custom_headers).value!
+      response.body unless response.nil?
+    end
+
+    #
+    # @param resource_group_name [String] The name of the resource group.
+    # @param network_interface_name [String] The name of the network interface.
+    # @param parameters [NetworkInterface] Parameters supplied to the
+    # create/update NetworkInterface operation
+    # @param custom_headers [Hash{String => String}] A hash of custom headers that
+    # will be added to the HTTP request.
+    #
     # @return [Concurrent::Promise] promise which provides async access to http
     # response.
     #
-    def create_or_update(resource_group_name, network_interface_name, parameters, custom_headers = nil)
+    def create_or_update_async(resource_group_name, network_interface_name, parameters, custom_headers = nil)
       # Send request
       promise = begin_create_or_update_async(resource_group_name, network_interface_name, parameters, custom_headers)
 
@@ -984,10 +1010,23 @@ module Azure::ARM::Network
     # @param custom_headers [Hash{String => String}] A hash of custom headers that
     # will be added to the HTTP request.
     #
+    # @return [EffectiveRouteListResult] operation results.
+    #
+    def get_effective_route_table(resource_group_name, network_interface_name, custom_headers = nil)
+      first_page = get_effective_route_table_as_lazy(resource_group_name, network_interface_name, custom_headers)
+      first_page.get_all_items
+    end
+
+    #
+    # @param resource_group_name [String] The name of the resource group.
+    # @param network_interface_name [String] The name of the network interface.
+    # @param custom_headers [Hash{String => String}] A hash of custom headers that
+    # will be added to the HTTP request.
+    #
     # @return [Concurrent::Promise] promise which provides async access to http
     # response.
     #
-    def get_effective_route_table(resource_group_name, network_interface_name, custom_headers = nil)
+    def get_effective_route_table_async(resource_group_name, network_interface_name, custom_headers = nil)
       # Send request
       promise = begin_get_effective_route_table_async(resource_group_name, network_interface_name, custom_headers)
 
@@ -1014,10 +1053,23 @@ module Azure::ARM::Network
     # @param custom_headers [Hash{String => String}] A hash of custom headers that
     # will be added to the HTTP request.
     #
+    # @return [Array<EffectiveRoute>] operation results.
+    #
+    def get_effective_route_table(resource_group_name, network_interface_name, custom_headers = nil)
+      first_page = get_effective_route_table_as_lazy(resource_group_name, network_interface_name, custom_headers)
+      first_page.get_all_items
+    end
+
+    #
+    # @param resource_group_name [String] The name of the resource group.
+    # @param network_interface_name [String] The name of the network interface.
+    # @param custom_headers [Hash{String => String}] A hash of custom headers that
+    # will be added to the HTTP request.
+    #
     # @return [Concurrent::Promise] promise which provides async access to http
     # response.
     #
-    def get_effective_route_table(resource_group_name, network_interface_name, custom_headers = nil)
+    def get_effective_route_table_async(resource_group_name, network_interface_name, custom_headers = nil)
       # Send request
       promise = begin_get_effective_route_table_async(resource_group_name, network_interface_name, custom_headers)
 
@@ -1164,10 +1216,23 @@ module Azure::ARM::Network
     # @param custom_headers [Hash{String => String}] A hash of custom headers that
     # will be added to the HTTP request.
     #
+    # @return [EffectiveNetworkSecurityGroupListResult] operation results.
+    #
+    def list_effective_network_security_groups(resource_group_name, network_interface_name, custom_headers = nil)
+      first_page = list_effective_network_security_groups_as_lazy(resource_group_name, network_interface_name, custom_headers)
+      first_page.get_all_items
+    end
+
+    #
+    # @param resource_group_name [String] The name of the resource group.
+    # @param network_interface_name [String] The name of the network interface.
+    # @param custom_headers [Hash{String => String}] A hash of custom headers that
+    # will be added to the HTTP request.
+    #
     # @return [Concurrent::Promise] promise which provides async access to http
     # response.
     #
-    def list_effective_network_security_groups(resource_group_name, network_interface_name, custom_headers = nil)
+    def list_effective_network_security_groups_async(resource_group_name, network_interface_name, custom_headers = nil)
       # Send request
       promise = begin_list_effective_network_security_groups_async(resource_group_name, network_interface_name, custom_headers)
 
@@ -1194,10 +1259,23 @@ module Azure::ARM::Network
     # @param custom_headers [Hash{String => String}] A hash of custom headers that
     # will be added to the HTTP request.
     #
+    # @return [Array<EffectiveNetworkSecurityGroup>] operation results.
+    #
+    def list_effective_network_security_groups(resource_group_name, network_interface_name, custom_headers = nil)
+      first_page = list_effective_network_security_groups_as_lazy(resource_group_name, network_interface_name, custom_headers)
+      first_page.get_all_items
+    end
+
+    #
+    # @param resource_group_name [String] The name of the resource group.
+    # @param network_interface_name [String] The name of the network interface.
+    # @param custom_headers [Hash{String => String}] A hash of custom headers that
+    # will be added to the HTTP request.
+    #
     # @return [Concurrent::Promise] promise which provides async access to http
     # response.
     #
-    def list_effective_network_security_groups(resource_group_name, network_interface_name, custom_headers = nil)
+    def list_effective_network_security_groups_async(resource_group_name, network_interface_name, custom_headers = nil)
       # Send request
       promise = begin_list_effective_network_security_groups_async(resource_group_name, network_interface_name, custom_headers)
 
@@ -1716,10 +1794,23 @@ module Azure::ARM::Network
     # @param custom_headers [Hash{String => String}] A hash of custom headers that
     # will be added to the HTTP request.
     #
+    # @return [EffectiveRouteListResult] operation results.
+    #
+    def get_effective_route_table_next(next_page_link, custom_headers = nil)
+      response = get_effective_route_table_next_async(next_page_link, custom_headers).value!
+      response.body unless response.nil?
+    end
+
+    #
+    # @param next_page_link [String] The NextLink from the previous successful
+    # call to List operation.
+    # @param custom_headers [Hash{String => String}] A hash of custom headers that
+    # will be added to the HTTP request.
+    #
     # @return [Concurrent::Promise] promise which provides async access to http
     # response.
     #
-    def get_effective_route_table_next(next_page_link, custom_headers = nil)
+    def get_effective_route_table_next_async(next_page_link, custom_headers = nil)
       # Send request
       promise = begin_get_effective_route_table_next_async(next_page_link, custom_headers)
 
@@ -1839,10 +1930,23 @@ module Azure::ARM::Network
     # @param custom_headers [Hash{String => String}] A hash of custom headers that
     # will be added to the HTTP request.
     #
+    # @return [EffectiveNetworkSecurityGroupListResult] operation results.
+    #
+    def list_effective_network_security_groups_next(next_page_link, custom_headers = nil)
+      response = list_effective_network_security_groups_next_async(next_page_link, custom_headers).value!
+      response.body unless response.nil?
+    end
+
+    #
+    # @param next_page_link [String] The NextLink from the previous successful
+    # call to List operation.
+    # @param custom_headers [Hash{String => String}] A hash of custom headers that
+    # will be added to the HTTP request.
+    #
     # @return [Concurrent::Promise] promise which provides async access to http
     # response.
     #
-    def list_effective_network_security_groups_next(next_page_link, custom_headers = nil)
+    def list_effective_network_security_groups_next_async(next_page_link, custom_headers = nil)
       # Send request
       promise = begin_list_effective_network_security_groups_next_async(next_page_link, custom_headers)
 

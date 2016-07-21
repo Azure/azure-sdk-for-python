@@ -8,7 +8,6 @@ module Azure::ARM::Logic
   # A service client - single point of access to the REST API.
   #
   class LogicManagementClient < MsRestAzure::AzureServiceClient
-    include Azure::ARM::Logic::Models
     include MsRest::Serialization
     include MsRestAzure
 

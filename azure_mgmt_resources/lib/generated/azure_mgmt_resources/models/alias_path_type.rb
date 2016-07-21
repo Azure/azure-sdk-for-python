@@ -3,42 +3,51 @@
 # Changes may cause incorrect behavior and will be lost if the code is
 # regenerated.
 
-module Azure::ARM::Network
+module Azure::ARM::Resources
   module Models
     #
-    # The List Usages operation response.
+    # Model object.
     #
-    class UsagesListResult
+    class AliasPathType
 
       include MsRestAzure
 
-      # @return [Array<Usage>] Gets or sets the list Network Resource Usages.
-      attr_accessor :value
+      # @return [String] The path of an alias.
+      attr_accessor :path
+
+      # @return [Array<String>] The api versions.
+      attr_accessor :api_versions
 
 
       #
-      # Mapper for UsagesListResult class as Ruby Hash.
+      # Mapper for AliasPathType class as Ruby Hash.
       # This will be used for serialization/deserialization.
       #
       def self.mapper()
         {
           required: false,
-          serialized_name: 'UsagesListResult',
+          serialized_name: 'AliasPathType',
           type: {
             name: 'Composite',
-            class_name: 'UsagesListResult',
+            class_name: 'AliasPathType',
             model_properties: {
-              value: {
+              path: {
                 required: false,
-                serialized_name: 'value',
+                serialized_name: 'path',
+                type: {
+                  name: 'String'
+                }
+              },
+              api_versions: {
+                required: false,
+                serialized_name: 'apiVersions',
                 type: {
                   name: 'Sequence',
                   element: {
                       required: false,
-                      serialized_name: 'UsageElementType',
+                      serialized_name: 'StringElementType',
                       type: {
-                        name: 'Composite',
-                        class_name: 'Usage'
+                        name: 'String'
                       }
                   }
                 }

@@ -8,7 +8,6 @@ module Azure::ARM::Search
   # A service client - single point of access to the REST API.
   #
   class SearchManagementClient < MsRestAzure::AzureServiceClient
-    include Azure::ARM::Search::Models
     include MsRest::Serialization
     include MsRestAzure
 

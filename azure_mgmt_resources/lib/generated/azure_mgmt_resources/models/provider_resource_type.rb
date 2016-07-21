@@ -12,17 +12,21 @@ module Azure::ARM::Resources
 
       include MsRestAzure
 
-      # @return [String] Gets or sets the resource type.
+      # @return [String] The resource type.
       attr_accessor :resource_type
 
-      # @return [Array<String>] Gets or sets the collection of locations where
-      # this resource type can be created in.
+      # @return [Array<String>] The collection of locations where this
+      # resource type can be created in.
       attr_accessor :locations
 
-      # @return [Array<String>] Gets or sets the api version.
+      # @return [Array<AliasType>] The aliases that are supported by this
+      # resource type.
+      attr_accessor :aliases
+
+      # @return [Array<String>] The api version.
       attr_accessor :api_versions
 
-      # @return [Hash{String => String}] Gets or sets the properties.
+      # @return [Hash{String => String}] The properties.
       attr_accessor :properties
 
 
@@ -55,6 +59,21 @@ module Azure::ARM::Resources
                       serialized_name: 'StringElementType',
                       type: {
                         name: 'String'
+                      }
+                  }
+                }
+              },
+              aliases: {
+                required: false,
+                serialized_name: 'aliases',
+                type: {
+                  name: 'Sequence',
+                  element: {
+                      required: false,
+                      serialized_name: 'AliasTypeElementType',
+                      type: {
+                        name: 'Composite',
+                        class_name: 'AliasType'
                       }
                   }
                 }

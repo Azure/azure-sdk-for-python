@@ -18,8 +18,8 @@ module Azure::ARM::Resources
       # @return [String] The tenant id of resource.
       attr_accessor :tenant_id
 
-      # @return [ResourceIdentityType] Gets or sets the identity type.
-      # Possible values include: 'SystemAssigned'
+      # @return [ResourceIdentityType] The identity type. Possible values
+      # include: 'SystemAssigned'
       attr_accessor :type
 
 

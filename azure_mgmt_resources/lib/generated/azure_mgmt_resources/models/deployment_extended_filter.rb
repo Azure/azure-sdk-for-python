@@ -12,7 +12,7 @@ module Azure::ARM::Resources
 
       include MsRestAzure
 
-      # @return [String] Gets or sets the provisioning state.
+      # @return [String] The provisioning state.
       attr_accessor :provisioning_state
 
 

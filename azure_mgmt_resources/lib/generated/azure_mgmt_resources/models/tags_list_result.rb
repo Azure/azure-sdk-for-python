@@ -12,10 +12,10 @@ module Azure::ARM::Resources
 
       include MsRestAzure
 
-      # @return [Array<TagDetails>] Gets or sets the list of tags.
+      # @return [Array<TagDetails>] The list of tags.
       attr_accessor :value
 
-      # @return [String] Gets or sets the URL to get the next set of results.
+      # @return [String] The URL to get the next set of results.
       attr_accessor :next_link
 
       # return [Proc] with next page method call.

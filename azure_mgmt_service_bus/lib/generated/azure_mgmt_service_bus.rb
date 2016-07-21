@@ -17,7 +17,6 @@ require 'faraday-cookie_jar'
 require 'concurrent'
 require 'ms_rest'
 require 'generated/azure_mgmt_service_bus/module_definition'
-require 'generated/azure_mgmt_service_bus/version'
 require 'ms_rest_azure'
 
 module Azure::ARM::ServiceBus
@@ -40,7 +39,7 @@ module Azure::ARM::ServiceBus
     autoload :SharedAccessAuthorizationRuleResource,              'generated/azure_mgmt_service_bus/models/shared_access_authorization_rule_resource.rb'
     autoload :NamespaceType,                                      'generated/azure_mgmt_service_bus/models/namespace_type.rb'
     autoload :Policykey,                                          'generated/azure_mgmt_service_bus/models/policykey.rb'
-    autoload :kind,                                               'generated/azure_mgmt_service_bus/models/kind.rb'
+    autoload :Kind,                                               'generated/azure_mgmt_service_bus/models/kind.rb'
     autoload :Name,                                               'generated/azure_mgmt_service_bus/models/name.rb'
     autoload :Tier,                                               'generated/azure_mgmt_service_bus/models/tier.rb'
     autoload :AccessRights,                                       'generated/azure_mgmt_service_bus/models/access_rights.rb'

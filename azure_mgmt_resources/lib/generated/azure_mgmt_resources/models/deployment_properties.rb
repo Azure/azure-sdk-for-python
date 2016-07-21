@@ -12,28 +12,27 @@ module Azure::ARM::Resources
 
       include MsRestAzure
 
-      # @return Gets or sets the template content. Use only one of Template or
-      # TemplateLink.
+      # @return The template content. It can be a JObject or a well formed
+      # JSON string. Use only one of Template or TemplateLink.
       attr_accessor :template
 
-      # @return [TemplateLink] Gets or sets the URI referencing the template.
-      # Use only one of Template or TemplateLink.
+      # @return [TemplateLink] The template URI. Use only one of Template or
+      # TemplateLink.
       attr_accessor :template_link
 
-      # @return Deployment parameters. Use only one of Parameters or
-      # ParametersLink.
+      # @return Deployment parameters. It can be a JObject or a well formed
+      # JSON string. Use only one of Parameters or ParametersLink.
       attr_accessor :parameters
 
-      # @return [ParametersLink] Gets or sets the URI referencing the
-      # parameters. Use only one of Parameters or ParametersLink.
+      # @return [ParametersLink] The parameters URI. Use only one of
+      # Parameters or ParametersLink.
       attr_accessor :parameters_link
 
-      # @return [DeploymentMode] Gets or sets the deployment mode. Possible
-      # values include: 'Incremental', 'Complete'
+      # @return [DeploymentMode] The deployment mode. Possible values include:
+      # 'Incremental', 'Complete'
       attr_accessor :mode
 
-      # @return [DebugSetting] Gets or sets the debug setting of the
-      # deployment.
+      # @return [DebugSetting] The debug setting of the deployment.
       attr_accessor :debug_setting
 
 

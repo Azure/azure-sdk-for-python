@@ -12,7 +12,7 @@ module Azure::ARM::Logic
 
       include MsRestAzure
 
-      # @return [ResourceReference] The key vault reference.
+      # @return [KeyVaultKeyReferenceKeyVault] The key vault reference.
       attr_accessor :key_vault
 
       # @return [String] The private key name in key vault.
@@ -39,7 +39,7 @@ module Azure::ARM::Logic
                 serialized_name: 'keyVault',
                 type: {
                   name: 'Composite',
-                  class_name: 'ResourceReference'
+                  class_name: 'KeyVaultKeyReferenceKeyVault'
                 }
               },
               key_name: {

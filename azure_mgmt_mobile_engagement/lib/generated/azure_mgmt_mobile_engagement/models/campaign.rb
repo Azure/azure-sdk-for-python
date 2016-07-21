@@ -38,7 +38,7 @@ module Azure::ARM::MobileEngagement
       # command to push the campaign to your end-users. Campaigns can be
       # pushed multiple times to the same device.
       # . Possible values include: 'real-time', 'one-shot', 'manual'. Default
-      # value: real-time .
+      # value: 'real-time' .
       attr_accessor :push_mode
 
       # @return [CampaignTypes] Applicable only to announcements and data
@@ -93,7 +93,7 @@ module Azure::ARM::MobileEngagement
       # should be displayed. Valid values are: * `system`: Display the
       # notification using a standard system notification. * `popup`: Display
       # the notification using a in-app banner notification.
-      # . Possible values include: 'system', 'popup'. Default value: popup .
+      # . Possible values include: 'system', 'popup'. Default value: 'popup' .
       attr_accessor :notification_type
 
       # @return [Boolean] A flag indicating whether or not you want to display
@@ -279,7 +279,7 @@ module Azure::ARM::MobileEngagement
               push_mode: {
                 required: false,
                 serialized_name: 'pushMode',
-                default_value: real-time,
+                default_value: 'real-time',
                 type: {
                   name: 'String'
                 }
@@ -336,7 +336,7 @@ module Azure::ARM::MobileEngagement
               notification_type: {
                 required: false,
                 serialized_name: 'notificationType',
-                default_value: popup,
+                default_value: 'popup',
                 type: {
                   name: 'String'
                 }

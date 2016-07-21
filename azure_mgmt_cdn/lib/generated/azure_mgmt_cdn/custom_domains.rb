@@ -256,10 +256,30 @@ module Azure::ARM::CDN
     # @param custom_headers [Hash{String => String}] A hash of custom headers that
     # will be added to the HTTP request.
     #
+    # @return [CustomDomain] operation results.
+    #
+    def create(custom_domain_name, custom_domain_properties, endpoint_name, profile_name, resource_group_name, custom_headers = nil)
+      response = create_async(custom_domain_name, custom_domain_properties, endpoint_name, profile_name, resource_group_name, custom_headers).value!
+      response.body unless response.nil?
+    end
+
+    #
+    # @param custom_domain_name [String] Name of the custom domain within an
+    # endpoint.
+    # @param custom_domain_properties [CustomDomainParameters] Custom domain
+    # properties required for creation.
+    # @param endpoint_name [String] Name of the endpoint within the CDN profile.
+    # @param profile_name [String] Name of the CDN profile within the resource
+    # group.
+    # @param resource_group_name [String] Name of the resource group within the
+    # Azure subscription.
+    # @param custom_headers [Hash{String => String}] A hash of custom headers that
+    # will be added to the HTTP request.
+    #
     # @return [Concurrent::Promise] promise which provides async access to http
     # response.
     #
-    def create(custom_domain_name, custom_domain_properties, endpoint_name, profile_name, resource_group_name, custom_headers = nil)
+    def create_async(custom_domain_name, custom_domain_properties, endpoint_name, profile_name, resource_group_name, custom_headers = nil)
       # Send request
       promise = begin_create_async(custom_domain_name, custom_domain_properties, endpoint_name, profile_name, resource_group_name, custom_headers)
 
@@ -561,10 +581,28 @@ module Azure::ARM::CDN
     # @param custom_headers [Hash{String => String}] A hash of custom headers that
     # will be added to the HTTP request.
     #
+    # @return [CustomDomain] operation results.
+    #
+    def delete_if_exists(custom_domain_name, endpoint_name, profile_name, resource_group_name, custom_headers = nil)
+      response = delete_if_exists_async(custom_domain_name, endpoint_name, profile_name, resource_group_name, custom_headers).value!
+      response.body unless response.nil?
+    end
+
+    #
+    # @param custom_domain_name [String] Name of the custom domain within an
+    # endpoint.
+    # @param endpoint_name [String] Name of the endpoint within the CDN profile.
+    # @param profile_name [String] Name of the CDN profile within the resource
+    # group.
+    # @param resource_group_name [String] Name of the resource group within the
+    # Azure subscription.
+    # @param custom_headers [Hash{String => String}] A hash of custom headers that
+    # will be added to the HTTP request.
+    #
     # @return [Concurrent::Promise] promise which provides async access to http
     # response.
     #
-    def delete_if_exists(custom_domain_name, endpoint_name, profile_name, resource_group_name, custom_headers = nil)
+    def delete_if_exists_async(custom_domain_name, endpoint_name, profile_name, resource_group_name, custom_headers = nil)
       # Send request
       promise = begin_delete_if_exists_async(custom_domain_name, endpoint_name, profile_name, resource_group_name, custom_headers)
 

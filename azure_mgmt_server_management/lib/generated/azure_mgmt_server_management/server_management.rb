@@ -8,7 +8,6 @@ module Azure::ARM::ServerManagement
   # A service client - single point of access to the REST API.
   #
   class ServerManagement < MsRestAzure::AzureServiceClient
-    include Azure::ARM::ServerManagement::Models
     include MsRest::Serialization
     include MsRestAzure
 

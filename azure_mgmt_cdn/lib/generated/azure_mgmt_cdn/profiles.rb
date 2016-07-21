@@ -317,10 +317,27 @@ module Azure::ARM::CDN
     # @param custom_headers [Hash{String => String}] A hash of custom headers that
     # will be added to the HTTP request.
     #
+    # @return [Profile] operation results.
+    #
+    def create(profile_name, profile_properties, resource_group_name, custom_headers = nil)
+      response = create_async(profile_name, profile_properties, resource_group_name, custom_headers).value!
+      response.body unless response.nil?
+    end
+
+    #
+    # @param profile_name [String] Name of the CDN profile within the resource
+    # group.
+    # @param profile_properties [ProfileCreateParameters] Profile properties
+    # needed for creation.
+    # @param resource_group_name [String] Name of the resource group within the
+    # Azure subscription.
+    # @param custom_headers [Hash{String => String}] A hash of custom headers that
+    # will be added to the HTTP request.
+    #
     # @return [Concurrent::Promise] promise which provides async access to http
     # response.
     #
-    def create(profile_name, profile_properties, resource_group_name, custom_headers = nil)
+    def create_async(profile_name, profile_properties, resource_group_name, custom_headers = nil)
       # Send request
       promise = begin_create_async(profile_name, profile_properties, resource_group_name, custom_headers)
 
@@ -486,10 +503,27 @@ module Azure::ARM::CDN
     # @param custom_headers [Hash{String => String}] A hash of custom headers that
     # will be added to the HTTP request.
     #
+    # @return [Profile] operation results.
+    #
+    def update(profile_name, profile_properties, resource_group_name, custom_headers = nil)
+      response = update_async(profile_name, profile_properties, resource_group_name, custom_headers).value!
+      response.body unless response.nil?
+    end
+
+    #
+    # @param profile_name [String] Name of the CDN profile within the resource
+    # group.
+    # @param profile_properties [ProfileUpdateParameters] Profile properties
+    # needed for update.
+    # @param resource_group_name [String] Name of the resource group within the
+    # Azure subscription.
+    # @param custom_headers [Hash{String => String}] A hash of custom headers that
+    # will be added to the HTTP request.
+    #
     # @return [Concurrent::Promise] promise which provides async access to http
     # response.
     #
-    def update(profile_name, profile_properties, resource_group_name, custom_headers = nil)
+    def update_async(profile_name, profile_properties, resource_group_name, custom_headers = nil)
       # Send request
       promise = begin_update_async(profile_name, profile_properties, resource_group_name, custom_headers)
 
@@ -645,10 +679,23 @@ module Azure::ARM::CDN
     # @param custom_headers [Hash{String => String}] A hash of custom headers that
     # will be added to the HTTP request.
     #
+    def delete_if_exists(profile_name, resource_group_name, custom_headers = nil)
+      response = delete_if_exists_async(profile_name, resource_group_name, custom_headers).value!
+      nil
+    end
+
+    #
+    # @param profile_name [String] Name of the CDN profile within the resource
+    # group.
+    # @param resource_group_name [String] Name of the resource group within the
+    # Azure subscription.
+    # @param custom_headers [Hash{String => String}] A hash of custom headers that
+    # will be added to the HTTP request.
+    #
     # @return [Concurrent::Promise] promise which provides async access to http
     # response.
     #
-    def delete_if_exists(profile_name, resource_group_name, custom_headers = nil)
+    def delete_if_exists_async(profile_name, resource_group_name, custom_headers = nil)
       # Send request
       promise = begin_delete_if_exists_async(profile_name, resource_group_name, custom_headers)
 

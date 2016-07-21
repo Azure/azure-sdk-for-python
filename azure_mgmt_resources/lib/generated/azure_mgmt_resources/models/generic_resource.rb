@@ -12,22 +12,22 @@ module Azure::ARM::Resources
 
       include MsRestAzure
 
-      # @return [Plan] Gets or sets the plan of the resource.
+      # @return [Plan] The plan of the resource.
       attr_accessor :plan
 
-      # @return Gets or sets the resource properties.
+      # @return The resource properties.
       attr_accessor :properties
 
-      # @return [String] Gets or sets the kind of the resource.
+      # @return [String] The kind of the resource.
       attr_accessor :kind
 
-      # @return [String] Gets or sets the managedBy property of the resource.
+      # @return [String] The managedBy property of the resource.
       attr_accessor :managed_by
 
-      # @return [Sku] Gets or sets the sku of the resource.
+      # @return [Sku] The sku of the resource.
       attr_accessor :sku
 
-      # @return [Identity] Gets or sets the identity of the resource.
+      # @return [Identity] The identity of the resource.
       attr_accessor :identity
 
 

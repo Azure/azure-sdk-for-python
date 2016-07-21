@@ -8,7 +8,6 @@ module Azure::ARM::DataLakeAnalytics::Account
   # A service client - single point of access to the REST API.
   #
   class DataLakeAnalyticsAccountManagementClient < MsRestAzure::AzureServiceClient
-    include Azure::ARM::DataLakeAnalytics::Account::Models
     include MsRest::Serialization
     include MsRestAzure
 

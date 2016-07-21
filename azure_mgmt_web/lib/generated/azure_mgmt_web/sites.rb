@@ -1278,10 +1278,25 @@ module Azure::ARM::Web
     # @param custom_headers [Hash{String => String}] A hash of custom headers that
     # will be added to the HTTP request.
     #
+    # @return [Object] operation results.
+    #
+    def swap_slot_with_production(resource_group_name, name, slot_swap_entity, custom_headers = nil)
+      response = swap_slot_with_production_async(resource_group_name, name, slot_swap_entity, custom_headers).value!
+      response.body unless response.nil?
+    end
+
+    #
+    # @param resource_group_name [String] Name of resource group
+    # @param name [String] Name of web app
+    # @param slot_swap_entity [CsmSlotEntity] Request body that contains the
+    # target slot name
+    # @param custom_headers [Hash{String => String}] A hash of custom headers that
+    # will be added to the HTTP request.
+    #
     # @return [Concurrent::Promise] promise which provides async access to http
     # response.
     #
-    def swap_slot_with_production(resource_group_name, name, slot_swap_entity, custom_headers = nil)
+    def swap_slot_with_production_async(resource_group_name, name, slot_swap_entity, custom_headers = nil)
       # Send request
       promise = begin_swap_slot_with_production_async(resource_group_name, name, slot_swap_entity, custom_headers)
 
@@ -1416,10 +1431,26 @@ module Azure::ARM::Web
     # @param custom_headers [Hash{String => String}] A hash of custom headers that
     # will be added to the HTTP request.
     #
+    # @return [Object] operation results.
+    #
+    def swap_slots_slot(resource_group_name, name, slot_swap_entity, slot, custom_headers = nil)
+      response = swap_slots_slot_async(resource_group_name, name, slot_swap_entity, slot, custom_headers).value!
+      response.body unless response.nil?
+    end
+
+    #
+    # @param resource_group_name [String] Name of resource group
+    # @param name [String] Name of web app
+    # @param slot_swap_entity [CsmSlotEntity] Request body that contains the
+    # target slot name
+    # @param slot [String] Name of source slot for the swap
+    # @param custom_headers [Hash{String => String}] A hash of custom headers that
+    # will be added to the HTTP request.
+    #
     # @return [Concurrent::Promise] promise which provides async access to http
     # response.
     #
-    def swap_slots_slot(resource_group_name, name, slot_swap_entity, slot, custom_headers = nil)
+    def swap_slots_slot_async(resource_group_name, name, slot_swap_entity, slot, custom_headers = nil)
       # Send request
       promise = begin_swap_slots_slot_async(resource_group_name, name, slot_swap_entity, slot, custom_headers)
 
@@ -2692,10 +2723,33 @@ module Azure::ARM::Web
     # @param custom_headers [Hash{String => String}] A hash of custom headers that
     # will be added to the HTTP request.
     #
+    # @return [Site] operation results.
+    #
+    def create_or_update_site(resource_group_name, name, site_envelope, skip_dns_registration = nil, skip_custom_domain_verification = nil, force_dns_registration = nil, ttl_in_seconds = nil, custom_headers = nil)
+      response = create_or_update_site_async(resource_group_name, name, site_envelope, skip_dns_registration, skip_custom_domain_verification, force_dns_registration, ttl_in_seconds, custom_headers).value!
+      response.body unless response.nil?
+    end
+
+    #
+    # @param resource_group_name [String] Name of the resource group
+    # @param name [String] Name of the web app
+    # @param site_envelope [Site] Details of web app if it exists already
+    # @param skip_dns_registration [String] If true web app hostname is not
+    # registered with DNS on creation. This parameter is
+    # only used for app creation
+    # @param skip_custom_domain_verification [String] If true, custom (non
+    # *.azurewebsites.net) domains associated with web app are not verified.
+    # @param force_dns_registration [String] If true, web app hostname is force
+    # registered with DNS
+    # @param ttl_in_seconds [String] Time to live in seconds for web app's default
+    # domain name
+    # @param custom_headers [Hash{String => String}] A hash of custom headers that
+    # will be added to the HTTP request.
+    #
     # @return [Concurrent::Promise] promise which provides async access to http
     # response.
     #
-    def create_or_update_site(resource_group_name, name, site_envelope, skip_dns_registration = nil, skip_custom_domain_verification = nil, force_dns_registration = nil, ttl_in_seconds = nil, custom_headers = nil)
+    def create_or_update_site_async(resource_group_name, name, site_envelope, skip_dns_registration = nil, skip_custom_domain_verification = nil, force_dns_registration = nil, ttl_in_seconds = nil, custom_headers = nil)
       # Send request
       promise = begin_create_or_update_site_async(resource_group_name, name, site_envelope, skip_dns_registration, skip_custom_domain_verification, force_dns_registration, ttl_in_seconds, custom_headers)
 
@@ -3086,10 +3140,35 @@ module Azure::ARM::Web
     # @param custom_headers [Hash{String => String}] A hash of custom headers that
     # will be added to the HTTP request.
     #
+    # @return [Site] operation results.
+    #
+    def create_or_update_site_slot(resource_group_name, name, site_envelope, slot, skip_dns_registration = nil, skip_custom_domain_verification = nil, force_dns_registration = nil, ttl_in_seconds = nil, custom_headers = nil)
+      response = create_or_update_site_slot_async(resource_group_name, name, site_envelope, slot, skip_dns_registration, skip_custom_domain_verification, force_dns_registration, ttl_in_seconds, custom_headers).value!
+      response.body unless response.nil?
+    end
+
+    #
+    # @param resource_group_name [String] Name of the resource group
+    # @param name [String] Name of the web app
+    # @param site_envelope [Site] Details of web app if it exists already
+    # @param slot [String] Name of web app slot. If not specified then will
+    # default to production slot.
+    # @param skip_dns_registration [String] If true web app hostname is not
+    # registered with DNS on creation. This parameter is
+    # only used for app creation
+    # @param skip_custom_domain_verification [String] If true, custom (non
+    # *.azurewebsites.net) domains associated with web app are not verified.
+    # @param force_dns_registration [String] If true, web app hostname is force
+    # registered with DNS
+    # @param ttl_in_seconds [String] Time to live in seconds for web app's default
+    # domain name
+    # @param custom_headers [Hash{String => String}] A hash of custom headers that
+    # will be added to the HTTP request.
+    #
     # @return [Concurrent::Promise] promise which provides async access to http
     # response.
     #
-    def create_or_update_site_slot(resource_group_name, name, site_envelope, slot, skip_dns_registration = nil, skip_custom_domain_verification = nil, force_dns_registration = nil, ttl_in_seconds = nil, custom_headers = nil)
+    def create_or_update_site_slot_async(resource_group_name, name, site_envelope, slot, skip_dns_registration = nil, skip_custom_domain_verification = nil, force_dns_registration = nil, ttl_in_seconds = nil, custom_headers = nil)
       # Send request
       promise = begin_create_or_update_site_slot_async(resource_group_name, name, site_envelope, slot, skip_dns_registration, skip_custom_domain_verification, force_dns_registration, ttl_in_seconds, custom_headers)
 
@@ -3573,10 +3652,26 @@ module Azure::ARM::Web
     # @param custom_headers [Hash{String => String}] A hash of custom headers that
     # will be added to the HTTP request.
     #
+    # @return [Site] operation results.
+    #
+    def recover_site(resource_group_name, name, recovery_entity, custom_headers = nil)
+      response = recover_site_async(resource_group_name, name, recovery_entity, custom_headers).value!
+      response.body unless response.nil?
+    end
+
+    #
+    # @param resource_group_name [String] Name of resource group
+    # @param name [String] Name of web app
+    # @param recovery_entity [CsmSiteRecoveryEntity] Snapshot data used for web
+    # app recovery. Snapshot information can be obtained by calling
+    # GetDeletedSites or GetSiteSnapshots API.
+    # @param custom_headers [Hash{String => String}] A hash of custom headers that
+    # will be added to the HTTP request.
+    #
     # @return [Concurrent::Promise] promise which provides async access to http
     # response.
     #
-    def recover_site(resource_group_name, name, recovery_entity, custom_headers = nil)
+    def recover_site_async(resource_group_name, name, recovery_entity, custom_headers = nil)
       # Send request
       promise = begin_recover_site_async(resource_group_name, name, recovery_entity, custom_headers)
 
@@ -3720,10 +3815,28 @@ module Azure::ARM::Web
     # @param custom_headers [Hash{String => String}] A hash of custom headers that
     # will be added to the HTTP request.
     #
+    # @return [Site] operation results.
+    #
+    def recover_site_slot(resource_group_name, name, recovery_entity, slot, custom_headers = nil)
+      response = recover_site_slot_async(resource_group_name, name, recovery_entity, slot, custom_headers).value!
+      response.body unless response.nil?
+    end
+
+    #
+    # @param resource_group_name [String] Name of resource group
+    # @param name [String] Name of web app
+    # @param recovery_entity [CsmSiteRecoveryEntity] Snapshot data used for web
+    # app recovery. Snapshot information can be obtained by calling
+    # GetDeletedSites or GetSiteSnapshots API.
+    # @param slot [String] Name of web app slot. If not specified then will
+    # default to production slot.
+    # @param custom_headers [Hash{String => String}] A hash of custom headers that
+    # will be added to the HTTP request.
+    #
     # @return [Concurrent::Promise] promise which provides async access to http
     # response.
     #
-    def recover_site_slot(resource_group_name, name, recovery_entity, slot, custom_headers = nil)
+    def recover_site_slot_async(resource_group_name, name, recovery_entity, slot, custom_headers = nil)
       # Send request
       promise = begin_recover_site_slot_async(resource_group_name, name, recovery_entity, slot, custom_headers)
 
@@ -9530,10 +9643,23 @@ module Azure::ARM::Web
     # @param custom_headers [Hash{String => String}] A hash of custom headers that
     # will be added to the HTTP request.
     #
+    # @return [User] operation results.
+    #
+    def list_site_publishing_credentials(resource_group_name, name, custom_headers = nil)
+      response = list_site_publishing_credentials_async(resource_group_name, name, custom_headers).value!
+      response.body unless response.nil?
+    end
+
+    #
+    # @param resource_group_name [String] Name of resource group
+    # @param name [String] Name of web app
+    # @param custom_headers [Hash{String => String}] A hash of custom headers that
+    # will be added to the HTTP request.
+    #
     # @return [Concurrent::Promise] promise which provides async access to http
     # response.
     #
-    def list_site_publishing_credentials(resource_group_name, name, custom_headers = nil)
+    def list_site_publishing_credentials_async(resource_group_name, name, custom_headers = nil)
       # Send request
       promise = begin_list_site_publishing_credentials_async(resource_group_name, name, custom_headers)
 
@@ -9655,10 +9781,25 @@ module Azure::ARM::Web
     # @param custom_headers [Hash{String => String}] A hash of custom headers that
     # will be added to the HTTP request.
     #
+    # @return [User] operation results.
+    #
+    def list_site_publishing_credentials_slot(resource_group_name, name, slot, custom_headers = nil)
+      response = list_site_publishing_credentials_slot_async(resource_group_name, name, slot, custom_headers).value!
+      response.body unless response.nil?
+    end
+
+    #
+    # @param resource_group_name [String] Name of resource group
+    # @param name [String] Name of web app
+    # @param slot [String] Name of web app slot. If not specified then will
+    # default to production slot.
+    # @param custom_headers [Hash{String => String}] A hash of custom headers that
+    # will be added to the HTTP request.
+    #
     # @return [Concurrent::Promise] promise which provides async access to http
     # response.
     #
-    def list_site_publishing_credentials_slot(resource_group_name, name, slot, custom_headers = nil)
+    def list_site_publishing_credentials_slot_async(resource_group_name, name, slot, custom_headers = nil)
       # Send request
       promise = begin_list_site_publishing_credentials_slot_async(resource_group_name, name, slot, custom_headers)
 
@@ -13015,10 +13156,25 @@ module Azure::ARM::Web
     # @param custom_headers [Hash{String => String}] A hash of custom headers that
     # will be added to the HTTP request.
     #
+    # @return [RestoreResponse] operation results.
+    #
+    def restore_site(resource_group_name, name, backup_id, request, custom_headers = nil)
+      response = restore_site_async(resource_group_name, name, backup_id, request, custom_headers).value!
+      response.body unless response.nil?
+    end
+
+    #
+    # @param resource_group_name [String] Name of resource group
+    # @param name [String] Name of web app
+    # @param backup_id [String] Id of backup to restore
+    # @param request [RestoreRequest] Information on restore request
+    # @param custom_headers [Hash{String => String}] A hash of custom headers that
+    # will be added to the HTTP request.
+    #
     # @return [Concurrent::Promise] promise which provides async access to http
     # response.
     #
-    def restore_site(resource_group_name, name, backup_id, request, custom_headers = nil)
+    def restore_site_async(resource_group_name, name, backup_id, request, custom_headers = nil)
       # Send request
       promise = begin_restore_site_async(resource_group_name, name, backup_id, request, custom_headers)
 
@@ -13159,10 +13315,27 @@ module Azure::ARM::Web
     # @param custom_headers [Hash{String => String}] A hash of custom headers that
     # will be added to the HTTP request.
     #
+    # @return [RestoreResponse] operation results.
+    #
+    def restore_site_slot(resource_group_name, name, backup_id, request, slot, custom_headers = nil)
+      response = restore_site_slot_async(resource_group_name, name, backup_id, request, slot, custom_headers).value!
+      response.body unless response.nil?
+    end
+
+    #
+    # @param resource_group_name [String] Name of resource group
+    # @param name [String] Name of web app
+    # @param backup_id [String] Id of backup to restore
+    # @param request [RestoreRequest] Information on restore request
+    # @param slot [String] Name of web app slot. If not specified then will
+    # default to production slot.
+    # @param custom_headers [Hash{String => String}] A hash of custom headers that
+    # will be added to the HTTP request.
+    #
     # @return [Concurrent::Promise] promise which provides async access to http
     # response.
     #
-    def restore_site_slot(resource_group_name, name, backup_id, request, slot, custom_headers = nil)
+    def restore_site_slot_async(resource_group_name, name, backup_id, request, slot, custom_headers = nil)
       # Send request
       promise = begin_restore_site_slot_async(resource_group_name, name, backup_id, request, slot, custom_headers)
 

@@ -138,10 +138,25 @@ module Azure::ARM::ServiceBus
     # @param custom_headers [Hash{String => String}] A hash of custom headers that
     # will be added to the HTTP request.
     #
+    # @return [NamespaceResource] operation results.
+    #
+    def create_or_update(resource_group_name, namespace_name, parameters, custom_headers = nil)
+      response = create_or_update_async(resource_group_name, namespace_name, parameters, custom_headers).value!
+      response.body unless response.nil?
+    end
+
+    #
+    # @param resource_group_name [String] The name of the resource group.
+    # @param namespace_name [String] The namespace name.
+    # @param parameters [NamespaceCreateOrUpdateParameters] Parameters supplied to
+    # create a Namespace Resource.
+    # @param custom_headers [Hash{String => String}] A hash of custom headers that
+    # will be added to the HTTP request.
+    #
     # @return [Concurrent::Promise] promise which provides async access to http
     # response.
     #
-    def create_or_update(resource_group_name, namespace_name, parameters, custom_headers = nil)
+    def create_or_update_async(resource_group_name, namespace_name, parameters, custom_headers = nil)
       # Send request
       promise = begin_create_or_update_async(resource_group_name, namespace_name, parameters, custom_headers)
 
@@ -247,7 +262,7 @@ module Azure::ARM::ServiceBus
       promise = promise.then do |http_response|
         status_code = http_response.status
         response_content = http_response.body
-        unless status_code == 201
+        unless status_code == 201 || status_code == 200
           error_model = JSON.load(response_content)
           fail MsRestAzure::AzureOperationError.new(request, http_response, error_model)
         end
@@ -257,6 +272,16 @@ module Azure::ARM::ServiceBus
         result.request_id = http_response['x-ms-request-id'] unless http_response['x-ms-request-id'].nil?
         # Deserialize Response
         if status_code == 201
+          begin
+            parsed_response = response_content.to_s.empty? ? nil : JSON.load(response_content)
+            result_mapper = NamespaceResource.mapper()
+            result.body = @client.deserialize(result_mapper, parsed_response, 'result.body')
+          rescue Exception => e
+            fail MsRest::DeserializationError.new('Error occurred in deserializing the response', e.message, e.backtrace, result)
+          end
+        end
+        # Deserialize Response
+        if status_code == 200
           begin
             parsed_response = response_content.to_s.empty? ? nil : JSON.load(response_content)
             result_mapper = NamespaceResource.mapper()
@@ -281,10 +306,21 @@ module Azure::ARM::ServiceBus
     # @param custom_headers [Hash{String => String}] A hash of custom headers that
     # will be added to the HTTP request.
     #
+    def delete(resource_group_name, namespace_name, custom_headers = nil)
+      response = delete_async(resource_group_name, namespace_name, custom_headers).value!
+      nil
+    end
+
+    #
+    # @param resource_group_name [String] The name of the resource group.
+    # @param namespace_name [String] The namespace name.
+    # @param custom_headers [Hash{String => String}] A hash of custom headers that
+    # will be added to the HTTP request.
+    #
     # @return [Concurrent::Promise] promise which provides async access to http
     # response.
     #
-    def delete(resource_group_name, namespace_name, custom_headers = nil)
+    def delete_async(resource_group_name, namespace_name, custom_headers = nil)
       # Send request
       promise = begin_delete_async(resource_group_name, namespace_name, custom_headers)
 
