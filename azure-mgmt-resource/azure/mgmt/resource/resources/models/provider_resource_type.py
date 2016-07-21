@@ -15,26 +15,31 @@ from msrest.serialization import Model
 class ProviderResourceType(Model):
     """Resource type managed by the resource provider.
 
-    :param resource_type: Gets or sets the resource type.
+    :param resource_type: The resource type.
     :type resource_type: str
-    :param locations: Gets or sets the collection of locations where this
-     resource type can be created in.
+    :param locations: The collection of locations where this resource type
+     can be created in.
     :type locations: list of str
-    :param api_versions: Gets or sets the api version.
+    :param aliases: The aliases that are supported by this resource type.
+    :type aliases: list of :class:`AliasType
+     <azure.mgmt.resource.resources.models.AliasType>`
+    :param api_versions: The api version.
     :type api_versions: list of str
-    :param properties: Gets or sets the properties.
+    :param properties: The properties.
     :type properties: dict
     """ 
 
     _attribute_map = {
         'resource_type': {'key': 'resourceType', 'type': 'str'},
         'locations': {'key': 'locations', 'type': '[str]'},
+        'aliases': {'key': 'aliases', 'type': '[AliasType]'},
         'api_versions': {'key': 'apiVersions', 'type': '[str]'},
         'properties': {'key': 'properties', 'type': '{str}'},
     }
 
-    def __init__(self, resource_type=None, locations=None, api_versions=None, properties=None):
+    def __init__(self, resource_type=None, locations=None, aliases=None, api_versions=None, properties=None):
         self.resource_type = resource_type
         self.locations = locations
+        self.aliases = aliases
         self.api_versions = api_versions
         self.properties = properties

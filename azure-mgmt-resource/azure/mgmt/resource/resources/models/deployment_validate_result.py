@@ -15,10 +15,10 @@ from msrest.serialization import Model
 class DeploymentValidateResult(Model):
     """Information from validate template deployment response.
 
-    :param error: Gets or sets validation error.
+    :param error: Validation error.
     :type error: :class:`ResourceManagementErrorWithDetails
      <azure.mgmt.resource.resources.models.ResourceManagementErrorWithDetails>`
-    :param properties: Gets or sets the template deployment properties.
+    :param properties: The template deployment properties.
     :type properties: :class:`DeploymentPropertiesExtended
      <azure.mgmt.resource.resources.models.DeploymentPropertiesExtended>`
     """ 

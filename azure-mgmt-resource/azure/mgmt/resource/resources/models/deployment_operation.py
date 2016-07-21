@@ -15,11 +15,11 @@ from msrest.serialization import Model
 class DeploymentOperation(Model):
     """Deployment operation information.
 
-    :param id: Gets or sets full deployment operation id.
+    :param id: Full deployment operation id.
     :type id: str
-    :param operation_id: Gets or sets deployment operation id.
+    :param operation_id: Deployment operation id.
     :type operation_id: str
-    :param properties: Gets or sets deployment properties.
+    :param properties: Deployment properties.
     :type properties: :class:`DeploymentOperationProperties
      <azure.mgmt.resource.resources.models.DeploymentOperationProperties>`
     """ 

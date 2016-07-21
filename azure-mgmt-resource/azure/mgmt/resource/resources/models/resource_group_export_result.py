@@ -15,9 +15,9 @@ from msrest.serialization import Model
 class ResourceGroupExportResult(Model):
     """ResourceGroupExportResult.
 
-    :param template: Gets or sets the template content.
+    :param template: The template content.
     :type template: object
-    :param error: Gets or sets the error.
+    :param error: The error.
     :type error: :class:`ResourceManagementErrorWithDetails
      <azure.mgmt.resource.resources.models.ResourceManagementErrorWithDetails>`
     """ 

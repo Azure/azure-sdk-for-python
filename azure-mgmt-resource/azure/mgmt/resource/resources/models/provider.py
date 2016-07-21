@@ -15,15 +15,13 @@ from msrest.serialization import Model
 class Provider(Model):
     """Resource provider information.
 
-    :param id: Gets or sets the provider id.
+    :param id: The provider id.
     :type id: str
-    :param namespace: Gets or sets the namespace of the provider.
+    :param namespace: The namespace of the provider.
     :type namespace: str
-    :param registration_state: Gets or sets the registration state of the
-     provider.
+    :param registration_state: The registration state of the provider.
     :type registration_state: str
-    :param resource_types: Gets or sets the collection of provider resource
-     types.
+    :param resource_types: The collection of provider resource types.
     :type resource_types: list of :class:`ProviderResourceType
      <azure.mgmt.resource.resources.models.ProviderResourceType>`
     """ 

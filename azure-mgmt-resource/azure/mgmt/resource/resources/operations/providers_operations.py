@@ -152,12 +152,15 @@ class ProvidersOperations(object):
         return deserialized
 
     def list(
-            self, top=None, custom_headers=None, raw=False, **operation_config):
+            self, top=None, expand=None, custom_headers=None, raw=False, **operation_config):
         """Gets a list of resource providers.
 
         :param top: Query parameters. If null is passed returns all
          deployments.
         :type top: int
+        :param expand: The $expand query parameter. e.g. To include property
+         aliases in response, use $expand=resourceTypes/aliases.
+        :type expand: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -180,6 +183,8 @@ class ProvidersOperations(object):
                 query_parameters = {}
                 if top is not None:
                     query_parameters['$top'] = self._serialize.query("top", top, 'int')
+                if expand is not None:
+                    query_parameters['$expand'] = self._serialize.query("expand", expand, 'str')
                 query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
 
             else:
@@ -219,12 +224,15 @@ class ProvidersOperations(object):
         return deserialized
 
     def get(
-            self, resource_provider_namespace, custom_headers=None, raw=False, **operation_config):
+            self, resource_provider_namespace, expand=None, custom_headers=None, raw=False, **operation_config):
         """Gets a resource provider.
 
         :param resource_provider_namespace: Namespace of the resource
          provider.
         :type resource_provider_namespace: str
+        :param expand: The $expand query parameter. e.g. To include property
+         aliases in response, use $expand=resourceTypes/aliases.
+        :type expand: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -245,6 +253,8 @@ class ProvidersOperations(object):
 
         # Construct parameters
         query_parameters = {}
+        if expand is not None:
+            query_parameters['$expand'] = self._serialize.query("expand", expand, 'str')
         query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
 
         # Construct headers
