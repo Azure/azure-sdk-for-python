@@ -15,13 +15,13 @@ from msrest.serialization import Model
 class ResourceManagementErrorWithDetails(Model):
     """ResourceManagementErrorWithDetails.
 
-    :param code: Gets or sets the error code returned from the server.
+    :param code: The error code returned from the server.
     :type code: str
-    :param message: Gets or sets the error message returned from the server.
+    :param message: The error message returned from the server.
     :type message: str
-    :param target: Gets or sets the target of the error.
+    :param target: The target of the error.
     :type target: str
-    :param details: Gets or sets validation error.
+    :param details: Validation error.
     :type details: list of :class:`ResourceManagementErrorWithDetails
      <azure.mgmt.resource.resources.models.ResourceManagementErrorWithDetails>`
     """ 

@@ -41,7 +41,7 @@ class ResourcesOperations(object):
 
         :param source_resource_group_name: Source resource group name.
         :type source_resource_group_name: str
-        :param resources: Gets or sets the ids of the resources.
+        :param resources: The ids of the resources.
         :type resources: list of str
         :param target_resource_group: The target resource group.
         :type target_resource_group: str
@@ -119,11 +119,13 @@ class ResourcesOperations(object):
             get_long_running_status, long_running_operation_timeout)
 
     def list(
-            self, filter=None, top=None, custom_headers=None, raw=False, **operation_config):
+            self, filter=None, expand=None, top=None, custom_headers=None, raw=False, **operation_config):
         """Get all of the resources under a subscription.
 
         :param filter: The filter to apply on the operation.
         :type filter: str
+        :param expand: The $expand query parameter.
+        :type expand: str
         :param top: Query parameters. If null is passed returns all resource
          groups.
         :type top: int
@@ -149,6 +151,8 @@ class ResourcesOperations(object):
                 query_parameters = {}
                 if filter is not None:
                     query_parameters['$filter'] = self._serialize.query("filter", filter, 'str')
+                if expand is not None:
+                    query_parameters['$expand'] = self._serialize.query("expand", expand, 'str')
                 if top is not None:
                     query_parameters['$top'] = self._serialize.query("top", top, 'int')
                 query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')

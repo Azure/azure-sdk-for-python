@@ -15,11 +15,11 @@ from msrest.serialization import Model
 class TargetResource(Model):
     """Target resource.
 
-    :param id: Gets or sets the ID of the resource.
+    :param id: The ID of the resource.
     :type id: str
-    :param resource_name: Gets or sets the name of the resource.
+    :param resource_name: The name of the resource.
     :type resource_name: str
-    :param resource_type: Gets or sets the type of the resource.
+    :param resource_type: The type of the resource.
     :type resource_type: str
     """ 
 

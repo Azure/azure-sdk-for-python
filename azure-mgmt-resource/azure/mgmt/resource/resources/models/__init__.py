@@ -19,6 +19,8 @@ from .debug_setting import DebugSetting
 from .deployment import Deployment
 from .deployment_export_result import DeploymentExportResult
 from .resource_management_error_with_details import ResourceManagementErrorWithDetails
+from .alias_path_type import AliasPathType
+from .alias_type import AliasType
 from .provider_resource_type import ProviderResourceType
 from .provider import Provider
 from .basic_dependency import BasicDependency
@@ -67,6 +69,8 @@ __all__ = [
     'Deployment',
     'DeploymentExportResult',
     'ResourceManagementErrorWithDetails',
+    'AliasPathType',
+    'AliasType',
     'ProviderResourceType',
     'Provider',
     'BasicDependency',

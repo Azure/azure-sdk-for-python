@@ -18,19 +18,19 @@ class ResourceGroup(Model):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar id: Gets the ID of the resource group.
+    :ivar id: The ID of the resource group.
     :vartype id: str
-    :param name: Gets or sets the Name of the resource group.
+    :param name: The Name of the resource group.
     :type name: str
     :param properties:
     :type properties: :class:`ResourceGroupProperties
      <azure.mgmt.resource.resources.models.ResourceGroupProperties>`
-    :param location: Gets or sets the location of the resource group. It
-     cannot be changed after the resource group has been created. Has to be
-     one of the supported Azure Locations, such as West US, East US, West
-     Europe, East Asia, etc.
+    :param location: The location of the resource group. It cannot be changed
+     after the resource group has been created. Has to be one of the
+     supported Azure Locations, such as West US, East US, West Europe, East
+     Asia, etc.
     :type location: str
-    :param tags: Gets or sets the tags attached to the resource group.
+    :param tags: The tags attached to the resource group.
     :type tags: dict
     """ 
 

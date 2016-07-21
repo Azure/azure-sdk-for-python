@@ -15,9 +15,9 @@ from msrest.serialization import Model
 class ResourceGroupFilter(Model):
     """Resource group filter.
 
-    :param tag_name: Gets or sets the tag name.
+    :param tag_name: The tag name.
     :type tag_name: str
-    :param tag_value: Gets or sets the tag value.
+    :param tag_value: The tag value.
     :type tag_value: str
     """ 
 

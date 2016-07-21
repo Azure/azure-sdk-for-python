@@ -35,7 +35,7 @@ class ResourceGroupsOperations(object):
         self.config = config
 
     def list_resources(
-            self, resource_group_name, filter=None, top=None, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, filter=None, expand=None, top=None, custom_headers=None, raw=False, **operation_config):
         """Get all of the resources under a subscription.
 
         :param resource_group_name: Query parameters. If null is passed
@@ -43,6 +43,8 @@ class ResourceGroupsOperations(object):
         :type resource_group_name: str
         :param filter: The filter to apply on the operation.
         :type filter: str
+        :param expand: The $expand query parameter
+        :type expand: str
         :param top: Query parameters. If null is passed returns all resource
          groups.
         :type top: int
@@ -69,6 +71,8 @@ class ResourceGroupsOperations(object):
                 query_parameters = {}
                 if filter is not None:
                     query_parameters['$filter'] = self._serialize.query("filter", filter, 'str')
+                if expand is not None:
+                    query_parameters['$expand'] = self._serialize.query("expand", expand, 'str')
                 if top is not None:
                     query_parameters['$top'] = self._serialize.query("top", top, 'int')
                 query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
@@ -441,9 +445,9 @@ class ResourceGroupsOperations(object):
         :param resource_group_name: The name of the resource group to be
          created or updated.
         :type resource_group_name: str
-        :param resources: Gets or sets the ids of the resources. The only
-         supported string currently is '*' (all resources). Future api
-         updates will support exporting specific resources.
+        :param resources: The ids of the resources. The only supported string
+         currently is '*' (all resources). Future api updates will support
+         exporting specific resources.
         :type resources: list of str
         :param options: The export template options. Supported values include
          'IncludeParameterDefaultValue', 'IncludeComments' or
