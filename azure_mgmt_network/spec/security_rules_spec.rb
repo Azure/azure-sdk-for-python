@@ -23,7 +23,7 @@ describe 'Security Rules' do
 
   it 'should create security rule' do
     params = build_security_rule_params
-    result = @client.create_or_update(@resource_group.name, @security_group.name, params.name, params).value!
+    result = @client.create_or_update_async(@resource_group.name, @security_group.name, params.name, params).value!
     expect(result.response.status).to eq(200)
     expect(result.body).not_to be_nil
     expect(result.body.name).to eq(params.name)
@@ -39,7 +39,7 @@ describe 'Security Rules' do
 
   it 'should delete security rule' do
     security_rule = create_security_rule
-    result = @client.delete(@resource_group.name, @security_group.name, security_rule.name).value!
+    result = @client.delete_async(@resource_group.name, @security_group.name, security_rule.name).value!
     expect(result.response.status).to eq(200)
   end
 
@@ -57,7 +57,7 @@ describe 'Security Rules' do
 
   def create_security_rule
     params = build_security_rule_params
-    @client.create_or_update(@resource_group.name, @security_group.name, params.name, params).value!.body
+    @client.create_or_update(@resource_group.name, @security_group.name, params.name, params)
   end
 
   def build_security_rule_params

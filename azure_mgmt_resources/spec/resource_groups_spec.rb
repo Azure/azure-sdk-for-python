@@ -30,7 +30,7 @@ describe 'Resource Groups' do
     expect(result.body.tags['tag1']).to eq('val1')
     expect(result.body.tags['tag2']).to eq('val2')
 
-    result = @client.delete(name).value!
+    result = @client.delete_async(name).value!
     expect(result.body).to be_nil
     expect(result.response.status).to eq(200)
   end
@@ -127,7 +127,7 @@ describe 'Resource Groups' do
     expect(result.body.value).to be_a(Array)
 
     while !result.body.next_link.nil? && !result.body.next_link.empty? do
-      result = @client.list_resources_next(result.body.next_link).value!
+      result = @client.list_resources_next_async(result.body.next_link).value!
       expect(result.body.value).not_to be_nil
       expect(result.body.value).to be_a(Array)
     end

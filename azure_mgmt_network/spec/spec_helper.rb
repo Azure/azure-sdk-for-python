@@ -53,7 +53,7 @@ class ResourceHelper
   end
 
   def delete_resource_group(name)
-    resource_client.resource_groups.delete(name).value!
+    resource_client.resource_groups.delete(name)
   end
 
   def build_virtual_network_params(location)
@@ -79,13 +79,13 @@ class ResourceHelper
   def create_virtual_network(resource_group_name)
     virtualNetworkName = "test_vnet"
     params = build_virtual_network_params('westus')
-    network_client.virtual_networks.create_or_update(resource_group_name, virtualNetworkName, params).value!.body
+    network_client.virtual_networks.create_or_update(resource_group_name, virtualNetworkName, params)
   end
 
   def create_subnet(virtual_network, resource_group, subnet_client)
     subnet_name = 'subnet4857647'
     params = build_subnet_params
-    subnet_client.create_or_update(resource_group.name, virtual_network.name, subnet_name, params).value!.body
+    subnet_client.create_or_update(resource_group.name, virtual_network.name, subnet_name, params)
   end
 
   def build_subnet_params
@@ -97,7 +97,7 @@ class ResourceHelper
   def create_local_network_gateway(resource_group, location, name = nil)
     params = build_local_network_gateway_params(location)
     params.name = name.nil? ? params.name : name
-    network_client.local_network_gateways.create_or_update(resource_group.name, params.name, params).value!.body
+    network_client.local_network_gateways.create_or_update(resource_group.name, params.name, params)
   end
 
   def build_local_network_gateway_params(location)
@@ -113,7 +113,7 @@ class ResourceHelper
 
   def create_network_security_group(resource_group, location)
     params = build_network_security_group_params(location)
-    network_client.network_security_groups.create_or_update(resource_group.name, params.name, params).value!.body
+    network_client.network_security_groups.create_or_update(resource_group.name, params.name, params)
   end
 
   def build_network_security_group_params(location)
@@ -127,7 +127,7 @@ class ResourceHelper
   def create_virtual_network_gateway(location, resource_group,name = nil)
     params = build_virtual_network_gateway_params(location, resource_group)
     params.name = name || params.name
-    network_client.virtual_network_gateways.create_or_update(resource_group.name, params.name, params).value!.body
+    network_client.virtual_network_gateways.create_or_update(resource_group.name, params.name, params)
   end
 
   def build_virtual_network_gateway_params(location, resource_group)
@@ -149,7 +149,7 @@ class ResourceHelper
     public_ip = create_public_ip_address(location, resource_group)
     subnet_params = build_subnet_params
     subnet_params.name = 'GatewaySubnet'
-    subnet = network_client.subnets.create_or_update(resource_group.name, vnet.name, subnet_params.name, subnet_params).value!.body
+    subnet = network_client.subnets.create_or_update(resource_group.name, vnet.name, subnet_params.name, subnet_params)
     ip_config_props.public_ipaddress = public_ip
     ip_config_props.subnet = subnet
     params
@@ -169,6 +169,6 @@ class ResourceHelper
   def create_public_ip_address(location, resource_group)
     public_ip_address_name = 'ip_name8363'
     params = build_public_ip_params(location)
-    network_client.public_ipaddresses.create_or_update(resource_group.name, public_ip_address_name, params).value!.body
+    network_client.public_ipaddresses.create_or_update(resource_group.name, public_ip_address_name, params)
   end
 end

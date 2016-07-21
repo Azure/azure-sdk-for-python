@@ -154,7 +154,7 @@ describe 'Resources' do
     params.target_resource_group = target_rg.id
     params.resources = [resource.id]
 
-    result = @client.move_resources(@resource_group.name, params).value!
+    result = @client.move_resources_async(@resource_group.name, params).value!
     expect(result.response.status).to eq(204)
 
     wait_resource_move

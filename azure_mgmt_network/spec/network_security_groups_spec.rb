@@ -22,7 +22,7 @@ describe 'Network Security Groups' do
 
   it 'should create security group' do
     params = @resource_helper.build_network_security_group_params(@location)
-    result = @client.create_or_update(@resource_group.name, params.name, params).value!
+    result = @client.create_or_update_async(@resource_group.name, params.name, params).value!
     expect(result.response.status).to eq(200)
     expect(result.body).not_to be_nil
     expect(result.body.name).to eq params.name
@@ -39,7 +39,7 @@ describe 'Network Security Groups' do
 
   it 'should delete security group' do
     security_group = @resource_helper.create_network_security_group(@resource_group, @location)
-    result = @client.delete(@resource_group.name, security_group.name).value!
+    result = @client.delete_async(@resource_group.name, security_group.name).value!
     expect(result.response.status).to eq(200)
   end
 

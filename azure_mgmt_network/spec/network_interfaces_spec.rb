@@ -24,7 +24,7 @@ describe 'Network Interfaces' do
 
   it 'should create network interface' do
     params = build_network_interface_param
-    result = @client.create_or_update(@resource_group.name, params.name, params).value!
+    result = @client.create_or_update_async(@resource_group.name, params.name, params).value!
     expect(result.response.status).to eq(201)
     expect(result.body).not_to be_nil
     expect(result.body.name).to eq(params.name)
@@ -40,7 +40,7 @@ describe 'Network Interfaces' do
 
   it 'should delete network interface' do
     network_interface = create_network_interface
-    result = @client.delete(@resource_group.name, network_interface.name).value!
+    result = @client.delete_async(@resource_group.name, network_interface.name).value!
     expect(result.response.status).to eq(200)
   end
 
@@ -70,7 +70,7 @@ describe 'Network Interfaces' do
 
   def create_network_interface
     params = build_network_interface_param
-    @client.create_or_update(@resource_group.name, params.name, params).value!.body
+    @client.create_or_update(@resource_group.name, params.name, params)
   end
 
   def build_network_interface_param

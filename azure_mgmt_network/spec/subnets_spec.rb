@@ -23,7 +23,7 @@ describe 'Subnets' do
     virtual_network = @resource_helper.create_virtual_network(@resource_group.name)
     subnet_name = 'subnet9520'
     params = @resource_helper.build_subnet_params
-    result = @client.create_or_update(@resource_group.name, virtual_network.name, subnet_name, params).value!
+    result = @client.create_or_update_async(@resource_group.name, virtual_network.name, subnet_name, params).value!
     expect(result.response.status).to eq(200)
     expect(result.body).not_to be_nil
     expect(result.body.name).to eq(subnet_name)
@@ -54,7 +54,7 @@ describe 'Subnets' do
   it 'should delete subnet from virtual network' do
     virtual_network = @resource_helper.create_virtual_network(@resource_group.name)
     subnet = @resource_helper.create_subnet(virtual_network, @resource_group, @client)
-    result = @client.delete(@resource_group.name, virtual_network.name, subnet.name).value!
+    result = @client.delete_async(@resource_group.name, virtual_network.name, subnet.name).value!
     expect(result.response.status).to eq(200)
   end
 end

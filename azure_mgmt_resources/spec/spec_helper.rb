@@ -37,13 +37,13 @@ class ResourceHelper
   end
 
   def delete_resource_group(name)
-    @resource_client.resource_groups.delete(name).value!
+    @resource_client.resource_groups.delete(name)
   end
 
   def create_deployment(resource_group_name)
     deployment_name = 'Deployment_test'
     params = build_deployment_params
-    @resource_client.deployments.create_or_update(resource_group_name, deployment_name, params).value!.body
+    @resource_client.deployments.create_or_update(resource_group_name, deployment_name, params)
   end
 
   def wait_for_deployment(resource_group_name, deployment_name, params)
