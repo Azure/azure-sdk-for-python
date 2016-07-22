@@ -15,25 +15,25 @@ from msrest.serialization import Model
 class DeploymentProperties(Model):
     """Deployment properties.
 
-    :param template: Gets or sets the template content. Use only one of
-     Template or TemplateLink.
+    :param template: The template content. It can be a JObject or a well
+     formed JSON string. Use only one of Template or TemplateLink.
     :type template: object
-    :param template_link: Gets or sets the URI referencing the template. Use
-     only one of Template or TemplateLink.
+    :param template_link: The template URI. Use only one of Template or
+     TemplateLink.
     :type template_link: :class:`TemplateLink
      <azure.mgmt.resource.resources.models.TemplateLink>`
-    :param parameters: Deployment parameters. Use only one of Parameters or
-     ParametersLink.
+    :param parameters: Deployment parameters. It can be a JObject or a well
+     formed JSON string. Use only one of Parameters or ParametersLink.
     :type parameters: object
-    :param parameters_link: Gets or sets the URI referencing the parameters.
-     Use only one of Parameters or ParametersLink.
+    :param parameters_link: The parameters URI. Use only one of Parameters or
+     ParametersLink.
     :type parameters_link: :class:`ParametersLink
      <azure.mgmt.resource.resources.models.ParametersLink>`
-    :param mode: Gets or sets the deployment mode. Possible values include:
-     'Incremental', 'Complete'
+    :param mode: The deployment mode. Possible values include: 'Incremental',
+     'Complete'
     :type mode: str or :class:`DeploymentMode
      <azure.mgmt.resource.resources.models.DeploymentMode>`
-    :param debug_setting: Gets or sets the debug setting of the deployment.
+    :param debug_setting: The debug setting of the deployment.
     :type debug_setting: :class:`DebugSetting
      <azure.mgmt.resource.resources.models.DebugSetting>`
     """ 

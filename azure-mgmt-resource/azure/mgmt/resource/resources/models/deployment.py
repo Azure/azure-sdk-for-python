@@ -15,7 +15,7 @@ from msrest.serialization import Model
 class Deployment(Model):
     """Deployment operation parameters.
 
-    :param properties: Gets or sets the deployment properties.
+    :param properties: The deployment properties.
     :type properties: :class:`DeploymentProperties
      <azure.mgmt.resource.resources.models.DeploymentProperties>`
     """ 

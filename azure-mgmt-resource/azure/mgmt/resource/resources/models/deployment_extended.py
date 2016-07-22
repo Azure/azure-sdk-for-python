@@ -15,11 +15,11 @@ from msrest.serialization import Model
 class DeploymentExtended(Model):
     """Deployment information.
 
-    :param id: Gets or sets the ID of the deployment.
+    :param id: The ID of the deployment.
     :type id: str
-    :param name: Gets or sets the name of the deployment.
+    :param name: The name of the deployment.
     :type name: str
-    :param properties: Gets or sets deployment properties.
+    :param properties: Deployment properties.
     :type properties: :class:`DeploymentPropertiesExtended
      <azure.mgmt.resource.resources.models.DeploymentPropertiesExtended>`
     """ 

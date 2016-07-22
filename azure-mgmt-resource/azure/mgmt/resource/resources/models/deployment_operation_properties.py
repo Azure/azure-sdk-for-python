@@ -15,24 +15,23 @@ from msrest.serialization import Model
 class DeploymentOperationProperties(Model):
     """Deployment operation properties.
 
-    :param provisioning_state: Gets or sets the state of the provisioning.
+    :param provisioning_state: The state of the provisioning.
     :type provisioning_state: str
-    :param timestamp: Gets or sets the date and time of the operation.
+    :param timestamp: The date and time of the operation.
     :type timestamp: datetime
-    :param service_request_id: Gets or sets deployment operation service
-     request id.
+    :param service_request_id: Deployment operation service request id.
     :type service_request_id: str
-    :param status_code: Gets or sets operation status code.
+    :param status_code: Operation status code.
     :type status_code: str
-    :param status_message: Gets or sets operation status message.
+    :param status_message: Operation status message.
     :type status_message: object
-    :param target_resource: Gets or sets the target resource.
+    :param target_resource: The target resource.
     :type target_resource: :class:`TargetResource
      <azure.mgmt.resource.resources.models.TargetResource>`
-    :param request: Gets or sets the HTTP request message.
+    :param request: The HTTP request message.
     :type request: :class:`HttpMessage
      <azure.mgmt.resource.resources.models.HttpMessage>`
-    :param response: Gets or sets the HTTP response message.
+    :param response: The HTTP response message.
     :type response: :class:`HttpMessage
      <azure.mgmt.resource.resources.models.HttpMessage>`
     """ 

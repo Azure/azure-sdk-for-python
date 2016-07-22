@@ -176,7 +176,7 @@ class DeploymentsOperations(object):
         :type resource_group_name: str
         :param deployment_name: The name of the deployment.
         :type deployment_name: str
-        :param properties: Gets or sets the deployment properties.
+        :param properties: The deployment properties.
         :type properties: :class:`DeploymentProperties
          <azure.mgmt.resource.resources.models.DeploymentProperties>`
         :param dict custom_headers: headers that will be added to the request
@@ -388,7 +388,7 @@ class DeploymentsOperations(object):
         :type resource_group_name: str
         :param deployment_name: The name of the deployment.
         :type deployment_name: str
-        :param properties: Gets or sets the deployment properties.
+        :param properties: The deployment properties.
         :type properties: :class:`DeploymentProperties
          <azure.mgmt.resource.resources.models.DeploymentProperties>`
         :param dict custom_headers: headers that will be added to the request

@@ -15,7 +15,7 @@ from msrest.serialization import Model
 class DebugSetting(Model):
     """DebugSetting.
 
-    :param detail_level: Gets or sets the debug detail level.
+    :param detail_level: The debug detail level.
     :type detail_level: str
     """ 
 
