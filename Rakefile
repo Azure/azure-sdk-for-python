@@ -18,6 +18,8 @@ require 'rspec/core/rake_task'
 require 'open3'
 require 'os'
 
+version = File.read(File.expand_path('../ARM_VERSION', __FILE__)).strip
+
 desc 'Azure Resource Manager related tasks which often traverse each of the arm gems'
 namespace :arm do
   desc 'Delete ./pkg for each of the Azure Resource Manager projects'
@@ -48,7 +50,7 @@ namespace :arm do
     each_gem do |dir|
       md = REGEN_METADATA[dir.to_sym]
       # Using execute method so that keys are not logged onto console
-      execute("gem push ./pkg/#{dir}-#{md[:version]}.gem" + (args[:key].nil? ? '' : " -k #{args[:key]}"))
+      execute("gem push ./pkg/#{dir}-#{version}.gem" + (args[:key].nil? ? '' : " -k #{args[:key]}"))
     end
     # TODO: Uncomment this when we decide to publish azure_arm gem
     # md = REGEN_METADATA[:azure_arm]
@@ -140,7 +142,6 @@ def each_gem
   end
 end
 
-version = File.read(File.expand_path('../ARM_VERSION', __FILE__)).strip
 REGEN_METADATA = {
     autorest_loc: ENV.fetch('AUTOREST_LOC', '../../../autorest/binaries/net45/AutoRest.exe'),
     azure_arm: {
