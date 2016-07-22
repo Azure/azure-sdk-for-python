@@ -9,10 +9,10 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .dns_management_client import DnsManagementClient
-from .version import VERSION
+from .record_sets_operations import RecordSetsOperations
+from .zones_operations import ZonesOperations
 
-__all__ = ['DnsManagementClient']
-
-__version__ = VERSION
-
+__all__ = [
+    'RecordSetsOperations',
+    'ZonesOperations',
+]

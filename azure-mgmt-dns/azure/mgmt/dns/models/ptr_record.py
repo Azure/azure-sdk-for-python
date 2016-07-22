@@ -9,10 +9,20 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .dns_management_client import DnsManagementClient
-from .version import VERSION
+from msrest.serialization import Model
 
-__all__ = ['DnsManagementClient']
 
-__version__ = VERSION
+class PtrRecord(Model):
+    """A PTR record.
 
+    :param ptrdname: Gets or sets the PTR target domain name for this record
+     without a terminating dot.
+    :type ptrdname: str
+    """ 
+
+    _attribute_map = {
+        'ptrdname': {'key': 'ptrdname', 'type': 'str'},
+    }
+
+    def __init__(self, ptrdname=None):
+        self.ptrdname = ptrdname
