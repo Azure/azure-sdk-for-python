@@ -9,10 +9,20 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .dns_management_client import DnsManagementClient
-from .version import VERSION
+from msrest.serialization import Model
 
-__all__ = ['DnsManagementClient']
 
-__version__ = VERSION
+class NsRecord(Model):
+    """An NS record.
 
+    :param nsdname: Gets or sets the name server name for this record,
+     without a terminating dot.
+    :type nsdname: str
+    """ 
+
+    _attribute_map = {
+        'nsdname': {'key': 'nsdname', 'type': 'str'},
+    }
+
+    def __init__(self, nsdname=None):
+        self.nsdname = nsdname

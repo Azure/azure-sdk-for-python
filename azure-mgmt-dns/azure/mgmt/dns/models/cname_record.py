@@ -9,10 +9,20 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .dns_management_client import DnsManagementClient
-from .version import VERSION
+from msrest.serialization import Model
 
-__all__ = ['DnsManagementClient']
 
-__version__ = VERSION
+class CnameRecord(Model):
+    """A CNAME record.
 
+    :param cname: Gets or sets the canonical name for this record without a
+     terminating dot.
+    :type cname: str
+    """ 
+
+    _attribute_map = {
+        'cname': {'key': 'cname', 'type': 'str'},
+    }
+
+    def __init__(self, cname=None):
+        self.cname = cname

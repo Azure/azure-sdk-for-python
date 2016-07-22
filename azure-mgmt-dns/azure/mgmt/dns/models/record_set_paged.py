@@ -9,10 +9,19 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .dns_management_client import DnsManagementClient
-from .version import VERSION
+from msrest.paging import Paged
 
-__all__ = ['DnsManagementClient']
 
-__version__ = VERSION
+class RecordSetPaged(Paged):
+    """
+    A paging container for iterating over a list of RecordSet object
+    """
 
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[RecordSet]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(RecordSetPaged, self).__init__(*args, **kwargs)

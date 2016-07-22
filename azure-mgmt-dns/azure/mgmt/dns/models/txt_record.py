@@ -9,10 +9,19 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .dns_management_client import DnsManagementClient
-from .version import VERSION
+from msrest.serialization import Model
 
-__all__ = ['DnsManagementClient']
 
-__version__ = VERSION
+class TxtRecord(Model):
+    """A TXT record.
 
+    :param value: Gets or sets the text value of this record.
+    :type value: list of str
+    """ 
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': '[str]'},
+    }
+
+    def __init__(self, value=None):
+        self.value = value

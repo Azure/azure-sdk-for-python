@@ -9,10 +9,20 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .dns_management_client import DnsManagementClient
-from .version import VERSION
+from msrest.serialization import Model
 
-__all__ = ['DnsManagementClient']
 
-__version__ = VERSION
+class RecordSetUpdateParameters(Model):
+    """Parameters supplied to update a RecordSet.
 
+    :param record_set: Gets or sets information about the RecordSet being
+     updated.
+    :type record_set: :class:`RecordSet <azure.mgmt.dns.models.RecordSet>`
+    """ 
+
+    _attribute_map = {
+        'record_set': {'key': 'RecordSet', 'type': 'RecordSet'},
+    }
+
+    def __init__(self, record_set=None):
+        self.record_set = record_set
