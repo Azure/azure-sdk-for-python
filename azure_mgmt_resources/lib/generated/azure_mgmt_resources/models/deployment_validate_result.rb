@@ -12,12 +12,11 @@ module Azure::ARM::Resources
 
       include MsRestAzure
 
-      # @return [ResourceManagementErrorWithDetails] Gets or sets validation
-      # error.
+      # @return [ResourceManagementErrorWithDetails] Validation error.
       attr_accessor :error
 
-      # @return [DeploymentPropertiesExtended] Gets or sets the template
-      # deployment properties.
+      # @return [DeploymentPropertiesExtended] The template deployment
+      # properties.
       attr_accessor :properties
 
 

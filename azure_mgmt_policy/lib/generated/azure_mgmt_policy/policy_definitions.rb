@@ -8,6 +8,7 @@ module Azure::ARM::Policy
   # PolicyDefinitions
   #
   class PolicyDefinitions
+    include Azure::ARM::Policy::Models
     include MsRestAzure
 
     #

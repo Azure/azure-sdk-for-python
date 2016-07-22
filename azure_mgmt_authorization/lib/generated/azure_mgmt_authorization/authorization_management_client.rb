@@ -8,7 +8,6 @@ module Azure::ARM::Authorization
   # A service client - single point of access to the REST API.
   #
   class AuthorizationManagementClient < MsRestAzure::AzureServiceClient
-    include Azure::ARM::Authorization::Models
     include MsRest::Serialization
     include MsRestAzure
 

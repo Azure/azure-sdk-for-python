@@ -39,7 +39,7 @@ describe 'DataLakeAnalyticsClient Account' do
     dla_acc_prop.data_lake_store_accounts = [dla_acc_info]
     analytics_acc.properties = dla_acc_prop
 
-    result = @client.create(@resource_group.name, @datalake_analytics_acc_name, analytics_acc).value!
+    result = @client.create_async(@resource_group.name, @datalake_analytics_acc_name, analytics_acc).value!
     expect(result.body).to be_an_instance_of(Account::Models::DataLakeAnalyticsAccount)
     expect(result.body.name).to eq(@datalake_analytics_acc_name)
     expect(result.body.tags.count).to eq(2)
@@ -53,13 +53,13 @@ describe 'DataLakeAnalyticsClient Account' do
         :testtag3 => :testtag3,
     }
 
-    result = @client.update(@resource_group.name, @datalake_analytics_acc_name, analytics_acc_update).value!
+    result = @client.update_async(@resource_group.name, @datalake_analytics_acc_name, analytics_acc_update).value!
     expect(result.body).to be_an_instance_of(Account::Models::DataLakeAnalyticsAccount)
     expect(result.body.name).to eq(@datalake_analytics_acc_name)
     expect(result.body.tags.count).to eq(3)
 
     # Delete
-    result = @client.delete(@resource_group.name, @datalake_analytics_acc_name).value!
+    result = @client.delete_async(@resource_group.name, @datalake_analytics_acc_name).value!
     expect(result.response.status).to eq(200)
   end
 end

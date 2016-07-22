@@ -17,7 +17,6 @@ require 'faraday-cookie_jar'
 require 'concurrent'
 require 'ms_rest'
 require 'generated/azure_mgmt_traffic_manager/module_definition'
-require 'generated/azure_mgmt_traffic_manager/version'
 require 'ms_rest_azure'
 
 module Azure::ARM::TrafficManager

@@ -13,7 +13,6 @@ module Azure::ARM::DataLakeAnalytics::Job
       include MsRestAzure
 
       @@discriminatorMap = Hash.new
-      @@discriminatorMap["JobProperties"] = "JobProperties"
       @@discriminatorMap["USql"] = "USqlJobProperties"
       @@discriminatorMap["Hive"] = "HiveJobProperties"
 

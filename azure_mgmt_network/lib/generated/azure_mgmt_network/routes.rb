@@ -34,10 +34,22 @@ module Azure::ARM::Network
     # @param custom_headers [Hash{String => String}] A hash of custom headers that
     # will be added to the HTTP request.
     #
+    def delete(resource_group_name, route_table_name, route_name, custom_headers = nil)
+      response = delete_async(resource_group_name, route_table_name, route_name, custom_headers).value!
+      nil
+    end
+
+    #
+    # @param resource_group_name [String] The name of the resource group.
+    # @param route_table_name [String] The name of the route table.
+    # @param route_name [String] The name of the route.
+    # @param custom_headers [Hash{String => String}] A hash of custom headers that
+    # will be added to the HTTP request.
+    #
     # @return [Concurrent::Promise] promise which provides async access to http
     # response.
     #
-    def delete(resource_group_name, route_table_name, route_name, custom_headers = nil)
+    def delete_async(resource_group_name, route_table_name, route_name, custom_headers = nil)
       # Send request
       promise = begin_delete_async(resource_group_name, route_table_name, route_name, custom_headers)
 
@@ -252,10 +264,26 @@ module Azure::ARM::Network
     # @param custom_headers [Hash{String => String}] A hash of custom headers that
     # will be added to the HTTP request.
     #
+    # @return [Route] operation results.
+    #
+    def create_or_update(resource_group_name, route_table_name, route_name, route_parameters, custom_headers = nil)
+      response = create_or_update_async(resource_group_name, route_table_name, route_name, route_parameters, custom_headers).value!
+      response.body unless response.nil?
+    end
+
+    #
+    # @param resource_group_name [String] The name of the resource group.
+    # @param route_table_name [String] The name of the route table.
+    # @param route_name [String] The name of the route.
+    # @param route_parameters [Route] Parameters supplied to the create/update
+    # routeoperation
+    # @param custom_headers [Hash{String => String}] A hash of custom headers that
+    # will be added to the HTTP request.
+    #
     # @return [Concurrent::Promise] promise which provides async access to http
     # response.
     #
-    def create_or_update(resource_group_name, route_table_name, route_name, route_parameters, custom_headers = nil)
+    def create_or_update_async(resource_group_name, route_table_name, route_name, route_parameters, custom_headers = nil)
       # Send request
       promise = begin_create_or_update_async(resource_group_name, route_table_name, route_name, route_parameters, custom_headers)
 

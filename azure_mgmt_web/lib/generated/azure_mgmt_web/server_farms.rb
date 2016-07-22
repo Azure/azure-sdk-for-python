@@ -228,10 +228,27 @@ module Azure::ARM::Web
     # @param custom_headers [Hash{String => String}] A hash of custom headers that
     # will be added to the HTTP request.
     #
+    # @return [ServerFarmWithRichSku] operation results.
+    #
+    def create_or_update_server_farm(resource_group_name, name, server_farm_envelope, allow_pending_state = nil, custom_headers = nil)
+      response = create_or_update_server_farm_async(resource_group_name, name, server_farm_envelope, allow_pending_state, custom_headers).value!
+      response.body unless response.nil?
+    end
+
+    #
+    # @param resource_group_name [String] Name of resource group
+    # @param name [String] Name of App Service Plan
+    # @param server_farm_envelope [ServerFarmWithRichSku] Details of App Service
+    # Plan
+    # @param allow_pending_state [Boolean] OBSOLETE: If true, allow pending state
+    # for App Service Plan
+    # @param custom_headers [Hash{String => String}] A hash of custom headers that
+    # will be added to the HTTP request.
+    #
     # @return [Concurrent::Promise] promise which provides async access to http
     # response.
     #
-    def create_or_update_server_farm(resource_group_name, name, server_farm_envelope, allow_pending_state = nil, custom_headers = nil)
+    def create_or_update_server_farm_async(resource_group_name, name, server_farm_envelope, allow_pending_state = nil, custom_headers = nil)
       # Send request
       promise = begin_create_or_update_server_farm_async(resource_group_name, name, server_farm_envelope, allow_pending_state, custom_headers)
 

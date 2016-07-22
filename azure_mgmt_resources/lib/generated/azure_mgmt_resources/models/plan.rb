@@ -12,16 +12,16 @@ module Azure::ARM::Resources
 
       include MsRestAzure
 
-      # @return [String] Gets or sets the plan ID.
+      # @return [String] The plan ID.
       attr_accessor :name
 
-      # @return [String] Gets or sets the publisher ID.
+      # @return [String] The publisher ID.
       attr_accessor :publisher
 
-      # @return [String] Gets or sets the offer ID.
+      # @return [String] The offer ID.
       attr_accessor :product
 
-      # @return [String] Gets or sets the promotion code.
+      # @return [String] The promotion code.
       attr_accessor :promotion_code
 
 

@@ -134,10 +134,26 @@ module Azure::ARM::ServerManagement
     # @param custom_headers [Hash{String => String}] A hash of custom headers that
     # will be added to the HTTP request.
     #
+    # @return [PowerShellSessionResource] operation results.
+    #
+    def create_session(resource_group_name, node_name, session, pssession, custom_headers = nil)
+      response = create_session_async(resource_group_name, node_name, session, pssession, custom_headers).value!
+      response.body unless response.nil?
+    end
+
+    #
+    # @param resource_group_name [String] The resource group name uniquely
+    # identifies the resource group within the user subscriptionId.
+    # @param node_name [String] The node name (256 characters maximum).
+    # @param session [String] The sessionId from the user
+    # @param pssession [String] The PowerShell sessionId from the user
+    # @param custom_headers [Hash{String => String}] A hash of custom headers that
+    # will be added to the HTTP request.
+    #
     # @return [Concurrent::Promise] promise which provides async access to http
     # response.
     #
-    def create_session(resource_group_name, node_name, session, pssession, custom_headers = nil)
+    def create_session_async(resource_group_name, node_name, session, pssession, custom_headers = nil)
       # Send request
       promise = begin_create_session_async(resource_group_name, node_name, session, pssession, custom_headers)
 
@@ -382,10 +398,26 @@ module Azure::ARM::ServerManagement
     # @param custom_headers [Hash{String => String}] A hash of custom headers that
     # will be added to the HTTP request.
     #
+    # @return [PowerShellCommandResults] operation results.
+    #
+    def update_command(resource_group_name, node_name, session, pssession, custom_headers = nil)
+      response = update_command_async(resource_group_name, node_name, session, pssession, custom_headers).value!
+      response.body unless response.nil?
+    end
+
+    #
+    # @param resource_group_name [String] The resource group name uniquely
+    # identifies the resource group within the user subscriptionId.
+    # @param node_name [String] The node name (256 characters maximum).
+    # @param session [String] The sessionId from the user
+    # @param pssession [String] The PowerShell sessionId from the user
+    # @param custom_headers [Hash{String => String}] A hash of custom headers that
+    # will be added to the HTTP request.
+    #
     # @return [Concurrent::Promise] promise which provides async access to http
     # response.
     #
-    def update_command(resource_group_name, node_name, session, pssession, custom_headers = nil)
+    def update_command_async(resource_group_name, node_name, session, pssession, custom_headers = nil)
       # Send request
       promise = begin_update_command_async(resource_group_name, node_name, session, pssession, custom_headers)
 
@@ -520,10 +552,27 @@ module Azure::ARM::ServerManagement
     # @param custom_headers [Hash{String => String}] A hash of custom headers that
     # will be added to the HTTP request.
     #
+    # @return [PowerShellCommandResults] operation results.
+    #
+    def invoke_command(resource_group_name, node_name, session, pssession, command = nil, custom_headers = nil)
+      response = invoke_command_async(resource_group_name, node_name, session, pssession, command, custom_headers).value!
+      response.body unless response.nil?
+    end
+
+    #
+    # @param resource_group_name [String] The resource group name uniquely
+    # identifies the resource group within the user subscriptionId.
+    # @param node_name [String] The node name (256 characters maximum).
+    # @param session [String] The sessionId from the user
+    # @param pssession [String] The PowerShell sessionId from the user
+    # @param command [String] Script to execute
+    # @param custom_headers [Hash{String => String}] A hash of custom headers that
+    # will be added to the HTTP request.
+    #
     # @return [Concurrent::Promise] promise which provides async access to http
     # response.
     #
-    def invoke_command(resource_group_name, node_name, session, pssession, command = nil, custom_headers = nil)
+    def invoke_command_async(resource_group_name, node_name, session, pssession, command = nil, custom_headers = nil)
       # Send request
       promise = begin_invoke_command_async(resource_group_name, node_name, session, pssession, command, custom_headers)
 
@@ -673,10 +722,26 @@ module Azure::ARM::ServerManagement
     # @param custom_headers [Hash{String => String}] A hash of custom headers that
     # will be added to the HTTP request.
     #
+    # @return [PowerShellCommandResults] operation results.
+    #
+    def cancel_command(resource_group_name, node_name, session, pssession, custom_headers = nil)
+      response = cancel_command_async(resource_group_name, node_name, session, pssession, custom_headers).value!
+      response.body unless response.nil?
+    end
+
+    #
+    # @param resource_group_name [String] The resource group name uniquely
+    # identifies the resource group within the user subscriptionId.
+    # @param node_name [String] The node name (256 characters maximum).
+    # @param session [String] The sessionId from the user
+    # @param pssession [String] The PowerShell sessionId from the user
+    # @param custom_headers [Hash{String => String}] A hash of custom headers that
+    # will be added to the HTTP request.
+    #
     # @return [Concurrent::Promise] promise which provides async access to http
     # response.
     #
-    def cancel_command(resource_group_name, node_name, session, pssession, custom_headers = nil)
+    def cancel_command_async(resource_group_name, node_name, session, pssession, custom_headers = nil)
       # Send request
       promise = begin_cancel_command_async(resource_group_name, node_name, session, pssession, custom_headers)
 

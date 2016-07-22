@@ -33,7 +33,7 @@ describe StorageAccounts do
     params.sku = sku
     params.kind = Models::Kind::Storage
 
-    result = @client.create(@resource_group.name, name, params).value!
+    result = @client.create_async(@resource_group.name, name, params).value!
     expect(result.response.status).to eq(200)
     expect(result.body).not_to be_nil
     expect(result.body).to be_a(Models::StorageAccount)
@@ -131,7 +131,7 @@ describe StorageAccounts do
     params.sku = sku
     params.kind = Models::Kind::Storage
 
-    @client.create(@resource_group.name, name, params).value!.body
+    @client.create(@resource_group.name, name, params)
 
     name
   end

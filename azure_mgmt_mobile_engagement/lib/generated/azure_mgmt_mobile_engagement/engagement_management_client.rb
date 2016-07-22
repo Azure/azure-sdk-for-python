@@ -8,7 +8,6 @@ module Azure::ARM::MobileEngagement
   # A service client - single point of access to the REST API.
   #
   class EngagementManagementClient < MsRestAzure::AzureServiceClient
-    include Azure::ARM::MobileEngagement::Models
     include MsRest::Serialization
     include MsRestAzure
 

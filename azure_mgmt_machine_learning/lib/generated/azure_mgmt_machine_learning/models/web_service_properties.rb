@@ -13,7 +13,6 @@ module Azure::ARM::MachineLearning
       include MsRestAzure
 
       @@discriminatorMap = Hash.new
-      @@discriminatorMap["WebServiceProperties"] = "WebServiceProperties"
       @@discriminatorMap["Graph"] = "WebServicePropertiesForGraph"
 
       def initialize

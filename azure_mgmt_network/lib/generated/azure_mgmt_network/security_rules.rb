@@ -36,10 +36,23 @@ module Azure::ARM::Network
     # @param custom_headers [Hash{String => String}] A hash of custom headers that
     # will be added to the HTTP request.
     #
+    def delete(resource_group_name, network_security_group_name, security_rule_name, custom_headers = nil)
+      response = delete_async(resource_group_name, network_security_group_name, security_rule_name, custom_headers).value!
+      nil
+    end
+
+    #
+    # @param resource_group_name [String] The name of the resource group.
+    # @param network_security_group_name [String] The name of the network security
+    # group.
+    # @param security_rule_name [String] The name of the security rule.
+    # @param custom_headers [Hash{String => String}] A hash of custom headers that
+    # will be added to the HTTP request.
+    #
     # @return [Concurrent::Promise] promise which provides async access to http
     # response.
     #
-    def delete(resource_group_name, network_security_group_name, security_rule_name, custom_headers = nil)
+    def delete_async(resource_group_name, network_security_group_name, security_rule_name, custom_headers = nil)
       # Send request
       promise = begin_delete_async(resource_group_name, network_security_group_name, security_rule_name, custom_headers)
 
@@ -265,10 +278,27 @@ module Azure::ARM::Network
     # @param custom_headers [Hash{String => String}] A hash of custom headers that
     # will be added to the HTTP request.
     #
+    # @return [SecurityRule] operation results.
+    #
+    def create_or_update(resource_group_name, network_security_group_name, security_rule_name, security_rule_parameters, custom_headers = nil)
+      response = create_or_update_async(resource_group_name, network_security_group_name, security_rule_name, security_rule_parameters, custom_headers).value!
+      response.body unless response.nil?
+    end
+
+    #
+    # @param resource_group_name [String] The name of the resource group.
+    # @param network_security_group_name [String] The name of the network security
+    # group.
+    # @param security_rule_name [String] The name of the security rule.
+    # @param security_rule_parameters [SecurityRule] Parameters supplied to the
+    # create/update network security rule operation
+    # @param custom_headers [Hash{String => String}] A hash of custom headers that
+    # will be added to the HTTP request.
+    #
     # @return [Concurrent::Promise] promise which provides async access to http
     # response.
     #
-    def create_or_update(resource_group_name, network_security_group_name, security_rule_name, security_rule_parameters, custom_headers = nil)
+    def create_or_update_async(resource_group_name, network_security_group_name, security_rule_name, security_rule_parameters, custom_headers = nil)
       # Send request
       promise = begin_create_or_update_async(resource_group_name, network_security_group_name, security_rule_name, security_rule_parameters, custom_headers)
 

@@ -12,17 +12,14 @@ module Azure::ARM::Resources
 
       include MsRestAzure
 
-      # @return [String] Gets or sets the resource type.
+      # @return [String] The resource type.
       attr_accessor :resource_type
 
-      # @return [String] Gets or sets the tag name.
+      # @return [String] The tag name.
       attr_accessor :tagname
 
-      # @return [String] Gets or sets the tag value.
+      # @return [String] The tag value.
       attr_accessor :tagvalue
-
-      # @return [String] Gets or sets the expand value.
-      attr_accessor :expand
 
 
       #
@@ -54,13 +51,6 @@ module Azure::ARM::Resources
               tagvalue: {
                 required: false,
                 serialized_name: 'tagvalue',
-                type: {
-                  name: 'String'
-                }
-              },
-              expand: {
-                required: false,
-                serialized_name: 'expand',
                 type: {
                   name: 'String'
                 }

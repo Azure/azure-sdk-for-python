@@ -383,10 +383,24 @@ module Azure::ARM::DevTestLabs
     # @param custom_headers [Hash{String => String}] A hash of custom headers that
     # will be added to the HTTP request.
     #
+    # @return [Lab] operation results.
+    #
+    def create_or_update_resource(resource_group_name, name, lab, custom_headers = nil)
+      response = create_or_update_resource_async(resource_group_name, name, lab, custom_headers).value!
+      response.body unless response.nil?
+    end
+
+    #
+    # @param resource_group_name [String] The name of the resource group.
+    # @param name [String] The name of the lab.
+    # @param lab [Lab]
+    # @param custom_headers [Hash{String => String}] A hash of custom headers that
+    # will be added to the HTTP request.
+    #
     # @return [Concurrent::Promise] promise which provides async access to http
     # response.
     #
-    def create_or_update_resource(resource_group_name, name, lab, custom_headers = nil)
+    def create_or_update_resource_async(resource_group_name, name, lab, custom_headers = nil)
       # Send request
       promise = begin_create_or_update_resource_async(resource_group_name, name, lab, custom_headers)
 
@@ -532,10 +546,21 @@ module Azure::ARM::DevTestLabs
     # @param custom_headers [Hash{String => String}] A hash of custom headers that
     # will be added to the HTTP request.
     #
+    def delete_resource(resource_group_name, name, custom_headers = nil)
+      response = delete_resource_async(resource_group_name, name, custom_headers).value!
+      nil
+    end
+
+    #
+    # @param resource_group_name [String] The name of the resource group.
+    # @param name [String] The name of the lab.
+    # @param custom_headers [Hash{String => String}] A hash of custom headers that
+    # will be added to the HTTP request.
+    #
     # @return [Concurrent::Promise] promise which provides async access to http
     # response.
     #
-    def delete_resource(resource_group_name, name, custom_headers = nil)
+    def delete_resource_async(resource_group_name, name, custom_headers = nil)
       # Send request
       promise = begin_delete_resource_async(resource_group_name, name, custom_headers)
 
@@ -751,10 +776,22 @@ module Azure::ARM::DevTestLabs
     # @param custom_headers [Hash{String => String}] A hash of custom headers that
     # will be added to the HTTP request.
     #
+    def create_environment(resource_group_name, name, lab_virtual_machine, custom_headers = nil)
+      response = create_environment_async(resource_group_name, name, lab_virtual_machine, custom_headers).value!
+      nil
+    end
+
+    #
+    # @param resource_group_name [String] The name of the resource group.
+    # @param name [String] The name of the lab.
+    # @param lab_virtual_machine [LabVirtualMachine]
+    # @param custom_headers [Hash{String => String}] A hash of custom headers that
+    # will be added to the HTTP request.
+    #
     # @return [Concurrent::Promise] promise which provides async access to http
     # response.
     #
-    def create_environment(resource_group_name, name, lab_virtual_machine, custom_headers = nil)
+    def create_environment_async(resource_group_name, name, lab_virtual_machine, custom_headers = nil)
       # Send request
       promise = begin_create_environment_async(resource_group_name, name, lab_virtual_machine, custom_headers)
 

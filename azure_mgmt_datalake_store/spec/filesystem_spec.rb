@@ -18,7 +18,7 @@ describe 'DataLakeStoreClient File System' do
     acc = Account::Models::DataLakeStoreAccount.new
     acc.name = @datalake_acc_name
     acc.location = 'East US 2'
-    result = @resource_helper.dls_acc_client.account.create(@resource_group.name, @datalake_acc_name, acc).value!
+    result = @resource_helper.dls_acc_client.account.create_async(@resource_group.name, @datalake_acc_name, acc).value!
     expect(result.body).to be_an_instance_of(Account::Models::DataLakeStoreAccount)
     expect(result.body.name).to eq(@datalake_acc_name)
   end

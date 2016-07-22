@@ -40,10 +40,31 @@ module Azure::ARM::Batch
     # @param custom_headers [Hash{String => String}] A hash of custom headers that
     # will be added to the HTTP request.
     #
+    # @return [AccountResource] operation results.
+    #
+    def create(resource_group_name, account_name, parameters, custom_headers = nil)
+      response = create_async(resource_group_name, account_name, parameters, custom_headers).value!
+      response.body unless response.nil?
+    end
+
+    #
+    # @param resource_group_name [String] The name of the resource group that
+    # contains the new Batch account.
+    # @param account_name [String] A name for the Batch account which must be
+    # unique within the region. Batch account names must be between 3 and 24
+    # characters in length and must use only numbers and lowercase letters. This
+    # name is used as part of the DNS name that is used to access the Batch
+    # service in the region in which the account is created. For example:
+    # http://accountname.region.batch.azure.com/.
+    # @param parameters [BatchAccountCreateParameters] Additional parameters for
+    # account creation.
+    # @param custom_headers [Hash{String => String}] A hash of custom headers that
+    # will be added to the HTTP request.
+    #
     # @return [Concurrent::Promise] promise which provides async access to http
     # response.
     #
-    def create(resource_group_name, account_name, parameters, custom_headers = nil)
+    def create_async(resource_group_name, account_name, parameters, custom_headers = nil)
       # Send request
       promise = begin_create_async(resource_group_name, account_name, parameters, custom_headers)
 
@@ -317,10 +338,22 @@ module Azure::ARM::Batch
     # @param custom_headers [Hash{String => String}] A hash of custom headers that
     # will be added to the HTTP request.
     #
+    def delete(resource_group_name, account_name, custom_headers = nil)
+      response = delete_async(resource_group_name, account_name, custom_headers).value!
+      nil
+    end
+
+    #
+    # @param resource_group_name [String] The name of the resource group that
+    # contains the Batch account to be deleted.
+    # @param account_name [String] The name of the account to be deleted.
+    # @param custom_headers [Hash{String => String}] A hash of custom headers that
+    # will be added to the HTTP request.
+    #
     # @return [Concurrent::Promise] promise which provides async access to http
     # response.
     #
-    def delete(resource_group_name, account_name, custom_headers = nil)
+    def delete_async(resource_group_name, account_name, custom_headers = nil)
       # Send request
       promise = begin_delete_async(resource_group_name, account_name, custom_headers)
 

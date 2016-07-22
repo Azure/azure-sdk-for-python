@@ -8,7 +8,6 @@ module Azure::ARM::CDN
   # A service client - single point of access to the REST API.
   #
   class CdnManagementClient < MsRestAzure::AzureServiceClient
-    include Azure::ARM::CDN::Models
     include MsRest::Serialization
     include MsRestAzure
 

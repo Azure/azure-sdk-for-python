@@ -12,16 +12,16 @@ module Azure::ARM::Resources
 
       include MsRestAzure
 
-      # @return [Array<BasicDependency>] Gets the list of dependencies.
+      # @return [Array<BasicDependency>] The list of dependencies.
       attr_accessor :depends_on
 
-      # @return [String] Gets or sets the ID of the dependency.
+      # @return [String] The ID of the dependency.
       attr_accessor :id
 
-      # @return [String] Gets or sets the dependency resource type.
+      # @return [String] The dependency resource type.
       attr_accessor :resource_type
 
-      # @return [String] Gets or sets the dependency resource name.
+      # @return [String] The dependency resource name.
       attr_accessor :resource_name
 
 

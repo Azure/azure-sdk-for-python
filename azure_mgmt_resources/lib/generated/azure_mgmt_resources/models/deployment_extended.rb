@@ -12,14 +12,13 @@ module Azure::ARM::Resources
 
       include MsRestAzure
 
-      # @return [String] Gets or sets the ID of the deployment.
+      # @return [String] The ID of the deployment.
       attr_accessor :id
 
-      # @return [String] Gets or sets the name of the deployment.
+      # @return [String] The name of the deployment.
       attr_accessor :name
 
-      # @return [DeploymentPropertiesExtended] Gets or sets deployment
-      # properties.
+      # @return [DeploymentPropertiesExtended] Deployment properties.
       attr_accessor :properties
 
 

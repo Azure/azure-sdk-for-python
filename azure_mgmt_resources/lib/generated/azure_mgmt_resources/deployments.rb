@@ -31,10 +31,22 @@ module Azure::ARM::Resources
     # @param custom_headers [Hash{String => String}] A hash of custom headers that
     # will be added to the HTTP request.
     #
+    def delete(resource_group_name, deployment_name, custom_headers = nil)
+      response = delete_async(resource_group_name, deployment_name, custom_headers).value!
+      nil
+    end
+
+    #
+    # @param resource_group_name [String] The name of the resource group. The name
+    # is case insensitive.
+    # @param deployment_name [String] The name of the deployment to be deleted.
+    # @param custom_headers [Hash{String => String}] A hash of custom headers that
+    # will be added to the HTTP request.
+    #
     # @return [Concurrent::Promise] promise which provides async access to http
     # response.
     #
-    def delete(resource_group_name, deployment_name, custom_headers = nil)
+    def delete_async(resource_group_name, deployment_name, custom_headers = nil)
       # Send request
       promise = begin_delete_async(resource_group_name, deployment_name, custom_headers)
 
@@ -235,10 +247,26 @@ module Azure::ARM::Resources
     # @param custom_headers [Hash{String => String}] A hash of custom headers that
     # will be added to the HTTP request.
     #
+    # @return [DeploymentExtended] operation results.
+    #
+    def create_or_update(resource_group_name, deployment_name, parameters, custom_headers = nil)
+      response = create_or_update_async(resource_group_name, deployment_name, parameters, custom_headers).value!
+      response.body unless response.nil?
+    end
+
+    #
+    # @param resource_group_name [String] The name of the resource group. The name
+    # is case insensitive.
+    # @param deployment_name [String] The name of the deployment.
+    # @param parameters [Deployment] Additional parameters supplied to the
+    # operation.
+    # @param custom_headers [Hash{String => String}] A hash of custom headers that
+    # will be added to the HTTP request.
+    #
     # @return [Concurrent::Promise] promise which provides async access to http
     # response.
     #
-    def create_or_update(resource_group_name, deployment_name, parameters, custom_headers = nil)
+    def create_or_update_async(resource_group_name, deployment_name, parameters, custom_headers = nil)
       # Send request
       promise = begin_create_or_update_async(resource_group_name, deployment_name, parameters, custom_headers)
 

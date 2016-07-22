@@ -30,7 +30,7 @@ describe 'Virtual machine and vm extension creation' do
   it 'should create virtual machine and vm extension' do
     params = build_virtual_machine_parameters
     vm_name = 'testvm'
-    result = @client.create_or_update(@resource_group.name, vm_name, params).value!
+    result = @client.create_or_update_async(@resource_group.name, vm_name, params).value!
     expect(result.response.status).to eq(200)
     expect(result.body).not_to be_nil
     expect(result.body.name).to eq vm_name
@@ -38,7 +38,7 @@ describe 'Virtual machine and vm extension creation' do
 
     vm_extension = build_extension_parameter
     ext_name = 'testextension'
-    result = @extensions_client.create_or_update(@resource_group.name, vm_name, ext_name, vm_extension).value!
+    result = @extensions_client.create_or_update_async(@resource_group.name, vm_name, ext_name, vm_extension).value!
     expect(result.response.status).to eq(200)
     expect(result.body.name).to eq(ext_name)
   end
@@ -52,9 +52,9 @@ describe 'Virtual machine and vm extension api' do
     @resource_group = @resource_helper.create_resource_group
     @location = 'westus'
     @vm_name = 'testvm'
-    @client.create_or_update(@resource_group.name, @vm_name, build_virtual_machine_parameters()).value!
+    @client.create_or_update(@resource_group.name, @vm_name, build_virtual_machine_parameters())
     @ext_name = 'testextension'
-    @extensions_client.create_or_update(@resource_group.name, @vm_name, @ext_name, build_extension_parameter()).value!
+    @extensions_client.create_or_update(@resource_group.name, @vm_name, @ext_name, build_extension_parameter())
   end
 
   after(:each) do
@@ -74,7 +74,7 @@ describe 'Virtual machine and vm extension api' do
   end
 
   it 'should delete vm extension' do
-    result = @extensions_client.delete(@resource_group.name, @vm_name, @ext_name).value!
+    result = @extensions_client.delete_async(@resource_group.name, @vm_name, @ext_name).value!
     expect(result.response.status).to eq(200)
   end
 end
@@ -86,7 +86,7 @@ describe 'Virtual machine api' do
     @resource_group = @resource_helper.create_resource_group
     @location = 'westus'
     @vm_name = 'testvm'
-    @client.create_or_update(@resource_group.name, @vm_name, build_virtual_machine_parameters()).value!
+    @client.create_or_update(@resource_group.name, @vm_name, build_virtual_machine_parameters())
   end
 
   after(:each) do
@@ -127,22 +127,22 @@ describe 'Virtual machine api' do
   end
 
   it 'should restart virtual machine' do
-    result = @client.restart(@resource_group.name, @vm_name).value!
+    result = @client.restart_async(@resource_group.name, @vm_name).value!
     expect(result.response.status).to eq(200)
   end
 
   it 'should power off virtual machine' do
-    result = @client.power_off(@resource_group.name, @vm_name).value!
+    result = @client.power_off_async(@resource_group.name, @vm_name).value!
     expect(result.response.status).to eq(200)
   end
 
   it 'should start virtual machine' do
-    result = @client.start(@resource_group.name, @vm_name).value!
+    result = @client.start_async(@resource_group.name, @vm_name).value!
     expect(result.response.status).to eq(200)
   end
 
   it 'should generalize and capture virtual machine' do
-    @client.power_off(@resource_group.name, @vm_name).value!
+    @client.power_off(@resource_group.name, @vm_name)
 
     # To generalize VM it should be started. But sometimes even after API method
     # starts it - the API still says that it cannot be generalized because it is
@@ -161,17 +161,17 @@ describe 'Virtual machine api' do
     capture_params.destination_container_name = 'test'
     capture_params.overwrite_vhds = true
 
-    result = @client.capture(@resource_group.name, @vm_name, capture_params).value!
+    result = @client.capture_async(@resource_group.name, @vm_name, capture_params).value!
     expect(result.response.status).to eq(200)
   end
 
   it 'should deallocate virtual machine' do
-    result = @client.deallocate(@resource_group.name, @vm_name).value!
+    result = @client.deallocate_async(@resource_group.name, @vm_name).value!
     expect(result.response.status).to eq(200)
   end
 
   it 'should delete virtual machine' do
-    result = @client.delete(@resource_group.name, @vm_name).value!
+    result = @client.delete_async(@resource_group.name, @vm_name).value!
     expect(result.response.status).to eq(200)
   end
 end
@@ -248,7 +248,7 @@ end
 def create_storage_account
   storage_name = 'teststorage53464'
   params = build_storage_account_create_parameters storage_name
-  result = @resource_helper.storage_client.storage_accounts.create(@resource_group.name, storage_name, params).value!.body
+  result = @resource_helper.storage_client.storage_accounts.create(@resource_group.name, storage_name, params)
   result.name = storage_name #similar problem in dot net tests
   result
 end
@@ -285,7 +285,7 @@ end
 def create_public_ip_address(location, resource_group)
   public_ip_address_name = 'test_ip_name'
   params = build_public_ip_params(location)
-  @resource_helper.network_client.public_ipaddresses.create_or_update(resource_group.name, public_ip_address_name, params).value!.body
+  @resource_helper.network_client.public_ipaddresses.create_or_update(resource_group.name, public_ip_address_name, params)
 end
 
 def build_virtual_network_params(location)
@@ -311,7 +311,7 @@ end
 def create_virtual_network(resource_group_name)
   virtualNetworkName = "testvnet53464"
   params = build_virtual_network_params('westus')
-  @resource_helper.network_client.virtual_networks.create_or_update(resource_group_name, virtualNetworkName, params).value!.body
+  @resource_helper.network_client.virtual_networks.create_or_update(resource_group_name, virtualNetworkName, params)
 end
 
 def build_subnet_params
@@ -324,12 +324,12 @@ def create_subnet(virtual_network, resource_group, subnet_client)
   subnet_name = 'testsubnet53464'
   params = build_subnet_params
 
-  subnet_client.create_or_update(resource_group.name, virtual_network.name, subnet_name, params).value!.body
+  subnet_client.create_or_update(resource_group.name, virtual_network.name, subnet_name, params)
 end
 
 def create_network_interface
   params = build_network_interface_param
-  @resource_helper.network_client.network_interfaces.create_or_update(@resource_group.name, params.name, params).value!.body
+  @resource_helper.network_client.network_interfaces.create_or_update(@resource_group.name, params.name, params)
 end
 
 def build_network_interface_param

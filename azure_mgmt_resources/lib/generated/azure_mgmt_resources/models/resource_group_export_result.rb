@@ -12,10 +12,10 @@ module Azure::ARM::Resources
 
       include MsRestAzure
 
-      # @return Gets or sets the template content.
+      # @return The template content.
       attr_accessor :template
 
-      # @return [ResourceManagementErrorWithDetails] Gets or sets the error.
+      # @return [ResourceManagementErrorWithDetails] The error.
       attr_accessor :error
 
 

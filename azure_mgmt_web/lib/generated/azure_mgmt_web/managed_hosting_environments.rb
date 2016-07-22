@@ -133,10 +133,25 @@ module Azure::ARM::Web
     # @param custom_headers [Hash{String => String}] A hash of custom headers that
     # will be added to the HTTP request.
     #
+    # @return [HostingEnvironment] operation results.
+    #
+    def create_or_update_managed_hosting_environment(resource_group_name, name, managed_hosting_environment_envelope, custom_headers = nil)
+      response = create_or_update_managed_hosting_environment_async(resource_group_name, name, managed_hosting_environment_envelope, custom_headers).value!
+      response.body unless response.nil?
+    end
+
+    #
+    # @param resource_group_name [String] Name of resource group
+    # @param name [String] Name of managed hosting environment
+    # @param managed_hosting_environment_envelope [HostingEnvironment] Properties
+    # of managed hosting environment
+    # @param custom_headers [Hash{String => String}] A hash of custom headers that
+    # will be added to the HTTP request.
+    #
     # @return [Concurrent::Promise] promise which provides async access to http
     # response.
     #
-    def create_or_update_managed_hosting_environment(resource_group_name, name, managed_hosting_environment_envelope, custom_headers = nil)
+    def create_or_update_managed_hosting_environment_async(resource_group_name, name, managed_hosting_environment_envelope, custom_headers = nil)
       # Send request
       promise = begin_create_or_update_managed_hosting_environment_async(resource_group_name, name, managed_hosting_environment_envelope, custom_headers)
 
@@ -274,10 +289,25 @@ module Azure::ARM::Web
     # @param custom_headers [Hash{String => String}] A hash of custom headers that
     # will be added to the HTTP request.
     #
+    # @return [Object] operation results.
+    #
+    def delete_managed_hosting_environment(resource_group_name, name, force_delete = nil, custom_headers = nil)
+      response = delete_managed_hosting_environment_async(resource_group_name, name, force_delete, custom_headers).value!
+      response.body unless response.nil?
+    end
+
+    #
+    # @param resource_group_name [String] Name of resource group
+    # @param name [String] Name of managed hosting environment
+    # @param force_delete [Boolean] Delete even if the managed hosting environment
+    # contains resources
+    # @param custom_headers [Hash{String => String}] A hash of custom headers that
+    # will be added to the HTTP request.
+    #
     # @return [Concurrent::Promise] promise which provides async access to http
     # response.
     #
-    def delete_managed_hosting_environment(resource_group_name, name, force_delete = nil, custom_headers = nil)
+    def delete_managed_hosting_environment_async(resource_group_name, name, force_delete = nil, custom_headers = nil)
       # Send request
       promise = begin_delete_managed_hosting_environment_async(resource_group_name, name, force_delete, custom_headers)
 

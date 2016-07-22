@@ -859,10 +859,23 @@ module Azure::ARM::Redis
     # @param custom_headers [Hash{String => String}] A hash of custom headers that
     # will be added to the HTTP request.
     #
+    def import(resource_group_name, name, parameters, custom_headers = nil)
+      response = import_async(resource_group_name, name, parameters, custom_headers).value!
+      nil
+    end
+
+    #
+    # @param resource_group_name [String] The name of the resource group.
+    # @param name [String] The name of the redis cache.
+    # @param parameters [ImportRDBParameters] Parameters for redis import
+    # operation.
+    # @param custom_headers [Hash{String => String}] A hash of custom headers that
+    # will be added to the HTTP request.
+    #
     # @return [Concurrent::Promise] promise which provides async access to http
     # response.
     #
-    def import(resource_group_name, name, parameters, custom_headers = nil)
+    def import_async(resource_group_name, name, parameters, custom_headers = nil)
       # Send request
       promise = begin_import_async(resource_group_name, name, parameters, custom_headers)
 
@@ -987,10 +1000,23 @@ module Azure::ARM::Redis
     # @param custom_headers [Hash{String => String}] A hash of custom headers that
     # will be added to the HTTP request.
     #
+    def export(resource_group_name, name, parameters, custom_headers = nil)
+      response = export_async(resource_group_name, name, parameters, custom_headers).value!
+      nil
+    end
+
+    #
+    # @param resource_group_name [String] The name of the resource group.
+    # @param name [String] The name of the redis cache.
+    # @param parameters [ExportRDBParameters] Parameters for redis export
+    # operation.
+    # @param custom_headers [Hash{String => String}] A hash of custom headers that
+    # will be added to the HTTP request.
+    #
     # @return [Concurrent::Promise] promise which provides async access to http
     # response.
     #
-    def export(resource_group_name, name, parameters, custom_headers = nil)
+    def export_async(resource_group_name, name, parameters, custom_headers = nil)
       # Send request
       promise = begin_export_async(resource_group_name, name, parameters, custom_headers)
 

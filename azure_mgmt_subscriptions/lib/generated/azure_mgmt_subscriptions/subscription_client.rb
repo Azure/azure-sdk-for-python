@@ -8,7 +8,6 @@ module Azure::ARM::Subscriptions
   # A service client - single point of access to the REST API.
   #
   class SubscriptionClient < MsRestAzure::AzureServiceClient
-    include Azure::ARM::Subscriptions::Models
     include MsRest::Serialization
     include MsRestAzure
 

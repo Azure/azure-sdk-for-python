@@ -75,7 +75,7 @@ class ResourceHelper
   end
 
   def delete_resource_group(name)
-    resource_client.resource_groups.delete(name).value!
+    resource_client.resource_groups.delete(name)
   end
 
   def create_availability_set(client, resource_group)

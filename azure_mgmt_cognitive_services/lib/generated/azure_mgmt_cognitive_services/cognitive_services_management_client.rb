@@ -8,7 +8,6 @@ module Azure::ARM::CognitiveServices
   # A service client - single point of access to the REST API.
   #
   class CognitiveServicesManagementClient < MsRestAzure::AzureServiceClient
-    include Azure::ARM::CognitiveServices::Models
     include MsRest::Serialization
     include MsRestAzure
 

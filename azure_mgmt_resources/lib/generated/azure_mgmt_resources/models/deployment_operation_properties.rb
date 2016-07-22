@@ -12,28 +12,28 @@ module Azure::ARM::Resources
 
       include MsRestAzure
 
-      # @return [String] Gets or sets the state of the provisioning.
+      # @return [String] The state of the provisioning.
       attr_accessor :provisioning_state
 
-      # @return [DateTime] Gets or sets the date and time of the operation.
+      # @return [DateTime] The date and time of the operation.
       attr_accessor :timestamp
 
-      # @return [String] Gets or sets deployment operation service request id.
+      # @return [String] Deployment operation service request id.
       attr_accessor :service_request_id
 
-      # @return [String] Gets or sets operation status code.
+      # @return [String] Operation status code.
       attr_accessor :status_code
 
-      # @return Gets or sets operation status message.
+      # @return Operation status message.
       attr_accessor :status_message
 
-      # @return [TargetResource] Gets or sets the target resource.
+      # @return [TargetResource] The target resource.
       attr_accessor :target_resource
 
-      # @return [HttpMessage] Gets or sets the HTTP request message.
+      # @return [HttpMessage] The HTTP request message.
       attr_accessor :request
 
-      # @return [HttpMessage] Gets or sets the HTTP response message.
+      # @return [HttpMessage] The HTTP response message.
       attr_accessor :response
 
 

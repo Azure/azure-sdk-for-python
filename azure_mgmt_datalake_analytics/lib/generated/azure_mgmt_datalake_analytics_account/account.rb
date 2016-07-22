@@ -2158,10 +2158,23 @@ module Azure::ARM::DataLakeAnalytics::Account
     # @param custom_headers [Hash{String => String}] A hash of custom headers that
     # will be added to the HTTP request.
     #
+    def delete(resource_group_name, account_name, custom_headers = nil)
+      response = delete_async(resource_group_name, account_name, custom_headers).value!
+      nil
+    end
+
+    #
+    # @param resource_group_name [String] The name of the Azure resource group
+    # that contains the Data Lake Analytics account.
+    # @param account_name [String] The name of the Data Lake Analytics account to
+    # delete
+    # @param custom_headers [Hash{String => String}] A hash of custom headers that
+    # will be added to the HTTP request.
+    #
     # @return [Concurrent::Promise] promise which provides async access to http
     # response.
     #
-    def delete(resource_group_name, account_name, custom_headers = nil)
+    def delete_async(resource_group_name, account_name, custom_headers = nil)
       # Send request
       promise = begin_delete_async(resource_group_name, account_name, custom_headers)
 
@@ -2282,10 +2295,27 @@ module Azure::ARM::DataLakeAnalytics::Account
     # @param custom_headers [Hash{String => String}] A hash of custom headers that
     # will be added to the HTTP request.
     #
+    # @return [DataLakeAnalyticsAccount] operation results.
+    #
+    def create(resource_group_name, name, parameters, custom_headers = nil)
+      response = create_async(resource_group_name, name, parameters, custom_headers).value!
+      response.body unless response.nil?
+    end
+
+    #
+    # @param resource_group_name [String] The name of the Azure resource group
+    # that contains the Data Lake Analytics account.the account will be
+    # associated with.
+    # @param name [String] The name of the Data Lake Analytics account to create.
+    # @param parameters [DataLakeAnalyticsAccount] Parameters supplied to the
+    # create Data Lake Analytics account operation.
+    # @param custom_headers [Hash{String => String}] A hash of custom headers that
+    # will be added to the HTTP request.
+    #
     # @return [Concurrent::Promise] promise which provides async access to http
     # response.
     #
-    def create(resource_group_name, name, parameters, custom_headers = nil)
+    def create_async(resource_group_name, name, parameters, custom_headers = nil)
       # Send request
       promise = begin_create_async(resource_group_name, name, parameters, custom_headers)
 
@@ -2444,10 +2474,26 @@ module Azure::ARM::DataLakeAnalytics::Account
     # @param custom_headers [Hash{String => String}] A hash of custom headers that
     # will be added to the HTTP request.
     #
+    # @return [DataLakeAnalyticsAccount] operation results.
+    #
+    def update(resource_group_name, name, parameters, custom_headers = nil)
+      response = update_async(resource_group_name, name, parameters, custom_headers).value!
+      response.body unless response.nil?
+    end
+
+    #
+    # @param resource_group_name [String] The name of the Azure resource group
+    # that contains the Data Lake Analytics account.
+    # @param name [String] The name of the Data Lake Analytics account to update.
+    # @param parameters [DataLakeAnalyticsAccount] Parameters supplied to the
+    # update Data Lake Analytics account operation.
+    # @param custom_headers [Hash{String => String}] A hash of custom headers that
+    # will be added to the HTTP request.
+    #
     # @return [Concurrent::Promise] promise which provides async access to http
     # response.
     #
-    def update(resource_group_name, name, parameters, custom_headers = nil)
+    def update_async(resource_group_name, name, parameters, custom_headers = nil)
       # Send request
       promise = begin_update_async(resource_group_name, name, parameters, custom_headers)
 

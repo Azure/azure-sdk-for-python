@@ -22,7 +22,7 @@ describe 'Load balancers' do
 
   it 'should create load balancer' do
     params = build_load_balancer_params
-    result = @client.create_or_update(@resource_group.name, params.name, params).execute.value!
+    result = @client.create_or_update_async(@resource_group.name, params.name, params).value!
     expect(result.response.status).to eq(201)
     expect(result.body).not_to be_nil
     expect(result.body.name).to eq(params.name)
@@ -41,7 +41,7 @@ describe 'Load balancers' do
     public_ip.dns_settings = dns_settings
 
     dns_settings.domain_name_label = lb_domain_name_label
-    public_ip = @resource_helper.network_client.public_ipaddresses.create_or_update(@resource_group.name, lb_public_ip_name, public_ip).value!.body
+    public_ip = @resource_helper.network_client.public_ipaddresses.create_or_update(@resource_group.name, lb_public_ip_name, public_ip)
 
     #create virtual network
     @resource_helper.create_virtual_network(@resource_group.name)
@@ -123,7 +123,7 @@ describe 'Load balancers' do
     load_balancer.inbound_nat_rules = [inbound_nat_rule1, inbound_nat_rule2]
 
     #create load balancer
-    result = @client.create_or_update(@resource_group.name, lb_name, load_balancer).value!
+    result = @client.create_or_update_async(@resource_group.name, lb_name, load_balancer).value!
     expect(result.response.status).to eq(201)
     expect(result.body).not_to be_nil
     expect(result.body.name).to eq(lb_name)
@@ -166,7 +166,7 @@ describe 'Load balancers' do
     inbound_tcp.frontend_port = 32900
     inbound_udp.backend_port = 32900
     inbound_tcp.backend_port = 32900
-    @client.create_or_update(@resource_group.name, params.name, params).value!
+    @client.create_or_update(@resource_group.name, params.name, params)
     result = @client.list_all_async.value!
     expect(result.response.status).to eq(200)
   end
@@ -181,7 +181,7 @@ describe 'Load balancers' do
 
   it 'should delete load balancer' do
     load_balancer = create_load_balancer
-    result = @client.delete(@resource_group.name, load_balancer.name).value!
+    result = @client.delete_async(@resource_group.name, load_balancer.name).value!
     expect(result.response.status).to eq(200)
   end
 
@@ -191,7 +191,7 @@ describe 'Load balancers' do
     expect(result.body).not_to be_nil
     expect(result.body.value).to be_a(Array)
     while !result.body.next_link.nil? && !result.body.next_link.empty? do
-      result = @client.list_all_next(result.body.next_link).value!
+      result = @client.list_all_next(result.body.next_link)
       expect(result.body.value).not_to be_nil
       expect(result.body.value).to be_a(Array)
     end
@@ -215,7 +215,7 @@ describe 'Load balancers' do
 
   def create_load_balancer
     params = build_load_balancer_params
-    @client.create_or_update(@resource_group.name, params.name, params).value!.body
+    @client.create_or_update(@resource_group.name, params.name, params)
   end
 
   def build_load_balancer_params

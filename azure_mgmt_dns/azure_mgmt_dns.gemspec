@@ -15,7 +15,7 @@ Gem::Specification.new do |spec|
   spec.email         = 'azrubyteam@microsoft.com'
   spec.description   = 'Microsoft Azure Dns Management Client Library for Ruby'
   spec.summary       = 'Official Ruby client library to consume Microsoft Azure Dns Management services.'
-  spec.homepage      = 'http://github.com/azure/azure-sdk-ruby'
+  spec.homepage      = 'https://aka.ms/azure-sdk-for-ruby'
   spec.license       = 'MIT'
 
   spec.files         = `git ls-files -z`.split("\x0").reject { |f| f.match(%r{^(test|spec|features)/}) }
@@ -29,7 +29,6 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'rake', '~> 10'
   spec.add_development_dependency 'rspec', '~> 3'
   spec.add_development_dependency 'dotenv', '~> 2'
-  spec.add_development_dependency 'azure_mgmt_resources', '~> 0.3'
 
   spec.add_runtime_dependency 'ms_rest_azure', '~> 0.3.0'
 end

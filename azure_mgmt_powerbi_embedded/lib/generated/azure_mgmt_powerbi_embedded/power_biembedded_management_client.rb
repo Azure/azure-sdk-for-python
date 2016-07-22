@@ -8,7 +8,6 @@ module Azure::ARM::PowerBiEmbedded
   # A service client - single point of access to the REST API.
   #
   class PowerBIEmbeddedManagementClient < MsRestAzure::AzureServiceClient
-    include Azure::ARM::PowerBiEmbedded::Models
     include MsRest::Serialization
     include MsRestAzure
 

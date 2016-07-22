@@ -38,10 +38,26 @@ module Azure::ARM::MachineLearning
     # @param custom_headers [Hash{String => String}] A hash of custom headers that
     # will be added to the HTTP request.
     #
+    # @return [WebService] operation results.
+    #
+    def create_or_update(create_or_update_payload, resource_group_name, web_service_name, custom_headers = nil)
+      response = create_or_update_async(create_or_update_payload, resource_group_name, web_service_name, custom_headers).value!
+      response.body unless response.nil?
+    end
+
+    #
+    # @param create_or_update_payload [WebService] The payload to create or update
+    # the Azure ML web service.
+    # @param resource_group_name [String] Name of the resource group.
+    # @param web_service_name [String] The Azure ML web service name which you
+    # want to reach.
+    # @param custom_headers [Hash{String => String}] A hash of custom headers that
+    # will be added to the HTTP request.
+    #
     # @return [Concurrent::Promise] promise which provides async access to http
     # response.
     #
-    def create_or_update(create_or_update_payload, resource_group_name, web_service_name, custom_headers = nil)
+    def create_or_update_async(create_or_update_payload, resource_group_name, web_service_name, custom_headers = nil)
       # Send request
       promise = begin_create_or_update_async(create_or_update_payload, resource_group_name, web_service_name, custom_headers)
 
@@ -293,10 +309,26 @@ module Azure::ARM::MachineLearning
     # @param custom_headers [Hash{String => String}] A hash of custom headers that
     # will be added to the HTTP request.
     #
+    # @return [WebService] operation results.
+    #
+    def patch(patch_payload, resource_group_name, web_service_name, custom_headers = nil)
+      response = patch_async(patch_payload, resource_group_name, web_service_name, custom_headers).value!
+      response.body unless response.nil?
+    end
+
+    #
+    # @param patch_payload [WebService] The payload to patch the Azure ML web
+    # service with.
+    # @param resource_group_name [String] Name of the resource group.
+    # @param web_service_name [String] The Azure ML web service name which you
+    # want to reach.
+    # @param custom_headers [Hash{String => String}] A hash of custom headers that
+    # will be added to the HTTP request.
+    #
     # @return [Concurrent::Promise] promise which provides async access to http
     # response.
     #
-    def patch(patch_payload, resource_group_name, web_service_name, custom_headers = nil)
+    def patch_async(patch_payload, resource_group_name, web_service_name, custom_headers = nil)
       # Send request
       promise = begin_patch_async(patch_payload, resource_group_name, web_service_name, custom_headers)
 
@@ -436,10 +468,22 @@ module Azure::ARM::MachineLearning
     # @param custom_headers [Hash{String => String}] A hash of custom headers that
     # will be added to the HTTP request.
     #
+    def remove(resource_group_name, web_service_name, custom_headers = nil)
+      response = remove_async(resource_group_name, web_service_name, custom_headers).value!
+      nil
+    end
+
+    #
+    # @param resource_group_name [String] Name of the resource group.
+    # @param web_service_name [String] The Azure ML web service name which you
+    # want to reach.
+    # @param custom_headers [Hash{String => String}] A hash of custom headers that
+    # will be added to the HTTP request.
+    #
     # @return [Concurrent::Promise] promise which provides async access to http
     # response.
     #
-    def remove(resource_group_name, web_service_name, custom_headers = nil)
+    def remove_async(resource_group_name, web_service_name, custom_headers = nil)
       # Send request
       promise = begin_remove_async(resource_group_name, web_service_name, custom_headers)
 

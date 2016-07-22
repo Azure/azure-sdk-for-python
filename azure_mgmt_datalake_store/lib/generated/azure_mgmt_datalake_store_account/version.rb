@@ -4,5 +4,5 @@
 # regenerated.
 
 module Azure::ARM::DataLakeStore::Account
-    VERSION = '0.3.1'
+    VERSION = '0.4.0'
 end

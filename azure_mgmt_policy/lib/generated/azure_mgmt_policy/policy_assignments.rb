@@ -8,6 +8,7 @@ module Azure::ARM::Policy
   # PolicyAssignments
   #
   class PolicyAssignments
+    include Azure::ARM::Policy::Models
     include MsRestAzure
 
     #

@@ -12,14 +12,13 @@ module Azure::ARM::Resources
 
       include MsRestAzure
 
-      # @return [String] Gets or sets full deployment operation id.
+      # @return [String] Full deployment operation id.
       attr_accessor :id
 
-      # @return [String] Gets or sets deployment operation id.
+      # @return [String] Deployment operation id.
       attr_accessor :operation_id
 
-      # @return [DeploymentOperationProperties] Gets or sets deployment
-      # properties.
+      # @return [DeploymentOperationProperties] Deployment properties.
       attr_accessor :properties
 
 

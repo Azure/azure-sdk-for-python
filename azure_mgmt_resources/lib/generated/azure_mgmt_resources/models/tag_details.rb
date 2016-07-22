@@ -12,16 +12,16 @@ module Azure::ARM::Resources
 
       include MsRestAzure
 
-      # @return [String] Gets or sets the tag ID.
+      # @return [String] The tag ID.
       attr_accessor :id
 
-      # @return [String] Gets or sets the tag name.
+      # @return [String] The tag name.
       attr_accessor :tag_name
 
-      # @return [TagCount] Gets or sets the tag count.
+      # @return [TagCount] The tag count.
       attr_accessor :count
 
-      # @return [Array<TagValue>] Gets or sets the list of tag values.
+      # @return [Array<TagValue>] The list of tag values.
       attr_accessor :values
 
 

@@ -33,10 +33,25 @@ module Azure::ARM::Compute
     # @param custom_headers [Hash{String => String}] A hash of custom headers that
     # will be added to the HTTP request.
     #
+    # @return [VirtualMachineCaptureResult] operation results.
+    #
+    def capture(resource_group_name, vm_name, parameters, custom_headers = nil)
+      response = capture_async(resource_group_name, vm_name, parameters, custom_headers).value!
+      response.body unless response.nil?
+    end
+
+    #
+    # @param resource_group_name [String] The name of the resource group.
+    # @param vm_name [String] The name of the virtual machine.
+    # @param parameters [VirtualMachineCaptureParameters] Parameters supplied to
+    # the Capture Virtual Machine operation.
+    # @param custom_headers [Hash{String => String}] A hash of custom headers that
+    # will be added to the HTTP request.
+    #
     # @return [Concurrent::Promise] promise which provides async access to http
     # response.
     #
-    def capture(resource_group_name, vm_name, parameters, custom_headers = nil)
+    def capture_async(resource_group_name, vm_name, parameters, custom_headers = nil)
       # Send request
       promise = begin_capture_async(resource_group_name, vm_name, parameters, custom_headers)
 
@@ -177,10 +192,25 @@ module Azure::ARM::Compute
     # @param custom_headers [Hash{String => String}] A hash of custom headers that
     # will be added to the HTTP request.
     #
+    # @return [VirtualMachine] operation results.
+    #
+    def create_or_update(resource_group_name, vm_name, parameters, custom_headers = nil)
+      response = create_or_update_async(resource_group_name, vm_name, parameters, custom_headers).value!
+      response.body unless response.nil?
+    end
+
+    #
+    # @param resource_group_name [String] The name of the resource group.
+    # @param vm_name [String] The name of the virtual machine.
+    # @param parameters [VirtualMachine] Parameters supplied to the Create Virtual
+    # Machine operation.
+    # @param custom_headers [Hash{String => String}] A hash of custom headers that
+    # will be added to the HTTP request.
+    #
     # @return [Concurrent::Promise] promise which provides async access to http
     # response.
     #
-    def create_or_update(resource_group_name, vm_name, parameters, custom_headers = nil)
+    def create_or_update_async(resource_group_name, vm_name, parameters, custom_headers = nil)
       # Send request
       promise = begin_create_or_update_async(resource_group_name, vm_name, parameters, custom_headers)
 
@@ -326,10 +356,21 @@ module Azure::ARM::Compute
     # @param custom_headers [Hash{String => String}] A hash of custom headers that
     # will be added to the HTTP request.
     #
+    def delete(resource_group_name, vm_name, custom_headers = nil)
+      response = delete_async(resource_group_name, vm_name, custom_headers).value!
+      nil
+    end
+
+    #
+    # @param resource_group_name [String] The name of the resource group.
+    # @param vm_name [String] The name of the virtual machine.
+    # @param custom_headers [Hash{String => String}] A hash of custom headers that
+    # will be added to the HTTP request.
+    #
     # @return [Concurrent::Promise] promise which provides async access to http
     # response.
     #
-    def delete(resource_group_name, vm_name, custom_headers = nil)
+    def delete_async(resource_group_name, vm_name, custom_headers = nil)
       # Send request
       promise = begin_delete_async(resource_group_name, vm_name, custom_headers)
 
@@ -537,10 +578,21 @@ module Azure::ARM::Compute
     # @param custom_headers [Hash{String => String}] A hash of custom headers that
     # will be added to the HTTP request.
     #
+    def deallocate(resource_group_name, vm_name, custom_headers = nil)
+      response = deallocate_async(resource_group_name, vm_name, custom_headers).value!
+      nil
+    end
+
+    #
+    # @param resource_group_name [String] The name of the resource group.
+    # @param vm_name [String] The name of the virtual machine.
+    # @param custom_headers [Hash{String => String}] A hash of custom headers that
+    # will be added to the HTTP request.
+    #
     # @return [Concurrent::Promise] promise which provides async access to http
     # response.
     #
-    def deallocate(resource_group_name, vm_name, custom_headers = nil)
+    def deallocate_async(resource_group_name, vm_name, custom_headers = nil)
       # Send request
       promise = begin_deallocate_async(resource_group_name, vm_name, custom_headers)
 
@@ -1055,10 +1107,21 @@ module Azure::ARM::Compute
     # @param custom_headers [Hash{String => String}] A hash of custom headers that
     # will be added to the HTTP request.
     #
+    def power_off(resource_group_name, vm_name, custom_headers = nil)
+      response = power_off_async(resource_group_name, vm_name, custom_headers).value!
+      nil
+    end
+
+    #
+    # @param resource_group_name [String] The name of the resource group.
+    # @param vm_name [String] The name of the virtual machine.
+    # @param custom_headers [Hash{String => String}] A hash of custom headers that
+    # will be added to the HTTP request.
+    #
     # @return [Concurrent::Promise] promise which provides async access to http
     # response.
     #
-    def power_off(resource_group_name, vm_name, custom_headers = nil)
+    def power_off_async(resource_group_name, vm_name, custom_headers = nil)
       # Send request
       promise = begin_power_off_async(resource_group_name, vm_name, custom_headers)
 
@@ -1165,10 +1228,21 @@ module Azure::ARM::Compute
     # @param custom_headers [Hash{String => String}] A hash of custom headers that
     # will be added to the HTTP request.
     #
+    def restart(resource_group_name, vm_name, custom_headers = nil)
+      response = restart_async(resource_group_name, vm_name, custom_headers).value!
+      nil
+    end
+
+    #
+    # @param resource_group_name [String] The name of the resource group.
+    # @param vm_name [String] The name of the virtual machine.
+    # @param custom_headers [Hash{String => String}] A hash of custom headers that
+    # will be added to the HTTP request.
+    #
     # @return [Concurrent::Promise] promise which provides async access to http
     # response.
     #
-    def restart(resource_group_name, vm_name, custom_headers = nil)
+    def restart_async(resource_group_name, vm_name, custom_headers = nil)
       # Send request
       promise = begin_restart_async(resource_group_name, vm_name, custom_headers)
 
@@ -1275,10 +1349,21 @@ module Azure::ARM::Compute
     # @param custom_headers [Hash{String => String}] A hash of custom headers that
     # will be added to the HTTP request.
     #
+    def start(resource_group_name, vm_name, custom_headers = nil)
+      response = start_async(resource_group_name, vm_name, custom_headers).value!
+      nil
+    end
+
+    #
+    # @param resource_group_name [String] The name of the resource group.
+    # @param vm_name [String] The name of the virtual machine.
+    # @param custom_headers [Hash{String => String}] A hash of custom headers that
+    # will be added to the HTTP request.
+    #
     # @return [Concurrent::Promise] promise which provides async access to http
     # response.
     #
-    def start(resource_group_name, vm_name, custom_headers = nil)
+    def start_async(resource_group_name, vm_name, custom_headers = nil)
       # Send request
       promise = begin_start_async(resource_group_name, vm_name, custom_headers)
 
@@ -1385,10 +1470,21 @@ module Azure::ARM::Compute
     # @param custom_headers [Hash{String => String}] A hash of custom headers that
     # will be added to the HTTP request.
     #
+    def redeploy(resource_group_name, vm_name, custom_headers = nil)
+      response = redeploy_async(resource_group_name, vm_name, custom_headers).value!
+      nil
+    end
+
+    #
+    # @param resource_group_name [String] The name of the resource group.
+    # @param vm_name [String] The name of the virtual machine.
+    # @param custom_headers [Hash{String => String}] A hash of custom headers that
+    # will be added to the HTTP request.
+    #
     # @return [Concurrent::Promise] promise which provides async access to http
     # response.
     #
-    def redeploy(resource_group_name, vm_name, custom_headers = nil)
+    def redeploy_async(resource_group_name, vm_name, custom_headers = nil)
       # Send request
       promise = begin_redeploy_async(resource_group_name, vm_name, custom_headers)
 

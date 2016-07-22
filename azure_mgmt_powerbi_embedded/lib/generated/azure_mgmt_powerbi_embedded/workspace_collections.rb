@@ -367,10 +367,22 @@ module Azure::ARM::PowerBiEmbedded
     # @param custom_headers [Hash{String => String}] A hash of custom headers that
     # will be added to the HTTP request.
     #
+    def delete(resource_group_name, workspace_collection_name, custom_headers = nil)
+      response = delete_async(resource_group_name, workspace_collection_name, custom_headers).value!
+      nil
+    end
+
+    #
+    # @param resource_group_name [String] Azure resource group
+    # @param workspace_collection_name [String] Power BI Embedded workspace
+    # collection name
+    # @param custom_headers [Hash{String => String}] A hash of custom headers that
+    # will be added to the HTTP request.
+    #
     # @return [Concurrent::Promise] promise which provides async access to http
     # response.
     #
-    def delete(resource_group_name, workspace_collection_name, custom_headers = nil)
+    def delete_async(resource_group_name, workspace_collection_name, custom_headers = nil)
       # Send request
       promise = begin_delete_async(resource_group_name, workspace_collection_name, custom_headers)
 

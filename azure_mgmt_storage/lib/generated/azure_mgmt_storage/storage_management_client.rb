@@ -8,7 +8,6 @@ module Azure::ARM::Storage
   # A service client - single point of access to the REST API.
   #
   class StorageManagementClient < MsRestAzure::AzureServiceClient
-    include Azure::ARM::Storage::Models
     include MsRest::Serialization
     include MsRestAzure
 

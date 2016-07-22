@@ -35,10 +35,23 @@ module Azure::ARM::Network
     # @param custom_headers [Hash{String => String}] A hash of custom headers that
     # will be added to the HTTP request.
     #
+    def delete(resource_group_name, virtual_network_name, virtual_network_peering_name, custom_headers = nil)
+      response = delete_async(resource_group_name, virtual_network_name, virtual_network_peering_name, custom_headers).value!
+      nil
+    end
+
+    #
+    # @param resource_group_name [String] The name of the resource group.
+    # @param virtual_network_name [String] The name of the virtual network.
+    # @param virtual_network_peering_name [String] The name of the virtual network
+    # peering.
+    # @param custom_headers [Hash{String => String}] A hash of custom headers that
+    # will be added to the HTTP request.
+    #
     # @return [Concurrent::Promise] promise which provides async access to http
     # response.
     #
-    def delete(resource_group_name, virtual_network_name, virtual_network_peering_name, custom_headers = nil)
+    def delete_async(resource_group_name, virtual_network_name, virtual_network_peering_name, custom_headers = nil)
       # Send request
       promise = begin_delete_async(resource_group_name, virtual_network_name, virtual_network_peering_name, custom_headers)
 
@@ -260,10 +273,26 @@ module Azure::ARM::Network
     # @param custom_headers [Hash{String => String}] A hash of custom headers that
     # will be added to the HTTP request.
     #
+    # @return [VirtualNetworkPeering] operation results.
+    #
+    def create_or_update(resource_group_name, virtual_network_name, virtual_network_peering_name, virtual_network_peering_parameters, custom_headers = nil)
+      response = create_or_update_async(resource_group_name, virtual_network_name, virtual_network_peering_name, virtual_network_peering_parameters, custom_headers).value!
+      response.body unless response.nil?
+    end
+
+    #
+    # @param resource_group_name [String] The name of the resource group.
+    # @param virtual_network_name [String] The name of the virtual network.
+    # @param virtual_network_peering_name [String] The name of the peering.
+    # @param virtual_network_peering_parameters [VirtualNetworkPeering] Parameters
+    # supplied to the create/update virtual network peering operation
+    # @param custom_headers [Hash{String => String}] A hash of custom headers that
+    # will be added to the HTTP request.
+    #
     # @return [Concurrent::Promise] promise which provides async access to http
     # response.
     #
-    def create_or_update(resource_group_name, virtual_network_name, virtual_network_peering_name, virtual_network_peering_parameters, custom_headers = nil)
+    def create_or_update_async(resource_group_name, virtual_network_name, virtual_network_peering_name, virtual_network_peering_parameters, custom_headers = nil)
       # Send request
       promise = begin_create_or_update_async(resource_group_name, virtual_network_name, virtual_network_peering_name, virtual_network_peering_parameters, custom_headers)
 

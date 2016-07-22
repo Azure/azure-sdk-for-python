@@ -8,7 +8,6 @@ module Azure::ARM::DevTestLabs
   # A service client - single point of access to the REST API.
   #
   class DevTestLabsClient < MsRestAzure::AzureServiceClient
-    include Azure::ARM::DevTestLabs::Models
     include MsRest::Serialization
     include MsRestAzure
 

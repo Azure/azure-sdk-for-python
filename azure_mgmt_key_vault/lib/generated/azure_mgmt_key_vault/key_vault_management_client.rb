@@ -8,7 +8,6 @@ module Azure::ARM::KeyVault
   # A service client - single point of access to the REST API.
   #
   class KeyVaultManagementClient < MsRestAzure::AzureServiceClient
-    include Azure::ARM::KeyVault::Models
     include MsRest::Serialization
     include MsRestAzure
 

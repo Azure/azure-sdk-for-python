@@ -213,14 +213,16 @@ module Azure::ARM::Resources
     #
     # @param top [Integer] Query parameters. If null is passed returns all
     # deployments.
+    # @param expand [String] The $expand query parameter. e.g. To include property
+    # aliases in response, use $expand=resourceTypes/aliases.
     # @param custom_headers [Hash{String => String}] A hash of custom headers that
     # will be added to the HTTP request.
     #
     # @return [ProviderListResult] which provide lazy access to pages of the
     # response.
     #
-    def list_as_lazy(top = nil, custom_headers = nil)
-      response = list_async(top, custom_headers).value!
+    def list_as_lazy(top = nil, expand = nil, custom_headers = nil)
+      response = list_async(top, expand, custom_headers).value!
       unless response.nil?
         page = response.body
         page.next_method = Proc.new do |next_link|
@@ -235,13 +237,15 @@ module Azure::ARM::Resources
     #
     # @param top [Integer] Query parameters. If null is passed returns all
     # deployments.
+    # @param expand [String] The $expand query parameter. e.g. To include property
+    # aliases in response, use $expand=resourceTypes/aliases.
     # @param custom_headers [Hash{String => String}] A hash of custom headers that
     # will be added to the HTTP request.
     #
     # @return [Array<Provider>] operation results.
     #
-    def list(top = nil, custom_headers = nil)
-      first_page = list_as_lazy(top, custom_headers)
+    def list(top = nil, expand = nil, custom_headers = nil)
+      first_page = list_as_lazy(top, expand, custom_headers)
       first_page.get_all_items
     end
 
@@ -250,13 +254,15 @@ module Azure::ARM::Resources
     #
     # @param top [Integer] Query parameters. If null is passed returns all
     # deployments.
+    # @param expand [String] The $expand query parameter. e.g. To include property
+    # aliases in response, use $expand=resourceTypes/aliases.
     # @param custom_headers [Hash{String => String}] A hash of custom headers that
     # will be added to the HTTP request.
     #
     # @return [MsRestAzure::AzureOperationResponse] HTTP response information.
     #
-    def list_with_http_info(top = nil, custom_headers = nil)
-      list_async(top, custom_headers).value!
+    def list_with_http_info(top = nil, expand = nil, custom_headers = nil)
+      list_async(top, expand, custom_headers).value!
     end
 
     #
@@ -264,12 +270,14 @@ module Azure::ARM::Resources
     #
     # @param top [Integer] Query parameters. If null is passed returns all
     # deployments.
+    # @param expand [String] The $expand query parameter. e.g. To include property
+    # aliases in response, use $expand=resourceTypes/aliases.
     # @param [Hash{String => String}] A hash of custom headers that will be added
     # to the HTTP request.
     #
     # @return [Concurrent::Promise] Promise object which holds the HTTP response.
     #
-    def list_async(top = nil, custom_headers = nil)
+    def list_async(top = nil, expand = nil, custom_headers = nil)
       fail ArgumentError, '@client.api_version is nil' if @client.api_version.nil?
       fail ArgumentError, '@client.subscription_id is nil' if @client.subscription_id.nil?
 
@@ -283,7 +291,7 @@ module Azure::ARM::Resources
       options = {
           middlewares: [[MsRest::RetryPolicyMiddleware, times: 3, retry: 0.02], [:cookie_jar]],
           path_params: {'subscriptionId' => @client.subscription_id},
-          query_params: {'$top' => top,'api-version' => @client.api_version},
+          query_params: {'$top' => top,'$expand' => expand,'api-version' => @client.api_version},
           headers: request_headers.merge(custom_headers || {})
       }
 
@@ -327,13 +335,15 @@ module Azure::ARM::Resources
     #
     # @param resource_provider_namespace [String] Namespace of the resource
     # provider.
+    # @param expand [String] The $expand query parameter. e.g. To include property
+    # aliases in response, use $expand=resourceTypes/aliases.
     # @param custom_headers [Hash{String => String}] A hash of custom headers that
     # will be added to the HTTP request.
     #
     # @return [Provider] operation results.
     #
-    def get(resource_provider_namespace, custom_headers = nil)
-      response = get_async(resource_provider_namespace, custom_headers).value!
+    def get(resource_provider_namespace, expand = nil, custom_headers = nil)
+      response = get_async(resource_provider_namespace, expand, custom_headers).value!
       response.body unless response.nil?
     end
 
@@ -342,13 +352,15 @@ module Azure::ARM::Resources
     #
     # @param resource_provider_namespace [String] Namespace of the resource
     # provider.
+    # @param expand [String] The $expand query parameter. e.g. To include property
+    # aliases in response, use $expand=resourceTypes/aliases.
     # @param custom_headers [Hash{String => String}] A hash of custom headers that
     # will be added to the HTTP request.
     #
     # @return [MsRestAzure::AzureOperationResponse] HTTP response information.
     #
-    def get_with_http_info(resource_provider_namespace, custom_headers = nil)
-      get_async(resource_provider_namespace, custom_headers).value!
+    def get_with_http_info(resource_provider_namespace, expand = nil, custom_headers = nil)
+      get_async(resource_provider_namespace, expand, custom_headers).value!
     end
 
     #
@@ -356,12 +368,14 @@ module Azure::ARM::Resources
     #
     # @param resource_provider_namespace [String] Namespace of the resource
     # provider.
+    # @param expand [String] The $expand query parameter. e.g. To include property
+    # aliases in response, use $expand=resourceTypes/aliases.
     # @param [Hash{String => String}] A hash of custom headers that will be added
     # to the HTTP request.
     #
     # @return [Concurrent::Promise] Promise object which holds the HTTP response.
     #
-    def get_async(resource_provider_namespace, custom_headers = nil)
+    def get_async(resource_provider_namespace, expand = nil, custom_headers = nil)
       fail ArgumentError, 'resource_provider_namespace is nil' if resource_provider_namespace.nil?
       fail ArgumentError, '@client.api_version is nil' if @client.api_version.nil?
       fail ArgumentError, '@client.subscription_id is nil' if @client.subscription_id.nil?
@@ -376,7 +390,7 @@ module Azure::ARM::Resources
       options = {
           middlewares: [[MsRest::RetryPolicyMiddleware, times: 3, retry: 0.02], [:cookie_jar]],
           path_params: {'resourceProviderNamespace' => resource_provider_namespace,'subscriptionId' => @client.subscription_id},
-          query_params: {'api-version' => @client.api_version},
+          query_params: {'$expand' => expand,'api-version' => @client.api_version},
           headers: request_headers.merge(custom_headers || {})
       }
 

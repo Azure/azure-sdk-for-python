@@ -8,7 +8,7 @@ module Azure::ARM::MachineLearning
     #
     # Instance of an Azure ML web service resource.
     #
-    class WebService < Resource
+    class WebService < MsRestAzure::Resource
 
       include MsRestAzure
 

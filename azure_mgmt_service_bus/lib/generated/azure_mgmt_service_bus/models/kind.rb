@@ -6,9 +6,9 @@
 module Azure::ARM::ServiceBus
   module Models
     #
-    # Defines values for kind
+    # Defines values for Kind
     #
-    module kind
+    module Kind
       Messaging = "Messaging"
       EventHub = "EventHub"
     end

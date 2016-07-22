@@ -17,7 +17,6 @@ require 'faraday-cookie_jar'
 require 'concurrent'
 require 'ms_rest'
 require 'generated/azure_mgmt_resources/module_definition'
-require 'generated/azure_mgmt_resources/version'
 require 'ms_rest_azure'
 
 module Azure::ARM::Resources
@@ -40,6 +39,8 @@ module Azure::ARM::Resources
     autoload :Deployment,                                         'generated/azure_mgmt_resources/models/deployment.rb'
     autoload :DeploymentExportResult,                             'generated/azure_mgmt_resources/models/deployment_export_result.rb'
     autoload :ResourceManagementErrorWithDetails,                 'generated/azure_mgmt_resources/models/resource_management_error_with_details.rb'
+    autoload :AliasPathType,                                      'generated/azure_mgmt_resources/models/alias_path_type.rb'
+    autoload :AliasType,                                          'generated/azure_mgmt_resources/models/alias_type.rb'
     autoload :ProviderResourceType,                               'generated/azure_mgmt_resources/models/provider_resource_type.rb'
     autoload :Provider,                                           'generated/azure_mgmt_resources/models/provider.rb'
     autoload :BasicDependency,                                    'generated/azure_mgmt_resources/models/basic_dependency.rb'

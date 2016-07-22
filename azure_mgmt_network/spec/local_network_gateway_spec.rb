@@ -22,7 +22,7 @@ describe 'Local Network Gateways' do
 
   it 'should create local network gateway' do
     params = @resource_helper.build_local_network_gateway_params(@location)
-    result = @client.create_or_update(@resource_group.name, params.name, params).value!
+    result = @client.create_or_update_async(@resource_group.name, params.name, params).value!
     expect(result.response.status).to eq(200)
     expect(result.body).not_to be_nil
     expect(result.body.name).to eq(params.name)
@@ -38,7 +38,7 @@ describe 'Local Network Gateways' do
 
   it 'should delete local network gateway' do
     local_network_gateway = @resource_helper.create_local_network_gateway(@resource_group, @location)
-    result = @client.delete(@resource_group.name, local_network_gateway.name).value!
+    result = @client.delete_async(@resource_group.name, local_network_gateway.name).value!
     expect(result.response.status).to eq(200)
   end
 

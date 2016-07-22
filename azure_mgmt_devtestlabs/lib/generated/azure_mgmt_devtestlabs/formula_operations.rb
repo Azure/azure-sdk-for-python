@@ -267,10 +267,25 @@ module Azure::ARM::DevTestLabs
     # @param custom_headers [Hash{String => String}] A hash of custom headers that
     # will be added to the HTTP request.
     #
+    # @return [Formula] operation results.
+    #
+    def create_or_update_resource(resource_group_name, lab_name, name, formula, custom_headers = nil)
+      response = create_or_update_resource_async(resource_group_name, lab_name, name, formula, custom_headers).value!
+      response.body unless response.nil?
+    end
+
+    #
+    # @param resource_group_name [String] The name of the resource group.
+    # @param lab_name [String] The name of the lab.
+    # @param name [String] The name of the formula.
+    # @param formula [Formula]
+    # @param custom_headers [Hash{String => String}] A hash of custom headers that
+    # will be added to the HTTP request.
+    #
     # @return [Concurrent::Promise] promise which provides async access to http
     # response.
     #
-    def create_or_update_resource(resource_group_name, lab_name, name, formula, custom_headers = nil)
+    def create_or_update_resource_async(resource_group_name, lab_name, name, formula, custom_headers = nil)
       # Send request
       promise = begin_create_or_update_resource_async(resource_group_name, lab_name, name, formula, custom_headers)
 

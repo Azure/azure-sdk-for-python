@@ -133,10 +133,25 @@ module Azure::ARM::Web
     # @param custom_headers [Hash{String => String}] A hash of custom headers that
     # will be added to the HTTP request.
     #
+    # @return [HostingEnvironment] operation results.
+    #
+    def create_or_update_hosting_environment(resource_group_name, name, hosting_environment_envelope, custom_headers = nil)
+      response = create_or_update_hosting_environment_async(resource_group_name, name, hosting_environment_envelope, custom_headers).value!
+      response.body unless response.nil?
+    end
+
+    #
+    # @param resource_group_name [String] Name of resource group
+    # @param name [String] Name of hostingEnvironment (App Service Environment)
+    # @param hosting_environment_envelope [HostingEnvironment] Properties of
+    # hostingEnvironment (App Service Environment)
+    # @param custom_headers [Hash{String => String}] A hash of custom headers that
+    # will be added to the HTTP request.
+    #
     # @return [Concurrent::Promise] promise which provides async access to http
     # response.
     #
-    def create_or_update_hosting_environment(resource_group_name, name, hosting_environment_envelope, custom_headers = nil)
+    def create_or_update_hosting_environment_async(resource_group_name, name, hosting_environment_envelope, custom_headers = nil)
       # Send request
       promise = begin_create_or_update_hosting_environment_async(resource_group_name, name, hosting_environment_envelope, custom_headers)
 
@@ -284,10 +299,25 @@ module Azure::ARM::Web
     # @param custom_headers [Hash{String => String}] A hash of custom headers that
     # will be added to the HTTP request.
     #
+    # @return [Object] operation results.
+    #
+    def delete_hosting_environment(resource_group_name, name, force_delete = nil, custom_headers = nil)
+      response = delete_hosting_environment_async(resource_group_name, name, force_delete, custom_headers).value!
+      response.body unless response.nil?
+    end
+
+    #
+    # @param resource_group_name [String] Name of resource group
+    # @param name [String] Name of hostingEnvironment (App Service Environment)
+    # @param force_delete [Boolean] Delete even if the hostingEnvironment (App
+    # Service Environment) contains resources
+    # @param custom_headers [Hash{String => String}] A hash of custom headers that
+    # will be added to the HTTP request.
+    #
     # @return [Concurrent::Promise] promise which provides async access to http
     # response.
     #
-    def delete_hosting_environment(resource_group_name, name, force_delete = nil, custom_headers = nil)
+    def delete_hosting_environment_async(resource_group_name, name, force_delete = nil, custom_headers = nil)
       # Send request
       promise = begin_delete_hosting_environment_async(resource_group_name, name, force_delete, custom_headers)
 
@@ -2598,10 +2628,24 @@ module Azure::ARM::Web
     # @param custom_headers [Hash{String => String}] A hash of custom headers that
     # will be added to the HTTP request.
     #
+    # @return [WorkerPool] operation results.
+    #
+    def create_or_update_multi_role_pool(resource_group_name, name, multi_role_pool_envelope, custom_headers = nil)
+      response = create_or_update_multi_role_pool_async(resource_group_name, name, multi_role_pool_envelope, custom_headers).value!
+      response.body unless response.nil?
+    end
+
+    #
+    # @param resource_group_name [String] Name of resource group
+    # @param name [String] Name of hostingEnvironment (App Service Environment)
+    # @param multi_role_pool_envelope [WorkerPool] Properties of multiRole pool
+    # @param custom_headers [Hash{String => String}] A hash of custom headers that
+    # will be added to the HTTP request.
+    #
     # @return [Concurrent::Promise] promise which provides async access to http
     # response.
     #
-    def create_or_update_multi_role_pool(resource_group_name, name, multi_role_pool_envelope, custom_headers = nil)
+    def create_or_update_multi_role_pool_async(resource_group_name, name, multi_role_pool_envelope, custom_headers = nil)
       # Send request
       promise = begin_create_or_update_multi_role_pool_async(resource_group_name, name, multi_role_pool_envelope, custom_headers)
 
@@ -3032,10 +3076,25 @@ module Azure::ARM::Web
     # @param custom_headers [Hash{String => String}] A hash of custom headers that
     # will be added to the HTTP request.
     #
+    # @return [WorkerPool] operation results.
+    #
+    def create_or_update_worker_pool(resource_group_name, name, worker_pool_name, worker_pool_envelope, custom_headers = nil)
+      response = create_or_update_worker_pool_async(resource_group_name, name, worker_pool_name, worker_pool_envelope, custom_headers).value!
+      response.body unless response.nil?
+    end
+
+    #
+    # @param resource_group_name [String] Name of resource group
+    # @param name [String] Name of hostingEnvironment (App Service Environment)
+    # @param worker_pool_name [String] Name of worker pool
+    # @param worker_pool_envelope [WorkerPool] Properties of worker pool
+    # @param custom_headers [Hash{String => String}] A hash of custom headers that
+    # will be added to the HTTP request.
+    #
     # @return [Concurrent::Promise] promise which provides async access to http
     # response.
     #
-    def create_or_update_worker_pool(resource_group_name, name, worker_pool_name, worker_pool_envelope, custom_headers = nil)
+    def create_or_update_worker_pool_async(resource_group_name, name, worker_pool_name, worker_pool_envelope, custom_headers = nil)
       # Send request
       promise = begin_create_or_update_worker_pool_async(resource_group_name, name, worker_pool_name, worker_pool_envelope, custom_headers)
 
@@ -3673,10 +3732,23 @@ module Azure::ARM::Web
     # @param custom_headers [Hash{String => String}] A hash of custom headers that
     # will be added to the HTTP request.
     #
+    # @return [SiteCollection] operation results.
+    #
+    def suspend_hosting_environment(resource_group_name, name, custom_headers = nil)
+      first_page = suspend_hosting_environment_as_lazy(resource_group_name, name, custom_headers)
+      first_page.get_all_items
+    end
+
+    #
+    # @param resource_group_name [String] Name of resource group
+    # @param name [String] Name of hostingEnvironment (App Service Environment)
+    # @param custom_headers [Hash{String => String}] A hash of custom headers that
+    # will be added to the HTTP request.
+    #
     # @return [Concurrent::Promise] promise which provides async access to http
     # response.
     #
-    def suspend_hosting_environment(resource_group_name, name, custom_headers = nil)
+    def suspend_hosting_environment_async(resource_group_name, name, custom_headers = nil)
       # Send request
       promise = begin_suspend_hosting_environment_async(resource_group_name, name, custom_headers)
 
@@ -3806,10 +3878,23 @@ module Azure::ARM::Web
     # @param custom_headers [Hash{String => String}] A hash of custom headers that
     # will be added to the HTTP request.
     #
+    # @return [SiteCollection] operation results.
+    #
+    def resume_hosting_environment(resource_group_name, name, custom_headers = nil)
+      first_page = resume_hosting_environment_as_lazy(resource_group_name, name, custom_headers)
+      first_page.get_all_items
+    end
+
+    #
+    # @param resource_group_name [String] Name of resource group
+    # @param name [String] Name of hostingEnvironment (App Service Environment)
+    # @param custom_headers [Hash{String => String}] A hash of custom headers that
+    # will be added to the HTTP request.
+    #
     # @return [Concurrent::Promise] promise which provides async access to http
     # response.
     #
-    def resume_hosting_environment(resource_group_name, name, custom_headers = nil)
+    def resume_hosting_environment_async(resource_group_name, name, custom_headers = nil)
       # Send request
       promise = begin_resume_hosting_environment_async(resource_group_name, name, custom_headers)
 

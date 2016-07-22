@@ -13,7 +13,7 @@ module Azure::ARM::MachineLearning
       include MsRestAzure
 
       # @return [OutputPortType] Port data type. Possible values include:
-      # 'Dataset'. Default value: Dataset .
+      # 'Dataset'. Default value: 'Dataset' .
       attr_accessor :type
 
 
@@ -32,7 +32,7 @@ module Azure::ARM::MachineLearning
               type: {
                 required: false,
                 serialized_name: 'type',
-                default_value: Dataset,
+                default_value: 'Dataset',
                 type: {
                   name: 'String'
                 }

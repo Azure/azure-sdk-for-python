@@ -12,7 +12,7 @@ module Azure::ARM::Resources
 
       include MsRestAzure
 
-      # @return [DeploymentProperties] Gets or sets the deployment properties.
+      # @return [DeploymentProperties] The deployment properties.
       attr_accessor :properties
 
 

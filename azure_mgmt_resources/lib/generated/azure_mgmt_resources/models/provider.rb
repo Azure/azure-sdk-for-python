@@ -12,17 +12,17 @@ module Azure::ARM::Resources
 
       include MsRestAzure
 
-      # @return [String] Gets or sets the provider id.
+      # @return [String] The provider id.
       attr_accessor :id
 
-      # @return [String] Gets or sets the namespace of the provider.
+      # @return [String] The namespace of the provider.
       attr_accessor :namespace
 
-      # @return [String] Gets or sets the registration state of the provider.
+      # @return [String] The registration state of the provider.
       attr_accessor :registration_state
 
-      # @return [Array<ProviderResourceType>] Gets or sets the collection of
-      # provider resource types.
+      # @return [Array<ProviderResourceType>] The collection of provider
+      # resource types.
       attr_accessor :resource_types
 
 

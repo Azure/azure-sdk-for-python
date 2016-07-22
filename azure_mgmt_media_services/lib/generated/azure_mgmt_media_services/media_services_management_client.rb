@@ -8,7 +8,6 @@ module Azure::ARM::MediaServices
   # A service client - single point of access to the REST API.
   #
   class MediaServicesManagementClient < MsRestAzure::AzureServiceClient
-    include Azure::ARM::MediaServices::Models
     include MsRest::Serialization
     include MsRestAzure
 

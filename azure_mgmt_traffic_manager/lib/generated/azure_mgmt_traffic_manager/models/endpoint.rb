@@ -6,7 +6,7 @@
 module Azure::ARM::TrafficManager
   module Models
     #
-    # Class respresenting a Traffic Manager endpoint.
+    # Class representing a Traffic Manager endpoint.
     #
     class Endpoint
 

@@ -34,10 +34,21 @@ module Azure::ARM::Network
     # @param custom_headers [Hash{String => String}] A hash of custom headers that
     # will be added to the HTTP request.
     #
+    def delete(resource_group_name, circuit_name, custom_headers = nil)
+      response = delete_async(resource_group_name, circuit_name, custom_headers).value!
+      nil
+    end
+
+    #
+    # @param resource_group_name [String] The name of the resource group.
+    # @param circuit_name [String] The name of the express route Circuit.
+    # @param custom_headers [Hash{String => String}] A hash of custom headers that
+    # will be added to the HTTP request.
+    #
     # @return [Concurrent::Promise] promise which provides async access to http
     # response.
     #
-    def delete(resource_group_name, circuit_name, custom_headers = nil)
+    def delete_async(resource_group_name, circuit_name, custom_headers = nil)
       # Send request
       promise = begin_delete_async(resource_group_name, circuit_name, custom_headers)
 
@@ -246,10 +257,25 @@ module Azure::ARM::Network
     # @param custom_headers [Hash{String => String}] A hash of custom headers that
     # will be added to the HTTP request.
     #
+    # @return [ExpressRouteCircuit] operation results.
+    #
+    def create_or_update(resource_group_name, circuit_name, parameters, custom_headers = nil)
+      response = create_or_update_async(resource_group_name, circuit_name, parameters, custom_headers).value!
+      response.body unless response.nil?
+    end
+
+    #
+    # @param resource_group_name [String] The name of the resource group.
+    # @param circuit_name [String] The name of the circuit.
+    # @param parameters [ExpressRouteCircuit] Parameters supplied to the
+    # create/delete ExpressRouteCircuit operation
+    # @param custom_headers [Hash{String => String}] A hash of custom headers that
+    # will be added to the HTTP request.
+    #
     # @return [Concurrent::Promise] promise which provides async access to http
     # response.
     #
-    def create_or_update(resource_group_name, circuit_name, parameters, custom_headers = nil)
+    def create_or_update_async(resource_group_name, circuit_name, parameters, custom_headers = nil)
       # Send request
       promise = begin_create_or_update_async(resource_group_name, circuit_name, parameters, custom_headers)
 
@@ -399,10 +425,25 @@ module Azure::ARM::Network
     # @param custom_headers [Hash{String => String}] A hash of custom headers that
     # will be added to the HTTP request.
     #
+    # @return [ExpressRouteCircuitsArpTableListResult] operation results.
+    #
+    def list_arp_table(resource_group_name, circuit_name, peering_name, device_path, custom_headers = nil)
+      response = list_arp_table_async(resource_group_name, circuit_name, peering_name, device_path, custom_headers).value!
+      response.body unless response.nil?
+    end
+
+    #
+    # @param resource_group_name [String] The name of the resource group.
+    # @param circuit_name [String] The name of the circuit.
+    # @param peering_name [String] The name of the peering.
+    # @param device_path [String] The path of the device.
+    # @param custom_headers [Hash{String => String}] A hash of custom headers that
+    # will be added to the HTTP request.
+    #
     # @return [Concurrent::Promise] promise which provides async access to http
     # response.
     #
-    def list_arp_table(resource_group_name, circuit_name, peering_name, device_path, custom_headers = nil)
+    def list_arp_table_async(resource_group_name, circuit_name, peering_name, device_path, custom_headers = nil)
       # Send request
       promise = begin_list_arp_table_async(resource_group_name, circuit_name, peering_name, device_path, custom_headers)
 
@@ -540,10 +581,25 @@ module Azure::ARM::Network
     # @param custom_headers [Hash{String => String}] A hash of custom headers that
     # will be added to the HTTP request.
     #
+    # @return [ExpressRouteCircuitsRoutesTableListResult] operation results.
+    #
+    def list_routes_table(resource_group_name, circuit_name, peering_name, device_path, custom_headers = nil)
+      response = list_routes_table_async(resource_group_name, circuit_name, peering_name, device_path, custom_headers).value!
+      response.body unless response.nil?
+    end
+
+    #
+    # @param resource_group_name [String] The name of the resource group.
+    # @param circuit_name [String] The name of the circuit.
+    # @param peering_name [String] The name of the peering.
+    # @param device_path [String] The path of the device.
+    # @param custom_headers [Hash{String => String}] A hash of custom headers that
+    # will be added to the HTTP request.
+    #
     # @return [Concurrent::Promise] promise which provides async access to http
     # response.
     #
-    def list_routes_table(resource_group_name, circuit_name, peering_name, device_path, custom_headers = nil)
+    def list_routes_table_async(resource_group_name, circuit_name, peering_name, device_path, custom_headers = nil)
       # Send request
       promise = begin_list_routes_table_async(resource_group_name, circuit_name, peering_name, device_path, custom_headers)
 
@@ -681,10 +737,25 @@ module Azure::ARM::Network
     # @param custom_headers [Hash{String => String}] A hash of custom headers that
     # will be added to the HTTP request.
     #
+    # @return [ExpressRouteCircuitsRoutesTableSummaryListResult] operation results.
+    #
+    def list_routes_table_summary(resource_group_name, circuit_name, peering_name, device_path, custom_headers = nil)
+      response = list_routes_table_summary_async(resource_group_name, circuit_name, peering_name, device_path, custom_headers).value!
+      response.body unless response.nil?
+    end
+
+    #
+    # @param resource_group_name [String] The name of the resource group.
+    # @param circuit_name [String] The name of the circuit.
+    # @param peering_name [String] The name of the peering.
+    # @param device_path [String] The path of the device.
+    # @param custom_headers [Hash{String => String}] A hash of custom headers that
+    # will be added to the HTTP request.
+    #
     # @return [Concurrent::Promise] promise which provides async access to http
     # response.
     #
-    def list_routes_table_summary(resource_group_name, circuit_name, peering_name, device_path, custom_headers = nil)
+    def list_routes_table_summary_async(resource_group_name, circuit_name, peering_name, device_path, custom_headers = nil)
       # Send request
       promise = begin_list_routes_table_summary_async(resource_group_name, circuit_name, peering_name, device_path, custom_headers)
 

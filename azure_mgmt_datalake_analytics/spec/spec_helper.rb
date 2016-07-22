@@ -76,18 +76,18 @@ class ResourceHelper
     params = Resources::Models::ResourceGroup.new()
     params.location = 'East US 2'
 
-    resource_client.resource_groups.create_or_update_async(@@resource_group_name, params).value!.body
+    resource_client.resource_groups.create_or_update(@@resource_group_name, params)
   end
 
   def delete_resource_group(name)
-    resource_client.resource_groups.delete(name).value!
+    resource_client.resource_groups.delete(name)
   end
 
   def create_datalake_store_account(name)
     dsl_acc = Azure::ARM::DataLakeStore::Account::Models::DataLakeStoreAccount.new
     dsl_acc.name = name
     dsl_acc.location = 'East US 2'
-    dls_acc_client.account.create(@@resource_group_name, name, dsl_acc).value!.body
+    dls_acc_client.account.create(@@resource_group_name, name, dsl_acc)
   end
 
   def create_datalake_analysis_account(analytics_acc_name, store_acc_name)
@@ -103,6 +103,6 @@ class ResourceHelper
     dla_acc_prop.data_lake_store_accounts = [dla_acc_info]
     analytics_acc.properties = dla_acc_prop
 
-    dla_acc_client.account.create(@@resource_group_name, analytics_acc_name, analytics_acc).value!.body
+    dla_acc_client.account.create(@@resource_group_name, analytics_acc_name, analytics_acc)
   end
 end

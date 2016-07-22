@@ -11,6 +11,7 @@ module Azure::ARM::SQL
   # Databases, Servers and related resources.
   #
   class SecurityAlertPolicy
+    include Azure::ARM::SQL::Models
     include MsRestAzure
 
     #
@@ -36,10 +37,27 @@ module Azure::ARM::SQL
     # @param custom_headers [Hash{String => String}] A hash of custom headers that
     # will be added to the HTTP request.
     #
+    # @return [ServerSecurityAlertPolicy] operation results.
+    #
+    def create_or_update(parameters, resource_group_name, server_name, custom_headers = nil)
+      response = create_or_update_async(parameters, resource_group_name, server_name, custom_headers).value!
+      response.body unless response.nil?
+    end
+
+    #
+    # @param parameters [ServerSecurityAlertPolicyCreateOrUpdateParameters] The
+    # required parameters for creating or updating a Azure SQL Server security
+    # alert policy.
+    # @param resource_group_name [String] The name of the Resource Group to which
+    # the server belongs.
+    # @param server_name [String] The name of the Azure SQL Server.
+    # @param custom_headers [Hash{String => String}] A hash of custom headers that
+    # will be added to the HTTP request.
+    #
     # @return [Concurrent::Promise] promise which provides async access to http
     # response.
     #
-    def create_or_update(parameters, resource_group_name, server_name, custom_headers = nil)
+    def create_or_update_async(parameters, resource_group_name, server_name, custom_headers = nil)
       # Send request
       promise = begin_create_or_update_async(parameters, resource_group_name, server_name, custom_headers)
 

@@ -8,7 +8,6 @@ module Azure::ARM::DataLakeAnalytics::Catalog
   # A service client - single point of access to the REST API.
   #
   class DataLakeAnalyticsCatalogManagementClient < MsRestAzure::AzureServiceClient
-    include Azure::ARM::DataLakeAnalytics::Catalog::Models
     include MsRest::Serialization
     include MsRestAzure
 

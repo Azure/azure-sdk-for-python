@@ -23,7 +23,7 @@ describe 'Virtual Networks' do
   it 'should create virtual network' do
     virtualNetworkName = "vnet7384"
     params = @resource_helper.build_virtual_network_params(@location)
-    result = @client.create_or_update(@resource_group.name, virtualNetworkName, params).value!
+    result = @client.create_or_update_async(@resource_group.name, virtualNetworkName, params).value!
 
     expect(result.response.status).to eq(200)
     expect(result.body).not_to be_nil
@@ -77,7 +77,7 @@ describe 'Virtual Networks' do
 
   it 'should delete virtual network' do
     vnet = @resource_helper.create_virtual_network(@resource_group.name)
-    result = @client.delete(@resource_group.name, vnet.name).value!
+    result = @client.delete_async(@resource_group.name, vnet.name).value!
     expect(result.response.status).to eq(200)
   end
 end

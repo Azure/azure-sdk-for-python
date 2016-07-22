@@ -23,7 +23,7 @@ describe 'Public IP Addresses' do
   it 'should create public ip address' do
     params = @resource_helper.build_public_ip_params(@location)
     public_ip_name = 'ip_name_364384'
-    result = @client.create_or_update(@resource_group.name, public_ip_name, params).value!
+    result = @client.create_or_update_async(@resource_group.name, public_ip_name, params).value!
     expect(result.response.status).to eq(200)
     expect(result.body).not_to be_nil
     expect(result.body.name).to eq(public_ip_name)
@@ -51,7 +51,7 @@ describe 'Public IP Addresses' do
 
   it 'should delete public ip address' do
     address = @resource_helper.create_public_ip_address(@location, @resource_group)
-    result = @client.delete(@resource_group.name, address.name).value!
+    result = @client.delete_async(@resource_group.name, address.name).value!
     expect(result.response.status).to eq(200)
   end
 

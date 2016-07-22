@@ -584,10 +584,22 @@ module Azure::ARM::DevTestLabs
     # @param custom_headers [Hash{String => String}] A hash of custom headers that
     # will be added to the HTTP request.
     #
+    def execute(resource_group_name, lab_name, name, custom_headers = nil)
+      response = execute_async(resource_group_name, lab_name, name, custom_headers).value!
+      nil
+    end
+
+    #
+    # @param resource_group_name [String] The name of the resource group.
+    # @param lab_name [String] The name of the lab.
+    # @param name [String] The name of the schedule.
+    # @param custom_headers [Hash{String => String}] A hash of custom headers that
+    # will be added to the HTTP request.
+    #
     # @return [Concurrent::Promise] promise which provides async access to http
     # response.
     #
-    def execute(resource_group_name, lab_name, name, custom_headers = nil)
+    def execute_async(resource_group_name, lab_name, name, custom_headers = nil)
       # Send request
       promise = begin_execute_async(resource_group_name, lab_name, name, custom_headers)
 

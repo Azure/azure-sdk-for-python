@@ -8,7 +8,6 @@ module Azure::ARM::Graph
   # A service client - single point of access to the REST API.
   #
   class GraphRbacManagementClient < MsRestAzure::AzureServiceClient
-    include Azure::ARM::Graph::Models
     include MsRest::Serialization
     include MsRestAzure
 
@@ -39,6 +38,9 @@ module Azure::ARM::Graph
     # subscription.
     attr_accessor :credentials
 
+    # @return [Objects] objects
+    attr_reader :objects
+
     # @return [Applications] applications
     attr_reader :applications
 
@@ -65,6 +67,7 @@ module Azure::ARM::Graph
       fail ArgumentError, 'invalid type of credentials input parameter' unless credentials.is_a?(MsRest::ServiceClientCredentials)
       @credentials = credentials
 
+      @objects = Objects.new(self)
       @applications = Applications.new(self)
       @groups = Groups.new(self)
       @service_principals = ServicePrincipals.new(self)

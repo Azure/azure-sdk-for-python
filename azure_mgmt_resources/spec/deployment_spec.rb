@@ -21,7 +21,7 @@ describe 'Template Deployments' do
 
   it 'should create template deployment' do
     deployment_name = 'Deployment_test'
-    result = @client.create_or_update(@resource_group.name, deployment_name, @resource_helper.build_deployment_params).value!
+    result = @client.create_or_update_async(@resource_group.name, deployment_name, @resource_helper.build_deployment_params).value!
 
     expect(result.body.id).not_to be_nil
     expect(result.body.name).to eq(deployment_name)

@@ -30,10 +30,10 @@ describe 'DataLakeStoreClient Account' do
         :testtag1 => :testtag1,
         :testtag2 => :testtag2,
     }
-    result = @client.create(@resource_group.name, @datalake_acc_name, acc).value!
-    expect(result.body).to be_an_instance_of(Models::DataLakeStoreAccount)
-    expect(result.body.name).to eq(@datalake_acc_name)
-    expect(result.body.tags.count).to eq(2)
+    result = @client.create(@resource_group.name, @datalake_acc_name, acc)
+    expect(result).to be_an_instance_of(Models::DataLakeStoreAccount)
+    expect(result.name).to eq(@datalake_acc_name)
+    expect(result.tags.count).to eq(2)
 
     # Update
     acc.tags = {
@@ -41,13 +41,13 @@ describe 'DataLakeStoreClient Account' do
         :testtag2 => :testtag2,
         :testtag3 => :testtag3,
     }
-    result = @client.update(@resource_group.name, @datalake_acc_name, acc).value!
-    expect(result.body).to be_an_instance_of(Models::DataLakeStoreAccount)
-    expect(result.body.name).to eq(@datalake_acc_name)
-    expect(result.body.tags.count).to eq(3)
+    result = @client.update(@resource_group.name, @datalake_acc_name, acc)
+    expect(result).to be_an_instance_of(Models::DataLakeStoreAccount)
+    expect(result.name).to eq(@datalake_acc_name)
+    expect(result.tags.count).to eq(3)
 
     # Delete
-    result = @client.delete(@resource_group.name, @datalake_acc_name).value!
+    result = @client.delete_async(@resource_group.name, @datalake_acc_name).value!
     expect(result.response.status).to eq(200)
   end
 end

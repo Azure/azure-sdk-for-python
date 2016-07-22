@@ -34,10 +34,21 @@ module Azure::ARM::Network
     # @param custom_headers [Hash{String => String}] A hash of custom headers that
     # will be added to the HTTP request.
     #
+    def delete(resource_group_name, application_gateway_name, custom_headers = nil)
+      response = delete_async(resource_group_name, application_gateway_name, custom_headers).value!
+      nil
+    end
+
+    #
+    # @param resource_group_name [String] The name of the resource group.
+    # @param application_gateway_name [String] The name of the applicationgateway.
+    # @param custom_headers [Hash{String => String}] A hash of custom headers that
+    # will be added to the HTTP request.
+    #
     # @return [Concurrent::Promise] promise which provides async access to http
     # response.
     #
-    def delete(resource_group_name, application_gateway_name, custom_headers = nil)
+    def delete_async(resource_group_name, application_gateway_name, custom_headers = nil)
       # Send request
       promise = begin_delete_async(resource_group_name, application_gateway_name, custom_headers)
 
@@ -246,10 +257,25 @@ module Azure::ARM::Network
     # @param custom_headers [Hash{String => String}] A hash of custom headers that
     # will be added to the HTTP request.
     #
+    # @return [ApplicationGateway] operation results.
+    #
+    def create_or_update(resource_group_name, application_gateway_name, parameters, custom_headers = nil)
+      response = create_or_update_async(resource_group_name, application_gateway_name, parameters, custom_headers).value!
+      response.body unless response.nil?
+    end
+
+    #
+    # @param resource_group_name [String] The name of the resource group.
+    # @param application_gateway_name [String] The name of the ApplicationGateway.
+    # @param parameters [ApplicationGateway] Parameters supplied to the
+    # create/delete ApplicationGateway operation
+    # @param custom_headers [Hash{String => String}] A hash of custom headers that
+    # will be added to the HTTP request.
+    #
     # @return [Concurrent::Promise] promise which provides async access to http
     # response.
     #
-    def create_or_update(resource_group_name, application_gateway_name, parameters, custom_headers = nil)
+    def create_or_update_async(resource_group_name, application_gateway_name, parameters, custom_headers = nil)
       # Send request
       promise = begin_create_or_update_async(resource_group_name, application_gateway_name, parameters, custom_headers)
 
@@ -621,10 +647,21 @@ module Azure::ARM::Network
     # @param custom_headers [Hash{String => String}] A hash of custom headers that
     # will be added to the HTTP request.
     #
+    def start(resource_group_name, application_gateway_name, custom_headers = nil)
+      response = start_async(resource_group_name, application_gateway_name, custom_headers).value!
+      nil
+    end
+
+    #
+    # @param resource_group_name [String] The name of the resource group.
+    # @param application_gateway_name [String] The name of the application gateway.
+    # @param custom_headers [Hash{String => String}] A hash of custom headers that
+    # will be added to the HTTP request.
+    #
     # @return [Concurrent::Promise] promise which provides async access to http
     # response.
     #
-    def start(resource_group_name, application_gateway_name, custom_headers = nil)
+    def start_async(resource_group_name, application_gateway_name, custom_headers = nil)
       # Send request
       promise = begin_start_async(resource_group_name, application_gateway_name, custom_headers)
 
@@ -735,10 +772,21 @@ module Azure::ARM::Network
     # @param custom_headers [Hash{String => String}] A hash of custom headers that
     # will be added to the HTTP request.
     #
+    def stop(resource_group_name, application_gateway_name, custom_headers = nil)
+      response = stop_async(resource_group_name, application_gateway_name, custom_headers).value!
+      nil
+    end
+
+    #
+    # @param resource_group_name [String] The name of the resource group.
+    # @param application_gateway_name [String] The name of the application gateway.
+    # @param custom_headers [Hash{String => String}] A hash of custom headers that
+    # will be added to the HTTP request.
+    #
     # @return [Concurrent::Promise] promise which provides async access to http
     # response.
     #
-    def stop(resource_group_name, application_gateway_name, custom_headers = nil)
+    def stop_async(resource_group_name, application_gateway_name, custom_headers = nil)
       # Send request
       promise = begin_stop_async(resource_group_name, application_gateway_name, custom_headers)
 

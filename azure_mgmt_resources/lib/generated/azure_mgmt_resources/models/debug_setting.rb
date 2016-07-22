@@ -12,7 +12,7 @@ module Azure::ARM::Resources
 
       include MsRestAzure
 
-      # @return [String] Gets or sets the debug detail level.
+      # @return [String] The debug detail level.
       attr_accessor :detail_level
 
 

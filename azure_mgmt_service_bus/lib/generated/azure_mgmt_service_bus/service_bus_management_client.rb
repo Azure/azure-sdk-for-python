@@ -8,7 +8,6 @@ module Azure::ARM::ServiceBus
   # A service client - single point of access to the REST API.
   #
   class ServiceBusManagementClient < MsRestAzure::AzureServiceClient
-    include Azure::ARM::ServiceBus::Models
     include MsRest::Serialization
     include MsRestAzure
 

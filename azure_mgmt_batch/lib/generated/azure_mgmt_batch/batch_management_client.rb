@@ -8,7 +8,6 @@ module Azure::ARM::Batch
   # A service client - single point of access to the REST API.
   #
   class BatchManagementClient < MsRestAzure::AzureServiceClient
-    include Azure::ARM::Batch::Models
     include MsRest::Serialization
     include MsRestAzure
 

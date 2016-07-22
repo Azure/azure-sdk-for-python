@@ -8,7 +8,6 @@ module Azure::ARM::NotificationHubs
   # A service client - single point of access to the REST API.
   #
   class NotificationHubsManagementClient < MsRestAzure::AzureServiceClient
-    include Azure::ARM::NotificationHubs::Models
     include MsRest::Serialization
     include MsRestAzure
 

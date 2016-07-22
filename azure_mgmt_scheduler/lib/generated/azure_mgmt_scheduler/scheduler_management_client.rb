@@ -8,7 +8,6 @@ module Azure::ARM::Scheduler
   # A service client - single point of access to the REST API.
   #
   class SchedulerManagementClient < MsRestAzure::AzureServiceClient
-    include Azure::ARM::Scheduler::Models
     include MsRest::Serialization
     include MsRestAzure
 
