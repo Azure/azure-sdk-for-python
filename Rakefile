@@ -147,12 +147,12 @@ REGEN_METADATA = {
         version: version,
         tag: 'azure_arm'
     },
-    azure_mgmt_authorization: {
-        spec_uri: 'https://raw.githubusercontent.com/Azure/azure-rest-api-specs/master/arm-authorization/2015-07-01/swagger/authorization.json',
-        ns: 'Azure::ARM::Authorization',
-        version: version,
-        tag: 'arm_auth'
-    },
+    # azure_mgmt_authorization: {
+    #     spec_uri: 'https://raw.githubusercontent.com/Azure/azure-rest-api-specs/master/arm-authorization/2015-07-01/swagger/authorization.json',
+    #     ns: 'Azure::ARM::Authorization',
+    #     version: version,
+    #     tag: 'arm_auth'
+    # },
     azure_mgmt_batch: {
         spec_uri: 'https://raw.githubusercontent.com/Azure/azure-rest-api-specs/master/arm-batch/2015-12-01/swagger/BatchManagement.json',
         ns: 'Azure::ARM::Batch',
@@ -233,12 +233,12 @@ REGEN_METADATA = {
         version: version,
         tag: 'arm_dns'
     },
-    azure_mgmt_features: {
-        spec_uri: 'https://raw.githubusercontent.com/Azure/azure-rest-api-specs/master/arm-resources/features/2015-12-01/swagger/features.json',
-        ns: 'Azure::ARM::Features',
-        version: version,
-        tag: 'arm_feat'
-    },
+    # azure_mgmt_features: {
+    #     spec_uri: 'https://raw.githubusercontent.com/Azure/azure-rest-api-specs/master/arm-resources/features/2015-12-01/swagger/features.json',
+    #     ns: 'Azure::ARM::Features',
+    #     version: version,
+    #     tag: 'arm_feat'
+    # },
     azure_mgmt_graph: {
         spec_uri: 'https://raw.githubusercontent.com/Azure/azure-rest-api-specs/master/arm-graphrbac/1.6/swagger/graphrbac.json',
         ns: 'Azure::ARM::Graph',
@@ -252,18 +252,18 @@ REGEN_METADATA = {
     #     version: version,
     #     tag: 'arm_intune'
     # },
-    azure_mgmt_key_vault: {
-        spec_uri: 'https://raw.githubusercontent.com/Azure/azure-rest-api-specs/master/arm-keyvault/2015-06-01/swagger/keyvault.json',
-        ns: 'Azure::ARM::KeyVault',
-        version: version,
-        tag: 'arm_key_vault'
-    },
-    azure_mgmt_locks: {
-        spec_uri: 'https://raw.githubusercontent.com/Azure/azure-rest-api-specs/master/arm-resources/locks/2015-01-01/swagger/locks.json',
-        ns: 'Azure::ARM::Locks',
-        version: version,
-        tag: 'arm_lock'
-    },
+    # azure_mgmt_key_vault: {
+    #     spec_uri: 'https://raw.githubusercontent.com/Azure/azure-rest-api-specs/master/arm-keyvault/2015-06-01/swagger/keyvault.json',
+    #     ns: 'Azure::ARM::KeyVault',
+    #     version: version,
+    #     tag: 'arm_key_vault'
+    # },
+    # azure_mgmt_locks: {
+    #     spec_uri: 'https://raw.githubusercontent.com/Azure/azure-rest-api-specs/master/arm-resources/locks/2015-01-01/swagger/locks.json',
+    #     ns: 'Azure::ARM::Locks',
+    #     version: version,
+    #     tag: 'arm_lock'
+    # },
     azure_mgmt_logic: {
         spec_uri: 'https://raw.githubusercontent.com/Azure/azure-rest-api-specs/master/arm-logic/2015-08-01-preview/swagger/logic.json',
         ns: 'Azure::ARM::Logic',
@@ -307,12 +307,12 @@ REGEN_METADATA = {
         version: version,
         tag: 'arm_policy'
     },
-    azure_mgmt_powerbi_embedded: {
-        spec_uri: 'https://raw.githubusercontent.com/Azure/azure-rest-api-specs/master/arm-powerbiembedded/2016-01-29/swagger/powerbiembedded.json',
-        ns: 'Azure::ARM::PowerBiEmbedded',
-        version: version,
-        tag: 'arm_powerbi'
-    },
+    # azure_mgmt_powerbi_embedded: {
+    #     spec_uri: 'https://raw.githubusercontent.com/Azure/azure-rest-api-specs/master/arm-powerbiembedded/2016-01-29/swagger/powerbiembedded.json',
+    #     ns: 'Azure::ARM::PowerBiEmbedded',
+    #     version: version,
+    #     tag: 'arm_powerbi'
+    # },
     azure_mgmt_redis: {
         spec_uri: 'https://raw.githubusercontent.com/Azure/azure-rest-api-specs/master/arm-redis/2016-04-01/swagger/redis.json',
         ns: 'Azure::ARM::Redis',
