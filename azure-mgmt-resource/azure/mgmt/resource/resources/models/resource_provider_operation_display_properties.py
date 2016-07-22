@@ -15,15 +15,15 @@ from msrest.serialization import Model
 class ResourceProviderOperationDisplayProperties(Model):
     """Resource provider operation's display properties.
 
-    :param publisher: Gets or sets operation description.
+    :param publisher: Operation description.
     :type publisher: str
-    :param provider: Gets or sets operation provider.
+    :param provider: Operation provider.
     :type provider: str
-    :param resource: Gets or sets operation resource.
+    :param resource: Operation resource.
     :type resource: str
-    :param operation: Gets or sets operation.
+    :param operation: Operation.
     :type operation: str
-    :param description: Gets or sets operation description.
+    :param description: Operation description.
     :type description: str
     """ 
 

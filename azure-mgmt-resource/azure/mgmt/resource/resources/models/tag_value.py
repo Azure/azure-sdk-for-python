@@ -15,11 +15,11 @@ from msrest.serialization import Model
 class TagValue(Model):
     """Tag information.
 
-    :param id: Gets or sets the tag ID.
+    :param id: The tag ID.
     :type id: str
-    :param tag_value: Gets or sets the tag value.
+    :param tag_value: The tag value.
     :type tag_value: str
-    :param count: Gets or sets the tag value count.
+    :param count: The tag value count.
     :type count: :class:`TagCount
      <azure.mgmt.resource.resources.models.TagCount>`
     """ 

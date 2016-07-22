@@ -22,8 +22,7 @@ class Identity(Model):
     :vartype principal_id: str
     :ivar tenant_id: The tenant id of resource.
     :vartype tenant_id: str
-    :param type: Gets or sets the identity type. Possible values include:
-     'SystemAssigned'
+    :param type: The identity type. Possible values include: 'SystemAssigned'
     :type type: str or :class:`ResourceIdentityType
      <azure.mgmt.resource.resources.models.ResourceIdentityType>`
     """ 

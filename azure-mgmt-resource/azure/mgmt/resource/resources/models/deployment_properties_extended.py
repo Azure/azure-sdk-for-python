@@ -15,41 +15,40 @@ from msrest.serialization import Model
 class DeploymentPropertiesExtended(Model):
     """Deployment properties with additional details.
 
-    :param provisioning_state: Gets or sets the state of the provisioning.
+    :param provisioning_state: The state of the provisioning.
     :type provisioning_state: str
-    :param correlation_id: Gets or sets the correlation ID of the deployment.
+    :param correlation_id: The correlation ID of the deployment.
     :type correlation_id: str
-    :param timestamp: Gets or sets the timestamp of the template deployment.
+    :param timestamp: The timestamp of the template deployment.
     :type timestamp: datetime
-    :param outputs: Gets or sets key/value pairs that represent
-     deploymentoutput.
+    :param outputs: Key/value pairs that represent deploymentoutput.
     :type outputs: object
-    :param providers: Gets the list of resource providers needed for the
+    :param providers: The list of resource providers needed for the
      deployment.
     :type providers: list of :class:`Provider
      <azure.mgmt.resource.resources.models.Provider>`
-    :param dependencies: Gets the list of deployment dependencies.
+    :param dependencies: The list of deployment dependencies.
     :type dependencies: list of :class:`Dependency
      <azure.mgmt.resource.resources.models.Dependency>`
-    :param template: Gets or sets the template content. Use only one of
-     Template or TemplateLink.
+    :param template: The template content. Use only one of Template or
+     TemplateLink.
     :type template: object
-    :param template_link: Gets or sets the URI referencing the template. Use
-     only one of Template or TemplateLink.
+    :param template_link: The URI referencing the template. Use only one of
+     Template or TemplateLink.
     :type template_link: :class:`TemplateLink
      <azure.mgmt.resource.resources.models.TemplateLink>`
     :param parameters: Deployment parameters. Use only one of Parameters or
      ParametersLink.
     :type parameters: object
-    :param parameters_link: Gets or sets the URI referencing the parameters.
-     Use only one of Parameters or ParametersLink.
+    :param parameters_link: The URI referencing the parameters. Use only one
+     of Parameters or ParametersLink.
     :type parameters_link: :class:`ParametersLink
      <azure.mgmt.resource.resources.models.ParametersLink>`
-    :param mode: Gets or sets the deployment mode. Possible values include:
-     'Incremental', 'Complete'
+    :param mode: The deployment mode. Possible values include: 'Incremental',
+     'Complete'
     :type mode: str or :class:`DeploymentMode
      <azure.mgmt.resource.resources.models.DeploymentMode>`
-    :param debug_setting: Gets or sets the debug setting of the deployment.
+    :param debug_setting: The debug setting of the deployment.
     :type debug_setting: :class:`DebugSetting
      <azure.mgmt.resource.resources.models.DebugSetting>`
     """ 

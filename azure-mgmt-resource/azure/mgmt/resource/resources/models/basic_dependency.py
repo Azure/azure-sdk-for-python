@@ -15,11 +15,11 @@ from msrest.serialization import Model
 class BasicDependency(Model):
     """Deployment dependency information.
 
-    :param id: Gets or sets the ID of the dependency.
+    :param id: The ID of the dependency.
     :type id: str
-    :param resource_type: Gets or sets the dependency resource type.
+    :param resource_type: The dependency resource type.
     :type resource_type: str
-    :param resource_name: Gets or sets the dependency resource name.
+    :param resource_name: The dependency resource name.
     :type resource_name: str
     """ 
 

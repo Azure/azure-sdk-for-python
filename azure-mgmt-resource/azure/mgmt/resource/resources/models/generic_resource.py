@@ -28,17 +28,17 @@ class GenericResource(ResourceModel):
     :type location: str
     :param tags: Resource tags
     :type tags: dict
-    :param plan: Gets or sets the plan of the resource.
+    :param plan: The plan of the resource.
     :type plan: :class:`Plan <azure.mgmt.resource.resources.models.Plan>`
-    :param properties: Gets or sets the resource properties.
+    :param properties: The resource properties.
     :type properties: object
-    :param kind: Gets or sets the kind of the resource.
+    :param kind: The kind of the resource.
     :type kind: str
-    :param managed_by: Gets or sets the managedBy property of the resource.
+    :param managed_by: The managedBy property of the resource.
     :type managed_by: str
-    :param sku: Gets or sets the sku of the resource.
+    :param sku: The sku of the resource.
     :type sku: :class:`Sku <azure.mgmt.resource.resources.models.Sku>`
-    :param identity: Gets or sets the identity of the resource.
+    :param identity: The identity of the resource.
     :type identity: :class:`Identity
      <azure.mgmt.resource.resources.models.Identity>`
     """ 

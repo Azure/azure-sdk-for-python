@@ -15,7 +15,7 @@ from msrest.serialization import Model
 class DeploymentExportResult(Model):
     """DeploymentExportResult.
 
-    :param template: Gets or sets the template content.
+    :param template: The template content.
     :type template: object
     """ 
 

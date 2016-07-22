@@ -12,20 +12,20 @@
 from msrest.serialization import Model
 
 
-class ResourcesMoveInfo(Model):
-    """Parameters of move resources.
+class AliasPathType(Model):
+    """AliasPathType.
 
-    :param resources: The ids of the resources.
-    :type resources: list of str
-    :param target_resource_group: The target resource group.
-    :type target_resource_group: str
+    :param path: The path of an alias.
+    :type path: str
+    :param api_versions: The api versions.
+    :type api_versions: list of str
     """ 
 
     _attribute_map = {
-        'resources': {'key': 'resources', 'type': '[str]'},
-        'target_resource_group': {'key': 'targetResourceGroup', 'type': 'str'},
+        'path': {'key': 'path', 'type': 'str'},
+        'api_versions': {'key': 'apiVersions', 'type': '[str]'},
     }
 
-    def __init__(self, resources=None, target_resource_group=None):
-        self.resources = resources
-        self.target_resource_group = target_resource_group
+    def __init__(self, path=None, api_versions=None):
+        self.path = path
+        self.api_versions = api_versions
