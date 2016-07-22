@@ -53,6 +53,13 @@
       },
       "output_dir": "azure-mgmt-compute/azure/mgmt/compute"
     },
+    "dns": {
+      "swagger": "arm-dns/2016-04-01/swagger/dns.json",
+      "autorest_options": {
+        "Namespace": "azure.mgmt.dns"
+      },
+      "output_dir": "azure-mgmt-dns/azure/mgmt/dns"
+    },
     "graphrbac": {
       "swagger": "arm-graphrbac/compositeGraphRbacManagementClient.json",
       "autorest_options": {
