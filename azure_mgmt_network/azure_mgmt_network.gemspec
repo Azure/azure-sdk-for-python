@@ -15,7 +15,7 @@ Gem::Specification.new do |spec|
   spec.email         = 'azrubyteam@microsoft.com'
   spec.description   = 'Microsoft Azure Network Management Client Library for Ruby'
   spec.summary       = 'Official Ruby client library to consume Microsoft Azure Network Management services.'
-  spec.homepage      = 'http://github.com/azure/azure-sdk-ruby'
+  spec.homepage      = 'https://aka.ms/azure-sdk-for-ruby'
   spec.license       = 'MIT'
 
   spec.files         = `git ls-files -z`.split("\x0").reject { |f| f.match(%r{^(test|spec|features)/}) }
