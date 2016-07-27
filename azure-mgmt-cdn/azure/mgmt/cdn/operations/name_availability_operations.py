@@ -33,17 +33,13 @@ class NameAvailabilityOperations(object):
         self.config = config
 
     def check_name_availability(
-            self, name, type, custom_headers=None, raw=False, **operation_config):
+            self, name, custom_headers=None, raw=False, **operation_config):
         """Check the availability of a resource name without creating the
         resource. This is needed for resources where name is globally unique,
         such as a CDN endpoint.
 
         :param name: The resource name to validate.
         :type name: str
-        :param type: The type of the resource whose name is to be validated.
-         Possible values include: 'Microsoft.Cdn/Profiles/Endpoints'
-        :type type: str or :class:`ResourceType
-         <azure.mgmt.cdn.models.ResourceType>`
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -54,7 +50,7 @@ class NameAvailabilityOperations(object):
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
-        check_name_availability_input = models.CheckNameAvailabilityInput(name=name, type=type)
+        check_name_availability_input = models.CheckNameAvailabilityInput(name=name)
 
         # Construct URL
         url = '/providers/Microsoft.Cdn/checkNameAvailability'
