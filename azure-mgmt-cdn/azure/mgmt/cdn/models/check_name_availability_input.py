@@ -15,24 +15,27 @@ from msrest.serialization import Model
 class CheckNameAvailabilityInput(Model):
     """Input of CheckNameAvailability API.
 
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
     :param name: The resource name to validate.
     :type name: str
-    :param type: The type of the resource whose name is to be validated.
-     Possible values include: 'Microsoft.Cdn/Profiles/Endpoints'
-    :type type: str or :class:`ResourceType
-     <azure.mgmt.cdn.models.ResourceType>`
+    :ivar type: The type of the resource whose name is to be validated.
+     Default value: "Microsoft.Cdn/Profiles/Endpoints" .
+    :vartype type: str
     """ 
 
     _validation = {
         'name': {'required': True},
-        'type': {'required': True},
+        'type': {'required': True, 'constant': True},
     }
 
     _attribute_map = {
         'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'ResourceType'},
+        'type': {'key': 'type', 'type': 'str'},
     }
 
-    def __init__(self, name, type):
+    type = "Microsoft.Cdn/Profiles/Endpoints"
+
+    def __init__(self, name):
         self.name = name
-        self.type = type
