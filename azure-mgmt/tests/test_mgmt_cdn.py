@@ -27,8 +27,7 @@ class MgmtCdnTest(AzureMgmtTestCase):
         account_name = self.get_resource_name('pyarmcdn')
 
         output = self.cdn_client.name_availability.check_name_availability(
-            name=account_name,
-            type='Microsoft.Cdn/profiles/endpoints'
+            name=account_name
         )
         self.assertTrue(output.name_available)
 
