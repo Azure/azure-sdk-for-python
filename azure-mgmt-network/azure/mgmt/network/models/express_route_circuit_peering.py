@@ -52,6 +52,11 @@ class ExpressRouteCircuitPeering(SubResource):
     :param provisioning_state: Gets provisioning state of the PublicIP
      resource Updating/Deleting/Failed
     :type provisioning_state: str
+    :param gateway_manager_etag: Gets or sets the GatewayManager Etag
+    :type gateway_manager_etag: str
+    :param last_modified_by: Gets whether the provider or the customer last
+     modified the peering
+    :type last_modified_by: str
     :param name: Gets name of the resource that is unique within a resource
      group. This name can be used to access the resource
     :type name: str
@@ -75,11 +80,13 @@ class ExpressRouteCircuitPeering(SubResource):
         'microsoft_peering_config': {'key': 'properties.microsoftPeeringConfig', 'type': 'ExpressRouteCircuitPeeringConfig'},
         'stats': {'key': 'properties.stats', 'type': 'ExpressRouteCircuitStats'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        'gateway_manager_etag': {'key': 'properties.gatewayManagerEtag', 'type': 'str'},
+        'last_modified_by': {'key': 'properties.lastModifiedBy', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'etag': {'key': 'etag', 'type': 'str'},
     }
 
-    def __init__(self, id=None, peering_type=None, state=None, azure_asn=None, peer_asn=None, primary_peer_address_prefix=None, secondary_peer_address_prefix=None, primary_azure_port=None, secondary_azure_port=None, shared_key=None, vlan_id=None, microsoft_peering_config=None, stats=None, provisioning_state=None, name=None, etag=None):
+    def __init__(self, id=None, peering_type=None, state=None, azure_asn=None, peer_asn=None, primary_peer_address_prefix=None, secondary_peer_address_prefix=None, primary_azure_port=None, secondary_azure_port=None, shared_key=None, vlan_id=None, microsoft_peering_config=None, stats=None, provisioning_state=None, gateway_manager_etag=None, last_modified_by=None, name=None, etag=None):
         super(ExpressRouteCircuitPeering, self).__init__(id=id)
         self.peering_type = peering_type
         self.state = state
@@ -94,5 +101,7 @@ class ExpressRouteCircuitPeering(SubResource):
         self.microsoft_peering_config = microsoft_peering_config
         self.stats = stats
         self.provisioning_state = provisioning_state
+        self.gateway_manager_etag = gateway_manager_etag
+        self.last_modified_by = last_modified_by
         self.name = name
         self.etag = etag
