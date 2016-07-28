@@ -15,8 +15,7 @@ from msrest.serialization import Model
 class JobSchedulePatchParameter(Model):
     """Parameters for a CloudJobScheduleOperations.Patch request.
 
-    :param schedule: The schedule according to which jobs will be created. If
-     you do not specify this element, the existing schedule is not modified.
+    :param schedule: The schedule according to which jobs will be created.
     :type schedule: :class:`Schedule <azure.batch.models.Schedule>`
     :param job_specification: The details of the jobs to be created on this
      schedule.

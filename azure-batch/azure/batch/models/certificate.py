@@ -45,8 +45,8 @@ class Certificate(Model):
      encoded .cer file.
     :type public_data: str
     :param delete_certificate_error: The error that occurred on the last
-     attempt to delete this certificate. This property is set only if the
-     certificate is in the deletefailed state.
+     attempt to delete this certificate.  This property is set only if the
+     certificate is in the DeleteFailed state.
     :type delete_certificate_error: :class:`DeleteCertificateError
      <azure.batch.models.DeleteCertificateError>`
     """ 

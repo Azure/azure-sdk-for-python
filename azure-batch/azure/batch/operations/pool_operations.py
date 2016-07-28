@@ -138,9 +138,11 @@ class PoolOperations(object):
     def get_all_pools_lifetime_statistics(
             self, pool_get_all_pools_lifetime_statistics_options=None, custom_headers=None, raw=False, **operation_config):
         """Gets lifetime summary statistics for all of the pools in the specified
-        account. Statistics are aggregated across all pools that have ever
-        existed in the account, from account creation to the last update time
-        of the statistics.
+        account.
+
+        Statistics are aggregated across all pools that have ever existed in
+        the account, from account creation to the last update time of the
+        statistics.
 
         :param pool_get_all_pools_lifetime_statistics_options: Additional
          parameters for the operation
@@ -1211,10 +1213,11 @@ class PoolOperations(object):
 
     def stop_resize(
             self, pool_id, pool_stop_resize_options=None, custom_headers=None, raw=False, **operation_config):
-        """Stops an ongoing resize operation on the pool. This does not restore
-        the pool to its previous state before the resize operation: it only
-        stops any further changes being made, and the pool maintains its
-        current state.
+        """Stops an ongoing resize operation on the pool.
+
+        This does not restore the pool to its previous state before the resize
+        operation: it only stops any further changes being made, and the pool
+        maintains its current state.
 
         :param pool_id: The id of the pool whose resizing you want to stop.
         :type pool_id: str

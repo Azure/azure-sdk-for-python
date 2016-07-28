@@ -15,7 +15,7 @@ from msrest.serialization import Model
 class ErrorMessage(Model):
     """An error message received in an Azure Batch error response.
 
-    :param lang: The language code of the error message
+    :param lang: The language code of the error message.
     :type lang: str
     :param value: The text of the message.
     :type value: str

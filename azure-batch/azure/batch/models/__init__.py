@@ -28,6 +28,10 @@ from .schedule import Schedule
 from .job_constraints import JobConstraints
 from .resource_file import ResourceFile
 from .environment_setting import EnvironmentSetting
+from .exit_conditions import ExitConditions
+from .exit_code_mapping import ExitCodeMapping
+from .exit_options import ExitOptions
+from .exit_code_range_mapping import ExitCodeRangeMapping
 from .task_constraints import TaskConstraints
 from .job_manager_task import JobManagerTask
 from .job_preparation_task import JobPreparationTask
@@ -40,6 +44,7 @@ from .pool_specification import PoolSpecification
 from .cloud_service_configuration import CloudServiceConfiguration
 from .virtual_machine_configuration import VirtualMachineConfiguration
 from .windows_configuration import WindowsConfiguration
+from .network_configuration import NetworkConfiguration
 from .auto_pool_specification import AutoPoolSpecification
 from .pool_information import PoolInformation
 from .job_specification import JobSpecification
@@ -190,6 +195,7 @@ from .batch_service_client_enums import (
     OSType,
     CertificateState,
     CertificateFormat,
+    JobAction,
     ComputeNodeFillType,
     CertificateStoreLocation,
     CertificateVisibility,
@@ -197,6 +203,8 @@ from .batch_service_client_enums import (
     JobScheduleState,
     SchedulingErrorCategory,
     JobState,
+    OnAllTasksComplete,
+    OnTaskFailure,
     JobPreparationTaskState,
     JobReleaseTaskState,
     PoolState,
@@ -233,6 +241,10 @@ __all__ = [
     'JobConstraints',
     'ResourceFile',
     'EnvironmentSetting',
+    'ExitConditions',
+    'ExitCodeMapping',
+    'ExitOptions',
+    'ExitCodeRangeMapping',
     'TaskConstraints',
     'JobManagerTask',
     'JobPreparationTask',
@@ -245,6 +257,7 @@ __all__ = [
     'CloudServiceConfiguration',
     'VirtualMachineConfiguration',
     'WindowsConfiguration',
+    'NetworkConfiguration',
     'AutoPoolSpecification',
     'PoolInformation',
     'JobSpecification',
@@ -394,6 +407,7 @@ __all__ = [
     'OSType',
     'CertificateState',
     'CertificateFormat',
+    'JobAction',
     'ComputeNodeFillType',
     'CertificateStoreLocation',
     'CertificateVisibility',
@@ -401,6 +415,8 @@ __all__ = [
     'JobScheduleState',
     'SchedulingErrorCategory',
     'JobState',
+    'OnAllTasksComplete',
+    'OnTaskFailure',
     'JobPreparationTaskState',
     'JobReleaseTaskState',
     'PoolState',

@@ -25,7 +25,7 @@ class CloudServiceConfiguration(Model):
     :type target_os_version: str
     :param current_os_version: The Azure Guest OS Version currently installed
      on the virtual machines in the pool. This may differ from
-     TargetOSVersion if the pool state is Upgrading.
+     targetOSVersion if the pool state is Upgrading.
     :type current_os_version: str
     """ 
 

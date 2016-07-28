@@ -16,7 +16,12 @@ class StartTask(Model):
     """A task which is run when a compute node joins a pool in the Azure Batch
     service, or when the compute node is rebooted or reimaged.
 
-    :param command_line: The command line of the start task.
+    :param command_line: The command line of the start task. The command line
+     does not run under a shell, and therefore cannot take advantage of shell
+     features such as environment variable expansion. If you want to take
+     advantage of such features, you should invoke the shell in the command
+     line, for example using "cmd /c MyCommand" in Windows or "/bin/sh -c
+     MyCommand" in Linux.
     :type command_line: str
     :param resource_files: A list of files that the Batch service will
      download to the compute node before running the command line.
@@ -38,6 +43,10 @@ class StartTask(Model):
     :type wait_for_success: bool
     """ 
 
+    _validation = {
+        'command_line': {'required': True},
+    }
+
     _attribute_map = {
         'command_line': {'key': 'commandLine', 'type': 'str'},
         'resource_files': {'key': 'resourceFiles', 'type': '[ResourceFile]'},
@@ -47,7 +56,7 @@ class StartTask(Model):
         'wait_for_success': {'key': 'waitForSuccess', 'type': 'bool'},
     }
 
-    def __init__(self, command_line=None, resource_files=None, environment_settings=None, run_elevated=None, max_task_retry_count=None, wait_for_success=None):
+    def __init__(self, command_line, resource_files=None, environment_settings=None, run_elevated=None, max_task_retry_count=None, wait_for_success=None):
         self.command_line = command_line
         self.resource_files = resource_files
         self.environment_settings = environment_settings

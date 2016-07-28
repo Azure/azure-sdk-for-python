@@ -21,7 +21,7 @@ class TaskAddCollectionParameter(Model):
     """ 
 
     _validation = {
-        'value': {'required': True},
+        'value': {'required': True, 'max_items': 100},
     }
 
     _attribute_map = {

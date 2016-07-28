@@ -20,7 +20,7 @@ class ApplicationSummary(Model):
     :type id: str
     :param display_name: The display name for the application.
     :type display_name: str
-    :param versions:
+    :param versions: The versions of the application which are available.
     :type versions: list of str
     """ 
 

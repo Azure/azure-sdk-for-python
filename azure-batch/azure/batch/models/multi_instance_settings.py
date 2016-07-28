@@ -13,8 +13,9 @@ from msrest.serialization import Model
 
 
 class MultiInstanceSettings(Model):
-    """Settings which specify how to run a multi-instance task. Multi-instance
-    tasks are commonly used to support MPI tasks.
+    """Settings which specify how to run a multi-instance task.
+
+    Multi-instance tasks are commonly used to support MPI tasks.
 
     :param number_of_instances: The number of compute nodes required by the
      multi-instance task.
