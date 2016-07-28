@@ -174,7 +174,7 @@
       "output_dir": "azure-mgmt-web/azure/mgmt/web/"
     },
     "batch": {
-      "swagger": "batch/2016-02-01.3.0/swagger/BatchService.json",
+      "swagger": "batch/2016-07-01.3.1/swagger/BatchService.json",
       "autorest_options": {
         "Namespace": "azure.batch"
       },
