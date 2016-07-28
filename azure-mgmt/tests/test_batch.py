@@ -460,7 +460,7 @@ class BatchMgmtTestCase(RecordingTestCase):
 
                 _m = "Test Upgrade Pool OS"
                 LOG.debug(_m)
-                response = self.assertRuns(_e, _m, self.batch_client.pool.upgrade_os, pool_id, 'WA-GUEST-OS-4.28_201601-01')
+                response = self.assertRuns(_e, _m, self.batch_client.pool.upgrade_os, pool_id, 'WA-GUEST-OS-4.32_201605-01')
                 self.assertIsNone(_e, _m, response)
 
                 _m = "Test Update Pool Parameters"
