@@ -217,9 +217,11 @@ class _MinidomXmlToObject(object):
 
     @staticmethod
     def get_child_nodes(node, tagName):
-        return [childNode for childNode in node.getElementsByTagName(tagName)
-                if childNode.parentNode == node]
-
+        if ':' not in tagName:
+            return _MinidomXmlToObject._get_child_nodesNS(node, '*', tagName)
+        else:
+            return [childNode for childNode in node.getElementsByTagName(tagName)
+                    if childNode.parentNode == node]
 
     @staticmethod
     def _get_child_nodesNS(node, ns, tagName):
@@ -1602,9 +1604,9 @@ class _ServiceBusManagementXmlSerializer(object):
                                                  'entry'):
             for node in _MinidomXmlToObject.get_children_from_path(xml_entry,
                                                 'content',
-                                                'm:properties'):
+                                                'properties'):
                 for name in members:
-                    xml_name = "d:" + _get_serialization_name(name)
+                    xml_name = _get_serialization_name(name)
                     children = _MinidomXmlToObject.get_child_nodes(node, xml_name)
                     if not children:
                         continue
