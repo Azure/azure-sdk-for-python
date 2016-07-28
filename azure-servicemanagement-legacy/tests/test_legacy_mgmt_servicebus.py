@@ -170,6 +170,9 @@ class LegacyMgmtServiceBusTest(LegacyMgmtTestCase):
         result = self.sms.list_topics(name)
         
         # Assert
+        # You HAVE to have at least Topic in SERVICEBUS_NAME, otherwise
+        # we don't actually test the parser
+        self.assertGreater(len(result), 0)
         self.assertIsNotNone(result)
         self.assertIsInstance(result, list)
 
@@ -182,6 +185,9 @@ class LegacyMgmtServiceBusTest(LegacyMgmtTestCase):
         result = self.sms.list_queues(name)
         
         # Assert
+        # You HAVE to have at least Topic in SERVICEBUS_NAME, otherwise
+        # we don't actually test the parser
+        self.assertGreater(len(result), 0)
         self.assertIsNotNone(result)
         self.assertIsInstance(result, list)
 
