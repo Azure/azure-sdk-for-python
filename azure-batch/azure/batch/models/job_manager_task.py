@@ -15,12 +15,16 @@ from msrest.serialization import Model
 class JobManagerTask(Model):
     """Specifies details of a Job Manager task.
 
-    :param id: A string that uniquely identifies the Job Manager task. A GUID
-     is recommended.
+    :param id: A string that uniquely identifies the Job Manager task.
     :type id: str
     :param display_name: The display name of the Job Manager task.
     :type display_name: str
-    :param command_line: The command line of the Job Manager task.
+    :param command_line: The command line of the Job Manager task. The
+     command line does not run under a shell, and therefore cannot take
+     advantage of shell features such as environment variable expansion. If
+     you want to take advantage of such features, you should invoke the shell
+     in the command line, for example using "cmd /c MyCommand" in Windows or
+     "/bin/sh -c MyCommand" in Linux.
     :type command_line: str
     :param resource_files: A list of files that the Batch service will
      download to the compute node before running the command line.
@@ -43,11 +47,22 @@ class JobManagerTask(Model):
      of the compute node where it runs. If true, no other tasks will run on
      the same compute node for as long as the Job Manager is running. If
      false, other tasks can run simultaneously with the Job Manager on a
-     compute node. (The Job Manager task counts normally against the node's
+     compute node. The Job Manager task counts normally against the node's
      concurrent task limit, so this is only relevant if the node allows
-     multiple concurrent tasks.)
+     multiple concurrent tasks.
     :type run_exclusive: bool
+    :param application_package_references: A list of application packages
+     that the Batch service will deploy to the compute node before running
+     the command line.
+    :type application_package_references: list of
+     :class:`ApplicationPackageReference
+     <azure.batch.models.ApplicationPackageReference>`
     """ 
+
+    _validation = {
+        'id': {'required': True},
+        'command_line': {'required': True},
+    }
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
@@ -59,9 +74,10 @@ class JobManagerTask(Model):
         'kill_job_on_completion': {'key': 'killJobOnCompletion', 'type': 'bool'},
         'run_elevated': {'key': 'runElevated', 'type': 'bool'},
         'run_exclusive': {'key': 'runExclusive', 'type': 'bool'},
+        'application_package_references': {'key': 'applicationPackageReferences', 'type': '[ApplicationPackageReference]'},
     }
 
-    def __init__(self, id=None, display_name=None, command_line=None, resource_files=None, environment_settings=None, constraints=None, kill_job_on_completion=None, run_elevated=None, run_exclusive=None):
+    def __init__(self, id, command_line, display_name=None, resource_files=None, environment_settings=None, constraints=None, kill_job_on_completion=None, run_elevated=None, run_exclusive=None, application_package_references=None):
         self.id = id
         self.display_name = display_name
         self.command_line = command_line
@@ -71,3 +87,4 @@ class JobManagerTask(Model):
         self.kill_job_on_completion = kill_job_on_completion
         self.run_elevated = run_elevated
         self.run_exclusive = run_exclusive
+        self.application_package_references = application_package_references

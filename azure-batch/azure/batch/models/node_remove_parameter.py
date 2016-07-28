@@ -15,7 +15,7 @@ from msrest.serialization import Model
 class NodeRemoveParameter(Model):
     """Parameters for a ComputeNodeOperations.Remove request.
 
-    :param node_list: A list containing the id of the compute nodes to be
+    :param node_list: A list containing the ids of the compute nodes to be
      removed from the specified pool.
     :type node_list: list of str
     :param resize_timeout: The timeout for removal of compute nodes to the
@@ -30,7 +30,7 @@ class NodeRemoveParameter(Model):
     """ 
 
     _validation = {
-        'node_list': {'required': True},
+        'node_list': {'required': True, 'max_items': 100},
     }
 
     _attribute_map = {

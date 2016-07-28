@@ -28,8 +28,8 @@ class SubtaskInformation(Model):
     :param end_time: The time at which the subtask completed. This property
      is set only if the subtask is in the Completed state.
     :type end_time: datetime
-    :param exit_code: The exit code of the subtask. This property is set only
-     if the subtask is in the Completed state.
+    :param exit_code: The exit code of the subtask.  This property is set
+     only if the subtask is in the Completed state.
     :type exit_code: int
     :param scheduling_error: Details of any error encountered scheduling the
      subtask.

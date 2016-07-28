@@ -13,9 +13,10 @@ from msrest.serialization import Model
 
 
 class MetadataItem(Model):
-    """A name-value pair associated with a Batch service resource. The Batch
-    service does not assign any meaning to this metadata; it is solely for
-    the use of user code.
+    """A name-value pair associated with a Batch service resource.
+
+    The Batch service does not assign any meaning to this metadata; it is
+    solely for the use of user code.
 
     :param name: The name of the metadata item.
     :type name: str
@@ -23,11 +24,16 @@ class MetadataItem(Model):
     :type value: str
     """ 
 
+    _validation = {
+        'name': {'required': True},
+        'value': {'required': True},
+    }
+
     _attribute_map = {
         'name': {'key': 'name', 'type': 'str'},
         'value': {'key': 'value', 'type': 'str'},
     }
 
-    def __init__(self, name=None, value=None):
+    def __init__(self, name, value):
         self.name = name
         self.value = value

@@ -54,6 +54,9 @@ class PoolSpecification(Model):
     :param enable_inter_node_communication: Whether the pool permits direct
      communication between nodes.
     :type enable_inter_node_communication: bool
+    :param network_configuration: The network configuration for the pool.
+    :type network_configuration: :class:`NetworkConfiguration
+     <azure.batch.models.NetworkConfiguration>`
     :param start_task: A task to run on each compute node as it joins the
      pool. The task runs when the node is added to the pool or when the node
      is restarted.
@@ -73,6 +76,10 @@ class PoolSpecification(Model):
      <azure.batch.models.MetadataItem>`
     """ 
 
+    _validation = {
+        'vm_size': {'required': True},
+    }
+
     _attribute_map = {
         'display_name': {'key': 'displayName', 'type': 'str'},
         'vm_size': {'key': 'vmSize', 'type': 'str'},
@@ -86,13 +93,14 @@ class PoolSpecification(Model):
         'auto_scale_formula': {'key': 'autoScaleFormula', 'type': 'str'},
         'auto_scale_evaluation_interval': {'key': 'autoScaleEvaluationInterval', 'type': 'duration'},
         'enable_inter_node_communication': {'key': 'enableInterNodeCommunication', 'type': 'bool'},
+        'network_configuration': {'key': 'networkConfiguration', 'type': 'NetworkConfiguration'},
         'start_task': {'key': 'startTask', 'type': 'StartTask'},
         'certificate_references': {'key': 'certificateReferences', 'type': '[CertificateReference]'},
         'application_package_references': {'key': 'applicationPackageReferences', 'type': '[ApplicationPackageReference]'},
         'metadata': {'key': 'metadata', 'type': '[MetadataItem]'},
     }
 
-    def __init__(self, display_name=None, vm_size=None, cloud_service_configuration=None, virtual_machine_configuration=None, max_tasks_per_node=None, task_scheduling_policy=None, resize_timeout=None, target_dedicated=None, enable_auto_scale=None, auto_scale_formula=None, auto_scale_evaluation_interval=None, enable_inter_node_communication=None, start_task=None, certificate_references=None, application_package_references=None, metadata=None):
+    def __init__(self, vm_size, display_name=None, cloud_service_configuration=None, virtual_machine_configuration=None, max_tasks_per_node=None, task_scheduling_policy=None, resize_timeout=None, target_dedicated=None, enable_auto_scale=None, auto_scale_formula=None, auto_scale_evaluation_interval=None, enable_inter_node_communication=None, network_configuration=None, start_task=None, certificate_references=None, application_package_references=None, metadata=None):
         self.display_name = display_name
         self.vm_size = vm_size
         self.cloud_service_configuration = cloud_service_configuration
@@ -105,6 +113,7 @@ class PoolSpecification(Model):
         self.auto_scale_formula = auto_scale_formula
         self.auto_scale_evaluation_interval = auto_scale_evaluation_interval
         self.enable_inter_node_communication = enable_inter_node_communication
+        self.network_configuration = network_configuration
         self.start_task = start_task
         self.certificate_references = certificate_references
         self.application_package_references = application_package_references

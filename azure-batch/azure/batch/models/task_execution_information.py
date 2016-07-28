@@ -23,7 +23,7 @@ class TaskExecutionInformation(Model):
      set only if the task is in the Completed state.
     :type end_time: datetime
     :param exit_code: The exit code of the task. This property is set only if
-     the task is in completed state.
+     the task is in Completed state.
     :type exit_code: int
     :param scheduling_error: Details of any error encountered scheduling the
      task.

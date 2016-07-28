@@ -18,14 +18,18 @@ class AffinityInformation(Model):
 
     :param affinity_id: An opaque string representing the location of a
      compute node or a task that has run previously. You can pass the
-     AffinityId of a compute node or task to indicate that this task needs to
+     affinityId of a compute node or task to indicate that this task needs to
      be placed close to the node or task.
     :type affinity_id: str
     """ 
+
+    _validation = {
+        'affinity_id': {'required': True},
+    }
 
     _attribute_map = {
         'affinity_id': {'key': 'affinityId', 'type': 'str'},
     }
 
-    def __init__(self, affinity_id=None):
+    def __init__(self, affinity_id):
         self.affinity_id = affinity_id

@@ -17,7 +17,7 @@ class JobScheduleAddParameter(Model):
     and a specification used to create each job.
 
     :param id: A string that uniquely identifies the schedule within the
-     account. A GUID is recommended.
+     account.
     :type id: str
     :param display_name: The display name for the schedule.
     :type display_name: str

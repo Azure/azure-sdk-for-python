@@ -33,8 +33,8 @@ class JobReleaseTaskExecutionInformation(Model):
     :param task_root_directory_url: The URL to the root directory of the Job
      Release task on the compute node.
     :type task_root_directory_url: str
-    :param exit_code: The exit code of the Job Release task. This property is
-     set only if the task is in the Completed state.
+    :param exit_code: The exit code of the Job Release task.  This property
+     is set only if the task is in the Completed state.
     :type exit_code: int
     :param scheduling_error: The scheduling error encountered by the Batch
      service when starting the task.
