@@ -35,9 +35,11 @@ class JobOperations(object):
     def get_all_jobs_lifetime_statistics(
             self, job_get_all_jobs_lifetime_statistics_options=None, custom_headers=None, raw=False, **operation_config):
         """Gets lifetime summary statistics for all of the jobs in the specified
-        account. Statistics are aggregated across all jobs that have ever
-        existed in the account, from account creation to the last update time
-        of the statistics.
+        account.
+
+        Statistics are aggregated across all jobs that have ever existed in
+        the account, from account creation to the last update time of the
+        statistics.
 
         :param job_get_all_jobs_lifetime_statistics_options: Additional
          parameters for the operation
@@ -248,6 +250,18 @@ class JobOperations(object):
         ocp_date = None
         if job_get_options is not None:
             ocp_date = job_get_options.ocp_date
+        if_match = None
+        if job_get_options is not None:
+            if_match = job_get_options.if_match
+        if_none_match = None
+        if job_get_options is not None:
+            if_none_match = job_get_options.if_none_match
+        if_modified_since = None
+        if job_get_options is not None:
+            if_modified_since = job_get_options.if_modified_since
+        if_unmodified_since = None
+        if job_get_options is not None:
+            if_unmodified_since = job_get_options.if_unmodified_since
 
         # Construct URL
         url = '/jobs/{jobId}'
@@ -281,6 +295,14 @@ class JobOperations(object):
             header_parameters['return-client-request-id'] = self._serialize.header("return_client_request_id", return_client_request_id, 'bool')
         if ocp_date is not None:
             header_parameters['ocp-date'] = self._serialize.header("ocp_date", ocp_date, 'rfc-1123')
+        if if_match is not None:
+            header_parameters['If-Match'] = self._serialize.header("if_match", if_match, 'str')
+        if if_none_match is not None:
+            header_parameters['If-None-Match'] = self._serialize.header("if_none_match", if_none_match, 'str')
+        if if_modified_since is not None:
+            header_parameters['If-Modified-Since'] = self._serialize.header("if_modified_since", if_modified_since, 'rfc-1123')
+        if if_unmodified_since is not None:
+            header_parameters['If-Unmodified-Since'] = self._serialize.header("if_unmodified_since", if_unmodified_since, 'rfc-1123')
 
         # Construct and send request
         request = self._client.get(url, query_parameters)

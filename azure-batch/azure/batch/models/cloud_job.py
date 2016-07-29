@@ -50,7 +50,7 @@ class CloudJob(Model):
      its previous state. This property is not set if the job is in its
      initial Active state.
     :type previous_state_transition_time: datetime
-    :param priority: The priority of the job. Priority values can range from
+    :param priority: The priority of the job.  Priority values can range from
      -1000 to 1000, with -1000 being the lowest priority and 1000 being the
      highest priority. The default value is 0.
     :type priority: int
@@ -77,6 +77,18 @@ class CloudJob(Model):
      tasks.
     :type pool_info: :class:`PoolInformation
      <azure.batch.models.PoolInformation>`
+    :param on_all_tasks_complete: The action the Batch service should take
+     when all tasks in the job are in the completed state. Possible values
+     include: 'noAction', 'terminateJob'
+    :type on_all_tasks_complete: str or :class:`OnAllTasksComplete
+     <azure.batch.models.OnAllTasksComplete>`
+    :param on_task_failure: The action the Batch service should take when any
+     task in the job fails. A task is considered to have failed if it
+     completes with a non-zero exit code and has exhausted its retry count,
+     or if it had a scheduling error. Possible values include: 'noAction',
+     'performExitOptionsJobAction'
+    :type on_task_failure: str or :class:`OnTaskFailure
+     <azure.batch.models.OnTaskFailure>`
     :param metadata: A list of name-value pairs associated with the job as
      metadata.
     :type metadata: list of :class:`MetadataItem
@@ -108,12 +120,14 @@ class CloudJob(Model):
         'job_release_task': {'key': 'jobReleaseTask', 'type': 'JobReleaseTask'},
         'common_environment_settings': {'key': 'commonEnvironmentSettings', 'type': '[EnvironmentSetting]'},
         'pool_info': {'key': 'poolInfo', 'type': 'PoolInformation'},
+        'on_all_tasks_complete': {'key': 'onAllTasksComplete', 'type': 'OnAllTasksComplete'},
+        'on_task_failure': {'key': 'onTaskFailure', 'type': 'OnTaskFailure'},
         'metadata': {'key': 'metadata', 'type': '[MetadataItem]'},
         'execution_info': {'key': 'executionInfo', 'type': 'JobExecutionInformation'},
         'stats': {'key': 'stats', 'type': 'JobStatistics'},
     }
 
-    def __init__(self, id=None, display_name=None, uses_task_dependencies=None, url=None, e_tag=None, last_modified=None, creation_time=None, state=None, state_transition_time=None, previous_state=None, previous_state_transition_time=None, priority=None, constraints=None, job_manager_task=None, job_preparation_task=None, job_release_task=None, common_environment_settings=None, pool_info=None, metadata=None, execution_info=None, stats=None):
+    def __init__(self, id=None, display_name=None, uses_task_dependencies=None, url=None, e_tag=None, last_modified=None, creation_time=None, state=None, state_transition_time=None, previous_state=None, previous_state_transition_time=None, priority=None, constraints=None, job_manager_task=None, job_preparation_task=None, job_release_task=None, common_environment_settings=None, pool_info=None, on_all_tasks_complete=None, on_task_failure=None, metadata=None, execution_info=None, stats=None):
         self.id = id
         self.display_name = display_name
         self.uses_task_dependencies = uses_task_dependencies
@@ -132,6 +146,8 @@ class CloudJob(Model):
         self.job_release_task = job_release_task
         self.common_environment_settings = common_environment_settings
         self.pool_info = pool_info
+        self.on_all_tasks_complete = on_all_tasks_complete
+        self.on_task_failure = on_task_failure
         self.metadata = metadata
         self.execution_info = execution_info
         self.stats = stats

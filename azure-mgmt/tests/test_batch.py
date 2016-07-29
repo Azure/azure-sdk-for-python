@@ -30,10 +30,10 @@ import azure.mgmt.batch
 import azure.batch as batch
 from azure.batch.batch_auth import SharedKeyCredentials
 
-AZURE_BATCH_ACCOUNT = 'pythonsdktestbatch'
-AZURE_RESOURCE_GROUP = 'python_sdk_test'
+AZURE_BATCH_ACCOUNT = 'pythonsdktest'
+AZURE_RESOURCE_GROUP = 'python_batch_sdk_test'
 AZURE_LOCATION = 'westus'
-AZURE_STORAGE_ACCOUNT = 'pythonsdkteststorage'
+AZURE_STORAGE_ACCOUNT = 'pythonsdkbatchtest'
 
 LOG = logging.getLogger('batch-python-tests')
 LOG.level = logging.WARNING
@@ -72,8 +72,11 @@ def create_resource_group(client):
 
 def create_storage_account(client):
     params = azure.mgmt.storage.models.StorageAccountCreateParameters(
-        location=AZURE_LOCATION,
-        account_type=azure.mgmt.storage.models.AccountType.standard_lrs,
+        sku=azure.mgmt.storage.models.Sku(
+            azure.mgmt.storage.models.SkuName.standard_lrs
+        ),
+        kind=azure.mgmt.storage.models.Kind.storage,
+        location=AZURE_LOCATION
     )
     result_create = client.storage_accounts.create(
         AZURE_RESOURCE_GROUP,
@@ -457,7 +460,7 @@ class BatchMgmtTestCase(RecordingTestCase):
 
                 _m = "Test Upgrade Pool OS"
                 LOG.debug(_m)
-                response = self.assertRuns(_e, _m, self.batch_client.pool.upgrade_os, pool_id, 'WA-GUEST-OS-4.28_201601-01')
+                response = self.assertRuns(_e, _m, self.batch_client.pool.upgrade_os, pool_id, 'WA-GUEST-OS-4.32_201605-01')
                 self.assertIsNone(_e, _m, response)
 
                 _m = "Test Update Pool Parameters"

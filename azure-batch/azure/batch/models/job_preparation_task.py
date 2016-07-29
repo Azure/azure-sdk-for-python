@@ -21,7 +21,12 @@ class JobPreparationTask(Model):
      characters including hyphens and underscores and cannot contain more
      than 64 characters.
     :type id: str
-    :param command_line: The command line of the Job Preparation task.
+    :param command_line: The command line of the Job Preparation task. The
+     command line does not run under a shell, and therefore cannot take
+     advantage of shell features such as environment variable expansion. If
+     you want to take advantage of such features, you should invoke the shell
+     in the command line, for example using "cmd /c MyCommand" in Windows or
+     "/bin/sh -c MyCommand" in Linux.
     :type command_line: str
     :param resource_files: A list of files that the Batch service will
      download to the compute node before running the command line.
@@ -49,6 +54,10 @@ class JobPreparationTask(Model):
     :type rerun_on_node_reboot_after_success: bool
     """ 
 
+    _validation = {
+        'command_line': {'required': True},
+    }
+
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
         'command_line': {'key': 'commandLine', 'type': 'str'},
@@ -60,7 +69,7 @@ class JobPreparationTask(Model):
         'rerun_on_node_reboot_after_success': {'key': 'rerunOnNodeRebootAfterSuccess', 'type': 'bool'},
     }
 
-    def __init__(self, id=None, command_line=None, resource_files=None, environment_settings=None, constraints=None, wait_for_success=None, run_elevated=None, rerun_on_node_reboot_after_success=None):
+    def __init__(self, command_line, id=None, resource_files=None, environment_settings=None, constraints=None, wait_for_success=None, run_elevated=None, rerun_on_node_reboot_after_success=None):
         self.id = id
         self.command_line = command_line
         self.resource_files = resource_files

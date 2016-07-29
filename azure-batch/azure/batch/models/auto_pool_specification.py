@@ -14,8 +14,7 @@ from msrest.serialization import Model
 
 class AutoPoolSpecification(Model):
     """Specifies characteristics for a temporary 'auto pool'. The Batch service
-    will create this auto pool, run all the tasks for the job on it, and will
-    delete the pool once the job has completed.
+    will create this auto pool when the job is submitted.
 
     :param auto_pool_id_prefix: A prefix to be added to the unique identifier
      when a pool is automatically created. The prefix can be up to 20

@@ -19,12 +19,22 @@ class JobPatchParameter(Model):
      -1000 to 1000, with -1000 being the lowest priority and 1000 being the
      highest priority. If omitted, the priority of the job is left unchanged.
     :type priority: int
+    :param on_all_tasks_complete: Specifies an action the Batch service
+     should take when all tasks in the job are in the completed state.
+     Possible values include: 'noAction', 'terminateJob'
+    :type on_all_tasks_complete: str or :class:`OnAllTasksComplete
+     <azure.batch.models.OnAllTasksComplete>`
     :param constraints: The execution constraints for the job. If omitted,
      the existing execution constraints are left unchanged.
     :type constraints: :class:`JobConstraints
      <azure.batch.models.JobConstraints>`
     :param pool_info: The pool on which the Batch service runs the job's
-     tasks. If omitted, the job continues to run on its current pool.
+     tasks. You may change the pool for a job only when the job is disabled.
+     The Patch Job call will fail if you include the poolInfo element and the
+     job is not disabled. If you specify an autoPoolSpecification
+     specification in the poolInfo, only the keepAlive property can be
+     updated, and then only if the auto pool has a poolLifetimeOption of job.
+     If omitted, the job continues to run on its current pool.
     :type pool_info: :class:`PoolInformation
      <azure.batch.models.PoolInformation>`
     :param metadata: A list of name-value pairs associated with the job as
@@ -35,13 +45,15 @@ class JobPatchParameter(Model):
 
     _attribute_map = {
         'priority': {'key': 'priority', 'type': 'int'},
+        'on_all_tasks_complete': {'key': 'onAllTasksComplete', 'type': 'OnAllTasksComplete'},
         'constraints': {'key': 'constraints', 'type': 'JobConstraints'},
         'pool_info': {'key': 'poolInfo', 'type': 'PoolInformation'},
         'metadata': {'key': 'metadata', 'type': '[MetadataItem]'},
     }
 
-    def __init__(self, priority=None, constraints=None, pool_info=None, metadata=None):
+    def __init__(self, priority=None, on_all_tasks_complete=None, constraints=None, pool_info=None, metadata=None):
         self.priority = priority
+        self.on_all_tasks_complete = on_all_tasks_complete
         self.constraints = constraints
         self.pool_info = pool_info
         self.metadata = metadata

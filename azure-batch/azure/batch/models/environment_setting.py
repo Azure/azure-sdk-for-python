@@ -21,11 +21,15 @@ class EnvironmentSetting(Model):
     :type value: str
     """ 
 
+    _validation = {
+        'name': {'required': True},
+    }
+
     _attribute_map = {
         'name': {'key': 'name', 'type': 'str'},
         'value': {'key': 'value', 'type': 'str'},
     }
 
-    def __init__(self, name=None, value=None):
+    def __init__(self, name, value=None):
         self.name = name
         self.value = value

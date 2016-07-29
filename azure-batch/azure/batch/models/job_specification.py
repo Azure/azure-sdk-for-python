@@ -21,8 +21,8 @@ class JobSpecification(Model):
      is 0.
     :type priority: int
     :param display_name: The display name for jobs created under this
-     schedule. It need not be unique and can contain any Unicode characters
-     up to a maximum length of 1024.
+     schedule. The name need not be unique and can contain any Unicode
+     characters up to a maximum length of 1024.
     :type display_name: str
     :param uses_task_dependencies: The flag that determines if this job will
      use tasks with dependencies.
@@ -59,6 +59,10 @@ class JobSpecification(Model):
      <azure.batch.models.MetadataItem>`
     """ 
 
+    _validation = {
+        'pool_info': {'required': True},
+    }
+
     _attribute_map = {
         'priority': {'key': 'priority', 'type': 'int'},
         'display_name': {'key': 'displayName', 'type': 'str'},
@@ -72,7 +76,7 @@ class JobSpecification(Model):
         'metadata': {'key': 'metadata', 'type': '[MetadataItem]'},
     }
 
-    def __init__(self, priority=None, display_name=None, uses_task_dependencies=None, constraints=None, job_manager_task=None, job_preparation_task=None, job_release_task=None, common_environment_settings=None, pool_info=None, metadata=None):
+    def __init__(self, pool_info, priority=None, display_name=None, uses_task_dependencies=None, constraints=None, job_manager_task=None, job_preparation_task=None, job_release_task=None, common_environment_settings=None, metadata=None):
         self.priority = priority
         self.display_name = display_name
         self.uses_task_dependencies = uses_task_dependencies

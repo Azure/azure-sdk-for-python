@@ -595,12 +595,12 @@ class ComputeNodeOperations(object):
 
     def disable_scheduling(
             self, pool_id, node_id, compute_node_disable_scheduling_options=None, node_disable_scheduling_option=None, custom_headers=None, raw=False, **operation_config):
-        """Disable task scheduling of the specified compute node.
+        """Disables task scheduling on the specified compute node.
 
         :param pool_id: The id of the pool that contains the compute node.
         :type pool_id: str
-        :param node_id: The id of the compute node that you want to disable
-         task scheduling.
+        :param node_id: The id of the compute node on which you want to
+         disable task scheduling.
         :type node_id: str
         :param compute_node_disable_scheduling_options: Additional parameters
          for the operation
@@ -696,12 +696,12 @@ class ComputeNodeOperations(object):
 
     def enable_scheduling(
             self, pool_id, node_id, compute_node_enable_scheduling_options=None, custom_headers=None, raw=False, **operation_config):
-        """Enable task scheduling of the specified compute node.
+        """Enables task scheduling on the specified compute node.
 
         :param pool_id: The id of the pool that contains the compute node.
         :type pool_id: str
-        :param node_id: The id of the compute node that you want to enable
-         task scheduling.
+        :param node_id: The id of the compute node on which you want to
+         enable task scheduling.
         :type node_id: str
         :param compute_node_enable_scheduling_options: Additional parameters
          for the operation
