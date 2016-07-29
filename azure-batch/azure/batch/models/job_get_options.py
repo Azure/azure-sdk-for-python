@@ -33,12 +33,29 @@ class JobGetOptions(Model):
      header will be automatically populated with the current system clock
      time.
     :type ocp_date: datetime
+    :param if_match: An ETag is specified. Specify this header to perform the
+     operation only if the resource's ETag is an exact match as specified.
+    :type if_match: str
+    :param if_none_match: An ETag is specified. Specify this header to
+     perform the operation only if the resource's ETag does not match the
+     specified ETag.
+    :type if_none_match: str
+    :param if_modified_since: Specify this header to perform the operation
+     only if the resource has been modified since the specified date/time.
+    :type if_modified_since: datetime
+    :param if_unmodified_since: Specify this header to perform the operation
+     only if the resource has not been modified since the specified date/time.
+    :type if_unmodified_since: datetime
     """ 
 
-    def __init__(self, select=None, expand=None, timeout=30, client_request_id=None, return_client_request_id=None, ocp_date=None):
+    def __init__(self, select=None, expand=None, timeout=30, client_request_id=None, return_client_request_id=None, ocp_date=None, if_match=None, if_none_match=None, if_modified_since=None, if_unmodified_since=None):
         self.select = select
         self.expand = expand
         self.timeout = timeout
         self.client_request_id = client_request_id
         self.return_client_request_id = return_client_request_id
         self.ocp_date = ocp_date
+        self.if_match = if_match
+        self.if_none_match = if_none_match
+        self.if_modified_since = if_modified_since
+        self.if_unmodified_since = if_unmodified_since

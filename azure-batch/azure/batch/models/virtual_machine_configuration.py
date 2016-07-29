@@ -28,7 +28,7 @@ class VirtualMachineConfiguration(Model):
     :type node_agent_sku_id: str
     :param windows_configuration: Windows operating system settings on the
      virtual machine. This property must not be specified if the
-     ImageReference property specifies a Linux OS image.
+     imageReference property specifies a Linux OS image.
     :type windows_configuration: :class:`WindowsConfiguration
      <azure.batch.models.WindowsConfiguration>`
     """ 

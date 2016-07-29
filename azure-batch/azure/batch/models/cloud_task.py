@@ -17,7 +17,8 @@ class CloudTask(Model):
 
     :param id: A string that uniquely identifies the task within the job. The
      id can contain any combination of alphanumeric characters including
-     hyphens and underscores, and cannot contain more than 64 characters.
+     hyphens and underscores, and cannot contain more than 64 characters. It
+     is common to use a GUID for the id.
     :type id: str
     :param display_name: A display name for the task.
     :type display_name: str
@@ -29,6 +30,10 @@ class CloudTask(Model):
     :type last_modified: datetime
     :param creation_time: The creation time of the task.
     :type creation_time: datetime
+    :param exit_conditions: How the Batch service should respond when the
+     task completes.
+    :type exit_conditions: :class:`ExitConditions
+     <azure.batch.models.ExitConditions>`
     :param state: The current state of the task. Possible values include:
      'active', 'preparing', 'running', 'completed'
     :type state: str or :class:`TaskState <azure.batch.models.TaskState>`
@@ -46,7 +51,12 @@ class CloudTask(Model):
     :type previous_state_transition_time: datetime
     :param command_line: The command line of the task. For multi-instance
      tasks, the command line is executed on the primary subtask after all the
-     subtasks have finished executing the coordianation command line.
+     subtasks have finished executing the coordianation command line. The
+     command line does not run under a shell, and therefore cannot take
+     advantage of shell features such as environment variable expansion. If
+     you want to take advantage of such features, you should invoke the shell
+     in the command line, for example using "cmd /c MyCommand" in Windows or
+     "/bin/sh -c MyCommand" in Linux.
     :type command_line: str
     :param resource_files: A list of files that the Batch service will
      download to the compute node before running the command line. For
@@ -83,6 +93,12 @@ class CloudTask(Model):
     :param depends_on: Any dependencies this task has.
     :type depends_on: :class:`TaskDependencies
      <azure.batch.models.TaskDependencies>`
+    :param application_package_references: A list of application packages
+     that the Batch service will deploy to the compute node before running
+     the command line.
+    :type application_package_references: list of
+     :class:`ApplicationPackageReference
+     <azure.batch.models.ApplicationPackageReference>`
     """ 
 
     _attribute_map = {
@@ -92,6 +108,7 @@ class CloudTask(Model):
         'e_tag': {'key': 'eTag', 'type': 'str'},
         'last_modified': {'key': 'lastModified', 'type': 'iso-8601'},
         'creation_time': {'key': 'creationTime', 'type': 'iso-8601'},
+        'exit_conditions': {'key': 'exitConditions', 'type': 'ExitConditions'},
         'state': {'key': 'state', 'type': 'TaskState'},
         'state_transition_time': {'key': 'stateTransitionTime', 'type': 'iso-8601'},
         'previous_state': {'key': 'previousState', 'type': 'TaskState'},
@@ -107,15 +124,17 @@ class CloudTask(Model):
         'multi_instance_settings': {'key': 'multiInstanceSettings', 'type': 'MultiInstanceSettings'},
         'stats': {'key': 'stats', 'type': 'TaskStatistics'},
         'depends_on': {'key': 'dependsOn', 'type': 'TaskDependencies'},
+        'application_package_references': {'key': 'applicationPackageReferences', 'type': '[ApplicationPackageReference]'},
     }
 
-    def __init__(self, id=None, display_name=None, url=None, e_tag=None, last_modified=None, creation_time=None, state=None, state_transition_time=None, previous_state=None, previous_state_transition_time=None, command_line=None, resource_files=None, environment_settings=None, affinity_info=None, constraints=None, run_elevated=None, execution_info=None, node_info=None, multi_instance_settings=None, stats=None, depends_on=None):
+    def __init__(self, id=None, display_name=None, url=None, e_tag=None, last_modified=None, creation_time=None, exit_conditions=None, state=None, state_transition_time=None, previous_state=None, previous_state_transition_time=None, command_line=None, resource_files=None, environment_settings=None, affinity_info=None, constraints=None, run_elevated=None, execution_info=None, node_info=None, multi_instance_settings=None, stats=None, depends_on=None, application_package_references=None):
         self.id = id
         self.display_name = display_name
         self.url = url
         self.e_tag = e_tag
         self.last_modified = last_modified
         self.creation_time = creation_time
+        self.exit_conditions = exit_conditions
         self.state = state
         self.state_transition_time = state_transition_time
         self.previous_state = previous_state
@@ -131,3 +150,4 @@ class CloudTask(Model):
         self.multi_instance_settings = multi_instance_settings
         self.stats = stats
         self.depends_on = depends_on
+        self.application_package_references = application_package_references

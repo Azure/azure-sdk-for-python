@@ -13,13 +13,12 @@ from msrest.serialization import Model
 
 
 class ApplicationPackageReference(Model):
-    """A reference to an application package to be installed on compute nodes in
-    a pool.
+    """A reference to an application package to be deployed to compute nodes.
 
-    :param application_id: The id of the application to install.
+    :param application_id: The id of the application to deploy.
     :type application_id: str
-    :param version: The version of the application to install. If omitted,
-     the default version is installed.
+    :param version: The version of the application to deploy. If omitted, the
+     default version is deployed.
     :type version: str
     """ 
 

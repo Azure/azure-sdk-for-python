@@ -21,7 +21,12 @@ class JobReleaseTask(Model):
      including hyphens and underscores and cannot contain more than 64
      characters.
     :type id: str
-    :param command_line: The command line of the Job Release task.
+    :param command_line: The command line of the Job Release task. The
+     command line does not run under a shell, and therefore cannot take
+     advantage of shell features such as environment variable expansion. If
+     you want to take advantage of such features, you should invoke the shell
+     in the command line, for example using "cmd /c MyCommand" in Windows or
+     "/bin/sh -c MyCommand" in Linux.
     :type command_line: str
     :param resource_files: A list of files that the Batch service will
      download to the compute node before running the command line.
@@ -38,13 +43,17 @@ class JobReleaseTask(Model):
     :type max_wall_clock_time: timedelta
     :param retention_time: The minimum time to retain the working directory
      for the Job Release task on the compute node. After this time, the Batch
-     service may delete the working directory and all its contents. The
+     service may delete the working directory and all its contents.  The
      default is infinite.
     :type retention_time: timedelta
     :param run_elevated: Whether to run the Job Release task in elevated
      mode. The default value is false.
     :type run_elevated: bool
     """ 
+
+    _validation = {
+        'command_line': {'required': True},
+    }
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
@@ -56,7 +65,7 @@ class JobReleaseTask(Model):
         'run_elevated': {'key': 'runElevated', 'type': 'bool'},
     }
 
-    def __init__(self, id=None, command_line=None, resource_files=None, environment_settings=None, max_wall_clock_time=None, retention_time=None, run_elevated=None):
+    def __init__(self, command_line, id=None, resource_files=None, environment_settings=None, max_wall_clock_time=None, retention_time=None, run_elevated=None):
         self.id = id
         self.command_line = command_line
         self.resource_files = resource_files

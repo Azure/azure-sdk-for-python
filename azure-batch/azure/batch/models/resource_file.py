@@ -28,13 +28,18 @@ class ResourceFile(Model):
     :type file_mode: str
     """ 
 
+    _validation = {
+        'blob_source': {'required': True},
+        'file_path': {'required': True},
+    }
+
     _attribute_map = {
         'blob_source': {'key': 'blobSource', 'type': 'str'},
         'file_path': {'key': 'filePath', 'type': 'str'},
         'file_mode': {'key': 'fileMode', 'type': 'str'},
     }
 
-    def __init__(self, blob_source=None, file_path=None, file_mode=None):
+    def __init__(self, blob_source, file_path, file_mode=None):
         self.blob_source = blob_source
         self.file_path = file_path
         self.file_mode = file_mode

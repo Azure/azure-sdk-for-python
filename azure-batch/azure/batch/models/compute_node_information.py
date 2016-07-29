@@ -19,7 +19,7 @@ class ComputeNodeInformation(Model):
      ran, which can be passed when adding a task to request that the task be
      scheduled close to this compute node.
     :type affinity_id: str
-    :param node_url: The URL of the node on which the task ran.
+    :param node_url: The URL of the node on which the task ran. .
     :type node_url: str
     :param pool_id: The id of the pool on which the task ran.
     :type pool_id: str
