@@ -51,6 +51,6 @@ setup(
         'azure-graphrbac==0.30.0rc5',
         'azure-servicebus==0.20.2',
         'azure-storage==0.32.0',
-        'azure-servicemanagement-legacy==0.20.3',
+        'azure-servicemanagement-legacy==0.20.4',
     ],
 )
