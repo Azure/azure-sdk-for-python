@@ -1219,6 +1219,70 @@ class ServiceManagementService(_ServiceManagementClient):
         return self._perform_delete(self._get_reserved_ip_path(name),
                                     async=True)
 
+    def associate_reserved_ip_address(
+        self, name, service_name, deployment_name, virtual_ip_name=None
+    ):
+        '''
+        Associate an existing reservedIP to a deployment.
+
+        name:
+            Required. Name of the reserved IP address.
+
+        service_name:
+            Required. Name of the hosted service.
+
+        deployment_name:
+            Required. Name of the deployment.
+
+        virtual_ip_name:
+            Optional. Name of the VirtualIP in case of multi Vip tenant.
+            If this value is not specified default virtualIP is used
+            for this operation.
+        '''
+        _validate_not_none('name', name)
+        _validate_not_none('service_name', service_name)
+        _validate_not_none('deployment_name', deployment_name)
+        return self._perform_post(
+            self._get_reserved_ip_path_for_association(name),
+            _XmlSerializer.associate_reserved_ip_to_xml(
+                service_name, deployment_name, virtual_ip_name
+            ),
+            async=True,
+            x_ms_version='2015-02-01'
+        )
+
+    def disassociate_reserved_ip_address(
+        self, name, service_name, deployment_name, virtual_ip_name=None
+    ):
+        '''
+        Disassociate an existing reservedIP from the given deployment.
+
+        name:
+            Required. Name of the reserved IP address.
+
+        service_name:
+            Required. Name of the hosted service.
+
+        deployment_name:
+            Required. Name of the deployment.
+
+        virtual_ip_name:
+            Optional. Name of the VirtualIP in case of multi Vip tenant.
+            If this value is not specified default virtualIP is used
+            for this operation.
+        '''
+        _validate_not_none('name', name)
+        _validate_not_none('service_name', service_name)
+        _validate_not_none('deployment_name', deployment_name)
+        return self._perform_post(
+            self._get_reserved_ip_path_for_disassociation(name),
+            _XmlSerializer.associate_reserved_ip_to_xml(
+                service_name, deployment_name, virtual_ip_name
+            ),
+            async=True,
+            x_ms_version='2015-02-01'
+        )
+
     def get_reserved_ip_address(self, name):
         '''
         Retrieves information about the specified reserved IP address.
@@ -2645,6 +2709,14 @@ class ServiceManagementService(_ServiceManagementClient):
 
     def _get_reserved_ip_path(self, name=None):
         return self._get_path('services/networking/reservedips', name)
+
+    def _get_reserved_ip_path_for_association(self, name):
+        return self._get_path('services/networking/reservedips', name) + \
+            '/operations/associate'
+
+    def _get_reserved_ip_path_for_disassociation(self, name):
+        return self._get_path('services/networking/reservedips', name) + \
+            '/operations/disassociate'
 
     def _get_data_disk_path(self, service_name, deployment_name, role_name,
                             lun=None):
