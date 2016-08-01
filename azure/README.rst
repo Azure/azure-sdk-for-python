@@ -19,7 +19,7 @@ packages. Follow the links for more information on each package.
 -  `azure-graphrbac v0.30.0rc5 <https://pypi.python.org/pypi/azure-graphrbac/0.30.0rc5>`__
 -  `azure-batch v0.30.0rc5 <https://pypi.python.org/pypi/azure-batch/0.30.0rc5>`__
 -  `azure-servicebus v0.20.2 <https://pypi.python.org/pypi/azure-servicebus/0.20.2>`__
--  `azure-servicemanagement-legacy v0.20.3 <https://pypi.python.org/pypi/azure-servicemanagement-legacy/0.20.3>`__
+-  `azure-servicemanagement-legacy v0.20.4 <https://pypi.python.org/pypi/azure-servicemanagement-legacy/0.20.4>`__
 -  `azure-storage v0.30.0 <https://pypi.python.org/pypi/azure-storage/0.30.0>`__
 
 Note that if you don't need all of these packages, you can install/uninstall them individually.
