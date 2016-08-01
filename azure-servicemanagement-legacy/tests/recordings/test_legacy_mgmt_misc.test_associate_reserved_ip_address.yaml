@@ -8,7 +8,7 @@ interactions:
       Connection: [keep-alive]
       Content-Length: ['488']
       Content-Type: [application/atom+xml;type=entry;charset=utf-8]
-      User-Agent: [pyazure/0.20.3]
+      User-Agent: [pyazure/0.20.4]
       x-ms-version: ['2014-10-01']
     method: POST
     uri: https://management.core.windows.net/00000000-0000-0000-0000-000000000000/services/hostedservices
@@ -28,7 +28,7 @@ interactions:
     headers:
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
-      User-Agent: [pyazure/0.20.3]
+      User-Agent: [pyazure/0.20.4]
       x-ms-version: ['2014-10-01']
     method: GET
     uri: https://management.core.windows.net/00000000-0000-0000-0000-000000000000/operations/de52baba7c2fab95882c38eaf8d3c17d
@@ -48583,7 +48583,7 @@ interactions:
       Connection: [keep-alive]
       Content-Length: ['1220']
       Content-Type: [application/atom+xml;type=entry;charset=utf-8]
-      User-Agent: [pyazure/0.20.3]
+      User-Agent: [pyazure/0.20.4]
       x-ms-version: ['2014-10-01']
     method: POST
     uri: https://management.core.windows.net/00000000-0000-0000-0000-000000000000/services/hostedservices/utsvc8ec516f9/deploymentslots/Production
@@ -48602,7 +48602,7 @@ interactions:
     headers:
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
-      User-Agent: [pyazure/0.20.3]
+      User-Agent: [pyazure/0.20.4]
       x-ms-version: ['2014-10-01']
     method: GET
     uri: https://management.core.windows.net/00000000-0000-0000-0000-000000000000/operations/937a58aef8a40ef39ea669d72e43197c
@@ -48622,7 +48622,7 @@ interactions:
     headers:
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
-      User-Agent: [pyazure/0.20.3]
+      User-Agent: [pyazure/0.20.4]
       x-ms-version: ['2014-10-01']
     method: GET
     uri: https://management.core.windows.net/00000000-0000-0000-0000-000000000000/operations/937a58aef8a40ef39ea669d72e43197c
@@ -48642,7 +48642,7 @@ interactions:
     headers:
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
-      User-Agent: [pyazure/0.20.3]
+      User-Agent: [pyazure/0.20.4]
       x-ms-version: ['2014-10-01']
     method: GET
     uri: https://management.core.windows.net/00000000-0000-0000-0000-000000000000/operations/937a58aef8a40ef39ea669d72e43197c
@@ -48662,7 +48662,7 @@ interactions:
     headers:
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
-      User-Agent: [pyazure/0.20.3]
+      User-Agent: [pyazure/0.20.4]
       x-ms-version: ['2014-10-01']
     method: GET
     uri: https://management.core.windows.net/00000000-0000-0000-0000-000000000000/operations/937a58aef8a40ef39ea669d72e43197c
@@ -48685,7 +48685,7 @@ interactions:
       Connection: [keep-alive]
       Content-Length: ['175']
       Content-Type: [application/atom+xml;type=entry;charset=utf-8]
-      User-Agent: [pyazure/0.20.3]
+      User-Agent: [pyazure/0.20.4]
       x-ms-version: ['2014-10-01']
     method: POST
     uri: https://management.core.windows.net/00000000-0000-0000-0000-000000000000/services/hostedservices/utsvc8ec516f9/deployments/utdeployment/?comp=status
@@ -48707,7 +48707,7 @@ interactions:
       Connection: [keep-alive]
       Content-Length: ['200']
       Content-Type: [application/atom+xml;type=entry;charset=utf-8]
-      User-Agent: [pyazure/0.20.3]
+      User-Agent: [pyazure/0.20.4]
       x-ms-version: ['2014-10-01']
     method: POST
     uri: https://management.core.windows.net/00000000-0000-0000-0000-000000000000/services/networking/reservedips
@@ -48726,7 +48726,7 @@ interactions:
     headers:
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
-      User-Agent: [pyazure/0.20.3]
+      User-Agent: [pyazure/0.20.4]
       x-ms-version: ['2014-10-01']
     method: GET
     uri: https://management.core.windows.net/00000000-0000-0000-0000-000000000000/operations/71c4f2c290030392a5e7fc4f5441a0fa
@@ -48746,7 +48746,7 @@ interactions:
     headers:
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
-      User-Agent: [pyazure/0.20.3]
+      User-Agent: [pyazure/0.20.4]
       x-ms-version: ['2014-10-01']
     method: GET
     uri: https://management.core.windows.net/00000000-0000-0000-0000-000000000000/operations/71c4f2c290030392a5e7fc4f5441a0fa
@@ -48766,7 +48766,7 @@ interactions:
     headers:
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
-      User-Agent: [pyazure/0.20.3]
+      User-Agent: [pyazure/0.20.4]
       x-ms-version: ['2014-10-01']
     method: GET
     uri: https://management.core.windows.net/00000000-0000-0000-0000-000000000000/operations/7e7e4b0c292400419ae977478b3935b2
@@ -48789,7 +48789,7 @@ interactions:
       Connection: [keep-alive]
       Content-Length: ['234']
       Content-Type: [application/atom+xml;type=entry;charset=utf-8]
-      User-Agent: [pyazure/0.20.3]
+      User-Agent: [pyazure/0.20.4]
       x-ms-version: ['2015-02-01']
     method: POST
     uri: https://management.core.windows.net/00000000-0000-0000-0000-000000000000/services/networking/reservedips/ip8ec516f9/operations/associate
@@ -48809,7 +48809,7 @@ interactions:
     headers:
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
-      User-Agent: [pyazure/0.20.3]
+      User-Agent: [pyazure/0.20.4]
       x-ms-version: ['2014-10-01']
     method: GET
     uri: https://management.core.windows.net/00000000-0000-0000-0000-000000000000/operations/51811fdd0f55ae01ae9b09b096215e7b
@@ -48829,7 +48829,7 @@ interactions:
     headers:
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
-      User-Agent: [pyazure/0.20.3]
+      User-Agent: [pyazure/0.20.4]
       x-ms-version: ['2014-10-01']
     method: GET
     uri: https://management.core.windows.net/00000000-0000-0000-0000-000000000000/operations/51811fdd0f55ae01ae9b09b096215e7b
@@ -48849,7 +48849,7 @@ interactions:
     headers:
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
-      User-Agent: [pyazure/0.20.3]
+      User-Agent: [pyazure/0.20.4]
       x-ms-version: ['2014-10-01']
     method: GET
     uri: https://management.core.windows.net/00000000-0000-0000-0000-000000000000/operations/51811fdd0f55ae01ae9b09b096215e7b
@@ -48869,7 +48869,7 @@ interactions:
     headers:
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
-      User-Agent: [pyazure/0.20.3]
+      User-Agent: [pyazure/0.20.4]
       x-ms-version: ['2014-10-01']
     method: GET
     uri: https://management.core.windows.net/00000000-0000-0000-0000-000000000000/operations/51811fdd0f55ae01ae9b09b096215e7b
@@ -48889,7 +48889,7 @@ interactions:
     headers:
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
-      User-Agent: [pyazure/0.20.3]
+      User-Agent: [pyazure/0.20.4]
       x-ms-version: ['2014-10-01']
     method: GET
     uri: https://management.core.windows.net/00000000-0000-0000-0000-000000000000/operations/51811fdd0f55ae01ae9b09b096215e7b
@@ -48909,7 +48909,7 @@ interactions:
     headers:
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
-      User-Agent: [pyazure/0.20.3]
+      User-Agent: [pyazure/0.20.4]
       x-ms-version: ['2014-10-01']
     method: GET
     uri: https://management.core.windows.net/00000000-0000-0000-0000-000000000000/operations/51811fdd0f55ae01ae9b09b096215e7b
@@ -48929,7 +48929,7 @@ interactions:
     headers:
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
-      User-Agent: [pyazure/0.20.3]
+      User-Agent: [pyazure/0.20.4]
       x-ms-version: ['2014-10-01']
     method: GET
     uri: https://management.core.windows.net/00000000-0000-0000-0000-000000000000/operations/51811fdd0f55ae01ae9b09b096215e7b
@@ -48949,7 +48949,7 @@ interactions:
     headers:
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
-      User-Agent: [pyazure/0.20.3]
+      User-Agent: [pyazure/0.20.4]
       x-ms-version: ['2014-10-01']
     method: GET
     uri: https://management.core.windows.net/00000000-0000-0000-0000-000000000000/operations/51811fdd0f55ae01ae9b09b096215e7b
@@ -48969,7 +48969,7 @@ interactions:
     headers:
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
-      User-Agent: [pyazure/0.20.3]
+      User-Agent: [pyazure/0.20.4]
       x-ms-version: ['2014-10-01']
     method: GET
     uri: https://management.core.windows.net/00000000-0000-0000-0000-000000000000/operations/51811fdd0f55ae01ae9b09b096215e7b
@@ -48989,7 +48989,7 @@ interactions:
     headers:
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
-      User-Agent: [pyazure/0.20.3]
+      User-Agent: [pyazure/0.20.4]
       x-ms-version: ['2014-10-01']
     method: GET
     uri: https://management.core.windows.net/00000000-0000-0000-0000-000000000000/operations/51811fdd0f55ae01ae9b09b096215e7b
@@ -49009,7 +49009,7 @@ interactions:
     headers:
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
-      User-Agent: [pyazure/0.20.3]
+      User-Agent: [pyazure/0.20.4]
       x-ms-version: ['2014-10-01']
     method: GET
     uri: https://management.core.windows.net/00000000-0000-0000-0000-000000000000/operations/51811fdd0f55ae01ae9b09b096215e7b
@@ -49029,7 +49029,7 @@ interactions:
     headers:
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
-      User-Agent: [pyazure/0.20.3]
+      User-Agent: [pyazure/0.20.4]
       x-ms-version: ['2014-10-01']
     method: GET
     uri: https://management.core.windows.net/00000000-0000-0000-0000-000000000000/operations/51811fdd0f55ae01ae9b09b096215e7b
@@ -49049,7 +49049,7 @@ interactions:
     headers:
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
-      User-Agent: [pyazure/0.20.3]
+      User-Agent: [pyazure/0.20.4]
       x-ms-version: ['2014-10-01']
     method: GET
     uri: https://management.core.windows.net/00000000-0000-0000-0000-000000000000/operations/51811fdd0f55ae01ae9b09b096215e7b
@@ -49069,7 +49069,7 @@ interactions:
     headers:
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
-      User-Agent: [pyazure/0.20.3]
+      User-Agent: [pyazure/0.20.4]
       x-ms-version: ['2014-10-01']
     method: GET
     uri: https://management.core.windows.net/00000000-0000-0000-0000-000000000000/services/hostedservices/utsvc8ec516f9?embed-detail=true
