@@ -15,26 +15,25 @@ from msrest.serialization import Model
 class AADObject(Model):
     """Active Directory object information.
 
-    :param object_id: Gets or sets object Id
+    :param object_id: object Id
     :type object_id: str
-    :param object_type: Gets or sets object type
+    :param object_type: object type
     :type object_type: str
-    :param display_name: Gets or sets object display name
+    :param display_name: object display name
     :type display_name: str
-    :param user_principal_name: Gets or sets principal name
+    :param user_principal_name: principal name
     :type user_principal_name: str
-    :param mail: Gets or sets mail
+    :param mail: mail
     :type mail: str
-    :param mail_enabled: Gets or sets MailEnabled field
+    :param mail_enabled: MailEnabled field
     :type mail_enabled: bool
-    :param security_enabled: Gets or sets SecurityEnabled field
+    :param security_enabled: SecurityEnabled field
     :type security_enabled: bool
-    :param sign_in_name: Gets or sets signIn name
+    :param sign_in_name: signIn name
     :type sign_in_name: str
-    :param service_principal_names: Gets or sets the list of service
-     principal names.
+    :param service_principal_names: the list of service principal names.
     :type service_principal_names: list of str
-    :param user_type: Gets or sets the user type
+    :param user_type: the user type
     :type user_type: str
     """ 
 
