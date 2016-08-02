@@ -29,7 +29,7 @@ class GraphRbacManagementClientConfiguration(AzureConfiguration):
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
      object<msrestazure.azure_active_directory>`
-    :param tenant_id: Gets or sets the tenant Id.
+    :param tenant_id: the tenant Id.
     :type tenant_id: str
     :param accept_language: Gets or sets the preferred language for the
      response.
@@ -91,7 +91,7 @@ class GraphRbacManagementClient(object):
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
      object<msrestazure.azure_active_directory>`
-    :param tenant_id: Gets or sets the tenant Id.
+    :param tenant_id: the tenant Id.
     :type tenant_id: str
     :param accept_language: Gets or sets the preferred language for the
      response.
