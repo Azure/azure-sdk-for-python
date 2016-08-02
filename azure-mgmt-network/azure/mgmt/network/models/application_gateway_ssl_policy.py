@@ -12,20 +12,19 @@
 from msrest.serialization import Model
 
 
-class ApplicationGatewayBackendAddress(Model):
-    """Backend Address of application gateway.
+class ApplicationGatewaySslPolicy(Model):
+    """Application gateway SSL policy.
 
-    :param fqdn: Dns name
-    :type fqdn: str
-    :param ip_address: Ip address
-    :type ip_address: str
+    :param disabled_ssl_protocols: SSL protocols to be disabled on
+     Application Gateway
+    :type disabled_ssl_protocols: list of str or
+     :class:`ApplicationGatewaySslProtocol
+     <azure.mgmt.network.models.ApplicationGatewaySslProtocol>`
     """ 
 
     _attribute_map = {
-        'fqdn': {'key': 'fqdn', 'type': 'str'},
-        'ip_address': {'key': 'ipAddress', 'type': 'str'},
+        'disabled_ssl_protocols': {'key': 'disabledSslProtocols', 'type': '[ApplicationGatewaySslProtocol]'},
     }
 
-    def __init__(self, fqdn=None, ip_address=None):
-        self.fqdn = fqdn
-        self.ip_address = ip_address
+    def __init__(self, disabled_ssl_protocols=None):
+        self.disabled_ssl_protocols = disabled_ssl_protocols

@@ -17,24 +17,23 @@ class ApplicationGatewayFrontendIPConfiguration(SubResource):
 
     :param id: Resource Id
     :type id: str
-    :param private_ip_address: Gets or sets the privateIPAddress of the
-     Network Interface IP Configuration
+    :param private_ip_address: PrivateIPAddress of the Network Interface IP
+     Configuration
     :type private_ip_address: str
-    :param private_ip_allocation_method: Gets or sets PrivateIP allocation
-     method (Static/Dynamic). Possible values include: 'Static', 'Dynamic'
+    :param private_ip_allocation_method: PrivateIP allocation method
+     (Static/Dynamic). Possible values include: 'Static', 'Dynamic'
     :type private_ip_allocation_method: str or :class:`IPAllocationMethod
      <azure.mgmt.network.models.IPAllocationMethod>`
-    :param subnet: Gets or sets the reference of the subnet resource
+    :param subnet: Reference of the subnet resource
     :type subnet: :class:`SubResource <azure.mgmt.network.models.SubResource>`
-    :param public_ip_address: Gets or sets the reference of the PublicIP
-     resource
+    :param public_ip_address: Reference of the PublicIP resource
     :type public_ip_address: :class:`SubResource
      <azure.mgmt.network.models.SubResource>`
-    :param provisioning_state: Gets or sets Provisioning state of the
-     PublicIP resource Updating/Deleting/Failed
+    :param provisioning_state: Provisioning state of the PublicIP resource
+     Updating/Deleting/Failed
     :type provisioning_state: str
-    :param name: Gets name of the resource that is unique within a resource
-     group. This name can be used to access the resource
+    :param name: Name of the resource that is unique within a resource group.
+     This name can be used to access the resource
     :type name: str
     :param etag: A unique read-only string that changes whenever the resource
      is updated
