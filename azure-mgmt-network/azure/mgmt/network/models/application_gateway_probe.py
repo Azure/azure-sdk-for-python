@@ -17,25 +17,24 @@ class ApplicationGatewayProbe(SubResource):
 
     :param id: Resource Id
     :type id: str
-    :param protocol: Gets or sets the protocol. Possible values include:
-     'Http', 'Https'
+    :param protocol: Protocol. Possible values include: 'Http', 'Https'
     :type protocol: str or :class:`ApplicationGatewayProtocol
      <azure.mgmt.network.models.ApplicationGatewayProtocol>`
-    :param host: Gets or sets the host to send probe to
+    :param host: Host to send probe to
     :type host: str
-    :param path: Gets or sets the relative path of probe
+    :param path: Relative path of probe
     :type path: str
-    :param interval: Gets or sets probing interval in seconds
+    :param interval: Probing interval in seconds
     :type interval: int
-    :param timeout: Gets or sets probing timeout in seconds
+    :param timeout: Probing timeout in seconds
     :type timeout: int
-    :param unhealthy_threshold: Gets or sets probing unhealthy threshold
+    :param unhealthy_threshold: Probing unhealthy threshold
     :type unhealthy_threshold: int
-    :param provisioning_state: Gets or sets Provisioning state of the backend
-     http settings resource Updating/Deleting/Failed
+    :param provisioning_state: Provisioning state of the backend http
+     settings resource Updating/Deleting/Failed
     :type provisioning_state: str
-    :param name: Gets name of the resource that is unique within a resource
-     group. This name can be used to access the resource
+    :param name: Name of the resource that is unique within a resource group.
+     This name can be used to access the resource
     :type name: str
     :param etag: A unique read-only string that changes whenever the resource
      is updated

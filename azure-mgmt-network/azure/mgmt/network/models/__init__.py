@@ -10,8 +10,10 @@
 # --------------------------------------------------------------------------
 
 from .application_gateway_sku import ApplicationGatewaySku
+from .application_gateway_ssl_policy import ApplicationGatewaySslPolicy
 from .sub_resource import SubResource
 from .application_gateway_ip_configuration import ApplicationGatewayIPConfiguration
+from .application_gateway_authentication_certificate import ApplicationGatewayAuthenticationCertificate
 from .application_gateway_ssl_certificate import ApplicationGatewaySslCertificate
 from .application_gateway_frontend_ip_configuration import ApplicationGatewayFrontendIPConfiguration
 from .application_gateway_frontend_port import ApplicationGatewayFrontendPort
@@ -110,6 +112,7 @@ from .virtual_network_paged import VirtualNetworkPaged
 from .network_management_client_enums import (
     ApplicationGatewaySkuName,
     ApplicationGatewayTier,
+    ApplicationGatewaySslProtocol,
     IPAllocationMethod,
     TransportProtocol,
     IPVersion,
@@ -145,8 +148,10 @@ from .network_management_client_enums import (
 
 __all__ = [
     'ApplicationGatewaySku',
+    'ApplicationGatewaySslPolicy',
     'SubResource',
     'ApplicationGatewayIPConfiguration',
+    'ApplicationGatewayAuthenticationCertificate',
     'ApplicationGatewaySslCertificate',
     'ApplicationGatewayFrontendIPConfiguration',
     'ApplicationGatewayFrontendPort',
@@ -244,6 +249,7 @@ __all__ = [
     'VirtualNetworkPaged',
     'ApplicationGatewaySkuName',
     'ApplicationGatewayTier',
+    'ApplicationGatewaySslProtocol',
     'IPAllocationMethod',
     'TransportProtocol',
     'IPVersion',
