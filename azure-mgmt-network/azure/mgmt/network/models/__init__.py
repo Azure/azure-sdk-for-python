@@ -65,8 +65,10 @@ from .bgp_settings import BgpSettings
 from .local_network_gateway import LocalNetworkGateway
 from .effective_network_security_group import EffectiveNetworkSecurityGroup
 from .effective_network_security_group_association import EffectiveNetworkSecurityGroupAssociation
-from .effective_network_security_rules import EffectiveNetworkSecurityRules
+from .effective_network_security_rule import EffectiveNetworkSecurityRule
+from .effective_network_security_group_list_result import EffectiveNetworkSecurityGroupListResult
 from .effective_route import EffectiveRoute
+from .effective_route_list_result import EffectiveRouteListResult
 from .virtual_network_peering import VirtualNetworkPeering
 from .usage_name import UsageName
 from .usage import Usage
@@ -96,8 +98,6 @@ from .express_route_service_provider_paged import ExpressRouteServiceProviderPag
 from .load_balancer_paged import LoadBalancerPaged
 from .local_network_gateway_paged import LocalNetworkGatewayPaged
 from .network_interface_paged import NetworkInterfacePaged
-from .effective_route_paged import EffectiveRoutePaged
-from .effective_network_security_group_paged import EffectiveNetworkSecurityGroupPaged
 from .network_security_group_paged import NetworkSecurityGroupPaged
 from .public_ip_address_paged import PublicIPAddressPaged
 from .route_table_paged import RouteTablePaged
@@ -203,8 +203,10 @@ __all__ = [
     'LocalNetworkGateway',
     'EffectiveNetworkSecurityGroup',
     'EffectiveNetworkSecurityGroupAssociation',
-    'EffectiveNetworkSecurityRules',
+    'EffectiveNetworkSecurityRule',
+    'EffectiveNetworkSecurityGroupListResult',
     'EffectiveRoute',
+    'EffectiveRouteListResult',
     'VirtualNetworkPeering',
     'UsageName',
     'Usage',
@@ -234,8 +236,6 @@ __all__ = [
     'LoadBalancerPaged',
     'LocalNetworkGatewayPaged',
     'NetworkInterfacePaged',
-    'EffectiveRoutePaged',
-    'EffectiveNetworkSecurityGroupPaged',
     'NetworkSecurityGroupPaged',
     'PublicIPAddressPaged',
     'RouteTablePaged',
