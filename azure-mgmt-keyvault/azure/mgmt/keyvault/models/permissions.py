@@ -16,14 +16,16 @@ class Permissions(Model):
     """Permissions the identity has for keys and secrets.
 
     :param keys: Permissions to keys
-    :type keys: list of str
+    :type keys: list of str or :class:`KeyPermissions
+     <azure.keyvault.models.KeyPermissions>`
     :param secrets: Permissions to secrets
-    :type secrets: list of str
+    :type secrets: list of str or :class:`SecretPermissions
+     <azure.keyvault.models.SecretPermissions>`
     """ 
 
     _attribute_map = {
-        'keys': {'key': 'keys', 'type': '[str]'},
-        'secrets': {'key': 'secrets', 'type': '[str]'},
+        'keys': {'key': 'keys', 'type': '[KeyPermissions]'},
+        'secrets': {'key': 'secrets', 'type': '[SecretPermissions]'},
     }
 
     def __init__(self, keys=None, secrets=None):
