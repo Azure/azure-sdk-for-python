@@ -12,7 +12,7 @@
 from msrest.serialization import Model
 
 
-class EffectiveNetworkSecurityRules(Model):
+class EffectiveNetworkSecurityRule(Model):
     """Effective NetworkSecurityRules.
 
     :param name: Gets the name of the security rule specified by the user (if

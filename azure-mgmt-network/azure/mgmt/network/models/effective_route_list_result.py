@@ -9,19 +9,24 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.paging import Paged
+from msrest.serialization import Model
 
 
-class EffectiveRoutePaged(Paged):
-    """
-    A paging container for iterating over a list of EffectiveRoute object
-    """
+class EffectiveRouteListResult(Model):
+    """Response for list effective route api servive call.
+
+    :param value: Gets list of effective routes
+    :type value: list of :class:`EffectiveRoute
+     <azure.mgmt.network.models.EffectiveRoute>`
+    :param next_link: Gets the URL to get the next set of results.
+    :type next_link: str
+    """ 
 
     _attribute_map = {
+        'value': {'key': 'value', 'type': '[EffectiveRoute]'},
         'next_link': {'key': 'nextLink', 'type': 'str'},
-        'current_page': {'key': 'value', 'type': '[EffectiveRoute]'}
     }
 
-    def __init__(self, *args, **kwargs):
-
-        super(EffectiveRoutePaged, self).__init__(*args, **kwargs)
+    def __init__(self, value=None, next_link=None):
+        self.value = value
+        self.next_link = next_link
