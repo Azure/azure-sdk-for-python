@@ -20,6 +20,8 @@ from .vault_paged import VaultPaged
 from .key_vault_management_client_enums import (
     SkuFamily,
     SkuName,
+    KeyPermissions,
+    SecretPermissions,
 )
 
 __all__ = [
@@ -33,4 +35,6 @@ __all__ = [
     'VaultPaged',
     'SkuFamily',
     'SkuName',
+    'KeyPermissions',
+    'SecretPermissions',
 ]
