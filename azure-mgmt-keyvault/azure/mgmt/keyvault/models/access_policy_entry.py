@@ -21,7 +21,8 @@ class AccessPolicyEntry(Model):
      used for authenticating requests to the key vault.
     :type tenant_id: str
     :param object_id: The object ID of a user or service principal in the
-     Azure Active Directory tenant for the vault.
+     Azure Active Directory tenant for the vault. The object ID must be
+     unique for the list of access policies.
     :type object_id: str
     :param application_id:  Application ID of the client making request on
      behalf of a principal
@@ -31,6 +32,12 @@ class AccessPolicyEntry(Model):
      <azure.keyvault.models.Permissions>`
     """ 
 
+    _validation = {
+        'tenant_id': {'required': True},
+        'object_id': {'required': True},
+        'permissions': {'required': True},
+    }
+
     _attribute_map = {
         'tenant_id': {'key': 'tenantId', 'type': 'str'},
         'object_id': {'key': 'objectId', 'type': 'str'},
@@ -38,7 +45,7 @@ class AccessPolicyEntry(Model):
         'permissions': {'key': 'permissions', 'type': 'Permissions'},
     }
 
-    def __init__(self, tenant_id=None, object_id=None, application_id=None, permissions=None):
+    def __init__(self, tenant_id, object_id, permissions, application_id=None):
         self.tenant_id = tenant_id
         self.object_id = object_id
         self.application_id = application_id
