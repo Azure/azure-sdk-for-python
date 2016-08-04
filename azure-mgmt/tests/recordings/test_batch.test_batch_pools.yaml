@@ -601,4 +601,1085 @@ interactions:
       Transfer-Encoding: [chunked]
       request-id: [7778a589-1ba7-40a1-a70e-5f3a28b2cee6]
     status: {code: 202, message: Accepted}
+- request:
+    body: '{"id": "python_test_pool_1", "cloudServiceConfiguration": {"osFamily":
+      "4"}, "vmSize": "small"}'
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['95']
+      Content-Type: [application/json; odata=minimalmetadata; charset=utf-8]
+      User-Agent: [python/3.5.2 (Windows-10-10.0.10586-SP0) requests/2.10.0 msrest/0.4.0
+          msrest_azure/0.4.1 batchserviceclient/0.30.0rc5 Azure-SDK-For-Python]
+      accept-language: [en-US]
+      client-request-id: [efa7d12e-59b7-11e6-aec8-6451065b724d]
+      ocp-date: ['Wed, 03 Aug 2016 20:22:01 GMT']
+    method: POST
+    uri: https://pythonsdktest.westus.batch.azure.com/pools?api-version=2016-07-01.3.1
+  response:
+    body: {string: ''}
+    headers:
+      DataServiceId: ['https://pythonsdktest.westus.batch.azure.com/pools/python_test_pool_1']
+      DataServiceVersion: ['3.0']
+      Date: ['Wed, 03 Aug 2016 20:22:00 GMT']
+      ETag: ['0x8D3BBDBD315DFC6']
+      Last-Modified: ['Wed, 03 Aug 2016 20:22:00 GMT']
+      Location: ['https://pythonsdktest.westus.batch.azure.com/pools/python_test_pool_1']
+      Server: [Microsoft-HTTPAPI/2.0]
+      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
+      Transfer-Encoding: [chunked]
+      request-id: [713063b8-dc00-43bc-85e0-3c13b882f0d1]
+    status: {code: 201, message: Created}
+- request:
+    body: '{"id": "python_test_pool_2", "cloudServiceConfiguration": {"osFamily":
+      "4"}, "vmSize": "small"}'
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['95']
+      Content-Type: [application/json; odata=minimalmetadata; charset=utf-8]
+      User-Agent: [python/3.5.2 (Windows-10-10.0.10586-SP0) requests/2.10.0 msrest/0.4.0
+          msrest_azure/0.4.1 batchserviceclient/0.30.0rc5 Azure-SDK-For-Python]
+      accept-language: [en-US]
+      client-request-id: [01e2d34c-59b8-11e6-9d05-6451065b724d]
+      ocp-date: ['Wed, 03 Aug 2016 20:22:32 GMT']
+    method: POST
+    uri: https://pythonsdktest.westus.batch.azure.com/pools?api-version=2016-07-01.3.1
+  response:
+    body: {string: ''}
+    headers:
+      DataServiceId: ['https://pythonsdktest.westus.batch.azure.com/pools/python_test_pool_2']
+      DataServiceVersion: ['3.0']
+      Date: ['Wed, 03 Aug 2016 20:22:30 GMT']
+      ETag: ['0x8D3BBDBE543BEC8']
+      Last-Modified: ['Wed, 03 Aug 2016 20:22:30 GMT']
+      Location: ['https://pythonsdktest.westus.batch.azure.com/pools/python_test_pool_2']
+      Server: [Microsoft-HTTPAPI/2.0]
+      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
+      Transfer-Encoding: [chunked]
+      request-id: [cf07d32b-f8ec-4e37-9930-65f5ad97db50]
+    status: {code: 201, message: Created}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['0']
+      Content-Type: [application/json; odata=minimalmetadata; charset=utf-8]
+      User-Agent: [python/3.5.2 (Windows-10-10.0.10586-SP0) requests/2.10.0 msrest/0.4.0
+          msrest_azure/0.4.1 batchserviceclient/0.30.0rc5 Azure-SDK-For-Python]
+      accept-language: [en-US]
+      client-request-id: [8db94242-59b9-11e6-b6cf-6451065b724d]
+      ocp-date: ['Wed, 03 Aug 2016 20:33:36 GMT']
+    method: DELETE
+    uri: https://pythonsdktest.westus.batch.azure.com/pools/python_test_pool_2?api-version=2016-07-01.3.1
+  response:
+    body: {string: ''}
+    headers:
+      DataServiceVersion: ['3.0']
+      Date: ['Wed, 03 Aug 2016 20:33:34 GMT']
+      Server: [Microsoft-HTTPAPI/2.0]
+      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
+      Transfer-Encoding: [chunked]
+      request-id: [88933c70-fb11-4895-b6d8-f35168924cc0]
+    status: {code: 202, message: Accepted}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['0']
+      Content-Type: [application/json; odata=minimalmetadata; charset=utf-8]
+      User-Agent: [python/3.5.2 (Windows-10-10.0.10586-SP0) requests/2.10.0 msrest/0.4.0
+          msrest_azure/0.4.1 batchserviceclient/0.30.0rc5 Azure-SDK-For-Python]
+      accept-language: [en-US]
+      client-request-id: [8e0f006c-59b9-11e6-8ad6-6451065b724d]
+      ocp-date: ['Wed, 03 Aug 2016 20:33:36 GMT']
+    method: DELETE
+    uri: https://pythonsdktest.westus.batch.azure.com/pools/python_test_pool_1?api-version=2016-07-01.3.1
+  response:
+    body: {string: ''}
+    headers:
+      DataServiceVersion: ['3.0']
+      Date: ['Wed, 03 Aug 2016 20:33:35 GMT']
+      Server: [Microsoft-HTTPAPI/2.0]
+      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
+      Transfer-Encoding: [chunked]
+      request-id: [2bf71a0c-3b22-4581-8e1e-937528309e0a]
+    status: {code: 202, message: Accepted}
+- request:
+    body: '{"cloudServiceConfiguration": {"osFamily": "4"}, "id": "python_test_pool_1",
+      "vmSize": "small"}'
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['95']
+      Content-Type: [application/json; odata=minimalmetadata; charset=utf-8]
+      User-Agent: [python/3.5.2 (Windows-10-10.0.10586-SP0) requests/2.10.0 msrest/0.4.0
+          msrest_azure/0.4.1 batchserviceclient/0.30.0rc5 Azure-SDK-For-Python]
+      accept-language: [en-US]
+      client-request-id: [987ea1d0-5a51-11e6-81fd-6451065b724d]
+      ocp-date: ['Thu, 04 Aug 2016 14:41:57 GMT']
+    method: POST
+    uri: https://pythonsdktest.westus.batch.azure.com/pools?api-version=2016-07-01.3.1
+  response:
+    body: {string: ''}
+    headers:
+      DataServiceId: ['https://pythonsdktest.westus.batch.azure.com/pools/python_test_pool_1']
+      DataServiceVersion: ['3.0']
+      Date: ['Thu, 04 Aug 2016 14:41:56 GMT']
+      ETag: ['0x8D3BC757C1A8DBB']
+      Last-Modified: ['Thu, 04 Aug 2016 14:41:56 GMT']
+      Location: ['https://pythonsdktest.westus.batch.azure.com/pools/python_test_pool_1']
+      Server: [Microsoft-HTTPAPI/2.0]
+      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
+      Transfer-Encoding: [chunked]
+      request-id: [5b360819-a262-42c9-bf88-006b7efcaf98]
+    status: {code: 201, message: Created}
+- request:
+    body: '{"cloudServiceConfiguration": {"osFamily": "4"}, "id": "python_test_pool_2",
+      "vmSize": "small"}'
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['95']
+      Content-Type: [application/json; odata=minimalmetadata; charset=utf-8]
+      User-Agent: [python/3.5.2 (Windows-10-10.0.10586-SP0) requests/2.10.0 msrest/0.4.0
+          msrest_azure/0.4.1 batchserviceclient/0.30.0rc5 Azure-SDK-For-Python]
+      accept-language: [en-US]
+      client-request-id: [aac34c5e-5a51-11e6-8f03-6451065b724d]
+      ocp-date: ['Thu, 04 Aug 2016 14:42:28 GMT']
+    method: POST
+    uri: https://pythonsdktest.westus.batch.azure.com/pools?api-version=2016-07-01.3.1
+  response:
+    body: {string: ''}
+    headers:
+      DataServiceId: ['https://pythonsdktest.westus.batch.azure.com/pools/python_test_pool_2']
+      DataServiceVersion: ['3.0']
+      Date: ['Thu, 04 Aug 2016 14:42:27 GMT']
+      ETag: ['0x8D3BC758E4C1843']
+      Last-Modified: ['Thu, 04 Aug 2016 14:42:27 GMT']
+      Location: ['https://pythonsdktest.westus.batch.azure.com/pools/python_test_pool_2']
+      Server: [Microsoft-HTTPAPI/2.0]
+      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
+      Transfer-Encoding: [chunked]
+      request-id: [b30d22a6-0ed3-4556-9195-d32ec46735f5]
+    status: {code: 201, message: Created}
+- request:
+    body: '{"cloudServiceConfiguration": {"osFamily": "4"}, "id": "no_pool", "vmSize":
+      "small", "networkConfiguration": {"subnetId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test/providers/Microsoft.Network/virtualNetworks/vnet1/subnets/subnet1"}}'
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['263']
+      Content-Type: [application/json; odata=minimalmetadata; charset=utf-8]
+      User-Agent: [python/3.5.2 (Windows-10-10.0.10586-SP0) requests/2.10.0 msrest/0.4.0
+          msrest_azure/0.4.1 batchserviceclient/0.30.0rc5 Azure-SDK-For-Python]
+      accept-language: [en-US]
+      client-request-id: [638a07b4-5a57-11e6-8981-6451065b724d]
+      ocp-date: ['Thu, 04 Aug 2016 15:23:28 GMT']
+    method: POST
+    uri: https://pythonsdktest.westus.batch.azure.com/pools?api-version=2016-07-01.3.1
+  response:
+    body: {string: "{\r\n  \"odata.metadata\":\"https://pythonsdktest.westus.batch.azure.com/$metadata#Microsoft.Azure.Batch.Protocol.Entities.Container.errors/@Element\"\
+        ,\"code\":\"InvalidPropertyValue\",\"message\":{\r\n    \"lang\":\"en-US\"\
+        ,\"value\":\"The value provided for one of the property in the request body\
+        \ is invalid.\\nRequestId:f8598930-9550-4688-a0b4-1c3dcb46ad7f\\nTime:2016-08-04T15:23:28.5638230Z\"\
+        \r\n  },\"values\":[\r\n    {\r\n      \"key\":\"PropertyName\",\"value\"\
+        :\"subnetId\"\r\n    },{\r\n      \"key\":\"PropertyValue\",\"value\":\"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test/providers/Microsoft.Network/virtualNetworks/vnet1/subnets/subnet1\"\
+        \r\n    },{\r\n      \"key\":\"Reason\",\"value\":\"The specified subnetId\
+        \ is in a different subscription and cannot be used with the current Batch\
+        \ account in subscription 00000000-0000-0000-0000-000000000000\"\r\n    }\r\
+        \n  ]\r\n}"}
+    headers:
+      Content-Length: ['843']
+      Content-Type: [application/json;odata=minimalmetadata]
+      DataServiceVersion: ['3.0']
+      Date: ['Thu, 04 Aug 2016 15:23:27 GMT']
+      Server: [Microsoft-HTTPAPI/2.0]
+      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
+      request-id: [f8598930-9550-4688-a0b4-1c3dcb46ad7f]
+    status: {code: 400, message: The value provided for one of the property in the
+        request body is invalid.}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['0']
+      Content-Type: [application/json; odata=minimalmetadata; charset=utf-8]
+      User-Agent: [python/3.5.2 (Windows-10-10.0.10586-SP0) requests/2.10.0 msrest/0.4.0
+          msrest_azure/0.4.1 batchserviceclient/0.30.0rc5 Azure-SDK-For-Python]
+      accept-language: [en-US]
+      client-request-id: [90bd1608-5a58-11e6-9aeb-6451065b724d]
+      ocp-date: ['Thu, 04 Aug 2016 15:31:51 GMT']
+    method: DELETE
+    uri: https://pythonsdktest.westus.batch.azure.com/pools/python_test_pool_2?api-version=2016-07-01.3.1
+  response:
+    body: {string: ''}
+    headers:
+      DataServiceVersion: ['3.0']
+      Date: ['Thu, 04 Aug 2016 15:31:50 GMT']
+      Server: [Microsoft-HTTPAPI/2.0]
+      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
+      Transfer-Encoding: [chunked]
+      request-id: [fb8a5eb3-163a-4fed-a854-550288d87869]
+    status: {code: 202, message: Accepted}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['0']
+      Content-Type: [application/json; odata=minimalmetadata; charset=utf-8]
+      User-Agent: [python/3.5.2 (Windows-10-10.0.10586-SP0) requests/2.10.0 msrest/0.4.0
+          msrest_azure/0.4.1 batchserviceclient/0.30.0rc5 Azure-SDK-For-Python]
+      accept-language: [en-US]
+      client-request-id: [911681fe-5a58-11e6-aba2-6451065b724d]
+      ocp-date: ['Thu, 04 Aug 2016 15:31:51 GMT']
+    method: DELETE
+    uri: https://pythonsdktest.westus.batch.azure.com/pools/python_test_pool_1?api-version=2016-07-01.3.1
+  response:
+    body: {string: ''}
+    headers:
+      DataServiceVersion: ['3.0']
+      Date: ['Thu, 04 Aug 2016 15:31:50 GMT']
+      Server: [Microsoft-HTTPAPI/2.0]
+      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
+      Transfer-Encoding: [chunked]
+      request-id: [7ac769c2-abc5-47f1-ab9e-3d2a916de32f]
+    status: {code: 202, message: Accepted}
+- request:
+    body: '{"id": "python_test_pool_1", "cloudServiceConfiguration": {"osFamily":
+      "4"}, "vmSize": "small"}'
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['95']
+      Content-Type: [application/json; odata=minimalmetadata; charset=utf-8]
+      User-Agent: [python/3.5.2 (Windows-10-10.0.10586-SP0) requests/2.10.0 msrest/0.4.0
+          msrest_azure/0.4.1 batchserviceclient/0.30.0rc5 Azure-SDK-For-Python]
+      accept-language: [en-US]
+      client-request-id: [f754b33a-5a59-11e6-aa29-6451065b724d]
+      ocp-date: ['Thu, 04 Aug 2016 15:41:52 GMT']
+    method: POST
+    uri: https://pythonsdktest.westus.batch.azure.com/pools?api-version=2016-07-01.3.1
+  response:
+    body: {string: ''}
+    headers:
+      DataServiceId: ['https://pythonsdktest.westus.batch.azure.com/pools/python_test_pool_1']
+      DataServiceVersion: ['3.0']
+      Date: ['Thu, 04 Aug 2016 15:41:52 GMT']
+      ETag: ['0x8D3BC7DDAF0E581']
+      Last-Modified: ['Thu, 04 Aug 2016 15:41:51 GMT']
+      Location: ['https://pythonsdktest.westus.batch.azure.com/pools/python_test_pool_1']
+      Server: [Microsoft-HTTPAPI/2.0]
+      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
+      Transfer-Encoding: [chunked]
+      request-id: [c9212d84-0791-41b1-a217-88f7ac26560f]
+    status: {code: 201, message: Created}
+- request:
+    body: '{"id": "python_test_pool_2", "cloudServiceConfiguration": {"osFamily":
+      "4"}, "vmSize": "small"}'
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['95']
+      Content-Type: [application/json; odata=minimalmetadata; charset=utf-8]
+      User-Agent: [python/3.5.2 (Windows-10-10.0.10586-SP0) requests/2.10.0 msrest/0.4.0
+          msrest_azure/0.4.1 batchserviceclient/0.30.0rc5 Azure-SDK-For-Python]
+      accept-language: [en-US]
+      client-request-id: [0998dc68-5a5a-11e6-a375-6451065b724d]
+      ocp-date: ['Thu, 04 Aug 2016 15:42:23 GMT']
+    method: POST
+    uri: https://pythonsdktest.westus.batch.azure.com/pools?api-version=2016-07-01.3.1
+  response:
+    body: {string: ''}
+    headers:
+      DataServiceId: ['https://pythonsdktest.westus.batch.azure.com/pools/python_test_pool_2']
+      DataServiceVersion: ['3.0']
+      Date: ['Thu, 04 Aug 2016 15:42:22 GMT']
+      ETag: ['0x8D3BC7DED26AAB0']
+      Last-Modified: ['Thu, 04 Aug 2016 15:42:22 GMT']
+      Location: ['https://pythonsdktest.westus.batch.azure.com/pools/python_test_pool_2']
+      Server: [Microsoft-HTTPAPI/2.0]
+      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
+      Transfer-Encoding: [chunked]
+      request-id: [400ae382-80cf-4f67-a5ce-085d3fb34d74]
+    status: {code: 201, message: Created}
+- request:
+    body: '{"id": "no_pool", "networkConfiguration": {"subnetId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test/providers/Microsoft.Network/virtualNetworks/vnet1/subnets/subnet1"},
+      "cloudServiceConfiguration": {"osFamily": "4"}, "vmSize": "small"}'
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['263']
+      Content-Type: [application/json; odata=minimalmetadata; charset=utf-8]
+      User-Agent: [python/3.5.2 (Windows-10-10.0.10586-SP0) requests/2.10.0 msrest/0.4.0
+          msrest_azure/0.4.1 batchserviceclient/0.30.0rc5 Azure-SDK-For-Python]
+      accept-language: [en-US]
+      client-request-id: [382c4b10-5a5a-11e6-bc9b-6451065b724d]
+      ocp-date: ['Thu, 04 Aug 2016 15:43:41 GMT']
+    method: POST
+    uri: https://pythonsdktest.westus.batch.azure.com/pools?api-version=2016-07-01.3.1
+  response:
+    body: {string: "{\r\n  \"odata.metadata\":\"https://pythonsdktest.westus.batch.azure.com/$metadata#Microsoft.Azure.Batch.Protocol.Entities.Container.errors/@Element\"\
+        ,\"code\":\"InvalidPropertyValue\",\"message\":{\r\n    \"lang\":\"en-US\"\
+        ,\"value\":\"The value provided for one of the property in the request body\
+        \ is invalid.\\nRequestId:f100a34d-5c8c-4a2c-a415-aa302aa9995f\\nTime:2016-08-04T15:43:41.1902900Z\"\
+        \r\n  },\"values\":[\r\n    {\r\n      \"key\":\"PropertyName\",\"value\"\
+        :\"subnetId\"\r\n    },{\r\n      \"key\":\"PropertyValue\",\"value\":\"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test/providers/Microsoft.Network/virtualNetworks/vnet1/subnets/subnet1\"\
+        \r\n    },{\r\n      \"key\":\"Reason\",\"value\":\"The specified subnetId\
+        \ is in a different subscription and cannot be used with the current Batch\
+        \ account in subscription 00000000-0000-0000-0000-000000000000\"\r\n    }\r\
+        \n  ]\r\n}"}
+    headers:
+      Content-Length: ['843']
+      Content-Type: [application/json;odata=minimalmetadata]
+      DataServiceVersion: ['3.0']
+      Date: ['Thu, 04 Aug 2016 15:43:40 GMT']
+      Server: [Microsoft-HTTPAPI/2.0]
+      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
+      request-id: [f100a34d-5c8c-4a2c-a415-aa302aa9995f]
+    status: {code: 400, message: The value provided for one of the property in the
+        request body is invalid.}
+- request:
+    body: '{"id": "no_pool", "networkConfiguration": {"subnetId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test/providers/Microsoft.Network/virtualNetworks/vnet1/subnets/subnet1"},
+      "cloudServiceConfiguration": {"osFamily": "4"}, "vmSize": "small"}'
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['263']
+      Content-Type: [application/json; odata=minimalmetadata; charset=utf-8]
+      User-Agent: [python/3.5.2 (Windows-10-10.0.10586-SP0) requests/2.10.0 msrest/0.4.0
+          msrest_azure/0.4.1 batchserviceclient/0.30.0rc5 Azure-SDK-For-Python]
+      accept-language: [en-US]
+      client-request-id: [4d078670-5a5a-11e6-a145-6451065b724d]
+      ocp-date: ['Thu, 04 Aug 2016 15:44:16 GMT']
+    method: POST
+    uri: https://pythonsdktest.westus.batch.azure.com/pools?api-version=2016-07-01.3.1
+  response:
+    body: {string: "{\r\n  \"odata.metadata\":\"https://pythonsdktest.westus.batch.azure.com/$metadata#Microsoft.Azure.Batch.Protocol.Entities.Container.errors/@Element\"\
+        ,\"code\":\"InvalidPropertyValue\",\"message\":{\r\n    \"lang\":\"en-US\"\
+        ,\"value\":\"The value provided for one of the property in the request body\
+        \ is invalid.\\nRequestId:3c510716-3fb6-4c68-83db-1482887a4de3\\nTime:2016-08-04T15:44:16.3154098Z\"\
+        \r\n  },\"values\":[\r\n    {\r\n      \"key\":\"PropertyName\",\"value\"\
+        :\"subnetId\"\r\n    },{\r\n      \"key\":\"PropertyValue\",\"value\":\"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test/providers/Microsoft.Network/virtualNetworks/vnet1/subnets/subnet1\"\
+        \r\n    },{\r\n      \"key\":\"Reason\",\"value\":\"The specified subnetId\
+        \ is in a different subscription and cannot be used with the current Batch\
+        \ account in subscription 00000000-0000-0000-0000-000000000000\"\r\n    }\r\
+        \n  ]\r\n}"}
+    headers:
+      Content-Length: ['843']
+      Content-Type: [application/json;odata=minimalmetadata]
+      DataServiceVersion: ['3.0']
+      Date: ['Thu, 04 Aug 2016 15:44:16 GMT']
+      Server: [Microsoft-HTTPAPI/2.0]
+      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
+      request-id: [3c510716-3fb6-4c68-83db-1482887a4de3]
+    status: {code: 400, message: The value provided for one of the property in the
+        request body is invalid.}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['0']
+      Content-Type: [application/json; odata=minimalmetadata; charset=utf-8]
+      User-Agent: [python/3.5.2 (Windows-10-10.0.10586-SP0) requests/2.10.0 msrest/0.4.0
+          msrest_azure/0.4.1 batchserviceclient/0.30.0rc5 Azure-SDK-For-Python]
+      accept-language: [en-US]
+      client-request-id: [50929226-5a5a-11e6-bf2b-6451065b724d]
+      ocp-date: ['Thu, 04 Aug 2016 15:44:22 GMT']
+    method: DELETE
+    uri: https://pythonsdktest.westus.batch.azure.com/pools/python_test_pool_2?api-version=2016-07-01.3.1
+  response:
+    body: {string: ''}
+    headers:
+      DataServiceVersion: ['3.0']
+      Date: ['Thu, 04 Aug 2016 15:44:21 GMT']
+      Server: [Microsoft-HTTPAPI/2.0]
+      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
+      Transfer-Encoding: [chunked]
+      request-id: [2c87ecce-6898-4ebd-a553-0a4660a1636f]
+    status: {code: 202, message: Accepted}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['0']
+      Content-Type: [application/json; odata=minimalmetadata; charset=utf-8]
+      User-Agent: [python/3.5.2 (Windows-10-10.0.10586-SP0) requests/2.10.0 msrest/0.4.0
+          msrest_azure/0.4.1 batchserviceclient/0.30.0rc5 Azure-SDK-For-Python]
+      accept-language: [en-US]
+      client-request-id: [50da5038-5a5a-11e6-ac7a-6451065b724d]
+      ocp-date: ['Thu, 04 Aug 2016 15:44:23 GMT']
+    method: DELETE
+    uri: https://pythonsdktest.westus.batch.azure.com/pools/python_test_pool_1?api-version=2016-07-01.3.1
+  response:
+    body: {string: ''}
+    headers:
+      DataServiceVersion: ['3.0']
+      Date: ['Thu, 04 Aug 2016 15:44:21 GMT']
+      Server: [Microsoft-HTTPAPI/2.0]
+      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
+      Transfer-Encoding: [chunked]
+      request-id: [411b2b08-2918-433b-95b4-4ff30aff0042]
+    status: {code: 202, message: Accepted}
+- request:
+    body: '{"cloudServiceConfiguration": {"osFamily": "4"}, "id": "python_test_pool_1",
+      "vmSize": "small"}'
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['95']
+      Content-Type: [application/json; odata=minimalmetadata; charset=utf-8]
+      User-Agent: [python/3.5.2 (Windows-10-10.0.10586-SP0) requests/2.10.0 msrest/0.4.0
+          msrest_azure/0.4.1 batchserviceclient/0.30.0rc5 Azure-SDK-For-Python]
+      accept-language: [en-US]
+      client-request-id: [ef85758a-5a5e-11e6-bf35-6451065b724d]
+      ocp-date: ['Thu, 04 Aug 2016 16:17:27 GMT']
+    method: POST
+    uri: https://pythonsdktest.westus.batch.azure.com/pools?api-version=2016-07-01.3.1
+  response:
+    body: {string: ''}
+    headers:
+      DataServiceId: ['https://pythonsdktest.westus.batch.azure.com/pools/python_test_pool_1']
+      DataServiceVersion: ['3.0']
+      Date: ['Thu, 04 Aug 2016 16:17:26 GMT']
+      ETag: ['0x8D3BC82D32D811B']
+      Last-Modified: ['Thu, 04 Aug 2016 16:17:26 GMT']
+      Location: ['https://pythonsdktest.westus.batch.azure.com/pools/python_test_pool_1']
+      Server: [Microsoft-HTTPAPI/2.0]
+      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
+      Transfer-Encoding: [chunked]
+      request-id: [5bcde31b-aab0-4da4-a8e7-7b140a324ef5]
+    status: {code: 201, message: Created}
+- request:
+    body: '{"cloudServiceConfiguration": {"osFamily": "4"}, "id": "python_test_pool_2",
+      "vmSize": "small"}'
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['95']
+      Content-Type: [application/json; odata=minimalmetadata; charset=utf-8]
+      User-Agent: [python/3.5.2 (Windows-10-10.0.10586-SP0) requests/2.10.0 msrest/0.4.0
+          msrest_azure/0.4.1 batchserviceclient/0.30.0rc5 Azure-SDK-For-Python]
+      accept-language: [en-US]
+      client-request-id: [01ce8c1c-5a5f-11e6-aef0-6451065b724d]
+      ocp-date: ['Thu, 04 Aug 2016 16:17:58 GMT']
+    method: POST
+    uri: https://pythonsdktest.westus.batch.azure.com/pools?api-version=2016-07-01.3.1
+  response:
+    body: {string: ''}
+    headers:
+      DataServiceId: ['https://pythonsdktest.westus.batch.azure.com/pools/python_test_pool_2']
+      DataServiceVersion: ['3.0']
+      Date: ['Thu, 04 Aug 2016 16:17:57 GMT']
+      ETag: ['0x8D3BC82E55F33A5']
+      Last-Modified: ['Thu, 04 Aug 2016 16:17:56 GMT']
+      Location: ['https://pythonsdktest.westus.batch.azure.com/pools/python_test_pool_2']
+      Server: [Microsoft-HTTPAPI/2.0]
+      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
+      Transfer-Encoding: [chunked]
+      request-id: [c6092728-9510-4036-be19-47385208e73f]
+    status: {code: 201, message: Created}
+- request:
+    body: '{"cloudServiceConfiguration": {"osFamily": "4"}, "networkConfiguration":
+      {"subnetId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test/providers/Microsoft.Network/virtualNetworks/vnet1/subnets/subnet1"},
+      "id": "no_pool", "vmSize": "small"}'
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['263']
+      Content-Type: [application/json; odata=minimalmetadata; charset=utf-8]
+      User-Agent: [python/3.5.2 (Windows-10-10.0.10586-SP0) requests/2.10.0 msrest/0.4.0
+          msrest_azure/0.4.1 batchserviceclient/0.30.0rc5 Azure-SDK-For-Python]
+      accept-language: [en-US]
+      client-request-id: [3a21daca-5a5f-11e6-bbab-6451065b724d]
+      ocp-date: ['Thu, 04 Aug 2016 16:19:32 GMT']
+    method: POST
+    uri: https://pythonsdktest.westus.batch.azure.com/pools?api-version=2016-07-01.3.1
+  response:
+    body: {string: "{\r\n  \"odata.metadata\":\"https://pythonsdktest.westus.batch.azure.com/$metadata#Microsoft.Azure.Batch.Protocol.Entities.Container.errors/@Element\"\
+        ,\"code\":\"InvalidPropertyValue\",\"message\":{\r\n    \"lang\":\"en-US\"\
+        ,\"value\":\"The value provided for one of the property in the request body\
+        \ is invalid.\\nRequestId:587e8f33-9d8a-4d82-814d-d2619d8c9d88\\nTime:2016-08-04T16:19:32.2202195Z\"\
+        \r\n  },\"values\":[\r\n    {\r\n      \"key\":\"PropertyName\",\"value\"\
+        :\"subnetId\"\r\n    },{\r\n      \"key\":\"PropertyValue\",\"value\":\"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test/providers/Microsoft.Network/virtualNetworks/vnet1/subnets/subnet1\"\
+        \r\n    },{\r\n      \"key\":\"Reason\",\"value\":\"The specified subnetId\
+        \ is in a different subscription and cannot be used with the current Batch\
+        \ account in subscription 00000000-0000-0000-0000-000000000000\"\r\n    }\r\
+        \n  ]\r\n}"}
+    headers:
+      Content-Length: ['843']
+      Content-Type: [application/json;odata=minimalmetadata]
+      DataServiceVersion: ['3.0']
+      Date: ['Thu, 04 Aug 2016 16:19:32 GMT']
+      Server: [Microsoft-HTTPAPI/2.0]
+      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
+      request-id: [587e8f33-9d8a-4d82-814d-d2619d8c9d88]
+    status: {code: 400, message: The value provided for one of the property in the
+        request body is invalid.}
+- request:
+    body: '{"targetOSVersion": "WA-GUEST-OS-4.32_201605-01"}'
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['49']
+      Content-Type: [application/json; odata=minimalmetadata; charset=utf-8]
+      User-Agent: [python/3.5.2 (Windows-10-10.0.10586-SP0) requests/2.10.0 msrest/0.4.0
+          msrest_azure/0.4.1 batchserviceclient/0.30.0rc5 Azure-SDK-For-Python]
+      accept-language: [en-US]
+      client-request-id: [3bb13a50-5a5f-11e6-8145-6451065b724d]
+      ocp-date: ['Thu, 04 Aug 2016 16:19:35 GMT']
+    method: POST
+    uri: https://pythonsdktest.westus.batch.azure.com/pools/python_test_pool_1/upgradeos?api-version=2016-07-01.3.1
+  response:
+    body: {string: ''}
+    headers:
+      DataServiceId: ['https://pythonsdktest.westus.batch.azure.com/pools/python_test_pool_1/upgradeos']
+      DataServiceVersion: ['3.0']
+      Date: ['Thu, 04 Aug 2016 16:19:33 GMT']
+      ETag: ['0x8D3BC831F58EACD']
+      Last-Modified: ['Thu, 04 Aug 2016 16:19:34 GMT']
+      Server: [Microsoft-HTTPAPI/2.0]
+      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
+      Transfer-Encoding: [chunked]
+      request-id: [3c46eb3a-1acd-42c4-8cd8-1f4f2db6d19a]
+    status: {code: 202, message: Accepted}
+- request:
+    body: '{"certificateReferences": [], "applicationPackageReferences": [], "metadata":
+      [{"value": "bar", "name": "foo"}]}'
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['112']
+      Content-Type: [application/json; odata=minimalmetadata; charset=utf-8]
+      User-Agent: [python/3.5.2 (Windows-10-10.0.10586-SP0) requests/2.10.0 msrest/0.4.0
+          msrest_azure/0.4.1 batchserviceclient/0.30.0rc5 Azure-SDK-For-Python]
+      accept-language: [en-US]
+      client-request-id: [3c115e12-5a5f-11e6-9546-6451065b724d]
+      ocp-date: ['Thu, 04 Aug 2016 16:19:35 GMT']
+    method: POST
+    uri: https://pythonsdktest.westus.batch.azure.com/pools/python_test_pool_1/updateproperties?api-version=2016-07-01.3.1
+  response:
+    body: {string: ''}
+    headers:
+      Content-Length: ['0']
+      DataServiceId: ['https://pythonsdktest.westus.batch.azure.com/pools/python_test_pool_1/updateproperties']
+      DataServiceVersion: ['3.0']
+      Date: ['Thu, 04 Aug 2016 16:19:35 GMT']
+      ETag: ['0x8D3BC831FA23A94']
+      Last-Modified: ['Thu, 04 Aug 2016 16:19:34 GMT']
+      Server: [Microsoft-HTTPAPI/2.0]
+      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
+      request-id: [3c0674f2-21aa-4353-8352-9c072112cd45]
+    status: {code: 204, message: No Content}
+- request:
+    body: '{"metadata": [{"value": "bar2", "name": "foo2"}]}'
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['49']
+      Content-Type: [application/json; odata=minimalmetadata; charset=utf-8]
+      User-Agent: [python/3.5.2 (Windows-10-10.0.10586-SP0) requests/2.10.0 msrest/0.4.0
+          msrest_azure/0.4.1 batchserviceclient/0.30.0rc5 Azure-SDK-For-Python]
+      accept-language: [en-US]
+      client-request-id: [3c53f58a-5a5f-11e6-8bed-6451065b724d]
+      ocp-date: ['Thu, 04 Aug 2016 16:19:36 GMT']
+    method: PATCH
+    uri: https://pythonsdktest.westus.batch.azure.com/pools/python_test_pool_1?api-version=2016-07-01.3.1
+  response:
+    body: {string: ''}
+    headers:
+      DataServiceId: ['https://pythonsdktest.westus.batch.azure.com/pools/python_test_pool_1']
+      DataServiceVersion: ['3.0']
+      Date: ['Thu, 04 Aug 2016 16:19:35 GMT']
+      ETag: ['0x8D3BC831FE4AFBD']
+      Last-Modified: ['Thu, 04 Aug 2016 16:19:35 GMT']
+      Server: [Microsoft-HTTPAPI/2.0]
+      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
+      Transfer-Encoding: [chunked]
+      request-id: [08534036-7c3c-45fe-a042-020452f1c2e5]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Type: [application/json; odata=minimalmetadata; charset=utf-8]
+      User-Agent: [python/3.5.2 (Windows-10-10.0.10586-SP0) requests/2.10.0 msrest/0.4.0
+          msrest_azure/0.4.1 batchserviceclient/0.30.0rc5 Azure-SDK-For-Python]
+      accept-language: [en-US]
+      client-request-id: [3c9335e2-5a5f-11e6-8ad6-6451065b724d]
+      ocp-date: ['Thu, 04 Aug 2016 16:19:36 GMT']
+    method: GET
+    uri: https://pythonsdktest.westus.batch.azure.com/pools/python_test_pool_1?api-version=2016-07-01.3.1
+  response:
+    body: {string: "{\r\n  \"odata.metadata\":\"https://pythonsdktest.westus.batch.azure.com/$metadata#pools/@Element\"\
+        ,\"id\":\"python_test_pool_1\",\"url\":\"https://pythonsdktest.westus.batch.azure.com/pools/python_test_pool_1\"\
+        ,\"eTag\":\"0x8D3BC831FE4AFBD\",\"lastModified\":\"2016-08-04T16:19:35.1190461Z\"\
+        ,\"creationTime\":\"2016-08-04T16:17:26.4117019Z\",\"state\":\"upgrading\"\
+        ,\"stateTransitionTime\":\"2016-08-04T16:19:35.1190461Z\",\"allocationState\"\
+        :\"steady\",\"allocationStateTransitionTime\":\"2016-08-04T16:17:26.5207351Z\"\
+        ,\"vmSize\":\"small\",\"resizeTimeout\":\"PT15M\",\"currentDedicated\":0,\"\
+        targetDedicated\":0,\"enableAutoScale\":false,\"enableInterNodeCommunication\"\
+        :false,\"metadata\":[\r\n    {\r\n      \"name\":\"foo2\",\"value\":\"bar2\"\
+        \r\n    }\r\n  ],\"maxTasksPerNode\":1,\"taskSchedulingPolicy\":{\r\n    \"\
+        nodeFillType\":\"Spread\"\r\n  },\"cloudServiceConfiguration\":{\r\n    \"\
+        osFamily\":\"4\",\"targetOSVersion\":\"WA-GUEST-OS-4.32_201605-01\",\"currentOSVersion\"\
+        :\"*\"\r\n  }\r\n}"}
+    headers:
+      Content-Type: [application/json;odata=minimalmetadata]
+      DataServiceVersion: ['3.0']
+      Date: ['Thu, 04 Aug 2016 16:19:35 GMT']
+      ETag: ['0x8D3BC831FE4AFBD']
+      Last-Modified: ['Thu, 04 Aug 2016 16:19:35 GMT']
+      Server: [Microsoft-HTTPAPI/2.0]
+      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
+      Transfer-Encoding: [chunked]
+      request-id: [11f95765-9712-4e58-9045-7e8c08737f53]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Type: [application/json; odata=minimalmetadata; charset=utf-8]
+      User-Agent: [python/3.5.2 (Windows-10-10.0.10586-SP0) requests/2.10.0 msrest/0.4.0
+          msrest_azure/0.4.1 batchserviceclient/0.30.0rc5 Azure-SDK-For-Python]
+      accept-language: [en-US]
+      client-request-id: [3cd1787e-5a5f-11e6-9d0b-6451065b724d]
+      ocp-date: ['Thu, 04 Aug 2016 16:19:37 GMT']
+    method: GET
+    uri: https://pythonsdktest.westus.batch.azure.com/pools/python_test_pool_1?timeout=30&$select=id%2Cstate&api-version=2016-07-01.3.1&$expand=stats
+  response:
+    body: {string: "{\r\n  \"odata.metadata\":\"https://pythonsdktest.westus.batch.azure.com/$metadata#pools/@Element\"\
+        ,\"id\":\"python_test_pool_1\",\"state\":\"upgrading\"\r\n}"}
+    headers:
+      Content-Type: [application/json;odata=minimalmetadata]
+      DataServiceVersion: ['3.0']
+      Date: ['Thu, 04 Aug 2016 16:19:35 GMT']
+      ETag: ['0x8D3BC831FE4AFBD']
+      Last-Modified: ['Thu, 04 Aug 2016 16:19:35 GMT']
+      Server: [Microsoft-HTTPAPI/2.0]
+      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
+      Transfer-Encoding: [chunked]
+      request-id: [0cefe713-f020-4c82-9329-41f3d940e4af]
+    status: {code: 200, message: OK}
+- request:
+    body: '{"autoScaleEvaluationInterval": "PT6M", "autoScaleFormula": "$TargetDedicated=2"}'
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['81']
+      Content-Type: [application/json; odata=minimalmetadata; charset=utf-8]
+      User-Agent: [python/3.5.2 (Windows-10-10.0.10586-SP0) requests/2.10.0 msrest/0.4.0
+          msrest_azure/0.4.1 batchserviceclient/0.30.0rc5 Azure-SDK-For-Python]
+      accept-language: [en-US]
+      client-request-id: [3d16740a-5a5f-11e6-8a0b-6451065b724d]
+      ocp-date: ['Thu, 04 Aug 2016 16:19:37 GMT']
+    method: POST
+    uri: https://pythonsdktest.westus.batch.azure.com/pools/python_test_pool_1/enableautoscale?api-version=2016-07-01.3.1
+  response:
+    body: {string: ''}
+    headers:
+      DataServiceId: ['https://pythonsdktest.westus.batch.azure.com/pools/python_test_pool_1/enableautoscale']
+      DataServiceVersion: ['3.0']
+      Date: ['Thu, 04 Aug 2016 16:19:37 GMT']
+      ETag: ['0x8D3BC8320C523ED']
+      Last-Modified: ['Thu, 04 Aug 2016 16:19:36 GMT']
+      Server: [Microsoft-HTTPAPI/2.0]
+      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
+      Transfer-Encoding: [chunked]
+      request-id: [b8599dea-430d-4852-9ed7-be7803b64726]
+    status: {code: 200, message: OK}
+- request:
+    body: '{"autoScaleFormula": "$TargetDedicated=3"}'
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['42']
+      Content-Type: [application/json; odata=minimalmetadata; charset=utf-8]
+      User-Agent: [python/3.5.2 (Windows-10-10.0.10586-SP0) requests/2.10.0 msrest/0.4.0
+          msrest_azure/0.4.1 batchserviceclient/0.30.0rc5 Azure-SDK-For-Python]
+      accept-language: [en-US]
+      client-request-id: [3d9083dc-5a5f-11e6-8b5e-6451065b724d]
+      ocp-date: ['Thu, 04 Aug 2016 16:19:38 GMT']
+    method: POST
+    uri: https://pythonsdktest.westus.batch.azure.com/pools/python_test_pool_1/evaluateautoscale?api-version=2016-07-01.3.1
+  response:
+    body: {string: "{\r\n  \"odata.metadata\":\"https://pythonsdktest.westus.batch.azure.com/$metadata#Microsoft.Azure.Batch.Protocol.Entities.AutoScaleRun\"\
+        ,\"timestamp\":\"2016-08-04T16:19:37.6110772Z\",\"results\":\"$TargetDedicated=3;$NodeDeallocationOption=requeue\"\
+        \r\n}"}
+    headers:
+      Content-Type: [application/json;odata=minimalmetadata]
+      DataServiceId: ['https://pythonsdktest.westus.batch.azure.com/pools/python_test_pool_1/evaluateautoscale']
+      DataServiceVersion: ['3.0']
+      Date: ['Thu, 04 Aug 2016 16:19:37 GMT']
+      Server: [Microsoft-HTTPAPI/2.0]
+      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
+      Transfer-Encoding: [chunked]
+      request-id: [b848ef84-c7ac-4f09-8f86-c279e88c5233]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['0']
+      Content-Type: [application/json; odata=minimalmetadata; charset=utf-8]
+      User-Agent: [python/3.5.2 (Windows-10-10.0.10586-SP0) requests/2.10.0 msrest/0.4.0
+          msrest_azure/0.4.1 batchserviceclient/0.30.0rc5 Azure-SDK-For-Python]
+      accept-language: [en-US]
+      client-request-id: [3ddb8590-5a5f-11e6-a620-6451065b724d]
+      ocp-date: ['Thu, 04 Aug 2016 16:19:38 GMT']
+    method: POST
+    uri: https://pythonsdktest.westus.batch.azure.com/pools/python_test_pool_1/disableautoscale?api-version=2016-07-01.3.1
+  response:
+    body: {string: ''}
+    headers:
+      DataServiceId: ['https://pythonsdktest.westus.batch.azure.com/pools/python_test_pool_1/disableautoscale']
+      DataServiceVersion: ['3.0']
+      Date: ['Thu, 04 Aug 2016 16:19:38 GMT']
+      ETag: ['0x8D3BC83216CFDD3']
+      Last-Modified: ['Thu, 04 Aug 2016 16:19:37 GMT']
+      Server: [Microsoft-HTTPAPI/2.0]
+      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
+      Transfer-Encoding: [chunked]
+      request-id: [c7763bc9-a73a-4b14-9f92-f4cac7eeb258]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Type: [application/json; odata=minimalmetadata; charset=utf-8]
+      User-Agent: [python/3.5.2 (Windows-10-10.0.10586-SP0) requests/2.10.0 msrest/0.4.0
+          msrest_azure/0.4.1 batchserviceclient/0.30.0rc5 Azure-SDK-For-Python]
+      accept-language: [en-US]
+      client-request-id: [3e20562c-5a5f-11e6-beee-6451065b724d]
+      ocp-date: ['Thu, 04 Aug 2016 16:19:39 GMT']
+    method: GET
+    uri: https://pythonsdktest.westus.batch.azure.com/pools?api-version=2016-07-01.3.1
+  response:
+    body: {string: "{\r\n  \"odata.metadata\":\"https://pythonsdktest.westus.batch.azure.com/$metadata#pools\"\
+        ,\"value\":[\r\n    {\r\n      \"id\":\"python_test_pool_1\",\"url\":\"https://pythonsdktest.westus.batch.azure.com/pools/python_test_pool_1\"\
+        ,\"eTag\":\"0x8D3BC83216CFDD3\",\"lastModified\":\"2016-08-04T16:19:37.6900563Z\"\
+        ,\"creationTime\":\"2016-08-04T16:17:26.4117019Z\",\"state\":\"upgrading\"\
+        ,\"stateTransitionTime\":\"2016-08-04T16:19:37.6900563Z\",\"allocationState\"\
+        :\"stopping\",\"allocationStateTransitionTime\":\"2016-08-04T16:19:37.6900563Z\"\
+        ,\"vmSize\":\"small\",\"resizeTimeout\":\"PT15M\",\"currentDedicated\":0,\"\
+        targetDedicated\":2,\"enableAutoScale\":false,\"enableInterNodeCommunication\"\
+        :false,\"metadata\":[\r\n        {\r\n          \"name\":\"foo2\",\"value\"\
+        :\"bar2\"\r\n        }\r\n      ],\"maxTasksPerNode\":1,\"taskSchedulingPolicy\"\
+        :{\r\n        \"nodeFillType\":\"Spread\"\r\n      },\"cloudServiceConfiguration\"\
+        :{\r\n        \"osFamily\":\"4\",\"targetOSVersion\":\"WA-GUEST-OS-4.32_201605-01\"\
+        ,\"currentOSVersion\":\"*\"\r\n      }\r\n    },{\r\n      \"id\":\"python_test_pool_2\"\
+        ,\"url\":\"https://pythonsdktest.westus.batch.azure.com/pools/python_test_pool_2\"\
+        ,\"eTag\":\"0x8D3BC82E55F33A5\",\"lastModified\":\"2016-08-04T16:17:56.9363877Z\"\
+        ,\"creationTime\":\"2016-08-04T16:17:56.9363877Z\",\"state\":\"active\",\"\
+        stateTransitionTime\":\"2016-08-04T16:17:56.9363877Z\",\"allocationState\"\
+        :\"steady\",\"allocationStateTransitionTime\":\"2016-08-04T16:17:57.0543014Z\"\
+        ,\"vmSize\":\"small\",\"resizeTimeout\":\"PT15M\",\"currentDedicated\":0,\"\
+        targetDedicated\":0,\"enableAutoScale\":false,\"enableInterNodeCommunication\"\
+        :false,\"maxTasksPerNode\":1,\"taskSchedulingPolicy\":{\r\n        \"nodeFillType\"\
+        :\"Spread\"\r\n      },\"cloudServiceConfiguration\":{\r\n        \"osFamily\"\
+        :\"4\",\"targetOSVersion\":\"*\",\"currentOSVersion\":\"*\"\r\n      }\r\n\
+        \    }\r\n  ]\r\n}"}
+    headers:
+      Content-Type: [application/json;odata=minimalmetadata]
+      DataServiceVersion: ['3.0']
+      Date: ['Thu, 04 Aug 2016 16:19:38 GMT']
+      Server: [Microsoft-HTTPAPI/2.0]
+      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
+      Transfer-Encoding: [chunked]
+      request-id: [460e52f1-5525-4bd9-8208-cdc5e30c54a7]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Type: [application/json; odata=minimalmetadata; charset=utf-8]
+      User-Agent: [python/3.5.2 (Windows-10-10.0.10586-SP0) requests/2.10.0 msrest/0.4.0
+          msrest_azure/0.4.1 batchserviceclient/0.30.0rc5 Azure-SDK-For-Python]
+      accept-language: [en-US]
+      client-request-id: [3e675440-5a5f-11e6-8a92-6451065b724d]
+      ocp-date: ['Thu, 04 Aug 2016 16:19:39 GMT']
+    method: GET
+    uri: https://pythonsdktest.westus.batch.azure.com/pools?maxresults=1&api-version=2016-07-01.3.1&timeout=30
+  response:
+    body: {string: "{\r\n  \"odata.metadata\":\"https://pythonsdktest.westus.batch.azure.com/$metadata#pools\"\
+        ,\"value\":[\r\n    {\r\n      \"id\":\"python_test_pool_1\",\"url\":\"https://pythonsdktest.westus.batch.azure.com/pools/python_test_pool_1\"\
+        ,\"eTag\":\"0x8D3BC83216CFDD3\",\"lastModified\":\"2016-08-04T16:19:37.6900563Z\"\
+        ,\"creationTime\":\"2016-08-04T16:17:26.4117019Z\",\"state\":\"upgrading\"\
+        ,\"stateTransitionTime\":\"2016-08-04T16:19:37.6900563Z\",\"allocationState\"\
+        :\"stopping\",\"allocationStateTransitionTime\":\"2016-08-04T16:19:37.6900563Z\"\
+        ,\"vmSize\":\"small\",\"resizeTimeout\":\"PT15M\",\"currentDedicated\":0,\"\
+        targetDedicated\":2,\"enableAutoScale\":false,\"enableInterNodeCommunication\"\
+        :false,\"metadata\":[\r\n        {\r\n          \"name\":\"foo2\",\"value\"\
+        :\"bar2\"\r\n        }\r\n      ],\"maxTasksPerNode\":1,\"taskSchedulingPolicy\"\
+        :{\r\n        \"nodeFillType\":\"Spread\"\r\n      },\"cloudServiceConfiguration\"\
+        :{\r\n        \"osFamily\":\"4\",\"targetOSVersion\":\"WA-GUEST-OS-4.32_201605-01\"\
+        ,\"currentOSVersion\":\"*\"\r\n      }\r\n    }\r\n  ],\"odata.nextLink\"\
+        :\"https://pythonsdktest.westus.batch.azure.com/pools?maxresults=1&api-version=2016-07-01.3.1&timeout=30&$skiptoken=WATV2:qi4K2o33LIbAqxR%5EnIIPE7Yxja/58jJw8335w%5EL7rWCnAikc4oKSb/%5EZufzx8TAVAHwMi3FatEI1rn7OACGUmCuvRcoxMjzjhkaQWa%5EKkThPFwfxei/ZvaAfM4vmeXyFxhVUsxSNJhOn4JyXUGexLcJiLqqwBNWjVQ4QszKH0fwl47eBITeaWzGjGp8zsqkzF9oVcLhdqUtdsopNevTos01dM6n6sAZbHT5X66Ir1B%5Ee4QleLSixvDiuZbN%5EJdq6n2v4K4V%5E8g7quZxHdA4Gk6SI720jqoQbR4CoQ0d84BY=:1$1\"\
+        \r\n}"}
+    headers:
+      Content-Type: [application/json;odata=minimalmetadata]
+      DataServiceVersion: ['3.0']
+      Date: ['Thu, 04 Aug 2016 16:19:38 GMT']
+      Server: [Microsoft-HTTPAPI/2.0]
+      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
+      Transfer-Encoding: [chunked]
+      request-id: [028f3188-4914-4f8c-b8a9-e6e0e48a7cfa]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Type: [application/json; odata=minimalmetadata; charset=utf-8]
+      User-Agent: [python/3.5.2 (Windows-10-10.0.10586-SP0) requests/2.10.0 msrest/0.4.0
+          msrest_azure/0.4.1 batchserviceclient/0.30.0rc5 Azure-SDK-For-Python]
+      accept-language: [en-US]
+      client-request-id: [3ec82174-5a5f-11e6-b967-6451065b724d]
+      ocp-date: ['Thu, 04 Aug 2016 16:19:40 GMT']
+    method: GET
+    uri: https://pythonsdktest.westus.batch.azure.com/pools?timeout=30&$filter=startswith%28id%2C%27python_test_pool_1%27%29&$select=id%2Cstate&api-version=2016-07-01.3.1&$expand=stats
+  response:
+    body: {string: "{\r\n  \"odata.metadata\":\"https://pythonsdktest.westus.batch.azure.com/$metadata#pools\"\
+        ,\"value\":[\r\n    {\r\n      \"id\":\"python_test_pool_1\",\"state\":\"\
+        upgrading\"\r\n    }\r\n  ]\r\n}"}
+    headers:
+      Content-Type: [application/json;odata=minimalmetadata]
+      DataServiceVersion: ['3.0']
+      Date: ['Thu, 04 Aug 2016 16:19:39 GMT']
+      Server: [Microsoft-HTTPAPI/2.0]
+      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
+      Transfer-Encoding: [chunked]
+      request-id: [1900f857-2043-412b-9cb6-7e84666c1c1f]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Type: [application/json; odata=minimalmetadata; charset=utf-8]
+      User-Agent: [python/3.5.2 (Windows-10-10.0.10586-SP0) requests/2.10.0 msrest/0.4.0
+          msrest_azure/0.4.1 batchserviceclient/0.30.0rc5 Azure-SDK-For-Python]
+      accept-language: [en-US]
+      client-request-id: [3f076788-5a5f-11e6-88b6-6451065b724d]
+      ocp-date: ['Thu, 04 Aug 2016 16:19:40 GMT']
+    method: HEAD
+    uri: https://pythonsdktest.westus.batch.azure.com/pools/python_test_pool_2?api-version=2016-07-01.3.1
+  response:
+    body: {string: ''}
+    headers:
+      DataServiceVersion: ['3.0']
+      Date: ['Thu, 04 Aug 2016 16:19:40 GMT']
+      ETag: ['0x8D3BC82E55F33A5']
+      Last-Modified: ['Thu, 04 Aug 2016 16:17:56 GMT']
+      Server: [Microsoft-HTTPAPI/2.0]
+      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
+      Transfer-Encoding: [chunked]
+      request-id: [d400e083-5763-47f0-a720-4a0389e55ec5]
+    status: {code: 200, message: OK}
+- request:
+    body: '{"targetDedicated": 3}'
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['22']
+      Content-Type: [application/json; odata=minimalmetadata; charset=utf-8]
+      User-Agent: [python/3.5.2 (Windows-10-10.0.10586-SP0) requests/2.10.0 msrest/0.4.0
+          msrest_azure/0.4.1 batchserviceclient/0.30.0rc5 Azure-SDK-For-Python]
+      accept-language: [en-US]
+      client-request-id: [3f4d9a5e-5a5f-11e6-9ce4-6451065b724d]
+      ocp-date: ['Thu, 04 Aug 2016 16:19:41 GMT']
+    method: POST
+    uri: https://pythonsdktest.westus.batch.azure.com/pools/python_test_pool_2/resize?api-version=2016-07-01.3.1
+  response:
+    body: {string: ''}
+    headers:
+      DataServiceId: ['https://pythonsdktest.westus.batch.azure.com/pools/python_test_pool_2/resize']
+      DataServiceVersion: ['3.0']
+      Date: ['Thu, 04 Aug 2016 16:19:40 GMT']
+      ETag: ['0x8D3BC8322E1E7A1']
+      Last-Modified: ['Thu, 04 Aug 2016 16:19:40 GMT']
+      Server: [Microsoft-HTTPAPI/2.0]
+      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
+      Transfer-Encoding: [chunked]
+      request-id: [db06cde1-d3b0-4d56-99b6-22b9f868e75b]
+    status: {code: 202, message: Accepted}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['0']
+      Content-Type: [application/json; odata=minimalmetadata; charset=utf-8]
+      User-Agent: [python/3.5.2 (Windows-10-10.0.10586-SP0) requests/2.10.0 msrest/0.4.0
+          msrest_azure/0.4.1 batchserviceclient/0.30.0rc5 Azure-SDK-For-Python]
+      accept-language: [en-US]
+      client-request-id: [3fa49dc8-5a5f-11e6-9ea9-6451065b724d]
+      ocp-date: ['Thu, 04 Aug 2016 16:19:41 GMT']
+    method: POST
+    uri: https://pythonsdktest.westus.batch.azure.com/pools/python_test_pool_2/stopresize?api-version=2016-07-01.3.1
+  response:
+    body: {string: ''}
+    headers:
+      DataServiceId: ['https://pythonsdktest.westus.batch.azure.com/pools/python_test_pool_2/stopresize']
+      DataServiceVersion: ['3.0']
+      Date: ['Thu, 04 Aug 2016 16:19:40 GMT']
+      ETag: ['0x8D3BC83233537E7']
+      Last-Modified: ['Thu, 04 Aug 2016 16:19:40 GMT']
+      Server: [Microsoft-HTTPAPI/2.0]
+      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
+      Transfer-Encoding: [chunked]
+      request-id: [84de50a6-f7f8-4b57-a4bc-bdef1a3cc9ae]
+    status: {code: 202, message: Accepted}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Type: [application/json; odata=minimalmetadata; charset=utf-8]
+      User-Agent: [python/3.5.2 (Windows-10-10.0.10586-SP0) requests/2.10.0 msrest/0.4.0
+          msrest_azure/0.4.1 batchserviceclient/0.30.0rc5 Azure-SDK-For-Python]
+      accept-language: [en-US]
+      client-request-id: [3fe4a130-5a5f-11e6-b049-6451065b724d]
+      ocp-date: ['Thu, 04 Aug 2016 16:19:42 GMT']
+    method: GET
+    uri: https://pythonsdktest.westus.batch.azure.com/lifetimepoolstats?api-version=2016-07-01.3.1
+  response:
+    body: {string: "{\r\n  \"odata.metadata\":\"https://pythonsdktest.westus.batch.azure.com/$metadata#poolstats/@Element\"\
+        ,\"url\":\"https://pythonsdktest.westus.batch.azure.com/lifetimepoolstats\"\
+        ,\"usageStats\":{\r\n    \"startTime\":\"2016-08-04T16:17:05.0576973Z\",\"\
+        lastUpdateTime\":\"2016-08-04T16:17:05.0576973Z\",\"dedicatedCoreTime\":\"\
+        PT0S\"\r\n  },\"resourceStats\":{\r\n    \"startTime\":\"2016-08-04T16:17:05.0576973Z\"\
+        ,\"diskReadIOps\":\"0\",\"diskWriteIOps\":\"0\",\"lastUpdateTime\":\"2016-08-04T16:17:05.0576973Z\"\
+        ,\"avgCPUPercentage\":0.0,\"avgMemoryGiB\":0.0,\"peakMemoryGiB\":0.0,\"avgDiskGiB\"\
+        :0.0,\"peakDiskGiB\":0.0,\"diskReadGiB\":0.0,\"diskWriteGiB\":0.0,\"networkReadGiB\"\
+        :0.0,\"networkWriteGiB\":0.0\r\n  }\r\n}"}
+    headers:
+      Content-Type: [application/json;odata=minimalmetadata]
+      DataServiceVersion: ['3.0']
+      Date: ['Thu, 04 Aug 2016 16:19:40 GMT']
+      Server: [Microsoft-HTTPAPI/2.0]
+      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
+      Transfer-Encoding: [chunked]
+      request-id: [dca47eed-961f-49ad-a83e-eab116bc8172]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Type: [application/json; odata=minimalmetadata; charset=utf-8]
+      User-Agent: [python/3.5.2 (Windows-10-10.0.10586-SP0) requests/2.10.0 msrest/0.4.0
+          msrest_azure/0.4.1 batchserviceclient/0.30.0rc5 Azure-SDK-For-Python]
+      accept-language: [en-US]
+      client-request-id: [40397b7e-5a5f-11e6-aea4-6451065b724d]
+      ocp-date: ['Thu, 04 Aug 2016 16:19:42 GMT']
+    method: GET
+    uri: https://pythonsdktest.westus.batch.azure.com/poolusagemetrics?api-version=2016-07-01.3.1
+  response:
+    body: {string: "{\r\n  \"odata.metadata\":\"https://pythonsdktest.westus.batch.azure.com/$metadata#poolusagemetrics\"\
+        ,\"value\":[\r\n    \r\n  ]\r\n}"}
+    headers:
+      Content-Type: [application/json;odata=minimalmetadata]
+      DataServiceVersion: ['3.0']
+      Date: ['Thu, 04 Aug 2016 16:19:41 GMT']
+      Server: [Microsoft-HTTPAPI/2.0]
+      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
+      Transfer-Encoding: [chunked]
+      request-id: [49eb4399-2efe-4aab-8eb5-fc463f280ff7]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['0']
+      Content-Type: [application/json; odata=minimalmetadata; charset=utf-8]
+      User-Agent: [python/3.5.2 (Windows-10-10.0.10586-SP0) requests/2.10.0 msrest/0.4.0
+          msrest_azure/0.4.1 batchserviceclient/0.30.0rc5 Azure-SDK-For-Python]
+      accept-language: [en-US]
+      client-request-id: [4084e848-5a5f-11e6-b7dd-6451065b724d]
+      ocp-date: ['Thu, 04 Aug 2016 16:19:43 GMT']
+    method: DELETE
+    uri: https://pythonsdktest.westus.batch.azure.com/pools/python_test_pool_2?api-version=2016-07-01.3.1
+  response:
+    body: {string: ''}
+    headers:
+      DataServiceVersion: ['3.0']
+      Date: ['Thu, 04 Aug 2016 16:19:42 GMT']
+      Server: [Microsoft-HTTPAPI/2.0]
+      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
+      Transfer-Encoding: [chunked]
+      request-id: [8d774ac8-f9d4-49b8-b781-5bc157e89d08]
+    status: {code: 202, message: Accepted}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['0']
+      Content-Type: [application/json; odata=minimalmetadata; charset=utf-8]
+      User-Agent: [python/3.5.2 (Windows-10-10.0.10586-SP0) requests/2.10.0 msrest/0.4.0
+          msrest_azure/0.4.1 batchserviceclient/0.30.0rc5 Azure-SDK-For-Python]
+      accept-language: [en-US]
+      client-request-id: [40c57e2e-5a5f-11e6-8a15-6451065b724d]
+      ocp-date: ['Thu, 04 Aug 2016 16:19:43 GMT']
+    method: DELETE
+    uri: https://pythonsdktest.westus.batch.azure.com/pools/python_test_pool_1?api-version=2016-07-01.3.1
+  response:
+    body: {string: ''}
+    headers:
+      DataServiceVersion: ['3.0']
+      Date: ['Thu, 04 Aug 2016 16:19:43 GMT']
+      Server: [Microsoft-HTTPAPI/2.0]
+      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
+      Transfer-Encoding: [chunked]
+      request-id: [550a2bd9-c343-49a7-963b-1435ea686245]
+    status: {code: 202, message: Accepted}
 version: 1

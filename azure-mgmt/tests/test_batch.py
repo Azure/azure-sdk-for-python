@@ -457,6 +457,14 @@ class BatchMgmtTestCase(RecordingTestCase):
         _e = {}
         with BatchPool(self.live, self.batch_client, 'python_test_pool_1') as pool_id:
             with BatchPool(self.live, self.batch_client, 'python_test_pool_2') as pool_id_2:
+                _m = "Test Create Pool with Network Configuration"
+                LOG.debug(_m)
+                pool_config = batch.models.CloudServiceConfiguration('4')
+                network_config = batch.models.NetworkConfiguration('/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test/providers/Microsoft.Network/virtualNetworks/vnet1/subnets/subnet1')
+                pool = batch.models.PoolAddParameter('no_pool', 'small', cloud_service_configuration=pool_config, network_configuration=network_config)
+                self.assertBatchError(_e, _m, 'InvalidPropertyValue',
+                                      self.batch_client.pool.add,
+                                      pool)
 
                 _m = "Test Upgrade Pool OS"
                 LOG.debug(_m)
@@ -694,6 +702,19 @@ class BatchMgmtTestCase(RecordingTestCase):
             LOG.debug("    wait for job to create...")
             self.sleep(10)
 
+            _m = "Test Create Job with Auto Complete"
+            LOG.debug(_m)
+            job_with_auto_complete = batch.models.JobAddParameter(id='python_test_job_2',
+                                                pool_info=batch.models.PoolInformation(pool_id=pool_id),
+                                                on_all_tasks_complete='noAction',
+                                                on_task_failure='performExitOptionsJobAction')
+            response = self.assertRuns(_e, _m, self.batch_client.job.add, job_with_auto_complete)
+            self.assertIsNone(_e, _m, response)
+
+
+            LOG.debug("    wait for job to create...")
+            self.sleep(10)
+
             _m = "Test Update Job"
             LOG.debug(_m)
             constraints = batch.models.JobConstraints(max_task_retry_count=3)
@@ -725,6 +746,7 @@ class BatchMgmtTestCase(RecordingTestCase):
             LOG.debug(_m)
             jobs = self.assertList(_e, _m, self.batch_client.job.list) 
             self.assertTrue(_e, _m, len(jobs) > 0)
+            job_ids = [j.id for j in jobs]
 
             _m = "Test Job Disable"
             LOG.debug(_m)
@@ -734,6 +756,52 @@ class BatchMgmtTestCase(RecordingTestCase):
             _m = "Test Job Enable"
             LOG.debug(_m)
             response = self.assertRuns(_e, _m, self.batch_client.job.enable, 'python_test_job')
+            self.assertIsNone(_e, _m, response)
+
+            _m = "Test Create Task with Auto Complete"
+            LOG.debug(_m)
+            conditions = batch.models.ExitConditions(default=batch.models.ExitOptions('terminate'),
+                                                     exit_codes=[batch.models.ExitCodeMapping(code=1, exit_options=batch.models.ExitOptions('None'))])
+            task = batch.models.TaskAddParameter(id='python_task_with_auto_complete',
+                                                 command_line='cmd /c echo hello world',
+                                                 exit_conditions=conditions)
+            response = self.assertRuns(_e, _m, self.batch_client.task.add, 'python_test_job_2', task)
+            self.assertIsNone(_e, _m, response)
+
+            _m = "Test Get Task with Auto Complete"
+            LOG.debug(_m)
+            task = self.assertRuns(_e, _m, self.batch_client.task.get, 'python_test_job_2', 'python_task_with_auto_complete')
+            self.assertIsInstance(task, batch.models.CloudTask)
+            if task:
+                self.assertEqual(_e, _m, task.exit_conditions.default.job_action.value, 'terminate')
+                self.assertEqual(_e, _m, task.exit_conditions.exit_codes[0].code, 1)
+                self.assertEqual(_e, _m, task.exit_conditions.exit_codes[0].exit_options.job_action.value, 'none')
+
+            _m = "Test Create Task with Application Package"
+            LOG.debug(_m)
+            application = self.assertRuns(_e, _m, self.batch_mgmt_client.application.add_application,
+                                          AZURE_RESOURCE_GROUP, AZURE_BATCH_ACCOUNT, 'my_application_id',
+                                          allow_updated=True, display_name='my_application_name')
+
+            package_ref = self.assertRuns(_e, _m, self.batch_mgmt_client.application.add_application_package,
+                                      AZURE_RESOURCE_GROUP, AZURE_BATCH_ACCOUNT, 'my_application_id', 'v1.0')
+
+            task = batch.models.TaskAddParameter('python_task_with_app_package',
+                                                 'cmd /c echo hello world',
+                                                 application_package_references=[batch.models.ApplicationPackageReference('my_application_id')])
+            response = self.assertRuns(_e, _m, self.batch_client.task.add, 'python_test_job', task)
+            self.assertIsNone(_e, _m, response)
+
+            _m = "Test Get Task with Application Package"
+            LOG.debug(_m)
+            task = self.assertRuns(_e, _m, self.batch_client.task.get, 'python_test_job', 'python_task_with_app_package')
+
+            self.assertIsInstance(task, batch.models.CloudTask)
+            if task:
+                self.assertEqual(_e, _m, task.id, 'python_task_with_app_package')
+                self.assertEqual(_e, _m, task.application_package_references[0].application_id, 'my_application_id')
+
+            response = self.assertRuns(_e, _m, self.batch_client.task.delete, 'python_test_job', 'python_task_with_app_package')
             self.assertIsNone(_e, _m, response)
 
             _m = "Test Create Task"
@@ -839,7 +907,9 @@ class BatchMgmtTestCase(RecordingTestCase):
 
             _m = "Test Delete Job"
             LOG.debug(_m)
-            response = self.assertRuns(_e, _m, self.batch_client.job.delete, 'python_test_job')
+            for id in job_ids:
+                response = self.assertRuns(_e, _m, self.batch_client.job.delete, id)
+                self.assertIsNone(_e, _m, response)
 
             _m = "Test Job Lifetime Statistics"
             LOG.debug(_m)
