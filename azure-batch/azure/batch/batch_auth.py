@@ -1,9 +1,19 @@
 ﻿# coding=utf-8
-#-------------------------------------------------------------------------
-# Copyright (c) Microsoft Corporation. All rights reserved.
-# Licensed under the MIT License. See License.txt in the project root for
-# license information.
-#--------------------------------------------------------------------------
+# --------------------------------------------------------------------------
+# Copyright (c) Microsoft and contributors.  All rights reserved.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+# http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#
+# See the License for the specific language governing permissions and
+# limitations under the License.
+# --------------------------------------------------------------------------
 
 import time
 import keyring
@@ -17,6 +27,7 @@ import requests
 from requests.auth import AuthBase
 from msrest.authentication import Authentication
 from msrest import Serializer
+from msrest.serialization import TZ_UTC
 
 try:
     from urlparse import urlparse, parse_qs
@@ -47,8 +58,9 @@ class SharedKeyAuth(AuthBase):
     def __call__(self, request):
 
         if not request.headers.get('ocp-date'):
-            request.headers['ocp-date'] = Serializer.serialize_rfc(
-                datetime.datetime.utcnow())
+            now = datetime.datetime.utcnow()
+            now = now.replace(tzinfo=TZ_UTC)
+            request.headers['ocp-date'] = Serializer.serialize_rfc(now)
 
         url = urlparse(request.url)
         uri_path = url.path
