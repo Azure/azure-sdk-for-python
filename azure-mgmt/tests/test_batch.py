@@ -461,7 +461,9 @@ class BatchMgmtTestCase(RecordingTestCase):
                 LOG.debug(_m)
                 pool_config = batch.models.CloudServiceConfiguration('4')
                 network_config = batch.models.NetworkConfiguration('/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test/providers/Microsoft.Network/virtualNetworks/vnet1/subnets/subnet1')
-                pool = batch.models.PoolAddParameter('no_pool', 'small', cloud_service_configuration=pool_config, network_configuration=network_config)
+                pool = batch.models.PoolAddParameter('no_pool', 'small',
+                                                     cloud_service_configuration=pool_config,
+                                                     network_configuration=network_config)
                 self.assertBatchError(_e, _m, 'InvalidPropertyValue',
                                       self.batch_client.pool.add,
                                       pool, batch.models.PoolAddOptions(timeout=45))
