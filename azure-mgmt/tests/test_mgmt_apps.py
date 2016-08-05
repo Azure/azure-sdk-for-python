@@ -59,7 +59,7 @@ class MgmtAppsTest(AzureMgmtTestCase):
         self.assertEquals(site.name, site_name)
 
         # List Sites by Resource Group
-        for site in self.web_client.sites.get_sites(self.group_name).value:
+        for site in self.web_client.sites.get_sites(self.group_name):
             self.assertIsNotNone(site)
 
         # Get a single Site
