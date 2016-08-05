@@ -9,24 +9,19 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.serialization import Model
+from msrest.paging import Paged
 
 
-class BackupItemCollection(Model):
-    """Collection of Backup Items.
-
-    :param value: Collection of resources
-    :type value: list of :class:`BackupItem
-     <azure.mgmt.web.models.BackupItem>`
-    :param next_link: Link to next page of resources
-    :type next_link: str
-    """ 
+class WorkerPoolPaged(Paged):
+    """
+    A paging container for iterating over a list of WorkerPool object
+    """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[BackupItem]'},
         'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[WorkerPool]'}
     }
 
-    def __init__(self, value=None, next_link=None):
-        self.value = value
-        self.next_link = next_link
+    def __init__(self, *args, **kwargs):
+
+        super(WorkerPoolPaged, self).__init__(*args, **kwargs)
