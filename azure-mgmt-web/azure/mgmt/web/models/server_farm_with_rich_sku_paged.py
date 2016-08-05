@@ -9,24 +9,19 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.serialization import Model
+from msrest.paging import Paged
 
 
-class MetricDefinitionCollection(Model):
-    """Collection of metric defintions.
-
-    :param value: Collection of resources
-    :type value: list of :class:`MetricDefinition
-     <azure.mgmt.web.models.MetricDefinition>`
-    :param next_link: Link to next page of resources
-    :type next_link: str
-    """ 
+class ServerFarmWithRichSkuPaged(Paged):
+    """
+    A paging container for iterating over a list of ServerFarmWithRichSku object
+    """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[MetricDefinition]'},
         'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[ServerFarmWithRichSku]'}
     }
 
-    def __init__(self, value=None, next_link=None):
-        self.value = value
-        self.next_link = next_link
+    def __init__(self, *args, **kwargs):
+
+        super(ServerFarmWithRichSkuPaged, self).__init__(*args, **kwargs)

@@ -9,24 +9,19 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.serialization import Model
+from msrest.paging import Paged
 
 
-class NameIdentifierCollection(Model):
-    """Collection of domain name identifiers.
-
-    :param value: Collection of resources
-    :type value: list of :class:`NameIdentifier
-     <azure.mgmt.web.models.NameIdentifier>`
-    :param next_link: Link to next page of resources
-    :type next_link: str
-    """ 
+class DomainPaged(Paged):
+    """
+    A paging container for iterating over a list of Domain object
+    """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[NameIdentifier]'},
         'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[Domain]'}
     }
 
-    def __init__(self, value=None, next_link=None):
-        self.value = value
-        self.next_link = next_link
+    def __init__(self, *args, **kwargs):
+
+        super(DomainPaged, self).__init__(*args, **kwargs)

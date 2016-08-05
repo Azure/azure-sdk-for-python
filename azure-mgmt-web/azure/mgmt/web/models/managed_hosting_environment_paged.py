@@ -9,23 +9,19 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.serialization import Model
+from msrest.paging import Paged
 
 
-class UsageCollection(Model):
-    """Collection of usages.
-
-    :param value: Collection of resources
-    :type value: list of :class:`Usage <azure.mgmt.web.models.Usage>`
-    :param next_link: Link to next page of resources
-    :type next_link: str
-    """ 
+class ManagedHostingEnvironmentPaged(Paged):
+    """
+    A paging container for iterating over a list of ManagedHostingEnvironment object
+    """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[Usage]'},
         'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[ManagedHostingEnvironment]'}
     }
 
-    def __init__(self, value=None, next_link=None):
-        self.value = value
-        self.next_link = next_link
+    def __init__(self, *args, **kwargs):
+
+        super(ManagedHostingEnvironmentPaged, self).__init__(*args, **kwargs)

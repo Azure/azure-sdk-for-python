@@ -14,28 +14,21 @@ from .certificate_order_certificate import CertificateOrderCertificate
 from .sku_description import SkuDescription
 from .certificate_order import CertificateOrder
 from .certificate_details import CertificateDetails
-from .certificate_order_collection import CertificateOrderCollection
-from .certificate_order_certificate_collection import CertificateOrderCertificateCollection
 from .reissue_certificate_order_request import ReissueCertificateOrderRequest
 from .renew_certificate_order_request import RenewCertificateOrderRequest
 from .certificate_order_action import CertificateOrderAction
 from .certificate_email import CertificateEmail
-from .certificate_collection import CertificateCollection
 from .certificate import Certificate
 from .hosting_environment_profile import HostingEnvironmentProfile
 from .csr import Csr
-from .classic_mobile_service_collection import ClassicMobileServiceCollection
 from .classic_mobile_service import ClassicMobileService
-from .domain_collection import DomainCollection
 from .domain import Domain
 from .contact import Contact
 from .address import Address
 from .host_name import HostName
 from .domain_purchase_consent import DomainPurchaseConsent
 from .user import User
-from .geo_region_collection import GeoRegionCollection
 from .geo_region import GeoRegion
-from .server_farm_collection import ServerFarmCollection
 from .server_farm_with_rich_sku import ServerFarmWithRichSku
 from .site_collection import SiteCollection
 from .site import Site
@@ -63,14 +56,12 @@ from .cloning_info import CloningInfo
 from .site_properties import SiteProperties
 from .routing_rule import RoutingRule
 from .site_auth_settings import SiteAuthSettings
-from .hosting_environment_collection import HostingEnvironmentCollection
 from .hosting_environment import HostingEnvironment
 from .virtual_network_profile import VirtualNetworkProfile
 from .worker_pool import WorkerPool
 from .virtual_ip_mapping import VirtualIPMapping
 from .stamp_capacity import StampCapacity
 from .network_access_control_entry import NetworkAccessControlEntry
-from .managed_hosting_environment_collection import ManagedHostingEnvironmentCollection
 from .managed_hosting_environment import ManagedHostingEnvironment
 from .resource_name_availability_request import ResourceNameAvailabilityRequest
 from .resource_name_availability import ResourceNameAvailability
@@ -79,29 +70,20 @@ from .domain_registration_input import DomainRegistrationInput
 from .name_identifier import NameIdentifier
 from .domain_availablility_check_result import DomainAvailablilityCheckResult
 from .domain_recommendation_search_parameters import DomainRecommendationSearchParameters
-from .name_identifier_collection import NameIdentifierCollection
 from .csm_move_resource_envelope import CsmMoveResourceEnvelope
 from .hosting_environment_diagnostics import HostingEnvironmentDiagnostics
-from .stamp_capacity_collection import StampCapacityCollection
 from .address_response import AddressResponse
-from .resource_metric_collection import ResourceMetricCollection
 from .resource_metric import ResourceMetric
 from .resource_metric_name import ResourceMetricName
 from .resource_metric_value import ResourceMetricValue
 from .key_value_pair_string_string import KeyValuePairStringString
 from .metric_definition import MetricDefinition
 from .metric_availabilily import MetricAvailabilily
-from .csm_usage_quota_collection import CsmUsageQuotaCollection
 from .csm_usage_quota import CsmUsageQuota
 from .localizable_string import LocalizableString
-from .metric_definition_collection import MetricDefinitionCollection
-from .usage_collection import UsageCollection
 from .usage import Usage
-from .worker_pool_collection import WorkerPoolCollection
-from .sku_info_collection import SkuInfoCollection
 from .sku_info import SkuInfo
 from .sku_capacity import SkuCapacity
-from .source_control_collection import SourceControlCollection
 from .source_control import SourceControl
 from .recommendation import Recommendation
 from .recommendation_rule import RecommendationRule
@@ -111,20 +93,15 @@ from .vnet_gateway import VnetGateway
 from .network_features import NetworkFeatures
 from .relay_service_connection_entity import RelayServiceConnectionEntity
 from .csm_slot_entity import CsmSlotEntity
-from .slot_difference_collection import SlotDifferenceCollection
 from .slot_difference import SlotDifference
 from .slot_config_names_resource import SlotConfigNamesResource
 from .slot_config_names import SlotConfigNames
 from .site_cloneability import SiteCloneability
 from .site_cloneability_criterion import SiteCloneabilityCriterion
 from .csm_site_recovery_entity import CsmSiteRecoveryEntity
-from .deleted_site_collection import DeletedSiteCollection
 from .deleted_site import DeletedSite
-from .deployment_collection import DeploymentCollection
 from .deployment import Deployment
-from .site_instance_collection import SiteInstanceCollection
 from .site_instance import SiteInstance
-from .host_name_binding_collection import HostNameBindingCollection
 from .host_name_binding import HostNameBinding
 from .site_source_control import SiteSourceControl
 from .string_dictionary import StringDictionary
@@ -145,16 +122,39 @@ from .backup_schedule import BackupSchedule
 from .database_backup_setting import DatabaseBackupSetting
 from .backup_item import BackupItem
 from .restore_request import RestoreRequest
-from .backup_item_collection import BackupItemCollection
 from .restore_response import RestoreResponse
 from .csm_publishing_profile_options import CsmPublishingProfileOptions
-from .top_level_domain_collection import TopLevelDomainCollection
 from .top_level_domain import TopLevelDomain
 from .top_level_domain_agreement_option import TopLevelDomainAgreementOption
-from .tld_legal_agreement_collection import TldLegalAgreementCollection
 from .tld_legal_agreement import TldLegalAgreement
 from .resource import Resource
+from .certificate_order_paged import CertificateOrderPaged
+from .certificate_order_certificate_paged import CertificateOrderCertificatePaged
+from .certificate_paged import CertificatePaged
+from .classic_mobile_service_paged import ClassicMobileServicePaged
+from .domain_paged import DomainPaged
+from .geo_region_paged import GeoRegionPaged
+from .server_farm_with_rich_sku_paged import ServerFarmWithRichSkuPaged
 from .site_paged import SitePaged
+from .hosting_environment_paged import HostingEnvironmentPaged
+from .managed_hosting_environment_paged import ManagedHostingEnvironmentPaged
+from .name_identifier_paged import NameIdentifierPaged
+from .stamp_capacity_paged import StampCapacityPaged
+from .resource_metric_paged import ResourceMetricPaged
+from .csm_usage_quota_paged import CsmUsageQuotaPaged
+from .metric_definition_paged import MetricDefinitionPaged
+from .usage_paged import UsagePaged
+from .worker_pool_paged import WorkerPoolPaged
+from .sku_info_paged import SkuInfoPaged
+from .source_control_paged import SourceControlPaged
+from .slot_difference_paged import SlotDifferencePaged
+from .deleted_site_paged import DeletedSitePaged
+from .deployment_paged import DeploymentPaged
+from .site_instance_paged import SiteInstancePaged
+from .host_name_binding_paged import HostNameBindingPaged
+from .backup_item_paged import BackupItemPaged
+from .top_level_domain_paged import TopLevelDomainPaged
+from .tld_legal_agreement_paged import TldLegalAgreementPaged
 from .web_site_management_client_enums import (
     KeyVaultSecretStatus,
     CertificateProductType,
@@ -197,28 +197,21 @@ __all__ = [
     'SkuDescription',
     'CertificateOrder',
     'CertificateDetails',
-    'CertificateOrderCollection',
-    'CertificateOrderCertificateCollection',
     'ReissueCertificateOrderRequest',
     'RenewCertificateOrderRequest',
     'CertificateOrderAction',
     'CertificateEmail',
-    'CertificateCollection',
     'Certificate',
     'HostingEnvironmentProfile',
     'Csr',
-    'ClassicMobileServiceCollection',
     'ClassicMobileService',
-    'DomainCollection',
     'Domain',
     'Contact',
     'Address',
     'HostName',
     'DomainPurchaseConsent',
     'User',
-    'GeoRegionCollection',
     'GeoRegion',
-    'ServerFarmCollection',
     'ServerFarmWithRichSku',
     'SiteCollection',
     'Site',
@@ -246,14 +239,12 @@ __all__ = [
     'SiteProperties',
     'RoutingRule',
     'SiteAuthSettings',
-    'HostingEnvironmentCollection',
     'HostingEnvironment',
     'VirtualNetworkProfile',
     'WorkerPool',
     'VirtualIPMapping',
     'StampCapacity',
     'NetworkAccessControlEntry',
-    'ManagedHostingEnvironmentCollection',
     'ManagedHostingEnvironment',
     'ResourceNameAvailabilityRequest',
     'ResourceNameAvailability',
@@ -262,29 +253,20 @@ __all__ = [
     'NameIdentifier',
     'DomainAvailablilityCheckResult',
     'DomainRecommendationSearchParameters',
-    'NameIdentifierCollection',
     'CsmMoveResourceEnvelope',
     'HostingEnvironmentDiagnostics',
-    'StampCapacityCollection',
     'AddressResponse',
-    'ResourceMetricCollection',
     'ResourceMetric',
     'ResourceMetricName',
     'ResourceMetricValue',
     'KeyValuePairStringString',
     'MetricDefinition',
     'MetricAvailabilily',
-    'CsmUsageQuotaCollection',
     'CsmUsageQuota',
     'LocalizableString',
-    'MetricDefinitionCollection',
-    'UsageCollection',
     'Usage',
-    'WorkerPoolCollection',
-    'SkuInfoCollection',
     'SkuInfo',
     'SkuCapacity',
-    'SourceControlCollection',
     'SourceControl',
     'Recommendation',
     'RecommendationRule',
@@ -294,20 +276,15 @@ __all__ = [
     'NetworkFeatures',
     'RelayServiceConnectionEntity',
     'CsmSlotEntity',
-    'SlotDifferenceCollection',
     'SlotDifference',
     'SlotConfigNamesResource',
     'SlotConfigNames',
     'SiteCloneability',
     'SiteCloneabilityCriterion',
     'CsmSiteRecoveryEntity',
-    'DeletedSiteCollection',
     'DeletedSite',
-    'DeploymentCollection',
     'Deployment',
-    'SiteInstanceCollection',
     'SiteInstance',
-    'HostNameBindingCollection',
     'HostNameBinding',
     'SiteSourceControl',
     'StringDictionary',
@@ -328,16 +305,39 @@ __all__ = [
     'DatabaseBackupSetting',
     'BackupItem',
     'RestoreRequest',
-    'BackupItemCollection',
     'RestoreResponse',
     'CsmPublishingProfileOptions',
-    'TopLevelDomainCollection',
     'TopLevelDomain',
     'TopLevelDomainAgreementOption',
-    'TldLegalAgreementCollection',
     'TldLegalAgreement',
     'Resource',
+    'CertificateOrderPaged',
+    'CertificateOrderCertificatePaged',
+    'CertificatePaged',
+    'ClassicMobileServicePaged',
+    'DomainPaged',
+    'GeoRegionPaged',
+    'ServerFarmWithRichSkuPaged',
     'SitePaged',
+    'HostingEnvironmentPaged',
+    'ManagedHostingEnvironmentPaged',
+    'NameIdentifierPaged',
+    'StampCapacityPaged',
+    'ResourceMetricPaged',
+    'CsmUsageQuotaPaged',
+    'MetricDefinitionPaged',
+    'UsagePaged',
+    'WorkerPoolPaged',
+    'SkuInfoPaged',
+    'SourceControlPaged',
+    'SlotDifferencePaged',
+    'DeletedSitePaged',
+    'DeploymentPaged',
+    'SiteInstancePaged',
+    'HostNameBindingPaged',
+    'BackupItemPaged',
+    'TopLevelDomainPaged',
+    'TldLegalAgreementPaged',
     'KeyVaultSecretStatus',
     'CertificateProductType',
     'ProvisioningState',

@@ -9,24 +9,19 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.serialization import Model
+from msrest.paging import Paged
 
 
-class ClassicMobileServiceCollection(Model):
-    """Collection of Classic Mobile Services.
-
-    :param value: Collection of resources
-    :type value: list of :class:`ClassicMobileService
-     <azure.mgmt.web.models.ClassicMobileService>`
-    :param next_link: Link to next page of resources
-    :type next_link: str
-    """ 
+class TopLevelDomainPaged(Paged):
+    """
+    A paging container for iterating over a list of TopLevelDomain object
+    """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[ClassicMobileService]'},
         'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[TopLevelDomain]'}
     }
 
-    def __init__(self, value=None, next_link=None):
-        self.value = value
-        self.next_link = next_link
+    def __init__(self, *args, **kwargs):
+
+        super(TopLevelDomainPaged, self).__init__(*args, **kwargs)
