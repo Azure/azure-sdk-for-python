@@ -17,6 +17,7 @@ import requests
 from requests.auth import AuthBase
 from msrest.authentication import Authentication
 from msrest import Serializer
+from msrest.serialization import TZ_UTC
 
 try:
     from urlparse import urlparse, parse_qs
@@ -47,8 +48,9 @@ class SharedKeyAuth(AuthBase):
     def __call__(self, request):
 
         if not request.headers.get('ocp-date'):
-            request.headers['ocp-date'] = Serializer.serialize_rfc(
-                datetime.datetime.utcnow())
+            now = datetime.datetime.utcnow()
+            now = now.replace(tzinfo=TZ_UTC)
+            request.headers['ocp-date'] = Serializer.serialize_rfc(now)
 
         url = urlparse(request.url)
         uri_path = url.path
