@@ -17,22 +17,22 @@ class ApplicationGatewayUrlPathMap(SubResource):
 
     :param id: Resource Id
     :type id: str
-    :param default_backend_address_pool: Gets or sets default backend address
-     pool resource of URL path map
+    :param default_backend_address_pool: Default backend address pool
+     resource of URL path map
     :type default_backend_address_pool: :class:`SubResource
      <azure.mgmt.network.models.SubResource>`
-    :param default_backend_http_settings: Gets or sets default backend http
-     settings resource of URL path map
+    :param default_backend_http_settings: Default backend http settings
+     resource of URL path map
     :type default_backend_http_settings: :class:`SubResource
      <azure.mgmt.network.models.SubResource>`
-    :param path_rules: Gets or sets path rule of URL path map resource
+    :param path_rules: Path rule of URL path map resource
     :type path_rules: list of :class:`ApplicationGatewayPathRule
      <azure.mgmt.network.models.ApplicationGatewayPathRule>`
-    :param provisioning_state: Gets provisioning state of the backend http
+    :param provisioning_state: Provisioning state of the backend http
      settings resource Updating/Deleting/Failed
     :type provisioning_state: str
-    :param name: Gets name of the resource that is unique within a resource
-     group. This name can be used to access the resource
+    :param name: Name of the resource that is unique within a resource group.
+     This name can be used to access the resource
     :type name: str
     :param etag: A unique read-only string that changes whenever the resource
      is updated

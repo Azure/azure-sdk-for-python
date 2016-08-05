@@ -12,20 +12,17 @@
 from msrest.serialization import Model
 
 
-class ApplicationGatewayBackendAddress(Model):
-    """Backend Address of application gateway.
+class PasswordCredentialsUpdateParameters(Model):
+    """Request paramters for PasswordCredentials update operation.
 
-    :param fqdn: Dns name
-    :type fqdn: str
-    :param ip_address: Ip address
-    :type ip_address: str
+    :param value: PasswordCredential list.
+    :type value: list of :class:`PasswordCredential
+     <azure.graphrbac.models.PasswordCredential>`
     """ 
 
     _attribute_map = {
-        'fqdn': {'key': 'fqdn', 'type': 'str'},
-        'ip_address': {'key': 'ipAddress', 'type': 'str'},
+        'value': {'key': 'value', 'type': '[PasswordCredential]'},
     }
 
-    def __init__(self, fqdn=None, ip_address=None):
-        self.fqdn = fqdn
-        self.ip_address = ip_address
+    def __init__(self, value=None):
+        self.value = value

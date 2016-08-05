@@ -1,3 +1,13 @@
+2016-08-01
+
+azure-servicemanagement-legacy 0.20.4
+
+Bug fix:
+* Incomplete parsing if XML contains namespace #257 #707
+
+New:
+* Associate/Dissociate Reserved IP #695 #716
+
 2016-06-28 Service Bus 0.20.2
 
 Bug fix:

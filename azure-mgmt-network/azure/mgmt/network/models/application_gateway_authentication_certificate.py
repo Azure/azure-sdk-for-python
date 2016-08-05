@@ -12,15 +12,15 @@
 from .sub_resource import SubResource
 
 
-class ApplicationGatewayFrontendPort(SubResource):
-    """Frontend Port of application gateway.
+class ApplicationGatewayAuthenticationCertificate(SubResource):
+    """Authentication certificates of application gateway.
 
     :param id: Resource Id
     :type id: str
-    :param port: Frontend port
-    :type port: int
-    :param provisioning_state: Provisioning state of the frontend port
-     resource Updating/Deleting/Failed
+    :param data: Certificate public data
+    :type data: str
+    :param provisioning_state: Provisioning state of the authentication
+     certificate resource Updating/Deleting/Failed
     :type provisioning_state: str
     :param name: Name of the resource that is unique within a resource group.
      This name can be used to access the resource
@@ -32,15 +32,15 @@ class ApplicationGatewayFrontendPort(SubResource):
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
-        'port': {'key': 'properties.port', 'type': 'int'},
+        'data': {'key': 'properties.data', 'type': 'str'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'etag': {'key': 'etag', 'type': 'str'},
     }
 
-    def __init__(self, id=None, port=None, provisioning_state=None, name=None, etag=None):
-        super(ApplicationGatewayFrontendPort, self).__init__(id=id)
-        self.port = port
+    def __init__(self, id=None, data=None, provisioning_state=None, name=None, etag=None):
+        super(ApplicationGatewayAuthenticationCertificate, self).__init__(id=id)
+        self.data = data
         self.provisioning_state = provisioning_state
         self.name = name
         self.etag = etag

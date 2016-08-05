@@ -25,14 +25,14 @@ class EffectiveNetworkSecurityGroup(Model):
     :param effective_security_rules: Gets collection of effective security
      rules
     :type effective_security_rules: list of
-     :class:`EffectiveNetworkSecurityRules
-     <azure.mgmt.network.models.EffectiveNetworkSecurityRules>`
+     :class:`EffectiveNetworkSecurityRule
+     <azure.mgmt.network.models.EffectiveNetworkSecurityRule>`
     """ 
 
     _attribute_map = {
         'network_security_group': {'key': 'networkSecurityGroup', 'type': 'SubResource'},
         'association': {'key': 'association', 'type': 'EffectiveNetworkSecurityGroupAssociation'},
-        'effective_security_rules': {'key': 'effectiveSecurityRules', 'type': '[EffectiveNetworkSecurityRules]'},
+        'effective_security_rules': {'key': 'effectiveSecurityRules', 'type': '[EffectiveNetworkSecurityRule]'},
     }
 
     def __init__(self, network_security_group=None, association=None, effective_security_rules=None):

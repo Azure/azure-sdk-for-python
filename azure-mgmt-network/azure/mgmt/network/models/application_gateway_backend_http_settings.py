@@ -17,26 +17,29 @@ class ApplicationGatewayBackendHttpSettings(SubResource):
 
     :param id: Resource Id
     :type id: str
-    :param port: Gets or sets the port
+    :param port: Port
     :type port: int
-    :param protocol: Gets or sets the protocol. Possible values include:
-     'Http', 'Https'
+    :param protocol: Protocol. Possible values include: 'Http', 'Https'
     :type protocol: str or :class:`ApplicationGatewayProtocol
      <azure.mgmt.network.models.ApplicationGatewayProtocol>`
-    :param cookie_based_affinity: Gets or sets the cookie affinity. Possible
-     values include: 'Enabled', 'Disabled'
+    :param cookie_based_affinity: Cookie affinity. Possible values include:
+     'Enabled', 'Disabled'
     :type cookie_based_affinity: str or
      :class:`ApplicationGatewayCookieBasedAffinity
      <azure.mgmt.network.models.ApplicationGatewayCookieBasedAffinity>`
-    :param request_timeout: Gets or sets request timeout
+    :param request_timeout: Request timeout
     :type request_timeout: int
-    :param probe: Gets or sets probe resource of application gateway
+    :param probe: Probe resource of application gateway
     :type probe: :class:`SubResource <azure.mgmt.network.models.SubResource>`
-    :param provisioning_state: Gets or sets Provisioning state of the backend
-     http settings resource Updating/Deleting/Failed
+    :param authentication_certificates: Array of references to Application
+     Gateway Authentication Certificates
+    :type authentication_certificates: list of :class:`SubResource
+     <azure.mgmt.network.models.SubResource>`
+    :param provisioning_state: Provisioning state of the backend http
+     settings resource Updating/Deleting/Failed
     :type provisioning_state: str
-    :param name: Gets name of the resource that is unique within a resource
-     group. This name can be used to access the resource
+    :param name: Name of the resource that is unique within a resource group.
+     This name can be used to access the resource
     :type name: str
     :param etag: A unique read-only string that changes whenever the resource
      is updated
@@ -50,18 +53,20 @@ class ApplicationGatewayBackendHttpSettings(SubResource):
         'cookie_based_affinity': {'key': 'properties.cookieBasedAffinity', 'type': 'str'},
         'request_timeout': {'key': 'properties.requestTimeout', 'type': 'int'},
         'probe': {'key': 'properties.probe', 'type': 'SubResource'},
+        'authentication_certificates': {'key': 'properties.authenticationCertificates', 'type': '[SubResource]'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'etag': {'key': 'etag', 'type': 'str'},
     }
 
-    def __init__(self, id=None, port=None, protocol=None, cookie_based_affinity=None, request_timeout=None, probe=None, provisioning_state=None, name=None, etag=None):
+    def __init__(self, id=None, port=None, protocol=None, cookie_based_affinity=None, request_timeout=None, probe=None, authentication_certificates=None, provisioning_state=None, name=None, etag=None):
         super(ApplicationGatewayBackendHttpSettings, self).__init__(id=id)
         self.port = port
         self.protocol = protocol
         self.cookie_based_affinity = cookie_based_affinity
         self.request_timeout = request_timeout
         self.probe = probe
+        self.authentication_certificates = authentication_certificates
         self.provisioning_state = provisioning_state
         self.name = name
         self.etag = etag

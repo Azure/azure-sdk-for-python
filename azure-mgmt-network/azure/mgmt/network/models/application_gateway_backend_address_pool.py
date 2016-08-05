@@ -17,19 +17,19 @@ class ApplicationGatewayBackendAddressPool(SubResource):
 
     :param id: Resource Id
     :type id: str
-    :param backend_ip_configurations: Gets collection of references to IPs
-     defined in NICs
+    :param backend_ip_configurations: Collection of references to IPs defined
+     in NICs
     :type backend_ip_configurations: list of
      :class:`NetworkInterfaceIPConfiguration
      <azure.mgmt.network.models.NetworkInterfaceIPConfiguration>`
-    :param backend_addresses: Gets or sets the backend addresses
+    :param backend_addresses: Backend addresses
     :type backend_addresses: list of :class:`ApplicationGatewayBackendAddress
      <azure.mgmt.network.models.ApplicationGatewayBackendAddress>`
-    :param provisioning_state: Gets provisioning state of the backend address
-     pool resource Updating/Deleting/Failed
+    :param provisioning_state: Provisioning state of the backend address pool
+     resource Updating/Deleting/Failed
     :type provisioning_state: str
-    :param name: Gets name of the resource that is unique within a resource
-     group. This name can be used to access the resource
+    :param name: Resource that is unique within a resource group. This name
+     can be used to access the resource
     :type name: str
     :param etag: A unique read-only string that changes whenever the resource
      is updated

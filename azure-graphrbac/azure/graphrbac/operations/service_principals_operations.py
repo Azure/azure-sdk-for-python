@@ -10,7 +10,6 @@
 # --------------------------------------------------------------------------
 
 from msrest.pipeline import ClientRawResponse
-from msrestazure.azure_exceptions import CloudError
 import uuid
 
 from .. import models
@@ -34,15 +33,14 @@ class ServicePrincipalsOperations(object):
         self.config = config
 
     def create(
-            self, app_id, account_enabled, api_version="1.6", custom_headers=None, raw=False, **operation_config):
+            self, parameters, api_version="1.6", custom_headers=None, raw=False, **operation_config):
         """Creates a service principal in the  directory.
 
+        :param parameters: Parameters to create a service principal.
+        :type parameters: :class:`ServicePrincipalCreateParameters
+         <azure.graphrbac.models.ServicePrincipalCreateParameters>`
         :param api_version: Client Api Version.
         :type api_version: str
-        :param app_id: Gets or sets application Id
-        :type app_id: str
-        :param account_enabled: Specifies if the account is enabled
-        :type account_enabled: bool
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -53,8 +51,6 @@ class ServicePrincipalsOperations(object):
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
-        parameters = models.ServicePrincipalCreateParameters(app_id=app_id, account_enabled=account_enabled)
-
         # Construct URL
         url = '/{tenantID}/servicePrincipals'
         path_format_arguments = {
@@ -85,9 +81,7 @@ class ServicePrincipalsOperations(object):
             request, header_parameters, body_content, **operation_config)
 
         if response.status_code not in [201]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.GraphErrorException(self._deserialize, response)
 
         deserialized = None
 
@@ -152,9 +146,7 @@ class ServicePrincipalsOperations(object):
                 request, header_parameters, **operation_config)
 
             if response.status_code not in [200]:
-                exp = CloudError(response)
-                exp.request_id = response.headers.get('x-ms-request-id')
-                raise exp
+                raise models.GraphErrorException(self._deserialize, response)
 
             return response
 
@@ -212,9 +204,7 @@ class ServicePrincipalsOperations(object):
         response = self._client.send(request, header_parameters, **operation_config)
 
         if response.status_code not in [204]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.GraphErrorException(self._deserialize, response)
 
         if raw:
             client_raw_response = ClientRawResponse(None, response)
@@ -265,9 +255,7 @@ class ServicePrincipalsOperations(object):
         response = self._client.send(request, header_parameters, **operation_config)
 
         if response.status_code not in [200]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.GraphErrorException(self._deserialize, response)
 
         deserialized = None
 
@@ -279,6 +267,262 @@ class ServicePrincipalsOperations(object):
             return client_raw_response
 
         return deserialized
+
+    def list_key_credentials(
+            self, object_id, api_version="1.6", custom_headers=None, raw=False, **operation_config):
+        """Get keyCredentials associated with the service principal by object Id.
+        Reference:
+        https://msdn.microsoft.com/en-us/library/azure/ad/graph/api/entity-and-complex-type-reference#keycredential-type.
+
+        :param object_id: Object id to get service principal information.
+        :type object_id: str
+        :param api_version: Client Api Version.
+        :type api_version: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :rtype: :class:`KeyCredentialPaged
+         <azure.graphrbac.models.KeyCredentialPaged>`
+        """
+        def internal_paging(next_link=None, raw=False):
+
+            if not next_link:
+                # Construct URL
+                url = '/{tenantID}/servicePrincipals/{objectId}/keyCredentials'
+                path_format_arguments = {
+                    'objectId': self._serialize.url("object_id", object_id, 'str', skip_quote=True),
+                    'tenantID': self._serialize.url("self.config.tenant_id", self.config.tenant_id, 'str')
+                }
+                url = self._client.format_url(url, **path_format_arguments)
+
+                # Construct parameters
+                query_parameters = {}
+                query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+
+            else:
+                url = next_link
+                query_parameters = {}
+
+            # Construct headers
+            header_parameters = {}
+            header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+            if self.config.generate_client_request_id:
+                header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+            if custom_headers:
+                header_parameters.update(custom_headers)
+            if self.config.accept_language is not None:
+                header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+            # Construct and send request
+            request = self._client.get(url, query_parameters)
+            response = self._client.send(
+                request, header_parameters, **operation_config)
+
+            if response.status_code not in [200]:
+                raise models.GraphErrorException(self._deserialize, response)
+
+            return response
+
+        # Deserialize response
+        deserialized = models.KeyCredentialPaged(internal_paging, self._deserialize.dependencies)
+
+        if raw:
+            header_dict = {}
+            client_raw_response = models.KeyCredentialPaged(internal_paging, self._deserialize.dependencies, header_dict)
+            return client_raw_response
+
+        return deserialized
+
+    def update_key_credentials(
+            self, object_id, api_version="1.6", value=None, custom_headers=None, raw=False, **operation_config):
+        """Update keyCredentials associated with an existing service principal.
+        Reference:
+        https://msdn.microsoft.com/en-us/library/azure/ad/graph/api/entity-and-complex-type-reference#keycredential-type.
+
+        :param object_id: Object id to get service principal information.
+        :type object_id: str
+        :param api_version: Client Api Version.
+        :type api_version: str
+        :param value: KeyCredential list.
+        :type value: list of :class:`KeyCredential
+         <azure.graphrbac.models.KeyCredential>`
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :rtype: None
+        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+         if raw=true
+        """
+        parameters = models.KeyCredentialsUpdateParameters(value=value)
+
+        # Construct URL
+        url = '/{tenantID}/servicePrincipals/{objectId}/keyCredentials'
+        path_format_arguments = {
+            'objectId': self._serialize.url("object_id", object_id, 'str', skip_quote=True),
+            'tenantID': self._serialize.url("self.config.tenant_id", self.config.tenant_id, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+        # Construct body
+        body_content = self._serialize.body(parameters, 'KeyCredentialsUpdateParameters')
+
+        # Construct and send request
+        request = self._client.patch(url, query_parameters)
+        response = self._client.send(
+            request, header_parameters, body_content, **operation_config)
+
+        if response.status_code not in [204]:
+            raise models.GraphErrorException(self._deserialize, response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(None, response)
+            return client_raw_response
+
+    def list_password_credentials(
+            self, object_id, api_version="1.6", custom_headers=None, raw=False, **operation_config):
+        """Gets passwordCredentials associated with an existing service
+        principal. Reference:
+        https://msdn.microsoft.com/en-us/library/azure/ad/graph/api/entity-and-complex-type-reference#passwordcredential-type.
+
+        :param object_id: Object id to get service principal information.
+        :type object_id: str
+        :param api_version: Client Api Version.
+        :type api_version: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :rtype: :class:`PasswordCredentialPaged
+         <azure.graphrbac.models.PasswordCredentialPaged>`
+        """
+        def internal_paging(next_link=None, raw=False):
+
+            if not next_link:
+                # Construct URL
+                url = '/{tenantID}/servicePrincipals/{objectId}/passwordCredentials'
+                path_format_arguments = {
+                    'objectId': self._serialize.url("object_id", object_id, 'str', skip_quote=True),
+                    'tenantID': self._serialize.url("self.config.tenant_id", self.config.tenant_id, 'str')
+                }
+                url = self._client.format_url(url, **path_format_arguments)
+
+                # Construct parameters
+                query_parameters = {}
+                query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+
+            else:
+                url = next_link
+                query_parameters = {}
+
+            # Construct headers
+            header_parameters = {}
+            header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+            if self.config.generate_client_request_id:
+                header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+            if custom_headers:
+                header_parameters.update(custom_headers)
+            if self.config.accept_language is not None:
+                header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+            # Construct and send request
+            request = self._client.get(url, query_parameters)
+            response = self._client.send(
+                request, header_parameters, **operation_config)
+
+            if response.status_code not in [200]:
+                raise models.GraphErrorException(self._deserialize, response)
+
+            return response
+
+        # Deserialize response
+        deserialized = models.PasswordCredentialPaged(internal_paging, self._deserialize.dependencies)
+
+        if raw:
+            header_dict = {}
+            client_raw_response = models.PasswordCredentialPaged(internal_paging, self._deserialize.dependencies, header_dict)
+            return client_raw_response
+
+        return deserialized
+
+    def update_password_credentials(
+            self, object_id, api_version="1.6", value=None, custom_headers=None, raw=False, **operation_config):
+        """Updates passwordCredentials associated with an existing service
+        principal. Reference:
+        https://msdn.microsoft.com/en-us/library/azure/ad/graph/api/entity-and-complex-type-reference#passwordcredential-type.
+
+        :param object_id: Object id to get service principal information.
+        :type object_id: str
+        :param api_version: Client Api Version.
+        :type api_version: str
+        :param value: PasswordCredential list.
+        :type value: list of :class:`PasswordCredential
+         <azure.graphrbac.models.PasswordCredential>`
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :rtype: None
+        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+         if raw=true
+        """
+        parameters = models.PasswordCredentialsUpdateParameters(value=value)
+
+        # Construct URL
+        url = '/{tenantID}/servicePrincipals/{objectId}/passwordCredentials'
+        path_format_arguments = {
+            'objectId': self._serialize.url("object_id", object_id, 'str', skip_quote=True),
+            'tenantID': self._serialize.url("self.config.tenant_id", self.config.tenant_id, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+        # Construct body
+        body_content = self._serialize.body(parameters, 'PasswordCredentialsUpdateParameters')
+
+        # Construct and send request
+        request = self._client.patch(url, query_parameters)
+        response = self._client.send(
+            request, header_parameters, body_content, **operation_config)
+
+        if response.status_code not in [204]:
+            raise models.GraphErrorException(self._deserialize, response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(None, response)
+            return client_raw_response
 
     def list_next(
             self, next_link, api_version="1.6", custom_headers=None, raw=False, **operation_config):
@@ -331,9 +575,7 @@ class ServicePrincipalsOperations(object):
                 request, header_parameters, **operation_config)
 
             if response.status_code not in [200]:
-                exp = CloudError(response)
-                exp.request_id = response.headers.get('x-ms-request-id')
-                raise exp
+                raise models.GraphErrorException(self._deserialize, response)
 
             return response
 
