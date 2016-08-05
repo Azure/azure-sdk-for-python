@@ -159,7 +159,7 @@
       "autorest_options": {
         "Namespace": "azure.mgmt.search"
       },
-      "output_dir": "azure-mgmt-search/azure/mgmt/search"
+      "output_dir": "unreleased/azure-mgmt-search/azure/mgmt/search"
     },
     "scheduler": {
       "swagger": "arm-scheduler/2016-01-01/swagger/scheduler.json",
@@ -206,35 +206,35 @@
       "autorest_options": {
         "Namespace": "azure.mgmt.datalake.analytics.account"
       },
-      "output_dir": "azure-mgmt-datalake-analytics/azure/mgmt/datalake/analytics/account/"
+      "output_dir": "unreleased/azure-mgmt-datalake-analytics/azure/mgmt/datalake/analytics/account/"
     },
     "datalake.analytics.catalog": {
       "swagger": "arm-datalake-analytics/catalog/2015-10-01-preview/swagger/catalog.json",
       "autorest_options": {
         "Namespace": "azure.mgmt.datalake.analytics.catalog"
       },
-      "output_dir": "azure-mgmt-datalake-analytics/azure/mgmt/datalake/analytics/catalog/"
+      "output_dir": "unreleased/azure-mgmt-datalake-analytics/azure/mgmt/datalake/analytics/catalog/"
     },
     "datalake.analytics.job": {
       "swagger": "arm-datalake-analytics/job/2015-11-01-preview/swagger/job.json",
       "autorest_options": {
         "Namespace": "azure.mgmt.datalake.analytics.job"
       },
-      "output_dir": "azure-mgmt-datalake-analytics/azure/mgmt/datalake/analytics/job/"
+      "output_dir": "unreleased/azure-mgmt-datalake-analytics/azure/mgmt/datalake/analytics/job/"
     },
     "datalake.store.account": {
       "swagger": "arm-datalake-store/account/2015-10-01-preview/swagger/account.json",
       "autorest_options": {
         "Namespace": "azure.mgmt.datalake.store.account"
       },
-      "output_dir": "azure-mgmt-datalake-store/azure/mgmt/datalake/store/account/"
+      "output_dir": "unreleased/azure-mgmt-datalake-store/azure/mgmt/datalake/store/account/"
     },
     "datalake.store.filesystem": {
       "swagger": "arm-datalake-store/filesystem/2015-10-01-preview/swagger/filesystem.json",
       "autorest_options": {
         "Namespace": "azure.mgmt.datalake.store.filesystem"
       },
-      "output_dir": "azure-mgmt-datalake-store/azure/mgmt/datalake/store/filesystem/"
+      "output_dir": "unreleased/azure-mgmt-datalake-store/azure/mgmt/datalake/store/filesystem/"
     }
   }
 }
