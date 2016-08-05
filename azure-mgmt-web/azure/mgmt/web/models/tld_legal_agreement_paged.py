@@ -9,23 +9,19 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.serialization import Model
+from msrest.paging import Paged
 
 
-class SkuInfoCollection(Model):
-    """Collection of SkuInfos.
-
-    :param value: Collection of resources
-    :type value: list of :class:`SkuInfo <azure.mgmt.web.models.SkuInfo>`
-    :param next_link: Link to next page of resources
-    :type next_link: str
-    """ 
+class TldLegalAgreementPaged(Paged):
+    """
+    A paging container for iterating over a list of TldLegalAgreement object
+    """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[SkuInfo]'},
         'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[TldLegalAgreement]'}
     }
 
-    def __init__(self, value=None, next_link=None):
-        self.value = value
-        self.next_link = next_link
+    def __init__(self, *args, **kwargs):
+
+        super(TldLegalAgreementPaged, self).__init__(*args, **kwargs)

@@ -9,24 +9,19 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.serialization import Model
+from msrest.paging import Paged
 
 
-class SlotDifferenceCollection(Model):
-    """Collection of Slot Differences.
-
-    :param value: Collection of resources
-    :type value: list of :class:`SlotDifference
-     <azure.mgmt.web.models.SlotDifference>`
-    :param next_link: Link to next page of resources
-    :type next_link: str
-    """ 
+class GeoRegionPaged(Paged):
+    """
+    A paging container for iterating over a list of GeoRegion object
+    """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[SlotDifference]'},
         'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[GeoRegion]'}
     }
 
-    def __init__(self, value=None, next_link=None):
-        self.value = value
-        self.next_link = next_link
+    def __init__(self, *args, **kwargs):
+
+        super(GeoRegionPaged, self).__init__(*args, **kwargs)
