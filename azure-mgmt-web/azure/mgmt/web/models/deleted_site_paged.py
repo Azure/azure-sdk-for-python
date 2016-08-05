@@ -9,24 +9,19 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.serialization import Model
+from msrest.paging import Paged
 
 
-class WorkerPoolCollection(Model):
-    """Collection of worker pools.
-
-    :param value: Collection of resources
-    :type value: list of :class:`WorkerPool
-     <azure.mgmt.web.models.WorkerPool>`
-    :param next_link: Link to next page of resources
-    :type next_link: str
-    """ 
+class DeletedSitePaged(Paged):
+    """
+    A paging container for iterating over a list of DeletedSite object
+    """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[WorkerPool]'},
         'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[DeletedSite]'}
     }
 
-    def __init__(self, value=None, next_link=None):
-        self.value = value
-        self.next_link = next_link
+    def __init__(self, *args, **kwargs):
+
+        super(DeletedSitePaged, self).__init__(*args, **kwargs)

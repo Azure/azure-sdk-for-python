@@ -9,24 +9,19 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.serialization import Model
+from msrest.paging import Paged
 
 
-class ResourceMetricCollection(Model):
-    """Collection of metric responses.
-
-    :param value: Collection of resources
-    :type value: list of :class:`ResourceMetric
-     <azure.mgmt.web.models.ResourceMetric>`
-    :param next_link: Link to next page of resources
-    :type next_link: str
-    """ 
+class CsmUsageQuotaPaged(Paged):
+    """
+    A paging container for iterating over a list of CsmUsageQuota object
+    """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[ResourceMetric]'},
         'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[CsmUsageQuota]'}
     }
 
-    def __init__(self, value=None, next_link=None):
-        self.value = value
-        self.next_link = next_link
+    def __init__(self, *args, **kwargs):
+
+        super(CsmUsageQuotaPaged, self).__init__(*args, **kwargs)

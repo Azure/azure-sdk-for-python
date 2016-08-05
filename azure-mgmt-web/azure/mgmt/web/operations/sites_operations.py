@@ -1065,56 +1065,62 @@ class SitesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`SlotDifferenceCollection
-         <azure.mgmt.web.models.SlotDifferenceCollection>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :rtype: :class:`SlotDifferencePaged
+         <azure.mgmt.web.models.SlotDifferencePaged>`
         """
         slot_swap_entity = models.CsmSlotEntity(target_slot=target_slot, preserve_vnet=preserve_vnet)
 
-        # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{name}/slotsdiffs'
-        path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            'name': self._serialize.url("name", name, 'str'),
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
-        }
-        url = self._client.format_url(url, **path_format_arguments)
+        def internal_paging(next_link=None, raw=False):
 
-        # Construct parameters
-        query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
+            if not next_link:
+                # Construct URL
+                url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{name}/slotsdiffs'
+                path_format_arguments = {
+                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+                    'name': self._serialize.url("name", name, 'str'),
+                    'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+                }
+                url = self._client.format_url(url, **path_format_arguments)
 
-        # Construct headers
-        header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
-        if self.config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-        if custom_headers:
-            header_parameters.update(custom_headers)
-        if self.config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+                # Construct parameters
+                query_parameters = {}
+                query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
 
-        # Construct body
-        body_content = self._serialize.body(slot_swap_entity, 'CsmSlotEntity')
+            else:
+                url = next_link
+                query_parameters = {}
 
-        # Construct and send request
-        request = self._client.post(url, query_parameters)
-        response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+            # Construct headers
+            header_parameters = {}
+            header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+            if self.config.generate_client_request_id:
+                header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+            if custom_headers:
+                header_parameters.update(custom_headers)
+            if self.config.accept_language is not None:
+                header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
-        if response.status_code not in [200]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            # Construct body
+            body_content = self._serialize.body(slot_swap_entity, 'CsmSlotEntity')
 
-        deserialized = None
+            # Construct and send request
+            request = self._client.post(url, query_parameters)
+            response = self._client.send(
+                request, header_parameters, body_content, **operation_config)
 
-        if response.status_code == 200:
-            deserialized = self._deserialize('SlotDifferenceCollection', response)
+            if response.status_code not in [200]:
+                exp = CloudError(response)
+                exp.request_id = response.headers.get('x-ms-request-id')
+                raise exp
+
+            return response
+
+        # Deserialize response
+        deserialized = models.SlotDifferencePaged(internal_paging, self._deserialize.dependencies)
 
         if raw:
-            client_raw_response = ClientRawResponse(deserialized, response)
+            header_dict = {}
+            client_raw_response = models.SlotDifferencePaged(internal_paging, self._deserialize.dependencies, header_dict)
             return client_raw_response
 
         return deserialized
@@ -1140,57 +1146,63 @@ class SitesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`SlotDifferenceCollection
-         <azure.mgmt.web.models.SlotDifferenceCollection>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :rtype: :class:`SlotDifferencePaged
+         <azure.mgmt.web.models.SlotDifferencePaged>`
         """
         slot_swap_entity = models.CsmSlotEntity(target_slot=target_slot, preserve_vnet=preserve_vnet)
 
-        # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{name}/slots/{slot}/slotsdiffs'
-        path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            'name': self._serialize.url("name", name, 'str'),
-            'slot': self._serialize.url("slot", slot, 'str'),
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
-        }
-        url = self._client.format_url(url, **path_format_arguments)
+        def internal_paging(next_link=None, raw=False):
 
-        # Construct parameters
-        query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
+            if not next_link:
+                # Construct URL
+                url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{name}/slots/{slot}/slotsdiffs'
+                path_format_arguments = {
+                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+                    'name': self._serialize.url("name", name, 'str'),
+                    'slot': self._serialize.url("slot", slot, 'str'),
+                    'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+                }
+                url = self._client.format_url(url, **path_format_arguments)
 
-        # Construct headers
-        header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
-        if self.config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-        if custom_headers:
-            header_parameters.update(custom_headers)
-        if self.config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+                # Construct parameters
+                query_parameters = {}
+                query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
 
-        # Construct body
-        body_content = self._serialize.body(slot_swap_entity, 'CsmSlotEntity')
+            else:
+                url = next_link
+                query_parameters = {}
 
-        # Construct and send request
-        request = self._client.post(url, query_parameters)
-        response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+            # Construct headers
+            header_parameters = {}
+            header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+            if self.config.generate_client_request_id:
+                header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+            if custom_headers:
+                header_parameters.update(custom_headers)
+            if self.config.accept_language is not None:
+                header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
-        if response.status_code not in [200]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            # Construct body
+            body_content = self._serialize.body(slot_swap_entity, 'CsmSlotEntity')
 
-        deserialized = None
+            # Construct and send request
+            request = self._client.post(url, query_parameters)
+            response = self._client.send(
+                request, header_parameters, body_content, **operation_config)
 
-        if response.status_code == 200:
-            deserialized = self._deserialize('SlotDifferenceCollection', response)
+            if response.status_code not in [200]:
+                exp = CloudError(response)
+                exp.request_id = response.headers.get('x-ms-request-id')
+                raise exp
+
+            return response
+
+        # Deserialize response
+        deserialized = models.SlotDifferencePaged(internal_paging, self._deserialize.dependencies)
 
         if raw:
-            client_raw_response = ClientRawResponse(deserialized, response)
+            header_dict = {}
+            client_raw_response = models.SlotDifferencePaged(internal_paging, self._deserialize.dependencies, header_dict)
             return client_raw_response
 
         return deserialized
@@ -1619,51 +1631,58 @@ class SitesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`SiteCollection <azure.mgmt.web.models.SiteCollection>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :rtype: :class:`SitePaged <azure.mgmt.web.models.SitePaged>`
         """
-        # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{name}/slots'
-        path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            'name': self._serialize.url("name", name, 'str'),
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
-        }
-        url = self._client.format_url(url, **path_format_arguments)
+        def internal_paging(next_link=None, raw=False):
 
-        # Construct parameters
-        query_parameters = {}
-        if properties_to_include is not None:
-            query_parameters['propertiesToInclude'] = self._serialize.query("properties_to_include", properties_to_include, 'str')
-        query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
+            if not next_link:
+                # Construct URL
+                url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{name}/slots'
+                path_format_arguments = {
+                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+                    'name': self._serialize.url("name", name, 'str'),
+                    'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+                }
+                url = self._client.format_url(url, **path_format_arguments)
 
-        # Construct headers
-        header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
-        if self.config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-        if custom_headers:
-            header_parameters.update(custom_headers)
-        if self.config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+                # Construct parameters
+                query_parameters = {}
+                if properties_to_include is not None:
+                    query_parameters['propertiesToInclude'] = self._serialize.query("properties_to_include", properties_to_include, 'str')
+                query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
 
-        # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+            else:
+                url = next_link
+                query_parameters = {}
 
-        if response.status_code not in [200]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            # Construct headers
+            header_parameters = {}
+            header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+            if self.config.generate_client_request_id:
+                header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+            if custom_headers:
+                header_parameters.update(custom_headers)
+            if self.config.accept_language is not None:
+                header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
-        deserialized = None
+            # Construct and send request
+            request = self._client.get(url, query_parameters)
+            response = self._client.send(
+                request, header_parameters, **operation_config)
 
-        if response.status_code == 200:
-            deserialized = self._deserialize('SiteCollection', response)
+            if response.status_code not in [200]:
+                exp = CloudError(response)
+                exp.request_id = response.headers.get('x-ms-request-id')
+                raise exp
+
+            return response
+
+        # Deserialize response
+        deserialized = models.SitePaged(internal_paging, self._deserialize.dependencies)
 
         if raw:
-            client_raw_response = ClientRawResponse(deserialized, response)
+            header_dict = {}
+            client_raw_response = models.SitePaged(internal_paging, self._deserialize.dependencies, header_dict)
             return client_raw_response
 
         return deserialized
@@ -1687,54 +1706,61 @@ class SitesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`SiteCollection <azure.mgmt.web.models.SiteCollection>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :rtype: :class:`SitePaged <azure.mgmt.web.models.SitePaged>`
         """
-        # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites'
-        path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
-        }
-        url = self._client.format_url(url, **path_format_arguments)
+        def internal_paging(next_link=None, raw=False):
 
-        # Construct parameters
-        query_parameters = {}
-        if properties_to_include is not None:
-            query_parameters['propertiesToInclude'] = self._serialize.query("properties_to_include", properties_to_include, 'str')
-        if include_site_types is not None:
-            query_parameters['includeSiteTypes'] = self._serialize.query("include_site_types", include_site_types, 'str')
-        if include_slots is not None:
-            query_parameters['includeSlots'] = self._serialize.query("include_slots", include_slots, 'bool')
-        query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
+            if not next_link:
+                # Construct URL
+                url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites'
+                path_format_arguments = {
+                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+                    'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+                }
+                url = self._client.format_url(url, **path_format_arguments)
 
-        # Construct headers
-        header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
-        if self.config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-        if custom_headers:
-            header_parameters.update(custom_headers)
-        if self.config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+                # Construct parameters
+                query_parameters = {}
+                if properties_to_include is not None:
+                    query_parameters['propertiesToInclude'] = self._serialize.query("properties_to_include", properties_to_include, 'str')
+                if include_site_types is not None:
+                    query_parameters['includeSiteTypes'] = self._serialize.query("include_site_types", include_site_types, 'str')
+                if include_slots is not None:
+                    query_parameters['includeSlots'] = self._serialize.query("include_slots", include_slots, 'bool')
+                query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
 
-        # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+            else:
+                url = next_link
+                query_parameters = {}
 
-        if response.status_code not in [200]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            # Construct headers
+            header_parameters = {}
+            header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+            if self.config.generate_client_request_id:
+                header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+            if custom_headers:
+                header_parameters.update(custom_headers)
+            if self.config.accept_language is not None:
+                header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
-        deserialized = None
+            # Construct and send request
+            request = self._client.get(url, query_parameters)
+            response = self._client.send(
+                request, header_parameters, **operation_config)
 
-        if response.status_code == 200:
-            deserialized = self._deserialize('SiteCollection', response)
+            if response.status_code not in [200]:
+                exp = CloudError(response)
+                exp.request_id = response.headers.get('x-ms-request-id')
+                raise exp
+
+            return response
+
+        # Deserialize response
+        deserialized = models.SitePaged(internal_paging, self._deserialize.dependencies)
 
         if raw:
-            client_raw_response = ClientRawResponse(deserialized, response)
+            header_dict = {}
+            client_raw_response = models.SitePaged(internal_paging, self._deserialize.dependencies, header_dict)
             return client_raw_response
 
         return deserialized
@@ -2716,53 +2742,60 @@ class SitesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`DeletedSiteCollection
-         <azure.mgmt.web.models.DeletedSiteCollection>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :rtype: :class:`DeletedSitePaged
+         <azure.mgmt.web.models.DeletedSitePaged>`
         """
-        # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/deletedSites'
-        path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
-        }
-        url = self._client.format_url(url, **path_format_arguments)
+        def internal_paging(next_link=None, raw=False):
 
-        # Construct parameters
-        query_parameters = {}
-        if properties_to_include is not None:
-            query_parameters['propertiesToInclude'] = self._serialize.query("properties_to_include", properties_to_include, 'str')
-        if include_site_types is not None:
-            query_parameters['includeSiteTypes'] = self._serialize.query("include_site_types", include_site_types, 'str')
-        query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
+            if not next_link:
+                # Construct URL
+                url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/deletedSites'
+                path_format_arguments = {
+                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+                    'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+                }
+                url = self._client.format_url(url, **path_format_arguments)
 
-        # Construct headers
-        header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
-        if self.config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-        if custom_headers:
-            header_parameters.update(custom_headers)
-        if self.config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+                # Construct parameters
+                query_parameters = {}
+                if properties_to_include is not None:
+                    query_parameters['propertiesToInclude'] = self._serialize.query("properties_to_include", properties_to_include, 'str')
+                if include_site_types is not None:
+                    query_parameters['includeSiteTypes'] = self._serialize.query("include_site_types", include_site_types, 'str')
+                query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
 
-        # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+            else:
+                url = next_link
+                query_parameters = {}
 
-        if response.status_code not in [200]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            # Construct headers
+            header_parameters = {}
+            header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+            if self.config.generate_client_request_id:
+                header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+            if custom_headers:
+                header_parameters.update(custom_headers)
+            if self.config.accept_language is not None:
+                header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
-        deserialized = None
+            # Construct and send request
+            request = self._client.get(url, query_parameters)
+            response = self._client.send(
+                request, header_parameters, **operation_config)
 
-        if response.status_code == 200:
-            deserialized = self._deserialize('DeletedSiteCollection', response)
+            if response.status_code not in [200]:
+                exp = CloudError(response)
+                exp.request_id = response.headers.get('x-ms-request-id')
+                raise exp
+
+            return response
+
+        # Deserialize response
+        deserialized = models.DeletedSitePaged(internal_paging, self._deserialize.dependencies)
 
         if raw:
-            client_raw_response = ClientRawResponse(deserialized, response)
+            header_dict = {}
+            client_raw_response = models.DeletedSitePaged(internal_paging, self._deserialize.dependencies, header_dict)
             return client_raw_response
 
         return deserialized
@@ -2780,50 +2813,57 @@ class SitesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`DeploymentCollection
-         <azure.mgmt.web.models.DeploymentCollection>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :rtype: :class:`DeploymentPaged
+         <azure.mgmt.web.models.DeploymentPaged>`
         """
-        # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{name}/deployments'
-        path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            'name': self._serialize.url("name", name, 'str'),
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
-        }
-        url = self._client.format_url(url, **path_format_arguments)
+        def internal_paging(next_link=None, raw=False):
 
-        # Construct parameters
-        query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
+            if not next_link:
+                # Construct URL
+                url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{name}/deployments'
+                path_format_arguments = {
+                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+                    'name': self._serialize.url("name", name, 'str'),
+                    'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+                }
+                url = self._client.format_url(url, **path_format_arguments)
 
-        # Construct headers
-        header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
-        if self.config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-        if custom_headers:
-            header_parameters.update(custom_headers)
-        if self.config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+                # Construct parameters
+                query_parameters = {}
+                query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
 
-        # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+            else:
+                url = next_link
+                query_parameters = {}
 
-        if response.status_code not in [200]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            # Construct headers
+            header_parameters = {}
+            header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+            if self.config.generate_client_request_id:
+                header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+            if custom_headers:
+                header_parameters.update(custom_headers)
+            if self.config.accept_language is not None:
+                header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
-        deserialized = None
+            # Construct and send request
+            request = self._client.get(url, query_parameters)
+            response = self._client.send(
+                request, header_parameters, **operation_config)
 
-        if response.status_code == 200:
-            deserialized = self._deserialize('DeploymentCollection', response)
+            if response.status_code not in [200]:
+                exp = CloudError(response)
+                exp.request_id = response.headers.get('x-ms-request-id')
+                raise exp
+
+            return response
+
+        # Deserialize response
+        deserialized = models.DeploymentPaged(internal_paging, self._deserialize.dependencies)
 
         if raw:
-            client_raw_response = ClientRawResponse(deserialized, response)
+            header_dict = {}
+            client_raw_response = models.DeploymentPaged(internal_paging, self._deserialize.dependencies, header_dict)
             return client_raw_response
 
         return deserialized
@@ -2844,51 +2884,58 @@ class SitesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`DeploymentCollection
-         <azure.mgmt.web.models.DeploymentCollection>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :rtype: :class:`DeploymentPaged
+         <azure.mgmt.web.models.DeploymentPaged>`
         """
-        # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{name}/slots/{slot}/deployments'
-        path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            'name': self._serialize.url("name", name, 'str'),
-            'slot': self._serialize.url("slot", slot, 'str'),
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
-        }
-        url = self._client.format_url(url, **path_format_arguments)
+        def internal_paging(next_link=None, raw=False):
 
-        # Construct parameters
-        query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
+            if not next_link:
+                # Construct URL
+                url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{name}/slots/{slot}/deployments'
+                path_format_arguments = {
+                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+                    'name': self._serialize.url("name", name, 'str'),
+                    'slot': self._serialize.url("slot", slot, 'str'),
+                    'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+                }
+                url = self._client.format_url(url, **path_format_arguments)
 
-        # Construct headers
-        header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
-        if self.config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-        if custom_headers:
-            header_parameters.update(custom_headers)
-        if self.config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+                # Construct parameters
+                query_parameters = {}
+                query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
 
-        # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+            else:
+                url = next_link
+                query_parameters = {}
 
-        if response.status_code not in [200]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            # Construct headers
+            header_parameters = {}
+            header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+            if self.config.generate_client_request_id:
+                header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+            if custom_headers:
+                header_parameters.update(custom_headers)
+            if self.config.accept_language is not None:
+                header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
-        deserialized = None
+            # Construct and send request
+            request = self._client.get(url, query_parameters)
+            response = self._client.send(
+                request, header_parameters, **operation_config)
 
-        if response.status_code == 200:
-            deserialized = self._deserialize('DeploymentCollection', response)
+            if response.status_code not in [200]:
+                exp = CloudError(response)
+                exp.request_id = response.headers.get('x-ms-request-id')
+                raise exp
+
+            return response
+
+        # Deserialize response
+        deserialized = models.DeploymentPaged(internal_paging, self._deserialize.dependencies)
 
         if raw:
-            client_raw_response = ClientRawResponse(deserialized, response)
+            header_dict = {}
+            client_raw_response = models.DeploymentPaged(internal_paging, self._deserialize.dependencies, header_dict)
             return client_raw_response
 
         return deserialized
@@ -2908,51 +2955,58 @@ class SitesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`DeploymentCollection
-         <azure.mgmt.web.models.DeploymentCollection>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :rtype: :class:`DeploymentPaged
+         <azure.mgmt.web.models.DeploymentPaged>`
         """
-        # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{name}/instances/{instanceId}/deployments'
-        path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            'name': self._serialize.url("name", name, 'str'),
-            'instanceId': self._serialize.url("instance_id", instance_id, 'str'),
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
-        }
-        url = self._client.format_url(url, **path_format_arguments)
+        def internal_paging(next_link=None, raw=False):
 
-        # Construct parameters
-        query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
+            if not next_link:
+                # Construct URL
+                url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{name}/instances/{instanceId}/deployments'
+                path_format_arguments = {
+                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+                    'name': self._serialize.url("name", name, 'str'),
+                    'instanceId': self._serialize.url("instance_id", instance_id, 'str'),
+                    'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+                }
+                url = self._client.format_url(url, **path_format_arguments)
 
-        # Construct headers
-        header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
-        if self.config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-        if custom_headers:
-            header_parameters.update(custom_headers)
-        if self.config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+                # Construct parameters
+                query_parameters = {}
+                query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
 
-        # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+            else:
+                url = next_link
+                query_parameters = {}
 
-        if response.status_code not in [200]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            # Construct headers
+            header_parameters = {}
+            header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+            if self.config.generate_client_request_id:
+                header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+            if custom_headers:
+                header_parameters.update(custom_headers)
+            if self.config.accept_language is not None:
+                header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
-        deserialized = None
+            # Construct and send request
+            request = self._client.get(url, query_parameters)
+            response = self._client.send(
+                request, header_parameters, **operation_config)
 
-        if response.status_code == 200:
-            deserialized = self._deserialize('DeploymentCollection', response)
+            if response.status_code not in [200]:
+                exp = CloudError(response)
+                exp.request_id = response.headers.get('x-ms-request-id')
+                raise exp
+
+            return response
+
+        # Deserialize response
+        deserialized = models.DeploymentPaged(internal_paging, self._deserialize.dependencies)
 
         if raw:
-            client_raw_response = ClientRawResponse(deserialized, response)
+            header_dict = {}
+            client_raw_response = models.DeploymentPaged(internal_paging, self._deserialize.dependencies, header_dict)
             return client_raw_response
 
         return deserialized
@@ -2975,52 +3029,59 @@ class SitesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`DeploymentCollection
-         <azure.mgmt.web.models.DeploymentCollection>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :rtype: :class:`DeploymentPaged
+         <azure.mgmt.web.models.DeploymentPaged>`
         """
-        # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{name}/slots/{slot}/instances/{instanceId}/deployments'
-        path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            'name': self._serialize.url("name", name, 'str'),
-            'slot': self._serialize.url("slot", slot, 'str'),
-            'instanceId': self._serialize.url("instance_id", instance_id, 'str'),
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
-        }
-        url = self._client.format_url(url, **path_format_arguments)
+        def internal_paging(next_link=None, raw=False):
 
-        # Construct parameters
-        query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
+            if not next_link:
+                # Construct URL
+                url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{name}/slots/{slot}/instances/{instanceId}/deployments'
+                path_format_arguments = {
+                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+                    'name': self._serialize.url("name", name, 'str'),
+                    'slot': self._serialize.url("slot", slot, 'str'),
+                    'instanceId': self._serialize.url("instance_id", instance_id, 'str'),
+                    'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+                }
+                url = self._client.format_url(url, **path_format_arguments)
 
-        # Construct headers
-        header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
-        if self.config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-        if custom_headers:
-            header_parameters.update(custom_headers)
-        if self.config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+                # Construct parameters
+                query_parameters = {}
+                query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
 
-        # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+            else:
+                url = next_link
+                query_parameters = {}
 
-        if response.status_code not in [200]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            # Construct headers
+            header_parameters = {}
+            header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+            if self.config.generate_client_request_id:
+                header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+            if custom_headers:
+                header_parameters.update(custom_headers)
+            if self.config.accept_language is not None:
+                header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
-        deserialized = None
+            # Construct and send request
+            request = self._client.get(url, query_parameters)
+            response = self._client.send(
+                request, header_parameters, **operation_config)
 
-        if response.status_code == 200:
-            deserialized = self._deserialize('DeploymentCollection', response)
+            if response.status_code not in [200]:
+                exp = CloudError(response)
+                exp.request_id = response.headers.get('x-ms-request-id')
+                raise exp
+
+            return response
+
+        # Deserialize response
+        deserialized = models.DeploymentPaged(internal_paging, self._deserialize.dependencies)
 
         if raw:
-            client_raw_response = ClientRawResponse(deserialized, response)
+            header_dict = {}
+            client_raw_response = models.DeploymentPaged(internal_paging, self._deserialize.dependencies, header_dict)
             return client_raw_response
 
         return deserialized
@@ -3864,50 +3925,57 @@ class SitesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`SiteInstanceCollection
-         <azure.mgmt.web.models.SiteInstanceCollection>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :rtype: :class:`SiteInstancePaged
+         <azure.mgmt.web.models.SiteInstancePaged>`
         """
-        # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{name}/instances'
-        path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            'name': self._serialize.url("name", name, 'str'),
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
-        }
-        url = self._client.format_url(url, **path_format_arguments)
+        def internal_paging(next_link=None, raw=False):
 
-        # Construct parameters
-        query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
+            if not next_link:
+                # Construct URL
+                url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{name}/instances'
+                path_format_arguments = {
+                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+                    'name': self._serialize.url("name", name, 'str'),
+                    'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+                }
+                url = self._client.format_url(url, **path_format_arguments)
 
-        # Construct headers
-        header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
-        if self.config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-        if custom_headers:
-            header_parameters.update(custom_headers)
-        if self.config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+                # Construct parameters
+                query_parameters = {}
+                query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
 
-        # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+            else:
+                url = next_link
+                query_parameters = {}
 
-        if response.status_code not in [200]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            # Construct headers
+            header_parameters = {}
+            header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+            if self.config.generate_client_request_id:
+                header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+            if custom_headers:
+                header_parameters.update(custom_headers)
+            if self.config.accept_language is not None:
+                header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
-        deserialized = None
+            # Construct and send request
+            request = self._client.get(url, query_parameters)
+            response = self._client.send(
+                request, header_parameters, **operation_config)
 
-        if response.status_code == 200:
-            deserialized = self._deserialize('SiteInstanceCollection', response)
+            if response.status_code not in [200]:
+                exp = CloudError(response)
+                exp.request_id = response.headers.get('x-ms-request-id')
+                raise exp
+
+            return response
+
+        # Deserialize response
+        deserialized = models.SiteInstancePaged(internal_paging, self._deserialize.dependencies)
 
         if raw:
-            client_raw_response = ClientRawResponse(deserialized, response)
+            header_dict = {}
+            client_raw_response = models.SiteInstancePaged(internal_paging, self._deserialize.dependencies, header_dict)
             return client_raw_response
 
         return deserialized
@@ -3928,51 +3996,58 @@ class SitesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`SiteInstanceCollection
-         <azure.mgmt.web.models.SiteInstanceCollection>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :rtype: :class:`SiteInstancePaged
+         <azure.mgmt.web.models.SiteInstancePaged>`
         """
-        # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{name}/slots/{slot}/instances'
-        path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            'name': self._serialize.url("name", name, 'str'),
-            'slot': self._serialize.url("slot", slot, 'str'),
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
-        }
-        url = self._client.format_url(url, **path_format_arguments)
+        def internal_paging(next_link=None, raw=False):
 
-        # Construct parameters
-        query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
+            if not next_link:
+                # Construct URL
+                url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{name}/slots/{slot}/instances'
+                path_format_arguments = {
+                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+                    'name': self._serialize.url("name", name, 'str'),
+                    'slot': self._serialize.url("slot", slot, 'str'),
+                    'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+                }
+                url = self._client.format_url(url, **path_format_arguments)
 
-        # Construct headers
-        header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
-        if self.config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-        if custom_headers:
-            header_parameters.update(custom_headers)
-        if self.config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+                # Construct parameters
+                query_parameters = {}
+                query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
 
-        # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+            else:
+                url = next_link
+                query_parameters = {}
 
-        if response.status_code not in [200]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            # Construct headers
+            header_parameters = {}
+            header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+            if self.config.generate_client_request_id:
+                header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+            if custom_headers:
+                header_parameters.update(custom_headers)
+            if self.config.accept_language is not None:
+                header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
-        deserialized = None
+            # Construct and send request
+            request = self._client.get(url, query_parameters)
+            response = self._client.send(
+                request, header_parameters, **operation_config)
 
-        if response.status_code == 200:
-            deserialized = self._deserialize('SiteInstanceCollection', response)
+            if response.status_code not in [200]:
+                exp = CloudError(response)
+                exp.request_id = response.headers.get('x-ms-request-id')
+                raise exp
+
+            return response
+
+        # Deserialize response
+        deserialized = models.SiteInstancePaged(internal_paging, self._deserialize.dependencies)
 
         if raw:
-            client_raw_response = ClientRawResponse(deserialized, response)
+            header_dict = {}
+            client_raw_response = models.SiteInstancePaged(internal_paging, self._deserialize.dependencies, header_dict)
             return client_raw_response
 
         return deserialized
@@ -3990,50 +4065,57 @@ class SitesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`HostNameBindingCollection
-         <azure.mgmt.web.models.HostNameBindingCollection>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :rtype: :class:`HostNameBindingPaged
+         <azure.mgmt.web.models.HostNameBindingPaged>`
         """
-        # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{name}/hostNameBindings'
-        path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            'name': self._serialize.url("name", name, 'str'),
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
-        }
-        url = self._client.format_url(url, **path_format_arguments)
+        def internal_paging(next_link=None, raw=False):
 
-        # Construct parameters
-        query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
+            if not next_link:
+                # Construct URL
+                url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{name}/hostNameBindings'
+                path_format_arguments = {
+                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+                    'name': self._serialize.url("name", name, 'str'),
+                    'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+                }
+                url = self._client.format_url(url, **path_format_arguments)
 
-        # Construct headers
-        header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
-        if self.config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-        if custom_headers:
-            header_parameters.update(custom_headers)
-        if self.config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+                # Construct parameters
+                query_parameters = {}
+                query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
 
-        # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+            else:
+                url = next_link
+                query_parameters = {}
 
-        if response.status_code not in [200]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            # Construct headers
+            header_parameters = {}
+            header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+            if self.config.generate_client_request_id:
+                header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+            if custom_headers:
+                header_parameters.update(custom_headers)
+            if self.config.accept_language is not None:
+                header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
-        deserialized = None
+            # Construct and send request
+            request = self._client.get(url, query_parameters)
+            response = self._client.send(
+                request, header_parameters, **operation_config)
 
-        if response.status_code == 200:
-            deserialized = self._deserialize('HostNameBindingCollection', response)
+            if response.status_code not in [200]:
+                exp = CloudError(response)
+                exp.request_id = response.headers.get('x-ms-request-id')
+                raise exp
+
+            return response
+
+        # Deserialize response
+        deserialized = models.HostNameBindingPaged(internal_paging, self._deserialize.dependencies)
 
         if raw:
-            client_raw_response = ClientRawResponse(deserialized, response)
+            header_dict = {}
+            client_raw_response = models.HostNameBindingPaged(internal_paging, self._deserialize.dependencies, header_dict)
             return client_raw_response
 
         return deserialized
@@ -4054,51 +4136,58 @@ class SitesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`HostNameBindingCollection
-         <azure.mgmt.web.models.HostNameBindingCollection>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :rtype: :class:`HostNameBindingPaged
+         <azure.mgmt.web.models.HostNameBindingPaged>`
         """
-        # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{name}/slots/{slot}/hostNameBindings'
-        path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            'name': self._serialize.url("name", name, 'str'),
-            'slot': self._serialize.url("slot", slot, 'str'),
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
-        }
-        url = self._client.format_url(url, **path_format_arguments)
+        def internal_paging(next_link=None, raw=False):
 
-        # Construct parameters
-        query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
+            if not next_link:
+                # Construct URL
+                url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{name}/slots/{slot}/hostNameBindings'
+                path_format_arguments = {
+                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+                    'name': self._serialize.url("name", name, 'str'),
+                    'slot': self._serialize.url("slot", slot, 'str'),
+                    'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+                }
+                url = self._client.format_url(url, **path_format_arguments)
 
-        # Construct headers
-        header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
-        if self.config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-        if custom_headers:
-            header_parameters.update(custom_headers)
-        if self.config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+                # Construct parameters
+                query_parameters = {}
+                query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
 
-        # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+            else:
+                url = next_link
+                query_parameters = {}
 
-        if response.status_code not in [200]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            # Construct headers
+            header_parameters = {}
+            header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+            if self.config.generate_client_request_id:
+                header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+            if custom_headers:
+                header_parameters.update(custom_headers)
+            if self.config.accept_language is not None:
+                header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
-        deserialized = None
+            # Construct and send request
+            request = self._client.get(url, query_parameters)
+            response = self._client.send(
+                request, header_parameters, **operation_config)
 
-        if response.status_code == 200:
-            deserialized = self._deserialize('HostNameBindingCollection', response)
+            if response.status_code not in [200]:
+                exp = CloudError(response)
+                exp.request_id = response.headers.get('x-ms-request-id')
+                raise exp
+
+            return response
+
+        # Deserialize response
+        deserialized = models.HostNameBindingPaged(internal_paging, self._deserialize.dependencies)
 
         if raw:
-            client_raw_response = ClientRawResponse(deserialized, response)
+            header_dict = {}
+            client_raw_response = models.HostNameBindingPaged(internal_paging, self._deserialize.dependencies, header_dict)
             return client_raw_response
 
         return deserialized
@@ -8024,50 +8113,57 @@ class SitesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`BackupItemCollection
-         <azure.mgmt.web.models.BackupItemCollection>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :rtype: :class:`BackupItemPaged
+         <azure.mgmt.web.models.BackupItemPaged>`
         """
-        # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{name}/backups'
-        path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            'name': self._serialize.url("name", name, 'str'),
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
-        }
-        url = self._client.format_url(url, **path_format_arguments)
+        def internal_paging(next_link=None, raw=False):
 
-        # Construct parameters
-        query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
+            if not next_link:
+                # Construct URL
+                url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{name}/backups'
+                path_format_arguments = {
+                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+                    'name': self._serialize.url("name", name, 'str'),
+                    'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+                }
+                url = self._client.format_url(url, **path_format_arguments)
 
-        # Construct headers
-        header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
-        if self.config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-        if custom_headers:
-            header_parameters.update(custom_headers)
-        if self.config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+                # Construct parameters
+                query_parameters = {}
+                query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
 
-        # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+            else:
+                url = next_link
+                query_parameters = {}
 
-        if response.status_code not in [200]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            # Construct headers
+            header_parameters = {}
+            header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+            if self.config.generate_client_request_id:
+                header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+            if custom_headers:
+                header_parameters.update(custom_headers)
+            if self.config.accept_language is not None:
+                header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
-        deserialized = None
+            # Construct and send request
+            request = self._client.get(url, query_parameters)
+            response = self._client.send(
+                request, header_parameters, **operation_config)
 
-        if response.status_code == 200:
-            deserialized = self._deserialize('BackupItemCollection', response)
+            if response.status_code not in [200]:
+                exp = CloudError(response)
+                exp.request_id = response.headers.get('x-ms-request-id')
+                raise exp
+
+            return response
+
+        # Deserialize response
+        deserialized = models.BackupItemPaged(internal_paging, self._deserialize.dependencies)
 
         if raw:
-            client_raw_response = ClientRawResponse(deserialized, response)
+            header_dict = {}
+            client_raw_response = models.BackupItemPaged(internal_paging, self._deserialize.dependencies, header_dict)
             return client_raw_response
 
         return deserialized
@@ -8088,51 +8184,58 @@ class SitesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`BackupItemCollection
-         <azure.mgmt.web.models.BackupItemCollection>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :rtype: :class:`BackupItemPaged
+         <azure.mgmt.web.models.BackupItemPaged>`
         """
-        # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{name}/slots/{slot}/backups'
-        path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            'name': self._serialize.url("name", name, 'str'),
-            'slot': self._serialize.url("slot", slot, 'str'),
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
-        }
-        url = self._client.format_url(url, **path_format_arguments)
+        def internal_paging(next_link=None, raw=False):
 
-        # Construct parameters
-        query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
+            if not next_link:
+                # Construct URL
+                url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{name}/slots/{slot}/backups'
+                path_format_arguments = {
+                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+                    'name': self._serialize.url("name", name, 'str'),
+                    'slot': self._serialize.url("slot", slot, 'str'),
+                    'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+                }
+                url = self._client.format_url(url, **path_format_arguments)
 
-        # Construct headers
-        header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
-        if self.config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-        if custom_headers:
-            header_parameters.update(custom_headers)
-        if self.config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+                # Construct parameters
+                query_parameters = {}
+                query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
 
-        # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+            else:
+                url = next_link
+                query_parameters = {}
 
-        if response.status_code not in [200]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            # Construct headers
+            header_parameters = {}
+            header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+            if self.config.generate_client_request_id:
+                header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+            if custom_headers:
+                header_parameters.update(custom_headers)
+            if self.config.accept_language is not None:
+                header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
-        deserialized = None
+            # Construct and send request
+            request = self._client.get(url, query_parameters)
+            response = self._client.send(
+                request, header_parameters, **operation_config)
 
-        if response.status_code == 200:
-            deserialized = self._deserialize('BackupItemCollection', response)
+            if response.status_code not in [200]:
+                exp = CloudError(response)
+                exp.request_id = response.headers.get('x-ms-request-id')
+                raise exp
+
+            return response
+
+        # Deserialize response
+        deserialized = models.BackupItemPaged(internal_paging, self._deserialize.dependencies)
 
         if raw:
-            client_raw_response = ClientRawResponse(deserialized, response)
+            header_dict = {}
+            client_raw_response = models.BackupItemPaged(internal_paging, self._deserialize.dependencies, header_dict)
             return client_raw_response
 
         return deserialized
@@ -8758,52 +8861,59 @@ class SitesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`CsmUsageQuotaCollection
-         <azure.mgmt.web.models.CsmUsageQuotaCollection>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :rtype: :class:`CsmUsageQuotaPaged
+         <azure.mgmt.web.models.CsmUsageQuotaPaged>`
         """
-        # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{name}/usages'
-        path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            'name': self._serialize.url("name", name, 'str'),
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
-        }
-        url = self._client.format_url(url, **path_format_arguments)
+        def internal_paging(next_link=None, raw=False):
 
-        # Construct parameters
-        query_parameters = {}
-        if filter is not None:
-            query_parameters['$filter'] = self._serialize.query("filter", filter, 'str')
-        query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
+            if not next_link:
+                # Construct URL
+                url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{name}/usages'
+                path_format_arguments = {
+                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+                    'name': self._serialize.url("name", name, 'str'),
+                    'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+                }
+                url = self._client.format_url(url, **path_format_arguments)
 
-        # Construct headers
-        header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
-        if self.config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-        if custom_headers:
-            header_parameters.update(custom_headers)
-        if self.config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+                # Construct parameters
+                query_parameters = {}
+                if filter is not None:
+                    query_parameters['$filter'] = self._serialize.query("filter", filter, 'str')
+                query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
 
-        # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+            else:
+                url = next_link
+                query_parameters = {}
 
-        if response.status_code not in [200]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            # Construct headers
+            header_parameters = {}
+            header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+            if self.config.generate_client_request_id:
+                header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+            if custom_headers:
+                header_parameters.update(custom_headers)
+            if self.config.accept_language is not None:
+                header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
-        deserialized = None
+            # Construct and send request
+            request = self._client.get(url, query_parameters)
+            response = self._client.send(
+                request, header_parameters, **operation_config)
 
-        if response.status_code == 200:
-            deserialized = self._deserialize('CsmUsageQuotaCollection', response)
+            if response.status_code not in [200]:
+                exp = CloudError(response)
+                exp.request_id = response.headers.get('x-ms-request-id')
+                raise exp
+
+            return response
+
+        # Deserialize response
+        deserialized = models.CsmUsageQuotaPaged(internal_paging, self._deserialize.dependencies)
 
         if raw:
-            client_raw_response = ClientRawResponse(deserialized, response)
+            header_dict = {}
+            client_raw_response = models.CsmUsageQuotaPaged(internal_paging, self._deserialize.dependencies, header_dict)
             return client_raw_response
 
         return deserialized
@@ -8830,53 +8940,60 @@ class SitesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`CsmUsageQuotaCollection
-         <azure.mgmt.web.models.CsmUsageQuotaCollection>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :rtype: :class:`CsmUsageQuotaPaged
+         <azure.mgmt.web.models.CsmUsageQuotaPaged>`
         """
-        # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{name}/slots/{slot}/usages'
-        path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            'name': self._serialize.url("name", name, 'str'),
-            'slot': self._serialize.url("slot", slot, 'str'),
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
-        }
-        url = self._client.format_url(url, **path_format_arguments)
+        def internal_paging(next_link=None, raw=False):
 
-        # Construct parameters
-        query_parameters = {}
-        if filter is not None:
-            query_parameters['$filter'] = self._serialize.query("filter", filter, 'str')
-        query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
+            if not next_link:
+                # Construct URL
+                url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{name}/slots/{slot}/usages'
+                path_format_arguments = {
+                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+                    'name': self._serialize.url("name", name, 'str'),
+                    'slot': self._serialize.url("slot", slot, 'str'),
+                    'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+                }
+                url = self._client.format_url(url, **path_format_arguments)
 
-        # Construct headers
-        header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
-        if self.config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-        if custom_headers:
-            header_parameters.update(custom_headers)
-        if self.config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+                # Construct parameters
+                query_parameters = {}
+                if filter is not None:
+                    query_parameters['$filter'] = self._serialize.query("filter", filter, 'str')
+                query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
 
-        # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+            else:
+                url = next_link
+                query_parameters = {}
 
-        if response.status_code not in [200]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            # Construct headers
+            header_parameters = {}
+            header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+            if self.config.generate_client_request_id:
+                header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+            if custom_headers:
+                header_parameters.update(custom_headers)
+            if self.config.accept_language is not None:
+                header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
-        deserialized = None
+            # Construct and send request
+            request = self._client.get(url, query_parameters)
+            response = self._client.send(
+                request, header_parameters, **operation_config)
 
-        if response.status_code == 200:
-            deserialized = self._deserialize('CsmUsageQuotaCollection', response)
+            if response.status_code not in [200]:
+                exp = CloudError(response)
+                exp.request_id = response.headers.get('x-ms-request-id')
+                raise exp
+
+            return response
+
+        # Deserialize response
+        deserialized = models.CsmUsageQuotaPaged(internal_paging, self._deserialize.dependencies)
 
         if raw:
-            client_raw_response = ClientRawResponse(deserialized, response)
+            header_dict = {}
+            client_raw_response = models.CsmUsageQuotaPaged(internal_paging, self._deserialize.dependencies, header_dict)
             return client_raw_response
 
         return deserialized
@@ -8902,54 +9019,61 @@ class SitesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`ResourceMetricCollection
-         <azure.mgmt.web.models.ResourceMetricCollection>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :rtype: :class:`ResourceMetricPaged
+         <azure.mgmt.web.models.ResourceMetricPaged>`
         """
-        # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{name}/metrics'
-        path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            'name': self._serialize.url("name", name, 'str'),
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
-        }
-        url = self._client.format_url(url, **path_format_arguments)
+        def internal_paging(next_link=None, raw=False):
 
-        # Construct parameters
-        query_parameters = {}
-        if details is not None:
-            query_parameters['details'] = self._serialize.query("details", details, 'bool')
-        if filter is not None:
-            query_parameters['$filter'] = self._serialize.query("filter", filter, 'str')
-        query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
+            if not next_link:
+                # Construct URL
+                url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{name}/metrics'
+                path_format_arguments = {
+                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+                    'name': self._serialize.url("name", name, 'str'),
+                    'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+                }
+                url = self._client.format_url(url, **path_format_arguments)
 
-        # Construct headers
-        header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
-        if self.config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-        if custom_headers:
-            header_parameters.update(custom_headers)
-        if self.config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+                # Construct parameters
+                query_parameters = {}
+                if details is not None:
+                    query_parameters['details'] = self._serialize.query("details", details, 'bool')
+                if filter is not None:
+                    query_parameters['$filter'] = self._serialize.query("filter", filter, 'str')
+                query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
 
-        # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+            else:
+                url = next_link
+                query_parameters = {}
 
-        if response.status_code not in [200]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            # Construct headers
+            header_parameters = {}
+            header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+            if self.config.generate_client_request_id:
+                header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+            if custom_headers:
+                header_parameters.update(custom_headers)
+            if self.config.accept_language is not None:
+                header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
-        deserialized = None
+            # Construct and send request
+            request = self._client.get(url, query_parameters)
+            response = self._client.send(
+                request, header_parameters, **operation_config)
 
-        if response.status_code == 200:
-            deserialized = self._deserialize('ResourceMetricCollection', response)
+            if response.status_code not in [200]:
+                exp = CloudError(response)
+                exp.request_id = response.headers.get('x-ms-request-id')
+                raise exp
+
+            return response
+
+        # Deserialize response
+        deserialized = models.ResourceMetricPaged(internal_paging, self._deserialize.dependencies)
 
         if raw:
-            client_raw_response = ClientRawResponse(deserialized, response)
+            header_dict = {}
+            client_raw_response = models.ResourceMetricPaged(internal_paging, self._deserialize.dependencies, header_dict)
             return client_raw_response
 
         return deserialized
@@ -8978,55 +9102,62 @@ class SitesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`ResourceMetricCollection
-         <azure.mgmt.web.models.ResourceMetricCollection>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :rtype: :class:`ResourceMetricPaged
+         <azure.mgmt.web.models.ResourceMetricPaged>`
         """
-        # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{name}/slots/{slot}/metrics'
-        path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            'name': self._serialize.url("name", name, 'str'),
-            'slot': self._serialize.url("slot", slot, 'str'),
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
-        }
-        url = self._client.format_url(url, **path_format_arguments)
+        def internal_paging(next_link=None, raw=False):
 
-        # Construct parameters
-        query_parameters = {}
-        if details is not None:
-            query_parameters['details'] = self._serialize.query("details", details, 'bool')
-        if filter is not None:
-            query_parameters['$filter'] = self._serialize.query("filter", filter, 'str')
-        query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
+            if not next_link:
+                # Construct URL
+                url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{name}/slots/{slot}/metrics'
+                path_format_arguments = {
+                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+                    'name': self._serialize.url("name", name, 'str'),
+                    'slot': self._serialize.url("slot", slot, 'str'),
+                    'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+                }
+                url = self._client.format_url(url, **path_format_arguments)
 
-        # Construct headers
-        header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
-        if self.config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-        if custom_headers:
-            header_parameters.update(custom_headers)
-        if self.config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+                # Construct parameters
+                query_parameters = {}
+                if details is not None:
+                    query_parameters['details'] = self._serialize.query("details", details, 'bool')
+                if filter is not None:
+                    query_parameters['$filter'] = self._serialize.query("filter", filter, 'str')
+                query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
 
-        # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+            else:
+                url = next_link
+                query_parameters = {}
 
-        if response.status_code not in [200]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            # Construct headers
+            header_parameters = {}
+            header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+            if self.config.generate_client_request_id:
+                header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+            if custom_headers:
+                header_parameters.update(custom_headers)
+            if self.config.accept_language is not None:
+                header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
-        deserialized = None
+            # Construct and send request
+            request = self._client.get(url, query_parameters)
+            response = self._client.send(
+                request, header_parameters, **operation_config)
 
-        if response.status_code == 200:
-            deserialized = self._deserialize('ResourceMetricCollection', response)
+            if response.status_code not in [200]:
+                exp = CloudError(response)
+                exp.request_id = response.headers.get('x-ms-request-id')
+                raise exp
+
+            return response
+
+        # Deserialize response
+        deserialized = models.ResourceMetricPaged(internal_paging, self._deserialize.dependencies)
 
         if raw:
-            client_raw_response = ClientRawResponse(deserialized, response)
+            header_dict = {}
+            client_raw_response = models.ResourceMetricPaged(internal_paging, self._deserialize.dependencies, header_dict)
             return client_raw_response
 
         return deserialized
@@ -9047,51 +9178,58 @@ class SitesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`MetricDefinitionCollection
-         <azure.mgmt.web.models.MetricDefinitionCollection>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :rtype: :class:`MetricDefinitionPaged
+         <azure.mgmt.web.models.MetricDefinitionPaged>`
         """
-        # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{name}/slots/{slot}/metricdefinitions'
-        path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            'name': self._serialize.url("name", name, 'str'),
-            'slot': self._serialize.url("slot", slot, 'str'),
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
-        }
-        url = self._client.format_url(url, **path_format_arguments)
+        def internal_paging(next_link=None, raw=False):
 
-        # Construct parameters
-        query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
+            if not next_link:
+                # Construct URL
+                url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{name}/slots/{slot}/metricdefinitions'
+                path_format_arguments = {
+                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+                    'name': self._serialize.url("name", name, 'str'),
+                    'slot': self._serialize.url("slot", slot, 'str'),
+                    'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+                }
+                url = self._client.format_url(url, **path_format_arguments)
 
-        # Construct headers
-        header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
-        if self.config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-        if custom_headers:
-            header_parameters.update(custom_headers)
-        if self.config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+                # Construct parameters
+                query_parameters = {}
+                query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
 
-        # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+            else:
+                url = next_link
+                query_parameters = {}
 
-        if response.status_code not in [200]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            # Construct headers
+            header_parameters = {}
+            header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+            if self.config.generate_client_request_id:
+                header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+            if custom_headers:
+                header_parameters.update(custom_headers)
+            if self.config.accept_language is not None:
+                header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
-        deserialized = None
+            # Construct and send request
+            request = self._client.get(url, query_parameters)
+            response = self._client.send(
+                request, header_parameters, **operation_config)
 
-        if response.status_code == 200:
-            deserialized = self._deserialize('MetricDefinitionCollection', response)
+            if response.status_code not in [200]:
+                exp = CloudError(response)
+                exp.request_id = response.headers.get('x-ms-request-id')
+                raise exp
+
+            return response
+
+        # Deserialize response
+        deserialized = models.MetricDefinitionPaged(internal_paging, self._deserialize.dependencies)
 
         if raw:
-            client_raw_response = ClientRawResponse(deserialized, response)
+            header_dict = {}
+            client_raw_response = models.MetricDefinitionPaged(internal_paging, self._deserialize.dependencies, header_dict)
             return client_raw_response
 
         return deserialized
@@ -9109,50 +9247,57 @@ class SitesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`MetricDefinitionCollection
-         <azure.mgmt.web.models.MetricDefinitionCollection>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :rtype: :class:`MetricDefinitionPaged
+         <azure.mgmt.web.models.MetricDefinitionPaged>`
         """
-        # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{name}/metricdefinitions'
-        path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            'name': self._serialize.url("name", name, 'str'),
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
-        }
-        url = self._client.format_url(url, **path_format_arguments)
+        def internal_paging(next_link=None, raw=False):
 
-        # Construct parameters
-        query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
+            if not next_link:
+                # Construct URL
+                url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{name}/metricdefinitions'
+                path_format_arguments = {
+                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+                    'name': self._serialize.url("name", name, 'str'),
+                    'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+                }
+                url = self._client.format_url(url, **path_format_arguments)
 
-        # Construct headers
-        header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
-        if self.config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-        if custom_headers:
-            header_parameters.update(custom_headers)
-        if self.config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+                # Construct parameters
+                query_parameters = {}
+                query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
 
-        # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+            else:
+                url = next_link
+                query_parameters = {}
 
-        if response.status_code not in [200]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            # Construct headers
+            header_parameters = {}
+            header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+            if self.config.generate_client_request_id:
+                header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+            if custom_headers:
+                header_parameters.update(custom_headers)
+            if self.config.accept_language is not None:
+                header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
-        deserialized = None
+            # Construct and send request
+            request = self._client.get(url, query_parameters)
+            response = self._client.send(
+                request, header_parameters, **operation_config)
 
-        if response.status_code == 200:
-            deserialized = self._deserialize('MetricDefinitionCollection', response)
+            if response.status_code not in [200]:
+                exp = CloudError(response)
+                exp.request_id = response.headers.get('x-ms-request-id')
+                raise exp
+
+            return response
+
+        # Deserialize response
+        deserialized = models.MetricDefinitionPaged(internal_paging, self._deserialize.dependencies)
 
         if raw:
-            client_raw_response = ClientRawResponse(deserialized, response)
+            header_dict = {}
+            client_raw_response = models.MetricDefinitionPaged(internal_paging, self._deserialize.dependencies, header_dict)
             return client_raw_response
 
         return deserialized

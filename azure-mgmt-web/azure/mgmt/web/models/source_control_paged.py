@@ -9,24 +9,19 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.serialization import Model
+from msrest.paging import Paged
 
 
-class CertificateOrderCollection(Model):
-    """Collection of ceritificate orders.
-
-    :param value: Collection of resources
-    :type value: list of :class:`CertificateOrder
-     <azure.mgmt.web.models.CertificateOrder>`
-    :param next_link: Link to next page of resources
-    :type next_link: str
-    """ 
+class SourceControlPaged(Paged):
+    """
+    A paging container for iterating over a list of SourceControl object
+    """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[CertificateOrder]'},
         'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[SourceControl]'}
     }
 
-    def __init__(self, value=None, next_link=None):
-        self.value = value
-        self.next_link = next_link
+    def __init__(self, *args, **kwargs):
+
+        super(SourceControlPaged, self).__init__(*args, **kwargs)

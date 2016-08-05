@@ -9,24 +9,19 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.serialization import Model
+from msrest.paging import Paged
 
 
-class CsmUsageQuotaCollection(Model):
-    """Collection of csm usage quotas.
-
-    :param value: Collection of resources
-    :type value: list of :class:`CsmUsageQuota
-     <azure.mgmt.web.models.CsmUsageQuota>`
-    :param next_link: Link to next page of resources
-    :type next_link: str
-    """ 
+class NameIdentifierPaged(Paged):
+    """
+    A paging container for iterating over a list of NameIdentifier object
+    """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[CsmUsageQuota]'},
         'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[NameIdentifier]'}
     }
 
-    def __init__(self, value=None, next_link=None):
-        self.value = value
-        self.next_link = next_link
+    def __init__(self, *args, **kwargs):
+
+        super(NameIdentifierPaged, self).__init__(*args, **kwargs)
