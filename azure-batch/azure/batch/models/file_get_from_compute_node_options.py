@@ -30,7 +30,7 @@ class FileGetFromComputeNodeOptions(Model):
      time.
     :type ocp_date: datetime
     :param ocp_range: The byte range to be retrieved. The default is to
-     retrieve the entire file. The format is startRange-endRange.
+     retrieve the entire file. The format is bytes=startRange-endRange.
     :type ocp_range: str
     :param if_modified_since: Specify this header to perform the operation
      only if the resource has been modified since the specified date/time.
