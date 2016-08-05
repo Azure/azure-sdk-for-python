@@ -9,11 +9,14 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
+from .graph_error import GraphError, GraphErrorException
 from .key_credential import KeyCredential
 from .password_credential import PasswordCredential
 from .application_create_parameters import ApplicationCreateParameters
 from .application_update_parameters import ApplicationUpdateParameters
 from .application import Application
+from .key_credentials_update_parameters import KeyCredentialsUpdateParameters
+from .password_credentials_update_parameters import PasswordCredentialsUpdateParameters
 from .aad_object import AADObject
 from .group_add_member_parameters import GroupAddMemberParameters
 from .group_create_parameters import GroupCreateParameters
@@ -30,6 +33,8 @@ from .user import User
 from .user_get_member_groups_parameters import UserGetMemberGroupsParameters
 from .get_objects_parameters import GetObjectsParameters
 from .application_paged import ApplicationPaged
+from .key_credential_paged import KeyCredentialPaged
+from .password_credential_paged import PasswordCredentialPaged
 from .ad_group_paged import ADGroupPaged
 from .aad_object_paged import AADObjectPaged
 from .str_paged import strPaged
@@ -37,11 +42,14 @@ from .service_principal_paged import ServicePrincipalPaged
 from .user_paged import UserPaged
 
 __all__ = [
+    'GraphError', 'GraphErrorException',
     'KeyCredential',
     'PasswordCredential',
     'ApplicationCreateParameters',
     'ApplicationUpdateParameters',
     'Application',
+    'KeyCredentialsUpdateParameters',
+    'PasswordCredentialsUpdateParameters',
     'AADObject',
     'GroupAddMemberParameters',
     'GroupCreateParameters',
@@ -58,6 +66,8 @@ __all__ = [
     'UserGetMemberGroupsParameters',
     'GetObjectsParameters',
     'ApplicationPaged',
+    'KeyCredentialPaged',
+    'PasswordCredentialPaged',
     'ADGroupPaged',
     'AADObjectPaged',
     'strPaged',

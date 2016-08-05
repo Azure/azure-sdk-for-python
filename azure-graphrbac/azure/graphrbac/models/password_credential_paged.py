@@ -9,23 +9,19 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.serialization import Model
+from msrest.paging import Paged
 
 
-class ApplicationGatewayBackendAddress(Model):
-    """Backend Address of application gateway.
-
-    :param fqdn: Dns name
-    :type fqdn: str
-    :param ip_address: Ip address
-    :type ip_address: str
-    """ 
+class PasswordCredentialPaged(Paged):
+    """
+    A paging container for iterating over a list of PasswordCredential object
+    """
 
     _attribute_map = {
-        'fqdn': {'key': 'fqdn', 'type': 'str'},
-        'ip_address': {'key': 'ipAddress', 'type': 'str'},
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[PasswordCredential]'}
     }
 
-    def __init__(self, fqdn=None, ip_address=None):
-        self.fqdn = fqdn
-        self.ip_address = ip_address
+    def __init__(self, *args, **kwargs):
+
+        super(PasswordCredentialPaged, self).__init__(*args, **kwargs)

@@ -10,8 +10,10 @@
 # --------------------------------------------------------------------------
 
 from .application_gateway_sku import ApplicationGatewaySku
+from .application_gateway_ssl_policy import ApplicationGatewaySslPolicy
 from .sub_resource import SubResource
 from .application_gateway_ip_configuration import ApplicationGatewayIPConfiguration
+from .application_gateway_authentication_certificate import ApplicationGatewayAuthenticationCertificate
 from .application_gateway_ssl_certificate import ApplicationGatewaySslCertificate
 from .application_gateway_frontend_ip_configuration import ApplicationGatewayFrontendIPConfiguration
 from .application_gateway_frontend_port import ApplicationGatewayFrontendPort
@@ -63,8 +65,10 @@ from .bgp_settings import BgpSettings
 from .local_network_gateway import LocalNetworkGateway
 from .effective_network_security_group import EffectiveNetworkSecurityGroup
 from .effective_network_security_group_association import EffectiveNetworkSecurityGroupAssociation
-from .effective_network_security_rules import EffectiveNetworkSecurityRules
+from .effective_network_security_rule import EffectiveNetworkSecurityRule
+from .effective_network_security_group_list_result import EffectiveNetworkSecurityGroupListResult
 from .effective_route import EffectiveRoute
+from .effective_route_list_result import EffectiveRouteListResult
 from .virtual_network_peering import VirtualNetworkPeering
 from .usage_name import UsageName
 from .usage import Usage
@@ -94,8 +98,6 @@ from .express_route_service_provider_paged import ExpressRouteServiceProviderPag
 from .load_balancer_paged import LoadBalancerPaged
 from .local_network_gateway_paged import LocalNetworkGatewayPaged
 from .network_interface_paged import NetworkInterfacePaged
-from .effective_route_paged import EffectiveRoutePaged
-from .effective_network_security_group_paged import EffectiveNetworkSecurityGroupPaged
 from .network_security_group_paged import NetworkSecurityGroupPaged
 from .public_ip_address_paged import PublicIPAddressPaged
 from .route_table_paged import RouteTablePaged
@@ -110,6 +112,7 @@ from .virtual_network_paged import VirtualNetworkPaged
 from .network_management_client_enums import (
     ApplicationGatewaySkuName,
     ApplicationGatewayTier,
+    ApplicationGatewaySslProtocol,
     IPAllocationMethod,
     TransportProtocol,
     IPVersion,
@@ -145,8 +148,10 @@ from .network_management_client_enums import (
 
 __all__ = [
     'ApplicationGatewaySku',
+    'ApplicationGatewaySslPolicy',
     'SubResource',
     'ApplicationGatewayIPConfiguration',
+    'ApplicationGatewayAuthenticationCertificate',
     'ApplicationGatewaySslCertificate',
     'ApplicationGatewayFrontendIPConfiguration',
     'ApplicationGatewayFrontendPort',
@@ -198,8 +203,10 @@ __all__ = [
     'LocalNetworkGateway',
     'EffectiveNetworkSecurityGroup',
     'EffectiveNetworkSecurityGroupAssociation',
-    'EffectiveNetworkSecurityRules',
+    'EffectiveNetworkSecurityRule',
+    'EffectiveNetworkSecurityGroupListResult',
     'EffectiveRoute',
+    'EffectiveRouteListResult',
     'VirtualNetworkPeering',
     'UsageName',
     'Usage',
@@ -229,8 +236,6 @@ __all__ = [
     'LoadBalancerPaged',
     'LocalNetworkGatewayPaged',
     'NetworkInterfacePaged',
-    'EffectiveRoutePaged',
-    'EffectiveNetworkSecurityGroupPaged',
     'NetworkSecurityGroupPaged',
     'PublicIPAddressPaged',
     'RouteTablePaged',
@@ -244,6 +249,7 @@ __all__ = [
     'VirtualNetworkPaged',
     'ApplicationGatewaySkuName',
     'ApplicationGatewayTier',
+    'ApplicationGatewaySslProtocol',
     'IPAllocationMethod',
     'TransportProtocol',
     'IPVersion',

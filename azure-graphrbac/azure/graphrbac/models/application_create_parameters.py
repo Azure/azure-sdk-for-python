@@ -26,11 +26,10 @@ class ApplicationCreateParameters(Model):
     :type identifier_uris: list of str
     :param reply_urls: Application reply Urls
     :type reply_urls: list of str
-    :param key_credentials: Gets or sets the list of KeyCredential objects
+    :param key_credentials: the list of KeyCredential objects
     :type key_credentials: list of :class:`KeyCredential
      <azure.graphrbac.models.KeyCredential>`
-    :param password_credentials: Gets or sets the list of PasswordCredential
-     objects
+    :param password_credentials: the list of PasswordCredential objects
     :type password_credentials: list of :class:`PasswordCredential
      <azure.graphrbac.models.PasswordCredential>`
     """ 
@@ -38,7 +37,6 @@ class ApplicationCreateParameters(Model):
     _validation = {
         'available_to_other_tenants': {'required': True},
         'display_name': {'required': True},
-        'homepage': {'required': True},
         'identifier_uris': {'required': True},
     }
 
@@ -52,7 +50,7 @@ class ApplicationCreateParameters(Model):
         'password_credentials': {'key': 'passwordCredentials', 'type': '[PasswordCredential]'},
     }
 
-    def __init__(self, available_to_other_tenants, display_name, homepage, identifier_uris, reply_urls=None, key_credentials=None, password_credentials=None):
+    def __init__(self, available_to_other_tenants, display_name, identifier_uris, homepage=None, reply_urls=None, key_credentials=None, password_credentials=None):
         self.available_to_other_tenants = available_to_other_tenants
         self.display_name = display_name
         self.homepage = homepage

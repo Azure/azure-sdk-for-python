@@ -12,16 +12,16 @@
 from msrest.paging import Paged
 
 
-class EffectiveNetworkSecurityGroupPaged(Paged):
+class KeyCredentialPaged(Paged):
     """
-    A paging container for iterating over a list of EffectiveNetworkSecurityGroup object
+    A paging container for iterating over a list of KeyCredential object
     """
 
     _attribute_map = {
         'next_link': {'key': 'nextLink', 'type': 'str'},
-        'current_page': {'key': 'value', 'type': '[EffectiveNetworkSecurityGroup]'}
+        'current_page': {'key': 'value', 'type': '[KeyCredential]'}
     }
 
     def __init__(self, *args, **kwargs):
 
-        super(EffectiveNetworkSecurityGroupPaged, self).__init__(*args, **kwargs)
+        super(KeyCredentialPaged, self).__init__(*args, **kwargs)

@@ -24,6 +24,13 @@ class ApplicationGatewayTier(Enum):
     standard = "Standard"
 
 
+class ApplicationGatewaySslProtocol(Enum):
+
+    tl_sv1_0 = "TLSv1_0"
+    tl_sv1_1 = "TLSv1_1"
+    tl_sv1_2 = "TLSv1_2"
+
+
 class IPAllocationMethod(Enum):
 
     static = "Static"

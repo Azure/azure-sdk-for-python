@@ -13,19 +13,20 @@ from msrest.serialization import Model
 
 
 class KeyCredential(Model):
-    """Active Directory service principal Key Credential information.
+    """Active Directory Key Credential information.
 
-    :param start_date: Gets or sets start date
+    :param start_date: start date
     :type start_date: datetime
-    :param end_date: Gets or sets end date
+    :param end_date: end date
     :type end_date: datetime
-    :param value: Gets or sets value
+    :param value: value
     :type value: str
-    :param key_id: Gets or sets key Id
+    :param key_id: key Id
     :type key_id: str
-    :param usage: Gets or sets usage
+    :param usage: usage. Acceptable values are 'Verify' and 'Sign'.
     :type usage: str
-    :param type: Gets or sets type
+    :param type: type. Acceptable values are 'AsymmetricX509Cert' and
+     'Symmetric'.
     :type type: str
     """ 
 

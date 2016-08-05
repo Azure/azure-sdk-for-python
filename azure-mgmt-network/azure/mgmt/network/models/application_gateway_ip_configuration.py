@@ -17,14 +17,14 @@ class ApplicationGatewayIPConfiguration(SubResource):
 
     :param id: Resource Id
     :type id: str
-    :param subnet: Gets or sets the reference of the subnet resource.A subnet
-     from where appliation gateway gets its private address
+    :param subnet: Reference of the subnet resource. A subnet from where
+     appliation gateway gets its private address
     :type subnet: :class:`SubResource <azure.mgmt.network.models.SubResource>`
-    :param provisioning_state: Gets provisioning state of the application
-     gateway subnet resource Updating/Deleting/Failed
+    :param provisioning_state: Provisioning state of the application gateway
+     subnet resource Updating/Deleting/Failed
     :type provisioning_state: str
-    :param name: Gets name of the resource that is unique within a resource
-     group. This name can be used to access the resource
+    :param name: Name of the resource that is unique within a resource group.
+     This name can be used to access the resource
     :type name: str
     :param etag: A unique read-only string that changes whenever the resource
      is updated
