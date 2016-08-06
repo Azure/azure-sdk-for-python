@@ -145,8 +145,8 @@ To create or manage storage accounts, see :doc:`Storage Resource Management<reso
     REGION = 'eastus2'
     IMAGE_PUBLISHER = 'Canonical'
     IMAGE_OFFER = 'UbuntuServer'
-    IMAGE_SKU = '15.04'
-    IMAGE_VERSION = '15.04.201508180'
+    IMAGE_SKU = '16.04.0-LTS'
+    IMAGE_VERSION = 'latest'
 
     # 1. Create a resource group
     result = resource_client.resource_groups.create_or_update(
