@@ -281,7 +281,7 @@ class SubnetsOperations(object):
 
     def list(
             self, resource_group_name, virtual_network_name, custom_headers=None, raw=False, **operation_config):
-        """The List subnets opertion retrieves all the subnets in a virtual
+        """The List subnets operation retrieves all the subnets in a virtual
         network.
 
         :param resource_group_name: The name of the resource group.

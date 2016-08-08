@@ -274,8 +274,8 @@ class LocalNetworkGatewaysOperations(object):
 
     def list(
             self, resource_group_name, custom_headers=None, raw=False, **operation_config):
-        """The List LocalNetworkGateways opertion retrieves all the local network
-        gateways stored.
+        """The List LocalNetworkGateways operation retrieves all the local
+        network gateways stored.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str

@@ -35,7 +35,7 @@ class ExpressRouteServiceProvidersOperations(object):
 
     def list(
             self, custom_headers=None, raw=False, **operation_config):
-        """The List ExpressRouteServiceProvider opertion retrieves all the
+        """The List ExpressRouteServiceProvider operation retrieves all the
         available ExpressRouteServiceProviders.
 
         :param dict custom_headers: headers that will be added to the request
