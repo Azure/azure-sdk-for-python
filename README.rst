@@ -43,12 +43,14 @@ If you need one specific package, you can install it directly, for instance:
 DISCLAIMER ON PREVIEW VERSIONS
 ==============================
 
-Please note that some packages are distributed as preview version and you will
+You can install additional preview packages not handled by the "azure" meta-package.
+
+Please note that these packages are distributed as preview version and you will
 need to tell pip:
 
 - Use the ``--pre`` flag: ``pip install --pre azure-mgmt-web``
 
-- Specify the version:  ``pip install azure-mgmt-web==0.30.0rc6``
+- Specify the version: ``pip install azure-mgmt-web==0.30.0rc6``
 
 
 Some of these generated libraries have not yet been tested extensively, and some have known issues.
