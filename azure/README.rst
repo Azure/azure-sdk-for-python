@@ -70,7 +70,7 @@ Use the following script to uninstall all of them.
     pip uninstall azure-mgmt
     pip uninstall azure-mgmt-batch
     pip uninstall azure-mgmt-compute
-	pip uninstall azure-mgmt-keyvault
+    pip uninstall azure-mgmt-keyvault
     pip uninstall azure-mgmt-network
     pip uninstall azure-mgmt-resource
     pip uninstall azure-mgmt-storage
