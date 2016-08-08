@@ -270,7 +270,7 @@ class ExpressRouteCircuitsOperations(object):
 
     def list_arp_table(
             self, resource_group_name, circuit_name, peering_name, device_path, custom_headers=None, raw=False, **operation_config):
-        """The ListArpTable from ExpressRouteCircuit opertion retrieves the
+        """The ListArpTable from ExpressRouteCircuit operation retrieves the
         currently advertised arp table associated with the
         ExpressRouteCircuits in a resource group.
 
@@ -362,7 +362,7 @@ class ExpressRouteCircuitsOperations(object):
 
     def list_routes_table(
             self, resource_group_name, circuit_name, peering_name, device_path, custom_headers=None, raw=False, **operation_config):
-        """The ListRoutesTable from ExpressRouteCircuit opertion retrieves the
+        """The ListRoutesTable from ExpressRouteCircuit operation retrieves the
         currently advertised routes table associated with the
         ExpressRouteCircuits in a resource group.
 
@@ -455,7 +455,7 @@ class ExpressRouteCircuitsOperations(object):
 
     def list_routes_table_summary(
             self, resource_group_name, circuit_name, peering_name, device_path, custom_headers=None, raw=False, **operation_config):
-        """The ListRoutesTable from ExpressRouteCircuit opertion retrieves the
+        """The ListRoutesTable from ExpressRouteCircuit operation retrieves the
         currently advertised routes table associated with the
         ExpressRouteCircuits in a resource group.
 
@@ -548,7 +548,7 @@ class ExpressRouteCircuitsOperations(object):
 
     def get_stats(
             self, resource_group_name, circuit_name, custom_headers=None, raw=False, **operation_config):
-        """The Liststats ExpressRouteCircuit opertion retrieves all the stats
+        """The Liststats ExpressRouteCircuit operation retrieves all the stats
         from a ExpressRouteCircuits in a resource group.
 
         :param resource_group_name: The name of the resource group.
@@ -610,7 +610,7 @@ class ExpressRouteCircuitsOperations(object):
 
     def get_peering_stats(
             self, resource_group_name, circuit_name, peering_name, custom_headers=None, raw=False, **operation_config):
-        """The Liststats ExpressRouteCircuit opertion retrieves all the stats
+        """The Liststats ExpressRouteCircuit operation retrieves all the stats
         from a ExpressRouteCircuits in a resource group.
 
         :param resource_group_name: The name of the resource group.
@@ -675,7 +675,7 @@ class ExpressRouteCircuitsOperations(object):
 
     def list(
             self, resource_group_name, custom_headers=None, raw=False, **operation_config):
-        """The List ExpressRouteCircuit opertion retrieves all the
+        """The List ExpressRouteCircuit operation retrieves all the
         ExpressRouteCircuits in a resource group.
 
         :param resource_group_name: The name of the resource group.
@@ -741,7 +741,7 @@ class ExpressRouteCircuitsOperations(object):
 
     def list_all(
             self, custom_headers=None, raw=False, **operation_config):
-        """The List ExpressRouteCircuit opertion retrieves all the
+        """The List ExpressRouteCircuit operation retrieves all the
         ExpressRouteCircuits in a subscription.
 
         :param dict custom_headers: headers that will be added to the request

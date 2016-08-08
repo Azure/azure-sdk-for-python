@@ -490,7 +490,7 @@ class NetworkInterfacesOperations(object):
 
     def list_all(
             self, custom_headers=None, raw=False, **operation_config):
-        """The List networkInterfaces opertion retrieves all the
+        """The List networkInterfaces operation retrieves all the
         networkInterfaces in a subscription.
 
         :param dict custom_headers: headers that will be added to the request
@@ -553,7 +553,7 @@ class NetworkInterfacesOperations(object):
 
     def list(
             self, resource_group_name, custom_headers=None, raw=False, **operation_config):
-        """The List networkInterfaces opertion retrieves all the
+        """The List networkInterfaces operation retrieves all the
         networkInterfaces in a resource group.
 
         :param resource_group_name: The name of the resource group.

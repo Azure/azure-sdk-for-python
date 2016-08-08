@@ -270,7 +270,7 @@ class ApplicationGatewaysOperations(object):
 
     def list(
             self, resource_group_name, custom_headers=None, raw=False, **operation_config):
-        """The List ApplicationGateway opertion retrieves all the
+        """The List ApplicationGateway operation retrieves all the
         applicationgateways in a resource group.
 
         :param resource_group_name: The name of the resource group.
@@ -336,7 +336,7 @@ class ApplicationGatewaysOperations(object):
 
     def list_all(
             self, custom_headers=None, raw=False, **operation_config):
-        """The List applicationgateway opertion retrieves all the
+        """The List applicationgateway operation retrieves all the
         applicationgateways in a subscription.
 
         :param dict custom_headers: headers that will be added to the request

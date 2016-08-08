@@ -278,7 +278,7 @@ class RoutesOperations(object):
 
     def list(
             self, resource_group_name, route_table_name, custom_headers=None, raw=False, **operation_config):
-        """The List network security rule opertion retrieves all the routes in a
+        """The List network security rule operation retrieves all the routes in a
         route table.
 
         :param resource_group_name: The name of the resource group.
