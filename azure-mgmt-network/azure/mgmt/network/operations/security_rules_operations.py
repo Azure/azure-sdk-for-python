@@ -281,7 +281,7 @@ class SecurityRulesOperations(object):
 
     def list(
             self, resource_group_name, network_security_group_name, custom_headers=None, raw=False, **operation_config):
-        """The List network security rule opertion retrieves all the security
+        """The List network security rule operation retrieves all the security
         rules in a network security group.
 
         :param resource_group_name: The name of the resource group.
