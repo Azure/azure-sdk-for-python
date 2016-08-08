@@ -275,7 +275,7 @@ class VirtualNetworkGatewaysOperations(object):
 
     def list(
             self, resource_group_name, custom_headers=None, raw=False, **operation_config):
-        """The List VirtualNetworkGateways opertion retrieves all the virtual
+        """The List VirtualNetworkGateways operation retrieves all the virtual
         network gateways stored.
 
         :param resource_group_name: The name of the resource group.
