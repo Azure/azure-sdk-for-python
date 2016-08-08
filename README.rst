@@ -27,61 +27,33 @@ See important information if you're currently using this SDK < 1.0 in `this issu
 INSTALLATION
 ============
 
-**The latest recommended release is currently a release candidate, tell this to pip to install it!**
-
-- Use the ``--pre`` flag: ``pip install --pre azure``
-
-- Specify the version:  ``pip install azure==2.0.0rc5``
+``pip install azure``
 
 If you want to install ``azure`` from source::
 
     git clone git://github.com/Azure/azure-sdk-for-python.git
     cd azure-sdk-for-python
     python setup.py install
+	
+If you need one specific package, you can install it directly, for instance:
 
-DISCLAIMER
-==========
-
-This is a release candidate. It could have minor breaking changes until the stable release.
-
-Some of the new generated libraries have not yet been tested extensively, and some have known issues (such as azure-mgmt-web).
-
-Our goal is to release a stable version by July 2016.  Please send us your feedback!
-
-Features
-========
-
--  `Service Bus Runtime </azure-servicebus>`__
-
--  `Service Management </azure-servicemanagement-legacy>`__
-
--  `Azure Active Directory Graph RBAC </azure-graphrbac>`__
-
--  `Batch </azure-batch>`__
-
--  `Resource Management </azure-mgmt>`__
-
-   -  `Authorization </azure-mgmt-authorization>`__
-   -  `Batch </azure-mgmt-batch>`__
-   -  `CDN </azure-mgmt-cdn>`__
-   -  `Compute </azure-mgmt-compute>`__
-   -  Apps
-   
-       -  `Logic Apps </azure-mgmt-logic>`__
-       -  `Web Apps </azure-mgmt-web>`__
-
-   -  `Network </azure-mgmt-network>`__
-   -  `Notification Hubs </azure-mgmt-notificationhubs>`__
-   -  `Redis Cache </azure-mgmt-redis>`__
-   -  `Resource </azure-mgmt-resource>`__
-   -  `Scheduler </azure-mgmt-scheduler>`__
-   -  `Storage </azure-mgmt-storage>`__
+``pip install azure-mgmt-compute``
 
 
-Installation
-============
+DISCLAIMER ON PREVIEW VERSIONS
+==============================
 
-To install a bundle that includes all of the Azure client libraries listed above, see the `azure <https://github.com/Azure/azure-sdk-for-python/tree/master/azure>`__  bundle package.
+Please note that some packages are distributed as preview version and you will
+need to tell pip:
+
+- Use the ``--pre`` flag: ``pip install --pre azure-mgmt-web``
+
+- Specify the version:  ``pip install azure-mgmt-web==0.30.0rc6``
+
+
+Some of these generated libraries have not yet been tested extensively, and some have known issues.
+
+Please send us your feedback!
 
 
 Usage

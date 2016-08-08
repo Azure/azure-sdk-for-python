@@ -1,3 +1,70 @@
+2016-08-08 Version 2.0.0 / 0.30.0
+
+Disclaimer:
+Starting with this release, most packages now use the MIT license. The following packages still remain on the Apache license:
+- azure-servicebus
+- aure-servicemanagement-legacy
+- azure-storage
+
+This is a stable release, ready for production.
+
+The azure 2.0.0 package contains the following Azure stable packages:
+- azure-mgmt-resource 0.30.0
+- azure-mgmt-compute 0.30.0
+- azure-mgmt-network 0.30.0
+- azure-mgmt-storage 0.30.0
+- azure-mgmt-keyvault 0.30.0
+- azure-mgmt-batch 0.30.0
+- azure-batch 0.30.0
+- azure-storage 0.32.0
+- azure-servicebus 0.20.2
+- azure-servicemanagement-legacy 0.20.3
+
+The following packages are also available as preview only, not ready for production,
+and will NOT be installed with the 2.0.0 "azure" meta-package:
+- azure-mgmt-authorization 0.30.0RC5
+- azure-mgmt-cdn 0.30.0RC6
+- azure-mgmt-cognitiveservices 0.30.0RC6
+- azure-mgmt-commerce 0.30.0RC6
+- azure-mgmt-dns 0.30.0RC6
+- azure-mgmt-logic 0.30.0RC6
+- azure-mgmt-notificationhubs 0.30.0RC6
+- azure-mgmt-powerbiembedded 0.30.0RC6
+- azure-mgmt-redis 0.30.0RC6
+- azure-mgmt-scheduler 0.30.0RC6
+- azure-mgmt-web 0.30.0RC6
+
+WHAT'S NEW COMPARED TO 1.0.3:
+* New libraries
+
+  * KeyVault Management
+  * Batch and Batch Management
+
+* Enhanced libraries compared to 1.0.0 preview
+
+  * Storage: create storage accounts, list keys, and more. Latest API version.
+  * Resource:
+
+    * resources : create resource groups, register providers and more
+    * features : manage features of provider and more
+    * authorization : manage resource group lock and more
+    * subscriptions : manage subscriptions and more
+    * policy : manage resources policy among users and more
+
+  * Network: create virtual networks, network interfaces, public ips and more
+  * Compute: create virtual machines, containers and more
+
+BREAKING CHANGES:
+We made efforts to document the breaking from ARM 1.0.x version to 2.0.0 `here<https://github.com/Azure/azure-sdk-for-python/wiki/Migrate-from-1.0.x-0.20.0-to-2.0.0-0.30.0>`__.
+
+If you were already using the 2.0.0RC5 version, there are no breaking changes.
+
+RC6 PACKAGES:
+All RC6 packages use the latest APIVersion available for these services
+
+azure-storage 0.32.0
+  * Major version. `Check the ChangeLog on storage github account for details<https://github.com/Azure/azure-storage-python/releases>`__.
+  
 2016-08-01
 
 azure-servicemanagement-legacy 0.20.4
