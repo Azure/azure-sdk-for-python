@@ -9,10 +9,19 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .traffic_manager_management_client import TrafficManagerManagementClient
-from .version import VERSION
+from msrest.paging import Paged
 
-__all__ = ['TrafficManagerManagementClient']
 
-__version__ = VERSION
+class ProfilePaged(Paged):
+    """
+    A paging container for iterating over a list of Profile object
+    """
 
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[Profile]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(ProfilePaged, self).__init__(*args, **kwargs)
