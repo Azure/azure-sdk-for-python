@@ -22,6 +22,7 @@ class ServicePrincipalsOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An objec model deserializer.
+    :ivar api_version: Client Api Version. Constant value: "1.6".
     """
 
     def __init__(self, client, config, serializer, deserializer):
@@ -29,18 +30,17 @@ class ServicePrincipalsOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
+        self.api_version = "1.6"
 
         self.config = config
 
     def create(
-            self, parameters, api_version="1.6", custom_headers=None, raw=False, **operation_config):
+            self, parameters, custom_headers=None, raw=False, **operation_config):
         """Creates a service principal in the  directory.
 
         :param parameters: Parameters to create a service principal.
         :type parameters: :class:`ServicePrincipalCreateParameters
          <azure.graphrbac.models.ServicePrincipalCreateParameters>`
-        :param api_version: Client Api Version.
-        :type api_version: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -60,7 +60,7 @@ class ServicePrincipalsOperations(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -95,11 +95,9 @@ class ServicePrincipalsOperations(object):
         return deserialized
 
     def list(
-            self, api_version="1.6", filter=None, custom_headers=None, raw=False, **operation_config):
+            self, filter=None, custom_headers=None, raw=False, **operation_config):
         """Gets list of service principals from the current tenant.
 
-        :param api_version: Client Api Version.
-        :type api_version: str
         :param filter: The filter to apply on the operation.
         :type filter: str
         :param dict custom_headers: headers that will be added to the request
@@ -124,7 +122,7 @@ class ServicePrincipalsOperations(object):
                 query_parameters = {}
                 if filter is not None:
                     query_parameters['$filter'] = self._serialize.query("filter", filter, 'str')
-                query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
             else:
                 url = next_link
@@ -161,13 +159,11 @@ class ServicePrincipalsOperations(object):
         return deserialized
 
     def delete(
-            self, object_id, api_version="1.6", custom_headers=None, raw=False, **operation_config):
+            self, object_id, custom_headers=None, raw=False, **operation_config):
         """Deletes service principal from the directory.
 
         :param object_id: Object id to delete service principal information.
         :type object_id: str
-        :param api_version: Client Api Version.
-        :type api_version: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -187,7 +183,7 @@ class ServicePrincipalsOperations(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -211,13 +207,11 @@ class ServicePrincipalsOperations(object):
             return client_raw_response
 
     def get(
-            self, object_id, api_version="1.6", custom_headers=None, raw=False, **operation_config):
+            self, object_id, custom_headers=None, raw=False, **operation_config):
         """Gets service principal information from the directory.
 
         :param object_id: Object id to get service principal information.
         :type object_id: str
-        :param api_version: Client Api Version.
-        :type api_version: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -238,7 +232,7 @@ class ServicePrincipalsOperations(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -269,15 +263,13 @@ class ServicePrincipalsOperations(object):
         return deserialized
 
     def list_key_credentials(
-            self, object_id, api_version="1.6", custom_headers=None, raw=False, **operation_config):
+            self, object_id, custom_headers=None, raw=False, **operation_config):
         """Get keyCredentials associated with the service principal by object Id.
         Reference:
         https://msdn.microsoft.com/en-us/library/azure/ad/graph/api/entity-and-complex-type-reference#keycredential-type.
 
         :param object_id: Object id to get service principal information.
         :type object_id: str
-        :param api_version: Client Api Version.
-        :type api_version: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -299,7 +291,7 @@ class ServicePrincipalsOperations(object):
 
                 # Construct parameters
                 query_parameters = {}
-                query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
             else:
                 url = next_link
@@ -336,15 +328,13 @@ class ServicePrincipalsOperations(object):
         return deserialized
 
     def update_key_credentials(
-            self, object_id, api_version="1.6", value=None, custom_headers=None, raw=False, **operation_config):
+            self, object_id, value=None, custom_headers=None, raw=False, **operation_config):
         """Update keyCredentials associated with an existing service principal.
         Reference:
         https://msdn.microsoft.com/en-us/library/azure/ad/graph/api/entity-and-complex-type-reference#keycredential-type.
 
         :param object_id: Object id to get service principal information.
         :type object_id: str
-        :param api_version: Client Api Version.
-        :type api_version: str
         :param value: KeyCredential list.
         :type value: list of :class:`KeyCredential
          <azure.graphrbac.models.KeyCredential>`
@@ -369,7 +359,7 @@ class ServicePrincipalsOperations(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -397,15 +387,13 @@ class ServicePrincipalsOperations(object):
             return client_raw_response
 
     def list_password_credentials(
-            self, object_id, api_version="1.6", custom_headers=None, raw=False, **operation_config):
+            self, object_id, custom_headers=None, raw=False, **operation_config):
         """Gets passwordCredentials associated with an existing service
         principal. Reference:
         https://msdn.microsoft.com/en-us/library/azure/ad/graph/api/entity-and-complex-type-reference#passwordcredential-type.
 
         :param object_id: Object id to get service principal information.
         :type object_id: str
-        :param api_version: Client Api Version.
-        :type api_version: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -427,7 +415,7 @@ class ServicePrincipalsOperations(object):
 
                 # Construct parameters
                 query_parameters = {}
-                query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
             else:
                 url = next_link
@@ -464,15 +452,13 @@ class ServicePrincipalsOperations(object):
         return deserialized
 
     def update_password_credentials(
-            self, object_id, api_version="1.6", value=None, custom_headers=None, raw=False, **operation_config):
+            self, object_id, value=None, custom_headers=None, raw=False, **operation_config):
         """Updates passwordCredentials associated with an existing service
         principal. Reference:
         https://msdn.microsoft.com/en-us/library/azure/ad/graph/api/entity-and-complex-type-reference#passwordcredential-type.
 
         :param object_id: Object id to get service principal information.
         :type object_id: str
-        :param api_version: Client Api Version.
-        :type api_version: str
         :param value: PasswordCredential list.
         :type value: list of :class:`PasswordCredential
          <azure.graphrbac.models.PasswordCredential>`
@@ -497,7 +483,7 @@ class ServicePrincipalsOperations(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -525,13 +511,11 @@ class ServicePrincipalsOperations(object):
             return client_raw_response
 
     def list_next(
-            self, next_link, api_version="1.6", custom_headers=None, raw=False, **operation_config):
+            self, next_link, custom_headers=None, raw=False, **operation_config):
         """Gets list of service principals from the current tenant.
 
         :param next_link: Next link for list operation.
         :type next_link: str
-        :param api_version: Client Api Version.
-        :type api_version: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -553,7 +537,7 @@ class ServicePrincipalsOperations(object):
 
                 # Construct parameters
                 query_parameters = {}
-                query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
             else:
                 url = next_link

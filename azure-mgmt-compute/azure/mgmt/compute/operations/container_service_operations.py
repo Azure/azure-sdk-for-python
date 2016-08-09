@@ -24,6 +24,7 @@ class ContainerServiceOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An objec model deserializer.
+    :ivar api_version: Client Api Version. Constant value: "2016-03-30".
     """
 
     def __init__(self, client, config, serializer, deserializer):
@@ -31,11 +32,12 @@ class ContainerServiceOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
+        self.api_version = "2016-03-30"
 
         self.config = config
 
     def create_or_update(
-            self, resource_group_name, container_service_name, parameters, api_version="2016-03-30", custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, container_service_name, parameters, custom_headers=None, raw=False, **operation_config):
         """The operation to create or update a container service.
 
         :param resource_group_name: The name of the resource group.
@@ -47,8 +49,6 @@ class ContainerServiceOperations(object):
          Service operation.
         :type parameters: :class:`ContainerService
          <azure.mgmt.compute.models.ContainerService>`
-        :param api_version: Client Api Version.
-        :type api_version: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -70,7 +70,7 @@ class ContainerServiceOperations(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -134,7 +134,7 @@ class ContainerServiceOperations(object):
             get_long_running_status, long_running_operation_timeout)
 
     def get(
-            self, resource_group_name, container_service_name, api_version="2016-03-30", custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, container_service_name, custom_headers=None, raw=False, **operation_config):
         """The operation to get a container service.
 
         :param resource_group_name: The name of the resource group.
@@ -142,8 +142,6 @@ class ContainerServiceOperations(object):
         :param container_service_name: The name of the container service
          within the given subscription and resource group.
         :type container_service_name: str
-        :param api_version: Client Api Version.
-        :type api_version: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -165,7 +163,7 @@ class ContainerServiceOperations(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -198,7 +196,7 @@ class ContainerServiceOperations(object):
         return deserialized
 
     def delete(
-            self, resource_group_name, container_service_name, api_version="2016-03-30", custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, container_service_name, custom_headers=None, raw=False, **operation_config):
         """The operation to delete a container service.
 
         :param resource_group_name: The name of the resource group.
@@ -206,8 +204,6 @@ class ContainerServiceOperations(object):
         :param container_service_name: The name of the container service
          within the given subscription and resource group.
         :type container_service_name: str
-        :param api_version: Client Api Version.
-        :type api_version: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -228,7 +224,7 @@ class ContainerServiceOperations(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -277,13 +273,11 @@ class ContainerServiceOperations(object):
             get_long_running_status, long_running_operation_timeout)
 
     def list(
-            self, resource_group_name, api_version="2016-03-30", custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, custom_headers=None, raw=False, **operation_config):
         """The operation to list container services.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
-        :param api_version: Client Api Version.
-        :type api_version: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -305,7 +299,7 @@ class ContainerServiceOperations(object):
 
                 # Construct parameters
                 query_parameters = {}
-                query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
             else:
                 url = next_link

@@ -22,6 +22,7 @@ class ApplicationsOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An objec model deserializer.
+    :ivar api_version: Client Api Version. Constant value: "1.6".
     """
 
     def __init__(self, client, config, serializer, deserializer):
@@ -29,19 +30,18 @@ class ApplicationsOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
+        self.api_version = "1.6"
 
         self.config = config
 
     def create(
-            self, parameters, api_version="1.6", custom_headers=None, raw=False, **operation_config):
+            self, parameters, custom_headers=None, raw=False, **operation_config):
         """Create a new application. Reference:
         http://msdn.microsoft.com/en-us/library/azure/hh974476.aspx.
 
         :param parameters: Parameters to create an application.
         :type parameters: :class:`ApplicationCreateParameters
          <azure.graphrbac.models.ApplicationCreateParameters>`
-        :param api_version: Client Api Version.
-        :type api_version: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -60,7 +60,7 @@ class ApplicationsOperations(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -95,12 +95,10 @@ class ApplicationsOperations(object):
         return deserialized
 
     def list(
-            self, api_version="1.6", filter=None, custom_headers=None, raw=False, **operation_config):
+            self, filter=None, custom_headers=None, raw=False, **operation_config):
         """Lists applications by filter parameters. Reference:
         http://msdn.microsoft.com/en-us/library/azure/hh974476.aspx.
 
-        :param api_version: Client Api Version.
-        :type api_version: str
         :param filter: The filters to apply on the operation
         :type filter: str
         :param dict custom_headers: headers that will be added to the request
@@ -125,7 +123,7 @@ class ApplicationsOperations(object):
                 query_parameters = {}
                 if filter is not None:
                     query_parameters['$filter'] = self._serialize.query("filter", filter, 'str')
-                query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
             else:
                 url = next_link
@@ -162,14 +160,12 @@ class ApplicationsOperations(object):
         return deserialized
 
     def delete(
-            self, application_object_id, api_version="1.6", custom_headers=None, raw=False, **operation_config):
+            self, application_object_id, custom_headers=None, raw=False, **operation_config):
         """Delete an application. Reference:
         http://msdn.microsoft.com/en-us/library/azure/hh974476.aspx.
 
         :param application_object_id: Application object id
         :type application_object_id: str
-        :param api_version: Client Api Version.
-        :type api_version: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -189,7 +185,7 @@ class ApplicationsOperations(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -213,14 +209,12 @@ class ApplicationsOperations(object):
             return client_raw_response
 
     def get(
-            self, application_object_id, api_version="1.6", custom_headers=None, raw=False, **operation_config):
+            self, application_object_id, custom_headers=None, raw=False, **operation_config):
         """Get an application by object Id. Reference:
         http://msdn.microsoft.com/en-us/library/azure/hh974476.aspx.
 
         :param application_object_id: Application object id
         :type application_object_id: str
-        :param api_version: Client Api Version.
-        :type api_version: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -240,7 +234,7 @@ class ApplicationsOperations(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -271,7 +265,7 @@ class ApplicationsOperations(object):
         return deserialized
 
     def patch(
-            self, application_object_id, parameters, api_version="1.6", custom_headers=None, raw=False, **operation_config):
+            self, application_object_id, parameters, custom_headers=None, raw=False, **operation_config):
         """Update existing application. Reference:
         http://msdn.microsoft.com/en-us/library/azure/hh974476.aspx.
 
@@ -280,8 +274,6 @@ class ApplicationsOperations(object):
         :param parameters: Parameters to update an existing application.
         :type parameters: :class:`ApplicationUpdateParameters
          <azure.graphrbac.models.ApplicationUpdateParameters>`
-        :param api_version: Client Api Version.
-        :type api_version: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -301,7 +293,7 @@ class ApplicationsOperations(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -329,15 +321,13 @@ class ApplicationsOperations(object):
             return client_raw_response
 
     def list_key_credentials(
-            self, application_object_id, api_version="1.6", custom_headers=None, raw=False, **operation_config):
+            self, application_object_id, custom_headers=None, raw=False, **operation_config):
         """Get keyCredentials associated with the application by object Id.
         Reference:
         https://msdn.microsoft.com/en-us/library/azure/ad/graph/api/entity-and-complex-type-reference#keycredential-type.
 
         :param application_object_id: Application object id
         :type application_object_id: str
-        :param api_version: Client Api Version.
-        :type api_version: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -359,7 +349,7 @@ class ApplicationsOperations(object):
 
                 # Construct parameters
                 query_parameters = {}
-                query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
             else:
                 url = next_link
@@ -396,15 +386,13 @@ class ApplicationsOperations(object):
         return deserialized
 
     def update_key_credentials(
-            self, application_object_id, api_version="1.6", value=None, custom_headers=None, raw=False, **operation_config):
+            self, application_object_id, value=None, custom_headers=None, raw=False, **operation_config):
         """Update keyCredentials associated with an existing application.
         Reference:
         https://msdn.microsoft.com/en-us/library/azure/ad/graph/api/entity-and-complex-type-reference#keycredential-type.
 
         :param application_object_id: Application object id
         :type application_object_id: str
-        :param api_version: Client Api Version.
-        :type api_version: str
         :param value: KeyCredential list.
         :type value: list of :class:`KeyCredential
          <azure.graphrbac.models.KeyCredential>`
@@ -429,7 +417,7 @@ class ApplicationsOperations(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -457,15 +445,13 @@ class ApplicationsOperations(object):
             return client_raw_response
 
     def list_password_credentials(
-            self, application_object_id, api_version="1.6", custom_headers=None, raw=False, **operation_config):
+            self, application_object_id, custom_headers=None, raw=False, **operation_config):
         """Gets passwordCredentials associated with an existing application.
         Reference:
         https://msdn.microsoft.com/en-us/library/azure/ad/graph/api/entity-and-complex-type-reference#passwordcredential-type.
 
         :param application_object_id: Application object id
         :type application_object_id: str
-        :param api_version: Client Api Version.
-        :type api_version: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -487,7 +473,7 @@ class ApplicationsOperations(object):
 
                 # Construct parameters
                 query_parameters = {}
-                query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
             else:
                 url = next_link
@@ -524,15 +510,13 @@ class ApplicationsOperations(object):
         return deserialized
 
     def update_password_credentials(
-            self, application_object_id, api_version="1.6", value=None, custom_headers=None, raw=False, **operation_config):
+            self, application_object_id, value=None, custom_headers=None, raw=False, **operation_config):
         """Updates passwordCredentials associated with an existing application.
         Reference:
         https://msdn.microsoft.com/en-us/library/azure/ad/graph/api/entity-and-complex-type-reference#passwordcredential-type.
 
         :param application_object_id: Application object id
         :type application_object_id: str
-        :param api_version: Client Api Version.
-        :type api_version: str
         :param value: PasswordCredential list.
         :type value: list of :class:`PasswordCredential
          <azure.graphrbac.models.PasswordCredential>`
@@ -557,7 +541,7 @@ class ApplicationsOperations(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
         header_parameters = {}
