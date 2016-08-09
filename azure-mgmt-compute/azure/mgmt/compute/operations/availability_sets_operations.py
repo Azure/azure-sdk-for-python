@@ -23,6 +23,7 @@ class AvailabilitySetsOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An objec model deserializer.
+    :ivar api_version: Client Api Version. Constant value: "2016-03-30".
     """
 
     def __init__(self, client, config, serializer, deserializer):
@@ -30,11 +31,12 @@ class AvailabilitySetsOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
+        self.api_version = "2016-03-30"
 
         self.config = config
 
     def create_or_update(
-            self, resource_group_name, name, parameters, api_version="2016-03-30", custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, name, parameters, custom_headers=None, raw=False, **operation_config):
         """The operation to create or update the availability set.
 
         :param resource_group_name: The name of the resource group.
@@ -46,8 +48,6 @@ class AvailabilitySetsOperations(object):
          operation.
         :type parameters: :class:`AvailabilitySet
          <azure.mgmt.compute.models.AvailabilitySet>`
-        :param api_version: Client Api Version.
-        :type api_version: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -69,7 +69,7 @@ class AvailabilitySetsOperations(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -106,15 +106,13 @@ class AvailabilitySetsOperations(object):
         return deserialized
 
     def delete(
-            self, resource_group_name, availability_set_name, api_version="2016-03-30", custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, availability_set_name, custom_headers=None, raw=False, **operation_config):
         """The operation to delete the availability set.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
         :param availability_set_name: The name of the availability set.
         :type availability_set_name: str
-        :param api_version: Client Api Version.
-        :type api_version: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -135,7 +133,7 @@ class AvailabilitySetsOperations(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -161,15 +159,13 @@ class AvailabilitySetsOperations(object):
             return client_raw_response
 
     def get(
-            self, resource_group_name, availability_set_name, api_version="2016-03-30", custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, availability_set_name, custom_headers=None, raw=False, **operation_config):
         """The operation to get the availability set.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
         :param availability_set_name: The name of the availability set.
         :type availability_set_name: str
-        :param api_version: Client Api Version.
-        :type api_version: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -191,7 +187,7 @@ class AvailabilitySetsOperations(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -224,13 +220,11 @@ class AvailabilitySetsOperations(object):
         return deserialized
 
     def list(
-            self, resource_group_name, api_version="2016-03-30", custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, custom_headers=None, raw=False, **operation_config):
         """The operation to list the availability sets.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
-        :param api_version: Client Api Version.
-        :type api_version: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -252,7 +246,7 @@ class AvailabilitySetsOperations(object):
 
                 # Construct parameters
                 query_parameters = {}
-                query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
             else:
                 url = next_link
@@ -291,7 +285,7 @@ class AvailabilitySetsOperations(object):
         return deserialized
 
     def list_available_sizes(
-            self, resource_group_name, availability_set_name, api_version="2016-03-30", custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, availability_set_name, custom_headers=None, raw=False, **operation_config):
         """Lists all available virtual machine sizes that can be used to create a
         new virtual machine in an existing availability set.
 
@@ -299,8 +293,6 @@ class AvailabilitySetsOperations(object):
         :type resource_group_name: str
         :param availability_set_name: The name of the availability set.
         :type availability_set_name: str
-        :param api_version: Client Api Version.
-        :type api_version: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -323,7 +315,7 @@ class AvailabilitySetsOperations(object):
 
                 # Construct parameters
                 query_parameters = {}
-                query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
             else:
                 url = next_link
