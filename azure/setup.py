@@ -47,7 +47,7 @@ setup(
     zip_safe=False,
     install_requires=[
         'azure-mgmt==0.30.0',
-        'azure-batch==0.30.0',
+        'azure-batch==1.0.0',
         'azure-servicebus==0.20.2',
         'azure-storage==0.32.0',
         'azure-servicemanagement-legacy==0.20.4',
