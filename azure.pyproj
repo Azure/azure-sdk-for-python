@@ -26,7 +26,7 @@
     <SccProvider>SAK</SccProvider>
     <SccAuxPath>SAK</SccAuxPath>
     <SccLocalPath>SAK</SccLocalPath>
-    <SearchPath>azure-common\;azure-servicebus\;azure-servicemanagement-legacy\;azure-mgmt-storage\;azure-mgmt-compute\;azure-mgmt-network\;azure-mgmt-resource\;azure-mgmt-redis\;azure-mgmt-authorization\;azure-mgmt-cdn\;azure-mgmt-logic\;azure-mgmt-notificationhubs\;azure-mgmt-scheduler\;azure-mgmt-web\;azure-graphrbac\;azure-mgmt\;azure-batch\;azure-mgmt-batch\;azure-mgmt-datalake-analytics\;azure-mgmt-datalake-store\;azure-mgmt-keyvault\;azure-mgmt-dns\</SearchPath>
+    <SearchPath>azure-common\;azure-servicebus\;azure-servicemanagement-legacy\;azure-mgmt-storage\;azure-mgmt-compute\;azure-mgmt-network\;azure-mgmt-resource\;azure-mgmt-redis\;azure-mgmt-authorization\;azure-mgmt-cdn\;azure-mgmt-logic\;azure-mgmt-notificationhubs\;azure-mgmt-scheduler\;azure-mgmt-web\;azure-graphrbac\;azure-mgmt\;azure-batch\;azure-mgmt-batch\;azure-mgmt-keyvault\;azure-mgmt-dns\;azure-mgmt-trafficmanager\</SearchPath>
     <EnableNativeCodeDebugging>False</EnableNativeCodeDebugging>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
@@ -1116,6 +1116,27 @@
     <Compile Include="azure-mgmt-storage\azure\mgmt\storage\operations\__init__.py" />
     <Compile Include="azure-mgmt-storage\azure\mgmt\storage\storage_management_client.py" />
     <Compile Include="azure-mgmt-storage\azure\mgmt\storage\version.py" />
+    <Compile Include="azure-mgmt-trafficmanager\azure\mgmt\trafficmanager\models\check_traffic_manager_relative_dns_name_availability_parameters.py" />
+    <Compile Include="azure-mgmt-trafficmanager\azure\mgmt\trafficmanager\models\dns_config.py" />
+    <Compile Include="azure-mgmt-trafficmanager\azure\mgmt\trafficmanager\models\endpoint.py" />
+    <Compile Include="azure-mgmt-trafficmanager\azure\mgmt\trafficmanager\models\monitor_config.py" />
+    <Compile Include="azure-mgmt-trafficmanager\azure\mgmt\trafficmanager\models\profile.py" />
+    <Compile Include="azure-mgmt-trafficmanager\azure\mgmt\trafficmanager\models\profile_paged.py" />
+    <Compile Include="azure-mgmt-trafficmanager\azure\mgmt\trafficmanager\models\resource.py" />
+    <Compile Include="azure-mgmt-trafficmanager\azure\mgmt\trafficmanager\models\traffic_manager_name_availability.py" />
+    <Compile Include="azure-mgmt-trafficmanager\azure\mgmt\trafficmanager\models\__init__.py" />
+    <Compile Include="azure-mgmt-trafficmanager\azure\mgmt\trafficmanager\operations\endpoints_operations.py" />
+    <Compile Include="azure-mgmt-trafficmanager\azure\mgmt\trafficmanager\operations\endpoints_operations.py" />
+    <Compile Include="azure-mgmt-trafficmanager\azure\mgmt\trafficmanager\operations\profiles_operations.py" />
+    <Compile Include="azure-mgmt-trafficmanager\azure\mgmt\trafficmanager\operations\profiles_operations.py" />
+    <Compile Include="azure-mgmt-trafficmanager\azure\mgmt\trafficmanager\operations\__init__.py" />
+    <Compile Include="azure-mgmt-trafficmanager\azure\mgmt\trafficmanager\operations\__init__.py" />
+    <Compile Include="azure-mgmt-trafficmanager\azure\mgmt\trafficmanager\traffic_manager_management_client.py" />
+    <Compile Include="azure-mgmt-trafficmanager\azure\mgmt\trafficmanager\version.py" />
+    <Compile Include="azure-mgmt-trafficmanager\azure\mgmt\trafficmanager\__init__.py" />
+    <Compile Include="azure-mgmt-trafficmanager\azure\mgmt\__init__.py" />
+    <Compile Include="azure-mgmt-trafficmanager\azure\__init__.py" />
+    <Compile Include="azure-mgmt-trafficmanager\setup.py" />
     <Compile Include="azure-mgmt-web\azure\mgmt\web\models\address.py" />
     <Compile Include="azure-mgmt-web\azure\mgmt\web\models\address_response.py" />
     <Compile Include="azure-mgmt-web\azure\mgmt\web\models\api_definition_info.py" />
@@ -1303,6 +1324,7 @@
     <Compile Include="azure-mgmt\tests\test_mgmt_resource_subscriptions.py" />
     <Compile Include="azure-mgmt\tests\test_mgmt_scheduler.py" />
     <Compile Include="azure-mgmt\tests\test_mgmt_storage.py" />
+    <Compile Include="azure-mgmt\tests\test_mgmt_trafficmanager.py" />
     <Compile Include="azure-mgmt\tests\__init__.py" />
     <Compile Include="azure-servicebus\azure\servicebus\constants.py">
       <SubType>Code</SubType>
@@ -1535,6 +1557,12 @@
     <Folder Include="azure-mgmt-scheduler\azure\mgmt\scheduler\operations\" />
     <Folder Include="azure-mgmt-storage\azure\mgmt\storage\models\" />
     <Folder Include="azure-mgmt-storage\azure\mgmt\storage\operations\" />
+    <Folder Include="azure-mgmt-trafficmanager\" />
+    <Folder Include="azure-mgmt-trafficmanager\azure\" />
+    <Folder Include="azure-mgmt-trafficmanager\azure\mgmt\" />
+    <Folder Include="azure-mgmt-trafficmanager\azure\mgmt\trafficmanager\" />
+    <Folder Include="azure-mgmt-trafficmanager\azure\mgmt\trafficmanager\models\" />
+    <Folder Include="azure-mgmt-trafficmanager\azure\mgmt\trafficmanager\operations\" />
     <Folder Include="azure-mgmt-web\" />
     <Folder Include="azure-mgmt-web\azure\" />
     <Folder Include="azure-mgmt-web\azure\mgmt\" />
@@ -1645,6 +1673,10 @@
     <Content Include="azure-mgmt-nspkg\MANIFEST.in" />
     <Content Include="azure-mgmt-nspkg\README.rst" />
     <Content Include="azure-mgmt-nspkg\setup.cfg" />
+    <Content Include="azure-mgmt-trafficmanager\HISTORY.rst" />
+    <Content Include="azure-mgmt-trafficmanager\MANIFEST.in" />
+    <Content Include="azure-mgmt-trafficmanager\README.rst" />
+    <Content Include="azure-mgmt-trafficmanager\setup.cfg" />
     <Content Include="azure-mgmt-web\MANIFEST.in" />
     <Content Include="azure-mgmt-web\README.rst" />
     <Content Include="azure-mgmt-web\setup.cfg" />
