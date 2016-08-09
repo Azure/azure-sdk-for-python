@@ -22,6 +22,10 @@ class FileSystemOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An objec model deserializer.
+    :ivar transfer_encoding: Indicates the data being sent to the server is being streamed in chunks. Constant value: "chunked".
+    :ivar append: The constant value for the operation. Constant value: "true".
+    :ivar write: The constant value for the operation. Constant value: "true".
+    :ivar read: The constant value for the operation. Constant value: "true".
     """
 
     def __init__(self, client, config, serializer, deserializer):
@@ -29,11 +33,15 @@ class FileSystemOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
+        self.transfer_encoding = "chunked"
+        self.append = "true"
+        self.write = "true"
+        self.read = "true"
 
         self.config = config
 
     def concurrent_append(
-            self, file_path, stream_contents, account_name="\"\\"\\\"\\\\"\\\\\"\\\\\\"\\\\\\\"\\\\\\\\"\\\\\\\\\"\\\\\\\\\\"\\\\\\\\\\\"\\\\\\\\\\\\"\\\\\\\\\\\\\"\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\\"None\\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\"\\\\\\\\\\\\\"\\\\\\\\\\\\"\\\\\\\\\\\"\\\\\\\\\\"\\\\\\\\\"\\\\\\\\"\\\\\\\"\\\\\\"\\\\\"\\\\"\\\"\\"\"", op="CONCURRENTAPPEND", transfer_encoding="chunked", append_mode=None, custom_headers=None, raw=False, callback=None, **operation_config):
+            self, account_name, file_path, stream_contents, append_mode=None, custom_headers=None, raw=False, callback=None, **operation_config):
         """Appends to the specified file. This method supports multiple
         concurrent appends to the file. NOTE: Concurrent append and normal
         (serial) append CANNOT be used interchangeably. Once a file has been
@@ -49,11 +57,6 @@ class FileSystemOperations(object):
         :param stream_contents: The file contents to include when appending
          to the file.
         :type stream_contents: Generator
-        :param op: The constant value for the operation.
-        :type op: str
-        :param transfer_encoding: Indicates the data being sent to the server
-         is being streamed in chunks.
-        :type transfer_encoding: str
         :param append_mode: Indicates the concurrent append call should
          create the file if it doesn't exist or just open the existing file
          for append. Possible values include: 'autocreate'
@@ -73,6 +76,8 @@ class FileSystemOperations(object):
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
+        op = "CONCURRENTAPPEND"
+
         # Construct URL
         url = '/WebHdfsExt/{filePath}'
         path_format_arguments = {
@@ -96,7 +101,7 @@ class FileSystemOperations(object):
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         if custom_headers:
             header_parameters.update(custom_headers)
-        header_parameters['Transfer-Encoding'] = self._serialize.header("transfer_encoding", transfer_encoding, 'str')
+        header_parameters['Transfer-Encoding'] = self._serialize.header("self.transfer_encoding", self.transfer_encoding, 'str')
         if self.config.accept_language is not None:
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
@@ -116,7 +121,7 @@ class FileSystemOperations(object):
             return client_raw_response
 
     def check_access(
-            self, path, account_name="\"\\"\\\"\\\\"\\\\\"\\\\\\"\\\\\\\"\\\\\\\\"\\\\\\\\\"\\\\\\\\\\"\\\\\\\\\\\"\\\\\\\\\\\\"\\\\\\\\\\\\\"\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\\"None\\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\"\\\\\\\\\\\\\"\\\\\\\\\\\\"\\\\\\\\\\\"\\\\\\\\\\"\\\\\\\\\"\\\\\\\\"\\\\\\\"\\\\\\"\\\\\"\\\\"\\\"\\"\"", op="CHECKACCESS", fsaction=None, custom_headers=None, raw=False, **operation_config):
+            self, account_name, path, fsaction=None, custom_headers=None, raw=False, **operation_config):
         """Checks if the specified access is available at the given path.
 
         :param account_name: The Azure Data Lake Store account to execute
@@ -125,8 +130,6 @@ class FileSystemOperations(object):
         :param path: The Data Lake Store path (starting with '/') of the file
          or directory for which to check access.
         :type path: str
-        :param op: The constant value for the operation.
-        :type op: str
         :param fsaction: File system operation read/write/execute in string
          form, matching regex pattern '[rwx-]{3}'
         :type fsaction: str
@@ -139,6 +142,8 @@ class FileSystemOperations(object):
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
+        op = "CHECKACCESS"
+
         # Construct URL
         url = '/webhdfs/v1/{path}'
         path_format_arguments = {
@@ -177,7 +182,7 @@ class FileSystemOperations(object):
             return client_raw_response
 
     def mkdirs(
-            self, path, account_name="\"\\"\\\"\\\\"\\\\\"\\\\\\"\\\\\\\"\\\\\\\\"\\\\\\\\\"\\\\\\\\\\"\\\\\\\\\\\"\\\\\\\\\\\\"\\\\\\\\\\\\\"\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\\"None\\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\"\\\\\\\\\\\\\"\\\\\\\\\\\\"\\\\\\\\\\\"\\\\\\\\\\"\\\\\\\\\"\\\\\\\\"\\\\\\\"\\\\\\"\\\\\"\\\\"\\\"\\"\"", op="MKDIRS", custom_headers=None, raw=False, **operation_config):
+            self, account_name, path, custom_headers=None, raw=False, **operation_config):
         """Creates a directory.
 
         :param account_name: The Azure Data Lake Store account to execute
@@ -186,8 +191,6 @@ class FileSystemOperations(object):
         :param path: The Data Lake Store path (starting with '/') of the
          directory to create.
         :type path: str
-        :param op: The constant value for the operation.
-        :type op: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -198,6 +201,8 @@ class FileSystemOperations(object):
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
+        op = "MKDIRS"
+
         # Construct URL
         url = '/webhdfs/v1/{path}'
         path_format_arguments = {
@@ -241,7 +246,7 @@ class FileSystemOperations(object):
         return deserialized
 
     def concat(
-            self, destination_path, sources, account_name="\"\\"\\\"\\\\"\\\\\"\\\\\\"\\\\\\\"\\\\\\\\"\\\\\\\\\"\\\\\\\\\\"\\\\\\\\\\\"\\\\\\\\\\\\"\\\\\\\\\\\\\"\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\\"None\\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\"\\\\\\\\\\\\\"\\\\\\\\\\\\"\\\\\\\\\\\"\\\\\\\\\\"\\\\\\\\\"\\\\\\\\"\\\\\\\"\\\\\\"\\\\\"\\\\"\\\"\\"\"", op="CONCAT", custom_headers=None, raw=False, **operation_config):
+            self, account_name, destination_path, sources, custom_headers=None, raw=False, **operation_config):
         """Concatenates the list of source files into the destination file,
         removing all source files upon success.
 
@@ -255,8 +260,6 @@ class FileSystemOperations(object):
          (starting with '/') of the files to concatenate, in the order in
          which they should be concatenated.
         :type sources: list of str
-        :param op: The constant value for the operation.
-        :type op: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -266,6 +269,8 @@ class FileSystemOperations(object):
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
+        op = "CONCAT"
+
         # Construct URL
         url = '/webhdfs/v1/{destinationPath}'
         path_format_arguments = {
@@ -303,7 +308,7 @@ class FileSystemOperations(object):
             return client_raw_response
 
     def ms_concat(
-            self, ms_concat_destination_path, stream_contents, account_name="\"\\"\\\"\\\\"\\\\\"\\\\\\"\\\\\\\"\\\\\\\\"\\\\\\\\\"\\\\\\\\\\"\\\\\\\\\\\"\\\\\\\\\\\\"\\\\\\\\\\\\\"\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\\"None\\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\"\\\\\\\\\\\\\"\\\\\\\\\\\\"\\\\\\\\\\\"\\\\\\\\\\"\\\\\\\\\"\\\\\\\\"\\\\\\\"\\\\\\"\\\\\"\\\\"\\\"\\"\"", op="MSCONCAT", delete_source_directory=None, custom_headers=None, raw=False, callback=None, **operation_config):
+            self, account_name, ms_concat_destination_path, stream_contents, delete_source_directory=None, custom_headers=None, raw=False, callback=None, **operation_config):
         """Concatenates the list of source files into the destination file,
         deleting all source files upon success. This method accepts more
         source file paths than the Concat method. This method and the
@@ -320,8 +325,6 @@ class FileSystemOperations(object):
          with '/') of the source files. Must be in the format: sources=<comma
          separated list>
         :type stream_contents: Generator
-        :param op: The constant value for the operation.
-        :type op: str
         :param delete_source_directory: Indicates that as an optimization
          instead of deleting each individual source stream, delete the source
          stream folder if all streams are in the same folder instead. This
@@ -345,6 +348,8 @@ class FileSystemOperations(object):
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
+        op = "MSCONCAT"
+
         # Construct URL
         url = '/webhdfs/v1/{msConcatDestinationPath}'
         path_format_arguments = {
@@ -387,7 +392,7 @@ class FileSystemOperations(object):
             return client_raw_response
 
     def list_file_status(
-            self, list_file_path, account_name="\"\\"\\\"\\\\"\\\\\"\\\\\\"\\\\\\\"\\\\\\\\"\\\\\\\\\"\\\\\\\\\\"\\\\\\\\\\\"\\\\\\\\\\\\"\\\\\\\\\\\\\"\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\\"None\\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\"\\\\\\\\\\\\\"\\\\\\\\\\\\"\\\\\\\\\\\"\\\\\\\\\\"\\\\\\\\\"\\\\\\\\"\\\\\\\"\\\\\\"\\\\\"\\\\"\\\"\\"\"", op="MSLISTSTATUS", list_size=None, list_after=None, list_before=None, custom_headers=None, raw=False, **operation_config):
+            self, account_name, list_file_path, list_size=None, list_after=None, list_before=None, custom_headers=None, raw=False, **operation_config):
         """Get the list of file status objects specified by the file path, with
         optional pagination parameters.
 
@@ -397,8 +402,6 @@ class FileSystemOperations(object):
         :param list_file_path: The Data Lake Store path (starting with '/')
          of the directory to list.
         :type list_file_path: str
-        :param op: The constant value for the operation.
-        :type op: str
         :param list_size: Gets or sets the number of items to return.
          Optional.
         :type list_size: int
@@ -422,6 +425,8 @@ class FileSystemOperations(object):
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
+        op = "MSLISTSTATUS"
+
         # Construct URL
         url = '/webhdfs/v1/{listFilePath}'
         path_format_arguments = {
@@ -471,7 +476,7 @@ class FileSystemOperations(object):
         return deserialized
 
     def get_content_summary(
-            self, get_content_summary_file_path, account_name="\"\\"\\\"\\\\"\\\\\"\\\\\\"\\\\\\\"\\\\\\\\"\\\\\\\\\"\\\\\\\\\\"\\\\\\\\\\\"\\\\\\\\\\\\"\\\\\\\\\\\\\"\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\\"None\\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\"\\\\\\\\\\\\\"\\\\\\\\\\\\"\\\\\\\\\\\"\\\\\\\\\\"\\\\\\\\\"\\\\\\\\"\\\\\\\"\\\\\\"\\\\\"\\\\"\\\"\\"\"", op="GETCONTENTSUMMARY", custom_headers=None, raw=False, **operation_config):
+            self, account_name, get_content_summary_file_path, custom_headers=None, raw=False, **operation_config):
         """Gets the file content summary object specified by the file path.
 
         :param account_name: The Azure Data Lake Store account to execute
@@ -480,8 +485,6 @@ class FileSystemOperations(object):
         :param get_content_summary_file_path: The Data Lake Store path
          (starting with '/') of the file for which to retrieve the summary.
         :type get_content_summary_file_path: str
-        :param op: The constant value for the operation.
-        :type op: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -492,6 +495,8 @@ class FileSystemOperations(object):
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
+        op = "GETCONTENTSUMMARY"
+
         # Construct URL
         url = '/webhdfs/va/{getContentSummaryFilePath}'
         path_format_arguments = {
@@ -535,7 +540,7 @@ class FileSystemOperations(object):
         return deserialized
 
     def get_file_status(
-            self, get_file_path, account_name="\"\\"\\\"\\\\"\\\\\"\\\\\\"\\\\\\\"\\\\\\\\"\\\\\\\\\"\\\\\\\\\\"\\\\\\\\\\\"\\\\\\\\\\\\"\\\\\\\\\\\\\"\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\\"None\\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\"\\\\\\\\\\\\\"\\\\\\\\\\\\"\\\\\\\\\\\"\\\\\\\\\\"\\\\\\\\\"\\\\\\\\"\\\\\\\"\\\\\\"\\\\\"\\\\"\\\"\\"\"", op="GETFILESTATUS", custom_headers=None, raw=False, **operation_config):
+            self, account_name, get_file_path, custom_headers=None, raw=False, **operation_config):
         """Get the file status object specified by the file path.
 
         :param account_name: The Azure Data Lake Store account to execute
@@ -544,8 +549,6 @@ class FileSystemOperations(object):
         :param get_file_path: The Data Lake Store path (starting with '/') of
          the file or directory for which to retrieve the status.
         :type get_file_path: str
-        :param op: The constant value for the operation.
-        :type op: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -556,6 +559,8 @@ class FileSystemOperations(object):
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
+        op = "GETFILESTATUS"
+
         # Construct URL
         url = '/webhdfs/v1/{getFilePath}'
         path_format_arguments = {
@@ -599,7 +604,7 @@ class FileSystemOperations(object):
         return deserialized
 
     def append(
-            self, direct_file_path, stream_contents, account_name="\"\\"\\\"\\\\"\\\\\"\\\\\\"\\\\\\\"\\\\\\\\"\\\\\\\\\"\\\\\\\\\\"\\\\\\\\\\\"\\\\\\\\\\\\"\\\\\\\\\\\\\"\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\\"None\\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\"\\\\\\\\\\\\\"\\\\\\\\\\\\"\\\\\\\\\\\"\\\\\\\\\\"\\\\\\\\\"\\\\\\\\"\\\\\\\"\\\\\\"\\\\\"\\\\"\\\"\\"\"", op="APPEND", append="true", transfer_encoding="chunked", offset=None, custom_headers=None, raw=False, callback=None, **operation_config):
+            self, account_name, direct_file_path, stream_contents, offset=None, custom_headers=None, raw=False, callback=None, **operation_config):
         """Appends to the specified file. This method does not support multiple
         concurrent appends to the file. NOTE: Concurrent append and normal
         (serial) append CANNOT be used interchangeably. Once a file has been
@@ -616,13 +621,6 @@ class FileSystemOperations(object):
         :param stream_contents: The file contents to include when appending
          to the file.
         :type stream_contents: Generator
-        :param op: The constant value for the operation.
-        :type op: str
-        :param append: The constant value for the operation.
-        :type append: str
-        :param transfer_encoding: Indicates the data being sent to the server
-         is being streamed in chunks.
-        :type transfer_encoding: str
         :param offset: The optional offset in the stream to begin the append
          operation. Default is to append at the end of the stream.
         :type offset: long
@@ -640,6 +638,8 @@ class FileSystemOperations(object):
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
+        op = "APPEND"
+
         # Construct URL
         url = '/webhdfs/v1/{directFilePath}'
         path_format_arguments = {
@@ -654,7 +654,7 @@ class FileSystemOperations(object):
         if offset is not None:
             query_parameters['offset'] = self._serialize.query("offset", offset, 'long')
         query_parameters['op'] = self._serialize.query("op", op, 'str')
-        query_parameters['append'] = self._serialize.query("append", append, 'str')
+        query_parameters['append'] = self._serialize.query("self.append", self.append, 'str')
         query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
 
         # Construct headers
@@ -664,7 +664,7 @@ class FileSystemOperations(object):
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         if custom_headers:
             header_parameters.update(custom_headers)
-        header_parameters['Transfer-Encoding'] = self._serialize.header("transfer_encoding", transfer_encoding, 'str')
+        header_parameters['Transfer-Encoding'] = self._serialize.header("self.transfer_encoding", self.transfer_encoding, 'str')
         if self.config.accept_language is not None:
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
@@ -684,7 +684,7 @@ class FileSystemOperations(object):
             return client_raw_response
 
     def create(
-            self, direct_file_path, account_name="\"\\"\\\"\\\\"\\\\\"\\\\\\"\\\\\\\"\\\\\\\\"\\\\\\\\\"\\\\\\\\\\"\\\\\\\\\\\"\\\\\\\\\\\\"\\\\\\\\\\\\\"\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\\"None\\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\"\\\\\\\\\\\\\"\\\\\\\\\\\\"\\\\\\\\\\\"\\\\\\\\\\"\\\\\\\\\"\\\\\\\\"\\\\\\\"\\\\\\"\\\\\"\\\\"\\\"\\"\"", op="CREATE", write="true", transfer_encoding="chunked", stream_contents=None, overwrite=None, custom_headers=None, raw=False, callback=None, **operation_config):
+            self, account_name, direct_file_path, stream_contents=None, overwrite=None, custom_headers=None, raw=False, callback=None, **operation_config):
         """Creates a file with optionally specified content.
 
         :param account_name: The Azure Data Lake Store account to execute
@@ -693,13 +693,6 @@ class FileSystemOperations(object):
         :param direct_file_path: The Data Lake Store path (starting with '/')
          of the file to create.
         :type direct_file_path: str
-        :param op: The constant value for the operation.
-        :type op: str
-        :param write: The constant value for the operation.
-        :type write: str
-        :param transfer_encoding: Indicates the data being sent to the server
-         is being streamed in chunks.
-        :type transfer_encoding: str
         :param stream_contents: The file contents to include when creating
          the file. This parameter is optional, resulting in an empty file if
          not specified.
@@ -720,6 +713,8 @@ class FileSystemOperations(object):
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
+        op = "CREATE"
+
         # Construct URL
         url = '/webhdfs/v1/{directFilePath}'
         path_format_arguments = {
@@ -734,7 +729,7 @@ class FileSystemOperations(object):
         if overwrite is not None:
             query_parameters['overwrite'] = self._serialize.query("overwrite", overwrite, 'bool')
         query_parameters['op'] = self._serialize.query("op", op, 'str')
-        query_parameters['write'] = self._serialize.query("write", write, 'str')
+        query_parameters['write'] = self._serialize.query("self.write", self.write, 'str')
         query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
 
         # Construct headers
@@ -744,7 +739,7 @@ class FileSystemOperations(object):
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         if custom_headers:
             header_parameters.update(custom_headers)
-        header_parameters['Transfer-Encoding'] = self._serialize.header("transfer_encoding", transfer_encoding, 'str')
+        header_parameters['Transfer-Encoding'] = self._serialize.header("self.transfer_encoding", self.transfer_encoding, 'str')
         if self.config.accept_language is not None:
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
@@ -764,7 +759,7 @@ class FileSystemOperations(object):
             return client_raw_response
 
     def open(
-            self, direct_file_path, account_name="\"\\"\\\"\\\\"\\\\\"\\\\\\"\\\\\\\"\\\\\\\\"\\\\\\\\\"\\\\\\\\\\"\\\\\\\\\\\"\\\\\\\\\\\\"\\\\\\\\\\\\\"\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\\"None\\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\"\\\\\\\\\\\\\"\\\\\\\\\\\\"\\\\\\\\\\\"\\\\\\\\\\"\\\\\\\\\"\\\\\\\\"\\\\\\\"\\\\\\"\\\\\"\\\\"\\\"\\"\"", op="OPEN", read="true", length=None, offset=None, custom_headers=None, raw=False, callback=None, **operation_config):
+            self, account_name, direct_file_path, length=None, offset=None, custom_headers=None, raw=False, callback=None, **operation_config):
         """Opens and reads from the specified file.
 
         :param account_name: The Azure Data Lake Store account to execute
@@ -773,10 +768,6 @@ class FileSystemOperations(object):
         :param direct_file_path: The Data Lake Store path (starting with '/')
          of the file to open.
         :type direct_file_path: str
-        :param op: The constant value for the operation.
-        :type op: str
-        :param read: The constant value for the operation.
-        :type read: str
         :param length:
         :type length: long
         :param offset:
@@ -795,6 +786,8 @@ class FileSystemOperations(object):
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
+        op = "OPEN"
+
         # Construct URL
         url = '/webhdfs/v1/{directFilePath}'
         path_format_arguments = {
@@ -811,7 +804,7 @@ class FileSystemOperations(object):
         if offset is not None:
             query_parameters['offset'] = self._serialize.query("offset", offset, 'long')
         query_parameters['op'] = self._serialize.query("op", op, 'str')
-        query_parameters['read'] = self._serialize.query("read", read, 'str')
+        query_parameters['read'] = self._serialize.query("self.read", self.read, 'str')
         query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
 
         # Construct headers
@@ -843,7 +836,7 @@ class FileSystemOperations(object):
         return deserialized
 
     def set_acl(
-            self, set_acl_file_path, aclspec, account_name="\"\\"\\\"\\\\"\\\\\"\\\\\\"\\\\\\\"\\\\\\\\"\\\\\\\\\"\\\\\\\\\\"\\\\\\\\\\\"\\\\\\\\\\\\"\\\\\\\\\\\\\"\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\\"None\\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\"\\\\\\\\\\\\\"\\\\\\\\\\\\"\\\\\\\\\\\"\\\\\\\\\\"\\\\\\\\\"\\\\\\\\"\\\\\\\"\\\\\\"\\\\\"\\\\"\\\"\\"\"", op="SETACL", custom_headers=None, raw=False, **operation_config):
+            self, account_name, set_acl_file_path, aclspec, custom_headers=None, raw=False, **operation_config):
         """Sets the Access Control List (ACL) for a file or folder.
 
         :param account_name: The Azure Data Lake Store account to execute
@@ -855,8 +848,6 @@ class FileSystemOperations(object):
         :param aclspec: The ACL spec included in ACL creation operations in
          the format '[default:]user|group|other::r|-w|-x|-'
         :type aclspec: str
-        :param op: The constant value for the operation.
-        :type op: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -866,6 +857,8 @@ class FileSystemOperations(object):
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
+        op = "SETACL"
+
         # Construct URL
         url = '/webhdfs/v1/{setAclFilePath}'
         path_format_arguments = {
@@ -903,7 +896,7 @@ class FileSystemOperations(object):
             return client_raw_response
 
     def modify_acl_entries(
-            self, modify_acl_file_path, aclspec, account_name="\"\\"\\\"\\\\"\\\\\"\\\\\\"\\\\\\\"\\\\\\\\"\\\\\\\\\"\\\\\\\\\\"\\\\\\\\\\\"\\\\\\\\\\\\"\\\\\\\\\\\\\"\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\\"None\\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\"\\\\\\\\\\\\\"\\\\\\\\\\\\"\\\\\\\\\\\"\\\\\\\\\\"\\\\\\\\\"\\\\\\\\"\\\\\\\"\\\\\\"\\\\\"\\\\"\\\"\\"\"", op="MODIFYACLENTRIES", custom_headers=None, raw=False, **operation_config):
+            self, account_name, modify_acl_file_path, aclspec, custom_headers=None, raw=False, **operation_config):
         """Modifies existing Access Control List (ACL) entries on a file or
         folder.
 
@@ -916,8 +909,6 @@ class FileSystemOperations(object):
         :param aclspec: The ACL specification included in ACL modification
          operations in the format '[default:]user|group|other::r|-w|-x|-'
         :type aclspec: str
-        :param op: The constant value for the operation.
-        :type op: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -927,6 +918,8 @@ class FileSystemOperations(object):
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
+        op = "MODIFYACLENTRIES"
+
         # Construct URL
         url = '/webhdfs/v1/{modifyAclFilePath}'
         path_format_arguments = {
@@ -964,7 +957,7 @@ class FileSystemOperations(object):
             return client_raw_response
 
     def remove_acl_entries(
-            self, remove_acl_file_path, aclspec, account_name="\"\\"\\\"\\\\"\\\\\"\\\\\\"\\\\\\\"\\\\\\\\"\\\\\\\\\"\\\\\\\\\\"\\\\\\\\\\\"\\\\\\\\\\\\"\\\\\\\\\\\\\"\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\\"None\\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\"\\\\\\\\\\\\\"\\\\\\\\\\\\"\\\\\\\\\\\"\\\\\\\\\\"\\\\\\\\\"\\\\\\\\"\\\\\\\"\\\\\\"\\\\\"\\\\"\\\"\\"\"", op="REMOVEACLENTRIES", custom_headers=None, raw=False, **operation_config):
+            self, account_name, remove_acl_file_path, aclspec, custom_headers=None, raw=False, **operation_config):
         """Removes existing Access Control List (ACL) entries for a file or
         folder.
 
@@ -977,8 +970,6 @@ class FileSystemOperations(object):
         :param aclspec: The ACL spec included in ACL removal operations in
          the format '[default:]user|group|other'
         :type aclspec: str
-        :param op: The constant value for the operation.
-        :type op: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -988,6 +979,8 @@ class FileSystemOperations(object):
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
+        op = "REMOVEACLENTRIES"
+
         # Construct URL
         url = '/webhdfs/v1/{removeAclFilePath}'
         path_format_arguments = {
@@ -1025,7 +1018,7 @@ class FileSystemOperations(object):
             return client_raw_response
 
     def get_acl_status(
-            self, acl_file_path, account_name="\"\\"\\\"\\\\"\\\\\"\\\\\\"\\\\\\\"\\\\\\\\"\\\\\\\\\"\\\\\\\\\\"\\\\\\\\\\\"\\\\\\\\\\\\"\\\\\\\\\\\\\"\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\\"None\\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\"\\\\\\\\\\\\\"\\\\\\\\\\\\"\\\\\\\\\\\"\\\\\\\\\\"\\\\\\\\\"\\\\\\\\"\\\\\\\"\\\\\\"\\\\\"\\\\"\\\"\\"\"", op="GETACLSTATUS", custom_headers=None, raw=False, **operation_config):
+            self, account_name, acl_file_path, custom_headers=None, raw=False, **operation_config):
         """Gets Access Control List (ACL) entries for the specified file or
         directory.
 
@@ -1035,8 +1028,6 @@ class FileSystemOperations(object):
         :param acl_file_path: The Data Lake Store path (starting with '/') of
          the file or directory for which to get the ACL.
         :type acl_file_path: str
-        :param op: The constant value for the operation.
-        :type op: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -1047,6 +1038,8 @@ class FileSystemOperations(object):
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
+        op = "GETACLSTATUS"
+
         # Construct URL
         url = '/webhdfs/v1/{aclFilePath}'
         path_format_arguments = {
@@ -1090,7 +1083,7 @@ class FileSystemOperations(object):
         return deserialized
 
     def delete(
-            self, file_path, account_name="\"\\"\\\"\\\\"\\\\\"\\\\\\"\\\\\\\"\\\\\\\\"\\\\\\\\\"\\\\\\\\\\"\\\\\\\\\\\"\\\\\\\\\\\\"\\\\\\\\\\\\\"\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\\"None\\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\"\\\\\\\\\\\\\"\\\\\\\\\\\\"\\\\\\\\\\\"\\\\\\\\\\"\\\\\\\\\"\\\\\\\\"\\\\\\\"\\\\\\"\\\\\"\\\\"\\\"\\"\"", op="DELETE", recursive=None, custom_headers=None, raw=False, **operation_config):
+            self, account_name, file_path, recursive=None, custom_headers=None, raw=False, **operation_config):
         """Deletes the requested file or directory, optionally recursively.
 
         :param account_name: The Azure Data Lake Store account to execute
@@ -1099,8 +1092,6 @@ class FileSystemOperations(object):
         :param file_path: The Data Lake Store path (starting with '/') of the
          file or directory to delete.
         :type file_path: str
-        :param op: The constant value for the operation.
-        :type op: str
         :param recursive: The optional switch indicating if the delete should
          be recursive
         :type recursive: bool
@@ -1114,6 +1105,8 @@ class FileSystemOperations(object):
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
+        op = "DELETE"
+
         # Construct URL
         url = '/webhdfs/v1/{filePath}'
         path_format_arguments = {
@@ -1159,7 +1152,7 @@ class FileSystemOperations(object):
         return deserialized
 
     def rename(
-            self, rename_file_path, destination, account_name="\"\\"\\\"\\\\"\\\\\"\\\\\\"\\\\\\\"\\\\\\\\"\\\\\\\\\"\\\\\\\\\\"\\\\\\\\\\\"\\\\\\\\\\\\"\\\\\\\\\\\\\"\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\\"None\\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\"\\\\\\\\\\\\\"\\\\\\\\\\\\"\\\\\\\\\\\"\\\\\\\\\\"\\\\\\\\\"\\\\\\\\"\\\\\\\"\\\\\\"\\\\\"\\\\"\\\"\\"\"", op="RENAME", custom_headers=None, raw=False, **operation_config):
+            self, account_name, rename_file_path, destination, custom_headers=None, raw=False, **operation_config):
         """Rename a file or directory.
 
         :param account_name: The Azure Data Lake Store account to execute
@@ -1170,8 +1163,6 @@ class FileSystemOperations(object):
         :type rename_file_path: str
         :param destination: The path to move/rename the file or folder to
         :type destination: str
-        :param op: The constant value for the operation.
-        :type op: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -1182,6 +1173,8 @@ class FileSystemOperations(object):
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
+        op = "RENAME"
+
         # Construct URL
         url = '/webhdfs/v1/{renameFilePath}'
         path_format_arguments = {
@@ -1226,7 +1219,7 @@ class FileSystemOperations(object):
         return deserialized
 
     def set_owner(
-            self, set_owner_file_path, account_name="\"\\"\\\"\\\\"\\\\\"\\\\\\"\\\\\\\"\\\\\\\\"\\\\\\\\\"\\\\\\\\\\"\\\\\\\\\\\"\\\\\\\\\\\\"\\\\\\\\\\\\\"\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\\"None\\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\"\\\\\\\\\\\\\"\\\\\\\\\\\\"\\\\\\\\\\\"\\\\\\\\\\"\\\\\\\\\"\\\\\\\\"\\\\\\\"\\\\\\"\\\\\"\\\\"\\\"\\"\"", op="SETOWNER", owner=None, group=None, custom_headers=None, raw=False, **operation_config):
+            self, account_name, set_owner_file_path, owner=None, group=None, custom_headers=None, raw=False, **operation_config):
         """Sets the owner of a file or directory.
 
         :param account_name: The Azure Data Lake Store account to execute
@@ -1235,8 +1228,6 @@ class FileSystemOperations(object):
         :param set_owner_file_path: The Data Lake Store path (starting with
          '/') of the file or directory for which to set the owner.
         :type set_owner_file_path: str
-        :param op: The constant value for the operation.
-        :type op: str
         :param owner: The AAD Object ID of the user owner of the file or
          directory. If empty, the property will remain unchanged.
         :type owner: str
@@ -1252,6 +1243,8 @@ class FileSystemOperations(object):
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
+        op = "SETOWNER"
+
         # Construct URL
         url = '/webhdfs/v1/{setOwnerFilePath}'
         path_format_arguments = {
@@ -1292,7 +1285,7 @@ class FileSystemOperations(object):
             return client_raw_response
 
     def set_permission(
-            self, set_permission_file_path, account_name="\"\\"\\\"\\\\"\\\\\"\\\\\\"\\\\\\\"\\\\\\\\"\\\\\\\\\"\\\\\\\\\\"\\\\\\\\\\\"\\\\\\\\\\\\"\\\\\\\\\\\\\"\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\\"None\\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\\"\\\\\\\\\\\\\\"\\\\\\\\\\\\\"\\\\\\\\\\\\"\\\\\\\\\\\"\\\\\\\\\\"\\\\\\\\\"\\\\\\\\"\\\\\\\"\\\\\\"\\\\\"\\\\"\\\"\\"\"", op="SETPERMISSION", permission=None, custom_headers=None, raw=False, **operation_config):
+            self, account_name, set_permission_file_path, permission=None, custom_headers=None, raw=False, **operation_config):
         """Sets the permission of the file or folder.
 
         :param account_name: The Azure Data Lake Store account to execute
@@ -1301,8 +1294,6 @@ class FileSystemOperations(object):
         :param set_permission_file_path: The Data Lake Store path (starting
          with '/') of the file or directory for which to set the permission.
         :type set_permission_file_path: str
-        :param op: The constant value for the operation.
-        :type op: str
         :param permission: A string representation of the permission (i.e
          'rwx'). If empty, this property remains unchanged.
         :type permission: str
@@ -1315,6 +1306,8 @@ class FileSystemOperations(object):
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
+        op = "SETPERMISSION"
+
         # Construct URL
         url = '/webhdfs/v1/{setPermissionFilePath}'
         path_format_arguments = {

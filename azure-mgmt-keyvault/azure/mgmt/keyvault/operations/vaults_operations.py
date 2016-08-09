@@ -23,6 +23,8 @@ class VaultsOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An objec model deserializer.
+    :ivar filter: The filter to apply on the operation. Constant value: "resourceType eq 'Microsoft.KeyVault/vaults'".
+    :ivar api_version: Azure Resource Manager Api Version. Constant value: "2015-11-01".
     """
 
     def __init__(self, client, config, serializer, deserializer):
@@ -30,6 +32,8 @@ class VaultsOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
+        self.filter = "resourceType eq 'Microsoft.KeyVault/vaults'"
+        self.api_version = "2015-11-01"
 
         self.config = config
 
@@ -289,14 +293,10 @@ class VaultsOperations(object):
         return deserialized
 
     def list(
-            self, filter="resourceType eq 'Microsoft.KeyVault/vaults'", api_version="2015-11-01", top=None, custom_headers=None, raw=False, **operation_config):
+            self, top=None, custom_headers=None, raw=False, **operation_config):
         """The List operation gets information about the vaults associated with
         the subscription.
 
-        :param filter: The filter to apply on the operation.
-        :type filter: str
-        :param api_version: Azure Resource Manager Api Version.
-        :type api_version: str
         :param top: Maximum number of results to return.
         :type top: int
         :param dict custom_headers: headers that will be added to the request
@@ -318,10 +318,10 @@ class VaultsOperations(object):
 
                 # Construct parameters
                 query_parameters = {}
-                query_parameters['$filter'] = self._serialize.query("filter", filter, 'str')
+                query_parameters['$filter'] = self._serialize.query("self.filter", self.filter, 'str')
                 if top is not None:
                     query_parameters['$top'] = self._serialize.query("top", top, 'int')
-                query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
             else:
                 url = next_link

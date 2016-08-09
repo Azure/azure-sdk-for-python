@@ -23,6 +23,7 @@ class VirtualMachineImagesOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An objec model deserializer.
+    :ivar api_version: Client Api Version. Constant value: "2016-03-30".
     """
 
     def __init__(self, client, config, serializer, deserializer):
@@ -30,11 +31,12 @@ class VirtualMachineImagesOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
+        self.api_version = "2016-03-30"
 
         self.config = config
 
     def get(
-            self, location, publisher_name, offer, skus, version, api_version="2016-03-30", custom_headers=None, raw=False, **operation_config):
+            self, location, publisher_name, offer, skus, version, custom_headers=None, raw=False, **operation_config):
         """Gets a virtual machine image.
 
         :param location:
@@ -47,8 +49,6 @@ class VirtualMachineImagesOperations(object):
         :type skus: str
         :param version:
         :type version: str
-        :param api_version: Client Api Version.
-        :type api_version: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -73,7 +73,7 @@ class VirtualMachineImagesOperations(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -106,7 +106,7 @@ class VirtualMachineImagesOperations(object):
         return deserialized
 
     def list(
-            self, location, publisher_name, offer, skus, api_version="2016-03-30", filter=None, top=None, orderby=None, custom_headers=None, raw=False, **operation_config):
+            self, location, publisher_name, offer, skus, filter=None, top=None, orderby=None, custom_headers=None, raw=False, **operation_config):
         """Gets a list of virtual machine images.
 
         :param location:
@@ -117,8 +117,6 @@ class VirtualMachineImagesOperations(object):
         :type offer: str
         :param skus:
         :type skus: str
-        :param api_version: Client Api Version.
-        :type api_version: str
         :param filter: The filter to apply on the operation.
         :type filter: str
         :param top:
@@ -154,7 +152,7 @@ class VirtualMachineImagesOperations(object):
             query_parameters['$top'] = self._serialize.query("top", top, 'int')
         if orderby is not None:
             query_parameters['$orderby'] = self._serialize.query("orderby", orderby, 'str')
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -187,15 +185,13 @@ class VirtualMachineImagesOperations(object):
         return deserialized
 
     def list_offers(
-            self, location, publisher_name, api_version="2016-03-30", custom_headers=None, raw=False, **operation_config):
+            self, location, publisher_name, custom_headers=None, raw=False, **operation_config):
         """Gets a list of virtual machine image offers.
 
         :param location:
         :type location: str
         :param publisher_name:
         :type publisher_name: str
-        :param api_version: Client Api Version.
-        :type api_version: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -217,7 +213,7 @@ class VirtualMachineImagesOperations(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -250,13 +246,11 @@ class VirtualMachineImagesOperations(object):
         return deserialized
 
     def list_publishers(
-            self, location, api_version="2016-03-30", custom_headers=None, raw=False, **operation_config):
+            self, location, custom_headers=None, raw=False, **operation_config):
         """Gets a list of virtual machine image publishers.
 
         :param location:
         :type location: str
-        :param api_version: Client Api Version.
-        :type api_version: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -277,7 +271,7 @@ class VirtualMachineImagesOperations(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -310,7 +304,7 @@ class VirtualMachineImagesOperations(object):
         return deserialized
 
     def list_skus(
-            self, location, publisher_name, offer, api_version="2016-03-30", custom_headers=None, raw=False, **operation_config):
+            self, location, publisher_name, offer, custom_headers=None, raw=False, **operation_config):
         """Gets a list of virtual machine image skus.
 
         :param location:
@@ -319,8 +313,6 @@ class VirtualMachineImagesOperations(object):
         :type publisher_name: str
         :param offer:
         :type offer: str
-        :param api_version: Client Api Version.
-        :type api_version: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -343,7 +335,7 @@ class VirtualMachineImagesOperations(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
         header_parameters = {}
