@@ -9,10 +9,10 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .traffic_manager_management_client import TrafficManagerManagementClient
-from .version import VERSION
+from .endpoints_operations import EndpointsOperations
+from .profiles_operations import ProfilesOperations
 
-__all__ = ['TrafficManagerManagementClient']
-
-__version__ = VERSION
-
+__all__ = [
+    'EndpointsOperations',
+    'ProfilesOperations',
+]
