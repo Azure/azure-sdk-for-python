@@ -6,8 +6,19 @@
 # license information.
 #--------------------------------------------------------------------------
 
-from setuptools import setup
+from setuptools import find_packages, setup
+from codecs import open
 import re
+import os.path
+
+# Change the PACKAGE_NAME only to change folder and different name
+PACKAGE_NAME = "azure-mgmt-batch"
+PACKAGE_PPRINT_NAME = "Batch Management"
+
+# a-b-c => a/b/c
+package_folder_path = PACKAGE_NAME.replace('-', '/')
+# a-b-c => a.b.c
+namespace_name = PACKAGE_NAME.replace('-', '.')
 
 # azure v0.x is not compatible with this package
 # azure v0.x used to have a __version__ attribute (newer versions don't)
@@ -25,24 +36,29 @@ except ImportError:
     pass
 
 # Version extraction inspired from 'requests'
-with open('azure/mgmt/batch/version.py', 'r') as fd:
+with open(os.path.join(package_folder_path, 'version.py'), 'r') as fd:
     version = re.search(r'^VERSION\s*=\s*[\'"]([^\'"]*)[\'"]',
                         fd.read(), re.MULTILINE).group(1)
 
 if not version:
     raise RuntimeError('Cannot find version information')
 
+with open('README.rst', 'r', 'utf-8') as f:
+    readme = f.read()
+with open('HISTORY.rst', 'r', 'utf-8') as f:
+    history = f.read()
+
 setup(
-    name='azure-mgmt-batch',
+    name=PACKAGE_NAME,
     version=version,
-    description='Microsoft Azure Batch Management Client Library for Python',
-    long_description=open('README.rst', 'r').read(),
+    description='Microsoft Azure {} Client Library for Python'.format(PACKAGE_PPRINT_NAME),
+    long_description=readme + '\n\n' + history,
     license='MIT License',
     author='Microsoft Corporation',
     author_email='ptvshelp@microsoft.com',
     url='https://github.com/Azure/azure-sdk-for-python',
     classifiers=[
-        'Development Status :: 4 - Beta',
+        'Development Status :: 5 - Production/Stable',
         'Programming Language :: Python',
         'Programming Language :: Python :: 2',
         'Programming Language :: Python :: 2.7',
@@ -53,13 +69,7 @@ setup(
         'License :: OSI Approved :: MIT License',
     ],
     zip_safe=False,
-    packages=[
-        'azure',
-        'azure.mgmt',
-        'azure.mgmt.batch',
-        'azure.mgmt.batch.models',
-        'azure.mgmt.batch.operations',
-    ],
+    packages=find_packages(),
     install_requires=[
         'azure-mgmt-nspkg',
         'azure-common[autorest]==1.1.4',
