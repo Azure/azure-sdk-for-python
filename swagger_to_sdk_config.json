@@ -20,7 +20,8 @@
     "batch.management": {
       "swagger": "arm-batch/2015-12-01/swagger/BatchManagement.json",
       "autorest_options": {
-        "Namespace": "azure.mgmt.batch"
+        "Namespace": "azure.mgmt.batch",
+        "PackageVersion": "1.0.0"
       },
       "output_dir": "azure-mgmt-batch/azure/mgmt/batch"
     },
@@ -176,7 +177,8 @@
     "batch": {
       "swagger": "batch/2016-07-01.3.1/swagger/BatchService.json",
       "autorest_options": {
-        "Namespace": "azure.batch"
+        "Namespace": "azure.batch",
+        "PackageVersion": "1.0.0"
       },
       "output_dir": "azure-batch/azure/batch/",
       "wrapper_filesOrDirs": [
