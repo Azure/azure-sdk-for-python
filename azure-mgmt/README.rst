@@ -39,7 +39,7 @@ Features
 This version of the Azure Management package bundle consists of the
 following packages. Follow the links for more information on each package.
 
--  `azure-mgmt-batch v0.30.0 <https://pypi.python.org/pypi/azure-mgmt-batch/0.30.0>`__
+-  `azure-mgmt-batch v1.0.0 <https://pypi.python.org/pypi/azure-mgmt-batch/1.0.0>`__
 -  `azure-mgmt-compute v0.30.0 <https://pypi.python.org/pypi/azure-mgmt-compute/0.30.0>`__
 -  `azure-mgmt-keyvault v0.30.0 <https://pypi.python.org/pypi/azure-mgmt-keyvault/0.30.0>`__
 -  `azure-mgmt-network v0.30.0 <https://pypi.python.org/pypi/azure-mgmt-network/0.30.0>`__

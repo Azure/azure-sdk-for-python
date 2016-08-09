@@ -18,8 +18,8 @@ The azure 2.0.0 package contains the following Azure stable packages:
 - azure-mgmt-network 0.30.0
 - azure-mgmt-storage 0.30.0
 - azure-mgmt-keyvault 0.30.0
-- azure-mgmt-batch 0.30.0
-- azure-batch 0.30.0
+- azure-mgmt-batch 1.0.0
+- azure-batch 1.0.0
 - azure-storage 0.32.0
 - azure-servicebus 0.20.2
 - azure-servicemanagement-legacy 0.20.3
@@ -37,6 +37,7 @@ and will NOT be installed with the 2.0.0 "azure" meta-package:
 - azure-mgmt-powerbiembedded 0.30.0RC6
 - azure-mgmt-redis 0.30.0RC6
 - azure-mgmt-scheduler 0.30.0RC6
+- azure-mgmt-trafficmanager 0.30.0RC6
 - azure-mgmt-web 0.30.0RC6
 
 **WHAT'S NEW COMPARED TO 1.0.3**
