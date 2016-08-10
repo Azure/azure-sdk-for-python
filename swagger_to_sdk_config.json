@@ -168,7 +168,7 @@
       "output_dir": "azure-mgmt-storage/azure/mgmt/storage"
     },
     "trafficmanager": {
-      "swagger": "arm-trafficmanager/2015-11-01/trafficmanager.json",
+      "swagger": "arm-trafficmanager/2015-11-01/swagger/trafficmanager.json",
       "autorest_options": {
         "Namespace": "azure.mgmt.trafficmanager"
       },
