@@ -86,6 +86,7 @@ from .connection_shared_key import ConnectionSharedKey
 from .dhcp_options import DhcpOptions
 from .virtual_network import VirtualNetwork
 from .dns_name_availability_result import DnsNameAvailabilityResult
+from .ip_address_availability_result import IPAddressAvailabilityResult
 from .error_details import ErrorDetails
 from .error import Error
 from .azure_async_operation_result import AzureAsyncOperationResult
@@ -224,6 +225,7 @@ __all__ = [
     'DhcpOptions',
     'VirtualNetwork',
     'DnsNameAvailabilityResult',
+    'IPAddressAvailabilityResult',
     'ErrorDetails',
     'Error',
     'AzureAsyncOperationResult',
