@@ -12,11 +12,6 @@
 from enum import Enum
 
 
-class SkuFamily(Enum):
-
-    a = "A"
-
-
 class SkuName(Enum):
 
     standard = "standard"
