@@ -34,7 +34,6 @@ class MgmtKeyVaultTest(AzureMgmtTestCase):
                 'location': self.region,
                 'properties': {
                     'sku': {
-                        'family': 'A',
                         'name': 'standard'
                     },
                     # Fake random GUID
