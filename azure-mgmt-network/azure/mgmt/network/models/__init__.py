@@ -32,6 +32,7 @@ from .route import Route
 from .ip_configuration import IPConfiguration
 from .public_ip_address import PublicIPAddress
 from .public_ip_address_dns_settings import PublicIPAddressDnsSettings
+from .resource_navigation_link import ResourceNavigationLink
 from .application_gateway_backend_http_settings import ApplicationGatewayBackendHttpSettings
 from .application_gateway_http_listener import ApplicationGatewayHttpListener
 from .application_gateway_path_rule import ApplicationGatewayPathRule
@@ -86,6 +87,7 @@ from .connection_shared_key import ConnectionSharedKey
 from .dhcp_options import DhcpOptions
 from .virtual_network import VirtualNetwork
 from .dns_name_availability_result import DnsNameAvailabilityResult
+from .ip_address_availability_result import IPAddressAvailabilityResult
 from .error_details import ErrorDetails
 from .error import Error
 from .azure_async_operation_result import AzureAsyncOperationResult
@@ -170,6 +172,7 @@ __all__ = [
     'IPConfiguration',
     'PublicIPAddress',
     'PublicIPAddressDnsSettings',
+    'ResourceNavigationLink',
     'ApplicationGatewayBackendHttpSettings',
     'ApplicationGatewayHttpListener',
     'ApplicationGatewayPathRule',
@@ -224,6 +227,7 @@ __all__ = [
     'DhcpOptions',
     'VirtualNetwork',
     'DnsNameAvailabilityResult',
+    'IPAddressAvailabilityResult',
     'ErrorDetails',
     'Error',
     'AzureAsyncOperationResult',
