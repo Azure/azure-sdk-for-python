@@ -1,41 +1,128 @@
-2016-08-01
+2016-08-08 Version 2.0.0 / 0.30.0
++++++++++++++++++++++++++++++++++
 
-azure-servicemanagement-legacy 0.20.4
+**Disclaimer**
 
-Bug fix:
+Starting with this release, most packages now use the MIT license. The following packages still remain on the Apache license:
+
+- azure-servicebus
+- aure-servicemanagement-legacy
+- azure-storage
+
+This is a stable release, ready for production.
+
+The azure 2.0.0 package contains the following Azure stable packages:
+
+- azure-mgmt-resource 0.30.0
+- azure-mgmt-compute 0.30.0
+- azure-mgmt-network 0.30.0
+- azure-mgmt-storage 0.30.0
+- azure-mgmt-keyvault 0.30.0
+- azure-mgmt-batch 1.0.0
+- azure-batch 1.0.0
+- azure-storage 0.32.0
+- azure-servicebus 0.20.2
+- azure-servicemanagement-legacy 0.20.3
+
+The following packages are also available as preview only, not ready for production,
+and will NOT be installed with the 2.0.0 "azure" meta-package:
+
+- azure-mgmt-authorization 0.30.0RC5
+- azure-mgmt-cdn 0.30.0RC6
+- azure-mgmt-cognitiveservices 0.30.0RC6
+- azure-mgmt-commerce 0.30.0RC6
+- azure-mgmt-dns 0.30.0RC6
+- azure-mgmt-logic 0.30.0RC6
+- azure-mgmt-notificationhubs 0.30.0RC6
+- azure-mgmt-powerbiembedded 0.30.0RC6
+- azure-mgmt-redis 0.30.0RC6
+- azure-mgmt-scheduler 0.30.0RC6
+- azure-mgmt-trafficmanager 0.30.0RC6
+- azure-mgmt-web 0.30.0RC6
+
+**WHAT'S NEW COMPARED TO 1.0.3**
+
+* New libraries
+
+  * KeyVault Management
+  * Batch and Batch Management
+
+* Enhanced libraries compared to 1.0.0 preview
+
+  * Storage: create storage accounts, list keys, and more. Latest API version.
+  * Resource:
+
+    * resources : create resource groups, register providers and more
+    * features : manage features of provider and more
+    * authorization : manage resource group lock and more
+    * subscriptions : manage subscriptions and more
+    * policy : manage resources policy among users and more
+
+  * Network: create virtual networks, network interfaces, public ips and more
+  * Compute: create virtual machines, containers and more
+
+**BREAKING CHANGES**
+
+We made efforts to document the breaking from ARM 1.0.x version to 2.0.0 `here<https://github.com/Azure/azure-sdk-for-python/wiki/Migrate-from-1.0.x-0.20.0-to-2.0.0-0.30.0>`__.
+
+If you were already using the 2.0.0RC5 version, there are no breaking changes.
+
+**RC6 PACKAGES**
+
+All RC6 packages use the latest APIVersion available for these services
+
+azure-storage 0.32.0
+  * Major version. `Check the ChangeLog on storage github account for details<https://github.com/Azure/azure-storage-python/releases>`__.
+  
+2016-08-01 azure-servicemanagement-legacy 0.20.4
+++++++++++++++++++++++++++++++++++++++++++++++++
+
+**Bugfix**
+
 * Incomplete parsing if XML contains namespace #257 #707
 
-New:
+**New**
+
 * Associate/Dissociate Reserved IP #695 #716
 
-2016-06-28 Service Bus 0.20.2
+Thank you to brandondahler, schaefi for their contributions.
 
-Bug fix:
+2016-06-28 Service Bus 0.20.2
++++++++++++++++++++++++++++++
+
+**Bugfix**
+
 * New header in Rest API which breaks the SDK #658 #657
 
 2016-06-23 Version 2.0.0rc5 / 0.30.0rc5
++++++++++++++++++++++++++++++++++++++++
 
-Disclaimer:
+**Disclaimer**
+
 * There is some breaking changes in the Storage client, due to the update the latest API-Version.
-There is a storage sample with the new version available here:
-https://github.com/Azure-Samples/storage-python-manage
+  There is a storage sample with the new version available here:
+  https://github.com/Azure-Samples/storage-python-manage
 * There is some breaking changes in the GraphRbac client, due to the update the latest API-Version.
-This is an example of change on our tests:
-https://github.com/Azure/azure-sdk-for-python/commit/b03cae526d9ac46d1b477840f15d3729aa0d939f#diff-296e794143f66af83d1bf2db6eb7a935
+  This is an example of change on our tests:
+  https://github.com/Azure/azure-sdk-for-python/commit/b03cae526d9ac46d1b477840f15d3729aa0d939f#diff-296e794143f66af83d1bf2db6eb7a935
 
-Bug fixes:
+**Bugfixes**
+
 * Each package has now a correct `__version__` attribute which contains the package version.
 * Fixed serialization of continuation tokens containing '.' (batch libraries)
 
-New:
+**New**
+
 * New PowerBI Embeddeded preview client
 * New Cognitive Services preview client
 
 2016-05-24 Version 2.0.0rc4 / 0.30.0rc4
++++++++++++++++++++++++++++++++++++++++
 
-Disclaimer:
+**Disclaimer**
+
 * There is a breaking change in all Client __init__ methods. Configuration classes have disappeared.
-Update this:
+  Update this::
 
     resource_client = ResourceManagementClient(
         ResourceManagementClientConfiguration(
@@ -44,19 +131,20 @@ Update this:
         )
     )
     
-to this:
+  to this::
 
     resource_client = ResourceManagementClient(
         credentials,
         subscription_id
     )
 
-If you were using the Configuration class, it is still available using the `config` attribute after Client creation:
+  If you were using the Configuration class, it is still available using the `config` attribute after Client creation::
 
     resource_client.config.long_running_operation_timeout = 5
     
-New:
-* you can now simplify your call by passing a dict directly and not an instance. This removes the needs to import each model:
+**New**
+
+* you can now simplify your call by passing a dict directly and not an instance. This removes the needs to import each model::
 
     from azure.mgmt.resource.resources.models import ResourceGroup
 
@@ -67,7 +155,7 @@ New:
         )
     )
 
-can now be written directly:
+  can now be written directly::
     
     resource_client.resource_groups.create_or_update(
         group_name,
@@ -76,7 +164,7 @@ can now be written directly:
         }
     )
 
-* All Resources clients have now alias in the azure.mgmt.resource namespace:
+* All Resources clients have now alias in the azure.mgmt.resource namespace::
 
     azure.mgmt.resource.FeatureClient
     azure.mgmt.resource.ManagementLockClient
@@ -85,13 +173,14 @@ can now be written directly:
     azure.mgmt.resource.SubscriptionClient
 
 * Enum refactoring. There are now two kinds of enum: "strict" and "soft".
-A "soft" enum can be substituted by any random string without risking a client-side exception. This is useful for
-services which might add new enum types frequently (e.g. VirtualMachine size). The server might decide to refuse our string and
-you might receive a CloudError exception.
 
-A "strict" enum must follow one of the authorized enum values. Strings are still accepted, but if your value is not valid
-you will receive a SerializationError *without* a call to the REST API. Before, the call was made to the REST API and you received 
-a `CloudError` if the server refused the request.
+  A "soft" enum can be substituted by any random string without risking a client-side exception. This is useful for
+  services which might add new enum types frequently (e.g. VirtualMachine size). The server might decide to refuse our string and
+  you might receive a CloudError exception.
+
+  A "strict" enum must follow one of the authorized enum values. Strings are still accepted, but if your value is not valid
+  you will receive a SerializationError *without* a call to the REST API. Before, the call was made to the REST API and you received 
+  a `CloudError` if the server refused the request.
 
 * Latest Swagger update for Redis (API-version 2016-04-01)
 * Latest Swagger update for GraphRbac (API-version 1.6)
@@ -100,53 +189,60 @@ a `CloudError` if the server refused the request.
 * New Compute Container client
 * New azure-mgmt-commerce preview package for Billing API
 
-Dependencies:
+**Dependencies**
+
 * msrest must be >= 0.4.0 (see their ChangeLog for details)
 * msrestazure must be >= 0.4.0 (see their ChangeLog for details)
 * azure-common[autorest] == 1.1.4, provides automatic autorest right dependencies
 * azure-storage 0.32.0
+
   * `Check the ChangeLog on storage github account for details<https://github.com/Azure/azure-storage-python/releases>`__.
     
     
 2016-04-26 Version 2.0.0rc3 / 0.30.0rc3
++++++++++++++++++++++++++++++++++++++++
 
-Disclaimer:
+**Disclaimer**
 There is no known breaking changes between 2.0.0RC2 and 2.0.0RC3.
-However, we removed several useless parameters for __init__ methods on model classes. If you get an error message like this after migrating to RC3:
+However, we removed several useless parameters for __init__ methods on model classes. If you get an error message like this after migrating to RC3::
  
     TypeError: __init__() got an unexpected keyword argument 'type'
     
-or
+or::
 
     TypeError: __init__() takes exactly 1 positional argument (2 given)
     
 You can remove the involved parameter safely, as it should not have been there in the first place.
 
-New:
+**New**
+
 * Batch / Batch Management are installed with the azure meta-package
 * Type checking improvement in Client
 * Latest Swagger update for Compute (Hardware profile update)
 * Latest Swagger update for Redis (force-reboot)
-* ´azure´ now installs azure-servicemanagement-legacy 0.20.3
-* ´azure´ now installs azure-storage 0.31.0
+* `azure` now installs azure-servicemanagement-legacy 0.20.3
+* `azure` now installs azure-storage 0.31.0
 
-Dependencies:
+**Dependencies**
+
 * msrest must be >= 0.3.0 (see their ChangeLog for details)
 * msrestazure must be >= 0.3.0 (see their ChangeLog for details)
 * azure-common[autorest] == 1.1.3, provides automatic autorest right dependencies
 * azure-storage 0.31.0
+
   * `Check the ChangeLog on storage github account for details<https://github.com/Azure/azure-storage-python/releases>`__.
 
-2016-03-31
-
-azure-servicemanagement-legacy 0.20.3
+2016-03-31 azure-servicemanagement-legacy 0.20.3
+++++++++++++++++++++++++++++++++++++++++++++++++
 
 New:
 * #519 Add support for the OSImage /details endpoint
 
 2016-03-29 Version 2.0.0rc2 / 0.30.0rc2
++++++++++++++++++++++++++++++++++++++++
 
-New:
+**New**
+
 * Latest Swagger update for CDN (minor fixes, documentation)
 * Latest Swagger update for Compute (API-version 2016-03-30, minor fixes, documentation)
 * Latest Swagger update for Network (API-version 2016-03-30, minor fixes, documentation)
@@ -154,21 +250,26 @@ New:
 * Rename resource/locks client from LockManagementClient to ManagementLockClient
 * Latest Swagger update for Webapps  (minor fixes, documentation)
 
-Fixes:
+**Bugfixes**
+
 * #552 #536 Broken parameters in some Network models
 * Raw=true in async methods now returns the direct server answer, not an AzureOperationPoller instance
 
-Dependencies:
+**Dependencies**
+
 * msrest must be >= 0.2.0 (see their ChangeLog for details)
 * msrestazure must be >= 0.2.0 (see their ChangeLog for details)
 * azure-common[autorest] == 1.1.2, provides automatic autorest right dependencies
 
-Misc:
+**Misc**
+
 * The AzureResourceViewer example in the 'example' folder has been updated to SDK 2.0.0rc2
 
 2016-03-04 Version 2.0.0rc1 / 0.30.0rc1
++++++++++++++++++++++++++++++++++++++++
 
-New:
+**New**
+
 * Lastest Swagger update for CDN (endpoint create/update fix).
 * Lastest Swagger update for ARM VMScaleSet (reimage, redeploy).
 * Lastest Swagger update for ARM VirtualMachine (minor fixes, redeploy).
@@ -181,21 +282,25 @@ New:
 * Base class Paged now inherits from collections.Iterable.
 * odata filters are now taken as string directly
 
-azure-common 1.1.0
+**azure-common 1.1.0**
+
 * add exceptions/credentials aliases in azure.common
 
-Dependencies:
+**Dependencies**
+
 * msrest/msrestazure must be >= 0.1.0 (see their ChangeLog for details)
 
 2016-02-18 Version 2.0.0a1
+++++++++++++++++++++++++++
 
-DISCLAIMER:
+**DISCLAIMER**
 
 This is an alpha release. Future releases may introduce some breaking changes.
 Some of the new generated libraries have not yet been tested extensively, and some have known issues (such as azure-mgmt-web).
 Our goal is to release a stable version by the end of March 2016.  Please send us your feedback!
 
-WHAT'S NEW:
+**WHAT'S NEW**
+
 * New ARM generated code based on `Swagger specification of the Azure REST APIs<https://github.com/Azure/azure-rest-api-specs>`__
 * New libraries
 
@@ -224,17 +329,19 @@ WHAT'S NEW:
   * Network: create virtual networks, network interfaces, public ips and more
   * Compute: create virtual machines and more
 
-BREAKING CHANGES:
+**BREAKING CHANGES**
+
 We made our possible to document the breaking from ARM 1.0.0 version to 2.0.0 `here<https://github.com/Azure/azure-sdk-for-python/wiki/Migrate-from-1.0.0-ARM-preview-to-2.0.0>`__.
+
+**Dependencies**
 
 azure-storage 0.30.0
   * Major version. `Check the ChangeLog on storage github account for details<https://github.com/Azure/azure-storage-python/releases>`__.
 
 2016-01-20 Version 1.0.3
+++++++++++++++++++++++++
 
-  * #491 #502 #422 Update documentation
-  * Update azure-storage dependency to 0.20.3
-  * Update azure-mgmt dependency to 0.20.2
+**Bugfixes**
 
 azure-mgmt-compute 0.20.1
   * #510 Missing "statuses" property in VirtualMachineInstanceView
@@ -244,10 +351,17 @@ azure-servicemanagement-legacy 0.20.2
   * #497      Add replicate_vm_image, unreplicate_vm_image, share_vm_image
   * #501 #511 Add update_os_image_from_image_reference
 
+**Misc**
+
+  * #491 #502 #422 Update documentation
+  * Update azure-storage dependency to 0.20.3
+  * Update azure-mgmt dependency to 0.20.2
+
 Thank you to bear454, ekesken, kingliantop, mamoo, schaefi for their contributions.
 
 
 2015-10-02 Version 1.0.2
+++++++++++++++++++++++++
 
 azure-mgmt-network 0.20.1
   * Fix retry timeout default value for long running operations
@@ -264,6 +378,7 @@ Thank you to aarsan, trondhindenes for their contributions.
 
 
 2015-09-14 Version 1.0.1
+++++++++++++++++++++++++
 
 * Use requests library by default in all libraries
   * Exception is azure-servicemanagement-legacy which can use requests or winhttp
@@ -272,20 +387,22 @@ Thank you to aarsan, trondhindenes for their contributions.
 
 
 2015-08-31 Version 1.0.0
+++++++++++++++++++++++++
 
-UPGRADE:
+**UPGRADE**
 
 If you are upgrading from v0.11.x or earlier, make sure to uninstall that
 version before installing the latest release.
 
-WHAT'S NEW:
+**WHAT'S NEW**
 
 * Preliminary Azure Resource Manager (ARM) support.
   Manage your Azure compute, network and storage resources.
   This is a preview and is subject to changes in future releases.
 * Azure Storage File support.
 * Azure library is now more modular. You can choose to install bundles
-  or install only the packages you need. Packages now available on PyPI:
+  or install only the packages you need. Packages now available on PyPI::
+
     azure (bundle)
       azure-mgmt (bundle)
         azure-mgmt-compute
@@ -295,44 +412,46 @@ WHAT'S NEW:
       azure-servicebus
       azure-servicemanagement-legacy
       azure-storage
+
 * Azure Storage has moved.
     https://github.com/Azure/azure-storage-python
+
     http://azure-storage.readthedocs.org/en/latest/
 
-FIXES:
+**Bugfixes**
 
 * #437 Make delete_storage_account return async request id
 * #435 Add complete flag to delete_role
 * #448 Cast authorization code from unicode to string
 * #395 Azure.Storage Python 2.6 compatibility
 
-BREAKING CHANGES:
+**BREAKING CHANGES**
 
-The following were renamed and moved from 'azure' to 'azure.common':
+The following were renamed and moved from 'azure' to 'azure.common'::
     WindowsAzureError                -> AzureException and AzureHttpError
     WindowsAzureConflictError        -> AzureConflictHttpError
     WindowsAzureMissingResourceError -> AzureMissingResourceHttpError
 
-The following were renamed and moved from 'azure' to 'azure.servicemanagement':
+The following were renamed and moved from 'azure' to 'azure.servicemanagement'::
     WindowsAzureAsyncOperationError  -> AzureAsyncOperationHttpError
 
-The following were renamed and moved from 'azure' to 'azure.storage':
+The following were renamed and moved from 'azure' to 'azure.storage'::
     WindowsAzureBatchOperationError  -> AzureBatchOperationError
 
-The following have moved from 'azure' to 'azure.servicemanagement':
+The following have moved from 'azure' to 'azure.servicemanagement'::
     DEFAULT_HTTP_TIMEOUT
     MANAGEMENT_HOST
 
-The following have moved from 'azure' to 'azure.servicebus':
+The following have moved from 'azure' to 'azure.servicebus'::
     DEFAULT_HTTP_TIMEOUT
     SERVICE_BUS_HOST_BASE
 
-The following have moved from 'azure' to 'azure.storage':
+The following have moved from 'azure' to 'azure.storage'::
     DEFAULT_HTTP_TIMEOUT
     DEV_ACCOUNT_NAME
     DEV_ACCOUNT_KEY
 
-The following have moved from 'azure.storage' to 'azure.storage.blob':
+The following have moved from 'azure.storage' to 'azure.storage.blob'::
     BLOB_SERVICE_HOST_BASE
     DEV_BLOB_HOST
     BlobService
@@ -351,7 +470,7 @@ The following have moved from 'azure.storage' to 'azure.storage.blob':
     ContainerSharedAccessPermissions
     BlobSharedAccessPermissions
 
-The following have moved from 'azure.storage' to 'azure.storage.queue':
+The following have moved from 'azure.storage' to 'azure.storage.queue'::
     QUEUE_SERVICE_HOST_BASE
     DEV_QUEUE_HOST
     QueueService
@@ -361,7 +480,7 @@ The following have moved from 'azure.storage' to 'azure.storage.queue':
     QueueMessage
     QueueSharedAccessPermissions
 
-The following have moved from 'azure.storage' to 'azure.storage.table':
+The following have moved from 'azure.storage' to 'azure.storage.table'::
     TABLE_SERVICE_HOST_BASE
     DEV_TABLE_HOST
     TableService
@@ -374,6 +493,7 @@ Thank you to Sabbasth, schaefi, feoff3, JamieCressey for their contributions.
 
 
 2015-06-16 Version 0.11.1
++++++++++++++++++++++++++
 
  * Azure storage connection string support
  * Add a request_session parameter to storage and service bus classes
@@ -386,8 +506,9 @@ Thank you to Sabbasth, schaefi, feoff3, JamieCressey for their contributions.
 Thank you to rchamorro, drdarshan, hosungs, h_yamaki for their contributions.
 
 2015-05-13 Version 0.11.0
++++++++++++++++++++++++++
 
-IMPORTANT CHANGE THAT AFFECTS STORAGE:
+**IMPORTANT CHANGE THAT AFFECTS STORAGE**
 
 The API for creating shared access signatures has changed. The new API enables
 easy production AND consumption of SAS for blob, queue and table storage.
@@ -404,7 +525,7 @@ easy production AND consumption of SAS for blob, queue and table storage.
  See http://azure-sdk-for-python.readthedocs.org/en/latest/storage.html for
  more details on using SAS with Azure Storage.
 
-Other changes:
+**Other changes**
 
  * Create/list/delete job functionality added to SchedulerManagementService
  * update_site added to WebsiteManagementService to start/stop web sites
@@ -421,66 +542,74 @@ Thank you to lmazuel, antonydenyer, zlike-msft, melor and amegianeg for their
 contributions.
 
 2015-04-28 Version 0.10.2
- * Fixes for bugs:
++++++++++++++++++++++++++
+
+**Bugfixes**
+
    #338 Version 0.10.0 fails with 'SocketReader' object has no attribute 'tell'
 
 2015-03-13 Version 0.10.0
++++++++++++++++++++++++++
 
-IMPORTANT CHANGE THAT AFFECTS STORAGE USERS (BLOB, QUEUE, TABLE):
+**IMPORTANT CHANGE THAT AFFECTS STORAGE USERS (BLOB, QUEUE, TABLE)**
 
 The library now targets x-ms-version '2014-02-14' of the storage REST API.
 Previous version of the library targeted '2012-02-12'.
 
 The upgrade to this new version causes some breaking changes for Python SDK users:
- * Metrics for blob, queue, table service properties, which used to be accessed
-   with the 'metrics' field are now accessed via 'hour_metrics' and 'minute_metrics'.
-   Note that a backwards compatible 'metrics' property was added to redirect access 
-   to 'hour_metrics'.
- * Url is no longer returned from list_containers, list_blobs, list_queues.
-   For blob, you can use the utility function make_blob_url as an alternate
-   way to get a URL.
 
-See MSDN documentation for details on REST API changes
- in '2013-08-15': https://msdn.microsoft.com/en-us/library/azure/dn592124.aspx
- in '2014-02-14': https://msdn.microsoft.com/en-us/library/azure/dd894041.aspx
+* Metrics for blob, queue, table service properties, which used to be accessed
+  with the 'metrics' field are now accessed via 'hour_metrics' and 'minute_metrics'.
+  Note that a backwards compatible 'metrics' property was added to redirect access 
+  to 'hour_metrics'.
+* Url is no longer returned from list_containers, list_blobs, list_queues.
+  For blob, you can use the utility function make_blob_url as an alternate
+  way to get a URL.
+
+See MSDN documentation for details on REST API changes:
+
+* in '2013-08-15': https://msdn.microsoft.com/en-us/library/azure/dn592124.aspx
+* in '2014-02-14': https://msdn.microsoft.com/en-us/library/azure/dd894041.aspx
 
 
 The other changes in this release are:
 
- * Performance improvements in xml deserialization of storage and service bus
-   Table storage query_entities is ~25X faster for the maximum of 1000 entities
- * Ability to upload and download blobs using multiple connections, along with
-   retries when a chunk upload/download failure occurs
-   Controlled via the max_connections, max_retries, retry_wait parameters
- * Use get_certificate_from_publish_settings to get a .pem certificate from
-   your azure publish settings file
- * Ability to adjust the global http timeout
- * Service bus event hub support (create/update/delete hubs + send events)
- * Documentation for API Reference is now available at 
-   http://azure-sdk-for-python.readthedocs.org/en/documentation/index.html
+* Performance improvements in xml deserialization of storage and service bus
+  Table storage query_entities is ~25X faster for the maximum of 1000 entities
+* Ability to upload and download blobs using multiple connections, along with
+  retries when a chunk upload/download failure occurs
+  Controlled via the max_connections, max_retries, retry_wait parameters
+* Use get_certificate_from_publish_settings to get a .pem certificate from
+  your azure publish settings file
+* Ability to adjust the global http timeout
+* Service bus event hub support (create/update/delete hubs + send events)
+* Documentation for API Reference is now available at 
+  http://azure-sdk-for-python.readthedocs.org/en/documentation/index.html
 
- * Fixes for bugs:
-   #237 Ability to use multiple connections to upload blob chunks in parallel
-   #254 Improve performance of table storage (and more?)
-   #258 Support authenticating with azureProfile like in CLI tools
-   #259 Unicode error is raised instead of actual error
-   #263 Change description name
-   #268 delete_deployment does not pass comp=media to delete disks
-   #271 Update current_name so that multiple parameters with the same name...
-   #270 Documentation for capture_vm_image is incorrect
-   #273 Unicode error with utf-8 encoding value
-   #276 Service Mgmt - Reserved IP create/delete are async
-   #280 add support for setting IdleTimeoutInMinutes on load balanced endpoint
-   #288 InvalidHeaderValue on BlobService example
-   #294 Upload of large files is too slow
-   #304 Unable to upload large size files to Azure Page Blob
+**Bugfixes**
+
+* #237 Ability to use multiple connections to upload blob chunks in parallel
+* #254 Improve performance of table storage (and more?)
+* #258 Support authenticating with azureProfile like in CLI tools
+* #259 Unicode error is raised instead of actual error
+* #263 Change description name
+* #268 delete_deployment does not pass comp=media to delete disks
+* #271 Update current_name so that multiple parameters with the same name...
+* #270 Documentation for capture_vm_image is incorrect
+* #273 Unicode error with utf-8 encoding value
+* #276 Service Mgmt - Reserved IP create/delete are async
+* #280 add support for setting IdleTimeoutInMinutes on load balanced endpoint
+* #288 InvalidHeaderValue on BlobService example
+* #294 Upload of large files is too slow
+* #304 Unable to upload large size files to Azure Page Blob
 
 Thank you to lmazuel, rhaps0dy, timfpark, gaellbn, moutai, edevil, rjschwei and
 okaram for their contributions.
 
 2014-11-21 Version 0.9.0
+++++++++++++++++++++++++
 
-IMPORTANT CHANGE IN BEHAVIOR THAT AFFECTS TABLE STORAGE USERS:
+**IMPORTANT CHANGE IN BEHAVIOR THAT AFFECTS TABLE STORAGE USERS**
 
 The library now converts any datetime object in an entity to UTC before writing
 the value to Azure, and it sets the timezone (tzinfo) to UTC on the entities
@@ -489,102 +618,134 @@ dependency.
 
 The other changes in this release are:
 
-  * Ability to pass in to management APIs a Session object from the requests
-    library (or any compatible). This allows more flexibility for authentication,
-    including oauth.
-  * New service management APIs
-    - list_role_sizes
-    - list_subscriptions (oauth only)
-    - rebuild_role_instance
-    - delete_role_instances
-    - create_reserved_ip_address
-    - delete_reserved_ip_address
-    - get_reserved_ip_address
-    - list_reserved_ip_addresses
-    - add_dns_server
-    - update_dns_server
-    - delete_dns_server
-    - list_resource_extensions
-    - list_resource_extension_versions
-    - capture_vm_image
-    - delete_vm_image
-    - list_vm_images
-    - create_vm_image
-    - update_vm_image
-  * Enhanced service management APIs
-    - create_virtual_machine_deployment / add_role
-      - custom data
-      - additional windows unattend content
-      - create from a vm image
-      - public ips
-      - resource extensions
-      - create from remote os image
-      - provision guest agent
-      - dns servers
-      - reserved ip
-    - update_role
-      - resource extensions
-      - provision guest agent
-    - create_storage_service
-      - account_type replaces geo_replication_enabled (preserved for backwards compat)
- * Preliminary Scheduler management API
- * Add metrics to Service Bus management API
- * Delete Blob - support for x-ms-delete-snapshots header 
- * Fixes for bugs:
-   #221 Topic names containing slash
-   #234 AttributeError on Timestamp property
-   #212 Storage: Timstamp's microseconds value out of range
-   #116 def _from_entity_datetime(value) in __init__.py returns 7 for seconds
-   #114 Timezone information 'Z' is ignored during parsing of datetime of table entity
+* Ability to pass in to management APIs a Session object from the requests
+  library (or any compatible). This allows more flexibility for authentication,
+  including oauth.
+* New service management APIs
+
+  - list_role_sizes
+  - list_subscriptions (oauth only)
+  - rebuild_role_instance
+  - delete_role_instances
+  - create_reserved_ip_address
+  - delete_reserved_ip_address
+  - get_reserved_ip_address
+  - list_reserved_ip_addresses
+  - add_dns_server
+  - update_dns_server
+  - delete_dns_server
+  - list_resource_extensions
+  - list_resource_extension_versions
+  - capture_vm_image
+  - delete_vm_image
+  - list_vm_images
+  - create_vm_image
+  - update_vm_image
+* Enhanced service management APIs
+
+  - create_virtual_machine_deployment / add_role
+
+    - custom data
+    - additional windows unattend content
+    - create from a vm image
+    - public ips
+    - resource extensions
+    - create from remote os image
+    - provision guest agent
+    - dns servers
+    - reserved ip
+
+  - update_role
+
+    - resource extensions
+    - provision guest agent
+
+  - create_storage_service
+
+    - account_type replaces geo_replication_enabled (preserved for backwards compat)
+
+* Preliminary Scheduler management API
+* Add metrics to Service Bus management API
+* Delete Blob - support for x-ms-delete-snapshots header 
+
+**Bugfixes**
+
+* #221 Topic names containing slash
+* #234 AttributeError on Timestamp property
+* #212 Storage: Timstamp's microseconds value out of range
+* #116 def _from_entity_datetime(value) in __init__.py returns 7 for seconds
+* #114 Timezone information 'Z' is ignored during parsing of datetime of table entity
 
 Thank you to Costeijn, lmazuel, pneumee, nicbon, bndw, troyanov for their contributions.
 
 2014-09-19 Version 0.8.4
- * Add ability to get website publish data as an object (thanks lmazuel)
- * Fixes for bugs:
-   #216 Daylight saving problem in ServiceBusSASAuthentication
-   #218 Content type incorrect on blob
+++++++++++++++++++++++++
+
+* Add ability to get website publish data as an object (thanks lmazuel)
+
+**Bugfixes**
+
+* #216 Daylight saving problem in ServiceBusSASAuthentication
+* #218 Content type incorrect on blob
 
 2014-09-09 Version 0.8.3
- * Add Shared Access Signature support to Service Bus
+++++++++++++++++++++++++
+
+* Add Shared Access Signature support to Service Bus
 
 2014-08-26 Version 0.8.2
+++++++++++++++++++++++++
+
  * Add functionality to Service Bus Management API
+
    - list queues/topics/notification hubs/relays
+
  * Add CreationTime to StorageAccountProperties
  * Preliminary SQL Database Management API
  * Preliminary Website Management API
+
    - list/get webspaces
    - list/get/create/delete/restart website
    - get historical usage metrics and metric definitions
    - get publish profile xml
- * Fixes for bugs:
-   #192 Fix deserialization of broker properties for service bus.
-   #173 Fix some incompatibilities with Python 2.6
 
- Thank you to lmazuel for the contributions to SQL Database, Service Bus and
- Website management.
+**Bugfixes**
+
+* #192 Fix deserialization of broker properties for service bus.
+* #173 Fix some incompatibilities with Python 2.6
+
+Thank you to lmazuel for the contributions to SQL Database, Service Bus and
+Website management.
 
 2014-06-26 Version 0.8.1
- * Fixes for bugs:
-   #149 Table storage batch client doesn't validate etag
-   #129 Inconsistent WindowsAzure Errors
+++++++++++++++++++++++++
 
- Thank you to kaptajnen, matlockx for their fixes for the redirection issue (#129).
+**Bugfixes**
+
+* #149 Table storage batch client doesn't validate etag
+* #129 Inconsistent WindowsAzure Errors
+
+Thank you to kaptajnen, matlockx for their fixes for the redirection issue (#129).
 
 2014-03-31 Version 0.8.0
+++++++++++++++++++++++++
+
  * Existing service management API now targets x-ms-version 2013-06-01
- * Fixes for bugs:
-   #145 Missing DataVirtualHardDisks in Cloud Service Properties
-   #144 Added configuration sets for role and added list virtual network function 
-   #139 How to start "Deallocated" role
-   #127 Add WinRM options to create_virtual_machine_deployment()
-   #131 Missing role instance endpoint in get_deployment_by_X
-   #128 Update __init__.py for missing host_name attribute on RoleInstance
-   #140 Table Service deletes empty strings 
-   #40  Edm.Binary and null support in table storage entities
+
+**Bugfixes**
+
+* #145 Missing DataVirtualHardDisks in Cloud Service Properties
+* #144 Added configuration sets for role and added list virtual network function 
+* #139 How to start "Deallocated" role
+* #127 Add WinRM options to create_virtual_machine_deployment()
+* #131 Missing role instance endpoint in get_deployment_by_X
+* #128 Update __init__.py for missing host_name attribute on RoleInstance
+* #140 Table Service deletes empty strings 
+* #40  Edm.Binary and null support in table storage entities
 
 2014-02-10 Version 0.8.0pr1
++++++++++++++++++++++++++++
+
  * Migrate to using httplib on Windows. This is now the default, unless a 
    Windows Certificate Store management certificate is used. Make sure to use 
    CPython 2.7.4 or later when using OpenSSL .pem certificates on Windows.
@@ -600,45 +761,62 @@ Thank you to Costeijn, lmazuel, pneumee, nicbon, bndw, troyanov for their contri
    #121 In blob storage, put_page, x-ms-if-sequence-number-lte header should be x-ms-if-sequence-number-le
 
 2013-11-06 Version 0.7.1
- * Fixes for bugs:
-   #118 Proxy doesn't support specifying credentials
-   #117 Service bus authorization code doesn't go through the proxy server
-   #108 Create VM, Administrator Password Base-64 Encoding 
-   #106 Why isn't setup.py in the root of the project?
-   #96  Change default connection protocol to https
+++++++++++++++++++++++++
+
+**Bugfixes**
+
+* #118 Proxy doesn't support specifying credentials
+* #117 Service bus authorization code doesn't go through the proxy server
+* #108 Create VM, Administrator Password Base-64 Encoding 
+* #106 Why isn't setup.py in the root of the project?
+* #96  Change default connection protocol to https
 
 2013-07-08 Version 0.7.0
+++++++++++++++++++++++++
+
  * Added service bus management API
  * Added support for list blobs delimiter (for easier hierarchical listings)
- * Fixes for bugs:
-   #90  get_blob_metadata returns more than the metadata (also get_container_metadata and get_queue_metadata)
-   #87  Proxy support for *NIX systems
-   #86  Fix capitalization in the 'Fingerprint' tag for XML of serialization of SSH keys configuration 
-   #83  Fixed an issue that prevented the creation of endpoints for a VM
-   #80  Error deserializing datetime value from Table Store
-   #79  Specify VirtualNetworkName when creating Virtual Machine
  * Cleanup of imports
  * Renamed some private functions that weren't starting with an underscore
  * Removed code generator (it's now obsolete, we make changes directly in the Python sources)
+
+**Bugfixes**
+
+* #90  get_blob_metadata returns more than the metadata (also get_container_metadata and get_queue_metadata)
+* #87  Proxy support for \*NIX systems
+* #86  Fix capitalization in the 'Fingerprint' tag for XML of serialization of SSH keys configuration 
+* #83  Fixed an issue that prevented the creation of endpoints for a VM
+* #80  Error deserializing datetime value from Table Store
+* #79  Specify VirtualNetworkName when creating Virtual Machine
  
- Thank you to timanovsky, sebhomengo, pneumee, ogrisel, 0xc0decafe and apatard for their bug reports and fixes.
+Thank you to timanovsky, sebhomengo, pneumee, ogrisel, 0xc0decafe and apatard for their bug reports and fixes.
 
 2013-03-20 Version 0.6.2
- * Fixes for bugs: 
-   #75  crash on python 2.7 x64 windows
-   #73  _convert_query_string return a wrong query string parameter   
+++++++++++++++++++++++++
+
+**Bugfixes**
+
+* #75  crash on python 2.7 x64 windows
+* #73  _convert_query_string return a wrong query string parameter   
 
 2012-12-17 Version 0.6.1
- * Fixes for bugs: 
-   #69  _get_readable_id doesn't support queues with slashes in their names   
-   #68  Service bus cache of tokens doesn't support multiple creds in same app  
-   #66  Need to change the default timeout for httprequest on windows  
- * Improved support for unicode data
+++++++++++++++++++++++++
+
+**Bugfixes**
+
+* #69  _get_readable_id doesn't support queues with slashes in their names   
+* #68  Service bus cache of tokens doesn't support multiple creds in same app  
+* #66  Need to change the default timeout for httprequest on windows  
+* Improved support for unicode data
 
 2012-10-16 Version 0.6.0
+++++++++++++++++++++++++
+
  * Added service management API
  * Added ability to specify custom hosts
  * Added proxy server support (HTTP CONNECT tunneling)
 
 2012-06-06 Version 0.5.0
+++++++++++++++++++++++++
+
  * Initial Release
