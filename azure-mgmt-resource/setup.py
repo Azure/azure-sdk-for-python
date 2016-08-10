@@ -7,6 +7,7 @@
 #--------------------------------------------------------------------------
 
 from setuptools import setup
+from codecs import open
 import re
 
 # azure v0.x is not compatible with this package
@@ -32,17 +33,22 @@ with open('azure/mgmt/resource/version.py', 'r') as fd:
 if not version:
     raise RuntimeError('Cannot find version information')
 
+with open('README.rst', 'r', 'utf-8') as f:
+    readme = f.read()
+with open('HISTORY.rst', 'r', 'utf-8') as f:
+    history = f.read()
+
 setup(
     name='azure-mgmt-resource',
     version=version,
     description='Microsoft Azure Resource Management Client Library for Python',
-    long_description=open('README.rst', 'r').read(),
+    long_description=readme + '\n\n' + history,
     license='MIT License',
     author='Microsoft Corporation',
     author_email='ptvshelp@microsoft.com',
     url='https://github.com/Azure/azure-sdk-for-python',
     classifiers=[
-        'Development Status :: 4 - Beta',
+        'Development Status :: 5 - Production/Stable',
         'Programming Language :: Python',
         'Programming Language :: Python :: 2',
         'Programming Language :: Python :: 2.7',
