@@ -32,6 +32,7 @@ from .route import Route
 from .ip_configuration import IPConfiguration
 from .public_ip_address import PublicIPAddress
 from .public_ip_address_dns_settings import PublicIPAddressDnsSettings
+from .resource_navigation_link import ResourceNavigationLink
 from .application_gateway_backend_http_settings import ApplicationGatewayBackendHttpSettings
 from .application_gateway_http_listener import ApplicationGatewayHttpListener
 from .application_gateway_path_rule import ApplicationGatewayPathRule
@@ -171,6 +172,7 @@ __all__ = [
     'IPConfiguration',
     'PublicIPAddress',
     'PublicIPAddressDnsSettings',
+    'ResourceNavigationLink',
     'ApplicationGatewayBackendHttpSettings',
     'ApplicationGatewayHttpListener',
     'ApplicationGatewayPathRule',

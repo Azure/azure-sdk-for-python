@@ -33,6 +33,10 @@ class Subnet(SubResource):
      interface IP configurations using subnet
     :vartype ip_configurations: list of :class:`IPConfiguration
      <azure.mgmt.network.models.IPConfiguration>`
+    :param resource_navigation_links: Gets array of references to the
+     external resources using subnet
+    :type resource_navigation_links: list of :class:`ResourceNavigationLink
+     <azure.mgmt.network.models.ResourceNavigationLink>`
     :param provisioning_state: Gets provisioning state of the resource
     :type provisioning_state: str
     :param name: Gets or sets the name of the resource that is unique within
@@ -53,17 +57,19 @@ class Subnet(SubResource):
         'network_security_group': {'key': 'properties.networkSecurityGroup', 'type': 'NetworkSecurityGroup'},
         'route_table': {'key': 'properties.routeTable', 'type': 'RouteTable'},
         'ip_configurations': {'key': 'properties.ipConfigurations', 'type': '[IPConfiguration]'},
+        'resource_navigation_links': {'key': 'properties.resourceNavigationLinks', 'type': '[ResourceNavigationLink]'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'etag': {'key': 'etag', 'type': 'str'},
     }
 
-    def __init__(self, id=None, address_prefix=None, network_security_group=None, route_table=None, provisioning_state=None, name=None, etag=None):
+    def __init__(self, id=None, address_prefix=None, network_security_group=None, route_table=None, resource_navigation_links=None, provisioning_state=None, name=None, etag=None):
         super(Subnet, self).__init__(id=id)
         self.address_prefix = address_prefix
         self.network_security_group = network_security_group
         self.route_table = route_table
         self.ip_configurations = None
+        self.resource_navigation_links = resource_navigation_links
         self.provisioning_state = provisioning_state
         self.name = name
         self.etag = etag
