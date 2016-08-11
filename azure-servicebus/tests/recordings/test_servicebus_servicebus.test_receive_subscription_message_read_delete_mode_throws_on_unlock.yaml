@@ -1,109 +1,94 @@
 interactions:
 - request:
-    body: !!binary |
-      PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiIHN0YW5kYWxvbmU9InllcyI/Pjxl
-      bnRyeSB4bWxuczpkPSJodHRwOi8vc2NoZW1hcy5taWNyb3NvZnQuY29tL2Fkby8yMDA3LzA4L2Rh
-      dGFzZXJ2aWNlcyIgeG1sbnM6bT0iaHR0cDovL3NjaGVtYXMubWljcm9zb2Z0LmNvbS9hZG8vMjAw
-      Ny8wOC9kYXRhc2VydmljZXMvbWV0YWRhdGEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDA1
-      L0F0b20iPjx0aXRsZT48L3RpdGxlPjx1cGRhdGVkPjIwMTUtMDYtMzBUMjA6NTc6NDYuNjM4MTkx
-      KzAwOjAwPC91cGRhdGVkPjxhdXRob3I+PG5hbWU+PC9uYW1lPjwvYXV0aG9yPjxpZD48L2lkPjxj
-      b250ZW50IHR5cGU9ImFwcGxpY2F0aW9uL3htbCI+PFRvcGljRGVzY3JpcHRpb24geG1sbnM6aT0i
-      aHR0cDovL3d3dy53My5vcmcvMjAwMS9YTUxTY2hlbWEtaW5zdGFuY2UiIHhtbG5zPSJodHRwOi8v
-      c2NoZW1hcy5taWNyb3NvZnQuY29tL25ldHNlcnZpY2VzLzIwMTAvMTAvc2VydmljZWJ1cy9jb25u
-      ZWN0Ij48L1RvcGljRGVzY3JpcHRpb24+PC9jb250ZW50PjwvZW50cnk+
+    body: <?xml version="1.0" encoding="utf-8" standalone="yes"?><entry xmlns:d="http://schemas.microsoft.com/ado/2007/08/dataservices"
+      xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata" xmlns="http://www.w3.org/2005/Atom"><title></title><updated>2016-08-11T23:42:10.212011+00:00</updated><author><name></name></author><id></id><content
+      type="application/xml"><TopicDescription xmlns:i="http://www.w3.org/2001/XMLSchema-instance"
+      xmlns="http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"></TopicDescription></content></entry>
     headers:
-      Accept: ['*/*']
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
       Content-Length: ['555']
       Content-Type: [application/atom+xml;type=entry;charset=utf-8]
-      User-Agent: [pyazure/0.20.0]
+      User-Agent: [pyazure/0.20.2]
     method: PUT
     uri: https://fakesbnamespace.servicebus.windows.net/uttopic3ba726eb
   response:
     body: {string: '<entry xmlns="http://www.w3.org/2005/Atom"><id>https://fakesbnamespace.servicebus.windows.net/uttopic3ba726eb</id><title
-        type="text">uttopic3ba726eb</title><published>2015-06-30T20:57:48Z</published><updated>2015-06-30T20:57:48Z</updated><author><name>fakesbnamespace</name></author><link
+        type="text">uttopic3ba726eb</title><published>2016-08-11T23:42:11Z</published><updated>2016-08-11T23:42:11Z</updated><author><name>fakesbnamespace</name></author><link
         rel="self" href="https://fakesbnamespace.servicebus.windows.net/uttopic3ba726eb"/><content
         type="application/xml"><TopicDescription xmlns="http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
-        xmlns:i="http://www.w3.org/2001/XMLSchema-instance"><DefaultMessageTimeToLive>P10675199DT2H48M5.4775807S</DefaultMessageTimeToLive><MaxSizeInMegabytes>1024</MaxSizeInMegabytes><RequiresDuplicateDetection>false</RequiresDuplicateDetection><DuplicateDetectionHistoryTimeWindow>PT10M</DuplicateDetectionHistoryTimeWindow><EnableBatchedOperations>true</EnableBatchedOperations><SizeInBytes>0</SizeInBytes><CreatedAt>2015-06-30T20:57:48.85</CreatedAt><UpdatedAt>2015-06-30T20:57:48.927</UpdatedAt></TopicDescription></content></entry>'}
+        xmlns:i="http://www.w3.org/2001/XMLSchema-instance"><DefaultMessageTimeToLive>P10675199DT2H48M5.4775807S</DefaultMessageTimeToLive><MaxSizeInMegabytes>1024</MaxSizeInMegabytes><RequiresDuplicateDetection>false</RequiresDuplicateDetection><DuplicateDetectionHistoryTimeWindow>PT10M</DuplicateDetectionHistoryTimeWindow><EnableBatchedOperations>true</EnableBatchedOperations><SizeInBytes>0</SizeInBytes><CreatedAt>2016-08-11T23:42:11.747</CreatedAt><UpdatedAt>2016-08-11T23:42:11.82</UpdatedAt></TopicDescription></content></entry>'}
     headers:
       Content-Type: [application/atom+xml;type=entry;charset=utf-8]
-      Date: ['Tue, 30 Jun 2015 20:57:48 GMT']
+      Date: ['Thu, 11 Aug 2016 23:42:10 GMT']
       Server: [Microsoft-HTTPAPI/2.0]
+      Strict-Transport-Security: [max-age=31536000]
       Transfer-Encoding: [chunked]
     status: {code: 201, message: Created}
 - request:
-    body: !!binary |
-      PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiIHN0YW5kYWxvbmU9InllcyI/Pjxl
-      bnRyeSB4bWxuczpkPSJodHRwOi8vc2NoZW1hcy5taWNyb3NvZnQuY29tL2Fkby8yMDA3LzA4L2Rh
-      dGFzZXJ2aWNlcyIgeG1sbnM6bT0iaHR0cDovL3NjaGVtYXMubWljcm9zb2Z0LmNvbS9hZG8vMjAw
-      Ny8wOC9kYXRhc2VydmljZXMvbWV0YWRhdGEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDA1
-      L0F0b20iPjx0aXRsZT48L3RpdGxlPjx1cGRhdGVkPjIwMTUtMDYtMzBUMjA6NTc6NDcuOTkxNjMy
-      KzAwOjAwPC91cGRhdGVkPjxhdXRob3I+PG5hbWU+PC9uYW1lPjwvYXV0aG9yPjxpZD48L2lkPjxj
-      b250ZW50IHR5cGU9ImFwcGxpY2F0aW9uL3htbCI+PFN1YnNjcmlwdGlvbkRlc2NyaXB0aW9uIHht
-      bG5zOmk9Imh0dHA6Ly93d3cudzMub3JnLzIwMDEvWE1MU2NoZW1hLWluc3RhbmNlIiB4bWxucz0i
-      aHR0cDovL3NjaGVtYXMubWljcm9zb2Z0LmNvbS9uZXRzZXJ2aWNlcy8yMDEwLzEwL3NlcnZpY2Vi
-      dXMvY29ubmVjdCI+PC9TdWJzY3JpcHRpb25EZXNjcmlwdGlvbj48L2NvbnRlbnQ+PC9lbnRyeT4=
+    body: <?xml version="1.0" encoding="utf-8" standalone="yes"?><entry xmlns:d="http://schemas.microsoft.com/ado/2007/08/dataservices"
+      xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata" xmlns="http://www.w3.org/2005/Atom"><title></title><updated>2016-08-11T23:42:11.505004+00:00</updated><author><name></name></author><id></id><content
+      type="application/xml"><SubscriptionDescription xmlns:i="http://www.w3.org/2001/XMLSchema-instance"
+      xmlns="http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"></SubscriptionDescription></content></entry>
     headers:
-      Accept: ['*/*']
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
       Content-Length: ['569']
       Content-Type: [application/atom+xml;type=entry;charset=utf-8]
-      User-Agent: [pyazure/0.20.0]
+      User-Agent: [pyazure/0.20.2]
     method: PUT
     uri: https://fakesbnamespace.servicebus.windows.net/uttopic3ba726eb/subscriptions/MySubscription
   response:
     body: {string: '<entry xmlns="http://www.w3.org/2005/Atom"><id>https://fakesbnamespace.servicebus.windows.net/uttopic3ba726eb/subscriptions/MySubscription</id><title
-        type="text">MySubscription</title><published>2015-06-30T20:57:49Z</published><updated>2015-06-30T20:57:49Z</updated><link
+        type="text">MySubscription</title><published>2016-08-11T23:42:10Z</published><updated>2016-08-11T23:42:10Z</updated><link
         rel="self" href="https://fakesbnamespace.servicebus.windows.net/uttopic3ba726eb/subscriptions/MySubscription"/><content
         type="application/xml"><SubscriptionDescription xmlns="http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
         xmlns:i="http://www.w3.org/2001/XMLSchema-instance"><LockDuration>PT1M</LockDuration><RequiresSession>false</RequiresSession><DefaultMessageTimeToLive>P10675199DT2H48M5.4775807S</DefaultMessageTimeToLive><DeadLetteringOnMessageExpiration>false</DeadLetteringOnMessageExpiration><DeadLetteringOnFilterEvaluationExceptions>true</DeadLetteringOnFilterEvaluationExceptions><MessageCount>0</MessageCount><MaxDeliveryCount>10</MaxDeliveryCount><EnableBatchedOperations>true</EnableBatchedOperations></SubscriptionDescription></content></entry>'}
     headers:
       Content-Type: [application/atom+xml;type=entry;charset=utf-8]
-      Date: ['Tue, 30 Jun 2015 20:57:49 GMT']
+      Date: ['Thu, 11 Aug 2016 23:42:11 GMT']
       Server: [Microsoft-HTTPAPI/2.0]
+      Strict-Transport-Security: [max-age=31536000]
       Transfer-Encoding: [chunked]
     status: {code: 201, message: Created}
 - request:
-    body: !!binary |
-      c3Vic2NyaXB0aW9uIG1lc3NhZ2U=
+    body: subscription message
     headers:
-      Accept: ['*/*']
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
       Content-Length: ['20']
       Content-Type: [application/atom+xml;type=entry;charset=utf-8]
-      User-Agent: [pyazure/0.20.0]
+      User-Agent: [pyazure/0.20.2]
     method: POST
     uri: https://fakesbnamespace.servicebus.windows.net/uttopic3ba726eb/messages
   response:
     body: {string: ''}
     headers:
       Content-Type: [application/xml; charset=utf-8]
-      Date: ['Tue, 30 Jun 2015 20:57:49 GMT']
+      Date: ['Thu, 11 Aug 2016 23:42:11 GMT']
       Server: [Microsoft-HTTPAPI/2.0]
+      Strict-Transport-Security: [max-age=31536000]
       Transfer-Encoding: [chunked]
     status: {code: 201, message: Created}
 - request:
     body: null
     headers:
-      Accept: ['*/*']
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
       Content-Length: ['0']
       Content-Type: [application/atom+xml;type=entry;charset=utf-8]
-      User-Agent: [pyazure/0.20.0]
+      User-Agent: [pyazure/0.20.2]
     method: DELETE
     uri: https://fakesbnamespace.servicebus.windows.net/uttopic3ba726eb/subscriptions/MySubscription/messages/head?timeout=60
   response:
     body: {string: subscription message}
     headers:
-      BrokerProperties: ['{"DeliveryCount":1,"EnqueuedSequenceNumber":1,"EnqueuedTimeUtc":"Tue,
-          30 Jun 2015 20:57:49 GMT","MessageId":"6a5944262f7445d5b09749c863157f44","SequenceNumber":1,"State":"Active","TimeToLive":922337203685.47754}']
+      BrokerProperties: ['{"DeliveryCount":1,"EnqueuedSequenceNumber":1,"EnqueuedTimeUtc":"Thu,
+          11 Aug 2016 23:42:11 GMT","MessageId":"41a8c5b8447e4c7d896807d368336ac4","SequenceNumber":1,"State":"Active","TimeToLive":922337203685.47754}']
       Content-Type: [application/atom+xml;type=entry;charset=utf-8]
-      Date: ['Tue, 30 Jun 2015 20:57:49 GMT']
+      Date: ['Thu, 11 Aug 2016 23:42:11 GMT']
       Server: [Microsoft-HTTPAPI/2.0]
+      Strict-Transport-Security: [max-age=31536000]
       Transfer-Encoding: [chunked]
     status: {code: 200, message: OK}
 version: 1

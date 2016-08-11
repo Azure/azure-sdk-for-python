@@ -24,6 +24,7 @@ from ._common_models import (
 from ._common_error import (
     _ERROR_MESSAGE_NOT_PEEK_LOCKED_ON_DELETE,
     _ERROR_MESSAGE_NOT_PEEK_LOCKED_ON_UNLOCK,
+    _ERROR_MESSAGE_NOT_PEEK_LOCKED_ON_RENEW_LOCK,
 )
 
 
@@ -225,6 +226,23 @@ class Message(WindowsAzureData):
                 self.broker_properties['LockToken'])
         else:
             raise AzureServiceBusPeekLockError(_ERROR_MESSAGE_NOT_PEEK_LOCKED_ON_UNLOCK)
+
+    def renew_lock(self):
+        ''' Renew lock on itself if find queue name or topic name and subscription
+        name. '''
+        if self._queue_name:
+            self.service_bus_service.renew_lock_queue_message(
+                self._queue_name,
+                self.broker_properties['SequenceNumber'],
+                self.broker_properties['LockToken'])
+        elif self._topic_name and self._subscription_name:
+            self.service_bus_service.renew_lock_subscription_message(
+                self._topic_name,
+                self._subscription_name,
+                self.broker_properties['SequenceNumber'],
+                self.broker_properties['LockToken'])
+        else:
+            raise AzureServiceBusPeekLockError(_ERROR_MESSAGE_NOT_PEEK_LOCKED_ON_RENEW_LOCK)
 
     def add_headers(self, request):
         ''' add addtional headers to request for message request.'''
