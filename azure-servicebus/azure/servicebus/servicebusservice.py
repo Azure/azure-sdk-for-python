@@ -733,6 +733,39 @@ class ServiceBusService(object):
         request.headers = self._update_service_bus_header(request)
         self._perform_request(request)
 
+    def renew_lock_subscription_message(self, topic_name, subscription_name,
+                                        sequence_number, lock_token):
+        '''
+        Renew the lock on an already locked message on a given
+        subscription. A message must have first been locked by a
+        receiver before this operation is called.
+
+        topic_name:
+            Name of the topic.
+        subscription_name:
+            Name of the subscription.
+        sequence_number:
+            The sequence number of the message to be unlocked as returned in
+            BrokerProperties['SequenceNumber'] by the Peek Message operation.
+        lock_token:
+            The ID of the lock as returned by the Peek Message operation in
+            BrokerProperties['LockToken']
+        '''
+        _validate_not_none('topic_name', topic_name)
+        _validate_not_none('subscription_name', subscription_name)
+        _validate_not_none('sequence_number', sequence_number)
+        _validate_not_none('lock_token', lock_token)
+        request = HTTPRequest()
+        request.method = 'POST'
+        request.host = self._get_host()
+        request.path = '/' + _str(topic_name) + \
+                       '/subscriptions/' + str(subscription_name) + \
+                       '/messages/' + _str(sequence_number) + \
+                       '/' + _str(lock_token) + ''
+        request.path, request.query = self._httpclient._update_request_uri_query(request)
+        request.headers = self._update_service_bus_header(request)
+        self._perform_request(request)
+
     def read_delete_subscription_message(self, topic_name, subscription_name,
                                          timeout='60'):
         '''
@@ -855,7 +888,7 @@ class ServiceBusService(object):
     def unlock_queue_message(self, queue_name, sequence_number, lock_token):
         '''
         Unlocks a message for processing by other receivers on a given
-        subscription. This operation deletes the lock object, causing the
+        queue. This operation deletes the lock object, causing the
         message to be unlocked. A message must have first been locked by a
         receiver before this operation is called.
 
@@ -873,6 +906,34 @@ class ServiceBusService(object):
         _validate_not_none('lock_token', lock_token)
         request = HTTPRequest()
         request.method = 'PUT'
+        request.host = self._get_host()
+        request.path = '/' + _str(queue_name) + \
+                       '/messages/' + _str(sequence_number) + \
+                       '/' + _str(lock_token) + ''
+        request.path, request.query = self._httpclient._update_request_uri_query(request)
+        request.headers = self._update_service_bus_header(request)
+        self._perform_request(request)
+
+    def renew_lock_queue_message(self, queue_name, sequence_number, lock_token):
+        '''
+        Renew lock on an already locked message on a given
+        queue. A message must have first been locked by a
+        receiver before this operation is called.
+
+        queue_name:
+            Name of the queue.
+        sequence_number:
+            The sequence number of the message to be unlocked as returned in
+            BrokerProperties['SequenceNumber'] by the Peek Message operation.
+        lock_token:
+            The ID of the lock as returned by the Peek Message operation in
+            BrokerProperties['LockToken']
+        '''
+        _validate_not_none('queue_name', queue_name)
+        _validate_not_none('sequence_number', sequence_number)
+        _validate_not_none('lock_token', lock_token)
+        request = HTTPRequest()
+        request.method = 'POST'
         request.host = self._get_host()
         request.path = '/' + _str(queue_name) + \
                        '/messages/' + _str(sequence_number) + \
