@@ -86,7 +86,7 @@ def _create_message(response, service_instance):
                                   'date',
                                   'strict-transport-security']:
             if '"' in value:
-                value = value[1:-1]
+                value = value[1:-1].replace('\\"', '"')
                 try:
                     custom_properties[name] = datetime.strptime(
                         value, '%a, %d %b %Y %H:%M:%S GMT')

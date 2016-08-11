@@ -493,7 +493,8 @@ class ServiceBusServiceBusTest(ServiceBusTestCase):
                  'deceased': False,
                  'large': 8555111000,
                  'floating': 3.14,
-                 'dob': datetime(2011, 12, 14)}
+                 'dob': datetime(2011, 12, 14),
+                 'quote_message': 'This "should" work fine'}
         sent_msg = Message(b'message with properties', custom_properties=props)
         self.sbs.send_queue_message(self.queue_name, sent_msg)
         received_msg = self.sbs.receive_queue_message(self.queue_name, True, 5)
@@ -509,6 +510,8 @@ class ServiceBusServiceBusTest(ServiceBusTestCase):
         self.assertEqual(received_msg.custom_properties['floating'], 3.14)
         self.assertEqual(
             received_msg.custom_properties['dob'], datetime(2011, 12, 14))
+        self.assertEqual(
+            received_msg.custom_properties['quote_message'], 'This "should" work fine')
 
     @unittest.skip('flaky')
     def test_receive_queue_message_timeout_5(self):
