@@ -274,7 +274,7 @@ class PublicIPAddressesOperations(object):
 
     def list_all(
             self, custom_headers=None, raw=False, **operation_config):
-        """The List publicIpAddress opertion retrieves all the publicIpAddresses
+        """The List publicIpAddress operation retrieves all the publicIpAddresses
         in a subscription.
 
         :param dict custom_headers: headers that will be added to the request
@@ -337,7 +337,7 @@ class PublicIPAddressesOperations(object):
 
     def list(
             self, resource_group_name, custom_headers=None, raw=False, **operation_config):
-        """The List publicIpAddress opertion retrieves all the publicIpAddresses
+        """The List publicIpAddress operation retrieves all the publicIpAddresses
         in a resource group.
 
         :param resource_group_name: The name of the resource group.

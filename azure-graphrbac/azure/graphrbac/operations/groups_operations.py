@@ -10,7 +10,6 @@
 # --------------------------------------------------------------------------
 
 from msrest.pipeline import ClientRawResponse
-from msrestazure.azure_exceptions import CloudError
 import uuid
 
 from .. import models
@@ -23,6 +22,7 @@ class GroupsOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An objec model deserializer.
+    :ivar api_version: Client Api Version. Constant value: "1.6".
     """
 
     def __init__(self, client, config, serializer, deserializer):
@@ -30,16 +30,15 @@ class GroupsOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
+        self.api_version = "1.6"
 
         self.config = config
 
     def is_member_of(
-            self, group_id, member_id, api_version="1.6", custom_headers=None, raw=False, **operation_config):
+            self, group_id, member_id, custom_headers=None, raw=False, **operation_config):
         """Checks whether the specified user, group, contact, or service
         principal is a direct or a transitive member of the specified group.
 
-        :param api_version: Client Api Version.
-        :type api_version: str
         :param group_id: The object ID of the group to check.
         :type group_id: str
         :param member_id: The object ID of the contact, group, user, or
@@ -66,7 +65,7 @@ class GroupsOperations(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -87,9 +86,7 @@ class GroupsOperations(object):
             request, header_parameters, body_content, **operation_config)
 
         if response.status_code not in [200]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.GraphErrorException(self._deserialize, response)
 
         deserialized = None
 
@@ -103,7 +100,7 @@ class GroupsOperations(object):
         return deserialized
 
     def remove_member(
-            self, group_object_id, member_object_id, api_version="1.6", custom_headers=None, raw=False, **operation_config):
+            self, group_object_id, member_object_id, custom_headers=None, raw=False, **operation_config):
         """Remove a memeber from a group. Reference:
         https://msdn.microsoft.com/en-us/library/azure/ad/graph/api/groups-operations#DeleteGroupMember.
 
@@ -111,8 +108,6 @@ class GroupsOperations(object):
         :type group_object_id: str
         :param member_object_id: Member Object id
         :type member_object_id: str
-        :param api_version: Client Api Version.
-        :type api_version: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -133,7 +128,7 @@ class GroupsOperations(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -150,23 +145,19 @@ class GroupsOperations(object):
         response = self._client.send(request, header_parameters, **operation_config)
 
         if response.status_code not in [204]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.GraphErrorException(self._deserialize, response)
 
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
 
     def add_member(
-            self, group_object_id, url, api_version="1.6", custom_headers=None, raw=False, **operation_config):
+            self, group_object_id, url, custom_headers=None, raw=False, **operation_config):
         """Add a memeber to a group. Reference:
         https://msdn.microsoft.com/en-us/library/azure/ad/graph/api/groups-operations#AddGroupMembers.
 
         :param group_object_id: Group object id
         :type group_object_id: str
-        :param api_version: Client Api Version.
-        :type api_version: str
         :param url: Member Object Url as
          "https://graph.windows.net/0b1f9851-1bf0-433f-aec3-cb9272f093dc/directoryObjects/f260bbc4-c254-447b-94cf-293b5ec434dd",
          where "0b1f9851-1bf0-433f-aec3-cb9272f093dc" is the tenantId and
@@ -194,7 +185,7 @@ class GroupsOperations(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -215,23 +206,19 @@ class GroupsOperations(object):
             request, header_parameters, body_content, **operation_config)
 
         if response.status_code not in [204]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.GraphErrorException(self._deserialize, response)
 
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
 
     def delete(
-            self, group_object_id, api_version="1.6", custom_headers=None, raw=False, **operation_config):
+            self, group_object_id, custom_headers=None, raw=False, **operation_config):
         """Delete a group in the directory. Reference:
         http://msdn.microsoft.com/en-us/library/azure/dn151676.aspx.
 
         :param group_object_id: Object id
         :type group_object_id: str
-        :param api_version: Client Api Version.
-        :type api_version: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -251,7 +238,7 @@ class GroupsOperations(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -268,21 +255,17 @@ class GroupsOperations(object):
         response = self._client.send(request, header_parameters, **operation_config)
 
         if response.status_code not in [204]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.GraphErrorException(self._deserialize, response)
 
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
 
     def create(
-            self, display_name, mail_nickname, api_version="1.6", custom_headers=None, raw=False, **operation_config):
+            self, display_name, mail_nickname, custom_headers=None, raw=False, **operation_config):
         """Create a group in the directory. Reference:
         http://msdn.microsoft.com/en-us/library/azure/dn151676.aspx.
 
-        :param api_version: Client Api Version.
-        :type api_version: str
         :param display_name: Group display name
         :type display_name: str
         :param mail_nickname: Mail nick name
@@ -307,7 +290,7 @@ class GroupsOperations(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -328,9 +311,7 @@ class GroupsOperations(object):
             request, header_parameters, body_content, **operation_config)
 
         if response.status_code not in [201]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.GraphErrorException(self._deserialize, response)
 
         deserialized = None
 
@@ -344,11 +325,9 @@ class GroupsOperations(object):
         return deserialized
 
     def list(
-            self, api_version="1.6", filter=None, custom_headers=None, raw=False, **operation_config):
+            self, filter=None, custom_headers=None, raw=False, **operation_config):
         """Gets list of groups for the current tenant.
 
-        :param api_version: Client Api Version.
-        :type api_version: str
         :param filter: The filter to apply on the operation.
         :type filter: str
         :param dict custom_headers: headers that will be added to the request
@@ -372,7 +351,7 @@ class GroupsOperations(object):
                 query_parameters = {}
                 if filter is not None:
                     query_parameters['$filter'] = self._serialize.query("filter", filter, 'str')
-                query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
             else:
                 url = next_link
@@ -394,9 +373,7 @@ class GroupsOperations(object):
                 request, header_parameters, **operation_config)
 
             if response.status_code not in [200]:
-                exp = CloudError(response)
-                exp.request_id = response.headers.get('x-ms-request-id')
-                raise exp
+                raise models.GraphErrorException(self._deserialize, response)
 
             return response
 
@@ -411,13 +388,11 @@ class GroupsOperations(object):
         return deserialized
 
     def get_group_members(
-            self, object_id, api_version="1.6", custom_headers=None, raw=False, **operation_config):
+            self, object_id, custom_headers=None, raw=False, **operation_config):
         """Gets the members of a group.
 
         :param object_id: Group object Id who's members should be retrieved.
         :type object_id: str
-        :param api_version: Client Api Version.
-        :type api_version: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -439,7 +414,7 @@ class GroupsOperations(object):
 
                 # Construct parameters
                 query_parameters = {}
-                query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
             else:
                 url = next_link
@@ -461,9 +436,7 @@ class GroupsOperations(object):
                 request, header_parameters, **operation_config)
 
             if response.status_code not in [200]:
-                exp = CloudError(response)
-                exp.request_id = response.headers.get('x-ms-request-id')
-                raise exp
+                raise models.GraphErrorException(self._deserialize, response)
 
             return response
 
@@ -478,13 +451,11 @@ class GroupsOperations(object):
         return deserialized
 
     def get(
-            self, object_id, api_version="1.6", custom_headers=None, raw=False, **operation_config):
+            self, object_id, custom_headers=None, raw=False, **operation_config):
         """Gets group information from the directory.
 
         :param object_id: User objectId to get group information.
         :type object_id: str
-        :param api_version: Client Api Version.
-        :type api_version: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -504,7 +475,7 @@ class GroupsOperations(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -521,9 +492,7 @@ class GroupsOperations(object):
         response = self._client.send(request, header_parameters, **operation_config)
 
         if response.status_code not in [200]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.GraphErrorException(self._deserialize, response)
 
         deserialized = None
 
@@ -537,14 +506,12 @@ class GroupsOperations(object):
         return deserialized
 
     def get_member_groups(
-            self, object_id, security_enabled_only, api_version="1.6", custom_headers=None, raw=False, **operation_config):
+            self, object_id, security_enabled_only, custom_headers=None, raw=False, **operation_config):
         """Gets a collection that contains the Object IDs of the groups of which
         the group is a member.
 
         :param object_id: Group filtering parameters.
         :type object_id: str
-        :param api_version: Client Api Version.
-        :type api_version: str
         :param security_enabled_only: If true only membership in security
          enabled groups should be checked. Otherwise membership in all groups
          should be checked
@@ -571,7 +538,7 @@ class GroupsOperations(object):
 
                 # Construct parameters
                 query_parameters = {}
-                query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
             else:
                 url = next_link
@@ -596,9 +563,7 @@ class GroupsOperations(object):
                 request, header_parameters, body_content, **operation_config)
 
             if response.status_code not in [200]:
-                exp = CloudError(response)
-                exp.request_id = response.headers.get('x-ms-request-id')
-                raise exp
+                raise models.GraphErrorException(self._deserialize, response)
 
             return response
 
@@ -613,13 +578,11 @@ class GroupsOperations(object):
         return deserialized
 
     def list_next(
-            self, next_link, api_version="1.6", custom_headers=None, raw=False, **operation_config):
+            self, next_link, custom_headers=None, raw=False, **operation_config):
         """Gets list of groups for the current tenant.
 
         :param next_link: Next link for list operation.
         :type next_link: str
-        :param api_version: Client Api Version.
-        :type api_version: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -640,7 +603,7 @@ class GroupsOperations(object):
 
                 # Construct parameters
                 query_parameters = {}
-                query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
             else:
                 url = next_link
@@ -662,9 +625,7 @@ class GroupsOperations(object):
                 request, header_parameters, **operation_config)
 
             if response.status_code not in [200]:
-                exp = CloudError(response)
-                exp.request_id = response.headers.get('x-ms-request-id')
-                raise exp
+                raise models.GraphErrorException(self._deserialize, response)
 
             return response
 
@@ -679,13 +640,11 @@ class GroupsOperations(object):
         return deserialized
 
     def get_group_members_next(
-            self, next_link, api_version="1.6", custom_headers=None, raw=False, **operation_config):
+            self, next_link, custom_headers=None, raw=False, **operation_config):
         """Gets the members of a group.
 
         :param next_link: Next link for list operation.
         :type next_link: str
-        :param api_version: Client Api Version.
-        :type api_version: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -707,7 +666,7 @@ class GroupsOperations(object):
 
                 # Construct parameters
                 query_parameters = {}
-                query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
             else:
                 url = next_link
@@ -729,9 +688,7 @@ class GroupsOperations(object):
                 request, header_parameters, **operation_config)
 
             if response.status_code not in [200]:
-                exp = CloudError(response)
-                exp.request_id = response.headers.get('x-ms-request-id')
-                raise exp
+                raise models.GraphErrorException(self._deserialize, response)
 
             return response
 

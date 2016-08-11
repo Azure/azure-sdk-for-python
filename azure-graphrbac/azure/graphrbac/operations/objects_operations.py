@@ -34,11 +34,9 @@ class ObjectsOperations(object):
         self.config = config
 
     def get_current_user(
-            self, api_version="1.6", custom_headers=None, raw=False, **operation_config):
+            self, custom_headers=None, raw=False, **operation_config):
         """Gets the details for current logged in user.
 
-        :param api_version: Client Api Version.
-        :type api_version: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -48,6 +46,8 @@ class ObjectsOperations(object):
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
+        api_version = "1.6"
+
         # Construct URL
         url = '/{tenantID}/me'
         path_format_arguments = {
@@ -74,9 +74,7 @@ class ObjectsOperations(object):
         response = self._client.send(request, header_parameters, **operation_config)
 
         if response.status_code not in [200]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.GraphErrorException(self._deserialize, response)
 
         deserialized = None
 
@@ -90,14 +88,12 @@ class ObjectsOperations(object):
         return deserialized
 
     def get_objects_by_object_ids(
-            self, parameters, api_version="1.6-internal", custom_headers=None, raw=False, **operation_config):
+            self, parameters, custom_headers=None, raw=False, **operation_config):
         """Gets AD group membership by provided AD object Ids.
 
         :param parameters: Objects filtering parameters.
         :type parameters: :class:`GetObjectsParameters
          <azure.graphrbac.models.GetObjectsParameters>`
-        :param api_version: Client Api Version.
-        :type api_version: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -106,6 +102,8 @@ class ObjectsOperations(object):
         :rtype: :class:`AADObjectPaged
          <azure.graphrbac.models.AADObjectPaged>`
         """
+        api_version = "1.6-internal"
+
         def internal_paging(next_link=None, raw=False):
 
             if not next_link:
@@ -160,13 +158,11 @@ class ObjectsOperations(object):
         return deserialized
 
     def get_objects_by_object_ids_next(
-            self, next_link, api_version="1.6-internal", custom_headers=None, raw=False, **operation_config):
+            self, next_link, custom_headers=None, raw=False, **operation_config):
         """Gets AD group membership by provided AD object Ids.
 
         :param next_link: Next link for list operation.
         :type next_link: str
-        :param api_version: Client Api Version.
-        :type api_version: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -175,6 +171,8 @@ class ObjectsOperations(object):
         :rtype: :class:`AADObjectPaged
          <azure.graphrbac.models.AADObjectPaged>`
         """
+        api_version = "1.6-internal"
+
         def internal_paging(next_link=None, raw=False):
 
             if not next_link:

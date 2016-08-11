@@ -17,17 +17,17 @@ class ApplicationGatewaySslCertificate(SubResource):
 
     :param id: Resource Id
     :type id: str
-    :param data: Gets or sets the certificate data
+    :param data: SSL Certificate data
     :type data: str
-    :param password: Gets or sets the certificate password
+    :param password: SSL Certificate password
     :type password: str
-    :param public_cert_data: Gets or sets the certificate public data
+    :param public_cert_data: SSL Certificate public data
     :type public_cert_data: str
-    :param provisioning_state: Gets or sets Provisioning state of the ssl
-     certificate resource Updating/Deleting/Failed
+    :param provisioning_state: Provisioning state of the ssl certificate
+     resource Updating/Deleting/Failed
     :type provisioning_state: str
-    :param name: Gets name of the resource that is unique within a resource
-     group. This name can be used to access the resource
+    :param name: Name of the resource that is unique within a resource group.
+     This name can be used to access the resource
     :type name: str
     :param etag: A unique read-only string that changes whenever the resource
      is updated

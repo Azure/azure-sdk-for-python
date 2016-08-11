@@ -9,18 +9,14 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .sub_resource import SubResource
+from msrest.serialization import Model
 
 
-class EffectiveRoute(SubResource):
+class EffectiveRoute(Model):
     """Effective Route.
 
-    :param id: Resource Id
-    :type id: str
-    :param user_defined_route: Gets the Id of the effective route. This is
-     optional, only user defined routes have the name.
-    :type user_defined_route: :class:`SubResource
-     <azure.mgmt.network.models.SubResource>`
+    :param name: Gets the name of the user defined route. This is optional.
+    :type name: str
     :param source: Gets who created the route. Possible values include:
      'Unknown', 'User', 'VirtualNetworkGateway', 'Default'
     :type source: str or :class:`EffectiveRouteSource
@@ -43,8 +39,7 @@ class EffectiveRoute(SubResource):
     """ 
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'user_defined_route': {'key': 'userDefinedRoute', 'type': 'SubResource'},
+        'name': {'key': 'name', 'type': 'str'},
         'source': {'key': 'source', 'type': 'str'},
         'state': {'key': 'state', 'type': 'str'},
         'address_prefix': {'key': 'addressPrefix', 'type': '[str]'},
@@ -52,9 +47,8 @@ class EffectiveRoute(SubResource):
         'next_hop_type': {'key': 'nextHopType', 'type': 'str'},
     }
 
-    def __init__(self, id=None, user_defined_route=None, source=None, state=None, address_prefix=None, next_hop_ip_address=None, next_hop_type=None):
-        super(EffectiveRoute, self).__init__(id=id)
-        self.user_defined_route = user_defined_route
+    def __init__(self, name=None, source=None, state=None, address_prefix=None, next_hop_ip_address=None, next_hop_type=None):
+        self.name = name
         self.source = source
         self.state = state
         self.address_prefix = address_prefix

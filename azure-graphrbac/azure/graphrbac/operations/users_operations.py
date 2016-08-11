@@ -10,7 +10,6 @@
 # --------------------------------------------------------------------------
 
 from msrest.pipeline import ClientRawResponse
-from msrestazure.azure_exceptions import CloudError
 import uuid
 
 from .. import models
@@ -23,6 +22,7 @@ class UsersOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An objec model deserializer.
+    :ivar api_version: Client Api Version. Constant value: "1.6".
     """
 
     def __init__(self, client, config, serializer, deserializer):
@@ -30,19 +30,18 @@ class UsersOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
+        self.api_version = "1.6"
 
         self.config = config
 
     def create(
-            self, parameters, api_version="1.6", custom_headers=None, raw=False, **operation_config):
+            self, parameters, custom_headers=None, raw=False, **operation_config):
         """Create a new user. Reference:
         https://msdn.microsoft.com/library/azure/ad/graph/api/users-operations#CreateUser.
 
         :param parameters: Parameters to create a user.
         :type parameters: :class:`UserCreateParameters
          <azure.graphrbac.models.UserCreateParameters>`
-        :param api_version: Client Api Version.
-        :type api_version: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -61,7 +60,7 @@ class UsersOperations(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -82,9 +81,7 @@ class UsersOperations(object):
             request, header_parameters, body_content, **operation_config)
 
         if response.status_code not in [201]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.GraphErrorException(self._deserialize, response)
 
         deserialized = None
 
@@ -98,12 +95,10 @@ class UsersOperations(object):
         return deserialized
 
     def list(
-            self, api_version="1.6", filter=None, custom_headers=None, raw=False, **operation_config):
+            self, filter=None, custom_headers=None, raw=False, **operation_config):
         """Gets list of users for the current tenant. Reference
         https://msdn.microsoft.com/en-us/library/azure/ad/graph/api/users-operations#GetUsers.
 
-        :param api_version: Client Api Version.
-        :type api_version: str
         :param filter: The filter to apply on the operation.
         :type filter: str
         :param dict custom_headers: headers that will be added to the request
@@ -127,7 +122,7 @@ class UsersOperations(object):
                 query_parameters = {}
                 if filter is not None:
                     query_parameters['$filter'] = self._serialize.query("filter", filter, 'str')
-                query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
             else:
                 url = next_link
@@ -149,9 +144,7 @@ class UsersOperations(object):
                 request, header_parameters, **operation_config)
 
             if response.status_code not in [200]:
-                exp = CloudError(response)
-                exp.request_id = response.headers.get('x-ms-request-id')
-                raise exp
+                raise models.GraphErrorException(self._deserialize, response)
 
             return response
 
@@ -166,15 +159,13 @@ class UsersOperations(object):
         return deserialized
 
     def get(
-            self, upn_or_object_id, api_version="1.6", custom_headers=None, raw=False, **operation_config):
+            self, upn_or_object_id, custom_headers=None, raw=False, **operation_config):
         """Gets user information from the directory. Reference:
         https://msdn.microsoft.com/en-us/library/azure/ad/graph/api/users-operations#GetAUser.
 
         :param upn_or_object_id: User object Id or user principal name to get
          user information.
         :type upn_or_object_id: str
-        :param api_version: Client Api Version.
-        :type api_version: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -194,7 +185,7 @@ class UsersOperations(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -211,9 +202,7 @@ class UsersOperations(object):
         response = self._client.send(request, header_parameters, **operation_config)
 
         if response.status_code not in [200]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.GraphErrorException(self._deserialize, response)
 
         deserialized = None
 
@@ -227,7 +216,7 @@ class UsersOperations(object):
         return deserialized
 
     def update(
-            self, upn_or_object_id, parameters, api_version="1.6", custom_headers=None, raw=False, **operation_config):
+            self, upn_or_object_id, parameters, custom_headers=None, raw=False, **operation_config):
         """Updates an exisitng user. Reference:
         https://msdn.microsoft.com/en-us/library/azure/ad/graph/api/users-operations#UpdateUser.
 
@@ -237,8 +226,6 @@ class UsersOperations(object):
         :param parameters: Parameters to update an exisitng user.
         :type parameters: :class:`UserUpdateParameters
          <azure.graphrbac.models.UserUpdateParameters>`
-        :param api_version: Client Api Version.
-        :type api_version: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -258,7 +245,7 @@ class UsersOperations(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -279,23 +266,19 @@ class UsersOperations(object):
             request, header_parameters, body_content, **operation_config)
 
         if response.status_code not in [204]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.GraphErrorException(self._deserialize, response)
 
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
 
     def delete(
-            self, upn_or_object_id, api_version="1.6", custom_headers=None, raw=False, **operation_config):
+            self, upn_or_object_id, custom_headers=None, raw=False, **operation_config):
         """Delete a user. Reference:
         https://msdn.microsoft.com/en-us/library/azure/ad/graph/api/users-operations#DeleteUser.
 
         :param upn_or_object_id: user object id or user principal name (upn)
         :type upn_or_object_id: str
-        :param api_version: Client Api Version.
-        :type api_version: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -315,7 +298,7 @@ class UsersOperations(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -332,23 +315,19 @@ class UsersOperations(object):
         response = self._client.send(request, header_parameters, **operation_config)
 
         if response.status_code not in [204]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.GraphErrorException(self._deserialize, response)
 
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
 
     def get_member_groups(
-            self, object_id, security_enabled_only, api_version="1.6", custom_headers=None, raw=False, **operation_config):
+            self, object_id, security_enabled_only, custom_headers=None, raw=False, **operation_config):
         """Gets a collection that contains the Object IDs of the groups of which
         the user is a member.
 
         :param object_id: User filtering parameters.
         :type object_id: str
-        :param api_version: Client Api Version.
-        :type api_version: str
         :param security_enabled_only: If true only membership in security
          enabled groups should be checked. Otherwise membership in all groups
          should be checked
@@ -375,7 +354,7 @@ class UsersOperations(object):
 
                 # Construct parameters
                 query_parameters = {}
-                query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
             else:
                 url = next_link
@@ -400,9 +379,7 @@ class UsersOperations(object):
                 request, header_parameters, body_content, **operation_config)
 
             if response.status_code not in [200]:
-                exp = CloudError(response)
-                exp.request_id = response.headers.get('x-ms-request-id')
-                raise exp
+                raise models.GraphErrorException(self._deserialize, response)
 
             return response
 
@@ -417,13 +394,11 @@ class UsersOperations(object):
         return deserialized
 
     def list_next(
-            self, next_link, api_version="1.6", custom_headers=None, raw=False, **operation_config):
+            self, next_link, custom_headers=None, raw=False, **operation_config):
         """Gets list of users for the current tenant.
 
         :param next_link: Next link for list operation.
         :type next_link: str
-        :param api_version: Client Api Version.
-        :type api_version: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -444,7 +419,7 @@ class UsersOperations(object):
 
                 # Construct parameters
                 query_parameters = {}
-                query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
             else:
                 url = next_link
@@ -466,9 +441,7 @@ class UsersOperations(object):
                 request, header_parameters, **operation_config)
 
             if response.status_code not in [200]:
-                exp = CloudError(response)
-                exp.request_id = response.headers.get('x-ms-request-id')
-                raise exp
+                raise models.GraphErrorException(self._deserialize, response)
 
             return response
 

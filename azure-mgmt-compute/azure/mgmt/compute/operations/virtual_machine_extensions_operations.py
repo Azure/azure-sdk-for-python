@@ -24,6 +24,7 @@ class VirtualMachineExtensionsOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An objec model deserializer.
+    :ivar api_version: Client Api Version. Constant value: "2016-03-30".
     """
 
     def __init__(self, client, config, serializer, deserializer):
@@ -31,11 +32,12 @@ class VirtualMachineExtensionsOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
+        self.api_version = "2016-03-30"
 
         self.config = config
 
     def create_or_update(
-            self, resource_group_name, vm_name, vm_extension_name, extension_parameters, api_version="2016-03-30", custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, vm_name, vm_extension_name, extension_parameters, custom_headers=None, raw=False, **operation_config):
         """The operation to create or update the extension.
 
         :param resource_group_name: The name of the resource group.
@@ -49,8 +51,6 @@ class VirtualMachineExtensionsOperations(object):
          Virtual Machine Extension operation.
         :type extension_parameters: :class:`VirtualMachineExtension
          <azure.mgmt.compute.models.VirtualMachineExtension>`
-        :param api_version: Client Api Version.
-        :type api_version: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -73,7 +73,7 @@ class VirtualMachineExtensionsOperations(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -135,7 +135,7 @@ class VirtualMachineExtensionsOperations(object):
             get_long_running_status, long_running_operation_timeout)
 
     def delete(
-            self, resource_group_name, vm_name, vm_extension_name, api_version="2016-03-30", custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, vm_name, vm_extension_name, custom_headers=None, raw=False, **operation_config):
         """The operation to delete the extension.
 
         :param resource_group_name: The name of the resource group.
@@ -145,8 +145,6 @@ class VirtualMachineExtensionsOperations(object):
         :type vm_name: str
         :param vm_extension_name: The name of the virtual machine extension.
         :type vm_extension_name: str
-        :param api_version: Client Api Version.
-        :type api_version: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -168,7 +166,7 @@ class VirtualMachineExtensionsOperations(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -217,7 +215,7 @@ class VirtualMachineExtensionsOperations(object):
             get_long_running_status, long_running_operation_timeout)
 
     def get(
-            self, resource_group_name, vm_name, vm_extension_name, api_version="2016-03-30", expand=None, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, vm_name, vm_extension_name, expand=None, custom_headers=None, raw=False, **operation_config):
         """The operation to get the extension.
 
         :param resource_group_name: The name of the resource group.
@@ -227,8 +225,6 @@ class VirtualMachineExtensionsOperations(object):
         :type vm_name: str
         :param vm_extension_name: The name of the virtual machine extension.
         :type vm_extension_name: str
-        :param api_version: Client Api Version.
-        :type api_version: str
         :param expand: The expand expression to apply on the operation.
         :type expand: str
         :param dict custom_headers: headers that will be added to the request
@@ -255,7 +251,7 @@ class VirtualMachineExtensionsOperations(object):
         query_parameters = {}
         if expand is not None:
             query_parameters['$expand'] = self._serialize.query("expand", expand, 'str')
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
         header_parameters = {}

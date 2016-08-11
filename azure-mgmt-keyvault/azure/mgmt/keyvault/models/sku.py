@@ -15,14 +15,18 @@ from msrest.serialization import Model
 class Sku(Model):
     """SKU details.
 
-    :param family: SKU family name. Possible values include: 'A'
-    :type family: str or :class:`SkuFamily <azure.keyvault.models.SkuFamily>`
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar family: SKU family name. Default value: "A" .
+    :vartype family: str
     :param name: SKU name to specify whether the key vault is a standard
      vault or a premium vault. Possible values include: 'standard', 'premium'
     :type name: str or :class:`SkuName <azure.keyvault.models.SkuName>`
     """ 
 
     _validation = {
+        'family': {'required': True, 'constant': True},
         'name': {'required': True},
     }
 
@@ -31,6 +35,7 @@ class Sku(Model):
         'name': {'key': 'name', 'type': 'SkuName'},
     }
 
-    def __init__(self, name, family=None):
-        self.family = family
+    family = "A"
+
+    def __init__(self, name):
         self.name = name

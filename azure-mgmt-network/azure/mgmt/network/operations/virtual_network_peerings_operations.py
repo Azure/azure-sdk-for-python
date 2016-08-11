@@ -282,7 +282,7 @@ class VirtualNetworkPeeringsOperations(object):
 
     def list(
             self, resource_group_name, virtual_network_name, custom_headers=None, raw=False, **operation_config):
-        """The List virtual network peerings opertion retrieves all the peerings
+        """The List virtual network peerings operation retrieves all the peerings
         in a virtual network.
 
         :param resource_group_name: The name of the resource group.

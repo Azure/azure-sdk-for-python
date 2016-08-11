@@ -271,7 +271,7 @@ class LoadBalancersOperations(object):
 
     def list_all(
             self, custom_headers=None, raw=False, **operation_config):
-        """The List loadBalancer opertion retrieves all the loadbalancers in a
+        """The List loadBalancer operation retrieves all the loadbalancers in a
         subscription.
 
         :param dict custom_headers: headers that will be added to the request
@@ -334,7 +334,7 @@ class LoadBalancersOperations(object):
 
     def list(
             self, resource_group_name, custom_headers=None, raw=False, **operation_config):
-        """The List loadBalancer opertion retrieves all the loadbalancers in a
+        """The List loadBalancer operation retrieves all the loadbalancers in a
         resource group.
 
         :param resource_group_name: The name of the resource group.

@@ -24,6 +24,7 @@ class VirtualMachineScaleSetsOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An objec model deserializer.
+    :ivar api_version: Client Api Version. Constant value: "2016-03-30".
     """
 
     def __init__(self, client, config, serializer, deserializer):
@@ -31,11 +32,12 @@ class VirtualMachineScaleSetsOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
+        self.api_version = "2016-03-30"
 
         self.config = config
 
     def create_or_update(
-            self, resource_group_name, name, parameters, api_version="2016-03-30", custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, name, parameters, custom_headers=None, raw=False, **operation_config):
         """Allows you to create or update a virtual machine scale set by
         providing parameters or a path to pre-configured parameter file.
 
@@ -48,8 +50,6 @@ class VirtualMachineScaleSetsOperations(object):
          Scale Set operation.
         :type parameters: :class:`VirtualMachineScaleSet
          <azure.mgmt.compute.models.VirtualMachineScaleSet>`
-        :param api_version: Client Api Version.
-        :type api_version: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -71,7 +71,7 @@ class VirtualMachineScaleSetsOperations(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -133,7 +133,7 @@ class VirtualMachineScaleSetsOperations(object):
             get_long_running_status, long_running_operation_timeout)
 
     def deallocate(
-            self, resource_group_name, vm_scale_set_name, api_version="2016-03-30", instance_ids=None, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, vm_scale_set_name, instance_ids=None, custom_headers=None, raw=False, **operation_config):
         """Allows you to deallocate virtual machines in a virtual machine scale
         set. Shuts down the virtual machines and releases the compute
         resources. You are not billed for the compute resources that this
@@ -143,8 +143,6 @@ class VirtualMachineScaleSetsOperations(object):
         :type resource_group_name: str
         :param vm_scale_set_name: The name of the virtual machine scale set.
         :type vm_scale_set_name: str
-        :param api_version: Client Api Version.
-        :type api_version: str
         :param instance_ids: the virtual machine scale set instance ids.
         :type instance_ids: list of str
         :param dict custom_headers: headers that will be added to the request
@@ -171,7 +169,7 @@ class VirtualMachineScaleSetsOperations(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -227,15 +225,13 @@ class VirtualMachineScaleSetsOperations(object):
             get_long_running_status, long_running_operation_timeout)
 
     def delete(
-            self, resource_group_name, vm_scale_set_name, api_version="2016-03-30", custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, vm_scale_set_name, custom_headers=None, raw=False, **operation_config):
         """Allows you to delete a virtual machine scale set.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
         :param vm_scale_set_name: The name of the virtual machine scale set.
         :type vm_scale_set_name: str
-        :param api_version: Client Api Version.
-        :type api_version: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -256,7 +252,7 @@ class VirtualMachineScaleSetsOperations(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -305,15 +301,13 @@ class VirtualMachineScaleSetsOperations(object):
             get_long_running_status, long_running_operation_timeout)
 
     def get(
-            self, resource_group_name, vm_scale_set_name, api_version="2016-03-30", custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, vm_scale_set_name, custom_headers=None, raw=False, **operation_config):
         """Display information about a virtual machine scale set.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
         :param vm_scale_set_name: The name of the virtual machine scale set.
         :type vm_scale_set_name: str
-        :param api_version: Client Api Version.
-        :type api_version: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -335,7 +329,7 @@ class VirtualMachineScaleSetsOperations(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -368,15 +362,13 @@ class VirtualMachineScaleSetsOperations(object):
         return deserialized
 
     def delete_instances(
-            self, resource_group_name, vm_scale_set_name, instance_ids, api_version="2016-03-30", custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, vm_scale_set_name, instance_ids, custom_headers=None, raw=False, **operation_config):
         """Allows you to delete virtual machines in a virtual machine scale set.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
         :param vm_scale_set_name: The name of the virtual machine scale set.
         :type vm_scale_set_name: str
-        :param api_version: Client Api Version.
-        :type api_version: str
         :param instance_ids: the virtual machine scale set instance ids.
         :type instance_ids: list of str
         :param dict custom_headers: headers that will be added to the request
@@ -401,7 +393,7 @@ class VirtualMachineScaleSetsOperations(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -454,15 +446,13 @@ class VirtualMachineScaleSetsOperations(object):
             get_long_running_status, long_running_operation_timeout)
 
     def get_instance_view(
-            self, resource_group_name, vm_scale_set_name, api_version="2016-03-30", custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, vm_scale_set_name, custom_headers=None, raw=False, **operation_config):
         """Displays status of a virtual machine scale set instance.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
         :param vm_scale_set_name: The name of the virtual machine scale set.
         :type vm_scale_set_name: str
-        :param api_version: Client Api Version.
-        :type api_version: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -484,7 +474,7 @@ class VirtualMachineScaleSetsOperations(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -517,13 +507,11 @@ class VirtualMachineScaleSetsOperations(object):
         return deserialized
 
     def list(
-            self, resource_group_name, api_version="2016-03-30", custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, custom_headers=None, raw=False, **operation_config):
         """Lists all virtual machine scale sets under a resource group.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
-        :param api_version: Client Api Version.
-        :type api_version: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -545,7 +533,7 @@ class VirtualMachineScaleSetsOperations(object):
 
                 # Construct parameters
                 query_parameters = {}
-                query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
             else:
                 url = next_link
@@ -584,14 +572,12 @@ class VirtualMachineScaleSetsOperations(object):
         return deserialized
 
     def list_all(
-            self, api_version="2016-03-30", custom_headers=None, raw=False, **operation_config):
+            self, custom_headers=None, raw=False, **operation_config):
         """Lists all Virtual Machine Scale Sets in the subscription. Use nextLink
         property in the response to get the next page of Virtual Machine
         Scale Sets. Do this till nextLink is not null to fetch all the
         Virtual Machine Scale Sets.
 
-        :param api_version: Client Api Version.
-        :type api_version: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -612,7 +598,7 @@ class VirtualMachineScaleSetsOperations(object):
 
                 # Construct parameters
                 query_parameters = {}
-                query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
             else:
                 url = next_link
@@ -651,7 +637,7 @@ class VirtualMachineScaleSetsOperations(object):
         return deserialized
 
     def list_skus(
-            self, resource_group_name, vm_scale_set_name, api_version="2016-03-30", custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, vm_scale_set_name, custom_headers=None, raw=False, **operation_config):
         """Displays available skus for your virtual machine scale set including
         the minimum and maximum vm instances allowed for a particular sku.
 
@@ -659,8 +645,6 @@ class VirtualMachineScaleSetsOperations(object):
         :type resource_group_name: str
         :param vm_scale_set_name: The name of the virtual machine scale set.
         :type vm_scale_set_name: str
-        :param api_version: Client Api Version.
-        :type api_version: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -683,7 +667,7 @@ class VirtualMachineScaleSetsOperations(object):
 
                 # Construct parameters
                 query_parameters = {}
-                query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
             else:
                 url = next_link
@@ -722,7 +706,7 @@ class VirtualMachineScaleSetsOperations(object):
         return deserialized
 
     def power_off(
-            self, resource_group_name, vm_scale_set_name, api_version="2016-03-30", instance_ids=None, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, vm_scale_set_name, instance_ids=None, custom_headers=None, raw=False, **operation_config):
         """Allows you to power off (stop) virtual machines in a virtual machine
         scale set. Note that resources are still attached and you are getting
         charged for the resources. Use deallocate to release resources.
@@ -731,8 +715,6 @@ class VirtualMachineScaleSetsOperations(object):
         :type resource_group_name: str
         :param vm_scale_set_name: The name of the virtual machine scale set.
         :type vm_scale_set_name: str
-        :param api_version: Client Api Version.
-        :type api_version: str
         :param instance_ids: the virtual machine scale set instance ids.
         :type instance_ids: list of str
         :param dict custom_headers: headers that will be added to the request
@@ -759,7 +741,7 @@ class VirtualMachineScaleSetsOperations(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -815,15 +797,13 @@ class VirtualMachineScaleSetsOperations(object):
             get_long_running_status, long_running_operation_timeout)
 
     def restart(
-            self, resource_group_name, vm_scale_set_name, api_version="2016-03-30", instance_ids=None, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, vm_scale_set_name, instance_ids=None, custom_headers=None, raw=False, **operation_config):
         """Allows you to restart virtual machines in a virtual machine scale set.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
         :param vm_scale_set_name: The name of the virtual machine scale set.
         :type vm_scale_set_name: str
-        :param api_version: Client Api Version.
-        :type api_version: str
         :param instance_ids: the virtual machine scale set instance ids.
         :type instance_ids: list of str
         :param dict custom_headers: headers that will be added to the request
@@ -850,7 +830,7 @@ class VirtualMachineScaleSetsOperations(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -906,15 +886,13 @@ class VirtualMachineScaleSetsOperations(object):
             get_long_running_status, long_running_operation_timeout)
 
     def start(
-            self, resource_group_name, vm_scale_set_name, api_version="2016-03-30", instance_ids=None, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, vm_scale_set_name, instance_ids=None, custom_headers=None, raw=False, **operation_config):
         """Allows you to start virtual machines in a virtual machine scale set.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
         :param vm_scale_set_name: The name of the virtual machine scale set.
         :type vm_scale_set_name: str
-        :param api_version: Client Api Version.
-        :type api_version: str
         :param instance_ids: the virtual machine scale set instance ids.
         :type instance_ids: list of str
         :param dict custom_headers: headers that will be added to the request
@@ -941,7 +919,7 @@ class VirtualMachineScaleSetsOperations(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -997,7 +975,7 @@ class VirtualMachineScaleSetsOperations(object):
             get_long_running_status, long_running_operation_timeout)
 
     def update_instances(
-            self, resource_group_name, vm_scale_set_name, instance_ids, api_version="2016-03-30", custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, vm_scale_set_name, instance_ids, custom_headers=None, raw=False, **operation_config):
         """Allows you to manually upgrade virtual machines in a virtual machine
         scale set.
 
@@ -1005,8 +983,6 @@ class VirtualMachineScaleSetsOperations(object):
         :type resource_group_name: str
         :param vm_scale_set_name: The name of the virtual machine scale set.
         :type vm_scale_set_name: str
-        :param api_version: Client Api Version.
-        :type api_version: str
         :param instance_ids: the virtual machine scale set instance ids.
         :type instance_ids: list of str
         :param dict custom_headers: headers that will be added to the request
@@ -1031,7 +1007,7 @@ class VirtualMachineScaleSetsOperations(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -1084,7 +1060,7 @@ class VirtualMachineScaleSetsOperations(object):
             get_long_running_status, long_running_operation_timeout)
 
     def reimage(
-            self, resource_group_name, vm_scale_set_name, api_version="2016-03-30", custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, vm_scale_set_name, custom_headers=None, raw=False, **operation_config):
         """Allows you to re-image(update the version of the installed operating
         system) virtual machines in a virtual machine scale set.
 
@@ -1092,8 +1068,6 @@ class VirtualMachineScaleSetsOperations(object):
         :type resource_group_name: str
         :param vm_scale_set_name: The name of the virtual machine scale set.
         :type vm_scale_set_name: str
-        :param api_version: Client Api Version.
-        :type api_version: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -1114,7 +1088,7 @@ class VirtualMachineScaleSetsOperations(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
         header_parameters = {}

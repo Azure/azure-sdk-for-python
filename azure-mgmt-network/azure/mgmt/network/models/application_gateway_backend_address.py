@@ -15,9 +15,9 @@ from msrest.serialization import Model
 class ApplicationGatewayBackendAddress(Model):
     """Backend Address of application gateway.
 
-    :param fqdn: Gets or sets the dns name
+    :param fqdn: Dns name
     :type fqdn: str
-    :param ip_address: Gets or sets the ip address
+    :param ip_address: Ip address
     :type ip_address: str
     """ 
 
