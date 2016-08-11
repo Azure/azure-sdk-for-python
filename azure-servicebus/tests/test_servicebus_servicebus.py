@@ -465,6 +465,20 @@ class ServiceBusServiceBusTest(ServiceBusTestCase):
         self.assertEqual(received_again_msg.body, received_msg.body)
 
     @record
+    def test_get_dead_letter_queue(self):
+        # Arrange
+        self._create_queue(self.queue_name)
+
+        # Act
+        dead_letter_name = ServiceBusService.format_dead_letter_queue_name(
+            self.queue_name)
+        try:
+            self.sbs.receive_queue_message(dead_letter_name, timeout=2)
+        except Exception:
+            # Assert
+            self.fail("Dead Letter queue not found")
+
+    @record
     def test_send_queue_message_with_custom_message_type(self):
         # Arrange
         self._create_queue(self.queue_name)
@@ -1285,6 +1299,21 @@ class ServiceBusServiceBusTest(ServiceBusTestCase):
         # Assert
         self.assertIsNotNone(received_msg)
         self.assertEqual(sent_msg.body, received_msg.body)
+
+    @record
+    def test_get_dead_letter_subscription(self):
+        # Arrange
+        self._create_topic_and_subscription(self.topic_name, 'MySubscription')
+
+        # Act
+        dead_letter_name = ServiceBusService.format_dead_letter_subscription_name(
+            'MySubscription')
+        try:
+            self.sbs.receive_subscription_message(
+                self.topic_name, dead_letter_name, timeout=2)
+        except Exception:
+            # Assert
+            self.fail("Dead Letter subscription not found")
 
     @record
     def test_receive_subscription_message_delete(self):
