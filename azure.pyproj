@@ -1689,8 +1689,6 @@
     <Content Include="azure-servicebus\tests\recordings\test_servicebus_servicebus.test_unicode_receive_subscription_message_binary_data.yaml" />
     <Content Include="azure-servicebus\tests\recordings\test_servicebus_servicebus.test_unicode_receive_subscription_message_unicode_data.yaml" />
     <Content Include="azure-servicebus\tests\recordings\test_servicebus_servicebus.test_with_filter.yaml" />
-    <Content Include="azure-servicebus\tests\run-servicebus" />
-    <Content Include="azure-servicebus\tests\run-servicebus.bat" />
     <Content Include="azure-servicemanagement-legacy\MANIFEST.in" />
     <Content Include="azure-servicemanagement-legacy\README.rst" />
     <Content Include="azure-servicemanagement-legacy\setup.cfg" />
