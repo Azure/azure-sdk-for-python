@@ -233,10 +233,12 @@ class Message(WindowsAzureData):
         if self.custom_properties:
             for name, value in self.custom_properties.items():
                 if sys.version_info < (3,) and isinstance(value, unicode):
+                    escaped_value = value.replace('"', '\\"')
                     request.headers.append(
-                        (name, '"' + value.encode('utf-8') + '"'))
+                        (name, '"' + escaped_value.encode('utf-8') + '"'))
                 elif isinstance(value, str):
-                    request.headers.append((name, '"' + str(value) + '"'))
+                    escaped_value = value.replace('"', '\\"')
+                    request.headers.append((name, '"' + escaped_value + '"'))
                 elif isinstance(value, datetime):
                     request.headers.append(
                         (name, '"' + value.strftime('%a, %d %b %Y %H:%M:%S GMT') + '"'))
