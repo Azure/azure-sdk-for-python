@@ -154,6 +154,16 @@ class ServiceBusService(object):
         )
         self._filter = self._httpclient.perform_request
 
+    @staticmethod
+    def format_dead_letter_queue_name(queue_name):
+        """Get the dead letter name of this queue"""
+        return queue_name + '/$DeadLetterQueue'
+
+    @staticmethod
+    def format_dead_letter_subscription_name(subscription_name):
+        """Get the dead letter name of this subscription"""
+        return subscription_name + '/$DeadLetterQueue'
+
     # Backwards compatibility:
     # account_key and issuer used to be stored on the service class, they are
     # now stored on the authentication class.
