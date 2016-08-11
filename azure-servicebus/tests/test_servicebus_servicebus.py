@@ -399,6 +399,8 @@ class ServiceBusServiceBusTest(ServiceBusTestCase):
         # Act
         received_msg = self.sbs.receive_queue_message(self.queue_name, False)
         with self.assertRaises(AzureServiceBusPeekLockError):
+            received_msg.renew_lock()
+        with self.assertRaises(AzureServiceBusPeekLockError):
             received_msg.unlock()
 
         # Assert
@@ -453,6 +455,7 @@ class ServiceBusServiceBusTest(ServiceBusTestCase):
 
         # Act
         received_msg = self.sbs.receive_queue_message(self.queue_name, True)
+        received_msg.renew_lock()
         received_msg.unlock()
 
         # Assert
@@ -1267,6 +1270,8 @@ class ServiceBusServiceBusTest(ServiceBusTestCase):
         received_msg = self.sbs.receive_subscription_message(
             self.topic_name, 'MySubscription', False)
         with self.assertRaises(AzureServiceBusPeekLockError):
+            received_msg.renew_lock()
+        with self.assertRaises(AzureServiceBusPeekLockError):
             received_msg.unlock()
 
         # Assert
@@ -1329,6 +1334,7 @@ class ServiceBusServiceBusTest(ServiceBusTestCase):
         # Act
         received_msg = self.sbs.receive_subscription_message(
             self.topic_name, 'MySubscription', True)
+        received_msg.renew_lock()
         received_msg.unlock()
 
         # Assert
