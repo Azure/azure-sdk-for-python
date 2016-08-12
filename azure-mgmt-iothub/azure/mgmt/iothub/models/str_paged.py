@@ -9,10 +9,19 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .iot_hub_client import IotHubClient
-from .version import VERSION
+from msrest.paging import Paged
 
-__all__ = ['IotHubClient']
 
-__version__ = VERSION
+class strPaged(Paged):
+    """
+    A paging container for iterating over a list of str object
+    """
 
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[str]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(strPaged, self).__init__(*args, **kwargs)

@@ -9,10 +9,8 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .iot_hub_client import IotHubClient
-from .version import VERSION
+from .iot_hub_resource_operations import IotHubResourceOperations
 
-__all__ = ['IotHubClient']
-
-__version__ = VERSION
-
+__all__ = [
+    'IotHubResourceOperations',
+]
