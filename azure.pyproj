@@ -26,7 +26,7 @@
     <SccProvider>SAK</SccProvider>
     <SccAuxPath>SAK</SccAuxPath>
     <SccLocalPath>SAK</SccLocalPath>
-    <SearchPath>azure-common\;azure-servicebus\;azure-servicemanagement-legacy\;azure-mgmt-storage\;azure-mgmt-compute\;azure-mgmt-network\;azure-mgmt-resource\;azure-mgmt-redis\;azure-mgmt-authorization\;azure-mgmt-cdn\;azure-mgmt-logic\;azure-mgmt-notificationhubs\;azure-mgmt-scheduler\;azure-mgmt-web\;azure-graphrbac\;azure-mgmt\;azure-batch\;azure-mgmt-batch\;azure-mgmt-keyvault\;azure-mgmt-dns\;azure-mgmt-trafficmanager\</SearchPath>
+    <SearchPath>azure-common\;azure-servicebus\;azure-servicemanagement-legacy\;azure-mgmt-storage\;azure-mgmt-compute\;azure-mgmt-network\;azure-mgmt-resource\;azure-mgmt-redis\;azure-mgmt-authorization\;azure-mgmt-cdn\;azure-mgmt-logic\;azure-mgmt-notificationhubs\;azure-mgmt-scheduler\;azure-mgmt-web\;azure-graphrbac\;azure-mgmt\;azure-batch\;azure-mgmt-batch\;azure-mgmt-keyvault\;azure-mgmt-dns\;azure-mgmt-trafficmanager\;azure-mgmt-iothub\</SearchPath>
     <EnableNativeCodeDebugging>False</EnableNativeCodeDebugging>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
@@ -573,6 +573,45 @@
     <Compile Include="azure-mgmt-dns\azure\mgmt\__init__.py" />
     <Compile Include="azure-mgmt-dns\azure\__init__.py" />
     <Compile Include="azure-mgmt-dns\setup.py" />
+    <Compile Include="azure-mgmt-iothub\azure\mgmt\iothub\iot_hub_client.py" />
+    <Compile Include="azure-mgmt-iothub\azure\mgmt\iothub\models\cloud_to_device_properties.py" />
+    <Compile Include="azure-mgmt-iothub\azure\mgmt\iothub\models\error_details.py" />
+    <Compile Include="azure-mgmt-iothub\azure\mgmt\iothub\models\event_hub_consumer_group_info.py" />
+    <Compile Include="azure-mgmt-iothub\azure\mgmt\iothub\models\event_hub_properties.py" />
+    <Compile Include="azure-mgmt-iothub\azure\mgmt\iothub\models\export_devices_request.py" />
+    <Compile Include="azure-mgmt-iothub\azure\mgmt\iothub\models\feedback_properties.py" />
+    <Compile Include="azure-mgmt-iothub\azure\mgmt\iothub\models\import_devices_request.py" />
+    <Compile Include="azure-mgmt-iothub\azure\mgmt\iothub\models\iot_hub_capacity.py" />
+    <Compile Include="azure-mgmt-iothub\azure\mgmt\iothub\models\iot_hub_client_enums.py" />
+    <Compile Include="azure-mgmt-iothub\azure\mgmt\iothub\models\iot_hub_description.py" />
+    <Compile Include="azure-mgmt-iothub\azure\mgmt\iothub\models\iot_hub_description_paged.py" />
+    <Compile Include="azure-mgmt-iothub\azure\mgmt\iothub\models\iot_hub_name_availability_info.py" />
+    <Compile Include="azure-mgmt-iothub\azure\mgmt\iothub\models\iot_hub_properties.py" />
+    <Compile Include="azure-mgmt-iothub\azure\mgmt\iothub\models\iot_hub_quota_metric_info.py" />
+    <Compile Include="azure-mgmt-iothub\azure\mgmt\iothub\models\iot_hub_quota_metric_info_paged.py" />
+    <Compile Include="azure-mgmt-iothub\azure\mgmt\iothub\models\iot_hub_sku_description.py" />
+    <Compile Include="azure-mgmt-iothub\azure\mgmt\iothub\models\iot_hub_sku_description_paged.py" />
+    <Compile Include="azure-mgmt-iothub\azure\mgmt\iothub\models\iot_hub_sku_info.py" />
+    <Compile Include="azure-mgmt-iothub\azure\mgmt\iothub\models\job_response.py" />
+    <Compile Include="azure-mgmt-iothub\azure\mgmt\iothub\models\job_response_paged.py" />
+    <Compile Include="azure-mgmt-iothub\azure\mgmt\iothub\models\messaging_endpoint_properties.py" />
+    <Compile Include="azure-mgmt-iothub\azure\mgmt\iothub\models\operations_monitoring_properties.py" />
+    <Compile Include="azure-mgmt-iothub\azure\mgmt\iothub\models\operation_inputs.py" />
+    <Compile Include="azure-mgmt-iothub\azure\mgmt\iothub\models\registry_statistics.py" />
+    <Compile Include="azure-mgmt-iothub\azure\mgmt\iothub\models\resource.py" />
+    <Compile Include="azure-mgmt-iothub\azure\mgmt\iothub\models\shared_access_authorization_rule.py" />
+    <Compile Include="azure-mgmt-iothub\azure\mgmt\iothub\models\shared_access_signature_authorization_rule.py" />
+    <Compile Include="azure-mgmt-iothub\azure\mgmt\iothub\models\shared_access_signature_authorization_rule_paged.py" />
+    <Compile Include="azure-mgmt-iothub\azure\mgmt\iothub\models\storage_endpoint_properties.py" />
+    <Compile Include="azure-mgmt-iothub\azure\mgmt\iothub\models\str_paged.py" />
+    <Compile Include="azure-mgmt-iothub\azure\mgmt\iothub\models\__init__.py" />
+    <Compile Include="azure-mgmt-iothub\azure\mgmt\iothub\operations\iot_hub_resource_operations.py" />
+    <Compile Include="azure-mgmt-iothub\azure\mgmt\iothub\operations\__init__.py" />
+    <Compile Include="azure-mgmt-iothub\azure\mgmt\iothub\version.py" />
+    <Compile Include="azure-mgmt-iothub\azure\mgmt\iothub\__init__.py" />
+    <Compile Include="azure-mgmt-iothub\azure\mgmt\__init__.py" />
+    <Compile Include="azure-mgmt-iothub\azure\__init__.py" />
+    <Compile Include="azure-mgmt-iothub\setup.py" />
     <Compile Include="azure-mgmt-keyvault\azure\mgmt\keyvault\key_vault_management_client.py" />
     <Compile Include="azure-mgmt-keyvault\azure\mgmt\keyvault\models\access_policy_entry.py" />
     <Compile Include="azure-mgmt-keyvault\azure\mgmt\keyvault\models\key_vault_management_client_enums.py" />
@@ -1211,6 +1250,7 @@
     <Compile Include="azure-mgmt\tests\test_mgmt_compute.py" />
     <Compile Include="azure-mgmt\tests\test_mgmt_apps.py" />
     <Compile Include="azure-mgmt\tests\test_mgmt_dns.py" />
+    <Compile Include="azure-mgmt\tests\test_mgmt_iothub.py" />
     <Compile Include="azure-mgmt\tests\test_mgmt_keyvault.py" />
     <Compile Include="azure-mgmt\tests\test_mgmt_network.py" />
     <Compile Include="azure-mgmt\tests\test_mgmt_notificationhubs.py" />
@@ -1367,6 +1407,12 @@
     <Folder Include="azure-mgmt-dns\azure\mgmt\dns\" />
     <Folder Include="azure-mgmt-dns\azure\mgmt\dns\models\" />
     <Folder Include="azure-mgmt-dns\azure\mgmt\dns\operations\" />
+    <Folder Include="azure-mgmt-iothub\" />
+    <Folder Include="azure-mgmt-iothub\azure\" />
+    <Folder Include="azure-mgmt-iothub\azure\mgmt\" />
+    <Folder Include="azure-mgmt-iothub\azure\mgmt\iothub\" />
+    <Folder Include="azure-mgmt-iothub\azure\mgmt\iothub\models\" />
+    <Folder Include="azure-mgmt-iothub\azure\mgmt\iothub\operations\" />
     <Folder Include="azure-mgmt-keyvault\" />
     <Folder Include="azure-mgmt-keyvault\azure\" />
     <Folder Include="azure-mgmt-keyvault\azure\mgmt\" />
@@ -1510,6 +1556,10 @@
     <Content Include="azure-mgmt-dns\MANIFEST.in" />
     <Content Include="azure-mgmt-dns\README.rst" />
     <Content Include="azure-mgmt-dns\setup.cfg" />
+    <Content Include="azure-mgmt-iothub\HISTORY.rst" />
+    <Content Include="azure-mgmt-iothub\MANIFEST.in" />
+    <Content Include="azure-mgmt-iothub\README.rst" />
+    <Content Include="azure-mgmt-iothub\setup.cfg" />
     <Content Include="azure-mgmt-keyvault\MANIFEST.in" />
     <Content Include="azure-mgmt-keyvault\README.rst" />
     <Content Include="azure-mgmt-keyvault\setup.cfg" />
