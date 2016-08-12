@@ -9,10 +9,19 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .iot_hub_client import IotHubClient
-from .version import VERSION
+from msrest.serialization import Model
 
-__all__ = ['IotHubClient']
 
-__version__ = VERSION
+class OperationsMonitoringProperties(Model):
+    """The Operation Monitoring properties.
 
+    :param events:
+    :type events: dict
+    """ 
+
+    _attribute_map = {
+        'events': {'key': 'events', 'type': '{OperationMonitoringLevel}'},
+    }
+
+    def __init__(self, events=None):
+        self.events = events

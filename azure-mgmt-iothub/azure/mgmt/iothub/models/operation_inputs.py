@@ -9,10 +9,19 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .iot_hub_client import IotHubClient
-from .version import VERSION
+from msrest.serialization import Model
 
-__all__ = ['IotHubClient']
 
-__version__ = VERSION
+class OperationInputs(Model):
+    """OperationInputs.
 
+    :param name: The name of the iot hub.
+    :type name: str
+    """ 
+
+    _attribute_map = {
+        'name': {'key': 'Name', 'type': 'str'},
+    }
+
+    def __init__(self, name=None):
+        self.name = name
