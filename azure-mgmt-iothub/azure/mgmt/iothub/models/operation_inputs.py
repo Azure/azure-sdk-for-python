@@ -19,9 +19,13 @@ class OperationInputs(Model):
     :type name: str
     """ 
 
+    _validation = {
+        'name': {'required': True},
+    }
+
     _attribute_map = {
         'name': {'key': 'Name', 'type': 'str'},
     }
 
-    def __init__(self, name=None):
+    def __init__(self, name):
         self.name = name
