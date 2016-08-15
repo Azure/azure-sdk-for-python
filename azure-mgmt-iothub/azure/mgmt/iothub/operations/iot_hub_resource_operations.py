@@ -988,7 +988,7 @@ class IotHubResourceOperations(object):
         return deserialized
 
     def check_name_availability(
-            self, name=None, custom_headers=None, raw=False, **operation_config):
+            self, name, custom_headers=None, raw=False, **operation_config):
         """Check if an IotHub name is available.
 
         Check if an IotHub name is available.
