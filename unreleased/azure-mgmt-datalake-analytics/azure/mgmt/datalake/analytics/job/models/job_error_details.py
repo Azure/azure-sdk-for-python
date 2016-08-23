@@ -18,45 +18,43 @@ class JobErrorDetails(Model):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar description: Gets the error message description
+    :ivar description: the error message description
     :vartype description: str
-    :ivar details: Gets the details of the error message.
+    :ivar details: the details of the error message.
     :vartype details: str
-    :ivar end_offset: Gets the end offset in the job where the error was
-     found.
+    :ivar end_offset: the end offset in the job where the error was found.
     :vartype end_offset: int
-    :ivar error_id: Gets the specific identifier for the type of error
-     encountered in the job.
+    :ivar error_id: the specific identifier for the type of error encountered
+     in the job.
     :vartype error_id: str
-    :ivar file_path: Gets the path to any supplemental error files, if any.
+    :ivar file_path: the path to any supplemental error files, if any.
     :vartype file_path: str
-    :ivar help_link: Gets the link to MSDN or Azure help for this type of
-     error, if any.
+    :ivar help_link: the link to MSDN or Azure help for this type of error,
+     if any.
     :vartype help_link: str
-    :ivar internal_diagnostics: Gets the internal diagnostic stack trace if
-     the user requesting the job error details has sufficient permissions it
-     will be retrieved, otherwise it will be empty.
+    :ivar internal_diagnostics: the internal diagnostic stack trace if the
+     user requesting the job error details has sufficient permissions it will
+     be retrieved, otherwise it will be empty.
     :vartype internal_diagnostics: str
-    :ivar line_number: Gets the specific line number in the job where the
-     error occured.
+    :ivar line_number: the specific line number in the job where the error
+     occured.
     :vartype line_number: int
-    :ivar message: Gets the user friendly error message for the failure.
+    :ivar message: the user friendly error message for the failure.
     :vartype message: str
-    :ivar resolution: Gets the recommended resolution for the failure, if any.
+    :ivar resolution: the recommended resolution for the failure, if any.
     :vartype resolution: str
-    :ivar inner_error: Gets the inner error of this specific job error
-     message, if any.
+    :ivar inner_error: the inner error of this specific job error message, if
+     any.
     :vartype inner_error: :class:`JobInnerError
      <azure.mgmt.datalake.analytics.job.models.JobInnerError>`
-    :ivar severity: Gets the severity level of the failure. Possible values
-     include: 'Warning', 'Error'
+    :ivar severity: the severity level of the failure. Possible values
+     include: 'Warning', 'Error', 'Info'
     :vartype severity: str or :class:`SeverityTypes
      <azure.mgmt.datalake.analytics.job.models.SeverityTypes>`
-    :ivar source: Gets the ultimate source of the failure (usually either
-     SYSTEM or USER).
+    :ivar source: the ultimate source of the failure (usually either SYSTEM
+     or USER).
     :vartype source: str
-    :ivar start_offset: Gets the start offset in the job where the error was
-     found
+    :ivar start_offset: the start offset in the job where the error was found
     :vartype start_offset: int
     """ 
 
@@ -88,7 +86,7 @@ class JobErrorDetails(Model):
         'line_number': {'key': 'lineNumber', 'type': 'int'},
         'message': {'key': 'message', 'type': 'str'},
         'resolution': {'key': 'resolution', 'type': 'str'},
-        'inner_error': {'key': 'InnerError', 'type': 'JobInnerError'},
+        'inner_error': {'key': 'innerError', 'type': 'JobInnerError'},
         'severity': {'key': 'severity', 'type': 'SeverityTypes'},
         'source': {'key': 'source', 'type': 'str'},
         'start_offset': {'key': 'startOffset', 'type': 'int'},

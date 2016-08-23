@@ -13,14 +13,16 @@ from msrest.serialization import Model
 
 
 class JobResource(Model):
-    """The Data Lake Analytics U-SQL job resources.
+    """The Data Lake Analytics job resources.
 
-    :param name: Gets or set the name of the resource.
+    :param name: the name of the resource.
     :type name: str
-    :param resource_path: Gets or sets the path to the resource.
+    :param resource_path: the path to the resource.
     :type resource_path: str
-    :param type: Gets or sets the job resource type. Possible values include:
-     'VertexResource', 'StatisticsResource'
+    :param type: the job resource type. Possible values include:
+     'VertexResource', 'JobManagerResource', 'StatisticsResource',
+     'VertexResourceInUserFolder', 'JobManagerResourceInUserFolder',
+     'StatisticsResourceInUserFolder'
     :type type: str or :class:`JobResourceType
      <azure.mgmt.datalake.analytics.job.models.JobResourceType>`
     """ 
