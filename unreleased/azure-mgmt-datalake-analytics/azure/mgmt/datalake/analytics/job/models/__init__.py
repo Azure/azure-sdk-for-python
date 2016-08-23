@@ -15,7 +15,7 @@ from .job_data_path import JobDataPath
 from .job_state_audit_record import JobStateAuditRecord
 from .job_resource import JobResource
 from .usql_job_properties import USqlJobProperties
-from .hive_job_statement_info import HiveJobStatementInfo
+from .diagnostics import Diagnostics
 from .hive_job_properties import HiveJobProperties
 from .job_properties import JobProperties
 from .job_error_details import JobErrorDetails
@@ -24,8 +24,8 @@ from .job_information import JobInformation
 from .job_information_paged import JobInformationPaged
 from .data_lake_analytics_job_management_client_enums import (
     JobResourceType,
-    CompileMode,
     SeverityTypes,
+    CompileMode,
     JobType,
     JobState,
     JobResult,
@@ -38,7 +38,7 @@ __all__ = [
     'JobStateAuditRecord',
     'JobResource',
     'USqlJobProperties',
-    'HiveJobStatementInfo',
+    'Diagnostics',
     'HiveJobProperties',
     'JobProperties',
     'JobErrorDetails',
@@ -46,8 +46,8 @@ __all__ = [
     'JobInformation',
     'JobInformationPaged',
     'JobResourceType',
-    'CompileMode',
     'SeverityTypes',
+    'CompileMode',
     'JobType',
     'JobState',
     'JobResult',

@@ -13,66 +13,61 @@ from msrest.serialization import Model
 
 
 class JobStatisticsVertexStage(Model):
-    """The Data Lake Analytics U-SQL job statistics vertex stage information.
+    """The Data Lake Analytics job statistics vertex stage information.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar data_read: Gets the amount of data read, in bytes.
+    :ivar data_read: the amount of data read, in bytes.
     :vartype data_read: long
-    :ivar data_read_cross_pod: Gets the amount of data read across multiple
-     pods, in bytes.
+    :ivar data_read_cross_pod: the amount of data read across multiple pods,
+     in bytes.
     :vartype data_read_cross_pod: long
-    :ivar data_read_intra_pod: Gets the amount of data read in one pod, in
-     bytes.
+    :ivar data_read_intra_pod: the amount of data read in one pod, in bytes.
     :vartype data_read_intra_pod: long
-    :ivar data_to_read: Gets the amount of data remaining to be read, in
-     bytes.
+    :ivar data_to_read: the amount of data remaining to be read, in bytes.
     :vartype data_to_read: long
-    :ivar data_written: Gets the amount of data written, in bytes.
+    :ivar data_written: the amount of data written, in bytes.
     :vartype data_written: long
-    :ivar duplicate_discard_count: Gets the number of duplicates that were
+    :ivar duplicate_discard_count: the number of duplicates that were
      discarded.
     :vartype duplicate_discard_count: int
-    :ivar failed_count: Gets the number of failures that occured in this
-     stage.
+    :ivar failed_count: the number of failures that occured in this stage.
     :vartype failed_count: int
-    :ivar max_vertex_data_read: Gets the maximum amount of data read in a
-     single vertex, in bytes.
+    :ivar max_vertex_data_read: the maximum amount of data read in a single
+     vertex, in bytes.
     :vartype max_vertex_data_read: long
-    :ivar min_vertex_data_read: Gets the minimum amount of data read in a
-     single vertex, in bytes.
+    :ivar min_vertex_data_read: the minimum amount of data read in a single
+     vertex, in bytes.
     :vartype min_vertex_data_read: long
-    :ivar read_failure_count: Gets the number of read failures in this stage.
+    :ivar read_failure_count: the number of read failures in this stage.
     :vartype read_failure_count: int
-    :ivar revocation_count: Gets the number of vertices that were revoked
-     during this stage.
-    :vartype revocation_count: int
-    :ivar running_count: Gets the number of currently running vertices in
+    :ivar revocation_count: the number of vertices that were revoked during
      this stage.
+    :vartype revocation_count: int
+    :ivar running_count: the number of currently running vertices in this
+     stage.
     :vartype running_count: int
-    :ivar scheduled_count: Gets the number of currently scheduled vertices in
-     this stage
+    :ivar scheduled_count: the number of currently scheduled vertices in this
+     stage
     :vartype scheduled_count: int
-    :ivar stage_name: Gets the name of this stage in job execution.
+    :ivar stage_name: the name of this stage in job execution.
     :vartype stage_name: str
-    :ivar succeeded_count: Gets the number of vertices that succeeded in this
+    :ivar succeeded_count: the number of vertices that succeeded in this
      stage.
     :vartype succeeded_count: int
-    :ivar temp_data_written: Gets the amount of temporary data written, in
-     bytes.
+    :ivar temp_data_written: the amount of temporary data written, in bytes.
     :vartype temp_data_written: long
-    :ivar total_count: Gets the total vertex count for this stage.
+    :ivar total_count: the total vertex count for this stage.
     :vartype total_count: int
-    :ivar total_failed_time: Gets the amount of time that failed vertices
-     took up in this stage.
-    :vartype total_failed_time: str
-    :ivar total_progress: Gets the current progress of this stage, as a
-     percentage.
+    :ivar total_failed_time: the amount of time that failed vertices took up
+     in this stage.
+    :vartype total_failed_time: timedelta
+    :ivar total_progress: the current progress of this stage, as a percentage.
     :vartype total_progress: int
-    :ivar total_succeeded_time: Gets the amount of time all successful
-     vertices took in this stage.
-    :vartype total_succeeded_time: str
+    :ivar total_succeeded_time: the amount of time all successful vertices
+     took in this stage.
+    :vartype total_succeeded_time: timedelta
     """ 
 
     _validation = {
@@ -116,9 +111,9 @@ class JobStatisticsVertexStage(Model):
         'succeeded_count': {'key': 'succeededCount', 'type': 'int'},
         'temp_data_written': {'key': 'tempDataWritten', 'type': 'long'},
         'total_count': {'key': 'totalCount', 'type': 'int'},
-        'total_failed_time': {'key': 'totalFailedTime', 'type': 'str'},
+        'total_failed_time': {'key': 'totalFailedTime', 'type': 'duration'},
         'total_progress': {'key': 'totalProgress', 'type': 'int'},
-        'total_succeeded_time': {'key': 'totalSucceededTime', 'type': 'str'},
+        'total_succeeded_time': {'key': 'totalSucceededTime', 'type': 'duration'},
     }
 
     def __init__(self):

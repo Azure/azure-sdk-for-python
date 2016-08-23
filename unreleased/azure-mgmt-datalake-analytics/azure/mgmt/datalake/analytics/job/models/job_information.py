@@ -18,49 +18,56 @@ class JobInformation(Model):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :param job_id: Gets or sets the job's unique identifier (a GUID).
+    :param job_id: the job's unique identifier (a GUID).
     :type job_id: str
-    :param name: Gets or sets the friendly name of the job.
+    :param name: the friendly name of the job.
     :type name: str
-    :param type: Gets or sets the job type of the current job (Hive or USql).
-     Possible values include: 'USql', 'Hive'
+    :param type: the job type of the current job (Hive or USql). Possible
+     values include: 'USql', 'Hive'
     :type type: str or :class:`JobType
      <azure.mgmt.datalake.analytics.job.models.JobType>`
-    :param submitter: Gets or sets the user or account that submitted the job.
+    :param submitter: the user or account that submitted the job.
     :type submitter: str
-    :ivar error_message: Gets the error message details for the job, if the
-     job failed.
+    :ivar error_message: the error message details for the job, if the job
+     failed.
     :vartype error_message: list of :class:`JobErrorDetails
      <azure.mgmt.datalake.analytics.job.models.JobErrorDetails>`
-    :param degree_of_parallelism: Gets or sets the degree of parallelism used
-     for this job. This must be greater than 0.
+    :param degree_of_parallelism: the degree of parallelism used for this
+     job. This must be greater than 0.
     :type degree_of_parallelism: int
-    :param priority: Gets or sets the priority value for the current job.
-     Lower numbers have a higher priority. By default, a job has a priority
-     of 1000. This must be greater than 0.
+    :param priority: the priority value for the current job. Lower numbers
+     have a higher priority. By default, a job has a priority of 1000. This
+     must be greater than 0.
     :type priority: int
-    :ivar submit_time: Gets the time the job was submitted to the service.
+    :ivar submit_time: the time the job was submitted to the service.
     :vartype submit_time: datetime
-    :ivar start_time: Gets the start time of the job.
+    :ivar start_time: the start time of the job.
     :vartype start_time: datetime
-    :ivar end_time: Gets the completion time of the job.
+    :ivar end_time: the completion time of the job.
     :vartype end_time: datetime
-    :ivar state: Gets the job state. When the job is in the Ended state,
-     refer to Result and ErrorMessage for details. Possible values include:
+    :ivar state: the job state. When the job is in the Ended state, refer to
+     Result and ErrorMessage for details. Possible values include:
      'Accepted', 'Compiling', 'Ended', 'New', 'Queued', 'Running',
      'Scheduling', 'Starting', 'Paused', 'WaitingForCapacity'
     :vartype state: str or :class:`JobState
      <azure.mgmt.datalake.analytics.job.models.JobState>`
-    :ivar result: Gets the result of job execution or the current result of
-     the running job. Possible values include: 'None', 'Succeeded',
-     'Cancelled', 'Failed'
+    :ivar result: the result of job execution or the current result of the
+     running job. Possible values include: 'None', 'Succeeded', 'Cancelled',
+     'Failed'
     :vartype result: str or :class:`JobResult
      <azure.mgmt.datalake.analytics.job.models.JobResult>`
-    :ivar state_audit_records: Gets the job state audit records, indicating
-     when various operations have been performed on this job.
+    :ivar log_folder: the log folder path to use in the following format:
+     adl://<accountName>.azuredatalakestore.net/system/jobservice/jobs/Usql/2016/03/13/17/18/5fe51957-93bc-4de0-8ddc-c5a4753b068b/logs/.
+    :vartype log_folder: str
+    :param log_file_patterns: the list of log file name patterns to find in
+     the logFolder. '*' is the only matching character allowed. Example
+     format: jobExecution*.log or *mylog*.txt
+    :type log_file_patterns: list of str
+    :ivar state_audit_records: the job state audit records, indicating when
+     various operations have been performed on this job.
     :vartype state_audit_records: list of :class:`JobStateAuditRecord
      <azure.mgmt.datalake.analytics.job.models.JobStateAuditRecord>`
-    :param properties: Gets or sets the job specific properties.
+    :param properties: the job specific properties.
     :type properties: :class:`JobProperties
      <azure.mgmt.datalake.analytics.job.models.JobProperties>`
     """ 
@@ -74,6 +81,7 @@ class JobInformation(Model):
         'end_time': {'readonly': True},
         'state': {'readonly': True},
         'result': {'readonly': True},
+        'log_folder': {'readonly': True},
         'state_audit_records': {'readonly': True},
         'properties': {'required': True},
     }
@@ -91,11 +99,13 @@ class JobInformation(Model):
         'end_time': {'key': 'endTime', 'type': 'iso-8601'},
         'state': {'key': 'state', 'type': 'JobState'},
         'result': {'key': 'result', 'type': 'JobResult'},
+        'log_folder': {'key': 'logFolder', 'type': 'str'},
+        'log_file_patterns': {'key': 'logFilePatterns', 'type': '[str]'},
         'state_audit_records': {'key': 'stateAuditRecords', 'type': '[JobStateAuditRecord]'},
         'properties': {'key': 'properties', 'type': 'JobProperties'},
     }
 
-    def __init__(self, name, type, properties, job_id=None, submitter=None, degree_of_parallelism=None, priority=None):
+    def __init__(self, name, type, properties, job_id=None, submitter=None, degree_of_parallelism=None, priority=None, log_file_patterns=None):
         self.job_id = job_id
         self.name = name
         self.type = type
@@ -108,5 +118,7 @@ class JobInformation(Model):
         self.end_time = None
         self.state = None
         self.result = None
+        self.log_folder = None
+        self.log_file_patterns = log_file_patterns
         self.state_audit_records = None
         self.properties = properties

@@ -15,51 +15,52 @@ from .job_properties import JobProperties
 class HiveJobProperties(JobProperties):
     """HiveJobProperties.
 
-    :param runtime_version: Gets or sets the runtime version of the U-SQL
-     engine to use
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :param runtime_version: the runtime version of the Data Lake Analytics
+     engine to use for the specific type of job being run.
     :type runtime_version: str
-    :param script: Gets or sets the U-SQL script to run
+    :param script: the script to run
     :type script: str
     :param type: Polymorphic Discriminator
     :type type: str
-    :param statement_info: Gets or sets the statement information for each
-     statement in the script
-    :type statement_info: list of :class:`HiveJobStatementInfo
-     <azure.mgmt.datalake.analytics.job.models.HiveJobStatementInfo>`
-    :param logs_location: Gets or sets the Hive logs location
-    :type logs_location: str
-    :param warehouse_location: Gets or sets the runtime version of the U-SQL
-     engine to use
-    :type warehouse_location: str
-    :param statement_count: Gets or sets the number of statements that will
-     be run based on the script
-    :type statement_count: int
-    :param executed_statement_count: Gets or sets the number of statements
-     that have been run based on the script
-    :type executed_statement_count: int
+    :ivar logs_location: the Hive logs location
+    :vartype logs_location: str
+    :ivar output_location: the location of Hive job output files (both
+     execution output and results)
+    :vartype output_location: str
+    :ivar statement_count: the number of statements that will be run based on
+     the script
+    :vartype statement_count: int
+    :ivar executed_statement_count: the number of statements that have been
+     run based on the script
+    :vartype executed_statement_count: int
     """ 
 
     _validation = {
         'script': {'required': True},
         'type': {'required': True},
+        'logs_location': {'readonly': True},
+        'output_location': {'readonly': True},
+        'statement_count': {'readonly': True},
+        'executed_statement_count': {'readonly': True},
     }
 
     _attribute_map = {
         'runtime_version': {'key': 'runtimeVersion', 'type': 'str'},
         'script': {'key': 'script', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'statement_info': {'key': 'statementInfo', 'type': '[HiveJobStatementInfo]'},
         'logs_location': {'key': 'logsLocation', 'type': 'str'},
-        'warehouse_location': {'key': 'warehouseLocation', 'type': 'str'},
+        'output_location': {'key': 'outputLocation', 'type': 'str'},
         'statement_count': {'key': 'statementCount', 'type': 'int'},
         'executed_statement_count': {'key': 'executedStatementCount', 'type': 'int'},
     }
 
-    def __init__(self, script, runtime_version=None, statement_info=None, logs_location=None, warehouse_location=None, statement_count=None, executed_statement_count=None):
+    def __init__(self, script, runtime_version=None):
         super(HiveJobProperties, self).__init__(runtime_version=runtime_version, script=script)
-        self.statement_info = statement_info
-        self.logs_location = logs_location
-        self.warehouse_location = warehouse_location
-        self.statement_count = statement_count
-        self.executed_statement_count = executed_statement_count
+        self.logs_location = None
+        self.output_location = None
+        self.statement_count = None
+        self.executed_statement_count = None
         self.type = 'Hive'

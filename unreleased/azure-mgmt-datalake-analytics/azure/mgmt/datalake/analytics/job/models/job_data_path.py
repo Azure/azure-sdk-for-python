@@ -13,16 +13,16 @@ from msrest.serialization import Model
 
 
 class JobDataPath(Model):
-    """A Data Lake Analytics U-SQL job data path item.
+    """A Data Lake Analytics job data path item.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar job_id: Gets the id of the job this data is for.
+    :ivar job_id: the id of the job this data is for.
     :vartype job_id: str
-    :ivar command: Gets the command that this job data relates to.
+    :ivar command: the command that this job data relates to.
     :vartype command: str
-    :ivar paths: Gets the list of paths to all of the job data.
+    :ivar paths: the list of paths to all of the job data.
     :vartype paths: list of str
     """ 
 
