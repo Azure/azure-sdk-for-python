@@ -18,53 +18,53 @@ class USqlJobProperties(JobProperties):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :param runtime_version: Gets or sets the runtime version of the U-SQL
-     engine to use
+    :param runtime_version: the runtime version of the Data Lake Analytics
+     engine to use for the specific type of job being run.
     :type runtime_version: str
-    :param script: Gets or sets the U-SQL script to run
+    :param script: the script to run
     :type script: str
     :param type: Polymorphic Discriminator
     :type type: str
-    :param resources: Gets or sets the list of resources that are required by
-     the job
+    :param resources: the list of resources that are required by the job
     :type resources: list of :class:`JobResource
      <azure.mgmt.datalake.analytics.job.models.JobResource>`
-    :param statistics: Gets or sets the job specific statistics.
+    :param statistics: the job specific statistics.
     :type statistics: :class:`JobStatistics
      <azure.mgmt.datalake.analytics.job.models.JobStatistics>`
-    :param debug_data: Gets or sets the job specific debug data locations.
+    :param debug_data: the job specific debug data locations.
     :type debug_data: :class:`JobDataPath
      <azure.mgmt.datalake.analytics.job.models.JobDataPath>`
-    :ivar algebra_file_path: Gets the U-SQL algebra file path after the job
-     has completed
+    :param diagnostics: the diagnostics for the job.
+    :type diagnostics: list of :class:`Diagnostics
+     <azure.mgmt.datalake.analytics.job.models.Diagnostics>`
+    :ivar algebra_file_path: the algebra file path after the job has completed
     :vartype algebra_file_path: str
-    :ivar total_compilation_time: Gets the total time this job spent
-     compiling. This value should not be set by the user and will be ignored
-     if it is.
-    :vartype total_compilation_time: str
-    :ivar total_pause_time: Gets the total time this job spent paused. This
-     value should not be set by the user and will be ignored if it is.
-    :vartype total_pause_time: str
-    :ivar total_queued_time: Gets the total time this job spent queued. This
-     value should not be set by the user and will be ignored if it is.
-    :vartype total_queued_time: str
-    :ivar total_running_time: Gets the total time this job spent executing.
+    :ivar total_compilation_time: the total time this job spent compiling.
      This value should not be set by the user and will be ignored if it is.
-    :vartype total_running_time: str
-    :ivar root_process_node_id: Gets the ID used to identify the job manager
+    :vartype total_compilation_time: timedelta
+    :ivar total_pause_time: the total time this job spent paused. This value
+     should not be set by the user and will be ignored if it is.
+    :vartype total_pause_time: timedelta
+    :ivar total_queued_time: the total time this job spent queued. This value
+     should not be set by the user and will be ignored if it is.
+    :vartype total_queued_time: timedelta
+    :ivar total_running_time: the total time this job spent executing. This
+     value should not be set by the user and will be ignored if it is.
+    :vartype total_running_time: timedelta
+    :ivar root_process_node_id: the ID used to identify the job manager
      coordinating job execution. This value should not be set by the user and
      will be ignored if it is.
     :vartype root_process_node_id: str
-    :ivar yarn_application_id: Gets the ID used to identify the yarn
+    :ivar yarn_application_id: the ID used to identify the yarn application
+     executing the job. This value should not be set by the user and will be
+     ignored if it is.
+    :vartype yarn_application_id: str
+    :ivar yarn_application_time_stamp: the timestamp (in ticks) for the yarn
      application executing the job. This value should not be set by the user
      and will be ignored if it is.
-    :vartype yarn_application_id: str
-    :ivar yarn_application_time_stamp: Gets the timestamp (in ticks) for the
-     yarn application executing the job. This value should not be set by the
-     user and will be ignored if it is.
     :vartype yarn_application_time_stamp: long
-    :param compile_mode: Gets or sets the compile mode for the job. Possible
-     values include: 'Semantic', 'Full', 'SingleBox'
+    :param compile_mode: the compile mode for the job. Possible values
+     include: 'Semantic', 'Full', 'SingleBox'
     :type compile_mode: str or :class:`CompileMode
      <azure.mgmt.datalake.analytics.job.models.CompileMode>`
     """ 
@@ -89,22 +89,24 @@ class USqlJobProperties(JobProperties):
         'resources': {'key': 'resources', 'type': '[JobResource]'},
         'statistics': {'key': 'statistics', 'type': 'JobStatistics'},
         'debug_data': {'key': 'debugData', 'type': 'JobDataPath'},
+        'diagnostics': {'key': 'diagnostics', 'type': '[Diagnostics]'},
         'algebra_file_path': {'key': 'algebraFilePath', 'type': 'str'},
-        'total_compilation_time': {'key': 'totalCompilationTime', 'type': 'str'},
-        'total_pause_time': {'key': 'totalPauseTime', 'type': 'str'},
-        'total_queued_time': {'key': 'totalQueuedTime', 'type': 'str'},
-        'total_running_time': {'key': 'totalRunningTime', 'type': 'str'},
+        'total_compilation_time': {'key': 'totalCompilationTime', 'type': 'duration'},
+        'total_pause_time': {'key': 'totalPauseTime', 'type': 'duration'},
+        'total_queued_time': {'key': 'totalQueuedTime', 'type': 'duration'},
+        'total_running_time': {'key': 'totalRunningTime', 'type': 'duration'},
         'root_process_node_id': {'key': 'rootProcessNodeId', 'type': 'str'},
         'yarn_application_id': {'key': 'yarnApplicationId', 'type': 'str'},
         'yarn_application_time_stamp': {'key': 'yarnApplicationTimeStamp', 'type': 'long'},
         'compile_mode': {'key': 'compileMode', 'type': 'CompileMode'},
     }
 
-    def __init__(self, script, runtime_version=None, resources=None, statistics=None, debug_data=None, compile_mode=None):
+    def __init__(self, script, runtime_version=None, resources=None, statistics=None, debug_data=None, diagnostics=None, compile_mode=None):
         super(USqlJobProperties, self).__init__(runtime_version=runtime_version, script=script)
         self.resources = resources
         self.statistics = statistics
         self.debug_data = debug_data
+        self.diagnostics = diagnostics
         self.algebra_file_path = None
         self.total_compilation_time = None
         self.total_pause_time = None

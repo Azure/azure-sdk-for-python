@@ -15,10 +15,10 @@ from msrest.serialization import Model
 class JobProperties(Model):
     """The common Data Lake Analytics job properties.
 
-    :param runtime_version: Gets or sets the runtime version of the U-SQL
-     engine to use
+    :param runtime_version: the runtime version of the Data Lake Analytics
+     engine to use for the specific type of job being run.
     :type runtime_version: str
-    :param script: Gets or sets the U-SQL script to run
+    :param script: the script to run
     :type script: str
     :param type: Polymorphic Discriminator
     :type type: str

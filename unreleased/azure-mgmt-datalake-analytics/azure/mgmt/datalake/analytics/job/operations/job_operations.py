@@ -40,7 +40,7 @@ class JobOperations(object):
         :param account_name: The Azure Data Lake Analytics account to execute
          job operations on.
         :type account_name: str
-        :param job_identity: JobInfo ID.
+        :param job_identity: Job Information ID.
         :type job_identity: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -76,7 +76,7 @@ class JobOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct and send request
-        request = self._client.post(url, query_parameters)
+        request = self._client.get(url, query_parameters)
         response = self._client.send(request, header_parameters, **operation_config)
 
         if response.status_code not in [200]:
@@ -97,7 +97,7 @@ class JobOperations(object):
 
     def get_debug_data_path(
             self, account_name, job_identity, custom_headers=None, raw=False, **operation_config):
-        """Gets the U-SQL job debug data information specified by the job ID.
+        """Gets the job debug data information specified by the job ID.
 
         :param account_name: The Azure Data Lake Analytics account to execute
          job operations on.
@@ -426,7 +426,7 @@ class JobOperations(object):
          elements. Optional.
         :type skip: int
         :param expand: OData expansion. Expand related resources in line with
-         the retrieved resources, e.g. Categories/$expand=Products would
+         the retrieved resources, e.g. Categories?$expand=Products would
          expand Product data in line with each Category entry. Optional.
         :type expand: str
         :param select: OData Select statement. Limits the properties on each

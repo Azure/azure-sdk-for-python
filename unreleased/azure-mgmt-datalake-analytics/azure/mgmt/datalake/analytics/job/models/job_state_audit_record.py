@@ -13,19 +13,19 @@ from msrest.serialization import Model
 
 
 class JobStateAuditRecord(Model):
-    """The Data Lake Analytics U-SQL job state audit records for tracking the
-    lifecycle of a job.
+    """The Data Lake Analytics job state audit records for tracking the lifecycle
+    of a job.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar new_state: Gets the new state the job is in.
+    :ivar new_state: the new state the job is in.
     :vartype new_state: str
-    :ivar time_stamp: Gets the time stamp that the state change took place.
+    :ivar time_stamp: the time stamp that the state change took place.
     :vartype time_stamp: datetime
-    :ivar requested_by_user: Gets the user who requests the change.
+    :ivar requested_by_user: the user who requests the change.
     :vartype requested_by_user: str
-    :ivar details: Gets  the details of the audit log.
+    :ivar details:  the details of the audit log.
     :vartype details: str
     """ 
 

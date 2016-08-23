@@ -15,7 +15,18 @@ from enum import Enum
 class JobResourceType(Enum):
 
     vertex_resource = "VertexResource"
+    job_manager_resource = "JobManagerResource"
     statistics_resource = "StatisticsResource"
+    vertex_resource_in_user_folder = "VertexResourceInUserFolder"
+    job_manager_resource_in_user_folder = "JobManagerResourceInUserFolder"
+    statistics_resource_in_user_folder = "StatisticsResourceInUserFolder"
+
+
+class SeverityTypes(Enum):
+
+    warning = "Warning"
+    error = "Error"
+    info = "Info"
 
 
 class CompileMode(Enum):
@@ -23,12 +34,6 @@ class CompileMode(Enum):
     semantic = "Semantic"
     full = "Full"
     single_box = "SingleBox"
-
-
-class SeverityTypes(Enum):
-
-    warning = "Warning"
-    error = "Error"
 
 
 class JobType(Enum):
