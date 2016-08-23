@@ -18,34 +18,34 @@ class JobInnerError(Model):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar diagnostic_code: Gets the diagnostic error code.
+    :ivar diagnostic_code: the diagnostic error code.
     :vartype diagnostic_code: int
-    :ivar severity: Gets the severity level of the failure. Possible values
-     include: 'Warning', 'Error'
+    :ivar severity: the severity level of the failure. Possible values
+     include: 'Warning', 'Error', 'Info'
     :vartype severity: str or :class:`SeverityTypes
      <azure.mgmt.datalake.analytics.job.models.SeverityTypes>`
-    :ivar details: Gets the details of the error message.
+    :ivar details: the details of the error message.
     :vartype details: str
-    :ivar component: Gets the component that failed.
+    :ivar component: the component that failed.
     :vartype component: str
-    :ivar error_id: Gets the specific identifier for the type of error
-     encountered in the job.
+    :ivar error_id: the specific identifier for the type of error encountered
+     in the job.
     :vartype error_id: str
-    :ivar help_link: Gets the link to MSDN or Azure help for this type of
-     error, if any.
+    :ivar help_link: the link to MSDN or Azure help for this type of error,
+     if any.
     :vartype help_link: str
-    :ivar internal_diagnostics: Gets the internal diagnostic stack trace if
-     the user requesting the job error details has sufficient permissions it
-     will be retrieved, otherwise it will be empty.
+    :ivar internal_diagnostics: the internal diagnostic stack trace if the
+     user requesting the job error details has sufficient permissions it will
+     be retrieved, otherwise it will be empty.
     :vartype internal_diagnostics: str
-    :ivar message: Gets the user friendly error message for the failure.
+    :ivar message: the user friendly error message for the failure.
     :vartype message: str
-    :ivar resolution: Gets the recommended resolution for the failure, if any.
+    :ivar resolution: the recommended resolution for the failure, if any.
     :vartype resolution: str
-    :ivar source: Gets the ultimate source of the failure (usually either
-     SYSTEM or USER).
+    :ivar source: the ultimate source of the failure (usually either SYSTEM
+     or USER).
     :vartype source: str
-    :ivar description: Gets the error message description
+    :ivar description: the error message description
     :vartype description: str
     """ 
 
