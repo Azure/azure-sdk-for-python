@@ -18,7 +18,7 @@ class ResourceGroupProperties(Model):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar provisioning_state: Gets resource group provisioning state.
+    :ivar provisioning_state: The provisioning state.
     :vartype provisioning_state: str
     """ 
 
