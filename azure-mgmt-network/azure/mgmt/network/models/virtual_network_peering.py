@@ -30,7 +30,7 @@ class VirtualNetworkPeering(SubResource):
     :type allow_gateway_transit: bool
     :param use_remote_gateways: Gets or sets if remote gateways can be used
      on this virtual network. If the flag is set to true, and
-     allowGatewayTransit on remotepeering is also true, virtual network will
+     allowGatewayTransit on remote peering is also true, virtual network will
      use gateways of remote virtual network for transit. Only 1 peering can
      have this flag set to true. This flag cannot be set if virtual network
      already has a gateway.

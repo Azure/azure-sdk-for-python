@@ -117,7 +117,7 @@ class VirtualNetworkPeeringsOperations(object):
 
     def get(
             self, resource_group_name, virtual_network_name, virtual_network_peering_name, custom_headers=None, raw=False, **operation_config):
-        """The Get virtual network peering operation retreives information about
+        """The Get virtual network peering operation retrieves information about
         the specified virtual network peering.
 
         :param resource_group_name: The name of the resource group.

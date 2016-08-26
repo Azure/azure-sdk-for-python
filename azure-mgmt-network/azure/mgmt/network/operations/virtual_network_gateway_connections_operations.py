@@ -43,7 +43,7 @@ class VirtualNetworkGatewayConnectionsOperations(object):
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
         :param virtual_network_gateway_connection_name: The name of the
-         virtual network gateway conenction.
+         virtual network gateway connection.
         :type virtual_network_gateway_connection_name: str
         :param parameters: Parameters supplied to the Begin Create or update
          Virtual Network Gateway connection operation through Network
@@ -199,7 +199,7 @@ class VirtualNetworkGatewayConnectionsOperations(object):
     def delete(
             self, resource_group_name, virtual_network_gateway_connection_name, custom_headers=None, raw=False, **operation_config):
         """The Delete VirtualNetworkGatewayConnection operation deletes the
-        specifed virtual network Gateway connection through Network resource
+        specified virtual network Gateway connection through Network resource
         provider.
 
         :param resource_group_name: The name of the resource group.

@@ -32,10 +32,10 @@ class LoadBalancer(Resource):
      the load balancer
     :type frontend_ip_configurations: list of :class:`FrontendIPConfiguration
      <azure.mgmt.network.models.FrontendIPConfiguration>`
-    :param backend_address_pools: Gets or sets Pools of backend IP addresseses
+    :param backend_address_pools: Gets or sets Pools of backend IP addresses
     :type backend_address_pools: list of :class:`BackendAddressPool
      <azure.mgmt.network.models.BackendAddressPool>`
-    :param load_balancing_rules: Gets or sets loadbalancing rules
+    :param load_balancing_rules: Gets or sets load balancing rules
     :type load_balancing_rules: list of :class:`LoadBalancingRule
      <azure.mgmt.network.models.LoadBalancingRule>`
     :param probes: Gets or sets list of Load balancer probes

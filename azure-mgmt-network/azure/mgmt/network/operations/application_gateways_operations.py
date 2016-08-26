@@ -36,12 +36,12 @@ class ApplicationGatewaysOperations(object):
 
     def delete(
             self, resource_group_name, application_gateway_name, custom_headers=None, raw=False, **operation_config):
-        """The delete applicationgateway operation deletes the specified
-        applicationgateway.
+        """The delete ApplicationGateway operation deletes the specified
+        application gateway.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
-        :param application_gateway_name: The name of the applicationgateway.
+        :param application_gateway_name: The name of the application gateway.
         :type application_gateway_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -113,12 +113,12 @@ class ApplicationGatewaysOperations(object):
 
     def get(
             self, resource_group_name, application_gateway_name, custom_headers=None, raw=False, **operation_config):
-        """The Get applicationgateway operation retreives information about the
-        specified applicationgateway.
+        """The Get ApplicationGateway operation retrieves information about the
+        specified application gateway.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
-        :param application_gateway_name: The name of the applicationgateway.
+        :param application_gateway_name: The name of the application gateway.
         :type application_gateway_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -270,8 +270,8 @@ class ApplicationGatewaysOperations(object):
 
     def list(
             self, resource_group_name, custom_headers=None, raw=False, **operation_config):
-        """The List ApplicationGateway operation retrieves all the
-        applicationgateways in a resource group.
+        """The List ApplicationGateway operation retrieves all the application
+        gateways in a resource group.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
@@ -336,8 +336,8 @@ class ApplicationGatewaysOperations(object):
 
     def list_all(
             self, custom_headers=None, raw=False, **operation_config):
-        """The List applicationgateway operation retrieves all the
-        applicationgateways in a subscription.
+        """The List ApplicationGateway operation retrieves all the application
+        gateways in a subscription.
 
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -399,7 +399,7 @@ class ApplicationGatewaysOperations(object):
 
     def start(
             self, resource_group_name, application_gateway_name, custom_headers=None, raw=False, **operation_config):
-        """The Start ApplicationGateway operation starts application gatewayin
+        """The Start ApplicationGateway operation starts application gateway in
         the specified resource group through Network resource provider.
 
         :param resource_group_name: The name of the resource group.
@@ -476,7 +476,7 @@ class ApplicationGatewaysOperations(object):
 
     def stop(
             self, resource_group_name, application_gateway_name, custom_headers=None, raw=False, **operation_config):
-        """The STOP ApplicationGateway operation stops application gatewayin the
+        """The STOP ApplicationGateway operation stops application gateway in the
         specified resource group through Network resource provider.
 
         :param resource_group_name: The name of the resource group.
