@@ -116,7 +116,7 @@ class RoutesOperations(object):
 
     def get(
             self, resource_group_name, route_table_name, route_name, custom_headers=None, raw=False, **operation_config):
-        """The Get route operation retreives information about the specified
+        """The Get route operation retrieves information about the specified
         route from the route table.
 
         :param resource_group_name: The name of the resource group.
@@ -190,7 +190,7 @@ class RoutesOperations(object):
         :param route_name: The name of the route.
         :type route_name: str
         :param route_parameters: Parameters supplied to the create/update
-         routeoperation
+         route operation
         :type route_parameters: :class:`Route
          <azure.mgmt.network.models.Route>`
         :param dict custom_headers: headers that will be added to the request

@@ -197,7 +197,7 @@ class VirtualNetworkGatewaysOperations(object):
 
     def delete(
             self, resource_group_name, virtual_network_gateway_name, custom_headers=None, raw=False, **operation_config):
-        """The Delete VirtualNetworkGateway operation deletes the specifed
+        """The Delete VirtualNetworkGateway operation deletes the specified
         virtual network Gateway through Network resource provider.
 
         :param resource_group_name: The name of the resource group.

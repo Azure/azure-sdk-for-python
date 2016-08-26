@@ -13,7 +13,7 @@ from msrest.serialization import Model
 
 
 class EffectiveRouteListResult(Model):
-    """Response for list effective route api servive call.
+    """Response for list effective route api service call.
 
     :param value: Gets list of effective routes
     :type value: list of :class:`EffectiveRoute

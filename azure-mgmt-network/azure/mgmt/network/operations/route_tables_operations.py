@@ -36,7 +36,7 @@ class RouteTablesOperations(object):
 
     def delete(
             self, resource_group_name, route_table_name, custom_headers=None, raw=False, **operation_config):
-        """The Delete RouteTable operation deletes the specifed Route Table.
+        """The Delete RouteTable operation deletes the specified Route Table.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
@@ -177,7 +177,7 @@ class RouteTablesOperations(object):
 
     def create_or_update(
             self, resource_group_name, route_table_name, parameters, custom_headers=None, raw=False, **operation_config):
-        """The Put RouteTable operation creates/updates a route tablein the
+        """The Put RouteTable operation creates/updates a route table in the
         specified resource group.
 
         :param resource_group_name: The name of the resource group.

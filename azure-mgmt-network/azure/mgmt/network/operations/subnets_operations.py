@@ -115,7 +115,7 @@ class SubnetsOperations(object):
 
     def get(
             self, resource_group_name, virtual_network_name, subnet_name, expand=None, custom_headers=None, raw=False, **operation_config):
-        """The Get subnet operation retreives information about the specified
+        """The Get subnet operation retrieves information about the specified
         subnet.
 
         :param resource_group_name: The name of the resource group.
@@ -183,7 +183,7 @@ class SubnetsOperations(object):
 
     def create_or_update(
             self, resource_group_name, virtual_network_name, subnet_name, subnet_parameters, custom_headers=None, raw=False, **operation_config):
-        """The Put Subnet operation creates/updates a subnet in thespecified
+        """The Put Subnet operation creates/updates a subnet in the specified
         virtual network.
 
         :param resource_group_name: The name of the resource group.

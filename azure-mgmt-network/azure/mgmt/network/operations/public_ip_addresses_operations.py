@@ -113,7 +113,7 @@ class PublicIPAddressesOperations(object):
 
     def get(
             self, resource_group_name, public_ip_address_name, expand=None, custom_headers=None, raw=False, **operation_config):
-        """The Get publicIpAddress operation retreives information about the
+        """The Get publicIpAddress operation retrieves information about the
         specified pubicIpAddress.
 
         :param resource_group_name: The name of the resource group.

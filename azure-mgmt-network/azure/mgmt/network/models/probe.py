@@ -24,7 +24,7 @@ class Probe(SubResource):
     :vartype load_balancing_rules: list of :class:`SubResource
      <azure.mgmt.network.models.SubResource>`
     :param protocol: Gets or sets the protocol of the end point. Possible
-     values are http pr Tcp. If Tcp is specified, a received ACK is required
+     values are http or Tcp. If Tcp is specified, a received ACK is required
      for the probe to be successful. If http is specified,a 200 OK response
      from the specifies URI is required for the probe to be successful.
      Possible values include: 'Http', 'Tcp'
@@ -41,7 +41,7 @@ class Probe(SubResource):
     :type interval_in_seconds: int
     :param number_of_probes: Gets or sets the number of probes where if no
      response, will result in stopping further traffic from being delivered
-     to the endpoint. This values allows endponints to be taken out of
+     to the endpoint. This values allows endpoints to be taken out of
      rotation faster or slower than the typical times used in Azure.
     :type number_of_probes: int
     :param request_path: Gets or sets the URI used for requesting health

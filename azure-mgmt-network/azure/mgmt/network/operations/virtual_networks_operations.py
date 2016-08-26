@@ -36,7 +36,7 @@ class VirtualNetworksOperations(object):
 
     def delete(
             self, resource_group_name, virtual_network_name, custom_headers=None, raw=False, **operation_config):
-        """The Delete VirtualNetwork operation deletes the specifed virtual
+        """The Delete VirtualNetwork operation deletes the specified virtual
         network.
 
         :param resource_group_name: The name of the resource group.

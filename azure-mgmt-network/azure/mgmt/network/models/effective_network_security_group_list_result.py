@@ -13,7 +13,7 @@ from msrest.serialization import Model
 
 
 class EffectiveNetworkSecurityGroupListResult(Model):
-    """Response for list effective network security groups api servive call.
+    """Response for list effective network security groups api service call.
 
     :param value: Gets list of effective network security groups
     :type value: list of :class:`EffectiveNetworkSecurityGroup
