@@ -113,7 +113,7 @@ class NetworkInterfacesOperations(object):
 
     def get(
             self, resource_group_name, network_interface_name, expand=None, custom_headers=None, raw=False, **operation_config):
-        """The Get ntework interface operation retreives information about the
+        """The Get network interface operation retrieves information about the
         specified network interface.
 
         :param resource_group_name: The name of the resource group.
@@ -417,7 +417,7 @@ class NetworkInterfacesOperations(object):
 
     def get_virtual_machine_scale_set_network_interface(
             self, resource_group_name, virtual_machine_scale_set_name, virtualmachine_index, network_interface_name, expand=None, custom_headers=None, raw=False, **operation_config):
-        """The Get ntework interface operation retreives information about the
+        """The Get network interface operation retrieves information about the
         specified network interface in a virtual machine scale set.
 
         :param resource_group_name: The name of the resource group.

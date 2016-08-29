@@ -13,7 +13,7 @@ from msrest.serialization import Model
 
 
 class ExpressRouteCircuitPeeringConfig(Model):
-    """Specfies the peering config.
+    """Specifies the peering config.
 
     :param advertised_public_prefixes: Gets or sets the reference of
      AdvertisedPublicPrefixes

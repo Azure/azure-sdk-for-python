@@ -13,7 +13,7 @@ from .sub_resource import SubResource
 
 
 class OutboundNatRule(SubResource):
-    """Outbound NAT pool of the loadbalancer.
+    """Outbound NAT pool of the load balancer.
 
     :param id: Resource Id
     :type id: str
