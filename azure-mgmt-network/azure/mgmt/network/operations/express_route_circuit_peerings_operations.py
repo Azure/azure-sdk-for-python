@@ -181,7 +181,7 @@ class ExpressRouteCircuitPeeringsOperations(object):
 
     def create_or_update(
             self, resource_group_name, circuit_name, peering_name, peering_parameters, custom_headers=None, raw=False, **operation_config):
-        """The Put Pering operation creates/updates an peering in the specified
+        """The Put Peering operation creates/updates an peering in the specified
         ExpressRouteCircuits.
 
         :param resource_group_name: The name of the resource group.
@@ -284,7 +284,7 @@ class ExpressRouteCircuitPeeringsOperations(object):
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
-        :param circuit_name: The name of the curcuit.
+        :param circuit_name: The name of the circuit.
         :type circuit_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the

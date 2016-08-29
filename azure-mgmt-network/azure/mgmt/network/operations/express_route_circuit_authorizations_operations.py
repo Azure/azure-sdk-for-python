@@ -182,7 +182,7 @@ class ExpressRouteCircuitAuthorizationsOperations(object):
     def create_or_update(
             self, resource_group_name, circuit_name, authorization_name, authorization_parameters, custom_headers=None, raw=False, **operation_config):
         """The Put Authorization operation creates/updates an authorization in
-        thespecified ExpressRouteCircuits.
+        the specified ExpressRouteCircuits.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
@@ -285,7 +285,7 @@ class ExpressRouteCircuitAuthorizationsOperations(object):
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
-        :param circuit_name: The name of the curcuit.
+        :param circuit_name: The name of the circuit.
         :type circuit_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the

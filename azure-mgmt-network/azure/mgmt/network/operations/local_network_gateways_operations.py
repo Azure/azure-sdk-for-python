@@ -196,7 +196,7 @@ class LocalNetworkGatewaysOperations(object):
 
     def delete(
             self, resource_group_name, local_network_gateway_name, custom_headers=None, raw=False, **operation_config):
-        """The Delete LocalNetworkGateway operation deletes the specifed local
+        """The Delete LocalNetworkGateway operation deletes the specified local
         network Gateway through Network resource provider.
 
         :param resource_group_name: The name of the resource group.

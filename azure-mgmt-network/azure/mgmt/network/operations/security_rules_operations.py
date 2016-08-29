@@ -117,7 +117,7 @@ class SecurityRulesOperations(object):
 
     def get(
             self, resource_group_name, network_security_group_name, security_rule_name, custom_headers=None, raw=False, **operation_config):
-        """The Get NetworkSecurityRule operation retreives information about the
+        """The Get NetworkSecurityRule operation retrieves information about the
         specified network security rule.
 
         :param resource_group_name: The name of the resource group.
