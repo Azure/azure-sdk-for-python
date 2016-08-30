@@ -18,7 +18,7 @@ class WorkflowRunAction(SubResource):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :param id: Gets or sets the resource id.
+    :param id: The resource id.
     :type id: str
     :ivar start_time: Gets the start time.
     :vartype start_time: datetime
@@ -26,21 +26,26 @@ class WorkflowRunAction(SubResource):
     :vartype end_time: datetime
     :ivar status: Gets the status. Possible values include: 'NotSpecified',
      'Paused', 'Running', 'Waiting', 'Succeeded', 'Skipped', 'Suspended',
-     'Cancelled', 'Failed', 'Faulted', 'TimedOut', 'Aborted'
+     'Cancelled', 'Failed', 'Faulted', 'TimedOut', 'Aborted', 'Ignored'
     :vartype status: str or :class:`WorkflowStatus
      <azure.mgmt.logic.models.WorkflowStatus>`
     :ivar code: Gets the code.
     :vartype code: str
     :ivar error: Gets the error.
     :vartype error: object
-    :ivar tracking_id: Gets the trackingId.
+    :ivar tracking_id: Gets the tracking id.
     :vartype tracking_id: str
+    :param correlation: The correlation properties.
+    :type correlation: :class:`Correlation
+     <azure.mgmt.logic.models.Correlation>`
     :ivar inputs_link: Gets the link to inputs.
     :vartype inputs_link: :class:`ContentLink
      <azure.mgmt.logic.models.ContentLink>`
     :ivar outputs_link: Gets the link to outputs.
     :vartype outputs_link: :class:`ContentLink
      <azure.mgmt.logic.models.ContentLink>`
+    :ivar tracked_properties: Gets the tracked properties.
+    :vartype tracked_properties: object
     :ivar name: Gets the workflow run action name.
     :vartype name: str
     :ivar type: Gets the workflow run action type.
@@ -56,6 +61,7 @@ class WorkflowRunAction(SubResource):
         'tracking_id': {'readonly': True},
         'inputs_link': {'readonly': True},
         'outputs_link': {'readonly': True},
+        'tracked_properties': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
     }
@@ -68,13 +74,15 @@ class WorkflowRunAction(SubResource):
         'code': {'key': 'properties.code', 'type': 'str'},
         'error': {'key': 'properties.error', 'type': 'object'},
         'tracking_id': {'key': 'properties.trackingId', 'type': 'str'},
+        'correlation': {'key': 'properties.correlation', 'type': 'Correlation'},
         'inputs_link': {'key': 'properties.inputsLink', 'type': 'ContentLink'},
         'outputs_link': {'key': 'properties.outputsLink', 'type': 'ContentLink'},
+        'tracked_properties': {'key': 'properties.trackedProperties', 'type': 'object'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
     }
 
-    def __init__(self, id=None):
+    def __init__(self, id=None, correlation=None):
         super(WorkflowRunAction, self).__init__(id=id)
         self.start_time = None
         self.end_time = None
@@ -82,7 +90,9 @@ class WorkflowRunAction(SubResource):
         self.code = None
         self.error = None
         self.tracking_id = None
+        self.correlation = correlation
         self.inputs_link = None
         self.outputs_link = None
+        self.tracked_properties = None
         self.name = None
         self.type = None

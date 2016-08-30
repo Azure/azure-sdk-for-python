@@ -16,7 +16,7 @@ class Sku(Model):
     """Sku.
 
     :param name: Gets or set the SKU. Possible values include: 'Standard',
-     'Free', 'Premium'
+     'Free', 'P10Premium', 'P20Premium'
     :type name: str or :class:`SkuDefinition
      <azure.mgmt.scheduler.models.SkuDefinition>`
     """ 

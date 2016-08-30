@@ -15,15 +15,15 @@ from msrest.serialization import Model
 class Resource(Model):
     """Resource.
 
-    :param id: Gets or sets the resource id.
+    :param id: The resource id.
     :type id: str
     :param name: Gets the resource name.
     :type name: str
     :param type: Gets the resource type.
     :type type: str
-    :param location: Gets or sets the resource location.
+    :param location: The resource location.
     :type location: str
-    :param tags: Gets or sets the resource tags.
+    :param tags: The resource tags.
     :type tags: dict
     """ 
 

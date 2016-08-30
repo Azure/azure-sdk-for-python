@@ -15,9 +15,9 @@ from msrest.serialization import Model
 class ContentHash(Model):
     """ContentHash.
 
-    :param algorithm: Gets or sets the algorithm.
+    :param algorithm: The algorithm.
     :type algorithm: str
-    :param value: Gets or sets the value.
+    :param value: The value.
     :type value: str
     """ 
 

@@ -16,7 +16,8 @@ class SkuDefinition(Enum):
 
     standard = "Standard"
     free = "Free"
-    premium = "Premium"
+    p10_premium = "P10Premium"
+    p20_premium = "P20Premium"
 
 
 class JobCollectionState(Enum):

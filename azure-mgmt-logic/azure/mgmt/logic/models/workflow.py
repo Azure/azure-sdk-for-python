@@ -18,43 +18,43 @@ class Workflow(Resource):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :param id: Gets or sets the resource id.
+    :param id: The resource id.
     :type id: str
     :param name: Gets the resource name.
     :type name: str
     :param type: Gets the resource type.
     :type type: str
-    :param location: Gets or sets the resource location.
+    :param location: The resource location.
     :type location: str
-    :param tags: Gets or sets the resource tags.
+    :param tags: The resource tags.
     :type tags: dict
     :ivar provisioning_state: Gets the provisioning state. Possible values
-     include: 'NotSpecified', 'Moving', 'Succeeded'
+     include: 'NotSpecified', 'Accepted', 'Running', 'Ready', 'Creating',
+     'Created', 'Deleting', 'Deleted', 'Canceled', 'Failed', 'Succeeded',
+     'Moving', 'Updating', 'Registering', 'Registered', 'Unregistering',
+     'Unregistered', 'Completed'
     :vartype provisioning_state: str or :class:`WorkflowProvisioningState
      <azure.mgmt.logic.models.WorkflowProvisioningState>`
     :ivar created_time: Gets the created time.
     :vartype created_time: datetime
     :ivar changed_time: Gets the changed time.
     :vartype changed_time: datetime
-    :param state: Gets or sets the state. Possible values include:
-     'NotSpecified', 'Enabled', 'Disabled', 'Deleted', 'Suspended'
+    :param state: The state. Possible values include: 'NotSpecified',
+     'Completed', 'Enabled', 'Disabled', 'Deleted', 'Suspended'
     :type state: str or :class:`WorkflowState
      <azure.mgmt.logic.models.WorkflowState>`
     :ivar version: Gets the version.
     :vartype version: str
     :ivar access_endpoint: Gets the access endpoint.
     :vartype access_endpoint: str
-    :param sku: Gets or sets the sku.
+    :param sku: The sku.
     :type sku: :class:`Sku <azure.mgmt.logic.models.Sku>`
-    :param definition_link: Gets or sets the link to definition.
-    :type definition_link: :class:`ContentLink
-     <azure.mgmt.logic.models.ContentLink>`
-    :param definition: Gets or sets the definition.
+    :param integration_account: The integration account.
+    :type integration_account: :class:`ResourceReference
+     <azure.mgmt.logic.models.ResourceReference>`
+    :param definition: The definition.
     :type definition: object
-    :param parameters_link: Gets or sets the link to parameters.
-    :type parameters_link: :class:`ContentLink
-     <azure.mgmt.logic.models.ContentLink>`
-    :param parameters: Gets or sets the parameters.
+    :param parameters: The parameters.
     :type parameters: dict
     """ 
 
@@ -79,13 +79,12 @@ class Workflow(Resource):
         'version': {'key': 'properties.version', 'type': 'str'},
         'access_endpoint': {'key': 'properties.accessEndpoint', 'type': 'str'},
         'sku': {'key': 'properties.sku', 'type': 'Sku'},
-        'definition_link': {'key': 'properties.definitionLink', 'type': 'ContentLink'},
+        'integration_account': {'key': 'properties.integrationAccount', 'type': 'ResourceReference'},
         'definition': {'key': 'properties.definition', 'type': 'object'},
-        'parameters_link': {'key': 'properties.parametersLink', 'type': 'ContentLink'},
         'parameters': {'key': 'properties.parameters', 'type': '{WorkflowParameter}'},
     }
 
-    def __init__(self, id=None, name=None, type=None, location=None, tags=None, state=None, sku=None, definition_link=None, definition=None, parameters_link=None, parameters=None):
+    def __init__(self, id=None, name=None, type=None, location=None, tags=None, state=None, sku=None, integration_account=None, definition=None, parameters=None):
         super(Workflow, self).__init__(id=id, name=name, type=type, location=location, tags=tags)
         self.provisioning_state = None
         self.created_time = None
@@ -94,7 +93,6 @@ class Workflow(Resource):
         self.version = None
         self.access_endpoint = None
         self.sku = sku
-        self.definition_link = definition_link
+        self.integration_account = integration_account
         self.definition = definition
-        self.parameters_link = parameters_link
         self.parameters = parameters

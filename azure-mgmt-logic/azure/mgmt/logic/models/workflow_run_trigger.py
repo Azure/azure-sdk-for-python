@@ -34,17 +34,22 @@ class WorkflowRunTrigger(Model):
     :vartype start_time: datetime
     :ivar end_time: Gets the end time.
     :vartype end_time: datetime
-    :ivar tracking_id: Gets the trackingId.
+    :ivar tracking_id: Gets the tracking id.
     :vartype tracking_id: str
+    :param correlation: The run correlation.
+    :type correlation: :class:`Correlation
+     <azure.mgmt.logic.models.Correlation>`
     :ivar code: Gets the code.
     :vartype code: str
     :ivar status: Gets the status. Possible values include: 'NotSpecified',
      'Paused', 'Running', 'Waiting', 'Succeeded', 'Skipped', 'Suspended',
-     'Cancelled', 'Failed', 'Faulted', 'TimedOut', 'Aborted'
+     'Cancelled', 'Failed', 'Faulted', 'TimedOut', 'Aborted', 'Ignored'
     :vartype status: str or :class:`WorkflowStatus
      <azure.mgmt.logic.models.WorkflowStatus>`
     :ivar error: Gets the error.
     :vartype error: object
+    :ivar tracked_properties: Gets the tracked properties.
+    :vartype tracked_properties: object
     """ 
 
     _validation = {
@@ -59,6 +64,7 @@ class WorkflowRunTrigger(Model):
         'code': {'readonly': True},
         'status': {'readonly': True},
         'error': {'readonly': True},
+        'tracked_properties': {'readonly': True},
     }
 
     _attribute_map = {
@@ -70,12 +76,14 @@ class WorkflowRunTrigger(Model):
         'start_time': {'key': 'startTime', 'type': 'iso-8601'},
         'end_time': {'key': 'endTime', 'type': 'iso-8601'},
         'tracking_id': {'key': 'trackingId', 'type': 'str'},
+        'correlation': {'key': 'correlation', 'type': 'Correlation'},
         'code': {'key': 'code', 'type': 'str'},
         'status': {'key': 'status', 'type': 'WorkflowStatus'},
         'error': {'key': 'error', 'type': 'object'},
+        'tracked_properties': {'key': 'trackedProperties', 'type': 'object'},
     }
 
-    def __init__(self):
+    def __init__(self, correlation=None):
         self.name = None
         self.inputs = None
         self.inputs_link = None
@@ -84,6 +92,8 @@ class WorkflowRunTrigger(Model):
         self.start_time = None
         self.end_time = None
         self.tracking_id = None
+        self.correlation = correlation
         self.code = None
         self.status = None
         self.error = None
+        self.tracked_properties = None
