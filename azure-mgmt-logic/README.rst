@@ -1,15 +1,9 @@
 Microsoft Azure SDK for Python
 ==============================
 
-This is the Microsoft Azure Logic Apps Resource Management Client Library.
-
-Azure Resource Manager (ARM) is the next generation of management APIs that
-replace the old Azure Service Management (ASM).
+This is the Microsoft Azure LogicApps Management Client Library.
 
 This package has been tested with Python 2.7, 3.3, 3.4 and 3.5.
-
-For the older Azure Service Management (ASM) libraries, see
-`azure-servicemanagement-legacy <https://pypi.python.org/pypi/azure-servicemanagement-legacy>`__ library.
 
 For a more complete set of Azure libraries, see the `azure <https://pypi.python.org/pypi/azure>`__ bundle package.
 

@@ -14,7 +14,6 @@ The following packages have the same content than RC5, but with MIT licence as h
 - azure-mgmt-cognitiveservices 0.30.0rc6
 - azure-mgmt-commerce 0.30.0rc6
 - azure-mgmt-dns 0.30.0rc6
-- azure-mgmt-logic 0.30.0rc6
 - azure-mgmt-notificationhubs 0.30.0rc6
 - azure-mgmt-powerbiembedded 0.30.0rc6
 - azure-mgmt-scheduler 0.30.0rc6
@@ -24,17 +23,18 @@ The following packages have the same content than RC5, but with MIT licence as h
 **Breaking changes**
 
 - azure-mgmt-storage 0.30.0rc6: fix usage list syntax (https://github.com/Azure/azure-rest-api-specs/issues/340)
+- azure-mgmt-logic 1.0.0: New API Version implies several changes to catch up latest Azure Portal behaviour.
 
 Some values that are constants and were incorrectly suggested as method parameter have been removed:
 
 - azure-mgmt-compute 0.30.0rc6: api_version is now an attribute and not a method parameter (#697)
-- azure-mgmt-cdn 0.30.0rc6: check_name_availability has no more a type attribute
+- azure-mgmt-cdn 0.30.0rc6: check_name_availability has no more a type parameter
+- azure-mgmt-keyvault 0.30.0rc6: Sku has no more a family parameter (#733)
 
 **New and bugfixes**
 
 - azure-mgmt-resource 0.30.0rc6: Property aliases support + Doc typo
 - azure-mgmt-network 0.30.0rc6: `check_ip_address_availability` and more + Doc typo
-- azure-mgmt-keyvault 0.30.0rc6: fix required parameters (#733)
 - azure-graphrbac 0.30.0rc6: latest API Version
 - azure-mgmt-redis 1.0.0: official stable release (same content than 0.30.0RC5)
 
@@ -59,6 +59,7 @@ The azure 2.0.0rc6 package contains the following Azure packages:
   - azure-batch 1.0.0
   - azure-mgmt-batch 1.0.0
   - azure-mgmt-redis 1.0.0
+  - azure-mgmt-logic 1.0.0
   - azure-servicebus 0.20.3
   - azure-servicemanagement-legacy 0.20.4
   - azure-storage 0.33.0
@@ -73,7 +74,6 @@ listed before.
 - azure-mgmt-cognitiveservices 0.30.0rc6
 - azure-mgmt-commerce 0.30.0rc6
 - azure-mgmt-dns 0.30.0rc6
-- azure-mgmt-logic 0.30.0rc6
 - azure-mgmt-notificationhubs 0.30.0rc6
 - azure-mgmt-powerbiembedded 0.30.0rc6
 - azure-mgmt-redis 0.30.0rc6
