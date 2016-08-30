@@ -9,23 +9,19 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.serialization import Model
+from msrest.paging import Paged
 
 
-class RunWorkflowParameters(Model):
-    """RunWorkflowParameters.
-
-    :param name: Gets or sets the name of workflow run trigger.
-    :type name: str
-    :param outputs: Gets or sets the outputs of workflow run trigger.
-    :type outputs: object
-    """ 
+class IntegrationAccountCertificatePaged(Paged):
+    """
+    A paging container for iterating over a list of IntegrationAccountCertificate object
+    """
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'outputs': {'key': 'outputs', 'type': 'object'},
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[IntegrationAccountCertificate]'}
     }
 
-    def __init__(self, name=None, outputs=None):
-        self.name = name
-        self.outputs = outputs
+    def __init__(self, *args, **kwargs):
+
+        super(IntegrationAccountCertificatePaged, self).__init__(*args, **kwargs)

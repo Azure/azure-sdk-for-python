@@ -18,15 +18,16 @@ class WorkflowOutputParameter(WorkflowParameter):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :param type: Gets or sets the type. Possible values include:
-     'NotSpecified', 'String', 'SecureString', 'Int', 'Float', 'Bool',
-     'Array', 'Object', 'SecureObject'
+    :param type: The type. Possible values include: 'NotSpecified', 'String',
+     'SecureString', 'Int', 'Float', 'Bool', 'Array', 'Object', 'SecureObject'
     :type type: str or :class:`ParameterType
      <azure.mgmt.logic.models.ParameterType>`
-    :param value: Gets or sets the value.
+    :param value: The value.
     :type value: object
-    :param metadata: Gets or sets the metadata.
+    :param metadata: The metadata.
     :type metadata: object
+    :param description: The description.
+    :type description: str
     :ivar error: Gets the error.
     :vartype error: object
     """ 
@@ -39,9 +40,10 @@ class WorkflowOutputParameter(WorkflowParameter):
         'type': {'key': 'type', 'type': 'ParameterType'},
         'value': {'key': 'value', 'type': 'object'},
         'metadata': {'key': 'metadata', 'type': 'object'},
+        'description': {'key': 'description', 'type': 'str'},
         'error': {'key': 'error', 'type': 'object'},
     }
 
-    def __init__(self, type=None, value=None, metadata=None):
-        super(WorkflowOutputParameter, self).__init__(type=type, value=value, metadata=metadata)
+    def __init__(self, type=None, value=None, metadata=None, description=None):
+        super(WorkflowOutputParameter, self).__init__(type=type, value=value, metadata=metadata, description=description)
         self.error = None
