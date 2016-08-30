@@ -18,10 +18,13 @@ class WorkflowTrigger(SubResource):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :param id: Gets or sets the resource id.
+    :param id: The resource id.
     :type id: str
     :ivar provisioning_state: Gets the provisioning state. Possible values
-     include: 'NotSpecified', 'Creating', 'Succeeded', 'Updating'
+     include: 'NotSpecified', 'Accepted', 'Running', 'Ready', 'Creating',
+     'Created', 'Deleting', 'Deleted', 'Canceled', 'Failed', 'Succeeded',
+     'Moving', 'Updating', 'Registering', 'Registered', 'Unregistering',
+     'Unregistered', 'Completed'
     :vartype provisioning_state: str or
      :class:`WorkflowTriggerProvisioningState
      <azure.mgmt.logic.models.WorkflowTriggerProvisioningState>`
@@ -30,12 +33,12 @@ class WorkflowTrigger(SubResource):
     :ivar changed_time: Gets the changed time.
     :vartype changed_time: datetime
     :ivar state: Gets the state. Possible values include: 'NotSpecified',
-     'Enabled', 'Disabled', 'Deleted', 'Suspended'
+     'Completed', 'Enabled', 'Disabled', 'Deleted', 'Suspended'
     :vartype state: str or :class:`WorkflowState
      <azure.mgmt.logic.models.WorkflowState>`
     :ivar status: Gets the status. Possible values include: 'NotSpecified',
      'Paused', 'Running', 'Waiting', 'Succeeded', 'Skipped', 'Suspended',
-     'Cancelled', 'Failed', 'Faulted', 'TimedOut', 'Aborted'
+     'Cancelled', 'Failed', 'Faulted', 'TimedOut', 'Aborted', 'Ignored'
     :vartype status: str or :class:`WorkflowStatus
      <azure.mgmt.logic.models.WorkflowStatus>`
     :ivar last_execution_time: Gets the last execution time.

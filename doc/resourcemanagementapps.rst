@@ -86,11 +86,11 @@ To create or manage resource groups, see :doc:`Resource Management<resourcemanag
 Create a Logic App Workflow
 ---------------------------
 
-The following code creates a logic app workflow under an existing app service plan.
+The following code creates a logic app workflow.
 
 .. code:: python
 
-    from azure.mgmt.logic.models import Workflow, Sku, ResourceReference
+    from azure.mgmt.logic.models import Workflow
 
     group_name = 'myresourcegroup'
     workflow_name = '12HourHeartBeat'
@@ -99,14 +99,8 @@ The following code creates a logic app workflow under an existing app service pl
         workflow_name,
         Workflow(
             location = 'West US',
-            sku = Sku(
-                name = 'Free',
-                plan = ResourceReference(
-                    id = app_service_plan.id
-                )
-            ),
             definition={ 
-                "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2015-08-01-preview/workflowdefinition.json#",
+                "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
                 "contentVersion": "1.0.0.0",
                 "parameters": {},
                 "triggers": {},

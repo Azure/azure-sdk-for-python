@@ -15,27 +15,36 @@ from msrest.serialization import Model
 class WorkflowTriggerRecurrence(Model):
     """WorkflowTriggerRecurrence.
 
-    :param frequency: Gets or sets the frequency. Possible values include:
+    :param frequency: The frequency. Possible values include: 'NotSpecified',
      'Second', 'Minute', 'Hour', 'Day', 'Week', 'Month', 'Year'
     :type frequency: str or :class:`RecurrenceFrequency
      <azure.mgmt.logic.models.RecurrenceFrequency>`
-    :param interval: Gets or sets the interval.
+    :param interval: The interval.
     :type interval: int
-    :param start_time: Gets or sets the start time.
+    :param start_time: The start time.
     :type start_time: datetime
-    :param time_zone: Gets or sets the time zone.
+    :param end_time: The end time.
+    :type end_time: datetime
+    :param time_zone: The time zone.
     :type time_zone: str
+    :param schedule: The recurrence schedule.
+    :type schedule: :class:`RecurrenceSchedule
+     <azure.mgmt.logic.models.RecurrenceSchedule>`
     """ 
 
     _attribute_map = {
         'frequency': {'key': 'frequency', 'type': 'RecurrenceFrequency'},
         'interval': {'key': 'interval', 'type': 'int'},
         'start_time': {'key': 'startTime', 'type': 'iso-8601'},
+        'end_time': {'key': 'endTime', 'type': 'iso-8601'},
         'time_zone': {'key': 'timeZone', 'type': 'str'},
+        'schedule': {'key': 'schedule', 'type': 'RecurrenceSchedule'},
     }
 
-    def __init__(self, frequency=None, interval=None, start_time=None, time_zone=None):
+    def __init__(self, frequency=None, interval=None, start_time=None, end_time=None, time_zone=None, schedule=None):
         self.frequency = frequency
         self.interval = interval
         self.start_time = start_time
+        self.end_time = end_time
         self.time_zone = time_zone
+        self.schedule = schedule

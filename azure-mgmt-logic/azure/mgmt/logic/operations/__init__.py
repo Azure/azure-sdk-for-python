@@ -11,18 +11,28 @@
 
 from .workflows_operations import WorkflowsOperations
 from .workflow_versions_operations import WorkflowVersionsOperations
-from .workflow_access_keys_operations import WorkflowAccessKeysOperations
 from .workflow_triggers_operations import WorkflowTriggersOperations
 from .workflow_trigger_histories_operations import WorkflowTriggerHistoriesOperations
 from .workflow_runs_operations import WorkflowRunsOperations
 from .workflow_run_actions_operations import WorkflowRunActionsOperations
+from .integration_accounts_operations import IntegrationAccountsOperations
+from .integration_account_schemas_operations import IntegrationAccountSchemasOperations
+from .integration_account_maps_operations import IntegrationAccountMapsOperations
+from .integration_account_partners_operations import IntegrationAccountPartnersOperations
+from .integration_account_agreements_operations import IntegrationAccountAgreementsOperations
+from .integration_account_certificates_operations import IntegrationAccountCertificatesOperations
 
 __all__ = [
     'WorkflowsOperations',
     'WorkflowVersionsOperations',
-    'WorkflowAccessKeysOperations',
     'WorkflowTriggersOperations',
     'WorkflowTriggerHistoriesOperations',
     'WorkflowRunsOperations',
     'WorkflowRunActionsOperations',
+    'IntegrationAccountsOperations',
+    'IntegrationAccountSchemasOperations',
+    'IntegrationAccountMapsOperations',
+    'IntegrationAccountPartnersOperations',
+    'IntegrationAccountAgreementsOperations',
+    'IntegrationAccountCertificatesOperations',
 ]

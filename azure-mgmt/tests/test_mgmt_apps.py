@@ -83,35 +83,14 @@ class MgmtAppsTest(AzureMgmtTestCase):
     def test_logic(self):
         self.create_resource_group()
 
-        # Create App Service Plan
-        app_service_plan_name = self.get_resource_name('pyarmappserviceplan')
-        app_service_plan = self.web_client.server_farms.create_or_update_server_farm(
-            self.group_name,
-            app_service_plan_name,
-            azure.mgmt.web.models.ServerFarmWithRichSku(
-                location='West US',
-                sku=azure.mgmt.web.models.SkuDescription(
-                    name='F1',
-                    tier='Free'
-                )
-            )
-        )
-        app_service_plan = app_service_plan.result()
-
         workflow_name = '12HourHeartBeat'
         self.logic_client.workflows.create_or_update(
             self.group_name,
             workflow_name,
             azure.mgmt.logic.models.Workflow(
                 location='West US',
-                sku=azure.mgmt.logic.models.Sku(
-                    name='Free',
-                    plan=azure.mgmt.logic.models.ResourceReference(
-                        id=app_service_plan.id
-                    )
-                ),
                 definition={ 
-                    "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2015-08-01-preview/workflowdefinition.json#",
+                    "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
                     "contentVersion": "1.0.0.0",
                     "parameters": {},
                     "triggers": {},

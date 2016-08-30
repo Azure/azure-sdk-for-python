@@ -392,7 +392,7 @@ class JobsOperations(object):
                 query_parameters = {}
                 query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
                 if top is not None:
-                    query_parameters['$top'] = self._serialize.query("top", top, 'int')
+                    query_parameters['$top'] = self._serialize.query("top", top, 'int', maximum=100, minimum=1)
                 if skip is not None:
                     query_parameters['$skip'] = self._serialize.query("skip", skip, 'int')
                 if filter is not None:
@@ -477,7 +477,7 @@ class JobsOperations(object):
                 query_parameters = {}
                 query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
                 if top is not None:
-                    query_parameters['$top'] = self._serialize.query("top", top, 'int')
+                    query_parameters['$top'] = self._serialize.query("top", top, 'int', maximum=100, minimum=1)
                 if skip is not None:
                     query_parameters['$skip'] = self._serialize.query("skip", skip, 'int')
                 if filter is not None:

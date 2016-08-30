@@ -15,11 +15,16 @@ from msrestazure import AzureConfiguration
 from .version import VERSION
 from .operations.workflows_operations import WorkflowsOperations
 from .operations.workflow_versions_operations import WorkflowVersionsOperations
-from .operations.workflow_access_keys_operations import WorkflowAccessKeysOperations
 from .operations.workflow_triggers_operations import WorkflowTriggersOperations
 from .operations.workflow_trigger_histories_operations import WorkflowTriggerHistoriesOperations
 from .operations.workflow_runs_operations import WorkflowRunsOperations
 from .operations.workflow_run_actions_operations import WorkflowRunActionsOperations
+from .operations.integration_accounts_operations import IntegrationAccountsOperations
+from .operations.integration_account_schemas_operations import IntegrationAccountSchemasOperations
+from .operations.integration_account_maps_operations import IntegrationAccountMapsOperations
+from .operations.integration_account_partners_operations import IntegrationAccountPartnersOperations
+from .operations.integration_account_agreements_operations import IntegrationAccountAgreementsOperations
+from .operations.integration_account_certificates_operations import IntegrationAccountCertificatesOperations
 from . import models
 
 
@@ -33,8 +38,6 @@ class LogicManagementClientConfiguration(AzureConfiguration):
      object<msrestazure.azure_active_directory>`
     :param subscription_id: The subscription id.
     :type subscription_id: str
-    :param api_version: The API version.
-    :type api_version: str
     :param accept_language: Gets or sets the preferred language for the
      response.
     :type accept_language: str
@@ -50,7 +53,7 @@ class LogicManagementClientConfiguration(AzureConfiguration):
     """
 
     def __init__(
-            self, credentials, subscription_id, api_version='2015-02-01-preview', accept_language='en-US', long_running_operation_retry_timeout=30, generate_client_request_id=True, base_url=None, filepath=None):
+            self, credentials, subscription_id, accept_language='en-US', long_running_operation_retry_timeout=30, generate_client_request_id=True, base_url=None, filepath=None):
 
         if credentials is None:
             raise ValueError("Parameter 'credentials' must not be None.")
@@ -58,8 +61,6 @@ class LogicManagementClientConfiguration(AzureConfiguration):
             raise ValueError("Parameter 'subscription_id' must not be None.")
         if not isinstance(subscription_id, str):
             raise TypeError("Parameter 'subscription_id' must be str.")
-        if api_version is not None and not isinstance(api_version, str):
-            raise TypeError("Optional parameter 'api_version' must be str.")
         if accept_language is not None and not isinstance(accept_language, str):
             raise TypeError("Optional parameter 'accept_language' must be str.")
         if not base_url:
@@ -72,14 +73,13 @@ class LogicManagementClientConfiguration(AzureConfiguration):
 
         self.credentials = credentials
         self.subscription_id = subscription_id
-        self.api_version = api_version
         self.accept_language = accept_language
         self.long_running_operation_retry_timeout = long_running_operation_retry_timeout
         self.generate_client_request_id = generate_client_request_id
 
 
 class LogicManagementClient(object):
-    """LogicManagementClient
+    """Composite Swagger for Logic Management Client
 
     :ivar config: Configuration for client.
     :vartype config: LogicManagementClientConfiguration
@@ -88,8 +88,6 @@ class LogicManagementClient(object):
     :vartype workflows: .operations.WorkflowsOperations
     :ivar workflow_versions: WorkflowVersions operations
     :vartype workflow_versions: .operations.WorkflowVersionsOperations
-    :ivar workflow_access_keys: WorkflowAccessKeys operations
-    :vartype workflow_access_keys: .operations.WorkflowAccessKeysOperations
     :ivar workflow_triggers: WorkflowTriggers operations
     :vartype workflow_triggers: .operations.WorkflowTriggersOperations
     :ivar workflow_trigger_histories: WorkflowTriggerHistories operations
@@ -98,14 +96,24 @@ class LogicManagementClient(object):
     :vartype workflow_runs: .operations.WorkflowRunsOperations
     :ivar workflow_run_actions: WorkflowRunActions operations
     :vartype workflow_run_actions: .operations.WorkflowRunActionsOperations
+    :ivar integration_accounts: IntegrationAccounts operations
+    :vartype integration_accounts: .operations.IntegrationAccountsOperations
+    :ivar integration_account_schemas: IntegrationAccountSchemas operations
+    :vartype integration_account_schemas: .operations.IntegrationAccountSchemasOperations
+    :ivar integration_account_maps: IntegrationAccountMaps operations
+    :vartype integration_account_maps: .operations.IntegrationAccountMapsOperations
+    :ivar integration_account_partners: IntegrationAccountPartners operations
+    :vartype integration_account_partners: .operations.IntegrationAccountPartnersOperations
+    :ivar integration_account_agreements: IntegrationAccountAgreements operations
+    :vartype integration_account_agreements: .operations.IntegrationAccountAgreementsOperations
+    :ivar integration_account_certificates: IntegrationAccountCertificates operations
+    :vartype integration_account_certificates: .operations.IntegrationAccountCertificatesOperations
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
      object<msrestazure.azure_active_directory>`
     :param subscription_id: The subscription id.
     :type subscription_id: str
-    :param api_version: The API version.
-    :type api_version: str
     :param accept_language: Gets or sets the preferred language for the
      response.
     :type accept_language: str
@@ -121,9 +129,9 @@ class LogicManagementClient(object):
     """
 
     def __init__(
-            self, credentials, subscription_id, api_version='2015-02-01-preview', accept_language='en-US', long_running_operation_retry_timeout=30, generate_client_request_id=True, base_url=None, filepath=None):
+            self, credentials, subscription_id, accept_language='en-US', long_running_operation_retry_timeout=30, generate_client_request_id=True, base_url=None, filepath=None):
 
-        self.config = LogicManagementClientConfiguration(credentials, subscription_id, api_version, accept_language, long_running_operation_retry_timeout, generate_client_request_id, base_url, filepath)
+        self.config = LogicManagementClientConfiguration(credentials, subscription_id, accept_language, long_running_operation_retry_timeout, generate_client_request_id, base_url, filepath)
         self._client = ServiceClient(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
@@ -134,8 +142,6 @@ class LogicManagementClient(object):
             self._client, self.config, self._serialize, self._deserialize)
         self.workflow_versions = WorkflowVersionsOperations(
             self._client, self.config, self._serialize, self._deserialize)
-        self.workflow_access_keys = WorkflowAccessKeysOperations(
-            self._client, self.config, self._serialize, self._deserialize)
         self.workflow_triggers = WorkflowTriggersOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.workflow_trigger_histories = WorkflowTriggerHistoriesOperations(
@@ -143,4 +149,16 @@ class LogicManagementClient(object):
         self.workflow_runs = WorkflowRunsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.workflow_run_actions = WorkflowRunActionsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.integration_accounts = IntegrationAccountsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.integration_account_schemas = IntegrationAccountSchemasOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.integration_account_maps = IntegrationAccountMapsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.integration_account_partners = IntegrationAccountPartnersOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.integration_account_agreements = IntegrationAccountAgreementsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.integration_account_certificates = IntegrationAccountCertificatesOperations(
             self._client, self.config, self._serialize, self._deserialize)

@@ -32,11 +32,16 @@ with open('azure/mgmt/logic/version.py', 'r') as fd:
 if not version:
     raise RuntimeError('Cannot find version information')
 
+with open('README.rst', 'r', 'utf-8') as f:
+    readme = f.read()
+with open('HISTORY.rst', 'r', 'utf-8') as f:
+    history = f.read()
+
 setup(
     name='azure-mgmt-logic',
     version=version,
     description='Microsoft Azure Logic Apps Resource Management Client Library for Python',
-    long_description=open('README.rst', 'r').read(),
+    long_description=readme + '\n\n' + history,
     license='MIT License',
     author='Microsoft Corporation',
     author_email='ptvshelp@microsoft.com',

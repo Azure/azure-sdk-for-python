@@ -15,13 +15,29 @@ from enum import Enum
 class WorkflowProvisioningState(Enum):
 
     not_specified = "NotSpecified"
-    moving = "Moving"
+    accepted = "Accepted"
+    running = "Running"
+    ready = "Ready"
+    creating = "Creating"
+    created = "Created"
+    deleting = "Deleting"
+    deleted = "Deleted"
+    canceled = "Canceled"
+    failed = "Failed"
     succeeded = "Succeeded"
+    moving = "Moving"
+    updating = "Updating"
+    registering = "Registering"
+    registered = "Registered"
+    unregistering = "Unregistering"
+    unregistered = "Unregistered"
+    completed = "Completed"
 
 
 class WorkflowState(Enum):
 
     not_specified = "NotSpecified"
+    completed = "Completed"
     enabled = "Enabled"
     disabled = "Disabled"
     deleted = "Deleted"
@@ -54,9 +70,23 @@ class ParameterType(Enum):
 class WorkflowTriggerProvisioningState(Enum):
 
     not_specified = "NotSpecified"
+    accepted = "Accepted"
+    running = "Running"
+    ready = "Ready"
     creating = "Creating"
+    created = "Created"
+    deleting = "Deleting"
+    deleted = "Deleted"
+    canceled = "Canceled"
+    failed = "Failed"
     succeeded = "Succeeded"
+    moving = "Moving"
     updating = "Updating"
+    registering = "Registering"
+    registered = "Registered"
+    unregistering = "Unregistering"
+    unregistered = "Unregistered"
+    completed = "Completed"
 
 
 class WorkflowStatus(Enum):
@@ -73,10 +103,12 @@ class WorkflowStatus(Enum):
     faulted = "Faulted"
     timed_out = "TimedOut"
     aborted = "Aborted"
+    ignored = "Ignored"
 
 
 class RecurrenceFrequency(Enum):
 
+    not_specified = "NotSpecified"
     second = "Second"
     minute = "Minute"
     hour = "Hour"
@@ -86,8 +118,158 @@ class RecurrenceFrequency(Enum):
     year = "Year"
 
 
+class DaysOfWeek(Enum):
+
+    sunday = "Sunday"
+    monday = "Monday"
+    tuesday = "Tuesday"
+    wednesday = "Wednesday"
+    thursday = "Thursday"
+    friday = "Friday"
+    saturday = "Saturday"
+
+
+class DayOfWeek(Enum):
+
+    sunday = "Sunday"
+    monday = "Monday"
+    tuesday = "Tuesday"
+    wednesday = "Wednesday"
+    thursday = "Thursday"
+    friday = "Friday"
+    saturday = "Saturday"
+
+
 class KeyType(Enum):
 
     not_specified = "NotSpecified"
     primary = "Primary"
     secondary = "Secondary"
+
+
+class SchemaType(Enum):
+
+    not_specified = "NotSpecified"
+    xml = "Xml"
+
+
+class MapType(Enum):
+
+    not_specified = "NotSpecified"
+    xslt = "Xslt"
+
+
+class PartnerType(Enum):
+
+    not_specified = "NotSpecified"
+    b2_b = "B2B"
+
+
+class AgreementType(Enum):
+
+    not_specified = "NotSpecified"
+    as2 = "AS2"
+    x12 = "X12"
+    edifact = "Edifact"
+
+
+class HashingAlgorithm(Enum):
+
+    not_specified = "NotSpecified"
+    none = "None"
+    sha2256 = "SHA2256"
+    sha2384 = "SHA2384"
+    sha2512 = "SHA2512"
+
+
+class EncryptionAlgorithm(Enum):
+
+    not_specified = "NotSpecified"
+    none = "None"
+    des3 = "DES3"
+    rc2 = "RC2"
+    aes128 = "AES128"
+    aes192 = "AES192"
+    aes256 = "AES256"
+
+
+class TrailingSeparatorPolicy(Enum):
+
+    not_specified = "NotSpecified"
+    not_allowed = "NotAllowed"
+    optional = "Optional"
+    mandatory = "Mandatory"
+
+
+class X12CharacterSet(Enum):
+
+    not_specified = "NotSpecified"
+    basic = "Basic"
+    extended = "Extended"
+    utf8 = "UTF8"
+
+
+class SegmentTerminatorSuffix(Enum):
+
+    not_specified = "NotSpecified"
+    none = "None"
+    cr = "CR"
+    lf = "LF"
+    crlf = "CRLF"
+
+
+class X12DateFormat(Enum):
+
+    not_specified = "NotSpecified"
+    ccyymmdd = "CCYYMMDD"
+    yymmdd = "YYMMDD"
+
+
+class X12TimeFormat(Enum):
+
+    not_specified = "NotSpecified"
+    hhmm = "HHMM"
+    hhmmss = "HHMMSS"
+    hhmms_sdd = "HHMMSSdd"
+    hhmms_sd = "HHMMSSd"
+
+
+class UsageIndicator(Enum):
+
+    not_specified = "NotSpecified"
+    test = "Test"
+    information = "Information"
+    production = "Production"
+
+
+class MessageFilterType(Enum):
+
+    not_specified = "NotSpecified"
+    include = "Include"
+    exclude = "Exclude"
+
+
+class EdifactCharacterSet(Enum):
+
+    not_specified = "NotSpecified"
+    unob = "UNOB"
+    unoa = "UNOA"
+    unoc = "UNOC"
+    unod = "UNOD"
+    unoe = "UNOE"
+    unof = "UNOF"
+    unog = "UNOG"
+    unoh = "UNOH"
+    unoi = "UNOI"
+    unoj = "UNOJ"
+    unok = "UNOK"
+    unox = "UNOX"
+    unoy = "UNOY"
+    keca = "KECA"
+
+
+class EdifactDecimalIndicator(Enum):
+
+    not_specified = "NotSpecified"
+    comma = "Comma"
+    decimal_enum = "Decimal"
