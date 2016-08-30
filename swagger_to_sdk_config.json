@@ -165,9 +165,10 @@
       "output_dir": "unreleased/azure-mgmt-search/azure/mgmt/search"
     },
     "scheduler": {
-      "swagger": "arm-scheduler/2016-01-01/swagger/scheduler.json",
+      "swagger": "arm-scheduler/2016-03-01/swagger/scheduler.json",
       "autorest_options": {
-        "Namespace": "azure.mgmt.scheduler"
+        "Namespace": "azure.mgmt.scheduler",
+        "PackageVersion": "1.0.0"
       },
       "output_dir": "azure-mgmt-scheduler/azure/mgmt/scheduler"
     },
