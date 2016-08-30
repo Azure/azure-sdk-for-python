@@ -17,11 +17,11 @@ The following packages have the same content than RC5, but with MIT licence as h
 - azure-mgmt-notificationhubs 0.30.0rc6
 - azure-mgmt-powerbiembedded 0.30.0rc6
 - azure-mgmt-trafficmanager 0.30.0rc6
-- azure-mgmt-web 0.30.0rc6
 
 **Breaking changes**
 
 - azure-mgmt-storage 0.30.0rc6: fix usage list syntax (https://github.com/Azure/azure-rest-api-specs/issues/340)
+- azure-mgmt-web 0.30.0rc6: fix list syntax (https://github.com/Azure/azure-rest-api-specs/pull/454)
 - azure-mgmt-logic 1.0.0: New API Version implies several changes to catch up latest Azure Portal behaviour.
 - azure-mgmt-scheduler 1.0.0: New API Version implies several changes to catch up latest Azure Portal behaviour.
 
