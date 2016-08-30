@@ -1,95 +1,16 @@
 interactions:
 - request:
-    body: !!binary |
-      eyJsb2NhdGlvbiI6ICJ3ZXN0dXMiLCAibmFtZSI6ICJ0ZXN0X21nbXRfYXBwc190ZXN0X2xvZ2lj
-      ODZhNjBhNDMifQ==
-    headers:
-      Accept: ['*/*']
-      Accept-Encoding: ['gzip, deflate']
-      Connection: [keep-alive]
-      Content-Length: ['67']
-      Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.5.1 requests/2.7.0 msrest/0.0.1 msrest_azure/0.0.1 resourcemanagementclient/2015-11-01]
-      accept-language: [en-US]
-      x-ms-client-request-id: [b2ced188-d4dd-11e5-a80d-54ee7574ca37]
-    method: PUT
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_mgmt_apps_test_logic86a60a43?api-version=2015-11-01
-  response:
-    body: {string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_apps_test_logic86a60a43","name":"test_mgmt_apps_test_logic86a60a43","location":"westus","properties":{"provisioningState":"Succeeded"}}'}
-    headers:
-      Cache-Control: [no-cache]
-      Content-Length: ['219']
-      Content-Type: [application/json; charset=utf-8]
-      Date: ['Tue, 16 Feb 2016 18:47:15 GMT']
-      Expires: ['-1']
-      Pragma: [no-cache]
-      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
-      x-ms-correlation-request-id: [a6e37499-5e2e-44df-a4c6-5014697e8dfe]
-      x-ms-ratelimit-remaining-subscription-writes: ['1197']
-      x-ms-request-id: [a6e37499-5e2e-44df-a4c6-5014697e8dfe]
-      x-ms-routing-request-id: ['WESTUS:20160216T184716Z:a6e37499-5e2e-44df-a4c6-5014697e8dfe']
-    status: {code: 201, message: Created}
-- request:
-    body: !!binary |
-      eyJsb2NhdGlvbiI6ICJXZXN0IFVTIiwgInNrdSI6IHsidGllciI6ICJGcmVlIiwgIm5hbWUiOiAi
-      RjEifX0=
-    headers:
-      Accept: ['*/*']
-      Accept-Encoding: ['gzip, deflate']
-      Connection: [keep-alive]
-      Content-Length: ['62']
-      Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.5.1 requests/2.7.0 msrest/0.0.1 msrest_azure/0.0.1 websitemanagementclient/2015-08-01]
-      accept-language: [en-US]
-      x-ms-client-request-id: [b308dd1e-d4dd-11e5-8a36-54ee7574ca37]
-    method: PUT
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_apps_test_logic86a60a43/providers/Microsoft.Web/serverfarms/pyarmappserviceplan86a60a43?api-version=2015-08-01
-  response:
-    body:
-      string: !!binary |
-        H4sIAAAAAAAEAO29B2AcSZYlJi9tynt/SvVK1+B0oQiAYBMk2JBAEOzBiM3mkuwdaUcjKasqgcpl
-        VmVdZhZAzO2dvPfee++999577733ujudTif33/8/XGZkAWz2zkrayZ4hgKrIHz9+fB8/In7xR8Xs
-        o0cf3W3Wk2ZaF6u2qJbN3fOHs4PdBw/z7f175zvb+59OJ9sPH05n2+cP9ibn2WQn+/Te5G6dN9W6
-        nuaf19V61dxt86b9/RcXi/b3z1ar5vfnP8vqopgefJp9upPt37u7qqvLYpbXzd0vimldNdV5O/5u
-        Prnb5PVlXp9n9aK5u7qmHwBAnxXTfFVmS/P+R6OPltkiJ2w3N2qvV2g02Ac1KatphpFSs+8SnulX
-        r+nDNrtoPnq0XJfl6CNCdZXXbZHTJ7/4I3n5Gb18RsTauSUeV1X9Nq9fFz+gpvSO+1OByAdvirx+
-        weCk5+V6McnrL8+/y99S99Ryuq7rfNnKR4AQ/1Th6ucvIoCaNmvX8utVPnm9yqYE6iOeqk0ztw0i
-        ffWaXmn4FQLksQtBuA2/0FvZbFEsXxdt7g94XjVtsbw4XV4WdbVcEObD37ysq/OitK8usnfFYr3o
-        jXSXJpDmQnr56CeLul1n5dN8VtCs57OX9JVB5tV62RaLvIvTtFqs1m3+RTWjj4hYDX0vf8j3F3n1
-        Kr+QsYM2wkDEMQD0epqVhPZHj86zssndjOI7Qo7A9QeGqRPQPhe+LZb280DaqFuCtXnSPvolhPfb
-        NfhX2fXZLiFJPF3j9zrneSS2wV/45jxbFOU1/qI/phnNdNHSnzu/5Jf8P5Fbiu8lBAAA
-    headers:
-      Cache-Control: [no-cache]
-      Content-Encoding: [gzip]
-      Content-Type: [application/json]
-      Date: ['Tue, 16 Feb 2016 18:47:18 GMT']
-      Expires: ['-1']
-      Pragma: [no-cache]
-      Server: [Microsoft-IIS/8.0]
-      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
-      Transfer-Encoding: [chunked]
-      Vary: [Accept-Encoding]
-      X-AspNet-Version: [4.0.30319]
-      X-Powered-By: [ASP.NET]
-      x-ms-correlation-request-id: [1ed8854f-490a-4884-b02f-aee2397f6411]
-      x-ms-ratelimit-remaining-subscription-writes: ['1198']
-      x-ms-request-id: [75784070-fc9d-4771-868e-494729f8aeb1]
-      x-ms-routing-request-id: ['WESTUS:20160216T184719Z:1ed8854f-490a-4884-b02f-aee2397f6411']
-    status: {code: 200, message: OK}
-- request:
-    body: !!binary |
-      eyJuYW1lIjogInRlc3RfbWdtdF9hcHBzX3Rlc3RfbG9naWM4NmE2MGE0MyIsICJsb2NhdGlvbiI6
-      ICJ3ZXN0dXMifQ==
+    body: '{"location": "westus"}'
     headers:
       Accept: [application/json]
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
-      Content-Length: ['67']
+      Content-Length: ['22']
       Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.5.1 requests/2.7.0 msrest/0.2.0 msrest_azure/0.2.0 resourcemanagementclient/2016-02-01
-          Azure-SDK-For-Python]
+      User-Agent: [python/3.5.1 (Windows-10-10.0.14393-SP0) requests/2.11.0 msrest/0.4.1
+          msrest_azure/0.4.1 resourcemanagementclient/0.30.0rc6 Azure-SDK-For-Python]
       accept-language: [en-US]
-      x-ms-client-request-id: [7bfb1750-f2c0-11e5-b8cf-54ee7574ca37]
+      x-ms-client-request-id: [f42648e8-6ed4-11e6-ba5e-ecb1d756380e]
     method: PUT
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_mgmt_apps_test_logic86a60a43?api-version=2016-02-01
   response:
@@ -98,101 +19,45 @@ interactions:
       Cache-Control: [no-cache]
       Content-Length: ['219']
       Content-Type: [application/json; charset=utf-8]
-      Date: ['Fri, 25 Mar 2016 19:33:42 GMT']
+      Date: ['Tue, 30 Aug 2016 17:12:39 GMT']
       Expires: ['-1']
       Pragma: [no-cache]
       Strict-Transport-Security: [max-age=31536000; includeSubDomains]
-      x-ms-correlation-request-id: [383724be-f25a-44bb-a652-0eeb53db3cef]
-      x-ms-ratelimit-remaining-subscription-writes: ['1194']
-      x-ms-request-id: [383724be-f25a-44bb-a652-0eeb53db3cef]
-      x-ms-routing-request-id: ['WESTUS:20160325T193343Z:383724be-f25a-44bb-a652-0eeb53db3cef']
+      x-ms-correlation-request-id: [50976ac8-2a91-49ef-ba7d-4cf872ddc756]
+      x-ms-ratelimit-remaining-subscription-writes: ['1198']
+      x-ms-request-id: [50976ac8-2a91-49ef-ba7d-4cf872ddc756]
+      x-ms-routing-request-id: ['CENTRALUS:20160830T171240Z:50976ac8-2a91-49ef-ba7d-4cf872ddc756']
     status: {code: 201, message: Created}
 - request:
-    body: !!binary |
-      eyJza3UiOiB7InRpZXIiOiAiRnJlZSIsICJuYW1lIjogIkYxIn0sICJsb2NhdGlvbiI6ICJXZXN0
-      IFVTIn0=
+    body: '{"properties": {"definition": {"$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+      "outputs": {}, "contentVersion": "1.0.0.0", "parameters": {}, "triggers": {},
+      "actions": {}}}, "location": "West US"}'
     headers:
       Accept: [application/json]
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
-      Content-Length: ['62']
+      Content-Length: ['268']
       Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.5.1 requests/2.7.0 msrest/0.2.0 msrest_azure/0.2.0 websitemanagementclient/2015-08-01
-          Azure-SDK-For-Python]
+      User-Agent: [python/3.5.1 (Windows-10-10.0.14393-SP0) requests/2.11.0 msrest/0.4.1
+          msrest_azure/0.4.1 logicmanagementclient/1.0.0 Azure-SDK-For-Python]
       accept-language: [en-US]
-      x-ms-client-request-id: [7c58d30a-f2c0-11e5-b366-54ee7574ca37]
+      x-ms-client-request-id: [f4e2f19a-6ed4-11e6-b7ac-ecb1d756380e]
     method: PUT
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_apps_test_logic86a60a43/providers/Microsoft.Web/serverfarms/pyarmappserviceplan86a60a43?api-version=2015-08-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_apps_test_logic86a60a43/providers/Microsoft.Logic/workflows/12HourHeartBeat?api-version=2016-06-01
   response:
-    body:
-      string: !!binary |
-        H4sIAAAAAAAEAO29B2AcSZYlJi9tynt/SvVK1+B0oQiAYBMk2JBAEOzBiM3mkuwdaUcjKasqgcpl
-        VmVdZhZAzO2dvPfee++999577733ujudTif33/8/XGZkAWz2zkrayZ4hgKrIHz9+fB8/In7xR8Xs
-        o0cf3W3Wk2ZaF6u2qJbN3fOHs4PdBw/z7f175zvb+59OJ9sPH05n2+cP9ibn2WQn+/Te5G6dN9W6
-        nuaf19V61dxt86b9/RcXi/b3z1ar5vfnP8vqopgefJp9upPt37u7qqvLYpbXzd0vimldNdV5O/5u
-        Prnb5PVlXp9n9aK5u7qmHwBAnxXTfFVmS/P+R6OPltkiJ2w3N2qvV2g02Ac1KatphpFSs+8SnulX
-        r+nDNrtoPnq0XJfl6CNCdZXXbZHTJ7/4I3n5Gb18RsTauSUeV1X9Nq9fFz+gpvSO+1OByAdvirx+
-        weCk5+V6McnrL8+/y99S99Ryuq7rfNnKR4AQ/1Th6ucvIoCaNmvX8utVPnm9yqYE6iOeqk0ztw0i
-        ffWaXmn4FQLksQtBuA2/0FvZbFEsXxdt7g94XjVtsbw4XV4WdbVcEObD37ysq/OitK8usnfFYr3o
-        jXSXJpDmQnr56CeLul1n5dN8VtCs57OX9JVB5tV62RaLvIvTtFqs1m3+RTWjj4hYDX0vf8j3F3n1
-        Kr+QsYM2wkDEMQD0epqVhPZHj86zssndjOI7Qo7A9QeGqRPQPhe+LZb280DaqFuCtXnSPvolhPfb
-        NfhX2fXZLiFJPF3j9zrneSS2wV/45jxbFOU1/qI/phnNdNHSnzu/5Jf8P5Fbiu8lBAAA
-    headers:
-      Cache-Control: [no-cache]
-      Content-Encoding: [gzip]
-      Content-Type: [application/json]
-      Date: ['Fri, 25 Mar 2016 19:33:47 GMT']
-      Expires: ['-1']
-      Pragma: [no-cache]
-      Server: [Microsoft-IIS/8.0]
-      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
-      Transfer-Encoding: [chunked]
-      Vary: [Accept-Encoding]
-      X-AspNet-Version: [4.0.30319]
-      X-Powered-By: [ASP.NET]
-      x-ms-correlation-request-id: [f96871ec-19bc-46bd-8546-80140f03aad8]
-      x-ms-ratelimit-remaining-subscription-writes: ['1196']
-      x-ms-request-id: [d8befa9c-b7f8-4330-b66c-c56ca81214f7]
-      x-ms-routing-request-id: ['WESTUS:20160325T193348Z:f96871ec-19bc-46bd-8546-80140f03aad8']
-    status: {code: 200, message: OK}
-- request:
-    body: !!binary |
-      eyJwcm9wZXJ0aWVzIjogeyJza3UiOiB7Im5hbWUiOiAiRnJlZSIsICJwbGFuIjogeyJpZCI6ICIv
-      c3Vic2NyaXB0aW9ucy8wMDAwMDAwMC0wMDAwLTAwMDAtMDAwMC0wMDAwMDAwMDAwMDAvcmVzb3Vy
-      Y2VHcm91cHMvdGVzdF9tZ210X2FwcHNfdGVzdF9sb2dpYzg2YTYwYTQzL3Byb3ZpZGVycy9NaWNy
-      b3NvZnQuV2ViL3NlcnZlcmZhcm1zL3B5YXJtYXBwc2VydmljZXBsYW44NmE2MGE0MyIsICJuYW1l
-      IjogInB5YXJtYXBwc2VydmljZXBsYW44NmE2MGE0MyIsICJ0eXBlIjogIk1pY3Jvc29mdC5XZWIv
-      U2VydmVyRmFybXMifX0sICJkZWZpbml0aW9uIjogeyJhY3Rpb25zIjoge30sICJwYXJhbWV0ZXJz
-      Ijoge30sICJ0cmlnZ2VycyI6IHt9LCAiJHNjaGVtYSI6ICJodHRwczovL3NjaGVtYS5tYW5hZ2Vt
-      ZW50LmF6dXJlLmNvbS9wcm92aWRlcnMvTWljcm9zb2Z0LkxvZ2ljL3NjaGVtYXMvMjAxNS0wOC0w
-      MS1wcmV2aWV3L3dvcmtmbG93ZGVmaW5pdGlvbi5qc29uIyIsICJjb250ZW50VmVyc2lvbiI6ICIx
-      LjAuMC4wIiwgIm91dHB1dHMiOiB7fX19LCAibG9jYXRpb24iOiAiV2VzdCBVUyJ9
-    headers:
-      Accept: [application/json]
-      Accept-Encoding: ['gzip, deflate']
-      Connection: [keep-alive]
-      Content-Length: ['561']
-      Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.5.1 requests/2.7.0 msrest/0.2.0 msrest_azure/0.2.0 logicmanagementclient/2015-02-01-preview
-          Azure-SDK-For-Python]
-      accept-language: [en-US]
-      x-ms-client-request-id: [7ef7ae52-f2c0-11e5-a829-54ee7574ca37]
-    method: PUT
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_apps_test_logic86a60a43/providers/Microsoft.Logic/workflows/12HourHeartBeat?api-version=2015-02-01-preview
-  response:
-    body: {string: '{"properties":{"provisioningState":"Succeeded","createdTime":"2016-03-25T19:33:49.1805078Z","changedTime":"2016-03-25T19:33:49.1805078Z","state":"Enabled","version":"08587426724564423819","accessEndpoint":"https://westus.logic.azure.com:443/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_mgmt_apps_test_logic86a60a43/providers/Microsoft.Logic/workflows/12HourHeartBeat","sku":{"name":"Free","plan":{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_apps_test_logic86a60a43/providers/Microsoft.Web/serverfarms/pyarmappserviceplan86a60a43","type":"Microsoft.Web/ServerFarms","name":"pyarmappserviceplan86a60a43"}},"definition":{"$schema":"https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2015-08-01-preview/workflowdefinition.json#","contentVersion":"1.0.0.0","parameters":{},"triggers":{},"actions":{},"outputs":{}},"parameters":{}},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_apps_test_logic86a60a43/providers/Microsoft.Logic/workflows/12HourHeartBeat","name":"12HourHeartBeat","type":"Microsoft.Logic/workflows","location":"West
+    body: {string: '{"properties":{"provisioningState":"Succeeded","createdTime":"2016-08-30T17:12:41.0076894Z","changedTime":"2016-08-30T17:12:41.0076894Z","state":"Enabled","version":"08587290297245768664","accessEndpoint":"https://prod-14.westus.logic.azure.com:443/workflows/58048da9717142a493e48e654a757eda","definition":{"$schema":"https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#","contentVersion":"1.0.0.0","parameters":{},"triggers":{},"actions":{},"outputs":{}},"parameters":{}},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_apps_test_logic86a60a43/providers/Microsoft.Logic/workflows/12HourHeartBeat","name":"12HourHeartBeat","type":"Microsoft.Logic/workflows","location":"West
         US"}'}
     headers:
       Cache-Control: [no-cache]
-      Content-Length: ['1151']
+      Content-Length: ['767']
       Content-Type: [application/json; charset=utf-8]
-      Date: ['Fri, 25 Mar 2016 19:33:49 GMT']
+      Date: ['Tue, 30 Aug 2016 17:12:40 GMT']
       Expires: ['-1']
       Pragma: [no-cache]
       Strict-Transport-Security: [max-age=31536000; includeSubDomains]
-      x-ms-correlation-request-id: [cbaa1753-eef1-43da-b7d1-cc8ba1836822]
-      x-ms-ratelimit-remaining-subscription-writes: ['1195']
-      x-ms-request-id: ['westus:132d7b07-b83c-4639-b64a-d7e98c486dac']
-      x-ms-routing-request-id: ['WESTUS:20160325T193349Z:cbaa1753-eef1-43da-b7d1-cc8ba1836822']
+      x-ms-correlation-request-id: [e1796ac0-ca4f-4970-9a4b-73bad19448fd]
+      x-ms-ratelimit-remaining-subscription-writes: ['1197']
+      x-ms-request-id: ['westus:6dcd77fb-11e7-4587-bc39-76fe480b0647']
+      x-ms-routing-request-id: ['CENTRALUS:20160830T171241Z:e1796ac0-ca4f-4970-9a4b-73bad19448fd']
     status: {code: 201, message: Created}
 version: 1
