@@ -18,7 +18,7 @@ class ResourceReference(Model):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :param id: Gets or sets the resource id.
+    :param id: The resource id.
     :type id: str
     :ivar name: Gets the resource name.
     :vartype name: str

@@ -15,16 +15,16 @@ from msrest.serialization import Model
 class ContentLink(Model):
     """ContentLink.
 
-    :param uri: Gets or sets the content link URI.
+    :param uri: The content link URI.
     :type uri: str
-    :param content_version: Gets or sets the content version.
+    :param content_version: The content version.
     :type content_version: str
-    :param content_size: Gets or sets the content size.
+    :param content_size: The content size.
     :type content_size: long
-    :param content_hash: Gets or sets the content hash.
+    :param content_hash: The content hash.
     :type content_hash: :class:`ContentHash
      <azure.mgmt.logic.models.ContentHash>`
-    :param metadata: Gets or sets the metadata.
+    :param metadata: The metadata.
     :type metadata: object
     """ 
 

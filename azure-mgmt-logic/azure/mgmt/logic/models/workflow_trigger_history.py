@@ -18,7 +18,7 @@ class WorkflowTriggerHistory(SubResource):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :param id: Gets or sets the resource id.
+    :param id: The resource id.
     :type id: str
     :ivar start_time: Gets the start time.
     :vartype start_time: datetime
@@ -26,7 +26,7 @@ class WorkflowTriggerHistory(SubResource):
     :vartype end_time: datetime
     :ivar status: Gets the status. Possible values include: 'NotSpecified',
      'Paused', 'Running', 'Waiting', 'Succeeded', 'Skipped', 'Suspended',
-     'Cancelled', 'Failed', 'Faulted', 'TimedOut', 'Aborted'
+     'Cancelled', 'Failed', 'Faulted', 'TimedOut', 'Aborted', 'Ignored'
     :vartype status: str or :class:`WorkflowStatus
      <azure.mgmt.logic.models.WorkflowStatus>`
     :ivar code: Gets the code.
@@ -35,6 +35,9 @@ class WorkflowTriggerHistory(SubResource):
     :vartype error: object
     :ivar tracking_id: Gets the tracking id.
     :vartype tracking_id: str
+    :param correlation: The run correlation.
+    :type correlation: :class:`Correlation
+     <azure.mgmt.logic.models.Correlation>`
     :ivar inputs_link: Gets the link to input parameters.
     :vartype inputs_link: :class:`ContentLink
      <azure.mgmt.logic.models.ContentLink>`
@@ -75,6 +78,7 @@ class WorkflowTriggerHistory(SubResource):
         'code': {'key': 'properties.code', 'type': 'str'},
         'error': {'key': 'properties.error', 'type': 'object'},
         'tracking_id': {'key': 'properties.trackingId', 'type': 'str'},
+        'correlation': {'key': 'properties.correlation', 'type': 'Correlation'},
         'inputs_link': {'key': 'properties.inputsLink', 'type': 'ContentLink'},
         'outputs_link': {'key': 'properties.outputsLink', 'type': 'ContentLink'},
         'fired': {'key': 'properties.fired', 'type': 'bool'},
@@ -83,7 +87,7 @@ class WorkflowTriggerHistory(SubResource):
         'type': {'key': 'type', 'type': 'str'},
     }
 
-    def __init__(self, id=None):
+    def __init__(self, id=None, correlation=None):
         super(WorkflowTriggerHistory, self).__init__(id=id)
         self.start_time = None
         self.end_time = None
@@ -91,6 +95,7 @@ class WorkflowTriggerHistory(SubResource):
         self.code = None
         self.error = None
         self.tracking_id = None
+        self.correlation = correlation
         self.inputs_link = None
         self.outputs_link = None
         self.fired = None

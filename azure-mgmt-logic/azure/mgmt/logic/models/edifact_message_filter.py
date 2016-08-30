@@ -12,17 +12,18 @@
 from msrest.serialization import Model
 
 
-class RegenerateSecretKeyParameters(Model):
-    """RegenerateSecretKeyParameters.
+class EdifactMessageFilter(Model):
+    """EdifactMessageFilter.
 
-    :param key_type: Gets or sets the key type. Possible values include:
-     'NotSpecified', 'Primary', 'Secondary'
-    :type key_type: str or :class:`KeyType <azure.mgmt.logic.models.KeyType>`
+    :param message_filter_type: The message filter type. Possible values
+     include: 'NotSpecified', 'Include', 'Exclude'
+    :type message_filter_type: str or :class:`MessageFilterType
+     <azure.mgmt.logic.models.MessageFilterType>`
     """ 
 
     _attribute_map = {
-        'key_type': {'key': 'keyType', 'type': 'KeyType'},
+        'message_filter_type': {'key': 'messageFilterType', 'type': 'MessageFilterType'},
     }
 
-    def __init__(self, key_type=None):
-        self.key_type = key_type
+    def __init__(self, message_filter_type=None):
+        self.message_filter_type = message_filter_type

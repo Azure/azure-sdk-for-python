@@ -9,19 +9,23 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.paging import Paged
+from msrest.serialization import Model
 
 
-class WorkflowAccessKeyPaged(Paged):
-    """
-    A paging container for iterating over a list of WorkflowAccessKey object
-    """
+class BusinessIdentity(Model):
+    """BusinessIdentity.
+
+    :param qualifier: The business identity qualifier.
+    :type qualifier: str
+    :param value: The business identity value.
+    :type value: str
+    """ 
 
     _attribute_map = {
-        'next_link': {'key': 'nextLink', 'type': 'str'},
-        'current_page': {'key': 'value', 'type': '[WorkflowAccessKey]'}
+        'qualifier': {'key': 'Qualifier', 'type': 'str'},
+        'value': {'key': 'Value', 'type': 'str'},
     }
 
-    def __init__(self, *args, **kwargs):
-
-        super(WorkflowAccessKeyPaged, self).__init__(*args, **kwargs)
+    def __init__(self, qualifier=None, value=None):
+        self.qualifier = qualifier
+        self.value = value

@@ -12,28 +12,32 @@
 from msrest.serialization import Model
 
 
-class WorkflowSecretKeys(Model):
-    """WorkflowSecretKeys.
+class KeyVaultKeyReferenceKeyVault(Model):
+    """The key vault reference.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar primary_secret_key: Gets the primary secret key.
-    :vartype primary_secret_key: str
-    :ivar secondary_secret_key: Gets the secondary secret key.
-    :vartype secondary_secret_key: str
+    :param id: The resource id.
+    :type id: str
+    :ivar name: The resource name.
+    :vartype name: str
+    :ivar type: The resource type.
+    :vartype type: str
     """ 
 
     _validation = {
-        'primary_secret_key': {'readonly': True},
-        'secondary_secret_key': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
     }
 
     _attribute_map = {
-        'primary_secret_key': {'key': 'primarySecretKey', 'type': 'str'},
-        'secondary_secret_key': {'key': 'secondarySecretKey', 'type': 'str'},
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
     }
 
-    def __init__(self):
-        self.primary_secret_key = None
-        self.secondary_secret_key = None
+    def __init__(self, id=None):
+        self.id = id
+        self.name = None
+        self.type = None
