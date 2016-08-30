@@ -1586,6 +1586,7 @@
     <Content Include="azure-mgmt-compute\MANIFEST.in" />
     <Content Include="azure-mgmt-compute\README.rst" />
     <Content Include="azure-mgmt-compute\setup.cfg" />
+    <Content Include="azure-mgmt-scheduler\HISTORY.rst" />
     <Content Include="azure-mgmt-scheduler\MANIFEST.in" />
     <Content Include="azure-mgmt-scheduler\README.rst" />
     <Content Include="azure-mgmt-scheduler\setup.cfg" />
