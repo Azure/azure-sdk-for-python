@@ -50,8 +50,7 @@
       "swagger": "arm-compute/compositeComputeClient.json",
       "autorest_options": {
         "Namespace": "azure.mgmt.compute",
-        "Modeler": "CompositeSwagger",
-        "PackageVersion": "0.30.0"
+        "Modeler": "CompositeSwagger"
       },
       "output_dir": "azure-mgmt-compute/azure/mgmt/compute"
     },
@@ -81,8 +80,7 @@
     "keyvault": {
       "swagger": "arm-keyvault/2015-06-01/swagger/keyvault.json",
       "autorest_options": {
-        "Namespace": "azure.keyvault",
-        "PackageVersion": "0.30.0"
+        "Namespace": "azure.keyvault"
       },
       "output_dir": "azure-mgmt-keyvault/azure/mgmt/keyvault"
     },
@@ -96,8 +94,7 @@
     "network": {
       "swagger": "arm-network/2016-06-01/swagger/network.json",
       "autorest_options": {
-        "Namespace": "azure.mgmt.network",
-        "PackageVersion": "0.30.0"
+        "Namespace": "azure.mgmt.network"
       },
       "output_dir": "azure-mgmt-network/azure/mgmt/network"
     },
@@ -125,40 +122,35 @@
     "resources.lock": {
       "swagger": "arm-resources/locks/2015-01-01/swagger/locks.json",
       "autorest_options": {
-        "Namespace": "azure.mgmt.resource.locks",
-        "PackageVersion": "0.30.0"
+        "Namespace": "azure.mgmt.resource.locks"
       },
       "output_dir": "azure-mgmt-resource/azure/mgmt/resource/locks"
     },
     "resources.features": {
       "swagger": "arm-resources/features/2015-12-01/swagger/features.json",
       "autorest_options": {
-        "Namespace": "azure.mgmt.resource.feature",
-        "PackageVersion": "0.30.0"
+        "Namespace": "azure.mgmt.resource.feature"
       },
       "output_dir": "azure-mgmt-resource/azure/mgmt/resource/features"
     },
     "resources.resources": {
       "swagger": "arm-resources/resources/2016-02-01/swagger/resources.json",
       "autorest_options": {
-        "Namespace": "azure.mgmt.resource.resources",
-        "PackageVersion": "0.30.0"
+        "Namespace": "azure.mgmt.resource.resources"
       },
       "output_dir": "azure-mgmt-resource/azure/mgmt/resource/resources"
     },
     "resources.subscriptions": {
       "swagger": "arm-resources/subscriptions/2015-11-01/swagger/subscriptions.json",
       "autorest_options": {
-        "Namespace": "azure.mgmt.resource.subscriptions",
-        "PackageVersion": "0.30.0"
+        "Namespace": "azure.mgmt.resource.subscriptions"
       },
       "output_dir": "azure-mgmt-resource/azure/mgmt/resource/subscriptions"
     },
     "resources.policy": {
       "swagger": "arm-resources/policy/2016-04-01/swagger/policy.json",
       "autorest_options": {
-        "Namespace": "azure.mgmt.resource.policy",
-        "PackageVersion": "0.30.0"
+        "Namespace": "azure.mgmt.resource.policy"
       },
       "output_dir": "azure-mgmt-resource/azure/mgmt/resource/policy"
     },
@@ -179,8 +171,7 @@
     "storage": {
       "swagger": "arm-storage/2016-01-01/swagger/storage.json",
       "autorest_options": {
-        "Namespace": "azure.mgmt.storage",
-        "PackageVersion": "0.30.0"
+        "Namespace": "azure.mgmt.storage"
       },
       "output_dir": "azure-mgmt-storage/azure/mgmt/storage"
     },

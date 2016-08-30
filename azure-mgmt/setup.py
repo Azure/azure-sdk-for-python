@@ -25,7 +25,7 @@ except ImportError:
 
 setup(
     name='azure-mgmt',
-    version='0.30.0',
+    version='0.30.0rc6',
     description='Microsoft Azure Resource Management Client Libraries for Python',
     long_description=open('README.rst', 'r').read(),
     license='MIT License',
@@ -46,10 +46,10 @@ setup(
     zip_safe=False,
     install_requires=[
         'azure-mgmt-batch==1.0.0',
-        'azure-mgmt-compute==0.30.0',
-        'azure-mgmt-keyvault==0.30.0',
-        'azure-mgmt-network==0.30.0',
-        'azure-mgmt-resource==0.30.0',
-        'azure-mgmt-storage==0.30.0',
+        'azure-mgmt-compute==0.30.0rc6',
+        'azure-mgmt-keyvault==0.30.0rc6',
+        'azure-mgmt-network==0.30.0rc6',
+        'azure-mgmt-resource==0.30.0rc6',
+        'azure-mgmt-storage==0.30.0rc6',
     ],
 )
