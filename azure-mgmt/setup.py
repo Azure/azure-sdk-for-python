@@ -46,6 +46,7 @@ setup(
     zip_safe=False,
     install_requires=[
         'azure-mgmt-batch==1.0.0',
+        'azure-mgmt-redis==1.0.0',
         'azure-mgmt-compute==0.30.0rc6',
         'azure-mgmt-keyvault==0.30.0rc6',
         'azure-mgmt-network==0.30.0rc6',

@@ -1,5 +1,5 @@
-2016-08-08 Version 2.0.0 / 0.30.0
-+++++++++++++++++++++++++++++++++
+2016-08-30 Version 2.0.0rc6 / 0.30.0rc6
++++++++++++++++++++++++++++++++++++++++
 
 **Disclaimer**
 
@@ -9,70 +9,78 @@ Starting with this release, most packages now use the MIT license. The following
 - aure-servicemanagement-legacy
 - azure-storage
 
-This is a stable release, ready for production.
+The following packages have the same content than RC5, but with MIT licence as header:
 
-The azure 2.0.0 package contains the following Azure stable packages:
+- azure-mgmt-cognitiveservices 0.30.0rc6
+- azure-mgmt-commerce 0.30.0rc6
+- azure-mgmt-dns 0.30.0rc6
+- azure-mgmt-logic 0.30.0rc6
+- azure-mgmt-notificationhubs 0.30.0rc6
+- azure-mgmt-powerbiembedded 0.30.0rc6
+- azure-mgmt-scheduler 0.30.0rc6
+- azure-mgmt-trafficmanager 0.30.0rc6
+- azure-mgmt-web 0.30.0rc6
 
-- azure-mgmt-resource 0.30.0
-- azure-mgmt-compute 0.30.0
-- azure-mgmt-network 0.30.0
-- azure-mgmt-storage 0.30.0
-- azure-mgmt-keyvault 0.30.0
-- azure-mgmt-batch 1.0.0
-- azure-batch 1.0.0
-- azure-storage 0.32.0
-- azure-servicebus 0.20.2
-- azure-servicemanagement-legacy 0.20.3
+**Breaking changes**
+
+- azure-mgmt-storage 0.30.0rc6: fix usage list syntax (https://github.com/Azure/azure-rest-api-specs/issues/340)
+
+Some values that are constants and were incorrectly suggested as method parameter have been removed:
+
+- azure-mgmt-compute 0.30.0rc6: api_version is now an attribute and not a method parameter (#697)
+- azure-mgmt-cdn 0.30.0rc6: check_name_availability has no more a type attribute
+
+**New and bugfixes**
+
+- azure-mgmt-resource 0.30.0rc6: Property aliases support + Doc typo
+- azure-mgmt-network 0.30.0rc6: `check_ip_address_availability` and more + Doc typo
+- azure-mgmt-keyvault 0.30.0rc6: fix required parameters (#733)
+- azure-graphrbac 0.30.0rc6: latest API Version
+- azure-mgmt-redis 1.0.0: official stable release (same content than 0.30.0RC5)
+
+**Meta-package**
+
+The 2.0.0rc6 is a release candidate. However, the core packages, from code quality/completeness perspectives can at this time 
+be considered "stable" - it will be officially labeled as such in September (in sync with other languages).
+We are not planning on any further major changes until then.
+
+The azure 2.0.0rc6 package contains the following Azure packages:
+
+- The following packages are still labeled "preview" but can be considered "stable":
+
+  - azure-mgmt-resource 0.30.0rc6
+  - azure-mgmt-compute 0.30.0rc6
+  - azure-mgmt-network 0.30.0rc6
+  - azure-mgmt-storage 0.30.0rc6
+  - azure-mgmt-keyvault 0.30.0rc6
+
+- The following packages are already released as "stable" and are officially production ready:
+
+  - azure-batch 1.0.0
+  - azure-mgmt-batch 1.0.0
+  - azure-mgmt-redis 1.0.0
+  - azure-servicebus 0.20.3
+  - azure-servicemanagement-legacy 0.20.4
+  - azure-storage 0.33.0
 
 The following packages are also available as preview only, not ready for production,
-and will NOT be installed with the 2.0.0 "azure" meta-package:
+and will NOT be installed with the 2.0.0rc6 "azure" meta-package. We removed then from the 2.0.0rc6
+to prepare our customers to the 2.0.0 stable release that will only contains the stable packages
+listed before.
 
 - azure-mgmt-authorization 0.30.0RC5
-- azure-mgmt-cdn 0.30.0RC6
-- azure-mgmt-cognitiveservices 0.30.0RC6
-- azure-mgmt-commerce 0.30.0RC6
-- azure-mgmt-dns 0.30.0RC6
-- azure-mgmt-logic 0.30.0RC6
-- azure-mgmt-notificationhubs 0.30.0RC6
-- azure-mgmt-powerbiembedded 0.30.0RC6
-- azure-mgmt-redis 0.30.0RC6
-- azure-mgmt-scheduler 0.30.0RC6
-- azure-mgmt-trafficmanager 0.30.0RC6
-- azure-mgmt-web 0.30.0RC6
+- azure-mgmt-cdn 0.30.0rc6
+- azure-mgmt-cognitiveservices 0.30.0rc6
+- azure-mgmt-commerce 0.30.0rc6
+- azure-mgmt-dns 0.30.0rc6
+- azure-mgmt-logic 0.30.0rc6
+- azure-mgmt-notificationhubs 0.30.0rc6
+- azure-mgmt-powerbiembedded 0.30.0rc6
+- azure-mgmt-redis 0.30.0rc6
+- azure-mgmt-scheduler 0.30.0rc6
+- azure-mgmt-trafficmanager 0.30.0rc6
+- azure-mgmt-web 0.30.0rc6
 
-**WHAT'S NEW COMPARED TO 1.0.3**
-
-* New libraries
-
-  * KeyVault Management
-  * Batch and Batch Management
-
-* Enhanced libraries compared to 1.0.0 preview
-
-  * Storage: create storage accounts, list keys, and more. Latest API version.
-  * Resource:
-
-    * resources : create resource groups, register providers and more
-    * features : manage features of provider and more
-    * authorization : manage resource group lock and more
-    * subscriptions : manage subscriptions and more
-    * policy : manage resources policy among users and more
-
-  * Network: create virtual networks, network interfaces, public ips and more
-  * Compute: create virtual machines, containers and more
-
-**BREAKING CHANGES**
-
-We made efforts to document the breaking from ARM 1.0.x version to 2.0.0 `here<https://github.com/Azure/azure-sdk-for-python/wiki/Migrate-from-1.0.x-0.20.0-to-2.0.0-0.30.0>`__.
-
-If you were already using the 2.0.0RC5 version, there are no breaking changes.
-
-**RC6 PACKAGES**
-
-All RC6 packages use the latest APIVersion available for these services
-
-azure-storage 0.32.0
-  * Major version. `Check the ChangeLog on storage github account for details<https://github.com/Azure/azure-storage-python/releases>`__.
   
 2016-08-01 azure-servicemanagement-legacy 0.20.4
 ++++++++++++++++++++++++++++++++++++++++++++++++
