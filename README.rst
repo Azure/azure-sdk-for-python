@@ -61,13 +61,17 @@ The following packages are still labeled "preview" but can be considered "stable
 - azure-mgmt-compute 0.30.0rc6
 - azure-mgmt-network 0.30.0rc6
 - azure-mgmt-storage 0.30.0rc6
+- azure-mgmt-keyvault 0.30.0rc6
 
 The following packages are already released as "stable" and are officially production ready:
 
 - azure-batch 1.0.0
 - azure-mgmt-batch 1.0.0
+- azure-mgmt-redis 1.0.0
+- azure-mgmt-logic 1.0.0
 - azure-servicebus 0.20.3
 - azure-servicemanagement-legacy 0.20.4
+- azure-storage 0.33.0
 
 All other packages are real "preview" packages. Please send us your feedback!
 
