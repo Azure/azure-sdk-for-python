@@ -27,35 +27,49 @@ See important information if you're currently using this SDK < 1.0 in `this issu
 INSTALLATION
 ============
 
-``pip install azure``
+**The latest recommended release is currently a release candidate, tell this to pip to install it!**
+
+The `azure` bundle meta-package will install all Azure SDKs at once:
+
+- Use the ``--pre`` flag: ``pip install --pre azure``
+
+- Specify the version:  ``pip install azure==2.0.0rc6``
+
+You can also install only what you exactly need:
+
+- Use the ``--pre`` flag: ``pip install --pre azure-mgmt-compute``
+
+- Specify the version:  ``pip install azure-mgmt-compute==0.30.0rc6``
 
 If you want to install ``azure`` from source::
 
     git clone git://github.com/Azure/azure-sdk-for-python.git
     cd azure-sdk-for-python
     python setup.py install
-	
-If you need one specific package, you can install it directly, for instance:
 
-``pip install azure-mgmt-compute``
+DISCLAIMER
+==========
 
+This is a release candidate. However, the core packages, from code quality/completeness perspectives can at this time be considered "stable" - 
+it will be officially labeled as such in September (in sync with other languages).
 
-DISCLAIMER ON PREVIEW VERSIONS
-==============================
+We are not planning on any further major changes until then.
 
-You can install additional preview packages not handled by the "azure" meta-package.
+The following packages are still labeled "preview" but can be considered "stable":
 
-Please note that these packages are distributed as preview version and you will
-need to tell pip:
+- azure-mgmt-resource 0.30.0rc6
+- azure-mgmt-compute 0.30.0rc6
+- azure-mgmt-network 0.30.0rc6
+- azure-mgmt-storage 0.30.0rc6
 
-- Use the ``--pre`` flag: ``pip install --pre azure-mgmt-web``
+The following packages are already released as "stable" and are officially production ready:
 
-- Specify the version: ``pip install azure-mgmt-web==0.30.0rc6``
+- azure-batch 1.0.0
+- azure-mgmt-batch 1.0.0
+- azure-servicebus 0.20.3
+- azure-servicemanagement-legacy 0.20.4
 
-
-Some of these generated libraries have not yet been tested extensively, and some have known issues.
-
-Please send us your feedback!
+All other packages are real "preview" packages. Please send us your feedback!
 
 
 Usage
