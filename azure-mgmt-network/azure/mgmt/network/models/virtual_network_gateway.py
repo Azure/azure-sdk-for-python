@@ -42,6 +42,8 @@ class VirtualNetworkGateway(Resource):
      <azure.mgmt.network.models.VpnType>`
     :param enable_bgp: EnableBgp Flag
     :type enable_bgp: bool
+    :param active_active: ActiveActive flag
+    :type active_active: bool
     :param gateway_default_site: Gets or sets the reference of the
      LocalNetworkGateway resource which represents Local network site having
      default routes. Assign Null value in case of removing existing default
@@ -86,6 +88,7 @@ class VirtualNetworkGateway(Resource):
         'gateway_type': {'key': 'properties.gatewayType', 'type': 'str'},
         'vpn_type': {'key': 'properties.vpnType', 'type': 'str'},
         'enable_bgp': {'key': 'properties.enableBgp', 'type': 'bool'},
+        'active_active': {'key': 'properties.activeActive', 'type': 'bool'},
         'gateway_default_site': {'key': 'properties.gatewayDefaultSite', 'type': 'SubResource'},
         'sku': {'key': 'properties.sku', 'type': 'VirtualNetworkGatewaySku'},
         'vpn_client_configuration': {'key': 'properties.vpnClientConfiguration', 'type': 'VpnClientConfiguration'},
@@ -95,12 +98,13 @@ class VirtualNetworkGateway(Resource):
         'etag': {'key': 'etag', 'type': 'str'},
     }
 
-    def __init__(self, id=None, location=None, tags=None, ip_configurations=None, gateway_type=None, vpn_type=None, enable_bgp=None, gateway_default_site=None, sku=None, vpn_client_configuration=None, bgp_settings=None, resource_guid=None, provisioning_state=None, etag=None):
+    def __init__(self, id=None, location=None, tags=None, ip_configurations=None, gateway_type=None, vpn_type=None, enable_bgp=None, active_active=None, gateway_default_site=None, sku=None, vpn_client_configuration=None, bgp_settings=None, resource_guid=None, provisioning_state=None, etag=None):
         super(VirtualNetworkGateway, self).__init__(id=id, location=location, tags=tags)
         self.ip_configurations = ip_configurations
         self.gateway_type = gateway_type
         self.vpn_type = vpn_type
         self.enable_bgp = enable_bgp
+        self.active_active = active_active
         self.gateway_default_site = gateway_default_site
         self.sku = sku
         self.vpn_client_configuration = vpn_client_configuration
