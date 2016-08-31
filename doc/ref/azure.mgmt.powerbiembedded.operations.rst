@@ -1,5 +1,5 @@
 azure.mgmt.powerbiembedded.operations module
-=====================================
+===========================================
 
 .. automodule:: azure.mgmt.powerbiembedded.operations
     :members:

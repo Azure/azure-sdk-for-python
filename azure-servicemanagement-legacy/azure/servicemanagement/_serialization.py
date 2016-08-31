@@ -1244,6 +1244,20 @@ class _XmlSerializer(object):
              ('Location', location)])
 
     @staticmethod
+    def associate_reserved_ip_to_xml(
+        service_name, deployment_name, virtual_ip_name
+    ):
+        xml = _XmlSerializer.data_to_xml([
+            ('ServiceName', service_name),
+            ('DeploymentName', deployment_name),
+        ])
+        if virtual_ip_name:
+            xml += _XmlSerializer.data_to_xml(
+                [('VirtualIPName', virtual_ip_name)]
+            )
+        return _XmlSerializer.doc_from_xml('ReservedIPAssociation', xml)
+
+    @staticmethod
     def dns_server_to_xml(name, address):
         return _XmlSerializer.doc_from_data(
             'DnsServer',

@@ -1,4 +1,0 @@
-[run]
-source =
-        ../azure
-omit = */test*

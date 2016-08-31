@@ -1,16 +1,7 @@
 ﻿#-------------------------------------------------------------------------
-# Copyright (c) Microsoft.  All rights reserved.
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#   http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License. See License.txt in the project root for
+# license information.
 #--------------------------------------------------------------------------
 from contextlib import contextmanager
 import copy
@@ -20,6 +11,7 @@ import os
 import os.path
 import time
 import vcr
+from vcr.filters import decode_response
 import zlib
 
 from .common_extendedtestcase import ExtendedTestCase
@@ -91,7 +83,7 @@ class RecordingTestCase(ExtendedTestCase):
             my_vcr = vcr.VCR(
                 before_record_request = self._scrub_sensitive_request_info,
                 before_record_response = self._scrub_sensitive_response_info,
-                record_mode = 'none' if TestMode.is_playback(self.test_mode) else 'all'
+                record_mode = 'none' if TestMode.is_playback(self.test_mode) else 'all',
             )
 
             self.assertIsNotNone(self.working_folder)
@@ -130,11 +122,14 @@ class RecordingTestCase(ExtendedTestCase):
             # such as 'location', often used in the request uri of a
             # subsequent service call.
             response = copy.deepcopy(response)
+            # decode_response is supposed to do a copy, but do it bad
+            # https://github.com/kevin1024/vcrpy/issues/264
+            response = decode_response(response)
             headers = response.get('headers')
             if headers:
                 for name, val in headers.items():
-                    for i in range(len(val)):
-                        val[i] = self._scrub(val[i])
+                    for i, e in enumerate(val):
+                        val[i] = self._scrub(e)
                     if name.lower() == 'retry-after':
                         val[:] = ['0']
             body = response.get('body')

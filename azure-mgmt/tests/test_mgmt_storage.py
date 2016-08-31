@@ -1,18 +1,9 @@
 ﻿# coding: utf-8
 
 #-------------------------------------------------------------------------
-# Copyright (c) Microsoft.  All rights reserved.
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#   http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License. See License.txt in the project root for
+# license information.
 #--------------------------------------------------------------------------
 import unittest
 
@@ -28,6 +19,11 @@ class MgmtStorageTest(AzureMgmtTestCase):
         self.storage_client = self.create_mgmt_client(
             azure.mgmt.storage.StorageManagementClient
         )
+
+    @record
+    def test_storage_usage(self):
+        usages = list(self.storage_client.usage.list())
+        self.assertGreater(len(usages), 0)
 
     @record
     def test_storage_accounts(self):
@@ -95,6 +91,14 @@ class MgmtStorageTest(AzureMgmtTestCase):
         result_list = self.storage_client.storage_accounts.list()
         result_list = list(result_list)
         self.assertGreater(len(result_list), 0)
+
+        storage_account = self.storage_client.storage_accounts.update(
+            self.group_name,
+            account_name,
+            azure.mgmt.storage.models.StorageAccountUpdateParameters(
+                sku=azure.mgmt.storage.models.Sku(azure.mgmt.storage.models.SkuName.standard_grs)
+            )
+        )
 
         self.storage_client.storage_accounts.delete(
             self.group_name,

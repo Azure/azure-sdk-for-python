@@ -103,7 +103,7 @@ def _create_message(response, service_instance):
                 else:
                     custom_properties[name] = float(value)
 
-    if message_type == None:
+    if message_type is None:
         message = Message(
             respbody, service_instance, message_location, custom_properties,
             'application/atom+xml;type=entry;charset=utf-8', broker_properties)

@@ -26,7 +26,7 @@
     <SccProvider>SAK</SccProvider>
     <SccAuxPath>SAK</SccAuxPath>
     <SccLocalPath>SAK</SccLocalPath>
-    <SearchPath>azure-common\;azure-servicebus\;azure-servicemanagement-legacy\;azure-mgmt-storage\;azure-mgmt-compute\;azure-mgmt-network\;azure-mgmt-resource\;azure-mgmt-redis\;azure-mgmt-authorization\;azure-mgmt-cdn\;azure-mgmt-logic\;azure-mgmt-notificationhubs\;azure-mgmt-scheduler\;azure-mgmt-web\;azure-graphrbac\;azure-mgmt\;azure-batch\;azure-mgmt-batch\;azure-mgmt-datalake-analytics\;azure-mgmt-datalake-store\</SearchPath>
+    <SearchPath>azure-common\;azure-servicebus\;azure-servicemanagement-legacy\;azure-mgmt-storage\;azure-mgmt-compute\;azure-mgmt-network\;azure-mgmt-resource\;azure-mgmt-redis\;azure-mgmt-authorization\;azure-mgmt-cdn\;azure-mgmt-logic\;azure-mgmt-notificationhubs\;azure-mgmt-scheduler\;azure-mgmt-web\;azure-graphrbac\;azure-mgmt\;azure-batch\;azure-mgmt-batch\;azure-mgmt-datalake-analytics\;azure-mgmt-datalake-store\;azure-mgmt-keyvault\</SearchPath>
     <EnableNativeCodeDebugging>False</EnableNativeCodeDebugging>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
@@ -389,6 +389,27 @@
     <Compile Include="azure-common\testutils\common_extendedtestcase.py" />
     <Compile Include="azure-common\testutils\create_credentials_file.py" />
     <Compile Include="azure-common\testutils\__init__.py" />
+    <Compile Include="azure-mgmt-cognitiveservices\azure\mgmt\cognitiveservices\cognitive_services_management_client.py" />
+    <Compile Include="azure-mgmt-cognitiveservices\azure\mgmt\cognitiveservices\models\cognitive_services_account.py" />
+    <Compile Include="azure-mgmt-cognitiveservices\azure\mgmt\cognitiveservices\models\cognitive_services_account_create_parameters.py" />
+    <Compile Include="azure-mgmt-cognitiveservices\azure\mgmt\cognitiveservices\models\cognitive_services_account_enumerate_skus_result.py" />
+    <Compile Include="azure-mgmt-cognitiveservices\azure\mgmt\cognitiveservices\models\cognitive_services_account_keys.py" />
+    <Compile Include="azure-mgmt-cognitiveservices\azure\mgmt\cognitiveservices\models\cognitive_services_account_paged.py" />
+    <Compile Include="azure-mgmt-cognitiveservices\azure\mgmt\cognitiveservices\models\cognitive_services_account_update_parameters.py" />
+    <Compile Include="azure-mgmt-cognitiveservices\azure\mgmt\cognitiveservices\models\cognitive_services_management_client_enums.py" />
+    <Compile Include="azure-mgmt-cognitiveservices\azure\mgmt\cognitiveservices\models\cognitive_services_resource_and_sku.py" />
+    <Compile Include="azure-mgmt-cognitiveservices\azure\mgmt\cognitiveservices\models\error.py" />
+    <Compile Include="azure-mgmt-cognitiveservices\azure\mgmt\cognitiveservices\models\error_body.py" />
+    <Compile Include="azure-mgmt-cognitiveservices\azure\mgmt\cognitiveservices\models\regenerate_key_parameters.py" />
+    <Compile Include="azure-mgmt-cognitiveservices\azure\mgmt\cognitiveservices\models\sku.py" />
+    <Compile Include="azure-mgmt-cognitiveservices\azure\mgmt\cognitiveservices\models\__init__.py" />
+    <Compile Include="azure-mgmt-cognitiveservices\azure\mgmt\cognitiveservices\operations\cognitive_services_accounts_operations.py" />
+    <Compile Include="azure-mgmt-cognitiveservices\azure\mgmt\cognitiveservices\operations\__init__.py" />
+    <Compile Include="azure-mgmt-cognitiveservices\azure\mgmt\cognitiveservices\version.py" />
+    <Compile Include="azure-mgmt-cognitiveservices\azure\mgmt\cognitiveservices\__init__.py" />
+    <Compile Include="azure-mgmt-cognitiveservices\azure\mgmt\__init__.py" />
+    <Compile Include="azure-mgmt-cognitiveservices\azure\__init__.py" />
+    <Compile Include="azure-mgmt-cognitiveservices\setup.py" />
     <Compile Include="azure-mgmt-commerce\azure\mgmt\commerce\models\error_response.py" />
     <Compile Include="azure-mgmt-commerce\azure\mgmt\commerce\models\info_field.py" />
     <Compile Include="azure-mgmt-commerce\azure\mgmt\commerce\models\meter_info.py" />
@@ -422,6 +443,17 @@
     <Compile Include="azure-mgmt-compute\azure\mgmt\compute\models\compute_long_running_operation_properties.py" />
     <Compile Include="azure-mgmt-compute\azure\mgmt\compute\models\compute_long_running_operation_result.py" />
     <Compile Include="azure-mgmt-compute\azure\mgmt\compute\models\compute_management_client_enums.py" />
+    <Compile Include="azure-mgmt-compute\azure\mgmt\compute\models\container_service.py" />
+    <Compile Include="azure-mgmt-compute\azure\mgmt\compute\models\container_service_agent_pool_profile.py" />
+    <Compile Include="azure-mgmt-compute\azure\mgmt\compute\models\container_service_diagnostics_profile.py" />
+    <Compile Include="azure-mgmt-compute\azure\mgmt\compute\models\container_service_linux_profile.py" />
+    <Compile Include="azure-mgmt-compute\azure\mgmt\compute\models\container_service_master_profile.py" />
+    <Compile Include="azure-mgmt-compute\azure\mgmt\compute\models\container_service_orchestrator_profile.py" />
+    <Compile Include="azure-mgmt-compute\azure\mgmt\compute\models\container_service_paged.py" />
+    <Compile Include="azure-mgmt-compute\azure\mgmt\compute\models\container_service_ssh_configuration.py" />
+    <Compile Include="azure-mgmt-compute\azure\mgmt\compute\models\container_service_ssh_public_key.py" />
+    <Compile Include="azure-mgmt-compute\azure\mgmt\compute\models\container_service_vm_diagnostics.py" />
+    <Compile Include="azure-mgmt-compute\azure\mgmt\compute\models\container_service_windows_profile.py" />
     <Compile Include="azure-mgmt-compute\azure\mgmt\compute\models\data_disk.py" />
     <Compile Include="azure-mgmt-compute\azure\mgmt\compute\models\data_disk_image.py" />
     <Compile Include="azure-mgmt-compute\azure\mgmt\compute\models\delete_operation_result.py" />
@@ -644,6 +676,24 @@
     <Compile Include="azure-mgmt-datalake-store\azure\mgmt\__init__.py" />
     <Compile Include="azure-mgmt-datalake-store\azure\__init__.py" />
     <Compile Include="azure-mgmt-datalake-store\setup.py" />
+    <Compile Include="azure-mgmt-keyvault\azure\mgmt\keyvault\key_vault_management_client.py" />
+    <Compile Include="azure-mgmt-keyvault\azure\mgmt\keyvault\models\access_policy_entry.py" />
+    <Compile Include="azure-mgmt-keyvault\azure\mgmt\keyvault\models\key_vault_management_client_enums.py" />
+    <Compile Include="azure-mgmt-keyvault\azure\mgmt\keyvault\models\permissions.py" />
+    <Compile Include="azure-mgmt-keyvault\azure\mgmt\keyvault\models\resource.py" />
+    <Compile Include="azure-mgmt-keyvault\azure\mgmt\keyvault\models\sku.py" />
+    <Compile Include="azure-mgmt-keyvault\azure\mgmt\keyvault\models\vault.py" />
+    <Compile Include="azure-mgmt-keyvault\azure\mgmt\keyvault\models\vault_create_or_update_parameters.py" />
+    <Compile Include="azure-mgmt-keyvault\azure\mgmt\keyvault\models\vault_paged.py" />
+    <Compile Include="azure-mgmt-keyvault\azure\mgmt\keyvault\models\vault_properties.py" />
+    <Compile Include="azure-mgmt-keyvault\azure\mgmt\keyvault\models\__init__.py" />
+    <Compile Include="azure-mgmt-keyvault\azure\mgmt\keyvault\operations\vaults_operations.py" />
+    <Compile Include="azure-mgmt-keyvault\azure\mgmt\keyvault\operations\__init__.py" />
+    <Compile Include="azure-mgmt-keyvault\azure\mgmt\keyvault\version.py" />
+    <Compile Include="azure-mgmt-keyvault\azure\mgmt\keyvault\__init__.py" />
+    <Compile Include="azure-mgmt-keyvault\azure\mgmt\__init__.py" />
+    <Compile Include="azure-mgmt-keyvault\azure\__init__.py" />
+    <Compile Include="azure-mgmt-keyvault\setup.py" />
     <Compile Include="azure-mgmt-logic\azure\mgmt\logic\logic_management_client.py" />
     <Compile Include="azure-mgmt-logic\azure\mgmt\logic\models\content_hash.py" />
     <Compile Include="azure-mgmt-logic\azure\mgmt\logic\models\content_link.py" />
@@ -841,6 +891,34 @@
     <Compile Include="azure-mgmt-notificationhubs\azure\mgmt\__init__.py" />
     <Compile Include="azure-mgmt-notificationhubs\azure\__init__.py" />
     <Compile Include="azure-mgmt-notificationhubs\setup.py" />
+    <Compile Include="azure-mgmt-powerbiembedded\azure\mgmt\powerbiembedded\models\azure_sku.py" />
+    <Compile Include="azure-mgmt-powerbiembedded\azure\mgmt\powerbiembedded\models\check_name_request.py" />
+    <Compile Include="azure-mgmt-powerbiembedded\azure\mgmt\powerbiembedded\models\check_name_response.py" />
+    <Compile Include="azure-mgmt-powerbiembedded\azure\mgmt\powerbiembedded\models\create_workspace_collection_request.py" />
+    <Compile Include="azure-mgmt-powerbiembedded\azure\mgmt\powerbiembedded\models\display.py" />
+    <Compile Include="azure-mgmt-powerbiembedded\azure\mgmt\powerbiembedded\models\error.py" />
+    <Compile Include="azure-mgmt-powerbiembedded\azure\mgmt\powerbiembedded\models\error_detail.py" />
+    <Compile Include="azure-mgmt-powerbiembedded\azure\mgmt\powerbiembedded\models\migrate_workspace_collection_request.py" />
+    <Compile Include="azure-mgmt-powerbiembedded\azure\mgmt\powerbiembedded\models\operation.py" />
+    <Compile Include="azure-mgmt-powerbiembedded\azure\mgmt\powerbiembedded\models\operation_list.py" />
+    <Compile Include="azure-mgmt-powerbiembedded\azure\mgmt\powerbiembedded\models\power_bi_embedded_management_client_enums.py" />
+    <Compile Include="azure-mgmt-powerbiembedded\azure\mgmt\powerbiembedded\models\update_workspace_collection_request.py" />
+    <Compile Include="azure-mgmt-powerbiembedded\azure\mgmt\powerbiembedded\models\workspace.py" />
+    <Compile Include="azure-mgmt-powerbiembedded\azure\mgmt\powerbiembedded\models\workspace_collection.py" />
+    <Compile Include="azure-mgmt-powerbiembedded\azure\mgmt\powerbiembedded\models\workspace_collection_access_key.py" />
+    <Compile Include="azure-mgmt-powerbiembedded\azure\mgmt\powerbiembedded\models\workspace_collection_access_keys.py" />
+    <Compile Include="azure-mgmt-powerbiembedded\azure\mgmt\powerbiembedded\models\workspace_collection_paged.py" />
+    <Compile Include="azure-mgmt-powerbiembedded\azure\mgmt\powerbiembedded\models\workspace_paged.py" />
+    <Compile Include="azure-mgmt-powerbiembedded\azure\mgmt\powerbiembedded\models\__init__.py" />
+    <Compile Include="azure-mgmt-powerbiembedded\azure\mgmt\powerbiembedded\operations\workspaces_operations.py" />
+    <Compile Include="azure-mgmt-powerbiembedded\azure\mgmt\powerbiembedded\operations\workspace_collections_operations.py" />
+    <Compile Include="azure-mgmt-powerbiembedded\azure\mgmt\powerbiembedded\operations\__init__.py" />
+    <Compile Include="azure-mgmt-powerbiembedded\azure\mgmt\powerbiembedded\power_bi_embedded_management_client.py" />
+    <Compile Include="azure-mgmt-powerbiembedded\azure\mgmt\powerbiembedded\version.py" />
+    <Compile Include="azure-mgmt-powerbiembedded\azure\mgmt\powerbiembedded\__init__.py" />
+    <Compile Include="azure-mgmt-powerbiembedded\azure\mgmt\__init__.py" />
+    <Compile Include="azure-mgmt-powerbiembedded\azure\__init__.py" />
+    <Compile Include="azure-mgmt-powerbiembedded\setup.py" />
     <Compile Include="azure-mgmt-redis\azure\mgmt\redis\models\redis_access_keys.py" />
     <Compile Include="azure-mgmt-redis\azure\mgmt\redis\models\redis_create_or_update_parameters.py" />
     <Compile Include="azure-mgmt-redis\azure\mgmt\redis\models\redis_list_keys_result.py" />
@@ -1214,10 +1292,14 @@
     <Compile Include="azure-mgmt\tests\test_mgmt_commerce.py" />
     <Compile Include="azure-mgmt\tests\test_mgmt_compute.py" />
     <Compile Include="azure-mgmt\tests\test_mgmt_apps.py" />
+    <Compile Include="azure-mgmt\tests\test_mgmt_keyvault.py" />
     <Compile Include="azure-mgmt\tests\test_mgmt_network.py" />
     <Compile Include="azure-mgmt\tests\test_mgmt_notificationhubs.py" />
     <Compile Include="azure-mgmt\tests\test_mgmt_redis.py" />
     <Compile Include="azure-mgmt\tests\test_mgmt_resource.py" />
+    <Compile Include="azure-mgmt\tests\test_mgmt_resource_features.py" />
+    <Compile Include="azure-mgmt\tests\test_mgmt_resource_locks.py" />
+    <Compile Include="azure-mgmt\tests\test_mgmt_resource_subscriptions.py" />
     <Compile Include="azure-mgmt\tests\test_mgmt_scheduler.py" />
     <Compile Include="azure-mgmt\tests\test_mgmt_storage.py" />
     <Compile Include="azure-mgmt\tests\__init__.py" />
@@ -1310,6 +1392,7 @@
     <Compile Include="azure-nspkg\azure\__init__.py" />
     <Compile Include="azure-nspkg\setup.py" />
     <Compile Include="azure\setup.py" />
+    <Compile Include="azure_nosetests.py" />
     <Compile Include="doc\conf.py" />
     <Compile Include="doc\__init__.py" />
     <Compile Include="setup.py" />
@@ -1344,6 +1427,12 @@
     <Folder Include="azure-mgmt-cdn\azure\mgmt\cdn\" />
     <Folder Include="azure-mgmt-cdn\azure\mgmt\cdn\models\" />
     <Folder Include="azure-mgmt-cdn\azure\mgmt\cdn\operations\" />
+    <Folder Include="azure-mgmt-cognitiveservices\" />
+    <Folder Include="azure-mgmt-cognitiveservices\azure\" />
+    <Folder Include="azure-mgmt-cognitiveservices\azure\mgmt\" />
+    <Folder Include="azure-mgmt-cognitiveservices\azure\mgmt\cognitiveservices\" />
+    <Folder Include="azure-mgmt-cognitiveservices\azure\mgmt\cognitiveservices\models\" />
+    <Folder Include="azure-mgmt-cognitiveservices\azure\mgmt\cognitiveservices\operations\" />
     <Folder Include="azure-mgmt-commerce\" />
     <Folder Include="azure-mgmt-commerce\azure\" />
     <Folder Include="azure-mgmt-commerce\azure\mgmt\" />
@@ -1381,6 +1470,12 @@
     <Folder Include="azure-mgmt-datalake-store\azure\mgmt\datalake\store\filesystem\" />
     <Folder Include="azure-mgmt-datalake-store\azure\mgmt\datalake\store\filesystem\models\" />
     <Folder Include="azure-mgmt-datalake-store\azure\mgmt\datalake\store\filesystem\operations\" />
+    <Folder Include="azure-mgmt-keyvault\" />
+    <Folder Include="azure-mgmt-keyvault\azure\" />
+    <Folder Include="azure-mgmt-keyvault\azure\mgmt\" />
+    <Folder Include="azure-mgmt-keyvault\azure\mgmt\keyvault\" />
+    <Folder Include="azure-mgmt-keyvault\azure\mgmt\keyvault\models\" />
+    <Folder Include="azure-mgmt-keyvault\azure\mgmt\keyvault\operations\" />
     <Folder Include="azure-mgmt-logic\" />
     <Folder Include="azure-mgmt-logic\azure\" />
     <Folder Include="azure-mgmt-logic\azure\mgmt\" />
@@ -1395,6 +1490,12 @@
     <Folder Include="azure-mgmt-notificationhubs\azure\mgmt\notificationhubs\" />
     <Folder Include="azure-mgmt-notificationhubs\azure\mgmt\notificationhubs\models\" />
     <Folder Include="azure-mgmt-notificationhubs\azure\mgmt\notificationhubs\operations\" />
+    <Folder Include="azure-mgmt-powerbiembedded\" />
+    <Folder Include="azure-mgmt-powerbiembedded\azure\" />
+    <Folder Include="azure-mgmt-powerbiembedded\azure\mgmt\" />
+    <Folder Include="azure-mgmt-powerbiembedded\azure\mgmt\powerbiembedded\" />
+    <Folder Include="azure-mgmt-powerbiembedded\azure\mgmt\powerbiembedded\models\" />
+    <Folder Include="azure-mgmt-powerbiembedded\azure\mgmt\powerbiembedded\operations\" />
     <Folder Include="azure-mgmt-redis\" />
     <Folder Include="azure-mgmt-redis\azure\" />
     <Folder Include="azure-mgmt-redis\azure\mgmt\" />
@@ -1493,6 +1594,10 @@
     <Content Include="azure-mgmt-cdn\MANIFEST.in" />
     <Content Include="azure-mgmt-cdn\README.rst" />
     <Content Include="azure-mgmt-cdn\setup.cfg" />
+    <Content Include="azure-mgmt-cognitiveservices\MANIFEST.in" />
+    <Content Include="azure-mgmt-cognitiveservices\README.rst" />
+    <Content Include="azure-mgmt-cognitiveservices\RECORD.txt" />
+    <Content Include="azure-mgmt-cognitiveservices\setup.cfg" />
     <Content Include="azure-mgmt-commerce\MANIFEST.in" />
     <Content Include="azure-mgmt-commerce\README.rst" />
     <Content Include="azure-mgmt-commerce\setup.cfg" />
@@ -1505,12 +1610,19 @@
     <Content Include="azure-mgmt-datalake-store\MANIFEST.in" />
     <Content Include="azure-mgmt-datalake-store\README.rst" />
     <Content Include="azure-mgmt-datalake-store\setup.cfg" />
+    <Content Include="azure-mgmt-keyvault\MANIFEST.in" />
+    <Content Include="azure-mgmt-keyvault\README.rst" />
+    <Content Include="azure-mgmt-keyvault\setup.cfg" />
     <Content Include="azure-mgmt-logic\MANIFEST.in" />
     <Content Include="azure-mgmt-logic\README.rst" />
     <Content Include="azure-mgmt-logic\setup.cfg" />
     <Content Include="azure-mgmt-notificationhubs\MANIFEST.in" />
     <Content Include="azure-mgmt-notificationhubs\README.rst" />
     <Content Include="azure-mgmt-notificationhubs\setup.cfg" />
+    <Content Include="azure-mgmt-powerbiembedded\MANIFEST.in" />
+    <Content Include="azure-mgmt-powerbiembedded\README.rst" />
+    <Content Include="azure-mgmt-powerbiembedded\RECORD.txt" />
+    <Content Include="azure-mgmt-powerbiembedded\setup.cfg" />
     <Content Include="azure-mgmt-redis\MANIFEST.in" />
     <Content Include="azure-mgmt-redis\README.rst" />
     <Content Include="azure-mgmt-redis\setup.cfg" />
@@ -1571,8 +1683,7 @@
     <Content Include="azure-mgmt\tests\recordings\test_mgmt_resource.test_resource_groups.yaml" />
     <Content Include="azure-mgmt\tests\recordings\test_mgmt_scheduler.test_scheduler.yaml" />
     <Content Include="azure-mgmt\tests\recordings\test_mgmt_storage.test_storage_accounts.yaml" />
-    <Content Include="azure-mgmt\tests\run-mgmt" />
-    <Content Include="azure-mgmt\tests\run-mgmt.bat" />
+    <Content Include="azure-mgmt\tests\testsettings_local.json" />
     <Content Include="azure-servicebus\MANIFEST.in" />
     <Content Include="azure-servicebus\README.rst" />
     <Content Include="azure-servicebus\setup.cfg" />
@@ -1814,13 +1925,10 @@
     <Content Include="azure-servicemanagement-legacy\tests\recordings\test_legacy_mgmt_website.test_list_web_spaces.yaml" />
     <Content Include="azure-servicemanagement-legacy\tests\recordings\test_legacy_mgmt_website.test_restart_site.yaml" />
     <Content Include="azure-servicemanagement-legacy\tests\recordings\test_legacy_mgmt_website.test_shutdown_start_site.yaml" />
-    <Content Include="azure-servicemanagement-legacy\tests\run-legacy-mgmt" />
-    <Content Include="azure-servicemanagement-legacy\tests\run-legacy-mgmt.bat" />
     <Content Include="azure-nspkg\README.rst" />
     <Content Include="azure-nspkg\setup.cfg" />
     <Content Include="azure\README.rst" />
     <Content Include="azure\setup.cfg" />
-    <Content Include="build.ps1" />
     <Content Include="ChangeLog.txt" />
     <Content Include="doc\batch.rst" />
     <Content Include="doc\BuildDocs.bat" />
@@ -1917,6 +2025,7 @@
     <Content Include="LICENSE.txt" />
     <Content Include="README.rst" />
     <Content Include="requirements.txt" />
+    <Content Include="setup.cfg" />
     <Content Include="swagger_to_sdk_config.json" />
   </ItemGroup>
   <PropertyGroup>

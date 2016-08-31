@@ -1,0 +1,14 @@
+[run]
+include =
+	azure*
+omit =
+	*/test*
+	env*
+
+[report]
+exclude_lines =
+	pragma: no cover
+	if raw:
+	if custom_headers:
+	if headers:
+	if response.status_code not in

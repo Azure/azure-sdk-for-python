@@ -1,0 +1,114 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.5.1 (Windows-10-10.0.14372-SP0) requests/2.10.0 msrest/0.4.0
+          msrest_azure/0.4.1 subscriptionclient/0.30.0rc5 Azure-SDK-For-Python]
+      accept-language: [en-US]
+      x-ms-client-request-id: [c23fdc06-491a-11e6-9500-ecb1d756380e]
+    method: GET
+    uri: https://management.azure.com/subscriptions?api-version=2015-11-01
+  response:
+    body: {string: '{"value":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000","subscriptionId":"00000000-0000-0000-0000-000000000000","displayName":"3-Month
+        Free Trial","state":"Enabled","subscriptionPolicies":{"locationPlacementId":"Public_2014-09-01","quotaId":"PayAsYouGo_2014-09-01"}}]}'}
+    headers:
+      Cache-Control: [no-cache]
+      Content-Type: [application/json; charset=utf-8]
+      Date: ['Wed, 13 Jul 2016 16:56:32 GMT']
+      Expires: ['-1']
+      Pragma: [no-cache]
+      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
+      Transfer-Encoding: [chunked]
+      Vary: [Accept-Encoding]
+      content-length: ['282']
+      x-ms-correlation-request-id: [0a442a73-dc4f-432d-a0ab-659cda0e3788]
+      x-ms-ratelimit-remaining-tenant-reads: ['14999']
+      x-ms-request-id: [0a442a73-dc4f-432d-a0ab-659cda0e3788]
+      x-ms-routing-request-id: ['WESTUS:20160713T165632Z:0a442a73-dc4f-432d-a0ab-659cda0e3788']
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.5.1 (Windows-10-10.0.14372-SP0) requests/2.10.0 msrest/0.4.0
+          msrest_azure/0.4.1 subscriptionclient/0.30.0rc5 Azure-SDK-For-Python]
+      accept-language: [en-US]
+      x-ms-client-request-id: [c267fd76-491a-11e6-80b0-ecb1d756380e]
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/locations?api-version=2015-11-01
+  response:
+    body: {string: '{"value":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/locations/eastasia","name":"eastasia","displayName":"East
+        Asia","longitude":"114.188","latitude":"22.267"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/locations/southeastasia","name":"southeastasia","displayName":"Southeast
+        Asia","longitude":"103.833","latitude":"1.283"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/locations/centralus","name":"centralus","displayName":"Central
+        US","longitude":"-93.6208","latitude":"41.5908"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/locations/eastus","name":"eastus","displayName":"East
+        US","longitude":"-79.8164","latitude":"37.3719"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/locations/eastus2","name":"eastus2","displayName":"East
+        US 2","longitude":"-78.3889","latitude":"36.6681"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/locations/westus","name":"westus","displayName":"West
+        US","longitude":"-122.417","latitude":"37.783"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/locations/northcentralus","name":"northcentralus","displayName":"North
+        Central US","longitude":"-87.6278","latitude":"41.8819"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/locations/southcentralus","name":"southcentralus","displayName":"South
+        Central US","longitude":"-98.5","latitude":"29.4167"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/locations/northeurope","name":"northeurope","displayName":"North
+        Europe","longitude":"-6.2597","latitude":"53.3478"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/locations/westeurope","name":"westeurope","displayName":"West
+        Europe","longitude":"4.9","latitude":"52.3667"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/locations/japanwest","name":"japanwest","displayName":"Japan
+        West","longitude":"135.5022","latitude":"34.6939"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/locations/japaneast","name":"japaneast","displayName":"Japan
+        East","longitude":"139.77","latitude":"35.68"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/locations/brazilsouth","name":"brazilsouth","displayName":"Brazil
+        South","longitude":"-46.633","latitude":"-23.55"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/locations/australiaeast","name":"australiaeast","displayName":"Australia
+        East","longitude":"151.2094","latitude":"-33.86"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/locations/australiasoutheast","name":"australiasoutheast","displayName":"Australia
+        Southeast","longitude":"144.9631","latitude":"-37.8136"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/locations/southindia","name":"southindia","displayName":"South
+        India","longitude":"80.1636","latitude":"12.9822"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/locations/centralindia","name":"centralindia","displayName":"Central
+        India","longitude":"73.9197","latitude":"18.5822"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/locations/westindia","name":"westindia","displayName":"West
+        India","longitude":"72.868","latitude":"19.088"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/locations/canadacentral","name":"canadacentral","displayName":"Canada
+        Central","longitude":"-79.383","latitude":"43.653"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/locations/canadaeast","name":"canadaeast","displayName":"Canada
+        East","longitude":"-71.217","latitude":"46.817"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/locations/westcentralus","name":"westcentralus","displayName":"West
+        Central US","longitude":"-79.383","latitude":"43.653"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/locations/westus2","name":"westus2","displayName":"West
+        US 2","longitude":"-71.217","latitude":"46.817"}]}'}
+    headers:
+      Cache-Control: [no-cache]
+      Content-Type: [application/json; charset=utf-8]
+      Date: ['Wed, 13 Jul 2016 16:56:32 GMT']
+      Expires: ['-1']
+      Pragma: [no-cache]
+      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
+      Vary: [Accept-Encoding]
+      content-length: ['3846']
+      x-ms-correlation-request-id: [9c764879-6bc4-44c0-8ece-c986b92e8a46]
+      x-ms-ratelimit-remaining-subscription-reads: ['14999']
+      x-ms-request-id: [9c764879-6bc4-44c0-8ece-c986b92e8a46]
+      x-ms-routing-request-id: ['WESTUS:20160713T165632Z:9c764879-6bc4-44c0-8ece-c986b92e8a46']
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.5.1 (Windows-10-10.0.14372-SP0) requests/2.10.0 msrest/0.4.0
+          msrest_azure/0.4.1 subscriptionclient/0.30.0rc5 Azure-SDK-For-Python]
+      accept-language: [en-US]
+      x-ms-client-request-id: [c2819ff4-491a-11e6-9f9c-ecb1d756380e]
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000?api-version=2015-11-01
+  response:
+    body: {string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000","subscriptionId":"00000000-0000-0000-0000-000000000000","displayName":"3-Month
+        Free Trial","state":"Enabled","subscriptionPolicies":{"locationPlacementId":"Public_2014-09-01","quotaId":"PayAsYouGo_2014-09-01"}}'}
+    headers:
+      Cache-Control: [no-cache]
+      Content-Type: [application/json; charset=utf-8]
+      Date: ['Wed, 13 Jul 2016 16:56:32 GMT']
+      Expires: ['-1']
+      Pragma: [no-cache]
+      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
+      Vary: [Accept-Encoding]
+      content-length: ['270']
+      x-ms-correlation-request-id: [7b76492d-5e77-40ff-af7e-451658a84472]
+      x-ms-ratelimit-remaining-subscription-reads: ['14998']
+      x-ms-request-id: [7b76492d-5e77-40ff-af7e-451658a84472]
+      x-ms-routing-request-id: ['WESTUS:20160713T165632Z:7b76492d-5e77-40ff-af7e-451658a84472']
+    status: {code: 200, message: OK}
+version: 1

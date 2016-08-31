@@ -1,18 +1,9 @@
 ﻿# coding: utf-8
 
 #-------------------------------------------------------------------------
-# Copyright (c) Microsoft.  All rights reserved.
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#   http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License. See License.txt in the project root for
+# license information.
 #--------------------------------------------------------------------------
 import unittest
 
@@ -77,16 +68,10 @@ class MgmtComputeTest(AzureMgmtTestCase):
                     '10.0.0.0/16',
                 ],
             ),
-            dhcp_options=azure.mgmt.network.models.DhcpOptions(
-                dns_servers=[
-                    '10.1.1.1',
-                    '10.1.2.4',
-                ],
-            ),
             subnets=[
                 azure.mgmt.network.models.Subnet(
                     name=subnet_name,
-                    address_prefix='10.0.1.0/24',
+                    address_prefix='10.0.0.0/24',
                 ),
             ],
         )
@@ -128,14 +113,7 @@ class MgmtComputeTest(AzureMgmtTestCase):
         )
         result_create = result_create.result()
         self.assertEqual(result_create.name, interface_name)
-
-        result_get = self.network_client.network_interfaces.get(
-            self.group_name,
-            interface_name,
-        )
-        self.assertEqual(result_get.name, interface_name)
-
-        return result_get.id
+        return result_create.id
 
     def get_os_profile(self):
        return azure.mgmt.compute.models.OSProfile(
@@ -177,7 +155,7 @@ class MgmtComputeTest(AzureMgmtTestCase):
         )
 
     @record
-    def test_vms_with_image_reference(self):
+    def test_virtual_machines_operations(self):
         self.create_resource_group()
 
         names = self.get_resource_names('pyvmir')
@@ -191,8 +169,8 @@ class MgmtComputeTest(AzureMgmtTestCase):
         storage_profile.image_reference = azure.mgmt.compute.models.ImageReference(
             publisher='Canonical',
             offer='UbuntuServer',
-            sku='15.10',
-            version='15.10.201603150',
+            sku='16.04.0-LTS',
+            version='latest'
         )
 
         params_create = azure.mgmt.compute.models.VirtualMachine(
@@ -203,6 +181,7 @@ class MgmtComputeTest(AzureMgmtTestCase):
             storage_profile=storage_profile,
         )
 
+        # Create VM test
         result_create = self.compute_client.virtual_machines.create_or_update(
             self.group_name,
             names.vm,
@@ -211,12 +190,15 @@ class MgmtComputeTest(AzureMgmtTestCase):
         vm_result = result_create.result()
         self.assertEqual(vm_result.name, names.vm)
         
+        # Get by name
         result_get = self.compute_client.virtual_machines.get(
             self.group_name,
             names.vm
         )
         self.assertEqual(result_get.name, names.vm)
         self.assertIsNone(result_get.instance_view)
+
+        # Get instanceView
         result_iv = self.compute_client.virtual_machines.get(
             self.group_name,
             names.vm,
@@ -224,8 +206,86 @@ class MgmtComputeTest(AzureMgmtTestCase):
         )
         self.assertTrue(result_iv.instance_view)
 
+        # Deallocate
+        async_vm_deallocate = self.compute_client.virtual_machines.deallocate(self.group_name, names.vm)
+        async_vm_deallocate.wait()
 
-    @unittest.skip("reference_uri seems to be not supported in new ARM")
+        # Start VM
+        async_vm_start =self.compute_client.virtual_machines.start(self.group_name, names.vm)
+        async_vm_start.wait()
+
+        # Restart VM
+        async_vm_restart = self.compute_client.virtual_machines.restart(self.group_name, names.vm)
+        async_vm_restart.wait()
+
+        # Stop VM
+        async_vm_stop = self.compute_client.virtual_machines.power_off(self.group_name, names.vm)
+        async_vm_stop.wait()
+
+        # List in resouce group
+        vms_rg = list(self.compute_client.virtual_machines.list(self.group_name))
+        self.assertEqual(len(vms_rg), 1)
+
+        # Delete
+        async_vm_delete = self.compute_client.virtual_machines.delete(self.group_name, names.vm)
+        async_vm_delete.wait()
+
+    @record
+    def test_virtual_machine_capture(self):
+        self.create_resource_group()
+
+        names = self.get_resource_names('pyvmir')
+        os_vhd_uri = self.get_vhd_uri(names.storage, 'osdisk')
+
+        self.create_storage_account(names.storage)
+        subnet = self.create_virtual_network(names.network, names.subnet)
+        nic_id = self.create_network_interface(names.nic, subnet)
+
+        storage_profile = self.get_storage_profile(os_vhd_uri)
+        storage_profile.image_reference = azure.mgmt.compute.models.ImageReference(
+            publisher='Canonical',
+            offer='UbuntuServer',
+            sku='16.04.0-LTS',
+            version='latest'
+        )
+
+        params_create = azure.mgmt.compute.models.VirtualMachine(
+            location=self.region,
+            os_profile=self.get_os_profile(),
+            hardware_profile=self.get_hardware_profile(),
+            network_profile=self.get_network_profile(nic_id),
+            storage_profile=storage_profile,
+        )
+
+        # Create VM test
+        result_create = self.compute_client.virtual_machines.create_or_update(
+            self.group_name,
+            names.vm,
+            params_create,
+        )
+        vm_result = result_create.result()
+        self.assertEqual(vm_result.name, names.vm)
+
+        # Deallocate
+        async_vm_deallocate = self.compute_client.virtual_machines.deallocate(self.group_name, names.vm)
+        async_vm_deallocate.wait()
+
+        # Generalize (possible because deallocated)
+        self.compute_client.virtual_machines.generalize(self.group_name, names.vm)
+
+        # Capture VM (VM must be generalized before)
+        async_capture = self.compute_client.virtual_machines.capture(
+            self.group_name,
+            names.vm,
+            {
+               "vhd_prefix":"pslib",
+               "destination_container_name":"dest",
+               "overwrite_vhds": True
+            }
+        )
+        capture_result = async_capture.result()
+        self.assertTrue(hasattr(capture_result, 'output'))
+
     @record
     def test_vm_extensions(self):
         #WARNING: this test may take 40 mins to complete against live server
@@ -233,21 +293,22 @@ class MgmtComputeTest(AzureMgmtTestCase):
 
         names = self.get_resource_names('pyvmext')
         os_vhd_uri = self.get_vhd_uri(names.storage, 'osdisk')
-        ext_name = 'extension1'
+        ext_name = names.vm + 'AccessAgent'
 
         self.create_storage_account(names.storage)
         subnet = self.create_virtual_network(names.network, names.subnet)
         nic_id = self.create_network_interface(names.nic, subnet)
 
         storage_profile = self.get_storage_profile(os_vhd_uri)
-        storage_profile.source_image = azure.mgmt.compute.models.SourceImageReference(
-            reference_uri=self.windows_img_ref_id,
+        storage_profile.image_reference = azure.mgmt.compute.models.ImageReference(
+            publisher='MicrosoftWindowsServerEssentials',
+            offer='WindowsServerEssentials',
+            sku='WindowsServerEssentials',
+            version='latest'
         )
 
         params_create = azure.mgmt.compute.models.VirtualMachine(
             location=self.region,
-            name=names.vm,
-            type='Microsoft.Compute/virtualMachines', # don't know if needed
             os_profile=self.get_os_profile(),
             hardware_profile=self.get_hardware_profile(),
             network_profile=self.get_network_profile(nic_id),
@@ -256,50 +317,41 @@ class MgmtComputeTest(AzureMgmtTestCase):
 
         result_create = self.compute_client.virtual_machines.create_or_update(
             self.group_name,
+            names.vm,
             params_create,
         )
-        #self.assertEqual(result_create.status_code, HttpStatusCode.OK)
+        result_create.wait()
 
         params_create = azure.mgmt.compute.models.VirtualMachineExtension(
             location=self.region,
-            name=ext_name,
             publisher='Microsoft.Compute',
-            extension_type='VMAccessAgent',
+            virtual_machine_extension_type='VMAccessAgent',
             type_handler_version='2.0',
             auto_upgrade_minor_version=True,
-            settings='{}',
-            protected_settings='{}',
-            tags={
-                'tag1': 'value1',
-            },
+            settings={},
+            protected_settings={},
         )
         result_create = self.compute_client.virtual_machine_extensions.create_or_update(
             self.group_name,
             names.vm,
+            ext_name,
             params_create,
         )
-        #self.assertEqual(result_create.status_code, HttpStatusCode.OK)
+        result_create.wait()
 
         result_get = self.compute_client.virtual_machine_extensions.get(
             self.group_name,
             names.vm,
             ext_name,
         )
-        self.assertEqual(result_get.status_code, HttpStatusCode.OK)
-
-        result_get_view = self.compute_client.virtual_machine_extensions.get_with_instance_view(
-            self.group_name,
-            names.vm,
-            ext_name,
-        )
-        #self.assertEqual(result_get.status_code, HttpStatusCode.OK)
+        self.assertEqual(result_get.name, ext_name)
 
         result_delete = self.compute_client.virtual_machine_extensions.delete(
             self.group_name,
             names.vm,
             ext_name,
         )
-        #self.assertEqual(result_get.status_code, HttpStatusCode.OK)
+        result_delete.wait()
 
     @record
     def test_vm_extension_images(self):
@@ -431,19 +483,6 @@ class MgmtComputeTest(AzureMgmtTestCase):
             availability_set_name,
         )
         self.assertEqual(result_get.name, availability_set_name)
-        #TODO: error, we get 0 back, not 2
-        #self.assertEqual(
-        #    len(result_get.statuses),
-        #    len(params_create.statuses),
-        #)
-        #self.assertEqual(
-        #    result_get.statuses[0].code,
-        #    view_status1.code,
-        #)
-        #self.assertEqual(
-        #    result_get.availability_set.statuses[1].code,
-        #    view_status2.code,
-        #)
         self.assertEqual(
             result_get.platform_fault_domain_count,
             params_create.platform_fault_domain_count,
@@ -456,21 +495,18 @@ class MgmtComputeTest(AzureMgmtTestCase):
         result_list = self.compute_client.availability_sets.list(
             self.group_name,
         )
-        #self.assertEqual(result_list.status_code, HttpStatusCode.OK)
-        self.assertIsNotNone(result_list)
+        result_list = list(result_list)
 
         result_list_sizes = self.compute_client.availability_sets.list_available_sizes(
             self.group_name,
             availability_set_name,
         )
-        #self.assertEqual(result_list_sizes.status_code, HttpStatusCode.OK)
-        self.assertIsNotNone(result_list_sizes)
+        result_list_sizes = list(result_list_sizes)
 
         self.compute_client.availability_sets.delete(
             self.group_name,
             availability_set_name,
         )
-        #self.assertEqual(result_delete.status_code, HttpStatusCode.OK)
 
     @record
     def test_usage(self):
@@ -485,6 +521,57 @@ class MgmtComputeTest(AzureMgmtTestCase):
         #self.assertEqual(result_list.status_code, HttpStatusCode.OK)
         virtual_machine_sizes = list(virtual_machine_sizes)
         self.assertGreater(len(virtual_machine_sizes), 0)
+
+    @record
+    def test_container(self):
+        self.create_resource_group()
+
+        container_name = self.get_resource_name('pycontainer')
+        
+        # https://msdn.microsoft.com/en-us/library/azure/mt711471.aspx
+        async_create = self.compute_client.container_service.create_or_update(
+            self.group_name,
+            container_name,
+            {
+                'location': self.region,
+                "master_profile": {
+                    "count": 1,
+                    "dns_prefix": "MasterPrefixTest"
+                },
+                "agent_pool_profiles": [{
+                    "name": "AgentPool1",
+                    "count": 3,
+                    "vm_size": "Standard_A1",
+                        "dns_prefix": "AgentPrefixTest"
+                }],
+                "linux_profile": {
+                    "admin_username": "acsLinuxAdmin",
+                    "ssh": {
+                       "public_keys": [{
+                            "key_data": "ssh-rsa AAAAB3NzaC1yc2EAAAABJQAAAQEAlj9UC6+57XWVu0fd6zqXa256EU9EZdoLGE3TqdZqu9fvUvLQOX2G0d5DmFhDCyTmWLQUx3/ONQ9RotYmHGymBIPQcpx43nnxsuihAILcpGZ5NjCj4IOYnmhdULxN4ti7k00S+udqokrRYpmwt0N4NA4VT9cN+7uJDL8Opqa1FYu0CT/RqSW+3aoQ0nfGj11axoxM37FuOMZ/c7mBSxvuI9NsDmcDQOUmPXjlgNlxrLzf6VcjxnJh4AO83zbyLok37mW/C7CuNK4WowjPO1Ix2kqRHRxBrzxYZ9xqZPc8GpFTw/dxJEYdJ3xlitbOoBoDgrL5gSITv6ESlNqjPk6kHQ== azureuser@linuxvm"
+                       }]
+                    }
+                },
+            }
+        )
+        container = async_create.result()
+
+        container = self.compute_client.container_service.get(
+            self.group_name,
+            container.name
+        )
+
+        containers = list(self.compute_client.container_service.list(
+            self.group_name
+        ))
+        self.assertEqual(len(containers), 1)
+
+        async_delete = self.compute_client.container_service.delete(
+            self.group_name,
+            container.name
+        )
+        async_delete.wait()
+
 
 #------------------------------------------------------------------------------
 if __name__ == '__main__':

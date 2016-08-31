@@ -1,16 +1,7 @@
 ﻿#-------------------------------------------------------------------------
-# Copyright (c) Microsoft.  All rights reserved.
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#   http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License. See License.txt in the project root for
+# license information.
 #--------------------------------------------------------------------------
 import json
 import os.path
@@ -90,6 +81,21 @@ class AzureMgmtTestCase(RecordingTestCase):
         return super(AzureMgmtTestCase, self).tearDown()
 
     def create_basic_client(self, client_class, **kwargs):
+        # Whatever the client, if credentials is None, fail
+        with self.assertRaises(ValueError):
+            client = client_class(
+                credentials=None,
+                **kwargs
+            )
+        # Whatever the client, if accept_language is not str, fail
+        with self.assertRaises(TypeError):
+            client = client_class(
+                credentials=self.settings.get_credentials(),
+                accept_language=42,
+                **kwargs
+            )
+
+        # Real client creation
         client = client_class(
             credentials=self.settings.get_credentials(),
             **kwargs
@@ -99,6 +105,21 @@ class AzureMgmtTestCase(RecordingTestCase):
         return client
 
     def create_mgmt_client(self, client_class, **kwargs):
+        # Whatever the client, if subscription_id is None, fail
+        with self.assertRaises(ValueError):
+            self.create_basic_client(
+                client_class,
+                subscription_id=None,
+                **kwargs
+            )
+        # Whatever the client, if subscription_id is not a string, fail
+        with self.assertRaises(TypeError):
+            self.create_basic_client(
+                client_class,
+                subscription_id=42,
+                **kwargs
+            )
+
         return self.create_basic_client(
             client_class,
             subscription_id=self.settings.SUBSCRIPTION_ID,
