@@ -15,12 +15,14 @@ from msrest.serialization import Model
 class VirtualNetworkGatewaySku(Model):
     """VirtualNetworkGatewaySku details.
 
-    :param name: Gateway sku name -Basic/HighPerformance/Standard. Possible
-     values include: 'Basic', 'HighPerformance', 'Standard'
+    :param name: Gateway sku name
+     -Basic/HighPerformance/Standard/UltraPerformance. Possible values
+     include: 'Basic', 'HighPerformance', 'Standard', 'UltraPerformance'
     :type name: str or :class:`VirtualNetworkGatewaySkuName
      <azure.mgmt.network.models.VirtualNetworkGatewaySkuName>`
-    :param tier: Gateway sku tier -Basic/HighPerformance/Standard. Possible
-     values include: 'Basic', 'HighPerformance', 'Standard'
+    :param tier: Gateway sku tier
+     -Basic/HighPerformance/Standard/UltraPerformance. Possible values
+     include: 'Basic', 'HighPerformance', 'Standard', 'UltraPerformance'
     :type tier: str or :class:`VirtualNetworkGatewaySkuTier
      <azure.mgmt.network.models.VirtualNetworkGatewaySkuTier>`
     :param capacity: The capacity
