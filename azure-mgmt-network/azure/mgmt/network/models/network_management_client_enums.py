@@ -201,6 +201,7 @@ class VirtualNetworkGatewaySkuName(Enum):
     basic = "Basic"
     high_performance = "HighPerformance"
     standard = "Standard"
+    ultra_performance = "UltraPerformance"
 
 
 class VirtualNetworkGatewaySkuTier(Enum):
@@ -208,6 +209,7 @@ class VirtualNetworkGatewaySkuTier(Enum):
     basic = "Basic"
     high_performance = "HighPerformance"
     standard = "Standard"
+    ultra_performance = "UltraPerformance"
 
 
 class ProcessorArchitecture(Enum):
