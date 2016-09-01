@@ -43,7 +43,7 @@ class SubscriptionClientConfiguration(AzureConfiguration):
     """
 
     def __init__(
-            self, credentials, api_version='2015-11-01', accept_language='en-US', long_running_operation_retry_timeout=30, generate_client_request_id=True, base_url=None, filepath=None):
+            self, credentials, api_version='2016-06-01', accept_language='en-US', long_running_operation_retry_timeout=30, generate_client_request_id=True, base_url=None, filepath=None):
 
         if credentials is None:
             raise ValueError("Parameter 'credentials' must not be None.")
@@ -97,7 +97,7 @@ class SubscriptionClient(object):
     """
 
     def __init__(
-            self, credentials, api_version='2015-11-01', accept_language='en-US', long_running_operation_retry_timeout=30, generate_client_request_id=True, base_url=None, filepath=None):
+            self, credentials, api_version='2016-06-01', accept_language='en-US', long_running_operation_retry_timeout=30, generate_client_request_id=True, base_url=None, filepath=None):
 
         self.config = SubscriptionClientConfiguration(credentials, api_version, accept_language, long_running_operation_retry_timeout, generate_client_request_id, base_url, filepath)
         self._client = ServiceClient(self.config.credentials, self.config)

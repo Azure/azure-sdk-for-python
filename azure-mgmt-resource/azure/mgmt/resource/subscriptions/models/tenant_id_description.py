@@ -15,17 +15,27 @@ from msrest.serialization import Model
 class TenantIdDescription(Model):
     """Tenant Id information.
 
-    :param id: Gets or sets Id
-    :type id: str
-    :param tenant_id: Gets or sets tenantId
-    :type tenant_id: str
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar id: The fully qualified Id. For example,
+     /tenants/00000000-0000-0000-0000-000000000000.
+    :vartype id: str
+    :ivar tenant_id: The tenantId. For example,
+     00000000-0000-0000-0000-000000000000.
+    :vartype tenant_id: str
     """ 
+
+    _validation = {
+        'id': {'readonly': True},
+        'tenant_id': {'readonly': True},
+    }
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
         'tenant_id': {'key': 'tenantId', 'type': 'str'},
     }
 
-    def __init__(self, id=None, tenant_id=None):
-        self.id = id
-        self.tenant_id = tenant_id
+    def __init__(self):
+        self.id = None
+        self.tenant_id = None

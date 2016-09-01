@@ -33,7 +33,13 @@ Some values that are constants and were incorrectly suggested as method paramete
 
 **New and bugfixes**
 
-- azure-mgmt-resource 0.30.0rc6: Property aliases support, Doc typo parenthesis support in RG name (https://github.com/Azure/azure-rest-api-specs/pull/490)
+- azure-mgmt-resource 0.30.0rc6:
+
+  - Property aliases support
+  - Doc typo
+  - Parenthesis support in RG name (https://github.com/Azure/azure-rest-api-specs/pull/490)
+  - New API version for subscription
+
 - azure-mgmt-network 0.30.0rc6: `check_ip_address_availability` and more + Doc typo
 - azure-mgmt-redis 1.0.0: official stable release (same content than 0.30.0RC5)
 
