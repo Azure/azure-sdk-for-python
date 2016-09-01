@@ -12,6 +12,17 @@
 from enum import Enum
 
 
+class EncryptionIdentityType(Enum):
+
+    system_assigned = "SystemAssigned"
+
+
+class EncryptionConfigType(Enum):
+
+    user_managed = "UserManaged"
+    service_managed = "ServiceManaged"
+
+
 class DataLakeStoreAccountStatus(Enum):
 
     failed = "Failed"
@@ -29,6 +40,18 @@ class DataLakeStoreAccountState(Enum):
 
     active = "active"
     suspended = "suspended"
+
+
+class EncryptionState(Enum):
+
+    enabled = "Enabled"
+    disabled = "Disabled"
+
+
+class EncryptionProvisioningState(Enum):
+
+    creating = "Creating"
+    succeeded = "Succeeded"
 
 
 class OperationStatus(Enum):

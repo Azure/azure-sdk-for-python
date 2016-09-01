@@ -11,6 +11,9 @@
 
 from .firewall_rule_properties import FirewallRuleProperties
 from .firewall_rule import FirewallRule
+from .encryption_identity import EncryptionIdentity
+from .encryption_config import EncryptionConfig
+from .key_vault_meta_info import KeyVaultMetaInfo
 from .data_lake_store_account_properties import DataLakeStoreAccountProperties
 from .data_lake_store_account import DataLakeStoreAccount
 from .error_details import ErrorDetails
@@ -20,14 +23,21 @@ from .azure_async_operation_result import AzureAsyncOperationResult
 from .firewall_rule_paged import FirewallRulePaged
 from .data_lake_store_account_paged import DataLakeStoreAccountPaged
 from .data_lake_store_account_management_client_enums import (
+    EncryptionIdentityType,
+    EncryptionConfigType,
     DataLakeStoreAccountStatus,
     DataLakeStoreAccountState,
+    EncryptionState,
+    EncryptionProvisioningState,
     OperationStatus,
 )
 
 __all__ = [
     'FirewallRuleProperties',
     'FirewallRule',
+    'EncryptionIdentity',
+    'EncryptionConfig',
+    'KeyVaultMetaInfo',
     'DataLakeStoreAccountProperties',
     'DataLakeStoreAccount',
     'ErrorDetails',
@@ -36,7 +46,11 @@ __all__ = [
     'AzureAsyncOperationResult',
     'FirewallRulePaged',
     'DataLakeStoreAccountPaged',
+    'EncryptionIdentityType',
+    'EncryptionConfigType',
     'DataLakeStoreAccountStatus',
     'DataLakeStoreAccountState',
+    'EncryptionState',
+    'EncryptionProvisioningState',
     'OperationStatus',
 ]

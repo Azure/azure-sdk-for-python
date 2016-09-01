@@ -120,6 +120,81 @@ class FileSystemOperations(object):
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
 
+    def set_file_expiry(
+            self, account_name, file_path, expiry_option, expire_time=None, custom_headers=None, raw=False, **operation_config):
+        """Sets or removes the expiration time on the specified file. This
+        operation can only be executed against files. Folders are not
+        supported.
+
+        :param account_name: The Azure Data Lake Store account to execute
+         filesystem operations on.
+        :type account_name: str
+        :param file_path: The Data Lake Store path (starting with '/') of the
+         file on which to set or remove the expiration time.
+        :type file_path: str
+        :param expiry_option: Indicates the type of expiration to use for the
+         file: 1. NeverExpire: ExpireTime is ignored. 2. RelativeToNow:
+         ExpireTime is an integer in milliseconds representing the expiration
+         date relative to when file expiration is updated. 3.
+         RelativeToCreationDate: ExpireTime is an integer in milliseconds
+         representing the expiration date relative to file creation. 4.
+         Absolute: ExpireTime is an integer in milliseconds, as a Unix
+         timestamp relative to 1/1/1970 00:00:00. Possible values include:
+         'NeverExpire', 'RelativeToNow', 'RelativeToCreationDate', 'Absolute'
+        :type expiry_option: str or :class:`ExpiryOptionType
+         <azure.mgmt.datalake.store.filesystem.models.ExpiryOptionType>`
+        :param expire_time: The time that the file will expire, corresponding
+         to the ExpiryOption that was set.
+        :type expire_time: long
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :rtype: None
+        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+         if raw=true
+        """
+        op = "SETEXPIRY"
+
+        # Construct URL
+        url = '/WebHdfsExt/{filePath}'
+        path_format_arguments = {
+            'accountName': self._serialize.url("account_name", account_name, 'str', skip_quote=True),
+            'adlsFileSystemDnsSuffix': self._serialize.url("self.config.adls_file_system_dns_suffix", self.config.adls_file_system_dns_suffix, 'str', skip_quote=True),
+            'filePath': self._serialize.url("file_path", file_path, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['expiryOption'] = self._serialize.query("expiry_option", expiry_option, 'ExpiryOptionType')
+        if expire_time is not None:
+            query_parameters['expireTime'] = self._serialize.query("expire_time", expire_time, 'long')
+        query_parameters['op'] = self._serialize.query("op", op, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+        # Construct and send request
+        request = self._client.put(url, query_parameters)
+        response = self._client.send(request, header_parameters, **operation_config)
+
+        if response.status_code not in [200]:
+            raise models.AdlsErrorException(self._deserialize, response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(None, response)
+            return client_raw_response
+
     def check_access(
             self, account_name, path, fsaction=None, custom_headers=None, raw=False, **operation_config):
         """Checks if the specified access is available at the given path.
@@ -559,7 +634,7 @@ class FileSystemOperations(object):
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
-        op = "GETFILESTATUS"
+        op = "MSGETFILESTATUS"
 
         # Construct URL
         url = '/webhdfs/v1/{getFilePath}'
@@ -1017,6 +1092,120 @@ class FileSystemOperations(object):
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
 
+    def remove_default_acl(
+            self, account_name, default_acl_file_path, custom_headers=None, raw=False, **operation_config):
+        """Removes the existing Default Access Control List (ACL) of the
+        specified directory.
+
+        :param account_name: The Azure Data Lake Store account to execute
+         filesystem operations on.
+        :type account_name: str
+        :param default_acl_file_path: The Data Lake Store path (starting with
+         '/') of the directory with the default ACL being removed.
+        :type default_acl_file_path: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :rtype: None
+        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+         if raw=true
+        """
+        op = "REMOVEDEFAULTACL"
+
+        # Construct URL
+        url = '/webhdfs/v1/{defaultAclFilePath}'
+        path_format_arguments = {
+            'accountName': self._serialize.url("account_name", account_name, 'str', skip_quote=True),
+            'adlsFileSystemDnsSuffix': self._serialize.url("self.config.adls_file_system_dns_suffix", self.config.adls_file_system_dns_suffix, 'str', skip_quote=True),
+            'defaultAclFilePath': self._serialize.url("default_acl_file_path", default_acl_file_path, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['op'] = self._serialize.query("op", op, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+        # Construct and send request
+        request = self._client.put(url, query_parameters)
+        response = self._client.send(request, header_parameters, **operation_config)
+
+        if response.status_code not in [200]:
+            raise models.AdlsErrorException(self._deserialize, response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(None, response)
+            return client_raw_response
+
+    def remove_acl(
+            self, account_name, acl_file_path, custom_headers=None, raw=False, **operation_config):
+        """Removes the existing Access Control List (ACL) of the specified file
+        or directory.
+
+        :param account_name: The Azure Data Lake Store account to execute
+         filesystem operations on.
+        :type account_name: str
+        :param acl_file_path: The Data Lake Store path (starting with '/') of
+         the file or directory with the ACL being removed.
+        :type acl_file_path: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :rtype: None
+        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+         if raw=true
+        """
+        op = "REMOVEACL"
+
+        # Construct URL
+        url = '/webhdfs/v1/{aclFilePath}'
+        path_format_arguments = {
+            'accountName': self._serialize.url("account_name", account_name, 'str', skip_quote=True),
+            'adlsFileSystemDnsSuffix': self._serialize.url("self.config.adls_file_system_dns_suffix", self.config.adls_file_system_dns_suffix, 'str', skip_quote=True),
+            'aclFilePath': self._serialize.url("acl_file_path", acl_file_path, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['op'] = self._serialize.query("op", op, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+        # Construct and send request
+        request = self._client.put(url, query_parameters)
+        response = self._client.send(request, header_parameters, **operation_config)
+
+        if response.status_code not in [200]:
+            raise models.AdlsErrorException(self._deserialize, response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(None, response)
+            return client_raw_response
+
     def get_acl_status(
             self, account_name, acl_file_path, custom_headers=None, raw=False, **operation_config):
         """Gets Access Control List (ACL) entries for the specified file or
@@ -1038,7 +1227,7 @@ class FileSystemOperations(object):
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
-        op = "GETACLSTATUS"
+        op = "MSGETACLSTATUS"
 
         # Construct URL
         url = '/webhdfs/v1/{aclFilePath}'
