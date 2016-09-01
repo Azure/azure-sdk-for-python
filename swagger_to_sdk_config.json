@@ -144,7 +144,7 @@
       "output_dir": "azure-mgmt-resource/azure/mgmt/resource/resources"
     },
     "resources.subscriptions": {
-      "swagger": "arm-resources/subscriptions/2015-11-01/swagger/subscriptions.json",
+      "swagger": "arm-resources/subscriptions/2016-06-01/swagger/subscriptions.json",
       "autorest_options": {
         "Namespace": "azure.mgmt.resource.subscriptions"
       },
