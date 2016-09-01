@@ -55,7 +55,7 @@ To create or manage resource groups, see :doc:`Resource Management<resourcemanag
 
 .. code:: python
 
-    from azure.mgmt.storage.models import StorageAccountCreateParameters, AccountType
+    from azure.mgmt.storage.models import StorageAccountCreateParameters, Sku, SkuName, Kind
 
     group_name = 'myresourcegroup'
     account_name = 'mystorageaccountname'
@@ -63,9 +63,10 @@ To create or manage resource groups, see :doc:`Resource Management<resourcemanag
         group_name,
         account_name,
         StorageAccountCreateParameters(
-            location='westus',
-            account_type=AccountType.standard_lrs,
-        ),
+            sku=Sku(SkuName.standard_lrs),
+            kind=Kind.storage,
+            location='westus'
+        )
     )
     # result is a msrestazure.azure_operation.AzureOperationPoller instance
     # wait insure polling the underlying async operation until it's done.
@@ -80,7 +81,6 @@ List storage accounts
     storage_accounts = storage_client.storage_accounts.list_by_resource_group(group_name)
     for storage_account in storage_accounts:
         print(storage_account.name)
-        print(storage_account.account_type)
         print(storage_account.location)
         print(storage_account.provisioning_state)
         print('')
@@ -92,6 +92,7 @@ Get storage account keys
 
     group_name = 'myresourcegroup'
     account_name = 'mystorageaccountname'
-    storage_account_keys = storage_client.storage_accounts.list_keys(group_name, account_name)
-    print(storage_account_keys.key1)
-    print(storage_account_keys.key2)
+    storage_keys = storage_client.storage_accounts.list_keys(group_name, account_name)
+    storage_keys = {v.key_name: v.value for v in storage_keys.keys}
+    print(storage_keys['key1'])
+    print(storage_keys['key2'])
