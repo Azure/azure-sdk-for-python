@@ -6,27 +6,27 @@ interactions:
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
       Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.5.1 (Windows-10-10.0.14372-SP0) requests/2.10.0 msrest/0.4.0
-          msrest_azure/0.4.1 subscriptionclient/0.30.0rc5 Azure-SDK-For-Python]
+      User-Agent: [python/3.5.1 (Windows-10-10.0.14393-SP0) requests/2.11.0 msrest/0.4.3
+          msrest_azure/0.4.2 subscriptionclient/0.30.0rc6 Azure-SDK-For-Python]
       accept-language: [en-US]
-      x-ms-client-request-id: [c3cd6a66-491a-11e6-8708-ecb1d756380e]
+      x-ms-client-request-id: [08a67e50-709a-11e6-a786-ecb1d756380e]
     method: GET
-    uri: https://management.azure.com/tenants?api-version=2015-11-01
+    uri: https://management.azure.com/tenants?api-version=2016-06-01
   response:
     body: {string: '{"value":[{"id":"/tenants/d6509e0c-ca64-4e5d-ae24-90a5b7d279e8","tenantId":"d6509e0c-ca64-4e5d-ae24-90a5b7d279e8"}]}'}
     headers:
       Cache-Control: [no-cache]
       Content-Type: [application/json; charset=utf-8]
-      Date: ['Wed, 13 Jul 2016 16:56:34 GMT']
+      Date: ['Thu, 01 Sep 2016 23:15:54 GMT']
       Expires: ['-1']
       Pragma: [no-cache]
       Strict-Transport-Security: [max-age=31536000; includeSubDomains]
       Transfer-Encoding: [chunked]
       Vary: [Accept-Encoding]
       content-length: ['116']
-      x-ms-correlation-request-id: [aa9e3329-ec32-4a3e-b6b1-573a9925c318]
-      x-ms-ratelimit-remaining-tenant-reads: ['14999']
-      x-ms-request-id: [aa9e3329-ec32-4a3e-b6b1-573a9925c318]
-      x-ms-routing-request-id: ['WESTUS:20160713T165635Z:aa9e3329-ec32-4a3e-b6b1-573a9925c318']
+      x-ms-correlation-request-id: [a16f7a61-7738-46db-ae09-0317ae0e1b9a]
+      x-ms-ratelimit-remaining-tenant-reads: ['14998']
+      x-ms-request-id: [a16f7a61-7738-46db-ae09-0317ae0e1b9a]
+      x-ms-routing-request-id: ['WESTUS2:20160901T231555Z:a16f7a61-7738-46db-ae09-0317ae0e1b9a']
     status: {code: 200, message: OK}
 version: 1
