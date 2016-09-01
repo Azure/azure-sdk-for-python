@@ -32,6 +32,7 @@ from .adls_error import AdlsError, AdlsErrorException
 from .data_lake_store_file_system_management_client_enums import (
     FileType,
     AppendModeType,
+    ExpiryOptionType,
 )
 
 __all__ = [
@@ -57,4 +58,5 @@ __all__ = [
     'AdlsError', 'AdlsErrorException',
     'FileType',
     'AppendModeType',
+    'ExpiryOptionType',
 ]

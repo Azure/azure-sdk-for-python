@@ -30,6 +30,19 @@ class DataLakeStoreAccountProperties(Model):
      <azure.mgmt.datalake.store.account.models.DataLakeStoreAccountState>`
     :ivar creation_time: the account creation time.
     :vartype creation_time: datetime
+    :ivar encryption_state: The current state of encryption for this Data
+     Lake store account. Possible values include: 'Enabled', 'Disabled'
+    :vartype encryption_state: str or :class:`EncryptionState
+     <azure.mgmt.datalake.store.account.models.EncryptionState>`
+    :ivar encryption_provisioning_state: The current state of encryption
+     provisioning for this Data Lake store account. Possible values include:
+     'Creating', 'Succeeded'
+    :vartype encryption_provisioning_state: str or
+     :class:`EncryptionProvisioningState
+     <azure.mgmt.datalake.store.account.models.EncryptionProvisioningState>`
+    :param encryption_config: The Key vault encryption configuration.
+    :type encryption_config: :class:`EncryptionConfig
+     <azure.mgmt.datalake.store.account.models.EncryptionConfig>`
     :ivar last_modified_time: the account last modified time.
     :vartype last_modified_time: datetime
     :param endpoint: the gateway host.
@@ -43,6 +56,8 @@ class DataLakeStoreAccountProperties(Model):
         'provisioning_state': {'readonly': True},
         'state': {'readonly': True},
         'creation_time': {'readonly': True},
+        'encryption_state': {'readonly': True},
+        'encryption_provisioning_state': {'readonly': True},
         'last_modified_time': {'readonly': True},
     }
 
@@ -50,15 +65,21 @@ class DataLakeStoreAccountProperties(Model):
         'provisioning_state': {'key': 'provisioningState', 'type': 'DataLakeStoreAccountStatus'},
         'state': {'key': 'state', 'type': 'DataLakeStoreAccountState'},
         'creation_time': {'key': 'creationTime', 'type': 'iso-8601'},
+        'encryption_state': {'key': 'encryptionState', 'type': 'EncryptionState'},
+        'encryption_provisioning_state': {'key': 'encryptionProvisioningState', 'type': 'EncryptionProvisioningState'},
+        'encryption_config': {'key': 'encryptionConfig', 'type': 'EncryptionConfig'},
         'last_modified_time': {'key': 'lastModifiedTime', 'type': 'iso-8601'},
         'endpoint': {'key': 'endpoint', 'type': 'str'},
         'default_group': {'key': 'defaultGroup', 'type': 'str'},
     }
 
-    def __init__(self, endpoint=None, default_group=None):
+    def __init__(self, encryption_config=None, endpoint=None, default_group=None):
         self.provisioning_state = None
         self.state = None
         self.creation_time = None
+        self.encryption_state = None
+        self.encryption_provisioning_state = None
+        self.encryption_config = encryption_config
         self.last_modified_time = None
         self.endpoint = endpoint
         self.default_group = default_group
