@@ -15,20 +15,32 @@ from msrest.serialization import Model
 class Location(Model):
     """Location information.
 
-    :param id: Gets or sets the ID of the resource
-     (/subscriptions/SubscriptionId).
-    :type id: str
-    :param subscription_id: Gets or sets the subscription Id.
-    :type subscription_id: str
-    :param name: Gets or sets the location name
-    :type name: str
-    :param display_name: Gets or sets the display name of the location
-    :type display_name: str
-    :param latitude: Gets or sets the latitude of the location
-    :type latitude: str
-    :param longitude: Gets or sets the longitude of the location
-    :type longitude: str
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar id: The fully qualified Id of the location. For example,
+     /subscriptions/00000000-0000-0000-0000-000000000000/locations/westus.
+    :vartype id: str
+    :ivar subscription_id: The subscription Id.
+    :vartype subscription_id: str
+    :ivar name: The location name.
+    :vartype name: str
+    :ivar display_name: The display name of the location.
+    :vartype display_name: str
+    :ivar latitude: The latitude of the location.
+    :vartype latitude: str
+    :ivar longitude: The longitude of the location.
+    :vartype longitude: str
     """ 
+
+    _validation = {
+        'id': {'readonly': True},
+        'subscription_id': {'readonly': True},
+        'name': {'readonly': True},
+        'display_name': {'readonly': True},
+        'latitude': {'readonly': True},
+        'longitude': {'readonly': True},
+    }
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
@@ -39,10 +51,10 @@ class Location(Model):
         'longitude': {'key': 'longitude', 'type': 'str'},
     }
 
-    def __init__(self, id=None, subscription_id=None, name=None, display_name=None, latitude=None, longitude=None):
-        self.id = id
-        self.subscription_id = subscription_id
-        self.name = name
-        self.display_name = display_name
-        self.latitude = latitude
-        self.longitude = longitude
+    def __init__(self):
+        self.id = None
+        self.subscription_id = None
+        self.name = None
+        self.display_name = None
+        self.latitude = None
+        self.longitude = None

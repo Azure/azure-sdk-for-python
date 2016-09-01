@@ -156,7 +156,7 @@ class SubscriptionsOperations(object):
 
     def list(
             self, custom_headers=None, raw=False, **operation_config):
-        """Gets a list of the subscriptionIds.
+        """Gets a list of subscriptions.
 
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
