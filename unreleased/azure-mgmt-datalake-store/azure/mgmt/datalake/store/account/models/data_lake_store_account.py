@@ -26,6 +26,9 @@ class DataLakeStoreAccount(Model):
     :vartype type: str
     :ivar id: the account subscription ID.
     :vartype id: str
+    :param identity: The Key vault encryption identity, if any.
+    :type identity: :class:`EncryptionIdentity
+     <azure.mgmt.datalake.store.account.models.EncryptionIdentity>`
     :param tags: the value of custom properties.
     :type tags: dict
     :param properties: the Data Lake Store account properties.
@@ -43,14 +46,16 @@ class DataLakeStoreAccount(Model):
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
         'id': {'key': 'id', 'type': 'str'},
+        'identity': {'key': 'identity', 'type': 'EncryptionIdentity'},
         'tags': {'key': 'tags', 'type': '{str}'},
         'properties': {'key': 'properties', 'type': 'DataLakeStoreAccountProperties'},
     }
 
-    def __init__(self, location=None, name=None, tags=None, properties=None):
+    def __init__(self, location=None, name=None, identity=None, tags=None, properties=None):
         self.location = location
         self.name = name
         self.type = None
         self.id = None
+        self.identity = identity
         self.tags = tags
         self.properties = properties

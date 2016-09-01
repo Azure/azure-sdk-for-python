@@ -15,25 +15,37 @@ from msrest.serialization import Model
 class AclStatus(Model):
     """Data Lake Store file or directory Access Control List information.
 
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
     :param entries: the list of ACLSpec entries on a file or directory.
     :type entries: list of str
     :param group: the group owner, an AAD Object ID.
     :type group: str
     :param owner: the user owner, an AAD Object ID.
     :type owner: str
-    :param sticky_bit: the indicator of whether the sticky bit is on or off.
-    :type sticky_bit: bool
+    :param permission: The octal representation of the unnamed user, mask and
+     other permissions.
+    :type permission: int
+    :ivar sticky_bit: the indicator of whether the sticky bit is on or off.
+    :vartype sticky_bit: bool
     """ 
+
+    _validation = {
+        'sticky_bit': {'readonly': True},
+    }
 
     _attribute_map = {
         'entries': {'key': 'entries', 'type': '[str]'},
         'group': {'key': 'group', 'type': 'str'},
         'owner': {'key': 'owner', 'type': 'str'},
+        'permission': {'key': 'permission', 'type': 'int'},
         'sticky_bit': {'key': 'stickyBit', 'type': 'bool'},
     }
 
-    def __init__(self, entries=None, group=None, owner=None, sticky_bit=None):
+    def __init__(self, entries=None, group=None, owner=None, permission=None):
         self.entries = entries
         self.group = group
         self.owner = owner
-        self.sticky_bit = sticky_bit
+        self.permission = permission
+        self.sticky_bit = None
