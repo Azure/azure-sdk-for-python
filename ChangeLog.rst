@@ -35,7 +35,7 @@ Some values that are constants and were incorrectly suggested as method paramete
 
 - azure-mgmt-resource 0.30.0rc6: Property aliases support + Doc typo
 - azure-mgmt-network 0.30.0rc6: `check_ip_address_availability` and more + Doc typo
-- azure-graphrbac 0.30.0rc6: latest API Version
+- azure-graphrbac 0.30.0rc6: latest API Version + List users fix (#653)
 - azure-mgmt-redis 1.0.0: official stable release (same content than 0.30.0RC5)
 
 **Meta-package**
