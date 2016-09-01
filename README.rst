@@ -13,6 +13,8 @@ Microsoft Azure SDK for Python
 .. image:: https://travis-ci.org/Azure/azure-sdk-for-python.svg?branch=master
     :target: https://travis-ci.org/Azure/azure-sdk-for-python
 
+.. image:: https://ci.appveyor.com/api/projects/status/m51hrgewcxknxhsd/branch/master?svg=true
+    :target: https://ci.appveyor.com/project/lmazuel/azure-sdk-for-python/branch/master
 
 This project provides a set of Python packages that make it easy to
 access the Microsoft Azure components such as ServiceManagement, Storage\*, and ServiceBus.
