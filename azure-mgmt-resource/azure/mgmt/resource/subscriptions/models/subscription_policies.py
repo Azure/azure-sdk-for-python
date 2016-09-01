@@ -15,18 +15,35 @@ from msrest.serialization import Model
 class SubscriptionPolicies(Model):
     """Subscription policies.
 
-    :param location_placement_id: Gets or sets the subscription location
-     placement Id.
-    :type location_placement_id: str
-    :param quota_id: Gets or sets the subscription quota Id.
-    :type quota_id: str
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar location_placement_id: The subscription location placement Id. The
+     Id indicates which regions are visible for a subscription. For example,
+     a subscription with a location placement Id of Public_2014-09-01 has
+     access to Azure public regions.
+    :vartype location_placement_id: str
+    :ivar quota_id: The subscription quota Id.
+    :vartype quota_id: str
+    :ivar spending_limit: The subscription spending limit. Possible values
+     include: 'On', 'Off', 'CurrentPeriodOff'
+    :vartype spending_limit: str or :class:`spendingLimit
+     <azure.mgmt.resource.subscriptions.models.spendingLimit>`
     """ 
+
+    _validation = {
+        'location_placement_id': {'readonly': True},
+        'quota_id': {'readonly': True},
+        'spending_limit': {'readonly': True},
+    }
 
     _attribute_map = {
         'location_placement_id': {'key': 'locationPlacementId', 'type': 'str'},
         'quota_id': {'key': 'quotaId', 'type': 'str'},
+        'spending_limit': {'key': 'spendingLimit', 'type': 'spendingLimit'},
     }
 
-    def __init__(self, location_placement_id=None, quota_id=None):
-        self.location_placement_id = location_placement_id
-        self.quota_id = quota_id
+    def __init__(self):
+        self.location_placement_id = None
+        self.quota_id = None
+        self.spending_limit = None

@@ -15,31 +15,54 @@ from msrest.serialization import Model
 class Subscription(Model):
     """Subscription information.
 
-    :param id: Gets or sets the ID of the resource
-     (/subscriptions/SubscriptionId).
-    :type id: str
-    :param subscription_id: Gets or sets the subscription Id.
-    :type subscription_id: str
-    :param display_name: Gets or sets the subscription display name
-    :type display_name: str
-    :param state: Gets or sets the subscription state
-    :type state: str
-    :param subscription_policies: Gets or sets the subscription policies.
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar id: The fully qualified Id. For example,
+     /subscriptions/00000000-0000-0000-0000-000000000000.
+    :vartype id: str
+    :ivar subscription_id: The subscription Id.
+    :vartype subscription_id: str
+    :ivar tenant_id: The tenant Id.
+    :vartype tenant_id: str
+    :ivar display_name: The subscription display name.
+    :vartype display_name: str
+    :ivar state: The subscription state. Possible values include: 'Enabled',
+     'Warned', 'PastDue', 'Disabled', 'Deleted'
+    :vartype state: str or :class:`SubscriptionState
+     <azure.mgmt.resource.subscriptions.models.SubscriptionState>`
+    :param subscription_policies: The subscription policies.
     :type subscription_policies: :class:`SubscriptionPolicies
      <azure.mgmt.resource.subscriptions.models.SubscriptionPolicies>`
+    :param authorization_source: The authorization source of the request.
+     Valid values are one or more combinations of Legacy, RoleBased,
+     Bypassed, Direct and Management. For example, 'Legacy, RoleBased'.
+    :type authorization_source: str
     """ 
+
+    _validation = {
+        'id': {'readonly': True},
+        'subscription_id': {'readonly': True},
+        'tenant_id': {'readonly': True},
+        'display_name': {'readonly': True},
+        'state': {'readonly': True},
+    }
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
         'subscription_id': {'key': 'subscriptionId', 'type': 'str'},
+        'tenant_id': {'key': 'tenantId', 'type': 'str'},
         'display_name': {'key': 'displayName', 'type': 'str'},
-        'state': {'key': 'state', 'type': 'str'},
+        'state': {'key': 'state', 'type': 'SubscriptionState'},
         'subscription_policies': {'key': 'subscriptionPolicies', 'type': 'SubscriptionPolicies'},
+        'authorization_source': {'key': 'authorizationSource', 'type': 'str'},
     }
 
-    def __init__(self, id=None, subscription_id=None, display_name=None, state=None, subscription_policies=None):
-        self.id = id
-        self.subscription_id = subscription_id
-        self.display_name = display_name
-        self.state = state
+    def __init__(self, subscription_policies=None, authorization_source=None):
+        self.id = None
+        self.subscription_id = None
+        self.tenant_id = None
+        self.display_name = None
+        self.state = None
         self.subscription_policies = subscription_policies
+        self.authorization_source = authorization_source
