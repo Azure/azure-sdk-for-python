@@ -12,16 +12,21 @@ You will need to provide your ``subscription_id`` which can be retrieved
 from `your subscription list <https://manage.windowsazure.com/#Workspaces/AdminTasks/SubscriptionMapping>`__.
 
 See :doc:`Resource Management Authentication <quickstart_authentication>`
-for details on getting a ``Credentials`` instance.
+for details on handling Azure Active Directory authentication with the Python SDK, and creating a ``Credentials`` instance.
 
 .. code:: python
 
     from azure.mgmt.cdn import CdnManagementClient
+	from azure.common.credentials import UserPassCredentials
 
-    # TODO: Replace this with your subscription id
+    # Replace this with your subscription id
     subscription_id = '33333333-3333-3333-3333-333333333333'
-    # TODO: See above how to get a Credentials instance
-    credentials = ...
+	
+    # See above for details on creating different types of AAD credentials
+    credentials = UserPassCredentials(
+		'user@domain.com',	# Your user
+		'my_password',		# Your password
+	)
 
     cdn_client = CdnManagementClient(
         credentials,
@@ -57,8 +62,7 @@ The following code check the name availability of a end-point.
     from azure.mgmt.cdn.models import CheckNameAvailabilityInput
 
     output = self.cdn_client.name_availability.check_name_availability(
-        name='myendpoint',
-        type='Microsoft.Cdn/profiles/endpoints'
+        name='myendpoint'
     )
     # output is a CheckNameAvailabilityOutput instance
     print(output.name_available)

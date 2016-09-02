@@ -1,7 +1,7 @@
-azure.mgmt.keyvault.operations module
+azure.mgmt.iothub.models module
 ===========================================
 
-.. automodule:: azure.mgmt.keyvault.operations
+.. automodule:: azure.mgmt.iothub.models
     :members:
     :undoc-members:
     :show-inheritance:

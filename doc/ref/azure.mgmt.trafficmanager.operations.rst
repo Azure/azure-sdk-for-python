@@ -1,7 +1,7 @@
-azure.mgmt.resource.feature.models module
+azure.mgmt.trafficmanager.operations module
 ===========================================
 
-.. automodule:: azure.mgmt.resource.feature.models
+.. automodule:: azure.mgmt.trafficmanager.operations
     :members:
     :undoc-members:
     :show-inheritance:

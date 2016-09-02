@@ -6,25 +6,26 @@ Create the client
 
 The following code creates an instance of the client.
 
-See :doc:`Resource Management Authentication <resourcemanagementauthentication>`
+See :doc:`Resource Management Authentication <quickstart_authentication>`
 for details on getting a ``Credentials`` instance.
-
-.. note:: You need to change the `resource` parameter to `https://graph.windows.net`
-    UserPassCredentials(
-        'user@xxxxx.onmicrosoft.com',
-        'smartpassword',
-        resource="https://graph.windows.net"
-    )
 
 You will also need the tenant id of the AD you want to manage. Could be the AD UUID or domain name.
 `You can follow this documentation to get it <https://msdn.microsoft.com/fr-fr/library/azure/ad/graph/howto/azure-ad-graph-api-operations-overview#TenantIdentifier>`__.
 
+.. note:: You need to change the `resource` parameter to `https://graph.windows.net` while creating the credentials instance
+
 .. code:: python
 
     from azure.graphrbac import GraphRbacManagementClient
+	from azure.common.credentials import UserPassCredentials
 
-    # TODO: See above how to get a Credentials instance
-    credentials = ...
+    # See above for details on creating different types of AAD credentials
+    credentials = UserPassCredentials(
+		'user@domain.com',	# Your user
+		'my_password',		# Your password
+		resource="https://graph.windows.net"
+	)
+
     tenant_id = "myad.onmicrosoft.com"
 
     graphrbac_client = GraphRbacManagementClient(

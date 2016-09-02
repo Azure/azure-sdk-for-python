@@ -4,22 +4,16 @@ Azure SDK for Python
 
 The Azure SDK for Python is a set of libraries which allow you to work on Azure for your management, runtime or data needs.
 
-This documentation does *not* cover:
-
-* `How to write an Azure WebApp in Python <https://azure.microsoft.com/en-us/documentation/articles/web-sites-python-create-deploy-django-app/>`_
-* `Azure IoT device SDK for Python <https://github.com/Azure/azure-iot-sdks/tree/master/python/device>`_
-* `Queries over SQL Azure <https://azure.microsoft.com/en-us/documentation/articles/sql-database-develop-python-simple/>`_
-* `DocumentDB <https://azure.microsoft.com/en-us/documentation/articles/documentdb-sdk-python/>`_
-* `Application Insight <https://github.com/Microsoft/ApplicationInsights-Python>`_
-* `Storage Runtime <http://azure-storage.readthedocs.org>`_
-
 For a more general view of Azure and Python, you can go on the `Python Developer Center for Azure <https://azure.microsoft.com/en-us/develop/python/>`_
 
 Example Usage
 -------------
 
-This example authenticates on Azure using an AD in your subscription, creates a Resource Group and a Storage account,
-uploads a simple "Hello world" HTML page and gives you the URL to get it.
+This example shows:
+
+* Authentication on Azure using an AD in your subscription,
+* Creation of a Resource Group and a Storage account,
+* Upload a simple "Hello world" HTML page and gives you the URL to get it.
 
 .. code:: python
 
@@ -53,8 +47,9 @@ uploads a simple "Hello world" HTML page and gives you the URL to get it.
     async_create.wait()
     
     storage_keys = storage_client.storage_accounts.list_keys('my_resource_group', 'my_storage_account')
+    storage_keys = {v.key_name: v.value for v in storage_keys.keys}
 
-    storage_client = CloudStorageAccount('my_storage_account', storage_keys.key1)
+    storage_client = CloudStorageAccount('my_storage_account', storage_keys['key1'])
     blob_service = storage_client.create_block_blob_service()
 
     blob_service.create_container('my_container_name')
@@ -69,40 +64,58 @@ uploads a simple "Hello world" HTML page and gives you the URL to get it.
     print(blob_service.make_blob_url('my_container_name', 'my_blob_name'))
 
 
-
 Installation
 ------------
 
-You can install the whole set of stable Azure libraries in a single line using the ``azure`` meta-package:
+Overview
+^^^^^^^^
+
+You can install individually each library for each Azure service:
 
 .. code-block:: console
 
-   $ pip install azure
+   $ pip install azure-batch          # Install the latest Batch runtime library
+   $ pip install azure-mgmt-scheduler # Install the latest Storage management library
 
-You can also install individually each library if you don't need everything
-and want to save installation space/time.
-
-.. code-block:: console
-
-   $ pip install azure-batch         # Install the latest Batch runtime library
-   $ pip install azure-mgmt-storage  # Install the latest Storage management library
-   $ pip install azure-mgmt-resource # Install only the latest Resource Management library
-
-Preview packages are not included in the ``azure`` meta-package and can be installed using the ``--pre`` flag:
+Preview packages can be installed using the ``--pre`` flag:
 
 .. code-block:: console
 
-   $ pip install --pre azure-mgmt-web # will install only the latest Web App Management library
+   $ pip install --pre azure-mgmt-compute # will install only the latest Compute Management library
 
 More details and information about the available libraries and their status can be found 
 in the :doc:`Installation Page<installation>`
 
+The ``azure`` meta-package
+^^^^^^^^^^^^^^^^^^^^^^^^^^
+   
+You can also install a set of Azure libraries in a single line using the ``azure`` meta-package. Since not all packages in this meta-package are
+published as stable yet, the ``azure`` meta-package is still in preview. 
+However, the core packages, from code quality/completeness perspectives can at this time be considered "stable" 
+- it will be officially labeled as such in sync with other languages as soon as possible. 
+We are not planning on any further major changes until then.
 
+Since it's a preview release, you need to use the ``--pre`` flag:
+
+.. code-block:: console
+
+   $ pip install --pre azure
+   
+or directly
+
+.. code-block:: console
+
+   $ pip install azure==2.0.0rc6
+
+.. important:: The azure meta-package 1.0.3 is deprecated is not working anymore.
+   
 Features
 --------
 
 Azure Resource Management
 ^^^^^^^^^^^^^^^^^^^^^^^^^
+
+All documentation of management libraries for Azure are on this website. This includes:
 
 * :doc:`Authorization <resourcemanagementauthorization>` : Permissions, roles and more
 * :doc:`Batch<resourcemanagementbatch>` : Manage Batch accounts and applications
@@ -126,13 +139,24 @@ Azure Resource Management
 Azure Runtime
 ^^^^^^^^^^^^^
 
-* :doc:`Batch<batch>` : Manage Batch pools, jobs, task and job schedules
-* :doc:`Azure Active Directory Graph RBAC<graphrbac>` : Users, applications and more
-* :doc:`Service Bus<servicebus>`:
-   -  Queues: create, list and delete queues; create, list, and delete
-      subscriptions; send, receive, unlock and delete messages
-   -  Topics: create, list, and delete topics; create, list, and delete
-      rules
+Some documentation of data libraries are on this website. This includes:
+
+* :doc:`Batch<batch>`
+* :doc:`Azure Active Directory Graph RBAC<graphrbac>`
+* :doc:`Service Bus<servicebus>` using HTTP.
+
+  .. note:: For critical performance issue, the Service Bus team currently recommends `AMQP <https://azure.microsoft.com/en-us/documentation/articles/service-bus-amqp-python/>`_.
+
+These Azure services have Python data libraries which are directly hosted by the service team or are extensively documented on the Azure documentation website:
+
+* `Storage <http://azure-storage.readthedocs.org>`_
+* `Azure IoT device SDK for Python <https://github.com/Azure/azure-iot-sdks/tree/master/python/device>`_
+* `SQL Azure <https://azure.microsoft.com/en-us/documentation/articles/sql-database-develop-python-simple/>`_
+* `DocumentDB <https://azure.microsoft.com/en-us/documentation/articles/documentdb-sdk-python/>`_
+* `Application Insight <https://github.com/Microsoft/ApplicationInsights-Python>`_
+* `Redis Cache <https://azure.microsoft.com/en-us/documentation/articles/cache-python-get-started/>`_
+* `Write an Azure WebApp in Python <https://azure.microsoft.com/en-us/documentation/articles/web-sites-python-create-deploy-django-app/>`_
+
 
 Azure Service Management
 ^^^^^^^^^^^^^^^^^^^^^^^^
@@ -216,24 +240,31 @@ Indices and tables
   servicebus
   
 .. toctree::
+  :maxdepth: 5
   :glob:
   :caption: Developer Documentation
 
   ref/azure.common
   ref/azure.batch
   ref/azure.graphrbac
+  ref/azure.mgmt.authorization
   ref/azure.mgmt.batch
   ref/azure.mgmt.cdn
+  ref/azure.mgmt.cognitiveservices
   ref/azure.mgmt.commerce
   ref/azure.mgmt.compute
+  ref/azure.mgmt.dns
+  ref/azure.mgmt.iothub
+  ref/azure.mgmt.keyvault
   ref/azure.mgmt.logic
   ref/azure.mgmt.network
   ref/azure.mgmt.notificationhubs
+  ref/azure.mgmt.powerbiembedded
   ref/azure.mgmt.redis
   ref/azure.mgmt.resource
-  ref/azure.mgmt.authorization
   ref/azure.mgmt.scheduler
   ref/azure.mgmt.storage
+  ref/azure.mgmt.trafficmanager
   ref/azure.mgmt.web
   ref/azure.servicebus
   ref/azure.servicemanagement

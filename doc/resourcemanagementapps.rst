@@ -12,17 +12,22 @@ You will need to provide your ``subscription_id`` which can be retrieved
 from `your subscription list <https://manage.windowsazure.com/#Workspaces/AdminTasks/SubscriptionMapping>`__.
 
 See :doc:`Resource Management Authentication <quickstart_authentication>`
-for details on getting a ``Credentials`` instance.
+for details on handling Azure Active Directory authentication with the Python SDK, and creating a ``Credentials`` instance.
 
 .. code:: python
 
     from azure.mgmt.logic import LogicManagementClient
     from azure.mgmt.web import WebSiteManagementClient
+	from azure.common.credentials import UserPassCredentials
 
-    # TODO: Replace this with your subscription id
+    # Replace this with your subscription id
     subscription_id = '33333333-3333-3333-3333-333333333333'
-    # TODO: See above how to get a Credentials instance
-    credentials = ...
+	
+    # See above for details on creating different types of AAD credentials
+    credentials = UserPassCredentials(
+		'user@domain.com',	# Your user
+		'my_password',		# Your password
+	)
 
     logic_client = LogicManagementClient(
         credentials,
@@ -44,7 +49,7 @@ credentials you created in the previous section.
 
 .. code:: python
 
-    from azure.mgmt.resource.resources import ResourceManagementClient
+    from azure.mgmt.resource import ResourceManagementClient
 
     resource_client = ResourceManagementClient(
         credentials,
@@ -53,34 +58,10 @@ credentials you created in the previous section.
     resource_client.providers.register('Microsoft.Web')
     resource_client.providers.register('Microsoft.Logic')
 
-Create an App Service Plan
---------------------------
+Usage sample for Web App Management
+-----------------------------------
 
-The following code creates an App Service Plan under an existing resource group.
-To create or manage resource groups, see :doc:`Resource Management<resourcemanagement>`.
-
-.. code:: python
-
-    from azure.mgmt.web.models import ServerFarmWithRichSku, SkuDescription
-
-    group_name = 'myresourcegroup'
-    app_service_plan_name = 'myserviceplan'
-    app_service_plan = web_client.server_farms.create_or_update_server_farm(
-        group_name,
-        app_service_plan_name,
-        ServerFarmWithRichSku(
-            location='West US',
-            sku = SkuDescription(
-                name='F1',
-                tier='Free'
-            )
-        )
-    )
-    # app_service_plan is a msrestazure.azure_operation.AzureOperationPoller instance
-    # wait insure polling the underlying async operation until it's done.
-    # result() will return a ServerFarmWithRichSku instance
-    app_service_plan = app_service_plan.result()
-
+https://github.com/Azure-Samples/app-service-web-python-manage
 
     
 Create a Logic App Workflow

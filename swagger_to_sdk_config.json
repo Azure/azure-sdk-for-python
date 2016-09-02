@@ -80,7 +80,7 @@
     "keyvault": {
       "swagger": "arm-keyvault/2015-06-01/swagger/keyvault.json",
       "autorest_options": {
-        "Namespace": "azure.keyvault"
+        "Namespace": "azure.mgmt.keyvault"
       },
       "output_dir": "azure-mgmt-keyvault/azure/mgmt/keyvault"
     },
@@ -132,7 +132,7 @@
     "resources.features": {
       "swagger": "arm-resources/features/2015-12-01/swagger/features.json",
       "autorest_options": {
-        "Namespace": "azure.mgmt.resource.feature"
+        "Namespace": "azure.mgmt.resource.features"
       },
       "output_dir": "azure-mgmt-resource/azure/mgmt/resource/features"
     },
