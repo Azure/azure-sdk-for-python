@@ -75,15 +75,14 @@ and will NOT be installed with the 2.0.0rc6 "azure" meta-package. We removed the
 to prepare our customers to the 2.0.0 stable release that will only contains the stable packages
 listed before.
 
-- azure-mgmt-authorization 0.30.0RC5
+- azure-graphrbac 0.30.0rc5
+- azure-mgmt-authorization 0.30.0rc5
 - azure-mgmt-cdn 0.30.0rc6
 - azure-mgmt-cognitiveservices 0.30.0rc6
 - azure-mgmt-commerce 0.30.0rc6
 - azure-mgmt-dns 0.30.0rc6
 - azure-mgmt-notificationhubs 0.30.0rc6
 - azure-mgmt-powerbiembedded 0.30.0rc6
-- azure-mgmt-redis 0.30.0rc6
-- azure-mgmt-scheduler 0.30.0rc6
 - azure-mgmt-trafficmanager 0.30.0rc6
 - azure-mgmt-web 0.30.0rc6
 
