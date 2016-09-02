@@ -76,7 +76,21 @@ The following packages are already released as "stable" and are officially produ
 - azure-servicemanagement-legacy 0.20.4
 - azure-storage 0.33.0
 
-All other packages are real "preview" packages. Please send us your feedback!
+The following packages are also available as preview only, not ready for production,
+and will NOT be installed with the 2.0.0rc6 "azure" meta-package. We removed then from the 2.0.0rc6
+to prepare our customers to the 2.0.0 stable release that will only contains the stable packages
+listed before.
+
+- azure-graphrbac 0.30.0rc5
+- azure-mgmt-authorization 0.30.0rc5
+- azure-mgmt-cdn 0.30.0rc6
+- azure-mgmt-cognitiveservices 0.30.0rc6
+- azure-mgmt-commerce 0.30.0rc6
+- azure-mgmt-dns 0.30.0rc6
+- azure-mgmt-notificationhubs 0.30.0rc6
+- azure-mgmt-powerbiembedded 0.30.0rc6
+- azure-mgmt-trafficmanager 0.30.0rc6
+- azure-mgmt-web 0.30.0rc6
 
 
 Usage
