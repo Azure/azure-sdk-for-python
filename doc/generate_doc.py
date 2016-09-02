@@ -44,6 +44,10 @@ def generate_doc(config_path, project_pattern=None):
             _LOGGER.info("Skip project %s", project)
             continue
 
+        if 'unreleased' in local_conf['output_dir'].lower():
+            _LOGGER.info("Skip unreleased project %s", project)
+            continue            
+
         _LOGGER.info("Working on %s", project)
         namespace = local_conf['autorest_options']['Namespace']
 

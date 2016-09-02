@@ -12,16 +12,21 @@ You will need to provide your ``subscription_id`` which can be retrieved
 from `your subscription list <https://manage.windowsazure.com/#Workspaces/AdminTasks/SubscriptionMapping>`__.
 
 See :doc:`Resource Management Authentication <quickstart_authentication>`
-for details on getting a ``Credentials`` instance.
+for details on handling Azure Active Directory authentication with the Python SDK, and creating a ``Credentials`` instance.
 
 .. code:: python
 
     from azure.mgmt.storage import StorageManagementClient
+	from azure.common.credentials import UserPassCredentials
 
-    # TODO: Replace this with your subscription id
+    # Replace this with your subscription id
     subscription_id = '33333333-3333-3333-3333-333333333333'
-    # TODO: See above how to get a Credentials instance
-    credentials = ...
+	
+    # See above for details on creating different types of AAD credentials
+    credentials = UserPassCredentials(
+		'user@domain.com',	# Your user
+		'my_password',		# Your password
+	)
 
     storage_client = StorageManagementClient(
         credentials,
@@ -47,52 +52,7 @@ credentials you created in the previous section.
     )
     resource_client.providers.register('Microsoft.Storage')
 
-Create storage account
-----------------------
+Usage sample
+------------
 
-The following code creates a new storage account under an existing resource group.
-To create or manage resource groups, see :doc:`Resource Management<resourcemanagement>`.
-
-.. code:: python
-
-    from azure.mgmt.storage.models import StorageAccountCreateParameters, Sku, SkuName, Kind
-
-    group_name = 'myresourcegroup'
-    account_name = 'mystorageaccountname'
-    result = storage_client.storage_accounts.create(
-        group_name,
-        account_name,
-        StorageAccountCreateParameters(
-            sku=Sku(SkuName.standard_lrs),
-            kind=Kind.storage,
-            location='westus'
-        )
-    )
-    # result is a msrestazure.azure_operation.AzureOperationPoller instance
-    # wait insure polling the underlying async operation until it's done.
-    result.wait()
-
-List storage accounts
----------------------
-
-.. code:: python
-
-    group_name = 'myresourcegroup'
-    storage_accounts = storage_client.storage_accounts.list_by_resource_group(group_name)
-    for storage_account in storage_accounts:
-        print(storage_account.name)
-        print(storage_account.location)
-        print(storage_account.provisioning_state)
-        print('')
-
-Get storage account keys
-------------------------
-
-.. code:: python
-
-    group_name = 'myresourcegroup'
-    account_name = 'mystorageaccountname'
-    storage_keys = storage_client.storage_accounts.list_keys(group_name, account_name)
-    storage_keys = {v.key_name: v.value for v in storage_keys.keys}
-    print(storage_keys['key1'])
-    print(storage_keys['key2'])
+https://github.com/Azure-Samples/storage-python-manage

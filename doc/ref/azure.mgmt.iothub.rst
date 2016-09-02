@@ -1,4 +1,4 @@
-azure.mgmt.keyvault package
+azure.mgmt.iothub package
 ==========================
 
 Submodules
@@ -6,13 +6,13 @@ Submodules
 
 .. toctree::
 
-   azure.mgmt.keyvault.models
-   azure.mgmt.keyvault.operations
+   azure.mgmt.iothub.models
+   azure.mgmt.iothub.operations
 
 Module contents
 ---------------
 
-.. automodule:: azure.mgmt.keyvault
+.. automodule:: azure.mgmt.iothub
     :members:
     :undoc-members:
     :show-inheritance:

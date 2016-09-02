@@ -1,7 +1,7 @@
-azure.mgmt.keyvault.operations module
+azure.mgmt.dns.models module
 ===========================================
 
-.. automodule:: azure.mgmt.keyvault.operations
+.. automodule:: azure.mgmt.dns.models
     :members:
     :undoc-members:
     :show-inheritance:

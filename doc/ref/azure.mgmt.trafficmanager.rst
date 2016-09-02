@@ -1,4 +1,4 @@
-azure.mgmt.keyvault package
+azure.mgmt.trafficmanager package
 ==========================
 
 Submodules
@@ -6,13 +6,13 @@ Submodules
 
 .. toctree::
 
-   azure.mgmt.keyvault.models
-   azure.mgmt.keyvault.operations
+   azure.mgmt.trafficmanager.models
+   azure.mgmt.trafficmanager.operations
 
 Module contents
 ---------------
 
-.. automodule:: azure.mgmt.keyvault
+.. automodule:: azure.mgmt.trafficmanager
     :members:
     :undoc-members:
     :show-inheritance:

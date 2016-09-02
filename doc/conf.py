@@ -35,8 +35,8 @@ extensions = ['sphinx.ext.autodoc', 'sphinx.ext.autosummary', 'sphinx.ext.doctes
 
 intersphinx_mapping = {
     'python': ('https://docs.python.org/3.5', None),
-    'msrestazure': ('http://msrestazure.readthedocs.org/en/latest/', None),
-    'msrest': ('http://msrest.readthedocs.org/en/latest/', None)
+    'msrestazure': ('http://msrestazure.readthedocs.io/en/latest/', None),
+    'msrest': ('http://msrest.readthedocs.io/en/latest/', None)
 }
 
 # Add any paths that contain templates here, relative to this directory.
