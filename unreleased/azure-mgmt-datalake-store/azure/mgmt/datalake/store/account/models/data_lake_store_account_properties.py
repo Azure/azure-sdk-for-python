@@ -30,9 +30,9 @@ class DataLakeStoreAccountProperties(Model):
      <azure.mgmt.datalake.store.account.models.DataLakeStoreAccountState>`
     :ivar creation_time: the account creation time.
     :vartype creation_time: datetime
-    :ivar encryption_state: The current state of encryption for this Data
+    :param encryption_state: The current state of encryption for this Data
      Lake store account. Possible values include: 'Enabled', 'Disabled'
-    :vartype encryption_state: str or :class:`EncryptionState
+    :type encryption_state: str or :class:`EncryptionState
      <azure.mgmt.datalake.store.account.models.EncryptionState>`
     :ivar encryption_provisioning_state: The current state of encryption
      provisioning for this Data Lake store account. Possible values include:
@@ -56,7 +56,6 @@ class DataLakeStoreAccountProperties(Model):
         'provisioning_state': {'readonly': True},
         'state': {'readonly': True},
         'creation_time': {'readonly': True},
-        'encryption_state': {'readonly': True},
         'encryption_provisioning_state': {'readonly': True},
         'last_modified_time': {'readonly': True},
     }
@@ -73,11 +72,11 @@ class DataLakeStoreAccountProperties(Model):
         'default_group': {'key': 'defaultGroup', 'type': 'str'},
     }
 
-    def __init__(self, encryption_config=None, endpoint=None, default_group=None):
+    def __init__(self, encryption_state=None, encryption_config=None, endpoint=None, default_group=None):
         self.provisioning_state = None
         self.state = None
         self.creation_time = None
-        self.encryption_state = None
+        self.encryption_state = encryption_state
         self.encryption_provisioning_state = None
         self.encryption_config = encryption_config
         self.last_modified_time = None
