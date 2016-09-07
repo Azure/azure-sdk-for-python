@@ -24,6 +24,10 @@ class FileStatusProperties(Model):
     :vartype block_size: long
     :ivar children_num: the number of children in the directory.
     :vartype children_num: long
+    :ivar expiration_time: Gets the expiration time, if any, as ticks since
+     the epoch. If this is set to 0 or DateTime.MaxValue there is no
+     expiration.
+    :vartype expiration_time: long
     :ivar group: the group owner.
     :vartype group: str
     :ivar length: the number of bytes in a file.
@@ -46,6 +50,7 @@ class FileStatusProperties(Model):
         'access_time': {'readonly': True},
         'block_size': {'readonly': True},
         'children_num': {'readonly': True},
+        'expiration_time': {'readonly': True},
         'group': {'readonly': True},
         'length': {'readonly': True},
         'modification_time': {'readonly': True},
@@ -59,6 +64,7 @@ class FileStatusProperties(Model):
         'access_time': {'key': 'accessTime', 'type': 'long'},
         'block_size': {'key': 'blockSize', 'type': 'long'},
         'children_num': {'key': 'childrenNum', 'type': 'long'},
+        'expiration_time': {'key': 'expirationTime', 'type': 'long'},
         'group': {'key': 'group', 'type': 'str'},
         'length': {'key': 'length', 'type': 'long'},
         'modification_time': {'key': 'modificationTime', 'type': 'long'},
@@ -72,6 +78,7 @@ class FileStatusProperties(Model):
         self.access_time = None
         self.block_size = None
         self.children_num = None
+        self.expiration_time = None
         self.group = None
         self.length = None
         self.modification_time = None

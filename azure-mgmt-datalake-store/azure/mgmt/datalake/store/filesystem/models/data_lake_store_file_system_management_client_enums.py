@@ -21,3 +21,11 @@ class FileType(Enum):
 class AppendModeType(Enum):
 
     autocreate = "autocreate"
+
+
+class ExpiryOptionType(Enum):
+
+    never_expire = "NeverExpire"
+    relative_to_now = "RelativeToNow"
+    relative_to_creation_date = "RelativeToCreationDate"
+    absolute = "Absolute"

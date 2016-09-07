@@ -36,7 +36,7 @@ class LoadBalancersOperations(object):
 
     def delete(
             self, resource_group_name, load_balancer_name, custom_headers=None, raw=False, **operation_config):
-        """The delete loadbalancer operation deletes the specified loadbalancer.
+        """The delete LoadBalancer operation deletes the specified load balancer.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
@@ -112,8 +112,8 @@ class LoadBalancersOperations(object):
 
     def get(
             self, resource_group_name, load_balancer_name, expand=None, custom_headers=None, raw=False, **operation_config):
-        """The Get ntework interface operation retreives information about the
-        specified network interface.
+        """The Get LoadBalancer operation retrieves information about the
+        specified LoadBalancer.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
@@ -271,7 +271,7 @@ class LoadBalancersOperations(object):
 
     def list_all(
             self, custom_headers=None, raw=False, **operation_config):
-        """The List loadBalancer operation retrieves all the loadbalancers in a
+        """The List loadBalancer operation retrieves all the load balancers in a
         subscription.
 
         :param dict custom_headers: headers that will be added to the request
@@ -334,7 +334,7 @@ class LoadBalancersOperations(object):
 
     def list(
             self, resource_group_name, custom_headers=None, raw=False, **operation_config):
-        """The List loadBalancer operation retrieves all the loadbalancers in a
+        """The List loadBalancer operation retrieves all the load balancers in a
         resource group.
 
         :param resource_group_name: The name of the resource group.

@@ -34,7 +34,7 @@ class GenericResource(ResourceModel):
     :type properties: object
     :param kind: The kind of the resource.
     :type kind: str
-    :param managed_by: The managedBy property of the resource.
+    :param managed_by: Id of the resource that manages this resource.
     :type managed_by: str
     :param sku: The sku of the resource.
     :type sku: :class:`Sku <azure.mgmt.resource.resources.models.Sku>`

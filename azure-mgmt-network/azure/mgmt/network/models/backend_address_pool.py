@@ -13,7 +13,7 @@ from .sub_resource import SubResource
 
 
 class BackendAddressPool(SubResource):
-    """Pool of backend IP addresseses.
+    """Pool of backend IP addresses.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.

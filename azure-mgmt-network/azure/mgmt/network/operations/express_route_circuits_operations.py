@@ -113,7 +113,7 @@ class ExpressRouteCircuitsOperations(object):
 
     def get(
             self, resource_group_name, circuit_name, custom_headers=None, raw=False, **operation_config):
-        """The Get ExpressRouteCircuit operation retreives information about the
+        """The Get ExpressRouteCircuit operation retrieves information about the
         specified ExpressRouteCircuit.
 
         :param resource_group_name: The name of the resource group.
@@ -548,7 +548,7 @@ class ExpressRouteCircuitsOperations(object):
 
     def get_stats(
             self, resource_group_name, circuit_name, custom_headers=None, raw=False, **operation_config):
-        """The Liststats ExpressRouteCircuit operation retrieves all the stats
+        """The List stats ExpressRouteCircuit operation retrieves all the stats
         from a ExpressRouteCircuits in a resource group.
 
         :param resource_group_name: The name of the resource group.
@@ -610,7 +610,7 @@ class ExpressRouteCircuitsOperations(object):
 
     def get_peering_stats(
             self, resource_group_name, circuit_name, peering_name, custom_headers=None, raw=False, **operation_config):
-        """The Liststats ExpressRouteCircuit operation retrieves all the stats
+        """The List stats ExpressRouteCircuit operation retrieves all the stats
         from a ExpressRouteCircuits in a resource group.
 
         :param resource_group_name: The name of the resource group.
