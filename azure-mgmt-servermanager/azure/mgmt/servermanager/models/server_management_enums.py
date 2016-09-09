@@ -9,10 +9,27 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .server_management import ServerManagement
-from .version import VERSION
+from enum import Enum
 
-__all__ = ['ServerManagement']
 
-__version__ = VERSION
+class AutoUpgrade(Enum):
 
+    on = "On"
+    off = "Off"
+
+
+class PromptFieldType(Enum):
+
+    string = "String"
+    secure_string = "SecureString"
+    credential = "Credential"
+
+
+class GatewayExpandOption(Enum):
+
+    status = "status"
+
+
+class PowerShellExpandOption(Enum):
+
+    output = "output"

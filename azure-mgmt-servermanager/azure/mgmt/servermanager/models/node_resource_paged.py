@@ -9,10 +9,19 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .server_management import ServerManagement
-from .version import VERSION
+from msrest.paging import Paged
 
-__all__ = ['ServerManagement']
 
-__version__ = VERSION
+class NodeResourcePaged(Paged):
+    """
+    A paging container for iterating over a list of NodeResource object
+    """
 
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[NodeResource]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(NodeResourcePaged, self).__init__(*args, **kwargs)

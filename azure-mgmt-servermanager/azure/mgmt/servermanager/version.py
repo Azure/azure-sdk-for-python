@@ -9,10 +9,5 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .server_management import ServerManagement
-from .version import VERSION
-
-__all__ = ['ServerManagement']
-
-__version__ = VERSION
+VERSION = "1.0.0"
 

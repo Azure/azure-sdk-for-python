@@ -9,10 +9,19 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .server_management import ServerManagement
-from .version import VERSION
+from msrest.serialization import Model
 
-__all__ = ['ServerManagement']
 
-__version__ = VERSION
+class PowerShellTabCompletionParameters(Model):
+    """PowerShellTabCompletionParameters.
 
+    :param command: Command to get tab completion for.
+    :type command: str
+    """ 
+
+    _attribute_map = {
+        'command': {'key': 'command', 'type': 'str'},
+    }
+
+    def __init__(self, command=None):
+        self.command = command

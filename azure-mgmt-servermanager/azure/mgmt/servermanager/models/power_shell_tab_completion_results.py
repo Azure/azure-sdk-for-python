@@ -9,10 +9,20 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .server_management import ServerManagement
-from .version import VERSION
+from msrest.serialization import Model
 
-__all__ = ['ServerManagement']
 
-__version__ = VERSION
+class PowerShellTabCompletionResults(Model):
+    """an array of strings representing the different values that can be tabbed
+    thru.
 
+    :param results:
+    :type results: list of str
+    """ 
+
+    _attribute_map = {
+        'results': {'key': 'results', 'type': '[str]'},
+    }
+
+    def __init__(self, results=None):
+        self.results = results

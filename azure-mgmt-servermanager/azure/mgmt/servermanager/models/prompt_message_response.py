@@ -9,10 +9,19 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .server_management import ServerManagement
-from .version import VERSION
+from msrest.serialization import Model
 
-__all__ = ['ServerManagement']
 
-__version__ = VERSION
+class PromptMessageResponse(Model):
+    """the response to a prompt message.
 
+    :param response: the list of responses a cmdlet expects
+    :type response: list of str
+    """ 
+
+    _attribute_map = {
+        'response': {'key': 'response', 'type': '[str]'},
+    }
+
+    def __init__(self, response=None):
+        self.response = response
