@@ -9,10 +9,8 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .media_services_management_client import MediaServicesManagementClient
-from .version import VERSION
+from .media_service_operations import MediaServiceOperations
 
-__all__ = ['MediaServicesManagementClient']
-
-__version__ = VERSION
-
+__all__ = [
+    'MediaServiceOperations',
+]

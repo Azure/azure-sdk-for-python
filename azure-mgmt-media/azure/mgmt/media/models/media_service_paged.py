@@ -9,10 +9,19 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .media_services_management_client import MediaServicesManagementClient
-from .version import VERSION
+from msrest.paging import Paged
 
-__all__ = ['MediaServicesManagementClient']
 
-__version__ = VERSION
+class MediaServicePaged(Paged):
+    """
+    A paging container for iterating over a list of MediaService object
+    """
 
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[MediaService]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(MediaServicePaged, self).__init__(*args, **kwargs)

@@ -9,10 +9,19 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .media_services_management_client import MediaServicesManagementClient
-from .version import VERSION
+from msrest.serialization import Model
 
-__all__ = ['MediaServicesManagementClient']
 
-__version__ = VERSION
+class RegenerateKeyOutput(Model):
+    """The response body for a RegenerateKey API.
 
+    :param key: The new value of either the primary or secondary key.
+    :type key: str
+    """ 
+
+    _attribute_map = {
+        'key': {'key': 'key', 'type': 'str'},
+    }
+
+    def __init__(self, key=None):
+        self.key = key
