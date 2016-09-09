@@ -9,10 +9,19 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .dev_test_labs_client import DevTestLabsClient
-from .version import VERSION
+from msrest.serialization import Model
 
-__all__ = ['DevTestLabsClient']
 
-__version__ = VERSION
+class LabVhd(Model):
+    """Properties of a VHD in the lab.
 
+    :param id: The absolute URI of the VHD.
+    :type id: str
+    """ 
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+    }
+
+    def __init__(self, id=None):
+        self.id = id

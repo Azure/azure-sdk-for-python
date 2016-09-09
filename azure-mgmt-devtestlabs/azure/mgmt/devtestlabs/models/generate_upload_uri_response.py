@@ -9,10 +9,19 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .dev_test_labs_client import DevTestLabsClient
-from .version import VERSION
+from msrest.serialization import Model
 
-__all__ = ['DevTestLabsClient']
 
-__version__ = VERSION
+class GenerateUploadUriResponse(Model):
+    """Reponse body for generating an upload URI.
 
+    :param upload_uri: The upload URI for the VHD.
+    :type upload_uri: str
+    """ 
+
+    _attribute_map = {
+        'upload_uri': {'key': 'uploadUri', 'type': 'str'},
+    }
+
+    def __init__(self, upload_uri=None):
+        self.upload_uri = upload_uri

@@ -9,10 +9,5 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .dev_test_labs_client import DevTestLabsClient
-from .version import VERSION
-
-__all__ = ['DevTestLabsClient']
-
-__version__ = VERSION
+VERSION = "1.0.0"
 

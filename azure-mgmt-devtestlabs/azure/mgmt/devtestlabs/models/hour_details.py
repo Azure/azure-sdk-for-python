@@ -9,10 +9,19 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .dev_test_labs_client import DevTestLabsClient
-from .version import VERSION
+from msrest.serialization import Model
 
-__all__ = ['DevTestLabsClient']
 
-__version__ = VERSION
+class HourDetails(Model):
+    """Properties of an hourly schedule.
 
+    :param minute: Minutes of the hour the schedule will run.
+    :type minute: int
+    """ 
+
+    _attribute_map = {
+        'minute': {'key': 'minute', 'type': 'int'},
+    }
+
+    def __init__(self, minute=None):
+        self.minute = minute

@@ -9,10 +9,19 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .dev_test_labs_client import DevTestLabsClient
-from .version import VERSION
+from msrest.paging import Paged
 
-__all__ = ['DevTestLabsClient']
 
-__version__ = VERSION
+class LabVirtualMachinePaged(Paged):
+    """
+    A paging container for iterating over a list of LabVirtualMachine object
+    """
 
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[LabVirtualMachine]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(LabVirtualMachinePaged, self).__init__(*args, **kwargs)

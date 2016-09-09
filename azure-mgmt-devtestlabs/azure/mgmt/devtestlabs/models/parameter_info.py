@@ -9,10 +9,23 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .dev_test_labs_client import DevTestLabsClient
-from .version import VERSION
+from msrest.serialization import Model
 
-__all__ = ['DevTestLabsClient']
 
-__version__ = VERSION
+class ParameterInfo(Model):
+    """ParameterInfo.
 
+    :param name:
+    :type name: str
+    :param value:
+    :type value: str
+    """ 
+
+    _attribute_map = {
+        'name': {'key': 'name', 'type': 'str'},
+        'value': {'key': 'value', 'type': 'str'},
+    }
+
+    def __init__(self, name=None, value=None):
+        self.name = name
+        self.value = value

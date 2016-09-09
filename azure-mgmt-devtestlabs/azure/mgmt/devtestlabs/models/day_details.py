@@ -9,10 +9,19 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .dev_test_labs_client import DevTestLabsClient
-from .version import VERSION
+from msrest.serialization import Model
 
-__all__ = ['DevTestLabsClient']
 
-__version__ = VERSION
+class DayDetails(Model):
+    """Properties of a daily schedule.
 
+    :param time:
+    :type time: str
+    """ 
+
+    _attribute_map = {
+        'time': {'key': 'time', 'type': 'str'},
+    }
+
+    def __init__(self, time=None):
+        self.time = time
