@@ -9,10 +9,10 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .intune_resource_management_client import IntuneResourceManagementClient
-from .version import VERSION
+from .ios_operations import IosOperations
+from .android_operations import AndroidOperations
 
-__all__ = ['IntuneResourceManagementClient']
-
-__version__ = VERSION
-
+__all__ = [
+    'IosOperations',
+    'AndroidOperations',
+]
