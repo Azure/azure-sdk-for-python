@@ -9,10 +9,5 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .intune_resource_management_client import IntuneResourceManagementClient
-from .version import VERSION
-
-__all__ = ['IntuneResourceManagementClient']
-
-__version__ = VERSION
+VERSION = "0.1.0"
 

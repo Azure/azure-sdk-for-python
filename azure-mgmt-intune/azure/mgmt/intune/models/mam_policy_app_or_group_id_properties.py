@@ -9,10 +9,23 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .intune_resource_management_client import IntuneResourceManagementClient
-from .version import VERSION
+from msrest.serialization import Model
 
-__all__ = ['IntuneResourceManagementClient']
 
-__version__ = VERSION
+class MAMPolicyAppOrGroupIdProperties(Model):
+    """Android Policy request body for Intune MAM.
 
+    :param url:
+    :type url: str
+    """ 
+
+    _validation = {
+        'url': {'required': True},
+    }
+
+    _attribute_map = {
+        'url': {'key': 'url', 'type': 'str'},
+    }
+
+    def __init__(self, url):
+        self.url = url

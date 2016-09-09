@@ -9,10 +9,19 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .intune_resource_management_client import IntuneResourceManagementClient
-from .version import VERSION
+from msrest.paging import Paged
 
-__all__ = ['IntuneResourceManagementClient']
 
-__version__ = VERSION
+class ApplicationPaged(Paged):
+    """
+    A paging container for iterating over a list of Application object
+    """
 
+    _attribute_map = {
+        'next_link': {'key': 'nextlink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[Application]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(ApplicationPaged, self).__init__(*args, **kwargs)
