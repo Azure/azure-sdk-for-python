@@ -9,10 +9,14 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .server_management import ServerManagement
-from .version import VERSION
+from .gateway_operations import GatewayOperations
+from .node_operations import NodeOperations
+from .session_operations import SessionOperations
+from .power_shell_operations import PowerShellOperations
 
-__all__ = ['ServerManagement']
-
-__version__ = VERSION
-
+__all__ = [
+    'GatewayOperations',
+    'NodeOperations',
+    'SessionOperations',
+    'PowerShellOperations',
+]
