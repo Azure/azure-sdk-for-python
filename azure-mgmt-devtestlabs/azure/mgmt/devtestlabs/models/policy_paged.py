@@ -9,10 +9,19 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .dev_test_labs_client import DevTestLabsClient
-from .version import VERSION
+from msrest.paging import Paged
 
-__all__ = ['DevTestLabsClient']
 
-__version__ = VERSION
+class PolicyPaged(Paged):
+    """
+    A paging container for iterating over a list of Policy object
+    """
 
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[Policy]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(PolicyPaged, self).__init__(*args, **kwargs)

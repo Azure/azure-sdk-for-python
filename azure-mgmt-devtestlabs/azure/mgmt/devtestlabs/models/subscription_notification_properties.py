@@ -9,10 +9,19 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .dev_test_labs_client import DevTestLabsClient
-from .version import VERSION
+from msrest.serialization import Model
 
-__all__ = ['DevTestLabsClient']
 
-__version__ = VERSION
+class SubscriptionNotificationProperties(Model):
+    """SubscriptionNotificationProperties.
 
+    :param tenant_id:
+    :type tenant_id: str
+    """ 
+
+    _attribute_map = {
+        'tenant_id': {'key': 'tenantId', 'type': 'str'},
+    }
+
+    def __init__(self, tenant_id=None):
+        self.tenant_id = tenant_id

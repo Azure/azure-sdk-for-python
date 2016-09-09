@@ -9,10 +9,20 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .dev_test_labs_client import DevTestLabsClient
-from .version import VERSION
+from msrest.serialization import Model
 
-__all__ = ['DevTestLabsClient']
 
-__version__ = VERSION
+class FormulaPropertiesFromVm(Model):
+    """Information about a VM from which a formula is to be created.
 
+    :param lab_vm_id: The identifier of the VM from which a formula is to be
+     created.
+    :type lab_vm_id: str
+    """ 
+
+    _attribute_map = {
+        'lab_vm_id': {'key': 'labVmId', 'type': 'str'},
+    }
+
+    def __init__(self, lab_vm_id=None):
+        self.lab_vm_id = lab_vm_id

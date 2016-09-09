@@ -9,10 +9,20 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .dev_test_labs_client import DevTestLabsClient
-from .version import VERSION
+from msrest.serialization import Model
 
-__all__ = ['DevTestLabsClient']
 
-__version__ = VERSION
+class EvaluatePoliciesResponse(Model):
+    """Response body for evaluating a policy set.
 
+    :param results: Results of evaluating a policy set.
+    :type results: list of :class:`PolicySetResult
+     <azure.mgmt.devtestlabs.models.PolicySetResult>`
+    """ 
+
+    _attribute_map = {
+        'results': {'key': 'results', 'type': '[PolicySetResult]'},
+    }
+
+    def __init__(self, results=None):
+        self.results = results
