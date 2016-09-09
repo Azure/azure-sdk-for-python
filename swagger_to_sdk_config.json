@@ -202,7 +202,8 @@
         "Namespace": "azure.mgmt.servermanager",
         "PackageVersion": "1.0.0"
       },
-      "output_dir": "azure-mgmt-servermanager/azure/mgmt/servermanager"
+      "output_dir": "azure-mgmt-servermanager/azure/mgmt/servermanager",
+      "generated_relative_base_directory": "servermanagement"
     },  
     "scheduler": {
       "swagger": "arm-scheduler/2016-03-01/swagger/scheduler.json",
