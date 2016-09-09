@@ -9,10 +9,21 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .azure_ml_web_services_management_client import AzureMLWebServicesManagementClient
-from .version import VERSION
+from msrest.serialization import Model
 
-__all__ = ['AzureMLWebServicesManagementClient']
 
-__version__ = VERSION
+class OutputPort(Model):
+    """Asset output port.
 
+    :param type: Port data type. Possible values include: 'Dataset'. Default
+     value: "Dataset" .
+    :type type: str or :class:`OutputPortType
+     <azure.mgmt.machinelearning.models.OutputPortType>`
+    """ 
+
+    _attribute_map = {
+        'type': {'key': 'type', 'type': 'str'},
+    }
+
+    def __init__(self, type="Dataset"):
+        self.type = type
