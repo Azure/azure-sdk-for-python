@@ -9,10 +9,17 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .media_services_management_client import MediaServicesManagementClient
-from .version import VERSION
+from enum import Enum
 
-__all__ = ['MediaServicesManagementClient']
 
-__version__ = VERSION
+class EntityNameUnavailabilityReason(Enum):
 
+    none = "None"
+    invalid = "Invalid"
+    already_exists = "AlreadyExists"
+
+
+class KeyType(Enum):
+
+    primary = "Primary"
+    secondary = "Secondary"

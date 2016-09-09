@@ -9,10 +9,19 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .media_services_management_client import MediaServicesManagementClient
-from .version import VERSION
+from msrest.serialization import Model
 
-__all__ = ['MediaServicesManagementClient']
 
-__version__ = VERSION
+class SyncStorageKeysInput(Model):
+    """The request  body for a SyncStorageKeys API.
 
+    :param id: The id of the storage account resource.
+    :type id: str
+    """ 
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+    }
+
+    def __init__(self, id=None):
+        self.id = id
