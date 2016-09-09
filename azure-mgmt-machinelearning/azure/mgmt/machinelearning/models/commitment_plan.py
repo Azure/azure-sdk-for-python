@@ -9,10 +9,24 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .azure_ml_web_services_management_client import AzureMLWebServicesManagementClient
-from .version import VERSION
+from msrest.serialization import Model
 
-__all__ = ['AzureMLWebServicesManagementClient']
 
-__version__ = VERSION
+class CommitmentPlan(Model):
+    """Information about the machine learning commitment plan associated with the
+    web service.
 
+    :param id: The commitment plan ARM resource  id.
+    :type id: str
+    """ 
+
+    _validation = {
+        'id': {'required': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+    }
+
+    def __init__(self, id):
+        self.id = id

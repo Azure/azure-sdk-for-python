@@ -9,10 +9,8 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .azure_ml_web_services_management_client import AzureMLWebServicesManagementClient
-from .version import VERSION
+from .web_services_operations import WebServicesOperations
 
-__all__ = ['AzureMLWebServicesManagementClient']
-
-__version__ = VERSION
-
+__all__ = [
+    'WebServicesOperations',
+]

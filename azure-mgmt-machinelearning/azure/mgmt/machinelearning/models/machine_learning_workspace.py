@@ -9,10 +9,24 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .azure_ml_web_services_management_client import AzureMLWebServicesManagementClient
-from .version import VERSION
+from msrest.serialization import Model
 
-__all__ = ['AzureMLWebServicesManagementClient']
 
-__version__ = VERSION
+class MachineLearningWorkspace(Model):
+    """Information about the machine learning workspace containing the experiment
+    that is source for the web service.
 
+    :param id: The workspace ARM resource id.
+    :type id: str
+    """ 
+
+    _validation = {
+        'id': {'required': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+    }
+
+    def __init__(self, id):
+        self.id = id
