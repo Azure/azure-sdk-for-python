@@ -31,6 +31,12 @@ class AccessRights(Enum):
     registry_read_registry_write_service_connect_device_connect = "RegistryRead, RegistryWrite, ServiceConnect, DeviceConnect"
 
 
+class IpFilterActionType(Enum):
+
+    accept = "Accept"
+    reject = "Reject"
+
+
 class SBAccessRights(Enum):
 
     manage = "Manage"

@@ -11,6 +11,7 @@
 
 from .shared_access_signature_authorization_rule import SharedAccessSignatureAuthorizationRule
 from .iot_hub_properties import IotHubProperties
+from .ip_filter_rule import IpFilterRule
 from .event_hub_properties import EventHubProperties
 from .shared_access_authorization_rule import SharedAccessAuthorizationRule
 from .storage_endpoint_properties import StorageEndpointProperties
@@ -40,6 +41,7 @@ from .iot_hub_quota_metric_info_paged import IotHubQuotaMetricInfoPaged
 from .shared_access_signature_authorization_rule_paged import SharedAccessSignatureAuthorizationRulePaged
 from .iot_hub_client_enums import (
     AccessRights,
+    IpFilterActionType,
     SBAccessRights,
     OperationMonitoringLevel,
     Capabilities,
@@ -54,6 +56,7 @@ from .iot_hub_client_enums import (
 __all__ = [
     'SharedAccessSignatureAuthorizationRule',
     'IotHubProperties',
+    'IpFilterRule',
     'EventHubProperties',
     'SharedAccessAuthorizationRule',
     'StorageEndpointProperties',
@@ -82,6 +85,7 @@ __all__ = [
     'IotHubQuotaMetricInfoPaged',
     'SharedAccessSignatureAuthorizationRulePaged',
     'AccessRights',
+    'IpFilterActionType',
     'SBAccessRights',
     'OperationMonitoringLevel',
     'Capabilities',
