@@ -26,7 +26,7 @@
     <SccProvider>SAK</SccProvider>
     <SccAuxPath>SAK</SccAuxPath>
     <SccLocalPath>SAK</SccLocalPath>
-    <SearchPath>azure-common\;azure-servicebus\;azure-servicemanagement-legacy\;azure-mgmt-storage\;azure-mgmt-compute\;azure-mgmt-network\;azure-mgmt-resource\;azure-mgmt-redis\;azure-mgmt-authorization\;azure-mgmt-cdn\;azure-mgmt-logic\;azure-mgmt-notificationhubs\;azure-mgmt-scheduler\;azure-mgmt-web\;azure-graphrbac\;azure-mgmt\;azure-batch\;azure-mgmt-batch\;azure-mgmt-keyvault\;azure-mgmt-dns\;azure-mgmt-trafficmanager\;azure-mgmt-iothub\</SearchPath>
+    <SearchPath>azure-common\;azure-servicebus\;azure-servicemanagement-legacy\;azure-mgmt-storage\;azure-mgmt-compute\;azure-mgmt-network\;azure-mgmt-resource\;azure-mgmt-redis\;azure-mgmt-authorization\;azure-mgmt-cdn\;azure-mgmt-logic\;azure-mgmt-notificationhubs\;azure-mgmt-scheduler\;azure-mgmt-web\;azure-graphrbac\;azure-mgmt\;azure-batch\;azure-mgmt-batch\;azure-mgmt-keyvault\;azure-mgmt-dns\;azure-mgmt-trafficmanager\;azure-mgmt-iothub\;..\autorest\src\client\Python\msrest\;..\autorest\src\client\Python\msrestazure\;azure-mgmt-devtestlabs\;azure-mgmt-servermanager\</SearchPath>
     <EnableNativeCodeDebugging>False</EnableNativeCodeDebugging>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
@@ -539,10 +539,6 @@
     <Compile Include="azure-mgmt-compute\azure\mgmt\compute\operations\virtual_machine_sizes_operations.py" />
     <Compile Include="azure-mgmt-compute\azure\mgmt\compute\operations\__init__.py" />
     <Compile Include="azure-mgmt-compute\azure\mgmt\compute\version.py" />
-    <Compile Include="azure-mgmt-datalake-store\azure\mgmt\datalake\store\account\operations\account_operations.py" />
-    <Compile Include="azure-mgmt-datalake-store\azure\mgmt\datalake\store\account\operations\__init__.py" />
-    <Compile Include="azure-mgmt-datalake-store\azure\mgmt\datalake\store\filesystem\operations\file_system_operations.py" />
-    <Compile Include="azure-mgmt-datalake-store\azure\mgmt\datalake\store\filesystem\operations\__init__.py" />
     <Compile Include="azure-mgmt-devtestlabs\azure\mgmt\devtestlabs\dev_test_labs_client.py" />
     <Compile Include="azure-mgmt-devtestlabs\azure\mgmt\devtestlabs\models\apply_artifacts_request.py" />
     <Compile Include="azure-mgmt-devtestlabs\azure\mgmt\devtestlabs\models\arm_template_info.py" />
@@ -1360,14 +1356,18 @@
     <Compile Include="azure-mgmt\tests\test_mgmt_apps.py" />
     <Compile Include="azure-mgmt\tests\test_mgmt_devtestlabs.py" />
     <Compile Include="azure-mgmt\tests\test_mgmt_dns.py" />
+    <Compile Include="azure-mgmt\tests\test_mgmt_intune.py" />
     <Compile Include="azure-mgmt\tests\test_mgmt_iothub.py" />
     <Compile Include="azure-mgmt\tests\test_mgmt_keyvault.py" />
+    <Compile Include="azure-mgmt\tests\test_mgmt_machinelearning.py" />
+    <Compile Include="azure-mgmt\tests\test_mgmt_media.py" />
     <Compile Include="azure-mgmt\tests\test_mgmt_network.py" />
     <Compile Include="azure-mgmt\tests\test_mgmt_notificationhubs.py" />
     <Compile Include="azure-mgmt\tests\test_mgmt_redis.py" />
     <Compile Include="azure-mgmt\tests\test_mgmt_resource.py" />
     <Compile Include="azure-mgmt\tests\test_mgmt_resource_features.py" />
     <Compile Include="azure-mgmt\tests\test_mgmt_resource_locks.py" />
+    <Compile Include="azure-mgmt\tests\test_mgmt_resource_policy.py" />
     <Compile Include="azure-mgmt\tests\test_mgmt_resource_subscriptions.py" />
     <Compile Include="azure-mgmt\tests\test_mgmt_scheduler.py" />
     <Compile Include="azure-mgmt\tests\test_mgmt_servermanager.py" />
@@ -2014,7 +2014,7 @@
     <Content Include="azure-nspkg\setup.cfg" />
     <Content Include="azure\README.rst" />
     <Content Include="azure\setup.cfg" />
-    <Content Include="ChangeLog.txt" />
+    <Content Include="ChangeLog.rst" />
     <Content Include="CODE_OF_CONDUCT.md" />
     <Content Include="CONTRIBUTING.md" />
     <Content Include="doc\batch.rst" />
