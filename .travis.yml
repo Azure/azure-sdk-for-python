@@ -11,6 +11,8 @@ matrix:
     - os: linux
       python: "3.5"
     - os: linux
+      python: "nightly"
+    - os: linux
       python: "pypy"
 #    - os: linux
 #      python: "pypy3"
