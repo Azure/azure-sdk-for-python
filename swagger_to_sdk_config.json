@@ -91,7 +91,7 @@
         "Namespace": "azure.mgmt.intune",
         "PackageVersion": "0.1.0"
       },
-      "output_dir": "azure-mgmt-intune/azure/mgmt/intune"
+      "output_dir": "unreleased/azure-mgmt-intune/azure/mgmt/intune"
     },  
     "keyvault": {
       "swagger": "arm-keyvault/2015-06-01/swagger/keyvault.json",
@@ -115,7 +115,7 @@
         "Namespace": "azure.mgmt.machinelearning",
         "PackageVersion": "0.1.0"
       },
-      "output_dir": "azure-mgmt-machinelearning/azure/mgmt/machinelearning"
+      "output_dir": "unreleased/azure-mgmt-machinelearning/azure/mgmt/machinelearning"
     },
     "media": {
       "swagger": "arm-mediaservices/2015-10-01/swagger/media.json",
@@ -123,7 +123,7 @@
         "Namespace": "azure.mgmt.media",
         "PackageVersion": "0.1.0"
       },
-      "output_dir": "azure-mgmt-media/azure/mgmt/media"
+      "output_dir": "unreleased/azure-mgmt-media/azure/mgmt/media"
     },  
     "network": {
       "swagger": "arm-network/2016-06-01/swagger/network.json",
