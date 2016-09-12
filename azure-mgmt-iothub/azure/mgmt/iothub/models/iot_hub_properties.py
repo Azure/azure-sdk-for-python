@@ -19,6 +19,9 @@ class IotHubProperties(Model):
     :type authorization_policies: list of
      :class:`SharedAccessSignatureAuthorizationRule
      <azure.mgmt.iothub.models.SharedAccessSignatureAuthorizationRule>`
+    :param ip_filter_rules: The IP filter rules.
+    :type ip_filter_rules: list of :class:`IpFilterRule
+     <azure.mgmt.iothub.models.IpFilterRule>`
     :param host_name: The name of the host.
     :type host_name: str
     :param event_hub_endpoints: The event hub endpoint properties.
@@ -49,6 +52,7 @@ class IotHubProperties(Model):
 
     _attribute_map = {
         'authorization_policies': {'key': 'authorizationPolicies', 'type': '[SharedAccessSignatureAuthorizationRule]'},
+        'ip_filter_rules': {'key': 'ipFilterRules', 'type': '[IpFilterRule]'},
         'host_name': {'key': 'hostName', 'type': 'str'},
         'event_hub_endpoints': {'key': 'eventHubEndpoints', 'type': '{EventHubProperties}'},
         'storage_endpoints': {'key': 'storageEndpoints', 'type': '{StorageEndpointProperties}'},
@@ -60,8 +64,9 @@ class IotHubProperties(Model):
         'features': {'key': 'features', 'type': 'str'},
     }
 
-    def __init__(self, authorization_policies=None, host_name=None, event_hub_endpoints=None, storage_endpoints=None, messaging_endpoints=None, enable_file_upload_notifications=None, cloud_to_device=None, comments=None, operations_monitoring_properties=None, features=None):
+    def __init__(self, authorization_policies=None, ip_filter_rules=None, host_name=None, event_hub_endpoints=None, storage_endpoints=None, messaging_endpoints=None, enable_file_upload_notifications=None, cloud_to_device=None, comments=None, operations_monitoring_properties=None, features=None):
         self.authorization_policies = authorization_policies
+        self.ip_filter_rules = ip_filter_rules
         self.host_name = host_name
         self.event_hub_endpoints = event_hub_endpoints
         self.storage_endpoints = storage_endpoints
