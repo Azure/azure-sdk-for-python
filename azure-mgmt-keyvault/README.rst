@@ -34,7 +34,7 @@ Usage
 =====
 
 For code examples, see `KeyVault Resource Management 
-<https://azure-sdk-for-python.readthedocs.org/en/latest/resourcemanagementkeyvault.html>`__
+<https://azure-sdk-for-python.readthedocs.org/en/latest/sample_azure-mgmt-keyvault.html>`__
 on readthedocs.org.
 
 

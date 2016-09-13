@@ -120,12 +120,17 @@ All documentation of management libraries for Azure are on this website. This in
 * :doc:`Authorization <resourcemanagementauthorization>` : Permissions, roles and more
 * :doc:`Batch<resourcemanagementbatch>` : Manage Batch accounts and applications
 * :doc:`Content Delivery Network<resourcemanagementcdn>` : Profiles, endpoints creation and more
+* :doc:`Cognitive Services<sample_azure-mgmt-cognitiveservices>` : Create CS accounts and more
 * :doc:`Commerce - Billing API<resourcemanagementcommerce>` : RateCard and Usage Billing API
 * :doc:`Compute<resourcemanagementcomputenetwork>` : Create virtual machines and more
 * :doc:`DevTestLabs<sample_azure-mgmt-devtestlabs>` : Create labs and more
-* :doc:`App Service<resourcemanagementapps>` : Manage App plan, Web Apps, Logic Apps and more
+* :doc:`DNS<sample_azure-mgmt-dns>` : Create DNS zone, record set and more
+* :doc:`IoTHub<sample_azure-mgmt-iothub>` : Create IoTHub account and more
+* :doc:`KeyVault<sample_azure-mgmt-keyvault>` : Create vaults and more
+* :doc:`App Service<resourcemanagementapps>` : Create App plan, Web Apps, Logic Apps and more
 * :doc:`Network<resourcemanagementcomputenetwork>` : Create virtual networks, network interfaces, public IPs and more
 * :doc:`Notification Hubs<resourcemanagementnotificationhubs>` : Namespaces, hub creation/deletion and more
+* :doc:`PowerBI Embedded<sample_azure-mgmt-powerbiembedded>` : Create account and more
 * :doc:`Redis Cache<resourcemanagementredis>` : Create cache and more
 * :doc:`Resource Management<resourcemanagement>`:
 
@@ -137,6 +142,7 @@ All documentation of management libraries for Azure are on this website. This in
 * :doc:`Scheduler<resourcemanagementscheduler>` : Create job collections, create job and more
 * :doc:`Server Manager<sample_azure-mgmt-servermanager>` : Create gateways, nodes and more
 * :doc:`Storage<resourcemanagementstorage>` : Create storage accounts, list keys, and more
+* :doc:`Traffic Manager<sample_azure-mgmt-trafficmanager>` : Create endpoints, profiles and more
 
 Azure Runtime
 ^^^^^^^^^^^^^
@@ -242,32 +248,4 @@ Indices and tables
   graphrbac
   servicebus
   
-.. toctree::
-  :maxdepth: 5
-  :glob:
-  :caption: Developer Documentation
-
-  ref/azure.common
-  ref/azure.batch
-  ref/azure.graphrbac
-  ref/azure.mgmt.authorization
-  ref/azure.mgmt.batch
-  ref/azure.mgmt.cdn
-  ref/azure.mgmt.cognitiveservices
-  ref/azure.mgmt.commerce
-  ref/azure.mgmt.compute
-  ref/azure.mgmt.dns
-  ref/azure.mgmt.iothub
-  ref/azure.mgmt.keyvault
-  ref/azure.mgmt.logic
-  ref/azure.mgmt.network
-  ref/azure.mgmt.notificationhubs
-  ref/azure.mgmt.powerbiembedded
-  ref/azure.mgmt.redis
-  ref/azure.mgmt.resource
-  ref/azure.mgmt.scheduler
-  ref/azure.mgmt.storage
-  ref/azure.mgmt.trafficmanager
-  ref/azure.mgmt.web
-  ref/azure.servicebus
-  ref/azure.servicemanagement
+.. include:: autorest_generated_packages.rst

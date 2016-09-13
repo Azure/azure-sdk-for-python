@@ -37,7 +37,7 @@ Usage
 =====
 
 For code examples, see `Web Apps Resource Management 
-<https://azure-sdk-for-python.readthedocs.org/en/latest/resourcemanagementweb.html>`__
+<https://azure-sdk-for-python.readthedocs.org/en/latest/resourcemanagementapps.html>`__
 on readthedocs.org.
 
 

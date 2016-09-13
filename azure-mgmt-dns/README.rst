@@ -37,7 +37,7 @@ Usage
 =====
 
 For code examples, see `DNS
-<https://azure-sdk-for-python.readthedocs.org/en/latest/dns.html>`__
+<https://azure-sdk-for-python.readthedocs.org/en/latest/sample_azure-mgmt-dns.html>`__
 on readthedocs.org.
 
 

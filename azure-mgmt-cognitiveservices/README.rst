@@ -36,8 +36,8 @@ If you see azure==0.11.0 (or any version below 1.0), uninstall it first:
 Usage
 =====
 
-For code examples, see `Commerce
-<https://azure-sdk-for-python.readthedocs.org/en/latest/commerce.html>`__
+For code examples, see `Cognitive Services
+<https://azure-sdk-for-python.readthedocs.org/en/latest/sample_azure-mgmt-cognitiveservices.html>`__
 on readthedocs.org.
 
 
