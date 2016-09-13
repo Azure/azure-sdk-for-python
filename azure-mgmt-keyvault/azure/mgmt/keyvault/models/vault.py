@@ -31,7 +31,7 @@ class Vault(Resource):
     :type tags: dict
     :param properties: Properties of the vault
     :type properties: :class:`VaultProperties
-     <azure.keyvault.models.VaultProperties>`
+     <azure.mgmt.keyvault.models.VaultProperties>`
     """ 
 
     _validation = {
