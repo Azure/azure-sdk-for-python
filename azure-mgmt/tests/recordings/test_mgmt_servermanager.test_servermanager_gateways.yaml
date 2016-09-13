@@ -1,0 +1,137 @@
+interactions:
+- request:
+    body: '{"location": "westus"}'
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['22']
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.5.1 (Windows-10-10.0.14393-SP0) requests/2.11.0 msrest/0.4.3
+          msrest_azure/0.4.2 resourcemanagementclient/0.30.0rc6 Azure-SDK-For-Python]
+      accept-language: [en-US]
+      x-ms-client-request-id: [b5856af8-792e-11e6-b3a7-ecb1d756380e]
+    method: PUT
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_mgmt_servermanager_test_servermanager_gateways26e51529?api-version=2016-02-01
+  response:
+    body: {string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_servermanager_test_servermanager_gateways26e51529","name":"test_mgmt_servermanager_test_servermanager_gateways26e51529","location":"westus","properties":{"provisioningState":"Succeeded"}}'}
+    headers:
+      Cache-Control: [no-cache]
+      Content-Length: ['271']
+      Content-Type: [application/json; charset=utf-8]
+      Date: ['Mon, 12 Sep 2016 21:20:19 GMT']
+      Expires: ['-1']
+      Pragma: [no-cache]
+      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
+      x-ms-correlation-request-id: [a4049036-4dbc-4504-8b4e-9dc152b44c0b]
+      x-ms-ratelimit-remaining-subscription-writes: ['1198']
+      x-ms-request-id: [a4049036-4dbc-4504-8b4e-9dc152b44c0b]
+      x-ms-routing-request-id: ['WESTUS2:20160912T212020Z:a4049036-4dbc-4504-8b4e-9dc152b44c0b']
+    status: {code: 201, message: Created}
+- request:
+    body: '{"location": "centralus"}'
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['25']
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.5.1 (Windows-10-10.0.14393-SP0) requests/2.11.0 msrest/0.4.3
+          msrest_azure/0.4.2 servermanagement/1.0.0 Azure-SDK-For-Python]
+      accept-language: [en-US]
+      x-ms-client-request-id: [b5f160fe-792e-11e6-8c30-ecb1d756380e]
+    method: PUT
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_servermanager_test_servermanager_gateways26e51529/providers/Microsoft.ServerManagement/gateways/pygateway26e51529?api-version=2015-07-01-preview
+  response:
+    body: {string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_mgmt_servermanager_test_servermanager_gateways26e51529/providers/microsoft.servermanagement/gateways/pygateway26e51529","name":"pygateway26e51529","type":"microsoft.servermanagement/gateways","location":"centralus","etag":"W/\"datetime''2016-09-12T21%3A20%3A24.2910614Z''\"","properties":{"created":"2016-09-12T21:20:20.3537754Z","updated":"2016-09-12T21:20:20.3537754Z","autoUpgrade":"On","upgradeMode":"Automatic","desiredVersion":null,"minimumVersion":"1.0.1547.0"}}'}
+    headers:
+      Cache-Control: [no-cache]
+      Content-Type: [application/json; charset=utf-8]
+      Date: ['Mon, 12 Sep 2016 21:20:23 GMT']
+      Expires: ['-1']
+      Pragma: [no-cache]
+      Server: [Microsoft-IIS/8.5]
+      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
+      Transfer-Encoding: [chunked]
+      Vary: [Accept-Encoding]
+      X-AspNet-Version: [4.0.30319]
+      X-Content-Type-Options: [nosniff]
+      X-Powered-By: [ASP.NET]
+      content-length: ['546']
+      x-managementservice-fileversion: [1.0.1645.0]
+      x-ms-correlation-request-id: [f0f82a0c-207a-4f98-a8c8-45d33b02fc32]
+      x-ms-ratelimit-remaining-subscription-writes: ['1198']
+      x-ms-request-id: [f0f82a0c-207a-4f98-a8c8-45d33b02fc32]
+      x-ms-routing-request-id: ['WESTUS2:20160912T212024Z:f0f82a0c-207a-4f98-a8c8-45d33b02fc32']
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.5.1 (Windows-10-10.0.14393-SP0) requests/2.11.0 msrest/0.4.3
+          msrest_azure/0.4.2 servermanagement/1.0.0 Azure-SDK-For-Python]
+      accept-language: [en-US]
+      x-ms-client-request-id: [b7e988f0-792e-11e6-8288-ecb1d756380e]
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_servermanager_test_servermanager_gateways26e51529/providers/Microsoft.ServerManagement/gateways/pygateway26e51529?api-version=2015-07-01-preview
+  response:
+    body: {string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_mgmt_servermanager_test_servermanager_gateways26e51529/providers/microsoft.servermanagement/gateways/pygateway26e51529","name":"pygateway26e51529","type":"microsoft.servermanagement/gateways","location":"centralus","etag":"W/\"datetime''2016-09-12T21%3A20%3A24.2910614Z''\"","properties":{"created":"2016-09-12T21:20:20.3537754Z","updated":"2016-09-12T21:20:20.3537754Z","autoUpgrade":"On","upgradeMode":"Automatic","desiredVersion":null,"minimumVersion":"1.0.1547.0"}}'}
+    headers:
+      Cache-Control: [no-cache]
+      Content-Type: [application/json; charset=utf-8]
+      Date: ['Mon, 12 Sep 2016 21:20:24 GMT']
+      Expires: ['-1']
+      Pragma: [no-cache]
+      Server: [Microsoft-IIS/8.5]
+      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
+      Transfer-Encoding: [chunked]
+      Vary: [Accept-Encoding]
+      X-AspNet-Version: [4.0.30319]
+      X-Content-Type-Options: [nosniff]
+      X-Powered-By: [ASP.NET]
+      content-length: ['546']
+      x-managementservice-fileversion: [1.0.1645.0]
+      x-ms-correlation-request-id: [41ead56f-061b-46b1-b374-ea1ad6745b5c]
+      x-ms-ratelimit-remaining-subscription-reads: ['14997']
+      x-ms-request-id: [41ead56f-061b-46b1-b374-ea1ad6745b5c]
+      x-ms-routing-request-id: ['WESTUS2:20160912T212024Z:41ead56f-061b-46b1-b374-ea1ad6745b5c']
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.5.1 (Windows-10-10.0.14393-SP0) requests/2.11.0 msrest/0.4.3
+          msrest_azure/0.4.2 servermanagement/1.0.0 Azure-SDK-For-Python]
+      accept-language: [en-US]
+      x-ms-client-request-id: [b836c1c2-792e-11e6-8890-ecb1d756380e]
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.ServerManagement/gateways?api-version=2015-07-01-preview
+  response:
+    body: {string: '{"value":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_mgmt_servermanager_test_servermanager_gateways26e51529/providers/microsoft.servermanagement/gateways/pygateway26e51529","name":"pygateway26e51529","type":"microsoft.servermanagement/gateways","location":"centralus","etag":"W/\"datetime''2016-09-12T21%3A20%3A24.2910614Z''\"","properties":{"created":"2016-09-12T21:20:20.3537754Z","updated":"2016-09-12T21:20:20.3537754Z","autoUpgrade":"On","upgradeMode":"Automatic","desiredVersion":null,"minimumVersion":"1.0.1547.0"}}]}'}
+    headers:
+      Cache-Control: [no-cache]
+      Content-Type: [application/json; charset=utf-8]
+      Date: ['Mon, 12 Sep 2016 21:20:24 GMT']
+      Expires: ['-1']
+      Pragma: [no-cache]
+      Server: [Microsoft-IIS/8.5]
+      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
+      Transfer-Encoding: [chunked]
+      Vary: [Accept-Encoding]
+      X-AspNet-Version: [4.0.30319]
+      X-Content-Type-Options: [nosniff]
+      X-Powered-By: [ASP.NET]
+      content-length: ['558']
+      x-managementservice-fileversion: [1.0.1645.0]
+      x-ms-correlation-request-id: [26a97d01-2d27-46d8-9305-7d044fc9d3cc]
+      x-ms-ratelimit-remaining-subscription-reads: ['14997']
+      x-ms-request-id: [26a97d01-2d27-46d8-9305-7d044fc9d3cc]
+      x-ms-routing-request-id: ['WESTUS2:20160912T212025Z:26a97d01-2d27-46d8-9305-7d044fc9d3cc']
+    status: {code: 200, message: OK}
+version: 1

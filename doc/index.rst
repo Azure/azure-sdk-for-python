@@ -122,6 +122,7 @@ All documentation of management libraries for Azure are on this website. This in
 * :doc:`Content Delivery Network<resourcemanagementcdn>` : Profiles, endpoints creation and more
 * :doc:`Commerce - Billing API<resourcemanagementcommerce>` : RateCard and Usage Billing API
 * :doc:`Compute<resourcemanagementcomputenetwork>` : Create virtual machines and more
+* :doc:`DevTestLabs<sample_azure-mgmt-devtestlabs>` : Create labs and more
 * :doc:`App Service<resourcemanagementapps>` : Manage App plan, Web Apps, Logic Apps and more
 * :doc:`Network<resourcemanagementcomputenetwork>` : Create virtual networks, network interfaces, public IPs and more
 * :doc:`Notification Hubs<resourcemanagementnotificationhubs>` : Namespaces, hub creation/deletion and more
@@ -134,6 +135,7 @@ All documentation of management libraries for Azure are on this website. This in
   * subscriptions : manage subscriptions and more
   
 * :doc:`Scheduler<resourcemanagementscheduler>` : Create job collections, create job and more
+* :doc:`Server Manager<sample_azure-mgmt-servermanager>` : Create gateways, nodes and more
 * :doc:`Storage<resourcemanagementstorage>` : Create storage accounts, list keys, and more
 
 Azure Runtime
@@ -229,6 +231,7 @@ Indices and tables
   :caption: Management Documentation
 
   resourcemanagement*
+  sample_*
   Service Management (Legacy) <servicemanagement>
   
 .. toctree::
