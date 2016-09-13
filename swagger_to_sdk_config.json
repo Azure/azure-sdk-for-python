@@ -204,6 +204,14 @@
       },
       "output_dir": "azure-mgmt-servermanager/azure/mgmt/servermanager",
       "generated_relative_base_directory": "servermanagement"
+    },
+    "servicebus": {
+      "swagger": "arm-servicebus/2015-08-01/swagger/servicebus.json",
+      "autorest_options": {
+        "Namespace": "azure.mgmt.servicebus",
+        "PackageVersion": "0.1.0"
+      },
+      "output_dir": "unreleased/azure-mgmt-servicebus/azure/mgmt/servicebus"
     },  
     "scheduler": {
       "swagger": "arm-scheduler/2016-03-01/swagger/scheduler.json",
