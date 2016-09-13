@@ -242,32 +242,4 @@ Indices and tables
   graphrbac
   servicebus
   
-.. toctree::
-  :maxdepth: 5
-  :glob:
-  :caption: Developer Documentation
-
-  ref/azure.common
-  ref/azure.batch
-  ref/azure.graphrbac
-  ref/azure.mgmt.authorization
-  ref/azure.mgmt.batch
-  ref/azure.mgmt.cdn
-  ref/azure.mgmt.cognitiveservices
-  ref/azure.mgmt.commerce
-  ref/azure.mgmt.compute
-  ref/azure.mgmt.dns
-  ref/azure.mgmt.iothub
-  ref/azure.mgmt.keyvault
-  ref/azure.mgmt.logic
-  ref/azure.mgmt.network
-  ref/azure.mgmt.notificationhubs
-  ref/azure.mgmt.powerbiembedded
-  ref/azure.mgmt.redis
-  ref/azure.mgmt.resource
-  ref/azure.mgmt.scheduler
-  ref/azure.mgmt.storage
-  ref/azure.mgmt.trafficmanager
-  ref/azure.mgmt.web
-  ref/azure.servicebus
-  ref/azure.servicemanagement
+.. include:: autorest_generated_packages.rst
