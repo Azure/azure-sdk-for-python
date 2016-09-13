@@ -9,10 +9,19 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .service_bus_management_client import ServiceBusManagementClient
-from .version import VERSION
+from msrest.paging import Paged
 
-__all__ = ['ServiceBusManagementClient']
 
-__version__ = VERSION
+class NamespaceResourcePaged(Paged):
+    """
+    A paging container for iterating over a list of NamespaceResource object
+    """
 
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[NamespaceResource]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(NamespaceResourcePaged, self).__init__(*args, **kwargs)
