@@ -1,0 +1,66 @@
+interactions:
+- request:
+    body: '{"location": "westus"}'
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['22']
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.5.1 (Windows-10-10.0.14393-SP0) requests/2.11.0 msrest/0.4.3
+          msrest_azure/0.4.2 resourcemanagementclient/0.30.0rc6 Azure-SDK-For-Python]
+      accept-language: [en-US]
+      x-ms-client-request-id: [cd32ef90-7913-11e6-8ef5-ecb1d756380e]
+    method: PUT
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_mgmt_devtestlabs_test_devtestlabs34410fc3?api-version=2016-02-01
+  response:
+    body: {string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_devtestlabs_test_devtestlabs34410fc3","name":"test_mgmt_devtestlabs_test_devtestlabs34410fc3","location":"westus","properties":{"provisioningState":"Succeeded"}}'}
+    headers:
+      Cache-Control: [no-cache]
+      Content-Type: [application/json; charset=utf-8]
+      Date: ['Mon, 12 Sep 2016 18:07:43 GMT']
+      Expires: ['-1']
+      Pragma: [no-cache]
+      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
+      Transfer-Encoding: [chunked]
+      Vary: [Accept-Encoding]
+      content-length: ['245']
+      x-ms-correlation-request-id: [e88d056a-1606-436a-a7be-dae9056ef718]
+      x-ms-ratelimit-remaining-subscription-writes: ['1199']
+      x-ms-request-id: [e88d056a-1606-436a-a7be-dae9056ef718]
+      x-ms-routing-request-id: ['WESTUS2:20160912T180743Z:e88d056a-1606-436a-a7be-dae9056ef718']
+    status: {code: 200, message: OK}
+- request:
+    body: '{"location": "westus"}'
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['22']
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.5.1 (Windows-10-10.0.14393-SP0) requests/2.11.0 msrest/0.4.3
+          msrest_azure/0.4.2 devtestlabsclient/1.0.0 Azure-SDK-For-Python]
+      accept-language: [en-US]
+      x-ms-client-request-id: [cd9c2dae-7913-11e6-b050-ecb1d756380e]
+    method: PUT
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_devtestlabs_test_devtestlabs34410fc3/providers/Microsoft.DevTestLab/labs/pylab34410fc3?api-version=2016-05-15
+  response:
+    body: {string: '{"properties":{"vaultName":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_devtestlabs_test_devtestlabs34410fc3/providers/Microsoft.KeyVault/vaults/pylab34410fc35447","labStorageType":"Standard","createdDate":"2016-09-12T18:06:00.4772532+00:00","premiumDataDisks":"Disabled","provisioningState":"Succeeded","uniqueIdentifier":"2d7bd2ff-95a9-4022-b5f6-527f01e55ee4"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_mgmt_devtestlabs_test_devtestlabs34410fc3/providers/microsoft.devtestlab/labs/pylab34410fc3","name":"pylab34410fc3","type":"Microsoft.DevTestLab/labs","location":"westus"}'}
+    headers:
+      Cache-Control: [no-cache]
+      Content-Length: ['645']
+      Content-Type: [application/json; charset=utf-8]
+      Date: ['Mon, 12 Sep 2016 18:07:44 GMT']
+      Expires: ['-1']
+      Pragma: [no-cache]
+      Server: [Microsoft-IIS/8.0]
+      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
+      X-AspNet-Version: [4.0.30319]
+      X-Powered-By: [ASP.NET]
+      x-ms-correlation-request-id: [b5158dfd-9cf7-489d-8b1f-8529f8c3cd22]
+      x-ms-ratelimit-remaining-subscription-writes: ['1198']
+      x-ms-request-id: [b5158dfd-9cf7-489d-8b1f-8529f8c3cd22]
+      x-ms-routing-request-id: ['WESTUS2:20160912T180744Z:b5158dfd-9cf7-489d-8b1f-8529f8c3cd22']
+      x-rp-requesturi: ['https://westus.rp1.vsdth.visualstudio.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_devtestlabs_test_devtestlabs34410fc3/providers/Microsoft.DevTestLab/labs/pylab34410fc3?api-version=2016-05-15']
+    status: {code: 201, message: Created}
+version: 1

@@ -10,6 +10,12 @@ matrix:
       python: "3.4"
     - os: linux
       python: "3.5"
+    - os: linux
+      python: "nightly"
+    - os: linux
+      python: "pypy"
+#    - os: linux
+#      python: "pypy3"
     - os: osx
       osx_image: xcode7
       language: generic
@@ -19,6 +25,32 @@ before_install:
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew install python3; fi
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then python3 -m venv venv; fi
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then source venv/bin/activate; fi
+  - |
+      if [ "$TRAVIS_PYTHON_VERSION" = "pypy" ]; then
+        export PYENV_ROOT="$HOME/.pyenv"
+        if [ -f "$PYENV_ROOT/bin/pyenv" ]; then
+          pushd "$PYENV_ROOT" && git pull && popd
+        else
+          rm -rf "$PYENV_ROOT" && git clone --depth 1 https://github.com/yyuu/pyenv.git "$PYENV_ROOT"
+        fi
+        export PYPY_VERSION="5.4"
+        "$PYENV_ROOT/bin/pyenv" install --skip-existing "pypy-$PYPY_VERSION"
+        virtualenv --python="$PYENV_ROOT/versions/pypy-$PYPY_VERSION/bin/python" "$HOME/virtualenvs/pypy-$PYPY_VERSION"
+        source "$HOME/virtualenvs/pypy-$PYPY_VERSION/bin/activate"
+      fi
+#  - |
+#      if [ "$TRAVIS_PYTHON_VERSION" = "pypy3" ]; then
+#        export PYENV_ROOT="$HOME/.pyenv"
+#        if [ -f "$PYENV_ROOT/bin/pyenv" ]; then
+#          pushd "$PYENV_ROOT" && git pull && popd
+#        else
+#          rm -rf "$PYENV_ROOT" && git clone --depth 1 https://github.com/yyuu/pyenv.git "$PYENV_ROOT"
+#        fi
+#        export PYPY3_VERSION="5.2-alpha1"
+#        "$PYENV_ROOT/bin/pyenv" install --skip-existing "pypy3.3-$PYPY3_VERSION"
+#        virtualenv --python="$PYENV_ROOT/versions/pypy3.3-$PYPY3_VERSION/bin/python" "$HOME/virtualenvs/pypy3.3-$PYPY3_VERSION"
+#        source "$HOME/virtualenvs/pypy3.3-$PYPY3_VERSION/bin/activate"
+#      fi
 install:
   - pip install -U pip
   - pip install -r requirements.txt

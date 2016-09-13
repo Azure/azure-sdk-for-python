@@ -37,7 +37,7 @@ Usage
 =====
 
 For code examples, see `Graph RBAC Resource Management 
-<https://azure-sdk-for-python.readthedocs.org/en/latest/resourcemanagementrgraphbac.html>`__
+<https://azure-sdk-for-python.readthedocs.org/en/latest/graphrbac.html>`__
 on readthedocs.org.
 
 
