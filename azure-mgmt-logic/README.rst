@@ -31,7 +31,7 @@ Usage
 =====
 
 For code examples, see `Logic Apps Resource Management 
-<https://azure-sdk-for-python.readthedocs.org/en/latest/resourcemanagementlogic.html>`__
+<https://azure-sdk-for-python.readthedocs.org/en/latest/resourcemanagementapps.html>`__
 on readthedocs.org.
 
 
