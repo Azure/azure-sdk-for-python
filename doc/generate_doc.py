@@ -4,6 +4,7 @@ import json
 from pathlib import Path
 
 CONFIG_FILE = '../swagger_to_sdk_config.json'
+GENERATED_PACKAGES_LIST_FILE = 'autorest_generated_packages.rst'
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -34,10 +35,23 @@ Module contents
     :undoc-members:
     :show-inheritance:
 """
+
+
+RST_AUTODOC_TOCTREE = """.. toctree::
+  :maxdepth: 5
+  :glob:
+  :caption: Developer Documentation
+
+  ref/azure.common
+{generated_packages}
+  ref/azure.servicebus
+  ref/azure.servicemanagement  
+"""
 def generate_doc(config_path, project_pattern=None):
 
     with Path(config_path).open() as config_fd:
         config = json.load(config_fd)
+    package_list_path = []
 
     for project, local_conf in config["projects"].items():
         if project_pattern and not any(project.startswith(p) for p in project_pattern):
@@ -51,10 +65,13 @@ def generate_doc(config_path, project_pattern=None):
         _LOGGER.info("Working on %s", project)
         namespace = local_conf['autorest_options']['Namespace']
 
-        with Path('./ref/{}.rst'.format(namespace)).open('w') as rst_file:
+        rst_path = './ref/{}.rst'.format(namespace) 
+        with Path(rst_path).open('w') as rst_file:
             rst_file.write(PACKAGE_TEMPLATE.format(
                 namespace=namespace
             ))
+
+        package_list_path.append(rst_path) 
 
         for module in ["operations", "models"]:
             with Path('./ref/{}.{}.rst'.format(namespace, module)).open('w') as rst_file:
@@ -62,6 +79,10 @@ def generate_doc(config_path, project_pattern=None):
                     namespace=namespace,
                     submodule=module
                 ))
+    package_list_path.sort()
+    with Path(GENERATED_PACKAGES_LIST_FILE).open('w') as generate_file_list_fd:
+        lines_to_write = "\n".join(["  "+package for package in package_list_path])
+        generate_file_list_fd.write(RST_AUTODOC_TOCTREE.format(generated_packages=lines_to_write))
 
 def main():
     parser = argparse.ArgumentParser(
