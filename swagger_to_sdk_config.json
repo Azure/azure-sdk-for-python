@@ -54,6 +54,14 @@
       },
       "output_dir": "azure-mgmt-compute/azure/mgmt/compute"
     },
+    "devtestlabs": {
+      "swagger": "arm-devtestlabs/2016-05-15/swagger/DTL.json",
+      "autorest_options": {
+        "Namespace": "azure.mgmt.devtestlabs",
+        "PackageVersion": "1.0.0"
+      },
+      "output_dir": "azure-mgmt-devtestlabs/azure/mgmt/devtestlabs"
+    },
     "dns": {
       "swagger": "arm-dns/2016-04-01/swagger/dns.json",
       "autorest_options": {
@@ -77,10 +85,18 @@
       },
       "output_dir": "azure-mgmt-iothub/azure/mgmt/iothub"
     },
+    "intune": {
+      "swagger": "arm-intune/2015-01-14-preview/swagger/intune.json",
+      "autorest_options": {
+        "Namespace": "azure.mgmt.intune",
+        "PackageVersion": "0.1.0"
+      },
+      "output_dir": "unreleased/azure-mgmt-intune/azure/mgmt/intune"
+    },  
     "keyvault": {
       "swagger": "arm-keyvault/2015-06-01/swagger/keyvault.json",
       "autorest_options": {
-        "Namespace": "azure.keyvault"
+        "Namespace": "azure.mgmt.keyvault"
       },
       "output_dir": "azure-mgmt-keyvault/azure/mgmt/keyvault"
     },
@@ -93,6 +109,22 @@
       },
       "output_dir": "azure-mgmt-logic/azure/mgmt/logic"
     },
+    "machinelearning": {
+      "swagger": "arm-machinelearning/2016-05-01-preview/swagger/webservices.json",
+      "autorest_options": {
+        "Namespace": "azure.mgmt.machinelearning",
+        "PackageVersion": "0.1.0"
+      },
+      "output_dir": "unreleased/azure-mgmt-machinelearning/azure/mgmt/machinelearning"
+    },
+    "media": {
+      "swagger": "arm-mediaservices/2015-10-01/swagger/media.json",
+      "autorest_options": {
+        "Namespace": "azure.mgmt.media",
+        "PackageVersion": "0.1.0"
+      },
+      "output_dir": "unreleased/azure-mgmt-media/azure/mgmt/media"
+    },  
     "network": {
       "swagger": "arm-network/2016-06-01/swagger/network.json",
       "autorest_options": {
@@ -132,7 +164,7 @@
     "resources.features": {
       "swagger": "arm-resources/features/2015-12-01/swagger/features.json",
       "autorest_options": {
-        "Namespace": "azure.mgmt.resource.feature"
+        "Namespace": "azure.mgmt.resource.features"
       },
       "output_dir": "azure-mgmt-resource/azure/mgmt/resource/features"
     },
@@ -164,6 +196,15 @@
       },
       "output_dir": "unreleased/azure-mgmt-search/azure/mgmt/search"
     },
+    "servermanager": {
+      "swagger": "arm-servermanagement/2015-07-01-preview/servermanagement.json",
+      "autorest_options": {
+        "Namespace": "azure.mgmt.servermanager",
+        "PackageVersion": "1.0.0"
+      },
+      "output_dir": "azure-mgmt-servermanager/azure/mgmt/servermanager",
+      "generated_relative_base_directory": "servermanagement"
+    },  
     "scheduler": {
       "swagger": "arm-scheduler/2016-03-01/swagger/scheduler.json",
       "autorest_options": {

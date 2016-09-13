@@ -71,7 +71,6 @@ setup(
     zip_safe=False,
     packages=find_packages(),
     install_requires=[
-        'azure-mgmt-nspkg',
         'azure-common[autorest]==1.1.4',
     ],
 )
