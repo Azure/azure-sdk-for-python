@@ -69,6 +69,14 @@
       },
       "output_dir": "azure-mgmt-dns/azure/mgmt/dns"
     },
+    "eventhub": {
+      "swagger": "arm-eventhub/2015-08-01/swagger/EventHub.json",
+      "autorest_options": {
+        "Namespace": "azure.mgmt.eventhub",
+        "PackageVersion": "0.1.0"
+      },
+      "output_dir": "unreleased/azure-mgmt-eventhub/azure/mgmt/eventhub"
+    },
     "graphrbac": {
       "swagger": "arm-graphrbac/compositeGraphRbacManagementClient.json",
       "autorest_options": {
