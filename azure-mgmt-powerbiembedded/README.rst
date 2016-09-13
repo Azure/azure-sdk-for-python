@@ -37,7 +37,7 @@ Usage
 =====
 
 For code examples, see `PowerBI Embedded
-<https://azure-sdk-for-python.readthedocs.org/en/latest/powerbiembedded.html>`__
+<https://azure-sdk-for-python.readthedocs.org/en/latest/sample_azure-mgmt-powerbiembedded.html>`__
 on readthedocs.org.
 
 
