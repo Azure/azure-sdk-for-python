@@ -9,10 +9,19 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .service_bus_management_client import ServiceBusManagementClient
-from .version import VERSION
+from msrest.paging import Paged
 
-__all__ = ['ServiceBusManagementClient']
 
-__version__ = VERSION
+class SubscriptionResourcePaged(Paged):
+    """
+    A paging container for iterating over a list of SubscriptionResource object
+    """
 
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[SubscriptionResource]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(SubscriptionResourcePaged, self).__init__(*args, **kwargs)

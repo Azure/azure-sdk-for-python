@@ -9,10 +9,19 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .service_bus_management_client import ServiceBusManagementClient
-from .version import VERSION
+from msrest.paging import Paged
 
-__all__ = ['ServiceBusManagementClient']
 
-__version__ = VERSION
+class TopicResourcePaged(Paged):
+    """
+    A paging container for iterating over a list of TopicResource object
+    """
 
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[TopicResource]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(TopicResourcePaged, self).__init__(*args, **kwargs)

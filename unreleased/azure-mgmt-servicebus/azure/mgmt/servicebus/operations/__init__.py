@@ -9,10 +9,14 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .service_bus_management_client import ServiceBusManagementClient
-from .version import VERSION
+from .namespaces_operations import NamespacesOperations
+from .queues_operations import QueuesOperations
+from .topics_operations import TopicsOperations
+from .subscriptions_operations import SubscriptionsOperations
 
-__all__ = ['ServiceBusManagementClient']
-
-__version__ = VERSION
-
+__all__ = [
+    'NamespacesOperations',
+    'QueuesOperations',
+    'TopicsOperations',
+    'SubscriptionsOperations',
+]
