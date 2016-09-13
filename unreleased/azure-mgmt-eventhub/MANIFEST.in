@@ -1,0 +1,3 @@
+include *.rst
+exclude azure/__init__.py
+exclude azure/mgmt/__init__.py
