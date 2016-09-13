@@ -37,7 +37,7 @@ Usage
 =====
 
 For code examples, see `Commerce
-<https://azure-sdk-for-python.readthedocs.org/en/latest/commerce.html>`__
+<https://azure-sdk-for-python.readthedocs.org/en/latest/resourcemanagementcommerce.html>`__
 on readthedocs.org.
 
 
