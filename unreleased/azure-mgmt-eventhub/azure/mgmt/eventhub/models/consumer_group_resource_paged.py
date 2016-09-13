@@ -9,10 +9,19 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .event_hub_management_client import EventHubManagementClient
-from .version import VERSION
+from msrest.paging import Paged
 
-__all__ = ['EventHubManagementClient']
 
-__version__ = VERSION
+class ConsumerGroupResourcePaged(Paged):
+    """
+    A paging container for iterating over a list of ConsumerGroupResource object
+    """
 
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[ConsumerGroupResource]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(ConsumerGroupResourcePaged, self).__init__(*args, **kwargs)

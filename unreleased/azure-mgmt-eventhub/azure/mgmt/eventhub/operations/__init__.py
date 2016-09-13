@@ -9,10 +9,12 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .event_hub_management_client import EventHubManagementClient
-from .version import VERSION
+from .namespaces_operations import NamespacesOperations
+from .event_hubs_operations import EventHubsOperations
+from .consumer_groups_operations import ConsumerGroupsOperations
 
-__all__ = ['EventHubManagementClient']
-
-__version__ = VERSION
-
+__all__ = [
+    'NamespacesOperations',
+    'EventHubsOperations',
+    'ConsumerGroupsOperations',
+]

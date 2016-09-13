@@ -9,10 +9,5 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .event_hub_management_client import EventHubManagementClient
-from .version import VERSION
-
-__all__ = ['EventHubManagementClient']
-
-__version__ = VERSION
+VERSION = "0.1.0"
 
