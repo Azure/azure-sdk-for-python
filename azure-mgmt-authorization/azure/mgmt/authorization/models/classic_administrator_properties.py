@@ -13,8 +13,7 @@ from msrest.serialization import Model
 
 
 class ClassicAdministratorProperties(Model):
-    """
-    Classic Administrator properties.
+    """Classic Administrator properties.
 
     :param email_address: Gets or sets the email address
     :type email_address: str
