@@ -46,6 +46,8 @@ class StatusesDefault(Resource):
     :vartype wipe_pending_apps: int
     :ivar wipe_succeeded_apps:
     :vartype wipe_succeeded_apps: int
+    :ivar nextlink: Gets the URL to get the next set of results.
+    :vartype nextlink: str
     """ 
 
     _validation = {
@@ -61,6 +63,7 @@ class StatusesDefault(Resource):
         'wipe_failed_apps': {'readonly': True},
         'wipe_pending_apps': {'readonly': True},
         'wipe_succeeded_apps': {'readonly': True},
+        'nextlink': {'readonly': True},
     }
 
     _attribute_map = {
@@ -78,6 +81,7 @@ class StatusesDefault(Resource):
         'wipe_failed_apps': {'key': 'properties.wipeFailedApps', 'type': 'int'},
         'wipe_pending_apps': {'key': 'properties.wipePendingApps', 'type': 'int'},
         'wipe_succeeded_apps': {'key': 'properties.wipeSucceededApps', 'type': 'int'},
+        'nextlink': {'key': 'nextlink', 'type': 'str'},
     }
 
     def __init__(self, tags=None, location=None):
@@ -91,3 +95,4 @@ class StatusesDefault(Resource):
         self.wipe_failed_apps = None
         self.wipe_pending_apps = None
         self.wipe_succeeded_apps = None
+        self.nextlink = None
