@@ -6,7 +6,7 @@ Release History
 0.30.0rc6 (2016-09-14)
 ++++++++++++++++++++++
 
-** bugfixes **
+**Bugfixes**
 
 * 'list' methods returned only 100 entries (#653)
 
