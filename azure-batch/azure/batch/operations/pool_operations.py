@@ -1010,7 +1010,8 @@ class PoolOperations(object):
 
     def evaluate_auto_scale(
             self, pool_id, auto_scale_formula, pool_evaluate_auto_scale_options=None, custom_headers=None, raw=False, **operation_config):
-        """Gets the result of evaluating an automatic scaling formula on the pool.
+        """Gets the result of evaluating an automatic scaling formula on the
+        pool.
 
         :param pool_id: The id of the pool on which to evaluate the automatic
          scaling formula.
