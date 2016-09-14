@@ -72,7 +72,7 @@ azure-mgmt-compute                    0.30.0rc6 Installed by ``azure`` 2.0.0rc6
 azure-mgmt-network                    0.30.0rc6 Installed by ``azure`` 2.0.0rc6
 azure-mgmt-storage                    0.30.0rc6 Installed by ``azure`` 2.0.0rc6
 azure-mgmt-keyvault                   0.30.0rc6 Installed by ``azure`` 2.0.0rc6
-azure-graphrbac                       0.30.0rc5
+azure-graphrbac                       0.30.0rc6
 azure-mgmt-authorization              0.30.0rc5
 azure-mgmt-cdn                        0.30.0rc6
 azure-mgmt-cognitiveservices          0.30.0rc6
