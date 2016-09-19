@@ -21,10 +21,11 @@ class MgmtKeyVaultTest(AzureMgmtTestCase):
         self.keyvault_client = self.create_mgmt_client(
             azure.mgmt.keyvault.KeyVaultManagementClient
         )
+        if not self.is_playback():
+            self.create_resource_group()
 
     @record
     def test_vaults_operations(self):
-        self.create_resource_group()
         account_name = self.get_resource_name('pykv')
 
         vault = self.keyvault_client.vaults.create_or_update(

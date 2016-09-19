@@ -19,11 +19,11 @@ class MgmtSchedulerTest(AzureMgmtTestCase):
         self.scheduler_client = self.create_mgmt_client(
             azure.mgmt.scheduler.SchedulerManagementClient
         )
+        if not self.is_playback():
+            self.create_resource_group()
 
     @record
     def test_scheduler(self):
-        self.create_resource_group()
-
         account_name = self.get_resource_name('pyarmscheduler')
 
         jobcollection_name = "myjobcollection"
