@@ -28,10 +28,11 @@ class MgmtMachineLearningTest(AzureMgmtTestCase):
         self.client = self.create_mgmt_client(
             azure.mgmt.machinelearning.AzureMLWebServicesManagementClient
         )
+        if not self.is_playback():
+            self.create_resource_group()
 
     @record
     def test_ml(self):
-        self.create_resource_group()
         region = 'southcentralus'
 
         # Create a storage account and get keys
