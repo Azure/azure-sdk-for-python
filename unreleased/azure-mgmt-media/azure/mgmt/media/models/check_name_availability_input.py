@@ -15,14 +15,19 @@ from msrest.serialization import Model
 class CheckNameAvailabilityInput(Model):
     """The request body for CheckNameAvailability API.
 
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
     :param name: The name of the resource. A name must be globally unique.
     :type name: str
-    :param type: Specifies the type of the resource.
-    :type type: str
+    :ivar type: Specifies the type of the resource. Default value:
+     "mediaservices" .
+    :vartype type: str
     """ 
 
     _validation = {
-        'name': {'max_length': 24, 'min_length': 3, 'pattern': '^[a-z0-9]'},
+        'name': {'required': True, 'max_length': 24, 'min_length': 3, 'pattern': '^[a-z0-9]'},
+        'type': {'required': True, 'constant': True},
     }
 
     _attribute_map = {
@@ -30,6 +35,7 @@ class CheckNameAvailabilityInput(Model):
         'type': {'key': 'type', 'type': 'str'},
     }
 
-    def __init__(self, name=None, type=None):
+    type = "mediaservices"
+
+    def __init__(self, name):
         self.name = name
-        self.type = type
