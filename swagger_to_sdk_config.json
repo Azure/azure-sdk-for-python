@@ -184,7 +184,7 @@
       "output_dir": "azure-mgmt-resource/azure/mgmt/resource/features"
     },
     "resources.resources": {
-      "swagger": "arm-resources/resources/2016-02-01/swagger/resources.json",
+      "swagger": "arm-resources/resources/2016-09-01/swagger/resources.json",
       "autorest_options": {
         "Namespace": "azure.mgmt.resource.resources"
       },
