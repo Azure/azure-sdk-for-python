@@ -37,7 +37,7 @@ class MgmtResourceTest(AzureMgmtTestCase):
 
         # List
         tags = list(self.resource_client.tags.list())
-        self.assertEqual(len(tags), 1)
+        self.assertGreater(len(tags), 0)
         self.assertTrue(all(hasattr(v, 'tag_name') for v in tags))
 
         # Delete value
