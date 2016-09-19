@@ -52,23 +52,7 @@ credentials you created in the previous section.
     )
     resource_client.providers.register('Microsoft.KeyVault')
 
-Create a vault
---------------
+Samples usage
+-------------
 
-.. code:: python
-
-	vault = kv_client.vaults.create_or_update(
-		'MyResourceGroup',
-		'pykv',
-		{
-			'location': 'westus',
-			'properties': {
-				'sku': {
-					'name': 'standard'
-				},
-				# Your tenant GUID
-				'tenant_id': '6819f86e-5d41-47b0-9297-334f33d7922d',
-				'access_policies': []
-			}
-		}
-	)
+https://github.com/Azure-Samples/key-vault-python-manage
