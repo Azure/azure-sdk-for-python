@@ -208,7 +208,7 @@ class ResourcesOperations(object):
         :type resource_type: str
         :param resource_name: Resource identity.
         :type resource_name: str
-        :param api_version:
+        :param api_version: Api version to use.
         :type api_version: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -275,7 +275,7 @@ class ResourcesOperations(object):
         :type resource_type: str
         :param resource_name: Resource identity.
         :type resource_name: str
-        :param api_version:
+        :param api_version: Api version to use.
         :type api_version: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -340,7 +340,7 @@ class ResourcesOperations(object):
         :type resource_type: str
         :param resource_name: Resource identity.
         :type resource_name: str
-        :param api_version:
+        :param api_version: Api version to use.
         :type api_version: str
         :param parameters: Create or update resource parameters.
         :type parameters: :class:`GenericResource
@@ -422,7 +422,7 @@ class ResourcesOperations(object):
         :type resource_type: str
         :param resource_name: Resource identity.
         :type resource_name: str
-        :param api_version:
+        :param api_version: Api version to use.
         :type api_version: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the

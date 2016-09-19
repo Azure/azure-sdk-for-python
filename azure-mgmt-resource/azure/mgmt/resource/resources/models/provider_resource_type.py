@@ -25,6 +25,9 @@ class ProviderResourceType(Model):
      <azure.mgmt.resource.resources.models.AliasType>`
     :param api_versions: The api version.
     :type api_versions: list of str
+    :param zone_mappings: The zone mappings supported by this resource type.
+    :type zone_mappings: list of :class:`ZoneMappingType
+     <azure.mgmt.resource.resources.models.ZoneMappingType>`
     :param properties: The properties.
     :type properties: dict
     """ 
@@ -34,12 +37,14 @@ class ProviderResourceType(Model):
         'locations': {'key': 'locations', 'type': '[str]'},
         'aliases': {'key': 'aliases', 'type': '[AliasType]'},
         'api_versions': {'key': 'apiVersions', 'type': '[str]'},
+        'zone_mappings': {'key': 'zoneMappings', 'type': '[ZoneMappingType]'},
         'properties': {'key': 'properties', 'type': '{str}'},
     }
 
-    def __init__(self, resource_type=None, locations=None, aliases=None, api_versions=None, properties=None):
+    def __init__(self, resource_type=None, locations=None, aliases=None, api_versions=None, zone_mappings=None, properties=None):
         self.resource_type = resource_type
         self.locations = locations
         self.aliases = aliases
         self.api_versions = api_versions
+        self.zone_mappings = zone_mappings
         self.properties = properties
