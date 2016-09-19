@@ -12,21 +12,20 @@
 from msrest.serialization import Model
 
 
-class AliasType(Model):
-    """The alias type. .
+class ZoneMappingType(Model):
+    """Zone mapping type. .
 
-    :param name: The alias name.
-    :type name: str
-    :param paths: The paths for an alias.
-    :type paths: list of :class:`AliasPathType
-     <azure.mgmt.resource.resources.models.AliasPathType>`
+    :param location: The location of this zone mapping.
+    :type location: str
+    :param zones: The zones in this zone mapping.
+    :type zones: list of str
     """ 
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'paths': {'key': 'paths', 'type': '[AliasPathType]'},
+        'location': {'key': 'location', 'type': 'str'},
+        'zones': {'key': 'zones', 'type': '[str]'},
     }
 
-    def __init__(self, name=None, paths=None):
-        self.name = name
-        self.paths = paths
+    def __init__(self, location=None, zones=None):
+        self.location = location
+        self.zones = zones
