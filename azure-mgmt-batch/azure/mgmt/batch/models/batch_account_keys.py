@@ -12,8 +12,8 @@
 from msrest.serialization import Model
 
 
-class BatchAccountListKeyResult(Model):
-    """Values returned by the GetKeys operation.
+class BatchAccountKeys(Model):
+    """A set of Azure Batch account keys.
 
     :param primary: The primary key associated with the account.
     :type primary: str

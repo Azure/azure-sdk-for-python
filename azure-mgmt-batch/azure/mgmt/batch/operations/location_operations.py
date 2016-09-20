@@ -16,8 +16,8 @@ import uuid
 from .. import models
 
 
-class SubscriptionOperations(object):
-    """SubscriptionOperations operations.
+class LocationOperations(object):
+    """LocationOperations operations.
 
     :param client: Client for service requests.
     :param config: Configuration of service client.
@@ -33,9 +33,10 @@ class SubscriptionOperations(object):
 
         self.config = config
 
-    def get_subscription_quotas(
+    def get_quotas(
             self, location_name, custom_headers=None, raw=False, **operation_config):
-        """Gets the Batch service quotas for the specified suscription.
+        """Gets the Batch service quotas for the specified subscription at the
+        given location.
 
         :param location_name: The desired region for the quotas.
         :type location_name: str
@@ -44,8 +45,8 @@ class SubscriptionOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`SubscriptionQuotasGetResult
-         <azure.mgmt.batch.models.SubscriptionQuotasGetResult>`
+        :rtype: :class:`BatchLocationQuota
+         <azure.mgmt.batch.models.BatchLocationQuota>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -83,7 +84,7 @@ class SubscriptionOperations(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('SubscriptionQuotasGetResult', response)
+            deserialized = self._deserialize('BatchLocationQuota', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)

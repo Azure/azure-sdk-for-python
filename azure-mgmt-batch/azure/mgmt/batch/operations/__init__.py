@@ -9,12 +9,14 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .account_operations import AccountOperations
+from .batch_account_operations import BatchAccountOperations
+from .application_package_operations import ApplicationPackageOperations
 from .application_operations import ApplicationOperations
-from .subscription_operations import SubscriptionOperations
+from .location_operations import LocationOperations
 
 __all__ = [
-    'AccountOperations',
+    'BatchAccountOperations',
+    'ApplicationPackageOperations',
     'ApplicationOperations',
-    'SubscriptionOperations',
+    'LocationOperations',
 ]
