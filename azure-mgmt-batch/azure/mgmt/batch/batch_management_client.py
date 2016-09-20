@@ -13,9 +13,10 @@ from msrest.service_client import ServiceClient
 from msrest import Serializer, Deserializer
 from msrestazure import AzureConfiguration
 from .version import VERSION
-from .operations.account_operations import AccountOperations
+from .operations.batch_account_operations import BatchAccountOperations
+from .operations.application_package_operations import ApplicationPackageOperations
 from .operations.application_operations import ApplicationOperations
-from .operations.subscription_operations import SubscriptionOperations
+from .operations.location_operations import LocationOperations
 from . import models
 
 
@@ -82,12 +83,14 @@ class BatchManagementClient(object):
     :ivar config: Configuration for client.
     :vartype config: BatchManagementClientConfiguration
 
-    :ivar account: Account operations
-    :vartype account: .operations.AccountOperations
+    :ivar batch_account: BatchAccount operations
+    :vartype batch_account: .operations.BatchAccountOperations
+    :ivar application_package: ApplicationPackage operations
+    :vartype application_package: .operations.ApplicationPackageOperations
     :ivar application: Application operations
     :vartype application: .operations.ApplicationOperations
-    :ivar subscription: Subscription operations
-    :vartype subscription: .operations.SubscriptionOperations
+    :ivar location: Location operations
+    :vartype location: .operations.LocationOperations
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
@@ -122,9 +125,11 @@ class BatchManagementClient(object):
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
 
-        self.account = AccountOperations(
+        self.batch_account = BatchAccountOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.application_package = ApplicationPackageOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.application = ApplicationOperations(
             self._client, self.config, self._serialize, self._deserialize)
-        self.subscription = SubscriptionOperations(
+        self.location = LocationOperations(
             self._client, self.config, self._serialize, self._deserialize)

@@ -12,16 +12,16 @@
 from msrest.paging import Paged
 
 
-class AccountResourcePaged(Paged):
+class BatchAccountPaged(Paged):
     """
-    A paging container for iterating over a list of AccountResource object
+    A paging container for iterating over a list of BatchAccount object
     """
 
     _attribute_map = {
         'next_link': {'key': 'nextLink', 'type': 'str'},
-        'current_page': {'key': 'value', 'type': '[AccountResource]'}
+        'current_page': {'key': 'value', 'type': '[BatchAccount]'}
     }
 
     def __init__(self, *args, **kwargs):
 
-        super(AccountResourcePaged, self).__init__(*args, **kwargs)
+        super(BatchAccountPaged, self).__init__(*args, **kwargs)
