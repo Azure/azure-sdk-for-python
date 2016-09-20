@@ -12,7 +12,7 @@
 from enum import Enum
 
 
-class AccountProvisioningState(Enum):
+class ProvisioningState(Enum):
 
     invalid = "Invalid"
     creating = "Creating"

@@ -12,24 +12,21 @@
 from .auto_storage_base_properties import AutoStorageBaseProperties
 from .batch_account_create_parameters import BatchAccountCreateParameters
 from .auto_storage_properties import AutoStorageProperties
-from .account_resource import AccountResource
+from .batch_account import BatchAccount
 from .batch_account_update_parameters import BatchAccountUpdateParameters
 from .batch_account_regenerate_key_parameters import BatchAccountRegenerateKeyParameters
-from .batch_account_regenerate_key_result import BatchAccountRegenerateKeyResult
-from .batch_account_list_key_result import BatchAccountListKeyResult
+from .batch_account_keys import BatchAccountKeys
 from .activate_application_package_parameters import ActivateApplicationPackageParameters
 from .add_application_parameters import AddApplicationParameters
-from .add_application_package_result import AddApplicationPackageResult
-from .application_package import ApplicationPackage
 from .application import Application
-from .get_application_package_result import GetApplicationPackageResult
+from .application_package import ApplicationPackage
 from .update_application_parameters import UpdateApplicationParameters
-from .subscription_quotas_get_result import SubscriptionQuotasGetResult
+from .batch_location_quota import BatchLocationQuota
 from .resource import Resource
-from .account_resource_paged import AccountResourcePaged
+from .batch_account_paged import BatchAccountPaged
 from .application_paged import ApplicationPaged
 from .batch_management_client_enums import (
-    AccountProvisioningState,
+    ProvisioningState,
     AccountKeyType,
     PackageState,
 )
@@ -38,23 +35,20 @@ __all__ = [
     'AutoStorageBaseProperties',
     'BatchAccountCreateParameters',
     'AutoStorageProperties',
-    'AccountResource',
+    'BatchAccount',
     'BatchAccountUpdateParameters',
     'BatchAccountRegenerateKeyParameters',
-    'BatchAccountRegenerateKeyResult',
-    'BatchAccountListKeyResult',
+    'BatchAccountKeys',
     'ActivateApplicationPackageParameters',
     'AddApplicationParameters',
-    'AddApplicationPackageResult',
-    'ApplicationPackage',
     'Application',
-    'GetApplicationPackageResult',
+    'ApplicationPackage',
     'UpdateApplicationParameters',
-    'SubscriptionQuotasGetResult',
+    'BatchLocationQuota',
     'Resource',
-    'AccountResourcePaged',
+    'BatchAccountPaged',
     'ApplicationPaged',
-    'AccountProvisioningState',
+    'ProvisioningState',
     'AccountKeyType',
     'PackageState',
 ]
