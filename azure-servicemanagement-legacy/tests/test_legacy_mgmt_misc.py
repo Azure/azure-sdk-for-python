@@ -2260,6 +2260,11 @@ class LegacyMgmtMiscTest(LegacyMgmtTestCase):
         os_image.media_link = self.settings.LINUX_OS_VHD
         os_image.os = 'Linux'
         os_image.name = self.os_image_name
+        # Partial date, will be converted to full ISO8601 Z date
+        os_image.published_date = '2016-09-09'
+        # Update to the opposite of what is currently in place, to be sure we changed something
+        current_show_in_gui = os_image.show_in_gui
+        os_image.show_in_gui = not current_show_in_gui
         result = self.sms.update_os_image_from_image_reference(
             self.os_image_name, os_image
         )
@@ -2274,6 +2279,12 @@ class LegacyMgmtMiscTest(LegacyMgmtTestCase):
         )
         self.assertEqual(
             image.os, 'Linux'
+        )
+        self.assertEqual(
+            image.published_date, '2016-09-09T00:00:00Z'
+        )
+        self.assertEqual(
+            image.show_in_gui, not current_show_in_gui
         )
 
     @record

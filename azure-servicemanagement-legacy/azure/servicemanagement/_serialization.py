@@ -1194,6 +1194,10 @@ class _XmlSerializer(object):
 
     @staticmethod
     def update_os_image_to_xml(image):
+        # Explicitly replace empty string by None to avoid serialization 
+        # of this field, since the API answers "BadRequest" for empty string.
+        if not image.published_date:
+            image.published_date = None
         xml = _XmlSerializer.data_to_xml(
             [
                 ('Label', image.label),
