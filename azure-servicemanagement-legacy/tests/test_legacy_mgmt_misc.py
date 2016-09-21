@@ -2143,32 +2143,29 @@ class LegacyMgmtMiscTest(LegacyMgmtTestCase):
         self.assertIsNotNone(result)
         self.assertTrue(len(result) > 0)
 
-        image = None
+        image_attributes = {}
         for temp in result:
             self.assertIn(temp.category, ['User', 'Public', 'Private', 'MSDN'])
-            if temp.category == 'Public':
-                image = temp
-                break
+            for attr in temp.__dict__:
+                if getattr(temp, attr):
+                    image_attributes[attr] = getattr(temp, attr)
 
-        self.assertIsNotNone(image)
-        self.assertGreater(len(image.category), 0)
-        self.assertGreater(len(image.label), 0)
-        self.assertGreater(len(image.location), 0)
-        self.assertIsNotNone(image.logical_size_in_gb)
-        self.assertGreaterEqual(image.logical_size_in_gb, 0)
-        self.assertGreater(len(image.name), 0)
-        self.assertGreater(len(image.os), 0)
-        self.assertIsNotNone(image.eula)
-        self.assertGreater(len(image.description), 0)
-        self.assertGreater(len(image.image_family), 0)
-        self.assertIsNotNone(image.show_in_gui)
-        self.assertGreater(len(image.published_date), 0)
-        self.assertIsNotNone(image.is_premium)
-        self.assertIsNotNone(image.icon_uri)
-        self.assertIsNotNone(image.privacy_uri)
-        self.assertIsNotNone(image.recommended_vm_size)
-        self.assertGreater(len(image.publisher_name), 0)
-        self.assertIsNotNone(image.small_icon_uri)
+        self.assertTrue(image_attributes['category'])
+        self.assertTrue(image_attributes['label'])
+        self.assertTrue(image_attributes['logical_size_in_gb'])
+        self.assertTrue(image_attributes['name'])
+        self.assertTrue(image_attributes['os'])
+        self.assertTrue(image_attributes['eula'])
+        self.assertTrue(image_attributes['description'])
+        self.assertTrue(image_attributes['image_family'])
+        self.assertTrue(image_attributes['show_in_gui'])
+        self.assertTrue(image_attributes['published_date'])
+        self.assertTrue(image_attributes['is_premium'])
+        self.assertTrue(image_attributes['icon_uri'])
+        self.assertTrue(image_attributes['privacy_uri'])
+        self.assertTrue(image_attributes['recommended_vm_size'])
+        self.assertTrue(image_attributes['publisher_name'])
+        self.assertTrue(image_attributes['small_icon_uri'])
 
     @record
     def test_get_os_image(self):
