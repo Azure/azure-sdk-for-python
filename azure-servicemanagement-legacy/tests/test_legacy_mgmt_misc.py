@@ -2166,7 +2166,7 @@ class LegacyMgmtMiscTest(LegacyMgmtTestCase):
         self.assertIsNotNone(image.is_premium)
         self.assertIsNotNone(image.icon_uri)
         self.assertIsNotNone(image.privacy_uri)
-        self.assertGreaterEqual(len(image.recommended_vm_size), 0)
+        self.assertIsNotNone(image.recommended_vm_size)
         self.assertGreater(len(image.publisher_name), 0)
         self.assertIsNotNone(image.small_icon_uri)
 
