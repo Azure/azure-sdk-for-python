@@ -17,7 +17,7 @@ class ExportRDBParameters(Model):
 
     :param format: File format.
     :type format: str
-    :param prefix: Prifix to use for exported files.
+    :param prefix: Prefix to use for exported files.
     :type prefix: str
     :param container: Container name to export to.
     :type container: str

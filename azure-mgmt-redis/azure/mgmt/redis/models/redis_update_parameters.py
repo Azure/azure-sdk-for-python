@@ -12,15 +12,9 @@
 from msrest.serialization import Model
 
 
-class RedisProperties(Model):
-    """Properties supplied to CreateOrUpdate redis operation.
+class RedisUpdateParameters(Model):
+    """Parameters supplied to the Update Redis operation.
 
-    :param redis_version: RedisVersion parameter has been deprecated. As
-     such, it is no longer necessary to provide this parameter and any value
-     specified is ignored.
-    :type redis_version: str
-    :param sku: What sku of redis cache to deploy.
-    :type sku: :class:`Sku <azure.mgmt.redis.models.Sku>`
     :param redis_configuration: All Redis Settings. Few possible keys:
      rdb-backup-enabled,rdb-storage-connection-string,rdb-backup-frequency,maxmemory-delta,maxmemory-policy,notify-keyspace-events,maxmemory-samples,slowlog-log-slower-than,slowlog-max-len,list-max-ziplist-entries,list-max-ziplist-value,hash-max-ziplist-entries,hash-max-ziplist-value,set-max-intset-entries,zset-max-ziplist-entries,zset-max-ziplist-value
      etc.
@@ -40,31 +34,34 @@ class RedisProperties(Model):
     :param static_ip: Required when deploying a redis cache inside an
      existing Azure Virtual Network.
     :type static_ip: str
+    :param sku: What sku of redis cache to deploy.
+    :type sku: :class:`Sku <azure.mgmt.redis.models.Sku>`
+    :param tags: Resource tags
+    :type tags: dict
     """ 
 
     _validation = {
-        'sku': {'required': True},
         'subnet_id': {'pattern': '^/subscriptions/[^/]*/resourceGroups/[^/]*/providers/Microsoft.(ClassicNetwork|Network)/virtualNetworks/[^/]*/subnets/[^/]*$'},
         'static_ip': {'pattern': '^\d+\.\d+\.\d+\.\d+$'},
     }
 
     _attribute_map = {
-        'redis_version': {'key': 'redisVersion', 'type': 'str'},
-        'sku': {'key': 'sku', 'type': 'Sku'},
-        'redis_configuration': {'key': 'redisConfiguration', 'type': '{str}'},
-        'enable_non_ssl_port': {'key': 'enableNonSslPort', 'type': 'bool'},
-        'tenant_settings': {'key': 'tenantSettings', 'type': '{str}'},
-        'shard_count': {'key': 'shardCount', 'type': 'int'},
-        'subnet_id': {'key': 'subnetId', 'type': 'str'},
-        'static_ip': {'key': 'staticIP', 'type': 'str'},
+        'redis_configuration': {'key': 'properties.redisConfiguration', 'type': '{str}'},
+        'enable_non_ssl_port': {'key': 'properties.enableNonSslPort', 'type': 'bool'},
+        'tenant_settings': {'key': 'properties.tenantSettings', 'type': '{str}'},
+        'shard_count': {'key': 'properties.shardCount', 'type': 'int'},
+        'subnet_id': {'key': 'properties.subnetId', 'type': 'str'},
+        'static_ip': {'key': 'properties.staticIP', 'type': 'str'},
+        'sku': {'key': 'properties.sku', 'type': 'Sku'},
+        'tags': {'key': 'properties.tags', 'type': '{str}'},
     }
 
-    def __init__(self, sku, redis_version=None, redis_configuration=None, enable_non_ssl_port=None, tenant_settings=None, shard_count=None, subnet_id=None, static_ip=None):
-        self.redis_version = redis_version
-        self.sku = sku
+    def __init__(self, redis_configuration=None, enable_non_ssl_port=None, tenant_settings=None, shard_count=None, subnet_id=None, static_ip=None, sku=None, tags=None):
         self.redis_configuration = redis_configuration
         self.enable_non_ssl_port = enable_non_ssl_port
         self.tenant_settings = tenant_settings
         self.shard_count = shard_count
         self.subnet_id = subnet_id
         self.static_ip = static_ip
+        self.sku = sku
+        self.tags = tags
