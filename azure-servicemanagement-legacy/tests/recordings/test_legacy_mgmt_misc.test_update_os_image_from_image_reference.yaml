@@ -1,18 +1,12 @@
 interactions:
 - request:
-    body: !!binary |
-      PE9TSW1hZ2UgeG1sbnM6aT0iaHR0cDovL3d3dy53My5vcmcvMjAwMS9YTUxTY2hlbWEtaW5zdGFu
-      Y2UiIHhtbG5zPSJodHRwOi8vc2NoZW1hcy5taWNyb3NvZnQuY29tL3dpbmRvd3NhenVyZSI+PExh
-      YmVsPnV0b3NpbWczOGNjMTlhYWxhYmVsPC9MYWJlbD48TWVkaWFMaW5rPmh0dHA6Ly9zdG9yYWdl
-      bmFtZS5ibG9iLmNvcmUud2luZG93cy5uZXQvaW5wdXR0ZXN0ZGF0YWRvbm90ZGVsZXRlL3VidW50
-      dS52aGQ8L01lZGlhTGluaz48TmFtZT51dG9zaW1nMzhjYzE5YWE8L05hbWU+PE9TPkxpbnV4PC9P
-      Uz48L09TSW1hZ2U+
+    body: <OSImage xmlns:i="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://schemas.microsoft.com/windowsazure"><Label>utosimg38cc19aalabel</Label><MediaLink>http://storagename.blob.core.windows.net/inputtestdatadonotdelete/ubuntu.vhd</MediaLink><Name>utosimg38cc19aa</Name><OS>Linux</OS></OSImage>
     headers:
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
-      Content-Length: ['305']
+      Content-Length: ['306']
       Content-Type: [application/atom+xml;type=entry;charset=utf-8]
-      User-Agent: [pyazure/0.20.2]
+      User-Agent: [pyazure/0.20.4]
       x-ms-version: ['2014-10-01']
     method: POST
     uri: https://management.core.windows.net/00000000-0000-0000-0000-000000000000/services/images
@@ -21,11 +15,11 @@ interactions:
         US</Location><LogicalSizeInGB>30</LogicalSizeInGB><MediaLink>http://storagename.blob.core.windows.net/inputtestdatadonotdelete/ubuntu.vhd</MediaLink><Name>utosimg38cc19aa</Name><OS>Linux</OS><IsPremium>false</IsPremium><OSState>Generalized</OSState><IOType>Standard</IOType></OSImage>'}
     headers:
       Cache-Control: [no-cache]
-      Content-Length: ['478']
+      Content-Length: ['479']
       Content-Type: [application/xml; charset=utf-8]
-      Date: ['Tue, 15 Dec 2015 19:01:41 GMT']
-      Server: [1.0.6198.292 (rd_rdfe_stable.151121-1554) Microsoft-HTTPAPI/2.0]
-      x-ms-request-id: [f16fdd1efb4c5a07ae22691a41d53d02]
+      Date: ['Wed, 21 Sep 2016 20:09:02 GMT']
+      Server: [1.0.6198.421 (rd_rdfe_stable.160905-1051) Microsoft-HTTPAPI/2.0]
+      x-ms-request-id: [26afa770cbbb0da9b6ffa8314e2c458b]
       x-ms-servedbyregion: [ussouth3]
     status: {code: 200, message: OK}
 - request:
@@ -33,19 +27,19 @@ interactions:
     headers:
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
-      User-Agent: [pyazure/0.20.2]
+      User-Agent: [pyazure/0.20.4]
       x-ms-version: ['2014-10-01']
     method: GET
-    uri: https://management.core.windows.net/00000000-0000-0000-0000-000000000000/operations/f16fdd1efb4c5a07ae22691a41d53d02
+    uri: https://management.core.windows.net/00000000-0000-0000-0000-000000000000/operations/26afa770cbbb0da9b6ffa8314e2c458b
   response:
-    body: {string: '<Operation xmlns="http://schemas.microsoft.com/windowsazure" xmlns:i="http://www.w3.org/2001/XMLSchema-instance"><ID>f16fdd1e-fb4c-5a07-ae22-691a41d53d02</ID><Status>Succeeded</Status><HttpStatusCode>200</HttpStatusCode></Operation>'}
+    body: {string: '<Operation xmlns="http://schemas.microsoft.com/windowsazure" xmlns:i="http://www.w3.org/2001/XMLSchema-instance"><ID>26afa770-cbbb-0da9-b6ff-a8314e2c458b</ID><Status>Succeeded</Status><HttpStatusCode>200</HttpStatusCode></Operation>'}
     headers:
       Cache-Control: [no-cache]
       Content-Length: ['232']
       Content-Type: [application/xml; charset=utf-8]
-      Date: ['Tue, 15 Dec 2015 19:01:43 GMT']
-      Server: [1.0.6198.292 (rd_rdfe_stable.151121-1554) Microsoft-HTTPAPI/2.0]
-      x-ms-request-id: [497df8157b025e77a593df7dc04cfbb6]
+      Date: ['Wed, 21 Sep 2016 20:09:03 GMT']
+      Server: [1.0.6198.421 (rd_rdfe_stable.160905-1051) Microsoft-HTTPAPI/2.0]
+      x-ms-request-id: [f6b89cd64f91098a89022cebe1c73208]
       x-ms-servedbyregion: [ussouth3]
     status: {code: 200, message: OK}
 - request:
@@ -53,7 +47,7 @@ interactions:
     headers:
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
-      User-Agent: [pyazure/0.20.2]
+      User-Agent: [pyazure/0.20.4]
       x-ms-version: ['2014-10-01']
     method: GET
     uri: https://management.core.windows.net/00000000-0000-0000-0000-000000000000/services/images/utosimg38cc19aa
@@ -62,44 +56,34 @@ interactions:
         US</Location><LogicalSizeInGB>30</LogicalSizeInGB><MediaLink>http://storagename.blob.core.windows.net/inputtestdatadonotdelete/ubuntu.vhd</MediaLink><Name>utosimg38cc19aa</Name><OS>Linux</OS><IsPremium>false</IsPremium><OSState>Generalized</OSState><IOType>Standard</IOType></OSImage>'}
     headers:
       Cache-Control: [no-cache]
-      Content-Length: ['478']
+      Content-Length: ['479']
       Content-Type: [application/xml; charset=utf-8]
-      Date: ['Tue, 15 Dec 2015 19:01:43 GMT']
-      Server: [1.0.6198.292 (rd_rdfe_stable.151121-1554) Microsoft-HTTPAPI/2.0]
-      x-ms-request-id: [167f50b389395e74917f3da3289f3120]
+      Date: ['Wed, 21 Sep 2016 20:09:03 GMT']
+      Server: [1.0.6198.421 (rd_rdfe_stable.160905-1051) Microsoft-HTTPAPI/2.0]
+      x-ms-request-id: [4e8d5a07f7bf09c29a9fc99e07ed8cb2]
       x-ms-servedbyregion: [ussouth3]
     status: {code: 200, message: OK}
 - request:
-    body: !!binary |
-      PE9TSW1hZ2UgeG1sbnM6aT0iaHR0cDovL3d3dy53My5vcmcvMjAwMS9YTUxTY2hlbWEtaW5zdGFu
-      Y2UiIHhtbG5zPSJodHRwOi8vc2NoZW1hcy5taWNyb3NvZnQuY29tL3dpbmRvd3NhenVyZSI+PExh
-      YmVsPm5ld2xhYmVsPC9MYWJlbD48RGVzY3JpcHRpb24+PC9EZXNjcmlwdGlvbj48TWVkaWFMaW5r
-      Pmh0dHA6Ly9zdG9yYWdlbmFtZS5ibG9iLmNvcmUud2luZG93cy5uZXQvaW5wdXR0ZXN0ZGF0YWRv
-      bm90ZGVsZXRlL3VidW50dS52aGQ8L01lZGlhTGluaz48TmFtZT51dG9zaW1nMzhjYzE5YWE8L05h
-      bWU+PE9TPkxpbnV4PC9PUz48TGFuZ3VhZ2U+PC9MYW5ndWFnZT48SW1hZ2VGYW1pbHk+PC9JbWFn
-      ZUZhbWlseT48UmVjb21tZW5kZWRWTVNpemU+PC9SZWNvbW1lbmRlZFZNU2l6ZT48RXVsYT48L0V1
-      bGE+PEljb25Vcmk+PC9JY29uVXJpPjxTbWFsbEljb25Vcmk+PC9TbWFsbEljb25Vcmk+PFByaXZh
-      Y3lVcmk+PC9Qcml2YWN5VXJpPjxQdWJsaXNoZWREYXRlPjwvUHVibGlzaGVkRGF0ZT48L09TSW1h
-      Z2U+
+    body: <OSImage xmlns:i="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://schemas.microsoft.com/windowsazure"><Label>newlabel</Label><Eula></Eula><Description></Description><ImageFamily></ImageFamily><ShowInGui>false</ShowInGui><PublishedDate>2016-09-09</PublishedDate><IconUri></IconUri><PrivacyUri></PrivacyUri><RecommendedVMSize></RecommendedVMSize><SmallIconUri></SmallIconUri><Language></Language></OSImage>
     headers:
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
-      Content-Length: ['524']
+      Content-Length: ['413']
       Content-Type: [application/atom+xml;type=entry;charset=utf-8]
-      User-Agent: [pyazure/0.20.2]
+      User-Agent: [pyazure/0.20.4]
       x-ms-version: ['2014-10-01']
     method: PUT
     uri: https://management.core.windows.net/00000000-0000-0000-0000-000000000000/services/images/utosimg38cc19aa
   response:
     body: {string: '<OSImage xmlns="http://schemas.microsoft.com/windowsazure" xmlns:i="http://www.w3.org/2001/XMLSchema-instance"><Category>User</Category><Label>newlabel</Label><Location>West
-        US</Location><LogicalSizeInGB>30</LogicalSizeInGB><MediaLink>http://storagename.blob.core.windows.net/inputtestdatadonotdelete/ubuntu.vhd</MediaLink><Name>utosimg38cc19aa</Name><OS>Linux</OS><Description/><IsPremium>false</IsPremium><Language/><OSState>Generalized</OSState><IOType>Standard</IOType></OSImage>'}
+        US</Location><LogicalSizeInGB>30</LogicalSizeInGB><MediaLink>http://storagename.blob.core.windows.net/inputtestdatadonotdelete/ubuntu.vhd</MediaLink><Name>utosimg38cc19aa</Name><OS>Linux</OS><Eula/><Description/><ImageFamily/><ShowInGui>false</ShowInGui><PublishedDate>2016-09-09T00:00:00</PublishedDate><IsPremium>false</IsPremium><IconUri/><PrivacyUri/><RecommendedVMSize/><SmallIconUri/><Language/><OSState>Generalized</OSState><IOType>Standard</IOType></OSImage>'}
     headers:
       Cache-Control: [no-cache]
-      Content-Length: ['491']
+      Content-Length: ['649']
       Content-Type: [application/xml; charset=utf-8]
-      Date: ['Tue, 15 Dec 2015 19:01:44 GMT']
-      Server: [1.0.6198.292 (rd_rdfe_stable.151121-1554) Microsoft-HTTPAPI/2.0]
-      x-ms-request-id: [8b35f3b7f1325a9a82d118f4c1a0aab5]
+      Date: ['Wed, 21 Sep 2016 20:09:03 GMT']
+      Server: [1.0.6198.421 (rd_rdfe_stable.160905-1051) Microsoft-HTTPAPI/2.0]
+      x-ms-request-id: [f8a4e682bfc80a60acb3cbeb798f13a7]
       x-ms-servedbyregion: [ussouth3]
     status: {code: 200, message: OK}
 - request:
@@ -107,19 +91,19 @@ interactions:
     headers:
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
-      User-Agent: [pyazure/0.20.2]
+      User-Agent: [pyazure/0.20.4]
       x-ms-version: ['2014-10-01']
     method: GET
-    uri: https://management.core.windows.net/00000000-0000-0000-0000-000000000000/operations/8b35f3b7f1325a9a82d118f4c1a0aab5
+    uri: https://management.core.windows.net/00000000-0000-0000-0000-000000000000/operations/f8a4e682bfc80a60acb3cbeb798f13a7
   response:
-    body: {string: '<Operation xmlns="http://schemas.microsoft.com/windowsazure" xmlns:i="http://www.w3.org/2001/XMLSchema-instance"><ID>8b35f3b7-f132-5a9a-82d1-18f4c1a0aab5</ID><Status>Succeeded</Status><HttpStatusCode>200</HttpStatusCode></Operation>'}
+    body: {string: '<Operation xmlns="http://schemas.microsoft.com/windowsazure" xmlns:i="http://www.w3.org/2001/XMLSchema-instance"><ID>f8a4e682-bfc8-0a60-acb3-cbeb798f13a7</ID><Status>Succeeded</Status><HttpStatusCode>200</HttpStatusCode></Operation>'}
     headers:
       Cache-Control: [no-cache]
       Content-Length: ['232']
       Content-Type: [application/xml; charset=utf-8]
-      Date: ['Tue, 15 Dec 2015 19:01:44 GMT']
-      Server: [1.0.6198.292 (rd_rdfe_stable.151121-1554) Microsoft-HTTPAPI/2.0]
-      x-ms-request-id: [a2dd529c688f5eb080ee7e59fbb4b576]
+      Date: ['Wed, 21 Sep 2016 20:09:03 GMT']
+      Server: [1.0.6198.421 (rd_rdfe_stable.160905-1051) Microsoft-HTTPAPI/2.0]
+      x-ms-request-id: [17874da926550b24a02cd494259d2eae]
       x-ms-servedbyregion: [ussouth3]
     status: {code: 200, message: OK}
 - request:
@@ -127,20 +111,20 @@ interactions:
     headers:
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
-      User-Agent: [pyazure/0.20.2]
+      User-Agent: [pyazure/0.20.4]
       x-ms-version: ['2014-10-01']
     method: GET
     uri: https://management.core.windows.net/00000000-0000-0000-0000-000000000000/services/images/utosimg38cc19aa
   response:
     body: {string: '<OSImage xmlns="http://schemas.microsoft.com/windowsazure" xmlns:i="http://www.w3.org/2001/XMLSchema-instance"><Category>User</Category><Label>newlabel</Label><Location>West
-        US</Location><LogicalSizeInGB>30</LogicalSizeInGB><MediaLink>http://storagename.blob.core.windows.net/inputtestdatadonotdelete/ubuntu.vhd</MediaLink><Name>utosimg38cc19aa</Name><OS>Linux</OS><Description/><IsPremium>false</IsPremium><Language/><OSState>Generalized</OSState><IOType>Standard</IOType></OSImage>'}
+        US</Location><LogicalSizeInGB>30</LogicalSizeInGB><MediaLink>http://storagename.blob.core.windows.net/inputtestdatadonotdelete/ubuntu.vhd</MediaLink><Name>utosimg38cc19aa</Name><OS>Linux</OS><Eula/><Description/><ImageFamily/><ShowInGui>false</ShowInGui><PublishedDate>2016-09-09T00:00:00Z</PublishedDate><IsPremium>false</IsPremium><RecommendedVMSize/><Language/><OSState>Generalized</OSState><IOType>Standard</IOType></OSImage>'}
     headers:
       Cache-Control: [no-cache]
-      Content-Length: ['491']
+      Content-Length: ['612']
       Content-Type: [application/xml; charset=utf-8]
-      Date: ['Tue, 15 Dec 2015 19:01:44 GMT']
-      Server: [1.0.6198.292 (rd_rdfe_stable.151121-1554) Microsoft-HTTPAPI/2.0]
-      x-ms-request-id: [04ae39babf3f5e0a864ddffdfe3e1a23]
+      Date: ['Wed, 21 Sep 2016 20:09:03 GMT']
+      Server: [1.0.6198.421 (rd_rdfe_stable.160905-1051) Microsoft-HTTPAPI/2.0]
+      x-ms-request-id: [17edb284f796096397c2aa2b7a81d7df]
       x-ms-servedbyregion: [ussouth3]
     status: {code: 200, message: OK}
 version: 1

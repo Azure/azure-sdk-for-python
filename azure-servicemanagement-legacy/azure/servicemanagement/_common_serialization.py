@@ -92,7 +92,8 @@ _KNOWN_SERIALIZATION_XFORMS = {
     'client_ip': 'ClientIP',
     'status_id': 'ID',
     'virtual_ips': 'VirtualIPs',
-    'virtual_ip': 'VirtualIP'
+    'virtual_ip': 'VirtualIP',
+    'recommended_vm_size': 'RecommendedVMSize'
     }
 
 
