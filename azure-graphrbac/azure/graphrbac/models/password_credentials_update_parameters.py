@@ -20,9 +20,13 @@ class PasswordCredentialsUpdateParameters(Model):
      <azure.graphrbac.models.PasswordCredential>`
     """ 
 
+    _validation = {
+        'value': {'required': True},
+    }
+
     _attribute_map = {
         'value': {'key': 'value', 'type': '[PasswordCredential]'},
     }
 
-    def __init__(self, value=None):
+    def __init__(self, value):
         self.value = value
