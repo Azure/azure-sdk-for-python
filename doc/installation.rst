@@ -57,7 +57,7 @@ azure-mgmt-redis                      1.0.0
 azure-mgmt-scheduler                  1.0.0
 azure-mgmt-servermanager              1.0.0
 azure-servicebus                      0.20.3
-azure-servicemanagement-legacy        0.20.4
+azure-servicemanagement-legacy        0.20.5
 azure-storage                         0.33.0
 ===================================== =======
 
