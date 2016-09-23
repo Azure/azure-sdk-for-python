@@ -842,3 +842,111 @@ class TaskOperations(object):
                 'DataServiceId': 'str',
             })
             return client_raw_response
+
+    def reactivate(
+            self, job_id, task_id, task_reactivate_options=None, custom_headers=None, raw=False, **operation_config):
+        """Reactivates the specified task.
+
+        Reactivation makes a task eligible to be retried again up to its
+        maximum retry count. This will fail for tasks that are not completed
+        or that previously completed successfully (with an exit code of 0).
+        Additionally, this will fail if the job has completed (or is
+        terminating or deleting).
+
+        :param job_id: The id of the job containing the task.
+        :type job_id: str
+        :param task_id: The id of the task to reactivate.
+        :type task_id: str
+        :param task_reactivate_options: Additional parameters for the
+         operation
+        :type task_reactivate_options: :class:`TaskReactivateOptions
+         <azure.batch.models.TaskReactivateOptions>`
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :rtype: None
+        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+         if raw=true
+        """
+        timeout = None
+        if task_reactivate_options is not None:
+            timeout = task_reactivate_options.timeout
+        client_request_id = None
+        if task_reactivate_options is not None:
+            client_request_id = task_reactivate_options.client_request_id
+        return_client_request_id = None
+        if task_reactivate_options is not None:
+            return_client_request_id = task_reactivate_options.return_client_request_id
+        ocp_date = None
+        if task_reactivate_options is not None:
+            ocp_date = task_reactivate_options.ocp_date
+        if_match = None
+        if task_reactivate_options is not None:
+            if_match = task_reactivate_options.if_match
+        if_none_match = None
+        if task_reactivate_options is not None:
+            if_none_match = task_reactivate_options.if_none_match
+        if_modified_since = None
+        if task_reactivate_options is not None:
+            if_modified_since = task_reactivate_options.if_modified_since
+        if_unmodified_since = None
+        if task_reactivate_options is not None:
+            if_unmodified_since = task_reactivate_options.if_unmodified_since
+
+        # Construct URL
+        url = '/jobs/{jobId}/tasks/{taskId}/reactivate'
+        path_format_arguments = {
+            'jobId': self._serialize.url("job_id", job_id, 'str'),
+            'taskId': self._serialize.url("task_id", task_id, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
+        if timeout is not None:
+            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'int')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Content-Type'] = 'application/json; odata=minimalmetadata; charset=utf-8'
+        if self.config.generate_client_request_id:
+            header_parameters['client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+        if client_request_id is not None:
+            header_parameters['client-request-id'] = self._serialize.header("client_request_id", client_request_id, 'str')
+        if return_client_request_id is not None:
+            header_parameters['return-client-request-id'] = self._serialize.header("return_client_request_id", return_client_request_id, 'bool')
+        if ocp_date is not None:
+            header_parameters['ocp-date'] = self._serialize.header("ocp_date", ocp_date, 'rfc-1123')
+        if if_match is not None:
+            header_parameters['If-Match'] = self._serialize.header("if_match", if_match, 'str')
+        if if_none_match is not None:
+            header_parameters['If-None-Match'] = self._serialize.header("if_none_match", if_none_match, 'str')
+        if if_modified_since is not None:
+            header_parameters['If-Modified-Since'] = self._serialize.header("if_modified_since", if_modified_since, 'rfc-1123')
+        if if_unmodified_since is not None:
+            header_parameters['If-Unmodified-Since'] = self._serialize.header("if_unmodified_since", if_unmodified_since, 'rfc-1123')
+
+        # Construct and send request
+        request = self._client.post(url, query_parameters)
+        response = self._client.send(request, header_parameters, **operation_config)
+
+        if response.status_code not in [204]:
+            raise models.BatchErrorException(self._deserialize, response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(None, response)
+            client_raw_response.add_headers({
+                'client-request-id': 'str',
+                'request-id': 'str',
+                'ETag': 'str',
+                'Last-Modified': 'rfc-1123',
+                'DataServiceId': 'str',
+            })
+            return client_raw_response
