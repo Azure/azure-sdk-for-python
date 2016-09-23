@@ -9,10 +9,19 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .key_vault_client import KeyVaultClient
-from .version import VERSION
+from msrest.paging import Paged
 
-__all__ = ['KeyVaultClient']
 
-__version__ = VERSION
+class CertificateIssuerItemPaged(Paged):
+    """
+    A paging container for iterating over a list of CertificateIssuerItem object
+    """
 
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[CertificateIssuerItem]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(CertificateIssuerItemPaged, self).__init__(*args, **kwargs)

@@ -9,10 +9,5 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .key_vault_client import KeyVaultClient
-from .version import VERSION
-
-__all__ = ['KeyVaultClient']
-
-__version__ = VERSION
+VERSION = "0.30.0rc6"
 
