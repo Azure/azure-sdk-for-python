@@ -26,11 +26,10 @@ class MgmtNotificationHubsTest(AzureMgmtTestCase):
 
         account_name = self.get_resource_name('pyarmnotificationhubs')
 
-        output = self.notificationhubs_client.namespaces.check_availability(
-            azure.mgmt.notificationhubs.models.CheckAvailabilityParameters(
-                name=account_name
-            )
-        )
+        output = self.notificationhubs_client.namespaces.check_availability({
+            'name': account_name,
+            'location': self.region    
+        })
         self.assertTrue(output.is_availiable)
 
 
