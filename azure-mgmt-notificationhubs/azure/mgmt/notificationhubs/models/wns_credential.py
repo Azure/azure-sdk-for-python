@@ -15,15 +15,21 @@ from msrest.serialization import Model
 class WnsCredential(Model):
     """Description of a NotificationHub WnsCredential.
 
-    :param properties: Gets or sets properties of NotificationHub
-     WnsCredential.
-    :type properties: :class:`WnsCredentialProperties
-     <azure.mgmt.notificationhubs.models.WnsCredentialProperties>`
+    :param package_sid: The package ID for this credential.
+    :type package_sid: str
+    :param secret_key: The secret key.
+    :type secret_key: str
+    :param windows_live_endpoint: The Windows Live endpoint.
+    :type windows_live_endpoint: str
     """ 
 
     _attribute_map = {
-        'properties': {'key': 'properties', 'type': 'WnsCredentialProperties'},
+        'package_sid': {'key': 'properties.packageSid', 'type': 'str'},
+        'secret_key': {'key': 'properties.secretKey', 'type': 'str'},
+        'windows_live_endpoint': {'key': 'properties.windowsLiveEndpoint', 'type': 'str'},
     }
 
-    def __init__(self, properties=None):
-        self.properties = properties
+    def __init__(self, package_sid=None, secret_key=None, windows_live_endpoint=None):
+        self.package_sid = package_sid
+        self.secret_key = secret_key
+        self.windows_live_endpoint = windows_live_endpoint

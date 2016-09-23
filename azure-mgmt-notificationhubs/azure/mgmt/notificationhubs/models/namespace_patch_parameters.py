@@ -12,17 +12,20 @@
 from msrest.serialization import Model
 
 
-class SharedAccessAuthorizationRuleProperties(Model):
-    """SharedAccessAuthorizationRule properties.
+class NamespacePatchParameters(Model):
+    """Parameters supplied to the Patch Namespace operation.
 
-    :param rights: The rights associated with the rule.
-    :type rights: list of str or :class:`AccessRights
-     <azure.mgmt.notificationhubs.models.AccessRights>`
+    :param tags: Resource tags
+    :type tags: dict
+    :param sku: The sku of the created namespace
+    :type sku: :class:`Sku <azure.mgmt.notificationhubs.models.Sku>`
     """ 
 
     _attribute_map = {
-        'rights': {'key': 'rights', 'type': '[AccessRights]'},
+        'tags': {'key': 'tags', 'type': '{str}'},
+        'sku': {'key': 'sku', 'type': 'Sku'},
     }
 
-    def __init__(self, rights=None):
-        self.rights = rights
+    def __init__(self, tags=None, sku=None):
+        self.tags = tags
+        self.sku = sku
