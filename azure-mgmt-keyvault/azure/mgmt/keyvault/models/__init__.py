@@ -21,6 +21,7 @@ from .key_vault_management_client_enums import (
     SkuName,
     KeyPermissions,
     SecretPermissions,
+    CertificatePermissions,
 )
 
 __all__ = [
@@ -35,4 +36,5 @@ __all__ = [
     'SkuName',
     'KeyPermissions',
     'SecretPermissions',
+    'CertificatePermissions',
 ]
