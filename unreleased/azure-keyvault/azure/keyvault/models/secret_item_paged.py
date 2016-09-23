@@ -9,10 +9,19 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .key_vault_client import KeyVaultClient
-from .version import VERSION
+from msrest.paging import Paged
 
-__all__ = ['KeyVaultClient']
 
-__version__ = VERSION
+class SecretItemPaged(Paged):
+    """
+    A paging container for iterating over a list of SecretItem object
+    """
 
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[SecretItem]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(SecretItemPaged, self).__init__(*args, **kwargs)

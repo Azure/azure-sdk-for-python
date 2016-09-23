@@ -9,10 +9,19 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .key_vault_client import KeyVaultClient
-from .version import VERSION
+from msrest.serialization import Model
 
-__all__ = ['KeyVaultClient']
 
-__version__ = VERSION
+class SecretProperties(Model):
+    """Properties of the key backing a certificate.
 
+    :param content_type: The media type (MIME type).
+    :type content_type: str
+    """ 
+
+    _attribute_map = {
+        'content_type': {'key': 'contentType', 'type': 'str'},
+    }
+
+    def __init__(self, content_type=None):
+        self.content_type = content_type
