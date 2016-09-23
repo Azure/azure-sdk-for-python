@@ -23,8 +23,8 @@ class KeyPermissions(Enum):
     all = "all"
     encrypt = "encrypt"
     decrypt = "decrypt"
-    wrapkey = "wrapkey"
-    unwrapkey = "unwrapkey"
+    wrap_key = "wrapKey"
+    unwrap_key = "unwrapKey"
     sign = "sign"
     verify = "verify"
     get = "get"
@@ -44,3 +44,20 @@ class SecretPermissions(Enum):
     list = "list"
     set = "set"
     delete = "delete"
+
+
+class CertificatePermissions(Enum):
+
+    all = "all"
+    get = "get"
+    list = "list"
+    delete = "delete"
+    create = "create"
+    import_enum = "import"
+    update = "update"
+    managecontacts = "managecontacts"
+    getissuers = "getissuers"
+    listissuers = "listissuers"
+    setissuers = "setissuers"
+    deleteissuers = "deleteissuers"
+    manageissuers = "manageissuers"
