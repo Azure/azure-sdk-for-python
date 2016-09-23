@@ -14,7 +14,6 @@
 
 import sys
 import os
-import pip
 import sphinx_rtd_theme
 
 # If extensions (or modules to document with autodoc) are in another directory,
@@ -113,10 +112,6 @@ html_theme = 'sphinx_rtd_theme'
 #html_theme_options = {'collapsiblesidebar': True}
 
 # Activate the theme.
-#pip.main(['install', 'sphinx_bootstrap_theme'])
-#import sphinx_bootstrap_theme
-#html_theme = 'bootstrap'
-#html_theme_path = sphinx_bootstrap_theme.get_html_theme_path()
 html_theme_path = [sphinx_rtd_theme.get_html_theme_path()]
 
 # Theme options are theme-specific and customize the look and feel of a theme
