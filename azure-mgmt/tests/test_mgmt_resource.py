@@ -151,6 +151,8 @@ class MgmtResourceTest(AzureMgmtTestCase):
             api_version="2015-05-01-preview",
             parameters={'location': self.region}
         )
+        result = create_result.result()
+        self.assertEqual(result.name, resource_name)
 
         get_result = self.resource_client.resources.get(
             resource_group_name=self.group_name,
@@ -188,6 +190,7 @@ class MgmtResourceTest(AzureMgmtTestCase):
             resource_name=resource_name,
             api_version="2015-05-01-preview",
         )
+        delete_result.wait()
 
         async_delete = self.resource_client.resource_groups.delete(
             new_group_name
