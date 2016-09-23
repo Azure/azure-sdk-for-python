@@ -148,7 +148,7 @@
       "output_dir": "azure-mgmt-network/azure/mgmt/network"
     },
     "notificationhubs": {
-      "swagger": "arm-notificationhubs/2014-09-01/swagger/notificationhubs.json",
+      "swagger": "arm-notificationhubs/2016-03-01/swagger/notificationhubs.json",
       "autorest_options": {
         "Namespace": "azure.mgmt.notificationhubs"
       },
