@@ -13,21 +13,21 @@ from msrest.serialization import Model
 
 
 class AccessPolicyEntry(Model):
-    """An array of 0 to 16 identities that have access to the key vault. All
-    identities in the array must use the same tenant ID as the key vault's
-    tenant ID.
+    """An identity that have access to the key vault. All identities in the array
+    must use the same tenant ID as the key vault's tenant ID.
 
     :param tenant_id: The Azure Active Directory tenant ID that should be
      used for authenticating requests to the key vault.
     :type tenant_id: str
-    :param object_id: The object ID of a user or service principal in the
-     Azure Active Directory tenant for the vault. The object ID must be
-     unique for the list of access policies.
+    :param object_id: The object ID of a user, service principal or security
+     group in the Azure Active Directory tenant for the vault. The object ID
+     must be unique for the list of access policies.
     :type object_id: str
     :param application_id:  Application ID of the client making request on
      behalf of a principal
     :type application_id: str
-    :param permissions: Permissions the identity has for keys and secrets
+    :param permissions: Permissions the identity has for keys, secrets and
+     certificates.
     :type permissions: :class:`Permissions
      <azure.mgmt.keyvault.models.Permissions>`
     """ 
