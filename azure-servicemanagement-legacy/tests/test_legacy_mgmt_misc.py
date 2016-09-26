@@ -2143,32 +2143,29 @@ class LegacyMgmtMiscTest(LegacyMgmtTestCase):
         self.assertIsNotNone(result)
         self.assertTrue(len(result) > 0)
 
-        image = None
+        image_attributes = {}
         for temp in result:
             self.assertIn(temp.category, ['User', 'Public', 'Private', 'MSDN'])
-            if temp.category == 'Public':
-                image = temp
-                break
+            for attr in temp.__dict__:
+                if getattr(temp, attr):
+                    image_attributes[attr] = getattr(temp, attr)
 
-        self.assertIsNotNone(image)
-        self.assertGreater(len(image.category), 0)
-        self.assertGreater(len(image.label), 0)
-        self.assertGreater(len(image.location), 0)
-        self.assertIsNotNone(image.logical_size_in_gb)
-        self.assertGreaterEqual(image.logical_size_in_gb, 0)
-        self.assertGreater(len(image.name), 0)
-        self.assertGreater(len(image.os), 0)
-        self.assertIsNotNone(image.eula)
-        self.assertGreater(len(image.description), 0)
-        self.assertGreater(len(image.image_family), 0)
-        self.assertIsNotNone(image.show_in_gui)
-        self.assertGreater(len(image.published_date), 0)
-        self.assertIsNotNone(image.is_premium)
-        self.assertIsNotNone(image.icon_uri)
-        self.assertIsNotNone(image.privacy_uri)
-        self.assertGreaterEqual(len(image.recommended_vm_size), 0)
-        self.assertGreater(len(image.publisher_name), 0)
-        self.assertIsNotNone(image.small_icon_uri)
+        self.assertTrue(image_attributes['category'])
+        self.assertTrue(image_attributes['label'])
+        self.assertTrue(image_attributes['logical_size_in_gb'])
+        self.assertTrue(image_attributes['name'])
+        self.assertTrue(image_attributes['os'])
+        self.assertTrue(image_attributes['eula'])
+        self.assertTrue(image_attributes['description'])
+        self.assertTrue(image_attributes['image_family'])
+        self.assertTrue(image_attributes['show_in_gui'])
+        self.assertTrue(image_attributes['published_date'])
+        self.assertTrue(image_attributes['is_premium'])
+        self.assertTrue(image_attributes['icon_uri'])
+        self.assertTrue(image_attributes['privacy_uri'])
+        self.assertTrue(image_attributes['recommended_vm_size'])
+        self.assertTrue(image_attributes['publisher_name'])
+        self.assertTrue(image_attributes['small_icon_uri'])
 
     @record
     def test_get_os_image(self):
@@ -2260,6 +2257,11 @@ class LegacyMgmtMiscTest(LegacyMgmtTestCase):
         os_image.media_link = self.settings.LINUX_OS_VHD
         os_image.os = 'Linux'
         os_image.name = self.os_image_name
+        # Partial date, will be converted to full ISO8601 Z date
+        os_image.published_date = '2016-09-09'
+        # Update to the opposite of what is currently in place, to be sure we changed something
+        current_show_in_gui = os_image.show_in_gui
+        os_image.show_in_gui = not current_show_in_gui
         result = self.sms.update_os_image_from_image_reference(
             self.os_image_name, os_image
         )
@@ -2274,6 +2276,12 @@ class LegacyMgmtMiscTest(LegacyMgmtTestCase):
         )
         self.assertEqual(
             image.os, 'Linux'
+        )
+        self.assertEqual(
+            image.published_date, '2016-09-09T00:00:00Z'
+        )
+        self.assertEqual(
+            image.show_in_gui, not current_show_in_gui
         )
 
     @record
