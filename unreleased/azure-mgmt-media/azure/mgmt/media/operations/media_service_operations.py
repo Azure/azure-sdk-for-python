@@ -32,15 +32,13 @@ class MediaServiceOperations(object):
 
         self.config = config
 
-    def check_name_availabilty(
-            self, name=None, type=None, custom_headers=None, raw=False, **operation_config):
+    def check_name_availability(
+            self, name, custom_headers=None, raw=False, **operation_config):
         """Check whether the Media Service resource name is available. The name
         must be globally unique.
 
         :param name: The name of the resource. A name must be globally unique.
         :type name: str
-        :param type: Specifies the type of the resource.
-        :type type: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -51,7 +49,7 @@ class MediaServiceOperations(object):
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
-        check_name_availability_input = models.CheckNameAvailabilityInput(name=name, type=type)
+        check_name_availability_input = models.CheckNameAvailabilityInput(name=name)
 
         # Construct URL
         url = '/subscriptions/{subscriptionId}/providers/Microsoft.Media/CheckNameAvailability'

@@ -12,6 +12,11 @@
 from enum import Enum
 
 
+class ResourceType(Enum):
+
+    mediaservices = "mediaservices"
+
+
 class EntityNameUnavailabilityReason(Enum):
 
     none = "None"

@@ -23,6 +23,7 @@ from .sync_storage_keys_input import SyncStorageKeysInput
 from .tracked_resource import TrackedResource
 from .media_service_paged import MediaServicePaged
 from .media_services_management_client_enums import (
+    ResourceType,
     EntityNameUnavailabilityReason,
     KeyType,
 )
@@ -41,6 +42,7 @@ __all__ = [
     'SyncStorageKeysInput',
     'TrackedResource',
     'MediaServicePaged',
+    'ResourceType',
     'EntityNameUnavailabilityReason',
     'KeyType',
 ]
