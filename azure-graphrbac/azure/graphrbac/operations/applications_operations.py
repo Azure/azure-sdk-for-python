@@ -386,7 +386,7 @@ class ApplicationsOperations(object):
         return deserialized
 
     def update_key_credentials(
-            self, application_object_id, value=None, custom_headers=None, raw=False, **operation_config):
+            self, application_object_id, value, custom_headers=None, raw=False, **operation_config):
         """Update keyCredentials associated with an existing application.
         Reference:
         https://msdn.microsoft.com/en-us/library/azure/ad/graph/api/entity-and-complex-type-reference#keycredential-type.
@@ -510,7 +510,7 @@ class ApplicationsOperations(object):
         return deserialized
 
     def update_password_credentials(
-            self, application_object_id, value=None, custom_headers=None, raw=False, **operation_config):
+            self, application_object_id, value, custom_headers=None, raw=False, **operation_config):
         """Updates passwordCredentials associated with an existing application.
         Reference:
         https://msdn.microsoft.com/en-us/library/azure/ad/graph/api/entity-and-complex-type-reference#passwordcredential-type.
