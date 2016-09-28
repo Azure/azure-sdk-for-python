@@ -51,10 +51,7 @@ setup(
         'azure.mgmt.datalake.store',
         'azure.mgmt.datalake.store.account',
         'azure.mgmt.datalake.store.account.models',
-        'azure.mgmt.datalake.store.account.operations',
-        'azure.mgmt.datalake.store.filesystem',
-        'azure.mgmt.datalake.store.filesystem.models',
-        'azure.mgmt.datalake.store.filesystem.operations'
+        'azure.mgmt.datalake.store.account.operations'
     ],
     install_requires=[
         'azure-mgmt-datalake-nspkg',
