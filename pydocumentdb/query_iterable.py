@@ -1,95 +1,92 @@
-﻿# Copyright (c) Microsoft Corporation.  All rights reserved.
+﻿#The MIT License (MIT)
+#Copyright (c) 2014 Microsoft Corporation
+
+#Permission is hereby granted, free of charge, to any person obtaining a copy
+#of this software and associated documentation files (the "Software"), to deal
+#in the Software without restriction, including without limitation the rights
+#to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+#copies of the Software, and to permit persons to whom the Software is
+#furnished to do so, subject to the following conditions:
+
+#The above copyright notice and this permission notice shall be included in all
+#copies or substantial portions of the Software.
+
+#THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+#IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+#FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+#AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+#LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+#OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+#SOFTWARE.
 
 """Iterable query results.
 """
-
-import pydocumentdb.base as base
-import pydocumentdb.http_constants as http_constants
-import pydocumentdb.retry_utility as retry_utility
-
+from pydocumentdb.execution_context import execution_dispatcher
+from pydocumentdb.execution_context import base_execution_context
 
 class QueryIterable(object):
     """Represents an iterable object of the query results.
+    QueryIterable is a wrapper for query execution context.
     """
     
-    def __init__(self, client, options, fetch_function):
+    def __init__(self, client, query, options, fetch_function, collection_link = None):
         """
+        Instantiates a QueryIterable for non-client side partitioning queries.
+        _ProxyQueryExecutionContext will be used as the internal query execution context
+         
         :Parameters:
-            - `client`: object, document client instance
-            - `options`: dict, the request options for the request.
-            - `fetch_function`: function, for executing the feed query
-
+            - client (DocumentClient), instance of document client
+            - query (dict) or (str), query
+            - options (dict), the request options for the request.
+            - fetch_function: method, fetch function
+            - collection_link (str): if this is a Document query/feed collection_link is required
+ 
         Example of `fetch_function`:
-
+ 
         >>> def result_fn(result):
         >>>     return result['Databases']
-
+ 
         """
         self._client = client
+        self.retry_options = client.connection_policy.RetryOptions;
+        self._query = query
         self._options = options
         self._fetch_function = fetch_function
-        self.retry_options = client.connection_policy.RetryOptions;
-        self._results = []
-        self._continuation = None
-        self._has_started = False
-        
-        self._current_collection_index = 0
-        self._collection_links = []
-        self._collection_links_length = 0
-
+        self._collection_link = collection_link
+        self._ex_context = None
 
     @classmethod
-    def PartitioningQueryIterable(cls, client, options, database_link, query, partition_key):
+    def PartitioningQueryIterable(cls, client, query, options, database_link, partition_key):
         """
+        Represents a client side partitioning query iterable.
+        
+        This constructor instantiates a QueryIterable for
+        client side partitioning queries, and sets _MultiCollectionQueryExecutionContext
+        as the internal execution context.
         :Parameters:
             - `client`: DocumentClient, instance of document client
+            - `query`: str or dict
             - `options`: dict, the request options for the request.
             - `database_link`: str, database self link or ID based link
-            - `query`: str or dict
             - `partition_key`: str, partition key for the query
-
-        Example of `fetch_function`:
-
-        >>> def result_fn(result):
-        >>>     return result['Databases']
-
         """
-        
         # This will call the base constructor(__init__ method above)
-        self = cls(client, options, None)
-
-        self._query = query
-
-        partition_resolver = client.GetPartitionResolver(database_link)
         
-        if(partition_resolver is None):
-            raise ValueError(client.PartitionResolverErrorMessage)
-        else:
-            self._collection_links = partition_resolver.ResolveForRead(partition_key)
+        self = cls(client, query, options, None, None)
+        self._database_link = database_link
+        self._partition_key = partition_key
 
-        self._collection_links_length = len(self._collection_links)
-
-        if self._collection_links is None:
-            raise ValueError("_collection_links is None.")
-
-        if self._collection_links_length <= 0:
-            raise ValueError("_collection_links_length is not greater than 0.")
-
-        # Creating the QueryFeed for the first collection
-        path = base.GetPathFromLink(self._collection_links[self._current_collection_index], 'docs')
-        collection_id = base.GetResourceIdOrFullNameFromLink(self._collection_links[self._current_collection_index])
-        
-        self._current_collection_index += 1
-
-        def fetch_fn(options):
-            return client.QueryFeed(path,
-                                    collection_id,
-                                    query,
-                                    options)
-
-        self._fetch_function = fetch_fn
-        
         return self
+    
+    def _create_execution_context(self):
+        """instantiates the internal query execution context based.
+        """
+        if hasattr(self, '_database_link'):
+            # client side partitioning query
+            return base_execution_context._MultiCollectionQueryExecutionContext(self._client, self._options, self._database_link, self._query, self._partition_key)
+        else:
+            # 
+            return execution_dispatcher._ProxyQueryExecutionContext(self._client, self._collection_link, self._query, self._options, self._fetch_function)
 
     def __iter__(self):
         """Makes this class iterable.
@@ -100,91 +97,31 @@ class QueryIterable(object):
         def __init__(self, iterable):
             self._iterable = iterable
             self._finished = False
-            self._current = 0
-            self._iterable._results = []
-            self._iterable._continuation = None
-            self._iterable._has_started = False
+            self._ex_context = iterable._create_execution_context()
 
         def __iter__(self):
             # Always returns self
             return self
 
-        def next(self):
-            def callback():
-                if not self._iterable.fetch_next_block():
-                    self._finished = True
-
-            if self._finished:
-                # Must keep raising once we have ended
-                raise StopIteration
-
-            if (self._current >= len(self._iterable._results) and
-                    not self._finished):
-                retry_utility._Execute(self._iterable._client, self._iterable._client._global_endpoint_manager, callback)
-                self._current = 0
-
-            if self._finished:
-                raise StopIteration
-
-            result = self._iterable._results[self._current]
-            self._current += 1
-            return result
+        def __next__(self):
+            return next(self._ex_context)
 
         # Also support Python 3.x iteration
-        __next__ = next
+        def next(self):
+            return self.__next__()
 
     def fetch_next_block(self):
-        """Fetches the next block of query results.
-
-        :Returns:
-            list of fetched items.
-
-        """
-        # Fetch next block of results by executing the query against the current document collection
-        fetched_items = self.fetch_items()
-
-        # If there are multiple document collections to query for(in case of partitioning), keep looping through each one of them,
-        # creating separate feed queries for each collection and fetching the items
-        while not fetched_items:
-            if self._collection_links and self._current_collection_index < self._collection_links_length:
-                path = base.GetPathFromLink(self._collection_links[self._current_collection_index], 'docs')
-                collection_id = base.GetResourceIdOrFullNameFromLink(self._collection_links[self._current_collection_index])
-                
-                self._continuation = None
-                self._has_started = False
-
-                def fetch_fn(options):
-                    return self._client.QueryFeed(path,
-                                            collection_id,
-                                            self._query,
-                                            options)
-
-                self._fetch_function = fetch_fn
-
-                fetched_items = self.fetch_items()
-                self._current_collection_index += 1
-            else:
-                break
-
-        return fetched_items
+        """Returns a block of results with respecting retry policy.
         
-
-    def fetch_items(self):
-        """Fetches more items.
+        This method only exists for backward compatibility reasons. (Because QueryIterable
+        has exposed fetch_next_block api).
 
         :Returns:
-            list of fetched items.
-
+            list. List of results.
         """
-        fetched_items = []
-        while self._continuation or not self._has_started:
-            if not self._has_started:
-                self._has_started = True
-            self._options['continuation'] = self._continuation
-            (fetched_items, response_headers) = self._fetch_function(self._options)
-            self._results = fetched_items
-            self._continuation = response_headers.get(
-                http_constants.HttpHeaders.Continuation)
-            if fetched_items:
-                break
-        return fetched_items
+                
+        if self._ex_context is None:
+            # initiates execution context for the first time
+            self._ex_context = self._create_execution_context()
+        
+        return self._ex_context.fetch_next_block()

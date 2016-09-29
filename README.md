@@ -8,6 +8,10 @@ Welcome to DocumentDB.
     Python 2.7
     https://www.python.org/download/releases/2.7
 
+    or
+
+    Python 3.4
+    https://www.python.org/download/releases/3.4.5/
 
     If you use Microsoft Visual Studio as IDE (we use 2015), please install the
     following extension for Python.

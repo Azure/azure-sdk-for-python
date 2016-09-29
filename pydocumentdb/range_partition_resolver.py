@@ -19,7 +19,7 @@
 #OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 #SOFTWARE.
 
-import pydocumentdb.range as range
+import pydocumentdb.range as prange
 
 class RangePartitionResolver(object):
     """RangePartitionResolver implements partitioning based on the ranges, allowing you to
@@ -92,20 +92,20 @@ class RangePartitionResolver(object):
         intersecting_ranges = set()
 
         if partition_key is None:
-            return partition_map.keys()
+            return list(self.partition_map.keys())
 
-        if isinstance(partition_key, range.Range):
+        if isinstance(partition_key, prange.Range):
             partitionkey_ranges.add(partition_key)
         elif isinstance(partition_key, list):
             for key in partition_key:
                 if key is None:
-                    return self.partition_map.keys()
-                elif isinstance(key, range.Range):
+                    return list(self.partition_map.keys())
+                elif isinstance(key, prange.Range):
                     partitionkey_ranges.add(key)
                 else:
-                    partitionkey_ranges.add(range.Range(key, key))
+                    partitionkey_ranges.add(prange.Range(key, key))
         else:
-            partitionkey_ranges.add(range.Range(partition_key, partition_key))
+            partitionkey_ranges.add(prange.Range(partition_key, partition_key))
 
         for partitionKeyRange in partitionkey_ranges:
             for keyrange in self.partition_map.keys():

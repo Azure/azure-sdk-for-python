@@ -42,13 +42,13 @@ class Range(object):
     def __eq__(self, other):
         return (self.low == other.low) and (self.high == other.high)
 
-    def __cmp__(self, other):
+    def __lt__(self, other):
         if self == other:
-            return 0
+            return False
         elif self.low < other.low or self.high < other.high:
-            return -1
+            return True
         else:
-            return 1
+            return False
 
     def Contains(self, other):
         """Checks if the passed parameter is in the range of this object.

@@ -1,3 +1,10 @@
+## Changes in 2.0.0 : ##
+
+- Added the support for Python 3.4.
+- Supports connection pooling using requests module.
+- Supports session consistency.
+- Supports TOP/ORDERBY queries for partitioned collections.
+
 ## Changes in 1.9.0 : ##
 
 - Added retry policy support for throttled requests. (Throttled requests receive a request rate too large exception, error code 429.) 

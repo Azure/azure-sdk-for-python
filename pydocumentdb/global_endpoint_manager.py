@@ -19,8 +19,7 @@
 #OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 #SOFTWARE.
 
-import urlparse
-
+from six.moves.urllib.parse import urlparse
 import pydocumentdb.constants as constants
 import pydocumentdb.errors as errors
 
@@ -87,7 +86,7 @@ class _GlobalEndpointManager(object):
         # and keeping eating the exception until we get the database account and return None at the end, if we are not able to get that info from any endpoints
         except errors.HTTPFailure:
             for location_name in self.PreferredLocations:
-                locational_endpoint = GetLocationalEndpoint(self.DefaultEndpoint, location_name)
+                locational_endpoint = _GlobalEndpointManager.GetLocationalEndpoint(self.DefaultEndpoint, location_name)
                 try:
                     database_account = self._GetDatabaseAccountStub(locational_endpoint)
                     return database_account
@@ -106,7 +105,7 @@ class _GlobalEndpointManager(object):
     def GetLocationalEndpoint(default_endpoint, location_name):
         # For default_endpoint like 'https://contoso.documents.azure.com:443/' parse it to generate URL format
         # This default_endpoint should be global endpoint(and cannot be a locational endpoint) and we agreed to document that
-        endpoint_url = urlparse.urlparse(default_endpoint)
+        endpoint_url = urlparse(default_endpoint)
 
         # hostname attribute in endpoint_url will return 'contoso.documents.azure.com'
         if endpoint_url.hostname is not None:

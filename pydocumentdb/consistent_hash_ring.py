@@ -21,6 +21,8 @@
 
 import pydocumentdb.partition as partition
 from struct import *
+import six
+from six.moves import xrange
 
 class _ConsistentHashRing(object):
     """The ConsistentHashRing class implements a consistent hash ring using the 
@@ -69,12 +71,12 @@ class _ConsistentHashRing(object):
         using the hashing algorithm and then finally sorting the partitions based on the hash value.
         """
         collections_node_count = len(collection_links)
-        partitions = [partition._Partition() for i in range(0, partitions_per_node * collections_node_count)]
+        partitions = [partition._Partition() for i in xrange(0, partitions_per_node * collections_node_count)]
 
         index = 0
         for collection_node in collection_links:
             hash_value = self.hash_generator.ComputeHash(self._GetBytes(collection_node))
-            for i in range(0, partitions_per_node):
+            for i in xrange(0, partitions_per_node):
                 partitions[index] = partition._Partition(hash_value, collection_node)
                 index += 1
                 hash_value = self.hash_generator.ComputeHash(hash_value)
@@ -103,7 +105,7 @@ class _ConsistentHashRing(object):
     def _GetBytes(partition_key):
         """Gets the bytes representing the value of the partition key.
         """
-        if isinstance(partition_key, basestring):
+        if isinstance(partition_key, six.string_types):
             return bytearray(partition_key, encoding='utf-8')
         else:
             raise ValueError("Unsupported " + str(type(partition_key)) + " for partitionKey.")
@@ -112,7 +114,7 @@ class _ConsistentHashRing(object):
     def _LowerBoundSearch(partitions, hash_value):
         """Searches the partition in the partition array using hashValue.
         """
-        for i in range(0, len(partitions) - 1):
+        for i in xrange(0, len(partitions) - 1):
             if partitions[i].CompareTo(hash_value) <= 0 and partitions[i+1].CompareTo(hash_value) > 0:
                 return i
 
