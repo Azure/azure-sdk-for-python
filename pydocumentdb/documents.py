@@ -1,4 +1,23 @@
-﻿# Copyright (c) Microsoft Corporation.  All rights reserved.
+﻿#The MIT License (MIT)
+#Copyright (c) 2014 Microsoft Corporation
+
+#Permission is hereby granted, free of charge, to any person obtaining a copy
+#of this software and associated documentation files (the "Software"), to deal
+#in the Software without restriction, including without limitation the rights
+#to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+#copies of the Software, and to permit persons to whom the Software is
+#furnished to do so, subject to the following conditions:
+
+#The above copyright notice and this permission notice shall be included in all
+#copies or substantial portions of the Software.
+
+#THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+#IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+#FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+#AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+#LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+#OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+#SOFTWARE.
 
 """AzureDocument classes and enums.
 """
@@ -91,7 +110,7 @@ class IndexingMode(object):
         - `Consistent`: Index is updated synchronously with a create or
           update operation. With consistent indexing, query behavior is the
           same as the default consistency level for the collection.
-         
+
           The index is
           always kept up to date with the data.
         - `Lazy`: Index is updated asynchronously with respect to a create
@@ -139,9 +158,15 @@ class DataType(object):
     :Attributes:
         - `Number`: Represents a numeric data type
         - `String`: Represents a string data type.
+        - `Point`: Represents a point data type
+        - `LineString`: Represents a line string data type
+        - `Polygon`: Represents a polygon data type
     """
     Number = 'Number'
     String = 'String'
+    Point = 'Point'
+    LineString = 'LineString'
+    Polygon = 'Polygon'
 
 
 class IndexingDirective(object):
@@ -212,7 +237,7 @@ class TriggerType(object):
 
 class TriggerOperation(object):
     """Specifies the operations on which a trigger should be executed.
-   
+
     :Attributes:
         - `All`: All operations.
         - `Create`: Create operations only.
@@ -230,12 +255,12 @@ class TriggerOperation(object):
 class SSLConfiguration(object):
     """Configurations for SSL connections.
 
-    Please refer to https://docs.python.org/2/library/ssl.html#socket-creation for more detail.
+    Please refer to http://docs.python-requests.org/en/master/user/advanced/#ssl-cert-verification for more detail.
 
     :Attributes:
         - `SSLKeyFile`: str, the path of the key file for ssl connection.
         - `SSLCertFile`: str, the path of the cert file for ssl connection.
-        - `SSLCaCerts`: str, the path of the ca_certs file for ssl connection.
+        - `SSLCaCerts`: str, the path of the CA_BUNDLE file with certificates of trusted CAs.
     """
     def __init__(self):
         self.SSLKeyFile = None
@@ -274,7 +299,7 @@ class ConnectionPolicy(object):
            current write and read locations and direct the requests to the correct location
            taking into consideration of the user's preference(if provided) as PreferredLocations.
         - `PreferredLocations`: list, gets or sets the preferred locations for geo-replicated database accounts.
-           When EnableEndpointDiscovery is true and PreferredLocations is non-empty, 
+           When EnableEndpointDiscovery is true and PreferredLocations is non-empty,
            the client will use this list to evaluate the final location, taking into consideration
            the order specified in PreferredLocations list. The locations in this list are specified as the names of
            the azure documentdb locations like, 'West US', 'East US', 'Central India' and so on.

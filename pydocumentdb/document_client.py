@@ -1,9 +1,30 @@
-﻿# Copyright (c) Microsoft Corporation.  All rights reserved.
+﻿#The MIT License (MIT)
+#Copyright (c) 2014 Microsoft Corporation
+
+#Permission is hereby granted, free of charge, to any person obtaining a copy
+#of this software and associated documentation files (the "Software"), to deal
+#in the Software without restriction, including without limitation the rights
+#to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+#copies of the Software, and to permit persons to whom the Software is
+#furnished to do so, subject to the following conditions:
+
+#The above copyright notice and this permission notice shall be included in all
+#copies or substantial portions of the Software.
+
+#THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+#IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+#FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+#AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+#LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+#OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+#SOFTWARE.
 
 """Document client.
 """
 
+import requests
 
+import six
 import pydocumentdb.base as base
 import pydocumentdb.documents as documents
 import pydocumentdb.constants as constants
@@ -12,13 +33,9 @@ import pydocumentdb.query_iterable as query_iterable
 import pydocumentdb.runtime_constants as runtime_constants
 import pydocumentdb.synchronized_request as synchronized_request
 import pydocumentdb.global_endpoint_manager as global_endpoint_manager
-
-
-try:
-    basestring
-except NameError:
-    basestring = (str, bytes)
-
+import pydocumentdb.routing.routing_map_provider as routing_map_provider
+import pydocumentdb.session as session
+import pydocumentdb.utils as utils
 
 class DocumentClient(object):
     """Represents a document client.
@@ -48,7 +65,7 @@ class DocumentClient(object):
                  url_connection,
                  auth,
                  connection_policy=None,
-                 consistency_level=None):
+                 consistency_level=documents.ConsistencyLevel.Session):
         """
         :Parameters:
             - `url_connection`: str, the URL for connecting to the DB server.
@@ -89,21 +106,48 @@ class DocumentClient(object):
             http_constants.HttpHeaders.Version:
                 http_constants.Versions.CurrentVersion,
             http_constants.HttpHeaders.UserAgent:
-                http_constants.Versions.UserAgent
+                utils._get_user_agent()
         }
 
         if consistency_level != None:
             self.default_headers[
                 http_constants.HttpHeaders.ConsistencyLevel] = consistency_level
+
         # Keeps the latest response headers from server.
         self.last_response_headers = None
 
+        if consistency_level == documents.ConsistencyLevel.Session:
+            '''create a session - this is maintained only if the default consistency level
+            on the client is set to session, or if the user explicitly sets it as a property
+            via setter'''
+            self.session = session.Session(self.url_connection)
+        else:
+            self.session = None
+
         self._global_endpoint_manager = global_endpoint_manager._GlobalEndpointManager(self)
+
+        # creating a requests session used for connection pooling and re-used by all requests
+        self._requests_session = requests.Session()
 
         # Query compatibility mode.
         # Allows to specify compatibility mode used by client when making query requests. Should be removed when
         # application/sql is no longer supported.
         self._query_compatibility_mode = DocumentClient._QueryCompatibilityMode.Default
+
+        # Routing map provider
+        self._routing_map_provider = routing_map_provider._SmartRoutingMapProvider(self)
+
+    @property
+    def Session(self):
+        """ Gets the session object from the client """
+        return self.session
+
+    @Session.setter
+    def Session(self, session):
+        """ Sets a session object on the document client
+            This will override the existing session
+        """
+        self.session = session
 
     @property
     def WriteEndpoint(self):
@@ -223,7 +267,7 @@ class DocumentClient(object):
                                     lambda _, b: b,
                                     query,
                                     options), self.last_response_headers
-        return query_iterable.QueryIterable(self, options, fetch_fn)
+        return query_iterable.QueryIterable(self, query, options, fetch_fn)
 
     def ReadCollections(self, database_link, options=None):
         """Reads all collections in a database.
@@ -266,7 +310,7 @@ class DocumentClient(object):
                                     lambda _, body: body,
                                     query,
                                     options), self.last_response_headers
-        return query_iterable.QueryIterable(self, options, fetch_fn)
+        return query_iterable.QueryIterable(self, query, options, fetch_fn)
 
     def CreateCollection(self, database_link, collection, options=None):
         """Creates a collection in a database.
@@ -451,7 +495,7 @@ class DocumentClient(object):
                                     lambda _, b: b,
                                     query,
                                     options), self.last_response_headers
-        return query_iterable.QueryIterable(self, options, fetch_fn)
+        return query_iterable.QueryIterable(self, query, options, fetch_fn)
 
     def DeleteDatabase(self, database_link, options=None):
         """Deletes a database.
@@ -591,7 +635,7 @@ class DocumentClient(object):
                                     lambda _, b: b,
                                     query,
                                     options), self.last_response_headers
-        return query_iterable.QueryIterable(self, options, fetch_fn)
+        return query_iterable.QueryIterable(self, query, options, fetch_fn)
 
     def ReplaceUser(self, user_link, user, options=None):
         """Replaces a user and return it.
@@ -721,7 +765,7 @@ class DocumentClient(object):
 
         if(base.IsDatabaseLink(database_or_collection_link)):
             # Python doesn't have a good way of specifying an overloaded constructor, and this is how it's generally overloaded constructors are specified(by calling a @classmethod) and returning the 'self' instance
-            return query_iterable.QueryIterable.PartitioningQueryIterable(self, options, database_or_collection_link, query, partition_key)
+            return query_iterable.QueryIterable.PartitioningQueryIterable(self, query, options, database_or_collection_link, partition_key)
         else:    
             path = base.GetPathFromLink(database_or_collection_link, 'docs')
             collection_id = base.GetResourceIdOrFullNameFromLink(database_or_collection_link)
@@ -733,7 +777,50 @@ class DocumentClient(object):
                                         lambda _, b: b,
                                         query,
                                         options), self.last_response_headers
-            return query_iterable.QueryIterable(self, options, fetch_fn)
+            return query_iterable.QueryIterable(self, query, options, fetch_fn, database_or_collection_link)
+
+    def _ReadPartitionKeyRanges(self, collection_link, feed_options=None):
+        """Reads Partition Key Ranges.
+
+        :Parameters:
+            - `collection_link`: str, the link to the document collection.
+            - `feed_options`: dict
+
+        :Returns:
+            query_iterable.QueryIterable
+
+        """
+        if feed_options is None:
+            feed_options = {}
+
+        return self._QueryPartitionKeyRanges(collection_link, None, feed_options)
+
+    def _QueryPartitionKeyRanges(self, collection_link, query, options=None):
+        """Queries Partition Key Ranges in a collection.
+
+        :Parameters:
+            - `collection_link`: str, the link to the document collection.
+            - `query`: str or dict.
+            - `options`: dict, the request options for the request.
+
+        :Returns:
+            query_iterable.QueryIterable
+
+        """
+        if options is None:
+            options = {}
+
+        path = base.GetPathFromLink(collection_link, 'pkranges')
+        collection_id = base.GetResourceIdOrFullNameFromLink(collection_link)
+        def fetch_fn(options):
+            return self.__QueryFeed(path,
+                                    'pkranges',
+                                    collection_id,
+                                    lambda r: r['PartitionKeyRanges'],
+                                    lambda _, b: b,
+                                    query,
+                                    options), self.last_response_headers
+        return query_iterable.QueryIterable(self, query, options, fetch_fn)
 
     def CreateDocument(self, database_or_collection_link, document, options=None):
         """Creates a document in a collection.
@@ -828,7 +915,7 @@ class DocumentClient(object):
             if(partition_resolver != None):
                 collection_link = partition_resolver.ResolveForCreate(document)
             else:
-                raise ValueError(PartitionResolverErrorMessage)
+                raise ValueError(DocumentClient.PartitionResolverErrorMessage)
         
         path = base.GetPathFromLink(collection_link, 'docs')
         collection_id = base.GetResourceIdOrFullNameFromLink(collection_link)
@@ -897,7 +984,7 @@ class DocumentClient(object):
                                     lambda _, b: b,
                                     query,
                                     options), self.last_response_headers
-        return query_iterable.QueryIterable(self, options, fetch_fn)
+        return query_iterable.QueryIterable(self, query, options, fetch_fn)
 
     def CreateTrigger(self, collection_link, trigger, options=None):
         """Creates a trigger in a collection.
@@ -1017,7 +1104,7 @@ class DocumentClient(object):
                                     lambda _, b: b,
                                     query,
                                     options), self.last_response_headers
-        return query_iterable.QueryIterable(self, options, fetch_fn)
+        return query_iterable.QueryIterable(self, query, options, fetch_fn)
 
     def CreateUserDefinedFunction(self, collection_link, udf, options=None):
         """Creates a user defined function in a collection.
@@ -1137,7 +1224,7 @@ class DocumentClient(object):
                                     lambda _, b: b,
                                     query,
                                     options), self.last_response_headers
-        return query_iterable.QueryIterable(self, options, fetch_fn)
+        return query_iterable.QueryIterable(self, query, options, fetch_fn)
 
     def CreateStoredProcedure(self, collection_link, sproc, options=None):
         """Creates a stored procedure in a collection.
@@ -1256,7 +1343,7 @@ class DocumentClient(object):
                                     lambda _, b: b,
                                     query,
                                     options), self.last_response_headers
-        return query_iterable.QueryIterable(self, options, fetch_fn)
+        return query_iterable.QueryIterable(self, query, options, fetch_fn)
 
     def ReadConflict(self, conflict_link, options=None):
         """Reads a conflict.
@@ -1545,7 +1632,7 @@ class DocumentClient(object):
                                     lambda _, b: b,
                                     query,
                                     options), self.last_response_headers
-        return query_iterable.QueryIterable(self, options, fetch_fn)
+        return query_iterable.QueryIterable(self, query, options, fetch_fn)
 
 
     def ReadMedia(self, media_link):
@@ -1628,6 +1715,8 @@ class DocumentClient(object):
                                                         path,
                                                         readable_stream,
                                                         headers)
+        
+        self._UpdateSessionIfRequired(headers, result, self.last_response_headers)
         return result
 
     def ReplaceAttachment(self, attachment_link, attachment, options=None):
@@ -1968,7 +2057,7 @@ class DocumentClient(object):
                                     lambda _, b: b,
                                     query,
                                     options), self.last_response_headers
-        return query_iterable.QueryIterable(self, options, fetch_fn)
+        return query_iterable.QueryIterable(self, query, options, fetch_fn)
 
     def GetDatabaseAccount(self, url_connection=None):
         """Gets database account info.
@@ -2045,6 +2134,9 @@ class DocumentClient(object):
                                                          path,
                                                          body,
                                                          headers)
+
+        # update session for write request
+        self._UpdateSessionIfRequired(headers, result, self.last_response_headers)
         return result
 
     def Upsert(self, body, path, type, id, initial_headers, options=None):
@@ -2082,6 +2174,8 @@ class DocumentClient(object):
                                                          path,
                                                          body,
                                                          headers)
+        # update session for write request
+        self._UpdateSessionIfRequired(headers, result, self.last_response_headers)
         return result
 
     def Replace(self, resource, path, type, id, initial_headers, options=None):
@@ -2116,6 +2210,9 @@ class DocumentClient(object):
                                                         path,
                                                         resource,
                                                         headers)
+        
+        # update session for request mutates data on server side
+        self._UpdateSessionIfRequired(headers, result, self.last_response_headers)
         return result
 
     def Read(self, path, type, id, initial_headers, options=None):
@@ -2180,6 +2277,11 @@ class DocumentClient(object):
         result, self.last_response_headers = self.__Delete(url_connection,
                                                            path,
                                                            headers)
+
+        # update session for request mutates data on server side
+        self._UpdateSessionIfRequired(headers, result, self.last_response_headers)
+
+
         return result
 
     def __Get(self, url, path, headers):
@@ -2198,6 +2300,7 @@ class DocumentClient(object):
         return synchronized_request.SynchronizedRequest(self,
                                                         self._global_endpoint_manager,
                                                         self.connection_policy,
+                                                        self._requests_session,
                                                         'GET',
                                                         url,
                                                         path,
@@ -2222,6 +2325,7 @@ class DocumentClient(object):
         return synchronized_request.SynchronizedRequest(self,
                                                         self._global_endpoint_manager,
                                                         self.connection_policy,
+                                                        self._requests_session,
                                                         'POST',
                                                         url,
                                                         path,
@@ -2246,6 +2350,7 @@ class DocumentClient(object):
         return synchronized_request.SynchronizedRequest(self,
                                                         self._global_endpoint_manager,
                                                         self.connection_policy,
+                                                        self._requests_session,
                                                         'PUT',
                                                         url,
                                                         path,
@@ -2269,6 +2374,7 @@ class DocumentClient(object):
         return synchronized_request.SynchronizedRequest(self,
                                                         self._global_endpoint_manager,
                                                         self.connection_policy,
+                                                        self._requests_session,
                                                         'DELETE',
                                                         url,
                                                         path,
@@ -2276,7 +2382,7 @@ class DocumentClient(object):
                                                         query_params=None,
                                                         headers=headers)
 
-    def QueryFeed(self, path, collection_id, query, options):
+    def QueryFeed(self, path, collection_id, query, options, partition_key_range_id = None):
         """Query Feed for Document Collection resource.
 
         :Parameters:
@@ -2284,7 +2390,7 @@ class DocumentClient(object):
             - `collection_id`: str, id of the document collection
             - `query`: str or dict
             - `options`: dict, the request options for the request.
-
+            - `partition_key_range_id`: str, partition key range id
         :Returns:
             tuple
 
@@ -2295,7 +2401,8 @@ class DocumentClient(object):
                                 lambda r: r['Documents'],
                                 lambda _, b: b,
                                 query,
-                                options), self.last_response_headers
+                                options,
+                                partition_key_range_id), self.last_response_headers
     
     def __QueryFeed(self,
                     path,
@@ -2304,7 +2411,8 @@ class DocumentClient(object):
                     result_fn,
                     create_fn,
                     query,
-                    options=None):
+                    options=None,
+                    partition_key_range_id=None):
         """Query for more than one DocumentDB resources.
 
         Raises :exc:`SystemError` is the query compatibility mode is undefined.
@@ -2317,6 +2425,7 @@ class DocumentClient(object):
             - `create_fn`: function
             - `query`: str or dict
             - `options`: dict, the request options for the request.
+            - `partition_key_range_id`: str, specifies partition key range id
 
         :Returns:
             list
@@ -2336,14 +2445,15 @@ class DocumentClient(object):
 
         initial_headers = self.default_headers.copy()
         # Copy to make sure that default_headers won't be changed.
-        if query == None:
+        if query is None:
             headers = base.GetHeaders(self,
                                       initial_headers,
                                       'get',
                                       path,
                                       id,
                                       type,
-                                      options)
+                                      options,
+                                      partition_key_range_id)
             result, self.last_response_headers = self.__Get(url_connection,
                                                             path,
                                                             headers)
@@ -2366,7 +2476,8 @@ class DocumentClient(object):
                                       path,
                                       id,
                                       type,
-                                      options)
+                                      options,
+                                      partition_key_range_id)
             result, self.last_response_headers = self.__Post(url_connection,
                                                              path,
                                                              query,
@@ -2388,14 +2499,14 @@ class DocumentClient(object):
         """
         if (self._query_compatibility_mode == DocumentClient._QueryCompatibilityMode.Default or
                self._query_compatibility_mode == DocumentClient._QueryCompatibilityMode.Query):
-            if not isinstance(query_body, dict) and not isinstance(query_body, basestring):
+            if not isinstance(query_body, dict) and not isinstance(query_body, six.string_types):
                 raise TypeError('query body must be a dict or string.')
             if isinstance(query_body, dict) and not query_body.get('query'):
                 raise ValueError('query body must have valid query text with key "query".')
-            if isinstance(query_body, basestring):
+            if isinstance(query_body, six.string_types):
                 return {'query': query_body}
         elif (self._query_compatibility_mode == DocumentClient._QueryCompatibilityMode.SqlQuery and
-              not isinstance(query_body, basestring)):
+              not isinstance(query_body, six.string_types)):
             raise TypeError('query body must be a string.')
         else:
             raise SystemError('Unexpected query compatibility mode.')
@@ -2468,3 +2579,30 @@ class DocumentClient(object):
          
         return partitionKey
     
+    def _UpdateSessionIfRequired(self, request_headers, response_result, response_headers):    
+        """
+        Updates session if necessary.
+
+        :Parameters:
+            - `response_result`- response result
+            - `response_headers` - response headers
+
+        :Returns:
+            None, but updates the client session if necessary
+
+        """
+
+        '''if this request was made with consistency level as session, then update
+        the session'''
+
+        if response_result is None or response_headers is None:
+            return
+
+        is_session_consistency = False
+        if http_constants.HttpHeaders.ConsistencyLevel in request_headers:
+            if documents.ConsistencyLevel.Session == request_headers[http_constants.HttpHeaders.ConsistencyLevel]:
+                is_session_consistency = True
+              
+        if is_session_consistency:
+            # update session
+            self.session.update_session(response_result, response_headers)

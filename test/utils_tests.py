@@ -19,23 +19,24 @@
 #OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 #SOFTWARE.
 
-"""Runtime Constants.
-"""
+import unittest
+import pydocumentdb.utils as utils
+import platform
+import pydocumentdb.http_constants as http_constants
 
-
-class MediaTypes:
-    """Constants of media types.
-
-    http://www.iana.org/assignments/media-types/media-types.xhtml
+class UtilsTests(unittest.TestCase):
+    """Utils Tests
     """
-    Any = '*/*'
-    ImageJpeg = 'image/jpeg'
-    ImagePng = 'image/png'
-    JavaScript = 'application/x-javascript'
-    Json = 'application/json'
-    OctetStream = 'application/octet-stream'
-    QueryJson = 'application/query+json'
-    SQL = 'application/sql'
-    TextHtml = 'text/html'
-    TextPlain = 'text/plain'
-    Xml = 'application/xml'
+
+    def test_user_agent(self):
+        user_agent = utils._get_user_agent()
+
+        expected_user_agent = "{}/{} Python/{} documentdb-python-sdk/{}".format(
+            platform.system(), platform.release(), platform.python_version(), 
+            http_constants.Versions.SDKVersion
+        )
+
+        self.assertEqual(user_agent, expected_user_agent)   
+        
+if __name__ == "__main__":
+    unittest.main()

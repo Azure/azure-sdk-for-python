@@ -55,7 +55,7 @@ def _Execute(client, global_endpoint_manager, function, *args, **kwargs):
             client.last_response_headers[http_constants.HttpHeaders.ThrottleRetryWaitTimeInMs] = resourceThrottle_retry_policy.cummulative_wait_time_in_milliseconds
             
             return result
-        except errors.HTTPFailure, e:
+        except errors.HTTPFailure as e:
             retry_policy = None
 
             if (e.status_code == endpoint_discovery_retry_policy._EndpointDiscoveryRetryPolicy.FORBIDDEN_STATUS_CODE

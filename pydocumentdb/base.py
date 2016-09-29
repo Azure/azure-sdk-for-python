@@ -1,4 +1,23 @@
-﻿# Copyright (c) Microsoft Corporation.  All rights reserved.
+﻿#The MIT License (MIT)
+#Copyright (c) 2014 Microsoft Corporation
+
+#Permission is hereby granted, free of charge, to any person obtaining a copy
+#of this software and associated documentation files (the "Software"), to deal
+#in the Software without restriction, including without limitation the rights
+#to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+#copies of the Software, and to permit persons to whom the Software is
+#furnished to do so, subject to the following conditions:
+
+#The above copyright notice and this permission notice shall be included in all
+#copies or substantial portions of the Software.
+
+#THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+#IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+#FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+#AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+#LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+#OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+#SOFTWARE.
 
 """Base functions.
 """
@@ -6,14 +25,17 @@
 import base64
 import datetime
 import json
-import urllib
 import uuid
+import urllib
 
 import pydocumentdb.auth as auth
 import pydocumentdb.documents as documents
 import pydocumentdb.http_constants as http_constants
 import pydocumentdb.runtime_constants as runtime_constants
 
+import six
+from six.moves.urllib.parse import quote as urllib_quote
+from six.moves import xrange
 
 def GetHeaders(document_client,
                default_headers,
@@ -21,7 +43,8 @@ def GetHeaders(document_client,
                path,
                resource_id,
                resource_type,
-               options):
+               options,
+               partition_key_range_id = None):
     """Gets HTTP request headers.
 
     :Parameters:
@@ -32,6 +55,7 @@ def GetHeaders(document_client,
         - `resource_id`: str
         - `resource_type`: str
         - `options`: dict
+        - `partition_key_range_id` : str
 
     :Returns:
         dict, the HTTP request headers.
@@ -72,16 +96,36 @@ def GetHeaders(document_client,
         headers[http_constants.HttpHeaders.IndexingDirective] = (
             options['indexingDirective'])
 
-    # TODO: add consistency level validation.
+    consistency_level = None
+    
+    ''' get default client consistency level'''
+    default_client_consistency_level = headers.get(http_constants.HttpHeaders.ConsistencyLevel)
+
+    ''' set consistency level. check if set via options, this will 
+    override the default '''
     if options.get('consistencyLevel'):
-        headers[http_constants.HttpHeaders.ConsistencyLevel] = (
-            options['consistencyLevel'])
+        consistency_level = options['consistencyLevel']
+        headers[http_constants.HttpHeaders.ConsistencyLevel] = consistency_level
+    elif default_client_consistency_level is not None:
+        consistency_level = default_client_consistency_level
+        headers[http_constants.HttpHeaders.ConsistencyLevel] = consistency_level
 
-    # TODO: add session token automatic handling in case of session consistency.
-    if options.get('sessionToken'):
-        headers[http_constants.HttpHeaders.SessionToken] = (
-            options['sessionToken'])
+    # figure out if consistency level for this request is session
+    is_session_consistency = (consistency_level == documents.ConsistencyLevel.Session)
 
+    # set session token if required
+    if is_session_consistency is True:
+        # if there is a token set via option, then use it to override default
+        if options.get('sessionToken'):
+            headers[http_constants.HttpHeaders.SessionToken] = options['sessionToken']
+        else:
+            # check if the client's default consistency is session (and request consistency level is same), 
+            # then update from session container
+            if default_client_consistency_level == documents.ConsistencyLevel.Session:
+                # populate session token from the client's session container
+                headers[http_constants.HttpHeaders.SessionToken] = (
+                    document_client.session.get_session_token(path))
+           
     if options.get('enableScanInQuery'):
         headers[http_constants.HttpHeaders.EnableScanInQuery] = (
             options['enableScanInQuery'])
@@ -97,9 +141,13 @@ def GetHeaders(document_client,
         headers[http_constants.HttpHeaders.OfferThroughput] = options['offerThroughput']
 
     if 'partitionKey' in options:
-        # if partitionKey value is Undefined, serailize it as {} to be consistent with other SDKs
+        # if partitionKey value is Undefined, serialize it as {} to be consistent with other SDKs
         if options.get('partitionKey') is documents.Undefined:
-            headers[http_constants.HttpHeaders.PartitionKey] = [{}]
+            if six.PY2:
+                headers[http_constants.HttpHeaders.PartitionKey] = [{}]
+            else:
+                # python 3 compatible
+                headers[http_constants.HttpHeaders.PartitionKey] = '[{}]'.encode('utf-8')
         # else serialize using json dumps method which apart from regular values will serialize None into null
         else:
             headers[http_constants.HttpHeaders.PartitionKey] = json.dumps([options['partitionKey']])
@@ -121,7 +169,7 @@ def GetHeaders(document_client,
         # urllib.quote throws when the input parameter is None
         if authorization:
             # -_.!~*'() are valid characters in url, and shouldn't be quoted.
-            authorization = urllib.quote(authorization, '-_.!~*\'()')
+            authorization = urllib_quote(authorization, '-_.!~*\'()')
         headers[http_constants.HttpHeaders.Authorization] = authorization
 
     if verb == 'post' or verb == 'put':
@@ -131,6 +179,8 @@ def GetHeaders(document_client,
     if not headers.get(http_constants.HttpHeaders.Accept):
         headers[http_constants.HttpHeaders.Accept] = runtime_constants.MediaTypes.Json
 
+    if partition_key_range_id is not None:
+        headers[http_constants.HttpHeaders.PartitionKeyRangeID] = partition_key_range_id
     return headers
 
 
@@ -191,8 +241,10 @@ def GetAttachmentIdFromMediaId(media_id):
     resoure_id_length = 20
     attachment_id = ''
     if len(buffer) > resoure_id_length:
-        # We are cuting off the storage index.
+        # We are cutting off the storage index.
         attachment_id = base64.b64encode(buffer[0:resoure_id_length], altchars)
+        if not six.PY2:
+            attachment_id = attachment_id.decode('utf-8')
     else:
         attachment_id = media_id
 
@@ -227,7 +279,7 @@ def GetPathFromLink(resource_link, resource_type=''):
     if IsNameBased(resource_link):
         # Replace special characters in string using the %xx escape. For example, space(' ') would be replaced by %20
         # This function is intended for quoting the path section of the URL and excludes '/' to be quoted as that's the default safe char
-        resource_link = urllib.quote(resource_link)
+        resource_link = urllib_quote(resource_link)
         
     # Padding leading and trailing slashes to the path returned both for name based and resource id based links
     if resource_type:
@@ -350,6 +402,47 @@ def IsDocumentCollectionLink(link):
     	return False
 
     return True;
+        
+def GetDocumentCollectionInfo(self_link, alt_content_path, id_from_response):
+    """ Given the self link and alt_content_path from the reponse header and result
+        extract the collection name and collection id
+
+        Ever response header has alt-content-path that is the 
+        owner's path in ascii. For document create / update requests, this can be used
+        to get the collection name, but for collection create response, we can't use it.
+        So we also rely on  
+
+    :Parameters:
+        - `self_link` - str, self link of the resource, as obtained from response result
+        - `alt_content_path` - owner path of the resource, as obtained from response header
+        - `resource_id` - 'id' as returned from the response result. This is only used if it is deduced that the
+            request was to create collection
+
+    :Returns:
+        tuple of (collection rid, collection name)
+    """ 
+
+    self_link = TrimBeginningAndEndingSlashes(self_link) + '/'
+
+    index = IndexOfNth(self_link, '/', 4)
+
+    if index != -1:
+        collection_id = self_link[0:index]
+
+        if 'colls' in self_link:
+            # this is a collection request
+            index_second_slash = IndexOfNth(alt_content_path, '/', 2)
+            if index_second_slash == -1:
+                collection_name = alt_content_path + '/colls/' + urllib_quote(id_from_response)
+                return collection_id, collection_name
+            else:
+                collection_name = alt_content_path
+                return collection_id, collection_name
+        else:
+            raise ValueError('Response Not from Server Partition, self_link: {0}, alt_content_path: {1},' +
+                'id: {2}'.format(self_link, alt_content_path, id_from_response))
+    else:
+        raise ValueError('Unable to parse document collection link from ' + self_link)
 
 def GetDocumentCollectionLink(link):
     """Gets the document collection link
@@ -361,8 +454,8 @@ def GetDocumentCollectionLink(link):
         str, document collection link
 
     """
-    link = TrimBeginningAndEndingSlashes(link)
-    
+    link = TrimBeginningAndEndingSlashes(link) + '/'
+
     index = IndexOfNth(link, '/', 4)
     
     if index != -1:
@@ -370,11 +463,11 @@ def GetDocumentCollectionLink(link):
     else:
         raise ValueError('Unable to parse document collection link from ' + link)
 
-def IndexOfNth(str, value, n):
+def IndexOfNth(s, value, n):
     """Gets the index of Nth occurance of a given character in a string
 
     :Parameters:
-        - `str`: str, input string
+        - `s`: str, input string
         - `value`: char, input char to be searched
         - `n`: int, Nth occurance of char to be searched
 
@@ -383,8 +476,8 @@ def IndexOfNth(str, value, n):
 
     """
     remaining = n
-    for i in range(0, len(str)):
-        if str[i] == value:
+    for i in xrange(0, len(s)):
+        if s[i] == value:
             remaining -= 1
             if remaining == 0:
                 return i
@@ -402,7 +495,6 @@ def DecodeBase64String(string_to_decode):
     """
     # '-' is not supported char for decoding in Python(same as C# and Java) which has similar logic while parsing ResourceID generated by backend
     return base64.standard_b64decode(string_to_decode.replace('-', '/'))
-
 
 def TrimBeginningAndEndingSlashes(path):
     """Trims beginning and ending slashes

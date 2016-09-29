@@ -19,23 +19,25 @@
 #OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 #SOFTWARE.
 
-"""Runtime Constants.
-"""
+import platform
+import re as re
+import pydocumentdb.http_constants as http_constants
 
+def _get_user_agent():
+    os_name = _safe_user_agent_header(platform.system())
+    os_version = _safe_user_agent_header(platform.release())
+    python_version = _safe_user_agent_header(platform.python_version())
 
-class MediaTypes:
-    """Constants of media types.
+    user_agent = "{}/{} Python/{} {}/{}".format(os_name, os_version,
+        python_version,
+        http_constants.Versions.SDKName, http_constants.Versions.SDKVersion)
+    return user_agent
 
-    http://www.iana.org/assignments/media-types/media-types.xhtml
-    """
-    Any = '*/*'
-    ImageJpeg = 'image/jpeg'
-    ImagePng = 'image/png'
-    JavaScript = 'application/x-javascript'
-    Json = 'application/json'
-    OctetStream = 'application/octet-stream'
-    QueryJson = 'application/query+json'
-    SQL = 'application/sql'
-    TextHtml = 'text/html'
-    TextPlain = 'text/plain'
-    Xml = 'application/xml'
+def _safe_user_agent_header(s):
+    if s is None:
+        s = "unknown"
+    # remove all white spaces
+    s = re.sub(r"\s+", '', s)
+    if not s:
+        s = "unknown"
+    return s

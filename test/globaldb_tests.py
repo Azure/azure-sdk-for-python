@@ -19,20 +19,19 @@
 #OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 #SOFTWARE.
 
-import urlparse
+from six.moves.urllib.parse import urlparse
+import six
+
 import unittest
 import time
 
 import pydocumentdb.document_client as document_client
 import pydocumentdb.documents as documents
 import pydocumentdb.errors as errors
-import pydocumentdb.base as base
-import pydocumentdb.http_constants as http_constants
-import pydocumentdb.constants as constants
 import pydocumentdb.global_endpoint_manager as global_endpoint_manager
 import pydocumentdb.endpoint_discovery_retry_policy as endpoint_discovery_retry_policy
 import pydocumentdb.retry_utility as retry_utility
-
+import pydocumentdb.http_constants as http_constants
 
 #IMPORTANT NOTES: 
   
@@ -124,10 +123,10 @@ class Test_globaldb_tests(unittest.TestCase):
         time.sleep(5)
 
         client.ReadDocument(created_document['_self'])
-        content_location = str(client.last_response_headers['content-location'])
+        content_location = str(client.last_response_headers[http_constants.HttpHeaders.ContentLocation])
 
-        content_location_url = urlparse.urlparse(content_location)
-        host_url = urlparse.urlparse(Test_globaldb_tests.host)
+        content_location_url = urlparse(content_location)
+        host_url = urlparse(Test_globaldb_tests.host)
         
         # When EnableEndpointDiscovery is False, ReadEndpoint is set to the endpoint passed while creating the client instance
         self.assertEqual(str(content_location_url.hostname), str(host_url.hostname))
@@ -146,10 +145,10 @@ class Test_globaldb_tests(unittest.TestCase):
         time.sleep(5)
 
         client.ReadDocument(created_document['_self'])
-        content_location = str(client.last_response_headers['content-location'])
+        content_location = str(client.last_response_headers[http_constants.HttpHeaders.ContentLocation])
         
-        content_location_url = urlparse.urlparse(content_location)
-        write_location_url = urlparse.urlparse(Test_globaldb_tests.write_location_host)
+        content_location_url = urlparse(content_location)
+        write_location_url = urlparse(Test_globaldb_tests.write_location_host)
 
         # If no preferred locations is set, we return the write endpoint as ReadEndpoint for better latency performance
         self.assertEqual(str(content_location_url.hostname), str(write_location_url.hostname))
@@ -175,7 +174,7 @@ class Test_globaldb_tests(unittest.TestCase):
             document_definition)
 
         # Query databases will pass for the read location client as it's a GET operation
-        databases = list(read_location_client.QueryDatabases({
+        list(read_location_client.QueryDatabases({
             'query': 'SELECT * FROM root r WHERE r.id=@id',
             'parameters': [
                 { 'name':'@id', 'value': self.test_db['id'] }
@@ -206,10 +205,10 @@ class Test_globaldb_tests(unittest.TestCase):
         time.sleep(5)
 
         client.ReadDocument(created_document['_self'])
-        content_location = str(client.last_response_headers['content-location'])
+        content_location = str(client.last_response_headers[http_constants.HttpHeaders.ContentLocation])
 
-        content_location_url = urlparse.urlparse(content_location)
-        write_location_url = urlparse.urlparse(Test_globaldb_tests.write_location_host)
+        content_location_url = urlparse(content_location)
+        write_location_url = urlparse(Test_globaldb_tests.write_location_host)
 
         # If no preferred locations is set, we return the write endpoint as ReadEndpoint for better latency performance
         self.assertEqual(str(content_location_url.hostname), str(write_location_url.hostname))
@@ -225,10 +224,10 @@ class Test_globaldb_tests(unittest.TestCase):
         time.sleep(5)
 
         client.ReadDocument(created_document['_self'])
-        content_location = str(client.last_response_headers['content-location'])
+        content_location = str(client.last_response_headers[http_constants.HttpHeaders.ContentLocation])
 
-        content_location_url = urlparse.urlparse(content_location)
-        read_location2_url = urlparse.urlparse(Test_globaldb_tests.read_location2_host)
+        content_location_url = urlparse(content_location)
+        read_location2_url = urlparse(Test_globaldb_tests.read_location2_host)
         
         # Test that the preferred location is set as ReadEndpoint instead of default write endpoint when no preference is set
         self.assertEqual(str(content_location_url.hostname), str(read_location2_url.hostname))

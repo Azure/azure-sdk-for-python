@@ -1,29 +1,52 @@
-﻿# Copyright (c) Microsoft Corporation.  All rights reserved.
+﻿#The MIT License (MIT)
+#Copyright (c) 2014 Microsoft Corporation
+
+#Permission is hereby granted, free of charge, to any person obtaining a copy
+#of this software and associated documentation files (the "Software"), to deal
+#in the Software without restriction, including without limitation the rights
+#to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+#copies of the Software, and to permit persons to whom the Software is
+#furnished to do so, subject to the following conditions:
+
+#The above copyright notice and this permission notice shall be included in all
+#copies or substantial portions of the Software.
+
+#THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+#IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+#FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+#AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+#LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+#OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+#SOFTWARE.
 
 """End to end test.
 """
 
-import logging
-import unittest
 import json
+import logging
 import os.path
+import sys
+import unittest
+from six.moves import xrange
+from struct import *
+from six.moves.builtins import *
+import six
 
+import pydocumentdb.base as base
+import pydocumentdb.consistent_hash_ring as consistent_hash_ring
 import pydocumentdb.documents as documents
 import pydocumentdb.document_client as document_client
 import pydocumentdb.errors as errors
-import pydocumentdb.http_constants as http_constants
 import pydocumentdb.hash_partition_resolver as hash_partition_resolver
-import pydocumentdb.range_partition_resolver as range_partition_resolver
+import pydocumentdb.http_constants as http_constants
 import pydocumentdb.murmur_hash as murmur_hash
-import pydocumentdb.consistent_hash_ring as consistent_hash_ring
+import pydocumentdb.range_partition_resolver as range_partition_resolver
 import pydocumentdb.range as partition_range
-import test_partition_resolver as test_partition_resolver
+import test.test_partition_resolver as test_partition_resolver
 import pydocumentdb.base as base
 
-from struct import *
-from __builtin__ import *
 
-#IMPORTANT NOTES:
+#IMPORTANT NOTES: 
   
 #  	Most test cases in this file create collections in your DocumentDB account.
 #  	Collections are billing entities.  By running these test cases, you may incur monetary costs on your account.
@@ -194,7 +217,7 @@ class CRUDTests(unittest.TestCase):
                                            self.GetDocumentCollectionLink(created_db, created_collection, is_name_based),
                                            change_collection)
 
-        self.assert_(collections)
+        self.assertTrue(collections)
         # delete collection
         client.DeleteCollection(self.GetDocumentCollectionLink(created_db, created_collection, is_name_based))
         # read collection after deletion
@@ -226,7 +249,8 @@ class CRUDTests(unittest.TestCase):
         self.assertEqual(collection_definition.get('partitionKey').get('paths')[0], created_collection.get('partitionKey').get('paths')[0])
         self.assertEqual(collection_definition.get('partitionKey').get('kind'), created_collection.get('partitionKey').get('kind'))
 
-        offers = list(client.ReadOffers())
+        offers = self.GetCollectionOffers(client, created_collection['_rid'])
+        
         self.assertEqual(1, len(offers))
         expected_offer = offers[0]
         self.assertEqual(expected_offer.get('content').get('offerThroughput'), options.get('offerThroughput'))
@@ -372,7 +396,9 @@ class CRUDTests(unittest.TestCase):
 
         
     def test_partitioned_collection_path_parser(self):
-        entries = json.loads(open(os.path.abspath("test\BaselineTest.PathParser.json")).read())
+        test_dir = os.path.dirname(os.path.abspath(__file__))
+        with open(os.path.join(test_dir, "BaselineTest.PathParser.json")) as json_file:
+            entries = json.loads(json_file.read())
         for entry in entries:
             parts = base.ParsePaths([entry['path']])
             self.assertEqual(parts, entry['parts'])
@@ -387,7 +413,7 @@ class CRUDTests(unittest.TestCase):
         
 
     def test_partitioned_collection_document_crud_and_query(self):
-        client = document_client.DocumentClient(CRUDTests.host, {'masterKey': CRUDTests.masterKey})
+        client = document_client.DocumentClient(CRUDTests.host, {'masterKey': CRUDTests.masterKey}, None, documents.ConsistencyLevel.Session)
 
         created_db = client.CreateDatabase({ 'id': CRUDTests.testDbName })
         
@@ -467,7 +493,7 @@ class CRUDTests(unittest.TestCase):
             self.GetDocumentLink(created_db, created_collection, upserted_document), 
             options)
 
-        # query document on the partition key secified in the predicate will pass even without setting enableCrossPartitionQuery or passing in the partitionKey value
+        # query document on the partition key specified in the predicate will pass even without setting enableCrossPartitionQuery or passing in the partitionKey value
         documentlist = list(client.QueryDocuments(
             self.GetDocumentCollectionLink(created_db, created_collection),
             {
@@ -666,7 +692,11 @@ class CRUDTests(unittest.TestCase):
                     - `chunks`: list
 
                 """
-                self._chunks = list(chunks)
+                if six.PY2:
+                    self._chunks = list(chunks)
+                else:
+                    # python3: convert to bytes
+                    self._chunks = [chunk.encode() for chunk in chunks]
 
             def read(self, n=-1):
                 """Simulates the read method in a file stream.
@@ -675,7 +705,7 @@ class CRUDTests(unittest.TestCase):
                     - `n`: int
 
                 :Returns:
-                    str
+                    bytes or str
 
                 """
                 if self._chunks:
@@ -1307,7 +1337,7 @@ class CRUDTests(unittest.TestCase):
                                 'key': 'value' }
         
         # Create 10 documents each with a different id starting from 0 to 9
-        for i in range(0, 10):
+        for i in xrange(0, 10):
             document_definition['id'] = str(i);
             client.CreateDocument(
                 self.GetDatabaseLink(created_db, True),
@@ -1407,21 +1437,21 @@ class CRUDTests(unittest.TestCase):
 
         collection = { 'id': 'coll' }
 
-        for i in range(0, total_collections_count):
+        for i in xrange(0, total_collections_count):
             collection['id'] = 'coll' + str(i)
             collection_link = self.GetDocumentCollectionLink(created_db, collection, True)
             collection_links.append(collection_link)
 
-        expected_partition_list.append(('dbs/db/colls/coll0', 1076200484L))
-        expected_partition_list.append(('dbs/db/colls/coll0', 1302652881L))
-        expected_partition_list.append(('dbs/db/colls/coll0', 2210251988L))
-        expected_partition_list.append(('dbs/db/colls/coll1', 2341558382L))
-        expected_partition_list.append(('dbs/db/colls/coll0', 2348251587L))
-        expected_partition_list.append(('dbs/db/colls/coll0', 2887945459L))
-        expected_partition_list.append(('dbs/db/colls/coll1', 2894403633L))
-        expected_partition_list.append(('dbs/db/colls/coll1', 3031617259L))
-        expected_partition_list.append(('dbs/db/colls/coll1', 3090861424L))
-        expected_partition_list.append(('dbs/db/colls/coll1', 4222475028L))
+        expected_partition_list.append(('dbs/db/colls/coll0', 1076200484))
+        expected_partition_list.append(('dbs/db/colls/coll0', 1302652881))
+        expected_partition_list.append(('dbs/db/colls/coll0', 2210251988))
+        expected_partition_list.append(('dbs/db/colls/coll1', 2341558382))
+        expected_partition_list.append(('dbs/db/colls/coll0', 2348251587))
+        expected_partition_list.append(('dbs/db/colls/coll0', 2887945459))
+        expected_partition_list.append(('dbs/db/colls/coll1', 2894403633))
+        expected_partition_list.append(('dbs/db/colls/coll1', 3031617259))
+        expected_partition_list.append(('dbs/db/colls/coll1', 3090861424))
+        expected_partition_list.append(('dbs/db/colls/coll1', 4222475028))
 
         id_partition_key_extractor = lambda document: document['id']
         
@@ -1431,7 +1461,7 @@ class CRUDTests(unittest.TestCase):
 
         self.assertEqual(len(expected_partition_list), len(actual_partition_list))
 
-        for i in range(0, len(expected_partition_list)):
+        for i in xrange(0, len(expected_partition_list)):
             self.assertEqual(actual_partition_list[i][0], expected_partition_list[i][0])
             self.assertEqual(actual_partition_list[i][1], expected_partition_list[i][1])
 
@@ -1460,29 +1490,29 @@ class CRUDTests(unittest.TestCase):
         bytes = bytearray(str, encoding='utf-8')
 
         hash_value = murmur_hash._MurmurHash._ComputeHash(bytes)
-        self.assertEqual(1099701186L, hash_value)
+        self.assertEqual(1099701186, hash_value)
 
         num = 374.0
         bytes = bytearray(pack('d', num))
 
         hash_value = murmur_hash._MurmurHash._ComputeHash(bytes)
-        self.assertEqual(3717946798L, hash_value)
+        self.assertEqual(3717946798, hash_value)
 
-        self._validate_bytes("", 0x1B873593, bytearray(b'\xEE\xA8\xA2\x67'), 1738713326L);
-        self._validate_bytes("1", 0xE82562E4, bytearray(b'\xD0\x92\x24\xED'), 3978597072L);
-        self._validate_bytes("00", 0xB4C39035, bytearray(b'\xFA\x09\x64\x1B'), 459540986L);
-        self._validate_bytes("eyetooth", 0x8161BD86, bytearray(b'\x98\x62\x1C\x6F'), 1864131224L);
-        self._validate_bytes("acid", 0x4DFFEAD7, bytearray(b'\x36\x92\xC0\xB9'), 3116405302L);
-        self._validate_bytes("elevation", 0x1A9E1828, bytearray(b'\xA9\xB6\x40\xDF'), 3745560233L);
-        self._validate_bytes("dent", 0xE73C4579, bytearray(b'\xD4\x59\xE1\xD3'), 3554761172L);
-        self._validate_bytes("homeland", 0xB3DA72CA, bytearray(b'\x06\x4D\x72\xBB'), 3144830214L);
-        self._validate_bytes("glamor", 0x8078A01B, bytearray(b'\x89\x89\xA2\xA7'), 2812447113L);
-        self._validate_bytes("flags", 0x4D16CD6C, bytearray(b'\x52\x87\x66\x02'), 40273746L);
-        self._validate_bytes("democracy", 0x19B4FABD, bytearray(b'\xE4\x55\xD6\xB0'), 2966836708L);
-        self._validate_bytes("bumble", 0xE653280E, bytearray(b'\xFE\xD7\xC3\x0C'), 214161406L);
-        self._validate_bytes("catch", 0xB2F1555F, bytearray(b'\x98\x4B\xB6\xCD'), 3451276184L);
-        self._validate_bytes("omnomnomnivore", 0x7F8F82B0, bytearray(b'\x38\xC4\xCD\xFF'), 4291675192L);
-        self._validate_bytes("The quick brown fox jumps over the lazy dog", 0x4C2DB001, bytearray(b'\x6D\xAB\x8D\xC9'), 3381504877L)
+        self._validate_bytes("", 0x1B873593, bytearray(b'\xEE\xA8\xA2\x67'), 1738713326);
+        self._validate_bytes("1", 0xE82562E4, bytearray(b'\xD0\x92\x24\xED'), 3978597072);
+        self._validate_bytes("00", 0xB4C39035, bytearray(b'\xFA\x09\x64\x1B'), 459540986);
+        self._validate_bytes("eyetooth", 0x8161BD86, bytearray(b'\x98\x62\x1C\x6F'), 1864131224);
+        self._validate_bytes("acid", 0x4DFFEAD7, bytearray(b'\x36\x92\xC0\xB9'), 3116405302);
+        self._validate_bytes("elevation", 0x1A9E1828, bytearray(b'\xA9\xB6\x40\xDF'), 3745560233);
+        self._validate_bytes("dent", 0xE73C4579, bytearray(b'\xD4\x59\xE1\xD3'), 3554761172);
+        self._validate_bytes("homeland", 0xB3DA72CA, bytearray(b'\x06\x4D\x72\xBB'), 3144830214);
+        self._validate_bytes("glamor", 0x8078A01B, bytearray(b'\x89\x89\xA2\xA7'), 2812447113);
+        self._validate_bytes("flags", 0x4D16CD6C, bytearray(b'\x52\x87\x66\x02'), 40273746);
+        self._validate_bytes("democracy", 0x19B4FABD, bytearray(b'\xE4\x55\xD6\xB0'), 2966836708);
+        self._validate_bytes("bumble", 0xE653280E, bytearray(b'\xFE\xD7\xC3\x0C'), 214161406);
+        self._validate_bytes("catch", 0xB2F1555F, bytearray(b'\x98\x4B\xB6\xCD'), 3451276184);
+        self._validate_bytes("omnomnomnivore", 0x7F8F82B0, bytearray(b'\x38\xC4\xCD\xFF'), 4291675192);
+        self._validate_bytes("The quick brown fox jumps over the lazy dog", 0x4C2DB001, bytearray(b'\x6D\xAB\x8D\xC9'), 3381504877)
 
     def _validate_bytes(self, str, seed, expected_hash_bytes, expected_value):
         hash_value = murmur_hash._MurmurHash._ComputeHash(bytearray(str, encoding='utf-8'), seed)
@@ -1751,7 +1781,11 @@ class CRUDTests(unittest.TestCase):
                     - `chunks`: list
 
                 """
-                self._chunks = list(chunks)
+                if six.PY2:
+                    self._chunks = list(chunks)
+                else:
+                    # python3: convert to bytes
+                    self._chunks = [chunk.encode() for chunk in chunks]
 
             def read(self, n=-1):
                 """Simulates the read method in a file stream.
@@ -1760,7 +1794,7 @@ class CRUDTests(unittest.TestCase):
                     - `n`: int
 
                 :Returns:
-                    str
+                    str or bytes
 
                 """
                 if self._chunks:
@@ -1872,7 +1906,7 @@ class CRUDTests(unittest.TestCase):
             documents.MediaReadMode.Streamed)
         media_response = client.ReadMedia(valid_attachment['media'])
         self.assertEqual(media_response.read(),
-                         'modified first chunk modified second chunk')
+                         b'modified first chunk modified second chunk')
         # share attachment with a second document
         document = client.CreateDocument(self.GetDocumentCollectionLink(db, collection, is_name_based),
                                          {'id': 'document 2'})
@@ -1917,7 +1951,11 @@ class CRUDTests(unittest.TestCase):
                     - `chunks`: list
 
                 """
-                self._chunks = list(chunks)
+                if six.PY2:
+                    self._chunks = list(chunks)
+                else:
+                    # python3: convert to bytes
+                    self._chunks = [chunk.encode() for chunk in chunks]
 
             def read(self, n=-1):
                 """Simulates the read method in a file stream.
@@ -1926,7 +1964,7 @@ class CRUDTests(unittest.TestCase):
                     - `n`: int
 
                 :Returns:
-                    str
+                    str or bytes
 
                 """
                 if self._chunks:
@@ -3462,9 +3500,17 @@ class CRUDTests(unittest.TestCase):
         client = document_client.DocumentClient(CRUDTests.host, { 'masterKey': CRUDTests.masterKey })
         # Create database.
         db = client.CreateDatabase({ 'id': CRUDTests.testDbName })
+
+        offers = list(client.ReadOffers())
+        initial_count = len(offers)
+
         # Create collection.
         collection = client.CreateCollection(db['_self'], { 'id': 'sample collection' })
         offers = list(client.ReadOffers())
+        self.assertEqual(initial_count+1, len(offers))
+
+        offers = self.GetCollectionOffers(client, collection['_rid'])
+        
         self.assertEqual(1, len(offers))
         expected_offer = offers[0]
         self.__ValidateOfferResponseBody(expected_offer, collection.get('_self'), None)
@@ -3485,6 +3531,7 @@ class CRUDTests(unittest.TestCase):
                     { 'name': '@id', 'value': expected_offer['id']}
                 ]
             }))
+        
         self.assertEqual(1, len(offers))
         query_one_offer = offers[0]
         self.__ValidateOfferResponseBody(query_one_offer, collection.get('_self'), expected_offer.get('offerType'))
@@ -3501,7 +3548,7 @@ class CRUDTests(unittest.TestCase):
         self.__AssertHTTPFailureWithStatus(404, client.ReadOffer, expected_offer.get('_self'))
         # Read feed now returns 0 results.
         offers = list(client.ReadOffers())
-        self.assert_(not offers)
+        self.assertEqual(initial_count, len(offers))
 
     def test_offer_replace(self):
         client = document_client.DocumentClient(CRUDTests.host, { 'masterKey': CRUDTests.masterKey })
@@ -3509,7 +3556,7 @@ class CRUDTests(unittest.TestCase):
         db = client.CreateDatabase({ 'id': CRUDTests.testDbName })
         # Create collection.
         collection = client.CreateCollection(db['_self'], { 'id': 'sample collection' })
-        offers = list(client.ReadOffers())
+        offers = self.GetCollectionOffers(client, collection['_rid'])
         self.assertEqual(1, len(offers))
         expected_offer = offers[0]
         self.__ValidateOfferResponseBody(expected_offer, collection.get('_self'), None)
@@ -3550,16 +3597,25 @@ class CRUDTests(unittest.TestCase):
         collections = list(client.ReadCollections(created_db['_self']))
         # create a collection
         before_create_collections_count = len(collections)
+
+        offers = list(client.ReadOffers())
+        before_offers_count = len(offers)
+        
         collection_definition = { 'id': 'sample collection' }
         collection = client.CreateCollection(created_db['_self'],
                                              collection_definition,
                                              {
                                                  'offerType': 'S2'
                                              })
-        # We should have an offer of type S2.
         offers = list(client.ReadOffers())
+        self.assertEqual(before_offers_count+1, len(offers))
+
+        offers = self.GetCollectionOffers(client, collection['_rid'])
+        
         self.assertEqual(1, len(offers))
         expected_offer = offers[0]
+
+        # We should have an offer of type S2.
         self.__ValidateOfferResponseBody(expected_offer, collection.get('_self'), 'S2')
 
     def test_database_account_functionality(self):
@@ -3649,35 +3705,35 @@ class CRUDTests(unittest.TestCase):
             client.CreateDatabase(database_definition)
             self.assertFalse(True)
         except ValueError as e:
-            self.assertEqual('Id ends with a space.', e.message)
+            self.assertEqual('Id ends with a space.', e.args[0])
         # Id shouldn't contain '/'.
         database_definition = { 'id': 'id_with_illegal/_char' }
         try:
             client.CreateDatabase(database_definition)
             self.assertFalse(True)
         except ValueError as e:
-            self.assertEqual('Id contains illegal chars.', e.message)
+            self.assertEqual('Id contains illegal chars.', e.args[0])
         # Id shouldn't contain '\\'.
         database_definition = { 'id': 'id_with_illegal\\_char' }
         try:
             client.CreateDatabase(database_definition)
             self.assertFalse(True)
         except ValueError as e:
-            self.assertEqual('Id contains illegal chars.', e.message)
+            self.assertEqual('Id contains illegal chars.', e.args[0])
         # Id shouldn't contain '?'.
         database_definition = { 'id': 'id_with_illegal?_char' }
         try:
             client.CreateDatabase(database_definition)
             self.assertFalse(True)
         except ValueError as e:
-            self.assertEqual('Id contains illegal chars.', e.message)
+            self.assertEqual('Id contains illegal chars.', e.args[0])
         # Id shouldn't contain '#'.
         database_definition = { 'id': 'id_with_illegal#_char' }
         try:
             client.CreateDatabase(database_definition)
             self.assertFalse(True)
         except ValueError as e:
-            self.assertEqual('Id contains illegal chars.', e.message)
+            self.assertEqual('Id contains illegal chars.', e.args[0])
 
         # Id can begin with space
         database_definition = { 'id': ' id_begin_space' }
@@ -3740,7 +3796,6 @@ class CRUDTests(unittest.TestCase):
         self.assertEqual(collection_definition1['id'], created_collection1['id'])
         self.assertEqual(collection_definition2['id'], created_collection2['id'])
 
-
     def GetDatabaseLink(self, database, is_name_based=True):
         if is_name_based:
             return 'dbs/' + database['id']
@@ -3800,6 +3855,15 @@ class CRUDTests(unittest.TestCase):
             return self.GetDocumentCollectionLink(database, document_collection) + '/conflicts/' + conflict['id']
         else:
             return conflict['_self']
+
+    def GetCollectionOffers(self, client, collection_rid):
+        return list(client.QueryOffers(
+            {
+                'query': 'SELECT * FROM root r WHERE r.offerResourceId=@offerResourceId',
+                'parameters': [
+                    { 'name': '@offerResourceId', 'value': collection_rid}
+                ]
+            }))
 
 if __name__ == '__main__':
     try:

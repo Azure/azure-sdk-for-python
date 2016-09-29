@@ -19,6 +19,8 @@
 #OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 #SOFTWARE.
 
+from six.moves import xrange
+
 class _Partition(object):
     """Represents a class that holds the hash value and node name for each partition.
     """
@@ -34,11 +36,12 @@ class _Partition(object):
     def __eq__(self, other):
         return (self.hash_value == other.hash_value) and (self.node == other.node)
 
-    def __cmp__(self, other):
+    def __lt__(self, other):
         if self == other:
-            return 0
-        return self.CompareTo(other.hash_value)
-    
+            return False
+        
+        return self.CompareTo(other.hash_value) < 0
+
     def CompareTo(self, other_hash_value):
         """Compares the passed hash value with the hash value of this object
         """
@@ -47,7 +50,7 @@ class _Partition(object):
 
         # The hash byte array that is returned from ComputeHash method has the MSB at the end of the array
         # so comparing the bytes from the end for compare operations.
-        for i in range(0, len(self.hash_value)):
+        for i in xrange(0, len(self.hash_value)):
             if(self.hash_value[len(self.hash_value) - i - 1] < other_hash_value[len(self.hash_value) - i - 1]):
                 return -1
             elif self.hash_value[len(self.hash_value) - i - 1] > other_hash_value[len(self.hash_value) - i - 1]:

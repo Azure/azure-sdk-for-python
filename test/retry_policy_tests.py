@@ -20,13 +20,10 @@
 #SOFTWARE.
 
 import unittest
-import time
-import logging
 
 import pydocumentdb.document_client as document_client
 import pydocumentdb.documents as documents
 import pydocumentdb.errors as errors
-import pydocumentdb.resource_throttle_retry_policy as resource_throttle_retry_policy
 import pydocumentdb.retry_options as retry_options
 import pydocumentdb.http_constants as http_constants
 import pydocumentdb.retry_utility as retry_utility
@@ -44,7 +41,7 @@ class Test_retry_policy_tests(unittest.TestCase):
 
     host = '[YOUR_ENDPOINT_HERE]'
     masterKey = '[YOUR_KEY_HERE]'
-    test_db_name = 'sample database'
+    test_db_name = 'sample database' 
     test_coll_name = 'sample collection'
 
     def __AssertHTTPFailureWithStatus(self, status_code, func, *args, **kwargs):
@@ -116,7 +113,7 @@ class Test_retry_policy_tests(unittest.TestCase):
 
         try:
             client.CreateDocument(self.created_collection['_self'], document_definition)
-        except errors.HTTPFailure, e:
+        except errors.HTTPFailure as e:
             self.assertEqual(e.status_code, 429)
             self.assertEqual(connection_policy.RetryOptions.MaxRetryAttemptCount, client.last_response_headers[http_constants.HttpHeaders.ThrottleRetryCount])
             self.assertGreaterEqual(client.last_response_headers[http_constants.HttpHeaders.ThrottleRetryWaitTimeInMs], connection_policy.RetryOptions.MaxRetryAttemptCount * self.retry_after_in_milliseconds)
@@ -139,7 +136,7 @@ class Test_retry_policy_tests(unittest.TestCase):
 
         try:
             client.CreateDocument(self.created_collection['_self'], document_definition)
-        except errors.HTTPFailure, e:
+        except errors.HTTPFailure as e:
             self.assertEqual(e.status_code, 429)
             self.assertEqual(connection_policy.RetryOptions.MaxRetryAttemptCount, client.last_response_headers[http_constants.HttpHeaders.ThrottleRetryCount])
             self.assertGreaterEqual(client.last_response_headers[http_constants.HttpHeaders.ThrottleRetryWaitTimeInMs], connection_policy.RetryOptions.MaxRetryAttemptCount * connection_policy.RetryOptions.FixedRetryIntervalInMilliseconds)
@@ -162,7 +159,7 @@ class Test_retry_policy_tests(unittest.TestCase):
 
         try:
             client.CreateDocument(self.created_collection['_self'], document_definition)
-        except errors.HTTPFailure, e:
+        except errors.HTTPFailure as e:
             self.assertEqual(e.status_code, 429)
             self.assertGreaterEqual(client.last_response_headers[http_constants.HttpHeaders.ThrottleRetryWaitTimeInMs], connection_policy.RetryOptions.MaxWaitTimeInSeconds * 1000)
 
@@ -192,7 +189,7 @@ class Test_retry_policy_tests(unittest.TestCase):
                     { 'name':'@id', 'value':document_definition['id'] }
                 ]
             }))
-        except errors.HTTPFailure, e:
+        except errors.HTTPFailure as e:
             self.assertEqual(e.status_code, 429)
             self.assertEqual(connection_policy.RetryOptions.MaxRetryAttemptCount, client.last_response_headers[http_constants.HttpHeaders.ThrottleRetryCount])
             self.assertGreaterEqual(client.last_response_headers[http_constants.HttpHeaders.ThrottleRetryWaitTimeInMs], connection_policy.RetryOptions.MaxRetryAttemptCount * self.retry_after_in_milliseconds)

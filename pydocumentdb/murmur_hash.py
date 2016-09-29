@@ -20,6 +20,7 @@
 #SOFTWARE.
 
 from struct import *
+from six.moves import xrange
 
 '''
 pymmh3 was written by Fredrik Kihlander, and is placed in the public
