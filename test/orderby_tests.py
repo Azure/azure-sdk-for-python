@@ -38,6 +38,8 @@ class CrossPartitionTopOrderByTest(unittest.TestCase):
     """Orderby Tests.
     """
     
+    host = '[YOUR_ENDPOINT_HERE]'
+    masterKey = '[YOUR_KEY_HERE]'
     testDbName = 'sample database'
     
     @classmethod

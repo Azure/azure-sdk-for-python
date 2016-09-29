@@ -37,6 +37,8 @@ class RoutingMapEndToEndTests(unittest.TestCase):
     """Routing Map Functionalities end to end Tests.
     """
 
+    host = '[YOUR_ENDPOINT_HERE]'
+    masterKey = '[YOUR_KEY_HERE]'
     testDbName = 'sample database'
 
     @classmethod
