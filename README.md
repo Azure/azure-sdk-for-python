@@ -6,12 +6,12 @@ Welcome to DocumentDB.
 0) Pre-requirements:
 
     Python 2.7
-    https://www.python.org/download/releases/2.7
+    https://www.python.org/downloads/
 
     or
 
-    Python 3.4
-    https://www.python.org/download/releases/3.4.5/
+    Python 3.5
+    https://www.python.org/downloads/
 
     If you use Microsoft Visual Studio as IDE (we use 2015), please install the
     following extension for Python.
