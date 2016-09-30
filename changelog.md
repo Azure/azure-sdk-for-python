@@ -1,6 +1,6 @@
 ## Changes in 2.0.0 : ##
 
-- Added support for Python 3.4.
+- Added support for Python 3.5.
 - Added support for connection pooling using the requests module.
 - Added support for session consistency.
 - Added support for TOP/ORDERBY queries for partitioned collections.
