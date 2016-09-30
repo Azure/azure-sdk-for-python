@@ -1036,7 +1036,8 @@ class JobOperations(object):
 
     def list_from_job_schedule(
             self, job_schedule_id, job_list_from_job_schedule_options=None, custom_headers=None, raw=False, **operation_config):
-        """Lists the jobs that have been created under the specified job schedule.
+        """Lists the jobs that have been created under the specified job
+        schedule.
 
         :param job_schedule_id: The id of the job schedule from which you
          want to get a list of jobs.
