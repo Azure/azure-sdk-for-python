@@ -169,6 +169,7 @@ from .task_get_options import TaskGetOptions
 from .task_update_options import TaskUpdateOptions
 from .task_list_subtasks_options import TaskListSubtasksOptions
 from .task_terminate_options import TaskTerminateOptions
+from .task_reactivate_options import TaskReactivateOptions
 from .compute_node_add_user_options import ComputeNodeAddUserOptions
 from .compute_node_delete_user_options import ComputeNodeDeleteUserOptions
 from .compute_node_update_user_options import ComputeNodeUpdateUserOptions
@@ -382,6 +383,7 @@ __all__ = [
     'TaskUpdateOptions',
     'TaskListSubtasksOptions',
     'TaskTerminateOptions',
+    'TaskReactivateOptions',
     'ComputeNodeAddUserOptions',
     'ComputeNodeDeleteUserOptions',
     'ComputeNodeUpdateUserOptions',
