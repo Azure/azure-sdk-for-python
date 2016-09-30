@@ -32,7 +32,7 @@ from azure.batch.batch_auth import SharedKeyCredentials
 
 AZURE_BATCH_ACCOUNT = 'pythonsdktest'
 AZURE_RESOURCE_GROUP = 'python_batch_sdk_test'
-AZURE_LOCATION = 'westus'
+AZURE_LOCATION = 'eastus'
 AZURE_STORAGE_ACCOUNT = 'pythonsdkbatchtest'
 
 LOG = logging.getLogger('batch-python-tests')
@@ -97,9 +97,9 @@ def create_batch_account(client, settings, live):
             location=AZURE_LOCATION,
             auto_storage=azure.mgmt.batch.models.AutoStorageBaseProperties(storage_resource)
         )
-        account_setup = client.account.create(AZURE_RESOURCE_GROUP, AZURE_BATCH_ACCOUNT, batch_account)
+        account_setup = client.batch_account.create(AZURE_RESOURCE_GROUP, AZURE_BATCH_ACCOUNT, batch_account)
         new_account = account_setup.result()
-        account_keys = client.account.list_keys(AZURE_RESOURCE_GROUP, AZURE_BATCH_ACCOUNT)
+        account_keys = client.batch_account.get_keys(AZURE_RESOURCE_GROUP, AZURE_BATCH_ACCOUNT)
         batch_creds = SharedKeyCredentials(AZURE_BATCH_ACCOUNT, account_keys.primary)
     else:
         batch_creds = SharedKeyCredentials(AZURE_BATCH_ACCOUNT, 'ZmFrZV9hY29jdW50X2tleQ==')
@@ -157,7 +157,7 @@ class BatchMgmtTestCase(RecordingTestCase):
         if cls.live:
             try:
                 LOG.debug("    deleting Batch account")
-                deleting = cls.batch_mgmt_client.account.delete(
+                deleting = cls.batch_mgmt_client.batch_account.delete(
                     AZURE_RESOURCE_GROUP, AZURE_BATCH_ACCOUNT)
                 deleting.wait()
             except: pass # This should get deleted with the resource group anyway
@@ -237,13 +237,6 @@ class BatchMgmtTestCase(RecordingTestCase):
             if message not in error:
                 error[message] = str(err)
 
-    #def assertIsInstance(self, error, message, obj, obj_type):
-    #    try:
-    #        super(BatchMgmtTestCase, self).assertIsInstance(obj, obj_type)
-    #    except AssertionError as err:
-    #        if message not in error:
-    #            error[message]
-
     def assertSuccess(self, errors):
         if errors:
             message = "The following errors occurred:\n"
@@ -255,50 +248,50 @@ class BatchMgmtTestCase(RecordingTestCase):
         _e = {}
         _m = "Test Get Subscription Quota"
         LOG.debug(_m)
-        quotas = self.assertRuns(_e, _m, self.batch_mgmt_client.subscription.get_subscription_quotas,
+        quotas = self.assertRuns(_e, _m, self.batch_mgmt_client.location.get_quotas,
                                  AZURE_LOCATION)
-        self.assertIsInstance(quotas, azure.mgmt.batch.models.SubscriptionQuotasGetResult)
+        self.assertTrue(_e, _m, isinstance(quotas, azure.mgmt.batch.models.BatchLocationQuota))
         if quotas:
             self.assertEqual(_e, _m, quotas.account_quota, 1)    
 
         _m = "Test Get Account"
         LOG.debug(_m)
-        account = self.assertRuns(_e, _m, self.batch_mgmt_client.account.get,
+        account = self.assertRuns(_e, _m, self.batch_mgmt_client.batch_account.get,
                                   AZURE_RESOURCE_GROUP, AZURE_BATCH_ACCOUNT)
-        self.assertIsInstance(account, azure.mgmt.batch.models.AccountResource)
+        self.assertTrue(_e, _m, isinstance(account, azure.mgmt.batch.models.BatchAccount))
         if account:
             self.assertEqual(_e, _m, account.core_quota, 20)
             self.assertEqual(_e, _m, account.pool_quota, 20)
 
         _m = "Test List Accounts"  #TODO: Need to re-record
         LOG.debug('TODO: ' + _m)
-        #accounts = self.assertList(_e, _m, self.batch_mgmt_client.account.list)
+        #accounts = self.assertList(_e, _m, self.batch_mgmt_client.batch_account.list)
         #self.assertTrue(_e, _m, len(accounts) > 0)
 
         _m = "Test List Accounts by Resource Group"
         LOG.debug(_m)
-        accounts = self.assertList(_e, _m, self.batch_mgmt_client.account.list_by_resource_group,
+        accounts = self.assertList(_e, _m, self.batch_mgmt_client.batch_account.list_by_resource_group,
                                    AZURE_RESOURCE_GROUP)
         self.assertEqual(_e, _m, len(accounts), 1)
 
         _m = "Test Regenerate Account Key"
         LOG.debug(_m)
-        keys = self.assertRuns(_e, _m, self.batch_mgmt_client.account.regenerate_key,
+        keys = self.assertRuns(_e, _m, self.batch_mgmt_client.batch_account.regenerate_key,
                                AZURE_RESOURCE_GROUP, AZURE_BATCH_ACCOUNT, 'Secondary')
-        self.assertIsInstance(keys, azure.mgmt.batch.models.BatchAccountRegenerateKeyResult)
+        self.assertTrue(_e, _m, isinstance(keys, azure.mgmt.batch.models.BatchAccountKeys))
 
         _m = "Test Sync AutoStorage Keys"
         LOG.debug(_m)
-        response = self.assertRuns(_e, _m, self.batch_mgmt_client.account.synchronize_auto_storage_keys,
+        response = self.assertRuns(_e, _m, self.batch_mgmt_client.batch_account.synchronize_auto_storage_keys,
                                    AZURE_RESOURCE_GROUP, AZURE_BATCH_ACCOUNT)
         self.assertIsNone(_e, _m, response)
 
         _m = "Test Update Account"
         LOG.debug(_m)
         tags = {'Name': 'tagName', 'Value': 'tagValue'}
-        updated = self.assertRuns(_e, _m, self.batch_mgmt_client.account.update,
+        updated = self.assertRuns(_e, _m, self.batch_mgmt_client.batch_account.update,
                                    AZURE_RESOURCE_GROUP, AZURE_BATCH_ACCOUNT, tags)
-        self.assertIsInstance(updated, azure.mgmt.batch.models.AccountResource)
+        self.assertTrue(_e, _m, isinstance(updated, azure.mgmt.batch.models.BatchAccount))
         if account:
             self.assertEqual(_e, _m, updated.tags['Name'], 'tagName')
             self.assertEqual(_e, _m, updated.tags['Value'], 'tagValue')
@@ -310,10 +303,10 @@ class BatchMgmtTestCase(RecordingTestCase):
         _e = {}
         _m = "Test Add Application"
         LOG.debug(_m)
-        application = self.assertRuns(_e, _m, self.batch_mgmt_client.application.add_application,
+        application = self.assertRuns(_e, _m, self.batch_mgmt_client.application.create,
                                    AZURE_RESOURCE_GROUP, AZURE_BATCH_ACCOUNT, 'my_application_id',
                                    allow_updated=True, display_name='my_application_name')
-        self.assertIsInstance(application, azure.mgmt.batch.models.Application)
+        self.assertTrue(_e, _m, isinstance(application, azure.mgmt.batch.models.Application))
         if application:
             self.assertEqual(_e, _m, application.id, 'my_application_id')
             self.assertEqual(_e, _m, application.display_name, 'my_application_name')
@@ -321,9 +314,9 @@ class BatchMgmtTestCase(RecordingTestCase):
 
         _m = "Test Mgmt Get Application"
         LOG.debug(_m)
-        application = self.assertRuns(_e, _m, self.batch_mgmt_client.application.get_application,
+        application = self.assertRuns(_e, _m, self.batch_mgmt_client.application.get,
                                       AZURE_RESOURCE_GROUP, AZURE_BATCH_ACCOUNT, 'my_application_id')
-        self.assertIsInstance(application, azure.mgmt.batch.models.Application)
+        self.assertTrue(_e, _m, isinstance(application, azure.mgmt.batch.models.Application))
         if application:
             self.assertEqual(_e, _m, application.id, 'my_application_id')
             self.assertEqual(_e, _m, application.display_name, 'my_application_name')
@@ -337,9 +330,9 @@ class BatchMgmtTestCase(RecordingTestCase):
 
         _m = "Test Add Application Package"
         LOG.debug(_m)
-        package_ref = self.assertRuns(_e, _m, self.batch_mgmt_client.application.add_application_package,
+        package_ref = self.assertRuns(_e, _m, self.batch_mgmt_client.application_package.create,
                                       AZURE_RESOURCE_GROUP, AZURE_BATCH_ACCOUNT, 'my_application_id', 'v1.0')
-        self.assertIsInstance(package_ref, azure.mgmt.batch.models.AddApplicationPackageResult)
+        self.assertTrue(_e, _m, isinstance(package_ref, azure.mgmt.batch.models.ApplicationPackage))
         if package_ref:
             try:
                 with io.BytesIO(b'Hello World') as f:
@@ -352,7 +345,7 @@ class BatchMgmtTestCase(RecordingTestCase):
 
         _m = "Test Activate Application Package"
         LOG.debug(_m)
-        response = self.assertRuns(_e, _m, self.batch_mgmt_client.application.activate_application_package,
+        response = self.assertRuns(_e, _m, self.batch_mgmt_client.application_package.activate,
                                    AZURE_RESOURCE_GROUP, AZURE_BATCH_ACCOUNT, 'my_application_id', 'v1.0', 'zip')
         self.assertIsNone(_e, _m, response)
 
@@ -363,15 +356,15 @@ class BatchMgmtTestCase(RecordingTestCase):
             display_name='my_updated_name',
             default_version='v1.0'
         )
-        response = self.assertRuns(_e, _m, self.batch_mgmt_client.application.update_application,
+        response = self.assertRuns(_e, _m, self.batch_mgmt_client.application.update,
                                    AZURE_RESOURCE_GROUP, AZURE_BATCH_ACCOUNT, 'my_application_id', params)
         self.assertIsNone(_e, _m, response)
 
         _m = "Test Get Application Package"
         LOG.debug(_m)
-        package_ref = self.assertRuns(_e, _m, self.batch_mgmt_client.application.get_application_package,
+        package_ref = self.assertRuns(_e, _m, self.batch_mgmt_client.application_package.get,
                                       AZURE_RESOURCE_GROUP, AZURE_BATCH_ACCOUNT, 'my_application_id', 'v1.0')
-        self.assertIsInstance(package_ref, azure.mgmt.batch.models.GetApplicationPackageResult)
+        self.assertTrue(_e, _m, isinstance(package_ref, azure.mgmt.batch.models.ApplicationPackage))
         if package_ref:
             self.assertEqual(_e, _m, package_ref.id, 'my_application_id')
             self.assertEqual(_e, _m, package_ref.version, 'v1.0')
@@ -381,7 +374,7 @@ class BatchMgmtTestCase(RecordingTestCase):
         _m = "Test Service Get Application"
         LOG.debug(_m)
         application = self.assertRuns(_e, _m, self.batch_client.application.get, 'my_application_id')
-        self.assertIsInstance(application, batch.models.ApplicationSummary)
+        self.assertTrue(_e, _m, isinstance(application, batch.models.ApplicationSummary))
         if application:
             self.assertEqual(_e, _m, application.id, 'my_application_id')
             self.assertEqual(_e, _m, application.display_name, 'my_updated_name')
@@ -394,13 +387,13 @@ class BatchMgmtTestCase(RecordingTestCase):
 
         _m = "Test Delete Application Package"
         LOG.debug(_m)
-        response = self.assertRuns(_e, _m, self.batch_mgmt_client.application.delete_application_package,
+        response = self.assertRuns(_e, _m, self.batch_mgmt_client.application_package.delete,
                                    AZURE_RESOURCE_GROUP, AZURE_BATCH_ACCOUNT, 'my_application_id', 'v1.0')
         self.assertIsNone(_e, _m, response)
 
         _m = "Test Delete Application"
         LOG.debug(_m)
-        response = self.assertRuns(_e, _m, self.batch_mgmt_client.application.delete_application,
+        response = self.assertRuns(_e, _m, self.batch_mgmt_client.application.delete,
                                    AZURE_RESOURCE_GROUP, AZURE_BATCH_ACCOUNT, 'my_application_id')
         self.assertIsNone(_e, _m, response)
         self.assertSuccess(_e)
@@ -431,7 +424,7 @@ class BatchMgmtTestCase(RecordingTestCase):
         _m = "Test Get Certificate"
         LOG.debug(_m)
         cert = self.assertRuns(_e, _m, self.batch_client.certificate.get, 'sha1', 'cff2ab63c8c955aaf71989efa641b906558d9fb7')
-        self.assertIsInstance(cert, batch.models.Certificate)
+        self.assertTrue(_e, _m, isinstance(cert, batch.models.Certificate))
         if cert:
             self.assertEqual(_e, _m, cert.thumbprint, 'cff2ab63c8c955aaf71989efa641b906558d9fb7')
             self.assertEqual(_e, _m, cert.thumbprint_algorithm, 'sha1')
@@ -470,7 +463,8 @@ class BatchMgmtTestCase(RecordingTestCase):
 
                 _m = "Test Upgrade Pool OS"
                 LOG.debug(_m)
-                response = self.assertRuns(_e, _m, self.batch_client.pool.upgrade_os, pool_id, 'WA-GUEST-OS-4.32_201605-01')
+                response = self.assertBatchError(_e, _m, "PoolVersionEqualsUpgradeVersion",
+                                                 self.batch_client.pool.upgrade_os, pool_id, '*')
                 self.assertIsNone(_e, _m, response)
 
                 _m = "Test Update Pool Parameters"
@@ -488,10 +482,10 @@ class BatchMgmtTestCase(RecordingTestCase):
                 _m = "Test Get Pool"
                 LOG.debug(_m)
                 pool = self.assertRuns(_e, _m, self.batch_client.pool.get, pool_id)
-                self.assertIsInstance(pool, batch.models.CloudPool)
+                self.assertTrue(_e, _m, isinstance(pool, batch.models.CloudPool))
                 if pool:
                     self.assertEqual(_e, _m, pool.id, pool_id)
-                    self.assertEqual(_e, _m, pool.state, batch.models.PoolState.upgrading)
+                    self.assertEqual(_e, _m, pool.state, batch.models.PoolState.active)
                     self.assertEqual(_e, _m, pool.allocation_state, batch.models.AllocationState.steady)
                     self.assertEqual(_e, _m, pool.cloud_service_configuration.os_family, '4')
                     self.assertEqual(_e, _m, pool.vm_size, 'small')
@@ -502,10 +496,10 @@ class BatchMgmtTestCase(RecordingTestCase):
                 LOG.debug(_m)
                 options = batch.models.PoolGetOptions(select='id,state', expand='stats')
                 pool = self.assertRuns(_e, _m, self.batch_client.pool.get, pool_id, options)
-                self.assertIsInstance(pool, batch.models.CloudPool)
+                self.assertTrue(_e, _m, isinstance(pool, batch.models.CloudPool))
                 if pool:
                     self.assertEqual(_e, _m, pool.id, pool_id)
-                    self.assertEqual(_e, _m, pool.state, batch.models.PoolState.upgrading)
+                    self.assertEqual(_e, _m, pool.state, batch.models.PoolState.active)
                     self.assertIsNone(_e, _m, pool.allocation_state)
                     self.assertIsNone(_e, _m, pool.vm_size)
 
@@ -520,7 +514,7 @@ class BatchMgmtTestCase(RecordingTestCase):
                 _m = "Test Evaluate Autoscale"
                 LOG.debug(_m)
                 result = self.assertRuns(_e, _m, self.batch_client.pool.evaluate_auto_scale, pool_id, '$TargetDedicated=3')
-                self.assertIsInstance(result, batch.models.AutoScaleRun)
+                self.assertTrue(_e, _m, isinstance(result, batch.models.AutoScaleRun))
                 self.assertEqual(_e, _m, result.results, '$TargetDedicated=3;$NodeDeallocationOption=requeue')
 
                 _m = "Test Disable Autoscale"
@@ -569,7 +563,7 @@ class BatchMgmtTestCase(RecordingTestCase):
                 _m = "Test Get All Pools Lifetime Statistics"
                 LOG.debug(_m)
                 stats = self.assertRuns(_e, _m, self.batch_client.pool.get_all_pools_lifetime_statistics)
-                self.assertIsInstance(stats, batch.models.PoolStatistics)
+                self.assertTrue(_e, _m, isinstance(stats, batch.models.PoolStatistics))
                 if stats:
                     self.assertEqual(_e, _m, stats.url, "https://{}.{}.batch.azure.com/lifetimepoolstats".format(
                         AZURE_BATCH_ACCOUNT, AZURE_LOCATION))
@@ -601,7 +595,7 @@ class BatchMgmtTestCase(RecordingTestCase):
             _m = "Test Get Compute Node"
             LOG.debug(_m)
             node = self.assertRuns(_e, _m, self.batch_client.compute_node.get, pool_id, node_ids[0])
-            self.assertIsInstance(node, batch.models.ComputeNode)
+            self.assertTrue(_e, _m, isinstance(node, batch.models.ComputeNode))
             if node:
                 self.assertEqual(_e, _m, node.state, batch.models.ComputeNodeState.idle)
                 self.assertEqual(_e, _m, node.scheduling_state, batch.models.SchedulingState.enabled)
@@ -689,6 +683,23 @@ class BatchMgmtTestCase(RecordingTestCase):
     @record
     def test_batch_jobs(self):
         _e = {}
+        _m = "Test Add Application"
+        LOG.debug(_m)
+        application = self.assertRuns(_e, _m, self.batch_mgmt_client.application.create,
+                                   AZURE_RESOURCE_GROUP, AZURE_BATCH_ACCOUNT, 'my_application_id',
+                                   allow_updated=True, display_name='my_application_name')
+        self.assertTrue(_e, _m, isinstance(application, azure.mgmt.batch.models.Application))
+        if application:
+            self.assertEqual(_e, _m, application.id, 'my_application_id')
+            self.assertEqual(_e, _m, application.display_name, 'my_application_name')
+            self.assertEqual(_e, _m, application.allow_updates, True)
+
+        _m = "Test Add Application Package"
+        LOG.debug(_m)
+        package_ref = self.assertRuns(_e, _m, self.batch_mgmt_client.application_package.create,
+                                      AZURE_RESOURCE_GROUP, AZURE_BATCH_ACCOUNT, 'my_application_id', 'v1.0')
+        self.assertTrue(_e, _m, isinstance(package_ref, azure.mgmt.batch.models.ApplicationPackage))
+    
         with BatchPool(self.live,
                        self.batch_client,
                        'python_test_pool_4',
@@ -738,7 +749,7 @@ class BatchMgmtTestCase(RecordingTestCase):
             _m = "Test Get Job"
             LOG.debug(_m)
             job = self.assertRuns(_e, _m, self.batch_client.job.get, 'python_test_job')
-            self.assertIsInstance(job, batch.models.CloudJob)
+            self.assertTrue(_e, _m, isinstance(job, batch.models.CloudJob))
             if job:
                 self.assertEqual(_e, _m, job.id, 'python_test_job')
                 self.assertEqual(_e, _m, job.pool_info.pool_id, pool_id)
@@ -773,7 +784,7 @@ class BatchMgmtTestCase(RecordingTestCase):
             _m = "Test Get Task with Auto Complete"
             LOG.debug(_m)
             task = self.assertRuns(_e, _m, self.batch_client.task.get, 'python_test_job_2', 'python_task_with_auto_complete')
-            self.assertIsInstance(task, batch.models.CloudTask)
+            self.assertTrue(_e, _m, isinstance(task, batch.models.CloudTask))
             if task:
                 self.assertEqual(_e, _m, task.exit_conditions.default.job_action.value, 'terminate')
                 self.assertEqual(_e, _m, task.exit_conditions.exit_codes[0].code, 1)
@@ -781,13 +792,6 @@ class BatchMgmtTestCase(RecordingTestCase):
 
             _m = "Test Create Task with Application Package"
             LOG.debug(_m)
-            application = self.assertRuns(_e, _m, self.batch_mgmt_client.application.add_application,
-                                          AZURE_RESOURCE_GROUP, AZURE_BATCH_ACCOUNT, 'my_application_id',
-                                          allow_updated=True, display_name='my_application_name')
-
-            package_ref = self.assertRuns(_e, _m, self.batch_mgmt_client.application.add_application_package,
-                                      AZURE_RESOURCE_GROUP, AZURE_BATCH_ACCOUNT, 'my_application_id', 'v1.0')
-
             task = batch.models.TaskAddParameter('python_task_with_app_package',
                                                  'cmd /c echo hello world',
                                                  application_package_references=[batch.models.ApplicationPackageReference('my_application_id')])
@@ -798,7 +802,7 @@ class BatchMgmtTestCase(RecordingTestCase):
             LOG.debug(_m)
             task = self.assertRuns(_e, _m, self.batch_client.task.get, 'python_test_job', 'python_task_with_app_package')
 
-            self.assertIsInstance(task, batch.models.CloudTask)
+            self.assertTrue(_e, _m, isinstance(task, batch.models.CloudTask))
             if task:
                 self.assertEqual(_e, _m, task.id, 'python_task_with_app_package')
                 self.assertEqual(_e, _m, task.application_package_references[0].application_id, 'my_application_id')
@@ -817,6 +821,23 @@ class BatchMgmtTestCase(RecordingTestCase):
             response = self.assertRuns(_e, _m, self.batch_client.task.terminate, 
                                        'python_test_job', 'python_task_1')
             self.assertIsNone(_e, _m, response)
+            
+            task = self.assertRuns(_e, _m, self.batch_client.task.get, 'python_test_job', 'python_task_1')
+            self.assertTrue(_e, _m, isinstance(task, batch.models.CloudTask))
+            if task:
+                self.assertEqual(_e, _m, task.state.value, 'completed')
+
+            _m = "Test Reactivate Task"
+            LOG.debug(_m)
+            response = self.assertRuns(_e, _m, self.batch_client.task.reactivate,
+                                       'python_test_job', 'python_task_1')
+            self.assertIsNone(_e, _m, response)
+            task = self.assertRuns(_e, _m, self.batch_client.task.get, 'python_test_job', 'python_task_1')
+
+            self.assertTrue(_e, _m, isinstance(task, batch.models.CloudTask))
+            if task:
+                self.assertEqual(_e, _m, task.state.value, 'active')
+
 
             _m = "Test Update Task"
             LOG.debug(_m)
@@ -833,7 +854,7 @@ class BatchMgmtTestCase(RecordingTestCase):
             for i in range(3, 6):
                 tasks.append(batch.models.TaskAddParameter('python_task_{}'.format(i), 'cmd /c echo hello world'))
             response = self.assertRuns(_e, _m, self.batch_client.task.add_collection, 'python_test_job', tasks)
-            self.assertIsInstance(response, batch.models.TaskAddCollectionResult)
+            self.assertTrue(_e, _m, isinstance(response, batch.models.TaskAddCollectionResult))
 
             _m = "Test List Tasks"
             LOG.debug(_m)
@@ -844,7 +865,7 @@ class BatchMgmtTestCase(RecordingTestCase):
             _m = "Test Get Task"
             LOG.debug(_m)
             task = self.assertRuns(_e, _m, self.batch_client.task.get, 'python_test_job', 'python_task_2')
-            self.assertIsInstance(task, batch.models.CloudTask)
+            self.assertTrue(_e, _m, isinstance(task, batch.models.CloudTask))
             if task:
                 self.assertEqual(_e, _m, task.constraints.max_task_retry_count, 1)
                 self.assertEqual(_e, _m, task.id, 'python_task_2')
@@ -943,7 +964,7 @@ class BatchMgmtTestCase(RecordingTestCase):
             _m = "Test Get Job Schedule"
             LOG.debug(_m)
             schedule = self.assertRuns(_e, _m, self.batch_client.job_schedule.get, 'python_test_schedule')
-            self.assertIsInstance(schedule, batch.models.CloudJobSchedule)
+            self.assertTrue(_e, _m, isinstance(schedule, batch.models.CloudJobSchedule))
             if schedule:
                 self.assertEqual(_e, _m, schedule.id, 'python_test_schedule')
                 self.assertEqual(_e, _m, schedule.state, batch.models.JobScheduleState.active)
