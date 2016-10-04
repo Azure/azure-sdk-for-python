@@ -21,7 +21,6 @@ from .deployment_export_result import DeploymentExportResult
 from .resource_management_error_with_details import ResourceManagementErrorWithDetails
 from .alias_path_type import AliasPathType
 from .alias_type import AliasType
-from .zone_mapping_type import ZoneMappingType
 from .provider_resource_type import ProviderResourceType
 from .provider import Provider
 from .basic_dependency import BasicDependency
@@ -72,7 +71,6 @@ __all__ = [
     'ResourceManagementErrorWithDetails',
     'AliasPathType',
     'AliasType',
-    'ZoneMappingType',
     'ProviderResourceType',
     'Provider',
     'BasicDependency',
