@@ -44,12 +44,10 @@ Available packages
 Stable packages
 ~~~~~~~~~~~~~~~
 
-.. note:: All these packages are installed by the latest ``azure`` meta-package 2.0.0rc6.
-
 ===================================== =======
 Package name                          Version
 ===================================== =======
-azure-batch                           1.0.0
+azure-batch                           1.1.0
 azure-mgmt-batch                      1.0.0
 azure-mgmt-devtestlabs                1.0.0
 azure-mgmt-logic                      1.0.0
@@ -57,21 +55,21 @@ azure-mgmt-redis                      1.0.0
 azure-mgmt-scheduler                  1.0.0
 azure-mgmt-servermanager              1.0.0
 azure-servicebus                      0.20.3
-azure-servicemanagement-legacy        0.20.4
+azure-servicemanagement-legacy        0.20.5
 azure-storage                         0.33.0
 ===================================== =======
 
 Preview packages
 ~~~~~~~~~~~~~~~~
 
-===================================== ========= ===============================
-Package name                          Version   Note
-===================================== ========= ===============================
-azure-mgmt-resource                   0.30.0rc6 Installed by ``azure`` 2.0.0rc6
-azure-mgmt-compute                    0.30.0rc6 Installed by ``azure`` 2.0.0rc6
-azure-mgmt-network                    0.30.0rc6 Installed by ``azure`` 2.0.0rc6
-azure-mgmt-storage                    0.30.0rc6 Installed by ``azure`` 2.0.0rc6
-azure-mgmt-keyvault                   0.30.0rc6 Installed by ``azure`` 2.0.0rc6
+===================================== =========
+Package name                          Version  
+===================================== =========
+azure-mgmt-resource                   0.30.0   
+azure-mgmt-compute                    0.30.0rc6
+azure-mgmt-network                    0.30.0rc6
+azure-mgmt-storage                    0.30.0rc6
+azure-mgmt-keyvault                   0.30.0rc6
 azure-graphrbac                       0.30.0rc6
 azure-mgmt-authorization              0.30.0rc6
 azure-mgmt-cdn                        0.30.0rc6
@@ -83,7 +81,7 @@ azure-mgmt-notificationhubs           0.30.0rc6
 azure-mgmt-powerbiembedded            0.30.0rc6
 azure-mgmt-trafficmanager             0.30.0rc6
 azure-mgmt-web                        0.30.0rc6   
-===================================== ========= ===============================
+===================================== =========
 
 Install from Github
 -------------------

@@ -19,11 +19,11 @@ class MgmtNotificationHubsTest(AzureMgmtTestCase):
         self.notificationhubs_client = self.create_mgmt_client(
             azure.mgmt.notificationhubs.NotificationHubsManagementClient
         )
+        if not self.is_playback():
+            self.create_resource_group()
 
     @record
     def test_notification_hubs(self):
-        self.create_resource_group()
-
         account_name = self.get_resource_name('pyarmnotificationhubs')
 
         output = self.notificationhubs_client.namespaces.check_availability(
