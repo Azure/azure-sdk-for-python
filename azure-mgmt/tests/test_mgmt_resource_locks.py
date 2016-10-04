@@ -21,7 +21,7 @@ class MgmtResourceLocksTest(AzureMgmtTestCase):
         )
 
     @record
-    def test_features(self):
+    def test_locks(self):
         self.create_resource_group()
         lock_name = 'pylockrg'
 
