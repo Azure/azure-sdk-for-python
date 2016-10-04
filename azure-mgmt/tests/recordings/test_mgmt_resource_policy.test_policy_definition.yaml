@@ -7,31 +7,31 @@ interactions:
       Connection: [keep-alive]
       Content-Length: ['22']
       Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.4.3 (Linux-3.4.0+-x86_64-with-Ubuntu-14.04-trusty) requests/2.10.0
-          msrest/0.4.0 msrest_azure/0.4.1 resourcemanagementclient/0.30.0rc5 Azure-SDK-For-Python]
+      User-Agent: [python/3.5.1 (Windows-10-10.0.14393-SP0) requests/2.11.0 msrest/0.4.4
+          msrest_azure/0.4.3 resourcemanagementclient/0.30.0rc6 Azure-SDK-For-Python]
       accept-language: [en-US]
-      x-ms-client-request-id: [de83e4c8-4abd-11e6-b5f3-00155d4b0101]
+      x-ms-client-request-id: [42bd814a-7e9b-11e6-b85a-ecb1d756380e]
     method: PUT
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_mgmt_resource_policy_test_policy_definitionea4a13f0?api-version=2016-02-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_mgmt_resource_policy_test_policy_definitionea4a13f0?api-version=2016-09-01
   response:
     body: {string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_resource_policy_test_policy_definitionea4a13f0","name":"test_mgmt_resource_policy_test_policy_definitionea4a13f0","location":"westus","properties":{"provisioningState":"Succeeded"}}'}
     headers:
       Cache-Control: [no-cache]
       Content-Length: ['265']
       Content-Type: [application/json; charset=utf-8]
-      Date: ['Fri, 15 Jul 2016 18:56:38 GMT']
+      Date: ['Mon, 19 Sep 2016 18:59:59 GMT']
       Expires: ['-1']
       Pragma: [no-cache]
       Strict-Transport-Security: [max-age=31536000; includeSubDomains]
-      x-ms-correlation-request-id: [205b9d95-bc98-4deb-ad07-67a4a1e83558]
-      x-ms-ratelimit-remaining-subscription-writes: ['1198']
-      x-ms-request-id: [205b9d95-bc98-4deb-ad07-67a4a1e83558]
-      x-ms-routing-request-id: ['CENTRALUS:20160715T185639Z:205b9d95-bc98-4deb-ad07-67a4a1e83558']
+      x-ms-correlation-request-id: [eb13a319-1e77-46a5-8cd2-5bacd8b2891d]
+      x-ms-ratelimit-remaining-subscription-writes: ['1193']
+      x-ms-request-id: [eb13a319-1e77-46a5-8cd2-5bacd8b2891d]
+      x-ms-routing-request-id: ['CENTRALUS:20160919T185959Z:eb13a319-1e77-46a5-8cd2-5bacd8b2891d']
     status: {code: 201, message: Created}
 - request:
     body: '{"properties": {"description": "Don''t create a VM anywhere", "policyRule":
       {"then": {"effect": "deny"}, "if": {"allOf": [{"equals": "Microsoft.Compute/virtualMachines/write",
-      "source": "action"}, {"in": ["eastus", "eastus2", "centralus"], "field": "location"}]}},
+      "source": "action"}, {"field": "location", "in": ["eastus", "eastus2", "centralus"]}]}},
       "policyType": "Custom"}}'
     headers:
       Accept: [application/json]
@@ -39,27 +39,27 @@ interactions:
       Connection: [keep-alive]
       Content-Length: ['288']
       Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.4.3 (Linux-3.4.0+-x86_64-with-Ubuntu-14.04-trusty) requests/2.10.0
-          msrest/0.4.0 msrest_azure/0.4.1 policyclient/0.30.0rc5 Azure-SDK-For-Python]
+      User-Agent: [python/3.5.1 (Windows-10-10.0.14393-SP0) requests/2.11.0 msrest/0.4.4
+          msrest_azure/0.4.3 policyclient/0.30.0rc6 Azure-SDK-For-Python]
       accept-language: [en-US]
-      x-ms-client-request-id: [df252dd8-4abd-11e6-b5f3-00155d4b0101]
+      x-ms-client-request-id: [435d8a9c-7e9b-11e6-8f8a-ecb1d756380e]
     method: PUT
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Authorization/policydefinitions/pypolicyea4a13f0?api-version=2016-04-01
   response:
     body: {string: '{"properties":{"policyType":"Custom","description":"Don''t create
-        a VM anywhere","policyRule":{"then":{"effect":"deny"},"if":{"allOf":[{"equals":"Microsoft.Compute/virtualMachines/write","source":"action"},{"in":["eastus","eastus2","centralus"],"field":"location"}]}}},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Authorization/policyDefinitions/pypolicyea4a13f0","type":"Microsoft.Authorization/policyDefinitions","name":"pypolicyea4a13f0"}'}
+        a VM anywhere","policyRule":{"then":{"effect":"deny"},"if":{"allOf":[{"equals":"Microsoft.Compute/virtualMachines/write","source":"action"},{"field":"location","in":["eastus","eastus2","centralus"]}]}}},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Authorization/policyDefinitions/pypolicyea4a13f0","type":"Microsoft.Authorization/policyDefinitions","name":"pypolicyea4a13f0"}'}
     headers:
       Cache-Control: [no-cache]
       Content-Length: ['473']
       Content-Type: [application/json; charset=utf-8]
-      Date: ['Fri, 15 Jul 2016 18:56:39 GMT']
+      Date: ['Mon, 19 Sep 2016 18:59:59 GMT']
       Expires: ['-1']
       Pragma: [no-cache]
       Strict-Transport-Security: [max-age=31536000; includeSubDomains]
-      x-ms-correlation-request-id: [ed08542e-981c-4784-b640-79490b45ab33]
-      x-ms-ratelimit-remaining-subscription-writes: ['1198']
-      x-ms-request-id: ['centralus:5a9cb4df-c172-423a-b412-65671b257cc4']
-      x-ms-routing-request-id: ['CENTRALUS:20160715T185639Z:ed08542e-981c-4784-b640-79490b45ab33']
+      x-ms-correlation-request-id: [de39ed23-812a-4d19-b064-76d17802dba9]
+      x-ms-ratelimit-remaining-subscription-writes: ['1186']
+      x-ms-request-id: ['centralus:2901036d-f5ee-4e16-9f55-caf3290b409c']
+      x-ms-routing-request-id: ['CENTRALUS:20160919T185959Z:de39ed23-812a-4d19-b064-76d17802dba9']
     status: {code: 201, message: Created}
 - request:
     body: null
@@ -68,29 +68,29 @@ interactions:
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
       Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.4.3 (Linux-3.4.0+-x86_64-with-Ubuntu-14.04-trusty) requests/2.10.0
-          msrest/0.4.0 msrest_azure/0.4.1 policyclient/0.30.0rc5 Azure-SDK-For-Python]
+      User-Agent: [python/3.5.1 (Windows-10-10.0.14393-SP0) requests/2.11.0 msrest/0.4.4
+          msrest_azure/0.4.3 policyclient/0.30.0rc6 Azure-SDK-For-Python]
       accept-language: [en-US]
-      x-ms-client-request-id: [df6bacae-4abd-11e6-b5f3-00155d4b0101]
+      x-ms-client-request-id: [439ce546-7e9b-11e6-81ae-ecb1d756380e]
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Authorization/policydefinitions/pypolicyea4a13f0?api-version=2016-04-01
   response:
     body: {string: '{"properties":{"policyType":"Custom","description":"Don''t create
-        a VM anywhere","policyRule":{"then":{"effect":"deny"},"if":{"allOf":[{"equals":"Microsoft.Compute/virtualMachines/write","source":"action"},{"in":["eastus","eastus2","centralus"],"field":"location"}]}}},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Authorization/policyDefinitions/pypolicyea4a13f0","type":"Microsoft.Authorization/policyDefinitions","name":"pypolicyea4a13f0"}'}
+        a VM anywhere","policyRule":{"then":{"effect":"deny"},"if":{"allOf":[{"equals":"Microsoft.Compute/virtualMachines/write","source":"action"},{"field":"location","in":["eastus","eastus2","centralus"]}]}}},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Authorization/policyDefinitions/pypolicyea4a13f0","type":"Microsoft.Authorization/policyDefinitions","name":"pypolicyea4a13f0"}'}
     headers:
       Cache-Control: [no-cache]
       Content-Type: [application/json; charset=utf-8]
-      Date: ['Fri, 15 Jul 2016 18:56:39 GMT']
+      Date: ['Mon, 19 Sep 2016 18:59:59 GMT']
       Expires: ['-1']
       Pragma: [no-cache]
       Strict-Transport-Security: [max-age=31536000; includeSubDomains]
       Transfer-Encoding: [chunked]
       Vary: ['Accept-Encoding,Accept-Encoding']
       content-length: ['473']
-      x-ms-correlation-request-id: [bde68221-6f7c-4024-b54c-0dddcf3cfa7c]
-      x-ms-ratelimit-remaining-subscription-reads: ['14998']
-      x-ms-request-id: ['centralus:4cc2b0ce-9a76-4fd4-a6cb-3a1770338b31']
-      x-ms-routing-request-id: ['CENTRALUS:20160715T185640Z:bde68221-6f7c-4024-b54c-0dddcf3cfa7c']
+      x-ms-correlation-request-id: [d6a6d86f-5999-47f3-9bc1-5a7eeda7302d]
+      x-ms-ratelimit-remaining-subscription-reads: ['14991']
+      x-ms-request-id: ['centralus:b0b7f05a-2a23-498a-9f49-84359819d608']
+      x-ms-routing-request-id: ['CENTRALUS:20160919T190000Z:d6a6d86f-5999-47f3-9bc1-5a7eeda7302d']
     status: {code: 200, message: OK}
 - request:
     body: null
@@ -99,10 +99,10 @@ interactions:
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
       Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.4.3 (Linux-3.4.0+-x86_64-with-Ubuntu-14.04-trusty) requests/2.10.0
-          msrest/0.4.0 msrest_azure/0.4.1 policyclient/0.30.0rc5 Azure-SDK-For-Python]
+      User-Agent: [python/3.5.1 (Windows-10-10.0.14393-SP0) requests/2.11.0 msrest/0.4.4
+          msrest_azure/0.4.3 policyclient/0.30.0rc6 Azure-SDK-For-Python]
       accept-language: [en-US]
-      x-ms-client-request-id: [dfb4c3a8-4abd-11e6-b5f3-00155d4b0101]
+      x-ms-client-request-id: [43dfc2dc-7e9b-11e6-ae93-ecb1d756380e]
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Authorization/policydefinitions?api-version=2016-04-01
   response:
@@ -127,21 +127,21 @@ interactions:
         resource creation only if the ''department'' tag is set","policyRule":{"if":{"not":{"field":"tags","containsKey":"department"}},"then":{"effect":"Deny"}}},"id":"/providers/Microsoft.Authorization/policyDefinitions/cd8dc879-a2ae-43c3-8211-1877c5755064","type":"Microsoft.Authorization/policyDefinitions","name":"cd8dc879-a2ae-43c3-8211-1877c5755064"},{"properties":{"displayName":"Allow
         resource creation only in Japan data centers","policyType":"BuiltIn","description":"Allows
         resource creation in the following locations only: Japan East, Japan West","policyRule":{"if":{"not":{"field":"location","in":["japaneast","japanwest"]}},"then":{"effect":"Deny"}}},"id":"/providers/Microsoft.Authorization/policyDefinitions/e01598e8-6538-41ed-95e8-8b29746cd697","type":"Microsoft.Authorization/policyDefinitions","name":"e01598e8-6538-41ed-95e8-8b29746cd697"},{"properties":{"policyType":"Custom","description":"Don''t
-        create a VM anywhere","policyRule":{"then":{"effect":"deny"},"if":{"allOf":[{"equals":"Microsoft.Compute/virtualMachines/write","source":"action"},{"in":["eastus","eastus2","centralus"],"field":"location"}]}}},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Authorization/policyDefinitions/pypolicyea4a13f0","type":"Microsoft.Authorization/policyDefinitions","name":"pypolicyea4a13f0"}]}'}
+        create a VM anywhere","policyRule":{"then":{"effect":"deny"},"if":{"allOf":[{"equals":"Microsoft.Compute/virtualMachines/write","source":"action"},{"field":"location","in":["eastus","eastus2","centralus"]}]}}},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Authorization/policyDefinitions/pypolicyea4a13f0","type":"Microsoft.Authorization/policyDefinitions","name":"pypolicyea4a13f0"}]}'}
     headers:
       Cache-Control: [no-cache]
       Content-Type: [application/json; charset=utf-8]
-      Date: ['Fri, 15 Jul 2016 18:56:40 GMT']
+      Date: ['Mon, 19 Sep 2016 19:00:01 GMT']
       Expires: ['-1']
       Pragma: [no-cache]
       Strict-Transport-Security: [max-age=31536000; includeSubDomains]
       Transfer-Encoding: [chunked]
       Vary: ['Accept-Encoding,Accept-Encoding']
       content-length: ['4839']
-      x-ms-correlation-request-id: [13462a7f-63af-46c6-b9c1-130093e10f3c]
-      x-ms-ratelimit-remaining-subscription-reads: ['14998']
-      x-ms-request-id: ['centralus:5135e64f-daaa-4f8e-a60b-170dec0f906a']
-      x-ms-routing-request-id: ['CENTRALUS:20160715T185640Z:13462a7f-63af-46c6-b9c1-130093e10f3c']
+      x-ms-correlation-request-id: [12fd8e5a-fd35-4fd4-ac41-23ccaf3454cf]
+      x-ms-ratelimit-remaining-subscription-reads: ['14968']
+      x-ms-request-id: ['centralus:5571f5d0-5294-485b-967f-53d5935e39f4']
+      x-ms-routing-request-id: ['CENTRALUS:20160919T190001Z:12fd8e5a-fd35-4fd4-ac41-23ccaf3454cf']
     status: {code: 200, message: OK}
 - request:
     body: '{"properties": {"policyDefinitionId": "/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Authorization/policyDefinitions/pypolicyea4a13f0"}}'
@@ -151,10 +151,10 @@ interactions:
       Connection: [keep-alive]
       Content-Length: ['162']
       Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.4.3 (Linux-3.4.0+-x86_64-with-Ubuntu-14.04-trusty) requests/2.10.0
-          msrest/0.4.0 msrest_azure/0.4.1 policyclient/0.30.0rc5 Azure-SDK-For-Python]
+      User-Agent: [python/3.5.1 (Windows-10-10.0.14393-SP0) requests/2.11.0 msrest/0.4.4
+          msrest_azure/0.4.3 policyclient/0.30.0rc6 Azure-SDK-For-Python]
       accept-language: [en-US]
-      x-ms-client-request-id: [dff1f520-4abd-11e6-b5f3-00155d4b0101]
+      x-ms-client-request-id: [4456fb82-7e9b-11e6-a339-ecb1d756380e]
     method: PUT
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_resource_policy_test_policy_definitionea4a13f0/providers/Microsoft.Authorization/policyassignments/pypolicyassignmentea4a13f0?api-version=2016-04-01
   response:
@@ -163,14 +163,14 @@ interactions:
       Cache-Control: [no-cache]
       Content-Length: ['591']
       Content-Type: [application/json; charset=utf-8]
-      Date: ['Fri, 15 Jul 2016 18:56:40 GMT']
+      Date: ['Mon, 19 Sep 2016 19:00:01 GMT']
       Expires: ['-1']
       Pragma: [no-cache]
       Strict-Transport-Security: [max-age=31536000; includeSubDomains]
-      x-ms-correlation-request-id: [de3c0b40-e5cf-4873-9b84-414160ef23e6]
-      x-ms-ratelimit-remaining-subscription-writes: ['1196']
-      x-ms-request-id: ['centralus:8227817e-2f71-4a71-898e-c10d55e0b863']
-      x-ms-routing-request-id: ['CENTRALUS:20160715T185641Z:de3c0b40-e5cf-4873-9b84-414160ef23e6']
+      x-ms-correlation-request-id: [e1c866f9-a5b2-4784-8431-e9defefc0340]
+      x-ms-ratelimit-remaining-subscription-writes: ['1189']
+      x-ms-request-id: ['centralus:b9f46108-9846-4d9e-b4ea-a98f6fc4b32f']
+      x-ms-routing-request-id: ['CENTRALUS:20160919T190001Z:e1c866f9-a5b2-4784-8431-e9defefc0340']
     status: {code: 201, message: Created}
 - request:
     body: null
@@ -179,10 +179,10 @@ interactions:
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
       Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.4.3 (Linux-3.4.0+-x86_64-with-Ubuntu-14.04-trusty) requests/2.10.0
-          msrest/0.4.0 msrest_azure/0.4.1 policyclient/0.30.0rc5 Azure-SDK-For-Python]
+      User-Agent: [python/3.5.1 (Windows-10-10.0.14393-SP0) requests/2.11.0 msrest/0.4.4
+          msrest_azure/0.4.3 policyclient/0.30.0rc6 Azure-SDK-For-Python]
       accept-language: [en-US]
-      x-ms-client-request-id: [e0554972-4abd-11e6-b5f3-00155d4b0101]
+      x-ms-client-request-id: [44ae69d2-7e9b-11e6-a96b-ecb1d756380e]
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_resource_policy_test_policy_definitionea4a13f0/providers/Microsoft.Authorization/policyassignments/pypolicyassignmentea4a13f0?api-version=2016-04-01
   response:
@@ -190,17 +190,17 @@ interactions:
     headers:
       Cache-Control: [no-cache]
       Content-Type: [application/json; charset=utf-8]
-      Date: ['Fri, 15 Jul 2016 18:56:40 GMT']
+      Date: ['Mon, 19 Sep 2016 19:00:02 GMT']
       Expires: ['-1']
       Pragma: [no-cache]
       Strict-Transport-Security: [max-age=31536000; includeSubDomains]
       Transfer-Encoding: [chunked]
       Vary: ['Accept-Encoding,Accept-Encoding']
       content-length: ['591']
-      x-ms-correlation-request-id: [0b197b3e-ff48-48b9-bf38-dd4297b360c4]
-      x-ms-ratelimit-remaining-subscription-reads: ['14997']
-      x-ms-request-id: ['centralus:164cdb8a-8f15-434e-8c17-4b18d488254c']
-      x-ms-routing-request-id: ['CENTRALUS:20160715T185641Z:0b197b3e-ff48-48b9-bf38-dd4297b360c4']
+      x-ms-correlation-request-id: [43148870-d571-45a2-b40c-68acfe7d61e8]
+      x-ms-ratelimit-remaining-subscription-reads: ['14952']
+      x-ms-request-id: ['centralus:cda61dc2-a559-45ab-98a4-b1d19ec1cc40']
+      x-ms-routing-request-id: ['CENTRALUS:20160919T190002Z:43148870-d571-45a2-b40c-68acfe7d61e8']
     status: {code: 200, message: OK}
 - request:
     body: null
@@ -209,10 +209,10 @@ interactions:
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
       Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.4.3 (Linux-3.4.0+-x86_64-with-Ubuntu-14.04-trusty) requests/2.10.0
-          msrest/0.4.0 msrest_azure/0.4.1 policyclient/0.30.0rc5 Azure-SDK-For-Python]
+      User-Agent: [python/3.5.1 (Windows-10-10.0.14393-SP0) requests/2.11.0 msrest/0.4.4
+          msrest_azure/0.4.3 policyclient/0.30.0rc6 Azure-SDK-For-Python]
       accept-language: [en-US]
-      x-ms-client-request-id: [e08c10ec-4abd-11e6-b5f3-00155d4b0101]
+      x-ms-client-request-id: [44e34986-7e9b-11e6-957f-ecb1d756380e]
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Authorization/policyassignments?api-version=2016-04-01
   response:
@@ -220,17 +220,17 @@ interactions:
     headers:
       Cache-Control: [no-cache]
       Content-Type: [application/json; charset=utf-8]
-      Date: ['Fri, 15 Jul 2016 18:56:41 GMT']
+      Date: ['Mon, 19 Sep 2016 19:00:02 GMT']
       Expires: ['-1']
       Pragma: [no-cache]
       Strict-Transport-Security: [max-age=31536000; includeSubDomains]
       Transfer-Encoding: [chunked]
       Vary: ['Accept-Encoding,Accept-Encoding']
       content-length: ['603']
-      x-ms-correlation-request-id: [9cf6d0f3-5a2f-446b-b6d6-a6f74c519cdc]
-      x-ms-ratelimit-remaining-subscription-reads: ['14998']
-      x-ms-request-id: ['centralus:763bd9ed-422b-4140-8378-8dfb94c3fe78']
-      x-ms-routing-request-id: ['CENTRALUS:20160715T185641Z:9cf6d0f3-5a2f-446b-b6d6-a6f74c519cdc']
+      x-ms-correlation-request-id: [143bd657-81de-4d04-a593-2d68d96be33d]
+      x-ms-ratelimit-remaining-subscription-reads: ['14967']
+      x-ms-request-id: ['centralus:491113f0-a5f0-4fc4-8a5a-c9c35228f518']
+      x-ms-routing-request-id: ['CENTRALUS:20160919T190002Z:143bd657-81de-4d04-a593-2d68d96be33d']
     status: {code: 200, message: OK}
 - request:
     body: null
@@ -239,10 +239,10 @@ interactions:
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
       Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.4.3 (Linux-3.4.0+-x86_64-with-Ubuntu-14.04-trusty) requests/2.10.0
-          msrest/0.4.0 msrest_azure/0.4.1 policyclient/0.30.0rc5 Azure-SDK-For-Python]
+      User-Agent: [python/3.5.1 (Windows-10-10.0.14393-SP0) requests/2.11.0 msrest/0.4.4
+          msrest_azure/0.4.3 policyclient/0.30.0rc6 Azure-SDK-For-Python]
       accept-language: [en-US]
-      x-ms-client-request-id: [e0c5975e-4abd-11e6-b5f3-00155d4b0101]
+      x-ms-client-request-id: [451c5980-7e9b-11e6-9c8b-ecb1d756380e]
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_resource_policy_test_policy_definitionea4a13f0/providers/Microsoft.Authorization/policyAssignments?api-version=2016-04-01
   response:
@@ -250,17 +250,17 @@ interactions:
     headers:
       Cache-Control: [no-cache]
       Content-Type: [application/json; charset=utf-8]
-      Date: ['Fri, 15 Jul 2016 18:56:41 GMT']
+      Date: ['Mon, 19 Sep 2016 19:00:02 GMT']
       Expires: ['-1']
       Pragma: [no-cache]
       Strict-Transport-Security: [max-age=31536000; includeSubDomains]
       Transfer-Encoding: [chunked]
       Vary: ['Accept-Encoding,Accept-Encoding']
       content-length: ['603']
-      x-ms-correlation-request-id: [a78d57ba-8a54-4af6-9473-3a1668c65aea]
-      x-ms-ratelimit-remaining-subscription-reads: ['14997']
-      x-ms-request-id: ['centralus:6f5cd40b-41ad-4129-aa7d-2d264261183e']
-      x-ms-routing-request-id: ['CENTRALUS:20160715T185642Z:a78d57ba-8a54-4af6-9473-3a1668c65aea']
+      x-ms-correlation-request-id: [405ea9dd-44fd-4c07-8294-1d55f8bfb6db]
+      x-ms-ratelimit-remaining-subscription-reads: ['14990']
+      x-ms-request-id: ['centralus:036a70bf-18e3-496d-80a0-17c35a3831f2']
+      x-ms-routing-request-id: ['CENTRALUS:20160919T190002Z:405ea9dd-44fd-4c07-8294-1d55f8bfb6db']
     status: {code: 200, message: OK}
 - request:
     body: null
@@ -270,10 +270,10 @@ interactions:
       Connection: [keep-alive]
       Content-Length: ['0']
       Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.4.3 (Linux-3.4.0+-x86_64-with-Ubuntu-14.04-trusty) requests/2.10.0
-          msrest/0.4.0 msrest_azure/0.4.1 policyclient/0.30.0rc5 Azure-SDK-For-Python]
+      User-Agent: [python/3.5.1 (Windows-10-10.0.14393-SP0) requests/2.11.0 msrest/0.4.4
+          msrest_azure/0.4.3 policyclient/0.30.0rc6 Azure-SDK-For-Python]
       accept-language: [en-US]
-      x-ms-client-request-id: [e0f8401e-4abd-11e6-b5f3-00155d4b0101]
+      x-ms-client-request-id: [455d22e4-7e9b-11e6-97b1-ecb1d756380e]
     method: DELETE
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_resource_policy_test_policy_definitionea4a13f0/providers/Microsoft.Authorization/policyassignments/pypolicyassignmentea4a13f0?api-version=2016-04-01
   response:
@@ -281,17 +281,17 @@ interactions:
     headers:
       Cache-Control: [no-cache]
       Content-Type: [application/json; charset=utf-8]
-      Date: ['Fri, 15 Jul 2016 18:56:42 GMT']
+      Date: ['Mon, 19 Sep 2016 19:00:03 GMT']
       Expires: ['-1']
       Pragma: [no-cache]
       Strict-Transport-Security: [max-age=31536000; includeSubDomains]
       Transfer-Encoding: [chunked]
       Vary: ['Accept-Encoding,Accept-Encoding']
       content-length: ['591']
-      x-ms-correlation-request-id: [2f94bcbb-4a3a-4a0a-83d3-6342691ca7a5]
-      x-ms-ratelimit-remaining-subscription-writes: ['1196']
-      x-ms-request-id: ['centralus:9f16c344-ce0b-4590-8b25-05b7553e583c']
-      x-ms-routing-request-id: ['CENTRALUS:20160715T185642Z:2f94bcbb-4a3a-4a0a-83d3-6342691ca7a5']
+      x-ms-correlation-request-id: [0220c4af-867e-484c-8a60-e806cc1df621]
+      x-ms-ratelimit-remaining-subscription-writes: ['1189']
+      x-ms-request-id: ['centralus:4d8a1c7f-44e9-4708-b1d4-a0decaba4349']
+      x-ms-routing-request-id: ['CENTRALUS:20160919T190003Z:0220c4af-867e-484c-8a60-e806cc1df621']
     status: {code: 200, message: OK}
 - request:
     body: '{"properties": {"policyDefinitionId": "/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Authorization/policyDefinitions/pypolicyea4a13f0"}}'
@@ -301,10 +301,10 @@ interactions:
       Connection: [keep-alive]
       Content-Length: ['162']
       Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.4.3 (Linux-3.4.0+-x86_64-with-Ubuntu-14.04-trusty) requests/2.10.0
-          msrest/0.4.0 msrest_azure/0.4.1 policyclient/0.30.0rc5 Azure-SDK-For-Python]
+      User-Agent: [python/3.5.1 (Windows-10-10.0.14393-SP0) requests/2.11.0 msrest/0.4.4
+          msrest_azure/0.4.3 policyclient/0.30.0rc6 Azure-SDK-For-Python]
       accept-language: [en-US]
-      x-ms-client-request-id: [e164bdac-4abd-11e6-b5f3-00155d4b0101]
+      x-ms-client-request-id: [45c62fd2-7e9b-11e6-9aa9-ecb1d756380e]
     method: PUT
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_resource_policy_test_policy_definitionea4a13f0/providers/Microsoft.Authorization/policyAssignments/pypolicyassignmentea4a13f0?api-version=2016-04-01
   response:
@@ -313,14 +313,14 @@ interactions:
       Cache-Control: [no-cache]
       Content-Length: ['591']
       Content-Type: [application/json; charset=utf-8]
-      Date: ['Fri, 15 Jul 2016 18:56:43 GMT']
+      Date: ['Mon, 19 Sep 2016 19:00:03 GMT']
       Expires: ['-1']
       Pragma: [no-cache]
       Strict-Transport-Security: [max-age=31536000; includeSubDomains]
-      x-ms-correlation-request-id: [e8f43c4d-a1f2-43e0-a0c9-13d12f2e59e1]
-      x-ms-ratelimit-remaining-subscription-writes: ['1197']
-      x-ms-request-id: ['centralus:d063aa76-c1df-4e71-a865-f12f413d1acf']
-      x-ms-routing-request-id: ['CENTRALUS:20160715T185643Z:e8f43c4d-a1f2-43e0-a0c9-13d12f2e59e1']
+      x-ms-correlation-request-id: [c842e1b7-1f87-4d6e-8de1-0fcc7b292af7]
+      x-ms-ratelimit-remaining-subscription-writes: ['1194']
+      x-ms-request-id: ['centralus:063fff3e-54e2-4cdf-8290-93bc2a796dd3']
+      x-ms-routing-request-id: ['CENTRALUS:20160919T190004Z:c842e1b7-1f87-4d6e-8de1-0fcc7b292af7']
     status: {code: 201, message: Created}
 - request:
     body: null
@@ -329,10 +329,10 @@ interactions:
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
       Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.4.3 (Linux-3.4.0+-x86_64-with-Ubuntu-14.04-trusty) requests/2.10.0
-          msrest/0.4.0 msrest_azure/0.4.1 policyclient/0.30.0rc5 Azure-SDK-For-Python]
+      User-Agent: [python/3.5.1 (Windows-10-10.0.14393-SP0) requests/2.11.0 msrest/0.4.4
+          msrest_azure/0.4.3 policyclient/0.30.0rc6 Azure-SDK-For-Python]
       accept-language: [en-US]
-      x-ms-client-request-id: [e1bf3b06-4abd-11e6-b5f3-00155d4b0101]
+      x-ms-client-request-id: [46176600-7e9b-11e6-b076-ecb1d756380e]
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_resource_policy_test_policy_definitionea4a13f0/providers/Microsoft.Authorization/policyAssignments/pypolicyassignmentea4a13f0?api-version=2016-04-01
   response:
@@ -340,17 +340,17 @@ interactions:
     headers:
       Cache-Control: [no-cache]
       Content-Type: [application/json; charset=utf-8]
-      Date: ['Fri, 15 Jul 2016 18:56:43 GMT']
+      Date: ['Mon, 19 Sep 2016 19:00:04 GMT']
       Expires: ['-1']
       Pragma: [no-cache]
       Strict-Transport-Security: [max-age=31536000; includeSubDomains]
       Transfer-Encoding: [chunked]
       Vary: ['Accept-Encoding,Accept-Encoding']
       content-length: ['591']
-      x-ms-correlation-request-id: [6832401c-4ef7-46fe-9361-bf4d7b7f7c79]
-      x-ms-ratelimit-remaining-subscription-reads: ['14998']
-      x-ms-request-id: ['centralus:232e33d1-e910-4552-a671-201d3fb61d9b']
-      x-ms-routing-request-id: ['CENTRALUS:20160715T185643Z:6832401c-4ef7-46fe-9361-bf4d7b7f7c79']
+      x-ms-correlation-request-id: [b601adcf-a379-452e-9a10-e954406d3bf4]
+      x-ms-ratelimit-remaining-subscription-reads: ['14991']
+      x-ms-request-id: ['centralus:3dc72c7e-a218-46a3-b461-65c888b2e1ec']
+      x-ms-routing-request-id: ['CENTRALUS:20160919T190004Z:b601adcf-a379-452e-9a10-e954406d3bf4']
     status: {code: 200, message: OK}
 - request:
     body: null
@@ -360,10 +360,10 @@ interactions:
       Connection: [keep-alive]
       Content-Length: ['0']
       Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.4.3 (Linux-3.4.0+-x86_64-with-Ubuntu-14.04-trusty) requests/2.10.0
-          msrest/0.4.0 msrest_azure/0.4.1 policyclient/0.30.0rc5 Azure-SDK-For-Python]
+      User-Agent: [python/3.5.1 (Windows-10-10.0.14393-SP0) requests/2.11.0 msrest/0.4.4
+          msrest_azure/0.4.3 policyclient/0.30.0rc6 Azure-SDK-For-Python]
       accept-language: [en-US]
-      x-ms-client-request-id: [e1f4a246-4abd-11e6-b5f3-00155d4b0101]
+      x-ms-client-request-id: [464f27e8-7e9b-11e6-b403-ecb1d756380e]
     method: DELETE
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_resource_policy_test_policy_definitionea4a13f0/providers/Microsoft.Authorization/policyAssignments/pypolicyassignmentea4a13f0?api-version=2016-04-01
   response:
@@ -371,17 +371,17 @@ interactions:
     headers:
       Cache-Control: [no-cache]
       Content-Type: [application/json; charset=utf-8]
-      Date: ['Fri, 15 Jul 2016 18:56:44 GMT']
+      Date: ['Mon, 19 Sep 2016 19:00:04 GMT']
       Expires: ['-1']
       Pragma: [no-cache]
       Strict-Transport-Security: [max-age=31536000; includeSubDomains]
       Transfer-Encoding: [chunked]
       Vary: ['Accept-Encoding,Accept-Encoding']
       content-length: ['591']
-      x-ms-correlation-request-id: [b0363797-2511-456b-85ca-4a0ccb948f46]
-      x-ms-ratelimit-remaining-subscription-writes: ['1197']
-      x-ms-request-id: ['centralus:8e68d3e6-c339-447a-9423-d633fdd0d038']
-      x-ms-routing-request-id: ['CENTRALUS:20160715T185644Z:b0363797-2511-456b-85ca-4a0ccb948f46']
+      x-ms-correlation-request-id: [7174ef74-fc26-4b9e-8e03-936e90a0e194]
+      x-ms-ratelimit-remaining-subscription-writes: ['1192']
+      x-ms-request-id: ['centralus:e879b339-d908-49d9-8822-4bb8bc472e95']
+      x-ms-routing-request-id: ['CENTRALUS:20160919T190005Z:7174ef74-fc26-4b9e-8e03-936e90a0e194']
     status: {code: 200, message: OK}
 - request:
     body: null
@@ -391,28 +391,28 @@ interactions:
       Connection: [keep-alive]
       Content-Length: ['0']
       Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.4.3 (Linux-3.4.0+-x86_64-with-Ubuntu-14.04-trusty) requests/2.10.0
-          msrest/0.4.0 msrest_azure/0.4.1 policyclient/0.30.0rc5 Azure-SDK-For-Python]
+      User-Agent: [python/3.5.1 (Windows-10-10.0.14393-SP0) requests/2.11.0 msrest/0.4.4
+          msrest_azure/0.4.3 policyclient/0.30.0rc6 Azure-SDK-For-Python]
       accept-language: [en-US]
-      x-ms-client-request-id: [e24cfae0-4abd-11e6-b5f3-00155d4b0101]
+      x-ms-client-request-id: [46b61652-7e9b-11e6-a860-ecb1d756380e]
     method: DELETE
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Authorization/policydefinitions/pypolicyea4a13f0?api-version=2016-04-01
   response:
     body: {string: '{"properties":{"policyType":"Custom","description":"Don''t create
-        a VM anywhere","policyRule":{"then":{"effect":"deny"},"if":{"allOf":[{"equals":"Microsoft.Compute/virtualMachines/write","source":"action"},{"in":["eastus","eastus2","centralus"],"field":"location"}]}}},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Authorization/policyDefinitions/pypolicyea4a13f0","type":"Microsoft.Authorization/policyDefinitions","name":"pypolicyea4a13f0"}'}
+        a VM anywhere","policyRule":{"then":{"effect":"deny"},"if":{"allOf":[{"equals":"Microsoft.Compute/virtualMachines/write","source":"action"},{"field":"location","in":["eastus","eastus2","centralus"]}]}}},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Authorization/policyDefinitions/pypolicyea4a13f0","type":"Microsoft.Authorization/policyDefinitions","name":"pypolicyea4a13f0"}'}
     headers:
       Cache-Control: [no-cache]
       Content-Type: [application/json; charset=utf-8]
-      Date: ['Fri, 15 Jul 2016 18:56:44 GMT']
+      Date: ['Mon, 19 Sep 2016 19:00:05 GMT']
       Expires: ['-1']
       Pragma: [no-cache]
       Strict-Transport-Security: [max-age=31536000; includeSubDomains]
       Transfer-Encoding: [chunked]
       Vary: ['Accept-Encoding,Accept-Encoding']
       content-length: ['473']
-      x-ms-correlation-request-id: [1301bec4-a0db-476e-9f55-1ee23b4ebba1]
-      x-ms-ratelimit-remaining-subscription-writes: ['1197']
-      x-ms-request-id: ['centralus:ceff7898-026a-4cff-bab3-65d029533c95']
-      x-ms-routing-request-id: ['CENTRALUS:20160715T185644Z:1301bec4-a0db-476e-9f55-1ee23b4ebba1']
+      x-ms-correlation-request-id: [e2c1213d-7ce4-48d6-998c-7273aa4f9cdc]
+      x-ms-ratelimit-remaining-subscription-writes: ['1189']
+      x-ms-request-id: ['centralus:592a1e99-fd03-48c4-9a90-d0a1c5564ab1']
+      x-ms-routing-request-id: ['CENTRALUS:20160919T190005Z:e2c1213d-7ce4-48d6-998c-7273aa4f9cdc']
     status: {code: 200, message: OK}
 version: 1

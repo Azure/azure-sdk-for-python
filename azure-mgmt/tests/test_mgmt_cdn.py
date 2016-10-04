@@ -19,11 +19,11 @@ class MgmtCdnTest(AzureMgmtTestCase):
         self.cdn_client = self.create_mgmt_client(
             azure.mgmt.cdn.CdnManagementClient
         )
+        if not self.is_playback():
+            self.create_resource_group()
 
     @record
     def test_cdn(self):
-        self.create_resource_group()
-
         account_name = self.get_resource_name('pyarmcdn')
 
         output = self.cdn_client.name_availability.check_name_availability(

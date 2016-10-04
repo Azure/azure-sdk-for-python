@@ -48,6 +48,7 @@ class GenericResource(ResourceModel):
         'name': {'readonly': True},
         'type': {'readonly': True},
         'location': {'required': True},
+        'kind': {'pattern': '^[-\w\._,\(\)]+$'},
     }
 
     _attribute_map = {

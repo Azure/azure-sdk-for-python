@@ -13,7 +13,7 @@ from msrest.serialization import Model
 
 
 class AliasPathType(Model):
-    """AliasPathType.
+    """The type of the paths for alias. .
 
     :param path: The path of an alias.
     :type path: str

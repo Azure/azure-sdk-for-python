@@ -15,12 +15,15 @@ from msrest.serialization import Model
 class DeploymentPropertiesExtended(Model):
     """Deployment properties with additional details.
 
-    :param provisioning_state: The state of the provisioning.
-    :type provisioning_state: str
-    :param correlation_id: The correlation ID of the deployment.
-    :type correlation_id: str
-    :param timestamp: The timestamp of the template deployment.
-    :type timestamp: datetime
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar provisioning_state: The state of the provisioning.
+    :vartype provisioning_state: str
+    :ivar correlation_id: The correlation ID of the deployment.
+    :vartype correlation_id: str
+    :ivar timestamp: The timestamp of the template deployment.
+    :vartype timestamp: datetime
     :param outputs: Key/value pairs that represent deploymentoutput.
     :type outputs: object
     :param providers: The list of resource providers needed for the
@@ -53,6 +56,12 @@ class DeploymentPropertiesExtended(Model):
      <azure.mgmt.resource.resources.models.DebugSetting>`
     """ 
 
+    _validation = {
+        'provisioning_state': {'readonly': True},
+        'correlation_id': {'readonly': True},
+        'timestamp': {'readonly': True},
+    }
+
     _attribute_map = {
         'provisioning_state': {'key': 'provisioningState', 'type': 'str'},
         'correlation_id': {'key': 'correlationId', 'type': 'str'},
@@ -68,10 +77,10 @@ class DeploymentPropertiesExtended(Model):
         'debug_setting': {'key': 'debugSetting', 'type': 'DebugSetting'},
     }
 
-    def __init__(self, provisioning_state=None, correlation_id=None, timestamp=None, outputs=None, providers=None, dependencies=None, template=None, template_link=None, parameters=None, parameters_link=None, mode=None, debug_setting=None):
-        self.provisioning_state = provisioning_state
-        self.correlation_id = correlation_id
-        self.timestamp = timestamp
+    def __init__(self, outputs=None, providers=None, dependencies=None, template=None, template_link=None, parameters=None, parameters_link=None, mode=None, debug_setting=None):
+        self.provisioning_state = None
+        self.correlation_id = None
+        self.timestamp = None
         self.outputs = outputs
         self.providers = providers
         self.dependencies = dependencies

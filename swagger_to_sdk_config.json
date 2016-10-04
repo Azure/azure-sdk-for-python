@@ -115,6 +115,13 @@
       },
       "output_dir": "azure-mgmt-keyvault/azure/mgmt/keyvault"
     },
+    "keyvault.data": {
+      "swagger": "keyvault/2015-06-01/swagger/keyvault.json",
+      "autorest_options": {
+        "Namespace": "azure.keyvault"
+      },
+      "output_dir": "unreleased/azure-keyvault/azure/keyvault"
+    },
     "logic": {
       "swagger": "arm-logic/CompositeLogicClient.json",
       "autorest_options": {
@@ -172,35 +179,40 @@
     "resources.lock": {
       "swagger": "arm-resources/locks/2015-01-01/swagger/locks.json",
       "autorest_options": {
-        "Namespace": "azure.mgmt.resource.locks"
+        "Namespace": "azure.mgmt.resource.locks",
+        "PackageVersion": "0.30.0"
       },
       "output_dir": "azure-mgmt-resource/azure/mgmt/resource/locks"
     },
     "resources.features": {
       "swagger": "arm-resources/features/2015-12-01/swagger/features.json",
       "autorest_options": {
-        "Namespace": "azure.mgmt.resource.features"
+        "Namespace": "azure.mgmt.resource.features",
+        "PackageVersion": "0.30.0"
       },
       "output_dir": "azure-mgmt-resource/azure/mgmt/resource/features"
     },
     "resources.resources": {
-      "swagger": "arm-resources/resources/2016-02-01/swagger/resources.json",
+      "swagger": "arm-resources/resources/2016-09-01/swagger/resources.json",
       "autorest_options": {
-        "Namespace": "azure.mgmt.resource.resources"
+        "Namespace": "azure.mgmt.resource.resources",
+        "PackageVersion": "0.30.0"
       },
       "output_dir": "azure-mgmt-resource/azure/mgmt/resource/resources"
     },
     "resources.subscriptions": {
       "swagger": "arm-resources/subscriptions/2016-06-01/swagger/subscriptions.json",
       "autorest_options": {
-        "Namespace": "azure.mgmt.resource.subscriptions"
+        "Namespace": "azure.mgmt.resource.subscriptions",
+        "PackageVersion": "0.30.0"
       },
       "output_dir": "azure-mgmt-resource/azure/mgmt/resource/subscriptions"
     },
     "resources.policy": {
       "swagger": "arm-resources/policy/2016-04-01/swagger/policy.json",
       "autorest_options": {
-        "Namespace": "azure.mgmt.resource.policy"
+        "Namespace": "azure.mgmt.resource.policy",
+        "PackageVersion": "0.30.0"
       },
       "output_dir": "azure-mgmt-resource/azure/mgmt/resource/policy"
     },

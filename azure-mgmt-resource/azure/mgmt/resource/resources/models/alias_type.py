@@ -13,7 +13,7 @@ from msrest.serialization import Model
 
 
 class AliasType(Model):
-    """AliasType.
+    """The alias type. .
 
     :param name: The alias name.
     :type name: str

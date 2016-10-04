@@ -19,10 +19,11 @@ class MgmtServerManagerTest(AzureMgmtTestCase):
         self.client = self.create_mgmt_client(
             azure.mgmt.servermanager.ServerManagement
         )
+        if not self.is_playback():
+            self.create_resource_group()
 
     @record
     def test_servermanager_gateways(self):
-        self.create_resource_group()
         gateway_name = self.get_resource_name('pygateway')
         region = 'centralus'
 
