@@ -2,221 +2,167 @@ interactions:
 - request:
     body: null
     headers:
-      Accept: ['*/*']
-      Accept-Encoding: ['gzip, deflate']
-      Connection: [keep-alive]
-      Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python-requests/2.6.0 CPython/3.4.1 Windows/8]
-    method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Web?api-version=2014-04-01-preview
-  response:
-    body:
-      string: !!binary |
-        H4sIAAAAAAAEAO29B2AcSZYlJi9tynt/SvVK1+B0oQiAYBMk2JBAEOzBiM3mkuwdaUcjKasqgcpl
-        VmVdZhZAzO2dvPfee++999577733ujudTif33/8/XGZkAWz2zkrayZ4hgKrIHz9+fB8/In7xR8Xs
-        o0cf3W3Wk2ZaF6u2qJbN3fOHs4PdBw/z7f175zvb+59OJ9sPH05n2+cP9ibn2WQn+/Te5O6qri6L
-        WV43d78opnXVVOft+Lv55KPRR8tskTerbJoT5O532bqdV3Xxgww9ffToF3+UrVZlMeU/z4BKRj3s
-        ZA+m29mnk0+39x/c+3T74N7uzvb9g/v37+8cPDh4MJ0RnLoq86f5ebEs7Jvn+w/y2cODyfZk59N7
-        2/vZfcI6pzf3Jw8n+/vn2YMH9+5/9Evo1byp1vU0f3O9ypuPHn3vFwefEKCmaPPmbv6uzZcNAW+o
-        u7ISFNH+oyd19oOiTF9XNBb67jRr2vS4KTLz+1ev6bfvZKtsmeJv+8d3c/7jRVW38/QkX7Z1Vkpj
-        +eh0XVeEwOgjhhy2wLuuAf/Fn3PTnHoxGARvoXv6Ld376PtE+lXxkzRdZhR7O7v3t3cOtnd2qaH8
-        8cD/41P/D/qf+2Pf/2PP/rG/vbvr/eEBoD/of7vbqzq/LPKr4MOPvv9LRgMz0JRV+6N5cGSkP+h/
-        7g8mn/njZ3EeimXTZsspCcuPJoD+5/5gupk/fhYnQAThR9Pg/qD/uT+YeuaPn8VpsBPwI53k/0H/
-        c38wCc0fP4tz0RGJH82I/wf9z/3BhDR//KzMyGo9KYtmXiwvvmoIZXrhRxPg/cF0M3/8rEwAEb9q
-        Wrjd2WVWlNmkxKh/NAneH0w788fPyiTIHycVDaUqfyQEP3T6W9Z/3WbTtz+agB/6BJANaF/DOB83
-        TXGxzGdvqm+TWnpBaole/tFkeH8wDc0fPBkxgoqnA9UOGj4pljMysT9i7A+gpXiNP6Io/vhQihKm
-        tdLsR/Sj/7k/+vTjP75BVTvN67Y4R9r0R9kA+oP+5/5gopk/flaoT0HOZV4/y+rFj4j/wyc+FDk1
-        +xHZvT+YWuaPnz2yi/2kxj8ivvcH08z88bNC/Hq9bAtaU6OWPuX/3zCIKL7CLIu8rYvp/yeRdiuL
-        /x9DnwVUB/H/YdT/v0h/5xToIP6/gPoA6v8fpP9FXtX5BSP1/z6Mb6/qRRao+aKg8Go2A8rheH5k
-        b/FHjHaI6ymeP11eFnW1XBAmP6JdjHbmj/dg4NvS++5iXbbFq6rMX1Y/yoLjD/qf+4NJaf742SD/
-        VVW/zesf0V7+oP+5P5iO5o+fDdqL6ezS/f+DQ/j/oPWPDiZQRTq2//+N6P8ns+VpLh3Y/8+G8//B
-        eZrlq7K6xoCeW3T/34f67Z3rotGpyt1ULWkhyC4dE4j/r4yOcEO805DZBLq06N1iiK/4s7zOZx/9
-        kv8HeLr6S90tAAA=
-    headers:
-      Cache-Control: [no-cache]
-      Content-Encoding: [gzip]
-      Content-Length: ['1094']
-      Content-Type: [application/json; charset=utf-8]
-      Date: ['Tue, 29 Sep 2015 23:51:55 GMT']
-      Expires: ['-1']
-      Pragma: [no-cache]
-      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
-      Vary: [Accept-Encoding]
-      x-ms-correlation-request-id: [422e9601-5e32-4f07-bc37-6a2a43b8cb1a]
-      x-ms-ratelimit-remaining-subscription-reads: ['14995']
-      x-ms-request-id: [422e9601-5e32-4f07-bc37-6a2a43b8cb1a]
-      x-ms-routing-request-id: ['WESTUS:20150929T235156Z:422e9601-5e32-4f07-bc37-6a2a43b8cb1a']
-    status: {code: 200, message: OK}
-- request:
-    body: null
-    headers:
-      Accept: ['*/*']
-      Accept-Encoding: ['gzip, deflate']
-      Connection: [keep-alive]
-      Content-Length: [0]
-      Content-Type: [application/json; charset=utf-8]
-      User-Agent: [resource_management_client/1.0.0]
-      accept-language: [en-US]
-      x-ms-client-request-id: [34d119d8-b64a-11e5-8443-dc53600575a2]
-    method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Web?api-version=2014-04-01-preview
-  response:
-    body:
-      string: !!binary |
-        H4sIAAAAAAAEAO29B2AcSZYlJi9tynt/SvVK1+B0oQiAYBMk2JBAEOzBiM3mkuwdaUcjKasqgcpl
-        VmVdZhZAzO2dvPfee++999577733ujudTif33/8/XGZkAWz2zkrayZ4hgKrIHz9+fB8/In7xR8Xs
-        o0cf3W3Wk2ZaF6u2qJbN3fOHs4PdBw/z7f175zvb+59OJ9sPH05n2+cP9ibn2WQn+/Te5O6qri6L
-        WV43d78opnXVVOft+Lv55KPRR8tskTerbJoT5O532bqdV3Xxgww9ffToF3+UrVZlMeU/z4BKRj3s
-        ZA+m29mnk0+39x/c+3T74N7uzvb9g/v37+8cPDh4MJ0RnLoq86f5ebEs7Jvn+w/y2cODyfZk59N7
-        2/vZfcI6pzf3Jw8n+/vn2YMH9+5/9Evo1byp1vU0f3O9ypuPHn3vFwefEKCmaPPmbv6uzZcNAW+o
-        u7ISFNH+oyd19oOiTF9XNBb67jRr2vS4KTLz+1ev6bfvZKtsmeJv+8d3c/7jRVW38/QkX7Z1Vkpj
-        +eh0XVeEwOgjhhy2wLuuAf/Fn3PTnHoxGARvoXv6Ld376PtE+lXxkzRdZhR7O7v3t3cOtnd2qaH8
-        8cD/41P/D/qf+2Pf/2PP/rG/vbvr/eEBoD/of7vbqzq/LPKr4MOPvv9LRgMz0JRV+6N5cGSkP+h/
-        7g8mn/njZ3EeimXTZsspCcuPJoD+5/5gupk/fhYnQAThR9Pg/qD/uT+YeuaPn8VpsBPwI53k/0H/
-        c38wCc0fP4tz0RGJH82I/wf9z/3BhDR//KzMyGo9KYtmXiwvvmoIZXrhRxPg/cF0M3/8rEwAEb9q
-        Wrjd2WVWlNmkxKh/NAneH0w788fPyiTIHycVDaUqfyQEP3T6W9Z/3WbTtz+agB/6BJANaF/DOB83
-        TXGxzGdvqm+TWnpBaole/tFkeH8wDc0fPBkxgoqnA9UOGj4pljMysT9i7A+gpXiNP6Io/vhQihKm
-        tdLsR/Sj/7k/+vTjP75BVTvN67Y4R9r0///ZgJAq+qH94/81U0KRz2VeP8vqxf/vZ4Qayh//7yE+
-        tDs1+/812UNy6If2j/93zYVYWmr8/+sZoYbyx/9riF+vl21Bq2/U0qf8/xsGEcVXmGWRt3Ux/f8k
-        0m4N8v9j6LOA6iD+P4z6/xfp7zwFHcTPHeoW26+L+v8X6c9MVOfTarHIlzNF+P99yL+H1v//0Vgu
-        8qrOLxjT/y8PQ5iMmi8KCpNnM6AcjudH3hD+iNEO+RnKy5wuL4u6WhJf/8iTpD/of+4Ppp354z0Y
-        +Lb0vrtYl23xqirzl9WPVjPwB/3P/cGkNH/8bJD/qqrf5vWPaC9/0P/cH0xH88fPBu3FsenS/f+D
-        Q/j/oG8WHUyginRs//8b0f9PZsvTXDqw/58N5/8n89ThwWLZtNly+v/KzNHtve73GahO58+7Af+/
-        m38/bOi+tNpxE6ifB6PU2f35Ndr/v/DyIltmF/ns2/3h07v+sH7k/ft/vMdcRMk+y1dldQ06P7c0
-        Dun9/wbUb89GRaMClDsOWmaLPLvMijKblJi+/++OblpmTVNMv6gmRZm/pkx0QYqAXvv/yogIN2Q2
-        GxIRoPu6zVoM6xV/ltf57KNf8v8AoiIoB483AAA=
-    headers:
-      Cache-Control: [no-cache]
-      Content-Encoding: [gzip]
-      Content-Length: ['1226']
-      Content-Type: [application/json; charset=utf-8]
-      Date: ['Fri, 08 Jan 2016 20:55:53 GMT']
-      Expires: ['-1']
-      Pragma: [no-cache]
-      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
-      Vary: [Accept-Encoding]
-      x-ms-correlation-request-id: [e578ce3f-e786-429b-a4eb-a2a765ebd751]
-      x-ms-ratelimit-remaining-subscription-reads: ['14996']
-      x-ms-request-id: [e578ce3f-e786-429b-a4eb-a2a765ebd751]
-      x-ms-routing-request-id: ['EASTUS2:20160108T205554Z:e578ce3f-e786-429b-a4eb-a2a765ebd751']
-    status: {code: 200, message: OK}
-- request:
-    body: null
-    headers:
-      Accept: ['*/*']
-      Accept-Encoding: ['gzip, deflate']
-      Connection: [keep-alive]
-      Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.5.1 requests/2.7.0 msrest/0.0.1 msrest_azure/0.0.1 resourcemanagementclient/2015-11-01]
-      accept-language: [en-US]
-      x-ms-client-request-id: [61f757b6-d4df-11e5-8746-54ee7574ca37]
-    method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Web?api-version=2015-11-01
-  response:
-    body:
-      string: !!binary |
-        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
-        /ZL/B/1Q9kLfQAAA
-    headers:
-      Cache-Control: [no-cache]
-      Content-Encoding: [gzip]
-      Content-Length: ['1608']
-      Content-Type: [application/json; charset=utf-8]
-      Date: ['Tue, 16 Feb 2016 18:59:18 GMT']
-      Expires: ['-1']
-      Pragma: [no-cache]
-      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
-      Vary: [Accept-Encoding]
-      x-ms-correlation-request-id: [f4b6b1ab-c343-477d-8bd7-e3df891f16c6]
-      x-ms-ratelimit-remaining-subscription-reads: ['14976']
-      x-ms-request-id: [f4b6b1ab-c343-477d-8bd7-e3df891f16c6]
-      x-ms-routing-request-id: ['CENTRALUS:20160216T185919Z:f4b6b1ab-c343-477d-8bd7-e3df891f16c6']
-    status: {code: 200, message: OK}
-- request:
-    body: null
-    headers:
       Accept: [application/json]
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
       Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.5.1 requests/2.7.0 msrest/0.1.3 msrest_azure/0.1.2 resourcemanagementclient/2016-02-01
-          Azure-SDK-For-Python]
+      User-Agent: [python/3.5.1 (Windows-10-10.0.14393-SP0) requests/2.11.0 msrest/0.4.4
+          msrest_azure/0.4.3 resourcemanagementclient/0.30.0rc6 Azure-SDK-For-Python]
       accept-language: [en-US]
-      x-ms-client-request-id: [04a9998c-f2b9-11e5-af13-54ee7574ca37]
+      x-ms-client-request-id: [90b46992-7e99-11e6-869b-ecb1d756380e]
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Web?api-version=2016-02-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Web?api-version=2016-09-01
   response:
-    body:
-      string: !!binary |
-        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
+    body: {string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Web","namespace":"Microsoft.Web","authorization":{"applicationId":"abfa0a7c-a6b6-4736-8310-5855508787cd","roleDefinitionId":"f47ed98b-b063-4a5b-9e10-4b9b44fa7735"},"resourceTypes":[{"resourceType":"sites/extensions","locations":["South
+        Central US","North Europe","West Europe","Southeast Asia","West US","East
+        US","Japan West","Japan East","East Asia","East US 2","North Central US","Central
+        US","Brazil South","Canada Central","Canada East","West Central US","UK West","UK
+        South","West US 2"],"apiVersions":["2016-03-01","2015-08-01","2015-07-01","2015-06-01","2015-05-01","2015-04-01","2015-02-01","2014-11-01","2014-06-01","2014-04-01-preview","2014-04-01"]},{"resourceType":"sites/slots/extensions","locations":["South
+        Central US","North Europe","West Europe","Southeast Asia","West US","East
+        US","Japan West","Japan East","East Asia","East US 2","North Central US","Central
+        US","Brazil South","Canada Central","Canada East","West Central US","UK West","UK
+        South","West US 2"],"apiVersions":["2016-03-01","2015-08-01","2015-07-01","2015-06-01","2015-05-01","2015-04-01","2015-02-01","2014-11-01","2014-06-01","2014-04-01-preview","2014-04-01"]},{"resourceType":"sites/instances","locations":["South
+        Central US","North Europe","West Europe","Southeast Asia","West US","East
+        US","Japan West","Japan East","East Asia","East US 2","North Central US","Central
+        US","Brazil South","Canada Central","Canada East","West Central US","UK West","UK
+        South","West US 2"],"apiVersions":["2016-03-01","2015-08-01","2015-07-01","2015-06-01","2015-05-01","2015-04-01","2015-02-01","2014-11-01","2014-06-01","2014-04-01-preview","2014-04-01"]},{"resourceType":"sites/slots/instances","locations":["South
+        Central US","North Europe","West Europe","Southeast Asia","West US","East
+        US","Japan West","Japan East","East Asia","East US 2","North Central US","Central
+        US","Brazil South","Canada Central","Canada East","West Central US","UK West","UK
+        South","West US 2"],"apiVersions":["2016-03-01","2015-08-01","2015-07-01","2015-06-01","2015-05-01","2015-04-01","2015-02-01","2014-11-01","2014-06-01","2014-04-01-preview","2014-04-01"]},{"resourceType":"sites/instances/extensions","locations":["South
+        Central US","North Europe","West Europe","Southeast Asia","West US","East
+        US","Japan West","Japan East","East Asia","East US 2","North Central US","Central
+        US","Brazil South","Canada Central","Canada East","West Central US","UK West","UK
+        South","West US 2"],"apiVersions":["2016-03-01","2015-08-01","2015-07-01","2015-06-01","2015-05-01","2015-04-01","2015-02-01","2014-11-01","2014-06-01","2014-04-01-preview","2014-04-01"]},{"resourceType":"sites/slots/instances/extensions","locations":["South
+        Central US","North Europe","West Europe","Southeast Asia","West US","East
+        US","Japan West","Japan East","East Asia","East US 2","North Central US","Central
+        US","Brazil South","Canada Central","Canada East","West Central US","UK West","UK
+        South","West US 2"],"apiVersions":["2016-03-01","2015-08-01","2015-07-01","2015-06-01","2015-05-01","2015-04-01","2015-02-01","2014-11-01","2014-06-01","2014-04-01-preview","2014-04-01"]},{"resourceType":"publishingUsers","locations":["South
+        Central US","North Europe","West Europe","Southeast Asia","West US","East
+        US","Japan West","Japan East","East Asia","East US 2","North Central US","Central
+        US","Brazil South","Canada Central","Canada East","West Central US","UK West","UK
+        South","West US 2"],"apiVersions":["2016-03-01","2015-08-01","2015-07-01","2015-06-01","2015-05-01","2015-04-01","2015-02-01","2014-11-01","2014-06-01","2014-04-01-preview","2014-04-01"]},{"resourceType":"ishostnameavailable","locations":["South
+        Central US","North Europe","West Europe","Southeast Asia","West US","East
+        US","Japan West","Japan East","East Asia","East US 2","North Central US","Central
+        US","Brazil South","Canada Central","Canada East","West Central US","UK West","UK
+        South","West US 2"],"apiVersions":["2016-03-01","2015-08-01","2015-07-01","2015-06-01","2015-05-01","2015-04-01","2015-02-01","2014-11-01","2014-06-01","2014-04-01-preview","2014-04-01"]},{"resourceType":"validate","locations":["South
+        Central US","North Europe","West Europe","Southeast Asia","West US","East
+        US","Japan West","Japan East","East Asia","East US 2","North Central US","Central
+        US","Brazil South","Canada Central","Canada East","West Central US","West
+        US 2"],"apiVersions":["2016-03-01","2015-08-01","2015-07-01","2015-06-01","2015-05-01","2015-04-01","2015-02-01","2014-11-01","2014-06-01","2014-04-01-preview","2014-04-01"]},{"resourceType":"isusernameavailable","locations":["South
+        Central US","North Europe","West Europe","Southeast Asia","West US","East
+        US","Japan West","Japan East","East Asia","East US 2","North Central US","Central
+        US","Brazil South","Canada Central","Canada East","West Central US","UK West","UK
+        South","West US 2"],"apiVersions":["2016-03-01","2015-08-01","2015-07-01","2015-06-01","2015-05-01","2015-04-01","2015-02-01","2014-11-01","2014-06-01","2014-04-01-preview","2014-04-01"]},{"resourceType":"sourceControls","locations":["South
+        Central US","North Europe","West Europe","Southeast Asia","West US","East
+        US","Japan West","Japan East","East Asia","East US 2","North Central US","Central
+        US","Brazil South","Canada Central","Canada East","West Central US","UK West","UK
+        South","West US 2"],"apiVersions":["2016-03-01","2015-08-01","2015-07-01","2015-06-01","2015-05-01","2015-04-01","2015-02-01","2014-11-01","2014-06-01","2014-04-01-preview","2014-04-01"]},{"resourceType":"availableStacks","locations":["South
+        Central US","North Europe","West Europe","Southeast Asia","West US","East
+        US","Japan West","Japan East","East Asia","East US 2","North Central US","Central
+        US","Brazil South","Canada Central","Canada East","West Central US","UK West","UK
+        South","West US 2"],"apiVersions":["2016-03-01","2015-08-01","2015-07-01","2015-06-01","2015-05-01","2015-04-01","2015-02-01","2014-11-01","2014-06-01","2014-04-01-preview","2014-04-01"]},{"resourceType":"listSitesAssignedToHostName","locations":["South
+        Central US","North Europe","West Europe","Southeast Asia","West US","East
+        US","Japan West","Japan East","East Asia","East US 2","North Central US","Central
+        US","Brazil South","Canada Central","Canada East","West Central US","UK West","UK
+        South","West US 2"],"apiVersions":["2016-03-01","2015-08-01","2015-07-01","2015-06-01","2015-05-01","2015-04-01","2015-02-01"]},{"resourceType":"sites/hostNameBindings","locations":["South
+        Central US","North Europe","West Europe","Southeast Asia","West US","East
+        US","Japan West","Japan East","East Asia","East US 2","North Central US","Central
+        US","Brazil South","Canada Central","Canada East","West Central US","UK West","UK
+        South","West US 2"],"apiVersions":["2016-03-01","2015-08-01","2015-07-01","2015-06-01","2015-05-01","2015-04-01","2015-02-01"]},{"resourceType":"sites/domainOwnershipIdentifiers","locations":["South
+        Central US","North Europe","West Europe","Southeast Asia","West US","East
+        US","Japan West","Japan East","East Asia","East US 2","North Central US","Central
+        US","Brazil South","Canada Central","Canada East","West Central US","UK West","UK
+        South","West US 2"],"apiVersions":["2016-03-01","2015-08-01","2015-07-01","2015-06-01","2015-05-01","2015-04-01","2015-02-01"]},{"resourceType":"sites/slots/hostNameBindings","locations":["South
+        Central US","North Europe","West Europe","Southeast Asia","West US","East
+        US","Japan West","Japan East","East Asia","East US 2","North Central US","Central
+        US","Brazil South","Canada Central","Canada East","West Central US","UK West","UK
+        South","West US 2"],"apiVersions":["2016-03-01","2015-08-01","2015-07-01","2015-06-01","2015-05-01","2015-04-01","2015-02-01"]},{"resourceType":"operations","locations":["South
+        Central US","North Europe","West Europe","Southeast Asia","West US","East
+        US","Japan West","Japan East","East Asia","East US 2","North Central US","Central
+        US","Brazil South","Canada Central","Canada East","West Central US","UK West","UK
+        South","West US 2"],"apiVersions":["2016-03-01","2015-08-01","2015-07-01","2015-06-01","2015-05-01","2015-04-01","2015-02-01","2014-11-01","2014-06-01","2014-04-01-preview","2014-04-01"]},{"resourceType":"certificates","locations":["South
+        Central US","North Europe","West Europe","Southeast Asia","West US","East
+        US","Japan West","Japan East","East Asia","East US 2","North Central US","Central
+        US","Brazil South","Canada Central","Canada East","West Central US","UK West","UK
+        South","West US 2"],"apiVersions":["2016-03-01","2015-08-01-preview","2015-08-01","2015-07-01","2015-06-01","2015-05-01","2015-04-01","2015-02-01","2014-11-01","2014-06-01","2014-04-01-preview","2014-04-01"],"capabilities":"CrossResourceGroupResourceMove,
+        CrossSubscriptionResourceMove"},{"resourceType":"serverFarms","locations":["South
+        Central US","North Europe","West Europe","Southeast Asia","West US","East
+        US","Japan West","Japan East","East Asia","East US 2","North Central US","Central
+        US","Brazil South","Canada Central","Canada East","West Central US","UK West","UK
+        South","West US 2"],"apiVersions":["2016-03-01","2015-08-01","2015-07-01","2015-06-01","2015-05-01","2015-04-01","2015-02-01","2014-11-01","2014-06-01","2014-04-01-preview","2014-04-01"],"capabilities":"CrossResourceGroupResourceMove,
+        CrossSubscriptionResourceMove"},{"resourceType":"serverFarms/workers","locations":["South
+        Central US","North Europe","West Europe","Southeast Asia","West US","East
+        US","Japan West","Japan East","East Asia","East US 2","North Central US","Central
+        US","Brazil South","Canada Central","Canada East","West Central US","UK West","UK
+        South","West US 2"],"apiVersions":["2016-03-01","2015-08-01","2015-07-01","2015-06-01","2015-05-01","2015-04-01","2015-02-01","2014-11-01","2014-06-01","2014-04-01-preview","2014-04-01"]},{"resourceType":"sites","locations":["South
+        Central US","North Europe","West Europe","Southeast Asia","West US","East
+        US","Japan West","Japan East","East Asia","East US 2","North Central US","Central
+        US","Brazil South","Canada Central","Canada East","West Central US","UK West","UK
+        South","West US 2"],"apiVersions":["2016-03-01","2015-08-01-preview","2015-08-01","2015-07-01","2015-06-01","2015-05-01","2015-04-01","2015-02-01","2014-11-01","2014-06-01","2014-04-01-preview","2014-04-01"],"capabilities":"CrossResourceGroupResourceMove,
+        CrossSubscriptionResourceMove"},{"resourceType":"sites/slots","locations":["South
+        Central US","North Europe","West Europe","Southeast Asia","West US","East
+        US","Japan West","Japan East","East Asia","East US 2","North Central US","Central
+        US","Brazil South","Canada Central","Canada East","West Central US","UK West","UK
+        South","West US 2"],"apiVersions":["2016-03-01","2015-08-01","2015-07-01","2015-06-01","2015-05-01","2015-04-01","2015-02-01","2014-11-01","2014-06-01","2014-04-01-preview","2014-04-01"],"capabilities":"CrossResourceGroupResourceMove,
+        CrossSubscriptionResourceMove"},{"resourceType":"runtimes","locations":[],"apiVersions":["2016-03-01","2015-08-01","2015-07-01","2015-06-01","2015-05-01","2015-04-01","2015-02-01","2014-11-01","2014-06-01","2014-04-01"]},{"resourceType":"sites/metrics","locations":[],"apiVersions":["2014-04-01"]},{"resourceType":"sites/metricDefinitions","locations":[],"apiVersions":["2014-04-01"]},{"resourceType":"sites/slots/metrics","locations":[],"apiVersions":["2014-04-01"]},{"resourceType":"sites/slots/metricDefinitions","locations":[],"apiVersions":["2014-04-01"]},{"resourceType":"serverFarms/metrics","locations":[],"apiVersions":["2014-04-01"]},{"resourceType":"serverFarms/metricDefinitions","locations":[],"apiVersions":["2014-04-01"]},{"resourceType":"sites/recommendations","locations":[],"apiVersions":["2016-03-01","2015-08-01","2015-07-01","2015-06-01","2015-05-01","2015-04-01","2015-02-01","2014-11-01","2014-06-01","2014-04-01-preview","2014-04-01"]},{"resourceType":"recommendations","locations":[],"apiVersions":["2016-03-01","2015-08-01","2015-07-01","2015-06-01","2015-05-01","2015-04-01","2015-02-01","2014-11-01","2014-06-01","2014-04-01-preview","2014-04-01"]},{"resourceType":"georegions","locations":[],"apiVersions":["2016-03-01","2015-08-01","2015-07-01","2015-06-01","2015-05-01","2015-04-01","2015-02-01","2014-11-01","2014-06-01","2014-04-01-preview","2014-04-01"]},{"resourceType":"sites/premieraddons","locations":["South
+        Central US","North Europe","West Europe","Southeast Asia","West US","East
+        US","Japan West","Japan East","East Asia","East US 2","North Central US","Central
+        US","Brazil South","Canada Central","Canada East","West Central US","UK West","UK
+        South","West US 2"],"apiVersions":["2016-03-01","2015-08-01","2015-07-01","2015-06-01","2015-05-01","2015-04-01"],"capabilities":"CrossResourceGroupResourceMove,
+        CrossSubscriptionResourceMove"},{"resourceType":"hostingEnvironments","locations":["South
+        Central US","North Europe","West Europe","Southeast Asia","West US","East
+        US","Japan West","Japan East","East Asia","East US 2","North Central US","Central
+        US","Brazil South","Canada Central","Canada East","West Central US","UK West","UK
+        South","West US 2"],"apiVersions":["2016-03-01","2015-08-01","2015-07-01","2015-06-01","2015-05-01","2015-04-01","2015-02-01","2014-11-01","2014-06-01","2014-04-01"],"capabilities":"CrossResourceGroupResourceMove,
+        CrossSubscriptionResourceMove"},{"resourceType":"hostingEnvironments/multiRolePools","locations":["South
+        Central US","North Europe","West Europe","Southeast Asia","West US","East
+        US","Japan West","Japan East","East Asia","East US 2","North Central US","Central
+        US","Brazil South","Canada Central","Canada East","West Central US","UK West","UK
+        South","West US 2"],"apiVersions":["2016-03-01","2015-08-01","2015-07-01","2015-06-01","2015-05-01","2015-04-01","2015-02-01","2014-11-01","2014-06-01","2014-04-01"]},{"resourceType":"hostingEnvironments/workerPools","locations":["South
+        Central US","North Europe","West Europe","Southeast Asia","West US","East
+        US","Japan West","Japan East","East Asia","East US 2","North Central US","Central
+        US","Brazil South","Canada Central","Canada East","West Central US","UK West","UK
+        South","West US 2"],"apiVersions":["2016-03-01","2015-08-01","2015-07-01","2015-06-01","2015-05-01","2015-04-01","2015-02-01","2014-11-01","2014-06-01","2014-04-01"]},{"resourceType":"hostingEnvironments/metrics","locations":[],"apiVersions":["2014-04-01"]},{"resourceType":"hostingEnvironments/metricDefinitions","locations":[],"apiVersions":["2014-04-01"]},{"resourceType":"hostingEnvironments/multiRolePools/metrics","locations":[],"apiVersions":["2014-04-01"]},{"resourceType":"hostingEnvironments/multiRolePools/metricDefinitions","locations":[],"apiVersions":["2014-04-01"]},{"resourceType":"hostingEnvironments/workerPools/metrics","locations":[],"apiVersions":["2014-04-01"]},{"resourceType":"hostingEnvironments/workerPools/metricDefinitions","locations":[],"apiVersions":["2014-04-01"]},{"resourceType":"hostingEnvironments/multiRolePools/instances","locations":[],"apiVersions":["2016-03-01","2015-08-01","2015-07-01","2015-06-01","2015-05-01","2015-04-01","2015-02-01","2014-11-01","2014-06-01","2014-04-01-preview","2014-04-01"]},{"resourceType":"hostingEnvironments/multiRolePools/instances/metrics","locations":[],"apiVersions":["2014-04-01"]},{"resourceType":"hostingEnvironments/multiRolePools/instances/metricDefinitions","locations":[],"apiVersions":["2014-04-01"]},{"resourceType":"hostingEnvironments/workerPools/instances","locations":[],"apiVersions":["2016-03-01","2015-08-01","2015-07-01","2015-06-01","2015-05-01","2015-04-01","2015-02-01","2014-11-01","2014-06-01","2014-04-01-preview","2014-04-01"]},{"resourceType":"hostingEnvironments/workerPools/instances/metrics","locations":[],"apiVersions":["2014-04-01"]},{"resourceType":"hostingEnvironments/workerPools/instances/metricDefinitions","locations":[],"apiVersions":["2014-04-01"]},{"resourceType":"managedHostingEnvironments","locations":["South
+        Central US","North Europe","West Europe","Southeast Asia","West US","East
+        US","Japan West","Japan East","East Asia","East US 2","North Central US","Central
+        US","Brazil South","Canada Central","Canada East","West Central US","UK West","UK
+        South","West US 2"],"apiVersions":["2016-03-01","2015-08-01","2015-07-01","2015-06-01","2015-05-01","2015-04-01","2015-02-01","2014-11-01","2014-06-01","2014-04-01"],"capabilities":"CrossResourceGroupResourceMove,
+        CrossSubscriptionResourceMove"},{"resourceType":"deploymentLocations","locations":[],"apiVersions":["2016-03-01","2015-08-01","2015-07-01","2015-06-01","2015-05-01","2015-04-01","2015-02-01","2014-11-01","2014-06-01","2014-04-01-preview","2014-04-01"]},{"resourceType":"functions","locations":["South
+        Central US","North Europe","West Europe","Southeast Asia","West US","East
+        US","Japan West","Japan East","East Asia","East US 2","North Central US","Central
+        US","Brazil South","Canada Central","Canada East","West Central US","UK West","UK
+        South","West US 2"],"apiVersions":["2016-03-01","2015-08-01","2015-07-01","2015-06-01","2015-05-01","2015-04-01","2015-02-01","2014-11-01","2014-06-01","2014-04-01-preview","2014-04-01"]},{"resourceType":"ishostingenvironmentnameavailable","locations":[],"apiVersions":["2016-03-01","2015-08-01","2015-07-01","2015-06-01","2015-05-01","2015-04-01","2015-02-01","2014-11-01","2014-06-01","2014-04-01-preview","2014-04-01"]},{"resourceType":"classicMobileServices","locations":[],"apiVersions":["2016-03-01","2015-08-01","2015-07-01","2015-06-01","2015-05-01","2015-04-01","2015-02-01","2014-11-01","2014-06-01","2014-04-01-preview","2014-04-01"],"capabilities":"CrossResourceGroupResourceMove,
+        CrossSubscriptionResourceMove"},{"resourceType":"connections","locations":["North
+        Central US","Central US","South Central US","North Europe","West Europe","East
+        Asia","Southeast Asia","West US","East US","East US 2","Japan West","Japan
+        East","Brazil South"],"apiVersions":["2016-06-01","2015-08-01-preview"],"capabilities":"CrossResourceGroupResourceMove,
+        CrossSubscriptionResourceMove"},{"resourceType":"locations","locations":[],"apiVersions":["2016-06-01","2015-08-01-preview"]},{"resourceType":"locations/managedApis","locations":["North
+        Central US","Central US","South Central US","North Europe","West Europe","East
+        Asia","Southeast Asia","West US","East US","East US 2","Japan West","Japan
+        East","Brazil South"],"apiVersions":["2016-06-01","2015-08-01-preview"]},{"resourceType":"locations/apiOperations","locations":["North
+        Central US","Central US","South Central US","North Europe","West Europe","East
+        Asia","Southeast Asia","West US","East US","East US 2","Japan West","Japan
+        East","Brazil South"],"apiVersions":["2016-06-01","2015-08-01-preview"]},{"resourceType":"connectionGateways","locations":["North
+        Central US","Central US","South Central US","North Europe","West Europe","East
+        Asia","Southeast Asia","West US","East US","East US 2","Japan West","Japan
+        East","Brazil South"],"apiVersions":["2016-06-01","2015-08-01-preview"],"capabilities":"CrossResourceGroupResourceMove,
+        CrossSubscriptionResourceMove"},{"resourceType":"locations/connectionGatewayInstallations","locations":["North
+        Central US","Central US","South Central US","North Europe","West Europe","East
+        Asia","Southeast Asia","West US","East US","East US 2","Japan West","Japan
+        East","Brazil South"],"apiVersions":["2016-06-01","2015-08-01-preview"]}],"registrationState":"Registered"}'}
     headers:
       Cache-Control: [no-cache]
-      Content-Encoding: [gzip]
-      Content-Length: ['1653']
       Content-Type: [application/json; charset=utf-8]
-      Date: ['Fri, 25 Mar 2016 18:40:16 GMT']
+      Date: ['Mon, 19 Sep 2016 18:47:50 GMT']
       Expires: ['-1']
       Pragma: [no-cache]
       Strict-Transport-Security: [max-age=31536000; includeSubDomains]
       Vary: [Accept-Encoding]
-      x-ms-correlation-request-id: [bb326c2b-7b44-4a7c-87c3-c597ad4c6a4d]
-      x-ms-ratelimit-remaining-subscription-reads: ['14988']
-      x-ms-request-id: [bb326c2b-7b44-4a7c-87c3-c597ad4c6a4d]
-      x-ms-routing-request-id: ['EASTUS:20160325T184017Z:bb326c2b-7b44-4a7c-87c3-c597ad4c6a4d']
+      content-length: ['19435']
+      x-ms-correlation-request-id: [f59f0bbe-2c56-44fc-a4bc-097641e08644]
+      x-ms-ratelimit-remaining-subscription-reads: ['14970']
+      x-ms-request-id: [f59f0bbe-2c56-44fc-a4bc-097641e08644]
+      x-ms-routing-request-id: ['CENTRALUS:20160919T184750Z:f59f0bbe-2c56-44fc-a4bc-097641e08644']
     status: {code: 200, message: OK}
 version: 1

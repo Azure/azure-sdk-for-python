@@ -15,20 +15,25 @@ from msrest.serialization import Model
 class ResourceManagementErrorWithDetails(Model):
     """ResourceManagementErrorWithDetails.
 
-    :param code: The error code returned from the server.
-    :type code: str
-    :param message: The error message returned from the server.
-    :type message: str
-    :param target: The target of the error.
-    :type target: str
-    :param details: Validation error.
-    :type details: list of :class:`ResourceManagementErrorWithDetails
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar code: The error code returned from the server.
+    :vartype code: str
+    :ivar message: The error message returned from the server.
+    :vartype message: str
+    :ivar target: The target of the error.
+    :vartype target: str
+    :ivar details: Validation error.
+    :vartype details: list of :class:`ResourceManagementErrorWithDetails
      <azure.mgmt.resource.resources.models.ResourceManagementErrorWithDetails>`
     """ 
 
     _validation = {
-        'code': {'required': True},
-        'message': {'required': True},
+        'code': {'readonly': True},
+        'message': {'readonly': True},
+        'target': {'readonly': True},
+        'details': {'readonly': True},
     }
 
     _attribute_map = {
@@ -38,8 +43,8 @@ class ResourceManagementErrorWithDetails(Model):
         'details': {'key': 'details', 'type': '[ResourceManagementErrorWithDetails]'},
     }
 
-    def __init__(self, code, message, target=None, details=None):
-        self.code = code
-        self.message = message
-        self.target = target
-        self.details = details
+    def __init__(self):
+        self.code = None
+        self.message = None
+        self.target = None
+        self.details = None

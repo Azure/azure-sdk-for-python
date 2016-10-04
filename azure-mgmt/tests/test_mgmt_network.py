@@ -18,11 +18,11 @@ class MgmtNetworkTest(AzureMgmtTestCase):
         self.network_client = self.create_mgmt_client(
             azure.mgmt.network.NetworkManagementClient
         )
+        if not self.is_playback():
+            self.create_resource_group()
 
     @record
     def test_network_interface_card(self):
-        self.create_resource_group()
-
         vnet_name = self.get_resource_name('pyvnet')
         subnet_name = self.get_resource_name('pysubnet')
         nic_name = self.get_resource_name('pynic')
@@ -86,8 +86,6 @@ class MgmtNetworkTest(AzureMgmtTestCase):
 
     @record
     def test_load_balancers(self):
-        self.create_resource_group()
-
         public_ip_name = self.get_resource_name('pyipname')
         frontend_ip_name = self.get_resource_name('pyfipname')
         addr_pool_name = self.get_resource_name('pyapname')
@@ -249,8 +247,6 @@ class MgmtNetworkTest(AzureMgmtTestCase):
 
     @record
     def test_public_ip_addresses(self):
-        self.create_resource_group()
-
         public_ip_name = self.get_resource_name('pyipname')
 
         params_create = azure.mgmt.network.models.PublicIPAddress(
@@ -300,8 +296,6 @@ class MgmtNetworkTest(AzureMgmtTestCase):
 
     @record
     def test_virtual_networks(self):
-        self.create_resource_group()
-
         network_name = self.get_resource_name('pyvnet')
         subnet1_name = self.get_resource_name('pyvnetsubnetone')
         subnet2_name = self.get_resource_name('pyvnetsubnettwo')
@@ -367,8 +361,6 @@ class MgmtNetworkTest(AzureMgmtTestCase):
 
     @record
     def test_subnets(self):
-        self.create_resource_group()
-
         network_name = self.get_resource_name('pysubnet')
         subnet1_name = self.get_resource_name('pysubnetone')
         subnet2_name = self.get_resource_name('pysubnettwo')
@@ -439,8 +431,6 @@ class MgmtNetworkTest(AzureMgmtTestCase):
 
     @record
     def test_network_security_groups(self):
-        self.create_resource_group()
-
         security_group_name = self.get_resource_name('pysecgroup')
         security_rule_name = self.get_resource_name('pysecgrouprule')
 
@@ -529,8 +519,6 @@ class MgmtNetworkTest(AzureMgmtTestCase):
 
     @record
     def test_routes(self):
-        self.create_resource_group()
-
         route_table_name = self.get_resource_name('pyroutetable')
         route_name = self.get_resource_name('pyroute')
 
@@ -606,8 +594,6 @@ class MgmtNetworkTest(AzureMgmtTestCase):
 
     @record
     def test_express_route_circuit(self):
-        self.create_resource_group()
-
         express_route_name = self.get_resource_name('pyexpressroute')
         async_express_route = self.network_client.express_route_circuits.create_or_update(
             self.group_name,
