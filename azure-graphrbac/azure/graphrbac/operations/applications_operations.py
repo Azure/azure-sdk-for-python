@@ -126,8 +126,14 @@ class ApplicationsOperations(object):
                 query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
             else:
-                url = next_link
+                url = '/{tenantID}/{nextLink}'
+                path_format_arguments = {
+                    'nextLink': self._serialize.url("next_link", next_link, 'str', skip_quote=True),
+                    'tenantID': self._serialize.url("self.config.tenant_id", self.config.tenant_id, 'str')
+                }
+                url = self._client.format_url(url, **path_format_arguments)
                 query_parameters = {}
+                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
             # Construct headers
             header_parameters = {}
@@ -386,7 +392,7 @@ class ApplicationsOperations(object):
         return deserialized
 
     def update_key_credentials(
-            self, application_object_id, value=None, custom_headers=None, raw=False, **operation_config):
+            self, application_object_id, value, custom_headers=None, raw=False, **operation_config):
         """Update keyCredentials associated with an existing application.
         Reference:
         https://msdn.microsoft.com/en-us/library/azure/ad/graph/api/entity-and-complex-type-reference#keycredential-type.
@@ -510,7 +516,7 @@ class ApplicationsOperations(object):
         return deserialized
 
     def update_password_credentials(
-            self, application_object_id, value=None, custom_headers=None, raw=False, **operation_config):
+            self, application_object_id, value, custom_headers=None, raw=False, **operation_config):
         """Updates passwordCredentials associated with an existing application.
         Reference:
         https://msdn.microsoft.com/en-us/library/azure/ad/graph/api/entity-and-complex-type-reference#passwordcredential-type.

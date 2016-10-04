@@ -34,28 +34,26 @@ class PatchSchedulesOperations(object):
         self.config = config
 
     def create_or_update(
-            self, resource_group_name, name, schedule_entries, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, name, parameters, custom_headers=None, raw=False, **operation_config):
         """Create or replace the patching schedule for redis cache.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
         :param name: The name of the redis cache.
         :type name: str
-        :param schedule_entries: List of patch schedules for redis cache.
-        :type schedule_entries: list of :class:`ScheduleEntry
-         <azure.mgmt.redis.models.ScheduleEntry>`
+        :param parameters: Parameters to set patch schedules for redis cache.
+        :type parameters: :class:`RedisPatchSchedule
+         <azure.mgmt.redis.models.RedisPatchSchedule>`
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`RedisPatchSchedulesResponse
-         <azure.mgmt.redis.models.RedisPatchSchedulesResponse>`
+        :rtype: :class:`RedisPatchSchedule
+         <azure.mgmt.redis.models.RedisPatchSchedule>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
-        parameters = models.RedisPatchSchedulesRequest(schedule_entries=schedule_entries)
-
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cache/Redis/{name}/patchSchedules/default'
         path_format_arguments = {
@@ -80,7 +78,7 @@ class PatchSchedulesOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct body
-        body_content = self._serialize.body(parameters, 'RedisPatchSchedulesRequest')
+        body_content = self._serialize.body(parameters, 'RedisPatchSchedule')
 
         # Construct and send request
         request = self._client.put(url, query_parameters)
@@ -95,7 +93,7 @@ class PatchSchedulesOperations(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('RedisPatchSchedulesResponse', response)
+            deserialized = self._deserialize('RedisPatchSchedule', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
@@ -169,8 +167,8 @@ class PatchSchedulesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`RedisPatchSchedulesResponse
-         <azure.mgmt.redis.models.RedisPatchSchedulesResponse>`
+        :rtype: :class:`RedisPatchSchedule
+         <azure.mgmt.redis.models.RedisPatchSchedule>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -201,7 +199,7 @@ class PatchSchedulesOperations(object):
         request = self._client.get(url, query_parameters)
         response = self._client.send(request, header_parameters, **operation_config)
 
-        if response.status_code not in [200]:
+        if response.status_code not in [200, 404]:
             exp = CloudError(response)
             exp.request_id = response.headers.get('x-ms-request-id')
             raise exp
@@ -209,7 +207,7 @@ class PatchSchedulesOperations(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('RedisPatchSchedulesResponse', response)
+            deserialized = self._deserialize('RedisPatchSchedule', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)

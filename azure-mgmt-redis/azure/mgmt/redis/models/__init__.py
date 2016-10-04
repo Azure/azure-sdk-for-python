@@ -10,20 +10,17 @@
 # --------------------------------------------------------------------------
 
 from .sku import Sku
-from .redis_properties import RedisProperties
 from .resource import Resource
-from .redis_create_or_update_parameters import RedisCreateOrUpdateParameters
+from .redis_create_parameters import RedisCreateParameters
+from .redis_update_parameters import RedisUpdateParameters
 from .redis_access_keys import RedisAccessKeys
-from .redis_resource_with_access_key import RedisResourceWithAccessKey
 from .redis_resource import RedisResource
-from .redis_list_keys_result import RedisListKeysResult
 from .redis_regenerate_key_parameters import RedisRegenerateKeyParameters
 from .redis_reboot_parameters import RedisRebootParameters
 from .export_rdb_parameters import ExportRDBParameters
 from .import_rdb_parameters import ImportRDBParameters
 from .schedule_entry import ScheduleEntry
-from .redis_patch_schedules_request import RedisPatchSchedulesRequest
-from .redis_patch_schedules_response import RedisPatchSchedulesResponse
+from .redis_patch_schedule import RedisPatchSchedule
 from .redis_resource_paged import RedisResourcePaged
 from .redis_management_client_enums import (
     SkuName,
@@ -35,20 +32,17 @@ from .redis_management_client_enums import (
 
 __all__ = [
     'Sku',
-    'RedisProperties',
     'Resource',
-    'RedisCreateOrUpdateParameters',
+    'RedisCreateParameters',
+    'RedisUpdateParameters',
     'RedisAccessKeys',
-    'RedisResourceWithAccessKey',
     'RedisResource',
-    'RedisListKeysResult',
     'RedisRegenerateKeyParameters',
     'RedisRebootParameters',
     'ExportRDBParameters',
     'ImportRDBParameters',
     'ScheduleEntry',
-    'RedisPatchSchedulesRequest',
-    'RedisPatchSchedulesResponse',
+    'RedisPatchSchedule',
     'RedisResourcePaged',
     'SkuName',
     'SkuFamily',
