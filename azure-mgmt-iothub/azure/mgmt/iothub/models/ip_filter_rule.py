@@ -25,13 +25,19 @@ class IpFilterRule(Model):
     :type ip_mask: str
     """ 
 
+    _validation = {
+        'filter_name': {'required': True},
+        'action': {'required': True},
+        'ip_mask': {'required': True},
+    }
+
     _attribute_map = {
         'filter_name': {'key': 'filterName', 'type': 'str'},
         'action': {'key': 'action', 'type': 'IpFilterActionType'},
         'ip_mask': {'key': 'ipMask', 'type': 'str'},
     }
 
-    def __init__(self, filter_name=None, action=None, ip_mask=None):
+    def __init__(self, filter_name, action, ip_mask):
         self.filter_name = filter_name
         self.action = action
         self.ip_mask = ip_mask

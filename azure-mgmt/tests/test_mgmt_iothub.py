@@ -20,10 +20,11 @@ class MgmtIoTHubTest(AzureMgmtTestCase):
         self.iothub_client = self.create_mgmt_client(
             azure.mgmt.iothub.IotHubClient
         )
+        if not self.is_playback():
+            self.create_resource_group()
 
     @record
     def test_iothub(self):
-        self.create_resource_group()
         account_name = self.get_resource_name('iot')
         
         is_available = self.iothub_client.iot_hub_resource.check_name_availability(

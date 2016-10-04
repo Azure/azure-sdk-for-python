@@ -19,11 +19,11 @@ class MgmtAuthorizationTest(AzureMgmtTestCase):
         self.authorization_client = self.create_mgmt_client(
             azure.mgmt.authorization.AuthorizationManagementClient
         )
+        if not self.is_playback():
+            self.create_resource_group()
 
     @record
     def test_authorization(self):
-        self.create_resource_group()
-
         permissions = self.authorization_client.permissions.list_for_resource_group(
             self.group_name
         )

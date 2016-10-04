@@ -24,11 +24,11 @@ class MgmtAppsTest(AzureMgmtTestCase):
         self.web_client = self.create_mgmt_client(
             azure.mgmt.web.WebSiteManagementClient
         )
+        if not self.is_playback():
+            self.create_resource_group()
 
     @record
     def test_webapp(self):
-        self.create_resource_group()
-
         app_service_plan_name = self.get_resource_name('pyarmappserviceplan')
         site_name = self.get_resource_name('pyarmsite')
 
@@ -81,8 +81,6 @@ class MgmtAppsTest(AzureMgmtTestCase):
 
     @record
     def test_logic(self):
-        self.create_resource_group()
-
         workflow_name = '12HourHeartBeat'
         self.logic_client.workflows.create_or_update(
             self.group_name,

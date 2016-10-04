@@ -15,16 +15,25 @@ from msrest.serialization import Model
 class Provider(Model):
     """Resource provider information.
 
-    :param id: The provider id.
-    :type id: str
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar id: The provider id.
+    :vartype id: str
     :param namespace: The namespace of the provider.
     :type namespace: str
-    :param registration_state: The registration state of the provider.
-    :type registration_state: str
-    :param resource_types: The collection of provider resource types.
-    :type resource_types: list of :class:`ProviderResourceType
+    :ivar registration_state: The registration state of the provider.
+    :vartype registration_state: str
+    :ivar resource_types: The collection of provider resource types.
+    :vartype resource_types: list of :class:`ProviderResourceType
      <azure.mgmt.resource.resources.models.ProviderResourceType>`
     """ 
+
+    _validation = {
+        'id': {'readonly': True},
+        'registration_state': {'readonly': True},
+        'resource_types': {'readonly': True},
+    }
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
@@ -33,8 +42,8 @@ class Provider(Model):
         'resource_types': {'key': 'resourceTypes', 'type': '[ProviderResourceType]'},
     }
 
-    def __init__(self, id=None, namespace=None, registration_state=None, resource_types=None):
-        self.id = id
+    def __init__(self, namespace=None):
+        self.id = None
         self.namespace = namespace
-        self.registration_state = registration_state
-        self.resource_types = resource_types
+        self.registration_state = None
+        self.resource_types = None
