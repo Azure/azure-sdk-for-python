@@ -12,7 +12,7 @@
 from .resource import Resource
 
 
-class AccountResource(Resource):
+class BatchAccount(Resource):
     """Contains information about an Azure Batch account.
 
     Variables are only populated by the server, and will be ignored when
@@ -28,14 +28,14 @@ class AccountResource(Resource):
     :type location: str
     :param tags: The tags of the resource
     :type tags: dict
-    :param account_endpoint: The endpoint used by this account to interact
+    :ivar account_endpoint: The endpoint used by this account to interact
      with the Batch services.
-    :type account_endpoint: str
+    :vartype account_endpoint: str
     :param provisioning_state: The provisioned state of the resource.
      Possible values include: 'Invalid', 'Creating', 'Deleting', 'Succeeded',
      'Failed', 'Cancelled'
-    :type provisioning_state: str or :class:`AccountProvisioningState
-     <azure.mgmt.batch.models.AccountProvisioningState>`
+    :type provisioning_state: str or :class:`ProvisioningState
+     <azure.mgmt.batch.models.ProvisioningState>`
     :param auto_storage: The properties and status of any auto storage
      account associated with the account.
     :type auto_storage: :class:`AutoStorageProperties
@@ -53,6 +53,7 @@ class AccountResource(Resource):
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
+        'account_endpoint': {'readonly': True},
         'core_quota': {'required': True},
         'pool_quota': {'required': True},
         'active_job_and_job_schedule_quota': {'required': True},
@@ -65,16 +66,16 @@ class AccountResource(Resource):
         'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
         'account_endpoint': {'key': 'properties.accountEndpoint', 'type': 'str'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'AccountProvisioningState'},
+        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'ProvisioningState'},
         'auto_storage': {'key': 'properties.autoStorage', 'type': 'AutoStorageProperties'},
         'core_quota': {'key': 'properties.coreQuota', 'type': 'int'},
         'pool_quota': {'key': 'properties.poolQuota', 'type': 'int'},
         'active_job_and_job_schedule_quota': {'key': 'properties.activeJobAndJobScheduleQuota', 'type': 'int'},
     }
 
-    def __init__(self, core_quota, pool_quota, active_job_and_job_schedule_quota, location=None, tags=None, account_endpoint=None, provisioning_state=None, auto_storage=None):
-        super(AccountResource, self).__init__(location=location, tags=tags)
-        self.account_endpoint = account_endpoint
+    def __init__(self, core_quota, pool_quota, active_job_and_job_schedule_quota, location=None, tags=None, provisioning_state=None, auto_storage=None):
+        super(BatchAccount, self).__init__(location=location, tags=tags)
+        self.account_endpoint = None
         self.provisioning_state = provisioning_state
         self.auto_storage = auto_storage
         self.core_quota = core_quota

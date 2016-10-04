@@ -12,8 +12,8 @@
 from msrest.serialization import Model
 
 
-class SubscriptionQuotasGetResult(Model):
-    """Values returned by the Get Subscription Quotas operation.
+class BatchLocationQuota(Model):
+    """Quotas associated with a Batch region for a particular subscription.
 
     :param account_quota: The number of Batch accounts that may be created
      under the subscription in the specified region.

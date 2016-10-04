@@ -17,8 +17,8 @@ import uuid
 from .. import models
 
 
-class AccountOperations(object):
-    """AccountOperations operations.
+class BatchAccountOperations(object):
+    """BatchAccountOperations operations.
 
     :param client: Client for service requests.
     :param config: Configuration of service client.
@@ -58,8 +58,8 @@ class AccountOperations(object):
          deserialized response
         :rtype:
          :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         instance that returns :class:`AccountResource
-         <azure.mgmt.batch.models.AccountResource>`
+         instance that returns :class:`BatchAccount
+         <azure.mgmt.batch.models.BatchAccount>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -114,7 +114,7 @@ class AccountOperations(object):
             deserialized = None
 
             if response.status_code == 200:
-                deserialized = self._deserialize('AccountResource', response)
+                deserialized = self._deserialize('BatchAccount', response)
 
             if raw:
                 client_raw_response = ClientRawResponse(deserialized, response)
@@ -152,8 +152,7 @@ class AccountOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`AccountResource
-         <azure.mgmt.batch.models.AccountResource>`
+        :rtype: :class:`BatchAccount <azure.mgmt.batch.models.BatchAccount>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -198,7 +197,7 @@ class AccountOperations(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('AccountResource', response)
+            deserialized = self._deserialize('BatchAccount', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
@@ -297,8 +296,7 @@ class AccountOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`AccountResource
-         <azure.mgmt.batch.models.AccountResource>`
+        :rtype: :class:`BatchAccount <azure.mgmt.batch.models.BatchAccount>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -337,7 +335,7 @@ class AccountOperations(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('AccountResource', response)
+            deserialized = self._deserialize('BatchAccount', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
@@ -355,8 +353,8 @@ class AccountOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`AccountResourcePaged
-         <azure.mgmt.batch.models.AccountResourcePaged>`
+        :rtype: :class:`BatchAccountPaged
+         <azure.mgmt.batch.models.BatchAccountPaged>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -399,11 +397,11 @@ class AccountOperations(object):
             return response
 
         # Deserialize response
-        deserialized = models.AccountResourcePaged(internal_paging, self._deserialize.dependencies)
+        deserialized = models.BatchAccountPaged(internal_paging, self._deserialize.dependencies)
 
         if raw:
             header_dict = {}
-            client_raw_response = models.AccountResourcePaged(internal_paging, self._deserialize.dependencies, header_dict)
+            client_raw_response = models.BatchAccountPaged(internal_paging, self._deserialize.dependencies, header_dict)
             return client_raw_response
 
         return deserialized
@@ -421,8 +419,8 @@ class AccountOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`AccountResourcePaged
-         <azure.mgmt.batch.models.AccountResourcePaged>`
+        :rtype: :class:`BatchAccountPaged
+         <azure.mgmt.batch.models.BatchAccountPaged>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -466,11 +464,11 @@ class AccountOperations(object):
             return response
 
         # Deserialize response
-        deserialized = models.AccountResourcePaged(internal_paging, self._deserialize.dependencies)
+        deserialized = models.BatchAccountPaged(internal_paging, self._deserialize.dependencies)
 
         if raw:
             header_dict = {}
-            client_raw_response = models.AccountResourcePaged(internal_paging, self._deserialize.dependencies, header_dict)
+            client_raw_response = models.BatchAccountPaged(internal_paging, self._deserialize.dependencies, header_dict)
             return client_raw_response
 
         return deserialized
@@ -548,8 +546,8 @@ class AccountOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`BatchAccountRegenerateKeyResult
-         <azure.mgmt.batch.models.BatchAccountRegenerateKeyResult>`
+        :rtype: :class:`BatchAccountKeys
+         <azure.mgmt.batch.models.BatchAccountKeys>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -594,7 +592,7 @@ class AccountOperations(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('BatchAccountRegenerateKeyResult', response)
+            deserialized = self._deserialize('BatchAccountKeys', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
@@ -602,9 +600,9 @@ class AccountOperations(object):
 
         return deserialized
 
-    def list_keys(
+    def get_keys(
             self, resource_group_name, account_name, custom_headers=None, raw=False, **operation_config):
-        """Lists the account keys for the specified Batch account.
+        """Gets the account keys for the specified Batch account.
 
         :param resource_group_name: The name of the resource group that
          contains the Batch account.
@@ -616,8 +614,8 @@ class AccountOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`BatchAccountListKeyResult
-         <azure.mgmt.batch.models.BatchAccountListKeyResult>`
+        :rtype: :class:`BatchAccountKeys
+         <azure.mgmt.batch.models.BatchAccountKeys>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
@@ -656,7 +654,7 @@ class AccountOperations(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('BatchAccountListKeyResult', response)
+            deserialized = self._deserialize('BatchAccountKeys', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
