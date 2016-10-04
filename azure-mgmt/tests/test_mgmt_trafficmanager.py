@@ -20,6 +20,8 @@ class MgmtTrafficManagerTest(AzureMgmtTestCase):
         self.commerce_client = self.create_mgmt_client(
             azure.mgmt.trafficmanager.TrafficManagerManagementClient
         )
+        if not self.is_playback():
+            self.create_resource_group()
 
     @record
     def test_trafficmanager(self):

@@ -19,11 +19,11 @@ class MgmtRedisTest(AzureMgmtTestCase):
         self.redis_client = self.create_mgmt_client(
             azure.mgmt.redis.RedisManagementClient
         )
+        if not self.is_playback():
+            self.create_resource_group()
 
     @record
     def test_redis(self):
-        self.create_resource_group()
-
         account_name = self.get_resource_name('pyarmredis')
 
         cache_name = 'mycachename'
