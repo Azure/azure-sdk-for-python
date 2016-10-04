@@ -48,7 +48,7 @@ Stable packages
 Package name                          Version
 ===================================== =======
 azure-batch                           1.1.0
-azure-mgmt-batch                      1.0.0
+azure-mgmt-batch                      2.0.0
 azure-mgmt-devtestlabs                1.0.0
 azure-mgmt-logic                      1.0.0
 azure-mgmt-redis                      1.0.0

@@ -28,7 +28,7 @@
       "swagger": "arm-batch/2015-12-01/swagger/BatchManagement.json",
       "autorest_options": {
         "Namespace": "azure.mgmt.batch",
-        "PackageVersion": "1.0.0"
+        "PackageVersion": "2.0.0"
       },
       "output_dir": "azure-mgmt-batch/azure/mgmt/batch"
     },

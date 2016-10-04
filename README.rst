@@ -65,7 +65,7 @@ The following packages are still labeled "preview" but can be considered "stable
 The following packages are already released as "stable" and are officially production ready:
 
 - azure-batch 1.1.0
-- azure-mgmt-batch 1.0.0
+- azure-mgmt-batch 2.0.0
 - azure-mgmt-devtestlabs 1.0.0
 - azure-mgmt-logic 1.0.0
 - azure-mgmt-redis 1.0.0
