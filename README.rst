@@ -56,7 +56,7 @@ We are not planning on any further major changes until then.
 
 The following packages are still labeled "preview" but can be considered "stable":
 
-- azure-mgmt-resource 0.30.0rc6
+- azure-mgmt-resource 0.30.0
 - azure-mgmt-compute 0.30.0rc6
 - azure-mgmt-network 0.30.0rc6
 - azure-mgmt-storage 0.30.0rc6
@@ -64,13 +64,15 @@ The following packages are still labeled "preview" but can be considered "stable
 
 The following packages are already released as "stable" and are officially production ready:
 
-- azure-batch 1.0.0
+- azure-batch 1.1.0
 - azure-mgmt-batch 1.0.0
-- azure-mgmt-redis 1.0.0
+- azure-mgmt-devtestlabs 1.0.0
 - azure-mgmt-logic 1.0.0
+- azure-mgmt-redis 1.0.0
 - azure-mgmt-scheduler 1.0.0
+- azure-mgmt-servermanager 1.0.0
 - azure-servicebus 0.20.3
-- azure-servicemanagement-legacy 0.20.4
+- azure-servicemanagement-legacy 0.20.5
 - azure-storage 0.33.0
 
 The following packages are also available as preview only, not ready for production,
@@ -78,8 +80,8 @@ and will NOT be installed with the 2.0.0rc6 "azure" meta-package. We removed the
 to prepare our customers to the 2.0.0 stable release that will only contains the stable packages
 listed before.
 
-- azure-graphrbac 0.30.0rc5
-- azure-mgmt-authorization 0.30.0rc5
+- azure-graphrbac 0.30.0rc6
+- azure-mgmt-authorization 0.30.0rc6
 - azure-mgmt-cdn 0.30.0rc6
 - azure-mgmt-cognitiveservices 0.30.0rc6
 - azure-mgmt-commerce 0.30.0rc6
