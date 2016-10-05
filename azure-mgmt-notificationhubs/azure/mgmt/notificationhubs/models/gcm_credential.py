@@ -15,15 +15,17 @@ from msrest.serialization import Model
 class GcmCredential(Model):
     """Description of a NotificationHub GcmCredential.
 
-    :param properties: Gets or sets properties of NotificationHub
-     GcmCredential.
-    :type properties: :class:`GcmCredentialProperties
-     <azure.mgmt.notificationhubs.models.GcmCredentialProperties>`
+    :param gcm_endpoint: The GCM endpoint.
+    :type gcm_endpoint: str
+    :param google_api_key: The Google API key.
+    :type google_api_key: str
     """ 
 
     _attribute_map = {
-        'properties': {'key': 'properties', 'type': 'GcmCredentialProperties'},
+        'gcm_endpoint': {'key': 'properties.gcmEndpoint', 'type': 'str'},
+        'google_api_key': {'key': 'properties.googleApiKey', 'type': 'str'},
     }
 
-    def __init__(self, properties=None):
-        self.properties = properties
+    def __init__(self, gcm_endpoint=None, google_api_key=None):
+        self.gcm_endpoint = gcm_endpoint
+        self.google_api_key = google_api_key

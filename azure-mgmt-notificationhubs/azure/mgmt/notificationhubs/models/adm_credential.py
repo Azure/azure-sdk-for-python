@@ -15,15 +15,21 @@ from msrest.serialization import Model
 class AdmCredential(Model):
     """Description of a NotificationHub AdmCredential.
 
-    :param properties: Gets or sets properties of NotificationHub
-     AdmCredential.
-    :type properties: :class:`AdmCredentialProperties
-     <azure.mgmt.notificationhubs.models.AdmCredentialProperties>`
+    :param client_id: The client identifier.
+    :type client_id: str
+    :param client_secret: The credential secret access key.
+    :type client_secret: str
+    :param auth_token_url: The URL of the authorization token.
+    :type auth_token_url: str
     """ 
 
     _attribute_map = {
-        'properties': {'key': 'properties', 'type': 'AdmCredentialProperties'},
+        'client_id': {'key': 'properties.clientId', 'type': 'str'},
+        'client_secret': {'key': 'properties.clientSecret', 'type': 'str'},
+        'auth_token_url': {'key': 'properties.authTokenUrl', 'type': 'str'},
     }
 
-    def __init__(self, properties=None):
-        self.properties = properties
+    def __init__(self, client_id=None, client_secret=None, auth_token_url=None):
+        self.client_id = client_id
+        self.client_secret = client_secret
+        self.auth_token_url = auth_token_url
