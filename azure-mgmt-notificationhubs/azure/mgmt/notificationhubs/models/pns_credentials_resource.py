@@ -9,22 +9,27 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.serialization import Model
+from .resource import Resource
 
 
-class NotificationHubProperties(Model):
-    """NotificationHub properties.
+class PnsCredentialsResource(Resource):
+    """Description of a NotificationHub PNS Credentials.
 
-    :param name: The NotificationHub name.
-    :type name: str
-    :param registration_ttl: The RegistrationTtl of the created
-     NotificationHub
-    :type registration_ttl: str
-    :param authorization_rules: The AuthorizationRules of the created
-     NotificationHub
-    :type authorization_rules: list of
-     :class:`SharedAccessAuthorizationRuleProperties
-     <azure.mgmt.notificationhubs.models.SharedAccessAuthorizationRuleProperties>`
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar id: Resource Id
+    :vartype id: str
+    :ivar name: Resource name
+    :vartype name: str
+    :ivar type: Resource type
+    :vartype type: str
+    :param location: Resource location
+    :type location: str
+    :param tags: Resource tags
+    :type tags: dict
+    :param sku: The sku of the created namespace
+    :type sku: :class:`Sku <azure.mgmt.notificationhubs.models.Sku>`
     :param apns_credential: The ApnsCredential of the created NotificationHub
     :type apns_credential: :class:`ApnsCredential
      <azure.mgmt.notificationhubs.models.ApnsCredential>`
@@ -46,22 +51,30 @@ class NotificationHubProperties(Model):
      <azure.mgmt.notificationhubs.models.BaiduCredential>`
     """ 
 
-    _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'registration_ttl': {'key': 'registrationTtl', 'type': 'str'},
-        'authorization_rules': {'key': 'authorizationRules', 'type': '[SharedAccessAuthorizationRuleProperties]'},
-        'apns_credential': {'key': 'apnsCredential', 'type': 'ApnsCredential'},
-        'wns_credential': {'key': 'wnsCredential', 'type': 'WnsCredential'},
-        'gcm_credential': {'key': 'gcmCredential', 'type': 'GcmCredential'},
-        'mpns_credential': {'key': 'mpnsCredential', 'type': 'MpnsCredential'},
-        'adm_credential': {'key': 'admCredential', 'type': 'AdmCredential'},
-        'baidu_credential': {'key': 'baiduCredential', 'type': 'BaiduCredential'},
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'location': {'required': True},
     }
 
-    def __init__(self, name=None, registration_ttl=None, authorization_rules=None, apns_credential=None, wns_credential=None, gcm_credential=None, mpns_credential=None, adm_credential=None, baidu_credential=None):
-        self.name = name
-        self.registration_ttl = registration_ttl
-        self.authorization_rules = authorization_rules
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'location': {'key': 'location', 'type': 'str'},
+        'tags': {'key': 'tags', 'type': '{str}'},
+        'sku': {'key': 'sku', 'type': 'Sku'},
+        'apns_credential': {'key': 'properties.apnsCredential', 'type': 'ApnsCredential'},
+        'wns_credential': {'key': 'properties.wnsCredential', 'type': 'WnsCredential'},
+        'gcm_credential': {'key': 'properties.gcmCredential', 'type': 'GcmCredential'},
+        'mpns_credential': {'key': 'properties.mpnsCredential', 'type': 'MpnsCredential'},
+        'adm_credential': {'key': 'properties.admCredential', 'type': 'AdmCredential'},
+        'baidu_credential': {'key': 'properties.baiduCredential', 'type': 'BaiduCredential'},
+    }
+
+    def __init__(self, location, tags=None, sku=None, apns_credential=None, wns_credential=None, gcm_credential=None, mpns_credential=None, adm_credential=None, baidu_credential=None):
+        super(PnsCredentialsResource, self).__init__(location=location, tags=tags, sku=sku)
         self.apns_credential = apns_credential
         self.wns_credential = wns_credential
         self.gcm_credential = gcm_credential

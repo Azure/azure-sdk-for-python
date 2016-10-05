@@ -12,8 +12,8 @@
 from .resource import Resource
 
 
-class SharedAccessAuthorizationRuleResource(Resource):
-    """Description of a Namespace AuthorizationRules.
+class CheckAvailabilityResult(Resource):
+    """Description of a CheckAvailibility resource.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -30,9 +30,9 @@ class SharedAccessAuthorizationRuleResource(Resource):
     :type tags: dict
     :param sku: The sku of the created namespace
     :type sku: :class:`Sku <azure.mgmt.notificationhubs.models.Sku>`
-    :param rights: The rights associated with the rule.
-    :type rights: list of str or :class:`AccessRights
-     <azure.mgmt.notificationhubs.models.AccessRights>`
+    :param is_availiable: True if the name is available and can be used to
+     create new Namespace/NotificationHub. Otherwise false.
+    :type is_availiable: bool
     """ 
 
     _validation = {
@@ -49,9 +49,9 @@ class SharedAccessAuthorizationRuleResource(Resource):
         'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
         'sku': {'key': 'sku', 'type': 'Sku'},
-        'rights': {'key': 'properties.rights', 'type': '[AccessRights]'},
+        'is_availiable': {'key': 'isAvailiable', 'type': 'bool'},
     }
 
-    def __init__(self, location, tags=None, sku=None, rights=None):
-        super(SharedAccessAuthorizationRuleResource, self).__init__(location=location, tags=tags, sku=sku)
-        self.rights = rights
+    def __init__(self, location, tags=None, sku=None, is_availiable=None):
+        super(CheckAvailabilityResult, self).__init__(location=location, tags=tags, sku=sku)
+        self.is_availiable = is_availiable

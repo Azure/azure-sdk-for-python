@@ -12,20 +12,18 @@
 from msrest.serialization import Model
 
 
-class GcmCredentialProperties(Model):
-    """Description of a NotificationHub GcmCredential.
+class PolicykeyResource(Model):
+    """Namespace/NotificationHub Regenerate Keys.
 
-    :param gcm_endpoint: Gets or sets the GCM endpoint.
-    :type gcm_endpoint: str
-    :param google_api_key: Gets or sets the Google API key.
-    :type google_api_key: str
+    :param policy_key: Name of the key that has to be regenerated for the
+     Namespace/Notification Hub Authorization Rule. The value can be Primary
+     Key/Secondary Key.
+    :type policy_key: str
     """ 
 
     _attribute_map = {
-        'gcm_endpoint': {'key': 'gcmEndpoint', 'type': 'str'},
-        'google_api_key': {'key': 'googleApiKey', 'type': 'str'},
+        'policy_key': {'key': 'policyKey', 'type': 'str'},
     }
 
-    def __init__(self, gcm_endpoint=None, google_api_key=None):
-        self.gcm_endpoint = gcm_endpoint
-        self.google_api_key = google_api_key
+    def __init__(self, policy_key=None):
+        self.policy_key = policy_key
