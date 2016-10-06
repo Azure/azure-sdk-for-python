@@ -62,6 +62,8 @@ class ServerFarmWithRichSku(Resource):
     :vartype number_of_sites: int
     :ivar resource_group: Resource group of the serverfarm
     :vartype resource_group: str
+    :param reserved: Enables creation of a Linux App Service Plan
+    :type reserved: bool
     :param sku:
     :type sku: :class:`SkuDescription <azure.mgmt.web.models.SkuDescription>`
     """ 
@@ -93,10 +95,11 @@ class ServerFarmWithRichSku(Resource):
         'per_site_scaling': {'key': 'properties.perSiteScaling', 'type': 'bool'},
         'number_of_sites': {'key': 'properties.numberOfSites', 'type': 'int'},
         'resource_group': {'key': 'properties.resourceGroup', 'type': 'str'},
+        'reserved': {'key': 'properties.reserved', 'type': 'bool'},
         'sku': {'key': 'sku', 'type': 'SkuDescription'},
     }
 
-    def __init__(self, location, id=None, name=None, kind=None, type=None, tags=None, server_farm_with_rich_sku_name=None, worker_tier_name=None, admin_site_name=None, hosting_environment_profile=None, maximum_number_of_workers=None, per_site_scaling=None, sku=None):
+    def __init__(self, location, id=None, name=None, kind=None, type=None, tags=None, server_farm_with_rich_sku_name=None, worker_tier_name=None, admin_site_name=None, hosting_environment_profile=None, maximum_number_of_workers=None, per_site_scaling=None, reserved=None, sku=None):
         super(ServerFarmWithRichSku, self).__init__(id=id, name=name, kind=kind, location=location, type=type, tags=tags)
         self.server_farm_with_rich_sku_name = server_farm_with_rich_sku_name
         self.worker_tier_name = worker_tier_name
@@ -109,4 +112,5 @@ class ServerFarmWithRichSku(Resource):
         self.per_site_scaling = per_site_scaling
         self.number_of_sites = None
         self.resource_group = None
+        self.reserved = reserved
         self.sku = sku

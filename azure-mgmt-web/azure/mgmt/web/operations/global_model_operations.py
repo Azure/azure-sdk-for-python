@@ -148,11 +148,14 @@ class GlobalModelOperations(object):
         return deserialized
 
     def get_subscription_geo_regions(
-            self, sku=None, custom_headers=None, raw=False, **operation_config):
+            self, sku=None, linux_workers_enabled=None, custom_headers=None, raw=False, **operation_config):
         """Gets list of available geo regions.
 
         :param sku: Filter only to regions that support this sku
         :type sku: str
+        :param linux_workers_enabled: Filter only to regions that support
+         linux workers
+        :type linux_workers_enabled: bool
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -174,6 +177,8 @@ class GlobalModelOperations(object):
                 query_parameters = {}
                 if sku is not None:
                     query_parameters['sku'] = self._serialize.query("sku", sku, 'str')
+                if linux_workers_enabled is not None:
+                    query_parameters['linuxWorkersEnabled'] = self._serialize.query("linux_workers_enabled", linux_workers_enabled, 'bool')
                 query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
 
             else:
