@@ -30,7 +30,7 @@ class VirtualMachineScaleSetOSDisk(Model):
     :type os_type: str or :class:`OperatingSystemTypes
      <azure.mgmt.compute.models.OperatingSystemTypes>`
     :param image: the Source User Image VirtualHardDisk. This VirtualHardDisk
-     will be copied before using it to attach to the Virtual Machine.If
+     will be copied before using it to attach to the Virtual Machine. If
      SourceImage is provided, the destination VirtualHardDisk should not
      exist.
     :type image: :class:`VirtualHardDisk
