@@ -121,7 +121,7 @@
       "autorest_options": {
         "Namespace": "azure.keyvault"
       },
-      "output_dir": "unreleased/azure-keyvault/azure/keyvault"
+      "output_dir": "azure-keyvault/azure/keyvault"
     },
     "logic": {
       "swagger": "arm-logic/CompositeLogicClient.json",
