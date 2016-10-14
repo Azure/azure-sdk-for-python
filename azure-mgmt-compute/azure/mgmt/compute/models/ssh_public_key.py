@@ -21,7 +21,7 @@ class SshPublicKey(Model):
      file.
     :type path: str
     :param key_data: Certificate public key used to authenticate with VM
-     through SSH.The certificate must be in Pem format with or without
+     through SSH. The certificate must be in Pem format with or without
      headers.
     :type key_data: str
     """ 
