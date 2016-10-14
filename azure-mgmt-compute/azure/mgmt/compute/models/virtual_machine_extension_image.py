@@ -37,7 +37,7 @@ class VirtualMachineExtensionImage(Resource):
      consumers should provide settings in a matching schema.
     :type handler_schema: str
     :param vm_scale_set_enabled: whether the extension can be used on xRP
-     VMScaleSets.By default existing extensions are usable on scalesets, but
+     VMScaleSets. By default existing extensions are usable on scalesets, but
      there might be cases where a publisher wants to explicitly indicate the
      extension is only enabled for CRP VMs but not VMSS.
     :type vm_scale_set_enabled: bool
