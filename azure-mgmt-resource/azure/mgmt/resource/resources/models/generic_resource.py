@@ -47,7 +47,6 @@ class GenericResource(ResourceModel):
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
-        'location': {'required': True},
         'kind': {'pattern': '^[-\w\._,\(\)]+$'},
     }
 
@@ -65,7 +64,7 @@ class GenericResource(ResourceModel):
         'identity': {'key': 'identity', 'type': 'Identity'},
     }
 
-    def __init__(self, location, tags=None, plan=None, properties=None, kind=None, managed_by=None, sku=None, identity=None):
+    def __init__(self, location=None, tags=None, plan=None, properties=None, kind=None, managed_by=None, sku=None, identity=None):
         super(GenericResource, self).__init__(location=location, tags=tags)
         self.plan = plan
         self.properties = properties
