@@ -87,7 +87,7 @@ listed before.
 - azure-mgmt-commerce 0.30.0rc6
 - azure-mgmt-dns 0.30.0rc6
 - azure-mgmt-iothub 0.1.0
-- azure-mgmt-notificationhubs 0.30.0rc6
+- azure-mgmt-notificationhubs 0.30.0
 - azure-mgmt-powerbiembedded 0.30.0rc6
 - azure-mgmt-trafficmanager 0.30.0rc6
 - azure-mgmt-web 0.30.0rc6

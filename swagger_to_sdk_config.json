@@ -159,7 +159,8 @@
     "notificationhubs": {
       "swagger": "arm-notificationhubs/2016-03-01/swagger/notificationhubs.json",
       "autorest_options": {
-        "Namespace": "azure.mgmt.notificationhubs"
+        "Namespace": "azure.mgmt.notificationhubs",
+        "PackageVersion": "0.30.0"
       },
       "output_dir": "azure-mgmt-notificationhubs/azure/mgmt/notificationhubs"
     },
