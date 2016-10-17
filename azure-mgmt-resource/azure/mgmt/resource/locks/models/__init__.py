@@ -9,24 +9,14 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .deployment_extended_filter import DeploymentExtendedFilter
-from .generic_resource_filter import GenericResourceFilter
-from .resource_group_filter import ResourceGroupFilter
 from .management_lock_object import ManagementLockObject
-from .resource_model import ResourceModel
-from .sub_resource import SubResource
 from .management_lock_object_paged import ManagementLockObjectPaged
 from .management_lock_client_enums import (
     LockLevel,
 )
 
 __all__ = [
-    'DeploymentExtendedFilter',
-    'GenericResourceFilter',
-    'ResourceGroupFilter',
     'ManagementLockObject',
-    'ResourceModel',
-    'SubResource',
     'ManagementLockObjectPaged',
     'LockLevel',
 ]
