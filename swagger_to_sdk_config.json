@@ -57,7 +57,8 @@
       "swagger": "arm-compute/compositeComputeClient.json",
       "autorest_options": {
         "Namespace": "azure.mgmt.compute",
-        "Modeler": "CompositeSwagger"
+        "Modeler": "CompositeSwagger",
+        "PackageVersion": "0.30.0"
       },
       "output_dir": "azure-mgmt-compute/azure/mgmt/compute"
     },
