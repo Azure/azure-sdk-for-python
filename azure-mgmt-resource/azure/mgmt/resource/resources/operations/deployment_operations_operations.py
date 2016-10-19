@@ -53,6 +53,7 @@ class DeploymentOperationsOperations(object):
          <azure.mgmt.resource.resources.models.DeploymentOperation>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/deployments/{deploymentName}/operations/{operationId}'
@@ -116,6 +117,7 @@ class DeploymentOperationsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`DeploymentOperationPaged
          <azure.mgmt.resource.resources.models.DeploymentOperationPaged>`
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
 

@@ -9,10 +9,9 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .management_link_client import ManagementLinkClient
-from .version import VERSION
+from enum import Enum
 
-__all__ = ['ManagementLinkClient']
 
-__version__ = VERSION
+class Filter(Enum):
 
+    at_scope = "atScope()"

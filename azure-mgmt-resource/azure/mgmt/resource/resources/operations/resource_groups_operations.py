@@ -55,6 +55,7 @@ class ResourceGroupsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`GenericResourcePaged
          <azure.mgmt.resource.resources.models.GenericResourcePaged>`
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -128,6 +129,7 @@ class ResourceGroupsOperations(object):
         :rtype: bool
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}'
@@ -186,6 +188,7 @@ class ResourceGroupsOperations(object):
          <azure.mgmt.resource.resources.models.ResourceGroup>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}'
@@ -250,6 +253,7 @@ class ResourceGroupsOperations(object):
          instance that returns None
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}'
@@ -325,6 +329,7 @@ class ResourceGroupsOperations(object):
          <azure.mgmt.resource.resources.models.ResourceGroup>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}'
@@ -391,6 +396,7 @@ class ResourceGroupsOperations(object):
          <azure.mgmt.resource.resources.models.ResourceGroup>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}'
@@ -462,6 +468,7 @@ class ResourceGroupsOperations(object):
          <azure.mgmt.resource.resources.models.ResourceGroupExportResult>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         parameters = models.ExportTemplateRequest(resources=resources, options=options)
 
@@ -527,6 +534,7 @@ class ResourceGroupsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`ResourceGroupPaged
          <azure.mgmt.resource.resources.models.ResourceGroupPaged>`
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
 

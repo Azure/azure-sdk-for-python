@@ -53,6 +53,7 @@ class ManagementLocksOperations(object):
          <azure.mgmt.resource.locks.models.ManagementLockObject>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Authorization/locks/{lockName}'
@@ -119,6 +120,7 @@ class ManagementLocksOperations(object):
         :rtype: None
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Authorization/locks/{lockName}'
@@ -173,6 +175,7 @@ class ManagementLocksOperations(object):
          <azure.mgmt.resource.locks.models.ManagementLockObject>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Authorization/locks/{lockName}'
@@ -246,6 +249,7 @@ class ManagementLocksOperations(object):
          <azure.mgmt.resource.locks.models.ManagementLockObject>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{parentResourcePath}/{resourceType}/{resourceName}/providers/Microsoft.Authorization/locks/{lockName}'
@@ -324,6 +328,7 @@ class ManagementLocksOperations(object):
         :rtype: None
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{parentResourcePath}/{resourceType}/{resourceName}/providers/Microsoft.Authorization/locks/{lockName}'
@@ -383,6 +388,7 @@ class ManagementLocksOperations(object):
          <azure.mgmt.resource.locks.models.ManagementLockObject>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/providers/Microsoft.Authorization/locks/{lockName}'
@@ -446,6 +452,7 @@ class ManagementLocksOperations(object):
         :rtype: None
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/providers/Microsoft.Authorization/locks/{lockName}'
@@ -497,6 +504,7 @@ class ManagementLocksOperations(object):
          <azure.mgmt.resource.locks.models.ManagementLockObject>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/providers/Microsoft.Authorization/locks/{lockName}'
@@ -555,6 +563,7 @@ class ManagementLocksOperations(object):
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`ManagementLockObjectPaged
          <azure.mgmt.resource.locks.models.ManagementLockObjectPaged>`
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -634,6 +643,7 @@ class ManagementLocksOperations(object):
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`ManagementLockObjectPaged
          <azure.mgmt.resource.locks.models.ManagementLockObjectPaged>`
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -705,6 +715,7 @@ class ManagementLocksOperations(object):
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`ManagementLockObjectPaged
          <azure.mgmt.resource.locks.models.ManagementLockObjectPaged>`
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
 

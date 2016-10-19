@@ -9,10 +9,8 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .management_link_client import ManagementLinkClient
-from .version import VERSION
+from .resource_links_operations import ResourceLinksOperations
 
-__all__ = ['ManagementLinkClient']
-
-__version__ = VERSION
-
+__all__ = [
+    'ResourceLinksOperations',
+]
