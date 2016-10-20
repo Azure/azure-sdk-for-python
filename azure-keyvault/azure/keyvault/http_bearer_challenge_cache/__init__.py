@@ -47,4 +47,4 @@ def set_challenge_for_url(url, challenge):
 
 def clear():
     """ Clears the cache. """
-    _cache = {} # pylint: disable=redefined-outer-name,unused-variable
+    _cache.clear() # pylint: disable=redefined-outer-name,unused-variable

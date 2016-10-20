@@ -3,9 +3,6 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 #---------------------------------------------------------------------------------------------
 
-#pylint: skip-file
-
-import adal
 import urllib
 from requests.auth import AuthBase
 import requests
