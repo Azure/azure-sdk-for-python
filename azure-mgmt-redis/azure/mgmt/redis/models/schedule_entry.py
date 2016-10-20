@@ -13,7 +13,7 @@ from msrest.serialization import Model
 
 
 class ScheduleEntry(Model):
-    """ScheduleEntry.
+    """Patch schedule entry for Premium Redis Cache.
 
     :param day_of_week: Day of week when cache can be patched. Possible
      values include: 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday',
@@ -33,7 +33,7 @@ class ScheduleEntry(Model):
     }
 
     _attribute_map = {
-        'day_of_week': {'key': 'dayOfWeek', 'type': 'str'},
+        'day_of_week': {'key': 'dayOfWeek', 'type': 'DayOfWeek'},
         'start_hour_utc': {'key': 'startHourUtc', 'type': 'int'},
         'maintenance_window': {'key': 'maintenanceWindow', 'type': 'duration'},
     }
