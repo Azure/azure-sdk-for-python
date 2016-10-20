@@ -269,28 +269,28 @@
       ]
     },
     "datalake.analytics.account": {
-      "swagger": "arm-datalake-analytics/account/2015-10-01-preview/swagger/account.json",
+      "swagger": "arm-datalake-analytics/account/2016-11-01/swagger/account.json",
       "autorest_options": {
         "Namespace": "azure.mgmt.datalake.analytics.account"
       },
       "output_dir": "azure-mgmt-datalake-analytics/azure/mgmt/datalake/analytics/account/"
     },
     "datalake.analytics.catalog": {
-      "swagger": "arm-datalake-analytics/catalog/2015-10-01-preview/swagger/catalog.json",
+      "swagger": "arm-datalake-analytics/catalog/2016-11-01/swagger/catalog.json",
       "autorest_options": {
         "Namespace": "azure.mgmt.datalake.analytics.catalog"
       },
       "output_dir": "azure-mgmt-datalake-analytics/azure/mgmt/datalake/analytics/catalog/"
     },
     "datalake.analytics.job": {
-      "swagger": "arm-datalake-analytics/job/2016-03-20-preview/swagger/job.json",
+      "swagger": "arm-datalake-analytics/job/2016-11-01/swagger/job.json",
       "autorest_options": {
         "Namespace": "azure.mgmt.datalake.analytics.job"
       },
       "output_dir": "azure-mgmt-datalake-analytics/azure/mgmt/datalake/analytics/job/"
     },
     "datalake.store.account": {
-      "swagger": "arm-datalake-store/account/2015-10-01-preview/swagger/account.json",
+      "swagger": "arm-datalake-store/account/2016-11-01/swagger/account.json",
       "autorest_options": {
         "Namespace": "azure.mgmt.datalake.store.account"
       },
