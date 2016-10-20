@@ -1416,6 +1416,10 @@
     <Compile Include="azure-mgmt-storage\setup.py" />
     <Compile Include="azure-mgmt-nspkg\azure\__init__.py" />
     <Compile Include="azure-mgmt-nspkg\setup.py" />
+    <Compile Include="azure-mgmt\tests\keyvault_testcase.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="azure-mgmt\tests\mgmt_settings_real.py" />
     <Compile Include="azure-mgmt\tests\mgmt_settings_fake.py" />
     <Compile Include="azure-mgmt\tests\mgmt_testcase.py" />
     <Compile Include="azure-mgmt\tests\test_batch.py" />
