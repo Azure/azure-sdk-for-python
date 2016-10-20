@@ -175,7 +175,7 @@
       "swagger": "arm-redis/2016-04-01/swagger/redis.json",
       "autorest_options": {
         "Namespace": "azure.mgmt.redis",
-        "PackageVersion": "1.0.0"
+        "PackageVersion": "2.0.0"
       },
       "output_dir": "azure-mgmt-redis/azure/mgmt/redis"
     },

@@ -68,7 +68,7 @@ The following packages are already released as "stable" and are officially produ
 - azure-mgmt-batch 2.0.0
 - azure-mgmt-devtestlabs 1.0.0
 - azure-mgmt-logic 1.0.0
-- azure-mgmt-redis 1.0.0
+- azure-mgmt-redis 2.0.0
 - azure-mgmt-scheduler 1.0.0
 - azure-mgmt-servermanager 1.0.0
 - azure-servicebus 0.20.3
