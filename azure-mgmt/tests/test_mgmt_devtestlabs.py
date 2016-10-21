@@ -19,10 +19,11 @@ class MgmtDevTestLabsTest(AzureMgmtTestCase):
         self.client = self.create_mgmt_client(
             azure.mgmt.devtestlabs.DevTestLabsClient
         )
+        if not self.is_playback():
+            self.create_resource_group()
 
     @record
     def test_devtestlabs(self):
-        self.create_resource_group()
         lab_name = self.get_resource_name('pylab')
 
         async_lab = self.client.lab.create_or_update_resource(

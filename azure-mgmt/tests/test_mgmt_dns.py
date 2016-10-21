@@ -19,11 +19,11 @@ class MgmtDnsTest(AzureMgmtTestCase):
         self.dns_client = self.create_mgmt_client(
             azure.mgmt.dns.DnsManagementClient
         )
+        if not self.is_playback():
+            self.create_resource_group()
 
     @record
     def test_dns(self):
-        self.create_resource_group()
-
         account_name = self.get_resource_name('pydns.com')
 
         # The only valid value is 'global', otherwise you will get a:

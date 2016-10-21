@@ -10,69 +10,63 @@
 # --------------------------------------------------------------------------
 
 from .check_availability_parameters import CheckAvailabilityParameters
-from .check_availability_resource import CheckAvailabilityResource
-from .namespace_properties import NamespaceProperties
+from .sku import Sku
+from .check_availability_result import CheckAvailabilityResult
 from .namespace_create_or_update_parameters import NamespaceCreateOrUpdateParameters
+from .namespace_patch_parameters import NamespacePatchParameters
 from .namespace_resource import NamespaceResource
 from .shared_access_authorization_rule_properties import SharedAccessAuthorizationRuleProperties
 from .shared_access_authorization_rule_create_or_update_parameters import SharedAccessAuthorizationRuleCreateOrUpdateParameters
 from .shared_access_authorization_rule_resource import SharedAccessAuthorizationRuleResource
 from .resource_list_keys import ResourceListKeys
-from .apns_credential_properties import ApnsCredentialProperties
+from .policykey_resource import PolicykeyResource
 from .apns_credential import ApnsCredential
-from .wns_credential_properties import WnsCredentialProperties
 from .wns_credential import WnsCredential
-from .gcm_credential_properties import GcmCredentialProperties
 from .gcm_credential import GcmCredential
-from .mpns_credential_properties import MpnsCredentialProperties
 from .mpns_credential import MpnsCredential
-from .adm_credential_properties import AdmCredentialProperties
 from .adm_credential import AdmCredential
-from .baidu_credential_properties import BaiduCredentialProperties
 from .baidu_credential import BaiduCredential
-from .notification_hub_properties import NotificationHubProperties
 from .notification_hub_create_or_update_parameters import NotificationHubCreateOrUpdateParameters
 from .notification_hub_resource import NotificationHubResource
+from .pns_credentials_resource import PnsCredentialsResource
 from .resource import Resource
 from .sub_resource import SubResource
 from .namespace_resource_paged import NamespaceResourcePaged
 from .shared_access_authorization_rule_resource_paged import SharedAccessAuthorizationRuleResourcePaged
 from .notification_hub_resource_paged import NotificationHubResourcePaged
 from .notification_hubs_management_client_enums import (
+    SkuName,
     NamespaceType,
     AccessRights,
 )
 
 __all__ = [
     'CheckAvailabilityParameters',
-    'CheckAvailabilityResource',
-    'NamespaceProperties',
+    'Sku',
+    'CheckAvailabilityResult',
     'NamespaceCreateOrUpdateParameters',
+    'NamespacePatchParameters',
     'NamespaceResource',
     'SharedAccessAuthorizationRuleProperties',
     'SharedAccessAuthorizationRuleCreateOrUpdateParameters',
     'SharedAccessAuthorizationRuleResource',
     'ResourceListKeys',
-    'ApnsCredentialProperties',
+    'PolicykeyResource',
     'ApnsCredential',
-    'WnsCredentialProperties',
     'WnsCredential',
-    'GcmCredentialProperties',
     'GcmCredential',
-    'MpnsCredentialProperties',
     'MpnsCredential',
-    'AdmCredentialProperties',
     'AdmCredential',
-    'BaiduCredentialProperties',
     'BaiduCredential',
-    'NotificationHubProperties',
     'NotificationHubCreateOrUpdateParameters',
     'NotificationHubResource',
+    'PnsCredentialsResource',
     'Resource',
     'SubResource',
     'NamespaceResourcePaged',
     'SharedAccessAuthorizationRuleResourcePaged',
     'NotificationHubResourcePaged',
+    'SkuName',
     'NamespaceType',
     'AccessRights',
 ]

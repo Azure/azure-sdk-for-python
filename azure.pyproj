@@ -1298,6 +1298,7 @@
     <Compile Include="azure-mgmt-resource\azure\mgmt\resource\subscriptions\subscription_client.py" />
     <Compile Include="azure-mgmt-resource\azure\mgmt\resource\subscriptions\version.py" />
     <Compile Include="azure-mgmt-resource\azure\mgmt\resource\subscriptions\__init__.py" />
+    <Compile Include="azure-mgmt-resource\azure\mgmt\resource\version.py" />
     <Compile Include="azure-mgmt-resource\azure\mgmt\resource\__init__.py" />
     <Compile Include="azure-mgmt-resource\azure\mgmt\__init__.py" />
     <Compile Include="azure-mgmt-resource\azure\__init__.py" />

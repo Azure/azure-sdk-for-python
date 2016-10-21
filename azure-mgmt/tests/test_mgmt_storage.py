@@ -19,6 +19,8 @@ class MgmtStorageTest(AzureMgmtTestCase):
         self.storage_client = self.create_mgmt_client(
             azure.mgmt.storage.StorageManagementClient
         )
+        if not self.is_playback():
+            self.create_resource_group()
 
     @record
     def test_storage_usage(self):
@@ -27,8 +29,6 @@ class MgmtStorageTest(AzureMgmtTestCase):
 
     @record
     def test_storage_accounts(self):
-        self.create_resource_group()
-
         account_name = self.get_resource_name('pyarmstorage')
 
         result_check = self.storage_client.storage_accounts.check_name_availability(

@@ -15,15 +15,21 @@ from msrest.serialization import Model
 class BaiduCredential(Model):
     """Description of a NotificationHub BaiduCredential.
 
-    :param properties: Gets or sets properties of NotificationHub
-     BaiduCredential.
-    :type properties: :class:`BaiduCredentialProperties
-     <azure.mgmt.notificationhubs.models.BaiduCredentialProperties>`
+    :param baidu_api_key: Baidu Api Key.
+    :type baidu_api_key: str
+    :param baidu_end_point: Baidu Endpoint.
+    :type baidu_end_point: str
+    :param baidu_secret_key: Baidu Secret Key
+    :type baidu_secret_key: str
     """ 
 
     _attribute_map = {
-        'properties': {'key': 'properties', 'type': 'BaiduCredentialProperties'},
+        'baidu_api_key': {'key': 'properties.baiduApiKey', 'type': 'str'},
+        'baidu_end_point': {'key': 'properties.baiduEndPoint', 'type': 'str'},
+        'baidu_secret_key': {'key': 'properties.baiduSecretKey', 'type': 'str'},
     }
 
-    def __init__(self, properties=None):
-        self.properties = properties
+    def __init__(self, baidu_api_key=None, baidu_end_point=None, baidu_secret_key=None):
+        self.baidu_api_key = baidu_api_key
+        self.baidu_end_point = baidu_end_point
+        self.baidu_secret_key = baidu_secret_key

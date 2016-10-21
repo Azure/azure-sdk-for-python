@@ -30,6 +30,8 @@ class ResourceGroup(Model):
      supported Azure Locations, such as West US, East US, West Europe, East
      Asia, etc.
     :type location: str
+    :param managed_by: Id of the resource that manages this resource group.
+    :type managed_by: str
     :param tags: The tags attached to the resource group.
     :type tags: dict
     """ 
@@ -44,12 +46,14 @@ class ResourceGroup(Model):
         'name': {'key': 'name', 'type': 'str'},
         'properties': {'key': 'properties', 'type': 'ResourceGroupProperties'},
         'location': {'key': 'location', 'type': 'str'},
+        'managed_by': {'key': 'managedBy', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
     }
 
-    def __init__(self, location, name=None, properties=None, tags=None):
+    def __init__(self, location, name=None, properties=None, managed_by=None, tags=None):
         self.id = None
         self.name = name
         self.properties = properties
         self.location = location
+        self.managed_by = managed_by
         self.tags = tags

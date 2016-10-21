@@ -15,7 +15,7 @@ from msrest.serialization import Model
 class BatchAccountCreateParameters(Model):
     """Parameters supplied to the Create operation.
 
-    :param location: The region in which the account is created.
+    :param location: The region in which to create the account.
     :type location: str
     :param tags: The user specified tags associated with the account.
     :type tags: dict
@@ -24,13 +24,17 @@ class BatchAccountCreateParameters(Model):
      <azure.mgmt.batch.models.AutoStorageBaseProperties>`
     """ 
 
+    _validation = {
+        'location': {'required': True},
+    }
+
     _attribute_map = {
         'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
         'auto_storage': {'key': 'properties.autoStorage', 'type': 'AutoStorageBaseProperties'},
     }
 
-    def __init__(self, location=None, tags=None, auto_storage=None):
+    def __init__(self, location, tags=None, auto_storage=None):
         self.location = location
         self.tags = tags
         self.auto_storage = auto_storage
