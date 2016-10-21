@@ -16,30 +16,48 @@ class CheckAvailabilityParameters(Model):
     """Parameters supplied to the Check Name Availability for Namespace and
     NotificationHubs.
 
-    :param name: Gets or sets name
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar id: Resource Id
+    :vartype id: str
+    :param name: Resource name
     :type name: str
-    :param location: Gets or sets location.
+    :ivar type: Resource type
+    :vartype type: str
+    :param location: Resource location
     :type location: str
-    :param tags: Gets or sets tags.
+    :param tags: Resource tags
     :type tags: dict
-    :param is_availiable: Gets or sets true if the name is available and can
-     be used to create new Namespace/NotificationHub. Otherwise false.
+    :param sku: The sku of the created namespace
+    :type sku: :class:`Sku <azure.mgmt.notificationhubs.models.Sku>`
+    :param is_availiable: True if the name is available and can be used to
+     create new Namespace/NotificationHub. Otherwise false.
     :type is_availiable: bool
     """ 
 
     _validation = {
+        'id': {'readonly': True},
         'name': {'required': True},
+        'type': {'readonly': True},
+        'location': {'required': True},
     }
 
     _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
         'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
+        'sku': {'key': 'sku', 'type': 'Sku'},
         'is_availiable': {'key': 'isAvailiable', 'type': 'bool'},
     }
 
-    def __init__(self, name, location=None, tags=None, is_availiable=None):
+    def __init__(self, name, location, tags=None, sku=None, is_availiable=None):
+        self.id = None
         self.name = name
+        self.type = None
         self.location = location
         self.tags = tags
+        self.sku = sku
         self.is_availiable = is_availiable

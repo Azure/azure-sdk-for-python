@@ -13,7 +13,7 @@ from msrest.serialization import Model
 
 
 class DeploymentExportResult(Model):
-    """DeploymentExportResult.
+    """The deployment export result. .
 
     :param template: The template content.
     :type template: object

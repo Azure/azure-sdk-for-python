@@ -37,6 +37,8 @@ class MgmtComputeTest(AzureMgmtTestCase):
 
         self.linux_img_ref_id = "/" + self.compute_client.config.subscription_id + "/services/images/b4590d9e3ed742e4a1d46e5424aa335e__sles12-azure-guest-priority.x86-64-0.4.3-build1.1"
         self.windows_img_ref_id = "/" + self.compute_client.config.subscription_id + "/services/images/a699494373c04fc0bc8f2bb1389d6106__Windows-Server-2012-Datacenter-201503.01-en.us-127GB.vhd"
+        if not self.is_playback():
+            self.create_resource_group()
 
     def get_resource_names(self, base):
         return ComputeResourceNames(
@@ -156,8 +158,6 @@ class MgmtComputeTest(AzureMgmtTestCase):
 
     @record
     def test_virtual_machines_operations(self):
-        self.create_resource_group()
-
         names = self.get_resource_names('pyvmir')
         os_vhd_uri = self.get_vhd_uri(names.storage, 'osdisk')
 
@@ -232,8 +232,6 @@ class MgmtComputeTest(AzureMgmtTestCase):
 
     @record
     def test_virtual_machine_capture(self):
-        self.create_resource_group()
-
         names = self.get_resource_names('pyvmir')
         os_vhd_uri = self.get_vhd_uri(names.storage, 'osdisk')
 
@@ -289,8 +287,6 @@ class MgmtComputeTest(AzureMgmtTestCase):
     @record
     def test_vm_extensions(self):
         #WARNING: this test may take 40 mins to complete against live server
-        self.create_resource_group()
-
         names = self.get_resource_names('pyvmext')
         os_vhd_uri = self.get_vhd_uri(names.storage, 'osdisk')
         ext_name = names.vm + 'AccessAgent'
@@ -447,8 +443,6 @@ class MgmtComputeTest(AzureMgmtTestCase):
 
     @record
     def test_availability_sets(self):
-        self.create_resource_group()
-
         availability_set_name = self.get_resource_name('pyarmset')
 
         params_create = azure.mgmt.compute.models.AvailabilitySet(
@@ -524,8 +518,6 @@ class MgmtComputeTest(AzureMgmtTestCase):
 
     @record
     def test_container(self):
-        self.create_resource_group()
-
         container_name = self.get_resource_name('pycontainer')
         
         # https://msdn.microsoft.com/en-us/library/azure/mt711471.aspx

@@ -7,26 +7,26 @@ interactions:
       Connection: [keep-alive]
       Content-Length: ['0']
       Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.5.1 (Windows-10-10.0.14372-SP0) requests/2.10.0 msrest/0.4.0
-          msrest_azure/0.4.1 resourcemanagementclient/0.30.0rc5 Azure-SDK-For-Python]
+      User-Agent: [python/3.5.1 (Windows-10-10.0.14393-SP0) requests/2.11.0 msrest/0.4.4
+          msrest_azure/0.4.3 resourcemanagementclient/0.30.0rc6 Azure-SDK-For-Python]
       accept-language: [en-US]
-      x-ms-client-request-id: [f9e50c6c-4930-11e6-8dc7-ecb1d756380e]
+      x-ms-client-request-id: [6d06ed5a-7e99-11e6-b936-ecb1d756380e]
     method: PUT
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/tagNames/tag1?api-version=2016-02-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/tagNames/tag1?api-version=2016-09-01
   response:
     body: {string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/tagNames/tag1","tagName":"tag1","count":{"type":"Total","value":0},"values":[]}'}
     headers:
       Cache-Control: [no-cache]
       Content-Length: ['138']
       Content-Type: [application/json; charset=utf-8]
-      Date: ['Wed, 13 Jul 2016 19:35:34 GMT']
+      Date: ['Mon, 19 Sep 2016 18:46:50 GMT']
       Expires: ['-1']
       Pragma: [no-cache]
       Strict-Transport-Security: [max-age=31536000; includeSubDomains]
-      x-ms-correlation-request-id: [5c809dae-92b0-4eae-ba43-ab36b8e4b202]
-      x-ms-ratelimit-remaining-subscription-writes: ['1198']
-      x-ms-request-id: [5c809dae-92b0-4eae-ba43-ab36b8e4b202]
-      x-ms-routing-request-id: ['CENTRALUS:20160713T193535Z:5c809dae-92b0-4eae-ba43-ab36b8e4b202']
+      x-ms-correlation-request-id: [636e20e0-3083-4298-80d7-2fb8af12e2e3]
+      x-ms-ratelimit-remaining-subscription-writes: ['1194']
+      x-ms-request-id: [636e20e0-3083-4298-80d7-2fb8af12e2e3]
+      x-ms-routing-request-id: ['CENTRALUS:20160919T184651Z:636e20e0-3083-4298-80d7-2fb8af12e2e3']
     status: {code: 201, message: Created}
 - request:
     body: null
@@ -36,26 +36,26 @@ interactions:
       Connection: [keep-alive]
       Content-Length: ['0']
       Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.5.1 (Windows-10-10.0.14372-SP0) requests/2.10.0 msrest/0.4.0
-          msrest_azure/0.4.1 resourcemanagementclient/0.30.0rc5 Azure-SDK-For-Python]
+      User-Agent: [python/3.5.1 (Windows-10-10.0.14393-SP0) requests/2.11.0 msrest/0.4.4
+          msrest_azure/0.4.3 resourcemanagementclient/0.30.0rc6 Azure-SDK-For-Python]
       accept-language: [en-US]
-      x-ms-client-request-id: [fa468d3e-4930-11e6-9929-ecb1d756380e]
+      x-ms-client-request-id: [6d912434-7e99-11e6-af81-ecb1d756380e]
     method: PUT
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/tagNames/tag1/tagValues/value1?api-version=2016-02-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/tagNames/tag1/tagValues/value1?api-version=2016-09-01
   response:
     body: {string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/tagNames/tag1/tagValues/value1","tagValue":"value1","count":{"type":"Total","value":0}}'}
     headers:
       Cache-Control: [no-cache]
       Content-Length: ['146']
       Content-Type: [application/json; charset=utf-8]
-      Date: ['Wed, 13 Jul 2016 19:35:35 GMT']
+      Date: ['Mon, 19 Sep 2016 18:46:52 GMT']
       Expires: ['-1']
       Pragma: [no-cache]
       Strict-Transport-Security: [max-age=31536000; includeSubDomains]
-      x-ms-correlation-request-id: [8bf762f3-4f0b-4bb9-bab2-10a2456b3f56]
-      x-ms-ratelimit-remaining-subscription-writes: ['1195']
-      x-ms-request-id: [8bf762f3-4f0b-4bb9-bab2-10a2456b3f56]
-      x-ms-routing-request-id: ['CENTRALUS:20160713T193536Z:8bf762f3-4f0b-4bb9-bab2-10a2456b3f56']
+      x-ms-correlation-request-id: [2ffda9db-3ef1-45e7-b77e-57c2650e24af]
+      x-ms-ratelimit-remaining-subscription-writes: ['1198']
+      x-ms-request-id: [2ffda9db-3ef1-45e7-b77e-57c2650e24af]
+      x-ms-routing-request-id: ['CENTRALUS:20160919T184652Z:2ffda9db-3ef1-45e7-b77e-57c2650e24af']
     status: {code: 201, message: Created}
 - request:
     body: null
@@ -64,27 +64,27 @@ interactions:
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
       Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.5.1 (Windows-10-10.0.14372-SP0) requests/2.10.0 msrest/0.4.0
-          msrest_azure/0.4.1 resourcemanagementclient/0.30.0rc5 Azure-SDK-For-Python]
+      User-Agent: [python/3.5.1 (Windows-10-10.0.14393-SP0) requests/2.11.0 msrest/0.4.4
+          msrest_azure/0.4.3 resourcemanagementclient/0.30.0rc6 Azure-SDK-For-Python]
       accept-language: [en-US]
-      x-ms-client-request-id: [fae84b68-4930-11e6-8e7e-ecb1d756380e]
+      x-ms-client-request-id: [6e1e554a-7e99-11e6-b492-ecb1d756380e]
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/tagNames?api-version=2016-02-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/tagNames?api-version=2016-09-01
   response:
-    body: {string: '{"value":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/tagNames/tag1","tagName":"tag1","count":{"type":"Total","value":0},"values":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/tagNames/tag1/tagValues/value1","tagValue":"value1","count":{"type":"Total","value":0}}]}]}'}
+    body: {string: '{"value":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/tagNames/CreatedBy","tagName":"CreatedBy","count":{"type":"Total","value":1},"values":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/tagNames/CreatedBy/tagValues/DevTestLabs","tagValue":"DevTestLabs","count":{"type":"Total","value":1}}]},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/tagNames/tag1","tagName":"tag1","count":{"type":"Total","value":0},"values":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/tagNames/tag1/tagValues/value1","tagValue":"value1","count":{"type":"Total","value":0}}]}]}'}
     headers:
       Cache-Control: [no-cache]
       Content-Type: [application/json; charset=utf-8]
-      Date: ['Wed, 13 Jul 2016 19:35:36 GMT']
+      Date: ['Mon, 19 Sep 2016 18:46:51 GMT']
       Expires: ['-1']
       Pragma: [no-cache]
       Strict-Transport-Security: [max-age=31536000; includeSubDomains]
       Vary: [Accept-Encoding]
-      content-length: ['296']
-      x-ms-correlation-request-id: [bd248388-c4a0-4008-8371-c28e4e001737]
-      x-ms-ratelimit-remaining-subscription-reads: ['14996']
-      x-ms-request-id: [bd248388-c4a0-4008-8371-c28e4e001737]
-      x-ms-routing-request-id: ['CENTRALUS:20160713T193536Z:bd248388-c4a0-4008-8371-c28e4e001737']
+      content-length: ['606']
+      x-ms-correlation-request-id: [6be14b00-c49f-43d4-afa3-f97c0455f2b0]
+      x-ms-ratelimit-remaining-subscription-reads: ['14971']
+      x-ms-request-id: [6be14b00-c49f-43d4-afa3-f97c0455f2b0]
+      x-ms-routing-request-id: ['CENTRALUS:20160919T184652Z:6be14b00-c49f-43d4-afa3-f97c0455f2b0']
     status: {code: 200, message: OK}
 - request:
     body: null
@@ -94,25 +94,25 @@ interactions:
       Connection: [keep-alive]
       Content-Length: ['0']
       Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.5.1 (Windows-10-10.0.14372-SP0) requests/2.10.0 msrest/0.4.0
-          msrest_azure/0.4.1 resourcemanagementclient/0.30.0rc5 Azure-SDK-For-Python]
+      User-Agent: [python/3.5.1 (Windows-10-10.0.14393-SP0) requests/2.11.0 msrest/0.4.4
+          msrest_azure/0.4.3 resourcemanagementclient/0.30.0rc6 Azure-SDK-For-Python]
       accept-language: [en-US]
-      x-ms-client-request-id: [fb10e21a-4930-11e6-b48d-ecb1d756380e]
+      x-ms-client-request-id: [6e4d5e70-7e99-11e6-b5bc-ecb1d756380e]
     method: DELETE
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/tagNames/tag1/tagValues/value1?api-version=2016-02-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/tagNames/tag1/tagValues/value1?api-version=2016-09-01
   response:
     body: {string: ''}
     headers:
       Cache-Control: [no-cache]
       Content-Length: ['0']
-      Date: ['Wed, 13 Jul 2016 19:35:36 GMT']
+      Date: ['Mon, 19 Sep 2016 18:46:52 GMT']
       Expires: ['-1']
       Pragma: [no-cache]
       Strict-Transport-Security: [max-age=31536000; includeSubDomains]
-      x-ms-correlation-request-id: [d0cdf10d-3363-4b73-aab9-d2ba47bc1297]
-      x-ms-ratelimit-remaining-subscription-writes: ['1199']
-      x-ms-request-id: [d0cdf10d-3363-4b73-aab9-d2ba47bc1297]
-      x-ms-routing-request-id: ['CENTRALUS:20160713T193537Z:d0cdf10d-3363-4b73-aab9-d2ba47bc1297']
+      x-ms-correlation-request-id: [09837a64-2ead-44af-9932-9dc750c3e428]
+      x-ms-ratelimit-remaining-subscription-writes: ['1196']
+      x-ms-request-id: [09837a64-2ead-44af-9932-9dc750c3e428]
+      x-ms-routing-request-id: ['CENTRALUS:20160919T184653Z:09837a64-2ead-44af-9932-9dc750c3e428']
     status: {code: 200, message: OK}
 - request:
     body: null
@@ -122,24 +122,24 @@ interactions:
       Connection: [keep-alive]
       Content-Length: ['0']
       Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.5.1 (Windows-10-10.0.14372-SP0) requests/2.10.0 msrest/0.4.0
-          msrest_azure/0.4.1 resourcemanagementclient/0.30.0rc5 Azure-SDK-For-Python]
+      User-Agent: [python/3.5.1 (Windows-10-10.0.14393-SP0) requests/2.11.0 msrest/0.4.4
+          msrest_azure/0.4.3 resourcemanagementclient/0.30.0rc6 Azure-SDK-For-Python]
       accept-language: [en-US]
-      x-ms-client-request-id: [fb8bd462-4930-11e6-9952-ecb1d756380e]
+      x-ms-client-request-id: [6ecb76a8-7e99-11e6-b699-ecb1d756380e]
     method: DELETE
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/tagNames/tag1?api-version=2016-02-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/tagNames/tag1?api-version=2016-09-01
   response:
     body: {string: ''}
     headers:
       Cache-Control: [no-cache]
       Content-Length: ['0']
-      Date: ['Wed, 13 Jul 2016 19:35:37 GMT']
+      Date: ['Mon, 19 Sep 2016 18:46:53 GMT']
       Expires: ['-1']
       Pragma: [no-cache]
       Strict-Transport-Security: [max-age=31536000; includeSubDomains]
-      x-ms-correlation-request-id: [ab133fe4-4149-4688-99c8-465a9b5312ed]
+      x-ms-correlation-request-id: [f172fef2-db50-4acc-89a9-9ed9ebe60655]
       x-ms-ratelimit-remaining-subscription-writes: ['1197']
-      x-ms-request-id: [ab133fe4-4149-4688-99c8-465a9b5312ed]
-      x-ms-routing-request-id: ['CENTRALUS:20160713T193538Z:ab133fe4-4149-4688-99c8-465a9b5312ed']
+      x-ms-request-id: [f172fef2-db50-4acc-89a9-9ed9ebe60655]
+      x-ms-routing-request-id: ['CENTRALUS:20160919T184654Z:f172fef2-db50-4acc-89a9-9ed9ebe60655']
     status: {code: 200, message: OK}
 version: 1

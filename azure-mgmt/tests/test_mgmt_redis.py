@@ -19,22 +19,24 @@ class MgmtRedisTest(AzureMgmtTestCase):
         self.redis_client = self.create_mgmt_client(
             azure.mgmt.redis.RedisManagementClient
         )
+        if not self.is_playback():
+            self.create_resource_group()
 
     @record
     def test_redis(self):
-        self.create_resource_group()
-
         account_name = self.get_resource_name('pyarmredis')
 
         cache_name = 'mycachename'
-        redis_cache = self.redis_client.redis.create_or_update(
+        redis_async_create = self.redis_client.redis.create(
             self.group_name, 
             cache_name,
-            azure.mgmt.redis.models.RedisCreateOrUpdateParameters( 
+            azure.mgmt.redis.models.RedisCreateParameters( 
                 sku = azure.mgmt.redis.models.Sku(name = 'Basic', family = 'C', capacity = '1'),
-                location = "West US"
+                location = self.region
             )
         ) 
+        redis_cache =redis_async_create.result()
+        self.assertEqual(redis_cache.name, cache_name)
 
         result = self.redis_client.redis.get(
             self.group_name, 

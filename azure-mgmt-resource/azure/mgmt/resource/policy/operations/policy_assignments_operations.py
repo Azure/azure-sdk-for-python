@@ -55,8 +55,7 @@ class PolicyAssignmentsOperations(object):
         url = '/{scope}/providers/Microsoft.Authorization/policyassignments/{policyAssignmentName}'
         path_format_arguments = {
             'scope': self._serialize.url("scope", scope, 'str', skip_quote=True),
-            'policyAssignmentName': self._serialize.url("policy_assignment_name", policy_assignment_name, 'str'),
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+            'policyAssignmentName': self._serialize.url("policy_assignment_name", policy_assignment_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -119,8 +118,7 @@ class PolicyAssignmentsOperations(object):
         url = '/{scope}/providers/Microsoft.Authorization/policyassignments/{policyAssignmentName}'
         path_format_arguments = {
             'scope': self._serialize.url("scope", scope, 'str', skip_quote=True),
-            'policyAssignmentName': self._serialize.url("policy_assignment_name", policy_assignment_name, 'str'),
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+            'policyAssignmentName': self._serialize.url("policy_assignment_name", policy_assignment_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -184,8 +182,7 @@ class PolicyAssignmentsOperations(object):
         url = '/{scope}/providers/Microsoft.Authorization/policyassignments/{policyAssignmentName}'
         path_format_arguments = {
             'scope': self._serialize.url("scope", scope, 'str', skip_quote=True),
-            'policyAssignmentName': self._serialize.url("policy_assignment_name", policy_assignment_name, 'str'),
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+            'policyAssignmentName': self._serialize.url("policy_assignment_name", policy_assignment_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -459,8 +456,7 @@ class PolicyAssignmentsOperations(object):
         # Construct URL
         url = '/{policyAssignmentId}'
         path_format_arguments = {
-            'policyAssignmentId': self._serialize.url("policy_assignment_id", policy_assignment_id, 'str', skip_quote=True),
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+            'policyAssignmentId': self._serialize.url("policy_assignment_id", policy_assignment_id, 'str', skip_quote=True)
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -520,8 +516,7 @@ class PolicyAssignmentsOperations(object):
         # Construct URL
         url = '/{policyAssignmentId}'
         path_format_arguments = {
-            'policyAssignmentId': self._serialize.url("policy_assignment_id", policy_assignment_id, 'str', skip_quote=True),
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+            'policyAssignmentId': self._serialize.url("policy_assignment_id", policy_assignment_id, 'str', skip_quote=True)
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -582,8 +577,7 @@ class PolicyAssignmentsOperations(object):
         # Construct URL
         url = '/{policyAssignmentId}'
         path_format_arguments = {
-            'policyAssignmentId': self._serialize.url("policy_assignment_id", policy_assignment_id, 'str', skip_quote=True),
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+            'policyAssignmentId': self._serialize.url("policy_assignment_id", policy_assignment_id, 'str', skip_quote=True)
         }
         url = self._client.format_url(url, **path_format_arguments)
 

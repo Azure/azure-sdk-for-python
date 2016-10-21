@@ -20,10 +20,11 @@ class MgmtMediaTest(AzureMgmtTestCase):
         self.client = self.create_mgmt_client(
             azure.mgmt.media.MediaServicesManagementClient
         )
+        if not self.is_playback():
+            self.create_resource_group()
 
     @record
     def test_media(self):
-        self.create_resource_group()
         media_name = self.get_resource_name('pymedia')
 
         available = self.client.media_service.check_name_availabilty(

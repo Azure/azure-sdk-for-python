@@ -15,26 +15,40 @@ from msrest.serialization import Model
 class DeploymentOperationProperties(Model):
     """Deployment operation properties.
 
-    :param provisioning_state: The state of the provisioning.
-    :type provisioning_state: str
-    :param timestamp: The date and time of the operation.
-    :type timestamp: datetime
-    :param service_request_id: Deployment operation service request id.
-    :type service_request_id: str
-    :param status_code: Operation status code.
-    :type status_code: str
-    :param status_message: Operation status message.
-    :type status_message: object
-    :param target_resource: The target resource.
-    :type target_resource: :class:`TargetResource
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar provisioning_state: The state of the provisioning.
+    :vartype provisioning_state: str
+    :ivar timestamp: The date and time of the operation.
+    :vartype timestamp: datetime
+    :ivar service_request_id: Deployment operation service request id.
+    :vartype service_request_id: str
+    :ivar status_code: Operation status code.
+    :vartype status_code: str
+    :ivar status_message: Operation status message.
+    :vartype status_message: object
+    :ivar target_resource: The target resource.
+    :vartype target_resource: :class:`TargetResource
      <azure.mgmt.resource.resources.models.TargetResource>`
-    :param request: The HTTP request message.
-    :type request: :class:`HttpMessage
+    :ivar request: The HTTP request message.
+    :vartype request: :class:`HttpMessage
      <azure.mgmt.resource.resources.models.HttpMessage>`
-    :param response: The HTTP response message.
-    :type response: :class:`HttpMessage
+    :ivar response: The HTTP response message.
+    :vartype response: :class:`HttpMessage
      <azure.mgmt.resource.resources.models.HttpMessage>`
     """ 
+
+    _validation = {
+        'provisioning_state': {'readonly': True},
+        'timestamp': {'readonly': True},
+        'service_request_id': {'readonly': True},
+        'status_code': {'readonly': True},
+        'status_message': {'readonly': True},
+        'target_resource': {'readonly': True},
+        'request': {'readonly': True},
+        'response': {'readonly': True},
+    }
 
     _attribute_map = {
         'provisioning_state': {'key': 'provisioningState', 'type': 'str'},
@@ -47,12 +61,12 @@ class DeploymentOperationProperties(Model):
         'response': {'key': 'response', 'type': 'HttpMessage'},
     }
 
-    def __init__(self, provisioning_state=None, timestamp=None, service_request_id=None, status_code=None, status_message=None, target_resource=None, request=None, response=None):
-        self.provisioning_state = provisioning_state
-        self.timestamp = timestamp
-        self.service_request_id = service_request_id
-        self.status_code = status_code
-        self.status_message = status_message
-        self.target_resource = target_resource
-        self.request = request
-        self.response = response
+    def __init__(self):
+        self.provisioning_state = None
+        self.timestamp = None
+        self.service_request_id = None
+        self.status_code = None
+        self.status_message = None
+        self.target_resource = None
+        self.request = None
+        self.response = None
