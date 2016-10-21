@@ -1,0 +1,845 @@
+interactions:
+- request:
+    body: password=Test124%21%40%24&grant_type=password&username=admin2%40azuresdkteam.onmicrosoft.com&resource=https%3A%2F%2Fmanagement.core.windows.net%2F&client_id=04b07795-8ddb-461a-bbee-02f9e1bf7b46
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['193']
+      Content-Type: [application/x-www-form-urlencoded;charset=UTF-8]
+      User-Agent: [python-requests/2.11.1]
+    method: POST
+    uri: https://login.microsoftonline.com/common/oauth2/token
+  response:
+    body: {string: '{"token_type":"Bearer","scope":"user_impersonation","expires_in":"3599","ext_expires_in":"0","expires_on":"1477086024","not_before":"1477082124","resource":"https://management.core.windows.net/","access_token":"eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsIng1dCI6Ikk2b0J3NFZ6QkhPcWxlR3JWMkFKZEE1RW1YYyIsImtpZCI6Ikk2b0J3NFZ6QkhPcWxlR3JWMkFKZEE1RW1YYyJ9.eyJhdWQiOiJodHRwczovL21hbmFnZW1lbnQuY29yZS53aW5kb3dzLm5ldC8iLCJpc3MiOiJodHRwczovL3N0cy53aW5kb3dzLm5ldC81NDgyNmIyMi0zOGQ2LTRmYjItYmFkOS1iN2I5M2EzZTljNWEvIiwiaWF0IjoxNDc3MDgyMTI0LCJuYmYiOjE0NzcwODIxMjQsImV4cCI6MTQ3NzA4NjAyNCwiYWNyIjoiMSIsImFtciI6WyJwd2QiXSwiYXBwaWQiOiIwNGIwNzc5NS04ZGRiLTQ2MWEtYmJlZS0wMmY5ZTFiZjdiNDYiLCJhcHBpZGFjciI6IjAiLCJmYW1pbHlfbmFtZSI6IkFkbWluMiIsImdpdmVuX25hbWUiOiJBZG1pbjIiLCJncm91cHMiOlsiZTRiYjBiNTYtMTAxNC00MGY4LTg4YWItM2Q4YThjYjBlMDg2IiwiNmI5Nzc2MWEtZDdkMC00OGY2LWFkNTYtZjM4ZDMyN2M4NTUzIl0sImlwYWRkciI6IjE2Ny4yMjAuMC4xODYiLCJuYW1lIjoiQWRtaW4yIiwib2lkIjoiNTk2M2Y1MGMtN2M0My00MDVjLWFmN2UtNTMyOTRkZTc2YWJkIiwicHVpZCI6IjEwMDNCRkZEOTU5Rjg0MjMiLCJzY3AiOiJ1c2VyX2ltcGVyc29uYXRpb24iLCJzdWIiOiJzRGdleFJ3Q05JZlktaHpRampDRHZaVDdJemRmbzRTeXJyNHgwZEROelI0IiwidGlkIjoiNTQ4MjZiMjItMzhkNi00ZmIyLWJhZDktYjdiOTNhM2U5YzVhIiwidW5pcXVlX25hbWUiOiJhZG1pbjJAQXp1cmVTREtUZWFtLm9ubWljcm9zb2Z0LmNvbSIsInVwbiI6ImFkbWluMkBBenVyZVNES1RlYW0ub25taWNyb3NvZnQuY29tIiwidmVyIjoiMS4wIiwid2lkcyI6WyI2MmU5MDM5NC02OWY1LTQyMzctOTE5MC0wMTIxNzcxNDVlMTAiXX0.iyIggssGha8JwPumDY8tvplflY7tT-47SdT4DuKJd9tvRo_DXUisBKRwOkcwfEWn95h6fLeuVxAVNwg8g6kQxKyGnSiaSTky6uXXEMXdB1EDfGYK3zzpKj8txWMw1D6K1HsndpvmXyD8G7csqkd4oBjGonVUICFIfAcwqn4DuFoQWUQOmO3z9ILilpvOPOSH5HgyEpBr6i_-1MHBU5nFB-3lSugfT14Dq0oli76y8fscI6oZs9svkNJ5ifqUx7QzEnVfuCzsGxcyEeDcTOMxuTrdgtMb6eN7u_b3jrSV2B7DEoPIxqzt3lnUNdG7xGWTwzoGy74GL-TKBqr_HzbcTw","refresh_token":"AQABAAAAAADRNYRQ3dhRSrm-4K-adpCJWAL1xBMIwHKetat0ACr8qTk6Ip7KtN8AE6p4dp74DA6B10axDCEvYbGokyEabh77WNtzMxSSur8Ptq7h1UABIbNY6HGx_SQQu5fd9Z91sbYzk7ZX-PPlgwx7dgorZvh_cwa5mtojRjoTuKA0A5VTdmorpOAAtUIAga7mCYQcfbPOy-KApvXZ6bGhNLbW_H1Y4_0H7ODYLBkbXt7ItNlmbiKi6PmpYXpN3JD7WRUD88LxwtKs1v9zCdRI0PA6WNP5iLP5OG874rEBkZVZ99dCgwqmVCEWjiUBdeWiWuWGJ6kO3gMzkQJuLcrUUok45Zg0m0GRmHVC3nRWBWBIt3nnemiRIrlSK1uNe_cqBKxAG8D1jlApl3vlXWw9cMCiwVQ6tA5ahVFm94V4yHbtleuo5BLpHqy-MWanXKZ3EVC0GzOAbBd5U4CL8DHi94nQf9D9yFAsD3icnttmmUgztc7MYRkao5HrX7ri9X1DA917UYbLsjKru3CG-JrSI_Bk_K6gql1qUv7kLQC9cHkIoK_VDGww1nzW6aKMxzMeTN-wO2AP934eQifMBN4HiklG6OS71ahKetTJi99jwH80Nzq5Hz5t595i7rGA_AjpfuYSK_XVcL7P9lhbXkaOKDfAKiS4IAA"}'}
+    headers:
+      Cache-Control: ['no-cache, no-store']
+      Content-Length: ['2422']
+      Content-Type: [application/json; charset=utf-8]
+      Date: ['Fri, 21 Oct 2016 20:40:22 GMT']
+      Expires: ['-1']
+      P3P: [CP="DSP CUR OTPi IND OTRi ONL FIN"]
+      Pragma: [no-cache]
+      Server: [Microsoft-IIS/8.5]
+      Set-Cookie: [esctx=AQABAAAAAADRNYRQ3dhRSrm-4K-adpCJs_XBQhvysW0SpNFI_1X5ej9gNA-imEzwYGd_ULyKw5ZOKF-rZiE5FpdGqyM8SBDlas1qDji6NPfFTDzO_2akg1dxtx8EFELkj_HWiRNEgJoQgRvMMN-31VjZSnw1CbKBToqvh_E2sho0UkBf9ZZ4fNoyLH2F3hRelyOjSWqgRNQgAA;
+          domain=.login.microsoftonline.com; path=/; secure; HttpOnly, x-ms-gateway-slice=productiona;
+          path=/; secure; HttpOnly, stsservicecookie=ests; path=/; secure; HttpOnly]
+      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
+      X-Content-Type-Options: [nosniff]
+      X-Powered-By: [ASP.NET]
+      client-request-id: [9c65ccbb-c8b1-47e0-858b-a9b11794812f]
+      x-ms-request-id: [59624923-b5ea-4b7c-9995-bda9a8c8b843]
+    status: {code: 200, message: OK}
+- request:
+    body: password=Test124%21%40%24&grant_type=password&username=admin2%40azuresdkteam.onmicrosoft.com&resource=https%3A%2F%2Fvault.azure.net&client_id=04b07795-8ddb-461a-bbee-02f9e1bf7b46
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['178']
+      Content-Type: [application/x-www-form-urlencoded;charset=UTF-8]
+      User-Agent: [python-requests/2.11.1]
+    method: POST
+    uri: https://login.microsoftonline.com/common/oauth2/token
+  response:
+    body: {string: '{"token_type":"Bearer","scope":"user_impersonation","expires_in":"3600","ext_expires_in":"0","expires_on":"1477086024","not_before":"1477082124","resource":"https://vault.azure.net","access_token":"eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsIng1dCI6Ikk2b0J3NFZ6QkhPcWxlR3JWMkFKZEE1RW1YYyIsImtpZCI6Ikk2b0J3NFZ6QkhPcWxlR3JWMkFKZEE1RW1YYyJ9.eyJhdWQiOiJodHRwczovL3ZhdWx0LmF6dXJlLm5ldCIsImlzcyI6Imh0dHBzOi8vc3RzLndpbmRvd3MubmV0LzU0ODI2YjIyLTM4ZDYtNGZiMi1iYWQ5LWI3YjkzYTNlOWM1YS8iLCJpYXQiOjE0NzcwODIxMjQsIm5iZiI6MTQ3NzA4MjEyNCwiZXhwIjoxNDc3MDg2MDI0LCJhY3IiOiIxIiwiYW1yIjpbInB3ZCJdLCJhcHBpZCI6IjA0YjA3Nzk1LThkZGItNDYxYS1iYmVlLTAyZjllMWJmN2I0NiIsImFwcGlkYWNyIjoiMCIsImZhbWlseV9uYW1lIjoiQWRtaW4yIiwiZ2l2ZW5fbmFtZSI6IkFkbWluMiIsImdyb3VwcyI6WyJlNGJiMGI1Ni0xMDE0LTQwZjgtODhhYi0zZDhhOGNiMGUwODYiLCI2Yjk3NzYxYS1kN2QwLTQ4ZjYtYWQ1Ni1mMzhkMzI3Yzg1NTMiXSwiaXBhZGRyIjoiMTY3LjIyMC4wLjE4NiIsIm5hbWUiOiJBZG1pbjIiLCJvaWQiOiI1OTYzZjUwYy03YzQzLTQwNWMtYWY3ZS01MzI5NGRlNzZhYmQiLCJwdWlkIjoiMTAwM0JGRkQ5NTlGODQyMyIsInNjcCI6InVzZXJfaW1wZXJzb25hdGlvbiIsInN1YiI6InB1QWlLRzRBMGE3VUE0ZHhZM1VNWEY4amtxZHRWSDhoMVAzY0tNMDJocWsiLCJ0aWQiOiI1NDgyNmIyMi0zOGQ2LTRmYjItYmFkOS1iN2I5M2EzZTljNWEiLCJ1bmlxdWVfbmFtZSI6ImFkbWluMkBBenVyZVNES1RlYW0ub25taWNyb3NvZnQuY29tIiwidXBuIjoiYWRtaW4yQEF6dXJlU0RLVGVhbS5vbm1pY3Jvc29mdC5jb20iLCJ2ZXIiOiIxLjAifQ.LjoQqyhpQb5w9l3mjP0is9zzIUJBRu34gWvG5Qy1sXU4nwLGMIXMrfz-8B-HFUeNCxMpRDkQ9v45Nmf6c839qRM-y2vLrF7DO42Nhv3PeRpcdQw_wZSaO-F_WYg9TuYFn_018DZ3PspvjSdIVt0SVzw7G3MYuKuewfXoA3KkUz1iY3xUkYLeUwFl1hIV3zdC5nnN7LZl_lRzJGMz4wqkeY7rkvPWqOAyNqpJzgo6zIHX1wXzlIHWcCYSWFijLteX5r0mbMI-OAQ-7Q5Ry5veYtrpL4zwHnNH-VLefAyv4ZrlNNQWhITqEspyzbQ-G_4mF6YbsU_pHJroG_pmOlGYmw","refresh_token":"AQABAAAAAADRNYRQ3dhRSrm-4K-adpCJbEZEZx3YuG44YAyzDlXez54Uk2BuqiB3XOhFwf92pvG7KlZ5qxqLyaquxxZ3X0NtgPWi9jzoin16oDbT7CfxglLfKye4vZQj6vhRjhnuCGOd5hT19zI4Yya0Ji2MRIKcqITPeA5oWHhmxrODbfNjoh78p_yn3LGZ2PJSThgiyxMuaZXM1DMBjPbpOp3osa9695oedjp5SexnmgeQHfv7pNfGhAQly-y8prSxw53txlxkRCqcelACZyeyaXK1Vu2zwoyPsQy9wcvREYiAzAQc_7ODbFmxmtRnk3BRWzChMzd4FGPvNDd-eao1E4VkPQ1Eu-iv89D0qKJkLKC9u0Tp6ZzgIX5cFfnp6fpr9aAxihyPTE7UE5HgZpk2_y04phVtCps06ewmVV7xJJL6FZ40HrGc9ViNUg95L2bC95C4l9Fsk2gtKmlG3sXIjZXwh8OVUB65U5MOvBepjH2ScMSXbqLKzbMjOjMVDPQMQqQd9DD34EFSXeBV3q4n6C-iowtah7YiplmL0StCbuDa3swT63AR0VxWUoj1f4uKTYwLuja9Myx_C3KN1BPrVTdhH4mnHhGRC3Hvon8kXuUKqj-xKP5a05reCr8eeev5zkNU-m8gAA"}'}
+    headers:
+      Cache-Control: ['no-cache, no-store']
+      Content-Length: ['2307']
+      Content-Type: [application/json; charset=utf-8]
+      Date: ['Fri, 21 Oct 2016 20:40:23 GMT']
+      Expires: ['-1']
+      P3P: [CP="DSP CUR OTPi IND OTRi ONL FIN"]
+      Pragma: [no-cache]
+      Server: [Microsoft-IIS/8.5]
+      Set-Cookie: [esctx=AQABAAAAAADRNYRQ3dhRSrm-4K-adpCJYYsAWnWKir4c16wQxSwWLQjUFZYLyQwOwJCSKVFv2Oeg1KVnT0WG8eP6akT35LHD2U4cc01x-ovAdfviZ8zbMc9YPns9EZBesKndAY7hH7pNmJxfJwaD0LVkRczFJiMeR8D_ghU4E8dqTIv7o_X1VGiRz4i8QsZTqyza9ewRQkEgAA;
+          domain=.login.microsoftonline.com; path=/; secure; HttpOnly, x-ms-gateway-slice=productiona;
+          path=/; secure; HttpOnly, stsservicecookie=ests; path=/; secure; HttpOnly]
+      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
+      X-Content-Type-Options: [nosniff]
+      X-Powered-By: [ASP.NET]
+      client-request-id: [00d2f424-9223-4865-a60b-140b85a99f9f]
+      x-ms-request-id: [e7a704dc-a250-4f65-874a-3f162c11389c]
+    status: {code: 200, message: OK}
+- request:
+    body: '{"kty": "RSA"}'
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['14']
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.5.1 (Windows-10-10.0.14393-SP0) requests/2.11.1 msrest/0.4.4
+          msrest_azure/0.4.3 keyvaultclient/0.30.0rc6 Azure-SDK-For-Python]
+      accept-language: [en-US]
+      x-ms-client-request-id: [97792222-97ce-11e6-9678-a0b3ccf7272a]
+    method: POST
+    uri: https://python-sdk-test-keyvault.vault.azure.net/keys/pythonKey-versioned/create?api-version=2015-06-01
+  response:
+    body: {string: '{"key":{"kid":"https://python-sdk-test-keyvault.vault.azure.net/keys/pythonKey-versioned/7cfcd3c2167c484cb3ab095bc7114c71","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"meHhdq0jQWgjXmIyEuEY8UAuC9SI_Zq0OMG4zjZAc16YCilp3ehemKJL5qo4QVna23yry6X2wb4WQS1OM97KvaX9OhLKhZmawN5Y-09Dl_ewIXaowRCoP3daTgydoFqYoajKEbodCl6NCCfQSfaajAUxr0mfHbOH73jIL4P3MmVSbiGu3zsA0AVWvVHcnru5U_SPLetSo6q4bLiblxnwWBGx9xH8Lf5M7yGNL9CXddc48hGZgW86fYE52NkLjXl2-PVegCNZuvJdN8hVi5WhjlAKnREvCgZKvKYJbiyDD_T3rNOKxUUOn9RWV6xEwM3BN4jgea4j3TNf0PNqLAtadw","e":"AQAB"},"attributes":{"enabled":true,"created":1477082427,"updated":1477082427}}'}
+    headers:
+      Cache-Control: [no-cache]
+      Content-Length: ['638']
+      Content-Type: [application/json; charset=utf-8]
+      Date: ['Fri, 21 Oct 2016 20:40:26 GMT']
+      Expires: ['-1']
+      Pragma: [no-cache]
+      Server: [Microsoft-IIS/8.5]
+      Strict-Transport-Security: [max-age=31536000;includeSubDomains]
+      X-AspNet-Version: [4.0.30319]
+      X-Content-Type-Options: [nosniff]
+      X-Powered-By: [ASP.NET]
+      x-ms-keyvault-region: [westus]
+      x-ms-keyvault-service-version: [1.0.0.781]
+      x-ms-request-id: [5548590e-faaf-4322-97d9-1235a6ab1f3a]
+    status: {code: 200, message: OK}
+- request:
+    body: password=Test124%21%40%24&grant_type=password&username=admin2%40azuresdkteam.onmicrosoft.com&resource=https%3A%2F%2Fmanagement.core.windows.net%2F&client_id=04b07795-8ddb-461a-bbee-02f9e1bf7b46
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['193']
+      Content-Type: [application/x-www-form-urlencoded;charset=UTF-8]
+      User-Agent: [python-requests/2.11.1]
+    method: POST
+    uri: https://login.microsoftonline.com/common/oauth2/token
+  response:
+    body: {string: '{"token_type":"Bearer","scope":"user_impersonation","expires_in":"3599","ext_expires_in":"0","expires_on":"1477086025","not_before":"1477082125","resource":"https://management.core.windows.net/","access_token":"eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsIng1dCI6Ikk2b0J3NFZ6QkhPcWxlR3JWMkFKZEE1RW1YYyIsImtpZCI6Ikk2b0J3NFZ6QkhPcWxlR3JWMkFKZEE1RW1YYyJ9.eyJhdWQiOiJodHRwczovL21hbmFnZW1lbnQuY29yZS53aW5kb3dzLm5ldC8iLCJpc3MiOiJodHRwczovL3N0cy53aW5kb3dzLm5ldC81NDgyNmIyMi0zOGQ2LTRmYjItYmFkOS1iN2I5M2EzZTljNWEvIiwiaWF0IjoxNDc3MDgyMTI1LCJuYmYiOjE0NzcwODIxMjUsImV4cCI6MTQ3NzA4NjAyNSwiYWNyIjoiMSIsImFtciI6WyJwd2QiXSwiYXBwaWQiOiIwNGIwNzc5NS04ZGRiLTQ2MWEtYmJlZS0wMmY5ZTFiZjdiNDYiLCJhcHBpZGFjciI6IjAiLCJmYW1pbHlfbmFtZSI6IkFkbWluMiIsImdpdmVuX25hbWUiOiJBZG1pbjIiLCJncm91cHMiOlsiZTRiYjBiNTYtMTAxNC00MGY4LTg4YWItM2Q4YThjYjBlMDg2IiwiNmI5Nzc2MWEtZDdkMC00OGY2LWFkNTYtZjM4ZDMyN2M4NTUzIl0sImlwYWRkciI6IjE2Ny4yMjAuMC4xODYiLCJuYW1lIjoiQWRtaW4yIiwib2lkIjoiNTk2M2Y1MGMtN2M0My00MDVjLWFmN2UtNTMyOTRkZTc2YWJkIiwicHVpZCI6IjEwMDNCRkZEOTU5Rjg0MjMiLCJzY3AiOiJ1c2VyX2ltcGVyc29uYXRpb24iLCJzdWIiOiJzRGdleFJ3Q05JZlktaHpRampDRHZaVDdJemRmbzRTeXJyNHgwZEROelI0IiwidGlkIjoiNTQ4MjZiMjItMzhkNi00ZmIyLWJhZDktYjdiOTNhM2U5YzVhIiwidW5pcXVlX25hbWUiOiJhZG1pbjJAQXp1cmVTREtUZWFtLm9ubWljcm9zb2Z0LmNvbSIsInVwbiI6ImFkbWluMkBBenVyZVNES1RlYW0ub25taWNyb3NvZnQuY29tIiwidmVyIjoiMS4wIiwid2lkcyI6WyI2MmU5MDM5NC02OWY1LTQyMzctOTE5MC0wMTIxNzcxNDVlMTAiXX0.UZ32Gi8DIknHcTRc9boPRaZQwF7eE0fw2FjREAX4ST85ww1-zRAYBm1ZQZA616_GVXbsLgJ_ac3yiDDO9axhusea3pYtgl0K0-MchywX0ePqWN6_x6mGIlzgfveHZPU6fh9isal71jS2avUPBvBHukWMeiAAk0tAw43pL57s_kAJu1aJxhTqojof42bhuGe2ZRGDBarmu7jK0Drm9aJNLdSTNV4T4OvXbxw01u3ZYCs45lKK53sytKIKiIToYR_-EegktAt6Kj6dnq-4m69cd_8aqYfXE1lGCvx-c2kyuNssgY_vhGp2Pp2PWUiwNtQ3zvrIZrjBYQvikL48htjHNg","refresh_token":"AQABAAAAAADRNYRQ3dhRSrm-4K-adpCJ6o5vGaoFCt6Gj9EAHPbkV-DYUUVk4nD8q4jIy21gcwUgzeOOsVUqfBVe_vq_dH1lzxnqdSPBRmK_mu8nduiWw_150XeRSO-pBBgG2_gbU41aaDy8ZG1dRfQNYZwTH7LIHb0WI2prl8gGmcYHO0MfizDHQ39-wJxnyrF3yNTUswN54J9oUhtCGW7tx_hja6v427zif_XST-DtWx0dtJ2DrEcSmP_-VDiZ6Ryglb10DwUYZyQlkFP5T0C7dnJCaYDLxNhd9LybbRMTastQJKNm5rEjEUXCPQs799j7EoIeHhWEyxW4G4M21GVj8zJM9xx_U2Or9ZAvYN2ZALrcBnVUXXsDpq5l5nIaVwe5XhG1a7MSWEW-4yVyXKtrqms5X6NkFEobH2h8-z2zPY10yGeyV2QHxRFwg8UHYjBIpowNTqsEW_Y_8OkyY0ddrwCzy0tWu52kvMv16LTXNoFd9AQm7uGTkjyfQ6eB-cLp0EmT2QF07p8U6zXl24Exn7pr-ruUPuX3xLKM6Ghou96MC6eroQMF4ALivyL3q64BuSuZJgz836F3q2af7oIe4VUt81Xq9yUQyE5Fvygn61XJOz2yp50EJ3FWD5ep-nQvKuvIsj3VuYjMTQJMLbLGz1Uo_EwVIAA"}'}
+    headers:
+      Cache-Control: ['no-cache, no-store']
+      Content-Length: ['2422']
+      Content-Type: [application/json; charset=utf-8]
+      Date: ['Fri, 21 Oct 2016 20:40:26 GMT']
+      Expires: ['-1']
+      P3P: [CP="DSP CUR OTPi IND OTRi ONL FIN"]
+      Pragma: [no-cache]
+      Server: [Microsoft-IIS/8.5]
+      Set-Cookie: [esctx=AQABAAAAAADRNYRQ3dhRSrm-4K-adpCJNXKR7JI6ismAgXjvKPVqAgswYqUGg0W0xJlZxqFQJAyNV2gq55m49NtvVaTzh0H1R0oPUwjOro_0MfYQuPjNUnBIBwPs_3FF9d07ooWnJ3yu7O2es7F7GyQNq3Pw66Agh5J_dTxnNvJDd1LVZ2VbFK9jz7r6BfPyStz2UMnc9sggAA;
+          domain=.login.microsoftonline.com; path=/; secure; HttpOnly, x-ms-gateway-slice=productiona;
+          path=/; secure; HttpOnly, stsservicecookie=ests; path=/; secure; HttpOnly]
+      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
+      X-Content-Type-Options: [nosniff]
+      X-Powered-By: [ASP.NET]
+      client-request-id: [77188af8-7284-4b44-92ac-2ba9552689ce]
+      x-ms-request-id: [d385773c-83d3-45e0-a9a2-928cd62a8704]
+    status: {code: 200, message: OK}
+- request:
+    body: password=Test124%21%40%24&grant_type=password&username=admin2%40azuresdkteam.onmicrosoft.com&resource=https%3A%2F%2Fvault.azure.net&client_id=04b07795-8ddb-461a-bbee-02f9e1bf7b46
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['178']
+      Content-Type: [application/x-www-form-urlencoded;charset=UTF-8]
+      User-Agent: [python-requests/2.11.1]
+    method: POST
+    uri: https://login.microsoftonline.com/common/oauth2/token
+  response:
+    body: {string: '{"token_type":"Bearer","scope":"user_impersonation","expires_in":"3600","ext_expires_in":"0","expires_on":"1477086025","not_before":"1477082125","resource":"https://vault.azure.net","access_token":"eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsIng1dCI6Ikk2b0J3NFZ6QkhPcWxlR3JWMkFKZEE1RW1YYyIsImtpZCI6Ikk2b0J3NFZ6QkhPcWxlR3JWMkFKZEE1RW1YYyJ9.eyJhdWQiOiJodHRwczovL3ZhdWx0LmF6dXJlLm5ldCIsImlzcyI6Imh0dHBzOi8vc3RzLndpbmRvd3MubmV0LzU0ODI2YjIyLTM4ZDYtNGZiMi1iYWQ5LWI3YjkzYTNlOWM1YS8iLCJpYXQiOjE0NzcwODIxMjUsIm5iZiI6MTQ3NzA4MjEyNSwiZXhwIjoxNDc3MDg2MDI1LCJhY3IiOiIxIiwiYW1yIjpbInB3ZCJdLCJhcHBpZCI6IjA0YjA3Nzk1LThkZGItNDYxYS1iYmVlLTAyZjllMWJmN2I0NiIsImFwcGlkYWNyIjoiMCIsImZhbWlseV9uYW1lIjoiQWRtaW4yIiwiZ2l2ZW5fbmFtZSI6IkFkbWluMiIsImdyb3VwcyI6WyJlNGJiMGI1Ni0xMDE0LTQwZjgtODhhYi0zZDhhOGNiMGUwODYiLCI2Yjk3NzYxYS1kN2QwLTQ4ZjYtYWQ1Ni1mMzhkMzI3Yzg1NTMiXSwiaXBhZGRyIjoiMTY3LjIyMC4wLjE4NiIsIm5hbWUiOiJBZG1pbjIiLCJvaWQiOiI1OTYzZjUwYy03YzQzLTQwNWMtYWY3ZS01MzI5NGRlNzZhYmQiLCJwdWlkIjoiMTAwM0JGRkQ5NTlGODQyMyIsInNjcCI6InVzZXJfaW1wZXJzb25hdGlvbiIsInN1YiI6InB1QWlLRzRBMGE3VUE0ZHhZM1VNWEY4amtxZHRWSDhoMVAzY0tNMDJocWsiLCJ0aWQiOiI1NDgyNmIyMi0zOGQ2LTRmYjItYmFkOS1iN2I5M2EzZTljNWEiLCJ1bmlxdWVfbmFtZSI6ImFkbWluMkBBenVyZVNES1RlYW0ub25taWNyb3NvZnQuY29tIiwidXBuIjoiYWRtaW4yQEF6dXJlU0RLVGVhbS5vbm1pY3Jvc29mdC5jb20iLCJ2ZXIiOiIxLjAifQ.Jq_sO1gsdzBzV7YnaC73z0ZXkSC2XidgZNOUNYaQq03U9ZdarAe6K1wgflREfY3Qbe7T7_5cxZHLmOocDpryHjMplZdSRxDY49HkhYjwUpAVHCGRqtpXIPJswKFzgwYhKpfdVuluwjOpzjF7TuAsSXSb7KY_TvXaneA-FMEnLU_nWuQ1V3q289TIeCApDzBxPrpxuD0dc2Z4rP3eh-FiD_oWC-def5lCo6111QwVxgZEWpjBpIjxy4VrbO03qSR_GEVYSt0tBILfD69-GfL4v-sTFnMEnLKbrvqpvzFjPwGyZw8eBTVriSF2ltYJ9PN7IRnp5FJ2pomuy2yJLgsM4A","refresh_token":"AQABAAAAAADRNYRQ3dhRSrm-4K-adpCJ5zHGEAsVVKxbiRjFQfvz4_XfiFtaShmGkwsglzF7vSgMUWaXeE2gQ3sx0YAYwqKiONgLCfnoskaR-ukzSjJlFZqKcp7YSBa1DAvgHWqmeHkSohP8eND7r9OgV7ZUw9IdEX-fDfXEMcaeBk7YfDrasFbLR7ame8horlpvsTfiO0P79NY1H1N4uFq6mZAuAAr5HYbJdZiqpj-rlzjaZMkpE8aG7TzI7vBb4qavxBkAE1ouY-qS8ljLEtf2lhCWc1PyCSBDwXCSnY8WgGnXijpagM9DCcz7Qz46grC6CBIcrEbphB2H-Qy-LaksgRpjlx-KoIUV28Sr47U82ojWKHH_ebcEcWBHw_4Kc2An1mB2XbTXPwINaatfHvOqeSbsQakt0n4e-frdQm61GHcx0zEh-U1UtMBugtwElg25z8LrjPqSqvoW-j9Nf5eJAvhk7pejkL62bKO5Xrw8eg71iRPwkACfqX7OcQPtgvKKA7Krz_q6zOSwT6pgkigmDIQc_VH23GR6bWkTqNWSn3l1vWzr62SWBx6o8wRJBh7ack29GDGUXDNrwD6eNFVDk3K-EfSOahaCh2fCB5DKv6tmZvHjLovsYZbKzQeohL6IYb03R_8gAA"}'}
+    headers:
+      Cache-Control: ['no-cache, no-store']
+      Content-Length: ['2307']
+      Content-Type: [application/json; charset=utf-8]
+      Date: ['Fri, 21 Oct 2016 20:40:26 GMT']
+      Expires: ['-1']
+      P3P: [CP="DSP CUR OTPi IND OTRi ONL FIN"]
+      Pragma: [no-cache]
+      Server: [Microsoft-IIS/8.5]
+      Set-Cookie: [esctx=AQABAAAAAADRNYRQ3dhRSrm-4K-adpCJP-hUhKYwn5N7-HYpdGzw-ARce_GQqgn0ViAHrXVtX8gy1I9wBmNQ2pX8nZYH0C1z1LApPk7iwou_ixz-O7ojzHk02GdbFvrTwjbPCDwcfwCn51OWqdV-zVqsoEqPfewVaEqpRIfnKbri0S97WT96WDj6zfHJTIo2WOPQCluCD8EgAA;
+          domain=.login.microsoftonline.com; path=/; secure; HttpOnly, x-ms-gateway-slice=productiona;
+          path=/; secure; HttpOnly, stsservicecookie=ests; path=/; secure; HttpOnly]
+      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
+      X-Content-Type-Options: [nosniff]
+      X-Powered-By: [ASP.NET]
+      client-request-id: [ac55637e-e172-4ff4-8825-905d7026f531]
+      x-ms-request-id: [a8d23a47-4f53-4152-848a-9c4a028c1eb3]
+    status: {code: 200, message: OK}
+- request:
+    body: '{"kty": "RSA"}'
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['14']
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.5.1 (Windows-10-10.0.14393-SP0) requests/2.11.1 msrest/0.4.4
+          msrest_azure/0.4.3 keyvaultclient/0.30.0rc6 Azure-SDK-For-Python]
+      accept-language: [en-US]
+      x-ms-client-request-id: [984b4006-97ce-11e6-ac88-a0b3ccf7272a]
+    method: POST
+    uri: https://python-sdk-test-keyvault.vault.azure.net/keys/pythonKey-versioned/create?api-version=2015-06-01
+  response:
+    body: {string: '{"key":{"kid":"https://python-sdk-test-keyvault.vault.azure.net/keys/pythonKey-versioned/c60ac869271b45ec9a85ecbdc42a8eee","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"4u9P-Nk19mUBh_s4JPf2Av9pH67--XOca7ZShii6bTtZOsPfXMFHZZeIF77tmiYlJ6hhiK8i5UNTmXBqgZcdJ0UfjpOJjdDNmmpFDey6stiIQy8KlL8F0yHHsBc4kYXyEYZkeoJY-wSUml5cl_RcPHb6jdKJFnz079AO9KYZSa324T8pyklkq7C7xABSFkH-58VsDUvvtmc-h749EMMU1uv-JwsZZSV6ivS1qbOyT_rB1S3IQykS1O02k18ecacBiJ3mPP9VeHfEjWdSPHrXfASTgnrTcCuBQAF1qLGtcNU8POkHP3gooQvtRRig4q0cmqgCq5mnJhrFjpRqTudUPw","e":"AQAB"},"attributes":{"enabled":true,"created":1477082426,"updated":1477082426}}'}
+    headers:
+      Cache-Control: [no-cache]
+      Content-Length: ['638']
+      Content-Type: [application/json; charset=utf-8]
+      Date: ['Fri, 21 Oct 2016 20:40:25 GMT']
+      Expires: ['-1']
+      Pragma: [no-cache]
+      Server: [Microsoft-IIS/8.5]
+      Strict-Transport-Security: [max-age=31536000;includeSubDomains]
+      X-AspNet-Version: [4.0.30319]
+      X-Content-Type-Options: [nosniff]
+      X-Powered-By: [ASP.NET]
+      x-ms-keyvault-region: [westus]
+      x-ms-keyvault-service-version: [1.0.0.781]
+      x-ms-request-id: [c74a691b-0500-4e21-ba94-460f2cea53e0]
+    status: {code: 200, message: OK}
+- request:
+    body: password=Test124%21%40%24&grant_type=password&username=admin2%40azuresdkteam.onmicrosoft.com&resource=https%3A%2F%2Fmanagement.core.windows.net%2F&client_id=04b07795-8ddb-461a-bbee-02f9e1bf7b46
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['193']
+      Content-Type: [application/x-www-form-urlencoded;charset=UTF-8]
+      User-Agent: [python-requests/2.11.1]
+    method: POST
+    uri: https://login.microsoftonline.com/common/oauth2/token
+  response:
+    body: {string: '{"token_type":"Bearer","scope":"user_impersonation","expires_in":"3600","ext_expires_in":"0","expires_on":"1477086026","not_before":"1477082126","resource":"https://management.core.windows.net/","access_token":"eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsIng1dCI6Ikk2b0J3NFZ6QkhPcWxlR3JWMkFKZEE1RW1YYyIsImtpZCI6Ikk2b0J3NFZ6QkhPcWxlR3JWMkFKZEE1RW1YYyJ9.eyJhdWQiOiJodHRwczovL21hbmFnZW1lbnQuY29yZS53aW5kb3dzLm5ldC8iLCJpc3MiOiJodHRwczovL3N0cy53aW5kb3dzLm5ldC81NDgyNmIyMi0zOGQ2LTRmYjItYmFkOS1iN2I5M2EzZTljNWEvIiwiaWF0IjoxNDc3MDgyMTI2LCJuYmYiOjE0NzcwODIxMjYsImV4cCI6MTQ3NzA4NjAyNiwiYWNyIjoiMSIsImFtciI6WyJwd2QiXSwiYXBwaWQiOiIwNGIwNzc5NS04ZGRiLTQ2MWEtYmJlZS0wMmY5ZTFiZjdiNDYiLCJhcHBpZGFjciI6IjAiLCJmYW1pbHlfbmFtZSI6IkFkbWluMiIsImdpdmVuX25hbWUiOiJBZG1pbjIiLCJncm91cHMiOlsiZTRiYjBiNTYtMTAxNC00MGY4LTg4YWItM2Q4YThjYjBlMDg2IiwiNmI5Nzc2MWEtZDdkMC00OGY2LWFkNTYtZjM4ZDMyN2M4NTUzIl0sImlwYWRkciI6IjE2Ny4yMjAuMC4xODYiLCJuYW1lIjoiQWRtaW4yIiwib2lkIjoiNTk2M2Y1MGMtN2M0My00MDVjLWFmN2UtNTMyOTRkZTc2YWJkIiwicHVpZCI6IjEwMDNCRkZEOTU5Rjg0MjMiLCJzY3AiOiJ1c2VyX2ltcGVyc29uYXRpb24iLCJzdWIiOiJzRGdleFJ3Q05JZlktaHpRampDRHZaVDdJemRmbzRTeXJyNHgwZEROelI0IiwidGlkIjoiNTQ4MjZiMjItMzhkNi00ZmIyLWJhZDktYjdiOTNhM2U5YzVhIiwidW5pcXVlX25hbWUiOiJhZG1pbjJAQXp1cmVTREtUZWFtLm9ubWljcm9zb2Z0LmNvbSIsInVwbiI6ImFkbWluMkBBenVyZVNES1RlYW0ub25taWNyb3NvZnQuY29tIiwidmVyIjoiMS4wIiwid2lkcyI6WyI2MmU5MDM5NC02OWY1LTQyMzctOTE5MC0wMTIxNzcxNDVlMTAiXX0.DVxc4_M_RWWjw82fslF1ZVEYnqZEs38kxGqhqk0ZhA8j4Jt1VxMyXSaFa3ABE3YPjugqsfaLbRjbmLiqcujS82Q81h-jS11Z3qMYcCDMWDpYQ2tL2-1UT3dMRnL4lFDTIn5Fium0WjEDQCDQgZOyK4tA_lTdl__11S9Oq7ErAs4JUOZWwpqqxF92G9LFy7X3DmjEUtB-_X_F9Ei0cTtnz272FfeC3P61w4m-rxK_DwsO96w6W49LAKWCn9Mk95bSKyetvvf7owc_ZXCgR7rQvuVQew7Zm2KRTNYPDT-ZAAf9rLqLJVfN9nus5K-l62bLBTnr_VON_4HRULBoqDt_RQ","refresh_token":"AQABAAAAAADRNYRQ3dhRSrm-4K-adpCJlBENDrDbNIZepHT8aKsZ-m5KiVRP-_J9EgXxTdcmAc3-D5ZeFASUjYCfqDy1dAuJvtTJc5Hw1TqmVW0iM69xWMzY6YGLzcqwOs8Lz8Fcpd4gMqTik_WWe1cVR_pZSEVQibLSZSOBFgLXgSXTrLx4yHmFWXLGV-x0-WD9bN7dFW-G_Fl14b9lk1_GerIb2v6uOcrazJ0Mt56jSqQjUI6I2YKMGpdjMammJTTByBIdn7uLdVZRfKs_Go9OJVnuLyzgzIldTvWllhJBC8SV_MOsO2NKJ8HXepcYFSWgsoodRmwrnGcExyupyrUz20-BzhPRjeSfEmvmfNm6kmsB0y7wiBiBJCHVWuag_Jxku1KetMhXMtPm4hzFi7rdcN7y7heNFY_6GYpjv595Gdfx_sY9UAA5wlRtnxTz-keh6U31WLUGUKvTbH--X-HDkOkyWLhZuH-EPX4Ax25JNoENKAB8xbSlUttded11XFEgMrTEWH3ZxHghCG4jb4isk517PpiiSOA4PG7-254kScf_RDrQhU862Wq2txhv71QnDMI76Nw2d2X3cioqGNQ2xbHfpTsru2JzPfp8dPzgc8uBHtMBGmJto355WwZWosWwRDM55bKYzI2IPImvbK-PXRXbELGaIAA"}'}
+    headers:
+      Cache-Control: ['no-cache, no-store']
+      Content-Length: ['2422']
+      Content-Type: [application/json; charset=utf-8]
+      Date: ['Fri, 21 Oct 2016 20:40:26 GMT']
+      Expires: ['-1']
+      P3P: [CP="DSP CUR OTPi IND OTRi ONL FIN"]
+      Pragma: [no-cache]
+      Server: [Microsoft-IIS/8.5]
+      Set-Cookie: [esctx=AQABAAAAAADRNYRQ3dhRSrm-4K-adpCJfBQHkrA1ydShxpxcWFQKqpXNWFfB90FZ9HP81CQT7tbuASsjlO4LwM-kq-F7_WmGtmmKTkmLqOoliSrVh0FM-0-R4tvaZdt5PcS_lz6eX6qyD7slyJdDHMjwMHgMILMjz3Wp0sVep6Y-MGsu7rDrgrq5OMIZ1gTQDXqiSc0AsKIgAA;
+          domain=.login.microsoftonline.com; path=/; secure; HttpOnly, x-ms-gateway-slice=productiona;
+          path=/; secure; HttpOnly, stsservicecookie=ests; path=/; secure; HttpOnly]
+      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
+      X-Content-Type-Options: [nosniff]
+      X-Powered-By: [ASP.NET]
+      client-request-id: [b0f899fe-11c4-46df-bc3a-327786b779de]
+      x-ms-request-id: [8325fe10-c6ce-4f22-8eb2-e00c79b0ef7c]
+    status: {code: 200, message: OK}
+- request:
+    body: password=Test124%21%40%24&grant_type=password&username=admin2%40azuresdkteam.onmicrosoft.com&resource=https%3A%2F%2Fvault.azure.net&client_id=04b07795-8ddb-461a-bbee-02f9e1bf7b46
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['178']
+      Content-Type: [application/x-www-form-urlencoded;charset=UTF-8]
+      User-Agent: [python-requests/2.11.1]
+    method: POST
+    uri: https://login.microsoftonline.com/common/oauth2/token
+  response:
+    body: {string: '{"token_type":"Bearer","scope":"user_impersonation","expires_in":"3600","ext_expires_in":"0","expires_on":"1477086026","not_before":"1477082126","resource":"https://vault.azure.net","access_token":"eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsIng1dCI6Ikk2b0J3NFZ6QkhPcWxlR3JWMkFKZEE1RW1YYyIsImtpZCI6Ikk2b0J3NFZ6QkhPcWxlR3JWMkFKZEE1RW1YYyJ9.eyJhdWQiOiJodHRwczovL3ZhdWx0LmF6dXJlLm5ldCIsImlzcyI6Imh0dHBzOi8vc3RzLndpbmRvd3MubmV0LzU0ODI2YjIyLTM4ZDYtNGZiMi1iYWQ5LWI3YjkzYTNlOWM1YS8iLCJpYXQiOjE0NzcwODIxMjYsIm5iZiI6MTQ3NzA4MjEyNiwiZXhwIjoxNDc3MDg2MDI2LCJhY3IiOiIxIiwiYW1yIjpbInB3ZCJdLCJhcHBpZCI6IjA0YjA3Nzk1LThkZGItNDYxYS1iYmVlLTAyZjllMWJmN2I0NiIsImFwcGlkYWNyIjoiMCIsImZhbWlseV9uYW1lIjoiQWRtaW4yIiwiZ2l2ZW5fbmFtZSI6IkFkbWluMiIsImdyb3VwcyI6WyJlNGJiMGI1Ni0xMDE0LTQwZjgtODhhYi0zZDhhOGNiMGUwODYiLCI2Yjk3NzYxYS1kN2QwLTQ4ZjYtYWQ1Ni1mMzhkMzI3Yzg1NTMiXSwiaXBhZGRyIjoiMTY3LjIyMC4wLjE4NiIsIm5hbWUiOiJBZG1pbjIiLCJvaWQiOiI1OTYzZjUwYy03YzQzLTQwNWMtYWY3ZS01MzI5NGRlNzZhYmQiLCJwdWlkIjoiMTAwM0JGRkQ5NTlGODQyMyIsInNjcCI6InVzZXJfaW1wZXJzb25hdGlvbiIsInN1YiI6InB1QWlLRzRBMGE3VUE0ZHhZM1VNWEY4amtxZHRWSDhoMVAzY0tNMDJocWsiLCJ0aWQiOiI1NDgyNmIyMi0zOGQ2LTRmYjItYmFkOS1iN2I5M2EzZTljNWEiLCJ1bmlxdWVfbmFtZSI6ImFkbWluMkBBenVyZVNES1RlYW0ub25taWNyb3NvZnQuY29tIiwidXBuIjoiYWRtaW4yQEF6dXJlU0RLVGVhbS5vbm1pY3Jvc29mdC5jb20iLCJ2ZXIiOiIxLjAifQ.IAk8LWKNuEVjGDTUTLigFYNC0EvuVsWZEkzJ4PqgH_49-4WjKoFpK0BG5PWNlTZ5G3jMFl22sKFvQcyqKGosS1CRIaiQcfTN0KUWwg7SCJl3JAveIdw5COChZQkPgzL-sP19-PX09QR6ihUaVviGgrrH_j3c8LEIgDmNiaiOtQAknX6sTSk-jk44vgAXBXWZ0qBHhLS6RTso9RAnhOffb8p0uSjPAc-mC27h0VKwzX9vT1-Yia6MPFsTQKQx1dsRqNyKBq6svpDP41Fkfa-Ak9O131WjLESbpKF9ZNCM_ptBQtiRSIIbJmTmu18jc7z57bAiIgGfU2GFhIPdmMBd6g","refresh_token":"AQABAAAAAADRNYRQ3dhRSrm-4K-adpCJ3ZCQEZssWlRRXuMHhhMzbZssvwN7HHtbG6TQ3jWY94-vO-QlTs_9ab1fimn3f2jmYX_Uu62AABPEYP8SVvfcFRJW326esAPGxR0XC94moFmbODO4uO6QKiX3XtOonJBQVT0XKETljWWaVcUlfDgwgW440diT9G8nWje6ir0fFLyKafZpIfDAfkm5if19qf2lVYQynwQinuRx_68ssRPta0pgk5c_tkST8G8yjnq8UcMmOnYjMNPD0QbH9ANjo1fBFP0CCGBksxgnVUH7Hs6_Knbu_p0mPRzVv75UHwT5PkLjlWntE4Mp8VGnor4TcRYqMaE0CR9HqbCd5sw9tr79fUzvP-z3Y3TOujeBd5yo59_Sjhj7WC7mxnJ2lwcpSFaL49K6HR4q3cH8LCIggaDcXNyT805XN51vgHzZZdPA4kEqABbi6snM-gPJpRpPLvleneko0P4GTYb_knFQ3dCcnF50nH8K0h6kzJSdV_jVOIqJT-8CeXG13Yw471BnzvHgqW-r0heb059j-YisuBILxm3_LhWN3iHCrTi_lAizgI9HW2dos1sKgpddpGDqxmWsA8_VmVmg0rVLwGrn8f0n68XlSbEyQfZf6S2El67LBqMgAA"}'}
+    headers:
+      Cache-Control: ['no-cache, no-store']
+      Content-Length: ['2307']
+      Content-Type: [application/json; charset=utf-8]
+      Date: ['Fri, 21 Oct 2016 20:40:26 GMT']
+      Expires: ['-1']
+      P3P: [CP="DSP CUR OTPi IND OTRi ONL FIN"]
+      Pragma: [no-cache]
+      Server: [Microsoft-IIS/8.5]
+      Set-Cookie: [esctx=AQABAAAAAADRNYRQ3dhRSrm-4K-adpCJ6IxFWatZhwqKltpM-RXBxD2ZSLMSsu_KdSnuQu6ewaqzETADbsba8NG6DuKOEFJchm7Y1HKdpOQ5OsQveM2NoDGsKAm0L1Oco689D1VwU_6UaOs_6U4S0-2tSsuYhrWzS3bCreZx4eZCjA46F4_Ml4suWsfxI069R2OnV_11dyYgAA;
+          domain=.login.microsoftonline.com; path=/; secure; HttpOnly, x-ms-gateway-slice=productiona;
+          path=/; secure; HttpOnly, stsservicecookie=ests; path=/; secure; HttpOnly]
+      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
+      X-Content-Type-Options: [nosniff]
+      X-Powered-By: [ASP.NET]
+      client-request-id: [50bf121b-2570-4f7b-ad84-8da5da2482d7]
+      x-ms-request-id: [c8ed93c2-cbc7-452d-b7dc-69575b730c9e]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.5.1 (Windows-10-10.0.14393-SP0) requests/2.11.1 msrest/0.4.4
+          msrest_azure/0.4.3 keyvaultclient/0.30.0rc6 Azure-SDK-For-Python]
+      accept-language: [en-US]
+      x-ms-client-request-id: [98d0455c-97ce-11e6-b9c2-a0b3ccf7272a]
+    method: GET
+    uri: https://python-sdk-test-keyvault.vault.azure.net/keys/pythonKey-versioned/versions?api-version=2015-06-01
+  response:
+    body: {string: '{"value":[{"kid":"https://python-sdk-test-keyvault.vault.azure.net/keys/pythonKey-versioned/7cfcd3c2167c484cb3ab095bc7114c71","attributes":{"enabled":true,"created":1477082427,"updated":1477082427}},{"kid":"https://python-sdk-test-keyvault.vault.azure.net/keys/pythonKey-versioned/c60ac869271b45ec9a85ecbdc42a8eee","attributes":{"enabled":true,"created":1477082426,"updated":1477082426}}],"nextLink":null}'}
+    headers:
+      Cache-Control: [no-cache]
+      Content-Length: ['405']
+      Content-Type: [application/json; charset=utf-8]
+      Date: ['Fri, 21 Oct 2016 20:40:26 GMT']
+      Expires: ['-1']
+      Pragma: [no-cache]
+      Server: [Microsoft-IIS/8.5]
+      Strict-Transport-Security: [max-age=31536000;includeSubDomains]
+      X-AspNet-Version: [4.0.30319]
+      X-Content-Type-Options: [nosniff]
+      X-Powered-By: [ASP.NET]
+      x-ms-keyvault-region: [westus]
+      x-ms-keyvault-service-version: [1.0.0.781]
+      x-ms-request-id: [c0c8f945-e9e0-44b6-a4a6-13e68278f454]
+    status: {code: 200, message: OK}
+- request:
+    body: username=admin2%40azuresdkteam.onmicrosoft.com&resource=https%3A%2F%2Fmanagement.core.windows.net%2F&grant_type=password&password=Test124%21%40%24&client_id=04b07795-8ddb-461a-bbee-02f9e1bf7b46
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['193']
+      Content-Type: [application/x-www-form-urlencoded;charset=UTF-8]
+      User-Agent: [python-requests/2.11.1]
+    method: POST
+    uri: https://login.microsoftonline.com/common/oauth2/token
+  response:
+    body: {string: '{"token_type":"Bearer","scope":"user_impersonation","expires_in":"3599","ext_expires_in":"0","expires_on":"1477086188","not_before":"1477082288","resource":"https://management.core.windows.net/","access_token":"eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsIng1dCI6Ikk2b0J3NFZ6QkhPcWxlR3JWMkFKZEE1RW1YYyIsImtpZCI6Ikk2b0J3NFZ6QkhPcWxlR3JWMkFKZEE1RW1YYyJ9.eyJhdWQiOiJodHRwczovL21hbmFnZW1lbnQuY29yZS53aW5kb3dzLm5ldC8iLCJpc3MiOiJodHRwczovL3N0cy53aW5kb3dzLm5ldC81NDgyNmIyMi0zOGQ2LTRmYjItYmFkOS1iN2I5M2EzZTljNWEvIiwiaWF0IjoxNDc3MDgyMjg4LCJuYmYiOjE0NzcwODIyODgsImV4cCI6MTQ3NzA4NjE4OCwiYWNyIjoiMSIsImFtciI6WyJwd2QiXSwiYXBwaWQiOiIwNGIwNzc5NS04ZGRiLTQ2MWEtYmJlZS0wMmY5ZTFiZjdiNDYiLCJhcHBpZGFjciI6IjAiLCJmYW1pbHlfbmFtZSI6IkFkbWluMiIsImdpdmVuX25hbWUiOiJBZG1pbjIiLCJncm91cHMiOlsiZTRiYjBiNTYtMTAxNC00MGY4LTg4YWItM2Q4YThjYjBlMDg2IiwiNmI5Nzc2MWEtZDdkMC00OGY2LWFkNTYtZjM4ZDMyN2M4NTUzIl0sImlwYWRkciI6IjE2Ny4yMjAuMC4xODYiLCJuYW1lIjoiQWRtaW4yIiwib2lkIjoiNTk2M2Y1MGMtN2M0My00MDVjLWFmN2UtNTMyOTRkZTc2YWJkIiwicHVpZCI6IjEwMDNCRkZEOTU5Rjg0MjMiLCJzY3AiOiJ1c2VyX2ltcGVyc29uYXRpb24iLCJzdWIiOiJzRGdleFJ3Q05JZlktaHpRampDRHZaVDdJemRmbzRTeXJyNHgwZEROelI0IiwidGlkIjoiNTQ4MjZiMjItMzhkNi00ZmIyLWJhZDktYjdiOTNhM2U5YzVhIiwidW5pcXVlX25hbWUiOiJhZG1pbjJAQXp1cmVTREtUZWFtLm9ubWljcm9zb2Z0LmNvbSIsInVwbiI6ImFkbWluMkBBenVyZVNES1RlYW0ub25taWNyb3NvZnQuY29tIiwidmVyIjoiMS4wIiwid2lkcyI6WyI2MmU5MDM5NC02OWY1LTQyMzctOTE5MC0wMTIxNzcxNDVlMTAiXX0.NShQS7lCZnjUi_Gfk05uBrMz4b1L8DZczatfGVvq38xZU2hqKCX1-T8rSQDrjc6r9oOo5PogFCDZaBPp9yAapDO-yt8NhxhGYzQbR0--GOnF33hOZjBEI3oLO1frMFqEA9BfLHUaJOTmP4HvlCqXcXLik9cS_Jy7WwxDzxv41D1qjH2SicHtX0oz9oVxIL6dt6zUNgoYoFFWv-boOUGSbPYlthwZc9QGBaKkHrOkhFPGY9quM1ggdubXOuQRQ-1hUEVswDCpZ2c6KaN1HfdTtZ36erc8lxRzLnFQmz74rJe1HSwaomRjekL3ksBXU9_aRGYPIxScydwRPOMNJJE_pw","refresh_token":"AQABAAAAAADRNYRQ3dhRSrm-4K-adpCJ65vDFdIuV2c262Bpk6Hyhy2MkROsiyhPmdDaC7lLCkFjT_hCIUK6euxgG9vcl12QXaiDsFsGnP6QczQEgpt3B1zf9BaKon9AFykw4Eus8cx7M7SYMS40-xIIxOzh91IAuo6d4tB9CpYGs-bPM6rqipz2tH4GVyddjMCYv2KbBb1PsvHXA_021SWSeQi6v558Mn8i1ZBJtodyrn0YgI6Dl5ZOpaIobGUl9DGnVE3MvOpPlyO_xMPq528RTbLm4e84O6vECGtaxYcaxXSojwDS2IIMC8HCuS5h8TICQzBJSag4fToaxx3Eh9jFF3eAm5frVfEs6jXgoptqhRY6mvDco8pQ5F8xK06Jy-erhNcpANRb7l8gGnyrjNYDAmJnAjJ90bDags3X2e_eJIDbItxE6QB0oeavP9Rz5nIaxZCl2jc4cXQ-oIu_4QXnJP_Au5JXTV7hKG9uFUuFVvQ4RcLV_X1tPV0MQlrbARRQMZOBUKY5_sciwPT1qtz4ZreUmBTos-oTyELGgx4bmOxF6TlbMb4bM08y6PbJH7EIpFUbPdwFKIjoPtZzDJW1LwFPHDFwHkW8oEJqHFZ8zBqQRhxe0iDBjs69g62xIVjUR2S5aAZ8eiZB_JIK6flFUA8TkAdLIAA"}'}
+    headers:
+      Cache-Control: ['no-cache, no-store']
+      Content-Length: ['2422']
+      Content-Type: [application/json; charset=utf-8]
+      Date: ['Fri, 21 Oct 2016 20:43:06 GMT']
+      Expires: ['-1']
+      P3P: [CP="DSP CUR OTPi IND OTRi ONL FIN"]
+      Pragma: [no-cache]
+      Server: [Microsoft-IIS/8.5]
+      Set-Cookie: [esctx=AQABAAAAAADRNYRQ3dhRSrm-4K-adpCJB-iSyCMTJC7Kj-DPuVuYNez3Q7ad6Cm3UU8s4XPKDkyuhwBhGcWhvo6Iv_CIbrJNeK9X_-003MQISNkPT4DEdHldlxFGjWo5uGc81F6uNQsU-5ac81Kn7M0izFiT2K8kUvvNffI3tXQLORU246zvmfMnVpYd7WmumfEQhGAiUhAgAA;
+          domain=.login.microsoftonline.com; path=/; secure; HttpOnly, x-ms-gateway-slice=productiona;
+          path=/; secure; HttpOnly, stsservicecookie=ests; path=/; secure; HttpOnly]
+      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
+      X-Content-Type-Options: [nosniff]
+      X-Powered-By: [ASP.NET]
+      client-request-id: [25755f70-420d-477d-bf56-71a7842e5177]
+      x-ms-request-id: [5bd35548-019e-4650-92b9-0ace0b90538b]
+    status: {code: 200, message: OK}
+- request:
+    body: username=admin2%40azuresdkteam.onmicrosoft.com&resource=https%3A%2F%2Fvault.azure.net&grant_type=password&password=Test124%21%40%24&client_id=04b07795-8ddb-461a-bbee-02f9e1bf7b46
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['178']
+      Content-Type: [application/x-www-form-urlencoded;charset=UTF-8]
+      User-Agent: [python-requests/2.11.1]
+    method: POST
+    uri: https://login.microsoftonline.com/common/oauth2/token
+  response:
+    body: {string: '{"token_type":"Bearer","scope":"user_impersonation","expires_in":"3599","ext_expires_in":"0","expires_on":"1477086188","not_before":"1477082288","resource":"https://vault.azure.net","access_token":"eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsIng1dCI6Ikk2b0J3NFZ6QkhPcWxlR3JWMkFKZEE1RW1YYyIsImtpZCI6Ikk2b0J3NFZ6QkhPcWxlR3JWMkFKZEE1RW1YYyJ9.eyJhdWQiOiJodHRwczovL3ZhdWx0LmF6dXJlLm5ldCIsImlzcyI6Imh0dHBzOi8vc3RzLndpbmRvd3MubmV0LzU0ODI2YjIyLTM4ZDYtNGZiMi1iYWQ5LWI3YjkzYTNlOWM1YS8iLCJpYXQiOjE0NzcwODIyODgsIm5iZiI6MTQ3NzA4MjI4OCwiZXhwIjoxNDc3MDg2MTg4LCJhY3IiOiIxIiwiYW1yIjpbInB3ZCJdLCJhcHBpZCI6IjA0YjA3Nzk1LThkZGItNDYxYS1iYmVlLTAyZjllMWJmN2I0NiIsImFwcGlkYWNyIjoiMCIsImZhbWlseV9uYW1lIjoiQWRtaW4yIiwiZ2l2ZW5fbmFtZSI6IkFkbWluMiIsImdyb3VwcyI6WyJlNGJiMGI1Ni0xMDE0LTQwZjgtODhhYi0zZDhhOGNiMGUwODYiLCI2Yjk3NzYxYS1kN2QwLTQ4ZjYtYWQ1Ni1mMzhkMzI3Yzg1NTMiXSwiaXBhZGRyIjoiMTY3LjIyMC4wLjE4NiIsIm5hbWUiOiJBZG1pbjIiLCJvaWQiOiI1OTYzZjUwYy03YzQzLTQwNWMtYWY3ZS01MzI5NGRlNzZhYmQiLCJwdWlkIjoiMTAwM0JGRkQ5NTlGODQyMyIsInNjcCI6InVzZXJfaW1wZXJzb25hdGlvbiIsInN1YiI6InB1QWlLRzRBMGE3VUE0ZHhZM1VNWEY4amtxZHRWSDhoMVAzY0tNMDJocWsiLCJ0aWQiOiI1NDgyNmIyMi0zOGQ2LTRmYjItYmFkOS1iN2I5M2EzZTljNWEiLCJ1bmlxdWVfbmFtZSI6ImFkbWluMkBBenVyZVNES1RlYW0ub25taWNyb3NvZnQuY29tIiwidXBuIjoiYWRtaW4yQEF6dXJlU0RLVGVhbS5vbm1pY3Jvc29mdC5jb20iLCJ2ZXIiOiIxLjAifQ.dzGL9fyoHbPVIUT_uGXxuM0IPvFbhOD08eN_2VZ86rtHTf85dvHfsJusmeHa-7xTSFu_hJIVp3ZylkmQYG3PMaVNvKTPBgv3OHZLuX80E2WaqTC4kpplTm2Od85WSwh7noRPMqhBt7pDISJWMYpNyqP6zoFYneKC31QyaIs999dbN6NteISSXPDKsrftG1DJ1QP0dsR0RFo5nc_agCkLliCeqt7LEzUW7XNXHc_a5Mj-7CJqFk8aBEyVdpU__7jV6jiRFsMlNfqvgFZHEoWV-LSAjE1Uo3g40RL7J9PwWlYbINPeTJYOG6ANLe9MDl-czOyXfS3UAkmEeqX0Ie1i2w","refresh_token":"AQABAAAAAADRNYRQ3dhRSrm-4K-adpCJVNkHUdcUqo-8yo_ANVTuU3aGlj_qBjmrvycTgAFii7spp3IrY0s6xgyvAJGUQZd4_ITu5LWJY05Q8ko3GrF3pbR-dOrJLPOKtB6wRBhXJGq69ZLeyM8PIED3Ng6UFS4Nn8qG3Ssc6h8pdnloCaoT6MPYCPcCqTdJspzllMuz6jhSSwtA4bLOu6Cznxv0BNiRfSDo6Uh-zC_RnASpZf7iNDgrWLbi8i8IPOLct7AUKpmHyYFl1QYF5hDSIdo-6tSmlK8lawCHt5t2K-m6QAV5TImaHd4d_LAnN3heLK9jfN85Q2ea6HEaUHACzMZzDgtuqpDgX1_1XuCjr0afTxWNbM3tHX2yhor2JuEiroXBjCoGViKfs7tqchaMVO9N6IPijFuRp4JMgNsokUtfikJHUV9w5jKyRWem5fUAxkJ0d4kQfMNU8VaS0DSAzmPvLwvc8vmpowJYH4R82tS4NloEDG1k3cNYKVh16Pi0Uy7cCIJ1ZG5x9KqXwfOwmX6_xFsPGeXnvFEExBBH02krlcyYvhkNdVb0F_dExKj2xa1i46u5aufVq5B0I646khtK7t3xVfXTciTVUFFXJzSJzxfn6Cy-Id86LlrQ8rymiw3g59EgAA"}'}
+    headers:
+      Cache-Control: ['no-cache, no-store']
+      Content-Length: ['2307']
+      Content-Type: [application/json; charset=utf-8]
+      Date: ['Fri, 21 Oct 2016 20:43:07 GMT']
+      Expires: ['-1']
+      P3P: [CP="DSP CUR OTPi IND OTRi ONL FIN"]
+      Pragma: [no-cache]
+      Server: [Microsoft-IIS/8.5]
+      Set-Cookie: [esctx=AQABAAAAAADRNYRQ3dhRSrm-4K-adpCJTZVnq2YeEq8QaiOfZIJ6H8NYrMuX2zZsxsZzBRV_MvrpJt-XYCGXuThk-l4UmpgM6Wf-DFgA65B1hVCSfnY9RVH8hRNMqSIvLWUs9VWv243GnVGHUi3R6MNfLwH0xXvTNhosjb7IFQgGxDjO94oEr4aLwvaUDFPO_gJvKm5-dcQgAA;
+          domain=.login.microsoftonline.com; path=/; secure; HttpOnly, x-ms-gateway-slice=productiona;
+          path=/; secure; HttpOnly, stsservicecookie=ests; path=/; secure; HttpOnly]
+      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
+      X-Content-Type-Options: [nosniff]
+      X-Powered-By: [ASP.NET]
+      client-request-id: [3823e7b9-db14-43d1-ba64-6d122636966b]
+      x-ms-request-id: [06b12e53-21c0-485e-a4aa-aa684dff5dbd]
+    status: {code: 200, message: OK}
+- request:
+    body: '{"kty": "RSA"}'
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['14']
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.5.1 (Windows-10-10.0.14393-SP0) requests/2.11.1 msrest/0.4.4
+          msrest_azure/0.4.3 keyvaultclient/0.30.0rc6 Azure-SDK-For-Python]
+      accept-language: [en-US]
+      x-ms-client-request-id: [f91e621e-97ce-11e6-aa7d-a0b3ccf7272a]
+    method: POST
+    uri: https://python-sdk-test-keyvault.vault.azure.net/keys/pythonKey-versioned/create?api-version=2015-06-01
+  response:
+    body: {string: '{"key":{"kid":"https://python-sdk-test-keyvault.vault.azure.net/keys/pythonKey-versioned/3bb62179908c4c30a4f3b9abb9a5a318","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"zc529XWZMJTnjCHSQsSU17gLQtaz2qBMwYbye8eKXIG63b_1a59QYL5-lHBLWDh4c7x8XRse4uWZyWXO2ppdRIh9aw39W5sFePxNoyjbOreZ74bJ_tH2IL68WReFolCvIKvKL8B4N_mKyJWlusxEUm_eaU9sNTAVK9HF66Z5MyR2WtXLKeJkQ9IHfgksXimSqUhNXkGMhQW9hMbjPXYWgyZV1AmnCWHo6a3_-F4ypq9PmsHzDutNu0AXytDrwAlsYoZ1YkoW5kxCesMD-L2fUwRYIVl8BUBScREmaZpHFJp5S264_oxjMhKzKwedHOfsd_o3Rvq5mUJeBCqa4lQn2Q","e":"AQAB"},"attributes":{"enabled":true,"created":1477082588,"updated":1477082588}}'}
+    headers:
+      Cache-Control: [no-cache]
+      Content-Length: ['638']
+      Content-Type: [application/json; charset=utf-8]
+      Date: ['Fri, 21 Oct 2016 20:43:08 GMT']
+      Expires: ['-1']
+      Pragma: [no-cache]
+      Server: [Microsoft-IIS/8.5]
+      Strict-Transport-Security: [max-age=31536000;includeSubDomains]
+      X-AspNet-Version: [4.0.30319]
+      X-Content-Type-Options: [nosniff]
+      X-Powered-By: [ASP.NET]
+      x-ms-keyvault-region: [westus]
+      x-ms-keyvault-service-version: [1.0.0.781]
+      x-ms-request-id: [4f382465-2298-402b-9fae-5e694ff2534e]
+    status: {code: 200, message: OK}
+- request:
+    body: username=admin2%40azuresdkteam.onmicrosoft.com&resource=https%3A%2F%2Fmanagement.core.windows.net%2F&grant_type=password&password=Test124%21%40%24&client_id=04b07795-8ddb-461a-bbee-02f9e1bf7b46
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['193']
+      Content-Type: [application/x-www-form-urlencoded;charset=UTF-8]
+      User-Agent: [python-requests/2.11.1]
+    method: POST
+    uri: https://login.microsoftonline.com/common/oauth2/token
+  response:
+    body: {string: '{"token_type":"Bearer","scope":"user_impersonation","expires_in":"3599","ext_expires_in":"0","expires_on":"1477086189","not_before":"1477082289","resource":"https://management.core.windows.net/","access_token":"eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsIng1dCI6Ikk2b0J3NFZ6QkhPcWxlR3JWMkFKZEE1RW1YYyIsImtpZCI6Ikk2b0J3NFZ6QkhPcWxlR3JWMkFKZEE1RW1YYyJ9.eyJhdWQiOiJodHRwczovL21hbmFnZW1lbnQuY29yZS53aW5kb3dzLm5ldC8iLCJpc3MiOiJodHRwczovL3N0cy53aW5kb3dzLm5ldC81NDgyNmIyMi0zOGQ2LTRmYjItYmFkOS1iN2I5M2EzZTljNWEvIiwiaWF0IjoxNDc3MDgyMjg5LCJuYmYiOjE0NzcwODIyODksImV4cCI6MTQ3NzA4NjE4OSwiYWNyIjoiMSIsImFtciI6WyJwd2QiXSwiYXBwaWQiOiIwNGIwNzc5NS04ZGRiLTQ2MWEtYmJlZS0wMmY5ZTFiZjdiNDYiLCJhcHBpZGFjciI6IjAiLCJmYW1pbHlfbmFtZSI6IkFkbWluMiIsImdpdmVuX25hbWUiOiJBZG1pbjIiLCJncm91cHMiOlsiZTRiYjBiNTYtMTAxNC00MGY4LTg4YWItM2Q4YThjYjBlMDg2IiwiNmI5Nzc2MWEtZDdkMC00OGY2LWFkNTYtZjM4ZDMyN2M4NTUzIl0sImlwYWRkciI6IjE2Ny4yMjAuMC4xODYiLCJuYW1lIjoiQWRtaW4yIiwib2lkIjoiNTk2M2Y1MGMtN2M0My00MDVjLWFmN2UtNTMyOTRkZTc2YWJkIiwicHVpZCI6IjEwMDNCRkZEOTU5Rjg0MjMiLCJzY3AiOiJ1c2VyX2ltcGVyc29uYXRpb24iLCJzdWIiOiJzRGdleFJ3Q05JZlktaHpRampDRHZaVDdJemRmbzRTeXJyNHgwZEROelI0IiwidGlkIjoiNTQ4MjZiMjItMzhkNi00ZmIyLWJhZDktYjdiOTNhM2U5YzVhIiwidW5pcXVlX25hbWUiOiJhZG1pbjJAQXp1cmVTREtUZWFtLm9ubWljcm9zb2Z0LmNvbSIsInVwbiI6ImFkbWluMkBBenVyZVNES1RlYW0ub25taWNyb3NvZnQuY29tIiwidmVyIjoiMS4wIiwid2lkcyI6WyI2MmU5MDM5NC02OWY1LTQyMzctOTE5MC0wMTIxNzcxNDVlMTAiXX0.GvGSCS5yhrEk5h1UaRNQzY4kDY2wlAF3tJeGe10YUiyw5GXurPgQU9hvkI4MJsvRz733gNhF6n-sfVwrbyo-uGIhguKryt5rv_M0jgDDMn6YZpkF2Nvv6KL9TB1bqd4LvKz50Kc8ZpJIV4fc3FTmTyREEviCLF3BFNoIzzL6EUAKKlF1uuR2CII2dfNcIlmfDBTHAUXKPT884uVactu8MzBdiswlHjXMpsyu5WqTVVF4N7RBb4f1Z9CsCbkSomANONzcHoYBZCVBaJqtyoOUVDi-FRGrrr5frvmMV5aV9vjOkiK7cBmNz_NvX8kviVEg-7pBoaH6kzQ7KKCT3gY_5g","refresh_token":"AQABAAAAAADRNYRQ3dhRSrm-4K-adpCJYE_c7ulW7e-B221n4-5fSBhU4u8gciX-rHeFsBXmKtuYGgBoxQhU_uZzes-8ADWDfbgJyhDh53zJunTfdSrNgo7xWo-_kIfzBc64ivf-pyDROFpI9Zca7jVU2h1lEDBGcl9dLJ2tDb6DDix7p5-XfMokCUvtZ9GKWcQW_XLCsIFNx3lMZTXwJ3rwV9DGu4NiMOu3n8sV6WkWtD18YBS3vi_7fuyqnK9pszE6LYvlNHOTFDEuS3NCYNyOsupiVt-5akpZVzkSU6SaioG-EHw0qPcOqpNQCp8g1-lwiZD4t0Gcwwz3iz7Xh0e5KURviGdySViAG-FiIei80xj9JvtI5CqCt6nTnApDhUSI8aoHmNMQhnAy5gNJxnxf2WSXyFfOmW9krqoKqpG4hKDkmCA4rkOf2KRALnyLbsDrE3QA-kh4mAiAw3Ev23oerPr3sa_4PzqAWVP87Vi-OrwQ5bg8Taz_z2RXfWt8-oxQfYo-10BsV0BQKakNXfeccRPeD1Q84H9HSfVXETKw46nqU0qT1xLu4ajpphwRpHLYYJZGFb-CDpkg9-RwYke9Ar1exty9C4UpEq-K0l9JLvBwVeWT5YSUem1NPZ3NL6i_y67_3MYNxKH4GiLcCHX-GQMgQJRgIAA"}'}
+    headers:
+      Cache-Control: ['no-cache, no-store']
+      Content-Length: ['2422']
+      Content-Type: [application/json; charset=utf-8]
+      Date: ['Fri, 21 Oct 2016 20:43:08 GMT']
+      Expires: ['-1']
+      P3P: [CP="DSP CUR OTPi IND OTRi ONL FIN"]
+      Pragma: [no-cache]
+      Server: [Microsoft-IIS/8.5]
+      Set-Cookie: [esctx=AQABAAAAAADRNYRQ3dhRSrm-4K-adpCJEoqfuR3pKQuAaQoZcx7fGITMR-0-tCHSKK_4cv_fmxBljaeI1KvN0spUWIuIOdPshVdyWQdr8aSEuU4vIsQyfDYONH_B3b0bj_d2jbEg5nTkEwgRSlqRC1RFd_yQRstprkxphdVMs4n-gXeP3q3ItDlfYKXdNwXoNEuLqTKOes4gAA;
+          domain=.login.microsoftonline.com; path=/; secure; HttpOnly, x-ms-gateway-slice=productiona;
+          path=/; secure; HttpOnly, stsservicecookie=ests; path=/; secure; HttpOnly]
+      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
+      X-Content-Type-Options: [nosniff]
+      X-Powered-By: [ASP.NET]
+      client-request-id: [1f5eb915-041f-4443-bd6e-890e92a4eba3]
+      x-ms-request-id: [aa36b1a9-9294-47cd-82c8-b7c4409c2ffd]
+    status: {code: 200, message: OK}
+- request:
+    body: username=admin2%40azuresdkteam.onmicrosoft.com&resource=https%3A%2F%2Fvault.azure.net&grant_type=password&password=Test124%21%40%24&client_id=04b07795-8ddb-461a-bbee-02f9e1bf7b46
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['178']
+      Content-Type: [application/x-www-form-urlencoded;charset=UTF-8]
+      User-Agent: [python-requests/2.11.1]
+    method: POST
+    uri: https://login.microsoftonline.com/common/oauth2/token
+  response:
+    body: {string: '{"token_type":"Bearer","scope":"user_impersonation","expires_in":"3599","ext_expires_in":"0","expires_on":"1477086189","not_before":"1477082289","resource":"https://vault.azure.net","access_token":"eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsIng1dCI6Ikk2b0J3NFZ6QkhPcWxlR3JWMkFKZEE1RW1YYyIsImtpZCI6Ikk2b0J3NFZ6QkhPcWxlR3JWMkFKZEE1RW1YYyJ9.eyJhdWQiOiJodHRwczovL3ZhdWx0LmF6dXJlLm5ldCIsImlzcyI6Imh0dHBzOi8vc3RzLndpbmRvd3MubmV0LzU0ODI2YjIyLTM4ZDYtNGZiMi1iYWQ5LWI3YjkzYTNlOWM1YS8iLCJpYXQiOjE0NzcwODIyODksIm5iZiI6MTQ3NzA4MjI4OSwiZXhwIjoxNDc3MDg2MTg5LCJhY3IiOiIxIiwiYW1yIjpbInB3ZCJdLCJhcHBpZCI6IjA0YjA3Nzk1LThkZGItNDYxYS1iYmVlLTAyZjllMWJmN2I0NiIsImFwcGlkYWNyIjoiMCIsImZhbWlseV9uYW1lIjoiQWRtaW4yIiwiZ2l2ZW5fbmFtZSI6IkFkbWluMiIsImdyb3VwcyI6WyJlNGJiMGI1Ni0xMDE0LTQwZjgtODhhYi0zZDhhOGNiMGUwODYiLCI2Yjk3NzYxYS1kN2QwLTQ4ZjYtYWQ1Ni1mMzhkMzI3Yzg1NTMiXSwiaXBhZGRyIjoiMTY3LjIyMC4wLjE4NiIsIm5hbWUiOiJBZG1pbjIiLCJvaWQiOiI1OTYzZjUwYy03YzQzLTQwNWMtYWY3ZS01MzI5NGRlNzZhYmQiLCJwdWlkIjoiMTAwM0JGRkQ5NTlGODQyMyIsInNjcCI6InVzZXJfaW1wZXJzb25hdGlvbiIsInN1YiI6InB1QWlLRzRBMGE3VUE0ZHhZM1VNWEY4amtxZHRWSDhoMVAzY0tNMDJocWsiLCJ0aWQiOiI1NDgyNmIyMi0zOGQ2LTRmYjItYmFkOS1iN2I5M2EzZTljNWEiLCJ1bmlxdWVfbmFtZSI6ImFkbWluMkBBenVyZVNES1RlYW0ub25taWNyb3NvZnQuY29tIiwidXBuIjoiYWRtaW4yQEF6dXJlU0RLVGVhbS5vbm1pY3Jvc29mdC5jb20iLCJ2ZXIiOiIxLjAifQ.QxlQf0lgnfz9vYy6NTbZ-ZaUcn2_ULn1SyJWBIr4neMX-OjjOe__GHbP4ZCc0G9KvLdOY2Aq8oPa3LJ2lpPjRlXoJM75_QdqUPzmDNvcwgDkl_Fl9vDDdhXNPOJLMobLlxHEdACvbJjT0G7QC24Np8fjVa_SHqk_eY10kS06UAY3b-HCKcdt3Vpujwj2g1g7iGQOFf0nkjGH_8ZwnESDWaTWzX5TuStoKZnEGg6raSGrcSCpE3O3wOtT-iVRdlSMyjM8NR11zKImgB4S-f8f6J2QNT-GB2anaQDXXp4ufJ46yPmc1lbx_9tPFUTZTUKazLcR34d0P2Bec7dDSMvFkQ","refresh_token":"AQABAAAAAADRNYRQ3dhRSrm-4K-adpCJ-_6dbN2C86H_Q9OCcrHOQ-wWM3RzOsTzfZSH20O2kOL2j6NJfFLb7J8VwTlOoFQVz1M4j0INbIU8IhVQMHanTMofIZZrsvD9-2bbZ0j67cQXN09GF7jFmUqa2hoCZMl0tl5ek7yclMmMNuPvjKoqzAhOYB6a4IGqbkhOeUtn39dpEQHCg17_wxnw_2aevxt-FZGvzqcYJ_zuq6TSg_1FsyjD120ETgHvuQGpqUToMZ5RT7MNiuqAWF0bEl3Zolyg1gulJJgfIxVqDTk5XNT29yAx8Bp0Uj9qsMhcOW6VtEycqK7JAWgllGZyRbDVOuO5a-yx8f2KO3mN4tYmInpKzRtOROUZsp2XebTP6oUOc4VvVgqT9Z_Z6fPZah_2tvGQdE-TTp2hvFV7TK_qVfTcsR4f1-68QswLOGV9PInoIulioB6IdANcVNMCrZHEX_F9O4j4HEq5C1l3paUomh5sHQQnhnCNpSUQg8LBRz8AaulbR1iT6w3k1ZAnhtlFb3Y5xlGIKP3MzUAbWpvk2cYrovjci5y3nKg825DUsEq9rhwRb5nGH4zewJSAMxU4p8oGqjcLeHWUx-hJcZ7TJfyjiwUciqurXcx8Yg-DHMdJuHggAA"}'}
+    headers:
+      Cache-Control: ['no-cache, no-store']
+      Content-Length: ['2307']
+      Content-Type: [application/json; charset=utf-8]
+      Date: ['Fri, 21 Oct 2016 20:43:09 GMT']
+      Expires: ['-1']
+      P3P: [CP="DSP CUR OTPi IND OTRi ONL FIN"]
+      Pragma: [no-cache]
+      Server: [Microsoft-IIS/8.5]
+      Set-Cookie: [esctx=AQABAAAAAADRNYRQ3dhRSrm-4K-adpCJPFDxxUB1SZLmGNAO2sI_omXWthc5Y3-9GumgT0HrO6ZSUdWUZu762awSbgWLfQ7vk_kF4MgeXCIkfOb1d9OQiMRNrkOAlPU2UgVgOomR1f1aGFiIpsJOhyChabc2NPMBDqTg86otPL4l0fLS_tdMZ2AArkIzjPFCN15aM9xTk_ggAA;
+          domain=.login.microsoftonline.com; path=/; secure; HttpOnly, x-ms-gateway-slice=productiona;
+          path=/; secure; HttpOnly, stsservicecookie=ests; path=/; secure; HttpOnly]
+      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
+      X-Content-Type-Options: [nosniff]
+      X-Powered-By: [ASP.NET]
+      client-request-id: [3257fcc0-75e2-4a3b-94fd-bcb0819790a0]
+      x-ms-request-id: [06bfaa65-cfe9-4c3a-9ebd-37ed8078dda2]
+    status: {code: 200, message: OK}
+- request:
+    body: '{"kty": "RSA"}'
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['14']
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.5.1 (Windows-10-10.0.14393-SP0) requests/2.11.1 msrest/0.4.4
+          msrest_azure/0.4.3 keyvaultclient/0.30.0rc6 Azure-SDK-For-Python]
+      accept-language: [en-US]
+      x-ms-client-request-id: [f9da88f8-97ce-11e6-b69a-a0b3ccf7272a]
+    method: POST
+    uri: https://python-sdk-test-keyvault.vault.azure.net/keys/pythonKey-versioned/create?api-version=2015-06-01
+  response:
+    body: {string: '{"key":{"kid":"https://python-sdk-test-keyvault.vault.azure.net/keys/pythonKey-versioned/31d0fbc0049b42acb4087c8fb9e81780","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"sEK4nmVvIEG-XT9AlkjhHi5KN7xHw0x4-BIpolhnsjl9KaSP2BXuesPgZe0AfzLbpO3Z98U7Cmbl8ZkNWEhbWHLUCuEGGE7VOXHqCH4zQ7ofoRb_IEIgGiyg5-BPS7qR_fD32JAB2_yOrt_pAcIrLhwnmwrZsqcVRIOhjegDaJlJBxdvIYNXzE3yJjdZXLS3TGVo3QhmdiqRBW5tKDAr42zFPjyGe34Ov3iVDzXkVUSVIUY-5hNJvJHzdOCNQdpdUain3ZdujkgyYJ6l1rACUAzXQcbTuiS1pxbROBV1KUlHl0aRZcXBGCEiIe1VjI_aHq8cnZq4FCBLdsE_Tlqc0Q","e":"AQAB"},"attributes":{"enabled":true,"created":1477082589,"updated":1477082589}}'}
+    headers:
+      Cache-Control: [no-cache]
+      Content-Length: ['638']
+      Content-Type: [application/json; charset=utf-8]
+      Date: ['Fri, 21 Oct 2016 20:43:09 GMT']
+      Expires: ['-1']
+      Pragma: [no-cache]
+      Server: [Microsoft-IIS/8.5]
+      Strict-Transport-Security: [max-age=31536000;includeSubDomains]
+      X-AspNet-Version: [4.0.30319]
+      X-Content-Type-Options: [nosniff]
+      X-Powered-By: [ASP.NET]
+      x-ms-keyvault-region: [westus]
+      x-ms-keyvault-service-version: [1.0.0.781]
+      x-ms-request-id: [ae086976-3d88-4f43-907a-4cc5981a5275]
+    status: {code: 200, message: OK}
+- request:
+    body: username=admin2%40azuresdkteam.onmicrosoft.com&resource=https%3A%2F%2Fmanagement.core.windows.net%2F&grant_type=password&password=Test124%21%40%24&client_id=04b07795-8ddb-461a-bbee-02f9e1bf7b46
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['193']
+      Content-Type: [application/x-www-form-urlencoded;charset=UTF-8]
+      User-Agent: [python-requests/2.11.1]
+    method: POST
+    uri: https://login.microsoftonline.com/common/oauth2/token
+  response:
+    body: {string: '{"token_type":"Bearer","scope":"user_impersonation","expires_in":"3599","ext_expires_in":"0","expires_on":"1477086190","not_before":"1477082290","resource":"https://management.core.windows.net/","access_token":"eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsIng1dCI6Ikk2b0J3NFZ6QkhPcWxlR3JWMkFKZEE1RW1YYyIsImtpZCI6Ikk2b0J3NFZ6QkhPcWxlR3JWMkFKZEE1RW1YYyJ9.eyJhdWQiOiJodHRwczovL21hbmFnZW1lbnQuY29yZS53aW5kb3dzLm5ldC8iLCJpc3MiOiJodHRwczovL3N0cy53aW5kb3dzLm5ldC81NDgyNmIyMi0zOGQ2LTRmYjItYmFkOS1iN2I5M2EzZTljNWEvIiwiaWF0IjoxNDc3MDgyMjkwLCJuYmYiOjE0NzcwODIyOTAsImV4cCI6MTQ3NzA4NjE5MCwiYWNyIjoiMSIsImFtciI6WyJwd2QiXSwiYXBwaWQiOiIwNGIwNzc5NS04ZGRiLTQ2MWEtYmJlZS0wMmY5ZTFiZjdiNDYiLCJhcHBpZGFjciI6IjAiLCJmYW1pbHlfbmFtZSI6IkFkbWluMiIsImdpdmVuX25hbWUiOiJBZG1pbjIiLCJncm91cHMiOlsiZTRiYjBiNTYtMTAxNC00MGY4LTg4YWItM2Q4YThjYjBlMDg2IiwiNmI5Nzc2MWEtZDdkMC00OGY2LWFkNTYtZjM4ZDMyN2M4NTUzIl0sImlwYWRkciI6IjE2Ny4yMjAuMC4xODYiLCJuYW1lIjoiQWRtaW4yIiwib2lkIjoiNTk2M2Y1MGMtN2M0My00MDVjLWFmN2UtNTMyOTRkZTc2YWJkIiwicHVpZCI6IjEwMDNCRkZEOTU5Rjg0MjMiLCJzY3AiOiJ1c2VyX2ltcGVyc29uYXRpb24iLCJzdWIiOiJzRGdleFJ3Q05JZlktaHpRampDRHZaVDdJemRmbzRTeXJyNHgwZEROelI0IiwidGlkIjoiNTQ4MjZiMjItMzhkNi00ZmIyLWJhZDktYjdiOTNhM2U5YzVhIiwidW5pcXVlX25hbWUiOiJhZG1pbjJAQXp1cmVTREtUZWFtLm9ubWljcm9zb2Z0LmNvbSIsInVwbiI6ImFkbWluMkBBenVyZVNES1RlYW0ub25taWNyb3NvZnQuY29tIiwidmVyIjoiMS4wIiwid2lkcyI6WyI2MmU5MDM5NC02OWY1LTQyMzctOTE5MC0wMTIxNzcxNDVlMTAiXX0.gx2yFNFVobQzw5HPeSHjdyM0TmfvitdePqp6ZJ8Us_3oKrD-tDrQhccOsLXavHc1OAq_KES3gIm6g-IxQjlCL_6MooMur-zXRKJIaowP3soPRyx87_Ibh7NkEaxgo_3btmdfE52daCyH-dVVYp-40xsEeXwYgqPUqiWkcEi1ytYuE1PzSGZ8r-JeUtYSAdq4Q9YwL7rnq5aj1xxvYr4HUPT5d-Kz3l5ses0OrqPB6u0VVlryTZZt52FsJXAH6pYk94eZu1DzJ5Ymm5cFC2zFUdrKOqD0wkle8kXB-GSFLQYN7ElwRjI5tmaHUzE2NcsyGZiZ8UhKHjQdLulyWiXLag","refresh_token":"AQABAAAAAADRNYRQ3dhRSrm-4K-adpCJK9JTgRmW8QgMYc-F99RbLcq4MRrwDPkub4ZwdLZ6I5vmSgpbtyBrGlzgvSrxF3gtYmpnXiHt20a3_iZQQwmblkcFa1KYSwUhJ4EXoDUD1S5UGO8O-tqhJ5svq3lbV-vnyxYmSYGoHfLdXV79YbGxH0TYwWeibpEg2zIl30D0kZOQBGKJVlWA68QjmxSjWojR_CRv2ke9pyUnrwqv6sJtLdJezlJ_ZS0fvwrzwvtwrJlE1bXPIkMLgvSaDzSqFFP4eglJoy7YyWhTwdUVX9wzzQsiiHYgxwXn1d839WpmpjykSteDMaGl9z7Zj9V2W7X_4_nfMsBdWhG6moWdiUAMoo_xtW5UksKtr2q7qYWBkXtR_5FAXKHOwTYDMPYqW9bbfwIX3zaWC_Twy3WrbPMusW6sjDDPeraDepWUJFdb-8uQtUcKuT_xeHTcCyiTET1Tein9Nvf1N-ZmEsYvEMOwfVrln3zd4K3IklCDMAhDs9UIBgMx5YwxrhWk27T4a1WZN3qpa9xsqf5YZBx7J0oS9lUK4fm_UJ4xfxa8eZP-lmdXFUGTT71rWyeuuH6NF6vxbGJYwL4Tfo3TWueaoHXG-pkW3ZsVIgwg0aC4nUDGU1Ftj7TyLjrnG8ohT912QcuyIAA"}'}
+    headers:
+      Cache-Control: ['no-cache, no-store']
+      Content-Length: ['2422']
+      Content-Type: [application/json; charset=utf-8]
+      Date: ['Fri, 21 Oct 2016 20:43:08 GMT']
+      Expires: ['-1']
+      P3P: [CP="DSP CUR OTPi IND OTRi ONL FIN"]
+      Pragma: [no-cache]
+      Server: [Microsoft-IIS/8.5]
+      Set-Cookie: [esctx=AQABAAAAAADRNYRQ3dhRSrm-4K-adpCJPrBF7oyOIuQDfP7gwvw5F4jrI6hMMcShoCT7W1qnmEXCNAZ0L9r9BhHe8FqEROZqSaCygdAZH0_F3u1VPVWgD5AFLeS33bqCzsIxoFT2UwGIFk482CHleadhn-c8M9Qaux-sKF5X5afIRuOLP3JhF28GvoJRkcVn-DNbDXs6T_UgAA;
+          domain=.login.microsoftonline.com; path=/; secure; HttpOnly, x-ms-gateway-slice=productiona;
+          path=/; secure; HttpOnly, stsservicecookie=ests; path=/; secure; HttpOnly]
+      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
+      X-Content-Type-Options: [nosniff]
+      X-Powered-By: [ASP.NET]
+      client-request-id: [b4d91dc4-0fea-4745-bf44-15e197256411]
+      x-ms-request-id: [8bbc28c1-5233-4f95-bfe0-c8d60d8a1e77]
+    status: {code: 200, message: OK}
+- request:
+    body: username=admin2%40azuresdkteam.onmicrosoft.com&resource=https%3A%2F%2Fvault.azure.net&grant_type=password&password=Test124%21%40%24&client_id=04b07795-8ddb-461a-bbee-02f9e1bf7b46
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['178']
+      Content-Type: [application/x-www-form-urlencoded;charset=UTF-8]
+      User-Agent: [python-requests/2.11.1]
+    method: POST
+    uri: https://login.microsoftonline.com/common/oauth2/token
+  response:
+    body: {string: '{"token_type":"Bearer","scope":"user_impersonation","expires_in":"3599","ext_expires_in":"0","expires_on":"1477086191","not_before":"1477082291","resource":"https://vault.azure.net","access_token":"eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsIng1dCI6Ikk2b0J3NFZ6QkhPcWxlR3JWMkFKZEE1RW1YYyIsImtpZCI6Ikk2b0J3NFZ6QkhPcWxlR3JWMkFKZEE1RW1YYyJ9.eyJhdWQiOiJodHRwczovL3ZhdWx0LmF6dXJlLm5ldCIsImlzcyI6Imh0dHBzOi8vc3RzLndpbmRvd3MubmV0LzU0ODI2YjIyLTM4ZDYtNGZiMi1iYWQ5LWI3YjkzYTNlOWM1YS8iLCJpYXQiOjE0NzcwODIyOTEsIm5iZiI6MTQ3NzA4MjI5MSwiZXhwIjoxNDc3MDg2MTkxLCJhY3IiOiIxIiwiYW1yIjpbInB3ZCJdLCJhcHBpZCI6IjA0YjA3Nzk1LThkZGItNDYxYS1iYmVlLTAyZjllMWJmN2I0NiIsImFwcGlkYWNyIjoiMCIsImZhbWlseV9uYW1lIjoiQWRtaW4yIiwiZ2l2ZW5fbmFtZSI6IkFkbWluMiIsImdyb3VwcyI6WyJlNGJiMGI1Ni0xMDE0LTQwZjgtODhhYi0zZDhhOGNiMGUwODYiLCI2Yjk3NzYxYS1kN2QwLTQ4ZjYtYWQ1Ni1mMzhkMzI3Yzg1NTMiXSwiaXBhZGRyIjoiMTY3LjIyMC4wLjE4NiIsIm5hbWUiOiJBZG1pbjIiLCJvaWQiOiI1OTYzZjUwYy03YzQzLTQwNWMtYWY3ZS01MzI5NGRlNzZhYmQiLCJwdWlkIjoiMTAwM0JGRkQ5NTlGODQyMyIsInNjcCI6InVzZXJfaW1wZXJzb25hdGlvbiIsInN1YiI6InB1QWlLRzRBMGE3VUE0ZHhZM1VNWEY4amtxZHRWSDhoMVAzY0tNMDJocWsiLCJ0aWQiOiI1NDgyNmIyMi0zOGQ2LTRmYjItYmFkOS1iN2I5M2EzZTljNWEiLCJ1bmlxdWVfbmFtZSI6ImFkbWluMkBBenVyZVNES1RlYW0ub25taWNyb3NvZnQuY29tIiwidXBuIjoiYWRtaW4yQEF6dXJlU0RLVGVhbS5vbm1pY3Jvc29mdC5jb20iLCJ2ZXIiOiIxLjAifQ.KrfjEC8VwEgXmoqEMQTNi0-yG7AE6enodVRwAXGCj4kRDGFF3MXySONW3Q1Ye2_K3zNDgVJHU8fBNtNfgNEMPEbyD7BsIWeZgdGQdHW5WWAmWNmDOaG_vWHN3poXZz-uAq35RGsXWXmxKYs7YElc9LVouNt39xqFGt2CWkGdeyYTiU8pblTqUKYMGpOo7hoYjFqX5cmXbx2rPTkyfbjtZ75w45tcI42xNO9PWGy2oy3LNpwTY9291sCx3iK_ZZhQrAwLR0HbgsBeNNdIiMSI3REPLQFD7rho_pPo5Z2uuul_WElti9Vyb6qb37VwGSw-_rZit7KgtpAOiA0JM821MA","refresh_token":"AQABAAAAAADRNYRQ3dhRSrm-4K-adpCJ-nydH_in32tHBEJGw_HmWB6AzDUK_jmzUisp6nvW6PaKiiz-mBRR98G10GCIT1h0CfHPTcWUO7o-KfgOv5KWoUUY4YLH3ztbUEf2ihBDAciMWpLuvs_SbnfF6leLgBmGSA8pJGwX2cJS1ReOfqUm6JU19RDQiHRPyt8xteywWkXGXu_yJY5cnQ6ScdWuofUPm8KP1pHaJqqHrkaycLCRBX8Gd0flYxeENqs2kC_e3kQYiXgEv4u3_heTdTGNNs_pHEq8a5iCSMtWi9_wX9c4Spk3J2-05yduF1jedsKJp6m75eEbKsWe3f7_24JvxOw9L1PuaTOZiP8MNnChKRR-evEaGkwpkOj2y4597PpgGhoZ3P6j4SvWz_aOhE_84yICUpA-KTT3IUtP7c3XdZZT2DS1eKsdXgm2evtFS639EbAnkvOjKu7DVGGiikldthNLhd-sD7YWv91HIF7oul2p62lHqGgsqqQWzMA_P90uE05QiX_Ss39lAIVVqIMB0tKWyUZ2yQ3JLbKxG1wiz9fo_WJt2Q1qlnEvN4ahizevLkRNUlZFzcmMShw8UOYry3m24UTyjwz5vLRbc-58kI0YBT8ZQTzvlqyNNCaFME-74E4gAA"}'}
+    headers:
+      Cache-Control: ['no-cache, no-store']
+      Content-Length: ['2307']
+      Content-Type: [application/json; charset=utf-8]
+      Date: ['Fri, 21 Oct 2016 20:43:11 GMT']
+      Expires: ['-1']
+      P3P: [CP="DSP CUR OTPi IND OTRi ONL FIN"]
+      Pragma: [no-cache]
+      Server: [Microsoft-IIS/8.5]
+      Set-Cookie: [esctx=AQABAAAAAADRNYRQ3dhRSrm-4K-adpCJ5NUcUl0v57MDI72CcQ0imu5Lcu4fmnCOjVb6oaGyqRBlPdzX0goR89m8yaVPDRiS2hDwhnkDFXgaTSsj8Rpwttb1W8xZ0lIq_3NWWTQ1hE5JzneIGIfFunfm4vw9IaQ_nig1z7ow_HZnWB45729jQYNxHuN_u9cDmZJYI7s03iUgAA;
+          domain=.login.microsoftonline.com; path=/; secure; HttpOnly, x-ms-gateway-slice=productiona;
+          path=/; secure; HttpOnly, stsservicecookie=ests; path=/; secure; HttpOnly]
+      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
+      X-Content-Type-Options: [nosniff]
+      X-Powered-By: [ASP.NET]
+      client-request-id: [6728c05b-ab1d-4638-a257-f8c49d55a165]
+      x-ms-request-id: [41f0cef8-9d5b-434e-9a8d-fe91b808b488]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.5.1 (Windows-10-10.0.14393-SP0) requests/2.11.1 msrest/0.4.4
+          msrest_azure/0.4.3 keyvaultclient/0.30.0rc6 Azure-SDK-For-Python]
+      accept-language: [en-US]
+      x-ms-client-request-id: [faa304ac-97ce-11e6-8346-a0b3ccf7272a]
+    method: GET
+    uri: https://python-sdk-test-keyvault.vault.azure.net/keys/pythonKey-versioned/versions?api-version=2015-06-01
+  response:
+    body: {string: '{"value":[{"kid":"https://python-sdk-test-keyvault.vault.azure.net/keys/pythonKey-versioned/31d0fbc0049b42acb4087c8fb9e81780","attributes":{"enabled":true,"created":1477082589,"updated":1477082589}},{"kid":"https://python-sdk-test-keyvault.vault.azure.net/keys/pythonKey-versioned/3bb62179908c4c30a4f3b9abb9a5a318","attributes":{"enabled":true,"created":1477082588,"updated":1477082588}}],"nextLink":null}'}
+    headers:
+      Cache-Control: [no-cache]
+      Content-Length: ['405']
+      Content-Type: [application/json; charset=utf-8]
+      Date: ['Fri, 21 Oct 2016 20:43:09 GMT']
+      Expires: ['-1']
+      Pragma: [no-cache]
+      Server: [Microsoft-IIS/8.5]
+      Strict-Transport-Security: [max-age=31536000;includeSubDomains]
+      X-AspNet-Version: [4.0.30319]
+      X-Content-Type-Options: [nosniff]
+      X-Powered-By: [ASP.NET]
+      x-ms-keyvault-region: [westus]
+      x-ms-keyvault-service-version: [1.0.0.781]
+      x-ms-request-id: [595ce2ed-4136-46fa-bbd4-98a39ded9d13]
+    status: {code: 200, message: OK}
+- request:
+    body: password=Test124%21%40%24&resource=https%3A%2F%2Fmanagement.core.windows.net%2F&client_id=04b07795-8ddb-461a-bbee-02f9e1bf7b46&grant_type=password&username=admin2%40azuresdkteam.onmicrosoft.com
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['193']
+      Content-Type: [application/x-www-form-urlencoded;charset=UTF-8]
+      User-Agent: [python-requests/2.11.1]
+    method: POST
+    uri: https://login.microsoftonline.com/common/oauth2/token
+  response:
+    body: {string: '{"token_type":"Bearer","scope":"user_impersonation","expires_in":"3600","ext_expires_in":"0","expires_on":"1477087192","not_before":"1477083292","resource":"https://management.core.windows.net/","access_token":"eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsIng1dCI6Ikk2b0J3NFZ6QkhPcWxlR3JWMkFKZEE1RW1YYyIsImtpZCI6Ikk2b0J3NFZ6QkhPcWxlR3JWMkFKZEE1RW1YYyJ9.eyJhdWQiOiJodHRwczovL21hbmFnZW1lbnQuY29yZS53aW5kb3dzLm5ldC8iLCJpc3MiOiJodHRwczovL3N0cy53aW5kb3dzLm5ldC81NDgyNmIyMi0zOGQ2LTRmYjItYmFkOS1iN2I5M2EzZTljNWEvIiwiaWF0IjoxNDc3MDgzMjkyLCJuYmYiOjE0NzcwODMyOTIsImV4cCI6MTQ3NzA4NzE5MiwiYWNyIjoiMSIsImFtciI6WyJwd2QiXSwiYXBwaWQiOiIwNGIwNzc5NS04ZGRiLTQ2MWEtYmJlZS0wMmY5ZTFiZjdiNDYiLCJhcHBpZGFjciI6IjAiLCJmYW1pbHlfbmFtZSI6IkFkbWluMiIsImdpdmVuX25hbWUiOiJBZG1pbjIiLCJncm91cHMiOlsiZTRiYjBiNTYtMTAxNC00MGY4LTg4YWItM2Q4YThjYjBlMDg2IiwiNmI5Nzc2MWEtZDdkMC00OGY2LWFkNTYtZjM4ZDMyN2M4NTUzIl0sImlwYWRkciI6IjE2Ny4yMjAuMC4xODYiLCJuYW1lIjoiQWRtaW4yIiwib2lkIjoiNTk2M2Y1MGMtN2M0My00MDVjLWFmN2UtNTMyOTRkZTc2YWJkIiwicHVpZCI6IjEwMDNCRkZEOTU5Rjg0MjMiLCJzY3AiOiJ1c2VyX2ltcGVyc29uYXRpb24iLCJzdWIiOiJzRGdleFJ3Q05JZlktaHpRampDRHZaVDdJemRmbzRTeXJyNHgwZEROelI0IiwidGlkIjoiNTQ4MjZiMjItMzhkNi00ZmIyLWJhZDktYjdiOTNhM2U5YzVhIiwidW5pcXVlX25hbWUiOiJhZG1pbjJAQXp1cmVTREtUZWFtLm9ubWljcm9zb2Z0LmNvbSIsInVwbiI6ImFkbWluMkBBenVyZVNES1RlYW0ub25taWNyb3NvZnQuY29tIiwidmVyIjoiMS4wIiwid2lkcyI6WyI2MmU5MDM5NC02OWY1LTQyMzctOTE5MC0wMTIxNzcxNDVlMTAiXX0.f7MoYEtCKGy8KKcllOiHLcKZG2MJm7FKMVonn2MQVSjOoAxSxRciE7Sz87dArsYmx4a6dPO63TonPBay4-RbcUws0kY9ncwlaFA0mOU83OttfE_PRRqgrltmkBu2WDelRKBRdQGtR1gk15GO8m8aXaLwpeH3nu1WUfCZiI0Qpxb6fkc_NGqxBMSGFO9pfSgQ7-MV8YYEgZrEm4NVe1u9WcoQhsZVAD6ouT0PhLmMQsilO4Ep6-pbOuCl6HmQh-n0ygxEKs-2Umlr6eFWLTPxpmLrLArW_jNtDY7LJz5sjVvegq4ckjs6dNCh2bRNbjTPWmuDWQoee75-MYXdzb5ynw","refresh_token":"AQABAAAAAADRNYRQ3dhRSrm-4K-adpCJsy_9a7DiWq35PY1iZnm_DAY6Yy4ueGxzhNW2xGd9tZ-r11prA-L2eJlqUyN6Y611skZz002S2Cu6gcIyGnlJf-Jf4P-dzofIDvXdxjDcb0iZD0sd_ar4vS9XOI8zGYh0ee9NdVuffB4sh1t1y3kqUnaZwXSq5srAShlsRKTahdrY_Rg6C9qZrrZYHHt30Rxqa4VVGwzhGzP9l1Zf0PytR8FW-mo1ASxcZLWEXwRbtZMUbWU-MI-_YUeQHOzHAr85S95aYf19NpefPDqyzduqz95Dgpoi0x2ry2JA__K-00lRjdQDv7dXqFKqXUvKfaOpVOKrqyb16AVVIsJr0ck9q7_1lUMbAB1Ifk77-cHIY7XacG0-U6xKvTOtWq7vJyHiU_ySPIqJnK713-HDgko_AJsXUA1e6vNqS0N-vd7kMc4aX9J5MpwXPgNlJoqlm7xW4rTkvO95L8ysQVey3tkUgoATSqGMD53hDhj80cvhlcUccxyznzqHU6C8BOUc1m8PVoJtp4eAnxUKVxYAU0joTl6kpSUVEEh89ZeU06VusGTMm-YKIgw-Dnf8XKqDoWRKGvx1TJAUwuswy-NLp73DtTKTjnXtjy35-XJW4SI9urlWGVejD-T_M42jeo0ea8lLIAA"}'}
+    headers:
+      Cache-Control: ['no-cache, no-store']
+      Content-Length: ['2422']
+      Content-Type: [application/json; charset=utf-8]
+      Date: ['Fri, 21 Oct 2016 20:59:51 GMT']
+      Expires: ['-1']
+      P3P: [CP="DSP CUR OTPi IND OTRi ONL FIN"]
+      Pragma: [no-cache]
+      Server: [Microsoft-IIS/8.5]
+      Set-Cookie: [esctx=AQABAAAAAADRNYRQ3dhRSrm-4K-adpCJ7-egeLW8fQWVxKA5C-x6yuc7nV740WwNcz7aOPJxFE9RpegTlVCWcDnPXrcOewOmP9Qb5FmlABPGjwqf_0bSAzdQmE-U51tIs64rUvNyRWa7GHQotlF5yCuG8Q0JlulEydFvVCRQFSoGBMMcgpnLT5bzPuLgF1qqqVzZJnmuyLEgAA;
+          domain=.login.microsoftonline.com; path=/; secure; HttpOnly, x-ms-gateway-slice=productiona;
+          path=/; secure; HttpOnly, stsservicecookie=ests; path=/; secure; HttpOnly]
+      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
+      X-Content-Type-Options: [nosniff]
+      X-Powered-By: [ASP.NET]
+      client-request-id: [57bf0ad1-5be9-46c0-b8f5-dcc7f750eb35]
+      x-ms-request-id: [d2fc725b-65c7-4bce-b404-8975e1467e73]
+    status: {code: 200, message: OK}
+- request:
+    body: password=Test124%21%40%24&resource=https%3A%2F%2Fvault.azure.net&client_id=04b07795-8ddb-461a-bbee-02f9e1bf7b46&grant_type=password&username=admin2%40azuresdkteam.onmicrosoft.com
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['178']
+      Content-Type: [application/x-www-form-urlencoded;charset=UTF-8]
+      User-Agent: [python-requests/2.11.1]
+    method: POST
+    uri: https://login.microsoftonline.com/common/oauth2/token
+  response:
+    body: {string: '{"token_type":"Bearer","scope":"user_impersonation","expires_in":"3600","ext_expires_in":"0","expires_on":"1477087191","not_before":"1477083291","resource":"https://vault.azure.net","access_token":"eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsIng1dCI6Ikk2b0J3NFZ6QkhPcWxlR3JWMkFKZEE1RW1YYyIsImtpZCI6Ikk2b0J3NFZ6QkhPcWxlR3JWMkFKZEE1RW1YYyJ9.eyJhdWQiOiJodHRwczovL3ZhdWx0LmF6dXJlLm5ldCIsImlzcyI6Imh0dHBzOi8vc3RzLndpbmRvd3MubmV0LzU0ODI2YjIyLTM4ZDYtNGZiMi1iYWQ5LWI3YjkzYTNlOWM1YS8iLCJpYXQiOjE0NzcwODMyOTEsIm5iZiI6MTQ3NzA4MzI5MSwiZXhwIjoxNDc3MDg3MTkxLCJhY3IiOiIxIiwiYW1yIjpbInB3ZCJdLCJhcHBpZCI6IjA0YjA3Nzk1LThkZGItNDYxYS1iYmVlLTAyZjllMWJmN2I0NiIsImFwcGlkYWNyIjoiMCIsImZhbWlseV9uYW1lIjoiQWRtaW4yIiwiZ2l2ZW5fbmFtZSI6IkFkbWluMiIsImdyb3VwcyI6WyJlNGJiMGI1Ni0xMDE0LTQwZjgtODhhYi0zZDhhOGNiMGUwODYiLCI2Yjk3NzYxYS1kN2QwLTQ4ZjYtYWQ1Ni1mMzhkMzI3Yzg1NTMiXSwiaXBhZGRyIjoiMTY3LjIyMC4wLjE4NiIsIm5hbWUiOiJBZG1pbjIiLCJvaWQiOiI1OTYzZjUwYy03YzQzLTQwNWMtYWY3ZS01MzI5NGRlNzZhYmQiLCJwdWlkIjoiMTAwM0JGRkQ5NTlGODQyMyIsInNjcCI6InVzZXJfaW1wZXJzb25hdGlvbiIsInN1YiI6InB1QWlLRzRBMGE3VUE0ZHhZM1VNWEY4amtxZHRWSDhoMVAzY0tNMDJocWsiLCJ0aWQiOiI1NDgyNmIyMi0zOGQ2LTRmYjItYmFkOS1iN2I5M2EzZTljNWEiLCJ1bmlxdWVfbmFtZSI6ImFkbWluMkBBenVyZVNES1RlYW0ub25taWNyb3NvZnQuY29tIiwidXBuIjoiYWRtaW4yQEF6dXJlU0RLVGVhbS5vbm1pY3Jvc29mdC5jb20iLCJ2ZXIiOiIxLjAifQ.OOFNU2PIw8VGwoak6DIimakLyr3uC6OuDURo5q6c-x-JkalRipyCSkHIqvlDWACsJWxnsEIxoVcP44wIdhjRUGp3neTFO3WapuldOkUulYkHfbOoAxFTsBgEzkPSnuuErRIAfOpGNBVUMsC_5il5t3xfj6ov7Z3VskOINpTGT-50xmR2dbT7wJUvuPncxFGFfvuOO1wvHsXfjK7YuBadtiAdwMtjm2IIQS4qc_sfP5hbJMtTsmpq2VAI4KhXl_QyQqwZ29yM4gzyk2KyPkJPlVUUBDoB5bA7AJJ4Ql7_V414nHA25fsVd9oXL7lUJ6urs-LZnGkJbXsgCZjYRl-KQA","refresh_token":"AQABAAAAAADRNYRQ3dhRSrm-4K-adpCJpW4JpLi2zdbHN0h0TlIwrxCe7ZTLeGuaVV7d3rS3BiGJ-chKjQLWDyJXpAT6-rOvC26CmcSdUOxIvlME5wmeG_YaQE-Rm0Lk0o8a2SODQ7vFLKQTZkKkopbPd4mO8auJ2n084i4p6hNppiYRD7-bIiVdKdedcVlZ2ahseJb8fo_paN4B_lonwHn7MiEDvyUsNWyqlh5qbbJ7rB7zeKlEe2LpZNltTFvobELVw8NkirtoDbifs1IxQ_cnf9yhsGj7xJ661OK63Epv_JXqygvVhTZwKyHYq7PzvGl3J34JhllSNTyH3e9Q_dqB8cVM4eWq_MoQQAWZK5xiVCme6ScTa1OOWociwF05uvfBVqyAK4vjVYJb1nHGF3IFSpDgCoIzxbufs-Cv95oKgs_uIKoAH6LpVyAd2x345_iO1tHtV9Mpr1_fJV5ng8XJlZi-GpCpR32Ww7-WstLqL1GLG-qvopwFwAS4nOzrT1gD47Ew9olrn0SYy5heEw86rFbW6rs0JeH8tsh8mlnEh3oJ-tGknM_iWbl1uJFzLuSuCRpLblRVx0Zf1nQEMvejwpLP92iaa-SAYUFkMDiUweadoFu5s-mQ3uzJ9vfIPL_RYX_oiK4gAA"}'}
+    headers:
+      Cache-Control: ['no-cache, no-store']
+      Content-Length: ['2307']
+      Content-Type: [application/json; charset=utf-8]
+      Date: ['Fri, 21 Oct 2016 20:59:51 GMT']
+      Expires: ['-1']
+      P3P: [CP="DSP CUR OTPi IND OTRi ONL FIN"]
+      Pragma: [no-cache]
+      Server: [Microsoft-IIS/8.5]
+      Set-Cookie: [esctx=AQABAAAAAADRNYRQ3dhRSrm-4K-adpCJtNTPVt3vyxwceimRAei6We1-p7cDDcwKuMfZ1zaH7E23JCV1jsC2psThDvcCGp0alZZLyu9RonXpSAiVku8piGkvGay9fdEpcGBSCrt5IqffVM4r9nVkCSgONmDw5MQEG0duXFqXIggGDgKNOqweV1RlfAtRGOuzEiIjTsf5PE4gAA;
+          domain=.login.microsoftonline.com; path=/; secure; HttpOnly, x-ms-gateway-slice=productiona;
+          path=/; secure; HttpOnly, stsservicecookie=ests; path=/; secure; HttpOnly]
+      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
+      X-Content-Type-Options: [nosniff]
+      X-Powered-By: [ASP.NET]
+      client-request-id: [8065004f-60c7-4bdf-9ca0-bd797669cf06]
+      x-ms-request-id: [18ae1e8e-ce1a-42ba-85cc-5d348f4a2551]
+    status: {code: 200, message: OK}
+- request:
+    body: '{"kty": "RSA"}'
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['14']
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.5.1 (Windows-10-10.0.14393-SP0) requests/2.11.1 msrest/0.4.4
+          msrest_azure/0.4.3 keyvaultclient/0.30.0rc6 Azure-SDK-For-Python]
+      accept-language: [en-US]
+      x-ms-client-request-id: [4ee0d38c-97d1-11e6-a103-a0b3ccf7272a]
+    method: POST
+    uri: https://python-sdk-test-keyvault.vault.azure.net/keys/pythonKey-versioned/create?api-version=2015-06-01
+  response:
+    body: {string: '{"key":{"kid":"https://python-sdk-test-keyvault.vault.azure.net/keys/pythonKey-versioned/9e93f336ca5347788ad251d559dcbad0","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"v_Vyy_zx-wLEpeVbThI-uPbsVc6SeQDNOSS6nbmTghxH5leuAUGGXBULa4ozEn-1BiURlrN1-NVeR4BHa542JE81OHT-2YmMgRi3ULg3sdGRkiOMPbrslrstZUZWHib8xF0B22KBHTXLX9XuH0R3vkc81zGzedDiIYZmm5EuYaWx0_Gm_Csu2cH_VMnjIr-W7Ef2X9q_fUsL2PsFiusZRwZDmBn4YtQVPP1sC8uVv9zpoVdwNo8idH3kjpMdXY-SHJwPIbQ6yRt3DJ7M47r2U90qRTgfuh_tvZkftXpKRPKaJOJkxB6UbKpzj4CsNRupknUOAHosPFfm-JAWi2AkpQ","e":"AQAB"},"attributes":{"enabled":true,"created":1477083591,"updated":1477083591}}'}
+    headers:
+      Cache-Control: [no-cache]
+      Content-Length: ['638']
+      Content-Type: [application/json; charset=utf-8]
+      Date: ['Fri, 21 Oct 2016 20:59:50 GMT']
+      Expires: ['-1']
+      Pragma: [no-cache]
+      Server: [Microsoft-IIS/8.5]
+      Strict-Transport-Security: [max-age=31536000;includeSubDomains]
+      X-AspNet-Version: [4.0.30319]
+      X-Content-Type-Options: [nosniff]
+      X-Powered-By: [ASP.NET]
+      x-ms-keyvault-region: [westus]
+      x-ms-keyvault-service-version: [1.0.0.781]
+      x-ms-request-id: [204bded4-ad18-4eec-b875-94b299d335f4]
+    status: {code: 200, message: OK}
+- request:
+    body: password=Test124%21%40%24&resource=https%3A%2F%2Fmanagement.core.windows.net%2F&client_id=04b07795-8ddb-461a-bbee-02f9e1bf7b46&grant_type=password&username=admin2%40azuresdkteam.onmicrosoft.com
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['193']
+      Content-Type: [application/x-www-form-urlencoded;charset=UTF-8]
+      User-Agent: [python-requests/2.11.1]
+    method: POST
+    uri: https://login.microsoftonline.com/common/oauth2/token
+  response:
+    body: {string: '{"token_type":"Bearer","scope":"user_impersonation","expires_in":"3599","ext_expires_in":"0","expires_on":"1477087191","not_before":"1477083291","resource":"https://management.core.windows.net/","access_token":"eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsIng1dCI6Ikk2b0J3NFZ6QkhPcWxlR3JWMkFKZEE1RW1YYyIsImtpZCI6Ikk2b0J3NFZ6QkhPcWxlR3JWMkFKZEE1RW1YYyJ9.eyJhdWQiOiJodHRwczovL21hbmFnZW1lbnQuY29yZS53aW5kb3dzLm5ldC8iLCJpc3MiOiJodHRwczovL3N0cy53aW5kb3dzLm5ldC81NDgyNmIyMi0zOGQ2LTRmYjItYmFkOS1iN2I5M2EzZTljNWEvIiwiaWF0IjoxNDc3MDgzMjkxLCJuYmYiOjE0NzcwODMyOTEsImV4cCI6MTQ3NzA4NzE5MSwiYWNyIjoiMSIsImFtciI6WyJwd2QiXSwiYXBwaWQiOiIwNGIwNzc5NS04ZGRiLTQ2MWEtYmJlZS0wMmY5ZTFiZjdiNDYiLCJhcHBpZGFjciI6IjAiLCJmYW1pbHlfbmFtZSI6IkFkbWluMiIsImdpdmVuX25hbWUiOiJBZG1pbjIiLCJncm91cHMiOlsiZTRiYjBiNTYtMTAxNC00MGY4LTg4YWItM2Q4YThjYjBlMDg2IiwiNmI5Nzc2MWEtZDdkMC00OGY2LWFkNTYtZjM4ZDMyN2M4NTUzIl0sImlwYWRkciI6IjE2Ny4yMjAuMC4xODYiLCJuYW1lIjoiQWRtaW4yIiwib2lkIjoiNTk2M2Y1MGMtN2M0My00MDVjLWFmN2UtNTMyOTRkZTc2YWJkIiwicHVpZCI6IjEwMDNCRkZEOTU5Rjg0MjMiLCJzY3AiOiJ1c2VyX2ltcGVyc29uYXRpb24iLCJzdWIiOiJzRGdleFJ3Q05JZlktaHpRampDRHZaVDdJemRmbzRTeXJyNHgwZEROelI0IiwidGlkIjoiNTQ4MjZiMjItMzhkNi00ZmIyLWJhZDktYjdiOTNhM2U5YzVhIiwidW5pcXVlX25hbWUiOiJhZG1pbjJAQXp1cmVTREtUZWFtLm9ubWljcm9zb2Z0LmNvbSIsInVwbiI6ImFkbWluMkBBenVyZVNES1RlYW0ub25taWNyb3NvZnQuY29tIiwidmVyIjoiMS4wIiwid2lkcyI6WyI2MmU5MDM5NC02OWY1LTQyMzctOTE5MC0wMTIxNzcxNDVlMTAiXX0.k5rTHaZoquSWAG_nhbx6Ncp-cLra45Z95iCVMP8oQvI-uzchSYf5kgaKILutLrim6yugOz1zYuOaVDGM-HG2L_PtwFKCM3d1JdjX3rpaLQAbjkDWQblXeu3vwkX3hOyn34pJdPdhCL28HlOnK6WNrTKtwy3BcoXyU-dT0fhNmpmbZS3gPJeJF1ATrb-kDVooeiGJCNCbo9xls15e6Ip6Tud_aRS2HsrxNKXVKmfBoB1bg6IESMYj4UH3DTdOBUTibdpgtpQVi6IykEFVdQTvJK1ggUhDpGdyBdMpn9pJrM_iEk1BOOHjBm3CDDJAiPTV7CWyFeO0snG_7AhRGaKc3w","refresh_token":"AQABAAAAAADRNYRQ3dhRSrm-4K-adpCJsImD071rfvq_sav43xh2nMtPhlPdZ5zyE7rNm7WgWYDO_reZHIFxGtq0cQNqMu9WPUj0-SkQLexDfV8js5dEzAfPZhdKL5jmiIFlGUq0WQXxg8X7fe0NMTHWjboY3noag4Pu7Ze-Z3NN_giXBMoZZ-hZviGT45f7AyTc-ow60h8zKYi2jjkLbLi7wVTeVkqwKyHSUmcuBzcA__v_Z33oujfu8pN7YPFzJ0rw3uPQc8xS8rKqNnLuRMLAb3iZ-jr58ixcOh_j9aBzTfogwrRHWv3-V0cEkg8TvUS5LPgT3PeKHfuDXfYuf9UEeaRQcETAZ1zkPzB44370Acu2PD0tUAAiRFcKUTMWjhhgONXnaf6ddKcqBUSnW8sQivxKl8lvYMsTSYbH7OxT8AyVQ6PlXmrrMDSiwEnLfMsSLs8VPDrIkLg-sVZuXZmxKEaBD0C905MR-gtkLSTcFhhPVGf9ajn_wyiwVOLAegUULgsb66xkHflKfWrbJaph4NBtxvAMQA4pg-yY0488uIXMI3RPMcmHo1ikXS_QsC5JFUbshO_dtFRGACLOhtUQnXI3JNw6juz-PgpgSmsZZPH_O4JSISRyCocglU11V8E8SqIsTSW99KAnTbtM9GqSZ3yq_wUMIAA"}'}
+    headers:
+      Cache-Control: ['no-cache, no-store']
+      Content-Length: ['2422']
+      Content-Type: [application/json; charset=utf-8]
+      Date: ['Fri, 21 Oct 2016 20:59:51 GMT']
+      Expires: ['-1']
+      P3P: [CP="DSP CUR OTPi IND OTRi ONL FIN"]
+      Pragma: [no-cache]
+      Server: [Microsoft-IIS/8.5]
+      Set-Cookie: [esctx=AQABAAAAAADRNYRQ3dhRSrm-4K-adpCJaftrxHVesuwKYV8PBgaAJzAw4HFB2ukQY0Ve2VGivmQOLiqZNXg-goDk94xULCkt6GDauoxH6gKe0ANVxblM3UCHgpghpTDpDruGXugAheVD0o6HFp0tHxoej9hRdHPi1NvfLXG-2u-BFx4Zq2Tpf6NvrAnZX90SGyKH5m-Z3OMgAA;
+          domain=.login.microsoftonline.com; path=/; secure; HttpOnly, x-ms-gateway-slice=productiona;
+          path=/; secure; HttpOnly, stsservicecookie=ests; path=/; secure; HttpOnly]
+      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
+      X-Content-Type-Options: [nosniff]
+      X-Powered-By: [ASP.NET]
+      client-request-id: [545c6493-3b6b-4c08-b415-af2bba3d9071]
+      x-ms-request-id: [79e109db-94a6-47dc-9dd3-d2ad79632a1a]
+    status: {code: 200, message: OK}
+- request:
+    body: password=Test124%21%40%24&resource=https%3A%2F%2Fvault.azure.net&client_id=04b07795-8ddb-461a-bbee-02f9e1bf7b46&grant_type=password&username=admin2%40azuresdkteam.onmicrosoft.com
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['178']
+      Content-Type: [application/x-www-form-urlencoded;charset=UTF-8]
+      User-Agent: [python-requests/2.11.1]
+    method: POST
+    uri: https://login.microsoftonline.com/common/oauth2/token
+  response:
+    body: {string: '{"token_type":"Bearer","scope":"user_impersonation","expires_in":"3599","ext_expires_in":"0","expires_on":"1477087192","not_before":"1477083292","resource":"https://vault.azure.net","access_token":"eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsIng1dCI6Ikk2b0J3NFZ6QkhPcWxlR3JWMkFKZEE1RW1YYyIsImtpZCI6Ikk2b0J3NFZ6QkhPcWxlR3JWMkFKZEE1RW1YYyJ9.eyJhdWQiOiJodHRwczovL3ZhdWx0LmF6dXJlLm5ldCIsImlzcyI6Imh0dHBzOi8vc3RzLndpbmRvd3MubmV0LzU0ODI2YjIyLTM4ZDYtNGZiMi1iYWQ5LWI3YjkzYTNlOWM1YS8iLCJpYXQiOjE0NzcwODMyOTIsIm5iZiI6MTQ3NzA4MzI5MiwiZXhwIjoxNDc3MDg3MTkyLCJhY3IiOiIxIiwiYW1yIjpbInB3ZCJdLCJhcHBpZCI6IjA0YjA3Nzk1LThkZGItNDYxYS1iYmVlLTAyZjllMWJmN2I0NiIsImFwcGlkYWNyIjoiMCIsImZhbWlseV9uYW1lIjoiQWRtaW4yIiwiZ2l2ZW5fbmFtZSI6IkFkbWluMiIsImdyb3VwcyI6WyJlNGJiMGI1Ni0xMDE0LTQwZjgtODhhYi0zZDhhOGNiMGUwODYiLCI2Yjk3NzYxYS1kN2QwLTQ4ZjYtYWQ1Ni1mMzhkMzI3Yzg1NTMiXSwiaXBhZGRyIjoiMTY3LjIyMC4wLjE4NiIsIm5hbWUiOiJBZG1pbjIiLCJvaWQiOiI1OTYzZjUwYy03YzQzLTQwNWMtYWY3ZS01MzI5NGRlNzZhYmQiLCJwdWlkIjoiMTAwM0JGRkQ5NTlGODQyMyIsInNjcCI6InVzZXJfaW1wZXJzb25hdGlvbiIsInN1YiI6InB1QWlLRzRBMGE3VUE0ZHhZM1VNWEY4amtxZHRWSDhoMVAzY0tNMDJocWsiLCJ0aWQiOiI1NDgyNmIyMi0zOGQ2LTRmYjItYmFkOS1iN2I5M2EzZTljNWEiLCJ1bmlxdWVfbmFtZSI6ImFkbWluMkBBenVyZVNES1RlYW0ub25taWNyb3NvZnQuY29tIiwidXBuIjoiYWRtaW4yQEF6dXJlU0RLVGVhbS5vbm1pY3Jvc29mdC5jb20iLCJ2ZXIiOiIxLjAifQ.UrRaY71_PfWbd1VZ-sNiJBW5Hf3Q1sojQQ6GAwTmc5Vs4WyPJG-WCvs3aP6wxawj2cLeIJC5ttDmffZL6dbHSNfQWKSHbmI37AK2_ynlyhZbfp3dlhFxXplpTOE1wesSXJnbFKMjE6GFZV2Ym3Ji3GteiItNnozW_H9wjnkUF1l_6kRNAPbwj7_vEiK-g8zQH6dT-Rfxds3hVvv8pgGLwa3Rw-MCDBiwH7ZroJiGMpqFriQpmoi5VK_up_OWqbN-0LeN-w4BynyJGOYFhYWE0HZLl1rePKG7fas_mEb6wzWYp1s0t-bBHHJV_jCEOe8IB0hjd_DUh7C3HWV2MxzgyA","refresh_token":"AQABAAAAAADRNYRQ3dhRSrm-4K-adpCJXD0CdEkgpcJ65MyukKaZX8NayTbdWP0o8qU9mHb5GblE0Zl-yM2pYisRlRUFeQeY_vXhfspdAEjSR_a4qdcF8wTXJRV62YtU01hkgGasZ2Fhv-B-iyU-durtglcTZDs0V-_gZpmkK_Y62BOQ8-bhiW0QF8lS5PrSwBkh89m9Dt7QyJFcq9dEj1sPEh3PdiVVpfopNdEoLIL4tVB-lUgs-ubsYZCC8ySoYRckUfHO_OQPQeGHzu2E56sspbIDaYXH04G2tF6rpSA4jbi7P7eBL6VMiN02AucWB775XjBauzitexoQRgL6odywx4zIkLBKVscPdoIM1e-LvwK0vzYLkgxhQ7dWGaYyebikfGyb30I8FNZ_EGLIfi2Pmr5V-O19V6DQYSTHh-sT8icVc13-TOoOVFBPsW9WwVURrGbmm5kk-U4sHkIZpvR_RP-GO4CImOJo_Z_d4TS-qm7yuWri2D2uUH6d-d0yV-xdE6P5QNQWEErtZ3bHYTO18NdKVpzMA5PW1WM526HwOD3ladmX4qMK1RK4OT0sT9EPkf16EyM0L_ZF7Kssf4b8ruhWTi-HaToWldevBe9m3px2pvOz0KGw6nWcQ1R8TnLbbzTecSUgAA"}'}
+    headers:
+      Cache-Control: ['no-cache, no-store']
+      Content-Length: ['2307']
+      Content-Type: [application/json; charset=utf-8]
+      Date: ['Fri, 21 Oct 2016 20:59:53 GMT']
+      Expires: ['-1']
+      P3P: [CP="DSP CUR OTPi IND OTRi ONL FIN"]
+      Pragma: [no-cache]
+      Server: [Microsoft-IIS/8.5]
+      Set-Cookie: [esctx=AQABAAAAAADRNYRQ3dhRSrm-4K-adpCJ1xe9BGhn0ZhX34BnGXnHV7wzYW5DN7ZVi7rl0hKViGObcvWLK5ENrn_RFCEbwZm4toLyii08-n96MM7UziUPbmkr0TGurNh_ME3gESr9YfdhobgnNccvx32Wb-_pjhdYwfb4HM8E3Kn4igHqEvf6q5nJI-GFZjKAvC6VXAU7LLcgAA;
+          domain=.login.microsoftonline.com; path=/; secure; HttpOnly, x-ms-gateway-slice=productiona;
+          path=/; secure; HttpOnly, stsservicecookie=ests; path=/; secure; HttpOnly]
+      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
+      X-Content-Type-Options: [nosniff]
+      X-Powered-By: [ASP.NET]
+      client-request-id: [15111958-2572-443a-9834-f82330b3d416]
+      x-ms-request-id: [675f8fa9-c51b-481b-b3a6-93cefa667ee0]
+    status: {code: 200, message: OK}
+- request:
+    body: '{"kty": "RSA"}'
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['14']
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.5.1 (Windows-10-10.0.14393-SP0) requests/2.11.1 msrest/0.4.4
+          msrest_azure/0.4.3 keyvaultclient/0.30.0rc6 Azure-SDK-For-Python]
+      accept-language: [en-US]
+      x-ms-client-request-id: [4f77b63e-97d1-11e6-9ded-a0b3ccf7272a]
+    method: POST
+    uri: https://python-sdk-test-keyvault.vault.azure.net/keys/pythonKey-versioned/create?api-version=2015-06-01
+  response:
+    body: {string: '{"key":{"kid":"https://python-sdk-test-keyvault.vault.azure.net/keys/pythonKey-versioned/87c656fd6de944968a66563ba3860c5e","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"lyaZslP7ZBQJLTUok-7dH581d1s6dU3gBYQCsO5A0J7tyABSwIm2MBBMzfNDpmJvFwdcHYOz0yRoXB8LO6C43eWwMZJLPlTguBXc0yDYlBE2rB4y0Nkm9s2NokFjdbnVcPXYLLK6t4yRKXtueVip0IBh_kD4qdxOm2ZuNnZpXDef4E203jyQyjL_U3SGDqZJZeWidAwY68CSSkfjDiFfjnQJUIjaAqh46NGbkQSxczemD2wyqW-GLeH2aeRUMKyuW2sSVSwGp6sfhOZaZS3jUAoCsT8CxB9vHWJlCZDOPSUdzpwlWtV2i7Us1WZmTBfpEvko-44Z2n2C2dybNUj7PQ","e":"AQAB"},"attributes":{"enabled":true,"created":1477083591,"updated":1477083591}}'}
+    headers:
+      Cache-Control: [no-cache]
+      Content-Length: ['638']
+      Content-Type: [application/json; charset=utf-8]
+      Date: ['Fri, 21 Oct 2016 20:59:51 GMT']
+      Expires: ['-1']
+      Pragma: [no-cache]
+      Server: [Microsoft-IIS/8.5]
+      Strict-Transport-Security: [max-age=31536000;includeSubDomains]
+      X-AspNet-Version: [4.0.30319]
+      X-Content-Type-Options: [nosniff]
+      X-Powered-By: [ASP.NET]
+      x-ms-keyvault-region: [westus]
+      x-ms-keyvault-service-version: [1.0.0.781]
+      x-ms-request-id: [6b5aaf44-7f58-4afe-8bb6-e6799d4c35ee]
+    status: {code: 200, message: OK}
+- request:
+    body: password=Test124%21%40%24&resource=https%3A%2F%2Fmanagement.core.windows.net%2F&client_id=04b07795-8ddb-461a-bbee-02f9e1bf7b46&grant_type=password&username=admin2%40azuresdkteam.onmicrosoft.com
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['193']
+      Content-Type: [application/x-www-form-urlencoded;charset=UTF-8]
+      User-Agent: [python-requests/2.11.1]
+    method: POST
+    uri: https://login.microsoftonline.com/common/oauth2/token
+  response:
+    body: {string: '{"token_type":"Bearer","scope":"user_impersonation","expires_in":"3599","ext_expires_in":"0","expires_on":"1477087194","not_before":"1477083294","resource":"https://management.core.windows.net/","access_token":"eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsIng1dCI6Ikk2b0J3NFZ6QkhPcWxlR3JWMkFKZEE1RW1YYyIsImtpZCI6Ikk2b0J3NFZ6QkhPcWxlR3JWMkFKZEE1RW1YYyJ9.eyJhdWQiOiJodHRwczovL21hbmFnZW1lbnQuY29yZS53aW5kb3dzLm5ldC8iLCJpc3MiOiJodHRwczovL3N0cy53aW5kb3dzLm5ldC81NDgyNmIyMi0zOGQ2LTRmYjItYmFkOS1iN2I5M2EzZTljNWEvIiwiaWF0IjoxNDc3MDgzMjk0LCJuYmYiOjE0NzcwODMyOTQsImV4cCI6MTQ3NzA4NzE5NCwiYWNyIjoiMSIsImFtciI6WyJwd2QiXSwiYXBwaWQiOiIwNGIwNzc5NS04ZGRiLTQ2MWEtYmJlZS0wMmY5ZTFiZjdiNDYiLCJhcHBpZGFjciI6IjAiLCJmYW1pbHlfbmFtZSI6IkFkbWluMiIsImdpdmVuX25hbWUiOiJBZG1pbjIiLCJncm91cHMiOlsiZTRiYjBiNTYtMTAxNC00MGY4LTg4YWItM2Q4YThjYjBlMDg2IiwiNmI5Nzc2MWEtZDdkMC00OGY2LWFkNTYtZjM4ZDMyN2M4NTUzIl0sImlwYWRkciI6IjE2Ny4yMjAuMC4xODYiLCJuYW1lIjoiQWRtaW4yIiwib2lkIjoiNTk2M2Y1MGMtN2M0My00MDVjLWFmN2UtNTMyOTRkZTc2YWJkIiwicHVpZCI6IjEwMDNCRkZEOTU5Rjg0MjMiLCJzY3AiOiJ1c2VyX2ltcGVyc29uYXRpb24iLCJzdWIiOiJzRGdleFJ3Q05JZlktaHpRampDRHZaVDdJemRmbzRTeXJyNHgwZEROelI0IiwidGlkIjoiNTQ4MjZiMjItMzhkNi00ZmIyLWJhZDktYjdiOTNhM2U5YzVhIiwidW5pcXVlX25hbWUiOiJhZG1pbjJAQXp1cmVTREtUZWFtLm9ubWljcm9zb2Z0LmNvbSIsInVwbiI6ImFkbWluMkBBenVyZVNES1RlYW0ub25taWNyb3NvZnQuY29tIiwidmVyIjoiMS4wIiwid2lkcyI6WyI2MmU5MDM5NC02OWY1LTQyMzctOTE5MC0wMTIxNzcxNDVlMTAiXX0.QmesongDqRq8Gk5cgOrdUorjyCWXwlLQcTUSMlgTjDOtvMgFh-s1x7eoBCGVP0hwKeo5wEgODQYIbFhoxszIFjo7zzKmPea3IP-v8Ztlw3LU-lNzVTjGV8cMxhh0NCMwaMxEf77pkZ75LZFFqYSoHJ-N0PM0hr8FBSGtHHgid3S-Cu2NBeGY_DN4yoqXCAKBPIlA6xK_w0LKEhx_RjE4RYnnM9pcvy1gduJzWgZ8r1Sx3db5Cd6k1u3w0nYlhctHeuJw8Du3JMAeda-ngotL5sWY8HWZKgED3u-o_hiS_56PS1bEh2KeV69h45qTlwnpdg7E_zWhVPj-CBbVntdgyg","refresh_token":"AQABAAAAAADRNYRQ3dhRSrm-4K-adpCJYyeDAZucaxINL_V4ItSUYeWQACBLyEdjC1Cb0fjdrsIkdoqLLJ7x4fK-CJrDyCenDTyaQ8lHA7fSxfCW27IQBY_Nr1Zw12Ydh-gsf7av5k_gh1j3e1R9k4NWwOpguwWT1-lhG_Jqr48Jy9I_KZCQq_v4EXAXa_JDP9rA9tapdlCtn2lAbPVYiSWhCtf-BRPCW_jViAdP6hUKIxloun-kmD2HU1uD7tor5-CW2xP8y95r5gBqCn28LYb2ThGJ9k0mJI13JO07mcIJYk9xbWC41N-9o-lI1v25VhMRrmcdjB6Kb5SdVawosiWikqmC1-jdI5KMYdIqczjLDxKSe8k6Jkwv6vB0MKhv4Xe6LTVz7ce-YHYT84xR3LToE2K4PcMxHheur6zKyJlk23RPuXXLSlPFxNX7DB_02WQoM9a9a0OtcrH8kTSxBzUqAnJP5V3v0KQNKDFutKLMDhJohvw5hGHJXpUkJbJnuY5kbYoLYBNksV9ivTzXlRGSx4RkSe_ZXbMtU5LZFM0lpYr3AR1WxC7l9z_e8iYiBMccM070XCE70SOuM2-iKxoTEeGt6a8RTAqZ1l8dVM_KHMk8TcPCiyb9P6tvW9TIEswA0Ez5cGvsX_tVNqNDoYZHSMDj60QhIAA"}'}
+    headers:
+      Cache-Control: ['no-cache, no-store']
+      Content-Length: ['2422']
+      Content-Type: [application/json; charset=utf-8]
+      Date: ['Fri, 21 Oct 2016 20:59:52 GMT']
+      Expires: ['-1']
+      P3P: [CP="DSP CUR OTPi IND OTRi ONL FIN"]
+      Pragma: [no-cache]
+      Server: [Microsoft-IIS/8.5]
+      Set-Cookie: [esctx=AQABAAAAAADRNYRQ3dhRSrm-4K-adpCJZW0MwMtatrN4teNO_NSBmIiJUDV5gnHW0Uwf4AYIFi9RS-BA1YPKODIw_AhY-vx5hi_lYTQtnOvZuWfz0c3NHm1jBm8-uapPfIBPggsb2n0HiL58AZbK2ExUbax7dGkvdcI4dyBwXLNrYjqF1nvN-Jbr9NM8IPg-xlaFYwvhnU0gAA;
+          domain=.login.microsoftonline.com; path=/; secure; HttpOnly, x-ms-gateway-slice=productiona;
+          path=/; secure; HttpOnly, stsservicecookie=ests; path=/; secure; HttpOnly]
+      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
+      X-Content-Type-Options: [nosniff]
+      X-Powered-By: [ASP.NET]
+      client-request-id: [6557572c-b181-4e5b-8132-a177eb2ca105]
+      x-ms-request-id: [89202224-1578-47dc-9540-1f072ee5b036]
+    status: {code: 200, message: OK}
+- request:
+    body: password=Test124%21%40%24&resource=https%3A%2F%2Fvault.azure.net&client_id=04b07795-8ddb-461a-bbee-02f9e1bf7b46&grant_type=password&username=admin2%40azuresdkteam.onmicrosoft.com
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['178']
+      Content-Type: [application/x-www-form-urlencoded;charset=UTF-8]
+      User-Agent: [python-requests/2.11.1]
+    method: POST
+    uri: https://login.microsoftonline.com/common/oauth2/token
+  response:
+    body: {string: '{"token_type":"Bearer","scope":"user_impersonation","expires_in":"3599","ext_expires_in":"0","expires_on":"1477087194","not_before":"1477083294","resource":"https://vault.azure.net","access_token":"eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsIng1dCI6Ikk2b0J3NFZ6QkhPcWxlR3JWMkFKZEE1RW1YYyIsImtpZCI6Ikk2b0J3NFZ6QkhPcWxlR3JWMkFKZEE1RW1YYyJ9.eyJhdWQiOiJodHRwczovL3ZhdWx0LmF6dXJlLm5ldCIsImlzcyI6Imh0dHBzOi8vc3RzLndpbmRvd3MubmV0LzU0ODI2YjIyLTM4ZDYtNGZiMi1iYWQ5LWI3YjkzYTNlOWM1YS8iLCJpYXQiOjE0NzcwODMyOTQsIm5iZiI6MTQ3NzA4MzI5NCwiZXhwIjoxNDc3MDg3MTk0LCJhY3IiOiIxIiwiYW1yIjpbInB3ZCJdLCJhcHBpZCI6IjA0YjA3Nzk1LThkZGItNDYxYS1iYmVlLTAyZjllMWJmN2I0NiIsImFwcGlkYWNyIjoiMCIsImZhbWlseV9uYW1lIjoiQWRtaW4yIiwiZ2l2ZW5fbmFtZSI6IkFkbWluMiIsImdyb3VwcyI6WyJlNGJiMGI1Ni0xMDE0LTQwZjgtODhhYi0zZDhhOGNiMGUwODYiLCI2Yjk3NzYxYS1kN2QwLTQ4ZjYtYWQ1Ni1mMzhkMzI3Yzg1NTMiXSwiaXBhZGRyIjoiMTY3LjIyMC4wLjE4NiIsIm5hbWUiOiJBZG1pbjIiLCJvaWQiOiI1OTYzZjUwYy03YzQzLTQwNWMtYWY3ZS01MzI5NGRlNzZhYmQiLCJwdWlkIjoiMTAwM0JGRkQ5NTlGODQyMyIsInNjcCI6InVzZXJfaW1wZXJzb25hdGlvbiIsInN1YiI6InB1QWlLRzRBMGE3VUE0ZHhZM1VNWEY4amtxZHRWSDhoMVAzY0tNMDJocWsiLCJ0aWQiOiI1NDgyNmIyMi0zOGQ2LTRmYjItYmFkOS1iN2I5M2EzZTljNWEiLCJ1bmlxdWVfbmFtZSI6ImFkbWluMkBBenVyZVNES1RlYW0ub25taWNyb3NvZnQuY29tIiwidXBuIjoiYWRtaW4yQEF6dXJlU0RLVGVhbS5vbm1pY3Jvc29mdC5jb20iLCJ2ZXIiOiIxLjAifQ.NpRyzEHD_kuTjlyBSaCI1Fk8odk8PuBu56z4aD3ZVsVYOcs0rv02L5sBGC8vWx73QYmWapuEjQlexXYJVcItKZEN3Ddi4J9M2opHpgdKd_j_UIpv8BAowRPMnqixPFuei3jsy1vZr0YaxZ_ACiftAf0H9mfXobSx-rDDuRNfsU7iwEWuwKm-pEXTXRrE7QPaxw9cTvAhDSAYpY5XLW2yZWHzJmkDt0pDqJml7kYtTVE_8O86z3IOF7bySq8N5t_dKlhKhS5jFwDiziXpxUVFlpNcXKMuVr-ji7tsu_o1Fz2Z5YKydneOUJp86itPjQywiEVjjfNiTQdPWaO4whYflQ","refresh_token":"AQABAAAAAADRNYRQ3dhRSrm-4K-adpCJlkP86IdMFqjNLciOH-xJCo2ewGLhZEkWVtQWswVVXs_ViawSqXy3LIkOxd2R6k0xHqsT21Ut-ZTxYOTFL6aKHdN9RnUB5x5tUGsiW8XckKdcSB7KFYkbENaNBgAYdUX7GfhILoAeEJn-5Pu2pikmBT261f-npqE6vMT83WT5pciELaihiShNv2WyGSeB967qBtRxedlCZSYgMaVQiJOwna5SkDdClsK0qEr8FAoQMwxr3sdNhG5u4Dp8a_oArKmdFgEqGa_j1LonrhOqK3Qz9kHHPk-gHpHNrtVDg1akbF78n2CXkhOnpNmVfOoO2oNtkZOJwUDjCAkqSYVsBGOJeZRephpj7NXrcCGDeZ3eP2tEVqQla5_JMoQpe3e--lCeHHHTE7EAaDuNAElFXR24co8cRI73c6ENjZTc564EMFwaiyne97CjnAUrnC3MNqV3HVxkttABbOJbF-lXqzcb5MfdmO8bYfgxr_b1mQm8lS-E-9-CgSMvv_487sKV41yzZTh1A7L-XQxaWE7KZciMmlhbXaN6zlBYY-iZ-RuW5PvyqrQH5NSDTq7IV1VoSY5PbCuG0CVdtfPJaIZfYVyIbF95w1d7gXPqhgpIuG6-AJIgAA"}'}
+    headers:
+      Cache-Control: ['no-cache, no-store']
+      Content-Length: ['2307']
+      Content-Type: [application/json; charset=utf-8]
+      Date: ['Fri, 21 Oct 2016 20:59:53 GMT']
+      Expires: ['-1']
+      P3P: [CP="DSP CUR OTPi IND OTRi ONL FIN"]
+      Pragma: [no-cache]
+      Server: [Microsoft-IIS/8.5]
+      Set-Cookie: [esctx=AQABAAAAAADRNYRQ3dhRSrm-4K-adpCJmfA2Rty6V7HOH72hjQsf-X-W1zAZGnmXDIbl6cSdGfuw-0bPdugJgTehydKP_03jPrYmx7AR4UQJb1RlRB5VhHaYVhQaXnx3r3pbq-Qq6pD-Pj4QW77IV4W5ga_rrV7utPH3lzYKuhyLFgA6EoXTFAXOR-zZX0Z0LkHvTHVwovUgAA;
+          domain=.login.microsoftonline.com; path=/; secure; HttpOnly, x-ms-gateway-slice=productiona;
+          path=/; secure; HttpOnly, stsservicecookie=ests; path=/; secure; HttpOnly]
+      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
+      X-Content-Type-Options: [nosniff]
+      X-Powered-By: [ASP.NET]
+      client-request-id: [2deb7a8b-0c18-44c4-be8c-37b5221fec64]
+      x-ms-request-id: [d41b1c7e-0548-45c5-9d77-10e48ce7ee29]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.5.1 (Windows-10-10.0.14393-SP0) requests/2.11.1 msrest/0.4.4
+          msrest_azure/0.4.3 keyvaultclient/0.30.0rc6 Azure-SDK-For-Python]
+      accept-language: [en-US]
+      x-ms-client-request-id: [5036c448-97d1-11e6-b308-a0b3ccf7272a]
+    method: GET
+    uri: https://python-sdk-test-keyvault.vault.azure.net/keys/pythonKey-versioned/versions?api-version=2015-06-01
+  response:
+    body: {string: '{"value":[{"kid":"https://python-sdk-test-keyvault.vault.azure.net/keys/pythonKey-versioned/87c656fd6de944968a66563ba3860c5e","attributes":{"enabled":true,"created":1477083591,"updated":1477083591}},{"kid":"https://python-sdk-test-keyvault.vault.azure.net/keys/pythonKey-versioned/9e93f336ca5347788ad251d559dcbad0","attributes":{"enabled":true,"created":1477083591,"updated":1477083591}}],"nextLink":null}'}
+    headers:
+      Cache-Control: [no-cache]
+      Content-Length: ['405']
+      Content-Type: [application/json; charset=utf-8]
+      Date: ['Fri, 21 Oct 2016 20:59:52 GMT']
+      Expires: ['-1']
+      Pragma: [no-cache]
+      Server: [Microsoft-IIS/8.5]
+      Strict-Transport-Security: [max-age=31536000;includeSubDomains]
+      X-AspNet-Version: [4.0.30319]
+      X-Content-Type-Options: [nosniff]
+      X-Powered-By: [ASP.NET]
+      x-ms-keyvault-region: [westus]
+      x-ms-keyvault-service-version: [1.0.0.781]
+      x-ms-request-id: [26042c15-043d-4e2c-aaa8-59b8ced84afb]
+    status: {code: 200, message: OK}
+version: 1

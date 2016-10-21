@@ -9,9 +9,7 @@ from msrest.pipeline import ClientRawResponse
 
 from azure.keyvault.generated import KeyVaultClient as _KeyVaultClient
 from azure.keyvault.generated.models import KeyVaultErrorException
-from .key_vault_id import \
-    (parse_key_id, parse_secret_id, parse_certificate_id, parse_certificate_operation_id,
-     parse_certificate_issuer_id)
+from .key_vault_id import *
 
 class KeyVaultClient(object):
 
@@ -100,13 +98,13 @@ class KeyVaultClient(object):
     delete_secret.__doc__ = _KeyVaultClient.delete_secret.__doc__
 
     def update_secret(self, secret_identifer, content_type=None, secret_attributes=None, tags=None, custom_headers=None, raw=False, **operation_config):
-        sid = parse_secret_it(secret_identifer)
+        sid = parse_secret_id(secret_identifer)
         return self.keyvault.update_secret(sid.vault, sid.name, sid.version or '', content_type, secret_attributes, tags, custom_headers, raw, **operation_config)
     update_secret.__doc__ = _KeyVaultClient.update_secret.__doc__
 
     def get_secret(self, secret_identifer, custom_headers=None, raw=False, **operation_config):
         sid = parse_secret_id(secret_identifer)
-        return self.keyvault.get_secret(sid.vault, sid.name, sid.version, custom_headers, raw, **operation_config)
+        return self.keyvault.get_secret(sid.vault, sid.name, sid.version or '', custom_headers, raw, **operation_config)
     get_secret.__doc__ = _KeyVaultClient.get_secret.__doc__
 
     def get_secrets(self, vault_base_url, maxresults=None, custom_headers=None, raw=False, **operation_config):
@@ -117,13 +115,39 @@ class KeyVaultClient(object):
         return self.keyvault.get_secret_versions(vault_base_url, secret_name, maxresults, custom_headers, raw, **operation_config)
     get_secret_versions.__doc__ = _KeyVaultClient.get_secret_versions.__doc__
 
-    def get_certificates(self, vault_base_url, maxresults=None, custom_headers=None, raw=False, **operation_config):
-        return self.keyvault.get_certificates(vault_base_url, maxresults, custom_headers, raw, **operation_config)
-    get_certificates.__doc__ = _KeyVaultClient.get_certificates.__doc__
+    def create_certificate(self, vault_base_url, certificate_name, certificate_policy=None, certificate_attributes=None, tags=None, custom_headers=None, raw=False, **operation_config):
+        return self.keyvault.create_certificate(vault_base_url, certificate_name, certificate_policy, certificate_attributes, tags, custom_headers, raw, **operation_config)
+    create_certificate.__doc__ = _KeyVaultClient.create_certificate.__doc__
+
+    def update_certificate(self, certificate_identifier, certificate_policy=None, certificate_attributes=None, tags=None, custom_headers=None, raw=False, **operation_config):
+        cid = parse_certificate_id(certificate_identifier)
+        return self.keyvault.update_certificate(cid.vault, cid.name, cid.version or '', certificate_policy, certificate_attributes, tags, custom_headers, raw, **operation_config)
+    update_certificate.__doc__ = _KeyVaultClient.update_certificate.__doc__
 
     def delete_certificate(self, vault_base_url, certificate_name, custom_headers=None, raw=False, **operation_config):
         return self.keyvault.delete_certificate(vault_base_url, certificate_name, custom_headers, raw, **operation_config)
     delete_certificate.__doc__ = _KeyVaultClient.delete_certificate.__doc__
+
+    def get_certificate(self, certificate_identifier, custom_headers=None, raw=False, **operation_config):
+        cid = parse_certificate_id(certificate_identifier)
+        return self.keyvault.get_certificate(cid.vault, cid.name, cid.version or '', custom_headers, raw, **operation_config)
+    get_certificate.__doc__ = _KeyVaultClient.get_certificate.__doc__
+
+    def get_certificates(self, vault_base_url, maxresults=None, custom_headers=None, raw=False, **operation_config):
+        return self.keyvault.get_certificates(vault_base_url, maxresults, custom_headers, raw, **operation_config)
+    get_certificates.__doc__ = _KeyVaultClient.get_certificates.__doc__
+
+    def merge_certificate(self, vault_base_url, certificate_name, x509_certificates, certificate_attributes=None, tags=None, custom_headers=None, raw=False, **operation_config):
+        return self.keyvault.merge_certificate(vault_base_url, certificate_name, x509_certificates, certificate_attributes, tags, custom_headers, raw, **operation_config)
+    merge_certificate.__doc__ = _KeyVaultClient.merge_certificate.__doc__
+
+    def import_certificate(self, vault_base_url, certificate_name, base64_encoded_certificate, password=None, certificate_policy=None, certificate_attributes=None, tags=None, custom_headers=None, raw=False, **operation_config):
+        return self.keyvault.import_certificate(vault_base_url, certificate_name, base64_encoded_certificate, password, certificate_policy, certificate_attributes, tags, custom_headers, raw, **operation_config)
+    import_certificate.__doc__ = _KeyVaultClient.import_certificate.__doc__
+
+    def get_certificate_versions(self, vault_base_url, certificate_name, maxresults=None, custom_headers=None, raw=False, **operation_config):
+        return self.keyvault.get_certificate_versions(vault_base_url, certificate_name, maxresults, custom_headers, raw, **operation_config)
+    get_certificate_versions.__doc__ = _KeyVaultClient.get_certificate_versions.__doc__
 
     # pylint: disable=redefined-builtin
     def set_certificate_contacts(self, vault_base_url, contact_list=None, custom_headers=None, raw=False, **operation_config):
@@ -158,18 +182,6 @@ class KeyVaultClient(object):
         return self.keyvault.delete_certificate_issuer(vault_base_url, issuer_name, custom_headers, raw, **operation_config)
     delete_certificate_issuer.__doc__ = _KeyVaultClient.delete_certificate_issuer.__doc__
 
-    def create_certificate(self, vault_base_url, certificate_name, certificate_policy=None, certificate_attributes=None, tags=None, custom_headers=None, raw=False, **operation_config):
-        return self.keyvault.create_certificate(vault_base_url, certificate_name, certificate_policy, certificate_attributes, tags, custom_headers, raw, **operation_config)
-    create_certificate.__doc__ = _KeyVaultClient.create_certificate.__doc__
-
-    def import_certificate(self, vault_base_url, certificate_name, base64_encoded_certificate, password=None, certificate_policy=None, certificate_attributes=None, tags=None, custom_headers=None, raw=False, **operation_config):
-        return self.keyvault.import_certificate(vault_base_url, certificate_name, base64_encoded_certificate, password, certificate_policy, certificate_attributes, tags, custom_headers, raw, **operation_config)
-    import_certificate.__doc__ = _KeyVaultClient.import_certificate.__doc__
-
-    def get_certificate_versions(self, vault_base_url, certificate_name, maxresults=None, custom_headers=None, raw=False, **operation_config):
-        return self.keyvault.get_certificate_versions(vault_base_url, certificate_name, maxresults, custom_headers, raw, **operation_config)
-    get_certificate_versions.__doc__ = _KeyVaultClient.get_certificate_versions.__doc__
-
     def get_certificate_policy(self, vault_base_url, certificate_name, custom_headers=None, raw=False, **operation_config):
         return self.keyvault.get_certificate_policy(vault_base_url, certificate_name, custom_headers, raw, **operation_config)
     get_certificate_policy.__doc__ = _KeyVaultClient.get_certificate_policy.__doc__
@@ -177,20 +189,6 @@ class KeyVaultClient(object):
     def update_certificate_policy(self, vault_base_url, certificate_name, certificate_policy, custom_headers=None, raw=False, **operation_config):
         return self.keyvault.update_certificate_policy(vault_base_url, certificate_name, certificate_policy, custom_headers, raw, **operation_config)
     update_certificate_policy.__doc__ = _KeyVaultClient.update_certificate_policy.__doc__
-
-    def update_certificate(self, certificate_identifier, certificate_policy=None, certificate_attributes=None, tags=None, custom_headers=None, raw=False, **operation_config):
-        cid = parse_certificate_id(certificate_identifier)
-        return self.keyvault.update_certificate(cid.vault, cid.name, cid.version or '', certificate_policy, certificate_attributes, tags, custom_headers, raw, **operation_config)
-    update_certificate.__doc__ = _KeyVaultClient.update_certificate.__doc__
-
-    def get_certificate(self, certificate_identifier, custom_headers=None, raw=False, **operation_config):
-        cid = parse_certificate_id(certificate_identifier)
-        return self.keyvault.get_certificate(cid.vault, cid.name, cid.version, custom_headers, raw, **operation_config)
-    get_certificate.__doc__ = _KeyVaultClient.get_certificate.__doc__
-
-    def merge_certificate(self, vault_base_url, certificate_name, x509_certificates, certificate_attributes=None, tags=None, custom_headers=None, raw=False, **operation_config):
-        return self.keyvault.merge_certificate(vault_base_url, certificate_name, x509_certificates, certificate_attributes, tags, custom_headers, raw, **operation_config)
-    merge_certificate.__doc__ = _KeyVaultClient.merge_certificate.__doc__
 
     def update_certificate_operation(self, vault_base_url, certificate_name, cancellation_requested, custom_headers=None, raw=False, **operation_config):
         return self.keyvault.update_certificate_operation(vault_base_url, certificate_name, cancellation_requested, custom_headers, raw, **operation_config)
