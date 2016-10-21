@@ -7,7 +7,7 @@ import json
 import os.path
 import time
 import azure.mgmt.resource
-from azure.keyvault import KeyVaultClient, KeyVaultAuthentication
+from azure.keyvault import KeyVaultClient, KeyVaultAuthentication, HttpBearerChallenge
 
 from azure.common.exceptions import (
     CloudError
@@ -32,6 +32,7 @@ class HttpStatusCode(object):
     Accepted = 202
     NoContent = 204
     NotFound = 404
+    Unauthorized = 401
 
 class AzureKeyVaultTestCase(RecordingTestCase):
 
@@ -40,9 +41,15 @@ class AzureKeyVaultTestCase(RecordingTestCase):
 
         super(AzureKeyVaultTestCase, self).setUp()
 
+        def mock_key_vault_auth_base(self, request):
+            challenge = HttpBearerChallenge(request.url, 'Bearer authorization=fake-url,resource=keyvault')
+            self.set_authorization_header(request, challenge)
+            return request
+
         self.fake_settings = fake_settings
         if TestMode.is_playback(self.test_mode):
             self.settings = self.fake_settings
+            azure.keyvault.key_vault_authentication.KeyVaultAuthBase.__call__ = mock_key_vault_auth_base
         else:
             import tests.mgmt_settings_real as real_settings
             self.settings = real_settings
@@ -129,12 +136,20 @@ class AzureKeyVaultTestCase(RecordingTestCase):
     def create_keyvault_client(self):
 
         def _auth_callback(server, resource, scope):
+            if TestMode.is_playback(self.test_mode):
+                return ('Bearer', 'fake-token')
             credentials = self.settings.get_credentials()
             credentials.resource = resource
             credentials.set_token()
             return credentials.scheme, credentials.__dict__['token']['access_token']
 
         return KeyVaultClient(KeyVaultAuthentication(_auth_callback))
+
+    def _scrub_sensitive_request_info(self, request):
+        request = super(AzureKeyVaultTestCase, self)._scrub_sensitive_request_info(request)
+        if '/oauth2/token' in request.uri:
+            request = None
+        return request
 
     def _scrub(self, val):
         val = super(AzureKeyVaultTestCase, self)._scrub(val)
