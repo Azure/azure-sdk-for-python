@@ -1698,7 +1698,7 @@ class KeyVaultClient(object):
         return deserialized
 
     def set_certificate_contacts(
-            self, vault_base_url, id=None, contact_list=None, custom_headers=None, raw=False, **operation_config):
+            self, vault_base_url, contact_list=None, custom_headers=None, raw=False, **operation_config):
         """Sets the certificate contacts for the specified vault.
 
         :param vault_base_url: The vault name, e.g.
@@ -1718,7 +1718,7 @@ class KeyVaultClient(object):
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         """
-        contacts = models.Contacts(id=id, contact_list=contact_list)
+        contacts = models.Contacts(contact_list=contact_list)
 
         # Construct URL
         url = '/certificates/contacts'

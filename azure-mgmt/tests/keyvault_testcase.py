@@ -146,22 +146,22 @@ class AzureKeyVaultTestCase(RecordingTestCase):
         return val
 
     def create_resource_group(self):
-        result = self.resource_client.resource_groups.create_or_update(
-            self.group_name,
-            {
-                'location': self.region
-            }
-        )
+        pass
+        #result = self.resource_client.resource_groups.create_or_update(
+        #    self.group_name,
+        #    {
+        #        'location': self.region
+        #    }
+        #)
 
     def delete_resource_group(self, wait_timeout):
-        azure_poller = self.resource_client.resource_groups.delete(self.group_name)
-        # TODO: Remove this once done testing...don't want to wait for delete to finish
-        return
-        if wait_timeout:
-            try:
-                azure_poller.wait(wait_timeout)
-                if azure_poller.done():
-                    return
-                self.assertTrue(False, 'Timed out waiting for resource group to be deleted.')            
-            except CloudError:
-                pass
+        pass
+        #azure_poller = self.resource_client.resource_groups.delete(self.group_name)
+        #if wait_timeout:
+        #    try:
+        #        azure_poller.wait(wait_timeout)
+        #        if azure_poller.done():
+        #            return
+        #        self.assertTrue(False, 'Timed out waiting for resource group to be deleted.')            
+        #    except CloudError:
+        #        pass
