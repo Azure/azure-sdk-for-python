@@ -42,7 +42,7 @@ class AzureKeyVaultTestCase(RecordingTestCase):
         super(AzureKeyVaultTestCase, self).setUp()
 
         def mock_key_vault_auth_base(self, request):
-            challenge = HttpBearerChallenge(request.url, 'Bearer authorization=fake-url,resource=keyvault')
+            challenge = HttpBearerChallenge(request.url, 'Bearer authorization=fake-url,resource=https://vault.azure.net')
             self.set_authorization_header(request, challenge)
             return request
 
@@ -142,14 +142,22 @@ class AzureKeyVaultTestCase(RecordingTestCase):
             credentials.resource = resource
             credentials.set_token()
             return credentials.scheme, credentials.__dict__['token']['access_token']
-
         return KeyVaultClient(KeyVaultAuthentication(_auth_callback))
 
     def _scrub_sensitive_request_info(self, request):
         request = super(AzureKeyVaultTestCase, self)._scrub_sensitive_request_info(request)
+        # do not record token requests
         if '/oauth2/token' in request.uri:
             request = None
         return request
+
+    def _scrub_sensitive_response_info(self, response):
+        from pprint import pprint
+        response = super(AzureKeyVaultTestCase, self)._scrub_sensitive_response_info(response)
+        # ignore any 401 responses during playback
+        if response['status']['code'] == 401:
+            response = None
+        return response
 
     def _scrub(self, val):
         val = super(AzureKeyVaultTestCase, self)._scrub(val)
