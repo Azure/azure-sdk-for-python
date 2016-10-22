@@ -7,7 +7,7 @@
 #--------------------------------------------------------------------------
 
 from setuptools import find_packages, setup
-from codecs import open
+from io import open
 import re
 import os.path
 
@@ -43,9 +43,9 @@ with open(os.path.join(package_folder_path, 'version.py'), 'r') as fd:
 if not version:
     raise RuntimeError('Cannot find version information')
 
-with open('README.rst', 'r', 'utf-8') as f:
+with open('README.rst', encoding='utf-8') as f:
     readme = f.read()
-with open('HISTORY.rst', 'r', 'utf-8') as f:
+with open('HISTORY.rst', encoding='utf-8') as f:
     history = f.read()
 
 setup(
