@@ -30,11 +30,12 @@ class KeyVaultAuthBase(AuthBase):
                 # the request
                 # TODO: wire up commons flag for things like Fiddler, logging, etc.
                 response = requests.Session().send(request)
-                auth_header = response.headers['WWW-Authenticate']
-                if HttpBearerChallenge.is_bearer_challenge(auth_header):
-                    challenge = HttpBearerChallenge(response.request.url, auth_header)
-                    ChallengeCache.set_challenge_for_url(response.request.url, challenge)
-                    self.set_authorization_header(request, challenge)
+                if response.status_code == 401:
+                    auth_header = response.headers['WWW-Authenticate']
+                    if HttpBearerChallenge.is_bearer_challenge(auth_header):
+                        challenge = HttpBearerChallenge(response.request.url, auth_header)
+                        ChallengeCache.set_challenge_for_url(response.request.url, challenge)
+                        self.set_authorization_header(request, challenge)
         return request
 
     def set_authorization_header(self, request, challenge):
