@@ -46,6 +46,7 @@ class NamespacesOperations(object):
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`NamespaceResourcePaged
          <azure.mgmt.eventhub.models.NamespaceResourcePaged>`
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -110,6 +111,7 @@ class NamespacesOperations(object):
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`NamespaceResourcePaged
          <azure.mgmt.eventhub.models.NamespaceResourcePaged>`
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -183,6 +185,7 @@ class NamespacesOperations(object):
          <azure.mgmt.eventhub.models.NamespaceResource>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventHub/namespaces/{namespaceName}'
@@ -273,6 +276,7 @@ class NamespacesOperations(object):
          instance that returns None
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventHub/namespaces/{namespaceName}'
@@ -350,6 +354,7 @@ class NamespacesOperations(object):
          <azure.mgmt.eventhub.models.NamespaceResource>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventHub/namespaces/{namespaceName}'
@@ -409,6 +414,7 @@ class NamespacesOperations(object):
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`SharedAccessAuthorizationRuleResourcePaged
          <azure.mgmt.eventhub.models.SharedAccessAuthorizationRuleResourcePaged>`
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -485,6 +491,7 @@ class NamespacesOperations(object):
          <azure.mgmt.eventhub.models.SharedAccessAuthorizationRuleResource>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventHub/namespaces/{namespaceName}/AuthorizationRules/{authorizationRuleName}'
@@ -552,6 +559,7 @@ class NamespacesOperations(object):
         :rtype: None
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventHub/namespaces/{namespaceName}/AuthorizationRules/{authorizationRuleName}'
@@ -609,6 +617,7 @@ class NamespacesOperations(object):
          <azure.mgmt.eventhub.models.SharedAccessAuthorizationRuleResource>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventHub/namespaces/{namespaceName}/AuthorizationRules/{authorizationRuleName}'
@@ -673,6 +682,7 @@ class NamespacesOperations(object):
          <azure.mgmt.eventhub.models.ResourceListKeys>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventHub/namespaces/{namespaceName}/AuthorizationRules/{authorizationRuleName}/listKeys'
@@ -742,6 +752,7 @@ class NamespacesOperations(object):
          <azure.mgmt.eventhub.models.ResourceListKeys>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         parameters = models.RegenerateKeysParameters(policykey=policykey)
 
