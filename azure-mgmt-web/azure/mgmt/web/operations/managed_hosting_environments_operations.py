@@ -51,6 +51,7 @@ class ManagedHostingEnvironmentsOperations(object):
          <azure.mgmt.web.models.ManagedHostingEnvironment>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/managedHostingEnvironments/{name}'
@@ -116,6 +117,7 @@ class ManagedHostingEnvironmentsOperations(object):
          <azure.mgmt.web.models.HostingEnvironment>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/managedHostingEnvironments/{name}'
@@ -206,6 +208,7 @@ class ManagedHostingEnvironmentsOperations(object):
          instance that returns object
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/managedHostingEnvironments/{name}'
@@ -288,6 +291,7 @@ class ManagedHostingEnvironmentsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`HostingEnvironmentPaged
          <azure.mgmt.web.models.HostingEnvironmentPaged>`
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -357,6 +361,7 @@ class ManagedHostingEnvironmentsOperations(object):
          <azure.mgmt.web.models.AddressResponse>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/managedHostingEnvironments/{name}/capacities/virtualip'
@@ -419,6 +424,7 @@ class ManagedHostingEnvironmentsOperations(object):
         :rtype: object
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/managedHostingEnvironments/{name}/operations/{operationId}'
@@ -483,6 +489,7 @@ class ManagedHostingEnvironmentsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`SitePaged <azure.mgmt.web.models.SitePaged>`
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -554,6 +561,7 @@ class ManagedHostingEnvironmentsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`ServerFarmWithRichSkuPaged
          <azure.mgmt.web.models.ServerFarmWithRichSkuPaged>`
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -623,6 +631,7 @@ class ManagedHostingEnvironmentsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`ServerFarmWithRichSkuPaged
          <azure.mgmt.web.models.ServerFarmWithRichSkuPaged>`
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
 

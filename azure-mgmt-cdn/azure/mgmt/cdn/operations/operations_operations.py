@@ -42,6 +42,8 @@ class OperationsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`OperationPaged <azure.mgmt.cdn.models.OperationPaged>`
+        :raises:
+         :class:`ErrorResponseException<azure.mgmt.cdn.models.ErrorResponseException>`
         """
         def internal_paging(next_link=None, raw=False):
 

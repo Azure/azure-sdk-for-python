@@ -43,6 +43,7 @@ class GlobalDomainRegistrationOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`DomainPaged <azure.mgmt.web.models.DomainPaged>`
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -107,6 +108,7 @@ class GlobalDomainRegistrationOperations(object):
          <azure.mgmt.web.models.DomainControlCenterSsoRequest>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/providers/Microsoft.DomainRegistration/generateSsoRequest'
@@ -164,6 +166,7 @@ class GlobalDomainRegistrationOperations(object):
         :rtype: object
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/providers/Microsoft.DomainRegistration/validateDomainRegistrationInformation'
@@ -225,6 +228,7 @@ class GlobalDomainRegistrationOperations(object):
          <azure.mgmt.web.models.DomainAvailablilityCheckResult>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         identifier = models.NameIdentifier(name=name)
 
@@ -289,6 +293,7 @@ class GlobalDomainRegistrationOperations(object):
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`NameIdentifierPaged
          <azure.mgmt.web.models.NameIdentifierPaged>`
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         parameters = models.DomainRecommendationSearchParameters(keywords=keywords, max_domain_recommendations=max_domain_recommendations)
 
