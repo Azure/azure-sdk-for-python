@@ -107,6 +107,12 @@ class RecordingTestCase(ExtendedTestCase):
         return name
 
     def _scrub_sensitive_request_info(self, request):
+        # WARNING: For some strange url parsing reason, sometimes url have '//':
+        # - Python 2.7 for 2.7/3.3/3.4 (...Microsoft.Compute//availabilitySets...)
+        # - Python 3.5 (...Microsoft.Compute/availabilitySets...)
+        # I don't know why 3.5 has one / and 2.7-3.4 two /
+        request.uri = request.uri.replace('//','/')
+
         if not TestMode.is_playback(self.test_mode):
             request.uri = self._scrub(request.uri)
             if request.body is not None:

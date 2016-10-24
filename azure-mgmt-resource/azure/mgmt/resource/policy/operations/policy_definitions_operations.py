@@ -51,6 +51,7 @@ class PolicyDefinitionsOperations(object):
          <azure.mgmt.resource.policy.models.PolicyDefinition>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/providers/Microsoft.Authorization/policydefinitions/{policyDefinitionName}'
@@ -112,6 +113,7 @@ class PolicyDefinitionsOperations(object):
         :rtype: None
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/providers/Microsoft.Authorization/policydefinitions/{policyDefinitionName}'
@@ -163,6 +165,7 @@ class PolicyDefinitionsOperations(object):
          <azure.mgmt.resource.policy.models.PolicyDefinition>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/providers/Microsoft.Authorization/policydefinitions/{policyDefinitionName}'
@@ -219,6 +222,7 @@ class PolicyDefinitionsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`PolicyDefinitionPaged
          <azure.mgmt.resource.policy.models.PolicyDefinitionPaged>`
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
 

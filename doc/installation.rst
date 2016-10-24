@@ -65,7 +65,7 @@ Preview packages
 ===================================== =========
 Package name                          Version  
 ===================================== =========
-azure-mgmt-resource                   0.30.1   
+azure-mgmt-resource                   0.30.2
 azure-mgmt-compute                    0.30.0
 azure-mgmt-network                    0.30.0rc6
 azure-mgmt-storage                    0.30.0rc6
