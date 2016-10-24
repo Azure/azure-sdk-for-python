@@ -263,5 +263,5 @@ class KeyVaultClient(object):
 
 try:
     KeyVaultClient.__doc__ = _KeyVaultClient.__doc__
-except AttributeError:
+except (AttributeError, TypeError):
     pass

@@ -94,4 +94,99 @@ interactions:
       x-ms-keyvault-service-version: [1.0.0.781]
       x-ms-request-id: [1c75366e-9c4e-406e-ae88-dcd19284703a]
     status: {code: 200, message: OK}
+- request:
+    body: '{"kty": "RSA"}'
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['14']
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.5.1 (Windows-10-10.0.14393-SP0) requests/2.11.1 msrest/0.4.4
+          msrest_azure/0.4.3 keyvaultclient/0.30.0rc6 Azure-SDK-For-Python]
+      accept-language: [en-US]
+      x-ms-client-request-id: [0ab8e148-9a21-11e6-b1c7-a0b3ccf7272a]
+    method: POST
+    uri: https://python-sdk-test-keyvault.vault.azure.net/keys/pythonKey-versioned/create?api-version=2015-06-01
+  response:
+    body: {string: '{"key":{"kid":"https://python-sdk-test-keyvault.vault.azure.net/keys/pythonKey-versioned/9b6774bce53f427ca0faa0e48c7dc643","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"0UsBnM6rutmV3b8gbVsVOc814Yw4WIQ3EcdHujSb2FUpEmBZ52xPGwTRmHeOkPTIyvleUhok4SleTlN1rv8frIAXEmXnpThiDkhymSv5oYQbjgJo6LkN2oVhZwBfX1BnHPUALgWF_9AsVLfUNoyleEJJJMy8ZYnhPTm2iIeETlKVL2D2MSKDKNosUUc0ZFdLKDfgc9ARcpyyAlBkCV545EGIY0bK22F7kIJDj23zj3uaLAo-fKN-MihWvSlNHu5RWFElzs13Z3J6rcwznW-vACpypuFMvGxs1LUDo42gE3D9OIJWXUqkkZOFCFoskFblHz2QiYPNil4BljE6UPM-Xw","e":"AQAB"},"attributes":{"enabled":true,"created":1477337738,"updated":1477337738}}'}
+    headers:
+      Cache-Control: [no-cache]
+      Content-Length: ['638']
+      Content-Type: [application/json; charset=utf-8]
+      Date: ['Mon, 24 Oct 2016 19:35:38 GMT']
+      Expires: ['-1']
+      Pragma: [no-cache]
+      Server: [Microsoft-IIS/8.5]
+      Strict-Transport-Security: [max-age=31536000;includeSubDomains]
+      X-AspNet-Version: [4.0.30319]
+      X-Content-Type-Options: [nosniff]
+      X-Powered-By: [ASP.NET]
+      x-ms-keyvault-region: [westus]
+      x-ms-keyvault-service-version: [1.0.0.781]
+      x-ms-request-id: [17e1f24f-1052-46ef-b92c-b5c560f8529d]
+    status: {code: 200, message: OK}
+- request:
+    body: '{"kty": "RSA"}'
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['14']
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.5.1 (Windows-10-10.0.14393-SP0) requests/2.11.1 msrest/0.4.4
+          msrest_azure/0.4.3 keyvaultclient/0.30.0rc6 Azure-SDK-For-Python]
+      accept-language: [en-US]
+      x-ms-client-request-id: [0b5ace46-9a21-11e6-98de-a0b3ccf7272a]
+    method: POST
+    uri: https://python-sdk-test-keyvault.vault.azure.net/keys/pythonKey-versioned/create?api-version=2015-06-01
+  response:
+    body: {string: '{"key":{"kid":"https://python-sdk-test-keyvault.vault.azure.net/keys/pythonKey-versioned/82f04660baca46fe8ea79b6ed5270112","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"iWgA7GbzzB8fZhG3DvLdYLVbgdo1hbsmqpEbJoe7i44TFO_9-KdJmXtQK9_BDv0Ox2M3oWdC0tA6Vp5chWjv6xeTFWbc1n4fViflpwnA15V6FokPGTFaa0rsO8QFw6LiNzu9Bo90bbgGNSBssjbwhMZHR4VI3L9ijiO-eVcg6Rz86MwpLd_zwXRSDAqyKg2Q1uHi2Gc8sk4E9V5KDg_agmgS0hIPew3fJSDWB5cCnHtkbO5tSn6yp7IP2Zw4y1qt8U9iT7KxKy7mMMgJTjZ9jS7NAyIKkgvgzjSexCd3BOmGvJIDCI9SVJ3N7NECyrJMBKp9po4t89n1ykggFYPmUw","e":"AQAB"},"attributes":{"enabled":true,"created":1477337739,"updated":1477337739}}'}
+    headers:
+      Cache-Control: [no-cache]
+      Content-Length: ['638']
+      Content-Type: [application/json; charset=utf-8]
+      Date: ['Mon, 24 Oct 2016 19:35:39 GMT']
+      Expires: ['-1']
+      Pragma: [no-cache]
+      Server: [Microsoft-IIS/8.5]
+      Strict-Transport-Security: [max-age=31536000;includeSubDomains]
+      X-AspNet-Version: [4.0.30319]
+      X-Content-Type-Options: [nosniff]
+      X-Powered-By: [ASP.NET]
+      x-ms-keyvault-region: [westus]
+      x-ms-keyvault-service-version: [1.0.0.781]
+      x-ms-request-id: [ce70d1cd-2e96-49dc-9d83-dc6143d3481c]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.5.1 (Windows-10-10.0.14393-SP0) requests/2.11.1 msrest/0.4.4
+          msrest_azure/0.4.3 keyvaultclient/0.30.0rc6 Azure-SDK-For-Python]
+      accept-language: [en-US]
+      x-ms-client-request-id: [0c2468a6-9a21-11e6-a664-a0b3ccf7272a]
+    method: GET
+    uri: https://python-sdk-test-keyvault.vault.azure.net/keys/pythonKey-versioned/versions?api-version=2015-06-01
+  response:
+    body: {string: '{"value":[{"kid":"https://python-sdk-test-keyvault.vault.azure.net/keys/pythonKey-versioned/82f04660baca46fe8ea79b6ed5270112","attributes":{"enabled":true,"created":1477337739,"updated":1477337739}},{"kid":"https://python-sdk-test-keyvault.vault.azure.net/keys/pythonKey-versioned/9b6774bce53f427ca0faa0e48c7dc643","attributes":{"enabled":true,"created":1477337738,"updated":1477337738}}],"nextLink":null}'}
+    headers:
+      Cache-Control: [no-cache]
+      Content-Length: ['405']
+      Content-Type: [application/json; charset=utf-8]
+      Date: ['Mon, 24 Oct 2016 19:35:40 GMT']
+      Expires: ['-1']
+      Pragma: [no-cache]
+      Server: [Microsoft-IIS/8.5]
+      Strict-Transport-Security: [max-age=31536000;includeSubDomains]
+      X-AspNet-Version: [4.0.30319]
+      X-Content-Type-Options: [nosniff]
+      X-Powered-By: [ASP.NET]
+      x-ms-keyvault-region: [westus]
+      x-ms-keyvault-service-version: [1.0.0.781]
+      x-ms-request-id: [00d0d996-0f8e-4e4d-acea-8077d0ca4aa4]
+    status: {code: 200, message: OK}
 version: 1

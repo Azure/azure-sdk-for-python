@@ -6,6 +6,7 @@
 # license information.
 #--------------------------------------------------------------------------
 import binascii
+import codecs
 import copy
 from dateutil import parser as date_parse
 import hashlib
@@ -25,10 +26,19 @@ from azure.keyvault.http_bearer_challenge_cache import \
 from azure.keyvault.generated.models import \
     (CertificatePolicy, KeyProperties, SecretProperties, IssuerParameters,
      X509CertificateProperties, IssuerBundle, IssuerCredentials, OrganizationDetails,
-     AdministratorDetails, Contact, KeyVaultError, SubjectAlternativeNames)
+     AdministratorDetails, Contact, KeyVaultError, SubjectAlternativeNames, JsonWebKey)
 
 from testutils.common_recordingtestcase import record
 from tests.keyvault_testcase import HttpStatusCode, AzureKeyVaultTestCase
+
+# To record tests or run them live, you should create a keyvault accessible within your
+# subscription using the following CLI commands:
+#
+# az keyvault create -g {resource-group}  -n python-sdk-test-keyvault --sku premium -l westus
+# az keyvault set-policy -g {resource-group}  -n python-sdk-test-keyvault --object-id {obtain from keyvault create response} --key-permissions all
+#
+# You must use a premium keyvault to allow importing keys to hardware and you must update the
+# key permissions to 'all' to permit testing of encrypt/decrypt/wrap/unwrap/sign/verify commands
 
 KEY_VAULT_URI = os.environ.get('AZURE_KV_VAULT', 'https://python-sdk-test-keyvault.vault.azure.net')
 
@@ -218,54 +228,38 @@ class KeyVaultKeyTest(AzureKeyVaultTestCase):
 
     def setUp(self):
         super(KeyVaultKeyTest, self).setUp()
-        standard_vault_only = str(os.environ.get('AZURE_KV_STANDARD_VAULT_ONLY', False)).lower() \
+        self.standard_vault_only = str(os.environ.get('AZURE_KV_STANDARD_VAULT_ONLY', False)).lower() \
             == 'true'
         self.key_name = 'pythonKey'
+        self.plain_text = binascii.b2a_hex(os.urandom(100))
         self.list_test_size = 2
-        if not self.is_playback():
-            self.create_resource_group()
 
     def tearDown(self):
         super(KeyVaultKeyTest, self).tearDown()
         self.cleanup_created_keys()
 
-    def _get_test_key(self):
-        return {
-            'n': { 'data': [31403165, 173515265, 63388853, 41445484, 28572798, 41983158, 179892955, 184539795, 195496834, 186371485, 105099914, 124126195, 220355614, 62597291, 211257834, 180260588, 50093174, 71664730, 168573911, 132471092, 92855735, 240596985, 236098769, 173925533, 21038343, 184422189, 50979118, 214529292, 171289383, 178021279, 227518712, 217740520, 81983906, 73408747, 267914051, 229529180, 16559719, 5537837, 68640078, 173929251, 81539991, 237912588, 235382838, 104343409, 52196777, 197367866, 158395070, 117971489, 160834890, 231935437, 38538604, 134498263, 37612848, 134625325, 50358689, 235472466, 72917894, 703321, 50980314, 120571588, 214503569, 14882466, 71451463, 38484115, 211379782, 199265141, 167739796, 236529689, 110194265, 252283980, 242275601, 45048505, 139306567, 13], 't': 74, 's': 0 },
-            'e': { 'data':[65537], 't': 1, 's': 0 },
-            'd': { 'data': [45687901, 82912839, 136844883, 32867876, 209589627, 114760643, 188378503, 262495278, 145440185, 65785046, 86798789, 62386434, 50560554, 61549169, 202839320, 47223801, 16345679, 183718797, 215606790, 260736332, 152310689, 243692743, 252563899, 55901901, 20486148, 164420346, 116855152, 217658322, 158370826, 94231438, 27528988, 67335341, 174899203, 109090394, 250630291, 9002457, 203943974, 156578180, 115625150, 114683304, 26974288, 508888, 171821311, 128703059, 7667499, 75449693, 176959654, 55586600, 67092631, 147722039, 47625305, 179087115, 68335990, 160396405, 27300777, 218451174, 232237402, 237108697, 210447563, 20554934, 167197589, 83310674, 139749301, 41733981, 16245554, 49622864, 194380346, 105816513, 256316339, 38893666, 192649829, 99609567, 117074140, 6], 't': 74, 's': 0 },
-            'p': { 'data': [33083239, 162132243, 220369741, 45039546, 222307487, 179206041, 256947704, 245855772, 249899507, 28771428, 14980020, 148159943, 19126604, 110980923, 232620253, 200804176, 193146776, 1849395, 38163760, 205096501, 123623920, 77315574, 131394591, 41619980, 234834515, 7977638, 258636778, 44457951, 40027731, 226143479, 195688366, 19044599, 23412006, 147023142, 222017947, 33779866, 62482], 't': 37, 's': 0 },
-            'q': { 'data': [252056923, 84721184, 208820342, 98257526, 257711757, 170210495, 211611252, 70482129, 164129480, 138844182, 56855320, 236397981, 200230378, 1345179, 23830734, 224624556, 110311189, 37776986, 172599799, 192572556, 60025524, 221499009, 261656032, 138834403, 207844105, 22896659, 40314333, 65995283, 96406231, 167203684, 62595788, 200386123, 90252701, 140191004, 267133432, 24172080, 58080], 't': 37, 's': 0 },
-            'dP': { 'data': [201993265, 47821091, 261789604, 27756464, 81622509, 134233349, 251725677, 237658138, 151857794, 249347443, 31788651, 33789622, 253087540, 158289247, 259273148, 65044487, 113510107, 172257746, 130321730, 75880872, 243610460, 176804584, 222782578, 136118430, 32479779, 88296461, 45617733, 83305291, 97037456, 67918464, 97435219, 168410452, 234985976, 238394001, 22331653, 267371287, 1349, 199116946, 123989676, 107034094, 192688242, 85537734, 173262414, 44240895, 113520276, 236524933, 161774153, 174144730, 191215545, 62177699, 80851160, 134899343, 259263575, 121357616, 156648819, 255499481, 103280063, 231493924, 4634332, 236843526, 156104816, 246744594, 112844480, 42556164, 94418795, 254142946, 8374346, 95569210, 181034034, 47641170, 125752615, 266787505, 241003275, 27650, 0], 't': 37, 's': 0 },
-            'dQ': { 'data': [84475683, 45186766, 37599068, 34522187, 265058634, 129988009, 226913475, 58582850, 115308212, 131964294, 196466844, 151174458, 225261037, 207233351, 84725934, 141546365, 163838731, 202239901, 154853708, 175227927, 184335942, 133762496, 92997640, 33570977, 56137749, 74033413, 88232389, 177734406, 169854856, 216277089, 160231444, 28162890, 96721484, 49993185, 259099732, 107900074, 52851, 234929, 97512319, 179816523, 203072779, 220703111, 150012141, 44886341, 59462775, 130019454, 227743067, 161683730, 153831298, 165320796, 152113376, 151476367, 167450232, 129591314, 57629678, 84105489, 206226099, 235738210, 119902853, 113106688, 22829142, 208571155, 244917660, 74554550, 255318099, 233351844, 215611320, 259557115, 139301223, 196032562, 41364499, 212828041, 168778543, 29746, 0], 't': 37, 's': 0 },
-            'qInv': { 'data': [257191369, 24789324, 179088888, 4877263, 229824703, 180005485, 140588854, 162932877, 148164403, 251171427, 37629294, 154026114, 253932472, 64590117, 134661418, 36207596, 237045424, 88285250, 196080720, 103392332, 203915656, 113894996, 31803101, 103603699, 98869410, 182818866, 105506928, 66214245, 239517111, 197997650, 218541095, 255370546, 25288449, 253555509, 158329635, 150487361, 51171], 't': 37, 's':0 }
-        }
-
     def _import_test_key(self, key_id, import_to_hardware=False):
 
-        def _set_rsa_parameters(dest, key):
-
-            def _big_integer_to_buffer(n):
-                # TODO: need to convert JS BigInteger to a Python integer
-                return n
-
-            dest['n'] = _big_integer_to_buffer(key['n'])
-            dest['e'] = _big_integer_to_buffer(key['e'])
-            dest['d'] = _big_integer_to_buffer(key['d'])
-            dest['p'] = _big_integer_to_buffer(key['p'])
-            dest['q'] = _big_integer_to_buffer(key['q'])
-            dest['dp'] = _big_integer_to_buffer(key['dP'])
-            dest['dq'] = _big_integer_to_buffer(key['dQ'])
-            dest['qi'] = _big_integer_to_buffer(key['qInv'])
-
-        key = {
-            'kty': 'RSA',
-            'keyOps': ['encrypt', 'decrypt', 'sign', 'verify', 'wrapKey', 'unwrapKey']
-        }
-        _set_rsa_parameters(key, self._get_test_key())
+        def _to_bytes(hex):
+            if len(hex) % 2:
+                hex = '0{}'.format(hex)
+            return codecs.decode(hex, 'hex_codec')
+        
+        key = JsonWebKey(
+            kty='RSA',
+            key_ops= ['encrypt', 'decrypt', 'sign', 'verify', 'wrapKey', 'unwrapKey'],
+            n=_to_bytes('00a0914d00234ac683b21b4c15d5bed887bdc959c2e57af54ae734e8f00720d775d275e455207e3784ceeb60a50a4655dd72a7a94d271e8ee8f7959a669ca6e775bf0e23badae991b4529d978528b4bd90521d32dd2656796ba82b6bbfc7668c8f5eeb5053747fd199319d29a8440d08f4412d527ff9311eda71825920b47b1c46b11ab3e91d7316407e89c7f340f7b85a34042ce51743b27d4718403d34c7b438af6181be05e4d11eb985d38253d7fe9bf53fc2f1b002d22d2d793fa79a504b6ab42d0492804d7071d727a06cf3a8893aa542b1503f832b296371b6707d4dc6e372f8fe67d8ded1c908fde45ce03bc086a71487fa75e43aa0e0679aa0d20efe35'),
+            e=_to_bytes('10001'),
+            d=_to_bytes('627c7d24668148fe2252c7fa649ea8a5a9ed44d75c766cda42b29b660e99404f0e862d4561a6c95af6a83d213e0a2244b03cd28576473215073785fb067f015da19084ade9f475e08b040a9a2c7ba00253bb8125508c9df140b75161d266be347a5e0f6900fe1d8bbf78ccc25eeb37e0c9d188d6e1fc15169ba4fe12276193d77790d2326928bd60d0d01d6ead8d6ac4861abadceec95358fd6689c50a1671a4a936d2376440a41445501da4e74bfb98f823bd19c45b94eb01d98fc0d2f284507f018ebd929b8180dbe6381fdd434bffb7800aaabdd973d55f9eaf9bb88a6ea7b28c2a80231e72de1ad244826d665582c2362761019de2e9f10cb8bcc2625649'),
+            p=_to_bytes('00d1deac8d68ddd2c1fd52d5999655b2cf1565260de5269e43fd2a85f39280e1708ffff0682166cb6106ee5ea5e9ffd9f98d0becc9ff2cda2febc97259215ad84b9051e563e14a051dce438bc6541a24ac4f014cf9732d36ebfc1e61a00d82cbe412090f7793cfbd4b7605be133dfc3991f7e1bed5786f337de5036fc1e2df4cf3'),
+            q=_to_bytes('00c3dc66b641a9b73cd833bc439cd34fc6574465ab5b7e8a92d32595a224d56d911e74624225b48c15a670282a51c40d1dad4bc2e9a3c8dab0c76f10052dfb053bc6ed42c65288a8e8bace7a8881184323f94d7db17ea6dfba651218f931a93b8f738f3d8fd3f6ba218d35b96861a0f584b0ab88ddcf446b9815f4d287d83a3237'),
+            dp=_to_bytes('00c9a159be7265cbbabc9afcc4967eb74fe58a4c4945431902d1142da599b760e03838f8cbd26b64324fea6bdc9338503f459793636e59b5361d1e6951e08ddb089e1b507be952a81fbeaf7e76890ea4f536e25505c3f648b1e88377dfc19b4c304e738dfca07211b792286a392a704d0f444c0a802539110b7f1f121c00cff0a9'),
+            dq=_to_bytes('00a0bd4c0a3d9f64436a082374b5caf2488bac1568696153a6a5e4cd85d186db31e2f58f024c617d29f37b4e6b54c97a1e25efec59c4d1fd3061ac33509ce8cae5c11f4cd2e83f41a8264f785e78dc0996076ee23dfdfc43d67c463afaa0180c4a718357f9a6f270d542479a0f213870e661fb950abca4a14ca290570ba7983347'),
+            qi=_to_bytes('009fe7ae42e92bc04fcd5780464bd21d0c8ac0c599f9af020fde6ab0a7e7d1d39902f5d8fb6c614184c4c1b103fb46e94cd10a6c8a40f9991a1f28269f326435b6c50276fda6493353c650a833f724d80c7d522ba16c79f0eb61f672736b68fb8be3243d10943c4ab7028d09e76cfb5892222e38bc4d35585bf35a88cd68c73b07')
+        )
         imported_key = self.client.import_key(key_id.vault, key_id.name, key, import_to_hardware)
         self._validate_rsa_key_bundle(imported_key, KEY_VAULT_URI, key_id.name,
-                                'RSA-HSM' if import_to_hardware else 'RSA', key['keyOps'])
+                                'RSA-HSM' if import_to_hardware else 'RSA', key.key_ops)
         return imported_key
 
     def _validate_rsa_key_bundle(self, bundle, vault, key_name, kty, key_ops=None):
@@ -411,94 +405,99 @@ class KeyVaultKeyTest(AzureKeyVaultTestCase):
         # restore key
         self.assertEqual(created_bundle, self.client.restore_key(KEY_VAULT_URI, key_backup))
 
-    # TODO Fix import issues
-    #@record
-    #def test_key_import(self):
+    @record
+    def test_key_import(self):
 
-    #    # import to software
-    #    self._import_test_key(False)
+        key_id = keyvaultid.create_key_id(KEY_VAULT_URI, 'importedKey')
 
-    #    # import to hardware
-    #    self._import_test_key(not self.standard_vault_only)
+        # import to software
+        self._import_test_key(key_id, False)
 
-    #@record
-    #def test_key_encrypt_and_decrypt(self):
+        # import to hardware
+        self._import_test_key(key_id, not self.standard_vault_only)
 
-    #    key_id = keyvaultid.create_key_id(KEY_VAULT_URI, self.key_name)
-    #    plain_text = binascii.b2a_hex(os.urandom(200))
+    @record
+    def test_key_encrypt_and_decrypt(self):
 
-    #    # import key
-    #    imported_key = self._import_test_key(key_id)
-    #    key_id = keyvaultid.parse_key_id(imported_key.key.kid)
+        key_id = keyvaultid.create_key_id(KEY_VAULT_URI, self.key_name)
+        plain_text = self.plain_text
 
-    #    # encrypt with version
-    #    result = self.client.encrypt(key_id.base_id, 'RSA-OAEP', plain_text)
-    #    cipher_text = result.result
+        # import key
+        imported_key = self._import_test_key(key_id)
+        key_id = keyvaultid.parse_key_id(imported_key.key.kid)
 
-    #    # decrypt with version
-    #    result = self.client.decrypt(key_id.base_id, 'RSA-OAEP', cipher_text)
-    #    self.assertEqual(plain_text, result.result)
+        # encrypt with version
+        result = self.client.encrypt(key_id.base_id, 'RSA-OAEP', plain_text)
+        cipher_text = result.result
 
-    #    # encrypt with version
-    #    result = self.client.encrypt(key_id.id, 'RSA-OAEP', plain_text)
-    #    cipher_text = result.result
+        # decrypt with version
+        result = self.client.decrypt(key_id.base_id, 'RSA-OAEP', cipher_text)
+        if not self.is_playback():
+            self.assertEqual(plain_text, result.result)
 
-    #    # decrypt with version
-    #    result = self.client.decrypt(key_id.id, 'RSA-OAEP', cipher_text)
-    #    self.assertEqual(plain_text, result.result)
+        # encrypt with version
+        result = self.client.encrypt(key_id.id, 'RSA-OAEP', plain_text)
+        cipher_text = result.result
 
-    #@record
-    #def test_key_wrap_and_unwrap(self):
+        # decrypt with version
+        result = self.client.decrypt(key_id.id, 'RSA-OAEP', cipher_text)
+        if not self.is_playback():
+            self.assertEqual(plain_text, result.result)
 
-    #    key_id = keyvaultid.create_key_id(KEY_VAULT_URI, self.key_name)
-    #    plain_text = binascii.b2a_hex(os.urandom(200))
+    @record
+    def test_key_wrap_and_unwrap(self):
 
-    #    # import key
-    #    imported_key = self._import_test_key(key_id)
-    #    key_id = keyvaultid.parse_key_id(imported_key.key.kid)
+        key_id = keyvaultid.create_key_id(KEY_VAULT_URI, self.key_name)
+        plain_text = self.plain_text
 
-    #    # wrap without version
-    #    result = self.client.wrap_key(key_id.base_id, 'RSA-OAEP', plain_text)
-    #    cipher_text = result.result
+        # import key
+        imported_key = self._import_test_key(key_id)
+        key_id = keyvaultid.parse_key_id(imported_key.key.kid)
 
-    #    # unwrap without version
-    #    result = self.client.unwrap_key(key_id.base_id, 'RSA-OAEP', cipher_text)
-    #    self.assertEqual(plain_text, result.result)
+        # wrap without version
+        result = self.client.wrap_key(key_id.base_id, 'RSA-OAEP', plain_text)
+        cipher_text = result.result
 
-    #    # wrap with version
-    #    result = self.client.wrap_key(key_id.id, 'RSA-OAEP', plain_text)
-    #    cipher_text = result.result
+        # unwrap without version
+        result = self.client.unwrap_key(key_id.base_id, 'RSA-OAEP', cipher_text)
+        if not self.is_playback():
+            self.assertEqual(plain_text, result.result)
 
-    #    # unwrap with version
-    #    result = self.client.unwrap_key(key_id.id, 'RSA-OAEP', cipher_text)
-    #    self.assertEqual(plain_text, result.result)
+        # wrap with version
+        result = self.client.wrap_key(key_id.id, 'RSA-OAEP', plain_text)
+        cipher_text = result.result
 
-    #@record
-    #def test_key_sign_and_verify(self):
+        # unwrap with version
+        result = self.client.unwrap_key(key_id.id, 'RSA-OAEP', cipher_text)
+        if not self.is_playback():
+            self.assertEqual(plain_text, result.result)
 
-    #    key_id = keyvaultid.create_key_id(KEY_VAULT_URI, self.key_name)
-    #    plain_text = binascii.b2a_hex(os.urandom(200))
-    #    md = hashlib.sha256()
-    #    md.update(plainText);
-    #    digest = md.digest();
+    @record
+    def test_key_sign_and_verify(self):
 
-    #    # import key
-    #    imported_key = self._import_test_key(key_id)
-    #    key_id = keyvaultid.parse_key_id(imported_key.key.kid)
+        key_id = keyvaultid.create_key_id(KEY_VAULT_URI, self.key_name)
+        plain_text = self.plain_text
+        md = hashlib.sha256()
+        md.update(plain_text);
+        digest = md.digest();
 
-    #    # sign without version
-    #    signature = self.client.sign(key_id.base_id, 'RS256', digest).result
+        # import key
+        imported_key = self._import_test_key(key_id)
+        key_id = keyvaultid.parse_key_id(imported_key.key.kid)
 
-    #    # verify without version
-    #    result = self.client.verify(key_id.base_id, 'RS256', digest, signature)
-    #    self.assertTrue(result.value)
+        # sign without version
+        signature = self.client.sign(key_id.base_id, 'RS256', digest).result
 
-    #    # sign with version
-    #    signature = self.client.sign(key_id.base_id, 'RS256', digest).result
+        # verify without version
+        result = self.client.verify(key_id.base_id, 'RS256', digest, signature)
+        self.assertTrue(result.value)
 
-    #    # verify with version
-    #    result = self.client.verify(key_id.id, 'RS256', digest, signature)
-    #    self.assertTrue(result.value)
+        # sign with version
+        signature = self.client.sign(key_id.base_id, 'RS256', digest).result
+
+        # verify with version
+        result = self.client.verify(key_id.id, 'RS256', digest, signature)
+        self.assertTrue(result.value)
 
 class KeyVaultSecretTest(AzureKeyVaultTestCase):
 
@@ -507,8 +506,6 @@ class KeyVaultSecretTest(AzureKeyVaultTestCase):
         self.secret_name = 'pythonSecret'
         self.secret_value = 'Pa$$w0rd'
         self.list_test_size = 2
-        if not self.is_playback():
-            self.create_resource_group()
 
     def tearDown(self):
         super(KeyVaultSecretTest, self).tearDown()
@@ -644,8 +641,6 @@ class KeyVaultCertificateTest(AzureKeyVaultTestCase):
         self.cert_name = 'pythonCertificate'
         self.issuer_name = 'pythonIssuer'
         self.list_test_size = 2
-        if not self.is_playback():
-            self.create_resource_group()
 
     def tearDown(self):
         super(KeyVaultCertificateTest, self).tearDown()
