@@ -23,7 +23,7 @@ class EventHubProperties(Model):
     :param partition_count: Number of partitions created for EventHub.
     :type partition_count: long
     :param partition_ids: Current number of shards on the Event Hub.
-    :type partition_ids: list of int
+    :type partition_ids: list of str
     :param status: Enumerates the possible values for the status of the
      EventHub. Possible values include: 'Active', 'Disabled', 'Restoring',
      'SendDisabled', 'ReceiveDisabled', 'Creating', 'Deleting', 'Renaming',
@@ -38,7 +38,7 @@ class EventHubProperties(Model):
         'created_at': {'key': 'createdAt', 'type': 'iso-8601'},
         'message_retention_in_days': {'key': 'messageRetentionInDays', 'type': 'long'},
         'partition_count': {'key': 'partitionCount', 'type': 'long'},
-        'partition_ids': {'key': 'partitionIds', 'type': '[int]'},
+        'partition_ids': {'key': 'partitionIds', 'type': '[str]'},
         'status': {'key': 'status', 'type': 'EntityStatus'},
         'updated_at': {'key': 'updatedAt', 'type': 'iso-8601'},
     }
