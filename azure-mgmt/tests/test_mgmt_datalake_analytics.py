@@ -34,6 +34,9 @@ class MgmtDataLakeAnalyticsTest(AzureMgmtTestCase):
             adla_catalog_dns_suffix = 'azuredatalakeanalytics.net'
         )
         
+        if not self.is_playback():
+            self.create_resource_group()
+
         # define all names
         self.adls_account_name = self.get_resource_name('pyarmadls')
         self.job_account_name = self.get_resource_name('pyarmadla2')
@@ -169,8 +172,7 @@ END;""".format(self.db_name, self.table_name, self.tvf_name, self.view_name, sel
         return val
 
     def run_test_prereqs(self, create_job_acct = False, create_catalog = False):
-        # construct a resource group and ADLS account for use with the ADLA tests.
-        self.create_resource_group()
+        # construct ADLS account for use with the ADLA tests.
         params_create = azure.mgmt.datalake.store.account.models.DataLakeStoreAccount(
             name = self.adls_account_name,
             location = self.region

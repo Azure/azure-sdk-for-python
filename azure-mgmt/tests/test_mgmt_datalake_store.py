@@ -21,9 +21,11 @@ class MgmtDataLakeStoreTest(AzureMgmtTestCase):
             azure.mgmt.datalake.store.account.DataLakeStoreAccountManagementClient
         )
 
+        if not self.is_playback():
+            self.create_resource_group()
+
     @record
     def test_adls_accounts(self):
-        self.create_resource_group()
         # define account params
         account_name = self.get_resource_name('pyarmadls')
         account_name_no_encryption = self.get_resource_name('pyarmadls2')
