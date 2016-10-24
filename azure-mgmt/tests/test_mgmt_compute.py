@@ -449,18 +449,6 @@ class MgmtComputeTest(AzureMgmtTestCase):
             location=self.region,
             platform_fault_domain_count=2,
             platform_update_domain_count=4,
-            statuses=[
-                azure.mgmt.compute.models.InstanceViewStatus(
-                    code='test1',
-                    display_status='test1 display',
-                    message='test1 message',
-                ),
-                azure.mgmt.compute.models.InstanceViewStatus(
-                    code='test2',
-                    display_status='test2 display',
-                    message='test2 message',
-                ),
-            ],
             tags={
                 'tag1': 'value1',
             },
