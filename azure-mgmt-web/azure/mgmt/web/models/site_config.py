@@ -37,6 +37,8 @@ class SiteConfig(Resource):
     :type php_version: str
     :param python_version: Version of Python
     :type python_version: str
+    :param node_version: Version of Node
+    :type node_version: str
     :param request_tracing_enabled: Enable request tracing
     :type request_tracing_enabled: bool
     :param request_tracing_expiration_time: Request tracing expiration time
@@ -142,6 +144,7 @@ class SiteConfig(Resource):
         'net_framework_version': {'key': 'properties.netFrameworkVersion', 'type': 'str'},
         'php_version': {'key': 'properties.phpVersion', 'type': 'str'},
         'python_version': {'key': 'properties.pythonVersion', 'type': 'str'},
+        'node_version': {'key': 'properties.nodeVersion', 'type': 'str'},
         'request_tracing_enabled': {'key': 'properties.requestTracingEnabled', 'type': 'bool'},
         'request_tracing_expiration_time': {'key': 'properties.requestTracingExpirationTime', 'type': 'iso-8601'},
         'remote_debugging_enabled': {'key': 'properties.remoteDebuggingEnabled', 'type': 'bool'},
@@ -180,13 +183,14 @@ class SiteConfig(Resource):
         'ip_security_restrictions': {'key': 'properties.ipSecurityRestrictions', 'type': '[IpSecurityRestriction]'},
     }
 
-    def __init__(self, location, id=None, name=None, kind=None, type=None, tags=None, number_of_workers=None, default_documents=None, net_framework_version=None, php_version=None, python_version=None, request_tracing_enabled=None, request_tracing_expiration_time=None, remote_debugging_enabled=None, remote_debugging_version=None, http_logging_enabled=None, logs_directory_size_limit=None, detailed_error_logging_enabled=None, publishing_username=None, publishing_password=None, app_settings=None, metadata=None, connection_strings=None, handler_mappings=None, document_root=None, scm_type=None, use32_bit_worker_process=None, web_sockets_enabled=None, always_on=None, java_version=None, java_container=None, java_container_version=None, app_command_line=None, managed_pipeline_mode=None, virtual_applications=None, load_balancing=None, experiments=None, limits=None, auto_heal_enabled=None, auto_heal_rules=None, tracing_options=None, vnet_name=None, cors=None, api_definition=None, auto_swap_slot_name=None, local_my_sql_enabled=None, ip_security_restrictions=None):
+    def __init__(self, location, id=None, name=None, kind=None, type=None, tags=None, number_of_workers=None, default_documents=None, net_framework_version=None, php_version=None, python_version=None, node_version=None, request_tracing_enabled=None, request_tracing_expiration_time=None, remote_debugging_enabled=None, remote_debugging_version=None, http_logging_enabled=None, logs_directory_size_limit=None, detailed_error_logging_enabled=None, publishing_username=None, publishing_password=None, app_settings=None, metadata=None, connection_strings=None, handler_mappings=None, document_root=None, scm_type=None, use32_bit_worker_process=None, web_sockets_enabled=None, always_on=None, java_version=None, java_container=None, java_container_version=None, app_command_line=None, managed_pipeline_mode=None, virtual_applications=None, load_balancing=None, experiments=None, limits=None, auto_heal_enabled=None, auto_heal_rules=None, tracing_options=None, vnet_name=None, cors=None, api_definition=None, auto_swap_slot_name=None, local_my_sql_enabled=None, ip_security_restrictions=None):
         super(SiteConfig, self).__init__(id=id, name=name, kind=kind, location=location, type=type, tags=tags)
         self.number_of_workers = number_of_workers
         self.default_documents = default_documents
         self.net_framework_version = net_framework_version
         self.php_version = php_version
         self.python_version = python_version
+        self.node_version = node_version
         self.request_tracing_enabled = request_tracing_enabled
         self.request_tracing_expiration_time = request_tracing_expiration_time
         self.remote_debugging_enabled = remote_debugging_enabled
