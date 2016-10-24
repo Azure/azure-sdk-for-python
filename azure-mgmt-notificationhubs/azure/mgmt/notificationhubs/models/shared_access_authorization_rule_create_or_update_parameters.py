@@ -9,33 +9,50 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.serialization import Model
+from .resource import Resource
 
 
-class SharedAccessAuthorizationRuleCreateOrUpdateParameters(Model):
+class SharedAccessAuthorizationRuleCreateOrUpdateParameters(Resource):
     """Parameters supplied to the CreateOrUpdate Namespace AuthorizationRules.
 
-    :param location: Gets or sets Namespace data center location.
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar id: Resource Id
+    :vartype id: str
+    :ivar name: Resource name
+    :vartype name: str
+    :ivar type: Resource type
+    :vartype type: str
+    :param location: Resource location
     :type location: str
-    :param name: Gets or sets Name of the Namespace AuthorizationRule.
-    :type name: str
-    :param properties: Gets or sets properties of the Namespace
-     AuthorizationRules.
+    :param tags: Resource tags
+    :type tags: dict
+    :param sku: The sku of the created namespace
+    :type sku: :class:`Sku <azure.mgmt.notificationhubs.models.Sku>`
+    :param properties: Properties of the Namespace AuthorizationRules.
     :type properties: :class:`SharedAccessAuthorizationRuleProperties
      <azure.mgmt.notificationhubs.models.SharedAccessAuthorizationRuleProperties>`
     """ 
 
     _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'location': {'required': True},
         'properties': {'required': True},
     }
 
     _attribute_map = {
-        'location': {'key': 'location', 'type': 'str'},
+        'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'location': {'key': 'location', 'type': 'str'},
+        'tags': {'key': 'tags', 'type': '{str}'},
+        'sku': {'key': 'sku', 'type': 'Sku'},
         'properties': {'key': 'properties', 'type': 'SharedAccessAuthorizationRuleProperties'},
     }
 
-    def __init__(self, properties, location=None, name=None):
-        self.location = location
-        self.name = name
+    def __init__(self, location, properties, tags=None, sku=None):
+        super(SharedAccessAuthorizationRuleCreateOrUpdateParameters, self).__init__(location=location, tags=tags, sku=sku)
         self.properties = properties

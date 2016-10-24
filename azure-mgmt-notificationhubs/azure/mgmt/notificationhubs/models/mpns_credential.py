@@ -15,15 +15,21 @@ from msrest.serialization import Model
 class MpnsCredential(Model):
     """Description of a NotificationHub MpnsCredential.
 
-    :param properties: Gets or sets properties of NotificationHub
-     MpnsCredential.
-    :type properties: :class:`MpnsCredentialProperties
-     <azure.mgmt.notificationhubs.models.MpnsCredentialProperties>`
+    :param mpns_certificate: The MPNS certificate.
+    :type mpns_certificate: str
+    :param certificate_key: The certificate key for this credential.
+    :type certificate_key: str
+    :param thumbprint: The Mpns certificate Thumbprint
+    :type thumbprint: str
     """ 
 
     _attribute_map = {
-        'properties': {'key': 'properties', 'type': 'MpnsCredentialProperties'},
+        'mpns_certificate': {'key': 'properties.mpnsCertificate', 'type': 'str'},
+        'certificate_key': {'key': 'properties.certificateKey', 'type': 'str'},
+        'thumbprint': {'key': 'properties.thumbprint', 'type': 'str'},
     }
 
-    def __init__(self, properties=None):
-        self.properties = properties
+    def __init__(self, mpns_certificate=None, certificate_key=None, thumbprint=None):
+        self.mpns_certificate = mpns_certificate
+        self.certificate_key = certificate_key
+        self.thumbprint = thumbprint

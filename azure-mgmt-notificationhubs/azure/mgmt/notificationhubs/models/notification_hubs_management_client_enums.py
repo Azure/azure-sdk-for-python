@@ -12,6 +12,13 @@
 from enum import Enum
 
 
+class SkuName(Enum):
+
+    free = "Free"
+    basic = "Basic"
+    standard = "Standard"
+
+
 class NamespaceType(Enum):
 
     messaging = "Messaging"

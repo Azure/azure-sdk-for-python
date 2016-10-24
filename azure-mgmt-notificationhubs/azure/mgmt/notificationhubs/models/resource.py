@@ -28,6 +28,8 @@ class Resource(Model):
     :type location: str
     :param tags: Resource tags
     :type tags: dict
+    :param sku: The sku of the created namespace
+    :type sku: :class:`Sku <azure.mgmt.notificationhubs.models.Sku>`
     """ 
 
     _validation = {
@@ -43,11 +45,13 @@ class Resource(Model):
         'type': {'key': 'type', 'type': 'str'},
         'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
+        'sku': {'key': 'sku', 'type': 'Sku'},
     }
 
-    def __init__(self, location, tags=None):
+    def __init__(self, location, tags=None, sku=None):
         self.id = None
         self.name = None
         self.type = None
         self.location = location
         self.tags = tags
+        self.sku = sku

@@ -83,6 +83,8 @@ class SiteConfig(Resource):
     :type java_container: str
     :param java_container_version: Java container version
     :type java_container_version: str
+    :param app_command_line: App Command Line to launch
+    :type app_command_line: str
     :param managed_pipeline_mode: Managed pipeline mode. Possible values
      include: 'Integrated', 'Classic'
     :type managed_pipeline_mode: str or :class:`ManagedPipelineMode
@@ -161,6 +163,7 @@ class SiteConfig(Resource):
         'java_version': {'key': 'properties.javaVersion', 'type': 'str'},
         'java_container': {'key': 'properties.javaContainer', 'type': 'str'},
         'java_container_version': {'key': 'properties.javaContainerVersion', 'type': 'str'},
+        'app_command_line': {'key': 'properties.appCommandLine', 'type': 'str'},
         'managed_pipeline_mode': {'key': 'properties.managedPipelineMode', 'type': 'ManagedPipelineMode'},
         'virtual_applications': {'key': 'properties.virtualApplications', 'type': '[VirtualApplication]'},
         'load_balancing': {'key': 'properties.loadBalancing', 'type': 'SiteLoadBalancing'},
@@ -177,7 +180,7 @@ class SiteConfig(Resource):
         'ip_security_restrictions': {'key': 'properties.ipSecurityRestrictions', 'type': '[IpSecurityRestriction]'},
     }
 
-    def __init__(self, location, id=None, name=None, kind=None, type=None, tags=None, number_of_workers=None, default_documents=None, net_framework_version=None, php_version=None, python_version=None, request_tracing_enabled=None, request_tracing_expiration_time=None, remote_debugging_enabled=None, remote_debugging_version=None, http_logging_enabled=None, logs_directory_size_limit=None, detailed_error_logging_enabled=None, publishing_username=None, publishing_password=None, app_settings=None, metadata=None, connection_strings=None, handler_mappings=None, document_root=None, scm_type=None, use32_bit_worker_process=None, web_sockets_enabled=None, always_on=None, java_version=None, java_container=None, java_container_version=None, managed_pipeline_mode=None, virtual_applications=None, load_balancing=None, experiments=None, limits=None, auto_heal_enabled=None, auto_heal_rules=None, tracing_options=None, vnet_name=None, cors=None, api_definition=None, auto_swap_slot_name=None, local_my_sql_enabled=None, ip_security_restrictions=None):
+    def __init__(self, location, id=None, name=None, kind=None, type=None, tags=None, number_of_workers=None, default_documents=None, net_framework_version=None, php_version=None, python_version=None, request_tracing_enabled=None, request_tracing_expiration_time=None, remote_debugging_enabled=None, remote_debugging_version=None, http_logging_enabled=None, logs_directory_size_limit=None, detailed_error_logging_enabled=None, publishing_username=None, publishing_password=None, app_settings=None, metadata=None, connection_strings=None, handler_mappings=None, document_root=None, scm_type=None, use32_bit_worker_process=None, web_sockets_enabled=None, always_on=None, java_version=None, java_container=None, java_container_version=None, app_command_line=None, managed_pipeline_mode=None, virtual_applications=None, load_balancing=None, experiments=None, limits=None, auto_heal_enabled=None, auto_heal_rules=None, tracing_options=None, vnet_name=None, cors=None, api_definition=None, auto_swap_slot_name=None, local_my_sql_enabled=None, ip_security_restrictions=None):
         super(SiteConfig, self).__init__(id=id, name=name, kind=kind, location=location, type=type, tags=tags)
         self.number_of_workers = number_of_workers
         self.default_documents = default_documents
@@ -205,6 +208,7 @@ class SiteConfig(Resource):
         self.java_version = java_version
         self.java_container = java_container
         self.java_container_version = java_container_version
+        self.app_command_line = app_command_line
         self.managed_pipeline_mode = managed_pipeline_mode
         self.virtual_applications = virtual_applications
         self.load_balancing = load_balancing
