@@ -6,7 +6,7 @@
 # license information.
 #--------------------------------------------------------------------------
 
-from setuptools import setup
+from setuptools import find_packages, setup
 from io import open
 import re
 
@@ -59,26 +59,7 @@ setup(
         'License :: OSI Approved :: MIT License',
     ],
     zip_safe=False,
-    packages=[
-        'azure',
-        'azure.mgmt',
-        'azure.mgmt.resource',
-        'azure.mgmt.resource.resources',
-        'azure.mgmt.resource.resources.models',
-        'azure.mgmt.resource.resources.operations',
-        'azure.mgmt.resource.features',
-        'azure.mgmt.resource.features.models',
-        'azure.mgmt.resource.features.operations',
-        'azure.mgmt.resource.locks',
-        'azure.mgmt.resource.locks.models',
-        'azure.mgmt.resource.locks.operations',
-        'azure.mgmt.resource.policy',
-        'azure.mgmt.resource.policy.models',
-        'azure.mgmt.resource.policy.operations',
-        'azure.mgmt.resource.subscriptions',
-        'azure.mgmt.resource.subscriptions.models',
-        'azure.mgmt.resource.subscriptions.operations',
-    ],
+    packages=find_packages(),
     install_requires=[
         'azure-mgmt-nspkg',
         'azure-common[autorest]==1.1.4',
