@@ -171,7 +171,7 @@ END;""".format(self.db_name, self.table_name, self.tvf_name, self.view_name, sel
         val = self._scrub_using_dict(val, real_to_fake_dict)
         return val
 
-    def run_test_prereqs(self, create_job_acct = False, create_catalog = False):
+    def run_prereqs(self, create_job_acct = False, create_catalog = False):
         # construct ADLS account for use with the ADLA tests.
         params_create = azure.mgmt.datalake.store.account.models.DataLakeStoreAccount(
             name = self.adls_account_name,
@@ -254,7 +254,7 @@ END;""".format(self.db_name, self.table_name, self.tvf_name, self.view_name, sel
 
     @record
     def test_adla_jobs(self):
-        self.run_test_prereqs(create_job_acct= True, create_catalog = False)
+        self.run_prereqs(create_job_acct= True, create_catalog = False)
         # define some static GUIDs
         job_to_submit = azure.mgmt.datalake.analytics.job.models.JobInformation(
             name = 'azure python sdk job test',
@@ -317,7 +317,7 @@ END;""".format(self.db_name, self.table_name, self.tvf_name, self.view_name, sel
 
     @record
     def test_adla_catalog_items(self):
-        self.run_test_prereqs(create_job_acct= True, create_catalog = True)
+        self.run_prereqs(create_job_acct= True, create_catalog = True)
         # get all databases, there should be at least 2 and the specific database
         dbList = list(self.adla_catalog_client.catalog.list_databases(self.job_account_name))
         self.assertGreater(len(dbList), 1)
@@ -378,7 +378,7 @@ END;""".format(self.db_name, self.table_name, self.tvf_name, self.view_name, sel
     # TODO: Uncomment once the new swagger specs are incorporated.
     #@record
     #def test_adla_catalog_credentials(self):
-    #    self.run_test_prereqs(create_job_acct= True, create_catalog = True)
+    #    self.run_prereqs(create_job_acct= True, create_catalog = True)
     #    self.adla_catalog_client.catalog.create_credential(
     #        self.job_account_name,
     #        self.db_name,
@@ -447,7 +447,7 @@ END;""".format(self.db_name, self.table_name, self.tvf_name, self.view_name, sel
 
     @record
     def test_adla_catalog_secrets(self):
-        self.run_test_prereqs(create_job_acct= True, create_catalog = True)
+        self.run_prereqs(create_job_acct= True, create_catalog = True)
 
         self.adla_catalog_client.catalog.create_secret(
             self.job_account_name,
@@ -540,7 +540,7 @@ END;""".format(self.db_name, self.table_name, self.tvf_name, self.view_name, sel
     def test_adla_accounts(self):
         
         # create resource group and store account
-        self.run_test_prereqs()
+        self.run_prereqs()
 
         # define account params
         account_name = self.get_resource_name('pyarmadla')
