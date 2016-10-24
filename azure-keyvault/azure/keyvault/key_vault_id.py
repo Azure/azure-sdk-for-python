@@ -32,9 +32,12 @@ def _validate_string_argument(prop, name, nullable=False):
     if prop is None and nullable:
         return prop
     try:
-        prop = prop.strip()
-    except AttributeError:
+        if not isinstance(prop, str) and not isinstance(prop, unicode):
+            raise TypeError("argument '{}' must by of type string".format(name))
+    except NameError: # unicode type does not exist in Python 3
         raise TypeError("argument '{}' must by of type string".format(name))
+
+    prop = prop.strip()        
     if not prop and not nullable:
         raise ValueError("argument '{}' must be specified".format(name))
     elif not prop and nullable:
@@ -47,7 +50,7 @@ def _parse_uri_argument(uri):
         parsed_uri = parse.urlparse(uri)
     except Exception: # pylint: disable=broad-except
         raise ValueError("'{}' is not not a valid URI".format(uri))
-    if not all([parsed_uri.scheme, parsed_uri.hostname]):
+    if not (parsed_uri.scheme and parsed_uri.hostname):
         raise ValueError("'{}' is not not a valid URI".format(uri))
     return parsed_uri
 
@@ -80,7 +83,7 @@ def parse_object_id(collection, id):
     id = _validate_string_argument(id, 'id')    
     
     parsed_uri = _parse_uri_argument(id)
-    segments = [x for x in parsed_uri.path.split('/') if x] # eliminate empty segments
+    segments = list(filter(None, parsed_uri.path.split('/'))) # eliminate empty segments
     
     num_coll_segs = len(collection.split('/'))
     num_segments = len(segments)
