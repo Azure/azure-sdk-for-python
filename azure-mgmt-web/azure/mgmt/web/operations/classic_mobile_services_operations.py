@@ -46,6 +46,7 @@ class ClassicMobileServicesOperations(object):
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`ClassicMobileServicePaged
          <azure.mgmt.web.models.ClassicMobileServicePaged>`
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -115,6 +116,7 @@ class ClassicMobileServicesOperations(object):
          <azure.mgmt.web.models.ClassicMobileService>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/classicMobileServices/{name}'
@@ -175,6 +177,7 @@ class ClassicMobileServicesOperations(object):
         :rtype: object
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/classicMobileServices/{name}'

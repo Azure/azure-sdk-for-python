@@ -43,6 +43,8 @@ class ProfilesOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`ProfilePaged <azure.mgmt.cdn.models.ProfilePaged>`
+        :raises:
+         :class:`ErrorResponseException<azure.mgmt.cdn.models.ErrorResponseException>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -105,6 +107,8 @@ class ProfilesOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`ProfilePaged <azure.mgmt.cdn.models.ProfilePaged>`
+        :raises:
+         :class:`ErrorResponseException<azure.mgmt.cdn.models.ErrorResponseException>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -173,6 +177,8 @@ class ProfilesOperations(object):
         :rtype: :class:`Profile <azure.mgmt.cdn.models.Profile>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`ErrorResponseException<azure.mgmt.cdn.models.ErrorResponseException>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cdn/profiles/{profileName}'
@@ -237,6 +243,8 @@ class ProfilesOperations(object):
          <azure.mgmt.cdn.models.Profile>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`ErrorResponseException<azure.mgmt.cdn.models.ErrorResponseException>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cdn/profiles/{profileName}'
@@ -331,6 +339,8 @@ class ProfilesOperations(object):
          <azure.mgmt.cdn.models.Profile>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`ErrorResponseException<azure.mgmt.cdn.models.ErrorResponseException>`
         """
         profile_properties = models.ProfileUpdateParameters(tags=tags)
 
@@ -424,6 +434,8 @@ class ProfilesOperations(object):
          instance that returns None
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`ErrorResponseException<azure.mgmt.cdn.models.ErrorResponseException>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cdn/profiles/{profileName}'
@@ -503,6 +515,8 @@ class ProfilesOperations(object):
         :rtype: :class:`SsoUri <azure.mgmt.cdn.models.SsoUri>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`ErrorResponseException<azure.mgmt.cdn.models.ErrorResponseException>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cdn/profiles/{profileName}/generateSsoUri'

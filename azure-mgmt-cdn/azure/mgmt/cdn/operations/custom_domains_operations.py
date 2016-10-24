@@ -52,6 +52,8 @@ class CustomDomainsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`CustomDomainPaged
          <azure.mgmt.cdn.models.CustomDomainPaged>`
+        :raises:
+         :class:`ErrorResponseException<azure.mgmt.cdn.models.ErrorResponseException>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -127,6 +129,8 @@ class CustomDomainsOperations(object):
         :rtype: :class:`CustomDomain <azure.mgmt.cdn.models.CustomDomain>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`ErrorResponseException<azure.mgmt.cdn.models.ErrorResponseException>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cdn/profiles/{profileName}/endpoints/{endpointName}/customDomains/{customDomainName}'
@@ -198,6 +202,8 @@ class CustomDomainsOperations(object):
          <azure.mgmt.cdn.models.CustomDomain>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`ErrorResponseException<azure.mgmt.cdn.models.ErrorResponseException>`
         """
         custom_domain_properties = models.CustomDomainParameters(host_name=host_name)
 
@@ -301,6 +307,8 @@ class CustomDomainsOperations(object):
         :rtype: :class:`ErrorResponse <azure.mgmt.cdn.models.ErrorResponse>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`ErrorResponseException<azure.mgmt.cdn.models.ErrorResponseException>`
         """
         custom_domain_properties = models.CustomDomainParameters(host_name=host_name)
 
@@ -368,6 +376,8 @@ class CustomDomainsOperations(object):
          <azure.mgmt.cdn.models.CustomDomain>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`ErrorResponseException<azure.mgmt.cdn.models.ErrorResponseException>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cdn/profiles/{profileName}/endpoints/{endpointName}/customDomains/{customDomainName}'
