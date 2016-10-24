@@ -49,6 +49,7 @@ class ProvidersOperations(object):
          <azure.mgmt.resource.resources.models.Provider>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/providers/{resourceProviderNamespace}/unregister'
@@ -108,6 +109,7 @@ class ProvidersOperations(object):
          <azure.mgmt.resource.resources.models.Provider>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/providers/{resourceProviderNamespace}/register'
@@ -168,6 +170,7 @@ class ProvidersOperations(object):
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`ProviderPaged
          <azure.mgmt.resource.resources.models.ProviderPaged>`
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -242,6 +245,7 @@ class ProvidersOperations(object):
          <azure.mgmt.resource.resources.models.Provider>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/providers/{resourceProviderNamespace}'

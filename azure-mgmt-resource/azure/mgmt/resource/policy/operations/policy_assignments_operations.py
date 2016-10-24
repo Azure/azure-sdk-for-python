@@ -50,6 +50,7 @@ class PolicyAssignmentsOperations(object):
          <azure.mgmt.resource.policy.models.PolicyAssignment>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/{scope}/providers/Microsoft.Authorization/policyassignments/{policyAssignmentName}'
@@ -113,6 +114,7 @@ class PolicyAssignmentsOperations(object):
          <azure.mgmt.resource.policy.models.PolicyAssignment>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/{scope}/providers/Microsoft.Authorization/policyassignments/{policyAssignmentName}'
@@ -177,6 +179,7 @@ class PolicyAssignmentsOperations(object):
          <azure.mgmt.resource.policy.models.PolicyAssignment>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/{scope}/providers/Microsoft.Authorization/policyassignments/{policyAssignmentName}'
@@ -235,6 +238,7 @@ class PolicyAssignmentsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`PolicyAssignmentPaged
          <azure.mgmt.resource.policy.models.PolicyAssignmentPaged>`
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -313,6 +317,7 @@ class PolicyAssignmentsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`PolicyAssignmentPaged
          <azure.mgmt.resource.policy.models.PolicyAssignmentPaged>`
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -384,6 +389,7 @@ class PolicyAssignmentsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`PolicyAssignmentPaged
          <azure.mgmt.resource.policy.models.PolicyAssignmentPaged>`
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -452,6 +458,7 @@ class PolicyAssignmentsOperations(object):
          <azure.mgmt.resource.policy.models.PolicyAssignment>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/{policyAssignmentId}'
@@ -512,6 +519,7 @@ class PolicyAssignmentsOperations(object):
          <azure.mgmt.resource.policy.models.PolicyAssignment>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/{policyAssignmentId}'
@@ -573,6 +581,7 @@ class PolicyAssignmentsOperations(object):
          <azure.mgmt.resource.policy.models.PolicyAssignment>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/{policyAssignmentId}'
