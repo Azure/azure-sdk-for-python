@@ -9,11 +9,11 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.serialization import Model
+from .resource import Resource
 
 
-class ResourceModel(Model):
-    """ResourceModel.
+class CheckAvailabilityResult(Resource):
+    """Description of a CheckAvailibility resource.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -28,6 +28,11 @@ class ResourceModel(Model):
     :type location: str
     :param tags: Resource tags
     :type tags: dict
+    :param sku: The sku of the created namespace
+    :type sku: :class:`Sku <azure.mgmt.notificationhubs.models.Sku>`
+    :param is_availiable: True if the name is available and can be used to
+     create new Namespace/NotificationHub. Otherwise false.
+    :type is_availiable: bool
     """ 
 
     _validation = {
@@ -43,11 +48,10 @@ class ResourceModel(Model):
         'type': {'key': 'type', 'type': 'str'},
         'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
+        'sku': {'key': 'sku', 'type': 'Sku'},
+        'is_availiable': {'key': 'isAvailiable', 'type': 'bool'},
     }
 
-    def __init__(self, location, tags=None):
-        self.id = None
-        self.name = None
-        self.type = None
-        self.location = location
-        self.tags = tags
+    def __init__(self, location, tags=None, sku=None, is_availiable=None):
+        super(CheckAvailabilityResult, self).__init__(location=location, tags=tags, sku=sku)
+        self.is_availiable = is_availiable

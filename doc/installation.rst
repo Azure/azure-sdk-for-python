@@ -65,8 +65,8 @@ Preview packages
 ===================================== =========
 Package name                          Version  
 ===================================== =========
-azure-mgmt-resource                   0.30.0   
-azure-mgmt-compute                    0.30.0rc6
+azure-mgmt-resource                   0.30.1   
+azure-mgmt-compute                    0.30.0
 azure-mgmt-network                    0.30.0rc6
 azure-mgmt-storage                    0.30.0rc6
 azure-mgmt-keyvault                   0.30.0
@@ -80,7 +80,7 @@ azure-mgmt-iothub                     0.1.0
 azure-mgmt-notificationhubs           0.30.0
 azure-mgmt-powerbiembedded            0.30.0rc6
 azure-mgmt-trafficmanager             0.30.0rc6
-azure-mgmt-web                        0.30.0rc6   
+azure-mgmt-web                        0.30.0
 ===================================== =========
 
 Install from Github

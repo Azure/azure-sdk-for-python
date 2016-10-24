@@ -28,7 +28,7 @@ class OSDisk(Model):
     :type vhd: :class:`VirtualHardDisk
      <azure.mgmt.compute.models.VirtualHardDisk>`
     :param image: the Source User Image VirtualHardDisk. This VirtualHardDisk
-     will be copied before using it to attach to the Virtual Machine.If
+     will be copied before using it to attach to the Virtual Machine. If
      SourceImage is provided, the destination VirtualHardDisk should not
      exist.
     :type image: :class:`VirtualHardDisk

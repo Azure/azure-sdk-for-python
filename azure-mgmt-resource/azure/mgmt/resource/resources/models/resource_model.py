@@ -34,7 +34,6 @@ class ResourceModel(Model):
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
-        'location': {'required': True},
     }
 
     _attribute_map = {
@@ -45,7 +44,7 @@ class ResourceModel(Model):
         'tags': {'key': 'tags', 'type': '{str}'},
     }
 
-    def __init__(self, location, tags=None):
+    def __init__(self, location=None, tags=None):
         self.id = None
         self.name = None
         self.type = None

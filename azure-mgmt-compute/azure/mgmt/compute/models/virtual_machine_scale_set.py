@@ -39,9 +39,9 @@ class VirtualMachineScaleSet(Resource):
     :ivar provisioning_state: the provisioning state, which only appears in
      the response.
     :vartype provisioning_state: str
-    :param over_provision: Specifies whether the Virtual Machine Scale Set
+    :param overprovision: Specifies whether the Virtual Machine Scale Set
      should be overprovisioned.
-    :type over_provision: bool
+    :type overprovision: bool
     """ 
 
     _validation = {
@@ -62,13 +62,13 @@ class VirtualMachineScaleSet(Resource):
         'upgrade_policy': {'key': 'properties.upgradePolicy', 'type': 'UpgradePolicy'},
         'virtual_machine_profile': {'key': 'properties.virtualMachineProfile', 'type': 'VirtualMachineScaleSetVMProfile'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'over_provision': {'key': 'properties.overProvision', 'type': 'bool'},
+        'overprovision': {'key': 'properties.overprovision', 'type': 'bool'},
     }
 
-    def __init__(self, location, tags=None, sku=None, upgrade_policy=None, virtual_machine_profile=None, over_provision=None):
+    def __init__(self, location, tags=None, sku=None, upgrade_policy=None, virtual_machine_profile=None, overprovision=None):
         super(VirtualMachineScaleSet, self).__init__(location=location, tags=tags)
         self.sku = sku
         self.upgrade_policy = upgrade_policy
         self.virtual_machine_profile = virtual_machine_profile
         self.provisioning_state = None
-        self.over_provision = over_provision
+        self.overprovision = overprovision

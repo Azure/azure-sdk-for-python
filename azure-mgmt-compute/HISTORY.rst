@@ -3,6 +3,11 @@
 Release History
 ===============
 
+0.30.0 (2016-10-17)
++++++++++++++++++++
+
+* Initial preview release. Based on API version 2016-03-30.
+
 
 0.20.0 (2015-08-31)
 +++++++++++++++++++
