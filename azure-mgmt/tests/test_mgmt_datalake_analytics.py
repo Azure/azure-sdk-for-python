@@ -33,51 +33,12 @@ class MgmtDataLakeAnalyticsTest(AzureMgmtTestCase):
             azure.mgmt.datalake.analytics.catalog.DataLakeAnalyticsCatalogManagementClient,
             adla_catalog_dns_suffix = 'azuredatalakeanalytics.net'
         )
-
-        # construct a resource group and ADLS account for use with the ADLA tests.
-        self.create_resource_group()
+        
+        # define all names
         self.adls_account_name = self.get_resource_name('pyarmadls')
-        params_create = azure.mgmt.datalake.store.account.models.DataLakeStoreAccount(
-            name = self.adls_account_name,
-            location = self.region
-        )
-        result_create = self.adls_account_client.account.create(
-            self.group_name,
-            self.adls_account_name,
-            params_create,
-        )
-
-        adls_account = result_create.result()
-        
-        # validation of the create
-        self.assertEqual(adls_account.name, self.adls_account_name)
-
-        # construct an ADLA account for use with catalog and job tests
         self.job_account_name = self.get_resource_name('pyarmadla2')
-        params_create = azure.mgmt.datalake.analytics.account.models.DataLakeAnalyticsAccount(
-            name = self.job_account_name,
-            location = self.region,
-            properties = azure.mgmt.datalake.analytics.account.models.DataLakeAnalyticsAccountProperties(
-                default_data_lake_store_account = self.adls_account_name,
-                data_lake_store_accounts = [azure.mgmt.datalake.analytics.account.models.DataLakeStoreAccountInfo(name = self.adls_account_name)]
-            )
-        )
 
-        result_create = self.adla_account_client.account.create(
-            self.group_name,
-            self.job_account_name,
-            params_create,
-        )
-
-        adla_account = result_create.result()
-        
-        # full validation of the create
-        self.assertEqual(adla_account.name, self.job_account_name)
-
-        # wait two minutes for the account to be fully provisioned with a queue.
-        self.sleep(120)
-
-        # construct the catalog in the job account
+        # construct the catalog script
         self.db_name = self.get_resource_name('adladb')
         self.table_name = self.get_resource_name('adlatable')
         self.tvf_name = self.get_resource_name('adlatvf')
@@ -180,14 +141,20 @@ AS BEGIN
   AS 
   T(a, b);
 END;""".format(self.db_name, self.table_name, self.tvf_name, self.view_name, self.proc_name)
-    
+
         # define all the job IDs to be used during execution
-        self.cancel_id = str(uuid.uuid1())
-        self.run_id = str(uuid.uuid1())
-        self.catalog_id = str(uuid.uuid1())
-        self.cred_create_id = str(uuid.uuid1())
-        self.cred_drop_id = str(uuid.uuid1())
-        self.run_job_to_completion(self.job_account_name, self.catalog_id, self.catalog_script)
+        if self.is_playback():
+            self.cancel_id = self.fake_settings.ADLA_JOB_ID
+            self.run_id = self.fake_settings.ADLA_JOB_ID
+            self.catalog_id = self.fake_settings.ADLA_JOB_ID
+            self.cred_create_id = self.fake_settings.ADLA_JOB_ID
+            self.cred_drop_id = self.fake_settings.ADLA_JOB_ID
+        else:
+            self.cancel_id = str(uuid.uuid1())
+            self.run_id = str(uuid.uuid1())
+            self.catalog_id = str(uuid.uuid1())
+            self.cred_create_id = str(uuid.uuid1())
+            self.cred_drop_id = str(uuid.uuid1())
 
     def _scrub(self, val):
         val = super(MgmtDataLakeAnalyticsTest, self)._scrub(val)
@@ -200,6 +167,52 @@ END;""".format(self.db_name, self.table_name, self.tvf_name, self.view_name, sel
         }
         val = self._scrub_using_dict(val, real_to_fake_dict)
         return val
+
+    def run_test_prereqs(self, create_job_acct = False, create_catalog = False):
+        # construct a resource group and ADLS account for use with the ADLA tests.
+        self.create_resource_group()
+        params_create = azure.mgmt.datalake.store.account.models.DataLakeStoreAccount(
+            name = self.adls_account_name,
+            location = self.region
+        )
+        result_create = self.adls_account_client.account.create(
+            self.group_name,
+            self.adls_account_name,
+            params_create,
+        )
+
+        adls_account = result_create.result()
+        
+        # validation of the create
+        self.assertEqual(adls_account.name, self.adls_account_name)
+
+        # construct an ADLA account for use with catalog and job tests
+        if(create_job_acct):
+            params_create = azure.mgmt.datalake.analytics.account.models.DataLakeAnalyticsAccount(
+                name = self.job_account_name,
+                location = self.region,
+                properties = azure.mgmt.datalake.analytics.account.models.DataLakeAnalyticsAccountProperties(
+                    default_data_lake_store_account = self.adls_account_name,
+                    data_lake_store_accounts = [azure.mgmt.datalake.analytics.account.models.DataLakeStoreAccountInfo(name = self.adls_account_name)]
+                )
+            )
+
+            result_create = self.adla_account_client.account.create(
+                self.group_name,
+                self.job_account_name,
+                params_create,
+            )
+
+            adla_account = result_create.result()
+        
+            # full validation of the create
+            self.assertEqual(adla_account.name, self.job_account_name)
+
+            # wait two minutes for the account to be fully provisioned with a queue.
+            self.sleep(120)
+    
+            if(create_catalog):
+                self.run_job_to_completion(self.job_account_name, self.catalog_id, self.catalog_script)
 
     def run_job_to_completion(self, adla_account_name, job_id, script_to_run):
         job_params = azure.mgmt.datalake.analytics.job.models.JobInformation(
@@ -239,6 +252,7 @@ END;""".format(self.db_name, self.table_name, self.tvf_name, self.view_name, sel
 
     @record
     def test_adla_jobs(self):
+        self.run_test_prereqs(create_job_acct= True, create_catalog = False)
         # define some static GUIDs
         job_to_submit = azure.mgmt.datalake.analytics.job.models.JobInformation(
             name = 'azure python sdk job test',
@@ -301,6 +315,7 @@ END;""".format(self.db_name, self.table_name, self.tvf_name, self.view_name, sel
 
     @record
     def test_adla_catalog_items(self):
+        self.run_test_prereqs(create_job_acct= True, create_catalog = True)
         # get all databases, there should be at least 2 and the specific database
         dbList = list(self.adla_catalog_client.catalog.list_databases(self.job_account_name))
         self.assertGreater(len(dbList), 1)
@@ -361,6 +376,7 @@ END;""".format(self.db_name, self.table_name, self.tvf_name, self.view_name, sel
     # TODO: Uncomment once the new swagger specs are incorporated.
     #@record
     #def test_adla_catalog_credentials(self):
+    #    self.run_test_prereqs(create_job_acct= True, create_catalog = True)
     #    self.adla_catalog_client.catalog.create_credential(
     #        self.job_account_name,
     #        self.db_name,
@@ -429,6 +445,8 @@ END;""".format(self.db_name, self.table_name, self.tvf_name, self.view_name, sel
 
     @record
     def test_adla_catalog_secrets(self):
+        self.run_test_prereqs(create_job_acct= True, create_catalog = True)
+
         self.adla_catalog_client.catalog.create_secret(
             self.job_account_name,
             self.db_name,
@@ -519,6 +537,9 @@ END;""".format(self.db_name, self.table_name, self.tvf_name, self.view_name, sel
     @record
     def test_adla_accounts(self):
         
+        # create resource group and store account
+        self.run_test_prereqs()
+
         # define account params
         account_name = self.get_resource_name('pyarmadla')
         params_create = azure.mgmt.datalake.analytics.account.models.DataLakeAnalyticsAccount(
@@ -577,11 +598,11 @@ END;""".format(self.db_name, self.table_name, self.tvf_name, self.view_name, sel
             self.group_name,
         )
         result_list = list(result_list)
-        self.assertGreater(len(result_list), 1)
+        self.assertGreater(len(result_list), 0)
 
         result_list = self.adla_account_client.account.list()
         result_list = list(result_list)
-        self.assertGreater(len(result_list), 1)
+        self.assertGreater(len(result_list), 0)
 
         
         # update the tags
