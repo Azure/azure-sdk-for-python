@@ -10,7 +10,7 @@ See :doc:`Resource Management Authentication <quickstart_authentication>`
 for details on getting a ``Credentials`` instance.
 
 You will also need the tenant id of the AD you want to manage. Could be the AD UUID or domain name.
-`You can follow this documentation to get it <https://msdn.microsoft.com/fr-fr/library/azure/ad/graph/howto/azure-ad-graph-api-operations-overview#TenantIdentifier>`__.
+`You can follow this documentation to get it <https://msdn.microsoft.com/en-us/library/azure/ad/graph/howto/azure-ad-graph-api-operations-overview#TenantIdentifier>`__.
 
 .. note:: You need to change the `resource` parameter to `https://graph.windows.net` while creating the credentials instance
 
