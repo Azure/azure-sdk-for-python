@@ -9,5 +9,19 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-VERSION = "0.30.2"
+from msrest.paging import Paged
 
+
+class ResourceLinkPaged(Paged):
+    """
+    A paging container for iterating over a list of ResourceLink object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[ResourceLink]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(ResourceLinkPaged, self).__init__(*args, **kwargs)

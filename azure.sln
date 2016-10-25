@@ -7,11 +7,11 @@ Project("{888888A0-9F3D-457C-B088-3A5042F75D52}") = "azure", "azure.pyproj", "{2
 EndProject
 Project("{888888A0-9F3D-457C-B088-3A5042F75D52}") = "AzureResourceViewer", "examples\AzureResourceViewer\AzureResourceViewer.pyproj", "{27A0D52F-03C0-4BF5-B6B3-4634BECC05B9}"
 EndProject
-Project("{888888A0-9F3D-457C-B088-3A5042F75D52}") = "msrestazure", "..\autorest\src\client\Python\msrestazure\msrestazure.pyproj", "{B80E5ECC-DCDC-4D31-B3BE-8C32DEA8E864}"
-EndProject
 Project("{888888A0-9F3D-457C-B088-3A5042F75D52}") = "Python.Tests.Azure", "..\autorest\src\generator\AutoRest.Python.Azure.Tests\Python.Tests.Azure.pyproj", "{74BE0601-FF65-4B46-8A8B-E670056061C4}"
 EndProject
-Project("{888888A0-9F3D-457C-B088-3A5042F75D52}") = "msrest", "..\autorest\src\client\Python\msrest\msrest.pyproj", "{8523BA22-21D4-4F69-A73E-958B617C9D37}"
+Project("{888888A0-9F3D-457C-B088-3A5042F75D52}") = "msrest", "..\msrest-for-python\msrest.pyproj", "{8523BA22-21D4-4F69-A73E-958B617C9D37}"
+EndProject
+Project("{888888A0-9F3D-457C-B088-3A5042F75D52}") = "msrestazure", "..\msrestazure-for-python\msrestazure.pyproj", "{B80E5ECC-DCDC-4D31-B3BE-8C32DEA8E864}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -25,12 +25,12 @@ Global
 		{27A0D52F-03C0-4BF5-B6B3-4634BECC05B9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{27A0D52F-03C0-4BF5-B6B3-4634BECC05B9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{27A0D52F-03C0-4BF5-B6B3-4634BECC05B9}.Release|Any CPU.Build.0 = Release|Any CPU
-		{B80E5ECC-DCDC-4D31-B3BE-8C32DEA8E864}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{B80E5ECC-DCDC-4D31-B3BE-8C32DEA8E864}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{74BE0601-FF65-4B46-8A8B-E670056061C4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{74BE0601-FF65-4B46-8A8B-E670056061C4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8523BA22-21D4-4F69-A73E-958B617C9D37}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{8523BA22-21D4-4F69-A73E-958B617C9D37}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B80E5ECC-DCDC-4D31-B3BE-8C32DEA8E864}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B80E5ECC-DCDC-4D31-B3BE-8C32DEA8E864}.Release|Any CPU.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
