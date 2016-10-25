@@ -21,7 +21,7 @@ class ContainerServiceAgentPoolProfile(Model):
     :param name: Unique name of the agent pool profile within the context of
      the subscription and resource group
     :type name: str
-    :param count: No. of agents (VMs) that will host docker containers
+    :param count: Number of agents (VMs) that will host docker containers
     :type count: int
     :param vm_size: Size of agent VMs. Possible values include:
      'Standard_A0', 'Standard_A1', 'Standard_A2', 'Standard_A3',
@@ -47,7 +47,8 @@ class ContainerServiceAgentPoolProfile(Model):
 
     _validation = {
         'name': {'required': True},
-        'count': {'maximum': 100, 'minimum': 1},
+        'count': {'required': True, 'maximum': 100, 'minimum': 1},
+        'vm_size': {'required': True},
         'dns_prefix': {'required': True},
         'fqdn': {'readonly': True},
     }
@@ -60,7 +61,7 @@ class ContainerServiceAgentPoolProfile(Model):
         'fqdn': {'key': 'fqdn', 'type': 'str'},
     }
 
-    def __init__(self, name, dns_prefix, count=None, vm_size=None):
+    def __init__(self, name, count, vm_size, dns_prefix):
         self.name = name
         self.count = count
         self.vm_size = vm_size
