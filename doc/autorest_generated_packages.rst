@@ -6,6 +6,7 @@
   ref/azure.common
   ./ref/azure.batch.rst
   ./ref/azure.graphrbac.rst
+  ./ref/azure.mgmt.authorization.rst
   ./ref/azure.mgmt.batch.rst
   ./ref/azure.mgmt.cdn.rst
   ./ref/azure.mgmt.cognitiveservices.rst
@@ -21,6 +22,7 @@
   ./ref/azure.mgmt.powerbiembedded.rst
   ./ref/azure.mgmt.redis.rst
   ./ref/azure.mgmt.resource.features.rst
+  ./ref/azure.mgmt.resource.links.rst
   ./ref/azure.mgmt.resource.locks.rst
   ./ref/azure.mgmt.resource.policy.rst
   ./ref/azure.mgmt.resource.resources.rst
