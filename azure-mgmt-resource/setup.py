@@ -6,8 +6,8 @@
 # license information.
 #--------------------------------------------------------------------------
 
-from setuptools import setup
-from codecs import open
+from setuptools import find_packages, setup
+from io import open
 import re
 
 # azure v0.x is not compatible with this package
@@ -33,9 +33,9 @@ with open('azure/mgmt/resource/version.py', 'r') as fd:
 if not version:
     raise RuntimeError('Cannot find version information')
 
-with open('README.rst', 'r', 'utf-8') as f:
+with open('README.rst', encoding='utf-8') as f:
     readme = f.read()
-with open('HISTORY.rst', 'r', 'utf-8') as f:
+with open('HISTORY.rst', encoding='utf-8') as f:
     history = f.read()
 
 setup(
@@ -59,26 +59,7 @@ setup(
         'License :: OSI Approved :: MIT License',
     ],
     zip_safe=False,
-    packages=[
-        'azure',
-        'azure.mgmt',
-        'azure.mgmt.resource',
-        'azure.mgmt.resource.resources',
-        'azure.mgmt.resource.resources.models',
-        'azure.mgmt.resource.resources.operations',
-        'azure.mgmt.resource.features',
-        'azure.mgmt.resource.features.models',
-        'azure.mgmt.resource.features.operations',
-        'azure.mgmt.resource.locks',
-        'azure.mgmt.resource.locks.models',
-        'azure.mgmt.resource.locks.operations',
-        'azure.mgmt.resource.policy',
-        'azure.mgmt.resource.policy.models',
-        'azure.mgmt.resource.policy.operations',
-        'azure.mgmt.resource.subscriptions',
-        'azure.mgmt.resource.subscriptions.models',
-        'azure.mgmt.resource.subscriptions.operations',
-    ],
+    packages=find_packages(),
     install_requires=[
         'azure-mgmt-nspkg',
         'azure-common[autorest]==1.1.4',
