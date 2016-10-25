@@ -319,10 +319,10 @@
     "datalake.store.account": {
       "swagger": "arm-datalake-store/account/2016-11-01/swagger/account.json",
       "autorest_options": {
-        "Namespace": "azure.mgmt.datalake.store.account",
+        "Namespace": "azure.mgmt.datalake.store",
         "PackageVersion": "0.10.0"
       },
-      "output_dir": "azure-mgmt-datalake-store/azure/mgmt/datalake/store/account/"
+      "output_dir": "azure-mgmt-datalake-store/azure/mgmt/datalake/store/"
     }
   }
 }

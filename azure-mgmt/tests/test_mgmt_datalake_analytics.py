@@ -8,7 +8,7 @@
 import unittest
 
 from azure.mgmt.datalake.analytics import account, job, catalog
-import azure.mgmt.datalake.store.account
+import azure.mgmt.datalake.store
 from testutils.common_recordingtestcase import record
 from tests.mgmt_testcase import HttpStatusCode, AzureMgmtTestCase
 import uuid
@@ -19,7 +19,7 @@ class MgmtDataLakeAnalyticsTest(AzureMgmtTestCase):
         super(MgmtDataLakeAnalyticsTest, self).setUp()
         self.region = 'East US 2' # this is the ADL produciton region for now.
         self.adls_account_client = self.create_mgmt_client(
-            azure.mgmt.datalake.store.account.DataLakeStoreAccountManagementClient
+            azure.mgmt.datalake.store.DataLakeStoreAccountManagementClient
         )
         self.adla_account_client = self.create_mgmt_client(
             azure.mgmt.datalake.analytics.account.DataLakeAnalyticsAccountManagementClient
@@ -173,7 +173,7 @@ END;""".format(self.db_name, self.table_name, self.tvf_name, self.view_name, sel
 
     def run_prereqs(self, create_job_acct = False, create_catalog = False):
         # construct ADLS account for use with the ADLA tests.
-        params_create = azure.mgmt.datalake.store.account.models.DataLakeStoreAccount(
+        params_create = azure.mgmt.datalake.store.models.DataLakeStoreAccount(
             name = self.adls_account_name,
             location = self.region
         )
