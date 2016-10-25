@@ -50,6 +50,7 @@ class VirtualMachineSizesOperations(object):
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`VirtualMachineSizePaged
          <azure.mgmt.compute.models.VirtualMachineSizePaged>`
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
 
