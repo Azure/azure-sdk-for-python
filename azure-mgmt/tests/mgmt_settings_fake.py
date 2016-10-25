@@ -10,6 +10,9 @@ from azure.common.credentials import (
 )
 
 SUBSCRIPTION_ID = "00000000-0000-0000-0000-000000000000"
+
+# this is used explicitly for ADLA job id replacement in recordings.
+ADLA_JOB_ID = "00000000-0000-0000-0000-000000000000"
 # GraphRBAC tests
 AD_DOMAIN = "myaddomain.onmicrosoft.com"
 
