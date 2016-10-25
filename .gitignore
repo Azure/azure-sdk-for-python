@@ -58,3 +58,6 @@ src/build
 
 # Azure deployment credentials
 *.pubxml
+
+# [begoldsm] ignore virtual env if it exists.
+adlEnv/
