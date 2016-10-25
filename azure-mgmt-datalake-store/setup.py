@@ -6,7 +6,8 @@
 # license information.
 #--------------------------------------------------------------------------
 
-from setuptools import setup
+from setuptools import find_packages, setup
+from io import open
 
 # azure v0.x is not compatible with this package
 # azure v0.x used to have a __version__ attribute (newer versions don't)
@@ -23,9 +24,19 @@ try:
 except ImportError:
     pass
 
+# Version extraction inspired from 'requests'
+with open('azure/mgmt/datalake/store/version.py', 'r') as fd:
+    version = re.search(r'^VERSION\s*=\s*[\'"]([^\'"]*)[\'"]',
+                        fd.read(), re.MULTILINE).group(1)
+
+with open('README.rst', encoding='utf-8') as f:
+    readme = f.read()
+with open('HISTORY.rst', encoding='utf-8') as f:
+    history = f.read()
+
 setup(
     name='azure-mgmt-datalake-store',
-    version='0.30.0rc4',
+    version=version,
     description='Microsoft Azure Data Lake Store Management Client Library for Python',
     long_description=open('README.rst', 'r').read(),
     license='MIT License',
@@ -44,15 +55,7 @@ setup(
         'License :: OSI Approved :: MIT License',
     ],
     zip_safe=False,
-    packages=[
-        'azure',
-        'azure.mgmt',
-        'azure.mgmt.datalake',
-        'azure.mgmt.datalake.store',
-        'azure.mgmt.datalake.store.account',
-        'azure.mgmt.datalake.store.account.models',
-        'azure.mgmt.datalake.store.account.operations'
-    ],
+    packages=find_packages(),
     install_requires=[
         'azure-mgmt-datalake-nspkg',
         'azure-common[autorest]==1.1.4',
