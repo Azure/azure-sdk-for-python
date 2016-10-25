@@ -59,6 +59,7 @@ class VirtualMachineScaleSetsOperations(object):
          <azure.mgmt.compute.models.VirtualMachineScaleSet>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/virtualMachineScaleSets/{name}'
@@ -153,6 +154,7 @@ class VirtualMachineScaleSetsOperations(object):
          instance that returns None
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         vm_instance_ids = None
         if instance_ids is not None:
@@ -240,6 +242,7 @@ class VirtualMachineScaleSetsOperations(object):
          instance that returns None
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/virtualMachineScaleSets/{vmScaleSetName}'
@@ -317,6 +320,7 @@ class VirtualMachineScaleSetsOperations(object):
          <azure.mgmt.compute.models.VirtualMachineScaleSet>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/virtualMachineScaleSets/{vmScaleSetName}'
@@ -379,6 +383,7 @@ class VirtualMachineScaleSetsOperations(object):
          instance that returns None
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         vm_instance_ids = models.VirtualMachineScaleSetVMInstanceRequiredIDs(instance_ids=instance_ids)
 
@@ -462,6 +467,7 @@ class VirtualMachineScaleSetsOperations(object):
          <azure.mgmt.compute.models.VirtualMachineScaleSetInstanceView>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/virtualMachineScaleSets/{vmScaleSetName}/instanceView'
@@ -519,6 +525,7 @@ class VirtualMachineScaleSetsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`VirtualMachineScaleSetPaged
          <azure.mgmt.compute.models.VirtualMachineScaleSetPaged>`
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -585,6 +592,7 @@ class VirtualMachineScaleSetsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`VirtualMachineScaleSetPaged
          <azure.mgmt.compute.models.VirtualMachineScaleSetPaged>`
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -652,6 +660,7 @@ class VirtualMachineScaleSetsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`VirtualMachineScaleSetSkuPaged
          <azure.mgmt.compute.models.VirtualMachineScaleSetSkuPaged>`
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -725,6 +734,7 @@ class VirtualMachineScaleSetsOperations(object):
          instance that returns None
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         vm_instance_ids = None
         if instance_ids is not None:
@@ -814,6 +824,7 @@ class VirtualMachineScaleSetsOperations(object):
          instance that returns None
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         vm_instance_ids = None
         if instance_ids is not None:
@@ -903,6 +914,7 @@ class VirtualMachineScaleSetsOperations(object):
          instance that returns None
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         vm_instance_ids = None
         if instance_ids is not None:
@@ -993,6 +1005,7 @@ class VirtualMachineScaleSetsOperations(object):
          instance that returns None
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         vm_instance_ids = models.VirtualMachineScaleSetVMInstanceRequiredIDs(instance_ids=instance_ids)
 
@@ -1076,6 +1089,7 @@ class VirtualMachineScaleSetsOperations(object):
          instance that returns None
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/virtualMachineScaleSets/{vmScaleSetName}/reimage'
