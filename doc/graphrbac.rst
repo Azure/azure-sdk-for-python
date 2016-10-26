@@ -37,7 +37,7 @@ Manage users
 ------------
 
 The following code creates a user, get it directly and by list filtering, and then delete it.
-`Filter syntax can be found here <https://msdn.microsoft.com/fr-fr/library/azure/ad/graph/howto/azure-ad-graph-api-supported-queries-filters-and-paging-options#-filter>`__.
+`Filter syntax can be found here <https://msdn.microsoft.com/library/azure/ad/graph/howto/azure-ad-graph-api-supported-queries-filters-and-paging-options#-filter>`__.
 
 .. code:: python
 
