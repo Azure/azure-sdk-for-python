@@ -9,10 +9,14 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .sql_management_client import SqlManagementClient
-from .version import VERSION
+from .databases_operations import DatabasesOperations
+from .servers_operations import ServersOperations
+from .elastic_pools_operations import ElasticPoolsOperations
+from .recommended_elastic_pools_operations import RecommendedElasticPoolsOperations
 
-__all__ = ['SqlManagementClient']
-
-__version__ = VERSION
-
+__all__ = [
+    'DatabasesOperations',
+    'ServersOperations',
+    'ElasticPoolsOperations',
+    'RecommendedElasticPoolsOperations',
+]

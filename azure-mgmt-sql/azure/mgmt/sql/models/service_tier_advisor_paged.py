@@ -9,10 +9,19 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .sql_management_client import SqlManagementClient
-from .version import VERSION
+from msrest.paging import Paged
 
-__all__ = ['SqlManagementClient']
 
-__version__ = VERSION
+class ServiceTierAdvisorPaged(Paged):
+    """
+    A paging container for iterating over a list of ServiceTierAdvisor object
+    """
 
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[ServiceTierAdvisor]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(ServiceTierAdvisorPaged, self).__init__(*args, **kwargs)
