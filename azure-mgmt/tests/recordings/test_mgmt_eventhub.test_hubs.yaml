@@ -1,0 +1,166 @@
+interactions:
+- request:
+    body: '{"location": "westus"}'
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['22']
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.5.1 (Windows-10-10.0.14393-SP0) requests/2.11.1 msrest/0.4.4
+          msrest_azure/0.4.3 eventhubmanagementclient/0.1.0 Azure-SDK-For-Python]
+      accept-language: [en-US]
+      x-ms-client-request-id: [13e6041e-9c77-11e6-863d-ecb1d756380e]
+    method: PUT
+    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_eventhub_test_hubsa90a0b94/providers/Microsoft.EventHub/namespaces/pyarmnsa90a0b94?api-version=2015-08-01
+  response:
+    body: {string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_eventhub_test_hubsa90a0b94/providers/Microsoft.EventHub/namespaces/pyarmnsa90a0b94","name":"pyarmnsa90a0b94","type":"Microsoft.EventHub/namespaces","location":"West
+        US","kind":"EventHub","tags":null,"properties":{"provisioningState":"Unknown","metricId":"00000000-0000-0000-0000-000000000000:pyarmnsa90a0b94","enabled":false,"namespaceType":"EventHub","messagingSku":2}}'}
+    headers:
+      Cache-Control: [no-cache]
+      Content-Type: [application/json; charset=utf-8]
+      Date: ['Thu, 27 Oct 2016 18:56:33 GMT']
+      Expires: ['-1']
+      Pragma: [no-cache]
+      Server: [Service-Bus-Resource-Provider/SN1, Microsoft-HTTPAPI/2.0]
+      Server-SB: [Service-Bus-Resource-Provider/SN1]
+      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
+      Transfer-Encoding: [chunked]
+      Vary: [Accept-Encoding]
+      content-length: ['454']
+      x-ms-correlation-request-id: [06b39487-f2ad-4324-95fe-e212dc3a12a3]
+      x-ms-ratelimit-remaining-subscription-writes: ['1199']
+      x-ms-request-id: [a97b26b4-1b13-465e-8228-4a129b870f19_M0_M0]
+      x-ms-routing-request-id: ['CENTRALUS:20161027T185634Z:06b39487-f2ad-4324-95fe-e212dc3a12a3']
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.5.1 (Windows-10-10.0.14393-SP0) requests/2.11.1 msrest/0.4.4
+          msrest_azure/0.4.3 eventhubmanagementclient/0.1.0 Azure-SDK-For-Python]
+      accept-language: [en-US]
+      x-ms-client-request-id: [13e6041e-9c77-11e6-863d-ecb1d756380e]
+    method: GET
+    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_eventhub_test_hubsa90a0b94/providers/Microsoft.EventHub/namespaces/pyarmnsa90a0b94?api-version=2015-08-01
+  response:
+    body: {string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_eventhub_test_hubsa90a0b94/providers/Microsoft.EventHub/namespaces/pyarmnsa90a0b94","name":"pyarmnsa90a0b94","type":"Microsoft.EventHub/namespaces","location":"West
+        US","kind":"EventHub","sku":{"name":"Standard","tier":"Standard","capacity":1},"tags":{},"properties":{"provisioningState":"Succeeded","metricId":"00000000-0000-0000-0000-000000000000:pyarmnsa90a0b94","status":"Active","createdAt":"2016-10-27T18:56:34.827Z","serviceBusEndpoint":"https://pyarmnsa90a0b94.servicebus.windows.net:443/","enabled":true,"critical":false,"updatedAt":"2016-10-27T18:56:57.777Z","eventHubEnabled":true,"namespaceType":"EventHub","messagingSku":2}}'}
+    headers:
+      Cache-Control: [no-cache]
+      Content-Type: [application/json; charset=utf-8]
+      Date: ['Thu, 27 Oct 2016 18:57:04 GMT']
+      Expires: ['-1']
+      Pragma: [no-cache]
+      Server: [Service-Bus-Resource-Provider/SN1, Microsoft-HTTPAPI/2.0]
+      Server-SB: [Service-Bus-Resource-Provider/SN1]
+      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
+      Transfer-Encoding: [chunked]
+      Vary: [Accept-Encoding]
+      content-length: ['721']
+      x-ms-correlation-request-id: [9367c02e-bbbc-43d5-8a46-b62dd29d7c95]
+      x-ms-ratelimit-remaining-subscription-reads: ['14999']
+      x-ms-request-id: [cdb8fdde-00fe-495c-beac-6477f76db660_M2_M2]
+      x-ms-routing-request-id: ['WESTUS2:20161027T185705Z:9367c02e-bbbc-43d5-8a46-b62dd29d7c95']
+    status: {code: 200, message: OK}
+- request:
+    body: '{"location": "westus"}'
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['22']
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.5.1 (Windows-10-10.0.14393-SP0) requests/2.11.1 msrest/0.4.4
+          msrest_azure/0.4.3 eventhubmanagementclient/0.1.0 Azure-SDK-For-Python]
+      accept-language: [en-US]
+      x-ms-client-request-id: [2715b60a-9c77-11e6-8b45-ecb1d756380e]
+    method: PUT
+    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_eventhub_test_hubsa90a0b94/providers/Microsoft.EventHub/namespaces/pyarmnsa90a0b94/eventhubs/pyarmeha90a0b94?api-version=2015-08-01
+  response:
+    body: {string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_eventhub_test_hubsa90a0b94/providers/Microsoft.EventHub/namespaces/pyarmnsa90a0b94/eventhubs/pyarmeha90a0b94","name":"pyarmeha90a0b94","type":"Microsoft.EventHub/EventHubs","location":"West
+        US","tags":null,"properties":{"messageRetentionInDays":7,"status":"Active","createdAt":"2016-10-27T18:57:06.48","updatedAt":"2016-10-27T18:57:06.87","partitionCount":4,"partitionIds":["0","1","2","3"]}}'}
+    headers:
+      Cache-Control: [no-cache]
+      Content-Type: [application/json; charset=utf-8]
+      Date: ['Thu, 27 Oct 2016 18:57:13 GMT']
+      Expires: ['-1']
+      Pragma: [no-cache]
+      Server: [Service-Bus-Resource-Provider/SN1, Microsoft-HTTPAPI/2.0]
+      Server-SB: [Service-Bus-Resource-Provider/SN1]
+      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
+      Transfer-Encoding: [chunked]
+      Vary: [Accept-Encoding]
+      content-length: ['476']
+      x-ms-correlation-request-id: [3c2e5750-f65e-40ed-a408-12498d889035]
+      x-ms-ratelimit-remaining-subscription-writes: ['1199']
+      x-ms-request-id: [ee0f6bc1-ab2b-43d9-a1cb-734a101936b3_M2_M2]
+      x-ms-routing-request-id: ['WESTUS2:20161027T185713Z:3c2e5750-f65e-40ed-a408-12498d889035']
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.5.1 (Windows-10-10.0.14393-SP0) requests/2.11.1 msrest/0.4.4
+          msrest_azure/0.4.3 eventhubmanagementclient/0.1.0 Azure-SDK-For-Python]
+      accept-language: [en-US]
+      x-ms-client-request-id: [2c246b50-9c77-11e6-ae59-ecb1d756380e]
+    method: GET
+    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_eventhub_test_hubsa90a0b94/providers/Microsoft.EventHub/namespaces/pyarmnsa90a0b94/eventhubs/pyarmeha90a0b94?api-version=2015-08-01
+  response:
+    body: {string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_eventhub_test_hubsa90a0b94/providers/Microsoft.EventHub/namespaces/pyarmnsa90a0b94/eventhubs/pyarmeha90a0b94","name":"pyarmeha90a0b94","type":"Microsoft.EventHub/EventHubs","location":"West
+        US","tags":null,"properties":{"messageRetentionInDays":7,"status":"Active","createdAt":"2016-10-27T18:57:06.48","updatedAt":"2016-10-27T18:57:06.87","partitionCount":4,"partitionIds":["0","1","2","3"]}}'}
+    headers:
+      Cache-Control: [no-cache]
+      Content-Type: [application/json; charset=utf-8]
+      Date: ['Thu, 27 Oct 2016 18:57:13 GMT']
+      Expires: ['-1']
+      Pragma: [no-cache]
+      Server: [Service-Bus-Resource-Provider/SN1, Microsoft-HTTPAPI/2.0]
+      Server-SB: [Service-Bus-Resource-Provider/SN1]
+      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
+      Transfer-Encoding: [chunked]
+      Vary: [Accept-Encoding]
+      content-length: ['476']
+      x-ms-correlation-request-id: [a4e1f58b-d142-4a61-852b-42ca35f8c23e]
+      x-ms-ratelimit-remaining-subscription-reads: ['14999']
+      x-ms-request-id: [adc66f73-e7b6-4673-993d-b34319e6250d_M2_M2]
+      x-ms-routing-request-id: ['WESTUS2:20161027T185714Z:a4e1f58b-d142-4a61-852b-42ca35f8c23e']
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['0']
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.5.1 (Windows-10-10.0.14393-SP0) requests/2.11.1 msrest/0.4.4
+          msrest_azure/0.4.3 eventhubmanagementclient/0.1.0 Azure-SDK-For-Python]
+      accept-language: [en-US]
+      x-ms-client-request-id: [2c6c30ae-9c77-11e6-92c3-ecb1d756380e]
+    method: DELETE
+    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_eventhub_test_hubsa90a0b94/providers/Microsoft.EventHub/namespaces/pyarmnsa90a0b94/eventhubs/pyarmeha90a0b94?api-version=2015-08-01
+  response:
+    body: {string: ''}
+    headers:
+      Cache-Control: [no-cache]
+      Content-Length: ['0']
+      Date: ['Thu, 27 Oct 2016 18:57:18 GMT']
+      Expires: ['-1']
+      Pragma: [no-cache]
+      Server: [Service-Bus-Resource-Provider/SN1, Microsoft-HTTPAPI/2.0]
+      Server-SB: [Service-Bus-Resource-Provider/SN1]
+      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
+      x-ms-correlation-request-id: [5e93b22b-3e44-4188-b8e2-01143e43f92d]
+      x-ms-ratelimit-remaining-subscription-writes: ['1199']
+      x-ms-request-id: [5e93b22b-3e44-4188-b8e2-01143e43f92d]
+      x-ms-routing-request-id: ['WESTUS2:20161027T185719Z:5e93b22b-3e44-4188-b8e2-01143e43f92d']
+    status: {code: 200, message: OK}
+version: 1
