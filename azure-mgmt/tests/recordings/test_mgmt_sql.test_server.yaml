@@ -1,0 +1,230 @@
+interactions:
+- request:
+    body: '{"location": "westus", "properties": {"version": "12.0", "administratorLoginPassword":
+      "HusH_Sec4et", "administratorLogin": "mysecretname"}}'
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['140']
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.5.1 (Windows-10-10.0.14393-SP0) requests/2.11.1 msrest/0.4.4
+          msrest_azure/0.4.3 sqlmanagementclient/0.1.0 Azure-SDK-For-Python]
+      accept-language: [en-US]
+      x-ms-client-request-id: [2faa32ba-9c88-11e6-94ed-ecb1d756380e]
+    method: PUT
+    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_sql_test_server87460a68/providers/Microsoft.Sql/servers/mypysqlserver87460a68?api-version=2014-04-01
+  response:
+    body: {string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_sql_test_server87460a68/providers/Microsoft.Sql/servers/mypysqlserver87460a68","name":"mypysqlserver87460a68","type":"Microsoft.Sql/servers","location":"West
+        US","kind":"v12.0","properties":{"fullyQualifiedDomainName":"mypysqlserver87460a68.database.windows.net","administratorLogin":"mysecretname","administratorLoginPassword":"HusH_Sec4et","externalAdministratorLogin":null,"externalAdministratorSid":null,"version":"12.0","state":"Ready"}}'}
+    headers:
+      Cache-Control: ['no-store, no-cache']
+      Content-Length: ['526']
+      Content-Type: [application/json; odata=minimalmetadata; streaming=true; charset=utf-8]
+      DataServiceVersion: [3.0;]
+      Date: ['Thu, 27 Oct 2016 20:59:30 GMT']
+      Preference-Applied: [return-content]
+      Server: [Microsoft-HTTPAPI/2.0]
+      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
+      X-Content-Type-Options: [nosniff]
+      x-ms-correlation-request-id: [8394beaf-9864-4434-9e47-7e6d00561c6c]
+      x-ms-ratelimit-remaining-subscription-writes: ['1194']
+      x-ms-request-id: [155f8503-daa5-456d-8416-8f37bd2b9c55]
+      x-ms-routing-request-id: ['CENTRALUS:20161027T205931Z:8394beaf-9864-4434-9e47-7e6d00561c6c']
+    status: {code: 201, message: Created}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.5.1 (Windows-10-10.0.14393-SP0) requests/2.11.1 msrest/0.4.4
+          msrest_azure/0.4.3 sqlmanagementclient/0.1.0 Azure-SDK-For-Python]
+      accept-language: [en-US]
+      x-ms-client-request-id: [420886c6-9c88-11e6-bb89-ecb1d756380e]
+    method: GET
+    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_sql_test_server87460a68/providers/Microsoft.Sql/servers/mypysqlserver87460a68?api-version=2014-04-01
+  response:
+    body: {string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_sql_test_server87460a68/providers/Microsoft.Sql/servers/mypysqlserver87460a68","name":"mypysqlserver87460a68","type":"Microsoft.Sql/servers","location":"West
+        US","kind":"v12.0","properties":{"fullyQualifiedDomainName":"mypysqlserver87460a68.database.windows.net","administratorLogin":"mysecretname","administratorLoginPassword":null,"externalAdministratorLogin":null,"externalAdministratorSid":null,"version":"12.0","state":"Ready"}}'}
+    headers:
+      Cache-Control: ['no-store, no-cache']
+      Content-Type: [application/json; odata=minimalmetadata; streaming=true; charset=utf-8]
+      DataServiceVersion: [3.0;]
+      Date: ['Thu, 27 Oct 2016 20:59:32 GMT']
+      Server: [Microsoft-HTTPAPI/2.0]
+      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
+      Transfer-Encoding: [chunked]
+      Vary: [Accept-Encoding]
+      X-Content-Type-Options: [nosniff]
+      content-length: ['517']
+      x-ms-correlation-request-id: [27766774-07ac-42ad-bdb4-f5edfa4236c3]
+      x-ms-ratelimit-remaining-subscription-reads: ['14996']
+      x-ms-request-id: [537a05b6-53be-4d30-a9bb-a85ad13bf8c6]
+      x-ms-routing-request-id: ['CENTRALUS:20161027T205932Z:27766774-07ac-42ad-bdb4-f5edfa4236c3']
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.5.1 (Windows-10-10.0.14393-SP0) requests/2.11.1 msrest/0.4.4
+          msrest_azure/0.4.3 sqlmanagementclient/0.1.0 Azure-SDK-For-Python]
+      accept-language: [en-US]
+      x-ms-client-request-id: [4263b85e-9c88-11e6-bd40-ecb1d756380e]
+    method: GET
+    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_sql_test_server87460a68/providers/Microsoft.Sql/servers?api-version=2014-04-01
+  response:
+    body: {string: '{"value":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_sql_test_server87460a68/providers/Microsoft.Sql/servers/mypysqlserver87460a68","name":"mypysqlserver87460a68","type":"Microsoft.Sql/servers","location":"West
+        US","kind":"v12.0","properties":{"fullyQualifiedDomainName":"mypysqlserver87460a68.database.windows.net","administratorLogin":"mysecretname","administratorLoginPassword":null,"externalAdministratorLogin":null,"externalAdministratorSid":null,"version":"12.0","state":"Ready"}}]}'}
+    headers:
+      Cache-Control: ['no-store, no-cache']
+      Content-Type: [application/json; odata=minimalmetadata; streaming=true; charset=utf-8]
+      DataServiceVersion: [3.0;]
+      Date: ['Thu, 27 Oct 2016 20:59:32 GMT']
+      Server: [Microsoft-HTTPAPI/2.0]
+      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
+      Transfer-Encoding: [chunked]
+      Vary: [Accept-Encoding]
+      X-Content-Type-Options: [nosniff]
+      content-length: ['529']
+      x-ms-correlation-request-id: [7dd2dca1-8740-40e2-b75b-24ef6f9b1a4a]
+      x-ms-ratelimit-remaining-subscription-reads: ['14999']
+      x-ms-request-id: [fc7e7c1f-3dcd-4039-a9ec-b8550f884ff7]
+      x-ms-routing-request-id: ['CENTRALUS:20161027T205932Z:7dd2dca1-8740-40e2-b75b-24ef6f9b1a4a']
+    status: {code: 200, message: OK}
+- request:
+    body: '{"location": "westus"}'
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['22']
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.5.1 (Windows-10-10.0.14393-SP0) requests/2.11.1 msrest/0.4.4
+          msrest_azure/0.4.3 sqlmanagementclient/0.1.0 Azure-SDK-For-Python]
+      accept-language: [en-US]
+      x-ms-client-request-id: [42a3cdec-9c88-11e6-b99d-ecb1d756380e]
+    method: PUT
+    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_sql_test_server87460a68/providers/Microsoft.Sql/servers/mypysqlserver87460a68/databases/pyarmdb87460a68?api-version=2014-04-01
+  response:
+    body: {string: '{"operation":"CreateLogicalDatabase","startTime":"\/Date(1477601972543+0000)\/"}'}
+    headers:
+      Azure-AsyncOperation: ['https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_sql_test_server87460a68/providers/Microsoft.Sql/servers/mypysqlserver87460a68/databases/pyarmdb87460a68/azureAsyncOperation/e3eeea03-6aef-406c-8f36-8e3c63f7f456?api-version=2014-04-01-Preview']
+      Cache-Control: ['no-store, no-cache']
+      Content-Length: ['80']
+      Content-Type: [application/json; odata=minimalmetadata; streaming=true; charset=utf-8]
+      DataServiceVersion: [3.0;]
+      Date: ['Thu, 27 Oct 2016 20:59:33 GMT']
+      Location: ['https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_sql_test_server87460a68/providers/Microsoft.Sql/servers/mypysqlserver87460a68/databases/pyarmdb87460a68/operationResults/e3eeea03-6aef-406c-8f36-8e3c63f7f456?api-version=2014-04-01-Preview']
+      Preference-Applied: [return-content]
+      Retry-After: ['0']
+      Server: [Microsoft-HTTPAPI/2.0]
+      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
+      X-Content-Type-Options: [nosniff]
+      x-ms-correlation-request-id: [0e41f198-534b-494d-b89a-66d88d441d00]
+      x-ms-ratelimit-remaining-subscription-writes: ['1197']
+      x-ms-request-id: [e3eeea03-6aef-406c-8f36-8e3c63f7f456]
+      x-ms-routing-request-id: ['CENTRALUS:20161027T205934Z:0e41f198-534b-494d-b89a-66d88d441d00']
+    status: {code: 202, message: Accepted}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.5.1 (Windows-10-10.0.14393-SP0) requests/2.11.1 msrest/0.4.4
+          msrest_azure/0.4.3 sqlmanagementclient/0.1.0 Azure-SDK-For-Python]
+      accept-language: [en-US]
+      x-ms-client-request-id: [42a3cdec-9c88-11e6-b99d-ecb1d756380e]
+    method: GET
+    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_sql_test_server87460a68/providers/Microsoft.Sql/servers/mypysqlserver87460a68/databases/pyarmdb87460a68/azureAsyncOperation/e3eeea03-6aef-406c-8f36-8e3c63f7f456?api-version=2014-04-01-Preview
+  response:
+    body: {string: '{"operationId":"e3eeea03-6aef-406c-8f36-8e3c63f7f456","status":"InProgress","error":null}'}
+    headers:
+      Azure-AsyncOperation: ['https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_sql_test_server87460a68/providers/Microsoft.Sql/servers/mypysqlserver87460a68/databases/pyarmdb87460a68/azureAsyncOperation/e3eeea03-6aef-406c-8f36-8e3c63f7f456?api-version=2014-04-01-Preview']
+      Cache-Control: ['no-store, no-cache']
+      Content-Type: [application/json; odata=minimalmetadata; streaming=true; charset=utf-8]
+      DataServiceVersion: [3.0;]
+      Date: ['Thu, 27 Oct 2016 21:00:04 GMT']
+      Server: [Microsoft-HTTPAPI/2.0]
+      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
+      Transfer-Encoding: [chunked]
+      Vary: [Accept-Encoding]
+      X-Content-Type-Options: [nosniff]
+      content-length: ['89']
+      x-ms-correlation-request-id: [bb814d76-c464-436f-9421-3735f2c3d735]
+      x-ms-ratelimit-remaining-subscription-reads: ['14996']
+      x-ms-request-id: [55731c7e-3e87-43a3-9603-10319338e6bb]
+      x-ms-routing-request-id: ['CENTRALUS:20161027T210005Z:bb814d76-c464-436f-9421-3735f2c3d735']
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.5.1 (Windows-10-10.0.14393-SP0) requests/2.11.1 msrest/0.4.4
+          msrest_azure/0.4.3 sqlmanagementclient/0.1.0 Azure-SDK-For-Python]
+      accept-language: [en-US]
+      x-ms-client-request-id: [42a3cdec-9c88-11e6-b99d-ecb1d756380e]
+    method: GET
+    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_sql_test_server87460a68/providers/Microsoft.Sql/servers/mypysqlserver87460a68/databases/pyarmdb87460a68/azureAsyncOperation/e3eeea03-6aef-406c-8f36-8e3c63f7f456?api-version=2014-04-01-Preview
+  response:
+    body: {string: '{"operationId":"e3eeea03-6aef-406c-8f36-8e3c63f7f456","status":"Succeeded","error":null}'}
+    headers:
+      Azure-AsyncOperation: ['https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_sql_test_server87460a68/providers/Microsoft.Sql/servers/mypysqlserver87460a68/databases/pyarmdb87460a68/azureAsyncOperation/e3eeea03-6aef-406c-8f36-8e3c63f7f456?api-version=2014-04-01-Preview']
+      Cache-Control: ['no-store, no-cache']
+      Content-Type: [application/json; odata=minimalmetadata; streaming=true; charset=utf-8]
+      DataServiceVersion: [3.0;]
+      Date: ['Thu, 27 Oct 2016 21:00:35 GMT']
+      Server: [Microsoft-HTTPAPI/2.0]
+      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
+      Transfer-Encoding: [chunked]
+      Vary: [Accept-Encoding]
+      X-Content-Type-Options: [nosniff]
+      content-length: ['88']
+      x-ms-correlation-request-id: [3812b1bd-c8e4-446d-b881-83ae1866ec82]
+      x-ms-ratelimit-remaining-subscription-reads: ['14997']
+      x-ms-request-id: [f31c57c9-c11a-4622-a5aa-d0f69264e3b1]
+      x-ms-routing-request-id: ['CENTRALUS:20161027T210035Z:3812b1bd-c8e4-446d-b881-83ae1866ec82']
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.5.1 (Windows-10-10.0.14393-SP0) requests/2.11.1 msrest/0.4.4
+          msrest_azure/0.4.3 sqlmanagementclient/0.1.0 Azure-SDK-For-Python]
+      accept-language: [en-US]
+      x-ms-client-request-id: [42a3cdec-9c88-11e6-b99d-ecb1d756380e]
+    method: GET
+    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_sql_test_server87460a68/providers/Microsoft.Sql/servers/mypysqlserver87460a68/databases/pyarmdb87460a68?api-version=2014-04-01
+  response:
+    body: {string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_sql_test_server87460a68/providers/Microsoft.Sql/servers/mypysqlserver87460a68/databases/pyarmdb87460a68","name":"pyarmdb87460a68","type":"Microsoft.Sql/servers/databases","location":"West
+        US","kind":"v12.0,user","properties":{"databaseId":"e071ce03-6dfd-449f-a3e0-8628ff6838fc","edition":"Standard","status":"Online","serviceLevelObjective":"S0","collation":"SQL_Latin1_General_CP1_CI_AS","maxSizeBytes":"268435456000","creationDate":"2016-10-27T20:59:32.777Z","currentServiceObjectiveId":"f1173c43-91bd-4aaa-973c-54e79e15235b","requestedServiceObjectiveId":"f1173c43-91bd-4aaa-973c-54e79e15235b","requestedServiceObjectiveName":"S0","defaultSecondaryLocation":"East
+        US","earliestRestoreDate":"2016-10-27T21:10:19.16Z","elasticPoolName":null,"containmentState":2}}'}
+    headers:
+      Cache-Control: ['no-store, no-cache']
+      Content-Type: [application/json; odata=minimalmetadata; streaming=true; charset=utf-8]
+      DataServiceVersion: [3.0;]
+      Date: ['Thu, 27 Oct 2016 21:00:36 GMT']
+      Server: [Microsoft-HTTPAPI/2.0]
+      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
+      Transfer-Encoding: [chunked]
+      Vary: [Accept-Encoding]
+      X-Content-Type-Options: [nosniff]
+      content-length: ['848']
+      x-ms-correlation-request-id: [4d3a3970-1b8c-4deb-94bb-1dc3eeb41183]
+      x-ms-ratelimit-remaining-subscription-reads: ['14997']
+      x-ms-request-id: [cfa63058-66b8-4473-a738-4b2295ade4f4]
+      x-ms-routing-request-id: ['CENTRALUS:20161027T210036Z:4d3a3970-1b8c-4deb-94bb-1dc3eeb41183']
+    status: {code: 200, message: OK}
+version: 1
