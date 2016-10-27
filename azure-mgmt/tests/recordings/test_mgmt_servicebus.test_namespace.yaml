@@ -1,0 +1,195 @@
+interactions:
+- request:
+    body: '{"location": "westus"}'
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['22']
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.5.1 (Windows-10-10.0.14393-SP0) requests/2.11.1 msrest/0.4.4
+          msrest_azure/0.4.3 servicebusmanagementclient/0.1.0 Azure-SDK-For-Python]
+      accept-language: [en-US]
+      x-ms-client-request-id: [bed65370-9c6d-11e6-b29c-ecb1d756380e]
+    method: PUT
+    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_servicebus_test_namespace61e0e69/providers/Microsoft.ServiceBus/namespaces/pyarmns61e0e69?api-version=2015-08-01
+  response:
+    body: {string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_servicebus_test_namespace61e0e69/providers/Microsoft.ServiceBus/namespaces/pyarmns61e0e69","name":"pyarmns61e0e69","type":"Microsoft.ServiceBus/namespaces","location":"West
+        US","kind":"Messaging","tags":null,"properties":{"provisioningState":"Unknown","metricId":"00000000-0000-0000-0000-000000000000:pyarmns61e0e69","enabled":false,"namespaceType":"Messaging","messagingSku":2}}'}
+    headers:
+      Cache-Control: [no-cache]
+      Content-Type: [application/json; charset=utf-8]
+      Date: ['Thu, 27 Oct 2016 17:49:46 GMT']
+      Expires: ['-1']
+      Pragma: [no-cache]
+      Server: [Service-Bus-Resource-Provider/SN1, Microsoft-HTTPAPI/2.0]
+      Server-SB: [Service-Bus-Resource-Provider/SN1]
+      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
+      Transfer-Encoding: [chunked]
+      Vary: [Accept-Encoding]
+      content-length: ['463']
+      x-ms-correlation-request-id: [a0632e39-b6ae-4058-80f5-45df891c0180]
+      x-ms-ratelimit-remaining-subscription-writes: ['1198']
+      x-ms-request-id: [c1a0500a-071d-468c-9fdf-fb6f01f67396_M2_M2]
+      x-ms-routing-request-id: ['WESTUS2:20161027T174946Z:a0632e39-b6ae-4058-80f5-45df891c0180']
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.5.1 (Windows-10-10.0.14393-SP0) requests/2.11.1 msrest/0.4.4
+          msrest_azure/0.4.3 servicebusmanagementclient/0.1.0 Azure-SDK-For-Python]
+      accept-language: [en-US]
+      x-ms-client-request-id: [bed65370-9c6d-11e6-b29c-ecb1d756380e]
+    method: GET
+    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_servicebus_test_namespace61e0e69/providers/Microsoft.ServiceBus/namespaces/pyarmns61e0e69?api-version=2015-08-01
+  response:
+    body: {string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_servicebus_test_namespace61e0e69/providers/Microsoft.ServiceBus/namespaces/pyarmns61e0e69","name":"pyarmns61e0e69","type":"Microsoft.ServiceBus/namespaces","location":"West
+        US","kind":"Messaging","sku":{"name":"Standard","tier":"Standard","capacity":1},"tags":{},"properties":{"provisioningState":"Succeeded","metricId":"00000000-0000-0000-0000-000000000000:pyarmns61e0e69","status":"Active","createdAt":"2016-10-27T17:49:47.567Z","serviceBusEndpoint":"https://pyarmns61e0e69.servicebus.windows.net:443/","enabled":true,"critical":false,"updatedAt":"2016-10-27T17:50:10.737Z","eventHubEnabled":true,"namespaceType":"Messaging","messagingSku":2}}'}
+    headers:
+      Cache-Control: [no-cache]
+      Content-Type: [application/json; charset=utf-8]
+      Date: ['Thu, 27 Oct 2016 17:50:15 GMT']
+      Expires: ['-1']
+      Pragma: [no-cache]
+      Server: [Service-Bus-Resource-Provider/SN1, Microsoft-HTTPAPI/2.0]
+      Server-SB: [Service-Bus-Resource-Provider/SN1]
+      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
+      Transfer-Encoding: [chunked]
+      Vary: [Accept-Encoding]
+      content-length: ['729']
+      x-ms-correlation-request-id: [267f75ff-6bf7-4354-848e-abf14a9b25bf]
+      x-ms-ratelimit-remaining-subscription-reads: ['14998']
+      x-ms-request-id: [693027e9-c88d-46f9-a039-f36607e482d7_M6_M6]
+      x-ms-routing-request-id: ['WESTUS2:20161027T175016Z:267f75ff-6bf7-4354-848e-abf14a9b25bf']
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.5.1 (Windows-10-10.0.14393-SP0) requests/2.11.1 msrest/0.4.4
+          msrest_azure/0.4.3 servicebusmanagementclient/0.1.0 Azure-SDK-For-Python]
+      accept-language: [en-US]
+      x-ms-client-request-id: [d1d96a9e-9c6d-11e6-983c-ecb1d756380e]
+    method: GET
+    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_servicebus_test_namespace61e0e69/providers/Microsoft.ServiceBus/namespaces/pyarmns61e0e69?api-version=2015-08-01
+  response:
+    body: {string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_servicebus_test_namespace61e0e69/providers/Microsoft.ServiceBus/namespaces/pyarmns61e0e69","name":"pyarmns61e0e69","type":"Microsoft.ServiceBus/namespaces","location":"West
+        US","kind":"Messaging","sku":{"name":"Standard","tier":"Standard","capacity":1},"tags":{},"properties":{"provisioningState":"Succeeded","metricId":"00000000-0000-0000-0000-000000000000:pyarmns61e0e69","status":"Active","createdAt":"2016-10-27T17:49:47.567Z","serviceBusEndpoint":"https://pyarmns61e0e69.servicebus.windows.net:443/","enabled":true,"critical":false,"updatedAt":"2016-10-27T17:50:10.737Z","eventHubEnabled":true,"namespaceType":"Messaging","messagingSku":2}}'}
+    headers:
+      Cache-Control: [no-cache]
+      Content-Type: [application/json; charset=utf-8]
+      Date: ['Thu, 27 Oct 2016 17:50:16 GMT']
+      Expires: ['-1']
+      Pragma: [no-cache]
+      Server: [Service-Bus-Resource-Provider/SN1, Microsoft-HTTPAPI/2.0]
+      Server-SB: [Service-Bus-Resource-Provider/SN1]
+      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
+      Transfer-Encoding: [chunked]
+      Vary: [Accept-Encoding]
+      content-length: ['729']
+      x-ms-correlation-request-id: [da9e0efd-fa9a-43ff-99f0-3c5963bd791f]
+      x-ms-ratelimit-remaining-subscription-reads: ['14996']
+      x-ms-request-id: [6cd21c10-1087-4d5c-9a0b-f0f123386e91_M4_M4]
+      x-ms-routing-request-id: ['WESTUS2:20161027T175017Z:da9e0efd-fa9a-43ff-99f0-3c5963bd791f']
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.5.1 (Windows-10-10.0.14393-SP0) requests/2.11.1 msrest/0.4.4
+          msrest_azure/0.4.3 servicebusmanagementclient/0.1.0 Azure-SDK-For-Python]
+      accept-language: [en-US]
+      x-ms-client-request-id: [d225810a-9c6d-11e6-8e83-ecb1d756380e]
+    method: GET
+    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_servicebus_test_namespace61e0e69/providers/Microsoft.ServiceBus/namespaces?api-version=2015-08-01
+  response:
+    body: {string: '{"value":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_servicebus_test_namespace61e0e69/providers/Microsoft.ServiceBus/namespaces/pyarmns61e0e69","name":"pyarmns61e0e69","type":"Microsoft.ServiceBus/namespaces","location":"West
+        US","kind":"Messaging","sku":{"name":"Standard","tier":"Standard","capacity":1},"tags":{},"properties":{"provisioningState":"Succeeded","metricId":"00000000-0000-0000-0000-000000000000:pyarmns61e0e69","status":"Active","createdAt":"2016-10-27T17:49:47.567Z","serviceBusEndpoint":"https://pyarmns61e0e69.servicebus.windows.net:443/","enabled":true,"critical":false,"updatedAt":"2016-10-27T17:50:10.737Z","eventHubEnabled":true,"namespaceType":"Messaging","messagingSku":2}}],"nextLink":null}'}
+    headers:
+      Cache-Control: [no-cache]
+      Content-Type: [application/json; charset=utf-8]
+      Date: ['Thu, 27 Oct 2016 17:50:17 GMT']
+      Expires: ['-1']
+      Pragma: [no-cache]
+      Server: [Service-Bus-Resource-Provider/SN1, Microsoft-HTTPAPI/2.0]
+      Server-SB: [Service-Bus-Resource-Provider/SN1]
+      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
+      Transfer-Encoding: [chunked]
+      Vary: [Accept-Encoding]
+      content-length: ['757']
+      x-ms-correlation-request-id: [d7f09d6e-ac73-4266-a8e4-38ef2536f0c4]
+      x-ms-ratelimit-remaining-subscription-reads: ['14999']
+      x-ms-request-id: [70dac737-3d00-4247-a71f-9bdc67f9bce7_M4_M4]
+      x-ms-routing-request-id: ['WESTUS2:20161027T175017Z:d7f09d6e-ac73-4266-a8e4-38ef2536f0c4']
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['0']
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.5.1 (Windows-10-10.0.14393-SP0) requests/2.11.1 msrest/0.4.4
+          msrest_azure/0.4.3 servicebusmanagementclient/0.1.0 Azure-SDK-For-Python]
+      accept-language: [en-US]
+      x-ms-client-request-id: [d2682924-9c6d-11e6-afb2-ecb1d756380e]
+    method: DELETE
+    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_servicebus_test_namespace61e0e69/providers/Microsoft.ServiceBus/namespaces/pyarmns61e0e69?api-version=2015-08-01
+  response:
+    body: {string: ''}
+    headers:
+      Cache-Control: [no-cache]
+      Content-Length: ['0']
+      Date: ['Thu, 27 Oct 2016 17:50:17 GMT']
+      Expires: ['-1']
+      Location: ['https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_servicebus_test_namespace61e0e69/providers/Microsoft.ServiceBus/namespaces/pyarmns61e0e69/operationresults/pyarmns61e0e69?api-version=2015-08-01']
+      Pragma: [no-cache]
+      Server: [Service-Bus-Resource-Provider/SN1, Microsoft-HTTPAPI/2.0]
+      Server-SB: [Service-Bus-Resource-Provider/SN1]
+      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
+      x-ms-correlation-request-id: [8205e1cb-7b88-4958-afd7-f6ccc5e7300d]
+      x-ms-ratelimit-remaining-subscription-writes: ['1199']
+      x-ms-request-id: [afb203c3-f9e8-41b8-b7ce-5842e11a7402_M2_M2]
+      x-ms-routing-request-id: ['WESTUS2:20161027T175018Z:8205e1cb-7b88-4958-afd7-f6ccc5e7300d']
+    status: {code: 202, message: Accepted}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.5.1 (Windows-10-10.0.14393-SP0) requests/2.11.1 msrest/0.4.4
+          msrest_azure/0.4.3 servicebusmanagementclient/0.1.0 Azure-SDK-For-Python]
+      accept-language: [en-US]
+      x-ms-client-request-id: [d2682924-9c6d-11e6-afb2-ecb1d756380e]
+    method: GET
+    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_servicebus_test_namespace61e0e69/providers/Microsoft.ServiceBus/namespaces/pyarmns61e0e69/operationresults/pyarmns61e0e69?api-version=2015-08-01
+  response:
+    body: {string: ''}
+    headers:
+      Cache-Control: [no-cache]
+      Content-Length: ['0']
+      Date: ['Thu, 27 Oct 2016 17:50:49 GMT']
+      Expires: ['-1']
+      Pragma: [no-cache]
+      Server: [Service-Bus-Resource-Provider/SN1, Microsoft-HTTPAPI/2.0]
+      Server-SB: [Service-Bus-Resource-Provider/SN1]
+      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
+      x-ms-correlation-request-id: [9b6d522b-38b5-4b56-a171-39451f0f1990]
+      x-ms-ratelimit-remaining-subscription-reads: ['14999']
+      x-ms-request-id: [52d96e53-3817-4f11-89b3-764d43ed97e1_M4_M4]
+      x-ms-routing-request-id: ['CENTRALUS:20161027T175049Z:9b6d522b-38b5-4b56-a171-39451f0f1990']
+    status: {code: 200, message: OK}
+version: 1
