@@ -29,6 +29,7 @@
   ./ref/azure.mgmt.resource.subscriptions.rst
   ./ref/azure.mgmt.scheduler.rst
   ./ref/azure.mgmt.servermanager.rst
+  ./ref/azure.mgmt.servicebus.rst
   ./ref/azure.mgmt.storage.rst
   ./ref/azure.mgmt.trafficmanager.rst
   ./ref/azure.mgmt.web.rst
