@@ -9,10 +9,19 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .sql_management_client import SqlManagementClient
-from .version import VERSION
+from msrest.paging import Paged
 
-__all__ = ['SqlManagementClient']
 
-__version__ = VERSION
+class ElasticPoolDatabaseActivityPaged(Paged):
+    """
+    A paging container for iterating over a list of ElasticPoolDatabaseActivity object
+    """
 
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[ElasticPoolDatabaseActivity]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(ElasticPoolDatabaseActivityPaged, self).__init__(*args, **kwargs)
