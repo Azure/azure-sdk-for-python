@@ -147,7 +147,7 @@
         "Namespace": "azure.mgmt.media",
         "PackageVersion": "0.1.0"
       },
-      "output_dir": "unreleased/azure-mgmt-media/azure/mgmt/media"
+      "output_dir": "azure-mgmt-media/azure/mgmt/media"
     },  
     "network": {
       "swagger": "arm-network/2016-06-01/swagger/network.json",
