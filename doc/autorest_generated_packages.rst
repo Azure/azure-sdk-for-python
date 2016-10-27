@@ -14,6 +14,7 @@
   ./ref/azure.mgmt.compute.rst
   ./ref/azure.mgmt.devtestlabs.rst
   ./ref/azure.mgmt.dns.rst
+  ./ref/azure.mgmt.eventhub.rst
   ./ref/azure.mgmt.iothub.rst
   ./ref/azure.mgmt.keyvault.rst
   ./ref/azure.mgmt.logic.rst
