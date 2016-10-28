@@ -509,7 +509,7 @@ class MgmtComputeTest(AzureMgmtTestCase):
         container_name = self.get_resource_name('pycontainer')
         
         # https://msdn.microsoft.com/en-us/library/azure/mt711471.aspx
-        async_create = self.compute_client.container_service.create_or_update(
+        async_create = self.compute_client.container_services.create_or_update(
             self.group_name,
             container_name,
             {
@@ -536,17 +536,17 @@ class MgmtComputeTest(AzureMgmtTestCase):
         )
         container = async_create.result()
 
-        container = self.compute_client.container_service.get(
+        container = self.compute_client.container_services.get(
             self.group_name,
             container.name
         )
 
-        containers = list(self.compute_client.container_service.list(
+        containers = list(self.compute_client.container_services.list(
             self.group_name
         ))
         self.assertEqual(len(containers), 1)
 
-        async_delete = self.compute_client.container_service.delete(
+        async_delete = self.compute_client.container_services.delete(
             self.group_name,
             container.name
         )
