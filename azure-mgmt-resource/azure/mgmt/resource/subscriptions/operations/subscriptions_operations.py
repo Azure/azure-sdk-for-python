@@ -46,6 +46,7 @@ class SubscriptionsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`LocationPaged
          <azure.mgmt.resource.subscriptions.models.LocationPaged>`
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -112,6 +113,7 @@ class SubscriptionsOperations(object):
          <azure.mgmt.resource.subscriptions.models.Subscription>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}'
@@ -165,6 +167,7 @@ class SubscriptionsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`SubscriptionPaged
          <azure.mgmt.resource.subscriptions.models.SubscriptionPaged>`
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
 

@@ -49,6 +49,8 @@ class NameAvailabilityOperations(object):
          <azure.mgmt.cdn.models.CheckNameAvailabilityOutput>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`ErrorResponseException<azure.mgmt.cdn.models.ErrorResponseException>`
         """
         check_name_availability_input = models.CheckNameAvailabilityInput(name=name)
 

@@ -51,6 +51,7 @@ class JobOperations(object):
          <azure.mgmt.datalake.analytics.job.models.JobStatistics>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/Jobs/{jobIdentity}/GetStatistics'
@@ -113,6 +114,7 @@ class JobOperations(object):
          <azure.mgmt.datalake.analytics.job.models.JobDataPath>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/Jobs/{jobIdentity}/GetDebugDataPath'
@@ -177,6 +179,7 @@ class JobOperations(object):
          <azure.mgmt.datalake.analytics.job.models.JobInformation>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/BuildJob'
@@ -241,6 +244,7 @@ class JobOperations(object):
         :rtype: None
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/Jobs/{jobIdentity}/CancelJob'
@@ -296,6 +300,7 @@ class JobOperations(object):
          <azure.mgmt.datalake.analytics.job.models.JobInformation>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/Jobs/{jobIdentity}'
@@ -361,6 +366,7 @@ class JobOperations(object):
          <azure.mgmt.datalake.analytics.job.models.JobInformation>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/Jobs/{jobIdentity}'
@@ -457,6 +463,7 @@ class JobOperations(object):
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`JobInformationPaged
          <azure.mgmt.datalake.analytics.job.models.JobInformationPaged>`
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
 

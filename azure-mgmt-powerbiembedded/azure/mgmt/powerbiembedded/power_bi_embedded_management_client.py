@@ -140,6 +140,8 @@ class PowerBIEmbeddedManagementClient(object):
          <azure.mgmt.powerbiembedded.models.OperationList>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`ErrorException<azure.mgmt.powerbiembedded.models.ErrorException>`
         """
         # Construct URL
         url = '/providers/Microsoft.PowerBI/operations'

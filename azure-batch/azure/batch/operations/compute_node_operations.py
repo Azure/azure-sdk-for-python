@@ -56,6 +56,8 @@ class ComputeNodeOperations(object):
         :rtype: None
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`BatchErrorException<azure.batch.models.BatchErrorException>`
         """
         timeout = None
         if compute_node_add_user_options is not None:
@@ -146,6 +148,8 @@ class ComputeNodeOperations(object):
         :rtype: None
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`BatchErrorException<azure.batch.models.BatchErrorException>`
         """
         timeout = None
         if compute_node_delete_user_options is not None:
@@ -234,6 +238,8 @@ class ComputeNodeOperations(object):
         :rtype: None
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`BatchErrorException<azure.batch.models.BatchErrorException>`
         """
         timeout = None
         if compute_node_update_user_options is not None:
@@ -322,6 +328,8 @@ class ComputeNodeOperations(object):
         :rtype: :class:`ComputeNode <azure.batch.models.ComputeNode>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`BatchErrorException<azure.batch.models.BatchErrorException>`
         """
         select = None
         if compute_node_get_options is not None:
@@ -423,6 +431,8 @@ class ComputeNodeOperations(object):
         :rtype: None
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`BatchErrorException<azure.batch.models.BatchErrorException>`
         """
         timeout = None
         if compute_node_reboot_options is not None:
@@ -521,6 +531,8 @@ class ComputeNodeOperations(object):
         :rtype: None
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`BatchErrorException<azure.batch.models.BatchErrorException>`
         """
         timeout = None
         if compute_node_reimage_options is not None:
@@ -622,6 +634,8 @@ class ComputeNodeOperations(object):
         :rtype: None
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`BatchErrorException<azure.batch.models.BatchErrorException>`
         """
         timeout = None
         if compute_node_disable_scheduling_options is not None:
@@ -716,6 +730,8 @@ class ComputeNodeOperations(object):
         :rtype: None
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`BatchErrorException<azure.batch.models.BatchErrorException>`
         """
         timeout = None
         if compute_node_enable_scheduling_options is not None:
@@ -801,6 +817,8 @@ class ComputeNodeOperations(object):
          <azure.batch.models.ComputeNodeGetRemoteLoginSettingsResult>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`BatchErrorException<azure.batch.models.BatchErrorException>`
         """
         timeout = None
         if compute_node_get_remote_login_settings_options is not None:
@@ -898,6 +916,8 @@ class ComputeNodeOperations(object):
         :rtype: Generator
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`BatchErrorException<azure.batch.models.BatchErrorException>`
         """
         timeout = None
         if compute_node_get_remote_desktop_options is not None:
@@ -985,6 +1005,8 @@ class ComputeNodeOperations(object):
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`ComputeNodePaged
          <azure.batch.models.ComputeNodePaged>`
+        :raises:
+         :class:`BatchErrorException<azure.batch.models.BatchErrorException>`
         """
         filter = None
         if compute_node_list_options is not None:

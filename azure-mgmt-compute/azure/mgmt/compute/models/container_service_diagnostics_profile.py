@@ -20,9 +20,13 @@ class ContainerServiceDiagnosticsProfile(Model):
      <azure.mgmt.compute.models.ContainerServiceVMDiagnostics>`
     """ 
 
+    _validation = {
+        'vm_diagnostics': {'required': True},
+    }
+
     _attribute_map = {
         'vm_diagnostics': {'key': 'vmDiagnostics', 'type': 'ContainerServiceVMDiagnostics'},
     }
 
-    def __init__(self, vm_diagnostics=None):
+    def __init__(self, vm_diagnostics):
         self.vm_diagnostics = vm_diagnostics

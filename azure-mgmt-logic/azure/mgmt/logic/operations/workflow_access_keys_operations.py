@@ -50,6 +50,7 @@ class WorkflowAccessKeysOperations(object):
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`WorkflowAccessKeyPaged
          <azure.mgmt.logic.models.WorkflowAccessKeyPaged>`
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -124,6 +125,7 @@ class WorkflowAccessKeysOperations(object):
          <azure.mgmt.logic.models.WorkflowAccessKey>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Logic/workflows/{workflowName}/accessKeys/{accessKeyName}'
@@ -191,6 +193,7 @@ class WorkflowAccessKeysOperations(object):
          <azure.mgmt.logic.models.WorkflowAccessKey>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Logic/workflows/{workflowName}/accessKeys/{accessKeyName}'
@@ -260,6 +263,7 @@ class WorkflowAccessKeysOperations(object):
         :rtype: None
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Logic/workflows/{workflowName}/accessKeys/{accessKeyName}'
@@ -317,6 +321,7 @@ class WorkflowAccessKeysOperations(object):
          <azure.mgmt.logic.models.WorkflowSecretKeys>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Logic/workflows/{workflowName}/accessKeys/{accessKeyName}/list'
@@ -385,6 +390,7 @@ class WorkflowAccessKeysOperations(object):
          <azure.mgmt.logic.models.WorkflowSecretKeys>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         parameters = models.RegenerateSecretKeyParameters(key_type=key_type)
 

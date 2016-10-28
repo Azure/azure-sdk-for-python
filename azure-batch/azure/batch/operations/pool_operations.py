@@ -49,6 +49,8 @@ class PoolOperations(object):
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`PoolUsageMetricsPaged
          <azure.batch.models.PoolUsageMetricsPaged>`
+        :raises:
+         :class:`BatchErrorException<azure.batch.models.BatchErrorException>`
         """
         start_time = None
         if pool_list_pool_usage_metrics_options is not None:
@@ -155,6 +157,8 @@ class PoolOperations(object):
         :rtype: :class:`PoolStatistics <azure.batch.models.PoolStatistics>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`BatchErrorException<azure.batch.models.BatchErrorException>`
         """
         timeout = None
         if pool_get_all_pools_lifetime_statistics_options is not None:
@@ -238,6 +242,8 @@ class PoolOperations(object):
         :rtype: None
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`BatchErrorException<azure.batch.models.BatchErrorException>`
         """
         timeout = None
         if pool_add_options is not None:
@@ -312,6 +318,8 @@ class PoolOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`CloudPoolPaged <azure.batch.models.CloudPoolPaged>`
+        :raises:
+         :class:`BatchErrorException<azure.batch.models.BatchErrorException>`
         """
         filter = None
         if pool_list_options is not None:
@@ -415,6 +423,8 @@ class PoolOperations(object):
         :rtype: None
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`BatchErrorException<azure.batch.models.BatchErrorException>`
         """
         timeout = None
         if pool_delete_options is not None:
@@ -510,6 +520,8 @@ class PoolOperations(object):
         :rtype: bool
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`BatchErrorException<azure.batch.models.BatchErrorException>`
         """
         timeout = None
         if pool_exists_options is not None:
@@ -609,6 +621,8 @@ class PoolOperations(object):
         :rtype: :class:`CloudPool <azure.batch.models.CloudPool>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`BatchErrorException<azure.batch.models.BatchErrorException>`
         """
         select = None
         if pool_get_options is not None:
@@ -728,6 +742,8 @@ class PoolOperations(object):
         :rtype: None
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`BatchErrorException<azure.batch.models.BatchErrorException>`
         """
         timeout = None
         if pool_patch_options is not None:
@@ -833,6 +849,8 @@ class PoolOperations(object):
         :rtype: None
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`BatchErrorException<azure.batch.models.BatchErrorException>`
         """
         timeout = None
         if pool_disable_auto_scale_options is not None:
@@ -920,6 +938,8 @@ class PoolOperations(object):
         :rtype: None
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`BatchErrorException<azure.batch.models.BatchErrorException>`
         """
         timeout = None
         if pool_enable_auto_scale_options is not None:
@@ -1029,6 +1049,8 @@ class PoolOperations(object):
         :rtype: :class:`AutoScaleRun <azure.batch.models.AutoScaleRun>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`BatchErrorException<azure.batch.models.BatchErrorException>`
         """
         timeout = None
         if pool_evaluate_auto_scale_options is not None:
@@ -1124,6 +1146,8 @@ class PoolOperations(object):
         :rtype: None
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`BatchErrorException<azure.batch.models.BatchErrorException>`
         """
         timeout = None
         if pool_resize_options is not None:
@@ -1230,6 +1254,8 @@ class PoolOperations(object):
         :rtype: None
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`BatchErrorException<azure.batch.models.BatchErrorException>`
         """
         timeout = None
         if pool_stop_resize_options is not None:
@@ -1335,6 +1361,8 @@ class PoolOperations(object):
         :rtype: None
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`BatchErrorException<azure.batch.models.BatchErrorException>`
         """
         timeout = None
         if pool_update_properties_options is not None:
@@ -1421,6 +1449,8 @@ class PoolOperations(object):
         :rtype: None
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`BatchErrorException<azure.batch.models.BatchErrorException>`
         """
         timeout = None
         if pool_upgrade_os_options is not None:
@@ -1529,6 +1559,8 @@ class PoolOperations(object):
         :rtype: None
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`BatchErrorException<azure.batch.models.BatchErrorException>`
         """
         timeout = None
         if pool_remove_nodes_options is not None:

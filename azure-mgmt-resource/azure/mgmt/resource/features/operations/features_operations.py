@@ -45,6 +45,7 @@ class FeaturesOperations(object):
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`FeatureResultPaged
          <azure.mgmt.resource.feature.models.FeatureResultPaged>`
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -110,6 +111,7 @@ class FeaturesOperations(object):
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`FeatureResultPaged
          <azure.mgmt.resource.feature.models.FeatureResultPaged>`
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -180,6 +182,7 @@ class FeaturesOperations(object):
          <azure.mgmt.resource.feature.models.FeatureResult>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/providers/Microsoft.Features/providers/{resourceProviderNamespace}/features/{featureName}'
@@ -242,6 +245,7 @@ class FeaturesOperations(object):
          <azure.mgmt.resource.feature.models.FeatureResult>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/providers/Microsoft.Features/providers/{resourceProviderNamespace}/features/{featureName}/register'

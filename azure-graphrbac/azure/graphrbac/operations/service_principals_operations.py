@@ -50,6 +50,8 @@ class ServicePrincipalsOperations(object):
          <azure.graphrbac.models.ServicePrincipal>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`GraphErrorException<azure.graphrbac.models.GraphErrorException>`
         """
         # Construct URL
         url = '/{tenantID}/servicePrincipals'
@@ -107,6 +109,8 @@ class ServicePrincipalsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`ServicePrincipalPaged
          <azure.graphrbac.models.ServicePrincipalPaged>`
+        :raises:
+         :class:`GraphErrorException<azure.graphrbac.models.GraphErrorException>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -178,6 +182,8 @@ class ServicePrincipalsOperations(object):
         :rtype: None
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`GraphErrorException<azure.graphrbac.models.GraphErrorException>`
         """
         # Construct URL
         url = '/{tenantID}/servicePrincipals/{objectId}'
@@ -227,6 +233,8 @@ class ServicePrincipalsOperations(object):
          <azure.graphrbac.models.ServicePrincipal>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`GraphErrorException<azure.graphrbac.models.GraphErrorException>`
         """
         # Construct URL
         url = '/{tenantID}/servicePrincipals/{objectId}'
@@ -283,6 +291,8 @@ class ServicePrincipalsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`KeyCredentialPaged
          <azure.graphrbac.models.KeyCredentialPaged>`
+        :raises:
+         :class:`GraphErrorException<azure.graphrbac.models.GraphErrorException>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -352,6 +362,8 @@ class ServicePrincipalsOperations(object):
         :rtype: None
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`GraphErrorException<azure.graphrbac.models.GraphErrorException>`
         """
         parameters = models.KeyCredentialsUpdateParameters(value=value)
 
@@ -407,6 +419,8 @@ class ServicePrincipalsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`PasswordCredentialPaged
          <azure.graphrbac.models.PasswordCredentialPaged>`
+        :raises:
+         :class:`GraphErrorException<azure.graphrbac.models.GraphErrorException>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -476,6 +490,8 @@ class ServicePrincipalsOperations(object):
         :rtype: None
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`GraphErrorException<azure.graphrbac.models.GraphErrorException>`
         """
         parameters = models.PasswordCredentialsUpdateParameters(value=value)
 

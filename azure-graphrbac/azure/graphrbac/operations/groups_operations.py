@@ -53,6 +53,8 @@ class GroupsOperations(object):
          <azure.graphrbac.models.CheckGroupMembershipResult>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`GraphErrorException<azure.graphrbac.models.GraphErrorException>`
         """
         parameters = models.CheckGroupMembershipParameters(group_id=group_id, member_id=member_id)
 
@@ -116,6 +118,8 @@ class GroupsOperations(object):
         :rtype: None
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`GraphErrorException<azure.graphrbac.models.GraphErrorException>`
         """
         # Construct URL
         url = '/{tenantID}/groups/{groupObjectId}/$links/members/{memberObjectId}'
@@ -172,6 +176,8 @@ class GroupsOperations(object):
         :rtype: None
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`GraphErrorException<azure.graphrbac.models.GraphErrorException>`
         """
         parameters = models.GroupAddMemberParameters(url=url)
 
@@ -227,6 +233,8 @@ class GroupsOperations(object):
         :rtype: None
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`GraphErrorException<azure.graphrbac.models.GraphErrorException>`
         """
         # Construct URL
         url = '/{tenantID}/groups/{groupObjectId}'
@@ -278,6 +286,8 @@ class GroupsOperations(object):
         :rtype: :class:`ADGroup <azure.graphrbac.models.ADGroup>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`GraphErrorException<azure.graphrbac.models.GraphErrorException>`
         """
         parameters = models.GroupCreateParameters(display_name=display_name, mail_nickname=mail_nickname)
 
@@ -336,6 +346,8 @@ class GroupsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`ADGroupPaged <azure.graphrbac.models.ADGroupPaged>`
+        :raises:
+         :class:`GraphErrorException<azure.graphrbac.models.GraphErrorException>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -406,6 +418,8 @@ class GroupsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`AADObjectPaged
          <azure.graphrbac.models.AADObjectPaged>`
+        :raises:
+         :class:`GraphErrorException<azure.graphrbac.models.GraphErrorException>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -476,6 +490,8 @@ class GroupsOperations(object):
         :rtype: :class:`ADGroup <azure.graphrbac.models.ADGroup>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`GraphErrorException<azure.graphrbac.models.GraphErrorException>`
         """
         # Construct URL
         url = '/{tenantID}/groups/{objectId}'
@@ -534,6 +550,8 @@ class GroupsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`strPaged <azure.graphrbac.models.strPaged>`
+        :raises:
+         :class:`GraphErrorException<azure.graphrbac.models.GraphErrorException>`
         """
         parameters = models.GroupGetMemberGroupsParameters(security_enabled_only=security_enabled_only)
 

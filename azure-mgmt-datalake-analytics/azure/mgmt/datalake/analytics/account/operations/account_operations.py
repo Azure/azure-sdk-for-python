@@ -57,6 +57,7 @@ class AccountOperations(object):
          <azure.mgmt.datalake.analytics.account.models.StorageAccountInfo>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataLakeAnalytics/accounts/{accountName}/StorageAccounts/{storageAccountName}'
@@ -124,6 +125,7 @@ class AccountOperations(object):
         :rtype: None
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataLakeAnalytics/accounts/{accountName}/StorageAccounts/{storageAccountName}'
@@ -187,6 +189,7 @@ class AccountOperations(object):
         :rtype: None
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         parameters = models.AddStorageAccountParameters(properties=properties)
 
@@ -257,6 +260,7 @@ class AccountOperations(object):
         :rtype: None
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         parameters = models.AddStorageAccountParameters(properties=properties)
 
@@ -327,6 +331,7 @@ class AccountOperations(object):
          <azure.mgmt.datalake.analytics.account.models.BlobContainer>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataLakeAnalytics/accounts/{accountName}/StorageAccounts/{storageAccountName}/Containers/{containerName}'
@@ -395,6 +400,7 @@ class AccountOperations(object):
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`BlobContainerPaged
          <azure.mgmt.datalake.analytics.account.models.BlobContainerPaged>`
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -473,6 +479,7 @@ class AccountOperations(object):
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`SasTokenInfoPaged
          <azure.mgmt.datalake.analytics.account.models.SasTokenInfoPaged>`
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -551,6 +558,7 @@ class AccountOperations(object):
          <azure.mgmt.datalake.analytics.account.models.DataLakeStoreAccountInfo>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataLakeAnalytics/accounts/{accountName}/DataLakeStoreAccounts/{dataLakeStoreAccountName}'
@@ -618,6 +626,7 @@ class AccountOperations(object):
         :rtype: None
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataLakeAnalytics/accounts/{accountName}/DataLakeStoreAccounts/{dataLakeStoreAccountName}'
@@ -682,6 +691,7 @@ class AccountOperations(object):
         :rtype: None
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         parameters = models.AddDataLakeStoreParameters(properties=properties)
 
@@ -777,6 +787,7 @@ class AccountOperations(object):
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`StorageAccountInfoPaged
          <azure.mgmt.datalake.analytics.account.models.StorageAccountInfoPaged>`
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -899,6 +910,7 @@ class AccountOperations(object):
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`DataLakeStoreAccountInfoPaged
          <azure.mgmt.datalake.analytics.account.models.DataLakeStoreAccountInfoPaged>`
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -1018,6 +1030,7 @@ class AccountOperations(object):
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`DataLakeAnalyticsAccountPaged
          <azure.mgmt.datalake.analytics.account.models.DataLakeAnalyticsAccountPaged>`
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -1133,6 +1146,7 @@ class AccountOperations(object):
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`DataLakeAnalyticsAccountPaged
          <azure.mgmt.datalake.analytics.account.models.DataLakeAnalyticsAccountPaged>`
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -1221,6 +1235,7 @@ class AccountOperations(object):
          <azure.mgmt.datalake.analytics.account.models.DataLakeAnalyticsAccount>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataLakeAnalytics/accounts/{accountName}'
@@ -1284,6 +1299,7 @@ class AccountOperations(object):
          instance that returns None
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataLakeAnalytics/accounts/{accountName}'
@@ -1368,6 +1384,7 @@ class AccountOperations(object):
          <azure.mgmt.datalake.analytics.account.models.DataLakeAnalyticsAccount>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataLakeAnalytics/accounts/{name}'
@@ -1464,6 +1481,7 @@ class AccountOperations(object):
          <azure.mgmt.datalake.analytics.account.models.DataLakeAnalyticsAccount>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataLakeAnalytics/accounts/{name}'

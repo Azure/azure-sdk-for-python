@@ -58,6 +58,7 @@ class VirtualNetworkGatewaysOperations(object):
          <azure.mgmt.network.models.VirtualNetworkGateway>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/virtualNetworkGateways/{virtualNetworkGatewayName}'
@@ -151,6 +152,7 @@ class VirtualNetworkGatewaysOperations(object):
          <azure.mgmt.network.models.VirtualNetworkGateway>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/virtualNetworkGateways/{virtualNetworkGatewayName}'
@@ -213,6 +215,7 @@ class VirtualNetworkGatewaysOperations(object):
          instance that returns None
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/virtualNetworkGateways/{virtualNetworkGatewayName}'
@@ -287,6 +290,7 @@ class VirtualNetworkGatewaysOperations(object):
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`VirtualNetworkGatewayPaged
          <azure.mgmt.network.models.VirtualNetworkGatewayPaged>`
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -363,6 +367,7 @@ class VirtualNetworkGatewaysOperations(object):
          <azure.mgmt.network.models.VirtualNetworkGateway>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/virtualNetworkGateways/{virtualNetworkGatewayName}/reset'
@@ -457,6 +462,7 @@ class VirtualNetworkGatewaysOperations(object):
         :rtype: str
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         parameters = models.VpnClientParameters(processor_architecture=processor_architecture)
 

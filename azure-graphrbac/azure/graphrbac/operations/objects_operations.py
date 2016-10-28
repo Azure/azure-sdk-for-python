@@ -45,6 +45,8 @@ class ObjectsOperations(object):
         :rtype: :class:`AADObject <azure.graphrbac.models.AADObject>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`GraphErrorException<azure.graphrbac.models.GraphErrorException>`
         """
         api_version = "1.6"
 
@@ -101,6 +103,7 @@ class ObjectsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`AADObjectPaged
          <azure.graphrbac.models.AADObjectPaged>`
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         api_version = "1.6-internal"
 

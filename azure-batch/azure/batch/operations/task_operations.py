@@ -52,6 +52,8 @@ class TaskOperations(object):
         :rtype: None
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`BatchErrorException<azure.batch.models.BatchErrorException>`
         """
         timeout = None
         if task_add_options is not None:
@@ -132,6 +134,8 @@ class TaskOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`CloudTaskPaged <azure.batch.models.CloudTaskPaged>`
+        :raises:
+         :class:`BatchErrorException<azure.batch.models.BatchErrorException>`
         """
         filter = None
         if task_list_options is not None:
@@ -245,6 +249,8 @@ class TaskOperations(object):
          <azure.batch.models.TaskAddCollectionResult>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`BatchErrorException<azure.batch.models.BatchErrorException>`
         """
         timeout = None
         if task_add_collection_options is not None:
@@ -336,6 +342,8 @@ class TaskOperations(object):
         :rtype: None
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`BatchErrorException<azure.batch.models.BatchErrorException>`
         """
         timeout = None
         if task_delete_options is not None:
@@ -434,6 +442,8 @@ class TaskOperations(object):
         :rtype: :class:`CloudTask <azure.batch.models.CloudTask>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`BatchErrorException<azure.batch.models.BatchErrorException>`
         """
         select = None
         if task_get_options is not None:
@@ -558,6 +568,8 @@ class TaskOperations(object):
         :rtype: None
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`BatchErrorException<azure.batch.models.BatchErrorException>`
         """
         timeout = None
         if task_update_options is not None:
@@ -667,6 +679,8 @@ class TaskOperations(object):
          <azure.batch.models.CloudTaskListSubtasksResult>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`BatchErrorException<azure.batch.models.BatchErrorException>`
         """
         select = None
         if task_list_subtasks_options is not None:
@@ -761,6 +775,8 @@ class TaskOperations(object):
         :rtype: None
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`BatchErrorException<azure.batch.models.BatchErrorException>`
         """
         timeout = None
         if task_terminate_options is not None:

@@ -50,6 +50,7 @@ class LoadBalancersOperations(object):
          instance that returns None
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/loadBalancers/{loadBalancerName}'
@@ -129,6 +130,7 @@ class LoadBalancersOperations(object):
         :rtype: :class:`LoadBalancer <azure.mgmt.network.models.LoadBalancer>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/loadBalancers/{loadBalancerName}'
@@ -196,6 +198,7 @@ class LoadBalancersOperations(object):
          <azure.mgmt.network.models.LoadBalancer>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/loadBalancers/{loadBalancerName}'
@@ -281,6 +284,7 @@ class LoadBalancersOperations(object):
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`LoadBalancerPaged
          <azure.mgmt.network.models.LoadBalancerPaged>`
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -346,6 +350,7 @@ class LoadBalancersOperations(object):
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`LoadBalancerPaged
          <azure.mgmt.network.models.LoadBalancerPaged>`
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
 

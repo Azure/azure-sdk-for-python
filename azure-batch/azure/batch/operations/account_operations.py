@@ -48,6 +48,8 @@ class AccountOperations(object):
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`NodeAgentSkuPaged
          <azure.batch.models.NodeAgentSkuPaged>`
+        :raises:
+         :class:`BatchErrorException<azure.batch.models.BatchErrorException>`
         """
         filter = None
         if account_list_node_agent_skus_options is not None:

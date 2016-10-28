@@ -60,6 +60,7 @@ class CatalogOperations(object):
          <azure.mgmt.datalake.analytics.catalog.models.USqlSecret>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         parameters = models.DataLakeAnalyticsCatalogSecretCreateOrUpdateParameters(password=password, uri=uri)
 
@@ -137,6 +138,7 @@ class CatalogOperations(object):
          <azure.mgmt.datalake.analytics.catalog.models.USqlSecret>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         parameters = models.DataLakeAnalyticsCatalogSecretCreateOrUpdateParameters(password=password, uri=uri)
 
@@ -208,6 +210,7 @@ class CatalogOperations(object):
          <azure.mgmt.datalake.analytics.catalog.models.USqlSecret>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/catalog/usql/databases/{databaseName}/secrets/{secretName}'
@@ -272,6 +275,7 @@ class CatalogOperations(object):
         :rtype: None
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/catalog/usql/databases/{databaseName}/secrets/{secretName}'
@@ -327,6 +331,7 @@ class CatalogOperations(object):
         :rtype: None
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/catalog/usql/databases/{databaseName}/secrets'
@@ -387,6 +392,7 @@ class CatalogOperations(object):
          <azure.mgmt.datalake.analytics.catalog.models.USqlExternalDataSource>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/catalog/usql/databases/{databaseName}/externaldatasources/{externalDataSourceName}'
@@ -474,6 +480,7 @@ class CatalogOperations(object):
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`USqlExternalDataSourcePaged
          <azure.mgmt.datalake.analytics.catalog.models.USqlExternalDataSourcePaged>`
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -562,6 +569,7 @@ class CatalogOperations(object):
          <azure.mgmt.datalake.analytics.catalog.models.USqlCredential>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/catalog/usql/databases/{databaseName}/credentials/{credentialName}'
@@ -647,6 +655,7 @@ class CatalogOperations(object):
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`USqlCredentialPaged
          <azure.mgmt.datalake.analytics.catalog.models.USqlCredentialPaged>`
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -737,6 +746,7 @@ class CatalogOperations(object):
          <azure.mgmt.datalake.analytics.catalog.models.USqlProcedure>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/catalog/usql/databases/{databaseName}/schemas/{schemaName}/procedures/{procedureName}'
@@ -826,6 +836,7 @@ class CatalogOperations(object):
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`USqlProcedurePaged
          <azure.mgmt.datalake.analytics.catalog.models.USqlProcedurePaged>`
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -916,6 +927,7 @@ class CatalogOperations(object):
          <azure.mgmt.datalake.analytics.catalog.models.USqlTable>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/catalog/usql/databases/{databaseName}/schemas/{schemaName}/tables/{tableName}'
@@ -1004,6 +1016,7 @@ class CatalogOperations(object):
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`USqlTablePaged
          <azure.mgmt.datalake.analytics.catalog.models.USqlTablePaged>`
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -1096,6 +1109,7 @@ class CatalogOperations(object):
          <azure.mgmt.datalake.analytics.catalog.models.USqlTableType>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/catalog/usql/databases/{databaseName}/schemas/{schemaName}/tabletypes/{tableTypeName}'
@@ -1185,6 +1199,7 @@ class CatalogOperations(object):
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`USqlTableTypePaged
          <azure.mgmt.datalake.analytics.catalog.models.USqlTableTypePaged>`
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -1275,6 +1290,7 @@ class CatalogOperations(object):
          <azure.mgmt.datalake.analytics.catalog.models.USqlView>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/catalog/usql/databases/{databaseName}/schemas/{schemaName}/views/{viewName}'
@@ -1363,6 +1379,7 @@ class CatalogOperations(object):
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`USqlViewPaged
          <azure.mgmt.datalake.analytics.catalog.models.USqlViewPaged>`
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -1457,6 +1474,7 @@ class CatalogOperations(object):
          <azure.mgmt.datalake.analytics.catalog.models.USqlTableStatistics>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/catalog/usql/databases/{databaseName}/schemas/{schemaName}/tables/{tableName}/statistics/{statisticsName}'
@@ -1550,6 +1568,7 @@ class CatalogOperations(object):
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`USqlTableStatisticsPaged
          <azure.mgmt.datalake.analytics.catalog.models.USqlTableStatisticsPaged>`
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -1645,6 +1664,7 @@ class CatalogOperations(object):
          <azure.mgmt.datalake.analytics.catalog.models.USqlTablePartition>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/catalog/usql/databases/{databaseName}/schemas/{schemaName}/tables/{tableName}/partitions/{partitionName}'
@@ -1738,6 +1758,7 @@ class CatalogOperations(object):
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`USqlTablePartitionPaged
          <azure.mgmt.datalake.analytics.catalog.models.USqlTablePartitionPaged>`
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -1850,6 +1871,7 @@ class CatalogOperations(object):
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`USqlTypePaged
          <azure.mgmt.datalake.analytics.catalog.models.USqlTypePaged>`
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -1944,6 +1966,7 @@ class CatalogOperations(object):
          <azure.mgmt.datalake.analytics.catalog.models.USqlTableValuedFunction>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/catalog/usql/databases/{databaseName}/schemas/{schemaName}/tablevaluedfunctions/{tableValuedFunctionName}'
@@ -2035,6 +2058,7 @@ class CatalogOperations(object):
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`USqlTableValuedFunctionPaged
          <azure.mgmt.datalake.analytics.catalog.models.USqlTableValuedFunctionPaged>`
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -2124,6 +2148,7 @@ class CatalogOperations(object):
          <azure.mgmt.datalake.analytics.catalog.models.USqlAssembly>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/catalog/usql/databases/{databaseName}/assemblies/{assemblyName}'
@@ -2210,6 +2235,7 @@ class CatalogOperations(object):
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`USqlAssemblyClrPaged
          <azure.mgmt.datalake.analytics.catalog.models.USqlAssemblyClrPaged>`
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -2297,6 +2323,7 @@ class CatalogOperations(object):
          <azure.mgmt.datalake.analytics.catalog.models.USqlSchema>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/catalog/usql/databases/{databaseName}/schemas/{schemaName}'
@@ -2382,6 +2409,7 @@ class CatalogOperations(object):
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`USqlSchemaPaged
          <azure.mgmt.datalake.analytics.catalog.models.USqlSchemaPaged>`
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -2467,6 +2495,7 @@ class CatalogOperations(object):
          <azure.mgmt.datalake.analytics.catalog.models.USqlDatabase>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/catalog/usql/databases/{databaseName}'
@@ -2549,6 +2578,7 @@ class CatalogOperations(object):
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`USqlDatabasePaged
          <azure.mgmt.datalake.analytics.catalog.models.USqlDatabasePaged>`
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
 

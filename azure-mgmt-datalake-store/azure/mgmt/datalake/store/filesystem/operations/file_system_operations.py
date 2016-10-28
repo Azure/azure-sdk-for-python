@@ -75,6 +75,8 @@ class FileSystemOperations(object):
         :rtype: None
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`AdlsErrorException<azure.mgmt.datalake.store.filesystem.models.AdlsErrorException>`
         """
         op = "CONCURRENTAPPEND"
 
@@ -154,6 +156,8 @@ class FileSystemOperations(object):
         :rtype: None
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`AdlsErrorException<azure.mgmt.datalake.store.filesystem.models.AdlsErrorException>`
         """
         op = "SETEXPIRY"
 
@@ -216,6 +220,8 @@ class FileSystemOperations(object):
         :rtype: None
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`AdlsErrorException<azure.mgmt.datalake.store.filesystem.models.AdlsErrorException>`
         """
         op = "CHECKACCESS"
 
@@ -275,6 +281,8 @@ class FileSystemOperations(object):
          <azure.mgmt.datalake.store.filesystem.models.FileOperationResult>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`AdlsErrorException<azure.mgmt.datalake.store.filesystem.models.AdlsErrorException>`
         """
         op = "MKDIRS"
 
@@ -343,6 +351,8 @@ class FileSystemOperations(object):
         :rtype: None
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`AdlsErrorException<azure.mgmt.datalake.store.filesystem.models.AdlsErrorException>`
         """
         op = "CONCAT"
 
@@ -422,6 +432,8 @@ class FileSystemOperations(object):
         :rtype: None
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`AdlsErrorException<azure.mgmt.datalake.store.filesystem.models.AdlsErrorException>`
         """
         op = "MSCONCAT"
 
@@ -499,6 +511,8 @@ class FileSystemOperations(object):
          <azure.mgmt.datalake.store.filesystem.models.FileStatusesResult>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`AdlsErrorException<azure.mgmt.datalake.store.filesystem.models.AdlsErrorException>`
         """
         op = "MSLISTSTATUS"
 
@@ -569,6 +583,8 @@ class FileSystemOperations(object):
          <azure.mgmt.datalake.store.filesystem.models.ContentSummaryResult>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`AdlsErrorException<azure.mgmt.datalake.store.filesystem.models.AdlsErrorException>`
         """
         op = "GETCONTENTSUMMARY"
 
@@ -633,6 +649,8 @@ class FileSystemOperations(object):
          <azure.mgmt.datalake.store.filesystem.models.FileStatusResult>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`AdlsErrorException<azure.mgmt.datalake.store.filesystem.models.AdlsErrorException>`
         """
         op = "MSGETFILESTATUS"
 
@@ -712,6 +730,8 @@ class FileSystemOperations(object):
         :rtype: None
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`AdlsErrorException<azure.mgmt.datalake.store.filesystem.models.AdlsErrorException>`
         """
         op = "APPEND"
 
@@ -787,6 +807,8 @@ class FileSystemOperations(object):
         :rtype: None
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`AdlsErrorException<azure.mgmt.datalake.store.filesystem.models.AdlsErrorException>`
         """
         op = "CREATE"
 
@@ -860,6 +882,8 @@ class FileSystemOperations(object):
         :rtype: Generator
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`AdlsErrorException<azure.mgmt.datalake.store.filesystem.models.AdlsErrorException>`
         """
         op = "OPEN"
 
@@ -931,6 +955,8 @@ class FileSystemOperations(object):
         :rtype: None
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`AdlsErrorException<azure.mgmt.datalake.store.filesystem.models.AdlsErrorException>`
         """
         op = "SETACL"
 
@@ -992,6 +1018,8 @@ class FileSystemOperations(object):
         :rtype: None
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`AdlsErrorException<azure.mgmt.datalake.store.filesystem.models.AdlsErrorException>`
         """
         op = "MODIFYACLENTRIES"
 
@@ -1053,6 +1081,8 @@ class FileSystemOperations(object):
         :rtype: None
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`AdlsErrorException<azure.mgmt.datalake.store.filesystem.models.AdlsErrorException>`
         """
         op = "REMOVEACLENTRIES"
 
@@ -1111,6 +1141,8 @@ class FileSystemOperations(object):
         :rtype: None
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`AdlsErrorException<azure.mgmt.datalake.store.filesystem.models.AdlsErrorException>`
         """
         op = "REMOVEDEFAULTACL"
 
@@ -1168,6 +1200,8 @@ class FileSystemOperations(object):
         :rtype: None
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`AdlsErrorException<azure.mgmt.datalake.store.filesystem.models.AdlsErrorException>`
         """
         op = "REMOVEACL"
 
@@ -1226,6 +1260,8 @@ class FileSystemOperations(object):
          <azure.mgmt.datalake.store.filesystem.models.AclStatusResult>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`AdlsErrorException<azure.mgmt.datalake.store.filesystem.models.AdlsErrorException>`
         """
         op = "MSGETACLSTATUS"
 
@@ -1293,6 +1329,8 @@ class FileSystemOperations(object):
          <azure.mgmt.datalake.store.filesystem.models.FileOperationResult>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`AdlsErrorException<azure.mgmt.datalake.store.filesystem.models.AdlsErrorException>`
         """
         op = "DELETE"
 
@@ -1361,6 +1399,8 @@ class FileSystemOperations(object):
          <azure.mgmt.datalake.store.filesystem.models.FileOperationResult>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`AdlsErrorException<azure.mgmt.datalake.store.filesystem.models.AdlsErrorException>`
         """
         op = "RENAME"
 
@@ -1431,6 +1471,8 @@ class FileSystemOperations(object):
         :rtype: None
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`AdlsErrorException<azure.mgmt.datalake.store.filesystem.models.AdlsErrorException>`
         """
         op = "SETOWNER"
 
@@ -1494,6 +1536,8 @@ class FileSystemOperations(object):
         :rtype: None
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`AdlsErrorException<azure.mgmt.datalake.store.filesystem.models.AdlsErrorException>`
         """
         op = "SETPERMISSION"
 

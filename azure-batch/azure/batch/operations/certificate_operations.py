@@ -51,6 +51,8 @@ class CertificateOperations(object):
         :rtype: None
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`BatchErrorException<azure.batch.models.BatchErrorException>`
         """
         timeout = None
         if certificate_add_options is not None:
@@ -128,6 +130,8 @@ class CertificateOperations(object):
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`CertificatePaged
          <azure.batch.models.CertificatePaged>`
+        :raises:
+         :class:`BatchErrorException<azure.batch.models.BatchErrorException>`
         """
         filter = None
         if certificate_list_options is not None:
@@ -231,6 +235,8 @@ class CertificateOperations(object):
         :rtype: None
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`BatchErrorException<azure.batch.models.BatchErrorException>`
         """
         timeout = None
         if certificate_cancel_deletion_options is not None:
@@ -314,6 +320,8 @@ class CertificateOperations(object):
         :rtype: None
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`BatchErrorException<azure.batch.models.BatchErrorException>`
         """
         timeout = None
         if certificate_delete_options is not None:
@@ -396,6 +404,8 @@ class CertificateOperations(object):
         :rtype: :class:`Certificate <azure.batch.models.Certificate>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`BatchErrorException<azure.batch.models.BatchErrorException>`
         """
         select = None
         if certificate_get_options is not None:

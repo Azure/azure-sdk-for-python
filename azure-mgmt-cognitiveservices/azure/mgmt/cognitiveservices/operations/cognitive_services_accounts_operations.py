@@ -58,6 +58,8 @@ class CognitiveServicesAccountsOperations(object):
          <azure.mgmt.cognitiveservices.models.CognitiveServicesAccount>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`ErrorException<azure.mgmt.cognitiveservices.models.ErrorException>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.CognitiveServices/accounts/{accountName}'
@@ -135,6 +137,8 @@ class CognitiveServicesAccountsOperations(object):
          <azure.mgmt.cognitiveservices.models.CognitiveServicesAccount>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`ErrorException<azure.mgmt.cognitiveservices.models.ErrorException>`
         """
         body = models.CognitiveServicesAccountUpdateParameters(sku=sku, tags=tags)
 
@@ -203,6 +207,8 @@ class CognitiveServicesAccountsOperations(object):
         :rtype: None
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`ErrorException<azure.mgmt.cognitiveservices.models.ErrorException>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.CognitiveServices/accounts/{accountName}'
@@ -259,6 +265,8 @@ class CognitiveServicesAccountsOperations(object):
          <azure.mgmt.cognitiveservices.models.CognitiveServicesAccount>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`ErrorException<azure.mgmt.cognitiveservices.models.ErrorException>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.CognitiveServices/accounts/{accountName}'
@@ -316,6 +324,8 @@ class CognitiveServicesAccountsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`CognitiveServicesAccountPaged
          <azure.mgmt.cognitiveservices.models.CognitiveServicesAccountPaged>`
+        :raises:
+         :class:`ErrorException<azure.mgmt.cognitiveservices.models.ErrorException>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -378,6 +388,8 @@ class CognitiveServicesAccountsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`CognitiveServicesAccountPaged
          <azure.mgmt.cognitiveservices.models.CognitiveServicesAccountPaged>`
+        :raises:
+         :class:`ErrorException<azure.mgmt.cognitiveservices.models.ErrorException>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -448,6 +460,8 @@ class CognitiveServicesAccountsOperations(object):
          <azure.mgmt.cognitiveservices.models.CognitiveServicesAccountKeys>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`ErrorException<azure.mgmt.cognitiveservices.models.ErrorException>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.CognitiveServices/accounts/{accountName}/listKeys'
@@ -516,6 +530,8 @@ class CognitiveServicesAccountsOperations(object):
          <azure.mgmt.cognitiveservices.models.CognitiveServicesAccountKeys>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`ErrorException<azure.mgmt.cognitiveservices.models.ErrorException>`
         """
         body = models.RegenerateKeyParameters(key_name=key_name)
 
@@ -585,6 +601,8 @@ class CognitiveServicesAccountsOperations(object):
          <azure.mgmt.cognitiveservices.models.CognitiveServicesAccountEnumerateSkusResult>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`ErrorException<azure.mgmt.cognitiveservices.models.ErrorException>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.CognitiveServices/accounts/{accountName}/skus'

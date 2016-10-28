@@ -59,6 +59,7 @@ class VirtualNetworkGatewayConnectionsOperations(object):
          <azure.mgmt.network.models.VirtualNetworkGatewayConnection>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/connections/{virtualNetworkGatewayConnectionName}'
@@ -152,6 +153,7 @@ class VirtualNetworkGatewayConnectionsOperations(object):
          <azure.mgmt.network.models.VirtualNetworkGatewayConnection>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/connections/{virtualNetworkGatewayConnectionName}'
@@ -215,6 +217,7 @@ class VirtualNetworkGatewayConnectionsOperations(object):
          instance that returns None
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/connections/{virtualNetworkGatewayConnectionName}'
@@ -295,6 +298,7 @@ class VirtualNetworkGatewayConnectionsOperations(object):
          <azure.mgmt.network.models.ConnectionSharedKeyResult>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/connections/{connectionSharedKeyName}/sharedkey'
@@ -353,6 +357,7 @@ class VirtualNetworkGatewayConnectionsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`VirtualNetworkGatewayConnectionPaged
          <azure.mgmt.network.models.VirtualNetworkGatewayConnectionPaged>`
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -429,6 +434,7 @@ class VirtualNetworkGatewayConnectionsOperations(object):
          <azure.mgmt.network.models.ConnectionResetSharedKey>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         parameters = models.ConnectionResetSharedKey(key_length=key_length)
 
@@ -525,6 +531,7 @@ class VirtualNetworkGatewayConnectionsOperations(object):
          <azure.mgmt.network.models.ConnectionSharedKey>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         parameters = models.ConnectionSharedKey(value=value)
 

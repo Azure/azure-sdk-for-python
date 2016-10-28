@@ -50,13 +50,13 @@ class PolicyAssignmentsOperations(object):
          <azure.mgmt.resource.policy.models.PolicyAssignment>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/{scope}/providers/Microsoft.Authorization/policyassignments/{policyAssignmentName}'
         path_format_arguments = {
             'scope': self._serialize.url("scope", scope, 'str', skip_quote=True),
-            'policyAssignmentName': self._serialize.url("policy_assignment_name", policy_assignment_name, 'str'),
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+            'policyAssignmentName': self._serialize.url("policy_assignment_name", policy_assignment_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -114,13 +114,13 @@ class PolicyAssignmentsOperations(object):
          <azure.mgmt.resource.policy.models.PolicyAssignment>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/{scope}/providers/Microsoft.Authorization/policyassignments/{policyAssignmentName}'
         path_format_arguments = {
             'scope': self._serialize.url("scope", scope, 'str', skip_quote=True),
-            'policyAssignmentName': self._serialize.url("policy_assignment_name", policy_assignment_name, 'str'),
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+            'policyAssignmentName': self._serialize.url("policy_assignment_name", policy_assignment_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -179,13 +179,13 @@ class PolicyAssignmentsOperations(object):
          <azure.mgmt.resource.policy.models.PolicyAssignment>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/{scope}/providers/Microsoft.Authorization/policyassignments/{policyAssignmentName}'
         path_format_arguments = {
             'scope': self._serialize.url("scope", scope, 'str', skip_quote=True),
-            'policyAssignmentName': self._serialize.url("policy_assignment_name", policy_assignment_name, 'str'),
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+            'policyAssignmentName': self._serialize.url("policy_assignment_name", policy_assignment_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -238,6 +238,7 @@ class PolicyAssignmentsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`PolicyAssignmentPaged
          <azure.mgmt.resource.policy.models.PolicyAssignmentPaged>`
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -316,6 +317,7 @@ class PolicyAssignmentsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`PolicyAssignmentPaged
          <azure.mgmt.resource.policy.models.PolicyAssignmentPaged>`
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -387,6 +389,7 @@ class PolicyAssignmentsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`PolicyAssignmentPaged
          <azure.mgmt.resource.policy.models.PolicyAssignmentPaged>`
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -455,12 +458,12 @@ class PolicyAssignmentsOperations(object):
          <azure.mgmt.resource.policy.models.PolicyAssignment>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/{policyAssignmentId}'
         path_format_arguments = {
-            'policyAssignmentId': self._serialize.url("policy_assignment_id", policy_assignment_id, 'str', skip_quote=True),
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+            'policyAssignmentId': self._serialize.url("policy_assignment_id", policy_assignment_id, 'str', skip_quote=True)
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -516,12 +519,12 @@ class PolicyAssignmentsOperations(object):
          <azure.mgmt.resource.policy.models.PolicyAssignment>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/{policyAssignmentId}'
         path_format_arguments = {
-            'policyAssignmentId': self._serialize.url("policy_assignment_id", policy_assignment_id, 'str', skip_quote=True),
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+            'policyAssignmentId': self._serialize.url("policy_assignment_id", policy_assignment_id, 'str', skip_quote=True)
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -578,12 +581,12 @@ class PolicyAssignmentsOperations(object):
          <azure.mgmt.resource.policy.models.PolicyAssignment>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/{policyAssignmentId}'
         path_format_arguments = {
-            'policyAssignmentId': self._serialize.url("policy_assignment_id", policy_assignment_id, 'str', skip_quote=True),
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+            'policyAssignmentId': self._serialize.url("policy_assignment_id", policy_assignment_id, 'str', skip_quote=True)
         }
         url = self._client.format_url(url, **path_format_arguments)
 

@@ -49,6 +49,8 @@ class WorkspacesOperations(object):
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`WorkspacePaged
          <azure.mgmt.powerbiembedded.models.WorkspacePaged>`
+        :raises:
+         :class:`ErrorException<azure.mgmt.powerbiembedded.models.ErrorException>`
         """
         def internal_paging(next_link=None, raw=False):
 

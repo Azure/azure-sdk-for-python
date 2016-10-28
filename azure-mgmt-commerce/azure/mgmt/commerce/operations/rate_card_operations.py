@@ -58,6 +58,8 @@ class RateCardOperations(object):
          <azure.mgmt.commerce.models.ResourceRateCardInfo>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`ErrorResponseException<azure.mgmt.commerce.models.ErrorResponseException>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/providers/Microsoft.Commerce/RateCard'

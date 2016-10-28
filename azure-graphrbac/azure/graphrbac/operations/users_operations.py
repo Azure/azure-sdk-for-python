@@ -50,6 +50,8 @@ class UsersOperations(object):
         :rtype: :class:`User <azure.graphrbac.models.User>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`GraphErrorException<azure.graphrbac.models.GraphErrorException>`
         """
         # Construct URL
         url = '/{tenantID}/users'
@@ -107,6 +109,8 @@ class UsersOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`UserPaged <azure.graphrbac.models.UserPaged>`
+        :raises:
+         :class:`GraphErrorException<azure.graphrbac.models.GraphErrorException>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -180,6 +184,8 @@ class UsersOperations(object):
         :rtype: :class:`User <azure.graphrbac.models.User>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`GraphErrorException<azure.graphrbac.models.GraphErrorException>`
         """
         # Construct URL
         url = '/{tenantID}/users/{upnOrObjectId}'
@@ -240,6 +246,8 @@ class UsersOperations(object):
         :rtype: None
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`GraphErrorException<azure.graphrbac.models.GraphErrorException>`
         """
         # Construct URL
         url = '/{tenantID}/users/{upnOrObjectId}'
@@ -293,6 +301,8 @@ class UsersOperations(object):
         :rtype: None
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`GraphErrorException<azure.graphrbac.models.GraphErrorException>`
         """
         # Construct URL
         url = '/{tenantID}/users/{upnOrObjectId}'
@@ -344,6 +354,8 @@ class UsersOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`strPaged <azure.graphrbac.models.strPaged>`
+        :raises:
+         :class:`GraphErrorException<azure.graphrbac.models.GraphErrorException>`
         """
         parameters = models.UserGetMemberGroupsParameters(security_enabled_only=security_enabled_only)
 

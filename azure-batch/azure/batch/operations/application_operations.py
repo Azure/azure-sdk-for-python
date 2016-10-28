@@ -47,6 +47,8 @@ class ApplicationOperations(object):
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`ApplicationSummaryPaged
          <azure.batch.models.ApplicationSummaryPaged>`
+        :raises:
+         :class:`BatchErrorException<azure.batch.models.BatchErrorException>`
         """
         max_results = None
         if application_list_options is not None:
@@ -137,6 +139,8 @@ class ApplicationOperations(object):
          <azure.batch.models.ApplicationSummary>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`BatchErrorException<azure.batch.models.BatchErrorException>`
         """
         timeout = None
         if application_get_options is not None:

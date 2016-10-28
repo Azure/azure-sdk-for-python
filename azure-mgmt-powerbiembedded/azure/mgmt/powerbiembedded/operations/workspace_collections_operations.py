@@ -51,6 +51,8 @@ class WorkspaceCollectionsOperations(object):
          <azure.mgmt.powerbiembedded.models.WorkspaceCollection>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`ErrorException<azure.mgmt.powerbiembedded.models.ErrorException>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.PowerBI/workspaceCollections/{workspaceCollectionName}'
@@ -118,6 +120,8 @@ class WorkspaceCollectionsOperations(object):
          <azure.mgmt.powerbiembedded.models.WorkspaceCollection>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`ErrorException<azure.mgmt.powerbiembedded.models.ErrorException>`
         """
         body = models.CreateWorkspaceCollectionRequest(location=location, tags=tags)
 
@@ -187,6 +191,8 @@ class WorkspaceCollectionsOperations(object):
          <azure.mgmt.powerbiembedded.models.WorkspaceCollection>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`ErrorException<azure.mgmt.powerbiembedded.models.ErrorException>`
         """
         body = models.UpdateWorkspaceCollectionRequest(tags=tags)
 
@@ -252,6 +258,8 @@ class WorkspaceCollectionsOperations(object):
          instance that returns None
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`ErrorException<azure.mgmt.powerbiembedded.models.ErrorException>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.PowerBI/workspaceCollections/{workspaceCollectionName}'
@@ -330,6 +338,8 @@ class WorkspaceCollectionsOperations(object):
          <azure.mgmt.powerbiembedded.models.CheckNameResponse>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`ErrorException<azure.mgmt.powerbiembedded.models.ErrorException>`
         """
         body = models.CheckNameRequest(name=name, type=type)
 
@@ -391,6 +401,8 @@ class WorkspaceCollectionsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`WorkspaceCollectionPaged
          <azure.mgmt.powerbiembedded.models.WorkspaceCollectionPaged>`
+        :raises:
+         :class:`ErrorException<azure.mgmt.powerbiembedded.models.ErrorException>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -453,6 +465,8 @@ class WorkspaceCollectionsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`WorkspaceCollectionPaged
          <azure.mgmt.powerbiembedded.models.WorkspaceCollectionPaged>`
+        :raises:
+         :class:`ErrorException<azure.mgmt.powerbiembedded.models.ErrorException>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -521,6 +535,8 @@ class WorkspaceCollectionsOperations(object):
          <azure.mgmt.powerbiembedded.models.WorkspaceCollectionAccessKeys>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`ErrorException<azure.mgmt.powerbiembedded.models.ErrorException>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.PowerBI/workspaceCollections/{workspaceCollectionName}/listKeys'
@@ -585,6 +601,8 @@ class WorkspaceCollectionsOperations(object):
          <azure.mgmt.powerbiembedded.models.WorkspaceCollectionAccessKeys>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`ErrorException<azure.mgmt.powerbiembedded.models.ErrorException>`
         """
         body = models.WorkspaceCollectionAccessKey(key_name=key_name)
 
@@ -653,6 +671,8 @@ class WorkspaceCollectionsOperations(object):
         :rtype: None
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`ErrorException<azure.mgmt.powerbiembedded.models.ErrorException>`
         """
         body = models.MigrateWorkspaceCollectionRequest(target_resource_group=target_resource_group, resources=resources)
 

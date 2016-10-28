@@ -49,6 +49,7 @@ class LocationOperations(object):
          <azure.mgmt.batch.models.BatchLocationQuota>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/providers/Microsoft.Batch/locations/{locationName}/quotas'

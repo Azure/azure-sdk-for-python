@@ -51,6 +51,8 @@ class JobScheduleOperations(object):
         :rtype: bool
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`BatchErrorException<azure.batch.models.BatchErrorException>`
         """
         timeout = None
         if job_schedule_exists_options is not None:
@@ -151,6 +153,8 @@ class JobScheduleOperations(object):
         :rtype: None
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`BatchErrorException<azure.batch.models.BatchErrorException>`
         """
         timeout = None
         if job_schedule_delete_options is not None:
@@ -248,6 +252,8 @@ class JobScheduleOperations(object):
          <azure.batch.models.CloudJobSchedule>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`BatchErrorException<azure.batch.models.BatchErrorException>`
         """
         select = None
         if job_schedule_get_options is not None:
@@ -368,6 +374,8 @@ class JobScheduleOperations(object):
         :rtype: None
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`BatchErrorException<azure.batch.models.BatchErrorException>`
         """
         timeout = None
         if job_schedule_patch_options is not None:
@@ -475,6 +483,8 @@ class JobScheduleOperations(object):
         :rtype: None
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`BatchErrorException<azure.batch.models.BatchErrorException>`
         """
         timeout = None
         if job_schedule_update_options is not None:
@@ -578,6 +588,8 @@ class JobScheduleOperations(object):
         :rtype: None
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`BatchErrorException<azure.batch.models.BatchErrorException>`
         """
         timeout = None
         if job_schedule_disable_options is not None:
@@ -677,6 +689,8 @@ class JobScheduleOperations(object):
         :rtype: None
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`BatchErrorException<azure.batch.models.BatchErrorException>`
         """
         timeout = None
         if job_schedule_enable_options is not None:
@@ -777,6 +791,8 @@ class JobScheduleOperations(object):
         :rtype: None
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`BatchErrorException<azure.batch.models.BatchErrorException>`
         """
         timeout = None
         if job_schedule_terminate_options is not None:
@@ -877,6 +893,8 @@ class JobScheduleOperations(object):
         :rtype: None
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`BatchErrorException<azure.batch.models.BatchErrorException>`
         """
         timeout = None
         if job_schedule_add_options is not None:
@@ -953,6 +971,8 @@ class JobScheduleOperations(object):
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`CloudJobSchedulePaged
          <azure.batch.models.CloudJobSchedulePaged>`
+        :raises:
+         :class:`BatchErrorException<azure.batch.models.BatchErrorException>`
         """
         filter = None
         if job_schedule_list_options is not None:

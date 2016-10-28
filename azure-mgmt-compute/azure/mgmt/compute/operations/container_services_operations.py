@@ -17,8 +17,8 @@ import uuid
 from .. import models
 
 
-class ContainerServiceOperations(object):
-    """ContainerServiceOperations operations.
+class ContainerServicesOperations(object):
+    """ContainerServicesOperations operations.
 
     :param client: Client for service requests.
     :param config: Configuration of service client.
@@ -36,9 +36,72 @@ class ContainerServiceOperations(object):
 
         self.config = config
 
+    def list(
+            self, custom_headers=None, raw=False, **operation_config):
+        """Lists all container services in a subscription.
+
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :rtype: :class:`ContainerServicePaged
+         <azure.mgmt.compute.models.ContainerServicePaged>`
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        """
+        def internal_paging(next_link=None, raw=False):
+
+            if not next_link:
+                # Construct URL
+                url = '/subscriptions/{subscriptionId}/providers/Microsoft.ContainerService/containerServices'
+                path_format_arguments = {
+                    'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+                }
+                url = self._client.format_url(url, **path_format_arguments)
+
+                # Construct parameters
+                query_parameters = {}
+                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+
+            else:
+                url = next_link
+                query_parameters = {}
+
+            # Construct headers
+            header_parameters = {}
+            header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+            if self.config.generate_client_request_id:
+                header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+            if custom_headers:
+                header_parameters.update(custom_headers)
+            if self.config.accept_language is not None:
+                header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+            # Construct and send request
+            request = self._client.get(url, query_parameters)
+            response = self._client.send(
+                request, header_parameters, **operation_config)
+
+            if response.status_code not in [200]:
+                exp = CloudError(response)
+                exp.request_id = response.headers.get('x-ms-request-id')
+                raise exp
+
+            return response
+
+        # Deserialize response
+        deserialized = models.ContainerServicePaged(internal_paging, self._deserialize.dependencies)
+
+        if raw:
+            header_dict = {}
+            client_raw_response = models.ContainerServicePaged(internal_paging, self._deserialize.dependencies, header_dict)
+            return client_raw_response
+
+        return deserialized
+
     def create_or_update(
             self, resource_group_name, container_service_name, parameters, custom_headers=None, raw=False, **operation_config):
-        """The operation to create or update a container service.
+        """Creates or updates a container service.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
@@ -58,6 +121,7 @@ class ContainerServiceOperations(object):
          <azure.mgmt.compute.models.ContainerService>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ContainerService/containerServices/{containerServiceName}'
@@ -135,7 +199,7 @@ class ContainerServiceOperations(object):
 
     def get(
             self, resource_group_name, container_service_name, custom_headers=None, raw=False, **operation_config):
-        """The operation to get a container service.
+        """Gets the specified container service.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
@@ -151,6 +215,7 @@ class ContainerServiceOperations(object):
          <azure.mgmt.compute.models.ContainerService>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ContainerService/containerServices/{containerServiceName}'
@@ -212,6 +277,7 @@ class ContainerServiceOperations(object):
          instance that returns None
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ContainerService/containerServices/{containerServiceName}'
@@ -272,7 +338,7 @@ class ContainerServiceOperations(object):
             long_running_send, get_long_running_output,
             get_long_running_status, long_running_operation_timeout)
 
-    def list(
+    def list_by_resource_group(
             self, resource_group_name, custom_headers=None, raw=False, **operation_config):
         """The operation to list container services.
 
@@ -285,6 +351,7 @@ class ContainerServiceOperations(object):
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`ContainerServicePaged
          <azure.mgmt.compute.models.ContainerServicePaged>`
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
 

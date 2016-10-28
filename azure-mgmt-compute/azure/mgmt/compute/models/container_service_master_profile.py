@@ -18,7 +18,8 @@ class ContainerServiceMasterProfile(Model):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :param count: Number of masters (VMs) in the container cluster
+    :param count: Number of masters (VMs) in the container cluster. Default
+     value: 1 .
     :type count: int
     :param dns_prefix: DNS prefix to be used to create FQDN for master
     :type dns_prefix: str
@@ -37,7 +38,7 @@ class ContainerServiceMasterProfile(Model):
         'fqdn': {'key': 'fqdn', 'type': 'str'},
     }
 
-    def __init__(self, dns_prefix, count=None):
+    def __init__(self, dns_prefix, count=1):
         self.count = count
         self.dns_prefix = dns_prefix
         self.fqdn = None

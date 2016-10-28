@@ -62,6 +62,7 @@ class BatchAccountOperations(object):
          <azure.mgmt.batch.models.BatchAccount>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Batch/batchAccounts/{accountName}'
@@ -155,6 +156,7 @@ class BatchAccountOperations(object):
         :rtype: :class:`BatchAccount <azure.mgmt.batch.models.BatchAccount>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         parameters = models.BatchAccountUpdateParameters(tags=tags, auto_storage=auto_storage)
 
@@ -222,6 +224,7 @@ class BatchAccountOperations(object):
          instance that returns None
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Batch/batchAccounts/{accountName}'
@@ -299,6 +302,7 @@ class BatchAccountOperations(object):
         :rtype: :class:`BatchAccount <azure.mgmt.batch.models.BatchAccount>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Batch/batchAccounts/{accountName}'
@@ -355,6 +359,7 @@ class BatchAccountOperations(object):
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`BatchAccountPaged
          <azure.mgmt.batch.models.BatchAccountPaged>`
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -421,6 +426,7 @@ class BatchAccountOperations(object):
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`BatchAccountPaged
          <azure.mgmt.batch.models.BatchAccountPaged>`
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -491,6 +497,7 @@ class BatchAccountOperations(object):
         :rtype: None
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Batch/batchAccounts/{accountName}/syncAutoStorageKeys'
@@ -550,6 +557,7 @@ class BatchAccountOperations(object):
          <azure.mgmt.batch.models.BatchAccountKeys>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         parameters = models.BatchAccountRegenerateKeyParameters(key_name=key_name)
 
@@ -618,6 +626,7 @@ class BatchAccountOperations(object):
          <azure.mgmt.batch.models.BatchAccountKeys>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Batch/batchAccounts/{accountName}/listKeys'

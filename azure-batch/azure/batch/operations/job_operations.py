@@ -52,6 +52,8 @@ class JobOperations(object):
         :rtype: :class:`JobStatistics <azure.batch.models.JobStatistics>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`BatchErrorException<azure.batch.models.BatchErrorException>`
         """
         timeout = None
         if job_get_all_jobs_lifetime_statistics_options is not None:
@@ -134,6 +136,8 @@ class JobOperations(object):
         :rtype: None
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`BatchErrorException<azure.batch.models.BatchErrorException>`
         """
         timeout = None
         if job_delete_options is not None:
@@ -229,6 +233,8 @@ class JobOperations(object):
         :rtype: :class:`CloudJob <azure.batch.models.CloudJob>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`BatchErrorException<azure.batch.models.BatchErrorException>`
         """
         select = None
         if job_get_options is not None:
@@ -328,6 +334,8 @@ class JobOperations(object):
         :rtype: None
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`BatchErrorException<azure.batch.models.BatchErrorException>`
         """
         timeout = None
         if job_patch_options is not None:
@@ -433,6 +441,8 @@ class JobOperations(object):
         :rtype: None
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`BatchErrorException<azure.batch.models.BatchErrorException>`
         """
         timeout = None
         if job_update_options is not None:
@@ -539,6 +549,8 @@ class JobOperations(object):
         :rtype: None
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`BatchErrorException<azure.batch.models.BatchErrorException>`
         """
         timeout = None
         if job_disable_options is not None:
@@ -642,6 +654,8 @@ class JobOperations(object):
         :rtype: None
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`BatchErrorException<azure.batch.models.BatchErrorException>`
         """
         timeout = None
         if job_enable_options is not None:
@@ -743,6 +757,8 @@ class JobOperations(object):
         :rtype: None
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`BatchErrorException<azure.batch.models.BatchErrorException>`
         """
         timeout = None
         if job_terminate_options is not None:
@@ -852,6 +868,8 @@ class JobOperations(object):
         :rtype: None
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`BatchErrorException<azure.batch.models.BatchErrorException>`
         """
         timeout = None
         if job_add_options is not None:
@@ -926,6 +944,8 @@ class JobOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`CloudJobPaged <azure.batch.models.CloudJobPaged>`
+        :raises:
+         :class:`BatchErrorException<azure.batch.models.BatchErrorException>`
         """
         filter = None
         if job_list_options is not None:
@@ -1030,6 +1050,8 @@ class JobOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`CloudJobPaged <azure.batch.models.CloudJobPaged>`
+        :raises:
+         :class:`BatchErrorException<azure.batch.models.BatchErrorException>`
         """
         filter = None
         if job_list_from_job_schedule_options is not None:
@@ -1139,6 +1161,8 @@ class JobOperations(object):
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`JobPreparationAndReleaseTaskExecutionInformationPaged
          <azure.batch.models.JobPreparationAndReleaseTaskExecutionInformationPaged>`
+        :raises:
+         :class:`BatchErrorException<azure.batch.models.BatchErrorException>`
         """
         filter = None
         if job_list_preparation_and_release_task_status_options is not None:

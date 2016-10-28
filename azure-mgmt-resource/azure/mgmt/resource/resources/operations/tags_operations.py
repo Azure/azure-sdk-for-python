@@ -49,6 +49,7 @@ class TagsOperations(object):
         :rtype: None
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/tagNames/{tagName}/tagValues/{tagValue}'
@@ -103,6 +104,7 @@ class TagsOperations(object):
          <azure.mgmt.resource.resources.models.TagValue>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/tagNames/{tagName}/tagValues/{tagValue}'
@@ -164,6 +166,7 @@ class TagsOperations(object):
          <azure.mgmt.resource.resources.models.TagDetails>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/tagNames/{tagName}'
@@ -223,6 +226,7 @@ class TagsOperations(object):
         :rtype: None
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/tagNames/{tagName}'
@@ -270,6 +274,7 @@ class TagsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`TagDetailsPaged
          <azure.mgmt.resource.resources.models.TagDetailsPaged>`
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
 
