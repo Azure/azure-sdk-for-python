@@ -18,15 +18,16 @@ class ContainerServiceVMDiagnostics(Model):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :param enabled: whether VM Diagnostic Agent should be provisioned on the
+    :param enabled: Whether VM Diagnostic Agent should be provisioned on the
      Virtual Machine.
     :type enabled: bool
-    :ivar storage_uri: whether VM Diagnostic Agent should be provisioned on
-     the Virtual Machine.
+    :ivar storage_uri: The URI of the storage account where diagnostics will
+     be stored.
     :vartype storage_uri: str
     """ 
 
     _validation = {
+        'enabled': {'required': True},
         'storage_uri': {'readonly': True},
     }
 
@@ -35,6 +36,6 @@ class ContainerServiceVMDiagnostics(Model):
         'storage_uri': {'key': 'storageUri', 'type': 'str'},
     }
 
-    def __init__(self, enabled=None):
+    def __init__(self, enabled):
         self.enabled = enabled
         self.storage_uri = None
