@@ -22,7 +22,7 @@ from .operations.virtual_machine_sizes_operations import VirtualMachineSizesOper
 from .operations.virtual_machines_operations import VirtualMachinesOperations
 from .operations.virtual_machine_scale_sets_operations import VirtualMachineScaleSetsOperations
 from .operations.virtual_machine_scale_set_vms_operations import VirtualMachineScaleSetVMsOperations
-from .operations.container_service_operations import ContainerServiceOperations
+from .operations.container_services_operations import ContainerServicesOperations
 from . import models
 
 
@@ -34,7 +34,7 @@ class ComputeManagementClientConfiguration(AzureConfiguration):
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
      object<msrestazure.azure_active_directory>`
-    :param subscription_id: subscription credentials which uniquely identify
+    :param subscription_id: Subscription credentials which uniquely identify
      Microsoft Azure subscription. The subscription ID forms part of the URI
      for every service call.
     :type subscription_id: str
@@ -102,13 +102,13 @@ class ComputeManagementClient(object):
     :vartype virtual_machine_scale_sets: .operations.VirtualMachineScaleSetsOperations
     :ivar virtual_machine_scale_set_vms: VirtualMachineScaleSetVMs operations
     :vartype virtual_machine_scale_set_vms: .operations.VirtualMachineScaleSetVMsOperations
-    :ivar container_service: ContainerService operations
-    :vartype container_service: .operations.ContainerServiceOperations
+    :ivar container_services: ContainerServices operations
+    :vartype container_services: .operations.ContainerServicesOperations
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
      object<msrestazure.azure_active_directory>`
-    :param subscription_id: subscription credentials which uniquely identify
+    :param subscription_id: Subscription credentials which uniquely identify
      Microsoft Azure subscription. The subscription ID forms part of the URI
      for every service call.
     :type subscription_id: str
@@ -154,5 +154,5 @@ class ComputeManagementClient(object):
             self._client, self.config, self._serialize, self._deserialize)
         self.virtual_machine_scale_set_vms = VirtualMachineScaleSetVMsOperations(
             self._client, self.config, self._serialize, self._deserialize)
-        self.container_service = ContainerServiceOperations(
+        self.container_services = ContainerServicesOperations(
             self._client, self.config, self._serialize, self._deserialize)
