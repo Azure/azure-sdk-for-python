@@ -21,9 +21,13 @@ class ContainerServiceSshConfiguration(Model):
      <azure.mgmt.compute.models.ContainerServiceSshPublicKey>`
     """ 
 
+    _validation = {
+        'public_keys': {'required': True},
+    }
+
     _attribute_map = {
         'public_keys': {'key': 'publicKeys', 'type': '[ContainerServiceSshPublicKey]'},
     }
 
-    def __init__(self, public_keys=None):
+    def __init__(self, public_keys):
         self.public_keys = public_keys
