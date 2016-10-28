@@ -277,7 +277,7 @@
       "swagger": "arm-web/2015-08-01/swagger/service.json",
       "autorest_options": {
         "Namespace": "azure.mgmt.web",
-        "PackageVersion": "0.30.0"
+        "PackageVersion": "0.30.1"
       },
       "output_dir": "azure-mgmt-web/azure/mgmt/web/"
     },
