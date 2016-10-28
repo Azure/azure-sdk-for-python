@@ -514,6 +514,9 @@ class MgmtComputeTest(AzureMgmtTestCase):
             container_name,
             {
                 'location': self.region,
+                "orchestrator_profile": {
+                    "orchestrator_type": "DCOS"
+                },
                 "master_profile": {
                     "count": 1,
                     "dns_prefix": "MasterPrefixTest"
@@ -532,7 +535,8 @@ class MgmtComputeTest(AzureMgmtTestCase):
                        }]
                     }
                 },
-            }
+            },
+            retries=0
         )
         container = async_create.result()
 
@@ -541,9 +545,12 @@ class MgmtComputeTest(AzureMgmtTestCase):
             container.name
         )
 
-        containers = list(self.compute_client.container_services.list(
+        containers = list(self.compute_client.container_services.list_by_resource_group(
             self.group_name
         ))
+        self.assertEqual(len(containers), 1)
+
+        containers = list(self.compute_client.container_services.list())
         self.assertEqual(len(containers), 1)
 
         async_delete = self.compute_client.container_services.delete(
