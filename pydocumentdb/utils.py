@@ -19,6 +19,9 @@
 #OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 #SOFTWARE.
 
+"""Internal Helper functions in the Azure DocumentDB database service.
+"""
+
 import platform
 import re as re
 import pydocumentdb.http_constants as http_constants

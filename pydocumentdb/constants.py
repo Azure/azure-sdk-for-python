@@ -19,6 +19,9 @@
 #OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 #SOFTWARE.
 
+"""Class for defining internal constants in the Azure DocumentDB database service.
+"""
+
 class _Constants(object):
     """Constants used in the pydocumentdb package"""
 

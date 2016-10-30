@@ -19,6 +19,10 @@
 #OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 #SOFTWARE.
 
+"""Range class implementation in the Azure DocumentDB database service.
+"""
+
+
 class Range(object):
     """Represents the Range class used to map the partition key of the document to their associated collection.
     """

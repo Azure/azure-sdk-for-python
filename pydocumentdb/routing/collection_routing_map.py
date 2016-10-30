@@ -19,6 +19,9 @@
 #OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 #SOFTWARE.
 
+"""Internal class for collection routing map implementation in the Azure DocumentDB database service.
+"""
+
 import bisect
 from pydocumentdb.routing import routing_range
 from pydocumentdb.routing.routing_range import _PartitionKeyRange

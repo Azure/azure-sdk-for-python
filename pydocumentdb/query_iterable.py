@@ -19,7 +19,7 @@
 #OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 #SOFTWARE.
 
-"""Iterable query results.
+"""Iterable query results in the Azure DocumentDB database service.
 """
 from pydocumentdb.execution_context import execution_dispatcher
 from pydocumentdb.execution_context import base_execution_context

@@ -19,6 +19,9 @@
 #OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 #SOFTWARE.
 
+"""Internal methods for executing functions in the Azure DocumentDB database service.
+"""
+
 import time
 
 import pydocumentdb.errors as errors

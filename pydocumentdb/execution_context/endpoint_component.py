@@ -19,6 +19,9 @@
 #OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 #SOFTWARE.
 
+"""Internal class for query execution endpoint component implementation in the Azure DocumentDB database service.
+"""
+
 class _QueryExecutionEndpointComponent(object):
     def __init__(self, execution_context):
         self._execution_context = execution_context

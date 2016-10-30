@@ -19,6 +19,9 @@
 #OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 #SOFTWARE.
 
+"""Internal class for proxy query execution context implementation in the Azure DocumentDB database service.
+"""
+
 import json
 from six.moves import xrange
 from pydocumentdb.errors import HTTPFailure

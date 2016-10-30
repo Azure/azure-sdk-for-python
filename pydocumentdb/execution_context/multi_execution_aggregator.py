@@ -19,6 +19,9 @@
 #OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 #SOFTWARE.
 
+"""Internal class for multi execution context aggregator implementation in the Azure DocumentDB database service.
+"""
+
 import heapq
 from pydocumentdb.execution_context.base_execution_context import _QueryExecutionContextBase
 from pydocumentdb.execution_context import document_producer
