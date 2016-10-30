@@ -19,6 +19,9 @@
 #OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 #SOFTWARE.
 
+"""Hash partition resolver implementation in the Azure DocumentDB database service.
+"""
+
 import pydocumentdb.murmur_hash as murmur_hash
 import pydocumentdb.consistent_hash_ring as consistent_hash_ring
 

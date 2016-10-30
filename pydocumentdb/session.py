@@ -19,7 +19,7 @@
 #OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 #SOFTWARE.
 
-"""Session Consistency Tracking 
+"""Session Consistency Tracking in the Azure DocumentDB database service.
 """
 
 import sys, traceback

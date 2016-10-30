@@ -19,7 +19,7 @@
 #OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 #SOFTWARE.
 
-"""Document client.
+"""Document client class for the Azure DocumentDB database service.
 """
 
 import requests

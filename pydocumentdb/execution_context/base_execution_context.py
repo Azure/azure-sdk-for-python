@@ -19,6 +19,9 @@
 #OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 #SOFTWARE.
 
+"""Internal class for query execution context implementation in the Azure DocumentDB database service.
+"""
+
 from collections import deque
 import pydocumentdb.retry_utility as retry_utility
 import pydocumentdb.http_constants as http_constants

@@ -19,7 +19,7 @@
 #OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 #SOFTWARE.
 
-"""PyDocumentDB Exceptions.
+"""PyDocumentDB Exceptions in the Azure DocumentDB database service.
 """
 import pydocumentdb.http_constants as http_constants
 

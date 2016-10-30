@@ -19,6 +19,9 @@
 #OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 #SOFTWARE.
 
+"""Class for retry options in the Azure DocumentDB database service.
+"""
+
 class RetryOptions(object):
     """The retry options to be applied to all requests when retrying
 

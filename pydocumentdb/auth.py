@@ -19,7 +19,7 @@
 #OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 #SOFTWARE.
 
-"""Authorization helper functions.
+"""Authorization helper functions in the Azure DocumentDB database service.
 """
 
 from hashlib import sha256

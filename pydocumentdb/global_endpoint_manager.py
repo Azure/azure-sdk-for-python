@@ -19,6 +19,9 @@
 #OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 #SOFTWARE.
 
+"""Internal class for global endpoint manager implementation in the Azure DocumentDB database service.
+"""
+
 from six.moves.urllib.parse import urlparse
 import pydocumentdb.constants as constants
 import pydocumentdb.errors as errors

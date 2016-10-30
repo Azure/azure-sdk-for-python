@@ -19,7 +19,7 @@
 #OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 #SOFTWARE.
 
-"""AzureDocument classes and enums.
+"""AzureDocument classes and enums for the Azure DocumentDB database service.
 """
 
 import pydocumentdb.retry_options as retry_options

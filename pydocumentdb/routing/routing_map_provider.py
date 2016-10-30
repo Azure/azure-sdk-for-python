@@ -19,6 +19,9 @@
 #OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 #SOFTWARE.
 
+"""Internal class for partition key range cache implementation in the Azure DocumentDB database service.
+"""
+
 import pydocumentdb.base as base
 from pydocumentdb.routing.collection_routing_map import _CollectionRoutingMap
 import pydocumentdb.routing.routing_range as routing_range

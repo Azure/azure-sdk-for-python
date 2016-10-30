@@ -19,6 +19,9 @@
 #OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 #SOFTWARE.
 
+"""Internal class for consistent hash ring implementation in the Azure DocumentDB database service.
+"""
+
 import pydocumentdb.partition as partition
 from struct import *
 import six

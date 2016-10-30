@@ -19,6 +19,9 @@
 #OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 #SOFTWARE.
 
+"""Internal class for partitioned query execution info implementation in the Azure DocumentDB database service.
+"""
+
 import six
 
 class _PartitionedQueryExecutionInfo(object):

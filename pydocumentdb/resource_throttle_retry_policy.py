@@ -19,6 +19,9 @@
 #OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 #SOFTWARE.
 
+"""Internal class for resource throttle retry policy implementation in the Azure DocumentDB database service.
+"""
+
 import pydocumentdb.http_constants as http_constants
 
 class _ResourceThrottleRetryPolicy(object):
