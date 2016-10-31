@@ -65,9 +65,9 @@ class VirtualNetworkGateway(Resource):
     :param resource_guid: Gets or sets resource guid property of the
      VirtualNetworkGateway resource
     :type resource_guid: str
-    :param provisioning_state: Gets provisioning state of the
+    :ivar provisioning_state: Gets provisioning state of the
      VirtualNetworkGateway resource Updating/Deleting/Failed
-    :type provisioning_state: str
+    :vartype provisioning_state: str
     :param etag: Gets a unique read-only string that changes whenever the
      resource is updated
     :type etag: str
@@ -76,6 +76,10 @@ class VirtualNetworkGateway(Resource):
     _validation = {
         'name': {'readonly': True},
         'type': {'readonly': True},
+        'ip_configurations': {'required': True},
+        'gateway_type': {'required': True},
+        'vpn_type': {'required': True},
+        'provisioning_state': {'readonly': True},
     }
 
     _attribute_map = {
@@ -98,7 +102,7 @@ class VirtualNetworkGateway(Resource):
         'etag': {'key': 'etag', 'type': 'str'},
     }
 
-    def __init__(self, id=None, location=None, tags=None, ip_configurations=None, gateway_type=None, vpn_type=None, enable_bgp=None, active_active=None, gateway_default_site=None, sku=None, vpn_client_configuration=None, bgp_settings=None, resource_guid=None, provisioning_state=None, etag=None):
+    def __init__(self, ip_configurations, gateway_type, vpn_type, id=None, location=None, tags=None, enable_bgp=None, active_active=None, gateway_default_site=None, sku=None, vpn_client_configuration=None, bgp_settings=None, resource_guid=None, etag=None):
         super(VirtualNetworkGateway, self).__init__(id=id, location=location, tags=tags)
         self.ip_configurations = ip_configurations
         self.gateway_type = gateway_type
@@ -110,5 +114,5 @@ class VirtualNetworkGateway(Resource):
         self.vpn_client_configuration = vpn_client_configuration
         self.bgp_settings = bgp_settings
         self.resource_guid = resource_guid
-        self.provisioning_state = provisioning_state
+        self.provisioning_state = None
         self.etag = etag

@@ -45,6 +45,7 @@ class ExpressRouteServiceProvidersOperations(object):
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`ExpressRouteServiceProviderPaged
          <azure.mgmt.network.models.ExpressRouteServiceProviderPaged>`
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
 

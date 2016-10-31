@@ -39,9 +39,9 @@ class LocalNetworkGateway(Resource):
     :param resource_guid: Gets or sets resource guid property of the
      LocalNetworkGateway resource
     :type resource_guid: str
-    :param provisioning_state: Gets provisioning state of the
+    :ivar provisioning_state: Gets provisioning state of the
      LocalNetworkGateway resource Updating/Deleting/Failed
-    :type provisioning_state: str
+    :vartype provisioning_state: str
     :param etag: Gets a unique read-only string that changes whenever the
      resource is updated
     :type etag: str
@@ -50,6 +50,8 @@ class LocalNetworkGateway(Resource):
     _validation = {
         'name': {'readonly': True},
         'type': {'readonly': True},
+        'local_network_address_space': {'required': True},
+        'provisioning_state': {'readonly': True},
     }
 
     _attribute_map = {
@@ -66,11 +68,11 @@ class LocalNetworkGateway(Resource):
         'etag': {'key': 'etag', 'type': 'str'},
     }
 
-    def __init__(self, id=None, location=None, tags=None, local_network_address_space=None, gateway_ip_address=None, bgp_settings=None, resource_guid=None, provisioning_state=None, etag=None):
+    def __init__(self, local_network_address_space, id=None, location=None, tags=None, gateway_ip_address=None, bgp_settings=None, resource_guid=None, etag=None):
         super(LocalNetworkGateway, self).__init__(id=id, location=location, tags=tags)
         self.local_network_address_space = local_network_address_space
         self.gateway_ip_address = gateway_ip_address
         self.bgp_settings = bgp_settings
         self.resource_guid = resource_guid
-        self.provisioning_state = provisioning_state
+        self.provisioning_state = None
         self.etag = etag
