@@ -1,3 +1,7 @@
+## Changes in 2.0.1 : ##
+
+- Added minor doc comments. 
+
 ## Changes in 2.0.0 : ##
 
 - Added support for Python 3.5.
