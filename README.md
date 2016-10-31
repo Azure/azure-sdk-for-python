@@ -1,4 +1,4 @@
-This is the README of the Python driver for Microsoft Azure DocumentDB.
+This is the README of the Python driver for Microsoft Azure DocumentDB database service.
 
 Welcome to DocumentDB.
 
@@ -50,5 +50,5 @@ Most of the test cases create collections in your DocumentDB account. Collection
     Install Sphinx: http://sphinx-doc.org/install.html
 
     $ cd doc
-    $ sphinx-apidoc -e -o .\api ..\pydocumentdb
+    $ sphinx-apidoc -f -e -o api ..\pydocumentdb
     $ make.bat html
