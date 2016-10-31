@@ -9,6 +9,9 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
+from .server_firewall_rule import ServerFirewallRule
+from .sql_sub_resource import SqlSubResource
+from .replication_link import ReplicationLink
 from .recommended_elastic_pool_metric import RecommendedElasticPoolMetric
 from .database import Database
 from .service_tier_advisor import ServiceTierAdvisor
@@ -35,8 +38,8 @@ from .server_metric import ServerMetric
 from .service_objective import ServiceObjective
 from .transparent_data_encryption_activity import TransparentDataEncryptionActivity
 from .resource import Resource
-from .sql_sub_resource import SqlSubResource
-from .server_firewall_rule import ServerFirewallRule
+from .server_firewall_rule_paged import ServerFirewallRulePaged
+from .replication_link_paged import ReplicationLinkPaged
 from .restore_point_paged import RestorePointPaged
 from .database_paged import DatabasePaged
 from .database_metric_paged import DatabaseMetricPaged
@@ -50,9 +53,11 @@ from .recommended_elastic_pool_metric_paged import RecommendedElasticPoolMetricP
 from .service_tier_advisor_paged import ServiceTierAdvisorPaged
 from .service_objective_paged import ServiceObjectivePaged
 from .transparent_data_encryption_activity_paged import TransparentDataEncryptionActivityPaged
-from .server_firewall_rule_paged import ServerFirewallRulePaged
 from .sql_management_client_enums import (
+    ReplicationRole,
+    ReplicationState,
     ElasticPoolEditions,
+    createMode,
     DatabaseEditions,
     ServiceObjectiveName,
     TableType,
@@ -69,6 +74,9 @@ from .sql_management_client_enums import (
 )
 
 __all__ = [
+    'ServerFirewallRule',
+    'SqlSubResource',
+    'ReplicationLink',
     'RecommendedElasticPoolMetric',
     'Database',
     'ServiceTierAdvisor',
@@ -95,8 +103,8 @@ __all__ = [
     'ServiceObjective',
     'TransparentDataEncryptionActivity',
     'Resource',
-    'SqlSubResource',
-    'ServerFirewallRule',
+    'ServerFirewallRulePaged',
+    'ReplicationLinkPaged',
     'RestorePointPaged',
     'DatabasePaged',
     'DatabaseMetricPaged',
@@ -110,8 +118,10 @@ __all__ = [
     'ServiceTierAdvisorPaged',
     'ServiceObjectivePaged',
     'TransparentDataEncryptionActivityPaged',
-    'ServerFirewallRulePaged',
+    'ReplicationRole',
+    'ReplicationState',
     'ElasticPoolEditions',
+    'createMode',
     'DatabaseEditions',
     'ServiceObjectiveName',
     'TableType',

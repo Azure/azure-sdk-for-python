@@ -200,7 +200,7 @@ class ElasticPoolsOperations(object):
 
     def get(
             self, resource_group_name, server_name, elastic_pool_name, custom_headers=None, raw=False, **operation_config):
-        """Returns information about an Azure SQL elastic pool.
+        """Gets information about an Azure SQL elastic pool.
 
         :param resource_group_name: The name of the Resource Group to which
          the resource belongs.
@@ -484,7 +484,7 @@ class ElasticPoolsOperations(object):
 
     def get_database(
             self, resource_group_name, server_name, elastic_pool_name, database_name, custom_headers=None, raw=False, **operation_config):
-        """Returns information about an Azure SQL database inside of an Azure SQL
+        """Gets information about an Azure SQL database inside of an Azure SQL
         elastic pool.
 
         :param resource_group_name: The name of the Resource Group to which

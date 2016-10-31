@@ -9,14 +9,19 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .servers_operations import ServersOperations
-from .databases_operations import DatabasesOperations
-from .elastic_pools_operations import ElasticPoolsOperations
-from .recommended_elastic_pools_operations import RecommendedElasticPoolsOperations
+from msrest.paging import Paged
 
-__all__ = [
-    'ServersOperations',
-    'DatabasesOperations',
-    'ElasticPoolsOperations',
-    'RecommendedElasticPoolsOperations',
-]
+
+class ReplicationLinkPaged(Paged):
+    """
+    A paging container for iterating over a list of ReplicationLink object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[ReplicationLink]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(ReplicationLinkPaged, self).__init__(*args, **kwargs)

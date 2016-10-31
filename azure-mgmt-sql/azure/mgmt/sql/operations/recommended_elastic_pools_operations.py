@@ -37,7 +37,7 @@ class RecommendedElasticPoolsOperations(object):
 
     def get(
             self, resource_group_name, server_name, recommended_elastic_pool_name, custom_headers=None, raw=False, **operation_config):
-        """Returns information about an Azure SQL Recommended Elastic Pool.
+        """Gets information about an Azure SQL Recommended Elastic Pool.
 
         :param resource_group_name: The name of the Resource Group to which
          the resource belongs.
@@ -104,7 +104,7 @@ class RecommendedElasticPoolsOperations(object):
 
     def get_databases(
             self, resource_group_name, server_name, recommended_elastic_pool_name, database_name, custom_headers=None, raw=False, **operation_config):
-        """Returns information about an Azure SQL Database inside of an Azure SQL
+        """Gets information about an Azure SQL Database inside of an Azure SQL
         Recommended Elastic Pool.
 
         :param resource_group_name: The name of the Resource Group to which

@@ -36,9 +36,11 @@ class Server(Resource):
     :type version: str or :class:`ServerVersion
      <azure.mgmt.sql.models.ServerVersion>`
     :param administrator_login: Administrator username for the server. Can
-     only be specified when the server is being created.
+     only be specified when the server is being created (and is required for
+     creation).
     :type administrator_login: str
-    :param administrator_login_password: The administrator login password.
+    :param administrator_login_password: The administrator login password
+     (required for server creation).
     :type administrator_login_password: str
     """ 
 

@@ -45,6 +45,18 @@ class Database(Resource):
      SQL Database. This records the start date and time when recovery is
      available for this Azure SQL Database (ISO8601 format).
     :vartype earliest_restore_date: datetime
+    :param create_mode: Specifies the type of database to create. Possible
+     values include: 'Copy', 'Default', 'NonReadableSecondary',
+     'OnlineSecondary', 'PointInTimeRestore', 'Recovery', 'Restore'
+    :type create_mode: str or :class:`createMode
+     <azure.mgmt.sql.models.createMode>`
+    :param source_database_id: Conditional.  Specifies the resource Id of the
+     source database.  If createMode is not set to Default, then this value
+     must be specified.  The name of the source database must be the same.
+     NOTE: Collation, Edition, and MaxSizeBytes must remain the same while
+     the link is active.  Values specified for these parameters will be
+     ignored.
+    :type source_database_id: str
     :param edition: The edition of the Azure SQL Database.  The
      DatabaseEditions enumeration contains all the valid editions. Possible
      values include: 'Web', 'Business', 'Basic', 'Standard', 'Premium',
@@ -135,6 +147,8 @@ class Database(Resource):
         'current_service_objective_id': {'key': 'properties.currentServiceObjectiveId', 'type': 'str'},
         'database_id': {'key': 'properties.databaseId', 'type': 'str'},
         'earliest_restore_date': {'key': 'properties.earliestRestoreDate', 'type': 'iso-8601'},
+        'create_mode': {'key': 'properties.createMode', 'type': 'str'},
+        'source_database_id': {'key': 'properties.sourceDatabaseId', 'type': 'str'},
         'edition': {'key': 'properties.edition', 'type': 'str'},
         'max_size_bytes': {'key': 'properties.maxSizeBytes', 'type': 'str'},
         'requested_service_objective_id': {'key': 'properties.requestedServiceObjectiveId', 'type': 'str'},
@@ -150,7 +164,7 @@ class Database(Resource):
         'recommended_index': {'key': 'properties.recommendedIndex', 'type': '[RecommendedIndex]'},
     }
 
-    def __init__(self, location, tags=None, collation=None, edition=None, max_size_bytes=None, requested_service_objective_id=None, requested_service_objective_name=None, elastic_pool_name=None):
+    def __init__(self, location, tags=None, collation=None, create_mode=None, source_database_id=None, edition=None, max_size_bytes=None, requested_service_objective_id=None, requested_service_objective_name=None, elastic_pool_name=None):
         super(Database, self).__init__(location=location, tags=tags)
         self.collation = collation
         self.creation_date = None
@@ -158,6 +172,8 @@ class Database(Resource):
         self.current_service_objective_id = None
         self.database_id = None
         self.earliest_restore_date = None
+        self.create_mode = create_mode
+        self.source_database_id = source_database_id
         self.edition = edition
         self.max_size_bytes = max_size_bytes
         self.requested_service_objective_id = requested_service_objective_id
