@@ -1,6 +1,6 @@
 ## Changes in 2.0.1 : ##
 
-- Added minor doc comments. 
+- Made editorial changes to documentation comments.
 
 ## Changes in 2.0.0 : ##
 
