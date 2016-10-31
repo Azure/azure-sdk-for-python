@@ -48,6 +48,8 @@ class MediaServiceOperations(object):
          <azure.mgmt.media.models.CheckNameAvailabilityOutput>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`ApiErrorException<azure.mgmt.media.models.ApiErrorException>`
         """
         check_name_availability_input = models.CheckNameAvailabilityInput(name=name)
 
@@ -108,6 +110,8 @@ class MediaServiceOperations(object):
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`MediaServicePaged
          <azure.mgmt.media.models.MediaServicePaged>`
+        :raises:
+         :class:`ApiErrorException<azure.mgmt.media.models.ApiErrorException>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -175,6 +179,8 @@ class MediaServiceOperations(object):
         :rtype: :class:`MediaService <azure.mgmt.media.models.MediaService>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`ApiErrorException<azure.mgmt.media.models.ApiErrorException>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Media/mediaservices/{mediaServiceName}'
@@ -237,6 +243,8 @@ class MediaServiceOperations(object):
         :rtype: :class:`MediaService <azure.mgmt.media.models.MediaService>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`ApiErrorException<azure.mgmt.media.models.ApiErrorException>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Media/mediaservices/{mediaServiceName}'
@@ -302,6 +310,8 @@ class MediaServiceOperations(object):
         :rtype: None
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`ApiErrorException<azure.mgmt.media.models.ApiErrorException>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Media/mediaservices/{mediaServiceName}'
@@ -357,6 +367,8 @@ class MediaServiceOperations(object):
         :rtype: :class:`MediaService <azure.mgmt.media.models.MediaService>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`ApiErrorException<azure.mgmt.media.models.ApiErrorException>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Media/mediaservices/{mediaServiceName}'
@@ -426,6 +438,8 @@ class MediaServiceOperations(object):
          <azure.mgmt.media.models.RegenerateKeyOutput>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`ApiErrorException<azure.mgmt.media.models.ApiErrorException>`
         """
         regenerate_key_input = models.RegenerateKeyInput(key_type=key_type)
 
@@ -491,6 +505,8 @@ class MediaServiceOperations(object):
         :rtype: :class:`ServiceKeys <azure.mgmt.media.models.ServiceKeys>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`ApiErrorException<azure.mgmt.media.models.ApiErrorException>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Media/mediaservices/{mediaServiceName}/listKeys'
@@ -552,6 +568,8 @@ class MediaServiceOperations(object):
         :rtype: :class:`MediaService <azure.mgmt.media.models.MediaService>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`ApiErrorException<azure.mgmt.media.models.ApiErrorException>`
         """
         sync_storage_keys_input = models.SyncStorageKeysInput(id=id)
 
