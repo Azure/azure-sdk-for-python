@@ -48,6 +48,7 @@
     <Compile Include="pydocumentdb\routing\__init__.py" />
     <Compile Include="pydocumentdb\runtime_constants.py" />
     <Compile Include="pydocumentdb\session.py" />
+    <Compile Include="pydocumentdb\utils.py" />
     <Compile Include="setup.py" />
     <Compile Include="test\crud_tests.py" />
     <Compile Include="test\orderby_tests.py" />

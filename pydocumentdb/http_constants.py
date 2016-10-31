@@ -235,7 +235,7 @@ class Versions:
     """
     CurrentVersion = '2016-07-11'
     SDKName = 'documentdb-python-sdk'
-    SDKVersion = '2.0.0'
+    SDKVersion = '2.0.1'
 
 
 class Delimiters:
