@@ -13,8 +13,8 @@ from msrest.service_client import ServiceClient
 from msrest import Serializer, Deserializer
 from msrestazure import AzureConfiguration
 from .version import VERSION
-from .operations.databases_operations import DatabasesOperations
 from .operations.servers_operations import ServersOperations
+from .operations.databases_operations import DatabasesOperations
 from .operations.elastic_pools_operations import ElasticPoolsOperations
 from .operations.recommended_elastic_pools_operations import RecommendedElasticPoolsOperations
 from . import models
@@ -28,9 +28,8 @@ class SqlManagementClientConfiguration(AzureConfiguration):
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
      object<msrestazure.azure_active_directory>`
-    :param subscription_id: Gets subscription credentials which uniquely
-     identify Microsoft Azure subscription. The subscription ID forms part of
-     the URI for every service call.
+    :param subscription_id: The subscription id that identifies an Azure
+     subscription.
     :type subscription_id: str
     :param accept_language: Gets or sets the preferred language for the
      response.
@@ -73,15 +72,15 @@ class SqlManagementClientConfiguration(AzureConfiguration):
 
 
 class SqlManagementClient(object):
-    """Composite Swagger for Azure Sql Database Client
+    """The Azure SQL Database management API provides a RESTful set of web services that interact with Azure SQL Database services to manage your databases. The API enables users to create, retrieve, update, and delete databases.
 
     :ivar config: Configuration for client.
     :vartype config: SqlManagementClientConfiguration
 
-    :ivar databases: Databases operations
-    :vartype databases: .operations.DatabasesOperations
     :ivar servers: Servers operations
     :vartype servers: .operations.ServersOperations
+    :ivar databases: Databases operations
+    :vartype databases: .operations.DatabasesOperations
     :ivar elastic_pools: ElasticPools operations
     :vartype elastic_pools: .operations.ElasticPoolsOperations
     :ivar recommended_elastic_pools: RecommendedElasticPools operations
@@ -90,9 +89,8 @@ class SqlManagementClient(object):
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
      object<msrestazure.azure_active_directory>`
-    :param subscription_id: Gets subscription credentials which uniquely
-     identify Microsoft Azure subscription. The subscription ID forms part of
-     the URI for every service call.
+    :param subscription_id: The subscription id that identifies an Azure
+     subscription.
     :type subscription_id: str
     :param accept_language: Gets or sets the preferred language for the
      response.
@@ -118,9 +116,9 @@ class SqlManagementClient(object):
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
 
-        self.databases = DatabasesOperations(
-            self._client, self.config, self._serialize, self._deserialize)
         self.servers = ServersOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.databases = DatabasesOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.elastic_pools = ElasticPoolsOperations(
             self._client, self.config, self._serialize, self._deserialize)

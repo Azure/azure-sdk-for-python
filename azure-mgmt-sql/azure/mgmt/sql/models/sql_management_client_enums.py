@@ -12,11 +12,39 @@
 from enum import Enum
 
 
+class ReplicationRole(Enum):
+
+    primary = "Primary"
+    secondary = "Secondary"
+    non_readable_secondary = "NonReadableSecondary"
+    source = "Source"
+    copy = "Copy"
+
+
+class ReplicationState(Enum):
+
+    pending = "PENDING"
+    seeding = "SEEDING"
+    catch_up = "CATCH_UP"
+    suspended = "SUSPENDED"
+
+
 class ElasticPoolEditions(Enum):
 
     basic = "Basic"
     standard = "Standard"
     premium = "Premium"
+
+
+class createMode(Enum):
+
+    copy = "Copy"
+    default = "Default"
+    non_readable_secondary = "NonReadableSecondary"
+    online_secondary = "OnlineSecondary"
+    point_in_time_restore = "PointInTimeRestore"
+    recovery = "Recovery"
+    restore = "Restore"
 
 
 class DatabaseEditions(Enum):
