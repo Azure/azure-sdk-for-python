@@ -50,6 +50,7 @@ class RouteTablesOperations(object):
          instance that returns None
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/routeTables/{routeTableName}'
@@ -129,6 +130,7 @@ class RouteTablesOperations(object):
         :rtype: :class:`RouteTable <azure.mgmt.network.models.RouteTable>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/routeTables/{routeTableName}'
@@ -197,6 +199,7 @@ class RouteTablesOperations(object):
          <azure.mgmt.network.models.RouteTable>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/routeTables/{routeTableName}'
@@ -283,6 +286,7 @@ class RouteTablesOperations(object):
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`RouteTablePaged
          <azure.mgmt.network.models.RouteTablePaged>`
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -346,6 +350,7 @@ class RouteTablesOperations(object):
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`RouteTablePaged
          <azure.mgmt.network.models.RouteTablePaged>`
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
 

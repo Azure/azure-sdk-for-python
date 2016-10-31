@@ -46,6 +46,9 @@ class NetworkInterface(Resource):
     :type mac_address: str
     :param primary: Gets whether this is a primary NIC on a virtual machine
     :type primary: bool
+    :param enable_accelerated_networking: Gets or sets if the network
+     interface is accelerated networking enabled
+    :type enable_accelerated_networking: bool
     :param enable_ip_forwarding: Gets or sets whether IPForwarding is enabled
      on the NIC
     :type enable_ip_forwarding: bool
@@ -77,13 +80,14 @@ class NetworkInterface(Resource):
         'dns_settings': {'key': 'properties.dnsSettings', 'type': 'NetworkInterfaceDnsSettings'},
         'mac_address': {'key': 'properties.macAddress', 'type': 'str'},
         'primary': {'key': 'properties.primary', 'type': 'bool'},
+        'enable_accelerated_networking': {'key': 'properties.enableAcceleratedNetworking', 'type': 'bool'},
         'enable_ip_forwarding': {'key': 'properties.enableIPForwarding', 'type': 'bool'},
         'resource_guid': {'key': 'properties.resourceGuid', 'type': 'str'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'etag': {'key': 'etag', 'type': 'str'},
     }
 
-    def __init__(self, id=None, location=None, tags=None, virtual_machine=None, network_security_group=None, ip_configurations=None, dns_settings=None, mac_address=None, primary=None, enable_ip_forwarding=None, resource_guid=None, provisioning_state=None, etag=None):
+    def __init__(self, id=None, location=None, tags=None, virtual_machine=None, network_security_group=None, ip_configurations=None, dns_settings=None, mac_address=None, primary=None, enable_accelerated_networking=None, enable_ip_forwarding=None, resource_guid=None, provisioning_state=None, etag=None):
         super(NetworkInterface, self).__init__(id=id, location=location, tags=tags)
         self.virtual_machine = virtual_machine
         self.network_security_group = network_security_group
@@ -91,6 +95,7 @@ class NetworkInterface(Resource):
         self.dns_settings = dns_settings
         self.mac_address = mac_address
         self.primary = primary
+        self.enable_accelerated_networking = enable_accelerated_networking
         self.enable_ip_forwarding = enable_ip_forwarding
         self.resource_guid = resource_guid
         self.provisioning_state = provisioning_state

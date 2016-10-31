@@ -51,6 +51,7 @@ class NetworkInterfacesOperations(object):
          instance that returns None
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/networkInterfaces/{networkInterfaceName}'
@@ -131,6 +132,7 @@ class NetworkInterfacesOperations(object):
          <azure.mgmt.network.models.NetworkInterface>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/networkInterfaces/{networkInterfaceName}'
@@ -198,6 +200,7 @@ class NetworkInterfacesOperations(object):
          <azure.mgmt.network.models.NetworkInterface>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/networkInterfaces/{networkInterfaceName}'
@@ -291,6 +294,7 @@ class NetworkInterfacesOperations(object):
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`NetworkInterfacePaged
          <azure.mgmt.network.models.NetworkInterfacePaged>`
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -362,6 +366,7 @@ class NetworkInterfacesOperations(object):
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`NetworkInterfacePaged
          <azure.mgmt.network.models.NetworkInterfacePaged>`
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -440,6 +445,7 @@ class NetworkInterfacesOperations(object):
          <azure.mgmt.network.models.NetworkInterface>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/microsoft.Compute/virtualMachineScaleSets/{virtualMachineScaleSetName}/virtualMachines/{virtualmachineIndex}/networkInterfaces/{networkInterfaceName}'
@@ -500,6 +506,7 @@ class NetworkInterfacesOperations(object):
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`NetworkInterfacePaged
          <azure.mgmt.network.models.NetworkInterfacePaged>`
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -565,6 +572,7 @@ class NetworkInterfacesOperations(object):
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`NetworkInterfacePaged
          <azure.mgmt.network.models.NetworkInterfacePaged>`
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -635,6 +643,7 @@ class NetworkInterfacesOperations(object):
          <azure.mgmt.network.models.EffectiveRouteListResult>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/networkInterfaces/{networkInterfaceName}/effectiveRouteTable'
@@ -720,6 +729,7 @@ class NetworkInterfacesOperations(object):
          :class:`EffectiveNetworkSecurityGroupListResult <azure.mgmt.network.models.EffectiveNetworkSecurityGroupListResult>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/networkInterfaces/{networkInterfaceName}/effectiveNetworkSecurityGroups'

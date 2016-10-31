@@ -51,6 +51,7 @@ class ExpressRouteCircuitsOperations(object):
          instance that returns None
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/expressRouteCircuits/{circuitName}'
@@ -129,6 +130,7 @@ class ExpressRouteCircuitsOperations(object):
          <azure.mgmt.network.models.ExpressRouteCircuit>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/expressRouteCircuits/{circuitName}'
@@ -195,6 +197,7 @@ class ExpressRouteCircuitsOperations(object):
          <azure.mgmt.network.models.ExpressRouteCircuit>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/expressRouteCircuits/{circuitName}'
@@ -291,6 +294,7 @@ class ExpressRouteCircuitsOperations(object):
          <azure.mgmt.network.models.ExpressRouteCircuitsArpTableListResult>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/expressRouteCircuits/{circuitName}/peerings/{peeringName}/arpTables/{devicePath}'
@@ -384,6 +388,7 @@ class ExpressRouteCircuitsOperations(object):
          <azure.mgmt.network.models.ExpressRouteCircuitsRoutesTableListResult>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/expressRouteCircuits/{circuitName}/peerings/{peeringName}/routeTables/{devicePath}'
@@ -477,6 +482,7 @@ class ExpressRouteCircuitsOperations(object):
          <azure.mgmt.network.models.ExpressRouteCircuitsRoutesTableSummaryListResult>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/expressRouteCircuits/{circuitName}/peerings/{peeringName}/routeTablesSummary/{devicePath}'
@@ -564,6 +570,7 @@ class ExpressRouteCircuitsOperations(object):
          <azure.mgmt.network.models.ExpressRouteCircuitStats>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/expressRouteCircuits/{circuitName}/stats'
@@ -628,6 +635,7 @@ class ExpressRouteCircuitsOperations(object):
          <azure.mgmt.network.models.ExpressRouteCircuitStats>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/expressRouteCircuits/{circuitName}/peerings/{peeringName}/stats'
@@ -687,6 +695,7 @@ class ExpressRouteCircuitsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`ExpressRouteCircuitPaged
          <azure.mgmt.network.models.ExpressRouteCircuitPaged>`
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -751,6 +760,7 @@ class ExpressRouteCircuitsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`ExpressRouteCircuitPaged
          <azure.mgmt.network.models.ExpressRouteCircuitPaged>`
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
 
