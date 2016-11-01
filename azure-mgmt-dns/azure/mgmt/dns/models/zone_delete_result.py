@@ -16,7 +16,7 @@ class ZoneDeleteResult(Model):
     """The response to a Zone Delete operation.
 
     :param azure_async_operation: Users can perform a Get on
-     Azure-AsyncOperation to get the status of their delete Zone operations
+     Azure-AsyncOperation to get the status of their delete Zone operations.
     :type azure_async_operation: str
     :param status: Possible values include: 'InProgress', 'Succeeded',
      'Failed'
@@ -36,8 +36,8 @@ class ZoneDeleteResult(Model):
      'RequestedRangeNotSatisfiable', 'ExpectationFailed', 'UpgradeRequired',
      'InternalServerError', 'NotImplemented', 'BadGateway',
      'ServiceUnavailable', 'GatewayTimeout', 'HttpVersionNotSupported'
-    :type status_code: str or :class:`HtpStatusCode
-     <azure.mgmt.dns.models.HtpStatusCode>`
+    :type status_code: str or :class:`HttpStatusCode
+     <azure.mgmt.dns.models.HttpStatusCode>`
     :param request_id:
     :type request_id: str
     """ 
@@ -45,7 +45,7 @@ class ZoneDeleteResult(Model):
     _attribute_map = {
         'azure_async_operation': {'key': 'azureAsyncOperation', 'type': 'str'},
         'status': {'key': 'status', 'type': 'OperationStatus'},
-        'status_code': {'key': 'statusCode', 'type': 'HtpStatusCode'},
+        'status_code': {'key': 'statusCode', 'type': 'HttpStatusCode'},
         'request_id': {'key': 'requestId', 'type': 'str'},
     }
 

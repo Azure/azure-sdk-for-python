@@ -47,7 +47,7 @@ class ContainerServiceAgentPoolProfile(Model):
 
     _validation = {
         'name': {'required': True},
-        'count': {'required': True, 'maximum': 100, 'minimum': 1},
+        'count': {'maximum': 100, 'minimum': 1},
         'vm_size': {'required': True},
         'dns_prefix': {'required': True},
         'fqdn': {'readonly': True},
@@ -61,7 +61,7 @@ class ContainerServiceAgentPoolProfile(Model):
         'fqdn': {'key': 'fqdn', 'type': 'str'},
     }
 
-    def __init__(self, name, count, vm_size, dns_prefix):
+    def __init__(self, name, vm_size, dns_prefix, count=None):
         self.name = name
         self.count = count
         self.vm_size = vm_size
