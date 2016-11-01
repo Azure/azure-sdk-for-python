@@ -76,7 +76,7 @@ class DnsManagementClientConfiguration(AzureConfiguration):
 
 
 class DnsManagementClient(object):
-    """DnsManagementClient
+    """The DNS Management Client.
 
     :ivar config: Configuration for client.
     :vartype config: DnsManagementClientConfiguration

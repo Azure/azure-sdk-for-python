@@ -19,7 +19,7 @@ class OperationStatus(Enum):
     failed = "Failed"
 
 
-class HtpStatusCode(Enum):
+class HttpStatusCode(Enum):
 
     continue_enum = "Continue"
     switching_protocols = "SwitchingProtocols"
