@@ -84,6 +84,11 @@ class ApplicationGateway(Resource):
     :type request_routing_rules: list of
      :class:`ApplicationGatewayRequestRoutingRule
      <azure.mgmt.network.models.ApplicationGatewayRequestRoutingRule>`
+    :param web_application_firewall_configuration: Web application firewall
+     configuration
+    :type web_application_firewall_configuration:
+     :class:`ApplicationGatewayWebApplicationFirewallConfiguration
+     <azure.mgmt.network.models.ApplicationGatewayWebApplicationFirewallConfiguration>`
     :param resource_guid: Resource guid property of the ApplicationGateway
      resource
     :type resource_guid: str
@@ -121,12 +126,13 @@ class ApplicationGateway(Resource):
         'http_listeners': {'key': 'properties.httpListeners', 'type': '[ApplicationGatewayHttpListener]'},
         'url_path_maps': {'key': 'properties.urlPathMaps', 'type': '[ApplicationGatewayUrlPathMap]'},
         'request_routing_rules': {'key': 'properties.requestRoutingRules', 'type': '[ApplicationGatewayRequestRoutingRule]'},
+        'web_application_firewall_configuration': {'key': 'properties.webApplicationFirewallConfiguration', 'type': 'ApplicationGatewayWebApplicationFirewallConfiguration'},
         'resource_guid': {'key': 'properties.resourceGuid', 'type': 'str'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'etag': {'key': 'etag', 'type': 'str'},
     }
 
-    def __init__(self, id=None, location=None, tags=None, sku=None, ssl_policy=None, gateway_ip_configurations=None, authentication_certificates=None, ssl_certificates=None, frontend_ip_configurations=None, frontend_ports=None, probes=None, backend_address_pools=None, backend_http_settings_collection=None, http_listeners=None, url_path_maps=None, request_routing_rules=None, resource_guid=None, provisioning_state=None, etag=None):
+    def __init__(self, id=None, location=None, tags=None, sku=None, ssl_policy=None, gateway_ip_configurations=None, authentication_certificates=None, ssl_certificates=None, frontend_ip_configurations=None, frontend_ports=None, probes=None, backend_address_pools=None, backend_http_settings_collection=None, http_listeners=None, url_path_maps=None, request_routing_rules=None, web_application_firewall_configuration=None, resource_guid=None, provisioning_state=None, etag=None):
         super(ApplicationGateway, self).__init__(id=id, location=location, tags=tags)
         self.sku = sku
         self.ssl_policy = ssl_policy
@@ -142,6 +148,7 @@ class ApplicationGateway(Resource):
         self.http_listeners = http_listeners
         self.url_path_maps = url_path_maps
         self.request_routing_rules = request_routing_rules
+        self.web_application_firewall_configuration = web_application_firewall_configuration
         self.resource_guid = resource_guid
         self.provisioning_state = provisioning_state
         self.etag = etag
