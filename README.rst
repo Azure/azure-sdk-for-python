@@ -58,7 +58,7 @@ The following packages are still labeled "preview" but can be considered "stable
 
 - azure-mgmt-resource 0.30.2
 - azure-mgmt-compute 0.30.0rc6
-- azure-mgmt-network 0.30.0rc6
+- azure-mgmt-network 0.30.0
 - azure-mgmt-storage 0.30.0rc6
 - azure-mgmt-keyvault 0.30.0
 
