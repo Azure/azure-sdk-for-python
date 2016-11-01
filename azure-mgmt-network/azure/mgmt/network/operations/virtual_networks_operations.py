@@ -51,6 +51,7 @@ class VirtualNetworksOperations(object):
          instance that returns None
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/virtualNetworks/{virtualNetworkName}'
@@ -131,6 +132,7 @@ class VirtualNetworksOperations(object):
          <azure.mgmt.network.models.VirtualNetwork>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/virtualNetworks/{virtualNetworkName}'
@@ -199,6 +201,7 @@ class VirtualNetworksOperations(object):
          <azure.mgmt.network.models.VirtualNetwork>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/virtualNetworks/{virtualNetworkName}'
@@ -283,6 +286,7 @@ class VirtualNetworksOperations(object):
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`VirtualNetworkPaged
          <azure.mgmt.network.models.VirtualNetworkPaged>`
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -348,6 +352,7 @@ class VirtualNetworksOperations(object):
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`VirtualNetworkPaged
          <azure.mgmt.network.models.VirtualNetworkPaged>`
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -419,6 +424,7 @@ class VirtualNetworksOperations(object):
          <azure.mgmt.network.models.IPAddressAvailabilityResult>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/virtualNetworks/{virtualNetworkName}/CheckIPAddressAvailability'

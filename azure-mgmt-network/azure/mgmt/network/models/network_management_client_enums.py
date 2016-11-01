@@ -12,35 +12,16 @@
 from enum import Enum
 
 
-class ApplicationGatewaySkuName(Enum):
+class TransportProtocol(Enum):
 
-    standard_small = "Standard_Small"
-    standard_medium = "Standard_Medium"
-    standard_large = "Standard_Large"
-
-
-class ApplicationGatewayTier(Enum):
-
-    standard = "Standard"
-
-
-class ApplicationGatewaySslProtocol(Enum):
-
-    tl_sv1_0 = "TLSv1_0"
-    tl_sv1_1 = "TLSv1_1"
-    tl_sv1_2 = "TLSv1_2"
+    udp = "Udp"
+    tcp = "Tcp"
 
 
 class IPAllocationMethod(Enum):
 
     static = "Static"
     dynamic = "Dynamic"
-
-
-class TransportProtocol(Enum):
-
-    udp = "Udp"
-    tcp = "Tcp"
 
 
 class IPVersion(Enum):
@@ -89,6 +70,36 @@ class ApplicationGatewayCookieBasedAffinity(Enum):
     disabled = "Disabled"
 
 
+class ApplicationGatewayBackendHealthServerHealth(Enum):
+
+    unknown = "Unknown"
+    healthy = "Healthy"
+    unhealthy = "Unhealthy"
+    partial = "Partial"
+
+
+class ApplicationGatewaySkuName(Enum):
+
+    standard_small = "Standard_Small"
+    standard_medium = "Standard_Medium"
+    standard_large = "Standard_Large"
+    waf_medium = "WAF_Medium"
+    waf_large = "WAF_Large"
+
+
+class ApplicationGatewayTier(Enum):
+
+    standard = "Standard"
+    waf = "WAF"
+
+
+class ApplicationGatewaySslProtocol(Enum):
+
+    tl_sv1_0 = "TLSv1_0"
+    tl_sv1_1 = "TLSv1_1"
+    tl_sv1_2 = "TLSv1_2"
+
+
 class ApplicationGatewayRequestRoutingRuleType(Enum):
 
     basic = "Basic"
@@ -101,6 +112,12 @@ class ApplicationGatewayOperationalState(Enum):
     starting = "Starting"
     running = "Running"
     stopping = "Stopping"
+
+
+class ApplicationGatewayFirewallMode(Enum):
+
+    detection = "Detection"
+    prevention = "Prevention"
 
 
 class AuthorizationUseStatus(Enum):
@@ -218,20 +235,20 @@ class ProcessorArchitecture(Enum):
     x86 = "X86"
 
 
-class VirtualNetworkGatewayConnectionType(Enum):
-
-    ipsec = "IPsec"
-    vnet2_vnet = "Vnet2Vnet"
-    express_route = "ExpressRoute"
-    vpn_client = "VPNClient"
-
-
 class VirtualNetworkGatewayConnectionStatus(Enum):
 
     unknown = "Unknown"
     connecting = "Connecting"
     connected = "Connected"
     not_connected = "NotConnected"
+
+
+class VirtualNetworkGatewayConnectionType(Enum):
+
+    ipsec = "IPsec"
+    vnet2_vnet = "Vnet2Vnet"
+    express_route = "ExpressRoute"
+    vpn_client = "VPNClient"
 
 
 class NetworkOperationStatus(Enum):
