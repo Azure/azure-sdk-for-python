@@ -63,6 +63,7 @@ class RecordSetsOperations(object):
         :rtype: :class:`RecordSet <azure.mgmt.dns.models.RecordSet>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/dnszones/{zoneName}/{recordType}/{relativeRecordSetName}'
@@ -148,6 +149,7 @@ class RecordSetsOperations(object):
         :rtype: :class:`RecordSet <azure.mgmt.dns.models.RecordSet>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/dnszones/{zoneName}/{recordType}/{relativeRecordSetName}'
@@ -235,6 +237,7 @@ class RecordSetsOperations(object):
         :rtype: None
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/dnszones/{zoneName}/{recordType}/{relativeRecordSetName}'
@@ -301,6 +304,7 @@ class RecordSetsOperations(object):
         :rtype: :class:`RecordSet <azure.mgmt.dns.models.RecordSet>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/dnszones/{zoneName}/{recordType}/{relativeRecordSetName}'
@@ -362,15 +366,16 @@ class RecordSetsOperations(object):
          'SRV', 'TXT'
         :type record_type: str or :class:`RecordType
          <azure.mgmt.dns.models.RecordType>`
-        :param top: Query parameters. If null is passed returns the default
-         number of zones.
-        :type top: str
+        :param top: Query parameters. If not specified returns the default
+         number of recordsets.
+        :type top: int
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`RecordSetPaged <azure.mgmt.dns.models.RecordSetPaged>`
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -388,7 +393,7 @@ class RecordSetsOperations(object):
                 # Construct parameters
                 query_parameters = {}
                 if top is not None:
-                    query_parameters['$top'] = self._serialize.query("top", top, 'str')
+                    query_parameters['$top'] = self._serialize.query("top", top, 'int')
                 query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
 
             else:
@@ -427,7 +432,7 @@ class RecordSetsOperations(object):
 
         return deserialized
 
-    def list_all_in_resource_group(
+    def list_by_dns_zone(
             self, resource_group_name, zone_name, top=None, custom_headers=None, raw=False, **operation_config):
         """Lists all RecordSets in a DNS zone.
 
@@ -437,15 +442,16 @@ class RecordSetsOperations(object):
         :param zone_name: The name of the zone from which to enumerate
          RecordSets.
         :type zone_name: str
-        :param top: Query parameters. If null is passed returns the default
+        :param top: Query parameters. If not specified returns the default
          number of zones.
-        :type top: str
+        :type top: int
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`RecordSetPaged <azure.mgmt.dns.models.RecordSetPaged>`
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -462,7 +468,7 @@ class RecordSetsOperations(object):
                 # Construct parameters
                 query_parameters = {}
                 if top is not None:
-                    query_parameters['$top'] = self._serialize.query("top", top, 'str')
+                    query_parameters['$top'] = self._serialize.query("top", top, 'int')
                 query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
 
             else:

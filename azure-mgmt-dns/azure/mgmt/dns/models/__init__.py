@@ -27,7 +27,7 @@ from .record_set_paged import RecordSetPaged
 from .zone_paged import ZonePaged
 from .dns_management_client_enums import (
     OperationStatus,
-    HtpStatusCode,
+    HttpStatusCode,
     RecordType,
 )
 
@@ -49,6 +49,6 @@ __all__ = [
     'RecordSetPaged',
     'ZonePaged',
     'OperationStatus',
-    'HtpStatusCode',
+    'HttpStatusCode',
     'RecordType',
 ]
