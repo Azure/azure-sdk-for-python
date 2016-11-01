@@ -3,21 +3,17 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Azure DocumentDB Python SDK.
+Azure DocumentDB Python SDK
 ========================================
 
 System Requirements:
 --------------------
 
-    The supported Python versions are 2.7 and 2.7.x.
-    To download Python version 2.7, please visit
-    https://www.python.org/download/releases/2.7
+    The supported Python versions are 2.7, 3.3, 3.4 and 3.5. To download Python, please visit https://www.python.org/download/releases.
 
 
     Python Tools for Visual Studio is required when using Microsoft Visual
-	Studio to develop Python applications.  To download Python Tools for
-	Visual Studio, please visit
-	http://pytools.codeplex.com/wikipage?title=PTVS%20Installation
+    Studio to develop Python applications. To download Python Tools for Visual Studio, please visit http://microsoft.github.io/PTVS.
 
 
 Installation:
@@ -26,7 +22,7 @@ Installation:
     Method 1:
 
     1. Download the Azure DocumentDB Python SDK source from
-       https://github.com/Azure/azure-documentdb-python.
+       https://github.com/Azure/azure-documentdb-python which is needed to manage the Azure DocumentDB database service.
 
     2. Execute the following setup script in bash shell:
 
@@ -43,17 +39,17 @@ Installation:
 
        .. code-block:: bash
 
-         $ pip install -pre pydocumentdb
+         $ pip install pydocumentdb
 
 To run tests:
 -------------
 
     .. code-block:: bash
 
-      $ python test/crud_tests.py
+      $ python -m unittest discover -s .\test -p "*.py"
 
     If you use Microsoft Visual Studio, open the project file python.pyproj,
-    and press F5.
+    and run all the tests in Test Explorer.
 
 
 To generate documentations:
@@ -64,7 +60,7 @@ To generate documentations:
     .. code-block:: bash
 
       $ cd doc
-      $ sphinx-apidoc -e -o .\api ..\pydocumentdb
+      $ sphinx-apidoc -f -e -o api ..\pydocumentdb
       $ make.bat html
 
 
