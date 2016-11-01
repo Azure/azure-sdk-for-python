@@ -43,12 +43,12 @@ class MgmtDnsTest(AzureMgmtTestCase):
         )
         self.assertEqual(zone.name, account_name)
 
-        zones = list(self.dns_client.zones.list_in_resource_group(
+        zones = list(self.dns_client.zones.list_by_resource_group(
             self.group_name
         ))
         self.assertEqual(len(zones), 1)
 
-        zones = list(self.dns_client.zones.list_in_subscription())
+        zones = list(self.dns_client.zones.list())
         self.assertEqual(len(zones), 1)
 
         # Record set
@@ -103,7 +103,7 @@ class MgmtDnsTest(AzureMgmtTestCase):
         ))
         self.assertEqual(len(record_sets), 1)
 
-        record_sets = list(self.dns_client.record_sets.list_all_in_resource_group(
+        record_sets = list(self.dns_client.record_sets.list_by_dns_zone(
             self.group_name,
             zone.name
         ))
