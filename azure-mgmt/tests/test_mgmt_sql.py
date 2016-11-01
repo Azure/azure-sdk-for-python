@@ -8,7 +8,6 @@
 import unittest
 
 import azure.mgmt.sql
-from random import random
 from testutils.common_recordingtestcase import record
 from tests.mgmt_testcase import HttpStatusCode, AzureMgmtTestCase
 
@@ -26,8 +25,7 @@ class MgmtSqlTest(AzureMgmtTestCase):
 
     @record
     def test_server(self):
-        random_number = int(random()*1000)
-        server_name = self.get_resource_name('mypysqlserver{}'.format(random_number))
+        server_name = self.get_resource_name('mypysqlserver')
 
         server = self.client.servers.create_or_update(
             self.group_name, # Created by the framework
@@ -62,8 +60,7 @@ class MgmtSqlTest(AzureMgmtTestCase):
 
     @record
     def test_database(self):
-        random_number = int(random()*1000)
-        server_name = self.get_resource_name('mypysqlserver{}'.format(random_number))
+        server_name = self.get_resource_name('mypysqlserver')
         db_name = self.get_resource_name('pyarmdb')
 
         server = self.client.servers.create_or_update(
