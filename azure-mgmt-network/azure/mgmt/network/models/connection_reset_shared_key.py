@@ -15,13 +15,18 @@ from msrest.serialization import Model
 class ConnectionResetSharedKey(Model):
     """ConnectionResetSharedKey.
 
-    :param key_length: The virtual network connection reset shared key length
-    :type key_length: long
+    :param key_length: The virtual network connection reset shared key
+     length, should between 1 and 128.
+    :type key_length: int
     """ 
 
-    _attribute_map = {
-        'key_length': {'key': 'keyLength', 'type': 'long'},
+    _validation = {
+        'key_length': {'required': True, 'maximum': 128, 'minimum': 1},
     }
 
-    def __init__(self, key_length=None):
+    _attribute_map = {
+        'key_length': {'key': 'keyLength', 'type': 'int'},
+    }
+
+    def __init__(self, key_length):
         self.key_length = key_length

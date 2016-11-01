@@ -29,13 +29,18 @@ class VirtualNetworkGatewaySku(Model):
     :type capacity: int
     """ 
 
+    _validation = {
+        'name': {'required': True},
+        'tier': {'required': True},
+    }
+
     _attribute_map = {
         'name': {'key': 'name', 'type': 'str'},
         'tier': {'key': 'tier', 'type': 'str'},
         'capacity': {'key': 'capacity', 'type': 'int'},
     }
 
-    def __init__(self, name=None, tier=None, capacity=None):
+    def __init__(self, name, tier, capacity=None):
         self.name = name
         self.tier = tier
         self.capacity = capacity

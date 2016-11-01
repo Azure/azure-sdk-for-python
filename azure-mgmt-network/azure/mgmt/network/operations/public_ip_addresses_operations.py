@@ -51,6 +51,7 @@ class PublicIPAddressesOperations(object):
          instance that returns None
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/publicIPAddresses/{publicIpAddressName}'
@@ -131,6 +132,7 @@ class PublicIPAddressesOperations(object):
          <azure.mgmt.network.models.PublicIPAddress>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/publicIPAddresses/{publicIpAddressName}'
@@ -199,6 +201,7 @@ class PublicIPAddressesOperations(object):
          <azure.mgmt.network.models.PublicIPAddress>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/publicIPAddresses/{publicIpAddressName}'
@@ -284,6 +287,7 @@ class PublicIPAddressesOperations(object):
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`PublicIPAddressPaged
          <azure.mgmt.network.models.PublicIPAddressPaged>`
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -349,6 +353,7 @@ class PublicIPAddressesOperations(object):
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`PublicIPAddressPaged
          <azure.mgmt.network.models.PublicIPAddressPaged>`
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
 

@@ -150,9 +150,10 @@
       "output_dir": "unreleased/azure-mgmt-media/azure/mgmt/media"
     },  
     "network": {
-      "swagger": "arm-network/2016-06-01/swagger/network.json",
+      "swagger": "arm-network/2016-09-01/swagger/network.json",
       "autorest_options": {
-        "Namespace": "azure.mgmt.network"
+        "Namespace": "azure.mgmt.network",
+        "PackageVersion": "0.30.0"
       },
       "output_dir": "azure-mgmt-network/azure/mgmt/network"
     },

@@ -53,6 +53,7 @@ class ExpressRouteCircuitAuthorizationsOperations(object):
          instance that returns None
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/expressRouteCircuits/{circuitName}/authorizations/{authorizationName}'
@@ -134,6 +135,7 @@ class ExpressRouteCircuitAuthorizationsOperations(object):
          <azure.mgmt.network.models.ExpressRouteCircuitAuthorization>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/expressRouteCircuits/{circuitName}/authorizations/{authorizationName}'
@@ -204,6 +206,7 @@ class ExpressRouteCircuitAuthorizationsOperations(object):
          <azure.mgmt.network.models.ExpressRouteCircuitAuthorization>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/expressRouteCircuits/{circuitName}/authorizations/{authorizationName}'
@@ -294,6 +297,7 @@ class ExpressRouteCircuitAuthorizationsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`ExpressRouteCircuitAuthorizationPaged
          <azure.mgmt.network.models.ExpressRouteCircuitAuthorizationPaged>`
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
 

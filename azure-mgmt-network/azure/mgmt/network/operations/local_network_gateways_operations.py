@@ -58,6 +58,7 @@ class LocalNetworkGatewaysOperations(object):
          <azure.mgmt.network.models.LocalNetworkGateway>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/localNetworkGateways/{localNetworkGatewayName}'
@@ -150,6 +151,7 @@ class LocalNetworkGatewaysOperations(object):
          <azure.mgmt.network.models.LocalNetworkGateway>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/localNetworkGateways/{localNetworkGatewayName}'
@@ -212,6 +214,7 @@ class LocalNetworkGatewaysOperations(object):
          instance that returns None
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/localNetworkGateways/{localNetworkGatewayName}'
@@ -286,6 +289,7 @@ class LocalNetworkGatewaysOperations(object):
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`LocalNetworkGatewayPaged
          <azure.mgmt.network.models.LocalNetworkGatewayPaged>`
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
 
