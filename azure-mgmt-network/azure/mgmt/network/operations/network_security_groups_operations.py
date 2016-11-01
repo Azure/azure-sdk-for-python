@@ -52,6 +52,7 @@ class NetworkSecurityGroupsOperations(object):
          instance that returns None
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/networkSecurityGroups/{networkSecurityGroupName}'
@@ -133,6 +134,7 @@ class NetworkSecurityGroupsOperations(object):
          <azure.mgmt.network.models.NetworkSecurityGroup>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/networkSecurityGroups/{networkSecurityGroupName}'
@@ -202,6 +204,7 @@ class NetworkSecurityGroupsOperations(object):
          <azure.mgmt.network.models.NetworkSecurityGroup>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/networkSecurityGroups/{networkSecurityGroupName}'
@@ -287,6 +290,7 @@ class NetworkSecurityGroupsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`NetworkSecurityGroupPaged
          <azure.mgmt.network.models.NetworkSecurityGroupPaged>`
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -352,6 +356,7 @@ class NetworkSecurityGroupsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`NetworkSecurityGroupPaged
          <azure.mgmt.network.models.NetworkSecurityGroupPaged>`
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
 

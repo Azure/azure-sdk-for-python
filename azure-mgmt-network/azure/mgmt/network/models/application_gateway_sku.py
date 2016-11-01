@@ -16,11 +16,12 @@ class ApplicationGatewaySku(Model):
     """SKU of application gateway.
 
     :param name: Name of application gateway SKU. Possible values include:
-     'Standard_Small', 'Standard_Medium', 'Standard_Large'
+     'Standard_Small', 'Standard_Medium', 'Standard_Large', 'WAF_Medium',
+     'WAF_Large'
     :type name: str or :class:`ApplicationGatewaySkuName
      <azure.mgmt.network.models.ApplicationGatewaySkuName>`
     :param tier: Tier of application gateway. Possible values include:
-     'Standard'
+     'Standard', 'WAF'
     :type tier: str or :class:`ApplicationGatewayTier
      <azure.mgmt.network.models.ApplicationGatewayTier>`
     :param capacity: Capacity (instance count) of application gateway
