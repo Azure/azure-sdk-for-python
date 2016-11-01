@@ -35,7 +35,6 @@ class TrackedResource(Resource):
         'name': {'readonly': True},
         'type': {'readonly': True},
         'location': {'required': True},
-        'tags': {'required': True},
     }
 
     _attribute_map = {
@@ -46,7 +45,7 @@ class TrackedResource(Resource):
         'tags': {'key': 'tags', 'type': '{str}'},
     }
 
-    def __init__(self, location, tags):
+    def __init__(self, location, tags=None):
         super(TrackedResource, self).__init__()
         self.location = location
         self.tags = tags
