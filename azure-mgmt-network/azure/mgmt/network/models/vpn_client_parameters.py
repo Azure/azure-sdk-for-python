@@ -21,9 +21,13 @@ class VpnClientParameters(Model):
      <azure.mgmt.network.models.ProcessorArchitecture>`
     """ 
 
+    _validation = {
+        'processor_architecture': {'required': True},
+    }
+
     _attribute_map = {
         'processor_architecture': {'key': 'ProcessorArchitecture', 'type': 'str'},
     }
 
-    def __init__(self, processor_architecture=None):
+    def __init__(self, processor_architecture):
         self.processor_architecture = processor_architecture

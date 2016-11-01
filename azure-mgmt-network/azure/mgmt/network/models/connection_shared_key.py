@@ -19,9 +19,13 @@ class ConnectionSharedKey(Model):
     :type value: str
     """ 
 
+    _validation = {
+        'value': {'required': True},
+    }
+
     _attribute_map = {
         'value': {'key': 'value', 'type': 'str'},
     }
 
-    def __init__(self, value=None):
+    def __init__(self, value):
         self.value = value

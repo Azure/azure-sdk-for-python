@@ -12,16 +12,18 @@
 from msrest.serialization import Model
 
 
-class ConnectionSharedKeyResult(Model):
-    """Response for CheckConnectionSharedKey Api service call.
+class ApplicationGatewayBackendHealth(Model):
+    """List of backendhealth pools.
 
-    :param value: The virtual network connection shared key value
-    :type value: str
+    :param backend_address_pools:
+    :type backend_address_pools: list of
+     :class:`ApplicationGatewayBackendHealthPool
+     <azure.mgmt.network.models.ApplicationGatewayBackendHealthPool>`
     """ 
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': 'str'},
+        'backend_address_pools': {'key': 'backendAddressPools', 'type': '[ApplicationGatewayBackendHealthPool]'},
     }
 
-    def __init__(self, value=None):
-        self.value = value
+    def __init__(self, backend_address_pools=None):
+        self.backend_address_pools = backend_address_pools

@@ -53,6 +53,7 @@ class ExpressRouteCircuitPeeringsOperations(object):
          instance that returns None
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/expressRouteCircuits/{circuitName}/peerings/{peeringName}'
@@ -134,6 +135,7 @@ class ExpressRouteCircuitPeeringsOperations(object):
          <azure.mgmt.network.models.ExpressRouteCircuitPeering>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/expressRouteCircuits/{circuitName}/peerings/{peeringName}'
@@ -203,6 +205,7 @@ class ExpressRouteCircuitPeeringsOperations(object):
          <azure.mgmt.network.models.ExpressRouteCircuitPeering>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/expressRouteCircuits/{circuitName}/peerings/{peeringName}'
@@ -293,6 +296,7 @@ class ExpressRouteCircuitPeeringsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`ExpressRouteCircuitPeeringPaged
          <azure.mgmt.network.models.ExpressRouteCircuitPeeringPaged>`
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
 

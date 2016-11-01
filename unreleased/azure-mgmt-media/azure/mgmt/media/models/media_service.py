@@ -42,7 +42,6 @@ class MediaService(TrackedResource):
         'name': {'readonly': True},
         'type': {'readonly': True},
         'location': {'required': True},
-        'tags': {'required': True},
     }
 
     _attribute_map = {
@@ -55,7 +54,7 @@ class MediaService(TrackedResource):
         'storage_accounts': {'key': 'properties.storageAccounts', 'type': '[StorageAccount]'},
     }
 
-    def __init__(self, location, tags, api_endpoints=None, storage_accounts=None):
+    def __init__(self, location, tags=None, api_endpoints=None, storage_accounts=None):
         super(MediaService, self).__init__(location=location, tags=tags)
         self.api_endpoints = api_endpoints
         self.storage_accounts = storage_accounts
