@@ -27,11 +27,12 @@ class SearchManagementClientConfiguration(AzureConfiguration):
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
      object<msrestazure.azure_active_directory>`
-    :param subscription_id: Gets subscription credentials which uniquely
-     identify Microsoft Azure subscription. The subscription ID forms part of
-     the URI for every service call.
+    :param subscription_id: The unique identifier for a Microsoft Azure
+     subscription. You can obtain this value from the Azure Resource Manager
+     API or the portal.
     :type subscription_id: str
-    :param api_version: Client Api Version.
+    :param api_version: The API version to use for each request. The current
+     version is 2015-08-19.
     :type api_version: str
     :param accept_language: Gets or sets the preferred language for the
      response.
@@ -48,7 +49,7 @@ class SearchManagementClientConfiguration(AzureConfiguration):
     """
 
     def __init__(
-            self, credentials, subscription_id, api_version='2015-02-28', accept_language='en-US', long_running_operation_retry_timeout=30, generate_client_request_id=True, base_url=None, filepath=None):
+            self, credentials, subscription_id, api_version='2015-08-19', accept_language='en-US', long_running_operation_retry_timeout=30, generate_client_request_id=True, base_url=None, filepath=None):
 
         if credentials is None:
             raise ValueError("Parameter 'credentials' must not be None.")
@@ -92,11 +93,12 @@ class SearchManagementClient(object):
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
      object<msrestazure.azure_active_directory>`
-    :param subscription_id: Gets subscription credentials which uniquely
-     identify Microsoft Azure subscription. The subscription ID forms part of
-     the URI for every service call.
+    :param subscription_id: The unique identifier for a Microsoft Azure
+     subscription. You can obtain this value from the Azure Resource Manager
+     API or the portal.
     :type subscription_id: str
-    :param api_version: Client Api Version.
+    :param api_version: The API version to use for each request. The current
+     version is 2015-08-19.
     :type api_version: str
     :param accept_language: Gets or sets the preferred language for the
      response.
@@ -113,7 +115,7 @@ class SearchManagementClient(object):
     """
 
     def __init__(
-            self, credentials, subscription_id, api_version='2015-02-28', accept_language='en-US', long_running_operation_retry_timeout=30, generate_client_request_id=True, base_url=None, filepath=None):
+            self, credentials, subscription_id, api_version='2015-08-19', accept_language='en-US', long_running_operation_retry_timeout=30, generate_client_request_id=True, base_url=None, filepath=None):
 
         self.config = SearchManagementClientConfiguration(credentials, subscription_id, api_version, accept_language, long_running_operation_retry_timeout, generate_client_request_id, base_url, filepath)
         self._client = ServiceClient(self.config.credentials, self.config)

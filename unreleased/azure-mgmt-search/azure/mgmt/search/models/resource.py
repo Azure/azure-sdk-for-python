@@ -12,42 +12,45 @@
 from msrest.serialization import Model
 
 
-class SearchServiceResource(Model):
-    """Describes an Azure Search service and its current state.
+class Resource(Model):
+    """Base type for all Azure resources.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar id: The resource Id of the Azure Search service.
+    :ivar id: The ID of the resource. This can be used with the Azure
+     Resource Manager to link resources together.
     :vartype id: str
-    :param name: The name of the Search service.
-    :type name: str
-    :param location: The geographic location of the Search service.
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The resource type.
+    :vartype type: str
+    :param location: The geographic location of the resource. This must be
+     one of the supported and registered Azure Geo Regions (for example, West
+     US, East US, Southeast Asia, and so forth).
     :type location: str
-    :param tags: Tags to help categorize the Search service in the Azure
-     Portal.
+    :param tags: Tags to help categorize the resource in the Azure portal.
     :type tags: dict
-    :ivar properties: Properties of the Search service.
-    :vartype properties: :class:`SearchServiceReadableProperties
-     <azure.mgmt.search.models.SearchServiceReadableProperties>`
     """ 
 
     _validation = {
         'id': {'readonly': True},
-        'properties': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'location': {'required': True},
     }
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
         'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
-        'properties': {'key': 'properties', 'type': 'SearchServiceReadableProperties'},
     }
 
-    def __init__(self, name=None, location=None, tags=None):
+    def __init__(self, location, tags=None):
         self.id = None
-        self.name = name
+        self.name = None
+        self.type = None
         self.location = location
         self.tags = tags
-        self.properties = None

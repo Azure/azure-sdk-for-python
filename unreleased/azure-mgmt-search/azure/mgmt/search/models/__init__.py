@@ -9,32 +9,40 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
+from .check_name_availability_input import CheckNameAvailabilityInput
+from .check_name_availability_output import CheckNameAvailabilityOutput
 from .admin_key_result import AdminKeyResult
 from .query_key import QueryKey
-from .list_query_keys_result import ListQueryKeysResult
 from .sku import Sku
-from .search_service_properties import SearchServiceProperties
-from .search_service_create_or_update_parameters import SearchServiceCreateOrUpdateParameters
-from .search_service_readable_properties import SearchServiceReadableProperties
-from .search_service_resource import SearchServiceResource
-from .search_service_list_result import SearchServiceListResult
+from .search_service import SearchService
+from .search_management_request_options import SearchManagementRequestOptions
+from .resource import Resource
+from .query_key_paged import QueryKeyPaged
+from .search_service_paged import SearchServicePaged
 from .search_management_client_enums import (
-    SkuType,
+    UnavailableNameReason,
+    SkuName,
+    HostingMode,
     SearchServiceStatus,
     ProvisioningState,
+    AdminKeyKind,
 )
 
 __all__ = [
+    'CheckNameAvailabilityInput',
+    'CheckNameAvailabilityOutput',
     'AdminKeyResult',
     'QueryKey',
-    'ListQueryKeysResult',
     'Sku',
-    'SearchServiceProperties',
-    'SearchServiceCreateOrUpdateParameters',
-    'SearchServiceReadableProperties',
-    'SearchServiceResource',
-    'SearchServiceListResult',
-    'SkuType',
+    'SearchService',
+    'SearchManagementRequestOptions',
+    'Resource',
+    'QueryKeyPaged',
+    'SearchServicePaged',
+    'UnavailableNameReason',
+    'SkuName',
+    'HostingMode',
     'SearchServiceStatus',
     'ProvisioningState',
+    'AdminKeyKind',
 ]
