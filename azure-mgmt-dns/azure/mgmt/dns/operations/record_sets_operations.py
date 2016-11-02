@@ -35,13 +35,13 @@ class RecordSetsOperations(object):
 
     def update(
             self, resource_group_name, zone_name, relative_record_set_name, record_type, parameters, if_match=None, if_none_match=None, custom_headers=None, raw=False, **operation_config):
-        """Updates a RecordSet within a DNS zone.
+        """Updates a Recordset within a DNS zone.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
         :param zone_name: The name of the zone without a terminating dot.
         :type zone_name: str
-        :param relative_record_set_name: The name of the RecordSet, relative
+        :param relative_record_set_name: The name of the Recordset, relative
          to the name of the zone.
         :type relative_record_set_name: str
         :param record_type: The type of DNS record. Possible values include:
@@ -120,13 +120,13 @@ class RecordSetsOperations(object):
 
     def create_or_update(
             self, resource_group_name, zone_name, relative_record_set_name, record_type, parameters, if_match=None, if_none_match=None, custom_headers=None, raw=False, **operation_config):
-        """Creates or Updates a RecordSet within a DNS zone.
+        """Creates or updates a Recordset within a DNS zone.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
         :param zone_name: The name of the zone without a terminating dot.
         :type zone_name: str
-        :param relative_record_set_name: The name of the RecordSet, relative
+        :param relative_record_set_name: The name of the Recordset, relative
          to the name of the zone.
         :type relative_record_set_name: str
         :param record_type: The type of DNS record. Possible values include:
@@ -208,13 +208,13 @@ class RecordSetsOperations(object):
 
     def delete(
             self, resource_group_name, zone_name, relative_record_set_name, record_type, if_match=None, if_none_match=None, custom_headers=None, raw=False, **operation_config):
-        """Removes a RecordSet from a DNS zone.
+        """Removes a Recordset from a DNS zone.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
         :param zone_name: The name of the zone without a terminating dot.
         :type zone_name: str
-        :param relative_record_set_name: The name of the RecordSet, relative
+        :param relative_record_set_name: The name of the Recordset, relative
          to the name of the zone.
         :type relative_record_set_name: str
         :param record_type: The type of DNS record. Possible values include:
@@ -283,13 +283,13 @@ class RecordSetsOperations(object):
 
     def get(
             self, resource_group_name, zone_name, relative_record_set_name, record_type, custom_headers=None, raw=False, **operation_config):
-        """Gets a RecordSet.
+        """Gets a Recordset.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
         :param zone_name: The name of the zone without a terminating dot.
         :type zone_name: str
-        :param relative_record_set_name: The name of the RecordSet, relative
+        :param relative_record_set_name: The name of the Recordset, relative
          to the name of the zone.
         :type relative_record_set_name: str
         :param record_type: The type of DNS record. Possible values include:
@@ -353,13 +353,13 @@ class RecordSetsOperations(object):
 
     def list_by_type(
             self, resource_group_name, zone_name, record_type, top=None, custom_headers=None, raw=False, **operation_config):
-        """Lists the RecordSets of a specified type in a DNS zone.
+        """Lists the Recordsets of a specified type in a DNS zone.
 
         :param resource_group_name: The name of the resource group that
          contains the zone.
         :type resource_group_name: str
         :param zone_name: The name of the zone from which to enumerate
-         RecordsSets.
+         Recordsets.
         :type zone_name: str
         :param record_type: The type of record sets to enumerate. Possible
          values include: 'A', 'AAAA', 'CNAME', 'MX', 'NS', 'PTR', 'SOA',
@@ -434,13 +434,13 @@ class RecordSetsOperations(object):
 
     def list_by_dns_zone(
             self, resource_group_name, zone_name, top=None, custom_headers=None, raw=False, **operation_config):
-        """Lists all RecordSets in a DNS zone.
+        """Lists all Recordsets in a DNS zone.
 
         :param resource_group_name: The name of the resource group that
          contains the zone.
         :type resource_group_name: str
         :param zone_name: The name of the zone from which to enumerate
-         RecordSets.
+         Recordsets.
         :type zone_name: str
         :param top: Query parameters. If not specified returns the default
          number of zones.

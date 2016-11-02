@@ -16,7 +16,7 @@ class ZoneDeleteResult(Model):
     """The response to a Zone Delete operation.
 
     :param azure_async_operation: Users can perform a Get on
-     Azure-AsyncOperation to get the status of their delete Zone operations
+     Azure-AsyncOperation to get the status of their delete Zone operations.
     :type azure_async_operation: str
     :param status: Possible values include: 'InProgress', 'Succeeded',
      'Failed'
