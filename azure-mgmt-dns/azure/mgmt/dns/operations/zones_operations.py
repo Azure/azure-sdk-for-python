@@ -36,7 +36,7 @@ class ZonesOperations(object):
 
     def create_or_update(
             self, resource_group_name, zone_name, parameters, if_match=None, if_none_match=None, custom_headers=None, raw=False, **operation_config):
-        """Creates or Updates a DNS zone within a resource group.
+        """Creates or updates a DNS zone within a resource group.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
