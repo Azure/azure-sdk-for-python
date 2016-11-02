@@ -22,9 +22,13 @@ class ContainerServiceOrchestratorProfile(Model):
      <azure.mgmt.compute.models.ContainerServiceOchestratorTypes>`
     """ 
 
+    _validation = {
+        'orchestrator_type': {'required': True},
+    }
+
     _attribute_map = {
         'orchestrator_type': {'key': 'orchestratorType', 'type': 'ContainerServiceOchestratorTypes'},
     }
 
-    def __init__(self, orchestrator_type=None):
+    def __init__(self, orchestrator_type):
         self.orchestrator_type = orchestrator_type
