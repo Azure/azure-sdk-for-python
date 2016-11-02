@@ -13,15 +13,15 @@ from msrest.serialization import Model
 
 
 class AdminKeyResult(Model):
-    """Response containing the primary and secondary API keys for a given Azure
-    Search service.
+    """Response containing the primary and secondary admin API keys for a given
+    Azure Search service.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar primary_key: The primary API key of the Search service.
+    :ivar primary_key: The primary admin API key of the Search service.
     :vartype primary_key: str
-    :ivar secondary_key: The secondary API key of the Search service.
+    :ivar secondary_key: The secondary admin API key of the Search service.
     :vartype secondary_key: str
     """ 
 

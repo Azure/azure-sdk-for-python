@@ -12,11 +12,25 @@
 from enum import Enum
 
 
-class SkuType(Enum):
+class UnavailableNameReason(Enum):
+
+    invalid = "Invalid"
+    already_exists = "AlreadyExists"
+
+
+class SkuName(Enum):
 
     free = "free"
+    basic = "basic"
     standard = "standard"
     standard2 = "standard2"
+    standard3 = "standard3"
+
+
+class HostingMode(Enum):
+
+    default = "default"
+    high_density = "highDensity"
 
 
 class SearchServiceStatus(Enum):
@@ -34,3 +48,9 @@ class ProvisioningState(Enum):
     succeeded = "succeeded"
     provisioning = "provisioning"
     failed = "failed"
+
+
+class AdminKeyKind(Enum):
+
+    primary = "primary"
+    secondary = "secondary"

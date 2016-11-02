@@ -33,17 +33,23 @@ class AdminKeysOperations(object):
 
         self.config = config
 
-    def list(
-            self, resource_group_name, service_name, custom_headers=None, raw=False, **operation_config):
-        """Returns the primary and secondary API keys for the given Azure Search
-        service.
+    def get(
+            self, resource_group_name, search_service_name, search_management_request_options=None, custom_headers=None, raw=False, **operation_config):
+        """Gets the primary and secondary admin API keys for the specified Azure
+        Search service.
 
         :param resource_group_name: The name of the resource group within the
-         current subscription.
+         current subscription. You can obtain this value from the Azure
+         Resource Manager API or the portal.
         :type resource_group_name: str
-        :param service_name: The name of the Search service for which to list
-         admin keys.
-        :type service_name: str
+        :param search_service_name: The name of the Azure Search service
+         associated with the specified resource group.
+        :type search_service_name: str
+        :param search_management_request_options: Additional parameters for
+         the operation
+        :type search_management_request_options:
+         :class:`SearchManagementRequestOptions
+         <azure.mgmt.search.models.SearchManagementRequestOptions>`
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -53,12 +59,17 @@ class AdminKeysOperations(object):
          <azure.mgmt.search.models.AdminKeyResult>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
+        client_request_id = None
+        if search_management_request_options is not None:
+            client_request_id = search_management_request_options.client_request_id
+
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Search/searchServices/{serviceName}/listAdminKeys'
+        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Search/searchServices/{searchServiceName}/listAdminKeys'
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            'serviceName': self._serialize.url("service_name", service_name, 'str'),
+            'searchServiceName': self._serialize.url("search_service_name", search_service_name, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -76,6 +87,91 @@ class AdminKeysOperations(object):
             header_parameters.update(custom_headers)
         if self.config.accept_language is not None:
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+        if client_request_id is not None:
+            header_parameters['x-ms-client-request-id'] = self._serialize.header("client_request_id", client_request_id, 'str')
+
+        # Construct and send request
+        request = self._client.post(url, query_parameters)
+        response = self._client.send(request, header_parameters, **operation_config)
+
+        if response.status_code not in [200]:
+            exp = CloudError(response)
+            exp.request_id = response.headers.get('x-ms-request-id')
+            raise exp
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('AdminKeyResult', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+
+    def regenerate(
+            self, resource_group_name, search_service_name, key_kind, search_management_request_options=None, custom_headers=None, raw=False, **operation_config):
+        """Regenerates either the primary or secondary admin API key. You can
+        only regenerate one key at a time.
+
+        :param resource_group_name: The name of the resource group within the
+         current subscription. You can obtain this value from the Azure
+         Resource Manager API or the portal.
+        :type resource_group_name: str
+        :param search_service_name: The name of the Azure Search service
+         associated with the specified resource group.
+        :type search_service_name: str
+        :param key_kind: Specifies which key to regenerate. Valid values
+         include 'primary' and 'secondary'. Possible values include:
+         'primary', 'secondary'
+        :type key_kind: str or :class:`AdminKeyKind
+         <azure.mgmt.search.models.AdminKeyKind>`
+        :param search_management_request_options: Additional parameters for
+         the operation
+        :type search_management_request_options:
+         :class:`SearchManagementRequestOptions
+         <azure.mgmt.search.models.SearchManagementRequestOptions>`
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :rtype: :class:`AdminKeyResult
+         <azure.mgmt.search.models.AdminKeyResult>`
+        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+         if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        """
+        client_request_id = None
+        if search_management_request_options is not None:
+            client_request_id = search_management_request_options.client_request_id
+
+        # Construct URL
+        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Search/searchServices/{searchServiceName}/regenerateAdminKey/{keyKind}'
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'searchServiceName': self._serialize.url("search_service_name", search_service_name, 'str'),
+            'keyKind': self._serialize.url("key_kind", key_kind, 'AdminKeyKind'),
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+        if client_request_id is not None:
+            header_parameters['x-ms-client-request-id'] = self._serialize.header("client_request_id", client_request_id, 'str')
 
         # Construct and send request
         request = self._client.post(url, query_parameters)
