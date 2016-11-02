@@ -29,21 +29,15 @@ class KeyVaultId(object):
         self.id = '{}/{}'.format(self.base_id, version) if version else self.base_id
 
 def _validate_string_argument(prop, name, nullable=False):
-    if prop is None and nullable:
-        return prop
     try:
-        if not isinstance(prop, str) and not isinstance(prop, unicode):
+        prop = prop.strip()
+    except AttributeError:
+        if not nullable:
             raise TypeError("argument '{}' must by of type string".format(name))
-    except NameError: # unicode type does not exist in Python 3
-        raise TypeError("argument '{}' must by of type string".format(name))
-
-    prop = prop.strip()        
+    prop = prop if prop else None # force falsy types to None
     if not prop and not nullable:
         raise ValueError("argument '{}' must be specified".format(name))
-    elif not prop and nullable:
-        return None
-    else:
-        return prop
+    return prop
 
 def _parse_uri_argument(uri):
     try:
