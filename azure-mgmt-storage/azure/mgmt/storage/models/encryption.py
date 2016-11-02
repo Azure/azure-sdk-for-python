@@ -13,16 +13,16 @@ from msrest.serialization import Model
 
 
 class Encryption(Model):
-    """The encryption settings on the account.
+    """The encryption settings on the storage account.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :param services: Gets the services which are encrypted.
+    :param services: List of services which support encryption.
     :type services: :class:`EncryptionServices
      <azure.mgmt.storage.models.EncryptionServices>`
-    :ivar key_source: Gets the encryption keySource(provider). Possible
-     values (case-insensitive):  Microsoft.Storage. Default value:
+    :ivar key_source: The encryption keySource (provider). Possible values
+     (case-insensitive):  Microsoft.Storage. Default value:
      "Microsoft.Storage" .
     :vartype key_source: str
     """ 

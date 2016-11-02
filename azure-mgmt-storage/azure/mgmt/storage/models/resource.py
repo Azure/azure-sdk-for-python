@@ -26,7 +26,8 @@ class Resource(Model):
     :vartype type: str
     :param location: Resource location
     :type location: str
-    :param tags: Resource tags
+    :param tags: Tags assigned to a resource; can be used for viewing and
+     grouping a resource (across resource groups).
     :type tags: dict
     """ 
 

@@ -20,7 +20,7 @@ class CheckNameAvailabilityResult(Model):
 
     :ivar name_available: Gets a boolean value that indicates whether the
      name is available for you to use. If true, the name is available. If
-     false, the name has already been taken or invalid and cannot be used.
+     false, the name has already been taken or is invalid and cannot be used.
     :vartype name_available: bool
     :ivar reason: Gets the reason that a storage account name could not be
      used. The Reason element is only returned if NameAvailable is false.
