@@ -13,12 +13,13 @@ from msrest.serialization import Model
 
 
 class StorageAccountListKeysResult(Model):
-    """The ListKeys operation response.
+    """The response from the ListKeys operation.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar keys: Gets the list of account keys and their properties.
+    :ivar keys: Gets the list of storage account keys and their properties
+     for the specified storage account.
     :vartype keys: list of :class:`StorageAccountKey
      <azure.mgmt.storage.models.StorageAccountKey>`
     """ 

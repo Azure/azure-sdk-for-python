@@ -13,7 +13,7 @@ from msrest.serialization import Model
 
 
 class UsageName(Model):
-    """The Usage Names.
+    """The usage names that can be used; currently limited to StorageAccount.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
