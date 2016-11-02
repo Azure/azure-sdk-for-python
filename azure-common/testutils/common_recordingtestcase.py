@@ -21,7 +21,7 @@ class TestMode(object):
     none = 'None' # this will be for unit test, no need for any recordings
     playback = 'Playback'
     record = 'Record'
-    run_live_no_record = 'RunLiveNoRecord'
+    live = 'Live'
 
     @staticmethod
     def is_playback(mode):
@@ -35,7 +35,7 @@ class TestMode(object):
     @staticmethod
     def need_real_credentials(mode):
         mode_lower = mode.lower()
-        return mode_lower == TestMode.run_live_no_record.lower() or mode_lower == TestMode.record.lower()
+        return mode_lower == TestMode.live.lower() or mode_lower == TestMode.record.lower()
 
 
 class RecordingTestCase(ExtendedTestCase):
