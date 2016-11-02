@@ -13,19 +13,18 @@ from msrest.serialization import Model
 
 
 class EncryptionService(Model):
-    """An encrypted service.
+    """A service that allows server-side encryption to be used.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :param enabled: A boolean indicating whether or not the service is
-     encrypted.
+    :param enabled: A boolean indicating whether or not the service encrypts
+     the data as it is stored.
     :type enabled: bool
-    :ivar last_enabled_time: Gets a time value indicating when was the
-     encryption enabled by the user last time. We return this value only when
-     encryption is enabled. There might be some unencrypted blobs which were
-     written after this time. This time is just to give a rough estimate of
-     when encryption was enabled.
+    :ivar last_enabled_time: Gets a rough estimate of the date/time when the
+     encryption was last enabled by the user. Only returned when encryption
+     is enabled. There might be some unencrypted blobs which were written
+     after this time, as it is just a rough estimate.
     :vartype last_enabled_time: datetime
     """ 
 

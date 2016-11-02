@@ -13,7 +13,7 @@ from msrest.serialization import Model
 
 
 class Endpoints(Model):
-    """The URIs that are used to perform a retrieval of a public blob, queue or
+    """The URIs that are used to perform a retrieval of a public blob, queue, or
     table object.
 
     Variables are only populated by the server, and will be ignored when
