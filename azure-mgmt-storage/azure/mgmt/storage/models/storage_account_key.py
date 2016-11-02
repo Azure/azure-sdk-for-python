@@ -20,10 +20,10 @@ class StorageAccountKey(Model):
 
     :ivar key_name: Name of the key.
     :vartype key_name: str
-    :ivar value: Base 64 encoded value of the key.
+    :ivar value: Base 64-encoded value of the key.
     :vartype value: str
-    :ivar permissions: Permissions for the key. Possible values include:
-     'READ', 'FULL'
+    :ivar permissions: Permissions for the key -- read-only or full
+     permissions. Possible values include: 'READ', 'FULL'
     :vartype permissions: str or :class:`KeyPermission
      <azure.mgmt.storage.models.KeyPermission>`
     """ 
