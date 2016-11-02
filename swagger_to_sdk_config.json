@@ -260,6 +260,15 @@
       },
       "output_dir": "azure-mgmt-scheduler/azure/mgmt/scheduler"
     },
+    "sql": {
+      "swagger": "arm-sql/compositeSql.json",
+      "autorest_options": {
+        "Namespace": "azure.mgmt.sql",
+        "Modeler": "CompositeSwagger",
+        "PackageVersion": "0.1.0"
+      },
+      "output_dir": "azure-mgmt-sql/azure/mgmt/sql"
+    },
     "storage": {
       "swagger": "arm-storage/2016-01-01/swagger/storage.json",
       "autorest_options": {

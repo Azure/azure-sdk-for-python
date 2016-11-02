@@ -1355,7 +1355,6 @@
     <Compile Include="azure-mgmt\tests\test_mgmt_commerce.py" />
     <Compile Include="azure-mgmt\tests\test_mgmt_compute.py" />
     <Compile Include="azure-mgmt\tests\test_mgmt_apps.py" />
-    <Compile Include="azure-mgmt\tests\test_mgmt_datalake_analytics.py" />
     <Compile Include="azure-mgmt\tests\test_mgmt_devtestlabs.py" />
     <Compile Include="azure-mgmt\tests\test_mgmt_dns.py" />
     <Compile Include="azure-mgmt\tests\test_mgmt_intune.py" />
@@ -1374,7 +1373,7 @@
     <Compile Include="azure-mgmt\tests\test_mgmt_resource_subscriptions.py" />
     <Compile Include="azure-mgmt\tests\test_mgmt_scheduler.py" />
     <Compile Include="azure-mgmt\tests\test_mgmt_servermanager.py" />
-    <Compile Include="azure-mgmt\tests\test_mgmt_datalake_store.py" />
+    <Compile Include="azure-mgmt\tests\test_mgmt_sql.py" />
     <Compile Include="azure-mgmt\tests\test_mgmt_storage.py" />
     <Compile Include="azure-mgmt\tests\test_mgmt_trafficmanager.py" />
     <Compile Include="azure-mgmt\tests\__init__.py" />
