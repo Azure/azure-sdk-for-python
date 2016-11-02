@@ -120,7 +120,7 @@ class RecordSetsOperations(object):
 
     def create_or_update(
             self, resource_group_name, zone_name, relative_record_set_name, record_type, parameters, if_match=None, if_none_match=None, custom_headers=None, raw=False, **operation_config):
-        """Creates or Updates a Recordset within a DNS zone.
+        """Creates or updates a Recordset within a DNS zone.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str

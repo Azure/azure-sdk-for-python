@@ -9171,7 +9171,7 @@ class SitesOperations(object):
                 if details is not None:
                     query_parameters['details'] = self._serialize.query("details", details, 'bool')
                 if filter is not None:
-                    query_parameters['$filter'] = self._serialize.query("filter", filter, 'str')
+                    query_parameters['$filter'] = self._serialize.query("filter", filter, 'str', skip_quote=True)
                 query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
 
             else:
@@ -9256,7 +9256,7 @@ class SitesOperations(object):
                 if details is not None:
                     query_parameters['details'] = self._serialize.query("details", details, 'bool')
                 if filter is not None:
-                    query_parameters['$filter'] = self._serialize.query("filter", filter, 'str')
+                    query_parameters['$filter'] = self._serialize.query("filter", filter, 'str', skip_quote=True)
                 query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
 
             else:
