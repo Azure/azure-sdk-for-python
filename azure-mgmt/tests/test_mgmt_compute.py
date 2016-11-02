@@ -509,11 +509,14 @@ class MgmtComputeTest(AzureMgmtTestCase):
         container_name = self.get_resource_name('pycontainer')
         
         # https://msdn.microsoft.com/en-us/library/azure/mt711471.aspx
-        async_create = self.compute_client.container_service.create_or_update(
+        async_create = self.compute_client.container_services.create_or_update(
             self.group_name,
             container_name,
             {
                 'location': self.region,
+                "orchestrator_profile": {
+                    "orchestrator_type": "DCOS"
+                },
                 "master_profile": {
                     "count": 1,
                     "dns_prefix": "MasterPrefixTest"
@@ -532,21 +535,25 @@ class MgmtComputeTest(AzureMgmtTestCase):
                        }]
                     }
                 },
-            }
+            },
+            retries=0
         )
         container = async_create.result()
 
-        container = self.compute_client.container_service.get(
+        container = self.compute_client.container_services.get(
             self.group_name,
             container.name
         )
 
-        containers = list(self.compute_client.container_service.list(
+        containers = list(self.compute_client.container_services.list_by_resource_group(
             self.group_name
         ))
         self.assertEqual(len(containers), 1)
 
-        async_delete = self.compute_client.container_service.delete(
+        containers = list(self.compute_client.container_services.list())
+        self.assertEqual(len(containers), 1)
+
+        async_delete = self.compute_client.container_services.delete(
             self.group_name,
             container.name
         )
