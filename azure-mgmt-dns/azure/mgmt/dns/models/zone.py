@@ -32,10 +32,10 @@ class Zone(Resource):
      received from a Get operation.
     :type etag: str
     :param max_number_of_record_sets: Gets or sets the maximum number of
-     record sets that can be created in this zone.
+     recordsets that can be created in this zone.
     :type max_number_of_record_sets: long
-    :param number_of_record_sets: Gets or sets the current number of record
-     sets in this zone.
+    :param number_of_record_sets: Gets or sets the current number of
+     recordsets in this zone.
     :type number_of_record_sets: long
     :ivar name_servers: Gets the name servers populated for this zone. This
      is a read-only property and any attempt to set this value will be
