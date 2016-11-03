@@ -21,7 +21,7 @@ class ContainerServiceAgentPoolProfile(Model):
     :param name: Unique name of the agent pool profile within the context of
      the subscription and resource group
     :type name: str
-    :param count: Number of agents (VMs) that will host docker containers
+    :param count: Number of agents (VMs) to host docker containers
     :type count: int
     :param vm_size: Size of agent VMs. Possible values include:
      'Standard_A0', 'Standard_A1', 'Standard_A2', 'Standard_A3',
@@ -38,16 +38,16 @@ class ContainerServiceAgentPoolProfile(Model):
      'Standard_GS2', 'Standard_GS3', 'Standard_GS4', 'Standard_GS5'
     :type vm_size: str or :class:`ContainerServiceVMSizeTypes
      <azure.mgmt.compute.models.ContainerServiceVMSizeTypes>`
-    :param dns_prefix: DNS prefix to be used to create FQDN for this agent
-     pool
+    :param dns_prefix: DNS prefix to be used to create the FQDN for the agent
+     pool.
     :type dns_prefix: str
-    :ivar fqdn: FDQN for the agent pool
+    :ivar fqdn: FDQN for the agent pool.
     :vartype fqdn: str
     """ 
 
     _validation = {
         'name': {'required': True},
-        'count': {'maximum': 100, 'minimum': 1},
+        'count': {'required': True, 'maximum': 100, 'minimum': 1},
         'vm_size': {'required': True},
         'dns_prefix': {'required': True},
         'fqdn': {'readonly': True},
@@ -61,7 +61,7 @@ class ContainerServiceAgentPoolProfile(Model):
         'fqdn': {'key': 'fqdn', 'type': 'str'},
     }
 
-    def __init__(self, name, vm_size, dns_prefix, count=None):
+    def __init__(self, name, count, vm_size, dns_prefix):
         self.name = name
         self.count = count
         self.vm_size = vm_size

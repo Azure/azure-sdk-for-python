@@ -34,9 +34,9 @@ class ComputeManagementClientConfiguration(AzureConfiguration):
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
      object<msrestazure.azure_active_directory>`
-    :param subscription_id: Subscription credentials which uniquely identify
-     Microsoft Azure subscription. The subscription ID forms part of the URI
-     for every service call.
+    :param subscription_id: Subscription credentials that uniquely identify
+     the Microsoft Azure subscription. The subscription ID forms part of the
+     URI for every service call.
     :type subscription_id: str
     :param accept_language: Gets or sets the preferred language for the
      response.
@@ -108,9 +108,9 @@ class ComputeManagementClient(object):
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
      object<msrestazure.azure_active_directory>`
-    :param subscription_id: Subscription credentials which uniquely identify
-     Microsoft Azure subscription. The subscription ID forms part of the URI
-     for every service call.
+    :param subscription_id: Subscription credentials that uniquely identify
+     the Microsoft Azure subscription. The subscription ID forms part of the
+     URI for every service call.
     :type subscription_id: str
     :param accept_language: Gets or sets the preferred language for the
      response.
