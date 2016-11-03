@@ -15,8 +15,7 @@ from msrest.serialization import Model
 class ARecord(Model):
     """An A record.
 
-    :param ipv4_address: Gets or sets the IPv4 address of this A record in
-     string notation.
+    :param ipv4_address: The IPv4 address of this A record.
     :type ipv4_address: str
     """ 
 

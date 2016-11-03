@@ -15,7 +15,7 @@ from msrest.serialization import Model
 class TxtRecord(Model):
     """A TXT record.
 
-    :param value: Gets or sets the text value of this record.
+    :param value: The text value of this TXT record.
     :type value: list of str
     """ 
 
