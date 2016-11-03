@@ -9,10 +9,19 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .insights_management_client import InsightsManagementClient
-from .version import VERSION
+from msrest.paging import Paged
 
-__all__ = ['InsightsManagementClient']
 
-__version__ = VERSION
+class LogProfileResourcePaged(Paged):
+    """
+    A paging container for iterating over a list of LogProfileResource object
+    """
 
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[LogProfileResource]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(LogProfileResourcePaged, self).__init__(*args, **kwargs)
