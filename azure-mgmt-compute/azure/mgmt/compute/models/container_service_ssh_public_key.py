@@ -15,8 +15,8 @@ from msrest.serialization import Model
 class ContainerServiceSshPublicKey(Model):
     """Contains information about SSH certificate public key data.
 
-    :param key_data: Certificate public key used to authenticate with VM
-     through SSH. The certificate must be in Pem format with or without
+    :param key_data: Certificate public key used to authenticate with VMs
+     through SSH. The certificate must be in PEM format with or without
      headers.
     :type key_data: str
     """ 
