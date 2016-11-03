@@ -9,10 +9,8 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .container_registry_management_client import ContainerRegistryManagementClient
-from .version import VERSION
+from .registries_operations import RegistriesOperations
 
-__all__ = ['ContainerRegistryManagementClient']
-
-__version__ = VERSION
-
+__all__ = [
+    'RegistriesOperations',
+]
