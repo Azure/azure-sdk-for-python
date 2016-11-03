@@ -18,7 +18,7 @@ class KeyOperationsParameters(Model):
     :param algorithm: algorithm identifier. Possible values include:
      'RSA-OAEP', 'RSA1_5'
     :type algorithm: str or :class:`JsonWebKeyEncryptionAlgorithm
-     <azure.keyvault.models.JsonWebKeyEncryptionAlgorithm>`
+     <Azure.keyvault.generated.models.JsonWebKeyEncryptionAlgorithm>`
     :param value:
     :type value: bytes
     """ 

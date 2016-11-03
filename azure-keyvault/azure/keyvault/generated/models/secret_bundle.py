@@ -26,7 +26,7 @@ class SecretBundle(Model):
     :type content_type: str
     :param attributes: The secret management attributes
     :type attributes: :class:`SecretAttributes
-     <azure.keyvault.models.SecretAttributes>`
+     <Azure.keyvault.generated.models.SecretAttributes>`
     :param tags: Application-specific metadata in the form of key-value pairs
     :type tags: dict
     :ivar kid: If this is a secret backing a KV certificate, then this field

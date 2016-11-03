@@ -19,14 +19,14 @@ class CertificateIssuerSetParameters(Model):
     :type provider: str
     :param credentials: The credentials to be used for the issuer.
     :type credentials: :class:`IssuerCredentials
-     <azure.keyvault.models.IssuerCredentials>`
+     <Azure.keyvault.generated.models.IssuerCredentials>`
     :param organization_details: Details of the organization as provided to
      the issuer.
     :type organization_details: :class:`OrganizationDetails
-     <azure.keyvault.models.OrganizationDetails>`
+     <Azure.keyvault.generated.models.OrganizationDetails>`
     :param attributes: Attributes of the issuer object.
     :type attributes: :class:`IssuerAttributes
-     <azure.keyvault.models.IssuerAttributes>`
+     <Azure.keyvault.generated.models.IssuerAttributes>`
     """ 
 
     _validation = {

@@ -22,7 +22,7 @@ class Sku(Model):
     :vartype family: str
     :param name: SKU name to specify whether the key vault is a standard
      vault or a premium vault. Possible values include: 'standard', 'premium'
-    :type name: str or :class:`SkuName <azure.mgmt.keyvault.models.SkuName>`
+    :type name: str or :class:`SkuName <Azure.mgmt.keyvault.models.SkuName>`
     """ 
 
     _validation = {
