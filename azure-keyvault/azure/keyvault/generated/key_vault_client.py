@@ -1751,14 +1751,12 @@ class KeyVaultClient(object):
         return deserialized
 
     def set_certificate_contacts(
-            self, vault_base_url, id=None, contact_list=None, custom_headers=None, raw=False, **operation_config):
+            self, vault_base_url, contact_list=None, custom_headers=None, raw=False, **operation_config):
         """Sets the certificate contacts for the specified vault.
 
         :param vault_base_url: The vault name, e.g.
          https://myvault.vault.azure.net
         :type vault_base_url: str
-        :param id: Identifier for the contacts collection.
-        :type id: str
         :param contact_list: The contact list for the vault certificates.
         :type contact_list: list of :class:`Contact
          <Azure.keyvault.generated.models.Contact>`
@@ -1773,7 +1771,7 @@ class KeyVaultClient(object):
         :raises:
          :class:`KeyVaultErrorException<Azure.keyvault.generated.models.KeyVaultErrorException>`
         """
-        contacts = models.Contacts(id=id, contact_list=contact_list)
+        contacts = models.Contacts(contact_list=contact_list)
 
         # Construct URL
         url = '/certificates/contacts'
