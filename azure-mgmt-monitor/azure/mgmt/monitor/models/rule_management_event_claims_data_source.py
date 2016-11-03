@@ -9,10 +9,19 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .insights_management_client import InsightsManagementClient
-from .version import VERSION
+from msrest.serialization import Model
 
-__all__ = ['InsightsManagementClient']
 
-__version__ = VERSION
+class RuleManagementEventClaimsDataSource(Model):
+    """The claims for a rule management event data source.
 
+    :param email_address: the email address.
+    :type email_address: str
+    """ 
+
+    _attribute_map = {
+        'email_address': {'key': 'emailAddress', 'type': 'str'},
+    }
+
+    def __init__(self, email_address=None):
+        self.email_address = email_address
