@@ -9,10 +9,19 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .container_registry_management_client import ContainerRegistryManagementClient
-from .version import VERSION
+from msrest.paging import Paged
 
-__all__ = ['ContainerRegistryManagementClient']
 
-__version__ = VERSION
+class RegistryPaged(Paged):
+    """
+    A paging container for iterating over a list of Registry object
+    """
 
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[Registry]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(RegistryPaged, self).__init__(*args, **kwargs)
