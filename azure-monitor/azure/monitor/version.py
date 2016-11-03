@@ -9,10 +9,5 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .insights_client import InsightsClient
-from .version import VERSION
-
-__all__ = ['InsightsClient']
-
-__version__ = VERSION
+VERSION = "0.1.0"
 

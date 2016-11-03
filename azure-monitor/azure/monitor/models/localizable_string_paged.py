@@ -9,10 +9,19 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .insights_client import InsightsClient
-from .version import VERSION
+from msrest.paging import Paged
 
-__all__ = ['InsightsClient']
 
-__version__ = VERSION
+class LocalizableStringPaged(Paged):
+    """
+    A paging container for iterating over a list of LocalizableString object
+    """
 
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[LocalizableString]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(LocalizableStringPaged, self).__init__(*args, **kwargs)

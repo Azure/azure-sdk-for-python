@@ -9,10 +9,19 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .insights_client import InsightsClient
-from .version import VERSION
+from msrest.paging import Paged
 
-__all__ = ['InsightsClient']
 
-__version__ = VERSION
+class UsageMetricPaged(Paged):
+    """
+    A paging container for iterating over a list of UsageMetric object
+    """
 
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[UsageMetric]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(UsageMetricPaged, self).__init__(*args, **kwargs)

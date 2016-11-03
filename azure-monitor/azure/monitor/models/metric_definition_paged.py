@@ -9,10 +9,19 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .insights_client import InsightsClient
-from .version import VERSION
+from msrest.paging import Paged
 
-__all__ = ['InsightsClient']
 
-__version__ = VERSION
+class MetricDefinitionPaged(Paged):
+    """
+    A paging container for iterating over a list of MetricDefinition object
+    """
 
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[MetricDefinition]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(MetricDefinitionPaged, self).__init__(*args, **kwargs)
