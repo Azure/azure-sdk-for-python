@@ -3,6 +3,16 @@
 Release History
 ===============
 
+0.32.0 (2016-11-02)
++++++++++++++++++++
+
+**Breaking change**
+
+New APIVersion for "container" 2016-09-30.
+
+* several parameters (e.g. "username") now dynamically check before REST calls validity 
+  against a regexp. Exception will be TypeError and not CloudError anymore.
+
 0.31.0 (2016-11-01)
 +++++++++++++++++++
 
