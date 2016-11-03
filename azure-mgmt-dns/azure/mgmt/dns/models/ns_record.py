@@ -15,8 +15,7 @@ from msrest.serialization import Model
 class NsRecord(Model):
     """An NS record.
 
-    :param nsdname: Gets or sets the name server name for this record,
-     without a terminating dot.
+    :param nsdname: The name server name for this NS record.
     :type nsdname: str
     """ 
 

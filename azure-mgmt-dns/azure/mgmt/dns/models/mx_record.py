@@ -15,10 +15,9 @@ from msrest.serialization import Model
 class MxRecord(Model):
     """An MX record.
 
-    :param preference: Gets or sets the preference metric for this record.
+    :param preference: The preference value for this MX record.
     :type preference: int
-    :param exchange: Gets or sets the domain name of the mail host, without a
-     terminating dot.
+    :param exchange: The domain name of the mail host for this MX record.
     :type exchange: str
     """ 
 
