@@ -13,11 +13,11 @@ from msrest.serialization import Model
 
 
 class ContainerServiceOrchestratorProfile(Model):
-    """Profile for Orchestrator.
+    """Profile for orchestrator.
 
-    :param orchestrator_type: Specifies what orchestrator will be used to
-     manage container cluster resources. Possible values include: 'Swarm',
-     'DCOS'
+    :param orchestrator_type: Specifies the orchestrator to use to manage
+     container service cluster resources. Possible values include: 'Swarm',
+     'DCOS', 'Custom'
     :type orchestrator_type: str or :class:`ContainerServiceOchestratorTypes
      <azure.mgmt.compute.models.ContainerServiceOchestratorTypes>`
     """ 
