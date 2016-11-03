@@ -83,6 +83,8 @@ from .inner_error import InnerError
 from .api_error import ApiError
 from .compute_long_running_operation_properties import ComputeLongRunningOperationProperties
 from .resource import Resource
+from .container_service_custom_profile import ContainerServiceCustomProfile
+from .container_service_service_principal_profile import ContainerServiceServicePrincipalProfile
 from .container_service_orchestrator_profile import ContainerServiceOrchestratorProfile
 from .container_service_master_profile import ContainerServiceMasterProfile
 from .container_service_agent_pool_profile import ContainerServiceAgentPoolProfile
@@ -193,6 +195,8 @@ __all__ = [
     'ApiError',
     'ComputeLongRunningOperationProperties',
     'Resource',
+    'ContainerServiceCustomProfile',
+    'ContainerServiceServicePrincipalProfile',
     'ContainerServiceOrchestratorProfile',
     'ContainerServiceMasterProfile',
     'ContainerServiceAgentPoolProfile',

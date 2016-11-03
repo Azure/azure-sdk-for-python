@@ -24,7 +24,7 @@ class ContainerServicesOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An objec model deserializer.
-    :ivar api_version: Client Api Version. Constant value: "2016-03-30".
+    :ivar api_version: Client API version. Constant value: "2016-09-30".
     """
 
     def __init__(self, client, config, serializer, deserializer):
@@ -32,13 +32,17 @@ class ContainerServicesOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2016-03-30"
+        self.api_version = "2016-09-30"
 
         self.config = config
 
     def list(
             self, custom_headers=None, raw=False, **operation_config):
-        """Lists all container services in a subscription.
+        """Gets a list of container services in the specified subscription.
+
+        Gets a list of container services in the specified subscription. The
+        operation returns properties of each container service including
+        state, number of masters and agents, and FQDNs of masters and agents.
 
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -103,13 +107,16 @@ class ContainerServicesOperations(object):
             self, resource_group_name, container_service_name, parameters, custom_headers=None, raw=False, **operation_config):
         """Creates or updates a container service.
 
+        Creates or updates a container service with the specified
+        configuration of orchestrator, masters, and agents.
+
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
-        :param container_service_name: The name of the container service
-         within the given subscription and resource group.
+        :param container_service_name: The name of the container service in
+         the specified subscription and resource group.
         :type container_service_name: str
-        :param parameters: Parameters supplied to the Create Container
-         Service operation.
+        :param parameters: Parameters supplied to the Create or Update a
+         Container Service operation.
         :type parameters: :class:`ContainerService
          <azure.mgmt.compute.models.ContainerService>`
         :param dict custom_headers: headers that will be added to the request
@@ -201,10 +208,15 @@ class ContainerServicesOperations(object):
             self, resource_group_name, container_service_name, custom_headers=None, raw=False, **operation_config):
         """Gets the specified container service.
 
+        Gets the specified container service in the specified subscription and
+        resource group. The operation returns the properties for the
+        specified container service including state, number of masters and
+        agents, and FQDNs of masters and agents. .
+
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
-        :param container_service_name: The name of the container service
-         within the given subscription and resource group.
+        :param container_service_name: The name of the container service in
+         the specified subscription and resource group.
         :type container_service_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -262,12 +274,19 @@ class ContainerServicesOperations(object):
 
     def delete(
             self, resource_group_name, container_service_name, custom_headers=None, raw=False, **operation_config):
-        """The operation to delete a container service.
+        """Deletes the specified container service.
+
+        Deletes the specified container service in the specified subscription
+        and resource group. The operation does not delete other resources
+        created as part of creating a container service, including storage
+        accounts, VMs, and availability sets. All the other resources created
+        with the container service are part of the same resource group and
+        can be deleted individually.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
-        :param container_service_name: The name of the container service
-         within the given subscription and resource group.
+        :param container_service_name: The name of the container service in
+         the specified subscription and resource group.
         :type container_service_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -340,7 +359,12 @@ class ContainerServicesOperations(object):
 
     def list_by_resource_group(
             self, resource_group_name, custom_headers=None, raw=False, **operation_config):
-        """The operation to list container services.
+        """Gets a list of container services in the specified resource group.
+
+        Gets a list of container services in the specified subscription and
+        resource group. The operation returns properties of each container
+        service including state, number of masters and agents, and FQDNs of
+        masters and agents.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str

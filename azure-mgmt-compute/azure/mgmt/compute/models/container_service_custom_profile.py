@@ -12,16 +12,20 @@
 from msrest.serialization import Model
 
 
-class PtrRecord(Model):
-    """A PTR record.
+class ContainerServiceCustomProfile(Model):
+    """Properties to configure custom clusters.
 
-    :param ptrdname: The PTR target domain name for this PTR record.
-    :type ptrdname: str
+    :param orchestrator: The name of the custom orchestrator to use.
+    :type orchestrator: str
     """ 
 
-    _attribute_map = {
-        'ptrdname': {'key': 'ptrdname', 'type': 'str'},
+    _validation = {
+        'orchestrator': {'required': True},
     }
 
-    def __init__(self, ptrdname=None):
-        self.ptrdname = ptrdname
+    _attribute_map = {
+        'orchestrator': {'key': 'orchestrator', 'type': 'str'},
+    }
+
+    def __init__(self, orchestrator):
+        self.orchestrator = orchestrator

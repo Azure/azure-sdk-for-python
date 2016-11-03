@@ -18,12 +18,12 @@ class ContainerServiceMasterProfile(Model):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :param count: Number of masters (VMs) in the container cluster. Default
-     value: 1 .
+    :param count: Number of masters (VMs) in the container service cluster.
+     Default value: 1 .
     :type count: int
-    :param dns_prefix: DNS prefix to be used to create FQDN for master
+    :param dns_prefix: DNS prefix to be used to create FQDN for master.
     :type dns_prefix: str
-    :ivar fqdn: FDQN for the master
+    :ivar fqdn: FDQN for the master.
     :vartype fqdn: str
     """ 
 

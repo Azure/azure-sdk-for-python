@@ -36,19 +36,24 @@ class ZonesOperations(object):
 
     def create_or_update(
             self, resource_group_name, zone_name, parameters, if_match=None, if_none_match=None, custom_headers=None, raw=False, **operation_config):
-        """Creates or updates a DNS zone within a resource group.
+        """Creates or updates a DNS zone. Does not modify DNS records within the
+        zone.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
-        :param zone_name: The name of the zone without a terminating dot.
+        :param zone_name: The name of the DNS zone (without a terminating
+         dot).
         :type zone_name: str
         :param parameters: Parameters supplied to the CreateOrUpdate
          operation.
         :type parameters: :class:`Zone <azure.mgmt.dns.models.Zone>`
-        :param if_match: The etag of Zone.
+        :param if_match: The etag of the DNS zone. Omit this value to always
+         overwrite the current zone. Specify the last-seen etag value to
+         prevent accidentally overwritting any concurrent changes.
         :type if_match: str
-        :param if_none_match: Defines the If-None-Match condition. Set to '*'
-         to force Create-If-Not-Exist. Other values will be ignored.
+        :param if_none_match: Set to '*' to allow a new DNS zone to be
+         created, but to prevent updating an existing zone. Other values will
+         be ignored.
         :type if_none_match: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -61,7 +66,7 @@ class ZonesOperations(object):
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/dnszones/{zoneName}'
+        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/dnsZones/{zoneName}'
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'zoneName': self._serialize.url("zone_name", zone_name, 'str'),
@@ -114,21 +119,19 @@ class ZonesOperations(object):
         return deserialized
 
     def delete(
-            self, resource_group_name, zone_name, if_match=None, if_none_match=None, custom_headers=None, raw=False, **operation_config):
-        """Removes a DNS zone from a resource group.
+            self, resource_group_name, zone_name, if_match=None, custom_headers=None, raw=False, **operation_config):
+        """Deletes a DNS zone. WARNING: All DNS records in the zone will also be
+        deleted. This operation cannot be undone.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
-        :param zone_name: The name of the zone without a terminating dot.
+        :param zone_name: The name of the DNS zone (without a terminating
+         dot).
         :type zone_name: str
-        :param if_match: Defines the If-Match condition. The delete operation
-         will be performed only if the ETag of the zone on the server matches
-         this value.
+        :param if_match: The etag of the DNS zone. Omit this value to always
+         delete the current zone. Specify the last-seen etag value to prevent
+         accidentally deleting any concurrent changes.
         :type if_match: str
-        :param if_none_match: Defines the If-None-Match condition. The delete
-         operation will be performed only if the ETag of the zone on the
-         server does not match this value.
-        :type if_none_match: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -141,7 +144,7 @@ class ZonesOperations(object):
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/dnszones/{zoneName}'
+        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/dnsZones/{zoneName}'
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'zoneName': self._serialize.url("zone_name", zone_name, 'str'),
@@ -162,8 +165,6 @@ class ZonesOperations(object):
             header_parameters.update(custom_headers)
         if if_match is not None:
             header_parameters['If-Match'] = self._serialize.header("if_match", if_match, 'str')
-        if if_none_match is not None:
-            header_parameters['If-None-Match'] = self._serialize.header("if_none_match", if_none_match, 'str')
         if self.config.accept_language is not None:
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
@@ -212,11 +213,13 @@ class ZonesOperations(object):
 
     def get(
             self, resource_group_name, zone_name, custom_headers=None, raw=False, **operation_config):
-        """Gets a DNS zone.
+        """Gets a DNS zone. Retrieves the zone properties, but not the record
+        sets within the zone.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
-        :param zone_name: The name of the zone without a terminating dot.
+        :param zone_name: The name of the DNS zone (without a terminating
+         dot).
         :type zone_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -229,7 +232,7 @@ class ZonesOperations(object):
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/dnszones/{zoneName}'
+        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/dnsZones/{zoneName}'
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'zoneName': self._serialize.url("zone_name", zone_name, 'str'),
@@ -277,8 +280,8 @@ class ZonesOperations(object):
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
-        :param top: Query parameters. If not specified returns the default
-         number of zones.
+        :param top: The maximum number of record sets to return. If not
+         specified, returns up to 100 record sets.
         :type top: int
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -292,7 +295,7 @@ class ZonesOperations(object):
 
             if not next_link:
                 # Construct URL
-                url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/dnszones'
+                url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/dnsZones'
                 path_format_arguments = {
                     'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
                     'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
@@ -343,10 +346,10 @@ class ZonesOperations(object):
 
     def list(
             self, top=None, custom_headers=None, raw=False, **operation_config):
-        """Lists the DNS zones within subscription.
+        """Lists the DNS zones in all resource groups in a subscription.
 
-        :param top: Query parameters. If not specified returns the default
-         number of zones.
+        :param top: The maximum number of DNS zones to return. If not
+         specified, returns up to 100 zones.
         :type top: int
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
