@@ -35,7 +35,7 @@ from tests.keyvault_testcase import HttpStatusCode, AzureKeyVaultTestCase
 # subscription using the following CLI commands:
 #
 # az keyvault create -g {resource-group}  -n python-sdk-test-keyvault --sku premium -l westus
-# az keyvault set-policy -g {resource-group}  -n python-sdk-test-keyvault --object-id {obtain from keyvault create response} --key-permissions all
+# az keyvault set-policy -g {resource-group}  -n python-sdk-test-keyvault --object-id {obtain from keyvault create response} --tenant-id {obtain from keyvault create response} --key-permissions all
 #
 # You must use a premium keyvault to allow importing keys to hardware and you must update the
 # key permissions to 'all' to permit testing of encrypt/decrypt/wrap/unwrap/sign/verify commands

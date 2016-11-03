@@ -1,399 +1,7 @@
 interactions:
 - request:
-    body: '{"contacts": [{"phone": "1111111111", "email": "admin@contoso.com", "name":
-      "John Doe"}, {"phone": "2222222222", "email": "admin2@contoso.com", "name":
-      "John Doe2"}]}'
-    headers:
-      Accept: [application/json]
-      Accept-Encoding: ['gzip, deflate']
-      Connection: [keep-alive]
-      Content-Length: ['166']
-      Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.5.1 (Windows-10-10.0.14393-SP0) requests/2.11.1 msrest/0.4.4
-          msrest_azure/0.4.3 keyvaultclient/0.30.0rc6 Azure-SDK-For-Python]
-      accept-language: [en-US]
-      x-ms-client-request-id: [69c6c824-97ef-11e6-b95b-a0b3ccf7272a]
-    method: PUT
-    uri: https://python-sdk-test-keyvault.vault.azure.net/certificates/contacts?api-version=2015-06-01
-  response:
-    body: {string: '{"id":"https://python-sdk-test-keyvault.vault.azure.net/certificates/contacts","contacts":[{"email":"admin@contoso.com","name":"John
-        Doe","phone":"1111111111"},{"email":"admin2@contoso.com","name":"John Doe2","phone":"2222222222"}]}'}
-    headers:
-      Cache-Control: [no-cache]
-      Content-Length: ['232']
-      Content-Type: [application/json; charset=utf-8]
-      Date: ['Sat, 22 Oct 2016 00:35:20 GMT']
-      Expires: ['-1']
-      Pragma: [no-cache]
-      Server: [Microsoft-IIS/8.5]
-      Strict-Transport-Security: [max-age=31536000;includeSubDomains]
-      X-AspNet-Version: [4.0.30319]
-      X-Content-Type-Options: [nosniff]
-      X-Powered-By: [ASP.NET]
-      x-ms-keyvault-region: [westus]
-      x-ms-keyvault-service-version: [1.0.0.781]
-      x-ms-request-id: [1a38e751-4488-46b0-8359-af696cc5cab0]
-    status: {code: 200, message: OK}
-- request:
-    body: null
-    headers:
-      Accept: [application/json]
-      Accept-Encoding: ['gzip, deflate']
-      Connection: [keep-alive]
-      Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.5.1 (Windows-10-10.0.14393-SP0) requests/2.11.1 msrest/0.4.4
-          msrest_azure/0.4.3 keyvaultclient/0.30.0rc6 Azure-SDK-For-Python]
-      accept-language: [en-US]
-      x-ms-client-request-id: [6a4fa81a-97ef-11e6-9575-a0b3ccf7272a]
-    method: GET
-    uri: https://python-sdk-test-keyvault.vault.azure.net/certificates/contacts?api-version=2015-06-01
-  response:
-    body: {string: '{"id":"https://python-sdk-test-keyvault.vault.azure.net/certificates/contacts","contacts":[{"email":"admin@contoso.com","name":"John
-        Doe","phone":"1111111111"},{"email":"admin2@contoso.com","name":"John Doe2","phone":"2222222222"}]}'}
-    headers:
-      Cache-Control: [no-cache]
-      Content-Length: ['232']
-      Content-Type: [application/json; charset=utf-8]
-      Date: ['Sat, 22 Oct 2016 00:35:21 GMT']
-      Expires: ['-1']
-      Pragma: [no-cache]
-      Server: [Microsoft-IIS/8.5]
-      Strict-Transport-Security: [max-age=31536000;includeSubDomains]
-      X-AspNet-Version: [4.0.30319]
-      X-Content-Type-Options: [nosniff]
-      X-Powered-By: [ASP.NET]
-      x-ms-keyvault-region: [westus]
-      x-ms-keyvault-service-version: [1.0.0.781]
-      x-ms-request-id: [1fe2fc3c-a795-477a-ba2d-dfa5215225d4]
-    status: {code: 200, message: OK}
-- request:
-    body: null
-    headers:
-      Accept: [application/json]
-      Accept-Encoding: ['gzip, deflate']
-      Connection: [keep-alive]
-      Content-Length: ['0']
-      Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.5.1 (Windows-10-10.0.14393-SP0) requests/2.11.1 msrest/0.4.4
-          msrest_azure/0.4.3 keyvaultclient/0.30.0rc6 Azure-SDK-For-Python]
-      accept-language: [en-US]
-      x-ms-client-request-id: [6acf84de-97ef-11e6-8562-a0b3ccf7272a]
-    method: DELETE
-    uri: https://python-sdk-test-keyvault.vault.azure.net/certificates/contacts?api-version=2015-06-01
-  response:
-    body: {string: '{"id":"https://python-sdk-test-keyvault.vault.azure.net/certificates/contacts","contacts":[{"email":"admin@contoso.com","name":"John
-        Doe","phone":"1111111111"},{"email":"admin2@contoso.com","name":"John Doe2","phone":"2222222222"}]}'}
-    headers:
-      Cache-Control: [no-cache]
-      Content-Length: ['232']
-      Content-Type: [application/json; charset=utf-8]
-      Date: ['Sat, 22 Oct 2016 00:35:21 GMT']
-      Expires: ['-1']
-      Pragma: [no-cache]
-      Server: [Microsoft-IIS/8.5]
-      Strict-Transport-Security: [max-age=31536000;includeSubDomains]
-      X-AspNet-Version: [4.0.30319]
-      X-Content-Type-Options: [nosniff]
-      X-Powered-By: [ASP.NET]
-      x-ms-keyvault-region: [westus]
-      x-ms-keyvault-service-version: [1.0.0.781]
-      x-ms-request-id: [7c77fd57-7018-481c-b9f9-f6e86647326a]
-    status: {code: 200, message: OK}
-- request:
-    body: null
-    headers:
-      Accept: [application/json]
-      Accept-Encoding: ['gzip, deflate']
-      Connection: [keep-alive]
-      Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.5.1 (Windows-10-10.0.14393-SP0) requests/2.11.1 msrest/0.4.4
-          msrest_azure/0.4.3 keyvaultclient/0.30.0rc6 Azure-SDK-For-Python]
-      accept-language: [en-US]
-      x-ms-client-request-id: [6b655ef0-97ef-11e6-a124-a0b3ccf7272a]
-    method: GET
-    uri: https://python-sdk-test-keyvault.vault.azure.net/certificates/contacts?api-version=2015-06-01
-  response:
-    body: {string: '{"error":{"code":"ContactsNotFound","message":"Contacts not found"}}'}
-    headers:
-      Cache-Control: [no-cache]
-      Content-Length: ['68']
-      Content-Type: [application/json; charset=utf-8]
-      Date: ['Sat, 22 Oct 2016 00:35:22 GMT']
-      Expires: ['-1']
-      Pragma: [no-cache]
-      Server: [Microsoft-IIS/8.5]
-      Strict-Transport-Security: [max-age=31536000;includeSubDomains]
-      X-AspNet-Version: [4.0.30319]
-      X-Content-Type-Options: [nosniff]
-      X-Powered-By: [ASP.NET]
-      x-ms-keyvault-region: [westus]
-      x-ms-keyvault-service-version: [1.0.0.781]
-      x-ms-request-id: [4239de72-bdeb-49a1-8e6f-46579911bc21]
-    status: {code: 404, message: Not Found}
-- request:
-    body: '{"contacts": [{"name": "John Doe", "phone": "1111111111", "email": "admin@contoso.com"},
-      {"name": "John Doe2", "phone": "2222222222", "email": "admin2@contoso.com"}]}'
-    headers:
-      Accept: [application/json]
-      Accept-Encoding: ['gzip, deflate']
-      Connection: [keep-alive]
-      Content-Length: ['166']
-      Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.5.1 (Windows-10-10.0.14393-SP0) requests/2.11.1 msrest/0.4.4
-          msrest_azure/0.4.3 keyvaultclient/0.30.0rc6 Azure-SDK-For-Python]
-      accept-language: [en-US]
-      x-ms-client-request-id: [b8f7e61e-9a20-11e6-8b0d-a0b3ccf7272a]
-    method: PUT
-    uri: https://python-sdk-test-keyvault.vault.azure.net/certificates/contacts?api-version=2015-06-01
-  response:
-    body: {string: '{"id":"https://python-sdk-test-keyvault.vault.azure.net/certificates/contacts","contacts":[{"email":"admin@contoso.com","name":"John
-        Doe","phone":"1111111111"},{"email":"admin2@contoso.com","name":"John Doe2","phone":"2222222222"}]}'}
-    headers:
-      Cache-Control: [no-cache]
-      Content-Length: ['232']
-      Content-Type: [application/json; charset=utf-8]
-      Date: ['Mon, 24 Oct 2016 19:33:20 GMT']
-      Expires: ['-1']
-      Pragma: [no-cache]
-      Server: [Microsoft-IIS/8.5]
-      Strict-Transport-Security: [max-age=31536000;includeSubDomains]
-      X-AspNet-Version: [4.0.30319]
-      X-Content-Type-Options: [nosniff]
-      X-Powered-By: [ASP.NET]
-      x-ms-keyvault-region: [westus]
-      x-ms-keyvault-service-version: [1.0.0.781]
-      x-ms-request-id: [bade833a-c07c-4bab-8f14-793ce0c26caa]
-    status: {code: 200, message: OK}
-- request:
-    body: null
-    headers:
-      Accept: [application/json]
-      Accept-Encoding: ['gzip, deflate']
-      Connection: [keep-alive]
-      Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.5.1 (Windows-10-10.0.14393-SP0) requests/2.11.1 msrest/0.4.4
-          msrest_azure/0.4.3 keyvaultclient/0.30.0rc6 Azure-SDK-For-Python]
-      accept-language: [en-US]
-      x-ms-client-request-id: [b96862b8-9a20-11e6-851a-a0b3ccf7272a]
-    method: GET
-    uri: https://python-sdk-test-keyvault.vault.azure.net/certificates/contacts?api-version=2015-06-01
-  response:
-    body: {string: '{"id":"https://python-sdk-test-keyvault.vault.azure.net/certificates/contacts","contacts":[{"email":"admin@contoso.com","name":"John
-        Doe","phone":"1111111111"},{"email":"admin2@contoso.com","name":"John Doe2","phone":"2222222222"}]}'}
-    headers:
-      Cache-Control: [no-cache]
-      Content-Length: ['232']
-      Content-Type: [application/json; charset=utf-8]
-      Date: ['Mon, 24 Oct 2016 19:33:22 GMT']
-      Expires: ['-1']
-      Pragma: [no-cache]
-      Server: [Microsoft-IIS/8.5]
-      Strict-Transport-Security: [max-age=31536000;includeSubDomains]
-      X-AspNet-Version: [4.0.30319]
-      X-Content-Type-Options: [nosniff]
-      X-Powered-By: [ASP.NET]
-      x-ms-keyvault-region: [westus]
-      x-ms-keyvault-service-version: [1.0.0.781]
-      x-ms-request-id: [891a90d2-c621-4839-8c0f-947b1b7a13d2]
-    status: {code: 200, message: OK}
-- request:
-    body: null
-    headers:
-      Accept: [application/json]
-      Accept-Encoding: ['gzip, deflate']
-      Connection: [keep-alive]
-      Content-Length: ['0']
-      Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.5.1 (Windows-10-10.0.14393-SP0) requests/2.11.1 msrest/0.4.4
-          msrest_azure/0.4.3 keyvaultclient/0.30.0rc6 Azure-SDK-For-Python]
-      accept-language: [en-US]
-      x-ms-client-request-id: [b9efdc9a-9a20-11e6-b568-a0b3ccf7272a]
-    method: DELETE
-    uri: https://python-sdk-test-keyvault.vault.azure.net/certificates/contacts?api-version=2015-06-01
-  response:
-    body: {string: '{"id":"https://python-sdk-test-keyvault.vault.azure.net/certificates/contacts","contacts":[{"email":"admin@contoso.com","name":"John
-        Doe","phone":"1111111111"},{"email":"admin2@contoso.com","name":"John Doe2","phone":"2222222222"}]}'}
-    headers:
-      Cache-Control: [no-cache]
-      Content-Length: ['232']
-      Content-Type: [application/json; charset=utf-8]
-      Date: ['Mon, 24 Oct 2016 19:33:24 GMT']
-      Expires: ['-1']
-      Pragma: [no-cache]
-      Server: [Microsoft-IIS/8.5]
-      Strict-Transport-Security: [max-age=31536000;includeSubDomains]
-      X-AspNet-Version: [4.0.30319]
-      X-Content-Type-Options: [nosniff]
-      X-Powered-By: [ASP.NET]
-      x-ms-keyvault-region: [westus]
-      x-ms-keyvault-service-version: [1.0.0.781]
-      x-ms-request-id: [0745d92b-a20a-48c1-b856-f34ae240b559]
-    status: {code: 200, message: OK}
-- request:
-    body: null
-    headers:
-      Accept: [application/json]
-      Accept-Encoding: ['gzip, deflate']
-      Connection: [keep-alive]
-      Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.5.1 (Windows-10-10.0.14393-SP0) requests/2.11.1 msrest/0.4.4
-          msrest_azure/0.4.3 keyvaultclient/0.30.0rc6 Azure-SDK-For-Python]
-      accept-language: [en-US]
-      x-ms-client-request-id: [ba8c05b4-9a20-11e6-8a4e-a0b3ccf7272a]
-    method: GET
-    uri: https://python-sdk-test-keyvault.vault.azure.net/certificates/contacts?api-version=2015-06-01
-  response:
-    body: {string: '{"error":{"code":"ContactsNotFound","message":"Contacts not found"}}'}
-    headers:
-      Cache-Control: [no-cache]
-      Content-Length: ['68']
-      Content-Type: [application/json; charset=utf-8]
-      Date: ['Mon, 24 Oct 2016 19:33:24 GMT']
-      Expires: ['-1']
-      Pragma: [no-cache]
-      Server: [Microsoft-IIS/8.5]
-      Strict-Transport-Security: [max-age=31536000;includeSubDomains]
-      X-AspNet-Version: [4.0.30319]
-      X-Content-Type-Options: [nosniff]
-      X-Powered-By: [ASP.NET]
-      x-ms-keyvault-region: [westus]
-      x-ms-keyvault-service-version: [1.0.0.781]
-      x-ms-request-id: [6d2aba30-3f51-467e-a16d-95663f4e0b06]
-    status: {code: 404, message: Not Found}
-- request:
-    body: '{"contacts": [{"email": "admin@contoso.com", "phone": "1111111111", "name":
-      "John Doe"}, {"email": "admin2@contoso.com", "phone": "2222222222", "name":
-      "John Doe2"}]}'
-    headers:
-      Accept: [application/json]
-      Accept-Encoding: ['gzip, deflate']
-      Connection: [keep-alive]
-      Content-Length: ['166']
-      Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.5.1 (Windows-10-10.0.14393-SP0) requests/2.11.1 msrest/0.4.4
-          msrest_azure/0.4.3 keyvaultclient/0.30.0rc6 Azure-SDK-For-Python]
-      accept-language: [en-US]
-      x-ms-client-request-id: [f8a68b0a-a201-11e6-ba3f-a0b3ccf7272a]
-    method: PUT
-    uri: https://python-sdk-test-keyvault.vault.azure.net/certificates/contacts?api-version=2016-10-01
-  response:
-    body: {string: '{"id":"https://python-sdk-test-keyvault.vault.azure.net/certificates/contacts","contacts":[{"email":"admin@contoso.com","name":"John
-        Doe","phone":"1111111111"},{"email":"admin2@contoso.com","name":"John Doe2","phone":"2222222222"}]}'}
-    headers:
-      Cache-Control: [no-cache]
-      Content-Length: ['232']
-      Content-Type: [application/json; charset=utf-8]
-      Date: ['Thu, 03 Nov 2016 20:13:23 GMT']
-      Expires: ['-1']
-      Pragma: [no-cache]
-      Server: [Microsoft-IIS/8.5]
-      Strict-Transport-Security: [max-age=31536000;includeSubDomains]
-      X-AspNet-Version: [4.0.30319]
-      X-Content-Type-Options: [nosniff]
-      X-Powered-By: [ASP.NET]
-      x-ms-keyvault-region: [westus]
-      x-ms-keyvault-service-version: [1.0.0.783]
-      x-ms-request-id: [cd1100c3-4f10-48cf-ae4b-2d0d267744e0]
-    status: {code: 200, message: OK}
-- request:
-    body: null
-    headers:
-      Accept: [application/json]
-      Accept-Encoding: ['gzip, deflate']
-      Connection: [keep-alive]
-      Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.5.1 (Windows-10-10.0.14393-SP0) requests/2.11.1 msrest/0.4.4
-          msrest_azure/0.4.3 keyvaultclient/0.30.0rc6 Azure-SDK-For-Python]
-      accept-language: [en-US]
-      x-ms-client-request-id: [f959612e-a201-11e6-9fcc-a0b3ccf7272a]
-    method: GET
-    uri: https://python-sdk-test-keyvault.vault.azure.net/certificates/contacts?api-version=2016-10-01
-  response:
-    body: {string: '{"id":"https://python-sdk-test-keyvault.vault.azure.net/certificates/contacts","contacts":[{"email":"admin@contoso.com","name":"John
-        Doe","phone":"1111111111"},{"email":"admin2@contoso.com","name":"John Doe2","phone":"2222222222"}]}'}
-    headers:
-      Cache-Control: [no-cache]
-      Content-Length: ['232']
-      Content-Type: [application/json; charset=utf-8]
-      Date: ['Thu, 03 Nov 2016 20:13:24 GMT']
-      Expires: ['-1']
-      Pragma: [no-cache]
-      Server: [Microsoft-IIS/8.5]
-      Strict-Transport-Security: [max-age=31536000;includeSubDomains]
-      X-AspNet-Version: [4.0.30319]
-      X-Content-Type-Options: [nosniff]
-      X-Powered-By: [ASP.NET]
-      x-ms-keyvault-region: [westus]
-      x-ms-keyvault-service-version: [1.0.0.783]
-      x-ms-request-id: [e62af3cf-a560-4bcd-93b2-b758f6796a30]
-    status: {code: 200, message: OK}
-- request:
-    body: null
-    headers:
-      Accept: [application/json]
-      Accept-Encoding: ['gzip, deflate']
-      Connection: [keep-alive]
-      Content-Length: ['0']
-      Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.5.1 (Windows-10-10.0.14393-SP0) requests/2.11.1 msrest/0.4.4
-          msrest_azure/0.4.3 keyvaultclient/0.30.0rc6 Azure-SDK-For-Python]
-      accept-language: [en-US]
-      x-ms-client-request-id: [f9dd33e8-a201-11e6-bdaf-a0b3ccf7272a]
-    method: DELETE
-    uri: https://python-sdk-test-keyvault.vault.azure.net/certificates/contacts?api-version=2016-10-01
-  response:
-    body: {string: '{"id":"https://python-sdk-test-keyvault.vault.azure.net/certificates/contacts","contacts":[{"email":"admin@contoso.com","name":"John
-        Doe","phone":"1111111111"},{"email":"admin2@contoso.com","name":"John Doe2","phone":"2222222222"}]}'}
-    headers:
-      Cache-Control: [no-cache]
-      Content-Length: ['232']
-      Content-Type: [application/json; charset=utf-8]
-      Date: ['Thu, 03 Nov 2016 20:13:25 GMT']
-      Expires: ['-1']
-      Pragma: [no-cache]
-      Server: [Microsoft-IIS/8.5]
-      Strict-Transport-Security: [max-age=31536000;includeSubDomains]
-      X-AspNet-Version: [4.0.30319]
-      X-Content-Type-Options: [nosniff]
-      X-Powered-By: [ASP.NET]
-      x-ms-keyvault-region: [westus]
-      x-ms-keyvault-service-version: [1.0.0.783]
-      x-ms-request-id: [2396ee57-91f0-4d66-834a-49b5e89064f6]
-    status: {code: 200, message: OK}
-- request:
-    body: null
-    headers:
-      Accept: [application/json]
-      Accept-Encoding: ['gzip, deflate']
-      Connection: [keep-alive]
-      Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.5.1 (Windows-10-10.0.14393-SP0) requests/2.11.1 msrest/0.4.4
-          msrest_azure/0.4.3 keyvaultclient/0.30.0rc6 Azure-SDK-For-Python]
-      accept-language: [en-US]
-      x-ms-client-request-id: [fa632f4c-a201-11e6-9176-a0b3ccf7272a]
-    method: GET
-    uri: https://python-sdk-test-keyvault.vault.azure.net/certificates/contacts?api-version=2016-10-01
-  response:
-    body: {string: '{"error":{"code":"ContactsNotFound","message":"Contacts not found"}}'}
-    headers:
-      Cache-Control: [no-cache]
-      Content-Length: ['68']
-      Content-Type: [application/json; charset=utf-8]
-      Date: ['Thu, 03 Nov 2016 20:13:26 GMT']
-      Expires: ['-1']
-      Pragma: [no-cache]
-      Server: [Microsoft-IIS/8.5]
-      Strict-Transport-Security: [max-age=31536000;includeSubDomains]
-      X-AspNet-Version: [4.0.30319]
-      X-Content-Type-Options: [nosniff]
-      X-Powered-By: [ASP.NET]
-      x-ms-keyvault-region: [westus]
-      x-ms-keyvault-service-version: [1.0.0.783]
-      x-ms-request-id: [492de21a-66f5-408d-9323-c40a817674d0]
-    status: {code: 404, message: Not Found}
-- request:
-    body: '{"contacts": [{"email": "admin@contoso.com", "name": "John Doe", "phone":
-      "1111111111"}, {"email": "admin2@contoso.com", "name": "John Doe2", "phone":
+    body: '{"contacts": [{"name": "John Doe", "email": "admin@contoso.com", "phone":
+      "1111111111"}, {"name": "John Doe2", "email": "admin2@contoso.com", "phone":
       "2222222222"}]}'
     headers:
       Accept: [application/json]
@@ -404,7 +12,7 @@ interactions:
       User-Agent: [python/3.5.1 (Windows-10-10.0.14393-SP0) requests/2.11.1 msrest/0.4.4
           msrest_azure/0.4.3 keyvaultclient/0.30.0rc6 Azure-SDK-For-Python]
       accept-language: [en-US]
-      x-ms-client-request-id: [97f10302-a202-11e6-a2ce-a0b3ccf7272a]
+      x-ms-client-request-id: [8295b6f0-a216-11e6-9ea9-a0b3ccf7272a]
     method: PUT
     uri: https://python-sdk-test-keyvault.vault.azure.net/certificates/contacts?api-version=2016-10-01
   response:
@@ -414,7 +22,7 @@ interactions:
       Cache-Control: [no-cache]
       Content-Length: ['232']
       Content-Type: [application/json; charset=utf-8]
-      Date: ['Thu, 03 Nov 2016 20:17:50 GMT']
+      Date: ['Thu, 03 Nov 2016 22:40:24 GMT']
       Expires: ['-1']
       Pragma: [no-cache]
       Server: [Microsoft-IIS/8.5]
@@ -424,7 +32,7 @@ interactions:
       X-Powered-By: [ASP.NET]
       x-ms-keyvault-region: [westus]
       x-ms-keyvault-service-version: [1.0.0.783]
-      x-ms-request-id: [fdc60158-1415-40e3-a00c-69b84a602942]
+      x-ms-request-id: [73be6dbe-ba33-4811-8492-169bae50f571]
     status: {code: 200, message: OK}
 - request:
     body: null
@@ -436,7 +44,7 @@ interactions:
       User-Agent: [python/3.5.1 (Windows-10-10.0.14393-SP0) requests/2.11.1 msrest/0.4.4
           msrest_azure/0.4.3 keyvaultclient/0.30.0rc6 Azure-SDK-For-Python]
       accept-language: [en-US]
-      x-ms-client-request-id: [98660964-a202-11e6-ab6f-a0b3ccf7272a]
+      x-ms-client-request-id: [830242b0-a216-11e6-ad8c-a0b3ccf7272a]
     method: GET
     uri: https://python-sdk-test-keyvault.vault.azure.net/certificates/contacts?api-version=2016-10-01
   response:
@@ -446,7 +54,7 @@ interactions:
       Cache-Control: [no-cache]
       Content-Length: ['232']
       Content-Type: [application/json; charset=utf-8]
-      Date: ['Thu, 03 Nov 2016 20:17:50 GMT']
+      Date: ['Thu, 03 Nov 2016 22:40:24 GMT']
       Expires: ['-1']
       Pragma: [no-cache]
       Server: [Microsoft-IIS/8.5]
@@ -456,7 +64,7 @@ interactions:
       X-Powered-By: [ASP.NET]
       x-ms-keyvault-region: [westus]
       x-ms-keyvault-service-version: [1.0.0.783]
-      x-ms-request-id: [47272417-02ea-40ea-982e-55758ec2725c]
+      x-ms-request-id: [eda3040c-4da0-4cb8-aef6-83c236b11ad7]
     status: {code: 200, message: OK}
 - request:
     body: null
@@ -469,7 +77,7 @@ interactions:
       User-Agent: [python/3.5.1 (Windows-10-10.0.14393-SP0) requests/2.11.1 msrest/0.4.4
           msrest_azure/0.4.3 keyvaultclient/0.30.0rc6 Azure-SDK-For-Python]
       accept-language: [en-US]
-      x-ms-client-request-id: [98e1137a-a202-11e6-852c-a0b3ccf7272a]
+      x-ms-client-request-id: [837695f8-a216-11e6-ac54-a0b3ccf7272a]
     method: DELETE
     uri: https://python-sdk-test-keyvault.vault.azure.net/certificates/contacts?api-version=2016-10-01
   response:
@@ -479,7 +87,7 @@ interactions:
       Cache-Control: [no-cache]
       Content-Length: ['232']
       Content-Type: [application/json; charset=utf-8]
-      Date: ['Thu, 03 Nov 2016 20:17:51 GMT']
+      Date: ['Thu, 03 Nov 2016 22:40:25 GMT']
       Expires: ['-1']
       Pragma: [no-cache]
       Server: [Microsoft-IIS/8.5]
@@ -489,7 +97,7 @@ interactions:
       X-Powered-By: [ASP.NET]
       x-ms-keyvault-region: [westus]
       x-ms-keyvault-service-version: [1.0.0.783]
-      x-ms-request-id: [dd88297b-265b-4ed4-9061-e294c8c919df]
+      x-ms-request-id: [505a4161-2eba-4ecf-b071-155ab7ab9223]
     status: {code: 200, message: OK}
 - request:
     body: null
@@ -501,7 +109,7 @@ interactions:
       User-Agent: [python/3.5.1 (Windows-10-10.0.14393-SP0) requests/2.11.1 msrest/0.4.4
           msrest_azure/0.4.3 keyvaultclient/0.30.0rc6 Azure-SDK-For-Python]
       accept-language: [en-US]
-      x-ms-client-request-id: [9962ff9e-a202-11e6-a473-a0b3ccf7272a]
+      x-ms-client-request-id: [83ebfc78-a216-11e6-bd74-a0b3ccf7272a]
     method: GET
     uri: https://python-sdk-test-keyvault.vault.azure.net/certificates/contacts?api-version=2016-10-01
   response:
@@ -510,7 +118,7 @@ interactions:
       Cache-Control: [no-cache]
       Content-Length: ['68']
       Content-Type: [application/json; charset=utf-8]
-      Date: ['Thu, 03 Nov 2016 20:17:52 GMT']
+      Date: ['Thu, 03 Nov 2016 22:40:26 GMT']
       Expires: ['-1']
       Pragma: [no-cache]
       Server: [Microsoft-IIS/8.5]
@@ -520,137 +128,6 @@ interactions:
       X-Powered-By: [ASP.NET]
       x-ms-keyvault-region: [westus]
       x-ms-keyvault-service-version: [1.0.0.783]
-      x-ms-request-id: [be40bbde-e8ee-48ce-a84a-5684cbdee982]
-    status: {code: 404, message: Not Found}
-- request:
-    body: '{"contacts": [{"phone": "1111111111", "email": "admin@contoso.com", "name":
-      "John Doe"}, {"phone": "2222222222", "email": "admin2@contoso.com", "name":
-      "John Doe2"}]}'
-    headers:
-      Accept: [application/json]
-      Accept-Encoding: ['gzip, deflate']
-      Connection: [keep-alive]
-      Content-Length: ['166']
-      Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.5.1 (Windows-10-10.0.14393-SP0) requests/2.11.1 msrest/0.4.4
-          msrest_azure/0.4.3 keyvaultclient/0.30.0rc6 Azure-SDK-For-Python]
-      accept-language: [en-US]
-      x-ms-client-request-id: [f7e5a2e8-a202-11e6-b07c-a0b3ccf7272a]
-    method: PUT
-    uri: https://python-sdk-test-keyvault.vault.azure.net/certificates/contacts?api-version=2016-10-01
-  response:
-    body: {string: '{"id":"https://python-sdk-test-keyvault.vault.azure.net/certificates/contacts","contacts":[{"email":"admin@contoso.com","name":"John
-        Doe","phone":"1111111111"},{"email":"admin2@contoso.com","name":"John Doe2","phone":"2222222222"}]}'}
-    headers:
-      Cache-Control: [no-cache]
-      Content-Length: ['232']
-      Content-Type: [application/json; charset=utf-8]
-      Date: ['Thu, 03 Nov 2016 20:20:31 GMT']
-      Expires: ['-1']
-      Pragma: [no-cache]
-      Server: [Microsoft-IIS/8.5]
-      Strict-Transport-Security: [max-age=31536000;includeSubDomains]
-      X-AspNet-Version: [4.0.30319]
-      X-Content-Type-Options: [nosniff]
-      X-Powered-By: [ASP.NET]
-      x-ms-keyvault-region: [westus]
-      x-ms-keyvault-service-version: [1.0.0.783]
-      x-ms-request-id: [3c2a65c9-6b2d-462e-bc66-96da86f324a2]
-    status: {code: 200, message: OK}
-- request:
-    body: null
-    headers:
-      Accept: [application/json]
-      Accept-Encoding: ['gzip, deflate']
-      Connection: [keep-alive]
-      Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.5.1 (Windows-10-10.0.14393-SP0) requests/2.11.1 msrest/0.4.4
-          msrest_azure/0.4.3 keyvaultclient/0.30.0rc6 Azure-SDK-For-Python]
-      accept-language: [en-US]
-      x-ms-client-request-id: [f863f69e-a202-11e6-8150-a0b3ccf7272a]
-    method: GET
-    uri: https://python-sdk-test-keyvault.vault.azure.net/certificates/contacts?api-version=2016-10-01
-  response:
-    body: {string: '{"id":"https://python-sdk-test-keyvault.vault.azure.net/certificates/contacts","contacts":[{"email":"admin@contoso.com","name":"John
-        Doe","phone":"1111111111"},{"email":"admin2@contoso.com","name":"John Doe2","phone":"2222222222"}]}'}
-    headers:
-      Cache-Control: [no-cache]
-      Content-Length: ['232']
-      Content-Type: [application/json; charset=utf-8]
-      Date: ['Thu, 03 Nov 2016 20:20:32 GMT']
-      Expires: ['-1']
-      Pragma: [no-cache]
-      Server: [Microsoft-IIS/8.5]
-      Strict-Transport-Security: [max-age=31536000;includeSubDomains]
-      X-AspNet-Version: [4.0.30319]
-      X-Content-Type-Options: [nosniff]
-      X-Powered-By: [ASP.NET]
-      x-ms-keyvault-region: [westus]
-      x-ms-keyvault-service-version: [1.0.0.783]
-      x-ms-request-id: [ff55218e-8840-4401-933b-62a7e7d00d6f]
-    status: {code: 200, message: OK}
-- request:
-    body: null
-    headers:
-      Accept: [application/json]
-      Accept-Encoding: ['gzip, deflate']
-      Connection: [keep-alive]
-      Content-Length: ['0']
-      Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.5.1 (Windows-10-10.0.14393-SP0) requests/2.11.1 msrest/0.4.4
-          msrest_azure/0.4.3 keyvaultclient/0.30.0rc6 Azure-SDK-For-Python]
-      accept-language: [en-US]
-      x-ms-client-request-id: [f8d828ae-a202-11e6-96d8-a0b3ccf7272a]
-    method: DELETE
-    uri: https://python-sdk-test-keyvault.vault.azure.net/certificates/contacts?api-version=2016-10-01
-  response:
-    body: {string: '{"id":"https://python-sdk-test-keyvault.vault.azure.net/certificates/contacts","contacts":[{"email":"admin@contoso.com","name":"John
-        Doe","phone":"1111111111"},{"email":"admin2@contoso.com","name":"John Doe2","phone":"2222222222"}]}'}
-    headers:
-      Cache-Control: [no-cache]
-      Content-Length: ['232']
-      Content-Type: [application/json; charset=utf-8]
-      Date: ['Thu, 03 Nov 2016 20:20:32 GMT']
-      Expires: ['-1']
-      Pragma: [no-cache]
-      Server: [Microsoft-IIS/8.5]
-      Strict-Transport-Security: [max-age=31536000;includeSubDomains]
-      X-AspNet-Version: [4.0.30319]
-      X-Content-Type-Options: [nosniff]
-      X-Powered-By: [ASP.NET]
-      x-ms-keyvault-region: [westus]
-      x-ms-keyvault-service-version: [1.0.0.783]
-      x-ms-request-id: [19f6d37e-18bc-4e11-8b82-df0993dab4a7]
-    status: {code: 200, message: OK}
-- request:
-    body: null
-    headers:
-      Accept: [application/json]
-      Accept-Encoding: ['gzip, deflate']
-      Connection: [keep-alive]
-      Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.5.1 (Windows-10-10.0.14393-SP0) requests/2.11.1 msrest/0.4.4
-          msrest_azure/0.4.3 keyvaultclient/0.30.0rc6 Azure-SDK-For-Python]
-      accept-language: [en-US]
-      x-ms-client-request-id: [f94aed1a-a202-11e6-aef3-a0b3ccf7272a]
-    method: GET
-    uri: https://python-sdk-test-keyvault.vault.azure.net/certificates/contacts?api-version=2016-10-01
-  response:
-    body: {string: '{"error":{"code":"ContactsNotFound","message":"Contacts not found"}}'}
-    headers:
-      Cache-Control: [no-cache]
-      Content-Length: ['68']
-      Content-Type: [application/json; charset=utf-8]
-      Date: ['Thu, 03 Nov 2016 20:20:33 GMT']
-      Expires: ['-1']
-      Pragma: [no-cache]
-      Server: [Microsoft-IIS/8.5]
-      Strict-Transport-Security: [max-age=31536000;includeSubDomains]
-      X-AspNet-Version: [4.0.30319]
-      X-Content-Type-Options: [nosniff]
-      X-Powered-By: [ASP.NET]
-      x-ms-keyvault-region: [westus]
-      x-ms-keyvault-service-version: [1.0.0.783]
-      x-ms-request-id: [5cfd4974-9ec1-4e1a-89a9-6467931a1989]
+      x-ms-request-id: [8ce30e6a-f73b-4e76-8abd-d0187130ab22]
     status: {code: 404, message: Not Found}
 version: 1
