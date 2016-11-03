@@ -48,15 +48,16 @@ class VaultsOperations(object):
         :type vault_name: str
         :param parameters: Parameters to create or update the vault
         :type parameters: :class:`VaultCreateOrUpdateParameters
-         <azure.mgmt.keyvault.models.VaultCreateOrUpdateParameters>`
+         <Azure.mgmt.keyvault.models.VaultCreateOrUpdateParameters>`
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`Vault <azure.mgmt.keyvault.models.Vault>`
+        :rtype: :class:`Vault <Azure.mgmt.keyvault.models.Vault>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.KeyVault/vaults/{vaultName}'
@@ -124,6 +125,7 @@ class VaultsOperations(object):
         :rtype: None
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.KeyVault/vaults/{vaultName}'
@@ -175,9 +177,10 @@ class VaultsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`Vault <azure.mgmt.keyvault.models.Vault>`
+        :rtype: :class:`Vault <Azure.mgmt.keyvault.models.Vault>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.KeyVault/vaults/{vaultName}'
@@ -237,7 +240,8 @@ class VaultsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`VaultPaged <azure.mgmt.keyvault.models.VaultPaged>`
+        :rtype: :class:`VaultPaged <Azure.mgmt.keyvault.models.VaultPaged>`
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -304,7 +308,8 @@ class VaultsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`VaultPaged <azure.mgmt.keyvault.models.VaultPaged>`
+        :rtype: :class:`VaultPaged <Azure.mgmt.keyvault.models.VaultPaged>`
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
 

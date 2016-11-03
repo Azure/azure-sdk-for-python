@@ -22,18 +22,24 @@ class Error(Model):
     :vartype code: str
     :ivar message: The error message.
     :vartype message: str
+    :ivar inner_error:
+    :vartype inner_error: :class:`Error
+     <Azure.keyvault.generated.models.Error>`
     """ 
 
     _validation = {
         'code': {'readonly': True},
         'message': {'readonly': True},
+        'inner_error': {'readonly': True},
     }
 
     _attribute_map = {
         'code': {'key': 'code', 'type': 'str'},
         'message': {'key': 'message', 'type': 'str'},
+        'inner_error': {'key': 'innererror', 'type': 'Error'},
     }
 
     def __init__(self):
         self.code = None
         self.message = None
+        self.inner_error = None

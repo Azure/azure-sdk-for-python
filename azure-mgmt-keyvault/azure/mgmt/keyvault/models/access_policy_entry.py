@@ -29,7 +29,7 @@ class AccessPolicyEntry(Model):
     :param permissions: Permissions the identity has for keys, secrets and
      certificates.
     :type permissions: :class:`Permissions
-     <azure.mgmt.keyvault.models.Permissions>`
+     <Azure.mgmt.keyvault.models.Permissions>`
     """ 
 
     _validation = {

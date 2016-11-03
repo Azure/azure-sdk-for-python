@@ -22,7 +22,7 @@ class KeyItem(Model):
     :type kid: str
     :param attributes: The key management attributes
     :type attributes: :class:`KeyAttributes
-     <azure.keyvault.models.KeyAttributes>`
+     <Azure.keyvault.generated.models.KeyAttributes>`
     :param tags: Application-specific metadata in the form of key-value pairs
     :type tags: dict
     :ivar managed: True if the key's lifetime is managed by key vault i.e. if

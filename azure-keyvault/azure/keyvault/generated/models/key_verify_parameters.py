@@ -20,7 +20,7 @@ class KeyVerifyParameters(Model):
      JsonWebKeySignatureAlgorithm. Possible values include: 'RS256', 'RS384',
      'RS512', 'RSNULL'
     :type algorithm: str or :class:`JsonWebKeySignatureAlgorithm
-     <azure.keyvault.models.JsonWebKeySignatureAlgorithm>`
+     <Azure.keyvault.generated.models.JsonWebKeySignatureAlgorithm>`
     :param digest: The digest used for signing
     :type digest: bytes
     :param signature: The signature to be verified

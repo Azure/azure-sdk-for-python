@@ -22,12 +22,12 @@ class VaultProperties(Model):
      used for authenticating requests to the key vault.
     :type tenant_id: str
     :param sku: SKU details
-    :type sku: :class:`Sku <azure.mgmt.keyvault.models.Sku>`
+    :type sku: :class:`Sku <Azure.mgmt.keyvault.models.Sku>`
     :param access_policies: An array of 0 to 16 identities that have access
      to the key vault. All identities in the array must use the same tenant
      ID as the key vault's tenant ID.
     :type access_policies: list of :class:`AccessPolicyEntry
-     <azure.mgmt.keyvault.models.AccessPolicyEntry>`
+     <Azure.mgmt.keyvault.models.AccessPolicyEntry>`
     :param enabled_for_deployment: Property to specify whether Azure Virtual
      Machines are permitted to retrieve certificates stored as secrets from
      the key vault.
