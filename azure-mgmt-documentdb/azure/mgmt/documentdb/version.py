@@ -9,10 +9,5 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .document_db import DocumentDB
-from .version import VERSION
-
-__all__ = ['DocumentDB']
-
-__version__ = VERSION
+VERSION = "0.1.0"
 

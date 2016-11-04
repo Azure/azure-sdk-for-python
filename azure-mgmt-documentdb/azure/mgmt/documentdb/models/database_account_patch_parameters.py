@@ -9,10 +9,23 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .document_db import DocumentDB
-from .version import VERSION
+from msrest.serialization import Model
 
-__all__ = ['DocumentDB']
 
-__version__ = VERSION
+class DatabaseAccountPatchParameters(Model):
+    """Parameters for patching Azure DocumentDB database account properties.
 
+    :param tags:
+    :type tags: dict
+    """ 
+
+    _validation = {
+        'tags': {'required': True},
+    }
+
+    _attribute_map = {
+        'tags': {'key': 'tags', 'type': '{str}'},
+    }
+
+    def __init__(self, tags):
+        self.tags = tags

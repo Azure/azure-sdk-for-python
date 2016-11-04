@@ -9,10 +9,8 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .document_db import DocumentDB
-from .version import VERSION
+from .database_accounts_operations import DatabaseAccountsOperations
 
-__all__ = ['DocumentDB']
-
-__version__ = VERSION
-
+__all__ = [
+    'DatabaseAccountsOperations',
+]

@@ -9,10 +9,19 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .document_db import DocumentDB
-from .version import VERSION
+from msrest.paging import Paged
 
-__all__ = ['DocumentDB']
 
-__version__ = VERSION
+class DatabaseAccountPaged(Paged):
+    """
+    A paging container for iterating over a list of DatabaseAccount object
+    """
 
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[DatabaseAccount]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(DatabaseAccountPaged, self).__init__(*args, **kwargs)
