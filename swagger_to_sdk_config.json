@@ -2,7 +2,7 @@
   "meta": {
     "version": "0.1.0",
     "language": "Python",
-    "autorest": "0.17.0-Nightly20161018",
+    "autorest": "latest",
     "autorest_options": {
       "Header": "MICROSOFT_MIT_NO_VERSION",
       "AddCredentials": true,
