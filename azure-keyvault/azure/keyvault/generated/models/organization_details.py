@@ -19,7 +19,7 @@ class OrganizationDetails(Model):
     :type id: str
     :param admin_details: Details of the organization administrator.
     :type admin_details: list of :class:`AdministratorDetails
-     <Azure.keyvault.generated.models.AdministratorDetails>`
+     <azure.keyvault.generated.models.AdministratorDetails>`
     """ 
 
     _attribute_map = {

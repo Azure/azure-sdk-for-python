@@ -23,7 +23,7 @@ class CertificateOperation(Model):
     :param issuer_parameters: Parameters for the issuer of the X509 component
      of a certificate.
     :type issuer_parameters: :class:`IssuerParameters
-     <Azure.keyvault.generated.models.IssuerParameters>`
+     <azure.keyvault.generated.models.IssuerParameters>`
     :param csr: The Certificate Signing Request (CSR) that is being used in
      the certificate operation.
     :type csr: bytearray
@@ -35,7 +35,7 @@ class CertificateOperation(Model):
     :param status_details: The status details of the certificate operation.
     :type status_details: str
     :param error: Error encountered, if any, during the certificate operation.
-    :type error: :class:`Error <Azure.keyvault.generated.models.Error>`
+    :type error: :class:`Error <azure.keyvault.generated.models.Error>`
     :param target: Location which contains the result of the certificate
      operation.
     :type target: str

@@ -22,10 +22,10 @@ class X509CertificateProperties(Model):
     :type ekus: list of str
     :param subject_alternative_names: The subject alternative names.
     :type subject_alternative_names: :class:`SubjectAlternativeNames
-     <Azure.keyvault.generated.models.SubjectAlternativeNames>`
+     <azure.keyvault.generated.models.SubjectAlternativeNames>`
     :param key_usage: List of key usages.
     :type key_usage: list of str or :class:`KeyUsageType
-     <Azure.keyvault.generated.models.KeyUsageType>`
+     <azure.keyvault.generated.models.KeyUsageType>`
     :param validity_in_months: The duration that the ceritifcate is valid in
      months.
     :type validity_in_months: int

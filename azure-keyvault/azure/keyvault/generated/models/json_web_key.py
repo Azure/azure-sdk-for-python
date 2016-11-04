@@ -21,7 +21,7 @@ class JsonWebKey(Model):
      HSM, Octet, usually RSA. Possible values include: 'EC', 'RSA',
      'RSA-HSM', 'oct'
     :type kty: str or :class:`JsonWebKeyType
-     <Azure.keyvault.generated.models.JsonWebKeyType>`
+     <azure.keyvault.generated.models.JsonWebKeyType>`
     :param key_ops:
     :type key_ops: list of str
     :param n: RSA modulus
