@@ -20,10 +20,10 @@ class KeyBundle(Model):
 
     :param key: The Json web key
     :type key: :class:`JsonWebKey
-     <Azure.keyvault.generated.models.JsonWebKey>`
+     <azure.keyvault.generated.models.JsonWebKey>`
     :param attributes: The key management attributes
     :type attributes: :class:`KeyAttributes
-     <Azure.keyvault.generated.models.KeyAttributes>`
+     <azure.keyvault.generated.models.KeyAttributes>`
     :param tags: Application-specific metadata in the form of key-value pairs
     :type tags: dict
     :ivar managed: True if the key's lifetime is managed by key vault i.e. if

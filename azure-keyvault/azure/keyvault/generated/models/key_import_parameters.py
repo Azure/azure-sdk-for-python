@@ -19,10 +19,10 @@ class KeyImportParameters(Model):
     :type hsm: bool
     :param key: The Json web key
     :type key: :class:`JsonWebKey
-     <Azure.keyvault.generated.models.JsonWebKey>`
+     <azure.keyvault.generated.models.JsonWebKey>`
     :param key_attributes: The key management attributes
     :type key_attributes: :class:`KeyAttributes
-     <Azure.keyvault.generated.models.KeyAttributes>`
+     <azure.keyvault.generated.models.KeyAttributes>`
     :param tags: Application-specific metadata in the form of key-value pairs
     :type tags: dict
     """ 

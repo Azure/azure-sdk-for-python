@@ -22,7 +22,7 @@ class SecretItem(Model):
     :type id: str
     :param attributes: The secret management attributes
     :type attributes: :class:`SecretAttributes
-     <Azure.keyvault.generated.models.SecretAttributes>`
+     <azure.keyvault.generated.models.SecretAttributes>`
     :param tags: Application-specific metadata in the form of key-value pairs
     :type tags: dict
     :param content_type: Type of the secret value such as a password

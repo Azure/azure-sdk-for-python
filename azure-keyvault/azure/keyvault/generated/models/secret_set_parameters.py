@@ -23,7 +23,7 @@ class SecretSetParameters(Model):
     :type content_type: str
     :param secret_attributes: The secret management attributes
     :type secret_attributes: :class:`SecretAttributes
-     <Azure.keyvault.generated.models.SecretAttributes>`
+     <azure.keyvault.generated.models.SecretAttributes>`
     """ 
 
     _validation = {

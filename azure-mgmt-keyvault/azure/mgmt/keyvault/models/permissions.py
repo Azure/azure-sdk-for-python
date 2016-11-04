@@ -17,13 +17,13 @@ class Permissions(Model):
 
     :param keys: Permissions to keys
     :type keys: list of str or :class:`KeyPermissions
-     <Azure.mgmt.keyvault.models.KeyPermissions>`
+     <azure.mgmt.keyvault.models.KeyPermissions>`
     :param secrets: Permissions to secrets
     :type secrets: list of str or :class:`SecretPermissions
-     <Azure.mgmt.keyvault.models.SecretPermissions>`
+     <azure.mgmt.keyvault.models.SecretPermissions>`
     :param certificates: Permissions to certificates
     :type certificates: list of str or :class:`CertificatePermissions
-     <Azure.mgmt.keyvault.models.CertificatePermissions>`
+     <azure.mgmt.keyvault.models.CertificatePermissions>`
     """ 
 
     _attribute_map = {

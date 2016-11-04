@@ -24,7 +24,7 @@ class Error(Model):
     :vartype message: str
     :ivar inner_error:
     :vartype inner_error: :class:`Error
-     <Azure.keyvault.generated.models.Error>`
+     <azure.keyvault.generated.models.Error>`
     """ 
 
     _validation = {

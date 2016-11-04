@@ -19,7 +19,7 @@ class CertificateItem(Model):
     :type id: str
     :param attributes: The certificate management attributes
     :type attributes: :class:`CertificateAttributes
-     <Azure.keyvault.generated.models.CertificateAttributes>`
+     <azure.keyvault.generated.models.CertificateAttributes>`
     :param tags: Application-specific metadata in the form of key-value pairs
     :type tags: dict
     :param x509_thumbprint: Thumbprint of the certificate.

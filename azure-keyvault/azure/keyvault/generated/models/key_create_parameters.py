@@ -19,15 +19,15 @@ class KeyCreateParameters(Model):
      JsonWebKeyType. Supported JsonWebKey key types (kty) for Elliptic Curve,
      RSA, HSM, Octet. Possible values include: 'EC', 'RSA', 'RSA-HSM', 'oct'
     :type kty: str or :class:`JsonWebKeyType
-     <Azure.keyvault.generated.models.JsonWebKeyType>`
+     <azure.keyvault.generated.models.JsonWebKeyType>`
     :param key_size: The key size in bytes. e.g. 1024 or 2048.
     :type key_size: int
     :param key_ops:
     :type key_ops: list of str or :class:`JsonWebKeyOperation
-     <Azure.keyvault.generated.models.JsonWebKeyOperation>`
+     <azure.keyvault.generated.models.JsonWebKeyOperation>`
     :param key_attributes:
     :type key_attributes: :class:`KeyAttributes
-     <Azure.keyvault.generated.models.KeyAttributes>`
+     <azure.keyvault.generated.models.KeyAttributes>`
     :param tags: Application-specific metadata in the form of key-value pairs
     :type tags: dict
     """ 

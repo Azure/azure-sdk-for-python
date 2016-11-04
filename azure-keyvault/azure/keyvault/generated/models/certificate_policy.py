@@ -22,25 +22,25 @@ class CertificatePolicy(Model):
     :vartype id: str
     :param key_properties: Properties of the key backing a certificate.
     :type key_properties: :class:`KeyProperties
-     <Azure.keyvault.generated.models.KeyProperties>`
+     <azure.keyvault.generated.models.KeyProperties>`
     :param secret_properties: Properties of the secret backing a certificate.
     :type secret_properties: :class:`SecretProperties
-     <Azure.keyvault.generated.models.SecretProperties>`
+     <azure.keyvault.generated.models.SecretProperties>`
     :param x509_certificate_properties: Properties of the X509 component of a
      certificate.
     :type x509_certificate_properties: :class:`X509CertificateProperties
-     <Azure.keyvault.generated.models.X509CertificateProperties>`
+     <azure.keyvault.generated.models.X509CertificateProperties>`
     :param lifetime_actions: Actions that will be performed by Key Vault over
      the lifetime of a certificate.
     :type lifetime_actions: list of :class:`LifetimeAction
-     <Azure.keyvault.generated.models.LifetimeAction>`
+     <azure.keyvault.generated.models.LifetimeAction>`
     :param issuer_parameters: Parameters for the issuer of the X509 component
      of a certificate.
     :type issuer_parameters: :class:`IssuerParameters
-     <Azure.keyvault.generated.models.IssuerParameters>`
+     <azure.keyvault.generated.models.IssuerParameters>`
     :param attributes: The certificate attributes.
     :type attributes: :class:`CertificateAttributes
-     <Azure.keyvault.generated.models.CertificateAttributes>`
+     <azure.keyvault.generated.models.CertificateAttributes>`
     """ 
 
     _validation = {
