@@ -18,15 +18,15 @@ class VirtualNetworkGatewayConnection(Resource):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :param id: Resource Id
+    :param id: Resource ID.
     :type id: str
-    :ivar name: Resource name
+    :ivar name: Resource name.
     :vartype name: str
-    :ivar type: Resource type
+    :ivar type: Resource type.
     :vartype type: str
-    :param location: Resource location
+    :param location: Resource location.
     :type location: str
-    :param tags: Resource tags
+    :param tags: Resource tags.
     :type tags: dict
     :param authorization_key: The authorizationKey.
     :type authorization_key: str
@@ -39,18 +39,19 @@ class VirtualNetworkGatewayConnection(Resource):
     :param local_network_gateway2:
     :type local_network_gateway2: :class:`LocalNetworkGateway
      <azure.mgmt.network.models.LocalNetworkGateway>`
-    :param connection_type: Gateway connection type
-     -Ipsec/Dedicated/VpnClient/Vnet2Vnet. Possible values include: 'IPsec',
-     'Vnet2Vnet', 'ExpressRoute', 'VPNClient'
+    :param connection_type: Gateway connection type. Possible values are:
+     'Ipsec','Vnet2Vnet','ExpressRoute', and 'VPNClient. Possible values
+     include: 'IPsec', 'Vnet2Vnet', 'ExpressRoute', 'VPNClient'
     :type connection_type: str or :class:`VirtualNetworkGatewayConnectionType
      <azure.mgmt.network.models.VirtualNetworkGatewayConnectionType>`
-    :param routing_weight: The Routing weight.
+    :param routing_weight: The routing weight.
     :type routing_weight: int
-    :param shared_key: The Ipsec share key.
+    :param shared_key: The IPSec shared key.
     :type shared_key: str
     :ivar connection_status: Virtual network Gateway connection status.
-     Possible values include: 'Unknown', 'Connecting', 'Connected',
-     'NotConnected'
+     Possible values are 'Unknown', 'Connecting', 'Connected' and
+     'NotConnected'. Possible values include: 'Unknown', 'Connecting',
+     'Connected', 'NotConnected'
     :vartype connection_status: str or
      :class:`VirtualNetworkGatewayConnectionStatus
      <azure.mgmt.network.models.VirtualNetworkGatewayConnectionStatus>`
@@ -58,24 +59,25 @@ class VirtualNetworkGatewayConnection(Resource):
      health status.
     :vartype tunnel_connection_status: list of :class:`TunnelConnectionHealth
      <azure.mgmt.network.models.TunnelConnectionHealth>`
-    :ivar egress_bytes_transferred: The Egress Bytes Transferred in this
-     connection
+    :ivar egress_bytes_transferred: The egress bytes transferred in this
+     connection.
     :vartype egress_bytes_transferred: long
-    :ivar ingress_bytes_transferred: The Ingress Bytes Transferred in this
-     connection
+    :ivar ingress_bytes_transferred: The ingress bytes transferred in this
+     connection.
     :vartype ingress_bytes_transferred: long
     :param peer: The reference to peerings resource.
     :type peer: :class:`SubResource <azure.mgmt.network.models.SubResource>`
-    :param enable_bgp: EnableBgp Flag
+    :param enable_bgp: EnableBgp flag
     :type enable_bgp: bool
-    :param resource_guid: Gets or sets resource guid property of the
-     VirtualNetworkGatewayConnection resource
+    :param resource_guid: The resource GUID property of the
+     VirtualNetworkGatewayConnection resource.
     :type resource_guid: str
-    :ivar provisioning_state: Gets provisioning state of the
-     VirtualNetworkGatewayConnection resource Updating/Deleting/Failed
+    :ivar provisioning_state: The provisioning state of the
+     VirtualNetworkGatewayConnection resource. Possible values are:
+     'Updating', 'Deleting', and 'Failed'.
     :vartype provisioning_state: str
     :param etag: Gets a unique read-only string that changes whenever the
-     resource is updated
+     resource is updated.
     :type etag: str
     """ 
 

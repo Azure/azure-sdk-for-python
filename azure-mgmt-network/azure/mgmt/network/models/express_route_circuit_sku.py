@@ -13,15 +13,16 @@ from msrest.serialization import Model
 
 
 class ExpressRouteCircuitSku(Model):
-    """Contains sku in an ExpressRouteCircuit.
+    """Contains SKU in an ExpressRouteCircuit.
 
-    :param name: Gets or sets name of the sku.
+    :param name: The name of the SKU.
     :type name: str
-    :param tier: Gets or sets tier of the sku. Possible values include:
-     'Standard', 'Premium'
+    :param tier: The tier of the SKU. Possible values are 'Standard' and
+     'Premium'. Possible values include: 'Standard', 'Premium'
     :type tier: str or :class:`ExpressRouteCircuitSkuTier
      <azure.mgmt.network.models.ExpressRouteCircuitSkuTier>`
-    :param family: Gets or sets family of the sku. Possible values include:
+    :param family: The family of the SKU. Possible values are:
+     'UnlimitedData' and 'MeteredData'. Possible values include:
      'UnlimitedData', 'MeteredData'
     :type family: str or :class:`ExpressRouteCircuitSkuFamily
      <azure.mgmt.network.models.ExpressRouteCircuitSkuFamily>`

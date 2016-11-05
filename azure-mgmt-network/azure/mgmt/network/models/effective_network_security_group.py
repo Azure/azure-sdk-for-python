@@ -13,17 +13,16 @@ from msrest.serialization import Model
 
 
 class EffectiveNetworkSecurityGroup(Model):
-    """Effective NetworkSecurityGroup.
+    """Effective network security group.
 
-    :param network_security_group: Gets the id of network security group that
-     is applied
+    :param network_security_group: The ID of network security group that is
+     applied.
     :type network_security_group: :class:`SubResource
      <azure.mgmt.network.models.SubResource>`
     :param association:
     :type association: :class:`EffectiveNetworkSecurityGroupAssociation
      <azure.mgmt.network.models.EffectiveNetworkSecurityGroupAssociation>`
-    :param effective_security_rules: Gets collection of effective security
-     rules
+    :param effective_security_rules: A collection of effective security rules.
     :type effective_security_rules: list of
      :class:`EffectiveNetworkSecurityRule
      <azure.mgmt.network.models.EffectiveNetworkSecurityRule>`

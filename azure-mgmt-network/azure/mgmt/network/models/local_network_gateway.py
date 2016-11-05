@@ -18,32 +18,33 @@ class LocalNetworkGateway(Resource):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :param id: Resource Id
+    :param id: Resource ID.
     :type id: str
-    :ivar name: Resource name
+    :ivar name: Resource name.
     :vartype name: str
-    :ivar type: Resource type
+    :ivar type: Resource type.
     :vartype type: str
-    :param location: Resource location
+    :param location: Resource location.
     :type location: str
-    :param tags: Resource tags
+    :param tags: Resource tags.
     :type tags: dict
-    :param local_network_address_space: Local network site Address space
+    :param local_network_address_space: Local network site address space.
     :type local_network_address_space: :class:`AddressSpace
      <azure.mgmt.network.models.AddressSpace>`
     :param gateway_ip_address: IP address of local network gateway.
     :type gateway_ip_address: str
-    :param bgp_settings: Local network gateway's BGP speaker settings
+    :param bgp_settings: Local network gateway's BGP speaker settings.
     :type bgp_settings: :class:`BgpSettings
      <azure.mgmt.network.models.BgpSettings>`
-    :param resource_guid: Gets or sets resource guid property of the
-     LocalNetworkGateway resource
+    :param resource_guid: The resource GUID property of the
+     LocalNetworkGateway resource.
     :type resource_guid: str
-    :ivar provisioning_state: Gets provisioning state of the
-     LocalNetworkGateway resource Updating/Deleting/Failed
+    :ivar provisioning_state: The provisioning state of the
+     LocalNetworkGateway resource. Possible values are: 'Updating',
+     'Deleting', and 'Failed'.
     :vartype provisioning_state: str
-    :param etag: Gets a unique read-only string that changes whenever the
-     resource is updated
+    :param etag: A unique read-only string that changes whenever the resource
+     is updated.
     :type etag: str
     """ 
 

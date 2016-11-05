@@ -14,12 +14,12 @@ from msrest.serialization import Model
 
 class ExpressRouteCircuitsRoutesTableSummaryListResult(Model):
     """Response for ListRoutesTable associated with the Express Route Circuits
-    Api.
+    API.
 
-    :param value: Gets List of RoutesTable
+    :param value: A list of the routes table.
     :type value: list of :class:`ExpressRouteCircuitRoutesTableSummary
      <azure.mgmt.network.models.ExpressRouteCircuitRoutesTableSummary>`
-    :param next_link: Gets the URL to get the next set of results.
+    :param next_link: The URL to get the next set of results.
     :type next_link: str
     """ 
 

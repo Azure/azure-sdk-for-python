@@ -13,19 +13,28 @@ from msrest.serialization import Model
 
 
 class NetworkInterfaceDnsSettings(Model):
-    """Dns settings of a network interface.
+    """DNS settings of a network interface.
 
-    :param dns_servers: Gets or sets list of DNS servers IP addresses
+    :param dns_servers: List of DNS servers IP addresses. Use
+     'AzureProvidedDNS' to switch to azure provided DNS resolution.
+     'AzureProvidedDNS' value cannot be combined with other IPs, it must be
+     the only value in dnsServers collection.
     :type dns_servers: list of str
-    :param applied_dns_servers: Gets or sets list of Applied DNS servers IP
-     addresses
+    :param applied_dns_servers: If the VM that uses this NIC is part of an
+     Availability Set, then this list will have the union of all DNS servers
+     from all NICs that are part of the Availability Set. This property is
+     what is configured on each of those VMs.
     :type applied_dns_servers: list of str
-    :param internal_dns_name_label: Gets or sets the internal DNS name
+    :param internal_dns_name_label: Relative DNS name for this NIC used for
+     internal communications between VMs in the same virtual network.
     :type internal_dns_name_label: str
-    :param internal_fqdn: Gets or sets the internal fqdn.
+    :param internal_fqdn: Fully qualified DNS name supporting internal
+     communications between VMs in the same virtual network.
     :type internal_fqdn: str
-    :param internal_domain_name_suffix: Gets or sets internal domain name
-     suffix of the NIC.
+    :param internal_domain_name_suffix: Even if internalDnsNameLabel is not
+     specified, a DNS entry is created for the primary NIC of the VM. This
+     DNS name can be constructed by concatenating the VM name with the value
+     of internalDomainNameSuffix.
     :type internal_domain_name_suffix: str
     """ 
 

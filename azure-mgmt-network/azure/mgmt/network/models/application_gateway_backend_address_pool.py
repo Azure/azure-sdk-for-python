@@ -13,12 +13,12 @@ from .sub_resource import SubResource
 
 
 class ApplicationGatewayBackendAddressPool(SubResource):
-    """Backend Address Pool of application gateway.
+    """Backend Address Pool of an application gateway.
 
-    :param id: Resource Id
+    :param id: Resource ID.
     :type id: str
     :param backend_ip_configurations: Collection of references to IPs defined
-     in NICs
+     in network interfaces.
     :type backend_ip_configurations: list of
      :class:`NetworkInterfaceIPConfiguration
      <azure.mgmt.network.models.NetworkInterfaceIPConfiguration>`
@@ -26,13 +26,13 @@ class ApplicationGatewayBackendAddressPool(SubResource):
     :type backend_addresses: list of :class:`ApplicationGatewayBackendAddress
      <azure.mgmt.network.models.ApplicationGatewayBackendAddress>`
     :param provisioning_state: Provisioning state of the backend address pool
-     resource Updating/Deleting/Failed
+     resource. Possible values are: 'Updating', 'Deleting', and 'Failed'.
     :type provisioning_state: str
     :param name: Resource that is unique within a resource group. This name
-     can be used to access the resource
+     can be used to access the resource.
     :type name: str
     :param etag: A unique read-only string that changes whenever the resource
-     is updated
+     is updated.
     :type etag: str
     """ 
 

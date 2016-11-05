@@ -73,8 +73,8 @@ class ApplicationGatewayCookieBasedAffinity(Enum):
 class ApplicationGatewayBackendHealthServerHealth(Enum):
 
     unknown = "Unknown"
-    healthy = "Healthy"
-    unhealthy = "Unhealthy"
+    up = "Up"
+    down = "Down"
     partial = "Partial"
 
 

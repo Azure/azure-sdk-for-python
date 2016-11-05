@@ -13,20 +13,21 @@ from .sub_resource import SubResource
 
 
 class ApplicationGatewayAuthenticationCertificate(SubResource):
-    """Authentication certificates of application gateway.
+    """Authentication certificates of an application gateway.
 
-    :param id: Resource Id
+    :param id: Resource ID.
     :type id: str
-    :param data: Certificate public data
+    :param data: Certificate public data.
     :type data: str
     :param provisioning_state: Provisioning state of the authentication
-     certificate resource Updating/Deleting/Failed
+     certificate resource. Possible values are: 'Updating', 'Deleting', and
+     'Failed'.
     :type provisioning_state: str
     :param name: Name of the resource that is unique within a resource group.
-     This name can be used to access the resource
+     This name can be used to access the resource.
     :type name: str
     :param etag: A unique read-only string that changes whenever the resource
-     is updated
+     is updated.
     :type etag: str
     """ 
 

@@ -13,37 +13,37 @@ from .sub_resource import SubResource
 
 
 class Subnet(SubResource):
-    """Subnet in a VirtualNework resource.
+    """Subnet in a virtual network resource.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :param id: Resource Id
+    :param id: Resource ID.
     :type id: str
-    :param address_prefix: Gets or sets Address prefix for the subnet.
+    :param address_prefix: The address prefix for the subnet.
     :type address_prefix: str
-    :param network_security_group: Gets or sets the reference of the
-     NetworkSecurityGroup resource
+    :param network_security_group: The reference of the NetworkSecurityGroup
+     resource.
     :type network_security_group: :class:`NetworkSecurityGroup
      <azure.mgmt.network.models.NetworkSecurityGroup>`
-    :param route_table: Gets or sets the reference of the RouteTable resource
+    :param route_table: The reference of the RouteTable resource.
     :type route_table: :class:`RouteTable
      <azure.mgmt.network.models.RouteTable>`
-    :ivar ip_configurations: Gets array of references to the network
-     interface IP configurations using subnet
+    :ivar ip_configurations: Gets an array of references to the network
+     interface IP configurations using subnet.
     :vartype ip_configurations: list of :class:`IPConfiguration
      <azure.mgmt.network.models.IPConfiguration>`
-    :param resource_navigation_links: Gets array of references to the
-     external resources using subnet
+    :param resource_navigation_links: Gets an array of references to the
+     external resources using subnet.
     :type resource_navigation_links: list of :class:`ResourceNavigationLink
      <azure.mgmt.network.models.ResourceNavigationLink>`
-    :param provisioning_state: Gets provisioning state of the resource
+    :param provisioning_state: The provisioning state of the resource.
     :type provisioning_state: str
-    :param name: Gets or sets the name of the resource that is unique within
-     a resource group. This name can be used to access the resource
+    :param name: The name of the resource that is unique within a resource
+     group. This name can be used to access the resource.
     :type name: str
     :param etag: A unique read-only string that changes whenever the resource
-     is updated
+     is updated.
     :type etag: str
     """ 
 

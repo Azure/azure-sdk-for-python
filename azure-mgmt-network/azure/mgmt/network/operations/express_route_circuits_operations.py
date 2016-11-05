@@ -36,12 +36,11 @@ class ExpressRouteCircuitsOperations(object):
 
     def delete(
             self, resource_group_name, circuit_name, custom_headers=None, raw=False, **operation_config):
-        """The delete ExpressRouteCircuit operation deletes the specified
-        ExpressRouteCircuit.
+        """Deletes the specified express route circuit.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
-        :param circuit_name: The name of the express route Circuit.
+        :param circuit_name: The name of the express route circuit.
         :type circuit_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -114,12 +113,11 @@ class ExpressRouteCircuitsOperations(object):
 
     def get(
             self, resource_group_name, circuit_name, custom_headers=None, raw=False, **operation_config):
-        """The Get ExpressRouteCircuit operation retrieves information about the
-        specified ExpressRouteCircuit.
+        """Gets information about the specified express route circuit.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
-        :param circuit_name: The name of the circuit.
+        :param circuit_name: The name of express route circuit.
         :type circuit_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -177,15 +175,14 @@ class ExpressRouteCircuitsOperations(object):
 
     def create_or_update(
             self, resource_group_name, circuit_name, parameters, custom_headers=None, raw=False, **operation_config):
-        """The Put ExpressRouteCircuit operation creates/updates a
-        ExpressRouteCircuit.
+        """Creates or updates an express route circuit.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
         :param circuit_name: The name of the circuit.
         :type circuit_name: str
-        :param parameters: Parameters supplied to the create/delete
-         ExpressRouteCircuit operation
+        :param parameters: Parameters supplied to the create or update
+         express route circuit operation.
         :type parameters: :class:`ExpressRouteCircuit
          <azure.mgmt.network.models.ExpressRouteCircuit>`
         :param dict custom_headers: headers that will be added to the request
@@ -273,13 +270,12 @@ class ExpressRouteCircuitsOperations(object):
 
     def list_arp_table(
             self, resource_group_name, circuit_name, peering_name, device_path, custom_headers=None, raw=False, **operation_config):
-        """The ListArpTable from ExpressRouteCircuit operation retrieves the
-        currently advertised arp table associated with the
-        ExpressRouteCircuits in a resource group.
+        """Gets the currently advertised ARP table associated with the express
+        route circuit in a resource group.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
-        :param circuit_name: The name of the circuit.
+        :param circuit_name: The name of the express route circuit.
         :type circuit_name: str
         :param peering_name: The name of the peering.
         :type peering_name: str
@@ -366,13 +362,12 @@ class ExpressRouteCircuitsOperations(object):
 
     def list_routes_table(
             self, resource_group_name, circuit_name, peering_name, device_path, custom_headers=None, raw=False, **operation_config):
-        """The ListRoutesTable from ExpressRouteCircuit operation retrieves the
-        currently advertised routes table associated with the
-        ExpressRouteCircuits in a resource group.
+        """Gets the currently advertised routes table associated with the express
+        route circuit in a resource group.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
-        :param circuit_name: The name of the circuit.
+        :param circuit_name: The name of the express route circuit.
         :type circuit_name: str
         :param peering_name: The name of the peering.
         :type peering_name: str
@@ -460,13 +455,12 @@ class ExpressRouteCircuitsOperations(object):
 
     def list_routes_table_summary(
             self, resource_group_name, circuit_name, peering_name, device_path, custom_headers=None, raw=False, **operation_config):
-        """The ListRoutesTable from ExpressRouteCircuit operation retrieves the
-        currently advertised routes table associated with the
-        ExpressRouteCircuits in a resource group.
+        """Gets the currently advertised routes table summary associated with the
+        express route circuit in a resource group.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
-        :param circuit_name: The name of the circuit.
+        :param circuit_name: The name of the express route circuit.
         :type circuit_name: str
         :param peering_name: The name of the peering.
         :type peering_name: str
@@ -554,12 +548,11 @@ class ExpressRouteCircuitsOperations(object):
 
     def get_stats(
             self, resource_group_name, circuit_name, custom_headers=None, raw=False, **operation_config):
-        """The List stats ExpressRouteCircuit operation retrieves all the stats
-        from a ExpressRouteCircuits in a resource group.
+        """Gets all the stats from an express route circuit in a resource group.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
-        :param circuit_name: The name of the circuit.
+        :param circuit_name: The name of the express route circuit.
         :type circuit_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -617,12 +610,11 @@ class ExpressRouteCircuitsOperations(object):
 
     def get_peering_stats(
             self, resource_group_name, circuit_name, peering_name, custom_headers=None, raw=False, **operation_config):
-        """The List stats ExpressRouteCircuit operation retrieves all the stats
-        from a ExpressRouteCircuits in a resource group.
+        """Gets all stats from an express route circuit in a resource group.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
-        :param circuit_name: The name of the circuit.
+        :param circuit_name: The name of the express route circuit.
         :type circuit_name: str
         :param peering_name: The name of the peering.
         :type peering_name: str
@@ -683,8 +675,7 @@ class ExpressRouteCircuitsOperations(object):
 
     def list(
             self, resource_group_name, custom_headers=None, raw=False, **operation_config):
-        """The List ExpressRouteCircuit operation retrieves all the
-        ExpressRouteCircuits in a resource group.
+        """Gets all the express route circuits in a resource group.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
@@ -750,8 +741,7 @@ class ExpressRouteCircuitsOperations(object):
 
     def list_all(
             self, custom_headers=None, raw=False, **operation_config):
-        """The List ExpressRouteCircuit operation retrieves all the
-        ExpressRouteCircuits in a subscription.
+        """Gets all the express route circuits in a subscription.
 
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
