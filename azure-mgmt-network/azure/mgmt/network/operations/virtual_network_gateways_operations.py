@@ -36,17 +36,16 @@ class VirtualNetworkGatewaysOperations(object):
 
     def create_or_update(
             self, resource_group_name, virtual_network_gateway_name, parameters, custom_headers=None, raw=False, **operation_config):
-        """The Put VirtualNetworkGateway operation creates/updates a virtual
-        network gateway in the specified resource group through Network
-        resource provider.
+        """Creates or updates a virtual network gateway in the specified resource
+        group.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
         :param virtual_network_gateway_name: The name of the virtual network
          gateway.
         :type virtual_network_gateway_name: str
-        :param parameters: Parameters supplied to the Begin Create or update
-         Virtual Network Gateway operation through Network resource provider.
+        :param parameters: Parameters supplied to create or update virtual
+         network gateway operation.
         :type parameters: :class:`VirtualNetworkGateway
          <azure.mgmt.network.models.VirtualNetworkGateway>`
         :param dict custom_headers: headers that will be added to the request
@@ -134,9 +133,7 @@ class VirtualNetworkGatewaysOperations(object):
 
     def get(
             self, resource_group_name, virtual_network_gateway_name, custom_headers=None, raw=False, **operation_config):
-        """The Get VirtualNetworkGateway operation retrieves information about
-        the specified virtual network gateway through Network resource
-        provider.
+        """Gets the specified virtual network gateway by resource group.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
@@ -199,8 +196,7 @@ class VirtualNetworkGatewaysOperations(object):
 
     def delete(
             self, resource_group_name, virtual_network_gateway_name, custom_headers=None, raw=False, **operation_config):
-        """The Delete VirtualNetworkGateway operation deletes the specified
-        virtual network Gateway through Network resource provider.
+        """Deletes the specified virtual network gateway.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
@@ -278,8 +274,7 @@ class VirtualNetworkGatewaysOperations(object):
 
     def list(
             self, resource_group_name, custom_headers=None, raw=False, **operation_config):
-        """The List VirtualNetworkGateways operation retrieves all the virtual
-        network gateways stored.
+        """Gets all virtual network gateways by resource group.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
@@ -345,9 +340,8 @@ class VirtualNetworkGatewaysOperations(object):
 
     def reset(
             self, resource_group_name, virtual_network_gateway_name, gateway_vip=None, custom_headers=None, raw=False, **operation_config):
-        """The Reset VirtualNetworkGateway operation resets the primary of the
-        virtual network gateway in the specified resource group through
-        Network resource provider.
+        """Resets the primary of the virtual network gateway in the specified
+        resource group.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
@@ -355,7 +349,7 @@ class VirtualNetworkGatewaysOperations(object):
          gateway.
         :type virtual_network_gateway_name: str
         :param gateway_vip: Virtual network gateway vip address supplied to
-         the Begin Reset of Active-Active feature enabled Gateway.
+         the begin reset of the active-active feature enabled gateway.
         :type gateway_vip: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -438,17 +432,17 @@ class VirtualNetworkGatewaysOperations(object):
 
     def generatevpnclientpackage(
             self, resource_group_name, virtual_network_gateway_name, processor_architecture, custom_headers=None, raw=False, **operation_config):
-        """The Generatevpnclientpackage operation generates Vpn client package
-        for P2S client of the virtual network gateway in the specified
-        resource group through Network resource provider.
+        """Generates VPN client package for P2S client of the virtual network
+        gateway in the specified resource group.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
         :param virtual_network_gateway_name: The name of the virtual network
          gateway.
         :type virtual_network_gateway_name: str
-        :param processor_architecture: VPN client Processor Architecture
-         -Amd64/X86. Possible values include: 'Amd64', 'X86'
+        :param processor_architecture: VPN client Processor Architecture.
+         Possible values are: 'AMD64' and 'X86'. Possible values include:
+         'Amd64', 'X86'
         :type processor_architecture: str or :class:`ProcessorArchitecture
          <azure.mgmt.network.models.ProcessorArchitecture>`
         :param dict custom_headers: headers that will be added to the request

@@ -13,53 +13,54 @@ from .resource import Resource
 
 
 class NetworkInterface(Resource):
-    """A NetworkInterface in a resource group.
+    """A network interface in a resource group.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :param id: Resource Id
+    :param id: Resource ID.
     :type id: str
-    :ivar name: Resource name
+    :ivar name: Resource name.
     :vartype name: str
-    :ivar type: Resource type
+    :ivar type: Resource type.
     :vartype type: str
-    :param location: Resource location
+    :param location: Resource location.
     :type location: str
-    :param tags: Resource tags
+    :param tags: Resource tags.
     :type tags: dict
-    :param virtual_machine: Gets or sets the reference of a VirtualMachine
+    :param virtual_machine: The reference of a virtual machine.
     :type virtual_machine: :class:`SubResource
      <azure.mgmt.network.models.SubResource>`
-    :param network_security_group: Gets or sets the reference of the
-     NetworkSecurityGroup resource
+    :param network_security_group: The reference of the NetworkSecurityGroup
+     resource.
     :type network_security_group: :class:`NetworkSecurityGroup
      <azure.mgmt.network.models.NetworkSecurityGroup>`
-    :param ip_configurations: Gets or sets list of IPConfigurations of the
-     network interface
+    :param ip_configurations: A list of IPConfigurations of the network
+     interface.
     :type ip_configurations: list of :class:`NetworkInterfaceIPConfiguration
      <azure.mgmt.network.models.NetworkInterfaceIPConfiguration>`
-    :param dns_settings: Gets or sets DNS settings in network interface
+    :param dns_settings: The DNS settings in network interface.
     :type dns_settings: :class:`NetworkInterfaceDnsSettings
      <azure.mgmt.network.models.NetworkInterfaceDnsSettings>`
-    :param mac_address: Gets the MAC address of the network interface
+    :param mac_address: The MAC address of the network interface.
     :type mac_address: str
-    :param primary: Gets whether this is a primary NIC on a virtual machine
+    :param primary: Gets whether this is a primary network interface on a
+     virtual machine.
     :type primary: bool
-    :param enable_accelerated_networking: Gets or sets if the network
-     interface is accelerated networking enabled
+    :param enable_accelerated_networking: If the network interface is
+     accelerated networking enabled.
     :type enable_accelerated_networking: bool
-    :param enable_ip_forwarding: Gets or sets whether IPForwarding is enabled
-     on the NIC
+    :param enable_ip_forwarding: Indicates whether IP forwarding is enabled
+     on this network interface.
     :type enable_ip_forwarding: bool
-    :param resource_guid: Gets or sets resource guid property of the network
-     interface resource
+    :param resource_guid: The resource GUID property of the network interface
+     resource.
     :type resource_guid: str
-    :param provisioning_state: Gets provisioning state of the PublicIP
-     resource Updating/Deleting/Failed
+    :param provisioning_state: The provisioning state of the public IP
+     resource. Possible values are: 'Updating', 'Deleting', and 'Failed'.
     :type provisioning_state: str
-    :param etag: Gets a unique read-only string that changes whenever the
-     resource is updated
+    :param etag: A unique read-only string that changes whenever the resource
+     is updated.
     :type etag: str
     """ 
 

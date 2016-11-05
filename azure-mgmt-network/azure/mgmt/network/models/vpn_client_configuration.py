@@ -15,11 +15,11 @@ from msrest.serialization import Model
 class VpnClientConfiguration(Model):
     """VpnClientConfiguration for P2S client.
 
-    :param vpn_client_address_pool: Gets or sets the reference of the Address
-     space resource which represents Address space for P2S VpnClient.
+    :param vpn_client_address_pool: The reference of the address space
+     resource which represents Address space for P2S VpnClient.
     :type vpn_client_address_pool: :class:`AddressSpace
      <azure.mgmt.network.models.AddressSpace>`
-    :param vpn_client_root_certificates: VpnClientRootCertificate for Virtual
+    :param vpn_client_root_certificates: VpnClientRootCertificate for virtual
      network gateway.
     :type vpn_client_root_certificates: list of
      :class:`VpnClientRootCertificate

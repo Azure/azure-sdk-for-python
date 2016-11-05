@@ -13,49 +13,49 @@ from .resource import Resource
 
 
 class PublicIPAddress(Resource):
-    """PublicIPAddress resource.
+    """Public IP address resource.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :param id: Resource Id
+    :param id: Resource ID.
     :type id: str
-    :ivar name: Resource name
+    :ivar name: Resource name.
     :vartype name: str
-    :ivar type: Resource type
+    :ivar type: Resource type.
     :vartype type: str
-    :param location: Resource location
+    :param location: Resource location.
     :type location: str
-    :param tags: Resource tags
+    :param tags: Resource tags.
     :type tags: dict
-    :param public_ip_allocation_method: Gets or sets PublicIP allocation
-     method (Static/Dynamic). Possible values include: 'Static', 'Dynamic'
+    :param public_ip_allocation_method: The public IP allocation method.
+     Possible values are: 'Static' and 'Dynamic'. Possible values include:
+     'Static', 'Dynamic'
     :type public_ip_allocation_method: str or :class:`IPAllocationMethod
      <azure.mgmt.network.models.IPAllocationMethod>`
-    :param public_ip_address_version: Gets or sets PublicIP address version
-     (IPv4/IPv6). Possible values include: 'IPv4', 'IPv6'
+    :param public_ip_address_version: The public IP address version. Possible
+     values are: 'IPv4' and 'IPv6'. Possible values include: 'IPv4', 'IPv6'
     :type public_ip_address_version: str or :class:`IPVersion
      <azure.mgmt.network.models.IPVersion>`
     :ivar ip_configuration:
     :vartype ip_configuration: :class:`IPConfiguration
      <azure.mgmt.network.models.IPConfiguration>`
-    :param dns_settings: Gets or sets FQDN of the DNS record associated with
-     the public IP address
+    :param dns_settings: The FQDN of the DNS record associated with the
+     public IP address.
     :type dns_settings: :class:`PublicIPAddressDnsSettings
      <azure.mgmt.network.models.PublicIPAddressDnsSettings>`
     :param ip_address:
     :type ip_address: str
-    :param idle_timeout_in_minutes: Gets or sets the Idletimeout of the
-     public IP address
+    :param idle_timeout_in_minutes: The idle timeout of the public IP address.
     :type idle_timeout_in_minutes: int
-    :param resource_guid: Gets or sets resource guid property of the PublicIP
-     resource
+    :param resource_guid: The resource GUID property of the public IP
+     resource.
     :type resource_guid: str
-    :param provisioning_state: Gets provisioning state of the PublicIP
-     resource Updating/Deleting/Failed
+    :param provisioning_state: The provisioning state of the PublicIP
+     resource. Possible values are: 'Updating', 'Deleting', and 'Failed'.
     :type provisioning_state: str
-    :param etag: Gets a unique read-only string that changes whenever the
-     resource is updated
+    :param etag: A unique read-only string that changes whenever the resource
+     is updated.
     :type etag: str
     """ 
 

@@ -36,8 +36,7 @@ class RoutesOperations(object):
 
     def delete(
             self, resource_group_name, route_table_name, route_name, custom_headers=None, raw=False, **operation_config):
-        """The delete route operation deletes the specified route from a route
-        table.
+        """Deletes the specified route from a route table.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
@@ -117,8 +116,7 @@ class RoutesOperations(object):
 
     def get(
             self, resource_group_name, route_table_name, route_name, custom_headers=None, raw=False, **operation_config):
-        """The Get route operation retrieves information about the specified
-        route from the route table.
+        """Gets the specified route from a route table.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
@@ -182,8 +180,7 @@ class RoutesOperations(object):
 
     def create_or_update(
             self, resource_group_name, route_table_name, route_name, route_parameters, custom_headers=None, raw=False, **operation_config):
-        """The Put route operation creates/updates a route in the specified route
-        table.
+        """Creates or updates a route in the specified route table.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
@@ -191,8 +188,8 @@ class RoutesOperations(object):
         :type route_table_name: str
         :param route_name: The name of the route.
         :type route_name: str
-        :param route_parameters: Parameters supplied to the create/update
-         route operation
+        :param route_parameters: Parameters supplied to the create or update
+         route operation.
         :type route_parameters: :class:`Route
          <azure.mgmt.network.models.Route>`
         :param dict custom_headers: headers that will be added to the request
@@ -281,8 +278,7 @@ class RoutesOperations(object):
 
     def list(
             self, resource_group_name, route_table_name, custom_headers=None, raw=False, **operation_config):
-        """The List network security rule operation retrieves all the routes in a
-        route table.
+        """Gets all routes in a route table.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str

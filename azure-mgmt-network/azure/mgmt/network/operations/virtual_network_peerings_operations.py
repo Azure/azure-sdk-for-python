@@ -36,8 +36,7 @@ class VirtualNetworkPeeringsOperations(object):
 
     def delete(
             self, resource_group_name, virtual_network_name, virtual_network_peering_name, custom_headers=None, raw=False, **operation_config):
-        """The delete virtual network peering operation deletes the specified
-        peering.
+        """Deletes the specified virtual network peering.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
@@ -118,8 +117,7 @@ class VirtualNetworkPeeringsOperations(object):
 
     def get(
             self, resource_group_name, virtual_network_name, virtual_network_peering_name, custom_headers=None, raw=False, **operation_config):
-        """The Get virtual network peering operation retrieves information about
-        the specified virtual network peering.
+        """Gets the specified virtual network peering.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
@@ -185,8 +183,7 @@ class VirtualNetworkPeeringsOperations(object):
 
     def create_or_update(
             self, resource_group_name, virtual_network_name, virtual_network_peering_name, virtual_network_peering_parameters, custom_headers=None, raw=False, **operation_config):
-        """The Put virtual network peering operation creates/updates a peering in
-        the specified virtual network.
+        """Creates or updates a peering in the specified virtual network.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
@@ -195,7 +192,7 @@ class VirtualNetworkPeeringsOperations(object):
         :param virtual_network_peering_name: The name of the peering.
         :type virtual_network_peering_name: str
         :param virtual_network_peering_parameters: Parameters supplied to the
-         create/update virtual network peering operation
+         create or update virtual network peering operation.
         :type virtual_network_peering_parameters:
          :class:`VirtualNetworkPeering
          <azure.mgmt.network.models.VirtualNetworkPeering>`
@@ -285,8 +282,7 @@ class VirtualNetworkPeeringsOperations(object):
 
     def list(
             self, resource_group_name, virtual_network_name, custom_headers=None, raw=False, **operation_config):
-        """The List virtual network peerings operation retrieves all the peerings
-        in a virtual network.
+        """Gets all virtual network peerings in a virtual network.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str

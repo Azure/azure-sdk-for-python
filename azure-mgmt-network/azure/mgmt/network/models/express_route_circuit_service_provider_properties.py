@@ -15,11 +15,11 @@ from msrest.serialization import Model
 class ExpressRouteCircuitServiceProviderProperties(Model):
     """Contains ServiceProviderProperties in an ExpressRouteCircuit.
 
-    :param service_provider_name: Gets or sets serviceProviderName.
+    :param service_provider_name: The serviceProviderName.
     :type service_provider_name: str
-    :param peering_location: Gets or sets peering location.
+    :param peering_location: The peering location.
     :type peering_location: str
-    :param bandwidth_in_mbps: Gets or sets BandwidthInMbps.
+    :param bandwidth_in_mbps: The BandwidthInMbps.
     :type bandwidth_in_mbps: int
     """ 
 

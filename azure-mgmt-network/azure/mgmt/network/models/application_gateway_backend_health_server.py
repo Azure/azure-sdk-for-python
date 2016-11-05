@@ -15,13 +15,14 @@ from msrest.serialization import Model
 class ApplicationGatewayBackendHealthServer(Model):
     """Application gateway backendhealth http settings.
 
-    :param address: IP address or FQDN of backend server
+    :param address: IP address or FQDN of backend server.
     :type address: str
     :param ip_configuration: Reference of IP configuration of backend server.
     :type ip_configuration: :class:`SubResource
      <azure.mgmt.network.models.SubResource>`
-    :param health: Health of backend server. Possible values include:
-     'Unknown', 'Healthy', 'Unhealthy', 'Partial'
+    :param health: Health of backend server. Possible values are: 'Unknown',
+     'Up', 'Down', and 'Partial'. Possible values include: 'Unknown', 'Up',
+     'Down', 'Partial'
     :type health: str or :class:`ApplicationGatewayBackendHealthServerHealth
      <azure.mgmt.network.models.ApplicationGatewayBackendHealthServerHealth>`
     """ 

@@ -18,45 +18,60 @@ class LoadBalancer(Resource):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :param id: Resource Id
+    :param id: Resource ID.
     :type id: str
-    :ivar name: Resource name
+    :ivar name: Resource name.
     :vartype name: str
-    :ivar type: Resource type
+    :ivar type: Resource type.
     :vartype type: str
-    :param location: Resource location
+    :param location: Resource location.
     :type location: str
-    :param tags: Resource tags
+    :param tags: Resource tags.
     :type tags: dict
-    :param frontend_ip_configurations: Gets or sets frontend IP addresses of
-     the load balancer
+    :param frontend_ip_configurations: Object representing the frontend IPs
+     to be used for the load balancer
     :type frontend_ip_configurations: list of :class:`FrontendIPConfiguration
      <azure.mgmt.network.models.FrontendIPConfiguration>`
-    :param backend_address_pools: Gets or sets Pools of backend IP addresses
+    :param backend_address_pools: Collection of backend address pools used by
+     a load balancer
     :type backend_address_pools: list of :class:`BackendAddressPool
      <azure.mgmt.network.models.BackendAddressPool>`
-    :param load_balancing_rules: Gets or sets load balancing rules
+    :param load_balancing_rules: Object collection representing the load
+     balancing rules Gets the provisioning
     :type load_balancing_rules: list of :class:`LoadBalancingRule
      <azure.mgmt.network.models.LoadBalancingRule>`
-    :param probes: Gets or sets list of Load balancer probes
+    :param probes: Collection of probe objects used in the load balancer
     :type probes: list of :class:`Probe <azure.mgmt.network.models.Probe>`
-    :param inbound_nat_rules: Gets or sets list of inbound rules
+    :param inbound_nat_rules: Collection of inbound NAT Rules used by a load
+     balancer. Defining inbound NAT rules on your load balancer is mutually
+     exclusive with defining an inbound NAT pool. Inbound NAT pools are
+     referenced from virtual machine scale sets. NICs that are associated
+     with individual virtual machines cannot reference an Inbound NAT pool.
+     They have to reference individual inbound NAT rules.
     :type inbound_nat_rules: list of :class:`InboundNatRule
      <azure.mgmt.network.models.InboundNatRule>`
-    :param inbound_nat_pools: Gets or sets inbound NAT pools
+    :param inbound_nat_pools: Defines an external port range for inbound NAT
+     to a single backend port on NICs associated with a load balancer.
+     Inbound NAT rules are created automatically for each NIC associated with
+     the Load Balancer using an external port from this range. Defining an
+     Inbound NAT pool on your Load Balancer is mutually exclusive with
+     defining inbound Nat rules. Inbound NAT pools are referenced from
+     virtual machine scale sets. NICs that are associated with individual
+     virtual machines cannot reference an inbound NAT pool. They have to
+     reference individual inbound NAT rules.
     :type inbound_nat_pools: list of :class:`InboundNatPool
      <azure.mgmt.network.models.InboundNatPool>`
-    :param outbound_nat_rules: Gets or sets outbound NAT rules
+    :param outbound_nat_rules: The outbound NAT rules.
     :type outbound_nat_rules: list of :class:`OutboundNatRule
      <azure.mgmt.network.models.OutboundNatRule>`
-    :param resource_guid: Gets or sets resource guid property of the Load
-     balancer resource
+    :param resource_guid: The resource GUID property of the load balancer
+     resource.
     :type resource_guid: str
-    :param provisioning_state: Gets provisioning state of the PublicIP
-     resource Updating/Deleting/Failed
+    :param provisioning_state: Gets the provisioning state of the PublicIP
+     resource. Possible values are: 'Updating', 'Deleting', and 'Failed'.
     :type provisioning_state: str
-    :param etag: Gets a unique read-only string that changes whenever the
-     resource is updated
+    :param etag: A unique read-only string that changes whenever the resource
+     is updated.
     :type etag: str
     """ 
 

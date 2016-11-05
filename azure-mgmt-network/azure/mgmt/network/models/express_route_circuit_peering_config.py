@@ -13,21 +13,22 @@ from msrest.serialization import Model
 
 
 class ExpressRouteCircuitPeeringConfig(Model):
-    """Specifies the peering config.
+    """Specifies the peering configuration.
 
-    :param advertised_public_prefixes: Gets or sets the reference of
-     AdvertisedPublicPrefixes
+    :param advertised_public_prefixes: The reference of
+     AdvertisedPublicPrefixes.
     :type advertised_public_prefixes: list of str
-    :param advertised_public_prefixes_state: Gets or sets
-     AdvertisedPublicPrefixState of the Peering resource . Possible values
+    :param advertised_public_prefixes_state: AdvertisedPublicPrefixState of
+     the Peering resource. Possible values are 'NotConfigured',
+     'Configuring', 'Configured', and 'ValidationNeeded'. Possible values
      include: 'NotConfigured', 'Configuring', 'Configured', 'ValidationNeeded'
     :type advertised_public_prefixes_state: str or
      :class:`ExpressRouteCircuitPeeringAdvertisedPublicPrefixState
      <azure.mgmt.network.models.ExpressRouteCircuitPeeringAdvertisedPublicPrefixState>`
-    :param customer_asn: Gets or Sets CustomerAsn of the peering.
+    :param customer_asn: The CustomerASN of the peering.
     :type customer_asn: int
-    :param routing_registry_name: Gets or Sets RoutingRegistryName of the
-     config.
+    :param routing_registry_name: The RoutingRegistryName of the
+     configuration.
     :type routing_registry_name: str
     """ 
 

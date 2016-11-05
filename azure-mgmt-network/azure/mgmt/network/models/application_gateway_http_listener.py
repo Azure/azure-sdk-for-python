@@ -13,36 +13,38 @@ from .sub_resource import SubResource
 
 
 class ApplicationGatewayHttpListener(SubResource):
-    """Http listener of application gateway.
+    """Http listener of an application gateway.
 
-    :param id: Resource Id
+    :param id: Resource ID.
     :type id: str
     :param frontend_ip_configuration: Frontend IP configuration resource of
-     application gateway
+     an application gateway.
     :type frontend_ip_configuration: :class:`SubResource
      <azure.mgmt.network.models.SubResource>`
-    :param frontend_port: Frontend port resource of application gateway
+    :param frontend_port: Frontend port resource of an application gateway.
     :type frontend_port: :class:`SubResource
      <azure.mgmt.network.models.SubResource>`
-    :param protocol: Protocol. Possible values include: 'Http', 'Https'
+    :param protocol: Protocol. Possible values are: 'Http' and 'Https'.
+     Possible values include: 'Http', 'Https'
     :type protocol: str or :class:`ApplicationGatewayProtocol
      <azure.mgmt.network.models.ApplicationGatewayProtocol>`
-    :param host_name: Host name of http listener
+    :param host_name: Host name of HTTP listener.
     :type host_name: str
-    :param ssl_certificate: Ssl certificate resource of application gateway
+    :param ssl_certificate: SSL certificate resource of an application
+     gateway.
     :type ssl_certificate: :class:`SubResource
      <azure.mgmt.network.models.SubResource>`
-    :param require_server_name_indication: RequireServerNameIndication of
-     http listener
+    :param require_server_name_indication: Applicable only if protocol is
+     https. Enables SNI for multi-hosting.
     :type require_server_name_indication: bool
-    :param provisioning_state: Provisioning state of the http listener
-     resource Updating/Deleting/Failed
+    :param provisioning_state: Provisioning state of the HTTP listener
+     resource. Possible values are: 'Updating', 'Deleting', and 'Failed'.
     :type provisioning_state: str
     :param name: Name of the resource that is unique within a resource group.
-     This name can be used to access the resource
+     This name can be used to access the resource.
     :type name: str
     :param etag: A unique read-only string that changes whenever the resource
-     is updated
+     is updated.
     :type etag: str
     """ 
 
@@ -52,7 +54,7 @@ class ApplicationGatewayHttpListener(SubResource):
         'frontend_port': {'key': 'properties.frontendPort', 'type': 'SubResource'},
         'protocol': {'key': 'properties.protocol', 'type': 'str'},
         'host_name': {'key': 'properties.hostName', 'type': 'str'},
-        'ssl_certificate': {'key': 'properties.sslCertificate', 'type': 'SubResource'},
+        'ssl_certificate': {'key': 'properties.SSLCertificate', 'type': 'SubResource'},
         'require_server_name_indication': {'key': 'properties.requireServerNameIndication', 'type': 'bool'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},

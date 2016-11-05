@@ -18,18 +18,19 @@ class VpnClientRootCertificate(SubResource):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :param id: Resource Id
+    :param id: Resource ID.
     :type id: str
-    :param public_cert_data: Gets or sets the certificate public data
+    :param public_cert_data: The certificate public data.
     :type public_cert_data: str
-    :ivar provisioning_state: Gets provisioning state of the VPN client root
-     certificate resource Updating/Deleting/Failed
+    :ivar provisioning_state: The provisioning state of the VPN client root
+     certificate resource. Possible values are: 'Updating', 'Deleting', and
+     'Failed'.
     :vartype provisioning_state: str
-    :param name: Gets name of the resource that is unique within a resource
-     group. This name can be used to access the resource
+    :param name: The name of the resource that is unique within a resource
+     group. This name can be used to access the resource.
     :type name: str
     :param etag: A unique read-only string that changes whenever the resource
-     is updated
+     is updated.
     :type etag: str
     """ 
 

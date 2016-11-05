@@ -18,29 +18,29 @@ class BackendAddressPool(SubResource):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :param id: Resource Id
+    :param id: Resource ID.
     :type id: str
-    :ivar backend_ip_configurations: Gets collection of references to IPs
-     defined in NICs
+    :ivar backend_ip_configurations: Gets collection of references to IP
+     addresses defined in network interfaces.
     :vartype backend_ip_configurations: list of
      :class:`NetworkInterfaceIPConfiguration
      <azure.mgmt.network.models.NetworkInterfaceIPConfiguration>`
-    :ivar load_balancing_rules: Gets Load Balancing rules that use this
-     Backend Address Pool
+    :ivar load_balancing_rules: Gets load balancing rules that use this
+     backend address pool.
     :vartype load_balancing_rules: list of :class:`SubResource
      <azure.mgmt.network.models.SubResource>`
-    :ivar outbound_nat_rule: Gets outbound rules that use this Backend
-     Address Pool
+    :ivar outbound_nat_rule: Gets outbound rules that use this backend
+     address pool.
     :vartype outbound_nat_rule: :class:`SubResource
      <azure.mgmt.network.models.SubResource>`
-    :param provisioning_state: Get provisioning state of the PublicIP
-     resource Updating/Deleting/Failed
+    :param provisioning_state: Get provisioning state of the public IP
+     resource. Possible values are: 'Updating', 'Deleting', and 'Failed'.
     :type provisioning_state: str
     :param name: Gets name of the resource that is unique within a resource
-     group. This name can be used to access the resource
+     group. This name can be used to access the resource.
     :type name: str
     :param etag: A unique read-only string that changes whenever the resource
-     is updated
+     is updated.
     :type etag: str
     """ 
 

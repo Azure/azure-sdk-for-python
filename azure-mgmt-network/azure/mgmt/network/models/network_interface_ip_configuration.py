@@ -13,48 +13,52 @@ from .sub_resource import SubResource
 
 
 class NetworkInterfaceIPConfiguration(SubResource):
-    """IPConfiguration in a NetworkInterface.
+    """IPConfiguration in a network interface.
 
-    :param id: Resource Id
+    :param id: Resource ID.
     :type id: str
-    :param application_gateway_backend_address_pools: Gets or sets the
-     reference of ApplicationGatewayBackendAddressPool resource
+    :param application_gateway_backend_address_pools: The reference of
+     ApplicationGatewayBackendAddressPool resource.
     :type application_gateway_backend_address_pools: list of
      :class:`ApplicationGatewayBackendAddressPool
      <azure.mgmt.network.models.ApplicationGatewayBackendAddressPool>`
-    :param load_balancer_backend_address_pools: Gets or sets the reference of
-     LoadBalancerBackendAddressPool resource
+    :param load_balancer_backend_address_pools: The reference of
+     LoadBalancerBackendAddressPool resource.
     :type load_balancer_backend_address_pools: list of
      :class:`BackendAddressPool
      <azure.mgmt.network.models.BackendAddressPool>`
-    :param load_balancer_inbound_nat_rules: Gets or sets list of references
-     of LoadBalancerInboundNatRules
+    :param load_balancer_inbound_nat_rules: A list of references of
+     LoadBalancerInboundNatRules.
     :type load_balancer_inbound_nat_rules: list of :class:`InboundNatRule
      <azure.mgmt.network.models.InboundNatRule>`
     :param private_ip_address:
     :type private_ip_address: str
-    :param private_ip_allocation_method: Gets or sets PrivateIP allocation
-     method. Possible values include: 'Static', 'Dynamic'
+    :param private_ip_allocation_method: Defines how a private IP address is
+     assigned. Possible values are: 'Static' and 'Dynamic'. Possible values
+     include: 'Static', 'Dynamic'
     :type private_ip_allocation_method: str or :class:`IPAllocationMethod
      <azure.mgmt.network.models.IPAllocationMethod>`
-    :param private_ip_address_version: Gets or sets PrivateIP address version
-     (IPv4/IPv6). Possible values include: 'IPv4', 'IPv6'
+    :param private_ip_address_version: Available from Api-Version 2016-03-30
+     onwards, it represents whether the specific ipconfiguration is IPv4 or
+     IPv6. Default is taken as IPv4.  Possible values are: 'IPv4' and 'IPv6'.
+     Possible values include: 'IPv4', 'IPv6'
     :type private_ip_address_version: str or :class:`IPVersion
      <azure.mgmt.network.models.IPVersion>`
     :param subnet:
     :type subnet: :class:`Subnet <azure.mgmt.network.models.Subnet>`
-    :param primary: Gets whether this is a primary customer address on the NIC
+    :param primary: Gets whether this is a primary customer address on the
+     network interface.
     :type primary: bool
     :param public_ip_address:
     :type public_ip_address: :class:`PublicIPAddress
      <azure.mgmt.network.models.PublicIPAddress>`
     :param provisioning_state:
     :type provisioning_state: str
-    :param name: Gets name of the resource that is unique within a resource
-     group. This name can be used to access the resource
+    :param name: The name of the resource that is unique within a resource
+     group. This name can be used to access the resource.
     :type name: str
     :param etag: A unique read-only string that changes whenever the resource
-     is updated
+     is updated.
     :type etag: str
     """ 
 

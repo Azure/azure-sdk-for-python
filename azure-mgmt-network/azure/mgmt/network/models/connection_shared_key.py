@@ -13,9 +13,9 @@ from msrest.serialization import Model
 
 
 class ConnectionSharedKey(Model):
-    """Response for GetConnectionSharedKey Api service call.
+    """Response for GetConnectionSharedKey API service call.
 
-    :param value: The virtual network connection shared key value
+    :param value: The virtual network connection shared key value.
     :type value: str
     """ 
 
