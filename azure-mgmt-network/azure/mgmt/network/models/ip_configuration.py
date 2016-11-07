@@ -15,29 +15,28 @@ from .sub_resource import SubResource
 class IPConfiguration(SubResource):
     """IPConfiguration.
 
-    :param id: Resource Id
+    :param id: Resource ID.
     :type id: str
-    :param private_ip_address: Gets or sets the privateIPAddress of the IP
-     Configuration
+    :param private_ip_address: The private IP address of the IP configuration.
     :type private_ip_address: str
-    :param private_ip_allocation_method: Gets or sets PrivateIP allocation
-     method. Possible values include: 'Static', 'Dynamic'
+    :param private_ip_allocation_method: The private IP allocation method.
+     Possible values are 'Static' and 'Dynamic'. Possible values include:
+     'Static', 'Dynamic'
     :type private_ip_allocation_method: str or :class:`IPAllocationMethod
      <azure.mgmt.network.models.IPAllocationMethod>`
-    :param subnet: Gets or sets the reference of the subnet resource
+    :param subnet: The reference of the subnet resource.
     :type subnet: :class:`Subnet <azure.mgmt.network.models.Subnet>`
-    :param public_ip_address: Gets or sets the reference of the PublicIP
-     resource
+    :param public_ip_address: The reference of the public IP resource.
     :type public_ip_address: :class:`PublicIPAddress
      <azure.mgmt.network.models.PublicIPAddress>`
-    :param provisioning_state: Gets provisioning state of the PublicIP
-     resource Updating/Deleting/Failed
+    :param provisioning_state: Gets the provisioning state of the public IP
+     resource. Possible values are: 'Updating', 'Deleting', and 'Failed'.
     :type provisioning_state: str
-    :param name: Gets name of the resource that is unique within a resource
-     group. This name can be used to access the resource
+    :param name: The name of the resource that is unique within a resource
+     group. This name can be used to access the resource.
     :type name: str
     :param etag: A unique read-only string that changes whenever the resource
-     is updated
+     is updated.
     :type etag: str
     """ 
 

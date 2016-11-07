@@ -13,19 +13,19 @@ from msrest.serialization import Model
 
 
 class Usage(Model):
-    """Describes Network Resource Usage.
+    """Describes network resource usage.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar unit: Gets or sets an enum describing the unit of measurement.
-     Default value: "Count" .
+    :ivar unit: An enum describing the unit of measurement. Default value:
+     "Count" .
     :vartype unit: str
-    :param current_value: Gets or sets the current value of the usage.
+    :param current_value: The current value of the usage.
     :type current_value: long
-    :param limit: Gets or sets the limit of usage.
+    :param limit: The limit of usage.
     :type limit: long
-    :param name: Gets or sets the name of the type of usage.
+    :param name: The name of the type of usage.
     :type name: :class:`UsageName <azure.mgmt.network.models.UsageName>`
     """ 
 

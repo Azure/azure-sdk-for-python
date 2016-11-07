@@ -36,8 +36,7 @@ class ExpressRouteCircuitPeeringsOperations(object):
 
     def delete(
             self, resource_group_name, circuit_name, peering_name, custom_headers=None, raw=False, **operation_config):
-        """The delete peering operation deletes the specified peering from the
-        ExpressRouteCircuit.
+        """Deletes the specified peering from the specified express route circuit.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
@@ -117,8 +116,8 @@ class ExpressRouteCircuitPeeringsOperations(object):
 
     def get(
             self, resource_group_name, circuit_name, peering_name, custom_headers=None, raw=False, **operation_config):
-        """The GET peering operation retrieves the specified authorization from
-        the ExpressRouteCircuit.
+        """Gets the specified authorization from the specified express route
+        circuit.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
@@ -183,8 +182,7 @@ class ExpressRouteCircuitPeeringsOperations(object):
 
     def create_or_update(
             self, resource_group_name, circuit_name, peering_name, peering_parameters, custom_headers=None, raw=False, **operation_config):
-        """The Put Peering operation creates/updates an peering in the specified
-        ExpressRouteCircuits.
+        """Creates or updates a peering in the specified express route circuits.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
@@ -192,8 +190,8 @@ class ExpressRouteCircuitPeeringsOperations(object):
         :type circuit_name: str
         :param peering_name: The name of the peering.
         :type peering_name: str
-        :param peering_parameters: Parameters supplied to the create/update
-         ExpressRouteCircuit Peering operation
+        :param peering_parameters: Parameters supplied to the create or
+         update express route circuit peering operation.
         :type peering_parameters: :class:`ExpressRouteCircuitPeering
          <azure.mgmt.network.models.ExpressRouteCircuitPeering>`
         :param dict custom_headers: headers that will be added to the request
@@ -282,12 +280,11 @@ class ExpressRouteCircuitPeeringsOperations(object):
 
     def list(
             self, resource_group_name, circuit_name, custom_headers=None, raw=False, **operation_config):
-        """The List peering operation retrieves all the peerings in an
-        ExpressRouteCircuit.
+        """Gets all peerings in a specified express route circuit.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
-        :param circuit_name: The name of the circuit.
+        :param circuit_name: The name of the express route circuit.
         :type circuit_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the

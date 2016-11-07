@@ -13,28 +13,28 @@ from .resource import Resource
 
 
 class ExpressRouteServiceProvider(Resource):
-    """ExpressRouteResourceProvider object.
+    """A ExpressRouteResourceProvider object.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :param id: Resource Id
+    :param id: Resource ID.
     :type id: str
-    :ivar name: Resource name
+    :ivar name: Resource name.
     :vartype name: str
-    :ivar type: Resource type
+    :ivar type: Resource type.
     :vartype type: str
-    :param location: Resource location
+    :param location: Resource location.
     :type location: str
-    :param tags: Resource tags
+    :param tags: Resource tags.
     :type tags: dict
-    :param peering_locations: Gets or list of peering locations
+    :param peering_locations: Get a list of peering locations.
     :type peering_locations: list of str
-    :param bandwidths_offered: Gets or bandwidths offered
+    :param bandwidths_offered: Gets bandwidths offered.
     :type bandwidths_offered: list of
      :class:`ExpressRouteServiceProviderBandwidthsOffered
      <azure.mgmt.network.models.ExpressRouteServiceProviderBandwidthsOffered>`
-    :param provisioning_state: Gets provisioning state of the resource
+    :param provisioning_state: Gets the provisioning state of the resource.
     :type provisioning_state: str
     """ 
 

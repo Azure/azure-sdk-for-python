@@ -36,18 +36,16 @@ class VirtualNetworkGatewayConnectionsOperations(object):
 
     def create_or_update(
             self, resource_group_name, virtual_network_gateway_connection_name, parameters, custom_headers=None, raw=False, **operation_config):
-        """The Put VirtualNetworkGatewayConnection operation creates/updates a
-        virtual network gateway connection in the specified resource group
-        through Network resource provider.
+        """Creates or updates a virtual network gateway connection in the
+        specified resource group.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
         :param virtual_network_gateway_connection_name: The name of the
          virtual network gateway connection.
         :type virtual_network_gateway_connection_name: str
-        :param parameters: Parameters supplied to the Begin Create or update
-         Virtual Network Gateway connection operation through Network
-         resource provider.
+        :param parameters: Parameters supplied to the create or update
+         virtual network gateway connection operation.
         :type parameters: :class:`VirtualNetworkGatewayConnection
          <azure.mgmt.network.models.VirtualNetworkGatewayConnection>`
         :param dict custom_headers: headers that will be added to the request
@@ -135,9 +133,8 @@ class VirtualNetworkGatewayConnectionsOperations(object):
 
     def get(
             self, resource_group_name, virtual_network_gateway_connection_name, custom_headers=None, raw=False, **operation_config):
-        """The Get VirtualNetworkGatewayConnection operation retrieves
-        information about the specified virtual network gateway connection
-        through Network resource provider.
+        """Gets the specified virtual network gateway connection by resource
+        group.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
@@ -200,9 +197,7 @@ class VirtualNetworkGatewayConnectionsOperations(object):
 
     def delete(
             self, resource_group_name, virtual_network_gateway_connection_name, custom_headers=None, raw=False, **operation_config):
-        """The Delete VirtualNetworkGatewayConnection operation deletes the
-        specified virtual network Gateway connection through Network resource
-        provider.
+        """Deletes the specified virtual network Gateway connection.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
@@ -290,7 +285,7 @@ class VirtualNetworkGatewayConnectionsOperations(object):
         :param virtual_network_gateway_connection_name: The virtual network
          gateway connection name.
         :type virtual_network_gateway_connection_name: str
-        :param value: The virtual network connection shared key value
+        :param value: The virtual network connection shared key value.
         :type value: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the

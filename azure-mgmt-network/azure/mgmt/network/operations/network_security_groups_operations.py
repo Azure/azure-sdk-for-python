@@ -36,8 +36,7 @@ class NetworkSecurityGroupsOperations(object):
 
     def delete(
             self, resource_group_name, network_security_group_name, custom_headers=None, raw=False, **operation_config):
-        """The Delete NetworkSecurityGroup operation deletes the specified
-        network security group.
+        """Deletes the specified network security group.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
@@ -115,15 +114,14 @@ class NetworkSecurityGroupsOperations(object):
 
     def get(
             self, resource_group_name, network_security_group_name, expand=None, custom_headers=None, raw=False, **operation_config):
-        """The Get NetworkSecurityGroups operation retrieves information about
-        the specified network security group.
+        """Gets the specified network security group.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
         :param network_security_group_name: The name of the network security
          group.
         :type network_security_group_name: str
-        :param expand: expand references resources.
+        :param expand: Expands referenced resources.
         :type expand: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -183,16 +181,16 @@ class NetworkSecurityGroupsOperations(object):
 
     def create_or_update(
             self, resource_group_name, network_security_group_name, parameters, custom_headers=None, raw=False, **operation_config):
-        """The Put NetworkSecurityGroup operation creates/updates a network
-        security group in the specified resource group.
+        """Creates or updates a network security group in the specified resource
+        group.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
         :param network_security_group_name: The name of the network security
          group.
         :type network_security_group_name: str
-        :param parameters: Parameters supplied to the create/update Network
-         Security Group operation
+        :param parameters: Parameters supplied to the create or update
+         network security group operation.
         :type parameters: :class:`NetworkSecurityGroup
          <azure.mgmt.network.models.NetworkSecurityGroup>`
         :param dict custom_headers: headers that will be added to the request
@@ -280,8 +278,7 @@ class NetworkSecurityGroupsOperations(object):
 
     def list_all(
             self, custom_headers=None, raw=False, **operation_config):
-        """The list NetworkSecurityGroups returns all network security groups in
-        a subscription.
+        """Gets all network security groups in a subscription.
 
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -344,8 +341,7 @@ class NetworkSecurityGroupsOperations(object):
 
     def list(
             self, resource_group_name, custom_headers=None, raw=False, **operation_config):
-        """The list NetworkSecurityGroups returns all network security groups in
-        a resource group.
+        """Gets all network security groups in a resource group.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str

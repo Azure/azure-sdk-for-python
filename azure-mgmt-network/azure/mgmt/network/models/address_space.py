@@ -14,10 +14,10 @@ from msrest.serialization import Model
 
 class AddressSpace(Model):
     """AddressSpace contains an array of IP address ranges that can be used by
-    subnets.
+    subnets of the virtual network.
 
-    :param address_prefixes: Gets or sets list of address blocks reserved for
-     this virtual network in CIDR notation
+    :param address_prefixes: A list of address blocks reserved for this
+     virtual network in CIDR notation.
     :type address_prefixes: list of str
     """ 
 

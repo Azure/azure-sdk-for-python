@@ -13,64 +13,54 @@ from .sub_resource import SubResource
 
 
 class LoadBalancingRule(SubResource):
-    """Rules of the load balancer.
+    """A loag balancing rule for a load balancer.
 
-    :param id: Resource Id
+    :param id: Resource ID.
     :type id: str
-    :param frontend_ip_configuration: Gets or sets a reference to frontend IP
-     Addresses
+    :param frontend_ip_configuration: A reference to frontend IP addresses.
     :type frontend_ip_configuration: :class:`SubResource
      <azure.mgmt.network.models.SubResource>`
-    :param backend_address_pool: Gets or sets  a reference to a pool of DIPs.
-     Inbound traffic is randomly load balanced across IPs in the backend IPs
+    :param backend_address_pool: A reference to a pool of DIPs. Inbound
+     traffic is randomly load balanced across IPs in the backend IPs.
     :type backend_address_pool: :class:`SubResource
      <azure.mgmt.network.models.SubResource>`
-    :param probe: Gets or sets the reference of the load balancer probe used
-     by the Load Balancing rule.
+    :param probe: The reference of the load balancer probe used by the load
+     balancing rule.
     :type probe: :class:`SubResource <azure.mgmt.network.models.SubResource>`
-    :param protocol: Gets or sets the transport protocol for the external
-     endpoint. Possible values are Udp or Tcp. Possible values include:
-     'Udp', 'Tcp'
+    :param protocol: The transport protocol for the external endpoint.
+     Possible values are 'Udp' or 'Tcp'. Possible values include: 'Udp', 'Tcp'
     :type protocol: str or :class:`TransportProtocol
      <azure.mgmt.network.models.TransportProtocol>`
-    :param load_distribution: Gets or sets the load distribution policy for
-     this rule. Possible values include: 'Default', 'SourceIP',
-     'SourceIPProtocol'
+    :param load_distribution: The load distribution policy for this rule.
+     Possible values are 'Default', 'SourceIP', and 'SourceIPProtocol'.
+     Possible values include: 'Default', 'SourceIP', 'SourceIPProtocol'
     :type load_distribution: str or :class:`LoadDistribution
      <azure.mgmt.network.models.LoadDistribution>`
-    :param frontend_port: Gets or sets the port for the external endpoint.
-     You can specify any port number you choose, but the port numbers
-     specified for each role in the service must be unique. Possible values
-     range between 1 and 65535, inclusive
+    :param frontend_port: The port for the external endpoint. Port numbers
+     for each Rule must be unique within the Load Balancer. Acceptable values
+     are between 1 and 65534.
     :type frontend_port: int
-    :param backend_port: Gets or sets a port used for internal connections on
-     the endpoint. The localPort attribute maps the eternal port of the
-     endpoint to an internal port on a role. This is useful in scenarios
-     where a role must communicate to an internal component on a port that is
-     different from the one that is exposed externally. If not specified, the
-     value of localPort is the same as the port attribute. Set the value of
-     localPort to '*' to automatically assign an unallocated port that is
-     discoverable using the runtime API
+    :param backend_port: The port used for internal connections on the
+     endpoint. Acceptable values are between 1 and 65535.
     :type backend_port: int
-    :param idle_timeout_in_minutes: Gets or sets the timeout for the Tcp idle
-     connection. The value can be set between 4 and 30 minutes. The default
-     value is 4 minutes. This element is only used when the protocol is set
-     to Tcp
+    :param idle_timeout_in_minutes: The timeout for the TCP idle connection.
+     The value can be set between 4 and 30 minutes. The default value is 4
+     minutes. This element is only used when the protocol is set to TCP.
     :type idle_timeout_in_minutes: int
     :param enable_floating_ip: Configures a virtual machine's endpoint for
      the floating IP capability required to configure a SQL AlwaysOn
-     availability Group. This setting is required when using the SQL Always
-     ON availability Groups in SQL server. This setting can't be changed
-     after you create the endpoint
+     Availability Group. This setting is required when using the SQL AlwaysOn
+     Availability Groups in SQL server. This setting can't be changed after
+     you create the endpoint.
     :type enable_floating_ip: bool
-    :param provisioning_state: Gets provisioning state of the PublicIP
-     resource Updating/Deleting/Failed
+    :param provisioning_state: Gets the provisioning state of the PublicIP
+     resource. Possible values are: 'Updating', 'Deleting', and 'Failed'.
     :type provisioning_state: str
-    :param name: Gets name of the resource that is unique within a resource
-     group. This name can be used to access the resource
+    :param name: The name of the resource that is unique within a resource
+     group. This name can be used to access the resource.
     :type name: str
     :param etag: A unique read-only string that changes whenever the resource
-     is updated
+     is updated.
     :type etag: str
     """ 
 

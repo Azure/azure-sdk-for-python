@@ -18,20 +18,20 @@ class ResourceNavigationLink(SubResource):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :param id: Resource Id
+    :param id: Resource ID.
     :type id: str
-    :param linked_resource_type: Resource type of the linked resource
+    :param linked_resource_type: Resource type of the linked resource.
     :type linked_resource_type: str
     :param link: Link to the external resource
     :type link: str
     :ivar provisioning_state: Provisioning state of the
-     ResourceNavigationLink resource
+     ResourceNavigationLink resource.
     :vartype provisioning_state: str
     :param name: Name of the resource that is unique within a resource group.
-     This name can be used to access the resource
+     This name can be used to access the resource.
     :type name: str
     :ivar etag: A unique read-only string that changes whenever the resource
-     is updated
+     is updated.
     :vartype etag: str
     """ 
 

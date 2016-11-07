@@ -13,12 +13,12 @@ from msrest.serialization import Model
 
 
 class EffectiveNetworkSecurityGroupListResult(Model):
-    """Response for list effective network security groups api service call.
+    """Response for list effective network security groups API service call.
 
-    :param value: Gets list of effective network security groups
+    :param value: A list of effective network security groups.
     :type value: list of :class:`EffectiveNetworkSecurityGroup
      <azure.mgmt.network.models.EffectiveNetworkSecurityGroup>`
-    :param next_link: Gets the URL to get the next set of results.
+    :param next_link: The URL to get the next set of results.
     :type next_link: str
     """ 
 
