@@ -16,7 +16,8 @@ class ApplicationGatewaySslPolicy(Model):
     """Application gateway SSL policy.
 
     :param disabled_ssl_protocols: SSL protocols to be disabled on
-     Application Gateway
+     application gateway. Possible values are: 'TLSv1_0', 'TLSv1_1', and
+     'TLSv1_2'.
     :type disabled_ssl_protocols: list of str or
      :class:`ApplicationGatewaySslProtocol
      <azure.mgmt.network.models.ApplicationGatewaySslProtocol>`

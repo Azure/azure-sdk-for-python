@@ -18,39 +18,39 @@ class NetworkSecurityGroup(Resource):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :param id: Resource Id
+    :param id: Resource ID.
     :type id: str
-    :ivar name: Resource name
+    :ivar name: Resource name.
     :vartype name: str
-    :ivar type: Resource type
+    :ivar type: Resource type.
     :vartype type: str
-    :param location: Resource location
+    :param location: Resource location.
     :type location: str
-    :param tags: Resource tags
+    :param tags: Resource tags.
     :type tags: dict
-    :param security_rules: Gets or sets security rules of network security
-     group
+    :param security_rules: A collection of security rules of the network
+     security group.
     :type security_rules: list of :class:`SecurityRule
      <azure.mgmt.network.models.SecurityRule>`
-    :param default_security_rules: Gets or default security rules of network
-     security group
+    :param default_security_rules: The default security rules of network
+     security group.
     :type default_security_rules: list of :class:`SecurityRule
      <azure.mgmt.network.models.SecurityRule>`
-    :ivar network_interfaces: Gets collection of references to Network
-     Interfaces
+    :ivar network_interfaces: A collection of references to network
+     interfaces.
     :vartype network_interfaces: list of :class:`NetworkInterface
      <azure.mgmt.network.models.NetworkInterface>`
-    :ivar subnets: Gets collection of references to subnets
+    :ivar subnets: A collection of references to subnets.
     :vartype subnets: list of :class:`Subnet
      <azure.mgmt.network.models.Subnet>`
-    :param resource_guid: Gets or sets resource guid property of the network
-     security group resource
+    :param resource_guid: The resource GUID property of the network security
+     group resource.
     :type resource_guid: str
-    :param provisioning_state: Gets provisioning state of the PublicIP
-     resource Updating/Deleting/Failed
+    :param provisioning_state: The provisioning state of the public IP
+     resource. Possible values are: 'Updating', 'Deleting', and 'Failed'.
     :type provisioning_state: str
-    :param etag: Gets a unique read-only string that changes whenever the
-     resource is updated
+    :param etag: A unique read-only string that changes whenever the resource
+     is updated.
     :type etag: str
     """ 
 

@@ -13,31 +13,31 @@ from .resource import Resource
 
 
 class RouteTable(Resource):
-    """RouteTable resource.
+    """Route table resource.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :param id: Resource Id
+    :param id: Resource ID.
     :type id: str
-    :ivar name: Resource name
+    :ivar name: Resource name.
     :vartype name: str
-    :ivar type: Resource type
+    :ivar type: Resource type.
     :vartype type: str
-    :param location: Resource location
+    :param location: Resource location.
     :type location: str
-    :param tags: Resource tags
+    :param tags: Resource tags.
     :type tags: dict
-    :param routes: Gets or sets Routes in a Route Table
+    :param routes: Collection of routes contained within a route table.
     :type routes: list of :class:`Route <azure.mgmt.network.models.Route>`
-    :ivar subnets: Gets collection of references to subnets
+    :ivar subnets: A collection of references to subnets.
     :vartype subnets: list of :class:`Subnet
      <azure.mgmt.network.models.Subnet>`
-    :param provisioning_state: Gets provisioning state of the resource
-     Updating/Deleting/Failed
+    :param provisioning_state: The provisioning state of the resource.
+     Possible values are: 'Updating', 'Deleting', and 'Failed'.
     :type provisioning_state: str
     :param etag: Gets a unique read-only string that changes whenever the
-     resource is updated
+     resource is updated.
     :type etag: str
     """ 
 

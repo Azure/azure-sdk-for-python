@@ -13,36 +13,37 @@ from msrest.serialization import Model
 
 
 class EffectiveNetworkSecurityRule(Model):
-    """Effective NetworkSecurityRules.
+    """Effective network security rules.
 
-    :param name: Gets the name of the security rule specified by the user (if
-     created by the user)
+    :param name: The name of the security rule specified by the user (if
+     created by the user).
     :type name: str
-    :param protocol: Gets Network protocol this rule applies to. Possible
-     values include: 'Tcp', 'Udp', '*'
+    :param protocol: The network protocol this rule applies to. Possible
+     values are: 'Tcp', 'Udp', and '*'. Possible values include: 'Tcp',
+     'Udp', '*'
     :type protocol: str or :class:`SecurityRuleProtocol
      <azure.mgmt.network.models.SecurityRuleProtocol>`
-    :param source_port_range: Gets source port or range
+    :param source_port_range: The source port or range.
     :type source_port_range: str
-    :param destination_port_range: Gets destination port or range
+    :param destination_port_range: The destination port or range.
     :type destination_port_range: str
-    :param source_address_prefix: Gets source address prefix
+    :param source_address_prefix: The source address prefix.
     :type source_address_prefix: str
-    :param destination_address_prefix: Gets destination address prefix
+    :param destination_address_prefix: The destination address prefix.
     :type destination_address_prefix: str
-    :param expanded_source_address_prefix: Gets expanded source address prefix
+    :param expanded_source_address_prefix: The expanded source address prefix.
     :type expanded_source_address_prefix: list of str
-    :param expanded_destination_address_prefix: Gets expanded destination
-     address prefix
+    :param expanded_destination_address_prefix: Expanded destination address
+     prefix.
     :type expanded_destination_address_prefix: list of str
-    :param access: Gets network traffic is allowed or denied. Possible values
-     include: 'Allow', 'Deny'
+    :param access: Whether network traffic is allowed or denied. Possible
+     values are: 'Allow' and 'Deny'. Possible values include: 'Allow', 'Deny'
     :type access: str or :class:`SecurityRuleAccess
      <azure.mgmt.network.models.SecurityRuleAccess>`
-    :param priority: Gets the priority of the rule
+    :param priority: The priority of the rule.
     :type priority: int
-    :param direction: Gets the direction of the rule. Possible values
-     include: 'Inbound', 'Outbound'
+    :param direction: The direction of the rule. Possible values are:
+     'Inbound and Outbound'. Possible values include: 'Inbound', 'Outbound'
     :type direction: str or :class:`SecurityRuleDirection
      <azure.mgmt.network.models.SecurityRuleDirection>`
     """ 

@@ -36,8 +36,7 @@ class PublicIPAddressesOperations(object):
 
     def delete(
             self, resource_group_name, public_ip_address_name, custom_headers=None, raw=False, **operation_config):
-        """The delete publicIpAddress operation deletes the specified
-        publicIpAddress.
+        """Deletes the specified public IP address.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
@@ -114,14 +113,13 @@ class PublicIPAddressesOperations(object):
 
     def get(
             self, resource_group_name, public_ip_address_name, expand=None, custom_headers=None, raw=False, **operation_config):
-        """The Get publicIpAddress operation retrieves information about the
-        specified pubicIpAddress.
+        """Gets the specified public IP address in a specified resource group.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
         :param public_ip_address_name: The name of the subnet.
         :type public_ip_address_name: str
-        :param expand: expand references resources.
+        :param expand: Expands referenced resources.
         :type expand: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -181,15 +179,14 @@ class PublicIPAddressesOperations(object):
 
     def create_or_update(
             self, resource_group_name, public_ip_address_name, parameters, custom_headers=None, raw=False, **operation_config):
-        """The Put PublicIPAddress operation creates/updates a stable/dynamic
-        PublicIP address.
+        """Creates or updates a static or dynamic public IP address.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
-        :param public_ip_address_name: The name of the publicIpAddress.
+        :param public_ip_address_name: The name of the public IP address.
         :type public_ip_address_name: str
-        :param parameters: Parameters supplied to the create/update
-         PublicIPAddress operation
+        :param parameters: Parameters supplied to the create or update public
+         IP address operation.
         :type parameters: :class:`PublicIPAddress
          <azure.mgmt.network.models.PublicIPAddress>`
         :param dict custom_headers: headers that will be added to the request
@@ -277,8 +274,7 @@ class PublicIPAddressesOperations(object):
 
     def list_all(
             self, custom_headers=None, raw=False, **operation_config):
-        """The List publicIpAddress operation retrieves all the publicIpAddresses
-        in a subscription.
+        """Gets all the public IP addresses in a subscription.
 
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -341,8 +337,7 @@ class PublicIPAddressesOperations(object):
 
     def list(
             self, resource_group_name, custom_headers=None, raw=False, **operation_config):
-        """The List publicIpAddress operation retrieves all the publicIpAddresses
-        in a resource group.
+        """Gets all public IP addresses in a resource group.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str

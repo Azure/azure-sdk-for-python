@@ -13,28 +13,28 @@ from .sub_resource import SubResource
 
 
 class ApplicationGatewayPathRule(SubResource):
-    """Path rule of URL path map of application gateway.
+    """Path rule of URL path map of an application gateway.
 
-    :param id: Resource Id
+    :param id: Resource ID.
     :type id: str
-    :param paths: Path rules of URL path map
+    :param paths: Path rules of URL path map.
     :type paths: list of str
     :param backend_address_pool: Backend address pool resource of URL path
-     map
+     map.
     :type backend_address_pool: :class:`SubResource
      <azure.mgmt.network.models.SubResource>`
     :param backend_http_settings: Backend http settings resource of URL path
-     map
+     map.
     :type backend_http_settings: :class:`SubResource
      <azure.mgmt.network.models.SubResource>`
-    :param provisioning_state: Path rule of URL path map resource
-     Updating/Deleting/Failed
+    :param provisioning_state: Path rule of URL path map resource. Possible
+     values are: 'Updating', 'Deleting', and 'Failed'.
     :type provisioning_state: str
     :param name: Name of the resource that is unique within a resource group.
-     This name can be used to access the resource
+     This name can be used to access the resource.
     :type name: str
     :param etag: A unique read-only string that changes whenever the resource
-     is updated
+     is updated.
     :type etag: str
     """ 
 

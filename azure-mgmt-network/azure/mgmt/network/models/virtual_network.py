@@ -18,38 +18,37 @@ class VirtualNetwork(Resource):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :param id: Resource Id
+    :param id: Resource ID.
     :type id: str
-    :ivar name: Resource name
+    :ivar name: Resource name.
     :vartype name: str
-    :ivar type: Resource type
+    :ivar type: Resource type.
     :vartype type: str
-    :param location: Resource location
+    :param location: Resource location.
     :type location: str
-    :param tags: Resource tags
+    :param tags: Resource tags.
     :type tags: dict
-    :param address_space: Gets or sets AddressSpace that contains an array of
-     IP address ranges that can be used by subnets
+    :param address_space: The AddressSpace that contains an array of IP
+     address ranges that can be used by subnets.
     :type address_space: :class:`AddressSpace
      <azure.mgmt.network.models.AddressSpace>`
-    :param dhcp_options: Gets or sets DHCPOptions that contains an array of
-     DNS servers available to VMs deployed in the virtual network
+    :param dhcp_options: The dhcpOptions that contains an array of DNS
+     servers available to VMs deployed in the virtual network.
     :type dhcp_options: :class:`DhcpOptions
      <azure.mgmt.network.models.DhcpOptions>`
-    :param subnets: Gets or sets list of subnets in a VirtualNetwork
+    :param subnets: A list of subnets in a Virtual Network.
     :type subnets: list of :class:`Subnet <azure.mgmt.network.models.Subnet>`
-    :param virtual_network_peerings: Gets or sets list of peerings in a
-     VirtualNetwork
+    :param virtual_network_peerings: A list of peerings in a Virtual Network.
     :type virtual_network_peerings: list of :class:`VirtualNetworkPeering
      <azure.mgmt.network.models.VirtualNetworkPeering>`
-    :param resource_guid: Gets or sets resource guid property of the
-     VirtualNetwork resource
+    :param resource_guid: The resourceGuid property of the Virtual Network
+     resource.
     :type resource_guid: str
-    :param provisioning_state: Gets provisioning state of the PublicIP
-     resource Updating/Deleting/Failed
+    :param provisioning_state: The provisioning state of the PublicIP
+     resource. Possible values are: 'Updating', 'Deleting', and 'Failed'.
     :type provisioning_state: str
     :param etag: Gets a unique read-only string that changes whenever the
-     resource is updated
+     resource is updated.
     :type etag: str
     """ 
 

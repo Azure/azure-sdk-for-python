@@ -13,90 +13,93 @@ from .resource import Resource
 
 
 class ApplicationGateway(Resource):
-    """ApplicationGateways resource.
+    """Application gateway resource.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :param id: Resource Id
+    :param id: Resource ID.
     :type id: str
-    :ivar name: Resource name
+    :ivar name: Resource name.
     :vartype name: str
-    :ivar type: Resource type
+    :ivar type: Resource type.
     :vartype type: str
-    :param location: Resource location
+    :param location: Resource location.
     :type location: str
-    :param tags: Resource tags
+    :param tags: Resource tags.
     :type tags: dict
-    :param sku: Sku of application gateway resource
+    :param sku: SKU of the application gateway resource.
     :type sku: :class:`ApplicationGatewaySku
      <azure.mgmt.network.models.ApplicationGatewaySku>`
-    :param ssl_policy: SSL policy of application gateway resource
+    :param ssl_policy: SSL policy of the application gateway resource.
     :type ssl_policy: :class:`ApplicationGatewaySslPolicy
      <azure.mgmt.network.models.ApplicationGatewaySslPolicy>`
-    :ivar operational_state: Operational state of application gateway
-     resource. Possible values include: 'Stopped', 'Starting', 'Running',
+    :ivar operational_state: Operational state of the application gateway
+     resource. Possible values are: 'Stopped', 'Started', 'Running', and
+     'Stopping'. Possible values include: 'Stopped', 'Starting', 'Running',
      'Stopping'
     :vartype operational_state: str or
      :class:`ApplicationGatewayOperationalState
      <azure.mgmt.network.models.ApplicationGatewayOperationalState>`
-    :param gateway_ip_configurations: Subnets of application gateway resource
+    :param gateway_ip_configurations: Subnets of application the gateway
+     resource.
     :type gateway_ip_configurations: list of
      :class:`ApplicationGatewayIPConfiguration
      <azure.mgmt.network.models.ApplicationGatewayIPConfiguration>`
-    :param authentication_certificates: Authentication certificates of
-     application gateway resource
+    :param authentication_certificates: Authentication certificates of the
+     application gateway resource.
     :type authentication_certificates: list of
      :class:`ApplicationGatewayAuthenticationCertificate
      <azure.mgmt.network.models.ApplicationGatewayAuthenticationCertificate>`
-    :param ssl_certificates: SSL certificates of application gateway resource
+    :param ssl_certificates: SSL certificates of the application gateway
+     resource.
     :type ssl_certificates: list of :class:`ApplicationGatewaySslCertificate
      <azure.mgmt.network.models.ApplicationGatewaySslCertificate>`
-    :param frontend_ip_configurations: Frontend IP addresses of application
-     gateway resource
+    :param frontend_ip_configurations: Frontend IP addresses of the
+     application gateway resource.
     :type frontend_ip_configurations: list of
      :class:`ApplicationGatewayFrontendIPConfiguration
      <azure.mgmt.network.models.ApplicationGatewayFrontendIPConfiguration>`
-    :param frontend_ports: Frontend ports of application gateway resource
+    :param frontend_ports: Frontend ports of the application gateway resource.
     :type frontend_ports: list of :class:`ApplicationGatewayFrontendPort
      <azure.mgmt.network.models.ApplicationGatewayFrontendPort>`
-    :param probes: Probes of application gateway resource
+    :param probes: Probes of the application gateway resource.
     :type probes: list of :class:`ApplicationGatewayProbe
      <azure.mgmt.network.models.ApplicationGatewayProbe>`
-    :param backend_address_pools: Backend address pool of application gateway
-     resource
+    :param backend_address_pools: Backend address pool of the application
+     gateway resource.
     :type backend_address_pools: list of
      :class:`ApplicationGatewayBackendAddressPool
      <azure.mgmt.network.models.ApplicationGatewayBackendAddressPool>`
-    :param backend_http_settings_collection: Backend http settings of
-     application gateway resource
+    :param backend_http_settings_collection: Backend http settings of the
+     application gateway resource.
     :type backend_http_settings_collection: list of
      :class:`ApplicationGatewayBackendHttpSettings
      <azure.mgmt.network.models.ApplicationGatewayBackendHttpSettings>`
-    :param http_listeners: HTTP listeners of application gateway resource
+    :param http_listeners: Http listeners of the application gateway resource.
     :type http_listeners: list of :class:`ApplicationGatewayHttpListener
      <azure.mgmt.network.models.ApplicationGatewayHttpListener>`
-    :param url_path_maps: URL path map of application gateway resource
+    :param url_path_maps: URL path map of the application gateway resource.
     :type url_path_maps: list of :class:`ApplicationGatewayUrlPathMap
      <azure.mgmt.network.models.ApplicationGatewayUrlPathMap>`
-    :param request_routing_rules: Request routing rules of application
-     gateway resource
+    :param request_routing_rules: Request routing rules of the application
+     gateway resource.
     :type request_routing_rules: list of
      :class:`ApplicationGatewayRequestRoutingRule
      <azure.mgmt.network.models.ApplicationGatewayRequestRoutingRule>`
     :param web_application_firewall_configuration: Web application firewall
-     configuration
+     configuration.
     :type web_application_firewall_configuration:
      :class:`ApplicationGatewayWebApplicationFirewallConfiguration
      <azure.mgmt.network.models.ApplicationGatewayWebApplicationFirewallConfiguration>`
-    :param resource_guid: Resource guid property of the ApplicationGateway
-     resource
+    :param resource_guid: Resource GUID property of the application gateway
+     resource.
     :type resource_guid: str
-    :param provisioning_state: Provisioning state of the ApplicationGateway
-     resource Updating/Deleting/Failed
+    :param provisioning_state: Provisioning state of the application gateway
+     resource. Possible values are: 'Updating', 'Deleting', and 'Failed'.
     :type provisioning_state: str
     :param etag: A unique read-only string that changes whenever the resource
-     is updated
+     is updated.
     :type etag: str
     """ 
 
@@ -113,11 +116,11 @@ class ApplicationGateway(Resource):
         'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
         'sku': {'key': 'properties.sku', 'type': 'ApplicationGatewaySku'},
-        'ssl_policy': {'key': 'properties.sslPolicy', 'type': 'ApplicationGatewaySslPolicy'},
+        'ssl_policy': {'key': 'properties.SSLPolicy', 'type': 'ApplicationGatewaySslPolicy'},
         'operational_state': {'key': 'properties.operationalState', 'type': 'str'},
         'gateway_ip_configurations': {'key': 'properties.gatewayIPConfigurations', 'type': '[ApplicationGatewayIPConfiguration]'},
         'authentication_certificates': {'key': 'properties.authenticationCertificates', 'type': '[ApplicationGatewayAuthenticationCertificate]'},
-        'ssl_certificates': {'key': 'properties.sslCertificates', 'type': '[ApplicationGatewaySslCertificate]'},
+        'ssl_certificates': {'key': 'properties.SSLCertificates', 'type': '[ApplicationGatewaySslCertificate]'},
         'frontend_ip_configurations': {'key': 'properties.frontendIPConfigurations', 'type': '[ApplicationGatewayFrontendIPConfiguration]'},
         'frontend_ports': {'key': 'properties.frontendPorts', 'type': '[ApplicationGatewayFrontendPort]'},
         'probes': {'key': 'properties.probes', 'type': '[ApplicationGatewayProbe]'},

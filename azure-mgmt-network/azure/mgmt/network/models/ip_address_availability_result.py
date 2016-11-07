@@ -13,12 +13,12 @@ from msrest.serialization import Model
 
 
 class IPAddressAvailabilityResult(Model):
-    """Response for CheckIPAddressAvailability Api service call.
+    """Response for CheckIPAddressAvailability API service call.
 
-    :param available: Private IP address availability
+    :param available: Private IP address availability.
     :type available: bool
     :param available_ip_addresses: Contains other available private IP
-     addresses if the asked for address is taken
+     addresses if the asked for address is taken.
     :type available_ip_addresses: list of str
     """ 
 

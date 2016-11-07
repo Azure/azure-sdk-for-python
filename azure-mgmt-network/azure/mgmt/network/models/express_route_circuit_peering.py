@@ -13,55 +13,55 @@ from .sub_resource import SubResource
 
 
 class ExpressRouteCircuitPeering(SubResource):
-    """Peering in a ExpressRouteCircuit resource.
+    """Peering in an ExpressRouteCircuit resource.
 
-    :param id: Resource Id
+    :param id: Resource ID.
     :type id: str
-    :param peering_type: Gets or sets PeeringType. Possible values include:
-     'AzurePublicPeering', 'AzurePrivatePeering', 'MicrosoftPeering'
+    :param peering_type: The PeeringType. Possible values are:
+     'AzurePublicPeering', 'AzurePrivatePeering', and 'MicrosoftPeering'.
+     Possible values include: 'AzurePublicPeering', 'AzurePrivatePeering',
+     'MicrosoftPeering'
     :type peering_type: str or :class:`ExpressRouteCircuitPeeringType
      <azure.mgmt.network.models.ExpressRouteCircuitPeeringType>`
-    :param state: Gets or sets state of Peering. Possible values include:
-     'Disabled', 'Enabled'
+    :param state: The state of peering. Possible values are: 'Disabled' and
+     'Enbaled'. Possible values include: 'Disabled', 'Enabled'
     :type state: str or :class:`ExpressRouteCircuitPeeringState
      <azure.mgmt.network.models.ExpressRouteCircuitPeeringState>`
-    :param azure_asn: Gets or sets the azure ASN
+    :param azure_asn: The Azure ASN.
     :type azure_asn: int
-    :param peer_asn: Gets or sets the peer ASN
+    :param peer_asn: The peer ASN.
     :type peer_asn: int
-    :param primary_peer_address_prefix: Gets or sets the primary address
-     prefix
+    :param primary_peer_address_prefix: The primary address prefix.
     :type primary_peer_address_prefix: str
-    :param secondary_peer_address_prefix: Gets or sets the secondary address
-     prefix
+    :param secondary_peer_address_prefix: The secondary address prefix.
     :type secondary_peer_address_prefix: str
-    :param primary_azure_port: Gets or sets the primary port
+    :param primary_azure_port: The primary port.
     :type primary_azure_port: str
-    :param secondary_azure_port: Gets or sets the secondary port
+    :param secondary_azure_port: The secondary port.
     :type secondary_azure_port: str
-    :param shared_key: Gets or sets the shared key
+    :param shared_key: The shared key.
     :type shared_key: str
-    :param vlan_id: Gets or sets the vlan id
+    :param vlan_id: The VLAN ID.
     :type vlan_id: int
-    :param microsoft_peering_config: Gets or sets the mircosoft peering config
+    :param microsoft_peering_config: The Microsoft peering configuration.
     :type microsoft_peering_config: :class:`ExpressRouteCircuitPeeringConfig
      <azure.mgmt.network.models.ExpressRouteCircuitPeeringConfig>`
-    :param stats: Gets or peering stats
+    :param stats: Gets peering stats.
     :type stats: :class:`ExpressRouteCircuitStats
      <azure.mgmt.network.models.ExpressRouteCircuitStats>`
-    :param provisioning_state: Gets provisioning state of the PublicIP
-     resource Updating/Deleting/Failed
+    :param provisioning_state: Gets the provisioning state of the public IP
+     resource. Possible values are: 'Updating', 'Deleting', and 'Failed'.
     :type provisioning_state: str
-    :param gateway_manager_etag: Gets or sets the GatewayManager Etag
+    :param gateway_manager_etag: The GatewayManager Etag.
     :type gateway_manager_etag: str
     :param last_modified_by: Gets whether the provider or the customer last
-     modified the peering
+     modified the peering.
     :type last_modified_by: str
     :param name: Gets name of the resource that is unique within a resource
-     group. This name can be used to access the resource
+     group. This name can be used to access the resource.
     :type name: str
     :param etag: A unique read-only string that changes whenever the resource
-     is updated
+     is updated.
     :type etag: str
     """ 
 

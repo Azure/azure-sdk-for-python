@@ -36,7 +36,7 @@ class RouteTablesOperations(object):
 
     def delete(
             self, resource_group_name, route_table_name, custom_headers=None, raw=False, **operation_config):
-        """The Delete RouteTable operation deletes the specified Route Table.
+        """Deletes the specified route table.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
@@ -113,14 +113,13 @@ class RouteTablesOperations(object):
 
     def get(
             self, resource_group_name, route_table_name, expand=None, custom_headers=None, raw=False, **operation_config):
-        """The Get RouteTables operation retrieves information about the
-        specified route table.
+        """Gets the specified route table.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
         :param route_table_name: The name of the route table.
         :type route_table_name: str
-        :param expand: expand references resources.
+        :param expand: Expands referenced resources.
         :type expand: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -179,15 +178,14 @@ class RouteTablesOperations(object):
 
     def create_or_update(
             self, resource_group_name, route_table_name, parameters, custom_headers=None, raw=False, **operation_config):
-        """The Put RouteTable operation creates/updates a route table in the
-        specified resource group.
+        """Create or updates a route table in a specified resource group.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
         :param route_table_name: The name of the route table.
         :type route_table_name: str
-        :param parameters: Parameters supplied to the create/update Route
-         Table operation
+        :param parameters: Parameters supplied to the create or update route
+         table operation.
         :type parameters: :class:`RouteTable
          <azure.mgmt.network.models.RouteTable>`
         :param dict custom_headers: headers that will be added to the request
@@ -275,7 +273,7 @@ class RouteTablesOperations(object):
 
     def list(
             self, resource_group_name, custom_headers=None, raw=False, **operation_config):
-        """The list RouteTables returns all route tables in a resource group.
+        """Gets all route tables in a resource group.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
@@ -341,7 +339,7 @@ class RouteTablesOperations(object):
 
     def list_all(
             self, custom_headers=None, raw=False, **operation_config):
-        """The list RouteTables returns all route tables in a subscription.
+        """Gets all route tables in a subscription.
 
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the

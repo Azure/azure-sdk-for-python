@@ -15,6 +15,7 @@ from msrestazure import AzureConfiguration
 from .version import VERSION
 from msrest.pipeline import ClientRawResponse
 from msrestazure.azure_exceptions import CloudError
+from msrestazure.azure_operation import AzureOperationPoller
 import uuid
 from .operations.application_gateways_operations import ApplicationGatewaysOperations
 from .operations.express_route_circuit_authorizations_operations import ExpressRouteCircuitAuthorizationsOperations
@@ -46,11 +47,11 @@ class NetworkManagementClientConfiguration(AzureConfiguration):
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
      object<msrestazure.azure_active_directory>`
-    :param subscription_id: Gets subscription credentials which uniquely
-     identify Microsoft Azure subscription. The subscription ID forms part of
-     the URI for every service call.
+    :param subscription_id: The subscription credentials which uniquely
+     identify the Microsoft Azure subscription. The subscription ID forms
+     part of the URI for every service call.
     :type subscription_id: str
-    :param api_version: Client Api Version.
+    :param api_version: Client API version.
     :type api_version: str
     :param accept_language: Gets or sets the preferred language for the
      response.
@@ -143,11 +144,11 @@ class NetworkManagementClient(object):
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
      object<msrestazure.azure_active_directory>`
-    :param subscription_id: Gets subscription credentials which uniquely
-     identify Microsoft Azure subscription. The subscription ID forms part of
-     the URI for every service call.
+    :param subscription_id: The subscription credentials which uniquely
+     identify the Microsoft Azure subscription. The subscription ID forms
+     part of the URI for every service call.
     :type subscription_id: str
-    :param api_version: Client Api Version.
+    :param api_version: Client API version.
     :type api_version: str
     :param accept_language: Gets or sets the preferred language for the
      response.
@@ -217,7 +218,7 @@ class NetworkManagementClient(object):
         """Checks whether a domain name in the cloudapp.net zone is available for
         use.
 
-        :param location: The location of the domain name
+        :param location: The location of the domain name.
         :type location: str
         :param domain_name_label: The domain name to be verified. It must
          conform to the following regular expression:

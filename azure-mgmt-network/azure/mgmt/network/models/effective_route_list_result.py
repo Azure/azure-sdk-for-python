@@ -13,12 +13,12 @@ from msrest.serialization import Model
 
 
 class EffectiveRouteListResult(Model):
-    """Response for list effective route api service call.
+    """Response for list effective route API service call.
 
-    :param value: Gets list of effective routes
+    :param value: A list of effective routes.
     :type value: list of :class:`EffectiveRoute
      <azure.mgmt.network.models.EffectiveRoute>`
-    :param next_link: Gets the URL to get the next set of results.
+    :param next_link: The URL to get the next set of results.
     :type next_link: str
     """ 
 

@@ -13,7 +13,7 @@ from msrest.serialization import Model
 
 
 class ApplicationGatewayBackendHealth(Model):
-    """List of backendhealth pools.
+    """List of ApplicationGatewayBackendHealthPool resources.
 
     :param backend_address_pools:
     :type backend_address_pools: list of

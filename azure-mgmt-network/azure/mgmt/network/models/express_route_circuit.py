@@ -18,52 +18,53 @@ class ExpressRouteCircuit(Resource):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :param id: Resource Id
+    :param id: Resource ID.
     :type id: str
-    :ivar name: Resource name
+    :ivar name: Resource name.
     :vartype name: str
-    :ivar type: Resource type
+    :ivar type: Resource type.
     :vartype type: str
-    :param location: Resource location
+    :param location: Resource location.
     :type location: str
-    :param tags: Resource tags
+    :param tags: Resource tags.
     :type tags: dict
-    :param sku: Gets or sets sku
+    :param sku: The SKU.
     :type sku: :class:`ExpressRouteCircuitSku
      <azure.mgmt.network.models.ExpressRouteCircuitSku>`
-    :param allow_classic_operations: allow classic operations
+    :param allow_classic_operations: Allow classic operations
     :type allow_classic_operations: bool
-    :param circuit_provisioning_state: Gets or sets CircuitProvisioningState
-     state of the resource
+    :param circuit_provisioning_state: The CircuitProvisioningState state of
+     the resource.
     :type circuit_provisioning_state: str
-    :param service_provider_provisioning_state: Gets or sets
-     ServiceProviderProvisioningState state of the resource . Possible values
-     include: 'NotProvisioned', 'Provisioning', 'Provisioned',
-     'Deprovisioning'
+    :param service_provider_provisioning_state: The
+     ServiceProviderProvisioningState state of the resource. Possible values
+     are 'NotProvisioned', 'Provisioning', 'Provisioned', and
+     'Deprovisioning'. Possible values include: 'NotProvisioned',
+     'Provisioning', 'Provisioned', 'Deprovisioning'
     :type service_provider_provisioning_state: str or
      :class:`ServiceProviderProvisioningState
      <azure.mgmt.network.models.ServiceProviderProvisioningState>`
-    :param authorizations: Gets or sets list of authorizations
+    :param authorizations: The list of authorizations.
     :type authorizations: list of :class:`ExpressRouteCircuitAuthorization
      <azure.mgmt.network.models.ExpressRouteCircuitAuthorization>`
-    :param peerings: Gets or sets list of peerings
+    :param peerings: The list of peerings.
     :type peerings: list of :class:`ExpressRouteCircuitPeering
      <azure.mgmt.network.models.ExpressRouteCircuitPeering>`
-    :param service_key: Gets or sets ServiceKey
+    :param service_key: The ServiceKey.
     :type service_key: str
-    :param service_provider_notes: Gets or sets ServiceProviderNotes
+    :param service_provider_notes: The ServiceProviderNotes.
     :type service_provider_notes: str
-    :param service_provider_properties: Gets or sets ServiceProviderProperties
+    :param service_provider_properties: The ServiceProviderProperties.
     :type service_provider_properties:
      :class:`ExpressRouteCircuitServiceProviderProperties
      <azure.mgmt.network.models.ExpressRouteCircuitServiceProviderProperties>`
-    :param provisioning_state: Gets provisioning state of the PublicIP
-     resource Updating/Deleting/Failed
+    :param provisioning_state: Gets the provisioning state of the public IP
+     resource. Possible values are: 'Updating', 'Deleting', and 'Failed'.
     :type provisioning_state: str
-    :param gateway_manager_etag: Gets or sets the GatewayManager Etag
+    :param gateway_manager_etag: The GatewayManager Etag.
     :type gateway_manager_etag: str
     :param etag: Gets a unique read-only string that changes whenever the
-     resource is updated
+     resource is updated.
     :type etag: str
     """ 
 
