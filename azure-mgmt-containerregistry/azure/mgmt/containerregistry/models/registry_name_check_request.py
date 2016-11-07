@@ -12,24 +12,30 @@
 from msrest.serialization import Model
 
 
-class ListQueryKeysResult(Model):
-    """Response containing the query API keys for a given Azure Search service.
+class RegistryNameCheckRequest(Model):
+    """The request to check whether the container registry name is available.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar value: The query keys for the Azure Search service.
-    :vartype value: list of :class:`QueryKey
-     <azure.mgmt.search.models.QueryKey>`
+    :param name: The container registry name.
+    :type name: str
+    :ivar type: The container registry resource type. Default value:
+     "Microsoft.ContainerRegistry/registries" .
+    :vartype type: str
     """ 
 
     _validation = {
-        'value': {'readonly': True},
+        'name': {'required': True},
+        'type': {'required': True, 'constant': True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[QueryKey]'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
     }
 
-    def __init__(self):
-        self.value = None
+    type = "Microsoft.ContainerRegistry/registries"
+
+    def __init__(self, name):
+        self.name = name

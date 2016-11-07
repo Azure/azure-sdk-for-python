@@ -62,6 +62,14 @@
       },
       "output_dir": "azure-mgmt-compute/azure/mgmt/compute"
     },
+    "containerregistry": {
+      "swagger": "arm-containerregistry/2016-06-27-preview/swagger/containerregistry.json",
+      "autorest_options": {
+        "Namespace": "azure.mgmt.containerregistry",
+        "PackageVersion": "0.1.0"
+      },
+      "output_dir": "azure-mgmt-containerregistry/azure/mgmt/containerregistry"
+    },
     "devtestlabs": {
       "swagger": "arm-devtestlabs/2016-05-15/swagger/DTL.json",
       "autorest_options": {
@@ -229,7 +237,7 @@
       "output_dir": "azure-mgmt-resource/azure/mgmt/resource/links"
     },
     "search": {
-      "swagger": "arm-search/2015-02-28/swagger/search.json",
+      "swagger": "arm-search/2015-08-19/swagger/search.json",
       "autorest_options": {
         "Namespace": "azure.mgmt.search"
       },

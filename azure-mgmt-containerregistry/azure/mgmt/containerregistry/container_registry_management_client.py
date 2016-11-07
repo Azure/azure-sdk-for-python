@@ -13,26 +13,21 @@ from msrest.service_client import ServiceClient
 from msrest import Serializer, Deserializer
 from msrestazure import AzureConfiguration
 from .version import VERSION
-from .operations.admin_keys_operations import AdminKeysOperations
-from .operations.query_keys_operations import QueryKeysOperations
-from .operations.services_operations import ServicesOperations
+from .operations.registries_operations import RegistriesOperations
 from . import models
 
 
-class SearchManagementClientConfiguration(AzureConfiguration):
-    """Configuration for SearchManagementClient
+class ContainerRegistryManagementClientConfiguration(AzureConfiguration):
+    """Configuration for ContainerRegistryManagementClient
     Note that all parameters used to create this instance are saved as instance
     attributes.
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
      object<msrestazure.azure_active_directory>`
-    :param subscription_id: The unique identifier for a Microsoft Azure
-     subscription. You can obtain this value from the Azure Resource Manager
-     API or the portal.
+    :param subscription_id: Microsoft Azure subscription id.
     :type subscription_id: str
-    :param api_version: The API version to use for each request. The current
-     version is 2015-08-19.
+    :param api_version: Client Api Version.
     :type api_version: str
     :param accept_language: Gets or sets the preferred language for the
      response.
@@ -49,7 +44,7 @@ class SearchManagementClientConfiguration(AzureConfiguration):
     """
 
     def __init__(
-            self, credentials, subscription_id, api_version='2015-08-19', accept_language='en-US', long_running_operation_retry_timeout=30, generate_client_request_id=True, base_url=None, filepath=None):
+            self, credentials, subscription_id, api_version='2016-06-27-preview', accept_language='en-US', long_running_operation_retry_timeout=30, generate_client_request_id=True, base_url=None, filepath=None):
 
         if credentials is None:
             raise ValueError("Parameter 'credentials' must not be None.")
@@ -64,9 +59,9 @@ class SearchManagementClientConfiguration(AzureConfiguration):
         if not base_url:
             base_url = 'https://management.azure.com'
 
-        super(SearchManagementClientConfiguration, self).__init__(base_url, filepath)
+        super(ContainerRegistryManagementClientConfiguration, self).__init__(base_url, filepath)
 
-        self.add_user_agent('searchmanagementclient/{}'.format(VERSION))
+        self.add_user_agent('containerregistrymanagementclient/{}'.format(VERSION))
         self.add_user_agent('Azure-SDK-For-Python')
 
         self.credentials = credentials
@@ -77,28 +72,21 @@ class SearchManagementClientConfiguration(AzureConfiguration):
         self.generate_client_request_id = generate_client_request_id
 
 
-class SearchManagementClient(object):
-    """Client that can be used to manage Azure Search services and API keys.
+class ContainerRegistryManagementClient(object):
+    """ContainerRegistryManagementClient
 
     :ivar config: Configuration for client.
-    :vartype config: SearchManagementClientConfiguration
+    :vartype config: ContainerRegistryManagementClientConfiguration
 
-    :ivar admin_keys: AdminKeys operations
-    :vartype admin_keys: .operations.AdminKeysOperations
-    :ivar query_keys: QueryKeys operations
-    :vartype query_keys: .operations.QueryKeysOperations
-    :ivar services: Services operations
-    :vartype services: .operations.ServicesOperations
+    :ivar registries: Registries operations
+    :vartype registries: .operations.RegistriesOperations
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
      object<msrestazure.azure_active_directory>`
-    :param subscription_id: The unique identifier for a Microsoft Azure
-     subscription. You can obtain this value from the Azure Resource Manager
-     API or the portal.
+    :param subscription_id: Microsoft Azure subscription id.
     :type subscription_id: str
-    :param api_version: The API version to use for each request. The current
-     version is 2015-08-19.
+    :param api_version: Client Api Version.
     :type api_version: str
     :param accept_language: Gets or sets the preferred language for the
      response.
@@ -115,18 +103,14 @@ class SearchManagementClient(object):
     """
 
     def __init__(
-            self, credentials, subscription_id, api_version='2015-08-19', accept_language='en-US', long_running_operation_retry_timeout=30, generate_client_request_id=True, base_url=None, filepath=None):
+            self, credentials, subscription_id, api_version='2016-06-27-preview', accept_language='en-US', long_running_operation_retry_timeout=30, generate_client_request_id=True, base_url=None, filepath=None):
 
-        self.config = SearchManagementClientConfiguration(credentials, subscription_id, api_version, accept_language, long_running_operation_retry_timeout, generate_client_request_id, base_url, filepath)
+        self.config = ContainerRegistryManagementClientConfiguration(credentials, subscription_id, api_version, accept_language, long_running_operation_retry_timeout, generate_client_request_id, base_url, filepath)
         self._client = ServiceClient(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
 
-        self.admin_keys = AdminKeysOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.query_keys = QueryKeysOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.services = ServicesOperations(
+        self.registries = RegistriesOperations(
             self._client, self.config, self._serialize, self._deserialize)
