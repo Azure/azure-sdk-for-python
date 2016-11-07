@@ -46,7 +46,6 @@ class DatabaseAccountCreateUpdateParameters(Resource):
         'name': {'readonly': True},
         'type': {'readonly': True},
         'location': {'required': True},
-        'consistency_policy': {'required': True},
         'locations': {'required': True},
         'database_account_offer_type': {'required': True, 'constant': True},
     }
@@ -59,12 +58,12 @@ class DatabaseAccountCreateUpdateParameters(Resource):
         'tags': {'key': 'tags', 'type': '{str}'},
         'consistency_policy': {'key': 'properties.consistencyPolicy', 'type': 'ConsistencyPolicy'},
         'locations': {'key': 'properties.locations', 'type': '[Location]'},
-        'database_account_offer_type': {'key': 'databaseAccountOfferType', 'type': 'str'},
+        'database_account_offer_type': {'key': 'properties.databaseAccountOfferType', 'type': 'str'},
     }
 
     database_account_offer_type = "Standard"
 
-    def __init__(self, location, consistency_policy, locations, tags=None):
+    def __init__(self, location, locations, tags=None, consistency_policy=None):
         super(DatabaseAccountCreateUpdateParameters, self).__init__(location=location, tags=tags)
         self.consistency_policy = consistency_policy
         self.locations = locations
