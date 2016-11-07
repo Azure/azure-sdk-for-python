@@ -1,0 +1,304 @@
+interactions:
+- request:
+    body: '{"type": "Microsoft.ContainerRegistry/registries", "name": "pyacr16cc0ef3"}'
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['75']
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.5.1 (Windows-10-10.0.14393-SP0) requests/2.11.1 msrest/0.4.4
+          msrest_azure/0.4.3 containerregistrymanagementclient/0.1.0 Azure-SDK-For-Python]
+      accept-language: [en-US]
+      x-ms-client-request-id: [61cc6bb4-a2c0-11e6-8105-ecb1d756380e]
+    method: POST
+    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.ContainerRegistry/checkNameAvailability?api-version=2016-06-27-preview
+  response:
+    body: {string: '{"nameAvailable":true}'}
+    headers:
+      Cache-Control: [no-cache]
+      Content-Type: [application/json; charset=utf-8]
+      Date: ['Fri, 04 Nov 2016 18:56:24 GMT']
+      Expires: ['-1']
+      Pragma: [no-cache]
+      Server: [Microsoft-IIS/8.5]
+      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
+      Transfer-Encoding: [chunked]
+      Vary: [Accept-Encoding]
+      X-AspNet-Version: [4.0.30319]
+      X-Powered-By: [ASP.NET]
+      content-length: ['22']
+      x-ms-correlation-request-id: [8ed73f52-4e07-420e-85de-12647721c191]
+      x-ms-ratelimit-remaining-subscription-reads: ['14989']
+      x-ms-request-id: [8ed73f52-4e07-420e-85de-12647721c191]
+      x-ms-routing-request-id: ['WESTUS2:20161104T185624Z:8ed73f52-4e07-420e-85de-12647721c191']
+    status: {code: 200, message: OK}
+- request:
+    body: '{"properties": {"storageAccount": {"accessKey": "r75KiBFOlsW0hKgh0hlnzDyZcpSwrTYa7+XBOyOJKjb7HqyAtp4HXldIPvR+HoLl0WfGcg+JrYGBiRageox9RQ==",
+      "name": "mstopytest"}, "adminUserEnabled": false}, "location": "eastus"}'
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['212']
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.5.1 (Windows-10-10.0.14393-SP0) requests/2.11.1 msrest/0.4.4
+          msrest_azure/0.4.3 containerregistrymanagementclient/0.1.0 Azure-SDK-For-Python]
+      accept-language: [en-US]
+      x-ms-client-request-id: [6254869c-a2c0-11e6-a14b-ecb1d756380e]
+    method: PUT
+    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_containerregistry_test_acr16cc0ef3/providers/Microsoft.ContainerRegistry/registries/pyacr16cc0ef3?api-version=2016-06-27-preview
+  response:
+    body: {string: '{"type":"Microsoft.ContainerRegistry/registries","id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_mgmt_containerregistry_test_acr16cc0ef3/providers/Microsoft.ContainerRegistry/registries/pyacr16cc0ef3","name":"pyacr16cc0ef3","location":"eastus","tags":{},"properties":{"loginServer":"pyacr16cc0ef3-exp.azurecr.io","creationDate":"0001-01-01T00:00:00Z","adminUserEnabled":false,"storageAccount":{"name":"mstopytest"}}}'}
+    headers:
+      Cache-Control: [no-cache]
+      Content-Type: [application/json; charset=utf-8]
+      Date: ['Fri, 04 Nov 2016 18:56:27 GMT']
+      Expires: ['-1']
+      Pragma: [no-cache]
+      Server: [Microsoft-IIS/8.5]
+      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
+      Transfer-Encoding: [chunked]
+      Vary: [Accept-Encoding]
+      X-AspNet-Version: [4.0.30319]
+      X-Powered-By: [ASP.NET]
+      content-length: ['446']
+      x-ms-correlation-request-id: [880a3885-ac5b-4847-87cc-8b5141267a8f]
+      x-ms-ratelimit-remaining-subscription-writes: ['1199']
+      x-ms-request-id: [880a3885-ac5b-4847-87cc-8b5141267a8f]
+      x-ms-routing-request-id: ['WESTUS2:20161104T185628Z:880a3885-ac5b-4847-87cc-8b5141267a8f']
+    status: {code: 200, message: OK}
+- request:
+    body: '{"properties": {"storageAccount": {"accessKey": "r75KiBFOlsW0hKgh0hlnzDyZcpSwrTYa7+XBOyOJKjb7HqyAtp4HXldIPvR+HoLl0WfGcg+JrYGBiRageox9RQ==",
+      "name": "mstopytest"}, "adminUserEnabled": true}, "location": "eastus"}'
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['211']
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.5.1 (Windows-10-10.0.14393-SP0) requests/2.11.1 msrest/0.4.4
+          msrest_azure/0.4.3 containerregistrymanagementclient/0.1.0 Azure-SDK-For-Python]
+      accept-language: [en-US]
+      x-ms-client-request-id: [643c2bb4-a2c0-11e6-9cef-ecb1d756380e]
+    method: PUT
+    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_containerregistry_test_acr16cc0ef3/providers/Microsoft.ContainerRegistry/registries/pyacr16cc0ef3?api-version=2016-06-27-preview
+  response:
+    body: {string: '{"type":"Microsoft.ContainerRegistry/registries","id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_mgmt_containerregistry_test_acr16cc0ef3/providers/Microsoft.ContainerRegistry/registries/pyacr16cc0ef3","name":"pyacr16cc0ef3","location":"eastus","tags":{},"properties":{"loginServer":"pyacr16cc0ef3-exp.azurecr.io","creationDate":"0001-01-01T00:00:00Z","adminUserEnabled":true,"storageAccount":{"name":"mstopytest"}}}'}
+    headers:
+      Cache-Control: [no-cache]
+      Content-Type: [application/json; charset=utf-8]
+      Date: ['Fri, 04 Nov 2016 18:56:28 GMT']
+      Expires: ['-1']
+      Pragma: [no-cache]
+      Server: [Microsoft-IIS/8.5]
+      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
+      Transfer-Encoding: [chunked]
+      Vary: [Accept-Encoding]
+      X-AspNet-Version: [4.0.30319]
+      X-Powered-By: [ASP.NET]
+      content-length: ['445']
+      x-ms-correlation-request-id: [8d66425c-09ba-4a48-8d4f-97ff69194395]
+      x-ms-ratelimit-remaining-subscription-writes: ['1198']
+      x-ms-request-id: [8d66425c-09ba-4a48-8d4f-97ff69194395]
+      x-ms-routing-request-id: ['WESTUS2:20161104T185628Z:8d66425c-09ba-4a48-8d4f-97ff69194395']
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.5.1 (Windows-10-10.0.14393-SP0) requests/2.11.1 msrest/0.4.4
+          msrest_azure/0.4.3 containerregistrymanagementclient/0.1.0 Azure-SDK-For-Python]
+      accept-language: [en-US]
+      x-ms-client-request-id: [64c9da36-a2c0-11e6-b181-ecb1d756380e]
+    method: GET
+    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_containerregistry_test_acr16cc0ef3/providers/Microsoft.ContainerRegistry/registries/pyacr16cc0ef3?api-version=2016-06-27-preview
+  response:
+    body: {string: '{"type":"Microsoft.ContainerRegistry/registries","id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_mgmt_containerregistry_test_acr16cc0ef3/providers/Microsoft.ContainerRegistry/registries/pyacr16cc0ef3","name":"pyacr16cc0ef3","location":"eastus","tags":{},"properties":{"loginServer":"pyacr16cc0ef3-exp.azurecr.io","creationDate":"2016-11-04T18:56:28.7662248Z","adminUserEnabled":true,"storageAccount":{"name":"mstopytest"}}}'}
+    headers:
+      Cache-Control: [no-cache]
+      Content-Type: [application/json; charset=utf-8]
+      Date: ['Fri, 04 Nov 2016 18:56:29 GMT']
+      Expires: ['-1']
+      Pragma: [no-cache]
+      Server: [Microsoft-IIS/8.5]
+      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
+      Transfer-Encoding: [chunked]
+      Vary: [Accept-Encoding]
+      X-AspNet-Version: [4.0.30319]
+      X-Powered-By: [ASP.NET]
+      content-length: ['453']
+      x-ms-correlation-request-id: [f70c9b9b-9020-4763-ac37-90031108bf68]
+      x-ms-ratelimit-remaining-subscription-reads: ['14988']
+      x-ms-request-id: [f70c9b9b-9020-4763-ac37-90031108bf68]
+      x-ms-routing-request-id: ['WESTUS2:20161104T185629Z:f70c9b9b-9020-4763-ac37-90031108bf68']
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.5.1 (Windows-10-10.0.14393-SP0) requests/2.11.1 msrest/0.4.4
+          msrest_azure/0.4.3 containerregistrymanagementclient/0.1.0 Azure-SDK-For-Python]
+      accept-language: [en-US]
+      x-ms-client-request-id: [655654ca-a2c0-11e6-905b-ecb1d756380e]
+    method: GET
+    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.ContainerRegistry/registries?api-version=2016-06-27-preview
+  response:
+    body: {string: '{"value":[{"type":"Microsoft.ContainerRegistry/registries","id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_mgmt_containerregistry_test_acr16cc0ef3/providers/Microsoft.ContainerRegistry/registries/pyacr16cc0ef3","name":"pyacr16cc0ef3","location":"eastus","tags":{},"properties":{"loginServer":"pyacr16cc0ef3-exp.azurecr.io","creationDate":"2016-11-04T18:56:28.7662248Z","adminUserEnabled":true,"storageAccount":{"name":"mstopytest"}}}]}'}
+    headers:
+      Cache-Control: [no-cache]
+      Content-Type: [application/json; charset=utf-8]
+      Date: ['Fri, 04 Nov 2016 18:56:29 GMT']
+      Expires: ['-1']
+      Pragma: [no-cache]
+      Server: [Microsoft-IIS/8.5]
+      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
+      Transfer-Encoding: [chunked]
+      Vary: [Accept-Encoding]
+      X-AspNet-Version: [4.0.30319]
+      X-Powered-By: [ASP.NET]
+      content-length: ['465']
+      x-ms-correlation-request-id: [f0373a81-657b-45ef-ab61-587b1a98c3fd]
+      x-ms-ratelimit-remaining-subscription-reads: ['14995']
+      x-ms-request-id: [f0373a81-657b-45ef-ab61-587b1a98c3fd]
+      x-ms-routing-request-id: ['WESTUS2:20161104T185630Z:f0373a81-657b-45ef-ab61-587b1a98c3fd']
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.5.1 (Windows-10-10.0.14393-SP0) requests/2.11.1 msrest/0.4.4
+          msrest_azure/0.4.3 containerregistrymanagementclient/0.1.0 Azure-SDK-For-Python]
+      accept-language: [en-US]
+      x-ms-client-request-id: [6597b850-a2c0-11e6-99fc-ecb1d756380e]
+    method: GET
+    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_containerregistry_test_acr16cc0ef3/providers/Microsoft.ContainerRegistry/registries?api-version=2016-06-27-preview
+  response:
+    body: {string: '{"value":[{"type":"Microsoft.ContainerRegistry/registries","id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_mgmt_containerregistry_test_acr16cc0ef3/providers/Microsoft.ContainerRegistry/registries/pyacr16cc0ef3","name":"pyacr16cc0ef3","location":"eastus","tags":{},"properties":{"loginServer":"pyacr16cc0ef3-exp.azurecr.io","creationDate":"2016-11-04T18:56:28.7662248Z","adminUserEnabled":true,"storageAccount":{"name":"mstopytest"}}}]}'}
+    headers:
+      Cache-Control: [no-cache]
+      Content-Type: [application/json; charset=utf-8]
+      Date: ['Fri, 04 Nov 2016 18:56:30 GMT']
+      Expires: ['-1']
+      Pragma: [no-cache]
+      Server: [Microsoft-IIS/8.5]
+      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
+      Transfer-Encoding: [chunked]
+      Vary: [Accept-Encoding]
+      X-AspNet-Version: [4.0.30319]
+      X-Powered-By: [ASP.NET]
+      content-length: ['465']
+      x-ms-correlation-request-id: [cf070696-18f7-4793-95f8-8722e029409b]
+      x-ms-ratelimit-remaining-subscription-reads: ['14991']
+      x-ms-request-id: [cf070696-18f7-4793-95f8-8722e029409b]
+      x-ms-routing-request-id: ['WESTUS2:20161104T185631Z:cf070696-18f7-4793-95f8-8722e029409b']
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['0']
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.5.1 (Windows-10-10.0.14393-SP0) requests/2.11.1 msrest/0.4.4
+          msrest_azure/0.4.3 containerregistrymanagementclient/0.1.0 Azure-SDK-For-Python]
+      accept-language: [en-US]
+      x-ms-client-request-id: [661e3ce4-a2c0-11e6-beb7-ecb1d756380e]
+    method: POST
+    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_containerregistry_test_acr16cc0ef3/providers/Microsoft.ContainerRegistry/registries/pyacr16cc0ef3/getCredentials?api-version=2016-06-27-preview
+  response:
+    body: {string: '{"username":"pyacr16cc0ef3","password":"eF//=+/f3=Wq++Z=8HqE=EzyJi+4FLIb"}'}
+    headers:
+      Cache-Control: [no-cache]
+      Content-Type: [application/json; charset=utf-8]
+      Date: ['Fri, 04 Nov 2016 18:56:30 GMT']
+      Expires: ['-1']
+      Pragma: [no-cache]
+      Server: [Microsoft-IIS/8.5]
+      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
+      Transfer-Encoding: [chunked]
+      Vary: [Accept-Encoding]
+      X-AspNet-Version: [4.0.30319]
+      X-Powered-By: [ASP.NET]
+      content-length: ['74']
+      x-ms-correlation-request-id: [7b718456-38a0-4410-b8ad-63f2ee07c432]
+      x-ms-ratelimit-remaining-subscription-writes: ['1199']
+      x-ms-request-id: [7b718456-38a0-4410-b8ad-63f2ee07c432]
+      x-ms-routing-request-id: ['WESTUS2:20161104T185631Z:7b718456-38a0-4410-b8ad-63f2ee07c432']
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['0']
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.5.1 (Windows-10-10.0.14393-SP0) requests/2.11.1 msrest/0.4.4
+          msrest_azure/0.4.3 containerregistrymanagementclient/0.1.0 Azure-SDK-For-Python]
+      accept-language: [en-US]
+      x-ms-client-request-id: [667b6cf8-a2c0-11e6-ab18-ecb1d756380e]
+    method: POST
+    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_containerregistry_test_acr16cc0ef3/providers/Microsoft.ContainerRegistry/registries/pyacr16cc0ef3/regenerateCredentials?api-version=2016-06-27-preview
+  response:
+    body: {string: '{"username":"pyacr16cc0ef3","password":"f/+//8++M+Ohz+Q+GolhfLa/T/IJe=n2"}'}
+    headers:
+      Cache-Control: [no-cache]
+      Content-Type: [application/json; charset=utf-8]
+      Date: ['Fri, 04 Nov 2016 18:56:32 GMT']
+      Expires: ['-1']
+      Pragma: [no-cache]
+      Server: [Microsoft-IIS/8.5]
+      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
+      Transfer-Encoding: [chunked]
+      Vary: [Accept-Encoding]
+      X-AspNet-Version: [4.0.30319]
+      X-Powered-By: [ASP.NET]
+      content-length: ['74']
+      x-ms-correlation-request-id: [e1a40040-0bea-4503-b146-30edf92ef943]
+      x-ms-ratelimit-remaining-subscription-writes: ['1198']
+      x-ms-request-id: [e1a40040-0bea-4503-b146-30edf92ef943]
+      x-ms-routing-request-id: ['WESTUS2:20161104T185632Z:e1a40040-0bea-4503-b146-30edf92ef943']
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['0']
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.5.1 (Windows-10-10.0.14393-SP0) requests/2.11.1 msrest/0.4.4
+          msrest_azure/0.4.3 containerregistrymanagementclient/0.1.0 Azure-SDK-For-Python]
+      accept-language: [en-US]
+      x-ms-client-request-id: [67161108-a2c0-11e6-ad5c-ecb1d756380e]
+    method: DELETE
+    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_containerregistry_test_acr16cc0ef3/providers/Microsoft.ContainerRegistry/registries/pyacr16cc0ef3?api-version=2016-06-27-preview
+  response:
+    body: {string: ''}
+    headers:
+      Cache-Control: [no-cache]
+      Content-Length: ['0']
+      Date: ['Fri, 04 Nov 2016 18:56:33 GMT']
+      Expires: ['-1']
+      Pragma: [no-cache]
+      Server: [Microsoft-IIS/8.5]
+      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
+      X-AspNet-Version: [4.0.30319]
+      X-Powered-By: [ASP.NET]
+      x-ms-correlation-request-id: [2f73db02-3933-4aa1-be96-776869876637]
+      x-ms-ratelimit-remaining-subscription-writes: ['1198']
+      x-ms-request-id: [2f73db02-3933-4aa1-be96-776869876637]
+      x-ms-routing-request-id: ['WESTUS2:20161104T185634Z:2f73db02-3933-4aa1-be96-776869876637']
+    status: {code: 200, message: OK}
+version: 1

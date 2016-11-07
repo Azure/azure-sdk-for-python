@@ -12,25 +12,25 @@
 from msrest.serialization import Model
 
 
-class SearchServiceListResult(Model):
-    """Response containing a list of Azure Search services for a given resource
-    group.
+class StorageAccountProperties(Model):
+    """The storage account properties.
 
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
-
-    :ivar value: The Search services in the resource group.
-    :vartype value: list of :class:`SearchServiceResource
-     <azure.mgmt.search.models.SearchServiceResource>`
+    :param name: Storage account name.
+    :type name: str
+    :param access_key: Storage account access key.
+    :type access_key: str
     """ 
 
     _validation = {
-        'value': {'readonly': True},
+        'name': {'required': True},
+        'access_key': {'required': True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[SearchServiceResource]'},
+        'name': {'key': 'name', 'type': 'str'},
+        'access_key': {'key': 'accessKey', 'type': 'str'},
     }
 
-    def __init__(self):
-        self.value = None
+    def __init__(self, name, access_key):
+        self.name = name
+        self.access_key = access_key

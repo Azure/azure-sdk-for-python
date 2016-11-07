@@ -12,42 +12,43 @@
 from msrest.serialization import Model
 
 
-class SearchServiceResource(Model):
-    """Describes an Azure Search service and its current state.
+class Resource(Model):
+    """Azure resource.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar id: The resource Id of the Azure Search service.
+    :ivar id: Resource Id.
     :vartype id: str
-    :param name: The name of the Search service.
-    :type name: str
-    :param location: The geographic location of the Search service.
+    :ivar name: Resource name.
+    :vartype name: str
+    :ivar type: Resource type.
+    :vartype type: str
+    :param location: Resource location. Once the resource has been created,
+     location cannot be updated.
     :type location: str
-    :param tags: Tags to help categorize the Search service in the Azure
-     Portal.
+    :param tags: Resource tags.
     :type tags: dict
-    :ivar properties: Properties of the Search service.
-    :vartype properties: :class:`SearchServiceReadableProperties
-     <azure.mgmt.search.models.SearchServiceReadableProperties>`
     """ 
 
     _validation = {
         'id': {'readonly': True},
-        'properties': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'location': {'required': True},
     }
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
         'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
-        'properties': {'key': 'properties', 'type': 'SearchServiceReadableProperties'},
     }
 
-    def __init__(self, name=None, location=None, tags=None):
+    def __init__(self, location, tags=None):
         self.id = None
-        self.name = name
+        self.name = None
+        self.type = None
         self.location = location
         self.tags = tags
-        self.properties = None
