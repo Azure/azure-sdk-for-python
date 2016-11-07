@@ -19,6 +19,7 @@
   ./ref/azure.mgmt.iothub.rst
   ./ref/azure.mgmt.keyvault.rst
   ./ref/azure.mgmt.logic.rst
+  ./ref/azure.mgmt.media.rst
   ./ref/azure.mgmt.network.rst
   ./ref/azure.mgmt.notificationhubs.rst
   ./ref/azure.mgmt.powerbiembedded.rst
