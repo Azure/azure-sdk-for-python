@@ -13,7 +13,7 @@ from msrest.serialization import Model
 
 
 class ContainerServiceWindowsProfile(Model):
-    """Profile for Windows VMs.
+    """Profile for Windows VMs in the container service cluster.
 
     :param admin_username: The administrator user name to use for Windows VMs.
     :type admin_username: str

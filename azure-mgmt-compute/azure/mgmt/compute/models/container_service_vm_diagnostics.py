@@ -13,13 +13,12 @@ from msrest.serialization import Model
 
 
 class ContainerServiceVMDiagnostics(Model):
-    """Describes VM diagnostics.
+    """Profile for diagnostics on the container service VMs.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :param enabled: Whether the VM diagnostic agent should be provisioned on
-     the VM.
+    :param enabled: Whether the VM diagnostic agent is provisioned on the VM.
     :type enabled: bool
     :ivar storage_uri: The URI of the storage account where diagnostics are
      stored.
