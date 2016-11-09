@@ -25,9 +25,9 @@ class ContainerRegistryManagementClientConfiguration(AzureConfiguration):
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
      object<msrestazure.azure_active_directory>`
-    :param subscription_id: Microsoft Azure subscription id.
+    :param subscription_id: The Microsoft Azure subscription ID.
     :type subscription_id: str
-    :param api_version: Client Api Version.
+    :param api_version: The client API version.
     :type api_version: str
     :param accept_language: Gets or sets the preferred language for the
      response.
@@ -84,9 +84,9 @@ class ContainerRegistryManagementClient(object):
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
      object<msrestazure.azure_active_directory>`
-    :param subscription_id: Microsoft Azure subscription id.
+    :param subscription_id: The Microsoft Azure subscription ID.
     :type subscription_id: str
-    :param api_version: Client Api Version.
+    :param api_version: The client API version.
     :type api_version: str
     :param accept_language: Gets or sets the preferred language for the
      response.
