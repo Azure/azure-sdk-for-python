@@ -37,7 +37,9 @@ class UsageOperations(object):
 
     def list(
             self, location, custom_headers=None, raw=False, **operation_config):
-        """Lists compute usages for a subscription.
+        """Gets, for the specified location, the current compute usage
+        information as well as the limits for compute resources under the
+        subscription.
 
         :param location: The location upon which resource usage is queried.
         :type location: str

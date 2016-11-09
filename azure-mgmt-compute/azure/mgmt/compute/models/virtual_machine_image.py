@@ -17,11 +17,11 @@ class VirtualMachineImage(VirtualMachineImageResource):
 
     :param id: Resource Id
     :type id: str
-    :param name: the name of the resource.
+    :param name: The name of the resource.
     :type name: str
-    :param location: the location of the resource.
+    :param location: The supported Azure location of the resource.
     :type location: str
-    :param tags: the tags attached to the resource.
+    :param tags: The tags attached to the resource.
     :type tags: dict
     :param plan:
     :type plan: :class:`PurchasePlan <azure.mgmt.compute.models.PurchasePlan>`

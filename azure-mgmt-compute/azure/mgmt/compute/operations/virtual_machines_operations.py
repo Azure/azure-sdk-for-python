@@ -636,8 +636,8 @@ class VirtualMachinesOperations(object):
 
     def list_available_sizes(
             self, resource_group_name, vm_name, custom_headers=None, raw=False, **operation_config):
-        """Lists all available virtual machine sizes it can be resized to for a
-        virtual machine.
+        """Lists all available virtual machine sizes to which the specified
+        virtual machine can be resized.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
