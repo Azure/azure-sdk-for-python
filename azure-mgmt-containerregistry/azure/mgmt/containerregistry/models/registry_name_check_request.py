@@ -13,14 +13,15 @@ from msrest.serialization import Model
 
 
 class RegistryNameCheckRequest(Model):
-    """The request to check whether the container registry name is available.
+    """A request to check whether the container registry name is available.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :param name: The container registry name.
+    :param name: The name of the container registry.
     :type name: str
-    :ivar type: The container registry resource type. Default value:
+    :ivar type: The resource type of the container registry. This field must
+     be set to "Microsoft.ContainerRegistry/registries". Default value:
      "Microsoft.ContainerRegistry/registries" .
     :vartype type: str
     """ 

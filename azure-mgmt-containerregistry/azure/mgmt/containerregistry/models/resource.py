@@ -13,21 +13,21 @@ from msrest.serialization import Model
 
 
 class Resource(Model):
-    """Azure resource.
+    """An Azure resource.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar id: Resource Id.
+    :ivar id: The resource ID.
     :vartype id: str
-    :ivar name: Resource name.
+    :ivar name: The name of the resource.
     :vartype name: str
-    :ivar type: Resource type.
+    :ivar type: The type of the resource.
     :vartype type: str
-    :param location: Resource location. Once the resource has been created,
-     location cannot be updated.
+    :param location: The location of the resource. This cannot be changed
+     after the resource is created.
     :type location: str
-    :param tags: Resource tags.
+    :param tags: The tags of the resource.
     :type tags: dict
     """ 
 

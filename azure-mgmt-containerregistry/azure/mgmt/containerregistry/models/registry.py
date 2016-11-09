@@ -13,31 +13,34 @@ from .resource import Resource
 
 
 class Registry(Resource):
-    """The container registry.
+    """An object that represents a container registry.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar id: Resource Id.
+    :ivar id: The resource ID.
     :vartype id: str
-    :ivar name: Resource name.
+    :ivar name: The name of the resource.
     :vartype name: str
-    :ivar type: Resource type.
+    :ivar type: The type of the resource.
     :vartype type: str
-    :param location: Resource location. Once the resource has been created,
-     location cannot be updated.
+    :param location: The location of the resource. This cannot be changed
+     after the resource is created.
     :type location: str
-    :param tags: Resource tags.
+    :param tags: The tags of the resource.
     :type tags: dict
-    :ivar login_server: The URL to log into the container registry.
+    :ivar login_server: The URL that can be used to log into the container
+     registry.
     :vartype login_server: str
     :ivar creation_date: The creation date of the container registry in
      ISO8601 format.
     :vartype creation_date: datetime
-    :param admin_user_enabled: The boolean value that indicates whether admin
-     user is enabled. Default value is false. Default value: False .
+    :param admin_user_enabled: The value that indicates whether the admin
+     user is enabled. This value is false by default. Default value: False .
     :type admin_user_enabled: bool
-    :param storage_account: The storage account properties.
+    :param storage_account: The properties of the storage account for the
+     container registry. If specified, the storage account must be in the
+     same physical location as the container registry.
     :type storage_account: :class:`StorageAccountProperties
      <azure.mgmt.containerregistry.models.StorageAccountProperties>`
     """ 
