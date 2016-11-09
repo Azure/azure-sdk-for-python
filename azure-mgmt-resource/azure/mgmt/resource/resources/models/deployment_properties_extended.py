@@ -47,8 +47,8 @@ class DeploymentPropertiesExtended(Model):
      of Parameters or ParametersLink.
     :type parameters_link: :class:`ParametersLink
      <azure.mgmt.resource.resources.models.ParametersLink>`
-    :param mode: The deployment mode. Possible values include: 'Incremental',
-     'Complete'
+    :param mode: The deployment mode. Possible values are Incremental and
+     Complete. Possible values include: 'Incremental', 'Complete'
     :type mode: str or :class:`DeploymentMode
      <azure.mgmt.resource.resources.models.DeploymentMode>`
     :param debug_setting: The debug setting of the deployment.

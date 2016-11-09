@@ -18,9 +18,9 @@ class Provider(Model):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar id: The provider id.
+    :ivar id: The provider ID.
     :vartype id: str
-    :param namespace: The namespace of the provider.
+    :param namespace: The namespace of the resource provider.
     :type namespace: str
     :ivar registration_state: The registration state of the provider.
     :vartype registration_state: str
