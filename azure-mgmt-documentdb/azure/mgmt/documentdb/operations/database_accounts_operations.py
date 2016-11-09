@@ -727,8 +727,7 @@ class DatabaseAccountsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`DatabaseAccountListKeysResult
-         <azure.mgmt.documentdb.models.DatabaseAccountListKeysResult>`
+        :rtype: None
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
@@ -766,21 +765,14 @@ class DatabaseAccountsOperations(object):
         response = self._client.send(
             request, header_parameters, body_content, **operation_config)
 
-        if response.status_code not in [200]:
+        if response.status_code not in [202]:
             exp = CloudError(response)
             exp.request_id = response.headers.get('x-ms-request-id')
             raise exp
 
-        deserialized = None
-
-        if response.status_code == 200:
-            deserialized = self._deserialize('DatabaseAccountListKeysResult', response)
-
         if raw:
-            client_raw_response = ClientRawResponse(deserialized, response)
+            client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
-
-        return deserialized
 
     def check_name_exists(
             self, account_name, custom_headers=None, raw=False, **operation_config):
@@ -801,9 +793,8 @@ class DatabaseAccountsOperations(object):
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/providers/Microsoft.DocumentDB/databaseAccountNames/{accountName}'
+        url = '/providers/Microsoft.DocumentDB/databaseAccountNames/{accountName}'
         path_format_arguments = {
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3)
         }
         url = self._client.format_url(url, **path_format_arguments)
