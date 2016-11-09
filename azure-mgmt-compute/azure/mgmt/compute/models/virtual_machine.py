@@ -28,37 +28,40 @@ class VirtualMachine(Resource):
     :type location: str
     :param tags: Resource tags.
     :type tags: dict
-    :param plan: the purchase plan when deploying virtual machine from VM
+    :param plan: The purchase plan when deploying virtual machine from VM
      Marketplace images.
     :type plan: :class:`Plan <azure.mgmt.compute.models.Plan>`
-    :param hardware_profile: the hardware profile.
+    :param hardware_profile: The hardware profile.
     :type hardware_profile: :class:`HardwareProfile
      <azure.mgmt.compute.models.HardwareProfile>`
-    :param storage_profile: the storage profile.
+    :param storage_profile: The storage profile.
     :type storage_profile: :class:`StorageProfile
      <azure.mgmt.compute.models.StorageProfile>`
-    :param os_profile: the OS profile.
+    :param os_profile: The OS profile.
     :type os_profile: :class:`OSProfile <azure.mgmt.compute.models.OSProfile>`
-    :param network_profile: the network profile.
+    :param network_profile: The network profile.
     :type network_profile: :class:`NetworkProfile
      <azure.mgmt.compute.models.NetworkProfile>`
-    :param diagnostics_profile: the diagnostics profile.
+    :param diagnostics_profile: The diagnostics profile.
     :type diagnostics_profile: :class:`DiagnosticsProfile
      <azure.mgmt.compute.models.DiagnosticsProfile>`
-    :param availability_set: the reference Id of the availability set to
-     which this virtual machine belongs.
+    :param availability_set: The reference Id of the availability set to
+     which the virtual machine belongs.
     :type availability_set: :class:`SubResource
      <azure.mgmt.compute.models.SubResource>`
-    :ivar provisioning_state: the provisioning state, which only appears in
+    :ivar provisioning_state: The provisioning state, which only appears in
      the response.
     :vartype provisioning_state: str
-    :ivar instance_view: the virtual machine instance view.
+    :ivar instance_view: The virtual machine instance view.
     :vartype instance_view: :class:`VirtualMachineInstanceView
      <azure.mgmt.compute.models.VirtualMachineInstanceView>`
-    :param license_type: the license type, which is for bring your own
-     license scenario.
+    :param license_type: Specifies that the image or disk that is being used
+     was licensed on-premises. This element is only used for images that
+     contain the Windows Server operating system.
     :type license_type: str
-    :ivar vm_id: the virtual machine unique id.
+    :ivar vm_id: Specifies the VM unique ID which is a 128-bits identifier
+     that is encoded and stored in all Azure IaaS VMs SMBIOS and can be read
+     using platform BIOS commands.
     :vartype vm_id: str
     :ivar resources: the virtual machine child extension resources.
     :vartype resources: list of :class:`VirtualMachineExtension
