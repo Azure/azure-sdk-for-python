@@ -28,8 +28,8 @@ class ContainerService(Resource):
     :type location: str
     :param tags: Resource tags.
     :type tags: dict
-    :ivar provisioning_state: The provisioning state, which only appears in
-     the response.
+    :ivar provisioning_state: The current deployment or provisioning state,
+     which only appears in the response.
     :vartype provisioning_state: str
     :param orchestrator_profile: Properties of the orchestrator.
     :type orchestrator_profile: :class:`ContainerServiceOrchestratorProfile
@@ -45,7 +45,7 @@ class ContainerService(Resource):
     :param master_profile: Properties of master agents.
     :type master_profile: :class:`ContainerServiceMasterProfile
      <azure.mgmt.compute.models.ContainerServiceMasterProfile>`
-    :param agent_pool_profiles: Properties of agent pools.
+    :param agent_pool_profiles: Properties of the agent pool.
     :type agent_pool_profiles: list of
      :class:`ContainerServiceAgentPoolProfile
      <azure.mgmt.compute.models.ContainerServiceAgentPoolProfile>`
