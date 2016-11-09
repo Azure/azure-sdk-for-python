@@ -13,7 +13,7 @@ from msrest.serialization import Model
 
 
 class NamespaceCreateOrUpdateParameters(Model):
-    """Parameters supplied to the CreateOrUpdate Namespace operation.
+    """Parameters supplied to the Create Or Update Namespace operation.
 
     :param location: Namespace location.
     :type location: str
@@ -21,7 +21,7 @@ class NamespaceCreateOrUpdateParameters(Model):
     :type sku: :class:`Sku <azure.mgmt.servicebus.models.Sku>`
     :param tags: Namespace tags.
     :type tags: dict
-    :param provisioning_state: Provisioning state of the Namespace.
+    :param provisioning_state: Provisioning state of the namespace.
     :type provisioning_state: str
     :param status: State of the namespace. Possible values include:
      'Unknown', 'Creating', 'Created', 'Activating', 'Enabling', 'Active',
@@ -33,10 +33,10 @@ class NamespaceCreateOrUpdateParameters(Model):
     :type created_at: datetime
     :param updated_at: The time the namespace was updated.
     :type updated_at: datetime
-    :param service_bus_endpoint: Endpoint you can use to perform ServiceBus
+    :param service_bus_endpoint: Endpoint you can use to perform Service Bus
      operations.
     :type service_bus_endpoint: str
-    :param create_acs_namespace: Indicates whether to create ACS namespace.
+    :param create_acs_namespace: Indicates whether to create an ACS namespace.
     :type create_acs_namespace: bool
     :param enabled: Specifies whether this instance is enabled.
     :type enabled: bool

@@ -35,7 +35,7 @@ class TopicsOperations(object):
 
     def list_all(
             self, resource_group_name, namespace_name, custom_headers=None, raw=False, **operation_config):
-        """Lists all the topics in a namespace.
+        """Gets all the topics in a namespace.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
@@ -48,6 +48,7 @@ class TopicsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`TopicResourcePaged
          <azure.mgmt.servicebus.models.TopicResourcePaged>`
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -111,7 +112,7 @@ class TopicsOperations(object):
         :type namespace_name: str
         :param topic_name: The topic name.
         :type topic_name: str
-        :param parameters: Parameters supplied to create a Topic Resource.
+        :param parameters: Parameters supplied to create a topic resource.
         :type parameters: :class:`TopicCreateOrUpdateParameters
          <azure.mgmt.servicebus.models.TopicCreateOrUpdateParameters>`
         :param dict custom_headers: headers that will be added to the request
@@ -123,6 +124,7 @@ class TopicsOperations(object):
          <azure.mgmt.servicebus.models.TopicResource>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ServiceBus/namespaces/{namespaceName}/topics/{topicName}'
@@ -178,9 +180,9 @@ class TopicsOperations(object):
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
-        :param namespace_name: The topics name.
+        :param namespace_name: The namespace name.
         :type namespace_name: str
-        :param topic_name: The topics name.
+        :param topic_name: The name of the topic to delete.
         :type topic_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -190,6 +192,7 @@ class TopicsOperations(object):
         :rtype: None
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ServiceBus/namespaces/{namespaceName}/topics/{topicName}'
@@ -230,7 +233,7 @@ class TopicsOperations(object):
 
     def get(
             self, resource_group_name, namespace_name, topic_name, custom_headers=None, raw=False, **operation_config):
-        """Returns the description for the specified topic.
+        """Returns a description for the specified topic.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
@@ -247,6 +250,7 @@ class TopicsOperations(object):
          <azure.mgmt.servicebus.models.TopicResource>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ServiceBus/namespaces/{namespaceName}/topics/{topicName}'
@@ -294,11 +298,11 @@ class TopicsOperations(object):
 
     def list_authorization_rules(
             self, resource_group_name, namespace_name, topic_name, custom_headers=None, raw=False, **operation_config):
-        """Authorization rules for a topic.
+        """Gets authorization rules for a topic.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
-        :param namespace_name: The topic name
+        :param namespace_name: The namespace name.
         :type namespace_name: str
         :param topic_name: The topic name.
         :type topic_name: str
@@ -309,6 +313,7 @@ class TopicsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`SharedAccessAuthorizationRuleResourcePaged
          <azure.mgmt.servicebus.models.SharedAccessAuthorizationRuleResourcePaged>`
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -365,7 +370,7 @@ class TopicsOperations(object):
 
     def create_or_update_authorization_rule(
             self, resource_group_name, namespace_name, topic_name, authorization_rule_name, parameters, custom_headers=None, raw=False, **operation_config):
-        """Creates an authorizatioRule for the specified topic.
+        """Creates an authorizatio rule for the specified topic.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
@@ -373,7 +378,7 @@ class TopicsOperations(object):
         :type namespace_name: str
         :param topic_name: The topic name.
         :type topic_name: str
-        :param authorization_rule_name: Aauthorization Rule Name.
+        :param authorization_rule_name: Authorization rule name.
         :type authorization_rule_name: str
         :param parameters: The shared access authorization rule.
         :type parameters:
@@ -388,6 +393,7 @@ class TopicsOperations(object):
          <azure.mgmt.servicebus.models.SharedAccessAuthorizationRuleResource>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ServiceBus/namespaces/{namespaceName}/topics/{topicName}/authorizationRules/{authorizationRuleName}'
@@ -440,11 +446,11 @@ class TopicsOperations(object):
 
     def get_authorization_rule(
             self, resource_group_name, namespace_name, topic_name, authorization_rule_name, custom_headers=None, raw=False, **operation_config):
-        """Returns the specified authorizationRule.
+        """Returns the specified authorization rule.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
-        :param namespace_name: The namespace name
+        :param namespace_name: The namespace name.
         :type namespace_name: str
         :param topic_name: The topic name.
         :type topic_name: str
@@ -459,6 +465,7 @@ class TopicsOperations(object):
          <azure.mgmt.servicebus.models.SharedAccessAuthorizationRuleResource>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ServiceBus/namespaces/{namespaceName}/topics/{topicName}/authorizationRules/{authorizationRuleName}'
@@ -507,7 +514,7 @@ class TopicsOperations(object):
 
     def delete_authorization_rule(
             self, resource_group_name, namespace_name, topic_name, authorization_rule_name, custom_headers=None, raw=False, **operation_config):
-        """Deletes a topic authorizationRule.
+        """Deletes a topic authorization rule.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
@@ -515,7 +522,7 @@ class TopicsOperations(object):
         :type namespace_name: str
         :param topic_name: The topic name.
         :type topic_name: str
-        :param authorization_rule_name: AuthorizationRule Name.
+        :param authorization_rule_name: Authorization rule name.
         :type authorization_rule_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -525,6 +532,7 @@ class TopicsOperations(object):
         :rtype: None
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ServiceBus/namespaces/{namespaceName}/topics/{topicName}/authorizationRules/{authorizationRuleName}'
@@ -566,7 +574,7 @@ class TopicsOperations(object):
 
     def list_keys(
             self, resource_group_name, namespace_name, topic_name, authorization_rule_name, custom_headers=None, raw=False, **operation_config):
-        """Primary and Secondary ConnectionStrings to the topic.
+        """Gets the primary and secondary connection strings for the topic.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
@@ -574,7 +582,7 @@ class TopicsOperations(object):
         :type namespace_name: str
         :param topic_name: The topic name.
         :type topic_name: str
-        :param authorization_rule_name: The authorizationRule name.
+        :param authorization_rule_name: The authorization rule name.
         :type authorization_rule_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -585,6 +593,7 @@ class TopicsOperations(object):
          <azure.mgmt.servicebus.models.ResourceListKeys>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ServiceBus/namespaces/{namespaceName}/topics/{topicName}/authorizationRules/{authorizationRuleName}/ListKeys'
@@ -633,7 +642,7 @@ class TopicsOperations(object):
 
     def regenerate_keys(
             self, resource_group_name, namespace_name, topic_name, authorization_rule_name, policykey=None, custom_headers=None, raw=False, **operation_config):
-        """Regenerates Primary or Secondary ConnectionStrings to the topic.
+        """Regenerates primary or secondary connection strings for the topic.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
@@ -641,9 +650,9 @@ class TopicsOperations(object):
         :type namespace_name: str
         :param topic_name: The topic name.
         :type topic_name: str
-        :param authorization_rule_name: The authorizationRule name.
+        :param authorization_rule_name: The authorization rule name.
         :type authorization_rule_name: str
-        :param policykey: Key that needs to be regenerated . Possible values
+        :param policykey: Key that needs to be regenerated. Possible values
          include: 'PrimaryKey', 'SecondaryKey'
         :type policykey: str or :class:`Policykey
          <azure.mgmt.servicebus.models.Policykey>`
@@ -656,6 +665,7 @@ class TopicsOperations(object):
          <azure.mgmt.servicebus.models.ResourceListKeys>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         parameters = models.RegenerateKeysParameters(policykey=policykey)
 
