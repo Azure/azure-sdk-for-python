@@ -18,9 +18,9 @@ class ResourceManagementErrorWithDetails(Model):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar code: The error code returned from the server.
+    :ivar code: The error code returned when exporting the template.
     :vartype code: str
-    :ivar message: The error message returned from the server.
+    :ivar message: The error message describing the export error.
     :vartype message: str
     :ivar target: The target of the error.
     :vartype target: str

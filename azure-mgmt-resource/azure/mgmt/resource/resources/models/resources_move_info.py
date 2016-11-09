@@ -15,7 +15,7 @@ from msrest.serialization import Model
 class ResourcesMoveInfo(Model):
     """Parameters of move resources.
 
-    :param resources: The ids of the resources.
+    :param resources: The IDs of the resources.
     :type resources: list of str
     :param target_resource_group: The target resource group.
     :type target_resource_group: str

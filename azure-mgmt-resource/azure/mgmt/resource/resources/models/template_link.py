@@ -15,10 +15,10 @@ from msrest.serialization import Model
 class TemplateLink(Model):
     """Entity representing the reference to the template.
 
-    :param uri: URI referencing the template.
+    :param uri: The URI of the template to deploy.
     :type uri: str
-    :param content_version: If included it must match the ContentVersion in
-     the template.
+    :param content_version: If included, must match the ContentVersion in the
+     template.
     :type content_version: str
     """ 
 
