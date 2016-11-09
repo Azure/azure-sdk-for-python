@@ -22,7 +22,7 @@ class CheckNameResponse(Model):
      Possible values include: 'Unavailable', 'Invalid'
     :type reason: str or :class:`CheckNameReason
      <azure.mgmt.powerbiembedded.models.CheckNameReason>`
-    :param message: Message indicating an unavailable name due to a conflict
+    :param message: Message indicating an unavailable name due to a conflict,
      or a description of the naming rules that are violated.
     :type message: str
     """ 
