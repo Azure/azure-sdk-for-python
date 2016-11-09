@@ -35,10 +35,10 @@ class PermissionsOperations(object):
 
     def list_for_resource_group(
             self, resource_group_name, custom_headers=None, raw=False, **operation_config):
-        """Gets a resource group permissions.
+        """Gets all permissions the caller has for a resource group.
 
-        :param resource_group_name: Name of the resource group to get the
-         permissions for.The name is case insensitive.
+        :param resource_group_name: The name of the resource group to get the
+         permissions for. The name is case insensitive.
         :type resource_group_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -47,6 +47,7 @@ class PermissionsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`PermissionPaged
          <azure.mgmt.authorization.models.PermissionPaged>`
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -101,18 +102,20 @@ class PermissionsOperations(object):
 
     def list_for_resource(
             self, resource_group_name, resource_provider_namespace, parent_resource_path, resource_type, resource_name, custom_headers=None, raw=False, **operation_config):
-        """Gets a resource permissions.
+        """Gets all permissions the caller has for a resource.
 
-        :param resource_group_name: The name of the resource group. The name
-         is case insensitive.
+        :param resource_group_name: The name of the resource group containing
+         the resource. The name is case insensitive.
         :type resource_group_name: str
-        :param resource_provider_namespace: Resource
+        :param resource_provider_namespace: The namespace of the resource
+         provider.
         :type resource_provider_namespace: str
-        :param parent_resource_path: Resource
+        :param parent_resource_path: The parent resource identity.
         :type parent_resource_path: str
-        :param resource_type: Resource
+        :param resource_type: The resource type of the resource.
         :type resource_type: str
-        :param resource_name: Resource
+        :param resource_name: The name of the resource to get the permissions
+         for.
         :type resource_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -121,6 +124,7 @@ class PermissionsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`PermissionPaged
          <azure.mgmt.authorization.models.PermissionPaged>`
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
 
