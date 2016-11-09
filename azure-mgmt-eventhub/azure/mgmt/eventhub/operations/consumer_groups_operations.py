@@ -35,19 +35,19 @@ class ConsumerGroupsOperations(object):
 
     def create_or_update(
             self, resource_group_name, namespace_name, event_hub_name, consumer_group_name, parameters, custom_headers=None, raw=False, **operation_config):
-        """Creates/Updates a consumer group as a nested resource within a
-        namespace.
+        """Creates or updates an Event Hubs consumer group as a nested resource
+        within a namespace.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
         :param namespace_name: The namespace name.
         :type namespace_name: str
-        :param event_hub_name: The EventHub name.
+        :param event_hub_name: The Event Hub name.
         :type event_hub_name: str
-        :param consumer_group_name: The Consumer Group name.
+        :param consumer_group_name: The consumer group name.
         :type consumer_group_name: str
-        :param parameters: Parameters supplied to create a Consumer Group
-         Resource.
+        :param parameters: Parameters supplied to create a consumer group
+         resource.
         :type parameters: :class:`ConsumerGroupCreateOrUpdateParameters
          <azure.mgmt.eventhub.models.ConsumerGroupCreateOrUpdateParameters>`
         :param dict custom_headers: headers that will be added to the request
@@ -112,16 +112,16 @@ class ConsumerGroupsOperations(object):
 
     def delete(
             self, resource_group_name, namespace_name, event_hub_name, consumer_group_name, custom_headers=None, raw=False, **operation_config):
-        """Deletes an ConsumerGroup from the specified EventHub and resource
+        """Deletes a consumer group from the specified Event Hub and resource
         group.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
         :param namespace_name: The namespace name.
         :type namespace_name: str
-        :param event_hub_name: The EventHub name.
+        :param event_hub_name: The Event Hub name.
         :type event_hub_name: str
-        :param consumer_group_name: The Consumer Group name.
+        :param consumer_group_name: The Cconsumer group name.
         :type consumer_group_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -173,15 +173,15 @@ class ConsumerGroupsOperations(object):
 
     def get(
             self, resource_group_name, namespace_name, event_hub_name, consumer_group_name, custom_headers=None, raw=False, **operation_config):
-        """Returns an Consumer Group description for the specified Consumer Group.
+        """Gets a description for the specified consumer group.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
         :param namespace_name: The namespace name.
         :type namespace_name: str
-        :param event_hub_name: The EventHub name.
+        :param event_hub_name: The Event Hub name.
         :type event_hub_name: str
-        :param consumer_group_name: The Consumer Group name.
+        :param consumer_group_name: The consumer group name.
         :type consumer_group_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -241,14 +241,14 @@ class ConsumerGroupsOperations(object):
 
     def list_all(
             self, resource_group_name, namespace_name, event_hub_name, custom_headers=None, raw=False, **operation_config):
-        """Enumerates the consumer groups in a namespace. An empty feed is
-        returned if no consumer group exists in the namespace.
+        """Gets all the consumer groups in a namespace. An empty feed is returned
+        if no consumer group exists in the namespace.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
         :param namespace_name: The namespace name.
         :type namespace_name: str
-        :param event_hub_name: The EventHub name.
+        :param event_hub_name: The Event Hub name.
         :type event_hub_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
