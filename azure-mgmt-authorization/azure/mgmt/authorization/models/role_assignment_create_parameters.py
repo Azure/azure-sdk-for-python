@@ -15,7 +15,7 @@ from msrest.serialization import Model
 class RoleAssignmentCreateParameters(Model):
     """Role assignment create parameters.
 
-    :param properties: Gets or sets role assignment properties.
+    :param properties: Role assignment properties.
     :type properties: :class:`RoleAssignmentProperties
      <azure.mgmt.authorization.models.RoleAssignmentProperties>`
     """ 

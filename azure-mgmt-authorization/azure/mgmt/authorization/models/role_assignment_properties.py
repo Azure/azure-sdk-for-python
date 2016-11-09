@@ -15,9 +15,12 @@ from msrest.serialization import Model
 class RoleAssignmentProperties(Model):
     """Role assignment properties.
 
-    :param role_definition_id: Gets or sets role definition id.
+    :param role_definition_id: The role definition ID used in the role
+     assignment.
     :type role_definition_id: str
-    :param principal_id: Gets or sets principal Id.
+    :param principal_id: The principal ID assigned to the role. This maps to
+     the ID inside the Active Directory. It can point to a user, service
+     principal, or security group.
     :type principal_id: str
     """ 
 
