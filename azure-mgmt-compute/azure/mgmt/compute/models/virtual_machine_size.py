@@ -15,19 +15,22 @@ from msrest.serialization import Model
 class VirtualMachineSize(Model):
     """Describes the properties of a VM size.
 
-    :param name: the VM size name.
+    :param name: The name of the virtual machine size.
     :type name: str
-    :param number_of_cores: the Number of cores supported by a VM size.
+    :param number_of_cores: The number of cores supported by the virtual
+     machine size.
     :type number_of_cores: int
-    :param os_disk_size_in_mb: the OS disk size allowed by a VM size.
+    :param os_disk_size_in_mb: The OS disk size, in MB, allowed by the
+     virtual machine size.
     :type os_disk_size_in_mb: int
-    :param resource_disk_size_in_mb: the Resource disk size allowed by a VM
-     size.
+    :param resource_disk_size_in_mb: The resource disk size, in MB, allowed
+     by the virtual machine size.
     :type resource_disk_size_in_mb: int
-    :param memory_in_mb: the Memory size supported by a VM size.
+    :param memory_in_mb: The amount of memory, in MB, supported by the
+     virtual machine size.
     :type memory_in_mb: int
-    :param max_data_disk_count: the Maximum number of data disks allowed by a
-     VM size.
+    :param max_data_disk_count: The maximum number of data disks that can be
+     attached to the virtual machine size.
     :type max_data_disk_count: int
     """ 
 

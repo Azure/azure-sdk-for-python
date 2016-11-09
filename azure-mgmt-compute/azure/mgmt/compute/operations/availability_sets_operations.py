@@ -41,8 +41,7 @@ class AvailabilitySetsOperations(object):
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
-        :param name: Parameters supplied to the Create Availability Set
-         operation.
+        :param name: The name of the availability set.
         :type name: str
         :param parameters: Parameters supplied to the Create Availability Set
          operation.
@@ -162,7 +161,7 @@ class AvailabilitySetsOperations(object):
 
     def get(
             self, resource_group_name, availability_set_name, custom_headers=None, raw=False, **operation_config):
-        """The operation to get the availability set.
+        """Retrieves information about an availability set.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
@@ -224,7 +223,7 @@ class AvailabilitySetsOperations(object):
 
     def list(
             self, resource_group_name, custom_headers=None, raw=False, **operation_config):
-        """The operation to list the availability sets.
+        """The operation to list all availability sets in a resource group.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str

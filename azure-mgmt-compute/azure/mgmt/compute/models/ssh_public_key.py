@@ -16,11 +16,11 @@ class SshPublicKey(Model):
     """Contains information about SSH certificate public key and the path on the
     Linux VM where the public key is placed.
 
-    :param path: the full path on the created VM where SSH public key is
-     stored. If the file already exists, the specified key is appended to the
-     file.
+    :param path: Specifies the full path on the created VM where SSH public
+     key is stored. If the file already exists, the specified key is appended
+     to the file.
     :type path: str
-    :param key_data: Certificate public key used to authenticate with VM
+    :param key_data: Certificate public key used to authenticate to the VM
      through SSH. The certificate must be in Pem format with or without
      headers.
     :type key_data: str

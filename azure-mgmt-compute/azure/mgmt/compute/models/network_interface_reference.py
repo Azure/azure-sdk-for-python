@@ -17,7 +17,8 @@ class NetworkInterfaceReference(SubResource):
 
     :param id: Resource Id
     :type id: str
-    :param primary: whether this is a primary NIC on a virtual machine
+    :param primary: Specifies the primary network interface in case the
+     virtual machine has more than 1 network interface.
     :type primary: bool
     """ 
 
