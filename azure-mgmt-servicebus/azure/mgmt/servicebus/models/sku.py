@@ -13,15 +13,15 @@ from msrest.serialization import Model
 
 
 class Sku(Model):
-    """Sku of the Namespace.
+    """SKU of the namespace.
 
-    :param name: Name of this Sku. Possible values include: 'Basic',
+    :param name: Name of this SKU. Possible values include: 'Basic',
      'Standard', 'Premium'
     :type name: str or :class:`SkuName <azure.mgmt.servicebus.models.SkuName>`
-    :param tier: The tier of this particular SKU. Possible values include:
-     'Basic', 'Standard', 'Premium'
+    :param tier: The billing tier of this particular SKU. Possible values
+     include: 'Basic', 'Standard', 'Premium'
     :type tier: str or :class:`SkuTier <azure.mgmt.servicebus.models.SkuTier>`
-    :param capacity: The messaging units for the tier specified
+    :param capacity: The specified messaging units for the tier.
     :type capacity: int
     """ 
 

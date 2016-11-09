@@ -28,11 +28,11 @@ class ServiceBusManagementClientConfiguration(AzureConfiguration):
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
      object<msrestazure.azure_active_directory>`
-    :param subscription_id: Subscription credentials which uniquely identify
+    :param subscription_id: Subscription credentials that uniquely identify a
      Microsoft Azure subscription. The subscription ID forms part of the URI
      for every service call.
     :type subscription_id: str
-    :param api_version: Client Api Version.
+    :param api_version: Client API version.
     :type api_version: str
     :param accept_language: Gets or sets the preferred language for the
      response.
@@ -95,11 +95,11 @@ class ServiceBusManagementClient(object):
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
      object<msrestazure.azure_active_directory>`
-    :param subscription_id: Subscription credentials which uniquely identify
+    :param subscription_id: Subscription credentials that uniquely identify a
      Microsoft Azure subscription. The subscription ID forms part of the URI
      for every service call.
     :type subscription_id: str
-    :param api_version: Client Api Version.
+    :param api_version: Client API version.
     :type api_version: str
     :param accept_language: Gets or sets the preferred language for the
      response.

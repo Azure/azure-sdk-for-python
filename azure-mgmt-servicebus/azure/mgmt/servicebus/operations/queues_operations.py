@@ -35,7 +35,7 @@ class QueuesOperations(object):
 
     def list_all(
             self, resource_group_name, namespace_name, custom_headers=None, raw=False, **operation_config):
-        """Lists the queues within the namespace.
+        """Gets the queues within a namespace.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
@@ -48,6 +48,7 @@ class QueuesOperations(object):
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`QueueResourcePaged
          <azure.mgmt.servicebus.models.QueueResourcePaged>`
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -103,7 +104,7 @@ class QueuesOperations(object):
 
     def create_or_update(
             self, resource_group_name, namespace_name, queue_name, parameters, custom_headers=None, raw=False, **operation_config):
-        """Creates/Updates a service Queue. This operation is idempotent.
+        """Creates or updates a Service Bus queue. This operation is idempotent.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
@@ -111,7 +112,8 @@ class QueuesOperations(object):
         :type namespace_name: str
         :param queue_name: The queue name.
         :type queue_name: str
-        :param parameters: Parameters supplied to create a Queue Resource.
+        :param parameters: Parameters supplied to create or update a queue
+         resource.
         :type parameters: :class:`QueueCreateOrUpdateParameters
          <azure.mgmt.servicebus.models.QueueCreateOrUpdateParameters>`
         :param dict custom_headers: headers that will be added to the request
@@ -123,6 +125,7 @@ class QueuesOperations(object):
          <azure.mgmt.servicebus.models.QueueResource>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ServiceBus/namespaces/{namespaceName}/queues/{queueName}'
@@ -174,13 +177,13 @@ class QueuesOperations(object):
 
     def delete(
             self, resource_group_name, namespace_name, queue_name, custom_headers=None, raw=False, **operation_config):
-        """Deletes a queue from the specified namespace in resource group.
+        """Deletes a queue from the specified namespace in a resource group.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
         :param namespace_name: The namespace name.
         :type namespace_name: str
-        :param queue_name: The queue name.
+        :param queue_name: The name of the queue to be deleted.
         :type queue_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -190,6 +193,7 @@ class QueuesOperations(object):
         :rtype: None
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ServiceBus/namespaces/{namespaceName}/queues/{queueName}'
@@ -230,7 +234,7 @@ class QueuesOperations(object):
 
     def get(
             self, resource_group_name, namespace_name, queue_name, custom_headers=None, raw=False, **operation_config):
-        """Returns the description for the specified queue.
+        """Returns a description for the specified queue.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
@@ -247,6 +251,7 @@ class QueuesOperations(object):
          <azure.mgmt.servicebus.models.QueueResource>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ServiceBus/namespaces/{namespaceName}/queues/{queueName}'
@@ -294,7 +299,7 @@ class QueuesOperations(object):
 
     def list_authorization_rules(
             self, resource_group_name, namespace_name, queue_name, custom_headers=None, raw=False, **operation_config):
-        """Returns all Queue authorizationRules.
+        """Gets all authorization rules for a queue.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
@@ -309,6 +314,7 @@ class QueuesOperations(object):
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`SharedAccessAuthorizationRuleResourcePaged
          <azure.mgmt.servicebus.models.SharedAccessAuthorizationRuleResourcePaged>`
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -373,7 +379,7 @@ class QueuesOperations(object):
         :type namespace_name: str
         :param queue_name: The queue name.
         :type queue_name: str
-        :param authorization_rule_name: Aauthorization Rule Name.
+        :param authorization_rule_name: Authorization rule name.
         :type authorization_rule_name: str
         :param parameters: The shared access authorization rule.
         :type parameters:
@@ -388,6 +394,7 @@ class QueuesOperations(object):
          <azure.mgmt.servicebus.models.SharedAccessAuthorizationRuleResource>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ServiceBus/namespaces/{namespaceName}/queues/{queueName}/authorizationRules/{authorizationRuleName}'
@@ -448,7 +455,7 @@ class QueuesOperations(object):
         :type namespace_name: str
         :param queue_name: The queue name.
         :type queue_name: str
-        :param authorization_rule_name: Authorization Rule Name.
+        :param authorization_rule_name: Authorization rule name.
         :type authorization_rule_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -458,6 +465,7 @@ class QueuesOperations(object):
         :rtype: None
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ServiceBus/namespaces/{namespaceName}/queues/{queueName}/authorizationRules/{authorizationRuleName}'
@@ -499,11 +507,11 @@ class QueuesOperations(object):
 
     def get_authorization_rule(
             self, resource_group_name, namespace_name, queue_name, authorization_rule_name, custom_headers=None, raw=False, **operation_config):
-        """Queue authorizationRule for a queue by name.
+        """Gets an authorization rule for a queue by rule name.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
-        :param namespace_name: The namespace name
+        :param namespace_name: The namespace name.
         :type namespace_name: str
         :param queue_name: The queue name.
         :type queue_name: str
@@ -518,6 +526,7 @@ class QueuesOperations(object):
          <azure.mgmt.servicebus.models.SharedAccessAuthorizationRuleResource>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ServiceBus/namespaces/{namespaceName}/queues/{queueName}/authorizationRules/{authorizationRuleName}'
@@ -566,7 +575,7 @@ class QueuesOperations(object):
 
     def list_keys(
             self, resource_group_name, namespace_name, queue_name, authorization_rule_name, custom_headers=None, raw=False, **operation_config):
-        """Primary and Secondary ConnectionStrings to the queue.
+        """Primary and secondary connection strings to the queue.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
@@ -574,7 +583,7 @@ class QueuesOperations(object):
         :type namespace_name: str
         :param queue_name: The queue name.
         :type queue_name: str
-        :param authorization_rule_name: The authorizationRule name.
+        :param authorization_rule_name: The authorization rule name.
         :type authorization_rule_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -585,6 +594,7 @@ class QueuesOperations(object):
          <azure.mgmt.servicebus.models.ResourceListKeys>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ServiceBus/namespaces/{namespaceName}/queues/{queueName}/authorizationRules/{authorizationRuleName}/ListKeys'
@@ -633,7 +643,7 @@ class QueuesOperations(object):
 
     def regenerate_keys(
             self, resource_group_name, namespace_name, queue_name, authorization_rule_name, policykey=None, custom_headers=None, raw=False, **operation_config):
-        """Regenerates the Primary or Secondary ConnectionStrings to the Queue.
+        """Regenerates the primary or secondary connection strings to the queue.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
@@ -641,9 +651,9 @@ class QueuesOperations(object):
         :type namespace_name: str
         :param queue_name: The queue name.
         :type queue_name: str
-        :param authorization_rule_name: The authorizationRule name
+        :param authorization_rule_name: The authorization rule name.
         :type authorization_rule_name: str
-        :param policykey: Key that needs to be regenerated . Possible values
+        :param policykey: Key that needs to be regenerated. Possible values
          include: 'PrimaryKey', 'SecondaryKey'
         :type policykey: str or :class:`Policykey
          <azure.mgmt.servicebus.models.Policykey>`
@@ -656,6 +666,7 @@ class QueuesOperations(object):
          <azure.mgmt.servicebus.models.ResourceListKeys>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         parameters = models.RegenerateKeysParameters(policykey=policykey)
 
