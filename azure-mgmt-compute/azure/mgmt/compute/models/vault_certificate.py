@@ -16,10 +16,10 @@ class VaultCertificate(Model):
     """Describes a single certificate reference in a Key Vault, and where the
     certificate should reside on the VM.
 
-    :param certificate_url: the URL referencing a secret in a Key Vault which
+    :param certificate_url: The URL referencing a secret in a Key Vault which
      contains a properly formatted certificate.
     :type certificate_url: str
-    :param certificate_store: the Certificate store in LocalMachine to add
+    :param certificate_store: The Certificate store in LocalMachine to add
      the certificate to on Windows, leave empty on Linux.
     :type certificate_store: str
     """ 

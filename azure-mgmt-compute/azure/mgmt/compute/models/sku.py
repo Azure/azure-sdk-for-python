@@ -15,9 +15,9 @@ from msrest.serialization import Model
 class Sku(Model):
     """Describes a virtual machine scale set sku.
 
-    :param name: the sku name.
+    :param name: The sku name.
     :type name: str
-    :param tier: the sku tier.
+    :param tier: The sku tier.
     :type tier: str
     :param capacity: the sku capacity.
     :type capacity: long
