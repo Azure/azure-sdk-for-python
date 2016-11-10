@@ -13,9 +13,9 @@ from msrest.serialization import Model
 
 
 class FeatureProperties(Model):
-    """Previewed feature information.
+    """Information about feature.
 
-    :param state: Gets or sets the state of the previewed feature.
+    :param state: The registration state of the feature for the subscription.
     :type state: str
     """ 
 

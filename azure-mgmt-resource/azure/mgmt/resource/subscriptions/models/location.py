@@ -18,10 +18,10 @@ class Location(Model):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar id: The fully qualified Id of the location. For example,
+    :ivar id: The fully qualified ID of the location. For example,
      /subscriptions/00000000-0000-0000-0000-000000000000/locations/westus.
     :vartype id: str
-    :ivar subscription_id: The subscription Id.
+    :ivar subscription_id: The subscription ID.
     :vartype subscription_id: str
     :ivar name: The location name.
     :vartype name: str

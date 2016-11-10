@@ -18,11 +18,11 @@ class ResourceLink(Model):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar id: The fully qualified Id of the resource link.
+    :ivar id: The fully qualified ID of the resource link.
     :vartype id: str
     :ivar name: The name of the resource link.
     :vartype name: str
-    :param properties:
+    :param properties: Properties for resource link.
     :type properties: :class:`ResourceLinkProperties
      <azure.mgmt.resource.links.models.ResourceLinkProperties>`
     """ 

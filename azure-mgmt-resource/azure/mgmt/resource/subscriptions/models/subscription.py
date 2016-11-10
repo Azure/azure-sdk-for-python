@@ -18,16 +18,17 @@ class Subscription(Model):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar id: The fully qualified Id. For example,
+    :ivar id: The fully qualified ID for the subscription. For example,
      /subscriptions/00000000-0000-0000-0000-000000000000.
     :vartype id: str
-    :ivar subscription_id: The subscription Id.
+    :ivar subscription_id: The subscription ID.
     :vartype subscription_id: str
-    :ivar tenant_id: The tenant Id.
+    :ivar tenant_id: The tenant ID.
     :vartype tenant_id: str
     :ivar display_name: The subscription display name.
     :vartype display_name: str
-    :ivar state: The subscription state. Possible values include: 'Enabled',
+    :ivar state: The subscription state. Possible values are Enabled, Warned,
+     PastDue, Disabled, and Deleted. Possible values include: 'Enabled',
      'Warned', 'PastDue', 'Disabled', 'Deleted'
     :vartype state: str or :class:`SubscriptionState
      <azure.mgmt.resource.subscriptions.models.SubscriptionState>`

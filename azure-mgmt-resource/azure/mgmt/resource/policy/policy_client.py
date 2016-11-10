@@ -26,11 +26,9 @@ class PolicyClientConfiguration(AzureConfiguration):
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
      object<msrestazure.azure_active_directory>`
-    :param subscription_id: Gets subscription credentials which uniquely
-     identify Microsoft Azure subscription. The subscription ID forms part of
-     the URI for every service call.
+    :param subscription_id: The ID of the target subscription.
     :type subscription_id: str
-    :param api_version: Client Api Version.
+    :param api_version: The API version to use for the operation.
     :type api_version: str
     :param accept_language: Gets or sets the preferred language for the
      response.
@@ -76,7 +74,7 @@ class PolicyClientConfiguration(AzureConfiguration):
 
 
 class PolicyClient(object):
-    """PolicyClient
+    """To manage and control access to your resources, you can define customized policies and assign them at a scope.
 
     :ivar config: Configuration for client.
     :vartype config: PolicyClientConfiguration
@@ -89,11 +87,9 @@ class PolicyClient(object):
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
      object<msrestazure.azure_active_directory>`
-    :param subscription_id: Gets subscription credentials which uniquely
-     identify Microsoft Azure subscription. The subscription ID forms part of
-     the URI for every service call.
+    :param subscription_id: The ID of the target subscription.
     :type subscription_id: str
-    :param api_version: Client Api Version.
+    :param api_version: The API version to use for the operation.
     :type api_version: str
     :param accept_language: Gets or sets the preferred language for the
      response.

@@ -35,10 +35,10 @@ class ProvidersOperations(object):
 
     def unregister(
             self, resource_provider_namespace, custom_headers=None, raw=False, **operation_config):
-        """Unregisters provider from a subscription.
+        """Unregisters a subscription from a resource provider.
 
-        :param resource_provider_namespace: Namespace of the resource
-         provider.
+        :param resource_provider_namespace: The namespace of the resource
+         provider to unregister.
         :type resource_provider_namespace: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -95,10 +95,10 @@ class ProvidersOperations(object):
 
     def register(
             self, resource_provider_namespace, custom_headers=None, raw=False, **operation_config):
-        """Registers provider to be used with a subscription.
+        """Registers a subscription with a resource provider.
 
-        :param resource_provider_namespace: Namespace of the resource
-         provider.
+        :param resource_provider_namespace: The namespace of the resource
+         provider to register.
         :type resource_provider_namespace: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -155,13 +155,15 @@ class ProvidersOperations(object):
 
     def list(
             self, top=None, expand=None, custom_headers=None, raw=False, **operation_config):
-        """Gets a list of resource providers.
+        """Gets all resource providers for a subscription.
 
-        :param top: Query parameters. If null is passed returns all
-         deployments.
+        :param top: The number of results to return. If null is passed
+         returns all deployments.
         :type top: int
-        :param expand: The $expand query parameter. e.g. To include property
-         aliases in response, use $expand=resourceTypes/aliases.
+        :param expand: The properties to include in the results. For example,
+         use &$expand=metadata in the query string to retrieve resource
+         provider metadata. To include property aliases in response, use
+         $expand=resourceTypes/aliases.
         :type expand: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -228,13 +230,13 @@ class ProvidersOperations(object):
 
     def get(
             self, resource_provider_namespace, expand=None, custom_headers=None, raw=False, **operation_config):
-        """Gets a resource provider.
+        """Gets the specified resource provider.
 
-        :param resource_provider_namespace: Namespace of the resource
+        :param resource_provider_namespace: The namespace of the resource
          provider.
         :type resource_provider_namespace: str
-        :param expand: The $expand query parameter. e.g. To include property
-         aliases in response, use $expand=resourceTypes/aliases.
+        :param expand: The $expand query parameter. For example, to include
+         property aliases in response, use $expand=resourceTypes/aliases.
         :type expand: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the

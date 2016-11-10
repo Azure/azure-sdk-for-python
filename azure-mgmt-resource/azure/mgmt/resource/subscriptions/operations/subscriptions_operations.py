@@ -35,9 +35,13 @@ class SubscriptionsOperations(object):
 
     def list_locations(
             self, subscription_id, custom_headers=None, raw=False, **operation_config):
-        """Gets a list of the subscription locations.
+        """Gets all available geo-locations.
 
-        :param subscription_id: Id of the subscription
+        This operation provides all the locations that are available for
+        resource providers; however, each resource provider may support a
+        subset of this list.
+
+        :param subscription_id: The ID of the target subscription.
         :type subscription_id: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -100,9 +104,9 @@ class SubscriptionsOperations(object):
 
     def get(
             self, subscription_id, custom_headers=None, raw=False, **operation_config):
-        """Gets details about particular subscription.
+        """Gets details about a specified subscription.
 
-        :param subscription_id: Id of the subscription.
+        :param subscription_id: The ID of the target subscription.
         :type subscription_id: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -158,7 +162,7 @@ class SubscriptionsOperations(object):
 
     def list(
             self, custom_headers=None, raw=False, **operation_config):
-        """Gets a list of subscriptions.
+        """Gets all subscriptions for a tenant.
 
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
