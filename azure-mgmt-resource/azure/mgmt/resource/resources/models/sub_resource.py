@@ -15,7 +15,7 @@ from msrest.serialization import Model
 class SubResource(Model):
     """SubResource.
 
-    :param id: Resource Id
+    :param id: Resource ID
     :type id: str
     """ 
 

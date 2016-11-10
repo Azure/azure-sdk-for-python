@@ -19,7 +19,9 @@ class TagDetails(Model):
     :type id: str
     :param tag_name: The tag name.
     :type tag_name: str
-    :param count: The tag count.
+    :param count: The total number of resources that use the resource tag.
+     When a tag is initially created and has no associated resources, the
+     value is 0.
     :type count: :class:`TagCount
      <azure.mgmt.resource.resources.models.TagCount>`
     :param values: The list of tag values.

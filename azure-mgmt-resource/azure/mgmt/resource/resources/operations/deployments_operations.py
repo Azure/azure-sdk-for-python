@@ -36,12 +36,24 @@ class DeploymentsOperations(object):
 
     def delete(
             self, resource_group_name, deployment_name, custom_headers=None, raw=False, **operation_config):
-        """Delete deployment.
+        """Deletes a deployment from the deployment history.
 
-        :param resource_group_name: The name of the resource group. The name
-         is case insensitive.
+        A template deployment that is currently running cannot be deleted.
+        Deleting a template deployment removes the associated deployment
+        operations. Deleting a template deployment does not affect the state
+        of the resource group. This is an asynchronous operation that returns
+        a status of 202 until the template deployment is successfully
+        deleted. The Location response header contains the URI that is used
+        to obtain the status of the process. While the process is running, a
+        call to the URI in the Location header returns a status of 202. When
+        the process finishes, the URI in the Location header returns a status
+        of 204 on success. If the asynchronous request failed, the URI in the
+        Location header returns an error-level status code.
+
+        :param resource_group_name: The name of the resource group with the
+         deployment to delete. The name is case insensitive.
         :type resource_group_name: str
-        :param deployment_name: The name of the deployment to be deleted.
+        :param deployment_name: The name of the deployment to delete.
         :type deployment_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -114,12 +126,12 @@ class DeploymentsOperations(object):
 
     def check_existence(
             self, resource_group_name, deployment_name, custom_headers=None, raw=False, **operation_config):
-        """Checks whether deployment exists.
+        """Checks whether the deployment exists.
 
-        :param resource_group_name: The name of the resource group to check.
-         The name is case insensitive.
+        :param resource_group_name: The name of the resource group with the
+         deployment to check. The name is case insensitive.
         :type resource_group_name: str
-        :param deployment_name: The name of the deployment.
+        :param deployment_name: The name of the deployment to check.
         :type deployment_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -171,10 +183,14 @@ class DeploymentsOperations(object):
 
     def create_or_update(
             self, resource_group_name, deployment_name, properties=None, custom_headers=None, raw=False, **operation_config):
-        """Create a named template deployment using a template.
+        """Deploys resources to a resource group.
 
-        :param resource_group_name: The name of the resource group. The name
-         is case insensitive.
+        You can provide the template and parameters directly in the request or
+        link to JSON files.
+
+        :param resource_group_name: The name of the resource group to deploy
+         the resources to. The name is case insensitive. The resource group
+         must already exist.
         :type resource_group_name: str
         :param deployment_name: The name of the deployment.
         :type deployment_name: str
@@ -268,12 +284,12 @@ class DeploymentsOperations(object):
 
     def get(
             self, resource_group_name, deployment_name, custom_headers=None, raw=False, **operation_config):
-        """Get a deployment.
+        """Gets a deployment.
 
-        :param resource_group_name: The name of the resource group to get.
-         The name is case insensitive.
+        :param resource_group_name: The name of the resource group. The name
+         is case insensitive.
         :type resource_group_name: str
-        :param deployment_name: The name of the deployment.
+        :param deployment_name: The name of the deployment to get.
         :type deployment_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -331,12 +347,18 @@ class DeploymentsOperations(object):
 
     def cancel(
             self, resource_group_name, deployment_name, custom_headers=None, raw=False, **operation_config):
-        """Cancel a currently running template deployment.
+        """Cancels a currently running template deployment.
+
+        You can cancel a deployment only if the provisioningState is Accepted
+        or Running. After the deployment is canceled, the provisioningState
+        is set to Canceled. Canceling a template deployment stops the
+        currently running template deployment and leaves the resource group
+        partially deployed.
 
         :param resource_group_name: The name of the resource group. The name
          is case insensitive.
         :type resource_group_name: str
-        :param deployment_name: The name of the deployment.
+        :param deployment_name: The name of the deployment to cancel.
         :type deployment_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -386,10 +408,11 @@ class DeploymentsOperations(object):
 
     def validate(
             self, resource_group_name, deployment_name, properties=None, custom_headers=None, raw=False, **operation_config):
-        """Validate a deployment template.
+        """Validates whether the specified template is syntactically correct and
+        will be accepted by Azure Resource Manager..
 
-        :param resource_group_name: The name of the resource group. The name
-         is case insensitive.
+        :param resource_group_name: The name of the resource group the
+         template will be deployed to. The name is case insensitive.
         :type resource_group_name: str
         :param deployment_name: The name of the deployment.
         :type deployment_name: str
@@ -460,12 +483,13 @@ class DeploymentsOperations(object):
 
     def export_template(
             self, resource_group_name, deployment_name, custom_headers=None, raw=False, **operation_config):
-        """Exports a deployment template.
+        """Exports the template used for specified deployment.
 
         :param resource_group_name: The name of the resource group. The name
          is case insensitive.
         :type resource_group_name: str
-        :param deployment_name: The name of the deployment.
+        :param deployment_name: The name of the deployment from which to get
+         the template.
         :type deployment_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -523,15 +547,16 @@ class DeploymentsOperations(object):
 
     def list(
             self, resource_group_name, filter=None, top=None, custom_headers=None, raw=False, **operation_config):
-        """Get a list of deployments.
+        """Get all the deployments for a resource group.
 
-        :param resource_group_name: The name of the resource group to filter
-         by. The name is case insensitive.
+        :param resource_group_name: The name of the resource group with the
+         deployments to get. The name is case insensitive.
         :type resource_group_name: str
-        :param filter: The filter to apply on the operation.
+        :param filter: The filter to apply on the operation. For example, you
+         can use $filter=provisioningState eq '{state}'.
         :type filter: str
-        :param top: Query parameters. If null is passed returns all
-         deployments.
+        :param top: The number of results to get. If null is passed, returns
+         all deployments.
         :type top: int
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
