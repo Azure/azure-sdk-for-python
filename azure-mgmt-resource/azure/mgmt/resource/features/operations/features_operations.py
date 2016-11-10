@@ -35,7 +35,7 @@ class FeaturesOperations(object):
 
     def list_all(
             self, custom_headers=None, raw=False, **operation_config):
-        """Gets a list of previewed features for all the providers in the current
+        """Gets all the preview features that are available through AFEC for the
         subscription.
 
         :param dict custom_headers: headers that will be added to the request
@@ -99,10 +99,11 @@ class FeaturesOperations(object):
 
     def list(
             self, resource_provider_namespace, custom_headers=None, raw=False, **operation_config):
-        """Gets a list of previewed features of a resource provider.
+        """Gets all the preview features in a provider namespace that are
+        available through AFEC for the subscription.
 
         :param resource_provider_namespace: The namespace of the resource
-         provider.
+         provider for getting features.
         :type resource_provider_namespace: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -166,12 +167,12 @@ class FeaturesOperations(object):
 
     def get(
             self, resource_provider_namespace, feature_name, custom_headers=None, raw=False, **operation_config):
-        """Get all features under the subscription.
+        """Gets the preview feature with the specified name.
 
-        :param resource_provider_namespace: Namespace of the resource
-         provider.
+        :param resource_provider_namespace: The resource provider namespace
+         for the feature.
         :type resource_provider_namespace: str
-        :param feature_name: Previewed feature name in the resource provider.
+        :param feature_name: The name of the feature to get.
         :type feature_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -229,12 +230,12 @@ class FeaturesOperations(object):
 
     def register(
             self, resource_provider_namespace, feature_name, custom_headers=None, raw=False, **operation_config):
-        """Registers for a previewed feature of a resource provider.
+        """Registers the preview feature for the subscription.
 
-        :param resource_provider_namespace: Namespace of the resource
+        :param resource_provider_namespace: The namespace of the resource
          provider.
         :type resource_provider_namespace: str
-        :param feature_name: Previewed feature name in the resource provider.
+        :param feature_name: The name of the feature to register.
         :type feature_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
