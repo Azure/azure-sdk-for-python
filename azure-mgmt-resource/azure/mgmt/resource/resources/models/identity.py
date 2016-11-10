@@ -18,9 +18,9 @@ class Identity(Model):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar principal_id: The principal id of resource identity.
+    :ivar principal_id: The principal ID of resource identity.
     :vartype principal_id: str
-    :ivar tenant_id: The tenant id of resource.
+    :ivar tenant_id: The tenant ID of resource.
     :vartype tenant_id: str
     :param type: The identity type. Possible values include: 'SystemAssigned'
     :type type: str or :class:`ResourceIdentityType

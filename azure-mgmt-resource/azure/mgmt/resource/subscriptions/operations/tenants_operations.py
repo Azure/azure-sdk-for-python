@@ -35,7 +35,7 @@ class TenantsOperations(object):
 
     def list(
             self, custom_headers=None, raw=False, **operation_config):
-        """Gets a list of tenants.
+        """Gets the tenants for your account.
 
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the

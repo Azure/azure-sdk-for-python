@@ -35,10 +35,12 @@ class ResourceLinksOperations(object):
 
     def delete(
             self, link_id, custom_headers=None, raw=False, **operation_config):
-        """Deletes a resource link.
+        """Deletes a resource link with the specified ID.
 
-        :param link_id: The fully qualified Id of the resource link. For
-         example,
+        :param link_id: The fully qualified ID of the resource link. Use the
+         format,
+         /subscriptions/{subscription-id}/resourceGroups/{resource-group-name}/{provider-namespace}/{resource-type}/{resource-name}/Microsoft.Resources/links/{link-name}.
+         For example,
          /subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myGroup/Microsoft.Web/sites/mySite/Microsoft.Resources/links/myLink
         :type link_id: str
         :param dict custom_headers: headers that will be added to the request
@@ -86,16 +88,18 @@ class ResourceLinksOperations(object):
             return client_raw_response
 
     def create_or_update(
-            self, link_id, parameters, custom_headers=None, raw=False, **operation_config):
-        """Create a resource link.
+            self, link_id, properties=None, custom_headers=None, raw=False, **operation_config):
+        """Creates or updates a resource link between the specified resources.
 
-        :param link_id: The fully qualified Id of the resource link. For
-         example,
+        :param link_id: The fully qualified ID of the resource link. Use the
+         format,
+         /subscriptions/{subscription-id}/resourceGroups/{resource-group-name}/{provider-namespace}/{resource-type}/{resource-name}/Microsoft.Resources/links/{link-name}.
+         For example,
          /subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myGroup/Microsoft.Web/sites/mySite/Microsoft.Resources/links/myLink
         :type link_id: str
-        :param parameters: Create or update resource link parameters.
-        :type parameters: :class:`ResourceLink
-         <azure.mgmt.resource.links.models.ResourceLink>`
+        :param properties: Properties for resource link.
+        :type properties: :class:`ResourceLinkProperties
+         <azure.mgmt.resource.links.models.ResourceLinkProperties>`
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -107,6 +111,8 @@ class ResourceLinksOperations(object):
          if raw=true
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
+        parameters = models.ResourceLink(properties=properties)
+
         # Construct URL
         url = '/{linkId}'
         path_format_arguments = {
@@ -156,7 +162,7 @@ class ResourceLinksOperations(object):
 
     def get(
             self, link_id, custom_headers=None, raw=False, **operation_config):
-        """Gets a resource link.
+        """Gets a resource link with the specified ID.
 
         :param link_id: The fully qualified Id of the resource link. For
          example,
@@ -216,10 +222,11 @@ class ResourceLinksOperations(object):
 
     def list_at_subscription(
             self, filter=None, custom_headers=None, raw=False, **operation_config):
-        """Gets a list of resource links under the subscription.
+        """Gets all the linked resources for the subscription.
 
         :param filter: The filter to apply on the list resource links
-         operation. The supported filter for list resource links is targetId.
+         operation. The supported filter for list resource links is targetid.
+         For example, $filter=targetid eq {value}
         :type filter: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -285,18 +292,15 @@ class ResourceLinksOperations(object):
     def list_at_source_scope(
             self, scope, filter=None, custom_headers=None, raw=False, **operation_config):
         """Gets a list of resource links at and below the specified source scope.
-        For example, to list resource links at and under a resource group,
-        set the scope to
-        /subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myGroup.
 
-        :param scope: The fully qualified Id of the source resource scope.
-         For example, to list resource links at and under a resource group,
-         set the scope to
+        :param scope: The fully qualified ID of the scope for getting the
+         resource links. For example, to list resource links at and under a
+         resource group, set the scope to
          /subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myGroup.
         :type scope: str
-        :param filter: The filter to apply on the list resource links
-         operation. To list links only at the specified scope (not below the
-         scope), use Filter.atScope(). Possible values include: 'atScope()'
+        :param filter: The filter to apply when getting resource links. To
+         get links only at the specified scope (not below the scope), use
+         Filter.atScope().
         :type filter: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the

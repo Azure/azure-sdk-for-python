@@ -35,11 +35,12 @@ class PolicyAssignmentsOperations(object):
 
     def delete(
             self, scope, policy_assignment_name, custom_headers=None, raw=False, **operation_config):
-        """Delete policy assignment.
+        """Deletes a policy assignment.
 
-        :param scope: Scope of the policy assignment.
+        :param scope: The scope of the policy assignment.
         :type scope: str
-        :param policy_assignment_name: Policy assignment name.
+        :param policy_assignment_name: The name of the policy assignment to
+         delete.
         :type policy_assignment_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -96,13 +97,17 @@ class PolicyAssignmentsOperations(object):
 
     def create(
             self, scope, policy_assignment_name, parameters, custom_headers=None, raw=False, **operation_config):
-        """Create policy assignment.
+        """Creates a policy assignment.
 
-        :param scope: Scope of the policy assignment.
+        Policy assignments are inherited by child resources. For example, when
+        you apply a policy to a resource group that policy is assigned to all
+        resources in the group.
+
+        :param scope: The scope of the policy assignment.
         :type scope: str
-        :param policy_assignment_name: Policy assignment name.
+        :param policy_assignment_name: The name of the policy assignment.
         :type policy_assignment_name: str
-        :param parameters: Policy assignment.
+        :param parameters: Parameters for the policy assignment.
         :type parameters: :class:`PolicyAssignment
          <azure.mgmt.resource.policy.models.PolicyAssignment>`
         :param dict custom_headers: headers that will be added to the request
@@ -164,11 +169,12 @@ class PolicyAssignmentsOperations(object):
 
     def get(
             self, scope, policy_assignment_name, custom_headers=None, raw=False, **operation_config):
-        """Get single policy assignment.
+        """Gets a policy assignment.
 
-        :param scope: Scope of the policy assignment.
+        :param scope: The scope of the policy assignment.
         :type scope: str
-        :param policy_assignment_name: Policy assignment name.
+        :param policy_assignment_name: The name of the policy assignment to
+         get.
         :type policy_assignment_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -225,9 +231,10 @@ class PolicyAssignmentsOperations(object):
 
     def list_for_resource_group(
             self, resource_group_name, filter=None, custom_headers=None, raw=False, **operation_config):
-        """Gets policy assignments of the resource group.
+        """Gets policy assignments for the resource group.
 
-        :param resource_group_name: Resource group name.
+        :param resource_group_name: The name of the resource group that
+         contains policy assignments.
         :type resource_group_name: str
         :param filter: The filter to apply on the operation.
         :type filter: str
@@ -295,18 +302,20 @@ class PolicyAssignmentsOperations(object):
 
     def list_for_resource(
             self, resource_group_name, resource_provider_namespace, parent_resource_path, resource_type, resource_name, filter=None, custom_headers=None, raw=False, **operation_config):
-        """Gets policy assignments of the resource.
+        """Gets policy assignments for a resource.
 
-        :param resource_group_name: The name of the resource group. The name
-         is case insensitive.
+        :param resource_group_name: The name of the resource group containing
+         the resource. The name is case insensitive.
         :type resource_group_name: str
-        :param resource_provider_namespace: The resource provider namespace.
+        :param resource_provider_namespace: The namespace of the resource
+         provider.
         :type resource_provider_namespace: str
         :param parent_resource_path: The parent resource path.
         :type parent_resource_path: str
         :param resource_type: The resource type.
         :type resource_type: str
-        :param resource_name: The resource name.
+        :param resource_name: The name of the resource with policy
+         assignments.
         :type resource_name: str
         :param filter: The filter to apply on the operation.
         :type filter: str
@@ -378,7 +387,7 @@ class PolicyAssignmentsOperations(object):
 
     def list(
             self, filter=None, custom_headers=None, raw=False, **operation_config):
-        """Gets all the policy assignments of a subscription.
+        """Gets all the policy assignments for a subscription.
 
         :param filter: The filter to apply on the operation.
         :type filter: str
@@ -445,9 +454,18 @@ class PolicyAssignmentsOperations(object):
 
     def delete_by_id(
             self, policy_assignment_id, custom_headers=None, raw=False, **operation_config):
-        """Delete policy assignment.
+        """Deletes a policy assignment by ID.
 
-        :param policy_assignment_id: Policy assignment Id
+        When providing a scope for the assigment, use
+        '/subscriptions/{subscription-id}/' for subscriptions,
+        '/subscriptions/{subscription-id}/resourceGroups/{resource-group-name}'
+        for resource groups, and
+        '/subscriptions/{subscription-id}/resourceGroups/{resource-group-name}/providers/{resource-provider-namespace}/{resource-type}/{resource-name}'
+        for resources.
+
+        :param policy_assignment_id: The ID of the policy assignment to
+         delete. Use the format
+         '/{scope}/providers/Microsoft.Authorization/policyAssignments/{policy-assignment-name}'.
         :type policy_assignment_id: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -503,11 +521,22 @@ class PolicyAssignmentsOperations(object):
 
     def create_by_id(
             self, policy_assignment_id, parameters, custom_headers=None, raw=False, **operation_config):
-        """Create policy assignment by Id.
+        """Creates a policy assignment by ID.
 
-        :param policy_assignment_id: Policy assignment Id
+        Policy assignments are inherited by child resources. For example, when
+        you apply a policy to a resource group that policy is assigned to all
+        resources in the group. When providing a scope for the assigment, use
+        '/subscriptions/{subscription-id}/' for subscriptions,
+        '/subscriptions/{subscription-id}/resourceGroups/{resource-group-name}'
+        for resource groups, and
+        '/subscriptions/{subscription-id}/resourceGroups/{resource-group-name}/providers/{resource-provider-namespace}/{resource-type}/{resource-name}'
+        for resources.
+
+        :param policy_assignment_id: The ID of the policy assignment to
+         create. Use the format
+         '/{scope}/providers/Microsoft.Authorization/policyAssignments/{policy-assignment-name}'.
         :type policy_assignment_id: str
-        :param parameters: Policy assignment.
+        :param parameters: Parameters for policy assignment.
         :type parameters: :class:`PolicyAssignment
          <azure.mgmt.resource.policy.models.PolicyAssignment>`
         :param dict custom_headers: headers that will be added to the request
@@ -568,9 +597,18 @@ class PolicyAssignmentsOperations(object):
 
     def get_by_id(
             self, policy_assignment_id, custom_headers=None, raw=False, **operation_config):
-        """Get single policy assignment.
+        """Gets a policy assignment by ID.
 
-        :param policy_assignment_id: Policy assignment Id
+        When providing a scope for the assigment, use
+        '/subscriptions/{subscription-id}/' for subscriptions,
+        '/subscriptions/{subscription-id}/resourceGroups/{resource-group-name}'
+        for resource groups, and
+        '/subscriptions/{subscription-id}/resourceGroups/{resource-group-name}/providers/{resource-provider-namespace}/{resource-type}/{resource-name}'
+        for resources.
+
+        :param policy_assignment_id: The ID of the policy assignment to get.
+         Use the format
+         '/{scope}/providers/Microsoft.Authorization/policyAssignments/{policy-assignment-name}'.
         :type policy_assignment_id: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the

@@ -18,12 +18,12 @@ class SubscriptionPolicies(Model):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar location_placement_id: The subscription location placement Id. The
-     Id indicates which regions are visible for a subscription. For example,
+    :ivar location_placement_id: The subscription location placement ID. The
+     ID indicates which regions are visible for a subscription. For example,
      a subscription with a location placement Id of Public_2014-09-01 has
      access to Azure public regions.
     :vartype location_placement_id: str
-    :ivar quota_id: The subscription quota Id.
+    :ivar quota_id: The subscription quota ID.
     :vartype quota_id: str
     :ivar spending_limit: The subscription spending limit. Possible values
      include: 'On', 'Off', 'CurrentPeriodOff'
