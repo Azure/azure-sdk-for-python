@@ -3,6 +3,13 @@
 Release History
 ===============
 
+0.31.0 (2016-11-10)
++++++++++++++++++++
+
+**Breaking change**
+
+- Resource.Links 'create_or_update' method has simpler parameters
+
 0.30.2 (2016-10-20)
 +++++++++++++++++++
 
