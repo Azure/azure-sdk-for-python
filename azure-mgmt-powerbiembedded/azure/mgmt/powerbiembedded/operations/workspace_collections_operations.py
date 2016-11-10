@@ -39,8 +39,8 @@ class WorkspaceCollectionsOperations(object):
 
         :param resource_group_name: Azure resource group
         :type resource_group_name: str
-        :param workspace_collection_name: Power BI Embedded workspace
-         collection name
+        :param workspace_collection_name: Power BI Embedded Workspace
+         Collection name
         :type workspace_collection_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -51,6 +51,8 @@ class WorkspaceCollectionsOperations(object):
          <azure.mgmt.powerbiembedded.models.WorkspaceCollection>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`ErrorException<azure.mgmt.powerbiembedded.models.ErrorException>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.PowerBI/workspaceCollections/{workspaceCollectionName}'
@@ -97,13 +99,13 @@ class WorkspaceCollectionsOperations(object):
             self, resource_group_name, workspace_collection_name, location=None, tags=None, custom_headers=None, raw=False, **operation_config):
         """Creates a new Power BI Workspace Collection with the specified
         properties. A Power BI Workspace Collection contains one or more
-        Power BI Workspaces and can be used to provision keys that provide
-        API access to those Power BI Workspaces.
+        workspaces, and can be used to provision keys that provide API access
+        to those workspaces.
 
         :param resource_group_name: Azure resource group
         :type resource_group_name: str
-        :param workspace_collection_name: Power BI Embedded workspace
-         collection name
+        :param workspace_collection_name: Power BI Embedded Workspace
+         Collection name
         :type workspace_collection_name: str
         :param location: Azure location
         :type location: str
@@ -118,6 +120,8 @@ class WorkspaceCollectionsOperations(object):
          <azure.mgmt.powerbiembedded.models.WorkspaceCollection>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`ErrorException<azure.mgmt.powerbiembedded.models.ErrorException>`
         """
         body = models.CreateWorkspaceCollectionRequest(location=location, tags=tags)
 
@@ -173,8 +177,8 @@ class WorkspaceCollectionsOperations(object):
 
         :param resource_group_name: Azure resource group
         :type resource_group_name: str
-        :param workspace_collection_name: Power BI Embedded workspace
-         collection name
+        :param workspace_collection_name: Power BI Embedded Workspace
+         Collection name
         :type workspace_collection_name: str
         :param tags:
         :type tags: dict
@@ -187,6 +191,8 @@ class WorkspaceCollectionsOperations(object):
          <azure.mgmt.powerbiembedded.models.WorkspaceCollection>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`ErrorException<azure.mgmt.powerbiembedded.models.ErrorException>`
         """
         body = models.UpdateWorkspaceCollectionRequest(tags=tags)
 
@@ -241,8 +247,8 @@ class WorkspaceCollectionsOperations(object):
 
         :param resource_group_name: Azure resource group
         :type resource_group_name: str
-        :param workspace_collection_name: Power BI Embedded workspace
-         collection name
+        :param workspace_collection_name: Power BI Embedded Workspace
+         Collection name
         :type workspace_collection_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -252,6 +258,8 @@ class WorkspaceCollectionsOperations(object):
          instance that returns None
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`ErrorException<azure.mgmt.powerbiembedded.models.ErrorException>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.PowerBI/workspaceCollections/{workspaceCollectionName}'
@@ -312,8 +320,8 @@ class WorkspaceCollectionsOperations(object):
 
     def check_name_availability(
             self, location, name=None, type="Microsoft.PowerBI/workspaceCollections", custom_headers=None, raw=False, **operation_config):
-        """Check that the specified Power BI Workspace Collection name is valid
-        and not in use.
+        """Verify the specified Power BI Workspace Collection name is valid and
+        not already in use.
 
         :param location: Azure location
         :type location: str
@@ -330,6 +338,8 @@ class WorkspaceCollectionsOperations(object):
          <azure.mgmt.powerbiembedded.models.CheckNameResponse>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`ErrorException<azure.mgmt.powerbiembedded.models.ErrorException>`
         """
         body = models.CheckNameRequest(name=name, type=type)
 
@@ -379,7 +389,7 @@ class WorkspaceCollectionsOperations(object):
 
     def list_by_resource_group(
             self, resource_group_name, custom_headers=None, raw=False, **operation_config):
-        """Retrieves all existing Power BI Workspace Collections in the specified
+        """Retrieves all existing Power BI workspace collections in the specified
         resource group.
 
         :param resource_group_name: Azure resource group
@@ -391,6 +401,8 @@ class WorkspaceCollectionsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`WorkspaceCollectionPaged
          <azure.mgmt.powerbiembedded.models.WorkspaceCollectionPaged>`
+        :raises:
+         :class:`ErrorException<azure.mgmt.powerbiembedded.models.ErrorException>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -443,7 +455,7 @@ class WorkspaceCollectionsOperations(object):
 
     def list_by_subscription(
             self, custom_headers=None, raw=False, **operation_config):
-        """Retrieves all existing Power BI Workspace Collections in the specified
+        """Retrieves all existing Power BI workspace collections in the specified
         subscription.
 
         :param dict custom_headers: headers that will be added to the request
@@ -453,6 +465,8 @@ class WorkspaceCollectionsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`WorkspaceCollectionPaged
          <azure.mgmt.powerbiembedded.models.WorkspaceCollectionPaged>`
+        :raises:
+         :class:`ErrorException<azure.mgmt.powerbiembedded.models.ErrorException>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -509,8 +523,8 @@ class WorkspaceCollectionsOperations(object):
 
         :param resource_group_name: Azure resource group
         :type resource_group_name: str
-        :param workspace_collection_name: Power BI Embedded workspace
-         collection name
+        :param workspace_collection_name: Power BI Embedded Workspace
+         Collection name
         :type workspace_collection_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -521,6 +535,8 @@ class WorkspaceCollectionsOperations(object):
          <azure.mgmt.powerbiembedded.models.WorkspaceCollectionAccessKeys>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`ErrorException<azure.mgmt.powerbiembedded.models.ErrorException>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.PowerBI/workspaceCollections/{workspaceCollectionName}/listKeys'
@@ -570,8 +586,8 @@ class WorkspaceCollectionsOperations(object):
 
         :param resource_group_name: Azure resource group
         :type resource_group_name: str
-        :param workspace_collection_name: Power BI Embedded workspace
-         collection name
+        :param workspace_collection_name: Power BI Embedded Workspace
+         Collection name
         :type workspace_collection_name: str
         :param key_name: Key name. Possible values include: 'key1', 'key2'
         :type key_name: str or :class:`AccessKeyName
@@ -585,6 +601,8 @@ class WorkspaceCollectionsOperations(object):
          <azure.mgmt.powerbiembedded.models.WorkspaceCollectionAccessKeys>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`ErrorException<azure.mgmt.powerbiembedded.models.ErrorException>`
         """
         body = models.WorkspaceCollectionAccessKey(key_name=key_name)
 
@@ -640,8 +658,8 @@ class WorkspaceCollectionsOperations(object):
 
         :param resource_group_name: Azure resource group
         :type resource_group_name: str
-        :param target_resource_group: Name of the resource group that the
-         Power BI Workspace Collections will be migrated to.
+        :param target_resource_group: Name of the resource group the Power BI
+         workspace collections will be migrated to.
         :type target_resource_group: str
         :param resources:
         :type resources: list of str
@@ -653,6 +671,8 @@ class WorkspaceCollectionsOperations(object):
         :rtype: None
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`ErrorException<azure.mgmt.powerbiembedded.models.ErrorException>`
         """
         body = models.MigrateWorkspaceCollectionRequest(target_resource_group=target_resource_group, resources=resources)
 

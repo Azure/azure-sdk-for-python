@@ -34,13 +34,13 @@ class WorkspacesOperations(object):
 
     def list(
             self, resource_group_name, workspace_collection_name, custom_headers=None, raw=False, **operation_config):
-        """Retrieves all existing Power BI Workspaces in the specified Workspace
-        Collection.
+        """Retrieves all existing Power BI workspaces in the specified workspace
+        collection.
 
         :param resource_group_name: Azure resource group
         :type resource_group_name: str
-        :param workspace_collection_name: Power BI Embedded workspace
-         collection name
+        :param workspace_collection_name: Power BI Embedded Workspace
+         Collection name
         :type workspace_collection_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -49,6 +49,8 @@ class WorkspacesOperations(object):
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`WorkspacePaged
          <azure.mgmt.powerbiembedded.models.WorkspacePaged>`
+        :raises:
+         :class:`ErrorException<azure.mgmt.powerbiembedded.models.ErrorException>`
         """
         def internal_paging(next_link=None, raw=False):
 
