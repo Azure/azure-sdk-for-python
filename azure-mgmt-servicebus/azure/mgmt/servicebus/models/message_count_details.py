@@ -19,9 +19,9 @@ class MessageCountDetails(Model):
      topic, or subscription.
     :type active_message_count: long
     :param dead_letter_message_count: Number of messages that are dead
-     letters.
+     lettered.
     :type dead_letter_message_count: long
-    :param scheduled_message_count: Number scheduled messages.
+    :param scheduled_message_count: Number of scheduled messages.
     :type scheduled_message_count: long
     :param transfer_dead_letter_message_count: Number of messages transferred
      into dead letters.

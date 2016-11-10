@@ -13,14 +13,14 @@ from msrest.serialization import Model
 
 
 class TopicCreateOrUpdateParameters(Model):
-    """Parameters supplied to the CreateOrUpdate Topic operation.
+    """Parameters supplied to the Create Or Update Topic operation.
 
     :param name: Topic name.
     :type name: str
     :param location: Location of the resource.
     :type location: str
-    :param accessed_at: Last time the message was sent or a request was
-     received for this topic.
+    :param accessed_at: Last time the message was sent, or a request was
+     received, for this topic.
     :type accessed_at: datetime
     :param auto_delete_on_idle: TimeSpan idle interval after which the topic
      is automatically deleted. The minimum duration is 5 minutes.
@@ -42,10 +42,10 @@ class TopicCreateOrUpdateParameters(Model):
     :type default_message_time_to_live: str
     :param duplicate_detection_history_time_window: TimeSpan structure that
      defines the duration of the duplicate detection history. The default
-     value is 10 minutes..
+     value is 10 minutes.
     :type duplicate_detection_history_time_window: str
     :param enable_batched_operations: Value that indicates whether
-     server-side batched operations are enabled..
+     server-side batched operations are enabled.
     :type enable_batched_operations: bool
     :param enable_express: Value that indicates whether Express Entities are
      enabled. An express topic holds a message in memory temporarily before
@@ -55,23 +55,23 @@ class TopicCreateOrUpdateParameters(Model):
      partitioned across multiple message brokers is enabled.
     :type enable_partitioning: bool
     :param enable_subscription_partitioning: Value that indicates whether
-     partitioning is enabled or disabled..
+     partitioning is enabled or disabled.
     :type enable_subscription_partitioning: bool
     :param filtering_messages_before_publishing: Whether messages should be
      filtered before publishing.
     :type filtering_messages_before_publishing: bool
     :param is_anonymous_accessible: Value that indicates whether the message
-     is anonymous accessible.
+     is accessible anonymously.
     :type is_anonymous_accessible: bool
     :param is_express:
     :type is_express: bool
     :param max_size_in_megabytes: Maximum size of the topic in megabytes,
-     which is the size of memory allocated for the topic.
+     which is the size of the memory allocated for the topic.
     :type max_size_in_megabytes: long
     :param requires_duplicate_detection: Value indicating if this topic
      requires duplicate detection.
     :type requires_duplicate_detection: bool
-    :param size_in_bytes: Size of the topic in bytes.
+    :param size_in_bytes: Size of the topic, in bytes.
     :type size_in_bytes: long
     :param status: Enumerates the possible values for the status of a
      messaging entity. Possible values include: 'Active', 'Creating',
@@ -84,7 +84,7 @@ class TopicCreateOrUpdateParameters(Model):
     :param support_ordering: Value that indicates whether the topic supports
      ordering.
     :type support_ordering: bool
-    :param updated_at: The exact time the message has been updated.
+    :param updated_at: The exact time the message was updated.
     :type updated_at: datetime
     """ 
 

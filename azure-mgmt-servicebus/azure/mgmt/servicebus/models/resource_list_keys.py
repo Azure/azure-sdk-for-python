@@ -15,19 +15,19 @@ from msrest.serialization import Model
 class ResourceListKeys(Model):
     """Namespace/ServiceBus Connection String.
 
-    :param primary_connection_string: PrimaryConnectionString of the created
-     Namespace AuthorizationRule.
+    :param primary_connection_string: Primary connection string of the
+     created namespace authorization rule.
     :type primary_connection_string: str
-    :param secondary_connection_string: SecondaryConnectionString of the
-     created Namespace AuthorizationRule
+    :param secondary_connection_string: Secondary connection string of the
+     created namespace authorization rule.
     :type secondary_connection_string: str
     :param primary_key: A base64-encoded 256-bit primary key for signing and
-     validating the SAS token
+     validating the SAS token.
     :type primary_key: str
     :param secondary_key: A base64-encoded 256-bit primary key for signing
-     and validating the SAS token
+     and validating the SAS token.
     :type secondary_key: str
-    :param key_name: A string that describes the authorization rule
+    :param key_name: A string that describes the authorization rule.
     :type key_name: str
     """ 
 
