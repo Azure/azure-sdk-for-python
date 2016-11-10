@@ -35,6 +35,9 @@ try:
 except ImportError:
     pass
 
+#For KeyVault only
+package_folder_path = os.path.join(package_folder_path, 'generated')
+	
 # Version extraction inspired from 'requests'
 with open(os.path.join(package_folder_path, 'version.py'), 'r') as fd:
     version = re.search(r'^VERSION\s*=\s*[\'"]([^\'"]*)[\'"]',
