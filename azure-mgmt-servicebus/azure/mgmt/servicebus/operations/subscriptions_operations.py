@@ -50,6 +50,7 @@ class SubscriptionsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`SubscriptionResourcePaged
          <azure.mgmt.servicebus.models.SubscriptionResourcePaged>`
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -112,12 +113,12 @@ class SubscriptionsOperations(object):
         :type resource_group_name: str
         :param namespace_name: The namespace name.
         :type namespace_name: str
-        :param topic_name: The topicName name.
+        :param topic_name: The topic name.
         :type topic_name: str
-        :param subscription_name: The subscriptionName name.
+        :param subscription_name: The subscription name.
         :type subscription_name: str
         :param parameters: Parameters supplied to create a subscription
-         Resource.
+         resource.
         :type parameters: :class:`SubscriptionCreateOrUpdateParameters
          <azure.mgmt.servicebus.models.SubscriptionCreateOrUpdateParameters>`
         :param dict custom_headers: headers that will be added to the request
@@ -129,6 +130,7 @@ class SubscriptionsOperations(object):
          <azure.mgmt.servicebus.models.SubscriptionResource>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ServiceBus/namespaces/{namespaceName}/topics/{topicName}/subscriptions/{subscriptionName}'
@@ -199,6 +201,7 @@ class SubscriptionsOperations(object):
         :rtype: None
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ServiceBus/namespaces/{namespaceName}/topics/{topicName}/subscriptions/{subscriptionName}'
@@ -259,6 +262,7 @@ class SubscriptionsOperations(object):
          <azure.mgmt.servicebus.models.SubscriptionResource>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ServiceBus/namespaces/{namespaceName}/topics/{topicName}/subscriptions/{subscriptionName}'

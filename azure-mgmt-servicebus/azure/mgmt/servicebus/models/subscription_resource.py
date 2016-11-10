@@ -13,7 +13,7 @@ from .resource import Resource
 
 
 class SubscriptionResource(Resource):
-    """Description of Subscription Resource.
+    """Description of subscription resource.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -28,7 +28,7 @@ class SubscriptionResource(Resource):
     :type location: str
     :param tags: Resource tags
     :type tags: dict
-    :param accessed_at: Last time a there was a receive request to this
+    :param accessed_at: Last time there was a receive request to this
      subscription.
     :type accessed_at: datetime
     :param auto_delete_on_idle: TimeSpan idle interval after which the topic
@@ -45,14 +45,14 @@ class SubscriptionResource(Resource):
      TimeToLive is not set on a message itself.
     :type default_message_time_to_live: str
     :param dead_lettering_on_filter_evaluation_exceptions: Value that
-     indicates if a subscription has dead letter support on Filter evaluation
-     exceptions.
+     indicates whether a subscription has dead letter support on filter
+     evaluation exceptions.
     :type dead_lettering_on_filter_evaluation_exceptions: bool
-    :param dead_lettering_on_message_expiration: Value that indicates if a
-     subscription has dead letter support when a message expires.
+    :param dead_lettering_on_message_expiration: Value that indicates whether
+     a subscription has dead letter support when a message expires.
     :type dead_lettering_on_message_expiration: bool
     :param enable_batched_operations: Value that indicates whether
-     server-side batched operations are enabled..
+     server-side batched operations are enabled.
     :type enable_batched_operations: bool
     :param entity_availability_status: Entity availability status for the
      topic. Possible values include: 'Available', 'Limited', 'Renaming',
@@ -69,7 +69,7 @@ class SubscriptionResource(Resource):
     :param message_count: Number of messages.
     :type message_count: long
     :param requires_session: Value indicating if a subscription supports the
-     concept of session.
+     concept of sessions.
     :type requires_session: bool
     :param status: Enumerates the possible values for the status of a
      messaging entity. Possible values include: 'Active', 'Creating',
@@ -77,7 +77,7 @@ class SubscriptionResource(Resource):
      'SendDisabled', 'Unknown'
     :type status: str or :class:`EntityStatus
      <azure.mgmt.servicebus.models.EntityStatus>`
-    :param updated_at: The exact time the message has been updated.
+    :param updated_at: The exact time the message was updated.
     :type updated_at: datetime
     """ 
 

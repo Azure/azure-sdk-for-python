@@ -28,7 +28,7 @@ class QueueResource(Resource):
     :type location: str
     :param tags: Resource tags
     :type tags: dict
-    :param lock_duration: the duration of a peek lock; that is, the amount of
+    :param lock_duration: The duration of a peek-lock; that is, the amount of
      time that the message is locked for other receivers. The maximum value
      for LockDuration is 5 minutes; the default value is 1 minute.
     :type lock_duration: str
@@ -43,51 +43,51 @@ class QueueResource(Resource):
      'Restoring', 'Unknown'
     :type entity_availability_status: str or :class:`EntityAvailabilityStatus
      <azure.mgmt.servicebus.models.EntityAvailabilityStatus>`
-    :param created_at: the exact time the message was created.
+    :param created_at: The exact time the message was created.
     :type created_at: datetime
-    :param default_message_time_to_live: the default message time to live
+    :param default_message_time_to_live: The default message time to live
      value. This is the duration after which the message expires, starting
      from when the message is sent to Service Bus. This is the default value
      used when TimeToLive is not set on a message itself.
     :type default_message_time_to_live: str
     :param duplicate_detection_history_time_window: TimeSpan structure that
      defines the duration of the duplicate detection history. The default
-     value is 10 minutes..
+     value is 10 minutes.
     :type duplicate_detection_history_time_window: str
-    :param enable_batched_operations: value that indicates whether
-     server-side batched operations are enabled..
+    :param enable_batched_operations: A value that indicates whether
+     server-side batched operations are enabled.
     :type enable_batched_operations: bool
-    :param dead_lettering_on_message_expiration: a value that indicates
+    :param dead_lettering_on_message_expiration: A value that indicates
      whether this queue has dead letter support when a message expires.
     :type dead_lettering_on_message_expiration: bool
-    :param enable_express: a value that indicates whether Express Entities
+    :param enable_express: A value that indicates whether Express Entities
      are enabled. An express queue holds a message in memory temporarily
      before writing it to persistent storage.
     :type enable_express: bool
-    :param enable_partitioning: value that indicates whether the queue to be
-     partitioned across multiple message brokers is enabled.
+    :param enable_partitioning: A value that indicates whether the queue is
+     to be partitioned across multiple message brokers.
     :type enable_partitioning: bool
-    :param is_anonymous_accessible: a value that indicates whether the
-     message is anonymous accessible.
+    :param is_anonymous_accessible: A value that indicates whether the
+     message is accessible anonymously.
     :type is_anonymous_accessible: bool
-    :param max_delivery_count: the maximum delivery count. A message is
+    :param max_delivery_count: The maximum delivery count. A message is
      automatically deadlettered after this number of deliveries.
     :type max_delivery_count: int
-    :param max_size_in_megabytes: the maximum size of the queue in megabytes,
+    :param max_size_in_megabytes: The maximum size of the queue in megabytes,
      which is the size of memory allocated for the queue.
     :type max_size_in_megabytes: long
-    :param message_count: the number of messages in the queue.
+    :param message_count: The number of messages in the queue.
     :type message_count: long
     :param count_details:
     :type count_details: :class:`MessageCountDetails
      <azure.mgmt.servicebus.models.MessageCountDetails>`
-    :param requires_duplicate_detection: the value indicating if this queue
+    :param requires_duplicate_detection: A value indicating if this queue
      requires duplicate detection.
     :type requires_duplicate_detection: bool
-    :param requires_session: a value that indicates whether the queue
-     supports the concept of session.
+    :param requires_session: A value that indicates whether the queue
+     supports the concept of sessions.
     :type requires_session: bool
-    :param size_in_bytes: the size of the queue in bytes.
+    :param size_in_bytes: The size of the queue, in bytes.
     :type size_in_bytes: long
     :param status: Enumerates the possible values for the status of a
      messaging entity. Possible values include: 'Active', 'Creating',
@@ -95,10 +95,10 @@ class QueueResource(Resource):
      'SendDisabled', 'Unknown'
     :type status: str or :class:`EntityStatus
      <azure.mgmt.servicebus.models.EntityStatus>`
-    :param support_ordering: a value that indicates whether the queue
+    :param support_ordering: A value that indicates whether the queue
      supports ordering.
     :type support_ordering: bool
-    :param updated_at: the exact time the message has been updated.
+    :param updated_at: The exact time the message was updated.
     :type updated_at: datetime
     """ 
 
