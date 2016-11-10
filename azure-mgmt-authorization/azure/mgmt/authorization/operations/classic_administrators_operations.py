@@ -35,9 +35,10 @@ class ClassicAdministratorsOperations(object):
 
     def list(
             self, api_version, custom_headers=None, raw=False, **operation_config):
-        """Gets a list of classic administrators for the subscription.
+        """Gets service administrator, account administrator, and
+        co-administrators for the subscription.
 
-        :param api_version:
+        :param api_version: The API version to use for this operation.
         :type api_version: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -46,6 +47,7 @@ class ClassicAdministratorsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`ClassicAdministratorPaged
          <azure.mgmt.authorization.models.ClassicAdministratorPaged>`
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
 

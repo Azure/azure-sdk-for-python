@@ -15,13 +15,13 @@ from msrest.serialization import Model
 class ClassicAdministrator(Model):
     """Classic Administrators.
 
-    :param id: Gets or sets the classic administrator id.
+    :param id: The ID of the administrator.
     :type id: str
-    :param name: Gets or sets the classic administrator name.
+    :param name: The name of the administrator.
     :type name: str
-    :param type: Gets or sets the classic administrator type.
+    :param type: The type of the administrator.
     :type type: str
-    :param properties: Gets or sets the classic administrator properties.
+    :param properties: Properties for the classic administrator.
     :type properties: :class:`ClassicAdministratorProperties
      <azure.mgmt.authorization.models.ClassicAdministratorProperties>`
     """ 

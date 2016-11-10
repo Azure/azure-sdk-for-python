@@ -29,11 +29,9 @@ class AuthorizationManagementClientConfiguration(AzureConfiguration):
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
      object<msrestazure.azure_active_directory>`
-    :param subscription_id: Gets subscription credentials which uniquely
-     identify Microsoft Azure subscription. The subscription ID forms part of
-     the URI for every service call.
+    :param subscription_id: The ID of the target subscription.
     :type subscription_id: str
-    :param api_version: Client Api Version.
+    :param api_version: The API version to use for this operation.
     :type api_version: str
     :param accept_language: Gets or sets the preferred language for the
      response.
@@ -79,7 +77,7 @@ class AuthorizationManagementClientConfiguration(AzureConfiguration):
 
 
 class AuthorizationManagementClient(object):
-    """AuthorizationManagementClient
+    """Role based access control provides you a way to apply granular level policy administration down to individual resources or resource groups. These operations enable you to manage role definitions and role assignments. A role definition describes the set of actions that can be performed on resources. A role assignment grants access to Azure Active Directory users.
 
     :ivar config: Configuration for client.
     :vartype config: AuthorizationManagementClientConfiguration
@@ -98,11 +96,9 @@ class AuthorizationManagementClient(object):
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
      object<msrestazure.azure_active_directory>`
-    :param subscription_id: Gets subscription credentials which uniquely
-     identify Microsoft Azure subscription. The subscription ID forms part of
-     the URI for every service call.
+    :param subscription_id: The ID of the target subscription.
     :type subscription_id: str
-    :param api_version: Client Api Version.
+    :param api_version: The API version to use for this operation.
     :type api_version: str
     :param accept_language: Gets or sets the preferred language for the
      response.
