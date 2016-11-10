@@ -28,9 +28,9 @@ class VirtualMachineScaleSetVM(Resource):
     :type location: str
     :param tags: Resource tags.
     :type tags: dict
-    :ivar instance_id: the virtual machine instance id.
+    :ivar instance_id: The virtual machine instance ID.
     :vartype instance_id: str
-    :ivar sku: the virtual machine sku.
+    :ivar sku: The virtual machine SKU.
     :vartype sku: :class:`Sku <azure.mgmt.compute.models.Sku>`
     :ivar latest_model_applied: Specifies whether the latest model has been
      applied to the virtual machine.
@@ -62,7 +62,7 @@ class VirtualMachineScaleSetVM(Resource):
     :param license_type: the license type, which is for bring your own
      license scenario.
     :type license_type: str
-    :param plan: the purchase plan when deploying virtual machine from VM
+    :param plan: The purchase plan when deploying virtual machine from VM
      Marketplace images.
     :type plan: :class:`Plan <azure.mgmt.compute.models.Plan>`
     :ivar resources: the virtual machine child extension resources.
