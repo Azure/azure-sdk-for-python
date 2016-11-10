@@ -12,25 +12,32 @@
 from msrest.serialization import Model
 
 
-class StorageAccountProperties(Model):
-    """Azure Storage account properties information.
+class CreateStorageAccountInfo(Model):
+    """Azure Storage account information to add to the Data Lake analytics
+    account being created.
 
+    :param name: the account name associated with the Azure storage account
+     to add to the Data Lake analytics account being created.
+    :type name: str
     :param access_key: the access key associated with this Azure Storage
      account that will be used to connect to it.
     :type access_key: str
-    :param suffix: the optional suffix for the Data Lake account.
+    :param suffix: the optional suffix for the storage account.
     :type suffix: str
     """ 
 
     _validation = {
+        'name': {'required': True},
         'access_key': {'required': True},
     }
 
     _attribute_map = {
-        'access_key': {'key': 'accessKey', 'type': 'str'},
-        'suffix': {'key': 'suffix', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'access_key': {'key': 'properties.accessKey', 'type': 'str'},
+        'suffix': {'key': 'properties.suffix', 'type': 'str'},
     }
 
-    def __init__(self, access_key, suffix=None):
+    def __init__(self, name, access_key, suffix=None):
+        self.name = name
         self.access_key = access_key
         self.suffix = suffix

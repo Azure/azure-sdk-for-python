@@ -15,12 +15,11 @@ from msrest.serialization import Model
 class DataLakeStoreAccountInfo(Model):
     """Data Lake Store account information.
 
-    :param name: the account name of the Data Lake Store account.
+    :param name: the account name of the Data Lake Store account to add to
+     the Data Lake Analytics account being created.
     :type name: str
-    :param properties: the properties associated with this Data Lake Store
-     account.
-    :type properties: :class:`DataLakeStoreAccountInfoProperties
-     <azure.mgmt.datalake.analytics.account.models.DataLakeStoreAccountInfoProperties>`
+    :param suffix: the optional suffix for the Data Lake Store account.
+    :type suffix: str
     """ 
 
     _validation = {
@@ -29,9 +28,9 @@ class DataLakeStoreAccountInfo(Model):
 
     _attribute_map = {
         'name': {'key': 'name', 'type': 'str'},
-        'properties': {'key': 'properties', 'type': 'DataLakeStoreAccountInfoProperties'},
+        'suffix': {'key': 'properties.suffix', 'type': 'str'},
     }
 
-    def __init__(self, name, properties=None):
+    def __init__(self, name, suffix=None):
         self.name = name
-        self.properties = properties
+        self.suffix = suffix

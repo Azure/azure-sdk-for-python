@@ -13,7 +13,7 @@ from msrest.serialization import Model
 
 
 class Diagnostics(Model):
-    """Diagnostics.
+    """Error diagnostic information for failed jobs.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.

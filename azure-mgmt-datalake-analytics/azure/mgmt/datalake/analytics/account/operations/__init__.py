@@ -9,8 +9,12 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
+from .storage_accounts_operations import StorageAccountsOperations
+from .data_lake_store_accounts_operations import DataLakeStoreAccountsOperations
 from .account_operations import AccountOperations
 
 __all__ = [
+    'StorageAccountsOperations',
+    'DataLakeStoreAccountsOperations',
     'AccountOperations',
 ]
