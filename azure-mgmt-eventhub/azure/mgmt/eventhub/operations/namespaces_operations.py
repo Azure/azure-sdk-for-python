@@ -36,8 +36,8 @@ class NamespacesOperations(object):
 
     def list_by_subscription(
             self, custom_headers=None, raw=False, **operation_config):
-        """Lists all the available namespaces within the subscription
-        irrespective of the resourceGroups.
+        """Lists all the available namespaces within a subscription, irrespective
+        of the resource groups.
 
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -100,7 +100,7 @@ class NamespacesOperations(object):
 
     def list_by_resource_group(
             self, resource_group_name, custom_headers=None, raw=False, **operation_config):
-        """Lists the available namespaces within a resourceGroup.
+        """Lists the available namespaces within a resource group.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
@@ -166,14 +166,14 @@ class NamespacesOperations(object):
 
     def create_or_update(
             self, resource_group_name, namespace_name, parameters, custom_headers=None, raw=False, **operation_config):
-        """Creates Updates namespace. Once created, this namespace's resource
-        manifest is immutable. This operation is idempotent.
+        """Creates or updates a namespace. Once created, this namespace's
+        resource manifest is immutable. This operation is idempotent.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
         :param namespace_name: The namespace name.
         :type namespace_name: str
-        :param parameters: Parameters supplied to create a Namespace Resource.
+        :param parameters: Parameters for creating a namespace resource.
         :type parameters: :class:`NamespaceCreateOrUpdateParameters
          <azure.mgmt.eventhub.models.NamespaceCreateOrUpdateParameters>`
         :param dict custom_headers: headers that will be added to the request
@@ -264,9 +264,10 @@ class NamespacesOperations(object):
         """Deletes an existing namespace. This operation also removes all
         associated resources under the namespace.
 
-        :param resource_group_name: The name of the resource group.
+        :param resource_group_name: The name of the resource group in which
+         the namespace lives.
         :type resource_group_name: str
-        :param namespace_name: The namespace name.
+        :param namespace_name: The name of the namespace to delete.
         :type namespace_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -339,11 +340,12 @@ class NamespacesOperations(object):
 
     def get(
             self, resource_group_name, namespace_name, custom_headers=None, raw=False, **operation_config):
-        """Returns the description for the specified namespace.
+        """Gets the description of the specified namespace.
 
-        :param resource_group_name: The name of the resource group.
+        :param resource_group_name: The name of the resource group in which
+         the namespace lives.
         :type resource_group_name: str
-        :param namespace_name: The namespace name.
+        :param namespace_name: The name of the specified namespace.
         :type namespace_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -401,11 +403,12 @@ class NamespacesOperations(object):
 
     def list_authorization_rules(
             self, resource_group_name, namespace_name, custom_headers=None, raw=False, **operation_config):
-        """Authorization rules for a namespace.
+        """Gets a list of authorization rules for a namespace.
 
-        :param resource_group_name: The name of the resource group.
+        :param resource_group_name: The name of the resource group in which
+         the namespace lives.
         :type resource_group_name: str
-        :param namespace_name: The namespace name
+        :param namespace_name: The namespace name.
         :type namespace_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -470,13 +473,14 @@ class NamespacesOperations(object):
 
     def create_or_update_authorization_rule(
             self, resource_group_name, namespace_name, authorization_rule_name, parameters, custom_headers=None, raw=False, **operation_config):
-        """Creates an authorization rule for a namespace.
+        """Creates or updates an authorization rule for a namespace.
 
-        :param resource_group_name: The name of the resource group.
+        :param resource_group_name: The name of the resource group in which
+         the namespace lives.
         :type resource_group_name: str
         :param namespace_name: The namespace name.
         :type namespace_name: str
-        :param authorization_rule_name: Namespace Aauthorization Rule Name.
+        :param authorization_rule_name: Namespace authorization rule name.
         :type authorization_rule_name: str
         :param parameters: The shared access authorization rule.
         :type parameters:
@@ -543,13 +547,14 @@ class NamespacesOperations(object):
 
     def delete_authorization_rule(
             self, resource_group_name, namespace_name, authorization_rule_name, custom_headers=None, raw=False, **operation_config):
-        """Deletes a namespace authorization rule.
+        """Deletes an authorization rule for a namespace.
 
-        :param resource_group_name: The name of the resource group.
+        :param resource_group_name: The name of the resource group in which
+         the namespace lives.
         :type resource_group_name: str
         :param namespace_name: The namespace name.
         :type namespace_name: str
-        :param authorization_rule_name: Authorization Rule Name.
+        :param authorization_rule_name: Authorization rule name.
         :type authorization_rule_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -600,11 +605,12 @@ class NamespacesOperations(object):
 
     def get_authorization_rule(
             self, resource_group_name, namespace_name, authorization_rule_name, custom_headers=None, raw=False, **operation_config):
-        """Authorization rule for a namespace by name.
+        """Gets an authorization rule for a namespace by rule name.
 
-        :param resource_group_name: The name of the resource group.
+        :param resource_group_name: The name of the resource group in which
+         the namespace lives.
         :type resource_group_name: str
-        :param namespace_name: The namespace name
+        :param namespace_name: The namespace name.
         :type namespace_name: str
         :param authorization_rule_name: Authorization rule name.
         :type authorization_rule_name: str
@@ -665,13 +671,14 @@ class NamespacesOperations(object):
 
     def list_keys(
             self, resource_group_name, namespace_name, authorization_rule_name, custom_headers=None, raw=False, **operation_config):
-        """Primary and Secondary ConnectionStrings to the namespace .
+        """Gets the primary and secondary connection strings for the namespace.
 
-        :param resource_group_name: The name of the resource group.
+        :param resource_group_name: The name of the resource group in which
+         the namespace lives.
         :type resource_group_name: str
         :param namespace_name: The namespace name.
         :type namespace_name: str
-        :param authorization_rule_name: The authorizationRule name.
+        :param authorization_rule_name: The authorization rule name.
         :type authorization_rule_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -730,16 +737,17 @@ class NamespacesOperations(object):
 
     def regenerate_keys(
             self, resource_group_name, namespace_name, authorization_rule_name, policykey=None, custom_headers=None, raw=False, **operation_config):
-        """Regenerats the Primary or Secondary ConnectionStrings to the namespace
-        .
+        """Regenerates the primary or secondary connection strings for the
+        specified namespace.
 
-        :param resource_group_name: The name of the resource group.
+        :param resource_group_name: The name of the resource group in which
+         the namespace lives.
         :type resource_group_name: str
         :param namespace_name: The namespace name.
         :type namespace_name: str
-        :param authorization_rule_name: The authorizationRule name.
+        :param authorization_rule_name: The authorization rule name.
         :type authorization_rule_name: str
-        :param policykey: Key that needs to be regenerated . Possible values
+        :param policykey: Key that needs to be regenerated. Possible values
          include: 'PrimaryKey', 'SecondaryKey'
         :type policykey: str or :class:`Policykey
          <azure.mgmt.eventhub.models.Policykey>`
