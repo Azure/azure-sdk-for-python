@@ -25,11 +25,9 @@ class FeatureClientConfiguration(AzureConfiguration):
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
      object<msrestazure.azure_active_directory>`
-    :param subscription_id: Gets subscription credentials which uniquely
-     identify Microsoft Azure subscription. The subscription ID forms part of
-     the URI for every service call.
+    :param subscription_id: The ID of the target subscription.
     :type subscription_id: str
-    :param api_version: Client Api Version.
+    :param api_version: The API version to use for this operation.
     :type api_version: str
     :param accept_language: Gets or sets the preferred language for the
      response.
@@ -75,7 +73,7 @@ class FeatureClientConfiguration(AzureConfiguration):
 
 
 class FeatureClient(object):
-    """FeatureClient
+    """Azure Feature Exposure Control (AFEC) provides a mechanism for the resource providers to control feature exposure to users. Resource providers typically use this mechanism to provide public/private preview for new features prior to making them generally available. Users need to explicitly register for AFEC features to get access to such functionality.
 
     :ivar config: Configuration for client.
     :vartype config: FeatureClientConfiguration
@@ -86,11 +84,9 @@ class FeatureClient(object):
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
      object<msrestazure.azure_active_directory>`
-    :param subscription_id: Gets subscription credentials which uniquely
-     identify Microsoft Azure subscription. The subscription ID forms part of
-     the URI for every service call.
+    :param subscription_id: The ID of the target subscription.
     :type subscription_id: str
-    :param api_version: Client Api Version.
+    :param api_version: The API version to use for this operation.
     :type api_version: str
     :param accept_language: Gets or sets the preferred language for the
      response.
