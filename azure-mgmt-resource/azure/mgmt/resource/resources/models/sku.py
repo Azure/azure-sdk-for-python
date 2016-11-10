@@ -13,19 +13,19 @@ from msrest.serialization import Model
 
 
 class Sku(Model):
-    """Sku for the resource.
+    """SKU for the resource.
 
-    :param name: The sku name.
+    :param name: The SKU name.
     :type name: str
-    :param tier: The sku tier.
+    :param tier: The SKU tier.
     :type tier: str
-    :param size: The sku size.
+    :param size: The SKU size.
     :type size: str
-    :param family: The sku family.
+    :param family: The SKU family.
     :type family: str
-    :param model: The sku model.
+    :param model: The SKU model.
     :type model: str
-    :param capacity: The sku capacity.
+    :param capacity: The SKU capacity.
     :type capacity: int
     """ 
 

@@ -449,18 +449,6 @@ class MgmtComputeTest(AzureMgmtTestCase):
             location=self.region,
             platform_fault_domain_count=2,
             platform_update_domain_count=4,
-            statuses=[
-                azure.mgmt.compute.models.InstanceViewStatus(
-                    code='test1',
-                    display_status='test1 display',
-                    message='test1 message',
-                ),
-                azure.mgmt.compute.models.InstanceViewStatus(
-                    code='test2',
-                    display_status='test2 display',
-                    message='test2 message',
-                ),
-            ],
             tags={
                 'tag1': 'value1',
             },
@@ -521,11 +509,14 @@ class MgmtComputeTest(AzureMgmtTestCase):
         container_name = self.get_resource_name('pycontainer')
         
         # https://msdn.microsoft.com/en-us/library/azure/mt711471.aspx
-        async_create = self.compute_client.container_service.create_or_update(
+        async_create = self.compute_client.container_services.create_or_update(
             self.group_name,
             container_name,
             {
                 'location': self.region,
+                "orchestrator_profile": {
+                    "orchestrator_type": "DCOS"
+                },
                 "master_profile": {
                     "count": 1,
                     "dns_prefix": "MasterPrefixTest"
@@ -537,28 +528,32 @@ class MgmtComputeTest(AzureMgmtTestCase):
                         "dns_prefix": "AgentPrefixTest"
                 }],
                 "linux_profile": {
-                    "admin_username": "acsLinuxAdmin",
+                    "admin_username": "acslinuxadmin",
                     "ssh": {
                        "public_keys": [{
                             "key_data": "ssh-rsa AAAAB3NzaC1yc2EAAAABJQAAAQEAlj9UC6+57XWVu0fd6zqXa256EU9EZdoLGE3TqdZqu9fvUvLQOX2G0d5DmFhDCyTmWLQUx3/ONQ9RotYmHGymBIPQcpx43nnxsuihAILcpGZ5NjCj4IOYnmhdULxN4ti7k00S+udqokrRYpmwt0N4NA4VT9cN+7uJDL8Opqa1FYu0CT/RqSW+3aoQ0nfGj11axoxM37FuOMZ/c7mBSxvuI9NsDmcDQOUmPXjlgNlxrLzf6VcjxnJh4AO83zbyLok37mW/C7CuNK4WowjPO1Ix2kqRHRxBrzxYZ9xqZPc8GpFTw/dxJEYdJ3xlitbOoBoDgrL5gSITv6ESlNqjPk6kHQ== azureuser@linuxvm"
                        }]
                     }
                 },
-            }
+            },
+            retries=0
         )
         container = async_create.result()
 
-        container = self.compute_client.container_service.get(
+        container = self.compute_client.container_services.get(
             self.group_name,
             container.name
         )
 
-        containers = list(self.compute_client.container_service.list(
+        containers = list(self.compute_client.container_services.list_by_resource_group(
             self.group_name
         ))
         self.assertEqual(len(containers), 1)
 
-        async_delete = self.compute_client.container_service.delete(
+        containers = list(self.compute_client.container_services.list())
+        self.assertEqual(len(containers), 1)
+
+        async_delete = self.compute_client.container_services.delete(
             self.group_name,
             container.name
         )

@@ -15,18 +15,18 @@ from msrest.serialization import Model
 class ProviderOperationsMetadata(Model):
     """Provider Operations metadata.
 
-    :param id: Gets or sets the provider id.
+    :param id: The provider id.
     :type id: str
-    :param name: Gets or sets the provider name
+    :param name: The provider name.
     :type name: str
-    :param type: Gets or sets the provider type
+    :param type: The provider type.
     :type type: str
-    :param display_name: Gets or sets the provider display name
+    :param display_name: The provider display name.
     :type display_name: str
-    :param resource_types: Gets or sets the provider resource types
+    :param resource_types: The provider resource types
     :type resource_types: list of :class:`ResourceType
      <azure.mgmt.authorization.models.ResourceType>`
-    :param operations: Gets or sets the provider operations
+    :param operations: The provider operations.
     :type operations: list of :class:`ProviderOperation
      <azure.mgmt.authorization.models.ProviderOperation>`
     """ 

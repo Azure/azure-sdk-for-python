@@ -13,11 +13,11 @@ from msrest.serialization import Model
 
 
 class EffectiveNetworkSecurityGroupAssociation(Model):
-    """Effective NetworkSecurityGroup association.
+    """The effective network security group association.
 
-    :param subnet: Gets the id of subnet if assigned
+    :param subnet: The ID of the subnet if assigned.
     :type subnet: :class:`SubResource <azure.mgmt.network.models.SubResource>`
-    :param network_interface: Gets the id of network interface if assigned
+    :param network_interface: The ID of the network interface if assigned.
     :type network_interface: :class:`SubResource
      <azure.mgmt.network.models.SubResource>`
     """ 

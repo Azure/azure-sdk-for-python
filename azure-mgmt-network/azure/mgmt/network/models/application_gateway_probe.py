@@ -13,31 +13,40 @@ from .sub_resource import SubResource
 
 
 class ApplicationGatewayProbe(SubResource):
-    """Probe of application gateway.
+    """Probe of the application gateway.
 
-    :param id: Resource Id
+    :param id: Resource ID.
     :type id: str
-    :param protocol: Protocol. Possible values include: 'Http', 'Https'
+    :param protocol: Protocol. Possible values are: 'Http' and 'Https'.
+     Possible values include: 'Http', 'Https'
     :type protocol: str or :class:`ApplicationGatewayProtocol
      <azure.mgmt.network.models.ApplicationGatewayProtocol>`
-    :param host: Host to send probe to
+    :param host: Host name to send the probe to.
     :type host: str
-    :param path: Relative path of probe
+    :param path: Relative path of probe. Valid path starts from '/'. Probe is
+     sent to <Protocol>://<host>:<port><path>
     :type path: str
-    :param interval: Probing interval in seconds
+    :param interval: The probing interval in seconds. This is the time
+     interval between two consecutive probes. Acceptable values are from 1
+     second to 86400 seconds.
     :type interval: int
-    :param timeout: Probing timeout in seconds
+    :param timeout: the probe timeout in seconds. Probe marked as failed if
+     valid response is not received with this timeout period. Acceptable
+     values are from 1 second to 86400 seconds.
     :type timeout: int
-    :param unhealthy_threshold: Probing unhealthy threshold
+    :param unhealthy_threshold: The probe retry count. Backend server is
+     marked down after consecutive probe failure count reaches
+     UnhealthyThreshold. Acceptable values are from 1 second to 20.
     :type unhealthy_threshold: int
     :param provisioning_state: Provisioning state of the backend http
-     settings resource Updating/Deleting/Failed
+     settings resource. Possible values are: 'Updating', 'Deleting', and
+     'Failed'.
     :type provisioning_state: str
     :param name: Name of the resource that is unique within a resource group.
-     This name can be used to access the resource
+     This name can be used to access the resource.
     :type name: str
     :param etag: A unique read-only string that changes whenever the resource
-     is updated
+     is updated.
     :type etag: str
     """ 
 

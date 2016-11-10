@@ -13,17 +13,17 @@ from msrest.serialization import Model
 
 
 class ContainerServiceWindowsProfile(Model):
-    """Profile for Windows VMs.
+    """Profile for Windows VMs in the container service cluster.
 
-    :param admin_username: The administrator username to use for Windows VMs
+    :param admin_username: The administrator user name to use for Windows VMs.
     :type admin_username: str
-    :param admin_password: The administrator password to use for Windows VMs
+    :param admin_password: The administrator password to use for Windows VMs.
     :type admin_password: str
     """ 
 
     _validation = {
-        'admin_username': {'required': True},
-        'admin_password': {'required': True},
+        'admin_username': {'required': True, 'pattern': '^[a-zA-Z0-9]+([._]?[a-zA-Z0-9]+)*$'},
+        'admin_password': {'required': True, 'pattern': '^(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%\^&\*\(\)])[a-zA-Z\d!@#$%\^&\*\(\)]{12,123}$'},
     }
 
     _attribute_map = {

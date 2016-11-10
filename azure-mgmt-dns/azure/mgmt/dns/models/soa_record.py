@@ -15,20 +15,21 @@ from msrest.serialization import Model
 class SoaRecord(Model):
     """An SOA record.
 
-    :param host: Gets or sets the domain name of the authoritative name
-     server, without a temrinating dot.
+    :param host: The domain name of the authoritative name server for this
+     SOA record.
     :type host: str
-    :param email: Gets or sets the email for this record.
+    :param email: The email contact for this SOA record.
     :type email: str
-    :param serial_number: Gets or sets the serial number for this record.
+    :param serial_number: The serial number for this SOA record.
     :type serial_number: long
-    :param refresh_time: Gets or sets the refresh value for this record.
+    :param refresh_time: The refresh value for this SOA record.
     :type refresh_time: long
-    :param retry_time: Gets or sets the retry time for this record.
+    :param retry_time: The retry time for this SOA record.
     :type retry_time: long
-    :param expire_time: Gets or sets the expire time for this record.
+    :param expire_time: The expire time for this SOA record.
     :type expire_time: long
-    :param minimum_ttl: Gets or sets the minimum TTL value for this record.
+    :param minimum_ttl: The minimum value for this SOA record. By convention
+     this is used to determine the negative caching duration.
     :type minimum_ttl: long
     """ 
 

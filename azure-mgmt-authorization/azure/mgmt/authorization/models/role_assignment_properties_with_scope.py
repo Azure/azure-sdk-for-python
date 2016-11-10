@@ -15,11 +15,11 @@ from msrest.serialization import Model
 class RoleAssignmentPropertiesWithScope(Model):
     """Role assignment properties with scope.
 
-    :param scope: Gets or sets role assignment scope.
+    :param scope: The role assignment scope.
     :type scope: str
-    :param role_definition_id: Gets or sets role definition id.
+    :param role_definition_id: The role definition ID.
     :type role_definition_id: str
-    :param principal_id: Gets or sets principal Id.
+    :param principal_id: The principal ID.
     :type principal_id: str
     """ 
 

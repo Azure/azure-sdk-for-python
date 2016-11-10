@@ -36,7 +36,7 @@ class SubnetsOperations(object):
 
     def delete(
             self, resource_group_name, virtual_network_name, subnet_name, custom_headers=None, raw=False, **operation_config):
-        """The delete subnet operation deletes the specified subnet.
+        """Deletes the specified subnet.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
@@ -52,6 +52,7 @@ class SubnetsOperations(object):
          instance that returns None
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/virtualNetworks/{virtualNetworkName}/subnets/{subnetName}'
@@ -115,8 +116,7 @@ class SubnetsOperations(object):
 
     def get(
             self, resource_group_name, virtual_network_name, subnet_name, expand=None, custom_headers=None, raw=False, **operation_config):
-        """The Get subnet operation retrieves information about the specified
-        subnet.
+        """Gets the specified subnet by virtual network and resource group.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
@@ -124,7 +124,7 @@ class SubnetsOperations(object):
         :type virtual_network_name: str
         :param subnet_name: The name of the subnet.
         :type subnet_name: str
-        :param expand: expand references resources.
+        :param expand: Expands referenced resources.
         :type expand: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -134,6 +134,7 @@ class SubnetsOperations(object):
         :rtype: :class:`Subnet <azure.mgmt.network.models.Subnet>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/virtualNetworks/{virtualNetworkName}/subnets/{subnetName}'
@@ -183,8 +184,7 @@ class SubnetsOperations(object):
 
     def create_or_update(
             self, resource_group_name, virtual_network_name, subnet_name, subnet_parameters, custom_headers=None, raw=False, **operation_config):
-        """The Put Subnet operation creates/updates a subnet in the specified
-        virtual network.
+        """Creates or updates a subnet in the specified virtual network.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
@@ -192,8 +192,8 @@ class SubnetsOperations(object):
         :type virtual_network_name: str
         :param subnet_name: The name of the subnet.
         :type subnet_name: str
-        :param subnet_parameters: Parameters supplied to the create/update
-         Subnet operation
+        :param subnet_parameters: Parameters supplied to the create or update
+         subnet operation.
         :type subnet_parameters: :class:`Subnet
          <azure.mgmt.network.models.Subnet>`
         :param dict custom_headers: headers that will be added to the request
@@ -205,6 +205,7 @@ class SubnetsOperations(object):
          <azure.mgmt.network.models.Subnet>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/virtualNetworks/{virtualNetworkName}/subnets/{subnetName}'
@@ -281,8 +282,7 @@ class SubnetsOperations(object):
 
     def list(
             self, resource_group_name, virtual_network_name, custom_headers=None, raw=False, **operation_config):
-        """The List subnets operation retrieves all the subnets in a virtual
-        network.
+        """Gets all subnets in a virtual network.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
@@ -294,6 +294,7 @@ class SubnetsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`SubnetPaged <azure.mgmt.network.models.SubnetPaged>`
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
 

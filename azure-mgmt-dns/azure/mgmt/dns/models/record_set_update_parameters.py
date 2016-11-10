@@ -13,9 +13,9 @@ from msrest.serialization import Model
 
 
 class RecordSetUpdateParameters(Model):
-    """Parameters supplied to update a RecordSet.
+    """Parameters supplied to update a record set.
 
-    :param record_set: Gets or sets information about the RecordSet being
+    :param record_set: Specifies information about the record set being
      updated.
     :type record_set: :class:`RecordSet <azure.mgmt.dns.models.RecordSet>`
     """ 

@@ -13,16 +13,16 @@ from msrest.serialization import Model
 
 
 class AdditionalUnattendContent(Model):
-    """additional XML formatted information that can be included in the
+    """Additional XML formatted information that can be included in the
     Unattend.xml file, which is used by Windows Setup. Contents are defined
     by setting name, component name, and the pass in which the content is a
     applied.
 
-    :param pass_name: the pass name. Currently, the only allowable value is
+    :param pass_name: The pass name. Currently, the only allowable value is
      oobeSystem. Possible values include: 'oobeSystem'
     :type pass_name: str or :class:`PassNames
      <azure.mgmt.compute.models.PassNames>`
-    :param component_name: the component name. Currently, the only allowable
+    :param component_name: The component name. Currently, the only allowable
      value is Microsoft-Windows-Shell-Setup. Possible values include:
      'Microsoft-Windows-Shell-Setup'
     :type component_name: str or :class:`ComponentNames

@@ -15,15 +15,15 @@ from msrest.serialization import Model
 class ExpressRouteCircuitRoutesTable(Model):
     """The routes table associated with the ExpressRouteCircuit.
 
-    :param network: network.
+    :param network: network
     :type network: str
     :param next_hop: nextHop
     :type next_hop: str
-    :param loc_prf: locPrf.
+    :param loc_prf: locPrf
     :type loc_prf: str
     :param weight: weight.
     :type weight: int
-    :param path: path .
+    :param path: path
     :type path: str
     """ 
 

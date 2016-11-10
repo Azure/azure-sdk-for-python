@@ -15,13 +15,13 @@ from msrest.serialization import Model
 class RoleDefinition(Model):
     """Role definition.
 
-    :param id: Gets or sets role definition id.
+    :param id: The role definition ID.
     :type id: str
-    :param name: Gets or sets role definition name.
+    :param name: The role definition name.
     :type name: str
-    :param type: Gets or sets role definition type.
+    :param type: The role definition type.
     :type type: str
-    :param properties: Gets or sets role definition properties.
+    :param properties: Role definition properties.
     :type properties: :class:`RoleDefinitionProperties
      <azure.mgmt.authorization.models.RoleDefinitionProperties>`
     """ 

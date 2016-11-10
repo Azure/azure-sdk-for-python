@@ -6,7 +6,8 @@
 # license information.
 #--------------------------------------------------------------------------
 
-from setuptools import setup
+from setuptools import find_packages, setup
+from io import open
 
 # azure v0.x is not compatible with this package
 # azure v0.x used to have a __version__ attribute (newer versions don't)
@@ -23,11 +24,21 @@ try:
 except ImportError:
     pass
 
+# Version extraction inspired from 'requests'
+with open('azure/mgmt/datalake/analytics/version.py', 'r') as fd:
+    version = re.search(r'^VERSION\s*=\s*[\'"]([^\'"]*)[\'"]',
+                        fd.read(), re.MULTILINE).group(1)
+
+with open('README.rst', encoding='utf-8') as f:
+    readme = f.read()
+with open('HISTORY.rst', encoding='utf-8') as f:
+    history = f.read()
+
 setup(
     name='azure-mgmt-datalake-analytics',
-    version='0.30.0rc4',
+    version=version,
     description='Microsoft Azure Data Lake Analytics Management Client Library for Python',
-    long_description=open('README.rst', 'r').read(),
+    long_description=readme + '\n\n' + history,
     license='MIT License',
     author='Microsoft Corporation',
     author_email='ptvshelp@microsoft.com',
@@ -44,21 +55,7 @@ setup(
         'License :: OSI Approved :: MIT License',
     ],
     zip_safe=False,
-    packages=[
-        'azure',
-        'azure.mgmt',
-        'azure.mgmt.datalake',
-        'azure.mgmt.datalake.analytics',
-        'azure.mgmt.datalake.analytics.account',
-        'azure.mgmt.datalake.analytics.account.models',
-        'azure.mgmt.datalake.analytics.account.operations',
-        'azure.mgmt.datalake.analytics.catalog',
-        'azure.mgmt.datalake.analytics.catalog.models',
-        'azure.mgmt.datalake.analytics.catalog.operations',
-        'azure.mgmt.datalake.analytics.job',
-        'azure.mgmt.datalake.analytics.job.models',
-        'azure.mgmt.datalake.analytics.job.operations'
-    ],
+    packages=find_packages(),
     install_requires=[
         'azure-mgmt-datalake-nspkg',
         'azure-common[autorest]==1.1.4',

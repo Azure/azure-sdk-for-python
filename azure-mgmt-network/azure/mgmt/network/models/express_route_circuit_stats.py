@@ -13,7 +13,7 @@ from msrest.serialization import Model
 
 
 class ExpressRouteCircuitStats(Model):
-    """Contains Stats associated with the peering.
+    """Contains stats associated with the peering.
 
     :param primarybytes_in: Gets BytesIn of the peering.
     :type primarybytes_in: long

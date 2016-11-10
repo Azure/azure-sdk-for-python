@@ -35,9 +35,10 @@ class PolicyDefinitionsOperations(object):
 
     def create_or_update(
             self, policy_definition_name, parameters, custom_headers=None, raw=False, **operation_config):
-        """Create or update a policy definition.
+        """Creates or updates a policy definition.
 
-        :param policy_definition_name: The policy definition name.
+        :param policy_definition_name: The name of the policy definition to
+         create.
         :type policy_definition_name: str
         :param parameters: The policy definition properties.
         :type parameters: :class:`PolicyDefinition
@@ -51,6 +52,7 @@ class PolicyDefinitionsOperations(object):
          <azure.mgmt.resource.policy.models.PolicyDefinition>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/providers/Microsoft.Authorization/policydefinitions/{policyDefinitionName}'
@@ -100,9 +102,10 @@ class PolicyDefinitionsOperations(object):
 
     def delete(
             self, policy_definition_name, custom_headers=None, raw=False, **operation_config):
-        """Deletes the policy definition.
+        """Deletes a policy definition.
 
-        :param policy_definition_name: The policy definition name.
+        :param policy_definition_name: The name of the policy definition to
+         delete.
         :type policy_definition_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -112,6 +115,7 @@ class PolicyDefinitionsOperations(object):
         :rtype: None
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/providers/Microsoft.Authorization/policydefinitions/{policyDefinitionName}'
@@ -152,7 +156,8 @@ class PolicyDefinitionsOperations(object):
             self, policy_definition_name, custom_headers=None, raw=False, **operation_config):
         """Gets the policy definition.
 
-        :param policy_definition_name: The policy definition name.
+        :param policy_definition_name: The name of the policy definition to
+         get.
         :type policy_definition_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -163,6 +168,7 @@ class PolicyDefinitionsOperations(object):
          <azure.mgmt.resource.policy.models.PolicyDefinition>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/providers/Microsoft.Authorization/policydefinitions/{policyDefinitionName}'
@@ -208,7 +214,7 @@ class PolicyDefinitionsOperations(object):
 
     def list(
             self, filter=None, custom_headers=None, raw=False, **operation_config):
-        """Gets all the policy definitions of a subscription.
+        """Gets all the policy definitions for a subscription.
 
         :param filter: The filter to apply on the operation.
         :type filter: str
@@ -219,6 +225,7 @@ class PolicyDefinitionsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`PolicyDefinitionPaged
          <azure.mgmt.resource.policy.models.PolicyDefinitionPaged>`
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
 

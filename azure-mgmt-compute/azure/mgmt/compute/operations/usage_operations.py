@@ -23,7 +23,7 @@ class UsageOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An objec model deserializer.
-    :ivar api_version: Client Api Version. Constant value: "2016-03-30".
+    :ivar api_version: Client API Version. Constant value: "2016-03-30".
     """
 
     def __init__(self, client, config, serializer, deserializer):
@@ -37,7 +37,9 @@ class UsageOperations(object):
 
     def list(
             self, location, custom_headers=None, raw=False, **operation_config):
-        """Lists compute usages for a subscription.
+        """Gets, for the specified location, the current compute usage
+        information as well as the limits for compute resources under the
+        subscription.
 
         :param location: The location upon which resource usage is queried.
         :type location: str
@@ -47,6 +49,7 @@ class UsageOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`UsagePaged <azure.mgmt.compute.models.UsagePaged>`
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
 

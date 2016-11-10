@@ -13,16 +13,18 @@ from msrest.serialization import Model
 
 
 class ContainerServiceMasterProfile(Model):
-    """Profile for container service master.
+    """Profile for the container service master.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :param count: Number of masters (VMs) in the container cluster
+    :param count: Number of masters (VMs) in the container service cluster.
+     Allowed values are 1, 3, and 5. The default value is 1. Default value: 1
+     .
     :type count: int
-    :param dns_prefix: DNS prefix to be used to create FQDN for master
+    :param dns_prefix: DNS prefix to be used to create the FQDN for master.
     :type dns_prefix: str
-    :ivar fqdn: FDQN for the master
+    :ivar fqdn: FDQN for the master.
     :vartype fqdn: str
     """ 
 
@@ -37,7 +39,7 @@ class ContainerServiceMasterProfile(Model):
         'fqdn': {'key': 'fqdn', 'type': 'str'},
     }
 
-    def __init__(self, dns_prefix, count=None):
+    def __init__(self, dns_prefix, count=1):
         self.count = count
         self.dns_prefix = dns_prefix
         self.fqdn = None

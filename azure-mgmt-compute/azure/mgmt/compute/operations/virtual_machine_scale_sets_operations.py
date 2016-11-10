@@ -24,7 +24,7 @@ class VirtualMachineScaleSetsOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An objec model deserializer.
-    :ivar api_version: Client Api Version. Constant value: "2016-03-30".
+    :ivar api_version: Client API Version. Constant value: "2016-03-30".
     """
 
     def __init__(self, client, config, serializer, deserializer):
@@ -38,16 +38,13 @@ class VirtualMachineScaleSetsOperations(object):
 
     def create_or_update(
             self, resource_group_name, name, parameters, custom_headers=None, raw=False, **operation_config):
-        """Allows you to create or update a virtual machine scale set by
-        providing parameters or a path to pre-configured parameter file.
+        """Create or update a VM scale set.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
-        :param name: Parameters supplied to the Create Virtual Machine Scale
-         Set operation.
+        :param name: The name of the VM scale set to create or update.
         :type name: str
-        :param parameters: Parameters supplied to the Create Virtual Machine
-         Scale Set operation.
+        :param parameters: The scale set object.
         :type parameters: :class:`VirtualMachineScaleSet
          <azure.mgmt.compute.models.VirtualMachineScaleSet>`
         :param dict custom_headers: headers that will be added to the request
@@ -59,6 +56,7 @@ class VirtualMachineScaleSetsOperations(object):
          <azure.mgmt.compute.models.VirtualMachineScaleSet>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/virtualMachineScaleSets/{name}'
@@ -134,14 +132,14 @@ class VirtualMachineScaleSetsOperations(object):
 
     def deallocate(
             self, resource_group_name, vm_scale_set_name, instance_ids=None, custom_headers=None, raw=False, **operation_config):
-        """Allows you to deallocate virtual machines in a virtual machine scale
-        set. Shuts down the virtual machines and releases the compute
-        resources. You are not billed for the compute resources that this
-        virtual machine scale set uses.
+        """Deallocates specific virtual machines in a VM scale set. Shuts down
+        the virtual machines and releases the compute resources. You are not
+        billed for the compute resources that this virtual machine scale set
+        deallocates.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
-        :param vm_scale_set_name: The name of the virtual machine scale set.
+        :param vm_scale_set_name: The name of the VM scale set.
         :type vm_scale_set_name: str
         :param instance_ids: the virtual machine scale set instance ids.
         :type instance_ids: list of str
@@ -153,6 +151,7 @@ class VirtualMachineScaleSetsOperations(object):
          instance that returns None
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         vm_instance_ids = None
         if instance_ids is not None:
@@ -226,11 +225,11 @@ class VirtualMachineScaleSetsOperations(object):
 
     def delete(
             self, resource_group_name, vm_scale_set_name, custom_headers=None, raw=False, **operation_config):
-        """Allows you to delete a virtual machine scale set.
+        """Deletes a VM scale set.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
-        :param vm_scale_set_name: The name of the virtual machine scale set.
+        :param vm_scale_set_name: The name of the VM scale set.
         :type vm_scale_set_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -240,6 +239,7 @@ class VirtualMachineScaleSetsOperations(object):
          instance that returns None
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/virtualMachineScaleSets/{vmScaleSetName}'
@@ -306,7 +306,7 @@ class VirtualMachineScaleSetsOperations(object):
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
-        :param vm_scale_set_name: The name of the virtual machine scale set.
+        :param vm_scale_set_name: The name of the VM scale set.
         :type vm_scale_set_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -317,6 +317,7 @@ class VirtualMachineScaleSetsOperations(object):
          <azure.mgmt.compute.models.VirtualMachineScaleSet>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/virtualMachineScaleSets/{vmScaleSetName}'
@@ -363,11 +364,11 @@ class VirtualMachineScaleSetsOperations(object):
 
     def delete_instances(
             self, resource_group_name, vm_scale_set_name, instance_ids, custom_headers=None, raw=False, **operation_config):
-        """Allows you to delete virtual machines in a virtual machine scale set.
+        """Deletes virtual machines in a VM scale set.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
-        :param vm_scale_set_name: The name of the virtual machine scale set.
+        :param vm_scale_set_name: The name of the VM scale set.
         :type vm_scale_set_name: str
         :param instance_ids: the virtual machine scale set instance ids.
         :type instance_ids: list of str
@@ -379,6 +380,7 @@ class VirtualMachineScaleSetsOperations(object):
          instance that returns None
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         vm_instance_ids = models.VirtualMachineScaleSetVMInstanceRequiredIDs(instance_ids=instance_ids)
 
@@ -447,11 +449,11 @@ class VirtualMachineScaleSetsOperations(object):
 
     def get_instance_view(
             self, resource_group_name, vm_scale_set_name, custom_headers=None, raw=False, **operation_config):
-        """Displays status of a virtual machine scale set instance.
+        """Gets the status of a VM scale set instance.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
-        :param vm_scale_set_name: The name of the virtual machine scale set.
+        :param vm_scale_set_name: The name of the VM scale set.
         :type vm_scale_set_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -462,6 +464,7 @@ class VirtualMachineScaleSetsOperations(object):
          <azure.mgmt.compute.models.VirtualMachineScaleSetInstanceView>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/virtualMachineScaleSets/{vmScaleSetName}/instanceView'
@@ -508,7 +511,7 @@ class VirtualMachineScaleSetsOperations(object):
 
     def list(
             self, resource_group_name, custom_headers=None, raw=False, **operation_config):
-        """Lists all virtual machine scale sets under a resource group.
+        """Gets a list of all VM scale sets under a resource group.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
@@ -519,6 +522,7 @@ class VirtualMachineScaleSetsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`VirtualMachineScaleSetPaged
          <azure.mgmt.compute.models.VirtualMachineScaleSetPaged>`
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -573,10 +577,10 @@ class VirtualMachineScaleSetsOperations(object):
 
     def list_all(
             self, custom_headers=None, raw=False, **operation_config):
-        """Lists all Virtual Machine Scale Sets in the subscription. Use nextLink
-        property in the response to get the next page of Virtual Machine
-        Scale Sets. Do this till nextLink is not null to fetch all the
-        Virtual Machine Scale Sets.
+        """Gets a list of all VM Scale Sets in the subscription, regardless of
+        the associated resource group. Use nextLink property in the response
+        to get the next page of VM Scale Sets. Do this till nextLink is not
+        null to fetch all the VM Scale Sets.
 
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -585,6 +589,7 @@ class VirtualMachineScaleSetsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`VirtualMachineScaleSetPaged
          <azure.mgmt.compute.models.VirtualMachineScaleSetPaged>`
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -638,12 +643,12 @@ class VirtualMachineScaleSetsOperations(object):
 
     def list_skus(
             self, resource_group_name, vm_scale_set_name, custom_headers=None, raw=False, **operation_config):
-        """Displays available skus for your virtual machine scale set including
-        the minimum and maximum vm instances allowed for a particular sku.
+        """Gets a list of SKUs available for your VM scale set, including the
+        minimum and maximum VM instances allowed for each SKU.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
-        :param vm_scale_set_name: The name of the virtual machine scale set.
+        :param vm_scale_set_name: The name of the VM scale set.
         :type vm_scale_set_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -652,6 +657,7 @@ class VirtualMachineScaleSetsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`VirtualMachineScaleSetSkuPaged
          <azure.mgmt.compute.models.VirtualMachineScaleSetSkuPaged>`
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -707,13 +713,14 @@ class VirtualMachineScaleSetsOperations(object):
 
     def power_off(
             self, resource_group_name, vm_scale_set_name, instance_ids=None, custom_headers=None, raw=False, **operation_config):
-        """Allows you to power off (stop) virtual machines in a virtual machine
-        scale set. Note that resources are still attached and you are getting
-        charged for the resources. Use deallocate to release resources.
+        """Power off (stop) one or more virtual machines in a VM scale set. Note
+        that resources are still attached and you are getting charged for the
+        resources. Instead, use deallocate to release resources and avoid
+        charges.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
-        :param vm_scale_set_name: The name of the virtual machine scale set.
+        :param vm_scale_set_name: The name of the VM scale set.
         :type vm_scale_set_name: str
         :param instance_ids: the virtual machine scale set instance ids.
         :type instance_ids: list of str
@@ -725,6 +732,7 @@ class VirtualMachineScaleSetsOperations(object):
          instance that returns None
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         vm_instance_ids = None
         if instance_ids is not None:
@@ -798,11 +806,11 @@ class VirtualMachineScaleSetsOperations(object):
 
     def restart(
             self, resource_group_name, vm_scale_set_name, instance_ids=None, custom_headers=None, raw=False, **operation_config):
-        """Allows you to restart virtual machines in a virtual machine scale set.
+        """Restarts one or more virtual machines in a VM scale set.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
-        :param vm_scale_set_name: The name of the virtual machine scale set.
+        :param vm_scale_set_name: The name of the VM scale set.
         :type vm_scale_set_name: str
         :param instance_ids: the virtual machine scale set instance ids.
         :type instance_ids: list of str
@@ -814,6 +822,7 @@ class VirtualMachineScaleSetsOperations(object):
          instance that returns None
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         vm_instance_ids = None
         if instance_ids is not None:
@@ -887,11 +896,11 @@ class VirtualMachineScaleSetsOperations(object):
 
     def start(
             self, resource_group_name, vm_scale_set_name, instance_ids=None, custom_headers=None, raw=False, **operation_config):
-        """Allows you to start virtual machines in a virtual machine scale set.
+        """Starts one or more virtual machines in a VM scale set.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
-        :param vm_scale_set_name: The name of the virtual machine scale set.
+        :param vm_scale_set_name: The name of the VM scale set.
         :type vm_scale_set_name: str
         :param instance_ids: the virtual machine scale set instance ids.
         :type instance_ids: list of str
@@ -903,6 +912,7 @@ class VirtualMachineScaleSetsOperations(object):
          instance that returns None
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         vm_instance_ids = None
         if instance_ids is not None:
@@ -976,12 +986,12 @@ class VirtualMachineScaleSetsOperations(object):
 
     def update_instances(
             self, resource_group_name, vm_scale_set_name, instance_ids, custom_headers=None, raw=False, **operation_config):
-        """Allows you to manually upgrade virtual machines in a virtual machine
-        scale set.
+        """Upgrades one or more virtual machines to the latest SKU set in the VM
+        scale set model.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
-        :param vm_scale_set_name: The name of the virtual machine scale set.
+        :param vm_scale_set_name: The name of the VM scale set.
         :type vm_scale_set_name: str
         :param instance_ids: the virtual machine scale set instance ids.
         :type instance_ids: list of str
@@ -993,6 +1003,7 @@ class VirtualMachineScaleSetsOperations(object):
          instance that returns None
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         vm_instance_ids = models.VirtualMachineScaleSetVMInstanceRequiredIDs(instance_ids=instance_ids)
 
@@ -1061,12 +1072,12 @@ class VirtualMachineScaleSetsOperations(object):
 
     def reimage(
             self, resource_group_name, vm_scale_set_name, custom_headers=None, raw=False, **operation_config):
-        """Allows you to re-image(update the version of the installed operating
-        system) virtual machines in a virtual machine scale set.
+        """Reimages (upgrade the operating system) one or more virtual machines
+        in a VM scale set.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
-        :param vm_scale_set_name: The name of the virtual machine scale set.
+        :param vm_scale_set_name: The name of the VM scale set.
         :type vm_scale_set_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -1076,6 +1087,7 @@ class VirtualMachineScaleSetsOperations(object):
          instance that returns None
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/virtualMachineScaleSets/{vmScaleSetName}/reimage'

@@ -128,6 +128,7 @@ All documentation of management libraries for Azure are on this website. This in
 * :doc:`IoTHub<sample_azure-mgmt-iothub>` : Create IoTHub account and more
 * :doc:`KeyVault<sample_azure-mgmt-keyvault>` : Create vaults and more
 * :doc:`App Service<resourcemanagementapps>` : Create App plan, Web Apps, Logic Apps and more
+* :doc:`Media Services<sample_azure-mgmt-media>` : Create account and more
 * :doc:`Network<resourcemanagementcomputenetwork>` : Create virtual networks, network interfaces, public IPs and more
 * :doc:`Notification Hubs<resourcemanagementnotificationhubs>` : Namespaces, hub creation/deletion and more
 * :doc:`PowerBI Embedded<sample_azure-mgmt-powerbiembedded>` : Create account and more
@@ -141,6 +142,7 @@ All documentation of management libraries for Azure are on this website. This in
   
 * :doc:`Scheduler<resourcemanagementscheduler>` : Create job collections, create job and more
 * :doc:`Server Manager<sample_azure-mgmt-servermanager>` : Create gateways, nodes and more
+* :doc:`SQL Database<sample_azure-mgmt-sql>` : Create servers, databases nodes and more
 * :doc:`Storage<resourcemanagementstorage>` : Create storage accounts, list keys, and more
 * :doc:`Traffic Manager<sample_azure-mgmt-trafficmanager>` : Create endpoints, profiles and more
 

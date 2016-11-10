@@ -15,19 +15,22 @@ from msrest.serialization import Model
 class PolicyDefinition(Model):
     """The policy definition.
 
-    :param policy_type: Gets or sets policy definition policy type. Possible
-     values include: 'NotSpecified', 'BuiltIn', 'Custom'
+    :param policy_type: The type of policy definition. Possible values are
+     NotSpecified, BuiltIn, and Custom. Possible values include:
+     'NotSpecified', 'BuiltIn', 'Custom'
     :type policy_type: str or :class:`policyType
      <azure.mgmt.resource.policy.models.policyType>`
-    :param display_name: Gets or sets the policy definition display name.
+    :param display_name: The display name of the policy definition.
     :type display_name: str
-    :param description: Gets or sets the policy definition description.
+    :param description: The policy definition description.
     :type description: str
-    :param policy_rule: Gets or sets the policy rule.
+    :param policy_rule: The policy rule.
     :type policy_rule: object
-    :param id: Gets or sets the Id of the policy definition.
+    :param id: The ID of the policy definition.
     :type id: str
-    :param name: Gets or sets the name of the policy definition.
+    :param name: The name of the policy definition. If you do not specify a
+     value for name, the value is inferred from the name value in the request
+     URI.
     :type name: str
     """ 
 

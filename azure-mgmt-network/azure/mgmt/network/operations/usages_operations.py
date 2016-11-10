@@ -37,7 +37,7 @@ class UsagesOperations(object):
             self, location, custom_headers=None, raw=False, **operation_config):
         """Lists compute usages for a subscription.
 
-        :param location: The location upon which resource usage is queried.
+        :param location: The location where resource usage is queried.
         :type location: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -45,6 +45,7 @@ class UsagesOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`UsagePaged <azure.mgmt.network.models.UsagePaged>`
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
 

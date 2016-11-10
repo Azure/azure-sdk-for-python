@@ -35,11 +35,11 @@ class TagsOperations(object):
 
     def delete_value(
             self, tag_name, tag_value, custom_headers=None, raw=False, **operation_config):
-        """Delete a subscription resource tag value.
+        """Deletes a tag value.
 
         :param tag_name: The name of the tag.
         :type tag_name: str
-        :param tag_value: The value of the tag.
+        :param tag_value: The value of the tag to delete.
         :type tag_value: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -49,6 +49,7 @@ class TagsOperations(object):
         :rtype: None
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/tagNames/{tagName}/tagValues/{tagValue}'
@@ -88,11 +89,11 @@ class TagsOperations(object):
 
     def create_or_update_value(
             self, tag_name, tag_value, custom_headers=None, raw=False, **operation_config):
-        """Create a subscription resource tag value.
+        """Creates a tag value. The name of the tag must already exist.
 
         :param tag_name: The name of the tag.
         :type tag_name: str
-        :param tag_value: The value of the tag.
+        :param tag_value: The value of the tag to create.
         :type tag_value: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -103,6 +104,7 @@ class TagsOperations(object):
          <azure.mgmt.resource.resources.models.TagValue>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/tagNames/{tagName}/tagValues/{tagValue}'
@@ -151,9 +153,13 @@ class TagsOperations(object):
 
     def create_or_update(
             self, tag_name, custom_headers=None, raw=False, **operation_config):
-        """Create a subscription resource tag.
+        """Creates a tag in the subscription.
 
-        :param tag_name: The name of the tag.
+        The tag name can have a maximum of 512 characters and is case
+        insensitive. Tag names created by Azure have prefixes of microsoft,
+        azure, or windows. You cannot create tags with one of these prefixes.
+
+        :param tag_name: The name of the tag to create.
         :type tag_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -164,6 +170,7 @@ class TagsOperations(object):
          <azure.mgmt.resource.resources.models.TagDetails>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/tagNames/{tagName}'
@@ -211,7 +218,10 @@ class TagsOperations(object):
 
     def delete(
             self, tag_name, custom_headers=None, raw=False, **operation_config):
-        """Delete a subscription resource tag.
+        """Deletes a tag from the subscription.
+
+        You must remove all values from a resource tag before you can delete
+        it.
 
         :param tag_name: The name of the tag.
         :type tag_name: str
@@ -223,6 +233,7 @@ class TagsOperations(object):
         :rtype: None
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/tagNames/{tagName}'
@@ -261,7 +272,8 @@ class TagsOperations(object):
 
     def list(
             self, custom_headers=None, raw=False, **operation_config):
-        """Get a list of subscription resource tags.
+        """Gets the names and values of all resource tags that are defined in a
+        subscription.
 
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -270,6 +282,7 @@ class TagsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`TagDetailsPaged
          <azure.mgmt.resource.resources.models.TagDetailsPaged>`
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
 

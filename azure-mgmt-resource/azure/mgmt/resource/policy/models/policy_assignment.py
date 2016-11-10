@@ -15,18 +15,17 @@ from msrest.serialization import Model
 class PolicyAssignment(Model):
     """The policy definition.
 
-    :param display_name: Gets or sets the policy assignment display name.
+    :param display_name: The display name of the policy assignment.
     :type display_name: str
-    :param policy_definition_id: Gets or sets the policy definition Id.
+    :param policy_definition_id: The ID of the policy definition.
     :type policy_definition_id: str
-    :param scope: Gets or sets the scope at which the policy assignment
-     exists.
+    :param scope: The scope for the policy assignment.
     :type scope: str
-    :param id: Gets or sets the Id of the policy assignment.
+    :param id: The ID of the policy assignment.
     :type id: str
-    :param type: Gets or sets the type of the policy assignment.
+    :param type: The type of the policy assignment.
     :type type: str
-    :param name: Gets or sets the name of the policy assignment.
+    :param name: The name of the policy assignment.
     :type name: str
     """ 
 

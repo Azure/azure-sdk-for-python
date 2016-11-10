@@ -15,13 +15,15 @@ from msrest.serialization import Model
 class VirtualMachineInstanceView(Model):
     """The instance view of a virtual machine.
 
-    :param platform_update_domain: the Update Domain count.
+    :param platform_update_domain: Specifies the update domain of the virtual
+     machine.
     :type platform_update_domain: int
-    :param platform_fault_domain: the Fault Domain count.
+    :param platform_fault_domain: Specifies the fault domain of the virtual
+     machine.
     :type platform_fault_domain: int
-    :param rdp_thumb_print: the Remote desktop certificate thumbprint.
+    :param rdp_thumb_print: The Remote desktop certificate thumbprint.
     :type rdp_thumb_print: str
-    :param vm_agent: the VM Agent running on the virtual machine.
+    :param vm_agent: The VM Agent running on the virtual machine.
     :type vm_agent: :class:`VirtualMachineAgentInstanceView
      <azure.mgmt.compute.models.VirtualMachineAgentInstanceView>`
     :param disks: the disks information.

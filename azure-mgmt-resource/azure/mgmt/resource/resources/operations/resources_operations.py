@@ -36,12 +36,18 @@ class ResourcesOperations(object):
 
     def move_resources(
             self, source_resource_group_name, resources=None, target_resource_group=None, custom_headers=None, raw=False, **operation_config):
-        """Move resources from one resource group to another. The resources being
-        moved should all be in the same resource group.
+        """Moves resources from one resource group to another resource group.
 
-        :param source_resource_group_name: Source resource group name.
+        The resources to move must be in the same source resource group. The
+        target resource group may be in a different subscription. When moving
+        resources, both the source group and the target group are locked for
+        the duration of the operation. Write and delete operations are
+        blocked on the groups until the move completes. .
+
+        :param source_resource_group_name: The name of the resource group
+         containing the rsources to move.
         :type source_resource_group_name: str
-        :param resources: The ids of the resources.
+        :param resources: The IDs of the resources.
         :type resources: list of str
         :param target_resource_group: The target resource group.
         :type target_resource_group: str
@@ -53,6 +59,7 @@ class ResourcesOperations(object):
          instance that returns None
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         parameters = models.ResourcesMoveInfo(resources=resources, target_resource_group=target_resource_group)
 
@@ -120,14 +127,14 @@ class ResourcesOperations(object):
 
     def list(
             self, filter=None, expand=None, top=None, custom_headers=None, raw=False, **operation_config):
-        """Get all of the resources under a subscription.
+        """Get all the resources in a subscription.
 
         :param filter: The filter to apply on the operation.
         :type filter: str
         :param expand: The $expand query parameter.
         :type expand: str
-        :param top: Query parameters. If null is passed returns all resource
-         groups.
+        :param top: The number of results to return. If null is passed,
+         returns all resource groups.
         :type top: int
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -136,6 +143,7 @@ class ResourcesOperations(object):
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`GenericResourcePaged
          <azure.mgmt.resource.resources.models.GenericResourcePaged>`
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -195,20 +203,22 @@ class ResourcesOperations(object):
 
     def check_existence(
             self, resource_group_name, resource_provider_namespace, parent_resource_path, resource_type, resource_name, api_version, custom_headers=None, raw=False, **operation_config):
-        """Checks whether resource exists.
+        """Checks whether a resource exists.
 
-        :param resource_group_name: The name of the resource group. The name
-         is case insensitive.
+        :param resource_group_name: The name of the resource group containing
+         the resource to check. The name is case insensitive.
         :type resource_group_name: str
-        :param resource_provider_namespace: Resource identity.
+        :param resource_provider_namespace: The resource provider of the
+         resource to check.
         :type resource_provider_namespace: str
-        :param parent_resource_path: Resource identity.
+        :param parent_resource_path: The parent resource identity.
         :type parent_resource_path: str
-        :param resource_type: Resource identity.
+        :param resource_type: The resource type.
         :type resource_type: str
-        :param resource_name: Resource identity.
+        :param resource_name: The name of the resource to check whether it
+         exists.
         :type resource_name: str
-        :param api_version: Api version to use.
+        :param api_version: The API version to use for the operation.
         :type api_version: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -218,6 +228,7 @@ class ResourcesOperations(object):
         :rtype: bool
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{parentResourcePath}/{resourceType}/{resourceName}'
@@ -264,18 +275,19 @@ class ResourcesOperations(object):
             self, resource_group_name, resource_provider_namespace, parent_resource_path, resource_type, resource_name, api_version, custom_headers=None, raw=False, **operation_config):
         """Deletes a resource.
 
-        :param resource_group_name: The name of the resource group. The name
-         is case insensitive.
+        :param resource_group_name: The name of the resource group that
+         contains the resource to delete. The name is case insensitive.
         :type resource_group_name: str
-        :param resource_provider_namespace: Resource identity.
+        :param resource_provider_namespace: The namespace of the resource
+         provider.
         :type resource_provider_namespace: str
-        :param parent_resource_path: Resource identity.
+        :param parent_resource_path: The parent resource identity.
         :type parent_resource_path: str
-        :param resource_type: Resource identity.
+        :param resource_type: The resource type.
         :type resource_type: str
-        :param resource_name: Resource identity.
+        :param resource_name: The name of the resource to delete.
         :type resource_name: str
-        :param api_version: Api version to use.
+        :param api_version: The API version to use for the operation.
         :type api_version: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -285,6 +297,7 @@ class ResourcesOperations(object):
          instance that returns None
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{parentResourcePath}/{resourceType}/{resourceName}'
@@ -350,22 +363,23 @@ class ResourcesOperations(object):
 
     def create_or_update(
             self, resource_group_name, resource_provider_namespace, parent_resource_path, resource_type, resource_name, api_version, parameters, custom_headers=None, raw=False, **operation_config):
-        """Create a resource.
+        """Creates a resource.
 
-        :param resource_group_name: The name of the resource group. The name
-         is case insensitive.
+        :param resource_group_name: The name of the resource group for the
+         resource. The name is case insensitive.
         :type resource_group_name: str
-        :param resource_provider_namespace: Resource identity.
+        :param resource_provider_namespace: The namespace of the resource
+         provider.
         :type resource_provider_namespace: str
-        :param parent_resource_path: Resource identity.
+        :param parent_resource_path: The parent resource identity.
         :type parent_resource_path: str
-        :param resource_type: Resource identity.
+        :param resource_type: The resource type of the resource to create.
         :type resource_type: str
-        :param resource_name: Resource identity.
+        :param resource_name: The name of the resource to create.
         :type resource_name: str
-        :param api_version: Api version to use.
+        :param api_version: The API version to use for the operation.
         :type api_version: str
-        :param parameters: Create or update resource parameters.
+        :param parameters: Parameters for creating or updating the resource.
         :type parameters: :class:`GenericResource
          <azure.mgmt.resource.resources.models.GenericResource>`
         :param dict custom_headers: headers that will be added to the request
@@ -377,6 +391,7 @@ class ResourcesOperations(object):
          <azure.mgmt.resource.resources.models.GenericResource>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{parentResourcePath}/{resourceType}/{resourceName}'
@@ -455,20 +470,21 @@ class ResourcesOperations(object):
 
     def get(
             self, resource_group_name, resource_provider_namespace, parent_resource_path, resource_type, resource_name, api_version, custom_headers=None, raw=False, **operation_config):
-        """Returns a resource belonging to a resource group.
+        """Gets a resource.
 
-        :param resource_group_name: The name of the resource group. The name
-         is case insensitive.
+        :param resource_group_name: The name of the resource group containing
+         the resource to get. The name is case insensitive.
         :type resource_group_name: str
-        :param resource_provider_namespace: Resource identity.
+        :param resource_provider_namespace: The namespace of the resource
+         provider.
         :type resource_provider_namespace: str
-        :param parent_resource_path: Resource identity.
+        :param parent_resource_path: The parent resource identity.
         :type parent_resource_path: str
-        :param resource_type: Resource identity.
+        :param resource_type: The resource type of the resource.
         :type resource_type: str
-        :param resource_name: Resource identity.
+        :param resource_name: The name of the resource to get.
         :type resource_name: str
-        :param api_version: Api version to use.
+        :param api_version: The API version to use for the operation.
         :type api_version: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -479,6 +495,7 @@ class ResourcesOperations(object):
          <azure.mgmt.resource.resources.models.GenericResource>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{parentResourcePath}/{resourceType}/{resourceName}'
@@ -528,13 +545,13 @@ class ResourcesOperations(object):
 
     def check_existence_by_id(
             self, resource_id, api_version, custom_headers=None, raw=False, **operation_config):
-        """Checks whether resource exists.
+        """Checks by ID whether a resource exists.
 
-        :param resource_id: The fully qualified Id of the resource, including
-         the resource name and resource type. For example,
-         /subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myGroup/Microsoft.Web/sites/mySite
+        :param resource_id: The fully qualified ID of the resource, including
+         the resource name and resource type. Use the format,
+         /subscriptions/{guid}/resourceGroups/{resource-group-name}/{resource-provider-namespace}/{resource-type}/{resource-name}
         :type resource_id: str
-        :param api_version: Api version to use.
+        :param api_version: The API version to use for the operation.
         :type api_version: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -544,6 +561,7 @@ class ResourcesOperations(object):
         :rtype: bool
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/{resourceId}'
@@ -583,13 +601,13 @@ class ResourcesOperations(object):
 
     def delete_by_id(
             self, resource_id, api_version, custom_headers=None, raw=False, **operation_config):
-        """Deletes a resource.
+        """Deletes a resource by ID.
 
-        :param resource_id: The fully qualified Id of the resource, including
-         the resource name and resource type. For example,
-         /subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myGroup/Microsoft.Web/sites/mySite
+        :param resource_id: The fully qualified ID of the resource, including
+         the resource name and resource type. Use the format,
+         /subscriptions/{guid}/resourceGroups/{resource-group-name}/{resource-provider-namespace}/{resource-type}/{resource-name}
         :type resource_id: str
-        :param api_version: Api version to use.
+        :param api_version: The API version to use for the operation.
         :type api_version: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -599,6 +617,7 @@ class ResourcesOperations(object):
          instance that returns None
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/{resourceId}'
@@ -659,13 +678,13 @@ class ResourcesOperations(object):
 
     def create_or_update_by_id(
             self, resource_id, api_version, parameters, custom_headers=None, raw=False, **operation_config):
-        """Create a resource.
+        """Create a resource by ID.
 
-        :param resource_id: The fully qualified Id of the resource, including
-         the resource name and resource type. For example,
-         /subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myGroup/Microsoft.Web/sites/mySite
+        :param resource_id: The fully qualified ID of the resource, including
+         the resource name and resource type. Use the format,
+         /subscriptions/{guid}/resourceGroups/{resource-group-name}/{resource-provider-namespace}/{resource-type}/{resource-name}
         :type resource_id: str
-        :param api_version: Api version to use.
+        :param api_version: The API version to use for the operation.
         :type api_version: str
         :param parameters: Create or update resource parameters.
         :type parameters: :class:`GenericResource
@@ -679,6 +698,7 @@ class ResourcesOperations(object):
          <azure.mgmt.resource.resources.models.GenericResource>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/{resourceId}'
@@ -752,13 +772,13 @@ class ResourcesOperations(object):
 
     def get_by_id(
             self, resource_id, api_version, custom_headers=None, raw=False, **operation_config):
-        """Gets a resource.
+        """Gets a resource by ID.
 
-        :param resource_id: The fully qualified Id of the resource, including
-         the resource name and resource type. For example,
-         /subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myGroup/Microsoft.Web/sites/mySite
+        :param resource_id: The fully qualified ID of the resource, including
+         the resource name and resource type. Use the format,
+         /subscriptions/{guid}/resourceGroups/{resource-group-name}/{resource-provider-namespace}/{resource-type}/{resource-name}
         :type resource_id: str
-        :param api_version: Api version to use.
+        :param api_version: The API version to use for the operation.
         :type api_version: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -769,6 +789,7 @@ class ResourcesOperations(object):
          <azure.mgmt.resource.resources.models.GenericResource>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/{resourceId}'

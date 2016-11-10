@@ -13,11 +13,11 @@ from msrest.serialization import Model
 
 
 class ExpressRouteServiceProviderBandwidthsOffered(Model):
-    """Contains Bandwidths offered in ExpressRouteServiceProviders.
+    """Contains bandwidths offered in ExpressRouteServiceProvider resources.
 
-    :param offer_name: Gets the OfferName
+    :param offer_name: The OfferName.
     :type offer_name: str
-    :param value_in_mbps: Gets the ValueInMbps.
+    :param value_in_mbps: The ValueInMbps.
     :type value_in_mbps: int
     """ 
 

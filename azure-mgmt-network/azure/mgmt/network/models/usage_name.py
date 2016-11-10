@@ -13,12 +13,11 @@ from msrest.serialization import Model
 
 
 class UsageName(Model):
-    """The Usage Names.
+    """The usage names.
 
-    :param value: Gets or sets a string describing the resource name.
+    :param value: A string describing the resource name.
     :type value: str
-    :param localized_value: Gets or sets a localized string describing the
-     resource name.
+    :param localized_value: A localized string describing the resource name.
     :type localized_value: str
     """ 
 

@@ -9,18 +9,12 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .application_gateway_sku import ApplicationGatewaySku
-from .application_gateway_ssl_policy import ApplicationGatewaySslPolicy
-from .sub_resource import SubResource
-from .application_gateway_ip_configuration import ApplicationGatewayIPConfiguration
-from .application_gateway_authentication_certificate import ApplicationGatewayAuthenticationCertificate
-from .application_gateway_ssl_certificate import ApplicationGatewaySslCertificate
-from .application_gateway_frontend_ip_configuration import ApplicationGatewayFrontendIPConfiguration
-from .application_gateway_frontend_port import ApplicationGatewayFrontendPort
-from .application_gateway_backend_address import ApplicationGatewayBackendAddress
-from .network_interface_ip_configuration import NetworkInterfaceIPConfiguration
+from .application_gateway_backend_health import ApplicationGatewayBackendHealth
+from .application_gateway_backend_health_pool import ApplicationGatewayBackendHealthPool
 from .application_gateway_backend_address_pool import ApplicationGatewayBackendAddressPool
+from .network_interface_ip_configuration import NetworkInterfaceIPConfiguration
 from .backend_address_pool import BackendAddressPool
+from .sub_resource import SubResource
 from .inbound_nat_rule import InboundNatRule
 from .subnet import Subnet
 from .network_security_group import NetworkSecurityGroup
@@ -33,12 +27,23 @@ from .ip_configuration import IPConfiguration
 from .public_ip_address import PublicIPAddress
 from .public_ip_address_dns_settings import PublicIPAddressDnsSettings
 from .resource_navigation_link import ResourceNavigationLink
+from .application_gateway_backend_address import ApplicationGatewayBackendAddress
+from .application_gateway_backend_health_http_settings import ApplicationGatewayBackendHealthHttpSettings
 from .application_gateway_backend_http_settings import ApplicationGatewayBackendHttpSettings
+from .application_gateway_backend_health_server import ApplicationGatewayBackendHealthServer
+from .application_gateway_sku import ApplicationGatewaySku
+from .application_gateway_ssl_policy import ApplicationGatewaySslPolicy
+from .application_gateway_ip_configuration import ApplicationGatewayIPConfiguration
+from .application_gateway_authentication_certificate import ApplicationGatewayAuthenticationCertificate
+from .application_gateway_ssl_certificate import ApplicationGatewaySslCertificate
+from .application_gateway_frontend_ip_configuration import ApplicationGatewayFrontendIPConfiguration
+from .application_gateway_frontend_port import ApplicationGatewayFrontendPort
 from .application_gateway_http_listener import ApplicationGatewayHttpListener
 from .application_gateway_path_rule import ApplicationGatewayPathRule
 from .application_gateway_probe import ApplicationGatewayProbe
 from .application_gateway_request_routing_rule import ApplicationGatewayRequestRoutingRule
 from .application_gateway_url_path_map import ApplicationGatewayUrlPathMap
+from .application_gateway_web_application_firewall_configuration import ApplicationGatewayWebApplicationFirewallConfiguration
 from .application_gateway import ApplicationGateway
 from .express_route_circuit_authorization import ExpressRouteCircuitAuthorization
 from .express_route_circuit_peering_config import ExpressRouteCircuitPeeringConfig
@@ -80,8 +85,8 @@ from .vpn_client_root_certificate import VpnClientRootCertificate
 from .vpn_client_revoked_certificate import VpnClientRevokedCertificate
 from .virtual_network_gateway import VirtualNetworkGateway
 from .vpn_client_parameters import VpnClientParameters
+from .tunnel_connection_health import TunnelConnectionHealth
 from .virtual_network_gateway_connection import VirtualNetworkGatewayConnection
-from .connection_shared_key_result import ConnectionSharedKeyResult
 from .connection_reset_shared_key import ConnectionResetSharedKey
 from .connection_shared_key import ConnectionSharedKey
 from .dhcp_options import DhcpOptions
@@ -112,11 +117,8 @@ from .virtual_network_gateway_connection_paged import VirtualNetworkGatewayConne
 from .virtual_network_gateway_paged import VirtualNetworkGatewayPaged
 from .virtual_network_paged import VirtualNetworkPaged
 from .network_management_client_enums import (
-    ApplicationGatewaySkuName,
-    ApplicationGatewayTier,
-    ApplicationGatewaySslProtocol,
-    IPAllocationMethod,
     TransportProtocol,
+    IPAllocationMethod,
     IPVersion,
     SecurityRuleProtocol,
     SecurityRuleAccess,
@@ -124,8 +126,13 @@ from .network_management_client_enums import (
     RouteNextHopType,
     ApplicationGatewayProtocol,
     ApplicationGatewayCookieBasedAffinity,
+    ApplicationGatewayBackendHealthServerHealth,
+    ApplicationGatewaySkuName,
+    ApplicationGatewayTier,
+    ApplicationGatewaySslProtocol,
     ApplicationGatewayRequestRoutingRuleType,
     ApplicationGatewayOperationalState,
+    ApplicationGatewayFirewallMode,
     AuthorizationUseStatus,
     ExpressRouteCircuitPeeringAdvertisedPublicPrefixState,
     ExpressRouteCircuitPeeringType,
@@ -143,24 +150,18 @@ from .network_management_client_enums import (
     VirtualNetworkGatewaySkuName,
     VirtualNetworkGatewaySkuTier,
     ProcessorArchitecture,
-    VirtualNetworkGatewayConnectionType,
     VirtualNetworkGatewayConnectionStatus,
+    VirtualNetworkGatewayConnectionType,
     NetworkOperationStatus,
 )
 
 __all__ = [
-    'ApplicationGatewaySku',
-    'ApplicationGatewaySslPolicy',
-    'SubResource',
-    'ApplicationGatewayIPConfiguration',
-    'ApplicationGatewayAuthenticationCertificate',
-    'ApplicationGatewaySslCertificate',
-    'ApplicationGatewayFrontendIPConfiguration',
-    'ApplicationGatewayFrontendPort',
-    'ApplicationGatewayBackendAddress',
-    'NetworkInterfaceIPConfiguration',
+    'ApplicationGatewayBackendHealth',
+    'ApplicationGatewayBackendHealthPool',
     'ApplicationGatewayBackendAddressPool',
+    'NetworkInterfaceIPConfiguration',
     'BackendAddressPool',
+    'SubResource',
     'InboundNatRule',
     'Subnet',
     'NetworkSecurityGroup',
@@ -173,12 +174,23 @@ __all__ = [
     'PublicIPAddress',
     'PublicIPAddressDnsSettings',
     'ResourceNavigationLink',
+    'ApplicationGatewayBackendAddress',
+    'ApplicationGatewayBackendHealthHttpSettings',
     'ApplicationGatewayBackendHttpSettings',
+    'ApplicationGatewayBackendHealthServer',
+    'ApplicationGatewaySku',
+    'ApplicationGatewaySslPolicy',
+    'ApplicationGatewayIPConfiguration',
+    'ApplicationGatewayAuthenticationCertificate',
+    'ApplicationGatewaySslCertificate',
+    'ApplicationGatewayFrontendIPConfiguration',
+    'ApplicationGatewayFrontendPort',
     'ApplicationGatewayHttpListener',
     'ApplicationGatewayPathRule',
     'ApplicationGatewayProbe',
     'ApplicationGatewayRequestRoutingRule',
     'ApplicationGatewayUrlPathMap',
+    'ApplicationGatewayWebApplicationFirewallConfiguration',
     'ApplicationGateway',
     'ExpressRouteCircuitAuthorization',
     'ExpressRouteCircuitPeeringConfig',
@@ -220,8 +232,8 @@ __all__ = [
     'VpnClientRevokedCertificate',
     'VirtualNetworkGateway',
     'VpnClientParameters',
+    'TunnelConnectionHealth',
     'VirtualNetworkGatewayConnection',
-    'ConnectionSharedKeyResult',
     'ConnectionResetSharedKey',
     'ConnectionSharedKey',
     'DhcpOptions',
@@ -251,11 +263,8 @@ __all__ = [
     'VirtualNetworkGatewayConnectionPaged',
     'VirtualNetworkGatewayPaged',
     'VirtualNetworkPaged',
-    'ApplicationGatewaySkuName',
-    'ApplicationGatewayTier',
-    'ApplicationGatewaySslProtocol',
-    'IPAllocationMethod',
     'TransportProtocol',
+    'IPAllocationMethod',
     'IPVersion',
     'SecurityRuleProtocol',
     'SecurityRuleAccess',
@@ -263,8 +272,13 @@ __all__ = [
     'RouteNextHopType',
     'ApplicationGatewayProtocol',
     'ApplicationGatewayCookieBasedAffinity',
+    'ApplicationGatewayBackendHealthServerHealth',
+    'ApplicationGatewaySkuName',
+    'ApplicationGatewayTier',
+    'ApplicationGatewaySslProtocol',
     'ApplicationGatewayRequestRoutingRuleType',
     'ApplicationGatewayOperationalState',
+    'ApplicationGatewayFirewallMode',
     'AuthorizationUseStatus',
     'ExpressRouteCircuitPeeringAdvertisedPublicPrefixState',
     'ExpressRouteCircuitPeeringType',
@@ -282,7 +296,7 @@ __all__ = [
     'VirtualNetworkGatewaySkuName',
     'VirtualNetworkGatewaySkuTier',
     'ProcessorArchitecture',
-    'VirtualNetworkGatewayConnectionType',
     'VirtualNetworkGatewayConnectionStatus',
+    'VirtualNetworkGatewayConnectionType',
     'NetworkOperationStatus',
 ]

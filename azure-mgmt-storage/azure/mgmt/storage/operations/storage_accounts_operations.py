@@ -36,7 +36,8 @@ class StorageAccountsOperations(object):
 
     def check_name_availability(
             self, name, custom_headers=None, raw=False, **operation_config):
-        """Checks that account name is valid and is not in use.
+        """Checks that the storage account name is valid and is not already in
+        use.
 
         :param name:
         :type name: str
@@ -49,6 +50,7 @@ class StorageAccountsOperations(object):
          <azure.mgmt.storage.models.CheckNameAvailabilityResult>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         account_name = models.StorageAccountCheckNameAvailabilityParameters(name=name)
 
@@ -100,11 +102,11 @@ class StorageAccountsOperations(object):
     def create(
             self, resource_group_name, account_name, parameters, custom_headers=None, raw=False, **operation_config):
         """Asynchronously creates a new storage account with the specified
-        parameters. If an account is already created and subsequent create
+        parameters. If an account is already created and a subsequent create
         request is issued with different properties, the account properties
-        will be updated. If an account is already created and subsequent
-        create or update request is issued with exact same set of properties,
-        the request will succeed.
+        will be updated. If an account is already created and a subsequent
+        create or update request is issued with the exact same set of
+        properties, the request will succeed.
 
         :param resource_group_name: The name of the resource group within the
          user's subscription.
@@ -126,6 +128,7 @@ class StorageAccountsOperations(object):
          <azure.mgmt.storage.models.StorageAccount>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Storage/storageAccounts/{accountName}'
@@ -170,7 +173,7 @@ class StorageAccountsOperations(object):
 
         def get_long_running_output(response):
 
-            if response.status_code not in [202, 200]:
+            if response.status_code not in [200, 202]:
                 exp = CloudError(response)
                 exp.request_id = response.headers.get('x-ms-request-id')
                 raise exp
@@ -217,6 +220,7 @@ class StorageAccountsOperations(object):
         :rtype: None
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Storage/storageAccounts/{accountName}'
@@ -257,7 +261,7 @@ class StorageAccountsOperations(object):
     def get_properties(
             self, resource_group_name, account_name, custom_headers=None, raw=False, **operation_config):
         """Returns the properties for the specified storage account including but
-        not limited to name, account type, location, and account status. The
+        not limited to name, SKU name, location, and account status. The
         ListKeys operation should be used to retrieve storage keys.
 
         :param resource_group_name: The name of the resource group within the
@@ -277,6 +281,7 @@ class StorageAccountsOperations(object):
          <azure.mgmt.storage.models.StorageAccount>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Storage/storageAccounts/{accountName}'
@@ -323,16 +328,16 @@ class StorageAccountsOperations(object):
 
     def update(
             self, resource_group_name, account_name, parameters, custom_headers=None, raw=False, **operation_config):
-        """The update operation can be used to update the account type,
-        encryption, or tags for a storage account. It can also be used to map
-        the account to a custom domain. Only one custom domain is supported
-        per storage account and. replacement/change of custom domain is not
+        """The update operation can be used to update the SKU, encryption, access
+        tier, or tags for a storage account. It can also be used to map the
+        account to a custom domain. Only one custom domain is supported per
+        storage account; the replacement/change of custom domain is not
         supported. In order to replace an old custom domain, the old value
-        must be cleared/unregistered before a new value may be set. Update of
-        multiple properties is supported. This call does not change the
-        storage keys for the account. If you want to change storage account
-        keys, use the regenerate keys operation.  The location and name of
-        the storage account cannot be changed after creation.
+        must be cleared/unregistered before a new value can be set. The
+        update of multiple properties is supported. This call does not change
+        the storage keys for the account. If you want to change the storage
+        account keys, use the regenerate keys operation. The location and
+        name of the storage account cannot be changed after creation.
 
         :param resource_group_name: The name of the resource group within the
          user's subscription.
@@ -354,6 +359,7 @@ class StorageAccountsOperations(object):
          <azure.mgmt.storage.models.StorageAccount>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Storage/storageAccounts/{accountName}'
@@ -415,6 +421,7 @@ class StorageAccountsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`StorageAccountPaged
          <azure.mgmt.storage.models.StorageAccountPaged>`
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -482,6 +489,7 @@ class StorageAccountsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`StorageAccountPaged
          <azure.mgmt.storage.models.StorageAccountPaged>`
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -538,9 +546,13 @@ class StorageAccountsOperations(object):
             self, resource_group_name, account_name, custom_headers=None, raw=False, **operation_config):
         """Lists the access keys for the specified storage account.
 
-        :param resource_group_name: The name of the resource group.
+        :param resource_group_name: The name of the resource group within the
+         user's subscription.
         :type resource_group_name: str
-        :param account_name: The name of the storage account.
+        :param account_name: The name of the storage account within the
+         specified resource group. Storage account names must be between 3
+         and 24 characters in length and use numbers and lower-case letters
+         only.
         :type account_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -551,6 +563,7 @@ class StorageAccountsOperations(object):
          <azure.mgmt.storage.models.StorageAccountListKeysResult>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Storage/storageAccounts/{accountName}/listKeys'
@@ -597,7 +610,7 @@ class StorageAccountsOperations(object):
 
     def regenerate_key(
             self, resource_group_name, account_name, key_name, custom_headers=None, raw=False, **operation_config):
-        """Regenerates the access keys for the specified storage account.
+        """Regenerates one of the access keys for the specified storage account.
 
         :param resource_group_name: The name of the resource group within the
          user's subscription.
@@ -618,6 +631,7 @@ class StorageAccountsOperations(object):
          <azure.mgmt.storage.models.StorageAccountListKeysResult>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         regenerate_key = models.StorageAccountRegenerateKeyParameters(key_name=key_name)
 

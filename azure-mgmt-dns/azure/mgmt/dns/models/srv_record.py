@@ -15,14 +15,13 @@ from msrest.serialization import Model
 class SrvRecord(Model):
     """An SRV record.
 
-    :param priority: Gets or sets the priority metric for this record.
+    :param priority: The priority value for this SRV record.
     :type priority: int
-    :param weight: Gets or sets the weight metric for this this record.
+    :param weight: The weight value for this SRV record.
     :type weight: int
-    :param port: Gets or sets the port of the service for this record.
+    :param port: The port value for this SRV record.
     :type port: int
-    :param target: Gets or sets the domain name of the target for this
-     record, without a terminating dot.
+    :param target: The target domain name for this SRV record.
     :type target: str
     """ 
 

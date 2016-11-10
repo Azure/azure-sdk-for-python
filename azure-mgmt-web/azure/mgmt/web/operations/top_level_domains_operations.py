@@ -44,6 +44,7 @@ class TopLevelDomainsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`TopLevelDomainPaged
          <azure.mgmt.web.models.TopLevelDomainPaged>`
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -109,6 +110,7 @@ class TopLevelDomainsOperations(object):
         :rtype: :class:`TopLevelDomain <azure.mgmt.web.models.TopLevelDomain>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/providers/Microsoft.DomainRegistration/topLevelDomains/{name}'
@@ -169,6 +171,7 @@ class TopLevelDomainsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`TldLegalAgreementPaged
          <azure.mgmt.web.models.TldLegalAgreementPaged>`
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         agreement_option = models.TopLevelDomainAgreementOption(include_privacy=include_privacy)
 

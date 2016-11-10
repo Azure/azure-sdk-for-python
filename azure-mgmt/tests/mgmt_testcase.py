@@ -136,7 +136,7 @@ class AzureMgmtTestCase(RecordingTestCase):
         return val
 
     def create_resource_group(self):
-        result = self.resource_client.resource_groups.create_or_update(
+        self.group = self.resource_client.resource_groups.create_or_update(
             self.group_name,
             {
                 'location': self.region

@@ -36,8 +36,7 @@ class SecurityRulesOperations(object):
 
     def delete(
             self, resource_group_name, network_security_group_name, security_rule_name, custom_headers=None, raw=False, **operation_config):
-        """The delete network security rule operation deletes the specified
-        network security rule.
+        """Deletes the specified network security rule.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
@@ -54,6 +53,7 @@ class SecurityRulesOperations(object):
          instance that returns None
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/networkSecurityGroups/{networkSecurityGroupName}/securityRules/{securityRuleName}'
@@ -117,8 +117,7 @@ class SecurityRulesOperations(object):
 
     def get(
             self, resource_group_name, network_security_group_name, security_rule_name, custom_headers=None, raw=False, **operation_config):
-        """The Get NetworkSecurityRule operation retrieves information about the
-        specified network security rule.
+        """Get the specified network security rule.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
@@ -135,6 +134,7 @@ class SecurityRulesOperations(object):
         :rtype: :class:`SecurityRule <azure.mgmt.network.models.SecurityRule>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/networkSecurityGroups/{networkSecurityGroupName}/securityRules/{securityRuleName}'
@@ -182,8 +182,8 @@ class SecurityRulesOperations(object):
 
     def create_or_update(
             self, resource_group_name, network_security_group_name, security_rule_name, security_rule_parameters, custom_headers=None, raw=False, **operation_config):
-        """The Put network security rule operation creates/updates a security
-        rule in the specified network security group.
+        """Creates or updates a security rule in the specified network security
+        group.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
@@ -192,8 +192,8 @@ class SecurityRulesOperations(object):
         :type network_security_group_name: str
         :param security_rule_name: The name of the security rule.
         :type security_rule_name: str
-        :param security_rule_parameters: Parameters supplied to the
-         create/update network security rule operation
+        :param security_rule_parameters: Parameters supplied to the create or
+         update network security rule operation.
         :type security_rule_parameters: :class:`SecurityRule
          <azure.mgmt.network.models.SecurityRule>`
         :param dict custom_headers: headers that will be added to the request
@@ -205,6 +205,7 @@ class SecurityRulesOperations(object):
          <azure.mgmt.network.models.SecurityRule>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/networkSecurityGroups/{networkSecurityGroupName}/securityRules/{securityRuleName}'
@@ -281,8 +282,7 @@ class SecurityRulesOperations(object):
 
     def list(
             self, resource_group_name, network_security_group_name, custom_headers=None, raw=False, **operation_config):
-        """The List network security rule operation retrieves all the security
-        rules in a network security group.
+        """Gets all security rules in a network security group.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
@@ -296,6 +296,7 @@ class SecurityRulesOperations(object):
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`SecurityRulePaged
          <azure.mgmt.network.models.SecurityRulePaged>`
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
 

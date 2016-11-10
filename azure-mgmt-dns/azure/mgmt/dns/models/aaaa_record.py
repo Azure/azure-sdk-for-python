@@ -15,8 +15,7 @@ from msrest.serialization import Model
 class AaaaRecord(Model):
     """An AAAA record.
 
-    :param ipv6_address: Gets or sets the IPv6 address of this AAAA record in
-     string notation.
+    :param ipv6_address: The IPv6 address of this AAAA record.
     :type ipv6_address: str
     """ 
 
