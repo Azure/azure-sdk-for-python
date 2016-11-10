@@ -13,15 +13,17 @@ from msrest.serialization import Model
 
 
 class ContainerServiceAgentPoolProfile(Model):
-    """Profile for container service agent pool.
+    """Profile for the container service agent pool.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :param name: Unique name of the agent pool profile within the context of
-     the subscription and resource group
+    :param name: Unique name of the agent pool profile in the context of the
+     subscription and resource group.
     :type name: str
-    :param count: Number of agents (VMs) to host docker containers
+    :param count: Number of agents (VMs) to host docker containers. Allowed
+     values must be in the range of 1 to 100 (inclusive). The default value
+     is 1.
     :type count: int
     :param vm_size: Size of agent VMs. Possible values include:
      'Standard_A0', 'Standard_A1', 'Standard_A2', 'Standard_A3',
