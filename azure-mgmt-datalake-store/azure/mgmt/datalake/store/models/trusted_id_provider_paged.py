@@ -9,19 +9,19 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.serialization import Model
+from msrest.paging import Paged
 
 
-class DataLakeStoreAccountInfoProperties(Model):
-    """Data Lake Store account properties information.
-
-    :param suffix: the optional suffix for the Data Lake Store account.
-    :type suffix: str
-    """ 
+class TrustedIdProviderPaged(Paged):
+    """
+    A paging container for iterating over a list of TrustedIdProvider object
+    """
 
     _attribute_map = {
-        'suffix': {'key': 'suffix', 'type': 'str'},
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[TrustedIdProvider]'}
     }
 
-    def __init__(self, suffix=None):
-        self.suffix = suffix
+    def __init__(self, *args, **kwargs):
+
+        super(TrustedIdProviderPaged, self).__init__(*args, **kwargs)

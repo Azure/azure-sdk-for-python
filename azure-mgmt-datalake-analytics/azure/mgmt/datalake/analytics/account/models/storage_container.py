@@ -12,23 +12,38 @@
 from msrest.serialization import Model
 
 
-class BlobContainerProperties(Model):
-    """Azure Storage blob container properties information.
+class StorageContainer(Model):
+    """Azure Storage blob container information.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
+    :ivar name: the name of the blob container.
+    :vartype name: str
+    :ivar id: the unique identifier of the blob container.
+    :vartype id: str
+    :ivar type: the type of the blob container.
+    :vartype type: str
     :ivar last_modified_time: the last modified time of the blob container.
     :vartype last_modified_time: datetime
     """ 
 
     _validation = {
+        'name': {'readonly': True},
+        'id': {'readonly': True},
+        'type': {'readonly': True},
         'last_modified_time': {'readonly': True},
     }
 
     _attribute_map = {
-        'last_modified_time': {'key': 'lastModifiedTime', 'type': 'iso-8601'},
+        'name': {'key': 'name', 'type': 'str'},
+        'id': {'key': 'id', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'last_modified_time': {'key': 'properties.lastModifiedTime', 'type': 'iso-8601'},
     }
 
     def __init__(self):
+        self.name = None
+        self.id = None
+        self.type = None
         self.last_modified_time = None

@@ -10,6 +10,9 @@
 # --------------------------------------------------------------------------
 
 from .data_lake_analytics_catalog_secret_create_or_update_parameters import DataLakeAnalyticsCatalogSecretCreateOrUpdateParameters
+from .data_lake_analytics_catalog_credential_create_parameters import DataLakeAnalyticsCatalogCredentialCreateParameters
+from .data_lake_analytics_catalog_credential_delete_parameters import DataLakeAnalyticsCatalogCredentialDeleteParameters
+from .data_lake_analytics_catalog_credential_update_parameters import DataLakeAnalyticsCatalogCredentialUpdateParameters
 from .usql_secret import USqlSecret
 from .usql_external_data_source import USqlExternalDataSource
 from .usql_credential import USqlCredential
@@ -37,8 +40,8 @@ from .usql_schema import USqlSchema
 from .usql_database import USqlDatabase
 from .catalog_item import CatalogItem
 from .catalog_item_list import CatalogItemList
-from .usql_external_data_source_paged import USqlExternalDataSourcePaged
 from .usql_credential_paged import USqlCredentialPaged
+from .usql_external_data_source_paged import USqlExternalDataSourcePaged
 from .usql_procedure_paged import USqlProcedurePaged
 from .usql_table_paged import USqlTablePaged
 from .usql_table_type_paged import USqlTableTypePaged
@@ -56,6 +59,9 @@ from .data_lake_analytics_catalog_management_client_enums import (
 
 __all__ = [
     'DataLakeAnalyticsCatalogSecretCreateOrUpdateParameters',
+    'DataLakeAnalyticsCatalogCredentialCreateParameters',
+    'DataLakeAnalyticsCatalogCredentialDeleteParameters',
+    'DataLakeAnalyticsCatalogCredentialUpdateParameters',
     'USqlSecret',
     'USqlExternalDataSource',
     'USqlCredential',
@@ -83,8 +89,8 @@ __all__ = [
     'USqlDatabase',
     'CatalogItem',
     'CatalogItemList',
-    'USqlExternalDataSourcePaged',
     'USqlCredentialPaged',
+    'USqlExternalDataSourcePaged',
     'USqlProcedurePaged',
     'USqlTablePaged',
     'USqlTableTypePaged',
