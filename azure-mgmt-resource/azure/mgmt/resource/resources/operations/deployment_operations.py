@@ -16,8 +16,8 @@ import uuid
 from .. import models
 
 
-class DeploymentOperationsOperations(object):
-    """DeploymentOperationsOperations operations.
+class DeploymentOperations(object):
+    """DeploymentOperations operations.
 
     :param client: Client for service requests.
     :param config: Configuration of service client.
@@ -35,14 +35,14 @@ class DeploymentOperationsOperations(object):
 
     def get(
             self, resource_group_name, deployment_name, operation_id, custom_headers=None, raw=False, **operation_config):
-        """Get a list of deployments operations.
+        """Gets a deployments operation.
 
         :param resource_group_name: The name of the resource group. The name
          is case insensitive.
         :type resource_group_name: str
         :param deployment_name: The name of the deployment.
         :type deployment_name: str
-        :param operation_id: Operation Id.
+        :param operation_id: The ID of the operation to get.
         :type operation_id: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -101,14 +101,15 @@ class DeploymentOperationsOperations(object):
 
     def list(
             self, resource_group_name, deployment_name, top=None, custom_headers=None, raw=False, **operation_config):
-        """Gets a list of deployments operations.
+        """Gets all deployments operations for a deployment.
 
         :param resource_group_name: The name of the resource group. The name
          is case insensitive.
         :type resource_group_name: str
-        :param deployment_name: The name of the deployment.
+        :param deployment_name: The name of the deployment with the operation
+         to get.
         :type deployment_name: str
-        :param top: Query parameters.
+        :param top: The number of results to return.
         :type top: int
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the

@@ -12,13 +12,13 @@
 from msrest.serialization import Model
 
 
-class ResourceModel(Model):
-    """ResourceModel.
+class Resource(Model):
+    """Resource.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar id: Resource Id
+    :ivar id: Resource ID
     :vartype id: str
     :ivar name: Resource name
     :vartype name: str

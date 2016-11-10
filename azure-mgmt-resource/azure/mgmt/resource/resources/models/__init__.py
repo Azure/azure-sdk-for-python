@@ -44,7 +44,7 @@ from .http_message import HttpMessage
 from .deployment_operation_properties import DeploymentOperationProperties
 from .deployment_operation import DeploymentOperation
 from .resource_provider_operation_display_properties import ResourceProviderOperationDisplayProperties
-from .resource_model import ResourceModel
+from .resource import Resource
 from .sub_resource import SubResource
 from .resource_group_export_result import ResourceGroupExportResult
 from .deployment_extended_paged import DeploymentExtendedPaged
@@ -94,7 +94,7 @@ __all__ = [
     'DeploymentOperationProperties',
     'DeploymentOperation',
     'ResourceProviderOperationDisplayProperties',
-    'ResourceModel',
+    'Resource',
     'SubResource',
     'ResourceGroupExportResult',
     'DeploymentExtendedPaged',
