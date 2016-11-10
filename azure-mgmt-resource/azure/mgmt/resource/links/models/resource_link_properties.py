@@ -18,12 +18,13 @@ class ResourceLinkProperties(Model):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar source_id: The fully qualified source resource Id.
+    :ivar source_id: The fully qualified ID of the source resource in the
+     link.
     :vartype source_id: str
-    :param target_id: The fully qualified target resource Id. For example,
-     /subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myGroup/Microsoft.Web/sites/mySite.
+    :param target_id: The fully qualified ID of the target resource in the
+     link.
     :type target_id: str
-    :param notes: The resource link notes.
+    :param notes: Notes about the resource link.
     :type notes: str
     """ 
 

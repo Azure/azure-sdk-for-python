@@ -15,7 +15,7 @@ from msrest.serialization import Model
 class ResourceLinkFilter(Model):
     """Resource link filter.
 
-    :param target_id: The target Id of the resource.
+    :param target_id: The ID of the target resource.
     :type target_id: str
     """ 
 

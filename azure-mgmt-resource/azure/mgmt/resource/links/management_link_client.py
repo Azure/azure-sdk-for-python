@@ -25,11 +25,9 @@ class ManagementLinkClientConfiguration(AzureConfiguration):
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
      object<msrestazure.azure_active_directory>`
-    :param subscription_id: Gets subscription credentials which uniquely
-     identify Microsoft Azure subscription. The subscription ID forms part of
-     the URI for every service call.
+    :param subscription_id: The ID of the target subscription.
     :type subscription_id: str
-    :param api_version: Client Api Version.
+    :param api_version: The API version to use for the operation.
     :type api_version: str
     :param accept_language: Gets or sets the preferred language for the
      response.
@@ -75,7 +73,7 @@ class ManagementLinkClientConfiguration(AzureConfiguration):
 
 
 class ManagementLinkClient(object):
-    """ManagementLinkClient
+    """Azure resources can be linked together to form logical relationships. You can establish links between resources belonging to different resource groups. However, all the linked resources must belong to the same subscription. Each resource can be linked to 50 other resources. If any of the linked resources are deleted or moved, the link owner must clean up the remaining link.
 
     :ivar config: Configuration for client.
     :vartype config: ManagementLinkClientConfiguration
@@ -86,11 +84,9 @@ class ManagementLinkClient(object):
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
      object<msrestazure.azure_active_directory>`
-    :param subscription_id: Gets subscription credentials which uniquely
-     identify Microsoft Azure subscription. The subscription ID forms part of
-     the URI for every service call.
+    :param subscription_id: The ID of the target subscription.
     :type subscription_id: str
-    :param api_version: Client Api Version.
+    :param api_version: The API version to use for the operation.
     :type api_version: str
     :param accept_language: Gets or sets the preferred language for the
      response.
