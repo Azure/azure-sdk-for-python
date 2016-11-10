@@ -35,14 +35,14 @@ class ProviderOperationsMetadataOperations(object):
 
     def get(
             self, resource_provider_namespace, api_version, expand="resourceTypes", custom_headers=None, raw=False, **operation_config):
-        """Gets provider operations metadata.
+        """Gets provider operations metadata for the specified resource provider.
 
-        :param resource_provider_namespace: Namespace of the resource
+        :param resource_provider_namespace: The namespace of the resource
          provider.
         :type resource_provider_namespace: str
-        :param api_version:
+        :param api_version: The API version to use for the operation.
         :type api_version: str
-        :param expand:
+        :param expand: Specifies whether to expand the values.
         :type expand: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -53,6 +53,7 @@ class ProviderOperationsMetadataOperations(object):
          <azure.mgmt.authorization.models.ProviderOperationsMetadata>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/providers/Microsoft.Authorization/providerOperations/{resourceProviderNamespace}'
@@ -99,11 +100,11 @@ class ProviderOperationsMetadataOperations(object):
 
     def list(
             self, api_version, expand="resourceTypes", custom_headers=None, raw=False, **operation_config):
-        """Gets provider operations metadata list.
+        """Gets provider operations metadata for all resource providers.
 
-        :param api_version:
+        :param api_version: The API version to use for this operation.
         :type api_version: str
-        :param expand:
+        :param expand: Specifies whether to expand the values.
         :type expand: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -112,6 +113,7 @@ class ProviderOperationsMetadataOperations(object):
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`ProviderOperationsMetadataPaged
          <azure.mgmt.authorization.models.ProviderOperationsMetadataPaged>`
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
 

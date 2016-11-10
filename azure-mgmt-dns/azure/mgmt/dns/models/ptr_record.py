@@ -15,8 +15,7 @@ from msrest.serialization import Model
 class PtrRecord(Model):
     """A PTR record.
 
-    :param ptrdname: Gets or sets the PTR target domain name for this record
-     without a terminating dot.
+    :param ptrdname: The PTR target domain name for this PTR record.
     :type ptrdname: str
     """ 
 

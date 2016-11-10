@@ -24,7 +24,7 @@ class VirtualMachineExtensionsOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An objec model deserializer.
-    :ivar api_version: Client Api Version. Constant value: "2016-03-30".
+    :ivar api_version: Client API Version. Constant value: "2016-03-30".
     """
 
     def __init__(self, client, config, serializer, deserializer):
@@ -60,6 +60,7 @@ class VirtualMachineExtensionsOperations(object):
          <azure.mgmt.compute.models.VirtualMachineExtension>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/virtualMachines/{vmName}/extensions/{vmExtensionName}'
@@ -153,6 +154,7 @@ class VirtualMachineExtensionsOperations(object):
          instance that returns None
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/virtualMachines/{vmName}/extensions/{vmExtensionName}'
@@ -236,6 +238,7 @@ class VirtualMachineExtensionsOperations(object):
          <azure.mgmt.compute.models.VirtualMachineExtension>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/virtualMachines/{vmName}/extensions/{vmExtensionName}'

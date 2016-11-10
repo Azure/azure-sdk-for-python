@@ -23,7 +23,7 @@ class VirtualMachineImagesOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An objec model deserializer.
-    :ivar api_version: Client Api Version. Constant value: "2016-03-30".
+    :ivar api_version: Client API Version. Constant value: "2016-03-30".
     """
 
     def __init__(self, client, config, serializer, deserializer):
@@ -39,15 +39,15 @@ class VirtualMachineImagesOperations(object):
             self, location, publisher_name, offer, skus, version, custom_headers=None, raw=False, **operation_config):
         """Gets a virtual machine image.
 
-        :param location:
+        :param location: The name of a supported Azure region.
         :type location: str
-        :param publisher_name:
+        :param publisher_name: A valid image publisher.
         :type publisher_name: str
-        :param offer:
+        :param offer: A valid image publisher offer.
         :type offer: str
-        :param skus:
+        :param skus: A valid image SKU.
         :type skus: str
-        :param version:
+        :param version: A valid image SKU version.
         :type version: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -58,6 +58,7 @@ class VirtualMachineImagesOperations(object):
          <azure.mgmt.compute.models.VirtualMachineImage>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/providers/Microsoft.Compute/locations/{location}/publishers/{publisherName}/artifacttypes/vmimage/offers/{offer}/skus/{skus}/versions/{version}'
@@ -107,15 +108,16 @@ class VirtualMachineImagesOperations(object):
 
     def list(
             self, location, publisher_name, offer, skus, filter=None, top=None, orderby=None, custom_headers=None, raw=False, **operation_config):
-        """Gets a list of virtual machine images.
+        """Gets a list of all virtual machine image versions for the specified
+        location, publisher, offer, and SKU.
 
-        :param location:
+        :param location: The name of a supported Azure region.
         :type location: str
-        :param publisher_name:
+        :param publisher_name: A valid image publisher.
         :type publisher_name: str
-        :param offer:
+        :param offer: A valid image publisher offer.
         :type offer: str
-        :param skus:
+        :param skus: A valid image SKU.
         :type skus: str
         :param filter: The filter to apply on the operation.
         :type filter: str
@@ -132,6 +134,7 @@ class VirtualMachineImagesOperations(object):
          <azure.mgmt.compute.models.VirtualMachineImageResource>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/providers/Microsoft.Compute/locations/{location}/publishers/{publisherName}/artifacttypes/vmimage/offers/{offer}/skus/{skus}/versions'
@@ -186,11 +189,12 @@ class VirtualMachineImagesOperations(object):
 
     def list_offers(
             self, location, publisher_name, custom_headers=None, raw=False, **operation_config):
-        """Gets a list of virtual machine image offers.
+        """Gets a list of virtual machine image offers for the specified location
+        and publisher.
 
-        :param location:
+        :param location: The name of a supported Azure region.
         :type location: str
-        :param publisher_name:
+        :param publisher_name: A valid image publisher.
         :type publisher_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -201,6 +205,7 @@ class VirtualMachineImagesOperations(object):
          <azure.mgmt.compute.models.VirtualMachineImageResource>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/providers/Microsoft.Compute/locations/{location}/publishers/{publisherName}/artifacttypes/vmimage/offers'
@@ -247,9 +252,10 @@ class VirtualMachineImagesOperations(object):
 
     def list_publishers(
             self, location, custom_headers=None, raw=False, **operation_config):
-        """Gets a list of virtual machine image publishers.
+        """Gets a list of virtual machine image publishers for the specified
+        Azure location.
 
-        :param location:
+        :param location: The name of a supported Azure region.
         :type location: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -260,6 +266,7 @@ class VirtualMachineImagesOperations(object):
          <azure.mgmt.compute.models.VirtualMachineImageResource>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/providers/Microsoft.Compute/locations/{location}/publishers'
@@ -305,13 +312,14 @@ class VirtualMachineImagesOperations(object):
 
     def list_skus(
             self, location, publisher_name, offer, custom_headers=None, raw=False, **operation_config):
-        """Gets a list of virtual machine image skus.
+        """Gets a list of virtual machine image SKUs for the specified location,
+        publisher, and offer.
 
-        :param location:
+        :param location: The name of a supported Azure region.
         :type location: str
-        :param publisher_name:
+        :param publisher_name: A valid image publisher.
         :type publisher_name: str
-        :param offer:
+        :param offer: A valid image publisher offer.
         :type offer: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -322,6 +330,7 @@ class VirtualMachineImagesOperations(object):
          <azure.mgmt.compute.models.VirtualMachineImageResource>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/providers/Microsoft.Compute/locations/{location}/publishers/{publisherName}/artifacttypes/vmimage/offers/{offer}/skus'

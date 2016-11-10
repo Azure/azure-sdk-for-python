@@ -15,9 +15,9 @@ from msrest.serialization import Model
 class Permission(Model):
     """Role definition permissions.
 
-    :param actions: Role definition allowed actions.
+    :param actions: Allowed actions.
     :type actions: list of str
-    :param not_actions: Role definition denied actions.
+    :param not_actions: Denied actions.
     :type not_actions: list of str
     """ 
 

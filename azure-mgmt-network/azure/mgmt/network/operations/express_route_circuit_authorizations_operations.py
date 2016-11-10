@@ -36,8 +36,8 @@ class ExpressRouteCircuitAuthorizationsOperations(object):
 
     def delete(
             self, resource_group_name, circuit_name, authorization_name, custom_headers=None, raw=False, **operation_config):
-        """The delete authorization operation deletes the specified authorization
-        from the specified ExpressRouteCircuit.
+        """Deletes the specified authorization from the specified express route
+        circuit.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
@@ -53,6 +53,7 @@ class ExpressRouteCircuitAuthorizationsOperations(object):
          instance that returns None
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/expressRouteCircuits/{circuitName}/authorizations/{authorizationName}'
@@ -116,8 +117,8 @@ class ExpressRouteCircuitAuthorizationsOperations(object):
 
     def get(
             self, resource_group_name, circuit_name, authorization_name, custom_headers=None, raw=False, **operation_config):
-        """The GET authorization operation retrieves the specified authorization
-        from the specified ExpressRouteCircuit.
+        """Gets the specified authorization from the specified express route
+        circuit.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
@@ -134,6 +135,7 @@ class ExpressRouteCircuitAuthorizationsOperations(object):
          <azure.mgmt.network.models.ExpressRouteCircuitAuthorization>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/expressRouteCircuits/{circuitName}/authorizations/{authorizationName}'
@@ -181,8 +183,8 @@ class ExpressRouteCircuitAuthorizationsOperations(object):
 
     def create_or_update(
             self, resource_group_name, circuit_name, authorization_name, authorization_parameters, custom_headers=None, raw=False, **operation_config):
-        """The Put Authorization operation creates/updates an authorization in
-        the specified ExpressRouteCircuits.
+        """Creates or updates an authorization in the specified express route
+        circuit.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
@@ -190,8 +192,8 @@ class ExpressRouteCircuitAuthorizationsOperations(object):
         :type circuit_name: str
         :param authorization_name: The name of the authorization.
         :type authorization_name: str
-        :param authorization_parameters: Parameters supplied to the
-         create/update ExpressRouteCircuitAuthorization operation
+        :param authorization_parameters: Parameters supplied to the create or
+         update express route circuit authorization operation.
         :type authorization_parameters:
          :class:`ExpressRouteCircuitAuthorization
          <azure.mgmt.network.models.ExpressRouteCircuitAuthorization>`
@@ -204,6 +206,7 @@ class ExpressRouteCircuitAuthorizationsOperations(object):
          <azure.mgmt.network.models.ExpressRouteCircuitAuthorization>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/expressRouteCircuits/{circuitName}/authorizations/{authorizationName}'
@@ -280,8 +283,7 @@ class ExpressRouteCircuitAuthorizationsOperations(object):
 
     def list(
             self, resource_group_name, circuit_name, custom_headers=None, raw=False, **operation_config):
-        """The List authorization operation retrieves all the authorizations in
-        an ExpressRouteCircuit.
+        """Gets all authorizations in an express route circuit.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
@@ -294,6 +296,7 @@ class ExpressRouteCircuitAuthorizationsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`ExpressRouteCircuitAuthorizationPaged
          <azure.mgmt.network.models.ExpressRouteCircuitAuthorizationPaged>`
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
 

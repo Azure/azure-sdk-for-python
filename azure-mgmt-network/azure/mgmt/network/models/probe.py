@@ -13,49 +13,49 @@ from .sub_resource import SubResource
 
 
 class Probe(SubResource):
-    """Load balancer Probe.
+    """A load balancer probe.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :param id: Resource Id
+    :param id: Resource ID.
     :type id: str
-    :ivar load_balancing_rules: Gets Load balancer rules that use this probe
+    :ivar load_balancing_rules: The load balancer rules that use this probe.
     :vartype load_balancing_rules: list of :class:`SubResource
      <azure.mgmt.network.models.SubResource>`
-    :param protocol: Gets or sets the protocol of the end point. Possible
-     values are http or Tcp. If Tcp is specified, a received ACK is required
-     for the probe to be successful. If http is specified,a 200 OK response
+    :param protocol: The protocol of the end point. Possible values are:
+     'Http' or 'Tcp'. If 'Tcp' is specified, a received ACK is required for
+     the probe to be successful. If 'Http' is specified, a 200 OK response
      from the specifies URI is required for the probe to be successful.
      Possible values include: 'Http', 'Tcp'
     :type protocol: str or :class:`ProbeProtocol
      <azure.mgmt.network.models.ProbeProtocol>`
-    :param port: Gets or sets Port for communicating the probe. Possible
-     values range from 1 to 65535, inclusive.
+    :param port: The port for communicating the probe. Possible values range
+     from 1 to 65535, inclusive.
     :type port: int
-    :param interval_in_seconds: Gets or sets the interval, in seconds, for
-     how frequently to probe the endpoint for health status. Typically, the
-     interval is slightly less than half the allocated timeout period (in
-     seconds) which allows two full probes before taking the instance out of
-     rotation. The default value is 15, the minimum value is 5
+    :param interval_in_seconds: The interval, in seconds, for how frequently
+     to probe the endpoint for health status. Typically, the interval is
+     slightly less than half the allocated timeout period (in seconds) which
+     allows two full probes before taking the instance out of rotation. The
+     default value is 15, the minimum value is 5.
     :type interval_in_seconds: int
-    :param number_of_probes: Gets or sets the number of probes where if no
-     response, will result in stopping further traffic from being delivered
-     to the endpoint. This values allows endpoints to be taken out of
-     rotation faster or slower than the typical times used in Azure.
+    :param number_of_probes: The number of probes where if no response, will
+     result in stopping further traffic from being delivered to the endpoint.
+     This values allows endpoints to be taken out of rotation faster or
+     slower than the typical times used in Azure.
     :type number_of_probes: int
-    :param request_path: Gets or sets the URI used for requesting health
-     status from the VM. Path is required if a protocol is set to http.
-     Otherwise, it is not allowed. There is no default value
+    :param request_path: The URI used for requesting health status from the
+     VM. Path is required if a protocol is set to http. Otherwise, it is not
+     allowed. There is no default value.
     :type request_path: str
-    :param provisioning_state: Gets provisioning state of the PublicIP
-     resource Updating/Deleting/Failed
+    :param provisioning_state: Gets the provisioning state of the public IP
+     resource. Possible values are: 'Updating', 'Deleting', and 'Failed'.
     :type provisioning_state: str
     :param name: Gets name of the resource that is unique within a resource
-     group. This name can be used to access the resource
+     group. This name can be used to access the resource.
     :type name: str
     :param etag: A unique read-only string that changes whenever the resource
-     is updated
+     is updated.
     :type etag: str
     """ 
 

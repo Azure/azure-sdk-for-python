@@ -44,6 +44,7 @@ class ProviderOperations(object):
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`SourceControlPaged
          <azure.mgmt.web.models.SourceControlPaged>`
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -105,6 +106,7 @@ class ProviderOperations(object):
         :rtype: :class:`SourceControl <azure.mgmt.web.models.SourceControl>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/providers/Microsoft.Web/sourcecontrols/{sourceControlType}'
@@ -164,6 +166,7 @@ class ProviderOperations(object):
         :rtype: :class:`SourceControl <azure.mgmt.web.models.SourceControl>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/providers/Microsoft.Web/sourcecontrols/{sourceControlType}'
@@ -222,6 +225,7 @@ class ProviderOperations(object):
         :rtype: :class:`User <azure.mgmt.web.models.User>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/providers/Microsoft.Web/publishingUsers/web'
@@ -274,6 +278,7 @@ class ProviderOperations(object):
         :rtype: :class:`User <azure.mgmt.web.models.User>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/providers/Microsoft.Web/publishingUsers/web'

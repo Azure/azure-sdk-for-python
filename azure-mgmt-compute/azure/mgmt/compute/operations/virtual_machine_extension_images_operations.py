@@ -23,7 +23,7 @@ class VirtualMachineExtensionImagesOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An objec model deserializer.
-    :ivar api_version: Client Api Version. Constant value: "2016-03-30".
+    :ivar api_version: Client API Version. Constant value: "2016-03-30".
     """
 
     def __init__(self, client, config, serializer, deserializer):
@@ -56,6 +56,7 @@ class VirtualMachineExtensionImagesOperations(object):
          <azure.mgmt.compute.models.VirtualMachineExtensionImage>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/providers/Microsoft.Compute/locations/{location}/publishers/{publisherName}/artifacttypes/vmextension/types/{type}/versions/{version}'
@@ -119,6 +120,7 @@ class VirtualMachineExtensionImagesOperations(object):
          <azure.mgmt.compute.models.VirtualMachineExtensionImage>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/providers/Microsoft.Compute/locations/{location}/publishers/{publisherName}/artifacttypes/vmextension/types'
@@ -188,6 +190,7 @@ class VirtualMachineExtensionImagesOperations(object):
          <azure.mgmt.compute.models.VirtualMachineExtensionImage>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/providers/Microsoft.Compute/locations/{location}/publishers/{publisherName}/artifacttypes/vmextension/types/{type}/versions'

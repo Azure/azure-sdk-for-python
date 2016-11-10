@@ -26,11 +26,10 @@ class DnsManagementClientConfiguration(AzureConfiguration):
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
      object<msrestazure.azure_active_directory>`
-    :param subscription_id: Gets subscription credentials which uniquely
-     identify Microsoft Azure subscription. The subscription ID forms part of
-     the URI for every service call.
+    :param subscription_id: Specifies the Azure subscription ID, which
+     uniquely identifies the Microsoft Azure subscription.
     :type subscription_id: str
-    :param api_version: Client Api Version.
+    :param api_version: Specifies the API version.
     :type api_version: str
     :param accept_language: Gets or sets the preferred language for the
      response.
@@ -76,7 +75,7 @@ class DnsManagementClientConfiguration(AzureConfiguration):
 
 
 class DnsManagementClient(object):
-    """DnsManagementClient
+    """The DNS Management Client.
 
     :ivar config: Configuration for client.
     :vartype config: DnsManagementClientConfiguration
@@ -89,11 +88,10 @@ class DnsManagementClient(object):
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
      object<msrestazure.azure_active_directory>`
-    :param subscription_id: Gets subscription credentials which uniquely
-     identify Microsoft Azure subscription. The subscription ID forms part of
-     the URI for every service call.
+    :param subscription_id: Specifies the Azure subscription ID, which
+     uniquely identifies the Microsoft Azure subscription.
     :type subscription_id: str
-    :param api_version: Client Api Version.
+    :param api_version: Specifies the API version.
     :type api_version: str
     :param accept_language: Gets or sets the preferred language for the
      response.

@@ -15,19 +15,24 @@ from msrest.serialization import Model
 class VirtualNetworkGatewaySku(Model):
     """VirtualNetworkGatewaySku details.
 
-    :param name: Gateway sku name
-     -Basic/HighPerformance/Standard/UltraPerformance. Possible values
+    :param name: Gateway SKU name. Possible values are: 'Basic',
+     'HighPerformance','Standard', and 'UltraPerformance'. Possible values
      include: 'Basic', 'HighPerformance', 'Standard', 'UltraPerformance'
     :type name: str or :class:`VirtualNetworkGatewaySkuName
      <azure.mgmt.network.models.VirtualNetworkGatewaySkuName>`
-    :param tier: Gateway sku tier
-     -Basic/HighPerformance/Standard/UltraPerformance. Possible values
+    :param tier: Gateway SKU tier. Possible values are: 'Basic',
+     'HighPerformance','Standard', and 'UltraPerformance'. Possible values
      include: 'Basic', 'HighPerformance', 'Standard', 'UltraPerformance'
     :type tier: str or :class:`VirtualNetworkGatewaySkuTier
      <azure.mgmt.network.models.VirtualNetworkGatewaySkuTier>`
-    :param capacity: The capacity
+    :param capacity: The capacity.
     :type capacity: int
     """ 
+
+    _validation = {
+        'name': {'required': True},
+        'tier': {'required': True},
+    }
 
     _attribute_map = {
         'name': {'key': 'name', 'type': 'str'},
@@ -35,7 +40,7 @@ class VirtualNetworkGatewaySku(Model):
         'capacity': {'key': 'capacity', 'type': 'int'},
     }
 
-    def __init__(self, name=None, tier=None, capacity=None):
+    def __init__(self, name, tier, capacity=None):
         self.name = name
         self.tier = tier
         self.capacity = capacity

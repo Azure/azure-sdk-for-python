@@ -13,11 +13,11 @@ from msrest.serialization import Model
 
 
 class ApplicationGatewayBackendAddress(Model):
-    """Backend Address of application gateway.
+    """Backend address of an application gateway.
 
-    :param fqdn: Dns name
+    :param fqdn: Fully qualified domain name (FQDN).
     :type fqdn: str
-    :param ip_address: Ip address
+    :param ip_address: IP address
     :type ip_address: str
     """ 
 

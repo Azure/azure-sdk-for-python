@@ -13,15 +13,15 @@ from msrest.serialization import Model
 
 
 class ExpressRouteCircuitArpTable(Model):
-    """The arp table associated with the ExpressRouteCircuit.
+    """The ARP table associated with the ExpressRouteCircuit.
 
-    :param age: Age.
+    :param age: Age
     :type age: int
-    :param interface: Interface.
+    :param interface: Interface
     :type interface: str
-    :param ip_address: Gets ipAddress.
+    :param ip_address: The IP address.
     :type ip_address: str
-    :param mac_address: Gets macAddress.
+    :param mac_address: The MAC address.
     :type mac_address: str
     """ 
 

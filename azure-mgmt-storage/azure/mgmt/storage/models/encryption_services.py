@@ -13,9 +13,9 @@ from msrest.serialization import Model
 
 
 class EncryptionServices(Model):
-    """The encrypted services.
+    """A list of services that support encryption.
 
-    :param blob: The blob service.
+    :param blob: The encryption function of the blob storage service.
     :type blob: :class:`EncryptionService
      <azure.mgmt.storage.models.EncryptionService>`
     """ 

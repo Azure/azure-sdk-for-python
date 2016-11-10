@@ -45,6 +45,7 @@ class GlobalModelOperations(object):
         :rtype: :class:`User <azure.mgmt.web.models.User>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/providers/Microsoft.Web/publishingCredentials'
@@ -101,6 +102,7 @@ class GlobalModelOperations(object):
         :rtype: :class:`User <azure.mgmt.web.models.User>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/providers/Microsoft.Web/publishingCredentials'
@@ -162,6 +164,7 @@ class GlobalModelOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`GeoRegionPaged <azure.mgmt.web.models.GeoRegionPaged>`
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -228,6 +231,7 @@ class GlobalModelOperations(object):
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`CertificatePaged
          <azure.mgmt.web.models.CertificatePaged>`
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -294,6 +298,7 @@ class GlobalModelOperations(object):
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`ServerFarmWithRichSkuPaged
          <azure.mgmt.web.models.ServerFarmWithRichSkuPaged>`
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -357,6 +362,7 @@ class GlobalModelOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`SitePaged <azure.mgmt.web.models.SitePaged>`
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -420,6 +426,7 @@ class GlobalModelOperations(object):
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`HostingEnvironmentPaged
          <azure.mgmt.web.models.HostingEnvironmentPaged>`
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -482,6 +489,7 @@ class GlobalModelOperations(object):
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`ManagedHostingEnvironmentPaged
          <azure.mgmt.web.models.ManagedHostingEnvironmentPaged>`
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -544,6 +552,7 @@ class GlobalModelOperations(object):
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`ClassicMobileServicePaged
          <azure.mgmt.web.models.ClassicMobileServicePaged>`
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -607,6 +616,7 @@ class GlobalModelOperations(object):
         :rtype: object
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/providers/Microsoft.Web/premieraddonoffers'
@@ -663,6 +673,7 @@ class GlobalModelOperations(object):
         :rtype: object
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/providers/Microsoft.Web/ishostingenvironmentnameavailable'
@@ -720,6 +731,7 @@ class GlobalModelOperations(object):
         :rtype: object
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/providers/Microsoft.Web/ishostingenvironmentnameavailable/{name}'
@@ -779,6 +791,7 @@ class GlobalModelOperations(object):
          <azure.mgmt.web.models.ResourceNameAvailability>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/providers/Microsoft.Web/checknameavailability'

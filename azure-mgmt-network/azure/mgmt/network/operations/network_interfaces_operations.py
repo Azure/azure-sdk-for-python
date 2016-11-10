@@ -36,8 +36,7 @@ class NetworkInterfacesOperations(object):
 
     def delete(
             self, resource_group_name, network_interface_name, custom_headers=None, raw=False, **operation_config):
-        """The delete netwokInterface operation deletes the specified
-        netwokInterface.
+        """Deletes the specified network interface.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
@@ -51,6 +50,7 @@ class NetworkInterfacesOperations(object):
          instance that returns None
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/networkInterfaces/{networkInterfaceName}'
@@ -113,14 +113,13 @@ class NetworkInterfacesOperations(object):
 
     def get(
             self, resource_group_name, network_interface_name, expand=None, custom_headers=None, raw=False, **operation_config):
-        """The Get network interface operation retrieves information about the
-        specified network interface.
+        """Gets information about the specified network interface.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
         :param network_interface_name: The name of the network interface.
         :type network_interface_name: str
-        :param expand: expand references resources.
+        :param expand: Expands referenced resources.
         :type expand: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -131,6 +130,7 @@ class NetworkInterfacesOperations(object):
          <azure.mgmt.network.models.NetworkInterface>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/networkInterfaces/{networkInterfaceName}'
@@ -179,14 +179,14 @@ class NetworkInterfacesOperations(object):
 
     def create_or_update(
             self, resource_group_name, network_interface_name, parameters, custom_headers=None, raw=False, **operation_config):
-        """The Put NetworkInterface operation creates/updates a networkInterface.
+        """Creates or updates a network interface.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
         :param network_interface_name: The name of the network interface.
         :type network_interface_name: str
-        :param parameters: Parameters supplied to the create/update
-         NetworkInterface operation
+        :param parameters: Parameters supplied to the create or update
+         network interface operation.
         :type parameters: :class:`NetworkInterface
          <azure.mgmt.network.models.NetworkInterface>`
         :param dict custom_headers: headers that will be added to the request
@@ -198,6 +198,7 @@ class NetworkInterfacesOperations(object):
          <azure.mgmt.network.models.NetworkInterface>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/networkInterfaces/{networkInterfaceName}'
@@ -273,9 +274,8 @@ class NetworkInterfacesOperations(object):
 
     def list_virtual_machine_scale_set_vm_network_interfaces(
             self, resource_group_name, virtual_machine_scale_set_name, virtualmachine_index, custom_headers=None, raw=False, **operation_config):
-        """The list network interface operation retrieves information about all
-        network interfaces in a virtual machine from a virtual machine scale
-        set.
+        """Gets information about all network interfaces in a virtual machine in
+        a virtual machine scale set.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
@@ -291,6 +291,7 @@ class NetworkInterfacesOperations(object):
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`NetworkInterfacePaged
          <azure.mgmt.network.models.NetworkInterfacePaged>`
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -347,8 +348,7 @@ class NetworkInterfacesOperations(object):
 
     def list_virtual_machine_scale_set_network_interfaces(
             self, resource_group_name, virtual_machine_scale_set_name, custom_headers=None, raw=False, **operation_config):
-        """The list network interface operation retrieves information about all
-        network interfaces in a virtual machine scale set.
+        """Gets all network interfaces in a virtual machine scale set.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
@@ -362,6 +362,7 @@ class NetworkInterfacesOperations(object):
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`NetworkInterfacePaged
          <azure.mgmt.network.models.NetworkInterfacePaged>`
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -417,8 +418,7 @@ class NetworkInterfacesOperations(object):
 
     def get_virtual_machine_scale_set_network_interface(
             self, resource_group_name, virtual_machine_scale_set_name, virtualmachine_index, network_interface_name, expand=None, custom_headers=None, raw=False, **operation_config):
-        """The Get network interface operation retrieves information about the
-        specified network interface in a virtual machine scale set.
+        """Get the specified network interface in a virtual machine scale set.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
@@ -429,7 +429,7 @@ class NetworkInterfacesOperations(object):
         :type virtualmachine_index: str
         :param network_interface_name: The name of the network interface.
         :type network_interface_name: str
-        :param expand: expand references resources.
+        :param expand: Expands referenced resources.
         :type expand: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -440,6 +440,7 @@ class NetworkInterfacesOperations(object):
          <azure.mgmt.network.models.NetworkInterface>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/microsoft.Compute/virtualMachineScaleSets/{virtualMachineScaleSetName}/virtualMachines/{virtualmachineIndex}/networkInterfaces/{networkInterfaceName}'
@@ -490,8 +491,7 @@ class NetworkInterfacesOperations(object):
 
     def list_all(
             self, custom_headers=None, raw=False, **operation_config):
-        """The List networkInterfaces operation retrieves all the
-        networkInterfaces in a subscription.
+        """Gets all network interfaces in a subscription.
 
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -500,6 +500,7 @@ class NetworkInterfacesOperations(object):
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`NetworkInterfacePaged
          <azure.mgmt.network.models.NetworkInterfacePaged>`
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -553,8 +554,7 @@ class NetworkInterfacesOperations(object):
 
     def list(
             self, resource_group_name, custom_headers=None, raw=False, **operation_config):
-        """The List networkInterfaces operation retrieves all the
-        networkInterfaces in a resource group.
+        """Gets all network interfaces in a resource group.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
@@ -565,6 +565,7 @@ class NetworkInterfacesOperations(object):
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`NetworkInterfacePaged
          <azure.mgmt.network.models.NetworkInterfacePaged>`
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -619,8 +620,7 @@ class NetworkInterfacesOperations(object):
 
     def get_effective_route_table(
             self, resource_group_name, network_interface_name, custom_headers=None, raw=False, **operation_config):
-        """The get effective routetable operation retrieves all the route tables
-        applied on a networkInterface.
+        """Gets all route tables applied to a network interface.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
@@ -635,6 +635,7 @@ class NetworkInterfacesOperations(object):
          <azure.mgmt.network.models.EffectiveRouteListResult>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/networkInterfaces/{networkInterfaceName}/effectiveRouteTable'
@@ -704,8 +705,7 @@ class NetworkInterfacesOperations(object):
 
     def list_effective_network_security_groups(
             self, resource_group_name, network_interface_name, custom_headers=None, raw=False, **operation_config):
-        """The list effective network security group operation retrieves all the
-        network security groups applied on a networkInterface.
+        """Gets all network security groups applied to a network interface.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
@@ -720,6 +720,7 @@ class NetworkInterfacesOperations(object):
          :class:`EffectiveNetworkSecurityGroupListResult <azure.mgmt.network.models.EffectiveNetworkSecurityGroupListResult>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/networkInterfaces/{networkInterfaceName}/effectiveNetworkSecurityGroups'

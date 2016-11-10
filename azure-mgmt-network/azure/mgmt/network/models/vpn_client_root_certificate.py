@@ -15,20 +15,29 @@ from .sub_resource import SubResource
 class VpnClientRootCertificate(SubResource):
     """VPN client root certificate of virtual network gateway.
 
-    :param id: Resource Id
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :param id: Resource ID.
     :type id: str
-    :param public_cert_data: Gets or sets the certificate public data
+    :param public_cert_data: The certificate public data.
     :type public_cert_data: str
-    :param provisioning_state: Gets provisioning state of the VPN client root
-     certificate resource Updating/Deleting/Failed
-    :type provisioning_state: str
-    :param name: Gets name of the resource that is unique within a resource
-     group. This name can be used to access the resource
+    :ivar provisioning_state: The provisioning state of the VPN client root
+     certificate resource. Possible values are: 'Updating', 'Deleting', and
+     'Failed'.
+    :vartype provisioning_state: str
+    :param name: The name of the resource that is unique within a resource
+     group. This name can be used to access the resource.
     :type name: str
     :param etag: A unique read-only string that changes whenever the resource
-     is updated
+     is updated.
     :type etag: str
     """ 
+
+    _validation = {
+        'public_cert_data': {'required': True},
+        'provisioning_state': {'readonly': True},
+    }
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
@@ -38,9 +47,9 @@ class VpnClientRootCertificate(SubResource):
         'etag': {'key': 'etag', 'type': 'str'},
     }
 
-    def __init__(self, id=None, public_cert_data=None, provisioning_state=None, name=None, etag=None):
+    def __init__(self, public_cert_data, id=None, name=None, etag=None):
         super(VpnClientRootCertificate, self).__init__(id=id)
         self.public_cert_data = public_cert_data
-        self.provisioning_state = provisioning_state
+        self.provisioning_state = None
         self.name = name
         self.etag = etag

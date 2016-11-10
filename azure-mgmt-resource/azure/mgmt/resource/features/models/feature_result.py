@@ -15,14 +15,14 @@ from msrest.serialization import Model
 class FeatureResult(Model):
     """Previewed feature information.
 
-    :param name: Gets or sets the name of the feature.
+    :param name: The name of the feature.
     :type name: str
-    :param properties: Gets or sets the properties of the previewed feature.
+    :param properties: Properties of the previewed feature.
     :type properties: :class:`FeatureProperties
      <azure.mgmt.resource.features.models.FeatureProperties>`
-    :param id: Gets or sets the Id of the feature.
+    :param id: The resource ID of the feature.
     :type id: str
-    :param type: Gets or sets the type of the feature.
+    :param type: The resource type of the feature.
     :type type: str
     """ 
 

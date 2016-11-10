@@ -23,7 +23,7 @@ class AvailabilitySetsOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An objec model deserializer.
-    :ivar api_version: Client Api Version. Constant value: "2016-03-30".
+    :ivar api_version: Client API Version. Constant value: "2016-03-30".
     """
 
     def __init__(self, client, config, serializer, deserializer):
@@ -41,8 +41,7 @@ class AvailabilitySetsOperations(object):
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
-        :param name: Parameters supplied to the Create Availability Set
-         operation.
+        :param name: The name of the availability set.
         :type name: str
         :param parameters: Parameters supplied to the Create Availability Set
          operation.
@@ -57,6 +56,7 @@ class AvailabilitySetsOperations(object):
          <azure.mgmt.compute.models.AvailabilitySet>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/availabilitySets/{name}'
@@ -121,6 +121,7 @@ class AvailabilitySetsOperations(object):
         :rtype: None
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/availabilitySets/{availabilitySetName}'
@@ -160,7 +161,7 @@ class AvailabilitySetsOperations(object):
 
     def get(
             self, resource_group_name, availability_set_name, custom_headers=None, raw=False, **operation_config):
-        """The operation to get the availability set.
+        """Retrieves information about an availability set.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
@@ -175,6 +176,7 @@ class AvailabilitySetsOperations(object):
          <azure.mgmt.compute.models.AvailabilitySet>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/availabilitySets/{availabilitySetName}'
@@ -221,7 +223,7 @@ class AvailabilitySetsOperations(object):
 
     def list(
             self, resource_group_name, custom_headers=None, raw=False, **operation_config):
-        """The operation to list the availability sets.
+        """The operation to list all availability sets in a resource group.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
@@ -232,6 +234,7 @@ class AvailabilitySetsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`AvailabilitySetPaged
          <azure.mgmt.compute.models.AvailabilitySetPaged>`
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -300,6 +303,7 @@ class AvailabilitySetsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`VirtualMachineSizePaged
          <azure.mgmt.compute.models.VirtualMachineSizePaged>`
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
 

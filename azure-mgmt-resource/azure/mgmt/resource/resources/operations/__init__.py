@@ -14,7 +14,7 @@ from .providers_operations import ProvidersOperations
 from .resource_groups_operations import ResourceGroupsOperations
 from .resources_operations import ResourcesOperations
 from .tags_operations import TagsOperations
-from .deployment_operations_operations import DeploymentOperationsOperations
+from .deployment_operations import DeploymentOperations
 
 __all__ = [
     'DeploymentsOperations',
@@ -22,5 +22,5 @@ __all__ = [
     'ResourceGroupsOperations',
     'ResourcesOperations',
     'TagsOperations',
-    'DeploymentOperationsOperations',
+    'DeploymentOperations',
 ]

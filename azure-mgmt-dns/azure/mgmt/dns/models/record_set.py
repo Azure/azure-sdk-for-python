@@ -13,46 +13,45 @@ from msrest.serialization import Model
 
 
 class RecordSet(Model):
-    """Describes a DNS RecordSet (a set of DNS records with the same name and
-    type).
+    """Describes a DNS record set (a collection of DNS records with the same name
+    and type).
 
-    :param id: Gets or sets the ID of the resource.
+    :param id: The ID of the record set.
     :type id: str
-    :param name: Gets or sets the name of the resource.
+    :param name: The name of the record set.
     :type name: str
-    :param type: Gets or sets the type of the resource.
+    :param type: The type of the record set.
     :type type: str
-    :param etag: Gets or sets the ETag of the RecordSet.
+    :param etag: The etag of the record set.
     :type etag: str
-    :param metadata: Gets or sets the metadata attached to the resource.
+    :param metadata: The metadata attached to the record set.
     :type metadata: dict
-    :param ttl: Gets or sets the TTL of the records in the RecordSet.
+    :param ttl: The TTL (time-to-live) of the records in the record set.
     :type ttl: long
-    :param arecords: Gets or sets the list of A records in the RecordSet.
+    :param arecords: The list of A records in the record set.
     :type arecords: list of :class:`ARecord <azure.mgmt.dns.models.ARecord>`
-    :param aaaa_records: Gets or sets the list of AAAA records in the
-     RecordSet.
+    :param aaaa_records: The list of AAAA records in the record set.
     :type aaaa_records: list of :class:`AaaaRecord
      <azure.mgmt.dns.models.AaaaRecord>`
-    :param mx_records: Gets or sets the list of MX records in the RecordSet.
+    :param mx_records: The list of MX records in the record set.
     :type mx_records: list of :class:`MxRecord
      <azure.mgmt.dns.models.MxRecord>`
-    :param ns_records: Gets or sets the list of NS records in the RecordSet.
+    :param ns_records: The list of NS records in the record set.
     :type ns_records: list of :class:`NsRecord
      <azure.mgmt.dns.models.NsRecord>`
-    :param ptr_records: Gets or sets the list of PTR records in the RecordSet.
+    :param ptr_records: The list of PTR records in the record set.
     :type ptr_records: list of :class:`PtrRecord
      <azure.mgmt.dns.models.PtrRecord>`
-    :param srv_records: Gets or sets the list of SRV records in the RecordSet.
+    :param srv_records: The list of SRV records in the record set.
     :type srv_records: list of :class:`SrvRecord
      <azure.mgmt.dns.models.SrvRecord>`
-    :param txt_records: Gets or sets the list of TXT records in the RecordSet.
+    :param txt_records: The list of TXT records in the record set.
     :type txt_records: list of :class:`TxtRecord
      <azure.mgmt.dns.models.TxtRecord>`
-    :param cname_record: Gets or sets the CNAME record in the RecordSet.
+    :param cname_record: The CNAME record in the  record set.
     :type cname_record: :class:`CnameRecord
      <azure.mgmt.dns.models.CnameRecord>`
-    :param soa_record: Gets or sets the SOA record in the RecordSet.
+    :param soa_record: The SOA record in the record set.
     :type soa_record: :class:`SoaRecord <azure.mgmt.dns.models.SoaRecord>`
     """ 
 

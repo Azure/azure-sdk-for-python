@@ -15,13 +15,13 @@ from msrest.serialization import Model
 class RoleAssignment(Model):
     """Role Assignments.
 
-    :param id: Gets or sets role assignment id.
+    :param id: The role assignment ID.
     :type id: str
-    :param name: Gets or sets role assignment name.
+    :param name: The role assignment name.
     :type name: str
-    :param type: Gets or sets role assignment type.
+    :param type: The role assignment type.
     :type type: str
-    :param properties: Gets or sets role assignment properties.
+    :param properties: Role assignment properties.
     :type properties: :class:`RoleAssignmentPropertiesWithScope
      <azure.mgmt.authorization.models.RoleAssignmentPropertiesWithScope>`
     """ 

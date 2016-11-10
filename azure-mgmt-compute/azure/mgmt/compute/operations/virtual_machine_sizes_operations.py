@@ -23,7 +23,7 @@ class VirtualMachineSizesOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An objec model deserializer.
-    :ivar api_version: Client Api Version. Constant value: "2016-03-30".
+    :ivar api_version: Client API Version. Constant value: "2016-03-30".
     """
 
     def __init__(self, client, config, serializer, deserializer):
@@ -50,6 +50,7 @@ class VirtualMachineSizesOperations(object):
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`VirtualMachineSizePaged
          <azure.mgmt.compute.models.VirtualMachineSizePaged>`
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
 

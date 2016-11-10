@@ -15,28 +15,29 @@ from .sub_resource import SubResource
 class Route(SubResource):
     """Route resource.
 
-    :param id: Resource Id
+    :param id: Resource ID.
     :type id: str
-    :param address_prefix: Gets or sets the destination CIDR to which the
-     route applies.
+    :param address_prefix: The destination CIDR to which the route applies.
     :type address_prefix: str
-    :param next_hop_type: Gets or sets the type of Azure hop the packet
-     should be sent to. Possible values include: 'VirtualNetworkGateway',
-     'VnetLocal', 'Internet', 'VirtualAppliance', 'None'
+    :param next_hop_type: The type of Azure hop the packet should be sent to.
+     Possible values are: 'VirtualNetworkGateway', 'VnetLocal', 'Internet',
+     'VirtualAppliance', and 'None'. Possible values include:
+     'VirtualNetworkGateway', 'VnetLocal', 'Internet', 'VirtualAppliance',
+     'None'
     :type next_hop_type: str or :class:`RouteNextHopType
      <azure.mgmt.network.models.RouteNextHopType>`
-    :param next_hop_ip_address: Gets or sets the IP address packets should be
-     forwarded to. Next hop values are only allowed in routes where the next
-     hop type is VirtualAppliance.
+    :param next_hop_ip_address: The IP address packets should be forwarded
+     to. Next hop values are only allowed in routes where the next hop type
+     is VirtualAppliance.
     :type next_hop_ip_address: str
-    :param provisioning_state: Gets provisioning state of the resource
-     Updating/Deleting/Failed
+    :param provisioning_state: The provisioning state of the resource.
+     Possible values are: 'Updating', 'Deleting', and 'Failed'.
     :type provisioning_state: str
-    :param name: Gets name of the resource that is unique within a resource
-     group. This name can be used to access the resource
+    :param name: The name of the resource that is unique within a resource
+     group. This name can be used to access the resource.
     :type name: str
     :param etag: A unique read-only string that changes whenever the resource
-     is updated
+     is updated.
     :type etag: str
     """ 
 

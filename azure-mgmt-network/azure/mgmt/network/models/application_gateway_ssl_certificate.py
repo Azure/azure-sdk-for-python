@@ -13,24 +13,27 @@ from .sub_resource import SubResource
 
 
 class ApplicationGatewaySslCertificate(SubResource):
-    """SSL certificates of application gateway.
+    """SSL certificates of an application gateway.
 
-    :param id: Resource Id
+    :param id: Resource ID.
     :type id: str
-    :param data: SSL Certificate data
+    :param data: Base-64 encoded pfx certificate. Only applicable in PUT
+     Request.
     :type data: str
-    :param password: SSL Certificate password
+    :param password: Password for the pfx file specified in data. Only
+     applicable in PUT request.
     :type password: str
-    :param public_cert_data: SSL Certificate public data
+    :param public_cert_data: Base-64 encoded Public cert data corresponding
+     to pfx specified in data. Only applicable in GET request.
     :type public_cert_data: str
-    :param provisioning_state: Provisioning state of the ssl certificate
-     resource Updating/Deleting/Failed
+    :param provisioning_state: Provisioning state of the SSL certificate
+     resource Possible values are: 'Updating', 'Deleting', and 'Failed'.
     :type provisioning_state: str
     :param name: Name of the resource that is unique within a resource group.
-     This name can be used to access the resource
+     This name can be used to access the resource.
     :type name: str
     :param etag: A unique read-only string that changes whenever the resource
-     is updated
+     is updated.
     :type etag: str
     """ 
 

@@ -15,9 +15,9 @@ from msrest.serialization import Model
 class ClassicAdministratorProperties(Model):
     """Classic Administrator properties.
 
-    :param email_address: Gets or sets the email address
+    :param email_address: The email address of the administrator.
     :type email_address: str
-    :param role: Gets or sets the role
+    :param role: The role of the administrator.
     :type role: str
     """ 
 

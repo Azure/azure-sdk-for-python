@@ -18,26 +18,26 @@ class AvailabilitySet(Resource):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar id: Resource Id
+    :ivar id: Resource ID.
     :vartype id: str
-    :ivar name: Resource name
+    :ivar name: Resource name.
     :vartype name: str
-    :ivar type: Resource type
+    :ivar type: Resource type.
     :vartype type: str
-    :param location: Resource location
+    :param location: Resource location.
     :type location: str
-    :param tags: Resource tags
+    :param tags: Resource tags.
     :type tags: dict
     :param platform_update_domain_count: Update Domain count.
     :type platform_update_domain_count: int
     :param platform_fault_domain_count: Fault Domain count.
     :type platform_fault_domain_count: int
-    :param virtual_machines: a list containing reference to all Virtual
-     Machines created under this Availability Set.
+    :param virtual_machines: A list of references to all virtual machines in
+     the availability set.
     :type virtual_machines: list of :class:`SubResource
      <azure.mgmt.compute.models.SubResource>`
-    :param statuses: the resource status information.
-    :type statuses: list of :class:`InstanceViewStatus
+    :ivar statuses: the resource status information.
+    :vartype statuses: list of :class:`InstanceViewStatus
      <azure.mgmt.compute.models.InstanceViewStatus>`
     """ 
 
@@ -46,6 +46,7 @@ class AvailabilitySet(Resource):
         'name': {'readonly': True},
         'type': {'readonly': True},
         'location': {'required': True},
+        'statuses': {'readonly': True},
     }
 
     _attribute_map = {
@@ -60,9 +61,9 @@ class AvailabilitySet(Resource):
         'statuses': {'key': 'properties.statuses', 'type': '[InstanceViewStatus]'},
     }
 
-    def __init__(self, location, tags=None, platform_update_domain_count=None, platform_fault_domain_count=None, virtual_machines=None, statuses=None):
+    def __init__(self, location, tags=None, platform_update_domain_count=None, platform_fault_domain_count=None, virtual_machines=None):
         super(AvailabilitySet, self).__init__(location=location, tags=tags)
         self.platform_update_domain_count = platform_update_domain_count
         self.platform_fault_domain_count = platform_fault_domain_count
         self.virtual_machines = virtual_machines
-        self.statuses = statuses
+        self.statuses = None

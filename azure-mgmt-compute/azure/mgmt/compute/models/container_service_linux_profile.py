@@ -13,17 +13,17 @@ from msrest.serialization import Model
 
 
 class ContainerServiceLinuxProfile(Model):
-    """Profile for Linux VMs.
+    """Profile for Linux VMs in the container service cluster.
 
-    :param admin_username: The administrator username to use for all Linux VMs
+    :param admin_username: The administrator user name to use for Linux VMs.
     :type admin_username: str
-    :param ssh: Specifies the ssh key configuration for Linux VMs
+    :param ssh: The ssh key configuration for Linux VMs.
     :type ssh: :class:`ContainerServiceSshConfiguration
      <azure.mgmt.compute.models.ContainerServiceSshConfiguration>`
     """ 
 
     _validation = {
-        'admin_username': {'required': True},
+        'admin_username': {'required': True, 'pattern': '^[a-z][a-z0-9_-]*$'},
         'ssh': {'required': True},
     }
 

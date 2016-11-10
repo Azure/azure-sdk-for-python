@@ -35,11 +35,11 @@ class RoleDefinitionsOperations(object):
 
     def delete(
             self, scope, role_definition_id, custom_headers=None, raw=False, **operation_config):
-        """Deletes the role definition.
+        """Deletes a role definition.
 
-        :param scope: Scope
+        :param scope: The scope of the role definition.
         :type scope: str
-        :param role_definition_id: Role definition id.
+        :param role_definition_id: The ID of the role definition to delete.
         :type role_definition_id: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -50,6 +50,7 @@ class RoleDefinitionsOperations(object):
          <azure.mgmt.authorization.models.RoleDefinition>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/{scope}/providers/Microsoft.Authorization/roleDefinitions/{roleDefinitionId}'
@@ -97,9 +98,9 @@ class RoleDefinitionsOperations(object):
             self, scope, role_definition_id, custom_headers=None, raw=False, **operation_config):
         """Get role definition by name (GUID).
 
-        :param scope: Scope
+        :param scope: The scope of the role definition.
         :type scope: str
-        :param role_definition_id: Role definition Id
+        :param role_definition_id: The ID of the role definition.
         :type role_definition_id: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -110,6 +111,7 @@ class RoleDefinitionsOperations(object):
          <azure.mgmt.authorization.models.RoleDefinition>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/{scope}/providers/Microsoft.Authorization/roleDefinitions/{roleDefinitionId}'
@@ -157,11 +159,11 @@ class RoleDefinitionsOperations(object):
             self, scope, role_definition_id, role_definition, custom_headers=None, raw=False, **operation_config):
         """Creates or updates a role definition.
 
-        :param scope: Scope
+        :param scope: The scope of the role definition.
         :type scope: str
-        :param role_definition_id: Role definition id.
+        :param role_definition_id: The ID of the role definition.
         :type role_definition_id: str
-        :param role_definition: Role definition.
+        :param role_definition: The values for the role definition.
         :type role_definition: :class:`RoleDefinition
          <azure.mgmt.authorization.models.RoleDefinition>`
         :param dict custom_headers: headers that will be added to the request
@@ -173,6 +175,7 @@ class RoleDefinitionsOperations(object):
          <azure.mgmt.authorization.models.RoleDefinition>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/{scope}/providers/Microsoft.Authorization/roleDefinitions/{roleDefinitionId}'
@@ -222,9 +225,10 @@ class RoleDefinitionsOperations(object):
 
     def get_by_id(
             self, role_definition_id, custom_headers=None, raw=False, **operation_config):
-        """Get role definition by name (GUID).
+        """Gets a role definition by ID.
 
-        :param role_definition_id: Fully qualified role definition Id
+        :param role_definition_id: The fully qualified role definition ID to
+         get.
         :type role_definition_id: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -235,6 +239,7 @@ class RoleDefinitionsOperations(object):
          <azure.mgmt.authorization.models.RoleDefinition>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/{roleDefinitionId}'
@@ -279,12 +284,12 @@ class RoleDefinitionsOperations(object):
 
     def list(
             self, scope, filter=None, custom_headers=None, raw=False, **operation_config):
-        """Get all role definitions that are applicable at scope and above. Use
-        atScopeAndBelow filter to search below the given scope as well.
+        """Get all role definitions that are applicable at scope and above.
 
-        :param scope: Scope
+        :param scope: The scope of the role definition.
         :type scope: str
-        :param filter: The filter to apply on the operation.
+        :param filter: The filter to apply on the operation. Use
+         atScopeAndBelow filter to search below the given scope as well.
         :type filter: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -293,6 +298,7 @@ class RoleDefinitionsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`RoleDefinitionPaged
          <azure.mgmt.authorization.models.RoleDefinitionPaged>`
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
 

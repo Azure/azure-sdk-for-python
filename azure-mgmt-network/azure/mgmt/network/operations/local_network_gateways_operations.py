@@ -36,17 +36,16 @@ class LocalNetworkGatewaysOperations(object):
 
     def create_or_update(
             self, resource_group_name, local_network_gateway_name, parameters, custom_headers=None, raw=False, **operation_config):
-        """The Put LocalNetworkGateway operation creates/updates a local network
-        gateway in the specified resource group through Network resource
-        provider.
+        """Creates or updates a local network gateway in the specified resource
+        group.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
         :param local_network_gateway_name: The name of the local network
          gateway.
         :type local_network_gateway_name: str
-        :param parameters: Parameters supplied to the Begin Create or update
-         Local Network Gateway operation through Network resource provider.
+        :param parameters: Parameters supplied to the create or update local
+         network gateway operation.
         :type parameters: :class:`LocalNetworkGateway
          <azure.mgmt.network.models.LocalNetworkGateway>`
         :param dict custom_headers: headers that will be added to the request
@@ -58,6 +57,7 @@ class LocalNetworkGatewaysOperations(object):
          <azure.mgmt.network.models.LocalNetworkGateway>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/localNetworkGateways/{localNetworkGatewayName}'
@@ -133,8 +133,7 @@ class LocalNetworkGatewaysOperations(object):
 
     def get(
             self, resource_group_name, local_network_gateway_name, custom_headers=None, raw=False, **operation_config):
-        """The Get LocalNetworkGateway operation retrieves information about the
-        specified local network gateway through Network resource provider.
+        """Gets the specified local network gateway in a resource group.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
@@ -150,6 +149,7 @@ class LocalNetworkGatewaysOperations(object):
          <azure.mgmt.network.models.LocalNetworkGateway>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/localNetworkGateways/{localNetworkGatewayName}'
@@ -196,8 +196,7 @@ class LocalNetworkGatewaysOperations(object):
 
     def delete(
             self, resource_group_name, local_network_gateway_name, custom_headers=None, raw=False, **operation_config):
-        """The Delete LocalNetworkGateway operation deletes the specified local
-        network Gateway through Network resource provider.
+        """Deletes the specified local network gateway.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
@@ -212,6 +211,7 @@ class LocalNetworkGatewaysOperations(object):
          instance that returns None
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/localNetworkGateways/{localNetworkGatewayName}'
@@ -274,8 +274,7 @@ class LocalNetworkGatewaysOperations(object):
 
     def list(
             self, resource_group_name, custom_headers=None, raw=False, **operation_config):
-        """The List LocalNetworkGateways operation retrieves all the local
-        network gateways stored.
+        """Gets all the local network gateways in a resource group.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
@@ -286,6 +285,7 @@ class LocalNetworkGatewaysOperations(object):
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`LocalNetworkGatewayPaged
          <azure.mgmt.network.models.LocalNetworkGatewayPaged>`
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
 

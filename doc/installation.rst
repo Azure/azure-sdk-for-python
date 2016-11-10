@@ -51,7 +51,7 @@ azure-batch                           1.1.0
 azure-mgmt-batch                      2.0.0
 azure-mgmt-devtestlabs                1.0.0
 azure-mgmt-logic                      1.0.0
-azure-mgmt-redis                      1.0.0
+azure-mgmt-redis                      2.0.0
 azure-mgmt-scheduler                  1.0.0
 azure-mgmt-servermanager              1.0.0
 azure-servicebus                      0.20.3
@@ -65,22 +65,27 @@ Preview packages
 ===================================== =========
 Package name                          Version  
 ===================================== =========
-azure-mgmt-resource                   0.30.1   
-azure-mgmt-compute                    0.30.0
-azure-mgmt-network                    0.30.0rc6
+azure-mgmt-resource                   0.31.0
+azure-mgmt-compute                    0.32.0
+azure-mgmt-network                    0.30.0
 azure-mgmt-storage                    0.30.0rc6
 azure-mgmt-keyvault                   0.30.0
 azure-graphrbac                       0.30.0rc6
 azure-mgmt-authorization              0.30.0rc6
 azure-mgmt-cdn                        0.30.0rc6
 azure-mgmt-cognitiveservices          0.30.0rc6
+azure-mgmt-containerregistry          0.1.0
 azure-mgmt-commerce                   0.30.0rc6
 azure-mgmt-dns                        0.30.0rc6
+azure-mgmt-eventhub                   0.1.0
 azure-mgmt-iothub                     0.1.0
+azure-mgmt-media                      0.1.0
 azure-mgmt-notificationhubs           0.30.0
 azure-mgmt-powerbiembedded            0.30.0rc6
+azure-mgmt-servicebus                 0.1.0
+azure-mgmt-sql                        0.1.0
 azure-mgmt-trafficmanager             0.30.0rc6
-azure-mgmt-web                        0.30.0
+azure-mgmt-web                        0.30.1
 ===================================== =========
 
 Install from Github

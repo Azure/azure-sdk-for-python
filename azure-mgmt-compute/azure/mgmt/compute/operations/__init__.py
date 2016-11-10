@@ -18,7 +18,7 @@ from .virtual_machine_sizes_operations import VirtualMachineSizesOperations
 from .virtual_machines_operations import VirtualMachinesOperations
 from .virtual_machine_scale_sets_operations import VirtualMachineScaleSetsOperations
 from .virtual_machine_scale_set_vms_operations import VirtualMachineScaleSetVMsOperations
-from .container_service_operations import ContainerServiceOperations
+from .container_services_operations import ContainerServicesOperations
 
 __all__ = [
     'AvailabilitySetsOperations',
@@ -30,5 +30,5 @@ __all__ = [
     'VirtualMachinesOperations',
     'VirtualMachineScaleSetsOperations',
     'VirtualMachineScaleSetVMsOperations',
-    'ContainerServiceOperations',
+    'ContainerServicesOperations',
 ]

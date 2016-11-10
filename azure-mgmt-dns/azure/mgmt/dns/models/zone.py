@@ -18,28 +18,28 @@ class Zone(Resource):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar id: Resource Id
+    :ivar id: Resource ID.
     :vartype id: str
-    :ivar name: Resource name
+    :ivar name: Resource name.
     :vartype name: str
-    :ivar type: Resource type
+    :ivar type: Resource type.
     :vartype type: str
-    :param location: Resource location
+    :param location: Resource location.
     :type location: str
-    :param tags: Resource tags
+    :param tags: Resource tags.
     :type tags: dict
-    :param etag: Gets or sets the ETag of the zone that is being updated, as
-     received from a Get operation.
+    :param etag: The etag of the zone.
     :type etag: str
-    :param max_number_of_record_sets: Gets or sets the maximum number of
-     record sets that can be created in this zone.
+    :param max_number_of_record_sets: The maximum number of record sets that
+     can be created in this DNS zone.  This is a read-only property and any
+     attempt to set this value will be ignored.
     :type max_number_of_record_sets: long
-    :param number_of_record_sets: Gets or sets the current number of record
-     sets in this zone.
+    :param number_of_record_sets: The current number of record sets in this
+     DNS zone.  This is a read-only property and any attempt to set this
+     value will be ignored.
     :type number_of_record_sets: long
-    :ivar name_servers: Gets the name servers populated for this zone. This
-     is a read-only property and any attempt to set this value will be
-     ignored.
+    :ivar name_servers: The name servers for this DNS zone. This is a
+     read-only property and any attempt to set this value will be ignored.
     :vartype name_servers: list of str
     """ 
 

@@ -15,8 +15,7 @@ from msrest.serialization import Model
 class CnameRecord(Model):
     """A CNAME record.
 
-    :param cname: Gets or sets the canonical name for this record without a
-     terminating dot.
+    :param cname: The canonical name for this CNAME record.
     :type cname: str
     """ 
 

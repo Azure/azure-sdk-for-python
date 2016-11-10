@@ -13,15 +13,19 @@ from msrest.serialization import Model
 
 
 class ConnectionSharedKey(Model):
-    """Response for GetConnectionSharedKey Api service call.
+    """Response for GetConnectionSharedKey API service call.
 
-    :param value: The virtual network connection shared key value
+    :param value: The virtual network connection shared key value.
     :type value: str
     """ 
+
+    _validation = {
+        'value': {'required': True},
+    }
 
     _attribute_map = {
         'value': {'key': 'value', 'type': 'str'},
     }
 
-    def __init__(self, value=None):
+    def __init__(self, value):
         self.value = value
