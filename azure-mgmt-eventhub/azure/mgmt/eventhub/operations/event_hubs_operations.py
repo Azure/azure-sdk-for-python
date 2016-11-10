@@ -35,7 +35,7 @@ class EventHubsOperations(object):
 
     def list_all(
             self, resource_group_name, namespace_name, custom_headers=None, raw=False, **operation_config):
-        """Enumerates the Event Hubs in a namespace.
+        """Gets all the Event Hubs in a namespace.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
@@ -104,16 +104,17 @@ class EventHubsOperations(object):
 
     def create_or_update(
             self, resource_group_name, namespace_name, event_hub_name, parameters, custom_headers=None, raw=False, **operation_config):
-        """Creates/Updates a new Event Hub as a nested resource within a
+        """Creates or updates a new Event Hub as a nested resource within a
         namespace.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
         :param namespace_name: The namespace name.
         :type namespace_name: str
-        :param event_hub_name: The EventHub name.
+        :param event_hub_name: The Event Hub name.
         :type event_hub_name: str
-        :param parameters: Parameters supplied to create a EventHub Resource.
+        :param parameters: Parameters supplied to create an Event Hub
+         resource.
         :type parameters: :class:`EventHubCreateOrUpdateParameters
          <azure.mgmt.eventhub.models.EventHubCreateOrUpdateParameters>`
         :param dict custom_headers: headers that will be added to the request
@@ -177,13 +178,13 @@ class EventHubsOperations(object):
 
     def delete(
             self, resource_group_name, namespace_name, event_hub_name, custom_headers=None, raw=False, **operation_config):
-        """Deletes an Event hub from the specified namespace and resource group.
+        """Deletes an Event Hub from the specified namespace and resource group.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
         :param namespace_name: The namespace name.
         :type namespace_name: str
-        :param event_hub_name: The EventHub name.
+        :param event_hub_name: The name of the Event Hub to delete.
         :type event_hub_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -234,13 +235,13 @@ class EventHubsOperations(object):
 
     def get(
             self, resource_group_name, namespace_name, event_hub_name, custom_headers=None, raw=False, **operation_config):
-        """Returns an Event Hub description for the specified Event Hub.
+        """Gets an Event Hubs description for the specified Event Hub.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
         :param namespace_name: The namespace name.
         :type namespace_name: str
-        :param event_hub_name: The EventHub name.
+        :param event_hub_name: The Event Hub name.
         :type event_hub_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -299,13 +300,13 @@ class EventHubsOperations(object):
 
     def list_authorization_rules(
             self, resource_group_name, namespace_name, event_hub_name, custom_headers=None, raw=False, **operation_config):
-        """Authorization rules for a EventHub.
+        """Gets the authorization rules for an Event Hub.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
-        :param namespace_name: The NameSpace name
+        :param namespace_name: The namespace name
         :type namespace_name: str
-        :param event_hub_name: The EventHub name.
+        :param event_hub_name: The Event Hub name.
         :type event_hub_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -371,7 +372,7 @@ class EventHubsOperations(object):
 
     def create_or_update_authorization_rule(
             self, resource_group_name, namespace_name, event_hub_name, authorization_rule_name, parameters, custom_headers=None, raw=False, **operation_config):
-        """Creates an authorization rule for the specified Event Hub.
+        """Creates or updates an authorization rule for the specified Event Hub.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
@@ -379,7 +380,7 @@ class EventHubsOperations(object):
         :type namespace_name: str
         :param event_hub_name: The Event Hub name.
         :type event_hub_name: str
-        :param authorization_rule_name: Aauthorization Rule Name.
+        :param authorization_rule_name: The authorization rule name.
         :type authorization_rule_name: str
         :param parameters: The shared access authorization rule.
         :type parameters:
@@ -447,15 +448,15 @@ class EventHubsOperations(object):
 
     def get_authorization_rule(
             self, resource_group_name, namespace_name, event_hub_name, authorization_rule_name, custom_headers=None, raw=False, **operation_config):
-        """Authorization rule for a EventHub by name.
+        """Gets an authorization rule for an Event Hub by rule name.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
-        :param namespace_name: The namespace name
+        :param namespace_name: The namespace name.
         :type namespace_name: str
         :param event_hub_name: The Event Hub name.
         :type event_hub_name: str
-        :param authorization_rule_name: Authorization rule name.
+        :param authorization_rule_name: The authorization rule name.
         :type authorization_rule_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -515,15 +516,15 @@ class EventHubsOperations(object):
 
     def delete_authorization_rule(
             self, resource_group_name, namespace_name, event_hub_name, authorization_rule_name, custom_headers=None, raw=False, **operation_config):
-        """Deletes a EventHub authorization rule.
+        """Deletes an Event Hubs authorization rule.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
         :param namespace_name: The namespace name.
         :type namespace_name: str
-        :param event_hub_name: The Eventhub name.
+        :param event_hub_name: The Event Hub name.
         :type event_hub_name: str
-        :param authorization_rule_name: Authorization Rule Name.
+        :param authorization_rule_name: The authorization rule name.
         :type authorization_rule_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -575,16 +576,16 @@ class EventHubsOperations(object):
 
     def list_keys(
             self, resource_group_name, namespace_name, event_hub_name, authorization_rule_name, custom_headers=None, raw=False, **operation_config):
-        """Returns the ACS and SAS connection strings for the Event Hub.
+        """Gets the ACS and SAS connection strings for the Event Hub.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
         :param namespace_name: The namespace name.
         :type namespace_name: str
-        :param event_hub_name: The event hub name.
+        :param event_hub_name: The Event Hub name.
         :type event_hub_name: str
         :param authorization_rule_name: The connection string of the
-         namespace for the specified authorizationRule.
+         namespace for the specified authorization rule.
         :type authorization_rule_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -650,12 +651,12 @@ class EventHubsOperations(object):
         :type resource_group_name: str
         :param namespace_name: The namespace name.
         :type namespace_name: str
-        :param event_hub_name: The event hub name.
+        :param event_hub_name: The Event Hub name.
         :type event_hub_name: str
-        :param authorization_rule_name: The connection string of the EventHub
-         for the specified authorizationRule.
+        :param authorization_rule_name: The connection string of the Event
+         Hub for the specified authorization rule.
         :type authorization_rule_name: str
-        :param policykey: Key that needs to be regenerated . Possible values
+        :param policykey: Key that needs to be regenerated. Possible values
          include: 'PrimaryKey', 'SecondaryKey'
         :type policykey: str or :class:`Policykey
          <azure.mgmt.eventhub.models.Policykey>`

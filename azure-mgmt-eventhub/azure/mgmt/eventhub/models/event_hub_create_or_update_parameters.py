@@ -13,7 +13,7 @@ from msrest.serialization import Model
 
 
 class EventHubCreateOrUpdateParameters(Model):
-    """Parameters supplied to the CreateOrUpdate EventHub operation.
+    """Parameters supplied to the Create Or Update Event Hub operation.
 
     :param location: Location of the resource.
     :type location: str
