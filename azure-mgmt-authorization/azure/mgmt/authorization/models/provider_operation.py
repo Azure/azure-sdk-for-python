@@ -15,15 +15,15 @@ from msrest.serialization import Model
 class ProviderOperation(Model):
     """Operation.
 
-    :param name: Gets or sets the operation name
+    :param name: The operation name.
     :type name: str
-    :param display_name: Gets or sets the operation display name
+    :param display_name: The operation display name.
     :type display_name: str
-    :param description: Gets or sets the operation description
+    :param description: The operation description.
     :type description: str
-    :param origin: Gets or sets the operation origin
+    :param origin: The operation origin.
     :type origin: str
-    :param properties: Gets or sets the operation properties
+    :param properties: The operation properties.
     :type properties: object
     """ 
 
