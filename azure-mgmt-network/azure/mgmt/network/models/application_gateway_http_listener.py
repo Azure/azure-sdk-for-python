@@ -54,7 +54,7 @@ class ApplicationGatewayHttpListener(SubResource):
         'frontend_port': {'key': 'properties.frontendPort', 'type': 'SubResource'},
         'protocol': {'key': 'properties.protocol', 'type': 'str'},
         'host_name': {'key': 'properties.hostName', 'type': 'str'},
-        'ssl_certificate': {'key': 'properties.SSLCertificate', 'type': 'SubResource'},
+        'ssl_certificate': {'key': 'properties.sslCertificate', 'type': 'SubResource'},
         'require_server_name_indication': {'key': 'properties.requireServerNameIndication', 'type': 'bool'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},

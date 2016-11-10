@@ -66,7 +66,7 @@ class VirtualNetwork(Resource):
         'address_space': {'key': 'properties.addressSpace', 'type': 'AddressSpace'},
         'dhcp_options': {'key': 'properties.dhcpOptions', 'type': 'DhcpOptions'},
         'subnets': {'key': 'properties.subnets', 'type': '[Subnet]'},
-        'virtual_network_peerings': {'key': 'properties.VirtualNetworkPeerings', 'type': '[VirtualNetworkPeering]'},
+        'virtual_network_peerings': {'key': 'properties.virtualNetworkPeerings', 'type': '[VirtualNetworkPeering]'},
         'resource_guid': {'key': 'properties.resourceGuid', 'type': 'str'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'etag': {'key': 'etag', 'type': 'str'},
