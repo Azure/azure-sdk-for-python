@@ -23,9 +23,16 @@ class CloudJobSchedule(Model):
     :type display_name: str
     :param url: The URL of the job schedule.
     :type url: str
-    :param e_tag: The ETag of the job schedule.
+    :param e_tag: The ETag of the job schedule. This is an opaque string. You
+     can use it to detect whether the job schedule has changed between
+     requests. In particular, you can be pass the ETag with an Update Job
+     Schedule request to specify that your changes should take effect only if
+     nobody else has modified the schedule in the meantime.
     :type e_tag: str
-    :param last_modified: The last modified time of the job schedule.
+    :param last_modified: The last modified time of the job schedule. This is
+     the last time at which the schedule level data, such as the job
+     specification or recurrence information, changed. It does not factor in
+     job-level changes such as new jobs being created or jobs changing state.
     :type last_modified: datetime
     :param creation_time: The creation time of the job schedule.
     :type creation_time: datetime
@@ -36,13 +43,15 @@ class CloudJobSchedule(Model):
     :param state_transition_time: The time at which the job schedule entered
      the current state.
     :type state_transition_time: datetime
-    :param previous_state: The previous state of the job schedule. Possible
-     values include: 'active', 'completed', 'disabled', 'terminating',
-     'deleting'
+    :param previous_state: The previous state of the job schedule. This
+     property is not present if the job schedule is in its initial active
+     state. Possible values include: 'active', 'completed', 'disabled',
+     'terminating', 'deleting'
     :type previous_state: str or :class:`JobScheduleState
      <azure.batch.models.JobScheduleState>`
     :param previous_state_transition_time: The time at which the job schedule
-     entered its previous state.
+     entered its previous state. This property is not present if the job
+     schedule is in its initial active state.
     :type previous_state_transition_time: datetime
     :param schedule: The schedule according to which jobs will be created.
     :type schedule: :class:`Schedule <azure.batch.models.Schedule>`
@@ -55,7 +64,8 @@ class CloudJobSchedule(Model):
     :type execution_info: :class:`JobScheduleExecutionInformation
      <azure.batch.models.JobScheduleExecutionInformation>`
     :param metadata: A list of name-value pairs associated with the schedule
-     as metadata.
+     as metadata. The Batch service does not assign any meaning to metadata; it
+     is solely for the use of user code.
     :type metadata: list of :class:`MetadataItem
      <azure.batch.models.MetadataItem>`
     :param stats: The lifetime resource usage statistics for the job schedule.

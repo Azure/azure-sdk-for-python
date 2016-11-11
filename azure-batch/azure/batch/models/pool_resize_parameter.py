@@ -13,17 +13,19 @@ from msrest.serialization import Model
 
 
 class PoolResizeParameter(Model):
-    """Parameters for a CloudPoolOperations.Resize request.
+    """Options for changing the size of a pool.
 
     :param target_dedicated: The desired number of compute nodes in the pool.
     :type target_dedicated: int
     :param resize_timeout: The timeout for allocation of compute nodes to the
-     pool or removal of compute nodes from the pool. The default value is 10
-     minutes.
+     pool or removal of compute nodes from the pool. The default value is 15
+     minutes. The minimum value is 5 minutes. If you specify a value less than
+     5 minutes, the Batch service returns an error; if you are calling the REST
+     API directly, the HTTP status code is 400 (Bad Request).
     :type resize_timeout: timedelta
     :param node_deallocation_option: When nodes may be removed from the pool,
-     if the pool size is decreasing. Possible values include: 'requeue',
-     'terminate', 'taskcompletion', 'retaineddata'
+     if the pool size is decreasing. The default value is requeue. Possible
+     values include: 'requeue', 'terminate', 'taskcompletion', 'retaineddata'
     :type node_deallocation_option: str or
      :class:`ComputeNodeDeallocationOption
      <azure.batch.models.ComputeNodeDeallocationOption>`

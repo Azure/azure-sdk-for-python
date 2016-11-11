@@ -34,11 +34,11 @@ class ResourceStatistics(Model):
     :param avg_disk_gi_b: The average used disk space in GiB across all nodes
      in the pool.
     :type avg_disk_gi_b: float
-    :param peak_disk_gi_b: The peak used disk space in GiB across all nodes
-     in the pool.
+    :param peak_disk_gi_b: The peak used disk space in GiB across all nodes in
+     the pool.
     :type peak_disk_gi_b: float
-    :param disk_read_iops: The total number of disk read operations across
-     all nodes in the pool.
+    :param disk_read_iops: The total number of disk read operations across all
+     nodes in the pool.
     :type disk_read_iops: long
     :param disk_write_iops: The total number of disk write operations across
      all nodes in the pool.
@@ -49,8 +49,8 @@ class ResourceStatistics(Model):
     :param disk_write_gi_b: The total amount of data in GiB of disk writes
      across all nodes in the pool.
     :type disk_write_gi_b: float
-    :param network_read_gi_b: The total amount of data in GiB of network
-     reads across all nodes in the pool.
+    :param network_read_gi_b: The total amount of data in GiB of network reads
+     across all nodes in the pool.
     :type network_read_gi_b: float
     :param network_write_gi_b: The total amount of data in GiB of network
      writes across all nodes in the pool.

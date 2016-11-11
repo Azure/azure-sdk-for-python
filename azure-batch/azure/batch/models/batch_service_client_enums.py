@@ -69,6 +69,18 @@ class PoolLifetimeOption(Enum):
     unmapped = "unmapped"
 
 
+class OnAllTasksComplete(Enum):
+
+    no_action = "noAction"
+    terminate_job = "terminateJob"
+
+
+class OnTaskFailure(Enum):
+
+    no_action = "noAction"
+    perform_exit_options_job_action = "performExitOptionsJobAction"
+
+
 class JobScheduleState(Enum):
 
     active = "active"
@@ -94,18 +106,6 @@ class JobState(Enum):
     terminating = "terminating"
     completed = "completed"
     deleting = "deleting"
-
-
-class OnAllTasksComplete(Enum):
-
-    no_action = "noAction"
-    terminate_job = "terminateJob"
-
-
-class OnTaskFailure(Enum):
-
-    no_action = "noAction"
-    perform_exit_options_job_action = "performExitOptionsJobAction"
 
 
 class JobPreparationTaskState(Enum):

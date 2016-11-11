@@ -15,15 +15,15 @@ from msrest.serialization import Model
 class JobSchedulingError(Model):
     """An error encountered by the Batch service when scheduling a job.
 
-    :param category: The category of the job scheduling error. Possible
-     values include: 'usererror', 'servererror', 'unmapped'
+    :param category: The category of the job scheduling error. Possible values
+     include: 'usererror', 'servererror', 'unmapped'
     :type category: str or :class:`SchedulingErrorCategory
      <azure.batch.models.SchedulingErrorCategory>`
     :param code: An identifier for the job scheduling error. Codes are
      invariant and are intended to be consumed programmatically.
     :type code: str
-    :param message: A message describing the job scheduling error, intended
-     to be suitable for display in a user interface.
+    :param message: A message describing the job scheduling error, intended to
+     be suitable for display in a user interface.
     :type message: str
     :param details: A list of additional error details related to the
      scheduling error.

@@ -13,7 +13,7 @@ from msrest.serialization import Model
 
 
 class NodeRebootParameter(Model):
-    """Parameters for a ComputeNodeOperations.Reboot request.
+    """Options for rebooting a compute node.
 
     :param node_reboot_option: When to reboot the compute node and what to do
      with currently running tasks. The default value is requeue. Possible
