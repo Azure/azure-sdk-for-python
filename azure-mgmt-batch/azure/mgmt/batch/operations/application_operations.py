@@ -10,7 +10,6 @@
 # --------------------------------------------------------------------------
 
 from msrest.pipeline import ClientRawResponse
-from msrestazure.azure_exceptions import CloudError
 import uuid
 
 from .. import models
@@ -42,7 +41,7 @@ class ApplicationOperations(object):
         :type resource_group_name: str
         :param account_name: The name of the Batch account.
         :type account_name: str
-        :param application_id: The id of the application.
+        :param application_id: The ID of the application.
         :type application_id: str
         :param allow_updates: A value indicating whether packages within the
          application may be overwritten using the same version string.
@@ -57,6 +56,8 @@ class ApplicationOperations(object):
         :rtype: :class:`Application <azure.mgmt.batch.models.Application>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`ErrorBodyException<azure.mgmt.batch.models.ErrorBodyException>`
         """
         parameters = None
         if allow_updates is not None or display_name is not None:
@@ -98,9 +99,7 @@ class ApplicationOperations(object):
             request, header_parameters, body_content, **operation_config)
 
         if response.status_code not in [201]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.ErrorBodyException(self._deserialize, response)
 
         deserialized = None
 
@@ -122,7 +121,7 @@ class ApplicationOperations(object):
         :type resource_group_name: str
         :param account_name: The name of the Batch account.
         :type account_name: str
-        :param application_id: The id of the application.
+        :param application_id: The ID of the application.
         :type application_id: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -132,6 +131,8 @@ class ApplicationOperations(object):
         :rtype: None
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`ErrorBodyException<azure.mgmt.batch.models.ErrorBodyException>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Batch/batchAccounts/{accountName}/applications/{applicationId}'
@@ -162,9 +163,7 @@ class ApplicationOperations(object):
         response = self._client.send(request, header_parameters, **operation_config)
 
         if response.status_code not in [204]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.ErrorBodyException(self._deserialize, response)
 
         if raw:
             client_raw_response = ClientRawResponse(None, response)
@@ -179,7 +178,7 @@ class ApplicationOperations(object):
         :type resource_group_name: str
         :param account_name: The name of the Batch account.
         :type account_name: str
-        :param application_id: The id of the application.
+        :param application_id: The ID of the application.
         :type application_id: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -189,6 +188,8 @@ class ApplicationOperations(object):
         :rtype: :class:`Application <azure.mgmt.batch.models.Application>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`ErrorBodyException<azure.mgmt.batch.models.ErrorBodyException>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Batch/batchAccounts/{accountName}/applications/{applicationId}'
@@ -219,9 +220,7 @@ class ApplicationOperations(object):
         response = self._client.send(request, header_parameters, **operation_config)
 
         if response.status_code not in [200]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.ErrorBodyException(self._deserialize, response)
 
         deserialized = None
 
@@ -243,7 +242,7 @@ class ApplicationOperations(object):
         :type resource_group_name: str
         :param account_name: The name of the Batch account.
         :type account_name: str
-        :param application_id: The id of the application.
+        :param application_id: The ID of the application.
         :type application_id: str
         :param parameters: The parameters for the request.
         :type parameters: :class:`UpdateApplicationParameters
@@ -256,6 +255,8 @@ class ApplicationOperations(object):
         :rtype: None
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`ErrorBodyException<azure.mgmt.batch.models.ErrorBodyException>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Batch/batchAccounts/{accountName}/applications/{applicationId}'
@@ -290,9 +291,7 @@ class ApplicationOperations(object):
             request, header_parameters, body_content, **operation_config)
 
         if response.status_code not in [204]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.ErrorBodyException(self._deserialize, response)
 
         if raw:
             client_raw_response = ClientRawResponse(None, response)
@@ -317,6 +316,8 @@ class ApplicationOperations(object):
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`ApplicationPaged
          <azure.mgmt.batch.models.ApplicationPaged>`
+        :raises:
+         :class:`ErrorBodyException<azure.mgmt.batch.models.ErrorBodyException>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -356,9 +357,7 @@ class ApplicationOperations(object):
                 request, header_parameters, **operation_config)
 
             if response.status_code not in [200]:
-                exp = CloudError(response)
-                exp.request_id = response.headers.get('x-ms-request-id')
-                raise exp
+                raise models.ErrorBodyException(self._deserialize, response)
 
             return response
 

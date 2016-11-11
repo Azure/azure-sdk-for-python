@@ -18,7 +18,7 @@ class BatchAccount(Resource):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar id: The id of the resource
+    :ivar id: The ID of the resource
     :vartype id: str
     :ivar name: The name of the resource
     :vartype name: str
@@ -28,16 +28,16 @@ class BatchAccount(Resource):
     :type location: str
     :param tags: The tags of the resource
     :type tags: dict
-    :ivar account_endpoint: The endpoint used by this account to interact
-     with the Batch services.
+    :ivar account_endpoint: The endpoint used by this account to interact with
+     the Batch services.
     :vartype account_endpoint: str
-    :param provisioning_state: The provisioned state of the resource.
-     Possible values include: 'Invalid', 'Creating', 'Deleting', 'Succeeded',
-     'Failed', 'Cancelled'
+    :param provisioning_state: The provisioned state of the resource. Possible
+     values include: 'Invalid', 'Creating', 'Deleting', 'Succeeded', 'Failed',
+     'Cancelled'
     :type provisioning_state: str or :class:`ProvisioningState
      <azure.mgmt.batch.models.ProvisioningState>`
-    :param auto_storage: The properties and status of any auto storage
-     account associated with the account.
+    :param auto_storage: The properties and status of any auto storage account
+     associated with the account.
     :type auto_storage: :class:`AutoStorageProperties
      <azure.mgmt.batch.models.AutoStorageProperties>`
     :param core_quota: The core quota for this Batch account.

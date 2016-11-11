@@ -10,7 +10,6 @@
 # --------------------------------------------------------------------------
 
 from msrest.pipeline import ClientRawResponse
-from msrestazure.azure_exceptions import CloudError
 from msrestazure.azure_operation import AzureOperationPoller
 import uuid
 
@@ -37,18 +36,18 @@ class BatchAccountOperations(object):
     def create(
             self, resource_group_name, account_name, parameters, custom_headers=None, raw=False, **operation_config):
         """Creates a new Batch account with the specified parameters. Existing
-        accounts cannot be updated with this API and should instead be
-        updated with the Update Batch Account API.
+        accounts cannot be updated with this API and should instead be updated
+        with the Update Batch Account API.
 
         :param resource_group_name: The name of the resource group that
          contains the new Batch account.
         :type resource_group_name: str
-        :param account_name: A name for the Batch account which must be
-         unique within the region. Batch account names must be between 3 and
-         24 characters in length and must use only numbers and lowercase
-         letters. This name is used as part of the DNS name that is used to
-         access the Batch service in the region in which the account is
-         created. For example: http://accountname.region.batch.azure.com/.
+        :param account_name: A name for the Batch account which must be unique
+         within the region. Batch account names must be between 3 and 24
+         characters in length and must use only numbers and lowercase letters.
+         This name is used as part of the DNS name that is used to access the
+         Batch service in the region in which the account is created. For
+         example: http://accountname.region.batch.azure.com/.
         :type account_name: str
         :param parameters: Additional parameters for account creation.
         :type parameters: :class:`BatchAccountCreateParameters
@@ -62,6 +61,8 @@ class BatchAccountOperations(object):
          <azure.mgmt.batch.models.BatchAccount>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`ErrorBodyException<azure.mgmt.batch.models.ErrorBodyException>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Batch/batchAccounts/{accountName}'
@@ -106,18 +107,22 @@ class BatchAccountOperations(object):
 
         def get_long_running_output(response):
 
-            if response.status_code not in [202, 200]:
-                exp = CloudError(response)
-                exp.request_id = response.headers.get('x-ms-request-id')
-                raise exp
+            if response.status_code not in [200, 202]:
+                raise models.ErrorBodyException(self._deserialize, response)
 
             deserialized = None
+            header_dict = {}
 
             if response.status_code == 200:
                 deserialized = self._deserialize('BatchAccount', response)
+                header_dict = {
+                    'Location': 'str',
+                    'Retry-After': 'int',
+                }
 
             if raw:
                 client_raw_response = ClientRawResponse(deserialized, response)
+                client_raw_response.add_headers(header_dict)
                 return client_raw_response
 
             return deserialized
@@ -155,6 +160,8 @@ class BatchAccountOperations(object):
         :rtype: :class:`BatchAccount <azure.mgmt.batch.models.BatchAccount>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`ErrorBodyException<azure.mgmt.batch.models.ErrorBodyException>`
         """
         parameters = models.BatchAccountUpdateParameters(tags=tags, auto_storage=auto_storage)
 
@@ -190,9 +197,7 @@ class BatchAccountOperations(object):
             request, header_parameters, body_content, **operation_config)
 
         if response.status_code not in [200]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.ErrorBodyException(self._deserialize, response)
 
         deserialized = None
 
@@ -222,6 +227,8 @@ class BatchAccountOperations(object):
          instance that returns None
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`ErrorBodyException<azure.mgmt.batch.models.ErrorBodyException>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Batch/batchAccounts/{accountName}'
@@ -262,13 +269,15 @@ class BatchAccountOperations(object):
 
         def get_long_running_output(response):
 
-            if response.status_code not in [202, 204, 200]:
-                exp = CloudError(response)
-                exp.request_id = response.headers.get('x-ms-request-id')
-                raise exp
+            if response.status_code not in [200, 202]:
+                raise models.ErrorBodyException(self._deserialize, response)
 
             if raw:
                 client_raw_response = ClientRawResponse(None, response)
+                client_raw_response.add_headers({
+                    'Location': 'str',
+                    'Retry-After': 'int',
+                })
                 return client_raw_response
 
         if raw:
@@ -299,6 +308,8 @@ class BatchAccountOperations(object):
         :rtype: :class:`BatchAccount <azure.mgmt.batch.models.BatchAccount>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`ErrorBodyException<azure.mgmt.batch.models.ErrorBodyException>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Batch/batchAccounts/{accountName}'
@@ -328,9 +339,7 @@ class BatchAccountOperations(object):
         response = self._client.send(request, header_parameters, **operation_config)
 
         if response.status_code not in [200]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.ErrorBodyException(self._deserialize, response)
 
         deserialized = None
 
@@ -355,6 +364,8 @@ class BatchAccountOperations(object):
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`BatchAccountPaged
          <azure.mgmt.batch.models.BatchAccountPaged>`
+        :raises:
+         :class:`ErrorBodyException<azure.mgmt.batch.models.ErrorBodyException>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -390,9 +401,7 @@ class BatchAccountOperations(object):
                 request, header_parameters, **operation_config)
 
             if response.status_code not in [200]:
-                exp = CloudError(response)
-                exp.request_id = response.headers.get('x-ms-request-id')
-                raise exp
+                raise models.ErrorBodyException(self._deserialize, response)
 
             return response
 
@@ -411,8 +420,8 @@ class BatchAccountOperations(object):
         """Gets information about the Batch accounts associated within the
         specified resource group.
 
-        :param resource_group_name: The name of the resource group whose
-         Batch accounts to list.
+        :param resource_group_name: The name of the resource group whose Batch
+         accounts to list.
         :type resource_group_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -421,6 +430,8 @@ class BatchAccountOperations(object):
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`BatchAccountPaged
          <azure.mgmt.batch.models.BatchAccountPaged>`
+        :raises:
+         :class:`ErrorBodyException<azure.mgmt.batch.models.ErrorBodyException>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -457,9 +468,7 @@ class BatchAccountOperations(object):
                 request, header_parameters, **operation_config)
 
             if response.status_code not in [200]:
-                exp = CloudError(response)
-                exp.request_id = response.headers.get('x-ms-request-id')
-                raise exp
+                raise models.ErrorBodyException(self._deserialize, response)
 
             return response
 
@@ -491,6 +500,8 @@ class BatchAccountOperations(object):
         :rtype: None
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`ErrorBodyException<azure.mgmt.batch.models.ErrorBodyException>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Batch/batchAccounts/{accountName}/syncAutoStorageKeys'
@@ -520,9 +531,7 @@ class BatchAccountOperations(object):
         response = self._client.send(request, header_parameters, **operation_config)
 
         if response.status_code not in [204]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.ErrorBodyException(self._deserialize, response)
 
         if raw:
             client_raw_response = ClientRawResponse(None, response)
@@ -530,7 +539,7 @@ class BatchAccountOperations(object):
 
     def regenerate_key(
             self, resource_group_name, account_name, key_name, custom_headers=None, raw=False, **operation_config):
-        """Regenerates the specified account key for the specified Batch account.
+        """Regenerates the specified account key for the Batch account.
 
         :param resource_group_name: The name of the resource group that
          contains the Batch account.
@@ -550,6 +559,8 @@ class BatchAccountOperations(object):
          <azure.mgmt.batch.models.BatchAccountKeys>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`ErrorBodyException<azure.mgmt.batch.models.ErrorBodyException>`
         """
         parameters = models.BatchAccountRegenerateKeyParameters(key_name=key_name)
 
@@ -585,9 +596,7 @@ class BatchAccountOperations(object):
             request, header_parameters, body_content, **operation_config)
 
         if response.status_code not in [200]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.ErrorBodyException(self._deserialize, response)
 
         deserialized = None
 
@@ -618,6 +627,8 @@ class BatchAccountOperations(object):
          <azure.mgmt.batch.models.BatchAccountKeys>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`ErrorBodyException<azure.mgmt.batch.models.ErrorBodyException>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Batch/batchAccounts/{accountName}/listKeys'
@@ -647,9 +658,7 @@ class BatchAccountOperations(object):
         response = self._client.send(request, header_parameters, **operation_config)
 
         if response.status_code not in [200]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.ErrorBodyException(self._deserialize, response)
 
         deserialized = None
 
