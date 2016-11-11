@@ -13,16 +13,20 @@ from msrest.serialization import Model
 
 
 class JobSchedulePatchParameter(Model):
-    """Parameters for a CloudJobScheduleOperations.Patch request.
+    """The set of changes to be made to a job schedule.
 
-    :param schedule: The schedule according to which jobs will be created.
+    :param schedule: The schedule according to which jobs will be created. If
+     you do not specify this element, the existing schedule is left unchanged.
     :type schedule: :class:`Schedule <azure.batch.models.Schedule>`
     :param job_specification: The details of the jobs to be created on this
-     schedule.
+     schedule. Updates affect only jobs that are started after the update has
+     taken place. Any currently active job continues with the older
+     specification.
     :type job_specification: :class:`JobSpecification
      <azure.batch.models.JobSpecification>`
     :param metadata: A list of name-value pairs associated with the job
-     schedule as metadata.
+     schedule as metadata. If you do not specify this element, existing
+     metadata is left unchanged.
     :type metadata: list of :class:`MetadataItem
      <azure.batch.models.MetadataItem>`
     """ 

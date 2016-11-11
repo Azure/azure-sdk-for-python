@@ -21,9 +21,9 @@ class ComputeNodeInformation(Model):
     :type affinity_id: str
     :param node_url: The URL of the node on which the task ran. .
     :type node_url: str
-    :param pool_id: The id of the pool on which the task ran.
+    :param pool_id: The ID of the pool on which the task ran.
     :type pool_id: str
-    :param node_id: The id of the node on which the task ran.
+    :param node_id: The ID of the node on which the task ran.
     :type node_id: str
     :param task_root_directory: The root directory of the task on the compute
      node.

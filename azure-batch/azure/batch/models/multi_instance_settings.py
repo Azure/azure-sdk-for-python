@@ -18,10 +18,13 @@ class MultiInstanceSettings(Model):
     Multi-instance tasks are commonly used to support MPI tasks.
 
     :param number_of_instances: The number of compute nodes required by the
-     multi-instance task.
+     task.
     :type number_of_instances: int
-    :param coordination_command_line: The command to run on the compute node
-     instances for coordinating among the subtasks.
+    :param coordination_command_line: The command line to run on all the
+     compute nodes to enable them to coordinate when the primary runs the main
+     task command. A typical coordination command line launches a background
+     service and verifies that the service is ready to process inter-node
+     messages.
     :type coordination_command_line: str
     :param common_resource_files: A list of files that the Batch service will
      download before running the coordination command line. The difference

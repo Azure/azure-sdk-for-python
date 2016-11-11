@@ -37,8 +37,8 @@ class JobOperations(object):
         """Gets lifetime summary statistics for all of the jobs in the specified
         account.
 
-        Statistics are aggregated across all jobs that have ever existed in
-        the account, from account creation to the last update time of the
+        Statistics are aggregated across all jobs that have ever existed in the
+        account, from account creation to the last update time of the
         statistics.
 
         :param job_get_all_jobs_lifetime_statistics_options: Additional
@@ -54,6 +54,8 @@ class JobOperations(object):
         :rtype: :class:`JobStatistics <azure.batch.models.JobStatistics>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`BatchErrorException<azure.batch.models.BatchErrorException>`
         """
         timeout = None
         if job_get_all_jobs_lifetime_statistics_options is not None:
@@ -123,7 +125,13 @@ class JobOperations(object):
             self, job_id, job_delete_options=None, custom_headers=None, raw=False, **operation_config):
         """Deletes a job.
 
-        :param job_id: The id of the job to delete.
+        Deleting a job also deletes all tasks that are part of that job, and
+        all job statistics. This also overrides the retention period for task
+        data; that is, if the job contains tasks which are still retained on
+        compute nodes, the Batch services deletes those tasks' working
+        directories and all their contents.
+
+        :param job_id: The ID of the job to delete.
         :type job_id: str
         :param job_delete_options: Additional parameters for the operation
         :type job_delete_options: :class:`JobDeleteOptions
@@ -136,6 +144,8 @@ class JobOperations(object):
         :rtype: None
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`BatchErrorException<azure.batch.models.BatchErrorException>`
         """
         timeout = None
         if job_delete_options is not None:
@@ -218,7 +228,7 @@ class JobOperations(object):
             self, job_id, job_get_options=None, custom_headers=None, raw=False, **operation_config):
         """Gets information about the specified job.
 
-        :param job_id: The id of the job.
+        :param job_id: The ID of the job.
         :type job_id: str
         :param job_get_options: Additional parameters for the operation
         :type job_get_options: :class:`JobGetOptions
@@ -231,6 +241,8 @@ class JobOperations(object):
         :rtype: :class:`CloudJob <azure.batch.models.CloudJob>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`BatchErrorException<azure.batch.models.BatchErrorException>`
         """
         select = None
         if job_get_options is not None:
@@ -332,9 +344,13 @@ class JobOperations(object):
 
     def patch(
             self, job_id, job_patch_parameter, job_patch_options=None, custom_headers=None, raw=False, **operation_config):
-        """Updates the properties of a job.
+        """Updates the properties of the specified job.
 
-        :param job_id: The id of the job whose properties you want to update.
+        This replaces only the job properties specified in the request. For
+        example, if the job has constraints, and a request does not specify the
+        constraints element, then the job keeps the existing constraints.
+
+        :param job_id: The ID of the job whose properties you want to update.
         :type job_id: str
         :param job_patch_parameter: The parameters for the request.
         :type job_patch_parameter: :class:`JobPatchParameter
@@ -350,6 +366,8 @@ class JobOperations(object):
         :rtype: None
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`BatchErrorException<azure.batch.models.BatchErrorException>`
         """
         timeout = None
         if job_patch_options is not None:
@@ -437,9 +455,14 @@ class JobOperations(object):
 
     def update(
             self, job_id, job_update_parameter, job_update_options=None, custom_headers=None, raw=False, **operation_config):
-        """Updates the properties of a job.
+        """Updates the properties of the specified job.
 
-        :param job_id: The id of the job whose properties you want to update.
+        This fully replaces all the updateable properties of the job. For
+        example, if the job has constraints associated with it and if
+        constraints is not specified with this request, then the Batch service
+        will remove the existing constraints.
+
+        :param job_id: The ID of the job whose properties you want to update.
         :type job_id: str
         :param job_update_parameter: The parameters for the request.
         :type job_update_parameter: :class:`JobUpdateParameter
@@ -455,6 +478,8 @@ class JobOperations(object):
         :rtype: None
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`BatchErrorException<azure.batch.models.BatchErrorException>`
         """
         timeout = None
         if job_update_options is not None:
@@ -544,10 +569,24 @@ class JobOperations(object):
             self, job_id, disable_tasks, job_disable_options=None, custom_headers=None, raw=False, **operation_config):
         """Disables the specified job, preventing new tasks from running.
 
-        :param job_id: The id of the job to disable.
+        The Batch Service immediately moves the job to the disabling state.
+        Batch then uses the disableTasks parameter to determine what to do with
+        the currently running tasks of the job. The job remains in the
+        disabling state until the disable operation is completed and all tasks
+        have been dealt with according to the disableTasks option; the job then
+        moves to the disabled state. No new tasks are started under the job
+        until it moves back to active state. If you try to disable a job that
+        is in any state other than active, disabling, or disabled, the request
+        fails with status code 409.
+
+        :param job_id: The ID of the job to disable.
         :type job_id: str
-        :param disable_tasks: What to do with active tasks associated with
-         the job. Possible values include: 'requeue', 'terminate', 'wait'
+        :param disable_tasks: What to do with active tasks associated with the
+         job. Possible values are: requeue – Terminate running tasks and
+         requeue them. The tasks will run again when the job is enabled.
+         terminate – Terminate running tasks. The tasks will not run again.
+         wait – Allow currently running tasks to complete. Possible values
+         include: 'requeue', 'terminate', 'wait'
         :type disable_tasks: str or :class:`DisableJobOption
          <azure.batch.models.DisableJobOption>`
         :param job_disable_options: Additional parameters for the operation
@@ -561,6 +600,8 @@ class JobOperations(object):
         :rtype: None
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`BatchErrorException<azure.batch.models.BatchErrorException>`
         """
         timeout = None
         if job_disable_options is not None:
@@ -651,7 +692,14 @@ class JobOperations(object):
             self, job_id, job_enable_options=None, custom_headers=None, raw=False, **operation_config):
         """Enables the specified job, allowing new tasks to run.
 
-        :param job_id: The id of the job to enable.
+        When you call this API, the Batch service sets a disabled job to the
+        enabling state. After the this operation is completed, the job moves to
+        the active state, and scheduling of new tasks under the job resumes.
+        The Batch service does not allow a task to remain in the active state
+        for more than 7 days. Therefore, if you enable a job containing active
+        tasks which were added more than 7 days ago, those tasks will not run.
+
+        :param job_id: The ID of the job to enable.
         :type job_id: str
         :param job_enable_options: Additional parameters for the operation
         :type job_enable_options: :class:`JobEnableOptions
@@ -664,6 +712,8 @@ class JobOperations(object):
         :rtype: None
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`BatchErrorException<azure.batch.models.BatchErrorException>`
         """
         timeout = None
         if job_enable_options is not None:
@@ -749,7 +799,12 @@ class JobOperations(object):
             self, job_id, job_terminate_options=None, terminate_reason=None, custom_headers=None, raw=False, **operation_config):
         """Terminates the specified job, marking it as completed.
 
-        :param job_id: The id of the job to terminate.
+        When a Terminate Job request is received, the Batch service sets the
+        job to the terminating state. The Batch service then terminates any
+        active or running tasks associated with the job, and runs any required
+        Job Release tasks. The job then moves into the completed state.
+
+        :param job_id: The ID of the job to terminate.
         :type job_id: str
         :param job_terminate_options: Additional parameters for the operation
         :type job_terminate_options: :class:`JobTerminateOptions
@@ -765,6 +820,8 @@ class JobOperations(object):
         :rtype: None
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`BatchErrorException<azure.batch.models.BatchErrorException>`
         """
         timeout = None
         if job_terminate_options is not None:
@@ -860,6 +917,17 @@ class JobOperations(object):
             self, job, job_add_options=None, custom_headers=None, raw=False, **operation_config):
         """Adds a job to the specified account.
 
+        The Batch service supports two ways to control the work done as part of
+        a job. In the first approach, the user specifies a Job Manager task.
+        The Batch service launches this task when it is ready to start the job.
+        The Job Manager task controls all other tasks that run under this job,
+        by using the Task APIs. In the second approach, the user directly
+        controls the execution of tasks under an active job, by using the Task
+        APIs. Also note: when naming jobs, avoid including sensitive
+        information such as user names or secret project names. This
+        information may appear in telemetry logs accessible to Microsoft
+        Support engineers.
+
         :param job: The job to be added.
         :type job: :class:`JobAddParameter
          <azure.batch.models.JobAddParameter>`
@@ -874,6 +942,8 @@ class JobOperations(object):
         :rtype: None
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`BatchErrorException<azure.batch.models.BatchErrorException>`
         """
         timeout = None
         if job_add_options is not None:
@@ -948,6 +1018,8 @@ class JobOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`CloudJobPaged <azure.batch.models.CloudJobPaged>`
+        :raises:
+         :class:`BatchErrorException<azure.batch.models.BatchErrorException>`
         """
         filter = None
         if job_list_options is not None:
@@ -990,7 +1062,7 @@ class JobOperations(object):
                 if expand is not None:
                     query_parameters['$expand'] = self._serialize.query("expand", expand, 'str')
                 if max_results is not None:
-                    query_parameters['maxresults'] = self._serialize.query("max_results", max_results, 'int')
+                    query_parameters['maxresults'] = self._serialize.query("max_results", max_results, 'int', maximum=1000, minimum=1)
                 if timeout is not None:
                     query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'int')
 
@@ -1036,11 +1108,10 @@ class JobOperations(object):
 
     def list_from_job_schedule(
             self, job_schedule_id, job_list_from_job_schedule_options=None, custom_headers=None, raw=False, **operation_config):
-        """Lists the jobs that have been created under the specified job
-        schedule.
+        """Lists the jobs that have been created under the specified job schedule.
 
-        :param job_schedule_id: The id of the job schedule from which you
-         want to get a list of jobs.
+        :param job_schedule_id: The ID of the job schedule from which you want
+         to get a list of jobs.
         :type job_schedule_id: str
         :param job_list_from_job_schedule_options: Additional parameters for
          the operation
@@ -1053,6 +1124,8 @@ class JobOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`CloudJobPaged <azure.batch.models.CloudJobPaged>`
+        :raises:
+         :class:`BatchErrorException<azure.batch.models.BatchErrorException>`
         """
         filter = None
         if job_list_from_job_schedule_options is not None:
@@ -1099,7 +1172,7 @@ class JobOperations(object):
                 if expand is not None:
                     query_parameters['$expand'] = self._serialize.query("expand", expand, 'str')
                 if max_results is not None:
-                    query_parameters['maxresults'] = self._serialize.query("max_results", max_results, 'int')
+                    query_parameters['maxresults'] = self._serialize.query("max_results", max_results, 'int', maximum=1000, minimum=1)
                 if timeout is not None:
                     query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'int')
 
@@ -1148,7 +1221,11 @@ class JobOperations(object):
         """Lists the execution status of the Job Preparation and Job Release task
         for the specified job across the compute nodes where the job has run.
 
-        :param job_id: The id of the job.
+        This API returns the Job Preparation and Job Release task status on all
+        compute nodes that have run the Job Preparation or Job Release task.
+        This includes nodes which have since been removed from the pool. .
+
+        :param job_id: The ID of the job.
         :type job_id: str
         :param job_list_preparation_and_release_task_status_options:
          Additional parameters for the operation
@@ -1162,6 +1239,8 @@ class JobOperations(object):
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`JobPreparationAndReleaseTaskExecutionInformationPaged
          <azure.batch.models.JobPreparationAndReleaseTaskExecutionInformationPaged>`
+        :raises:
+         :class:`BatchErrorException<azure.batch.models.BatchErrorException>`
         """
         filter = None
         if job_list_preparation_and_release_task_status_options is not None:
@@ -1203,7 +1282,7 @@ class JobOperations(object):
                 if select is not None:
                     query_parameters['$select'] = self._serialize.query("select", select, 'str')
                 if max_results is not None:
-                    query_parameters['maxresults'] = self._serialize.query("max_results", max_results, 'int')
+                    query_parameters['maxresults'] = self._serialize.query("max_results", max_results, 'int', maximum=1000, minimum=1)
                 if timeout is not None:
                     query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'int')
 

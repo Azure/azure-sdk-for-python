@@ -22,8 +22,8 @@ class AutoScaleRunError(Model):
     :param message: A message describing the autoscale error, intended to be
      suitable for display in a user interface.
     :type message: str
-    :param values: A list of additional error details related to the
-     autoscale error.
+    :param values: A list of additional error details related to the autoscale
+     error.
     :type values: list of :class:`NameValuePair
      <azure.batch.models.NameValuePair>`
     """ 
