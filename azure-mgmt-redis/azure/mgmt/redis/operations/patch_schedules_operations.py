@@ -34,16 +34,16 @@ class PatchSchedulesOperations(object):
         self.config = config
 
     def create_or_update(
-            self, resource_group_name, name, parameters, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, name, schedule_entries, custom_headers=None, raw=False, **operation_config):
         """Create or replace the patching schedule for redis cache.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
         :param name: The name of the redis cache.
         :type name: str
-        :param parameters: Parameters to set patch schedules for redis cache.
-        :type parameters: :class:`RedisPatchSchedule
-         <azure.mgmt.redis.models.RedisPatchSchedule>`
+        :param schedule_entries: List of patch schedules for redis cache.
+        :type schedule_entries: list of :class:`ScheduleEntry
+         <azure.mgmt.redis.models.ScheduleEntry>`
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -53,7 +53,10 @@ class PatchSchedulesOperations(object):
          <azure.mgmt.redis.models.RedisPatchSchedule>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
+        parameters = models.RedisPatchSchedule(schedule_entries=schedule_entries)
+
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cache/Redis/{name}/patchSchedules/default'
         path_format_arguments = {
@@ -117,6 +120,7 @@ class PatchSchedulesOperations(object):
         :rtype: None
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cache/Redis/{name}/patchSchedules/default'
@@ -171,6 +175,7 @@ class PatchSchedulesOperations(object):
          <azure.mgmt.redis.models.RedisPatchSchedule>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cache/Redis/{name}/patchSchedules/default'

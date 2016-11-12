@@ -17,7 +17,7 @@ class ScheduleEntry(Model):
 
     :param day_of_week: Day of week when cache can be patched. Possible
      values include: 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday',
-     'Saturday', 'Sunday'
+     'Saturday', 'Sunday', 'Everyday', 'Weekend'
     :type day_of_week: str or :class:`DayOfWeek
      <azure.mgmt.redis.models.DayOfWeek>`
     :param start_hour_utc: Start hour after which cache patching can start.
