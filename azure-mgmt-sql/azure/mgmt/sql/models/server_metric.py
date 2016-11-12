@@ -13,7 +13,7 @@ from msrest.serialization import Model
 
 
 class ServerMetric(Model):
-    """Represents Azure SQL Server metrics.
+    """Represents Azure SQL server metrics.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
