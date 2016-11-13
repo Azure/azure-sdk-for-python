@@ -150,6 +150,7 @@ class ContainerServiceOchestratorTypes(Enum):
     swarm = "Swarm"
     dcos = "DCOS"
     custom = "Custom"
+    kubernetes = "Kubernetes"
 
 
 class ContainerServiceVMSizeTypes(Enum):

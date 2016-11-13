@@ -31,8 +31,7 @@ class VirtualMachineScaleSetOSDisk(Model):
      <azure.mgmt.compute.models.OperatingSystemTypes>`
     :param image: the Source User Image VirtualHardDisk. This VirtualHardDisk
      will be copied before using it to attach to the Virtual Machine. If
-     SourceImage is provided, the destination VirtualHardDisk should not
-     exist.
+     SourceImage is provided, the destination VirtualHardDisk should not exist.
     :type image: :class:`VirtualHardDisk
      <azure.mgmt.compute.models.VirtualHardDisk>`
     :param vhd_containers: the list of virtual hard disk container uris.

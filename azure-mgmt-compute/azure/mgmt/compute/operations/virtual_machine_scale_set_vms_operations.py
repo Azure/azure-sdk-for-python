@@ -38,8 +38,8 @@ class VirtualMachineScaleSetVMsOperations(object):
 
     def reimage(
             self, resource_group_name, vm_scale_set_name, instance_id, custom_headers=None, raw=False, **operation_config):
-        """Reimages (upgrade the operating system) a specific virtual machine in
-        a VM scale set.
+        """Reimages (upgrade the operating system) a specific virtual machine in a
+        VM scale set.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
@@ -120,9 +120,9 @@ class VirtualMachineScaleSetVMsOperations(object):
     def deallocate(
             self, resource_group_name, vm_scale_set_name, instance_id, custom_headers=None, raw=False, **operation_config):
         """Deallocates a specific virtual machine in a VM scale set. Shuts down
-        the virtual machine and releases the compute resources it uses. You
-        are not billed for the compute resources of this virtual machine once
-        it is deallocated.
+        the virtual machine and releases the compute resources it uses. You are
+        not billed for the compute resources of this virtual machine once it is
+        deallocated.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
