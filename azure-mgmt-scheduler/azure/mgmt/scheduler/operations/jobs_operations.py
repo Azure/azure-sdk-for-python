@@ -52,6 +52,7 @@ class JobsOperations(object):
          <azure.mgmt.scheduler.models.JobDefinition>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Scheduler/jobCollections/{jobCollectionName}/jobs/{jobName}'
@@ -98,7 +99,7 @@ class JobsOperations(object):
         return deserialized
 
     def create_or_update(
-            self, resource_group_name, job_collection_name, job_name, job, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, job_collection_name, job_name, properties=None, custom_headers=None, raw=False, **operation_config):
         """Provisions a new job or updates an existing job.
 
         :param resource_group_name: The resource group name.
@@ -107,9 +108,9 @@ class JobsOperations(object):
         :type job_collection_name: str
         :param job_name: The job name.
         :type job_name: str
-        :param job: The job definition.
-        :type job: :class:`JobDefinition
-         <azure.mgmt.scheduler.models.JobDefinition>`
+        :param properties: Gets or sets the job properties.
+        :type properties: :class:`JobProperties
+         <azure.mgmt.scheduler.models.JobProperties>`
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -119,7 +120,10 @@ class JobsOperations(object):
          <azure.mgmt.scheduler.models.JobDefinition>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
+        job = models.JobDefinition(properties=properties)
+
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Scheduler/jobCollections/{jobCollectionName}/jobs/{jobName}'
         path_format_arguments = {
@@ -171,7 +175,7 @@ class JobsOperations(object):
         return deserialized
 
     def patch(
-            self, resource_group_name, job_collection_name, job_name, job, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, job_collection_name, job_name, properties=None, custom_headers=None, raw=False, **operation_config):
         """Patches an existing job.
 
         :param resource_group_name: The resource group name.
@@ -180,9 +184,9 @@ class JobsOperations(object):
         :type job_collection_name: str
         :param job_name: The job name.
         :type job_name: str
-        :param job: The job definition.
-        :type job: :class:`JobDefinition
-         <azure.mgmt.scheduler.models.JobDefinition>`
+        :param properties: Gets or sets the job properties.
+        :type properties: :class:`JobProperties
+         <azure.mgmt.scheduler.models.JobProperties>`
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -192,7 +196,10 @@ class JobsOperations(object):
          <azure.mgmt.scheduler.models.JobDefinition>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
+        job = models.JobDefinition(properties=properties)
+
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Scheduler/jobCollections/{jobCollectionName}/jobs/{jobName}'
         path_format_arguments = {
@@ -259,6 +266,7 @@ class JobsOperations(object):
         :rtype: None
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Scheduler/jobCollections/{jobCollectionName}/jobs/{jobName}'
@@ -315,6 +323,7 @@ class JobsOperations(object):
         :rtype: None
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Scheduler/jobCollections/{jobCollectionName}/jobs/{jobName}/run'
@@ -361,10 +370,11 @@ class JobsOperations(object):
         :type resource_group_name: str
         :param job_collection_name: The job collection name.
         :type job_collection_name: str
-        :param top: The number of jobs to request, in the of range [1..100].
+        :param top: The number of jobs to request, in the of range of
+         [1..100].
         :type top: int
-        :param skip: The (0-based) index of the job history list from which
-         to begin requesting entries.
+        :param skip: The (0-based) index of the job history list from which to
+         begin requesting entries.
         :type skip: int
         :param filter: The filter to apply on the job state.
         :type filter: str
@@ -375,6 +385,7 @@ class JobsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`JobDefinitionPaged
          <azure.mgmt.scheduler.models.JobDefinitionPaged>`
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -444,11 +455,11 @@ class JobsOperations(object):
         :type job_collection_name: str
         :param job_name: The job name.
         :type job_name: str
-        :param top: the number of job history to request, in the of range
+        :param top: the number of job history to request, in the of range of
          [1..100].
         :type top: int
-        :param skip: The (0-based) index of the job history list from which
-         to begin requesting entries.
+        :param skip: The (0-based) index of the job history list from which to
+         begin requesting entries.
         :type skip: int
         :param filter: The filter to apply on the job state.
         :type filter: str
@@ -459,6 +470,7 @@ class JobsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`JobHistoryDefinitionPaged
          <azure.mgmt.scheduler.models.JobHistoryDefinitionPaged>`
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
 

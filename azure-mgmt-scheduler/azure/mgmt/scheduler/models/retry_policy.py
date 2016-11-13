@@ -19,7 +19,8 @@ class RetryPolicy(Model):
      values include: 'None', 'Fixed'
     :type retry_type: str or :class:`RetryType
      <azure.mgmt.scheduler.models.RetryType>`
-    :param retry_interval: Gets or sets the retry interval between retries.
+    :param retry_interval: Gets or sets the retry interval between retries,
+     specify duration in ISO 8601 format.
     :type retry_interval: timedelta
     :param retry_count: Gets or sets the number of times a retry should be
      attempted.
