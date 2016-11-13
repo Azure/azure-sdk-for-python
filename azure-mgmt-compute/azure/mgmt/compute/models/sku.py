@@ -19,7 +19,7 @@ class Sku(Model):
     :type name: str
     :param tier: The sku tier.
     :type tier: str
-    :param capacity: the sku capacity.
+    :param capacity: The sku capacity.
     :type capacity: long
     """ 
 
