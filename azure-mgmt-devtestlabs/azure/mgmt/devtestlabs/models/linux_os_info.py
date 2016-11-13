@@ -15,8 +15,8 @@ from msrest.serialization import Model
 class LinuxOsInfo(Model):
     """Information about a Linux OS.
 
-    :param linux_os_state: The state of the Linux OS. Possible values
-     include: 'NonDeprovisioned', 'DeprovisionRequested', 'DeprovisionApplied'
+    :param linux_os_state: The state of the Linux OS. Possible values include:
+     'NonDeprovisioned', 'DeprovisionRequested', 'DeprovisionApplied'
     :type linux_os_state: str or :class:`LinuxOsState
      <azure.mgmt.devtestlabs.models.LinuxOsState>`
     """ 

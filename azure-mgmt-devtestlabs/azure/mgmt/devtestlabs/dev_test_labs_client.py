@@ -84,7 +84,7 @@ class DevTestLabsClientConfiguration(AzureConfiguration):
 
 
 class DevTestLabsClient(object):
-    """The DevTest Labs Client.
+    """Azure DevTest Labs REST API.
 
     :ivar config: Configuration for client.
     :vartype config: DevTestLabsClientConfiguration

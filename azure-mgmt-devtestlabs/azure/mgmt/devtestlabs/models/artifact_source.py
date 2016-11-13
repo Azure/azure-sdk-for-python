@@ -29,8 +29,8 @@ class ArtifactSource(Model):
     :type branch_ref: str
     :param security_token: The security token of the artifact source.
     :type security_token: str
-    :param status: The status of the artifact source. Possible values
-     include: 'Enabled', 'Disabled'
+    :param status: The status of the artifact source. Possible values include:
+     'Enabled', 'Disabled'
     :type status: str or :class:`EnableStatus
      <azure.mgmt.devtestlabs.models.EnableStatus>`
     :param provisioning_state: The provisioning status of the resource.
