@@ -12,27 +12,33 @@
 from msrest.serialization import Model
 
 
-class DataLakeAnalyticsCatalogSecretCreateOrUpdateParameters(Model):
-    """Data Lake Analytics catalog secret creation and update parameters. This is
-    deprecated and will be removed in the next release. Please use
-    DataLakeAnalyticsCatalogCredentialCreateOrUpdateParameters instead.
+class DataLakeAnalyticsCatalogCredentialCreateParameters(Model):
+    """Data Lake Analytics catalog credential creation parameters.
 
-    :param password: the password for the secret to pass in
+    :param password: the password for the credential and user with access to
+     the data source.
     :type password: str
-    :param uri: the URI identifier for the secret in the format
-     <hostname>:<port>
+    :param uri: the URI identifier for the data source this credential can
+     connect to in the format <hostname>:<port>
     :type uri: str
+    :param user_id: the object identifier for the user associated with this
+     credential with access to the data source.
+    :type user_id: str
     """ 
 
     _validation = {
         'password': {'required': True},
+        'uri': {'required': True},
+        'user_id': {'required': True},
     }
 
     _attribute_map = {
         'password': {'key': 'password', 'type': 'str'},
         'uri': {'key': 'uri', 'type': 'str'},
+        'user_id': {'key': 'userId', 'type': 'str'},
     }
 
-    def __init__(self, password, uri=None):
+    def __init__(self, password, uri, user_id):
         self.password = password
         self.uri = uri
+        self.user_id = user_id

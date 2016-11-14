@@ -18,22 +18,22 @@ class JobInformation(Model):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :param job_id: the job's unique identifier (a GUID).
-    :type job_id: str
+    :ivar job_id: the job's unique identifier (a GUID).
+    :vartype job_id: str
     :param name: the friendly name of the job.
     :type name: str
     :param type: the job type of the current job (Hive or USql). Possible
      values include: 'USql', 'Hive'
     :type type: str or :class:`JobType
      <azure.mgmt.datalake.analytics.job.models.JobType>`
-    :param submitter: the user or account that submitted the job.
-    :type submitter: str
+    :ivar submitter: the user or account that submitted the job.
+    :vartype submitter: str
     :ivar error_message: the error message details for the job, if the job
      failed.
     :vartype error_message: list of :class:`JobErrorDetails
      <azure.mgmt.datalake.analytics.job.models.JobErrorDetails>`
     :param degree_of_parallelism: the degree of parallelism used for this
-     job. This must be greater than 0.
+     job. This must be greater than 0. Default value: 1 .
     :type degree_of_parallelism: int
     :param priority: the priority value for the current job. Lower numbers
      have a higher priority. By default, a job has a priority of 1000. This
@@ -73,9 +73,12 @@ class JobInformation(Model):
     """ 
 
     _validation = {
+        'job_id': {'readonly': True},
         'name': {'required': True},
         'type': {'required': True},
+        'submitter': {'readonly': True},
         'error_message': {'readonly': True},
+        'degree_of_parallelism': {'minimum': 1},
         'submit_time': {'readonly': True},
         'start_time': {'readonly': True},
         'end_time': {'readonly': True},
@@ -105,11 +108,11 @@ class JobInformation(Model):
         'properties': {'key': 'properties', 'type': 'JobProperties'},
     }
 
-    def __init__(self, name, type, properties, job_id=None, submitter=None, degree_of_parallelism=None, priority=None, log_file_patterns=None):
-        self.job_id = job_id
+    def __init__(self, name, type, properties, degree_of_parallelism=1, priority=None, log_file_patterns=None):
+        self.job_id = None
         self.name = name
         self.type = type
-        self.submitter = submitter
+        self.submitter = None
         self.error_message = None
         self.degree_of_parallelism = degree_of_parallelism
         self.priority = priority
