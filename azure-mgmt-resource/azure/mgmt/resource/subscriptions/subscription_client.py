@@ -26,7 +26,7 @@ class SubscriptionClientConfiguration(AzureConfiguration):
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
      object<msrestazure.azure_active_directory>`
-    :param api_version: Client Api Version.
+    :param api_version: The API version to use for the operation.
     :type api_version: str
     :param accept_language: Gets or sets the preferred language for the
      response.
@@ -67,7 +67,7 @@ class SubscriptionClientConfiguration(AzureConfiguration):
 
 
 class SubscriptionClient(object):
-    """SubscriptionClient
+    """All resource groups and resources exist within subscriptions. These operation enable you get information about your subscriptions and tenants. A tenant is a dedicated instance of Azure Active Directory (Azure AD) for your organization.
 
     :ivar config: Configuration for client.
     :vartype config: SubscriptionClientConfiguration
@@ -80,7 +80,7 @@ class SubscriptionClient(object):
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
      object<msrestazure.azure_active_directory>`
-    :param api_version: Client Api Version.
+    :param api_version: The API version to use for the operation.
     :type api_version: str
     :param accept_language: Gets or sets the preferred language for the
      response.

@@ -13,12 +13,12 @@ from msrest.serialization import Model
 
 
 class PasswordProfile(Model):
-    """Contains the password profile associated with a user.
+    """The password profile associated with a user.
 
     :param password: Password
     :type password: str
-    :param force_change_password_next_login: Force change password on next
-     login
+    :param force_change_password_next_login: Whether to force a password
+     change on next login.
     :type force_change_password_next_login: bool
     """ 
 

@@ -55,6 +55,7 @@ class PolicySetOperations(object):
          <azure.mgmt.devtestlabs.models.EvaluatePoliciesResponse>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         evaluate_policies_request = models.EvaluatePoliciesRequest(policies=policies)
 

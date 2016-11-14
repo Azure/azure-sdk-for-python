@@ -13,11 +13,11 @@ from msrest.serialization import Model
 
 
 class StorageAccountProperties(Model):
-    """The storage account properties.
+    """The properties of a storage account for a container registry.
 
-    :param name: Storage account name.
+    :param name: The name of the storage account.
     :type name: str
-    :param access_key: Storage account access key.
+    :param access_key: The access key to the storage account.
     :type access_key: str
     """ 
 

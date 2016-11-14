@@ -27,12 +27,5 @@ class DataLakeAnalyticsAccountStatus(Enum):
 
 class DataLakeAnalyticsAccountState(Enum):
 
-    active = "active"
-    suspended = "suspended"
-
-
-class OperationStatus(Enum):
-
-    in_progress = "InProgress"
-    succeeded = "Succeeded"
-    failed = "Failed"
+    active = "Active"
+    suspended = "Suspended"

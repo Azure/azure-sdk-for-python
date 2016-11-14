@@ -13,6 +13,10 @@
   ./ref/azure.mgmt.commerce.rst
   ./ref/azure.mgmt.compute.rst
   ./ref/azure.mgmt.containerregistry.rst
+  ./ref/azure.mgmt.datalake.analytics.account.rst
+  ./ref/azure.mgmt.datalake.analytics.catalog.rst
+  ./ref/azure.mgmt.datalake.analytics.job.rst
+  ./ref/azure.mgmt.datalake.store.rst
   ./ref/azure.mgmt.devtestlabs.rst
   ./ref/azure.mgmt.dns.rst
   ./ref/azure.mgmt.eventhub.rst

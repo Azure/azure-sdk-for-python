@@ -20,17 +20,17 @@ class ResourceGroup(Model):
 
     :ivar id: The ID of the resource group.
     :vartype id: str
-    :param name: The Name of the resource group.
+    :param name: The name of the resource group.
     :type name: str
     :param properties:
     :type properties: :class:`ResourceGroupProperties
      <azure.mgmt.resource.resources.models.ResourceGroupProperties>`
     :param location: The location of the resource group. It cannot be changed
-     after the resource group has been created. Has to be one of the
-     supported Azure Locations, such as West US, East US, West Europe, East
-     Asia, etc.
+     after the resource group has been created. It muct be one of the
+     supported Azure locations.
     :type location: str
-    :param managed_by: Id of the resource that manages this resource group.
+    :param managed_by: The ID of the resource that manages this resource
+     group.
     :type managed_by: str
     :param tags: The tags attached to the resource group.
     :type tags: dict

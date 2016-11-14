@@ -12,8 +12,8 @@
 from msrest.serialization import Model
 
 
-class ResourceModel(Model):
-    """ResourceModel.
+class Resource(Model):
+    """The Resource model definition.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -34,6 +34,7 @@ class ResourceModel(Model):
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
+        'location': {'required': True},
     }
 
     _attribute_map = {
@@ -44,7 +45,7 @@ class ResourceModel(Model):
         'tags': {'key': 'tags', 'type': '{str}'},
     }
 
-    def __init__(self, location=None, tags=None):
+    def __init__(self, location, tags=None):
         self.id = None
         self.name = None
         self.type = None

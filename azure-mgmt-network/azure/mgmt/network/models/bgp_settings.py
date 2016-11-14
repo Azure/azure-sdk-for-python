@@ -15,13 +15,13 @@ from msrest.serialization import Model
 class BgpSettings(Model):
     """BgpSettings.
 
-    :param asn: Gets or sets this BGP speaker's ASN
+    :param asn: The BGP speaker's ASN.
     :type asn: long
-    :param bgp_peering_address: Gets or sets the BGP peering address and BGP
-     identifier of this BGP speaker
+    :param bgp_peering_address: The BGP peering address and BGP identifier of
+     this BGP speaker.
     :type bgp_peering_address: str
-    :param peer_weight: Gets or sets the weight added to routes learned from
-     this BGP speaker
+    :param peer_weight: The weight added to routes learned from this BGP
+     speaker.
     :type peer_weight: int
     """ 
 

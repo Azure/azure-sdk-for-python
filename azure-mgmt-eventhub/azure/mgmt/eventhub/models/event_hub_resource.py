@@ -13,7 +13,7 @@ from .resource import Resource
 
 
 class EventHubResource(Resource):
-    """Description of EventHub Resource.
+    """Description of the Event Hub resource.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -28,22 +28,22 @@ class EventHubResource(Resource):
     :type location: str
     :param tags: Resource tags
     :type tags: dict
-    :param created_at: Exact time the Event was created.
+    :param created_at: Exact time the Event Hub was created.
     :type created_at: datetime
     :param message_retention_in_days: Number of days to retain the events for
      this Event Hub.
     :type message_retention_in_days: long
-    :param partition_count: Number of partitions created for EventHub.
+    :param partition_count: Number of partitions created for the Event Hub.
     :type partition_count: long
     :param partition_ids: Current number of shards on the Event Hub.
     :type partition_ids: list of str
-    :param status: Enumerates the possible values for the status of the
-     EventHub. Possible values include: 'Active', 'Disabled', 'Restoring',
+    :param status: Enumerates the possible values for the status of the Event
+     Hub. Possible values include: 'Active', 'Disabled', 'Restoring',
      'SendDisabled', 'ReceiveDisabled', 'Creating', 'Deleting', 'Renaming',
      'Unknown'
     :type status: str or :class:`EntityStatus
      <azure.mgmt.eventhub.models.EntityStatus>`
-    :param updated_at: The exact time the message has been updated.
+    :param updated_at: The exact time the message was updated.
     :type updated_at: datetime
     """ 
 

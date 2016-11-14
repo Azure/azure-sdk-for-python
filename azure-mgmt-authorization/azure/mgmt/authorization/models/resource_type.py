@@ -15,11 +15,11 @@ from msrest.serialization import Model
 class ResourceType(Model):
     """Resource Type.
 
-    :param name: Gets or sets the resource type name
+    :param name: The resource type name.
     :type name: str
-    :param display_name: Gets or sets the resource type display name
+    :param display_name: The resource type display name.
     :type display_name: str
-    :param operations: Gets or sets the resource type operations
+    :param operations: The resource type operations.
     :type operations: list of :class:`ProviderOperation
      <azure.mgmt.authorization.models.ProviderOperation>`
     """ 

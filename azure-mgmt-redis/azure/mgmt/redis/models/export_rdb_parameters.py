@@ -13,7 +13,7 @@ from msrest.serialization import Model
 
 
 class ExportRDBParameters(Model):
-    """Parameters for redis export operation.
+    """Parameters for Redis export operation.
 
     :param format: File format.
     :type format: str

@@ -15,15 +15,15 @@ from msrest.serialization import Model
 class ServicePrincipal(Model):
     """Active Directory service principal information.
 
-    :param object_id: object Id
+    :param object_id: The object ID.
     :type object_id: str
-    :param object_type: object type
+    :param object_type: The object type.
     :type object_type: str
-    :param display_name: service principal display name
+    :param display_name: The display name of the service principal.
     :type display_name: str
-    :param app_id: app id
+    :param app_id: The application ID.
     :type app_id: str
-    :param service_principal_names: the list of names.
+    :param service_principal_names: A collection of service principal names.
     :type service_principal_names: list of str
     """ 
 

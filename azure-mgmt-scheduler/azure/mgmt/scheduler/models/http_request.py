@@ -15,10 +15,11 @@ from msrest.serialization import Model
 class HttpRequest(Model):
     """HttpRequest.
 
-    :param authentication: Gets or sets the http authentication.
+    :param authentication: Gets or sets the authentication method of the
+     request.
     :type authentication: :class:`HttpAuthentication
      <azure.mgmt.scheduler.models.HttpAuthentication>`
-    :param uri: Gets or sets the Uri.
+    :param uri: Gets or sets the URI of the request.
     :type uri: str
     :param method: Gets or sets the method of the request.
     :type method: str

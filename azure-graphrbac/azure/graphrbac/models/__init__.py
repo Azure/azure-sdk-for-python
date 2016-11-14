@@ -32,12 +32,12 @@ from .user_update_parameters import UserUpdateParameters
 from .user import User
 from .user_get_member_groups_parameters import UserGetMemberGroupsParameters
 from .get_objects_parameters import GetObjectsParameters
+from .aad_object_paged import AADObjectPaged
 from .application_paged import ApplicationPaged
 from .key_credential_paged import KeyCredentialPaged
 from .password_credential_paged import PasswordCredentialPaged
 from .ad_group_paged import ADGroupPaged
-from .aad_object_paged import AADObjectPaged
-from .str_paged import strPaged
+from .str_paged import StrPaged
 from .service_principal_paged import ServicePrincipalPaged
 from .user_paged import UserPaged
 
@@ -65,12 +65,12 @@ __all__ = [
     'User',
     'UserGetMemberGroupsParameters',
     'GetObjectsParameters',
+    'AADObjectPaged',
     'ApplicationPaged',
     'KeyCredentialPaged',
     'PasswordCredentialPaged',
     'ADGroupPaged',
-    'AADObjectPaged',
-    'strPaged',
+    'StrPaged',
     'ServicePrincipalPaged',
     'UserPaged',
 ]

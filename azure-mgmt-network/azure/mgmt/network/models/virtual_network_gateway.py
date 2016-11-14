@@ -18,58 +18,61 @@ class VirtualNetworkGateway(Resource):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :param id: Resource Id
+    :param id: Resource ID.
     :type id: str
-    :ivar name: Resource name
+    :ivar name: Resource name.
     :vartype name: str
-    :ivar type: Resource type
+    :ivar type: Resource type.
     :vartype type: str
-    :param location: Resource location
+    :param location: Resource location.
     :type location: str
-    :param tags: Resource tags
+    :param tags: Resource tags.
     :type tags: dict
-    :param ip_configurations: IpConfigurations for Virtual network gateway.
+    :param ip_configurations: IP configurations for virtual network gateway.
     :type ip_configurations: list of
      :class:`VirtualNetworkGatewayIPConfiguration
      <azure.mgmt.network.models.VirtualNetworkGatewayIPConfiguration>`
     :param gateway_type: The type of this virtual network gateway. Possible
-     values include: 'Vpn', 'ExpressRoute'
+     values are: 'Vpn' and 'ExpressRoute'. Possible values include: 'Vpn',
+     'ExpressRoute'
     :type gateway_type: str or :class:`VirtualNetworkGatewayType
      <azure.mgmt.network.models.VirtualNetworkGatewayType>`
     :param vpn_type: The type of this virtual network gateway. Possible
-     values include: 'PolicyBased', 'RouteBased'
+     values are: 'PolicyBased' and 'RouteBased'. Possible values include:
+     'PolicyBased', 'RouteBased'
     :type vpn_type: str or :class:`VpnType
      <azure.mgmt.network.models.VpnType>`
-    :param enable_bgp: EnableBgp Flag
+    :param enable_bgp: Whether BGP is enabled for this virtual network
+     gateway or not.
     :type enable_bgp: bool
     :param active_active: ActiveActive flag
     :type active_active: bool
-    :param gateway_default_site: Gets or sets the reference of the
-     LocalNetworkGateway resource which represents Local network site having
-     default routes. Assign Null value in case of removing existing default
-     site setting.
+    :param gateway_default_site: The reference of the LocalNetworkGateway
+     resource which represents local network site having default routes.
+     Assign Null value in case of removing existing default site setting.
     :type gateway_default_site: :class:`SubResource
      <azure.mgmt.network.models.SubResource>`
-    :param sku: Gets or sets the reference of the VirtualNetworkGatewaySku
-     resource which represents the sku selected for Virtual network gateway.
+    :param sku: The reference of the VirtualNetworkGatewaySku resource which
+     represents the SKU selected for Virtual network gateway.
     :type sku: :class:`VirtualNetworkGatewaySku
      <azure.mgmt.network.models.VirtualNetworkGatewaySku>`
-    :param vpn_client_configuration: Gets or sets the reference of the
+    :param vpn_client_configuration: The reference of the
      VpnClientConfiguration resource which represents the P2S VpnClient
      configurations.
     :type vpn_client_configuration: :class:`VpnClientConfiguration
      <azure.mgmt.network.models.VpnClientConfiguration>`
-    :param bgp_settings: Virtual network gateway's BGP speaker settings
+    :param bgp_settings: Virtual network gateway's BGP speaker settings.
     :type bgp_settings: :class:`BgpSettings
      <azure.mgmt.network.models.BgpSettings>`
-    :param resource_guid: Gets or sets resource guid property of the
-     VirtualNetworkGateway resource
+    :param resource_guid: The resource GUID property of the
+     VirtualNetworkGateway resource.
     :type resource_guid: str
-    :ivar provisioning_state: Gets provisioning state of the
-     VirtualNetworkGateway resource Updating/Deleting/Failed
+    :ivar provisioning_state: The provisioning state of the
+     VirtualNetworkGateway resource. Possible values are: 'Updating',
+     'Deleting', and 'Failed'.
     :vartype provisioning_state: str
     :param etag: Gets a unique read-only string that changes whenever the
-     resource is updated
+     resource is updated.
     :type etag: str
     """ 
 

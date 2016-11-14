@@ -15,8 +15,8 @@ from msrest.serialization import Model
 class MigrateWorkspaceCollectionRequest(Model):
     """MigrateWorkspaceCollectionRequest.
 
-    :param target_resource_group: Name of the resource group that the Power
-     BI Workspace Collections will be migrated to.
+    :param target_resource_group: Name of the resource group the Power BI
+     workspace collections will be migrated to.
     :type target_resource_group: str
     :param resources:
     :type resources: list of str

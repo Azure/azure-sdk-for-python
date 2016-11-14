@@ -15,14 +15,15 @@ from .http_authentication import HttpAuthentication
 class BasicAuthentication(HttpAuthentication):
     """BasicAuthentication.
 
-    :param type: Gets or sets the http authentication type. Possible values
+    :param type: Gets or sets the HTTP authentication type. Possible values
      include: 'NotSpecified', 'ClientCertificate', 'ActiveDirectoryOAuth',
      'Basic'
     :type type: str or :class:`HttpAuthenticationType
      <azure.mgmt.scheduler.models.HttpAuthenticationType>`
     :param username: Gets or sets the username.
     :type username: str
-    :param password: Gets or sets the password.
+    :param password: Gets or sets the password, return value will always be
+     empty.
     :type password: str
     """ 
 

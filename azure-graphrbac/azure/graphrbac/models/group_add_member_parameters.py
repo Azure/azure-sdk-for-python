@@ -15,7 +15,7 @@ from msrest.serialization import Model
 class GroupAddMemberParameters(Model):
     """Request parameters for adding a member to a group.
 
-    :param url: Member Object Url as
+    :param url: A member object URL, such as
      "https://graph.windows.net/0b1f9851-1bf0-433f-aec3-cb9272f093dc/directoryObjects/f260bbc4-c254-447b-94cf-293b5ec434dd",
      where "0b1f9851-1bf0-433f-aec3-cb9272f093dc" is the tenantId and
      "f260bbc4-c254-447b-94cf-293b5ec434dd" is the objectId of the member

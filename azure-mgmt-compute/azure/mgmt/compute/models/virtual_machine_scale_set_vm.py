@@ -28,9 +28,9 @@ class VirtualMachineScaleSetVM(Resource):
     :type location: str
     :param tags: Resource tags.
     :type tags: dict
-    :ivar instance_id: the virtual machine instance id.
+    :ivar instance_id: The virtual machine instance ID.
     :vartype instance_id: str
-    :ivar sku: the virtual machine sku.
+    :ivar sku: The virtual machine SKU.
     :vartype sku: :class:`Sku <azure.mgmt.compute.models.Sku>`
     :ivar latest_model_applied: Specifies whether the latest model has been
      applied to the virtual machine.
@@ -52,17 +52,17 @@ class VirtualMachineScaleSetVM(Resource):
     :param diagnostics_profile: the diagnostics profile.
     :type diagnostics_profile: :class:`DiagnosticsProfile
      <azure.mgmt.compute.models.DiagnosticsProfile>`
-    :param availability_set: the reference Id of the availability set to
-     which this virtual machine belongs.
+    :param availability_set: the reference Id of the availability set to which
+     this virtual machine belongs.
     :type availability_set: :class:`SubResource
      <azure.mgmt.compute.models.SubResource>`
     :ivar provisioning_state: the provisioning state, which only appears in
      the response.
     :vartype provisioning_state: str
-    :param license_type: the license type, which is for bring your own
-     license scenario.
+    :param license_type: the license type, which is for bring your own license
+     scenario.
     :type license_type: str
-    :param plan: the purchase plan when deploying virtual machine from VM
+    :param plan: The purchase plan when deploying virtual machine from VM
      Marketplace images.
     :type plan: :class:`Plan <azure.mgmt.compute.models.Plan>`
     :ivar resources: the virtual machine child extension resources.

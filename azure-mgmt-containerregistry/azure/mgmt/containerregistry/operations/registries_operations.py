@@ -35,9 +35,11 @@ class RegistriesOperations(object):
 
     def check_name_availability(
             self, name, custom_headers=None, raw=False, **operation_config):
-        """Checks whether the container registry name is available.
+        """Checks whether the container registry name is available for use. The
+        name must contain only alphanumeric characters, be globally unique,
+        and between 5 and 60 characters in length.
 
-        :param name: The container registry name.
+        :param name: The name of the container registry.
         :type name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -99,11 +101,12 @@ class RegistriesOperations(object):
 
     def get_properties(
             self, resource_group_name, registry_name, custom_headers=None, raw=False, **operation_config):
-        """Gets the properties for the specified container registry.
+        """Gets the properties of the specified container registry.
 
-        :param resource_group_name: The resource group name.
+        :param resource_group_name: The name of the resource group to which
+         the container registry belongs.
         :type resource_group_name: str
-        :param registry_name: The container registry name.
+        :param registry_name: The name of the container registry.
         :type registry_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -162,14 +165,14 @@ class RegistriesOperations(object):
     def create_or_update(
             self, resource_group_name, registry_name, registry, custom_headers=None, raw=False, **operation_config):
         """Creates or updates a container registry with the specified parameters.
-        The storage account provided in this operation should be in the same
-        location as the container registry.
 
-        :param resource_group_name: The resource group name.
+        :param resource_group_name: The name of the resource group to which
+         the container registry belongs.
         :type resource_group_name: str
-        :param registry_name: The container registry name.
+        :param registry_name: The name of the container registry.
         :type registry_name: str
-        :param registry: The container registry.
+        :param registry: The parameters for creating or updating a container
+         registry.
         :type registry: :class:`Registry
          <azure.mgmt.containerregistry.models.Registry>`
         :param dict custom_headers: headers that will be added to the request
@@ -232,12 +235,12 @@ class RegistriesOperations(object):
 
     def delete(
             self, resource_group_name, registry_name, custom_headers=None, raw=False, **operation_config):
-        """Deletes a container registry from the given subscription and resource
-        group.
+        """Deletes a container registry.
 
-        :param resource_group_name: The resource group name.
+        :param resource_group_name: The name of the resource group to which
+         the container registry belongs.
         :type resource_group_name: str
-        :param registry_name: The container registry name.
+        :param registry_name: The name of the container registry.
         :type registry_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -287,13 +290,12 @@ class RegistriesOperations(object):
 
     def update(
             self, resource_group_name, registry_name, registry_update_parameters, custom_headers=None, raw=False, **operation_config):
-        """Updates a container registry with the specified parameters. The
-        storage account provided in this operation should be in the same
-        location as the container registry.
+        """Updates a container registry with the specified parameters.
 
-        :param resource_group_name: The resource group name.
+        :param resource_group_name: The name of the resource group to which
+         the container registry belongs.
         :type resource_group_name: str
-        :param registry_name: The container registry name.
+        :param registry_name: The name of the container registry.
         :type registry_name: str
         :param registry_update_parameters: The parameters for updating a
          container registry.
@@ -359,10 +361,11 @@ class RegistriesOperations(object):
 
     def list_by_resource_group(
             self, resource_group_name, custom_headers=None, raw=False, **operation_config):
-        """Lists all the container registries available under the given resource
-        group.
+        """Lists all the available container registries under the specified
+        resource group.
 
-        :param resource_group_name: The resource group name.
+        :param resource_group_name: The name of the resource group to which
+         the container registry belongs.
         :type resource_group_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -426,7 +429,8 @@ class RegistriesOperations(object):
 
     def list(
             self, custom_headers=None, raw=False, **operation_config):
-        """Lists all the container registries available under the subscription.
+        """Lists all the available container registries under the specified
+        subscription.
 
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -489,11 +493,13 @@ class RegistriesOperations(object):
 
     def get_credentials(
             self, resource_group_name, registry_name, custom_headers=None, raw=False, **operation_config):
-        """Gets login credentials for the specified container registry.
+        """Gets the administrator login credentials for the specified container
+        registry.
 
-        :param resource_group_name: The resource group name.
+        :param resource_group_name: The name of the resource group to which
+         the container registry belongs.
         :type resource_group_name: str
-        :param registry_name: The container registry name.
+        :param registry_name: The name of the container registry.
         :type registry_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -551,11 +557,13 @@ class RegistriesOperations(object):
 
     def regenerate_credentials(
             self, resource_group_name, registry_name, custom_headers=None, raw=False, **operation_config):
-        """Regenerates login credentials for the specified container registry.
+        """Regenerates the administrator login credentials for the specified
+        container registry.
 
-        :param resource_group_name: The resource group name.
+        :param resource_group_name: The name of the resource group to which
+         the container registry belongs.
         :type resource_group_name: str
-        :param registry_name: The container registry name.
+        :param registry_name: The name of the container registry.
         :type registry_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the

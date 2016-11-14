@@ -13,11 +13,11 @@ from msrest.serialization import Model
 
 
 class SharedAccessAuthorizationRuleCreateOrUpdateParameters(Model):
-    """Parameters supplied to the CreateOrUpdate  AuthorizationRules.
+    """Parameters supplied to the Create Or Update Authorization Rules operation.
 
-    :param location: data center location.
+    :param location: Data center location.
     :type location: str
-    :param name: Name of the AuthorizationRule.
+    :param name: Name of the authorization rule.
     :type name: str
     :param rights: The rights associated with the rule.
     :type rights: list of str or :class:`AccessRights

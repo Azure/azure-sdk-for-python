@@ -13,12 +13,12 @@ from msrest.serialization import Model
 
 
 class ExpressRouteCircuitsArpTableListResult(Model):
-    """Response for ListArpTable associated with the Express Route Circuits Api.
+    """Response for ListArpTable associated with the Express Route Circuits API.
 
-    :param value: Gets List of ArpTable
+    :param value: Gets list of the ARP table.
     :type value: list of :class:`ExpressRouteCircuitArpTable
      <azure.mgmt.network.models.ExpressRouteCircuitArpTable>`
-    :param next_link: Gets the URL to get the next set of results.
+    :param next_link: The URL to get the next set of results.
     :type next_link: str
     """ 
 

@@ -15,11 +15,11 @@ from msrest.serialization import Model
 class BootDiagnostics(Model):
     """Describes Boot Diagnostics.
 
-    :param enabled: whether boot diagnostics should be enabled on the Virtual
+    :param enabled: Whether boot diagnostics should be enabled on the Virtual
      Machine.
     :type enabled: bool
-    :param storage_uri: the boot diagnostics storage Uri. It should be a
-     valid Uri
+    :param storage_uri: URI of the storage account to use for placing the
+     console output and screenshot.
     :type storage_uri: str
     """ 
 

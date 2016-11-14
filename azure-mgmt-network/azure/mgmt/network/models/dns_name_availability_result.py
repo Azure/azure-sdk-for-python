@@ -13,9 +13,9 @@ from msrest.serialization import Model
 
 
 class DnsNameAvailabilityResult(Model):
-    """Response for CheckDnsNameAvailability Api service call.
+    """Response for the CheckDnsNameAvailability API service call.
 
-    :param available: Domain availability (True/False)
+    :param available: Domain availability (True/False).
     :type available: bool
     """ 
 

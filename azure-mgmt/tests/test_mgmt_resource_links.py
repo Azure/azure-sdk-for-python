@@ -46,10 +46,8 @@ class MgmtResourceLinksTest(AzureMgmtTestCase):
         link = self.client.resource_links.create_or_update(
             self.group.id+'/providers/Microsoft.Resources/links/myLink',
             {
-                'properties': {
-                    'target_id' : result.id,
-                    'notes': 'Testing links'
-                }
+                'target_id' : result.id,
+                'notes': 'Testing links'
             }
         )
         self.assertEqual(link.name, 'myLink')

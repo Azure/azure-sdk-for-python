@@ -13,7 +13,7 @@ from msrest.serialization import Model
 
 
 class ConsumerGroupCreateOrUpdateParameters(Model):
-    """Parameters supplied to the CreateOrUpdate Consumer Group operation.
+    """Parameters supplied to the Create Or Update Consumer Group operation.
 
     :param location: Location of the resource.
     :type location: str
@@ -23,9 +23,9 @@ class ConsumerGroupCreateOrUpdateParameters(Model):
     :type name: str
     :param created_at: Exact time the message was created.
     :type created_at: datetime
-    :param event_hub_path: The path of the event hub.
+    :param event_hub_path: The path of the Event Hub.
     :type event_hub_path: str
-    :param updated_at: The exact time the message has been updated.
+    :param updated_at: The exact time the message was updated.
     :type updated_at: datetime
     :param user_metadata: The user metadata.
     :type user_metadata: str

@@ -36,17 +36,17 @@ class ResourceGroupsOperations(object):
 
     def list_resources(
             self, resource_group_name, filter=None, expand=None, top=None, custom_headers=None, raw=False, **operation_config):
-        """Get all of the resources under a subscription.
+        """Get all the resources for a resource group.
 
-        :param resource_group_name: Query parameters. If null is passed
-         returns all resource groups.
+        :param resource_group_name: The resource group with the resources to
+         get.
         :type resource_group_name: str
         :param filter: The filter to apply on the operation.
         :type filter: str
         :param expand: The $expand query parameter
         :type expand: str
-        :param top: Query parameters. If null is passed returns all resource
-         groups.
+        :param top: The number of results to return. If null is passed,
+         returns all resources.
         :type top: int
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -116,7 +116,7 @@ class ResourceGroupsOperations(object):
 
     def check_existence(
             self, resource_group_name, custom_headers=None, raw=False, **operation_config):
-        """Checks whether resource group exists.
+        """Checks whether a resource group exists.
 
         :param resource_group_name: The name of the resource group to check.
          The name is case insensitive.
@@ -170,13 +170,13 @@ class ResourceGroupsOperations(object):
 
     def create_or_update(
             self, resource_group_name, parameters, custom_headers=None, raw=False, **operation_config):
-        """Create a resource group.
+        """Creates a resource group.
 
-        :param resource_group_name: The name of the resource group to be
-         created or updated.
+        :param resource_group_name: The name of the resource group to create
+         or update.
         :type resource_group_name: str
-        :param parameters: Parameters supplied to the create or update
-         resource group service operation.
+        :param parameters: Parameters supplied to the create or update a
+         resource group.
         :type parameters: :class:`ResourceGroup
          <azure.mgmt.resource.resources.models.ResourceGroup>`
         :param dict custom_headers: headers that will be added to the request
@@ -240,10 +240,14 @@ class ResourceGroupsOperations(object):
 
     def delete(
             self, resource_group_name, custom_headers=None, raw=False, **operation_config):
-        """Delete resource group.
+        """Deletes a resource group.
 
-        :param resource_group_name: The name of the resource group to be
-         deleted. The name is case insensitive.
+        When you delete a resource group, all of its resources are also
+        deleted. Deleting a resource group deletes all of its template
+        deployments and currently stored operations.
+
+        :param resource_group_name: The name of the resource group to delete.
+         The name is case insensitive.
         :type resource_group_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -315,7 +319,7 @@ class ResourceGroupsOperations(object):
 
     def get(
             self, resource_group_name, custom_headers=None, raw=False, **operation_config):
-        """Get a resource group.
+        """Gets a resource group.
 
         :param resource_group_name: The name of the resource group to get.
          The name is case insensitive.
@@ -375,16 +379,17 @@ class ResourceGroupsOperations(object):
 
     def patch(
             self, resource_group_name, parameters, custom_headers=None, raw=False, **operation_config):
-        """Resource groups can be updated through a simple PATCH operation to a
-        group address. The format of the request is the same as that for
-        creating a resource groups, though if a field is unspecified current
-        value will be carried over. .
+        """Updates a resource group.
 
-        :param resource_group_name: The name of the resource group to be
-         created or updated. The name is case insensitive.
+        Resource groups can be updated through a simple PATCH operation to a
+        group address. The format of the request is the same as that for
+        creating a resource group. If a field is unspecified, the current
+        value is retained.
+
+        :param resource_group_name: The name of the resource group to update.
+         The name is case insensitive.
         :type resource_group_name: str
-        :param parameters: Parameters supplied to the update state resource
-         group service operation.
+        :param parameters: Parameters supplied to update a resource group.
         :type parameters: :class:`ResourceGroup
          <azure.mgmt.resource.resources.models.ResourceGroup>`
         :param dict custom_headers: headers that will be added to the request
@@ -448,11 +453,11 @@ class ResourceGroupsOperations(object):
             self, resource_group_name, resources=None, options=None, custom_headers=None, raw=False, **operation_config):
         """Captures the specified resource group as a template.
 
-        :param resource_group_name: The name of the resource group to be
-         created or updated.
+        :param resource_group_name: The name of the resource group to export
+         as a template.
         :type resource_group_name: str
-        :param resources: The ids of the resources. The only supported string
-         currently is '*' (all resources). Future api updates will support
+        :param resources: The IDs of the resources. The only supported string
+         currently is '*' (all resources). Future updates will support
          exporting specific resources.
         :type resources: list of str
         :param options: The export template options. Supported values include
@@ -520,12 +525,12 @@ class ResourceGroupsOperations(object):
 
     def list(
             self, filter=None, top=None, custom_headers=None, raw=False, **operation_config):
-        """Gets a collection of resource groups.
+        """Gets all the resource groups for a subscription.
 
         :param filter: The filter to apply on the operation.
         :type filter: str
-        :param top: Query parameters. If null is passed returns all resource
-         groups.
+        :param top: The number of results to return. If null is passed,
+         returns all resource groups.
         :type top: int
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the

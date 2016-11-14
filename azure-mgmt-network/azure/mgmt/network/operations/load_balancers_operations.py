@@ -36,11 +36,11 @@ class LoadBalancersOperations(object):
 
     def delete(
             self, resource_group_name, load_balancer_name, custom_headers=None, raw=False, **operation_config):
-        """The delete LoadBalancer operation deletes the specified load balancer.
+        """Deletes the specified load balancer.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
-        :param load_balancer_name: The name of the loadBalancer.
+        :param load_balancer_name: The name of the load balancer.
         :type load_balancer_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -113,14 +113,13 @@ class LoadBalancersOperations(object):
 
     def get(
             self, resource_group_name, load_balancer_name, expand=None, custom_headers=None, raw=False, **operation_config):
-        """The Get LoadBalancer operation retrieves information about the
-        specified LoadBalancer.
+        """Gets the specified load balancer.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
-        :param load_balancer_name: The name of the loadBalancer.
+        :param load_balancer_name: The name of the load balancer.
         :type load_balancer_name: str
-        :param expand: expand references resources.
+        :param expand: Expands referenced resources.
         :type expand: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -179,14 +178,14 @@ class LoadBalancersOperations(object):
 
     def create_or_update(
             self, resource_group_name, load_balancer_name, parameters, custom_headers=None, raw=False, **operation_config):
-        """The Put LoadBalancer operation creates/updates a LoadBalancer.
+        """Creates or updates a load balancer.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
-        :param load_balancer_name: The name of the loadBalancer.
+        :param load_balancer_name: The name of the load balancer.
         :type load_balancer_name: str
-        :param parameters: Parameters supplied to the create/delete
-         LoadBalancer operation
+        :param parameters: Parameters supplied to the create or update load
+         balancer operation.
         :type parameters: :class:`LoadBalancer
          <azure.mgmt.network.models.LoadBalancer>`
         :param dict custom_headers: headers that will be added to the request
@@ -274,8 +273,7 @@ class LoadBalancersOperations(object):
 
     def list_all(
             self, custom_headers=None, raw=False, **operation_config):
-        """The List loadBalancer operation retrieves all the load balancers in a
-        subscription.
+        """Gets all the load balancers in a subscription.
 
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -338,8 +336,7 @@ class LoadBalancersOperations(object):
 
     def list(
             self, resource_group_name, custom_headers=None, raw=False, **operation_config):
-        """The List loadBalancer operation retrieves all the load balancers in a
-        resource group.
+        """Gets all the load balancers in a resource group.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str

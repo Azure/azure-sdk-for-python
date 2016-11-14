@@ -35,19 +35,24 @@ class RoleAssignmentsOperations(object):
 
     def list_for_resource(
             self, resource_group_name, resource_provider_namespace, parent_resource_path, resource_type, resource_name, filter=None, custom_headers=None, raw=False, **operation_config):
-        """Gets role assignments of the resource.
+        """Gets role assignments for a resource.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
-        :param resource_provider_namespace: Resource identity.
+        :param resource_provider_namespace: The namespace of the resource
+         provider.
         :type resource_provider_namespace: str
-        :param parent_resource_path: Resource identity.
+        :param parent_resource_path: The parent resource identity.
         :type parent_resource_path: str
-        :param resource_type: Resource identity.
+        :param resource_type: The resource type of the resource.
         :type resource_type: str
-        :param resource_name: Resource identity.
+        :param resource_name: The name of the resource to get role
+         assignments for.
         :type resource_name: str
-        :param filter: The filter to apply on the operation.
+        :param filter: The filter to apply on the operation. Use
+         $filter=atScope() to return all role assignments at or above the
+         scope. Use $filter=principalId eq {id} to return all role
+         assignments at, above or below the scope for the specified principal.
         :type filter: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -56,6 +61,7 @@ class RoleAssignmentsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`RoleAssignmentPaged
          <azure.mgmt.authorization.models.RoleAssignmentPaged>`
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -116,11 +122,14 @@ class RoleAssignmentsOperations(object):
 
     def list_for_resource_group(
             self, resource_group_name, filter=None, custom_headers=None, raw=False, **operation_config):
-        """Gets role assignments of the resource group.
+        """Gets role assignments for a resource group.
 
-        :param resource_group_name: Resource group name.
+        :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
-        :param filter: The filter to apply on the operation.
+        :param filter: The filter to apply on the operation. Use
+         $filter=atScope() to return all role assignments at or above the
+         scope. Use $filter=principalId eq {id} to return all role
+         assignments at, above or below the scope for the specified principal.
         :type filter: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -129,6 +138,7 @@ class RoleAssignmentsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`RoleAssignmentPaged
          <azure.mgmt.authorization.models.RoleAssignmentPaged>`
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -185,11 +195,12 @@ class RoleAssignmentsOperations(object):
 
     def delete(
             self, scope, role_assignment_name, custom_headers=None, raw=False, **operation_config):
-        """Delete role assignment.
+        """Deletes a role assignment.
 
-        :param scope: Scope.
+        :param scope: The scope of the role assignment to delete.
         :type scope: str
-        :param role_assignment_name: Role assignment name.
+        :param role_assignment_name: The name of the role assignment to
+         delete.
         :type role_assignment_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -200,6 +211,7 @@ class RoleAssignmentsOperations(object):
          <azure.mgmt.authorization.models.RoleAssignment>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/{scope}/providers/Microsoft.Authorization/roleAssignments/{roleAssignmentName}'
@@ -245,13 +257,20 @@ class RoleAssignmentsOperations(object):
 
     def create(
             self, scope, role_assignment_name, properties=None, custom_headers=None, raw=False, **operation_config):
-        """Create role assignment.
+        """Creates a role assignment.
 
-        :param scope: Scope.
+        :param scope: The scope of the role assignment to create. The scope
+         can be any REST resource instance. For example, use
+         '/subscriptions/{subscription-id}/' for a subscription,
+         '/subscriptions/{subscription-id}/resourceGroups/{resource-group-name}'
+         for a resource group, and
+         '/subscriptions/{subscription-id}/resourceGroups/{resource-group-name}/providers/{resource-provider}/{resource-type}/{resource-name}'
+         for a resource.
         :type scope: str
-        :param role_assignment_name: Role assignment name.
+        :param role_assignment_name: The name of the role assignment to
+         create. It can be any valid GUID.
         :type role_assignment_name: str
-        :param properties: Gets or sets role assignment properties.
+        :param properties: Role assignment properties.
         :type properties: :class:`RoleAssignmentProperties
          <azure.mgmt.authorization.models.RoleAssignmentProperties>`
         :param dict custom_headers: headers that will be added to the request
@@ -263,6 +282,7 @@ class RoleAssignmentsOperations(object):
          <azure.mgmt.authorization.models.RoleAssignment>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         parameters = models.RoleAssignmentCreateParameters(properties=properties)
 
@@ -314,11 +334,11 @@ class RoleAssignmentsOperations(object):
 
     def get(
             self, scope, role_assignment_name, custom_headers=None, raw=False, **operation_config):
-        """Get single role assignment.
+        """Get the specified role assignment.
 
-        :param scope: Scope.
+        :param scope: The scope of the role assignment.
         :type scope: str
-        :param role_assignment_name: Role assignment name.
+        :param role_assignment_name: The name of the role assignment to get.
         :type role_assignment_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -329,6 +349,7 @@ class RoleAssignmentsOperations(object):
          <azure.mgmt.authorization.models.RoleAssignment>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/{scope}/providers/Microsoft.Authorization/roleAssignments/{roleAssignmentName}'
@@ -374,9 +395,9 @@ class RoleAssignmentsOperations(object):
 
     def delete_by_id(
             self, role_assignment_id, custom_headers=None, raw=False, **operation_config):
-        """Delete role assignment.
+        """Deletes a role assignment.
 
-        :param role_assignment_id: Role assignment Id
+        :param role_assignment_id: The ID of the role assignment to delete.
         :type role_assignment_id: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -387,6 +408,7 @@ class RoleAssignmentsOperations(object):
          <azure.mgmt.authorization.models.RoleAssignment>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/{roleAssignmentId}'
@@ -431,11 +453,11 @@ class RoleAssignmentsOperations(object):
 
     def create_by_id(
             self, role_assignment_id, properties=None, custom_headers=None, raw=False, **operation_config):
-        """Create role assignment by Id.
+        """Creates a role assignment by ID.
 
-        :param role_assignment_id: Role assignment Id
+        :param role_assignment_id: The ID of the role assignment to create.
         :type role_assignment_id: str
-        :param properties: Gets or sets role assignment properties.
+        :param properties: Role assignment properties.
         :type properties: :class:`RoleAssignmentProperties
          <azure.mgmt.authorization.models.RoleAssignmentProperties>`
         :param dict custom_headers: headers that will be added to the request
@@ -447,6 +469,7 @@ class RoleAssignmentsOperations(object):
          <azure.mgmt.authorization.models.RoleAssignment>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         parameters = models.RoleAssignmentCreateParameters(properties=properties)
 
@@ -497,9 +520,9 @@ class RoleAssignmentsOperations(object):
 
     def get_by_id(
             self, role_assignment_id, custom_headers=None, raw=False, **operation_config):
-        """Get single role assignment.
+        """Gets a role assignment by ID.
 
-        :param role_assignment_id: Role assignment Id
+        :param role_assignment_id: The ID of the role assignment to get.
         :type role_assignment_id: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -510,6 +533,7 @@ class RoleAssignmentsOperations(object):
          <azure.mgmt.authorization.models.RoleAssignment>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/{roleAssignmentId}'
@@ -554,9 +578,12 @@ class RoleAssignmentsOperations(object):
 
     def list(
             self, filter=None, custom_headers=None, raw=False, **operation_config):
-        """Gets role assignments of the subscription.
+        """Gets all role assignments for the subscription.
 
-        :param filter: The filter to apply on the operation.
+        :param filter: The filter to apply on the operation. Use
+         $filter=atScope() to return all role assignments at or above the
+         scope. Use $filter=principalId eq {id} to return all role
+         assignments at, above or below the scope for the specified principal.
         :type filter: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -565,6 +592,7 @@ class RoleAssignmentsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`RoleAssignmentPaged
          <azure.mgmt.authorization.models.RoleAssignmentPaged>`
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -620,11 +648,14 @@ class RoleAssignmentsOperations(object):
 
     def list_for_scope(
             self, scope, filter=None, custom_headers=None, raw=False, **operation_config):
-        """Gets role assignments of the scope.
+        """Gets role assignments for a scope.
 
-        :param scope: Scope.
+        :param scope: The scope of the role assignments.
         :type scope: str
-        :param filter: The filter to apply on the operation.
+        :param filter: The filter to apply on the operation. Use
+         $filter=atScope() to return all role assignments at or above the
+         scope. Use $filter=principalId eq {id} to return all role
+         assignments at, above or below the scope for the specified principal.
         :type filter: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -633,6 +664,7 @@ class RoleAssignmentsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`RoleAssignmentPaged
          <azure.mgmt.authorization.models.RoleAssignmentPaged>`
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
 

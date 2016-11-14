@@ -13,24 +13,25 @@ from .sub_resource import SubResource
 
 
 class ExpressRouteCircuitAuthorization(SubResource):
-    """Authorization in a ExpressRouteCircuit resource.
+    """Authorization in an ExpressRouteCircuit resource.
 
-    :param id: Resource Id
+    :param id: Resource ID.
     :type id: str
-    :param authorization_key: Gets or sets the authorization key
+    :param authorization_key: The authorization key.
     :type authorization_key: str
-    :param authorization_use_status: Gets or sets AuthorizationUseStatus.
-     Possible values include: 'Available', 'InUse'
+    :param authorization_use_status: AuthorizationUseStatus. Possible values
+     are: 'Available' and 'InUse'. Possible values include: 'Available',
+     'InUse'
     :type authorization_use_status: str or :class:`AuthorizationUseStatus
      <azure.mgmt.network.models.AuthorizationUseStatus>`
-    :param provisioning_state: Gets provisioning state of the PublicIP
-     resource Updating/Deleting/Failed
+    :param provisioning_state: Gets the provisioning state of the public IP
+     resource. Possible values are: 'Updating', 'Deleting', and 'Failed'.
     :type provisioning_state: str
     :param name: Gets name of the resource that is unique within a resource
-     group. This name can be used to access the resource
+     group. This name can be used to access the resource.
     :type name: str
     :param etag: A unique read-only string that changes whenever the resource
-     is updated
+     is updated.
     :type etag: str
     """ 
 

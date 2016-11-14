@@ -26,10 +26,10 @@ class Error(Model):
     :vartype target: str
     :ivar details: the list of error details
     :vartype details: list of :class:`ErrorDetails
-     <azure.mgmt.datalake.store.account.models.ErrorDetails>`
+     <azure.mgmt.datalake.store.models.ErrorDetails>`
     :ivar inner_error: the inner exceptions or errors, if any
     :vartype inner_error: :class:`InnerError
-     <azure.mgmt.datalake.store.account.models.InnerError>`
+     <azure.mgmt.datalake.store.models.InnerError>`
     """ 
 
     _validation = {

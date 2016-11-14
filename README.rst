@@ -56,10 +56,10 @@ We are not planning on any further major changes until then.
 
 The following packages are still labeled "preview" but can be considered "stable":
 
-- azure-mgmt-resource 0.30.2
-- azure-mgmt-compute 0.32.0
+- azure-mgmt-resource 0.31.0
+- azure-mgmt-compute 0.32.1
 - azure-mgmt-network 0.30.0
-- azure-mgmt-storage 0.30.0rc6
+- azure-mgmt-storage 0.30.0
 - azure-mgmt-keyvault 0.30.0
 
 The following packages are already released as "stable" and are officially production ready:
@@ -68,8 +68,8 @@ The following packages are already released as "stable" and are officially produ
 - azure-mgmt-batch 2.0.0
 - azure-mgmt-devtestlabs 1.0.0
 - azure-mgmt-logic 1.0.0
-- azure-mgmt-redis 2.0.0
-- azure-mgmt-scheduler 1.0.0
+- azure-mgmt-redis 3.0.0
+- azure-mgmt-scheduler 1.1.0
 - azure-mgmt-servermanager 1.1.0
 - azure-servicebus 0.20.3
 - azure-servicemanagement-legacy 0.20.5
@@ -85,6 +85,8 @@ listed before.
 - azure-mgmt-cdn 0.30.0rc6
 - azure-mgmt-cognitiveservices 0.30.0rc6
 - azure-mgmt-containerregistry 0.1.0
+- azure-mgmt-datalake-analytics 0.1.0
+- azure-mgmt-datalake-store 0.1.0
 - azure-mgmt-commerce 0.30.0rc6
 - azure-mgmt-eventhub 0.1.0
 - azure-mgmt-dns 0.30.0rc6

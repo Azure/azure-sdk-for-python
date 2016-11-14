@@ -26,8 +26,8 @@ class Usage(Model):
     :ivar current_value: Gets the current count of the allocated resources in
      the subscription.
     :vartype current_value: int
-    :ivar limit: Gets the maximum count of the resources that can be
-     allocated in the subscription.
+    :ivar limit: Gets the maximum count of the resources that can be allocated
+     in the subscription.
     :vartype limit: int
     :ivar name: Gets the name of the type of usage.
     :vartype name: :class:`UsageName <azure.mgmt.storage.models.UsageName>`
