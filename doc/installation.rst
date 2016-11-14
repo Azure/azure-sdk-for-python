@@ -52,7 +52,7 @@ azure-mgmt-batch                      2.0.0
 azure-mgmt-devtestlabs                1.0.0
 azure-mgmt-logic                      1.0.0
 azure-mgmt-redis                      3.0.0
-azure-mgmt-scheduler                  1.0.0
+azure-mgmt-scheduler                  1.1.0
 azure-mgmt-servermanager              1.0.0
 azure-servicebus                      0.20.3
 azure-servicemanagement-legacy        0.20.5
