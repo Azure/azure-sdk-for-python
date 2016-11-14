@@ -22,8 +22,8 @@ class JobRecurrence(Model):
      <azure.mgmt.scheduler.models.RecurrenceFrequency>`
     :param interval: Gets or sets the interval between retries.
     :type interval: int
-    :param count: Gets or sets the maximum number of times that the job
-     should run.
+    :param count: Gets or sets the maximum number of times that the job should
+     run.
     :type count: int
     :param end_time: Gets or sets the time at which the job will complete.
     :type end_time: datetime
