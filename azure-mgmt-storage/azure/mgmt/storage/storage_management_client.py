@@ -27,8 +27,8 @@ class StorageManagementClientConfiguration(AzureConfiguration):
     :type credentials: :mod:`A msrestazure Credentials
      object<msrestazure.azure_active_directory>`
     :param subscription_id: Gets subscription credentials which uniquely
-     identify the Microsoft Azure subscription. The subscription ID forms
-     part of the URI for every service call.
+     identify the Microsoft Azure subscription. The subscription ID forms part
+     of the URI for every service call.
     :type subscription_id: str
     :param api_version: Client Api Version.
     :type api_version: str
@@ -90,8 +90,8 @@ class StorageManagementClient(object):
     :type credentials: :mod:`A msrestazure Credentials
      object<msrestazure.azure_active_directory>`
     :param subscription_id: Gets subscription credentials which uniquely
-     identify the Microsoft Azure subscription. The subscription ID forms
-     part of the URI for every service call.
+     identify the Microsoft Azure subscription. The subscription ID forms part
+     of the URI for every service call.
     :type subscription_id: str
     :param api_version: Client Api Version.
     :type api_version: str
