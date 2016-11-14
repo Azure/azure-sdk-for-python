@@ -280,7 +280,8 @@
     "storage": {
       "swagger": "arm-storage/2016-01-01/swagger/storage.json",
       "autorest_options": {
-        "Namespace": "azure.mgmt.storage"
+        "Namespace": "azure.mgmt.storage",
+        "PackageVersion": "0.30.0"
       },
       "output_dir": "azure-mgmt-storage/azure/mgmt/storage"
     },
