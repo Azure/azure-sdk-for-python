@@ -12,6 +12,7 @@
 from .resource import Resource
 from .gateway_resource import GatewayResource
 from .gateway_status import GatewayStatus
+from .encryption_jwk_resource import EncryptionJwkResource
 from .gateway_profile import GatewayProfile
 from .gateway_parameters import GatewayParameters
 from .node_resource import NodeResource
@@ -33,7 +34,9 @@ from .error import Error, ErrorException
 from .gateway_resource_paged import GatewayResourcePaged
 from .node_resource_paged import NodeResourcePaged
 from .server_management_enums import (
-    AutoUpgrade,
+    upgradeMode,
+    retentionPeriod,
+    credentialDataFormat,
     PromptFieldType,
     GatewayExpandOption,
     PowerShellExpandOption,
@@ -43,6 +46,7 @@ __all__ = [
     'Resource',
     'GatewayResource',
     'GatewayStatus',
+    'EncryptionJwkResource',
     'GatewayProfile',
     'GatewayParameters',
     'NodeResource',
@@ -63,7 +67,9 @@ __all__ = [
     'Error', 'ErrorException',
     'GatewayResourcePaged',
     'NodeResourcePaged',
-    'AutoUpgrade',
+    'upgradeMode',
+    'retentionPeriod',
+    'credentialDataFormat',
     'PromptFieldType',
     'GatewayExpandOption',
     'PowerShellExpandOption',

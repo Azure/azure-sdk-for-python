@@ -13,20 +13,20 @@ from .resource import Resource
 
 
 class PowerShellCommandStatus(Resource):
-    """PowerShellCommandStatus.
+    """Result status from invoking a PowerShell command.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar id: ARM Resource ID
+    :ivar id: Resource Manager Resource ID.
     :vartype id: str
-    :ivar type: ARM Resource Type
+    :ivar type: Resource Manager Resource Type.
     :vartype type: str
-    :ivar name: ARM Resource Name
+    :ivar name: Resource Manager Resource Name.
     :vartype name: str
-    :ivar location: ARM Resource Location
+    :ivar location: Resource Manager Resource Location.
     :vartype location: str
-    :param tags: ARM Resource Tags
+    :param tags: Resource Manager Resource Tags.
     :type tags: dict
     :param etag:
     :type etag: str

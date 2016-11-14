@@ -12,17 +12,28 @@
 from msrest.serialization import Model
 
 
-class PowerShellTabCompletionResults(Model):
-    """An array of strings representing the different values that can be selected
-    through.
+class EncryptionJwkResource(Model):
+    """The public key of the gateway.
 
-    :param results:
-    :type results: list of str
+    :param kty:
+    :type kty: str
+    :param alg:
+    :type alg: str
+    :param e:
+    :type e: str
+    :param n:
+    :type n: str
     """ 
 
     _attribute_map = {
-        'results': {'key': 'results', 'type': '[str]'},
+        'kty': {'key': 'kty', 'type': 'str'},
+        'alg': {'key': 'alg', 'type': 'str'},
+        'e': {'key': 'e', 'type': 'str'},
+        'n': {'key': 'n', 'type': 'str'},
     }
 
-    def __init__(self, results=None):
-        self.results = results
+    def __init__(self, kty=None, alg=None, e=None, n=None):
+        self.kty = kty
+        self.alg = alg
+        self.e = e
+        self.n = n

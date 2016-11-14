@@ -13,25 +13,25 @@ from .resource import Resource
 
 
 class PowerShellSessionResource(Resource):
-    """A powershell session resource (practically equivalent to a runspace
+    """A PowerShell session resource (practically equivalent to a runspace
     instance).
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar id: ARM Resource ID
+    :ivar id: Resource Manager Resource ID.
     :vartype id: str
-    :ivar type: ARM Resource Type
+    :ivar type: Resource Manager Resource Type.
     :vartype type: str
-    :ivar name: ARM Resource Name
+    :ivar name: Resource Manager Resource Name.
     :vartype name: str
-    :ivar location: ARM Resource Location
+    :ivar location: Resource Manager Resource Location.
     :vartype location: str
-    :param tags: ARM Resource Tags
+    :param tags: Resource Manager Resource Tags.
     :type tags: dict
     :param etag:
     :type etag: str
-    :param session_id: the PowerShell Session Id.
+    :param session_id: The PowerShell Session ID.
     :type session_id: str
     :param state: The runspace state.
     :type state: str
@@ -44,7 +44,7 @@ class PowerShellSessionResource(Resource):
     :type expires_on: datetime
     :param version:
     :type version: :class:`Version <azure.mgmt.servermanager.models.Version>`
-    :param power_shell_session_resource_name: Name of the runspace
+    :param power_shell_session_resource_name: Name of the runspace.
     :type power_shell_session_resource_name: str
     """ 
 

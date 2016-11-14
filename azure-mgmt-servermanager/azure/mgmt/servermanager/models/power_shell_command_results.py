@@ -13,7 +13,7 @@ from msrest.serialization import Model
 
 
 class PowerShellCommandResults(Model):
-    """a collection of results from a powershell command.
+    """A collection of results from a PowerShell command.
 
     :param results:
     :type results: list of :class:`PowerShellCommandResult

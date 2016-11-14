@@ -12,10 +12,21 @@
 from enum import Enum
 
 
-class AutoUpgrade(Enum):
+class upgradeMode(Enum):
 
-    on = "On"
-    off = "Off"
+    manual = "Manual"
+    automatic = "Automatic"
+
+
+class retentionPeriod(Enum):
+
+    session = "Session"
+    persistent = "Persistent"
+
+
+class credentialDataFormat(Enum):
+
+    rsa_encrypted = "RsaEncrypted"
 
 
 class PromptFieldType(Enum):
@@ -28,6 +39,7 @@ class PromptFieldType(Enum):
 class GatewayExpandOption(Enum):
 
     status = "status"
+    download = "download"
 
 
 class PowerShellExpandOption(Enum):

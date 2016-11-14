@@ -42,7 +42,7 @@ class PowerShellOperations(object):
         :type resource_group_name: str
         :param node_name: The node name (256 characters maximum).
         :type node_name: str
-        :param session: The sessionId from the user
+        :param session: The sessionId from the user.
         :type session: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -53,6 +53,8 @@ class PowerShellOperations(object):
          <azure.mgmt.servermanager.models.PowerShellSessionResources>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`ErrorException<azure.mgmt.servermanager.models.ErrorException>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ServerManagement/nodes/{nodeName}/sessions/{session}/features/powerShellConsole/pssessions'
@@ -105,9 +107,9 @@ class PowerShellOperations(object):
         :type resource_group_name: str
         :param node_name: The node name (256 characters maximum).
         :type node_name: str
-        :param session: The sessionId from the user
+        :param session: The sessionId from the user.
         :type session: str
-        :param pssession: The PowerShell sessionId from the user
+        :param pssession: The PowerShell sessionId from the user.
         :type pssession: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -118,6 +120,8 @@ class PowerShellOperations(object):
          <azure.mgmt.servermanager.models.PowerShellSessionResource>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`ErrorException<azure.mgmt.servermanager.models.ErrorException>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ServerManagement/nodes/{nodeName}/sessions/{session}/features/powerShellConsole/pssessions/{pssession}'
@@ -194,9 +198,9 @@ class PowerShellOperations(object):
         :type resource_group_name: str
         :param node_name: The node name (256 characters maximum).
         :type node_name: str
-        :param session: The sessionId from the user
+        :param session: The sessionId from the user.
         :type session: str
-        :param pssession: The PowerShell sessionId from the user
+        :param pssession: The PowerShell sessionId from the user.
         :type pssession: str
         :param expand: Gets current output from an ongoing call. Possible
          values include: 'output'
@@ -211,6 +215,8 @@ class PowerShellOperations(object):
          <azure.mgmt.servermanager.models.PowerShellCommandStatus>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`ErrorException<azure.mgmt.servermanager.models.ErrorException>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ServerManagement/nodes/{nodeName}/sessions/{session}/features/powerShellConsole/pssessions/{pssession}'
@@ -259,16 +265,16 @@ class PowerShellOperations(object):
 
     def update_command(
             self, resource_group_name, node_name, session, pssession, custom_headers=None, raw=False, **operation_config):
-        """updates a running PowerShell command with more data.
+        """Updates a running PowerShell command with more data.
 
         :param resource_group_name: The resource group name uniquely
          identifies the resource group within the user subscriptionId.
         :type resource_group_name: str
         :param node_name: The node name (256 characters maximum).
         :type node_name: str
-        :param session: The sessionId from the user
+        :param session: The sessionId from the user.
         :type session: str
-        :param pssession: The PowerShell sessionId from the user
+        :param pssession: The PowerShell sessionId from the user.
         :type pssession: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -279,6 +285,8 @@ class PowerShellOperations(object):
          <azure.mgmt.servermanager.models.PowerShellCommandResults>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`ErrorException<azure.mgmt.servermanager.models.ErrorException>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ServerManagement/nodes/{nodeName}/sessions/{session}/features/powerShellConsole/pssessions/{pssession}'
@@ -355,11 +363,11 @@ class PowerShellOperations(object):
         :type resource_group_name: str
         :param node_name: The node name (256 characters maximum).
         :type node_name: str
-        :param session: The sessionId from the user
+        :param session: The sessionId from the user.
         :type session: str
-        :param pssession: The PowerShell sessionId from the user
+        :param pssession: The PowerShell sessionId from the user.
         :type pssession: str
-        :param command: Script to execute
+        :param command: Script to execute.
         :type command: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -370,6 +378,8 @@ class PowerShellOperations(object):
          <azure.mgmt.servermanager.models.PowerShellCommandResults>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`ErrorException<azure.mgmt.servermanager.models.ErrorException>`
         """
         power_shell_command_parameters = models.PowerShellCommandParameters(command=command)
 
@@ -452,9 +462,9 @@ class PowerShellOperations(object):
         :type resource_group_name: str
         :param node_name: The node name (256 characters maximum).
         :type node_name: str
-        :param session: The sessionId from the user
+        :param session: The sessionId from the user.
         :type session: str
-        :param pssession: The PowerShell sessionId from the user
+        :param pssession: The PowerShell sessionId from the user.
         :type pssession: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -465,6 +475,8 @@ class PowerShellOperations(object):
          <azure.mgmt.servermanager.models.PowerShellCommandResults>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`ErrorException<azure.mgmt.servermanager.models.ErrorException>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ServerManagement/nodes/{nodeName}/sessions/{session}/features/powerShellConsole/pssessions/{pssession}/cancel'
@@ -534,16 +546,16 @@ class PowerShellOperations(object):
 
     def tab_completion(
             self, resource_group_name, node_name, session, pssession, command=None, custom_headers=None, raw=False, **operation_config):
-        """gets tab completion values for a command.
+        """Gets tab completion values for a command.
 
         :param resource_group_name: The resource group name uniquely
          identifies the resource group within the user subscriptionId.
         :type resource_group_name: str
         :param node_name: The node name (256 characters maximum).
         :type node_name: str
-        :param session: The sessionId from the user
+        :param session: The sessionId from the user.
         :type session: str
-        :param pssession: The PowerShell sessionId from the user
+        :param pssession: The PowerShell sessionId from the user.
         :type pssession: str
         :param command: Command to get tab completion for.
         :type command: str
@@ -556,6 +568,8 @@ class PowerShellOperations(object):
          <azure.mgmt.servermanager.models.PowerShellTabCompletionResults>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`ErrorException<azure.mgmt.servermanager.models.ErrorException>`
         """
         power_shell_tab_completion_paramters = models.PowerShellTabCompletionParameters(command=command)
 

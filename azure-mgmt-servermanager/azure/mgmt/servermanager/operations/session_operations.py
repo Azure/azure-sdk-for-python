@@ -34,7 +34,7 @@ class SessionOperations(object):
         self.config = config
 
     def create(
-            self, resource_group_name, node_name, session, user_name=None, password=None, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, node_name, session, user_name=None, password=None, retention_period=None, credential_data_format=None, encryption_certificate_thumbprint=None, custom_headers=None, raw=False, **operation_config):
         """Creates a session for a node.
 
         :param resource_group_name: The resource group name uniquely
@@ -42,12 +42,23 @@ class SessionOperations(object):
         :type resource_group_name: str
         :param node_name: The node name (256 characters maximum).
         :type node_name: str
-        :param session: The sessionId from the user
+        :param session: The sessionId from the user.
         :type session: str
-        :param user_name: User name to be used to connect to node
+        :param user_name: Encrypted User name to be used to connect to node.
         :type user_name: str
-        :param password: Password associated with user name
+        :param password: Encrypted Password associated with user name.
         :type password: str
+        :param retention_period: Session retention period. Possible values
+         include: 'Session', 'Persistent'
+        :type retention_period: str or :class:`retentionPeriod
+         <azure.mgmt.servermanager.models.retentionPeriod>`
+        :param credential_data_format: Credential data format. Possible values
+         include: 'RsaEncrypted'
+        :type credential_data_format: str or :class:`credentialDataFormat
+         <azure.mgmt.servermanager.models.credentialDataFormat>`
+        :param encryption_certificate_thumbprint: Encryption certificate
+         thumbprint.
+        :type encryption_certificate_thumbprint: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -57,8 +68,10 @@ class SessionOperations(object):
          <azure.mgmt.servermanager.models.SessionResource>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`ErrorException<azure.mgmt.servermanager.models.ErrorException>`
         """
-        session_parameters = models.SessionParameters(user_name=user_name, password=password)
+        session_parameters = models.SessionParameters(user_name=user_name, password=password, retention_period=retention_period, credential_data_format=credential_data_format, encryption_certificate_thumbprint=encryption_certificate_thumbprint)
 
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ServerManagement/nodes/{nodeName}/sessions/{session}'
@@ -140,7 +153,7 @@ class SessionOperations(object):
         :type resource_group_name: str
         :param node_name: The node name (256 characters maximum).
         :type node_name: str
-        :param session: The sessionId from the user
+        :param session: The sessionId from the user.
         :type session: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -150,6 +163,8 @@ class SessionOperations(object):
         :rtype: None
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`ErrorException<azure.mgmt.servermanager.models.ErrorException>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ServerManagement/nodes/{nodeName}/sessions/{session}'
@@ -195,7 +210,7 @@ class SessionOperations(object):
         :type resource_group_name: str
         :param node_name: The node name (256 characters maximum).
         :type node_name: str
-        :param session: The sessionId from the user
+        :param session: The sessionId from the user.
         :type session: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -206,6 +221,8 @@ class SessionOperations(object):
          <azure.mgmt.servermanager.models.SessionResource>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`ErrorException<azure.mgmt.servermanager.models.ErrorException>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ServerManagement/nodes/{nodeName}/sessions/{session}'
