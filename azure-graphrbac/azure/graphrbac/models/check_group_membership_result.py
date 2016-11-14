@@ -15,7 +15,7 @@ from msrest.serialization import Model
 class CheckGroupMembershipResult(Model):
     """Server response for IsMemberOf API call.
 
-    :param value: true if the specified user, group, contact, or service
+    :param value: True if the specified user, group, contact, or service
      principal has either direct or transitive membership in the specified
      group; otherwise, false.
     :type value: bool

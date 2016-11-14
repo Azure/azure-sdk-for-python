@@ -22,7 +22,7 @@ class ApplicationsOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An objec model deserializer.
-    :ivar api_version: Client Api Version. Constant value: "1.6".
+    :ivar api_version: Client API version. Constant value: "1.6".
     """
 
     def __init__(self, client, config, serializer, deserializer):
@@ -36,10 +36,9 @@ class ApplicationsOperations(object):
 
     def create(
             self, parameters, custom_headers=None, raw=False, **operation_config):
-        """Create a new application. Reference:
-        http://msdn.microsoft.com/en-us/library/azure/hh974476.aspx.
+        """Create a new application.
 
-        :param parameters: Parameters to create an application.
+        :param parameters: The parameters for creating an application.
         :type parameters: :class:`ApplicationCreateParameters
          <azure.graphrbac.models.ApplicationCreateParameters>`
         :param dict custom_headers: headers that will be added to the request
@@ -50,6 +49,8 @@ class ApplicationsOperations(object):
         :rtype: :class:`Application <azure.graphrbac.models.Application>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`GraphErrorException<azure.graphrbac.models.GraphErrorException>`
         """
         # Construct URL
         url = '/{tenantID}/applications'
@@ -96,10 +97,9 @@ class ApplicationsOperations(object):
 
     def list(
             self, filter=None, custom_headers=None, raw=False, **operation_config):
-        """Lists applications by filter parameters. Reference:
-        http://msdn.microsoft.com/en-us/library/azure/hh974476.aspx.
+        """Lists applications by filter parameters.
 
-        :param filter: The filters to apply on the operation
+        :param filter: The filters to apply to the operation.
         :type filter: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -108,6 +108,8 @@ class ApplicationsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`ApplicationPaged
          <azure.graphrbac.models.ApplicationPaged>`
+        :raises:
+         :class:`GraphErrorException<azure.graphrbac.models.GraphErrorException>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -167,10 +169,9 @@ class ApplicationsOperations(object):
 
     def delete(
             self, application_object_id, custom_headers=None, raw=False, **operation_config):
-        """Delete an application. Reference:
-        http://msdn.microsoft.com/en-us/library/azure/hh974476.aspx.
+        """Delete an application.
 
-        :param application_object_id: Application object id
+        :param application_object_id: Application object ID.
         :type application_object_id: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -180,6 +181,8 @@ class ApplicationsOperations(object):
         :rtype: None
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`GraphErrorException<azure.graphrbac.models.GraphErrorException>`
         """
         # Construct URL
         url = '/{tenantID}/applications/{applicationObjectId}'
@@ -216,10 +219,9 @@ class ApplicationsOperations(object):
 
     def get(
             self, application_object_id, custom_headers=None, raw=False, **operation_config):
-        """Get an application by object Id. Reference:
-        http://msdn.microsoft.com/en-us/library/azure/hh974476.aspx.
+        """Get an application by object ID.
 
-        :param application_object_id: Application object id
+        :param application_object_id: Application object ID.
         :type application_object_id: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -229,6 +231,8 @@ class ApplicationsOperations(object):
         :rtype: :class:`Application <azure.graphrbac.models.Application>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`GraphErrorException<azure.graphrbac.models.GraphErrorException>`
         """
         # Construct URL
         url = '/{tenantID}/applications/{applicationObjectId}'
@@ -272,10 +276,9 @@ class ApplicationsOperations(object):
 
     def patch(
             self, application_object_id, parameters, custom_headers=None, raw=False, **operation_config):
-        """Update existing application. Reference:
-        http://msdn.microsoft.com/en-us/library/azure/hh974476.aspx.
+        """Update an existing application.
 
-        :param application_object_id: Application object id
+        :param application_object_id: Application object ID.
         :type application_object_id: str
         :param parameters: Parameters to update an existing application.
         :type parameters: :class:`ApplicationUpdateParameters
@@ -288,6 +291,8 @@ class ApplicationsOperations(object):
         :rtype: None
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`GraphErrorException<azure.graphrbac.models.GraphErrorException>`
         """
         # Construct URL
         url = '/{tenantID}/applications/{applicationObjectId}'
@@ -328,11 +333,9 @@ class ApplicationsOperations(object):
 
     def list_key_credentials(
             self, application_object_id, custom_headers=None, raw=False, **operation_config):
-        """Get keyCredentials associated with the application by object Id.
-        Reference:
-        https://msdn.microsoft.com/en-us/library/azure/ad/graph/api/entity-and-complex-type-reference#keycredential-type.
+        """Get the keyCredentials associated with an application.
 
-        :param application_object_id: Application object id
+        :param application_object_id: Application object ID.
         :type application_object_id: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -341,6 +344,8 @@ class ApplicationsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`KeyCredentialPaged
          <azure.graphrbac.models.KeyCredentialPaged>`
+        :raises:
+         :class:`GraphErrorException<azure.graphrbac.models.GraphErrorException>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -393,13 +398,11 @@ class ApplicationsOperations(object):
 
     def update_key_credentials(
             self, application_object_id, value, custom_headers=None, raw=False, **operation_config):
-        """Update keyCredentials associated with an existing application.
-        Reference:
-        https://msdn.microsoft.com/en-us/library/azure/ad/graph/api/entity-and-complex-type-reference#keycredential-type.
+        """Update the keyCredentials associated with an application.
 
-        :param application_object_id: Application object id
+        :param application_object_id: Application object ID.
         :type application_object_id: str
-        :param value: KeyCredential list.
+        :param value: A collection of KeyCredentials.
         :type value: list of :class:`KeyCredential
          <azure.graphrbac.models.KeyCredential>`
         :param dict custom_headers: headers that will be added to the request
@@ -410,6 +413,8 @@ class ApplicationsOperations(object):
         :rtype: None
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`GraphErrorException<azure.graphrbac.models.GraphErrorException>`
         """
         parameters = models.KeyCredentialsUpdateParameters(value=value)
 
@@ -452,11 +457,9 @@ class ApplicationsOperations(object):
 
     def list_password_credentials(
             self, application_object_id, custom_headers=None, raw=False, **operation_config):
-        """Gets passwordCredentials associated with an existing application.
-        Reference:
-        https://msdn.microsoft.com/en-us/library/azure/ad/graph/api/entity-and-complex-type-reference#passwordcredential-type.
+        """Get the passwordCredentials associated with an application.
 
-        :param application_object_id: Application object id
+        :param application_object_id: Application object ID.
         :type application_object_id: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -465,6 +468,8 @@ class ApplicationsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`PasswordCredentialPaged
          <azure.graphrbac.models.PasswordCredentialPaged>`
+        :raises:
+         :class:`GraphErrorException<azure.graphrbac.models.GraphErrorException>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -517,13 +522,11 @@ class ApplicationsOperations(object):
 
     def update_password_credentials(
             self, application_object_id, value, custom_headers=None, raw=False, **operation_config):
-        """Updates passwordCredentials associated with an existing application.
-        Reference:
-        https://msdn.microsoft.com/en-us/library/azure/ad/graph/api/entity-and-complex-type-reference#passwordcredential-type.
+        """Update passwordCredentials associated with an application.
 
-        :param application_object_id: Application object id
+        :param application_object_id: Application object ID.
         :type application_object_id: str
-        :param value: PasswordCredential list.
+        :param value: A collection of PasswordCredentials.
         :type value: list of :class:`PasswordCredential
          <azure.graphrbac.models.PasswordCredential>`
         :param dict custom_headers: headers that will be added to the request
@@ -534,6 +537,8 @@ class ApplicationsOperations(object):
         :rtype: None
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`GraphErrorException<azure.graphrbac.models.GraphErrorException>`
         """
         parameters = models.PasswordCredentialsUpdateParameters(value=value)
 

@@ -12,7 +12,7 @@
 from msrest.paging import Paged
 
 
-class strPaged(Paged):
+class StrPaged(Paged):
     """
     A paging container for iterating over a list of str object
     """
@@ -24,4 +24,4 @@ class strPaged(Paged):
 
     def __init__(self, *args, **kwargs):
 
-        super(strPaged, self).__init__(*args, **kwargs)
+        super(StrPaged, self).__init__(*args, **kwargs)

@@ -13,14 +13,14 @@ from msrest.serialization import Model
 
 
 class GetObjectsParameters(Model):
-    """Request parameters for GetObjectsByObjectIds API call.
+    """Request parameters for the GetObjectsByObjectIds API.
 
-    :param object_ids: Requested object Ids
+    :param object_ids: The requested object IDs.
     :type object_ids: list of str
-    :param types: Requested object types
+    :param types: The requested object types.
     :type types: list of str
     :param include_directory_object_references: If true, also searches for
-     object ids in the partner tenant
+     object IDs in the partner tenant.
     :type include_directory_object_references: bool
     """ 
 

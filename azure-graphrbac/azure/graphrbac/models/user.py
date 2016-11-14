@@ -15,19 +15,19 @@ from msrest.serialization import Model
 class User(Model):
     """Active Directory user information.
 
-    :param object_id: object Id
+    :param object_id: The object ID.
     :type object_id: str
-    :param object_type: object type
+    :param object_type: The object type.
     :type object_type: str
-    :param user_principal_name: user principal name
+    :param user_principal_name: The principal name of the user.
     :type user_principal_name: str
-    :param display_name: user display name
+    :param display_name: The display name of the user.
     :type display_name: str
-    :param sign_in_name: user signIn name
+    :param sign_in_name: The sign-in name of the user.
     :type sign_in_name: str
-    :param mail: user mail
+    :param mail: The primary email address of the user.
     :type mail: str
-    :param mail_nickname: The mail alias for the user
+    :param mail_nickname: The mail alias for the user.
     :type mail_nickname: str
     """ 
 
