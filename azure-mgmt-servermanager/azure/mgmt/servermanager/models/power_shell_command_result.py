@@ -13,31 +13,31 @@ from msrest.serialization import Model
 
 
 class PowerShellCommandResult(Model):
-    """PowerShellCommandResult.
+    """Results from invoking a PowerShell command.
 
-    :param message_type: the type of message
+    :param message_type: The type of message.
     :type message_type: int
-    :param foreground_color: the HTML color string representing the
-     foreground color.
+    :param foreground_color: The HTML color string representing the foreground
+     color.
     :type foreground_color: str
-    :param background_color: the HTML color string representing the
-     background color.
+    :param background_color: The HTML color string representing the background
+     color.
     :type background_color: str
-    :param value: actual result text from the PowerShell Command
+    :param value: Actual result text from the PowerShell Command.
     :type value: str
-    :param prompt: The interactive prompt message
+    :param prompt: The interactive prompt message.
     :type prompt: str
-    :param exit_code: the exit code from a executable that was called from
-     powershell.
+    :param exit_code: The exit code from a executable that was called from
+     PowerShell.
     :type exit_code: int
-    :param id: ID of the prompt message
+    :param id: ID of the prompt message.
     :type id: int
-    :param caption: text that precedes the prompt.
+    :param caption: Text that precedes the prompt.
     :type caption: str
-    :param message: text of the prompt.
+    :param message: Text of the prompt.
     :type message: str
-    :param descriptions: collection of PromptFieldDescription objects that
-     contains the user input
+    :param descriptions: Collection of PromptFieldDescription objects that
+     contains the user input.
     :type descriptions: list of :class:`PromptFieldDescription
      <azure.mgmt.servermanager.models.PromptFieldDescription>`
     """ 
