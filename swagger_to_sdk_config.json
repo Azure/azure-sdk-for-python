@@ -244,10 +244,10 @@
       "output_dir": "unreleased/azure-mgmt-search/azure/mgmt/search"
     },
     "servermanager": {
-      "swagger": "arm-servermanagement/2015-07-01-preview/servermanagement.json",
+      "swagger": "arm-servermanagement/2016-07-01-preview/swagger/servermanagement.json",
       "autorest_options": {
         "Namespace": "azure.mgmt.servermanager",
-        "PackageVersion": "1.0.0"
+        "PackageVersion": "2.0.0"
       },
       "output_dir": "azure-mgmt-servermanager/azure/mgmt/servermanager",
       "generated_relative_base_directory": "servermanagement"
