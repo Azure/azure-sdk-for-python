@@ -58,7 +58,7 @@
       "autorest_options": {
         "Namespace": "azure.mgmt.compute",
         "Modeler": "CompositeSwagger",
-        "PackageVersion": "0.32.0"
+        "PackageVersion": "0.32.1"
       },
       "output_dir": "azure-mgmt-compute/azure/mgmt/compute"
     },

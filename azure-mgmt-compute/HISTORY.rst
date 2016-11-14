@@ -3,6 +3,12 @@
 Release History
 ===============
 
+0.32.1 (2016-11-14)
++++++++++++++++++++
+
+* Add "Kubernetes" on Containers
+* Improve technical documentation
+
 0.32.0 (2016-11-02)
 +++++++++++++++++++
 
