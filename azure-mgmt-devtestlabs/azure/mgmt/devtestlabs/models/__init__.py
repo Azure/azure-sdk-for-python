@@ -51,6 +51,7 @@ from .subnet_override import SubnetOverride
 from .subscription_notification import SubscriptionNotification
 from .subscription_notification_properties import SubscriptionNotificationProperties
 from .lab_paged import LabPaged
+from .lab_vhd_paged import LabVhdPaged
 from .artifact_source_paged import ArtifactSourcePaged
 from .artifact_paged import ArtifactPaged
 from .custom_image_paged import CustomImagePaged
@@ -60,7 +61,6 @@ from .policy_paged import PolicyPaged
 from .schedule_paged import SchedulePaged
 from .lab_virtual_machine_paged import LabVirtualMachinePaged
 from .virtual_network_paged import VirtualNetworkPaged
-from .lab_vhd_paged import LabVhdPaged
 from .dev_test_labs_client_enums import (
     SourceControlType,
     EnableStatus,
@@ -119,6 +119,7 @@ __all__ = [
     'SubscriptionNotification',
     'SubscriptionNotificationProperties',
     'LabPaged',
+    'LabVhdPaged',
     'ArtifactSourcePaged',
     'ArtifactPaged',
     'CustomImagePaged',
@@ -128,7 +129,6 @@ __all__ = [
     'SchedulePaged',
     'LabVirtualMachinePaged',
     'VirtualNetworkPaged',
-    'LabVhdPaged',
     'SourceControlType',
     'EnableStatus',
     'LabCostType',
