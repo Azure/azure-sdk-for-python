@@ -9,43 +9,45 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .sub_resource import SubResource
+from msrest.serialization import Model
 
 
-class FirewallRule(SubResource):
-    """Data Lake Store firewall rule information.
+class Resource(Model):
+    """The Resource model definition.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
     :ivar id: Resource Id
     :vartype id: str
-    :param name: Resource name
-    :type name: str
+    :ivar name: Resource name
+    :vartype name: str
     :ivar type: Resource type
     :vartype type: str
-    :param start_ip_address: the start IP address for the firewall rule.
-    :type start_ip_address: str
-    :param end_ip_address: the end IP address for the firewall rule.
-    :type end_ip_address: str
+    :param location: Resource location
+    :type location: str
+    :param tags: Resource tags
+    :type tags: dict
     """ 
 
     _validation = {
         'id': {'readonly': True},
+        'name': {'readonly': True},
         'type': {'readonly': True},
-        'start_ip_address': {'required': True},
-        'end_ip_address': {'required': True},
+        'location': {'required': True},
     }
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'start_ip_address': {'key': 'properties.startIpAddress', 'type': 'str'},
-        'end_ip_address': {'key': 'properties.endIpAddress', 'type': 'str'},
+        'location': {'key': 'location', 'type': 'str'},
+        'tags': {'key': 'tags', 'type': '{str}'},
     }
 
-    def __init__(self, start_ip_address, end_ip_address, name=None):
-        super(FirewallRule, self).__init__(name=name)
-        self.start_ip_address = start_ip_address
-        self.end_ip_address = end_ip_address
+    def __init__(self, location, tags=None):
+        self.id = None
+        self.name = None
+        self.type = None
+        self.location = location
+        self.tags = tags

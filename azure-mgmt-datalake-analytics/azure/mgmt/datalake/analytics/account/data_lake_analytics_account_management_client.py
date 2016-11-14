@@ -13,6 +13,8 @@ from msrest.service_client import ServiceClient
 from msrest import Serializer, Deserializer
 from msrestazure import AzureConfiguration
 from .version import VERSION
+from .operations.storage_accounts_operations import StorageAccountsOperations
+from .operations.data_lake_store_accounts_operations import DataLakeStoreAccountsOperations
 from .operations.account_operations import AccountOperations
 from . import models
 
@@ -46,7 +48,7 @@ class DataLakeAnalyticsAccountManagementClientConfiguration(AzureConfiguration):
     """
 
     def __init__(
-            self, credentials, subscription_id, api_version='2015-10-01-preview', accept_language='en-US', long_running_operation_retry_timeout=30, generate_client_request_id=True, base_url=None, filepath=None):
+            self, credentials, subscription_id, api_version='2016-11-01', accept_language='en-US', long_running_operation_retry_timeout=30, generate_client_request_id=True, base_url=None, filepath=None):
 
         if credentials is None:
             raise ValueError("Parameter 'credentials' must not be None.")
@@ -80,6 +82,10 @@ class DataLakeAnalyticsAccountManagementClient(object):
     :ivar config: Configuration for client.
     :vartype config: DataLakeAnalyticsAccountManagementClientConfiguration
 
+    :ivar storage_accounts: StorageAccounts operations
+    :vartype storage_accounts: .operations.StorageAccountsOperations
+    :ivar data_lake_store_accounts: DataLakeStoreAccounts operations
+    :vartype data_lake_store_accounts: .operations.DataLakeStoreAccountsOperations
     :ivar account: Account operations
     :vartype account: .operations.AccountOperations
 
@@ -107,7 +113,7 @@ class DataLakeAnalyticsAccountManagementClient(object):
     """
 
     def __init__(
-            self, credentials, subscription_id, api_version='2015-10-01-preview', accept_language='en-US', long_running_operation_retry_timeout=30, generate_client_request_id=True, base_url=None, filepath=None):
+            self, credentials, subscription_id, api_version='2016-11-01', accept_language='en-US', long_running_operation_retry_timeout=30, generate_client_request_id=True, base_url=None, filepath=None):
 
         self.config = DataLakeAnalyticsAccountManagementClientConfiguration(credentials, subscription_id, api_version, accept_language, long_running_operation_retry_timeout, generate_client_request_id, base_url, filepath)
         self._client = ServiceClient(self.config.credentials, self.config)
@@ -116,5 +122,9 @@ class DataLakeAnalyticsAccountManagementClient(object):
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
 
+        self.storage_accounts = StorageAccountsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.data_lake_store_accounts = DataLakeStoreAccountsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
         self.account = AccountOperations(
             self._client, self.config, self._serialize, self._deserialize)

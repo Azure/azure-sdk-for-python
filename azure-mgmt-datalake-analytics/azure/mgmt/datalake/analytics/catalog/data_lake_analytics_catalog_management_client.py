@@ -44,7 +44,7 @@ class DataLakeAnalyticsCatalogManagementClientConfiguration(AzureConfiguration):
     """
 
     def __init__(
-            self, credentials, adla_catalog_dns_suffix, api_version='2015-10-01-preview', accept_language='en-US', long_running_operation_retry_timeout=30, generate_client_request_id=True, filepath=None):
+            self, credentials, adla_catalog_dns_suffix, api_version='2016-11-01', accept_language='en-US', long_running_operation_retry_timeout=30, generate_client_request_id=True, filepath=None):
 
         if credentials is None:
             raise ValueError("Parameter 'credentials' must not be None.")
@@ -102,7 +102,7 @@ class DataLakeAnalyticsCatalogManagementClient(object):
     """
 
     def __init__(
-            self, credentials, adla_catalog_dns_suffix, api_version='2015-10-01-preview', accept_language='en-US', long_running_operation_retry_timeout=30, generate_client_request_id=True, filepath=None):
+            self, credentials, adla_catalog_dns_suffix, api_version='2016-11-01', accept_language='en-US', long_running_operation_retry_timeout=30, generate_client_request_id=True, filepath=None):
 
         self.config = DataLakeAnalyticsCatalogManagementClientConfiguration(credentials, adla_catalog_dns_suffix, api_version, accept_language, long_running_operation_retry_timeout, generate_client_request_id, filepath)
         self._client = ServiceClient(self.config.credentials, self.config)

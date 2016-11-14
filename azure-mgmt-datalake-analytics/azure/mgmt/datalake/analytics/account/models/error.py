@@ -24,10 +24,10 @@ class Error(Model):
     :vartype message: str
     :ivar target: the target of the error.
     :vartype target: str
-    :ivar details: the list of error details
+    :ivar details: The list of error details
     :vartype details: list of :class:`ErrorDetails
      <azure.mgmt.datalake.analytics.account.models.ErrorDetails>`
-    :ivar inner_error: the inner exceptions or errors, if any
+    :ivar inner_error: The inner exceptions or errors, if any
     :vartype inner_error: :class:`InnerError
      <azure.mgmt.datalake.analytics.account.models.InnerError>`
     """ 

@@ -9,19 +9,21 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.paging import Paged
+from msrest.serialization import Model
 
 
-class BlobContainerPaged(Paged):
-    """
-    A paging container for iterating over a list of BlobContainer object
-    """
+class DataLakeAnalyticsCatalogCredentialDeleteParameters(Model):
+    """Data Lake Analytics catalog credential deletion parameters.
+
+    :param password: the current password for the credential and user with
+     access to the data source. This is required if the requester is not the
+     account owner.
+    :type password: str
+    """ 
 
     _attribute_map = {
-        'next_link': {'key': 'nextLink', 'type': 'str'},
-        'current_page': {'key': 'value', 'type': '[BlobContainer]'}
+        'password': {'key': 'password', 'type': 'str'},
     }
 
-    def __init__(self, *args, **kwargs):
-
-        super(BlobContainerPaged, self).__init__(*args, **kwargs)
+    def __init__(self, password=None):
+        self.password = password
