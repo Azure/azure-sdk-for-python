@@ -26,10 +26,10 @@ class StorageAccountUpdateParameters(Model):
      resource. Each tag must have a key no greater in length than 128
      characters and a value no greater in length than 256 characters.
     :type tags: dict
-    :param custom_domain: Custom domain assigned to the storage account by
-     the user. Name is the CNAME source. Only one custom domain is supported
-     per storage account at this time. To clear the existing custom domain,
-     use an empty string for the custom domain name property.
+    :param custom_domain: Custom domain assigned to the storage account by the
+     user. Name is the CNAME source. Only one custom domain is supported per
+     storage account at this time. To clear the existing custom domain, use an
+     empty string for the custom domain name property.
     :type custom_domain: :class:`CustomDomain
      <azure.mgmt.storage.models.CustomDomain>`
     :param encryption: Provides the encryption settings on the account. The

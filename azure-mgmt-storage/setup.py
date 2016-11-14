@@ -6,7 +6,7 @@
 # license information.
 #--------------------------------------------------------------------------
 
-from setuptools import setup
+from setuptools import find_packages, setup
 from io import open
 import re
 
@@ -59,13 +59,7 @@ setup(
         'License :: OSI Approved :: MIT License',
     ],
     zip_safe=False,
-    packages=[
-        'azure',
-        'azure.mgmt',
-        'azure.mgmt.storage',
-        'azure.mgmt.storage.models',
-        'azure.mgmt.storage.operations',
-    ],
+    packages=find_packages(),
     install_requires=[
         'azure-mgmt-nspkg',
         'azure-common[autorest]==1.1.4',
