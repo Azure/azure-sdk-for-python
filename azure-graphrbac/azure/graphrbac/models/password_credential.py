@@ -13,15 +13,15 @@ from msrest.serialization import Model
 
 
 class PasswordCredential(Model):
-    """Active Directory PasswordCredential information.
+    """Active Directory Password Credential information.
 
-    :param start_date: start date
+    :param start_date: Start date.
     :type start_date: datetime
-    :param end_date: end date
+    :param end_date: End date.
     :type end_date: datetime
-    :param key_id: key Id
+    :param key_id: Key ID.
     :type key_id: str
-    :param value: value
+    :param value: Key value.
     :type value: str
     """ 
 

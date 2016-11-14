@@ -15,25 +15,28 @@ from msrest.serialization import Model
 class EffectiveRoute(Model):
     """Effective Route.
 
-    :param name: Gets the name of the user defined route. This is optional.
+    :param name: The name of the user defined route. This is optional.
     :type name: str
-    :param source: Gets who created the route. Possible values include:
+    :param source: Who created the route. Possible values are: 'Unknown',
+     'User', 'VirtualNetworkGateway', and 'Default'. Possible values include:
      'Unknown', 'User', 'VirtualNetworkGateway', 'Default'
     :type source: str or :class:`EffectiveRouteSource
      <azure.mgmt.network.models.EffectiveRouteSource>`
-    :param state: Gets value of effective route. Possible values include:
-     'Active', 'Invalid'
+    :param state: The value of effective route. Possible values are: 'Active'
+     and 'Invalid'. Possible values include: 'Active', 'Invalid'
     :type state: str or :class:`EffectiveRouteState
      <azure.mgmt.network.models.EffectiveRouteState>`
-    :param address_prefix: Gets address prefixes of the effective routes in
+    :param address_prefix: The address prefixes of the effective routes in
      CIDR notation.
     :type address_prefix: list of str
-    :param next_hop_ip_address: Gets the IP address of the next hop of the
-     effective route
+    :param next_hop_ip_address: The IP address of the next hop of the
+     effective route.
     :type next_hop_ip_address: list of str
-    :param next_hop_type: Gets or sets the type of Azure hop the packet
-     should be sent to. Possible values include: 'VirtualNetworkGateway',
-     'VnetLocal', 'Internet', 'VirtualAppliance', 'None'
+    :param next_hop_type: The type of Azure hop the packet should be sent to.
+     Possible values are: 'VirtualNetworkGateway', 'VnetLocal', 'Internet',
+     'VirtualAppliance', and 'None'. Possible values include:
+     'VirtualNetworkGateway', 'VnetLocal', 'Internet', 'VirtualAppliance',
+     'None'
     :type next_hop_type: str or :class:`RouteNextHopType
      <azure.mgmt.network.models.RouteNextHopType>`
     """ 

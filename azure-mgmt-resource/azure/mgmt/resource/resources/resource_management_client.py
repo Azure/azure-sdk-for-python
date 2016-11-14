@@ -18,7 +18,7 @@ from .operations.providers_operations import ProvidersOperations
 from .operations.resource_groups_operations import ResourceGroupsOperations
 from .operations.resources_operations import ResourcesOperations
 from .operations.tags_operations import TagsOperations
-from .operations.deployment_operations_operations import DeploymentOperationsOperations
+from .operations.deployment_operations import DeploymentOperations
 from . import models
 
 
@@ -30,11 +30,9 @@ class ResourceManagementClientConfiguration(AzureConfiguration):
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
      object<msrestazure.azure_active_directory>`
-    :param subscription_id: Gets subscription credentials which uniquely
-     identify Microsoft Azure subscription. The subscription ID forms part of
-     the URI for every service call.
+    :param subscription_id: The ID of the target subscription.
     :type subscription_id: str
-    :param api_version: Client Api Version.
+    :param api_version: The API version to use for this operation.
     :type api_version: str
     :param accept_language: Gets or sets the preferred language for the
      response.
@@ -80,7 +78,7 @@ class ResourceManagementClientConfiguration(AzureConfiguration):
 
 
 class ResourceManagementClient(object):
-    """ResourceManagementClient
+    """Provides operations for working with resources and resource groups.
 
     :ivar config: Configuration for client.
     :vartype config: ResourceManagementClientConfiguration
@@ -96,16 +94,14 @@ class ResourceManagementClient(object):
     :ivar tags: Tags operations
     :vartype tags: .operations.TagsOperations
     :ivar deployment_operations: DeploymentOperations operations
-    :vartype deployment_operations: .operations.DeploymentOperationsOperations
+    :vartype deployment_operations: .operations.DeploymentOperations
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
      object<msrestazure.azure_active_directory>`
-    :param subscription_id: Gets subscription credentials which uniquely
-     identify Microsoft Azure subscription. The subscription ID forms part of
-     the URI for every service call.
+    :param subscription_id: The ID of the target subscription.
     :type subscription_id: str
-    :param api_version: Client Api Version.
+    :param api_version: The API version to use for this operation.
     :type api_version: str
     :param accept_language: Gets or sets the preferred language for the
      response.
@@ -141,5 +137,5 @@ class ResourceManagementClient(object):
             self._client, self.config, self._serialize, self._deserialize)
         self.tags = TagsOperations(
             self._client, self.config, self._serialize, self._deserialize)
-        self.deployment_operations = DeploymentOperationsOperations(
+        self.deployment_operations = DeploymentOperations(
             self._client, self.config, self._serialize, self._deserialize)

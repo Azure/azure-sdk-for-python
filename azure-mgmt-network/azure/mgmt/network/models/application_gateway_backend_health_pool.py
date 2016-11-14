@@ -13,14 +13,14 @@ from msrest.serialization import Model
 
 
 class ApplicationGatewayBackendHealthPool(Model):
-    """Application gateway backendhealth pool.
+    """Application gateway BackendHealth pool.
 
-    :param backend_address_pool: Reference of application gateway backend
-     address pool resource.
+    :param backend_address_pool: Reference of an
+     ApplicationGatewayBackendAddressPool resource.
     :type backend_address_pool: :class:`ApplicationGatewayBackendAddressPool
      <azure.mgmt.network.models.ApplicationGatewayBackendAddressPool>`
-    :param backend_http_settings_collection: List of application gateway
-     backendhealth http settings.
+    :param backend_http_settings_collection: List of
+     ApplicationGatewayBackendHealthHttpSettings resources.
     :type backend_http_settings_collection: list of
      :class:`ApplicationGatewayBackendHealthHttpSettings
      <azure.mgmt.network.models.ApplicationGatewayBackendHealthHttpSettings>`

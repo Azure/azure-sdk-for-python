@@ -13,9 +13,9 @@ from msrest.serialization import Model
 
 
 class RegenerateKeysParameters(Model):
-    """Parameters supplied to the Regenerate Auth Rule.
+    """Parameters supplied to the Regenerate Authorization Rule operation.
 
-    :param policykey: Key that needs to be regenerated . Possible values
+    :param policykey: Key that needs to be regenerated. Possible values
      include: 'PrimaryKey', 'SecondaryKey'
     :type policykey: str or :class:`Policykey
      <azure.mgmt.eventhub.models.Policykey>`

@@ -58,6 +58,7 @@ class ArtifactOperations(object):
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`ArtifactPaged
          <azure.mgmt.devtestlabs.models.ArtifactPaged>`
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -138,6 +139,7 @@ class ArtifactOperations(object):
         :rtype: :class:`Artifact <azure.mgmt.devtestlabs.models.Artifact>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DevTestLab/labs/{labName}/artifactsources/{artifactSourceName}/artifacts/{name}'
@@ -210,6 +212,7 @@ class ArtifactOperations(object):
          <azure.mgmt.devtestlabs.models.ArmTemplateInfo>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DevTestLab/labs/{labName}/artifactsources/{artifactSourceName}/artifacts/{name}/generateArmTemplate'

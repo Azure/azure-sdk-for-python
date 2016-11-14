@@ -18,9 +18,9 @@ class DeploymentOperation(Model):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar id: Full deployment operation id.
+    :ivar id: Full deployment operation ID.
     :vartype id: str
-    :ivar operation_id: Deployment operation id.
+    :ivar operation_id: Deployment operation ID.
     :vartype operation_id: str
     :param properties: Deployment properties.
     :type properties: :class:`DeploymentOperationProperties

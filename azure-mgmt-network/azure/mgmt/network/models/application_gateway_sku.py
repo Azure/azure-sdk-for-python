@@ -13,18 +13,19 @@ from msrest.serialization import Model
 
 
 class ApplicationGatewaySku(Model):
-    """SKU of application gateway.
+    """SKU of an application gateway.
 
-    :param name: Name of application gateway SKU. Possible values include:
-     'Standard_Small', 'Standard_Medium', 'Standard_Large', 'WAF_Medium',
-     'WAF_Large'
+    :param name: Name of an application gateway SKU. Possible values are:
+     'Standard_Small', 'Standard_Medium', 'Standard_Large', 'WAF_Medium', and
+     'WAF_Large'. Possible values include: 'Standard_Small',
+     'Standard_Medium', 'Standard_Large', 'WAF_Medium', 'WAF_Large'
     :type name: str or :class:`ApplicationGatewaySkuName
      <azure.mgmt.network.models.ApplicationGatewaySkuName>`
-    :param tier: Tier of application gateway. Possible values include:
-     'Standard', 'WAF'
+    :param tier: Tier of an application gateway. Possible values are:
+     'Standard' and 'WAF'. Possible values include: 'Standard', 'WAF'
     :type tier: str or :class:`ApplicationGatewayTier
      <azure.mgmt.network.models.ApplicationGatewayTier>`
-    :param capacity: Capacity (instance count) of application gateway
+    :param capacity: Capacity (instance count) of an application gateway.
     :type capacity: int
     """ 
 

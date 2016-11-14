@@ -13,7 +13,7 @@ from .resource import Resource
 
 
 class SharedAccessAuthorizationRuleResource(Resource):
-    """Description of a Namespace AuthorizationRules.
+    """Description of a namespace authorization rule.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.

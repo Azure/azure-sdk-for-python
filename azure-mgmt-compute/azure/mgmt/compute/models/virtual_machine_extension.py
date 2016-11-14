@@ -37,8 +37,8 @@ class VirtualMachineExtension(Resource):
     :type virtual_machine_extension_type: str
     :param type_handler_version: the type version of the extension handler.
     :type type_handler_version: str
-    :param auto_upgrade_minor_version: whether the extension handler should
-     be automatically upgraded across minor versions.
+    :param auto_upgrade_minor_version: whether the extension handler should be
+     automatically upgraded across minor versions.
     :type auto_upgrade_minor_version: bool
     :param settings: Json formatted public settings for the extension.
     :type settings: object

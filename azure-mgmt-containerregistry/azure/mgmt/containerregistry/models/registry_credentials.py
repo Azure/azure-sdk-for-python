@@ -13,11 +13,12 @@ from msrest.serialization import Model
 
 
 class RegistryCredentials(Model):
-    """The result of showing admin user credentials.
+    """The result of a request to get the administrator login credentials for a
+    container registry.
 
-    :param username: Admin username.
+    :param username: The administrator username.
     :type username: str
-    :param password: Admin password.
+    :param password: The administrator password.
     :type password: str
     """ 
 

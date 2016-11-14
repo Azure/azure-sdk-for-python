@@ -13,7 +13,7 @@ from .resource import Resource
 
 
 class ConsumerGroupResource(Resource):
-    """Description of Consumer Group Resource.
+    """Description of the consumer group resource.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -30,9 +30,9 @@ class ConsumerGroupResource(Resource):
     :type tags: dict
     :param created_at: Exact time the message was created.
     :type created_at: datetime
-    :param event_hub_path: The path of the event hub.
+    :param event_hub_path: The path of the Event Hub.
     :type event_hub_path: str
-    :param updated_at: The exact time the message has been updated.
+    :param updated_at: The exact time the message was updated.
     :type updated_at: datetime
     :param user_metadata: The user metadata.
     :type user_metadata: str

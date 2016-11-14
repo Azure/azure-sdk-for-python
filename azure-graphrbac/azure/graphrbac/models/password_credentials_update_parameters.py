@@ -13,9 +13,9 @@ from msrest.serialization import Model
 
 
 class PasswordCredentialsUpdateParameters(Model):
-    """Request paramters for PasswordCredentials update operation.
+    """Request parameters for a PasswordCredentials update operation.
 
-    :param value: PasswordCredential list.
+    :param value: A collection of PasswordCredentials.
     :type value: list of :class:`PasswordCredential
      <azure.graphrbac.models.PasswordCredential>`
     """ 

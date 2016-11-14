@@ -15,9 +15,9 @@ from msrest.serialization import Model
 class DiskInstanceView(Model):
     """The instance view of the disk.
 
-    :param name: the disk name.
+    :param name: The disk name.
     :type name: str
-    :param statuses: the resource status information.
+    :param statuses: The resource status information.
     :type statuses: list of :class:`InstanceViewStatus
      <azure.mgmt.compute.models.InstanceViewStatus>`
     """ 

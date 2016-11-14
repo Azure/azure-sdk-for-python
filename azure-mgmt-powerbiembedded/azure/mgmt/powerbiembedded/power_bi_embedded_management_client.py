@@ -14,6 +14,7 @@ from msrest import Serializer, Deserializer
 from msrestazure import AzureConfiguration
 from .version import VERSION
 from msrest.pipeline import ClientRawResponse
+from msrestazure.azure_operation import AzureOperationPoller
 import uuid
 from .operations.workspace_collections_operations import WorkspaceCollectionsOperations
 from .operations.workspaces_operations import WorkspacesOperations
@@ -29,8 +30,8 @@ class PowerBIEmbeddedManagementClientConfiguration(AzureConfiguration):
     :type credentials: :mod:`A msrestazure Credentials
      object<msrestazure.azure_active_directory>`
     :param subscription_id: Gets subscription credentials which uniquely
-     identify Microsoft Azure subscription. The subscription ID forms part of
-     the URI for every service call.
+     identify a Microsoft Azure subscription. The subscription ID forms part
+     of the URI for every service call.
     :type subscription_id: str
     :param api_version: Client Api Version.
     :type api_version: str
@@ -78,7 +79,7 @@ class PowerBIEmbeddedManagementClientConfiguration(AzureConfiguration):
 
 
 class PowerBIEmbeddedManagementClient(object):
-    """Client to manage your Power BI embedded workspace collections and retrieve workspaces.
+    """Client to manage your Power BI Embedded workspace collections and retrieve workspaces.
 
     :ivar config: Configuration for client.
     :vartype config: PowerBIEmbeddedManagementClientConfiguration
@@ -92,8 +93,8 @@ class PowerBIEmbeddedManagementClient(object):
     :type credentials: :mod:`A msrestazure Credentials
      object<msrestazure.azure_active_directory>`
     :param subscription_id: Gets subscription credentials which uniquely
-     identify Microsoft Azure subscription. The subscription ID forms part of
-     the URI for every service call.
+     identify a Microsoft Azure subscription. The subscription ID forms part
+     of the URI for every service call.
     :type subscription_id: str
     :param api_version: Client Api Version.
     :type api_version: str
@@ -140,6 +141,8 @@ class PowerBIEmbeddedManagementClient(object):
          <azure.mgmt.powerbiembedded.models.OperationList>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`ErrorException<azure.mgmt.powerbiembedded.models.ErrorException>`
         """
         # Construct URL
         url = '/providers/Microsoft.PowerBI/operations'

@@ -22,9 +22,9 @@ class EncryptionService(Model):
      the data as it is stored.
     :type enabled: bool
     :ivar last_enabled_time: Gets a rough estimate of the date/time when the
-     encryption was last enabled by the user. Only returned when encryption
-     is enabled. There might be some unencrypted blobs which were written
-     after this time, as it is just a rough estimate.
+     encryption was last enabled by the user. Only returned when encryption is
+     enabled. There might be some unencrypted blobs which were written after
+     this time, as it is just a rough estimate.
     :vartype last_enabled_time: datetime
     """ 
 

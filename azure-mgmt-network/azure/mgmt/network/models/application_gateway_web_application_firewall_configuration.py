@@ -15,10 +15,11 @@ from msrest.serialization import Model
 class ApplicationGatewayWebApplicationFirewallConfiguration(Model):
     """Application gateway web application firewall configuration.
 
-    :param enabled: Whether web application firewall is enabled
+    :param enabled: Whether the web application firewall is enabled.
     :type enabled: bool
-    :param firewall_mode: Web application firewall mode. Possible values
-     include: 'Detection', 'Prevention'
+    :param firewall_mode: Web application firewall mode. Possible values are:
+     'Detection' and 'Prevention'. Possible values include: 'Detection',
+     'Prevention'
     :type firewall_mode: str or :class:`ApplicationGatewayFirewallMode
      <azure.mgmt.network.models.ApplicationGatewayFirewallMode>`
     """ 

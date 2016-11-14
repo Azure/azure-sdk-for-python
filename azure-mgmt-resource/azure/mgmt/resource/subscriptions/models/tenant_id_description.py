@@ -18,10 +18,10 @@ class TenantIdDescription(Model):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar id: The fully qualified Id. For example,
+    :ivar id: The fully qualified ID of the tenant. For example,
      /tenants/00000000-0000-0000-0000-000000000000.
     :vartype id: str
-    :ivar tenant_id: The tenantId. For example,
+    :ivar tenant_id: The tenant ID. For example,
      00000000-0000-0000-0000-000000000000.
     :vartype tenant_id: str
     """ 

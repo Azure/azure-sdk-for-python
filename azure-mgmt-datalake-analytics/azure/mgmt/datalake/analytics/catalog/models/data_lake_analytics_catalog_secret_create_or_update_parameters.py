@@ -13,7 +13,9 @@ from msrest.serialization import Model
 
 
 class DataLakeAnalyticsCatalogSecretCreateOrUpdateParameters(Model):
-    """DataLakeAnalytics DataLakeAnalyticsAccount information.
+    """Data Lake Analytics catalog secret creation and update parameters. This is
+    deprecated and will be removed in the next release. Please use
+    DataLakeAnalyticsCatalogCredentialCreateOrUpdateParameters instead.
 
     :param password: the password for the secret to pass in
     :type password: str

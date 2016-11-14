@@ -9,16 +9,16 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .resource_model import ResourceModel
+from .resource import Resource
 
 
-class GenericResource(ResourceModel):
+class GenericResource(Resource):
     """Resource information.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar id: Resource Id
+    :ivar id: Resource ID
     :vartype id: str
     :ivar name: Resource name
     :vartype name: str
@@ -34,9 +34,9 @@ class GenericResource(ResourceModel):
     :type properties: object
     :param kind: The kind of the resource.
     :type kind: str
-    :param managed_by: Id of the resource that manages this resource.
+    :param managed_by: ID of the resource that manages this resource.
     :type managed_by: str
-    :param sku: The sku of the resource.
+    :param sku: The SKU of the resource.
     :type sku: :class:`Sku <azure.mgmt.resource.resources.models.Sku>`
     :param identity: The identity of the resource.
     :type identity: :class:`Identity

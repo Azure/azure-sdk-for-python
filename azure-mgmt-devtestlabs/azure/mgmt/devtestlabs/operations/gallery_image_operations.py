@@ -56,6 +56,7 @@ class GalleryImageOperations(object):
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`GalleryImagePaged
          <azure.mgmt.devtestlabs.models.GalleryImagePaged>`
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
 

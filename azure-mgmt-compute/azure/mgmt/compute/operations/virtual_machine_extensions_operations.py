@@ -47,8 +47,8 @@ class VirtualMachineExtensionsOperations(object):
         :type vm_name: str
         :param vm_extension_name: The name of the virtual machine extension.
         :type vm_extension_name: str
-        :param extension_parameters: Parameters supplied to the Create
-         Virtual Machine Extension operation.
+        :param extension_parameters: Parameters supplied to the Create Virtual
+         Machine Extension operation.
         :type extension_parameters: :class:`VirtualMachineExtension
          <azure.mgmt.compute.models.VirtualMachineExtension>`
         :param dict custom_headers: headers that will be added to the request

@@ -15,9 +15,9 @@ from msrest.serialization import Model
 class BootDiagnosticsInstanceView(Model):
     """The instance view of a virtual machine boot diagnostics.
 
-    :param console_screenshot_blob_uri: the console screenshot blob Uri.
+    :param console_screenshot_blob_uri: The console screenshot blob URI.
     :type console_screenshot_blob_uri: str
-    :param serial_console_log_blob_uri: the Linux serial console log blob Uri.
+    :param serial_console_log_blob_uri: The Linux serial console log blob Uri.
     :type serial_console_log_blob_uri: str
     """ 
 

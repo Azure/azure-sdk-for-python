@@ -18,19 +18,19 @@ class VpnClientRevokedCertificate(SubResource):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :param id: Resource Id
+    :param id: Resource ID.
     :type id: str
-    :param thumbprint: Gets or sets the revoked Vpn client certificate
-     thumbprint
+    :param thumbprint: The revoked VPN client certificate thumbprint.
     :type thumbprint: str
-    :ivar provisioning_state: Gets provisioning state of the VPN client
-     revoked certificate resource Updating/Deleting/Failed
+    :ivar provisioning_state: The provisioning state of the VPN client
+     revoked certificate resource. Possible values are: 'Updating',
+     'Deleting', and 'Failed'.
     :vartype provisioning_state: str
-    :param name: Gets name of the resource that is unique within a resource
-     group. This name can be used to access the resource
+    :param name: The name of the resource that is unique within a resource
+     group. This name can be used to access the resource.
     :type name: str
     :param etag: A unique read-only string that changes whenever the resource
-     is updated
+     is updated.
     :type etag: str
     """ 
 

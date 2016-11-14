@@ -15,23 +15,30 @@ from msrest.serialization import Model
 class StorageAccountInfo(Model):
     """Azure Storage account information.
 
-    :param name: the account name associated with the Azure storage account.
-    :type name: str
-    :param properties: the properties associated with this storage account.
-    :type properties: :class:`StorageAccountProperties
-     <azure.mgmt.datalake.analytics.account.models.StorageAccountProperties>`
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar name: the account name associated with the Azure storage account.
+    :vartype name: str
+    :param access_key: the access key associated with this Azure Storage
+     account that will be used to connect to it.
+    :type access_key: str
+    :param suffix: the optional suffix for the storage account.
+    :type suffix: str
     """ 
 
     _validation = {
-        'name': {'required': True},
-        'properties': {'required': True},
+        'name': {'readonly': True},
+        'access_key': {'required': True},
     }
 
     _attribute_map = {
         'name': {'key': 'name', 'type': 'str'},
-        'properties': {'key': 'properties', 'type': 'StorageAccountProperties'},
+        'access_key': {'key': 'properties.accessKey', 'type': 'str'},
+        'suffix': {'key': 'properties.suffix', 'type': 'str'},
     }
 
-    def __init__(self, name, properties):
-        self.name = name
-        self.properties = properties
+    def __init__(self, access_key, suffix=None):
+        self.name = None
+        self.access_key = access_key
+        self.suffix = suffix

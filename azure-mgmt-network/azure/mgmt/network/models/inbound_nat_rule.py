@@ -13,60 +13,51 @@ from .sub_resource import SubResource
 
 
 class InboundNatRule(SubResource):
-    """Inbound NAT rule of the loadbalancer.
+    """Inbound NAT rule of the load balancer.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :param id: Resource Id
+    :param id: Resource ID.
     :type id: str
-    :param frontend_ip_configuration: Gets or sets a reference to frontend IP
-     Addresses
+    :param frontend_ip_configuration: A reference to frontend IP addresses.
     :type frontend_ip_configuration: :class:`SubResource
      <azure.mgmt.network.models.SubResource>`
-    :ivar backend_ip_configuration: Gets or sets a reference to a private ip
-     address defined on a NetworkInterface of a VM. Traffic sent to
-     frontendPort of each of the frontendIPConfigurations is forwarded to the
-     backed IP
+    :ivar backend_ip_configuration: A reference to a private IP address
+     defined on a network interface of a VM. Traffic sent to the frontend
+     port of each of the frontend IP configurations is forwarded to the
+     backed IP.
     :vartype backend_ip_configuration:
      :class:`NetworkInterfaceIPConfiguration <azure.mgmt.network.models.NetworkInterfaceIPConfiguration>`
-    :param protocol: Gets or sets the transport protocol for the endpoint.
-     Possible values are Udp or Tcp. Possible values include: 'Udp', 'Tcp'
+    :param protocol: The transport protocol for the endpoint. Possible values
+     are: 'Udp' or 'Tcp'. Possible values include: 'Udp', 'Tcp'
     :type protocol: str or :class:`TransportProtocol
      <azure.mgmt.network.models.TransportProtocol>`
-    :param frontend_port: Gets or sets the port for the external endpoint.
-     You can specify any port number you choose, but the port numbers
-     specified for each role in the service must be unique. Possible values
-     range between 1 and 65535, inclusive
+    :param frontend_port: The port for the external endpoint. Port numbers
+     for each Rule must be unique within the Load Balancer. Acceptable values
+     range from 1 to 65534.
     :type frontend_port: int
-    :param backend_port: Gets or sets a port used for internal connections on
-     the endpoint. The localPort attribute maps the eternal port of the
-     endpoint to an internal port on a role. This is useful in scenarios
-     where a role must communicate to an internal component on a port that is
-     different from the one that is exposed externally. If not specified, the
-     value of localPort is the same as the port attribute. Set the value of
-     localPort to '*' to automatically assign an unallocated port that is
-     discoverable using the runtime API
+    :param backend_port: The port used for the internal endpoint. Acceptable
+     values range from 1 to 65535.
     :type backend_port: int
-    :param idle_timeout_in_minutes: Gets or sets the timeout for the Tcp idle
-     connection. The value can be set between 4 and 30 minutes. The default
-     value is 4 minutes. This element is only used when the protocol is set
-     to Tcp
+    :param idle_timeout_in_minutes: The timeout for the TCP idle connection.
+     The value can be set between 4 and 30 minutes. The default value is 4
+     minutes. This element is only used when the protocol is set to TCP.
     :type idle_timeout_in_minutes: int
     :param enable_floating_ip: Configures a virtual machine's endpoint for
      the floating IP capability required to configure a SQL AlwaysOn
-     availability Group. This setting is required when using the SQL Always
-     ON availability Groups in SQL server. This setting can't be changed
-     after you create the endpoint
+     Availability Group. This setting is required when using the SQL AlwaysOn
+     Availability Groups in SQL server. This setting can't be changed after
+     you create the endpoint.
     :type enable_floating_ip: bool
-    :param provisioning_state: Gets provisioning state of the PublicIP
-     resource Updating/Deleting/Failed
+    :param provisioning_state: Gets the provisioning state of the public IP
+     resource. Possible values are: 'Updating', 'Deleting', and 'Failed'.
     :type provisioning_state: str
     :param name: Gets name of the resource that is unique within a resource
-     group. This name can be used to access the resource
+     group. This name can be used to access the resource.
     :type name: str
     :param etag: A unique read-only string that changes whenever the resource
-     is updated
+     is updated.
     :type etag: str
     """ 
 

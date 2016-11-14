@@ -13,11 +13,11 @@ from msrest.serialization import Model
 
 
 class DhcpOptions(Model):
-    """DHCPOptions contains an array of DNS servers available to VMs deployed in
-    the virtual networkStandard DHCP option for a subnet overrides VNET DHCP
-    options.
+    """DhcpOptions contains an array of DNS servers available to VMs deployed in
+    the virtual network. Standard DHCP option for a subnet overrides VNET
+    DHCP options.
 
-    :param dns_servers: Gets or sets list of DNS servers IP addresses
+    :param dns_servers: The list of DNS servers IP addresses.
     :type dns_servers: list of str
     """ 
 

@@ -13,13 +13,13 @@ from msrest.serialization import Model
 
 
 class ApplicationGatewayBackendHealthHttpSettings(Model):
-    """Application gateway backendhealth http settings.
+    """Application gateway BackendHealthHttp settings.
 
-    :param backend_http_settings: Reference of application gateway backend
-     http settings resource.
+    :param backend_http_settings: Reference of an
+     ApplicationGatewayBackendHttpSettings resource.
     :type backend_http_settings:
      :class:`ApplicationGatewayBackendHttpSettings <azure.mgmt.network.models.ApplicationGatewayBackendHttpSettings>`
-    :param servers: List of application gateway backendhealth servers.
+    :param servers: List of ApplicationGatewayBackendHealthServer resources.
     :type servers: list of :class:`ApplicationGatewayBackendHealthServer
      <azure.mgmt.network.models.ApplicationGatewayBackendHealthServer>`
     """ 

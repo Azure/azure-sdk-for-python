@@ -13,7 +13,7 @@ from msrest.serialization import Model
 
 
 class ContainerServiceCustomProfile(Model):
-    """Properties to configure custom clusters.
+    """Properties to configure a custom container service cluster.
 
     :param orchestrator: The name of the custom orchestrator to use.
     :type orchestrator: str

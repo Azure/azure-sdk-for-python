@@ -15,21 +15,25 @@ from msrest.serialization import Model
 class OSProfile(Model):
     """Describes an OS profile.
 
-    :param computer_name: the computer name.
+    :param computer_name: Specifies the host OS name of the virtual machine.
     :type computer_name: str
-    :param admin_username: the admin user name.
+    :param admin_username: Specifies the name of the administrator account.
     :type admin_username: str
-    :param admin_password: the admin user password.
+    :param admin_password: Specifies the password of the administrator
+     account.
     :type admin_password: str
-    :param custom_data: a base-64 encoded string of custom data.
+    :param custom_data: Specifies a base-64 encoded string of custom data. The
+     base-64 encoded string is decoded to a binary array that is saved as a
+     file on the Virtual Machine. The maximum length of the binary array is
+     65535 bytes
     :type custom_data: str
-    :param windows_configuration: the Windows Configuration of the OS profile.
+    :param windows_configuration: the Windows configuration of the OS profile.
     :type windows_configuration: :class:`WindowsConfiguration
      <azure.mgmt.compute.models.WindowsConfiguration>`
-    :param linux_configuration: the Linux Configuration of the OS profile.
+    :param linux_configuration: the Linux configuration of the OS profile.
     :type linux_configuration: :class:`LinuxConfiguration
      <azure.mgmt.compute.models.LinuxConfiguration>`
-    :param secrets: the List of certificates for addition to the VM.
+    :param secrets: The list of certificates for addition to the VM.
     :type secrets: list of :class:`VaultSecretGroup
      <azure.mgmt.compute.models.VaultSecretGroup>`
     """ 

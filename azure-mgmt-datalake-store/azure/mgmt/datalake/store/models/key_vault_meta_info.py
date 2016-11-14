@@ -13,7 +13,7 @@ from msrest.serialization import Model
 
 
 class KeyVaultMetaInfo(Model):
-    """KeyVaultMetaInfo.
+    """Metadata information used by account encryption.
 
     :param key_vault_resource_id: The resource identifier for the user
      managed Key Vault being used to encrypt.
@@ -25,13 +25,19 @@ class KeyVaultMetaInfo(Model):
     :type encryption_key_version: str
     """ 
 
+    _validation = {
+        'key_vault_resource_id': {'required': True},
+        'encryption_key_name': {'required': True},
+        'encryption_key_version': {'required': True},
+    }
+
     _attribute_map = {
         'key_vault_resource_id': {'key': 'keyVaultResourceId', 'type': 'str'},
         'encryption_key_name': {'key': 'encryptionKeyName', 'type': 'str'},
         'encryption_key_version': {'key': 'encryptionKeyVersion', 'type': 'str'},
     }
 
-    def __init__(self, key_vault_resource_id=None, encryption_key_name=None, encryption_key_version=None):
+    def __init__(self, key_vault_resource_id, encryption_key_name, encryption_key_version):
         self.key_vault_resource_id = key_vault_resource_id
         self.encryption_key_name = encryption_key_name
         self.encryption_key_version = encryption_key_version
