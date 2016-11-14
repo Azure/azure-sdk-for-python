@@ -13,12 +13,11 @@ from msrest.serialization import Model
 
 
 class UserCreateParameters(Model):
-    """Request parameters for create a new work or school account user.
+    """Request parameters for creating a new work or school account user.
 
-    :param account_enabled: Enable the account. If it is enabled then true
-     else false.
+    :param account_enabled: Whether the account is enabled.
     :type account_enabled: bool
-    :param display_name: User display name
+    :param display_name: The display name of the user.
     :type display_name: str
     :param password_profile: Password Profile
     :type password_profile: :class:`PasswordProfile
@@ -27,12 +26,12 @@ class UserCreateParameters(Model):
      (someuser@contoso.com). It must contain one of the verified domains for
      the tenant.
     :type user_principal_name: str
-    :param mail_nickname: The mail alias for the user
+    :param mail_nickname: The mail alias for the user.
     :type mail_nickname: str
-    :param immutable_id: Needs to be specified if you are using a federated
-     domain for the user's userPrincipalName (UPN) property while creating a
-     new user account. It is used to associate an on-premises Active
-     Directory user account to their Azure AD user object.
+    :param immutable_id: This must be specified if you are using a federated
+     domain for the user's userPrincipalName (UPN) property when creating a new
+     user account. It is used to associate an on-premises Active Directory user
+     account with their Azure AD user object.
     :type immutable_id: str
     """ 
 

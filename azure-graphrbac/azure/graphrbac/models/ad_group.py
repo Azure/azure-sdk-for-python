@@ -15,15 +15,15 @@ from msrest.serialization import Model
 class ADGroup(Model):
     """Active Directory group information.
 
-    :param object_id: object Id
+    :param object_id: The object ID.
     :type object_id: str
-    :param object_type: object type
+    :param object_type: The object type.
     :type object_type: str
-    :param display_name: group display name
+    :param display_name: The display name of the group.
     :type display_name: str
-    :param security_enabled: security enabled field
+    :param security_enabled: Whether the group is security-enable.
     :type security_enabled: bool
-    :param mail: mail field
+    :param mail: The primary email address of the group.
     :type mail: str
     """ 
 
