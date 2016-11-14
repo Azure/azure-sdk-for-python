@@ -45,8 +45,8 @@ class VirtualMachine(Resource):
     :param diagnostics_profile: The diagnostics profile.
     :type diagnostics_profile: :class:`DiagnosticsProfile
      <azure.mgmt.compute.models.DiagnosticsProfile>`
-    :param availability_set: The reference Id of the availability set to
-     which the virtual machine belongs.
+    :param availability_set: The reference Id of the availability set to which
+     the virtual machine belongs.
     :type availability_set: :class:`SubResource
      <azure.mgmt.compute.models.SubResource>`
     :ivar provisioning_state: The provisioning state, which only appears in

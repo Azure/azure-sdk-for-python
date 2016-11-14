@@ -16,8 +16,8 @@ class DiagnosticsProfile(Model):
     """Describes a diagnostics profile.
 
     :param boot_diagnostics: Boot Diagnostics is a debugging feature which
-     allows the user to view console output and/or a screenshot of the
-     virtual machine from the hypervisor.
+     allows the user to view console output and/or a screenshot of the virtual
+     machine from the hypervisor.
     :type boot_diagnostics: :class:`BootDiagnostics
      <azure.mgmt.compute.models.BootDiagnostics>`
     """ 
