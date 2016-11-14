@@ -123,6 +123,8 @@ All documentation of management libraries for Azure are on this website. This in
 * :doc:`Cognitive Services<sample_azure-mgmt-cognitiveservices>` : Create CS accounts and more
 * :doc:`Commerce - Billing API<resourcemanagementcommerce>` : RateCard and Usage Billing API
 * :doc:`Compute<resourcemanagementcomputenetwork>` : Create virtual machines and more
+* :doc:`Data Lake Analytics<sample_azure-mgmt-datalake-analytics>` : Manage account, job, catalog and more
+* :doc:`Data Lake Store<sample_azure-mgmt-datalake-store>` : Manage account and more
 * :doc:`DevTestLabs<sample_azure-mgmt-devtestlabs>` : Create labs and more
 * :doc:`DNS<sample_azure-mgmt-dns>` : Create DNS zone, record set and more
 * :doc:`IoTHub<sample_azure-mgmt-iothub>` : Create IoTHub account and more
