@@ -14,8 +14,8 @@ from msrest.serialization import Model
 
 class AdditionalUnattendContent(Model):
     """Additional XML formatted information that can be included in the
-    Unattend.xml file, which is used by Windows Setup. Contents are defined
-    by setting name, component name, and the pass in which the content is a
+    Unattend.xml file, which is used by Windows Setup. Contents are defined by
+    setting name, component name, and the pass in which the content is a
     applied.
 
     :param pass_name: The pass name. Currently, the only allowable value is
@@ -33,8 +33,8 @@ class AdditionalUnattendContent(Model):
      <azure.mgmt.compute.models.SettingNames>`
     :param content: XML formatted content that is added to the unattend.xml
      file in the specified pass and component. The XML must be less than 4 KB
-     and must include the root element for the setting or feature that is
-     being inserted.
+     and must include the root element for the setting or feature that is being
+     inserted.
     :type content: str
     """ 
 

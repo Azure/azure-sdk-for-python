@@ -304,7 +304,8 @@ class VirtualMachinesOperations(object):
 
     def get(
             self, resource_group_name, vm_name, expand=None, custom_headers=None, raw=False, **operation_config):
-        """The operation to get a virtual machine.
+        """Retrieves information about the model view or the instance view of a
+        virtual machine.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
@@ -372,8 +373,8 @@ class VirtualMachinesOperations(object):
 
     def deallocate(
             self, resource_group_name, vm_name, custom_headers=None, raw=False, **operation_config):
-        """Shuts down the Virtual Machine and releases the compute resources. You
-        are not billed for the compute resources that this Virtual Machine
+        """Shuts down the virtual machine and releases the compute resources. You
+        are not billed for the compute resources that this virtual machine
         uses.
 
         :param resource_group_name: The name of the resource group.
@@ -451,7 +452,7 @@ class VirtualMachinesOperations(object):
 
     def generalize(
             self, resource_group_name, vm_name, custom_headers=None, raw=False, **operation_config):
-        """Sets the state of the VM as Generalized.
+        """Sets the state of the virtual machine to generalized.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
@@ -505,7 +506,9 @@ class VirtualMachinesOperations(object):
 
     def list(
             self, resource_group_name, custom_headers=None, raw=False, **operation_config):
-        """The operation to list virtual machines under a resource group.
+        """Lists all of the virtual machines in the specified resource group. Use
+        the nextLink property in the response to get the next page of virtual
+        machines.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
@@ -571,9 +574,9 @@ class VirtualMachinesOperations(object):
 
     def list_all(
             self, custom_headers=None, raw=False, **operation_config):
-        """Gets the list of Virtual Machines in the subscription. Use nextLink
-        property in the response to get the next page of Virtual Machines. Do
-        this till nextLink is not null to fetch all the Virtual Machines.
+        """Lists all of the virtual machines in the specified subscription. Use
+        the nextLink property in the response to get the next page of virtual
+        machines.
 
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -706,7 +709,9 @@ class VirtualMachinesOperations(object):
 
     def power_off(
             self, resource_group_name, vm_name, custom_headers=None, raw=False, **operation_config):
-        """The operation to power off (stop) a virtual machine.
+        """The operation to power off (stop) a virtual machine. The virtual
+        machine can be restarted with the same provisioned resources. You are
+        still charged for this virtual machine.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str

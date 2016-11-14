@@ -132,9 +132,9 @@ class VirtualMachineScaleSetsOperations(object):
 
     def deallocate(
             self, resource_group_name, vm_scale_set_name, instance_ids=None, custom_headers=None, raw=False, **operation_config):
-        """Deallocates specific virtual machines in a VM scale set. Shuts down
-        the virtual machines and releases the compute resources. You are not
-        billed for the compute resources that this virtual machine scale set
+        """Deallocates specific virtual machines in a VM scale set. Shuts down the
+        virtual machines and releases the compute resources. You are not billed
+        for the compute resources that this virtual machine scale set
         deallocates.
 
         :param resource_group_name: The name of the resource group.
@@ -577,10 +577,10 @@ class VirtualMachineScaleSetsOperations(object):
 
     def list_all(
             self, custom_headers=None, raw=False, **operation_config):
-        """Gets a list of all VM Scale Sets in the subscription, regardless of
-        the associated resource group. Use nextLink property in the response
-        to get the next page of VM Scale Sets. Do this till nextLink is not
-        null to fetch all the VM Scale Sets.
+        """Gets a list of all VM Scale Sets in the subscription, regardless of the
+        associated resource group. Use nextLink property in the response to get
+        the next page of VM Scale Sets. Do this till nextLink is not null to
+        fetch all the VM Scale Sets.
 
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -1072,8 +1072,8 @@ class VirtualMachineScaleSetsOperations(object):
 
     def reimage(
             self, resource_group_name, vm_scale_set_name, custom_headers=None, raw=False, **operation_config):
-        """Reimages (upgrade the operating system) one or more virtual machines
-        in a VM scale set.
+        """Reimages (upgrade the operating system) one or more virtual machines in
+        a VM scale set.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str

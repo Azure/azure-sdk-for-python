@@ -52,15 +52,15 @@ class VirtualMachineScaleSetVM(Resource):
     :param diagnostics_profile: the diagnostics profile.
     :type diagnostics_profile: :class:`DiagnosticsProfile
      <azure.mgmt.compute.models.DiagnosticsProfile>`
-    :param availability_set: the reference Id of the availability set to
-     which this virtual machine belongs.
+    :param availability_set: the reference Id of the availability set to which
+     this virtual machine belongs.
     :type availability_set: :class:`SubResource
      <azure.mgmt.compute.models.SubResource>`
     :ivar provisioning_state: the provisioning state, which only appears in
      the response.
     :vartype provisioning_state: str
-    :param license_type: the license type, which is for bring your own
-     license scenario.
+    :param license_type: the license type, which is for bring your own license
+     scenario.
     :type license_type: str
     :param plan: The purchase plan when deploying virtual machine from VM
      Marketplace images.

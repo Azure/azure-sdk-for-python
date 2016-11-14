@@ -13,7 +13,7 @@ from msrest.serialization import Model
 
 
 class LinuxConfiguration(Model):
-    """Describes Windows Configuration of the OS Profile.
+    """Describes Windows configuration of the OS Profile.
 
     :param disable_password_authentication: Specifies whether password
      authentication should be disabled.
