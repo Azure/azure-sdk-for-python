@@ -112,9 +112,8 @@ class StorageAccountsOperations(object):
          user's subscription.
         :type resource_group_name: str
         :param account_name: The name of the storage account within the
-         specified resource group. Storage account names must be between 3
-         and 24 characters in length and use numbers and lower-case letters
-         only.
+         specified resource group. Storage account names must be between 3 and
+         24 characters in length and use numbers and lower-case letters only.
         :type account_name: str
         :param parameters: The parameters to provide for the created account.
         :type parameters: :class:`StorageAccountCreateParameters
@@ -208,9 +207,8 @@ class StorageAccountsOperations(object):
          user's subscription.
         :type resource_group_name: str
         :param account_name: The name of the storage account within the
-         specified resource group. Storage account names must be between 3
-         and 24 characters in length and use numbers and lower-case letters
-         only.
+         specified resource group. Storage account names must be between 3 and
+         24 characters in length and use numbers and lower-case letters only.
         :type account_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -268,9 +266,8 @@ class StorageAccountsOperations(object):
          user's subscription.
         :type resource_group_name: str
         :param account_name: The name of the storage account within the
-         specified resource group. Storage account names must be between 3
-         and 24 characters in length and use numbers and lower-case letters
-         only.
+         specified resource group. Storage account names must be between 3 and
+         24 characters in length and use numbers and lower-case letters only.
         :type account_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -332,20 +329,19 @@ class StorageAccountsOperations(object):
         tier, or tags for a storage account. It can also be used to map the
         account to a custom domain. Only one custom domain is supported per
         storage account; the replacement/change of custom domain is not
-        supported. In order to replace an old custom domain, the old value
-        must be cleared/unregistered before a new value can be set. The
-        update of multiple properties is supported. This call does not change
-        the storage keys for the account. If you want to change the storage
-        account keys, use the regenerate keys operation. The location and
-        name of the storage account cannot be changed after creation.
+        supported. In order to replace an old custom domain, the old value must
+        be cleared/unregistered before a new value can be set. The update of
+        multiple properties is supported. This call does not change the storage
+        keys for the account. If you want to change the storage account keys,
+        use the regenerate keys operation. The location and name of the storage
+        account cannot be changed after creation.
 
         :param resource_group_name: The name of the resource group within the
          user's subscription.
         :type resource_group_name: str
         :param account_name: The name of the storage account within the
-         specified resource group. Storage account names must be between 3
-         and 24 characters in length and use numbers and lower-case letters
-         only.
+         specified resource group. Storage account names must be between 3 and
+         24 characters in length and use numbers and lower-case letters only.
         :type account_name: str
         :param parameters: The parameters to provide for the updated account.
         :type parameters: :class:`StorageAccountUpdateParameters
@@ -550,9 +546,8 @@ class StorageAccountsOperations(object):
          user's subscription.
         :type resource_group_name: str
         :param account_name: The name of the storage account within the
-         specified resource group. Storage account names must be between 3
-         and 24 characters in length and use numbers and lower-case letters
-         only.
+         specified resource group. Storage account names must be between 3 and
+         24 characters in length and use numbers and lower-case letters only.
         :type account_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -616,9 +611,8 @@ class StorageAccountsOperations(object):
          user's subscription.
         :type resource_group_name: str
         :param account_name: The name of the storage account within the
-         specified resource group. Storage account names must be between 3
-         and 24 characters in length and use numbers and lower-case letters
-         only.
+         specified resource group. Storage account names must be between 3 and
+         24 characters in length and use numbers and lower-case letters only.
         :type account_name: str
         :param key_name:
         :type key_name: str
@@ -633,7 +627,7 @@ class StorageAccountsOperations(object):
          if raw=true
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
-        regenerate_key = models.StorageAccountRegenerateKeyParameters(key_name=key_name)
+        regenerate_key1 = models.StorageAccountRegenerateKeyParameters(key_name=key_name)
 
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Storage/storageAccounts/{accountName}/regenerateKey'
@@ -659,7 +653,7 @@ class StorageAccountsOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct body
-        body_content = self._serialize.body(regenerate_key, 'StorageAccountRegenerateKeyParameters')
+        body_content = self._serialize.body(regenerate_key1, 'StorageAccountRegenerateKeyParameters')
 
         # Construct and send request
         request = self._client.post(url, query_parameters)
