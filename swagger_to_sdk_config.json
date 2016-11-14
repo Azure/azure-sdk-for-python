@@ -247,7 +247,7 @@
       "swagger": "arm-servermanagement/2016-07-01-preview/swagger/servermanagement.json",
       "autorest_options": {
         "Namespace": "azure.mgmt.servermanager",
-        "PackageVersion": "2.0.0"
+        "PackageVersion": "1.1.0"
       },
       "output_dir": "azure-mgmt-servermanager/azure/mgmt/servermanager",
       "generated_relative_base_directory": "servermanagement"
