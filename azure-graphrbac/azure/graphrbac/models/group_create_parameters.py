@@ -13,22 +13,22 @@ from msrest.serialization import Model
 
 
 class GroupCreateParameters(Model):
-    """Request parameters for create a new group.
+    """Request parameters for creating a new group.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
     :param display_name: Group display name
     :type display_name: str
-    :ivar mail_enabled: Specifies whether the group is mail-enabled. Must be
-     false. This is because only pure security groups can be created using
-     the Graph API. Default value: False .
+    :ivar mail_enabled: Whether the group is mail-enabled. Must be false. This
+     is because only pure security groups can be created using the Graph API.
+     Default value: False .
     :vartype mail_enabled: bool
-    :param mail_nickname: Mail nick name
+    :param mail_nickname: Mail nickname
     :type mail_nickname: str
-    :ivar security_enabled: Specifies whether the group is a security group.
-     Must be true. This is because only pure security groups can be created
-     using the Graph API. Default value: True .
+    :ivar security_enabled: Whether the group is a security group. Must be
+     true. This is because only pure security groups can be created using the
+     Graph API. Default value: True .
     :vartype security_enabled: bool
     """ 
 

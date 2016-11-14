@@ -22,7 +22,7 @@ class ServicePrincipalsOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An objec model deserializer.
-    :ivar api_version: Client Api Version. Constant value: "1.6".
+    :ivar api_version: Client API version. Constant value: "1.6".
     """
 
     def __init__(self, client, config, serializer, deserializer):
@@ -36,7 +36,7 @@ class ServicePrincipalsOperations(object):
 
     def create(
             self, parameters, custom_headers=None, raw=False, **operation_config):
-        """Creates a service principal in the  directory.
+        """Creates a service principal in the directory.
 
         :param parameters: Parameters to create a service principal.
         :type parameters: :class:`ServicePrincipalCreateParameters
@@ -50,6 +50,8 @@ class ServicePrincipalsOperations(object):
          <azure.graphrbac.models.ServicePrincipal>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`GraphErrorException<azure.graphrbac.models.GraphErrorException>`
         """
         # Construct URL
         url = '/{tenantID}/servicePrincipals'
@@ -96,9 +98,9 @@ class ServicePrincipalsOperations(object):
 
     def list(
             self, filter=None, custom_headers=None, raw=False, **operation_config):
-        """Gets list of service principals from the current tenant.
+        """Gets a list of service principals from the current tenant.
 
-        :param filter: The filter to apply on the operation.
+        :param filter: The filter to apply to the operation.
         :type filter: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -107,6 +109,8 @@ class ServicePrincipalsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`ServicePrincipalPaged
          <azure.graphrbac.models.ServicePrincipalPaged>`
+        :raises:
+         :class:`GraphErrorException<azure.graphrbac.models.GraphErrorException>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -166,9 +170,9 @@ class ServicePrincipalsOperations(object):
 
     def delete(
             self, object_id, custom_headers=None, raw=False, **operation_config):
-        """Deletes service principal from the directory.
+        """Deletes a service principal from the directory.
 
-        :param object_id: Object id to delete service principal information.
+        :param object_id: The object ID of the service principal to delete.
         :type object_id: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -178,6 +182,8 @@ class ServicePrincipalsOperations(object):
         :rtype: None
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`GraphErrorException<azure.graphrbac.models.GraphErrorException>`
         """
         # Construct URL
         url = '/{tenantID}/servicePrincipals/{objectId}'
@@ -216,7 +222,7 @@ class ServicePrincipalsOperations(object):
             self, object_id, custom_headers=None, raw=False, **operation_config):
         """Gets service principal information from the directory.
 
-        :param object_id: Object id to get service principal information.
+        :param object_id: The object ID of the service principal to get.
         :type object_id: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -227,6 +233,8 @@ class ServicePrincipalsOperations(object):
          <azure.graphrbac.models.ServicePrincipal>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`GraphErrorException<azure.graphrbac.models.GraphErrorException>`
         """
         # Construct URL
         url = '/{tenantID}/servicePrincipals/{objectId}'
@@ -270,11 +278,10 @@ class ServicePrincipalsOperations(object):
 
     def list_key_credentials(
             self, object_id, custom_headers=None, raw=False, **operation_config):
-        """Get keyCredentials associated with the service principal by object Id.
-        Reference:
-        https://msdn.microsoft.com/en-us/library/azure/ad/graph/api/entity-and-complex-type-reference#keycredential-type.
+        """Get the keyCredentials associated with the specified service principal.
 
-        :param object_id: Object id to get service principal information.
+        :param object_id: The object ID of the service principal for which to
+         get keyCredentials.
         :type object_id: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -283,6 +290,8 @@ class ServicePrincipalsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`KeyCredentialPaged
          <azure.graphrbac.models.KeyCredentialPaged>`
+        :raises:
+         :class:`GraphErrorException<azure.graphrbac.models.GraphErrorException>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -335,13 +344,12 @@ class ServicePrincipalsOperations(object):
 
     def update_key_credentials(
             self, object_id, value, custom_headers=None, raw=False, **operation_config):
-        """Update keyCredentials associated with an existing service principal.
-        Reference:
-        https://msdn.microsoft.com/en-us/library/azure/ad/graph/api/entity-and-complex-type-reference#keycredential-type.
+        """Update the keyCredentials associated with a service principal.
 
-        :param object_id: Object id to get service principal information.
+        :param object_id: The object ID for which to get service principal
+         information.
         :type object_id: str
-        :param value: KeyCredential list.
+        :param value: A collection of KeyCredentials.
         :type value: list of :class:`KeyCredential
          <azure.graphrbac.models.KeyCredential>`
         :param dict custom_headers: headers that will be added to the request
@@ -352,6 +360,8 @@ class ServicePrincipalsOperations(object):
         :rtype: None
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`GraphErrorException<azure.graphrbac.models.GraphErrorException>`
         """
         parameters = models.KeyCredentialsUpdateParameters(value=value)
 
@@ -394,11 +404,9 @@ class ServicePrincipalsOperations(object):
 
     def list_password_credentials(
             self, object_id, custom_headers=None, raw=False, **operation_config):
-        """Gets passwordCredentials associated with an existing service
-        principal. Reference:
-        https://msdn.microsoft.com/en-us/library/azure/ad/graph/api/entity-and-complex-type-reference#passwordcredential-type.
+        """Gets the passwordCredentials associated with a service principal.
 
-        :param object_id: Object id to get service principal information.
+        :param object_id: The object ID of the service principal.
         :type object_id: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -407,6 +415,8 @@ class ServicePrincipalsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`PasswordCredentialPaged
          <azure.graphrbac.models.PasswordCredentialPaged>`
+        :raises:
+         :class:`GraphErrorException<azure.graphrbac.models.GraphErrorException>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -459,13 +469,11 @@ class ServicePrincipalsOperations(object):
 
     def update_password_credentials(
             self, object_id, value, custom_headers=None, raw=False, **operation_config):
-        """Updates passwordCredentials associated with an existing service
-        principal. Reference:
-        https://msdn.microsoft.com/en-us/library/azure/ad/graph/api/entity-and-complex-type-reference#passwordcredential-type.
+        """Updates the passwordCredentials associated with a service principal.
 
-        :param object_id: Object id to get service principal information.
+        :param object_id: The object ID of the service principal.
         :type object_id: str
-        :param value: PasswordCredential list.
+        :param value: A collection of PasswordCredentials.
         :type value: list of :class:`PasswordCredential
          <azure.graphrbac.models.PasswordCredential>`
         :param dict custom_headers: headers that will be added to the request
@@ -476,6 +484,8 @@ class ServicePrincipalsOperations(object):
         :rtype: None
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`GraphErrorException<azure.graphrbac.models.GraphErrorException>`
         """
         parameters = models.PasswordCredentialsUpdateParameters(value=value)
 
