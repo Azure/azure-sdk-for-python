@@ -76,6 +76,8 @@ azure-mgmt-cdn                        0.30.0rc6
 azure-mgmt-cognitiveservices          0.30.0rc6
 azure-mgmt-containerregistry          0.1.0
 azure-mgmt-commerce                   0.30.0rc6
+azure-mgmt-datalake-analytics         0.1.0
+azure-mgmt-datalake-store             0.1.0
 azure-mgmt-dns                        0.30.0rc6
 azure-mgmt-eventhub                   0.1.0
 azure-mgmt-iothub                     0.1.0
