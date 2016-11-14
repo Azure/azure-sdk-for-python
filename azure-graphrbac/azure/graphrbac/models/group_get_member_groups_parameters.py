@@ -15,9 +15,9 @@ from msrest.serialization import Model
 class GroupGetMemberGroupsParameters(Model):
     """Request parameters for GetMemberGroups API call.
 
-    :param security_enabled_only: If true only membership in security enabled
-     groups should be checked. Otherwise membership in all groups should be
-     checked
+    :param security_enabled_only: If true, only membership in security-enabled
+     groups should be checked. Otherwise, membership in all groups should be
+     checked.
     :type security_enabled_only: bool
     """ 
 

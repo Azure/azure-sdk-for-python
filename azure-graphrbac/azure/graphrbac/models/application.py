@@ -13,26 +13,26 @@ from msrest.serialization import Model
 
 
 class Application(Model):
-    """Active Directory user information.
+    """Active Directory application information.
 
-    :param object_id: object Id
+    :param object_id: The object ID.
     :type object_id: str
-    :param object_type: object type
+    :param object_type: The object type.
     :type object_type: str
-    :param app_id: application Id
+    :param app_id: The application ID.
     :type app_id: str
-    :param app_permissions: application permissions
+    :param app_permissions: The application permissions.
     :type app_permissions: list of str
-    :param available_to_other_tenants: Indicates if the application will be
-     available to other tenants
+    :param available_to_other_tenants: Whether the application is be available
+     to other tenants.
     :type available_to_other_tenants: bool
-    :param display_name: the displayName
+    :param display_name: The display name of the application.
     :type display_name: str
-    :param identifier_uris: the application identifier Uris
+    :param identifier_uris: A collection of URIs for the application.
     :type identifier_uris: list of str
-    :param reply_urls: the application reply Urls
+    :param reply_urls: A collection of reply URLs for the application.
     :type reply_urls: list of str
-    :param homepage: Application homepage
+    :param homepage: The home page of the application.
     :type homepage: str
     """ 
 

@@ -13,27 +13,28 @@ from msrest.serialization import Model
 
 
 class AADObject(Model):
-    """Active Directory object information.
+    """The properties of an Active Directory object.
 
-    :param object_id: object Id
+    :param object_id: The ID of the object.
     :type object_id: str
-    :param object_type: object type
+    :param object_type: The type of AAD object.
     :type object_type: str
-    :param display_name: object display name
+    :param display_name: The display name of the object.
     :type display_name: str
-    :param user_principal_name: principal name
+    :param user_principal_name: The principal name of the object.
     :type user_principal_name: str
-    :param mail: mail
+    :param mail: The primary email address of the object.
     :type mail: str
-    :param mail_enabled: MailEnabled field
+    :param mail_enabled: Whether the AAD object is mail-enabled.
     :type mail_enabled: bool
-    :param security_enabled: SecurityEnabled field
+    :param security_enabled: Whether the AAD object is security-enabled.
     :type security_enabled: bool
-    :param sign_in_name: signIn name
+    :param sign_in_name: The sign-in name of the object.
     :type sign_in_name: str
-    :param service_principal_names: the list of service principal names.
+    :param service_principal_names: A collection of service principal names
+     associated with the object.
     :type service_principal_names: list of str
-    :param user_type: the user type
+    :param user_type: The user type of the object.
     :type user_type: str
     """ 
 

@@ -29,7 +29,7 @@ class GraphRbacManagementClientConfiguration(AzureConfiguration):
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
      object<msrestazure.azure_active_directory>`
-    :param tenant_id: the tenant Id.
+    :param tenant_id: The tenant ID.
     :type tenant_id: str
     :param accept_language: Gets or sets the preferred language for the
      response.
@@ -72,7 +72,7 @@ class GraphRbacManagementClientConfiguration(AzureConfiguration):
 
 
 class GraphRbacManagementClient(object):
-    """Composite Swagger for GraphRbac Management Client
+    """Composite Swagger specification for Azure Active Directory Graph RBAC management client.
 
     :ivar config: Configuration for client.
     :vartype config: GraphRbacManagementClientConfiguration
@@ -91,7 +91,7 @@ class GraphRbacManagementClient(object):
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
      object<msrestazure.azure_active_directory>`
-    :param tenant_id: the tenant Id.
+    :param tenant_id: The tenant ID.
     :type tenant_id: str
     :param accept_language: Gets or sets the preferred language for the
      response.
