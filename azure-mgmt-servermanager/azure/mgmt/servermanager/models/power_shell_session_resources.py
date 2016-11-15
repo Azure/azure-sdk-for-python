@@ -13,12 +13,12 @@ from msrest.serialization import Model
 
 
 class PowerShellSessionResources(Model):
-    """a collaction of powershell session resources.
+    """A collection of PowerShell session resources.
 
-    :param value: Colleciton of powershell session resources
+    :param value: Collection of PowerShell session resources.
     :type value: list of :class:`PowerShellSessionResource
      <azure.mgmt.servermanager.models.PowerShellSessionResource>`
-    :param next_link: the URL to the next set of resources
+    :param next_link: The URL to the next set of resources.
     :type next_link: str
     """ 
 

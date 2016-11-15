@@ -42,17 +42,17 @@ class NodeOperations(object):
         :type resource_group_name: str
         :param node_name: The node name (256 characters maximum).
         :type node_name: str
-        :param location: location of the resource?
+        :param location: Location of the resource.
         :type location: str
-        :param tags: resource tags
+        :param tags: Resource tags.
         :type tags: object
-        :param gateway_id: Gateway id which will manage this node
+        :param gateway_id: Gateway ID which will manage this node.
         :type gateway_id: str
         :param connection_name: myhost.domain.com
         :type connection_name: str
-        :param user_name: User name to be used to connect to node
+        :param user_name: User name to be used to connect to node.
         :type user_name: str
-        :param password: Password associated with user name
+        :param password: Password associated with user name.
         :type password: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -63,6 +63,8 @@ class NodeOperations(object):
          <azure.mgmt.servermanager.models.NodeResource>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`ErrorException<azure.mgmt.servermanager.models.ErrorException>`
         """
         gateway_parameters = models.NodeParameters(location=location, tags=tags, gateway_id=gateway_id, connection_name=connection_name, user_name=user_name, password=password)
 
@@ -145,17 +147,17 @@ class NodeOperations(object):
         :type resource_group_name: str
         :param node_name: The node name (256 characters maximum).
         :type node_name: str
-        :param location: location of the resource?
+        :param location: Location of the resource.
         :type location: str
-        :param tags: resource tags
+        :param tags: Resource tags.
         :type tags: object
-        :param gateway_id: Gateway id which will manage this node
+        :param gateway_id: Gateway ID which will manage this node.
         :type gateway_id: str
         :param connection_name: myhost.domain.com
         :type connection_name: str
-        :param user_name: User name to be used to connect to node
+        :param user_name: User name to be used to connect to node.
         :type user_name: str
-        :param password: Password associated with user name
+        :param password: Password associated with user name.
         :type password: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -166,6 +168,8 @@ class NodeOperations(object):
          <azure.mgmt.servermanager.models.NodeResource>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`ErrorException<azure.mgmt.servermanager.models.ErrorException>`
         """
         node_parameters = models.NodeParameters(location=location, tags=tags, gateway_id=gateway_id, connection_name=connection_name, user_name=user_name, password=password)
 
@@ -254,6 +258,8 @@ class NodeOperations(object):
         :rtype: None
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`ErrorException<azure.mgmt.servermanager.models.ErrorException>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ServerManagement/nodes/{nodeName}'
@@ -291,7 +297,7 @@ class NodeOperations(object):
 
     def get(
             self, resource_group_name, node_name, custom_headers=None, raw=False, **operation_config):
-        """gets a management node.
+        """Gets a management node.
 
         :param resource_group_name: The resource group name uniquely
          identifies the resource group within the user subscriptionId.
@@ -307,6 +313,8 @@ class NodeOperations(object):
          <azure.mgmt.servermanager.models.NodeResource>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`ErrorException<azure.mgmt.servermanager.models.ErrorException>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ServerManagement/nodes/{nodeName}'
@@ -351,7 +359,7 @@ class NodeOperations(object):
 
     def list(
             self, custom_headers=None, raw=False, **operation_config):
-        """Returns nodes in a subscription.
+        """Lists nodes in a subscription.
 
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -360,6 +368,8 @@ class NodeOperations(object):
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`NodeResourcePaged
          <azure.mgmt.servermanager.models.NodeResourcePaged>`
+        :raises:
+         :class:`ErrorException<azure.mgmt.servermanager.models.ErrorException>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -411,7 +421,7 @@ class NodeOperations(object):
 
     def list_for_resource_group(
             self, resource_group_name, custom_headers=None, raw=False, **operation_config):
-        """Returns nodes in a resource group.
+        """Lists nodes in a resource group.
 
         :param resource_group_name: The resource group name uniquely
          identifies the resource group within the user subscriptionId.
@@ -423,6 +433,8 @@ class NodeOperations(object):
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`NodeResourcePaged
          <azure.mgmt.servermanager.models.NodeResourcePaged>`
+        :raises:
+         :class:`ErrorException<azure.mgmt.servermanager.models.ErrorException>`
         """
         def internal_paging(next_link=None, raw=False):
 
