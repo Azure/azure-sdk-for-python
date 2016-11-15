@@ -15,9 +15,9 @@ from msrest.serialization import Model
 class StorageAccount(Model):
     """Access information for a storage account.
 
-    :param name: The storage account's name.
+    :param name: Specifies the name of the storage account.
     :type name: str
-    :param key: The storage account's active key.
+    :param key: Specifies the key used to access the storage account.
     :type key: str
     """ 
 

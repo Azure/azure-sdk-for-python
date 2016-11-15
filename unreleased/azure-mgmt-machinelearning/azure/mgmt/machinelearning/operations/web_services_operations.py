@@ -35,19 +35,21 @@ class WebServicesOperations(object):
         self.config = config
 
     def create_or_update(
-            self, create_or_update_payload, resource_group_name, web_service_name, custom_headers=None, raw=False, **operation_config):
-        """Creates or updates a new Azure ML web service or update an existing
-        one.
+            self, resource_group_name, web_service_name, create_or_update_payload, custom_headers=None, raw=False, **operation_config):
+        """Create or update a web service. This call will overwrite an existing
+        web service. Note that there is no warning or confirmation. This is a
+        nonrecoverable operation. If your intent is to create a new web
+        service, call the Get operation first to verify that it does not exist.
 
-        :param create_or_update_payload: The payload to create or update the
-         Azure ML web service.
+        :param resource_group_name: Name of the resource group in which the
+         web service is located.
+        :type resource_group_name: str
+        :param web_service_name: The name of the web service.
+        :type web_service_name: str
+        :param create_or_update_payload: The payload that is used to create or
+         update the web service.
         :type create_or_update_payload: :class:`WebService
          <azure.mgmt.machinelearning.models.WebService>`
-        :param resource_group_name: Name of the resource group.
-        :type resource_group_name: str
-        :param web_service_name: The Azure ML web service name which you want
-         to reach.
-        :type web_service_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -57,6 +59,7 @@ class WebServicesOperations(object):
          <azure.mgmt.machinelearning.models.WebService>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearning/webServices/{webServiceName}'
@@ -132,13 +135,15 @@ class WebServicesOperations(object):
 
     def get(
             self, resource_group_name, web_service_name, custom_headers=None, raw=False, **operation_config):
-        """Retrieve an Azure ML web service definition by its subscription,
-        resource group and name.
+        """Gets the Web Service Definiton as specified by a subscription, resource
+        group, and name. Note that the storage credentials and web service keys
+        are not returned by this call. To get the web service access keys, call
+        List Keys.
 
-        :param resource_group_name: Name of the resource group.
+        :param resource_group_name: Name of the resource group in which the
+         web service is located.
         :type resource_group_name: str
-        :param web_service_name: The Azure ML web service name which you want
-         to reach.
+        :param web_service_name: The name of the web service.
         :type web_service_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -149,6 +154,7 @@ class WebServicesOperations(object):
          <azure.mgmt.machinelearning.models.WebService>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearning/webServices/{webServiceName}'
@@ -194,18 +200,19 @@ class WebServicesOperations(object):
         return deserialized
 
     def patch(
-            self, patch_payload, resource_group_name, web_service_name, custom_headers=None, raw=False, **operation_config):
-        """Patch an existing Azure ML web service resource.
+            self, resource_group_name, web_service_name, patch_payload, custom_headers=None, raw=False, **operation_config):
+        """Modifies an existing web service resource. The PATCH API call is an
+        asynchronous operation. To determine whether it has completed
+        successfully, you must perform a Get operation.
 
-        :param patch_payload: The payload to patch the Azure ML web service
-         with.
+        :param resource_group_name: Name of the resource group in which the
+         web service is located.
+        :type resource_group_name: str
+        :param web_service_name: The name of the web service.
+        :type web_service_name: str
+        :param patch_payload: The payload to use to patch the web service.
         :type patch_payload: :class:`WebService
          <azure.mgmt.machinelearning.models.WebService>`
-        :param resource_group_name: Name of the resource group.
-        :type resource_group_name: str
-        :param web_service_name: The Azure ML web service name which you want
-         to reach.
-        :type web_service_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -215,6 +222,7 @@ class WebServicesOperations(object):
          <azure.mgmt.machinelearning.models.WebService>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearning/webServices/{webServiceName}'
@@ -288,12 +296,12 @@ class WebServicesOperations(object):
 
     def remove(
             self, resource_group_name, web_service_name, custom_headers=None, raw=False, **operation_config):
-        """Remove an existing Azure ML web service.
+        """Deletes the specified web service.
 
-        :param resource_group_name: Name of the resource group.
+        :param resource_group_name: Name of the resource group in which the
+         web service is located.
         :type resource_group_name: str
-        :param web_service_name: The Azure ML web service name which you want
-         to reach.
+        :param web_service_name: The name of the web service.
         :type web_service_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -303,6 +311,7 @@ class WebServicesOperations(object):
          instance that returns None
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearning/webServices/{webServiceName}'
@@ -343,7 +352,7 @@ class WebServicesOperations(object):
 
         def get_long_running_output(response):
 
-            if response.status_code not in [202, 204]:
+            if response.status_code not in [202]:
                 exp = CloudError(response)
                 exp.request_id = response.headers.get('x-ms-request-id')
                 raise exp
@@ -365,12 +374,12 @@ class WebServicesOperations(object):
 
     def list_keys(
             self, resource_group_name, web_service_name, custom_headers=None, raw=False, **operation_config):
-        """Get the access keys of a particular Azure ML web service.
+        """Gets the access keys for the specified web service.
 
-        :param resource_group_name: Name of the resource group.
+        :param resource_group_name: Name of the resource group in which the
+         web service is located.
         :type resource_group_name: str
-        :param web_service_name: The Azure ML web service name which you want
-         to reach.
+        :param web_service_name: The name of the web service.
         :type web_service_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -381,6 +390,7 @@ class WebServicesOperations(object):
          <azure.mgmt.machinelearning.models.WebServiceKeys>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearning/webServices/{webServiceName}/listKeys'
@@ -427,9 +437,10 @@ class WebServicesOperations(object):
 
     def list_in_resource_group(
             self, resource_group_name, skiptoken=None, custom_headers=None, raw=False, **operation_config):
-        """Retrieve all Azure ML web services in a given resource group.
+        """Gets the web services in the specified resource group.
 
-        :param resource_group_name: Name of the resource group.
+        :param resource_group_name: Name of the resource group in which the
+         web service is located.
         :type resource_group_name: str
         :param skiptoken: Continuation token for pagination.
         :type skiptoken: str
@@ -442,6 +453,7 @@ class WebServicesOperations(object):
          <azure.mgmt.machinelearning.models.PaginatedWebServicesList>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearning/webServices'
@@ -489,7 +501,7 @@ class WebServicesOperations(object):
 
     def list(
             self, skiptoken=None, custom_headers=None, raw=False, **operation_config):
-        """Retrieve all Azure ML web services in the current Azure subscription.
+        """Gets the web services in the specified subscription.
 
         :param skiptoken: Continuation token for pagination.
         :type skiptoken: str
@@ -502,6 +514,7 @@ class WebServicesOperations(object):
          <azure.mgmt.machinelearning.models.PaginatedWebServicesList>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/providers/Microsoft.MachineLearning/webServices'

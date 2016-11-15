@@ -15,11 +15,11 @@ from msrest.serialization import Model
 class PaginatedWebServicesList(Model):
     """Paginated list of web services.
 
-    :param value: List of web services objects.
+    :param value: An array of web service objects.
     :type value: list of :class:`WebService
      <azure.mgmt.machinelearning.models.WebService>`
-    :param next_link: Continuation link to be used to potentially retrieve
-     the next page of results in the list.
+    :param next_link: A continuation link (absolute URI) to the next page of
+     results in the list.
     :type next_link: str
     """ 
 

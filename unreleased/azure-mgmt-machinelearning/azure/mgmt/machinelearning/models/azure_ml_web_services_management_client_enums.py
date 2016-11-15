@@ -18,7 +18,6 @@ class ProvisioningState(Enum):
     provisioning = "Provisioning"
     succeeded = "Succeeded"
     failed = "Failed"
-    canceled = "Canceled"
 
 
 class DiagnosticsLevel(Enum):
@@ -40,7 +39,10 @@ class ColumnFormat(Enum):
 
     byte = "Byte"
     char = "Char"
-    datetime_enum = "Datetime"
+    complex64 = "Complex64"
+    complex128 = "Complex128"
+    date_time = "Date-time"
+    date_time_offset = "Date-timeOffset"
     double = "Double"
     duration = "Duration"
     float_enum = "Float"

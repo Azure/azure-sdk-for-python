@@ -13,9 +13,9 @@ from msrest.serialization import Model
 
 
 class GraphNode(Model):
-    """Specifies a node in the web service graph. The node can either be an
-    input, output or asset node, so only one of the corresponding id
-    properties is populated at any given time.
+    """Specifies a node in the web service graph. The node can either be an input,
+    output or asset node, so only one of the corresponding id properties is
+    populated at any given time.
 
     :param asset_id: The id of the asset represented by this node.
     :type asset_id: str
