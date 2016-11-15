@@ -16,8 +16,8 @@ class RealtimeConfiguration(Model):
     """Holds the available configuration options for an Azure ML web service
     endpoint.
 
-    :param max_concurrent_calls: Maximum number of concurrent calls allowed
-     on the realtime endpoint.
+    :param max_concurrent_calls: Specifies the maximum concurrent calls that
+     can be made to the web service. Minimum value: 4, Maximum value: 200.
     :type max_concurrent_calls: int
     """ 
 
