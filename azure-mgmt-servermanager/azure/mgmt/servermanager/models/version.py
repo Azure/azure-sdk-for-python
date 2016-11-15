@@ -15,17 +15,17 @@ from msrest.serialization import Model
 class Version(Model):
     """A multipart-numeric version number.
 
-    :param major: the leftmost number of the version
+    :param major: The leftmost number of the version.
     :type major: int
-    :param minor: the second leftmost number of the version
+    :param minor: The second leftmost number of the version.
     :type minor: int
-    :param build: the third number of the version
+    :param build: The third number of the version.
     :type build: int
-    :param revision: the fourth number of the version
+    :param revision: The fourth number of the version.
     :type revision: int
-    :param major_revision: the MSW of the fourth part
+    :param major_revision: The MSW of the fourth part.
     :type major_revision: int
-    :param minor_revision: the LSW of the fourth part
+    :param minor_revision: The LSW of the fourth part.
     :type minor_revision: int
     """ 
 

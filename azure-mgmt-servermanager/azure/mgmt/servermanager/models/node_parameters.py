@@ -13,19 +13,19 @@ from msrest.serialization import Model
 
 
 class NodeParameters(Model):
-    """NodeParameters.
+    """Parameter collection for operations on arm node resource.
 
-    :param location: location of the resource?
+    :param location: Location of the resource.
     :type location: str
-    :param tags: resource tags
+    :param tags: Resource tags.
     :type tags: object
-    :param gateway_id: Gateway id which will manage this node
+    :param gateway_id: Gateway ID which will manage this node.
     :type gateway_id: str
     :param connection_name: myhost.domain.com
     :type connection_name: str
-    :param user_name: User name to be used to connect to node
+    :param user_name: User name to be used to connect to node.
     :type user_name: str
-    :param password: Password associated with user name
+    :param password: Password associated with user name.
     :type password: str
     """ 
 

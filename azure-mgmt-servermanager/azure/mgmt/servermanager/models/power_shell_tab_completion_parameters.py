@@ -13,7 +13,7 @@ from msrest.serialization import Model
 
 
 class PowerShellTabCompletionParameters(Model):
-    """PowerShellTabCompletionParameters.
+    """Collection of parameters for PowerShell tab completion.
 
     :param command: Command to get tab completion for.
     :type command: str
