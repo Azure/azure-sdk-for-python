@@ -27,8 +27,8 @@ class DocumentDBConfiguration(AzureConfiguration):
      object<msrestazure.azure_active_directory>`
     :param subscription_id: Azure subscription ID.
     :type subscription_id: str
-    :param api_version: Version of the API to be used with the client
-     request. The current version is 2015-04-08.
+    :param api_version: Version of the API to be used with the client request.
+     The current version is 2015-04-08.
     :type api_version: str
     :param accept_language: Gets or sets the preferred language for the
      response.
@@ -87,8 +87,8 @@ class DocumentDB(object):
      object<msrestazure.azure_active_directory>`
     :param subscription_id: Azure subscription ID.
     :type subscription_id: str
-    :param api_version: Version of the API to be used with the client
-     request. The current version is 2015-04-08.
+    :param api_version: Version of the API to be used with the client request.
+     The current version is 2015-04-08.
     :type api_version: str
     :param accept_language: Gets or sets the preferred language for the
      response.

@@ -363,20 +363,19 @@ class DatabaseAccountsOperations(object):
             get_long_running_status, long_running_operation_timeout)
 
     def failover_priority_change(
-            self, resource_group_name, account_name, failover_parameters, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, account_name, failover_policies=None, custom_headers=None, raw=False, **operation_config):
         """Changes the failover priority for the Azure DocumentDB database
-        account. A failover priority of 0 indicates a write region. The
-        maximum value for a failover priority = (total number of regions -
-        1). Failover priority values must be unique for each of the regions
-        in which the database account exists.
+        account. A failover priority of 0 indicates a write region. The maximum
+        value for a failover priority = (total number of regions - 1). Failover
+        priority values must be unique for each of the regions in which the
+        database account exists.
 
         :param resource_group_name: Name of an Azure resource group.
         :type resource_group_name: str
         :param account_name: DocumentDB database account name.
         :type account_name: str
-        :param failover_parameters: The new failover policies for the
-         database account.
-        :type failover_parameters: list of :class:`FailoverPolicy
+        :param failover_policies: List of failover policies.
+        :type failover_policies: list of :class:`FailoverPolicy
          <azure.mgmt.documentdb.models.FailoverPolicy>`
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -388,6 +387,8 @@ class DatabaseAccountsOperations(object):
          if raw=true
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
+        failover_parameters = models.FailoverPolicies(failover_policies=failover_policies)
+
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/failoverPriorityChange'
         path_format_arguments = {
@@ -412,7 +413,7 @@ class DatabaseAccountsOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct body
-        body_content = self._serialize.body(failover_parameters, '[FailoverPolicy]')
+        body_content = self._serialize.body(failover_parameters, 'FailoverPolicies')
 
         # Construct and send request
         def long_running_send():
@@ -725,9 +726,9 @@ class DatabaseAccountsOperations(object):
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :rtype: None
+        :rtype:
+         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
+         instance that returns None
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
@@ -761,18 +762,41 @@ class DatabaseAccountsOperations(object):
         body_content = self._serialize.body(key_to_regenerate, 'DatabaseAccountRegenerateKeyParameters')
 
         # Construct and send request
-        request = self._client.post(url, query_parameters)
-        response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+        def long_running_send():
 
-        if response.status_code not in [202]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            request = self._client.post(url, query_parameters)
+            return self._client.send(
+                request, header_parameters, body_content, **operation_config)
+
+        def get_long_running_status(status_link, headers=None):
+
+            request = self._client.get(status_link)
+            if headers:
+                request.headers.update(headers)
+            return self._client.send(
+                request, header_parameters, **operation_config)
+
+        def get_long_running_output(response):
+
+            if response.status_code not in [200, 202]:
+                exp = CloudError(response)
+                exp.request_id = response.headers.get('x-ms-request-id')
+                raise exp
+
+            if raw:
+                client_raw_response = ClientRawResponse(None, response)
+                return client_raw_response
 
         if raw:
-            client_raw_response = ClientRawResponse(None, response)
-            return client_raw_response
+            response = long_running_send()
+            return get_long_running_output(response)
+
+        long_running_operation_timeout = operation_config.get(
+            'long_running_operation_timeout',
+            self.config.long_running_operation_timeout)
+        return AzureOperationPoller(
+            long_running_send, get_long_running_output,
+            get_long_running_status, long_running_operation_timeout)
 
     def check_name_exists(
             self, account_name, custom_headers=None, raw=False, **operation_config):
