@@ -22,8 +22,8 @@ class ErrorDetails(Model):
     :vartype code: str
     :ivar message: the error message localized based on Accept-Language
     :vartype message: str
-    :ivar target: the target of the particular error (for example, the name
-     of the property in error).
+    :ivar target: the target of the particular error (for example, the name of
+     the property in error).
     :vartype target: str
     """ 
 

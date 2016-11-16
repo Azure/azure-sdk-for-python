@@ -15,8 +15,8 @@ from msrest.serialization import Model
 class DataLakeStoreAccountInfo(Model):
     """Data Lake Store account information.
 
-    :param name: the account name of the Data Lake Store account to add to
-     the Data Lake Analytics account being created.
+    :param name: the account name of the Data Lake Store account to add to the
+     Data Lake Analytics account being created.
     :type name: str
     :param suffix: the optional suffix for the Data Lake Store account.
     :type suffix: str

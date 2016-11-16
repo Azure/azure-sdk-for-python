@@ -44,8 +44,8 @@ class StorageAccountsOperations(object):
         :param account_name: The name of the Data Lake Analytics account from
          which to retrieve Azure storage account details.
         :type account_name: str
-        :param storage_account_name: The name of the Azure Storage account
-         for which to retrieve the details.
+        :param storage_account_name: The name of the Azure Storage account for
+         which to retrieve the details.
         :type storage_account_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -472,8 +472,8 @@ class StorageAccountsOperations(object):
         :param account_name: The name of the Data Lake Analytics account from
          which an Azure Storage account's SAS token is being requested.
         :type account_name: str
-        :param storage_account_name: The name of the Azure storage account
-         for which the SAS token is being requested.
+        :param storage_account_name: The name of the Azure storage account for
+         which the SAS token is being requested.
         :type storage_account_name: str
         :param container_name: The name of the Azure storage container for
          which the SAS token is being requested.
@@ -544,8 +544,8 @@ class StorageAccountsOperations(object):
     def list_by_account(
             self, resource_group_name, account_name, filter=None, top=None, skip=None, select=None, orderby=None, count=None, custom_headers=None, raw=False, **operation_config):
         """Gets the first page of Azure Storage accounts, if any, linked to the
-        specified Data Lake Analytics account. The response includes a link
-        to the next page, if any.
+        specified Data Lake Analytics account. The response includes a link to
+        the next page, if any.
 
         :param resource_group_name: The name of the Azure resource group that
          contains the Data Lake Analytics account.
@@ -569,9 +569,9 @@ class StorageAccountsOperations(object):
          on the order you'd like the values sorted, e.g.
          Categories?$orderby=CategoryName desc. Optional.
         :type orderby: str
-        :param count: The Boolean value of true or false to request a count
-         of the matching resources included with the resources in the
-         response, e.g. Categories?$count=true. Optional.
+        :param count: The Boolean value of true or false to request a count of
+         the matching resources included with the resources in the response,
+         e.g. Categories?$count=true. Optional.
         :type count: bool
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
