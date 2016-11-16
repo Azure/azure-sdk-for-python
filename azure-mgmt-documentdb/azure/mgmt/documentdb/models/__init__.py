@@ -13,6 +13,7 @@ from .database_account import DatabaseAccount
 from .consistency_policy import ConsistencyPolicy
 from .location import Location
 from .failover_policy import FailoverPolicy
+from .failover_policies import FailoverPolicies
 from .resource import Resource
 from .database_account_create_update_parameters import DatabaseAccountCreateUpdateParameters
 from .database_account_patch_parameters import DatabaseAccountPatchParameters
@@ -32,6 +33,7 @@ __all__ = [
     'ConsistencyPolicy',
     'Location',
     'FailoverPolicy',
+    'FailoverPolicies',
     'Resource',
     'DatabaseAccountCreateUpdateParameters',
     'DatabaseAccountPatchParameters',

@@ -30,9 +30,8 @@ class DatabaseAccount(Resource):
     :param tags:
     :type tags: dict
     :param kind: Indicates the type of database account. This can only be set
-     at database account creation. Possible values include:
-     'GlobalDocumentDB', 'MongoDB', 'Parse'. Default value:
-     "GlobalDocumentDB" .
+     at database account creation. Possible values include: 'GlobalDocumentDB',
+     'MongoDB', 'Parse'. Default value: "GlobalDocumentDB" .
     :type kind: str or :class:`DatabaseAccountKind
      <azure.mgmt.documentdb.models.DatabaseAccountKind>`
     :param provisioning_state:
@@ -54,8 +53,8 @@ class DatabaseAccount(Resource):
      DocumentDB account.
     :vartype write_locations: list of :class:`Location
      <azure.mgmt.documentdb.models.Location>`
-    :ivar read_locations: An array that contains of the read locations
-     enabled for the DocumentDB account.
+    :ivar read_locations: An array that contains of the read locations enabled
+     for the DocumentDB account.
     :vartype read_locations: list of :class:`Location
      <azure.mgmt.documentdb.models.Location>`
     :ivar failover_policies: An array that contains the regions ordered by

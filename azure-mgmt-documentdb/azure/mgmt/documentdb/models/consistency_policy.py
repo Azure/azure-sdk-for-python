@@ -16,8 +16,8 @@ class ConsistencyPolicy(Model):
     """The consistency policy for the DocumentDB database account.
 
     :param default_consistency_level: The default consistency level and
-     configuration settings of the DocumentDB account. Possible values
-     include: 'Eventual', 'Session', 'BoundedStaleness', 'Strong'
+     configuration settings of the DocumentDB account. Possible values include:
+     'Eventual', 'Session', 'BoundedStaleness', 'Strong'
     :type default_consistency_level: str or :class:`DefaultConsistencyLevel
      <azure.mgmt.documentdb.models.DefaultConsistencyLevel>`
     :param max_staleness_prefix: When used with the Bounded Staleness
@@ -26,9 +26,9 @@ class ConsistencyPolicy(Model):
      when defaultConsistencyPolicy is set to 'BoundedStaleness'.
     :type max_staleness_prefix: long
     :param max_interval_in_seconds: When used with the Bounded Staleness
-     consistency level, this value represents the time amount of staleness
-     (in seconds) tolerated. Accepted range for this value is 1 - 100.
-     Required when defaultConsistencyPolicy is set to 'BoundedStaleness'.
+     consistency level, this value represents the time amount of staleness (in
+     seconds) tolerated. Accepted range for this value is 1 - 100. Required
+     when defaultConsistencyPolicy is set to 'BoundedStaleness'.
     :type max_interval_in_seconds: int
     """ 
 

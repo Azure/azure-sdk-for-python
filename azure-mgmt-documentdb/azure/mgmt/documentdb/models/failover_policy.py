@@ -21,13 +21,13 @@ class FailoverPolicy(Model):
     :ivar id: The unique identifier of the region in which the database
      account replicates to. Example: &lt;accountName&gt;-&lt;locationName&gt;.
     :vartype id: str
-    :param location_name: The name of the region in which the database
-     account exists.
+    :param location_name: The name of the region in which the database account
+     exists.
     :type location_name: str
     :param failover_priority: The failover priority of the region. A failover
      priority of 0 indicates a write region. The maximum value for a failover
-     priority = (total number of regions - 1). Failover priority values must
-     be unique for each of the regions in which the database account exists.
+     priority = (total number of regions - 1). Failover priority values must be
+     unique for each of the regions in which the database account exists.
     :type failover_priority: int
     """ 
 
