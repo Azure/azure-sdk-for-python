@@ -20,7 +20,7 @@ class ServiceObjective(SqlSubResource):
 
     :ivar name: Resource name
     :vartype name: str
-    :ivar id: Resource Id
+    :ivar id: The resource ID.
     :vartype id: str
     :ivar service_objective_name: The name for the service objective.
     :vartype service_objective_name: str

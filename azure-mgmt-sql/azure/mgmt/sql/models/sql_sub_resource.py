@@ -20,7 +20,7 @@ class SqlSubResource(Model):
 
     :ivar name: Resource name
     :vartype name: str
-    :ivar id: Resource Id
+    :ivar id: The resource ID.
     :vartype id: str
     """ 
 
