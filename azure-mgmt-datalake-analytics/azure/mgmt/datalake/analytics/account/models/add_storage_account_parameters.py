@@ -13,8 +13,8 @@ from msrest.serialization import Model
 
 
 class AddStorageAccountParameters(Model):
-    """Storage account parameters for a storage account being added to a Data
-    Lake Analytics account.
+    """Storage account parameters for a storage account being added to a Data Lake
+    Analytics account.
 
     :param access_key: the access key associated with this Azure Storage
      account that will be used to connect to it.

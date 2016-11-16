@@ -13,8 +13,8 @@ from .resource import Resource
 
 
 class DataLakeAnalyticsAccount(Resource):
-    """A Data Lake Analytics account object, containing all information
-    associated with the named Data Lake Analytics account.
+    """A Data Lake Analytics account object, containing all information associated
+    with the named Data Lake Analytics account.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -31,12 +31,12 @@ class DataLakeAnalyticsAccount(Resource):
     :type tags: dict
     :ivar provisioning_state: the provisioning status of the Data Lake
      Analytics account. Possible values include: 'Failed', 'Creating',
-     'Running', 'Succeeded', 'Patching', 'Suspending', 'Resuming',
-     'Deleting', 'Deleted'
-    :vartype provisioning_state: str or
-     :class:`DataLakeAnalyticsAccountStatus <azure.mgmt.datalake.analytics.account.models.DataLakeAnalyticsAccountStatus>`
-    :ivar state: the state of the Data Lake Analytics account. Possible
-     values include: 'Active', 'Suspended'
+     'Running', 'Succeeded', 'Patching', 'Suspending', 'Resuming', 'Deleting',
+     'Deleted'
+    :vartype provisioning_state: str or :class:`DataLakeAnalyticsAccountStatus
+     <azure.mgmt.datalake.analytics.account.models.DataLakeAnalyticsAccountStatus>`
+    :ivar state: the state of the Data Lake Analytics account. Possible values
+     include: 'Active', 'Suspended'
     :vartype state: str or :class:`DataLakeAnalyticsAccountState
      <azure.mgmt.datalake.analytics.account.models.DataLakeAnalyticsAccountState>`
     :param default_data_lake_store_account: the default data lake storage
@@ -48,8 +48,8 @@ class DataLakeAnalyticsAccount(Resource):
     :param query_store_retention: the number of days that job metadata is
      retained. Default value: 30 .
     :type query_store_retention: int
-    :param max_job_count: the maximum supported jobs running under the
-     account at the same time. Default value: 3 .
+    :param max_job_count: the maximum supported jobs running under the account
+     at the same time. Default value: 3 .
     :type max_job_count: int
     :ivar system_max_degree_of_parallelism: the system defined maximum
      supported degree of parallelism for this account, which restricts the
