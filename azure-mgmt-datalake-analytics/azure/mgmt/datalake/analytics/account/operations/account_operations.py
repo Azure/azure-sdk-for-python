@@ -37,8 +37,7 @@ class AccountOperations(object):
     def list_by_resource_group(
             self, resource_group_name, filter=None, top=None, skip=None, select=None, orderby=None, count=None, custom_headers=None, raw=False, **operation_config):
         """Gets the first page of Data Lake Analytics accounts, if any, within a
-        specific resource group. This includes a link to the next page, if
-        any.
+        specific resource group. This includes a link to the next page, if any.
 
         :param resource_group_name: The name of the Azure resource group that
          contains the Data Lake Analytics account.
@@ -59,9 +58,9 @@ class AccountOperations(object):
          on the order you'd like the values sorted, e.g.
          Categories?$orderby=CategoryName desc. Optional.
         :type orderby: str
-        :param count: The Boolean value of true or false to request a count
-         of the matching resources included with the resources in the
-         response, e.g. Categories?$count=true. Optional.
+        :param count: The Boolean value of true or false to request a count of
+         the matching resources included with the resources in the response,
+         e.g. Categories?$count=true. Optional.
         :type count: bool
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -137,9 +136,8 @@ class AccountOperations(object):
 
     def list(
             self, filter=None, top=None, skip=None, select=None, orderby=None, count=None, custom_headers=None, raw=False, **operation_config):
-        """Gets the first page of Data Lake Analytics accounts, if any, within
-        the current subscription. This includes a link to the next page, if
-        any.
+        """Gets the first page of Data Lake Analytics accounts, if any, within the
+        current subscription. This includes a link to the next page, if any.
 
         :param filter: OData filter. Optional.
         :type filter: str
@@ -157,9 +155,9 @@ class AccountOperations(object):
          on the order you'd like the values sorted, e.g.
          Categories?$orderby=CategoryName desc. Optional.
         :type orderby: str
-        :param count: The Boolean value of true or false to request a count
-         of the matching resources included with the resources in the
-         response, e.g. Categories?$count=true. Optional.
+        :param count: The Boolean value of true or false to request a count of
+         the matching resources included with the resources in the response,
+         e.g. Categories?$count=true. Optional.
         :type count: bool
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
