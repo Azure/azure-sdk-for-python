@@ -13,11 +13,11 @@ from msrest.serialization import Model
 
 
 class CreateStorageAccountInfo(Model):
-    """Azure Storage account information to add to the Data Lake analytics
-    account being created.
+    """Azure Storage account information to add to the Data Lake analytics account
+    being created.
 
-    :param name: the account name associated with the Azure storage account
-     to add to the Data Lake analytics account being created.
+    :param name: the account name associated with the Azure storage account to
+     add to the Data Lake analytics account being created.
     :type name: str
     :param access_key: the access key associated with this Azure Storage
      account that will be used to connect to it.

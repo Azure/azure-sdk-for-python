@@ -24,8 +24,8 @@ class DataLakeAnalyticsAccountUpdateParameters(Model):
     :param query_store_retention: the number of days that job metadata is
      retained.
     :type query_store_retention: int
-    :param max_job_count: the maximum supported jobs running under the
-     account at the same time.
+    :param max_job_count: the maximum supported jobs running under the account
+     at the same time.
     :type max_job_count: int
     """ 
 
