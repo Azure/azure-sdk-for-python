@@ -29,6 +29,39 @@ class MgmtMonitorTest(AzureMgmtTestCase):
             self.create_resource_group()
 
     @record
+    def test_activity_log(self):
+
+        # RBAC for this test (CLI command)
+        # > azure role assignment create 
+        #     --objectId 00000000-0000-0000-0000-000000000
+        #     --roleName "Monitoring Contributor Service Role"
+        #     --scope /subscriptions/00000000-0000-0000-0000-000000000
+
+        # filter/select syntax: https://msdn.microsoft.com/en-us/library/azure/dn931934.aspx
+
+        # Need to freeze the date for the recorded tests
+        today = datetime.date(2016,11,17)
+        filter = " and ".join([
+            "eventTimestamp ge {}".format(today),
+            "eventChannels eq 'Admin, Operation'"
+        ])
+        select = "eventName,operationName"
+        filter = filter.format(self.group_name)
+        events = list(self.data_client.events.list(
+            filter=filter,
+            select=select
+        ))
+        for event in events:
+            # azure.monitor.models.EventData
+            #print(" ".join([
+            #    event.event_name.localized_value,
+            #    event.operation_name.localized_value
+            #]))
+            self.assertIsNotNone(event.event_name.localized_value)
+            self.assertIsNotNone(event.operation_name.localized_value)
+
+
+    @record
     def test_metrics(self):
         # Get the VM or your resource and use "id" attribute, or build the id yourself from RG and name
         resource_id = (
@@ -44,7 +77,7 @@ class MgmtMonitorTest(AzureMgmtTestCase):
         for item in metrics:
             self.assertIsNotNone(item.name)
 
-        # Need to fix the date for the recorded tests
+        # Need to freeze the date for the recorded tests
         today = datetime.date(2016,11,17)
         yesterday = today - datetime.timedelta(days=1)
 
@@ -111,25 +144,6 @@ class MgmtMonitorTest(AzureMgmtTestCase):
         self.assertEqual(len(profiles), 1)
 
         self.mgmt_client.log_profiles.delete(profile_name)
-
-    @record
-    def test_activity_log(self):
-
-        # RBAC for this test (CLI command)
-        # azure role assignment create 
-        #     --objectId ed95d6cc-6ad3-42bb-834e-826d1c7db543
-        #     --roleName "Monitoring Contributor Service Role"
-        #     --scope /subscriptions/f9d8179e-43f0-46cb-99cd-f72bfab0a63
-
-        filter = ("eventTimestamp ge '2016-11-01T00:00:00Z' and "
-                    "eventChannels eq 'Admin, Operation'")
-        select = "description"
-        filter = filter.format(self.group_name)
-        events = list(self.data_client.events.list(
-            filter=filter,
-            select=select
-        ))
-        print(len(events))
 
     @record
     def test_tenants_event(self):
