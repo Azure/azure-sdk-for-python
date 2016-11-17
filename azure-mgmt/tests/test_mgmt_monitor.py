@@ -6,6 +6,7 @@
 # license information.
 #--------------------------------------------------------------------------
 import unittest
+import datetime
 
 import azure.mgmt.monitor
 import azure.monitor
@@ -29,20 +30,46 @@ class MgmtMonitorTest(AzureMgmtTestCase):
 
     @record
     def test_metrics(self):
-        resource_id = "subscriptions/f9d8179e-43f0-46cb-99cd-f72bfab0a63b/resourceGroups/DoNotDeleteGroup/providers/Microsoft.Compute/virtualMachines/UbuntuServerDoNotDelete"
+        # Get the VM or your resource and use "id" attribute, or build the id yourself from RG and name
+        resource_id = (
+            "subscriptions/{}/"
+            "resourceGroups/DoNotDeleteGroup/"
+            "providers/Microsoft.Compute/virtualMachines/UbuntuServerDoNotDelete"
+        ).format(self.settings.SUBSCRIPTION_ID)
 
         metrics = list(self.data_client.metric_definitions.list(
             resource_id,
         ))
+        self.assertGreaterEqual(len(metrics), 1)
         for item in metrics:
-            print(item.name)
+            self.assertIsNotNone(item.name)
+
+        # Need to fix the date for the recorded tests
+        today = datetime.date(2016,11,17)
+        yesterday = today - datetime.timedelta(days=1)
+
+        filter = " and ".join([
+            "(name.value eq 'Percentage CPU')",
+            "(aggregationType eq 'Total')",
+            "startTime eq {}".format(yesterday),
+            "endTime eq {}".format(today),
+            "timeGrain eq duration'PT1H'"
+        ])
         
         metrics = list(self.data_client.metrics.list(
             resource_id,
-            filter="(name.value eq 'Percentage CPU') and (aggregationType eq 'Total' or aggregationType eq 'Average') and startTime eq 2016-11-02 and endTime eq 2016-11-03 and timeGrain eq duration'PT1H'"
+            filter=filter
         ))
+        self.assertGreaterEqual(len(metrics), 1)
         for item in metrics:
-            print(item)
+            self.assertIsNotNone(item.name)
+            self.assertIsNotNone(item.unit)
+            for data in item.data:
+                # self.assertIsNotNone(data.time_stamp) # Known bug
+                self.assertIsNotNone(data.total)
+
+    @record
+    def test_usage_metrics(self):
 
         usage_metrics = list(self.data_client.usage_metrics.list(
             resource_id,
