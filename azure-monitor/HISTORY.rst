@@ -3,7 +3,8 @@
 Release History
 ===============
 
-0.0.1 (1970-01-01)
+0.0.1 (2016-11-16)
 ++++++++++++++++++
 
-* Initial Release
+* Initial alpha release.
+  This package is highly unstable and should be used only for discovering the Python SDK of monitor.
