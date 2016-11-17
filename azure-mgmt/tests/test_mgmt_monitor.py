@@ -101,6 +101,7 @@ class MgmtMonitorTest(AzureMgmtTestCase):
                 # self.assertIsNotNone(data.time_stamp) # Known bug
                 self.assertIsNotNone(data.total)
 
+    @unittest.skip("Known bug")
     @record
     def test_usage_metrics(self):
 
@@ -108,7 +109,7 @@ class MgmtMonitorTest(AzureMgmtTestCase):
             resource_id,
         ))
 
-
+    @unittest.skip("Known bug")
     @record
     def test_log_profile(self):
         profile_name = self.get_resource_name('pyprofile')
@@ -145,17 +146,19 @@ class MgmtMonitorTest(AzureMgmtTestCase):
 
         self.mgmt_client.log_profiles.delete(profile_name)
 
+    @unittest.skip("Known bug")
     @record
     def test_tenants_event(self):
 
         tenant_events = list(self.data_client.tenant_events.list())
 
+    @unittest.skip("Known bug")
     @record
     def test_event_categories(self):
 
         event_categories = list(self.data_client.event_categories.list())
 
-
+    @unittest.skip("Known bug")
     @record    
     def test_autoscale_settings(self):
         as_name = "setting1"
