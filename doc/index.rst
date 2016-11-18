@@ -154,6 +154,7 @@ Azure Runtime
 Some documentation of data libraries are on this website. This includes:
 
 * :doc:`Batch<batch>`
+* :doc:`Azure Monitor<sample_azure-monitor>`
 * :doc:`Azure Active Directory Graph RBAC<graphrbac>`
 * :doc:`Service Bus<servicebus>` using HTTP.
 
@@ -241,7 +242,7 @@ Indices and tables
   :caption: Management Documentation
 
   resourcemanagement*
-  sample_*
+  sample_azure-mgmt-*
   Service Management (Legacy) <servicemanagement>
   
 .. toctree::
@@ -249,6 +250,7 @@ Indices and tables
   :caption: Runtime Documentation
 
   batch
+  sample_azure-monitor
   graphrbac
   servicebus
   
