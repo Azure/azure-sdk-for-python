@@ -36,8 +36,8 @@ class CatalogOperations(object):
     def create_secret(
             self, account_name, database_name, secret_name, password, uri=None, custom_headers=None, raw=False, **operation_config):
         """Creates the specified secret for use with external data sources in the
-        specified database. This is deprecated and will be removed in the
-        next release. Please use CreateCredential instead.
+        specified database. This is deprecated and will be removed in the next
+        release. Please use CreateCredential instead.
 
         :param account_name: The Azure Data Lake Analytics account upon which
          to execute catalog operations.
@@ -115,9 +115,9 @@ class CatalogOperations(object):
 
     def update_secret(
             self, account_name, database_name, secret_name, password, uri=None, custom_headers=None, raw=False, **operation_config):
-        """Modifies the specified secret for use with external data sources in
-        the specified database. This is deprecated and will be removed in the
-        next release. Please use UpdateCredential instead.
+        """Modifies the specified secret for use with external data sources in the
+        specified database. This is deprecated and will be removed in the next
+        release. Please use UpdateCredential instead.
 
         :param account_name: The Azure Data Lake Analytics account upon which
          to execute catalog operations.
@@ -194,9 +194,9 @@ class CatalogOperations(object):
 
     def get_secret(
             self, account_name, database_name, secret_name, custom_headers=None, raw=False, **operation_config):
-        """Gets the specified secret in the specified database. This is
-        deprecated and will be removed in the next release. Please use
-        GetCredential instead.
+        """Gets the specified secret in the specified database. This is deprecated
+        and will be removed in the next release. Please use GetCredential
+        instead.
 
         :param account_name: The Azure Data Lake Analytics account upon which
          to execute catalog operations.
@@ -448,8 +448,8 @@ class CatalogOperations(object):
 
     def update_credential(
             self, account_name, database_name, credential_name, parameters, custom_headers=None, raw=False, **operation_config):
-        """Modifies the specified credential for use with external data sources
-        in the specified database.
+        """Modifies the specified credential for use with external data sources in
+        the specified database.
 
         :param account_name: The Azure Data Lake Analytics account upon which
          to execute catalog operations.
@@ -583,7 +583,7 @@ class CatalogOperations(object):
         return deserialized
 
     def delete_credential(
-            self, account_name, database_name, credential_name, password=None, custom_headers=None, raw=False, **operation_config):
+            self, account_name, database_name, credential_name, cascade=False, password=None, custom_headers=None, raw=False, **operation_config):
         """Deletes the specified credential in the specified database.
 
         :param account_name: The Azure Data Lake Analytics account upon which
@@ -594,9 +594,14 @@ class CatalogOperations(object):
         :type database_name: str
         :param credential_name: The name of the credential to delete
         :type credential_name: str
-        :param password: the current password for the credential and user
-         with access to the data source. This is required if the requester is
-         not the account owner.
+        :param cascade: Indicates if the delete should be a cascading delete
+         (which deletes all resources dependent on the credential as well as
+         the credential) or not. If false will fail if there are any resources
+         relying on the credential.
+        :type cascade: bool
+        :param password: the current password for the credential and user with
+         access to the data source. This is required if the requester is not
+         the account owner.
         :type password: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -624,6 +629,8 @@ class CatalogOperations(object):
 
         # Construct parameters
         query_parameters = {}
+        if cascade is not None:
+            query_parameters['cascade'] = self._serialize.query("cascade", cascade, 'bool')
         query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
 
         # Construct headers
@@ -681,9 +688,9 @@ class CatalogOperations(object):
          on the order you'd like the values sorted, e.g.
          Categories?$orderby=CategoryName desc. Optional.
         :type orderby: str
-        :param count: The Boolean value of true or false to request a count
-         of the matching resources included with the resources in the
-         response, e.g. Categories?$count=true. Optional.
+        :param count: The Boolean value of true or false to request a count of
+         the matching resources included with the resources in the response,
+         e.g. Categories?$count=true. Optional.
         :type count: bool
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -766,8 +773,8 @@ class CatalogOperations(object):
         :param account_name: The Azure Data Lake Analytics account upon which
          to execute catalog operations.
         :type account_name: str
-        :param database_name: The name of the database containing the
-         external data source.
+        :param database_name: The name of the database containing the external
+         data source.
         :type database_name: str
         :param external_data_source_name: The name of the external data
          source.
@@ -835,8 +842,8 @@ class CatalogOperations(object):
         :param account_name: The Azure Data Lake Analytics account upon which
          to execute catalog operations.
         :type account_name: str
-        :param database_name: The name of the database containing the
-         external data sources.
+        :param database_name: The name of the database containing the external
+         data sources.
         :type database_name: str
         :param filter: OData filter. Optional.
         :type filter: str
@@ -854,9 +861,9 @@ class CatalogOperations(object):
          on the order you'd like the values sorted, e.g.
          Categories?$orderby=CategoryName desc. Optional.
         :type orderby: str
-        :param count: The Boolean value of true or false to request a count
-         of the matching resources included with the resources in the
-         response, e.g. Categories?$count=true. Optional.
+        :param count: The Boolean value of true or false to request a count of
+         the matching resources included with the resources in the response,
+         e.g. Categories?$count=true. Optional.
         :type count: bool
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -1029,9 +1036,9 @@ class CatalogOperations(object):
          on the order you'd like the values sorted, e.g.
          Categories?$orderby=CategoryName desc. Optional.
         :type orderby: str
-        :param count: The Boolean value of true or false to request a count
-         of the matching resources included with the resources in the
-         response, e.g. Categories?$count=true. Optional.
+        :param count: The Boolean value of true or false to request a count of
+         the matching resources included with the resources in the response,
+         e.g. Categories?$count=true. Optional.
         :type count: bool
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -1203,9 +1210,9 @@ class CatalogOperations(object):
          on the order you'd like the values sorted, e.g.
          Categories?$orderby=CategoryName desc. Optional.
         :type orderby: str
-        :param count: The Boolean value of true or false to request a count
-         of the matching resources included with the resources in the
-         response, e.g. Categories?$count=true. Optional.
+        :param count: The Boolean value of true or false to request a count of
+         the matching resources included with the resources in the response,
+         e.g. Categories?$count=true. Optional.
         :type count: bool
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -1380,9 +1387,9 @@ class CatalogOperations(object):
          on the order you'd like the values sorted, e.g.
          Categories?$orderby=CategoryName desc. Optional.
         :type orderby: str
-        :param count: The Boolean value of true or false to request a count
-         of the matching resources included with the resources in the
-         response, e.g. Categories?$count=true. Optional.
+        :param count: The Boolean value of true or false to request a count of
+         the matching resources included with the resources in the response,
+         e.g. Categories?$count=true. Optional.
         :type count: bool
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -1554,9 +1561,9 @@ class CatalogOperations(object):
          on the order you'd like the values sorted, e.g.
          Categories?$orderby=CategoryName desc. Optional.
         :type orderby: str
-        :param count: The Boolean value of true or false to request a count
-         of the matching resources included with the resources in the
-         response, e.g. Categories?$count=true. Optional.
+        :param count: The Boolean value of true or false to request a count of
+         the matching resources included with the resources in the response,
+         e.g. Categories?$count=true. Optional.
         :type count: bool
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -1737,9 +1744,9 @@ class CatalogOperations(object):
          on the order you'd like the values sorted, e.g.
          Categories?$orderby=CategoryName desc. Optional.
         :type orderby: str
-        :param count: The Boolean value of true or false to request a count
-         of the matching resources included with the resources in the
-         response, e.g. Categories?$count=true. Optional.
+        :param count: The Boolean value of true or false to request a count of
+         the matching resources included with the resources in the response,
+         e.g. Categories?$count=true. Optional.
         :type count: bool
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -1921,9 +1928,9 @@ class CatalogOperations(object):
          on the order you'd like the values sorted, e.g.
          Categories?$orderby=CategoryName desc. Optional.
         :type orderby: str
-        :param count: The Boolean value of true or false to request a count
-         of the matching resources included with the resources in the
-         response, e.g. Categories?$count=true. Optional.
+        :param count: The Boolean value of true or false to request a count of
+         the matching resources included with the resources in the response,
+         e.g. Categories?$count=true. Optional.
         :type count: bool
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -2028,9 +2035,9 @@ class CatalogOperations(object):
          on the order you'd like the values sorted, e.g.
          Categories?$orderby=CategoryName desc. Optional.
         :type orderby: str
-        :param count: The Boolean value of true or false to request a count
-         of the matching resources included with the resources in the
-         response, e.g. Categories?$count=true. Optional.
+        :param count: The Boolean value of true or false to request a count of
+         the matching resources included with the resources in the response,
+         e.g. Categories?$count=true. Optional.
         :type count: bool
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -2117,8 +2124,8 @@ class CatalogOperations(object):
         :param database_name: The name of the database containing the table
          valued function.
         :type database_name: str
-        :param schema_name: The name of the schema containing the table
-         valued function.
+        :param schema_name: The name of the schema containing the table valued
+         function.
         :type schema_name: str
         :param table_valued_function_name: The name of the
          tableValuedFunction.
@@ -2190,8 +2197,8 @@ class CatalogOperations(object):
         :param database_name: The name of the database containing the table
          valued functions.
         :type database_name: str
-        :param schema_name: The name of the schema containing the table
-         valued functions.
+        :param schema_name: The name of the schema containing the table valued
+         functions.
         :type schema_name: str
         :param filter: OData filter. Optional.
         :type filter: str
@@ -2209,9 +2216,9 @@ class CatalogOperations(object):
          on the order you'd like the values sorted, e.g.
          Categories?$orderby=CategoryName desc. Optional.
         :type orderby: str
-        :param count: The Boolean value of true or false to request a count
-         of the matching resources included with the resources in the
-         response, e.g. Categories?$count=true. Optional.
+        :param count: The Boolean value of true or false to request a count of
+         the matching resources included with the resources in the response,
+         e.g. Categories?$count=true. Optional.
         :type count: bool
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -2380,9 +2387,9 @@ class CatalogOperations(object):
          on the order you'd like the values sorted, e.g.
          Categories?$orderby=CategoryName desc. Optional.
         :type orderby: str
-        :param count: The Boolean value of true or false to request a count
-         of the matching resources included with the resources in the
-         response, e.g. Categories?$count=true. Optional.
+        :param count: The Boolean value of true or false to request a count of
+         the matching resources included with the resources in the response,
+         e.g. Categories?$count=true. Optional.
         :type count: bool
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -2548,9 +2555,9 @@ class CatalogOperations(object):
          on the order you'd like the values sorted, e.g.
          Categories?$orderby=CategoryName desc. Optional.
         :type orderby: str
-        :param count: The Boolean value of true or false to request a count
-         of the matching resources included with the resources in the
-         response, e.g. Categories?$count=true. Optional.
+        :param count: The Boolean value of true or false to request a count of
+         the matching resources included with the resources in the response,
+         e.g. Categories?$count=true. Optional.
         :type count: bool
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -2711,9 +2718,9 @@ class CatalogOperations(object):
          on the order you'd like the values sorted, e.g.
          Categories?$orderby=CategoryName desc. Optional.
         :type orderby: str
-        :param count: The Boolean value of true or false to request a count
-         of the matching resources included with the resources in the
-         response, e.g. Categories?$count=true. Optional.
+        :param count: The Boolean value of true or false to request a count of
+         the matching resources included with the resources in the response,
+         e.g. Categories?$count=true. Optional.
         :type count: bool
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the

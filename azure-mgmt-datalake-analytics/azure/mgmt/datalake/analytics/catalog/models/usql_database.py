@@ -21,7 +21,7 @@ class USqlDatabase(CatalogItem):
     :type version: str
     :param name: the name of the database.
     :type name: str
-    """ 
+    """
 
     _attribute_map = {
         'compute_account_name': {'key': 'computeAccountName', 'type': 'str'},

@@ -23,7 +23,7 @@ class USqlSchema(CatalogItem):
     :type database_name: str
     :param name: the name of the schema.
     :type name: str
-    """ 
+    """
 
     _attribute_map = {
         'compute_account_name': {'key': 'computeAccountName', 'type': 'str'},

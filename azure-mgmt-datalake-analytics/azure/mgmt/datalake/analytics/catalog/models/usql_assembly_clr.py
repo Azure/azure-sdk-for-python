@@ -25,7 +25,7 @@ class USqlAssemblyClr(CatalogItem):
     :type name: str
     :param clr_name: the name of the CLR.
     :type clr_name: str
-    """ 
+    """
 
     _attribute_map = {
         'compute_account_name': {'key': 'computeAccountName', 'type': 'str'},
