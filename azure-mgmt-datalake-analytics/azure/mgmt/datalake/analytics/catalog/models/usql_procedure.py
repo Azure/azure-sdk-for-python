@@ -28,7 +28,7 @@ class USqlProcedure(CatalogItem):
     :type name: str
     :param definition: the defined query of the procedure.
     :type definition: str
-    """ 
+    """
 
     _attribute_map = {
         'compute_account_name': {'key': 'computeAccountName', 'type': 'str'},

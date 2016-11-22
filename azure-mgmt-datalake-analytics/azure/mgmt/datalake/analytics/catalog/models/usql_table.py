@@ -40,7 +40,7 @@ class USqlTable(CatalogItem):
     :param distribution_info: the distributions info of the table
     :type distribution_info: :class:`USqlDistributionInfo
      <azure.mgmt.datalake.analytics.catalog.models.USqlDistributionInfo>`
-    """ 
+    """
 
     _attribute_map = {
         'compute_account_name': {'key': 'computeAccountName', 'type': 'str'},

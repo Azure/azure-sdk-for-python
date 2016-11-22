@@ -35,7 +35,7 @@ class USqlTablePartition(CatalogItem):
     :type label: list of str
     :param create_date: the creation time of the partition
     :type create_date: datetime
-    """ 
+    """
 
     _attribute_map = {
         'compute_account_name': {'key': 'computeAccountName', 'type': 'str'},
