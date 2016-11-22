@@ -98,7 +98,7 @@ class MgmtMonitorTest(AzureMgmtTestCase):
             self.assertIsNotNone(item.name)
             self.assertIsNotNone(item.unit)
             for data in item.data:
-                # self.assertIsNotNone(data.time_stamp) # Known bug
+                self.assertIsNotNone(data.time_stamp)
                 self.assertIsNotNone(data.total)
 
     @unittest.skip("Known bug")
