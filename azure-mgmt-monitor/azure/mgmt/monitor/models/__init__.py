@@ -25,9 +25,8 @@ from .autoscale_setting_resource import AutoscaleSettingResource
 from .retention_policy import RetentionPolicy
 from .metric_settings import MetricSettings
 from .log_settings import LogSettings
+from .service_diagnostic_settings import ServiceDiagnosticSettings
 from .service_diagnostic_settings_resource import ServiceDiagnosticSettingsResource
-from .service_diagnostic_settings_create_or_update_parameters import ServiceDiagnosticSettingsCreateOrUpdateParameters
-from .incident import Incident
 from .rule_condition import RuleCondition
 from .rule_data_source import RuleDataSource
 from .rule_metric_data_source import RuleMetricDataSource
@@ -41,17 +40,19 @@ from .rule_action import RuleAction
 from .rule_email_action import RuleEmailAction
 from .rule_webhook_action import RuleWebhookAction
 from .alert_rule_resource import AlertRuleResource
-from .log_profile_create_or_update_parameters import LogProfileCreateOrUpdateParameters
+from .incident import Incident
+from .log_profile_properties import LogProfileProperties
 from .log_profile_resource import LogProfileResource
 from .autoscale_setting_resource_paged import AutoscaleSettingResourcePaged
-from .incident_paged import IncidentPaged
 from .alert_rule_resource_paged import AlertRuleResourcePaged
+from .incident_paged import IncidentPaged
 from .log_profile_resource_paged import LogProfileResourcePaged
 from .insights_management_client_enums import (
     MetricStatisticType,
     TimeAggregationType,
     ComparisonOperationType,
     ScaleDirection,
+    ScaleType,
     RecurrenceFrequency,
     ConditionOperator,
     TimeAggregationOperator,
@@ -74,9 +75,8 @@ __all__ = [
     'RetentionPolicy',
     'MetricSettings',
     'LogSettings',
+    'ServiceDiagnosticSettings',
     'ServiceDiagnosticSettingsResource',
-    'ServiceDiagnosticSettingsCreateOrUpdateParameters',
-    'Incident',
     'RuleCondition',
     'RuleDataSource',
     'RuleMetricDataSource',
@@ -90,16 +90,18 @@ __all__ = [
     'RuleEmailAction',
     'RuleWebhookAction',
     'AlertRuleResource',
-    'LogProfileCreateOrUpdateParameters',
+    'Incident',
+    'LogProfileProperties',
     'LogProfileResource',
     'AutoscaleSettingResourcePaged',
-    'IncidentPaged',
     'AlertRuleResourcePaged',
+    'IncidentPaged',
     'LogProfileResourcePaged',
     'MetricStatisticType',
     'TimeAggregationType',
     'ComparisonOperationType',
     'ScaleDirection',
+    'ScaleType',
     'RecurrenceFrequency',
     'ConditionOperator',
     'TimeAggregationOperator',

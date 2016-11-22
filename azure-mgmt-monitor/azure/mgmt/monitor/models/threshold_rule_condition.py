@@ -15,14 +15,15 @@ from .rule_condition import RuleCondition
 class ThresholdRuleCondition(RuleCondition):
     """A rule condition based on a metric crossing a threshold.
 
-    :param odata.type: Polymorphic Discriminator
-    :type odata.type: str
+    :param odatatype: Polymorphic Discriminator
+    :type odatatype: str
     :param data_source: the resource from which the rule collects its data.
+     For this type dataSource will always be of type RuleMetricDataSource.
     :type data_source: :class:`RuleDataSource
      <azure.mgmt.monitor.models.RuleDataSource>`
     :param operator: the operator used to compare the data and the threshold.
-     Possible values include: 'GreaterThan', 'GreaterThanOrEqual',
-     'LessThan', 'LessThanOrEqual'
+     Possible values include: 'GreaterThan', 'GreaterThanOrEqual', 'LessThan',
+     'LessThanOrEqual'
     :type operator: str or :class:`ConditionOperator
      <azure.mgmt.monitor.models.ConditionOperator>`
     :param threshold: the threshold value that activates the alert.
@@ -32,21 +33,21 @@ class ThresholdRuleCondition(RuleCondition):
      then it must be between 5 minutes and 1 day.
     :type window_size: timedelta
     :param time_aggregation: the time aggregation operator. How the data that
-     is collected should be combined over time. The default value is the
-     PrimaryAggregationType of the Metric. Possible values include:
-     'Average', 'Minimum', 'Maximum', 'Total', 'Last'
+     are collected should be combined over time. The default value is the
+     PrimaryAggregationType of the Metric. Possible values include: 'Average',
+     'Minimum', 'Maximum', 'Total', 'Last'
     :type time_aggregation: str or :class:`TimeAggregationOperator
      <azure.mgmt.monitor.models.TimeAggregationOperator>`
-    """ 
+    """
 
     _validation = {
-        'odata.type': {'required': True},
+        'odatatype': {'required': True},
         'operator': {'required': True},
         'threshold': {'required': True},
     }
 
     _attribute_map = {
-        'odata.type': {'key': 'odata.type', 'type': 'str'},
+        'odatatype': {'key': 'odata\\.type', 'type': 'str'},
         'data_source': {'key': 'dataSource', 'type': 'RuleDataSource'},
         'operator': {'key': 'operator', 'type': 'ConditionOperator'},
         'threshold': {'key': 'threshold', 'type': 'float'},
@@ -61,4 +62,4 @@ class ThresholdRuleCondition(RuleCondition):
         self.threshold = threshold
         self.window_size = window_size
         self.time_aggregation = time_aggregation
-        self.odata.type = 'Microsoft.Azure.Management.Insights.Models.ThresholdRuleCondition'
+        self.odatatype = 'Microsoft.Azure.Management.Insights.Models.ThresholdRuleCondition'

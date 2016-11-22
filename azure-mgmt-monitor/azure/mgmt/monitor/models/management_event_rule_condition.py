@@ -15,22 +15,27 @@ from .rule_condition import RuleCondition
 class ManagementEventRuleCondition(RuleCondition):
     """A management event rule condition.
 
-    :param odata.type: Polymorphic Discriminator
-    :type odata.type: str
+    :param odatatype: Polymorphic Discriminator
+    :type odatatype: str
     :param data_source: the resource from which the rule collects its data.
+     For this type dataSource will always be of type
+     RuleManagementEventDataSource.
     :type data_source: :class:`RuleDataSource
      <azure.mgmt.monitor.models.RuleDataSource>`
-    :param aggregation: the aggregation condition.
+    :param aggregation: How the data that is collected should be combined over
+     time and when the alert is activated. Note that for management event
+     alerts aggregation is optional – if it is not provided then any event will
+     cause the alert to activate.
     :type aggregation: :class:`ManagementEventAggregationCondition
      <azure.mgmt.monitor.models.ManagementEventAggregationCondition>`
-    """ 
+    """
 
     _validation = {
-        'odata.type': {'required': True},
+        'odatatype': {'required': True},
     }
 
     _attribute_map = {
-        'odata.type': {'key': 'odata.type', 'type': 'str'},
+        'odatatype': {'key': 'odata\\.type', 'type': 'str'},
         'data_source': {'key': 'dataSource', 'type': 'RuleDataSource'},
         'aggregation': {'key': 'aggregation', 'type': 'ManagementEventAggregationCondition'},
     }
@@ -39,4 +44,4 @@ class ManagementEventRuleCondition(RuleCondition):
         super(ManagementEventRuleCondition, self).__init__()
         self.data_source = data_source
         self.aggregation = aggregation
-        self.odata.type = 'Microsoft.Azure.Management.Insights.Models.ManagementEventRuleCondition'
+        self.odatatype = 'Microsoft.Azure.Management.Insights.Models.ManagementEventRuleCondition'

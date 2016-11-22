@@ -18,9 +18,10 @@ class RetentionPolicy(Model):
     :param enabled: a value indicating whether the retention policy is
      enabled.
     :type enabled: bool
-    :param days: the number of days for the retention.
+    :param days: the number of days for the retention in days. A value of 0
+     will retain the events indefinitely.
     :type days: int
-    """ 
+    """
 
     _validation = {
         'enabled': {'required': True},

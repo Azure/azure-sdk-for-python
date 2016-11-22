@@ -13,10 +13,11 @@ from .rule_data_source import RuleDataSource
 
 
 class RuleManagementEventDataSource(RuleDataSource):
-    """A rule management event data source.
+    """A rule management event data source. The discriminator fields is always
+    RuleManagementEventDataSource in this case.
 
-    :param odata.type: Polymorphic Discriminator
-    :type odata.type: str
+    :param odatatype: Polymorphic Discriminator
+    :type odatatype: str
     :param event_name: the event name.
     :type event_name: str
     :param event_source: the event source.
@@ -40,14 +41,14 @@ class RuleManagementEventDataSource(RuleDataSource):
     :param claims: the claims.
     :type claims: :class:`RuleManagementEventClaimsDataSource
      <azure.mgmt.monitor.models.RuleManagementEventClaimsDataSource>`
-    """ 
+    """
 
     _validation = {
-        'odata.type': {'required': True},
+        'odatatype': {'required': True},
     }
 
     _attribute_map = {
-        'odata.type': {'key': 'odata.type', 'type': 'str'},
+        'odatatype': {'key': 'odata\\.type', 'type': 'str'},
         'event_name': {'key': 'eventName', 'type': 'str'},
         'event_source': {'key': 'eventSource', 'type': 'str'},
         'level': {'key': 'level', 'type': 'str'},
@@ -72,4 +73,4 @@ class RuleManagementEventDataSource(RuleDataSource):
         self.status = status
         self.sub_status = sub_status
         self.claims = claims
-        self.odata.type = 'Microsoft.Azure.Management.Insights.Models.RuleManagementEventDataSource'
+        self.odatatype = 'Microsoft.Azure.Management.Insights.Models.RuleManagementEventDataSource'

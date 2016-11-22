@@ -13,7 +13,7 @@ from msrest.serialization import Model
 
 
 class EmailNotification(Model):
-    """Email notification.
+    """Email notification of an autoscale event.
 
     :param send_to_subscription_administrator: a value indicating whether to
      send email to subscription administrator.
@@ -21,9 +21,10 @@ class EmailNotification(Model):
     :param send_to_subscription_co_administrators: a value indicating whether
      to send email to subscription co-administrators.
     :type send_to_subscription_co_administrators: bool
-    :param custom_emails: the custom email list.
+    :param custom_emails: the custom e-mails list. This value can be null or
+     empty, in which case this attribute will be ignored.
     :type custom_emails: list of str
-    """ 
+    """
 
     _attribute_map = {
         'send_to_subscription_administrator': {'key': 'sendToSubscriptionAdministrator', 'type': 'bool'},

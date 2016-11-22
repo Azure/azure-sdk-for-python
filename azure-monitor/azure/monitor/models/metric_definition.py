@@ -15,10 +15,11 @@ from msrest.serialization import Model
 class MetricDefinition(Model):
     """Metric definition class specifies the metadata for a metric.
 
-    :param resource_id: the resource identifier of the resource that has
-     emitted the metric.
+    :param resource_id: the resource identifier of the resource that emitted
+     the metric.
     :type resource_id: str
-    :param name: the name and the display name of the metric.
+    :param name: the name and the display name of the metric, i.e. it is a
+     localizable string.
     :type name: :class:`LocalizableString
      <azure.monitor.models.LocalizableString>`
     :param unit: the unit of the metric. Possible values include: 'Count',
@@ -30,13 +31,13 @@ class MetricDefinition(Model):
      'None', 'Average', 'Count', 'Minimum', 'Maximum', 'Total'
     :type primary_aggregation_type: str or :class:`AggregationType
      <azure.monitor.models.AggregationType>`
-    :param metric_availabilities: the collection of what aggregation
-     intervals are available to be queried.
+    :param metric_availabilities: the collection of what aggregation intervals
+     are available to be queried.
     :type metric_availabilities: list of :class:`MetricAvailability
      <azure.monitor.models.MetricAvailability>`
     :param id: the resource identifier of the metric definition.
     :type id: str
-    """ 
+    """
 
     _attribute_map = {
         'resource_id': {'key': 'resourceId', 'type': 'str'},

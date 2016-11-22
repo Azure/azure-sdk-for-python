@@ -37,13 +37,18 @@ class MetricDefinitionsOperations(object):
 
     def list(
             self, resource_uri, filter=None, custom_headers=None, raw=False, **operation_config):
-        """Lists the metric definitions for the resource.
+        """Lists the metric definitions for the resource. The **$filter**
+        parameter is optional, and can be used to only retrieve certain metric
+        definitions. For example, get just the definition for the CPU
+        percentage counter: $filter=name.value eq '\Processor(_Total)\%
+        Processor Time'. This $filter is very restricted and allows only these
+        'name eq <value>' clauses separated by or operators. No other syntax is
+        allowed.
 
         :param resource_uri: The identifier of the resource.
         :type resource_uri: str
-        :param filter: The filter to apply on the operation. For more
-         information please see
-         https://msdn.microsoft.com/en-us/library/azure/dn931934.aspx
+        :param filter: Reduces the set of data collected. The syntax allowed
+         depends on the operation. See the operation's description for details.
         :type filter: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -60,8 +65,7 @@ class MetricDefinitionsOperations(object):
                 # Construct URL
                 url = '/{resourceUri}/providers/microsoft.insights/metricDefinitions'
                 path_format_arguments = {
-                    'resourceUri': self._serialize.url("resource_uri", resource_uri, 'str', skip_quote=True),
-                    'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+                    'resourceUri': self._serialize.url("resource_uri", resource_uri, 'str', skip_quote=True)
                 }
                 url = self._client.format_url(url, **path_format_arguments)
 

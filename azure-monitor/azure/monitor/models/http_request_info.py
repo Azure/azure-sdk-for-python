@@ -23,7 +23,7 @@ class HttpRequestInfo(Model):
     :type method: str
     :param uri: the Uri.
     :type uri: str
-    """ 
+    """
 
     _attribute_map = {
         'client_request_id': {'key': 'clientRequestId', 'type': 'str'},

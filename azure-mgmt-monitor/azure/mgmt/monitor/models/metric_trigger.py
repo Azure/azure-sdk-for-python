@@ -25,20 +25,18 @@ class MetricTrigger(Model):
      one of the predefined values returned from metric definitions for the
      metric. Must be between 12 hours and 1 minute.
     :type time_grain: timedelta
-    :param statistic: the metric statistic type. How the metrics from
-     multiple instances are combined. Possible values include: 'Average',
-     'Min', 'Max', 'Sum'
+    :param statistic: the metric statistic type. How the metrics from multiple
+     instances are combined. Possible values include: 'Average', 'Min', 'Max',
+     'Sum'
     :type statistic: str or :class:`MetricStatisticType
      <azure.mgmt.monitor.models.MetricStatisticType>`
-    :param time_window: the range of time in which instance data is
-     collected. This value must be greater than the delay in metric
-     collection, which can vary from resource-to-resource. Must be between 12
-     hours and 5 minutes.
+    :param time_window: the range of time in which instance data is collected.
+     This value must be greater than the delay in metric collection, which can
+     vary from resource-to-resource. Must be between 12 hours and 5 minutes.
     :type time_window: timedelta
     :param time_aggregation: time aggregation type. How the data that is
      collected should be combined over time. The default value is Average.
-     Possible values include: 'Average', 'Minimum', 'Maximum', 'Total',
-     'Count'
+     Possible values include: 'Average', 'Minimum', 'Maximum', 'Total', 'Count'
     :type time_aggregation: str or :class:`TimeAggregationType
      <azure.mgmt.monitor.models.TimeAggregationType>`
     :param operator: the operator that is used to compare the metric data and
@@ -49,7 +47,18 @@ class MetricTrigger(Model):
     :param threshold: the threshold of the metric that triggers the scale
      action.
     :type threshold: float
-    """ 
+    """
+
+    _validation = {
+        'metric_name': {'required': True},
+        'metric_resource_uri': {'required': True},
+        'time_grain': {'required': True},
+        'statistic': {'required': True},
+        'time_window': {'required': True},
+        'time_aggregation': {'required': True},
+        'operator': {'required': True},
+        'threshold': {'required': True},
+    }
 
     _attribute_map = {
         'metric_name': {'key': 'metricName', 'type': 'str'},
@@ -62,7 +71,7 @@ class MetricTrigger(Model):
         'threshold': {'key': 'threshold', 'type': 'float'},
     }
 
-    def __init__(self, metric_name=None, metric_resource_uri=None, time_grain=None, statistic=None, time_window=None, time_aggregation=None, operator=None, threshold=None):
+    def __init__(self, metric_name, metric_resource_uri, time_grain, statistic, time_window, time_aggregation, operator, threshold):
         self.metric_name = metric_name
         self.metric_resource_uri = metric_resource_uri
         self.time_grain = time_grain

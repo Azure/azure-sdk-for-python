@@ -14,23 +14,24 @@ from .rule_action import RuleAction
 
 class RuleWebhookAction(RuleAction):
     """Specifies the action to post to service when the rule condition is
-    evaluated.
+    evaluated. The discriminator is always RuleWebhookAction in this case.
 
-    :param odata.type: Polymorphic Discriminator
-    :type odata.type: str
-    :param service_uri: the service uri to Post the notitication.
+    :param odatatype: Polymorphic Discriminator
+    :type odatatype: str
+    :param service_uri: the service uri to Post the notitication when the
+     alert activates or resolves.
     :type service_uri: str
-    :param properties: the dictionary of custom properties to include with
-     the post operation.
+    :param properties: the dictionary of custom properties to include with the
+     post operation. These data are appended to the webhook payload.
     :type properties: dict
-    """ 
+    """
 
     _validation = {
-        'odata.type': {'required': True},
+        'odatatype': {'required': True},
     }
 
     _attribute_map = {
-        'odata.type': {'key': 'odata.type', 'type': 'str'},
+        'odatatype': {'key': 'odata\\.type', 'type': 'str'},
         'service_uri': {'key': 'serviceUri', 'type': 'str'},
         'properties': {'key': 'properties', 'type': '{str}'},
     }
@@ -39,4 +40,4 @@ class RuleWebhookAction(RuleAction):
         super(RuleWebhookAction, self).__init__()
         self.service_uri = service_uri
         self.properties = properties
-        self.odata.type = 'Microsoft.Azure.Management.Insights.Models.RuleWebhookAction'
+        self.odatatype = 'Microsoft.Azure.Management.Insights.Models.RuleWebhookAction'

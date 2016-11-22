@@ -37,7 +37,9 @@ class EventCategoriesOperations(object):
 
     def list(
             self, custom_headers=None, raw=False, **operation_config):
-        """The list of event categories.
+        """get the list of available event categories supported in the Activity
+        Log Service. The current list includes the following: Aministrative,
+        Security, ServiceHealth, Alert, Recommendation, Policy.
 
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -52,7 +54,7 @@ class EventCategoriesOperations(object):
 
             if not next_link:
                 # Construct URL
-                url = '/providers/microsoft.insights/eventtypes/management/eventcategories'
+                url = '/providers/microsoft.insights/eventcategories'
 
                 # Construct parameters
                 query_parameters = {}

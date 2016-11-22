@@ -21,9 +21,10 @@ class ScaleRule(Model):
     :param scale_action: the parameters for the scaling action.
     :type scale_action: :class:`ScaleAction
      <azure.mgmt.monitor.models.ScaleAction>`
-    """ 
+    """
 
     _validation = {
+        'metric_trigger': {'required': True},
         'scale_action': {'required': True},
     }
 
@@ -32,6 +33,6 @@ class ScaleRule(Model):
         'scale_action': {'key': 'scaleAction', 'type': 'ScaleAction'},
     }
 
-    def __init__(self, scale_action, metric_trigger=None):
+    def __init__(self, metric_trigger, scale_action):
         self.metric_trigger = metric_trigger
         self.scale_action = scale_action

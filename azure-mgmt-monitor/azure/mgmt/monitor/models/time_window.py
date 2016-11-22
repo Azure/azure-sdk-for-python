@@ -13,8 +13,7 @@ from msrest.serialization import Model
 
 
 class TimeWindow(Model):
-    """A specific date-time for the profile. This element is not used if the
-    Recurrence element is used.
+    """A specific date-time for the profile.
 
     :param time_zone: the time zone of the start and end times for the
      profile. See examples of valid timezone ids over here:
@@ -24,7 +23,7 @@ class TimeWindow(Model):
     :type start: datetime
     :param end: the end time for the profile in ISO 8601 format.
     :type end: datetime
-    """ 
+    """
 
     _validation = {
         'start': {'required': True},

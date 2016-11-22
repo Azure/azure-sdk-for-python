@@ -15,42 +15,41 @@ from msrest.serialization import Model
 class ScaleAction(Model):
     """The parameters for the scaling action.
 
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
-
     :param direction: the scale direction. Whether the scaling action
      increases or decreases the number of instances. Possible values include:
      'None', 'Increase', 'Decrease'
     :type direction: str or :class:`ScaleDirection
      <azure.mgmt.monitor.models.ScaleDirection>`
-    :ivar type: the type of action that should occur, this must be set to
-     ChangeCount. Default value: "ChangeCount" .
-    :vartype type: str
+    :param type: the type of action that should occur when the scale rule
+     fires. Possible values include: 'ChangeCount', 'PercentChangeCount',
+     'ExactCount'
+    :type type: str or :class:`ScaleType
+     <azure.mgmt.monitor.models.ScaleType>`
     :param value: the number of instances that are involved in the scaling
      action. This value must be 1 or greater. The default value is 1. Default
      value: "1" .
     :type value: str
     :param cooldown: the amount of time to wait since the last scaling action
-     before this action occurs. It must be between 1 week and 1 minute.
+     before this action occurs. It must be between 1 week and 1 minute in ISO
+     8601 format.
     :type cooldown: timedelta
-    """ 
+    """
 
     _validation = {
         'direction': {'required': True},
-        'type': {'required': True, 'constant': True},
+        'type': {'required': True},
         'cooldown': {'required': True},
     }
 
     _attribute_map = {
         'direction': {'key': 'direction', 'type': 'ScaleDirection'},
-        'type': {'key': 'type', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'ScaleType'},
         'value': {'key': 'value', 'type': 'str'},
         'cooldown': {'key': 'cooldown', 'type': 'duration'},
     }
 
-    type = "ChangeCount"
-
-    def __init__(self, direction, cooldown, value="1"):
+    def __init__(self, direction, type, cooldown, value="1"):
         self.direction = direction
+        self.type = type
         self.value = value
         self.cooldown = cooldown

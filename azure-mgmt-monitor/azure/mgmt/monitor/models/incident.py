@@ -31,7 +31,7 @@ class Incident(Model):
     :ivar resolved_time: The time at which the incident was resolved in
      ISO8601 format. If null, it means the incident is still active.
     :vartype resolved_time: datetime
-    """ 
+    """
 
     _validation = {
         'name': {'readonly': True},
