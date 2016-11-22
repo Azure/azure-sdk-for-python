@@ -22,19 +22,18 @@ class AutoscaleProfile(Model):
     :type capacity: :class:`ScaleCapacity
      <azure.mgmt.monitor.models.ScaleCapacity>`
     :param rules: the collection of rules that provide the triggers and
-     parameters for the scaling action. A maximum of 10 rules can be
-     specified.
+     parameters for the scaling action. A maximum of 10 rules can be specified.
     :type rules: list of :class:`ScaleRule
      <azure.mgmt.monitor.models.ScaleRule>`
-    :param fixed_date: the specific date-time for the profile. This element
-     is not used if the Recurrence element is used.
+    :param fixed_date: the specific date-time for the profile. This element is
+     not used if the Recurrence element is used.
     :type fixed_date: :class:`TimeWindow
      <azure.mgmt.monitor.models.TimeWindow>`
     :param recurrence: the repeating times at which this profile begins. This
      element is not used if the FixedDate element is used.
     :type recurrence: :class:`Recurrence
      <azure.mgmt.monitor.models.Recurrence>`
-    """ 
+    """
 
     _validation = {
         'name': {'required': True},

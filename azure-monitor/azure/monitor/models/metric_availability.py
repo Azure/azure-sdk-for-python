@@ -17,12 +17,12 @@ class MetricAvailability(Model):
     frequency) and the retention period for that time grain.
 
     :param time_grain: the time grain specifies the aggregation interval for
-     the metric. Expressed as a duration 'PT1M', 'P1D' etc.
+     the metric. Expressed as a duration 'PT1M', 'P1D', etc.
     :type time_grain: timedelta
     :param retention: the retention period for the metric at the specified
-     timegrain.  Expressed as a duration 'PT1M', 'P1D' etc.
+     timegrain.  Expressed as a duration 'PT1M', 'P1D', etc.
     :type retention: timedelta
-    """ 
+    """
 
     _attribute_map = {
         'time_grain': {'key': 'timeGrain', 'type': 'duration'},

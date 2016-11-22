@@ -15,8 +15,9 @@ from msrest.serialization import Model
 class EventData(Model):
     """The Azure event log entries are of type EventData.
 
-    :param authorization: the authorization used by the user who has
-     performed the operation that led to this event.
+    :param authorization: the authorization used by the user who has performed
+     the operation that led to this event. This captures the RBAC properties of
+     the event. These usually include the 'action', 'role' and the 'scope'
     :type authorization: :class:`SenderAuthorization
      <azure.monitor.models.SenderAuthorization>`
     :param channels: the event channels. The regular event logs, that you see
@@ -31,13 +32,15 @@ class EventData(Model):
     :type caller: str
     :param description: the description of the event.
     :type description: str
-    :param id: the resource Id.
+    :param id: the Id of this event as required by ARM for RBAC. It contains
+     the EventDataID and a timestamp information.
     :type id: str
     :param event_data_id: the event data Id. This is a unique identifier for
      an event.
     :type event_data_id: str
-    :param correlation_id: the correlation Id. The correlation Id is shared
-     among the events that belong to the same deployment.
+    :param correlation_id: the correlation Id, usually a GUID in the string
+     format. The correlation Id is shared among the events that belong to the
+     same uber operation.
     :type correlation_id: str
     :param event_name: the event name. This value should not be confused with
      OperationName. For practical purposes, OperationName might be more
@@ -47,55 +50,66 @@ class EventData(Model):
     :param category: the event category.
     :type category: :class:`LocalizableString
      <azure.monitor.models.LocalizableString>`
-    :param http_request: the HTTP request info. The client IP address of the
-     user who initiated the event is captured as part of the HTTP request
-     info.
+    :param http_request: the HTTP request info. Usually includes the
+     'clientRequestId', 'clientIpAddress' (IP address of the user who initiated
+     the event) and 'method' (HTTP method e.g. PUT).
     :type http_request: :class:`HttpRequestInfo
      <azure.monitor.models.HttpRequestInfo>`
     :param level: the event level. Possible values include: 'Critical',
      'Error', 'Warning', 'Informational', 'Verbose'
     :type level: str or :class:`EventLevel <azure.monitor.models.EventLevel>`
-    :param resource_group_name: the resource group name.
+    :param resource_group_name: the resource group name of the impacted
+     resource.
     :type resource_group_name: str
-    :param resource_provider_name: the resource provider name.
+    :param resource_provider_name: the resource provider name of the impacted
+     resource.
     :type resource_provider_name: :class:`LocalizableString
      <azure.monitor.models.LocalizableString>`
-    :param resource_id: the resource uri
+    :param resource_id: the resource uri that uniquely identifies the resource
+     that caused this event.
     :type resource_id: str
     :param resource_type: the resource type
     :type resource_type: :class:`LocalizableString
      <azure.monitor.models.LocalizableString>`
     :param operation_id: It is usually a GUID shared among the events
-     corresponding to single operation. This value should not be confused
-     with EventName.
+     corresponding to single operation. This value should not be confused with
+     EventName.
     :type operation_id: str
     :param operation_name: the operation name.
     :type operation_name: :class:`LocalizableString
      <azure.monitor.models.LocalizableString>`
-    :param properties: the property bag that includes details about the event.
+    :param properties: the set of <Key, Value> pairs (usually a
+     Dictionary<String, String>) that includes details about the event.
     :type properties: dict
-    :param status: the event status. Some typical values are: Started,
-     Succeeded, Failed. For more information see:
-     https://msdn.microsoft.com/en-us/library/azure/dn931934.aspx
+    :param status: a string describing the status of the operation. Some
+     typical values are: Started, In progress, Succeeded, Failed, Resolved.
     :type status: :class:`LocalizableString
      <azure.monitor.models.LocalizableString>`
     :param sub_status: the event sub status. Most of the time, when included,
-     this captures the HTTP status code. For more information see:
-     https://msdn.microsoft.com/en-us/library/azure/dn931934.aspx
+     this captures the HTTP status code of the REST call. Common values are: OK
+     (HTTP Status Code: 200), Created (HTTP Status Code: 201), Accepted (HTTP
+     Status Code: 202), No Content (HTTP Status Code: 204), Bad Request(HTTP
+     Status Code: 400), Not Found (HTTP Status Code: 404), Conflict (HTTP
+     Status Code: 409), Internal Server Error (HTTP Status Code: 500), Service
+     Unavailable (HTTP Status Code:503), Gateway Timeout (HTTP Status Code:
+     504)
     :type sub_status: :class:`LocalizableString
      <azure.monitor.models.LocalizableString>`
-    :param event_timestamp: the occurrence time of event in ISO 8601 format
+    :param event_timestamp: the timestamp of when the event was generated by
+     the Azure service processing the request corresponding the event. It in
+     ISO 8601 format.
     :type event_timestamp: datetime
-    :param submission_timestamp: the event submission time in ISO 8601
-     format. This value should not be confused eventTimestamp. As there might
-     be a delay between the occurence time of the event, and the time that
-     the event is submitted to the Azure logging infrastructure.
+    :param submission_timestamp: the timestamp of when the event became
+     available for querying via this API. It is in ISO 8601 format. This value
+     should not be confused eventTimestamp. As there might be a delay between
+     the occurence time of the event, and the time that the event is submitted
+     to the Azure logging infrastructure.
     :type submission_timestamp: datetime
-    :param subscription_id: the Azure subscription Id
+    :param subscription_id: the Azure subscription Id usually a GUID.
     :type subscription_id: str
     :param tenant_id: the Azure tenant Id
     :type tenant_id: str
-    """ 
+    """
 
     _validation = {
         'channels': {'required': True},

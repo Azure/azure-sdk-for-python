@@ -15,8 +15,8 @@ from msrest.serialization import Model
 class MetricValue(Model):
     """Represents a metric value.
 
-    :param timestamp: the timestamp for the metric value in ISO 8601 format.
-    :type timestamp: datetime
+    :param time_stamp: the timestamp for the metric value in ISO 8601 format.
+    :type time_stamp: datetime
     :param average: the average value in the time range.
     :type average: float
     :param minimum: the least value in the time range.
@@ -28,14 +28,14 @@ class MetricValue(Model):
     :param count: the number of samples in the time range. Can be used to
      determine the number of values that contributed to the average value.
     :type count: long
-    """ 
+    """
 
     _validation = {
-        'timestamp': {'required': True},
+        'time_stamp': {'required': True},
     }
 
     _attribute_map = {
-        'timestamp': {'key': 'timestamp', 'type': 'iso-8601'},
+        'time_stamp': {'key': 'timeStamp', 'type': 'iso-8601'},
         'average': {'key': 'average', 'type': 'float'},
         'minimum': {'key': 'minimum', 'type': 'float'},
         'maximum': {'key': 'maximum', 'type': 'float'},
@@ -43,8 +43,8 @@ class MetricValue(Model):
         'count': {'key': 'count', 'type': 'long'},
     }
 
-    def __init__(self, timestamp, average=None, minimum=None, maximum=None, total=None, count=None):
-        self.timestamp = timestamp
+    def __init__(self, time_stamp, average=None, minimum=None, maximum=None, total=None, count=None):
+        self.time_stamp = time_stamp
         self.average = average
         self.minimum = minimum
         self.maximum = maximum

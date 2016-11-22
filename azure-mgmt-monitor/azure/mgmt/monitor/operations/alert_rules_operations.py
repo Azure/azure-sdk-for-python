@@ -38,6 +38,8 @@ class AlertRulesOperations(object):
     def create_or_update(
             self, resource_group_name, rule_name, parameters, custom_headers=None, raw=False, **operation_config):
         """Creates or updates an alert rule.
+        Request method: PUT		Request URI:
+        https://management.azure.com/subscriptions/{subscription-id}/resourceGroups/{resource-group-name}/providers/microsoft.insights/alertRules/{alert-rule-name}?api-version={api-version}.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str

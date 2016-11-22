@@ -14,24 +14,25 @@ from .rule_action import RuleAction
 
 class RuleEmailAction(RuleAction):
     """Specifies the action to send email when the rule condition is evaluated.
+    The discriminator is always RuleEmailAction in this case.
 
-    :param odata.type: Polymorphic Discriminator
-    :type odata.type: str
-    :param send_to_service_owners: the flag to send e-mails to the service
-     owners. Whether the administrators (service and co-adiminstrators) of
-     the service should be notified when the alert is activated.
+    :param odatatype: Polymorphic Discriminator
+    :type odatatype: str
+    :param send_to_service_owners: Whether the administrators (service and
+     co-adiminstrators) of the service should be notified when the alert is
+     activated.
     :type send_to_service_owners: bool
     :param custom_emails: the list of administrator's custom email addresses
      notifiy of the activation of the alert.
     :type custom_emails: list of str
-    """ 
+    """
 
     _validation = {
-        'odata.type': {'required': True},
+        'odatatype': {'required': True},
     }
 
     _attribute_map = {
-        'odata.type': {'key': 'odata.type', 'type': 'str'},
+        'odatatype': {'key': 'odata\\.type', 'type': 'str'},
         'send_to_service_owners': {'key': 'sendToServiceOwners', 'type': 'bool'},
         'custom_emails': {'key': 'customEmails', 'type': '[str]'},
     }
@@ -40,4 +41,4 @@ class RuleEmailAction(RuleAction):
         super(RuleEmailAction, self).__init__()
         self.send_to_service_owners = send_to_service_owners
         self.custom_emails = custom_emails
-        self.odata.type = 'Microsoft.Azure.Management.Insights.Models.RuleEmailAction'
+        self.odatatype = 'Microsoft.Azure.Management.Insights.Models.RuleEmailAction'

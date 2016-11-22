@@ -16,21 +16,21 @@ class RuleAction(Model):
     """The action that is performed when the alert rule becomes active, and when
     an alert condition is resolved.
 
-    :param odata.type: Polymorphic Discriminator
-    :type odata.type: str
-    """ 
+    :param odatatype: Polymorphic Discriminator
+    :type odatatype: str
+    """
 
     _validation = {
-        'odata.type': {'required': True},
+        'odatatype': {'required': True},
     }
 
     _attribute_map = {
-        'odata.type': {'key': 'odata.type', 'type': 'str'},
+        'odatatype': {'key': 'odata\\.type', 'type': 'str'},
     }
 
     _subtype_map = {
-        'odata.type': {'Microsoft.Azure.Management.Insights.Models.RuleEmailAction': 'RuleEmailAction', 'Microsoft.Azure.Management.Insights.Models.RuleWebhookAction': 'RuleWebhookAction'}
+        'odatatype': {'Microsoft.Azure.Management.Insights.Models.RuleEmailAction': 'RuleEmailAction', 'Microsoft.Azure.Management.Insights.Models.RuleWebhookAction': 'RuleWebhookAction'}
     }
 
     def __init__(self):
-        self.odata.type = None
+        self.odatatype = None

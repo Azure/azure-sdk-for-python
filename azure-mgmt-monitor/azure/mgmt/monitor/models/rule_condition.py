@@ -15,21 +15,21 @@ from msrest.serialization import Model
 class RuleCondition(Model):
     """The condition that results in the alert rule being activated.
 
-    :param odata.type: Polymorphic Discriminator
-    :type odata.type: str
-    """ 
+    :param odatatype: Polymorphic Discriminator
+    :type odatatype: str
+    """
 
     _validation = {
-        'odata.type': {'required': True},
+        'odatatype': {'required': True},
     }
 
     _attribute_map = {
-        'odata.type': {'key': 'odata.type', 'type': 'str'},
+        'odatatype': {'key': 'odata\\.type', 'type': 'str'},
     }
 
     _subtype_map = {
-        'odata.type': {'Microsoft.Azure.Management.Insights.Models.ThresholdRuleCondition': 'ThresholdRuleCondition', 'Microsoft.Azure.Management.Insights.Models.LocationThresholdRuleCondition': 'LocationThresholdRuleCondition', 'Microsoft.Azure.Management.Insights.Models.ManagementEventRuleCondition': 'ManagementEventRuleCondition'}
+        'odatatype': {'Microsoft.Azure.Management.Insights.Models.ThresholdRuleCondition': 'ThresholdRuleCondition', 'Microsoft.Azure.Management.Insights.Models.LocationThresholdRuleCondition': 'LocationThresholdRuleCondition', 'Microsoft.Azure.Management.Insights.Models.ManagementEventRuleCondition': 'ManagementEventRuleCondition'}
     }
 
     def __init__(self):
-        self.odata.type = None
+        self.odatatype = None

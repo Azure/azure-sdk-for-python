@@ -37,13 +37,27 @@ class MetricsOperations(object):
 
     def list(
             self, resource_uri, filter=None, custom_headers=None, raw=False, **operation_config):
-        """Lists the metric values for a resource.
+        """Lists the metric values for a resource. The $filter is used to reduce
+        the set of metric data returned. Some common properties for this
+        expression will be: name.value, aggregationType, startTime, endTime,
+        timeGrain. The filter expression uses these properties with comparison
+        operators (eg. eq, gt, lt) and multiple expressions can be combined
+        with parentheses and 'and/or' operators. Some example filter
+        expressions are: - $filter=(name.value eq 'RunsSucceeded') and
+        aggregationType eq 'Total' and startTime eq 2016-02-20 and endTime eq
+        2016-02-21 and timeGrain eq duration'PT1M', - $filter=(name.value eq
+        'RunsSucceeded') and (aggregationType eq 'Total' or aggregationType eq
+        'Average') and startTime eq 2016-02-20 and endTime eq 2016-02-21 and
+        timeGrain eq duration'PT1H', - $filter=(name.value eq
+        'ActionsCompleted' or name.value eq 'RunsSucceeded') and
+        (aggregationType eq 'Total' or aggregationType eq 'Average') and
+        startTime eq 2016-02-20 and endTime eq 2016-02-21 and timeGrain eq
+        duration'PT1M'.
 
         :param resource_uri: The identifier of the resource.
         :type resource_uri: str
-        :param filter: The filter to apply on the operation. For more
-         information please see
-         https://msdn.microsoft.com/en-us/library/azure/dn931934.aspx
+        :param filter: Reduces the set of data collected. The syntax allowed
+         depends on the operation. See the operation's description for details.
         :type filter: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -59,8 +73,7 @@ class MetricsOperations(object):
                 # Construct URL
                 url = '/{resourceUri}/providers/microsoft.insights/metrics'
                 path_format_arguments = {
-                    'resourceUri': self._serialize.url("resource_uri", resource_uri, 'str', skip_quote=True),
-                    'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+                    'resourceUri': self._serialize.url("resource_uri", resource_uri, 'str', skip_quote=True)
                 }
                 url = self._client.format_url(url, **path_format_arguments)
 

@@ -30,7 +30,7 @@ class UsageMetric(Model):
     :type next_reset_time: datetime
     :param quota_period: the amount of time it takes to reset the value.
     :type quota_period: timedelta
-    """ 
+    """
 
     _attribute_map = {
         'name': {'key': 'name', 'type': 'LocalizableString'},

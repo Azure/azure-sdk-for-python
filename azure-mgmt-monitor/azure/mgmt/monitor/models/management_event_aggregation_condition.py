@@ -13,19 +13,19 @@ from msrest.serialization import Model
 
 
 class ManagementEventAggregationCondition(Model):
-    """A management event aggregation condition.
+    """How the data that is collected should be combined over time.
 
     :param operator: the condition operator. Possible values include:
      'GreaterThan', 'GreaterThanOrEqual', 'LessThan', 'LessThanOrEqual'
     :type operator: str or :class:`ConditionOperator
      <azure.mgmt.monitor.models.ConditionOperator>`
-    :param threshold: the condition threshold.
+    :param threshold: The threshold value that activates the alert.
     :type threshold: float
     :param window_size: the period of time (in ISO 8601 duration format) that
      is used to monitor alert activity based on the threshold. If specified
      then it must be between 5 minutes and 1 day.
     :type window_size: timedelta
-    """ 
+    """
 
     _attribute_map = {
         'operator': {'key': 'operator', 'type': 'ConditionOperator'},

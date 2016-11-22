@@ -13,13 +13,13 @@ from msrest.serialization import Model
 
 
 class WebhookNotification(Model):
-    """Webhook notification.
+    """Webhook notification of an autoscale event.
 
     :param service_uri: the service address to receive the notification.
     :type service_uri: str
-    :param properties: a property bag of settings.
+    :param properties: a property bag of settings. This value can be empty.
     :type properties: dict
-    """ 
+    """
 
     _attribute_map = {
         'service_uri': {'key': 'serviceUri', 'type': 'str'},
