@@ -27,18 +27,18 @@ class RedisUpdateParameters(Model):
     :param shard_count: The number of shards to be created on a Premium
      Cluster Cache.
     :type shard_count: int
-    :param subnet_id: The full resource ID of a subnet in a virtual network
-     to deploy the Redis cache in. Example format:
+    :param subnet_id: The full resource ID of a subnet in a virtual network to
+     deploy the Redis cache in. Example format:
      /subscriptions/{subid}/resourceGroups/{resourceGroupName}/Microsoft.{Network|ClassicNetwork}/VirtualNetworks/vnet1/subnets/subnet1
     :type subnet_id: str
-    :param static_ip: Static IP address. Required when deploying a Redis
-     cache inside an existing Azure Virtual Network.
+    :param static_ip: Static IP address. Required when deploying a Redis cache
+     inside an existing Azure Virtual Network.
     :type static_ip: str
     :param sku: The SKU of the Redis cache to deploy.
     :type sku: :class:`Sku <azure.mgmt.redis.models.Sku>`
     :param tags: Resource tags.
     :type tags: dict
-    """ 
+    """
 
     _validation = {
         'subnet_id': {'pattern': '^/subscriptions/[^/]*/resourceGroups/[^/]*/providers/Microsoft.(ClassicNetwork|Network)/virtualNetworks/[^/]*/subnets/[^/]*$'},
@@ -46,7 +46,7 @@ class RedisUpdateParameters(Model):
     }
 
     _attribute_map = {
-        'redis_configuration': {'key': 'properties.RedisConfiguration', 'type': '{str}'},
+        'redis_configuration': {'key': 'properties.redisConfiguration', 'type': '{str}'},
         'enable_non_ssl_port': {'key': 'properties.enableNonSslPort', 'type': 'bool'},
         'tenant_settings': {'key': 'properties.tenantSettings', 'type': '{str}'},
         'shard_count': {'key': 'properties.shardCount', 'type': 'int'},

@@ -24,7 +24,7 @@ class RedisAccessKeys(Model):
     :ivar secondary_key: The current secondary key that clients can use to
      authenticate with Redis cache.
     :vartype secondary_key: str
-    """ 
+    """
 
     _validation = {
         'primary_key': {'readonly': True},

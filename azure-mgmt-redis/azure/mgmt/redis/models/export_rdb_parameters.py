@@ -21,7 +21,7 @@ class ExportRDBParameters(Model):
     :type prefix: str
     :param container: Container name to export to.
     :type container: str
-    """ 
+    """
 
     _validation = {
         'prefix': {'required': True},
