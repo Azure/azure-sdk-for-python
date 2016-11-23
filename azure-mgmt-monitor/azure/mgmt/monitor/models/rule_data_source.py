@@ -15,21 +15,21 @@ from msrest.serialization import Model
 class RuleDataSource(Model):
     """The resource from which the rule collects its data.
 
-    :param odata.type: Polymorphic Discriminator
-    :type odata.type: str
-    """ 
+    :param odatatype: Polymorphic Discriminator
+    :type odatatype: str
+    """
 
     _validation = {
-        'odata.type': {'required': True},
+        'odatatype': {'required': True},
     }
 
     _attribute_map = {
-        'odata.type': {'key': 'odata.type', 'type': 'str'},
+        'odatatype': {'key': 'odata\\.type', 'type': 'str'},
     }
 
     _subtype_map = {
-        'odata.type': {'Microsoft.Azure.Management.Insights.Models.RuleMetricDataSource': 'RuleMetricDataSource', 'Microsoft.Azure.Management.Insights.Models.RuleManagementEventDataSource': 'RuleManagementEventDataSource'}
+        'odatatype': {'Microsoft.Azure.Management.Insights.Models.RuleMetricDataSource': 'RuleMetricDataSource', 'Microsoft.Azure.Management.Insights.Models.RuleManagementEventDataSource': 'RuleManagementEventDataSource'}
     }
 
     def __init__(self):
-        self.odata.type = None
+        self.odatatype = None

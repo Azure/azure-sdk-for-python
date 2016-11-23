@@ -28,23 +28,24 @@ class AutoscaleSettingResource(Resource):
     :type location: str
     :param tags: Resource tags
     :type tags: dict
-    :param profiles: the collection of automatic scaling profiles that
-     specify different scaling parameters for different time periods. A
-     maximum of 20 profiles can be specified.
+    :param profiles: the collection of automatic scaling profiles that specify
+     different scaling parameters for different time periods. A maximum of 20
+     profiles can be specified.
     :type profiles: list of :class:`AutoscaleProfile
      <azure.mgmt.monitor.models.AutoscaleProfile>`
     :param notifications: the collection of notifications.
     :type notifications: list of :class:`AutoscaleNotification
      <azure.mgmt.monitor.models.AutoscaleNotification>`
     :param enabled: the enabled flag. Specifies whether automatic scaling is
-     enabled for the resource. Default value: True .
+     enabled for the resource. The default value is 'true'. Default value: True
+     .
     :type enabled: bool
     :param autoscale_setting_resource_name: the name of the autoscale setting.
     :type autoscale_setting_resource_name: str
     :param target_resource_uri: the resource identifier of the resource that
      the autoscale setting should be added to.
     :type target_resource_uri: str
-    """ 
+    """
 
     _validation = {
         'id': {'readonly': True},

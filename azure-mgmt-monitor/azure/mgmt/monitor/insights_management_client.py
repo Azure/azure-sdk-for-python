@@ -15,9 +15,8 @@ from msrestazure import AzureConfiguration
 from .version import VERSION
 from .operations.autoscale_settings_operations import AutoscaleSettingsOperations
 from .operations.service_diagnostic_settings_operations import ServiceDiagnosticSettingsOperations
-from .operations.alert_rule_incidents_operations import AlertRuleIncidentsOperations
-from .operations.incidents_operations import IncidentsOperations
 from .operations.alert_rules_operations import AlertRulesOperations
+from .operations.alert_rule_incidents_operations import AlertRuleIncidentsOperations
 from .operations.log_profiles_operations import LogProfilesOperations
 from . import models
 
@@ -82,12 +81,10 @@ class InsightsManagementClient(object):
     :vartype autoscale_settings: .operations.AutoscaleSettingsOperations
     :ivar service_diagnostic_settings: ServiceDiagnosticSettings operations
     :vartype service_diagnostic_settings: .operations.ServiceDiagnosticSettingsOperations
-    :ivar alert_rule_incidents: AlertRuleIncidents operations
-    :vartype alert_rule_incidents: .operations.AlertRuleIncidentsOperations
-    :ivar incidents: Incidents operations
-    :vartype incidents: .operations.IncidentsOperations
     :ivar alert_rules: AlertRules operations
     :vartype alert_rules: .operations.AlertRulesOperations
+    :ivar alert_rule_incidents: AlertRuleIncidents operations
+    :vartype alert_rule_incidents: .operations.AlertRuleIncidentsOperations
     :ivar log_profiles: LogProfiles operations
     :vartype log_profiles: .operations.LogProfilesOperations
 
@@ -124,11 +121,9 @@ class InsightsManagementClient(object):
             self._client, self.config, self._serialize, self._deserialize)
         self.service_diagnostic_settings = ServiceDiagnosticSettingsOperations(
             self._client, self.config, self._serialize, self._deserialize)
-        self.alert_rule_incidents = AlertRuleIncidentsOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.incidents = IncidentsOperations(
-            self._client, self.config, self._serialize, self._deserialize)
         self.alert_rules = AlertRulesOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.alert_rule_incidents = AlertRuleIncidentsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.log_profiles = LogProfilesOperations(
             self._client, self.config, self._serialize, self._deserialize)

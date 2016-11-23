@@ -9,25 +9,12 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .resource import Resource
+from msrest.serialization import Model
 
 
-class LogProfileResource(Resource):
-    """The log profile resource.
+class LogProfileProperties(Model):
+    """The log profile properties.
 
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
-
-    :ivar id: Azure resource Id
-    :vartype id: str
-    :param name: Azure resource name
-    :type name: str
-    :ivar type: Azure resource type
-    :vartype type: str
-    :param location: Resource location
-    :type location: str
-    :param tags: Resource tags
-    :type tags: dict
     :param storage_account_id: the resource id of the storage account to which
      you would like to send the Activity Log.
     :type storage_account_id: str
@@ -50,28 +37,19 @@ class LogProfileResource(Resource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'type': {'readonly': True},
-        'location': {'required': True},
         'storage_account_id': {'required': True},
         'locations': {'required': True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'storage_account_id': {'key': 'properties.storageAccountId', 'type': 'str'},
-        'service_bus_rule_id': {'key': 'properties.serviceBusRuleId', 'type': 'str'},
-        'locations': {'key': 'properties.locations', 'type': '[str]'},
-        'categories': {'key': 'properties.categories', 'type': '[str]'},
-        'retention_policy': {'key': 'properties.retentionPolicy', 'type': 'RetentionPolicy'},
+        'storage_account_id': {'key': 'storageAccountId', 'type': 'str'},
+        'service_bus_rule_id': {'key': 'serviceBusRuleId', 'type': 'str'},
+        'locations': {'key': 'locations', 'type': '[str]'},
+        'categories': {'key': 'categories', 'type': '[str]'},
+        'retention_policy': {'key': 'retentionPolicy', 'type': 'RetentionPolicy'},
     }
 
-    def __init__(self, location, storage_account_id, locations, name=None, tags=None, service_bus_rule_id=None, categories=None, retention_policy=None):
-        super(LogProfileResource, self).__init__(name=name, location=location, tags=tags)
+    def __init__(self, storage_account_id, locations, service_bus_rule_id=None, categories=None, retention_policy=None):
         self.storage_account_id = storage_account_id
         self.service_bus_rule_id = service_bus_rule_id
         self.locations = locations

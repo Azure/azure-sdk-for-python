@@ -15,7 +15,8 @@ from msrest.serialization import Model
 class Metric(Model):
     """A set of metric values in a time range.
 
-    :param name: the name and the display name of the metric.
+    :param name: the name and the display name of the metric, i.e. it is
+     localizable string.
     :type name: :class:`LocalizableString
      <azure.monitor.models.LocalizableString>`
     :param unit: the unit of the metric. Possible values include: 'Count',
@@ -25,7 +26,7 @@ class Metric(Model):
     :param data: Array of data points representing the metric values.
     :type data: list of :class:`MetricValue
      <azure.monitor.models.MetricValue>`
-    """ 
+    """
 
     _validation = {
         'name': {'required': True},

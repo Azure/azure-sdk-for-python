@@ -16,14 +16,17 @@ class LogSettings(Model):
     """Part of MultiTenantDiagnosticSettings. Specifies the settings for a
     particular log.
 
-    :param category: the name of the logs to which this setting is applied.
+    :param category: Name of a Diagnostic Log category for a resource type
+     this setting is applied to. To obtain the list of Diagnostic Log
+     categories for a resource, first perform a GET diagnostic settings
+     operation.
     :type category: str
     :param enabled: a value indicating whether this log is enabled.
     :type enabled: bool
     :param retention_policy: the retention policy for this log.
     :type retention_policy: :class:`RetentionPolicy
      <azure.mgmt.monitor.models.RetentionPolicy>`
-    """ 
+    """
 
     _validation = {
         'enabled': {'required': True},

@@ -19,13 +19,17 @@ class LocalizableString(Model):
     :type value: str
     :param localized_value: the locale specific value.
     :type localized_value: str
-    """ 
+    """
+
+    _validation = {
+        'value': {'required': True},
+    }
 
     _attribute_map = {
         'value': {'key': 'value', 'type': 'str'},
         'localized_value': {'key': 'localizedValue', 'type': 'str'},
     }
 
-    def __init__(self, value=None, localized_value=None):
+    def __init__(self, value, localized_value=None):
         self.value = value
         self.localized_value = localized_value

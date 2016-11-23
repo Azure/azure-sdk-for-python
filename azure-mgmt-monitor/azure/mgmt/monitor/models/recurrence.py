@@ -16,22 +16,27 @@ class Recurrence(Model):
     """The repeating times at which this profile begins. This element is not used
     if the FixedDate element is used.
 
-    :param frequency: the recurrence frequency. How often the schedule
-     profile should take effect. This value must be Week, meaning each week
-     will have the same set of profiles. Possible values include: 'None',
-     'Second', 'Minute', 'Hour', 'Day', 'Week', 'Month', 'Year'
+    :param frequency: the recurrence frequency. How often the schedule profile
+     should take effect. This value must be Week, meaning each week will have
+     the same set of profiles. Possible values include: 'None', 'Second',
+     'Minute', 'Hour', 'Day', 'Week', 'Month', 'Year'
     :type frequency: str or :class:`RecurrenceFrequency
      <azure.mgmt.monitor.models.RecurrenceFrequency>`
     :param schedule: the scheduling constraints for when the profile begins.
     :type schedule: :class:`RecurrentSchedule
      <azure.mgmt.monitor.models.RecurrentSchedule>`
-    """ 
+    """
+
+    _validation = {
+        'frequency': {'required': True},
+        'schedule': {'required': True},
+    }
 
     _attribute_map = {
         'frequency': {'key': 'frequency', 'type': 'RecurrenceFrequency'},
         'schedule': {'key': 'schedule', 'type': 'RecurrentSchedule'},
     }
 
-    def __init__(self, frequency=None, schedule=None):
+    def __init__(self, frequency, schedule):
         self.frequency = frequency
         self.schedule = schedule
