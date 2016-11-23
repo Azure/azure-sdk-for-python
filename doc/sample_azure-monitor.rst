@@ -110,7 +110,7 @@ here: https://msdn.microsoft.com/en-us/library/azure/mt743622.aspx
         "resourceGroups/{}/"
         "providers/Microsoft.Compute/virtualMachines/{}"
     ).format(subscription_id, resource_group_name, vm_name)
-    
+
     # You can get the available metrics of this specific resource
     for metric in client.metric_definitions.list(resource_id):
         # azure.monitor.models.MetricDefinition
@@ -119,7 +119,7 @@ here: https://msdn.microsoft.com/en-us/library/azure/mt743622.aspx
             metric.name.value,
             metric.unit
         ))
-        
+
     # Example of result for a VM:
     # Percentage CPU: id=Percentage CPU, unit=Unit.percent
     # Network In: id=Network In, unit=Unit.bytes
@@ -130,10 +130,10 @@ here: https://msdn.microsoft.com/en-us/library/azure/mt743622.aspx
     # Disk Write Operations/Sec: id=Disk Write Operations/Sec, unit=Unit.count_per_second
 
     # Get CPU total of yesterday for this VM, by hour
-    
+
     today = datetime.datetime.now().date()
     yesterday = today - datetime.timedelta(days=1)
-    
+
     filter = " and ".join([
         "name.value eq 'Percentage CPU'",
         "aggregationType eq 'Total'",
@@ -141,7 +141,7 @@ here: https://msdn.microsoft.com/en-us/library/azure/mt743622.aspx
         "endTime eq {}".format(today),
         "timeGrain eq duration'PT1H'"
     ])
-    
+
     metrics_data = client.metrics.list(
         resource_id,
         filter=filter
@@ -152,7 +152,7 @@ here: https://msdn.microsoft.com/en-us/library/azure/mt743622.aspx
         print("{} ({})".format(item.name.localized_value, item.unit.name))
         for data in item.data:
             # azure.monitor.models.MetricData
-            print("{}: {}".format(data.time_stamp, data.total)
+            print("{}: {}".format(data.time_stamp, data.total))
 
     # Example of result:
     # Percentage CPU (percent)
