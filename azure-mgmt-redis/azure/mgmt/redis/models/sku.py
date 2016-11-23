@@ -27,7 +27,7 @@ class Sku(Model):
      C (Basic/Standard) family (0, 1, 2, 3, 4, 5, 6), for P (Premium) family
      (1, 2, 3, 4).
     :type capacity: int
-    """ 
+    """
 
     _validation = {
         'name': {'required': True},
