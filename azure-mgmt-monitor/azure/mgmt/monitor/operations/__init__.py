@@ -11,16 +11,14 @@
 
 from .autoscale_settings_operations import AutoscaleSettingsOperations
 from .service_diagnostic_settings_operations import ServiceDiagnosticSettingsOperations
-from .alert_rule_incidents_operations import AlertRuleIncidentsOperations
-from .incidents_operations import IncidentsOperations
 from .alert_rules_operations import AlertRulesOperations
+from .alert_rule_incidents_operations import AlertRuleIncidentsOperations
 from .log_profiles_operations import LogProfilesOperations
 
 __all__ = [
     'AutoscaleSettingsOperations',
     'ServiceDiagnosticSettingsOperations',
-    'AlertRuleIncidentsOperations',
-    'IncidentsOperations',
     'AlertRulesOperations',
+    'AlertRuleIncidentsOperations',
     'LogProfilesOperations',
 ]

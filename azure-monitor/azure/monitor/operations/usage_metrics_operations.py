@@ -23,7 +23,7 @@ class UsageMetricsOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An objec model deserializer.
-    :ivar api_version: Client Api Version. Constant value: "2014-04-01".
+    :ivar api_version: Client Api Version. NOTE: This is not a client property, it must be explicit in the call and there is no default value. Constant value: "2014-04-01".
     """
 
     def __init__(self, client, config, serializer, deserializer):
@@ -58,8 +58,7 @@ class UsageMetricsOperations(object):
                 # Construct URL
                 url = '/{resourceUri}/usages'
                 path_format_arguments = {
-                    'resourceUri': self._serialize.url("resource_uri", resource_uri, 'str', skip_quote=True),
-                    'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+                    'resourceUri': self._serialize.url("resource_uri", resource_uri, 'str', skip_quote=True)
                 }
                 url = self._client.format_url(url, **path_format_arguments)
 

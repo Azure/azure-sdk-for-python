@@ -18,7 +18,7 @@ class AutoscaleNotification(Model):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar operation: the operation associated with the notification and it's
+    :ivar operation: the operation associated with the notification and its
      value must be "scale". Default value: "Scale" .
     :vartype operation: str
     :param email: the email notification.
@@ -27,7 +27,7 @@ class AutoscaleNotification(Model):
     :param webhooks: the collection of webhook notifications.
     :type webhooks: list of :class:`WebhookNotification
      <azure.mgmt.monitor.models.WebhookNotification>`
-    """ 
+    """
 
     _validation = {
         'operation': {'required': True, 'constant': True},

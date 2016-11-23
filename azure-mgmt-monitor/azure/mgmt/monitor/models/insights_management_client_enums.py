@@ -46,6 +46,13 @@ class ScaleDirection(Enum):
     decrease = "Decrease"
 
 
+class ScaleType(Enum):
+
+    change_count = "ChangeCount"
+    percent_change_count = "PercentChangeCount"
+    exact_count = "ExactCount"
+
+
 class RecurrenceFrequency(Enum):
 
     none = "None"

@@ -18,23 +18,19 @@ class SenderAuthorization(Model):
     :param action: the permissible actions. For instance:
      microsoft.support/supporttickets/write
     :type action: str
-    :param condition: the condition.
-    :type condition: str
     :param role: the role of the user. For instance: Subscription Admin
     :type role: str
     :param scope: the scope.
     :type scope: str
-    """ 
+    """
 
     _attribute_map = {
         'action': {'key': 'action', 'type': 'str'},
-        'condition': {'key': 'condition', 'type': 'str'},
         'role': {'key': 'role', 'type': 'str'},
         'scope': {'key': 'scope', 'type': 'str'},
     }
 
-    def __init__(self, action=None, condition=None, role=None, scope=None):
+    def __init__(self, action=None, role=None, scope=None):
         self.action = action
-        self.condition = condition
         self.role = role
         self.scope = scope

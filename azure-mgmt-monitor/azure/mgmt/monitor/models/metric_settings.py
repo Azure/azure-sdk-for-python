@@ -23,7 +23,7 @@ class MetricSettings(Model):
     :param retention_policy: the retention policy for this timegrain.
     :type retention_policy: :class:`RetentionPolicy
      <azure.mgmt.monitor.models.RetentionPolicy>`
-    """ 
+    """
 
     _validation = {
         'time_grain': {'required': True},

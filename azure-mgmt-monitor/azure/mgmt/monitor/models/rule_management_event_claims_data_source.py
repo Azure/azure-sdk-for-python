@@ -17,7 +17,7 @@ class RuleManagementEventClaimsDataSource(Model):
 
     :param email_address: the email address.
     :type email_address: str
-    """ 
+    """
 
     _attribute_map = {
         'email_address': {'key': 'emailAddress', 'type': 'str'},
