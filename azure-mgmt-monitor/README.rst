@@ -1,9 +1,9 @@
 Microsoft Azure SDK for Python
 ==============================
 
-This is the Microsoft Azure Data Lake Store Management Client Library.
+This is the Microsoft Azure Monitor Management Client Library.
 
-Azure Data Lake Store Manager (ARM) is the next generation of management APIs that
+Azure Resource Manager (ARM) is the next generation of management APIs that
 replace the old Azure Service Management (ASM).
 
 This package has been tested with Python 2.7, 3.3, 3.4 and 3.5.
@@ -36,8 +36,8 @@ If you see azure==0.11.0 (or any version below 1.0), uninstall it first:
 Usage
 =====
 
-For code examples, see `Data Lake Store Management 
-<https://azure-sdk-for-python.readthedocs.org/en/latest/sample_azure-mgmt-datalake-store.html>`__
+For code examples, see `Monitor Management
+<https://azure-sdk-for-python.readthedocs.org/en/latest/sample_azure-mgmt-monitor.html>`__
 on readthedocs.org.
 
 

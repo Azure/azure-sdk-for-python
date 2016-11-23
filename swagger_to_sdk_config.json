@@ -157,6 +157,24 @@
       },
       "output_dir": "azure-mgmt-media/azure/mgmt/media"
     },  
+    "monitor.mgmt": {
+      "swagger": "arm-insights/compositeInsightsManagementClient.json",
+      "autorest_options": {
+        "Namespace": "azure.mgmt.monitor",
+        "Modeler": "CompositeSwagger",
+        "PackageVersion": "0.1.0"
+      },
+      "output_dir": "azure-mgmt-monitor/azure/mgmt/monitor"
+    },
+    "monitor.data": {
+      "swagger": "insights/compositeInsightsClient.json",
+      "autorest_options": {
+        "Namespace": "azure.monitor",
+        "Modeler": "CompositeSwagger",
+        "PackageVersion": "0.1.0"
+      },
+      "output_dir": "azure-monitor/azure/monitor"
+    },
     "network": {
       "swagger": "arm-network/2016-09-01/swagger/network.json",
       "autorest_options": {
