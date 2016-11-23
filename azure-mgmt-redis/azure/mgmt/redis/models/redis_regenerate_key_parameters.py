@@ -19,7 +19,7 @@ class RedisRegenerateKeyParameters(Model):
      include: 'Primary', 'Secondary'
     :type key_type: str or :class:`RedisKeyType
      <azure.mgmt.redis.models.RedisKeyType>`
-    """ 
+    """
 
     _validation = {
         'key_type': {'required': True},

@@ -22,10 +22,10 @@ class ScheduleEntry(Model):
      <azure.mgmt.redis.models.DayOfWeek>`
     :param start_hour_utc: Start hour after which cache patching can start.
     :type start_hour_utc: int
-    :param maintenance_window: ISO8601 timespan specifying how much time
-     cache patching can take.
+    :param maintenance_window: ISO8601 timespan specifying how much time cache
+     patching can take.
     :type maintenance_window: timedelta
-    """ 
+    """
 
     _validation = {
         'day_of_week': {'required': True},

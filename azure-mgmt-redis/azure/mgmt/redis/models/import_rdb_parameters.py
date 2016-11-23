@@ -19,7 +19,7 @@ class ImportRDBParameters(Model):
     :type format: str
     :param files: files to import.
     :type files: list of str
-    """ 
+    """
 
     _validation = {
         'files': {'required': True},
