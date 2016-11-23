@@ -103,11 +103,37 @@ class MgmtMonitorTest(AzureMgmtTestCase):
 
     @unittest.skip("Known bug")
     @record
+    def test_tenants_event(self):
+
+        tenant_events = list(self.data_client.tenant_events.list())
+
+    @record
+    def test_event_categories(self):
+        event_categories = list(self.data_client.event_categories.list())
+
+        for cat in event_categories:
+            # azure.monitor.models.LocalizableString
+            # print("Category: {} (localized: {})".format(cat.value, cat.localized_value))
+            self.assertIsNotNone(cat.value)
+            self.assertIsNotNone(cat.localized_value)
+
+
+    @record
     def test_usage_metrics(self):
+        # Get the DocDB or your resource and use "id" attribute, or build the id yourself from RG and name
+        # Usage metric is rare, DocDb and WebPlan are good example.
+        resource_id = (
+            "subscriptions/{}/"
+            "resourceGroups/MonitorTestsDoNotDelete/"
+            "providers/Microsoft.DocumentDb/databaseAccounts/pymonitortest"
+        ).format(self.settings.SUBSCRIPTION_ID)
 
         usage_metrics = list(self.data_client.usage_metrics.list(
             resource_id,
         ))
+        for usage in usage_metrics:
+            # azure.monitor.models.UsageMetric
+            self.assertIsNotNone(usage.name)
 
     @unittest.skip("Known bug")
     @record
@@ -145,18 +171,6 @@ class MgmtMonitorTest(AzureMgmtTestCase):
         self.assertEqual(len(profiles), 1)
 
         self.mgmt_client.log_profiles.delete(profile_name)
-
-    @unittest.skip("Known bug")
-    @record
-    def test_tenants_event(self):
-
-        tenant_events = list(self.data_client.tenant_events.list())
-
-    @unittest.skip("Known bug")
-    @record
-    def test_event_categories(self):
-
-        event_categories = list(self.data_client.event_categories.list())
 
     @unittest.skip("Known bug")
     @record    
