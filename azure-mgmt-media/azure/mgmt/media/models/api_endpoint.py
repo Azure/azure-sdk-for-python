@@ -19,7 +19,7 @@ class ApiEndpoint(Model):
     :type endpoint: str
     :param major_version: The version of Media Services REST API.
     :type major_version: str
-    """ 
+    """
 
     _attribute_map = {
         'endpoint': {'key': 'endpoint', 'type': 'str'},
