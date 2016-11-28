@@ -20,7 +20,7 @@ class USqlDirectedColumn(Model):
     :param descending: the switch indicating if the index is descending or
      not.
     :type descending: bool
-    """ 
+    """
 
     _attribute_map = {
         'name': {'key': 'name', 'type': 'str'},

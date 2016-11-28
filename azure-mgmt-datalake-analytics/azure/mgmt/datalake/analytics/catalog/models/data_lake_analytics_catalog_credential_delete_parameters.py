@@ -19,7 +19,7 @@ class DataLakeAnalyticsCatalogCredentialDeleteParameters(Model):
      access to the data source. This is required if the requester is not the
      account owner.
     :type password: str
-    """ 
+    """
 
     _attribute_map = {
         'password': {'key': 'password', 'type': 'str'},

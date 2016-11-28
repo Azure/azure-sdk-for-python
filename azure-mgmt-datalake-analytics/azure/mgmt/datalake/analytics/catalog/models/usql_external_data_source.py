@@ -31,7 +31,7 @@ class USqlExternalDataSource(CatalogItem):
     :param pushdown_types: the list of types to push down from the external
      data source.
     :type pushdown_types: list of str
-    """ 
+    """
 
     _attribute_map = {
         'compute_account_name': {'key': 'computeAccountName', 'type': 'str'},

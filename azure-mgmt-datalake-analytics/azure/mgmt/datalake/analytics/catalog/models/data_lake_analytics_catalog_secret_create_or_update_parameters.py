@@ -22,7 +22,7 @@ class DataLakeAnalyticsCatalogSecretCreateOrUpdateParameters(Model):
     :param uri: the URI identifier for the secret in the format
      <hostname>:<port>
     :type uri: str
-    """ 
+    """
 
     _validation = {
         'password': {'required': True},

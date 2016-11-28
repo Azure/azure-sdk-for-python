@@ -39,7 +39,7 @@ class USqlIndex(Model):
     :type index_id: int
     :param is_unique: the switch indicating if this index is a unique index.
     :type is_unique: bool
-    """ 
+    """
 
     _attribute_map = {
         'name': {'key': 'name', 'type': 'str'},

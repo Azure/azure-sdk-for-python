@@ -17,7 +17,7 @@ class CatalogItemList(Model):
 
     :param next_link: the link to the next page of results.
     :type next_link: str
-    """ 
+    """
 
     _attribute_map = {
         'next_link': {'key': 'nextLink', 'type': 'str'},

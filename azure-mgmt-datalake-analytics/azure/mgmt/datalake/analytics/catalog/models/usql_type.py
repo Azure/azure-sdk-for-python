@@ -54,7 +54,7 @@ class USqlType(CatalogItem):
     :param is_complex_type: the the switch indicating if this type is a
      complex type.
     :type is_complex_type: bool
-    """ 
+    """
 
     _attribute_map = {
         'compute_account_name': {'key': 'computeAccountName', 'type': 'str'},

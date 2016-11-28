@@ -60,7 +60,7 @@ class USqlTableType(USqlType):
     :ivar columns: the type field information associated with this table type.
     :vartype columns: list of :class:`TypeFieldInfo
      <azure.mgmt.datalake.analytics.catalog.models.TypeFieldInfo>`
-    """ 
+    """
 
     _validation = {
         'columns': {'readonly': True},

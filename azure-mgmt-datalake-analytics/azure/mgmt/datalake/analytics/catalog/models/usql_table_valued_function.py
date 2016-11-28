@@ -27,7 +27,7 @@ class USqlTableValuedFunction(CatalogItem):
     :type name: str
     :param definition: the definition of the table valued function.
     :type definition: str
-    """ 
+    """
 
     _attribute_map = {
         'compute_account_name': {'key': 'computeAccountName', 'type': 'str'},

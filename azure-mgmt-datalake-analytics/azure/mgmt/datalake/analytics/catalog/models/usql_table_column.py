@@ -20,7 +20,7 @@ class USqlTableColumn(Model):
     :param type: the object type of the specified column (such as
      System.String).
     :type type: str
-    """ 
+    """
 
     _attribute_map = {
         'name': {'key': 'name', 'type': 'str'},

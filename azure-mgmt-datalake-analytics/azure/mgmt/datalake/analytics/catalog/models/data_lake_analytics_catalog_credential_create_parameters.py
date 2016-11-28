@@ -24,7 +24,7 @@ class DataLakeAnalyticsCatalogCredentialCreateParameters(Model):
     :param user_id: the object identifier for the user associated with this
      credential with access to the data source.
     :type user_id: str
-    """ 
+    """
 
     _validation = {
         'password': {'required': True},
