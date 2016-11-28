@@ -36,8 +36,8 @@ class USqlTableStatistics(CatalogItem):
     :type create_time: datetime
     :param update_time: the last time the statistics were updated.
     :type update_time: datetime
-    :param is_user_created: the switch indicating if these statistics are
-     user created.
+    :param is_user_created: the switch indicating if these statistics are user
+     created.
     :type is_user_created: bool
     :param is_auto_created: the switch indicating if these statistics are
      automatically created.
@@ -50,7 +50,7 @@ class USqlTableStatistics(CatalogItem):
     :param col_names: the list of column names associated with these
      statistics.
     :type col_names: list of str
-    """ 
+    """
 
     _attribute_map = {
         'compute_account_name': {'key': 'computeAccountName', 'type': 'str'},

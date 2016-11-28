@@ -23,7 +23,7 @@ class USqlAssemblyFileInfo(Model):
     :type original_path: str
     :param content_path: the the content path to the assembly file.
     :type content_path: str
-    """ 
+    """
 
     _attribute_map = {
         'type': {'key': 'type', 'type': 'FileType'},

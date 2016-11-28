@@ -21,7 +21,7 @@ class USqlCredential(CatalogItem):
     :type version: str
     :param name: the name of the credential.
     :type name: str
-    """ 
+    """
 
     _attribute_map = {
         'compute_account_name': {'key': 'computeAccountName', 'type': 'str'},
