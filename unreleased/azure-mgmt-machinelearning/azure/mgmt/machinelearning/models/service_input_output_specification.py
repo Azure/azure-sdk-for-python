@@ -27,7 +27,7 @@ class ServiceInputOutputSpecification(Model):
      for each input or output of the web service. For more information, see the
      Swagger specification.
     :type properties: dict
-    """ 
+    """
 
     _validation = {
         'type': {'required': True},

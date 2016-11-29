@@ -19,7 +19,7 @@ class CommitmentPlan(Model):
     :param id: Specifies the Azure Resource Manager ID of the commitment plan
      associated with the web service.
     :type id: str
-    """ 
+    """
 
     _validation = {
         'id': {'required': True},
