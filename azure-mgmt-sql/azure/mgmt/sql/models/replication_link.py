@@ -13,24 +13,24 @@ from .sql_sub_resource import SqlSubResource
 
 
 class ReplicationLink(SqlSubResource):
-    """Represents an Azure SQL Database Replication Link.
+    """Represents an Azure SQL database replication link.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
     :ivar name: Resource name
     :vartype name: str
-    :ivar id: Resource Id
+    :ivar id: The resource ID.
     :vartype id: str
-    :ivar partner_server: The name of the Azure SQL Server hosting the
-     partner Azure SQL Database.
+    :ivar partner_server: The name of the Azure SQL server hosting the partner
+     Azure SQL Database.
     :vartype partner_server: str
     :ivar partner_database: The name of the partner Azure SQL Database.
     :vartype partner_database: str
     :ivar partner_location: The Azure Region of the partner Azure SQL
      Database.
     :vartype partner_location: str
-    :ivar role: The role of the Azure SQL Database in the replication link.
+    :ivar role: The role of the Azure SQL database in the replication link.
      Possible values include: 'Primary', 'Secondary', 'NonReadableSecondary',
      'Source', 'Copy'
     :vartype role: str or :class:`ReplicationRole
@@ -50,7 +50,7 @@ class ReplicationLink(SqlSubResource):
      Possible values include: 'PENDING', 'SEEDING', 'CATCH_UP', 'SUSPENDED'
     :vartype replication_state: str or :class:`ReplicationState
      <azure.mgmt.sql.models.ReplicationState>`
-    """ 
+    """
 
     _validation = {
         'name': {'readonly': True},

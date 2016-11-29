@@ -13,7 +13,7 @@ from msrest.serialization import Model
 
 
 class ServerMetric(Model):
-    """Represents Azure SQL Server metrics.
+    """Represents Azure SQL server metrics.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -31,7 +31,7 @@ class ServerMetric(Model):
     :ivar next_reset_time: The next reset time for the metric (ISO8601
      format).
     :vartype next_reset_time: datetime
-    """ 
+    """
 
     _validation = {
         'resource_name': {'readonly': True},

@@ -9,51 +9,25 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .resource import Resource
+from msrest.serialization import Model
 
 
-class UpgradeHint(Resource):
+class UpgradeHint(Model):
     """Represents a Upgrade Hint.
 
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
-
-    :ivar name: Resource name
-    :vartype name: str
-    :ivar id: Resource Id
-    :vartype id: str
-    :ivar type: Resource type
-    :vartype type: str
-    :param location: Resource location
-    :type location: str
-    :param tags: Resource tags
-    :type tags: dict
     :param target_service_level_objective: TargetServiceLevelObjective for
      upgrade hint.
     :type target_service_level_objective: str
     :param target_service_level_objective_id: TargetServiceLevelObjectiveId
      for upgrade hint.
     :type target_service_level_objective_id: str
-    """ 
-
-    _validation = {
-        'name': {'readonly': True},
-        'id': {'readonly': True},
-        'type': {'readonly': True},
-        'location': {'required': True},
-    }
+    """
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'id': {'key': 'id', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
         'target_service_level_objective': {'key': 'targetServiceLevelObjective', 'type': 'str'},
         'target_service_level_objective_id': {'key': 'targetServiceLevelObjectiveId', 'type': 'str'},
     }
 
-    def __init__(self, location, tags=None, target_service_level_objective=None, target_service_level_objective_id=None):
-        super(UpgradeHint, self).__init__(location=location, tags=tags)
+    def __init__(self, target_service_level_objective=None, target_service_level_objective_id=None):
         self.target_service_level_objective = target_service_level_objective
         self.target_service_level_objective_id = target_service_level_objective_id

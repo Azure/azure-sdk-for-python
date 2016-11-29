@@ -24,10 +24,10 @@ class OperationImpact(Model):
     :vartype unit: str
     :ivar change_value_absolute: The absolute impact to dimension.
     :vartype change_value_absolute: float
-    :ivar change_value_relative: The relative impact to dimension (null if
-     not applicable)
+    :ivar change_value_relative: The relative impact to dimension (null if not
+     applicable)
     :vartype change_value_relative: float
-    """ 
+    """
 
     _validation = {
         'name': {'readonly': True},

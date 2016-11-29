@@ -20,7 +20,7 @@ class ElasticPoolDatabaseActivity(Resource):
 
     :ivar name: Resource name
     :vartype name: str
-    :ivar id: Resource Id
+    :ivar id: Resource ID
     :vartype id: str
     :ivar type: Resource type
     :vartype type: str
@@ -50,20 +50,20 @@ class ElasticPoolDatabaseActivity(Resource):
     :ivar current_elastic_pool_name: The name of the current Elastic Pool the
      database is in if available.
     :vartype current_elastic_pool_name: str
-    :ivar current_service_objective: The name of the current service
-     objective if available.
+    :ivar current_service_objective: The name of the current service objective
+     if available.
     :vartype current_service_objective: str
     :ivar requested_service_objective: The name of the requested service
      objective if available.
     :vartype requested_service_objective: str
-    :ivar server_name: The name of the Azure SQL Server the Elastic Pool is
+    :ivar server_name: The name of the Azure SQL server the Elastic Pool is
      in.
     :vartype server_name: str
     :ivar start_time: The time the operation started (ISO8601 format).
     :vartype start_time: datetime
     :ivar state: The current state of the operation.
     :vartype state: str
-    """ 
+    """
 
     _validation = {
         'name': {'readonly': True},

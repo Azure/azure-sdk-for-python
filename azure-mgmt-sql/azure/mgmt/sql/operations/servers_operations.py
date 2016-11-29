@@ -11,7 +11,6 @@
 
 from msrest.pipeline import ClientRawResponse
 from msrestazure.azure_exceptions import CloudError
-from msrestazure.azure_operation import AzureOperationPoller
 import uuid
 
 from .. import models
@@ -24,7 +23,7 @@ class ServersOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An objec model deserializer.
-    :ivar api_version: Client Api Version. Constant value: "2014-04-01".
+    :ivar api_version: The API version to use for the request. Constant value: "2014-04-01".
     """
 
     def __init__(self, client, config, serializer, deserializer):
@@ -37,21 +36,24 @@ class ServersOperations(object):
         self.config = config
 
     def create_or_update_firewall_rule(
-            self, resource_group_name, server_name, firewall_rule_name, parameters, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, server_name, firewall_rule_name, start_ip_address=None, end_ip_address=None, custom_headers=None, raw=False, **operation_config):
         """Creates or updates an Azure SQL server firewall rule.
 
-        :param resource_group_name: The name of the Resource Group to which
-         the resource belongs.
+        :param resource_group_name: The name of the resource group that
+         contains the resource. You can obtain this value from the Azure
+         Resource Manager API or the portal.
         :type resource_group_name: str
-        :param server_name: The name of the Azure SQL Server
+        :param server_name: The name of the Azure SQL server.
         :type server_name: str
-        :param firewall_rule_name: The name of the Azure SQL Server Firewall
-         Rule.
+        :param firewall_rule_name: The name of the Azure SQL server firewall
+         rule.
         :type firewall_rule_name: str
-        :param parameters: The required parameters for createing or updating
-         a firewall rule.
-        :type parameters: :class:`ServerFirewallRule
-         <azure.mgmt.sql.models.ServerFirewallRule>`
+        :param start_ip_address: The start IP address of the Azure SQL server
+         firewall rule. Must be IPv4 format.
+        :type start_ip_address: str
+        :param end_ip_address: The end IP address of the Azure SQL server
+         firewall rule. Must be IPv4 format.
+        :type end_ip_address: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -63,6 +65,8 @@ class ServersOperations(object):
          if raw=true
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
+        parameters = models.ServerFirewallRule(start_ip_address=start_ip_address, end_ip_address=end_ip_address)
+
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/firewallRules/{firewallRuleName}'
         path_format_arguments = {
@@ -117,13 +121,14 @@ class ServersOperations(object):
             self, resource_group_name, server_name, firewall_rule_name, custom_headers=None, raw=False, **operation_config):
         """Deletes an Azure SQL server firewall rule.
 
-        :param resource_group_name: The name of the Resource Group to which
-         the resource belongs.
+        :param resource_group_name: The name of the resource group that
+         contains the resource. You can obtain this value from the Azure
+         Resource Manager API or the portal.
         :type resource_group_name: str
-        :param server_name: The name of the Azure SQL Server
+        :param server_name: The name of the Azure SQL server.
         :type server_name: str
-        :param firewall_rule_name: The name of the Azure SQL Server Firewall
-         Rule.
+        :param firewall_rule_name: The name of the Azure SQL server firewall
+         rule.
         :type firewall_rule_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -176,13 +181,14 @@ class ServersOperations(object):
             self, resource_group_name, server_name, firewall_rule_name, custom_headers=None, raw=False, **operation_config):
         """Returns an Azure SQL server firewall rule.
 
-        :param resource_group_name: The name of the Resource Group to which
-         the resource belongs.
+        :param resource_group_name: The name of the resource group that
+         contains the resource. You can obtain this value from the Azure
+         Resource Manager API or the portal.
         :type resource_group_name: str
-        :param server_name: The name of the Azure SQL Server
+        :param server_name: The name of the Azure SQL server.
         :type server_name: str
-        :param firewall_rule_name: The name of the Azure SQL Server Firewall
-         Rule.
+        :param firewall_rule_name: The name of the Azure SQL server firewall
+         rule.
         :type firewall_rule_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -243,10 +249,11 @@ class ServersOperations(object):
             self, resource_group_name, server_name, custom_headers=None, raw=False, **operation_config):
         """Returns a list of Azure SQL server firewall rules.
 
-        :param resource_group_name: The name of the Resource Group to which
-         the resource belongs.
+        :param resource_group_name: The name of the resource group that
+         contains the resource. You can obtain this value from the Azure
+         Resource Manager API or the portal.
         :type resource_group_name: str
-        :param server_name: The name of the Azure SQL Server
+        :param server_name: The name of the Azure SQL server.
         :type server_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -311,7 +318,7 @@ class ServersOperations(object):
 
     def list(
             self, custom_headers=None, raw=False, **operation_config):
-        """Returns information about an Azure SQL Server.
+        """Returns information about an Azure SQL server.
 
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -373,15 +380,16 @@ class ServersOperations(object):
 
     def create_or_update(
             self, resource_group_name, server_name, parameters, custom_headers=None, raw=False, **operation_config):
-        """Creates a new Azure SQL Server.
+        """Creates a new Azure SQL server.
 
-        :param resource_group_name: The name of the Resource Group to which
-         the resource belongs.
+        :param resource_group_name: The name of the resource group that
+         contains the resource. You can obtain this value from the Azure
+         Resource Manager API or the portal.
         :type resource_group_name: str
-        :param server_name: The name of the Azure SQL Server
+        :param server_name: The name of the Azure SQL server.
         :type server_name: str
-        :param parameters: The required parameters for createing or updating
-         a server.
+        :param parameters: The required parameters for creating or updating a
+         server.
         :type parameters: :class:`Server <azure.mgmt.sql.models.Server>`
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -446,10 +454,11 @@ class ServersOperations(object):
             self, resource_group_name, server_name, custom_headers=None, raw=False, **operation_config):
         """Deletes a SQL server.
 
-        :param resource_group_name: The name of the Resource Group to which
-         the resource belongs.
+        :param resource_group_name: The name of the resource group that
+         contains the resource. You can obtain this value from the Azure
+         Resource Manager API or the portal.
         :type resource_group_name: str
-        :param server_name: The name of the Azure SQL Server
+        :param server_name: The name of the Azure SQL server.
         :type server_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -499,12 +508,13 @@ class ServersOperations(object):
 
     def get_by_resource_group(
             self, resource_group_name, server_name, custom_headers=None, raw=False, **operation_config):
-        """Gets information about an Azure SQL Server.
+        """Gets information about an Azure SQL server.
 
-        :param resource_group_name: The name of the Resource Group to which
-         the resource belongs.
+        :param resource_group_name: The name of the resource group that
+         contains the resource. You can obtain this value from the Azure
+         Resource Manager API or the portal.
         :type resource_group_name: str
-        :param server_name: The name of the Azure SQL Server
+        :param server_name: The name of the Azure SQL server.
         :type server_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -561,10 +571,11 @@ class ServersOperations(object):
 
     def list_by_resource_group(
             self, resource_group_name, custom_headers=None, raw=False, **operation_config):
-        """Returns information about an Azure SQL Server.
+        """Returns information about an Azure SQL server.
 
-        :param resource_group_name: The name of the Resource Group to which
-         the resource belongs.
+        :param resource_group_name: The name of the resource group that
+         contains the resource. You can obtain this value from the Azure
+         Resource Manager API or the portal.
         :type resource_group_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -625,218 +636,15 @@ class ServersOperations(object):
 
         return deserialized
 
-    def cancel_upgrade(
-            self, resource_group_name, server_name, custom_headers=None, raw=False, **operation_config):
-        """Cancel a pending upgrade for the Azure SQL Server.
-
-        :param resource_group_name: The name of the Resource Group to which
-         the resource belongs.
-        :type resource_group_name: str
-        :param server_name: The name of the Azure SQL Server
-        :type server_name: str
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :rtype: None
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
-        """
-        # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/operationResults/versionUpgrade'
-        path_format_arguments = {
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            'serverName': self._serialize.url("server_name", server_name, 'str')
-        }
-        url = self._client.format_url(url, **path_format_arguments)
-
-        # Construct parameters
-        query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
-
-        # Construct headers
-        header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
-        if self.config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-        if custom_headers:
-            header_parameters.update(custom_headers)
-        if self.config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
-
-        # Construct and send request
-        request = self._client.delete(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
-
-        if response.status_code not in [200, 204]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
-
-        if raw:
-            client_raw_response = ClientRawResponse(None, response)
-            return client_raw_response
-
-    def get_upgrade(
-            self, resource_group_name, server_name, custom_headers=None, raw=False, **operation_config):
-        """Gets information about Upgrade status of an Azure SQL Server.
-
-        :param resource_group_name: The name of the Resource Group to which
-         the resource belongs.
-        :type resource_group_name: str
-        :param server_name: The name of the Azure SQL Server
-        :type server_name: str
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`ServerUpgradeGetResult
-         <azure.mgmt.sql.models.ServerUpgradeGetResult>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
-        """
-        # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/operationResults/versionUpgrade'
-        path_format_arguments = {
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            'serverName': self._serialize.url("server_name", server_name, 'str')
-        }
-        url = self._client.format_url(url, **path_format_arguments)
-
-        # Construct parameters
-        query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
-
-        # Construct headers
-        header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
-        if self.config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-        if custom_headers:
-            header_parameters.update(custom_headers)
-        if self.config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
-
-        # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
-
-        if response.status_code not in [200]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
-
-        deserialized = None
-
-        if response.status_code == 200:
-            deserialized = self._deserialize('ServerUpgradeGetResult', response)
-
-        if raw:
-            client_raw_response = ClientRawResponse(deserialized, response)
-            return client_raw_response
-
-        return deserialized
-
-    def start_upgrade(
-            self, resource_group_name, server_name, parameters, custom_headers=None, raw=False, **operation_config):
-        """Start an Azure SQL Server Upgrade.
-
-        :param resource_group_name: The name of the Resource Group to which
-         the resource belongs.
-        :type resource_group_name: str
-        :param server_name: The name of the Azure SQL Server
-        :type server_name: str
-        :param parameters: The required parameters for the Azure SQL Server
-         Upgrade.
-        :type parameters: :class:`ServerUpgradeStartParameters
-         <azure.mgmt.sql.models.ServerUpgradeStartParameters>`
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :rtype:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         instance that returns None
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
-        """
-        # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/upgrade'
-        path_format_arguments = {
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            'serverName': self._serialize.url("server_name", server_name, 'str')
-        }
-        url = self._client.format_url(url, **path_format_arguments)
-
-        # Construct parameters
-        query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
-
-        # Construct headers
-        header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
-        if self.config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-        if custom_headers:
-            header_parameters.update(custom_headers)
-        if self.config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
-
-        # Construct body
-        body_content = self._serialize.body(parameters, 'ServerUpgradeStartParameters')
-
-        # Construct and send request
-        def long_running_send():
-
-            request = self._client.post(url, query_parameters)
-            return self._client.send(
-                request, header_parameters, body_content, **operation_config)
-
-        def get_long_running_status(status_link, headers=None):
-
-            request = self._client.get(status_link)
-            if headers:
-                request.headers.update(headers)
-            return self._client.send(
-                request, header_parameters, **operation_config)
-
-        def get_long_running_output(response):
-
-            if response.status_code not in [202]:
-                exp = CloudError(response)
-                exp.request_id = response.headers.get('x-ms-request-id')
-                raise exp
-
-            if raw:
-                client_raw_response = ClientRawResponse(None, response)
-                return client_raw_response
-
-        if raw:
-            response = long_running_send()
-            return get_long_running_output(response)
-
-        long_running_operation_timeout = operation_config.get(
-            'long_running_operation_timeout',
-            self.config.long_running_operation_timeout)
-        return AzureOperationPoller(
-            long_running_send, get_long_running_output,
-            get_long_running_status, long_running_operation_timeout)
-
     def list_usages(
             self, resource_group_name, server_name, custom_headers=None, raw=False, **operation_config):
-        """Returns information about Azure SQL Server usage.
+        """Returns information about Azure SQL server usage.
 
-        :param resource_group_name: The name of the Resource Group to which
-         the resource belongs.
+        :param resource_group_name: The name of the resource group that
+         contains the resource. You can obtain this value from the Azure
+         Resource Manager API or the portal.
         :type resource_group_name: str
-        :param server_name: The name of the Azure SQL Server
+        :param server_name: The name of the Azure SQL server.
         :type server_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -901,12 +709,13 @@ class ServersOperations(object):
 
     def get_service_objective(
             self, resource_group_name, server_name, service_objective_name, custom_headers=None, raw=False, **operation_config):
-        """Gets information about an Azure SQL Database Service Objective.
+        """Gets information about an Azure SQL database Service Objective.
 
-        :param resource_group_name: The name of the Resource Group to which
-         the resource belongs.
+        :param resource_group_name: The name of the resource group that
+         contains the resource. You can obtain this value from the Azure
+         Resource Manager API or the portal.
         :type resource_group_name: str
-        :param server_name: The name of the Azure SQL Server
+        :param server_name: The name of the Azure SQL server.
         :type server_name: str
         :param service_objective_name: The name of the service objective to
          retrieve.
@@ -968,12 +777,13 @@ class ServersOperations(object):
 
     def list_service_objectives(
             self, resource_group_name, server_name, custom_headers=None, raw=False, **operation_config):
-        """Returns information about Azure SQL Database Service Objectives.
+        """Returns information about Azure SQL database Service Objectives.
 
-        :param resource_group_name: The name of the Resource Group to which
-         the resource belongs.
+        :param resource_group_name: The name of the resource group that
+         contains the resource. You can obtain this value from the Azure
+         Resource Manager API or the portal.
         :type resource_group_name: str
-        :param server_name: The name of the Azure SQL Server
+        :param server_name: The name of the Azure SQL server.
         :type server_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
