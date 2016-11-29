@@ -20,7 +20,7 @@ class Schema(Resource):
 
     :ivar name: Resource name
     :vartype name: str
-    :ivar id: Resource Id
+    :ivar id: Resource ID
     :vartype id: str
     :ivar type: Resource type
     :vartype type: str
@@ -30,7 +30,7 @@ class Schema(Resource):
     :type tags: dict
     :ivar tables: The tables from this database.
     :vartype tables: list of :class:`Table <azure.mgmt.sql.models.Table>`
-    """ 
+    """
 
     _validation = {
         'name': {'readonly': True},

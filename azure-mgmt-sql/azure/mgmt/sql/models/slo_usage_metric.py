@@ -9,25 +9,12 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .resource import Resource
+from msrest.serialization import Model
 
 
-class SloUsageMetric(Resource):
+class SloUsageMetric(Model):
     """Represents a Slo Usage Metric.
 
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
-
-    :ivar name: Resource name
-    :vartype name: str
-    :ivar id: Resource Id
-    :vartype id: str
-    :ivar type: Resource type
-    :vartype type: str
-    :param location: Resource location
-    :type location: str
-    :param tags: Resource tags
-    :type tags: dict
     :param service_level_objective: The serviceLevelObjective for SLO usage
      metric. Possible values include: 'Basic', 'S0', 'S1', 'S2', 'S3', 'P1',
      'P2', 'P3'
@@ -39,28 +26,15 @@ class SloUsageMetric(Resource):
     :param in_range_time_ratio: Gets or sets inRangeTimeRatio for SLO usage
      metric.
     :type in_range_time_ratio: float
-    """ 
-
-    _validation = {
-        'name': {'readonly': True},
-        'id': {'readonly': True},
-        'type': {'readonly': True},
-        'location': {'required': True},
-    }
+    """
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'id': {'key': 'id', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
         'service_level_objective': {'key': 'serviceLevelObjective', 'type': 'str'},
         'service_level_objective_id': {'key': 'serviceLevelObjectiveId', 'type': 'str'},
         'in_range_time_ratio': {'key': 'inRangeTimeRatio', 'type': 'float'},
     }
 
-    def __init__(self, location, tags=None, service_level_objective=None, service_level_objective_id=None, in_range_time_ratio=None):
-        super(SloUsageMetric, self).__init__(location=location, tags=tags)
+    def __init__(self, service_level_objective=None, service_level_objective_id=None, in_range_time_ratio=None):
         self.service_level_objective = service_level_objective
         self.service_level_objective_id = service_level_objective_id
         self.in_range_time_ratio = in_range_time_ratio

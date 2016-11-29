@@ -20,7 +20,7 @@ class RecommendedElasticPool(Resource):
 
     :ivar name: Resource name
     :vartype name: str
-    :ivar id: Resource Id
+    :ivar id: Resource ID
     :vartype id: str
     :ivar type: Resource type
     :vartype type: str
@@ -29,8 +29,8 @@ class RecommendedElasticPool(Resource):
     :param tags: Resource tags
     :type tags: dict
     :ivar database_edition: The edition of the Azure SQL Recommended Elastic
-     Pool. The ElasticPoolEditions enumeration contains all the valid
-     editions. Possible values include: 'Basic', 'Standard', 'Premium'
+     Pool. The ElasticPoolEditions enumeration contains all the valid editions.
+     Possible values include: 'Basic', 'Standard', 'Premium'
     :vartype database_edition: str or :class:`ElasticPoolEditions
      <azure.mgmt.sql.models.ElasticPoolEditions>`
     :param dtu: The DTU for the SQL Azure Recommended Elastic Pool.
@@ -51,15 +51,15 @@ class RecommendedElasticPool(Resource):
     :vartype max_observed_dtu: float
     :ivar max_observed_storage_mb: Gets maximum observed storage in megabytes.
     :vartype max_observed_storage_mb: float
-    :ivar databases: The list of Azure SQL Databases in this pool. Expanded
-     property
-    :vartype databases: list of :class:`Database
+    :ivar databases_property: The list of Azure SQL Databases in this pool.
+     Expanded property
+    :vartype databases_property: list of :class:`Database
      <azure.mgmt.sql.models.Database>`
     :ivar metrics: The list of Azure SQL Databases housed in the server.
      Expanded property
     :vartype metrics: list of :class:`RecommendedElasticPoolMetric
      <azure.mgmt.sql.models.RecommendedElasticPoolMetric>`
-    """ 
+    """
 
     _validation = {
         'name': {'readonly': True},
@@ -71,7 +71,7 @@ class RecommendedElasticPool(Resource):
         'observation_period_end': {'readonly': True},
         'max_observed_dtu': {'readonly': True},
         'max_observed_storage_mb': {'readonly': True},
-        'databases': {'readonly': True},
+        'databases_property': {'readonly': True},
         'metrics': {'readonly': True},
     }
 
@@ -90,7 +90,7 @@ class RecommendedElasticPool(Resource):
         'observation_period_end': {'key': 'properties.observationPeriodEnd', 'type': 'iso-8601'},
         'max_observed_dtu': {'key': 'properties.maxObservedDtu', 'type': 'float'},
         'max_observed_storage_mb': {'key': 'properties.maxObservedStorageMB', 'type': 'float'},
-        'databases': {'key': 'properties.databases', 'type': '[Database]'},
+        'databases_property': {'key': 'properties.databases', 'type': '[Database]'},
         'metrics': {'key': 'properties.metrics', 'type': '[RecommendedElasticPoolMetric]'},
     }
 
@@ -105,5 +105,5 @@ class RecommendedElasticPool(Resource):
         self.observation_period_end = None
         self.max_observed_dtu = None
         self.max_observed_storage_mb = None
-        self.databases = None
+        self.databases_property = None
         self.metrics = None

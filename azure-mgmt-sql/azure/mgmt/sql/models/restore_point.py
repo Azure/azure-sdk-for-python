@@ -20,7 +20,7 @@ class RestorePoint(Resource):
 
     :ivar name: Resource name
     :vartype name: str
-    :ivar id: Resource Id
+    :ivar id: Resource ID
     :vartype id: str
     :ivar type: Resource type
     :vartype type: str
@@ -28,8 +28,8 @@ class RestorePoint(Resource):
     :type location: str
     :param tags: Resource tags
     :type tags: dict
-    :ivar restore_point_type: The restore point type of the Azure SQL
-     Database restore point. Possible values include: 'DISCRETE', 'CONTINUOUS'
+    :ivar restore_point_type: The restore point type of the Azure SQL database
+     restore point. Possible values include: 'DISCRETE', 'CONTINUOUS'
     :vartype restore_point_type: str or :class:`RestorePointTypes
      <azure.mgmt.sql.models.RestorePointTypes>`
     :ivar restore_point_creation_date: Restore point creation time (ISO8601
@@ -38,7 +38,7 @@ class RestorePoint(Resource):
     :ivar earliest_restore_date: Earliest restore time (ISO8601 format).
      Populated when restorePointType = DISCRETE. Null otherwise.
     :vartype earliest_restore_date: datetime
-    """ 
+    """
 
     _validation = {
         'name': {'readonly': True},
