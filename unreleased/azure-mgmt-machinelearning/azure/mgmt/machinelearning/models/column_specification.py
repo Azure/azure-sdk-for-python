@@ -36,7 +36,7 @@ class ColumnSpecification(Model):
     :param x_ms_isordered: Flag indicating whether the categories are treated
      as an ordered set or not, if this is a categorical column.
     :type x_ms_isordered: bool
-    """ 
+    """
 
     _validation = {
         'type': {'required': True},

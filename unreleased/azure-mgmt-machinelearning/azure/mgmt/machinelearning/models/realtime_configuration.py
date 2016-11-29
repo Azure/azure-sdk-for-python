@@ -19,7 +19,7 @@ class RealtimeConfiguration(Model):
     :param max_concurrent_calls: Specifies the maximum concurrent calls that
      can be made to the web service. Minimum value: 4, Maximum value: 200.
     :type max_concurrent_calls: int
-    """ 
+    """
 
     _validation = {
         'max_concurrent_calls': {'maximum': 200, 'minimum': 4},

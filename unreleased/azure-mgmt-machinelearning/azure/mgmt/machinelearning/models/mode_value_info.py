@@ -21,7 +21,7 @@ class ModeValueInfo(Model):
     :param parameters: The definition of the parameter.
     :type parameters: list of :class:`ModuleAssetParameter
      <azure.mgmt.machinelearning.models.ModuleAssetParameter>`
-    """ 
+    """
 
     _attribute_map = {
         'interface_string': {'key': 'interfaceString', 'type': 'str'},

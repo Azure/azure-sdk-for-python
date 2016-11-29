@@ -97,7 +97,7 @@ class WebServiceProperties(Model):
     :type parameters: dict
     :param package_type: Polymorphic Discriminator
     :type package_type: str
-    """ 
+    """
 
     _validation = {
         'created_on': {'readonly': True},

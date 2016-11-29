@@ -21,7 +21,7 @@ class ExampleRequest(Model):
     :param global_parameters: Sample input data for the web service's global
      parameters
     :type global_parameters: dict
-    """ 
+    """
 
     _attribute_map = {
         'inputs': {'key': 'inputs', 'type': '{list}'},

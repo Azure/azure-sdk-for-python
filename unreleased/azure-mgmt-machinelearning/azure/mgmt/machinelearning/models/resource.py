@@ -28,7 +28,7 @@ class Resource(Model):
     :vartype type: str
     :param tags: Contains resource tags defined as key/value pairs.
     :type tags: dict
-    """ 
+    """
 
     _validation = {
         'id': {'readonly': True},
