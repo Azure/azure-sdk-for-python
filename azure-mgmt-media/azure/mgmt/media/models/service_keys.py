@@ -15,17 +15,17 @@ from msrest.serialization import Model
 class ServiceKeys(Model):
     """The response body for a ListKeys API.
 
-    :param primary_auth_endpoint: The primary Authorization endpoint.
+    :param primary_auth_endpoint: The primary authorization endpoint.
     :type primary_auth_endpoint: str
-    :param secondary_auth_endpoint: The secondary Authorization endpoint.
+    :param secondary_auth_endpoint: The secondary authorization endpoint.
     :type secondary_auth_endpoint: str
-    :param primary_key: The primary resource.
+    :param primary_key: The primary key for the Media Service resource.
     :type primary_key: str
-    :param secondary_key: The secondary resource.
+    :param secondary_key: The secondary key for the Media Service resource.
     :type secondary_key: str
     :param scope: The authorization scope.
     :type scope: str
-    """ 
+    """
 
     _attribute_map = {
         'primary_auth_endpoint': {'key': 'primaryAuthEndpoint', 'type': 'str'},
