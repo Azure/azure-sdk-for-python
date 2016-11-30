@@ -20,7 +20,7 @@ class RegistryCredentials(Model):
     :type username: str
     :param password: The administrator password.
     :type password: str
-    """ 
+    """
 
     _attribute_map = {
         'username': {'key': 'username', 'type': 'str'},

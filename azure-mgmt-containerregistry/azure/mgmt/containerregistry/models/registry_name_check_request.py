@@ -24,7 +24,7 @@ class RegistryNameCheckRequest(Model):
      be set to "Microsoft.ContainerRegistry/registries". Default value:
      "Microsoft.ContainerRegistry/registries" .
     :vartype type: str
-    """ 
+    """
 
     _validation = {
         'name': {'required': True},
