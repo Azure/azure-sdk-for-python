@@ -32,7 +32,7 @@ class WebService(Resource):
      service.
     :type properties: :class:`WebServiceProperties
      <azure.mgmt.machinelearning.models.WebServiceProperties>`
-    """ 
+    """
 
     _validation = {
         'id': {'readonly': True},

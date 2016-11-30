@@ -21,7 +21,7 @@ class AssetLocation(Model):
     :param credentials: Access credentials for the asset, if applicable (e.g.
      asset specified by storage account connection string + blob URI)
     :type credentials: str
-    """ 
+    """
 
     _validation = {
         'uri': {'required': True},

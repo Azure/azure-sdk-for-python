@@ -25,7 +25,7 @@ class GraphEdge(Model):
     :param target_port_id: The identifier of the destination node's port that
      the edge connects into.
     :type target_port_id: str
-    """ 
+    """
 
     _attribute_map = {
         'source_node_id': {'key': 'sourceNodeId', 'type': 'str'},

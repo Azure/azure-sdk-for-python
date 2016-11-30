@@ -19,7 +19,7 @@ class StorageAccount(Model):
     :type name: str
     :param key: Specifies the key used to access the storage account.
     :type key: str
-    """ 
+    """
 
     _attribute_map = {
         'name': {'key': 'name', 'type': 'str'},

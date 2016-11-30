@@ -9,23 +9,19 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.serialization import Model
+from msrest.paging import Paged
 
 
-class WebServiceKeys(Model):
-    """Access keys for the web service calls.
-
-    :param primary: The primary access key.
-    :type primary: str
-    :param secondary: The secondary access key.
-    :type secondary: str
+class WebServicePaged(Paged):
+    """
+    A paging container for iterating over a list of WebService object
     """
 
     _attribute_map = {
-        'primary': {'key': 'primary', 'type': 'str'},
-        'secondary': {'key': 'secondary', 'type': 'str'},
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[WebService]'}
     }
 
-    def __init__(self, primary=None, secondary=None):
-        self.primary = primary
-        self.secondary = secondary
+    def __init__(self, *args, **kwargs):
+
+        super(WebServicePaged, self).__init__(*args, **kwargs)

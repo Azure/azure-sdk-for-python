@@ -26,7 +26,7 @@ class GraphPackage(Model):
      parameter here has a 1:1 match with the global parameters values map
      declared at the WebServiceProperties level.
     :type graph_parameters: dict
-    """ 
+    """
 
     _attribute_map = {
         'nodes': {'key': 'nodes', 'type': '{GraphNode}'},

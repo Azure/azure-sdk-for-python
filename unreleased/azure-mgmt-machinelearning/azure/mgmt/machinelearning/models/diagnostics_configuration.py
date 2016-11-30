@@ -24,7 +24,7 @@ class DiagnosticsConfiguration(Model):
     :param expiry: Specifies the date and time when the logging will cease. If
      null, diagnostic collection is not time limited.
     :type expiry: datetime
-    """ 
+    """
 
     _validation = {
         'level': {'required': True},

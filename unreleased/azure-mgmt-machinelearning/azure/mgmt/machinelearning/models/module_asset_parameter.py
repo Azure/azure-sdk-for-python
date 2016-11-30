@@ -22,7 +22,7 @@ class ModuleAssetParameter(Model):
     :param mode_values_info: Definitions for nested interface parameters if
      this is a complex module parameter.
     :type mode_values_info: dict
-    """ 
+    """
 
     _attribute_map = {
         'name': {'key': 'name', 'type': 'str'},
