@@ -26,7 +26,7 @@ class GraphNode(Model):
     :param parameters: If applicable, parameters of the node. Global graph
      parameters map into these, with values set at runtime.
     :type parameters: dict
-    """ 
+    """
 
     _attribute_map = {
         'asset_id': {'key': 'assetId', 'type': 'str'},

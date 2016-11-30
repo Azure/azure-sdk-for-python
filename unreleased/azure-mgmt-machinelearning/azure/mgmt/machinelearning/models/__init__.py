@@ -10,31 +10,31 @@
 # --------------------------------------------------------------------------
 
 from .resource import Resource
-from .web_service import WebService
-from .web_service_properties import WebServiceProperties
 from .web_service_keys import WebServiceKeys
 from .realtime_configuration import RealtimeConfiguration
 from .diagnostics_configuration import DiagnosticsConfiguration
 from .storage_account import StorageAccount
 from .machine_learning_workspace import MachineLearningWorkspace
 from .commitment_plan import CommitmentPlan
-from .service_input_output_specification import ServiceInputOutputSpecification
-from .table_specification import TableSpecification
 from .column_specification import ColumnSpecification
+from .table_specification import TableSpecification
+from .service_input_output_specification import ServiceInputOutputSpecification
 from .example_request import ExampleRequest
-from .asset_item import AssetItem
 from .asset_location import AssetLocation
 from .input_port import InputPort
 from .output_port import OutputPort
-from .module_asset_parameter import ModuleAssetParameter
 from .mode_value_info import ModeValueInfo
-from .web_service_properties_for_graph import WebServicePropertiesForGraph
-from .graph_package import GraphPackage
+from .module_asset_parameter import ModuleAssetParameter
+from .asset_item import AssetItem
+from .web_service_properties import WebServiceProperties
+from .web_service import WebService
 from .graph_node import GraphNode
 from .graph_edge import GraphEdge
-from .graph_parameter import GraphParameter
 from .graph_parameter_link import GraphParameterLink
-from .paginated_web_services_list import PaginatedWebServicesList
+from .graph_parameter import GraphParameter
+from .graph_package import GraphPackage
+from .web_service_properties_for_graph import WebServicePropertiesForGraph
+from .web_service_paged import WebServicePaged
 from .azure_ml_web_services_management_client_enums import (
     ProvisioningState,
     DiagnosticsLevel,
@@ -48,31 +48,31 @@ from .azure_ml_web_services_management_client_enums import (
 
 __all__ = [
     'Resource',
-    'WebService',
-    'WebServiceProperties',
     'WebServiceKeys',
     'RealtimeConfiguration',
     'DiagnosticsConfiguration',
     'StorageAccount',
     'MachineLearningWorkspace',
     'CommitmentPlan',
-    'ServiceInputOutputSpecification',
-    'TableSpecification',
     'ColumnSpecification',
+    'TableSpecification',
+    'ServiceInputOutputSpecification',
     'ExampleRequest',
-    'AssetItem',
     'AssetLocation',
     'InputPort',
     'OutputPort',
-    'ModuleAssetParameter',
     'ModeValueInfo',
-    'WebServicePropertiesForGraph',
-    'GraphPackage',
+    'ModuleAssetParameter',
+    'AssetItem',
+    'WebServiceProperties',
+    'WebService',
     'GraphNode',
     'GraphEdge',
-    'GraphParameter',
     'GraphParameterLink',
-    'PaginatedWebServicesList',
+    'GraphParameter',
+    'GraphPackage',
+    'WebServicePropertiesForGraph',
+    'WebServicePaged',
     'ProvisioningState',
     'DiagnosticsLevel',
     'ColumnType',

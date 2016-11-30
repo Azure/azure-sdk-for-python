@@ -101,7 +101,7 @@ class WebServicePropertiesForGraph(WebServiceProperties):
      service.
     :type package: :class:`GraphPackage
      <azure.mgmt.machinelearning.models.GraphPackage>`
-    """ 
+    """
 
     _validation = {
         'created_on': {'readonly': True},

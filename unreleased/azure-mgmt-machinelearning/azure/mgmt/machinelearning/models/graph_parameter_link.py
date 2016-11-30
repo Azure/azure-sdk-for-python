@@ -20,7 +20,7 @@ class GraphParameterLink(Model):
     :param parameter_key: The identifier of the node parameter that the global
      parameter maps to.
     :type parameter_key: str
-    """ 
+    """
 
     _validation = {
         'node_id': {'required': True},
