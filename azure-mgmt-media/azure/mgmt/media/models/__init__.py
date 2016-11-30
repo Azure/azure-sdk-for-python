@@ -13,14 +13,13 @@ from .api_endpoint import ApiEndpoint
 from .api_error import ApiError, ApiErrorException
 from .check_name_availability_input import CheckNameAvailabilityInput
 from .check_name_availability_output import CheckNameAvailabilityOutput
-from .media_service import MediaService
 from .storage_account import StorageAccount
+from .media_service import MediaService
 from .regenerate_key_input import RegenerateKeyInput
 from .regenerate_key_output import RegenerateKeyOutput
 from .resource import Resource
 from .service_keys import ServiceKeys
 from .sync_storage_keys_input import SyncStorageKeysInput
-from .tracked_resource import TrackedResource
 from .media_service_paged import MediaServicePaged
 from .media_services_management_client_enums import (
     ResourceType,
@@ -33,14 +32,13 @@ __all__ = [
     'ApiError', 'ApiErrorException',
     'CheckNameAvailabilityInput',
     'CheckNameAvailabilityOutput',
-    'MediaService',
     'StorageAccount',
+    'MediaService',
     'RegenerateKeyInput',
     'RegenerateKeyOutput',
     'Resource',
     'ServiceKeys',
     'SyncStorageKeysInput',
-    'TrackedResource',
     'MediaServicePaged',
     'ResourceType',
     'EntityNameUnavailabilityReason',
