@@ -69,7 +69,7 @@ You are now able to log in Python using OAuth.
 Using ADAL
 ----------
 
-`ADAL for Python <https://github.com/AzureAD/azure-activedirectory-library-for-python>` is a library 
+`ADAL for Python <https://github.com/AzureAD/azure-activedirectory-library-for-python>`__ is a library 
 from the Azure Active Directory team, that proposes the more complex scenarios not covered by the
 two previous instances (like 2FA). Please refer to the ADAL website for all the available scenarios
 list and samples.
@@ -116,4 +116,4 @@ or using a lambda if you prefer:
     )
 
 Note that the UserPassCredentials and ServicePrincipalCredentials scenarios are also covered by the ADAL library. 
-In a close future their implementation will be rewritten using ADAL.
+In the near future their implementation will be rewritten using ADAL.
