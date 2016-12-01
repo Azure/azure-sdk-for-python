@@ -1,0 +1,399 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.5.1 (Windows-10-10.0.14393-SP0) requests/2.12.1 msrest/0.4.4
+          msrest_azure/0.4.3 documentdb/0.1.0 Azure-SDK-For-Python]
+      accept-language: [en-US]
+      x-ms-client-request-id: [f9b826da-b1a6-11e6-9a52-ecb1d756380e]
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_documentdb_test_accounts_features865411c4/providers/Microsoft.DocumentDB/databaseAccounts/pydocdbtest865411c4?api-version=2015-04-08
+  response:
+    body: {string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_documentdb_test_accounts_features865411c4/providers/Microsoft.DocumentDB/databaseAccounts/pydocdbtest865411c4","name":"pydocdbtest865411c4","location":"West
+        US","type":"Microsoft.DocumentDB/databaseAccounts","kind":"GlobalDocumentDB","tags":{},"properties":{"provisioningState":"Succeeded","documentEndpoint":"https://pydocdbtest865411c4.documents.azure.com:443/","databaseAccountOfferType":"Standard","consistencyPolicy":{"defaultConsistencyLevel":"Session","maxIntervalInSeconds":5,"maxStalenessPrefix":100},"writeLocations":[{"id":"pydocdbtest865411c4-westus","locationName":"West
+        US","documentEndpoint":"https://pydocdbtest865411c4-westus.documents.azure.com:443/","provisioningState":"Succeeded","failoverPriority":0}],"readLocations":[{"id":"pydocdbtest865411c4-westus","locationName":"West
+        US","documentEndpoint":"https://pydocdbtest865411c4-westus.documents.azure.com:443/","provisioningState":"Succeeded","failoverPriority":0}],"failoverPolicies":[{"id":"pydocdbtest865411c4-westus","locationName":"West
+        US","failoverPriority":0}]}}'}
+    headers:
+      Cache-Control: ['no-store, no-cache']
+      Content-Location: ['https://management.documents.azure.com:450/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_documentdb_test_accounts_features865411c4/providers/Microsoft.DocumentDB/databaseAccounts/pydocdbtest865411c4?api-version=2015-04-08']
+      Content-Type: [application/json]
+      Date: ['Wed, 23 Nov 2016 18:02:20 GMT']
+      Pragma: [no-cache]
+      Server: [Microsoft-HTTPAPI/2.0]
+      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
+      Transfer-Encoding: [chunked]
+      Vary: [Accept-Encoding]
+      content-length: ['1125']
+      x-ms-correlation-request-id: [6be1bcee-d5d8-4ad5-aa73-a7a4eadd88fe]
+      x-ms-gatewayversion: [version=1.10.57.4]
+      x-ms-ratelimit-remaining-subscription-reads: ['14993']
+      x-ms-request-id: [6be1bcee-d5d8-4ad5-aa73-a7a4eadd88fe]
+      x-ms-routing-request-id: ['CENTRALUS:20161123T180220Z:6be1bcee-d5d8-4ad5-aa73-a7a4eadd88fe']
+    status: {code: 200, message: Ok}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.5.1 (Windows-10-10.0.14393-SP0) requests/2.12.1 msrest/0.4.4
+          msrest_azure/0.4.3 documentdb/0.1.0 Azure-SDK-For-Python]
+      accept-language: [en-US]
+      x-ms-client-request-id: [fa8eff90-b1a6-11e6-8a3d-ecb1d756380e]
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_documentdb_test_accounts_features865411c4/providers/Microsoft.DocumentDB/databaseAccounts?api-version=2015-04-08
+  response:
+    body: {string: '{"value":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_documentdb_test_accounts_features865411c4/providers/Microsoft.DocumentDB/databaseAccounts/pydocdbtest865411c4","name":"pydocdbtest865411c4","location":"West
+        US","type":"Microsoft.DocumentDB/databaseAccounts","kind":"GlobalDocumentDB","tags":{},"properties":{"provisioningState":"Succeeded","documentEndpoint":"https://pydocdbtest865411c4.documents.azure.com:443/","databaseAccountOfferType":"Standard","consistencyPolicy":{"defaultConsistencyLevel":"Session","maxIntervalInSeconds":5,"maxStalenessPrefix":100},"writeLocations":[{"id":"pydocdbtest865411c4-westus","locationName":"West
+        US","documentEndpoint":"https://pydocdbtest865411c4-westus.documents.azure.com:443/","provisioningState":"Succeeded","failoverPriority":0}],"readLocations":[{"id":"pydocdbtest865411c4-westus","locationName":"West
+        US","documentEndpoint":"https://pydocdbtest865411c4-westus.documents.azure.com:443/","provisioningState":"Succeeded","failoverPriority":0}],"failoverPolicies":[{"id":"pydocdbtest865411c4-westus","locationName":"West
+        US","failoverPriority":0}]}}]}'}
+    headers:
+      Cache-Control: ['no-store, no-cache']
+      Content-Location: ['https://management.documents.azure.com:450/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_documentdb_test_accounts_features865411c4/providers/Microsoft.DocumentDB/databaseAccounts?api-version=2015-04-08']
+      Content-Type: [application/json]
+      Date: ['Wed, 23 Nov 2016 18:02:21 GMT']
+      Pragma: [no-cache]
+      Server: [Microsoft-HTTPAPI/2.0]
+      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
+      Transfer-Encoding: [chunked]
+      Vary: [Accept-Encoding]
+      content-length: ['1137']
+      x-ms-correlation-request-id: [138a81c9-c25e-447d-964f-53baea9a7467]
+      x-ms-gatewayversion: [version=1.10.57.4]
+      x-ms-ratelimit-remaining-subscription-reads: ['14957']
+      x-ms-request-id: [138a81c9-c25e-447d-964f-53baea9a7467]
+      x-ms-routing-request-id: ['CENTRALUS:20161123T180222Z:138a81c9-c25e-447d-964f-53baea9a7467']
+    status: {code: 200, message: Ok}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.5.1 (Windows-10-10.0.14393-SP0) requests/2.12.1 msrest/0.4.4
+          msrest_azure/0.4.3 documentdb/0.1.0 Azure-SDK-For-Python]
+      accept-language: [en-US]
+      x-ms-client-request-id: [fb7dbf66-b1a6-11e6-8515-ecb1d756380e]
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DocumentDB/databaseAccounts?api-version=2015-04-08
+  response:
+    body: {string: '{"value":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_documentdb_test_accounts_features865411c4/providers/Microsoft.DocumentDB/databaseAccounts/pydocdbtest865411c4","name":"pydocdbtest865411c4","location":"West
+        US","type":"Microsoft.DocumentDB/databaseAccounts","kind":"GlobalDocumentDB","tags":{},"properties":{"provisioningState":"Succeeded","documentEndpoint":"https://pydocdbtest865411c4.documents.azure.com:443/","databaseAccountOfferType":"Standard","consistencyPolicy":{"defaultConsistencyLevel":"Session","maxIntervalInSeconds":5,"maxStalenessPrefix":100},"writeLocations":[{"id":"pydocdbtest865411c4-westus","locationName":"West
+        US","documentEndpoint":"https://pydocdbtest865411c4-westus.documents.azure.com:443/","provisioningState":"Succeeded","failoverPriority":0}],"readLocations":[{"id":"pydocdbtest865411c4-westus","locationName":"West
+        US","documentEndpoint":"https://pydocdbtest865411c4-westus.documents.azure.com:443/","provisioningState":"Succeeded","failoverPriority":0}],"failoverPolicies":[{"id":"pydocdbtest865411c4-westus","locationName":"West
+        US","failoverPriority":0}]}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/MonitorTestsDoNotDelete/providers/Microsoft.DocumentDB/databaseAccounts/pymonitortest","name":"pymonitortest","location":"West
+        US","type":"Microsoft.DocumentDB/databaseAccounts","kind":"GlobalDocumentDB","tags":{},"properties":{"provisioningState":"Succeeded","documentEndpoint":"https://pymonitortest.documents.azure.com:443/","databaseAccountOfferType":"Standard","consistencyPolicy":{"defaultConsistencyLevel":"Session","maxIntervalInSeconds":5,"maxStalenessPrefix":100},"writeLocations":[{"id":"pymonitortest-westus","locationName":"West
+        US","documentEndpoint":"https://pymonitortest-westus.documents.azure.com:443/","provisioningState":"Succeeded","failoverPriority":0}],"readLocations":[{"id":"pymonitortest-westus","locationName":"West
+        US","documentEndpoint":"https://pymonitortest-westus.documents.azure.com:443/","provisioningState":"Succeeded","failoverPriority":0}],"failoverPolicies":[{"id":"pymonitortest-westus","locationName":"West
+        US","failoverPriority":0}]}}]}'}
+    headers:
+      Cache-Control: ['no-store, no-cache']
+      Content-Location: ['https://management.documents.azure.com:450/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DocumentDB/databaseAccounts?api-version=2015-04-08']
+      Content-Type: [application/json]
+      Date: ['Wed, 23 Nov 2016 18:02:23 GMT']
+      Pragma: [no-cache]
+      Server: [Microsoft-HTTPAPI/2.0]
+      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
+      Transfer-Encoding: [chunked]
+      Vary: [Accept-Encoding]
+      content-length: ['2187']
+      x-ms-correlation-request-id: [2d525c0d-b750-4bef-aed1-a0aea9ddca56]
+      x-ms-gatewayversion: [version=1.10.57.4]
+      x-ms-ratelimit-remaining-subscription-reads: ['14992']
+      x-ms-request-id: [2d525c0d-b750-4bef-aed1-a0aea9ddca56]
+      x-ms-routing-request-id: ['WESTUS2:20161123T180223Z:2d525c0d-b750-4bef-aed1-a0aea9ddca56']
+    status: {code: 200, message: Ok}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.5.1 (Windows-10-10.0.14393-SP0) requests/2.12.1 msrest/0.4.4
+          msrest_azure/0.4.3 documentdb/0.1.0 Azure-SDK-For-Python]
+      accept-language: [en-US]
+      x-ms-client-request-id: [46c83080-b1a6-11e6-b629-ecb1d756380e]
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_documentdb_test_accounts_features865411c4/providers/Microsoft.DocumentDB/databaseAccounts/pydocdbtest865411c4/operationResults/8edfb3b1-2890-433f-ad0e-aa292b8040a7?api-version=2015-04-08
+  response:
+    body: {string: '{"status":"Completed","error":{}}'}
+    headers:
+      Cache-Control: ['no-store, no-cache']
+      Content-Location: ['https://management.documents.azure.com:450/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_documentdb_test_accounts_features865411c4/providers/Microsoft.DocumentDB/databaseAccounts/pydocdbtest865411c4/operationResults/8edfb3b1-2890-433f-ad0e-aa292b8040a7?api-version=2015-04-08']
+      Content-Type: [application/json]
+      Date: ['Wed, 23 Nov 2016 18:02:24 GMT']
+      Pragma: [no-cache]
+      Server: [Microsoft-HTTPAPI/2.0]
+      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
+      Transfer-Encoding: [chunked]
+      Vary: [Accept-Encoding]
+      content-length: ['33']
+      x-ms-correlation-request-id: [012e95c7-3eff-483d-9d75-5fbaab6bea0b]
+      x-ms-gatewayversion: [version=1.10.57.4]
+      x-ms-ratelimit-remaining-subscription-reads: ['14996']
+      x-ms-request-id: [012e95c7-3eff-483d-9d75-5fbaab6bea0b]
+      x-ms-routing-request-id: ['WESTUS2:20161123T180224Z:012e95c7-3eff-483d-9d75-5fbaab6bea0b']
+    status: {code: 200, message: Ok}
+- request:
+    body: '{"failoverPolicies": [{"failoverPriority": 0, "locationName": "westus"}]}'
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['73']
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.5.1 (Windows-10-10.0.14393-SP0) requests/2.12.1 msrest/0.4.4
+          msrest_azure/0.4.3 documentdb/0.1.0 Azure-SDK-For-Python]
+      accept-language: [en-US]
+      x-ms-client-request-id: [fc5c2770-b1a6-11e6-95db-ecb1d756380e]
+    method: POST
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_documentdb_test_accounts_features865411c4/providers/Microsoft.DocumentDB/databaseAccounts/pydocdbtest865411c4/failoverPriorityChange?api-version=2015-04-08
+  response:
+    body: {string: '{"code":"BadRequest","message":"Failover priorities must be unique
+        and 0 <= priority < (number of failover policies)\r\nActivityId: fc5c2770-b1a6-11e6-95db-ecb1d756380e"}'}
+    headers:
+      Cache-Control: ['no-store, no-cache']
+      Content-Length: ['170']
+      Content-Type: [application/json]
+      Date: ['Wed, 23 Nov 2016 18:02:24 GMT']
+      Pragma: [no-cache]
+      Server: [Microsoft-HTTPAPI/2.0]
+      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
+      x-ms-correlation-request-id: [e3d1551b-4f77-4c2f-a9fc-d5874a4761cf]
+      x-ms-gatewayversion: [version=1.10.57.4]
+      x-ms-ratelimit-remaining-subscription-writes: ['1198']
+      x-ms-request-id: [e3d1551b-4f77-4c2f-a9fc-d5874a4761cf]
+      x-ms-routing-request-id: ['WESTUS2:20161123T180225Z:e3d1551b-4f77-4c2f-a9fc-d5874a4761cf']
+    status: {code: 400, message: BadRequest}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['0']
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.5.1 (Windows-10-10.0.14393-SP0) requests/2.12.1 msrest/0.4.4
+          msrest_azure/0.4.3 documentdb/0.1.0 Azure-SDK-For-Python]
+      accept-language: [en-US]
+      x-ms-client-request-id: [fd2c4eba-b1a6-11e6-9d56-ecb1d756380e]
+    method: POST
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_documentdb_test_accounts_features865411c4/providers/Microsoft.DocumentDB/databaseAccounts/pydocdbtest865411c4/listKeys?api-version=2015-04-08
+  response:
+    body: {string: '{"primaryMasterKey":"OHDSANhxA0O6MvqOPIjGNOgvTJFdPtvNt24dmWEOXt31hIEVaEHwWj4Ffdmx5gdj1nof1uy1Uei8JNLwaEUGyA==","secondaryMasterKey":"SBq5zZn26sBLnbvIc9LZrLYxun9efw63ug2AP6Prr4utiri8Jpp284unl4pPkZ6pqEjjKe1KDd7MoEnw8FXJjQ==","primaryReadonlyMasterKey":"eSEjl9WWPiE30PIefeOV75wOpnBbnS8c3gnrxwe8reH9s5a3EuR84329Ot2EiGoyFT3OeK91HGlHrJXUesKznw==","secondaryReadonlyMasterKey":"U3UhUDZl56KEdxStkMXi6Sr8uXY4wY83hXNv7w3PkvAVLt8KglgGLq2xy646J3HOv4lK6O2V4woUrDRdhnO5Pg=="}'}
+    headers:
+      Cache-Control: ['no-store, no-cache']
+      Content-Type: [application/json]
+      Date: ['Wed, 23 Nov 2016 18:02:25 GMT']
+      Pragma: [no-cache]
+      Server: [Microsoft-HTTPAPI/2.0]
+      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
+      Transfer-Encoding: [chunked]
+      Vary: [Accept-Encoding]
+      content-length: ['461']
+      x-ms-correlation-request-id: [c76db30a-4f1e-4ef0-8986-d1e41b59e5bf]
+      x-ms-gatewayversion: [version=1.10.57.4]
+      x-ms-ratelimit-remaining-subscription-writes: ['1199']
+      x-ms-request-id: [c76db30a-4f1e-4ef0-8986-d1e41b59e5bf]
+      x-ms-routing-request-id: ['WESTUS2:20161123T180225Z:c76db30a-4f1e-4ef0-8986-d1e41b59e5bf']
+    status: {code: 200, message: Ok}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.5.1 (Windows-10-10.0.14393-SP0) requests/2.12.1 msrest/0.4.4
+          msrest_azure/0.4.3 documentdb/0.1.0 Azure-SDK-For-Python]
+      accept-language: [en-US]
+      x-ms-client-request-id: [fd708038-b1a6-11e6-ac17-ecb1d756380e]
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_documentdb_test_accounts_features865411c4/providers/Microsoft.DocumentDB/databaseAccounts/pydocdbtest865411c4/readonlykeys?api-version=2015-04-08
+  response:
+    body: {string: '{"primaryReadonlyMasterKey":"eSEjl9WWPiE30PIefeOV75wOpnBbnS8c3gnrxwe8reH9s5a3EuR84329Ot2EiGoyFT3OeK91HGlHrJXUesKznw==","secondaryReadonlyMasterKey":"U3UhUDZl56KEdxStkMXi6Sr8uXY4wY83hXNv7w3PkvAVLt8KglgGLq2xy646J3HOv4lK6O2V4woUrDRdhnO5Pg=="}'}
+    headers:
+      Cache-Control: ['no-store, no-cache']
+      Content-Location: ['https://management.documents.azure.com:450/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_documentdb_test_accounts_features865411c4/providers/Microsoft.DocumentDB/databaseAccounts/pydocdbtest865411c4/readonlykeys?api-version=2015-04-08']
+      Content-Type: [application/json]
+      Date: ['Wed, 23 Nov 2016 18:02:25 GMT']
+      Pragma: [no-cache]
+      Server: [Microsoft-HTTPAPI/2.0]
+      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
+      Transfer-Encoding: [chunked]
+      Vary: [Accept-Encoding]
+      content-length: ['239']
+      x-ms-correlation-request-id: [fdd2b4d5-2c76-4abc-818f-78021f22bfdc]
+      x-ms-gatewayversion: [version=1.10.57.4]
+      x-ms-ratelimit-remaining-subscription-reads: ['14981']
+      x-ms-request-id: [fdd2b4d5-2c76-4abc-818f-78021f22bfdc]
+      x-ms-routing-request-id: ['WESTUS2:20161123T180226Z:fdd2b4d5-2c76-4abc-818f-78021f22bfdc']
+    status: {code: 200, message: Ok}
+- request:
+    body: '{"keyKind": "primary"}'
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['22']
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.5.1 (Windows-10-10.0.14393-SP0) requests/2.12.1 msrest/0.4.4
+          msrest_azure/0.4.3 documentdb/0.1.0 Azure-SDK-For-Python]
+      accept-language: [en-US]
+      x-ms-client-request-id: [fdb41b26-b1a6-11e6-9baf-ecb1d756380e]
+    method: POST
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_documentdb_test_accounts_features865411c4/providers/Microsoft.DocumentDB/databaseAccounts/pydocdbtest865411c4/regenerateKey?api-version=2015-04-08
+  response:
+    body: {string: '{"status":"Enqueued","error":{}}'}
+    headers:
+      Cache-Control: ['no-store, no-cache']
+      Content-Length: ['32']
+      Content-Type: [application/json]
+      Date: ['Wed, 23 Nov 2016 18:02:27 GMT']
+      Location: ['https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_documentdb_test_accounts_features865411c4/providers/Microsoft.DocumentDB/databaseAccounts/pydocdbtest865411c4/regenerateKey/operationResults/72ba37ea-a43d-48be-bb19-a006027a538c?api-version=2015-04-08']
+      Pragma: [no-cache]
+      Server: [Microsoft-HTTPAPI/2.0]
+      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
+      x-ms-correlation-request-id: [0733f5d6-b9d8-4b55-a75d-0b6aed007c69]
+      x-ms-gatewayversion: [version=1.10.57.4]
+      x-ms-ratelimit-remaining-subscription-writes: ['1199']
+      x-ms-request-id: [72ba37ea-a43d-48be-bb19-a006027a538c]
+      x-ms-routing-request-id: ['WESTUS2:20161123T180227Z:0733f5d6-b9d8-4b55-a75d-0b6aed007c69']
+    status: {code: 202, message: Accepted}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.5.1 (Windows-10-10.0.14393-SP0) requests/2.12.1 msrest/0.4.4
+          msrest_azure/0.4.3 documentdb/0.1.0 Azure-SDK-For-Python]
+      accept-language: [en-US]
+      x-ms-client-request-id: [46c83080-b1a6-11e6-b629-ecb1d756380e]
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_documentdb_test_accounts_features865411c4/providers/Microsoft.DocumentDB/databaseAccounts/pydocdbtest865411c4/operationResults/8edfb3b1-2890-433f-ad0e-aa292b8040a7?api-version=2015-04-08
+  response:
+    body: {string: '{"status":"Completed","error":{}}'}
+    headers:
+      Cache-Control: ['no-store, no-cache']
+      Content-Location: ['https://management.documents.azure.com:450/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_documentdb_test_accounts_features865411c4/providers/Microsoft.DocumentDB/databaseAccounts/pydocdbtest865411c4/operationResults/8edfb3b1-2890-433f-ad0e-aa292b8040a7?api-version=2015-04-08']
+      Content-Type: [application/json]
+      Date: ['Wed, 23 Nov 2016 18:02:54 GMT']
+      Pragma: [no-cache]
+      Server: [Microsoft-HTTPAPI/2.0]
+      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
+      Transfer-Encoding: [chunked]
+      Vary: [Accept-Encoding]
+      content-length: ['33']
+      x-ms-correlation-request-id: [209db253-2346-47b3-a473-5126ea52b236]
+      x-ms-gatewayversion: [version=1.10.57.4]
+      x-ms-ratelimit-remaining-subscription-reads: ['14993']
+      x-ms-request-id: [209db253-2346-47b3-a473-5126ea52b236]
+      x-ms-routing-request-id: ['CENTRALUS:20161123T180255Z:209db253-2346-47b3-a473-5126ea52b236']
+    status: {code: 200, message: Ok}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.5.1 (Windows-10-10.0.14393-SP0) requests/2.12.1 msrest/0.4.4
+          msrest_azure/0.4.3 documentdb/0.1.0 Azure-SDK-For-Python]
+      accept-language: [en-US]
+      x-ms-client-request-id: [fdb41b26-b1a6-11e6-9baf-ecb1d756380e]
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_documentdb_test_accounts_features865411c4/providers/Microsoft.DocumentDB/databaseAccounts/pydocdbtest865411c4/regenerateKey/operationResults/72ba37ea-a43d-48be-bb19-a006027a538c?api-version=2015-04-08
+  response:
+    body: {string: '{"status":"Dequeued","error":{}}'}
+    headers:
+      Cache-Control: ['no-store, no-cache']
+      Content-Length: ['32']
+      Content-Location: ['https://management.documents.azure.com:450/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_documentdb_test_accounts_features865411c4/providers/Microsoft.DocumentDB/databaseAccounts/pydocdbtest865411c4/regenerateKey/operationResults/72ba37ea-a43d-48be-bb19-a006027a538c?api-version=2015-04-08']
+      Content-Type: [application/json]
+      Date: ['Wed, 23 Nov 2016 18:02:57 GMT']
+      Location: ['https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_documentdb_test_accounts_features865411c4/providers/Microsoft.DocumentDB/databaseAccounts/pydocdbtest865411c4/regenerateKey/operationResults/72ba37ea-a43d-48be-bb19-a006027a538c?api-version=2015-04-08']
+      Pragma: [no-cache]
+      Server: [Microsoft-HTTPAPI/2.0]
+      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
+      x-ms-correlation-request-id: [6b2c0c1b-0bcd-45a1-95eb-21e098c5eb7d]
+      x-ms-gatewayversion: [version=1.10.57.4]
+      x-ms-ratelimit-remaining-subscription-reads: ['14998']
+      x-ms-request-id: [72ba37ea-a43d-48be-bb19-a006027a538c]
+      x-ms-routing-request-id: ['CENTRALUS:20161123T180258Z:6b2c0c1b-0bcd-45a1-95eb-21e098c5eb7d']
+    status: {code: 202, message: Accepted}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.5.1 (Windows-10-10.0.14393-SP0) requests/2.12.1 msrest/0.4.4
+          msrest_azure/0.4.3 documentdb/0.1.0 Azure-SDK-For-Python]
+      accept-language: [en-US]
+      x-ms-client-request-id: [46c83080-b1a6-11e6-b629-ecb1d756380e]
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_documentdb_test_accounts_features865411c4/providers/Microsoft.DocumentDB/databaseAccounts/pydocdbtest865411c4/operationResults/8edfb3b1-2890-433f-ad0e-aa292b8040a7?api-version=2015-04-08
+  response:
+    body: {string: '{"status":"Completed","error":{}}'}
+    headers:
+      Cache-Control: ['no-store, no-cache']
+      Content-Location: ['https://management.documents.azure.com:450/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_documentdb_test_accounts_features865411c4/providers/Microsoft.DocumentDB/databaseAccounts/pydocdbtest865411c4/operationResults/8edfb3b1-2890-433f-ad0e-aa292b8040a7?api-version=2015-04-08']
+      Content-Type: [application/json]
+      Date: ['Wed, 23 Nov 2016 18:03:25 GMT']
+      Pragma: [no-cache]
+      Server: [Microsoft-HTTPAPI/2.0]
+      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
+      Transfer-Encoding: [chunked]
+      Vary: [Accept-Encoding]
+      content-length: ['33']
+      x-ms-correlation-request-id: [30b8beaf-d308-4948-8ee7-2610e04a44b9]
+      x-ms-gatewayversion: [version=1.10.57.4]
+      x-ms-ratelimit-remaining-subscription-reads: ['14991']
+      x-ms-request-id: [30b8beaf-d308-4948-8ee7-2610e04a44b9]
+      x-ms-routing-request-id: ['WESTUS2:20161123T180325Z:30b8beaf-d308-4948-8ee7-2610e04a44b9']
+    status: {code: 200, message: Ok}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.5.1 (Windows-10-10.0.14393-SP0) requests/2.12.1 msrest/0.4.4
+          msrest_azure/0.4.3 documentdb/0.1.0 Azure-SDK-For-Python]
+      accept-language: [en-US]
+      x-ms-client-request-id: [fdb41b26-b1a6-11e6-9baf-ecb1d756380e]
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_documentdb_test_accounts_features865411c4/providers/Microsoft.DocumentDB/databaseAccounts/pydocdbtest865411c4/regenerateKey/operationResults/72ba37ea-a43d-48be-bb19-a006027a538c?api-version=2015-04-08
+  response:
+    body: {string: '{"primaryMasterKey":"TAU79i6fRq56UGGoFfLag0KvI3YqJHo2kSqRiFQGlu0h3t5r2aRzgEkWsUGKvwC8ZbytOoQkPdDYUPU2IN3xYw==","secondaryMasterKey":"SBq5zZn26sBLnbvIc9LZrLYxun9efw63ug2AP6Prr4utiri8Jpp284unl4pPkZ6pqEjjKe1KDd7MoEnw8FXJjQ==","primaryReadonlyMasterKey":"eSEjl9WWPiE30PIefeOV75wOpnBbnS8c3gnrxwe8reH9s5a3EuR84329Ot2EiGoyFT3OeK91HGlHrJXUesKznw==","secondaryReadonlyMasterKey":"U3UhUDZl56KEdxStkMXi6Sr8uXY4wY83hXNv7w3PkvAVLt8KglgGLq2xy646J3HOv4lK6O2V4woUrDRdhnO5Pg=="}'}
+    headers:
+      Cache-Control: ['no-store, no-cache']
+      Content-Location: ['https://management.documents.azure.com:450/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_documentdb_test_accounts_features865411c4/providers/Microsoft.DocumentDB/databaseAccounts/pydocdbtest865411c4/regenerateKey/operationResults/72ba37ea-a43d-48be-bb19-a006027a538c?api-version=2015-04-08']
+      Content-Type: [application/json]
+      Date: ['Wed, 23 Nov 2016 18:03:28 GMT']
+      Pragma: [no-cache]
+      Server: [Microsoft-HTTPAPI/2.0]
+      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
+      Transfer-Encoding: [chunked]
+      Vary: [Accept-Encoding]
+      content-length: ['461']
+      x-ms-correlation-request-id: [464587dc-5d98-4262-af2a-61455dd3a7ff]
+      x-ms-gatewayversion: [version=1.10.57.4]
+      x-ms-ratelimit-remaining-subscription-reads: ['14991']
+      x-ms-request-id: [464587dc-5d98-4262-af2a-61455dd3a7ff]
+      x-ms-routing-request-id: ['WESTUS2:20161123T180328Z:464587dc-5d98-4262-af2a-61455dd3a7ff']
+    status: {code: 200, message: Ok}
+version: 1
