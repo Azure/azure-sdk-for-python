@@ -1492,6 +1492,7 @@
     <Compile Include="azure-mgmt\tests\test_mgmt_datalake_store.py" />
     <Compile Include="azure-mgmt\tests\test_mgmt_devtestlabs.py" />
     <Compile Include="azure-mgmt\tests\test_mgmt_dns.py" />
+    <Compile Include="azure-mgmt\tests\test_mgmt_documentdb.py" />
     <Compile Include="azure-mgmt\tests\test_mgmt_intune.py" />
     <Compile Include="azure-mgmt\tests\test_mgmt_iothub.py" />
     <Compile Include="azure-mgmt\tests\test_mgmt_keyvault.py" />
