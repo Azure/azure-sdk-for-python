@@ -13,53 +13,63 @@ from msrest.serialization import Model
 
 
 class JobResponse(Model):
-    """The properties describing a Job Response.
+    """The properties of the Job Response object.
 
-    :param job_id: The job identifier.
-    :type job_id: str
-    :param start_time_utc: Start time of the Job.
-    :type start_time_utc: datetime
-    :param end_time_utc: Represents the time the job stopped processing.
-    :type end_time_utc: datetime
-    :param type: The type of job to execute. Possible values include:
-     'unknown', 'export', 'import', 'backup', 'readDeviceProperties',
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar job_id: The job identifier.
+    :vartype job_id: str
+    :ivar start_time_utc: The start time of the Job.
+    :vartype start_time_utc: datetime
+    :ivar end_time_utc: The time the job stopped processing.
+    :vartype end_time_utc: datetime
+    :ivar type: The type of the job. Possible values include: 'unknown',
+     'export', 'import', 'backup', 'readDeviceProperties',
      'writeDeviceProperties', 'updateDeviceConfiguration', 'rebootDevice',
      'factoryResetDevice', 'firmwareUpdate'
-    :type type: str or :class:`JobType <azure.mgmt.iothub.models.JobType>`
-    :param status: Status of the Job. Possible values include: 'unknown',
+    :vartype type: str or :class:`JobType <azure.mgmt.iothub.models.JobType>`
+    :ivar status: The status of the job. Possible values include: 'unknown',
      'enqueued', 'running', 'completed', 'failed', 'cancelled'
-    :type status: str or :class:`JobStatus
+    :vartype status: str or :class:`JobStatus
      <azure.mgmt.iothub.models.JobStatus>`
-    :param failure_reason: If status == failure, this represents a string
-     containing the reason.
-    :type failure_reason: str
-    :param status_message: The status message for the job.
-    :type status_message: str
-    :param device_id: The deviceId related to this response.
-    :type device_id: str
-    :param parent_job_id: The jobId of the parent job, if any.
-    :type parent_job_id: str
-    """ 
+    :ivar failure_reason: If status == failed, this string containing the
+     reason for the failure.
+    :vartype failure_reason: str
+    :ivar status_message: The status message for the job.
+    :vartype status_message: str
+    :ivar parent_job_id: The job identifier of the parent job, if any.
+    :vartype parent_job_id: str
+    """
+
+    _validation = {
+        'job_id': {'readonly': True},
+        'start_time_utc': {'readonly': True},
+        'end_time_utc': {'readonly': True},
+        'type': {'readonly': True},
+        'status': {'readonly': True},
+        'failure_reason': {'readonly': True},
+        'status_message': {'readonly': True},
+        'parent_job_id': {'readonly': True},
+    }
 
     _attribute_map = {
         'job_id': {'key': 'jobId', 'type': 'str'},
-        'start_time_utc': {'key': 'startTimeUtc', 'type': 'iso-8601'},
-        'end_time_utc': {'key': 'endTimeUtc', 'type': 'iso-8601'},
+        'start_time_utc': {'key': 'startTimeUtc', 'type': 'rfc-1123'},
+        'end_time_utc': {'key': 'endTimeUtc', 'type': 'rfc-1123'},
         'type': {'key': 'type', 'type': 'str'},
         'status': {'key': 'status', 'type': 'JobStatus'},
         'failure_reason': {'key': 'failureReason', 'type': 'str'},
         'status_message': {'key': 'statusMessage', 'type': 'str'},
-        'device_id': {'key': 'deviceId', 'type': 'str'},
         'parent_job_id': {'key': 'parentJobId', 'type': 'str'},
     }
 
-    def __init__(self, job_id=None, start_time_utc=None, end_time_utc=None, type=None, status=None, failure_reason=None, status_message=None, device_id=None, parent_job_id=None):
-        self.job_id = job_id
-        self.start_time_utc = start_time_utc
-        self.end_time_utc = end_time_utc
-        self.type = type
-        self.status = status
-        self.failure_reason = failure_reason
-        self.status_message = status_message
-        self.device_id = device_id
-        self.parent_job_id = parent_job_id
+    def __init__(self):
+        self.job_id = None
+        self.start_time_utc = None
+        self.end_time_utc = None
+        self.type = None
+        self.status = None
+        self.failure_reason = None
+        self.status_message = None
+        self.parent_job_id = None

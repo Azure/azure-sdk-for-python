@@ -13,15 +13,15 @@ from msrest.serialization import Model
 
 
 class ExportDevicesRequest(Model):
-    """Used to provide parameters when requesting an export of all devices in the
-    hub.
+    """Use to provide parameters when requesting an export of all devices in the
+    IoT hub.
 
-    :param export_blob_container_uri: The export BLOB container URI.
+    :param export_blob_container_uri: The export blob container URI.
     :type export_blob_container_uri: str
     :param exclude_keys: The value indicating whether keys should be excluded
      during export.
     :type exclude_keys: bool
-    """ 
+    """
 
     _validation = {
         'export_blob_container_uri': {'required': True},

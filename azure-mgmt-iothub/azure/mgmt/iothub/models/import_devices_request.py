@@ -13,14 +13,14 @@ from msrest.serialization import Model
 
 
 class ImportDevicesRequest(Model):
-    """Used to provide parameters when requesting an import of all devices in the
+    """Use to provide parameters when requesting an import of all devices in the
     hub.
 
-    :param input_blob_container_uri: The input BLOB container URI.
+    :param input_blob_container_uri: The input blob container URI.
     :type input_blob_container_uri: str
-    :param output_blob_container_uri: The output BLOB container URI.
+    :param output_blob_container_uri: The output blob container URI.
     :type output_blob_container_uri: str
-    """ 
+    """
 
     _validation = {
         'input_blob_container_uri': {'required': True},

@@ -10,15 +10,14 @@
 # --------------------------------------------------------------------------
 
 from .shared_access_signature_authorization_rule import SharedAccessSignatureAuthorizationRule
-from .iot_hub_properties import IotHubProperties
 from .ip_filter_rule import IpFilterRule
 from .event_hub_properties import EventHubProperties
-from .shared_access_authorization_rule import SharedAccessAuthorizationRule
 from .storage_endpoint_properties import StorageEndpointProperties
 from .messaging_endpoint_properties import MessagingEndpointProperties
-from .cloud_to_device_properties import CloudToDeviceProperties
 from .feedback_properties import FeedbackProperties
+from .cloud_to_device_properties import CloudToDeviceProperties
 from .operations_monitoring_properties import OperationsMonitoringProperties
+from .iot_hub_properties import IotHubProperties
 from .iot_hub_sku_info import IotHubSkuInfo
 from .iot_hub_description import IotHubDescription
 from .resource import Resource
@@ -26,8 +25,8 @@ from .error_details import ErrorDetails, ErrorDetailsException
 from .iot_hub_quota_metric_info import IotHubQuotaMetricInfo
 from .registry_statistics import RegistryStatistics
 from .job_response import JobResponse
-from .iot_hub_sku_description import IotHubSkuDescription
 from .iot_hub_capacity import IotHubCapacity
+from .iot_hub_sku_description import IotHubSkuDescription
 from .event_hub_consumer_group_info import EventHubConsumerGroupInfo
 from .operation_inputs import OperationInputs
 from .iot_hub_name_availability_info import IotHubNameAvailabilityInfo
@@ -35,14 +34,13 @@ from .export_devices_request import ExportDevicesRequest
 from .import_devices_request import ImportDevicesRequest
 from .iot_hub_description_paged import IotHubDescriptionPaged
 from .iot_hub_sku_description_paged import IotHubSkuDescriptionPaged
-from .str_paged import strPaged
+from .str_paged import StrPaged
 from .job_response_paged import JobResponsePaged
 from .iot_hub_quota_metric_info_paged import IotHubQuotaMetricInfoPaged
 from .shared_access_signature_authorization_rule_paged import SharedAccessSignatureAuthorizationRulePaged
 from .iot_hub_client_enums import (
     AccessRights,
     IpFilterActionType,
-    SBAccessRights,
     OperationMonitoringLevel,
     Capabilities,
     IotHubSku,
@@ -55,15 +53,14 @@ from .iot_hub_client_enums import (
 
 __all__ = [
     'SharedAccessSignatureAuthorizationRule',
-    'IotHubProperties',
     'IpFilterRule',
     'EventHubProperties',
-    'SharedAccessAuthorizationRule',
     'StorageEndpointProperties',
     'MessagingEndpointProperties',
-    'CloudToDeviceProperties',
     'FeedbackProperties',
+    'CloudToDeviceProperties',
     'OperationsMonitoringProperties',
+    'IotHubProperties',
     'IotHubSkuInfo',
     'IotHubDescription',
     'Resource',
@@ -71,8 +68,8 @@ __all__ = [
     'IotHubQuotaMetricInfo',
     'RegistryStatistics',
     'JobResponse',
-    'IotHubSkuDescription',
     'IotHubCapacity',
+    'IotHubSkuDescription',
     'EventHubConsumerGroupInfo',
     'OperationInputs',
     'IotHubNameAvailabilityInfo',
@@ -80,13 +77,12 @@ __all__ = [
     'ImportDevicesRequest',
     'IotHubDescriptionPaged',
     'IotHubSkuDescriptionPaged',
-    'strPaged',
+    'StrPaged',
     'JobResponsePaged',
     'IotHubQuotaMetricInfoPaged',
     'SharedAccessSignatureAuthorizationRulePaged',
     'AccessRights',
     'IpFilterActionType',
-    'SBAccessRights',
     'OperationMonitoringLevel',
     'Capabilities',
     'IotHubSku',
