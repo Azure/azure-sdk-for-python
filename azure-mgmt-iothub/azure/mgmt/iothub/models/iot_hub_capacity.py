@@ -13,22 +13,28 @@ from msrest.serialization import Model
 
 
 class IotHubCapacity(Model):
-    """The properties related to the capacity information.
+    """IoT Hub capacity information.
 
-    :param minimum: The minimum number of units.
-    :type minimum: long
-    :param maximum: The maximum number of units.
-    :type maximum: long
-    :param default: The default number of units.
-    :type default: long
-    :param scale_type: The type of the scale. Possible values include:
-     'Automatic', 'Manual', 'None'
-    :type scale_type: str or :class:`IotHubScaleType
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar minimum: The minimum number of units.
+    :vartype minimum: long
+    :ivar maximum: The maximum number of units.
+    :vartype maximum: long
+    :ivar default: The default number of units.
+    :vartype default: long
+    :ivar scale_type: The type of the scaling enabled. Possible values
+     include: 'Automatic', 'Manual', 'None'
+    :vartype scale_type: str or :class:`IotHubScaleType
      <azure.mgmt.iothub.models.IotHubScaleType>`
-    """ 
+    """
 
     _validation = {
-        'minimum': {'maximum': 1, 'minimum': 1},
+        'minimum': {'readonly': True, 'maximum': 1, 'minimum': 1},
+        'maximum': {'readonly': True},
+        'default': {'readonly': True},
+        'scale_type': {'readonly': True},
     }
 
     _attribute_map = {
@@ -38,8 +44,8 @@ class IotHubCapacity(Model):
         'scale_type': {'key': 'scaleType', 'type': 'IotHubScaleType'},
     }
 
-    def __init__(self, minimum=None, maximum=None, default=None, scale_type=None):
-        self.minimum = minimum
-        self.maximum = maximum
-        self.default = default
-        self.scale_type = scale_type
+    def __init__(self):
+        self.minimum = None
+        self.maximum = None
+        self.default = None
+        self.scale_type = None

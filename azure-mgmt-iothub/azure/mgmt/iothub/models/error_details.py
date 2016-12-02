@@ -14,23 +14,26 @@ from msrest.exceptions import HttpOperationError
 
 
 class ErrorDetails(Model):
-    """The properties related to the details of an error.
+    """Error details.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :param code: The error code.
-    :type code: str
-    :ivar http_status_code: The http status code.
+    :ivar code: The error code.
+    :vartype code: str
+    :ivar http_status_code: The HTTP status code.
     :vartype http_status_code: str
-    :param message: The error message.
-    :type message: str
-    :param details: The error details.
-    :type details: str
-    """ 
+    :ivar message: The error message.
+    :vartype message: str
+    :ivar details: The error details.
+    :vartype details: str
+    """
 
     _validation = {
+        'code': {'readonly': True},
         'http_status_code': {'readonly': True},
+        'message': {'readonly': True},
+        'details': {'readonly': True},
     }
 
     _attribute_map = {
@@ -40,11 +43,11 @@ class ErrorDetails(Model):
         'details': {'key': 'Details', 'type': 'str'},
     }
 
-    def __init__(self, code=None, message=None, details=None):
-        self.code = code
+    def __init__(self):
+        self.code = None
         self.http_status_code = None
-        self.message = message
-        self.details = details
+        self.message = None
+        self.details = None
 
 
 class ErrorDetailsException(HttpOperationError):
