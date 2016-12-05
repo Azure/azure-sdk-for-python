@@ -240,8 +240,8 @@ class FirewallRulesOperations(object):
 
     def list_by_account(
             self, resource_group_name, account_name, custom_headers=None, raw=False, **operation_config):
-        """Lists the Data Lake Store firewall rules within the specified Data
-        Lake Store account.
+        """Lists the Data Lake Store firewall rules within the specified Data Lake
+        Store account.
 
         :param resource_group_name: The name of the Azure resource group that
          contains the Data Lake Store account.

@@ -73,7 +73,7 @@ class DataLakeAnalyticsAccount(Resource):
     :vartype last_modified_time: datetime
     :ivar endpoint: the full CName endpoint for this account.
     :vartype endpoint: str
-    """ 
+    """
 
     _validation = {
         'id': {'readonly': True},

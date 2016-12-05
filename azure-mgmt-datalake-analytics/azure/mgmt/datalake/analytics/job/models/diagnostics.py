@@ -32,7 +32,7 @@ class Diagnostics(Model):
      <azure.mgmt.datalake.analytics.job.models.SeverityTypes>`
     :ivar start: the starting index of the error.
     :vartype start: int
-    """ 
+    """
 
     _validation = {
         'column_number': {'readonly': True},

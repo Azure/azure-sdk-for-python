@@ -189,7 +189,9 @@ class DataLakeStoreAccountsOperations(object):
          if raw=true
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
-        parameters = models.AddDataLakeStoreParameters(suffix=suffix)
+        parameters = None
+        if suffix is not None:
+            parameters = models.AddDataLakeStoreParameters(suffix=suffix)
 
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataLakeAnalytics/accounts/{accountName}/DataLakeStoreAccounts/{dataLakeStoreAccountName}'
@@ -216,7 +218,10 @@ class DataLakeStoreAccountsOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct body
-        body_content = self._serialize.body(parameters, 'AddDataLakeStoreParameters')
+        if parameters is not None:
+            body_content = self._serialize.body(parameters, 'AddDataLakeStoreParameters')
+        else:
+            body_content = None
 
         # Construct and send request
         request = self._client.put(url, query_parameters)

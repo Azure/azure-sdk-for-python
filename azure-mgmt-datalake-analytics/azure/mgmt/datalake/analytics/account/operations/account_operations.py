@@ -375,7 +375,7 @@ class AccountOperations(object):
             get_long_running_status, long_running_operation_timeout)
 
     def create(
-            self, resource_group_name, name, parameters, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, account_name, parameters, custom_headers=None, raw=False, **operation_config):
         """Creates the specified Data Lake Analytics account. This supplies the
         user with computation services for Data Lake Analytics workloads.
 
@@ -383,8 +383,9 @@ class AccountOperations(object):
          contains the Data Lake Analytics account.the account will be
          associated with.
         :type resource_group_name: str
-        :param name: The name of the Data Lake Analytics account to create.
-        :type name: str
+        :param account_name: The name of the Data Lake Analytics account to
+         create.
+        :type account_name: str
         :param parameters: Parameters supplied to the create Data Lake
          Analytics account operation.
         :type parameters: :class:`DataLakeAnalyticsAccount
@@ -401,10 +402,10 @@ class AccountOperations(object):
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataLakeAnalytics/accounts/{name}'
+        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataLakeAnalytics/accounts/{accountName}'
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            'name': self._serialize.url("name", name, 'str'),
+            'accountName': self._serialize.url("account_name", account_name, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -473,15 +474,16 @@ class AccountOperations(object):
             get_long_running_status, long_running_operation_timeout)
 
     def update(
-            self, resource_group_name, name, parameters=None, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, account_name, parameters=None, custom_headers=None, raw=False, **operation_config):
         """Updates the Data Lake Analytics account object specified by the
         accountName with the contents of the account object.
 
         :param resource_group_name: The name of the Azure resource group that
          contains the Data Lake Analytics account.
         :type resource_group_name: str
-        :param name: The name of the Data Lake Analytics account to update.
-        :type name: str
+        :param account_name: The name of the Data Lake Analytics account to
+         update.
+        :type account_name: str
         :param parameters: Parameters supplied to the update Data Lake
          Analytics account operation.
         :type parameters: :class:`DataLakeAnalyticsAccountUpdateParameters
@@ -498,10 +500,10 @@ class AccountOperations(object):
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataLakeAnalytics/accounts/{name}'
+        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataLakeAnalytics/accounts/{accountName}'
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            'name': self._serialize.url("name", name, 'str'),
+            'accountName': self._serialize.url("account_name", account_name, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)

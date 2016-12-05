@@ -116,8 +116,8 @@ class TrustedIdProvidersOperations(object):
 
     def delete(
             self, resource_group_name, account_name, trusted_id_provider_name, custom_headers=None, raw=False, **operation_config):
-        """Deletes the specified trusted identity provider from the specified
-        Data Lake Store account.
+        """Deletes the specified trusted identity provider from the specified Data
+        Lake Store account.
 
         :param resource_group_name: The name of the Azure resource group that
          contains the Data Lake Store account.

@@ -31,8 +31,8 @@ class JobInnerError(Model):
     :ivar error_id: the specific identifier for the type of error encountered
      in the job.
     :vartype error_id: str
-    :ivar help_link: the link to MSDN or Azure help for this type of error,
-     if any.
+    :ivar help_link: the link to MSDN or Azure help for this type of error, if
+     any.
     :vartype help_link: str
     :ivar internal_diagnostics: the internal diagnostic stack trace if the
      user requesting the job error details has sufficient permissions it will
@@ -42,12 +42,12 @@ class JobInnerError(Model):
     :vartype message: str
     :ivar resolution: the recommended resolution for the failure, if any.
     :vartype resolution: str
-    :ivar source: the ultimate source of the failure (usually either SYSTEM
-     or USER).
+    :ivar source: the ultimate source of the failure (usually either SYSTEM or
+     USER).
     :vartype source: str
     :ivar description: the error message description
     :vartype description: str
-    """ 
+    """
 
     _validation = {
         'diagnostic_code': {'readonly': True},

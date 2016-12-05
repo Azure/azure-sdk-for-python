@@ -140,7 +140,7 @@ class JobOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct and send request
-        request = self._client.post(url, query_parameters)
+        request = self._client.get(url, query_parameters)
         response = self._client.send(request, header_parameters, **operation_config)
 
         if response.status_code not in [200]:
@@ -440,9 +440,9 @@ class JobOperations(object):
          on the order you'd like the values sorted, e.g.
          Categories?$orderby=CategoryName desc. Optional.
         :type orderby: str
-        :param count: The Boolean value of true or false to request a count
-         of the matching resources included with the resources in the
-         response, e.g. Categories?$count=true. Optional.
+        :param count: The Boolean value of true or false to request a count of
+         the matching resources included with the resources in the response,
+         e.g. Categories?$count=true. Optional.
         :type count: bool
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the

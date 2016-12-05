@@ -33,7 +33,7 @@ class DataLakeStoreAccountUpdateParameters(Model):
     :param default_group: the default owner group for all new folders and
      files created in the Data Lake Store account.
     :type default_group: str
-    """ 
+    """
 
     _attribute_map = {
         'tags': {'key': 'tags', 'type': '{str}'},
