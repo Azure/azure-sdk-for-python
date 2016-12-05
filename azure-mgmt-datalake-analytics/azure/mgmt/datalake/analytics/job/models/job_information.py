@@ -32,8 +32,8 @@ class JobInformation(Model):
      failed.
     :vartype error_message: list of :class:`JobErrorDetails
      <azure.mgmt.datalake.analytics.job.models.JobErrorDetails>`
-    :param degree_of_parallelism: the degree of parallelism used for this
-     job. This must be greater than 0. Default value: 1 .
+    :param degree_of_parallelism: the degree of parallelism used for this job.
+     This must be greater than 0. Default value: 1 .
     :type degree_of_parallelism: int
     :param priority: the priority value for the current job. Lower numbers
      have a higher priority. By default, a job has a priority of 1000. This
@@ -46,9 +46,9 @@ class JobInformation(Model):
     :ivar end_time: the completion time of the job.
     :vartype end_time: datetime
     :ivar state: the job state. When the job is in the Ended state, refer to
-     Result and ErrorMessage for details. Possible values include:
-     'Accepted', 'Compiling', 'Ended', 'New', 'Queued', 'Running',
-     'Scheduling', 'Starting', 'Paused', 'WaitingForCapacity'
+     Result and ErrorMessage for details. Possible values include: 'Accepted',
+     'Compiling', 'Ended', 'New', 'Queued', 'Running', 'Scheduling',
+     'Starting', 'Paused', 'WaitingForCapacity'
     :vartype state: str or :class:`JobState
      <azure.mgmt.datalake.analytics.job.models.JobState>`
     :ivar result: the result of job execution or the current result of the
@@ -60,8 +60,8 @@ class JobInformation(Model):
      adl://<accountName>.azuredatalakestore.net/system/jobservice/jobs/Usql/2016/03/13/17/18/5fe51957-93bc-4de0-8ddc-c5a4753b068b/logs/.
     :vartype log_folder: str
     :param log_file_patterns: the list of log file name patterns to find in
-     the logFolder. '*' is the only matching character allowed. Example
-     format: jobExecution*.log or *mylog*.txt
+     the logFolder. '*' is the only matching character allowed. Example format:
+     jobExecution*.log or *mylog*.txt
     :type log_file_patterns: list of str
     :ivar state_audit_records: the job state audit records, indicating when
      various operations have been performed on this job.
@@ -70,7 +70,7 @@ class JobInformation(Model):
     :param properties: the job specific properties.
     :type properties: :class:`JobProperties
      <azure.mgmt.datalake.analytics.job.models.JobProperties>`
-    """ 
+    """
 
     _validation = {
         'job_id': {'readonly': True},

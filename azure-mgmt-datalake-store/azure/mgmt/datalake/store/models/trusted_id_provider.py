@@ -26,7 +26,7 @@ class TrustedIdProvider(SubResource):
     :vartype type: str
     :param id_provider: The URL of this trusted identity provider
     :type id_provider: str
-    """ 
+    """
 
     _validation = {
         'id': {'readonly': True},

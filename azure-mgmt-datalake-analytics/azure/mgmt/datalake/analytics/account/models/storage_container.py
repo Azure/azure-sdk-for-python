@@ -26,7 +26,7 @@ class StorageContainer(Model):
     :vartype type: str
     :ivar last_modified_time: the last modified time of the blob container.
     :vartype last_modified_time: datetime
-    """ 
+    """
 
     _validation = {
         'name': {'readonly': True},

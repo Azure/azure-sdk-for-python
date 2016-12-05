@@ -15,15 +15,15 @@ from msrest.serialization import Model
 class KeyVaultMetaInfo(Model):
     """Metadata information used by account encryption.
 
-    :param key_vault_resource_id: The resource identifier for the user
-     managed Key Vault being used to encrypt.
+    :param key_vault_resource_id: The resource identifier for the user managed
+     Key Vault being used to encrypt.
     :type key_vault_resource_id: str
     :param encryption_key_name: The name of the user managed encryption key.
     :type encryption_key_name: str
     :param encryption_key_version: The version of the user managed encryption
      key.
     :type encryption_key_version: str
-    """ 
+    """
 
     _validation = {
         'key_vault_resource_id': {'required': True},

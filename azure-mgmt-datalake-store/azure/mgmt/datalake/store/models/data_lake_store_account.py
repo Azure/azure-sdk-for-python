@@ -33,8 +33,8 @@ class DataLakeStoreAccount(Resource):
      <azure.mgmt.datalake.store.models.EncryptionIdentity>`
     :ivar provisioning_state: the status of the Data Lake Store account while
      being provisioned. Possible values include: 'Failed', 'Creating',
-     'Running', 'Succeeded', 'Patching', 'Suspending', 'Resuming',
-     'Deleting', 'Deleted'
+     'Running', 'Succeeded', 'Patching', 'Suspending', 'Resuming', 'Deleting',
+     'Deleted'
     :vartype provisioning_state: str or :class:`DataLakeStoreAccountStatus
      <azure.mgmt.datalake.store.models.DataLakeStoreAccountStatus>`
     :ivar state: the status of the Data Lake Store account after provisioning
@@ -81,7 +81,7 @@ class DataLakeStoreAccount(Resource):
     :param default_group: the default owner group for all new folders and
      files created in the Data Lake Store account.
     :type default_group: str
-    """ 
+    """
 
     _validation = {
         'id': {'readonly': True},

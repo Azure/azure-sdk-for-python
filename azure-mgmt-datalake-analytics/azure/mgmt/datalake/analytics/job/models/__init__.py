@@ -14,12 +14,12 @@ from .job_statistics import JobStatistics
 from .job_data_path import JobDataPath
 from .job_state_audit_record import JobStateAuditRecord
 from .job_resource import JobResource
-from .usql_job_properties import USqlJobProperties
 from .diagnostics import Diagnostics
+from .usql_job_properties import USqlJobProperties
 from .hive_job_properties import HiveJobProperties
 from .job_properties import JobProperties
-from .job_error_details import JobErrorDetails
 from .job_inner_error import JobInnerError
+from .job_error_details import JobErrorDetails
 from .job_information import JobInformation
 from .job_information_paged import JobInformationPaged
 from .data_lake_analytics_job_management_client_enums import (
@@ -37,12 +37,12 @@ __all__ = [
     'JobDataPath',
     'JobStateAuditRecord',
     'JobResource',
-    'USqlJobProperties',
     'Diagnostics',
+    'USqlJobProperties',
     'HiveJobProperties',
     'JobProperties',
-    'JobErrorDetails',
     'JobInnerError',
+    'JobErrorDetails',
     'JobInformation',
     'JobInformationPaged',
     'JobResourceType',
