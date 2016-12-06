@@ -45,7 +45,7 @@ class EventHubResource(Resource):
      <azure.mgmt.eventhub.models.EntityStatus>`
     :param updated_at: The exact time the message was updated.
     :type updated_at: datetime
-    """ 
+    """
 
     _validation = {
         'id': {'readonly': True},

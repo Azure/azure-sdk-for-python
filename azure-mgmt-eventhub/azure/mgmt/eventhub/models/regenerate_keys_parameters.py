@@ -19,7 +19,7 @@ class RegenerateKeysParameters(Model):
      include: 'PrimaryKey', 'SecondaryKey'
     :type policykey: str or :class:`Policykey
      <azure.mgmt.eventhub.models.Policykey>`
-    """ 
+    """
 
     _attribute_map = {
         'policykey': {'key': 'Policykey', 'type': 'Policykey'},

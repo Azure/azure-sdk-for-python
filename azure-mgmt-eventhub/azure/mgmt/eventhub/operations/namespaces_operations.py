@@ -166,8 +166,8 @@ class NamespacesOperations(object):
 
     def create_or_update(
             self, resource_group_name, namespace_name, parameters, custom_headers=None, raw=False, **operation_config):
-        """Creates or updates a namespace. Once created, this namespace's
-        resource manifest is immutable. This operation is idempotent.
+        """Creates or updates a namespace. Once created, this namespace's resource
+        manifest is immutable. This operation is idempotent.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str

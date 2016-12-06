@@ -36,7 +36,7 @@ class ConsumerGroupResource(Resource):
     :type updated_at: datetime
     :param user_metadata: The user metadata.
     :type user_metadata: str
-    """ 
+    """
 
     _validation = {
         'id': {'readonly': True},
