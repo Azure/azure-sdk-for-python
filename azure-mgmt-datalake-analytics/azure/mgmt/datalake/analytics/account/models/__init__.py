@@ -10,7 +10,6 @@
 # --------------------------------------------------------------------------
 
 from .storage_account_info import StorageAccountInfo
-from .create_storage_account_info import CreateStorageAccountInfo
 from .storage_container import StorageContainer
 from .sas_token_info import SasTokenInfo
 from .data_lake_store_account_info import DataLakeStoreAccountInfo
@@ -20,9 +19,8 @@ from .update_storage_account_parameters import UpdateStorageAccountParameters
 from .data_lake_analytics_account_update_parameters import DataLakeAnalyticsAccountUpdateParameters
 from .data_lake_analytics_account import DataLakeAnalyticsAccount
 from .error_details import ErrorDetails
-from .inner_error import InnerError
-from .error import Error
 from .resource import Resource
+from .sub_resource import SubResource
 from .storage_container_paged import StorageContainerPaged
 from .sas_token_info_paged import SasTokenInfoPaged
 from .storage_account_info_paged import StorageAccountInfoPaged
@@ -35,7 +33,6 @@ from .data_lake_analytics_account_management_client_enums import (
 
 __all__ = [
     'StorageAccountInfo',
-    'CreateStorageAccountInfo',
     'StorageContainer',
     'SasTokenInfo',
     'DataLakeStoreAccountInfo',
@@ -45,9 +42,8 @@ __all__ = [
     'DataLakeAnalyticsAccountUpdateParameters',
     'DataLakeAnalyticsAccount',
     'ErrorDetails',
-    'InnerError',
-    'Error',
     'Resource',
+    'SubResource',
     'StorageContainerPaged',
     'SasTokenInfoPaged',
     'StorageAccountInfoPaged',

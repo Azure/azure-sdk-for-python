@@ -64,12 +64,12 @@ class USqlJobProperties(JobProperties):
      and will be ignored if it is.
     :vartype yarn_application_time_stamp: long
     :param compile_mode: Optionally enforces a specific compilation mode for
-     the job during execution. If this is not specified during submission,
-     the server will determine the optimal compilation mode. Possible values
+     the job during execution. If this is not specified during submission, the
+     server will determine the optimal compilation mode. Possible values
      include: 'Semantic', 'Full', 'SingleBox'
     :type compile_mode: str or :class:`CompileMode
      <azure.mgmt.datalake.analytics.job.models.CompileMode>`
-    """ 
+    """
 
     _validation = {
         'script': {'required': True},

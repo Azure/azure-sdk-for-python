@@ -27,7 +27,7 @@ class DataLakeAnalyticsAccountUpdateParameters(Model):
     :param max_job_count: the maximum supported jobs running under the account
      at the same time.
     :type max_job_count: int
-    """ 
+    """
 
     _validation = {
         'max_degree_of_parallelism': {'minimum': 1},

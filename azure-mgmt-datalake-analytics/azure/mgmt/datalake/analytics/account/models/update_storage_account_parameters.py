@@ -21,7 +21,7 @@ class UpdateStorageAccountParameters(Model):
     :type access_key: str
     :param suffix: the optional suffix for the storage account.
     :type suffix: str
-    """ 
+    """
 
     _attribute_map = {
         'access_key': {'key': 'properties.accessKey', 'type': 'str'},

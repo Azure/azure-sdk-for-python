@@ -26,7 +26,7 @@ class EncryptionIdentity(Model):
     :vartype principal_id: str
     :ivar tenant_id: The tenant identifier associated with the encryption.
     :vartype tenant_id: str
-    """ 
+    """
 
     _validation = {
         'type': {'required': True, 'constant': True},
