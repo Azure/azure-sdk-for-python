@@ -28,7 +28,7 @@ class FirewallRule(SubResource):
     :type start_ip_address: str
     :param end_ip_address: the end IP address for the firewall rule.
     :type end_ip_address: str
-    """ 
+    """
 
     _validation = {
         'id': {'readonly': True},

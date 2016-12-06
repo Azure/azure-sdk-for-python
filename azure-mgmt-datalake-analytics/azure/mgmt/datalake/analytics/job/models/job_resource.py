@@ -25,7 +25,7 @@ class JobResource(Model):
      'StatisticsResourceInUserFolder'
     :type type: str or :class:`JobResourceType
      <azure.mgmt.datalake.analytics.job.models.JobResourceType>`
-    """ 
+    """
 
     _attribute_map = {
         'name': {'key': 'name', 'type': 'str'},

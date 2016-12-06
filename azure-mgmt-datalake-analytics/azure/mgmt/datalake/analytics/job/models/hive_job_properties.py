@@ -36,7 +36,7 @@ class HiveJobProperties(JobProperties):
     :ivar executed_statement_count: the number of statements that have been
      run based on the script
     :vartype executed_statement_count: int
-    """ 
+    """
 
     _validation = {
         'script': {'required': True},

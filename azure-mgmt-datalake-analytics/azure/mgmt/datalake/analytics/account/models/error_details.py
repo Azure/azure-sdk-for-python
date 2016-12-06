@@ -25,7 +25,7 @@ class ErrorDetails(Model):
     :ivar target: the target of the particular error (for example, the name of
      the property in error).
     :vartype target: str
-    """ 
+    """
 
     _validation = {
         'code': {'readonly': True},

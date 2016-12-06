@@ -16,15 +16,15 @@ class EncryptionConfig(Model):
     """The encryption configuration for the account.
 
     :param type: The type of encryption configuration being used. Currently
-     the only supported types are 'UserManaged' and 'ServiceManaged'.
-     Possible values include: 'UserManaged', 'ServiceManaged'
+     the only supported types are 'UserManaged' and 'ServiceManaged'. Possible
+     values include: 'UserManaged', 'ServiceManaged'
     :type type: str or :class:`EncryptionConfigType
      <azure.mgmt.datalake.store.models.EncryptionConfigType>`
     :param key_vault_meta_info: The Key vault information for connecting to
      user managed encryption keys.
     :type key_vault_meta_info: :class:`KeyVaultMetaInfo
      <azure.mgmt.datalake.store.models.KeyVaultMetaInfo>`
-    """ 
+    """
 
     _validation = {
         'type': {'required': True},

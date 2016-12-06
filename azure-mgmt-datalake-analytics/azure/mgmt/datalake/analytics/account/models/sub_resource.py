@@ -12,28 +12,33 @@
 from msrest.serialization import Model
 
 
-class InnerError(Model):
-    """Generic resource inner error information.
+class SubResource(Model):
+    """The Sub Resource model definition.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar trace: the stack trace for the error
-    :vartype trace: str
-    :ivar context: the context for the error message
-    :vartype context: str
-    """ 
+    :ivar id: Resource Id
+    :vartype id: str
+    :param name: Resource name
+    :type name: str
+    :ivar type: Resource type
+    :vartype type: str
+    """
 
     _validation = {
-        'trace': {'readonly': True},
-        'context': {'readonly': True},
+        'id': {'readonly': True},
+        'name': {'required': True},
+        'type': {'readonly': True},
     }
 
     _attribute_map = {
-        'trace': {'key': 'trace', 'type': 'str'},
-        'context': {'key': 'context', 'type': 'str'},
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
     }
 
-    def __init__(self):
-        self.trace = None
-        self.context = None
+    def __init__(self, name):
+        self.id = None
+        self.name = name
+        self.type = None

@@ -25,7 +25,7 @@ class JobStatistics(Model):
     :ivar stages: the list of stages for the job.
     :vartype stages: list of :class:`JobStatisticsVertexStage
      <azure.mgmt.datalake.analytics.job.models.JobStatisticsVertexStage>`
-    """ 
+    """
 
     _validation = {
         'last_update_time_utc': {'readonly': True},

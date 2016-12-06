@@ -17,7 +17,7 @@ class AddDataLakeStoreParameters(Model):
 
     :param suffix: the optional suffix for the Data Lake Store account.
     :type suffix: str
-    """ 
+    """
 
     _attribute_map = {
         'suffix': {'key': 'properties.suffix', 'type': 'str'},
