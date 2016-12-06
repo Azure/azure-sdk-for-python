@@ -32,10 +32,9 @@ class NamespaceResource(Resource):
     :type sku: :class:`Sku <azure.mgmt.eventhub.models.Sku>`
     :param provisioning_state: Provisioning state of the namespace.
     :type provisioning_state: str
-    :param status: State of the namespace. Possible values include:
-     'Unknown', 'Creating', 'Created', 'Activating', 'Enabling', 'Active',
-     'Disabling', 'Disabled', 'SoftDeleting', 'SoftDeleted', 'Removing',
-     'Removed', 'Failed'
+    :param status: State of the namespace. Possible values include: 'Unknown',
+     'Creating', 'Created', 'Activating', 'Enabling', 'Active', 'Disabling',
+     'Disabled', 'SoftDeleting', 'SoftDeleted', 'Removing', 'Removed', 'Failed'
     :type status: str or :class:`NamespaceState
      <azure.mgmt.eventhub.models.NamespaceState>`
     :param created_at: The time the namespace was created.
@@ -49,7 +48,7 @@ class NamespaceResource(Resource):
     :type create_acs_namespace: bool
     :param enabled: Specifies whether this instance is enabled.
     :type enabled: bool
-    """ 
+    """
 
     _validation = {
         'id': {'readonly': True},
