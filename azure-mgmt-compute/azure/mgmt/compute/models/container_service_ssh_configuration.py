@@ -19,7 +19,7 @@ class ContainerServiceSshConfiguration(Model):
      Linux-based VMs.
     :type public_keys: list of :class:`ContainerServiceSshPublicKey
      <azure.mgmt.compute.models.ContainerServiceSshPublicKey>`
-    """ 
+    """
 
     _validation = {
         'public_keys': {'required': True},

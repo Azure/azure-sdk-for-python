@@ -19,7 +19,7 @@ class OSDiskImage(Model):
      values include: 'Windows', 'Linux'
     :type operating_system: str or :class:`OperatingSystemTypes
      <azure.mgmt.compute.models.OperatingSystemTypes>`
-    """ 
+    """
 
     _validation = {
         'operating_system': {'required': True},

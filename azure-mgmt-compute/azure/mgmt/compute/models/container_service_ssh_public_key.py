@@ -19,7 +19,7 @@ class ContainerServiceSshPublicKey(Model):
      through SSH. The certificate must be in PEM format with or without
      headers.
     :type key_data: str
-    """ 
+    """
 
     _validation = {
         'key_data': {'required': True},

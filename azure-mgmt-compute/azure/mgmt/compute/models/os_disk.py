@@ -19,7 +19,7 @@ class OSDisk(Model):
      'Windows', 'Linux'
     :type os_type: str or :class:`OperatingSystemTypes
      <azure.mgmt.compute.models.OperatingSystemTypes>`
-    :param encryption_settings: the disk encryption settings.
+    :param encryption_settings: The disk encryption settings.
     :type encryption_settings: :class:`DiskEncryptionSettings
      <azure.mgmt.compute.models.DiskEncryptionSettings>`
     :param name: The disk name.
@@ -43,7 +43,7 @@ class OSDisk(Model):
     :param disk_size_gb: The initial disk size, in GB, for blank data disks,
      and the new desired size for resizing existing OS and data disks.
     :type disk_size_gb: int
-    """ 
+    """
 
     _validation = {
         'name': {'required': True},

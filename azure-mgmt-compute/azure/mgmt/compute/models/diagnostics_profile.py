@@ -20,7 +20,7 @@ class DiagnosticsProfile(Model):
      machine from the hypervisor.
     :type boot_diagnostics: :class:`BootDiagnostics
      <azure.mgmt.compute.models.BootDiagnostics>`
-    """ 
+    """
 
     _attribute_map = {
         'boot_diagnostics': {'key': 'bootDiagnostics', 'type': 'BootDiagnostics'},

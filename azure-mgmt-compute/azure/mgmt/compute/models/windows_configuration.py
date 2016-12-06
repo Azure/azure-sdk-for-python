@@ -32,7 +32,7 @@ class WindowsConfiguration(Model):
     :param win_rm: The Windows Remote Management configuration of the VM
     :type win_rm: :class:`WinRMConfiguration
      <azure.mgmt.compute.models.WinRMConfiguration>`
-    """ 
+    """
 
     _attribute_map = {
         'provision_vm_agent': {'key': 'provisionVMAgent', 'type': 'bool'},

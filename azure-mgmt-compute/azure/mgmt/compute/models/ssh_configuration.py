@@ -19,7 +19,7 @@ class SshConfiguration(Model):
      linux based VMs.
     :type public_keys: list of :class:`SshPublicKey
      <azure.mgmt.compute.models.SshPublicKey>`
-    """ 
+    """
 
     _attribute_map = {
         'public_keys': {'key': 'publicKeys', 'type': '[SshPublicKey]'},

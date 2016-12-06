@@ -15,28 +15,28 @@ from msrest.serialization import Model
 class VirtualMachineScaleSetVMInstanceView(Model):
     """The instance view of a virtual machine scale set VM.
 
-    :param platform_update_domain: the Update Domain count.
+    :param platform_update_domain: The Update Domain count.
     :type platform_update_domain: int
-    :param platform_fault_domain: the Fault Domain count.
+    :param platform_fault_domain: The Fault Domain count.
     :type platform_fault_domain: int
-    :param rdp_thumb_print: the Remote desktop certificate thumbprint.
+    :param rdp_thumb_print: The Remote desktop certificate thumbprint.
     :type rdp_thumb_print: str
-    :param vm_agent: the VM Agent running on the virtual machine.
+    :param vm_agent: The VM Agent running on the virtual machine.
     :type vm_agent: :class:`VirtualMachineAgentInstanceView
      <azure.mgmt.compute.models.VirtualMachineAgentInstanceView>`
-    :param disks: the disks information.
+    :param disks: The disks information.
     :type disks: list of :class:`DiskInstanceView
      <azure.mgmt.compute.models.DiskInstanceView>`
-    :param extensions: the extensions information.
+    :param extensions: The extensions information.
     :type extensions: list of :class:`VirtualMachineExtensionInstanceView
      <azure.mgmt.compute.models.VirtualMachineExtensionInstanceView>`
-    :param boot_diagnostics: the boot diagnostics.
+    :param boot_diagnostics: The boot diagnostics.
     :type boot_diagnostics: :class:`BootDiagnosticsInstanceView
      <azure.mgmt.compute.models.BootDiagnosticsInstanceView>`
-    :param statuses: the resource status information.
+    :param statuses: The resource status information.
     :type statuses: list of :class:`InstanceViewStatus
      <azure.mgmt.compute.models.InstanceViewStatus>`
-    """ 
+    """
 
     _attribute_map = {
         'platform_update_domain': {'key': 'platformUpdateDomain', 'type': 'int'},

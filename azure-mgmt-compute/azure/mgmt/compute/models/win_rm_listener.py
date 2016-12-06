@@ -22,7 +22,7 @@ class WinRMListener(Model):
     :param certificate_url: The Certificate URL in KMS for Https listeners.
      Should be null for Http listeners.
     :type certificate_url: str
-    """ 
+    """
 
     _attribute_map = {
         'protocol': {'key': 'protocol', 'type': 'ProtocolTypes'},

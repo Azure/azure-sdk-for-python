@@ -23,7 +23,7 @@ class ContainerServiceVMDiagnostics(Model):
     :ivar storage_uri: The URI of the storage account where diagnostics are
      stored.
     :vartype storage_uri: str
-    """ 
+    """
 
     _validation = {
         'enabled': {'required': True},

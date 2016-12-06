@@ -22,7 +22,7 @@ class PurchasePlan(Model):
     :type name: str
     :param product: The product ID.
     :type product: str
-    """ 
+    """
 
     _validation = {
         'publisher': {'required': True},

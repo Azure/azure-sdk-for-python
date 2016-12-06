@@ -20,7 +20,7 @@ class ContainerServiceLinuxProfile(Model):
     :param ssh: The ssh key configuration for Linux VMs.
     :type ssh: :class:`ContainerServiceSshConfiguration
      <azure.mgmt.compute.models.ContainerServiceSshConfiguration>`
-    """ 
+    """
 
     _validation = {
         'admin_username': {'required': True, 'pattern': '^[a-z][a-z0-9_-]*$'},

@@ -58,7 +58,7 @@ class ContainerService(Resource):
     :param diagnostics_profile: Properties of the diagnostic agent.
     :type diagnostics_profile: :class:`ContainerServiceDiagnosticsProfile
      <azure.mgmt.compute.models.ContainerServiceDiagnosticsProfile>`
-    """ 
+    """
 
     _validation = {
         'id': {'readonly': True},

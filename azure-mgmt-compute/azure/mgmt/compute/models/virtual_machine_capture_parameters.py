@@ -22,7 +22,7 @@ class VirtualMachineCaptureParameters(Model):
     :param overwrite_vhds: Specifies whether to overwrite the destination
      virtual hard disk, in case of conflict.
     :type overwrite_vhds: bool
-    """ 
+    """
 
     _validation = {
         'vhd_prefix': {'required': True},

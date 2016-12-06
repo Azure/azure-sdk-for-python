@@ -29,16 +29,16 @@ class VirtualMachineInstanceView(Model):
     :param disks: The virtual machine disk information.
     :type disks: list of :class:`DiskInstanceView
      <azure.mgmt.compute.models.DiskInstanceView>`
-    :param extensions: the extensions information.
+    :param extensions: The extensions information.
     :type extensions: list of :class:`VirtualMachineExtensionInstanceView
      <azure.mgmt.compute.models.VirtualMachineExtensionInstanceView>`
-    :param boot_diagnostics: the boot diagnostics.
+    :param boot_diagnostics: The boot diagnostics.
     :type boot_diagnostics: :class:`BootDiagnosticsInstanceView
      <azure.mgmt.compute.models.BootDiagnosticsInstanceView>`
     :param statuses: The resource status information.
     :type statuses: list of :class:`InstanceViewStatus
      <azure.mgmt.compute.models.InstanceViewStatus>`
-    """ 
+    """
 
     _attribute_map = {
         'platform_update_domain': {'key': 'platformUpdateDomain', 'type': 'int'},

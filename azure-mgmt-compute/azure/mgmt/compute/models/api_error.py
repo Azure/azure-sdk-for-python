@@ -15,19 +15,19 @@ from msrest.serialization import Model
 class ApiError(Model):
     """Api error.
 
-    :param details: the Api error details
+    :param details: The Api error details
     :type details: list of :class:`ApiErrorBase
      <azure.mgmt.compute.models.ApiErrorBase>`
-    :param innererror: the Api inner error
+    :param innererror: The Api inner error
     :type innererror: :class:`InnerError
      <azure.mgmt.compute.models.InnerError>`
-    :param code: the error code.
+    :param code: The error code.
     :type code: str
-    :param target: the target of the particular error.
+    :param target: The target of the particular error.
     :type target: str
-    :param message: the error message.
+    :param message: The error message.
     :type message: str
-    """ 
+    """
 
     _attribute_map = {
         'details': {'key': 'details', 'type': '[ApiErrorBase]'},

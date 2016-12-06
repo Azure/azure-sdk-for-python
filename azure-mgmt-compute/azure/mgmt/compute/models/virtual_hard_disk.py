@@ -18,7 +18,7 @@ class VirtualHardDisk(Model):
     :param uri: The virtual hard disk's URI. Must be a valid URI to a virtual
      hard disk.
     :type uri: str
-    """ 
+    """
 
     _attribute_map = {
         'uri': {'key': 'uri', 'type': 'str'},
