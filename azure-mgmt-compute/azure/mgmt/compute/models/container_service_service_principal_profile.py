@@ -20,7 +20,7 @@ class ContainerServiceServicePrincipalProfile(Model):
     :type client_id: str
     :param secret: The secret password associated with the service principal.
     :type secret: str
-    """ 
+    """
 
     _validation = {
         'client_id': {'required': True},

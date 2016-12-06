@@ -20,7 +20,7 @@ class NetworkInterfaceReference(SubResource):
     :param primary: Specifies the primary network interface in case the
      virtual machine has more than 1 network interface.
     :type primary: bool
-    """ 
+    """
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},

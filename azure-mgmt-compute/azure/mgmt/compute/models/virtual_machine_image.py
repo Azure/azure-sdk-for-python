@@ -31,7 +31,7 @@ class VirtualMachineImage(VirtualMachineImageResource):
     :param data_disk_images:
     :type data_disk_images: list of :class:`DataDiskImage
      <azure.mgmt.compute.models.DataDiskImage>`
-    """ 
+    """
 
     _validation = {
         'name': {'required': True},

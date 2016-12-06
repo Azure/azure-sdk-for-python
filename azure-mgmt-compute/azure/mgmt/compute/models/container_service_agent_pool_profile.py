@@ -45,7 +45,7 @@ class ContainerServiceAgentPoolProfile(Model):
     :type dns_prefix: str
     :ivar fqdn: FDQN for the agent pool.
     :vartype fqdn: str
-    """ 
+    """
 
     _validation = {
         'name': {'required': True},

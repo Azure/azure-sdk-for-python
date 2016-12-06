@@ -19,7 +19,7 @@ class ContainerServiceWindowsProfile(Model):
     :type admin_username: str
     :param admin_password: The administrator password to use for Windows VMs.
     :type admin_password: str
-    """ 
+    """
 
     _validation = {
         'admin_username': {'required': True, 'pattern': '^[a-zA-Z0-9]+([._]?[a-zA-Z0-9]+)*$'},

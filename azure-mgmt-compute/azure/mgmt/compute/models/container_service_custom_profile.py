@@ -17,7 +17,7 @@ class ContainerServiceCustomProfile(Model):
 
     :param orchestrator: The name of the custom orchestrator to use.
     :type orchestrator: str
-    """ 
+    """
 
     _validation = {
         'orchestrator': {'required': True},

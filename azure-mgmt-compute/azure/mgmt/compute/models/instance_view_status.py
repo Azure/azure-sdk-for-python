@@ -28,7 +28,7 @@ class InstanceViewStatus(Model):
     :type message: str
     :param time: The time of the status.
     :type time: datetime
-    """ 
+    """
 
     _attribute_map = {
         'code': {'key': 'code', 'type': 'str'},

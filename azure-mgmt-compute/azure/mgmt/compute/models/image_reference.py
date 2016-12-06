@@ -25,7 +25,7 @@ class ImageReference(Model):
      Major.Minor.Build or 'latest'. Major, Minor and Build are decimal numbers.
      Specify 'latest' to use the latest version of the image.
     :type version: str
-    """ 
+    """
 
     _attribute_map = {
         'publisher': {'key': 'publisher', 'type': 'str'},

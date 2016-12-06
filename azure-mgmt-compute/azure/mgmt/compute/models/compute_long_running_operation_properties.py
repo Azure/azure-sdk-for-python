@@ -17,7 +17,7 @@ class ComputeLongRunningOperationProperties(Model):
 
     :param output: Operation output data (raw JSON)
     :type output: object
-    """ 
+    """
 
     _attribute_map = {
         'output': {'key': 'output', 'type': 'object'},

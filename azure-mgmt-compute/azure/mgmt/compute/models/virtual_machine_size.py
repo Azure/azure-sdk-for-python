@@ -32,7 +32,7 @@ class VirtualMachineSize(Model):
     :param max_data_disk_count: The maximum number of data disks that can be
      attached to the virtual machine size.
     :type max_data_disk_count: int
-    """ 
+    """
 
     _attribute_map = {
         'name': {'key': 'name', 'type': 'str'},

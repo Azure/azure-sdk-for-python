@@ -15,19 +15,19 @@ from msrest.serialization import Model
 class VirtualMachineScaleSetVMProfile(Model):
     """Describes a virtual machine scale set virtual machine profile.
 
-    :param os_profile: the virtual machine scale set OS profile.
+    :param os_profile: The virtual machine scale set OS profile.
     :type os_profile: :class:`VirtualMachineScaleSetOSProfile
      <azure.mgmt.compute.models.VirtualMachineScaleSetOSProfile>`
-    :param storage_profile: the virtual machine scale set storage profile.
+    :param storage_profile: The virtual machine scale set storage profile.
     :type storage_profile: :class:`VirtualMachineScaleSetStorageProfile
      <azure.mgmt.compute.models.VirtualMachineScaleSetStorageProfile>`
-    :param network_profile: the virtual machine scale set network profile.
+    :param network_profile: The virtual machine scale set network profile.
     :type network_profile: :class:`VirtualMachineScaleSetNetworkProfile
      <azure.mgmt.compute.models.VirtualMachineScaleSetNetworkProfile>`
-    :param extension_profile: the virtual machine scale set extension profile.
+    :param extension_profile: The virtual machine scale set extension profile.
     :type extension_profile: :class:`VirtualMachineScaleSetExtensionProfile
      <azure.mgmt.compute.models.VirtualMachineScaleSetExtensionProfile>`
-    """ 
+    """
 
     _attribute_map = {
         'os_profile': {'key': 'osProfile', 'type': 'VirtualMachineScaleSetOSProfile'},

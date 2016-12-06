@@ -38,7 +38,7 @@ class DataDisk(Model):
     :param disk_size_gb: The initial disk size in GB for blank data disks, and
      the new desired size for resizing existing OS and data disks.
     :type disk_size_gb: int
-    """ 
+    """
 
     _validation = {
         'lun': {'required': True},

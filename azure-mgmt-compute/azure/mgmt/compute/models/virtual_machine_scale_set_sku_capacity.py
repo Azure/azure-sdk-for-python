@@ -18,17 +18,17 @@ class VirtualMachineScaleSetSkuCapacity(Model):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar minimum: the minimum capacity.
+    :ivar minimum: The minimum capacity.
     :vartype minimum: long
-    :ivar maximum: the maximum capacity that can be set.
+    :ivar maximum: The maximum capacity that can be set.
     :vartype maximum: long
-    :ivar default_capacity: the default capacity.
+    :ivar default_capacity: The default capacity.
     :vartype default_capacity: long
-    :ivar scale_type: the scale type applicable to the sku. Possible values
+    :ivar scale_type: The scale type applicable to the sku. Possible values
      include: 'Automatic', 'None'
     :vartype scale_type: str or :class:`VirtualMachineScaleSetSkuScaleType
      <azure.mgmt.compute.models.VirtualMachineScaleSetSkuScaleType>`
-    """ 
+    """
 
     _validation = {
         'minimum': {'readonly': True},

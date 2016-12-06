@@ -25,7 +25,7 @@ class DiskEncryptionSettings(Model):
     :param enabled: Specifies whether disk encryption should be enabled on the
      virtual machine.
     :type enabled: bool
-    """ 
+    """
 
     _attribute_map = {
         'disk_encryption_key': {'key': 'diskEncryptionKey', 'type': 'KeyVaultSecretReference'},
