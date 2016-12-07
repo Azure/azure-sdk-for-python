@@ -15,10 +15,10 @@ from msrest.serialization import Model
 class ApiEntityReference(Model):
     """The API entity reference.
 
-    :param id: the ARM resource id in the form of
+    :param id: The ARM resource id in the form of
      /subscriptions/{SubcriptionId}/resourceGroups/{ResourceGroupName}/...
     :type id: str
-    """ 
+    """
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},

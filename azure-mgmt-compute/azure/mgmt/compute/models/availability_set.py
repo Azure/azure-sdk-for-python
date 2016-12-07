@@ -39,7 +39,7 @@ class AvailabilitySet(Resource):
     :ivar statuses: The resource status information.
     :vartype statuses: list of :class:`InstanceViewStatus
      <azure.mgmt.compute.models.InstanceViewStatus>`
-    """ 
+    """
 
     _validation = {
         'id': {'readonly': True},

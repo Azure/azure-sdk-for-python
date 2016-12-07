@@ -141,7 +141,7 @@ class VirtualMachineScaleSetsOperations(object):
         :type resource_group_name: str
         :param vm_scale_set_name: The name of the VM scale set.
         :type vm_scale_set_name: str
-        :param instance_ids: the virtual machine scale set instance ids.
+        :param instance_ids: The virtual machine scale set instance ids.
         :type instance_ids: list of str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -370,7 +370,7 @@ class VirtualMachineScaleSetsOperations(object):
         :type resource_group_name: str
         :param vm_scale_set_name: The name of the VM scale set.
         :type vm_scale_set_name: str
-        :param instance_ids: the virtual machine scale set instance ids.
+        :param instance_ids: The virtual machine scale set instance ids.
         :type instance_ids: list of str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -722,7 +722,7 @@ class VirtualMachineScaleSetsOperations(object):
         :type resource_group_name: str
         :param vm_scale_set_name: The name of the VM scale set.
         :type vm_scale_set_name: str
-        :param instance_ids: the virtual machine scale set instance ids.
+        :param instance_ids: The virtual machine scale set instance ids.
         :type instance_ids: list of str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -812,7 +812,7 @@ class VirtualMachineScaleSetsOperations(object):
         :type resource_group_name: str
         :param vm_scale_set_name: The name of the VM scale set.
         :type vm_scale_set_name: str
-        :param instance_ids: the virtual machine scale set instance ids.
+        :param instance_ids: The virtual machine scale set instance ids.
         :type instance_ids: list of str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -902,7 +902,7 @@ class VirtualMachineScaleSetsOperations(object):
         :type resource_group_name: str
         :param vm_scale_set_name: The name of the VM scale set.
         :type vm_scale_set_name: str
-        :param instance_ids: the virtual machine scale set instance ids.
+        :param instance_ids: The virtual machine scale set instance ids.
         :type instance_ids: list of str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -993,7 +993,7 @@ class VirtualMachineScaleSetsOperations(object):
         :type resource_group_name: str
         :param vm_scale_set_name: The name of the VM scale set.
         :type vm_scale_set_name: str
-        :param instance_ids: the virtual machine scale set instance ids.
+        :param instance_ids: The virtual machine scale set instance ids.
         :type instance_ids: list of str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the

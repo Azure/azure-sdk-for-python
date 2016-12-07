@@ -21,7 +21,7 @@ class KeyVaultSecretReference(Model):
      secret.
     :type source_vault: :class:`SubResource
      <azure.mgmt.compute.models.SubResource>`
-    """ 
+    """
 
     _validation = {
         'secret_url': {'required': True},

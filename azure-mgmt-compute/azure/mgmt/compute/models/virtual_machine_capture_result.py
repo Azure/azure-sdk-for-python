@@ -19,7 +19,7 @@ class VirtualMachineCaptureResult(SubResource):
     :type id: str
     :param output: Operation output data (raw JSON)
     :type output: object
-    """ 
+    """
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},

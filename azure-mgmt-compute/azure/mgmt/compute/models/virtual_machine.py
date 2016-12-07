@@ -63,10 +63,10 @@ class VirtualMachine(Resource):
      that is encoded and stored in all Azure IaaS VMs SMBIOS and can be read
      using platform BIOS commands.
     :vartype vm_id: str
-    :ivar resources: the virtual machine child extension resources.
+    :ivar resources: The virtual machine child extension resources.
     :vartype resources: list of :class:`VirtualMachineExtension
      <azure.mgmt.compute.models.VirtualMachineExtension>`
-    """ 
+    """
 
     _validation = {
         'id': {'readonly': True},

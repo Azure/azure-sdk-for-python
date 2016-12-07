@@ -20,7 +20,7 @@ class ContainerServiceOrchestratorProfile(Model):
      Possible values include: 'Swarm', 'DCOS', 'Custom', 'Kubernetes'
     :type orchestrator_type: str or :class:`ContainerServiceOchestratorTypes
      <azure.mgmt.compute.models.ContainerServiceOchestratorTypes>`
-    """ 
+    """
 
     _validation = {
         'orchestrator_type': {'required': True},

@@ -89,11 +89,11 @@ from .container_service_orchestrator_profile import ContainerServiceOrchestrator
 from .container_service_master_profile import ContainerServiceMasterProfile
 from .container_service_agent_pool_profile import ContainerServiceAgentPoolProfile
 from .container_service_windows_profile import ContainerServiceWindowsProfile
-from .container_service_linux_profile import ContainerServiceLinuxProfile
-from .container_service_ssh_configuration import ContainerServiceSshConfiguration
 from .container_service_ssh_public_key import ContainerServiceSshPublicKey
-from .container_service_diagnostics_profile import ContainerServiceDiagnosticsProfile
+from .container_service_ssh_configuration import ContainerServiceSshConfiguration
+from .container_service_linux_profile import ContainerServiceLinuxProfile
 from .container_service_vm_diagnostics import ContainerServiceVMDiagnostics
+from .container_service_diagnostics_profile import ContainerServiceDiagnosticsProfile
 from .container_service import ContainerService
 from .availability_set_paged import AvailabilitySetPaged
 from .virtual_machine_size_paged import VirtualMachineSizePaged
@@ -201,11 +201,11 @@ __all__ = [
     'ContainerServiceMasterProfile',
     'ContainerServiceAgentPoolProfile',
     'ContainerServiceWindowsProfile',
-    'ContainerServiceLinuxProfile',
-    'ContainerServiceSshConfiguration',
     'ContainerServiceSshPublicKey',
-    'ContainerServiceDiagnosticsProfile',
+    'ContainerServiceSshConfiguration',
+    'ContainerServiceLinuxProfile',
     'ContainerServiceVMDiagnostics',
+    'ContainerServiceDiagnosticsProfile',
     'ContainerService',
     'AvailabilitySetPaged',
     'VirtualMachineSizePaged',

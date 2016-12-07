@@ -22,7 +22,7 @@ class DataDiskImage(Model):
      data disk image inside the VMImage and therefore it must be unique for
      each data disk.
     :vartype lun: int
-    """ 
+    """
 
     _validation = {
         'lun': {'readonly': True},
