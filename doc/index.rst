@@ -162,7 +162,8 @@ Some documentation of data libraries are on this website. This includes:
 
 These Azure services have Python data libraries which are directly hosted by the service team or are extensively documented on the Azure documentation website:
 
-* `Storage <http://azure-storage.readthedocs.org>`_
+* `Storage <http://azure-storage.readthedocs.io>`_
+* `Azure Data Lake Store Filesystem <http://azure-datalake-store.readthedocs.io/>`_
 * `Azure IoT device SDK for Python <https://github.com/Azure/azure-iot-sdks/tree/master/python/device>`_
 * `SQL Azure <https://azure.microsoft.com/en-us/documentation/articles/sql-database-develop-python-simple/>`_
 * `DocumentDB <https://azure.microsoft.com/en-us/documentation/articles/documentdb-sdk-python/>`_

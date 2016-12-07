@@ -76,6 +76,11 @@ class MgmtMonitorTest(AzureMgmtTestCase):
         self.assertGreaterEqual(len(metrics), 1)
         for item in metrics:
             self.assertIsNotNone(item.name)
+            print("{}: id={}, unit={}".format(
+                item.name.localized_value,
+                item.name.value,
+                item.unit)
+            )
 
         # Need to freeze the date for the recorded tests
         today = datetime.date(2016,11,17)
@@ -100,6 +105,12 @@ class MgmtMonitorTest(AzureMgmtTestCase):
             for data in item.data:
                 self.assertIsNotNone(data.time_stamp)
                 self.assertIsNotNone(data.total)
+
+        for item in metrics:
+            print("{} ({})".format(item.name.localized_value, item.unit.name))
+            for data in item.data:
+                print("{}: {}".format(data.time_stamp, data.total))
+
 
     @unittest.skip("Known bug")
     @record
@@ -131,9 +142,15 @@ class MgmtMonitorTest(AzureMgmtTestCase):
         usage_metrics = list(self.data_client.usage_metrics.list(
             resource_id,
         ))
-        for usage in usage_metrics:
+        for item in usage_metrics:
             # azure.monitor.models.UsageMetric
-            self.assertIsNotNone(usage.name)
+            print("{} ({}): {} / {}".format(
+                item.name.localized_value,
+                item.unit,
+                item.current_value,
+                item.limit 
+            ))
+            self.assertIsNotNone(item.name)
 
     @unittest.skip("Known bug")
     @record
