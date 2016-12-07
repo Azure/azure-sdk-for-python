@@ -18,14 +18,14 @@ class VirtualMachineScaleSetSku(Model):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar resource_type: the type of resource the sku applies to.
+    :ivar resource_type: The type of resource the sku applies to.
     :vartype resource_type: str
-    :ivar sku: the Sku.
+    :ivar sku: The Sku.
     :vartype sku: :class:`Sku <azure.mgmt.compute.models.Sku>`
-    :ivar capacity: available scaling information.
+    :ivar capacity: Available scaling information.
     :vartype capacity: :class:`VirtualMachineScaleSetSkuCapacity
      <azure.mgmt.compute.models.VirtualMachineScaleSetSkuCapacity>`
-    """ 
+    """
 
     _validation = {
         'resource_type': {'readonly': True},

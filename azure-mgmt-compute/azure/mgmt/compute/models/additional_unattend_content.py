@@ -27,7 +27,7 @@ class AdditionalUnattendContent(Model):
      'Microsoft-Windows-Shell-Setup'
     :type component_name: str or :class:`ComponentNames
      <azure.mgmt.compute.models.ComponentNames>`
-    :param setting_name: setting name (e.g. FirstLogonCommands, AutoLogon ).
+    :param setting_name: Setting name (e.g. FirstLogonCommands, AutoLogon ).
      Possible values include: 'AutoLogon', 'FirstLogonCommands'
     :type setting_name: str or :class:`SettingNames
      <azure.mgmt.compute.models.SettingNames>`
@@ -36,7 +36,7 @@ class AdditionalUnattendContent(Model):
      and must include the root element for the setting or feature that is being
      inserted.
     :type content: str
-    """ 
+    """
 
     _attribute_map = {
         'pass_name': {'key': 'passName', 'type': 'PassNames'},

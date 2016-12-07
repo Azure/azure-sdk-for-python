@@ -23,7 +23,7 @@ class VaultSecretGroup(Model):
      which contain certificates.
     :type vault_certificates: list of :class:`VaultCertificate
      <azure.mgmt.compute.models.VaultCertificate>`
-    """ 
+    """
 
     _attribute_map = {
         'source_vault': {'key': 'sourceVault', 'type': 'SubResource'},

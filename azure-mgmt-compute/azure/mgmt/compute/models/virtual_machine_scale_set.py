@@ -28,21 +28,21 @@ class VirtualMachineScaleSet(Resource):
     :type location: str
     :param tags: Resource tags.
     :type tags: dict
-    :param sku: the virtual machine scale set sku.
+    :param sku: The virtual machine scale set sku.
     :type sku: :class:`Sku <azure.mgmt.compute.models.Sku>`
-    :param upgrade_policy: the upgrade policy.
+    :param upgrade_policy: The upgrade policy.
     :type upgrade_policy: :class:`UpgradePolicy
      <azure.mgmt.compute.models.UpgradePolicy>`
-    :param virtual_machine_profile: the virtual machine profile.
+    :param virtual_machine_profile: The virtual machine profile.
     :type virtual_machine_profile: :class:`VirtualMachineScaleSetVMProfile
      <azure.mgmt.compute.models.VirtualMachineScaleSetVMProfile>`
-    :ivar provisioning_state: the provisioning state, which only appears in
+    :ivar provisioning_state: The provisioning state, which only appears in
      the response.
     :vartype provisioning_state: str
     :param overprovision: Specifies whether the Virtual Machine Scale Set
      should be overprovisioned.
     :type overprovision: bool
-    """ 
+    """
 
     _validation = {
         'id': {'readonly': True},

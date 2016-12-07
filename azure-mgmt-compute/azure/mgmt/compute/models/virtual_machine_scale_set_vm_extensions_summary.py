@@ -18,12 +18,12 @@ class VirtualMachineScaleSetVMExtensionsSummary(Model):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar name: the extension name.
+    :ivar name: The extension name.
     :vartype name: str
-    :ivar statuses_summary: the extensions information.
+    :ivar statuses_summary: The extensions information.
     :vartype statuses_summary: list of :class:`VirtualMachineStatusCodeCount
      <azure.mgmt.compute.models.VirtualMachineStatusCodeCount>`
-    """ 
+    """
 
     _validation = {
         'name': {'readonly': True},

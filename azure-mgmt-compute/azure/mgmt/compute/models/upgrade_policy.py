@@ -15,11 +15,11 @@ from msrest.serialization import Model
 class UpgradePolicy(Model):
     """Describes an upgrade policy - automatic or manual.
 
-    :param mode: the upgrade mode. Possible values include: 'Automatic',
+    :param mode: The upgrade mode. Possible values include: 'Automatic',
      'Manual'
     :type mode: str or :class:`UpgradeMode
      <azure.mgmt.compute.models.UpgradeMode>`
-    """ 
+    """
 
     _attribute_map = {
         'mode': {'key': 'mode', 'type': 'UpgradeMode'},

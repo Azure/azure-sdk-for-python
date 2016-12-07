@@ -15,13 +15,13 @@ from msrest.serialization import Model
 class VirtualMachineScaleSetStorageProfile(Model):
     """Describes a virtual machine scale set storage profile.
 
-    :param image_reference: the image reference.
+    :param image_reference: The image reference.
     :type image_reference: :class:`ImageReference
      <azure.mgmt.compute.models.ImageReference>`
-    :param os_disk: the OS disk.
+    :param os_disk: The OS disk.
     :type os_disk: :class:`VirtualMachineScaleSetOSDisk
      <azure.mgmt.compute.models.VirtualMachineScaleSetOSDisk>`
-    """ 
+    """
 
     _attribute_map = {
         'image_reference': {'key': 'imageReference', 'type': 'ImageReference'},

@@ -25,7 +25,7 @@ class ContainerServiceMasterProfile(Model):
     :type dns_prefix: str
     :ivar fqdn: FDQN for the master.
     :vartype fqdn: str
-    """ 
+    """
 
     _validation = {
         'dns_prefix': {'required': True},

@@ -15,20 +15,20 @@ from msrest.serialization import Model
 class VirtualMachineExtensionInstanceView(Model):
     """The instance view of a virtual machine extension.
 
-    :param name: the virtual machine extension name.
+    :param name: The virtual machine extension name.
     :type name: str
-    :param type: the full type of the extension handler which includes both
+    :param type: The full type of the extension handler which includes both
      publisher and type.
     :type type: str
-    :param type_handler_version: the type version of the extension handler.
+    :param type_handler_version: The type version of the extension handler.
     :type type_handler_version: str
-    :param substatuses: the resource status information.
+    :param substatuses: The resource status information.
     :type substatuses: list of :class:`InstanceViewStatus
      <azure.mgmt.compute.models.InstanceViewStatus>`
-    :param statuses: the resource status information.
+    :param statuses: The resource status information.
     :type statuses: list of :class:`InstanceViewStatus
      <azure.mgmt.compute.models.InstanceViewStatus>`
-    """ 
+    """
 
     _attribute_map = {
         'name': {'key': 'name', 'type': 'str'},

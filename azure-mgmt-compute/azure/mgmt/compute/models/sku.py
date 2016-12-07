@@ -21,7 +21,7 @@ class Sku(Model):
     :type tier: str
     :param capacity: The sku capacity.
     :type capacity: long
-    """ 
+    """
 
     _attribute_map = {
         'name': {'key': 'name', 'type': 'str'},

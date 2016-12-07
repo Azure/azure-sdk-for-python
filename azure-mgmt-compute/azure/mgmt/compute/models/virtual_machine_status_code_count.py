@@ -19,11 +19,11 @@ class VirtualMachineStatusCodeCount(Model):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar code: the instance view status code.
+    :ivar code: The instance view status code.
     :vartype code: str
-    :ivar count: the number of instances having a particular status code.
+    :ivar count: The number of instances having a particular status code.
     :vartype count: int
-    """ 
+    """
 
     _validation = {
         'code': {'readonly': True},

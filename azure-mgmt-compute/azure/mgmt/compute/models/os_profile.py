@@ -27,16 +27,16 @@ class OSProfile(Model):
      file on the Virtual Machine. The maximum length of the binary array is
      65535 bytes
     :type custom_data: str
-    :param windows_configuration: the Windows configuration of the OS profile.
+    :param windows_configuration: The Windows configuration of the OS profile.
     :type windows_configuration: :class:`WindowsConfiguration
      <azure.mgmt.compute.models.WindowsConfiguration>`
-    :param linux_configuration: the Linux configuration of the OS profile.
+    :param linux_configuration: The Linux configuration of the OS profile.
     :type linux_configuration: :class:`LinuxConfiguration
      <azure.mgmt.compute.models.LinuxConfiguration>`
     :param secrets: The list of certificates for addition to the VM.
     :type secrets: list of :class:`VaultSecretGroup
      <azure.mgmt.compute.models.VaultSecretGroup>`
-    """ 
+    """
 
     _attribute_map = {
         'computer_name': {'key': 'computerName', 'type': 'str'},
