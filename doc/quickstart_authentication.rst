@@ -7,11 +7,13 @@ To be able to use use the ARM library, you need to obtain one of these instances
 
 * azure.common.credentials.UserPassCredentials
 * azure.common.credentials.ServicePrincipalCredentials
+* msrestazure.azure_active_directory.AdalAuthentication
  
-And use it as credentials in your management configuration client. These two instances correspond to:
+And use it as credentials in your management configuration client. These three instances correspond to:
 
 * OAuth authentication using Azure Active Directory user/password
 * OAuth authentication using Active Directory application and service principal
+* A wrapper on top of `ADAL for Python <https://github.com/AzureAD/azure-activedirectory-library-for-python>`
 
 Using Service Principal
 ------------------------
@@ -63,3 +65,55 @@ You are now able to log in Python using OAuth.
         'user@domain.com',    # Your new user
         'my_smart_password',  # Your password    
     )
+
+Using ADAL
+----------
+
+`ADAL for Python <https://github.com/AzureAD/azure-activedirectory-library-for-python>`__ is a library 
+from the Azure Active Directory team, that proposes the more complex scenarios not covered by the
+two previous instances (like 2FA). Please refer to the ADAL website for all the available scenarios
+list and samples.
+
+For example, this code from the ADAL tutorial:
+
+.. code:: python
+
+    context = adal.AuthenticationContext('https://login.microsoftonline.com/ABCDEFGH-1234-1234-1234-ABCDEFGHIJKL')
+    RESOURCE = '00000002-0000-0000-c000-000000000000' #AAD graph resource
+    token = context.acquire_token_with_client_credentials(
+        RESOURCE,
+        "http://PythonSDK",
+        "Key-Configured-In-Portal")
+
+can be written here:
+
+.. code:: python
+
+    from msrestazure.azure_active_directory import AdalAuthentication
+
+    context = adal.AuthenticationContext('https://login.microsoftonline.com/ABCDEFGH-1234-1234-1234-ABCDEFGHIJKL')
+    RESOURCE = '00000002-0000-0000-c000-000000000000' #AAD graph resource
+    credentials = AdalAuthentication(
+        context.acquire_token_with_client_credentials,
+        RESOURCE,
+        "http://PythonSDK",
+        "Key-Configured-In-Portal")
+
+or using a lambda if you prefer:
+
+.. code:: python
+
+    from msrestazure.azure_active_directory import AdalAuthentication
+
+    context = adal.AuthenticationContext('https://login.microsoftonline.com/ABCDEFGH-1234-1234-1234-ABCDEFGHIJKL')
+    RESOURCE = '00000002-0000-0000-c000-000000000000' #AAD graph resource
+    credentials = AdalAuthentication(
+        lambda: context.acquire_token_with_client_credentials(
+            RESOURCE,
+            "http://PythonSDK",
+            "Key-Configured-In-Portal"
+        )
+    )
+
+Note that the UserPassCredentials and ServicePrincipalCredentials scenarios are also covered by the ADAL library. 
+In the near future their implementation will be rewritten using ADAL.
