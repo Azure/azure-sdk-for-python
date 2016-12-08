@@ -13,15 +13,15 @@ from msrest.serialization import Model
 
 
 class EventHubConsumerGroupInfo(Model):
-    """The properties indicating the EventHubConsumerGroupInfo.
+    """The properties of the EventHubConsumerGroupInfo object.
 
     :param tags: The tags.
     :type tags: dict
-    :param id: The event hub consumer group identifier.
+    :param id: The Event Hub-compatible consumer group identifier.
     :type id: str
-    :param name: The event hub consumer group name.
+    :param name: The Event Hub-compatible consumer group name.
     :type name: str
-    """ 
+    """
 
     _attribute_map = {
         'tags': {'key': 'tags', 'type': '{str}'},

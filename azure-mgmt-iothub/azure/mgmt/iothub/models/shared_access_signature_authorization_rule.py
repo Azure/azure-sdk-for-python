@@ -13,26 +13,32 @@ from msrest.serialization import Model
 
 
 class SharedAccessSignatureAuthorizationRule(Model):
-    """The properties that describe the keys to access the IotHub artifacts.
+    """The properties of an IoT hub shared access policy.
 
-    :param key_name: The name of the key.
+    :param key_name: The name of the shared access policy.
     :type key_name: str
     :param primary_key: The primary key.
     :type primary_key: str
     :param secondary_key: The secondary key.
     :type secondary_key: str
-    :param rights: The access rights. Possible values include:
-     'RegistryRead', 'RegistryWrite', 'ServiceConnect', 'DeviceConnect',
-     'RegistryRead, RegistryWrite', 'RegistryRead, ServiceConnect',
-     'RegistryRead, DeviceConnect', 'RegistryWrite, ServiceConnect',
-     'RegistryWrite, DeviceConnect', 'ServiceConnect, DeviceConnect',
-     'RegistryRead, RegistryWrite, ServiceConnect', 'RegistryRead,
-     RegistryWrite, DeviceConnect', 'RegistryRead, ServiceConnect,
-     DeviceConnect', 'RegistryWrite, ServiceConnect, DeviceConnect',
-     'RegistryRead, RegistryWrite, ServiceConnect, DeviceConnect'
+    :param rights: The permissions assigned to the shared access policy.
+     Possible values include: 'RegistryRead', 'RegistryWrite',
+     'ServiceConnect', 'DeviceConnect', 'RegistryRead, RegistryWrite',
+     'RegistryRead, ServiceConnect', 'RegistryRead, DeviceConnect',
+     'RegistryWrite, ServiceConnect', 'RegistryWrite, DeviceConnect',
+     'ServiceConnect, DeviceConnect', 'RegistryRead, RegistryWrite,
+     ServiceConnect', 'RegistryRead, RegistryWrite, DeviceConnect',
+     'RegistryRead, ServiceConnect, DeviceConnect', 'RegistryWrite,
+     ServiceConnect, DeviceConnect', 'RegistryRead, RegistryWrite,
+     ServiceConnect, DeviceConnect'
     :type rights: str or :class:`AccessRights
      <azure.mgmt.iothub.models.AccessRights>`
-    """ 
+    """
+
+    _validation = {
+        'key_name': {'required': True},
+        'rights': {'required': True},
+    }
 
     _attribute_map = {
         'key_name': {'key': 'keyName', 'type': 'str'},
@@ -41,7 +47,7 @@ class SharedAccessSignatureAuthorizationRule(Model):
         'rights': {'key': 'rights', 'type': 'AccessRights'},
     }
 
-    def __init__(self, key_name=None, primary_key=None, secondary_key=None, rights=None):
+    def __init__(self, key_name, rights, primary_key=None, secondary_key=None):
         self.key_name = key_name
         self.primary_key = primary_key
         self.secondary_key = secondary_key
