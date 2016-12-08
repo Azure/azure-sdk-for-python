@@ -1,7 +1,79 @@
 interactions:
 - request:
-    body: '{"location": "westus", "properties": {"publicIPAllocationMethod": "static",
-      "idleTimeoutInMinutes": 4}}'
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Charset: [utf-8]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      User-Agent: [python-requests/2.11.1]
+      client-request-id: [cf17c8ea-926c-46b9-875a-d7f45cac8917]
+      return-client-request-id: ['true']
+      x-client-CPU: [x86]
+      x-client-OS: [win32]
+      x-client-SKU: [Python]
+      x-client-Ver: [0.4.3]
+    method: GET
+    uri: https:/login.microsoftonline.com/common/UserRealm/unittest%40myaddomain.onmicrosoft.com?api-version=1.0
+  response:
+    body: {string: '{"ver":"1.0","account_type":"Managed","domain_name":"myaddomain.onmicrosoft.com","cloud_instance_name":"microsoftonline.com"}'}
+    headers:
+      Cache-Control: [private]
+      Content-Length: ['131']
+      Content-Type: [application/json; charset=utf-8]
+      Date: ['Wed, 07 Dec 2016 23:34:17 GMT']
+      P3P: [CP="DSP CUR OTPi IND OTRi ONL FIN"]
+      Server: [Microsoft-IIS/8.5]
+      Set-Cookie: [esctx=AQABAAAAAADRNYRQ3dhRSrm-4K-adpCJ2ZxAmv3_HgxN5nRDnzWSNRm2H1a6UUUNME88sFgAQWL7bYwTjc6T7U3pacS903Cz8e3aUD-KJkFRNqemHPzYYLqVHKPIjs7nr5tZ1UZvG05wuk3e1bUDxIYmrcKM2wjOcRGFrvPIfQ6a8wpOkuBvzxz9DJtpmMgNqfllKBIEgwcgAA;
+          domain=.login.microsoftonline.com; path=/; secure; HttpOnly, x-ms-gateway-slice=corp;
+          path=/; secure; HttpOnly, stsservicecookie=ests; path=/; secure; HttpOnly]
+      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
+      X-Content-Type-Options: [nosniff]
+      X-Powered-By: [ASP.NET]
+      client-request-id: [cf17c8ea-926c-46b9-875a-d7f45cac8917]
+      x-ms-request-id: [7bc798c3-c001-44ae-b559-4220d9b8d16c]
+    status: {code: 200, message: OK}
+- request:
+    body: username=unittest%40myaddomain.onmicrosoft.com&password=R0ckNTe5T%21&scope=openid&grant_type=password&client_id=04b07795-8ddb-461a-bbee-02f9e1bf7b46&resource=https%3A%2F%2Fmanagement.core.windows.net%2F
+    headers:
+      Accept: ['*/*']
+      Accept-Charset: [utf-8]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['208']
+      User-Agent: [python-requests/2.11.1]
+      client-request-id: [cf17c8ea-926c-46b9-875a-d7f45cac8917]
+      content-type: [application/x-www-form-urlencoded]
+      return-client-request-id: ['true']
+      x-client-CPU: [x86]
+      x-client-OS: [win32]
+      x-client-SKU: [Python]
+      x-client-Ver: [0.4.3]
+    method: POST
+    uri: https:/login.microsoftonline.com/common/oauth2/token?api-version=1.0
+  response:
+    body: {string: '{"token_type":"Bearer","scope":"user_impersonation","expires_in":"3599","ext_expires_in":"10800","expires_on":"1481157258","not_before":"1481153358","resource":"https://management.core.windows.net/","access_token":"eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsIng1dCI6IlJyUXF1OXJ5ZEJWUldtY29jdVhVYjIwSEdSTSIsImtpZCI6IlJyUXF1OXJ5ZEJWUldtY29jdVhVYjIwSEdSTSJ9.eyJhdWQiOiJodHRwczovL21hbmFnZW1lbnQuY29yZS53aW5kb3dzLm5ldC8iLCJpc3MiOiJodHRwczovL3N0cy53aW5kb3dzLm5ldC9kNjUwOWUwYy1jYTY0LTRlNWQtYWUyNC05MGE1YjdkMjc5ZTgvIiwiaWF0IjoxNDgxMTUzMzU4LCJuYmYiOjE0ODExNTMzNTgsImV4cCI6MTQ4MTE1NzI1OCwiYWNyIjoiMSIsImFtciI6WyJwd2QiXSwiYXBwaWQiOiIwNGIwNzc5NS04ZGRiLTQ2MWEtYmJlZS0wMmY5ZTFiZjdiNDYiLCJhcHBpZGFjciI6IjAiLCJlX2V4cCI6MTA4MDAsImZhbWlseV9uYW1lIjoiVGVzdHMiLCJnaXZlbl9uYW1lIjoiVW5pdCIsImdyb3VwcyI6WyIxM2VmMWY2NC01MTU3LTQ4MWMtYjQxYS1hMWNmZjkyNjAxZGIiXSwiaXBhZGRyIjoiMTY3LjIyMC4xLjE3MiIsIm5hbWUiOiJVbml0IFRlc3RzIiwib2lkIjoiZWQ5NWQ2Y2MtNmFkMy00MmJiLTgzNGUtODI2ZDFjN2RiNTQzIiwicGxhdGYiOiIxNCIsInB1aWQiOiIxMDAzMDAwMDk5N0NDQUU1Iiwic2NwIjoidXNlcl9pbXBlcnNvbmF0aW9uIiwic3ViIjoiVVdCdWdQb3BZM093Q3B5Vnk1SDU0VkNhZWhvaTVXZGhXckJKVHNQLXRVcyIsInRpZCI6ImQ2NTA5ZTBjLWNhNjQtNGU1ZC1hZTI0LTkwYTViN2QyNzllOCIsInVuaXF1ZV9uYW1lIjoidW5pdHRlc3RAcHR2c2F6dXJlb3V0bG9vay5vbm1pY3Jvc29mdC5jb20iLCJ1cG4iOiJ1bml0dGVzdEBwdHZzYXp1cmVvdXRsb29rLm9ubWljcm9zb2Z0LmNvbSIsInZlciI6IjEuMCIsIndpZHMiOlsiNjJlOTAzOTQtNjlmNS00MjM3LTkxOTAtMDEyMTc3MTQ1ZTEwIl19.Tampla2_U5wQHtAKT7pxn0A7tGKd1Oij58dd_TOZhMeXe3dspJd3dv9lrZ9FTXupTbYauQ_6ucroZQGJmAuJB4buNUeZRui7L1JpFpvsotPNKY9x2v0uw7LTkVdNsItA2Kg4loi_az38Mv7NZGX-SOzNK61sD8euGX4YFlEom3L1AUmPtyhrrtuJGeXp98myTaDN9dbAtpar3NCfqEvkyyTSh7UFhB01-ze72VwSDn1yelL_FWeU64-rGS6IyJshrGIO_LFyi7h4xQ3e_ljAZPCGEfCsgnvBYtCIKeLt5x5-cW14d4DgVA_bL2gFRSIPEKOVQv5tk2XjFTOSKFtySA","refresh_token":"AQABAAAAAADRNYRQ3dhRSrm-4K-adpCJOEnk0sERMBUmd1Y14oBhSSKHOikIoiqS_uEuQuHeP7kcV1phkUXzrHZv8m3qvQVvTQAdnKZ2amHpkqLD8dCV17FPodnoNcUwYw9zx9LVeC5nvHqoDEARM95EVjvpwKRCwCRB24zG39wa58EkZvTmYmzu0DA-82vUaOoWBkq3qxBy7V4y3PoEEGUyAMDDy_anhmUvunWW5NSl2qi1H3qzc2Ek3diyrr5XOmQfFHOeF0dJGqBVSCA9ON2gn52bkRIzPW6vWK7-MPXlv9UO-ZxkVOwHx61RHUORDgx5yEhT4pXjnxKD6L55QpX772ZaZ4s8bKsuAyJmQ2Yd1iyXcSx7twJOaSjO0RafSX4O9uqC1QO5byVD9A0d5mNKGOzgzS2Fv7z-RaonfURAFNlt7fKGdP2DzR-Xv63rRaH3pG2Op2LH4_4vZyWnmkxDfNw9naTXfrFl4qGiYjV8ZCGPjAlIZi9zLflA63mqM35WjSxzwqCggRKvNhCWsa6S6MQ9x_6brgqaTgRdwOsee66VrRwDR-lFxbTcJSp79nXwnbTqiKT9m-C90vrxjJCC99dtWa9aZiJD3Ax3tNon2tRm2nWqdp5fGVqJI1uc2DVq6SIm1LqOobt1qpEyH53UZQ_Li8KkIAA","id_token":"eyJ0eXAiOiJKV1QiLCJhbGciOiJub25lIn0.eyJhdWQiOiIwNGIwNzc5NS04ZGRiLTQ2MWEtYmJlZS0wMmY5ZTFiZjdiNDYiLCJpc3MiOiJodHRwczovL3N0cy53aW5kb3dzLm5ldC9kNjUwOWUwYy1jYTY0LTRlNWQtYWUyNC05MGE1YjdkMjc5ZTgvIiwiaWF0IjoxNDgxMTUzMzU4LCJuYmYiOjE0ODExNTMzNTgsImV4cCI6MTQ4MTE1NzI1OCwiYW1yIjpbInB3ZCJdLCJmYW1pbHlfbmFtZSI6IlRlc3RzIiwiZ2l2ZW5fbmFtZSI6IlVuaXQiLCJpcGFkZHIiOiIxNjcuMjIwLjEuMTcyIiwibmFtZSI6IlVuaXQgVGVzdHMiLCJvaWQiOiJlZDk1ZDZjYy02YWQzLTQyYmItODM0ZS04MjZkMWM3ZGI1NDMiLCJwbGF0ZiI6IjE0Iiwic3ViIjoiZFNlSGJCQlhXOHNESEtJRjdVYWRqZjZsWDdFazZaSy1wdGJaQ3VNUHhkayIsInRpZCI6ImQ2NTA5ZTBjLWNhNjQtNGU1ZC1hZTI0LTkwYTViN2QyNzllOCIsInVuaXF1ZV9uYW1lIjoidW5pdHRlc3RAcHR2c2F6dXJlb3V0bG9vay5vbm1pY3Jvc29mdC5jb20iLCJ1cG4iOiJ1bml0dGVzdEBwdHZzYXp1cmVvdXRsb29rLm9ubWljcm9zb2Z0LmNvbSIsInZlciI6IjEuMCJ9."}'}
+    headers:
+      Cache-Control: ['no-cache, no-store']
+      Content-Length: ['3202']
+      Content-Type: [application/json; charset=utf-8]
+      Date: ['Wed, 07 Dec 2016 23:34:17 GMT']
+      Expires: ['-1']
+      P3P: [CP="DSP CUR OTPi IND OTRi ONL FIN"]
+      Pragma: [no-cache]
+      Server: [Microsoft-IIS/8.5]
+      Set-Cookie: [esctx=AQABAAAAAADRNYRQ3dhRSrm-4K-adpCJUB0tg8oDGarZs65qAQTMTuMYaJACbWezTmPpJwvkf8lAS_Ps0APc4PnFvFrvUrlWxnPbnUtDMzxZrr7BWa8d9ERtq8H8pjcHo564VtEfD6Vy_hF8f8oE2U_oBOhV1iCcQrehsElybZUs7ZgGKdjI5YKp4F9mzhctCCoIHgalNwggAA;
+          domain=.login.microsoftonline.com; path=/; secure; HttpOnly, x-ms-gateway-slice=corp;
+          path=/; secure; HttpOnly, stsservicecookie=ests; path=/; secure; HttpOnly]
+      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
+      X-Content-Type-Options: [nosniff]
+      X-Powered-By: [ASP.NET]
+      client-request-id: [cf17c8ea-926c-46b9-875a-d7f45cac8917]
+      x-ms-request-id: [247b1fe2-1bf3-4042-86a2-798dbd7e794f]
+    status: {code: 200, message: OK}
+- request:
+    body: '{"location": "westus", "properties": {"idleTimeoutInMinutes": 4, "publicIPAllocationMethod":
+      "static"}}'
     headers:
       Accept: [application/json]
       Accept-Encoding: ['gzip, deflate']
@@ -9,34 +81,34 @@ interactions:
       Content-Length: ['103']
       Content-Type: [application/json; charset=utf-8]
       User-Agent: [python/3.5.1 (Windows-10-10.0.14393-SP0) requests/2.11.1 msrest/0.4.4
-          msrest_azure/0.4.3 networkmanagementclient/0.30.0 Azure-SDK-For-Python]
+          msrest_azure/0.4.5 networkmanagementclient/0.30.0 Azure-SDK-For-Python]
       accept-language: [en-US]
-      x-ms-client-request-id: [cc050186-9fc1-11e6-b161-ecb1d756380e]
+      x-ms-client-request-id: [ac17fe9c-bcd5-11e6-90dc-ecb1d756380e]
     method: PUT
     uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_load_balancers239e0f35/providers/Microsoft.Network/publicIPAddresses/pyipname239e0f35?api-version=2016-09-01
   response:
     body: {string: "{\r\n  \"name\": \"pyipname239e0f35\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_load_balancers239e0f35/providers/Microsoft.Network/publicIPAddresses/pyipname239e0f35\",\r\n
-        \ \"etag\": \"W/\\\"8148a907-960e-4e38-95c3-a8fca2284a59\\\"\",\r\n  \"type\":
+        \ \"etag\": \"W/\\\"b14cd120-8ba0-474d-8b80-3546ba10bfff\\\"\",\r\n  \"type\":
         \"Microsoft.Network/publicIPAddresses\",\r\n  \"location\": \"westus\",\r\n
         \ \"properties\": {\r\n    \"provisioningState\": \"Updating\",\r\n    \"resourceGuid\":
-        \"0dbf3e6a-ca15-490a-a29f-328eae39bf66\",\r\n    \"publicIPAddressVersion\":
+        \"9c07d632-10e2-4b79-8591-bfb13c04852a\",\r\n    \"publicIPAddressVersion\":
         \"IPv4\",\r\n    \"publicIPAllocationMethod\": \"Static\",\r\n    \"idleTimeoutInMinutes\":
         4\r\n  }\r\n}"}
     headers:
-      Azure-AsyncOperation: ['https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/a23cf782-bbaa-4ab4-9304-b2f93308621f?api-version=2016-09-01']
+      Azure-AsyncOperation: ['https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/efe6cd4d-79c6-4303-93e0-3067f4797fba?api-version=2016-09-01']
       Cache-Control: [no-cache]
       Content-Length: ['591']
       Content-Type: [application/json; charset=utf-8]
-      Date: ['Mon, 31 Oct 2016 23:28:58 GMT']
+      Date: ['Wed, 07 Dec 2016 23:34:19 GMT']
       Expires: ['-1']
       Pragma: [no-cache]
       Retry-After: ['0']
       Server: [Microsoft-HTTPAPI/2.0, Microsoft-HTTPAPI/2.0]
       Strict-Transport-Security: [max-age=31536000; includeSubDomains]
-      x-ms-correlation-request-id: [ca1efce7-7fbb-41e2-978e-797573b2f150]
-      x-ms-ratelimit-remaining-subscription-writes: ['1199']
-      x-ms-request-id: [a23cf782-bbaa-4ab4-9304-b2f93308621f]
-      x-ms-routing-request-id: ['CENTRALUS:20161031T232859Z:ca1efce7-7fbb-41e2-978e-797573b2f150']
+      x-ms-correlation-request-id: [960fd746-47ce-4409-b53a-51d56876a1f9]
+      x-ms-ratelimit-remaining-subscription-writes: ['1197']
+      x-ms-request-id: [efe6cd4d-79c6-4303-93e0-3067f4797fba]
+      x-ms-routing-request-id: ['CENTRALUS:20161207T233420Z:960fd746-47ce-4409-b53a-51d56876a1f9']
     status: {code: 201, message: Created}
 - request:
     body: null
@@ -46,17 +118,17 @@ interactions:
       Connection: [keep-alive]
       Content-Type: [application/json; charset=utf-8]
       User-Agent: [python/3.5.1 (Windows-10-10.0.14393-SP0) requests/2.11.1 msrest/0.4.4
-          msrest_azure/0.4.3 networkmanagementclient/0.30.0 Azure-SDK-For-Python]
+          msrest_azure/0.4.5 networkmanagementclient/0.30.0 Azure-SDK-For-Python]
       accept-language: [en-US]
-      x-ms-client-request-id: [cc050186-9fc1-11e6-b161-ecb1d756380e]
+      x-ms-client-request-id: [ac17fe9c-bcd5-11e6-90dc-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/a23cf782-bbaa-4ab4-9304-b2f93308621f?api-version=2016-09-01
+    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/efe6cd4d-79c6-4303-93e0-3067f4797fba?api-version=2016-09-01
   response:
     body: {string: "{\r\n  \"status\": \"Succeeded\"\r\n}"}
     headers:
       Cache-Control: [no-cache]
       Content-Type: [application/json; charset=utf-8]
-      Date: ['Mon, 31 Oct 2016 23:29:08 GMT']
+      Date: ['Wed, 07 Dec 2016 23:34:23 GMT']
       Expires: ['-1']
       Pragma: [no-cache]
       Server: [Microsoft-HTTPAPI/2.0, Microsoft-HTTPAPI/2.0]
@@ -64,10 +136,10 @@ interactions:
       Transfer-Encoding: [chunked]
       Vary: [Accept-Encoding]
       content-length: ['29']
-      x-ms-correlation-request-id: [35254d81-f239-498d-8e30-8e3936fb4e80]
-      x-ms-ratelimit-remaining-subscription-reads: ['14990']
-      x-ms-request-id: [9e5c2465-6119-43c6-ae99-6eb1014791af]
-      x-ms-routing-request-id: ['CENTRALUS:20161031T232909Z:35254d81-f239-498d-8e30-8e3936fb4e80']
+      x-ms-correlation-request-id: [0e4c8768-5f3f-4ff1-bb1d-46f403bc17c6]
+      x-ms-ratelimit-remaining-subscription-reads: ['14984']
+      x-ms-request-id: [02a626ac-d7ad-47a6-a967-94c4575984b2]
+      x-ms-routing-request-id: ['CENTRALUS:20161207T233423Z:0e4c8768-5f3f-4ff1-bb1d-46f403bc17c6']
     status: {code: 200, message: OK}
 - request:
     body: null
@@ -77,24 +149,24 @@ interactions:
       Connection: [keep-alive]
       Content-Type: [application/json; charset=utf-8]
       User-Agent: [python/3.5.1 (Windows-10-10.0.14393-SP0) requests/2.11.1 msrest/0.4.4
-          msrest_azure/0.4.3 networkmanagementclient/0.30.0 Azure-SDK-For-Python]
+          msrest_azure/0.4.5 networkmanagementclient/0.30.0 Azure-SDK-For-Python]
       accept-language: [en-US]
-      x-ms-client-request-id: [cc050186-9fc1-11e6-b161-ecb1d756380e]
+      x-ms-client-request-id: [ac17fe9c-bcd5-11e6-90dc-ecb1d756380e]
     method: GET
     uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_load_balancers239e0f35/providers/Microsoft.Network/publicIPAddresses/pyipname239e0f35?api-version=2016-09-01
   response:
     body: {string: "{\r\n  \"name\": \"pyipname239e0f35\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_load_balancers239e0f35/providers/Microsoft.Network/publicIPAddresses/pyipname239e0f35\",\r\n
-        \ \"etag\": \"W/\\\"52c42e5b-d039-47a6-832f-060f0f321f8a\\\"\",\r\n  \"type\":
+        \ \"etag\": \"W/\\\"29be9f94-625a-4411-b4c3-a5a6e34f5537\\\"\",\r\n  \"type\":
         \"Microsoft.Network/publicIPAddresses\",\r\n  \"location\": \"westus\",\r\n
         \ \"properties\": {\r\n    \"provisioningState\": \"Succeeded\",\r\n    \"resourceGuid\":
-        \"0dbf3e6a-ca15-490a-a29f-328eae39bf66\",\r\n    \"ipAddress\": \"40.112.208.120\",\r\n
+        \"9c07d632-10e2-4b79-8591-bfb13c04852a\",\r\n    \"ipAddress\": \"168.62.213.105\",\r\n
         \   \"publicIPAddressVersion\": \"IPv4\",\r\n    \"publicIPAllocationMethod\":
         \"Static\",\r\n    \"idleTimeoutInMinutes\": 4\r\n  }\r\n}"}
     headers:
       Cache-Control: [no-cache]
       Content-Type: [application/json; charset=utf-8]
-      Date: ['Mon, 31 Oct 2016 23:29:09 GMT']
-      ETag: [W/"52c42e5b-d039-47a6-832f-060f0f321f8a"]
+      Date: ['Wed, 07 Dec 2016 23:34:23 GMT']
+      ETag: [W/"29be9f94-625a-4411-b4c3-a5a6e34f5537"]
       Expires: ['-1']
       Pragma: [no-cache]
       Server: [Microsoft-HTTPAPI/2.0, Microsoft-HTTPAPI/2.0]
@@ -102,29 +174,30 @@ interactions:
       Transfer-Encoding: [chunked]
       Vary: [Accept-Encoding]
       content-length: ['628']
-      x-ms-correlation-request-id: [33428c10-72d8-4fbb-b967-6b93b98f83bb]
-      x-ms-ratelimit-remaining-subscription-reads: ['14843']
-      x-ms-request-id: [7ea81e01-0e4d-4542-9fb7-5da0dfa8d1d7]
-      x-ms-routing-request-id: ['CENTRALUS:20161031T232910Z:33428c10-72d8-4fbb-b967-6b93b98f83bb']
+      x-ms-correlation-request-id: [5ca1d1a5-9ff3-4745-87f5-ddae29e534af]
+      x-ms-ratelimit-remaining-subscription-reads: ['14980']
+      x-ms-request-id: [70a7d67a-d9bf-4aa6-9879-96fbdbb06d0b]
+      x-ms-routing-request-id: ['CENTRALUS:20161207T233424Z:5ca1d1a5-9ff3-4745-87f5-ddae29e534af']
     status: {code: 200, message: OK}
 - request:
-    body: '{"location": "westus", "properties": {"loadBalancingRules": [{"name": "azure-sample-lb-rule",
-      "properties": {"enableFloatingIP": false, "idleTimeoutInMinutes": 4, "frontendPort":
-      80, "backendAddressPool": {"id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_load_balancers239e0f35/providers/Microsoft.Network/loadBalancers/pylbname239e0f35/backendAddressPools/pyapname239e0f35"},
-      "backendPort": 80, "protocol": "tcp", "probe": {"id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_load_balancers239e0f35/providers/Microsoft.Network/loadBalancers/pylbname239e0f35/probes/pyprobename239e0f35"},
-      "loadDistribution": "Default", "frontendIPConfiguration": {"id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_load_balancers239e0f35/providers/Microsoft.Network/loadBalancers/pylbname239e0f35/frontendIPConfigurations/pyfipname239e0f35"}}}],
-      "backendAddressPools": [{"name": "pyapname239e0f35"}], "inboundNatRules": [{"name":
-      "azure-sample-netrule1", "properties": {"enableFloatingIP": false, "frontendIPConfiguration":
-      {"id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_load_balancers239e0f35/providers/Microsoft.Network/loadBalancers/pylbname239e0f35/frontendIPConfigurations/pyfipname239e0f35"},
-      "frontendPort": 21, "backendPort": 22, "idleTimeoutInMinutes": 4, "protocol":
-      "tcp"}}, {"name": "azure-sample-netrule2", "properties": {"enableFloatingIP":
-      false, "frontendIPConfiguration": {"id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_load_balancers239e0f35/providers/Microsoft.Network/loadBalancers/pylbname239e0f35/frontendIPConfigurations/pyfipname239e0f35"},
-      "frontendPort": 23, "backendPort": 22, "idleTimeoutInMinutes": 4, "protocol":
-      "tcp"}}], "frontendIPConfigurations": [{"name": "pyfipname239e0f35", "properties":
-      {"privateIPAllocationMethod": "Dynamic", "publicIPAddress": {"id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_load_balancers239e0f35/providers/Microsoft.Network/publicIPAddresses/pyipname239e0f35"}}}],
-      "probes": [{"name": "pyprobename239e0f35", "properties": {"port": 80, "intervalInSeconds":
-      15, "protocol": "Http", "requestPath": "healthprobe.aspx", "numberOfProbes":
-      4}}]}}'
+    body: '{"location": "westus", "properties": {"backendAddressPools": [{"name":
+      "pyapname239e0f35"}], "probes": [{"properties": {"intervalInSeconds": 15, "requestPath":
+      "healthprobe.aspx", "numberOfProbes": 4, "protocol": "Http", "port": 80}, "name":
+      "pyprobename239e0f35"}], "frontendIPConfigurations": [{"properties": {"privateIPAllocationMethod":
+      "Dynamic", "publicIPAddress": {"id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_load_balancers239e0f35/providers/Microsoft.Network/publicIPAddresses/pyipname239e0f35"}},
+      "name": "pyfipname239e0f35"}], "loadBalancingRules": [{"properties": {"backendPort":
+      80, "probe": {"id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_load_balancers239e0f35/providers/Microsoft.Network/loadBalancers/pylbname239e0f35/probes/pyprobename239e0f35"},
+      "frontendIPConfiguration": {"id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_load_balancers239e0f35/providers/Microsoft.Network/loadBalancers/pylbname239e0f35/frontendIPConfigurations/pyfipname239e0f35"},
+      "protocol": "tcp", "loadDistribution": "Default", "backendAddressPool": {"id":
+      "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_load_balancers239e0f35/providers/Microsoft.Network/loadBalancers/pylbname239e0f35/backendAddressPools/pyapname239e0f35"},
+      "enableFloatingIP": false, "idleTimeoutInMinutes": 4, "frontendPort": 80}, "name":
+      "azure-sample-lb-rule"}], "inboundNatRules": [{"properties": {"backendPort":
+      22, "frontendPort": 21, "frontendIPConfiguration": {"id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_load_balancers239e0f35/providers/Microsoft.Network/loadBalancers/pylbname239e0f35/frontendIPConfigurations/pyfipname239e0f35"},
+      "protocol": "tcp", "enableFloatingIP": false, "idleTimeoutInMinutes": 4}, "name":
+      "azure-sample-netrule1"}, {"properties": {"backendPort": 22, "frontendPort":
+      23, "frontendIPConfiguration": {"id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_load_balancers239e0f35/providers/Microsoft.Network/loadBalancers/pylbname239e0f35/frontendIPConfigurations/pyfipname239e0f35"},
+      "protocol": "tcp", "enableFloatingIP": false, "idleTimeoutInMinutes": 4}, "name":
+      "azure-sample-netrule2"}]}}'
     headers:
       Accept: [application/json]
       Accept-Encoding: ['gzip, deflate']
@@ -132,19 +205,19 @@ interactions:
       Content-Length: ['2374']
       Content-Type: [application/json; charset=utf-8]
       User-Agent: [python/3.5.1 (Windows-10-10.0.14393-SP0) requests/2.11.1 msrest/0.4.4
-          msrest_azure/0.4.3 networkmanagementclient/0.30.0 Azure-SDK-For-Python]
+          msrest_azure/0.4.5 networkmanagementclient/0.30.0 Azure-SDK-For-Python]
       accept-language: [en-US]
-      x-ms-client-request-id: [d334c248-9fc1-11e6-8256-ecb1d756380e]
+      x-ms-client-request-id: [afc94ff0-bcd5-11e6-acc3-ecb1d756380e]
     method: PUT
     uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_load_balancers239e0f35/providers/Microsoft.Network/loadBalancers/pylbname239e0f35?api-version=2016-09-01
   response:
     body: {string: "{\r\n  \"name\": \"pylbname239e0f35\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_load_balancers239e0f35/providers/Microsoft.Network/loadBalancers/pylbname239e0f35\",\r\n
-        \ \"etag\": \"W/\\\"9784eed8-79ea-4df9-a3fe-ca1e095ca80b\\\"\",\r\n  \"type\":
+        \ \"etag\": \"W/\\\"a39e7045-0034-4bbc-bad6-a16d4227d72f\\\"\",\r\n  \"type\":
         \"Microsoft.Network/loadBalancers\",\r\n  \"location\": \"westus\",\r\n  \"properties\":
-        {\r\n    \"provisioningState\": \"Succeeded\",\r\n    \"resourceGuid\": \"a574e18c-2ab8-4faf-8867-a8c8b9379e06\",\r\n
+        {\r\n    \"provisioningState\": \"Succeeded\",\r\n    \"resourceGuid\": \"59e28698-c494-4755-a735-850d9982f3c9\",\r\n
         \   \"frontendIPConfigurations\": [\r\n      {\r\n        \"name\": \"pyfipname239e0f35\",\r\n
         \       \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_load_balancers239e0f35/providers/Microsoft.Network/loadBalancers/pylbname239e0f35/frontendIPConfigurations/pyfipname239e0f35\",\r\n
-        \       \"etag\": \"W/\\\"9784eed8-79ea-4df9-a3fe-ca1e095ca80b\\\"\",\r\n
+        \       \"etag\": \"W/\\\"a39e7045-0034-4bbc-bad6-a16d4227d72f\\\"\",\r\n
         \       \"properties\": {\r\n          \"provisioningState\": \"Succeeded\",\r\n
         \         \"privateIPAllocationMethod\": \"Dynamic\",\r\n          \"publicIPAddress\":
         {\r\n            \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_load_balancers239e0f35/providers/Microsoft.Network/publicIPAddresses/pyipname239e0f35\"\r\n
@@ -156,14 +229,14 @@ interactions:
         \           }\r\n          ]\r\n        }\r\n      }\r\n    ],\r\n    \"backendAddressPools\":
         [\r\n      {\r\n        \"name\": \"pyapname239e0f35\",\r\n        \"id\":
         \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_load_balancers239e0f35/providers/Microsoft.Network/loadBalancers/pylbname239e0f35/backendAddressPools/pyapname239e0f35\",\r\n
-        \       \"etag\": \"W/\\\"9784eed8-79ea-4df9-a3fe-ca1e095ca80b\\\"\",\r\n
+        \       \"etag\": \"W/\\\"a39e7045-0034-4bbc-bad6-a16d4227d72f\\\"\",\r\n
         \       \"properties\": {\r\n          \"provisioningState\": \"Succeeded\",\r\n
         \         \"loadBalancingRules\": [\r\n            {\r\n              \"id\":
         \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_load_balancers239e0f35/providers/Microsoft.Network/loadBalancers/pylbname239e0f35/loadBalancingRules/azure-sample-lb-rule\"\r\n
         \           }\r\n          ]\r\n        }\r\n      }\r\n    ],\r\n    \"loadBalancingRules\":
         [\r\n      {\r\n        \"name\": \"azure-sample-lb-rule\",\r\n        \"id\":
         \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_load_balancers239e0f35/providers/Microsoft.Network/loadBalancers/pylbname239e0f35/loadBalancingRules/azure-sample-lb-rule\",\r\n
-        \       \"etag\": \"W/\\\"9784eed8-79ea-4df9-a3fe-ca1e095ca80b\\\"\",\r\n
+        \       \"etag\": \"W/\\\"a39e7045-0034-4bbc-bad6-a16d4227d72f\\\"\",\r\n
         \       \"properties\": {\r\n          \"provisioningState\": \"Succeeded\",\r\n
         \         \"frontendIPConfiguration\": {\r\n            \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_load_balancers239e0f35/providers/Microsoft.Network/loadBalancers/pylbname239e0f35/frontendIPConfigurations/pyfipname239e0f35\"\r\n
         \         },\r\n          \"frontendPort\": 80,\r\n          \"backendPort\":
@@ -174,7 +247,7 @@ interactions:
         \         },\r\n          \"probe\": {\r\n            \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_load_balancers239e0f35/providers/Microsoft.Network/loadBalancers/pylbname239e0f35/probes/pyprobename239e0f35\"\r\n
         \         }\r\n        }\r\n      }\r\n    ],\r\n    \"probes\": [\r\n      {\r\n
         \       \"name\": \"pyprobename239e0f35\",\r\n        \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_load_balancers239e0f35/providers/Microsoft.Network/loadBalancers/pylbname239e0f35/probes/pyprobename239e0f35\",\r\n
-        \       \"etag\": \"W/\\\"9784eed8-79ea-4df9-a3fe-ca1e095ca80b\\\"\",\r\n
+        \       \"etag\": \"W/\\\"a39e7045-0034-4bbc-bad6-a16d4227d72f\\\"\",\r\n
         \       \"properties\": {\r\n          \"provisioningState\": \"Succeeded\",\r\n
         \         \"protocol\": \"Http\",\r\n          \"port\": 80,\r\n          \"requestPath\":
         \"healthprobe.aspx\",\r\n          \"intervalInSeconds\": 15,\r\n          \"numberOfProbes\":
@@ -183,14 +256,14 @@ interactions:
         \           }\r\n          ]\r\n        }\r\n      }\r\n    ],\r\n    \"inboundNatRules\":
         [\r\n      {\r\n        \"name\": \"azure-sample-netrule1\",\r\n        \"id\":
         \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_load_balancers239e0f35/providers/Microsoft.Network/loadBalancers/pylbname239e0f35/inboundNatRules/azure-sample-netrule1\",\r\n
-        \       \"etag\": \"W/\\\"9784eed8-79ea-4df9-a3fe-ca1e095ca80b\\\"\",\r\n
+        \       \"etag\": \"W/\\\"a39e7045-0034-4bbc-bad6-a16d4227d72f\\\"\",\r\n
         \       \"properties\": {\r\n          \"provisioningState\": \"Succeeded\",\r\n
         \         \"frontendIPConfiguration\": {\r\n            \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_load_balancers239e0f35/providers/Microsoft.Network/loadBalancers/pylbname239e0f35/frontendIPConfigurations/pyfipname239e0f35\"\r\n
         \         },\r\n          \"frontendPort\": 21,\r\n          \"backendPort\":
         22,\r\n          \"enableFloatingIP\": false,\r\n          \"idleTimeoutInMinutes\":
         4,\r\n          \"protocol\": \"Tcp\"\r\n        }\r\n      },\r\n      {\r\n
         \       \"name\": \"azure-sample-netrule2\",\r\n        \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_load_balancers239e0f35/providers/Microsoft.Network/loadBalancers/pylbname239e0f35/inboundNatRules/azure-sample-netrule2\",\r\n
-        \       \"etag\": \"W/\\\"9784eed8-79ea-4df9-a3fe-ca1e095ca80b\\\"\",\r\n
+        \       \"etag\": \"W/\\\"a39e7045-0034-4bbc-bad6-a16d4227d72f\\\"\",\r\n
         \       \"properties\": {\r\n          \"provisioningState\": \"Succeeded\",\r\n
         \         \"frontendIPConfiguration\": {\r\n            \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_load_balancers239e0f35/providers/Microsoft.Network/loadBalancers/pylbname239e0f35/frontendIPConfigurations/pyfipname239e0f35\"\r\n
         \         },\r\n          \"frontendPort\": 23,\r\n          \"backendPort\":
@@ -198,19 +271,19 @@ interactions:
         4,\r\n          \"protocol\": \"Tcp\"\r\n        }\r\n      }\r\n    ],\r\n
         \   \"outboundNatRules\": [],\r\n    \"inboundNatPools\": []\r\n  }\r\n}"}
     headers:
-      Azure-AsyncOperation: ['https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/72df8f5e-614b-4bf0-843f-be5eb0ee89b4?api-version=2016-09-01']
+      Azure-AsyncOperation: ['https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/7ef6ed12-5c89-47bc-816a-0a2f2a775847?api-version=2016-09-01']
       Cache-Control: [no-cache]
       Content-Length: ['7199']
       Content-Type: [application/json; charset=utf-8]
-      Date: ['Mon, 31 Oct 2016 23:29:11 GMT']
+      Date: ['Wed, 07 Dec 2016 23:34:25 GMT']
       Expires: ['-1']
       Pragma: [no-cache]
       Server: [Microsoft-HTTPAPI/2.0, Microsoft-HTTPAPI/2.0]
       Strict-Transport-Security: [max-age=31536000; includeSubDomains]
-      x-ms-correlation-request-id: [3106cfcc-397a-4270-954a-78d9bc15d29b]
+      x-ms-correlation-request-id: [dc1a481a-e92b-4968-928e-5f8fe4faae94]
       x-ms-ratelimit-remaining-subscription-writes: ['1199']
-      x-ms-request-id: [72df8f5e-614b-4bf0-843f-be5eb0ee89b4]
-      x-ms-routing-request-id: ['CENTRALUS:20161031T232911Z:3106cfcc-397a-4270-954a-78d9bc15d29b']
+      x-ms-request-id: [7ef6ed12-5c89-47bc-816a-0a2f2a775847]
+      x-ms-routing-request-id: ['CENTRALUS:20161207T233425Z:dc1a481a-e92b-4968-928e-5f8fe4faae94']
     status: {code: 201, message: Created}
 - request:
     body: null
@@ -220,19 +293,50 @@ interactions:
       Connection: [keep-alive]
       Content-Type: [application/json; charset=utf-8]
       User-Agent: [python/3.5.1 (Windows-10-10.0.14393-SP0) requests/2.11.1 msrest/0.4.4
-          msrest_azure/0.4.3 networkmanagementclient/0.30.0 Azure-SDK-For-Python]
+          msrest_azure/0.4.5 networkmanagementclient/0.30.0 Azure-SDK-For-Python]
       accept-language: [en-US]
-      x-ms-client-request-id: [d3fbbbb6-9fc1-11e6-9230-ecb1d756380e]
+      x-ms-client-request-id: [afc94ff0-bcd5-11e6-acc3-ecb1d756380e]
+    method: GET
+    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/7ef6ed12-5c89-47bc-816a-0a2f2a775847?api-version=2016-09-01
+  response:
+    body: {string: "{\r\n  \"status\": \"Succeeded\"\r\n}"}
+    headers:
+      Cache-Control: [no-cache]
+      Content-Type: [application/json; charset=utf-8]
+      Date: ['Wed, 07 Dec 2016 23:34:55 GMT']
+      Expires: ['-1']
+      Pragma: [no-cache]
+      Server: [Microsoft-HTTPAPI/2.0, Microsoft-HTTPAPI/2.0]
+      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
+      Transfer-Encoding: [chunked]
+      Vary: [Accept-Encoding]
+      content-length: ['29']
+      x-ms-correlation-request-id: [5a40f7e4-a073-4c86-93cc-5a433c158f22]
+      x-ms-ratelimit-remaining-subscription-reads: ['14998']
+      x-ms-request-id: [809ca241-4238-4c5e-bd93-fe3462e3bfcb]
+      x-ms-routing-request-id: ['WESTUS2:20161207T233456Z:5a40f7e4-a073-4c86-93cc-5a433c158f22']
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.5.1 (Windows-10-10.0.14393-SP0) requests/2.11.1 msrest/0.4.4
+          msrest_azure/0.4.5 networkmanagementclient/0.30.0 Azure-SDK-For-Python]
+      accept-language: [en-US]
+      x-ms-client-request-id: [afc94ff0-bcd5-11e6-acc3-ecb1d756380e]
     method: GET
     uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_load_balancers239e0f35/providers/Microsoft.Network/loadBalancers/pylbname239e0f35?api-version=2016-09-01
   response:
     body: {string: "{\r\n  \"name\": \"pylbname239e0f35\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_load_balancers239e0f35/providers/Microsoft.Network/loadBalancers/pylbname239e0f35\",\r\n
-        \ \"etag\": \"W/\\\"9784eed8-79ea-4df9-a3fe-ca1e095ca80b\\\"\",\r\n  \"type\":
+        \ \"etag\": \"W/\\\"a39e7045-0034-4bbc-bad6-a16d4227d72f\\\"\",\r\n  \"type\":
         \"Microsoft.Network/loadBalancers\",\r\n  \"location\": \"westus\",\r\n  \"properties\":
-        {\r\n    \"provisioningState\": \"Succeeded\",\r\n    \"resourceGuid\": \"a574e18c-2ab8-4faf-8867-a8c8b9379e06\",\r\n
+        {\r\n    \"provisioningState\": \"Succeeded\",\r\n    \"resourceGuid\": \"59e28698-c494-4755-a735-850d9982f3c9\",\r\n
         \   \"frontendIPConfigurations\": [\r\n      {\r\n        \"name\": \"pyfipname239e0f35\",\r\n
         \       \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_load_balancers239e0f35/providers/Microsoft.Network/loadBalancers/pylbname239e0f35/frontendIPConfigurations/pyfipname239e0f35\",\r\n
-        \       \"etag\": \"W/\\\"9784eed8-79ea-4df9-a3fe-ca1e095ca80b\\\"\",\r\n
+        \       \"etag\": \"W/\\\"a39e7045-0034-4bbc-bad6-a16d4227d72f\\\"\",\r\n
         \       \"properties\": {\r\n          \"provisioningState\": \"Succeeded\",\r\n
         \         \"privateIPAllocationMethod\": \"Dynamic\",\r\n          \"publicIPAddress\":
         {\r\n            \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_load_balancers239e0f35/providers/Microsoft.Network/publicIPAddresses/pyipname239e0f35\"\r\n
@@ -244,14 +348,14 @@ interactions:
         \           }\r\n          ]\r\n        }\r\n      }\r\n    ],\r\n    \"backendAddressPools\":
         [\r\n      {\r\n        \"name\": \"pyapname239e0f35\",\r\n        \"id\":
         \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_load_balancers239e0f35/providers/Microsoft.Network/loadBalancers/pylbname239e0f35/backendAddressPools/pyapname239e0f35\",\r\n
-        \       \"etag\": \"W/\\\"9784eed8-79ea-4df9-a3fe-ca1e095ca80b\\\"\",\r\n
+        \       \"etag\": \"W/\\\"a39e7045-0034-4bbc-bad6-a16d4227d72f\\\"\",\r\n
         \       \"properties\": {\r\n          \"provisioningState\": \"Succeeded\",\r\n
         \         \"loadBalancingRules\": [\r\n            {\r\n              \"id\":
         \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_load_balancers239e0f35/providers/Microsoft.Network/loadBalancers/pylbname239e0f35/loadBalancingRules/azure-sample-lb-rule\"\r\n
         \           }\r\n          ]\r\n        }\r\n      }\r\n    ],\r\n    \"loadBalancingRules\":
         [\r\n      {\r\n        \"name\": \"azure-sample-lb-rule\",\r\n        \"id\":
         \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_load_balancers239e0f35/providers/Microsoft.Network/loadBalancers/pylbname239e0f35/loadBalancingRules/azure-sample-lb-rule\",\r\n
-        \       \"etag\": \"W/\\\"9784eed8-79ea-4df9-a3fe-ca1e095ca80b\\\"\",\r\n
+        \       \"etag\": \"W/\\\"a39e7045-0034-4bbc-bad6-a16d4227d72f\\\"\",\r\n
         \       \"properties\": {\r\n          \"provisioningState\": \"Succeeded\",\r\n
         \         \"frontendIPConfiguration\": {\r\n            \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_load_balancers239e0f35/providers/Microsoft.Network/loadBalancers/pylbname239e0f35/frontendIPConfigurations/pyfipname239e0f35\"\r\n
         \         },\r\n          \"frontendPort\": 80,\r\n          \"backendPort\":
@@ -262,7 +366,7 @@ interactions:
         \         },\r\n          \"probe\": {\r\n            \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_load_balancers239e0f35/providers/Microsoft.Network/loadBalancers/pylbname239e0f35/probes/pyprobename239e0f35\"\r\n
         \         }\r\n        }\r\n      }\r\n    ],\r\n    \"probes\": [\r\n      {\r\n
         \       \"name\": \"pyprobename239e0f35\",\r\n        \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_load_balancers239e0f35/providers/Microsoft.Network/loadBalancers/pylbname239e0f35/probes/pyprobename239e0f35\",\r\n
-        \       \"etag\": \"W/\\\"9784eed8-79ea-4df9-a3fe-ca1e095ca80b\\\"\",\r\n
+        \       \"etag\": \"W/\\\"a39e7045-0034-4bbc-bad6-a16d4227d72f\\\"\",\r\n
         \       \"properties\": {\r\n          \"provisioningState\": \"Succeeded\",\r\n
         \         \"protocol\": \"Http\",\r\n          \"port\": 80,\r\n          \"requestPath\":
         \"healthprobe.aspx\",\r\n          \"intervalInSeconds\": 15,\r\n          \"numberOfProbes\":
@@ -271,14 +375,14 @@ interactions:
         \           }\r\n          ]\r\n        }\r\n      }\r\n    ],\r\n    \"inboundNatRules\":
         [\r\n      {\r\n        \"name\": \"azure-sample-netrule1\",\r\n        \"id\":
         \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_load_balancers239e0f35/providers/Microsoft.Network/loadBalancers/pylbname239e0f35/inboundNatRules/azure-sample-netrule1\",\r\n
-        \       \"etag\": \"W/\\\"9784eed8-79ea-4df9-a3fe-ca1e095ca80b\\\"\",\r\n
+        \       \"etag\": \"W/\\\"a39e7045-0034-4bbc-bad6-a16d4227d72f\\\"\",\r\n
         \       \"properties\": {\r\n          \"provisioningState\": \"Succeeded\",\r\n
         \         \"frontendIPConfiguration\": {\r\n            \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_load_balancers239e0f35/providers/Microsoft.Network/loadBalancers/pylbname239e0f35/frontendIPConfigurations/pyfipname239e0f35\"\r\n
         \         },\r\n          \"frontendPort\": 21,\r\n          \"backendPort\":
         22,\r\n          \"enableFloatingIP\": false,\r\n          \"idleTimeoutInMinutes\":
         4,\r\n          \"protocol\": \"Tcp\"\r\n        }\r\n      },\r\n      {\r\n
         \       \"name\": \"azure-sample-netrule2\",\r\n        \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_load_balancers239e0f35/providers/Microsoft.Network/loadBalancers/pylbname239e0f35/inboundNatRules/azure-sample-netrule2\",\r\n
-        \       \"etag\": \"W/\\\"9784eed8-79ea-4df9-a3fe-ca1e095ca80b\\\"\",\r\n
+        \       \"etag\": \"W/\\\"a39e7045-0034-4bbc-bad6-a16d4227d72f\\\"\",\r\n
         \       \"properties\": {\r\n          \"provisioningState\": \"Succeeded\",\r\n
         \         \"frontendIPConfiguration\": {\r\n            \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_load_balancers239e0f35/providers/Microsoft.Network/loadBalancers/pylbname239e0f35/frontendIPConfigurations/pyfipname239e0f35\"\r\n
         \         },\r\n          \"frontendPort\": 23,\r\n          \"backendPort\":
@@ -288,8 +392,8 @@ interactions:
     headers:
       Cache-Control: [no-cache]
       Content-Type: [application/json; charset=utf-8]
-      Date: ['Mon, 31 Oct 2016 23:29:11 GMT']
-      ETag: [W/"9784eed8-79ea-4df9-a3fe-ca1e095ca80b"]
+      Date: ['Wed, 07 Dec 2016 23:34:56 GMT']
+      ETag: [W/"a39e7045-0034-4bbc-bad6-a16d4227d72f"]
       Expires: ['-1']
       Pragma: [no-cache]
       Server: [Microsoft-HTTPAPI/2.0, Microsoft-HTTPAPI/2.0]
@@ -297,10 +401,10 @@ interactions:
       Transfer-Encoding: [chunked]
       Vary: [Accept-Encoding]
       content-length: ['7199']
-      x-ms-correlation-request-id: [22b4b18c-6165-43cc-9e8e-52348013cb96]
-      x-ms-ratelimit-remaining-subscription-reads: ['14991']
-      x-ms-request-id: [073735cf-96ae-4037-a1b3-392c55a87f65]
-      x-ms-routing-request-id: ['CENTRALUS:20161031T232911Z:22b4b18c-6165-43cc-9e8e-52348013cb96']
+      x-ms-correlation-request-id: [5d50e624-6299-4acb-96e4-110b1eef2221]
+      x-ms-ratelimit-remaining-subscription-reads: ['14997']
+      x-ms-request-id: [7a0fa07a-ba99-4c92-95ad-df33125ca192]
+      x-ms-routing-request-id: ['WESTUS2:20161207T233456Z:5d50e624-6299-4acb-96e4-110b1eef2221']
     status: {code: 200, message: OK}
 - request:
     body: null
@@ -310,21 +414,111 @@ interactions:
       Connection: [keep-alive]
       Content-Type: [application/json; charset=utf-8]
       User-Agent: [python/3.5.1 (Windows-10-10.0.14393-SP0) requests/2.11.1 msrest/0.4.4
-          msrest_azure/0.4.3 networkmanagementclient/0.30.0 Azure-SDK-For-Python]
+          msrest_azure/0.4.5 networkmanagementclient/0.30.0 Azure-SDK-For-Python]
       accept-language: [en-US]
-      x-ms-client-request-id: [d43fa274-9fc1-11e6-9fd4-ecb1d756380e]
+      x-ms-client-request-id: [c2fe3686-bcd5-11e6-8d2d-ecb1d756380e]
+    method: GET
+    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_load_balancers239e0f35/providers/Microsoft.Network/loadBalancers/pylbname239e0f35?api-version=2016-09-01
+  response:
+    body: {string: "{\r\n  \"name\": \"pylbname239e0f35\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_load_balancers239e0f35/providers/Microsoft.Network/loadBalancers/pylbname239e0f35\",\r\n
+        \ \"etag\": \"W/\\\"a39e7045-0034-4bbc-bad6-a16d4227d72f\\\"\",\r\n  \"type\":
+        \"Microsoft.Network/loadBalancers\",\r\n  \"location\": \"westus\",\r\n  \"properties\":
+        {\r\n    \"provisioningState\": \"Succeeded\",\r\n    \"resourceGuid\": \"59e28698-c494-4755-a735-850d9982f3c9\",\r\n
+        \   \"frontendIPConfigurations\": [\r\n      {\r\n        \"name\": \"pyfipname239e0f35\",\r\n
+        \       \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_load_balancers239e0f35/providers/Microsoft.Network/loadBalancers/pylbname239e0f35/frontendIPConfigurations/pyfipname239e0f35\",\r\n
+        \       \"etag\": \"W/\\\"a39e7045-0034-4bbc-bad6-a16d4227d72f\\\"\",\r\n
+        \       \"properties\": {\r\n          \"provisioningState\": \"Succeeded\",\r\n
+        \         \"privateIPAllocationMethod\": \"Dynamic\",\r\n          \"publicIPAddress\":
+        {\r\n            \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_load_balancers239e0f35/providers/Microsoft.Network/publicIPAddresses/pyipname239e0f35\"\r\n
+        \         },\r\n          \"loadBalancingRules\": [\r\n            {\r\n              \"id\":
+        \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_load_balancers239e0f35/providers/Microsoft.Network/loadBalancers/pylbname239e0f35/loadBalancingRules/azure-sample-lb-rule\"\r\n
+        \           }\r\n          ],\r\n          \"inboundNatRules\": [\r\n            {\r\n
+        \             \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_load_balancers239e0f35/providers/Microsoft.Network/loadBalancers/pylbname239e0f35/inboundNatRules/azure-sample-netrule1\"\r\n
+        \           },\r\n            {\r\n              \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_load_balancers239e0f35/providers/Microsoft.Network/loadBalancers/pylbname239e0f35/inboundNatRules/azure-sample-netrule2\"\r\n
+        \           }\r\n          ]\r\n        }\r\n      }\r\n    ],\r\n    \"backendAddressPools\":
+        [\r\n      {\r\n        \"name\": \"pyapname239e0f35\",\r\n        \"id\":
+        \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_load_balancers239e0f35/providers/Microsoft.Network/loadBalancers/pylbname239e0f35/backendAddressPools/pyapname239e0f35\",\r\n
+        \       \"etag\": \"W/\\\"a39e7045-0034-4bbc-bad6-a16d4227d72f\\\"\",\r\n
+        \       \"properties\": {\r\n          \"provisioningState\": \"Succeeded\",\r\n
+        \         \"loadBalancingRules\": [\r\n            {\r\n              \"id\":
+        \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_load_balancers239e0f35/providers/Microsoft.Network/loadBalancers/pylbname239e0f35/loadBalancingRules/azure-sample-lb-rule\"\r\n
+        \           }\r\n          ]\r\n        }\r\n      }\r\n    ],\r\n    \"loadBalancingRules\":
+        [\r\n      {\r\n        \"name\": \"azure-sample-lb-rule\",\r\n        \"id\":
+        \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_load_balancers239e0f35/providers/Microsoft.Network/loadBalancers/pylbname239e0f35/loadBalancingRules/azure-sample-lb-rule\",\r\n
+        \       \"etag\": \"W/\\\"a39e7045-0034-4bbc-bad6-a16d4227d72f\\\"\",\r\n
+        \       \"properties\": {\r\n          \"provisioningState\": \"Succeeded\",\r\n
+        \         \"frontendIPConfiguration\": {\r\n            \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_load_balancers239e0f35/providers/Microsoft.Network/loadBalancers/pylbname239e0f35/frontendIPConfigurations/pyfipname239e0f35\"\r\n
+        \         },\r\n          \"frontendPort\": 80,\r\n          \"backendPort\":
+        80,\r\n          \"enableFloatingIP\": false,\r\n          \"idleTimeoutInMinutes\":
+        4,\r\n          \"protocol\": \"Tcp\",\r\n          \"loadDistribution\":
+        \"Default\",\r\n          \"backendAddressPool\": {\r\n            \"id\":
+        \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_load_balancers239e0f35/providers/Microsoft.Network/loadBalancers/pylbname239e0f35/backendAddressPools/pyapname239e0f35\"\r\n
+        \         },\r\n          \"probe\": {\r\n            \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_load_balancers239e0f35/providers/Microsoft.Network/loadBalancers/pylbname239e0f35/probes/pyprobename239e0f35\"\r\n
+        \         }\r\n        }\r\n      }\r\n    ],\r\n    \"probes\": [\r\n      {\r\n
+        \       \"name\": \"pyprobename239e0f35\",\r\n        \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_load_balancers239e0f35/providers/Microsoft.Network/loadBalancers/pylbname239e0f35/probes/pyprobename239e0f35\",\r\n
+        \       \"etag\": \"W/\\\"a39e7045-0034-4bbc-bad6-a16d4227d72f\\\"\",\r\n
+        \       \"properties\": {\r\n          \"provisioningState\": \"Succeeded\",\r\n
+        \         \"protocol\": \"Http\",\r\n          \"port\": 80,\r\n          \"requestPath\":
+        \"healthprobe.aspx\",\r\n          \"intervalInSeconds\": 15,\r\n          \"numberOfProbes\":
+        4,\r\n          \"loadBalancingRules\": [\r\n            {\r\n              \"id\":
+        \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_load_balancers239e0f35/providers/Microsoft.Network/loadBalancers/pylbname239e0f35/loadBalancingRules/azure-sample-lb-rule\"\r\n
+        \           }\r\n          ]\r\n        }\r\n      }\r\n    ],\r\n    \"inboundNatRules\":
+        [\r\n      {\r\n        \"name\": \"azure-sample-netrule1\",\r\n        \"id\":
+        \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_load_balancers239e0f35/providers/Microsoft.Network/loadBalancers/pylbname239e0f35/inboundNatRules/azure-sample-netrule1\",\r\n
+        \       \"etag\": \"W/\\\"a39e7045-0034-4bbc-bad6-a16d4227d72f\\\"\",\r\n
+        \       \"properties\": {\r\n          \"provisioningState\": \"Succeeded\",\r\n
+        \         \"frontendIPConfiguration\": {\r\n            \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_load_balancers239e0f35/providers/Microsoft.Network/loadBalancers/pylbname239e0f35/frontendIPConfigurations/pyfipname239e0f35\"\r\n
+        \         },\r\n          \"frontendPort\": 21,\r\n          \"backendPort\":
+        22,\r\n          \"enableFloatingIP\": false,\r\n          \"idleTimeoutInMinutes\":
+        4,\r\n          \"protocol\": \"Tcp\"\r\n        }\r\n      },\r\n      {\r\n
+        \       \"name\": \"azure-sample-netrule2\",\r\n        \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_load_balancers239e0f35/providers/Microsoft.Network/loadBalancers/pylbname239e0f35/inboundNatRules/azure-sample-netrule2\",\r\n
+        \       \"etag\": \"W/\\\"a39e7045-0034-4bbc-bad6-a16d4227d72f\\\"\",\r\n
+        \       \"properties\": {\r\n          \"provisioningState\": \"Succeeded\",\r\n
+        \         \"frontendIPConfiguration\": {\r\n            \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_load_balancers239e0f35/providers/Microsoft.Network/loadBalancers/pylbname239e0f35/frontendIPConfigurations/pyfipname239e0f35\"\r\n
+        \         },\r\n          \"frontendPort\": 23,\r\n          \"backendPort\":
+        22,\r\n          \"enableFloatingIP\": false,\r\n          \"idleTimeoutInMinutes\":
+        4,\r\n          \"protocol\": \"Tcp\"\r\n        }\r\n      }\r\n    ],\r\n
+        \   \"outboundNatRules\": [],\r\n    \"inboundNatPools\": []\r\n  }\r\n}"}
+    headers:
+      Cache-Control: [no-cache]
+      Content-Type: [application/json; charset=utf-8]
+      Date: ['Wed, 07 Dec 2016 23:34:56 GMT']
+      ETag: [W/"a39e7045-0034-4bbc-bad6-a16d4227d72f"]
+      Expires: ['-1']
+      Pragma: [no-cache]
+      Server: [Microsoft-HTTPAPI/2.0, Microsoft-HTTPAPI/2.0]
+      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
+      Transfer-Encoding: [chunked]
+      Vary: [Accept-Encoding]
+      content-length: ['7199']
+      x-ms-correlation-request-id: [2f7d2614-e397-4849-b7e4-ebe89b0cd55c]
+      x-ms-ratelimit-remaining-subscription-reads: ['14996']
+      x-ms-request-id: [29f75df4-a5f3-488d-a4df-fcce60b49f5f]
+      x-ms-routing-request-id: ['WESTUS2:20161207T233456Z:2f7d2614-e397-4849-b7e4-ebe89b0cd55c']
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.5.1 (Windows-10-10.0.14393-SP0) requests/2.11.1 msrest/0.4.4
+          msrest_azure/0.4.5 networkmanagementclient/0.30.0 Azure-SDK-For-Python]
+      accept-language: [en-US]
+      x-ms-client-request-id: [c330ab5c-bcd5-11e6-90c7-ecb1d756380e]
     method: GET
     uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/loadBalancers?api-version=2016-09-01
   response:
     body: {string: "{\r\n  \"value\": [\r\n    {\r\n      \"name\": \"pylbname239e0f35\",\r\n
         \     \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_load_balancers239e0f35/providers/Microsoft.Network/loadBalancers/pylbname239e0f35\",\r\n
-        \     \"etag\": \"W/\\\"9784eed8-79ea-4df9-a3fe-ca1e095ca80b\\\"\",\r\n      \"type\":
+        \     \"etag\": \"W/\\\"a39e7045-0034-4bbc-bad6-a16d4227d72f\\\"\",\r\n      \"type\":
         \"Microsoft.Network/loadBalancers\",\r\n      \"location\": \"westus\",\r\n
         \     \"properties\": {\r\n        \"provisioningState\": \"Succeeded\",\r\n
-        \       \"resourceGuid\": \"a574e18c-2ab8-4faf-8867-a8c8b9379e06\",\r\n        \"frontendIPConfigurations\":
+        \       \"resourceGuid\": \"59e28698-c494-4755-a735-850d9982f3c9\",\r\n        \"frontendIPConfigurations\":
         [\r\n          {\r\n            \"name\": \"pyfipname239e0f35\",\r\n            \"id\":
         \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_load_balancers239e0f35/providers/Microsoft.Network/loadBalancers/pylbname239e0f35/frontendIPConfigurations/pyfipname239e0f35\",\r\n
-        \           \"etag\": \"W/\\\"9784eed8-79ea-4df9-a3fe-ca1e095ca80b\\\"\",\r\n
+        \           \"etag\": \"W/\\\"a39e7045-0034-4bbc-bad6-a16d4227d72f\\\"\",\r\n
         \           \"properties\": {\r\n              \"provisioningState\": \"Succeeded\",\r\n
         \             \"privateIPAllocationMethod\": \"Dynamic\",\r\n              \"publicIPAddress\":
         {\r\n                \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_load_balancers239e0f35/providers/Microsoft.Network/publicIPAddresses/pyipname239e0f35\"\r\n
@@ -336,14 +530,14 @@ interactions:
         \               }\r\n              ]\r\n            }\r\n          }\r\n        ],\r\n
         \       \"backendAddressPools\": [\r\n          {\r\n            \"name\":
         \"pyapname239e0f35\",\r\n            \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_load_balancers239e0f35/providers/Microsoft.Network/loadBalancers/pylbname239e0f35/backendAddressPools/pyapname239e0f35\",\r\n
-        \           \"etag\": \"W/\\\"9784eed8-79ea-4df9-a3fe-ca1e095ca80b\\\"\",\r\n
+        \           \"etag\": \"W/\\\"a39e7045-0034-4bbc-bad6-a16d4227d72f\\\"\",\r\n
         \           \"properties\": {\r\n              \"provisioningState\": \"Succeeded\",\r\n
         \             \"loadBalancingRules\": [\r\n                {\r\n                  \"id\":
         \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_load_balancers239e0f35/providers/Microsoft.Network/loadBalancers/pylbname239e0f35/loadBalancingRules/azure-sample-lb-rule\"\r\n
         \               }\r\n              ]\r\n            }\r\n          }\r\n        ],\r\n
         \       \"loadBalancingRules\": [\r\n          {\r\n            \"name\":
         \"azure-sample-lb-rule\",\r\n            \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_load_balancers239e0f35/providers/Microsoft.Network/loadBalancers/pylbname239e0f35/loadBalancingRules/azure-sample-lb-rule\",\r\n
-        \           \"etag\": \"W/\\\"9784eed8-79ea-4df9-a3fe-ca1e095ca80b\\\"\",\r\n
+        \           \"etag\": \"W/\\\"a39e7045-0034-4bbc-bad6-a16d4227d72f\\\"\",\r\n
         \           \"properties\": {\r\n              \"provisioningState\": \"Succeeded\",\r\n
         \             \"frontendIPConfiguration\": {\r\n                \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_load_balancers239e0f35/providers/Microsoft.Network/loadBalancers/pylbname239e0f35/frontendIPConfigurations/pyfipname239e0f35\"\r\n
         \             },\r\n              \"frontendPort\": 80,\r\n              \"backendPort\":
@@ -356,7 +550,7 @@ interactions:
         \             }\r\n            }\r\n          }\r\n        ],\r\n        \"probes\":
         [\r\n          {\r\n            \"name\": \"pyprobename239e0f35\",\r\n            \"id\":
         \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_load_balancers239e0f35/providers/Microsoft.Network/loadBalancers/pylbname239e0f35/probes/pyprobename239e0f35\",\r\n
-        \           \"etag\": \"W/\\\"9784eed8-79ea-4df9-a3fe-ca1e095ca80b\\\"\",\r\n
+        \           \"etag\": \"W/\\\"a39e7045-0034-4bbc-bad6-a16d4227d72f\\\"\",\r\n
         \           \"properties\": {\r\n              \"provisioningState\": \"Succeeded\",\r\n
         \             \"protocol\": \"Http\",\r\n              \"port\": 80,\r\n              \"requestPath\":
         \"healthprobe.aspx\",\r\n              \"intervalInSeconds\": 15,\r\n              \"numberOfProbes\":
@@ -365,7 +559,7 @@ interactions:
         \               }\r\n              ]\r\n            }\r\n          }\r\n        ],\r\n
         \       \"inboundNatRules\": [\r\n          {\r\n            \"name\": \"azure-sample-netrule1\",\r\n
         \           \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_load_balancers239e0f35/providers/Microsoft.Network/loadBalancers/pylbname239e0f35/inboundNatRules/azure-sample-netrule1\",\r\n
-        \           \"etag\": \"W/\\\"9784eed8-79ea-4df9-a3fe-ca1e095ca80b\\\"\",\r\n
+        \           \"etag\": \"W/\\\"a39e7045-0034-4bbc-bad6-a16d4227d72f\\\"\",\r\n
         \           \"properties\": {\r\n              \"provisioningState\": \"Succeeded\",\r\n
         \             \"frontendIPConfiguration\": {\r\n                \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_load_balancers239e0f35/providers/Microsoft.Network/loadBalancers/pylbname239e0f35/frontendIPConfigurations/pyfipname239e0f35\"\r\n
         \             },\r\n              \"frontendPort\": 21,\r\n              \"backendPort\":
@@ -373,7 +567,7 @@ interactions:
         4,\r\n              \"protocol\": \"Tcp\"\r\n            }\r\n          },\r\n
         \         {\r\n            \"name\": \"azure-sample-netrule2\",\r\n            \"id\":
         \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_load_balancers239e0f35/providers/Microsoft.Network/loadBalancers/pylbname239e0f35/inboundNatRules/azure-sample-netrule2\",\r\n
-        \           \"etag\": \"W/\\\"9784eed8-79ea-4df9-a3fe-ca1e095ca80b\\\"\",\r\n
+        \           \"etag\": \"W/\\\"a39e7045-0034-4bbc-bad6-a16d4227d72f\\\"\",\r\n
         \           \"properties\": {\r\n              \"provisioningState\": \"Succeeded\",\r\n
         \             \"frontendIPConfiguration\": {\r\n                \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_load_balancers239e0f35/providers/Microsoft.Network/loadBalancers/pylbname239e0f35/frontendIPConfigurations/pyfipname239e0f35\"\r\n
         \             },\r\n              \"frontendPort\": 23,\r\n              \"backendPort\":
@@ -384,7 +578,7 @@ interactions:
     headers:
       Cache-Control: [no-cache]
       Content-Type: [application/json; charset=utf-8]
-      Date: ['Mon, 31 Oct 2016 23:29:11 GMT']
+      Date: ['Wed, 07 Dec 2016 23:34:56 GMT']
       Expires: ['-1']
       Pragma: [no-cache]
       Server: [Microsoft-HTTPAPI/2.0, Microsoft-HTTPAPI/2.0]
@@ -392,10 +586,10 @@ interactions:
       Transfer-Encoding: [chunked]
       Vary: [Accept-Encoding]
       content-length: ['7760']
-      x-ms-correlation-request-id: [029ef427-0b72-4187-8a6a-7ee8c483ab2b]
+      x-ms-correlation-request-id: [e217ecc0-b89f-46ce-b208-b584e3d99802]
       x-ms-ratelimit-remaining-subscription-reads: ['14994']
-      x-ms-request-id: [5045ef2b-a6e4-4bdf-8657-0b91683ae283]
-      x-ms-routing-request-id: ['CENTRALUS:20161031T232912Z:029ef427-0b72-4187-8a6a-7ee8c483ab2b']
+      x-ms-request-id: [a568d881-5fce-401a-8182-d4cf6a5b1adc]
+      x-ms-routing-request-id: ['WESTUS2:20161207T233457Z:e217ecc0-b89f-46ce-b208-b584e3d99802']
     status: {code: 200, message: OK}
 - request:
     body: null
@@ -405,21 +599,21 @@ interactions:
       Connection: [keep-alive]
       Content-Type: [application/json; charset=utf-8]
       User-Agent: [python/3.5.1 (Windows-10-10.0.14393-SP0) requests/2.11.1 msrest/0.4.4
-          msrest_azure/0.4.3 networkmanagementclient/0.30.0 Azure-SDK-For-Python]
+          msrest_azure/0.4.5 networkmanagementclient/0.30.0 Azure-SDK-For-Python]
       accept-language: [en-US]
-      x-ms-client-request-id: [d481b494-9fc1-11e6-a449-ecb1d756380e]
+      x-ms-client-request-id: [c3598f8a-bcd5-11e6-9e9f-ecb1d756380e]
     method: GET
     uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_load_balancers239e0f35/providers/Microsoft.Network/loadBalancers?api-version=2016-09-01
   response:
     body: {string: "{\r\n  \"value\": [\r\n    {\r\n      \"name\": \"pylbname239e0f35\",\r\n
         \     \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_load_balancers239e0f35/providers/Microsoft.Network/loadBalancers/pylbname239e0f35\",\r\n
-        \     \"etag\": \"W/\\\"9784eed8-79ea-4df9-a3fe-ca1e095ca80b\\\"\",\r\n      \"type\":
+        \     \"etag\": \"W/\\\"a39e7045-0034-4bbc-bad6-a16d4227d72f\\\"\",\r\n      \"type\":
         \"Microsoft.Network/loadBalancers\",\r\n      \"location\": \"westus\",\r\n
         \     \"properties\": {\r\n        \"provisioningState\": \"Succeeded\",\r\n
-        \       \"resourceGuid\": \"a574e18c-2ab8-4faf-8867-a8c8b9379e06\",\r\n        \"frontendIPConfigurations\":
+        \       \"resourceGuid\": \"59e28698-c494-4755-a735-850d9982f3c9\",\r\n        \"frontendIPConfigurations\":
         [\r\n          {\r\n            \"name\": \"pyfipname239e0f35\",\r\n            \"id\":
         \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_load_balancers239e0f35/providers/Microsoft.Network/loadBalancers/pylbname239e0f35/frontendIPConfigurations/pyfipname239e0f35\",\r\n
-        \           \"etag\": \"W/\\\"9784eed8-79ea-4df9-a3fe-ca1e095ca80b\\\"\",\r\n
+        \           \"etag\": \"W/\\\"a39e7045-0034-4bbc-bad6-a16d4227d72f\\\"\",\r\n
         \           \"properties\": {\r\n              \"provisioningState\": \"Succeeded\",\r\n
         \             \"privateIPAllocationMethod\": \"Dynamic\",\r\n              \"publicIPAddress\":
         {\r\n                \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_load_balancers239e0f35/providers/Microsoft.Network/publicIPAddresses/pyipname239e0f35\"\r\n
@@ -431,14 +625,14 @@ interactions:
         \               }\r\n              ]\r\n            }\r\n          }\r\n        ],\r\n
         \       \"backendAddressPools\": [\r\n          {\r\n            \"name\":
         \"pyapname239e0f35\",\r\n            \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_load_balancers239e0f35/providers/Microsoft.Network/loadBalancers/pylbname239e0f35/backendAddressPools/pyapname239e0f35\",\r\n
-        \           \"etag\": \"W/\\\"9784eed8-79ea-4df9-a3fe-ca1e095ca80b\\\"\",\r\n
+        \           \"etag\": \"W/\\\"a39e7045-0034-4bbc-bad6-a16d4227d72f\\\"\",\r\n
         \           \"properties\": {\r\n              \"provisioningState\": \"Succeeded\",\r\n
         \             \"loadBalancingRules\": [\r\n                {\r\n                  \"id\":
         \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_load_balancers239e0f35/providers/Microsoft.Network/loadBalancers/pylbname239e0f35/loadBalancingRules/azure-sample-lb-rule\"\r\n
         \               }\r\n              ]\r\n            }\r\n          }\r\n        ],\r\n
         \       \"loadBalancingRules\": [\r\n          {\r\n            \"name\":
         \"azure-sample-lb-rule\",\r\n            \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_load_balancers239e0f35/providers/Microsoft.Network/loadBalancers/pylbname239e0f35/loadBalancingRules/azure-sample-lb-rule\",\r\n
-        \           \"etag\": \"W/\\\"9784eed8-79ea-4df9-a3fe-ca1e095ca80b\\\"\",\r\n
+        \           \"etag\": \"W/\\\"a39e7045-0034-4bbc-bad6-a16d4227d72f\\\"\",\r\n
         \           \"properties\": {\r\n              \"provisioningState\": \"Succeeded\",\r\n
         \             \"frontendIPConfiguration\": {\r\n                \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_load_balancers239e0f35/providers/Microsoft.Network/loadBalancers/pylbname239e0f35/frontendIPConfigurations/pyfipname239e0f35\"\r\n
         \             },\r\n              \"frontendPort\": 80,\r\n              \"backendPort\":
@@ -451,7 +645,7 @@ interactions:
         \             }\r\n            }\r\n          }\r\n        ],\r\n        \"probes\":
         [\r\n          {\r\n            \"name\": \"pyprobename239e0f35\",\r\n            \"id\":
         \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_load_balancers239e0f35/providers/Microsoft.Network/loadBalancers/pylbname239e0f35/probes/pyprobename239e0f35\",\r\n
-        \           \"etag\": \"W/\\\"9784eed8-79ea-4df9-a3fe-ca1e095ca80b\\\"\",\r\n
+        \           \"etag\": \"W/\\\"a39e7045-0034-4bbc-bad6-a16d4227d72f\\\"\",\r\n
         \           \"properties\": {\r\n              \"provisioningState\": \"Succeeded\",\r\n
         \             \"protocol\": \"Http\",\r\n              \"port\": 80,\r\n              \"requestPath\":
         \"healthprobe.aspx\",\r\n              \"intervalInSeconds\": 15,\r\n              \"numberOfProbes\":
@@ -460,7 +654,7 @@ interactions:
         \               }\r\n              ]\r\n            }\r\n          }\r\n        ],\r\n
         \       \"inboundNatRules\": [\r\n          {\r\n            \"name\": \"azure-sample-netrule1\",\r\n
         \           \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_load_balancers239e0f35/providers/Microsoft.Network/loadBalancers/pylbname239e0f35/inboundNatRules/azure-sample-netrule1\",\r\n
-        \           \"etag\": \"W/\\\"9784eed8-79ea-4df9-a3fe-ca1e095ca80b\\\"\",\r\n
+        \           \"etag\": \"W/\\\"a39e7045-0034-4bbc-bad6-a16d4227d72f\\\"\",\r\n
         \           \"properties\": {\r\n              \"provisioningState\": \"Succeeded\",\r\n
         \             \"frontendIPConfiguration\": {\r\n                \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_load_balancers239e0f35/providers/Microsoft.Network/loadBalancers/pylbname239e0f35/frontendIPConfigurations/pyfipname239e0f35\"\r\n
         \             },\r\n              \"frontendPort\": 21,\r\n              \"backendPort\":
@@ -468,7 +662,7 @@ interactions:
         4,\r\n              \"protocol\": \"Tcp\"\r\n            }\r\n          },\r\n
         \         {\r\n            \"name\": \"azure-sample-netrule2\",\r\n            \"id\":
         \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_load_balancers239e0f35/providers/Microsoft.Network/loadBalancers/pylbname239e0f35/inboundNatRules/azure-sample-netrule2\",\r\n
-        \           \"etag\": \"W/\\\"9784eed8-79ea-4df9-a3fe-ca1e095ca80b\\\"\",\r\n
+        \           \"etag\": \"W/\\\"a39e7045-0034-4bbc-bad6-a16d4227d72f\\\"\",\r\n
         \           \"properties\": {\r\n              \"provisioningState\": \"Succeeded\",\r\n
         \             \"frontendIPConfiguration\": {\r\n                \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_load_balancers239e0f35/providers/Microsoft.Network/loadBalancers/pylbname239e0f35/frontendIPConfigurations/pyfipname239e0f35\"\r\n
         \             },\r\n              \"frontendPort\": 23,\r\n              \"backendPort\":
@@ -479,7 +673,7 @@ interactions:
     headers:
       Cache-Control: [no-cache]
       Content-Type: [application/json; charset=utf-8]
-      Date: ['Mon, 31 Oct 2016 23:29:12 GMT']
+      Date: ['Wed, 07 Dec 2016 23:34:56 GMT']
       Expires: ['-1']
       Pragma: [no-cache]
       Server: [Microsoft-HTTPAPI/2.0, Microsoft-HTTPAPI/2.0]
@@ -487,10 +681,10 @@ interactions:
       Transfer-Encoding: [chunked]
       Vary: [Accept-Encoding]
       content-length: ['7760']
-      x-ms-correlation-request-id: [e75596c0-94d5-4aa4-9840-145235a305b2]
-      x-ms-ratelimit-remaining-subscription-reads: ['14993']
-      x-ms-request-id: [3ba7c44d-4ce7-4b23-a12d-aa051b80bb5e]
-      x-ms-routing-request-id: ['CENTRALUS:20161031T232912Z:e75596c0-94d5-4aa4-9840-145235a305b2']
+      x-ms-correlation-request-id: [755978c7-04df-46fe-99b4-f153c48b1205]
+      x-ms-ratelimit-remaining-subscription-reads: ['14994']
+      x-ms-request-id: [0d814726-bf42-401e-9395-73abdf1b5a08]
+      x-ms-routing-request-id: ['WESTUS2:20161207T233457Z:755978c7-04df-46fe-99b4-f153c48b1205']
     status: {code: 200, message: OK}
 - request:
     body: null
@@ -501,28 +695,28 @@ interactions:
       Content-Length: ['0']
       Content-Type: [application/json; charset=utf-8]
       User-Agent: [python/3.5.1 (Windows-10-10.0.14393-SP0) requests/2.11.1 msrest/0.4.4
-          msrest_azure/0.4.3 networkmanagementclient/0.30.0 Azure-SDK-For-Python]
+          msrest_azure/0.4.5 networkmanagementclient/0.30.0 Azure-SDK-For-Python]
       accept-language: [en-US]
-      x-ms-client-request-id: [d4c721f6-9fc1-11e6-8885-ecb1d756380e]
+      x-ms-client-request-id: [c3827ddc-bcd5-11e6-9510-ecb1d756380e]
     method: DELETE
     uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_load_balancers239e0f35/providers/Microsoft.Network/loadBalancers/pylbname239e0f35?api-version=2016-09-01
   response:
     body: {string: ''}
     headers:
-      Azure-AsyncOperation: ['https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/f702ee97-4609-4121-a0ab-7efef03dced1?api-version=2016-09-01']
+      Azure-AsyncOperation: ['https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/8ffe55c0-fe9e-4a92-af84-e58095a2858f?api-version=2016-09-01']
       Cache-Control: [no-cache]
       Content-Length: ['0']
-      Date: ['Mon, 31 Oct 2016 23:29:12 GMT']
+      Date: ['Wed, 07 Dec 2016 23:34:57 GMT']
       Expires: ['-1']
-      Location: ['https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operationResults/f702ee97-4609-4121-a0ab-7efef03dced1?api-version=2016-09-01']
+      Location: ['https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operationResults/8ffe55c0-fe9e-4a92-af84-e58095a2858f?api-version=2016-09-01']
       Pragma: [no-cache]
       Retry-After: ['0']
       Server: [Microsoft-HTTPAPI/2.0, Microsoft-HTTPAPI/2.0]
       Strict-Transport-Security: [max-age=31536000; includeSubDomains]
-      x-ms-correlation-request-id: [1838e169-e741-43ff-8478-cdc58ddfa81e]
-      x-ms-ratelimit-remaining-subscription-writes: ['1199']
-      x-ms-request-id: [f702ee97-4609-4121-a0ab-7efef03dced1]
-      x-ms-routing-request-id: ['CENTRALUS:20161031T232913Z:1838e169-e741-43ff-8478-cdc58ddfa81e']
+      x-ms-correlation-request-id: [ebfacb90-3527-4e4d-ab9f-dbf1acd6e7c2]
+      x-ms-ratelimit-remaining-subscription-writes: ['1196']
+      x-ms-request-id: [8ffe55c0-fe9e-4a92-af84-e58095a2858f]
+      x-ms-routing-request-id: ['WESTUS2:20161207T233457Z:ebfacb90-3527-4e4d-ab9f-dbf1acd6e7c2']
     status: {code: 202, message: Accepted}
 - request:
     body: null
@@ -532,17 +726,17 @@ interactions:
       Connection: [keep-alive]
       Content-Type: [application/json; charset=utf-8]
       User-Agent: [python/3.5.1 (Windows-10-10.0.14393-SP0) requests/2.11.1 msrest/0.4.4
-          msrest_azure/0.4.3 networkmanagementclient/0.30.0 Azure-SDK-For-Python]
+          msrest_azure/0.4.5 networkmanagementclient/0.30.0 Azure-SDK-For-Python]
       accept-language: [en-US]
-      x-ms-client-request-id: [d4c721f6-9fc1-11e6-8885-ecb1d756380e]
+      x-ms-client-request-id: [c3827ddc-bcd5-11e6-9510-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/f702ee97-4609-4121-a0ab-7efef03dced1?api-version=2016-09-01
+    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/8ffe55c0-fe9e-4a92-af84-e58095a2858f?api-version=2016-09-01
   response:
     body: {string: "{\r\n  \"status\": \"Succeeded\"\r\n}"}
     headers:
       Cache-Control: [no-cache]
       Content-Type: [application/json; charset=utf-8]
-      Date: ['Mon, 31 Oct 2016 23:29:23 GMT']
+      Date: ['Wed, 07 Dec 2016 23:35:07 GMT']
       Expires: ['-1']
       Pragma: [no-cache]
       Server: [Microsoft-HTTPAPI/2.0, Microsoft-HTTPAPI/2.0]
@@ -550,9 +744,9 @@ interactions:
       Transfer-Encoding: [chunked]
       Vary: [Accept-Encoding]
       content-length: ['29']
-      x-ms-correlation-request-id: [265a2d93-453b-4a9e-8aef-b10e321a159a]
+      x-ms-correlation-request-id: [2bb19dcc-04a2-4c35-8ccf-a6eb011e897e]
       x-ms-ratelimit-remaining-subscription-reads: ['14998']
-      x-ms-request-id: [79bed645-553d-4282-af35-a1de739b7b9d]
-      x-ms-routing-request-id: ['WESTUS2:20161031T232923Z:265a2d93-453b-4a9e-8aef-b10e321a159a']
+      x-ms-request-id: [056c6d85-0ad0-4a72-8d2b-ad79a04f9a18]
+      x-ms-routing-request-id: ['WESTUS2:20161207T233508Z:2bb19dcc-04a2-4c35-8ccf-a6eb011e897e']
     status: {code: 200, message: OK}
 version: 1
