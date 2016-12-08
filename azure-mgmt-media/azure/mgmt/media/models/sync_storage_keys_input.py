@@ -17,11 +17,15 @@ class SyncStorageKeysInput(Model):
 
     :param id: The id of the storage account resource.
     :type id: str
-    """ 
+    """
+
+    _validation = {
+        'id': {'required': True},
+    }
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
     }
 
-    def __init__(self, id=None):
+    def __init__(self, id):
         self.id = id
