@@ -56,10 +56,9 @@ install:
   - pip install -U pip
   - pip install -r requirements.txt
   - pip install azure-storage
-  - pip install coveralls
   - pip install nose
   - pip uninstall -y azure-common  # Use azure-common from this repo, not the PyPI version azure-storage pulls in.
 script: 
   - python ./azure_nosetests.py
 after_success:
-  coveralls
+  - bash <(curl -s https://codecov.io/bash)
