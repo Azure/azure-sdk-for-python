@@ -20,10 +20,10 @@ class CheckNameAvailabilityInput(Model):
 
     :param name: The name of the resource. A name must be globally unique.
     :type name: str
-    :ivar type: Specifies the type of the resource. Default value:
+    :ivar type: The type of the resource - mediaservices. Default value:
      "mediaservices" .
     :vartype type: str
-    """ 
+    """
 
     _validation = {
         'name': {'required': True, 'max_length': 24, 'min_length': 3, 'pattern': '^[a-z0-9]'},

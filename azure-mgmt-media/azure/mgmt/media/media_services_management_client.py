@@ -25,10 +25,11 @@ class MediaServicesManagementClientConfiguration(AzureConfiguration):
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
      object<msrestazure.azure_active_directory>`
-    :param subscription_id: Azure subscription id.
+    :param subscription_id: The unique identifier for a Microsoft Azure
+     subscription.
     :type subscription_id: str
-    :param api_version: Version of the API to be used with the client
-     request. Current version is 2015-10-01
+    :param api_version: Version of the API to be used with the client request.
+     Current version is 2015-10-01
     :type api_version: str
     :param accept_language: Gets or sets the preferred language for the
      response.
@@ -85,10 +86,11 @@ class MediaServicesManagementClient(object):
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
      object<msrestazure.azure_active_directory>`
-    :param subscription_id: Azure subscription id.
+    :param subscription_id: The unique identifier for a Microsoft Azure
+     subscription.
     :type subscription_id: str
-    :param api_version: Version of the API to be used with the client
-     request. Current version is 2015-10-01
+    :param api_version: Version of the API to be used with the client request.
+     Current version is 2015-10-01
     :type api_version: str
     :param accept_language: Gets or sets the preferred language for the
      response.
