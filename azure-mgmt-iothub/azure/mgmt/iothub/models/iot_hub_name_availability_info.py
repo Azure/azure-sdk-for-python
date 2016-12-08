@@ -13,18 +13,26 @@ from msrest.serialization import Model
 
 
 class IotHubNameAvailabilityInfo(Model):
-    """The properties indicating whether a given iothub name is available.
+    """The properties indicating whether a given IoT hub name is available.
 
-    :param name_available: The value which indicates whether the provided
-     name is available.
-    :type name_available: bool
-    :param reason: The reason for unavailability. Possible values include:
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar name_available: The value which indicates whether the provided name
+     is available.
+    :vartype name_available: bool
+    :ivar reason: The reason for unavailability. Possible values include:
      'Invalid', 'AlreadyExists'
-    :type reason: str or :class:`IotHubNameUnavailabilityReason
+    :vartype reason: str or :class:`IotHubNameUnavailabilityReason
      <azure.mgmt.iothub.models.IotHubNameUnavailabilityReason>`
-    :param message: The message describing the detailed reason.
+    :param message: The detailed reason message.
     :type message: str
-    """ 
+    """
+
+    _validation = {
+        'name_available': {'readonly': True},
+        'reason': {'readonly': True},
+    }
 
     _attribute_map = {
         'name_available': {'key': 'nameAvailable', 'type': 'bool'},
@@ -32,7 +40,7 @@ class IotHubNameAvailabilityInfo(Model):
         'message': {'key': 'message', 'type': 'str'},
     }
 
-    def __init__(self, name_available=None, reason=None, message=None):
-        self.name_available = name_available
-        self.reason = reason
+    def __init__(self, message=None):
+        self.name_available = None
+        self.reason = None
         self.message = message

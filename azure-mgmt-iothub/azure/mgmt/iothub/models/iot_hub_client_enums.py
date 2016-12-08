@@ -37,19 +37,12 @@ class IpFilterActionType(Enum):
     reject = "Reject"
 
 
-class SBAccessRights(Enum):
-
-    manage = "Manage"
-    send = "Send"
-    listen = "Listen"
-    manage_notification_hub = "ManageNotificationHub"
-
-
 class OperationMonitoringLevel(Enum):
 
     none = "None"
     error = "Error"
     information = "Information"
+    error_information = "Error, Information"
 
 
 class Capabilities(Enum):

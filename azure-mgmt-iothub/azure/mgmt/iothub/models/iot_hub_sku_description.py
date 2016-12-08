@@ -13,7 +13,7 @@ from msrest.serialization import Model
 
 
 class IotHubSkuDescription(Model):
-    """The properties related to the Sku.
+    """SKU properties.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -25,10 +25,12 @@ class IotHubSkuDescription(Model):
     :param capacity:
     :type capacity: :class:`IotHubCapacity
      <azure.mgmt.iothub.models.IotHubCapacity>`
-    """ 
+    """
 
     _validation = {
         'resource_type': {'readonly': True},
+        'sku': {'required': True},
+        'capacity': {'required': True},
     }
 
     _attribute_map = {
@@ -37,7 +39,7 @@ class IotHubSkuDescription(Model):
         'capacity': {'key': 'capacity', 'type': 'IotHubCapacity'},
     }
 
-    def __init__(self, sku=None, capacity=None):
+    def __init__(self, sku, capacity):
         self.resource_type = None
         self.sku = sku
         self.capacity = capacity

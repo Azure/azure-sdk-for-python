@@ -13,18 +13,20 @@ from msrest.serialization import Model
 
 
 class CloudToDeviceProperties(Model):
-    """The Iot Hub Cloud-To-Device messaging properties.
+    """The IoT hub cloud-to-device messaging properties.
 
-    :param max_delivery_count: The max delivery count for the device queue.
-     Range : 1-100.
+    :param max_delivery_count: The max delivery count for cloud-to-device
+     messages in the device queue. See:
+     https://docs.microsoft.com/azure/iot-hub/iot-hub-devguide-messaging#cloud-to-device-messages.
     :type max_delivery_count: int
-    :param default_ttl_as_iso8601: The default time to live for the device
-     queue. Range : 1 Min (PT1M) - 2 Days (P2D).
+    :param default_ttl_as_iso8601: The default time to live for
+     cloud-to-device messages in the device queue. See:
+     https://docs.microsoft.com/azure/iot-hub/iot-hub-devguide-messaging#cloud-to-device-messages.
     :type default_ttl_as_iso8601: timedelta
     :param feedback:
     :type feedback: :class:`FeedbackProperties
      <azure.mgmt.iothub.models.FeedbackProperties>`
-    """ 
+    """
 
     _validation = {
         'max_delivery_count': {'maximum': 100, 'minimum': 1},
