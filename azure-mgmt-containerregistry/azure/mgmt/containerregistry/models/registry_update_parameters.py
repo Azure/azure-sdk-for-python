@@ -17,15 +17,15 @@ class RegistryUpdateParameters(Model):
 
     :param tags: The resource tags for the container registry.
     :type tags: dict
-    :param admin_user_enabled: The value that indicates whether the admin
-     user is enabled. This value is false by default.
+    :param admin_user_enabled: The value that indicates whether the admin user
+     is enabled. This value is false by default.
     :type admin_user_enabled: bool
     :param storage_account: The properties of a storage account for the
-     container registry. If specified, the storage account must be in the
-     same physical location as the container registry.
+     container registry. If specified, the storage account must be in the same
+     physical location as the container registry.
     :type storage_account: :class:`StorageAccountProperties
      <azure.mgmt.containerregistry.models.StorageAccountProperties>`
-    """ 
+    """
 
     _attribute_map = {
         'tags': {'key': 'tags', 'type': '{str}'},
