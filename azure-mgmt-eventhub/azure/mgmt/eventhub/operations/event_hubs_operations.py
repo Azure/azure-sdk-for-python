@@ -584,8 +584,8 @@ class EventHubsOperations(object):
         :type namespace_name: str
         :param event_hub_name: The Event Hub name.
         :type event_hub_name: str
-        :param authorization_rule_name: The connection string of the
-         namespace for the specified authorization rule.
+        :param authorization_rule_name: The connection string of the namespace
+         for the specified authorization rule.
         :type authorization_rule_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -653,8 +653,8 @@ class EventHubsOperations(object):
         :type namespace_name: str
         :param event_hub_name: The Event Hub name.
         :type event_hub_name: str
-        :param authorization_rule_name: The connection string of the Event
-         Hub for the specified authorization rule.
+        :param authorization_rule_name: The connection string of the Event Hub
+         for the specified authorization rule.
         :type authorization_rule_name: str
         :param policykey: Key that needs to be regenerated. Possible values
          include: 'PrimaryKey', 'SecondaryKey'
