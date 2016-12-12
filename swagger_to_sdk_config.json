@@ -153,7 +153,7 @@
       "swagger": "arm-mediaservices/2015-10-01/swagger/media.json",
       "autorest_options": {
         "Namespace": "azure.mgmt.media",
-        "PackageVersion": "0.1.0"
+        "PackageVersion": "0.1.1"
       },
       "output_dir": "azure-mgmt-media/azure/mgmt/media"
     },  

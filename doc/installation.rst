@@ -82,7 +82,7 @@ azure-mgmt-datalake-store             0.1.1
 azure-mgmt-dns                        0.30.0rc6
 azure-mgmt-eventhub                   0.1.0
 azure-mgmt-iothub                     0.1.0
-azure-mgmt-media                      0.1.0
+azure-mgmt-media                      0.1.1
 azure-mgmt-notificationhubs           0.30.0
 azure-mgmt-powerbiembedded            0.30.0rc6
 azure-mgmt-servicebus                 0.1.0
