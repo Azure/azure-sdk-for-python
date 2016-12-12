@@ -20,7 +20,7 @@ class Resource(Model):
 
     :ivar name: Resource name
     :vartype name: str
-    :ivar id: Resource Id
+    :ivar id: Resource ID
     :vartype id: str
     :ivar type: Resource type
     :vartype type: str
@@ -28,7 +28,7 @@ class Resource(Model):
     :type location: str
     :param tags: Resource tags
     :type tags: dict
-    """ 
+    """
 
     _validation = {
         'name': {'readonly': True},

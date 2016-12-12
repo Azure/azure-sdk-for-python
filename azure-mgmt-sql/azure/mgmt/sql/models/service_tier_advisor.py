@@ -20,7 +20,7 @@ class ServiceTierAdvisor(SqlSubResource):
 
     :ivar name: Resource name
     :vartype name: str
-    :ivar id: Resource Id
+    :ivar id: The resource ID.
     :vartype id: str
     :ivar observation_period_start: The observation period start (ISO8601
      format).
@@ -55,21 +55,21 @@ class ServiceTierAdvisor(SqlSubResource):
      usageBasedRecommendationServiceLevelObjectiveId for service tier advisor.
     :vartype usage_based_recommendation_service_level_objective_id: str
     :ivar database_size_based_recommendation_service_level_objective: Gets or
-     sets databaseSizeBasedRecommendationServiceLevelObjective for service
-     tier advisor.
+     sets databaseSizeBasedRecommendationServiceLevelObjective for service tier
+     advisor.
     :vartype database_size_based_recommendation_service_level_objective: str
     :ivar database_size_based_recommendation_service_level_objective_id: Gets
-     or sets databaseSizeBasedRecommendationServiceLevelObjectiveId for
-     service tier advisor.
+     or sets databaseSizeBasedRecommendationServiceLevelObjectiveId for service
+     tier advisor.
     :vartype database_size_based_recommendation_service_level_objective_id:
      str
     :ivar disaster_plan_based_recommendation_service_level_objective: Gets or
-     sets disasterPlanBasedRecommendationServiceLevelObjective for service
-     tier advisor.
+     sets disasterPlanBasedRecommendationServiceLevelObjective for service tier
+     advisor.
     :vartype disaster_plan_based_recommendation_service_level_objective: str
     :ivar disaster_plan_based_recommendation_service_level_objective_id: Gets
-     or sets disasterPlanBasedRecommendationServiceLevelObjectiveId for
-     service tier advisor.
+     or sets disasterPlanBasedRecommendationServiceLevelObjectiveId for service
+     tier advisor.
     :vartype disaster_plan_based_recommendation_service_level_objective_id:
      str
     :ivar overall_recommendation_service_level_objective: Gets or sets
@@ -80,7 +80,7 @@ class ServiceTierAdvisor(SqlSubResource):
     :vartype overall_recommendation_service_level_objective_id: str
     :ivar confidence: Gets or sets confidence for service tier advisor.
     :vartype confidence: float
-    """ 
+    """
 
     _validation = {
         'name': {'readonly': True},
