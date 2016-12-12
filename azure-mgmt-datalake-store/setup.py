@@ -39,7 +39,7 @@ setup(
     name='azure-mgmt-datalake-store',
     version=version,
     description='Microsoft Azure Data Lake Store Management Client Library for Python',
-    long_description=open('README.rst', 'r').read(),
+    long_description=readme + '\n\n' + history,
     license='MIT License',
     author='Microsoft Corporation',
     author_email='ptvshelp@microsoft.com',
