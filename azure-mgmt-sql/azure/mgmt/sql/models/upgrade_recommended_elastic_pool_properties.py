@@ -39,10 +39,10 @@ class UpgradeRecommendedElasticPoolProperties(Model):
     :param database_collection: The list of database names to be put in the
      Azure SQL Recommended Elastic Pool being upgraded.
     :type database_collection: list of str
-    :param include_all_databases: Gets or sets whether all databases to be
-     put in the Azure SQL Recommended Elastic Pool being upgraded.
+    :param include_all_databases: Gets or sets whether all databases to be put
+     in the Azure SQL Recommended Elastic Pool being upgraded.
     :type include_all_databases: bool
-    """ 
+    """
 
     _validation = {
         'name': {'required': True},

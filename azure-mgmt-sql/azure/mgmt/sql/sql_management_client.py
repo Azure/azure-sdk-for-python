@@ -28,7 +28,7 @@ class SqlManagementClientConfiguration(AzureConfiguration):
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
      object<msrestazure.azure_active_directory>`
-    :param subscription_id: The subscription id that identifies an Azure
+    :param subscription_id: The subscription ID that identifies an Azure
      subscription.
     :type subscription_id: str
     :param accept_language: Gets or sets the preferred language for the
@@ -72,7 +72,7 @@ class SqlManagementClientConfiguration(AzureConfiguration):
 
 
 class SqlManagementClient(object):
-    """The Azure SQL Database management API provides a RESTful set of web services that interact with Azure SQL Database services to manage your databases. The API enables users to create, retrieve, update, and delete databases.
+    """The Azure SQL Database management API provides a RESTful set of web services that interact with Azure SQL Database services to manage your databases. The API enables you to create, retrieve, update, and delete databases.
 
     :ivar config: Configuration for client.
     :vartype config: SqlManagementClientConfiguration
@@ -89,7 +89,7 @@ class SqlManagementClient(object):
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
      object<msrestazure.azure_active_directory>`
-    :param subscription_id: The subscription id that identifies an Azure
+    :param subscription_id: The subscription ID that identifies an Azure
      subscription.
     :type subscription_id: str
     :param accept_language: Gets or sets the preferred language for the

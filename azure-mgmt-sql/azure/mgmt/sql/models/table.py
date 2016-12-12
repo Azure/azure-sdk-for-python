@@ -20,7 +20,7 @@ class Table(Resource):
 
     :ivar name: Resource name
     :vartype name: str
-    :ivar id: Resource Id
+    :ivar id: Resource ID
     :vartype id: str
     :ivar type: Resource type
     :vartype type: str
@@ -37,7 +37,7 @@ class Table(Resource):
     :ivar recommended_indexes: The recommended indices for this table.
     :vartype recommended_indexes: list of :class:`RecommendedIndex
      <azure.mgmt.sql.models.RecommendedIndex>`
-    """ 
+    """
 
     _validation = {
         'name': {'readonly': True},

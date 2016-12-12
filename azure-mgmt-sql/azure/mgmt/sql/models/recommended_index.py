@@ -20,7 +20,7 @@ class RecommendedIndex(Resource):
 
     :ivar name: Resource name
     :vartype name: str
-    :ivar id: Resource Id
+    :ivar id: Resource ID
     :vartype id: str
     :ivar type: Resource type
     :vartype type: str
@@ -28,13 +28,13 @@ class RecommendedIndex(Resource):
     :type location: str
     :param tags: Resource tags
     :type tags: dict
-    :ivar action: The proposed index action. We suggest user to create
-     missing index, drop unused index or to rebuild already existing index to
-     improve its performance. Possible values are 'Create', 'Drop',
-     'Rebuild'. Possible values include: 'Create', 'Drop', 'Rebuild'
+    :ivar action: The proposed index action. You can create a missing index,
+     drop an unused index, or rebuild an existing index to improve its
+     performance. Possible values are 'Create', 'Drop', 'Rebuild'. Possible
+     values include: 'Create', 'Drop', 'Rebuild'
     :vartype action: str or :class:`RecommendedIndexActions
      <azure.mgmt.sql.models.RecommendedIndexActions>`
-    :ivar state: The state recommendation is in. Current options are:
+    :ivar state: The current recommendation state. Current options are:
      'Active', 'Pending', 'Executing', 'Verifying', 'Pending Revert',
      'Reverting', 'Reverted', 'Ignored', 'Expired', 'Blocked', 'Success'.
      Possible values include: 'Active', 'Pending', 'Executing', 'Verifying',
@@ -48,9 +48,9 @@ class RecommendedIndex(Resource):
     :ivar last_modified: The UTC datetime of when was this resource last
      changed (ISO8601 format).
     :vartype last_modified: datetime
-    :ivar index_type: The type of index (CLUSTERED, NONCLUSTERED,
-     COLUMNSTORE, CLUSTERED COLUMNSTORE). Possible values include:
-     'CLUSTERED', 'NONCLUSTERED', 'COLUMNSTORE', 'CLUSTERED COLUMNSTORE'
+    :ivar index_type: The type of index (CLUSTERED, NONCLUSTERED, COLUMNSTORE,
+     CLUSTERED COLUMNSTORE). Possible values include: 'CLUSTERED',
+     'NONCLUSTERED', 'COLUMNSTORE', 'CLUSTERED COLUMNSTORE'
     :vartype index_type: str or :class:`RecommendedIndexTypes
      <azure.mgmt.sql.models.RecommendedIndexTypes>`
     :ivar schema: The schema where table to build index over resides
@@ -71,7 +71,7 @@ class RecommendedIndex(Resource):
     :ivar reported_impact: The values reported after index action is complete.
     :vartype reported_impact: list of :class:`OperationImpact
      <azure.mgmt.sql.models.OperationImpact>`
-    """ 
+    """
 
     _validation = {
         'name': {'readonly': True},

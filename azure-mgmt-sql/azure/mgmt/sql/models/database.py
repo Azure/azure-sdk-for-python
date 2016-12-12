@@ -20,7 +20,7 @@ class Database(Resource):
 
     :ivar name: Resource name
     :vartype name: str
-    :ivar id: Resource Id
+    :ivar id: Resource ID
     :vartype id: str
     :ivar type: Resource type
     :vartype type: str
@@ -28,21 +28,21 @@ class Database(Resource):
     :type location: str
     :param tags: Resource tags
     :type tags: dict
-    :param collation: The collation of the Azure SQL Database.
+    :param collation: The collation of the Azure SQL database.
     :type collation: str
-    :ivar creation_date: The creation date of the Azure SQL Database (ISO8601
+    :ivar creation_date: The creation date of the Azure SQL database (ISO8601
      format).
     :vartype creation_date: datetime
-    :ivar containment_state: The containment state of the Azure SQL Database.
+    :ivar containment_state: The containment state of the Azure SQL database.
     :vartype containment_state: long
-    :ivar current_service_objective_id: The current Service Level Objective
-     Id of the Azure SQL Database. This is the Id of the Service Level
-     Objective that is currently active.
+    :ivar current_service_objective_id: The current Service Level Objective ID
+     of the Azure SQL database. This is the ID of the Service Level Objective
+     that is currently active.
     :vartype current_service_objective_id: str
-    :ivar database_id: The Id of the Azure SQL Database.
+    :ivar database_id: The ID of the Azure SQL database.
     :vartype database_id: str
     :ivar earliest_restore_date: The recovery period start date of the Azure
-     SQL Database. This records the start date and time when recovery is
+     SQL database. This records the start date and time when recovery is
      available for this Azure SQL Database (ISO8601 format).
     :vartype earliest_restore_date: datetime
     :param create_mode: Specifies the type of database to create. Possible
@@ -50,45 +50,43 @@ class Database(Resource):
      'OnlineSecondary', 'PointInTimeRestore', 'Recovery', 'Restore'
     :type create_mode: str or :class:`createMode
      <azure.mgmt.sql.models.createMode>`
-    :param source_database_id: Conditional.  Specifies the resource Id of the
-     source database.  If createMode is not set to Default, then this value
-     must be specified.  The name of the source database must be the same.
-     NOTE: Collation, Edition, and MaxSizeBytes must remain the same while
-     the link is active.  Values specified for these parameters will be
-     ignored.
+    :param source_database_id: Conditional. Specifies the resource ID of the
+     source database. If createMode is not set to Default, then this value must
+     be specified. The name of the source database must be the same. NOTE:
+     Collation, Edition, and MaxSizeBytes must remain the same while the link
+     is active. Values specified for these parameters will be ignored.
     :type source_database_id: str
-    :param edition: The edition of the Azure SQL Database.  The
+    :param edition: The edition of the Azure SQL database. The
      DatabaseEditions enumeration contains all the valid editions. Possible
-     values include: 'Web', 'Business', 'Basic', 'Standard', 'Premium',
-     'Free', 'Stretch', 'DataWarehouse'
+     values include: 'Web', 'Business', 'Basic', 'Standard', 'Premium', 'Free',
+     'Stretch', 'DataWarehouse'
     :type edition: str or :class:`DatabaseEditions
      <azure.mgmt.sql.models.DatabaseEditions>`
-    :param max_size_bytes: The max size of the Azure SQL Database expressed
-     in bytes. Note: Only the following sizes are supported (in addition to
-     limitations being placed on each edition): { 100 MB | 500 MB |1 GB | 5
-     GB | 10 GB | 20 GB | 30 GB … 150 GB | 200 GB … 500 GB }
+    :param max_size_bytes: The max size of the Azure SQL database expressed in
+     bytes. Note: Only the following sizes are supported (in addition to
+     limitations being placed on each edition): { 100 MB | 500 MB |1 GB | 5 GB
+     | 10 GB | 20 GB | 30 GB … 150 GB | 200 GB … 500 GB }
     :type max_size_bytes: str
     :param requested_service_objective_id: The configured Service Level
-     Objective Id of the Azure SQL Database. This is the Service Level
+     Objective ID of the Azure SQL database. This is the Service Level
      Objective that is in the process of being applied to the Azure SQL
-     Database.  Once successfully updated, it will match the value of
+     database. Once successfully updated, it will match the value of
      currentServiceObjectiveId property.
     :type requested_service_objective_id: str
     :param requested_service_objective_name: The name of the configured
-     Service Level Objective of the Azure SQL Database. This is the Service
+     Service Level Objective of the Azure SQL database. This is the Service
      Level Objective that is in the process of being applied to the Azure SQL
-     Database.  Once successfully updated, it will match the value of
+     database. Once successfully updated, it will match the value of
      serviceLevelObjective property. Possible values include: 'Basic', 'S0',
      'S1', 'S2', 'S3', 'P1', 'P2', 'P3'
     :type requested_service_objective_name: str or
-     :class:`ServiceObjectiveName
-     <azure.mgmt.sql.models.ServiceObjectiveName>`
+     :class:`ServiceObjectiveName <azure.mgmt.sql.models.ServiceObjectiveName>`
     :ivar service_level_objective: The current Service Level Objective of the
-     Azure SQL Database. Possible values include: 'Basic', 'S0', 'S1', 'S2',
+     Azure SQL database. Possible values include: 'Basic', 'S0', 'S1', 'S2',
      'S3', 'P1', 'P2', 'P3'
     :vartype service_level_objective: str or :class:`ServiceObjectiveName
      <azure.mgmt.sql.models.ServiceObjectiveName>`
-    :ivar status: The status of the Azure SQL Database.
+    :ivar status: The status of the Azure SQL database.
     :vartype status: str
     :param elastic_pool_name: The name of the Azure SQL Elastic Pool the
      database is in.
@@ -113,7 +111,7 @@ class Database(Resource):
     :ivar recommended_index: The recommended indices for this database.
     :vartype recommended_index: list of :class:`RecommendedIndex
      <azure.mgmt.sql.models.RecommendedIndex>`
-    """ 
+    """
 
     _validation = {
         'name': {'readonly': True},
