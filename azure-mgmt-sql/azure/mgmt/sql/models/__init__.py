@@ -39,20 +39,20 @@ from .service_objective import ServiceObjective
 from .transparent_data_encryption_activity import TransparentDataEncryptionActivity
 from .resource import Resource
 from .server_firewall_rule_paged import ServerFirewallRulePaged
+from .server_paged import ServerPaged
+from .server_metric_paged import ServerMetricPaged
+from .service_objective_paged import ServiceObjectivePaged
 from .replication_link_paged import ReplicationLinkPaged
 from .restore_point_paged import RestorePointPaged
 from .database_paged import DatabasePaged
 from .database_metric_paged import DatabaseMetricPaged
-from .server_paged import ServerPaged
-from .server_metric_paged import ServerMetricPaged
+from .service_tier_advisor_paged import ServiceTierAdvisorPaged
+from .transparent_data_encryption_activity_paged import TransparentDataEncryptionActivityPaged
 from .elastic_pool_paged import ElasticPoolPaged
 from .elastic_pool_activity_paged import ElasticPoolActivityPaged
 from .elastic_pool_database_activity_paged import ElasticPoolDatabaseActivityPaged
 from .recommended_elastic_pool_paged import RecommendedElasticPoolPaged
 from .recommended_elastic_pool_metric_paged import RecommendedElasticPoolMetricPaged
-from .service_tier_advisor_paged import ServiceTierAdvisorPaged
-from .service_objective_paged import ServiceObjectivePaged
-from .transparent_data_encryption_activity_paged import TransparentDataEncryptionActivityPaged
 from .sql_management_client_enums import (
     ReplicationRole,
     ReplicationState,
@@ -104,20 +104,20 @@ __all__ = [
     'TransparentDataEncryptionActivity',
     'Resource',
     'ServerFirewallRulePaged',
+    'ServerPaged',
+    'ServerMetricPaged',
+    'ServiceObjectivePaged',
     'ReplicationLinkPaged',
     'RestorePointPaged',
     'DatabasePaged',
     'DatabaseMetricPaged',
-    'ServerPaged',
-    'ServerMetricPaged',
+    'ServiceTierAdvisorPaged',
+    'TransparentDataEncryptionActivityPaged',
     'ElasticPoolPaged',
     'ElasticPoolActivityPaged',
     'ElasticPoolDatabaseActivityPaged',
     'RecommendedElasticPoolPaged',
     'RecommendedElasticPoolMetricPaged',
-    'ServiceTierAdvisorPaged',
-    'ServiceObjectivePaged',
-    'TransparentDataEncryptionActivityPaged',
     'ReplicationRole',
     'ReplicationState',
     'ElasticPoolEditions',

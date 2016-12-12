@@ -13,16 +13,16 @@ from msrest.serialization import Model
 
 
 class ServerUpgradeGetResult(Model):
-    """Represents the response to a Get request for Upgrade status of an Azure
-    SQL Server.
+    """Represents the response to a Get request for upgrade status of an Azure SQL
+    server.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar status: The status of the Azure SQL Server Upgrade.
+    :ivar status: The status of the Azure SQL server upgrade.
     :vartype status: str
     :ivar schedule_upgrade_after_time: The schedule time of the Azure SQL
-     Server Upgrade (ISO8601 format).
+     server upgrade (ISO8601 format).
     :vartype schedule_upgrade_after_time: datetime
     """ 
 

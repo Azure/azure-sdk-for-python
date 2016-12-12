@@ -13,23 +13,23 @@ from msrest.serialization import Model
 
 
 class ServerUpgradeStartParameters(Model):
-    """Start Azure SQL Server Upgrade parameters.
+    """Start Azure SQL server upgrade parameters.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar version: The version for the Azure SQL Server being upgraded.
+    :ivar version: The version for the Azure SQL server being upgraded.
      Default value: "12.0" .
     :vartype version: str
     :param schedule_upgrade_after_utc_date_time: The earliest time to upgrade
-     the Azure SQL Server (ISO8601 format).
+     the Azure SQL server (ISO8601 format).
     :type schedule_upgrade_after_utc_date_time: datetime
     :param database_collection: The collection of recommended database
-     properties to upgrade the Azure SQL Server.
+     properties to upgrade the Azure SQL server.
     :type database_collection: list of :class:`RecommendedDatabaseProperties
      <azure.mgmt.sql.models.RecommendedDatabaseProperties>`
-    :param elastic_pool_collection: The collection of recommended elastic
-     pool properties to upgrade the Azure SQL Server.
+    :param elastic_pool_collection: The collection of recommended elastic pool
+     properties to upgrade the Azure SQL server.
     :type elastic_pool_collection: list of
      :class:`UpgradeRecommendedElasticPoolProperties
      <azure.mgmt.sql.models.UpgradeRecommendedElasticPoolProperties>`
