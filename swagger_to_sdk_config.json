@@ -81,7 +81,8 @@
     "dns": {
       "swagger": "arm-dns/2016-04-01/swagger/dns.json",
       "autorest_options": {
-        "Namespace": "azure.mgmt.dns"
+        "Namespace": "azure.mgmt.dns",
+		"PackageVersion": "1.0.0"
       },
       "output_dir": "azure-mgmt-dns/azure/mgmt/dns"
     },
