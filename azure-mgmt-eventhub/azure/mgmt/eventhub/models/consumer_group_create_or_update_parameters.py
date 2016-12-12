@@ -29,7 +29,7 @@ class ConsumerGroupCreateOrUpdateParameters(Model):
     :type updated_at: datetime
     :param user_metadata: The user metadata.
     :type user_metadata: str
-    """ 
+    """
 
     _validation = {
         'location': {'required': True},

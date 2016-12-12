@@ -31,7 +31,7 @@ class SharedAccessAuthorizationRuleResource(Resource):
     :param rights: The rights associated with the rule.
     :type rights: list of str or :class:`AccessRights
      <azure.mgmt.eventhub.models.AccessRights>`
-    """ 
+    """
 
     _validation = {
         'id': {'readonly': True},
