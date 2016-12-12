@@ -66,7 +66,7 @@
       "swagger": "arm-containerregistry/2016-06-27-preview/swagger/containerregistry.json",
       "autorest_options": {
         "Namespace": "azure.mgmt.containerregistry",
-        "PackageVersion": "0.1.0"
+        "PackageVersion": "0.1.1"
       },
       "output_dir": "azure-mgmt-containerregistry/azure/mgmt/containerregistry"
     },
