@@ -48,7 +48,7 @@ class StorageAccountCreateParameters(Model):
      'Hot', 'Cool'
     :type access_tier: str or :class:`AccessTier
      <azure.mgmt.storage.models.AccessTier>`
-    """ 
+    """
 
     _validation = {
         'sku': {'required': True},

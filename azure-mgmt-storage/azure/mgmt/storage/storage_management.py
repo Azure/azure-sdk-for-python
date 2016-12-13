@@ -18,8 +18,8 @@ from .operations.usage_operations import UsageOperations
 from . import models
 
 
-class StorageManagementClientConfiguration(AzureConfiguration):
-    """Configuration for StorageManagementClient
+class StorageManagementConfiguration(AzureConfiguration):
+    """Configuration for StorageManagement
     Note that all parameters used to create this instance are saved as instance
     attributes.
 
@@ -47,7 +47,7 @@ class StorageManagementClientConfiguration(AzureConfiguration):
     """
 
     def __init__(
-            self, credentials, subscription_id, api_version='2016-01-01', accept_language='en-US', long_running_operation_retry_timeout=30, generate_client_request_id=True, base_url=None, filepath=None):
+            self, credentials, subscription_id, api_version='2016-05-01', accept_language='en-US', long_running_operation_retry_timeout=30, generate_client_request_id=True, base_url=None, filepath=None):
 
         if credentials is None:
             raise ValueError("Parameter 'credentials' must not be None.")
@@ -62,9 +62,9 @@ class StorageManagementClientConfiguration(AzureConfiguration):
         if not base_url:
             base_url = 'https://management.azure.com'
 
-        super(StorageManagementClientConfiguration, self).__init__(base_url, filepath)
+        super(StorageManagementConfiguration, self).__init__(base_url, filepath)
 
-        self.add_user_agent('storagemanagementclient/{}'.format(VERSION))
+        self.add_user_agent('storagemanagement/{}'.format(VERSION))
         self.add_user_agent('Azure-SDK-For-Python')
 
         self.credentials = credentials
@@ -75,11 +75,11 @@ class StorageManagementClientConfiguration(AzureConfiguration):
         self.generate_client_request_id = generate_client_request_id
 
 
-class StorageManagementClient(object):
-    """The Storage Management Client.
+class StorageManagement(object):
+    """The Azure Storage Management API.
 
     :ivar config: Configuration for client.
-    :vartype config: StorageManagementClientConfiguration
+    :vartype config: StorageManagementConfiguration
 
     :ivar storage_accounts: StorageAccounts operations
     :vartype storage_accounts: .operations.StorageAccountsOperations
@@ -110,9 +110,9 @@ class StorageManagementClient(object):
     """
 
     def __init__(
-            self, credentials, subscription_id, api_version='2016-01-01', accept_language='en-US', long_running_operation_retry_timeout=30, generate_client_request_id=True, base_url=None, filepath=None):
+            self, credentials, subscription_id, api_version='2016-05-01', accept_language='en-US', long_running_operation_retry_timeout=30, generate_client_request_id=True, base_url=None, filepath=None):
 
-        self.config = StorageManagementClientConfiguration(credentials, subscription_id, api_version, accept_language, long_running_operation_retry_timeout, generate_client_request_id, base_url, filepath)
+        self.config = StorageManagementConfiguration(credentials, subscription_id, api_version, accept_language, long_running_operation_retry_timeout, generate_client_request_id, base_url, filepath)
         self._client = ServiceClient(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
