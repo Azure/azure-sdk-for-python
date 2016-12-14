@@ -13,12 +13,12 @@ from msrest.serialization import Model
 
 
 class LoadParameters(Model):
-    """Parameters required for endpoint load.
+    """Parameters required for content load.
 
-    :param content_paths: The path to the content to be loaded. Should
-     describe a file path.
+    :param content_paths: The path to the content to be loaded. Path should be
+     a relative file URL of the origin.
     :type content_paths: list of str
-    """ 
+    """
 
     _validation = {
         'content_paths': {'required': True},

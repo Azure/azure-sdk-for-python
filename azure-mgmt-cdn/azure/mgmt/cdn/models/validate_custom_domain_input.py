@@ -13,12 +13,12 @@ from msrest.serialization import Model
 
 
 class ValidateCustomDomainInput(Model):
-    """Input of the custom domain to be validated.
+    """Input of the custom domain to be validated for DNS mapping.
 
     :param host_name: The host name of the custom domain. Must be a domain
      name.
     :type host_name: str
-    """ 
+    """
 
     _validation = {
         'host_name': {'required': True},

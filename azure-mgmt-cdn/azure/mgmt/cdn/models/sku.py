@@ -13,16 +13,17 @@ from msrest.serialization import Model
 
 
 class Sku(Model):
-    """The SKU (pricing tier) of the CDN profile.
+    """The pricing tier (defines a CDN provider, feature list and rate) of the CDN
+    profile.
 
     :param name: Name of the pricing tier. Possible values include:
      'Standard_Verizon', 'Premium_Verizon', 'Custom_Verizon',
-     'Standard_Akamai'
+     'Standard_Akamai', 'Standard_ChinaCdn'
     :type name: str or :class:`SkuName <azure.mgmt.cdn.models.SkuName>`
-    """ 
+    """
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'SkuName'},
+        'name': {'key': 'name', 'type': 'str'},
     }
 
     def __init__(self, name=None):

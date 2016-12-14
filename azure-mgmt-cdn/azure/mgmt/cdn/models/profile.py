@@ -9,10 +9,10 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .tracked_resource import TrackedResource
+from .resource import Resource
 
 
-class Profile(TrackedResource):
+class Profile(Resource):
     """CDN profile represents the top level resource and the entry point into the
     CDN API. This allows users to set up a logical grouping of endpoints in
     addition to creating shared configuration settings and selecting pricing
@@ -21,35 +21,35 @@ class Profile(TrackedResource):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar id: Resource ID
+    :ivar id: Resource ID.
     :vartype id: str
-    :ivar name: Resource name
+    :ivar name: Resource name.
     :vartype name: str
-    :ivar type: Resource type
+    :ivar type: Resource type.
     :vartype type: str
-    :param location: Resource location
+    :param location: Resource location.
     :type location: str
-    :param tags: Resource tags
+    :param tags: Resource tags.
     :type tags: dict
-    :param sku: The SKU (pricing tier) of the CDN profile.
+    :param sku: The pricing tier (defines a CDN provider, feature list and
+     rate) of the CDN profile.
     :type sku: :class:`Sku <azure.mgmt.cdn.models.Sku>`
     :ivar resource_state: Resource status of the profile. Possible values
      include: 'Creating', 'Active', 'Deleting', 'Disabled'
     :vartype resource_state: str or :class:`ProfileResourceState
      <azure.mgmt.cdn.models.ProfileResourceState>`
-    :param provisioning_state: Provisioning status of the profile. Possible
-     values include: 'Creating', 'Succeeded', 'Failed'
-    :type provisioning_state: str or :class:`ProvisioningState
-     <azure.mgmt.cdn.models.ProvisioningState>`
-    """ 
+    :ivar provisioning_state: Provisioning status of the profile.
+    :vartype provisioning_state: str
+    """
 
     _validation = {
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
         'location': {'required': True},
-        'tags': {'required': True},
+        'sku': {'required': True},
         'resource_state': {'readonly': True},
+        'provisioning_state': {'readonly': True},
     }
 
     _attribute_map = {
@@ -59,12 +59,12 @@ class Profile(TrackedResource):
         'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
         'sku': {'key': 'sku', 'type': 'Sku'},
-        'resource_state': {'key': 'properties.resourceState', 'type': 'ProfileResourceState'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'ProvisioningState'},
+        'resource_state': {'key': 'properties.resourceState', 'type': 'str'},
+        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
     }
 
-    def __init__(self, location, tags, sku=None, provisioning_state=None):
+    def __init__(self, location, sku, tags=None):
         super(Profile, self).__init__(location=location, tags=tags)
         self.sku = sku
         self.resource_state = None
-        self.provisioning_state = provisioning_state
+        self.provisioning_state = None
