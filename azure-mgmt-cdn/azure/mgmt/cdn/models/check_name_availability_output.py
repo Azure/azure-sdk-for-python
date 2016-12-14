@@ -22,12 +22,12 @@ class CheckNameAvailabilityOutput(Model):
     :param message: The detailed error message describing why the name is not
      available.
     :type message: str
-    """ 
+    """
 
     _attribute_map = {
-        'name_available': {'key': 'NameAvailable', 'type': 'bool'},
-        'reason': {'key': 'Reason', 'type': 'str'},
-        'message': {'key': 'Message', 'type': 'str'},
+        'name_available': {'key': 'nameAvailable', 'type': 'bool'},
+        'reason': {'key': 'reason', 'type': 'str'},
+        'message': {'key': 'message', 'type': 'str'},
     }
 
     def __init__(self, name_available=None, reason=None, message=None):

@@ -59,10 +59,6 @@ The following code check the name availability of a end-point.
 
 .. code:: python
 
-    from azure.mgmt.cdn.models import CheckNameAvailabilityInput
-
-    output = self.cdn_client.name_availability.check_name_availability(
-        name='myendpoint'
-    )
+    output = cdn_client.check_name_availability('myendpoint')
     # output is a CheckNameAvailabilityOutput instance
     print(output.name_available)

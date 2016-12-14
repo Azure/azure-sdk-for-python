@@ -33,9 +33,10 @@
       "output_dir": "azure-mgmt-batch/azure/mgmt/batch"
     },
     "cdn": {
-      "swagger": "arm-cdn/2016-04-02/swagger/cdn.json",
+      "swagger": "arm-cdn/2016-10-02/swagger/cdn.json",
       "autorest_options": {
-        "Namespace": "azure.mgmt.cdn"
+        "Namespace": "azure.mgmt.cdn",
+        "PackageVersion": "0.30.0"
       },
       "output_dir": "azure-mgmt-cdn/azure/mgmt/cdn"
     },
@@ -82,7 +83,7 @@
       "swagger": "arm-dns/2016-04-01/swagger/dns.json",
       "autorest_options": {
         "Namespace": "azure.mgmt.dns",
-		"PackageVersion": "1.0.0"
+        "PackageVersion": "1.0.0"
       },
       "output_dir": "azure-mgmt-dns/azure/mgmt/dns"
     },

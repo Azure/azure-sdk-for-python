@@ -9,16 +9,19 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .profiles_operations import ProfilesOperations
-from .endpoints_operations import EndpointsOperations
-from .origins_operations import OriginsOperations
-from .custom_domains_operations import CustomDomainsOperations
-from .edge_nodes_operations import EdgeNodesOperations
+from msrest.paging import Paged
 
-__all__ = [
-    'ProfilesOperations',
-    'EndpointsOperations',
-    'OriginsOperations',
-    'CustomDomainsOperations',
-    'EdgeNodesOperations',
-]
+
+class ResourceUsagePaged(Paged):
+    """
+    A paging container for iterating over a list of ResourceUsage object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[ResourceUsage]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(ResourceUsagePaged, self).__init__(*args, **kwargs)

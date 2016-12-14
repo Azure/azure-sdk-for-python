@@ -18,6 +18,7 @@ class SkuName(Enum):
     premium_verizon = "Premium_Verizon"
     custom_verizon = "Custom_Verizon"
     standard_akamai = "Standard_Akamai"
+    standard_china_cdn = "Standard_ChinaCdn"
 
 
 class ProfileResourceState(Enum):
@@ -28,11 +29,14 @@ class ProfileResourceState(Enum):
     disabled = "Disabled"
 
 
-class ProvisioningState(Enum):
+class EndpointResourceState(Enum):
 
     creating = "Creating"
-    succeeded = "Succeeded"
-    failed = "Failed"
+    deleting = "Deleting"
+    running = "Running"
+    starting = "Starting"
+    stopped = "Stopped"
+    stopping = "Stopping"
 
 
 class QueryStringCachingBehavior(Enum):
@@ -43,14 +47,10 @@ class QueryStringCachingBehavior(Enum):
     not_set = "NotSet"
 
 
-class EndpointResourceState(Enum):
+class GeoFilterActions(Enum):
 
-    creating = "Creating"
-    deleting = "Deleting"
-    running = "Running"
-    starting = "Starting"
-    stopped = "Stopped"
-    stopping = "Stopping"
+    block = "Block"
+    allow = "Allow"
 
 
 class OriginResourceState(Enum):

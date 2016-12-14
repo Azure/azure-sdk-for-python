@@ -13,19 +13,21 @@ from .resource import Resource
 
 
 class CustomDomain(Resource):
-    """CDN CustomDomain represents a mapping between a user specified domain name
-    and a CDN endpoint. This is to use custom domain names to represent the
-    URLs for branding purposes.
+    """Customer provided domain for branding purposes, e.g. www.consoto.com.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar id: Resource ID
+    :ivar id: Resource ID.
     :vartype id: str
-    :ivar name: Resource name
+    :ivar name: Resource name.
     :vartype name: str
-    :ivar type: Resource type
+    :ivar type: Resource type.
     :vartype type: str
+    :param location: Resource location.
+    :type location: str
+    :param tags: Resource tags.
+    :type tags: dict
     :param host_name: The host name of the custom domain. Must be a domain
      name.
     :type host_name: str
@@ -33,31 +35,39 @@ class CustomDomain(Resource):
      values include: 'Creating', 'Active', 'Deleting'
     :vartype resource_state: str or :class:`CustomDomainResourceState
      <azure.mgmt.cdn.models.CustomDomainResourceState>`
-    :param provisioning_state: Provisioning status of the custom domain.
-     Possible values include: 'Creating', 'Succeeded', 'Failed'
-    :type provisioning_state: str or :class:`ProvisioningState
-     <azure.mgmt.cdn.models.ProvisioningState>`
-    """ 
+    :param validation_data: Special validation or data may be required when
+     delivering CDN to some regions due to local compliance reasons. E.g. ICP
+     license number of a custom domain is required to deliver content in China.
+    :type validation_data: str
+    :ivar provisioning_state: Provisioning status of the custom domain.
+    :vartype provisioning_state: str
+    """
 
     _validation = {
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
+        'location': {'required': True},
         'host_name': {'required': True},
         'resource_state': {'readonly': True},
+        'provisioning_state': {'readonly': True},
     }
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
+        'location': {'key': 'location', 'type': 'str'},
+        'tags': {'key': 'tags', 'type': '{str}'},
         'host_name': {'key': 'properties.hostName', 'type': 'str'},
-        'resource_state': {'key': 'properties.resourceState', 'type': 'CustomDomainResourceState'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'ProvisioningState'},
+        'resource_state': {'key': 'properties.resourceState', 'type': 'str'},
+        'validation_data': {'key': 'properties.validationData', 'type': 'str'},
+        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
     }
 
-    def __init__(self, host_name, provisioning_state=None):
-        super(CustomDomain, self).__init__()
+    def __init__(self, location, host_name, tags=None, validation_data=None):
+        super(CustomDomain, self).__init__(location=location, tags=tags)
         self.host_name = host_name
         self.resource_state = None
-        self.provisioning_state = provisioning_state
+        self.validation_data = validation_data
+        self.provisioning_state = None

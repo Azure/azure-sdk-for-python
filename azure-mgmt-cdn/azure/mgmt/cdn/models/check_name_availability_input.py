@@ -23,7 +23,7 @@ class CheckNameAvailabilityInput(Model):
     :ivar type: The type of the resource whose name is to be validated.
      Default value: "Microsoft.Cdn/Profiles/Endpoints" .
     :vartype type: str
-    """ 
+    """
 
     _validation = {
         'name': {'required': True},
