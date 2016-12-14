@@ -24,7 +24,7 @@ class Permissions(Model):
     :param certificates: Permissions to certificates
     :type certificates: list of str or :class:`CertificatePermissions
      <azure.mgmt.keyvault.models.CertificatePermissions>`
-    """ 
+    """
 
     _attribute_map = {
         'keys': {'key': 'keys', 'type': '[KeyPermissions]'},

@@ -20,10 +20,10 @@ class Sku(Model):
 
     :ivar family: SKU family name. Default value: "A" .
     :vartype family: str
-    :param name: SKU name to specify whether the key vault is a standard
-     vault or a premium vault. Possible values include: 'standard', 'premium'
+    :param name: SKU name to specify whether the key vault is a standard vault
+     or a premium vault. Possible values include: 'standard', 'premium'
     :type name: str or :class:`SkuName <azure.mgmt.keyvault.models.SkuName>`
-    """ 
+    """
 
     _validation = {
         'family': {'required': True, 'constant': True},
