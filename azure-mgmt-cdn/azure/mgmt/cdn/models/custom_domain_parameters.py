@@ -13,12 +13,12 @@ from msrest.serialization import Model
 
 
 class CustomDomainParameters(Model):
-    """CustomDomain properties required for custom domain creation or update.
+    """The customDomain JSON object required for custom domain creation or update.
 
     :param host_name: The host name of the custom domain. Must be a domain
      name.
     :type host_name: str
-    """ 
+    """
 
     _validation = {
         'host_name': {'required': True},

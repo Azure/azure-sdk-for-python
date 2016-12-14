@@ -14,13 +14,14 @@ from msrest.exceptions import HttpOperationError
 
 
 class ErrorResponse(Model):
-    """ErrorResponse.
+    """Error reponse indicates CDN service is not able to process the incoming
+    request. The reason is provided in the error message.
 
-    :param code: Error code
+    :param code: Error code.
     :type code: str
     :param message: Error message indicating why the operation failed.
     :type message: str
-    """ 
+    """
 
     _attribute_map = {
         'code': {'key': 'code', 'type': 'str'},

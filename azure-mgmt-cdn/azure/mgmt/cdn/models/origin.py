@@ -21,14 +21,18 @@ class Origin(Resource):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar id: Resource ID
+    :ivar id: Resource ID.
     :vartype id: str
-    :ivar name: Resource name
+    :ivar name: Resource name.
     :vartype name: str
-    :ivar type: Resource type
+    :ivar type: Resource type.
     :vartype type: str
-    :param host_name: The address of the origin. Domain names, IPv4
-     addresses, and IPv6 addresses are supported.
+    :param location: Resource location.
+    :type location: str
+    :param tags: Resource tags.
+    :type tags: dict
+    :param host_name: The address of the origin. Domain names, IPv4 addresses,
+     and IPv6 addresses are supported.
     :type host_name: str
     :param http_port: The value of the HTTP port. Must be between 1 and 65535.
     :type http_port: int
@@ -39,35 +43,39 @@ class Origin(Resource):
      include: 'Creating', 'Active', 'Deleting'
     :vartype resource_state: str or :class:`OriginResourceState
      <azure.mgmt.cdn.models.OriginResourceState>`
-    :param provisioning_state: Provisioning status of the origin. Possible
-     values include: 'Creating', 'Succeeded', 'Failed'
-    :type provisioning_state: str or :class:`ProvisioningState
-     <azure.mgmt.cdn.models.ProvisioningState>`
-    """ 
+    :ivar provisioning_state: Provisioning status of the origin.
+    :vartype provisioning_state: str
+    """
 
     _validation = {
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
+        'location': {'required': True},
         'host_name': {'required': True},
+        'http_port': {'maximum': 65535, 'minimum': 1},
+        'https_port': {'maximum': 65535, 'minimum': 1},
         'resource_state': {'readonly': True},
+        'provisioning_state': {'readonly': True},
     }
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
+        'location': {'key': 'location', 'type': 'str'},
+        'tags': {'key': 'tags', 'type': '{str}'},
         'host_name': {'key': 'properties.hostName', 'type': 'str'},
         'http_port': {'key': 'properties.httpPort', 'type': 'int'},
         'https_port': {'key': 'properties.httpsPort', 'type': 'int'},
-        'resource_state': {'key': 'properties.resourceState', 'type': 'OriginResourceState'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'ProvisioningState'},
+        'resource_state': {'key': 'properties.resourceState', 'type': 'str'},
+        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
     }
 
-    def __init__(self, host_name, http_port=None, https_port=None, provisioning_state=None):
-        super(Origin, self).__init__()
+    def __init__(self, location, host_name, tags=None, http_port=None, https_port=None):
+        super(Origin, self).__init__(location=location, tags=tags)
         self.host_name = host_name
         self.http_port = http_port
         self.https_port = https_port
         self.resource_state = None
-        self.provisioning_state = provisioning_state
+        self.provisioning_state = None

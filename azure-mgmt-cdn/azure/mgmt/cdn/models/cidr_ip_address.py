@@ -12,16 +12,20 @@
 from msrest.serialization import Model
 
 
-class SsoUri(Model):
-    """SSO URI required to login to the supplemental portal.
+class CidrIpAddress(Model):
+    """CIDR Ip address.
 
-    :param sso_uri_value: The URI used to login to the supplemental portal.
-    :type sso_uri_value: str
+    :param base_ip_address: Ip adress itself.
+    :type base_ip_address: str
+    :param prefix_length: The length of the prefix of the ip address.
+    :type prefix_length: str
     """
 
     _attribute_map = {
-        'sso_uri_value': {'key': 'ssoUriValue', 'type': 'str'},
+        'base_ip_address': {'key': 'baseIpAddress', 'type': 'str'},
+        'prefix_length': {'key': 'prefixLength', 'type': 'str'},
     }
 
-    def __init__(self, sso_uri_value=None):
-        self.sso_uri_value = sso_uri_value
+    def __init__(self, base_ip_address=None, prefix_length=None):
+        self.base_ip_address = base_ip_address
+        self.prefix_length = prefix_length

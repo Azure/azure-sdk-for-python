@@ -17,10 +17,10 @@ class Operation(Model):
 
     :param name: Operation name: {provider}/{resource}/{operation}
     :type name: str
-    :param display:
+    :param display: The object that represents the operation.
     :type display: :class:`OperationDisplay
      <azure.mgmt.cdn.models.OperationDisplay>`
-    """ 
+    """
 
     _attribute_map = {
         'name': {'key': 'name', 'type': 'str'},

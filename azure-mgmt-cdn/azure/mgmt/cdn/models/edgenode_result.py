@@ -9,16 +9,20 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .profiles_operations import ProfilesOperations
-from .endpoints_operations import EndpointsOperations
-from .origins_operations import OriginsOperations
-from .custom_domains_operations import CustomDomainsOperations
-from .edge_nodes_operations import EdgeNodesOperations
+from msrest.serialization import Model
 
-__all__ = [
-    'ProfilesOperations',
-    'EndpointsOperations',
-    'OriginsOperations',
-    'CustomDomainsOperations',
-    'EdgeNodesOperations',
-]
+
+class EdgenodeResult(Model):
+    """Result of the request to list CDN edgenodes. It contains a list of ip
+    address group and a URL link to get the next set of results.
+
+    :param value: Edge node of CDN service.
+    :type value: object
+    """
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': 'object'},
+    }
+
+    def __init__(self, value=None):
+        self.value = value
