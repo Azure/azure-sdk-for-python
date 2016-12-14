@@ -13,7 +13,7 @@ from msrest.serialization import Model
 
 
 class OperationDisplay(Model):
-    """OperationDisplay.
+    """The object that represents the operation.
 
     :param provider: Service provider: Microsoft.Cdn
     :type provider: str
@@ -22,7 +22,7 @@ class OperationDisplay(Model):
     :type resource: str
     :param operation: Operation type: Read, write, delete, etc.
     :type operation: str
-    """ 
+    """
 
     _attribute_map = {
         'provider': {'key': 'provider', 'type': 'str'},

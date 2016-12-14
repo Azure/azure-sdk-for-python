@@ -13,23 +13,25 @@ from msrest.serialization import Model
 
 
 class DeepCreatedOrigin(Model):
-    """Deep created origins within a CDN endpoint.
+    """Origin to be added when creating a CDN endpoint.
 
     :param name: Origin name
     :type name: str
-    :param host_name: The address of the origin. Domain names, IPv4
-     addresses, and IPv6 addresses are supported.
+    :param host_name: The address of the origin. It can be a domain names,
+     IPv4 address, or IPv6 address.
     :type host_name: str
     :param http_port: The value of the HTTP port. Must be between 1 and 65535
     :type http_port: int
     :param https_port: The value of the HTTPS port. Must be between 1 and
      65535
     :type https_port: int
-    """ 
+    """
 
     _validation = {
         'name': {'required': True},
         'host_name': {'required': True},
+        'http_port': {'maximum': 65535, 'minimum': 1},
+        'https_port': {'maximum': 65535, 'minimum': 1},
     }
 
     _attribute_map = {

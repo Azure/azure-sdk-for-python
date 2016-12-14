@@ -20,9 +20,10 @@ class ValidateCustomDomainOutput(Model):
     :type custom_domain_validated: bool
     :param reason: The reason why the custom domain is not valid.
     :type reason: str
-    :param message: The message describing why the custom domain is not valid.
+    :param message: Error message describing why the custom domain is not
+     valid.
     :type message: str
-    """ 
+    """
 
     _attribute_map = {
         'custom_domain_validated': {'key': 'customDomainValidated', 'type': 'bool'},
