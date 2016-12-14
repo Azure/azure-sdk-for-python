@@ -23,7 +23,7 @@ class VaultCreateOrUpdateParameters(Model):
     :param properties: Properties of the vault
     :type properties: :class:`VaultProperties
      <azure.mgmt.keyvault.models.VaultProperties>`
-    """ 
+    """
 
     _validation = {
         'location': {'required': True},
