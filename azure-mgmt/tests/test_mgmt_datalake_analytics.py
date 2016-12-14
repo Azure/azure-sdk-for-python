@@ -35,7 +35,7 @@ class MgmtDataLakeAnalyticsTest(AzureMgmtTestCase):
         )
 
         # define all names
-        self.adls_account_name = self.get_resource_name('pyarmadls')
+        self.adls_account_name = self.get_resource_name('pyarmadls2')
         self.job_account_name = self.get_resource_name('pyarmadla2')
 
         # construct the catalog script
