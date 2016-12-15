@@ -36,7 +36,7 @@ class TaskOperations(object):
             self, job_id, task, task_add_options=None, custom_headers=None, raw=False, **operation_config):
         """Adds a task to the specified job.
 
-        :param job_id: The id of the job to which the task is to be added.
+        :param job_id: The ID of the job to which the task is to be added.
         :type job_id: str
         :param task: The task to be added.
         :type task: :class:`TaskAddParameter
@@ -52,6 +52,8 @@ class TaskOperations(object):
         :rtype: None
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`BatchErrorException<azure.batch.models.BatchErrorException>`
         """
         timeout = None
         if task_add_options is not None:
@@ -121,7 +123,11 @@ class TaskOperations(object):
             self, job_id, task_list_options=None, custom_headers=None, raw=False, **operation_config):
         """Lists all of the tasks that are associated with the specified job.
 
-        :param job_id: The id of the job.
+        For multi-instance tasks, information such as affinityId, executionInfo
+        and nodeInfo refer to the primary task. Use the list subtasks API to
+        retrieve information about subtasks.
+
+        :param job_id: The ID of the job.
         :type job_id: str
         :param task_list_options: Additional parameters for the operation
         :type task_list_options: :class:`TaskListOptions
@@ -132,6 +138,8 @@ class TaskOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`CloudTaskPaged <azure.batch.models.CloudTaskPaged>`
+        :raises:
+         :class:`BatchErrorException<azure.batch.models.BatchErrorException>`
         """
         filter = None
         if task_list_options is not None:
@@ -178,7 +186,7 @@ class TaskOperations(object):
                 if expand is not None:
                     query_parameters['$expand'] = self._serialize.query("expand", expand, 'str')
                 if max_results is not None:
-                    query_parameters['maxresults'] = self._serialize.query("max_results", max_results, 'int')
+                    query_parameters['maxresults'] = self._serialize.query("max_results", max_results, 'int', maximum=1000, minimum=1)
                 if timeout is not None:
                     query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'int')
 
@@ -226,8 +234,18 @@ class TaskOperations(object):
             self, job_id, value, task_add_collection_options=None, custom_headers=None, raw=False, **operation_config):
         """Adds a collection of tasks to the specified job.
 
-        :param job_id: The id of the job to which the task collection is to
-         be added.
+        Note that each task must have a unique ID. The Batch service may not
+        return the results for each task in the same order the tasks were
+        submitted in this request. If the server times out or the connection is
+        closed during the request, the request may have been partially or fully
+        processed, or not at all. In such cases, the user should re-issue the
+        request. Note that it is up to the user to correctly handle failures
+        when re-issuing a request. For example, you should use the same task
+        ids during a retry so that if the prior operation succeeded, the retry
+        will not create extra tasks unexpectedly.
+
+        :param job_id: The ID of the job to which the task collection is to be
+         added.
         :type job_id: str
         :param value: The collection of tasks to add.
         :type value: list of :class:`TaskAddParameter
@@ -245,6 +263,8 @@ class TaskOperations(object):
          <azure.batch.models.TaskAddCollectionResult>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`BatchErrorException<azure.batch.models.BatchErrorException>`
         """
         timeout = None
         if task_add_collection_options is not None:
@@ -321,9 +341,15 @@ class TaskOperations(object):
             self, job_id, task_id, task_delete_options=None, custom_headers=None, raw=False, **operation_config):
         """Deletes a task from the specified job.
 
-        :param job_id: The id of the job from which to delete the task.
+        When a task is deleted, all of the files in its directory on the
+        compute node where it ran are also deleted (regardless of the retention
+        time). For multi-instance tasks, the delete task operation applies
+        synchronously to the primary task; subtasks and their files are then
+        deleted asynchronously in the background.
+
+        :param job_id: The ID of the job from which to delete the task.
         :type job_id: str
-        :param task_id: The id of the task to delete.
+        :param task_id: The ID of the task to delete.
         :type task_id: str
         :param task_delete_options: Additional parameters for the operation
         :type task_delete_options: :class:`TaskDeleteOptions
@@ -336,6 +362,8 @@ class TaskOperations(object):
         :rtype: None
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`BatchErrorException<azure.batch.models.BatchErrorException>`
         """
         timeout = None
         if task_delete_options is not None:
@@ -419,9 +447,13 @@ class TaskOperations(object):
             self, job_id, task_id, task_get_options=None, custom_headers=None, raw=False, **operation_config):
         """Gets information about the specified task.
 
-        :param job_id: The id of the job that contains the task.
+        For multi-instance tasks, information such as affinityId, executionInfo
+        and nodeInfo refer to the primary task. Use the list subtasks API to
+        retrieve information about subtasks.
+
+        :param job_id: The ID of the job that contains the task.
         :type job_id: str
-        :param task_id: The id of the task to get information about.
+        :param task_id: The ID of the task to get information about.
         :type task_id: str
         :param task_get_options: Additional parameters for the operation
         :type task_get_options: :class:`TaskGetOptions
@@ -434,6 +466,8 @@ class TaskOperations(object):
         :rtype: :class:`CloudTask <azure.batch.models.CloudTask>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`BatchErrorException<azure.batch.models.BatchErrorException>`
         """
         select = None
         if task_get_options is not None:
@@ -539,9 +573,9 @@ class TaskOperations(object):
             self, job_id, task_id, task_update_options=None, constraints=None, custom_headers=None, raw=False, **operation_config):
         """Updates the properties of the specified task.
 
-        :param job_id: The id of the job containing the task.
+        :param job_id: The ID of the job containing the task.
         :type job_id: str
-        :param task_id: The id of the task to update.
+        :param task_id: The ID of the task to update.
         :type task_id: str
         :param task_update_options: Additional parameters for the operation
         :type task_update_options: :class:`TaskUpdateOptions
@@ -558,6 +592,8 @@ class TaskOperations(object):
         :rtype: None
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`BatchErrorException<azure.batch.models.BatchErrorException>`
         """
         timeout = None
         if task_update_options is not None:
@@ -650,9 +686,12 @@ class TaskOperations(object):
         """Lists all of the subtasks that are associated with the specified
         multi-instance task.
 
-        :param job_id: The id of the job.
+        If the task is not a multi-instance task then this returns an empty
+        collection.
+
+        :param job_id: The ID of the job.
         :type job_id: str
-        :param task_id: The id of the task.
+        :param task_id: The ID of the task.
         :type task_id: str
         :param task_list_subtasks_options: Additional parameters for the
          operation
@@ -667,6 +706,8 @@ class TaskOperations(object):
          <azure.batch.models.CloudTaskListSubtasksResult>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`BatchErrorException<azure.batch.models.BatchErrorException>`
         """
         select = None
         if task_list_subtasks_options is not None:
@@ -746,9 +787,14 @@ class TaskOperations(object):
             self, job_id, task_id, task_terminate_options=None, custom_headers=None, raw=False, **operation_config):
         """Terminates the specified task.
 
-        :param job_id: The id of the job containing the task.
+        When the task has been terminated, it moves to the completed state. For
+        multi-instance tasks, the terminate task operation applies
+        synchronously to the primary task; subtasks are then terminated
+        asynchronously in the background.
+
+        :param job_id: The ID of the job containing the task.
         :type job_id: str
-        :param task_id: The id of the task to terminate.
+        :param task_id: The ID of the task to terminate.
         :type task_id: str
         :param task_terminate_options: Additional parameters for the operation
         :type task_terminate_options: :class:`TaskTerminateOptions
@@ -761,6 +807,8 @@ class TaskOperations(object):
         :rtype: None
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`BatchErrorException<azure.batch.models.BatchErrorException>`
         """
         timeout = None
         if task_terminate_options is not None:
@@ -848,14 +896,16 @@ class TaskOperations(object):
         """Reactivates the specified task.
 
         Reactivation makes a task eligible to be retried again up to its
-        maximum retry count. This will fail for tasks that are not completed
-        or that previously completed successfully (with an exit code of 0).
-        Additionally, this will fail if the job has completed (or is
-        terminating or deleting).
+        maximum retry count. The task's state is changed to active. As the task
+        is no longer in the completed state, any previous exit code or
+        scheduling error is no longer available after reactivation. This will
+        fail for tasks that are not completed or that previously completed
+        successfully (with an exit code of 0). Additionally, this will fail if
+        the job has completed (or is terminating or deleting).
 
-        :param job_id: The id of the job containing the task.
+        :param job_id: The ID of the job containing the task.
         :type job_id: str
-        :param task_id: The id of the task to reactivate.
+        :param task_id: The ID of the task to reactivate.
         :type task_id: str
         :param task_reactivate_options: Additional parameters for the
          operation
@@ -869,6 +919,8 @@ class TaskOperations(object):
         :rtype: None
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`BatchErrorException<azure.batch.models.BatchErrorException>`
         """
         timeout = None
         if task_reactivate_options is not None:

@@ -38,25 +38,29 @@ class JobStatistics(Model):
     :param write_iops: The total number of disk write operations made by all
      tasks in the job.
     :type write_iops: long
-    :param read_io_gi_b: The total gibibytes read from disk by all tasks in
-     the job.
+    :param read_io_gi_b: The total amount of data in GiB read from disk by all
+     tasks in the job.
     :type read_io_gi_b: float
-    :param write_io_gi_b: The total gibibytes written to disk by all tasks in
-     the job.
+    :param write_io_gi_b: The total amount of data in GiB written to disk by
+     all tasks in the job.
     :type write_io_gi_b: float
     :param num_succeeded_tasks: The total number of tasks successfully
-     completed in the job during the given time range.
+     completed in the job during the given time range. A task completes
+     successfully if it returns exit code 0.
     :type num_succeeded_tasks: long
     :param num_failed_tasks: The total number of tasks in the job that failed
-     during the given time range.
+     during the given time range. A task fails if it exhausts its maximum retry
+     count without returning exit code 0.
     :type num_failed_tasks: long
     :param num_task_retries: The total number of retries on all the tasks in
      the job during the given time range.
     :type num_task_retries: long
     :param wait_time: The total wait time of all tasks in the job. The wait
-     time for a task is defined as the elapsed time between the creation of
-     the task and the start of task execution. (If the task is retried due to
+     time for a task is defined as the elapsed time between the creation of the
+     task and the start of task execution. (If the task is retried due to
      failures, the wait time is the time to the most recent task execution.)
+     This value is only reported in the account lifetime statistics; it is not
+     included in the job statistics.
     :type wait_time: timedelta
     """ 
 

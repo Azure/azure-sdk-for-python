@@ -13,19 +13,27 @@ from msrest.serialization import Model
 
 
 class TaskConstraints(Model):
-    """Constraints to apply to the Job Manager task.
+    """Execution constraints to apply to a task.
 
     :param max_wall_clock_time: The maximum elapsed time that the task may
-     run, measured from the time the task starts. If the task does not
-     complete within the time limit, the Batch service terminates it.
+     run, measured from the time the task starts. If the task does not complete
+     within the time limit, the Batch service terminates it. If this is not
+     specified, there is no time limit on how long the task may run.
     :type max_wall_clock_time: timedelta
-    :param retention_time: The minimum time to retain the working directory
-     for the task on the compute node where it ran, from the time it
-     completes execution. After this time, the Batch service may delete the
-     working directory and all its contents. The default is infinite.
+    :param retention_time: The minimum time to retain the task directory on
+     the compute node where it ran, from the time it completes execution. After
+     this time, the Batch service may delete the task directory and all its
+     contents. The default is infinite, i.e. the task directory will be
+     retained until the compute node is removed or reimaged.
     :type retention_time: timedelta
     :param max_task_retry_count: The maximum number of times the task may be
      retried. The Batch service retries a task if its exit code is nonzero.
+     Note that this value specifically controls the number of retries. The
+     Batch service will try the task once, and may then retry up to this limit.
+     For example, if the maximum retry count is 3, Batch tries the task up to 4
+     times (one initial try and 3 retries). If the maximum retry count is 0,
+     the Batch service does not retry the task. If the maximum retry count is
+     -1, the Batch service retries the task without limit.
     :type max_task_retry_count: int
     """ 
 

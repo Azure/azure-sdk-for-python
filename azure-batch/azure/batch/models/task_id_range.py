@@ -13,13 +13,16 @@ from msrest.serialization import Model
 
 
 class TaskIdRange(Model):
-    """A range of task ids that a task can depend on. All tasks with ids in the
+    """A range of task IDs that a task can depend on. All tasks with IDs in the
     range must complete successfully before the dependent task can be
     scheduled.
 
-    :param start: The first task id in the range.
+    The start and end of the range are inclusive. For example, if a range has
+    start 9 and end 12, then it represents tasks '9', '10', '11' and '12'.
+
+    :param start: The first task ID in the range.
     :type start: int
-    :param end: The last task id in the range.
+    :param end: The last task ID in the range.
     :type end: int
     """ 
 

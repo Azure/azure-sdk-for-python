@@ -36,7 +36,7 @@ class JobScheduleOperations(object):
             self, job_schedule_id, job_schedule_exists_options=None, custom_headers=None, raw=False, **operation_config):
         """Checks the specified job schedule exists.
 
-        :param job_schedule_id: The id of the job schedule which you want to
+        :param job_schedule_id: The ID of the job schedule which you want to
          check.
         :type job_schedule_id: str
         :param job_schedule_exists_options: Additional parameters for the
@@ -51,6 +51,8 @@ class JobScheduleOperations(object):
         :rtype: bool
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`BatchErrorException<azure.batch.models.BatchErrorException>`
         """
         timeout = None
         if job_schedule_exists_options is not None:
@@ -137,7 +139,14 @@ class JobScheduleOperations(object):
             self, job_schedule_id, job_schedule_delete_options=None, custom_headers=None, raw=False, **operation_config):
         """Deletes a job schedule from the specified account.
 
-        :param job_schedule_id: The id of the job schedule to delete.
+        When you delete a job schedule, this also deletes all jobs and tasks
+        under that schedule. When tasks are deleted, all the files in their
+        working directories on the compute nodes are also deleted (the
+        retention period is ignored). The job schedule statistics are no longer
+        accessible once the job schedule is deleted, though they are still
+        counted towards account lifetime statistics.
+
+        :param job_schedule_id: The ID of the job schedule to delete.
         :type job_schedule_id: str
         :param job_schedule_delete_options: Additional parameters for the
          operation
@@ -151,6 +160,8 @@ class JobScheduleOperations(object):
         :rtype: None
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`BatchErrorException<azure.batch.models.BatchErrorException>`
         """
         timeout = None
         if job_schedule_delete_options is not None:
@@ -233,7 +244,7 @@ class JobScheduleOperations(object):
             self, job_schedule_id, job_schedule_get_options=None, custom_headers=None, raw=False, **operation_config):
         """Gets information about the specified job schedule.
 
-        :param job_schedule_id: The id of the job schedule to get.
+        :param job_schedule_id: The ID of the job schedule to get.
         :type job_schedule_id: str
         :param job_schedule_get_options: Additional parameters for the
          operation
@@ -248,6 +259,8 @@ class JobScheduleOperations(object):
          <azure.batch.models.CloudJobSchedule>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`BatchErrorException<azure.batch.models.BatchErrorException>`
         """
         select = None
         if job_schedule_get_options is not None:
@@ -351,7 +364,14 @@ class JobScheduleOperations(object):
             self, job_schedule_id, job_schedule_patch_parameter, job_schedule_patch_options=None, custom_headers=None, raw=False, **operation_config):
         """Updates the properties of the specified job schedule.
 
-        :param job_schedule_id: The id of the job schedule to update.
+        This replaces only the job schedule properties specified in the
+        request. For example, if the schedule property is not specified with
+        this request, then the Batch service will keep the existing schedule.
+        Changes to a job schedule only impact jobs created by the schedule
+        after the update has taken place; currently running jobs are
+        unaffected.
+
+        :param job_schedule_id: The ID of the job schedule to update.
         :type job_schedule_id: str
         :param job_schedule_patch_parameter: The parameters for the request.
         :type job_schedule_patch_parameter: :class:`JobSchedulePatchParameter
@@ -368,6 +388,8 @@ class JobScheduleOperations(object):
         :rtype: None
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`BatchErrorException<azure.batch.models.BatchErrorException>`
         """
         timeout = None
         if job_schedule_patch_options is not None:
@@ -457,7 +479,14 @@ class JobScheduleOperations(object):
             self, job_schedule_id, job_schedule_update_parameter, job_schedule_update_options=None, custom_headers=None, raw=False, **operation_config):
         """Updates the properties of the specified job schedule.
 
-        :param job_schedule_id: The id of the job schedule to update.
+        This fully replaces all the updateable properties of the job schedule.
+        For example, if the schedule property is not specified with this
+        request, then the Batch service will remove the existing schedule.
+        Changes to a job schedule only impact jobs created by the schedule
+        after the update has taken place; currently running jobs are
+        unaffected.
+
+        :param job_schedule_id: The ID of the job schedule to update.
         :type job_schedule_id: str
         :param job_schedule_update_parameter: The parameters for the request.
         :type job_schedule_update_parameter:
@@ -475,6 +504,8 @@ class JobScheduleOperations(object):
         :rtype: None
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`BatchErrorException<azure.batch.models.BatchErrorException>`
         """
         timeout = None
         if job_schedule_update_options is not None:
@@ -564,7 +595,9 @@ class JobScheduleOperations(object):
             self, job_schedule_id, job_schedule_disable_options=None, custom_headers=None, raw=False, **operation_config):
         """Disables a job schedule.
 
-        :param job_schedule_id: The id of the job schedule to disable.
+        No new jobs will be created until the job schedule is enabled again.
+
+        :param job_schedule_id: The ID of the job schedule to disable.
         :type job_schedule_id: str
         :param job_schedule_disable_options: Additional parameters for the
          operation
@@ -578,6 +611,8 @@ class JobScheduleOperations(object):
         :rtype: None
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`BatchErrorException<azure.batch.models.BatchErrorException>`
         """
         timeout = None
         if job_schedule_disable_options is not None:
@@ -663,7 +698,7 @@ class JobScheduleOperations(object):
             self, job_schedule_id, job_schedule_enable_options=None, custom_headers=None, raw=False, **operation_config):
         """Enables a job schedule.
 
-        :param job_schedule_id: The id of the job schedule to enable.
+        :param job_schedule_id: The ID of the job schedule to enable.
         :type job_schedule_id: str
         :param job_schedule_enable_options: Additional parameters for the
          operation
@@ -677,6 +712,8 @@ class JobScheduleOperations(object):
         :rtype: None
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`BatchErrorException<azure.batch.models.BatchErrorException>`
         """
         timeout = None
         if job_schedule_enable_options is not None:
@@ -762,7 +799,7 @@ class JobScheduleOperations(object):
             self, job_schedule_id, job_schedule_terminate_options=None, custom_headers=None, raw=False, **operation_config):
         """Terminates a job schedule.
 
-        :param job_schedule_id: The id of the job schedule to terminates.
+        :param job_schedule_id: The ID of the job schedule to terminates.
         :type job_schedule_id: str
         :param job_schedule_terminate_options: Additional parameters for the
          operation
@@ -777,6 +814,8 @@ class JobScheduleOperations(object):
         :rtype: None
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`BatchErrorException<azure.batch.models.BatchErrorException>`
         """
         timeout = None
         if job_schedule_terminate_options is not None:
@@ -877,6 +916,8 @@ class JobScheduleOperations(object):
         :rtype: None
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`BatchErrorException<azure.batch.models.BatchErrorException>`
         """
         timeout = None
         if job_schedule_add_options is not None:
@@ -953,6 +994,8 @@ class JobScheduleOperations(object):
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`CloudJobSchedulePaged
          <azure.batch.models.CloudJobSchedulePaged>`
+        :raises:
+         :class:`BatchErrorException<azure.batch.models.BatchErrorException>`
         """
         filter = None
         if job_schedule_list_options is not None:
@@ -995,7 +1038,7 @@ class JobScheduleOperations(object):
                 if expand is not None:
                     query_parameters['$expand'] = self._serialize.query("expand", expand, 'str')
                 if max_results is not None:
-                    query_parameters['maxresults'] = self._serialize.query("max_results", max_results, 'int')
+                    query_parameters['maxresults'] = self._serialize.query("max_results", max_results, 'int', maximum=1000, minimum=1)
                 if timeout is not None:
                     query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'int')
 

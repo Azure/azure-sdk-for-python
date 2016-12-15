@@ -13,7 +13,7 @@ from msrest.serialization import Model
 
 
 class JobScheduleGetOptions(Model):
-    """Additional parameters for the JobSchedule_Get operation.
+    """Additional parameters for the JobSchedule_get operation.
 
     :param select: An OData $select clause.
     :type select: str
@@ -27,18 +27,17 @@ class JobScheduleGetOptions(Model):
      9C4D50EE-2D56-4CD3-8152-34347DC9F2B0.
     :type client_request_id: str
     :param return_client_request_id: Whether the server should return the
-     client-request-id identifier in the response.
+     client-request-id in the response. Default value: False .
     :type return_client_request_id: bool
     :param ocp_date: The time the request was issued. If not specified, this
-     header will be automatically populated with the current system clock
-     time.
+     header will be automatically populated with the current system clock time.
     :type ocp_date: datetime
     :param if_match: An ETag is specified. Specify this header to perform the
      operation only if the resource's ETag is an exact match as specified.
     :type if_match: str
-    :param if_none_match: An ETag is specified. Specify this header to
-     perform the operation only if the resource's ETag does not match the
-     specified ETag.
+    :param if_none_match: An ETag is specified. Specify this header to perform
+     the operation only if the resource's ETag does not match the specified
+     ETag.
     :type if_none_match: str
     :param if_modified_since: Specify this header to perform the operation
      only if the resource has been modified since the specified date/time.
@@ -48,7 +47,7 @@ class JobScheduleGetOptions(Model):
     :type if_unmodified_since: datetime
     """ 
 
-    def __init__(self, select=None, expand=None, timeout=30, client_request_id=None, return_client_request_id=None, ocp_date=None, if_match=None, if_none_match=None, if_modified_since=None, if_unmodified_since=None):
+    def __init__(self, select=None, expand=None, timeout=30, client_request_id=None, return_client_request_id=False, ocp_date=None, if_match=None, if_none_match=None, if_modified_since=None, if_unmodified_since=None):
         self.select = select
         self.expand = expand
         self.timeout = timeout

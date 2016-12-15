@@ -13,9 +13,9 @@ from msrest.serialization import Model
 
 
 class CloudTaskListSubtasksResult(Model):
-    """Response to a CloudTaskOperations.ListSubtasks request.
+    """The result of listing the subtasks of a task.
 
-    :param value: The list of information of subtasks.
+    :param value: The list of subtasks.
     :type value: list of :class:`SubtaskInformation
      <azure.batch.models.SubtaskInformation>`
     """ 

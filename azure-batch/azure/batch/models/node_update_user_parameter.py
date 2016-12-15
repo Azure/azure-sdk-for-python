@@ -13,15 +13,25 @@ from msrest.serialization import Model
 
 
 class NodeUpdateUserParameter(Model):
-    """Parameters for a ComputeNodeOperations.UpdateUser request.
+    """The set of changes to be made to a user account on a node.
 
-    :param password: The password of the account.
+    :param password: The password of the account. The password is required for
+     Windows nodes (those created with 'cloudServiceConfiguration', or created
+     with 'virtualMachineConfiguration' using a Windows image reference). For
+     Linux compute nodes, the password can optionally be specified along with
+     the sshPublicKey property. If omitted, any existing password is removed.
     :type password: str
     :param expiry_time: The time at which the account should expire. If
-     omitted, the default is 1 day from the current time.
+     omitted, the default is 1 day from the current time. For Linux compute
+     nodes, the expiryTime has a precision up to a day.
     :type expiry_time: datetime
     :param ssh_public_key: The SSH public key that can be used for remote
-     login to the compute node.
+     login to the compute node. The public key should be compatible with
+     OpenSSH encoding and should be base 64 encoded. This property can be
+     specified only for Linux nodes. If this is specified for a Windows node,
+     then the Batch service rejects the request; if you are calling the REST
+     API directly, the HTTP status code is 400 (Bad Request). If omitted, any
+     existing SSH public key is removed.
     :type ssh_public_key: str
     """ 
 

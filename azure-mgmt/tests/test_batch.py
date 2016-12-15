@@ -457,7 +457,7 @@ class BatchMgmtTestCase(RecordingTestCase):
                 pool = batch.models.PoolAddParameter('no_pool', 'small',
                                                      cloud_service_configuration=pool_config,
                                                      network_configuration=network_config)
-                self.assertBatchError(_e, _m, 'InvalidPropertyValue',
+                self.assertBatchError(_e, _m, 'Forbidden',
                                       self.batch_client.pool.add,
                                       pool, batch.models.PoolAddOptions(timeout=45))
 
