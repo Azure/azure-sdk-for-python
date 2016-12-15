@@ -29,10 +29,10 @@ class BatchManagementClientConfiguration(AzureConfiguration):
     :type credentials: :mod:`A msrestazure Credentials
      object<msrestazure.azure_active_directory>`
     :param subscription_id: A unique identifier of a Microsoft Azure
-     subscription. The subscription id forms part of the URI for every
-     service call.
+     subscription. The subscription ID forms part of the URI for every service
+     call.
     :type subscription_id: str
-    :param api_version: Client API Version.
+    :param api_version: The API version to be used with the HTTP request.
     :type api_version: str
     :param accept_language: Gets or sets the preferred language for the
      response.
@@ -96,10 +96,10 @@ class BatchManagementClient(object):
     :type credentials: :mod:`A msrestazure Credentials
      object<msrestazure.azure_active_directory>`
     :param subscription_id: A unique identifier of a Microsoft Azure
-     subscription. The subscription id forms part of the URI for every
-     service call.
+     subscription. The subscription ID forms part of the URI for every service
+     call.
     :type subscription_id: str
-    :param api_version: Client API Version.
+    :param api_version: The API version to be used with the HTTP request.
     :type api_version: str
     :param accept_language: Gets or sets the preferred language for the
      response.
