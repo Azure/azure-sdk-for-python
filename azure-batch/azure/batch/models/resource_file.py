@@ -16,15 +16,20 @@ class ResourceFile(Model):
     """A file to be downloaded from Azure blob storage to a compute node.
 
     :param blob_source: The URL of the file within Azure Blob Storage. This
-     URL should include a shared access signature if the blob is not publicly
-     readable.
+     URL must be readable using anonymous access; that is, the Batch service
+     does not present any credentials when downloading the blob. There are two
+     ways to get such a URL for a blob in Azure storage: include a Shared
+     Access Signature (SAS) granting read permissions on the blob, or set the
+     ACL for the blob or its container to allow public access.
     :type blob_source: str
-    :param file_path: The location to which to download the file, relative to
-     the task's working directory.
+    :param file_path: The location on the compute node to which to download
+     the file, relative to the task's working directory.
     :type file_path: str
-    :param file_mode: The file mode attribute in octal format. This property
+    :param file_mode: The file permission mode attribute in octal format. This
+     property applies only to files being downloaded to Linux compute nodes. It
      will be ignored if it is specified for a resourceFile which will be
-     downloaded to a Windows compute node.
+     downloaded to a Windows node. If this property is not specified for a
+     Linux node, then a default value of 0770 is applied to the file.
     :type file_mode: str
     """ 
 

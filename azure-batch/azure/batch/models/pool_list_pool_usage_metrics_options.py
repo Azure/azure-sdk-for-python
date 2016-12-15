@@ -13,17 +13,24 @@ from msrest.serialization import Model
 
 
 class PoolListPoolUsageMetricsOptions(Model):
-    """Additional parameters for the Pool_ListPoolUsageMetrics operation.
+    """Additional parameters for the Pool_list_pool_usage_metrics operation.
 
     :param start_time: The earliest time from which to include metrics. This
-     must be at least two and a half hours before the current time.
+     must be at least two and a half hours before the current time. If not
+     specified this defaults to the start time of the last aggregation interval
+     currently available.
     :type start_time: datetime
     :param end_time: The latest time from which to include metrics. This must
-     be at least two hours before the current time.
+     be at least two hours before the current time. If not specified this
+     defaults to the end time of the last aggregation interval currently
+     available.
     :type end_time: datetime
-    :param filter: An OData $filter clause.
+    :param filter: An OData $filter clause. If this is not specified the
+     response includes all pools that existed in the account in the time range
+     of the returned aggregation intervals.
     :type filter: str
     :param max_results: The maximum number of items to return in the response.
+     A maximum of 1000 results will be returned. Default value: 1000 .
     :type max_results: int
     :param timeout: The maximum time that the server can spend processing the
      request, in seconds. The default is 30 seconds. Default value: 30 .
@@ -33,15 +40,14 @@ class PoolListPoolUsageMetricsOptions(Model):
      9C4D50EE-2D56-4CD3-8152-34347DC9F2B0.
     :type client_request_id: str
     :param return_client_request_id: Whether the server should return the
-     client-request-id identifier in the response.
+     client-request-id in the response. Default value: False .
     :type return_client_request_id: bool
     :param ocp_date: The time the request was issued. If not specified, this
-     header will be automatically populated with the current system clock
-     time.
+     header will be automatically populated with the current system clock time.
     :type ocp_date: datetime
     """ 
 
-    def __init__(self, start_time=None, end_time=None, filter=None, max_results=None, timeout=30, client_request_id=None, return_client_request_id=None, ocp_date=None):
+    def __init__(self, start_time=None, end_time=None, filter=None, max_results=1000, timeout=30, client_request_id=None, return_client_request_id=False, ocp_date=None):
         self.start_time = start_time
         self.end_time = end_time
         self.filter = filter

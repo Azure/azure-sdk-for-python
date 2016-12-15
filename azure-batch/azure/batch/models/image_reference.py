@@ -13,7 +13,9 @@ from msrest.serialization import Model
 
 
 class ImageReference(Model):
-    """A reference to an Azure Virtual Machines Marketplace image.
+    """A reference to an Azure Virtual Machines Marketplace image. To get the list
+    of all imageReferences verified by Azure Batch, see the 'List supported
+    node agent SKUs' operation.
 
     :param publisher: The publisher of the Azure Virtual Machines Marketplace
      image. For example, Canonical or MicrosoftWindowsServer.

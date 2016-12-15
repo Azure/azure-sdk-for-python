@@ -110,9 +110,34 @@ from .node_remove_parameter import NodeRemoveParameter
 from .application_list_options import ApplicationListOptions
 from .application_get_options import ApplicationGetOptions
 from .pool_list_pool_usage_metrics_options import PoolListPoolUsageMetricsOptions
-from .account_list_node_agent_skus_options import AccountListNodeAgentSkusOptions
 from .pool_get_all_pools_lifetime_statistics_options import PoolGetAllPoolsLifetimeStatisticsOptions
+from .pool_add_options import PoolAddOptions
+from .pool_list_options import PoolListOptions
+from .pool_delete_options import PoolDeleteOptions
+from .pool_exists_options import PoolExistsOptions
+from .pool_get_options import PoolGetOptions
+from .pool_patch_options import PoolPatchOptions
+from .pool_disable_auto_scale_options import PoolDisableAutoScaleOptions
+from .pool_enable_auto_scale_options import PoolEnableAutoScaleOptions
+from .pool_evaluate_auto_scale_options import PoolEvaluateAutoScaleOptions
+from .pool_resize_options import PoolResizeOptions
+from .pool_stop_resize_options import PoolStopResizeOptions
+from .pool_update_properties_options import PoolUpdatePropertiesOptions
+from .pool_upgrade_os_options import PoolUpgradeOsOptions
+from .pool_remove_nodes_options import PoolRemoveNodesOptions
+from .account_list_node_agent_skus_options import AccountListNodeAgentSkusOptions
 from .job_get_all_jobs_lifetime_statistics_options import JobGetAllJobsLifetimeStatisticsOptions
+from .job_delete_options import JobDeleteOptions
+from .job_get_options import JobGetOptions
+from .job_patch_options import JobPatchOptions
+from .job_update_options import JobUpdateOptions
+from .job_disable_options import JobDisableOptions
+from .job_enable_options import JobEnableOptions
+from .job_terminate_options import JobTerminateOptions
+from .job_add_options import JobAddOptions
+from .job_list_options import JobListOptions
+from .job_list_from_job_schedule_options import JobListFromJobScheduleOptions
+from .job_list_preparation_and_release_task_status_options import JobListPreparationAndReleaseTaskStatusOptions
 from .certificate_add_options import CertificateAddOptions
 from .certificate_list_options import CertificateListOptions
 from .certificate_cancel_deletion_options import CertificateCancelDeletionOptions
@@ -136,31 +161,6 @@ from .job_schedule_enable_options import JobScheduleEnableOptions
 from .job_schedule_terminate_options import JobScheduleTerminateOptions
 from .job_schedule_add_options import JobScheduleAddOptions
 from .job_schedule_list_options import JobScheduleListOptions
-from .job_delete_options import JobDeleteOptions
-from .job_get_options import JobGetOptions
-from .job_patch_options import JobPatchOptions
-from .job_update_options import JobUpdateOptions
-from .job_disable_options import JobDisableOptions
-from .job_enable_options import JobEnableOptions
-from .job_terminate_options import JobTerminateOptions
-from .job_add_options import JobAddOptions
-from .job_list_options import JobListOptions
-from .job_list_from_job_schedule_options import JobListFromJobScheduleOptions
-from .job_list_preparation_and_release_task_status_options import JobListPreparationAndReleaseTaskStatusOptions
-from .pool_add_options import PoolAddOptions
-from .pool_list_options import PoolListOptions
-from .pool_delete_options import PoolDeleteOptions
-from .pool_exists_options import PoolExistsOptions
-from .pool_get_options import PoolGetOptions
-from .pool_patch_options import PoolPatchOptions
-from .pool_disable_auto_scale_options import PoolDisableAutoScaleOptions
-from .pool_enable_auto_scale_options import PoolEnableAutoScaleOptions
-from .pool_evaluate_auto_scale_options import PoolEvaluateAutoScaleOptions
-from .pool_resize_options import PoolResizeOptions
-from .pool_stop_resize_options import PoolStopResizeOptions
-from .pool_update_properties_options import PoolUpdatePropertiesOptions
-from .pool_upgrade_os_options import PoolUpgradeOSOptions
-from .pool_remove_nodes_options import PoolRemoveNodesOptions
 from .task_add_options import TaskAddOptions
 from .task_list_options import TaskListOptions
 from .task_add_collection_options import TaskAddCollectionOptions
@@ -183,13 +183,13 @@ from .compute_node_get_remote_desktop_options import ComputeNodeGetRemoteDesktop
 from .compute_node_list_options import ComputeNodeListOptions
 from .application_summary_paged import ApplicationSummaryPaged
 from .pool_usage_metrics_paged import PoolUsageMetricsPaged
+from .cloud_pool_paged import CloudPoolPaged
 from .node_agent_sku_paged import NodeAgentSkuPaged
+from .cloud_job_paged import CloudJobPaged
+from .job_preparation_and_release_task_execution_information_paged import JobPreparationAndReleaseTaskExecutionInformationPaged
 from .certificate_paged import CertificatePaged
 from .node_file_paged import NodeFilePaged
 from .cloud_job_schedule_paged import CloudJobSchedulePaged
-from .cloud_job_paged import CloudJobPaged
-from .job_preparation_and_release_task_execution_information_paged import JobPreparationAndReleaseTaskExecutionInformationPaged
-from .cloud_pool_paged import CloudPoolPaged
 from .cloud_task_paged import CloudTaskPaged
 from .compute_node_paged import ComputeNodePaged
 from .batch_service_client_enums import (
@@ -201,11 +201,11 @@ from .batch_service_client_enums import (
     CertificateStoreLocation,
     CertificateVisibility,
     PoolLifetimeOption,
+    OnAllTasksComplete,
+    OnTaskFailure,
     JobScheduleState,
     SchedulingErrorCategory,
     JobState,
-    OnAllTasksComplete,
-    OnTaskFailure,
     JobPreparationTaskState,
     JobReleaseTaskState,
     PoolState,
@@ -324,9 +324,34 @@ __all__ = [
     'ApplicationListOptions',
     'ApplicationGetOptions',
     'PoolListPoolUsageMetricsOptions',
-    'AccountListNodeAgentSkusOptions',
     'PoolGetAllPoolsLifetimeStatisticsOptions',
+    'PoolAddOptions',
+    'PoolListOptions',
+    'PoolDeleteOptions',
+    'PoolExistsOptions',
+    'PoolGetOptions',
+    'PoolPatchOptions',
+    'PoolDisableAutoScaleOptions',
+    'PoolEnableAutoScaleOptions',
+    'PoolEvaluateAutoScaleOptions',
+    'PoolResizeOptions',
+    'PoolStopResizeOptions',
+    'PoolUpdatePropertiesOptions',
+    'PoolUpgradeOsOptions',
+    'PoolRemoveNodesOptions',
+    'AccountListNodeAgentSkusOptions',
     'JobGetAllJobsLifetimeStatisticsOptions',
+    'JobDeleteOptions',
+    'JobGetOptions',
+    'JobPatchOptions',
+    'JobUpdateOptions',
+    'JobDisableOptions',
+    'JobEnableOptions',
+    'JobTerminateOptions',
+    'JobAddOptions',
+    'JobListOptions',
+    'JobListFromJobScheduleOptions',
+    'JobListPreparationAndReleaseTaskStatusOptions',
     'CertificateAddOptions',
     'CertificateListOptions',
     'CertificateCancelDeletionOptions',
@@ -350,31 +375,6 @@ __all__ = [
     'JobScheduleTerminateOptions',
     'JobScheduleAddOptions',
     'JobScheduleListOptions',
-    'JobDeleteOptions',
-    'JobGetOptions',
-    'JobPatchOptions',
-    'JobUpdateOptions',
-    'JobDisableOptions',
-    'JobEnableOptions',
-    'JobTerminateOptions',
-    'JobAddOptions',
-    'JobListOptions',
-    'JobListFromJobScheduleOptions',
-    'JobListPreparationAndReleaseTaskStatusOptions',
-    'PoolAddOptions',
-    'PoolListOptions',
-    'PoolDeleteOptions',
-    'PoolExistsOptions',
-    'PoolGetOptions',
-    'PoolPatchOptions',
-    'PoolDisableAutoScaleOptions',
-    'PoolEnableAutoScaleOptions',
-    'PoolEvaluateAutoScaleOptions',
-    'PoolResizeOptions',
-    'PoolStopResizeOptions',
-    'PoolUpdatePropertiesOptions',
-    'PoolUpgradeOSOptions',
-    'PoolRemoveNodesOptions',
     'TaskAddOptions',
     'TaskListOptions',
     'TaskAddCollectionOptions',
@@ -397,13 +397,13 @@ __all__ = [
     'ComputeNodeListOptions',
     'ApplicationSummaryPaged',
     'PoolUsageMetricsPaged',
+    'CloudPoolPaged',
     'NodeAgentSkuPaged',
+    'CloudJobPaged',
+    'JobPreparationAndReleaseTaskExecutionInformationPaged',
     'CertificatePaged',
     'NodeFilePaged',
     'CloudJobSchedulePaged',
-    'CloudJobPaged',
-    'JobPreparationAndReleaseTaskExecutionInformationPaged',
-    'CloudPoolPaged',
     'CloudTaskPaged',
     'ComputeNodePaged',
     'OSType',
@@ -414,11 +414,11 @@ __all__ = [
     'CertificateStoreLocation',
     'CertificateVisibility',
     'PoolLifetimeOption',
+    'OnAllTasksComplete',
+    'OnTaskFailure',
     'JobScheduleState',
     'SchedulingErrorCategory',
     'JobState',
-    'OnAllTasksComplete',
-    'OnTaskFailure',
     'JobPreparationTaskState',
     'JobReleaseTaskState',
     'PoolState',

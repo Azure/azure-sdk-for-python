@@ -17,15 +17,15 @@ class TaskInformation(Model):
 
     :param task_url: The URL of the task.
     :type task_url: str
-    :param job_id: The id of the job to which the task belongs.
+    :param job_id: The ID of the job to which the task belongs.
     :type job_id: str
-    :param task_id: The id of the task.
+    :param task_id: The ID of the task.
     :type task_id: str
-    :param subtask_id: The id of the subtask if the task is a multi-instance
+    :param subtask_id: The ID of the subtask if the task is a multi-instance
      task.
     :type subtask_id: int
-    :param task_state: The current state of the task. Possible values
-     include: 'active', 'preparing', 'running', 'completed'
+    :param task_state: The current state of the task. Possible values include:
+     'active', 'preparing', 'running', 'completed'
     :type task_state: str or :class:`TaskState <azure.batch.models.TaskState>`
     :param execution_info: Information about the execution of the task.
     :type execution_info: :class:`TaskExecutionInformation

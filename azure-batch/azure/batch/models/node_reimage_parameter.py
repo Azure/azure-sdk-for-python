@@ -13,7 +13,7 @@ from msrest.serialization import Model
 
 
 class NodeReimageParameter(Model):
-    """Parameters for a ComputeNodeOperations.Reimage request.
+    """Options for reimaging a compute node.
 
     :param node_reimage_option: When to reimage the compute node and what to
      do with currently running tasks. The default value is requeue. Possible

@@ -36,8 +36,8 @@ class AccountOperations(object):
             self, account_list_node_agent_skus_options=None, custom_headers=None, raw=False, **operation_config):
         """Lists all node agent SKUs supported by the Azure Batch service.
 
-        :param account_list_node_agent_skus_options: Additional parameters
-         for the operation
+        :param account_list_node_agent_skus_options: Additional parameters for
+         the operation
         :type account_list_node_agent_skus_options:
          :class:`AccountListNodeAgentSkusOptions
          <azure.batch.models.AccountListNodeAgentSkusOptions>`
@@ -48,6 +48,8 @@ class AccountOperations(object):
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`NodeAgentSkuPaged
          <azure.batch.models.NodeAgentSkuPaged>`
+        :raises:
+         :class:`BatchErrorException<azure.batch.models.BatchErrorException>`
         """
         filter = None
         if account_list_node_agent_skus_options is not None:
@@ -80,7 +82,7 @@ class AccountOperations(object):
                 if filter is not None:
                     query_parameters['$filter'] = self._serialize.query("filter", filter, 'str')
                 if max_results is not None:
-                    query_parameters['maxresults'] = self._serialize.query("max_results", max_results, 'int')
+                    query_parameters['maxresults'] = self._serialize.query("max_results", max_results, 'int', maximum=1000, minimum=1)
                 if timeout is not None:
                     query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'int')
 

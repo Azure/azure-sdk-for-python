@@ -36,6 +36,12 @@ class ApplicationOperations(object):
             self, application_list_options=None, custom_headers=None, raw=False, **operation_config):
         """Lists all of the applications available in the specified account.
 
+        This operation returns only applications and versions that are
+        available for use on compute nodes; that is, that can be used in an
+        application package reference. For administrator information about
+        applications and versions that are not yet available to compute nodes,
+        use the Azure portal or the Azure Resource Manager API.
+
         :param application_list_options: Additional parameters for the
          operation
         :type application_list_options: :class:`ApplicationListOptions
@@ -47,6 +53,8 @@ class ApplicationOperations(object):
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`ApplicationSummaryPaged
          <azure.batch.models.ApplicationSummaryPaged>`
+        :raises:
+         :class:`BatchErrorException<azure.batch.models.BatchErrorException>`
         """
         max_results = None
         if application_list_options is not None:
@@ -74,7 +82,7 @@ class ApplicationOperations(object):
                 query_parameters = {}
                 query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
                 if max_results is not None:
-                    query_parameters['maxresults'] = self._serialize.query("max_results", max_results, 'int')
+                    query_parameters['maxresults'] = self._serialize.query("max_results", max_results, 'int', maximum=1000, minimum=1)
                 if timeout is not None:
                     query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'int')
 
@@ -122,7 +130,7 @@ class ApplicationOperations(object):
             self, application_id, application_get_options=None, custom_headers=None, raw=False, **operation_config):
         """Gets information about the specified application.
 
-        :param application_id: The id of the application.
+        :param application_id: The ID of the application.
         :type application_id: str
         :param application_get_options: Additional parameters for the
          operation
@@ -137,6 +145,8 @@ class ApplicationOperations(object):
          <azure.batch.models.ApplicationSummary>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`BatchErrorException<azure.batch.models.BatchErrorException>`
         """
         timeout = None
         if application_get_options is not None:
