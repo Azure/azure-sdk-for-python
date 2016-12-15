@@ -12,28 +12,27 @@
 from msrest.serialization import Model
 
 
-class ComputeNodeError(Model):
-    """An error encountered by a compute node.
+class ErrorDetail(Model):
+    """Specific detail about an error.
 
-    :param code: An identifier for the compute node error. Codes are invariant
-     and are intended to be consumed programmatically.
+    :param code: An identifier for the error. Codes are invariant and are
+     intended to be consumed programmatically.
     :type code: str
-    :param message: A message describing the compute node error, intended to
-     be suitable for display in a user interface.
+    :param message: A message describing the error, intended to be suitable
+     for display in a user interface.
     :type message: str
-    :param error_details: The list of additional error details related to the
-     compute node error.
-    :type error_details: list of :class:`NameValuePair
-     <azure.batch.models.NameValuePair>`
+    :param target: The target of the particular error. For example, the name
+     of the property in error.
+    :type target: str
     """ 
 
     _attribute_map = {
         'code': {'key': 'code', 'type': 'str'},
         'message': {'key': 'message', 'type': 'str'},
-        'error_details': {'key': 'errorDetails', 'type': '[NameValuePair]'},
+        'target': {'key': 'target', 'type': 'str'},
     }
 
-    def __init__(self, code=None, message=None, error_details=None):
+    def __init__(self, code=None, message=None, target=None):
         self.code = code
         self.message = message
-        self.error_details = error_details
+        self.target = target

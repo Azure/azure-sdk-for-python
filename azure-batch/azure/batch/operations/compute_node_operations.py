@@ -36,9 +36,12 @@ class ComputeNodeOperations(object):
             self, pool_id, node_id, user, compute_node_add_user_options=None, custom_headers=None, raw=False, **operation_config):
         """Adds a user account to the specified compute node.
 
-        :param pool_id: The id of the pool that contains the compute node.
+        You can add a user account to a node only when it is in the idle or
+        running state.
+
+        :param pool_id: The ID of the pool that contains the compute node.
         :type pool_id: str
-        :param node_id: The id of the machine on which you want to create a
+        :param node_id: The ID of the machine on which you want to create a
          user account.
         :type node_id: str
         :param user: The user account to be created.
@@ -46,8 +49,8 @@ class ComputeNodeOperations(object):
          <azure.batch.models.ComputeNodeUser>`
         :param compute_node_add_user_options: Additional parameters for the
          operation
-        :type compute_node_add_user_options:
-         :class:`ComputeNodeAddUserOptions <azure.batch.models.ComputeNodeAddUserOptions>`
+        :type compute_node_add_user_options: :class:`ComputeNodeAddUserOptions
+         <azure.batch.models.ComputeNodeAddUserOptions>`
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -56,6 +59,8 @@ class ComputeNodeOperations(object):
         :rtype: None
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`BatchErrorException<azure.batch.models.BatchErrorException>`
         """
         timeout = None
         if compute_node_add_user_options is not None:
@@ -126,15 +131,18 @@ class ComputeNodeOperations(object):
             self, pool_id, node_id, user_name, compute_node_delete_user_options=None, custom_headers=None, raw=False, **operation_config):
         """Deletes a user account from the specified compute node.
 
-        :param pool_id: The id of the pool that contains the compute node.
+        You can delete a user account to a node only when it is in the idle or
+        running state.
+
+        :param pool_id: The ID of the pool that contains the compute node.
         :type pool_id: str
-        :param node_id: The id of the machine on which you want to delete a
+        :param node_id: The ID of the machine on which you want to delete a
          user account.
         :type node_id: str
         :param user_name: The name of the user account to delete.
         :type user_name: str
-        :param compute_node_delete_user_options: Additional parameters for
-         the operation
+        :param compute_node_delete_user_options: Additional parameters for the
+         operation
         :type compute_node_delete_user_options:
          :class:`ComputeNodeDeleteUserOptions
          <azure.batch.models.ComputeNodeDeleteUserOptions>`
@@ -146,6 +154,8 @@ class ComputeNodeOperations(object):
         :rtype: None
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`BatchErrorException<azure.batch.models.BatchErrorException>`
         """
         timeout = None
         if compute_node_delete_user_options is not None:
@@ -211,9 +221,15 @@ class ComputeNodeOperations(object):
         """Updates the password or expiration time of a user account on the
         specified compute node.
 
-        :param pool_id: The id of the pool that contains the compute node.
+        This operation replaces of all the updateable properties of the
+        account. For example, if the expiryTime element is not specified, the
+        current value is replaced with the default value, not left unmodified.
+        You can update a user account on a node only when it is in the idle or
+        running state.
+
+        :param pool_id: The ID of the pool that contains the compute node.
         :type pool_id: str
-        :param node_id: The id of the machine on which you want to update a
+        :param node_id: The ID of the machine on which you want to update a
          user account.
         :type node_id: str
         :param user_name: The name of the user account to update.
@@ -221,8 +237,8 @@ class ComputeNodeOperations(object):
         :param node_update_user_parameter: The parameters for the request.
         :type node_update_user_parameter: :class:`NodeUpdateUserParameter
          <azure.batch.models.NodeUpdateUserParameter>`
-        :param compute_node_update_user_options: Additional parameters for
-         the operation
+        :param compute_node_update_user_options: Additional parameters for the
+         operation
         :type compute_node_update_user_options:
          :class:`ComputeNodeUpdateUserOptions
          <azure.batch.models.ComputeNodeUpdateUserOptions>`
@@ -234,6 +250,8 @@ class ComputeNodeOperations(object):
         :rtype: None
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`BatchErrorException<azure.batch.models.BatchErrorException>`
         """
         timeout = None
         if compute_node_update_user_options is not None:
@@ -305,9 +323,9 @@ class ComputeNodeOperations(object):
             self, pool_id, node_id, compute_node_get_options=None, custom_headers=None, raw=False, **operation_config):
         """Gets information about the specified compute node.
 
-        :param pool_id: The id of the pool that contains the compute node.
+        :param pool_id: The ID of the pool that contains the compute node.
         :type pool_id: str
-        :param node_id: The id of the compute node that you want to get
+        :param node_id: The ID of the compute node that you want to get
          information about.
         :type node_id: str
         :param compute_node_get_options: Additional parameters for the
@@ -322,6 +340,8 @@ class ComputeNodeOperations(object):
         :rtype: :class:`ComputeNode <azure.batch.models.ComputeNode>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`BatchErrorException<azure.batch.models.BatchErrorException>`
         """
         select = None
         if compute_node_get_options is not None:
@@ -401,16 +421,18 @@ class ComputeNodeOperations(object):
             self, pool_id, node_id, compute_node_reboot_options=None, node_reboot_option=None, custom_headers=None, raw=False, **operation_config):
         """Restarts the specified compute node.
 
-        :param pool_id: The id of the pool that contains the compute node.
+        You can restart a node only if it is in an idle or running state.
+
+        :param pool_id: The ID of the pool that contains the compute node.
         :type pool_id: str
-        :param node_id: The id of the compute node that you want to restart.
+        :param node_id: The ID of the compute node that you want to restart.
         :type node_id: str
         :param compute_node_reboot_options: Additional parameters for the
          operation
         :type compute_node_reboot_options: :class:`ComputeNodeRebootOptions
          <azure.batch.models.ComputeNodeRebootOptions>`
-        :param node_reboot_option: When to reboot the compute node and what
-         to do with currently running tasks. The default value is requeue.
+        :param node_reboot_option: When to reboot the compute node and what to
+         do with currently running tasks. The default value is requeue.
          Possible values include: 'requeue', 'terminate', 'taskcompletion',
          'retaineddata'
         :type node_reboot_option: str or :class:`ComputeNodeRebootOption
@@ -423,6 +445,8 @@ class ComputeNodeOperations(object):
         :rtype: None
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`BatchErrorException<azure.batch.models.BatchErrorException>`
         """
         timeout = None
         if compute_node_reboot_options is not None:
@@ -499,9 +523,13 @@ class ComputeNodeOperations(object):
             self, pool_id, node_id, compute_node_reimage_options=None, node_reimage_option=None, custom_headers=None, raw=False, **operation_config):
         """Reinstalls the operating system on the specified compute node.
 
-        :param pool_id: The id of the pool that contains the compute node.
+        You can reinstall the operating system on a node only if it is in an
+        idle or running state. This API can be invoked only on pools created
+        with the cloud service configuration property.
+
+        :param pool_id: The ID of the pool that contains the compute node.
         :type pool_id: str
-        :param node_id: The id of the compute node that you want to restart.
+        :param node_id: The ID of the compute node that you want to restart.
         :type node_id: str
         :param compute_node_reimage_options: Additional parameters for the
          operation
@@ -521,6 +549,8 @@ class ComputeNodeOperations(object):
         :rtype: None
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`BatchErrorException<azure.batch.models.BatchErrorException>`
         """
         timeout = None
         if compute_node_reimage_options is not None:
@@ -597,9 +627,9 @@ class ComputeNodeOperations(object):
             self, pool_id, node_id, compute_node_disable_scheduling_options=None, node_disable_scheduling_option=None, custom_headers=None, raw=False, **operation_config):
         """Disables task scheduling on the specified compute node.
 
-        :param pool_id: The id of the pool that contains the compute node.
+        :param pool_id: The ID of the pool that contains the compute node.
         :type pool_id: str
-        :param node_id: The id of the compute node on which you want to
+        :param node_id: The ID of the compute node on which you want to
          disable task scheduling.
         :type node_id: str
         :param compute_node_disable_scheduling_options: Additional parameters
@@ -608,7 +638,7 @@ class ComputeNodeOperations(object):
          :class:`ComputeNodeDisableSchedulingOptions
          <azure.batch.models.ComputeNodeDisableSchedulingOptions>`
         :param node_disable_scheduling_option: What to do with currently
-         running tasks when disable task scheduling on the compute node. The
+         running tasks when disabling task scheduling on the compute node. The
          default value is requeue. Possible values include: 'requeue',
          'terminate', 'taskcompletion'
         :type node_disable_scheduling_option: str or
@@ -622,6 +652,8 @@ class ComputeNodeOperations(object):
         :rtype: None
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`BatchErrorException<azure.batch.models.BatchErrorException>`
         """
         timeout = None
         if compute_node_disable_scheduling_options is not None:
@@ -698,10 +730,10 @@ class ComputeNodeOperations(object):
             self, pool_id, node_id, compute_node_enable_scheduling_options=None, custom_headers=None, raw=False, **operation_config):
         """Enables task scheduling on the specified compute node.
 
-        :param pool_id: The id of the pool that contains the compute node.
+        :param pool_id: The ID of the pool that contains the compute node.
         :type pool_id: str
-        :param node_id: The id of the compute node on which you want to
-         enable task scheduling.
+        :param node_id: The ID of the compute node on which you want to enable
+         task scheduling.
         :type node_id: str
         :param compute_node_enable_scheduling_options: Additional parameters
          for the operation
@@ -716,6 +748,8 @@ class ComputeNodeOperations(object):
         :rtype: None
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`BatchErrorException<azure.batch.models.BatchErrorException>`
         """
         timeout = None
         if compute_node_enable_scheduling_options is not None:
@@ -782,9 +816,14 @@ class ComputeNodeOperations(object):
             self, pool_id, node_id, compute_node_get_remote_login_settings_options=None, custom_headers=None, raw=False, **operation_config):
         """Gets the settings required for remote login to a compute node.
 
-        :param pool_id: The id of the pool that contains the compute node.
+        Before you can remotely login to a node using the remote login
+        settings, you must create a user account on the node. This API can be
+        invoked only on pools created with the virtual machine configuration
+        property.
+
+        :param pool_id: The ID of the pool that contains the compute node.
         :type pool_id: str
-        :param node_id: The id of the compute node for which to obtain the
+        :param node_id: The ID of the compute node for which to obtain the
          remote login settings.
         :type node_id: str
         :param compute_node_get_remote_login_settings_options: Additional
@@ -801,6 +840,8 @@ class ComputeNodeOperations(object):
          <azure.batch.models.ComputeNodeGetRemoteLoginSettingsResult>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`BatchErrorException<azure.batch.models.BatchErrorException>`
         """
         timeout = None
         if compute_node_get_remote_login_settings_options is not None:
@@ -875,9 +916,13 @@ class ComputeNodeOperations(object):
             self, pool_id, node_id, compute_node_get_remote_desktop_options=None, custom_headers=None, raw=False, callback=None, **operation_config):
         """Gets the Remote Desktop Protocol file for the specified compute node.
 
-        :param pool_id: The id of the pool that contains the compute node.
+        Before you can access a node by using the RDP file, you must create a
+        user account on the node. This API can only be invoked on pools created
+        with the cloud service configuration property.
+
+        :param pool_id: The ID of the pool that contains the compute node.
         :type pool_id: str
-        :param node_id: The id of the compute node for which you want to get
+        :param node_id: The ID of the compute node for which you want to get
          the Remote Desktop Protocol file.
         :type node_id: str
         :param compute_node_get_remote_desktop_options: Additional parameters
@@ -898,6 +943,8 @@ class ComputeNodeOperations(object):
         :rtype: Generator
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`BatchErrorException<azure.batch.models.BatchErrorException>`
         """
         timeout = None
         if compute_node_get_remote_desktop_options is not None:
@@ -972,7 +1019,7 @@ class ComputeNodeOperations(object):
             self, pool_id, compute_node_list_options=None, custom_headers=None, raw=False, **operation_config):
         """Lists the compute nodes in the specified pool.
 
-        :param pool_id: The id of the pool from which you want to list nodes.
+        :param pool_id: The ID of the pool from which you want to list nodes.
         :type pool_id: str
         :param compute_node_list_options: Additional parameters for the
          operation
@@ -985,6 +1032,8 @@ class ComputeNodeOperations(object):
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`ComputeNodePaged
          <azure.batch.models.ComputeNodePaged>`
+        :raises:
+         :class:`BatchErrorException<azure.batch.models.BatchErrorException>`
         """
         filter = None
         if compute_node_list_options is not None:
@@ -1026,7 +1075,7 @@ class ComputeNodeOperations(object):
                 if select is not None:
                     query_parameters['$select'] = self._serialize.query("select", select, 'str')
                 if max_results is not None:
-                    query_parameters['maxresults'] = self._serialize.query("max_results", max_results, 'int')
+                    query_parameters['maxresults'] = self._serialize.query("max_results", max_results, 'int', maximum=1000, minimum=1)
                 if timeout is not None:
                     query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'int')
 

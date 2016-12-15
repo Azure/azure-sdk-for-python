@@ -51,6 +51,8 @@ class CertificateOperations(object):
         :rtype: None
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`BatchErrorException<azure.batch.models.BatchErrorException>`
         """
         timeout = None
         if certificate_add_options is not None:
@@ -128,6 +130,8 @@ class CertificateOperations(object):
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`CertificatePaged
          <azure.batch.models.CertificatePaged>`
+        :raises:
+         :class:`BatchErrorException<azure.batch.models.BatchErrorException>`
         """
         filter = None
         if certificate_list_options is not None:
@@ -165,7 +169,7 @@ class CertificateOperations(object):
                 if select is not None:
                     query_parameters['$select'] = self._serialize.query("select", select, 'str')
                 if max_results is not None:
-                    query_parameters['maxresults'] = self._serialize.query("max_results", max_results, 'int')
+                    query_parameters['maxresults'] = self._serialize.query("max_results", max_results, 'int', maximum=1000, minimum=1)
                 if timeout is not None:
                     query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'int')
 
@@ -213,6 +217,15 @@ class CertificateOperations(object):
             self, thumbprint_algorithm, thumbprint, certificate_cancel_deletion_options=None, custom_headers=None, raw=False, **operation_config):
         """Cancels a failed deletion of a certificate from the specified account.
 
+        If you try to delete a certificate that is being used by a pool or
+        compute node, the status of the certificate changes to deletefailed. If
+        you decide that you want to continue using the certificate, you can use
+        this operation to set the status of the certificate back to active. If
+        you intend to delete the certificate, you do not need to run this
+        operation after the deletion failed. You must make sure that the
+        certificate is not being used by any resources, and then you can try
+        again to delete the certificate.
+
         :param thumbprint_algorithm: The algorithm used to derive the
          thumbprint parameter. This must be sha1.
         :type thumbprint_algorithm: str
@@ -231,6 +244,8 @@ class CertificateOperations(object):
         :rtype: None
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`BatchErrorException<azure.batch.models.BatchErrorException>`
         """
         timeout = None
         if certificate_cancel_deletion_options is not None:
@@ -297,6 +312,18 @@ class CertificateOperations(object):
             self, thumbprint_algorithm, thumbprint, certificate_delete_options=None, custom_headers=None, raw=False, **operation_config):
         """Deletes a certificate from the specified account.
 
+        You cannot delete a certificate if a resource (pool or compute node) is
+        using it. Before you can delete a certificate, you must therefore make
+        sure that the certificate is not associated with any existing pools,
+        the certificate is not installed on any compute nodes (even if you
+        remove a certificate from a pool, it is not removed from existing
+        compute nodes in that pool until they restart), and no running tasks
+        depend on the certificate. If you try to delete a certificate that is
+        in use, the deletion fails. The certificate status changes to
+        deletefailed. You can use Cancel Delete Certificate to set the status
+        back to active if you decide that you want to continue using the
+        certificate.
+
         :param thumbprint_algorithm: The algorithm used to derive the
          thumbprint parameter. This must be sha1.
         :type thumbprint_algorithm: str
@@ -314,6 +341,8 @@ class CertificateOperations(object):
         :rtype: None
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`BatchErrorException<azure.batch.models.BatchErrorException>`
         """
         timeout = None
         if certificate_delete_options is not None:
@@ -396,6 +425,8 @@ class CertificateOperations(object):
         :rtype: :class:`Certificate <azure.batch.models.Certificate>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`BatchErrorException<azure.batch.models.BatchErrorException>`
         """
         select = None
         if certificate_get_options is not None:

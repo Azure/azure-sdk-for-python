@@ -15,10 +15,13 @@ from msrest.serialization import Model
 class ApplicationPackageReference(Model):
     """A reference to an application package to be deployed to compute nodes.
 
-    :param application_id: The id of the application to deploy.
+    :param application_id: The ID of the application to deploy.
     :type application_id: str
     :param version: The version of the application to deploy. If omitted, the
-     default version is deployed.
+     default version is deployed. If this is omitted, and no default version is
+     specified for this application, the request fails with the error code
+     InvalidApplicationPackageReferences. If you are calling the REST API
+     directly, the HTTP status code is 409.
     :type version: str
     """ 
 

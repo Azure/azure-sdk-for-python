@@ -18,28 +18,28 @@ class VaultProperties(Model):
     :param vault_uri: The URI of the vault for performing operations on keys
      and secrets.
     :type vault_uri: str
-    :param tenant_id: The Azure Active Directory tenant ID that should be
-     used for authenticating requests to the key vault.
+    :param tenant_id: The Azure Active Directory tenant ID that should be used
+     for authenticating requests to the key vault.
     :type tenant_id: str
     :param sku: SKU details
     :type sku: :class:`Sku <azure.mgmt.keyvault.models.Sku>`
-    :param access_policies: An array of 0 to 16 identities that have access
-     to the key vault. All identities in the array must use the same tenant
-     ID as the key vault's tenant ID.
+    :param access_policies: An array of 0 to 16 identities that have access to
+     the key vault. All identities in the array must use the same tenant ID as
+     the key vault's tenant ID.
     :type access_policies: list of :class:`AccessPolicyEntry
      <azure.mgmt.keyvault.models.AccessPolicyEntry>`
     :param enabled_for_deployment: Property to specify whether Azure Virtual
-     Machines are permitted to retrieve certificates stored as secrets from
-     the key vault.
+     Machines are permitted to retrieve certificates stored as secrets from the
+     key vault.
     :type enabled_for_deployment: bool
-    :param enabled_for_disk_encryption: Property to specify whether Azure
-     Disk Encryption is permitted to retrieve secrets from the vault and
-     unwrap keys.
+    :param enabled_for_disk_encryption: Property to specify whether Azure Disk
+     Encryption is permitted to retrieve secrets from the vault and unwrap
+     keys.
     :type enabled_for_disk_encryption: bool
     :param enabled_for_template_deployment: Property to specify whether Azure
      Resource Manager is permitted to retrieve secrets from the key vault.
     :type enabled_for_template_deployment: bool
-    """ 
+    """
 
     _validation = {
         'tenant_id': {'required': True},

@@ -58,7 +58,7 @@ class MgmtKeyVaultTest(AzureMgmtTestCase):
 
         vaults = list(self.keyvault_client.vaults.list())
         self.assertGreater(len(vaults), 0)
-        self.assertTrue(all(isinstance(v, azure.mgmt.keyvault.models.Vault) for v in vaults))
+        self.assertTrue(all(isinstance(v, azure.mgmt.keyvault.models.Resource) for v in vaults))
 
         self.keyvault_client.vaults.delete(
             self.group_name,

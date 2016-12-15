@@ -13,7 +13,7 @@ from msrest.serialization import Model
 
 
 class ComputeNodeUpdateUserOptions(Model):
-    """Additional parameters for the ComputeNode_UpdateUser operation.
+    """Additional parameters for the ComputeNode_update_user operation.
 
     :param timeout: The maximum time that the server can spend processing the
      request, in seconds. The default is 30 seconds. Default value: 30 .
@@ -23,15 +23,14 @@ class ComputeNodeUpdateUserOptions(Model):
      9C4D50EE-2D56-4CD3-8152-34347DC9F2B0.
     :type client_request_id: str
     :param return_client_request_id: Whether the server should return the
-     client-request-id identifier in the response.
+     client-request-id in the response. Default value: False .
     :type return_client_request_id: bool
     :param ocp_date: The time the request was issued. If not specified, this
-     header will be automatically populated with the current system clock
-     time.
+     header will be automatically populated with the current system clock time.
     :type ocp_date: datetime
     """ 
 
-    def __init__(self, timeout=30, client_request_id=None, return_client_request_id=None, ocp_date=None):
+    def __init__(self, timeout=30, client_request_id=None, return_client_request_id=False, ocp_date=None):
         self.timeout = timeout
         self.client_request_id = client_request_id
         self.return_client_request_id = return_client_request_id

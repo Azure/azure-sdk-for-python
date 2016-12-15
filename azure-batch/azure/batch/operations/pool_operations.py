@@ -37,8 +37,12 @@ class PoolOperations(object):
         """Lists the usage metrics, aggregated by pool across individual time
         intervals, for the specified account.
 
-        :param pool_list_pool_usage_metrics_options: Additional parameters
-         for the operation
+        If you do not specify a $filter clause including a poolId, the response
+        includes all pools that existed in the account in the time range of the
+        returned aggregation intervals.
+
+        :param pool_list_pool_usage_metrics_options: Additional parameters for
+         the operation
         :type pool_list_pool_usage_metrics_options:
          :class:`PoolListPoolUsageMetricsOptions
          <azure.batch.models.PoolListPoolUsageMetricsOptions>`
@@ -49,6 +53,8 @@ class PoolOperations(object):
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`PoolUsageMetricsPaged
          <azure.batch.models.PoolUsageMetricsPaged>`
+        :raises:
+         :class:`BatchErrorException<azure.batch.models.BatchErrorException>`
         """
         start_time = None
         if pool_list_pool_usage_metrics_options is not None:
@@ -91,7 +97,7 @@ class PoolOperations(object):
                 if filter is not None:
                     query_parameters['$filter'] = self._serialize.query("filter", filter, 'str')
                 if max_results is not None:
-                    query_parameters['maxresults'] = self._serialize.query("max_results", max_results, 'int')
+                    query_parameters['maxresults'] = self._serialize.query("max_results", max_results, 'int', maximum=1000, minimum=1)
                 if timeout is not None:
                     query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'int')
 
@@ -157,6 +163,8 @@ class PoolOperations(object):
         :rtype: :class:`PoolStatistics <azure.batch.models.PoolStatistics>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`BatchErrorException<azure.batch.models.BatchErrorException>`
         """
         timeout = None
         if pool_get_all_pools_lifetime_statistics_options is not None:
@@ -226,6 +234,10 @@ class PoolOperations(object):
             self, pool, pool_add_options=None, custom_headers=None, raw=False, **operation_config):
         """Adds a pool to the specified account.
 
+        When naming pools, avoid including sensitive information such as user
+        names or secret project names. This information may appear in telemetry
+        logs accessible to Microsoft Support engineers.
+
         :param pool: The pool to be added.
         :type pool: :class:`PoolAddParameter
          <azure.batch.models.PoolAddParameter>`
@@ -240,6 +252,8 @@ class PoolOperations(object):
         :rtype: None
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`BatchErrorException<azure.batch.models.BatchErrorException>`
         """
         timeout = None
         if pool_add_options is not None:
@@ -314,6 +328,8 @@ class PoolOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`CloudPoolPaged <azure.batch.models.CloudPoolPaged>`
+        :raises:
+         :class:`BatchErrorException<azure.batch.models.BatchErrorException>`
         """
         filter = None
         if pool_list_options is not None:
@@ -356,7 +372,7 @@ class PoolOperations(object):
                 if expand is not None:
                     query_parameters['$expand'] = self._serialize.query("expand", expand, 'str')
                 if max_results is not None:
-                    query_parameters['maxresults'] = self._serialize.query("max_results", max_results, 'int')
+                    query_parameters['maxresults'] = self._serialize.query("max_results", max_results, 'int', maximum=1000, minimum=1)
                 if timeout is not None:
                     query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'int')
 
@@ -404,7 +420,21 @@ class PoolOperations(object):
             self, pool_id, pool_delete_options=None, custom_headers=None, raw=False, **operation_config):
         """Deletes a pool from the specified account.
 
-        :param pool_id: The id of the pool to delete.
+        When you request that a pool be deleted, the following actions occur:
+        the pool state is set to deleting; any ongoing resize operation on the
+        pool are stopped; the Batch service starts resizing the pool to zero
+        nodes; any tasks running on existing nodes are terminated and requeued
+        (as if a resize pool operation had been requested with the default
+        requeue option); finally, the pool is removed from the system. Because
+        running tasks are requeued, the user can rerun these tasks by updating
+        their job to target a different pool. The tasks can then run on the new
+        pool. If you want to override the requeue behavior, then you should
+        call resize pool explicitly to shrink the pool to zero size before
+        deleting the pool. If you call an Update, Patch or Delete API on a pool
+        in the deleting state, it will fail with HTTP status code 409 with
+        error code PoolBeingDeleted.
+
+        :param pool_id: The ID of the pool to delete.
         :type pool_id: str
         :param pool_delete_options: Additional parameters for the operation
         :type pool_delete_options: :class:`PoolDeleteOptions
@@ -417,6 +447,8 @@ class PoolOperations(object):
         :rtype: None
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`BatchErrorException<azure.batch.models.BatchErrorException>`
         """
         timeout = None
         if pool_delete_options is not None:
@@ -499,7 +531,7 @@ class PoolOperations(object):
             self, pool_id, pool_exists_options=None, custom_headers=None, raw=False, **operation_config):
         """Gets basic properties of a pool.
 
-        :param pool_id: The id of the pool to get.
+        :param pool_id: The ID of the pool to get.
         :type pool_id: str
         :param pool_exists_options: Additional parameters for the operation
         :type pool_exists_options: :class:`PoolExistsOptions
@@ -512,6 +544,8 @@ class PoolOperations(object):
         :rtype: bool
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`BatchErrorException<azure.batch.models.BatchErrorException>`
         """
         timeout = None
         if pool_exists_options is not None:
@@ -598,7 +632,7 @@ class PoolOperations(object):
             self, pool_id, pool_get_options=None, custom_headers=None, raw=False, **operation_config):
         """Gets information about the specified pool.
 
-        :param pool_id: The id of the pool to get.
+        :param pool_id: The ID of the pool to get.
         :type pool_id: str
         :param pool_get_options: Additional parameters for the operation
         :type pool_get_options: :class:`PoolGetOptions
@@ -611,6 +645,8 @@ class PoolOperations(object):
         :rtype: :class:`CloudPool <azure.batch.models.CloudPool>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`BatchErrorException<azure.batch.models.BatchErrorException>`
         """
         select = None
         if pool_get_options is not None:
@@ -712,9 +748,14 @@ class PoolOperations(object):
 
     def patch(
             self, pool_id, pool_patch_parameter, pool_patch_options=None, custom_headers=None, raw=False, **operation_config):
-        """Updates the properties of a pool.
+        """Updates the properties of the specified pool.
 
-        :param pool_id: The id of the pool to update.
+        This only replaces the pool properties specified in the request. For
+        example, if the pool has a start task associated with it, and a request
+        does not specify a start task element, then the pool keeps the existing
+        start task.
+
+        :param pool_id: The ID of the pool to update.
         :type pool_id: str
         :param pool_patch_parameter: The parameters for the request.
         :type pool_patch_parameter: :class:`PoolPatchParameter
@@ -730,6 +771,8 @@ class PoolOperations(object):
         :rtype: None
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`BatchErrorException<azure.batch.models.BatchErrorException>`
         """
         timeout = None
         if pool_patch_options is not None:
@@ -819,7 +862,7 @@ class PoolOperations(object):
             self, pool_id, pool_disable_auto_scale_options=None, custom_headers=None, raw=False, **operation_config):
         """Disables automatic scaling for a pool.
 
-        :param pool_id: The id of the pool on which to disable automatic
+        :param pool_id: The ID of the pool on which to disable automatic
          scaling.
         :type pool_id: str
         :param pool_disable_auto_scale_options: Additional parameters for the
@@ -835,6 +878,8 @@ class PoolOperations(object):
         :rtype: None
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`BatchErrorException<azure.batch.models.BatchErrorException>`
         """
         timeout = None
         if pool_disable_auto_scale_options is not None:
@@ -900,7 +945,14 @@ class PoolOperations(object):
             self, pool_id, pool_enable_auto_scale_options=None, auto_scale_formula=None, auto_scale_evaluation_interval=None, custom_headers=None, raw=False, **operation_config):
         """Enables automatic scaling for a pool.
 
-        :param pool_id: The id of the pool on which to enable automatic
+        You cannot enable automatic scaling on a pool if a resize operation is
+        in progress on the pool. If automatic scaling of the pool is currently
+        disabled, you must specify a valid autoscale formula as part of the
+        request. If automatic scaling of the pool is already enabled, you may
+        specify a new autoscale formula and/or a new evaluation interval. You
+        cannot call this API for the same pool more than once every 30 seconds.
+
+        :param pool_id: The ID of the pool on which to enable automatic
          scaling.
         :type pool_id: str
         :param pool_enable_auto_scale_options: Additional parameters for the
@@ -909,10 +961,24 @@ class PoolOperations(object):
          :class:`PoolEnableAutoScaleOptions
          <azure.batch.models.PoolEnableAutoScaleOptions>`
         :param auto_scale_formula: The formula for the desired number of
-         compute nodes in the pool.
+         compute nodes in the pool. The formula is checked for validity before
+         it is applied to the pool. If the formula is not valid, the Batch
+         service rejects the request with detailed error information. For more
+         information about specifying this formula, see Automatically scale
+         compute nodes in an Azure Batch pool
+         (https://azure.microsoft.com/en-us/documentation/articles/batch-automatic-scaling).
         :type auto_scale_formula: str
-        :param auto_scale_evaluation_interval: A time interval for the
-         desired autoscale evaluation period in the pool.
+        :param auto_scale_evaluation_interval: The time interval at which to
+         automatically adjust the pool size according to the autoscale formula.
+         The default value is 15 minutes. The minimum and maximum value are 5
+         minutes and 168 hours respectively. If you specify a value less than 5
+         minutes or greater than 168 hours, the Batch service rejects the
+         request with an invalid property value error; if you are calling the
+         REST API directly, the HTTP status code is 400 (Bad Request). If you
+         specify a new interval, then the existing autoscale evaluation
+         schedule will be stopped and a new autoscale evaluation schedule will
+         be started, with its starting time being the time when this request
+         was issued.
         :type auto_scale_evaluation_interval: timedelta
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -922,6 +988,8 @@ class PoolOperations(object):
         :rtype: None
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`BatchErrorException<azure.batch.models.BatchErrorException>`
         """
         timeout = None
         if pool_enable_auto_scale_options is not None:
@@ -1010,17 +1078,24 @@ class PoolOperations(object):
 
     def evaluate_auto_scale(
             self, pool_id, auto_scale_formula, pool_evaluate_auto_scale_options=None, custom_headers=None, raw=False, **operation_config):
-        """Gets the result of evaluating an automatic scaling formula on the
-        pool.
+        """Gets the result of evaluating an automatic scaling formula on the pool.
 
-        :param pool_id: The id of the pool on which to evaluate the automatic
+        This API is primarily for validating an autoscale formula, as it simply
+        returns the result without applying the formula to the pool.
+
+        :param pool_id: The ID of the pool on which to evaluate the automatic
          scaling formula.
         :type pool_id: str
-        :param auto_scale_formula: A formula for the desired number of
-         compute nodes in the pool.
+        :param auto_scale_formula: The formula for the desired number of
+         compute nodes in the pool. The formula is validated and its results
+         calculated, but it is not applied to the pool. To apply the formula to
+         the pool, 'Enable automatic scaling on a pool'. For more information
+         about specifying this formula, see Automatically scale compute nodes
+         in an Azure Batch pool
+         (https://azure.microsoft.com/en-us/documentation/articles/batch-automatic-scaling).
         :type auto_scale_formula: str
-        :param pool_evaluate_auto_scale_options: Additional parameters for
-         the operation
+        :param pool_evaluate_auto_scale_options: Additional parameters for the
+         operation
         :type pool_evaluate_auto_scale_options:
          :class:`PoolEvaluateAutoScaleOptions
          <azure.batch.models.PoolEvaluateAutoScaleOptions>`
@@ -1032,6 +1107,8 @@ class PoolOperations(object):
         :rtype: :class:`AutoScaleRun <azure.batch.models.AutoScaleRun>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`BatchErrorException<azure.batch.models.BatchErrorException>`
         """
         timeout = None
         if pool_evaluate_auto_scale_options is not None:
@@ -1111,7 +1188,16 @@ class PoolOperations(object):
             self, pool_id, pool_resize_parameter, pool_resize_options=None, custom_headers=None, raw=False, **operation_config):
         """Changes the number of compute nodes that are assigned to a pool.
 
-        :param pool_id: The id of the pool to resize.
+        You can only resize a pool when its allocation state is steady. If the
+        pool is already resizing, the request fails with status code 409. When
+        you resize a pool, the pool's allocation state changes from steady to
+        resizing. You cannot resize pools which are configured for automatic
+        scaling. If you try to do this, the Batch service returns an error 409.
+        If you resize a pool downwards, the Batch service chooses which nodes
+        to remove. To remove specific nodes, use the pool remove nodes API
+        instead.
+
+        :param pool_id: The ID of the pool to resize.
         :type pool_id: str
         :param pool_resize_parameter: The parameters for the request.
         :type pool_resize_parameter: :class:`PoolResizeParameter
@@ -1127,6 +1213,8 @@ class PoolOperations(object):
         :rtype: None
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`BatchErrorException<azure.batch.models.BatchErrorException>`
         """
         timeout = None
         if pool_resize_options is not None:
@@ -1218,9 +1306,11 @@ class PoolOperations(object):
 
         This does not restore the pool to its previous state before the resize
         operation: it only stops any further changes being made, and the pool
-        maintains its current state.
+        maintains its current state. A resize operation need not be an explicit
+        resize pool request; this API can also be used to halt the initial
+        sizing of the pool when it is created.
 
-        :param pool_id: The id of the pool whose resizing you want to stop.
+        :param pool_id: The ID of the pool whose resizing you want to stop.
         :type pool_id: str
         :param pool_stop_resize_options: Additional parameters for the
          operation
@@ -1234,6 +1324,8 @@ class PoolOperations(object):
         :rtype: None
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`BatchErrorException<azure.batch.models.BatchErrorException>`
         """
         timeout = None
         if pool_stop_resize_options is not None:
@@ -1317,9 +1409,14 @@ class PoolOperations(object):
 
     def update_properties(
             self, pool_id, pool_update_properties_parameter, pool_update_properties_options=None, custom_headers=None, raw=False, **operation_config):
-        """Updates the properties of a pool.
+        """Updates the properties of the specified pool.
 
-        :param pool_id: The id of the pool to update.
+        This fully replaces all the updateable properties of the pool. For
+        example, if the pool has a start task associated with it and if start
+        task is not specified with this request, then the Batch service will
+        remove the existing start task.
+
+        :param pool_id: The ID of the pool to update.
         :type pool_id: str
         :param pool_update_properties_parameter: The parameters for the
          request.
@@ -1339,6 +1436,8 @@ class PoolOperations(object):
         :rtype: None
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`BatchErrorException<azure.batch.models.BatchErrorException>`
         """
         timeout = None
         if pool_update_properties_options is not None:
@@ -1408,15 +1507,28 @@ class PoolOperations(object):
             self, pool_id, target_os_version, pool_upgrade_os_options=None, custom_headers=None, raw=False, **operation_config):
         """Upgrades the operating system of the specified pool.
 
-        :param pool_id: The id of the pool to upgrade.
+        During an upgrade, the Batch service upgrades each compute node in the
+        pool. When a compute node is chosen for upgrade, any tasks running on
+        that node are removed from the node and returned to the queue to be
+        rerun later (or on a different compute node). The node will be
+        unavailable until the upgrade is complete. This operation results in
+        temporarily reduced pool capacity as nodes are taken out of service to
+        be upgraded. Although the Batch service tries to avoid upgrading all
+        compute nodes at the same time, it does not guarantee to do this
+        (particularly on small pools); therefore, the pool may be temporarily
+        unavailable to run tasks. When this operation runs, the pool state
+        changes to upgrading. When all compute nodes have finished upgrading,
+        the pool state returns to active.
+
+        :param pool_id: The ID of the pool to upgrade.
         :type pool_id: str
         :param target_os_version: The Azure Guest OS version to be installed
          on the virtual machines in the pool.
         :type target_os_version: str
         :param pool_upgrade_os_options: Additional parameters for the
          operation
-        :type pool_upgrade_os_options: :class:`PoolUpgradeOSOptions
-         <azure.batch.models.PoolUpgradeOSOptions>`
+        :type pool_upgrade_os_options: :class:`PoolUpgradeOsOptions
+         <azure.batch.models.PoolUpgradeOsOptions>`
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -1425,6 +1537,8 @@ class PoolOperations(object):
         :rtype: None
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`BatchErrorException<azure.batch.models.BatchErrorException>`
         """
         timeout = None
         if pool_upgrade_os_options is not None:
@@ -1515,7 +1629,11 @@ class PoolOperations(object):
             self, pool_id, node_remove_parameter, pool_remove_nodes_options=None, custom_headers=None, raw=False, **operation_config):
         """Removes compute nodes from the specified pool.
 
-        :param pool_id: The id of the pool from which you want to remove
+        This operation can only run when the allocation state of the pool is
+        steady. When this operation runs, the allocation state changes from
+        steady to resizing.
+
+        :param pool_id: The ID of the pool from which you want to remove
          nodes.
         :type pool_id: str
         :param node_remove_parameter: The parameters for the request.
@@ -1533,6 +1651,8 @@ class PoolOperations(object):
         :rtype: None
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`BatchErrorException<azure.batch.models.BatchErrorException>`
         """
         timeout = None
         if pool_remove_nodes_options is not None:
