@@ -10,7 +10,6 @@
 # --------------------------------------------------------------------------
 
 from msrest.pipeline import ClientRawResponse
-from msrestazure.azure_exceptions import CloudError
 import uuid
 
 from .. import models
@@ -42,7 +41,7 @@ class ApplicationPackageOperations(object):
         :type resource_group_name: str
         :param account_name: The name of the Batch account.
         :type account_name: str
-        :param application_id: The id of the application.
+        :param application_id: The ID of the application.
         :type application_id: str
         :param version: The version of the application to activate.
         :type version: str
@@ -56,6 +55,8 @@ class ApplicationPackageOperations(object):
         :rtype: None
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`ErrorBodyException<azure.mgmt.batch.models.ErrorBodyException>`
         """
         parameters = models.ActivateApplicationPackageParameters(format=format)
 
@@ -93,9 +94,7 @@ class ApplicationPackageOperations(object):
             request, header_parameters, body_content, **operation_config)
 
         if response.status_code not in [204]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.ErrorBodyException(self._deserialize, response)
 
         if raw:
             client_raw_response = ClientRawResponse(None, response)
@@ -110,7 +109,7 @@ class ApplicationPackageOperations(object):
         :type resource_group_name: str
         :param account_name: The name of the Batch account.
         :type account_name: str
-        :param application_id: The id of the application.
+        :param application_id: The ID of the application.
         :type application_id: str
         :param version: The version of the application.
         :type version: str
@@ -123,6 +122,8 @@ class ApplicationPackageOperations(object):
          <azure.mgmt.batch.models.ApplicationPackage>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`ErrorBodyException<azure.mgmt.batch.models.ErrorBodyException>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Batch/batchAccounts/{accountName}/applications/{applicationId}/versions/{version}'
@@ -154,9 +155,7 @@ class ApplicationPackageOperations(object):
         response = self._client.send(request, header_parameters, **operation_config)
 
         if response.status_code not in [201]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.ErrorBodyException(self._deserialize, response)
 
         deserialized = None
 
@@ -178,7 +177,7 @@ class ApplicationPackageOperations(object):
         :type resource_group_name: str
         :param account_name: The name of the Batch account.
         :type account_name: str
-        :param application_id: The id of the application.
+        :param application_id: The ID of the application.
         :type application_id: str
         :param version: The version of the application to delete.
         :type version: str
@@ -190,6 +189,8 @@ class ApplicationPackageOperations(object):
         :rtype: None
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`ErrorBodyException<azure.mgmt.batch.models.ErrorBodyException>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Batch/batchAccounts/{accountName}/applications/{applicationId}/versions/{version}'
@@ -221,9 +222,7 @@ class ApplicationPackageOperations(object):
         response = self._client.send(request, header_parameters, **operation_config)
 
         if response.status_code not in [204]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.ErrorBodyException(self._deserialize, response)
 
         if raw:
             client_raw_response = ClientRawResponse(None, response)
@@ -238,7 +237,7 @@ class ApplicationPackageOperations(object):
         :type resource_group_name: str
         :param account_name: The name of the Batch account.
         :type account_name: str
-        :param application_id: The id of the application.
+        :param application_id: The ID of the application.
         :type application_id: str
         :param version: The version of the application.
         :type version: str
@@ -251,6 +250,8 @@ class ApplicationPackageOperations(object):
          <azure.mgmt.batch.models.ApplicationPackage>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`ErrorBodyException<azure.mgmt.batch.models.ErrorBodyException>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Batch/batchAccounts/{accountName}/applications/{applicationId}/versions/{version}'
@@ -282,9 +283,7 @@ class ApplicationPackageOperations(object):
         response = self._client.send(request, header_parameters, **operation_config)
 
         if response.status_code not in [200]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.ErrorBodyException(self._deserialize, response)
 
         deserialized = None
 
