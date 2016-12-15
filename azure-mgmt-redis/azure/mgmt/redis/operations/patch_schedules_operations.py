@@ -35,7 +35,8 @@ class PatchSchedulesOperations(object):
 
     def create_or_update(
             self, resource_group_name, name, schedule_entries, custom_headers=None, raw=False, **operation_config):
-        """Create or replace the patching schedule for Redis cache.
+        """Create or replace the patching schedule for Redis cache (requires
+        Premium SKU).
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
@@ -106,11 +107,11 @@ class PatchSchedulesOperations(object):
 
     def delete(
             self, resource_group_name, name, custom_headers=None, raw=False, **operation_config):
-        """Deletes the patching schedule for Redis cache.
+        """Deletes the patching schedule of a redis cache (requires Premium SKU).
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
-        :param name: The name of the Redis cache.
+        :param name: The name of the redis cache.
         :type name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -149,7 +150,7 @@ class PatchSchedulesOperations(object):
         request = self._client.delete(url, query_parameters)
         response = self._client.send(request, header_parameters, **operation_config)
 
-        if response.status_code not in [200]:
+        if response.status_code not in [200, 204]:
             exp = CloudError(response)
             exp.request_id = response.headers.get('x-ms-request-id')
             raise exp
@@ -160,11 +161,11 @@ class PatchSchedulesOperations(object):
 
     def get(
             self, resource_group_name, name, custom_headers=None, raw=False, **operation_config):
-        """Gets the patching schedule for Redis cache.
+        """Gets the patching schedule of a redis cache (requires Premium SKU).
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
-        :param name: The name of the Redis cache.
+        :param name: The name of the redis cache.
         :type name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -204,7 +205,7 @@ class PatchSchedulesOperations(object):
         request = self._client.get(url, query_parameters)
         response = self._client.send(request, header_parameters, **operation_config)
 
-        if response.status_code not in [200, 404]:
+        if response.status_code not in [200]:
             exp = CloudError(response)
             exp.request_id = response.headers.get('x-ms-request-id')
             raise exp
