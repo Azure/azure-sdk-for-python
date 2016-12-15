@@ -60,7 +60,7 @@ The following packages are still labeled "preview" but can be considered "stable
 - azure-mgmt-compute 0.32.1
 - azure-mgmt-network 0.30.0
 - azure-mgmt-storage 0.30.0
-- azure-mgmt-keyvault 0.30.0
+- azure-mgmt-keyvault 0.30.1
 
 The following packages are already released as "stable" and are officially production ready:
 

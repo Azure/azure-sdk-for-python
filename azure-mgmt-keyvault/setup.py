@@ -7,6 +7,7 @@
 #--------------------------------------------------------------------------
 
 from setuptools import setup
+from io import open
 import re
 
 # azure v0.x is not compatible with this package
@@ -32,11 +33,16 @@ with open('azure/mgmt/keyvault/version.py', 'r') as fd:
 if not version:
     raise RuntimeError('Cannot find version information')
 
+with open('README.rst', encoding='utf-8') as f:
+    readme = f.read()
+with open('HISTORY.rst', encoding='utf-8') as f:
+    history = f.read()
+
 setup(
     name='azure-mgmt-keyvault',
     version=version,
     description='Microsoft Azure KeyVault Apps Resource Management Client Library for Python',
-    long_description=open('README.rst', 'r').read(),
+    long_description=readme + '\n\n' + history,
     license='MIT License',
     author='Microsoft Corporation',
     author_email='ptvshelp@microsoft.com',
@@ -61,7 +67,8 @@ setup(
         'azure.mgmt.keyvault.operations',
     ],
     install_requires=[
-        'azure-common[autorest]==1.1.4',
+        'msrestazure~=0.4.6',
+        'azure-common~=1.1.4',
         'azure-mgmt-nspkg',
     ],
 )
