@@ -6,6 +6,7 @@ Submodules
 
 .. toctree::
 
+   azure.keyvault.key_vault_id
    azure.keyvault.generated
 
 Module contents

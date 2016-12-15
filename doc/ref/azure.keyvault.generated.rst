@@ -1,5 +1,5 @@
 azure.keyvault.generated package
-==========================
+================================
 
 Submodules
 ----------
@@ -7,7 +7,6 @@ Submodules
 .. toctree::
 
    azure.keyvault.generated.models
-   azure.keyvault.generated.operations
 
 Module contents
 ---------------
