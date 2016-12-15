@@ -9,23 +9,19 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.serialization import Model
+from msrest.paging import Paged
 
 
-class RecentJob(Model):
-    """Information about the most recent job to run under the job schedule.
-
-    :param id: The ID of the job.
-    :type id: str
-    :param url: The URL of the job.
-    :type url: str
-    """ 
+class ResourcePaged(Paged):
+    """
+    A paging container for iterating over a list of Resource object
+    """
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'url': {'key': 'url', 'type': 'str'},
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[Resource]'}
     }
 
-    def __init__(self, id=None, url=None):
-        self.id = id
-        self.url = url
+    def __init__(self, *args, **kwargs):
+
+        super(ResourcePaged, self).__init__(*args, **kwargs)

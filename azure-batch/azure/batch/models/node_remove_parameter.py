@@ -13,17 +13,20 @@ from msrest.serialization import Model
 
 
 class NodeRemoveParameter(Model):
-    """Parameters for a ComputeNodeOperations.Remove request.
+    """Options for removing compute nodes from a pool.
 
     :param node_list: A list containing the ids of the compute nodes to be
      removed from the specified pool.
     :type node_list: list of str
     :param resize_timeout: The timeout for removal of compute nodes to the
-     pool. The default value is 10 minutes.
+     pool. The default value is 15 minutes. The minimum value is 5 minutes. If
+     you specify a value less than 5 minutes, the Batch service returns an
+     error; if you are calling the REST API directly, the HTTP status code is
+     400 (Bad Request).
     :type resize_timeout: timedelta
-    :param node_deallocation_option: When compute nodes may be removed from
-     the pool. Possible values include: 'requeue', 'terminate',
-     'taskcompletion', 'retaineddata'
+    :param node_deallocation_option: When to remove compute nodes and what to
+     do with currently running tasks. The default value is requeue. Possible
+     values include: 'requeue', 'terminate', 'taskcompletion', 'retaineddata'
     :type node_deallocation_option: str or
      :class:`ComputeNodeDeallocationOption
      <azure.batch.models.ComputeNodeDeallocationOption>`

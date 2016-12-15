@@ -17,11 +17,11 @@ class EdgenodeResult(Model):
     address group and a URL link to get the next set of results.
 
     :param value: Edge node of CDN service.
-    :type value: object
+    :type value: list of :class:`EdgeNode <azure.mgmt.cdn.models.EdgeNode>`
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': 'object'},
+        'value': {'key': 'value', 'type': '[EdgeNode]'},
     }
 
     def __init__(self, value=None):

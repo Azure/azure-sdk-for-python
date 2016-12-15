@@ -31,6 +31,8 @@ class CertificateAddParameter(Model):
     :type certificate_format: str or :class:`CertificateFormat
      <azure.batch.models.CertificateFormat>`
     :param password: The password to access the certificate's private key.
+     This is required if the certificate format is pfx. It should be omitted if
+     the certificate format is cer.
     :type password: str
     """ 
 

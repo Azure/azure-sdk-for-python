@@ -20,9 +20,8 @@ class ExitCodeRangeMapping(Model):
     :type start: int
     :param end: The last exit code in the range.
     :type end: int
-    :param exit_options: An exitOptions specifying how the Batch service
-     should respond if the task exits with an exit code in the range start to
-     end.
+    :param exit_options: How the Batch service should respond if the task
+     exits with an exit code in the range start to end (inclusive).
     :type exit_options: :class:`ExitOptions <azure.batch.models.ExitOptions>`
     """ 
 

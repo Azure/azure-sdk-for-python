@@ -16,7 +16,7 @@ class ApplicationPackage(Model):
     """An application package which represents a particular version of an
     application.
 
-    :param id: The id of the application.
+    :param id: The ID of the application.
     :type id: str
     :param version: The version of the application package.
     :type version: str

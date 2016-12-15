@@ -30,10 +30,10 @@ from .check_name_availability_output import CheckNameAvailabilityOutput
 from .resource_usage import ResourceUsage
 from .operation_display import OperationDisplay
 from .operation import Operation
-from .edgenode_result import EdgenodeResult
 from .cidr_ip_address import CidrIpAddress
 from .ip_address_group import IpAddressGroup
 from .edge_node import EdgeNode
+from .edgenode_result import EdgenodeResult
 from .resource import Resource
 from .error_response import ErrorResponse, ErrorResponseException
 from .profile_paged import ProfilePaged
@@ -75,10 +75,10 @@ __all__ = [
     'ResourceUsage',
     'OperationDisplay',
     'Operation',
-    'EdgenodeResult',
     'CidrIpAddress',
     'IpAddressGroup',
     'EdgeNode',
+    'EdgenodeResult',
     'Resource',
     'ErrorResponse', 'ErrorResponseException',
     'ProfilePaged',
