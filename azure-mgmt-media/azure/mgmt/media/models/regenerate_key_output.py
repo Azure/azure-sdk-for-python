@@ -17,7 +17,7 @@ class RegenerateKeyOutput(Model):
 
     :param key: The new value of either the primary or secondary key.
     :type key: str
-    """ 
+    """
 
     _attribute_map = {
         'key': {'key': 'key', 'type': 'str'},

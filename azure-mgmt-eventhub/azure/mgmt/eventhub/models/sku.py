@@ -23,7 +23,7 @@ class Sku(Model):
     :type tier: str or :class:`SkuTier <azure.mgmt.eventhub.models.SkuTier>`
     :param capacity: The Event Hubs throughput units.
     :type capacity: int
-    """ 
+    """
 
     _validation = {
         'tier': {'required': True},

@@ -13,13 +13,13 @@ from msrest.serialization import Model
 
 
 class RedisRegenerateKeyParameters(Model):
-    """Specifies which redis access keys to reset.
+    """Specifies which Redis access keys to reset.
 
-    :param key_type: Which redis access key to reset. Possible values
+    :param key_type: The Redis access key to regenerate. Possible values
      include: 'Primary', 'Secondary'
     :type key_type: str or :class:`RedisKeyType
      <azure.mgmt.redis.models.RedisKeyType>`
-    """ 
+    """
 
     _validation = {
         'key_type': {'required': True},

@@ -15,31 +15,30 @@ from msrest.serialization import Model
 class DataDisk(Model):
     """Describes a data disk.
 
-    :param lun: the logical unit number.
+    :param lun: The logical unit number.
     :type lun: int
-    :param name: the disk name.
+    :param name: The disk name.
     :type name: str
-    :param vhd: the Virtual Hard Disk.
+    :param vhd: The virtual hard disk.
     :type vhd: :class:`VirtualHardDisk
      <azure.mgmt.compute.models.VirtualHardDisk>`
-    :param image: the Source User Image VirtualHardDisk. This VirtualHardDisk
-     will be copied before using it to attach to the Virtual Machine. If
-     SourceImage is provided, the destination VirtualHardDisk should not
-     exist.
+    :param image: The source user image virtual hard disk. This virtual hard
+     disk will be copied before using it to attach to the virtual machine. If
+     SourceImage is provided, the destination virtual hard disk must not exist.
     :type image: :class:`VirtualHardDisk
      <azure.mgmt.compute.models.VirtualHardDisk>`
-    :param caching: the caching type. Possible values include: 'None',
+    :param caching: The caching type. Possible values include: 'None',
      'ReadOnly', 'ReadWrite'
     :type caching: str or :class:`CachingTypes
      <azure.mgmt.compute.models.CachingTypes>`
-    :param create_option: the create option. Possible values include:
+    :param create_option: The create option. Possible values include:
      'fromImage', 'empty', 'attach'
     :type create_option: str or :class:`DiskCreateOptionTypes
      <azure.mgmt.compute.models.DiskCreateOptionTypes>`
-    :param disk_size_gb: the initial disk size in GB for blank data disks,
-     and the new desired size for existing OS and Data disks.
+    :param disk_size_gb: The initial disk size in GB for blank data disks, and
+     the new desired size for resizing existing OS and data disks.
     :type disk_size_gb: int
-    """ 
+    """
 
     _validation = {
         'lun': {'required': True},

@@ -27,8 +27,8 @@ class RedisManagementClientConfiguration(AzureConfiguration):
     :type credentials: :mod:`A msrestazure Credentials
      object<msrestazure.azure_active_directory>`
     :param subscription_id: Gets subscription credentials which uniquely
-     identify Microsoft Azure subscription. The subscription ID forms part of
-     the URI for every service call.
+     identify the Microsoft Azure subscription. The subscription ID forms part
+     of the URI for every service call.
     :type subscription_id: str
     :param api_version: Client Api Version.
     :type api_version: str
@@ -76,7 +76,7 @@ class RedisManagementClientConfiguration(AzureConfiguration):
 
 
 class RedisManagementClient(object):
-    """REST API for Azure Redis Cache Service
+    """REST API for Azure Redis Cache Service.
 
     :ivar config: Configuration for client.
     :vartype config: RedisManagementClientConfiguration
@@ -90,8 +90,8 @@ class RedisManagementClient(object):
     :type credentials: :mod:`A msrestazure Credentials
      object<msrestazure.azure_active_directory>`
     :param subscription_id: Gets subscription credentials which uniquely
-     identify Microsoft Azure subscription. The subscription ID forms part of
-     the URI for every service call.
+     identify the Microsoft Azure subscription. The subscription ID forms part
+     of the URI for every service call.
     :type subscription_id: str
     :param api_version: Client Api Version.
     :type api_version: str

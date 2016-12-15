@@ -13,9 +13,9 @@ from msrest.serialization import Model
 
 
 class KeyCredentialsUpdateParameters(Model):
-    """Request parameters for  KeyCredentials update operation.
+    """Request parameters for a KeyCredentials update operation.
 
-    :param value: KeyCredential list.
+    :param value: A collection of KeyCredentials.
     :type value: list of :class:`KeyCredential
      <azure.graphrbac.models.KeyCredential>`
     """ 

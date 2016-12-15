@@ -8,6 +8,7 @@
 
 from setuptools import find_packages, setup
 from io import open
+import re
 
 # azure v0.x is not compatible with this package
 # azure v0.x used to have a __version__ attribute (newer versions don't)
@@ -38,7 +39,7 @@ setup(
     name='azure-mgmt-datalake-store',
     version=version,
     description='Microsoft Azure Data Lake Store Management Client Library for Python',
-    long_description=open('README.rst', 'r').read(),
+    long_description=readme + '\n\n' + history,
     license='MIT License',
     author='Microsoft Corporation',
     author_email='ptvshelp@microsoft.com',

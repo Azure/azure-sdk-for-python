@@ -20,19 +20,19 @@ class VirtualMachineSize(Model):
     :param number_of_cores: The number of cores supported by the virtual
      machine size.
     :type number_of_cores: int
-    :param os_disk_size_in_mb: The OS disk size, in MB, allowed by the
-     virtual machine size.
+    :param os_disk_size_in_mb: The OS disk size, in MB, allowed by the virtual
+     machine size.
     :type os_disk_size_in_mb: int
-    :param resource_disk_size_in_mb: The resource disk size, in MB, allowed
-     by the virtual machine size.
+    :param resource_disk_size_in_mb: The resource disk size, in MB, allowed by
+     the virtual machine size.
     :type resource_disk_size_in_mb: int
-    :param memory_in_mb: The amount of memory, in MB, supported by the
-     virtual machine size.
+    :param memory_in_mb: The amount of memory, in MB, supported by the virtual
+     machine size.
     :type memory_in_mb: int
     :param max_data_disk_count: The maximum number of data disks that can be
      attached to the virtual machine size.
     :type max_data_disk_count: int
-    """ 
+    """
 
     _attribute_map = {
         'name': {'key': 'name', 'type': 'str'},

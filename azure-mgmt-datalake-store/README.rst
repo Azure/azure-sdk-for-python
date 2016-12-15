@@ -37,7 +37,7 @@ Usage
 =====
 
 For code examples, see `Data Lake Store Management 
-<https://azure-sdk-for-python.readthedocs.org/en/latest/datalakestoremanagement.html>`__
+<https://azure-sdk-for-python.readthedocs.org/en/latest/sample_azure-mgmt-datalake-store.html>`__
 on readthedocs.org.
 
 

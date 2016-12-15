@@ -13,35 +13,35 @@ from msrest.serialization import Model
 
 
 class EncryptionIdentity(Model):
-    """EncryptionIdentity.
+    """The encryption identity properties.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :param type: The type of encryption being used. Currently the only
-     supported type is 'SystemAssigned'. Possible values include:
-     'SystemAssigned'
-    :type type: str or :class:`EncryptionIdentityType
-     <azure.mgmt.datalake.store.account.models.EncryptionIdentityType>`
+    :ivar type: The type of encryption being used. Currently the only
+     supported type is 'SystemAssigned'. Default value: "SystemAssigned" .
+    :vartype type: str
     :ivar principal_id: The principal identifier associated with the
      encryption.
     :vartype principal_id: str
     :ivar tenant_id: The tenant identifier associated with the encryption.
     :vartype tenant_id: str
-    """ 
+    """
 
     _validation = {
+        'type': {'required': True, 'constant': True},
         'principal_id': {'readonly': True},
         'tenant_id': {'readonly': True},
     }
 
     _attribute_map = {
-        'type': {'key': 'type', 'type': 'EncryptionIdentityType'},
+        'type': {'key': 'type', 'type': 'str'},
         'principal_id': {'key': 'principalId', 'type': 'str'},
         'tenant_id': {'key': 'tenantId', 'type': 'str'},
     }
 
-    def __init__(self, type=None):
-        self.type = type
+    type = "SystemAssigned"
+
+    def __init__(self):
         self.principal_id = None
         self.tenant_id = None

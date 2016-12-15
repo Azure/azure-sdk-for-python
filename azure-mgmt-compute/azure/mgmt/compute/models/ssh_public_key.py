@@ -24,7 +24,7 @@ class SshPublicKey(Model):
      through SSH. The certificate must be in Pem format with or without
      headers.
     :type key_data: str
-    """ 
+    """
 
     _attribute_map = {
         'path': {'key': 'path', 'type': 'str'},

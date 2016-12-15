@@ -9,22 +9,19 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .storage_account_properties import StorageAccountProperties
 from .storage_account_info import StorageAccountInfo
-from .blob_container_properties import BlobContainerProperties
-from .blob_container import BlobContainer
+from .storage_container import StorageContainer
 from .sas_token_info import SasTokenInfo
-from .data_lake_store_account_info_properties import DataLakeStoreAccountInfoProperties
 from .data_lake_store_account_info import DataLakeStoreAccountInfo
-from .data_lake_analytics_account_properties import DataLakeAnalyticsAccountProperties
 from .add_data_lake_store_parameters import AddDataLakeStoreParameters
 from .add_storage_account_parameters import AddStorageAccountParameters
+from .update_storage_account_parameters import UpdateStorageAccountParameters
+from .data_lake_analytics_account_update_parameters import DataLakeAnalyticsAccountUpdateParameters
 from .data_lake_analytics_account import DataLakeAnalyticsAccount
 from .error_details import ErrorDetails
-from .inner_error import InnerError
-from .error import Error
-from .azure_async_operation_result import AzureAsyncOperationResult
-from .blob_container_paged import BlobContainerPaged
+from .resource import Resource
+from .sub_resource import SubResource
+from .storage_container_paged import StorageContainerPaged
 from .sas_token_info_paged import SasTokenInfoPaged
 from .storage_account_info_paged import StorageAccountInfoPaged
 from .data_lake_store_account_info_paged import DataLakeStoreAccountInfoPaged
@@ -32,31 +29,26 @@ from .data_lake_analytics_account_paged import DataLakeAnalyticsAccountPaged
 from .data_lake_analytics_account_management_client_enums import (
     DataLakeAnalyticsAccountStatus,
     DataLakeAnalyticsAccountState,
-    OperationStatus,
 )
 
 __all__ = [
-    'StorageAccountProperties',
     'StorageAccountInfo',
-    'BlobContainerProperties',
-    'BlobContainer',
+    'StorageContainer',
     'SasTokenInfo',
-    'DataLakeStoreAccountInfoProperties',
     'DataLakeStoreAccountInfo',
-    'DataLakeAnalyticsAccountProperties',
     'AddDataLakeStoreParameters',
     'AddStorageAccountParameters',
+    'UpdateStorageAccountParameters',
+    'DataLakeAnalyticsAccountUpdateParameters',
     'DataLakeAnalyticsAccount',
     'ErrorDetails',
-    'InnerError',
-    'Error',
-    'AzureAsyncOperationResult',
-    'BlobContainerPaged',
+    'Resource',
+    'SubResource',
+    'StorageContainerPaged',
     'SasTokenInfoPaged',
     'StorageAccountInfoPaged',
     'DataLakeStoreAccountInfoPaged',
     'DataLakeAnalyticsAccountPaged',
     'DataLakeAnalyticsAccountStatus',
     'DataLakeAnalyticsAccountState',
-    'OperationStatus',
 ]

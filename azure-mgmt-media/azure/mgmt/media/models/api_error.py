@@ -20,7 +20,7 @@ class ApiError(Model):
     :type code: str
     :param message: Error message.
     :type message: str
-    """ 
+    """
 
     _attribute_map = {
         'code': {'key': 'code', 'type': 'str'},

@@ -15,14 +15,14 @@ from msrest.serialization import Model
 class PromptFieldDescription(Model):
     """Field description for the implementation of PSHostUserInterface.Prompt.
 
-    :param name: the name of the prompt
+    :param name: The name of the prompt.
     :type name: str
-    :param label: the label text of the prompt
+    :param label: The label text of the prompt.
     :type label: str
-    :param help_message: the help message of the prompt
+    :param help_message: The help message of the prompt.
     :type help_message: str
-    :param prompt_field_type_is_list: when set to 'true' the prompt field
-     type is a list of values
+    :param prompt_field_type_is_list: When set to 'true' the prompt field type
+     is a list of values.
     :type prompt_field_type_is_list: bool
     :param prompt_field_type: Possible values include: 'String',
      'SecureString', 'Credential'

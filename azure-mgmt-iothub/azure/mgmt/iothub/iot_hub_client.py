@@ -27,7 +27,7 @@ class IotHubClientConfiguration(AzureConfiguration):
      object<msrestazure.azure_active_directory>`
     :param subscription_id: The subscription identifier.
     :type subscription_id: str
-    :param api_version: Version of the Api.
+    :param api_version: The version of the API.
     :type api_version: str
     :param accept_language: Gets or sets the preferred language for the
      response.
@@ -73,7 +73,7 @@ class IotHubClientConfiguration(AzureConfiguration):
 
 
 class IotHubClient(object):
-    """API for using the IoT Hub Features.
+    """Use this API to manage the IoT hubs in your subscription.
 
     :ivar config: Configuration for client.
     :vartype config: IotHubClientConfiguration
@@ -86,7 +86,7 @@ class IotHubClient(object):
      object<msrestazure.azure_active_directory>`
     :param subscription_id: The subscription identifier.
     :type subscription_id: str
-    :param api_version: Version of the Api.
+    :param api_version: The version of the API.
     :type api_version: str
     :param accept_language: Gets or sets the preferred language for the
      response.

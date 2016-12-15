@@ -123,6 +123,8 @@ All documentation of management libraries for Azure are on this website. This in
 * :doc:`Cognitive Services<sample_azure-mgmt-cognitiveservices>` : Create CS accounts and more
 * :doc:`Commerce - Billing API<resourcemanagementcommerce>` : RateCard and Usage Billing API
 * :doc:`Compute<resourcemanagementcomputenetwork>` : Create virtual machines and more
+* :doc:`Data Lake Analytics<sample_azure-mgmt-datalake-analytics>` : Manage account, job, catalog and more
+* :doc:`Data Lake Store<sample_azure-mgmt-datalake-store>` : Manage account and more
 * :doc:`DevTestLabs<sample_azure-mgmt-devtestlabs>` : Create labs and more
 * :doc:`DNS<sample_azure-mgmt-dns>` : Create DNS zone, record set and more
 * :doc:`IoTHub<sample_azure-mgmt-iothub>` : Create IoTHub account and more
@@ -152,6 +154,7 @@ Azure Runtime
 Some documentation of data libraries are on this website. This includes:
 
 * :doc:`Batch<batch>`
+* :doc:`Azure Monitor<sample_azure-monitor>`
 * :doc:`Azure Active Directory Graph RBAC<graphrbac>`
 * :doc:`Service Bus<servicebus>` using HTTP.
 
@@ -159,7 +162,8 @@ Some documentation of data libraries are on this website. This includes:
 
 These Azure services have Python data libraries which are directly hosted by the service team or are extensively documented on the Azure documentation website:
 
-* `Storage <http://azure-storage.readthedocs.org>`_
+* `Storage <http://azure-storage.readthedocs.io>`_
+* `Azure Data Lake Store Filesystem <http://azure-datalake-store.readthedocs.io/>`_
 * `Azure IoT device SDK for Python <https://github.com/Azure/azure-iot-sdks/tree/master/python/device>`_
 * `SQL Azure <https://azure.microsoft.com/en-us/documentation/articles/sql-database-develop-python-simple/>`_
 * `DocumentDB <https://azure.microsoft.com/en-us/documentation/articles/documentdb-sdk-python/>`_
@@ -239,7 +243,7 @@ Indices and tables
   :caption: Management Documentation
 
   resourcemanagement*
-  sample_*
+  sample_azure-mgmt-*
   Service Management (Legacy) <servicemanagement>
   
 .. toctree::
@@ -247,6 +251,7 @@ Indices and tables
   :caption: Runtime Documentation
 
   batch
+  sample_azure-monitor
   graphrbac
   servicebus
   

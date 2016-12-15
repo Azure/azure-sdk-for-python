@@ -57,7 +57,7 @@ Get rate card
 .. code:: python
 
     # OfferDurableID: https://azure.microsoft.com/en-us/support/legal/offer-details/
-    rate = self.commerce_client.rate_card.get(
+    rate = commerce_client.rate_card.get(
         "OfferDurableId eq 'MS-AZR-0062P' and Currency eq 'USD' and Locale eq 'en-US' and RegionInfo eq 'US'"
     )
 
@@ -69,7 +69,7 @@ Get Usage
     from datetime import date, timedelta
 
     # Takes onky dates in full ISO8601 with 'T00:00:00Z'
-    usage_list = self.commerce_client.usage_aggregates.list(
+    usage_list = commerce_client.usage_aggregates.list(
         str(date.today() - timedelta(days=1))+'T00:00:00Z',
         str(date.today())+'T00:00:00Z'
     )

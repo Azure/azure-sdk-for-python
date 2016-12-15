@@ -27,7 +27,7 @@ class TableSpecification(Model):
     :type format: str
     :param properties: The set of columns within the data table.
     :type properties: dict
-    """ 
+    """
 
     _validation = {
         'type': {'required': True},

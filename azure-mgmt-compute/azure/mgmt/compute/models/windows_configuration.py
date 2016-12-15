@@ -22,7 +22,7 @@ class WindowsConfiguration(Model):
     :param enable_automatic_updates: Indicates whether Windows updates are
      automatically installed on the VM.
     :type enable_automatic_updates: bool
-    :param time_zone: The Time Zone of the VM
+    :param time_zone: The time zone of the VM
     :type time_zone: str
     :param additional_unattend_content: Additional base-64 encoded XML
      formatted information that can be included in the Unattend.xml file.
@@ -32,7 +32,7 @@ class WindowsConfiguration(Model):
     :param win_rm: The Windows Remote Management configuration of the VM
     :type win_rm: :class:`WinRMConfiguration
      <azure.mgmt.compute.models.WinRMConfiguration>`
-    """ 
+    """
 
     _attribute_map = {
         'provision_vm_agent': {'key': 'provisionVMAgent', 'type': 'bool'},

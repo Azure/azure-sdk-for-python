@@ -13,11 +13,11 @@ from msrest.serialization import Model
 
 
 class VirtualMachineScaleSetVMInstanceRequiredIDs(Model):
-    """Specifies A list of virtual machine instance IDs from the VM scale set.
+    """Specifies a list of virtual machine instance IDs from the VM scale set.
 
-    :param instance_ids: the virtual machine scale set instance ids.
+    :param instance_ids: The virtual machine scale set instance ids.
     :type instance_ids: list of str
-    """ 
+    """
 
     _validation = {
         'instance_ids': {'required': True},

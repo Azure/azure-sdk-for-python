@@ -11,8 +11,8 @@
 
 from .registry_name_check_request import RegistryNameCheckRequest
 from .registry_name_status import RegistryNameStatus
-from .registry import Registry
 from .storage_account_properties import StorageAccountProperties
+from .registry import Registry
 from .registry_update_parameters import RegistryUpdateParameters
 from .registry_credentials import RegistryCredentials
 from .resource import Resource
@@ -21,8 +21,8 @@ from .registry_paged import RegistryPaged
 __all__ = [
     'RegistryNameCheckRequest',
     'RegistryNameStatus',
-    'Registry',
     'StorageAccountProperties',
+    'Registry',
     'RegistryUpdateParameters',
     'RegistryCredentials',
     'Resource',

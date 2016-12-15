@@ -16,17 +16,18 @@ class ServiceInputOutputSpecification(Model):
     """The swagger 2.0 schema describing the service's inputs or outputs. See
     Swagger specification: http://swagger.io/specification/.
 
-    :param title: Swagger schema title.
+    :param title: The title of your Swagger schema.
     :type title: str
-    :param description: Swagger schema description.
+    :param description: The description of the Swagger schema.
     :type description: str
-    :param type: The type of the entity described in swagger. Always
-     'object'. Default value: "object" .
+    :param type: The type of the entity described in swagger. Always 'object'.
+     Default value: "object" .
     :type type: str
-    :param properties: Map of name to swagger schema for each input or output
-     of the web service.
+    :param properties: Specifies a collection that contains the column schema
+     for each input or output of the web service. For more information, see the
+     Swagger specification.
     :type properties: dict
-    """ 
+    """
 
     _validation = {
         'type': {'required': True},

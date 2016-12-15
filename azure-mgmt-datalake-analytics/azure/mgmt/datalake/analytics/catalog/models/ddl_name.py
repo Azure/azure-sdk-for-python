@@ -15,19 +15,19 @@ from msrest.serialization import Model
 class DdlName(Model):
     """A Data Lake Analytics DDL name item.
 
-    :param first_part: the name of the table associated with this database
-     and schema.
+    :param first_part: the name of the table associated with this database and
+     schema.
     :type first_part: str
     :param second_part: the name of the table associated with this database
      and schema.
     :type second_part: str
-    :param third_part: the name of the table associated with this database
-     and schema.
+    :param third_part: the name of the table associated with this database and
+     schema.
     :type third_part: str
     :param server: the name of the table associated with this database and
      schema.
     :type server: str
-    """ 
+    """
 
     _attribute_map = {
         'first_part': {'key': 'firstPart', 'type': 'str'},

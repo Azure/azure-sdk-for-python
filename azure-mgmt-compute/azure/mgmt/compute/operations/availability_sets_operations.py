@@ -37,7 +37,7 @@ class AvailabilitySetsOperations(object):
 
     def create_or_update(
             self, resource_group_name, name, parameters, custom_headers=None, raw=False, **operation_config):
-        """The operation to create or update the availability set.
+        """Create or update an availability set.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
@@ -107,7 +107,7 @@ class AvailabilitySetsOperations(object):
 
     def delete(
             self, resource_group_name, availability_set_name, custom_headers=None, raw=False, **operation_config):
-        """The operation to delete the availability set.
+        """Delete an availability set.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
@@ -223,7 +223,7 @@ class AvailabilitySetsOperations(object):
 
     def list(
             self, resource_group_name, custom_headers=None, raw=False, **operation_config):
-        """The operation to list all availability sets in a resource group.
+        """Lists all availability sets in a resource group.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str

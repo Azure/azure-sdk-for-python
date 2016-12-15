@@ -19,28 +19,16 @@ class USqlCredential(CatalogItem):
     :type compute_account_name: str
     :param version: the version of the catalog item.
     :type version: str
-    :param database_name: the name of the database the credential is in.
-    :type database_name: str
-    :param identity: the name of the secret associated with the credential.
-    :type identity: str
     :param name: the name of the credential.
     :type name: str
-    :param user_name: the user name associated with the credential.
-    :type user_name: str
-    """ 
+    """
 
     _attribute_map = {
         'compute_account_name': {'key': 'computeAccountName', 'type': 'str'},
         'version': {'key': 'version', 'type': 'str'},
-        'database_name': {'key': 'databaseName', 'type': 'str'},
-        'identity': {'key': 'identity', 'type': 'str'},
         'name': {'key': 'credentialName', 'type': 'str'},
-        'user_name': {'key': 'userName', 'type': 'str'},
     }
 
-    def __init__(self, compute_account_name=None, version=None, database_name=None, identity=None, name=None, user_name=None):
+    def __init__(self, compute_account_name=None, version=None, name=None):
         super(USqlCredential, self).__init__(compute_account_name=compute_account_name, version=version)
-        self.database_name = database_name
-        self.identity = identity
         self.name = name
-        self.user_name = user_name

@@ -13,7 +13,7 @@ from msrest.serialization import Model
 
 
 class Diagnostics(Model):
-    """Diagnostics.
+    """Error diagnostic information for failed jobs.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -32,7 +32,7 @@ class Diagnostics(Model):
      <azure.mgmt.datalake.analytics.job.models.SeverityTypes>`
     :ivar start: the starting index of the error.
     :vartype start: int
-    """ 
+    """
 
     _validation = {
         'column_number': {'readonly': True},

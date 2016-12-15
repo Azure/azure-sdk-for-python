@@ -21,7 +21,7 @@ class BootDiagnostics(Model):
     :param storage_uri: URI of the storage account to use for placing the
      console output and screenshot.
     :type storage_uri: str
-    """ 
+    """
 
     _attribute_map = {
         'enabled': {'key': 'enabled', 'type': 'bool'},

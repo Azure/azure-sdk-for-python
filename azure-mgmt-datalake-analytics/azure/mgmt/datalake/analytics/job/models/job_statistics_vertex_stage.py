@@ -68,7 +68,7 @@ class JobStatisticsVertexStage(Model):
     :ivar total_succeeded_time: the amount of time all successful vertices
      took in this stage.
     :vartype total_succeeded_time: timedelta
-    """ 
+    """
 
     _validation = {
         'data_read': {'readonly': True},

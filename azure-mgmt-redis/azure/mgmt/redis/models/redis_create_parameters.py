@@ -18,38 +18,38 @@ class RedisCreateParameters(Resource):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar id: Resource Id
+    :ivar id: Resource ID.
     :vartype id: str
-    :ivar name: Resource name
+    :ivar name: Resource name.
     :vartype name: str
-    :ivar type: Resource type
+    :ivar type: Resource type.
     :vartype type: str
-    :param location: Resource location
+    :param location: Resource location.
     :type location: str
-    :param tags: Resource tags
+    :param tags: Resource tags.
     :type tags: dict
     :param redis_configuration: All Redis Settings. Few possible keys:
      rdb-backup-enabled,rdb-storage-connection-string,rdb-backup-frequency,maxmemory-delta,maxmemory-policy,notify-keyspace-events,maxmemory-samples,slowlog-log-slower-than,slowlog-max-len,list-max-ziplist-entries,list-max-ziplist-value,hash-max-ziplist-entries,hash-max-ziplist-value,set-max-intset-entries,zset-max-ziplist-entries,zset-max-ziplist-value
      etc.
     :type redis_configuration: dict
-    :param enable_non_ssl_port: If the value is true, then the non-ssl redis
-     server port (6379) will be enabled.
+    :param enable_non_ssl_port: Specifies whether the non-ssl Redis server
+     port (6379) is enabled.
     :type enable_non_ssl_port: bool
     :param tenant_settings: tenantSettings
     :type tenant_settings: dict
     :param shard_count: The number of shards to be created on a Premium
      Cluster Cache.
     :type shard_count: int
-    :param subnet_id: The full resource ID of a subnet in a virtual network
-     to deploy the redis cache in. Example format:
+    :param subnet_id: The full resource ID of a subnet in a virtual network to
+     deploy the Redis cache in. Example format:
      /subscriptions/{subid}/resourceGroups/{resourceGroupName}/Microsoft.{Network|ClassicNetwork}/VirtualNetworks/vnet1/subnets/subnet1
     :type subnet_id: str
-    :param static_ip: Required when deploying a redis cache inside an
-     existing Azure Virtual Network.
+    :param static_ip: Static IP address. Required when deploying a Redis cache
+     inside an existing Azure Virtual Network.
     :type static_ip: str
-    :param sku: What sku of redis cache to deploy.
+    :param sku: The SKU of the Redis cache to deploy.
     :type sku: :class:`Sku <azure.mgmt.redis.models.Sku>`
-    """ 
+    """
 
     _validation = {
         'id': {'readonly': True},

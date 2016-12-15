@@ -22,7 +22,7 @@ class UsersOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An objec model deserializer.
-    :ivar api_version: Client Api Version. Constant value: "1.6".
+    :ivar api_version: Client API version. Constant value: "1.6".
     """
 
     def __init__(self, client, config, serializer, deserializer):
@@ -36,8 +36,7 @@ class UsersOperations(object):
 
     def create(
             self, parameters, custom_headers=None, raw=False, **operation_config):
-        """Create a new user. Reference:
-        https://msdn.microsoft.com/library/azure/ad/graph/api/users-operations#CreateUser.
+        """Create a new user.
 
         :param parameters: Parameters to create a user.
         :type parameters: :class:`UserCreateParameters
@@ -50,6 +49,8 @@ class UsersOperations(object):
         :rtype: :class:`User <azure.graphrbac.models.User>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`GraphErrorException<azure.graphrbac.models.GraphErrorException>`
         """
         # Construct URL
         url = '/{tenantID}/users'
@@ -96,10 +97,9 @@ class UsersOperations(object):
 
     def list(
             self, filter=None, custom_headers=None, raw=False, **operation_config):
-        """Gets list of users for the current tenant. Reference
-        https://msdn.microsoft.com/en-us/library/azure/ad/graph/api/users-operations#GetUsers.
+        """Gets list of users for the current tenant.
 
-        :param filter: The filter to apply on the operation.
+        :param filter: The filter to apply to the operation.
         :type filter: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -107,6 +107,8 @@ class UsersOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`UserPaged <azure.graphrbac.models.UserPaged>`
+        :raises:
+         :class:`GraphErrorException<azure.graphrbac.models.GraphErrorException>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -166,11 +168,10 @@ class UsersOperations(object):
 
     def get(
             self, upn_or_object_id, custom_headers=None, raw=False, **operation_config):
-        """Gets user information from the directory. Reference:
-        https://msdn.microsoft.com/en-us/library/azure/ad/graph/api/users-operations#GetAUser.
+        """Gets user information from the directory.
 
-        :param upn_or_object_id: User object Id or user principal name to get
-         user information.
+        :param upn_or_object_id: The object ID or principal name of the user
+         for which to get information.
         :type upn_or_object_id: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -180,6 +181,8 @@ class UsersOperations(object):
         :rtype: :class:`User <azure.graphrbac.models.User>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`GraphErrorException<azure.graphrbac.models.GraphErrorException>`
         """
         # Construct URL
         url = '/{tenantID}/users/{upnOrObjectId}'
@@ -223,13 +226,12 @@ class UsersOperations(object):
 
     def update(
             self, upn_or_object_id, parameters, custom_headers=None, raw=False, **operation_config):
-        """Updates an exisitng user. Reference:
-        https://msdn.microsoft.com/en-us/library/azure/ad/graph/api/users-operations#UpdateUser.
+        """Updates a user.
 
-        :param upn_or_object_id: User object Id or user principal name to get
-         user information.
+        :param upn_or_object_id: The object ID or principal name of the user
+         to update.
         :type upn_or_object_id: str
-        :param parameters: Parameters to update an exisitng user.
+        :param parameters: Parameters to update an existing user.
         :type parameters: :class:`UserUpdateParameters
          <azure.graphrbac.models.UserUpdateParameters>`
         :param dict custom_headers: headers that will be added to the request
@@ -240,6 +242,8 @@ class UsersOperations(object):
         :rtype: None
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`GraphErrorException<azure.graphrbac.models.GraphErrorException>`
         """
         # Construct URL
         url = '/{tenantID}/users/{upnOrObjectId}'
@@ -280,10 +284,10 @@ class UsersOperations(object):
 
     def delete(
             self, upn_or_object_id, custom_headers=None, raw=False, **operation_config):
-        """Delete a user. Reference:
-        https://msdn.microsoft.com/en-us/library/azure/ad/graph/api/users-operations#DeleteUser.
+        """Delete a user.
 
-        :param upn_or_object_id: user object id or user principal name (upn)
+        :param upn_or_object_id: The object ID or principal name of the user
+         to delete.
         :type upn_or_object_id: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -293,6 +297,8 @@ class UsersOperations(object):
         :rtype: None
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`GraphErrorException<azure.graphrbac.models.GraphErrorException>`
         """
         # Construct URL
         url = '/{tenantID}/users/{upnOrObjectId}'
@@ -329,21 +335,24 @@ class UsersOperations(object):
 
     def get_member_groups(
             self, object_id, security_enabled_only, custom_headers=None, raw=False, **operation_config):
-        """Gets a collection that contains the Object IDs of the groups of which
+        """Gets a collection that contains the object IDs of the groups of which
         the user is a member.
 
-        :param object_id: User filtering parameters.
+        :param object_id: The object ID of the user for which to get group
+         membership.
         :type object_id: str
-        :param security_enabled_only: If true only membership in security
-         enabled groups should be checked. Otherwise membership in all groups
-         should be checked
+        :param security_enabled_only: If true, only membership in
+         security-enabled groups should be checked. Otherwise, membership in
+         all groups should be checked.
         :type security_enabled_only: bool
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`strPaged <azure.graphrbac.models.strPaged>`
+        :rtype: :class:`StrPaged <azure.graphrbac.models.StrPaged>`
+        :raises:
+         :class:`GraphErrorException<azure.graphrbac.models.GraphErrorException>`
         """
         parameters = models.UserGetMemberGroupsParameters(security_enabled_only=security_enabled_only)
 

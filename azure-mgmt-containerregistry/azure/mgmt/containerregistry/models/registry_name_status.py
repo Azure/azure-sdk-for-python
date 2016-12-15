@@ -24,7 +24,7 @@ class RegistryNameStatus(Model):
     :param message: If any, the error message that provides more detail for
      the reason that the name is not available.
     :type message: str
-    """ 
+    """
 
     _attribute_map = {
         'name_available': {'key': 'nameAvailable', 'type': 'bool'},

@@ -1,63 +1,26 @@
 interactions:
 - request:
-    body: !!binary |
-      eyJuYW1lIjogInRlc3RfbWdtdF9jZG5fdGVzdF9jZG42N2U2MDhlYiIsICJsb2NhdGlvbiI6ICJ3
-      ZXN0dXMifQ==
-    headers:
-      Accept: [application/json]
-      Accept-Encoding: ['gzip, deflate']
-      Connection: [keep-alive]
-      Content-Length: ['64']
-      Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.5.1 (Windows-10-10.0.10586-SP0) requests/2.7.0 msrest/0.4.0
-          msrest_azure/0.4.0 resourcemanagementclient/2016-02-01 Azure-SDK-For-Python]
-      accept-language: [en-US]
-      x-ms-client-request-id: [6aa6dc70-2202-11e6-ac06-54ee7574ca37]
-    method: PUT
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_mgmt_cdn_test_cdn67e608eb?api-version=2016-02-01
-  response:
-    body: {string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_cdn_test_cdn67e608eb","name":"test_mgmt_cdn_test_cdn67e608eb","location":"westus","properties":{"provisioningState":"Succeeded"}}'}
-    headers:
-      Cache-Control: [no-cache]
-      Content-Length: ['213']
-      Content-Type: [application/json; charset=utf-8]
-      Date: ['Tue, 24 May 2016 22:54:06 GMT']
-      Expires: ['-1']
-      Pragma: [no-cache]
-      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
-      x-ms-correlation-request-id: [6ab2bab5-6a2f-4396-82c7-9893a4f59849]
-      x-ms-ratelimit-remaining-subscription-writes: ['1199']
-      x-ms-request-id: [6ab2bab5-6a2f-4396-82c7-9893a4f59849]
-      x-ms-routing-request-id: ['WESTUS:20160524T225406Z:6ab2bab5-6a2f-4396-82c7-9893a4f59849']
-    status: {code: 201, message: Created}
-- request:
-    body: !!binary |
-      eyJ0eXBlIjogIk1pY3Jvc29mdC5DZG4vUHJvZmlsZXMvRW5kcG9pbnRzIiwgIm5hbWUiOiAicHlh
-      cm1jZG42N2U2MDhlYiJ9
+    body: '{"name": "pyarmcdn67e608eb", "type": "Microsoft.Cdn/Profiles/Endpoints"}'
     headers:
       Accept: [application/json]
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
       Content-Length: ['72']
       Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.5.1 (Windows-10-10.0.10586-SP0) requests/2.7.0 msrest/0.4.0
-          msrest_azure/0.4.0 cdnmanagementclient/2016-04-02 Azure-SDK-For-Python]
+      User-Agent: [python/3.5.1 (Windows-10-10.0.14393-SP0) requests/2.12.1 msrest/0.4.4
+          msrest_azure/0.4.6 cdnmanagementclient/0.30.0 Azure-SDK-For-Python]
       accept-language: [en-US]
-      x-ms-client-request-id: [6b3d755e-2202-11e6-aeb2-54ee7574ca37]
+      x-ms-client-request-id: [e2b048d2-c22b-11e6-8227-ecb1d756380e]
     method: POST
-    uri: https://management.azure.com/providers/Microsoft.Cdn/checkNameAvailability?api-version=2016-04-02
+    uri: https:/management.azure.com/providers/Microsoft.Cdn/checkNameAvailability?api-version=2016-10-02
   response:
-    body:
-      string: !!binary |
-        H4sIAAAAAAAEAO29B2AcSZYlJi9tynt/SvVK1+B0oQiAYBMk2JBAEOzBiM3mkuwdaUcjKasqgcpl
-        VmVdZhZAzO2dvPfee++999577733ujudTif33/8/XGZkAWz2zkrayZ4hgKrIHz9+fB8/In7xRy+y
-        RX58mRVlNinzjx619TofffQqz5pq+dGj5bosRx99kTdNdkFf4s9f8v8AuDz68TMAAAA=
+    body: {string: "{\r\n  \"nameAvailable\":true,\"reason\":null,\"message\":null\r\n}"}
     headers:
       Cache-Control: [no-cache]
-      Content-Encoding: [gzip]
-      Content-Type: [application/json; charset=utf-8]
-      Date: ['Tue, 24 May 2016 22:54:07 GMT']
+      Content-Type: [application/json; odata.metadata=minimal]
+      Date: ['Wed, 14 Dec 2016 18:34:03 GMT']
       Expires: ['-1']
+      OData-Version: ['4.0']
       Pragma: [no-cache]
       Server: [Microsoft-IIS/8.5]
       Strict-Transport-Security: [max-age=31536000; includeSubDomains]
@@ -65,10 +28,11 @@ interactions:
       Vary: [Accept-Encoding]
       X-AspNet-Version: [4.0.30319]
       X-Powered-By: [ASP.NET]
-      x-ms-client-request-id: [6b3d755e-2202-11e6-aeb2-54ee7574ca37]
-      x-ms-correlation-request-id: [513fe455-85bb-49e3-b1e7-613c143dd688]
+      content-length: ['57']
+      x-ms-client-request-id: [e2b048d2-c22b-11e6-8227-ecb1d756380e]
+      x-ms-correlation-request-id: [f92ab626-381b-43d8-bfbe-572d2ed265ed]
       x-ms-ratelimit-remaining-tenant-writes: ['1199']
-      x-ms-request-id: [6fde7840-de0a-4d1b-a8ed-49427f137631]
-      x-ms-routing-request-id: ['WESTUS:20160524T225407Z:513fe455-85bb-49e3-b1e7-613c143dd688']
+      x-ms-request-id: [8f0b7b24-05be-46d9-b1b9-216c751719b3]
+      x-ms-routing-request-id: ['WESTUS2:20161214T183403Z:f92ab626-381b-43d8-bfbe-572d2ed265ed']
     status: {code: 200, message: OK}
 version: 1

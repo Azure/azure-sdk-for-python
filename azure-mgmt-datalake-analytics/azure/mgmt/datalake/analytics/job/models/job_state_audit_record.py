@@ -27,7 +27,7 @@ class JobStateAuditRecord(Model):
     :vartype requested_by_user: str
     :ivar details:  the details of the audit log.
     :vartype details: str
-    """ 
+    """
 
     _validation = {
         'new_state': {'readonly': True},

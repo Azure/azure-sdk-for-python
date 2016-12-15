@@ -22,10 +22,10 @@ class ImageReference(Model):
     :param sku: The image SKU.
     :type sku: str
     :param version: The image version. The allowed formats are
-     Major.Minor.Build or 'latest'. Major, Minor and Build being decimal
-     numbers. Specify 'latest' to use the latest version of the image.
+     Major.Minor.Build or 'latest'. Major, Minor and Build are decimal numbers.
+     Specify 'latest' to use the latest version of the image.
     :type version: str
-    """ 
+    """
 
     _attribute_map = {
         'publisher': {'key': 'publisher', 'type': 'str'},

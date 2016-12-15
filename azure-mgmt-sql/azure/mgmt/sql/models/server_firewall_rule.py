@@ -13,26 +13,26 @@ from .sql_sub_resource import SqlSubResource
 
 
 class ServerFirewallRule(SqlSubResource):
-    """Represents an Azure SQL Server Firewall Rule.
+    """Represents an Azure SQL server firewall rule.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
     :ivar name: Resource name
     :vartype name: str
-    :ivar id: Resource Id
+    :ivar id: The resource ID.
     :vartype id: str
     :ivar kind: Kind of server that contains this firewall rule.
     :vartype kind: str
     :ivar location: Location of the server that contains this firewall rule.
     :vartype location: str
-    :param start_ip_address: The start IP address of the Azure SQL Database
-     Server Firewall Rule. Must be IPv4 format.
+    :param start_ip_address: The start IP address of the Azure SQL server
+     firewall rule. Must be IPv4 format.
     :type start_ip_address: str
-    :param end_ip_address: The end IP address of the Azure SQL Database
-     Server Firewall Rule. Must be IPv4 format.
+    :param end_ip_address: The end IP address of the Azure SQL server firewall
+     rule. Must be IPv4 format.
     :type end_ip_address: str
-    """ 
+    """
 
     _validation = {
         'name': {'readonly': True},

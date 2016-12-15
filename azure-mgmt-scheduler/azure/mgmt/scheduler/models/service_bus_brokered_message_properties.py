@@ -17,24 +17,24 @@ class ServiceBusBrokeredMessageProperties(Model):
 
     :param content_type: Gets or sets the content type.
     :type content_type: str
-    :param correlation_id: Gets or sets the correlation id.
+    :param correlation_id: Gets or sets the correlation ID.
     :type correlation_id: str
     :param force_persistence: Gets or sets the force persistence.
     :type force_persistence: bool
     :param label: Gets or sets the label.
     :type label: str
-    :param message_id: Gets or sets the message id.
+    :param message_id: Gets or sets the message ID.
     :type message_id: str
     :param partition_key: Gets or sets the partition key.
     :type partition_key: str
     :param reply_to: Gets or sets the reply to.
     :type reply_to: str
-    :param reply_to_session_id: Gets or sets the reply to session id.
+    :param reply_to_session_id: Gets or sets the reply to session ID.
     :type reply_to_session_id: str
-    :param scheduled_enqueue_time_utc: Gets or sets the scheduled enqueue
-     time UTC.
+    :param scheduled_enqueue_time_utc: Gets or sets the scheduled enqueue time
+     UTC.
     :type scheduled_enqueue_time_utc: datetime
-    :param session_id: Gets or sets the session id.
+    :param session_id: Gets or sets the session ID.
     :type session_id: str
     :param time_to_live: Gets or sets the time to live.
     :type time_to_live: datetime

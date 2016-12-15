@@ -19,7 +19,7 @@ class CatalogItem(Model):
     :type compute_account_name: str
     :param version: the version of the catalog item.
     :type version: str
-    """ 
+    """
 
     _attribute_map = {
         'compute_account_name': {'key': 'computeAccountName', 'type': 'str'},

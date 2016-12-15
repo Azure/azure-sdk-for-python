@@ -24,7 +24,7 @@ class JobDataPath(Model):
     :vartype command: str
     :ivar paths: the list of paths to all of the job data.
     :vartype paths: list of str
-    """ 
+    """
 
     _validation = {
         'job_id': {'readonly': True},

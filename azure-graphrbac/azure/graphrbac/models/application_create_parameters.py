@@ -13,23 +13,23 @@ from msrest.serialization import Model
 
 
 class ApplicationCreateParameters(Model):
-    """Request parameters for create a new application.
+    """Request parameters for creating a new application.
 
-    :param available_to_other_tenants: Indicates if the application will be
-     available to other tenants
+    :param available_to_other_tenants: Whether the application is available to
+     other tenants.
     :type available_to_other_tenants: bool
-    :param display_name: Application display name
+    :param display_name: The display name of the application.
     :type display_name: str
-    :param homepage: Application homepage
+    :param homepage: The home page of the application.
     :type homepage: str
-    :param identifier_uris: Application Uris
+    :param identifier_uris: A collection of URIs for the application.
     :type identifier_uris: list of str
-    :param reply_urls: Application reply Urls
+    :param reply_urls: A collection of reply URLs for the application.
     :type reply_urls: list of str
-    :param key_credentials: the list of KeyCredential objects
+    :param key_credentials: The list of KeyCredential objects.
     :type key_credentials: list of :class:`KeyCredential
      <azure.graphrbac.models.KeyCredential>`
-    :param password_credentials: the list of PasswordCredential objects
+    :param password_credentials: The list of PasswordCredential objects.
     :type password_credentials: list of :class:`PasswordCredential
      <azure.graphrbac.models.PasswordCredential>`
     """ 

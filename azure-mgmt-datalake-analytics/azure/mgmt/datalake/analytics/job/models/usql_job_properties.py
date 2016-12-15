@@ -13,7 +13,7 @@ from .job_properties import JobProperties
 
 
 class USqlJobProperties(JobProperties):
-    """USqlJobProperties.
+    """U-SQL job properties used when submitting and retrieving U-SQL jobs.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -63,11 +63,13 @@ class USqlJobProperties(JobProperties):
      application executing the job. This value should not be set by the user
      and will be ignored if it is.
     :vartype yarn_application_time_stamp: long
-    :param compile_mode: the compile mode for the job. Possible values
+    :param compile_mode: Optionally enforces a specific compilation mode for
+     the job during execution. If this is not specified during submission, the
+     server will determine the optimal compilation mode. Possible values
      include: 'Semantic', 'Full', 'SingleBox'
     :type compile_mode: str or :class:`CompileMode
      <azure.mgmt.datalake.analytics.job.models.CompileMode>`
-    """ 
+    """
 
     _validation = {
         'script': {'required': True},

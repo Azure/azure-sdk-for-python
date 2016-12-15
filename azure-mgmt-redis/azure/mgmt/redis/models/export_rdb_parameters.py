@@ -13,7 +13,7 @@ from msrest.serialization import Model
 
 
 class ExportRDBParameters(Model):
-    """Parameters for redis export operation.
+    """Parameters for Redis export operation.
 
     :param format: File format.
     :type format: str
@@ -21,7 +21,7 @@ class ExportRDBParameters(Model):
     :type prefix: str
     :param container: Container name to export to.
     :type container: str
-    """ 
+    """
 
     _validation = {
         'prefix': {'required': True},

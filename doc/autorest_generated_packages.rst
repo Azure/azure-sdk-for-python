@@ -14,6 +14,10 @@
   ./ref/azure.mgmt.commerce.rst
   ./ref/azure.mgmt.compute.rst
   ./ref/azure.mgmt.containerregistry.rst
+  ./ref/azure.mgmt.datalake.analytics.account.rst
+  ./ref/azure.mgmt.datalake.analytics.catalog.rst
+  ./ref/azure.mgmt.datalake.analytics.job.rst
+  ./ref/azure.mgmt.datalake.store.rst
   ./ref/azure.mgmt.devtestlabs.rst
   ./ref/azure.mgmt.dns.rst
   ./ref/azure.mgmt.eventhub.rst
@@ -21,6 +25,7 @@
   ./ref/azure.mgmt.keyvault.rst
   ./ref/azure.mgmt.logic.rst
   ./ref/azure.mgmt.media.rst
+  ./ref/azure.mgmt.monitor.rst
   ./ref/azure.mgmt.network.rst
   ./ref/azure.mgmt.notificationhubs.rst
   ./ref/azure.mgmt.powerbiembedded.rst
@@ -38,5 +43,6 @@
   ./ref/azure.mgmt.storage.rst
   ./ref/azure.mgmt.trafficmanager.rst
   ./ref/azure.mgmt.web.rst
+  ./ref/azure.monitor.rst
   ref/azure.servicebus
   ref/azure.servicemanagement  

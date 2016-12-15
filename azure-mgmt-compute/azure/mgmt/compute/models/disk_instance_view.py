@@ -20,7 +20,7 @@ class DiskInstanceView(Model):
     :param statuses: The resource status information.
     :type statuses: list of :class:`InstanceViewStatus
      <azure.mgmt.compute.models.InstanceViewStatus>`
-    """ 
+    """
 
     _attribute_map = {
         'name': {'key': 'name', 'type': 'str'},

@@ -45,8 +45,8 @@ class VirtualMachine(Resource):
     :param diagnostics_profile: The diagnostics profile.
     :type diagnostics_profile: :class:`DiagnosticsProfile
      <azure.mgmt.compute.models.DiagnosticsProfile>`
-    :param availability_set: The reference Id of the availability set to
-     which the virtual machine belongs.
+    :param availability_set: The reference Id of the availability set to which
+     the virtual machine belongs.
     :type availability_set: :class:`SubResource
      <azure.mgmt.compute.models.SubResource>`
     :ivar provisioning_state: The provisioning state, which only appears in
@@ -63,10 +63,10 @@ class VirtualMachine(Resource):
      that is encoded and stored in all Azure IaaS VMs SMBIOS and can be read
      using platform BIOS commands.
     :vartype vm_id: str
-    :ivar resources: the virtual machine child extension resources.
+    :ivar resources: The virtual machine child extension resources.
     :vartype resources: list of :class:`VirtualMachineExtension
      <azure.mgmt.compute.models.VirtualMachineExtension>`
-    """ 
+    """
 
     _validation = {
         'id': {'readonly': True},

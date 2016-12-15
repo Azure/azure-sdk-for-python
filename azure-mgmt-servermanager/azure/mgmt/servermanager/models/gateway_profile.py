@@ -16,26 +16,26 @@ class GatewayProfile(Model):
     """JSON properties that the gateway service uses know how to communicate with
     the resource.
 
-    :param data_plane_service_base_address: the Dataplane connection URL
+    :param data_plane_service_base_address: The Dataplane connection URL.
     :type data_plane_service_base_address: str
-    :param gateway_id: the ID of the gateway
+    :param gateway_id: The ID of the gateway.
     :type gateway_id: str
-    :param environment: the environment for the gateway (DEV, DogFood, or
-     Production)
+    :param environment: The environment for the gateway (DEV, DogFood, or
+     Production).
     :type environment: str
-    :param upgrade_manifest_url: Gateway upgrade manifest URL
+    :param upgrade_manifest_url: Gateway upgrade manifest URL.
     :type upgrade_manifest_url: str
-    :param messaging_namespace: Messaging namespace
+    :param messaging_namespace: Messaging namespace.
     :type messaging_namespace: str
-    :param messaging_account: Messaging Account
+    :param messaging_account: Messaging Account.
     :type messaging_account: str
-    :param messaging_key: Messaging Key
+    :param messaging_key: Messaging Key.
     :type messaging_key: str
-    :param request_queue: Request queue name
+    :param request_queue: Request queue name.
     :type request_queue: str
-    :param response_topic: Response topic name
+    :param response_topic: Response topic name.
     :type response_topic: str
-    :param status_blob_signature: The gateway status blob SAS url
+    :param status_blob_signature: The gateway status blob SAS URL.
     :type status_blob_signature: str
     """ 
 

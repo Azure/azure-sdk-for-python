@@ -36,8 +36,8 @@ class RegistriesOperations(object):
     def check_name_availability(
             self, name, custom_headers=None, raw=False, **operation_config):
         """Checks whether the container registry name is available for use. The
-        name must contain only alphanumeric characters, be globally unique,
-        and between 5 and 60 characters in length.
+        name must contain only alphanumeric characters, be globally unique, and
+        between 5 and 60 characters in length.
 
         :param name: The name of the container registry.
         :type name: str
@@ -217,7 +217,7 @@ class RegistriesOperations(object):
         response = self._client.send(
             request, header_parameters, body_content, **operation_config)
 
-        if response.status_code not in [200]:
+        if response.status_code not in [200, 202]:
             exp = CloudError(response)
             exp.request_id = response.headers.get('x-ms-request-id')
             raise exp
@@ -279,7 +279,7 @@ class RegistriesOperations(object):
         request = self._client.delete(url, query_parameters)
         response = self._client.send(request, header_parameters, **operation_config)
 
-        if response.status_code not in [200]:
+        if response.status_code not in [200, 204]:
             exp = CloudError(response)
             exp.request_id = response.headers.get('x-ms-request-id')
             raise exp

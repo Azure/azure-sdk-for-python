@@ -32,7 +32,7 @@ class ServerManagementConfiguration(AzureConfiguration):
      identify Microsoft Azure subscription. The subscription ID forms part of
      the URI for every service call.
     :type subscription_id: str
-    :param api_version: Client Api Version.
+    :param api_version: Client API Version.
     :type api_version: str
     :param accept_language: Gets or sets the preferred language for the
      response.
@@ -49,7 +49,7 @@ class ServerManagementConfiguration(AzureConfiguration):
     """
 
     def __init__(
-            self, credentials, subscription_id, api_version='2015-07-01-preview', accept_language='en-US', long_running_operation_retry_timeout=30, generate_client_request_id=True, base_url=None, filepath=None):
+            self, credentials, subscription_id, api_version='2016-07-01-preview', accept_language='en-US', long_running_operation_retry_timeout=30, generate_client_request_id=True, base_url=None, filepath=None):
 
         if credentials is None:
             raise ValueError("Parameter 'credentials' must not be None.")
@@ -78,7 +78,7 @@ class ServerManagementConfiguration(AzureConfiguration):
 
 
 class ServerManagement(object):
-    """REST API for Azure Server Management Service
+    """REST API for Azure Server Management Service.
 
     :ivar config: Configuration for client.
     :vartype config: ServerManagementConfiguration
@@ -99,7 +99,7 @@ class ServerManagement(object):
      identify Microsoft Azure subscription. The subscription ID forms part of
      the URI for every service call.
     :type subscription_id: str
-    :param api_version: Client Api Version.
+    :param api_version: Client API Version.
     :type api_version: str
     :param accept_language: Gets or sets the preferred language for the
      response.
@@ -116,7 +116,7 @@ class ServerManagement(object):
     """
 
     def __init__(
-            self, credentials, subscription_id, api_version='2015-07-01-preview', accept_language='en-US', long_running_operation_retry_timeout=30, generate_client_request_id=True, base_url=None, filepath=None):
+            self, credentials, subscription_id, api_version='2016-07-01-preview', accept_language='en-US', long_running_operation_retry_timeout=30, generate_client_request_id=True, base_url=None, filepath=None):
 
         self.config = ServerManagementConfiguration(credentials, subscription_id, api_version, accept_language, long_running_operation_retry_timeout, generate_client_request_id, base_url, filepath)
         self._client = ServiceClient(self.config.credentials, self.config)

@@ -19,14 +19,13 @@ class ContainerServiceMasterProfile(Model):
     sending a request.
 
     :param count: Number of masters (VMs) in the container service cluster.
-     Allowed values are 1, 3, and 5. The default value is 1. Default value: 1
-     .
+     Allowed values are 1, 3, and 5. The default value is 1. Default value: 1 .
     :type count: int
     :param dns_prefix: DNS prefix to be used to create the FQDN for master.
     :type dns_prefix: str
     :ivar fqdn: FDQN for the master.
     :vartype fqdn: str
-    """ 
+    """
 
     _validation = {
         'dns_prefix': {'required': True},

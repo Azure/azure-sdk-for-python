@@ -15,15 +15,14 @@ from msrest.serialization import Model
 class UserUpdateParameters(Model):
     """Request parameters for updating an existing work or school account user.
 
-    :param account_enabled: Enable the account. If it is enabled then true
-     else false.
+    :param account_enabled: Whether the account is enabled.
     :type account_enabled: bool
-    :param display_name: User display name
+    :param display_name: The display name of the user.
     :type display_name: str
-    :param password_profile: Password Profile
+    :param password_profile: The password profile of the user.
     :type password_profile: :class:`PasswordProfile
      <azure.graphrbac.models.PasswordProfile>`
-    :param mail_nickname: The mail alias for the user
+    :param mail_nickname: The mail alias for the user.
     :type mail_nickname: str
     """ 
 

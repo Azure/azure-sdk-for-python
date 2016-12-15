@@ -35,19 +35,21 @@ class WebServicesOperations(object):
         self.config = config
 
     def create_or_update(
-            self, create_or_update_payload, resource_group_name, web_service_name, custom_headers=None, raw=False, **operation_config):
-        """Creates or updates a new Azure ML web service or update an existing
-        one.
+            self, resource_group_name, web_service_name, create_or_update_payload, custom_headers=None, raw=False, **operation_config):
+        """Create or update a web service. This call will overwrite an existing
+        web service. Note that there is no warning or confirmation. This is a
+        nonrecoverable operation. If your intent is to create a new web
+        service, call the Get operation first to verify that it does not exist.
 
-        :param create_or_update_payload: The payload to create or update the
-         Azure ML web service.
+        :param resource_group_name: Name of the resource group in which the
+         web service is located.
+        :type resource_group_name: str
+        :param web_service_name: The name of the web service.
+        :type web_service_name: str
+        :param create_or_update_payload: The payload that is used to create or
+         update the web service.
         :type create_or_update_payload: :class:`WebService
          <azure.mgmt.machinelearning.models.WebService>`
-        :param resource_group_name: Name of the resource group.
-        :type resource_group_name: str
-        :param web_service_name: The Azure ML web service name which you want
-         to reach.
-        :type web_service_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -57,13 +59,14 @@ class WebServicesOperations(object):
          <azure.mgmt.machinelearning.models.WebService>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearning/webServices/{webServiceName}'
         path_format_arguments = {
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            'webServiceName': self._serialize.url("web_service_name", web_service_name, 'str')
+            'webServiceName': self._serialize.url("web_service_name", web_service_name, 'str'),
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -132,13 +135,15 @@ class WebServicesOperations(object):
 
     def get(
             self, resource_group_name, web_service_name, custom_headers=None, raw=False, **operation_config):
-        """Retrieve an Azure ML web service definition by its subscription,
-        resource group and name.
+        """Gets the Web Service Definiton as specified by a subscription, resource
+        group, and name. Note that the storage credentials and web service keys
+        are not returned by this call. To get the web service access keys, call
+        List Keys.
 
-        :param resource_group_name: Name of the resource group.
+        :param resource_group_name: Name of the resource group in which the
+         web service is located.
         :type resource_group_name: str
-        :param web_service_name: The Azure ML web service name which you want
-         to reach.
+        :param web_service_name: The name of the web service.
         :type web_service_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -149,13 +154,14 @@ class WebServicesOperations(object):
          <azure.mgmt.machinelearning.models.WebService>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearning/webServices/{webServiceName}'
         path_format_arguments = {
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            'webServiceName': self._serialize.url("web_service_name", web_service_name, 'str')
+            'webServiceName': self._serialize.url("web_service_name", web_service_name, 'str'),
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -194,18 +200,19 @@ class WebServicesOperations(object):
         return deserialized
 
     def patch(
-            self, patch_payload, resource_group_name, web_service_name, custom_headers=None, raw=False, **operation_config):
-        """Patch an existing Azure ML web service resource.
+            self, resource_group_name, web_service_name, patch_payload, custom_headers=None, raw=False, **operation_config):
+        """Modifies an existing web service resource. The PATCH API call is an
+        asynchronous operation. To determine whether it has completed
+        successfully, you must perform a Get operation.
 
-        :param patch_payload: The payload to patch the Azure ML web service
-         with.
+        :param resource_group_name: Name of the resource group in which the
+         web service is located.
+        :type resource_group_name: str
+        :param web_service_name: The name of the web service.
+        :type web_service_name: str
+        :param patch_payload: The payload to use to patch the web service.
         :type patch_payload: :class:`WebService
          <azure.mgmt.machinelearning.models.WebService>`
-        :param resource_group_name: Name of the resource group.
-        :type resource_group_name: str
-        :param web_service_name: The Azure ML web service name which you want
-         to reach.
-        :type web_service_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -215,13 +222,14 @@ class WebServicesOperations(object):
          <azure.mgmt.machinelearning.models.WebService>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearning/webServices/{webServiceName}'
         path_format_arguments = {
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            'webServiceName': self._serialize.url("web_service_name", web_service_name, 'str')
+            'webServiceName': self._serialize.url("web_service_name", web_service_name, 'str'),
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -288,12 +296,12 @@ class WebServicesOperations(object):
 
     def remove(
             self, resource_group_name, web_service_name, custom_headers=None, raw=False, **operation_config):
-        """Remove an existing Azure ML web service.
+        """Deletes the specified web service.
 
-        :param resource_group_name: Name of the resource group.
+        :param resource_group_name: Name of the resource group in which the
+         web service is located.
         :type resource_group_name: str
-        :param web_service_name: The Azure ML web service name which you want
-         to reach.
+        :param web_service_name: The name of the web service.
         :type web_service_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -303,13 +311,14 @@ class WebServicesOperations(object):
          instance that returns None
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearning/webServices/{webServiceName}'
         path_format_arguments = {
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            'webServiceName': self._serialize.url("web_service_name", web_service_name, 'str')
+            'webServiceName': self._serialize.url("web_service_name", web_service_name, 'str'),
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -365,12 +374,12 @@ class WebServicesOperations(object):
 
     def list_keys(
             self, resource_group_name, web_service_name, custom_headers=None, raw=False, **operation_config):
-        """Get the access keys of a particular Azure ML web service.
+        """Gets the access keys for the specified web service.
 
-        :param resource_group_name: Name of the resource group.
+        :param resource_group_name: Name of the resource group in which the
+         web service is located.
         :type resource_group_name: str
-        :param web_service_name: The Azure ML web service name which you want
-         to reach.
+        :param web_service_name: The name of the web service.
         :type web_service_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -381,13 +390,14 @@ class WebServicesOperations(object):
          <azure.mgmt.machinelearning.models.WebServiceKeys>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearning/webServices/{webServiceName}/listKeys'
         path_format_arguments = {
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            'webServiceName': self._serialize.url("web_service_name", web_service_name, 'str')
+            'webServiceName': self._serialize.url("web_service_name", web_service_name, 'str'),
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -425,11 +435,12 @@ class WebServicesOperations(object):
 
         return deserialized
 
-    def list_in_resource_group(
+    def list_by_resource_group(
             self, resource_group_name, skiptoken=None, custom_headers=None, raw=False, **operation_config):
-        """Retrieve all Azure ML web services in a given resource group.
+        """Gets the web services in the specified resource group.
 
-        :param resource_group_name: Name of the resource group.
+        :param resource_group_name: Name of the resource group in which the
+         web service is located.
         :type resource_group_name: str
         :param skiptoken: Continuation token for pagination.
         :type skiptoken: str
@@ -438,58 +449,66 @@ class WebServicesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`PaginatedWebServicesList
-         <azure.mgmt.machinelearning.models.PaginatedWebServicesList>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :rtype: :class:`WebServicePaged
+         <azure.mgmt.machinelearning.models.WebServicePaged>`
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
-        # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearning/webServices'
-        path_format_arguments = {
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str')
-        }
-        url = self._client.format_url(url, **path_format_arguments)
+        def internal_paging(next_link=None, raw=False):
 
-        # Construct parameters
-        query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
-        if skiptoken is not None:
-            query_parameters['$skiptoken'] = self._serialize.query("skiptoken", skiptoken, 'str')
+            if not next_link:
+                # Construct URL
+                url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearning/webServices'
+                path_format_arguments = {
+                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+                    'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+                }
+                url = self._client.format_url(url, **path_format_arguments)
 
-        # Construct headers
-        header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
-        if self.config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-        if custom_headers:
-            header_parameters.update(custom_headers)
-        if self.config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+                # Construct parameters
+                query_parameters = {}
+                if skiptoken is not None:
+                    query_parameters['$skiptoken'] = self._serialize.query("skiptoken", skiptoken, 'str')
+                query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
 
-        # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+            else:
+                url = next_link
+                query_parameters = {}
 
-        if response.status_code not in [200]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            # Construct headers
+            header_parameters = {}
+            header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+            if self.config.generate_client_request_id:
+                header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+            if custom_headers:
+                header_parameters.update(custom_headers)
+            if self.config.accept_language is not None:
+                header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
-        deserialized = None
+            # Construct and send request
+            request = self._client.get(url, query_parameters)
+            response = self._client.send(
+                request, header_parameters, **operation_config)
 
-        if response.status_code == 200:
-            deserialized = self._deserialize('PaginatedWebServicesList', response)
+            if response.status_code not in [200]:
+                exp = CloudError(response)
+                exp.request_id = response.headers.get('x-ms-request-id')
+                raise exp
+
+            return response
+
+        # Deserialize response
+        deserialized = models.WebServicePaged(internal_paging, self._deserialize.dependencies)
 
         if raw:
-            client_raw_response = ClientRawResponse(deserialized, response)
+            header_dict = {}
+            client_raw_response = models.WebServicePaged(internal_paging, self._deserialize.dependencies, header_dict)
             return client_raw_response
 
         return deserialized
 
     def list(
             self, skiptoken=None, custom_headers=None, raw=False, **operation_config):
-        """Retrieve all Azure ML web services in the current Azure subscription.
+        """Gets the web services in the specified subscription.
 
         :param skiptoken: Continuation token for pagination.
         :type skiptoken: str
@@ -498,50 +517,58 @@ class WebServicesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`PaginatedWebServicesList
-         <azure.mgmt.machinelearning.models.PaginatedWebServicesList>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :rtype: :class:`WebServicePaged
+         <azure.mgmt.machinelearning.models.WebServicePaged>`
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
-        # Construct URL
-        url = '/subscriptions/{subscriptionId}/providers/Microsoft.MachineLearning/webServices'
-        path_format_arguments = {
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
-        }
-        url = self._client.format_url(url, **path_format_arguments)
+        def internal_paging(next_link=None, raw=False):
 
-        # Construct parameters
-        query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
-        if skiptoken is not None:
-            query_parameters['$skiptoken'] = self._serialize.query("skiptoken", skiptoken, 'str')
+            if not next_link:
+                # Construct URL
+                url = '/subscriptions/{subscriptionId}/providers/Microsoft.MachineLearning/webServices'
+                path_format_arguments = {
+                    'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+                }
+                url = self._client.format_url(url, **path_format_arguments)
 
-        # Construct headers
-        header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
-        if self.config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-        if custom_headers:
-            header_parameters.update(custom_headers)
-        if self.config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+                # Construct parameters
+                query_parameters = {}
+                if skiptoken is not None:
+                    query_parameters['$skiptoken'] = self._serialize.query("skiptoken", skiptoken, 'str')
+                query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
 
-        # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+            else:
+                url = next_link
+                query_parameters = {}
 
-        if response.status_code not in [200]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            # Construct headers
+            header_parameters = {}
+            header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+            if self.config.generate_client_request_id:
+                header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+            if custom_headers:
+                header_parameters.update(custom_headers)
+            if self.config.accept_language is not None:
+                header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
-        deserialized = None
+            # Construct and send request
+            request = self._client.get(url, query_parameters)
+            response = self._client.send(
+                request, header_parameters, **operation_config)
 
-        if response.status_code == 200:
-            deserialized = self._deserialize('PaginatedWebServicesList', response)
+            if response.status_code not in [200]:
+                exp = CloudError(response)
+                exp.request_id = response.headers.get('x-ms-request-id')
+                raise exp
+
+            return response
+
+        # Deserialize response
+        deserialized = models.WebServicePaged(internal_paging, self._deserialize.dependencies)
 
         if raw:
-            client_raw_response = ClientRawResponse(deserialized, response)
+            header_dict = {}
+            client_raw_response = models.WebServicePaged(internal_paging, self._deserialize.dependencies, header_dict)
             return client_raw_response
 
         return deserialized

@@ -28,30 +28,30 @@ class VirtualMachineExtension(Resource):
     :type location: str
     :param tags: Resource tags.
     :type tags: dict
-    :param force_update_tag: how the extension handler should be forced to
+    :param force_update_tag: How the extension handler should be forced to
      update even if the extension configuration has not changed.
     :type force_update_tag: str
-    :param publisher: the name of the extension handler publisher.
+    :param publisher: The name of the extension handler publisher.
     :type publisher: str
-    :param virtual_machine_extension_type: the type of the extension handler.
+    :param virtual_machine_extension_type: The type of the extension handler.
     :type virtual_machine_extension_type: str
-    :param type_handler_version: the type version of the extension handler.
+    :param type_handler_version: The type version of the extension handler.
     :type type_handler_version: str
-    :param auto_upgrade_minor_version: whether the extension handler should
-     be automatically upgraded across minor versions.
+    :param auto_upgrade_minor_version: Whether the extension handler should be
+     automatically upgraded across minor versions.
     :type auto_upgrade_minor_version: bool
     :param settings: Json formatted public settings for the extension.
     :type settings: object
     :param protected_settings: Json formatted protected settings for the
      extension.
     :type protected_settings: object
-    :ivar provisioning_state: the provisioning state, which only appears in
+    :ivar provisioning_state: The provisioning state, which only appears in
      the response.
     :vartype provisioning_state: str
-    :param instance_view: the virtual machine extension instance view.
+    :param instance_view: The virtual machine extension instance view.
     :type instance_view: :class:`VirtualMachineExtensionInstanceView
      <azure.mgmt.compute.models.VirtualMachineExtensionInstanceView>`
-    """ 
+    """
 
     _validation = {
         'id': {'readonly': True},

@@ -13,15 +13,24 @@ from msrest.serialization import Model
 
 
 class IotHubQuotaMetricInfo(Model):
-    """The properties related to quota metrics.
+    """Quota metrics properties.
 
-    :param name: The name of the quota metric.
-    :type name: str
-    :param current_value: The current value for the quota metric.
-    :type current_value: long
-    :param max_value: The maximum value of the quota metric.
-    :type max_value: long
-    """ 
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar name: The name of the quota metric.
+    :vartype name: str
+    :ivar current_value: The current value for the quota metric.
+    :vartype current_value: long
+    :ivar max_value: The maximum value of the quota metric.
+    :vartype max_value: long
+    """
+
+    _validation = {
+        'name': {'readonly': True},
+        'current_value': {'readonly': True},
+        'max_value': {'readonly': True},
+    }
 
     _attribute_map = {
         'name': {'key': 'Name', 'type': 'str'},
@@ -29,7 +38,7 @@ class IotHubQuotaMetricInfo(Model):
         'max_value': {'key': 'MaxValue', 'type': 'long'},
     }
 
-    def __init__(self, name=None, current_value=None, max_value=None):
-        self.name = name
-        self.current_value = current_value
-        self.max_value = max_value
+    def __init__(self):
+        self.name = None
+        self.current_value = None
+        self.max_value = None

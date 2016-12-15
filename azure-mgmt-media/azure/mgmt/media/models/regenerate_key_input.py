@@ -18,11 +18,15 @@ class RegenerateKeyInput(Model):
     :param key_type: The keyType indicating which key you want to regenerate,
      Primary or Secondary. Possible values include: 'Primary', 'Secondary'
     :type key_type: str or :class:`KeyType <azure.mgmt.media.models.KeyType>`
-    """ 
+    """
+
+    _validation = {
+        'key_type': {'required': True},
+    }
 
     _attribute_map = {
         'key_type': {'key': 'keyType', 'type': 'KeyType'},
     }
 
-    def __init__(self, key_type=None):
+    def __init__(self, key_type):
         self.key_type = key_type

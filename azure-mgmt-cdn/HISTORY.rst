@@ -1,0 +1,15 @@
+.. :changelog:
+
+Release History
+===============
+
+0.30.0 (2016-12-14)
++++++++++++++++++++
+
+* Initial preview release (API Version 2016-10-02)
+* Major breaking changes from 0.30.0rc6
+
+0.30.0rc6 (2016-09-02)
+++++++++++++++++++++++
+
+* Initial alpha release (API Version 2016-04-02)

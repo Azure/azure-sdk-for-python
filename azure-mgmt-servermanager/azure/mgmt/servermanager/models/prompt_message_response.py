@@ -13,9 +13,9 @@ from msrest.serialization import Model
 
 
 class PromptMessageResponse(Model):
-    """the response to a prompt message.
+    """The response to a prompt message.
 
-    :param response: the list of responses a cmdlet expects
+    :param response: The list of responses a cmdlet expects.
     :type response: list of str
     """ 
 

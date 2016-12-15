@@ -13,11 +13,11 @@ from msrest.serialization import Model
 
 
 class OperationInputs(Model):
-    """OperationInputs.
+    """Input values.
 
-    :param name: The name of the iot hub.
+    :param name: The name of the IoT hub to check.
     :type name: str
-    """ 
+    """
 
     _validation = {
         'name': {'required': True},

@@ -13,26 +13,27 @@ from msrest.serialization import Model
 
 
 class GatewayParameters(Model):
-    """GatewayParameters.
+    """Collection of parameters for operations on a gateway resource.
 
-    :param location: location of the resource
+    :param location: Location of the resource.
     :type location: str
-    :param tags: resource tags
+    :param tags: Resource tags.
     :type tags: object
-    :param auto_upgrade: The autoUpgrade property gives the flexibility to
-     gateway to auto upgrade itself. If properties value not specified, then
-     we assume autoUpgrade = Off. Possible values include: 'On', 'Off'
-    :type auto_upgrade: str or :class:`AutoUpgrade
-     <azure.mgmt.servermanager.models.AutoUpgrade>`
+    :param upgrade_mode: The upgradeMode property gives the flexibility to
+     gateway to auto upgrade itself. If properties value not specified, then we
+     assume upgradeMode = Automatic. Possible values include: 'Manual',
+     'Automatic'
+    :type upgrade_mode: str or :class:`upgradeMode
+     <azure.mgmt.servermanager.models.upgradeMode>`
     """ 
 
     _attribute_map = {
         'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': 'object'},
-        'auto_upgrade': {'key': 'properties.autoUpgrade', 'type': 'AutoUpgrade'},
+        'upgrade_mode': {'key': 'properties.upgradeMode', 'type': 'upgradeMode'},
     }
 
-    def __init__(self, location=None, tags=None, auto_upgrade=None):
+    def __init__(self, location=None, tags=None, upgrade_mode=None):
         self.location = location
         self.tags = tags
-        self.auto_upgrade = auto_upgrade
+        self.upgrade_mode = upgrade_mode

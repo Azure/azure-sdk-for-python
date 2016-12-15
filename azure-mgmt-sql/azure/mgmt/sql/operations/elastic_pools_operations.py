@@ -24,7 +24,7 @@ class ElasticPoolsOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An objec model deserializer.
-    :ivar api_version: Client Api Version. Constant value: "2014-04-01".
+    :ivar api_version: The API version to use for the request. Constant value: "2014-04-01".
     """
 
     def __init__(self, client, config, serializer, deserializer):
@@ -41,16 +41,17 @@ class ElasticPoolsOperations(object):
         """Creates a new Azure SQL elastic pool or updates an existing Azure SQL
         elastic pool.
 
-        :param resource_group_name: The name of the Resource Group to which
-         the resource belongs.
+        :param resource_group_name: The name of the resource group that
+         contains the resource. You can obtain this value from the Azure
+         Resource Manager API or the portal.
         :type resource_group_name: str
-        :param server_name: The name of the Azure SQL Server
+        :param server_name: The name of the Azure SQL server.
         :type server_name: str
-        :param elastic_pool_name: The name of the Azure SQL Elastic Pool to
-         be operated on (Updated or created).
+        :param elastic_pool_name: The name of the Azure SQL Elastic Pool to be
+         operated on (Updated or created).
         :type elastic_pool_name: str
-        :param parameters: The required parameters for createing or updating
-         an Elastic Pool.
+        :param parameters: The required parameters for creating or updating an
+         Elastic Pool.
         :type parameters: :class:`ElasticPool
          <azure.mgmt.sql.models.ElasticPool>`
         :param dict custom_headers: headers that will be added to the request
@@ -143,13 +144,14 @@ class ElasticPoolsOperations(object):
             self, resource_group_name, server_name, elastic_pool_name, custom_headers=None, raw=False, **operation_config):
         """Deletes the Azure SQL elastic pool.
 
-        :param resource_group_name: The name of the Resource Group to which
-         the resource belongs.
+        :param resource_group_name: The name of the resource group that
+         contains the resource. You can obtain this value from the Azure
+         Resource Manager API or the portal.
         :type resource_group_name: str
-        :param server_name: The name of the Azure SQL Server
+        :param server_name: The name of the Azure SQL server.
         :type server_name: str
-        :param elastic_pool_name: The name of the Azure SQL Elastic Pool to
-         be deleted.
+        :param elastic_pool_name: The name of the Azure SQL Elastic Pool to be
+         deleted.
         :type elastic_pool_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -202,13 +204,14 @@ class ElasticPoolsOperations(object):
             self, resource_group_name, server_name, elastic_pool_name, custom_headers=None, raw=False, **operation_config):
         """Gets information about an Azure SQL elastic pool.
 
-        :param resource_group_name: The name of the Resource Group to which
-         the resource belongs.
+        :param resource_group_name: The name of the resource group that
+         contains the resource. You can obtain this value from the Azure
+         Resource Manager API or the portal.
         :type resource_group_name: str
-        :param server_name: The name of the Azure SQL Server
+        :param server_name: The name of the Azure SQL server.
         :type server_name: str
-        :param elastic_pool_name: The name of the Azure SQL Elastic Pool to
-         be retrieved.
+        :param elastic_pool_name: The name of the Azure SQL Elastic Pool to be
+         retrieved.
         :type elastic_pool_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -268,10 +271,11 @@ class ElasticPoolsOperations(object):
             self, resource_group_name, server_name, custom_headers=None, raw=False, **operation_config):
         """Returns information about Azure SQL elastic pools.
 
-        :param resource_group_name: The name of the Resource Group to which
-         the resource belongs.
+        :param resource_group_name: The name of the resource group that
+         contains the resource. You can obtain this value from the Azure
+         Resource Manager API or the portal.
         :type resource_group_name: str
-        :param server_name: The name of the Azure SQL Server
+        :param server_name: The name of the Azure SQL server.
         :type server_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -338,10 +342,11 @@ class ElasticPoolsOperations(object):
             self, resource_group_name, server_name, elastic_pool_name, custom_headers=None, raw=False, **operation_config):
         """Returns information about Azure SQL elastic pool activities.
 
-        :param resource_group_name: The name of the Resource Group to which
-         the resource belongs.
+        :param resource_group_name: The name of the resource group that
+         contains the resource. You can obtain this value from the Azure
+         Resource Manager API or the portal.
         :type resource_group_name: str
-        :param server_name: The name of the Azure SQL Server
+        :param server_name: The name of the Azure SQL server.
         :type server_name: str
         :param elastic_pool_name: The name of the Azure SQL Elastic Pool for
          which to get the current activity.
@@ -409,17 +414,18 @@ class ElasticPoolsOperations(object):
         return deserialized
 
     def list_database_activity(
-            self, elastic_pool_name, resource_group_name, server_name, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, server_name, elastic_pool_name, custom_headers=None, raw=False, **operation_config):
         """Returns information about activity on Azure SQL databases inside of an
         Azure SQL elastic pool.
 
+        :param resource_group_name: The name of the resource group that
+         contains the resource. You can obtain this value from the Azure
+         Resource Manager API or the portal.
+        :type resource_group_name: str
+        :param server_name: The name of the Azure SQL server.
+        :type server_name: str
         :param elastic_pool_name: The name of the Azure SQL Elastic Pool.
         :type elastic_pool_name: str
-        :param resource_group_name: The name of the Resource Group to which
-         the resource belongs.
-        :type resource_group_name: str
-        :param server_name: The name of the Azure SQL Server
-        :type server_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -435,10 +441,10 @@ class ElasticPoolsOperations(object):
                 # Construct URL
                 url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/elasticPools/{elasticPoolName}/elasticPoolDatabaseActivity'
                 path_format_arguments = {
-                    'elasticPoolName': self._serialize.url("elastic_pool_name", elastic_pool_name, 'str'),
                     'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
                     'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-                    'serverName': self._serialize.url("server_name", server_name, 'str')
+                    'serverName': self._serialize.url("server_name", server_name, 'str'),
+                    'elasticPoolName': self._serialize.url("elastic_pool_name", elastic_pool_name, 'str')
                 }
                 url = self._client.format_url(url, **path_format_arguments)
 
@@ -487,15 +493,16 @@ class ElasticPoolsOperations(object):
         """Gets information about an Azure SQL database inside of an Azure SQL
         elastic pool.
 
-        :param resource_group_name: The name of the Resource Group to which
-         the resource belongs.
+        :param resource_group_name: The name of the resource group that
+         contains the resource. You can obtain this value from the Azure
+         Resource Manager API or the portal.
         :type resource_group_name: str
-        :param server_name: The name of the Azure SQL Server
+        :param server_name: The name of the Azure SQL server.
         :type server_name: str
-        :param elastic_pool_name: The name of the Azure SQL Elastic Pool to
-         be retrieved.
+        :param elastic_pool_name: The name of the Azure SQL Elastic Pool to be
+         retrieved.
         :type elastic_pool_name: str
-        :param database_name: The name of the Azure SQL Database to be
+        :param database_name: The name of the Azure SQL database to be
          retrieved.
         :type database_name: str
         :param dict custom_headers: headers that will be added to the request
@@ -558,13 +565,14 @@ class ElasticPoolsOperations(object):
         """Returns information about an Azure SQL database inside of an Azure SQL
         elastic pool.
 
-        :param resource_group_name: The name of the Resource Group to which
-         the resource belongs.
+        :param resource_group_name: The name of the resource group that
+         contains the resource. You can obtain this value from the Azure
+         Resource Manager API or the portal.
         :type resource_group_name: str
-        :param server_name: The name of the Azure SQL Server
+        :param server_name: The name of the Azure SQL server.
         :type server_name: str
-        :param elastic_pool_name: The name of the Azure SQL Elastic Pool to
-         be retrieved.
+        :param elastic_pool_name: The name of the Azure SQL Elastic Pool to be
+         retrieved.
         :type elastic_pool_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the

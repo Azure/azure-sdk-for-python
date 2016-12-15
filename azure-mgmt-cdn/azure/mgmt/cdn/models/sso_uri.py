@@ -13,11 +13,11 @@ from msrest.serialization import Model
 
 
 class SsoUri(Model):
-    """SSO URI required to login to third party web portal.
+    """SSO URI required to login to the supplemental portal.
 
-    :param sso_uri_value: The URI used to login to third party web portal.
+    :param sso_uri_value: The URI used to login to the supplemental portal.
     :type sso_uri_value: str
-    """ 
+    """
 
     _attribute_map = {
         'sso_uri_value': {'key': 'ssoUriValue', 'type': 'str'},

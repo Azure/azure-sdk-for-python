@@ -9,43 +9,43 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.serialization import Model
+from .sub_resource import SubResource
 
 
-class FirewallRule(Model):
+class FirewallRule(SubResource):
     """Data Lake Store firewall rule information.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :param name: the firewall rule's name.
+    :ivar id: Resource Id
+    :vartype id: str
+    :param name: Resource name
     :type name: str
-    :ivar type: the namespace and type of the firewall Rule.
+    :ivar type: Resource type
     :vartype type: str
-    :param id: the firewall rule's subscription ID.
-    :type id: str
-    :param location: the firewall rule's regional location.
-    :type location: str
-    :param properties: the properties of the firewall rule.
-    :type properties: :class:`FirewallRuleProperties
-     <azure.mgmt.datalake.store.account.models.FirewallRuleProperties>`
-    """ 
+    :param start_ip_address: the start IP address for the firewall rule.
+    :type start_ip_address: str
+    :param end_ip_address: the end IP address for the firewall rule.
+    :type end_ip_address: str
+    """
 
     _validation = {
+        'id': {'readonly': True},
         'type': {'readonly': True},
+        'start_ip_address': {'required': True},
+        'end_ip_address': {'required': True},
     }
 
     _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'id': {'key': 'id', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'properties': {'key': 'properties', 'type': 'FirewallRuleProperties'},
+        'start_ip_address': {'key': 'properties.startIpAddress', 'type': 'str'},
+        'end_ip_address': {'key': 'properties.endIpAddress', 'type': 'str'},
     }
 
-    def __init__(self, name=None, id=None, location=None, properties=None):
-        self.name = name
-        self.type = None
-        self.id = id
-        self.location = location
-        self.properties = properties
+    def __init__(self, start_ip_address, end_ip_address, name=None):
+        super(FirewallRule, self).__init__(name=name)
+        self.start_ip_address = start_ip_address
+        self.end_ip_address = end_ip_address

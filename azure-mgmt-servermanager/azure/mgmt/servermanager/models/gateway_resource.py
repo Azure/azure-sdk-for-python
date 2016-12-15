@@ -13,43 +13,49 @@ from .resource import Resource
 
 
 class GatewayResource(Resource):
-    """GatewayResource.
+    """Data model for an arm gateway resource.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar id: ARM Resource ID
+    :ivar id: Resource Manager Resource ID.
     :vartype id: str
-    :ivar type: ARM Resource Type
+    :ivar type: Resource Manager Resource Type.
     :vartype type: str
-    :ivar name: ARM Resource Name
+    :ivar name: Resource Manager Resource Name.
     :vartype name: str
-    :ivar location: ARM Resource Location
+    :ivar location: Resource Manager Resource Location.
     :vartype location: str
-    :param tags: ARM Resource Tags
+    :param tags: Resource Manager Resource Tags.
     :type tags: dict
     :param etag:
     :type etag: str
     :param created: UTC date and time when gateway was first added to
-     management service
+     management service.
     :type created: datetime
-    :param updated: UTC date and time when node was last updated
+    :param updated: UTC date and time when node was last updated.
     :type updated: datetime
-    :param auto_upgrade: setting of the autoupgrade. Possible values include:
-     'On', 'Off'
-    :type auto_upgrade: str or :class:`AutoUpgrade
-     <azure.mgmt.servermanager.models.AutoUpgrade>`
-    :param desired_version: latest available msi version
+    :param upgrade_mode: The upgradeMode property gives the flexibility to
+     gateway to auto upgrade itself. If properties value not specified, then we
+     assume upgradeMode = Automatic. Possible values include: 'Manual',
+     'Automatic'
+    :type upgrade_mode: str or :class:`upgradeMode
+     <azure.mgmt.servermanager.models.upgradeMode>`
+    :param desired_version: Latest available MSI version.
     :type desired_version: str
-    :param instances: names of the nodes in the gateway
+    :param instances: Names of the nodes in the gateway.
     :type instances: list of :class:`GatewayStatus
      <azure.mgmt.servermanager.models.GatewayStatus>`
-    :param active_message_count: number of active messages
+    :param active_message_count: Number of active messages.
     :type active_message_count: int
-    :param latest_published_msi_version: last published msi version
+    :param latest_published_msi_version: Last published MSI version.
     :type latest_published_msi_version: str
-    :param published_time_utc: the date/time of the last published gateway
+    :param published_time_utc: The date/time of the last published gateway.
     :type published_time_utc: datetime
+    :ivar installer_download: Installer download uri.
+    :vartype installer_download: str
+    :ivar minimum_version: Minimum gateway version.
+    :vartype minimum_version: str
     """ 
 
     _validation = {
@@ -57,6 +63,8 @@ class GatewayResource(Resource):
         'type': {'readonly': True},
         'name': {'readonly': True},
         'location': {'readonly': True},
+        'installer_download': {'readonly': True},
+        'minimum_version': {'readonly': True},
     }
 
     _attribute_map = {
@@ -68,21 +76,25 @@ class GatewayResource(Resource):
         'etag': {'key': 'etag', 'type': 'str'},
         'created': {'key': 'properties.created', 'type': 'iso-8601'},
         'updated': {'key': 'properties.updated', 'type': 'iso-8601'},
-        'auto_upgrade': {'key': 'properties.autoUpgrade', 'type': 'AutoUpgrade'},
+        'upgrade_mode': {'key': 'properties.upgradeMode', 'type': 'upgradeMode'},
         'desired_version': {'key': 'properties.desiredVersion', 'type': 'str'},
         'instances': {'key': 'properties.instances', 'type': '[GatewayStatus]'},
         'active_message_count': {'key': 'properties.activeMessageCount', 'type': 'int'},
         'latest_published_msi_version': {'key': 'properties.latestPublishedMsiVersion', 'type': 'str'},
         'published_time_utc': {'key': 'properties.publishedTimeUtc', 'type': 'iso-8601'},
+        'installer_download': {'key': 'properties.installerDownload', 'type': 'str'},
+        'minimum_version': {'key': 'properties.minimumVersion', 'type': 'str'},
     }
 
-    def __init__(self, tags=None, etag=None, created=None, updated=None, auto_upgrade=None, desired_version=None, instances=None, active_message_count=None, latest_published_msi_version=None, published_time_utc=None):
+    def __init__(self, tags=None, etag=None, created=None, updated=None, upgrade_mode=None, desired_version=None, instances=None, active_message_count=None, latest_published_msi_version=None, published_time_utc=None):
         super(GatewayResource, self).__init__(tags=tags, etag=etag)
         self.created = created
         self.updated = updated
-        self.auto_upgrade = auto_upgrade
+        self.upgrade_mode = upgrade_mode
         self.desired_version = desired_version
         self.instances = instances
         self.active_message_count = active_message_count
         self.latest_published_msi_version = latest_published_msi_version
         self.published_time_utc = published_time_utc
+        self.installer_download = None
+        self.minimum_version = None

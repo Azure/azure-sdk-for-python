@@ -30,24 +30,18 @@ class MgmtDataLakeStoreTest(AzureMgmtTestCase):
         account_name = self.get_resource_name('pyarmadls')
         account_name_no_encryption = self.get_resource_name('pyarmadls2')
         params_create = azure.mgmt.datalake.store.models.DataLakeStoreAccount(
-            name = account_name,
             location = self.region,
-            identity = azure.mgmt.datalake.store.models.EncryptionIdentity(
-                type = azure.mgmt.datalake.store.models.EncryptionIdentityType.system_assigned
+            identity = azure.mgmt.datalake.store.models.EncryptionIdentity(),
+            encryption_config = azure.mgmt.datalake.store.models.EncryptionConfig(
+                type = azure.mgmt.datalake.store.models.EncryptionConfigType.service_managed
             ),
-            properties = azure.mgmt.datalake.store.models.DataLakeStoreAccountProperties(
-                encryption_config = azure.mgmt.datalake.store.models.EncryptionConfig(
-                    type = azure.mgmt.datalake.store.models.EncryptionConfigType.service_managed
-                ),
-                encryption_state = azure.mgmt.datalake.store.models.EncryptionState.enabled
-            ),
+            encryption_state = azure.mgmt.datalake.store.models.EncryptionState.enabled,
             tags={
                 'tag1': 'value1'
             }
         )
 
         params_create_no_encryption = azure.mgmt.datalake.store.models.DataLakeStoreAccount(
-            name = account_name_no_encryption,
             location = self.region,
             tags={
                 'tag1': 'value1'
@@ -66,15 +60,15 @@ class MgmtDataLakeStoreTest(AzureMgmtTestCase):
         self.assertEqual(adls_account.name, account_name)
 
         # TODO: re-enable once it is determined why this property is still in "creating" state.
-        # self.assertEqual(azure.mgmt.datalake.store.models.DataLakeStoreAccountStatus.succeeded, adls_account.properties.provisioning_state)
+        # self.assertEqual(azure.mgmt.datalake.store.models.DataLakeStoreAccountStatus.succeeded, adls_account.provisioning_state)
 
         self.assertIsNotNone(adls_account.id)
         self.assertIn(account_name, adls_account.id)
-        # self.assertIn(account_name, adls_account.properties.endpoint)
+        # self.assertIn(account_name, adls_account.endpoint)
         self.assertEqual(self.region, adls_account.location)
         self.assertEqual('Microsoft.DataLakeStore/accounts', adls_account.type)
-        # self.assertEqual(azure.mgmt.datalake.store.models.EncryptionState.enabled, adls_account.properties.encryption_state)
-        self.assertEqual(azure.mgmt.datalake.store.models.EncryptionIdentityType.system_assigned, adls_account.identity.type)
+        # self.assertEqual(azure.mgmt.datalake.store.models.EncryptionState.enabled, adls_account.encryption_state)
+        self.assertEqual('SystemAssigned', adls_account.identity.type)
         # self.assertIsNotNone(adls_account.identity.principal_id)
         # self.assertIsNotNone(adls_account.identity.tenant_id)
         self.assertEqual(adls_account.tags['tag1'], 'value1')
@@ -87,14 +81,14 @@ class MgmtDataLakeStoreTest(AzureMgmtTestCase):
 
         # full validation
         self.assertEqual(adls_account.name, account_name)
-        self.assertEqual(azure.mgmt.datalake.store.models.DataLakeStoreAccountStatus.succeeded, adls_account.properties.provisioning_state)
+        self.assertEqual(azure.mgmt.datalake.store.models.DataLakeStoreAccountStatus.succeeded, adls_account.provisioning_state)
         self.assertIsNotNone(adls_account.id)
         self.assertIn(account_name, adls_account.id)
-        self.assertIn(account_name, adls_account.properties.endpoint)
+        self.assertIn(account_name, adls_account.endpoint)
         self.assertEqual(self.region, adls_account.location)
         self.assertEqual('Microsoft.DataLakeStore/accounts', adls_account.type)
-        self.assertEqual(azure.mgmt.datalake.store.models.EncryptionState.enabled, adls_account.properties.encryption_state)
-        self.assertEqual(azure.mgmt.datalake.store.models.EncryptionIdentityType.system_assigned, adls_account.identity.type)
+        self.assertEqual(azure.mgmt.datalake.store.models.EncryptionState.enabled, adls_account.encryption_state)
+        self.assertEqual('SystemAssigned', adls_account.identity.type)
         self.assertIsNotNone(adls_account.identity.principal_id)
         self.assertIsNotNone(adls_account.identity.tenant_id)
         self.assertEqual(adls_account.tags['tag1'], 'value1')
@@ -115,13 +109,13 @@ class MgmtDataLakeStoreTest(AzureMgmtTestCase):
 
         # full validation of the create
         self.assertEqual(adls_account_no_encryption.name, account_name_no_encryption)
-        self.assertEqual(azure.mgmt.datalake.store.models.DataLakeStoreAccountStatus.succeeded, adls_account_no_encryption.properties.provisioning_state)
+        self.assertEqual(azure.mgmt.datalake.store.models.DataLakeStoreAccountStatus.succeeded, adls_account_no_encryption.provisioning_state)
         self.assertIsNotNone(adls_account_no_encryption.id)
         self.assertIn(account_name_no_encryption, adls_account_no_encryption.id)
-        self.assertIn(account_name_no_encryption, adls_account_no_encryption.properties.endpoint)
+        self.assertIn(account_name_no_encryption, adls_account_no_encryption.endpoint)
         self.assertEqual(self.region, adls_account_no_encryption.location)
         self.assertEqual('Microsoft.DataLakeStore/accounts', adls_account_no_encryption.type)
-        self.assertTrue(adls_account_no_encryption.properties.encryption_state == None or azure.mgmt.datalake.store.models.EncryptionState.disabled == adls_account_no_encryption.properties.encryption_state)
+        self.assertEqual(azure.mgmt.datalake.store.models.EncryptionState.enabled, adls_account_no_encryption.encryption_state)
         self.assertIsNone(adls_account_no_encryption.identity)
         self.assertEqual(adls_account_no_encryption.tags['tag1'], 'value1')
 
@@ -141,8 +135,7 @@ class MgmtDataLakeStoreTest(AzureMgmtTestCase):
         adls_account = self.adls_account_client.account.update(
             self.group_name,
             account_name,
-            azure.mgmt.datalake.store.models.DataLakeStoreAccount(
-                name = account_name,
+            azure.mgmt.datalake.store.models.DataLakeStoreAccountUpdateParameters(
                 tags = {
                     'tag2': 'value2'
                 }

@@ -18,11 +18,11 @@ class DataDiskImage(Model):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar lun: the LUN number for a data disk. This value is used to identify
-     data disk image inside the VMImage therefore it must be unique for each
-     data disk. The allowed character for the value is digit.
+    :ivar lun: The LUN number for a data disk. This value is used to identify
+     data disk image inside the VMImage and therefore it must be unique for
+     each data disk.
     :vartype lun: int
-    """ 
+    """
 
     _validation = {
         'lun': {'readonly': True},

@@ -22,8 +22,8 @@ class Encryption(Model):
     :type services: :class:`EncryptionServices
      <azure.mgmt.storage.models.EncryptionServices>`
     :ivar key_source: The encryption keySource (provider). Possible values
-     (case-insensitive):  Microsoft.Storage. Default value:
-     "Microsoft.Storage" .
+     (case-insensitive):  Microsoft.Storage. Default value: "Microsoft.Storage"
+     .
     :vartype key_source: str
     """ 
 

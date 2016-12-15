@@ -36,10 +36,11 @@ class CatalogOperations(object):
     def create_secret(
             self, account_name, database_name, secret_name, password, uri=None, custom_headers=None, raw=False, **operation_config):
         """Creates the specified secret for use with external data sources in the
-        specified database.
+        specified database. This is deprecated and will be removed in the next
+        release. Please use CreateCredential instead.
 
-        :param account_name: The Azure Data Lake Analytics account to execute
-         catalog operations on.
+        :param account_name: The Azure Data Lake Analytics account upon which
+         to execute catalog operations.
         :type account_name: str
         :param database_name: The name of the database in which to create the
          secret.
@@ -56,10 +57,10 @@ class CatalogOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`USqlSecret
-         <azure.mgmt.datalake.analytics.catalog.models.USqlSecret>`
+        :rtype: None
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         parameters = models.DataLakeAnalyticsCatalogSecretCreateOrUpdateParameters(password=password, uri=uri)
 
@@ -100,24 +101,18 @@ class CatalogOperations(object):
             exp.request_id = response.headers.get('x-ms-request-id')
             raise exp
 
-        deserialized = None
-
-        if response.status_code == 200:
-            deserialized = self._deserialize('USqlSecret', response)
-
         if raw:
-            client_raw_response = ClientRawResponse(deserialized, response)
+            client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
-
-        return deserialized
 
     def update_secret(
             self, account_name, database_name, secret_name, password, uri=None, custom_headers=None, raw=False, **operation_config):
-        """Modifies the specified secret for use with external data sources in
-        the specified database.
+        """Modifies the specified secret for use with external data sources in the
+        specified database. This is deprecated and will be removed in the next
+        release. Please use UpdateCredential instead.
 
-        :param account_name: The Azure Data Lake Analytics account to execute
-         catalog operations on.
+        :param account_name: The Azure Data Lake Analytics account upon which
+         to execute catalog operations.
         :type account_name: str
         :param database_name: The name of the database containing the secret.
         :type database_name: str
@@ -137,6 +132,7 @@ class CatalogOperations(object):
          <azure.mgmt.datalake.analytics.catalog.models.USqlSecret>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         parameters = models.DataLakeAnalyticsCatalogSecretCreateOrUpdateParameters(password=password, uri=uri)
 
@@ -190,10 +186,12 @@ class CatalogOperations(object):
 
     def get_secret(
             self, account_name, database_name, secret_name, custom_headers=None, raw=False, **operation_config):
-        """Gets the specified secret in the specified database.
+        """Gets the specified secret in the specified database. This is deprecated
+        and will be removed in the next release. Please use GetCredential
+        instead.
 
-        :param account_name: The Azure Data Lake Analytics account to execute
-         catalog operations on.
+        :param account_name: The Azure Data Lake Analytics account upon which
+         to execute catalog operations.
         :type account_name: str
         :param database_name: The name of the database containing the secret.
         :type database_name: str
@@ -208,6 +206,7 @@ class CatalogOperations(object):
          <azure.mgmt.datalake.analytics.catalog.models.USqlSecret>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/catalog/usql/databases/{databaseName}/secrets/{secretName}'
@@ -255,10 +254,12 @@ class CatalogOperations(object):
 
     def delete_secret(
             self, account_name, database_name, secret_name, custom_headers=None, raw=False, **operation_config):
-        """Deletes the specified secret in the specified database.
+        """Deletes the specified secret in the specified database. This is
+        deprecated and will be removed in the next release. Please use
+        DeleteCredential instead.
 
-        :param account_name: The Azure Data Lake Analytics account to execute
-         catalog operations on.
+        :param account_name: The Azure Data Lake Analytics account upon which
+         to execute catalog operations.
         :type account_name: str
         :param database_name: The name of the database containing the secret.
         :type database_name: str
@@ -272,6 +273,7 @@ class CatalogOperations(object):
         :rtype: None
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/catalog/usql/databases/{databaseName}/secrets/{secretName}'
@@ -312,10 +314,12 @@ class CatalogOperations(object):
 
     def delete_all_secrets(
             self, account_name, database_name, custom_headers=None, raw=False, **operation_config):
-        """Deletes all secrets in the specified database.
+        """Deletes all secrets in the specified database. This is deprecated and
+        will be removed in the next release. In the future, please only drop
+        individual credentials using DeleteCredential.
 
-        :param account_name: The Azure Data Lake Analytics account to execute
-         catalog operations on.
+        :param account_name: The Azure Data Lake Analytics account upon which
+         to execute catalog operations.
         :type account_name: str
         :param database_name: The name of the database containing the secret.
         :type database_name: str
@@ -327,6 +331,7 @@ class CatalogOperations(object):
         :rtype: None
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/catalog/usql/databases/{databaseName}/secrets'
@@ -364,16 +369,404 @@ class CatalogOperations(object):
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
 
+    def create_credential(
+            self, account_name, database_name, credential_name, parameters, custom_headers=None, raw=False, **operation_config):
+        """Creates the specified credential for use with external data sources in
+        the specified database.
+
+        :param account_name: The Azure Data Lake Analytics account upon which
+         to execute catalog operations.
+        :type account_name: str
+        :param database_name: The name of the database in which to create the
+         credential.
+        :type database_name: str
+        :param credential_name: The name of the credential.
+        :type credential_name: str
+        :param parameters: The parameters required to create the credential
+         (name and password)
+        :type parameters:
+         :class:`DataLakeAnalyticsCatalogCredentialCreateParameters
+         <azure.mgmt.datalake.analytics.catalog.models.DataLakeAnalyticsCatalogCredentialCreateParameters>`
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :rtype: None
+        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+         if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        """
+        # Construct URL
+        url = '/catalog/usql/databases/{databaseName}/credentials/{credentialName}'
+        path_format_arguments = {
+            'accountName': self._serialize.url("account_name", account_name, 'str', skip_quote=True),
+            'adlaCatalogDnsSuffix': self._serialize.url("self.config.adla_catalog_dns_suffix", self.config.adla_catalog_dns_suffix, 'str', skip_quote=True),
+            'databaseName': self._serialize.url("database_name", database_name, 'str'),
+            'credentialName': self._serialize.url("credential_name", credential_name, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+        # Construct body
+        body_content = self._serialize.body(parameters, 'DataLakeAnalyticsCatalogCredentialCreateParameters')
+
+        # Construct and send request
+        request = self._client.put(url, query_parameters)
+        response = self._client.send(
+            request, header_parameters, body_content, **operation_config)
+
+        if response.status_code not in [200]:
+            exp = CloudError(response)
+            exp.request_id = response.headers.get('x-ms-request-id')
+            raise exp
+
+        if raw:
+            client_raw_response = ClientRawResponse(None, response)
+            return client_raw_response
+
+    def update_credential(
+            self, account_name, database_name, credential_name, parameters, custom_headers=None, raw=False, **operation_config):
+        """Modifies the specified credential for use with external data sources in
+        the specified database.
+
+        :param account_name: The Azure Data Lake Analytics account upon which
+         to execute catalog operations.
+        :type account_name: str
+        :param database_name: The name of the database containing the
+         credential.
+        :type database_name: str
+        :param credential_name: The name of the credential.
+        :type credential_name: str
+        :param parameters: The parameters required to modify the credential
+         (name and password)
+        :type parameters:
+         :class:`DataLakeAnalyticsCatalogCredentialUpdateParameters
+         <azure.mgmt.datalake.analytics.catalog.models.DataLakeAnalyticsCatalogCredentialUpdateParameters>`
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :rtype: None
+        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+         if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        """
+        # Construct URL
+        url = '/catalog/usql/databases/{databaseName}/credentials/{credentialName}'
+        path_format_arguments = {
+            'accountName': self._serialize.url("account_name", account_name, 'str', skip_quote=True),
+            'adlaCatalogDnsSuffix': self._serialize.url("self.config.adla_catalog_dns_suffix", self.config.adla_catalog_dns_suffix, 'str', skip_quote=True),
+            'databaseName': self._serialize.url("database_name", database_name, 'str'),
+            'credentialName': self._serialize.url("credential_name", credential_name, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+        # Construct body
+        body_content = self._serialize.body(parameters, 'DataLakeAnalyticsCatalogCredentialUpdateParameters')
+
+        # Construct and send request
+        request = self._client.patch(url, query_parameters)
+        response = self._client.send(
+            request, header_parameters, body_content, **operation_config)
+
+        if response.status_code not in [200]:
+            exp = CloudError(response)
+            exp.request_id = response.headers.get('x-ms-request-id')
+            raise exp
+
+        if raw:
+            client_raw_response = ClientRawResponse(None, response)
+            return client_raw_response
+
+    def get_credential(
+            self, account_name, database_name, credential_name, custom_headers=None, raw=False, **operation_config):
+        """Retrieves the specified credential from the Data Lake Analytics
+        catalog.
+
+        :param account_name: The Azure Data Lake Analytics account upon which
+         to execute catalog operations.
+        :type account_name: str
+        :param database_name: The name of the database containing the schema.
+        :type database_name: str
+        :param credential_name: The name of the credential.
+        :type credential_name: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :rtype: :class:`USqlCredential
+         <azure.mgmt.datalake.analytics.catalog.models.USqlCredential>`
+        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+         if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        """
+        # Construct URL
+        url = '/catalog/usql/databases/{databaseName}/credentials/{credentialName}'
+        path_format_arguments = {
+            'accountName': self._serialize.url("account_name", account_name, 'str', skip_quote=True),
+            'adlaCatalogDnsSuffix': self._serialize.url("self.config.adla_catalog_dns_suffix", self.config.adla_catalog_dns_suffix, 'str', skip_quote=True),
+            'databaseName': self._serialize.url("database_name", database_name, 'str'),
+            'credentialName': self._serialize.url("credential_name", credential_name, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+        # Construct and send request
+        request = self._client.get(url, query_parameters)
+        response = self._client.send(request, header_parameters, **operation_config)
+
+        if response.status_code not in [200]:
+            exp = CloudError(response)
+            exp.request_id = response.headers.get('x-ms-request-id')
+            raise exp
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('USqlCredential', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+
+    def delete_credential(
+            self, account_name, database_name, credential_name, cascade=False, password=None, custom_headers=None, raw=False, **operation_config):
+        """Deletes the specified credential in the specified database.
+
+        :param account_name: The Azure Data Lake Analytics account upon which
+         to execute catalog operations.
+        :type account_name: str
+        :param database_name: The name of the database containing the
+         credential.
+        :type database_name: str
+        :param credential_name: The name of the credential to delete
+        :type credential_name: str
+        :param cascade: Indicates if the delete should be a cascading delete
+         (which deletes all resources dependent on the credential as well as
+         the credential) or not. If false will fail if there are any resources
+         relying on the credential.
+        :type cascade: bool
+        :param password: the current password for the credential and user with
+         access to the data source. This is required if the requester is not
+         the account owner.
+        :type password: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :rtype: None
+        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+         if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        """
+        parameters = None
+        if password is not None:
+            parameters = models.DataLakeAnalyticsCatalogCredentialDeleteParameters(password=password)
+
+        # Construct URL
+        url = '/catalog/usql/databases/{databaseName}/credentials/{credentialName}'
+        path_format_arguments = {
+            'accountName': self._serialize.url("account_name", account_name, 'str', skip_quote=True),
+            'adlaCatalogDnsSuffix': self._serialize.url("self.config.adla_catalog_dns_suffix", self.config.adla_catalog_dns_suffix, 'str', skip_quote=True),
+            'databaseName': self._serialize.url("database_name", database_name, 'str'),
+            'credentialName': self._serialize.url("credential_name", credential_name, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        if cascade is not None:
+            query_parameters['cascade'] = self._serialize.query("cascade", cascade, 'bool')
+        query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+        # Construct body
+        if parameters is not None:
+            body_content = self._serialize.body(parameters, 'DataLakeAnalyticsCatalogCredentialDeleteParameters')
+        else:
+            body_content = None
+
+        # Construct and send request
+        request = self._client.post(url, query_parameters)
+        response = self._client.send(
+            request, header_parameters, body_content, **operation_config)
+
+        if response.status_code not in [200]:
+            exp = CloudError(response)
+            exp.request_id = response.headers.get('x-ms-request-id')
+            raise exp
+
+        if raw:
+            client_raw_response = ClientRawResponse(None, response)
+            return client_raw_response
+
+    def list_credentials(
+            self, account_name, database_name, filter=None, top=None, skip=None, select=None, orderby=None, count=None, custom_headers=None, raw=False, **operation_config):
+        """Retrieves the list of credentials from the Data Lake Analytics catalog.
+
+        :param account_name: The Azure Data Lake Analytics account upon which
+         to execute catalog operations.
+        :type account_name: str
+        :param database_name: The name of the database containing the schema.
+        :type database_name: str
+        :param filter: OData filter. Optional.
+        :type filter: str
+        :param top: The number of items to return. Optional.
+        :type top: int
+        :param skip: The number of items to skip over before returning
+         elements. Optional.
+        :type skip: int
+        :param select: OData Select statement. Limits the properties on each
+         entry to just those requested, e.g.
+         Categories?$select=CategoryName,Description. Optional.
+        :type select: str
+        :param orderby: OrderBy clause. One or more comma-separated
+         expressions with an optional "asc" (the default) or "desc" depending
+         on the order you'd like the values sorted, e.g.
+         Categories?$orderby=CategoryName desc. Optional.
+        :type orderby: str
+        :param count: The Boolean value of true or false to request a count of
+         the matching resources included with the resources in the response,
+         e.g. Categories?$count=true. Optional.
+        :type count: bool
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :rtype: :class:`USqlCredentialPaged
+         <azure.mgmt.datalake.analytics.catalog.models.USqlCredentialPaged>`
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        """
+        def internal_paging(next_link=None, raw=False):
+
+            if not next_link:
+                # Construct URL
+                url = '/catalog/usql/databases/{databaseName}/credentials'
+                path_format_arguments = {
+                    'accountName': self._serialize.url("account_name", account_name, 'str', skip_quote=True),
+                    'adlaCatalogDnsSuffix': self._serialize.url("self.config.adla_catalog_dns_suffix", self.config.adla_catalog_dns_suffix, 'str', skip_quote=True),
+                    'databaseName': self._serialize.url("database_name", database_name, 'str')
+                }
+                url = self._client.format_url(url, **path_format_arguments)
+
+                # Construct parameters
+                query_parameters = {}
+                if filter is not None:
+                    query_parameters['$filter'] = self._serialize.query("filter", filter, 'str')
+                if top is not None:
+                    query_parameters['$top'] = self._serialize.query("top", top, 'int', minimum=1)
+                if skip is not None:
+                    query_parameters['$skip'] = self._serialize.query("skip", skip, 'int', minimum=1)
+                if select is not None:
+                    query_parameters['$select'] = self._serialize.query("select", select, 'str')
+                if orderby is not None:
+                    query_parameters['$orderby'] = self._serialize.query("orderby", orderby, 'str')
+                if count is not None:
+                    query_parameters['$count'] = self._serialize.query("count", count, 'bool')
+                query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
+
+            else:
+                url = next_link
+                query_parameters = {}
+
+            # Construct headers
+            header_parameters = {}
+            header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+            if self.config.generate_client_request_id:
+                header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+            if custom_headers:
+                header_parameters.update(custom_headers)
+            if self.config.accept_language is not None:
+                header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+            # Construct and send request
+            request = self._client.get(url, query_parameters)
+            response = self._client.send(
+                request, header_parameters, **operation_config)
+
+            if response.status_code not in [200]:
+                exp = CloudError(response)
+                exp.request_id = response.headers.get('x-ms-request-id')
+                raise exp
+
+            return response
+
+        # Deserialize response
+        deserialized = models.USqlCredentialPaged(internal_paging, self._deserialize.dependencies)
+
+        if raw:
+            header_dict = {}
+            client_raw_response = models.USqlCredentialPaged(internal_paging, self._deserialize.dependencies, header_dict)
+            return client_raw_response
+
+        return deserialized
+
     def get_external_data_source(
             self, account_name, database_name, external_data_source_name, custom_headers=None, raw=False, **operation_config):
         """Retrieves the specified external data source from the Data Lake
         Analytics catalog.
 
-        :param account_name: The Azure Data Lake Analytics account to execute
-         catalog operations on.
+        :param account_name: The Azure Data Lake Analytics account upon which
+         to execute catalog operations.
         :type account_name: str
-        :param database_name: The name of the database containing the
-         external data source.
+        :param database_name: The name of the database containing the external
+         data source.
         :type database_name: str
         :param external_data_source_name: The name of the external data
          source.
@@ -387,6 +780,7 @@ class CatalogOperations(object):
          <azure.mgmt.datalake.analytics.catalog.models.USqlExternalDataSource>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/catalog/usql/databases/{databaseName}/externaldatasources/{externalDataSourceName}'
@@ -433,15 +827,15 @@ class CatalogOperations(object):
         return deserialized
 
     def list_external_data_sources(
-            self, account_name, database_name, filter=None, top=None, skip=None, expand=None, select=None, orderby=None, count=None, custom_headers=None, raw=False, **operation_config):
+            self, account_name, database_name, filter=None, top=None, skip=None, select=None, orderby=None, count=None, custom_headers=None, raw=False, **operation_config):
         """Retrieves the list of external data sources from the Data Lake
         Analytics catalog.
 
-        :param account_name: The Azure Data Lake Analytics account to execute
-         catalog operations on.
+        :param account_name: The Azure Data Lake Analytics account upon which
+         to execute catalog operations.
         :type account_name: str
-        :param database_name: The name of the database containing the
-         external data sources.
+        :param database_name: The name of the database containing the external
+         data sources.
         :type database_name: str
         :param filter: OData filter. Optional.
         :type filter: str
@@ -450,10 +844,6 @@ class CatalogOperations(object):
         :param skip: The number of items to skip over before returning
          elements. Optional.
         :type skip: int
-        :param expand: OData expansion. Expand related resources in line with
-         the retrieved resources, e.g. Categories?$expand=Products would
-         expand Product data in line with each Category entry. Optional.
-        :type expand: str
         :param select: OData Select statement. Limits the properties on each
          entry to just those requested, e.g.
          Categories?$select=CategoryName,Description. Optional.
@@ -463,9 +853,9 @@ class CatalogOperations(object):
          on the order you'd like the values sorted, e.g.
          Categories?$orderby=CategoryName desc. Optional.
         :type orderby: str
-        :param count: The Boolean value of true or false to request a count
-         of the matching resources included with the resources in the
-         response, e.g. Categories?$count=true. Optional.
+        :param count: The Boolean value of true or false to request a count of
+         the matching resources included with the resources in the response,
+         e.g. Categories?$count=true. Optional.
         :type count: bool
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -474,6 +864,7 @@ class CatalogOperations(object):
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`USqlExternalDataSourcePaged
          <azure.mgmt.datalake.analytics.catalog.models.USqlExternalDataSourcePaged>`
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -492,11 +883,9 @@ class CatalogOperations(object):
                 if filter is not None:
                     query_parameters['$filter'] = self._serialize.query("filter", filter, 'str')
                 if top is not None:
-                    query_parameters['$top'] = self._serialize.query("top", top, 'int')
+                    query_parameters['$top'] = self._serialize.query("top", top, 'int', minimum=1)
                 if skip is not None:
-                    query_parameters['$skip'] = self._serialize.query("skip", skip, 'int')
-                if expand is not None:
-                    query_parameters['$expand'] = self._serialize.query("expand", expand, 'str')
+                    query_parameters['$skip'] = self._serialize.query("skip", skip, 'int', minimum=1)
                 if select is not None:
                     query_parameters['$select'] = self._serialize.query("select", select, 'str')
                 if orderby is not None:
@@ -541,185 +930,12 @@ class CatalogOperations(object):
 
         return deserialized
 
-    def get_credential(
-            self, account_name, database_name, credential_name, custom_headers=None, raw=False, **operation_config):
-        """Retrieves the specified credential from the Data Lake Analytics
-        catalog.
-
-        :param account_name: The Azure Data Lake Analytics account to execute
-         catalog operations on.
-        :type account_name: str
-        :param database_name: The name of the database containing the schema.
-        :type database_name: str
-        :param credential_name: The name of the credential.
-        :type credential_name: str
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`USqlCredential
-         <azure.mgmt.datalake.analytics.catalog.models.USqlCredential>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
-        """
-        # Construct URL
-        url = '/catalog/usql/databases/{databaseName}/credentials/{credentialName}'
-        path_format_arguments = {
-            'accountName': self._serialize.url("account_name", account_name, 'str', skip_quote=True),
-            'adlaCatalogDnsSuffix': self._serialize.url("self.config.adla_catalog_dns_suffix", self.config.adla_catalog_dns_suffix, 'str', skip_quote=True),
-            'databaseName': self._serialize.url("database_name", database_name, 'str'),
-            'credentialName': self._serialize.url("credential_name", credential_name, 'str')
-        }
-        url = self._client.format_url(url, **path_format_arguments)
-
-        # Construct parameters
-        query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
-
-        # Construct headers
-        header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
-        if self.config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-        if custom_headers:
-            header_parameters.update(custom_headers)
-        if self.config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
-
-        # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
-
-        if response.status_code not in [200]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
-
-        deserialized = None
-
-        if response.status_code == 200:
-            deserialized = self._deserialize('USqlCredential', response)
-
-        if raw:
-            client_raw_response = ClientRawResponse(deserialized, response)
-            return client_raw_response
-
-        return deserialized
-
-    def list_credentials(
-            self, account_name, database_name, filter=None, top=None, skip=None, expand=None, select=None, orderby=None, count=None, custom_headers=None, raw=False, **operation_config):
-        """Retrieves the list of credentials from the Data Lake Analytics catalog.
-
-        :param account_name: The Azure Data Lake Analytics account to execute
-         catalog operations on.
-        :type account_name: str
-        :param database_name: The name of the database containing the schema.
-        :type database_name: str
-        :param filter: OData filter. Optional.
-        :type filter: str
-        :param top: The number of items to return. Optional.
-        :type top: int
-        :param skip: The number of items to skip over before returning
-         elements. Optional.
-        :type skip: int
-        :param expand: OData expansion. Expand related resources in line with
-         the retrieved resources, e.g. Categories?$expand=Products would
-         expand Product data in line with each Category entry. Optional.
-        :type expand: str
-        :param select: OData Select statement. Limits the properties on each
-         entry to just those requested, e.g.
-         Categories?$select=CategoryName,Description. Optional.
-        :type select: str
-        :param orderby: OrderBy clause. One or more comma-separated
-         expressions with an optional "asc" (the default) or "desc" depending
-         on the order you'd like the values sorted, e.g.
-         Categories?$orderby=CategoryName desc. Optional.
-        :type orderby: str
-        :param count: The Boolean value of true or false to request a count
-         of the matching resources included with the resources in the
-         response, e.g. Categories?$count=true. Optional.
-        :type count: bool
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`USqlCredentialPaged
-         <azure.mgmt.datalake.analytics.catalog.models.USqlCredentialPaged>`
-        """
-        def internal_paging(next_link=None, raw=False):
-
-            if not next_link:
-                # Construct URL
-                url = '/catalog/usql/databases/{databaseName}/credentials'
-                path_format_arguments = {
-                    'accountName': self._serialize.url("account_name", account_name, 'str', skip_quote=True),
-                    'adlaCatalogDnsSuffix': self._serialize.url("self.config.adla_catalog_dns_suffix", self.config.adla_catalog_dns_suffix, 'str', skip_quote=True),
-                    'databaseName': self._serialize.url("database_name", database_name, 'str')
-                }
-                url = self._client.format_url(url, **path_format_arguments)
-
-                # Construct parameters
-                query_parameters = {}
-                if filter is not None:
-                    query_parameters['$filter'] = self._serialize.query("filter", filter, 'str')
-                if top is not None:
-                    query_parameters['$top'] = self._serialize.query("top", top, 'int')
-                if skip is not None:
-                    query_parameters['$skip'] = self._serialize.query("skip", skip, 'int')
-                if expand is not None:
-                    query_parameters['$expand'] = self._serialize.query("expand", expand, 'str')
-                if select is not None:
-                    query_parameters['$select'] = self._serialize.query("select", select, 'str')
-                if orderby is not None:
-                    query_parameters['$orderby'] = self._serialize.query("orderby", orderby, 'str')
-                if count is not None:
-                    query_parameters['$count'] = self._serialize.query("count", count, 'bool')
-                query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
-
-            else:
-                url = next_link
-                query_parameters = {}
-
-            # Construct headers
-            header_parameters = {}
-            header_parameters['Content-Type'] = 'application/json; charset=utf-8'
-            if self.config.generate_client_request_id:
-                header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-            if custom_headers:
-                header_parameters.update(custom_headers)
-            if self.config.accept_language is not None:
-                header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
-
-            # Construct and send request
-            request = self._client.get(url, query_parameters)
-            response = self._client.send(
-                request, header_parameters, **operation_config)
-
-            if response.status_code not in [200]:
-                exp = CloudError(response)
-                exp.request_id = response.headers.get('x-ms-request-id')
-                raise exp
-
-            return response
-
-        # Deserialize response
-        deserialized = models.USqlCredentialPaged(internal_paging, self._deserialize.dependencies)
-
-        if raw:
-            header_dict = {}
-            client_raw_response = models.USqlCredentialPaged(internal_paging, self._deserialize.dependencies, header_dict)
-            return client_raw_response
-
-        return deserialized
-
     def get_procedure(
             self, account_name, database_name, schema_name, procedure_name, custom_headers=None, raw=False, **operation_config):
         """Retrieves the specified procedure from the Data Lake Analytics catalog.
 
-        :param account_name: The Azure Data Lake Analytics account to execute
-         catalog operations on.
+        :param account_name: The Azure Data Lake Analytics account upon which
+         to execute catalog operations.
         :type account_name: str
         :param database_name: The name of the database containing the
          procedure.
@@ -737,6 +953,7 @@ class CatalogOperations(object):
          <azure.mgmt.datalake.analytics.catalog.models.USqlProcedure>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/catalog/usql/databases/{databaseName}/schemas/{schemaName}/procedures/{procedureName}'
@@ -784,11 +1001,11 @@ class CatalogOperations(object):
         return deserialized
 
     def list_procedures(
-            self, account_name, database_name, schema_name, filter=None, top=None, skip=None, expand=None, select=None, orderby=None, count=None, custom_headers=None, raw=False, **operation_config):
+            self, account_name, database_name, schema_name, filter=None, top=None, skip=None, select=None, orderby=None, count=None, custom_headers=None, raw=False, **operation_config):
         """Retrieves the list of procedures from the Data Lake Analytics catalog.
 
-        :param account_name: The Azure Data Lake Analytics account to execute
-         catalog operations on.
+        :param account_name: The Azure Data Lake Analytics account upon which
+         to execute catalog operations.
         :type account_name: str
         :param database_name: The name of the database containing the
          procedures.
@@ -802,10 +1019,6 @@ class CatalogOperations(object):
         :param skip: The number of items to skip over before returning
          elements. Optional.
         :type skip: int
-        :param expand: OData expansion. Expand related resources in line with
-         the retrieved resources, e.g. Categories?$expand=Products would
-         expand Product data in line with each Category entry. Optional.
-        :type expand: str
         :param select: OData Select statement. Limits the properties on each
          entry to just those requested, e.g.
          Categories?$select=CategoryName,Description. Optional.
@@ -815,9 +1028,9 @@ class CatalogOperations(object):
          on the order you'd like the values sorted, e.g.
          Categories?$orderby=CategoryName desc. Optional.
         :type orderby: str
-        :param count: The Boolean value of true or false to request a count
-         of the matching resources included with the resources in the
-         response, e.g. Categories?$count=true. Optional.
+        :param count: The Boolean value of true or false to request a count of
+         the matching resources included with the resources in the response,
+         e.g. Categories?$count=true. Optional.
         :type count: bool
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -826,6 +1039,7 @@ class CatalogOperations(object):
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`USqlProcedurePaged
          <azure.mgmt.datalake.analytics.catalog.models.USqlProcedurePaged>`
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -845,11 +1059,9 @@ class CatalogOperations(object):
                 if filter is not None:
                     query_parameters['$filter'] = self._serialize.query("filter", filter, 'str')
                 if top is not None:
-                    query_parameters['$top'] = self._serialize.query("top", top, 'int')
+                    query_parameters['$top'] = self._serialize.query("top", top, 'int', minimum=1)
                 if skip is not None:
-                    query_parameters['$skip'] = self._serialize.query("skip", skip, 'int')
-                if expand is not None:
-                    query_parameters['$expand'] = self._serialize.query("expand", expand, 'str')
+                    query_parameters['$skip'] = self._serialize.query("skip", skip, 'int', minimum=1)
                 if select is not None:
                     query_parameters['$select'] = self._serialize.query("select", select, 'str')
                 if orderby is not None:
@@ -898,8 +1110,8 @@ class CatalogOperations(object):
             self, account_name, database_name, schema_name, table_name, custom_headers=None, raw=False, **operation_config):
         """Retrieves the specified table from the Data Lake Analytics catalog.
 
-        :param account_name: The Azure Data Lake Analytics account to execute
-         catalog operations on.
+        :param account_name: The Azure Data Lake Analytics account upon which
+         to execute catalog operations.
         :type account_name: str
         :param database_name: The name of the database containing the table.
         :type database_name: str
@@ -916,6 +1128,7 @@ class CatalogOperations(object):
          <azure.mgmt.datalake.analytics.catalog.models.USqlTable>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/catalog/usql/databases/{databaseName}/schemas/{schemaName}/tables/{tableName}'
@@ -963,11 +1176,11 @@ class CatalogOperations(object):
         return deserialized
 
     def list_tables(
-            self, account_name, database_name, schema_name, filter=None, top=None, skip=None, expand=None, select=None, orderby=None, count=None, custom_headers=None, raw=False, **operation_config):
+            self, account_name, database_name, schema_name, filter=None, top=None, skip=None, select=None, orderby=None, count=None, custom_headers=None, raw=False, **operation_config):
         """Retrieves the list of tables from the Data Lake Analytics catalog.
 
-        :param account_name: The Azure Data Lake Analytics account to execute
-         catalog operations on.
+        :param account_name: The Azure Data Lake Analytics account upon which
+         to execute catalog operations.
         :type account_name: str
         :param database_name: The name of the database containing the tables.
         :type database_name: str
@@ -980,10 +1193,6 @@ class CatalogOperations(object):
         :param skip: The number of items to skip over before returning
          elements. Optional.
         :type skip: int
-        :param expand: OData expansion. Expand related resources in line with
-         the retrieved resources, e.g. Categories?$expand=Products would
-         expand Product data in line with each Category entry. Optional.
-        :type expand: str
         :param select: OData Select statement. Limits the properties on each
          entry to just those requested, e.g.
          Categories?$select=CategoryName,Description. Optional.
@@ -993,9 +1202,9 @@ class CatalogOperations(object):
          on the order you'd like the values sorted, e.g.
          Categories?$orderby=CategoryName desc. Optional.
         :type orderby: str
-        :param count: The Boolean value of true or false to request a count
-         of the matching resources included with the resources in the
-         response, e.g. Categories?$count=true. Optional.
+        :param count: The Boolean value of true or false to request a count of
+         the matching resources included with the resources in the response,
+         e.g. Categories?$count=true. Optional.
         :type count: bool
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -1004,6 +1213,7 @@ class CatalogOperations(object):
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`USqlTablePaged
          <azure.mgmt.datalake.analytics.catalog.models.USqlTablePaged>`
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -1023,11 +1233,9 @@ class CatalogOperations(object):
                 if filter is not None:
                     query_parameters['$filter'] = self._serialize.query("filter", filter, 'str')
                 if top is not None:
-                    query_parameters['$top'] = self._serialize.query("top", top, 'int')
+                    query_parameters['$top'] = self._serialize.query("top", top, 'int', minimum=1)
                 if skip is not None:
-                    query_parameters['$skip'] = self._serialize.query("skip", skip, 'int')
-                if expand is not None:
-                    query_parameters['$expand'] = self._serialize.query("expand", expand, 'str')
+                    query_parameters['$skip'] = self._serialize.query("skip", skip, 'int', minimum=1)
                 if select is not None:
                     query_parameters['$select'] = self._serialize.query("select", select, 'str')
                 if orderby is not None:
@@ -1077,8 +1285,8 @@ class CatalogOperations(object):
         """Retrieves the specified table type from the Data Lake Analytics
         catalog.
 
-        :param account_name: The Azure Data Lake Analytics account to execute
-         catalog operations on.
+        :param account_name: The Azure Data Lake Analytics account upon which
+         to execute catalog operations.
         :type account_name: str
         :param database_name: The name of the database containing the table
          type.
@@ -1096,6 +1304,7 @@ class CatalogOperations(object):
          <azure.mgmt.datalake.analytics.catalog.models.USqlTableType>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/catalog/usql/databases/{databaseName}/schemas/{schemaName}/tabletypes/{tableTypeName}'
@@ -1143,11 +1352,11 @@ class CatalogOperations(object):
         return deserialized
 
     def list_table_types(
-            self, account_name, database_name, schema_name, filter=None, top=None, skip=None, expand=None, select=None, orderby=None, count=None, custom_headers=None, raw=False, **operation_config):
+            self, account_name, database_name, schema_name, filter=None, top=None, skip=None, select=None, orderby=None, count=None, custom_headers=None, raw=False, **operation_config):
         """Retrieves the list of table types from the Data Lake Analytics catalog.
 
-        :param account_name: The Azure Data Lake Analytics account to execute
-         catalog operations on.
+        :param account_name: The Azure Data Lake Analytics account upon which
+         to execute catalog operations.
         :type account_name: str
         :param database_name: The name of the database containing the table
          types.
@@ -1161,10 +1370,6 @@ class CatalogOperations(object):
         :param skip: The number of items to skip over before returning
          elements. Optional.
         :type skip: int
-        :param expand: OData expansion. Expand related resources in line with
-         the retrieved resources, e.g. Categories?$expand=Products would
-         expand Product data in line with each Category entry. Optional.
-        :type expand: str
         :param select: OData Select statement. Limits the properties on each
          entry to just those requested, e.g.
          Categories?$select=CategoryName,Description. Optional.
@@ -1174,9 +1379,9 @@ class CatalogOperations(object):
          on the order you'd like the values sorted, e.g.
          Categories?$orderby=CategoryName desc. Optional.
         :type orderby: str
-        :param count: The Boolean value of true or false to request a count
-         of the matching resources included with the resources in the
-         response, e.g. Categories?$count=true. Optional.
+        :param count: The Boolean value of true or false to request a count of
+         the matching resources included with the resources in the response,
+         e.g. Categories?$count=true. Optional.
         :type count: bool
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -1185,6 +1390,7 @@ class CatalogOperations(object):
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`USqlTableTypePaged
          <azure.mgmt.datalake.analytics.catalog.models.USqlTableTypePaged>`
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -1204,11 +1410,9 @@ class CatalogOperations(object):
                 if filter is not None:
                     query_parameters['$filter'] = self._serialize.query("filter", filter, 'str')
                 if top is not None:
-                    query_parameters['$top'] = self._serialize.query("top", top, 'int')
+                    query_parameters['$top'] = self._serialize.query("top", top, 'int', minimum=1)
                 if skip is not None:
-                    query_parameters['$skip'] = self._serialize.query("skip", skip, 'int')
-                if expand is not None:
-                    query_parameters['$expand'] = self._serialize.query("expand", expand, 'str')
+                    query_parameters['$skip'] = self._serialize.query("skip", skip, 'int', minimum=1)
                 if select is not None:
                     query_parameters['$select'] = self._serialize.query("select", select, 'str')
                 if orderby is not None:
@@ -1257,8 +1461,8 @@ class CatalogOperations(object):
             self, account_name, database_name, schema_name, view_name, custom_headers=None, raw=False, **operation_config):
         """Retrieves the specified view from the Data Lake Analytics catalog.
 
-        :param account_name: The Azure Data Lake Analytics account to execute
-         catalog operations on.
+        :param account_name: The Azure Data Lake Analytics account upon which
+         to execute catalog operations.
         :type account_name: str
         :param database_name: The name of the database containing the view.
         :type database_name: str
@@ -1275,6 +1479,7 @@ class CatalogOperations(object):
          <azure.mgmt.datalake.analytics.catalog.models.USqlView>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/catalog/usql/databases/{databaseName}/schemas/{schemaName}/views/{viewName}'
@@ -1322,11 +1527,11 @@ class CatalogOperations(object):
         return deserialized
 
     def list_views(
-            self, account_name, database_name, schema_name, filter=None, top=None, skip=None, expand=None, select=None, orderby=None, count=None, custom_headers=None, raw=False, **operation_config):
+            self, account_name, database_name, schema_name, filter=None, top=None, skip=None, select=None, orderby=None, count=None, custom_headers=None, raw=False, **operation_config):
         """Retrieves the list of views from the Data Lake Analytics catalog.
 
-        :param account_name: The Azure Data Lake Analytics account to execute
-         catalog operations on.
+        :param account_name: The Azure Data Lake Analytics account upon which
+         to execute catalog operations.
         :type account_name: str
         :param database_name: The name of the database containing the views.
         :type database_name: str
@@ -1339,10 +1544,6 @@ class CatalogOperations(object):
         :param skip: The number of items to skip over before returning
          elements. Optional.
         :type skip: int
-        :param expand: OData expansion. Expand related resources in line with
-         the retrieved resources, e.g. Categories?$expand=Products would
-         expand Product data in line with each Category entry. Optional.
-        :type expand: str
         :param select: OData Select statement. Limits the properties on each
          entry to just those requested, e.g.
          Categories?$select=CategoryName,Description. Optional.
@@ -1352,9 +1553,9 @@ class CatalogOperations(object):
          on the order you'd like the values sorted, e.g.
          Categories?$orderby=CategoryName desc. Optional.
         :type orderby: str
-        :param count: The Boolean value of true or false to request a count
-         of the matching resources included with the resources in the
-         response, e.g. Categories?$count=true. Optional.
+        :param count: The Boolean value of true or false to request a count of
+         the matching resources included with the resources in the response,
+         e.g. Categories?$count=true. Optional.
         :type count: bool
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -1363,6 +1564,7 @@ class CatalogOperations(object):
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`USqlViewPaged
          <azure.mgmt.datalake.analytics.catalog.models.USqlViewPaged>`
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -1382,11 +1584,9 @@ class CatalogOperations(object):
                 if filter is not None:
                     query_parameters['$filter'] = self._serialize.query("filter", filter, 'str')
                 if top is not None:
-                    query_parameters['$top'] = self._serialize.query("top", top, 'int')
+                    query_parameters['$top'] = self._serialize.query("top", top, 'int', minimum=1)
                 if skip is not None:
-                    query_parameters['$skip'] = self._serialize.query("skip", skip, 'int')
-                if expand is not None:
-                    query_parameters['$expand'] = self._serialize.query("expand", expand, 'str')
+                    query_parameters['$skip'] = self._serialize.query("skip", skip, 'int', minimum=1)
                 if select is not None:
                     query_parameters['$select'] = self._serialize.query("select", select, 'str')
                 if orderby is not None:
@@ -1436,8 +1636,8 @@ class CatalogOperations(object):
         """Retrieves the specified table statistics from the Data Lake Analytics
         catalog.
 
-        :param account_name: The Azure Data Lake Analytics account to execute
-         catalog operations on.
+        :param account_name: The Azure Data Lake Analytics account upon which
+         to execute catalog operations.
         :type account_name: str
         :param database_name: The name of the database containing the
          statistics.
@@ -1457,6 +1657,7 @@ class CatalogOperations(object):
          <azure.mgmt.datalake.analytics.catalog.models.USqlTableStatistics>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/catalog/usql/databases/{databaseName}/schemas/{schemaName}/tables/{tableName}/statistics/{statisticsName}'
@@ -1505,12 +1706,12 @@ class CatalogOperations(object):
         return deserialized
 
     def list_table_statistics(
-            self, account_name, database_name, schema_name, table_name, filter=None, top=None, skip=None, expand=None, select=None, orderby=None, count=None, custom_headers=None, raw=False, **operation_config):
+            self, account_name, database_name, schema_name, table_name, filter=None, top=None, skip=None, select=None, orderby=None, count=None, custom_headers=None, raw=False, **operation_config):
         """Retrieves the list of table statistics from the Data Lake Analytics
         catalog.
 
-        :param account_name: The Azure Data Lake Analytics account to execute
-         catalog operations on.
+        :param account_name: The Azure Data Lake Analytics account upon which
+         to execute catalog operations.
         :type account_name: str
         :param database_name: The name of the database containing the
          statistics.
@@ -1526,10 +1727,6 @@ class CatalogOperations(object):
         :param skip: The number of items to skip over before returning
          elements. Optional.
         :type skip: int
-        :param expand: OData expansion. Expand related resources in line with
-         the retrieved resources, e.g. Categories?$expand=Products would
-         expand Product data in line with each Category entry. Optional.
-        :type expand: str
         :param select: OData Select statement. Limits the properties on each
          entry to just those requested, e.g.
          Categories?$select=CategoryName,Description. Optional.
@@ -1539,9 +1736,9 @@ class CatalogOperations(object):
          on the order you'd like the values sorted, e.g.
          Categories?$orderby=CategoryName desc. Optional.
         :type orderby: str
-        :param count: The Boolean value of true or false to request a count
-         of the matching resources included with the resources in the
-         response, e.g. Categories?$count=true. Optional.
+        :param count: The Boolean value of true or false to request a count of
+         the matching resources included with the resources in the response,
+         e.g. Categories?$count=true. Optional.
         :type count: bool
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -1550,6 +1747,7 @@ class CatalogOperations(object):
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`USqlTableStatisticsPaged
          <azure.mgmt.datalake.analytics.catalog.models.USqlTableStatisticsPaged>`
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -1570,11 +1768,9 @@ class CatalogOperations(object):
                 if filter is not None:
                     query_parameters['$filter'] = self._serialize.query("filter", filter, 'str')
                 if top is not None:
-                    query_parameters['$top'] = self._serialize.query("top", top, 'int')
+                    query_parameters['$top'] = self._serialize.query("top", top, 'int', minimum=1)
                 if skip is not None:
-                    query_parameters['$skip'] = self._serialize.query("skip", skip, 'int')
-                if expand is not None:
-                    query_parameters['$expand'] = self._serialize.query("expand", expand, 'str')
+                    query_parameters['$skip'] = self._serialize.query("skip", skip, 'int', minimum=1)
                 if select is not None:
                     query_parameters['$select'] = self._serialize.query("select", select, 'str')
                 if orderby is not None:
@@ -1624,8 +1820,8 @@ class CatalogOperations(object):
         """Retrieves the specified table partition from the Data Lake Analytics
         catalog.
 
-        :param account_name: The Azure Data Lake Analytics account to execute
-         catalog operations on.
+        :param account_name: The Azure Data Lake Analytics account upon which
+         to execute catalog operations.
         :type account_name: str
         :param database_name: The name of the database containing the
          partition.
@@ -1645,6 +1841,7 @@ class CatalogOperations(object):
          <azure.mgmt.datalake.analytics.catalog.models.USqlTablePartition>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/catalog/usql/databases/{databaseName}/schemas/{schemaName}/tables/{tableName}/partitions/{partitionName}'
@@ -1693,12 +1890,12 @@ class CatalogOperations(object):
         return deserialized
 
     def list_table_partitions(
-            self, account_name, database_name, schema_name, table_name, filter=None, top=None, skip=None, expand=None, select=None, orderby=None, count=None, custom_headers=None, raw=False, **operation_config):
+            self, account_name, database_name, schema_name, table_name, filter=None, top=None, skip=None, select=None, orderby=None, count=None, custom_headers=None, raw=False, **operation_config):
         """Retrieves the list of table partitions from the Data Lake Analytics
         catalog.
 
-        :param account_name: The Azure Data Lake Analytics account to execute
-         catalog operations on.
+        :param account_name: The Azure Data Lake Analytics account upon which
+         to execute catalog operations.
         :type account_name: str
         :param database_name: The name of the database containing the
          partitions.
@@ -1714,10 +1911,6 @@ class CatalogOperations(object):
         :param skip: The number of items to skip over before returning
          elements. Optional.
         :type skip: int
-        :param expand: OData expansion. Expand related resources in line with
-         the retrieved resources, e.g. Categories?$expand=Products would
-         expand Product data in line with each Category entry. Optional.
-        :type expand: str
         :param select: OData Select statement. Limits the properties on each
          entry to just those requested, e.g.
          Categories?$select=CategoryName,Description. Optional.
@@ -1727,9 +1920,9 @@ class CatalogOperations(object):
          on the order you'd like the values sorted, e.g.
          Categories?$orderby=CategoryName desc. Optional.
         :type orderby: str
-        :param count: The Boolean value of true or false to request a count
-         of the matching resources included with the resources in the
-         response, e.g. Categories?$count=true. Optional.
+        :param count: The Boolean value of true or false to request a count of
+         the matching resources included with the resources in the response,
+         e.g. Categories?$count=true. Optional.
         :type count: bool
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -1738,6 +1931,7 @@ class CatalogOperations(object):
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`USqlTablePartitionPaged
          <azure.mgmt.datalake.analytics.catalog.models.USqlTablePartitionPaged>`
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -1758,11 +1952,9 @@ class CatalogOperations(object):
                 if filter is not None:
                     query_parameters['$filter'] = self._serialize.query("filter", filter, 'str')
                 if top is not None:
-                    query_parameters['$top'] = self._serialize.query("top", top, 'int')
+                    query_parameters['$top'] = self._serialize.query("top", top, 'int', minimum=1)
                 if skip is not None:
-                    query_parameters['$skip'] = self._serialize.query("skip", skip, 'int')
-                if expand is not None:
-                    query_parameters['$expand'] = self._serialize.query("expand", expand, 'str')
+                    query_parameters['$skip'] = self._serialize.query("skip", skip, 'int', minimum=1)
                 if select is not None:
                     query_parameters['$select'] = self._serialize.query("select", select, 'str')
                 if orderby is not None:
@@ -1808,12 +2000,12 @@ class CatalogOperations(object):
         return deserialized
 
     def list_types(
-            self, account_name, database_name, schema_name, filter=None, top=None, skip=None, expand=None, select=None, orderby=None, count=None, custom_headers=None, raw=False, **operation_config):
+            self, account_name, database_name, schema_name, filter=None, top=None, skip=None, select=None, orderby=None, count=None, custom_headers=None, raw=False, **operation_config):
         """Retrieves the list of types within the specified database and schema
         from the Data Lake Analytics catalog.
 
-        :param account_name: The Azure Data Lake Analytics account to execute
-         catalog operations on.
+        :param account_name: The Azure Data Lake Analytics account upon which
+         to execute catalog operations.
         :type account_name: str
         :param database_name: The name of the database containing the types.
         :type database_name: str
@@ -1826,10 +2018,6 @@ class CatalogOperations(object):
         :param skip: The number of items to skip over before returning
          elements. Optional.
         :type skip: int
-        :param expand: OData expansion. Expand related resources in line with
-         the retrieved resources, e.g. Categories?$expand=Products would
-         expand Product data in line with each Category entry. Optional.
-        :type expand: str
         :param select: OData Select statement. Limits the properties on each
          entry to just those requested, e.g.
          Categories?$select=CategoryName,Description. Optional.
@@ -1839,9 +2027,9 @@ class CatalogOperations(object):
          on the order you'd like the values sorted, e.g.
          Categories?$orderby=CategoryName desc. Optional.
         :type orderby: str
-        :param count: The Boolean value of true or false to request a count
-         of the matching resources included with the resources in the
-         response, e.g. Categories?$count=true. Optional.
+        :param count: The Boolean value of true or false to request a count of
+         the matching resources included with the resources in the response,
+         e.g. Categories?$count=true. Optional.
         :type count: bool
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -1850,6 +2038,7 @@ class CatalogOperations(object):
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`USqlTypePaged
          <azure.mgmt.datalake.analytics.catalog.models.USqlTypePaged>`
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -1869,11 +2058,9 @@ class CatalogOperations(object):
                 if filter is not None:
                     query_parameters['$filter'] = self._serialize.query("filter", filter, 'str')
                 if top is not None:
-                    query_parameters['$top'] = self._serialize.query("top", top, 'int')
+                    query_parameters['$top'] = self._serialize.query("top", top, 'int', minimum=1)
                 if skip is not None:
-                    query_parameters['$skip'] = self._serialize.query("skip", skip, 'int')
-                if expand is not None:
-                    query_parameters['$expand'] = self._serialize.query("expand", expand, 'str')
+                    query_parameters['$skip'] = self._serialize.query("skip", skip, 'int', minimum=1)
                 if select is not None:
                     query_parameters['$select'] = self._serialize.query("select", select, 'str')
                 if orderby is not None:
@@ -1923,14 +2110,14 @@ class CatalogOperations(object):
         """Retrieves the specified table valued function from the Data Lake
         Analytics catalog.
 
-        :param account_name: The Azure Data Lake Analytics account to execute
-         catalog operations on.
+        :param account_name: The Azure Data Lake Analytics account upon which
+         to execute catalog operations.
         :type account_name: str
         :param database_name: The name of the database containing the table
          valued function.
         :type database_name: str
-        :param schema_name: The name of the schema containing the table
-         valued function.
+        :param schema_name: The name of the schema containing the table valued
+         function.
         :type schema_name: str
         :param table_valued_function_name: The name of the
          tableValuedFunction.
@@ -1944,6 +2131,7 @@ class CatalogOperations(object):
          <azure.mgmt.datalake.analytics.catalog.models.USqlTableValuedFunction>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/catalog/usql/databases/{databaseName}/schemas/{schemaName}/tablevaluedfunctions/{tableValuedFunctionName}'
@@ -1991,18 +2179,18 @@ class CatalogOperations(object):
         return deserialized
 
     def list_table_valued_functions(
-            self, account_name, database_name, schema_name, filter=None, top=None, skip=None, expand=None, select=None, orderby=None, count=None, custom_headers=None, raw=False, **operation_config):
+            self, account_name, database_name, schema_name, filter=None, top=None, skip=None, select=None, orderby=None, count=None, custom_headers=None, raw=False, **operation_config):
         """Retrieves the list of table valued functions from the Data Lake
         Analytics catalog.
 
-        :param account_name: The Azure Data Lake Analytics account to execute
-         catalog operations on.
+        :param account_name: The Azure Data Lake Analytics account upon which
+         to execute catalog operations.
         :type account_name: str
         :param database_name: The name of the database containing the table
          valued functions.
         :type database_name: str
-        :param schema_name: The name of the schema containing the table
-         valued functions.
+        :param schema_name: The name of the schema containing the table valued
+         functions.
         :type schema_name: str
         :param filter: OData filter. Optional.
         :type filter: str
@@ -2011,10 +2199,6 @@ class CatalogOperations(object):
         :param skip: The number of items to skip over before returning
          elements. Optional.
         :type skip: int
-        :param expand: OData expansion. Expand related resources in line with
-         the retrieved resources, e.g. Categories?$expand=Products would
-         expand Product data in line with each Category entry. Optional.
-        :type expand: str
         :param select: OData Select statement. Limits the properties on each
          entry to just those requested, e.g.
          Categories?$select=CategoryName,Description. Optional.
@@ -2024,9 +2208,9 @@ class CatalogOperations(object):
          on the order you'd like the values sorted, e.g.
          Categories?$orderby=CategoryName desc. Optional.
         :type orderby: str
-        :param count: The Boolean value of true or false to request a count
-         of the matching resources included with the resources in the
-         response, e.g. Categories?$count=true. Optional.
+        :param count: The Boolean value of true or false to request a count of
+         the matching resources included with the resources in the response,
+         e.g. Categories?$count=true. Optional.
         :type count: bool
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -2035,6 +2219,7 @@ class CatalogOperations(object):
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`USqlTableValuedFunctionPaged
          <azure.mgmt.datalake.analytics.catalog.models.USqlTableValuedFunctionPaged>`
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -2054,11 +2239,9 @@ class CatalogOperations(object):
                 if filter is not None:
                     query_parameters['$filter'] = self._serialize.query("filter", filter, 'str')
                 if top is not None:
-                    query_parameters['$top'] = self._serialize.query("top", top, 'int')
+                    query_parameters['$top'] = self._serialize.query("top", top, 'int', minimum=1)
                 if skip is not None:
-                    query_parameters['$skip'] = self._serialize.query("skip", skip, 'int')
-                if expand is not None:
-                    query_parameters['$expand'] = self._serialize.query("expand", expand, 'str')
+                    query_parameters['$skip'] = self._serialize.query("skip", skip, 'int', minimum=1)
                 if select is not None:
                     query_parameters['$select'] = self._serialize.query("select", select, 'str')
                 if orderby is not None:
@@ -2107,8 +2290,8 @@ class CatalogOperations(object):
             self, account_name, database_name, assembly_name, custom_headers=None, raw=False, **operation_config):
         """Retrieves the specified assembly from the Data Lake Analytics catalog.
 
-        :param account_name: The Azure Data Lake Analytics account to execute
-         catalog operations on.
+        :param account_name: The Azure Data Lake Analytics account upon which
+         to execute catalog operations.
         :type account_name: str
         :param database_name: The name of the database containing the
          assembly.
@@ -2124,6 +2307,7 @@ class CatalogOperations(object):
          <azure.mgmt.datalake.analytics.catalog.models.USqlAssembly>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/catalog/usql/databases/{databaseName}/assemblies/{assemblyName}'
@@ -2170,11 +2354,11 @@ class CatalogOperations(object):
         return deserialized
 
     def list_assemblies(
-            self, account_name, database_name, filter=None, top=None, skip=None, expand=None, select=None, orderby=None, count=None, custom_headers=None, raw=False, **operation_config):
+            self, account_name, database_name, filter=None, top=None, skip=None, select=None, orderby=None, count=None, custom_headers=None, raw=False, **operation_config):
         """Retrieves the list of assemblies from the Data Lake Analytics catalog.
 
-        :param account_name: The Azure Data Lake Analytics account to execute
-         catalog operations on.
+        :param account_name: The Azure Data Lake Analytics account upon which
+         to execute catalog operations.
         :type account_name: str
         :param database_name: The name of the database containing the
          assembly.
@@ -2186,10 +2370,6 @@ class CatalogOperations(object):
         :param skip: The number of items to skip over before returning
          elements. Optional.
         :type skip: int
-        :param expand: OData expansion. Expand related resources in line with
-         the retrieved resources, e.g. Categories?$expand=Products would
-         expand Product data in line with each Category entry. Optional.
-        :type expand: str
         :param select: OData Select statement. Limits the properties on each
          entry to just those requested, e.g.
          Categories?$select=CategoryName,Description. Optional.
@@ -2199,9 +2379,9 @@ class CatalogOperations(object):
          on the order you'd like the values sorted, e.g.
          Categories?$orderby=CategoryName desc. Optional.
         :type orderby: str
-        :param count: The Boolean value of true or false to request a count
-         of the matching resources included with the resources in the
-         response, e.g. Categories?$count=true. Optional.
+        :param count: The Boolean value of true or false to request a count of
+         the matching resources included with the resources in the response,
+         e.g. Categories?$count=true. Optional.
         :type count: bool
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -2210,6 +2390,7 @@ class CatalogOperations(object):
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`USqlAssemblyClrPaged
          <azure.mgmt.datalake.analytics.catalog.models.USqlAssemblyClrPaged>`
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -2228,11 +2409,9 @@ class CatalogOperations(object):
                 if filter is not None:
                     query_parameters['$filter'] = self._serialize.query("filter", filter, 'str')
                 if top is not None:
-                    query_parameters['$top'] = self._serialize.query("top", top, 'int')
+                    query_parameters['$top'] = self._serialize.query("top", top, 'int', minimum=1)
                 if skip is not None:
-                    query_parameters['$skip'] = self._serialize.query("skip", skip, 'int')
-                if expand is not None:
-                    query_parameters['$expand'] = self._serialize.query("expand", expand, 'str')
+                    query_parameters['$skip'] = self._serialize.query("skip", skip, 'int', minimum=1)
                 if select is not None:
                     query_parameters['$select'] = self._serialize.query("select", select, 'str')
                 if orderby is not None:
@@ -2281,8 +2460,8 @@ class CatalogOperations(object):
             self, account_name, database_name, schema_name, custom_headers=None, raw=False, **operation_config):
         """Retrieves the specified schema from the Data Lake Analytics catalog.
 
-        :param account_name: The Azure Data Lake Analytics account to execute
-         catalog operations on.
+        :param account_name: The Azure Data Lake Analytics account upon which
+         to execute catalog operations.
         :type account_name: str
         :param database_name: The name of the database containing the schema.
         :type database_name: str
@@ -2297,6 +2476,7 @@ class CatalogOperations(object):
          <azure.mgmt.datalake.analytics.catalog.models.USqlSchema>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/catalog/usql/databases/{databaseName}/schemas/{schemaName}'
@@ -2343,11 +2523,11 @@ class CatalogOperations(object):
         return deserialized
 
     def list_schemas(
-            self, account_name, database_name, filter=None, top=None, skip=None, expand=None, select=None, orderby=None, count=None, custom_headers=None, raw=False, **operation_config):
+            self, account_name, database_name, filter=None, top=None, skip=None, select=None, orderby=None, count=None, custom_headers=None, raw=False, **operation_config):
         """Retrieves the list of schemas from the Data Lake Analytics catalog.
 
-        :param account_name: The Azure Data Lake Analytics account to execute
-         catalog operations on.
+        :param account_name: The Azure Data Lake Analytics account upon which
+         to execute catalog operations.
         :type account_name: str
         :param database_name: The name of the database containing the schema.
         :type database_name: str
@@ -2358,10 +2538,6 @@ class CatalogOperations(object):
         :param skip: The number of items to skip over before returning
          elements. Optional.
         :type skip: int
-        :param expand: OData expansion. Expand related resources in line with
-         the retrieved resources, e.g. Categories?$expand=Products would
-         expand Product data in line with each Category entry. Optional.
-        :type expand: str
         :param select: OData Select statement. Limits the properties on each
          entry to just those requested, e.g.
          Categories?$select=CategoryName,Description. Optional.
@@ -2371,9 +2547,9 @@ class CatalogOperations(object):
          on the order you'd like the values sorted, e.g.
          Categories?$orderby=CategoryName desc. Optional.
         :type orderby: str
-        :param count: The Boolean value of true or false to request a count
-         of the matching resources included with the resources in the
-         response, e.g. Categories?$count=true. Optional.
+        :param count: The Boolean value of true or false to request a count of
+         the matching resources included with the resources in the response,
+         e.g. Categories?$count=true. Optional.
         :type count: bool
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -2382,6 +2558,7 @@ class CatalogOperations(object):
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`USqlSchemaPaged
          <azure.mgmt.datalake.analytics.catalog.models.USqlSchemaPaged>`
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -2400,11 +2577,9 @@ class CatalogOperations(object):
                 if filter is not None:
                     query_parameters['$filter'] = self._serialize.query("filter", filter, 'str')
                 if top is not None:
-                    query_parameters['$top'] = self._serialize.query("top", top, 'int')
+                    query_parameters['$top'] = self._serialize.query("top", top, 'int', minimum=1)
                 if skip is not None:
-                    query_parameters['$skip'] = self._serialize.query("skip", skip, 'int')
-                if expand is not None:
-                    query_parameters['$expand'] = self._serialize.query("expand", expand, 'str')
+                    query_parameters['$skip'] = self._serialize.query("skip", skip, 'int', minimum=1)
                 if select is not None:
                     query_parameters['$select'] = self._serialize.query("select", select, 'str')
                 if orderby is not None:
@@ -2453,8 +2628,8 @@ class CatalogOperations(object):
             self, account_name, database_name, custom_headers=None, raw=False, **operation_config):
         """Retrieves the specified database from the Data Lake Analytics catalog.
 
-        :param account_name: The Azure Data Lake Analytics account to execute
-         catalog operations on.
+        :param account_name: The Azure Data Lake Analytics account upon which
+         to execute catalog operations.
         :type account_name: str
         :param database_name: The name of the database.
         :type database_name: str
@@ -2467,6 +2642,7 @@ class CatalogOperations(object):
          <azure.mgmt.datalake.analytics.catalog.models.USqlDatabase>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/catalog/usql/databases/{databaseName}'
@@ -2512,11 +2688,11 @@ class CatalogOperations(object):
         return deserialized
 
     def list_databases(
-            self, account_name, filter=None, top=None, skip=None, expand=None, select=None, orderby=None, count=None, custom_headers=None, raw=False, **operation_config):
+            self, account_name, filter=None, top=None, skip=None, select=None, orderby=None, count=None, custom_headers=None, raw=False, **operation_config):
         """Retrieves the list of databases from the Data Lake Analytics catalog.
 
-        :param account_name: The Azure Data Lake Analytics account to execute
-         catalog operations on.
+        :param account_name: The Azure Data Lake Analytics account upon which
+         to execute catalog operations.
         :type account_name: str
         :param filter: OData filter. Optional.
         :type filter: str
@@ -2525,10 +2701,6 @@ class CatalogOperations(object):
         :param skip: The number of items to skip over before returning
          elements. Optional.
         :type skip: int
-        :param expand: OData expansion. Expand related resources in line with
-         the retrieved resources, e.g. Categories?$expand=Products would
-         expand Product data in line with each Category entry. Optional.
-        :type expand: str
         :param select: OData Select statement. Limits the properties on each
          entry to just those requested, e.g.
          Categories?$select=CategoryName,Description. Optional.
@@ -2538,9 +2710,9 @@ class CatalogOperations(object):
          on the order you'd like the values sorted, e.g.
          Categories?$orderby=CategoryName desc. Optional.
         :type orderby: str
-        :param count: The Boolean value of true or false to request a count
-         of the matching resources included with the resources in the
-         response, e.g. Categories?$count=true. Optional.
+        :param count: The Boolean value of true or false to request a count of
+         the matching resources included with the resources in the response,
+         e.g. Categories?$count=true. Optional.
         :type count: bool
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -2549,6 +2721,7 @@ class CatalogOperations(object):
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`USqlDatabasePaged
          <azure.mgmt.datalake.analytics.catalog.models.USqlDatabasePaged>`
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -2566,11 +2739,9 @@ class CatalogOperations(object):
                 if filter is not None:
                     query_parameters['$filter'] = self._serialize.query("filter", filter, 'str')
                 if top is not None:
-                    query_parameters['$top'] = self._serialize.query("top", top, 'int')
+                    query_parameters['$top'] = self._serialize.query("top", top, 'int', minimum=1)
                 if skip is not None:
-                    query_parameters['$skip'] = self._serialize.query("skip", skip, 'int')
-                if expand is not None:
-                    query_parameters['$expand'] = self._serialize.query("expand", expand, 'str')
+                    query_parameters['$skip'] = self._serialize.query("skip", skip, 'int', minimum=1)
                 if select is not None:
                     query_parameters['$select'] = self._serialize.query("select", select, 'str')
                 if orderby is not None:

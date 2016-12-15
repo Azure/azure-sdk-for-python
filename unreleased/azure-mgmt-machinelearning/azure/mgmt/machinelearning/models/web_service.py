@@ -18,20 +18,21 @@ class WebService(Resource):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar id: Resource Id
+    :ivar id: Specifies the resource ID.
     :vartype id: str
-    :param name: Resource Name
+    :param name: Specifies the name of the resource.
     :type name: str
-    :param location: Resource Location
+    :param location: Specifies the location of the resource.
     :type location: str
-    :ivar type: Resource type
+    :ivar type: Specifies the type of the resource.
     :vartype type: str
-    :param tags: Resource tags
+    :param tags: Contains resource tags defined as key/value pairs.
     :type tags: dict
-    :param properties: Web service resource properties.
+    :param properties: Contains the property payload that describes the web
+     service.
     :type properties: :class:`WebServiceProperties
      <azure.mgmt.machinelearning.models.WebServiceProperties>`
-    """ 
+    """
 
     _validation = {
         'id': {'readonly': True},

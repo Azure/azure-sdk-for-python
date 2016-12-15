@@ -37,7 +37,7 @@ class USqlAssembly(CatalogItem):
     :param dependencies: the list of dependencies associated with the assembly
     :type dependencies: list of :class:`USqlAssemblyDependencyInfo
      <azure.mgmt.datalake.analytics.catalog.models.USqlAssemblyDependencyInfo>`
-    """ 
+    """
 
     _attribute_map = {
         'compute_account_name': {'key': 'computeAccountName', 'type': 'str'},

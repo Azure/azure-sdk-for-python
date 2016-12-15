@@ -19,10 +19,10 @@ class VaultCertificate(Model):
     :param certificate_url: The URL referencing a secret in a Key Vault which
      contains a properly formatted certificate.
     :type certificate_url: str
-    :param certificate_store: The Certificate store in LocalMachine to add
-     the certificate to on Windows, leave empty on Linux.
+    :param certificate_store: The Certificate store in LocalMachine to add the
+     certificate to on Windows, leave empty on Linux.
     :type certificate_store: str
-    """ 
+    """
 
     _attribute_map = {
         'certificate_url': {'key': 'certificateUrl', 'type': 'str'},
