@@ -36,7 +36,7 @@
       "swagger": "arm-cdn/2016-10-02/swagger/cdn.json",
       "autorest_options": {
         "Namespace": "azure.mgmt.cdn",
-        "PackageVersion": "0.30.0"
+        "PackageVersion": "0.30.1"
       },
       "output_dir": "azure-mgmt-cdn/azure/mgmt/cdn"
     },

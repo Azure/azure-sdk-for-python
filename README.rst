@@ -84,7 +84,7 @@ listed before.
 - azure-graphrbac 0.30.0rc6
 - azure-monitor 0.1.0
 - azure-mgmt-authorization 0.30.0rc6
-- azure-mgmt-cdn 0.30.0
+- azure-mgmt-cdn 0.30.1
 - azure-mgmt-cognitiveservices 0.30.0rc6
 - azure-mgmt-containerregistry 0.1.1
 - azure-mgmt-datalake-analytics 0.1.1
