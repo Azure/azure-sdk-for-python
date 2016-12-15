@@ -58,6 +58,7 @@ def create_object_id(collection, vault, name, version):
     :type name: str
     :param version: The resource version.
     :type version: str
+    :rtype: KeyVaultId
     """
     collection = _validate_string_argument(collection, 'collection')
     vault = _validate_string_argument(vault, 'vault')
@@ -72,6 +73,7 @@ def parse_object_id(collection, id):
     :type collection: str
     :param id: The resource uri.
     :type id: str
+    :rtype: KeyVaultId
     """
     collection = _validate_string_argument(collection, 'collection')
     id = _validate_string_argument(id, 'id')    
@@ -107,6 +109,7 @@ def create_key_id(vault, name, version=None):
     :type name: str
     :param version: The key version.
     :type version: str
+    :rtype: KeyVaultId
     """
     return create_object_id('keys', vault, name, version)
 
@@ -114,6 +117,7 @@ def parse_key_id(id):
     """
     :param id: The key uri.
     :type id: str
+    :rtype: KeyVaultId
     """
     return parse_object_id('keys', id)
 
@@ -125,6 +129,7 @@ def create_secret_id(vault, name, version=None):
     :type name: str
     :param version: The secret version.
     :type version: str
+    :rtype: KeyVaultId
     """
     return create_object_id('secrets', vault, name, version)
 
@@ -132,6 +137,7 @@ def parse_secret_id(id):
     """
     :param id: The secret uri.
     :type id: str
+    :rtype: KeyVaultId
     """
     return parse_object_id('secrets', id)
 
@@ -143,6 +149,7 @@ def create_certificate_id(vault, name, version=None):
     :type name: str
     :param version: The certificate version.
     :type version: str
+    :rtype: KeyVaultId
     """
     return create_object_id('certificates', vault, name, version)
 
@@ -150,23 +157,48 @@ def parse_certificate_id(id):
     """
     :param id: The resource collection type.
     :type id: str
+    :rtype: KeyVaultId
     """
     return parse_object_id('certificates', id)
 
 def create_certificate_operation_id(vault, name):
+    """
+    :param vault: The vault uri.
+    :type vault: str
+    :param name: The certificate name.
+    :type name: str
+    :rtype: KeyVaultId
+    """
     obj_id = create_object_id('certificates', vault, name, 'pending')
     obj_id.base_id = obj_id.id
     obj_id.version = None
     return obj_id
 
 def parse_certificate_operation_id(id):
+    """
+    :param id: The resource collection type.
+    :type id: str
+    :rtype: KeyVaultId
+    """
     obj_id = parse_object_id('certificates', id)
     obj_id.base_id = obj_id.id
     obj_id.version = None
     return obj_id
 
 def create_certificate_issuer_id(vault, name):
+    """
+    :param vault: The vault uri.
+    :type vault: str
+    :param name: The certificate name.
+    :type name: str
+    :rtype: KeyVaultId
+    """
     return create_object_id('certificates/issuers', vault, name, None)
 
 def parse_certificate_issuer_id(id):
+    """
+    :param id: The resource collection type.
+    :type id: str
+    :rtype: KeyVaultId
+    """
     return parse_object_id('certificates/issuers', id)

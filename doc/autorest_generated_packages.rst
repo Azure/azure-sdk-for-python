@@ -6,7 +6,7 @@
   ref/azure.common
   ./ref/azure.batch.rst
   ./ref/azure.graphrbac.rst
-  ./ref/azure.keyvault.generated.rst
+  ./ref/azure.keyvault.rst
   ./ref/azure.mgmt.authorization.rst
   ./ref/azure.mgmt.batch.rst
   ./ref/azure.mgmt.cdn.rst
