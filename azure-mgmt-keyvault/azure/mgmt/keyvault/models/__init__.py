@@ -10,13 +10,14 @@
 # --------------------------------------------------------------------------
 
 from .sku import Sku
-from .access_policy_entry import AccessPolicyEntry
 from .permissions import Permissions
+from .access_policy_entry import AccessPolicyEntry
 from .vault_properties import VaultProperties
 from .vault_create_or_update_parameters import VaultCreateOrUpdateParameters
 from .vault import Vault
 from .resource import Resource
 from .vault_paged import VaultPaged
+from .resource_paged import ResourcePaged
 from .key_vault_management_client_enums import (
     SkuName,
     KeyPermissions,
@@ -26,13 +27,14 @@ from .key_vault_management_client_enums import (
 
 __all__ = [
     'Sku',
-    'AccessPolicyEntry',
     'Permissions',
+    'AccessPolicyEntry',
     'VaultProperties',
     'VaultCreateOrUpdateParameters',
     'Vault',
     'Resource',
     'VaultPaged',
+    'ResourcePaged',
     'SkuName',
     'KeyPermissions',
     'SecretPermissions',
