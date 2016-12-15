@@ -16,13 +16,13 @@ class PurchasePlan(Model):
     """Used for establishing the purchase context of any 3rd Party artifact
     through MarketPlace.
 
-    :param publisher: the publisher ID.
+    :param publisher: The publisher ID.
     :type publisher: str
-    :param name: the plan ID.
+    :param name: The plan ID.
     :type name: str
-    :param product: the product ID.
+    :param product: The product ID.
     :type product: str
-    """ 
+    """
 
     _validation = {
         'publisher': {'required': True},

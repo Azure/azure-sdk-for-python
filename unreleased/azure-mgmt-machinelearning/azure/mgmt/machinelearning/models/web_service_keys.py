@@ -19,7 +19,7 @@ class WebServiceKeys(Model):
     :type primary: str
     :param secondary: The secondary access key.
     :type secondary: str
-    """ 
+    """
 
     _attribute_map = {
         'primary': {'key': 'primary', 'type': 'str'},

@@ -13,25 +13,26 @@ from .resource import Resource
 
 
 class IotHubDescription(Resource):
-    """The description of the IotHub.
+    """The description of the IoT hub.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar id: The Resource Id.
+    :ivar id: The resource identifier.
     :vartype id: str
-    :ivar name: The Resource name.
+    :ivar name: The resource name.
     :vartype name: str
-    :ivar type: The Resource type.
+    :ivar type: The resource type.
     :vartype type: str
-    :param location: The Resource location.
+    :param location: The resource location.
     :type location: str
-    :param tags: The Resource tags.
+    :param tags: The resource tags.
     :type tags: dict
     :param subscriptionid: The subscription identifier.
     :type subscriptionid: str
-    :param resourcegroup: The resource group name uniquely identifies the
-     resource group within the user subscriptionId.
+    :param resourcegroup: The name of the resource group that contains the IoT
+     hub. A resource group name uniquely identifies the resource group within
+     the subscription.
     :type resourcegroup: str
     :param etag: The Etag field is *not* required. If it is provided in the
      response body, it must also be provided as a header per the normal ETag
@@ -42,12 +43,16 @@ class IotHubDescription(Resource):
      <azure.mgmt.iothub.models.IotHubProperties>`
     :param sku:
     :type sku: :class:`IotHubSkuInfo <azure.mgmt.iothub.models.IotHubSkuInfo>`
-    """ 
+    """
 
     _validation = {
         'id': {'readonly': True},
         'name': {'readonly': True, 'pattern': '^(?![0-9]+$)(?!-)[a-zA-Z0-9-]{2,49}[a-zA-Z0-9]$'},
         'type': {'readonly': True},
+        'location': {'required': True},
+        'subscriptionid': {'required': True},
+        'resourcegroup': {'required': True},
+        'sku': {'required': True},
     }
 
     _attribute_map = {
@@ -63,7 +68,7 @@ class IotHubDescription(Resource):
         'sku': {'key': 'sku', 'type': 'IotHubSkuInfo'},
     }
 
-    def __init__(self, location=None, tags=None, subscriptionid=None, resourcegroup=None, etag=None, properties=None, sku=None):
+    def __init__(self, location, subscriptionid, resourcegroup, sku, tags=None, etag=None, properties=None):
         super(IotHubDescription, self).__init__(location=location, tags=tags)
         self.subscriptionid = subscriptionid
         self.resourcegroup = resourcegroup

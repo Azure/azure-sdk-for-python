@@ -13,11 +13,13 @@ from msrest.serialization import Model
 
 
 class OperationsMonitoringProperties(Model):
-    """The Operation Monitoring properties.
+    """The operations monitoring properties for the IoT hub. The possible keys to
+    the dictionary are Connections, DeviceTelemetry, C2DCommands,
+    DeviceIdentityOperations, FileUploadOperations.
 
     :param events:
     :type events: dict
-    """ 
+    """
 
     _attribute_map = {
         'events': {'key': 'events', 'type': '{OperationMonitoringLevel}'},

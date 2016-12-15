@@ -15,7 +15,7 @@ from .service_bus_message import ServiceBusMessage
 class ServiceBusTopicMessage(ServiceBusMessage):
     """ServiceBusTopicMessage.
 
-    :param authentication: Gets or sets the authentication.
+    :param authentication: Gets or sets the Service Bus authentication.
     :type authentication: :class:`ServiceBusAuthentication
      <azure.mgmt.scheduler.models.ServiceBusAuthentication>`
     :param brokered_message_properties: Gets or sets the brokered message

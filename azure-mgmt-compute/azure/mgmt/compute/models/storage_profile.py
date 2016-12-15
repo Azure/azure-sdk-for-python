@@ -23,7 +23,7 @@ class StorageProfile(Model):
     :param data_disks: The data disks.
     :type data_disks: list of :class:`DataDisk
      <azure.mgmt.compute.models.DataDisk>`
-    """ 
+    """
 
     _attribute_map = {
         'image_reference': {'key': 'imageReference', 'type': 'ImageReference'},

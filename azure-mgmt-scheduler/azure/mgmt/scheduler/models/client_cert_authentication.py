@@ -15,14 +15,16 @@ from .http_authentication import HttpAuthentication
 class ClientCertAuthentication(HttpAuthentication):
     """ClientCertAuthentication.
 
-    :param type: Gets or sets the http authentication type. Possible values
+    :param type: Gets or sets the HTTP authentication type. Possible values
      include: 'NotSpecified', 'ClientCertificate', 'ActiveDirectoryOAuth',
      'Basic'
     :type type: str or :class:`HttpAuthenticationType
      <azure.mgmt.scheduler.models.HttpAuthenticationType>`
-    :param password: Gets or sets the password.
+    :param password: Gets or sets the certificate password, return value will
+     always be empty.
     :type password: str
-    :param pfx: Gets or sets the pfx.
+    :param pfx: Gets or sets the pfx certificate. Accepts certification in
+     base64 encoding, return value will always be empty.
     :type pfx: str
     :param certificate_thumbprint: Gets or sets the certificate thumbprint.
     :type certificate_thumbprint: str

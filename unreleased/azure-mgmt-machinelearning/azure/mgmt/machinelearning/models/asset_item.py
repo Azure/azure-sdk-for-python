@@ -36,7 +36,7 @@ class AssetItem(Model):
      module's parameters.
     :type parameters: list of :class:`ModuleAssetParameter
      <azure.mgmt.machinelearning.models.ModuleAssetParameter>`
-    """ 
+    """
 
     _validation = {
         'name': {'required': True},

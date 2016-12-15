@@ -15,13 +15,13 @@ from msrest.serialization import Model
 class ApiErrorBase(Model):
     """Api error base.
 
-    :param code: the error code.
+    :param code: The error code.
     :type code: str
-    :param target: the target of the particular error.
+    :param target: The target of the particular error.
     :type target: str
-    :param message: the error message.
+    :param message: The error message.
     :type message: str
-    """ 
+    """
 
     _attribute_map = {
         'code': {'key': 'code', 'type': 'str'},

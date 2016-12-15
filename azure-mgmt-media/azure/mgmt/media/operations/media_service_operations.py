@@ -34,7 +34,7 @@ class MediaServiceOperations(object):
 
     def check_name_availability(
             self, name, custom_headers=None, raw=False, **operation_config):
-        """Check whether the Media Service resource name is available. The name
+        """Checks whether the Media Service resource name is available. The name
         must be globally unique.
 
         :param name: The name of the resource. A name must be globally unique.
@@ -98,7 +98,7 @@ class MediaServiceOperations(object):
 
     def list_by_resource_group(
             self, resource_group_name, custom_headers=None, raw=False, **operation_config):
-        """List all of the Media Services in a resource group.
+        """Lists all of the Media Services in a resource group.
 
         :param resource_group_name: Name of the resource group within the
          Azure subscription.
@@ -164,7 +164,7 @@ class MediaServiceOperations(object):
 
     def get(
             self, resource_group_name, media_service_name, custom_headers=None, raw=False, **operation_config):
-        """Get a Media Service.
+        """Gets a Media Service.
 
         :param resource_group_name: Name of the resource group within the
          Azure subscription.
@@ -225,7 +225,7 @@ class MediaServiceOperations(object):
 
     def create(
             self, resource_group_name, media_service_name, media_service, custom_headers=None, raw=False, **operation_config):
-        """Create a Media Service.
+        """Creates a Media Service.
 
         :param resource_group_name: Name of the resource group within the
          Azure subscription.
@@ -277,13 +277,11 @@ class MediaServiceOperations(object):
         response = self._client.send(
             request, header_parameters, body_content, **operation_config)
 
-        if response.status_code not in [200, 201]:
+        if response.status_code not in [201]:
             raise models.ApiErrorException(self._deserialize, response)
 
         deserialized = None
 
-        if response.status_code == 200:
-            deserialized = self._deserialize('MediaService', response)
         if response.status_code == 201:
             deserialized = self._deserialize('MediaService', response)
 
@@ -295,7 +293,7 @@ class MediaServiceOperations(object):
 
     def delete(
             self, resource_group_name, media_service_name, custom_headers=None, raw=False, **operation_config):
-        """Delete a Media Service.
+        """Deletes a Media Service.
 
         :param resource_group_name: Name of the resource group within the
          Azure subscription.
@@ -340,7 +338,7 @@ class MediaServiceOperations(object):
         request = self._client.delete(url, query_parameters)
         response = self._client.send(request, header_parameters, **operation_config)
 
-        if response.status_code not in [200]:
+        if response.status_code not in [200, 204]:
             raise models.ApiErrorException(self._deserialize, response)
 
         if raw:
@@ -349,7 +347,7 @@ class MediaServiceOperations(object):
 
     def update(
             self, resource_group_name, media_service_name, media_service, custom_headers=None, raw=False, **operation_config):
-        """Update a Media Service.
+        """Updates a Media Service.
 
         :param resource_group_name: Name of the resource group within the
          Azure subscription.
@@ -416,8 +414,8 @@ class MediaServiceOperations(object):
         return deserialized
 
     def regenerate_key(
-            self, resource_group_name, media_service_name, key_type=None, custom_headers=None, raw=False, **operation_config):
-        """Regenerate the key for a Media Service.
+            self, resource_group_name, media_service_name, key_type, custom_headers=None, raw=False, **operation_config):
+        """Regenerates a primary or secondary key for a Media Service.
 
         :param resource_group_name: Name of the resource group within the
          Azure subscription.
@@ -425,8 +423,8 @@ class MediaServiceOperations(object):
         :param media_service_name: Name of the Media Service.
         :type media_service_name: str
         :param key_type: The keyType indicating which key you want to
-         regenerate, Primary or Secondary. Possible values include:
-         'Primary', 'Secondary'
+         regenerate, Primary or Secondary. Possible values include: 'Primary',
+         'Secondary'
         :type key_type: str or :class:`KeyType
          <azure.mgmt.media.models.KeyType>`
         :param dict custom_headers: headers that will be added to the request
@@ -474,7 +472,7 @@ class MediaServiceOperations(object):
         response = self._client.send(
             request, header_parameters, body_content, **operation_config)
 
-        if response.status_code not in [200, 202]:
+        if response.status_code not in [200]:
             raise models.ApiErrorException(self._deserialize, response)
 
         deserialized = None
@@ -490,7 +488,7 @@ class MediaServiceOperations(object):
 
     def list_keys(
             self, resource_group_name, media_service_name, custom_headers=None, raw=False, **operation_config):
-        """List the keys for a Media Service.
+        """Lists the keys for a Media Service.
 
         :param resource_group_name: Name of the resource group within the
          Azure subscription.
@@ -535,7 +533,7 @@ class MediaServiceOperations(object):
         request = self._client.post(url, query_parameters)
         response = self._client.send(request, header_parameters, **operation_config)
 
-        if response.status_code not in [200, 202]:
+        if response.status_code not in [200]:
             raise models.ApiErrorException(self._deserialize, response)
 
         deserialized = None
@@ -550,8 +548,9 @@ class MediaServiceOperations(object):
         return deserialized
 
     def sync_storage_keys(
-            self, resource_group_name, media_service_name, id=None, custom_headers=None, raw=False, **operation_config):
-        """Synchronize the keys for a storage account to the Media Service.
+            self, resource_group_name, media_service_name, id, custom_headers=None, raw=False, **operation_config):
+        """Synchronizes storage account keys for a storage account associated with
+        the Media Service account.
 
         :param resource_group_name: Name of the resource group within the
          Azure subscription.
@@ -565,7 +564,7 @@ class MediaServiceOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`MediaService <azure.mgmt.media.models.MediaService>`
+        :rtype: None
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         :raises:
@@ -604,16 +603,9 @@ class MediaServiceOperations(object):
         response = self._client.send(
             request, header_parameters, body_content, **operation_config)
 
-        if response.status_code not in [200, 202]:
+        if response.status_code not in [200]:
             raise models.ApiErrorException(self._deserialize, response)
 
-        deserialized = None
-
-        if response.status_code == 200:
-            deserialized = self._deserialize('MediaService', response)
-
         if raw:
-            client_raw_response = ClientRawResponse(deserialized, response)
+            client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
-
-        return deserialized

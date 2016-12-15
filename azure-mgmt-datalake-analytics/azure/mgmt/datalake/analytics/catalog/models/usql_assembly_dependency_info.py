@@ -18,7 +18,7 @@ class USqlAssemblyDependencyInfo(Model):
     :param entity_id: the EntityId of the dependency.
     :type entity_id: :class:`EntityId
      <azure.mgmt.datalake.analytics.catalog.models.EntityId>`
-    """ 
+    """
 
     _attribute_map = {
         'entity_id': {'key': 'entityId', 'type': 'EntityId'},

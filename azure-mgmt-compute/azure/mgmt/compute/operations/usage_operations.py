@@ -37,11 +37,11 @@ class UsageOperations(object):
 
     def list(
             self, location, custom_headers=None, raw=False, **operation_config):
-        """Gets, for the specified location, the current compute usage
+        """Gets, for the specified location, the current compute resource usage
         information as well as the limits for compute resources under the
         subscription.
 
-        :param location: The location upon which resource usage is queried.
+        :param location: The location for which resource usage is queried.
         :type location: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the

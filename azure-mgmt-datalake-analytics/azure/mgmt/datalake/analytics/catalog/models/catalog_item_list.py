@@ -15,17 +15,13 @@ from msrest.serialization import Model
 class CatalogItemList(Model):
     """A Data Lake Analytics catalog item list.
 
-    :param count: the count of items in the list.
-    :type count: int
     :param next_link: the link to the next page of results.
     :type next_link: str
-    """ 
+    """
 
     _attribute_map = {
-        'count': {'key': 'count', 'type': 'int'},
         'next_link': {'key': 'nextLink', 'type': 'str'},
     }
 
-    def __init__(self, count=None, next_link=None):
-        self.count = count
+    def __init__(self, next_link=None):
         self.next_link = next_link

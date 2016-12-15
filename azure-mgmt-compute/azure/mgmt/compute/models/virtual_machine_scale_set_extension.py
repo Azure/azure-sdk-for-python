@@ -20,26 +20,26 @@ class VirtualMachineScaleSetExtension(SubResource):
 
     :param id: Resource Id
     :type id: str
-    :param name: the name of the extension.
+    :param name: The name of the extension.
     :type name: str
-    :param publisher: the name of the extension handler publisher.
+    :param publisher: The name of the extension handler publisher.
     :type publisher: str
-    :param type: the type of the extension handler.
+    :param type: The type of the extension handler.
     :type type: str
-    :param type_handler_version: the type version of the extension handler.
+    :param type_handler_version: The type version of the extension handler.
     :type type_handler_version: str
-    :param auto_upgrade_minor_version: whether the extension handler should
-     be automatically upgraded across minor versions.
+    :param auto_upgrade_minor_version: Whether the extension handler should be
+     automatically upgraded across minor versions.
     :type auto_upgrade_minor_version: bool
     :param settings: Json formatted public settings for the extension.
     :type settings: object
     :param protected_settings: Json formatted protected settings for the
      extension.
     :type protected_settings: object
-    :ivar provisioning_state: the provisioning state, which only appears in
+    :ivar provisioning_state: The provisioning state, which only appears in
      the response.
     :vartype provisioning_state: str
-    """ 
+    """
 
     _validation = {
         'provisioning_state': {'readonly': True},

@@ -31,7 +31,7 @@ class DatabaseMetric(Model):
     :ivar next_reset_time: The next reset time for the metric (ISO8601
      format).
     :vartype next_reset_time: datetime
-    """ 
+    """
 
     _validation = {
         'resource_name': {'readonly': True},

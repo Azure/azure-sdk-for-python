@@ -28,23 +28,23 @@ class VirtualMachineExtensionImage(Resource):
     :type location: str
     :param tags: Resource tags.
     :type tags: dict
-    :param operating_system: the operating system this extension supports.
+    :param operating_system: The operating system this extension supports.
     :type operating_system: str
-    :param compute_role: the type of role (IaaS or PaaS) this extension
+    :param compute_role: The type of role (IaaS or PaaS) this extension
      supports.
     :type compute_role: str
-    :param handler_schema: the schema defined by publisher, where extension
+    :param handler_schema: The schema defined by publisher, where extension
      consumers should provide settings in a matching schema.
     :type handler_schema: str
-    :param vm_scale_set_enabled: whether the extension can be used on xRP
+    :param vm_scale_set_enabled: Whether the extension can be used on xRP
      VMScaleSets. By default existing extensions are usable on scalesets, but
      there might be cases where a publisher wants to explicitly indicate the
      extension is only enabled for CRP VMs but not VMSS.
     :type vm_scale_set_enabled: bool
-    :param supports_multiple_extensions: whether the handler can support
+    :param supports_multiple_extensions: Whether the handler can support
      multiple extensions.
     :type supports_multiple_extensions: bool
-    """ 
+    """
 
     _validation = {
         'id': {'readonly': True},

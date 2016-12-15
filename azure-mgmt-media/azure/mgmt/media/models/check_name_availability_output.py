@@ -17,14 +17,14 @@ class CheckNameAvailabilityOutput(Model):
 
     :param name_available: Specifies if the name is available.
     :type name_available: bool
-    :param reason: Specifies the reason if the name is not available.
-     Possible values include: 'None', 'Invalid', 'AlreadyExists'
+    :param reason: Specifies the reason if the name is not available. Possible
+     values include: 'None', 'Invalid', 'AlreadyExists'
     :type reason: str or :class:`EntityNameUnavailabilityReason
      <azure.mgmt.media.models.EntityNameUnavailabilityReason>`
     :param message: Specifies the detailed reason if the name is not
      available.
     :type message: str
-    """ 
+    """
 
     _attribute_map = {
         'name_available': {'key': 'NameAvailable', 'type': 'bool'},

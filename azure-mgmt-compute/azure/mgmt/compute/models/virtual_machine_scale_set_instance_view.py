@@ -18,19 +18,19 @@ class VirtualMachineScaleSetInstanceView(Model):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar virtual_machine: the instance view status summary for the virtual
+    :ivar virtual_machine: The instance view status summary for the virtual
      machine scale set.
     :vartype virtual_machine:
      :class:`VirtualMachineScaleSetInstanceViewStatusesSummary
      <azure.mgmt.compute.models.VirtualMachineScaleSetInstanceViewStatusesSummary>`
-    :ivar extensions: the extensions information.
+    :ivar extensions: The extensions information.
     :vartype extensions: list of
      :class:`VirtualMachineScaleSetVMExtensionsSummary
      <azure.mgmt.compute.models.VirtualMachineScaleSetVMExtensionsSummary>`
-    :param statuses: the resource status information.
+    :param statuses: The resource status information.
     :type statuses: list of :class:`InstanceViewStatus
      <azure.mgmt.compute.models.InstanceViewStatus>`
-    """ 
+    """
 
     _validation = {
         'virtual_machine': {'readonly': True},

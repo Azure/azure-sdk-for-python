@@ -15,13 +15,13 @@ from msrest.serialization import Model
 class KeyVaultSecretReference(Model):
     """Describes a reference to Key Vault Secret.
 
-    :param secret_url: the URL referencing a secret in a Key Vault.
+    :param secret_url: The URL referencing a secret in a Key Vault.
     :type secret_url: str
-    :param source_vault: the Relative URL of the Key Vault containing the
+    :param source_vault: The relative URL of the Key Vault containing the
      secret.
     :type source_vault: :class:`SubResource
      <azure.mgmt.compute.models.SubResource>`
-    """ 
+    """
 
     _validation = {
         'secret_url': {'required': True},

@@ -13,9 +13,9 @@ from msrest.serialization import Model
 
 
 class PowerShellCommandParameters(Model):
-    """the parameters to a powershell script execution command.
+    """The parameters to a PowerShell script execution command.
 
-    :param command: Script to execute
+    :param command: Script to execute.
     :type command: str
     """ 
 

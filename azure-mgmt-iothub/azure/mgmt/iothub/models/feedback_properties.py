@@ -13,17 +13,21 @@ from msrest.serialization import Model
 
 
 class FeedbackProperties(Model):
-    """The Feedback Queue properties.
+    """The properties of the feedback queue for cloud-to-device messages.
 
-    :param lock_duration_as_iso8601: The lock duration for the feedback
-     queue. Range: 5 Sec (PT5S) - 5 Min (PT5M).
+    :param lock_duration_as_iso8601: The lock duration for the feedback queue.
+     See:
+     https://docs.microsoft.com/azure/iot-hub/iot-hub-devguide-messaging#cloud-to-device-messages.
     :type lock_duration_as_iso8601: timedelta
-    :param ttl_as_iso8601: The time to live for the feedback queue. Range: 1
-     Min (PT1M) - 2 Days (P2D).
+    :param ttl_as_iso8601: The period of time for which a message is available
+     to consume before it is expired by the IoT hub. See:
+     https://docs.microsoft.com/azure/iot-hub/iot-hub-devguide-messaging#cloud-to-device-messages.
     :type ttl_as_iso8601: timedelta
-    :param max_delivery_count: The max delivery count. Range : 1-100.
+    :param max_delivery_count: The number of times the IoT hub attempts to
+     deliver a message on the feedback queue. See:
+     https://docs.microsoft.com/azure/iot-hub/iot-hub-devguide-messaging#cloud-to-device-messages.
     :type max_delivery_count: int
-    """ 
+    """
 
     _validation = {
         'max_delivery_count': {'maximum': 100, 'minimum': 1},

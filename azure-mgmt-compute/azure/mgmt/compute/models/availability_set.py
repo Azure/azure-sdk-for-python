@@ -13,7 +13,7 @@ from .resource import Resource
 
 
 class AvailabilitySet(Resource):
-    """Create or update Availability Set parameters.
+    """Create or update availability set parameters.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -36,10 +36,10 @@ class AvailabilitySet(Resource):
      the availability set.
     :type virtual_machines: list of :class:`SubResource
      <azure.mgmt.compute.models.SubResource>`
-    :ivar statuses: the resource status information.
+    :ivar statuses: The resource status information.
     :vartype statuses: list of :class:`InstanceViewStatus
      <azure.mgmt.compute.models.InstanceViewStatus>`
-    """ 
+    """
 
     _validation = {
         'id': {'readonly': True},

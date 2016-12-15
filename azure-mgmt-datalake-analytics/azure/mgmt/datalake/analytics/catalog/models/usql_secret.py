@@ -31,7 +31,7 @@ class USqlSecret(CatalogItem):
     :type uri: str
     :param password: the password for the secret to pass in
     :type password: str
-    """ 
+    """
 
     _attribute_map = {
         'compute_account_name': {'key': 'computeAccountName', 'type': 'str'},

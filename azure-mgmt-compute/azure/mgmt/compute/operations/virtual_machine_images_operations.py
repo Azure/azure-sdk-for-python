@@ -252,8 +252,8 @@ class VirtualMachineImagesOperations(object):
 
     def list_publishers(
             self, location, custom_headers=None, raw=False, **operation_config):
-        """Gets a list of virtual machine image publishers for the specified
-        Azure location.
+        """Gets a list of virtual machine image publishers for the specified Azure
+        location.
 
         :param location: The name of a supported Azure region.
         :type location: str

@@ -22,21 +22,21 @@ class OSProfile(Model):
     :param admin_password: Specifies the password of the administrator
      account.
     :type admin_password: str
-    :param custom_data: Specifies a base-64 encoded string of custom data.
-     The base-64 encoded string is decoded to a binary array that is saved as
-     a file on the Virtual Machine. The maximum length of the binary array is
+    :param custom_data: Specifies a base-64 encoded string of custom data. The
+     base-64 encoded string is decoded to a binary array that is saved as a
+     file on the Virtual Machine. The maximum length of the binary array is
      65535 bytes
     :type custom_data: str
-    :param windows_configuration: the Windows Configuration of the OS profile.
+    :param windows_configuration: The Windows configuration of the OS profile.
     :type windows_configuration: :class:`WindowsConfiguration
      <azure.mgmt.compute.models.WindowsConfiguration>`
-    :param linux_configuration: the Linux Configuration of the OS profile.
+    :param linux_configuration: The Linux configuration of the OS profile.
     :type linux_configuration: :class:`LinuxConfiguration
      <azure.mgmt.compute.models.LinuxConfiguration>`
-    :param secrets: the List of certificates for addition to the VM.
+    :param secrets: The list of certificates for addition to the VM.
     :type secrets: list of :class:`VaultSecretGroup
      <azure.mgmt.compute.models.VaultSecretGroup>`
-    """ 
+    """
 
     _attribute_map = {
         'computer_name': {'key': 'computerName', 'type': 'str'},

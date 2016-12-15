@@ -22,9 +22,9 @@ class ColumnSpecification(Model):
     :type type: str or :class:`ColumnType
      <azure.mgmt.machinelearning.models.ColumnType>`
     :param format: Additional format information for the data type. Possible
-     values include: 'Byte', 'Char', 'Datetime', 'Double', 'Duration',
-     'Float', 'Int8', 'Int16', 'Int32', 'Int64', 'Uint8', 'Uint16', 'Uint32',
-     'Uint64'
+     values include: 'Byte', 'Char', 'Complex64', 'Complex128', 'Date-time',
+     'Date-timeOffset', 'Double', 'Duration', 'Float', 'Int8', 'Int16',
+     'Int32', 'Int64', 'Uint8', 'Uint16', 'Uint32', 'Uint64'
     :type format: str or :class:`ColumnFormat
      <azure.mgmt.machinelearning.models.ColumnFormat>`
     :param enum: If the data type is categorical, this provides the list of
@@ -36,7 +36,7 @@ class ColumnSpecification(Model):
     :param x_ms_isordered: Flag indicating whether the categories are treated
      as an ordered set or not, if this is a categorical column.
     :type x_ms_isordered: bool
-    """ 
+    """
 
     _validation = {
         'type': {'required': True},

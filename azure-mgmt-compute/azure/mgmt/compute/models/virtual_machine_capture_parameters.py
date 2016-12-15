@@ -15,14 +15,14 @@ from msrest.serialization import Model
 class VirtualMachineCaptureParameters(Model):
     """Capture Virtual Machine parameters.
 
-    :param vhd_prefix: the captured VirtualHardDisk's name prefix.
+    :param vhd_prefix: The captured virtual hard disk's name prefix.
     :type vhd_prefix: str
-    :param destination_container_name: the destination container name.
+    :param destination_container_name: The destination container name.
     :type destination_container_name: str
-    :param overwrite_vhds: whether it overwrites destination VirtualHardDisk
-     if true, in case of conflict.
+    :param overwrite_vhds: Specifies whether to overwrite the destination
+     virtual hard disk, in case of conflict.
     :type overwrite_vhds: bool
-    """ 
+    """
 
     _validation = {
         'vhd_prefix': {'required': True},

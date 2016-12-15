@@ -8,6 +8,7 @@
 
 from setuptools import find_packages, setup
 from io import open
+import re
 
 # azure v0.x is not compatible with this package
 # azure v0.x used to have a __version__ attribute (newer versions don't)

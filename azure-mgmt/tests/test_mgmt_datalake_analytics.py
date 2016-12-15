@@ -33,12 +33,9 @@ class MgmtDataLakeAnalyticsTest(AzureMgmtTestCase):
             azure.mgmt.datalake.analytics.catalog.DataLakeAnalyticsCatalogManagementClient,
             adla_catalog_dns_suffix = 'azuredatalakeanalytics.net'
         )
-        
-        if not self.is_playback():
-            self.create_resource_group()
 
         # define all names
-        self.adls_account_name = self.get_resource_name('pyarmadls')
+        self.adls_account_name = self.get_resource_name('pyarmadls2')
         self.job_account_name = self.get_resource_name('pyarmadla2')
 
         # construct the catalog script
@@ -172,9 +169,11 @@ END;""".format(self.db_name, self.table_name, self.tvf_name, self.view_name, sel
         return val
 
     def run_prereqs(self, create_job_acct = False, create_catalog = False):
+        if not self.is_playback():
+            self.create_resource_group()
+
         # construct ADLS account for use with the ADLA tests.
         params_create = azure.mgmt.datalake.store.models.DataLakeStoreAccount(
-            name = self.adls_account_name,
             location = self.region
         )
         result_create = self.adls_account_client.account.create(
@@ -191,12 +190,9 @@ END;""".format(self.db_name, self.table_name, self.tvf_name, self.view_name, sel
         # construct an ADLA account for use with catalog and job tests
         if(create_job_acct):
             params_create = azure.mgmt.datalake.analytics.account.models.DataLakeAnalyticsAccount(
-                name = self.job_account_name,
                 location = self.region,
-                properties = azure.mgmt.datalake.analytics.account.models.DataLakeAnalyticsAccountProperties(
-                    default_data_lake_store_account = self.adls_account_name,
-                    data_lake_store_accounts = [azure.mgmt.datalake.analytics.account.models.DataLakeStoreAccountInfo(name = self.adls_account_name)]
-                )
+                default_data_lake_store_account = self.adls_account_name,
+                data_lake_store_accounts = [azure.mgmt.datalake.analytics.account.models.DataLakeStoreAccountInfo(name = self.adls_account_name)]
             )
 
             result_create = self.adla_account_client.account.create(
@@ -223,8 +219,7 @@ END;""".format(self.db_name, self.table_name, self.tvf_name, self.view_name, sel
             degree_of_parallelism = 2,
             properties = azure.mgmt.datalake.analytics.job.models.USqlJobProperties(
                 script = script_to_run,
-            ),
-            job_id = job_id
+            )
         )
         create_response = self.adla_job_client.job.create(
             adla_account_name,
@@ -262,8 +257,7 @@ END;""".format(self.db_name, self.table_name, self.tvf_name, self.view_name, sel
             type = azure.mgmt.datalake.analytics.job.models.JobType.usql,
             properties = azure.mgmt.datalake.analytics.job.models.USqlJobProperties(
                 script = 'DROP DATABASE IF EXISTS testdb; CREATE DATABASE testdb;'
-            ),
-            job_id = self.cancel_id
+            )
         )
 
         # submit a job
@@ -375,78 +369,77 @@ END;""".format(self.db_name, self.table_name, self.tvf_name, self.view_name, sel
         self.assertIsNotNone(type_list)
         self.assertGreater(len(type_list), 0)
     
-    # TODO: Uncomment once the new swagger specs are incorporated.
-    #@record
-    #def test_adla_catalog_credentials(self):
-    #    self.run_prereqs(create_job_acct= True, create_catalog = True)
-    #    self.adla_catalog_client.catalog.create_credential(
-    #        self.job_account_name,
-    #        self.db_name,
-    #        self.credential_name,
-    #        azure.mgmt.datalake.analytics.catalog.models.DataLakeAnalyticsCatalogCredentialCreateParameters(
-    #            password = self.secret_pwd,
-    #            uri = 'https://pyadlacredtest.contoso.com:443',
-    #            user_id = self.credential_id
-    #        )
-    #    )
+    @record
+    def test_adla_catalog_credentials(self):
+        self.run_prereqs(create_job_acct= True, create_catalog = True)
+        self.adla_catalog_client.catalog.create_credential(
+            self.job_account_name,
+            self.db_name,
+            self.credential_name,
+            azure.mgmt.datalake.analytics.catalog.models.DataLakeAnalyticsCatalogCredentialCreateParameters(
+                password = self.secret_pwd,
+                uri = 'https://pyadlacredtest.contoso.com:443',
+                user_id = self.credential_id
+            )
+        )
         
-    #    # try to create the credential again.
-    #    try:
-    #        self.adla_catalog_client.catalog.create_credential(
-    #            self.job_account_name,
-    #            self.db_name,
-    #            self.credential_name,
-    #            azure.mgmt.datalake.analytics.catalog.models.DataLakeAnalyticsCatalogCredentialCreateParameters(
-    #                password = self.secret_pwd,
-    #                uri = 'https://pyadlacredtest.contoso.com:443',
-    #                user_id = self.generate_resource_name('newcredid')
-    #            )
-    #        )
-    #        self.assertTrue(False, 'should not have made it here')
-    #    except Exception as e:
-    #        self.assertTrue(True)
+        # try to create the credential again.
+        try:
+            self.adla_catalog_client.catalog.create_credential(
+                self.job_account_name,
+                self.db_name,
+                self.credential_name,
+                azure.mgmt.datalake.analytics.catalog.models.DataLakeAnalyticsCatalogCredentialCreateParameters(
+                    password = self.secret_pwd,
+                    uri = 'https://pyadlacredtest.contoso.com:443',
+                    user_id = self.generate_resource_name('newcredid')
+                )
+            )
+            self.assertTrue(False, 'should not have made it here')
+        except Exception as e:
+            self.assertTrue(True)
         
-    #    # get credential and ensure the response is not null
-    #    cred_response = self.adla_catalog_client.catalog.get_credential(
-    #        self.job_account_name,
-    #        self.db_name,
-    #        self.credential_name
-    #    )
-    #    self.assertIsNotNone(cred_response)
-    #    self.assertIsNotNone(cred_response.name)
+        # get credential and ensure the response is not null
+        cred_response = self.adla_catalog_client.catalog.get_credential(
+            self.job_account_name,
+            self.db_name,
+            self.credential_name
+        )
+        self.assertIsNotNone(cred_response)
+        self.assertIsNotNone(cred_response.name)
 
-    #    # list credentials
-    #    cred_list = list(self.adla_catalog_client.catalog.list_credentials(
-    #        self.job_account_name,
-    #        self.db_name
-    #    ))
+        # list credentials
+        cred_list = list(self.adla_catalog_client.catalog.list_credentials(
+            self.job_account_name,
+            self.db_name
+        ))
         
-    #    self.assertIsNotNone(cred_list)
-    #    self.assertGreater(len(cred_list), 0)
-    #    specific_cred = [item for item in cred_list if item.name == self.credential_name]
-    #    self.assertIsNotNone(specific_cred)
-    #    self.assertEqual(specific_cred[0].name, cred_response.name)
+        self.assertIsNotNone(cred_list)
+        self.assertGreater(len(cred_list), 0)
+        specific_cred = [item for item in cred_list if item.name == self.credential_name]
+        self.assertIsNotNone(specific_cred)
+        self.assertEqual(specific_cred[0].name, cred_response.name)
 
-    #    # delete the credential
-    #    self.adla_catalog_client.catalog.delete_credential(
-    #        self.job_account_name,
-    #        self.db_name,
-    #        self.credential_name
-    #    )
+        # delete the credential
+        self.adla_catalog_client.catalog.delete_credential(
+            self.job_account_name,
+            self.db_name,
+            self.credential_name
+        )
 
-    #    # try to get the credential and ensure it throws
-    #    try:
-    #        cred_response = self.adla_catalog_client.catalog.get_credential(
-    #            self.job_account_name,
-    #            self.db_name,
-    #            self.credential_name
-    #        )
-    #        self.assertTrue(False, 'should not have made it here')
-    #    except Exception as e:
-    #        self.assertTrue(True)
+        # try to get the credential and ensure it throws
+        try:
+            cred_response = self.adla_catalog_client.catalog.get_credential(
+                self.job_account_name,
+                self.db_name,
+                self.credential_name
+            )
+            self.assertTrue(False, 'should not have made it here')
+        except Exception as e:
+            self.assertTrue(True)
 
     @record
-    def test_adla_catalog_secrets(self):
+    def test_adla_catalog_secret(self):
         self.run_prereqs(create_job_acct= True, create_catalog = True)
 
         self.adla_catalog_client.catalog.create_secret(
@@ -545,18 +538,15 @@ END;""".format(self.db_name, self.table_name, self.tvf_name, self.view_name, sel
         # define account params
         account_name = self.get_resource_name('pyarmadla')
         params_create = azure.mgmt.datalake.analytics.account.models.DataLakeAnalyticsAccount(
-            name = account_name,
             location = self.region,
-            properties = azure.mgmt.datalake.analytics.account.models.DataLakeAnalyticsAccountProperties(
-                default_data_lake_store_account = self.adls_account_name,
-                data_lake_store_accounts = [azure.mgmt.datalake.analytics.account.models.DataLakeStoreAccountInfo(name = self.adls_account_name)]
-            ),
+            default_data_lake_store_account = self.adls_account_name,
+            data_lake_store_accounts = [azure.mgmt.datalake.analytics.account.models.DataLakeStoreAccountInfo(name = self.adls_account_name)],
             tags={
                 'tag1': 'value1'
             }
         )
 
-        # create and validate an ADLS account
+        # create and validate an ADLA account
         result_create = self.adla_account_client.account.create(
             self.group_name,
             account_name,
@@ -569,14 +559,14 @@ END;""".format(self.db_name, self.table_name, self.tvf_name, self.view_name, sel
         self.assertEqual(adla_account.name, account_name)
         
         # TODO: re-enable once it is determined why this property is still in "creating" state.
-        # self.assertEqual(azure.mgmt.datalake.analytics.account.models.DataLakeAnalyticsAccountStatus.succeeded, adla_account.properties.provisioning_state)
+        # self.assertEqual(azure.mgmt.datalake.analytics.account.models.DataLakeAnalyticsAccountStatus.succeeded, adla_account.provisioning_state)
         self.assertIsNotNone(adla_account.id)
         self.assertIn(account_name, adla_account.id)
         self.assertEqual(self.region, adla_account.location)
         self.assertEqual('Microsoft.DataLakeAnalytics/accounts', adla_account.type)
         self.assertEqual(adla_account.tags['tag1'], 'value1')
-        self.assertEqual(1, len(adla_account.properties.data_lake_store_accounts))
-        self.assertEqual(self.adls_account_name, adla_account.properties.default_data_lake_store_account)
+        self.assertEqual(1, len(adla_account.data_lake_store_accounts))
+        self.assertEqual(self.adls_account_name, adla_account.default_data_lake_store_account)
 
         # get the account and do the same checks
         adla_account = self.adla_account_client.account.get(
@@ -586,14 +576,14 @@ END;""".format(self.db_name, self.table_name, self.tvf_name, self.view_name, sel
 
         # full validation
         self.assertEqual(adla_account.name, account_name)
-        self.assertEqual(azure.mgmt.datalake.analytics.account.models.DataLakeAnalyticsAccountStatus.succeeded, adla_account.properties.provisioning_state)
+        self.assertEqual(azure.mgmt.datalake.analytics.account.models.DataLakeAnalyticsAccountStatus.succeeded, adla_account.provisioning_state)
         self.assertIsNotNone(adla_account.id)
         self.assertIn(account_name, adla_account.id)
         self.assertEqual(self.region, adla_account.location)
         self.assertEqual('Microsoft.DataLakeAnalytics/accounts', adla_account.type)
         self.assertEqual(adla_account.tags['tag1'], 'value1')
-        self.assertEqual(1, len(adla_account.properties.data_lake_store_accounts))
-        self.assertEqual(self.adls_account_name, adla_account.properties.default_data_lake_store_account)
+        self.assertEqual(1, len(adla_account.data_lake_store_accounts))
+        self.assertEqual(self.adls_account_name, adla_account.default_data_lake_store_account)
 
         # list all the accounts (there should always be at least 2).
         result_list = self.adla_account_client.account.list_by_resource_group(
@@ -611,8 +601,7 @@ END;""".format(self.db_name, self.table_name, self.tvf_name, self.view_name, sel
         adla_account = self.adla_account_client.account.update(
             self.group_name,
             account_name,
-            azure.mgmt.datalake.analytics.account.models.DataLakeAnalyticsAccount(
-                name = account_name,
+            azure.mgmt.datalake.analytics.account.models.DataLakeAnalyticsAccountUpdateParameters(
                 tags = {
                     'tag2': 'value2'
                 }

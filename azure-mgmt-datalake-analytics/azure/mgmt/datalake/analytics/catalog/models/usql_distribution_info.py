@@ -25,7 +25,7 @@ class USqlDistributionInfo(Model):
     :param dynamic_count: the dynamic count of indices using this
      distribution.
     :type dynamic_count: int
-    """ 
+    """
 
     _attribute_map = {
         'type': {'key': 'type', 'type': 'int'},

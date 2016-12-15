@@ -15,11 +15,11 @@ from msrest.serialization import Model
 class NetworkProfile(Model):
     """Describes a network profile.
 
-    :param network_interfaces: Specifies the list of resource Ids for the
+    :param network_interfaces: Specifies the list of resource IDs for the
      network interfaces associated with the virtual machine.
     :type network_interfaces: list of :class:`NetworkInterfaceReference
      <azure.mgmt.compute.models.NetworkInterfaceReference>`
-    """ 
+    """
 
     _attribute_map = {
         'network_interfaces': {'key': 'networkInterfaces', 'type': '[NetworkInterfaceReference]'},

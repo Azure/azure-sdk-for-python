@@ -35,13 +35,14 @@ class IotHubResourceOperations(object):
 
     def get(
             self, resource_group_name, resource_name, custom_headers=None, raw=False, **operation_config):
-        """Get an IotHub.
+        """Get the non-security related metadata of an IoT hub.
 
-        Get an IotHub.
+        Get the non-security related metadata of an IoT hub.
 
-        :param resource_group_name: The name of the resource group.
+        :param resource_group_name: The name of the resource group that
+         contains the IoT hub.
         :type resource_group_name: str
-        :param resource_name: The name of the resource.
+        :param resource_name: The name of the IoT hub.
         :type resource_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -52,6 +53,8 @@ class IotHubResourceOperations(object):
          <azure.mgmt.iothub.models.IotHubDescription>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`ErrorDetailsException<azure.mgmt.iothub.models.ErrorDetailsException>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Devices/IotHubs/{resourceName}'
@@ -96,15 +99,20 @@ class IotHubResourceOperations(object):
 
     def create_or_update(
             self, resource_group_name, resource_name, iot_hub_description, custom_headers=None, raw=False, **operation_config):
-        """Create or update an IotHub.
+        """Create or update the metadata of an IoT hub.
 
-        Create or update an IotHub.
+        Create or update the metadata of an Iot hub. The usual pattern to
+        modify a property is to retrieve the IoT hub metadata and security
+        metadata, and then combine them with the modified values in a new body
+        to update the IoT hub.
 
-        :param resource_group_name: The name of the resource group.
+        :param resource_group_name: The name of the resource group that
+         contains the IoT hub.
         :type resource_group_name: str
-        :param resource_name: The name of the resource.
+        :param resource_name: The name of the IoT hub to create or update.
         :type resource_name: str
-        :param iot_hub_description: The Iot hub description.
+        :param iot_hub_description: The IoT hub metadata and security
+         metadata.
         :type iot_hub_description: :class:`IotHubDescription
          <azure.mgmt.iothub.models.IotHubDescription>`
         :param dict custom_headers: headers that will be added to the request
@@ -116,6 +124,8 @@ class IotHubResourceOperations(object):
          <azure.mgmt.iothub.models.IotHubDescription>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`ErrorDetailsException<azure.mgmt.iothub.models.ErrorDetailsException>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Devices/IotHubs/{resourceName}'
@@ -160,12 +170,14 @@ class IotHubResourceOperations(object):
 
         def get_long_running_output(response):
 
-            if response.status_code not in [201]:
+            if response.status_code not in [201, 200]:
                 raise models.ErrorDetailsException(self._deserialize, response)
 
             deserialized = None
 
             if response.status_code == 201:
+                deserialized = self._deserialize('IotHubDescription', response)
+            if response.status_code == 200:
                 deserialized = self._deserialize('IotHubDescription', response)
 
             if raw:
@@ -187,23 +199,25 @@ class IotHubResourceOperations(object):
 
     def delete(
             self, resource_group_name, resource_name, custom_headers=None, raw=False, **operation_config):
-        """Delete an IotHub.
+        """Delete an IoT hub.
 
-        Delete an IotHub.
+        Delete an IoT hub.
 
-        :param resource_group_name: The name of the resource group.
+        :param resource_group_name: The name of the resource group that
+         contains the IoT hub.
         :type resource_group_name: str
-        :param resource_name: The name of the resource.
+        :param resource_name: The name of the IoT hub to delete.
         :type resource_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :rtype:
          :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         instance that returns :class:`IotHubDescription
-         <azure.mgmt.iothub.models.IotHubDescription>`
+         instance that returns object
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`ErrorDetailsException<azure.mgmt.iothub.models.ErrorDetailsException>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Devices/IotHubs/{resourceName}'
@@ -244,13 +258,17 @@ class IotHubResourceOperations(object):
 
         def get_long_running_output(response):
 
-            if response.status_code not in [202]:
+            if response.status_code not in [202, 200, 204, 404]:
                 raise models.ErrorDetailsException(self._deserialize, response)
 
             deserialized = None
 
             if response.status_code == 202:
                 deserialized = self._deserialize('IotHubDescription', response)
+            if response.status_code == 200:
+                deserialized = self._deserialize('IotHubDescription', response)
+            if response.status_code == 404:
+                deserialized = self._deserialize('ErrorDetails', response)
 
             if raw:
                 client_raw_response = ClientRawResponse(deserialized, response)
@@ -271,9 +289,9 @@ class IotHubResourceOperations(object):
 
     def list_by_subscription(
             self, custom_headers=None, raw=False, **operation_config):
-        """Get all IotHubs in a subscription.
+        """Get all the IoT hubs in a subscription.
 
-        Get all IotHubs in a subscription.
+        Get all the IoT hubs in a subscription.
 
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -282,6 +300,8 @@ class IotHubResourceOperations(object):
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`IotHubDescriptionPaged
          <azure.mgmt.iothub.models.IotHubDescriptionPaged>`
+        :raises:
+         :class:`ErrorDetailsException<azure.mgmt.iothub.models.ErrorDetailsException>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -333,11 +353,12 @@ class IotHubResourceOperations(object):
 
     def list_by_resource_group(
             self, resource_group_name, custom_headers=None, raw=False, **operation_config):
-        """Get all IotHubs in a Resourcegroup.
+        """Get all the IoT hubs in a resource group.
 
-        Get all IotHubs in a Resource group.
+        Get all the IoT hubs in a resource group.
 
-        :param resource_group_name: The name of the resource group.
+        :param resource_group_name: The name of the resource group that
+         contains the IoT hubs.
         :type resource_group_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -346,6 +367,8 @@ class IotHubResourceOperations(object):
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`IotHubDescriptionPaged
          <azure.mgmt.iothub.models.IotHubDescriptionPaged>`
+        :raises:
+         :class:`ErrorDetailsException<azure.mgmt.iothub.models.ErrorDetailsException>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -398,13 +421,14 @@ class IotHubResourceOperations(object):
 
     def get_stats(
             self, resource_group_name, resource_name, custom_headers=None, raw=False, **operation_config):
-        """Get IotHub Stats.
+        """Get the statistics from an IoT hub.
 
-        Get IotHub Stats.
+        Get the statistics from an IoT hub.
 
-        :param resource_group_name: The name of the resource group.
+        :param resource_group_name: The name of the resource group that
+         contains the IoT hub.
         :type resource_group_name: str
-        :param resource_name: The name of the resource.
+        :param resource_name: The name of the IoT hub.
         :type resource_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -415,6 +439,8 @@ class IotHubResourceOperations(object):
          <azure.mgmt.iothub.models.RegistryStatistics>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`ErrorDetailsException<azure.mgmt.iothub.models.ErrorDetailsException>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Devices/IotHubs/{resourceName}/IotHubStats'
@@ -459,13 +485,14 @@ class IotHubResourceOperations(object):
 
     def get_valid_skus(
             self, resource_group_name, resource_name, custom_headers=None, raw=False, **operation_config):
-        """Get Valid Skus.
+        """Get the list of valid SKUs for an IoT hub.
 
-        Get Valid Skus.
+        Get the list of valid SKUs for an IoT hub.
 
-        :param resource_group_name: The name of the resource group.
+        :param resource_group_name: The name of the resource group that
+         contains the IoT hub.
         :type resource_group_name: str
-        :param resource_name: The name of the resource.
+        :param resource_name: The name of the IoT hub.
         :type resource_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -474,6 +501,8 @@ class IotHubResourceOperations(object):
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`IotHubSkuDescriptionPaged
          <azure.mgmt.iothub.models.IotHubSkuDescriptionPaged>`
+        :raises:
+         :class:`ErrorDetailsException<azure.mgmt.iothub.models.ErrorDetailsException>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -527,22 +556,28 @@ class IotHubResourceOperations(object):
 
     def list_event_hub_consumer_groups(
             self, resource_group_name, resource_name, event_hub_endpoint_name, custom_headers=None, raw=False, **operation_config):
-        """Get EventHub Consumer Groups for an IotHub.
+        """Get a list of the consumer groups in the Event Hub-compatible
+        device-to-cloud endpoint in an IoT hub.
 
-        Get EventHub Consumer Groups for an IotHub.
+        Get a list of the consumer groups in the Event Hub-compatible
+        device-to-cloud endpoint in an IoT hub.
 
-        :param resource_group_name: The name of the resource group.
+        :param resource_group_name: The name of the resource group that
+         contains the IoT hub.
         :type resource_group_name: str
-        :param resource_name: The name of the resource.
+        :param resource_name: The name of the IoT hub.
         :type resource_name: str
-        :param event_hub_endpoint_name: The name of the event hub endpoint.
+        :param event_hub_endpoint_name: The name of the Event Hub-compatible
+         endpoint.
         :type event_hub_endpoint_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`strPaged <azure.mgmt.iothub.models.strPaged>`
+        :rtype: :class:`StrPaged <azure.mgmt.iothub.models.StrPaged>`
+        :raises:
+         :class:`ErrorDetailsException<azure.mgmt.iothub.models.ErrorDetailsException>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -597,17 +632,21 @@ class IotHubResourceOperations(object):
 
     def get_event_hub_consumer_group(
             self, resource_group_name, resource_name, event_hub_endpoint_name, name, custom_headers=None, raw=False, **operation_config):
-        """Get EventHub Consumer Group for an IotHub.
+        """Get a consumer group from the Event Hub-compatible device-to-cloud
+        endpoint for an IoT hub.
 
-        Get EventHub Consumer Group for an IotHub.
+        Get a consumer group from the Event Hub-compatible device-to-cloud
+        endpoint for an IoT hub.
 
-        :param resource_group_name: The name of the resource group.
+        :param resource_group_name: The name of the resource group that
+         contains the IoT hub.
         :type resource_group_name: str
-        :param resource_name: The name of the resource.
+        :param resource_name: The name of the IoT hub.
         :type resource_name: str
-        :param event_hub_endpoint_name: The name of the event hub endpoint.
+        :param event_hub_endpoint_name: The name of the Event Hub-compatible
+         endpoint in the IoT hub.
         :type event_hub_endpoint_name: str
-        :param name: The name of the consumer group.
+        :param name: The name of the consumer group to retrieve.
         :type name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -618,6 +657,8 @@ class IotHubResourceOperations(object):
          <azure.mgmt.iothub.models.EventHubConsumerGroupInfo>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`ErrorDetailsException<azure.mgmt.iothub.models.ErrorDetailsException>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Devices/IotHubs/{resourceName}/eventHubEndpoints/{eventHubEndpointName}/ConsumerGroups/{name}'
@@ -664,17 +705,19 @@ class IotHubResourceOperations(object):
 
     def create_event_hub_consumer_group(
             self, resource_group_name, resource_name, event_hub_endpoint_name, name, custom_headers=None, raw=False, **operation_config):
-        """Add an EventHub Consumer Group to an IotHub.
+        """Add a consumer group to an Event Hub-compatible endpoint in an IoT hub.
 
-        Add an EventHub Consumer Group to an IotHub.
+        Add a consumer group to an Event Hub-compatible endpoint in an IoT hub.
 
-        :param resource_group_name: The name of the resource group.
+        :param resource_group_name: The name of the resource group that
+         contains the IoT hub.
         :type resource_group_name: str
-        :param resource_name: The name of the resource.
+        :param resource_name: The name of the IoT hub.
         :type resource_name: str
-        :param event_hub_endpoint_name: The name of the event hub endpoint.
+        :param event_hub_endpoint_name: The name of the Event Hub-compatible
+         endpoint in the IoT hub.
         :type event_hub_endpoint_name: str
-        :param name: The name of the consumer group.
+        :param name: The name of the consumer group to add.
         :type name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -685,6 +728,8 @@ class IotHubResourceOperations(object):
          <azure.mgmt.iothub.models.EventHubConsumerGroupInfo>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`ErrorDetailsException<azure.mgmt.iothub.models.ErrorDetailsException>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Devices/IotHubs/{resourceName}/eventHubEndpoints/{eventHubEndpointName}/ConsumerGroups/{name}'
@@ -731,17 +776,21 @@ class IotHubResourceOperations(object):
 
     def delete_event_hub_consumer_group(
             self, resource_group_name, resource_name, event_hub_endpoint_name, name, custom_headers=None, raw=False, **operation_config):
-        """Delete EventHub Consumer Group for an IotHub.
+        """Delete a consumer group from an Event Hub-compatible endpoint in an IoT
+        hub.
 
-        Delete EventHub Consumer Group for an IotHub.
+        Delete a consumer group from an Event Hub-compatible endpoint in an IoT
+        hub.
 
-        :param resource_group_name: The name of the resource group.
+        :param resource_group_name: The name of the resource group that
+         contains the IoT hub.
         :type resource_group_name: str
-        :param resource_name: The name of the resource.
+        :param resource_name: The name of the IoT hub.
         :type resource_name: str
-        :param event_hub_endpoint_name: The name of the event hub endpoint.
+        :param event_hub_endpoint_name: The name of the Event Hub-compatible
+         endpoint in the IoT hub.
         :type event_hub_endpoint_name: str
-        :param name: The name of the consumer group.
+        :param name: The name of the consumer group to delete.
         :type name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -751,6 +800,8 @@ class IotHubResourceOperations(object):
         :rtype: None
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`ErrorDetailsException<azure.mgmt.iothub.models.ErrorDetailsException>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Devices/IotHubs/{resourceName}/eventHubEndpoints/{eventHubEndpointName}/ConsumerGroups/{name}'
@@ -790,13 +841,16 @@ class IotHubResourceOperations(object):
 
     def list_jobs(
             self, resource_group_name, resource_name, custom_headers=None, raw=False, **operation_config):
-        """Get all the jobs in an IotHub.
+        """Get a list of all the jobs in an IoT hub. For more information, see:
+        https://docs.microsoft.com/azure/iot-hub/iot-hub-devguide-identity-registry.
 
-        Get all the jobs in an IotHub.
+        Get a list of all the jobs in an IoT hub. For more information, see:
+        https://docs.microsoft.com/azure/iot-hub/iot-hub-devguide-identity-registry.
 
-        :param resource_group_name: The name of the resource group.
+        :param resource_group_name: The name of the resource group that
+         contains the IoT hub.
         :type resource_group_name: str
-        :param resource_name: The name of the resource.
+        :param resource_name: The name of the IoT hub.
         :type resource_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -805,6 +859,8 @@ class IotHubResourceOperations(object):
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`JobResponsePaged
          <azure.mgmt.iothub.models.JobResponsePaged>`
+        :raises:
+         :class:`ErrorDetailsException<azure.mgmt.iothub.models.ErrorDetailsException>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -858,13 +914,16 @@ class IotHubResourceOperations(object):
 
     def get_job(
             self, resource_group_name, resource_name, job_id, custom_headers=None, raw=False, **operation_config):
-        """Get a job in an IotHub.
+        """Get the details of a job from an IoT hub. For more information, see:
+        https://docs.microsoft.com/azure/iot-hub/iot-hub-devguide-identity-registry.
 
-        Get a job in an IotHub.
+        Get the details of a job from an IoT hub. For more information, see:
+        https://docs.microsoft.com/azure/iot-hub/iot-hub-devguide-identity-registry.
 
-        :param resource_group_name: The name of the resource group.
+        :param resource_group_name: The name of the resource group that
+         contains the IoT hub.
         :type resource_group_name: str
-        :param resource_name: The name of the resource.
+        :param resource_name: The name of the IoT hub.
         :type resource_name: str
         :param job_id: The job identifier.
         :type job_id: str
@@ -876,6 +935,8 @@ class IotHubResourceOperations(object):
         :rtype: :class:`JobResponse <azure.mgmt.iothub.models.JobResponse>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`ErrorDetailsException<azure.mgmt.iothub.models.ErrorDetailsException>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Devices/IotHubs/{resourceName}/jobs/{jobId}'
@@ -921,13 +982,14 @@ class IotHubResourceOperations(object):
 
     def get_quota_metrics(
             self, resource_group_name, resource_name, custom_headers=None, raw=False, **operation_config):
-        """Get quota metrics for an IotHub.
+        """Get the quota metrics for an IoT hub.
 
-        Get quota metrics for an IotHub.
+        Get the quota metrics for an IoT hub.
 
-        :param resource_group_name: The name of the resource group.
+        :param resource_group_name: The name of the resource group that
+         contains the IoT hub.
         :type resource_group_name: str
-        :param resource_name: The name of the resource.
+        :param resource_name: The name of the IoT hub.
         :type resource_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -936,6 +998,8 @@ class IotHubResourceOperations(object):
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`IotHubQuotaMetricInfoPaged
          <azure.mgmt.iothub.models.IotHubQuotaMetricInfoPaged>`
+        :raises:
+         :class:`ErrorDetailsException<azure.mgmt.iothub.models.ErrorDetailsException>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -989,11 +1053,11 @@ class IotHubResourceOperations(object):
 
     def check_name_availability(
             self, name, custom_headers=None, raw=False, **operation_config):
-        """Check if an IotHub name is available.
+        """Check if an IoT hub name is available.
 
-        Check if an IotHub name is available.
+        Check if an IoT hub name is available.
 
-        :param name: The name of the iot hub.
+        :param name: The name of the IoT hub to check.
         :type name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -1004,6 +1068,8 @@ class IotHubResourceOperations(object):
          <azure.mgmt.iothub.models.IotHubNameAvailabilityInfo>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`ErrorDetailsException<azure.mgmt.iothub.models.ErrorDetailsException>`
         """
         operation_inputs = models.OperationInputs(name=name)
 
@@ -1052,13 +1118,16 @@ class IotHubResourceOperations(object):
 
     def list_keys(
             self, resource_group_name, resource_name, custom_headers=None, raw=False, **operation_config):
-        """Get all keys for an IotHub.
+        """Get the security metadata for an IoT hub. For more information, see:
+        https://docs.microsoft.com/azure/iot-hub/iot-hub-devguide-security.
 
-        Get all keys for an IotHub.
+        Get the security metadata for an IoT hub. For more information, see:
+        https://docs.microsoft.com/azure/iot-hub/iot-hub-devguide-security.
 
-        :param resource_group_name: The name of the resource group.
+        :param resource_group_name: The name of the resource group that
+         contains the IoT hub.
         :type resource_group_name: str
-        :param resource_name: The name of the resource.
+        :param resource_name: The name of the IoT hub.
         :type resource_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -1067,6 +1136,8 @@ class IotHubResourceOperations(object):
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`SharedAccessSignatureAuthorizationRulePaged
          <azure.mgmt.iothub.models.SharedAccessSignatureAuthorizationRulePaged>`
+        :raises:
+         :class:`ErrorDetailsException<azure.mgmt.iothub.models.ErrorDetailsException>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -1120,15 +1191,20 @@ class IotHubResourceOperations(object):
 
     def get_keys_for_key_name(
             self, resource_group_name, resource_name, key_name, custom_headers=None, raw=False, **operation_config):
-        """Get the Key given a specific KeyName for an IotHub.
+        """Get a shared access policy by name from an IoT hub. For more
+        information, see:
+        https://docs.microsoft.com/azure/iot-hub/iot-hub-devguide-security.
 
-        Get the Key given a specific KeyName for an IotHub.
+        Get a shared access policy by name from an IoT hub. For more
+        information, see:
+        https://docs.microsoft.com/azure/iot-hub/iot-hub-devguide-security.
 
-        :param resource_group_name: The name of the resource group.
+        :param resource_group_name: The name of the resource group that
+         contains the IoT hub.
         :type resource_group_name: str
-        :param resource_name: The name of the resource.
+        :param resource_name: The name of the IoT hub.
         :type resource_name: str
-        :param key_name: The name of the key.
+        :param key_name: The name of the shared access policy.
         :type key_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -1139,6 +1215,8 @@ class IotHubResourceOperations(object):
          <azure.mgmt.iothub.models.SharedAccessSignatureAuthorizationRule>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`ErrorDetailsException<azure.mgmt.iothub.models.ErrorDetailsException>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Devices/IotHubs/{resourceName}/IotHubKeys/{keyName}/listkeys'
@@ -1184,15 +1262,20 @@ class IotHubResourceOperations(object):
 
     def export_devices(
             self, resource_group_name, resource_name, export_blob_container_uri, exclude_keys, custom_headers=None, raw=False, **operation_config):
-        """Export all the devices in an IotHub.
+        """Exports all the device identities in the IoT hub identity registry to
+        an Azure Storage blob container. For more information, see:
+        https://docs.microsoft.com/azure/iot-hub/iot-hub-devguide-identity-registry#import-and-export-device-identities.
 
-        Export all the devices in an IotHub.
+        Exports all the device identities in the IoT hub identity registry to
+        an Azure Storage blob container. For more information, see:
+        https://docs.microsoft.com/azure/iot-hub/iot-hub-devguide-identity-registry#import-and-export-device-identities.
 
-        :param resource_group_name: The name of the resource group.
+        :param resource_group_name: The name of the resource group that
+         contains the IoT hub.
         :type resource_group_name: str
-        :param resource_name: The name of the resource.
+        :param resource_name: The name of the IoT hub.
         :type resource_name: str
-        :param export_blob_container_uri: The export BLOB container URI.
+        :param export_blob_container_uri: The export blob container URI.
         :type export_blob_container_uri: str
         :param exclude_keys: The value indicating whether keys should be
          excluded during export.
@@ -1205,6 +1288,8 @@ class IotHubResourceOperations(object):
         :rtype: :class:`JobResponse <azure.mgmt.iothub.models.JobResponse>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`ErrorDetailsException<azure.mgmt.iothub.models.ErrorDetailsException>`
         """
         export_devices_parameters = models.ExportDevicesRequest(export_blob_container_uri=export_blob_container_uri, exclude_keys=exclude_keys)
 
@@ -1255,17 +1340,22 @@ class IotHubResourceOperations(object):
 
     def import_devices(
             self, resource_group_name, resource_name, input_blob_container_uri, output_blob_container_uri, custom_headers=None, raw=False, **operation_config):
-        """Import all the devices in an IotHub.
+        """Import, update, or delete device identities in the IoT hub identity
+        registry from a blob. For more information, see:
+        https://docs.microsoft.com/azure/iot-hub/iot-hub-devguide-identity-registry#import-and-export-device-identities.
 
-        Import all the devices in an IotHub.
+        Import, update, or delete device identities in the IoT hub identity
+        registry from a blob. For more information, see:
+        https://docs.microsoft.com/azure/iot-hub/iot-hub-devguide-identity-registry#import-and-export-device-identities.
 
-        :param resource_group_name: The name of the resource group.
+        :param resource_group_name: The name of the resource group that
+         contains the IoT hub.
         :type resource_group_name: str
-        :param resource_name: The name of the resource.
+        :param resource_name: The name of the IoT hub.
         :type resource_name: str
-        :param input_blob_container_uri: The input BLOB container URI.
+        :param input_blob_container_uri: The input blob container URI.
         :type input_blob_container_uri: str
-        :param output_blob_container_uri: The output BLOB container URI.
+        :param output_blob_container_uri: The output blob container URI.
         :type output_blob_container_uri: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -1275,6 +1365,8 @@ class IotHubResourceOperations(object):
         :rtype: :class:`JobResponse <azure.mgmt.iothub.models.JobResponse>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`ErrorDetailsException<azure.mgmt.iothub.models.ErrorDetailsException>`
         """
         import_devices_parameters = models.ImportDevicesRequest(input_blob_container_uri=input_blob_container_uri, output_blob_container_uri=output_blob_container_uri)
 

@@ -18,85 +18,93 @@ class WebServiceProperties(Model):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :param title: The title of the Azure ML web service.
+    :param title: The title of the web service.
     :type title: str
-    :param description: The description of the Azure ML web service.
+    :param description: The description of the web service.
     :type description: str
-    :ivar created_on: The moment of time the Azure ML web service was created.
+    :ivar created_on: Read Only: The date and time when the web service was
+     created.
     :vartype created_on: datetime
-    :ivar modified_on: The moment of time the web service was last modified.
+    :ivar modified_on: Read Only: The date and time when the web service was
+     last modified.
     :vartype modified_on: datetime
-    :ivar provisioning_state: The web service resource's provisioning state.
-     Possible values include: 'Unknown', 'Provisioning', 'Succeeded',
-     'Failed', 'Canceled'
+    :ivar provisioning_state: Read Only: The provision state of the web
+     service. Valid values are Unknown, Provisioning, Succeeded, and Failed.
+     Possible values include: 'Unknown', 'Provisioning', 'Succeeded', 'Failed'
     :vartype provisioning_state: str or :class:`ProvisioningState
      <azure.mgmt.machinelearning.models.ProvisioningState>`
-    :param keys: The set of access keys for the web service. If not specified
-     at creation time (PUT), they will be generated automatically by the
-     resource provider.
+    :param keys: Contains the web service provisioning keys. If you do not
+     specify provisioning keys, the Azure Machine Learning system generates
+     them for you. Note: The keys are not returned from calls to GET
+     operations.
     :type keys: :class:`WebServiceKeys
      <azure.mgmt.machinelearning.models.WebServiceKeys>`
-    :param read_only: If true, the web service can no longer be updated /
-     patched, only removed. Otherwise, the service resource supports changes.
+    :param read_only: When set to true, indicates that the web service is
+     read-only and can no longer be updated or patched, only removed. Default,
+     is false. Note: Once set to true, you cannot change its value.
     :type read_only: bool
-    :ivar swagger_location: The uri for the swagger spec associated with this
-     web service.
+    :ivar swagger_location: Read Only: Contains the URI of the swagger spec
+     associated with this web service.
     :vartype swagger_location: str
-    :param expose_sample_data: Flag that controls whether to expose sample
-     data or not in the web service's swagger definition.
+    :param expose_sample_data: When set to true, sample data is included in
+     the web service's swagger definition. The default value is true.
     :type expose_sample_data: bool
-    :param realtime_configuration: Configuration for the service's realtime
-     endpoint.
+    :param realtime_configuration: Contains the configuration settings for the
+     web service endpoint.
     :type realtime_configuration: :class:`RealtimeConfiguration
      <azure.mgmt.machinelearning.models.RealtimeConfiguration>`
-    :param diagnostics: Settings controlling the diagnostics traces
-     collection for the web service.
+    :param diagnostics: Settings controlling the diagnostics traces collection
+     for the web service.
     :type diagnostics: :class:`DiagnosticsConfiguration
      <azure.mgmt.machinelearning.models.DiagnosticsConfiguration>`
-    :param storage_account: The storage account associated with the service.
-     This is used to store both datasets and diagnostic traces. This
-     information is required at creation time (PUT) and only the key is
-     updateable after that. The account credentials are hidden on a GET web
-     service call.
+    :param storage_account: Specifies the storage account that Azure Machine
+     Learning uses to store information about the web service. Only the name of
+     the storage account is returned from calls to GET operations. When
+     updating the storage account information, you must ensure that all
+     necessary assets are available in the new storage account or calls to your
+     web service will fail.
     :type storage_account: :class:`StorageAccount
      <azure.mgmt.machinelearning.models.StorageAccount>`
-    :param machine_learning_workspace: This is only populated at creation
-     time (PUT) for web services originating from an AzureML Studio
-     experiment.
+    :param machine_learning_workspace: Specifies the Machine Learning
+     workspace containing the experiment that is source for the web service.
     :type machine_learning_workspace: :class:`MachineLearningWorkspace
      <azure.mgmt.machinelearning.models.MachineLearningWorkspace>`
-    :param commitment_plan: The commitment plan associated with this web
-     service. This is required to be specified at creation time (PUT) and is
-     not updateable afterwards.
+    :param commitment_plan: Contains the commitment plan associated with this
+     web service. Set at creation time. Once set, this value cannot be changed.
+     Note: The commitment plan is not returned from calls to GET operations.
     :type commitment_plan: :class:`CommitmentPlan
      <azure.mgmt.machinelearning.models.CommitmentPlan>`
-    :param input: Swagger schema for the service's input(s), as applicable.
+    :param input: Contains the Swagger 2.0 schema describing one or more of
+     the web service's inputs. For more information, see the Swagger
+     specification.
     :type input: :class:`ServiceInputOutputSpecification
      <azure.mgmt.machinelearning.models.ServiceInputOutputSpecification>`
-    :param output: Swagger schema for the service's output(s), as applicable.
+    :param output: Contains the Swagger 2.0 schema describing one or more of
+     the web service's outputs. For more information, see the Swagger
+     specification.
     :type output: :class:`ServiceInputOutputSpecification
      <azure.mgmt.machinelearning.models.ServiceInputOutputSpecification>`
-    :param example_request: Sample request data for each of the service's
-     inputs, as applicable.
+    :param example_request: Defines sample input data for one or more of the
+     service's inputs.
     :type example_request: :class:`ExampleRequest
      <azure.mgmt.machinelearning.models.ExampleRequest>`
-    :param assets: Set of assets associated with the web service.
+    :param assets: Contains user defined properties describing web service
+     assets. Properties are expressed as Key/Value pairs.
     :type assets: dict
-    :param parameters: The set of global parameters values defined for the
-     web service, given as a global parameter name to default value map. If
-     no default value is specified, the parameter is considered to be
-     required.
+    :param parameters: The set of global parameters values defined for the web
+     service, given as a global parameter name to default value map. If no
+     default value is specified, the parameter is considered to be required.
     :type parameters: dict
-    :param packageType: Polymorphic Discriminator
-    :type packageType: str
-    """ 
+    :param package_type: Polymorphic Discriminator
+    :type package_type: str
+    """
 
     _validation = {
         'created_on': {'readonly': True},
         'modified_on': {'readonly': True},
         'provisioning_state': {'readonly': True},
         'swagger_location': {'readonly': True},
-        'packageType': {'required': True},
+        'package_type': {'required': True},
     }
 
     _attribute_map = {
@@ -119,11 +127,11 @@ class WebServiceProperties(Model):
         'example_request': {'key': 'exampleRequest', 'type': 'ExampleRequest'},
         'assets': {'key': 'assets', 'type': '{AssetItem}'},
         'parameters': {'key': 'parameters', 'type': '{str}'},
-        'packageType': {'key': 'packageType', 'type': 'str'},
+        'package_type': {'key': 'packageType', 'type': 'str'},
     }
 
     _subtype_map = {
-        'packageType': {'Graph': 'WebServicePropertiesForGraph'}
+        'package_type': {'Graph': 'WebServicePropertiesForGraph'}
     }
 
     def __init__(self, title=None, description=None, keys=None, read_only=None, expose_sample_data=None, realtime_configuration=None, diagnostics=None, storage_account=None, machine_learning_workspace=None, commitment_plan=None, input=None, output=None, example_request=None, assets=None, parameters=None):
@@ -146,4 +154,4 @@ class WebServiceProperties(Model):
         self.example_request = example_request
         self.assets = assets
         self.parameters = parameters
-        self.packageType = None
+        self.package_type = None

@@ -15,11 +15,11 @@ from msrest.serialization import Model
 class UsageName(Model):
     """The Usage Names.
 
-    :param value: a string describing the resource name.
+    :param value: The name of the resource.
     :type value: str
-    :param localized_value: a localized string describing the resource name.
+    :param localized_value: The localized name of the resource.
     :type localized_value: str
-    """ 
+    """
 
     _attribute_map = {
         'value': {'key': 'value', 'type': 'str'},

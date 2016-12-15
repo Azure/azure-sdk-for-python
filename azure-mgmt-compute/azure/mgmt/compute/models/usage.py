@@ -18,16 +18,16 @@ class Usage(Model):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar unit: an enum describing the unit of measurement. Default value:
-     "Count" .
+    :ivar unit: An enum describing the unit of usage measurement. Default
+     value: "Count" .
     :vartype unit: str
-    :param current_value: the current value of the usage.
+    :param current_value: The current usage of the resource.
     :type current_value: int
-    :param limit: the limit of usage.
+    :param limit: The maximum permitted usage of the resource.
     :type limit: long
-    :param name: the name of the type of usage.
+    :param name: The name of the type of usage.
     :type name: :class:`UsageName <azure.mgmt.compute.models.UsageName>`
-    """ 
+    """
 
     _validation = {
         'unit': {'required': True, 'constant': True},

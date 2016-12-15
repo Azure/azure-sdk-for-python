@@ -13,17 +13,18 @@ from msrest.serialization import Model
 
 
 class IpFilterRule(Model):
-    """IP filter Rule.
+    """The IP filter rules for the IoT hub.
 
     :param filter_name: The name of the IP filter rule.
     :type filter_name: str
-    :param action: The action desired - accept or reject. Possible values
-     include: 'Accept', 'Reject'
+    :param action: The desired action for requests captured by this rule.
+     Possible values include: 'Accept', 'Reject'
     :type action: str or :class:`IpFilterActionType
      <azure.mgmt.iothub.models.IpFilterActionType>`
-    :param ip_mask: A string containing the IPAddress/range in CIDR notation.
+    :param ip_mask: A string that contains the IP address range in CIDR
+     notation for the rule.
     :type ip_mask: str
-    """ 
+    """
 
     _validation = {
         'filter_name': {'required': True},

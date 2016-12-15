@@ -19,7 +19,7 @@ class OutputPort(Model):
      value: "Dataset" .
     :type type: str or :class:`OutputPortType
      <azure.mgmt.machinelearning.models.OutputPortType>`
-    """ 
+    """
 
     _attribute_map = {
         'type': {'key': 'type', 'type': 'str'},

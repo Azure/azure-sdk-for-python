@@ -13,14 +13,14 @@ from .resource import Resource
 
 
 class Server(Resource):
-    """Represents an Azure SQL Server.
+    """Represents an Azure SQL server.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
     :ivar name: Resource name
     :vartype name: str
-    :ivar id: Resource Id
+    :ivar id: Resource ID
     :vartype id: str
     :ivar type: Resource type
     :vartype type: str
@@ -31,8 +31,8 @@ class Server(Resource):
     :ivar fully_qualified_domain_name: The fully qualified domain name of the
      server.
     :vartype fully_qualified_domain_name: str
-    :param version: The version of the server. Possible values include:
-     '2.0', '12.0'
+    :param version: The version of the server. Possible values include: '2.0',
+     '12.0'
     :type version: str or :class:`ServerVersion
      <azure.mgmt.sql.models.ServerVersion>`
     :param administrator_login: Administrator username for the server. Can
@@ -42,7 +42,7 @@ class Server(Resource):
     :param administrator_login_password: The administrator login password
      (required for server creation).
     :type administrator_login_password: str
-    """ 
+    """
 
     _validation = {
         'name': {'readonly': True},

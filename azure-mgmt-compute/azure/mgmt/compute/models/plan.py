@@ -15,15 +15,15 @@ from msrest.serialization import Model
 class Plan(Model):
     """Plan for the resource.
 
-    :param name: the plan ID.
+    :param name: The plan ID.
     :type name: str
-    :param publisher: the publisher ID.
+    :param publisher: The publisher ID.
     :type publisher: str
-    :param product: the offer ID.
+    :param product: The offer ID.
     :type product: str
-    :param promotion_code: the promotion code.
+    :param promotion_code: The promotion code.
     :type promotion_code: str
-    """ 
+    """
 
     _attribute_map = {
         'name': {'key': 'name', 'type': 'str'},

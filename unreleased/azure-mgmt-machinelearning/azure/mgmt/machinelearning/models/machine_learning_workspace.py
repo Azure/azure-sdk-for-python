@@ -16,9 +16,10 @@ class MachineLearningWorkspace(Model):
     """Information about the machine learning workspace containing the experiment
     that is source for the web service.
 
-    :param id: The workspace ARM resource id.
+    :param id: Specifies the workspace ID of the machine learning workspace
+     associated with the web service
     :type id: str
-    """ 
+    """
 
     _validation = {
         'id': {'required': True},

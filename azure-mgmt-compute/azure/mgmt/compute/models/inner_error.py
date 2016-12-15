@@ -15,11 +15,11 @@ from msrest.serialization import Model
 class InnerError(Model):
     """Inner error details.
 
-    :param exceptiontype: the exception type.
+    :param exceptiontype: The exception type.
     :type exceptiontype: str
-    :param errordetail: the internal error message or exception dump.
+    :param errordetail: The internal error message or exception dump.
     :type errordetail: str
-    """ 
+    """
 
     _attribute_map = {
         'exceptiontype': {'key': 'exceptiontype', 'type': 'str'},

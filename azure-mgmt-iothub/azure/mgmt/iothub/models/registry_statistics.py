@@ -13,15 +13,27 @@ from msrest.serialization import Model
 
 
 class RegistryStatistics(Model):
-    """The properties related to the registry statistics.
+    """Identity registry statistics.
 
-    :param total_device_count: The total device count.
-    :type total_device_count: long
-    :param enabled_device_count: The enabled device count.
-    :type enabled_device_count: long
-    :param disabled_device_count: The disabled device count.
-    :type disabled_device_count: long
-    """ 
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar total_device_count: The total count of devices in the identity
+     registry.
+    :vartype total_device_count: long
+    :ivar enabled_device_count: The count of enabled devices in the identity
+     registry.
+    :vartype enabled_device_count: long
+    :ivar disabled_device_count: The count of disabled devices in the identity
+     registry.
+    :vartype disabled_device_count: long
+    """
+
+    _validation = {
+        'total_device_count': {'readonly': True},
+        'enabled_device_count': {'readonly': True},
+        'disabled_device_count': {'readonly': True},
+    }
 
     _attribute_map = {
         'total_device_count': {'key': 'totalDeviceCount', 'type': 'long'},
@@ -29,7 +41,7 @@ class RegistryStatistics(Model):
         'disabled_device_count': {'key': 'disabledDeviceCount', 'type': 'long'},
     }
 
-    def __init__(self, total_device_count=None, enabled_device_count=None, disabled_device_count=None):
-        self.total_device_count = total_device_count
-        self.enabled_device_count = enabled_device_count
-        self.disabled_device_count = disabled_device_count
+    def __init__(self):
+        self.total_device_count = None
+        self.enabled_device_count = None
+        self.disabled_device_count = None

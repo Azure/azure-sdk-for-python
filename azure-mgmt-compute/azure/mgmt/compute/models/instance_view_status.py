@@ -15,20 +15,20 @@ from msrest.serialization import Model
 class InstanceViewStatus(Model):
     """Instance view status.
 
-    :param code: the status Code.
+    :param code: The status code.
     :type code: str
-    :param level: the level Code. Possible values include: 'Info', 'Warning',
+    :param level: The level code. Possible values include: 'Info', 'Warning',
      'Error'
     :type level: str or :class:`StatusLevelTypes
      <azure.mgmt.compute.models.StatusLevelTypes>`
-    :param display_status: the short localizable label for the status.
+    :param display_status: The short localizable label for the status.
     :type display_status: str
-    :param message: the detailed Message, including for alerts and error
-     messages.
+    :param message: The detailed status message, including for alerts and
+     error messages.
     :type message: str
-    :param time: the time of the status.
+    :param time: The time of the status.
     :type time: datetime
-    """ 
+    """
 
     _attribute_map = {
         'code': {'key': 'code', 'type': 'str'},

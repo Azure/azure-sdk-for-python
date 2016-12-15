@@ -13,16 +13,16 @@ from msrest.serialization import Model
 
 
 class ServicePrincipalCreateParameters(Model):
-    """Request parameters for create a new service principal.
+    """Request parameters for creating a new service principal.
 
     :param app_id: application Id
     :type app_id: str
-    :param account_enabled: Specifies if the account is enabled
+    :param account_enabled: Whether the account is enabled
     :type account_enabled: bool
-    :param key_credentials: the list of KeyCredential objects
+    :param key_credentials: A collection of KeyCredential objects.
     :type key_credentials: list of :class:`KeyCredential
      <azure.graphrbac.models.KeyCredential>`
-    :param password_credentials: the list of PasswordCredential objects
+    :param password_credentials: A collection of PasswordCredential objects
     :type password_credentials: list of :class:`PasswordCredential
      <azure.graphrbac.models.PasswordCredential>`
     """ 

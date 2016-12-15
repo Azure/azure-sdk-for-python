@@ -20,7 +20,7 @@ class ElasticPool(Resource):
 
     :ivar name: Resource name
     :vartype name: str
-    :ivar id: Resource Id
+    :ivar id: Resource ID
     :vartype id: str
     :ivar type: Resource type
     :vartype type: str
@@ -35,8 +35,8 @@ class ElasticPool(Resource):
      include: 'Creating', 'Ready', 'Disabled'
     :vartype state: str or :class:`ElasticPoolState
      <azure.mgmt.sql.models.ElasticPoolState>`
-    :param edition: The edition of the Azure SQL Elastic Pool. Possible
-     values include: 'Basic', 'Standard', 'Premium'
+    :param edition: The edition of the Azure SQL Elastic Pool. Possible values
+     include: 'Basic', 'Standard', 'Premium'
     :type edition: str or :class:`ElasticPoolEditions
      <azure.mgmt.sql.models.ElasticPoolEditions>`
     :param dtu: The total shared DTU for the SQL Azure Database Elastic Pool.
@@ -50,7 +50,7 @@ class ElasticPool(Resource):
     :param storage_mb: Gets storage limit for the SQL Azure Database Elastic
      Pool in MB.
     :type storage_mb: int
-    """ 
+    """
 
     _validation = {
         'name': {'readonly': True},

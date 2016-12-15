@@ -13,24 +13,28 @@ from msrest.serialization import Model
 
 
 class EncryptionConfig(Model):
-    """EncryptionConfig.
+    """The encryption configuration for the account.
 
     :param type: The type of encryption configuration being used. Currently
-     the only supported types are 'UserManaged' and 'ServiceManaged'.
-     Possible values include: 'UserManaged', 'ServiceManaged'
+     the only supported types are 'UserManaged' and 'ServiceManaged'. Possible
+     values include: 'UserManaged', 'ServiceManaged'
     :type type: str or :class:`EncryptionConfigType
-     <azure.mgmt.datalake.store.account.models.EncryptionConfigType>`
+     <azure.mgmt.datalake.store.models.EncryptionConfigType>`
     :param key_vault_meta_info: The Key vault information for connecting to
      user managed encryption keys.
     :type key_vault_meta_info: :class:`KeyVaultMetaInfo
-     <azure.mgmt.datalake.store.account.models.KeyVaultMetaInfo>`
-    """ 
+     <azure.mgmt.datalake.store.models.KeyVaultMetaInfo>`
+    """
+
+    _validation = {
+        'type': {'required': True},
+    }
 
     _attribute_map = {
         'type': {'key': 'type', 'type': 'EncryptionConfigType'},
         'key_vault_meta_info': {'key': 'keyVaultMetaInfo', 'type': 'KeyVaultMetaInfo'},
     }
 
-    def __init__(self, type=None, key_vault_meta_info=None):
+    def __init__(self, type, key_vault_meta_info=None):
         self.type = type
         self.key_vault_meta_info = key_vault_meta_info

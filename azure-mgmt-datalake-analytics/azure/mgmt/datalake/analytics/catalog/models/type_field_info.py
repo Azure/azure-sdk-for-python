@@ -19,7 +19,7 @@ class TypeFieldInfo(Model):
     :type name: str
     :param type: the type of the field.
     :type type: str
-    """ 
+    """
 
     _attribute_map = {
         'name': {'key': 'name', 'type': 'str'},

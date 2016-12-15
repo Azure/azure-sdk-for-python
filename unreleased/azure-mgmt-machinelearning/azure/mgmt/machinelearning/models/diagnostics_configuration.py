@@ -15,15 +15,16 @@ from msrest.serialization import Model
 class DiagnosticsConfiguration(Model):
     """Diagnostics settings for an Azure ML web service.
 
-    :param level: Level of tracing to be used: None - disables tracing; Error
-     - collects only error (stderr) traces; All - collects all traces (stdout
-     and stderr). Possible values include: 'None', 'Error', 'All'
+    :param level: Specifies the verbosity of the diagnostic output. Valid
+     values are: None - disables tracing; Error - collects only error (stderr)
+     traces; All - collects all traces (stdout and stderr). Possible values
+     include: 'None', 'Error', 'All'
     :type level: str or :class:`DiagnosticsLevel
      <azure.mgmt.machinelearning.models.DiagnosticsLevel>`
-    :param expiry: Moment of time after which diagnostics are no longer
-     collected. If null, diagnostic collection is not time limited.
+    :param expiry: Specifies the date and time when the logging will cease. If
+     null, diagnostic collection is not time limited.
     :type expiry: datetime
-    """ 
+    """
 
     _validation = {
         'level': {'required': True},

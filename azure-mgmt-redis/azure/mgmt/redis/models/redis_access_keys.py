@@ -19,12 +19,12 @@ class RedisAccessKeys(Model):
     sending a request.
 
     :ivar primary_key: The current primary key that clients can use to
-     authenticate with redis cache.
+     authenticate with Redis cache.
     :vartype primary_key: str
     :ivar secondary_key: The current secondary key that clients can use to
-     authenticate with redis cache.
+     authenticate with Redis cache.
     :vartype secondary_key: str
-    """ 
+    """
 
     _validation = {
         'primary_key': {'readonly': True},

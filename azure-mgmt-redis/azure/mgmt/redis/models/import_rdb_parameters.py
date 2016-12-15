@@ -13,13 +13,13 @@ from msrest.serialization import Model
 
 
 class ImportRDBParameters(Model):
-    """Parameters for redis import operation.
+    """Parameters for Redis import operation.
 
     :param format: File format.
     :type format: str
-    :param files: files to import
+    :param files: files to import.
     :type files: list of str
-    """ 
+    """
 
     _validation = {
         'files': {'required': True},

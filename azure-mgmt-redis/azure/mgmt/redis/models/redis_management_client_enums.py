@@ -47,3 +47,5 @@ class DayOfWeek(Enum):
     friday = "Friday"
     saturday = "Saturday"
     sunday = "Sunday"
+    everyday = "Everyday"
+    weekend = "Weekend"

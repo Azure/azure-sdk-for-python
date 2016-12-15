@@ -13,8 +13,8 @@ from msrest.serialization import Model
 
 
 class PowerShellTabCompletionResults(Model):
-    """an array of strings representing the different values that can be tabbed
-    thru.
+    """An array of strings representing the different values that can be selected
+    through.
 
     :param results:
     :type results: list of str

@@ -19,10 +19,10 @@ class WinRMListener(Model):
      are supported. Possible values include: 'Http', 'Https'
     :type protocol: str or :class:`ProtocolTypes
      <azure.mgmt.compute.models.ProtocolTypes>`
-    :param certificate_url: the Certificate URL in KMS for Https listeners.
+    :param certificate_url: The Certificate URL in KMS for Https listeners.
      Should be null for Http listeners.
     :type certificate_url: str
-    """ 
+    """
 
     _attribute_map = {
         'protocol': {'key': 'protocol', 'type': 'ProtocolTypes'},

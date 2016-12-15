@@ -23,7 +23,7 @@ class VirtualMachineImageResource(SubResource):
     :type location: str
     :param tags: The tags attached to the resource.
     :type tags: dict
-    """ 
+    """
 
     _validation = {
         'name': {'required': True},

@@ -15,12 +15,12 @@ from .http_authentication import HttpAuthentication
 class OAuthAuthentication(HttpAuthentication):
     """OAuthAuthentication.
 
-    :param type: Gets or sets the http authentication type. Possible values
+    :param type: Gets or sets the HTTP authentication type. Possible values
      include: 'NotSpecified', 'ClientCertificate', 'ActiveDirectoryOAuth',
      'Basic'
     :type type: str or :class:`HttpAuthenticationType
      <azure.mgmt.scheduler.models.HttpAuthenticationType>`
-    :param secret: Gets or sets the secret.
+    :param secret: Gets or sets the secret, return value will always be empty.
     :type secret: str
     :param tenant: Gets or sets the tenant.
     :type tenant: str

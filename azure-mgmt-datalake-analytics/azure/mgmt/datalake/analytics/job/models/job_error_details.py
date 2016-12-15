@@ -29,8 +29,8 @@ class JobErrorDetails(Model):
     :vartype error_id: str
     :ivar file_path: the path to any supplemental error files, if any.
     :vartype file_path: str
-    :ivar help_link: the link to MSDN or Azure help for this type of error,
-     if any.
+    :ivar help_link: the link to MSDN or Azure help for this type of error, if
+     any.
     :vartype help_link: str
     :ivar internal_diagnostics: the internal diagnostic stack trace if the
      user requesting the job error details has sufficient permissions it will
@@ -51,12 +51,12 @@ class JobErrorDetails(Model):
      include: 'Warning', 'Error', 'Info'
     :vartype severity: str or :class:`SeverityTypes
      <azure.mgmt.datalake.analytics.job.models.SeverityTypes>`
-    :ivar source: the ultimate source of the failure (usually either SYSTEM
-     or USER).
+    :ivar source: the ultimate source of the failure (usually either SYSTEM or
+     USER).
     :vartype source: str
     :ivar start_offset: the start offset in the job where the error was found
     :vartype start_offset: int
-    """ 
+    """
 
     _validation = {
         'description': {'readonly': True},

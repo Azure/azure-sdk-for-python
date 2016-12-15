@@ -41,9 +41,9 @@ class ContainerServicesOperations(object):
         """Gets a list of container services in the specified subscription.
 
         Gets a list of container services in the specified subscription. The
-        operation returns properties of each container service including
-        state, orchestrator, number of masters and agents, and FQDNs of
-        masters and agents.
+        operation returns properties of each container service including state,
+        orchestrator, number of masters and agents, and FQDNs of masters and
+        agents.
 
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -108,8 +108,8 @@ class ContainerServicesOperations(object):
             self, resource_group_name, container_service_name, parameters, custom_headers=None, raw=False, **operation_config):
         """Creates or updates a container service.
 
-        Creates or updates a container service with the specified
-        configuration of orchestrator, masters, and agents.
+        Creates or updates a container service with the specified configuration
+        of orchestrator, masters, and agents.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
@@ -209,10 +209,10 @@ class ContainerServicesOperations(object):
             self, resource_group_name, container_service_name, custom_headers=None, raw=False, **operation_config):
         """Gets the properties of the specified container service.
 
-        Gets the properties of the specified container service in the
-        specified subscription and resource group. The operation returns the
-        properties including state, orchestrator, number of masters and
-        agents, and FQDNs of masters and agents. .
+        Gets the properties of the specified container service in the specified
+        subscription and resource group. The operation returns the properties
+        including state, orchestrator, number of masters and agents, and FQDNs
+        of masters and agents. .
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
@@ -281,8 +281,8 @@ class ContainerServicesOperations(object):
         and resource group. The operation does not delete other resources
         created as part of creating a container service, including storage
         accounts, VMs, and availability sets. All the other resources created
-        with the container service are part of the same resource group and
-        can be deleted individually.
+        with the container service are part of the same resource group and can
+        be deleted individually.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str

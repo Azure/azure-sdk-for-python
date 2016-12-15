@@ -22,7 +22,7 @@ class GroupsOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An objec model deserializer.
-    :ivar api_version: Client Api Version. Constant value: "1.6".
+    :ivar api_version: Client API version. Constant value: "1.6".
     """
 
     def __init__(self, client, config, serializer, deserializer):
@@ -36,8 +36,8 @@ class GroupsOperations(object):
 
     def is_member_of(
             self, group_id, member_id, custom_headers=None, raw=False, **operation_config):
-        """Checks whether the specified user, group, contact, or service
-        principal is a direct or a transitive member of the specified group.
+        """Checks whether the specified user, group, contact, or service principal
+        is a direct or transitive member of the specified group.
 
         :param group_id: The object ID of the group to check.
         :type group_id: str
@@ -53,6 +53,8 @@ class GroupsOperations(object):
          <azure.graphrbac.models.CheckGroupMembershipResult>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`GraphErrorException<azure.graphrbac.models.GraphErrorException>`
         """
         parameters = models.CheckGroupMembershipParameters(group_id=group_id, member_id=member_id)
 
@@ -101,12 +103,12 @@ class GroupsOperations(object):
 
     def remove_member(
             self, group_object_id, member_object_id, custom_headers=None, raw=False, **operation_config):
-        """Remove a memeber from a group. Reference:
-        https://msdn.microsoft.com/en-us/library/azure/ad/graph/api/groups-operations#DeleteGroupMember.
+        """Remove a member from a group.
 
-        :param group_object_id: Group object id
+        :param group_object_id: The object ID of the group from which to
+         remove the member.
         :type group_object_id: str
-        :param member_object_id: Member Object id
+        :param member_object_id: Member object id
         :type member_object_id: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -116,6 +118,8 @@ class GroupsOperations(object):
         :rtype: None
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`GraphErrorException<azure.graphrbac.models.GraphErrorException>`
         """
         # Construct URL
         url = '/{tenantID}/groups/{groupObjectId}/$links/members/{memberObjectId}'
@@ -153,12 +157,12 @@ class GroupsOperations(object):
 
     def add_member(
             self, group_object_id, url, custom_headers=None, raw=False, **operation_config):
-        """Add a memeber to a group. Reference:
-        https://msdn.microsoft.com/en-us/library/azure/ad/graph/api/groups-operations#AddGroupMembers.
+        """Add a member to a group.
 
-        :param group_object_id: Group object id
+        :param group_object_id: The object ID of the group to which to add the
+         member.
         :type group_object_id: str
-        :param url: Member Object Url as
+        :param url: A member object URL, such as
          "https://graph.windows.net/0b1f9851-1bf0-433f-aec3-cb9272f093dc/directoryObjects/f260bbc4-c254-447b-94cf-293b5ec434dd",
          where "0b1f9851-1bf0-433f-aec3-cb9272f093dc" is the tenantId and
          "f260bbc4-c254-447b-94cf-293b5ec434dd" is the objectId of the member
@@ -172,6 +176,8 @@ class GroupsOperations(object):
         :rtype: None
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`GraphErrorException<azure.graphrbac.models.GraphErrorException>`
         """
         parameters = models.GroupAddMemberParameters(url=url)
 
@@ -214,10 +220,9 @@ class GroupsOperations(object):
 
     def delete(
             self, group_object_id, custom_headers=None, raw=False, **operation_config):
-        """Delete a group in the directory. Reference:
-        http://msdn.microsoft.com/en-us/library/azure/dn151676.aspx.
+        """Delete a group from the directory.
 
-        :param group_object_id: Object id
+        :param group_object_id: The object ID of the group to delete.
         :type group_object_id: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -227,6 +232,8 @@ class GroupsOperations(object):
         :rtype: None
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`GraphErrorException<azure.graphrbac.models.GraphErrorException>`
         """
         # Construct URL
         url = '/{tenantID}/groups/{groupObjectId}'
@@ -263,12 +270,11 @@ class GroupsOperations(object):
 
     def create(
             self, display_name, mail_nickname, custom_headers=None, raw=False, **operation_config):
-        """Create a group in the directory. Reference:
-        http://msdn.microsoft.com/en-us/library/azure/dn151676.aspx.
+        """Create a group in the directory.
 
         :param display_name: Group display name
         :type display_name: str
-        :param mail_nickname: Mail nick name
+        :param mail_nickname: Mail nickname
         :type mail_nickname: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -278,6 +284,8 @@ class GroupsOperations(object):
         :rtype: :class:`ADGroup <azure.graphrbac.models.ADGroup>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`GraphErrorException<azure.graphrbac.models.GraphErrorException>`
         """
         parameters = models.GroupCreateParameters(display_name=display_name, mail_nickname=mail_nickname)
 
@@ -328,7 +336,7 @@ class GroupsOperations(object):
             self, filter=None, custom_headers=None, raw=False, **operation_config):
         """Gets list of groups for the current tenant.
 
-        :param filter: The filter to apply on the operation.
+        :param filter: The filter to apply to the operation.
         :type filter: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -336,6 +344,8 @@ class GroupsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`ADGroupPaged <azure.graphrbac.models.ADGroupPaged>`
+        :raises:
+         :class:`GraphErrorException<azure.graphrbac.models.GraphErrorException>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -397,7 +407,8 @@ class GroupsOperations(object):
             self, object_id, custom_headers=None, raw=False, **operation_config):
         """Gets the members of a group.
 
-        :param object_id: Group object Id who's members should be retrieved.
+        :param object_id: The object ID of the group whose members should be
+         retrieved.
         :type object_id: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -406,6 +417,8 @@ class GroupsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`AADObjectPaged
          <azure.graphrbac.models.AADObjectPaged>`
+        :raises:
+         :class:`GraphErrorException<azure.graphrbac.models.GraphErrorException>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -466,7 +479,8 @@ class GroupsOperations(object):
             self, object_id, custom_headers=None, raw=False, **operation_config):
         """Gets group information from the directory.
 
-        :param object_id: User objectId to get group information.
+        :param object_id: The object ID of the user for which to get group
+         information.
         :type object_id: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -476,6 +490,8 @@ class GroupsOperations(object):
         :rtype: :class:`ADGroup <azure.graphrbac.models.ADGroup>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`GraphErrorException<azure.graphrbac.models.GraphErrorException>`
         """
         # Construct URL
         url = '/{tenantID}/groups/{objectId}'
@@ -519,21 +535,24 @@ class GroupsOperations(object):
 
     def get_member_groups(
             self, object_id, security_enabled_only, custom_headers=None, raw=False, **operation_config):
-        """Gets a collection that contains the Object IDs of the groups of which
-        the group is a member.
+        """Gets a collection of object IDs of groups of which the specified group
+        is a member.
 
-        :param object_id: Group filtering parameters.
+        :param object_id: The object ID of the group for which to get group
+         membership.
         :type object_id: str
-        :param security_enabled_only: If true only membership in security
-         enabled groups should be checked. Otherwise membership in all groups
-         should be checked
+        :param security_enabled_only: If true, only membership in
+         security-enabled groups should be checked. Otherwise, membership in
+         all groups should be checked.
         :type security_enabled_only: bool
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`strPaged <azure.graphrbac.models.strPaged>`
+        :rtype: :class:`StrPaged <azure.graphrbac.models.StrPaged>`
+        :raises:
+         :class:`GraphErrorException<azure.graphrbac.models.GraphErrorException>`
         """
         parameters = models.GroupGetMemberGroupsParameters(security_enabled_only=security_enabled_only)
 

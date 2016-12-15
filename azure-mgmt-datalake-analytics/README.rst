@@ -37,7 +37,7 @@ Usage
 =====
 
 For code examples, see `Data Lake Analytics Management 
-<https://azure-sdk-for-python.readthedocs.org/en/latest/datalakeanalyticsmanagement.html>`__
+<https://azure-sdk-for-python.readthedocs.org/en/latest/sample_azure-mgmt-datalake-analytics.html>`__
 on readthedocs.org.
 
 

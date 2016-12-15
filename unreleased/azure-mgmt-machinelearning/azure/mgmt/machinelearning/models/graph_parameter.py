@@ -25,7 +25,7 @@ class GraphParameter(Model):
     :param links: Association links for this parameter to nodes in the graph.
     :type links: list of :class:`GraphParameterLink
      <azure.mgmt.machinelearning.models.GraphParameterLink>`
-    """ 
+    """
 
     _validation = {
         'type': {'required': True},

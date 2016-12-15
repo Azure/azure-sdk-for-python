@@ -51,6 +51,7 @@ class JobOperations(object):
          <azure.mgmt.datalake.analytics.job.models.JobStatistics>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/Jobs/{jobIdentity}/GetStatistics'
@@ -113,6 +114,7 @@ class JobOperations(object):
          <azure.mgmt.datalake.analytics.job.models.JobDataPath>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/Jobs/{jobIdentity}/GetDebugDataPath'
@@ -138,7 +140,7 @@ class JobOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct and send request
-        request = self._client.post(url, query_parameters)
+        request = self._client.get(url, query_parameters)
         response = self._client.send(request, header_parameters, **operation_config)
 
         if response.status_code not in [200]:
@@ -177,6 +179,7 @@ class JobOperations(object):
          <azure.mgmt.datalake.analytics.job.models.JobInformation>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/BuildJob'
@@ -241,6 +244,7 @@ class JobOperations(object):
         :rtype: None
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/Jobs/{jobIdentity}/CancelJob'
@@ -296,6 +300,7 @@ class JobOperations(object):
          <azure.mgmt.datalake.analytics.job.models.JobInformation>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/Jobs/{jobIdentity}'
@@ -361,6 +366,7 @@ class JobOperations(object):
          <azure.mgmt.datalake.analytics.job.models.JobInformation>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/Jobs/{jobIdentity}'
@@ -410,7 +416,7 @@ class JobOperations(object):
         return deserialized
 
     def list(
-            self, account_name, filter=None, top=None, skip=None, expand=None, select=None, orderby=None, count=None, search=None, format=None, custom_headers=None, raw=False, **operation_config):
+            self, account_name, filter=None, top=None, skip=None, select=None, orderby=None, count=None, custom_headers=None, raw=False, **operation_config):
         """Lists the jobs, if any, associated with the specified Data Lake
         Analytics account. The response includes a link to the next page of
         results, if any.
@@ -425,10 +431,6 @@ class JobOperations(object):
         :param skip: The number of items to skip over before returning
          elements. Optional.
         :type skip: int
-        :param expand: OData expansion. Expand related resources in line with
-         the retrieved resources, e.g. Categories?$expand=Products would
-         expand Product data in line with each Category entry. Optional.
-        :type expand: str
         :param select: OData Select statement. Limits the properties on each
          entry to just those requested, e.g.
          Categories?$select=CategoryName,Description. Optional.
@@ -438,18 +440,10 @@ class JobOperations(object):
          on the order you'd like the values sorted, e.g.
          Categories?$orderby=CategoryName desc. Optional.
         :type orderby: str
-        :param count: The Boolean value of true or false to request a count
-         of the matching resources included with the resources in the
-         response, e.g. Categories?$count=true. Optional.
+        :param count: The Boolean value of true or false to request a count of
+         the matching resources included with the resources in the response,
+         e.g. Categories?$count=true. Optional.
         :type count: bool
-        :param search: A free form search. A free-text search expression to
-         match for whether a particular entry should be included in the feed,
-         e.g. Categories?$search=blue OR green. Optional.
-        :type search: str
-        :param format: The return format. Return the response in particular
-         formatxii without access to request headers for standard
-         content-type negotiation (e.g Orders?$format=json). Optional.
-        :type format: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -457,6 +451,7 @@ class JobOperations(object):
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`JobInformationPaged
          <azure.mgmt.datalake.analytics.job.models.JobInformationPaged>`
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -474,21 +469,15 @@ class JobOperations(object):
                 if filter is not None:
                     query_parameters['$filter'] = self._serialize.query("filter", filter, 'str')
                 if top is not None:
-                    query_parameters['$top'] = self._serialize.query("top", top, 'int')
+                    query_parameters['$top'] = self._serialize.query("top", top, 'int', minimum=1)
                 if skip is not None:
-                    query_parameters['$skip'] = self._serialize.query("skip", skip, 'int')
-                if expand is not None:
-                    query_parameters['$expand'] = self._serialize.query("expand", expand, 'str')
+                    query_parameters['$skip'] = self._serialize.query("skip", skip, 'int', minimum=1)
                 if select is not None:
                     query_parameters['$select'] = self._serialize.query("select", select, 'str')
                 if orderby is not None:
                     query_parameters['$orderby'] = self._serialize.query("orderby", orderby, 'str')
                 if count is not None:
                     query_parameters['$count'] = self._serialize.query("count", count, 'bool')
-                if search is not None:
-                    query_parameters['$search'] = self._serialize.query("search", search, 'str')
-                if format is not None:
-                    query_parameters['$format'] = self._serialize.query("format", format, 'str')
                 query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
 
             else:

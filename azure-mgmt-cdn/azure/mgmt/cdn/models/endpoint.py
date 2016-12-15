@@ -9,52 +9,49 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .tracked_resource import TrackedResource
+from .resource import Resource
 
 
-class Endpoint(TrackedResource):
+class Endpoint(Resource):
     """CDN endpoint is the entity within a CDN profile containing configuration
-    information regarding caching behaviors and origins. The CDN endpoint is
-    exposed using the URL format <endpointname>.azureedge.net by default, but
-    custom domains can also be created.
+    information such as origin, protocol, content caching and delivery
+    behavior. The CDN endpoint uses the URL format
+    <endpointname>.azureedge.net.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar id: Resource ID
+    :ivar id: Resource ID.
     :vartype id: str
-    :ivar name: Resource name
+    :ivar name: Resource name.
     :vartype name: str
-    :ivar type: Resource type
+    :ivar type: Resource type.
     :vartype type: str
-    :param location: Resource location
+    :param location: Resource location.
     :type location: str
-    :param tags: Resource tags
+    :param tags: Resource tags.
     :type tags: dict
-    :ivar host_name: The host name of the endpoint {endpointName}.{DNSZone}
-    :vartype host_name: str
-    :param origin_host_header: The host header the CDN provider will send
-     along with content requests to origins. The default value is the host
-     name of the origin.
+    :param origin_host_header: The host header CDN sends along with content
+     requests to origin. The default value is the host name of the origin.
     :type origin_host_header: str
-    :param origin_path: The path used for origin requests.
+    :param origin_path: The path used when CDN sends request to origin.
     :type origin_path: str
     :param content_types_to_compress: List of content types on which
-     compression will be applied. The value for the elements should be a
-     valid MIME type.
+     compression applies. The value should be a valid MIME type.
     :type content_types_to_compress: list of str
-    :param is_compression_enabled: Indicates whether the compression is
-     enabled. Default value is false. If compression is enabled, the content
-     transferred from cdn endpoint to end user will be compressed. The
-     requested content must be larger than 1 byte and smaller than 1 MB.
+    :param is_compression_enabled: Indicates whether content compression is
+     enabled on CDN. Default value is false. If compression is enabled, content
+     will be served as compressed if user requests for a compressed version.
+     Content won't be compressed on CDN when requested content is smaller than
+     1 byte or larger than 1 MB.
     :type is_compression_enabled: bool
     :param is_http_allowed: Indicates whether HTTP traffic is allowed on the
      endpoint. Default value is true. At least one protocol (HTTP or HTTPS)
      must be allowed.
     :type is_http_allowed: bool
-    :param is_https_allowed: Indicates whether https traffic is allowed on
-     the endpoint. Default value is true. At least one protocol (HTTP or
-     HTTPS) must be allowed.
+    :param is_https_allowed: Indicates whether HTTPS traffic is allowed on the
+     endpoint. Default value is true. At least one protocol (HTTP or HTTPS)
+     must be allowed.
     :type is_https_allowed: bool
     :param query_string_caching_behavior: Defines the query string caching
      behavior. Possible values include: 'IgnoreQueryString', 'BypassCaching',
@@ -62,9 +59,19 @@ class Endpoint(TrackedResource):
     :type query_string_caching_behavior: str or
      :class:`QueryStringCachingBehavior
      <azure.mgmt.cdn.models.QueryStringCachingBehavior>`
-    :param origins: The set of origins for the CDN endpoint. When multiple
-     origins exist, the first origin will be used as primary and rest will be
-     used as failover options.
+    :param optimization_type: Customer can specify what scenario they want
+     this CDN endpoint to optimize, e.g. Download, Media services. With this
+     information we can apply scenario driven optimization.
+    :type optimization_type: str
+    :param geo_filters: List of rules defining user geo access within a CDN
+     endpoint. Each geo filter defines an acess rule to a specified path or
+     content, e.g. block APAC for path /pictures/
+    :type geo_filters: list of :class:`GeoFilter
+     <azure.mgmt.cdn.models.GeoFilter>`
+    :ivar host_name: The host name of the endpoint structured as
+     {endpointName}.{DNSZone}, e.g. consoto.azureedge.net
+    :vartype host_name: str
+    :param origins: The source of the content being delivered via CDN.
     :type origins: list of :class:`DeepCreatedOrigin
      <azure.mgmt.cdn.models.DeepCreatedOrigin>`
     :ivar resource_state: Resource status of the endpoint. Possible values
@@ -72,20 +79,19 @@ class Endpoint(TrackedResource):
      'Stopping'
     :vartype resource_state: str or :class:`EndpointResourceState
      <azure.mgmt.cdn.models.EndpointResourceState>`
-    :param provisioning_state: Provisioning status of the endpoint. Possible
-     values include: 'Creating', 'Succeeded', 'Failed'
-    :type provisioning_state: str or :class:`ProvisioningState
-     <azure.mgmt.cdn.models.ProvisioningState>`
-    """ 
+    :ivar provisioning_state: Provisioning status of the endpoint.
+    :vartype provisioning_state: str
+    """
 
     _validation = {
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
         'location': {'required': True},
-        'tags': {'required': True},
         'host_name': {'readonly': True},
+        'origins': {'required': True},
         'resource_state': {'readonly': True},
+        'provisioning_state': {'readonly': True},
     }
 
     _attribute_map = {
@@ -94,7 +100,6 @@ class Endpoint(TrackedResource):
         'type': {'key': 'type', 'type': 'str'},
         'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
-        'host_name': {'key': 'properties.hostName', 'type': 'str'},
         'origin_host_header': {'key': 'properties.originHostHeader', 'type': 'str'},
         'origin_path': {'key': 'properties.originPath', 'type': 'str'},
         'content_types_to_compress': {'key': 'properties.contentTypesToCompress', 'type': '[str]'},
@@ -102,14 +107,16 @@ class Endpoint(TrackedResource):
         'is_http_allowed': {'key': 'properties.isHttpAllowed', 'type': 'bool'},
         'is_https_allowed': {'key': 'properties.isHttpsAllowed', 'type': 'bool'},
         'query_string_caching_behavior': {'key': 'properties.queryStringCachingBehavior', 'type': 'QueryStringCachingBehavior'},
+        'optimization_type': {'key': 'properties.optimizationType', 'type': 'str'},
+        'geo_filters': {'key': 'properties.geoFilters', 'type': '[GeoFilter]'},
+        'host_name': {'key': 'properties.hostName', 'type': 'str'},
         'origins': {'key': 'properties.origins', 'type': '[DeepCreatedOrigin]'},
-        'resource_state': {'key': 'properties.resourceState', 'type': 'EndpointResourceState'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'ProvisioningState'},
+        'resource_state': {'key': 'properties.resourceState', 'type': 'str'},
+        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
     }
 
-    def __init__(self, location, tags, origin_host_header=None, origin_path=None, content_types_to_compress=None, is_compression_enabled=None, is_http_allowed=None, is_https_allowed=None, query_string_caching_behavior=None, origins=None, provisioning_state=None):
+    def __init__(self, location, origins, tags=None, origin_host_header=None, origin_path=None, content_types_to_compress=None, is_compression_enabled=None, is_http_allowed=None, is_https_allowed=None, query_string_caching_behavior=None, optimization_type=None, geo_filters=None):
         super(Endpoint, self).__init__(location=location, tags=tags)
-        self.host_name = None
         self.origin_host_header = origin_host_header
         self.origin_path = origin_path
         self.content_types_to_compress = content_types_to_compress
@@ -117,6 +124,9 @@ class Endpoint(TrackedResource):
         self.is_http_allowed = is_http_allowed
         self.is_https_allowed = is_https_allowed
         self.query_string_caching_behavior = query_string_caching_behavior
+        self.optimization_type = optimization_type
+        self.geo_filters = geo_filters
+        self.host_name = None
         self.origins = origins
         self.resource_state = None
-        self.provisioning_state = provisioning_state
+        self.provisioning_state = None

@@ -13,7 +13,7 @@ from msrest.serialization import Model
 
 
 class LinuxConfiguration(Model):
-    """Describes Windows Configuration of the OS Profile.
+    """Describes Windows configuration of the OS Profile.
 
     :param disable_password_authentication: Specifies whether password
      authentication should be disabled.
@@ -21,7 +21,7 @@ class LinuxConfiguration(Model):
     :param ssh: The SSH configuration for linux VMs.
     :type ssh: :class:`SshConfiguration
      <azure.mgmt.compute.models.SshConfiguration>`
-    """ 
+    """
 
     _attribute_map = {
         'disable_password_authentication': {'key': 'disablePasswordAuthentication', 'type': 'bool'},

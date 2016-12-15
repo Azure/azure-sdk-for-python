@@ -19,16 +19,16 @@ class SubnetOverride(Model):
     :type resource_id: str
     :param lab_subnet_name: The name given to the subnet within the lab.
     :type lab_subnet_name: str
-    :param use_in_vm_creation_permission: Indicates whether this subnet can
-     be used during virtual machine creation. Possible values include:
-     'Default', 'Deny', 'Allow'
+    :param use_in_vm_creation_permission: Indicates whether this subnet can be
+     used during virtual machine creation. Possible values include: 'Default',
+     'Deny', 'Allow'
     :type use_in_vm_creation_permission: str or :class:`UsagePermissionType
      <azure.mgmt.devtestlabs.models.UsagePermissionType>`
     :param use_public_ip_address_permission: Indicates whether public IP
      addresses can be assigned to virtual machines on this subnet. Possible
      values include: 'Default', 'Deny', 'Allow'
-    :type use_public_ip_address_permission: str or
-     :class:`UsagePermissionType <azure.mgmt.devtestlabs.models.UsagePermissionType>`
+    :type use_public_ip_address_permission: str or :class:`UsagePermissionType
+     <azure.mgmt.devtestlabs.models.UsagePermissionType>`
     """ 
 
     _attribute_map = {

@@ -13,27 +13,27 @@ from .resource import Resource
 
 
 class SessionResource(Resource):
-    """the session object.
+    """The session object.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar id: ARM Resource ID
+    :ivar id: Resource Manager Resource ID.
     :vartype id: str
-    :ivar type: ARM Resource Type
+    :ivar type: Resource Manager Resource Type.
     :vartype type: str
-    :ivar name: ARM Resource Name
+    :ivar name: Resource Manager Resource Name.
     :vartype name: str
-    :ivar location: ARM Resource Location
+    :ivar location: Resource Manager Resource Location.
     :vartype location: str
-    :param tags: ARM Resource Tags
+    :param tags: Resource Manager Resource Tags.
     :type tags: dict
     :param etag:
     :type etag: str
-    :param user_name: the username connecting to the session
+    :param user_name: The username connecting to the session.
     :type user_name: str
     :param created: UTC date and time when node was first added to management
-     service
+     service.
     :type created: datetime
     :param updated: UTC date and time when node was last updated.
     :type updated: datetime

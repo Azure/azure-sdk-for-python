@@ -13,7 +13,7 @@ from .job_properties import JobProperties
 
 
 class HiveJobProperties(JobProperties):
-    """HiveJobProperties.
+    """Hive job properties used when submitting and retrieving Hive jobs.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -36,7 +36,7 @@ class HiveJobProperties(JobProperties):
     :ivar executed_statement_count: the number of statements that have been
      run based on the script
     :vartype executed_statement_count: int
-    """ 
+    """
 
     _validation = {
         'script': {'required': True},

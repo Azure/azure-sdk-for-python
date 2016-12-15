@@ -15,17 +15,17 @@ from msrest.serialization import Model
 class DiskEncryptionSettings(Model):
     """Describes a Encryption Settings for a Disk.
 
-    :param disk_encryption_key: the disk encryption key which is a KeyVault
+    :param disk_encryption_key: The disk encryption key which is a Key Vault
      Secret.
     :type disk_encryption_key: :class:`KeyVaultSecretReference
      <azure.mgmt.compute.models.KeyVaultSecretReference>`
-    :param key_encryption_key: the key encryption key which is KeyVault Key.
+    :param key_encryption_key: The key encryption key which is Key Vault Key.
     :type key_encryption_key: :class:`KeyVaultKeyReference
      <azure.mgmt.compute.models.KeyVaultKeyReference>`
-    :param enabled: whether disk encryption should be enabled on the Virtual
-     Machine.
+    :param enabled: Specifies whether disk encryption should be enabled on the
+     virtual machine.
     :type enabled: bool
-    """ 
+    """
 
     _attribute_map = {
         'disk_encryption_key': {'key': 'diskEncryptionKey', 'type': 'KeyVaultSecretReference'},

@@ -22,7 +22,7 @@ class JobProperties(Model):
     :type script: str
     :param type: Polymorphic Discriminator
     :type type: str
-    """ 
+    """
 
     _validation = {
         'script': {'required': True},

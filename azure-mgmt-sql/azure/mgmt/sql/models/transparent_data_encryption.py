@@ -20,13 +20,13 @@ class TransparentDataEncryption(SqlSubResource):
 
     :ivar name: Resource name
     :vartype name: str
-    :ivar id: Resource Id
+    :ivar id: The resource ID.
     :vartype id: str
     :param status: The status of the Azure SQL Database Transparent Data
      Encryption. Possible values include: 'Enabled', 'Disabled'
     :type status: str or :class:`TransparentDataEncryptionStates
      <azure.mgmt.sql.models.TransparentDataEncryptionStates>`
-    """ 
+    """
 
     _validation = {
         'name': {'readonly': True},

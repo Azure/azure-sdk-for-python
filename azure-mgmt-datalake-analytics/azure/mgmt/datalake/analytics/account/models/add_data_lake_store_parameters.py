@@ -15,19 +15,13 @@ from msrest.serialization import Model
 class AddDataLakeStoreParameters(Model):
     """Additional Data Lake Store parameters.
 
-    :param properties: the properties for the Data Lake Store account being
-     added.
-    :type properties: :class:`DataLakeStoreAccountInfoProperties
-     <azure.mgmt.datalake.analytics.account.models.DataLakeStoreAccountInfoProperties>`
-    """ 
-
-    _validation = {
-        'properties': {'required': True},
-    }
+    :param suffix: the optional suffix for the Data Lake Store account.
+    :type suffix: str
+    """
 
     _attribute_map = {
-        'properties': {'key': 'properties', 'type': 'DataLakeStoreAccountInfoProperties'},
+        'suffix': {'key': 'properties.suffix', 'type': 'str'},
     }
 
-    def __init__(self, properties):
-        self.properties = properties
+    def __init__(self, suffix=None):
+        self.suffix = suffix

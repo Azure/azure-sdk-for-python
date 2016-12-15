@@ -18,8 +18,8 @@ class StorageAccountListKeysResult(Model):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar keys: Gets the list of storage account keys and their properties
-     for the specified storage account.
+    :ivar keys: Gets the list of storage account keys and their properties for
+     the specified storage account.
     :vartype keys: list of :class:`StorageAccountKey
      <azure.mgmt.storage.models.StorageAccountKey>`
     """ 

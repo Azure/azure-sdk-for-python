@@ -19,10 +19,10 @@ class VirtualMachineScaleSetInstanceViewStatusesSummary(Model):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar statuses_summary: the extensions information.
+    :ivar statuses_summary: The extensions information.
     :vartype statuses_summary: list of :class:`VirtualMachineStatusCodeCount
      <azure.mgmt.compute.models.VirtualMachineStatusCodeCount>`
-    """ 
+    """
 
     _validation = {
         'statuses_summary': {'readonly': True},

@@ -21,7 +21,7 @@ class SasTokenInfo(Model):
     :ivar access_token: the access token for the associated Azure Storage
      Container.
     :vartype access_token: str
-    """ 
+    """
 
     _validation = {
         'access_token': {'readonly': True},

@@ -34,7 +34,7 @@ class GatewayOperations(object):
         self.config = config
 
     def create(
-            self, resource_group_name, gateway_name, location=None, tags=None, auto_upgrade=None, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, gateway_name, location=None, tags=None, upgrade_mode=None, custom_headers=None, raw=False, **operation_config):
         """Creates or updates a ManagementService gateway.
 
         :param resource_group_name: The resource group name uniquely
@@ -42,16 +42,16 @@ class GatewayOperations(object):
         :type resource_group_name: str
         :param gateway_name: The gateway name (256 characters maximum).
         :type gateway_name: str
-        :param location: location of the resource
+        :param location: Location of the resource.
         :type location: str
-        :param tags: resource tags
+        :param tags: Resource tags.
         :type tags: object
-        :param auto_upgrade: The autoUpgrade property gives the flexibility
-         to gateway to auto upgrade itself. If properties value not
-         specified, then we assume autoUpgrade = Off. Possible values
-         include: 'On', 'Off'
-        :type auto_upgrade: str or :class:`AutoUpgrade
-         <azure.mgmt.servermanager.models.AutoUpgrade>`
+        :param upgrade_mode: The upgradeMode property gives the flexibility to
+         gateway to auto upgrade itself. If properties value not specified,
+         then we assume upgradeMode = Automatic. Possible values include:
+         'Manual', 'Automatic'
+        :type upgrade_mode: str or :class:`upgradeMode
+         <azure.mgmt.servermanager.models.upgradeMode>`
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -61,8 +61,10 @@ class GatewayOperations(object):
          <azure.mgmt.servermanager.models.GatewayResource>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`ErrorException<azure.mgmt.servermanager.models.ErrorException>`
         """
-        gateway_parameters = models.GatewayParameters(location=location, tags=tags, auto_upgrade=auto_upgrade)
+        gateway_parameters = models.GatewayParameters(location=location, tags=tags, upgrade_mode=upgrade_mode)
 
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ServerManagement/gateways/{gatewayName}'
@@ -135,7 +137,7 @@ class GatewayOperations(object):
             get_long_running_status, long_running_operation_timeout)
 
     def update(
-            self, resource_group_name, gateway_name, location=None, tags=None, auto_upgrade=None, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, gateway_name, location=None, tags=None, upgrade_mode=None, custom_headers=None, raw=False, **operation_config):
         """Updates a gateway belonging to a resource group.
 
         :param resource_group_name: The resource group name uniquely
@@ -143,16 +145,16 @@ class GatewayOperations(object):
         :type resource_group_name: str
         :param gateway_name: The gateway name (256 characters maximum).
         :type gateway_name: str
-        :param location: location of the resource
+        :param location: Location of the resource.
         :type location: str
-        :param tags: resource tags
+        :param tags: Resource tags.
         :type tags: object
-        :param auto_upgrade: The autoUpgrade property gives the flexibility
-         to gateway to auto upgrade itself. If properties value not
-         specified, then we assume autoUpgrade = Off. Possible values
-         include: 'On', 'Off'
-        :type auto_upgrade: str or :class:`AutoUpgrade
-         <azure.mgmt.servermanager.models.AutoUpgrade>`
+        :param upgrade_mode: The upgradeMode property gives the flexibility to
+         gateway to auto upgrade itself. If properties value not specified,
+         then we assume upgradeMode = Automatic. Possible values include:
+         'Manual', 'Automatic'
+        :type upgrade_mode: str or :class:`upgradeMode
+         <azure.mgmt.servermanager.models.upgradeMode>`
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -162,8 +164,10 @@ class GatewayOperations(object):
          <azure.mgmt.servermanager.models.GatewayResource>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`ErrorException<azure.mgmt.servermanager.models.ErrorException>`
         """
-        gateway_parameters = models.GatewayParameters(location=location, tags=tags, auto_upgrade=auto_upgrade)
+        gateway_parameters = models.GatewayParameters(location=location, tags=tags, upgrade_mode=upgrade_mode)
 
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ServerManagement/gateways/{gatewayName}'
@@ -250,6 +254,8 @@ class GatewayOperations(object):
         :rtype: None
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`ErrorException<azure.mgmt.servermanager.models.ErrorException>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ServerManagement/gateways/{gatewayName}'
@@ -287,7 +293,7 @@ class GatewayOperations(object):
 
     def get(
             self, resource_group_name, gateway_name, expand=None, custom_headers=None, raw=False, **operation_config):
-        """Returns a gateway.
+        """Gets a gateway.
 
         :param resource_group_name: The resource group name uniquely
          identifies the resource group within the user subscriptionId.
@@ -296,7 +302,8 @@ class GatewayOperations(object):
         :type gateway_name: str
         :param expand: Gets subscription credentials which uniquely identify
          Microsoft Azure subscription. The subscription ID forms part of the
-         URI for every service call. Possible values include: 'status'
+         URI for every service call. Possible values include: 'status',
+         'download'
         :type expand: str or :class:`GatewayExpandOption
          <azure.mgmt.servermanager.models.GatewayExpandOption>`
         :param dict custom_headers: headers that will be added to the request
@@ -308,6 +315,8 @@ class GatewayOperations(object):
          <azure.mgmt.servermanager.models.GatewayResource>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`ErrorException<azure.mgmt.servermanager.models.ErrorException>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ServerManagement/gateways/{gatewayName}'
@@ -363,6 +372,8 @@ class GatewayOperations(object):
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`GatewayResourcePaged
          <azure.mgmt.servermanager.models.GatewayResourcePaged>`
+        :raises:
+         :class:`ErrorException<azure.mgmt.servermanager.models.ErrorException>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -426,6 +437,8 @@ class GatewayOperations(object):
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`GatewayResourcePaged
          <azure.mgmt.servermanager.models.GatewayResourcePaged>`
+        :raises:
+         :class:`ErrorException<azure.mgmt.servermanager.models.ErrorException>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -478,7 +491,7 @@ class GatewayOperations(object):
 
     def upgrade(
             self, resource_group_name, gateway_name, custom_headers=None, raw=False, **operation_config):
-        """Upgrade a gateway.
+        """Upgrades a gateway.
 
         :param resource_group_name: The resource group name uniquely
          identifies the resource group within the user subscriptionId.
@@ -493,6 +506,8 @@ class GatewayOperations(object):
          instance that returns None
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`ErrorException<azure.mgmt.servermanager.models.ErrorException>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ServerManagement/gateways/{gatewayName}/upgradetolatest'
@@ -568,6 +583,8 @@ class GatewayOperations(object):
          instance that returns None
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`ErrorException<azure.mgmt.servermanager.models.ErrorException>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ServerManagement/gateways/{gatewayName}/regenerateprofile'
@@ -644,6 +661,8 @@ class GatewayOperations(object):
          <azure.mgmt.servermanager.models.GatewayProfile>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`ErrorException<azure.mgmt.servermanager.models.ErrorException>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ServerManagement/gateways/{gatewayName}/profile'

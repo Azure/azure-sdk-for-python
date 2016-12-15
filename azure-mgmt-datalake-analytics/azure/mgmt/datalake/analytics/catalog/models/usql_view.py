@@ -28,7 +28,7 @@ class USqlView(CatalogItem):
     :type name: str
     :param definition: the defined query of the view.
     :type definition: str
-    """ 
+    """
 
     _attribute_map = {
         'compute_account_name': {'key': 'computeAccountName', 'type': 'str'},

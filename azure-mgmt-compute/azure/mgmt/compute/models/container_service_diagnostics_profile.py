@@ -19,7 +19,7 @@ class ContainerServiceDiagnosticsProfile(Model):
      agent.
     :type vm_diagnostics: :class:`ContainerServiceVMDiagnostics
      <azure.mgmt.compute.models.ContainerServiceVMDiagnostics>`
-    """ 
+    """
 
     _validation = {
         'vm_diagnostics': {'required': True},

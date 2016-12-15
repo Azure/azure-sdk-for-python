@@ -18,15 +18,15 @@ class VirtualMachineScaleSetNetworkConfiguration(SubResource):
 
     :param id: Resource Id
     :type id: str
-    :param name: the network configuration name.
+    :param name: The network configuration name.
     :type name: str
-    :param primary: whether this is a primary NIC on a virtual machine.
+    :param primary: Whether this is a primary NIC on a virtual machine.
     :type primary: bool
-    :param ip_configurations: the virtual machine scale set IP Configuration.
+    :param ip_configurations: The virtual machine scale set IP Configuration.
     :type ip_configurations: list of
      :class:`VirtualMachineScaleSetIPConfiguration
      <azure.mgmt.compute.models.VirtualMachineScaleSetIPConfiguration>`
-    """ 
+    """
 
     _validation = {
         'name': {'required': True},

@@ -10,15 +10,14 @@
 # --------------------------------------------------------------------------
 
 from .resource import Resource
-from .namespace_create_or_update_parameters import NamespaceCreateOrUpdateParameters
 from .sku import Sku
+from .namespace_create_or_update_parameters import NamespaceCreateOrUpdateParameters
 from .namespace_resource import NamespaceResource
 from .shared_access_authorization_rule_create_or_update_parameters import SharedAccessAuthorizationRuleCreateOrUpdateParameters
 from .shared_access_authorization_rule_resource import SharedAccessAuthorizationRuleResource
 from .resource_list_keys import ResourceListKeys
 from .regenerate_keys_parameters import RegenerateKeysParameters
 from .event_hub_create_or_update_parameters import EventHubCreateOrUpdateParameters
-from .event_hub_properties import EventHubProperties
 from .event_hub_resource import EventHubResource
 from .consumer_group_create_or_update_parameters import ConsumerGroupCreateOrUpdateParameters
 from .consumer_group_resource import ConsumerGroupResource
@@ -37,15 +36,14 @@ from .event_hub_management_client_enums import (
 
 __all__ = [
     'Resource',
-    'NamespaceCreateOrUpdateParameters',
     'Sku',
+    'NamespaceCreateOrUpdateParameters',
     'NamespaceResource',
     'SharedAccessAuthorizationRuleCreateOrUpdateParameters',
     'SharedAccessAuthorizationRuleResource',
     'ResourceListKeys',
     'RegenerateKeysParameters',
     'EventHubCreateOrUpdateParameters',
-    'EventHubProperties',
     'EventHubResource',
     'ConsumerGroupCreateOrUpdateParameters',
     'ConsumerGroupResource',

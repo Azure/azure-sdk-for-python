@@ -18,22 +18,22 @@ class JobInformation(Model):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :param job_id: the job's unique identifier (a GUID).
-    :type job_id: str
+    :ivar job_id: the job's unique identifier (a GUID).
+    :vartype job_id: str
     :param name: the friendly name of the job.
     :type name: str
     :param type: the job type of the current job (Hive or USql). Possible
      values include: 'USql', 'Hive'
     :type type: str or :class:`JobType
      <azure.mgmt.datalake.analytics.job.models.JobType>`
-    :param submitter: the user or account that submitted the job.
-    :type submitter: str
+    :ivar submitter: the user or account that submitted the job.
+    :vartype submitter: str
     :ivar error_message: the error message details for the job, if the job
      failed.
     :vartype error_message: list of :class:`JobErrorDetails
      <azure.mgmt.datalake.analytics.job.models.JobErrorDetails>`
-    :param degree_of_parallelism: the degree of parallelism used for this
-     job. This must be greater than 0.
+    :param degree_of_parallelism: the degree of parallelism used for this job.
+     This must be greater than 0. Default value: 1 .
     :type degree_of_parallelism: int
     :param priority: the priority value for the current job. Lower numbers
      have a higher priority. By default, a job has a priority of 1000. This
@@ -46,9 +46,9 @@ class JobInformation(Model):
     :ivar end_time: the completion time of the job.
     :vartype end_time: datetime
     :ivar state: the job state. When the job is in the Ended state, refer to
-     Result and ErrorMessage for details. Possible values include:
-     'Accepted', 'Compiling', 'Ended', 'New', 'Queued', 'Running',
-     'Scheduling', 'Starting', 'Paused', 'WaitingForCapacity'
+     Result and ErrorMessage for details. Possible values include: 'Accepted',
+     'Compiling', 'Ended', 'New', 'Queued', 'Running', 'Scheduling',
+     'Starting', 'Paused', 'WaitingForCapacity'
     :vartype state: str or :class:`JobState
      <azure.mgmt.datalake.analytics.job.models.JobState>`
     :ivar result: the result of job execution or the current result of the
@@ -60,8 +60,8 @@ class JobInformation(Model):
      adl://<accountName>.azuredatalakestore.net/system/jobservice/jobs/Usql/2016/03/13/17/18/5fe51957-93bc-4de0-8ddc-c5a4753b068b/logs/.
     :vartype log_folder: str
     :param log_file_patterns: the list of log file name patterns to find in
-     the logFolder. '*' is the only matching character allowed. Example
-     format: jobExecution*.log or *mylog*.txt
+     the logFolder. '*' is the only matching character allowed. Example format:
+     jobExecution*.log or *mylog*.txt
     :type log_file_patterns: list of str
     :ivar state_audit_records: the job state audit records, indicating when
      various operations have been performed on this job.
@@ -70,12 +70,15 @@ class JobInformation(Model):
     :param properties: the job specific properties.
     :type properties: :class:`JobProperties
      <azure.mgmt.datalake.analytics.job.models.JobProperties>`
-    """ 
+    """
 
     _validation = {
+        'job_id': {'readonly': True},
         'name': {'required': True},
         'type': {'required': True},
+        'submitter': {'readonly': True},
         'error_message': {'readonly': True},
+        'degree_of_parallelism': {'minimum': 1},
         'submit_time': {'readonly': True},
         'start_time': {'readonly': True},
         'end_time': {'readonly': True},
@@ -105,11 +108,11 @@ class JobInformation(Model):
         'properties': {'key': 'properties', 'type': 'JobProperties'},
     }
 
-    def __init__(self, name, type, properties, job_id=None, submitter=None, degree_of_parallelism=None, priority=None, log_file_patterns=None):
-        self.job_id = job_id
+    def __init__(self, name, type, properties, degree_of_parallelism=1, priority=None, log_file_patterns=None):
+        self.job_id = None
         self.name = name
         self.type = type
-        self.submitter = submitter
+        self.submitter = None
         self.error_message = None
         self.degree_of_parallelism = degree_of_parallelism
         self.priority = priority

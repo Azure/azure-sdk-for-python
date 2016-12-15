@@ -13,29 +13,34 @@ from msrest.serialization import Model
 
 
 class EventHubProperties(Model):
-    """The properties of the provisioned event hub used by the Iot Hub.
+    """The properties of the provisioned Event Hub-compatible endpoint used by the
+    IoT hub.
 
-    :param retention_time_in_days: The retention time in days. Range of
-     values [For F1: 1-1, S1: 1-7, S2: 1-7, S3: 1-7].
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :param retention_time_in_days: The retention time for device-to-cloud
+     messages in days. See:
+     https://docs.microsoft.com/azure/iot-hub/iot-hub-devguide-messaging#device-to-cloud-messages
     :type retention_time_in_days: long
-    :param partition_count: The partition count. Range of values [For F1:
-     2-2, S1: 2-128, S2: 2-128, S3: 2-128].
+    :param partition_count: The number of paritions for receiving
+     device-to-cloud messages in the Event Hub-compatible endpoint. See:
+     https://docs.microsoft.com/azure/iot-hub/iot-hub-devguide-messaging#device-to-cloud-messages.
     :type partition_count: int
-    :param partition_ids: The partition ids.
-    :type partition_ids: list of str
-    :param path: The eventhub path.
-    :type path: str
-    :param endpoint: The endpoint.
-    :type endpoint: str
-    :param internal_authorization_policies: The internal authorization rules.
-    :type internal_authorization_policies: list of
-     :class:`SharedAccessAuthorizationRule
-     <azure.mgmt.iothub.models.SharedAccessAuthorizationRule>`
-    :param authorization_policies: The authorization rules.
-    :type authorization_policies: list of
-     :class:`SharedAccessAuthorizationRule
-     <azure.mgmt.iothub.models.SharedAccessAuthorizationRule>`
-    """ 
+    :ivar partition_ids: The partition ids in the Event Hub-compatible
+     endpoint.
+    :vartype partition_ids: list of str
+    :ivar path: The Event Hub-compatible name.
+    :vartype path: str
+    :ivar endpoint: The Event Hub-compatible endpoint.
+    :vartype endpoint: str
+    """
+
+    _validation = {
+        'partition_ids': {'readonly': True},
+        'path': {'readonly': True},
+        'endpoint': {'readonly': True},
+    }
 
     _attribute_map = {
         'retention_time_in_days': {'key': 'retentionTimeInDays', 'type': 'long'},
@@ -43,15 +48,11 @@ class EventHubProperties(Model):
         'partition_ids': {'key': 'partitionIds', 'type': '[str]'},
         'path': {'key': 'path', 'type': 'str'},
         'endpoint': {'key': 'endpoint', 'type': 'str'},
-        'internal_authorization_policies': {'key': 'internalAuthorizationPolicies', 'type': '[SharedAccessAuthorizationRule]'},
-        'authorization_policies': {'key': 'authorizationPolicies', 'type': '[SharedAccessAuthorizationRule]'},
     }
 
-    def __init__(self, retention_time_in_days=None, partition_count=None, partition_ids=None, path=None, endpoint=None, internal_authorization_policies=None, authorization_policies=None):
+    def __init__(self, retention_time_in_days=None, partition_count=None):
         self.retention_time_in_days = retention_time_in_days
         self.partition_count = partition_count
-        self.partition_ids = partition_ids
-        self.path = path
-        self.endpoint = endpoint
-        self.internal_authorization_policies = internal_authorization_policies
-        self.authorization_policies = authorization_policies
+        self.partition_ids = None
+        self.path = None
+        self.endpoint = None

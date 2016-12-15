@@ -19,7 +19,7 @@ class StorageAccountProperties(Model):
     :type name: str
     :param access_key: The access key to the storage account.
     :type access_key: str
-    """ 
+    """
 
     _validation = {
         'name': {'required': True},
