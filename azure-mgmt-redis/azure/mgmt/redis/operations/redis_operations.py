@@ -782,7 +782,7 @@ class RedisOperations(object):
 
     def export_data(
             self, resource_group_name, name, parameters, custom_headers=None, raw=False, **operation_config):
-        """Import data into Redis cache.
+        """Export data from the redis cache to blobs in a container.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
