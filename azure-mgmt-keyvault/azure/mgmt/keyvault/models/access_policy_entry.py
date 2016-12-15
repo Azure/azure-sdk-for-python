@@ -16,8 +16,8 @@ class AccessPolicyEntry(Model):
     """An identity that have access to the key vault. All identities in the array
     must use the same tenant ID as the key vault's tenant ID.
 
-    :param tenant_id: The Azure Active Directory tenant ID that should be
-     used for authenticating requests to the key vault.
+    :param tenant_id: The Azure Active Directory tenant ID that should be used
+     for authenticating requests to the key vault.
     :type tenant_id: str
     :param object_id: The object ID of a user, service principal or security
      group in the Azure Active Directory tenant for the vault. The object ID
@@ -30,7 +30,7 @@ class AccessPolicyEntry(Model):
      certificates.
     :type permissions: :class:`Permissions
      <azure.mgmt.keyvault.models.Permissions>`
-    """ 
+    """
 
     _validation = {
         'tenant_id': {'required': True},

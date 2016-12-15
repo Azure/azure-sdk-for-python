@@ -32,7 +32,7 @@ class Vault(Resource):
     :param properties: Properties of the vault
     :type properties: :class:`VaultProperties
      <azure.mgmt.keyvault.models.VaultProperties>`
-    """ 
+    """
 
     _validation = {
         'id': {'readonly': True},
