@@ -27,9 +27,9 @@ class CheckNameAvailabilityOutput(Model):
     """
 
     _attribute_map = {
-        'name_available': {'key': 'NameAvailable', 'type': 'bool'},
-        'reason': {'key': 'Reason', 'type': 'EntityNameUnavailabilityReason'},
-        'message': {'key': 'Message', 'type': 'str'},
+        'name_available': {'key': 'nameAvailable', 'type': 'bool'},
+        'reason': {'key': 'reason', 'type': 'EntityNameUnavailabilityReason'},
+        'message': {'key': 'message', 'type': 'str'},
     }
 
     def __init__(self, name_available=None, reason=None, message=None):
