@@ -17,13 +17,13 @@ from .key_vault_id import *
 _DOC_PATTERNS = {
     re.compile(r"( +):param vault_base_url:.+:param key_name:.+:type key_version:[^\n]+",
                re.MULTILINE+re.DOTALL):
-        "\\1:param key_identifier: The key identifier\n\\1:type key_identifier: azure.keyvault.key_vault_id.KeyVaultId",
+        "\\1:param key_identifier: The key identifier\n\\1:type key_identifier: str",
     re.compile(r"( +):param vault_base_url:.+:param certificate_name:.+:type certificate_version:[^\n]+",
                re.MULTILINE + re.DOTALL):
-        "\\1:param certificate_identifier: The certificate identifier\n\\1:type certificate_identifier: azure.keyvault.key_vault_id.KeyVaultId",
+        "\\1:param certificate_identifier: The certificate identifier\n\\1:type certificate_identifier: str",
     re.compile(r"( +):param vault_base_url:.+:param secret_name:.+:type secret_version:[^\n]+",
                re.MULTILINE + re.DOTALL):
-        "\\1:param secret_identifier: The secret identifier\n\\1:type secret_identifier: azure.keyvault.key_vault_id.KeyVaultId",
+        "\\1:param secret_identifier: The secret identifier\n\\1:type secret_identifier: str",
 }
 
 
