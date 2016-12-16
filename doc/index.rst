@@ -154,6 +154,7 @@ Azure Runtime
 Some documentation of data libraries are on this website. This includes:
 
 * :doc:`Batch<batch>`
+* :doc:`Key Vault<sample_azure-keyvault>`
 * :doc:`Azure Monitor<sample_azure-monitor>`
 * :doc:`Azure Active Directory Graph RBAC<graphrbac>`
 * :doc:`Service Bus<servicebus>` using HTTP.
@@ -252,6 +253,7 @@ Indices and tables
 
   batch
   sample_azure-monitor
+  sample_azure-keyvault
   graphrbac
   servicebus
   
