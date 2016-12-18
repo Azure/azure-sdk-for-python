@@ -30,7 +30,7 @@ class WorkflowTriggerRecurrence(Model):
     :param schedule: The recurrence schedule.
     :type schedule: :class:`RecurrenceSchedule
      <azure.mgmt.logic.models.RecurrenceSchedule>`
-    """ 
+    """
 
     _attribute_map = {
         'frequency': {'key': 'frequency', 'type': 'RecurrenceFrequency'},

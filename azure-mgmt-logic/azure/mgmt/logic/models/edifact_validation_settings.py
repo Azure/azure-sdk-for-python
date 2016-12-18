@@ -46,7 +46,7 @@ class EdifactValidationSettings(Model):
      values include: 'NotSpecified', 'NotAllowed', 'Optional', 'Mandatory'
     :type trailing_separator_policy: str or :class:`TrailingSeparatorPolicy
      <azure.mgmt.logic.models.TrailingSeparatorPolicy>`
-    """ 
+    """
 
     _attribute_map = {
         'validate_character_set': {'key': 'validateCharacterSet', 'type': 'bool'},

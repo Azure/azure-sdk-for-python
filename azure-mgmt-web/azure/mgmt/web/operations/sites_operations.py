@@ -1645,8 +1645,8 @@ class SitesOperations(object):
         :type resource_group_name: str
         :param name: Name of web app
         :type name: str
-        :param properties_to_include: List of app properties to include in
-         the response
+        :param properties_to_include: List of app properties to include in the
+         response
         :type properties_to_include: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -1870,8 +1870,7 @@ class SitesOperations(object):
          only used for app creation
         :type skip_dns_registration: str
         :param skip_custom_domain_verification: If true, custom (non
-         *.azurewebsites.net) domains associated with web app are not
-         verified.
+         *.azurewebsites.net) domains associated with web app are not verified.
         :type skip_custom_domain_verification: str
         :param force_dns_registration: If true, web app hostname is force
          registered with DNS
@@ -1979,8 +1978,8 @@ class SitesOperations(object):
         :type name: str
         :param delete_metrics: If true, web app metrics are also deleted
         :type delete_metrics: str
-        :param delete_empty_server_farm: If true and App Service Plan is
-         empty after web app deletion, App Service Plan is also deleted
+        :param delete_empty_server_farm: If true and App Service Plan is empty
+         after web app deletion, App Service Plan is also deleted
         :type delete_empty_server_farm: str
         :param skip_dns_registration: If true, DNS registration is skipped
         :type skip_dns_registration: str
@@ -2136,8 +2135,7 @@ class SitesOperations(object):
          only used for app creation
         :type skip_dns_registration: str
         :param skip_custom_domain_verification: If true, custom (non
-         *.azurewebsites.net) domains associated with web app are not
-         verified.
+         *.azurewebsites.net) domains associated with web app are not verified.
         :type skip_custom_domain_verification: str
         :param force_dns_registration: If true, web app hostname is force
          registered with DNS
@@ -2249,8 +2247,8 @@ class SitesOperations(object):
         :type slot: str
         :param delete_metrics: If true, web app metrics are also deleted
         :type delete_metrics: str
-        :param delete_empty_server_farm: If true and App Service Plan is
-         empty after web app deletion, App Service Plan is also deleted
+        :param delete_empty_server_farm: If true and App Service Plan is empty
+         after web app deletion, App Service Plan is also deleted
         :type delete_empty_server_farm: str
         :param skip_dns_registration: If true, DNS registration is skipped
         :type skip_dns_registration: str
@@ -6291,8 +6289,8 @@ class SitesOperations(object):
 
     def update_site_auth_settings(
             self, resource_group_name, name, site_auth_settings, custom_headers=None, raw=False, **operation_config):
-        """Updates the Authentication / Authorization settings associated with
-        web app.
+        """Updates the Authentication / Authorization settings associated with web
+        app.
 
         :param resource_group_name: Name of resource group
         :type resource_group_name: str
@@ -6361,8 +6359,8 @@ class SitesOperations(object):
 
     def update_site_auth_settings_slot(
             self, resource_group_name, name, site_auth_settings, slot, custom_headers=None, raw=False, **operation_config):
-        """Updates the Authentication / Authorization settings associated with
-        web app.
+        """Updates the Authentication / Authorization settings associated with web
+        app.
 
         :param resource_group_name: Name of resource group
         :type resource_group_name: str
@@ -8628,9 +8626,9 @@ class SitesOperations(object):
     def get_site_backup_status_secrets_slot(
             self, resource_group_name, name, backup_id, request, slot, custom_headers=None, raw=False, **operation_config):
         """Gets status of a web app backup that may be in progress, including
-        secrets associated with the backup, such as the Azure Storage SAS
-        URL. Also can be used to update the SAS URL for the backup if a new
-        URL is passed in the request body.
+        secrets associated with the backup, such as the Azure Storage SAS URL.
+        Also can be used to update the SAS URL for the backup if a new URL is
+        passed in the request body.
 
         :param resource_group_name: Name of resource group
         :type resource_group_name: str
@@ -8706,9 +8704,9 @@ class SitesOperations(object):
     def get_site_backup_status_secrets(
             self, resource_group_name, name, backup_id, request, custom_headers=None, raw=False, **operation_config):
         """Gets status of a web app backup that may be in progress, including
-        secrets associated with the backup, such as the Azure Storage SAS
-        URL. Also can be used to update the SAS URL for the backup if a new
-        URL is passed in the request body.
+        secrets associated with the backup, such as the Azure Storage SAS URL.
+        Also can be used to update the SAS URL for the backup if a new URL is
+        passed in the request body.
 
         :param resource_group_name: Name of resource group
         :type resource_group_name: str
@@ -10314,8 +10312,8 @@ class SitesOperations(object):
 
     def create_or_update_site_relay_service_connection(
             self, resource_group_name, name, entity_name, connection_envelope, custom_headers=None, raw=False, **operation_config):
-        """Creates a new association to a Biztalk Hybrid Connection, or updates
-        an existing one.
+        """Creates a new association to a Biztalk Hybrid Connection, or updates an
+        existing one.
 
         :param resource_group_name: The resource group name
         :type resource_group_name: str
@@ -10454,8 +10452,8 @@ class SitesOperations(object):
 
     def update_site_relay_service_connection(
             self, resource_group_name, name, entity_name, connection_envelope, custom_headers=None, raw=False, **operation_config):
-        """Creates a new association to a Biztalk Hybrid Connection, or updates
-        an existing one.
+        """Creates a new association to a Biztalk Hybrid Connection, or updates an
+        existing one.
 
         :param resource_group_name: The resource group name
         :type resource_group_name: str
@@ -10597,8 +10595,8 @@ class SitesOperations(object):
 
     def create_or_update_site_relay_service_connection_slot(
             self, resource_group_name, name, entity_name, connection_envelope, slot, custom_headers=None, raw=False, **operation_config):
-        """Creates a new association to a Biztalk Hybrid Connection, or updates
-        an existing one.
+        """Creates a new association to a Biztalk Hybrid Connection, or updates an
+        existing one.
 
         :param resource_group_name: The resource group name
         :type resource_group_name: str
@@ -10743,8 +10741,8 @@ class SitesOperations(object):
 
     def update_site_relay_service_connection_slot(
             self, resource_group_name, name, entity_name, connection_envelope, slot, custom_headers=None, raw=False, **operation_config):
-        """Creates a new association to a Biztalk Hybrid Connection, or updates
-        an existing one.
+        """Creates a new association to a Biztalk Hybrid Connection, or updates an
+        existing one.
 
         :param resource_group_name: The resource group name
         :type resource_group_name: str
@@ -10947,8 +10945,8 @@ class SitesOperations(object):
 
     def get_site_vnet_gateway_slot(
             self, resource_group_name, name, vnet_name, gateway_name, slot, custom_headers=None, raw=False, **operation_config):
-        """Retrieves a Virtual Network connection gateway associated with this
-        web app and virtual network.
+        """Retrieves a Virtual Network connection gateway associated with this web
+        app and virtual network.
 
         :param resource_group_name: The resource group name
         :type resource_group_name: str
@@ -11177,8 +11175,8 @@ class SitesOperations(object):
 
     def get_site_vnet_gateway(
             self, resource_group_name, name, vnet_name, gateway_name, custom_headers=None, raw=False, **operation_config):
-        """Retrieves a Virtual Network connection gateway associated with this
-        web app and virtual network.
+        """Retrieves a Virtual Network connection gateway associated with this web
+        app and virtual network.
 
         :param resource_group_name: The resource group name
         :type resource_group_name: str

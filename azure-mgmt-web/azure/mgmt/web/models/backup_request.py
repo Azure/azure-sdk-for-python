@@ -45,7 +45,7 @@ class BackupRequest(Resource):
      'Default', 'Clone', 'Relocation'
     :type backup_request_type: str or :class:`BackupRestoreOperationType
      <azure.mgmt.web.models.BackupRestoreOperationType>`
-    """ 
+    """
 
     _validation = {
         'location': {'required': True},

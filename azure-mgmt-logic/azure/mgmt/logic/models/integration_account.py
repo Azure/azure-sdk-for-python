@@ -30,7 +30,7 @@ class IntegrationAccount(IntegrationAccountResource):
     :param sku: The sku.
     :type sku: :class:`IntegrationAccountSku
      <azure.mgmt.logic.models.IntegrationAccountSku>`
-    """ 
+    """
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},

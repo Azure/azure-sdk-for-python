@@ -27,7 +27,7 @@ class AutoHealActions(Model):
      the process must execute
      before taking the action
     :type min_process_execution_time: str
-    """ 
+    """
 
     _validation = {
         'action_type': {'required': True},

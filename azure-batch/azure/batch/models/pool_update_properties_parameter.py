@@ -48,7 +48,7 @@ class PoolUpdatePropertiesParameter(Model):
      is removed from the pool.
     :type metadata: list of :class:`MetadataItem
      <azure.batch.models.MetadataItem>`
-    """ 
+    """
 
     _validation = {
         'certificate_references': {'required': True},

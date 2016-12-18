@@ -51,7 +51,7 @@ class IntegrationAccountAgreement(IntegrationAccountResource):
     :param content: The agreement content.
     :type content: :class:`AgreementContent
      <azure.mgmt.logic.models.AgreementContent>`
-    """ 
+    """
 
     _validation = {
         'created_time': {'readonly': True},

@@ -64,7 +64,7 @@ class BackupItem(Resource):
     :param website_size_in_bytes: Size of the original web app which has been
      backed up
     :type website_size_in_bytes: long
-    """ 
+    """
 
     _validation = {
         'location': {'required': True},

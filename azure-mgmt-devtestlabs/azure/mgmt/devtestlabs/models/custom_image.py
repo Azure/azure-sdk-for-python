@@ -42,7 +42,7 @@ class CustomImage(Model):
     :type location: str
     :param tags: The tags of the resource.
     :type tags: dict
-    """ 
+    """
 
     _attribute_map = {
         'vm': {'key': 'properties.vm', 'type': 'CustomImagePropertiesFromVm'},

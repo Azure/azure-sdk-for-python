@@ -25,7 +25,7 @@ class SkuDescription(Model):
     :type family: str
     :param capacity: Current number of instances assigned to the resource
     :type capacity: int
-    """ 
+    """
 
     _attribute_map = {
         'name': {'key': 'name', 'type': 'str'},

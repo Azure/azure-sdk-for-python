@@ -21,26 +21,26 @@ class MonetaryCredit(OfferTermInfo):
     :param excluded_meter_ids: An array of meter ids that are excluded from
      the given offer terms.
     :type excluded_meter_ids: list of str
-    :param Name: Polymorphic Discriminator
-    :type Name: str
+    :param name: Polymorphic Discriminator
+    :type name: str
     :param credit: The amount of credit provided under the terms of the given
      offer level. This field is used only by offer terms of type
      'MonetaryCredit'.
     :type credit: Decimal
-    """ 
+    """
 
     _validation = {
-        'Name': {'required': True},
+        'name': {'required': True},
     }
 
     _attribute_map = {
         'effective_date': {'key': 'EffectiveDate', 'type': 'iso-8601'},
         'excluded_meter_ids': {'key': 'ExcludedMeterIds', 'type': '[str]'},
-        'Name': {'key': 'Name', 'type': 'str'},
-        'credit': {'key': 'Credit', 'type': 'decimal'},
+        'name': {'key': 'Name', 'type': 'str'},
+        'credit': {'key': 'Credit', 'type': 'Decimal'},
     }
 
     def __init__(self, effective_date=None, excluded_meter_ids=None, credit=None):
         super(MonetaryCredit, self).__init__(effective_date=effective_date, excluded_meter_ids=excluded_meter_ids)
         self.credit = credit
-        self.Name = 'Monetary Credit'
+        self.name = 'Monetary Credit'

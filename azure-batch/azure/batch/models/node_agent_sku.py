@@ -31,7 +31,7 @@ class NodeAgentSku(Model):
      compatible with the node agent SKU. Possible values include: 'linux',
      'windows', 'unmapped'
     :type os_type: str or :class:`OSType <azure.batch.models.OSType>`
-    """ 
+    """
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},

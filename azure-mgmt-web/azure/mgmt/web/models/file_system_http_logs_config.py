@@ -17,8 +17,7 @@ class FileSystemHttpLogsConfig(Model):
 
     :param retention_in_mb: Maximum size in megabytes that http log files can
      use.
-     When reached old log files will be removed to make space for
-     new ones.
+     When reached old log files will be removed to make space for new ones.
      Value can range between 25 and 100.
     :type retention_in_mb: int
     :param retention_in_days: Retention in days.
@@ -27,7 +26,7 @@ class FileSystemHttpLogsConfig(Model):
     :type retention_in_days: int
     :param enabled: Enabled
     :type enabled: bool
-    """ 
+    """
 
     _attribute_map = {
         'retention_in_mb': {'key': 'retentionInMb', 'type': 'int'},

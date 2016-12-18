@@ -18,8 +18,8 @@ class JsonWebKey(Model):
     :param kid: Key Identifier
     :type kid: str
     :param kty: Supported JsonWebKey key types (kty) for Elliptic Curve, RSA,
-     HSM, Octet, usually RSA. Possible values include: 'EC', 'RSA',
-     'RSA-HSM', 'oct'
+     HSM, Octet, usually RSA. Possible values include: 'EC', 'RSA', 'RSA-HSM',
+     'oct'
     :type kty: str or :class:`JsonWebKeyType
      <azure.keyvault.models.JsonWebKeyType>`
     :param key_ops:
@@ -44,7 +44,7 @@ class JsonWebKey(Model):
     :type k: bytes
     :param t: HSM Token, used with Bring Your Own Key
     :type t: bytes
-    """ 
+    """
 
     _attribute_map = {
         'kid': {'key': 'kid', 'type': 'str'},

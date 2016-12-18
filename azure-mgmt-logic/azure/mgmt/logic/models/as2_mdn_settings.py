@@ -25,11 +25,11 @@ class AS2MdnSettings(Model):
     :type send_mdn_asynchronously: bool
     :param receipt_delivery_url: The receipt delivery URL.
     :type receipt_delivery_url: str
-    :param disposition_notification_to: The disposition notification to
-     header value.
+    :param disposition_notification_to: The disposition notification to header
+     value.
     :type disposition_notification_to: str
-    :param sign_outbound_mdn_if_optional: The value indicating whether to
-     sign the outbound MDN if optional.
+    :param sign_outbound_mdn_if_optional: The value indicating whether to sign
+     the outbound MDN if optional.
     :type sign_outbound_mdn_if_optional: bool
     :param mdn_text: The MDN text.
     :type mdn_text: str
@@ -40,7 +40,7 @@ class AS2MdnSettings(Model):
      values include: 'NotSpecified', 'None', 'SHA2256', 'SHA2384', 'SHA2512'
     :type mic_hashing_algorithm: str or :class:`HashingAlgorithm
      <azure.mgmt.logic.models.HashingAlgorithm>`
-    """ 
+    """
 
     _attribute_map = {
         'need_mdn': {'key': 'needMdn', 'type': 'bool'},

@@ -23,7 +23,7 @@ class VirtualIPMapping(Model):
     :type internal_https_port: int
     :param in_use: Is VIP mapping in use
     :type in_use: bool
-    """ 
+    """
 
     _attribute_map = {
         'virtual_ip': {'key': 'virtualIP', 'type': 'str'},

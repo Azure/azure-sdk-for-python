@@ -39,7 +39,7 @@ class SiteLogsConfig(Resource):
     :param detailed_error_messages: Detailed error messages configuration
     :type detailed_error_messages: :class:`EnabledConfig
      <azure.mgmt.web.models.EnabledConfig>`
-    """ 
+    """
 
     _validation = {
         'location': {'required': True},

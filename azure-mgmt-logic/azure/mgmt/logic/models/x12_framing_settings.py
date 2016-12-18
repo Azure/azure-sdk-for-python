@@ -34,7 +34,7 @@ class X12FramingSettings(Model):
      values include: 'NotSpecified', 'None', 'CR', 'LF', 'CRLF'
     :type segment_terminator_suffix: str or :class:`SegmentTerminatorSuffix
      <azure.mgmt.logic.models.SegmentTerminatorSuffix>`
-    """ 
+    """
 
     _attribute_map = {
         'data_element_separator': {'key': 'dataElementSeparator', 'type': 'int'},

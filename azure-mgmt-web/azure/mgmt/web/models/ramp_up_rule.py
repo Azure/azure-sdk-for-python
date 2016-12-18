@@ -25,15 +25,14 @@ class RampUpRule(Model):
     :type reroute_percentage: float
     :param change_step: [Optional] In auto ramp up scenario this is the step
      to to add/remove from
-     {Microsoft.Web.Hosting.Administration.RampUpRule.ReroutePercentage}
-     until it reaches
-     {Microsoft.Web.Hosting.Administration.RampUpRule.MinReroutePercentage}
-     or
+     {Microsoft.Web.Hosting.Administration.RampUpRule.ReroutePercentage} until
+     it reaches
+     {Microsoft.Web.Hosting.Administration.RampUpRule.MinReroutePercentage} or
      {Microsoft.Web.Hosting.Administration.RampUpRule.MaxReroutePercentage}.
      Site metrics are checked every N minutes specificed in
      {Microsoft.Web.Hosting.Administration.RampUpRule.ChangeIntervalInMinutes}.
-     Custom decision algorithm can be provided in TiPCallback site
-     extension which Url can be specified in
+     Custom decision algorithm can be provided in TiPCallback site extension
+     which Url can be specified in
      {Microsoft.Web.Hosting.Administration.RampUpRule.ChangeDecisionCallbackUrl}
     :type change_step: float
     :param change_interval_in_minutes: [Optional] Specifies interval in
@@ -53,7 +52,7 @@ class RampUpRule(Model):
     :param name: Name of the routing rule. The recommended name would be to
      point to the slot which will receive the traffic in the experiment.
     :type name: str
-    """ 
+    """
 
     _attribute_map = {
         'action_host_name': {'key': 'actionHostName', 'type': 'str'},

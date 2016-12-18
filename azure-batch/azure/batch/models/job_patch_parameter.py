@@ -46,7 +46,7 @@ class JobPatchParameter(Model):
      metadata. If omitted, the existing job metadata is left unchanged.
     :type metadata: list of :class:`MetadataItem
      <azure.batch.models.MetadataItem>`
-    """ 
+    """
 
     _attribute_map = {
         'priority': {'key': 'priority', 'type': 'int'},

@@ -50,7 +50,7 @@ class EdifactProtocolSettings(Model):
     :type edifact_delimiter_overrides: list of
      :class:`EdifactDelimiterOverride
      <azure.mgmt.logic.models.EdifactDelimiterOverride>`
-    """ 
+    """
 
     _attribute_map = {
         'validation_settings': {'key': 'validationSettings', 'type': 'EdifactValidationSettings'},

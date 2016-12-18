@@ -49,7 +49,7 @@ class PoolPatchParameter(Model):
      unchanged.
     :type metadata: list of :class:`MetadataItem
      <azure.batch.models.MetadataItem>`
-    """ 
+    """
 
     _attribute_map = {
         'start_task': {'key': 'startTask', 'type': 'StartTask'},

@@ -45,7 +45,7 @@ class CertificateDetails(Resource):
     :type issuer: str
     :param raw_data: Raw certificate data
     :type raw_data: str
-    """ 
+    """
 
     _validation = {
         'location': {'required': True},

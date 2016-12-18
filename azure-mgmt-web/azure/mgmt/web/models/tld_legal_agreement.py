@@ -23,7 +23,7 @@ class TldLegalAgreement(Model):
     :type content: str
     :param url: Url where a copy of the agreement details is hosted
     :type url: str
-    """ 
+    """
 
     _attribute_map = {
         'agreement_key': {'key': 'agreementKey', 'type': 'str'},

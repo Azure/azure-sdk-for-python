@@ -39,7 +39,7 @@ class IntegrationAccountCertificate(IntegrationAccountResource):
      <azure.mgmt.logic.models.KeyVaultKeyReference>`
     :param public_certificate: The public certificate.
     :type public_certificate: str
-    """ 
+    """
 
     _validation = {
         'created_time': {'readonly': True},

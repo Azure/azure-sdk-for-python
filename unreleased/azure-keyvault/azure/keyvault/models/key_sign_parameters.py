@@ -16,14 +16,13 @@ class KeySignParameters(Model):
     """The key operations parameters.
 
     :param algorithm: The signing/verification algorithm identifier. For more
-     information on possible algorithm types, see
-     JsonWebKeySignatureAlgorithm. Possible values include: 'RS256', 'RS384',
-     'RS512', 'RSNULL'
+     information on possible algorithm types, see JsonWebKeySignatureAlgorithm.
+     Possible values include: 'RS256', 'RS384', 'RS512', 'RSNULL'
     :type algorithm: str or :class:`JsonWebKeySignatureAlgorithm
      <azure.keyvault.models.JsonWebKeySignatureAlgorithm>`
     :param value:
     :type value: bytes
-    """ 
+    """
 
     _validation = {
         'algorithm': {'required': True, 'min_length': 1},

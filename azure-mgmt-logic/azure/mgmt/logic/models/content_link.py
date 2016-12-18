@@ -26,7 +26,7 @@ class ContentLink(Model):
      <azure.mgmt.logic.models.ContentHash>`
     :param metadata: The metadata.
     :type metadata: object
-    """ 
+    """
 
     _attribute_map = {
         'uri': {'key': 'uri', 'type': 'str'},

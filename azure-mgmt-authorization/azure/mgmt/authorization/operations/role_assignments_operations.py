@@ -46,13 +46,13 @@ class RoleAssignmentsOperations(object):
         :type parent_resource_path: str
         :param resource_type: The resource type of the resource.
         :type resource_type: str
-        :param resource_name: The name of the resource to get role
-         assignments for.
+        :param resource_name: The name of the resource to get role assignments
+         for.
         :type resource_name: str
         :param filter: The filter to apply on the operation. Use
          $filter=atScope() to return all role assignments at or above the
-         scope. Use $filter=principalId eq {id} to return all role
-         assignments at, above or below the scope for the specified principal.
+         scope. Use $filter=principalId eq {id} to return all role assignments
+         at, above or below the scope for the specified principal.
         :type filter: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -128,8 +128,8 @@ class RoleAssignmentsOperations(object):
         :type resource_group_name: str
         :param filter: The filter to apply on the operation. Use
          $filter=atScope() to return all role assignments at or above the
-         scope. Use $filter=principalId eq {id} to return all role
-         assignments at, above or below the scope for the specified principal.
+         scope. Use $filter=principalId eq {id} to return all role assignments
+         at, above or below the scope for the specified principal.
         :type filter: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -582,8 +582,8 @@ class RoleAssignmentsOperations(object):
 
         :param filter: The filter to apply on the operation. Use
          $filter=atScope() to return all role assignments at or above the
-         scope. Use $filter=principalId eq {id} to return all role
-         assignments at, above or below the scope for the specified principal.
+         scope. Use $filter=principalId eq {id} to return all role assignments
+         at, above or below the scope for the specified principal.
         :type filter: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -654,8 +654,8 @@ class RoleAssignmentsOperations(object):
         :type scope: str
         :param filter: The filter to apply on the operation. Use
          $filter=atScope() to return all role assignments at or above the
-         scope. Use $filter=principalId eq {id} to return all role
-         assignments at, above or below the scope for the specified principal.
+         scope. Use $filter=principalId eq {id} to return all role assignments
+         at, above or below the scope for the specified principal.
         :type filter: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the

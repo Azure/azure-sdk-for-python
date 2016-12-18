@@ -19,7 +19,7 @@ class ClassicAdministratorProperties(Model):
     :type email_address: str
     :param role: The role of the administrator.
     :type role: str
-    """ 
+    """
 
     _attribute_map = {
         'email_address': {'key': 'emailAddress', 'type': 'str'},

@@ -19,7 +19,7 @@ class IntegrationAccountMapFilter(Model):
      values include: 'NotSpecified', 'Xslt'
     :type schema_type: str or :class:`MapType
      <azure.mgmt.logic.models.MapType>`
-    """ 
+    """
 
     _attribute_map = {
         'schema_type': {'key': 'schemaType', 'type': 'MapType'},

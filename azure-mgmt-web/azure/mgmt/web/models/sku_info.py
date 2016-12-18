@@ -21,7 +21,7 @@ class SkuInfo(Model):
     :type sku: :class:`SkuDescription <azure.mgmt.web.models.SkuDescription>`
     :param capacity: Min, max, and default scale values of the sku
     :type capacity: :class:`SkuCapacity <azure.mgmt.web.models.SkuCapacity>`
-    """ 
+    """
 
     _attribute_map = {
         'resource_type': {'key': 'resourceType', 'type': 'str'},

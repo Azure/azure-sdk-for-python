@@ -41,7 +41,7 @@ class CertificateOperation(Model):
     :type target: str
     :param request_id: Identifier for the certificate operation.
     :type request_id: str
-    """ 
+    """
 
     _validation = {
         'id': {'readonly': True},

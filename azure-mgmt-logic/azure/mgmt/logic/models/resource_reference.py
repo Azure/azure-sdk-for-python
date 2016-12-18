@@ -24,7 +24,7 @@ class ResourceReference(Model):
     :vartype name: str
     :ivar type: Gets the resource type.
     :vartype type: str
-    """ 
+    """
 
     _validation = {
         'name': {'readonly': True},

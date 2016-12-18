@@ -39,13 +39,13 @@ class EdifactDelimiterOverride(Model):
      <azure.mgmt.logic.models.EdifactDecimalIndicator>`
     :param release_indicator: The release indicator.
     :type release_indicator: int
-    :param message_association_assigned_code: The message association
-     assigned code.
+    :param message_association_assigned_code: The message association assigned
+     code.
     :type message_association_assigned_code: str
     :param target_namespace: The target namespace on which this delimiter
      settings has to be applied.
     :type target_namespace: str
-    """ 
+    """
 
     _attribute_map = {
         'message_id': {'key': 'messageId', 'type': 'str'},

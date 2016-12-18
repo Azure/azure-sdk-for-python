@@ -23,7 +23,7 @@ class X12SecuritySettings(Model):
     :type security_qualifier: str
     :param password_value: The password value.
     :type password_value: str
-    """ 
+    """
 
     _attribute_map = {
         'authorization_qualifier': {'key': 'authorizationQualifier', 'type': 'str'},

@@ -24,7 +24,7 @@ class AgreementContent(Model):
     :param edifact: The EDIFACT agreement content.
     :type edifact: :class:`EdifactAgreementContent
      <azure.mgmt.logic.models.EdifactAgreementContent>`
-    """ 
+    """
 
     _attribute_map = {
         'as2': {'key': 'AS2', 'type': 'AS2AgreementContent'},

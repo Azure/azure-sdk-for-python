@@ -17,7 +17,7 @@ class PowerShellTabCompletionParameters(Model):
 
     :param command: Command to get tab completion for.
     :type command: str
-    """ 
+    """
 
     _attribute_map = {
         'command': {'key': 'command', 'type': 'str'},

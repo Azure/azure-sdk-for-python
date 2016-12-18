@@ -29,7 +29,7 @@ class ClassicMobileService(Resource):
     :type tags: dict
     :param classic_mobile_service_name: Name of the mobile service
     :type classic_mobile_service_name: str
-    """ 
+    """
 
     _validation = {
         'location': {'required': True},

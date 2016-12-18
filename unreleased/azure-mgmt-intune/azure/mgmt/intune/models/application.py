@@ -32,10 +32,10 @@ class Application(Resource):
     :type friendly_name: str
     :param platform: Possible values include: 'ios', 'android', 'windows'.
      Default value: "ios" .
-    :type platform: str
+    :type platform: str or :class:`enum <azure.mgmt.intune.models.enum>`
     :param app_id:
     :type app_id: str
-    """ 
+    """
 
     _validation = {
         'id': {'readonly': True},

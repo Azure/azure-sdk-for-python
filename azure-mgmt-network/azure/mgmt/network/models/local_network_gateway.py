@@ -40,13 +40,13 @@ class LocalNetworkGateway(Resource):
      LocalNetworkGateway resource.
     :type resource_guid: str
     :ivar provisioning_state: The provisioning state of the
-     LocalNetworkGateway resource. Possible values are: 'Updating',
-     'Deleting', and 'Failed'.
+     LocalNetworkGateway resource. Possible values are: 'Updating', 'Deleting',
+     and 'Failed'.
     :vartype provisioning_state: str
     :param etag: A unique read-only string that changes whenever the resource
      is updated.
     :type etag: str
-    """ 
+    """
 
     _validation = {
         'name': {'readonly': True},

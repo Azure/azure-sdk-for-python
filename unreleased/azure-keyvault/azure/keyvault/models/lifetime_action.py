@@ -20,7 +20,7 @@ class LifetimeAction(Model):
     :type trigger: :class:`Trigger <azure.keyvault.models.Trigger>`
     :param action: The action that will be executed.
     :type action: :class:`Action <azure.keyvault.models.Action>`
-    """ 
+    """
 
     _attribute_map = {
         'trigger': {'key': 'trigger', 'type': 'Trigger'},

@@ -51,7 +51,7 @@ class X12ProtocolSettings(Model):
     :param x12_delimiter_overrides: The X12 delimiter override settings.
     :type x12_delimiter_overrides: list of :class:`X12DelimiterOverrides
      <azure.mgmt.logic.models.X12DelimiterOverrides>`
-    """ 
+    """
 
     _attribute_map = {
         'validation_settings': {'key': 'validationSettings', 'type': 'X12ValidationSettings'},

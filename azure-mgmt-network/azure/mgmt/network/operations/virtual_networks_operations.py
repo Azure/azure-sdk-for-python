@@ -185,8 +185,8 @@ class VirtualNetworksOperations(object):
         :type resource_group_name: str
         :param virtual_network_name: The name of the virtual network.
         :type virtual_network_name: str
-        :param parameters: Parameters supplied to the create or update
-         virtual network operation
+        :param parameters: Parameters supplied to the create or update virtual
+         network operation
         :type parameters: :class:`VirtualNetwork
          <azure.mgmt.network.models.VirtualNetwork>`
         :param dict custom_headers: headers that will be added to the request

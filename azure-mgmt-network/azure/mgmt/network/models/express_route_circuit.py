@@ -38,9 +38,9 @@ class ExpressRouteCircuit(Resource):
     :type circuit_provisioning_state: str
     :param service_provider_provisioning_state: The
      ServiceProviderProvisioningState state of the resource. Possible values
-     are 'NotProvisioned', 'Provisioning', 'Provisioned', and
-     'Deprovisioning'. Possible values include: 'NotProvisioned',
-     'Provisioning', 'Provisioned', 'Deprovisioning'
+     are 'NotProvisioned', 'Provisioning', 'Provisioned', and 'Deprovisioning'.
+     Possible values include: 'NotProvisioned', 'Provisioning', 'Provisioned',
+     'Deprovisioning'
     :type service_provider_provisioning_state: str or
      :class:`ServiceProviderProvisioningState
      <azure.mgmt.network.models.ServiceProviderProvisioningState>`
@@ -66,7 +66,7 @@ class ExpressRouteCircuit(Resource):
     :param etag: Gets a unique read-only string that changes whenever the
      resource is updated.
     :type etag: str
-    """ 
+    """
 
     _validation = {
         'name': {'readonly': True},

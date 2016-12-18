@@ -29,7 +29,7 @@ class SiteInstance(Resource):
     :type tags: dict
     :param site_instance_name: Name of instance
     :type site_instance_name: str
-    """ 
+    """
 
     _validation = {
         'location': {'required': True},

@@ -26,7 +26,7 @@ class EffectiveNetworkSecurityGroup(Model):
     :type effective_security_rules: list of
      :class:`EffectiveNetworkSecurityRule
      <azure.mgmt.network.models.EffectiveNetworkSecurityRule>`
-    """ 
+    """
 
     _attribute_map = {
         'network_security_group': {'key': 'networkSecurityGroup', 'type': 'SubResource'},

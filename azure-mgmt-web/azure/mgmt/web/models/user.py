@@ -36,7 +36,7 @@ class User(Resource):
     :param scm_uri: Service Control Manager URI, including username and
      password
     :type scm_uri: str
-    """ 
+    """
 
     _validation = {
         'location': {'required': True},

@@ -19,7 +19,7 @@ class WeekDetails(Model):
     :type weekdays: list of str
     :param time: The time of the day.
     :type time: str
-    """ 
+    """
 
     _attribute_map = {
         'weekdays': {'key': 'weekdays', 'type': '[str]'},

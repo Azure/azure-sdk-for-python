@@ -36,10 +36,10 @@ class Subscription(Model):
     :type subscription_policies: :class:`SubscriptionPolicies
      <azure.mgmt.resource.subscriptions.models.SubscriptionPolicies>`
     :param authorization_source: The authorization source of the request.
-     Valid values are one or more combinations of Legacy, RoleBased,
-     Bypassed, Direct and Management. For example, 'Legacy, RoleBased'.
+     Valid values are one or more combinations of Legacy, RoleBased, Bypassed,
+     Direct and Management. For example, 'Legacy, RoleBased'.
     :type authorization_source: str
-    """ 
+    """
 
     _validation = {
         'id': {'readonly': True},

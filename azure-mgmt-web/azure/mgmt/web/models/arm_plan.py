@@ -25,7 +25,7 @@ class ArmPlan(Model):
     :type promotion_code: str
     :param version: Version of product
     :type version: str
-    """ 
+    """
 
     _attribute_map = {
         'name': {'key': 'name', 'type': 'str'},

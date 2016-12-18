@@ -44,7 +44,7 @@ class IntegrationAccountMap(IntegrationAccountResource):
      <azure.mgmt.logic.models.IntegrationAccountContentLink>`
     :param metadata: The metadata.
     :type metadata: object
-    """ 
+    """
 
     _validation = {
         'created_time': {'readonly': True},

@@ -22,7 +22,7 @@ class KeyValuePairStringString(Model):
     :vartype key: str
     :ivar value:
     :vartype value: str
-    """ 
+    """
 
     _validation = {
         'key': {'readonly': True},

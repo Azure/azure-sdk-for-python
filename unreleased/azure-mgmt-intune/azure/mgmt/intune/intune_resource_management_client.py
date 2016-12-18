@@ -124,6 +124,8 @@ class IntuneResourceManagementClient(object):
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`LocationPaged
          <azure.mgmt.intune.models.LocationPaged>`
+        :raises:
+         :class:`ErrorException<azure.mgmt.intune.models.ErrorException>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -181,6 +183,8 @@ class IntuneResourceManagementClient(object):
         :rtype: :class:`Location <azure.mgmt.intune.models.Location>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`ErrorException<azure.mgmt.intune.models.ErrorException>`
         """
         # Construct URL
         url = '/providers/Microsoft.Intune/locations/hostName'
@@ -236,6 +240,8 @@ class IntuneResourceManagementClient(object):
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`ApplicationPaged
          <azure.mgmt.intune.models.ApplicationPaged>`
+        :raises:
+         :class:`ErrorException<azure.mgmt.intune.models.ErrorException>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -311,6 +317,8 @@ class IntuneResourceManagementClient(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`DevicePaged <azure.mgmt.intune.models.DevicePaged>`
+        :raises:
+         :class:`ErrorException<azure.mgmt.intune.models.ErrorException>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -387,6 +395,8 @@ class IntuneResourceManagementClient(object):
         :rtype: :class:`Device <azure.mgmt.intune.models.Device>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`ErrorException<azure.mgmt.intune.models.ErrorException>`
         """
         # Construct URL
         url = '/providers/Microsoft.Intune/locations/{hostName}/users/{userName}/devices/{deviceName}'
@@ -450,6 +460,8 @@ class IntuneResourceManagementClient(object):
          <azure.mgmt.intune.models.WipeDeviceOperationResult>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`ErrorException<azure.mgmt.intune.models.ErrorException>`
         """
         # Construct URL
         url = '/providers/Microsoft.Intune/locations/{hostName}/users/{userName}/devices/{deviceName}/wipe'
@@ -511,6 +523,8 @@ class IntuneResourceManagementClient(object):
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`OperationResultPaged
          <azure.mgmt.intune.models.OperationResultPaged>`
+        :raises:
+         :class:`ErrorException<azure.mgmt.intune.models.ErrorException>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -579,6 +593,8 @@ class IntuneResourceManagementClient(object):
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`StatusesDefault
          <azure.mgmt.intune.models.StatusesDefault>`
+        :raises:
+         :class:`ErrorException<azure.mgmt.intune.models.ErrorException>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -647,6 +663,8 @@ class IntuneResourceManagementClient(object):
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`FlaggedUserPaged
          <azure.mgmt.intune.models.FlaggedUserPaged>`
+        :raises:
+         :class:`ErrorException<azure.mgmt.intune.models.ErrorException>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -720,6 +738,8 @@ class IntuneResourceManagementClient(object):
         :rtype: :class:`FlaggedUser <azure.mgmt.intune.models.FlaggedUser>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`ErrorException<azure.mgmt.intune.models.ErrorException>`
         """
         # Construct URL
         url = '/providers/Microsoft.Intune/locations/{hostName}/flaggedUsers/{userName}'
@@ -784,6 +804,8 @@ class IntuneResourceManagementClient(object):
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`FlaggedEnrolledAppPaged
          <azure.mgmt.intune.models.FlaggedEnrolledAppPaged>`
+        :raises:
+         :class:`ErrorException<azure.mgmt.intune.models.ErrorException>`
         """
         def internal_paging(next_link=None, raw=False):
 

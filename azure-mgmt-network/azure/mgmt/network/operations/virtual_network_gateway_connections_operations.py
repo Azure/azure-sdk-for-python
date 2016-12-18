@@ -44,8 +44,8 @@ class VirtualNetworkGatewayConnectionsOperations(object):
         :param virtual_network_gateway_connection_name: The name of the
          virtual network gateway connection.
         :type virtual_network_gateway_connection_name: str
-        :param parameters: Parameters supplied to the create or update
-         virtual network gateway connection operation.
+        :param parameters: Parameters supplied to the create or update virtual
+         network gateway connection operation.
         :type parameters: :class:`VirtualNetworkGatewayConnection
          <azure.mgmt.network.models.VirtualNetworkGatewayConnection>`
         :param dict custom_headers: headers that will be added to the request

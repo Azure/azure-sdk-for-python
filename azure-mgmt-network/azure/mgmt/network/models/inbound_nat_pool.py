@@ -25,14 +25,12 @@ class InboundNatPool(SubResource):
     :type protocol: str or :class:`TransportProtocol
      <azure.mgmt.network.models.TransportProtocol>`
     :param frontend_port_range_start: The first port number in the range of
-     external ports that will be used to provide Inbound Nat to NICs
-     associated with a load balancer. Acceptable values range between 1 and
-     65534.
+     external ports that will be used to provide Inbound Nat to NICs associated
+     with a load balancer. Acceptable values range between 1 and 65534.
     :type frontend_port_range_start: int
     :param frontend_port_range_end: The last port number in the range of
-     external ports that will be used to provide Inbound Nat to NICs
-     associated with a load balancer. Acceptable values range between 1 and
-     65535.
+     external ports that will be used to provide Inbound Nat to NICs associated
+     with a load balancer. Acceptable values range between 1 and 65535.
     :type frontend_port_range_end: int
     :param backend_port: The port used for internal connections on the
      endpoint. Acceptable values are between 1 and 65535.
@@ -46,7 +44,7 @@ class InboundNatPool(SubResource):
     :param etag: A unique read-only string that changes whenever the resource
      is updated.
     :type etag: str
-    """ 
+    """
 
     _validation = {
         'protocol': {'required': True},

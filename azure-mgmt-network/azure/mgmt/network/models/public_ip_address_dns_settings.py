@@ -26,11 +26,11 @@ class PublicIPAddressDnsSettings(Model):
      domainNameLabel and the regionalized DNS zone.
     :type fqdn: str
     :param reverse_fqdn: The reverse FQDN. A user-visible, fully qualified
-     domain name that resolves to this public IP address. If the reverseFqdn
-     is specified, then a PTR DNS record is created pointing from the IP
-     address in the in-addr.arpa domain to the reverse FQDN.
+     domain name that resolves to this public IP address. If the reverseFqdn is
+     specified, then a PTR DNS record is created pointing from the IP address
+     in the in-addr.arpa domain to the reverse FQDN.
     :type reverse_fqdn: str
-    """ 
+    """
 
     _attribute_map = {
         'domain_name_label': {'key': 'domainNameLabel', 'type': 'str'},

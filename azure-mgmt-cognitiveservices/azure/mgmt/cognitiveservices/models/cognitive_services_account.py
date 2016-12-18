@@ -46,7 +46,7 @@ class CognitiveServicesAccount(Model):
     :type tags: dict
     :param type: Resource type
     :type type: str
-    """ 
+    """
 
     _validation = {
         'provisioning_state': {'readonly': True},

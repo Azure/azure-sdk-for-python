@@ -28,7 +28,7 @@ class CsmSiteRecoveryEntity(Model):
     :param slot_name: [Optional] Destination web app slot name into which web
      app should be recovered
     :type slot_name: str
-    """ 
+    """
 
     _attribute_map = {
         'snapshot_time': {'key': 'snapshotTime', 'type': 'iso-8601'},

@@ -185,8 +185,8 @@ class NetworkInterfacesOperations(object):
         :type resource_group_name: str
         :param network_interface_name: The name of the network interface.
         :type network_interface_name: str
-        :param parameters: Parameters supplied to the create or update
-         network interface operation.
+        :param parameters: Parameters supplied to the create or update network
+         interface operation.
         :type parameters: :class:`NetworkInterface
          <azure.mgmt.network.models.NetworkInterface>`
         :param dict custom_headers: headers that will be added to the request
@@ -274,13 +274,13 @@ class NetworkInterfacesOperations(object):
 
     def list_virtual_machine_scale_set_vm_network_interfaces(
             self, resource_group_name, virtual_machine_scale_set_name, virtualmachine_index, custom_headers=None, raw=False, **operation_config):
-        """Gets information about all network interfaces in a virtual machine in
-        a virtual machine scale set.
+        """Gets information about all network interfaces in a virtual machine in a
+        virtual machine scale set.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
-        :param virtual_machine_scale_set_name: The name of the virtual
-         machine scale set.
+        :param virtual_machine_scale_set_name: The name of the virtual machine
+         scale set.
         :type virtual_machine_scale_set_name: str
         :param virtualmachine_index: The virtual machine index.
         :type virtualmachine_index: str
@@ -352,8 +352,8 @@ class NetworkInterfacesOperations(object):
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
-        :param virtual_machine_scale_set_name: The name of the virtual
-         machine scale set.
+        :param virtual_machine_scale_set_name: The name of the virtual machine
+         scale set.
         :type virtual_machine_scale_set_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -422,8 +422,8 @@ class NetworkInterfacesOperations(object):
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
-        :param virtual_machine_scale_set_name: The name of the virtual
-         machine scale set.
+        :param virtual_machine_scale_set_name: The name of the virtual machine
+         scale set.
         :type virtual_machine_scale_set_name: str
         :param virtualmachine_index: The virtual machine index.
         :type virtualmachine_index: str
@@ -716,8 +716,8 @@ class NetworkInterfacesOperations(object):
          deserialized response
         :rtype:
          :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         instance that returns
-         :class:`EffectiveNetworkSecurityGroupListResult <azure.mgmt.network.models.EffectiveNetworkSecurityGroupListResult>`
+         instance that returns :class:`EffectiveNetworkSecurityGroupListResult
+         <azure.mgmt.network.models.EffectiveNetworkSecurityGroupListResult>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`

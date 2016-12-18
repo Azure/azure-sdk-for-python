@@ -20,7 +20,7 @@ class WorkflowTriggerCallbackUrl(Model):
 
     :ivar value: Gets the workflow trigger callback URL.
     :vartype value: str
-    """ 
+    """
 
     _validation = {
         'value': {'readonly': True},

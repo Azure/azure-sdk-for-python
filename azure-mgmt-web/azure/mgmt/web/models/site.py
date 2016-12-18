@@ -38,25 +38,25 @@ class Site(Resource):
     :vartype host_names: list of str
     :ivar repository_site_name: Name of repository site
     :vartype repository_site_name: str
-    :ivar usage_state: State indicating whether web app has exceeded its
-     quota usage. Possible values include: 'Normal', 'Exceeded'
+    :ivar usage_state: State indicating whether web app has exceeded its quota
+     usage. Possible values include: 'Normal', 'Exceeded'
     :vartype usage_state: str or :class:`UsageState
      <azure.mgmt.web.models.UsageState>`
     :param enabled: True if the site is enabled; otherwise, false. Setting
      this  value to false disables the site (takes the site off line).
     :type enabled: bool
     :ivar enabled_host_names: Hostnames for the web app that are enabled.
-     Hostnames need to be assigned and enabled. If some hostnames are
-     assigned but not enabled
+     Hostnames need to be assigned and enabled. If some hostnames are assigned
+     but not enabled
      the app is not served on those hostnames
     :vartype enabled_host_names: list of str
     :ivar availability_state: Management information availability state for
      the web app. Possible values are Normal or Limited.
-     Normal means that the site is running correctly and that
-     management information for the site is available.
-     Limited means that only partial management information for
-     the site is available and that detailed site information is unavailable.
-     Possible values include: 'Normal', 'Limited', 'DisasterRecoveryMode'
+     Normal means that the site is running correctly and that management
+     information for the site is available.
+     Limited means that only partial management information for the site is
+     available and that detailed site information is unavailable. Possible
+     values include: 'Normal', 'Limited', 'DisasterRecoveryMode'
     :vartype availability_state: str or :class:`SiteAvailabilityState
      <azure.mgmt.web.models.SiteAvailabilityState>`
     :param host_name_ssl_states: Hostname SSL states are  used to manage the
@@ -90,16 +90,15 @@ class Site(Resource):
     :param gateway_site_name: Name of gateway app associated with web app
     :type gateway_site_name: str
     :param client_affinity_enabled: Specifies if the client affinity is
-     enabled when load balancing http request for multiple instances of the
-     web app
+     enabled when load balancing http request for multiple instances of the web
+     app
     :type client_affinity_enabled: bool
-    :param client_cert_enabled: Specifies if the client certificate is
-     enabled for the web app
+    :param client_cert_enabled: Specifies if the client certificate is enabled
+     for the web app
     :type client_cert_enabled: bool
-    :param host_names_disabled: Specifies if the public hostnames are
-     disabled the web app.
-     If set to true the app is only accessible via API Management
-     process
+    :param host_names_disabled: Specifies if the public hostnames are disabled
+     the web app.
+     If set to true the app is only accessible via API Management process
     :type host_names_disabled: bool
     :ivar outbound_ip_addresses: List of comma separated IP addresses that
      this web app uses for outbound connections. Those can be used when
@@ -121,7 +120,7 @@ class Site(Resource):
     :vartype is_default_container: bool
     :ivar default_host_name: Default hostname of the web app
     :vartype default_host_name: str
-    """ 
+    """
 
     _validation = {
         'location': {'required': True},

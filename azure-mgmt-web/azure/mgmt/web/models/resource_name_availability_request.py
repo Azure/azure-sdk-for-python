@@ -21,7 +21,7 @@ class ResourceNameAvailabilityRequest(Model):
     :type type: str
     :param is_fqdn: Is fully qualified domain name
     :type is_fqdn: bool
-    """ 
+    """
 
     _attribute_map = {
         'name': {'key': 'name', 'type': 'str'},

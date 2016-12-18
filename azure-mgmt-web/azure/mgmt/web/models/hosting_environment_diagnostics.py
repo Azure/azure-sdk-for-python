@@ -19,7 +19,7 @@ class HostingEnvironmentDiagnostics(Model):
     :type name: str
     :param diagnosics_output: Diagnostics output
     :type diagnosics_output: str
-    """ 
+    """
 
     _attribute_map = {
         'name': {'key': 'name', 'type': 'str'},

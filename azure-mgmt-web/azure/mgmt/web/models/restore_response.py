@@ -30,7 +30,7 @@ class RestoreResponse(Resource):
     :param operation_id: When server starts the restore process, it will
      return an OperationId identifying that particular restore operation
     :type operation_id: str
-    """ 
+    """
 
     _validation = {
         'location': {'required': True},

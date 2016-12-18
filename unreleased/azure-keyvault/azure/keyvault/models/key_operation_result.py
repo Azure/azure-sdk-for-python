@@ -22,7 +22,7 @@ class KeyOperationResult(Model):
     :vartype kid: str
     :ivar result:
     :vartype result: bytes
-    """ 
+    """
 
     _validation = {
         'kid': {'readonly': True},

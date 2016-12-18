@@ -28,7 +28,7 @@ class KeyAttributes(Attributes):
     :vartype created: datetime
     :ivar updated: Last updated time in UTC
     :vartype updated: datetime
-    """ 
+    """
 
     _validation = {
         'created': {'readonly': True},

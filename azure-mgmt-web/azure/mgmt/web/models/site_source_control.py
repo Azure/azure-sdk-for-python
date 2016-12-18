@@ -38,7 +38,7 @@ class SiteSourceControl(Resource):
     :type deployment_rollback_enabled: bool
     :param is_mercurial: Mercurial or Git repository type
     :type is_mercurial: bool
-    """ 
+    """
 
     _validation = {
         'location': {'required': True},

@@ -21,25 +21,25 @@ class RecurringCharge(OfferTermInfo):
     :param excluded_meter_ids: An array of meter ids that are excluded from
      the given offer terms.
     :type excluded_meter_ids: list of str
-    :param Name: Polymorphic Discriminator
-    :type Name: str
+    :param name: Polymorphic Discriminator
+    :type name: str
     :param recurring_charge: The amount of recurring charge as per the offer
      term.
     :type recurring_charge: int
-    """ 
+    """
 
     _validation = {
-        'Name': {'required': True},
+        'name': {'required': True},
     }
 
     _attribute_map = {
         'effective_date': {'key': 'EffectiveDate', 'type': 'iso-8601'},
         'excluded_meter_ids': {'key': 'ExcludedMeterIds', 'type': '[str]'},
-        'Name': {'key': 'Name', 'type': 'str'},
+        'name': {'key': 'Name', 'type': 'str'},
         'recurring_charge': {'key': 'RecurringCharge', 'type': 'int'},
     }
 
     def __init__(self, effective_date=None, excluded_meter_ids=None, recurring_charge=None):
         super(RecurringCharge, self).__init__(effective_date=effective_date, excluded_meter_ids=excluded_meter_ids)
         self.recurring_charge = recurring_charge
-        self.Name = 'Recurring Charge'
+        self.name = 'Recurring Charge'

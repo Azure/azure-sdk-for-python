@@ -38,7 +38,7 @@ class Device(Resource):
     :type platform_version: str
     :param device_type:
     :type device_type: str
-    """ 
+    """
 
     _validation = {
         'id': {'readonly': True},

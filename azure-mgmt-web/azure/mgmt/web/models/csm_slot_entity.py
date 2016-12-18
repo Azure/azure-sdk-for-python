@@ -21,7 +21,7 @@ class CsmSlotEntity(Model):
     :param preserve_vnet: Get or set the flag indicating it should preserve
      VNet to the slot during swap
     :type preserve_vnet: bool
-    """ 
+    """
 
     _attribute_map = {
         'target_slot': {'key': 'targetSlot', 'type': 'str'},

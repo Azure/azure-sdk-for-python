@@ -24,7 +24,7 @@ class PowerShellCommandResults(Model):
     :type command: str
     :param completed:
     :type completed: bool
-    """ 
+    """
 
     _attribute_map = {
         'results': {'key': 'results', 'type': '[PowerShellCommandResult]'},

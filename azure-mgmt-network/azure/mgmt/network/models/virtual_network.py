@@ -32,8 +32,8 @@ class VirtualNetwork(Resource):
      address ranges that can be used by subnets.
     :type address_space: :class:`AddressSpace
      <azure.mgmt.network.models.AddressSpace>`
-    :param dhcp_options: The dhcpOptions that contains an array of DNS
-     servers available to VMs deployed in the virtual network.
+    :param dhcp_options: The dhcpOptions that contains an array of DNS servers
+     available to VMs deployed in the virtual network.
     :type dhcp_options: :class:`DhcpOptions
      <azure.mgmt.network.models.DhcpOptions>`
     :param subnets: A list of subnets in a Virtual Network.
@@ -50,7 +50,7 @@ class VirtualNetwork(Resource):
     :param etag: Gets a unique read-only string that changes whenever the
      resource is updated.
     :type etag: str
-    """ 
+    """
 
     _validation = {
         'name': {'readonly': True},

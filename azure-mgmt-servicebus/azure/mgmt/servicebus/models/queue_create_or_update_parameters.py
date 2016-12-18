@@ -20,8 +20,8 @@ class QueueCreateOrUpdateParameters(Model):
     :param location: location of the resource.
     :type location: str
     :param lock_duration: The duration of a peek-lock; that is, the amount of
-     time that the message is locked for other receivers. The maximum value
-     for LockDuration is 5 minutes; the default value is 1 minute.
+     time that the message is locked for other receivers. The maximum value for
+     LockDuration is 5 minutes; the default value is 1 minute.
     :type lock_duration: str
     :param accessed_at: Last time a message was sent, or the last time there
      was a receive request to this queue.
@@ -37,13 +37,13 @@ class QueueCreateOrUpdateParameters(Model):
     :param created_at: The exact time the message was created.
     :type created_at: datetime
     :param default_message_time_to_live: The default message time to live
-     value. This is the duration after which the message expires, starting
-     from when the message is sent to Service Bus. This is the default value
-     used when TimeToLive is not set on a message itself.
+     value. This is the duration after which the message expires, starting from
+     when the message is sent to Service Bus. This is the default value used
+     when TimeToLive is not set on a message itself.
     :type default_message_time_to_live: str
     :param duplicate_detection_history_time_window: TimeSpan structure that
-     defines the duration of the duplicate detection history. The default
-     value is 10 minutes.
+     defines the duration of the duplicate detection history. The default value
+     is 10 minutes.
     :type duplicate_detection_history_time_window: str
     :param enable_batched_operations: A value that indicates whether
      server-side batched operations are enabled.
@@ -51,15 +51,15 @@ class QueueCreateOrUpdateParameters(Model):
     :param dead_lettering_on_message_expiration: A value that indicates
      whether this queue has dead letter support when a message expires.
     :type dead_lettering_on_message_expiration: bool
-    :param enable_express: A value that indicates whether Express Entities
-     are enabled. An express queue holds a message in memory temporarily
-     before writing it to persistent storage.
+    :param enable_express: A value that indicates whether Express Entities are
+     enabled. An express queue holds a message in memory temporarily before
+     writing it to persistent storage.
     :type enable_express: bool
-    :param enable_partitioning: A value that indicates whether the queue is
-     to be partitioned across multiple message brokers.
+    :param enable_partitioning: A value that indicates whether the queue is to
+     be partitioned across multiple message brokers.
     :type enable_partitioning: bool
-    :param is_anonymous_accessible: A value that indicates whether the
-     message is accessible anonymously.
+    :param is_anonymous_accessible: A value that indicates whether the message
+     is accessible anonymously.
     :type is_anonymous_accessible: bool
     :param max_delivery_count: The maximum delivery count. A message is
      automatically deadlettered after this number of deliveries.
@@ -75,8 +75,8 @@ class QueueCreateOrUpdateParameters(Model):
     :param requires_duplicate_detection: A value indicating if this queue
      requires duplicate detection.
     :type requires_duplicate_detection: bool
-    :param requires_session: A value that indicates whether the queue
-     supports the concept of sessions.
+    :param requires_session: A value that indicates whether the queue supports
+     the concept of sessions.
     :type requires_session: bool
     :param size_in_bytes: The size of the queue, in bytes.
     :type size_in_bytes: long
@@ -86,12 +86,12 @@ class QueueCreateOrUpdateParameters(Model):
      'SendDisabled', 'Unknown'
     :type status: str or :class:`EntityStatus
      <azure.mgmt.servicebus.models.EntityStatus>`
-    :param support_ordering: A value that indicates whether the queue
-     supports ordering.
+    :param support_ordering: A value that indicates whether the queue supports
+     ordering.
     :type support_ordering: bool
     :param updated_at: The exact time the message was updated.
     :type updated_at: datetime
-    """ 
+    """
 
     _validation = {
         'location': {'required': True},

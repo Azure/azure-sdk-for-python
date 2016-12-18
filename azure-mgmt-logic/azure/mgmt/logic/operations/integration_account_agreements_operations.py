@@ -54,6 +54,7 @@ class IntegrationAccountAgreementsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`IntegrationAccountAgreementPaged
          <azure.mgmt.logic.models.IntegrationAccountAgreementPaged>`
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -130,6 +131,7 @@ class IntegrationAccountAgreementsOperations(object):
          <azure.mgmt.logic.models.IntegrationAccountAgreement>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Logic/integrationAccounts/{integrationAccountName}/agreements/{agreementName}'
@@ -197,6 +199,7 @@ class IntegrationAccountAgreementsOperations(object):
          <azure.mgmt.logic.models.IntegrationAccountAgreement>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Logic/integrationAccounts/{integrationAccountName}/agreements/{agreementName}'
@@ -266,6 +269,7 @@ class IntegrationAccountAgreementsOperations(object):
         :rtype: None
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Logic/integrationAccounts/{integrationAccountName}/agreements/{agreementName}'

@@ -25,7 +25,7 @@ class StatusCodesBasedTrigger(Model):
     :type count: int
     :param time_interval: TimeInterval
     :type time_interval: str
-    """ 
+    """
 
     _attribute_map = {
         'status': {'key': 'status', 'type': 'int'},

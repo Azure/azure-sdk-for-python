@@ -31,7 +31,7 @@ class ResourceFile(Model):
      downloaded to a Windows node. If this property is not specified for a
      Linux node, then a default value of 0770 is applied to the file.
     :type file_mode: str
-    """ 
+    """
 
     _validation = {
         'blob_source': {'required': True},

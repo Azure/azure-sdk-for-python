@@ -21,7 +21,7 @@ class WorkflowTriggerHistoryFilter(Model):
      'Aborted', 'Ignored'
     :type status: str or :class:`WorkflowStatus
      <azure.mgmt.logic.models.WorkflowStatus>`
-    """ 
+    """
 
     _attribute_map = {
         'status': {'key': 'status', 'type': 'WorkflowStatus'},

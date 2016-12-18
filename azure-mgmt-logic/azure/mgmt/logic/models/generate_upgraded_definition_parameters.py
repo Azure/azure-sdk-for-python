@@ -17,7 +17,7 @@ class GenerateUpgradedDefinitionParameters(Model):
 
     :param target_schema_version: The target schema version.
     :type target_schema_version: str
-    """ 
+    """
 
     _attribute_map = {
         'target_schema_version': {'key': 'targetSchemaVersion', 'type': 'str'},

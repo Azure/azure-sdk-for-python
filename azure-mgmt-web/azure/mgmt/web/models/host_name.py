@@ -18,8 +18,8 @@ class HostName(Model):
     :param name: Name of the hostname
     :type name: str
     :param site_names: List of sites the hostname is assigned to. This list
-     will have more than one site only if the hostname is pointing to a
-     Traffic Manager
+     will have more than one site only if the hostname is pointing to a Traffic
+     Manager
     :type site_names: list of str
     :param azure_resource_name: Name of the Azure resource the hostname is
      assigned to. If it is assigned to a traffic manager then it will be the
@@ -38,7 +38,7 @@ class HostName(Model):
      'Verified', 'Managed'
     :type host_name_type: str or :class:`HostNameType
      <azure.mgmt.web.models.HostNameType>`
-    """ 
+    """
 
     _attribute_map = {
         'name': {'key': 'name', 'type': 'str'},

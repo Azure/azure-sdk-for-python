@@ -30,7 +30,7 @@ class SessionParameters(Model):
     :param encryption_certificate_thumbprint: Encryption certificate
      thumbprint.
     :type encryption_certificate_thumbprint: str
-    """ 
+    """
 
     _attribute_map = {
         'user_name': {'key': 'properties.userName', 'type': 'str'},

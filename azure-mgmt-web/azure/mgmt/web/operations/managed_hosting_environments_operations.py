@@ -106,8 +106,8 @@ class ManagedHostingEnvironmentsOperations(object):
         :type name: str
         :param managed_hosting_environment_envelope: Properties of managed
          hosting environment
-        :type managed_hosting_environment_envelope:
-         :class:`HostingEnvironment <azure.mgmt.web.models.HostingEnvironment>`
+        :type managed_hosting_environment_envelope: :class:`HostingEnvironment
+         <azure.mgmt.web.models.HostingEnvironment>`
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response

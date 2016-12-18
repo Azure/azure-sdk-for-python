@@ -124,7 +124,7 @@ class EdifactEnvelopeSettings(Model):
     :param receiver_internal_sub_identification: The receiver internal sub
      identification.
     :type receiver_internal_sub_identification: str
-    """ 
+    """
 
     _attribute_map = {
         'group_association_assigned_code': {'key': 'groupAssociationAssignedCode', 'type': 'str'},

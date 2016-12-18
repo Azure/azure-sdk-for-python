@@ -24,7 +24,7 @@ class KeyProperties(Model):
     :param reuse_key: Indicates if the same key pair will be used on
      certificate renewal.
     :type reuse_key: bool
-    """ 
+    """
 
     _attribute_map = {
         'exportable': {'key': 'exportable', 'type': 'bool'},

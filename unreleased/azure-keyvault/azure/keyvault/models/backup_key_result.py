@@ -20,7 +20,7 @@ class BackupKeyResult(Model):
 
     :ivar value: The backup blob containing the backed up key
     :vartype value: bytes
-    """ 
+    """
 
     _validation = {
         'value': {'readonly': True},

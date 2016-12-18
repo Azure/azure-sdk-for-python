@@ -24,7 +24,7 @@ class ErrorDetail(Model):
     :param target: The target of the particular error. For example, the name
      of the property in error.
     :type target: str
-    """ 
+    """
 
     _attribute_map = {
         'code': {'key': 'code', 'type': 'str'},

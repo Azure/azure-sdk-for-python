@@ -42,9 +42,9 @@ class RecommendationsOperations(object):
          recommendation among the others. Otherwise this API returns all
          recommendations available
         :type featured: bool
-        :param filter: Return only channels specified in the filter. Filter
-         is specified by using OData syntax. Example: $filter=channels eq
-         'Api' or channel eq 'Notification'
+        :param filter: Return only channels specified in the filter. Filter is
+         specified by using OData syntax. Example: $filter=channels eq 'Api' or
+         channel eq 'Notification'
         :type filter: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the

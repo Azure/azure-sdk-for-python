@@ -19,7 +19,7 @@ class LinuxOsInfo(Model):
      'NonDeprovisioned', 'DeprovisionRequested', 'DeprovisionApplied'
     :type linux_os_state: str or :class:`LinuxOsState
      <azure.mgmt.devtestlabs.models.LinuxOsState>`
-    """ 
+    """
 
     _attribute_map = {
         'linux_os_state': {'key': 'linuxOsState', 'type': 'str'},

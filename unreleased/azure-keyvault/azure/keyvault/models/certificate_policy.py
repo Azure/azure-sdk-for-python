@@ -41,7 +41,7 @@ class CertificatePolicy(Model):
     :param attributes: The certificate attributes.
     :type attributes: :class:`CertificateAttributes
      <azure.keyvault.models.CertificateAttributes>`
-    """ 
+    """
 
     _validation = {
         'id': {'readonly': True},

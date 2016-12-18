@@ -36,8 +36,8 @@ class X12AcknowledgementSettings(Model):
     :param implementation_acknowledgement_version: The implementation
      acknowledgement version.
     :type implementation_acknowledgement_version: str
-    :param batch_implementation_acknowledgements: The value indicating
-     whether to batch implementation acknowledgements.
+    :param batch_implementation_acknowledgements: The value indicating whether
+     to batch implementation acknowledgements.
     :type batch_implementation_acknowledgements: bool
     :param need_loop_for_valid_messages: The value indicating whether a loop
      is needed for valid messages.
@@ -60,7 +60,7 @@ class X12AcknowledgementSettings(Model):
     :param rollover_acknowledgement_control_number: The value indicating
      whether to rollover acknowledgement control number.
     :type rollover_acknowledgement_control_number: bool
-    """ 
+    """
 
     _attribute_map = {
         'need_technical_acknowledgement': {'key': 'needTechnicalAcknowledgement', 'type': 'bool'},

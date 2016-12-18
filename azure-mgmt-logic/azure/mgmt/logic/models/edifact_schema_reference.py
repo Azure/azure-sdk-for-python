@@ -29,7 +29,7 @@ class EdifactSchemaReference(Model):
     :type association_assigned_code: str
     :param schema_name: The schema name.
     :type schema_name: str
-    """ 
+    """
 
     _attribute_map = {
         'message_id': {'key': 'messageId', 'type': 'str'},

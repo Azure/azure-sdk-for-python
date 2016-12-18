@@ -21,7 +21,7 @@ class DeploymentValidateResult(Model):
     :param properties: The template deployment properties.
     :type properties: :class:`DeploymentPropertiesExtended
      <azure.mgmt.resource.resources.models.DeploymentPropertiesExtended>`
-    """ 
+    """
 
     _attribute_map = {
         'error': {'key': 'error', 'type': 'ResourceManagementErrorWithDetails'},

@@ -34,7 +34,7 @@ class ResourceMetric(Model):
     :param properties: Properties
     :type properties: list of :class:`KeyValuePairStringString
      <azure.mgmt.web.models.KeyValuePairStringString>`
-    """ 
+    """
 
     _attribute_map = {
         'name': {'key': 'name', 'type': 'ResourceMetricName'},

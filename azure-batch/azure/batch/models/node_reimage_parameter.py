@@ -20,7 +20,7 @@ class NodeReimageParameter(Model):
      values include: 'requeue', 'terminate', 'taskcompletion', 'retaineddata'
     :type node_reimage_option: str or :class:`ComputeNodeReimageOption
      <azure.batch.models.ComputeNodeReimageOption>`
-    """ 
+    """
 
     _attribute_map = {
         'node_reimage_option': {'key': 'nodeReimageOption', 'type': 'ComputeNodeReimageOption'},

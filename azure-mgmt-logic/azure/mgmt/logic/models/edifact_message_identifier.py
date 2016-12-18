@@ -18,7 +18,7 @@ class EdifactMessageIdentifier(Model):
     :param message_id: The message id on which this envelope settings has to
      be applied.
     :type message_id: str
-    """ 
+    """
 
     _attribute_map = {
         'message_id': {'key': 'messageId', 'type': 'str'},

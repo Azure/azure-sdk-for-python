@@ -23,7 +23,7 @@ class X12SchemaReference(Model):
     :type schema_version: str
     :param schema_name: The schema name.
     :type schema_name: str
-    """ 
+    """
 
     _attribute_map = {
         'message_id': {'key': 'messageId', 'type': 'str'},

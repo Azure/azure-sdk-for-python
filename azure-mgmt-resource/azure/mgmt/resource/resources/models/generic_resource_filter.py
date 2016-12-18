@@ -21,7 +21,7 @@ class GenericResourceFilter(Model):
     :type tagname: str
     :param tagvalue: The tag value.
     :type tagvalue: str
-    """ 
+    """
 
     _attribute_map = {
         'resource_type': {'key': 'resourceType', 'type': 'str'},

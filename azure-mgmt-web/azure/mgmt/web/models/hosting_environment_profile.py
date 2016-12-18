@@ -13,8 +13,8 @@ from msrest.serialization import Model
 
 
 class HostingEnvironmentProfile(Model):
-    """Specification for a hostingEnvironment (App Service Environment) to use
-    for this resource.
+    """Specification for a hostingEnvironment (App Service Environment) to use for
+    this resource.
 
     :param id: Resource id of the hostingEnvironment (App Service Environment)
     :type id: str
@@ -24,7 +24,7 @@ class HostingEnvironmentProfile(Model):
     :param type: Resource type of the hostingEnvironment (App Service
      Environment) (read only)
     :type type: str
-    """ 
+    """
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},

@@ -17,7 +17,7 @@ class GenerateUploadUriResponse(Model):
 
     :param upload_uri: The upload URI for the VHD.
     :type upload_uri: str
-    """ 
+    """
 
     _attribute_map = {
         'upload_uri': {'key': 'uploadUri', 'type': 'str'},

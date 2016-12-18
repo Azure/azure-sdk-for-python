@@ -133,6 +133,8 @@ class KeyVaultClient(object):
         :rtype: :class:`KeyBundle <azure.keyvault.models.KeyBundle>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`KeyVaultErrorException<azure.keyvault.models.KeyVaultErrorException>`
         """
         parameters = models.KeyCreateParameters(kty=kty, key_size=key_size, key_ops=key_ops, key_attributes=key_attributes, tags=tags)
 
@@ -207,6 +209,8 @@ class KeyVaultClient(object):
         :rtype: :class:`KeyBundle <azure.keyvault.models.KeyBundle>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`KeyVaultErrorException<azure.keyvault.models.KeyVaultErrorException>`
         """
         parameters = models.KeyImportParameters(hsm=hsm, key=key, key_attributes=key_attributes, tags=tags)
 
@@ -271,6 +275,8 @@ class KeyVaultClient(object):
         :rtype: :class:`KeyBundle <azure.keyvault.models.KeyBundle>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`KeyVaultErrorException<azure.keyvault.models.KeyVaultErrorException>`
         """
         # Construct URL
         url = '/keys/{key-name}'
@@ -341,6 +347,8 @@ class KeyVaultClient(object):
         :rtype: :class:`KeyBundle <azure.keyvault.models.KeyBundle>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`KeyVaultErrorException<azure.keyvault.models.KeyVaultErrorException>`
         """
         parameters = models.KeyUpdateParameters(key_ops=key_ops, key_attributes=key_attributes, tags=tags)
 
@@ -408,6 +416,8 @@ class KeyVaultClient(object):
         :rtype: :class:`KeyBundle <azure.keyvault.models.KeyBundle>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`KeyVaultErrorException<azure.keyvault.models.KeyVaultErrorException>`
         """
         # Construct URL
         url = '/keys/{key-name}/{key-version}'
@@ -468,6 +478,8 @@ class KeyVaultClient(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`KeyItemPaged <azure.keyvault.models.KeyItemPaged>`
+        :raises:
+         :class:`KeyVaultErrorException<azure.keyvault.models.KeyVaultErrorException>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -536,6 +548,8 @@ class KeyVaultClient(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`KeyItemPaged <azure.keyvault.models.KeyItemPaged>`
+        :raises:
+         :class:`KeyVaultErrorException<azure.keyvault.models.KeyVaultErrorException>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -606,6 +620,8 @@ class KeyVaultClient(object):
          <azure.keyvault.models.BackupKeyResult>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`KeyVaultErrorException<azure.keyvault.models.KeyVaultErrorException>`
         """
         # Construct URL
         url = '/keys/{key-name}/backup'
@@ -664,6 +680,8 @@ class KeyVaultClient(object):
         :rtype: :class:`KeyBundle <azure.keyvault.models.KeyBundle>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`KeyVaultErrorException<azure.keyvault.models.KeyVaultErrorException>`
         """
         parameters = models.KeyRestoreParameters(key_bundle_backup=key_bundle_backup)
 
@@ -712,8 +730,8 @@ class KeyVaultClient(object):
 
     def encrypt(
             self, vault_base_url, key_name, key_version, algorithm, value, custom_headers=None, raw=False, **operation_config):
-        """Encrypts an arbitrary sequence of bytes using an encryption key that
-        is stored in Azure Key Vault.
+        """Encrypts an arbitrary sequence of bytes using an encryption key that is
+        stored in Azure Key Vault.
 
         :param vault_base_url: The vault name, e.g.
          https://myvault.vault.azure.net
@@ -737,6 +755,8 @@ class KeyVaultClient(object):
          <azure.keyvault.models.KeyOperationResult>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`KeyVaultErrorException<azure.keyvault.models.KeyVaultErrorException>`
         """
         parameters = models.KeyOperationsParameters(algorithm=algorithm, value=value)
 
@@ -811,6 +831,8 @@ class KeyVaultClient(object):
          <azure.keyvault.models.KeyOperationResult>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`KeyVaultErrorException<azure.keyvault.models.KeyVaultErrorException>`
         """
         parameters = models.KeyOperationsParameters(algorithm=algorithm, value=value)
 
@@ -887,6 +909,8 @@ class KeyVaultClient(object):
          <azure.keyvault.models.KeyOperationResult>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`KeyVaultErrorException<azure.keyvault.models.KeyVaultErrorException>`
         """
         parameters = models.KeySignParameters(algorithm=algorithm, value=value)
 
@@ -965,6 +989,8 @@ class KeyVaultClient(object):
          <azure.keyvault.models.KeyVerifyResult>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`KeyVaultErrorException<azure.keyvault.models.KeyVaultErrorException>`
         """
         parameters = models.KeyVerifyParameters(algorithm=algorithm, digest=digest, signature=signature)
 
@@ -1039,6 +1065,8 @@ class KeyVaultClient(object):
          <azure.keyvault.models.KeyOperationResult>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`KeyVaultErrorException<azure.keyvault.models.KeyVaultErrorException>`
         """
         parameters = models.KeyOperationsParameters(algorithm=algorithm, value=value)
 
@@ -1114,6 +1142,8 @@ class KeyVaultClient(object):
          <azure.keyvault.models.KeyOperationResult>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`KeyVaultErrorException<azure.keyvault.models.KeyVaultErrorException>`
         """
         parameters = models.KeyOperationsParameters(algorithm=algorithm, value=value)
 
@@ -1189,6 +1219,8 @@ class KeyVaultClient(object):
         :rtype: :class:`SecretBundle <azure.keyvault.models.SecretBundle>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`KeyVaultErrorException<azure.keyvault.models.KeyVaultErrorException>`
         """
         parameters = models.SecretSetParameters(value=value, tags=tags, content_type=content_type, secret_attributes=secret_attributes)
 
@@ -1253,6 +1285,8 @@ class KeyVaultClient(object):
         :rtype: :class:`SecretBundle <azure.keyvault.models.SecretBundle>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`KeyVaultErrorException<azure.keyvault.models.KeyVaultErrorException>`
         """
         # Construct URL
         url = '/secrets/{secret-name}'
@@ -1321,6 +1355,8 @@ class KeyVaultClient(object):
         :rtype: :class:`SecretBundle <azure.keyvault.models.SecretBundle>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`KeyVaultErrorException<azure.keyvault.models.KeyVaultErrorException>`
         """
         parameters = models.SecretUpdateParameters(content_type=content_type, secret_attributes=secret_attributes, tags=tags)
 
@@ -1388,6 +1424,8 @@ class KeyVaultClient(object):
         :rtype: :class:`SecretBundle <azure.keyvault.models.SecretBundle>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`KeyVaultErrorException<azure.keyvault.models.KeyVaultErrorException>`
         """
         # Construct URL
         url = '/secrets/{secret-name}/{secret-version}'
@@ -1447,6 +1485,8 @@ class KeyVaultClient(object):
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`SecretItemPaged
          <azure.keyvault.models.SecretItemPaged>`
+        :raises:
+         :class:`KeyVaultErrorException<azure.keyvault.models.KeyVaultErrorException>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -1517,6 +1557,8 @@ class KeyVaultClient(object):
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`SecretItemPaged
          <azure.keyvault.models.SecretItemPaged>`
+        :raises:
+         :class:`KeyVaultErrorException<azure.keyvault.models.KeyVaultErrorException>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -1586,6 +1628,8 @@ class KeyVaultClient(object):
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`CertificateItemPaged
          <azure.keyvault.models.CertificateItemPaged>`
+        :raises:
+         :class:`KeyVaultErrorException<azure.keyvault.models.KeyVaultErrorException>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -1656,6 +1700,8 @@ class KeyVaultClient(object):
          <azure.keyvault.models.CertificateBundle>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`KeyVaultErrorException<azure.keyvault.models.KeyVaultErrorException>`
         """
         # Construct URL
         url = '/certificates/{certificate-name}'
@@ -1698,14 +1744,12 @@ class KeyVaultClient(object):
         return deserialized
 
     def set_certificate_contacts(
-            self, vault_base_url, id=None, contact_list=None, custom_headers=None, raw=False, **operation_config):
+            self, vault_base_url, contact_list=None, custom_headers=None, raw=False, **operation_config):
         """Sets the certificate contacts for the specified vault.
 
         :param vault_base_url: The vault name, e.g.
          https://myvault.vault.azure.net
         :type vault_base_url: str
-        :param id: Identifier for the contacts collection.
-        :type id: str
         :param contact_list: The contact list for the vault certificates.
         :type contact_list: list of :class:`Contact
          <azure.keyvault.models.Contact>`
@@ -1717,8 +1761,10 @@ class KeyVaultClient(object):
         :rtype: :class:`Contacts <azure.keyvault.models.Contacts>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`KeyVaultErrorException<azure.keyvault.models.KeyVaultErrorException>`
         """
-        contacts = models.Contacts(id=id, contact_list=contact_list)
+        contacts = models.Contacts(contact_list=contact_list)
 
         # Construct URL
         url = '/certificates/contacts'
@@ -1778,6 +1824,8 @@ class KeyVaultClient(object):
         :rtype: :class:`Contacts <azure.keyvault.models.Contacts>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`KeyVaultErrorException<azure.keyvault.models.KeyVaultErrorException>`
         """
         # Construct URL
         url = '/certificates/contacts'
@@ -1833,6 +1881,8 @@ class KeyVaultClient(object):
         :rtype: :class:`Contacts <azure.keyvault.models.Contacts>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`KeyVaultErrorException<azure.keyvault.models.KeyVaultErrorException>`
         """
         # Construct URL
         url = '/certificates/contacts'
@@ -1890,6 +1940,8 @@ class KeyVaultClient(object):
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`CertificateIssuerItemPaged
          <azure.keyvault.models.CertificateIssuerItemPaged>`
+        :raises:
+         :class:`KeyVaultErrorException<azure.keyvault.models.KeyVaultErrorException>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -1970,6 +2022,8 @@ class KeyVaultClient(object):
         :rtype: :class:`IssuerBundle <azure.keyvault.models.IssuerBundle>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`KeyVaultErrorException<azure.keyvault.models.KeyVaultErrorException>`
         """
         parameter = models.CertificateIssuerSetParameters(provider=provider, credentials=credentials, organization_details=organization_details, attributes=attributes)
 
@@ -2046,6 +2100,8 @@ class KeyVaultClient(object):
         :rtype: :class:`IssuerBundle <azure.keyvault.models.IssuerBundle>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`KeyVaultErrorException<azure.keyvault.models.KeyVaultErrorException>`
         """
         parameter = models.CertificateIssuerUpdateParameters(provider=provider, credentials=credentials, organization_details=organization_details, attributes=attributes)
 
@@ -2110,6 +2166,8 @@ class KeyVaultClient(object):
         :rtype: :class:`IssuerBundle <azure.keyvault.models.IssuerBundle>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`KeyVaultErrorException<azure.keyvault.models.KeyVaultErrorException>`
         """
         # Construct URL
         url = '/certificates/issuers/{issuer-name}'
@@ -2168,6 +2226,8 @@ class KeyVaultClient(object):
         :rtype: :class:`IssuerBundle <azure.keyvault.models.IssuerBundle>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`KeyVaultErrorException<azure.keyvault.models.KeyVaultErrorException>`
         """
         # Construct URL
         url = '/certificates/issuers/{issuer-name}'
@@ -2238,6 +2298,8 @@ class KeyVaultClient(object):
          <azure.keyvault.models.CertificateOperation>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`KeyVaultErrorException<azure.keyvault.models.KeyVaultErrorException>`
         """
         parameters = models.CertificateCreateParameters(certificate_policy=certificate_policy, certificate_attributes=certificate_attributes, tags=tags)
 
@@ -2320,6 +2382,8 @@ class KeyVaultClient(object):
          <azure.keyvault.models.CertificateBundle>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`KeyVaultErrorException<azure.keyvault.models.KeyVaultErrorException>`
         """
         parameters = models.CertificateImportParameters(base64_encoded_certificate=base64_encoded_certificate, password=password, certificate_policy=certificate_policy, certificate_attributes=certificate_attributes, tags=tags)
 
@@ -2386,6 +2450,8 @@ class KeyVaultClient(object):
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`CertificateItemPaged
          <azure.keyvault.models.CertificateItemPaged>`
+        :raises:
+         :class:`KeyVaultErrorException<azure.keyvault.models.KeyVaultErrorException>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -2457,6 +2523,8 @@ class KeyVaultClient(object):
          <azure.keyvault.models.CertificatePolicy>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`KeyVaultErrorException<azure.keyvault.models.KeyVaultErrorException>`
         """
         # Construct URL
         url = '/certificates/{certificate-name}/policy'
@@ -2521,6 +2589,8 @@ class KeyVaultClient(object):
          <azure.keyvault.models.CertificatePolicy>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`KeyVaultErrorException<azure.keyvault.models.KeyVaultErrorException>`
         """
         # Construct URL
         url = '/certificates/{certificate-name}/policy'
@@ -2597,6 +2667,8 @@ class KeyVaultClient(object):
          <azure.keyvault.models.CertificateBundle>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`KeyVaultErrorException<azure.keyvault.models.KeyVaultErrorException>`
         """
         parameters = models.CertificateUpdateParameters(certificate_policy=certificate_policy, certificate_attributes=certificate_attributes, tags=tags)
 
@@ -2666,6 +2738,8 @@ class KeyVaultClient(object):
          <azure.keyvault.models.CertificateBundle>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`KeyVaultErrorException<azure.keyvault.models.KeyVaultErrorException>`
         """
         # Construct URL
         url = '/certificates/{certificate-name}/{certificate-version}'
@@ -2717,8 +2791,8 @@ class KeyVaultClient(object):
         :type vault_base_url: str
         :param certificate_name: The name of the certificate
         :type certificate_name: str
-        :param cancellation_requested: Indicates if cancellation was
-         requested on the certificate operation.
+        :param cancellation_requested: Indicates if cancellation was requested
+         on the certificate operation.
         :type cancellation_requested: bool
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -2729,6 +2803,8 @@ class KeyVaultClient(object):
          <azure.keyvault.models.CertificateOperation>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`KeyVaultErrorException<azure.keyvault.models.KeyVaultErrorException>`
         """
         certificate_operation = models.CertificateOperationUpdateParameter(cancellation_requested=cancellation_requested)
 
@@ -2794,6 +2870,8 @@ class KeyVaultClient(object):
          <azure.keyvault.models.CertificateOperation>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`KeyVaultErrorException<azure.keyvault.models.KeyVaultErrorException>`
         """
         # Construct URL
         url = '/certificates/{certificate-name}/pending'
@@ -2853,6 +2931,8 @@ class KeyVaultClient(object):
          <azure.keyvault.models.CertificateOperation>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`KeyVaultErrorException<azure.keyvault.models.KeyVaultErrorException>`
         """
         # Construct URL
         url = '/certificates/{certificate-name}/pending'
@@ -2896,8 +2976,8 @@ class KeyVaultClient(object):
 
     def merge_certificate(
             self, vault_base_url, certificate_name, x509_certificates, certificate_attributes=None, tags=None, custom_headers=None, raw=False, **operation_config):
-        """Merges a certificate or a certificate chain with a key pair existing
-        on the server.
+        """Merges a certificate or a certificate chain with a key pair existing on
+        the server.
 
         :param vault_base_url: The vault name, e.g.
          https://myvault.vault.azure.net
@@ -2923,6 +3003,8 @@ class KeyVaultClient(object):
          <azure.keyvault.models.CertificateBundle>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`KeyVaultErrorException<azure.keyvault.models.KeyVaultErrorException>`
         """
         parameters = models.CertificateMergeParameters(x509_certificates=x509_certificates, certificate_attributes=certificate_attributes, tags=tags)
 

@@ -32,7 +32,7 @@ class FlaggedUser(Resource):
     :vartype error_count: int
     :ivar friendly_name:
     :vartype friendly_name: str
-    """ 
+    """
 
     _validation = {
         'id': {'readonly': True},

@@ -22,7 +22,7 @@ class JobMaxRecurrence(Model):
      <azure.mgmt.scheduler.models.RecurrenceFrequency>`
     :param interval: Gets or sets the interval between retries.
     :type interval: int
-    """ 
+    """
 
     _attribute_map = {
         'frequency': {'key': 'frequency', 'type': 'RecurrenceFrequency'},

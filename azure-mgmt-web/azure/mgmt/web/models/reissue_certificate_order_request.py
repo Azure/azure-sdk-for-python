@@ -32,7 +32,7 @@ class ReissueCertificateOrderRequest(Resource):
     :param delay_existing_revoke_in_hours: Delay in hours to revoke existing
      certificate after the new certificate is issued
     :type delay_existing_revoke_in_hours: int
-    """ 
+    """
 
     _validation = {
         'location': {'required': True},

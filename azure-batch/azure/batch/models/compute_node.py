@@ -106,7 +106,7 @@ class ComputeNode(Model):
      the compute node.
     :type errors: list of :class:`ComputeNodeError
      <azure.batch.models.ComputeNodeError>`
-    """ 
+    """
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},

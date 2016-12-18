@@ -41,7 +41,7 @@ class PoolResizeOptions(Model):
     :param if_unmodified_since: Specify this header to perform the operation
      only if the resource has not been modified since the specified date/time.
     :type if_unmodified_since: datetime
-    """ 
+    """
 
     def __init__(self, timeout=30, client_request_id=None, return_client_request_id=False, ocp_date=None, if_match=None, if_none_match=None, if_modified_since=None, if_unmodified_since=None):
         self.timeout = timeout

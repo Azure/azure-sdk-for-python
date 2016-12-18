@@ -30,7 +30,7 @@ class SecretItem(Model):
     :ivar managed: True if the secret's lifetime is managed by key vault i.e.
      if this is a key backing a certificate, then managed will be true.
     :vartype managed: bool
-    """ 
+    """
 
     _validation = {
         'managed': {'readonly': True},

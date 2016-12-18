@@ -19,7 +19,7 @@ class RecentJob(Model):
     :type id: str
     :param url: The URL of the job.
     :type url: str
-    """ 
+    """
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},

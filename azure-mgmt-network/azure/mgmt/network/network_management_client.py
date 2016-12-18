@@ -48,8 +48,8 @@ class NetworkManagementClientConfiguration(AzureConfiguration):
     :type credentials: :mod:`A msrestazure Credentials
      object<msrestazure.azure_active_directory>`
     :param subscription_id: The subscription credentials which uniquely
-     identify the Microsoft Azure subscription. The subscription ID forms
-     part of the URI for every service call.
+     identify the Microsoft Azure subscription. The subscription ID forms part
+     of the URI for every service call.
     :type subscription_id: str
     :param api_version: Client API version.
     :type api_version: str
@@ -145,8 +145,8 @@ class NetworkManagementClient(object):
     :type credentials: :mod:`A msrestazure Credentials
      object<msrestazure.azure_active_directory>`
     :param subscription_id: The subscription credentials which uniquely
-     identify the Microsoft Azure subscription. The subscription ID forms
-     part of the URI for every service call.
+     identify the Microsoft Azure subscription. The subscription ID forms part
+     of the URI for every service call.
     :type subscription_id: str
     :param api_version: Client API version.
     :type api_version: str

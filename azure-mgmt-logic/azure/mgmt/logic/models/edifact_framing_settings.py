@@ -42,11 +42,11 @@ class EdifactFramingSettings(Model):
     :type decimal_point_indicator: str or :class:`EdifactDecimalIndicator
      <azure.mgmt.logic.models.EdifactDecimalIndicator>`
     :param segment_terminator_suffix: The EDIFACT frame setting segment
-     terminator suffix. Possible values include: 'NotSpecified', 'None',
-     'CR', 'LF', 'CRLF'
+     terminator suffix. Possible values include: 'NotSpecified', 'None', 'CR',
+     'LF', 'CRLF'
     :type segment_terminator_suffix: str or :class:`SegmentTerminatorSuffix
      <azure.mgmt.logic.models.SegmentTerminatorSuffix>`
-    """ 
+    """
 
     _attribute_map = {
         'service_code_list_directory_version': {'key': 'serviceCodeListDirectoryVersion', 'type': 'str'},

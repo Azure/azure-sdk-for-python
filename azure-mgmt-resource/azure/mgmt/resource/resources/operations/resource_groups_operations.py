@@ -321,8 +321,8 @@ class ResourceGroupsOperations(object):
             self, resource_group_name, custom_headers=None, raw=False, **operation_config):
         """Gets a resource group.
 
-        :param resource_group_name: The name of the resource group to get.
-         The name is case insensitive.
+        :param resource_group_name: The name of the resource group to get. The
+         name is case insensitive.
         :type resource_group_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -383,8 +383,8 @@ class ResourceGroupsOperations(object):
 
         Resource groups can be updated through a simple PATCH operation to a
         group address. The format of the request is the same as that for
-        creating a resource group. If a field is unspecified, the current
-        value is retained.
+        creating a resource group. If a field is unspecified, the current value
+        is retained.
 
         :param resource_group_name: The name of the resource group to update.
          The name is case insensitive.

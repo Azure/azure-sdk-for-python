@@ -35,7 +35,7 @@ class ExitConditions(Model):
      you want non-default behaviour on exit code 0, you must list it explicitly
      using the exitCodes or exitCodeRanges collection.
     :type default: :class:`ExitOptions <azure.batch.models.ExitOptions>`
-    """ 
+    """
 
     _attribute_map = {
         'exit_codes': {'key': 'exitCodes', 'type': '[ExitCodeMapping]'},

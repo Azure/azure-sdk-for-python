@@ -23,7 +23,7 @@ class SkuCapacity(Model):
     :type default: int
     :param scale_type: Available scale configurations for an App Service Plan
     :type scale_type: str
-    """ 
+    """
 
     _attribute_map = {
         'minimum': {'key': 'minimum', 'type': 'int'},

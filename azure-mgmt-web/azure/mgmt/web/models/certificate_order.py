@@ -69,7 +69,7 @@ class CertificateOrder(Resource):
     :type last_certificate_issuance_time: datetime
     :param expiration_time: Certificate expiration time
     :type expiration_time: datetime
-    """ 
+    """
 
     _validation = {
         'location': {'required': True},

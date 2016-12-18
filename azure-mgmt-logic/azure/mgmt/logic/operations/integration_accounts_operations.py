@@ -48,6 +48,7 @@ class IntegrationAccountsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`IntegrationAccountPaged
          <azure.mgmt.logic.models.IntegrationAccountPaged>`
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -116,6 +117,7 @@ class IntegrationAccountsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`IntegrationAccountPaged
          <azure.mgmt.logic.models.IntegrationAccountPaged>`
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -187,6 +189,7 @@ class IntegrationAccountsOperations(object):
          <azure.mgmt.logic.models.IntegrationAccount>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Logic/integrationAccounts/{integrationAccountName}'
@@ -251,6 +254,7 @@ class IntegrationAccountsOperations(object):
          <azure.mgmt.logic.models.IntegrationAccount>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Logic/integrationAccounts/{integrationAccountName}'
@@ -321,6 +325,7 @@ class IntegrationAccountsOperations(object):
          <azure.mgmt.logic.models.IntegrationAccount>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Logic/integrationAccounts/{integrationAccountName}'
@@ -385,6 +390,7 @@ class IntegrationAccountsOperations(object):
         :rtype: None
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Logic/integrationAccounts/{integrationAccountName}'
@@ -440,6 +446,7 @@ class IntegrationAccountsOperations(object):
         :rtype: :class:`CallbackUrl <azure.mgmt.logic.models.CallbackUrl>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         parameters = models.ListCallbackUrlParameters(not_after=not_after)
 

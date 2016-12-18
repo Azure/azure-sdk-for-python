@@ -29,7 +29,7 @@ class StringDictionary(Resource):
     :type tags: dict
     :param properties: Settings
     :type properties: dict
-    """ 
+    """
 
     _validation = {
         'location': {'required': True},

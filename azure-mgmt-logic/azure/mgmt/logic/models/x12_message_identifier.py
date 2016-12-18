@@ -17,7 +17,7 @@ class X12MessageIdentifier(Model):
 
     :param message_id: The message id.
     :type message_id: str
-    """ 
+    """
 
     _attribute_map = {
         'message_id': {'key': 'messageId', 'type': 'str'},

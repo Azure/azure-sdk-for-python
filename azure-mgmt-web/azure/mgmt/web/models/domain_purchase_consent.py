@@ -24,7 +24,7 @@ class DomainPurchaseConsent(Model):
     :type agreed_by: str
     :param agreed_at: Timestamp when the agreements were accepted
     :type agreed_at: datetime
-    """ 
+    """
 
     _attribute_map = {
         'agreement_keys': {'key': 'agreementKeys', 'type': '[str]'},

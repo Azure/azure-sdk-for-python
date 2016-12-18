@@ -50,7 +50,7 @@ class WorkflowRunAction(SubResource):
     :vartype name: str
     :ivar type: Gets the workflow run action type.
     :vartype type: str
-    """ 
+    """
 
     _validation = {
         'start_time': {'readonly': True},

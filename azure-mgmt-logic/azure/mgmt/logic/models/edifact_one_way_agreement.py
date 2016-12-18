@@ -24,7 +24,7 @@ class EdifactOneWayAgreement(Model):
     :param protocol_settings: The EDIFACT protocol settings.
     :type protocol_settings: :class:`EdifactProtocolSettings
      <azure.mgmt.logic.models.EdifactProtocolSettings>`
-    """ 
+    """
 
     _attribute_map = {
         'sender_business_identity': {'key': 'senderBusinessIdentity', 'type': 'BusinessIdentity'},

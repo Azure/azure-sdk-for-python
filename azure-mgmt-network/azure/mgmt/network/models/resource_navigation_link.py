@@ -24,8 +24,8 @@ class ResourceNavigationLink(SubResource):
     :type linked_resource_type: str
     :param link: Link to the external resource
     :type link: str
-    :ivar provisioning_state: Provisioning state of the
-     ResourceNavigationLink resource.
+    :ivar provisioning_state: Provisioning state of the ResourceNavigationLink
+     resource.
     :vartype provisioning_state: str
     :param name: Name of the resource that is unique within a resource group.
      This name can be used to access the resource.
@@ -33,7 +33,7 @@ class ResourceNavigationLink(SubResource):
     :ivar etag: A unique read-only string that changes whenever the resource
      is updated.
     :vartype etag: str
-    """ 
+    """
 
     _validation = {
         'provisioning_state': {'readonly': True},

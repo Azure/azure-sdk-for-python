@@ -19,7 +19,7 @@ class ContentHash(Model):
     :type algorithm: str
     :param value: The value.
     :type value: str
-    """ 
+    """
 
     _attribute_map = {
         'algorithm': {'key': 'algorithm', 'type': 'str'},

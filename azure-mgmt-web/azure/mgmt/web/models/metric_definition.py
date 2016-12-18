@@ -33,13 +33,13 @@ class MetricDefinition(Resource):
     :type unit: str
     :param primary_aggregation_type: Primary aggregation type
     :type primary_aggregation_type: str
-    :param metric_availabilities: List of time grains supported for the
-     metric together with retention period
+    :param metric_availabilities: List of time grains supported for the metric
+     together with retention period
     :type metric_availabilities: list of :class:`MetricAvailabilily
      <azure.mgmt.web.models.MetricAvailabilily>`
     :param display_name: Friendly name shown in the UI
     :type display_name: str
-    """ 
+    """
 
     _validation = {
         'location': {'required': True},

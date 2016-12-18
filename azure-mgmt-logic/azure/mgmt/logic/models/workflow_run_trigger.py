@@ -50,7 +50,7 @@ class WorkflowRunTrigger(Model):
     :vartype error: object
     :ivar tracked_properties: Gets the tracked properties.
     :vartype tracked_properties: object
-    """ 
+    """
 
     _validation = {
         'name': {'readonly': True},

@@ -19,7 +19,7 @@ class LocalizableString(Model):
     :type value: str
     :param localized_value: Localized name
     :type localized_value: str
-    """ 
+    """
 
     _attribute_map = {
         'value': {'key': 'value', 'type': 'str'},

@@ -18,7 +18,7 @@ class RoutingRule(Model):
     :param name: Name of the routing rule. The recommended name would be to
      point to the slot which will receive the traffic in the experiment.
     :type name: str
-    """ 
+    """
 
     _attribute_map = {
         'name': {'key': 'name', 'type': 'str'},

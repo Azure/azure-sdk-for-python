@@ -92,7 +92,7 @@ class JobSpecification(Model):
      any meaning to metadata; it is solely for the use of user code.
     :type metadata: list of :class:`MetadataItem
      <azure.batch.models.MetadataItem>`
-    """ 
+    """
 
     _validation = {
         'pool_info': {'required': True},

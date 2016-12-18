@@ -47,7 +47,7 @@ class Usage(Resource):
      <azure.mgmt.web.models.ComputeModeOptions>`
     :param site_mode: SiteMode used for this usage
     :type site_mode: str
-    """ 
+    """
 
     _validation = {
         'location': {'required': True},

@@ -26,7 +26,7 @@ class PremierAddOnRequest(Model):
     :type properties: object
     :param sku: Sku description of the resource
     :type sku: :class:`SkuDescription <azure.mgmt.web.models.SkuDescription>`
-    """ 
+    """
 
     _attribute_map = {
         'location': {'key': 'location', 'type': 'str'},

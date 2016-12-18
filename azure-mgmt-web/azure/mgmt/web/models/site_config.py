@@ -115,8 +115,8 @@ class SiteConfig(Resource):
     :type vnet_name: str
     :param cors: Cross-Origin Resource Sharing (CORS) settings.
     :type cors: :class:`CorsSettings <azure.mgmt.web.models.CorsSettings>`
-    :param api_definition: Information about the formal API definition for
-     the web app.
+    :param api_definition: Information about the formal API definition for the
+     web app.
     :type api_definition: :class:`ApiDefinitionInfo
      <azure.mgmt.web.models.ApiDefinitionInfo>`
     :param auto_swap_slot_name: Auto swap slot name
@@ -126,7 +126,7 @@ class SiteConfig(Resource):
     :param ip_security_restrictions: Ip Security restrictions
     :type ip_security_restrictions: list of :class:`IpSecurityRestriction
      <azure.mgmt.web.models.IpSecurityRestriction>`
-    """ 
+    """
 
     _validation = {
         'location': {'required': True},

@@ -42,7 +42,7 @@ class X12EnvelopeOverride(Model):
      'NotSpecified', 'HHMM', 'HHMMSS', 'HHMMSSdd', 'HHMMSSd'
     :type time_format: str or :class:`X12TimeFormat
      <azure.mgmt.logic.models.X12TimeFormat>`
-    """ 
+    """
 
     _attribute_map = {
         'target_namespace': {'key': 'targetNamespace', 'type': 'str'},

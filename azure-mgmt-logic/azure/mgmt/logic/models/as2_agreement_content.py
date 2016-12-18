@@ -21,7 +21,7 @@ class AS2AgreementContent(Model):
     :param send_agreement: The AS2 one-way send agreement.
     :type send_agreement: :class:`AS2OneWayAgreement
      <azure.mgmt.logic.models.AS2OneWayAgreement>`
-    """ 
+    """
 
     _attribute_map = {
         'receive_agreement': {'key': 'receiveAgreement', 'type': 'AS2OneWayAgreement'},

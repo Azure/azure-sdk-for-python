@@ -23,7 +23,7 @@ class ExportTemplateRequest(Model):
      'IncludeParameterDefaultValue', 'IncludeComments' or
      'IncludeParameterDefaultValue, IncludeComments
     :type options: str
-    """ 
+    """
 
     _attribute_map = {
         'resources': {'key': 'resources', 'type': '[str]'},

@@ -213,8 +213,8 @@ class ZonesOperations(object):
 
     def get(
             self, resource_group_name, zone_name, custom_headers=None, raw=False, **operation_config):
-        """Gets a DNS zone. Retrieves the zone properties, but not the record
-        sets within the zone.
+        """Gets a DNS zone. Retrieves the zone properties, but not the record sets
+        within the zone.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str

@@ -30,7 +30,7 @@ class WorkflowOutputParameter(WorkflowParameter):
     :type description: str
     :ivar error: Gets the error.
     :vartype error: object
-    """ 
+    """
 
     _validation = {
         'error': {'readonly': True},

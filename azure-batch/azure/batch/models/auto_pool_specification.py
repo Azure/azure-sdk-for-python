@@ -41,7 +41,7 @@ class AutoPoolSpecification(Model):
     :param pool: The pool specification for the auto pool.
     :type pool: :class:`PoolSpecification
      <azure.batch.models.PoolSpecification>`
-    """ 
+    """
 
     _validation = {
         'pool_lifetime_option': {'required': True},

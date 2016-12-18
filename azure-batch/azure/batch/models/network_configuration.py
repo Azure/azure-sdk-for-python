@@ -33,7 +33,7 @@ class NetworkConfiguration(Model):
      nodes to unusable. This property can only be specified for pools created
      with a cloudServiceConfiguration.
     :type subnet_id: str
-    """ 
+    """
 
     _attribute_map = {
         'subnet_id': {'key': 'subnetId', 'type': 'str'},

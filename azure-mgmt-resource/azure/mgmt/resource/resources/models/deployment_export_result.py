@@ -17,7 +17,7 @@ class DeploymentExportResult(Model):
 
     :param template: The template content.
     :type template: object
-    """ 
+    """
 
     _attribute_map = {
         'template': {'key': 'template', 'type': 'object'},

@@ -23,7 +23,7 @@ class JobDisableParameter(Model):
      'terminate', 'wait'
     :type disable_tasks: str or :class:`DisableJobOption
      <azure.batch.models.DisableJobOption>`
-    """ 
+    """
 
     _validation = {
         'disable_tasks': {'required': True},

@@ -24,7 +24,7 @@ class KeyVaultKeyReferenceKeyVault(Model):
     :vartype name: str
     :ivar type: The resource type.
     :vartype type: str
-    """ 
+    """
 
     _validation = {
         'name': {'readonly': True},

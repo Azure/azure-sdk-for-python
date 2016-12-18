@@ -89,7 +89,7 @@ class StorageAccount(Resource):
      The access tier used for billing. Possible values include: 'Hot', 'Cool'
     :vartype access_tier: str or :class:`AccessTier
      <azure.mgmt.storage.models.AccessTier>`
-    """ 
+    """
 
     _validation = {
         'id': {'readonly': True},

@@ -45,7 +45,7 @@ class PoolListPoolUsageMetricsOptions(Model):
     :param ocp_date: The time the request was issued. If not specified, this
      header will be automatically populated with the current system clock time.
     :type ocp_date: datetime
-    """ 
+    """
 
     def __init__(self, start_time=None, end_time=None, filter=None, max_results=1000, timeout=30, client_request_id=None, return_client_request_id=False, ocp_date=None):
         self.start_time = start_time

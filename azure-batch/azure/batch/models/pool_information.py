@@ -35,7 +35,7 @@ class PoolInformation(Model):
      pool ID or the auto pool specification, but not both.
     :type auto_pool_specification: :class:`AutoPoolSpecification
      <azure.batch.models.AutoPoolSpecification>`
-    """ 
+    """
 
     _attribute_map = {
         'pool_id': {'key': 'poolId', 'type': 'str'},

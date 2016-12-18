@@ -33,8 +33,8 @@ class ManagedHostingEnvironment(Resource):
     :param managed_hosting_environment_location: Location of the managed
      hosting environment e.g. "West US"
     :type managed_hosting_environment_location: str
-    :param status: Current status of the managed hosting environment.
-     Possible values include: 'Preparing', 'Ready', 'Deleting'
+    :param status: Current status of the managed hosting environment. Possible
+     values include: 'Preparing', 'Ready', 'Deleting'
     :type status: str or :class:`ManagedHostingEnvironmentStatus
      <azure.mgmt.web.models.ManagedHostingEnvironmentStatus>`
     :param virtual_network: Description of the managed hosting environment's
@@ -55,8 +55,8 @@ class ManagedHostingEnvironment(Resource):
     :param environment_is_healthy: True/false indicating whether the managed
      hosting environment is healthy
     :type environment_is_healthy: bool
-    :param environment_status: Detailed message about with results of the
-     last check of the managed hosting environment
+    :param environment_status: Detailed message about with results of the last
+     check of the managed hosting environment
     :type environment_status: str
     :param suspended: True/false indicating whether the managed hosting
      environment is suspended. The environment can be suspended e.g. when the
@@ -66,7 +66,7 @@ class ManagedHostingEnvironment(Resource):
     :param api_management_account: Resource id of the api management account
      associated with this managed hosting environment (read only)
     :type api_management_account: str
-    """ 
+    """
 
     _validation = {
         'location': {'required': True},

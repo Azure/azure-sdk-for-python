@@ -24,7 +24,7 @@ class NetworkAccessControlEntry(Model):
     :type order: int
     :param remote_subnet:
     :type remote_subnet: str
-    """ 
+    """
 
     _attribute_map = {
         'action': {'key': 'action', 'type': 'AccessControlEntryAction'},

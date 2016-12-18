@@ -32,14 +32,14 @@ class CertificateOrderCertificate(Resource):
     :type key_vault_id: str
     :param key_vault_secret_name: Key Vault secret name
     :type key_vault_secret_name: str
-    :param provisioning_state: Status of the Key Vault secret. Possible
-     values include: 'Initialized', 'WaitingOnCertificateOrder', 'Succeeded',
+    :param provisioning_state: Status of the Key Vault secret. Possible values
+     include: 'Initialized', 'WaitingOnCertificateOrder', 'Succeeded',
      'CertificateOrderFailed', 'OperationNotPermittedOnKeyVault',
      'AzureServiceUnauthorizedToAccessKeyVault', 'KeyVaultDoesNotExist',
      'KeyVaultSecretDoesNotExist', 'UnknownError', 'Unknown'
     :type provisioning_state: str or :class:`KeyVaultSecretStatus
      <azure.mgmt.web.models.KeyVaultSecretStatus>`
-    """ 
+    """
 
     _validation = {
         'location': {'required': True},

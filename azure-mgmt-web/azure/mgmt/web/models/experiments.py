@@ -19,7 +19,7 @@ class Experiments(Model):
      {Microsoft.Web.Hosting.Administration.RampUpRule} objects.
     :type ramp_up_rules: list of :class:`RampUpRule
      <azure.mgmt.web.models.RampUpRule>`
-    """ 
+    """
 
     _attribute_map = {
         'ramp_up_rules': {'key': 'rampUpRules', 'type': '[RampUpRule]'},

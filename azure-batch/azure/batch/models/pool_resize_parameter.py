@@ -29,7 +29,7 @@ class PoolResizeParameter(Model):
     :type node_deallocation_option: str or
      :class:`ComputeNodeDeallocationOption
      <azure.batch.models.ComputeNodeDeallocationOption>`
-    """ 
+    """
 
     _validation = {
         'target_dedicated': {'required': True},

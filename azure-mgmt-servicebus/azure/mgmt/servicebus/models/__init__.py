@@ -10,15 +10,15 @@
 # --------------------------------------------------------------------------
 
 from .resource import Resource
-from .namespace_create_or_update_parameters import NamespaceCreateOrUpdateParameters
 from .sku import Sku
+from .namespace_create_or_update_parameters import NamespaceCreateOrUpdateParameters
 from .namespace_resource import NamespaceResource
 from .shared_access_authorization_rule_create_or_update_parameters import SharedAccessAuthorizationRuleCreateOrUpdateParameters
 from .shared_access_authorization_rule_resource import SharedAccessAuthorizationRuleResource
 from .resource_list_keys import ResourceListKeys
 from .regenerate_keys_parameters import RegenerateKeysParameters
-from .queue_create_or_update_parameters import QueueCreateOrUpdateParameters
 from .message_count_details import MessageCountDetails
+from .queue_create_or_update_parameters import QueueCreateOrUpdateParameters
 from .queue_resource import QueueResource
 from .topic_create_or_update_parameters import TopicCreateOrUpdateParameters
 from .topic_resource import TopicResource
@@ -41,15 +41,15 @@ from .service_bus_management_client_enums import (
 
 __all__ = [
     'Resource',
-    'NamespaceCreateOrUpdateParameters',
     'Sku',
+    'NamespaceCreateOrUpdateParameters',
     'NamespaceResource',
     'SharedAccessAuthorizationRuleCreateOrUpdateParameters',
     'SharedAccessAuthorizationRuleResource',
     'ResourceListKeys',
     'RegenerateKeysParameters',
-    'QueueCreateOrUpdateParameters',
     'MessageCountDetails',
+    'QueueCreateOrUpdateParameters',
     'QueueResource',
     'TopicCreateOrUpdateParameters',
     'TopicResource',

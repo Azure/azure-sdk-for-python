@@ -15,13 +15,13 @@ from msrest.serialization import Model
 class WorkflowRunActionFilter(Model):
     """WorkflowRunActionFilter.
 
-    :param status: The status of workflow run action. Possible values
-     include: 'NotSpecified', 'Paused', 'Running', 'Waiting', 'Succeeded',
-     'Skipped', 'Suspended', 'Cancelled', 'Failed', 'Faulted', 'TimedOut',
-     'Aborted', 'Ignored'
+    :param status: The status of workflow run action. Possible values include:
+     'NotSpecified', 'Paused', 'Running', 'Waiting', 'Succeeded', 'Skipped',
+     'Suspended', 'Cancelled', 'Failed', 'Faulted', 'TimedOut', 'Aborted',
+     'Ignored'
     :type status: str or :class:`WorkflowStatus
      <azure.mgmt.logic.models.WorkflowStatus>`
-    """ 
+    """
 
     _attribute_map = {
         'status': {'key': 'status', 'type': 'WorkflowStatus'},

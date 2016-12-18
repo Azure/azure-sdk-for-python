@@ -25,7 +25,7 @@ class Identity(Model):
     :param type: The identity type. Possible values include: 'SystemAssigned'
     :type type: str or :class:`ResourceIdentityType
      <azure.mgmt.resource.resources.models.ResourceIdentityType>`
-    """ 
+    """
 
     _validation = {
         'principal_id': {'readonly': True},

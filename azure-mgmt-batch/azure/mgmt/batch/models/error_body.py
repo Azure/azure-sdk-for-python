@@ -28,7 +28,7 @@ class ErrorBody(Model):
     :param details: A list of additional details about the error.
     :type details: list of :class:`ErrorDetail
      <azure.mgmt.batch.models.ErrorDetail>`
-    """ 
+    """
 
     _attribute_map = {
         'code': {'key': 'code', 'type': 'str'},

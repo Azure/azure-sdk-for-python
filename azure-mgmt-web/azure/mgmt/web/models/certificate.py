@@ -59,7 +59,7 @@ class Certificate(Resource):
      environment (App Service Environment) to use for the certificate
     :type hosting_environment_profile: :class:`HostingEnvironmentProfile
      <azure.mgmt.web.models.HostingEnvironmentProfile>`
-    """ 
+    """
 
     _validation = {
         'location': {'required': True},

@@ -12,56 +12,56 @@
 from .arm_plan import ArmPlan
 from .certificate_order_certificate import CertificateOrderCertificate
 from .sku_description import SkuDescription
-from .certificate_order import CertificateOrder
 from .certificate_details import CertificateDetails
+from .certificate_order import CertificateOrder
 from .reissue_certificate_order_request import ReissueCertificateOrderRequest
 from .renew_certificate_order_request import RenewCertificateOrderRequest
 from .certificate_order_action import CertificateOrderAction
 from .certificate_email import CertificateEmail
-from .certificate import Certificate
 from .hosting_environment_profile import HostingEnvironmentProfile
+from .certificate import Certificate
 from .csr import Csr
 from .classic_mobile_service import ClassicMobileService
-from .domain import Domain
-from .contact import Contact
 from .address import Address
+from .contact import Contact
 from .host_name import HostName
 from .domain_purchase_consent import DomainPurchaseConsent
+from .domain import Domain
 from .user import User
 from .geo_region import GeoRegion
 from .server_farm_with_rich_sku import ServerFarmWithRichSku
-from .site_collection import SiteCollection
-from .site import Site
 from .host_name_ssl_state import HostNameSslState
-from .site_config import SiteConfig
 from .name_value_pair import NameValuePair
 from .conn_string_info import ConnStringInfo
 from .handler_mapping import HandlerMapping
-from .virtual_application import VirtualApplication
 from .virtual_directory import VirtualDirectory
-from .experiments import Experiments
+from .virtual_application import VirtualApplication
 from .ramp_up_rule import RampUpRule
+from .experiments import Experiments
 from .site_limits import SiteLimits
-from .auto_heal_rules import AutoHealRules
-from .auto_heal_triggers import AutoHealTriggers
 from .requests_based_trigger import RequestsBasedTrigger
 from .status_codes_based_trigger import StatusCodesBasedTrigger
 from .slow_requests_based_trigger import SlowRequestsBasedTrigger
-from .auto_heal_actions import AutoHealActions
+from .auto_heal_triggers import AutoHealTriggers
 from .auto_heal_custom_action import AutoHealCustomAction
+from .auto_heal_actions import AutoHealActions
+from .auto_heal_rules import AutoHealRules
 from .cors_settings import CorsSettings
 from .api_definition_info import ApiDefinitionInfo
 from .ip_security_restriction import IpSecurityRestriction
+from .site_config import SiteConfig
 from .cloning_info import CloningInfo
-from .site_properties import SiteProperties
+from .site import Site
+from .site_collection import SiteCollection
+from .site_properties_model import SitePropertiesModel
 from .routing_rule import RoutingRule
 from .site_auth_settings import SiteAuthSettings
-from .hosting_environment import HostingEnvironment
 from .virtual_network_profile import VirtualNetworkProfile
 from .worker_pool import WorkerPool
 from .virtual_ip_mapping import VirtualIPMapping
 from .stamp_capacity import StampCapacity
 from .network_access_control_entry import NetworkAccessControlEntry
+from .hosting_environment import HostingEnvironment
 from .managed_hosting_environment import ManagedHostingEnvironment
 from .resource_name_availability_request import ResourceNameAvailabilityRequest
 from .resource_name_availability import ResourceNameAvailability
@@ -73,31 +73,31 @@ from .domain_recommendation_search_parameters import DomainRecommendationSearchP
 from .csm_move_resource_envelope import CsmMoveResourceEnvelope
 from .hosting_environment_diagnostics import HostingEnvironmentDiagnostics
 from .address_response import AddressResponse
-from .resource_metric import ResourceMetric
 from .resource_metric_name import ResourceMetricName
 from .resource_metric_value import ResourceMetricValue
 from .key_value_pair_string_string import KeyValuePairStringString
-from .metric_definition import MetricDefinition
+from .resource_metric import ResourceMetric
 from .metric_availabilily import MetricAvailabilily
-from .csm_usage_quota import CsmUsageQuota
+from .metric_definition import MetricDefinition
 from .localizable_string import LocalizableString
+from .csm_usage_quota import CsmUsageQuota
 from .usage import Usage
-from .sku_info import SkuInfo
 from .sku_capacity import SkuCapacity
+from .sku_info import SkuInfo
 from .source_control import SourceControl
 from .recommendation import Recommendation
 from .recommendation_rule import RecommendationRule
-from .vnet_info import VnetInfo
 from .vnet_route import VnetRoute
+from .vnet_info import VnetInfo
 from .vnet_gateway import VnetGateway
-from .network_features import NetworkFeatures
 from .relay_service_connection_entity import RelayServiceConnectionEntity
+from .network_features import NetworkFeatures
 from .csm_slot_entity import CsmSlotEntity
 from .slot_difference import SlotDifference
 from .slot_config_names_resource import SlotConfigNamesResource
 from .slot_config_names import SlotConfigNames
-from .site_cloneability import SiteCloneability
 from .site_cloneability_criterion import SiteCloneabilityCriterion
+from .site_cloneability import SiteCloneability
 from .csm_site_recovery_entity import CsmSiteRecoveryEntity
 from .deleted_site import DeletedSite
 from .deployment import Deployment
@@ -105,21 +105,21 @@ from .site_instance import SiteInstance
 from .host_name_binding import HostNameBinding
 from .site_source_control import SiteSourceControl
 from .string_dictionary import StringDictionary
-from .connection_string_dictionary import ConnectionStringDictionary
 from .conn_string_value_type_pair import ConnStringValueTypePair
-from .site_logs_config import SiteLogsConfig
-from .application_logs_config import ApplicationLogsConfig
+from .connection_string_dictionary import ConnectionStringDictionary
 from .file_system_application_logs_config import FileSystemApplicationLogsConfig
 from .azure_table_storage_application_logs_config import AzureTableStorageApplicationLogsConfig
 from .azure_blob_storage_application_logs_config import AzureBlobStorageApplicationLogsConfig
-from .http_logs_config import HttpLogsConfig
+from .application_logs_config import ApplicationLogsConfig
 from .file_system_http_logs_config import FileSystemHttpLogsConfig
 from .azure_blob_storage_http_logs_config import AzureBlobStorageHttpLogsConfig
+from .http_logs_config import HttpLogsConfig
 from .enabled_config import EnabledConfig
+from .site_logs_config import SiteLogsConfig
 from .premier_add_on_request import PremierAddOnRequest
-from .backup_request import BackupRequest
 from .backup_schedule import BackupSchedule
 from .database_backup_setting import DatabaseBackupSetting
+from .backup_request import BackupRequest
 from .backup_item import BackupItem
 from .restore_request import RestoreRequest
 from .restore_response import RestoreResponse
@@ -195,56 +195,56 @@ __all__ = [
     'ArmPlan',
     'CertificateOrderCertificate',
     'SkuDescription',
-    'CertificateOrder',
     'CertificateDetails',
+    'CertificateOrder',
     'ReissueCertificateOrderRequest',
     'RenewCertificateOrderRequest',
     'CertificateOrderAction',
     'CertificateEmail',
-    'Certificate',
     'HostingEnvironmentProfile',
+    'Certificate',
     'Csr',
     'ClassicMobileService',
-    'Domain',
-    'Contact',
     'Address',
+    'Contact',
     'HostName',
     'DomainPurchaseConsent',
+    'Domain',
     'User',
     'GeoRegion',
     'ServerFarmWithRichSku',
-    'SiteCollection',
-    'Site',
     'HostNameSslState',
-    'SiteConfig',
     'NameValuePair',
     'ConnStringInfo',
     'HandlerMapping',
-    'VirtualApplication',
     'VirtualDirectory',
-    'Experiments',
+    'VirtualApplication',
     'RampUpRule',
+    'Experiments',
     'SiteLimits',
-    'AutoHealRules',
-    'AutoHealTriggers',
     'RequestsBasedTrigger',
     'StatusCodesBasedTrigger',
     'SlowRequestsBasedTrigger',
-    'AutoHealActions',
+    'AutoHealTriggers',
     'AutoHealCustomAction',
+    'AutoHealActions',
+    'AutoHealRules',
     'CorsSettings',
     'ApiDefinitionInfo',
     'IpSecurityRestriction',
+    'SiteConfig',
     'CloningInfo',
-    'SiteProperties',
+    'Site',
+    'SiteCollection',
+    'SitePropertiesModel',
     'RoutingRule',
     'SiteAuthSettings',
-    'HostingEnvironment',
     'VirtualNetworkProfile',
     'WorkerPool',
     'VirtualIPMapping',
     'StampCapacity',
     'NetworkAccessControlEntry',
+    'HostingEnvironment',
     'ManagedHostingEnvironment',
     'ResourceNameAvailabilityRequest',
     'ResourceNameAvailability',
@@ -256,31 +256,31 @@ __all__ = [
     'CsmMoveResourceEnvelope',
     'HostingEnvironmentDiagnostics',
     'AddressResponse',
-    'ResourceMetric',
     'ResourceMetricName',
     'ResourceMetricValue',
     'KeyValuePairStringString',
-    'MetricDefinition',
+    'ResourceMetric',
     'MetricAvailabilily',
-    'CsmUsageQuota',
+    'MetricDefinition',
     'LocalizableString',
+    'CsmUsageQuota',
     'Usage',
-    'SkuInfo',
     'SkuCapacity',
+    'SkuInfo',
     'SourceControl',
     'Recommendation',
     'RecommendationRule',
-    'VnetInfo',
     'VnetRoute',
+    'VnetInfo',
     'VnetGateway',
-    'NetworkFeatures',
     'RelayServiceConnectionEntity',
+    'NetworkFeatures',
     'CsmSlotEntity',
     'SlotDifference',
     'SlotConfigNamesResource',
     'SlotConfigNames',
-    'SiteCloneability',
     'SiteCloneabilityCriterion',
+    'SiteCloneability',
     'CsmSiteRecoveryEntity',
     'DeletedSite',
     'Deployment',
@@ -288,21 +288,21 @@ __all__ = [
     'HostNameBinding',
     'SiteSourceControl',
     'StringDictionary',
-    'ConnectionStringDictionary',
     'ConnStringValueTypePair',
-    'SiteLogsConfig',
-    'ApplicationLogsConfig',
+    'ConnectionStringDictionary',
     'FileSystemApplicationLogsConfig',
     'AzureTableStorageApplicationLogsConfig',
     'AzureBlobStorageApplicationLogsConfig',
-    'HttpLogsConfig',
+    'ApplicationLogsConfig',
     'FileSystemHttpLogsConfig',
     'AzureBlobStorageHttpLogsConfig',
+    'HttpLogsConfig',
     'EnabledConfig',
+    'SiteLogsConfig',
     'PremierAddOnRequest',
-    'BackupRequest',
     'BackupSchedule',
     'DatabaseBackupSetting',
+    'BackupRequest',
     'BackupItem',
     'RestoreRequest',
     'RestoreResponse',

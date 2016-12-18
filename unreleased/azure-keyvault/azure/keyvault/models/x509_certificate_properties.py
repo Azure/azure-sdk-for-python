@@ -29,7 +29,7 @@ class X509CertificateProperties(Model):
     :param validity_in_months: The duration that the ceritifcate is valid in
      months.
     :type validity_in_months: int
-    """ 
+    """
 
     _validation = {
         'validity_in_months': {'minimum': 0},

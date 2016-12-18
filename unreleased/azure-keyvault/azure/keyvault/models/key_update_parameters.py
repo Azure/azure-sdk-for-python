@@ -24,7 +24,7 @@ class KeyUpdateParameters(Model):
      <azure.keyvault.models.KeyAttributes>`
     :param tags: Application-specific metadata in the form of key-value pairs
     :type tags: dict
-    """ 
+    """
 
     _attribute_map = {
         'key_ops': {'key': 'key_ops', 'type': '[JsonWebKeyOperation]'},

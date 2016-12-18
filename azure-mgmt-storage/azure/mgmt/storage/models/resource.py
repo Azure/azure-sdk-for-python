@@ -29,7 +29,7 @@ class Resource(Model):
     :param tags: Tags assigned to a resource; can be used for viewing and
      grouping a resource (across resource groups).
     :type tags: dict
-    """ 
+    """
 
     _validation = {
         'id': {'readonly': True},

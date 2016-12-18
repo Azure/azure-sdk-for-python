@@ -59,7 +59,7 @@ class JobReleaseTask(Model):
     :param run_elevated: Whether to run the Job Release task in elevated mode.
      The default value is false.
     :type run_elevated: bool
-    """ 
+    """
 
     _validation = {
         'command_line': {'required': True},

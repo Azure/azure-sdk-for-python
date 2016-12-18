@@ -33,7 +33,7 @@ class Cost(Model):
     :type location: str
     :param tags: The tags of the resource.
     :type tags: dict
-    """ 
+    """
 
     _attribute_map = {
         'currency_code': {'key': 'properties.currencyCode', 'type': 'str'},

@@ -48,7 +48,7 @@ class HostNameBinding(Resource):
      'Verified', 'Managed'
     :type host_name_type: str or :class:`HostNameType
      <azure.mgmt.web.models.HostNameType>`
-    """ 
+    """
 
     _validation = {
         'location': {'required': True},

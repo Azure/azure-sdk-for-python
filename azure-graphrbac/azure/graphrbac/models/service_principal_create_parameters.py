@@ -25,7 +25,7 @@ class ServicePrincipalCreateParameters(Model):
     :param password_credentials: A collection of PasswordCredential objects
     :type password_credentials: list of :class:`PasswordCredential
      <azure.graphrbac.models.PasswordCredential>`
-    """ 
+    """
 
     _validation = {
         'app_id': {'required': True},

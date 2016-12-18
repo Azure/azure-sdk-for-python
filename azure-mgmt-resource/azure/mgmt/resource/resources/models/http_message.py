@@ -17,7 +17,7 @@ class HttpMessage(Model):
 
     :param content: HTTP message content.
     :type content: object
-    """ 
+    """
 
     _attribute_map = {
         'content': {'key': 'content', 'type': 'object'},

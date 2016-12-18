@@ -19,7 +19,7 @@ class CertificateIssuerItem(Model):
     :type id: str
     :param provider: The issuer provider.
     :type provider: str
-    """ 
+    """
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},

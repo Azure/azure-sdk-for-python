@@ -23,7 +23,7 @@ class VirtualNetworkProfile(Model):
     :type type: str
     :param subnet: Subnet within the virtual network
     :type subnet: str
-    """ 
+    """
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},

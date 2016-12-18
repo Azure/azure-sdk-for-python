@@ -44,7 +44,7 @@ class JobUpdateParameter(Model):
      'noAction', 'terminateJob'
     :type on_all_tasks_complete: str or :class:`OnAllTasksComplete
      <azure.batch.models.OnAllTasksComplete>`
-    """ 
+    """
 
     _validation = {
         'pool_info': {'required': True},

@@ -37,7 +37,7 @@ class NetworkFeatures(Resource):
     :param hybrid_connections: The Hybrid Connections Summary view
     :type hybrid_connections: list of :class:`RelayServiceConnectionEntity
      <azure.mgmt.web.models.RelayServiceConnectionEntity>`
-    """ 
+    """
 
     _validation = {
         'location': {'required': True},

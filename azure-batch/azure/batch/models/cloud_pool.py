@@ -167,7 +167,7 @@ class CloudPool(Model):
     :param stats: Utilization and resource usage statistics for the entire
      lifetime of the pool.
     :type stats: :class:`PoolStatistics <azure.batch.models.PoolStatistics>`
-    """ 
+    """
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},

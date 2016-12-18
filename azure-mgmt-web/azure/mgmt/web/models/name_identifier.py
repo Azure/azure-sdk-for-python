@@ -17,7 +17,7 @@ class NameIdentifier(Model):
 
     :param name: Name of the object
     :type name: str
-    """ 
+    """
 
     _attribute_map = {
         'name': {'key': 'name', 'type': 'str'},

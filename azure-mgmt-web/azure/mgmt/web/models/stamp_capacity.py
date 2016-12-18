@@ -41,12 +41,12 @@ class StampCapacity(Model):
     :param exclude_from_capacity_allocation: If true it includes basic sites
      Basic sites are not used for capacity allocation.
     :type exclude_from_capacity_allocation: bool
-    :param is_applicable_for_all_compute_modes: Is capacity applicable for
-     all sites?
+    :param is_applicable_for_all_compute_modes: Is capacity applicable for all
+     sites?
     :type is_applicable_for_all_compute_modes: bool
     :param site_mode: Shared or Dedicated
     :type site_mode: str
-    """ 
+    """
 
     _attribute_map = {
         'name': {'key': 'name', 'type': 'str'},

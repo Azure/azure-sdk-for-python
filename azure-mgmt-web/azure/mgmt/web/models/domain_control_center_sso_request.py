@@ -22,7 +22,7 @@ class DomainControlCenterSsoRequest(Model):
     :param post_parameter_value: Post parameter value. Client should use
      'application/x-www-form-urlencoded' encoding for this value.
     :type post_parameter_value: str
-    """ 
+    """
 
     _attribute_map = {
         'url': {'key': 'url', 'type': 'str'},

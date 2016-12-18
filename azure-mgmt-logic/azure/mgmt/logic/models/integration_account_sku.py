@@ -18,7 +18,7 @@ class IntegrationAccountSku(Model):
     :param name: The sku name. Possible values include: 'NotSpecified',
      'Free', 'Shared', 'Basic', 'Standard', 'Premium'
     :type name: str or :class:`SkuName <azure.mgmt.logic.models.SkuName>`
-    """ 
+    """
 
     _attribute_map = {
         'name': {'key': 'name', 'type': 'SkuName'},

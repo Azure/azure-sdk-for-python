@@ -17,10 +17,9 @@ class CorsSettings(Model):
 
     :param allowed_origins: Gets or sets the list of origins that should be
      allowed to make cross-origin
-     calls (for example: http://example.com:12345). Use "*" to
-     allow all.
+     calls (for example: http://example.com:12345). Use "*" to allow all.
     :type allowed_origins: list of str
-    """ 
+    """
 
     _attribute_map = {
         'allowed_origins': {'key': 'allowedOrigins', 'type': '[str]'},

@@ -24,7 +24,7 @@ class VirtualApplication(Model):
     :param virtual_directories:
     :type virtual_directories: list of :class:`VirtualDirectory
      <azure.mgmt.web.models.VirtualDirectory>`
-    """ 
+    """
 
     _attribute_map = {
         'virtual_path': {'key': 'virtualPath', 'type': 'str'},

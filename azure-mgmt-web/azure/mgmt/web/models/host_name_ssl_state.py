@@ -27,7 +27,7 @@ class HostNameSslState(Model):
     :type thumbprint: str
     :param to_update: Set this flag to update existing host name
     :type to_update: bool
-    """ 
+    """
 
     _validation = {
         'ssl_state': {'required': True},

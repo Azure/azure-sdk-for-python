@@ -14,8 +14,8 @@ from .generic_resource_filter import GenericResourceFilter
 from .resource_group_filter import ResourceGroupFilter
 from .template_link import TemplateLink
 from .parameters_link import ParametersLink
-from .deployment_properties import DeploymentProperties
 from .debug_setting import DebugSetting
+from .deployment_properties import DeploymentProperties
 from .deployment import Deployment
 from .deployment_export_result import DeploymentExportResult
 from .resource_management_error_with_details import ResourceManagementErrorWithDetails
@@ -28,12 +28,12 @@ from .dependency import Dependency
 from .deployment_properties_extended import DeploymentPropertiesExtended
 from .deployment_validate_result import DeploymentValidateResult
 from .deployment_extended import DeploymentExtended
-from .generic_resource import GenericResource
 from .plan import Plan
 from .sku import Sku
 from .identity import Identity
-from .resource_group import ResourceGroup
+from .generic_resource import GenericResource
 from .resource_group_properties import ResourceGroupProperties
+from .resource_group import ResourceGroup
 from .resources_move_info import ResourcesMoveInfo
 from .export_template_request import ExportTemplateRequest
 from .tag_count import TagCount
@@ -64,8 +64,8 @@ __all__ = [
     'ResourceGroupFilter',
     'TemplateLink',
     'ParametersLink',
-    'DeploymentProperties',
     'DebugSetting',
+    'DeploymentProperties',
     'Deployment',
     'DeploymentExportResult',
     'ResourceManagementErrorWithDetails',
@@ -78,12 +78,12 @@ __all__ = [
     'DeploymentPropertiesExtended',
     'DeploymentValidateResult',
     'DeploymentExtended',
-    'GenericResource',
     'Plan',
     'Sku',
     'Identity',
-    'ResourceGroup',
+    'GenericResource',
     'ResourceGroupProperties',
+    'ResourceGroup',
     'ResourcesMoveInfo',
     'ExportTemplateRequest',
     'TagCount',

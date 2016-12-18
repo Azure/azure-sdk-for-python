@@ -18,7 +18,7 @@ class B2BPartnerContent(Model):
     :param business_identities: The list of partner business identities.
     :type business_identities: list of :class:`BusinessIdentity
      <azure.mgmt.logic.models.BusinessIdentity>`
-    """ 
+    """
 
     _attribute_map = {
         'business_identities': {'key': 'businessIdentities', 'type': '[BusinessIdentity]'},

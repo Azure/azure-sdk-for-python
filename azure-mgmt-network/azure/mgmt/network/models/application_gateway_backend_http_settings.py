@@ -38,9 +38,8 @@ class ApplicationGatewayBackendHttpSettings(SubResource):
      gateway authentication certificates.
     :type authentication_certificates: list of :class:`SubResource
      <azure.mgmt.network.models.SubResource>`
-    :param provisioning_state: Provisioning state of the backend http
-     settings resource. Possible values are: 'Updating', 'Deleting', and
-     'Failed'.
+    :param provisioning_state: Provisioning state of the backend http settings
+     resource. Possible values are: 'Updating', 'Deleting', and 'Failed'.
     :type provisioning_state: str
     :param name: Name of the resource that is unique within a resource group.
      This name can be used to access the resource.
@@ -48,7 +47,7 @@ class ApplicationGatewayBackendHttpSettings(SubResource):
     :param etag: A unique read-only string that changes whenever the resource
      is updated.
     :type etag: str
-    """ 
+    """
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},

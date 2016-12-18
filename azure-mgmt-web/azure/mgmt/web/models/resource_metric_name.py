@@ -19,7 +19,7 @@ class ResourceMetricName(Model):
     :type value: str
     :param localized_value: Localized metric name value
     :type localized_value: str
-    """ 
+    """
 
     _attribute_map = {
         'value': {'key': 'value', 'type': 'str'},

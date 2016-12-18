@@ -20,7 +20,7 @@ class MetricAvailabilily(Model):
     :param retention: Retention period for the current
      {Microsoft.Web.Hosting.Administration.MetricAvailabilily.TimeGrain}
     :type retention: str
-    """ 
+    """
 
     _attribute_map = {
         'time_grain': {'key': 'timeGrain', 'type': 'str'},

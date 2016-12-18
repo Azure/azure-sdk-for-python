@@ -30,7 +30,7 @@ class NodeRemoveParameter(Model):
     :type node_deallocation_option: str or
      :class:`ComputeNodeDeallocationOption
      <azure.batch.models.ComputeNodeDeallocationOption>`
-    """ 
+    """
 
     _validation = {
         'node_list': {'required': True, 'max_items': 100},

@@ -27,7 +27,7 @@ class Sku(Model):
     :type family: str
     :param capacity: The capacity of the resource
     :type capacity: int
-    """ 
+    """
 
     _validation = {
         'name': {'required': True},

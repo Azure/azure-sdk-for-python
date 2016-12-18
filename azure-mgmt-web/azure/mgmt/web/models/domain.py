@@ -38,8 +38,8 @@ class Domain(Resource):
     :param registration_status: Domain registration status. Possible values
      include: 'Active', 'Awaiting', 'Cancelled', 'Confiscated', 'Disabled',
      'Excluded', 'Expired', 'Failed', 'Held', 'Locked', 'Parked', 'Pending',
-     'Reserved', 'Reverted', 'Suspended', 'Transferred', 'Unknown',
-     'Unlocked', 'Unparked', 'Updated', 'JsonConverterFailed'
+     'Reserved', 'Reverted', 'Suspended', 'Transferred', 'Unknown', 'Unlocked',
+     'Unparked', 'Updated', 'JsonConverterFailed'
     :type registration_status: str or :class:`DomainStatus
      <azure.mgmt.web.models.DomainStatus>`
     :param provisioning_state: Domain provisioning state. Possible values
@@ -58,10 +58,10 @@ class Domain(Resource):
     :type last_renewed_time: datetime
     :param auto_renew: If true then domain will renewed automatically
     :type auto_renew: bool
-    :param ready_for_dns_record_management: If true then Azure can assign
-     this domain to Web Apps. This value will be true if domain registration
-     status is active and it is hosted on name servers Azure has programmatic
-     access to
+    :param ready_for_dns_record_management: If true then Azure can assign this
+     domain to Web Apps. This value will be true if domain registration status
+     is active and it is hosted on name servers Azure has programmatic access
+     to
     :type ready_for_dns_record_management: bool
     :param managed_host_names: All hostnames derived from the domain and
      assigned to Azure resources
@@ -72,7 +72,7 @@ class Domain(Resource):
      <azure.mgmt.web.models.DomainPurchaseConsent>`
     :param domain_not_renewable_reasons: Reasons why domain is not renewable
     :type domain_not_renewable_reasons: list of str
-    """ 
+    """
 
     _validation = {
         'location': {'required': True},
@@ -100,7 +100,7 @@ class Domain(Resource):
         'ready_for_dns_record_management': {'key': 'properties.readyForDnsRecordManagement', 'type': 'bool'},
         'managed_host_names': {'key': 'properties.managedHostNames', 'type': '[HostName]'},
         'consent': {'key': 'properties.consent', 'type': 'DomainPurchaseConsent'},
-        'domain_not_renewable_reasons': {'key': 'properties.domainNotRenewableReasons', 'type': '[str]'},
+        'domain_not_renewable_reasons': {'key': 'properties.domainNotRenewableReasons', 'type': '[enum]'},
     }
 
     def __init__(self, location, id=None, name=None, kind=None, type=None, tags=None, contact_admin=None, contact_billing=None, contact_registrant=None, contact_tech=None, registration_status=None, provisioning_state=None, name_servers=None, privacy=None, created_time=None, expiration_time=None, last_renewed_time=None, auto_renew=None, ready_for_dns_record_management=None, managed_host_names=None, consent=None, domain_not_renewable_reasons=None):

@@ -25,7 +25,7 @@ class ResourceProviderOperationDisplayProperties(Model):
     :type operation: str
     :param description: Operation description.
     :type description: str
-    """ 
+    """
 
     _attribute_map = {
         'publisher': {'key': 'publisher', 'type': 'str'},

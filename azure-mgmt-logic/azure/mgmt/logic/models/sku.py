@@ -21,7 +21,7 @@ class Sku(Model):
     :param plan: The reference to plan.
     :type plan: :class:`ResourceReference
      <azure.mgmt.logic.models.ResourceReference>`
-    """ 
+    """
 
     _attribute_map = {
         'name': {'key': 'name', 'type': 'SkuName'},

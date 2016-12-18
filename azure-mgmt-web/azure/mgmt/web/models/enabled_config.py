@@ -17,7 +17,7 @@ class EnabledConfig(Model):
 
     :param enabled: Enabled
     :type enabled: bool
-    """ 
+    """
 
     _attribute_map = {
         'enabled': {'key': 'enabled', 'type': 'bool'},

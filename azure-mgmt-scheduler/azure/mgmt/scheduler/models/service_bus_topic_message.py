@@ -36,7 +36,7 @@ class ServiceBusTopicMessage(ServiceBusMessage):
      <azure.mgmt.scheduler.models.ServiceBusTransportType>`
     :param topic_path: Gets or sets the topic path.
     :type topic_path: str
-    """ 
+    """
 
     _attribute_map = {
         'authentication': {'key': 'authentication', 'type': 'ServiceBusAuthentication'},

@@ -22,7 +22,7 @@ class KeyVaultKeyReference(Model):
     :type key_name: str
     :param key_version: The private key version in key vault.
     :type key_version: str
-    """ 
+    """
 
     _attribute_map = {
         'key_vault': {'key': 'keyVault', 'type': 'KeyVaultKeyReferenceKeyVault'},

@@ -2510,8 +2510,8 @@ class HostingEnvironmentsOperations(object):
 
     def get_multi_role_pool_instance_metric_definitions(
             self, resource_group_name, name, instance, custom_headers=None, raw=False, **operation_config):
-        """Get metric definitions for a specific instance of a multiRole pool of
-        a hostingEnvironment (App Service Environment).
+        """Get metric definitions for a specific instance of a multiRole pool of a
+        hostingEnvironment (App Service Environment).
 
         :param resource_group_name: Name of resource group
         :type resource_group_name: str
