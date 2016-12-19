@@ -81,6 +81,17 @@ class DataLakeStoreAccount(Resource):
     :param default_group: the default owner group for all new folders and
      files created in the Data Lake Store account.
     :type default_group: str
+    :param new_tier: the billing tier to use for next month. Possible values
+     include: 'Consumption', 'Commitment_1TB', 'Commitment_10TB',
+     'Commitment_100TB', 'Commitment_500TB', 'Commitment_1PB', 'Commitment_5PB'
+    :type new_tier: str or :class:`PricingTierType
+     <azure.mgmt.datalake.store.models.PricingTierType>`
+    :ivar current_tier: the billing tier in use for the current month.
+     Possible values include: 'Consumption', 'Commitment_1TB',
+     'Commitment_10TB', 'Commitment_100TB', 'Commitment_500TB',
+     'Commitment_1PB', 'Commitment_5PB'
+    :vartype current_tier: str or :class:`PricingTierType
+     <azure.mgmt.datalake.store.models.PricingTierType>`
     """
 
     _validation = {
@@ -94,6 +105,7 @@ class DataLakeStoreAccount(Resource):
         'encryption_provisioning_state': {'readonly': True},
         'last_modified_time': {'readonly': True},
         'endpoint': {'readonly': True},
+        'current_tier': {'readonly': True},
     }
 
     _attribute_map = {
@@ -116,9 +128,11 @@ class DataLakeStoreAccount(Resource):
         'last_modified_time': {'key': 'properties.lastModifiedTime', 'type': 'iso-8601'},
         'endpoint': {'key': 'properties.endpoint', 'type': 'str'},
         'default_group': {'key': 'properties.defaultGroup', 'type': 'str'},
+        'new_tier': {'key': 'properties.newTier', 'type': 'PricingTierType'},
+        'current_tier': {'key': 'properties.currentTier', 'type': 'PricingTierType'},
     }
 
-    def __init__(self, location, tags=None, identity=None, encryption_state=None, encryption_config=None, firewall_state=None, firewall_rules=None, trusted_id_provider_state=None, trusted_id_providers=None, default_group=None):
+    def __init__(self, location, tags=None, identity=None, encryption_state=None, encryption_config=None, firewall_state=None, firewall_rules=None, trusted_id_provider_state=None, trusted_id_providers=None, default_group=None, new_tier=None):
         super(DataLakeStoreAccount, self).__init__(location=location, tags=tags)
         self.identity = identity
         self.provisioning_state = None
@@ -134,3 +148,5 @@ class DataLakeStoreAccount(Resource):
         self.last_modified_time = None
         self.endpoint = None
         self.default_group = default_group
+        self.new_tier = new_tier
+        self.current_tier = None
