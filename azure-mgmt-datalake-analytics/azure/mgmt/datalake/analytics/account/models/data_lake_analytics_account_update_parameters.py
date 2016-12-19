@@ -27,6 +27,13 @@ class DataLakeAnalyticsAccountUpdateParameters(Model):
     :param max_job_count: the maximum supported jobs running under the account
      at the same time.
     :type max_job_count: int
+    :param new_tier: the billing tier to use for next month. Possible values
+     include: 'Consumption', 'Commitment_100AUHours', 'Commitment_500AUHours',
+     'Commitment_1000AUHours', 'Commitment_5000AUHours',
+     'Commitment_10000AUHours', 'Commitment_50000AUHours',
+     'Commitment_100000AUHours', 'Commitment_500000AUHours'
+    :type new_tier: str or :class:`PricingTierType
+     <azure.mgmt.datalake.analytics.account.models.PricingTierType>`
     """
 
     _validation = {
@@ -40,10 +47,12 @@ class DataLakeAnalyticsAccountUpdateParameters(Model):
         'max_degree_of_parallelism': {'key': 'properties.maxDegreeOfParallelism', 'type': 'int'},
         'query_store_retention': {'key': 'properties.queryStoreRetention', 'type': 'int'},
         'max_job_count': {'key': 'properties.maxJobCount', 'type': 'int'},
+        'new_tier': {'key': 'properties.newTier', 'type': 'PricingTierType'},
     }
 
-    def __init__(self, tags=None, max_degree_of_parallelism=None, query_store_retention=None, max_job_count=None):
+    def __init__(self, tags=None, max_degree_of_parallelism=None, query_store_retention=None, max_job_count=None, new_tier=None):
         self.tags = tags
         self.max_degree_of_parallelism = max_degree_of_parallelism
         self.query_store_retention = query_store_retention
         self.max_job_count = max_job_count
+        self.new_tier = new_tier
