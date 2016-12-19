@@ -332,10 +332,17 @@ class MgmtNetworkTest(AzureMgmtTestCase):
         )
         vnet = result_create.result()
 
-        result_get = self.network_client.virtual_networks.get(
+        vnet = self.network_client.virtual_networks.get(
             self.group_name,
             vnet.name,
         )
+
+        ip_availability = self.network_client.virtual_networks.check_ip_address_availability(
+            self.group_name,
+            vnet.name,
+            '10.0.1.35' # Should be available since new VNet sor Subnet 1
+        )
+        self.assertTrue(ip_availability.available)
 
         result_list = list(self.network_client.virtual_networks.list(
             self.group_name,
