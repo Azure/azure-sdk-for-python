@@ -178,10 +178,11 @@
       "output_dir": "azure-monitor/azure/monitor"
     },
     "network": {
-      "swagger": "arm-network/2016-09-01/swagger/network.json",
+      "swagger": "arm-network/compositeNetworkClient.json",
       "autorest_options": {
         "Namespace": "azure.mgmt.network",
-        "PackageVersion": "0.30.0"
+        "Modeler": "CompositeSwagger",
+        "PackageVersion": "0.31.0"
       },
       "output_dir": "azure-mgmt-network/azure/mgmt/network"
     },
