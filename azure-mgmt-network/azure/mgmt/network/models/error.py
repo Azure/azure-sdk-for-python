@@ -26,7 +26,7 @@ class Error(Model):
      <azure.mgmt.network.models.ErrorDetails>`
     :param inner_error:
     :type inner_error: str
-    """ 
+    """
 
     _attribute_map = {
         'code': {'key': 'code', 'type': 'str'},
