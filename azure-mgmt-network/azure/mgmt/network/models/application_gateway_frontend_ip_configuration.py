@@ -20,9 +20,9 @@ class ApplicationGatewayFrontendIPConfiguration(SubResource):
     :param private_ip_address: PrivateIPAddress of the network interface IP
      Configuration.
     :type private_ip_address: str
-    :param private_ip_allocation_method: PrivateIP allocation method.
-     Possible values are: 'Static' and 'Dynamic'. Possible values include:
-     'Static', 'Dynamic'
+    :param private_ip_allocation_method: PrivateIP allocation method. Possible
+     values are: 'Static' and 'Dynamic'. Possible values include: 'Static',
+     'Dynamic'
     :type private_ip_allocation_method: str or :class:`IPAllocationMethod
      <azure.mgmt.network.models.IPAllocationMethod>`
     :param subnet: Reference of the subnet resource.
@@ -39,7 +39,7 @@ class ApplicationGatewayFrontendIPConfiguration(SubResource):
     :param etag: A unique read-only string that changes whenever the resource
      is updated.
     :type etag: str
-    """ 
+    """
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},

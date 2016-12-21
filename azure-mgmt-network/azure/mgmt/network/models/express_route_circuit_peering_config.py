@@ -19,9 +19,9 @@ class ExpressRouteCircuitPeeringConfig(Model):
      AdvertisedPublicPrefixes.
     :type advertised_public_prefixes: list of str
     :param advertised_public_prefixes_state: AdvertisedPublicPrefixState of
-     the Peering resource. Possible values are 'NotConfigured',
-     'Configuring', 'Configured', and 'ValidationNeeded'. Possible values
-     include: 'NotConfigured', 'Configuring', 'Configured', 'ValidationNeeded'
+     the Peering resource. Possible values are 'NotConfigured', 'Configuring',
+     'Configured', and 'ValidationNeeded'. Possible values include:
+     'NotConfigured', 'Configuring', 'Configured', 'ValidationNeeded'
     :type advertised_public_prefixes_state: str or
      :class:`ExpressRouteCircuitPeeringAdvertisedPublicPrefixState
      <azure.mgmt.network.models.ExpressRouteCircuitPeeringAdvertisedPublicPrefixState>`
@@ -30,7 +30,7 @@ class ExpressRouteCircuitPeeringConfig(Model):
     :param routing_registry_name: The RoutingRegistryName of the
      configuration.
     :type routing_registry_name: str
-    """ 
+    """
 
     _attribute_map = {
         'advertised_public_prefixes': {'key': 'advertisedPublicPrefixes', 'type': '[str]'},

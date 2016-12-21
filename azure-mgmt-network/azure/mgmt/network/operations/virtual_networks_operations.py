@@ -24,6 +24,7 @@ class VirtualNetworksOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An objec model deserializer.
+    :ivar api_version: Client API version. Constant value: "2016-09-01".
     """
 
     def __init__(self, client, config, serializer, deserializer):
@@ -31,6 +32,7 @@ class VirtualNetworksOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
+        self.api_version = "2016-09-01"
 
         self.config = config
 
@@ -63,7 +65,7 @@ class VirtualNetworksOperations(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -143,7 +145,7 @@ class VirtualNetworksOperations(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
         if expand is not None:
             query_parameters['$expand'] = self._serialize.query("expand", expand, 'str')
 
@@ -185,8 +187,8 @@ class VirtualNetworksOperations(object):
         :type resource_group_name: str
         :param virtual_network_name: The name of the virtual network.
         :type virtual_network_name: str
-        :param parameters: Parameters supplied to the create or update
-         virtual network operation
+        :param parameters: Parameters supplied to the create or update virtual
+         network operation
         :type parameters: :class:`VirtualNetwork
          <azure.mgmt.network.models.VirtualNetwork>`
         :param dict custom_headers: headers that will be added to the request
@@ -211,7 +213,7 @@ class VirtualNetworksOperations(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -297,7 +299,7 @@ class VirtualNetworksOperations(object):
 
                 # Construct parameters
                 query_parameters = {}
-                query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
+                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
             else:
                 url = next_link
@@ -363,7 +365,7 @@ class VirtualNetworksOperations(object):
 
                 # Construct parameters
                 query_parameters = {}
-                query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
+                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
             else:
                 url = next_link
@@ -435,7 +437,7 @@ class VirtualNetworksOperations(object):
         query_parameters = {}
         if ip_address is not None:
             query_parameters['ipAddress'] = self._serialize.query("ip_address", ip_address, 'str')
-        query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
         header_parameters = {}

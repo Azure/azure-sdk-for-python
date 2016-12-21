@@ -15,10 +15,10 @@ from msrest.serialization import Model
 class ConnectionResetSharedKey(Model):
     """ConnectionResetSharedKey.
 
-    :param key_length: The virtual network connection reset shared key
-     length, should between 1 and 128.
+    :param key_length: The virtual network connection reset shared key length,
+     should between 1 and 128.
     :type key_length: int
-    """ 
+    """
 
     _validation = {
         'key_length': {'required': True, 'maximum': 128, 'minimum': 1},

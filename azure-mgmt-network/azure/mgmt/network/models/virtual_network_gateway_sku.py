@@ -27,7 +27,7 @@ class VirtualNetworkGatewaySku(Model):
      <azure.mgmt.network.models.VirtualNetworkGatewaySkuTier>`
     :param capacity: The capacity.
     :type capacity: int
-    """ 
+    """
 
     _validation = {
         'name': {'required': True},

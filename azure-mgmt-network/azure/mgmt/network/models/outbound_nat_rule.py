@@ -37,7 +37,7 @@ class OutboundNatRule(SubResource):
     :param etag: A unique read-only string that changes whenever the resource
      is updated.
     :type etag: str
-    """ 
+    """
 
     _validation = {
         'backend_address_pool': {'required': True},

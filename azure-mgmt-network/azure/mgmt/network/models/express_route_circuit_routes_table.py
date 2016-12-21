@@ -25,7 +25,7 @@ class ExpressRouteCircuitRoutesTable(Model):
     :type weight: int
     :param path: path
     :type path: str
-    """ 
+    """
 
     _attribute_map = {
         'network': {'key': 'network', 'type': 'str'},

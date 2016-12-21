@@ -17,8 +17,8 @@ class ApplicationGatewayHttpListener(SubResource):
 
     :param id: Resource ID.
     :type id: str
-    :param frontend_ip_configuration: Frontend IP configuration resource of
-     an application gateway.
+    :param frontend_ip_configuration: Frontend IP configuration resource of an
+     application gateway.
     :type frontend_ip_configuration: :class:`SubResource
      <azure.mgmt.network.models.SubResource>`
     :param frontend_port: Frontend port resource of an application gateway.
@@ -46,7 +46,7 @@ class ApplicationGatewayHttpListener(SubResource):
     :param etag: A unique read-only string that changes whenever the resource
      is updated.
     :type etag: str
-    """ 
+    """
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},

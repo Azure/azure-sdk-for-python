@@ -9,28 +9,28 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .application_gateway_backend_health import ApplicationGatewayBackendHealth
-from .application_gateway_backend_health_pool import ApplicationGatewayBackendHealthPool
-from .application_gateway_backend_address_pool import ApplicationGatewayBackendAddressPool
-from .network_interface_ip_configuration import NetworkInterfaceIPConfiguration
-from .backend_address_pool import BackendAddressPool
 from .sub_resource import SubResource
+from .backend_address_pool import BackendAddressPool
 from .inbound_nat_rule import InboundNatRule
-from .subnet import Subnet
-from .network_security_group import NetworkSecurityGroup
 from .security_rule import SecurityRule
-from .network_interface import NetworkInterface
 from .network_interface_dns_settings import NetworkInterfaceDnsSettings
-from .route_table import RouteTable
+from .network_interface import NetworkInterface
+from .network_security_group import NetworkSecurityGroup
 from .route import Route
-from .ip_configuration import IPConfiguration
-from .public_ip_address import PublicIPAddress
+from .route_table import RouteTable
 from .public_ip_address_dns_settings import PublicIPAddressDnsSettings
+from .public_ip_address import PublicIPAddress
+from .ip_configuration import IPConfiguration
 from .resource_navigation_link import ResourceNavigationLink
+from .subnet import Subnet
+from .network_interface_ip_configuration import NetworkInterfaceIPConfiguration
 from .application_gateway_backend_address import ApplicationGatewayBackendAddress
-from .application_gateway_backend_health_http_settings import ApplicationGatewayBackendHealthHttpSettings
+from .application_gateway_backend_address_pool import ApplicationGatewayBackendAddressPool
 from .application_gateway_backend_http_settings import ApplicationGatewayBackendHttpSettings
 from .application_gateway_backend_health_server import ApplicationGatewayBackendHealthServer
+from .application_gateway_backend_health_http_settings import ApplicationGatewayBackendHealthHttpSettings
+from .application_gateway_backend_health_pool import ApplicationGatewayBackendHealthPool
+from .application_gateway_backend_health import ApplicationGatewayBackendHealth
 from .application_gateway_sku import ApplicationGatewaySku
 from .application_gateway_ssl_policy import ApplicationGatewaySslPolicy
 from .application_gateway_ip_configuration import ApplicationGatewayIPConfiguration
@@ -45,6 +45,43 @@ from .application_gateway_request_routing_rule import ApplicationGatewayRequestR
 from .application_gateway_url_path_map import ApplicationGatewayUrlPathMap
 from .application_gateway_web_application_firewall_configuration import ApplicationGatewayWebApplicationFirewallConfiguration
 from .application_gateway import ApplicationGateway
+from .resource import Resource
+from .error_details import ErrorDetails
+from .error import Error
+from .azure_async_operation_result import AzureAsyncOperationResult
+from .frontend_ip_configuration import FrontendIPConfiguration
+from .load_balancing_rule import LoadBalancingRule
+from .probe import Probe
+from .inbound_nat_pool import InboundNatPool
+from .outbound_nat_rule import OutboundNatRule
+from .load_balancer import LoadBalancer
+from .virtual_network_peering import VirtualNetworkPeering
+from .address_space import AddressSpace
+from .dhcp_options import DhcpOptions
+from .virtual_network import VirtualNetwork
+from .ip_address_availability_result import IPAddressAvailabilityResult
+from .effective_network_security_group_association import EffectiveNetworkSecurityGroupAssociation
+from .effective_network_security_rule import EffectiveNetworkSecurityRule
+from .effective_network_security_group import EffectiveNetworkSecurityGroup
+from .effective_network_security_group_list_result import EffectiveNetworkSecurityGroupListResult
+from .effective_route import EffectiveRoute
+from .effective_route_list_result import EffectiveRouteListResult
+from .usage_name import UsageName
+from .usage import Usage
+from .dns_name_availability_result import DnsNameAvailabilityResult
+from .virtual_network_gateway_ip_configuration import VirtualNetworkGatewayIPConfiguration
+from .virtual_network_gateway_sku import VirtualNetworkGatewaySku
+from .vpn_client_root_certificate import VpnClientRootCertificate
+from .vpn_client_revoked_certificate import VpnClientRevokedCertificate
+from .vpn_client_configuration import VpnClientConfiguration
+from .bgp_settings import BgpSettings
+from .virtual_network_gateway import VirtualNetworkGateway
+from .vpn_client_parameters import VpnClientParameters
+from .tunnel_connection_health import TunnelConnectionHealth
+from .local_network_gateway import LocalNetworkGateway
+from .virtual_network_gateway_connection import VirtualNetworkGatewayConnection
+from .connection_reset_shared_key import ConnectionResetSharedKey
+from .connection_shared_key import ConnectionSharedKey
 from .express_route_circuit_authorization import ExpressRouteCircuitAuthorization
 from .express_route_circuit_peering_config import ExpressRouteCircuitPeeringConfig
 from .express_route_circuit_stats import ExpressRouteCircuitStats
@@ -60,62 +97,25 @@ from .express_route_circuit_routes_table_summary import ExpressRouteCircuitRoute
 from .express_route_circuits_routes_table_summary_list_result import ExpressRouteCircuitsRoutesTableSummaryListResult
 from .express_route_service_provider_bandwidths_offered import ExpressRouteServiceProviderBandwidthsOffered
 from .express_route_service_provider import ExpressRouteServiceProvider
-from .frontend_ip_configuration import FrontendIPConfiguration
-from .load_balancing_rule import LoadBalancingRule
-from .probe import Probe
-from .inbound_nat_pool import InboundNatPool
-from .outbound_nat_rule import OutboundNatRule
-from .load_balancer import LoadBalancer
-from .address_space import AddressSpace
-from .bgp_settings import BgpSettings
-from .local_network_gateway import LocalNetworkGateway
-from .effective_network_security_group import EffectiveNetworkSecurityGroup
-from .effective_network_security_group_association import EffectiveNetworkSecurityGroupAssociation
-from .effective_network_security_rule import EffectiveNetworkSecurityRule
-from .effective_network_security_group_list_result import EffectiveNetworkSecurityGroupListResult
-from .effective_route import EffectiveRoute
-from .effective_route_list_result import EffectiveRouteListResult
-from .virtual_network_peering import VirtualNetworkPeering
-from .usage_name import UsageName
-from .usage import Usage
-from .virtual_network_gateway_ip_configuration import VirtualNetworkGatewayIPConfiguration
-from .virtual_network_gateway_sku import VirtualNetworkGatewaySku
-from .vpn_client_configuration import VpnClientConfiguration
-from .vpn_client_root_certificate import VpnClientRootCertificate
-from .vpn_client_revoked_certificate import VpnClientRevokedCertificate
-from .virtual_network_gateway import VirtualNetworkGateway
-from .vpn_client_parameters import VpnClientParameters
-from .tunnel_connection_health import TunnelConnectionHealth
-from .virtual_network_gateway_connection import VirtualNetworkGatewayConnection
-from .connection_reset_shared_key import ConnectionResetSharedKey
-from .connection_shared_key import ConnectionSharedKey
-from .dhcp_options import DhcpOptions
-from .virtual_network import VirtualNetwork
-from .dns_name_availability_result import DnsNameAvailabilityResult
-from .ip_address_availability_result import IPAddressAvailabilityResult
-from .error_details import ErrorDetails
-from .error import Error
-from .azure_async_operation_result import AzureAsyncOperationResult
-from .resource import Resource
 from .application_gateway_paged import ApplicationGatewayPaged
+from .route_table_paged import RouteTablePaged
+from .route_paged import RoutePaged
+from .public_ip_address_paged import PublicIPAddressPaged
+from .network_security_group_paged import NetworkSecurityGroupPaged
+from .security_rule_paged import SecurityRulePaged
+from .load_balancer_paged import LoadBalancerPaged
+from .virtual_network_paged import VirtualNetworkPaged
+from .subnet_paged import SubnetPaged
+from .virtual_network_peering_paged import VirtualNetworkPeeringPaged
+from .network_interface_paged import NetworkInterfacePaged
+from .usage_paged import UsagePaged
+from .virtual_network_gateway_paged import VirtualNetworkGatewayPaged
+from .virtual_network_gateway_connection_paged import VirtualNetworkGatewayConnectionPaged
+from .local_network_gateway_paged import LocalNetworkGatewayPaged
 from .express_route_circuit_authorization_paged import ExpressRouteCircuitAuthorizationPaged
 from .express_route_circuit_peering_paged import ExpressRouteCircuitPeeringPaged
 from .express_route_circuit_paged import ExpressRouteCircuitPaged
 from .express_route_service_provider_paged import ExpressRouteServiceProviderPaged
-from .load_balancer_paged import LoadBalancerPaged
-from .local_network_gateway_paged import LocalNetworkGatewayPaged
-from .network_interface_paged import NetworkInterfacePaged
-from .network_security_group_paged import NetworkSecurityGroupPaged
-from .public_ip_address_paged import PublicIPAddressPaged
-from .route_table_paged import RouteTablePaged
-from .route_paged import RoutePaged
-from .security_rule_paged import SecurityRulePaged
-from .subnet_paged import SubnetPaged
-from .virtual_network_peering_paged import VirtualNetworkPeeringPaged
-from .usage_paged import UsagePaged
-from .virtual_network_gateway_connection_paged import VirtualNetworkGatewayConnectionPaged
-from .virtual_network_gateway_paged import VirtualNetworkGatewayPaged
-from .virtual_network_paged import VirtualNetworkPaged
 from .network_management_client_enums import (
     TransportProtocol,
     IPAllocationMethod,
@@ -133,18 +133,12 @@ from .network_management_client_enums import (
     ApplicationGatewayRequestRoutingRuleType,
     ApplicationGatewayOperationalState,
     ApplicationGatewayFirewallMode,
-    AuthorizationUseStatus,
-    ExpressRouteCircuitPeeringAdvertisedPublicPrefixState,
-    ExpressRouteCircuitPeeringType,
-    ExpressRouteCircuitPeeringState,
-    ExpressRouteCircuitSkuTier,
-    ExpressRouteCircuitSkuFamily,
-    ServiceProviderProvisioningState,
+    NetworkOperationStatus,
     LoadDistribution,
     ProbeProtocol,
+    VirtualNetworkPeeringState,
     EffectiveRouteSource,
     EffectiveRouteState,
-    VirtualNetworkPeeringState,
     VirtualNetworkGatewayType,
     VpnType,
     VirtualNetworkGatewaySkuName,
@@ -152,32 +146,38 @@ from .network_management_client_enums import (
     ProcessorArchitecture,
     VirtualNetworkGatewayConnectionStatus,
     VirtualNetworkGatewayConnectionType,
-    NetworkOperationStatus,
+    AuthorizationUseStatus,
+    ExpressRouteCircuitPeeringAdvertisedPublicPrefixState,
+    ExpressRouteCircuitPeeringType,
+    ExpressRouteCircuitPeeringState,
+    ExpressRouteCircuitSkuTier,
+    ExpressRouteCircuitSkuFamily,
+    ServiceProviderProvisioningState,
 )
 
 __all__ = [
-    'ApplicationGatewayBackendHealth',
-    'ApplicationGatewayBackendHealthPool',
-    'ApplicationGatewayBackendAddressPool',
-    'NetworkInterfaceIPConfiguration',
-    'BackendAddressPool',
     'SubResource',
+    'BackendAddressPool',
     'InboundNatRule',
-    'Subnet',
-    'NetworkSecurityGroup',
     'SecurityRule',
-    'NetworkInterface',
     'NetworkInterfaceDnsSettings',
-    'RouteTable',
+    'NetworkInterface',
+    'NetworkSecurityGroup',
     'Route',
-    'IPConfiguration',
-    'PublicIPAddress',
+    'RouteTable',
     'PublicIPAddressDnsSettings',
+    'PublicIPAddress',
+    'IPConfiguration',
     'ResourceNavigationLink',
+    'Subnet',
+    'NetworkInterfaceIPConfiguration',
     'ApplicationGatewayBackendAddress',
-    'ApplicationGatewayBackendHealthHttpSettings',
+    'ApplicationGatewayBackendAddressPool',
     'ApplicationGatewayBackendHttpSettings',
     'ApplicationGatewayBackendHealthServer',
+    'ApplicationGatewayBackendHealthHttpSettings',
+    'ApplicationGatewayBackendHealthPool',
+    'ApplicationGatewayBackendHealth',
     'ApplicationGatewaySku',
     'ApplicationGatewaySslPolicy',
     'ApplicationGatewayIPConfiguration',
@@ -192,6 +192,43 @@ __all__ = [
     'ApplicationGatewayUrlPathMap',
     'ApplicationGatewayWebApplicationFirewallConfiguration',
     'ApplicationGateway',
+    'Resource',
+    'ErrorDetails',
+    'Error',
+    'AzureAsyncOperationResult',
+    'FrontendIPConfiguration',
+    'LoadBalancingRule',
+    'Probe',
+    'InboundNatPool',
+    'OutboundNatRule',
+    'LoadBalancer',
+    'VirtualNetworkPeering',
+    'AddressSpace',
+    'DhcpOptions',
+    'VirtualNetwork',
+    'IPAddressAvailabilityResult',
+    'EffectiveNetworkSecurityGroupAssociation',
+    'EffectiveNetworkSecurityRule',
+    'EffectiveNetworkSecurityGroup',
+    'EffectiveNetworkSecurityGroupListResult',
+    'EffectiveRoute',
+    'EffectiveRouteListResult',
+    'UsageName',
+    'Usage',
+    'DnsNameAvailabilityResult',
+    'VirtualNetworkGatewayIPConfiguration',
+    'VirtualNetworkGatewaySku',
+    'VpnClientRootCertificate',
+    'VpnClientRevokedCertificate',
+    'VpnClientConfiguration',
+    'BgpSettings',
+    'VirtualNetworkGateway',
+    'VpnClientParameters',
+    'TunnelConnectionHealth',
+    'LocalNetworkGateway',
+    'VirtualNetworkGatewayConnection',
+    'ConnectionResetSharedKey',
+    'ConnectionSharedKey',
     'ExpressRouteCircuitAuthorization',
     'ExpressRouteCircuitPeeringConfig',
     'ExpressRouteCircuitStats',
@@ -207,62 +244,25 @@ __all__ = [
     'ExpressRouteCircuitsRoutesTableSummaryListResult',
     'ExpressRouteServiceProviderBandwidthsOffered',
     'ExpressRouteServiceProvider',
-    'FrontendIPConfiguration',
-    'LoadBalancingRule',
-    'Probe',
-    'InboundNatPool',
-    'OutboundNatRule',
-    'LoadBalancer',
-    'AddressSpace',
-    'BgpSettings',
-    'LocalNetworkGateway',
-    'EffectiveNetworkSecurityGroup',
-    'EffectiveNetworkSecurityGroupAssociation',
-    'EffectiveNetworkSecurityRule',
-    'EffectiveNetworkSecurityGroupListResult',
-    'EffectiveRoute',
-    'EffectiveRouteListResult',
-    'VirtualNetworkPeering',
-    'UsageName',
-    'Usage',
-    'VirtualNetworkGatewayIPConfiguration',
-    'VirtualNetworkGatewaySku',
-    'VpnClientConfiguration',
-    'VpnClientRootCertificate',
-    'VpnClientRevokedCertificate',
-    'VirtualNetworkGateway',
-    'VpnClientParameters',
-    'TunnelConnectionHealth',
-    'VirtualNetworkGatewayConnection',
-    'ConnectionResetSharedKey',
-    'ConnectionSharedKey',
-    'DhcpOptions',
-    'VirtualNetwork',
-    'DnsNameAvailabilityResult',
-    'IPAddressAvailabilityResult',
-    'ErrorDetails',
-    'Error',
-    'AzureAsyncOperationResult',
-    'Resource',
     'ApplicationGatewayPaged',
+    'RouteTablePaged',
+    'RoutePaged',
+    'PublicIPAddressPaged',
+    'NetworkSecurityGroupPaged',
+    'SecurityRulePaged',
+    'LoadBalancerPaged',
+    'VirtualNetworkPaged',
+    'SubnetPaged',
+    'VirtualNetworkPeeringPaged',
+    'NetworkInterfacePaged',
+    'UsagePaged',
+    'VirtualNetworkGatewayPaged',
+    'VirtualNetworkGatewayConnectionPaged',
+    'LocalNetworkGatewayPaged',
     'ExpressRouteCircuitAuthorizationPaged',
     'ExpressRouteCircuitPeeringPaged',
     'ExpressRouteCircuitPaged',
     'ExpressRouteServiceProviderPaged',
-    'LoadBalancerPaged',
-    'LocalNetworkGatewayPaged',
-    'NetworkInterfacePaged',
-    'NetworkSecurityGroupPaged',
-    'PublicIPAddressPaged',
-    'RouteTablePaged',
-    'RoutePaged',
-    'SecurityRulePaged',
-    'SubnetPaged',
-    'VirtualNetworkPeeringPaged',
-    'UsagePaged',
-    'VirtualNetworkGatewayConnectionPaged',
-    'VirtualNetworkGatewayPaged',
-    'VirtualNetworkPaged',
     'TransportProtocol',
     'IPAllocationMethod',
     'IPVersion',
@@ -279,18 +279,12 @@ __all__ = [
     'ApplicationGatewayRequestRoutingRuleType',
     'ApplicationGatewayOperationalState',
     'ApplicationGatewayFirewallMode',
-    'AuthorizationUseStatus',
-    'ExpressRouteCircuitPeeringAdvertisedPublicPrefixState',
-    'ExpressRouteCircuitPeeringType',
-    'ExpressRouteCircuitPeeringState',
-    'ExpressRouteCircuitSkuTier',
-    'ExpressRouteCircuitSkuFamily',
-    'ServiceProviderProvisioningState',
+    'NetworkOperationStatus',
     'LoadDistribution',
     'ProbeProtocol',
+    'VirtualNetworkPeeringState',
     'EffectiveRouteSource',
     'EffectiveRouteState',
-    'VirtualNetworkPeeringState',
     'VirtualNetworkGatewayType',
     'VpnType',
     'VirtualNetworkGatewaySkuName',
@@ -298,5 +292,11 @@ __all__ = [
     'ProcessorArchitecture',
     'VirtualNetworkGatewayConnectionStatus',
     'VirtualNetworkGatewayConnectionType',
-    'NetworkOperationStatus',
+    'AuthorizationUseStatus',
+    'ExpressRouteCircuitPeeringAdvertisedPublicPrefixState',
+    'ExpressRouteCircuitPeeringType',
+    'ExpressRouteCircuitPeeringState',
+    'ExpressRouteCircuitSkuTier',
+    'ExpressRouteCircuitSkuFamily',
+    'ServiceProviderProvisioningState',
 ]

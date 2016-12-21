@@ -25,8 +25,7 @@ class NetworkInterfaceIPConfiguration(SubResource):
     :param load_balancer_backend_address_pools: The reference of
      LoadBalancerBackendAddressPool resource.
     :type load_balancer_backend_address_pools: list of
-     :class:`BackendAddressPool
-     <azure.mgmt.network.models.BackendAddressPool>`
+     :class:`BackendAddressPool <azure.mgmt.network.models.BackendAddressPool>`
     :param load_balancer_inbound_nat_rules: A list of references of
      LoadBalancerInboundNatRules.
     :type load_balancer_inbound_nat_rules: list of :class:`InboundNatRule
@@ -60,7 +59,7 @@ class NetworkInterfaceIPConfiguration(SubResource):
     :param etag: A unique read-only string that changes whenever the resource
      is updated.
     :type etag: str
-    """ 
+    """
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},

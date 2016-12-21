@@ -23,7 +23,7 @@ class ExpressRouteCircuitArpTable(Model):
     :type ip_address: str
     :param mac_address: The MAC address.
     :type mac_address: str
-    """ 
+    """
 
     _attribute_map = {
         'age': {'key': 'age', 'type': 'int'},

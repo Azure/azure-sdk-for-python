@@ -19,8 +19,8 @@ class EffectiveNetworkSecurityRule(Model):
      created by the user).
     :type name: str
     :param protocol: The network protocol this rule applies to. Possible
-     values are: 'Tcp', 'Udp', and '*'. Possible values include: 'Tcp',
-     'Udp', '*'
+     values are: 'Tcp', 'Udp', and '*'. Possible values include: 'Tcp', 'Udp',
+     '*'
     :type protocol: str or :class:`SecurityRuleProtocol
      <azure.mgmt.network.models.SecurityRuleProtocol>`
     :param source_port_range: The source port or range.
@@ -42,11 +42,11 @@ class EffectiveNetworkSecurityRule(Model):
      <azure.mgmt.network.models.SecurityRuleAccess>`
     :param priority: The priority of the rule.
     :type priority: int
-    :param direction: The direction of the rule. Possible values are:
-     'Inbound and Outbound'. Possible values include: 'Inbound', 'Outbound'
+    :param direction: The direction of the rule. Possible values are: 'Inbound
+     and Outbound'. Possible values include: 'Inbound', 'Outbound'
     :type direction: str or :class:`SecurityRuleDirection
      <azure.mgmt.network.models.SecurityRuleDirection>`
-    """ 
+    """
 
     _attribute_map = {
         'name': {'key': 'name', 'type': 'str'},

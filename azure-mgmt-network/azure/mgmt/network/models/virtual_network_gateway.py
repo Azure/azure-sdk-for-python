@@ -37,19 +37,19 @@ class VirtualNetworkGateway(Resource):
      'ExpressRoute'
     :type gateway_type: str or :class:`VirtualNetworkGatewayType
      <azure.mgmt.network.models.VirtualNetworkGatewayType>`
-    :param vpn_type: The type of this virtual network gateway. Possible
-     values are: 'PolicyBased' and 'RouteBased'. Possible values include:
+    :param vpn_type: The type of this virtual network gateway. Possible values
+     are: 'PolicyBased' and 'RouteBased'. Possible values include:
      'PolicyBased', 'RouteBased'
     :type vpn_type: str or :class:`VpnType
      <azure.mgmt.network.models.VpnType>`
-    :param enable_bgp: Whether BGP is enabled for this virtual network
-     gateway or not.
+    :param enable_bgp: Whether BGP is enabled for this virtual network gateway
+     or not.
     :type enable_bgp: bool
     :param active_active: ActiveActive flag
     :type active_active: bool
     :param gateway_default_site: The reference of the LocalNetworkGateway
-     resource which represents local network site having default routes.
-     Assign Null value in case of removing existing default site setting.
+     resource which represents local network site having default routes. Assign
+     Null value in case of removing existing default site setting.
     :type gateway_default_site: :class:`SubResource
      <azure.mgmt.network.models.SubResource>`
     :param sku: The reference of the VirtualNetworkGatewaySku resource which
@@ -74,7 +74,7 @@ class VirtualNetworkGateway(Resource):
     :param etag: Gets a unique read-only string that changes whenever the
      resource is updated.
     :type etag: str
-    """ 
+    """
 
     _validation = {
         'name': {'readonly': True},
