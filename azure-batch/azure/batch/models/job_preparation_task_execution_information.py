@@ -22,13 +22,17 @@ class JobPreparationTaskExecutionInformation(Model):
     :param end_time: The time at which the Job Preparation task completed.
      This property is set only if the task is in the Completed state.
     :type end_time: datetime
-    :param state: The current state of the Job Preparation task. Possible
-     values include: 'running', 'completed'
+    :param state: The current state of the Job Preparation task on the compute
+     node. Possible values are: running – the task is currently running
+     (including retrying). completed – the task has exited with exit code 0, or
+     the task has exhausted its retry limit, or the Batch service was unable to
+     start the task due to scheduling errors. Possible values include:
+     'running', 'completed'
     :type state: str or :class:`JobPreparationTaskState
      <azure.batch.models.JobPreparationTaskState>`
-    :param task_root_directory: The root directory of the Job Preparation
-     task on the compute node. You can use this path to retrieve files
-     created by the task, such as log files.
+    :param task_root_directory: The root directory of the Job Preparation task
+     on the compute node. You can use this path to retrieve files created by
+     the task, such as log files.
     :type task_root_directory: str
     :param task_root_directory_url: The URL to the root directory of the Job
      Preparation task on the compute node.
@@ -47,13 +51,17 @@ class JobPreparationTaskExecutionInformation(Model):
     :type scheduling_error: :class:`TaskSchedulingError
      <azure.batch.models.TaskSchedulingError>`
     :param retry_count: The number of times the task has been retried by the
-     Batch service. Every time the task exits with a non-zero exit code, it
-     is deemed a task failure. The Batch service will retry the task up to
-     the limit specified by the constraints.
+     Batch service. Every time the task exits with a non-zero exit code, it is
+     deemed a task failure. The Batch service will retry the task up to the
+     limit specified by the constraints.
     :type retry_count: int
     :param last_retry_time: The most recent time at which a retry of the Job
      Preparation task started running. This property is set only if the task
-     was retried (i.e. retryCount is nonzero).
+     was retried (i.e. retryCount is nonzero). If present, this is typically
+     the same as startTime, but may be different if the task has been restarted
+     for reasons other than retry; for example, if the compute node was
+     rebooted during a retry, then the startTime is updated but the
+     lastRetryTime is not.
     :type last_retry_time: datetime
     """ 
 

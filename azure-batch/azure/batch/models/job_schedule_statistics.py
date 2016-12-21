@@ -33,7 +33,11 @@ class JobScheduleStatistics(Model):
      under the schedule.
     :type kernel_cpu_time: timedelta
     :param wall_clock_time: The total wall clock time of all the tasks in all
-     the jobs created under the schedule.
+     the jobs created under the schedule. The wall clock time is the elapsed
+     time from when the task started running on a compute node to when it
+     finished (or to the last time the statistics were updated, if the task had
+     not finished by then). If a task was retried, this includes the wall clock
+     time of all the task retries.
     :type wall_clock_time: timedelta
     :param read_iops: The total number of disk read operations made by all
      tasks in all jobs created under the schedule.
@@ -48,21 +52,22 @@ class JobScheduleStatistics(Model):
      all jobs created under the schedule.
     :type write_io_gi_b: float
     :param num_succeeded_tasks: The total number of tasks successfully
-     completed during the given time range in jobs created under the
-     schedule. A task completes successfully if it returns exit code 0.
+     completed during the given time range in jobs created under the schedule.
+     A task completes successfully if it returns exit code 0.
     :type num_succeeded_tasks: long
     :param num_failed_tasks: The total number of tasks that failed during the
      given time range in jobs created under the schedule. A task fails if it
      exhausts its maximum retry count without returning exit code 0.
     :type num_failed_tasks: long
-    :param num_task_retries: The total number of retries during the given
-     time range on all tasks in all jobs created under the schedule.
+    :param num_task_retries: The total number of retries during the given time
+     range on all tasks in all jobs created under the schedule.
     :type num_task_retries: long
     :param wait_time: The total wait time of all tasks in all jobs created
      under the schedule. The wait time for a task is defined as the elapsed
-     time between the creation of the task and the start of task execution.
-     (If the task is retried due to failures, the wait time is the time to
-     the most recent task execution.).
+     time between the creation of the task and the start of task execution. (If
+     the task is retried due to failures, the wait time is the time to the most
+     recent task execution.). This value is only reported in the account
+     lifetime statistics; it is not included in the job statistics.
     :type wait_time: timedelta
     """ 
 

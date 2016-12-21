@@ -332,10 +332,17 @@ class MgmtNetworkTest(AzureMgmtTestCase):
         )
         vnet = result_create.result()
 
-        result_get = self.network_client.virtual_networks.get(
+        vnet = self.network_client.virtual_networks.get(
             self.group_name,
             vnet.name,
         )
+
+        ip_availability = self.network_client.virtual_networks.check_ip_address_availability(
+            self.group_name,
+            vnet.name,
+            '10.0.1.35' # Should be available since new VNet sor Subnet 1
+        )
+        self.assertTrue(ip_availability.available)
 
         result_list = list(self.network_client.virtual_networks.list(
             self.group_name,
@@ -706,6 +713,105 @@ class MgmtNetworkTest(AzureMgmtTestCase):
             express_route_name
         )
         async_express_route.wait()
+
+    @record
+    def test_virtual_network_gateway_operations(self):
+        # https://docs.microsoft.com/en-us/azure/vpn-gateway/vpn-gateway-howto-site-to-site-resource-manager-portal
+
+        vnet_name = self.get_resource_name('pyvirtnet')
+        fe_name = self.get_resource_name('pysubnetfe')
+        be_name = self.get_resource_name('pysubnetbe')
+        gateway_name = self.get_resource_name('pysubnetga')
+
+        # Create VNet
+        async_vnet_creation = self.network_client.virtual_networks.create_or_update(
+            self.group_name,
+            vnet_name,
+            {
+                'location': self.region,
+                'address_space': {
+                    'address_prefixes': [
+                        '10.11.0.0/16',
+                        '10.12.0.0/16'
+                    ]
+                }
+            }
+        )
+        async_vnet_creation.wait()
+
+        # Create Front End Subnet
+        async_subnet_creation = self.network_client.subnets.create_or_update(
+            self.group_name,
+            vnet_name,
+            fe_name,
+            {'address_prefix': '10.11.0.0/24'}
+        )
+        fe_subnet_info = async_subnet_creation.result()
+
+        # Create Back End Subnet
+        async_subnet_creation = self.network_client.subnets.create_or_update(
+            self.group_name,
+            vnet_name,
+            be_name,
+            {'address_prefix': '10.12.0.0/24'}
+        )
+        be_subnet_info = async_subnet_creation.result()
+
+        # Create Gateway Subnet
+        async_subnet_creation = self.network_client.subnets.create_or_update(
+            self.group_name,
+            vnet_name,
+            'GatewaySubnet',
+            {'address_prefix': '10.12.255.0/27'}
+        )
+        gateway_subnet_info = async_subnet_creation.result()
+
+        # Public IP Address
+        public_ip_name = self.get_resource_name('pyipname')
+        params_create = azure.mgmt.network.models.PublicIPAddress(
+            location=self.region,
+            public_ip_allocation_method=azure.mgmt.network.models.IPAllocationMethod.dynamic,
+            tags={
+                'key': 'value',
+            },
+        )
+        result_create = self.network_client.public_ip_addresses.create_or_update(
+            self.group_name,
+            public_ip_name,
+            params_create,
+        )
+        public_ip_address = result_create.result()
+
+        # Gateway itself
+        vng_name = self.get_resource_name('pyvng')
+        gw_params = {
+            'location': self.region,
+            'gateway_type': 'VPN',
+            'vpn_type': 'RouteBased',
+            'enable_bgp': False,
+            'sku': {
+                'tier': 'Standard',
+                'capacity': 2,
+                'name': 'Standard'},
+            'ip_configurations':[{
+                'name': 'default',
+                'private_ip_allocation_method': 'Dynamic',
+                'subnet': {
+                    'id': gateway_subnet_info.id
+                },
+                'public_ip_address': {
+                    'id': public_ip_address.id
+                }
+            }],
+        }
+        async_create = self.network_client.virtual_network_gateways.create_or_update(
+            self.group_name,
+            vng_name,
+            gw_params
+        )
+        vng = async_create.result()
+        self.assertEquals(vng.name, vng_name)
+
 
 #------------------------------------------------------------------------------
 if __name__ == '__main__':

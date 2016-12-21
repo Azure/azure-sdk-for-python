@@ -15,10 +15,10 @@ from msrest.serialization import Model
 class JobPreparationAndReleaseTaskExecutionInformation(Model):
     """The status of the Job Preparation and Job Release tasks on a compute node.
 
-    :param pool_id: The id of the pool containing the compute node to which
+    :param pool_id: The ID of the pool containing the compute node to which
      this entry refers.
     :type pool_id: str
-    :param node_id: The id of the compute node to which this entry refers.
+    :param node_id: The ID of the compute node to which this entry refers.
     :type node_id: str
     :param node_url: The URL of the compute node to which this entry refers.
     :type node_url: str
@@ -28,8 +28,8 @@ class JobPreparationAndReleaseTaskExecutionInformation(Model):
      :class:`JobPreparationTaskExecutionInformation
      <azure.batch.models.JobPreparationTaskExecutionInformation>`
     :param job_release_task_execution_info: Information about the execution
-     status of the Job Release task on this compute node. This property is
-     set only if the Job Release task has run on the node.
+     status of the Job Release task on this compute node. This property is set
+     only if the Job Release task has run on the node.
     :type job_release_task_execution_info:
      :class:`JobReleaseTaskExecutionInformation
      <azure.batch.models.JobReleaseTaskExecutionInformation>`

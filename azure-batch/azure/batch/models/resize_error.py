@@ -18,8 +18,8 @@ class ResizeError(Model):
     :param code: An identifier for the pool resize error. Codes are invariant
      and are intended to be consumed programmatically.
     :type code: str
-    :param message: A message describing the pool resize error, intended to
-     be suitable for display in a user interface.
+    :param message: A message describing the pool resize error, intended to be
+     suitable for display in a user interface.
     :type message: str
     :param values: A list of additional error details related to the pool
      resize error.

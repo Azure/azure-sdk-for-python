@@ -13,10 +13,14 @@ from msrest.serialization import Model
 
 
 class JobDisableParameter(Model):
-    """Parameters for a CloudJobOperations.Disable request.
+    """Options when disabling a job.
 
     :param disable_tasks: What to do with active tasks associated with the
-     job. Possible values include: 'requeue', 'terminate', 'wait'
+     job. Possible values are: requeue – Terminate running tasks and requeue
+     them. The tasks will run again when the job is enabled. terminate –
+     Terminate running tasks. The tasks will not run again. wait – Allow
+     currently running tasks to complete. Possible values include: 'requeue',
+     'terminate', 'wait'
     :type disable_tasks: str or :class:`DisableJobOption
      <azure.batch.models.DisableJobOption>`
     """ 

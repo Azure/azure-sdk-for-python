@@ -29,6 +29,7 @@ from .data_lake_analytics_account_paged import DataLakeAnalyticsAccountPaged
 from .data_lake_analytics_account_management_client_enums import (
     DataLakeAnalyticsAccountStatus,
     DataLakeAnalyticsAccountState,
+    PricingTierType,
 )
 
 __all__ = [
@@ -51,4 +52,5 @@ __all__ = [
     'DataLakeAnalyticsAccountPaged',
     'DataLakeAnalyticsAccountStatus',
     'DataLakeAnalyticsAccountState',
+    'PricingTierType',
 ]

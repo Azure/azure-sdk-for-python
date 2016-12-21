@@ -13,10 +13,15 @@ from msrest.serialization import Model
 
 
 class PoolEvaluateAutoScaleParameter(Model):
-    """Parameters for a CloudJobOperations.EvaluateAutoScale request.
+    """Options for evaluating an automatic scaling formula on a pool.
 
-    :param auto_scale_formula: A formula for the desired number of compute
-     nodes in the pool.
+    :param auto_scale_formula: The formula for the desired number of compute
+     nodes in the pool. The formula is validated and its results calculated,
+     but it is not applied to the pool. To apply the formula to the pool,
+     'Enable automatic scaling on a pool'. For more information about
+     specifying this formula, see Automatically scale compute nodes in an Azure
+     Batch pool
+     (https://azure.microsoft.com/en-us/documentation/articles/batch-automatic-scaling).
     :type auto_scale_formula: str
     """ 
 

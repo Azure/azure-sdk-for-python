@@ -15,7 +15,7 @@ from msrest.serialization import Model
 class RecentJob(Model):
     """Information about the most recent job to run under the job schedule.
 
-    :param id: The id of the job.
+    :param id: The ID of the job.
     :type id: str
     :param url: The URL of the job.
     :type url: str

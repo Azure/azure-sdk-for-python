@@ -59,3 +59,14 @@ class TrustedIdProviderState(Enum):
 
     enabled = "Enabled"
     disabled = "Disabled"
+
+
+class PricingTierType(Enum):
+
+    consumption = "Consumption"
+    commitment_1_tb = "Commitment_1TB"
+    commitment_10_tb = "Commitment_10TB"
+    commitment_100_tb = "Commitment_100TB"
+    commitment_500_tb = "Commitment_500TB"
+    commitment_1_pb = "Commitment_1PB"
+    commitment_5_pb = "Commitment_5PB"

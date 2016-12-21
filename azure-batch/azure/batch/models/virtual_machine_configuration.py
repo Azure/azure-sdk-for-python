@@ -20,15 +20,19 @@ class VirtualMachineConfiguration(Model):
      Marketplace image to use.
     :type image_reference: :class:`ImageReference
      <azure.batch.models.ImageReference>`
-    :param node_agent_sku_id: The SKU of Batch Node Agent to be provisioned
-     on the compute node. The Batch node agent is a program that runs on each
-     node in the pool, and provides the command-and-control interface between
-     the node and the Batch service. There are different implementations of
-     the node agent, known as SKUs, for different operating systems.
+    :param node_agent_sku_id: The SKU of the Batch node agent to be
+     provisioned on compute nodes in the pool. The Batch node agent is a
+     program that runs on each node in the pool, and provides the
+     command-and-control interface between the node and the Batch service.
+     There are different implementations of the node agent, known as SKUs, for
+     different operating systems. You must specify a node agent SKU which
+     matches the selected image reference. To get the list of supported node
+     agent SKUs along with their list of verified image references, see the
+     'List supported node agent SKUs' operation.
     :type node_agent_sku_id: str
     :param windows_configuration: Windows operating system settings on the
-     virtual machine. This property must not be specified if the
-     imageReference property specifies a Linux OS image.
+     virtual machine. This property must not be specified if the imageReference
+     property specifies a Linux OS image.
     :type windows_configuration: :class:`WindowsConfiguration
      <azure.batch.models.WindowsConfiguration>`
     """ 

@@ -17,19 +17,25 @@ class JobReleaseTask(Model):
     job has run.
 
     :param id: A string that uniquely identifies the Job Release task within
-     the job. The id can contain any combination of alphanumeric characters
+     the job. The ID can contain any combination of alphanumeric characters
      including hyphens and underscores and cannot contain more than 64
-     characters.
+     characters. If you do not specify this property, the Batch service assigns
+     a default value of 'jobrelease'. No other task in the job can have the
+     same id as the Job Release task. If you try to submit a task with the same
+     id, the Batch service rejects the request with error code
+     TaskIdSameAsJobReleaseTask; if you are calling the REST API directly, the
+     HTTP status code is 409 (Conflict).
     :type id: str
-    :param command_line: The command line of the Job Release task. The
-     command line does not run under a shell, and therefore cannot take
-     advantage of shell features such as environment variable expansion. If
-     you want to take advantage of such features, you should invoke the shell
-     in the command line, for example using "cmd /c MyCommand" in Windows or
-     "/bin/sh -c MyCommand" in Linux.
+    :param command_line: The command line of the Job Release task. The command
+     line does not run under a shell, and therefore cannot take advantage of
+     shell features such as environment variable expansion. If you want to take
+     advantage of such features, you should invoke the shell in the command
+     line, for example using "cmd /c MyCommand" in Windows or "/bin/sh -c
+     MyCommand" in Linux.
     :type command_line: str
     :param resource_files: A list of files that the Batch service will
-     download to the compute node before running the command line.
+     download to the compute node before running the command line. Files listed
+     under this element are located in the task's working directory.
     :type resource_files: list of :class:`ResourceFile
      <azure.batch.models.ResourceFile>`
     :param environment_settings: A list of environment variable settings for
@@ -39,15 +45,19 @@ class JobReleaseTask(Model):
     :param max_wall_clock_time: The maximum elapsed time that the Job Release
      task may run on a given compute node, measured from the time the task
      starts. If the task does not complete within the time limit, the Batch
-     service terminates it. The default value is 15 minutes.
+     service terminates it. The default value is 15 minutes. You may not
+     specify a timeout longer than 15 minutes. If you do, the Batch service
+     rejects it with an error; if you are calling the REST API directly, the
+     HTTP status code is 400 (Bad Request).
     :type max_wall_clock_time: timedelta
-    :param retention_time: The minimum time to retain the working directory
-     for the Job Release task on the compute node. After this time, the Batch
-     service may delete the working directory and all its contents.  The
-     default is infinite.
+    :param retention_time: The minimum time to retain the task directory for
+     the Job Release task on the compute node. After this time, the Batch
+     service may delete the task directory and all its contents. The default is
+     infinite, i.e. the task directory will be retained until the compute node
+     is removed or reimaged.
     :type retention_time: timedelta
-    :param run_elevated: Whether to run the Job Release task in elevated
-     mode. The default value is false.
+    :param run_elevated: Whether to run the Job Release task in elevated mode.
+     The default value is false.
     :type run_elevated: bool
     """ 
 

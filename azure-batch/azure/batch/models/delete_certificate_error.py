@@ -22,7 +22,10 @@ class DeleteCertificateError(Model):
      intended to be suitable for display in a user interface.
     :type message: str
     :param values: A list of additional error details related to the
-     certificate deletion error.
+     certificate deletion error. This list includes details such as the active
+     pools and nodes referencing this certificate. However, if a large number
+     of resources reference the certificate, the list contains only about the
+     first hundred.
     :type values: list of :class:`NameValuePair
      <azure.batch.models.NameValuePair>`
     """ 

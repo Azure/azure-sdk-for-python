@@ -37,22 +37,22 @@ class FileOperations(object):
         """Deletes the specified task file from the compute node where the task
         ran.
 
-        :param job_id: The id of the job that contains the task.
+        :param job_id: The ID of the job that contains the task.
         :type job_id: str
-        :param task_id: The id of the task whose file you want to delete.
+        :param task_id: The ID of the task whose file you want to delete.
         :type task_id: str
         :param file_name: The path to the task file that you want to delete.
         :type file_name: str
         :param recursive: Whether to delete children of a directory. If the
          fileName parameter represents a directory instead of a file, you can
-         set Recursive to true to delete the directory and all of the files
-         and subdirectories in it. If Recursive is false then the directory
-         must be empty or deletion will fail.
+         set recursive to true to delete the directory and all of the files and
+         subdirectories in it. If recursive is false then the directory must be
+         empty or deletion will fail.
         :type recursive: bool
         :param file_delete_from_task_options: Additional parameters for the
          operation
-        :type file_delete_from_task_options:
-         :class:`FileDeleteFromTaskOptions <azure.batch.models.FileDeleteFromTaskOptions>`
+        :type file_delete_from_task_options: :class:`FileDeleteFromTaskOptions
+         <azure.batch.models.FileDeleteFromTaskOptions>`
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -61,6 +61,8 @@ class FileOperations(object):
         :rtype: None
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`BatchErrorException<azure.batch.models.BatchErrorException>`
         """
         timeout = None
         if file_delete_from_task_options is not None:
@@ -127,9 +129,9 @@ class FileOperations(object):
             self, job_id, task_id, file_name, file_get_from_task_options=None, custom_headers=None, raw=False, callback=None, **operation_config):
         """Returns the content of the specified task file.
 
-        :param job_id: The id of the job that contains the task.
+        :param job_id: The ID of the job that contains the task.
         :type job_id: str
-        :param task_id: The id of the task whose file you want to retrieve.
+        :param task_id: The ID of the task whose file you want to retrieve.
         :type task_id: str
         :param file_name: The path to the task file that you want to get the
          content of.
@@ -151,6 +153,8 @@ class FileOperations(object):
         :rtype: Generator
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`BatchErrorException<azure.batch.models.BatchErrorException>`
         """
         timeout = None
         if file_get_from_task_options is not None:
@@ -247,9 +251,9 @@ class FileOperations(object):
             self, job_id, task_id, file_name, file_get_node_file_properties_from_task_options=None, custom_headers=None, raw=False, **operation_config):
         """Gets the properties of the specified task file.
 
-        :param job_id: The id of the job that contains the task.
+        :param job_id: The ID of the job that contains the task.
         :type job_id: str
-        :param task_id: The id of the task whose file you want to get the
+        :param task_id: The ID of the task whose file you want to get the
          properties of.
         :type task_id: str
         :param file_name: The path to the task file that you want to get the
@@ -268,6 +272,8 @@ class FileOperations(object):
         :rtype: None
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`BatchErrorException<azure.batch.models.BatchErrorException>`
         """
         timeout = None
         if file_get_node_file_properties_from_task_options is not None:
@@ -350,18 +356,18 @@ class FileOperations(object):
             self, pool_id, node_id, file_name, recursive=None, file_delete_from_compute_node_options=None, custom_headers=None, raw=False, **operation_config):
         """Deletes the specified task file from the compute node.
 
-        :param pool_id: The id of the pool that contains the compute node.
+        :param pool_id: The ID of the pool that contains the compute node.
         :type pool_id: str
-        :param node_id: The id of the compute node from which you want to
+        :param node_id: The ID of the compute node from which you want to
          delete the file.
         :type node_id: str
         :param file_name: The path to the file that you want to delete.
         :type file_name: str
         :param recursive: Whether to delete children of a directory. If the
          fileName parameter represents a directory instead of a file, you can
-         set Recursive to true to delete the directory and all of the files
-         and subdirectories in it. If Recursive is false then the directory
-         must be empty or deletion will fail.
+         set recursive to true to delete the directory and all of the files and
+         subdirectories in it. If recursive is false then the directory must be
+         empty or deletion will fail.
         :type recursive: bool
         :param file_delete_from_compute_node_options: Additional parameters
          for the operation
@@ -376,6 +382,8 @@ class FileOperations(object):
         :rtype: None
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`BatchErrorException<azure.batch.models.BatchErrorException>`
         """
         timeout = None
         if file_delete_from_compute_node_options is not None:
@@ -442,9 +450,9 @@ class FileOperations(object):
             self, pool_id, node_id, file_name, file_get_from_compute_node_options=None, custom_headers=None, raw=False, callback=None, **operation_config):
         """Returns the content of the specified task file.
 
-        :param pool_id: The id of the pool that contains the compute node.
+        :param pool_id: The ID of the pool that contains the compute node.
         :type pool_id: str
-        :param node_id: The id of the compute node that contains the file.
+        :param node_id: The ID of the compute node that contains the file.
         :type node_id: str
         :param file_name: The path to the task file that you want to get the
          content of.
@@ -467,6 +475,8 @@ class FileOperations(object):
         :rtype: Generator
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`BatchErrorException<azure.batch.models.BatchErrorException>`
         """
         timeout = None
         if file_get_from_compute_node_options is not None:
@@ -563,9 +573,9 @@ class FileOperations(object):
             self, pool_id, node_id, file_name, file_get_node_file_properties_from_compute_node_options=None, custom_headers=None, raw=False, **operation_config):
         """Gets the properties of the specified compute node file.
 
-        :param pool_id: The id of the pool that contains the compute node.
+        :param pool_id: The ID of the pool that contains the compute node.
         :type pool_id: str
-        :param node_id: The id of the compute node that contains the file.
+        :param node_id: The ID of the compute node that contains the file.
         :type node_id: str
         :param file_name: The path to the compute node file that you want to
          get the properties of.
@@ -583,6 +593,8 @@ class FileOperations(object):
         :rtype: None
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`BatchErrorException<azure.batch.models.BatchErrorException>`
         """
         timeout = None
         if file_get_node_file_properties_from_compute_node_options is not None:
@@ -665,11 +677,13 @@ class FileOperations(object):
             self, job_id, task_id, recursive=None, file_list_from_task_options=None, custom_headers=None, raw=False, **operation_config):
         """Lists the files in a task's directory on its compute node.
 
-        :param job_id: The id of the job that contains the task.
+        :param job_id: The ID of the job that contains the task.
         :type job_id: str
-        :param task_id: The id of the task whose files you want to list.
+        :param task_id: The ID of the task whose files you want to list.
         :type task_id: str
-        :param recursive: Whether to list children of a directory.
+        :param recursive: Whether to list children of a directory. This
+         parameter can be used in combination with the filter parameter to list
+         specific type of files.
         :type recursive: bool
         :param file_list_from_task_options: Additional parameters for the
          operation
@@ -681,6 +695,8 @@ class FileOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`NodeFilePaged <azure.batch.models.NodeFilePaged>`
+        :raises:
+         :class:`BatchErrorException<azure.batch.models.BatchErrorException>`
         """
         filter = None
         if file_list_from_task_options is not None:
@@ -720,7 +736,7 @@ class FileOperations(object):
                 if filter is not None:
                     query_parameters['$filter'] = self._serialize.query("filter", filter, 'str')
                 if max_results is not None:
-                    query_parameters['maxresults'] = self._serialize.query("max_results", max_results, 'int')
+                    query_parameters['maxresults'] = self._serialize.query("max_results", max_results, 'int', maximum=1000, minimum=1)
                 if timeout is not None:
                     query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'int')
 
@@ -769,9 +785,9 @@ class FileOperations(object):
         """Lists all of the files in task directories on the specified compute
         node.
 
-        :param pool_id: The id of the pool that contains the compute node.
+        :param pool_id: The ID of the pool that contains the compute node.
         :type pool_id: str
-        :param node_id: The id of the compute node whose files you want to
+        :param node_id: The ID of the compute node whose files you want to
          list.
         :type node_id: str
         :param recursive: Whether to list children of a directory.
@@ -787,6 +803,8 @@ class FileOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`NodeFilePaged <azure.batch.models.NodeFilePaged>`
+        :raises:
+         :class:`BatchErrorException<azure.batch.models.BatchErrorException>`
         """
         filter = None
         if file_list_from_compute_node_options is not None:
@@ -826,7 +844,7 @@ class FileOperations(object):
                 if filter is not None:
                     query_parameters['$filter'] = self._serialize.query("filter", filter, 'str')
                 if max_results is not None:
-                    query_parameters['maxresults'] = self._serialize.query("max_results", max_results, 'int')
+                    query_parameters['maxresults'] = self._serialize.query("max_results", max_results, 'int', maximum=1000, minimum=1)
                 if timeout is not None:
                     query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'int')
 

@@ -60,7 +60,7 @@ The following packages are still labeled "preview" but can be considered "stable
 - azure-mgmt-compute 0.32.1
 - azure-mgmt-network 0.30.0
 - azure-mgmt-storage 0.30.0
-- azure-mgmt-keyvault 0.30.0
+- azure-mgmt-keyvault 0.30.1
 
 The following packages are already released as "stable" and are officially production ready:
 
@@ -85,14 +85,14 @@ listed before.
 - azure-graphrbac 0.30.0rc6
 - azure-monitor 0.1.0
 - azure-mgmt-authorization 0.30.0rc6
-- azure-mgmt-cdn 0.30.0
+- azure-mgmt-cdn 0.30.1
 - azure-mgmt-cognitiveservices 0.30.0rc6
 - azure-mgmt-containerregistry 0.1.1
 - azure-mgmt-datalake-analytics 0.1.1
 - azure-mgmt-datalake-store 0.1.1
 - azure-mgmt-commerce 0.30.0rc6
 - azure-mgmt-eventhub 0.2.0
-- azure-mgmt-iothub 0.2.0
+- azure-mgmt-iothub 0.2.1
 - azure-mgmt-media 0.1.1
 - azure-mgmt-notificationhubs 0.30.0
 - azure-mgmt-powerbiembedded 0.30.0rc6
