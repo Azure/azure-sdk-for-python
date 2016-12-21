@@ -25,7 +25,7 @@ class ApplicationGatewayBackendHealthServer(Model):
      'Down', 'Partial'
     :type health: str or :class:`ApplicationGatewayBackendHealthServerHealth
      <azure.mgmt.network.models.ApplicationGatewayBackendHealthServerHealth>`
-    """ 
+    """
 
     _attribute_map = {
         'address': {'key': 'address', 'type': 'str'},

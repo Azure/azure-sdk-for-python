@@ -17,21 +17,21 @@ class VirtualNetworkPeering(SubResource):
 
     :param id: Resource ID.
     :type id: str
-    :param allow_virtual_network_access: Whether the VMs in the linked
-     virtual network space would be able to access all the VMs in local
-     Virtual network space.
+    :param allow_virtual_network_access: Whether the VMs in the linked virtual
+     network space would be able to access all the VMs in local Virtual network
+     space.
     :type allow_virtual_network_access: bool
-    :param allow_forwarded_traffic: Whether the forwarded traffic from the
-     VMs in the remote virtual network will be allowed/disallowed.
+    :param allow_forwarded_traffic: Whether the forwarded traffic from the VMs
+     in the remote virtual network will be allowed/disallowed.
     :type allow_forwarded_traffic: bool
     :param allow_gateway_transit: If gateway links can be used in remote
      virtual networking to link to this virtual network.
     :type allow_gateway_transit: bool
-    :param use_remote_gateways: If remote gateways can be used on this
-     virtual network. If the flag is set to true, and allowGatewayTransit on
-     remote peering is also true, virtual network will use gateways of remote
-     virtual network for transit. Only one peering can have this flag set to
-     true. This flag cannot be set if virtual network already has a gateway.
+    :param use_remote_gateways: If remote gateways can be used on this virtual
+     network. If the flag is set to true, and allowGatewayTransit on remote
+     peering is also true, virtual network will use gateways of remote virtual
+     network for transit. Only one peering can have this flag set to true. This
+     flag cannot be set if virtual network already has a gateway.
     :type use_remote_gateways: bool
     :param remote_virtual_network: The reference of the remote virtual
      network.
@@ -50,7 +50,7 @@ class VirtualNetworkPeering(SubResource):
     :param etag: A unique read-only string that changes whenever the resource
      is updated.
     :type etag: str
-    """ 
+    """
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},

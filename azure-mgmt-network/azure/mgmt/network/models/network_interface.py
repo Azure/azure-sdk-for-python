@@ -50,8 +50,8 @@ class NetworkInterface(Resource):
     :param enable_accelerated_networking: If the network interface is
      accelerated networking enabled.
     :type enable_accelerated_networking: bool
-    :param enable_ip_forwarding: Indicates whether IP forwarding is enabled
-     on this network interface.
+    :param enable_ip_forwarding: Indicates whether IP forwarding is enabled on
+     this network interface.
     :type enable_ip_forwarding: bool
     :param resource_guid: The resource GUID property of the network interface
      resource.
@@ -62,7 +62,7 @@ class NetworkInterface(Resource):
     :param etag: A unique read-only string that changes whenever the resource
      is updated.
     :type etag: str
-    """ 
+    """
 
     _validation = {
         'name': {'readonly': True},

@@ -27,7 +27,7 @@ class ExpressRouteCircuitRoutesTableSummary(Model):
     :param state_pfx_rcd: Current state of the BGP session, and the number of
      prefixes that have been received from a neighbor or peer group.
     :type state_pfx_rcd: str
-    """ 
+    """
 
     _attribute_map = {
         'neighbor': {'key': 'neighbor', 'type': 'str'},

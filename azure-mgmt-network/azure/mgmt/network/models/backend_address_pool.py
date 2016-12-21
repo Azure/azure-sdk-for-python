@@ -29,8 +29,8 @@ class BackendAddressPool(SubResource):
      backend address pool.
     :vartype load_balancing_rules: list of :class:`SubResource
      <azure.mgmt.network.models.SubResource>`
-    :ivar outbound_nat_rule: Gets outbound rules that use this backend
-     address pool.
+    :ivar outbound_nat_rule: Gets outbound rules that use this backend address
+     pool.
     :vartype outbound_nat_rule: :class:`SubResource
      <azure.mgmt.network.models.SubResource>`
     :param provisioning_state: Get provisioning state of the public IP
@@ -42,7 +42,7 @@ class BackendAddressPool(SubResource):
     :param etag: A unique read-only string that changes whenever the resource
      is updated.
     :type etag: str
-    """ 
+    """
 
     _validation = {
         'backend_ip_configurations': {'readonly': True},

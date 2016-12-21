@@ -17,13 +17,13 @@ class NetworkInterfaceDnsSettings(Model):
 
     :param dns_servers: List of DNS servers IP addresses. Use
      'AzureProvidedDNS' to switch to azure provided DNS resolution.
-     'AzureProvidedDNS' value cannot be combined with other IPs, it must be
-     the only value in dnsServers collection.
+     'AzureProvidedDNS' value cannot be combined with other IPs, it must be the
+     only value in dnsServers collection.
     :type dns_servers: list of str
     :param applied_dns_servers: If the VM that uses this NIC is part of an
      Availability Set, then this list will have the union of all DNS servers
-     from all NICs that are part of the Availability Set. This property is
-     what is configured on each of those VMs.
+     from all NICs that are part of the Availability Set. This property is what
+     is configured on each of those VMs.
     :type applied_dns_servers: list of str
     :param internal_dns_name_label: Relative DNS name for this NIC used for
      internal communications between VMs in the same virtual network.
@@ -32,11 +32,11 @@ class NetworkInterfaceDnsSettings(Model):
      communications between VMs in the same virtual network.
     :type internal_fqdn: str
     :param internal_domain_name_suffix: Even if internalDnsNameLabel is not
-     specified, a DNS entry is created for the primary NIC of the VM. This
-     DNS name can be constructed by concatenating the VM name with the value
-     of internalDomainNameSuffix.
+     specified, a DNS entry is created for the primary NIC of the VM. This DNS
+     name can be constructed by concatenating the VM name with the value of
+     internalDomainNameSuffix.
     :type internal_domain_name_suffix: str
-    """ 
+    """
 
     _attribute_map = {
         'dns_servers': {'key': 'dnsServers', 'type': '[str]'},
