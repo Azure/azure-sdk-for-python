@@ -30,7 +30,11 @@ class TaskStatistics(Model):
     :param kernel_cpu_time: The total kernel mode CPU time (summed across all
      cores and all compute nodes) consumed by the task.
     :type kernel_cpu_time: timedelta
-    :param wall_clock_time: The total wall clock time of the task.
+    :param wall_clock_time: The total wall clock time of the task. The wall
+     clock time is the elapsed time from when the task started running on a
+     compute node to when it finished (or to the last time the statistics were
+     updated, if the task had not finished by then). If the task was retried,
+     this includes the wall clock time of all the task retries.
     :type wall_clock_time: timedelta
     :param read_iops: The total number of disk read operations made by the
      task.
@@ -44,8 +48,8 @@ class TaskStatistics(Model):
     :type write_io_gi_b: float
     :param wait_time: The total wait time of the task. The wait time for a
      task is defined as the elapsed time between the creation of the task and
-     the start of task execution. (If the task is retried due to failures,
-     the wait time is the time to the most recent task execution.).
+     the start of task execution. (If the task is retried due to failures, the
+     wait time is the time to the most recent task execution.).
     :type wait_time: timedelta
     """ 
 

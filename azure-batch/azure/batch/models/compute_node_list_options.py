@@ -13,13 +13,14 @@ from msrest.serialization import Model
 
 
 class ComputeNodeListOptions(Model):
-    """Additional parameters for the ComputeNode_List operation.
+    """Additional parameters for the ComputeNode_list operation.
 
-    :param filter: An OData $filter clause.
+    :param filter: An OData $filter clause..
     :type filter: str
     :param select: An OData $select clause.
     :type select: str
     :param max_results: The maximum number of items to return in the response.
+     A maximum of 1000 nodes can be returned. Default value: 1000 .
     :type max_results: int
     :param timeout: The maximum time that the server can spend processing the
      request, in seconds. The default is 30 seconds. Default value: 30 .
@@ -29,15 +30,14 @@ class ComputeNodeListOptions(Model):
      9C4D50EE-2D56-4CD3-8152-34347DC9F2B0.
     :type client_request_id: str
     :param return_client_request_id: Whether the server should return the
-     client-request-id identifier in the response.
+     client-request-id in the response. Default value: False .
     :type return_client_request_id: bool
     :param ocp_date: The time the request was issued. If not specified, this
-     header will be automatically populated with the current system clock
-     time.
+     header will be automatically populated with the current system clock time.
     :type ocp_date: datetime
     """ 
 
-    def __init__(self, filter=None, select=None, max_results=None, timeout=30, client_request_id=None, return_client_request_id=None, ocp_date=None):
+    def __init__(self, filter=None, select=None, max_results=1000, timeout=30, client_request_id=None, return_client_request_id=False, ocp_date=None):
         self.filter = filter
         self.select = select
         self.max_results = max_results

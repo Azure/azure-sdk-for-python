@@ -308,7 +308,8 @@ class VaultsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`VaultPaged <azure.mgmt.keyvault.models.VaultPaged>`
+        :rtype: :class:`ResourcePaged
+         <azure.mgmt.keyvault.models.ResourcePaged>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
@@ -355,11 +356,11 @@ class VaultsOperations(object):
             return response
 
         # Deserialize response
-        deserialized = models.VaultPaged(internal_paging, self._deserialize.dependencies)
+        deserialized = models.ResourcePaged(internal_paging, self._deserialize.dependencies)
 
         if raw:
             header_dict = {}
-            client_raw_response = models.VaultPaged(internal_paging, self._deserialize.dependencies, header_dict)
+            client_raw_response = models.ResourcePaged(internal_paging, self._deserialize.dependencies, header_dict)
             return client_raw_response
 
         return deserialized

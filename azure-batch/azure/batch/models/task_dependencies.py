@@ -13,15 +13,17 @@ from msrest.serialization import Model
 
 
 class TaskDependencies(Model):
-    """Specifies any dependencies of a task. Any task that is explicitly
-    specified or within a dependency range must complete before the dependant
-    task will be scheduled.
+    """Specifies any dependencies of a task. Any task that is explicitly specified
+    or within a dependency range must complete before the dependant task will
+    be scheduled.
 
-    :param task_ids: The list of task ids that must complete before this task
-     can be scheduled.
+    :param task_ids: The list of task IDs that this task depends on. All tasks
+     in this list must complete successfully before the dependent task can be
+     scheduled.
     :type task_ids: list of str
-    :param task_id_ranges: The list of task ranges that must complete before
-     this task can be scheduled.
+    :param task_id_ranges: The list of task ID ranges that this task depends
+     on. All tasks in all ranges must complete successfully before the
+     dependent task can be scheduled.
     :type task_id_ranges: list of :class:`TaskIdRange
      <azure.batch.models.TaskIdRange>`
     """ 

@@ -19,8 +19,8 @@ class ExitConditions(Model):
      service should respond to them.
     :type exit_codes: list of :class:`ExitCodeMapping
      <azure.batch.models.ExitCodeMapping>`
-    :param exit_code_ranges: A list of task exit codes ranges and how the
-     Batch service should respond to them.
+    :param exit_code_ranges: A list of task exit code ranges and how the Batch
+     service should respond to them.
     :type exit_code_ranges: list of :class:`ExitCodeRangeMapping
      <azure.batch.models.ExitCodeRangeMapping>`
     :param scheduling_error: How the Batch service should respond if the task
@@ -31,7 +31,9 @@ class ExitConditions(Model):
      with an exit condition not covered by any of the other properties – that
      is, any nonzero exit code not listed in the exitCodes or exitCodeRanges
      collection, or a scheduling error if the schedulingError property is not
-     present.
+     present. Note that the default condition does not include exit code 0. If
+     you want non-default behaviour on exit code 0, you must list it explicitly
+     using the exitCodes or exitCodeRanges collection.
     :type default: :class:`ExitOptions <azure.batch.models.ExitOptions>`
     """ 
 

@@ -73,6 +73,21 @@ class DataLakeAnalyticsAccount(Resource):
     :vartype last_modified_time: datetime
     :ivar endpoint: the full CName endpoint for this account.
     :vartype endpoint: str
+    :param new_tier: the billing tier to use for next month. Possible values
+     include: 'Consumption', 'Commitment_100AUHours', 'Commitment_500AUHours',
+     'Commitment_1000AUHours', 'Commitment_5000AUHours',
+     'Commitment_10000AUHours', 'Commitment_50000AUHours',
+     'Commitment_100000AUHours', 'Commitment_500000AUHours'
+    :type new_tier: str or :class:`PricingTierType
+     <azure.mgmt.datalake.analytics.account.models.PricingTierType>`
+    :ivar current_tier: the billing tier in use for the current month.
+     Possible values include: 'Consumption', 'Commitment_100AUHours',
+     'Commitment_500AUHours', 'Commitment_1000AUHours',
+     'Commitment_5000AUHours', 'Commitment_10000AUHours',
+     'Commitment_50000AUHours', 'Commitment_100000AUHours',
+     'Commitment_500000AUHours'
+    :vartype current_tier: str or :class:`PricingTierType
+     <azure.mgmt.datalake.analytics.account.models.PricingTierType>`
     """
 
     _validation = {
@@ -92,6 +107,7 @@ class DataLakeAnalyticsAccount(Resource):
         'creation_time': {'readonly': True},
         'last_modified_time': {'readonly': True},
         'endpoint': {'readonly': True},
+        'current_tier': {'readonly': True},
     }
 
     _attribute_map = {
@@ -113,9 +129,11 @@ class DataLakeAnalyticsAccount(Resource):
         'creation_time': {'key': 'properties.creationTime', 'type': 'iso-8601'},
         'last_modified_time': {'key': 'properties.lastModifiedTime', 'type': 'iso-8601'},
         'endpoint': {'key': 'properties.endpoint', 'type': 'str'},
+        'new_tier': {'key': 'properties.newTier', 'type': 'PricingTierType'},
+        'current_tier': {'key': 'properties.currentTier', 'type': 'PricingTierType'},
     }
 
-    def __init__(self, location, default_data_lake_store_account, data_lake_store_accounts, tags=None, max_degree_of_parallelism=30, query_store_retention=30, max_job_count=3, storage_accounts=None):
+    def __init__(self, location, default_data_lake_store_account, data_lake_store_accounts, tags=None, max_degree_of_parallelism=30, query_store_retention=30, max_job_count=3, storage_accounts=None, new_tier=None):
         super(DataLakeAnalyticsAccount, self).__init__(location=location, tags=tags)
         self.provisioning_state = None
         self.state = None
@@ -130,3 +148,5 @@ class DataLakeAnalyticsAccount(Resource):
         self.creation_time = None
         self.last_modified_time = None
         self.endpoint = None
+        self.new_tier = new_tier
+        self.current_tier = None

@@ -13,8 +13,8 @@ from msrest.serialization import Model
 
 
 class ExitCodeMapping(Model):
-    """How the Batch service should respond if a task exits with a particular
-    exit code.
+    """How the Batch service should respond if a task exits with a particular exit
+    code.
 
     :param code: A process exit code.
     :type code: int

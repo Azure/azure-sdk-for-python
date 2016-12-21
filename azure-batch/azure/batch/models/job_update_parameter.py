@@ -13,22 +13,22 @@ from msrest.serialization import Model
 
 
 class JobUpdateParameter(Model):
-    """Parameters for a CloudJobOperations.Update request.
+    """The set of changes to be made to a job.
 
     :param priority: The priority of the job. Priority values can range from
      -1000 to 1000, with -1000 being the lowest priority and 1000 being the
      highest priority. If omitted, it is set to the default value 0.
     :type priority: int
-    :param constraints: The execution constraints for the job. If omitted,
-     the constraints are cleared.
+    :param constraints: The execution constraints for the job. If omitted, the
+     constraints are cleared.
     :type constraints: :class:`JobConstraints
      <azure.batch.models.JobConstraints>`
     :param pool_info: The pool on which the Batch service runs the job's
      tasks. You may change the pool for a job only when the job is disabled.
-     The Update Job call will fail if you include the poolInfo element and
-     the job is not disabled. If you specify an autoPoolSpecification
-     specification in the poolInfo, only the keepAlive property can be
-     updated, and then only if the auto pool has a poolLifetimeOption of job.
+     The Update Job call will fail if you include the poolInfo element and the
+     job is not disabled. If you specify an autoPoolSpecification specification
+     in the poolInfo, only the keepAlive property can be updated, and then only
+     if the auto pool has a poolLifetimeOption of job.
     :type pool_info: :class:`PoolInformation
      <azure.batch.models.PoolInformation>`
     :param metadata: A list of name-value pairs associated with the job as
@@ -36,9 +36,12 @@ class JobUpdateParameter(Model):
      effect, any existing metadata is deleted.
     :type metadata: list of :class:`MetadataItem
      <azure.batch.models.MetadataItem>`
-    :param on_all_tasks_complete: Specifies an action the Batch service
-     should take when all tasks in the job are in the completed state.
-     Possible values include: 'noAction', 'terminateJob'
+    :param on_all_tasks_complete: Specifies an action the Batch service should
+     take when all tasks in the job are in the completed state. If omitted, the
+     completion behavior is set to noaction. If the current value is
+     terminatejob, this is an error because a job's completion behavior may not
+     be changed from terminatejob to noaction. Possible values include:
+     'noAction', 'terminateJob'
     :type on_all_tasks_complete: str or :class:`OnAllTasksComplete
      <azure.batch.models.OnAllTasksComplete>`
     """ 

@@ -29,7 +29,7 @@ class Resource(Model):
     :type location: str
     :param tags: The tags that will be assigned to the key vault.
     :type tags: dict
-    """ 
+    """
 
     _validation = {
         'id': {'readonly': True},

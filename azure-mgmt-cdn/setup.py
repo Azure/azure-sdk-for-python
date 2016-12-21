@@ -7,6 +7,7 @@
 #--------------------------------------------------------------------------
 
 from setuptools import setup
+from io import open
 import re
 
 # azure v0.x is not compatible with this package

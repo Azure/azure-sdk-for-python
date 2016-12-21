@@ -15,7 +15,8 @@ from msrest.serialization import Model
 class FileProperties(Model):
     """The properties of a file on a compute node.
 
-    :param creation_time: The file creation time.
+    :param creation_time: The file creation time. The creation time is not
+     returned for files on Linux compute nodes.
     :type creation_time: datetime
     :param last_modified: The time at which the file was last modified.
     :type last_modified: datetime
@@ -23,8 +24,8 @@ class FileProperties(Model):
     :type content_length: long
     :param content_type: The content type of the file.
     :type content_type: str
-    :param file_mode: The file mode attribute in octal format. This property
-     will be returned only from a Linux compute node.
+    :param file_mode: The file mode attribute in octal format. The file mode
+     is returned only for files on Linux compute nodes.
     :type file_mode: str
     """ 
 
