@@ -23,7 +23,7 @@ class AdminKeyResult(Model):
     :vartype primary_key: str
     :ivar secondary_key: The secondary admin API key of the Search service.
     :vartype secondary_key: str
-    """ 
+    """
 
     _validation = {
         'primary_key': {'readonly': True},

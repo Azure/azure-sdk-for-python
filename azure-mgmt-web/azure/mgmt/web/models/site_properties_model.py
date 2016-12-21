@@ -12,8 +12,8 @@
 from msrest.serialization import Model
 
 
-class SiteProperties(Model):
-    """SiteProperties.
+class SitePropertiesModel(Model):
+    """SitePropertiesModel.
 
     :param metadata:
     :type metadata: list of :class:`NameValuePair
@@ -24,7 +24,7 @@ class SiteProperties(Model):
     :param app_settings:
     :type app_settings: list of :class:`NameValuePair
      <azure.mgmt.web.models.NameValuePair>`
-    """ 
+    """
 
     _attribute_map = {
         'metadata': {'key': 'metadata', 'type': '[NameValuePair]'},

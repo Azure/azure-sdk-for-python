@@ -25,7 +25,7 @@ class WorkflowParameter(Model):
     :type metadata: object
     :param description: The description.
     :type description: str
-    """ 
+    """
 
     _attribute_map = {
         'type': {'key': 'type', 'type': 'ParameterType'},

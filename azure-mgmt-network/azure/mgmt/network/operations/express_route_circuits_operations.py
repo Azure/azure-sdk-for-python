@@ -181,8 +181,8 @@ class ExpressRouteCircuitsOperations(object):
         :type resource_group_name: str
         :param circuit_name: The name of the circuit.
         :type circuit_name: str
-        :param parameters: Parameters supplied to the create or update
-         express route circuit operation.
+        :param parameters: Parameters supplied to the create or update express
+         route circuit operation.
         :type parameters: :class:`ExpressRouteCircuit
          <azure.mgmt.network.models.ExpressRouteCircuit>`
         :param dict custom_headers: headers that will be added to the request

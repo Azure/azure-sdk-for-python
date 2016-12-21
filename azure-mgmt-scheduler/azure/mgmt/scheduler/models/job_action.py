@@ -39,7 +39,7 @@ class JobAction(Model):
     :param error_action: Gets or sets the error action.
     :type error_action: :class:`JobErrorAction
      <azure.mgmt.scheduler.models.JobErrorAction>`
-    """ 
+    """
 
     _attribute_map = {
         'type': {'key': 'type', 'type': 'JobActionType'},

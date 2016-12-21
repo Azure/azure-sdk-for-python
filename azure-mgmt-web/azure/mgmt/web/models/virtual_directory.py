@@ -19,7 +19,7 @@ class VirtualDirectory(Model):
     :type virtual_path: str
     :param physical_path:
     :type physical_path: str
-    """ 
+    """
 
     _attribute_map = {
         'virtual_path': {'key': 'virtualPath', 'type': 'str'},

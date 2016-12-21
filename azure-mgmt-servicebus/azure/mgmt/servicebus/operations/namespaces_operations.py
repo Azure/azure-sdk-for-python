@@ -36,8 +36,8 @@ class NamespacesOperations(object):
 
     def list_by_subscription(
             self, custom_headers=None, raw=False, **operation_config):
-        """Gets all the available namespaces within the subscription,
-        irrespective of the resource groups.
+        """Gets all the available namespaces within the subscription, irrespective
+        of the resource groups.
 
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the

@@ -24,7 +24,7 @@ class DomainAvailablilityCheckResult(Model):
      'SoftDeleted'
     :type domain_type: str or :class:`DomainType
      <azure.mgmt.web.models.DomainType>`
-    """ 
+    """
 
     _attribute_map = {
         'name': {'key': 'name', 'type': 'str'},

@@ -47,7 +47,7 @@ class SlotDifference(Resource):
     :type value_in_target_slot: str
     :param description: Description of the difference
     :type description: str
-    """ 
+    """
 
     _validation = {
         'location': {'required': True},

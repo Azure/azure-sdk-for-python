@@ -17,7 +17,7 @@ class ListCallbackUrlParameters(Model):
 
     :param not_after: The expiry time.
     :type not_after: datetime
-    """ 
+    """
 
     _attribute_map = {
         'not_after': {'key': 'NotAfter', 'type': 'iso-8601'},

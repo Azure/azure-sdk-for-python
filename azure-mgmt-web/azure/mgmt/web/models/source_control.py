@@ -37,7 +37,7 @@ class SourceControl(Resource):
     :type refresh_token: str
     :param expiration_time: OAuth Token Expiration
     :type expiration_time: datetime
-    """ 
+    """
 
     _validation = {
         'location': {'required': True},

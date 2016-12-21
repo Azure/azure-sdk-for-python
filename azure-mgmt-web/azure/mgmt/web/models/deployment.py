@@ -47,7 +47,7 @@ class Deployment(Resource):
     :type active: bool
     :param details: Detail
     :type details: str
-    """ 
+    """
 
     _validation = {
         'location': {'required': True},

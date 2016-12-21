@@ -57,7 +57,7 @@ class SubtaskInformation(Model):
      entered its previous state. This property is not set if the subtask is in
      its initial running state.
     :type previous_state_transition_time: datetime
-    """ 
+    """
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'int'},

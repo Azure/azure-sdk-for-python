@@ -20,7 +20,7 @@ class AutoHealCustomAction(Model):
     :type exe: str
     :param parameters: Parameters for the executable
     :type parameters: str
-    """ 
+    """
 
     _attribute_map = {
         'exe': {'key': 'exe', 'type': 'str'},

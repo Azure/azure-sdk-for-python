@@ -41,7 +41,7 @@ class RelayServiceConnectionEntity(Resource):
     :type port: int
     :param biztalk_uri:
     :type biztalk_uri: str
-    """ 
+    """
 
     _validation = {
         'location': {'required': True},

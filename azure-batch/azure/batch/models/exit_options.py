@@ -24,7 +24,7 @@ class ExitOptions(Model):
      REST API directly, the HTTP status code is 400 (Bad Request). Possible
      values include: 'none', 'disable', 'terminate'
     :type job_action: str or :class:`JobAction <azure.batch.models.JobAction>`
-    """ 
+    """
 
     _attribute_map = {
         'job_action': {'key': 'jobAction', 'type': 'JobAction'},

@@ -19,7 +19,7 @@ class SiteCollection(Model):
     :type value: list of :class:`Site <azure.mgmt.web.models.Site>`
     :param next_link: Link to next page of resources
     :type next_link: str
-    """ 
+    """
 
     _attribute_map = {
         'value': {'key': 'value', 'type': '[Site]'},

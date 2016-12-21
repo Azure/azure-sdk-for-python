@@ -71,7 +71,7 @@ class CloudJobSchedule(Model):
     :param stats: The lifetime resource usage statistics for the job schedule.
     :type stats: :class:`JobScheduleStatistics
      <azure.batch.models.JobScheduleStatistics>`
-    """ 
+    """
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},

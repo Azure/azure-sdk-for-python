@@ -20,7 +20,7 @@ class NodeRebootParameter(Model):
      values include: 'requeue', 'terminate', 'taskcompletion', 'retaineddata'
     :type node_reboot_option: str or :class:`ComputeNodeRebootOption
      <azure.batch.models.ComputeNodeRebootOption>`
-    """ 
+    """
 
     _attribute_map = {
         'node_reboot_option': {'key': 'nodeRebootOption', 'type': 'ComputeNodeRebootOption'},

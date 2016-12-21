@@ -21,7 +21,7 @@ class AdmCredential(Model):
     :type client_secret: str
     :param auth_token_url: The URL of the authorization token.
     :type auth_token_url: str
-    """ 
+    """
 
     _attribute_map = {
         'client_id': {'key': 'properties.clientId', 'type': 'str'},

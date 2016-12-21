@@ -25,7 +25,7 @@ class Resource(Model):
     :type location: str
     :param tags: The resource tags.
     :type tags: dict
-    """ 
+    """
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},

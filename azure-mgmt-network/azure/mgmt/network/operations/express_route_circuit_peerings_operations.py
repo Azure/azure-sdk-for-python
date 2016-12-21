@@ -190,8 +190,8 @@ class ExpressRouteCircuitPeeringsOperations(object):
         :type circuit_name: str
         :param peering_name: The name of the peering.
         :type peering_name: str
-        :param peering_parameters: Parameters supplied to the create or
-         update express route circuit peering operation.
+        :param peering_parameters: Parameters supplied to the create or update
+         express route circuit peering operation.
         :type peering_parameters: :class:`ExpressRouteCircuitPeering
          <azure.mgmt.network.models.ExpressRouteCircuitPeering>`
         :param dict custom_headers: headers that will be added to the request

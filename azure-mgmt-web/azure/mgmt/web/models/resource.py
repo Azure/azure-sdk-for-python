@@ -27,7 +27,7 @@ class Resource(Model):
     :type type: str
     :param tags: Resource tags
     :type tags: dict
-    """ 
+    """
 
     _validation = {
         'location': {'required': True},

@@ -19,7 +19,7 @@ class IntegrationAccountPartnerFilter(Model):
      Possible values include: 'NotSpecified', 'B2B'
     :type partner_type: str or :class:`PartnerType
      <azure.mgmt.logic.models.PartnerType>`
-    """ 
+    """
 
     _attribute_map = {
         'partner_type': {'key': 'partnerType', 'type': 'PartnerType'},

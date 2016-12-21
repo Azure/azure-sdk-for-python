@@ -19,7 +19,7 @@ class UsageName(Model):
     :type value: str
     :param localized_value: A localized string describing the resource name.
     :type localized_value: str
-    """ 
+    """
 
     _attribute_map = {
         'value': {'key': 'value', 'type': 'str'},

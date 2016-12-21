@@ -54,8 +54,8 @@ class ServerFarmWithRichSku(Resource):
     :vartype geo_region: str
     :param per_site_scaling: If True apps assigned to this App Service Plan
      can be scaled independently
-     If False apps assigned to this App Service Plan will scale to
-     all instances of the plan
+     If False apps assigned to this App Service Plan will scale to all
+     instances of the plan
     :type per_site_scaling: bool
     :ivar number_of_sites: Number of web apps assigned to this App Service
      Plan
@@ -66,7 +66,7 @@ class ServerFarmWithRichSku(Resource):
     :type reserved: bool
     :param sku:
     :type sku: :class:`SkuDescription <azure.mgmt.web.models.SkuDescription>`
-    """ 
+    """
 
     _validation = {
         'location': {'required': True},

@@ -17,7 +17,7 @@ class KeyRestoreParameters(Model):
 
     :param key_bundle_backup: the backup blob associated with a key bundle
     :type key_bundle_backup: bytes
-    """ 
+    """
 
     _validation = {
         'key_bundle_backup': {'required': True},

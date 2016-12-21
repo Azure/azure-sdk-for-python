@@ -21,7 +21,7 @@ class SiteLimits(Model):
     :type max_memory_in_mb: long
     :param max_disk_size_in_mb: Maximum allowed disk size usage in MB
     :type max_disk_size_in_mb: long
-    """ 
+    """
 
     _attribute_map = {
         'max_percentage_cpu': {'key': 'maxPercentageCpu', 'type': 'float'},

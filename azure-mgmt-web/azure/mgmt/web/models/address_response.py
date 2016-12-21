@@ -27,7 +27,7 @@ class AddressResponse(Model):
     :param vip_mappings: Additional vips
     :type vip_mappings: list of :class:`VirtualIPMapping
      <azure.mgmt.web.models.VirtualIPMapping>`
-    """ 
+    """
 
     _attribute_map = {
         'service_ip_address': {'key': 'serviceIpAddress', 'type': 'str'},

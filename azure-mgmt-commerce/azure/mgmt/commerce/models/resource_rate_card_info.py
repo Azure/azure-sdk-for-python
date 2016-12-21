@@ -33,7 +33,7 @@ class ResourceRateCardInfo(Model):
     :param meters: A list of meters.
     :type meters: list of :class:`MeterInfo
      <azure.mgmt.commerce.models.MeterInfo>`
-    """ 
+    """
 
     _attribute_map = {
         'currency': {'key': 'Currency', 'type': 'str'},

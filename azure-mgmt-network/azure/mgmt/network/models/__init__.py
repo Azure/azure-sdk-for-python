@@ -9,28 +9,28 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .application_gateway_backend_health import ApplicationGatewayBackendHealth
-from .application_gateway_backend_health_pool import ApplicationGatewayBackendHealthPool
-from .application_gateway_backend_address_pool import ApplicationGatewayBackendAddressPool
-from .network_interface_ip_configuration import NetworkInterfaceIPConfiguration
-from .backend_address_pool import BackendAddressPool
 from .sub_resource import SubResource
+from .backend_address_pool import BackendAddressPool
 from .inbound_nat_rule import InboundNatRule
-from .subnet import Subnet
-from .network_security_group import NetworkSecurityGroup
 from .security_rule import SecurityRule
-from .network_interface import NetworkInterface
 from .network_interface_dns_settings import NetworkInterfaceDnsSettings
-from .route_table import RouteTable
+from .network_interface import NetworkInterface
+from .network_security_group import NetworkSecurityGroup
 from .route import Route
-from .ip_configuration import IPConfiguration
-from .public_ip_address import PublicIPAddress
+from .route_table import RouteTable
 from .public_ip_address_dns_settings import PublicIPAddressDnsSettings
+from .public_ip_address import PublicIPAddress
+from .ip_configuration import IPConfiguration
 from .resource_navigation_link import ResourceNavigationLink
+from .subnet import Subnet
+from .network_interface_ip_configuration import NetworkInterfaceIPConfiguration
 from .application_gateway_backend_address import ApplicationGatewayBackendAddress
-from .application_gateway_backend_health_http_settings import ApplicationGatewayBackendHealthHttpSettings
+from .application_gateway_backend_address_pool import ApplicationGatewayBackendAddressPool
 from .application_gateway_backend_http_settings import ApplicationGatewayBackendHttpSettings
 from .application_gateway_backend_health_server import ApplicationGatewayBackendHealthServer
+from .application_gateway_backend_health_http_settings import ApplicationGatewayBackendHealthHttpSettings
+from .application_gateway_backend_health_pool import ApplicationGatewayBackendHealthPool
+from .application_gateway_backend_health import ApplicationGatewayBackendHealth
 from .application_gateway_sku import ApplicationGatewaySku
 from .application_gateway_ssl_policy import ApplicationGatewaySslPolicy
 from .application_gateway_ip_configuration import ApplicationGatewayIPConfiguration
@@ -69,9 +69,9 @@ from .load_balancer import LoadBalancer
 from .address_space import AddressSpace
 from .bgp_settings import BgpSettings
 from .local_network_gateway import LocalNetworkGateway
-from .effective_network_security_group import EffectiveNetworkSecurityGroup
 from .effective_network_security_group_association import EffectiveNetworkSecurityGroupAssociation
 from .effective_network_security_rule import EffectiveNetworkSecurityRule
+from .effective_network_security_group import EffectiveNetworkSecurityGroup
 from .effective_network_security_group_list_result import EffectiveNetworkSecurityGroupListResult
 from .effective_route import EffectiveRoute
 from .effective_route_list_result import EffectiveRouteListResult
@@ -80,9 +80,9 @@ from .usage_name import UsageName
 from .usage import Usage
 from .virtual_network_gateway_ip_configuration import VirtualNetworkGatewayIPConfiguration
 from .virtual_network_gateway_sku import VirtualNetworkGatewaySku
-from .vpn_client_configuration import VpnClientConfiguration
 from .vpn_client_root_certificate import VpnClientRootCertificate
 from .vpn_client_revoked_certificate import VpnClientRevokedCertificate
+from .vpn_client_configuration import VpnClientConfiguration
 from .virtual_network_gateway import VirtualNetworkGateway
 from .vpn_client_parameters import VpnClientParameters
 from .tunnel_connection_health import TunnelConnectionHealth
@@ -156,28 +156,28 @@ from .network_management_client_enums import (
 )
 
 __all__ = [
-    'ApplicationGatewayBackendHealth',
-    'ApplicationGatewayBackendHealthPool',
-    'ApplicationGatewayBackendAddressPool',
-    'NetworkInterfaceIPConfiguration',
-    'BackendAddressPool',
     'SubResource',
+    'BackendAddressPool',
     'InboundNatRule',
-    'Subnet',
-    'NetworkSecurityGroup',
     'SecurityRule',
-    'NetworkInterface',
     'NetworkInterfaceDnsSettings',
-    'RouteTable',
+    'NetworkInterface',
+    'NetworkSecurityGroup',
     'Route',
-    'IPConfiguration',
-    'PublicIPAddress',
+    'RouteTable',
     'PublicIPAddressDnsSettings',
+    'PublicIPAddress',
+    'IPConfiguration',
     'ResourceNavigationLink',
+    'Subnet',
+    'NetworkInterfaceIPConfiguration',
     'ApplicationGatewayBackendAddress',
-    'ApplicationGatewayBackendHealthHttpSettings',
+    'ApplicationGatewayBackendAddressPool',
     'ApplicationGatewayBackendHttpSettings',
     'ApplicationGatewayBackendHealthServer',
+    'ApplicationGatewayBackendHealthHttpSettings',
+    'ApplicationGatewayBackendHealthPool',
+    'ApplicationGatewayBackendHealth',
     'ApplicationGatewaySku',
     'ApplicationGatewaySslPolicy',
     'ApplicationGatewayIPConfiguration',
@@ -216,9 +216,9 @@ __all__ = [
     'AddressSpace',
     'BgpSettings',
     'LocalNetworkGateway',
-    'EffectiveNetworkSecurityGroup',
     'EffectiveNetworkSecurityGroupAssociation',
     'EffectiveNetworkSecurityRule',
+    'EffectiveNetworkSecurityGroup',
     'EffectiveNetworkSecurityGroupListResult',
     'EffectiveRoute',
     'EffectiveRouteListResult',
@@ -227,9 +227,9 @@ __all__ = [
     'Usage',
     'VirtualNetworkGatewayIPConfiguration',
     'VirtualNetworkGatewaySku',
-    'VpnClientConfiguration',
     'VpnClientRootCertificate',
     'VpnClientRevokedCertificate',
+    'VpnClientConfiguration',
     'VirtualNetworkGateway',
     'VpnClientParameters',
     'TunnelConnectionHealth',

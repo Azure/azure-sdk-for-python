@@ -22,7 +22,7 @@ class Error(Model):
     :vartype code: str
     :ivar message: The error message.
     :vartype message: str
-    """ 
+    """
 
     _validation = {
         'code': {'readonly': True},

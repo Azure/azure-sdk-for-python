@@ -41,11 +41,11 @@ class TopicCreateOrUpdateParameters(Model):
      TimeToLive is not set on a message itself.
     :type default_message_time_to_live: str
     :param duplicate_detection_history_time_window: TimeSpan structure that
-     defines the duration of the duplicate detection history. The default
-     value is 10 minutes.
+     defines the duration of the duplicate detection history. The default value
+     is 10 minutes.
     :type duplicate_detection_history_time_window: str
-    :param enable_batched_operations: Value that indicates whether
-     server-side batched operations are enabled.
+    :param enable_batched_operations: Value that indicates whether server-side
+     batched operations are enabled.
     :type enable_batched_operations: bool
     :param enable_express: Value that indicates whether Express Entities are
      enabled. An express topic holds a message in memory temporarily before
@@ -86,7 +86,7 @@ class TopicCreateOrUpdateParameters(Model):
     :type support_ordering: bool
     :param updated_at: The exact time the message was updated.
     :type updated_at: datetime
-    """ 
+    """
 
     _validation = {
         'location': {'required': True},

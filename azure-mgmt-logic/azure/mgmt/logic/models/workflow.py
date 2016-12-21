@@ -56,7 +56,7 @@ class Workflow(Resource):
     :type definition: object
     :param parameters: The parameters.
     :type parameters: dict
-    """ 
+    """
 
     _validation = {
         'provisioning_state': {'readonly': True},

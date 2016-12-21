@@ -23,8 +23,8 @@ class ApplicationGatewaySslCertificate(SubResource):
     :param password: Password for the pfx file specified in data. Only
      applicable in PUT request.
     :type password: str
-    :param public_cert_data: Base-64 encoded Public cert data corresponding
-     to pfx specified in data. Only applicable in GET request.
+    :param public_cert_data: Base-64 encoded Public cert data corresponding to
+     pfx specified in data. Only applicable in GET request.
     :type public_cert_data: str
     :param provisioning_state: Provisioning state of the SSL certificate
      resource Possible values are: 'Updating', 'Deleting', and 'Failed'.
@@ -35,7 +35,7 @@ class ApplicationGatewaySslCertificate(SubResource):
     :param etag: A unique read-only string that changes whenever the resource
      is updated.
     :type etag: str
-    """ 
+    """
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},

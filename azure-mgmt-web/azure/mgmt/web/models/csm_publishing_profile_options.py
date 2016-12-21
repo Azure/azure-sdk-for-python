@@ -20,7 +20,7 @@ class CsmPublishingProfileOptions(Model):
      WebDeploy -- default
      Ftp
     :type format: str
-    """ 
+    """
 
     _attribute_map = {
         'format': {'key': 'format', 'type': 'str'},

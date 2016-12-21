@@ -112,8 +112,8 @@ class AdminKeysOperations(object):
 
     def regenerate(
             self, resource_group_name, search_service_name, key_kind, search_management_request_options=None, custom_headers=None, raw=False, **operation_config):
-        """Regenerates either the primary or secondary admin API key. You can
-        only regenerate one key at a time.
+        """Regenerates either the primary or secondary admin API key. You can only
+        regenerate one key at a time.
 
         :param resource_group_name: The name of the resource group within the
          current subscription. You can obtain this value from the Azure
@@ -123,8 +123,8 @@ class AdminKeysOperations(object):
          associated with the specified resource group.
         :type search_service_name: str
         :param key_kind: Specifies which key to regenerate. Valid values
-         include 'primary' and 'secondary'. Possible values include:
-         'primary', 'secondary'
+         include 'primary' and 'secondary'. Possible values include: 'primary',
+         'secondary'
         :type key_kind: str or :class:`AdminKeyKind
          <azure.mgmt.search.models.AdminKeyKind>`
         :param search_management_request_options: Additional parameters for

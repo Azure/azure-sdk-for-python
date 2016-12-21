@@ -36,9 +36,9 @@ class LoadBalancingRule(SubResource):
      Possible values include: 'Default', 'SourceIP', 'SourceIPProtocol'
     :type load_distribution: str or :class:`LoadDistribution
      <azure.mgmt.network.models.LoadDistribution>`
-    :param frontend_port: The port for the external endpoint. Port numbers
-     for each Rule must be unique within the Load Balancer. Acceptable values
-     are between 1 and 65534.
+    :param frontend_port: The port for the external endpoint. Port numbers for
+     each Rule must be unique within the Load Balancer. Acceptable values are
+     between 1 and 65534.
     :type frontend_port: int
     :param backend_port: The port used for internal connections on the
      endpoint. Acceptable values are between 1 and 65535.
@@ -47,11 +47,11 @@ class LoadBalancingRule(SubResource):
      The value can be set between 4 and 30 minutes. The default value is 4
      minutes. This element is only used when the protocol is set to TCP.
     :type idle_timeout_in_minutes: int
-    :param enable_floating_ip: Configures a virtual machine's endpoint for
-     the floating IP capability required to configure a SQL AlwaysOn
-     Availability Group. This setting is required when using the SQL AlwaysOn
-     Availability Groups in SQL server. This setting can't be changed after
-     you create the endpoint.
+    :param enable_floating_ip: Configures a virtual machine's endpoint for the
+     floating IP capability required to configure a SQL AlwaysOn Availability
+     Group. This setting is required when using the SQL AlwaysOn Availability
+     Groups in SQL server. This setting can't be changed after you create the
+     endpoint.
     :type enable_floating_ip: bool
     :param provisioning_state: Gets the provisioning state of the PublicIP
      resource. Possible values are: 'Updating', 'Deleting', and 'Failed'.
@@ -62,7 +62,7 @@ class LoadBalancingRule(SubResource):
     :param etag: A unique read-only string that changes whenever the resource
      is updated.
     :type etag: str
-    """ 
+    """
 
     _validation = {
         'protocol': {'required': True},

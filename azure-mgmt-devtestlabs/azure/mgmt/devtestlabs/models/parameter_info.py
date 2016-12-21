@@ -19,7 +19,7 @@ class ParameterInfo(Model):
     :type name: str
     :param value:
     :type value: str
-    """ 
+    """
 
     _attribute_map = {
         'name': {'key': 'name', 'type': 'str'},

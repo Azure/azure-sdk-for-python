@@ -31,7 +31,7 @@ class CertificateEmail(Resource):
     :type email_id: str
     :param time_stamp: Time stamp
     :type time_stamp: datetime
-    """ 
+    """
 
     _validation = {
         'location': {'required': True},

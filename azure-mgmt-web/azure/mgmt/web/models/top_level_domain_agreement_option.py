@@ -18,7 +18,7 @@ class TopLevelDomainAgreementOption(Model):
     :param include_privacy: If true then the list of agreements will inclue
      agreements for domain privacy as well.
     :type include_privacy: bool
-    """ 
+    """
 
     _attribute_map = {
         'include_privacy': {'key': 'includePrivacy', 'type': 'bool'},

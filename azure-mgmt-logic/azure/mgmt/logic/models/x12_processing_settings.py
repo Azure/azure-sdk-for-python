@@ -27,13 +27,13 @@ class X12ProcessingSettings(Model):
     :param suspend_interchange_on_error: The value indicating whether to
      suspend interchange on error.
     :type suspend_interchange_on_error: bool
-    :param create_empty_xml_tags_for_trailing_separators: The value
-     indicating whether to create empty xml tags for trailing separators.
+    :param create_empty_xml_tags_for_trailing_separators: The value indicating
+     whether to create empty xml tags for trailing separators.
     :type create_empty_xml_tags_for_trailing_separators: bool
     :param use_dot_as_decimal_separator: The value indicating whether to use
      dot as decimal separator.
     :type use_dot_as_decimal_separator: bool
-    """ 
+    """
 
     _attribute_map = {
         'mask_security_info': {'key': 'maskSecurityInfo', 'type': 'bool'},

@@ -17,7 +17,7 @@ class Correlation(Model):
 
     :param client_tracking_id: The client tracking id.
     :type client_tracking_id: str
-    """ 
+    """
 
     _attribute_map = {
         'client_tracking_id': {'key': 'clientTrackingId', 'type': 'str'},

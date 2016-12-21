@@ -32,8 +32,8 @@ class VnetInfo(Resource):
     :type vnet_resource_id: str
     :param cert_thumbprint: The client certificate thumbprint
     :type cert_thumbprint: str
-    :param cert_blob: A certificate file (.cer) blob containing the public
-     key of the private key used to authenticate a
+    :param cert_blob: A certificate file (.cer) blob containing the public key
+     of the private key used to authenticate a
      Point-To-Site VPN connection.
     :type cert_blob: str
     :param routes: The routes that this virtual network connection uses.
@@ -43,7 +43,7 @@ class VnetInfo(Resource):
     :param dns_servers: Dns servers to be used by this VNET. This should be a
      comma-separated list of IP addresses.
     :type dns_servers: str
-    """ 
+    """
 
     _validation = {
         'location': {'required': True},

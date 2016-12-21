@@ -23,7 +23,7 @@ class CognitiveServicesAccountUpdateParameters(Model):
      resource. Each tag must have a key no greater than 128 characters and
      value no greater than 256 characters.
     :type tags: dict
-    """ 
+    """
 
     _attribute_map = {
         'sku': {'key': 'sku', 'type': 'Sku'},

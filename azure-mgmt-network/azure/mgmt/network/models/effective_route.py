@@ -39,7 +39,7 @@ class EffectiveRoute(Model):
      'None'
     :type next_hop_type: str or :class:`RouteNextHopType
      <azure.mgmt.network.models.RouteNextHopType>`
-    """ 
+    """
 
     _attribute_map = {
         'name': {'key': 'name', 'type': 'str'},

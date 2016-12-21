@@ -18,7 +18,7 @@ class OperationList(Model):
     :param value:
     :type value: list of :class:`Operation
      <azure.mgmt.powerbiembedded.models.Operation>`
-    """ 
+    """
 
     _attribute_map = {
         'value': {'key': 'value', 'type': '[Operation]'},

@@ -27,7 +27,7 @@ class Address(Model):
     :type postal_code: str
     :param state: State
     :type state: str
-    """ 
+    """
 
     _attribute_map = {
         'address1': {'key': 'address1', 'type': 'str'},

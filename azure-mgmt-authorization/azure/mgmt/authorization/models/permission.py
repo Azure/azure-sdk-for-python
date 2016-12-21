@@ -19,7 +19,7 @@ class Permission(Model):
     :type actions: list of str
     :param not_actions: Denied actions.
     :type not_actions: list of str
-    """ 
+    """
 
     _attribute_map = {
         'actions': {'key': 'actions', 'type': '[str]'},

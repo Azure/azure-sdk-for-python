@@ -55,7 +55,7 @@ class WorkflowTrigger(SubResource):
     :vartype name: str
     :ivar type: Gets the workflow trigger type.
     :vartype type: str
-    """ 
+    """
 
     _validation = {
         'provisioning_state': {'readonly': True},

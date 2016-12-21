@@ -21,7 +21,7 @@ class AffinityInformation(Model):
      affinityId of a compute node or task to indicate that this task needs to
      be placed close to the node or task.
     :type affinity_id: str
-    """ 
+    """
 
     _validation = {
         'affinity_id': {'required': True},

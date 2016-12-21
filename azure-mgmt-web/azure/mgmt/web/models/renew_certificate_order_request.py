@@ -29,7 +29,7 @@ class RenewCertificateOrderRequest(Resource):
     :type tags: dict
     :param key_size: Certificate Key Size
     :type key_size: int
-    """ 
+    """
 
     _validation = {
         'location': {'required': True},

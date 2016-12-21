@@ -22,7 +22,7 @@ class AutoHealRules(Model):
     :param actions: Actions - Actions to be executed when a rule is triggered
     :type actions: :class:`AutoHealActions
      <azure.mgmt.web.models.AutoHealActions>`
-    """ 
+    """
 
     _attribute_map = {
         'triggers': {'key': 'triggers', 'type': 'AutoHealTriggers'},

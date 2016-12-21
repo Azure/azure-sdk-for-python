@@ -60,6 +60,8 @@ class UsageAggregatesOperations(object):
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`UsageAggregationPaged
          <azure.mgmt.commerce.models.UsageAggregationPaged>`
+        :raises:
+         :class:`ErrorResponseException<azure.mgmt.commerce.models.ErrorResponseException>`
         """
         def internal_paging(next_link=None, raw=False):
 

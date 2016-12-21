@@ -33,7 +33,7 @@ class GeoRegion(Resource):
     :type description: str
     :param display_name: Display name for region
     :type display_name: str
-    """ 
+    """
 
     _validation = {
         'location': {'required': True},

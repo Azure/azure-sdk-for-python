@@ -17,7 +17,7 @@ class DnsNameAvailabilityResult(Model):
 
     :param available: Domain availability (True/False).
     :type available: bool
-    """ 
+    """
 
     _attribute_map = {
         'available': {'key': 'available', 'type': 'bool'},

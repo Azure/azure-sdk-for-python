@@ -31,7 +31,7 @@ class SlotConfigNamesResource(Resource):
     :type connection_string_names: list of str
     :param app_setting_names: List of application settings names
     :type app_setting_names: list of str
-    """ 
+    """
 
     _validation = {
         'location': {'required': True},

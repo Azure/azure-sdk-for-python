@@ -18,7 +18,7 @@ class BatchLocationQuota(Model):
     :param account_quota: The number of Batch accounts that may be created
      under the subscription in the specified region.
     :type account_quota: int
-    """ 
+    """
 
     _attribute_map = {
         'account_quota': {'key': 'accountQuota', 'type': 'int'},

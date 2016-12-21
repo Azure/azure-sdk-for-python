@@ -21,7 +21,7 @@ class IssuerParameters(Model):
     :param certificate_type: Type of certificate to be requested from the
      issuer provider.
     :type certificate_type: str
-    """ 
+    """
 
     _attribute_map = {
         'name': {'key': 'name', 'type': 'str'},

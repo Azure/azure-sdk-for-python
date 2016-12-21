@@ -14,8 +14,7 @@ from msrest.serialization import Model
 
 class DatabaseBackupSetting(Model):
     """Note: properties are serialized in JSON format and stored in DB.
-    if new properties are added they might not be in the previous
-    data rows
+    if new properties are added they might not be in the previous data rows
     so please handle nulls.
 
     :param database_type: SqlAzure / MySql
@@ -24,14 +23,13 @@ class DatabaseBackupSetting(Model):
     :type name: str
     :param connection_string_name: Contains a connection string name that is
      linked to the SiteConfig.ConnectionStrings.
-     This is used during restore with overwrite connection strings
-     options.
+     This is used during restore with overwrite connection strings options.
     :type connection_string_name: str
-    :param connection_string: Contains a connection string to a database
-     which is being backed up/restored. If the restore should happen to a new
+    :param connection_string: Contains a connection string to a database which
+     is being backed up/restored. If the restore should happen to a new
      database, the database name inside is the new one.
     :type connection_string: str
-    """ 
+    """
 
     _attribute_map = {
         'database_type': {'key': 'databaseType', 'type': 'str'},

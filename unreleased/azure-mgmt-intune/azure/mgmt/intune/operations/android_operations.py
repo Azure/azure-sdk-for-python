@@ -51,6 +51,8 @@ class AndroidOperations(object):
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`AndroidMAMPolicyPaged
          <azure.mgmt.intune.models.AndroidMAMPolicyPaged>`
+        :raises:
+         :class:`ErrorException<azure.mgmt.intune.models.ErrorException>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -125,6 +127,8 @@ class AndroidOperations(object):
          <azure.mgmt.intune.models.AndroidMAMPolicy>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`ErrorException<azure.mgmt.intune.models.ErrorException>`
         """
         # Construct URL
         url = '/providers/Microsoft.Intune/locations/{hostName}/androidPolicies/{policyName}'
@@ -189,6 +193,8 @@ class AndroidOperations(object):
          <azure.mgmt.intune.models.AndroidMAMPolicy>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`ErrorException<azure.mgmt.intune.models.ErrorException>`
         """
         # Construct URL
         url = '/providers/Microsoft.Intune/locations/{hostName}/androidPolicies/{policyName}'
@@ -255,6 +261,8 @@ class AndroidOperations(object):
          <azure.mgmt.intune.models.AndroidMAMPolicy>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`ErrorException<azure.mgmt.intune.models.ErrorException>`
         """
         # Construct URL
         url = '/providers/Microsoft.Intune/locations/{hostName}/androidPolicies/{policyName}'
@@ -316,6 +324,8 @@ class AndroidOperations(object):
         :rtype: None
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`ErrorException<azure.mgmt.intune.models.ErrorException>`
         """
         # Construct URL
         url = '/providers/Microsoft.Intune/locations/{hostName}/androidPolicies/{policyName}'
@@ -371,6 +381,8 @@ class AndroidOperations(object):
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`ApplicationPaged
          <azure.mgmt.intune.models.ApplicationPaged>`
+        :raises:
+         :class:`ErrorException<azure.mgmt.intune.models.ErrorException>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -448,6 +460,8 @@ class AndroidOperations(object):
         :rtype: None
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`ErrorException<azure.mgmt.intune.models.ErrorException>`
         """
         parameters = models.MAMPolicyAppIdOrGroupIdPayload(properties=properties)
 
@@ -507,6 +521,8 @@ class AndroidOperations(object):
         :rtype: None
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`ErrorException<azure.mgmt.intune.models.ErrorException>`
         """
         # Construct URL
         url = '/providers/Microsoft.Intune/locations/{hostName}/androidPolicies/{policyName}/apps/{appName}'
@@ -557,6 +573,8 @@ class AndroidOperations(object):
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`GroupItemPaged
          <azure.mgmt.intune.models.GroupItemPaged>`
+        :raises:
+         :class:`ErrorException<azure.mgmt.intune.models.ErrorException>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -628,6 +646,8 @@ class AndroidOperations(object):
         :rtype: None
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`ErrorException<azure.mgmt.intune.models.ErrorException>`
         """
         parameters = models.MAMPolicyAppIdOrGroupIdPayload(properties=properties)
 
@@ -687,6 +707,8 @@ class AndroidOperations(object):
         :rtype: None
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`ErrorException<azure.mgmt.intune.models.ErrorException>`
         """
         # Construct URL
         url = '/providers/Microsoft.Intune/locations/{hostName}/androidPolicies/{policyName}/groups/{groupId}'

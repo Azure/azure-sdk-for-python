@@ -28,7 +28,7 @@ class AutoHealTriggers(Model):
      execution time
     :type slow_requests: :class:`SlowRequestsBasedTrigger
      <azure.mgmt.web.models.SlowRequestsBasedTrigger>`
-    """ 
+    """
 
     _attribute_map = {
         'requests': {'key': 'requests', 'type': 'RequestsBasedTrigger'},

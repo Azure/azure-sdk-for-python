@@ -21,7 +21,7 @@ class KeyVaultError(Model):
 
     :ivar error:
     :vartype error: :class:`Error <azure.keyvault.models.Error>`
-    """ 
+    """
 
     _validation = {
         'error': {'readonly': True},

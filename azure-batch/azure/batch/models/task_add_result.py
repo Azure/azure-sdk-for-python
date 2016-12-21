@@ -29,7 +29,7 @@ class TaskAddResult(Model):
     :type location: str
     :param error: The error encountered while attempting to add the task.
     :type error: :class:`BatchError <azure.batch.models.BatchError>`
-    """ 
+    """
 
     _validation = {
         'status': {'required': True},

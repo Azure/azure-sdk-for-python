@@ -27,7 +27,7 @@ class Sku(Model):
      values include: 'Free', 'Standard', 'Premium'
     :vartype tier: str or :class:`SkuTier
      <azure.mgmt.cognitiveservices.models.SkuTier>`
-    """ 
+    """
 
     _validation = {
         'name': {'required': True},

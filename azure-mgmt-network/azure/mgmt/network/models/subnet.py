@@ -45,7 +45,7 @@ class Subnet(SubResource):
     :param etag: A unique read-only string that changes whenever the resource
      is updated.
     :type etag: str
-    """ 
+    """
 
     _validation = {
         'ip_configurations': {'readonly': True},

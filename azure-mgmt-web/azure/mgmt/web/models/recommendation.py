@@ -65,7 +65,7 @@ class Recommendation(Model):
     :type notified_time: datetime
     :param score: A metric value measured by the rule.
     :type score: float
-    """ 
+    """
 
     _validation = {
         'level': {'required': True},

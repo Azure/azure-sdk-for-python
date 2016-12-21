@@ -44,7 +44,7 @@ class CertificateReference(Model):
      accounts.
     :type visibility: list of str or :class:`CertificateVisibility
      <azure.batch.models.CertificateVisibility>`
-    """ 
+    """
 
     _validation = {
         'thumbprint': {'required': True},

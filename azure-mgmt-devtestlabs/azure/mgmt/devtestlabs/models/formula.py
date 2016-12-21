@@ -44,7 +44,7 @@ class Formula(Model):
     :type location: str
     :param tags: The tags of the resource.
     :type tags: dict
-    """ 
+    """
 
     _attribute_map = {
         'description': {'key': 'properties.description', 'type': 'str'},

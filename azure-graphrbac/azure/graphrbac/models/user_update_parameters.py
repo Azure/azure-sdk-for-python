@@ -24,7 +24,7 @@ class UserUpdateParameters(Model):
      <azure.graphrbac.models.PasswordProfile>`
     :param mail_nickname: The mail alias for the user.
     :type mail_nickname: str
-    """ 
+    """
 
     _attribute_map = {
         'account_enabled': {'key': 'accountEnabled', 'type': 'bool'},

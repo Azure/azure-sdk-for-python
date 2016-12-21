@@ -24,7 +24,7 @@ class SecretSetParameters(Model):
     :param secret_attributes: The secret management attributes
     :type secret_attributes: :class:`SecretAttributes
      <azure.keyvault.models.SecretAttributes>`
-    """ 
+    """
 
     _validation = {
         'value': {'required': True},

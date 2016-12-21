@@ -23,7 +23,7 @@ class BgpSettings(Model):
     :param peer_weight: The weight added to routes learned from this BGP
      speaker.
     :type peer_weight: int
-    """ 
+    """
 
     _attribute_map = {
         'asn': {'key': 'asn', 'type': 'long'},

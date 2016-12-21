@@ -35,7 +35,7 @@ class VirtualMachineConfiguration(Model):
      property specifies a Linux OS image.
     :type windows_configuration: :class:`WindowsConfiguration
      <azure.batch.models.WindowsConfiguration>`
-    """ 
+    """
 
     _validation = {
         'image_reference': {'required': True},

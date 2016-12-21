@@ -25,7 +25,7 @@ class GatewayParameters(Model):
      'Automatic'
     :type upgrade_mode: str or :class:`upgradeMode
      <azure.mgmt.servermanager.models.upgradeMode>`
-    """ 
+    """
 
     _attribute_map = {
         'location': {'key': 'location', 'type': 'str'},

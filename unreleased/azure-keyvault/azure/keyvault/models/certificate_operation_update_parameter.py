@@ -18,7 +18,7 @@ class CertificateOperationUpdateParameter(Model):
     :param cancellation_requested: Indicates if cancellation was requested on
      the certificate operation.
     :type cancellation_requested: bool
-    """ 
+    """
 
     _validation = {
         'cancellation_requested': {'required': True},

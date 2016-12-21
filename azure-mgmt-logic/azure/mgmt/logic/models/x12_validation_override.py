@@ -37,7 +37,7 @@ class X12ValidationOverride(Model):
      values include: 'NotSpecified', 'NotAllowed', 'Optional', 'Mandatory'
     :type trailing_separator_policy: str or :class:`TrailingSeparatorPolicy
      <azure.mgmt.logic.models.TrailingSeparatorPolicy>`
-    """ 
+    """
 
     _attribute_map = {
         'message_id': {'key': 'messageId', 'type': 'str'},

@@ -41,8 +41,8 @@ class ResourcesOperations(object):
         The resources to move must be in the same source resource group. The
         target resource group may be in a different subscription. When moving
         resources, both the source group and the target group are locked for
-        the duration of the operation. Write and delete operations are
-        blocked on the groups until the move completes. .
+        the duration of the operation. Write and delete operations are blocked
+        on the groups until the move completes. .
 
         :param source_resource_group_name: The name of the resource group
          containing the rsources to move.

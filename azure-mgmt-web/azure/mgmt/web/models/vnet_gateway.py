@@ -32,7 +32,7 @@ class VnetGateway(Resource):
     :type vnet_name: str
     :param vpn_package_uri: The URI where the Vpn package can be downloaded
     :type vpn_package_uri: str
-    """ 
+    """
 
     _validation = {
         'location': {'required': True},

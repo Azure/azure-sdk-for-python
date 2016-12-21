@@ -25,7 +25,7 @@ class ApplicationLogsConfig(Model):
     :param azure_blob_storage: Application logs to blob storage configuration
     :type azure_blob_storage: :class:`AzureBlobStorageApplicationLogsConfig
      <azure.mgmt.web.models.AzureBlobStorageApplicationLogsConfig>`
-    """ 
+    """
 
     _attribute_map = {
         'file_system': {'key': 'fileSystem', 'type': 'FileSystemApplicationLogsConfig'},

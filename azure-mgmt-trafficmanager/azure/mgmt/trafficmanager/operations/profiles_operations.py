@@ -50,6 +50,7 @@ class ProfilesOperations(object):
          <azure.mgmt.trafficmanager.models.TrafficManagerNameAvailability>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         parameters = models.CheckTrafficManagerRelativeDnsNameAvailabilityParameters(name=name, type=type)
 
@@ -112,6 +113,7 @@ class ProfilesOperations(object):
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`ProfilePaged
          <azure.mgmt.trafficmanager.models.ProfilePaged>`
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -175,6 +177,7 @@ class ProfilesOperations(object):
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`ProfilePaged
          <azure.mgmt.trafficmanager.models.ProfilePaged>`
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -243,6 +246,7 @@ class ProfilesOperations(object):
         :rtype: :class:`Profile <azure.mgmt.trafficmanager.models.Profile>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/trafficmanagerprofiles/{profileName}'
@@ -308,6 +312,7 @@ class ProfilesOperations(object):
         :rtype: :class:`Profile <azure.mgmt.trafficmanager.models.Profile>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/trafficmanagerprofiles/{profileName}'
@@ -376,6 +381,7 @@ class ProfilesOperations(object):
         :rtype: None
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/trafficmanagerprofiles/{profileName}'
@@ -434,6 +440,7 @@ class ProfilesOperations(object):
         :rtype: :class:`Profile <azure.mgmt.trafficmanager.models.Profile>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/trafficmanagerprofiles/{profileName}'

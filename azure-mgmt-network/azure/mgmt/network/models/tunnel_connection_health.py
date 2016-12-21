@@ -35,7 +35,7 @@ class TunnelConnectionHealth(Model):
     :ivar last_connection_established_utc_time: The time at which connection
      was established in Utc format.
     :vartype last_connection_established_utc_time: str
-    """ 
+    """
 
     _validation = {
         'tunnel': {'readonly': True},

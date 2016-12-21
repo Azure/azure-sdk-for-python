@@ -10,8 +10,8 @@
 # --------------------------------------------------------------------------
 
 from .pool_usage_metrics import PoolUsageMetrics
-from .node_agent_sku import NodeAgentSku
 from .image_reference import ImageReference
+from .node_agent_sku import NodeAgentSku
 from .usage_statistics import UsageStatistics
 from .resource_statistics import ResourceStatistics
 from .pool_statistics import PoolStatistics
@@ -28,10 +28,10 @@ from .schedule import Schedule
 from .job_constraints import JobConstraints
 from .resource_file import ResourceFile
 from .environment_setting import EnvironmentSetting
-from .exit_conditions import ExitConditions
-from .exit_code_mapping import ExitCodeMapping
 from .exit_options import ExitOptions
+from .exit_code_mapping import ExitCodeMapping
 from .exit_code_range_mapping import ExitCodeRangeMapping
+from .exit_conditions import ExitConditions
 from .task_constraints import TaskConstraints
 from .job_manager_task import JobManagerTask
 from .job_preparation_task import JobPreparationTask
@@ -40,11 +40,11 @@ from .task_scheduling_policy import TaskSchedulingPolicy
 from .start_task import StartTask
 from .certificate_reference import CertificateReference
 from .metadata_item import MetadataItem
-from .pool_specification import PoolSpecification
 from .cloud_service_configuration import CloudServiceConfiguration
-from .virtual_machine_configuration import VirtualMachineConfiguration
 from .windows_configuration import WindowsConfiguration
+from .virtual_machine_configuration import VirtualMachineConfiguration
 from .network_configuration import NetworkConfiguration
+from .pool_specification import PoolSpecification
 from .auto_pool_specification import AutoPoolSpecification
 from .pool_information import PoolInformation
 from .job_specification import JobSpecification
@@ -71,15 +71,15 @@ from .task_execution_information import TaskExecutionInformation
 from .compute_node_information import ComputeNodeInformation
 from .multi_instance_settings import MultiInstanceSettings
 from .task_statistics import TaskStatistics
-from .task_dependencies import TaskDependencies
 from .task_id_range import TaskIdRange
+from .task_dependencies import TaskDependencies
 from .cloud_task import CloudTask
 from .task_add_parameter import TaskAddParameter
 from .task_add_collection_parameter import TaskAddCollectionParameter
-from .task_add_result import TaskAddResult
-from .batch_error import BatchError, BatchErrorException
 from .error_message import ErrorMessage
 from .batch_error_detail import BatchErrorDetail
+from .batch_error import BatchError, BatchErrorException
+from .task_add_result import TaskAddResult
 from .task_add_collection_result import TaskAddCollectionResult
 from .subtask_information import SubtaskInformation
 from .cloud_task_list_subtasks_result import CloudTaskListSubtasksResult
@@ -224,8 +224,8 @@ from .batch_service_client_enums import (
 
 __all__ = [
     'PoolUsageMetrics',
-    'NodeAgentSku',
     'ImageReference',
+    'NodeAgentSku',
     'UsageStatistics',
     'ResourceStatistics',
     'PoolStatistics',
@@ -242,10 +242,10 @@ __all__ = [
     'JobConstraints',
     'ResourceFile',
     'EnvironmentSetting',
-    'ExitConditions',
-    'ExitCodeMapping',
     'ExitOptions',
+    'ExitCodeMapping',
     'ExitCodeRangeMapping',
+    'ExitConditions',
     'TaskConstraints',
     'JobManagerTask',
     'JobPreparationTask',
@@ -254,11 +254,11 @@ __all__ = [
     'StartTask',
     'CertificateReference',
     'MetadataItem',
-    'PoolSpecification',
     'CloudServiceConfiguration',
-    'VirtualMachineConfiguration',
     'WindowsConfiguration',
+    'VirtualMachineConfiguration',
     'NetworkConfiguration',
+    'PoolSpecification',
     'AutoPoolSpecification',
     'PoolInformation',
     'JobSpecification',
@@ -285,15 +285,15 @@ __all__ = [
     'ComputeNodeInformation',
     'MultiInstanceSettings',
     'TaskStatistics',
-    'TaskDependencies',
     'TaskIdRange',
+    'TaskDependencies',
     'CloudTask',
     'TaskAddParameter',
     'TaskAddCollectionParameter',
-    'TaskAddResult',
-    'BatchError', 'BatchErrorException',
     'ErrorMessage',
     'BatchErrorDetail',
+    'BatchError', 'BatchErrorException',
+    'TaskAddResult',
     'TaskAddCollectionResult',
     'SubtaskInformation',
     'CloudTaskListSubtasksResult',

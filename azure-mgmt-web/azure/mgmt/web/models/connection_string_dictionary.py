@@ -29,7 +29,7 @@ class ConnectionStringDictionary(Resource):
     :type tags: dict
     :param properties: Connection strings
     :type properties: dict
-    """ 
+    """
 
     _validation = {
         'location': {'required': True},

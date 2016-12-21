@@ -53,6 +53,7 @@ class NotificationHubsOperations(object):
          <azure.mgmt.notificationhubs.models.CheckAvailabilityResult>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NotificationHubs/namespaces/{namespaceName}/checkNotificationHubAvailability'
@@ -124,6 +125,7 @@ class NotificationHubsOperations(object):
          <azure.mgmt.notificationhubs.models.NotificationHubResource>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NotificationHubs/namespaces/{namespaceName}/notificationHubs/{notificationHubName}'
@@ -193,6 +195,7 @@ class NotificationHubsOperations(object):
         :rtype: None
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NotificationHubs/namespaces/{namespaceName}/notificationHubs/{notificationHubName}'
@@ -250,6 +253,7 @@ class NotificationHubsOperations(object):
          <azure.mgmt.notificationhubs.models.NotificationHubResource>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NotificationHubs/namespaces/{namespaceName}/notificationHubs/{notificationHubName}'
@@ -320,6 +324,7 @@ class NotificationHubsOperations(object):
          <azure.mgmt.notificationhubs.models.SharedAccessAuthorizationRuleResource>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NotificationHubs/namespaces/{namespaceName}/notificationHubs/{notificationHubName}/AuthorizationRules/{authorizationRuleName}'
@@ -390,6 +395,7 @@ class NotificationHubsOperations(object):
         :rtype: None
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NotificationHubs/namespaces/{namespaceName}/notificationHubs/{notificationHubName}/AuthorizationRules/{authorizationRuleName}'
@@ -450,6 +456,7 @@ class NotificationHubsOperations(object):
          <azure.mgmt.notificationhubs.models.SharedAccessAuthorizationRuleResource>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NotificationHubs/namespaces/{namespaceName}/notificationHubs/{notificationHubName}/AuthorizationRules/{authorizationRuleName}'
@@ -511,6 +518,7 @@ class NotificationHubsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`NotificationHubResourcePaged
          <azure.mgmt.notificationhubs.models.NotificationHubResourcePaged>`
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -581,6 +589,7 @@ class NotificationHubsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`SharedAccessAuthorizationRuleResourcePaged
          <azure.mgmt.notificationhubs.models.SharedAccessAuthorizationRuleResourcePaged>`
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -637,8 +646,8 @@ class NotificationHubsOperations(object):
 
     def list_keys(
             self, resource_group_name, namespace_name, notification_hub_name, authorization_rule_name, custom_headers=None, raw=False, **operation_config):
-        """Gets the Primary and Secondary ConnectionStrings to the
-        NotificationHub .
+        """Gets the Primary and Secondary ConnectionStrings to the NotificationHub
+        .
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
@@ -658,6 +667,7 @@ class NotificationHubsOperations(object):
          <azure.mgmt.notificationhubs.models.ResourceListKeys>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NotificationHubs/namespaces/{namespaceName}/notificationHubs/{notificationHubName}/AuthorizationRules/{authorizationRuleName}/listKeys'
@@ -731,6 +741,7 @@ class NotificationHubsOperations(object):
          <azure.mgmt.notificationhubs.models.ResourceListKeys>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         parameters = models.PolicykeyResource(policy_key=policy_key)
 
@@ -802,6 +813,7 @@ class NotificationHubsOperations(object):
          <azure.mgmt.notificationhubs.models.PnsCredentialsResource>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NotificationHubs/namespaces/{namespaceName}/notificationHubs/{notificationHubName}/pnsCredentials'

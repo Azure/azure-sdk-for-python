@@ -20,7 +20,7 @@ class IpSecurityRestriction(Model):
     :param subnet_mask: Subnet mask for the range of IP addresses the
      restriction is valid for
     :type subnet_mask: str
-    """ 
+    """
 
     _attribute_map = {
         'ip_address': {'key': 'ipAddress', 'type': 'str'},

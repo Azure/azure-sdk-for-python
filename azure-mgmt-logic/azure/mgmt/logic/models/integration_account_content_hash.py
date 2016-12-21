@@ -19,7 +19,7 @@ class IntegrationAccountContentHash(Model):
     :type algorithm: str
     :param value: The content hash value.
     :type value: str
-    """ 
+    """
 
     _attribute_map = {
         'algorithm': {'key': 'algorithm', 'type': 'str'},

@@ -41,7 +41,7 @@ class VirtualNetwork(Model):
     :type location: str
     :param tags: The tags of the resource.
     :type tags: dict
-    """ 
+    """
 
     _attribute_map = {
         'allowed_subnets': {'key': 'properties.allowedSubnets', 'type': '[Subnet]'},

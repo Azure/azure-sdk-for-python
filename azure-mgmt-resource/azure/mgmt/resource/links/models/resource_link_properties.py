@@ -26,7 +26,7 @@ class ResourceLinkProperties(Model):
     :type target_id: str
     :param notes: Notes about the resource link.
     :type notes: str
-    """ 
+    """
 
     _validation = {
         'source_id': {'readonly': True},

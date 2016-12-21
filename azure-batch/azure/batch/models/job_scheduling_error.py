@@ -29,7 +29,7 @@ class JobSchedulingError(Model):
      scheduling error.
     :type details: list of :class:`NameValuePair
      <azure.batch.models.NameValuePair>`
-    """ 
+    """
 
     _validation = {
         'category': {'required': True},

@@ -20,7 +20,7 @@ class CsmMoveResourceEnvelope(Model):
     :type target_resource_group: str
     :param resources:
     :type resources: list of str
-    """ 
+    """
 
     _attribute_map = {
         'target_resource_group': {'key': 'targetResourceGroup', 'type': 'str'},

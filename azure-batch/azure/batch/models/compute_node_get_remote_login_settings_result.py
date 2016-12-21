@@ -21,7 +21,7 @@ class ComputeNodeGetRemoteLoginSettingsResult(Model):
     :param remote_login_port: The port used for remote login to the compute
      node.
     :type remote_login_port: int
-    """ 
+    """
 
     _validation = {
         'remote_login_ip_address': {'required': True},

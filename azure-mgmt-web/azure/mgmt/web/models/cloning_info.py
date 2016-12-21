@@ -37,11 +37,11 @@ class CloningInfo(Model):
     :type hosting_environment: str
     :param app_settings_overrides: Application settings overrides for cloned
      web app. If specified these settings will override the settings cloned
-     from source web app. If not specified, application settings
-     from source web app are retained.
+     from source web app. If not specified, application settings from source
+     web app are retained.
     :type app_settings_overrides: dict
-    :param configure_load_balancing: If specified configure load balancing
-     for source and clone site
+    :param configure_load_balancing: If specified configure load balancing for
+     source and clone site
     :type configure_load_balancing: bool
     :param traffic_manager_profile_id: ARM resource id of the traffic manager
      profile to use if it exists. Traffic manager resource id is of the form
@@ -51,7 +51,7 @@ class CloningInfo(Model):
      create. This is only needed if traffic manager profile does not already
      exist
     :type traffic_manager_profile_name: str
-    """ 
+    """
 
     _attribute_map = {
         'correlation_id': {'key': 'correlationId', 'type': 'str'},

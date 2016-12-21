@@ -19,7 +19,7 @@ class ResourcesMoveInfo(Model):
     :type resources: list of str
     :param target_resource_group: The target resource group.
     :type target_resource_group: str
-    """ 
+    """
 
     _attribute_map = {
         'resources': {'key': 'resources', 'type': '[str]'},

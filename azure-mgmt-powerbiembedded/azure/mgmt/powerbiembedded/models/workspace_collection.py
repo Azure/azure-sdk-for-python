@@ -34,7 +34,7 @@ class WorkspaceCollection(Model):
      <azure.mgmt.powerbiembedded.models.AzureSku>`
     :param properties: Properties
     :type properties: object
-    """ 
+    """
 
     _validation = {
         'sku': {'constant': True},

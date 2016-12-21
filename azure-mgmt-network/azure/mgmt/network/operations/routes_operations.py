@@ -197,8 +197,7 @@ class RoutesOperations(object):
          deserialized response
         :rtype:
          :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         instance that returns :class:`Route
-         <azure.mgmt.network.models.Route>`
+         instance that returns :class:`Route <azure.mgmt.network.models.Route>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`

@@ -34,8 +34,8 @@ class HostingEnvironment(Resource):
      (App Service Environment), e.g. "West US"
     :type hosting_environment_location: str
     :param provisioning_state: Provisioning state of the hostingEnvironment
-     (App Service Environment). Possible values include: 'Succeeded',
-     'Failed', 'Canceled', 'InProgress', 'Deleting'
+     (App Service Environment). Possible values include: 'Succeeded', 'Failed',
+     'Canceled', 'InProgress', 'Deleting'
     :type provisioning_state: str or :class:`ProvisioningState
      <azure.mgmt.web.models.ProvisioningState>`
     :param status: Current status of the hostingEnvironment (App Service
@@ -88,8 +88,8 @@ class HostingEnvironment(Resource):
     :param dns_suffix: DNS suffix of the hostingEnvironment (App Service
      Environment)
     :type dns_suffix: str
-    :param last_action: Last deployment action on this hostingEnvironment
-     (App Service Environment)
+    :param last_action: Last deployment action on this hostingEnvironment (App
+     Service Environment)
     :type last_action: str
     :param last_action_result: Result of the last deployment action on this
      hostingEnvironment (App Service Environment)
@@ -119,8 +119,8 @@ class HostingEnvironment(Resource):
     :param environment_is_healthy: True/false indicating whether the
      hostingEnvironment (App Service Environment) is healthy
     :type environment_is_healthy: bool
-    :param environment_status: Detailed message about with results of the
-     last check of the hostingEnvironment (App Service Environment)
+    :param environment_status: Detailed message about with results of the last
+     check of the hostingEnvironment (App Service Environment)
     :type environment_status: str
     :param resource_group: Resource group of the hostingEnvironment (App
      Service Environment)
@@ -137,7 +137,7 @@ class HostingEnvironment(Resource):
      hosting environment
     :type cluster_settings: list of :class:`NameValuePair
      <azure.mgmt.web.models.NameValuePair>`
-    """ 
+    """
 
     _validation = {
         'location': {'required': True},

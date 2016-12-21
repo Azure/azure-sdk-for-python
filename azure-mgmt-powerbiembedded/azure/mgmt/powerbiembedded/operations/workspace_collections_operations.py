@@ -518,8 +518,8 @@ class WorkspaceCollectionsOperations(object):
 
     def get_access_keys(
             self, resource_group_name, workspace_collection_name, custom_headers=None, raw=False, **operation_config):
-        """Retrieves the primary and secondary access keys for the specified
-        Power BI Workspace Collection.
+        """Retrieves the primary and secondary access keys for the specified Power
+        BI Workspace Collection.
 
         :param resource_group_name: Azure resource group
         :type resource_group_name: str
@@ -581,8 +581,8 @@ class WorkspaceCollectionsOperations(object):
 
     def regenerate_key(
             self, resource_group_name, workspace_collection_name, key_name=None, custom_headers=None, raw=False, **operation_config):
-        """Regenerates the primary or secondary access key for the specified
-        Power BI Workspace Collection.
+        """Regenerates the primary or secondary access key for the specified Power
+        BI Workspace Collection.
 
         :param resource_group_name: Azure resource group
         :type resource_group_name: str

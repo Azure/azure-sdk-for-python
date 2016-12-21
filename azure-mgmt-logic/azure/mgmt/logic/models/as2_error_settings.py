@@ -21,7 +21,7 @@ class AS2ErrorSettings(Model):
     :param resend_if_mdn_not_received: The value indicating whether to resend
      message If MDN is not received.
     :type resend_if_mdn_not_received: bool
-    """ 
+    """
 
     _attribute_map = {
         'suspend_duplicate_message': {'key': 'SuspendDuplicateMessage', 'type': 'bool'},

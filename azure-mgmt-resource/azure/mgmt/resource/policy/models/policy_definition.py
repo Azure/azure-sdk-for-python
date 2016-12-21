@@ -32,7 +32,7 @@ class PolicyDefinition(Model):
      value for name, the value is inferred from the name value in the request
      URI.
     :type name: str
-    """ 
+    """
 
     _attribute_map = {
         'policy_type': {'key': 'properties.policyType', 'type': 'str'},

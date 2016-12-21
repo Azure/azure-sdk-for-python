@@ -49,7 +49,7 @@ class JobReleaseTaskExecutionInformation(Model):
      starting the task.
     :type scheduling_error: :class:`TaskSchedulingError
      <azure.batch.models.TaskSchedulingError>`
-    """ 
+    """
 
     _validation = {
         'start_time': {'required': True},

@@ -83,7 +83,7 @@ class X12EnvelopeSettings(Model):
      'NotSpecified', 'Test', 'Information', 'Production'
     :type usage_indicator: str or :class:`UsageIndicator
      <azure.mgmt.logic.models.UsageIndicator>`
-    """ 
+    """
 
     _attribute_map = {
         'control_standards_id': {'key': 'controlStandardsId', 'type': 'int'},

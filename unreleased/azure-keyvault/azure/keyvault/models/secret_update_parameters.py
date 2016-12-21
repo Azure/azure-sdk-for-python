@@ -22,7 +22,7 @@ class SecretUpdateParameters(Model):
      <azure.keyvault.models.SecretAttributes>`
     :param tags: Application-specific metadata in the form of key-value pairs
     :type tags: dict
-    """ 
+    """
 
     _attribute_map = {
         'content_type': {'key': 'contentType', 'type': 'str'},

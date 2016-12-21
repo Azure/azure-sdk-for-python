@@ -20,7 +20,7 @@ class HttpAuthentication(Model):
      'Basic'
     :type type: str or :class:`HttpAuthenticationType
      <azure.mgmt.scheduler.models.HttpAuthenticationType>`
-    """ 
+    """
 
     _attribute_map = {
         'type': {'key': 'type', 'type': 'HttpAuthenticationType'},

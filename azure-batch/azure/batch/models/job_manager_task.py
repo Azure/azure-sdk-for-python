@@ -85,7 +85,7 @@ class JobManagerTask(Model):
     :type application_package_references: list of
      :class:`ApplicationPackageReference
      <azure.batch.models.ApplicationPackageReference>`
-    """ 
+    """
 
     _validation = {
         'id': {'required': True},

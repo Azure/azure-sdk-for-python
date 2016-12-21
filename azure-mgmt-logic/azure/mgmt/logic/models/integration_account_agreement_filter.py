@@ -20,7 +20,7 @@ class IntegrationAccountAgreementFilter(Model):
      'Edifact'
     :type agreement_type: str or :class:`AgreementType
      <azure.mgmt.logic.models.AgreementType>`
-    """ 
+    """
 
     _attribute_map = {
         'agreement_type': {'key': 'agreementType', 'type': 'AgreementType'},

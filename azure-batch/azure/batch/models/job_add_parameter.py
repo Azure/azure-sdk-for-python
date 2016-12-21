@@ -102,7 +102,7 @@ class JobAddParameter(Model):
     :param uses_task_dependencies: The flag that determines if this job will
      use tasks with dependencies.
     :type uses_task_dependencies: bool
-    """ 
+    """
 
     _validation = {
         'id': {'required': True},

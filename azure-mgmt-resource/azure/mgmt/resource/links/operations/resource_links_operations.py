@@ -298,8 +298,8 @@ class ResourceLinksOperations(object):
          resource group, set the scope to
          /subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myGroup.
         :type scope: str
-        :param filter: The filter to apply when getting resource links. To
-         get links only at the specified scope (not below the scope), use
+        :param filter: The filter to apply when getting resource links. To get
+         links only at the specified scope (not below the scope), use
          Filter.atScope().
         :type filter: str
         :param dict custom_headers: headers that will be added to the request

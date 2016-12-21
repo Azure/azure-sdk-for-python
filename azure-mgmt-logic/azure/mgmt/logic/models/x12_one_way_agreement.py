@@ -24,7 +24,7 @@ class X12OneWayAgreement(Model):
     :param protocol_settings: The X12 protocol settings.
     :type protocol_settings: :class:`X12ProtocolSettings
      <azure.mgmt.logic.models.X12ProtocolSettings>`
-    """ 
+    """
 
     _attribute_map = {
         'sender_business_identity': {'key': 'senderBusinessIdentity', 'type': 'BusinessIdentity'},

@@ -22,7 +22,7 @@ class NodeDisableSchedulingParameter(Model):
     :type node_disable_scheduling_option: str or
      :class:`DisableComputeNodeSchedulingOption
      <azure.batch.models.DisableComputeNodeSchedulingOption>`
-    """ 
+    """
 
     _attribute_map = {
         'node_disable_scheduling_option': {'key': 'nodeDisableSchedulingOption', 'type': 'DisableComputeNodeSchedulingOption'},

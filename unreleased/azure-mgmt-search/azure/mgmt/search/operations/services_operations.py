@@ -35,9 +35,9 @@ class ServicesOperations(object):
 
     def create_or_update(
             self, resource_group_name, search_service_name, service, search_management_request_options=None, custom_headers=None, raw=False, **operation_config):
-        """Creates or updates a Search service in the given resource group. If
-        the Search service already exists, all properties will be updated
-        with the given values.
+        """Creates or updates a Search service in the given resource group. If the
+        Search service already exists, all properties will be updated with the
+        given values.
 
         :param resource_group_name: The name of the resource group within the
          current subscription. You can obtain this value from the Azure
@@ -46,9 +46,9 @@ class ServicesOperations(object):
         :param search_service_name: The name of the Azure Search service to
          create or update. Search service names must only contain lowercase
          letters, digits or dashes, cannot use dash as the first two or last
-         one characters, cannot contain consecutive dashes, and must be
-         between 2 and 60 characters in length. Search service names must be
-         globally unique since they are part of the service URI
+         one characters, cannot contain consecutive dashes, and must be between
+         2 and 60 characters in length. Search service names must be globally
+         unique since they are part of the service URI
          (https://<name>.search.windows.net). You cannot change the service
          name after the service is created.
         :type search_service_name: str
@@ -358,11 +358,10 @@ class ServicesOperations(object):
         use. Search service names must be globally unique since they are part
         of the service URI (https://<name>.search.windows.net).
 
-        :param name: The Search service name to validate. Search service
-         names must only contain lowercase letters, digits or dashes, cannot
-         use dash as the first two or last one characters, cannot contain
-         consecutive dashes, and must be between 2 and 60 characters in
-         length.
+        :param name: The Search service name to validate. Search service names
+         must only contain lowercase letters, digits or dashes, cannot use dash
+         as the first two or last one characters, cannot contain consecutive
+         dashes, and must be between 2 and 60 characters in length.
         :type name: str
         :param search_management_request_options: Additional parameters for
          the operation

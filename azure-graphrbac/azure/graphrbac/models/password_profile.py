@@ -20,7 +20,7 @@ class PasswordProfile(Model):
     :param force_change_password_next_login: Whether to force a password
      change on next login.
     :type force_change_password_next_login: bool
-    """ 
+    """
 
     _validation = {
         'password': {'required': True},

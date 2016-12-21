@@ -21,7 +21,7 @@ class X12AgreementContent(Model):
     :param send_agreement: The X12 one-way send agreement.
     :type send_agreement: :class:`X12OneWayAgreement
      <azure.mgmt.logic.models.X12OneWayAgreement>`
-    """ 
+    """
 
     _attribute_map = {
         'receive_agreement': {'key': 'receiveAgreement', 'type': 'X12OneWayAgreement'},

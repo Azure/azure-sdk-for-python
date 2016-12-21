@@ -31,8 +31,8 @@ class RestoreRequest(Resource):
     :type storage_account_url: str
     :param blob_name: Name of a blob which contains the backup
     :type blob_name: str
-    :param overwrite: True if the restore operation can overwrite target
-     site. "True" needed if trying to restore over an existing site.
+    :param overwrite: True if the restore operation can overwrite target site.
+     "True" needed if trying to restore over an existing site.
     :type overwrite: bool
     :param site_name: Name of a site (Web App)
     :type site_name: str
@@ -43,11 +43,11 @@ class RestoreRequest(Resource):
     :param ignore_conflicting_host_names: Changes a logic when restoring a
      site with custom domains. If "true", custom domains are removed
      automatically. If "false", custom domains are added to
-     the site object when it is being restored, but that might
-     fail due to conflicts during the operation.
+     the site object when it is being restored, but that might fail due to
+     conflicts during the operation.
     :type ignore_conflicting_host_names: bool
-    :param operation_type: Operation type. Possible values include:
-     'Default', 'Clone', 'Relocation'
+    :param operation_type: Operation type. Possible values include: 'Default',
+     'Clone', 'Relocation'
     :type operation_type: str or :class:`BackupRestoreOperationType
      <azure.mgmt.web.models.BackupRestoreOperationType>`
     :param adjust_connection_strings: Gets or sets a flag showing if
@@ -56,7 +56,7 @@ class RestoreRequest(Resource):
     :param hosting_environment: App Service Environment name, if needed (only
      when restoring a site to an App Service Environment)
     :type hosting_environment: str
-    """ 
+    """
 
     _validation = {
         'location': {'required': True},

@@ -26,7 +26,7 @@ class StorageAccountKey(Model):
      permissions. Possible values include: 'READ', 'FULL'
     :vartype permissions: str or :class:`KeyPermission
      <azure.mgmt.storage.models.KeyPermission>`
-    """ 
+    """
 
     _validation = {
         'key_name': {'readonly': True},

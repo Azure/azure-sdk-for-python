@@ -18,7 +18,7 @@ class WindowsConfiguration(Model):
     :param enable_automatic_updates: Whether automatic updates are enabled on
      the virtual machine. If omitted, the default value is true.
     :type enable_automatic_updates: bool
-    """ 
+    """
 
     _attribute_map = {
         'enable_automatic_updates': {'key': 'enableAutomaticUpdates', 'type': 'bool'},

@@ -17,8 +17,8 @@ class ProviderResourceType(Model):
 
     :param resource_type: The resource type.
     :type resource_type: str
-    :param locations: The collection of locations where this resource type
-     can be created.
+    :param locations: The collection of locations where this resource type can
+     be created.
     :type locations: list of str
     :param aliases: The aliases that are supported by this resource type.
     :type aliases: list of :class:`AliasType
@@ -27,7 +27,7 @@ class ProviderResourceType(Model):
     :type api_versions: list of str
     :param properties: The properties.
     :type properties: dict
-    """ 
+    """
 
     _attribute_map = {
         'resource_type': {'key': 'resourceType', 'type': 'str'},

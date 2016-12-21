@@ -22,7 +22,7 @@ class StorageAccountListKeysResult(Model):
      the specified storage account.
     :vartype keys: list of :class:`StorageAccountKey
      <azure.mgmt.storage.models.StorageAccountKey>`
-    """ 
+    """
 
     _validation = {
         'keys': {'readonly': True},

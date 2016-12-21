@@ -44,7 +44,7 @@ class RecommendationRule(Model):
     :type channels: str or :class:`Channels <azure.mgmt.web.models.Channels>`
     :param tags: An array of category tags that the rule contains.
     :type tags: list of str
-    """ 
+    """
 
     _validation = {
         'level': {'required': True},

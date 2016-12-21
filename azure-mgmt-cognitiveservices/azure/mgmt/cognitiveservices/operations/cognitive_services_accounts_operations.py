@@ -41,10 +41,10 @@ class CognitiveServicesAccountsOperations(object):
         :param resource_group_name: The name of the resource group within the
          user's subscription.
         :type resource_group_name: str
-        :param account_name: The name of the cognitive services account
-         within the specified resource group. Cognitive Services account
-         names must be between 3 and 24 characters in length and use numbers
-         and lower-case letters only.
+        :param account_name: The name of the cognitive services account within
+         the specified resource group. Cognitive Services account names must be
+         between 3 and 24 characters in length and use numbers and lower-case
+         letters only.
         :type account_name: str
         :param parameters: The parameters to provide for the created account.
         :type parameters: :class:`CognitiveServicesAccountCreateParameters
@@ -58,6 +58,8 @@ class CognitiveServicesAccountsOperations(object):
          <azure.mgmt.cognitiveservices.models.CognitiveServicesAccount>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`ErrorException<azure.mgmt.cognitiveservices.models.ErrorException>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.CognitiveServices/accounts/{accountName}'
@@ -113,18 +115,18 @@ class CognitiveServicesAccountsOperations(object):
         :param resource_group_name: The name of the resource group within the
          user's subscription.
         :type resource_group_name: str
-        :param account_name: The name of the cognitive services account
-         within the specified resource group. Cognitive Services account
-         names must be between 3 and 24 characters in length and use numbers
-         and lower-case letters only.
+        :param account_name: The name of the cognitive services account within
+         the specified resource group. Cognitive Services account names must be
+         between 3 and 24 characters in length and use numbers and lower-case
+         letters only.
         :type account_name: str
         :param sku:
         :type sku: :class:`Sku <azure.mgmt.cognitiveservices.models.Sku>`
         :param tags: Gets or sets a list of key value pairs that describe the
-         resource. These tags can be used in viewing and grouping this
-         resource (across resource groups). A maximum of 15 tags can be
-         provided for a resource. Each tag must have a key no greater than
-         128 characters and value no greater than 256 characters.
+         resource. These tags can be used in viewing and grouping this resource
+         (across resource groups). A maximum of 15 tags can be provided for a
+         resource. Each tag must have a key no greater than 128 characters and
+         value no greater than 256 characters.
         :type tags: dict
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -135,6 +137,8 @@ class CognitiveServicesAccountsOperations(object):
          <azure.mgmt.cognitiveservices.models.CognitiveServicesAccount>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`ErrorException<azure.mgmt.cognitiveservices.models.ErrorException>`
         """
         body = models.CognitiveServicesAccountUpdateParameters(sku=sku, tags=tags)
 
@@ -190,10 +194,10 @@ class CognitiveServicesAccountsOperations(object):
         :param resource_group_name: The name of the resource group within the
          user's subscription.
         :type resource_group_name: str
-        :param account_name: The name of the cognitive services account
-         within the specified resource group. Cognitive Services account
-         names must be between 3 and 24 characters in length and use numbers
-         and lower-case letters only.
+        :param account_name: The name of the cognitive services account within
+         the specified resource group. Cognitive Services account names must be
+         between 3 and 24 characters in length and use numbers and lower-case
+         letters only.
         :type account_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -203,6 +207,8 @@ class CognitiveServicesAccountsOperations(object):
         :rtype: None
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`ErrorException<azure.mgmt.cognitiveservices.models.ErrorException>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.CognitiveServices/accounts/{accountName}'
@@ -245,10 +251,10 @@ class CognitiveServicesAccountsOperations(object):
         :param resource_group_name: The name of the resource group within the
          user's subscription.
         :type resource_group_name: str
-        :param account_name: The name of the cognitive services account
-         within the specified resource group. Cognitive Services account
-         names must be between 3 and 24 characters in length and use numbers
-         and lower-case letters only.
+        :param account_name: The name of the cognitive services account within
+         the specified resource group. Cognitive Services account names must be
+         between 3 and 24 characters in length and use numbers and lower-case
+         letters only.
         :type account_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -259,6 +265,8 @@ class CognitiveServicesAccountsOperations(object):
          <azure.mgmt.cognitiveservices.models.CognitiveServicesAccount>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`ErrorException<azure.mgmt.cognitiveservices.models.ErrorException>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.CognitiveServices/accounts/{accountName}'
@@ -316,6 +324,8 @@ class CognitiveServicesAccountsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`CognitiveServicesAccountPaged
          <azure.mgmt.cognitiveservices.models.CognitiveServicesAccountPaged>`
+        :raises:
+         :class:`ErrorException<azure.mgmt.cognitiveservices.models.ErrorException>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -378,6 +388,8 @@ class CognitiveServicesAccountsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`CognitiveServicesAccountPaged
          <azure.mgmt.cognitiveservices.models.CognitiveServicesAccountPaged>`
+        :raises:
+         :class:`ErrorException<azure.mgmt.cognitiveservices.models.ErrorException>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -434,10 +446,10 @@ class CognitiveServicesAccountsOperations(object):
         :param resource_group_name: The name of the resource group within the
          user's subscription.
         :type resource_group_name: str
-        :param account_name: The name of the cognitive services account
-         within the specified resource group. Congitive Services account
-         names must be between 3 and 24 characters in length and use numbers
-         and lower-case letters only.
+        :param account_name: The name of the cognitive services account within
+         the specified resource group. Congitive Services account names must be
+         between 3 and 24 characters in length and use numbers and lower-case
+         letters only.
         :type account_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -448,6 +460,8 @@ class CognitiveServicesAccountsOperations(object):
          <azure.mgmt.cognitiveservices.models.CognitiveServicesAccountKeys>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`ErrorException<azure.mgmt.cognitiveservices.models.ErrorException>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.CognitiveServices/accounts/{accountName}/listKeys'
@@ -498,10 +512,10 @@ class CognitiveServicesAccountsOperations(object):
         :param resource_group_name: The name of the resource group within the
          user's subscription.
         :type resource_group_name: str
-        :param account_name: The name of the cognitive services account
-         within the specified resource group. Cognitive Services account
-         names must be between 3 and 24 characters in length and use numbers
-         and lower-case letters only.
+        :param account_name: The name of the cognitive services account within
+         the specified resource group. Cognitive Services account names must be
+         between 3 and 24 characters in length and use numbers and lower-case
+         letters only.
         :type account_name: str
         :param key_name: key name to generate (Key1|Key2). Possible values
          include: 'Key1', 'Key2'
@@ -516,6 +530,8 @@ class CognitiveServicesAccountsOperations(object):
          <azure.mgmt.cognitiveservices.models.CognitiveServicesAccountKeys>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`ErrorException<azure.mgmt.cognitiveservices.models.ErrorException>`
         """
         body = models.RegenerateKeyParameters(key_name=key_name)
 
@@ -571,10 +587,10 @@ class CognitiveServicesAccountsOperations(object):
         :param resource_group_name: The name of the resource group within the
          user's subscription.
         :type resource_group_name: str
-        :param account_name: The name of the cognitive services account
-         within the specified resource group. Cognitive Services account
-         names must be between 3 and 24 characters in length and use numbers
-         and lower-case letters only.
+        :param account_name: The name of the cognitive services account within
+         the specified resource group. Cognitive Services account names must be
+         between 3 and 24 characters in length and use numbers and lower-case
+         letters only.
         :type account_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -585,6 +601,8 @@ class CognitiveServicesAccountsOperations(object):
          <azure.mgmt.cognitiveservices.models.CognitiveServicesAccountEnumerateSkusResult>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`ErrorException<azure.mgmt.cognitiveservices.models.ErrorException>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.CognitiveServices/accounts/{accountName}/skus'

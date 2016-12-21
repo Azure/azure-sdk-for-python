@@ -19,7 +19,7 @@ class Action(Model):
      'EmailContacts', 'AutoRenew'
     :type action_type: str or :class:`ActionType
      <azure.keyvault.models.ActionType>`
-    """ 
+    """
 
     _attribute_map = {
         'action_type': {'key': 'action_type', 'type': 'ActionType'},

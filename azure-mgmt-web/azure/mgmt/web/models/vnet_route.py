@@ -38,17 +38,16 @@ class VnetRoute(Resource):
      address is specified in CIDR notation, this must be omitted.
     :type end_address: str
     :param route_type: The type of route this is:
-     DEFAULT - By default, every web app has routes to the local
-     address ranges specified by RFC1918
-     INHERITED - Routes inherited from the real Virtual Network
-     routes
+     DEFAULT - By default, every web app has routes to the local address ranges
+     specified by RFC1918
+     INHERITED - Routes inherited from the real Virtual Network routes
      STATIC - Static route set on the web app only
-     These values will be used for syncing a Web App's routes with
-     those from a Virtual Network. This operation will clear all DEFAULT and
-     INHERITED routes and replace them
+     These values will be used for syncing a Web App's routes with those from a
+     Virtual Network. This operation will clear all DEFAULT and INHERITED
+     routes and replace them
      with new INHERITED routes.
     :type route_type: str
-    """ 
+    """
 
     _validation = {
         'location': {'required': True},

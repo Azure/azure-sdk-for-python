@@ -18,8 +18,8 @@ class AS2ProtocolSettings(Model):
     :param message_connection_settings: The message connection settings.
     :type message_connection_settings: :class:`AS2MessageConnectionSettings
      <azure.mgmt.logic.models.AS2MessageConnectionSettings>`
-    :param acknowledgement_connection_settings: The acknowledgement
-     connection settings.
+    :param acknowledgement_connection_settings: The acknowledgement connection
+     settings.
     :type acknowledgement_connection_settings:
      :class:`AS2AcknowledgementConnectionSettings
      <azure.mgmt.logic.models.AS2AcknowledgementConnectionSettings>`
@@ -38,7 +38,7 @@ class AS2ProtocolSettings(Model):
     :param error_settings: The error settings.
     :type error_settings: :class:`AS2ErrorSettings
      <azure.mgmt.logic.models.AS2ErrorSettings>`
-    """ 
+    """
 
     _attribute_map = {
         'message_connection_settings': {'key': 'messageConnectionSettings', 'type': 'AS2MessageConnectionSettings'},

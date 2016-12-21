@@ -55,7 +55,7 @@ class StartTaskInformation(Model):
      other than retry; for example, if the compute node was rebooted during a
      retry, then the startTime is updated but the lastRetryTime is not.
     :type last_retry_time: datetime
-    """ 
+    """
 
     _validation = {
         'state': {'required': True},

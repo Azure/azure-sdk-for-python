@@ -27,7 +27,7 @@ class RecurrenceSchedule(Model):
     :param monthly_occurrences: The monthly occurrences.
     :type monthly_occurrences: list of :class:`RecurrenceScheduleOccurrence
      <azure.mgmt.logic.models.RecurrenceScheduleOccurrence>`
-    """ 
+    """
 
     _attribute_map = {
         'minutes': {'key': 'minutes', 'type': '[int]'},

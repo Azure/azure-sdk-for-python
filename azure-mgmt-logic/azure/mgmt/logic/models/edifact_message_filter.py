@@ -19,7 +19,7 @@ class EdifactMessageFilter(Model):
      include: 'NotSpecified', 'Include', 'Exclude'
     :type message_filter_type: str or :class:`MessageFilterType
      <azure.mgmt.logic.models.MessageFilterType>`
-    """ 
+    """
 
     _attribute_map = {
         'message_filter_type': {'key': 'messageFilterType', 'type': 'MessageFilterType'},

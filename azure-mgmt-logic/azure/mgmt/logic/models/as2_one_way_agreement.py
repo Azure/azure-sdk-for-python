@@ -24,7 +24,7 @@ class AS2OneWayAgreement(Model):
     :param protocol_settings: The AS2 protocol settings.
     :type protocol_settings: :class:`AS2ProtocolSettings
      <azure.mgmt.logic.models.AS2ProtocolSettings>`
-    """ 
+    """
 
     _attribute_map = {
         'sender_business_identity': {'key': 'senderBusinessIdentity', 'type': 'BusinessIdentity'},

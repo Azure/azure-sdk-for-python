@@ -23,7 +23,7 @@ class JobRecurrenceScheduleMonthlyOccurrence(Model):
      <azure.mgmt.scheduler.models.JobScheduleDay>`
     :param occurrence: Gets or sets the occurrence. Must be between -5 and 5.
     :type occurrence: int
-    """ 
+    """
 
     _attribute_map = {
         'day': {'key': 'day', 'type': 'JobScheduleDay'},

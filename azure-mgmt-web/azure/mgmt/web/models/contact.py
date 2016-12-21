@@ -35,7 +35,7 @@ class Contact(Model):
     :type organization: str
     :param phone: Phone number
     :type phone: str
-    """ 
+    """
 
     _attribute_map = {
         'address_mailing': {'key': 'addressMailing', 'type': 'Address'},

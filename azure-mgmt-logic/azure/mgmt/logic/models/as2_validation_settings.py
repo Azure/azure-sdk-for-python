@@ -18,8 +18,8 @@ class AS2ValidationSettings(Model):
     :param override_message_properties: The value indicating whether to
      override incoming message properties with those in agreement.
     :type override_message_properties: bool
-    :param encrypt_message: The value indicating whether the message has to
-     be encrypted.
+    :param encrypt_message: The value indicating whether the message has to be
+     encrypted.
     :type encrypt_message: bool
     :param sign_message: The value indicating whether the message has to be
      signed.
@@ -44,7 +44,7 @@ class AS2ValidationSettings(Model):
      'AES256'
     :type encryption_algorithm: str or :class:`EncryptionAlgorithm
      <azure.mgmt.logic.models.EncryptionAlgorithm>`
-    """ 
+    """
 
     _attribute_map = {
         'override_message_properties': {'key': 'overrideMessageProperties', 'type': 'bool'},

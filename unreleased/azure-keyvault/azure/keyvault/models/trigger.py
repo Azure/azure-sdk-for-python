@@ -20,7 +20,7 @@ class Trigger(Model):
     :type lifetime_percentage: int
     :param days_before_expiry: Days before expiry.
     :type days_before_expiry: int
-    """ 
+    """
 
     _validation = {
         'lifetime_percentage': {'maximum': 99, 'minimum': 1},

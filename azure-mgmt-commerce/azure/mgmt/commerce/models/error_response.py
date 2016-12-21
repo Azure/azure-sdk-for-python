@@ -20,7 +20,7 @@ class ErrorResponse(Model):
     :type code: str
     :param message: Error message indicating why the operation failed.
     :type message: str
-    """ 
+    """
 
     _attribute_map = {
         'code': {'key': 'code', 'type': 'str'},

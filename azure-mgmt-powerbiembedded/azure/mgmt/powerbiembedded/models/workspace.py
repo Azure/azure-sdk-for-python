@@ -23,7 +23,7 @@ class Workspace(Model):
     :type type: str
     :param properties: Property bag
     :type properties: object
-    """ 
+    """
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},

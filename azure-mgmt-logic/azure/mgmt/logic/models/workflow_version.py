@@ -49,7 +49,7 @@ class WorkflowVersion(Resource):
     :type definition: object
     :param parameters: The parameters.
     :type parameters: dict
-    """ 
+    """
 
     _validation = {
         'created_time': {'readonly': True},

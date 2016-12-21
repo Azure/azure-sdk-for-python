@@ -48,7 +48,7 @@ class EdifactAcknowledgementSettings(Model):
     :param rollover_acknowledgement_control_number: The value indicating
      whether to rollover acknowledgement control number.
     :type rollover_acknowledgement_control_number: bool
-    """ 
+    """
 
     _attribute_map = {
         'need_technical_acknowledgement': {'key': 'needTechnicalAcknowledgement', 'type': 'bool'},

@@ -19,7 +19,7 @@ class SiteCloneabilityCriterion(Model):
     :type name: str
     :param description: Description of criterion
     :type description: str
-    """ 
+    """
 
     _attribute_map = {
         'name': {'key': 'name', 'type': 'str'},

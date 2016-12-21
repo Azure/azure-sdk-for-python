@@ -32,7 +32,7 @@ class ApplicationUpdateParameters(Model):
     :param password_credentials: The list of PasswordCredential objects.
     :type password_credentials: list of :class:`PasswordCredential
      <azure.graphrbac.models.PasswordCredential>`
-    """ 
+    """
 
     _attribute_map = {
         'available_to_other_tenants': {'key': 'availableToOtherTenants', 'type': 'bool'},

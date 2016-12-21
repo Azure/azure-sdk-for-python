@@ -19,7 +19,7 @@ class CognitiveServicesResourceAndSku(Model):
     :type resource_type: str
     :param sku:
     :type sku: :class:`Sku <azure.mgmt.cognitiveservices.models.Sku>`
-    """ 
+    """
 
     _attribute_map = {
         'resource_type': {'key': 'resourceType', 'type': 'str'},

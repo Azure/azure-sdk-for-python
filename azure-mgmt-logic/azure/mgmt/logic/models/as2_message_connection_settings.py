@@ -27,7 +27,7 @@ class AS2MessageConnectionSettings(Model):
     :param unfold_http_headers: The value indicating whether to unfold the
      HTTP headers.
     :type unfold_http_headers: bool
-    """ 
+    """
 
     _attribute_map = {
         'ignore_certificate_name_mismatch': {'key': 'ignoreCertificateNameMismatch', 'type': 'bool'},

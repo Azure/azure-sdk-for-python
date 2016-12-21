@@ -41,7 +41,7 @@ class Csr(Resource):
     :type public_key_hash: str
     :param hosting_environment: Hosting environment
     :type hosting_environment: str
-    """ 
+    """
 
     _validation = {
         'location': {'required': True},

@@ -21,7 +21,7 @@ class EdifactAgreementContent(Model):
     :param send_agreement: The EDIFACT one-way send agreement.
     :type send_agreement: :class:`EdifactOneWayAgreement
      <azure.mgmt.logic.models.EdifactOneWayAgreement>`
-    """ 
+    """
 
     _attribute_map = {
         'receive_agreement': {'key': 'receiveAgreement', 'type': 'EdifactOneWayAgreement'},

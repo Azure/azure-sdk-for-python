@@ -189,8 +189,8 @@ class NetworkSecurityGroupsOperations(object):
         :param network_security_group_name: The name of the network security
          group.
         :type network_security_group_name: str
-        :param parameters: Parameters supplied to the create or update
-         network security group operation.
+        :param parameters: Parameters supplied to the create or update network
+         security group operation.
         :type parameters: :class:`NetworkSecurityGroup
          <azure.mgmt.network.models.NetworkSecurityGroup>`
         :param dict custom_headers: headers that will be added to the request

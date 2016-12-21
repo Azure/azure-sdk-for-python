@@ -19,7 +19,7 @@ class DomainRecommendationSearchParameters(Model):
     :type keywords: str
     :param max_domain_recommendations: Maximum number of recommendations
     :type max_domain_recommendations: int
-    """ 
+    """
 
     _attribute_map = {
         'keywords': {'key': 'keywords', 'type': 'str'},

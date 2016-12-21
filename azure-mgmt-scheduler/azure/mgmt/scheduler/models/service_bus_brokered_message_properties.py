@@ -42,7 +42,7 @@ class ServiceBusBrokeredMessageProperties(Model):
     :type to: str
     :param via_partition_key: Gets or sets the via partition key.
     :type via_partition_key: str
-    """ 
+    """
 
     _attribute_map = {
         'content_type': {'key': 'contentType', 'type': 'str'},

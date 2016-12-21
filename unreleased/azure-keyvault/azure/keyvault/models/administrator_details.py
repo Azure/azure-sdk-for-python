@@ -23,7 +23,7 @@ class AdministratorDetails(Model):
     :type email_address: str
     :param phone: Phone number.
     :type phone: str
-    """ 
+    """
 
     _attribute_map = {
         'first_name': {'key': 'first_name', 'type': 'str'},

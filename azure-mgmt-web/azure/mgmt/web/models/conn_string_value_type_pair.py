@@ -21,7 +21,7 @@ class ConnStringValueTypePair(Model):
      'SQLServer', 'SQLAzure', 'Custom'
     :type type: str or :class:`DatabaseServerType
      <azure.mgmt.web.models.DatabaseServerType>`
-    """ 
+    """
 
     _validation = {
         'type': {'required': True},

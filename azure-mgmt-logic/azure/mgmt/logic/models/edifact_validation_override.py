@@ -37,7 +37,7 @@ class EdifactValidationOverride(Model):
     :param trim_leading_and_trailing_spaces_and_zeroes: The value indicating
      whether to trim leading and trailing spaces and zeroes.
     :type trim_leading_and_trailing_spaces_and_zeroes: bool
-    """ 
+    """
 
     _attribute_map = {
         'message_id': {'key': 'messageId', 'type': 'str'},

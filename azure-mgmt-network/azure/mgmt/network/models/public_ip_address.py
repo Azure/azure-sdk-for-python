@@ -40,8 +40,8 @@ class PublicIPAddress(Resource):
     :ivar ip_configuration:
     :vartype ip_configuration: :class:`IPConfiguration
      <azure.mgmt.network.models.IPConfiguration>`
-    :param dns_settings: The FQDN of the DNS record associated with the
-     public IP address.
+    :param dns_settings: The FQDN of the DNS record associated with the public
+     IP address.
     :type dns_settings: :class:`PublicIPAddressDnsSettings
      <azure.mgmt.network.models.PublicIPAddressDnsSettings>`
     :param ip_address:
@@ -57,7 +57,7 @@ class PublicIPAddress(Resource):
     :param etag: A unique read-only string that changes whenever the resource
      is updated.
     :type etag: str
-    """ 
+    """
 
     _validation = {
         'name': {'readonly': True},

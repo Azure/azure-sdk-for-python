@@ -26,7 +26,7 @@ class CsmUsageQuota(Model):
     :param name: Quota name
     :type name: :class:`LocalizableString
      <azure.mgmt.web.models.LocalizableString>`
-    """ 
+    """
 
     _attribute_map = {
         'unit': {'key': 'unit', 'type': 'str'},

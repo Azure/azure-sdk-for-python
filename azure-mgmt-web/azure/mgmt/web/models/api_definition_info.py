@@ -17,7 +17,7 @@ class ApiDefinitionInfo(Model):
 
     :param url: The URL of the API definition.
     :type url: str
-    """ 
+    """
 
     _attribute_map = {
         'url': {'key': 'url', 'type': 'str'},

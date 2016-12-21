@@ -27,7 +27,7 @@ class ResourceMetricValue(Model):
     :type total: float
     :param count: Value count
     :type count: float
-    """ 
+    """
 
     _attribute_map = {
         'time_stamp': {'key': 'timeStamp', 'type': 'str'},

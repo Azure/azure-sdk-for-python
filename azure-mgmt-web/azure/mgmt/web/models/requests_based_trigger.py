@@ -19,7 +19,7 @@ class RequestsBasedTrigger(Model):
     :type count: int
     :param time_interval: TimeInterval
     :type time_interval: str
-    """ 
+    """
 
     _attribute_map = {
         'count': {'key': 'count', 'type': 'int'},

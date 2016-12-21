@@ -24,7 +24,7 @@ class AzureBlobStorageHttpLogsConfig(Model):
     :type retention_in_days: int
     :param enabled: Enabled
     :type enabled: bool
-    """ 
+    """
 
     _attribute_map = {
         'sas_url': {'key': 'sasUrl', 'type': 'str'},

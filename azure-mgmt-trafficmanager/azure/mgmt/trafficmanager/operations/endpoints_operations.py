@@ -48,8 +48,8 @@ class EndpointsOperations(object):
         :param endpoint_name: The name of the Traffic Manager endpoint to be
          updated.
         :type endpoint_name: str
-        :param parameters: The Traffic Manager endpoint parameters supplied
-         to the Update operation.
+        :param parameters: The Traffic Manager endpoint parameters supplied to
+         the Update operation.
         :type parameters: :class:`Endpoint
          <azure.mgmt.trafficmanager.models.Endpoint>`
         :param dict custom_headers: headers that will be added to the request
@@ -60,6 +60,7 @@ class EndpointsOperations(object):
         :rtype: :class:`Endpoint <azure.mgmt.trafficmanager.models.Endpoint>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/trafficmanagerprofiles/{profileName}/{endpointType}/{endpointName}'
@@ -131,6 +132,7 @@ class EndpointsOperations(object):
         :rtype: :class:`Endpoint <azure.mgmt.trafficmanager.models.Endpoint>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/trafficmanagerprofiles/{profileName}/{endpointType}/{endpointName}'
@@ -192,8 +194,8 @@ class EndpointsOperations(object):
         :param endpoint_name: The name of the Traffic Manager endpoint to be
          created or updated.
         :type endpoint_name: str
-        :param parameters: The Traffic Manager endpoint parameters supplied
-         to the CreateOrUpdate operation.
+        :param parameters: The Traffic Manager endpoint parameters supplied to
+         the CreateOrUpdate operation.
         :type parameters: :class:`Endpoint
          <azure.mgmt.trafficmanager.models.Endpoint>`
         :param dict custom_headers: headers that will be added to the request
@@ -204,6 +206,7 @@ class EndpointsOperations(object):
         :rtype: :class:`Endpoint <azure.mgmt.trafficmanager.models.Endpoint>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/trafficmanagerprofiles/{profileName}/{endpointType}/{endpointName}'
@@ -279,6 +282,7 @@ class EndpointsOperations(object):
         :rtype: None
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/trafficmanagerprofiles/{profileName}/{endpointType}/{endpointName}'

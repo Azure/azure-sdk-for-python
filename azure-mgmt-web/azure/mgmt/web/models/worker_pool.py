@@ -42,7 +42,7 @@ class WorkerPool(Resource):
     :type instance_names: list of str
     :param sku:
     :type sku: :class:`SkuDescription <azure.mgmt.web.models.SkuDescription>`
-    """ 
+    """
 
     _validation = {
         'location': {'required': True},

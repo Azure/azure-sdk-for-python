@@ -47,7 +47,7 @@ class Schedule(Model):
     :type location: str
     :param tags: The tags of the resource.
     :type tags: dict
-    """ 
+    """
 
     _attribute_map = {
         'status': {'key': 'properties.status', 'type': 'str'},

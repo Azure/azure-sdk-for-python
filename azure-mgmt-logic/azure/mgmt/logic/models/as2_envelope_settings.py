@@ -22,13 +22,13 @@ class AS2EnvelopeSettings(Model):
     :type transmit_file_name_in_mime_header: bool
     :param file_name_template: The template for file name.
     :type file_name_template: str
-    :param suspend_message_on_file_name_generation_error: The value
-     indicating whether to suspend message on file name generation error.
+    :param suspend_message_on_file_name_generation_error: The value indicating
+     whether to suspend message on file name generation error.
     :type suspend_message_on_file_name_generation_error: bool
     :param autogenerate_file_name: The value indicating whether to auto
      generate file name.
     :type autogenerate_file_name: bool
-    """ 
+    """
 
     _attribute_map = {
         'message_content_type': {'key': 'messageContentType', 'type': 'str'},

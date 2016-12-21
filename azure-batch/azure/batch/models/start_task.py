@@ -56,7 +56,7 @@ class StartTask(Model):
      task is still running; and even if the start task fails, new tasks will
      continue to be scheduled on the node. The default is false.
     :type wait_for_success: bool
-    """ 
+    """
 
     _validation = {
         'command_line': {'required': True},

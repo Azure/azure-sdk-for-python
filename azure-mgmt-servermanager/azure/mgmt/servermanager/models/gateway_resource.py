@@ -56,7 +56,7 @@ class GatewayResource(Resource):
     :vartype installer_download: str
     :ivar minimum_version: Minimum gateway version.
     :vartype minimum_version: str
-    """ 
+    """
 
     _validation = {
         'id': {'readonly': True},

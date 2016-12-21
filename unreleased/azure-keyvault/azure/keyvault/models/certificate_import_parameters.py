@@ -31,7 +31,7 @@ class CertificateImportParameters(Model):
      <azure.keyvault.models.CertificateAttributes>`
     :param tags: Application-specific metadata in the form of key-value pairs
     :type tags: dict
-    """ 
+    """
 
     _validation = {
         'base64_encoded_certificate': {'required': True},

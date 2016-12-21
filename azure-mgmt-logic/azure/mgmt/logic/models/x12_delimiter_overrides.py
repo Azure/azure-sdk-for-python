@@ -37,7 +37,7 @@ class X12DelimiterOverrides(Model):
     :param target_namespace: The target namespace on which this delimiter
      settings has to be applied.
     :type target_namespace: str
-    """ 
+    """
 
     _attribute_map = {
         'protocol_version': {'key': 'protocolVersion', 'type': 'str'},

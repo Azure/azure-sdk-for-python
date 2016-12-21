@@ -49,7 +49,7 @@ class JobExecutionInformation(Model):
      a user-defined reason specified in a call to the 'Terminate a job'
      operation.
     :type terminate_reason: str
-    """ 
+    """
 
     _validation = {
         'start_time': {'required': True},

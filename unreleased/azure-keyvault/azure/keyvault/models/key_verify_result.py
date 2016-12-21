@@ -20,7 +20,7 @@ class KeyVerifyResult(Model):
 
     :ivar value: true if the signature is verified, false otherwise.
     :vartype value: bool
-    """ 
+    """
 
     _validation = {
         'value': {'readonly': True},

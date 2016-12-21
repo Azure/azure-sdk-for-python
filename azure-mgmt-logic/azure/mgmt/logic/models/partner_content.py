@@ -18,7 +18,7 @@ class PartnerContent(Model):
     :param b2b: The B2B partner content.
     :type b2b: :class:`B2BPartnerContent
      <azure.mgmt.logic.models.B2BPartnerContent>`
-    """ 
+    """
 
     _attribute_map = {
         'b2b': {'key': 'b2b', 'type': 'B2BPartnerContent'},

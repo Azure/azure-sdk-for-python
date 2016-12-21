@@ -23,7 +23,7 @@ class SrvRecord(Model):
     :type port: int
     :param target: The target domain name for this SRV record.
     :type target: str
-    """ 
+    """
 
     _attribute_map = {
         'priority': {'key': 'priority', 'type': 'int'},

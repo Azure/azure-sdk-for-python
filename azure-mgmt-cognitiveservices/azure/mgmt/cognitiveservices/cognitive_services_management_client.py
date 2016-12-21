@@ -27,8 +27,8 @@ class CognitiveServicesManagementClientConfiguration(AzureConfiguration):
      object<msrestazure.azure_active_directory>`
     :param subscription_id: Azure Subscription ID.
     :type subscription_id: str
-    :param api_version: Version of the API to be used with the client
-     request. Current version is 2016-02-01-preview
+    :param api_version: Version of the API to be used with the client request.
+     Current version is 2016-02-01-preview
     :type api_version: str
     :param accept_language: Gets or sets the preferred language for the
      response.
@@ -87,8 +87,8 @@ class CognitiveServicesManagementClient(object):
      object<msrestazure.azure_active_directory>`
     :param subscription_id: Azure Subscription ID.
     :type subscription_id: str
-    :param api_version: Version of the API to be used with the client
-     request. Current version is 2016-02-01-preview
+    :param api_version: Version of the API to be used with the client request.
+     Current version is 2016-02-01-preview
     :type api_version: str
     :param accept_language: Gets or sets the preferred language for the
      response.

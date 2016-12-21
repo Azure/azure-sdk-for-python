@@ -53,7 +53,7 @@ class WorkflowTriggerHistory(SubResource):
     :vartype name: str
     :ivar type: Gets the workflow trigger history type.
     :vartype type: str
-    """ 
+    """
 
     _validation = {
         'start_time': {'readonly': True},

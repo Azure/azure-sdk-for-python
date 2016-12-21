@@ -51,6 +51,8 @@ class IosOperations(object):
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`IOSMAMPolicyPaged
          <azure.mgmt.intune.models.IOSMAMPolicyPaged>`
+        :raises:
+         :class:`ErrorException<azure.mgmt.intune.models.ErrorException>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -124,6 +126,8 @@ class IosOperations(object):
         :rtype: :class:`IOSMAMPolicy <azure.mgmt.intune.models.IOSMAMPolicy>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`ErrorException<azure.mgmt.intune.models.ErrorException>`
         """
         # Construct URL
         url = '/providers/Microsoft.Intune/locations/{hostName}/iosPolicies/{policyName}'
@@ -187,6 +191,8 @@ class IosOperations(object):
         :rtype: :class:`IOSMAMPolicy <azure.mgmt.intune.models.IOSMAMPolicy>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`ErrorException<azure.mgmt.intune.models.ErrorException>`
         """
         # Construct URL
         url = '/providers/Microsoft.Intune/locations/{hostName}/iosPolicies/{policyName}'
@@ -252,6 +258,8 @@ class IosOperations(object):
         :rtype: :class:`IOSMAMPolicy <azure.mgmt.intune.models.IOSMAMPolicy>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`ErrorException<azure.mgmt.intune.models.ErrorException>`
         """
         # Construct URL
         url = '/providers/Microsoft.Intune/locations/{hostName}/iosPolicies/{policyName}'
@@ -313,6 +321,8 @@ class IosOperations(object):
         :rtype: None
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`ErrorException<azure.mgmt.intune.models.ErrorException>`
         """
         # Construct URL
         url = '/providers/Microsoft.Intune/locations/{hostName}/iosPolicies/{policyName}'
@@ -368,6 +378,8 @@ class IosOperations(object):
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`ApplicationPaged
          <azure.mgmt.intune.models.ApplicationPaged>`
+        :raises:
+         :class:`ErrorException<azure.mgmt.intune.models.ErrorException>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -445,6 +457,8 @@ class IosOperations(object):
         :rtype: None
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`ErrorException<azure.mgmt.intune.models.ErrorException>`
         """
         parameters = models.MAMPolicyAppIdOrGroupIdPayload(properties=properties)
 
@@ -504,6 +518,8 @@ class IosOperations(object):
         :rtype: None
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`ErrorException<azure.mgmt.intune.models.ErrorException>`
         """
         # Construct URL
         url = '/providers/Microsoft.Intune/locations/{hostName}/iosPolicies/{policyName}/apps/{appName}'
@@ -554,6 +570,8 @@ class IosOperations(object):
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`GroupItemPaged
          <azure.mgmt.intune.models.GroupItemPaged>`
+        :raises:
+         :class:`ErrorException<azure.mgmt.intune.models.ErrorException>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -625,6 +643,8 @@ class IosOperations(object):
         :rtype: None
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`ErrorException<azure.mgmt.intune.models.ErrorException>`
         """
         parameters = models.MAMPolicyAppIdOrGroupIdPayload(properties=properties)
 
@@ -684,6 +704,8 @@ class IosOperations(object):
         :rtype: None
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`ErrorException<azure.mgmt.intune.models.ErrorException>`
         """
         # Construct URL
         url = '/providers/Microsoft.Intune/locations/{hostName}/iosPolicies/{policyName}/groups/{groupId}'

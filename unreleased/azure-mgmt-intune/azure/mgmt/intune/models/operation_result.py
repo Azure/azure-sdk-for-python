@@ -39,7 +39,7 @@ class OperationResult(Resource):
     :param operation_metadata:
     :type operation_metadata: list of :class:`OperationMetadataProperties
      <azure.mgmt.intune.models.OperationMetadataProperties>`
-    """ 
+    """
 
     _validation = {
         'id': {'readonly': True},

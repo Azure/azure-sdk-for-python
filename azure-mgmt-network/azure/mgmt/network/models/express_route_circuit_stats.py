@@ -23,7 +23,7 @@ class ExpressRouteCircuitStats(Model):
     :type secondarybytes_in: long
     :param secondarybytes_out: Gets BytesOut of the peering.
     :type secondarybytes_out: long
-    """ 
+    """
 
     _attribute_map = {
         'primarybytes_in': {'key': 'primarybytesIn', 'type': 'long'},

@@ -15,8 +15,8 @@ from msrest.serialization import Model
 class AS2SecuritySettings(Model):
     """AS2SecuritySettings.
 
-    :param override_group_signing_certificate: The value indicating whether
-     to send or request a MDN.
+    :param override_group_signing_certificate: The value indicating whether to
+     send or request a MDN.
     :type override_group_signing_certificate: bool
     :param signing_certificate_name: The name of the signing certificate.
     :type signing_certificate_name: str
@@ -29,8 +29,8 @@ class AS2SecuritySettings(Model):
     :param enable_nrr_for_inbound_decoded_messages: The value indicating
      whether to enable NRR for inbound decoded messages.
     :type enable_nrr_for_inbound_decoded_messages: bool
-    :param enable_nrr_for_outbound_mdn: The value indicating whether to
-     enable NRR for outbound MDN.
+    :param enable_nrr_for_outbound_mdn: The value indicating whether to enable
+     NRR for outbound MDN.
     :type enable_nrr_for_outbound_mdn: bool
     :param enable_nrr_for_outbound_encoded_messages: The value indicating
      whether to enable NRR for outbound encoded messages.
@@ -41,7 +41,7 @@ class AS2SecuritySettings(Model):
     :param enable_nrr_for_inbound_mdn: The value indicating whether to enable
      NRR for inbound MDN.
     :type enable_nrr_for_inbound_mdn: bool
-    """ 
+    """
 
     _attribute_map = {
         'override_group_signing_certificate': {'key': 'overrideGroupSigningCertificate', 'type': 'bool'},

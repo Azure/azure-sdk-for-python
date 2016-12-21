@@ -25,7 +25,7 @@ class AzureBlobStorageApplicationLogsConfig(Model):
      Remove blobs older than X days.
      0 or lower means no retention.
     :type retention_in_days: int
-    """ 
+    """
 
     _attribute_map = {
         'level': {'key': 'level', 'type': 'LogLevel'},

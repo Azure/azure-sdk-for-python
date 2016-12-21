@@ -18,7 +18,7 @@ class MAMPolicyAppIdOrGroupIdPayload(Model):
     :param properties:
     :type properties: :class:`MAMPolicyAppOrGroupIdProperties
      <azure.mgmt.intune.models.MAMPolicyAppOrGroupIdProperties>`
-    """ 
+    """
 
     _attribute_map = {
         'properties': {'key': 'properties', 'type': 'MAMPolicyAppOrGroupIdProperties'},

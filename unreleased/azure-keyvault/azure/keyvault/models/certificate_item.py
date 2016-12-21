@@ -24,7 +24,7 @@ class CertificateItem(Model):
     :type tags: dict
     :param x509_thumbprint: Thumbprint of the certificate.
     :type x509_thumbprint: bytes
-    """ 
+    """
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},

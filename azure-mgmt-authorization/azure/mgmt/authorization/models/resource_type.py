@@ -22,7 +22,7 @@ class ResourceType(Model):
     :param operations: The resource type operations.
     :type operations: list of :class:`ProviderOperation
      <azure.mgmt.authorization.models.ProviderOperation>`
-    """ 
+    """
 
     _attribute_map = {
         'name': {'key': 'name', 'type': 'str'},

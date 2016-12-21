@@ -34,7 +34,7 @@ class CloudServiceConfiguration(Model):
      upgrade process. Once all virtual machines have upgraded, currentOSVersion
      is updated to be the same as targetOSVersion.
     :type current_os_version: str
-    """ 
+    """
 
     _validation = {
         'os_family': {'required': True},

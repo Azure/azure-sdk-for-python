@@ -21,7 +21,7 @@ class AzureTableStorageApplicationLogsConfig(Model):
     :param sas_url: SAS url to an azure table with add/query/delete
      permissions
     :type sas_url: str
-    """ 
+    """
 
     _attribute_map = {
         'level': {'key': 'level', 'type': 'LogLevel'},

@@ -19,7 +19,7 @@ class BusinessIdentity(Model):
     :type qualifier: str
     :param value: The business identity value.
     :type value: str
-    """ 
+    """
 
     _attribute_map = {
         'qualifier': {'key': 'Qualifier', 'type': 'str'},

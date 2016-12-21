@@ -47,7 +47,7 @@ class Certificate(Model):
      certificate is in the DeleteFailed state.
     :type delete_certificate_error: :class:`DeleteCertificateError
      <azure.batch.models.DeleteCertificateError>`
-    """ 
+    """
 
     _attribute_map = {
         'thumbprint': {'key': 'thumbprint', 'type': 'str'},

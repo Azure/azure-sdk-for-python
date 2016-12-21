@@ -70,7 +70,7 @@ class JobPreparationTask(Model):
      Job Preparation task to be idempotent and to behave correctly if run
      multiple times. The default value is true.
     :type rerun_on_node_reboot_after_success: bool
-    """ 
+    """
 
     _validation = {
         'command_line': {'required': True},

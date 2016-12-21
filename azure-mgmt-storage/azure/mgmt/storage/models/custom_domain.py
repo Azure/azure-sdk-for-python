@@ -22,7 +22,7 @@ class CustomDomain(Model):
     :param use_sub_domain: Indicates whether indirect CName validation is
      enabled. Default value is false. This should only be set on updates.
     :type use_sub_domain: bool
-    """ 
+    """
 
     _validation = {
         'name': {'required': True},

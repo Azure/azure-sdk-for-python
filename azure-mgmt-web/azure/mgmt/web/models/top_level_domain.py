@@ -31,7 +31,7 @@ class TopLevelDomain(Resource):
     :type top_level_domain_name: str
     :param privacy: If true then the top level domain supports domain privacy
     :type privacy: bool
-    """ 
+    """
 
     _validation = {
         'location': {'required': True},

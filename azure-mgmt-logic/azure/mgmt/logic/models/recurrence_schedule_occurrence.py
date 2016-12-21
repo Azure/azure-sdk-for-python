@@ -20,7 +20,7 @@ class RecurrenceScheduleOccurrence(Model):
     :type day: str or :class:`DayOfWeek <azure.mgmt.logic.models.DayOfWeek>`
     :param occurrence: The occurrence.
     :type occurrence: int
-    """ 
+    """
 
     _attribute_map = {
         'day': {'key': 'day', 'type': 'DayOfWeek'},

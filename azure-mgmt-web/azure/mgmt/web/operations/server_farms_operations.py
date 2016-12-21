@@ -174,8 +174,8 @@ class ServerFarmsOperations(object):
         :param server_farm_envelope: Details of App Service Plan
         :type server_farm_envelope: :class:`ServerFarmWithRichSku
          <azure.mgmt.web.models.ServerFarmWithRichSku>`
-        :param allow_pending_state: OBSOLETE: If true, allow pending state
-         for App Service Plan
+        :param allow_pending_state: OBSOLETE: If true, allow pending state for
+         App Service Plan
         :type allow_pending_state: bool
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the

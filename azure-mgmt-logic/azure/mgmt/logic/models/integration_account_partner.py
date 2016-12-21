@@ -41,7 +41,7 @@ class IntegrationAccountPartner(IntegrationAccountResource):
     :param content: The partner content.
     :type content: :class:`PartnerContent
      <azure.mgmt.logic.models.PartnerContent>`
-    """ 
+    """
 
     _validation = {
         'created_time': {'readonly': True},
