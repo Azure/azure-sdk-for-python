@@ -18,12 +18,12 @@ class CidrIpAddress(Model):
     :param base_ip_address: Ip adress itself.
     :type base_ip_address: str
     :param prefix_length: The length of the prefix of the ip address.
-    :type prefix_length: str
+    :type prefix_length: int
     """
 
     _attribute_map = {
         'base_ip_address': {'key': 'baseIpAddress', 'type': 'str'},
-        'prefix_length': {'key': 'prefixLength', 'type': 'str'},
+        'prefix_length': {'key': 'prefixLength', 'type': 'int'},
     }
 
     def __init__(self, base_ip_address=None, prefix_length=None):
