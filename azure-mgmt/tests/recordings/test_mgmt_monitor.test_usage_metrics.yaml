@@ -11,7 +11,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [79088694-b111-11e6-88b6-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/MonitorTestsDoNotDelete/providers/Microsoft.DocumentDb/databaseAccounts/pymonitortest/usages?api-version=2014-04-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/MonitorTestsDoNotDelete/providers/Microsoft.DocumentDb/databaseAccounts/pymonitortest/usages?api-version=2014-04-01
   response:
     body: {string: '{"value":[]}'}
     headers:

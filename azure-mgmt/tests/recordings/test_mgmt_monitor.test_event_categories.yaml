@@ -11,7 +11,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [9c954042-b0e8-11e6-b169-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/providers/microsoft.insights/eventcategories?api-version=2015-04-01
+    uri: https://management.azure.com/providers/microsoft.insights/eventcategories?api-version=2015-04-01
   response:
     body: {string: '{"value":[{"value":"Administrative","localizedValue":"Administrative"},{"value":"Security","localizedValue":"Security"},{"value":"ServiceHealth","localizedValue":"Service
         Health"},{"value":"Alert","localizedValue":"Alert"},{"value":"Recommendation","localizedValue":"Recommendation"},{"value":"Policy","localizedValue":"Policy"}]}'}

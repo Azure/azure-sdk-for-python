@@ -12,7 +12,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [0f1b207a-c3b8-11e6-bf7f-ecb1d756380e]
     method: POST
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Devices/checkNameAvailability?api-version=2016-02-03
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Devices/checkNameAvailability?api-version=2016-02-03
   response:
     body: {string: '{"nameAvailable":true,"reason":"Invalid","message":null}'}
     headers:
@@ -48,7 +48,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [0f534768-c3b8-11e6-822c-ecb1d756380e]
     method: PUT
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_iothub_test_iothuba8d80b97/providers/Microsoft.Devices/IotHubs/iota8d80b97?api-version=2016-02-03
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_iothub_test_iothuba8d80b97/providers/Microsoft.Devices/IotHubs/iota8d80b97?api-version=2016-02-03
   response:
     body: {string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_iothub_test_iothuba8d80b97/providers/Microsoft.Devices/IotHubs/iota8d80b97","name":"iota8d80b97","type":"Microsoft.Devices/IotHubs","location":"westus","tags":{},"subscriptionid":"00000000-0000-0000-0000-000000000000","resourcegroup":"test_mgmt_iothub_test_iothuba8d80b97","properties":{"state":"Activating","provisioningState":"Accepted","enableFileUploadNotifications":false,"cloudToDevice":{"maxDeliveryCount":10,"defaultTtlAsIso8601":"PT1H","feedback":{"lockDurationAsIso8601":"PT1M","ttlAsIso8601":"PT1H","maxDeliveryCount":10}},"operationsMonitoringProperties":{"events":{"C2DCommands":"Error","DeviceIdentityOperations":"Error","Connections":"Information","DeviceTelemetry":"Error"}},"features":"None","generationNumber":0},"sku":{"name":"S1","tier":"Standard","capacity":2}}'}
     headers:
@@ -78,7 +78,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [0f534768-c3b8-11e6-822c-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_iothub_test_iothuba8d80b97/providers/Microsoft.Devices/IotHubs/iota8d80b97/operationResults/OTJlOTNhZDYtMWUxYy00MDVjLThkZDctMzNlOGQzNDg1ODMy?api-version=2016-02-03&asyncinfo
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_iothub_test_iothuba8d80b97/providers/Microsoft.Devices/IotHubs/iota8d80b97/operationResults/OTJlOTNhZDYtMWUxYy00MDVjLThkZDctMzNlOGQzNDg1ODMy?api-version=2016-02-03&asyncinfo
   response:
     body: {string: '{"status":"Running"}'}
     headers:
@@ -109,7 +109,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [0f534768-c3b8-11e6-822c-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_iothub_test_iothuba8d80b97/providers/Microsoft.Devices/IotHubs/iota8d80b97/operationResults/OTJlOTNhZDYtMWUxYy00MDVjLThkZDctMzNlOGQzNDg1ODMy?api-version=2016-02-03&asyncinfo
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_iothub_test_iothuba8d80b97/providers/Microsoft.Devices/IotHubs/iota8d80b97/operationResults/OTJlOTNhZDYtMWUxYy00MDVjLThkZDctMzNlOGQzNDg1ODMy?api-version=2016-02-03&asyncinfo
   response:
     body: {string: '{"status":"Running"}'}
     headers:
@@ -140,7 +140,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [0f534768-c3b8-11e6-822c-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_iothub_test_iothuba8d80b97/providers/Microsoft.Devices/IotHubs/iota8d80b97/operationResults/OTJlOTNhZDYtMWUxYy00MDVjLThkZDctMzNlOGQzNDg1ODMy?api-version=2016-02-03&asyncinfo
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_iothub_test_iothuba8d80b97/providers/Microsoft.Devices/IotHubs/iota8d80b97/operationResults/OTJlOTNhZDYtMWUxYy00MDVjLThkZDctMzNlOGQzNDg1ODMy?api-version=2016-02-03&asyncinfo
   response:
     body: {string: '{"status":"Running"}'}
     headers:
@@ -171,7 +171,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [0f534768-c3b8-11e6-822c-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_iothub_test_iothuba8d80b97/providers/Microsoft.Devices/IotHubs/iota8d80b97/operationResults/OTJlOTNhZDYtMWUxYy00MDVjLThkZDctMzNlOGQzNDg1ODMy?api-version=2016-02-03&asyncinfo
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_iothub_test_iothuba8d80b97/providers/Microsoft.Devices/IotHubs/iota8d80b97/operationResults/OTJlOTNhZDYtMWUxYy00MDVjLThkZDctMzNlOGQzNDg1ODMy?api-version=2016-02-03&asyncinfo
   response:
     body: {string: '{"status":"Running"}'}
     headers:
@@ -202,7 +202,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [0f534768-c3b8-11e6-822c-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_iothub_test_iothuba8d80b97/providers/Microsoft.Devices/IotHubs/iota8d80b97/operationResults/OTJlOTNhZDYtMWUxYy00MDVjLThkZDctMzNlOGQzNDg1ODMy?api-version=2016-02-03&asyncinfo
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_iothub_test_iothuba8d80b97/providers/Microsoft.Devices/IotHubs/iota8d80b97/operationResults/OTJlOTNhZDYtMWUxYy00MDVjLThkZDctMzNlOGQzNDg1ODMy?api-version=2016-02-03&asyncinfo
   response:
     body: {string: '{"status":"Running"}'}
     headers:
@@ -233,7 +233,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [0f534768-c3b8-11e6-822c-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_iothub_test_iothuba8d80b97/providers/Microsoft.Devices/IotHubs/iota8d80b97/operationResults/OTJlOTNhZDYtMWUxYy00MDVjLThkZDctMzNlOGQzNDg1ODMy?api-version=2016-02-03&asyncinfo
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_iothub_test_iothuba8d80b97/providers/Microsoft.Devices/IotHubs/iota8d80b97/operationResults/OTJlOTNhZDYtMWUxYy00MDVjLThkZDctMzNlOGQzNDg1ODMy?api-version=2016-02-03&asyncinfo
   response:
     body: {string: '{"status":"Running"}'}
     headers:
@@ -264,7 +264,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [0f534768-c3b8-11e6-822c-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_iothub_test_iothuba8d80b97/providers/Microsoft.Devices/IotHubs/iota8d80b97/operationResults/OTJlOTNhZDYtMWUxYy00MDVjLThkZDctMzNlOGQzNDg1ODMy?api-version=2016-02-03&asyncinfo
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_iothub_test_iothuba8d80b97/providers/Microsoft.Devices/IotHubs/iota8d80b97/operationResults/OTJlOTNhZDYtMWUxYy00MDVjLThkZDctMzNlOGQzNDg1ODMy?api-version=2016-02-03&asyncinfo
   response:
     body: {string: '{"status":"Running"}'}
     headers:
@@ -295,7 +295,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [0f534768-c3b8-11e6-822c-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_iothub_test_iothuba8d80b97/providers/Microsoft.Devices/IotHubs/iota8d80b97/operationResults/OTJlOTNhZDYtMWUxYy00MDVjLThkZDctMzNlOGQzNDg1ODMy?api-version=2016-02-03&asyncinfo
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_iothub_test_iothuba8d80b97/providers/Microsoft.Devices/IotHubs/iota8d80b97/operationResults/OTJlOTNhZDYtMWUxYy00MDVjLThkZDctMzNlOGQzNDg1ODMy?api-version=2016-02-03&asyncinfo
   response:
     body: {string: '{"status":"Succeeded"}'}
     headers:
@@ -326,7 +326,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [0f534768-c3b8-11e6-822c-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_iothub_test_iothuba8d80b97/providers/Microsoft.Devices/IotHubs/iota8d80b97?api-version=2016-02-03
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_iothub_test_iothuba8d80b97/providers/Microsoft.Devices/IotHubs/iota8d80b97?api-version=2016-02-03
   response:
     body: {string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_iothub_test_iothuba8d80b97/providers/Microsoft.Devices/IotHubs/iota8d80b97","name":"iota8d80b97","type":"Microsoft.Devices/IotHubs","location":"westus","tags":{},"subscriptionid":"00000000-0000-0000-0000-000000000000","resourcegroup":"test_mgmt_iothub_test_iothuba8d80b97","etag":"AAAAAACPrdo=","properties":{"state":"Active","provisioningState":"Succeeded","ipFilterRules":[],"hostName":"iota8d80b97.azure-devices.net","eventHubEndpoints":{"events":{"retentionTimeInDays":1,"partitionCount":4,"partitionIds":["0","1","2","3"],"path":"iota8d80b97","endpoint":"sb://iothub-ns-iota8d80b9-97150-9a905294d2.servicebus.windows.net/"},"operationsMonitoringEvents":{"retentionTimeInDays":1,"partitionCount":4,"partitionIds":["0","1","2","3"],"path":"iota8d80b97-operationmonitoring","endpoint":"sb://iothub-ns-iota8d80b9-97150-9a905294d2.servicebus.windows.net/"}},"routing":{"endpoints":{"serviceBusQueues":[],"serviceBusTopics":[],"eventHubs":[]},"routes":[],"fallbackRoute":{"name":"$fallback","source":"DeviceMessages","condition":"true","endpointNames":["events"],"isEnabled":true}},"storageEndpoints":{"$default":{"sasTtlAsIso8601":"PT1H","connectionString":"","containerName":""}},"messagingEndpoints":{"fileNotifications":{"lockDurationAsIso8601":"PT1M","ttlAsIso8601":"PT1H","maxDeliveryCount":10}},"enableFileUploadNotifications":false,"cloudToDevice":{"maxDeliveryCount":10,"defaultTtlAsIso8601":"PT1H","feedback":{"lockDurationAsIso8601":"PT1M","ttlAsIso8601":"PT1H","maxDeliveryCount":10}},"operationsMonitoringProperties":{"events":{"C2DCommands":"Error","DeviceIdentityOperations":"Error","Connections":"Information","DeviceTelemetry":"Error","None":"None","FileUploadOperations":"None","Routes":"None"}},"features":"None","generationNumber":0},"sku":{"name":"S1","tier":"Standard","capacity":2}}'}
     headers:
@@ -357,7 +357,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [a21efa0a-c3b8-11e6-956c-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_iothub_test_iothuba8d80b97/providers/Microsoft.Devices/IotHubs/iota8d80b97?api-version=2016-02-03
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_iothub_test_iothuba8d80b97/providers/Microsoft.Devices/IotHubs/iota8d80b97?api-version=2016-02-03
   response:
     body: {string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_iothub_test_iothuba8d80b97/providers/Microsoft.Devices/IotHubs/iota8d80b97","name":"iota8d80b97","type":"Microsoft.Devices/IotHubs","location":"westus","tags":{},"subscriptionid":"00000000-0000-0000-0000-000000000000","resourcegroup":"test_mgmt_iothub_test_iothuba8d80b97","etag":"AAAAAACPrdo=","properties":{"state":"Active","provisioningState":"Succeeded","ipFilterRules":[],"hostName":"iota8d80b97.azure-devices.net","eventHubEndpoints":{"events":{"retentionTimeInDays":1,"partitionCount":4,"partitionIds":["0","1","2","3"],"path":"iota8d80b97","endpoint":"sb://iothub-ns-iota8d80b9-97150-9a905294d2.servicebus.windows.net/"},"operationsMonitoringEvents":{"retentionTimeInDays":1,"partitionCount":4,"partitionIds":["0","1","2","3"],"path":"iota8d80b97-operationmonitoring","endpoint":"sb://iothub-ns-iota8d80b9-97150-9a905294d2.servicebus.windows.net/"}},"routing":{"endpoints":{"serviceBusQueues":[],"serviceBusTopics":[],"eventHubs":[]},"routes":[],"fallbackRoute":{"name":"$fallback","source":"DeviceMessages","condition":"true","endpointNames":["events"],"isEnabled":true}},"storageEndpoints":{"$default":{"sasTtlAsIso8601":"PT1H","connectionString":"","containerName":""}},"messagingEndpoints":{"fileNotifications":{"lockDurationAsIso8601":"PT1M","ttlAsIso8601":"PT1H","maxDeliveryCount":10}},"enableFileUploadNotifications":false,"cloudToDevice":{"maxDeliveryCount":10,"defaultTtlAsIso8601":"PT1H","feedback":{"lockDurationAsIso8601":"PT1M","ttlAsIso8601":"PT1H","maxDeliveryCount":10}},"operationsMonitoringProperties":{"events":{"C2DCommands":"Error","DeviceIdentityOperations":"Error","Connections":"Information","DeviceTelemetry":"Error","None":"None","FileUploadOperations":"None","Routes":"None"}},"features":"None","generationNumber":0},"sku":{"name":"S1","tier":"Standard","capacity":2}}'}
     headers:
@@ -388,7 +388,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [a27d72ca-c3b8-11e6-a292-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_iothub_test_iothuba8d80b97/providers/Microsoft.Devices/IotHubs?api-version=2016-02-03
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_iothub_test_iothuba8d80b97/providers/Microsoft.Devices/IotHubs?api-version=2016-02-03
   response:
     body: {string: '{"value":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_iothub_test_iothuba8d80b97/providers/Microsoft.Devices/IotHubs/iota8d80b97","name":"iota8d80b97","type":"Microsoft.Devices/IotHubs","location":"westus","tags":{},"subscriptionid":"00000000-0000-0000-0000-000000000000","resourcegroup":"test_mgmt_iothub_test_iothuba8d80b97","etag":"AAAAAACPrdo=","properties":{"state":"Active","provisioningState":"Succeeded","ipFilterRules":[],"hostName":"iota8d80b97.azure-devices.net","eventHubEndpoints":{"events":{"retentionTimeInDays":1,"partitionCount":4,"partitionIds":["0","1","2","3"],"path":"iota8d80b97","endpoint":"sb://iothub-ns-iota8d80b9-97150-9a905294d2.servicebus.windows.net/"},"operationsMonitoringEvents":{"retentionTimeInDays":1,"partitionCount":4,"partitionIds":["0","1","2","3"],"path":"iota8d80b97-operationmonitoring","endpoint":"sb://iothub-ns-iota8d80b9-97150-9a905294d2.servicebus.windows.net/"}},"routing":{"endpoints":{"serviceBusQueues":[],"serviceBusTopics":[],"eventHubs":[]},"routes":[],"fallbackRoute":{"name":"$fallback","source":"DeviceMessages","condition":"true","endpointNames":["events"],"isEnabled":true}},"storageEndpoints":{"$default":{"sasTtlAsIso8601":"PT1H","connectionString":"","containerName":""}},"messagingEndpoints":{"fileNotifications":{"lockDurationAsIso8601":"PT1M","ttlAsIso8601":"PT1H","maxDeliveryCount":10}},"enableFileUploadNotifications":false,"cloudToDevice":{"maxDeliveryCount":10,"defaultTtlAsIso8601":"PT1H","feedback":{"lockDurationAsIso8601":"PT1M","ttlAsIso8601":"PT1H","maxDeliveryCount":10}},"operationsMonitoringProperties":{"events":{"C2DCommands":"Error","DeviceIdentityOperations":"Error","Connections":"Information","DeviceTelemetry":"Error","None":"None","FileUploadOperations":"None","Routes":"None"}},"features":"None","generationNumber":0},"sku":{"name":"S1","tier":"Standard","capacity":2}}]}'}
     headers:
@@ -419,7 +419,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [a2d16a94-c3b8-11e6-8d81-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Devices/IotHubs?api-version=2016-02-03
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Devices/IotHubs?api-version=2016-02-03
   response:
     body: {string: '{"value":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_iothub_test_iothuba8d80b97/providers/Microsoft.Devices/IotHubs/iota8d80b97","name":"iota8d80b97","type":"Microsoft.Devices/IotHubs","location":"westus","tags":{},"subscriptionid":"00000000-0000-0000-0000-000000000000","resourcegroup":"test_mgmt_iothub_test_iothuba8d80b97","etag":"AAAAAACPrdo=","properties":{"state":"Active","provisioningState":"Succeeded","ipFilterRules":[],"hostName":"iota8d80b97.azure-devices.net","eventHubEndpoints":{"events":{"retentionTimeInDays":1,"partitionCount":4,"partitionIds":["0","1","2","3"],"path":"iota8d80b97","endpoint":"sb://iothub-ns-iota8d80b9-97150-9a905294d2.servicebus.windows.net/"},"operationsMonitoringEvents":{"retentionTimeInDays":1,"partitionCount":4,"partitionIds":["0","1","2","3"],"path":"iota8d80b97-operationmonitoring","endpoint":"sb://iothub-ns-iota8d80b9-97150-9a905294d2.servicebus.windows.net/"}},"routing":{"endpoints":{"serviceBusQueues":[],"serviceBusTopics":[],"eventHubs":[]},"routes":[],"fallbackRoute":{"name":"$fallback","source":"DeviceMessages","condition":"true","endpointNames":["events"],"isEnabled":true}},"storageEndpoints":{"$default":{"sasTtlAsIso8601":"PT1H","connectionString":"","containerName":""}},"messagingEndpoints":{"fileNotifications":{"lockDurationAsIso8601":"PT1M","ttlAsIso8601":"PT1H","maxDeliveryCount":10}},"enableFileUploadNotifications":false,"cloudToDevice":{"maxDeliveryCount":10,"defaultTtlAsIso8601":"PT1H","feedback":{"lockDurationAsIso8601":"PT1M","ttlAsIso8601":"PT1H","maxDeliveryCount":10}},"operationsMonitoringProperties":{"events":{"C2DCommands":"Error","DeviceIdentityOperations":"Error","Connections":"Information","DeviceTelemetry":"Error","None":"None","FileUploadOperations":"None","Routes":"None"}},"features":"None","generationNumber":0},"sku":{"name":"S1","tier":"Standard","capacity":2}}]}'}
     headers:
@@ -450,7 +450,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [a334d224-c3b8-11e6-896b-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_iothub_test_iothuba8d80b97/providers/Microsoft.Devices/IotHubs/iota8d80b97/IotHubStats?api-version=2016-02-03
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_iothub_test_iothuba8d80b97/providers/Microsoft.Devices/IotHubs/iota8d80b97/IotHubStats?api-version=2016-02-03
   response:
     body: {string: '{"totalDeviceCount":0,"enabledDeviceCount":0,"disabledDeviceCount":0}'}
     headers:
@@ -481,7 +481,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [a39567e6-c3b8-11e6-a955-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_iothub_test_iothuba8d80b97/providers/Microsoft.Devices/IotHubs/iota8d80b97/skus?api-version=2016-02-03
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_iothub_test_iothuba8d80b97/providers/Microsoft.Devices/IotHubs/iota8d80b97/skus?api-version=2016-02-03
   response:
     body: {string: '{"value":[{"resourceType":"Microsoft.Devices/IotHubs","sku":{"name":"S1","tier":"Standard"},"capacity":{"minimum":1,"maximum":200,"default":1,"scaleType":"Manual"}},{"resourceType":"Microsoft.Devices/IotHubs","sku":{"name":"S2","tier":"Standard"},"capacity":{"minimum":1,"maximum":200,"default":1,"scaleType":"Manual"}},{"resourceType":"Microsoft.Devices/IotHubs","sku":{"name":"S3","tier":"Standard"},"capacity":{"minimum":1,"maximum":10,"default":1,"scaleType":"Manual"}}]}'}
     headers:
@@ -512,7 +512,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [a3d72f48-c3b8-11e6-8e28-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_iothub_test_iothuba8d80b97/providers/Microsoft.Devices/IotHubs/iota8d80b97/jobs?api-version=2016-02-03
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_iothub_test_iothuba8d80b97/providers/Microsoft.Devices/IotHubs/iota8d80b97/jobs?api-version=2016-02-03
   response:
     body: {string: '{"value":[]}'}
     headers:
@@ -543,7 +543,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [a40c97b6-c3b8-11e6-bba0-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_iothub_test_iothuba8d80b97/providers/Microsoft.Devices/IotHubs/iota8d80b97/quotaMetrics?api-version=2016-02-03
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_iothub_test_iothuba8d80b97/providers/Microsoft.Devices/IotHubs/iota8d80b97/quotaMetrics?api-version=2016-02-03
   response:
     body: {string: '{"value":[{"Name":"TotalMessages","CurrentValue":0,"MaxValue":800000},{"Name":"TotalDeviceCount","CurrentValue":0,"MaxValue":500000}]}'}
     headers:
@@ -575,7 +575,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [a43bf998-c3b8-11e6-b34c-ecb1d756380e]
     method: DELETE
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_iothub_test_iothuba8d80b97/providers/Microsoft.Devices/IotHubs/iota8d80b97?api-version=2016-02-03
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_iothub_test_iothuba8d80b97/providers/Microsoft.Devices/IotHubs/iota8d80b97?api-version=2016-02-03
   response:
     body: {string: 'null'}
     headers:
@@ -607,7 +607,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [a43bf998-c3b8-11e6-b34c-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_iothub_test_iothuba8d80b97/providers/Microsoft.Devices/IotHubs/iota8d80b97/operationResults/ZDBlZDY3OGMtOTdhYy00NWY3LWJlNTQtY2E2ZjgwYzllOGRi?api-version=2016-02-03&asyncinfo
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_iothub_test_iothuba8d80b97/providers/Microsoft.Devices/IotHubs/iota8d80b97/operationResults/ZDBlZDY3OGMtOTdhYy00NWY3LWJlNTQtY2E2ZjgwYzllOGRi?api-version=2016-02-03&asyncinfo
   response:
     body: {string: '{"status":"Running"}'}
     headers:
@@ -638,7 +638,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [a43bf998-c3b8-11e6-b34c-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_iothub_test_iothuba8d80b97/providers/Microsoft.Devices/IotHubs/iota8d80b97/operationResults/ZDBlZDY3OGMtOTdhYy00NWY3LWJlNTQtY2E2ZjgwYzllOGRi?api-version=2016-02-03&asyncinfo
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_iothub_test_iothuba8d80b97/providers/Microsoft.Devices/IotHubs/iota8d80b97/operationResults/ZDBlZDY3OGMtOTdhYy00NWY3LWJlNTQtY2E2ZjgwYzllOGRi?api-version=2016-02-03&asyncinfo
   response:
     body: {string: '{"status":"Succeeded"}'}
     headers:
