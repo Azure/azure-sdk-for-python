@@ -30,7 +30,7 @@ class ConsistencyPolicy(Model):
      seconds) tolerated. Accepted range for this value is 1 - 100. Required
      when defaultConsistencyPolicy is set to 'BoundedStaleness'.
     :type max_interval_in_seconds: int
-    """ 
+    """
 
     _validation = {
         'default_consistency_level': {'required': True},

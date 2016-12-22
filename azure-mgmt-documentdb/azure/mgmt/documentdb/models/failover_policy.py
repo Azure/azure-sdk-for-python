@@ -29,7 +29,7 @@ class FailoverPolicy(Model):
      priority = (total number of regions - 1). Failover priority values must be
      unique for each of the regions in which the database account exists.
     :type failover_priority: int
-    """ 
+    """
 
     _validation = {
         'id': {'readonly': True},

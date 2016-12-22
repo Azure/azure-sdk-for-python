@@ -17,7 +17,7 @@ class DatabaseAccountPatchParameters(Model):
 
     :param tags:
     :type tags: dict
-    """ 
+    """
 
     _validation = {
         'tags': {'required': True},

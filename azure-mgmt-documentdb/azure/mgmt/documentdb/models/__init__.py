@@ -9,10 +9,10 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .database_account import DatabaseAccount
 from .consistency_policy import ConsistencyPolicy
 from .location import Location
 from .failover_policy import FailoverPolicy
+from .database_account import DatabaseAccount
 from .failover_policies import FailoverPolicies
 from .resource import Resource
 from .database_account_create_update_parameters import DatabaseAccountCreateUpdateParameters
@@ -29,10 +29,10 @@ from .document_db_enums import (
 )
 
 __all__ = [
-    'DatabaseAccount',
     'ConsistencyPolicy',
     'Location',
     'FailoverPolicy',
+    'DatabaseAccount',
     'FailoverPolicies',
     'Resource',
     'DatabaseAccountCreateUpdateParameters',

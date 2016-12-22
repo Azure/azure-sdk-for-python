@@ -24,7 +24,7 @@ class DatabaseAccountListReadOnlyKeysResult(Model):
     :ivar secondary_readonly_master_key: Base 64 encoded value of the
      secondary read-only key.
     :vartype secondary_readonly_master_key: str
-    """ 
+    """
 
     _validation = {
         'primary_readonly_master_key': {'readonly': True},

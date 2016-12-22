@@ -19,7 +19,7 @@ class DatabaseAccountRegenerateKeyParameters(Model):
      'primary', 'secondary', 'primaryReadonly', 'secondaryReadonly'
     :type key_kind: str or :class:`KeyKind
      <azure.mgmt.documentdb.models.KeyKind>`
-    """ 
+    """
 
     _validation = {
         'key_kind': {'required': True},

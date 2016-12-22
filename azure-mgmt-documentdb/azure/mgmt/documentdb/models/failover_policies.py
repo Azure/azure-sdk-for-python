@@ -18,7 +18,7 @@ class FailoverPolicies(Model):
     :param failover_policies: List of failover policies.
     :type failover_policies: list of :class:`FailoverPolicy
      <azure.mgmt.documentdb.models.FailoverPolicy>`
-    """ 
+    """
 
     _attribute_map = {
         'failover_policies': {'key': 'failoverPolicies', 'type': '[FailoverPolicy]'},
