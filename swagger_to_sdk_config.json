@@ -234,6 +234,16 @@
       "output_dir": "azure-keyvault/azure/keyvault",
       "generated_relative_base_directory": "azure/keyvault"
     },
+    "loganalytics": {
+      "markdown": "specification/operationalinsights/resource-manager/readme.md",
+      "autorest_options": {
+        "title": "LogAnalyticsManagementClient",
+        "description": "The Log Analytics Client.",
+        "namespace": "azure.mgmt.loganalytics",
+        "package-version": "0.1.0"
+      },
+      "output_dir": "azure-mgmt-loganalytics/azure/mgmt/loganalytics"
+    },
     "logic": {
       "autorest_options": {
         "input-file": "specification/logic/resource-manager/Microsoft.Logic/2016-06-01/logic.json",
