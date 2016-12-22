@@ -201,6 +201,15 @@
       },
       "output_dir": "azure-mgmt-powerbiembedded/azure/mgmt/powerbiembedded"
     },
+    "recoveryservices_backup": {
+      "swagger": "arm-recoveryservicesbackup/compositeRecoveryServicesBackupClient.json",
+      "autorest_options": {
+        "Namespace": "azure.mgmt.recoveryservicesbackup",
+        "Modeler": "CompositeSwagger",
+        "PackageVersion": "0.1.0"
+      },
+      "output_dir": "azure-mgmt-recoveryservicesbackup/azure/mgmt/recoveryservicesbackup"
+    },	
     "redis": {
       "swagger": "arm-redis/2016-04-01/swagger/redis.json",
       "autorest_options": {
