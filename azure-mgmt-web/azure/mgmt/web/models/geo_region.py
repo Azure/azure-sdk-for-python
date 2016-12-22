@@ -15,28 +15,36 @@ from .resource import Resource
 class GeoRegion(Resource):
     """Geographical region.
 
-    :param id: Resource Id
-    :type id: str
-    :param name: Resource Name
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar id: Resource Id.
+    :vartype id: str
+    :param name: Resource Name.
     :type name: str
-    :param kind: Kind of resource
+    :param kind: Kind of resource.
     :type kind: str
-    :param location: Resource Location
+    :param location: Resource Location.
     :type location: str
-    :param type: Resource type
+    :param type: Resource type.
     :type type: str
-    :param tags: Resource tags
+    :param tags: Resource tags.
     :type tags: dict
-    :param geo_region_name: Region name
-    :type geo_region_name: str
-    :param description: Region description
-    :type description: str
-    :param display_name: Display name for region
-    :type display_name: str
-    """ 
+    :ivar geo_region_name: Region name.
+    :vartype geo_region_name: str
+    :ivar description: Region description.
+    :vartype description: str
+    :ivar display_name: Display name for region.
+    :vartype display_name: str
+    """
 
     _validation = {
+        'id': {'readonly': True},
+        'name': {'required': True},
         'location': {'required': True},
+        'geo_region_name': {'readonly': True},
+        'description': {'readonly': True},
+        'display_name': {'readonly': True},
     }
 
     _attribute_map = {
@@ -51,8 +59,8 @@ class GeoRegion(Resource):
         'display_name': {'key': 'properties.displayName', 'type': 'str'},
     }
 
-    def __init__(self, location, id=None, name=None, kind=None, type=None, tags=None, geo_region_name=None, description=None, display_name=None):
-        super(GeoRegion, self).__init__(id=id, name=name, kind=kind, location=location, type=type, tags=tags)
-        self.geo_region_name = geo_region_name
-        self.description = description
-        self.display_name = display_name
+    def __init__(self, name, location, kind=None, type=None, tags=None):
+        super(GeoRegion, self).__init__(name=name, kind=kind, location=location, type=type, tags=tags)
+        self.geo_region_name = None
+        self.description = None
+        self.display_name = None

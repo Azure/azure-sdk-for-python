@@ -13,25 +13,21 @@ from msrest.serialization import Model
 
 
 class HostNameSslState(Model):
-    """Object that represents a SSL-enabled host name.
+    """SSL-enabled hostname.
 
-    :param name: Host name
+    :param name: Hostname.
     :type name: str
     :param ssl_state: SSL type. Possible values include: 'Disabled',
      'SniEnabled', 'IpBasedEnabled'
     :type ssl_state: str or :class:`SslState <azure.mgmt.web.models.SslState>`
-    :param virtual_ip: Virtual IP address assigned to the host name if IP
-     based SSL is enabled
+    :param virtual_ip: Virtual IP address assigned to the hostname if IP based
+     SSL is enabled.
     :type virtual_ip: str
-    :param thumbprint: SSL cert thumbprint
+    :param thumbprint: SSL certificate thumbprint.
     :type thumbprint: str
-    :param to_update: Set this flag to update existing host name
+    :param to_update: Set to <code>true</code> to update existing hostname.
     :type to_update: bool
-    """ 
-
-    _validation = {
-        'ssl_state': {'required': True},
-    }
+    """
 
     _attribute_map = {
         'name': {'key': 'name', 'type': 'str'},
@@ -41,7 +37,7 @@ class HostNameSslState(Model):
         'to_update': {'key': 'toUpdate', 'type': 'bool'},
     }
 
-    def __init__(self, ssl_state, name=None, virtual_ip=None, thumbprint=None, to_update=None):
+    def __init__(self, name=None, ssl_state=None, virtual_ip=None, thumbprint=None, to_update=None):
         self.name = name
         self.ssl_state = ssl_state
         self.virtual_ip = virtual_ip

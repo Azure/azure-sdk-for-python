@@ -15,13 +15,15 @@ from msrest.serialization import Model
 class ResourceNameAvailabilityRequest(Model):
     """Resource name availability request content.
 
-    :param name: Resource name to verify
+    :param name: Resource name to verify.
     :type name: str
-    :param type: Resource type used for verification
-    :type type: str
-    :param is_fqdn: Is fully qualified domain name
+    :param type: Resource type used for verification. Possible values include:
+     'Site', 'Slot', 'HostingEnvironment'
+    :type type: str or :class:`CheckNameResourceTypes
+     <azure.mgmt.web.models.CheckNameResourceTypes>`
+    :param is_fqdn: Is fully qualified domain name.
     :type is_fqdn: bool
-    """ 
+    """
 
     _attribute_map = {
         'name': {'key': 'name', 'type': 'str'},

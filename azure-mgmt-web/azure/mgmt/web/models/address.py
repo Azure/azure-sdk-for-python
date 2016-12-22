@@ -15,19 +15,19 @@ from msrest.serialization import Model
 class Address(Model):
     """Address information for domain registration.
 
-    :param address1: Address 1
+    :param address1: Address 1.
     :type address1: str
-    :param address2: Address 2
+    :param address2: Address 2.
     :type address2: str
-    :param city: City
+    :param city: City.
     :type city: str
-    :param country: Country
+    :param country: Country.
     :type country: str
-    :param postal_code: Postal code
+    :param postal_code: Postal code.
     :type postal_code: str
-    :param state: State
+    :param state: State.
     :type state: str
-    """ 
+    """
 
     _attribute_map = {
         'address1': {'key': 'address1', 'type': 'str'},

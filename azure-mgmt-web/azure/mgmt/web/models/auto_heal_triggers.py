@@ -13,22 +13,20 @@ from msrest.serialization import Model
 
 
 class AutoHealTriggers(Model):
-    """AutoHealTriggers - describes the triggers for auto-heal.
+    """Triggers for auto-heal.
 
-    :param requests: Requests - Defines a rule based on total requests
+    :param requests: A rule based on total requests.
     :type requests: :class:`RequestsBasedTrigger
      <azure.mgmt.web.models.RequestsBasedTrigger>`
-    :param private_bytes_in_kb: PrivateBytesInKB - Defines a rule based on
-     private bytes
+    :param private_bytes_in_kb: A rule based on private bytes.
     :type private_bytes_in_kb: int
-    :param status_codes: StatusCodes - Defines a rule based on status codes
+    :param status_codes: A rule based on status codes.
     :type status_codes: list of :class:`StatusCodesBasedTrigger
      <azure.mgmt.web.models.StatusCodesBasedTrigger>`
-    :param slow_requests: SlowRequests - Defines a rule based on request
-     execution time
+    :param slow_requests: A rule based on request execution time.
     :type slow_requests: :class:`SlowRequestsBasedTrigger
      <azure.mgmt.web.models.SlowRequestsBasedTrigger>`
-    """ 
+    """
 
     _attribute_map = {
         'requests': {'key': 'requests', 'type': 'RequestsBasedTrigger'},

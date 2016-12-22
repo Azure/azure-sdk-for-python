@@ -13,26 +13,32 @@ from .resource import Resource
 
 
 class SiteInstance(Resource):
-    """Instance of a web app.
+    """Instance of an app.
 
-    :param id: Resource Id
-    :type id: str
-    :param name: Resource Name
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar id: Resource Id.
+    :vartype id: str
+    :param name: Resource Name.
     :type name: str
-    :param kind: Kind of resource
+    :param kind: Kind of resource.
     :type kind: str
-    :param location: Resource Location
+    :param location: Resource Location.
     :type location: str
-    :param type: Resource type
+    :param type: Resource type.
     :type type: str
-    :param tags: Resource tags
+    :param tags: Resource tags.
     :type tags: dict
-    :param site_instance_name: Name of instance
-    :type site_instance_name: str
-    """ 
+    :ivar site_instance_name: Name of instance.
+    :vartype site_instance_name: str
+    """
 
     _validation = {
+        'id': {'readonly': True},
+        'name': {'required': True},
         'location': {'required': True},
+        'site_instance_name': {'readonly': True},
     }
 
     _attribute_map = {
@@ -45,6 +51,6 @@ class SiteInstance(Resource):
         'site_instance_name': {'key': 'properties.name', 'type': 'str'},
     }
 
-    def __init__(self, location, id=None, name=None, kind=None, type=None, tags=None, site_instance_name=None):
-        super(SiteInstance, self).__init__(id=id, name=name, kind=kind, location=location, type=type, tags=tags)
-        self.site_instance_name = site_instance_name
+    def __init__(self, name, location, kind=None, type=None, tags=None):
+        super(SiteInstance, self).__init__(name=name, kind=kind, location=location, type=type, tags=tags)
+        self.site_instance_name = None

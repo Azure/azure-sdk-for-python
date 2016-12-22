@@ -13,13 +13,13 @@ from msrest.serialization import Model
 
 
 class VirtualDirectory(Model):
-    """VirtualDirectory.
+    """Directory for virtual application.
 
-    :param virtual_path:
+    :param virtual_path: Path to virtual application.
     :type virtual_path: str
-    :param physical_path:
+    :param physical_path: Physical path.
     :type physical_path: str
-    """ 
+    """
 
     _attribute_map = {
         'virtual_path': {'key': 'virtualPath', 'type': 'str'},

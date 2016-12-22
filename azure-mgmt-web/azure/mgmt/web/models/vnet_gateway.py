@@ -13,28 +13,33 @@ from .resource import Resource
 
 
 class VnetGateway(Resource):
-    """The VnetGateway contract. This is used to give the vnet gateway access to
-    the VPN package.
+    """The Virtual Network gateway contract. This is used to give the Virtual
+    Network gateway access to the VPN package.
 
-    :param id: Resource Id
-    :type id: str
-    :param name: Resource Name
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar id: Resource Id.
+    :vartype id: str
+    :param name: Resource Name.
     :type name: str
-    :param kind: Kind of resource
+    :param kind: Kind of resource.
     :type kind: str
-    :param location: Resource Location
+    :param location: Resource Location.
     :type location: str
-    :param type: Resource type
+    :param type: Resource type.
     :type type: str
-    :param tags: Resource tags
+    :param tags: Resource tags.
     :type tags: dict
-    :param vnet_name: The VNET name.
+    :param vnet_name: The Virtual Network name.
     :type vnet_name: str
-    :param vpn_package_uri: The URI where the Vpn package can be downloaded
+    :param vpn_package_uri: The URI where the VPN package can be downloaded.
     :type vpn_package_uri: str
-    """ 
+    """
 
     _validation = {
+        'id': {'readonly': True},
+        'name': {'required': True},
         'location': {'required': True},
     }
 
@@ -49,7 +54,7 @@ class VnetGateway(Resource):
         'vpn_package_uri': {'key': 'properties.vpnPackageUri', 'type': 'str'},
     }
 
-    def __init__(self, location, id=None, name=None, kind=None, type=None, tags=None, vnet_name=None, vpn_package_uri=None):
-        super(VnetGateway, self).__init__(id=id, name=name, kind=kind, location=location, type=type, tags=tags)
+    def __init__(self, name, location, kind=None, type=None, tags=None, vnet_name=None, vpn_package_uri=None):
+        super(VnetGateway, self).__init__(name=name, kind=kind, location=location, type=type, tags=tags)
         self.vnet_name = vnet_name
         self.vpn_package_uri = vpn_package_uri

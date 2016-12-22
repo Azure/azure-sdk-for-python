@@ -13,27 +13,33 @@ from .resource import Resource
 
 
 class RestoreResponse(Resource):
-    """Response for a restore site request.
+    """Response for an app restore request.
 
-    :param id: Resource Id
-    :type id: str
-    :param name: Resource Name
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar id: Resource Id.
+    :vartype id: str
+    :param name: Resource Name.
     :type name: str
-    :param kind: Kind of resource
+    :param kind: Kind of resource.
     :type kind: str
-    :param location: Resource Location
+    :param location: Resource Location.
     :type location: str
-    :param type: Resource type
+    :param type: Resource type.
     :type type: str
-    :param tags: Resource tags
+    :param tags: Resource tags.
     :type tags: dict
-    :param operation_id: When server starts the restore process, it will
-     return an OperationId identifying that particular restore operation
-    :type operation_id: str
-    """ 
+    :ivar operation_id: When server starts the restore process, it will return
+     an operation ID identifying that particular restore operation.
+    :vartype operation_id: str
+    """
 
     _validation = {
+        'id': {'readonly': True},
+        'name': {'required': True},
         'location': {'required': True},
+        'operation_id': {'readonly': True},
     }
 
     _attribute_map = {
@@ -46,6 +52,6 @@ class RestoreResponse(Resource):
         'operation_id': {'key': 'properties.operationId', 'type': 'str'},
     }
 
-    def __init__(self, location, id=None, name=None, kind=None, type=None, tags=None, operation_id=None):
-        super(RestoreResponse, self).__init__(id=id, name=name, kind=kind, location=location, type=type, tags=tags)
-        self.operation_id = operation_id
+    def __init__(self, name, location, kind=None, type=None, tags=None):
+        super(RestoreResponse, self).__init__(name=name, kind=kind, location=location, type=type, tags=tags)
+        self.operation_id = None

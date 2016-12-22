@@ -13,44 +13,53 @@ from .resource import Resource
 
 
 class SlotDifference(Resource):
-    """An object describing the difference in setting values between two web app
-    slots.
+    """A setting difference between two deployment slots of an app.
 
-    :param id: Resource Id
-    :type id: str
-    :param name: Resource Name
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar id: Resource Id.
+    :vartype id: str
+    :param name: Resource Name.
     :type name: str
-    :param kind: Kind of resource
+    :param kind: Kind of resource.
     :type kind: str
-    :param location: Resource Location
+    :param location: Resource Location.
     :type location: str
-    :param type: Resource type
+    :param type: Resource type.
     :type type: str
-    :param tags: Resource tags
+    :param tags: Resource tags.
     :type tags: dict
-    :param slot_difference_type: Indicates the type of the difference:
-     Information, Warning or Error.
-    :type slot_difference_type: str
-    :param setting_type: The type of the settings: General, AppSetting or
-     ConnectionString
-    :type setting_type: str
-    :param diff_rule: Rule that describes how to process the difference in
-     settings during web app slot swap.
-    :type diff_rule: str
-    :param setting_name: Name of the setting
-    :type setting_name: str
-    :param value_in_current_slot: Value of the setting in the current web app
-     slot
-    :type value_in_current_slot: str
-    :param value_in_target_slot: Value of the setting in the target web app
-     slot
-    :type value_in_target_slot: str
-    :param description: Description of the difference
-    :type description: str
-    """ 
+    :ivar slot_difference_type: Type of the difference: Information, Warning
+     or Error.
+    :vartype slot_difference_type: str
+    :ivar setting_type: The type of the setting: General, AppSetting or
+     ConnectionString.
+    :vartype setting_type: str
+    :ivar diff_rule: Rule that describes how to process the setting difference
+     during a slot swap.
+    :vartype diff_rule: str
+    :ivar setting_name: Name of the setting.
+    :vartype setting_name: str
+    :ivar value_in_current_slot: Value of the setting in the current slot.
+    :vartype value_in_current_slot: str
+    :ivar value_in_target_slot: Value of the setting in the target slot.
+    :vartype value_in_target_slot: str
+    :ivar description: Description of the setting difference.
+    :vartype description: str
+    """
 
     _validation = {
+        'id': {'readonly': True},
+        'name': {'required': True},
         'location': {'required': True},
+        'slot_difference_type': {'readonly': True},
+        'setting_type': {'readonly': True},
+        'diff_rule': {'readonly': True},
+        'setting_name': {'readonly': True},
+        'value_in_current_slot': {'readonly': True},
+        'value_in_target_slot': {'readonly': True},
+        'description': {'readonly': True},
     }
 
     _attribute_map = {
@@ -69,12 +78,12 @@ class SlotDifference(Resource):
         'description': {'key': 'properties.description', 'type': 'str'},
     }
 
-    def __init__(self, location, id=None, name=None, kind=None, type=None, tags=None, slot_difference_type=None, setting_type=None, diff_rule=None, setting_name=None, value_in_current_slot=None, value_in_target_slot=None, description=None):
-        super(SlotDifference, self).__init__(id=id, name=name, kind=kind, location=location, type=type, tags=tags)
-        self.slot_difference_type = slot_difference_type
-        self.setting_type = setting_type
-        self.diff_rule = diff_rule
-        self.setting_name = setting_name
-        self.value_in_current_slot = value_in_current_slot
-        self.value_in_target_slot = value_in_target_slot
-        self.description = description
+    def __init__(self, name, location, kind=None, type=None, tags=None):
+        super(SlotDifference, self).__init__(name=name, kind=kind, location=location, type=type, tags=tags)
+        self.slot_difference_type = None
+        self.setting_type = None
+        self.diff_rule = None
+        self.setting_name = None
+        self.value_in_current_slot = None
+        self.value_in_target_slot = None
+        self.description = None

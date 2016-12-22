@@ -17,27 +17,21 @@ class RampUpRule(Model):
     traffic % to a slot or to gradually change routing % based on performance.
 
     :param action_host_name: Hostname of a slot to which the traffic will be
-     redirected if decided to. E.g. mysite-stage.azurewebsites.net
+     redirected if decided to. E.g. myapp-stage.azurewebsites.net.
     :type action_host_name: str
     :param reroute_percentage: Percentage of the traffic which will be
-     redirected to
-     {Microsoft.Web.Hosting.Administration.RampUpRule.ActionHostName}
+     redirected to <code>ActionHostName</code>.
     :type reroute_percentage: float
     :param change_step: [Optional] In auto ramp up scenario this is the step
-     to to add/remove from
-     {Microsoft.Web.Hosting.Administration.RampUpRule.ReroutePercentage}
-     until it reaches
-     {Microsoft.Web.Hosting.Administration.RampUpRule.MinReroutePercentage}
-     or
-     {Microsoft.Web.Hosting.Administration.RampUpRule.MaxReroutePercentage}.
+     to to add/remove from <code>ReroutePercentage</code> until it reaches
+     <code>MinReroutePercentage</code> or <code>MaxReroutePercentage</code>.
      Site metrics are checked every N minutes specificed in
-     {Microsoft.Web.Hosting.Administration.RampUpRule.ChangeIntervalInMinutes}.
-     Custom decision algorithm can be provided in TiPCallback site
-     extension which Url can be specified in
-     {Microsoft.Web.Hosting.Administration.RampUpRule.ChangeDecisionCallbackUrl}
+     <code>ChangeIntervalInMinutes</code>.
+     Custom decision algorithm can be provided in TiPCallback site extension
+     which URL can be specified in <code>ChangeDecisionCallbackUrl</code>.
     :type change_step: float
     :param change_interval_in_minutes: [Optional] Specifies interval in
-     mimuntes to reevaluate ReroutePercentage
+     mimuntes to reevaluate ReroutePercentage.
     :type change_interval_in_minutes: int
     :param min_reroute_percentage: [Optional] Specifies lower boundary above
      which ReroutePercentage will stay.
@@ -46,14 +40,14 @@ class RampUpRule(Model):
      which ReroutePercentage will stay.
     :type max_reroute_percentage: float
     :param change_decision_callback_url: Custom decision algorithm can be
-     provided in TiPCallback site extension which Url can be specified. See
+     provided in TiPCallback site extension which URL can be specified. See
      TiPCallback site extension for the scaffold and contracts.
      https://www.siteextensions.net/packages/TiPCallback/
     :type change_decision_callback_url: str
     :param name: Name of the routing rule. The recommended name would be to
      point to the slot which will receive the traffic in the experiment.
     :type name: str
-    """ 
+    """
 
     _attribute_map = {
         'action_host_name': {'key': 'actionHostName', 'type': 'str'},

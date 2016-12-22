@@ -13,45 +13,51 @@ from msrest.serialization import Model
 
 
 class CloningInfo(Model):
-    """Represents information needed for cloning operation.
+    """Information needed for cloning operation.
 
-    :param correlation_id: Correlation Id of cloning operation. This id ties
+    :param correlation_id: Correlation ID of cloning operation. This ID ties
      multiple cloning operations
-     together to use the same snapshot
+     together to use the same snapshot.
     :type correlation_id: str
-    :param overwrite: Overwrite destination web app
+    :param overwrite: <code>true</code> to overwrite destination app;
+     otherwise, <code>false</code>.
     :type overwrite: bool
-    :param clone_custom_host_names: If true, clone custom hostnames from
-     source web app
+    :param clone_custom_host_names: <code>true</code> to clone custom
+     hostnames from source app; otherwise, <code>false</code>.
     :type clone_custom_host_names: bool
-    :param clone_source_control: Clone source control from source web app
+    :param clone_source_control: <code>true</code> to clone source control
+     from source app; otherwise, <code>false</code>.
     :type clone_source_control: bool
-    :param source_web_app_id: ARM resource id of the source web app. Web app
-     resource id is of the form
+    :param source_web_app_id: ARM resource ID of the source app. App resource
+     ID is of the form
      /subscriptions/{subId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{siteName}
      for production slots and
      /subscriptions/{subId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{siteName}/slots/{slotName}
-     for other slots
+     for other slots.
     :type source_web_app_id: str
-    :param hosting_environment: Hosting environment
+    :param hosting_environment: App Service Environment.
     :type hosting_environment: str
-    :param app_settings_overrides: Application settings overrides for cloned
-     web app. If specified these settings will override the settings cloned
-     from source web app. If not specified, application settings
-     from source web app are retained.
+    :param app_settings_overrides: Application setting overrides for cloned
+     app. If specified, these settings override the settings cloned
+     from source app. Otherwise, application settings from source app are
+     retained.
     :type app_settings_overrides: dict
-    :param configure_load_balancing: If specified configure load balancing
-     for source and clone site
+    :param configure_load_balancing: <code>true</code> to configure load
+     balancing for source and destination app.
     :type configure_load_balancing: bool
-    :param traffic_manager_profile_id: ARM resource id of the traffic manager
-     profile to use if it exists. Traffic manager resource id is of the form
-     /subscriptions/{subId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/trafficManagerProfiles/{profileName}
+    :param traffic_manager_profile_id: ARM resource ID of the Traffic Manager
+     profile to use, if it exists. Traffic Manager resource ID is of the form
+     /subscriptions/{subId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/trafficManagerProfiles/{profileName}.
     :type traffic_manager_profile_id: str
-    :param traffic_manager_profile_name: Name of traffic manager profile to
-     create. This is only needed if traffic manager profile does not already
-     exist
+    :param traffic_manager_profile_name: Name of Traffic Manager profile to
+     create. This is only needed if Traffic Manager profile does not already
+     exist.
     :type traffic_manager_profile_name: str
-    """ 
+    """
+
+    _validation = {
+        'source_web_app_id': {'required': True},
+    }
 
     _attribute_map = {
         'correlation_id': {'key': 'correlationId', 'type': 'str'},
@@ -66,7 +72,7 @@ class CloningInfo(Model):
         'traffic_manager_profile_name': {'key': 'trafficManagerProfileName', 'type': 'str'},
     }
 
-    def __init__(self, correlation_id=None, overwrite=None, clone_custom_host_names=None, clone_source_control=None, source_web_app_id=None, hosting_environment=None, app_settings_overrides=None, configure_load_balancing=None, traffic_manager_profile_id=None, traffic_manager_profile_name=None):
+    def __init__(self, source_web_app_id, correlation_id=None, overwrite=None, clone_custom_host_names=None, clone_source_control=None, hosting_environment=None, app_settings_overrides=None, configure_load_balancing=None, traffic_manager_profile_id=None, traffic_manager_profile_name=None):
         self.correlation_id = correlation_id
         self.overwrite = overwrite
         self.clone_custom_host_names = clone_custom_host_names

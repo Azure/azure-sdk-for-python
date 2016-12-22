@@ -14,28 +14,29 @@ from msrest.serialization import Model
 
 class Contact(Model):
     """Contact information for domain registration. If 'Domain Privacy' option is
-    not selected then the contact information will be  be made publicly
-    available through the Whois directories as per ICANN requirements.
+    not selected then the contact information is made publicly available
+    through the Whois
+    directories as per ICANN requirements.
 
-    :param address_mailing: Mailing address
+    :param address_mailing: Mailing address.
     :type address_mailing: :class:`Address <azure.mgmt.web.models.Address>`
-    :param email: Email address
+    :param email: Email address.
     :type email: str
-    :param fax: Fax number
+    :param fax: Fax number.
     :type fax: str
-    :param job_title: Job title
+    :param job_title: Job title.
     :type job_title: str
-    :param name_first: First name
+    :param name_first: First name.
     :type name_first: str
-    :param name_last: Last name
+    :param name_last: Last name.
     :type name_last: str
-    :param name_middle: Middle name
+    :param name_middle: Middle name.
     :type name_middle: str
-    :param organization: Organization
+    :param organization: Organization.
     :type organization: str
-    :param phone: Phone number
+    :param phone: Phone number.
     :type phone: str
-    """ 
+    """
 
     _attribute_map = {
         'address_mailing': {'key': 'addressMailing', 'type': 'Address'},
