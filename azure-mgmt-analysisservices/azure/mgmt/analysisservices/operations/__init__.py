@@ -9,10 +9,8 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .analysis_services_management_client import AnalysisServicesManagementClient
-from .version import VERSION
+from .servers_operations import ServersOperations
 
-__all__ = ['AnalysisServicesManagementClient']
-
-__version__ = VERSION
-
+__all__ = [
+    'ServersOperations',
+]

@@ -9,10 +9,19 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .analysis_services_management_client import AnalysisServicesManagementClient
-from .version import VERSION
+from msrest.serialization import Model
 
-__all__ = ['AnalysisServicesManagementClient']
 
-__version__ = VERSION
+class ServerAdministrators(Model):
+    """An array of administrator user identities.
 
+    :param members: An array of administrator user identities.
+    :type members: list of str
+    """
+
+    _attribute_map = {
+        'members': {'key': 'members', 'type': '[str]'},
+    }
+
+    def __init__(self, members=None):
+        self.members = members

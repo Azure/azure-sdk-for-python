@@ -9,10 +9,19 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .analysis_services_management_client import AnalysisServicesManagementClient
-from .version import VERSION
+from msrest.paging import Paged
 
-__all__ = ['AnalysisServicesManagementClient']
 
-__version__ = VERSION
+class AnalysisServicesServerPaged(Paged):
+    """
+    A paging container for iterating over a list of AnalysisServicesServer object
+    """
 
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[AnalysisServicesServer]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(AnalysisServicesServerPaged, self).__init__(*args, **kwargs)

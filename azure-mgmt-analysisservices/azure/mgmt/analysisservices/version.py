@@ -9,10 +9,5 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .analysis_services_management_client import AnalysisServicesManagementClient
-from .version import VERSION
-
-__all__ = ['AnalysisServicesManagementClient']
-
-__version__ = VERSION
+VERSION = "0.30.0rc6"
 

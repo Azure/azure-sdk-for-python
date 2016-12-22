@@ -9,10 +9,18 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .analysis_services_management_client import AnalysisServicesManagementClient
-from .version import VERSION
+from enum import Enum
 
-__all__ = ['AnalysisServicesManagementClient']
 
-__version__ = VERSION
+class SkuName(Enum):
 
+    s1 = "S1"
+    s2 = "S2"
+    s4 = "S4"
+    d1 = "D1"
+
+
+class SkuTier(Enum):
+
+    development = "Development"
+    standard = "Standard"
