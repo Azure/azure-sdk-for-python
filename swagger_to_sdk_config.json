@@ -260,9 +260,10 @@
     "search": {
       "swagger": "arm-search/2015-08-19/swagger/search.json",
       "autorest_options": {
-        "Namespace": "azure.mgmt.search"
+        "Namespace": "azure.mgmt.search",
+		"PackageVersion": "0.11.0"
       },
-      "output_dir": "unreleased/azure-mgmt-search/azure/mgmt/search"
+      "output_dir": "azure-mgmt-search/azure/mgmt/search"
     },
     "servermanager": {
       "swagger": "arm-servermanagement/2016-07-01-preview/swagger/servermanagement.json",
