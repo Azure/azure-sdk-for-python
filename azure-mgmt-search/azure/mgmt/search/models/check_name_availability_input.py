@@ -19,14 +19,14 @@ class CheckNameAvailabilityInput(Model):
     sending a request.
 
     :param name: The Search service name to validate. Search service names
-     must only contain lowercase letters, digits or dashes, cannot use dash
-     as the first two or last one characters, cannot contain consecutive
-     dashes, and must be between 2 and 60 characters in length.
+     must only contain lowercase letters, digits or dashes, cannot use dash as
+     the first two or last one characters, cannot contain consecutive dashes,
+     and must be between 2 and 60 characters in length.
     :type name: str
     :ivar type: The type of the resource whose name is to be validated. This
      value must always be 'searchServices'. Default value: "searchServices" .
     :vartype type: str
-    """ 
+    """
 
     _validation = {
         'name': {'required': True},

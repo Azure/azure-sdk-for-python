@@ -18,20 +18,20 @@ class Resource(Model):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar id: The ID of the resource. This can be used with the Azure
-     Resource Manager to link resources together.
+    :ivar id: The ID of the resource. This can be used with the Azure Resource
+     Manager to link resources together.
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
     :ivar type: The resource type.
     :vartype type: str
-    :param location: The geographic location of the resource. This must be
-     one of the supported and registered Azure Geo Regions (for example, West
-     US, East US, Southeast Asia, and so forth).
+    :param location: The geographic location of the resource. This must be one
+     of the supported and registered Azure Geo Regions (for example, West US,
+     East US, Southeast Asia, and so forth).
     :type location: str
     :param tags: Tags to help categorize the resource in the Azure portal.
     :type tags: dict
-    """ 
+    """
 
     _validation = {
         'id': {'readonly': True},
