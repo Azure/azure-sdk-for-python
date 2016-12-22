@@ -12,7 +12,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [c359dbd2-bda1-11e6-8471-ecb1d756380e]
     method: PUT
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_mgmt_datalake_analytics_test_adla_catalog_items32e3152c?api-version=2016-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_mgmt_datalake_analytics_test_adla_catalog_items32e3152c?api-version=2016-09-01
   response:
     body: {string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_datalake_analytics_test_adla_catalog_items32e3152c","name":"test_mgmt_datalake_analytics_test_adla_catalog_items32e3152c","location":"eastus2","properties":{"provisioningState":"Succeeded"}}'}
     headers:
@@ -113,7 +113,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [c3fe0c86-bda1-11e6-9867-ecb1d756380e]
     method: PUT
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_datalake_analytics_test_adla_catalog_items32e3152c/providers/Microsoft.DataLakeStore/accounts/pyarmadls232e3152c?api-version=2016-11-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_datalake_analytics_test_adla_catalog_items32e3152c/providers/Microsoft.DataLakeStore/accounts/pyarmadls232e3152c?api-version=2016-11-01
   response:
     body: {string: '{"properties":{"provisioningState":"Creating","state":null,"endpoint":null,"accountId":"674c3b38-f3e4-4049-af28-5cef022dae26","creationTime":null,"lastModifiedTime":null},"location":"East
         US 2","tags":null,"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_datalake_analytics_test_adla_catalog_items32e3152c/providers/Microsoft.DataLakeStore/accounts/pyarmadls232e3152c","name":"pyarmadls232e3152c","type":"Microsoft.DataLakeStore/accounts"}'}
@@ -150,7 +150,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [c3fe0c86-bda1-11e6-9867-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DataLakeStore/locations/EastUS2/operationResults/674c3b38-f3e4-4049-af28-5cef022dae260?api-version=2016-11-01&expanded=true
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DataLakeStore/locations/EastUS2/operationResults/674c3b38-f3e4-4049-af28-5cef022dae260?api-version=2016-11-01&expanded=true
   response:
     body: {string: '{"status":"InProgress"}'}
     headers:
@@ -184,7 +184,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [c3fe0c86-bda1-11e6-9867-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DataLakeStore/locations/EastUS2/operationResults/674c3b38-f3e4-4049-af28-5cef022dae260?api-version=2016-11-01&expanded=true
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DataLakeStore/locations/EastUS2/operationResults/674c3b38-f3e4-4049-af28-5cef022dae260?api-version=2016-11-01&expanded=true
   response:
     body: {string: '{"status":"Succeeded"}'}
     headers:
@@ -218,7 +218,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [c3fe0c86-bda1-11e6-9867-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_datalake_analytics_test_adla_catalog_items32e3152c/providers/Microsoft.DataLakeStore/accounts/pyarmadls232e3152c?api-version=2016-11-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_datalake_analytics_test_adla_catalog_items32e3152c/providers/Microsoft.DataLakeStore/accounts/pyarmadls232e3152c?api-version=2016-11-01
   response:
     body: {string: '{"properties":{"firewallState":"Disabled","firewallRules":[],"trustedIdProviderState":"Disabled","trustedIdProviders":[],"encryptionState":"Enabled","encryptionConfig":{"type":"ServiceManaged"},"provisioningState":"Succeeded","state":"Active","endpoint":"pyarmadls232e3152c.azuredatalakestore.net","accountId":"674c3b38-f3e4-4049-af28-5cef022dae26","creationTime":"2016-12-08T23:55:21.1778337Z","lastModifiedTime":"2016-12-08T23:55:21.1778337Z"},"location":"East
         US 2","tags":null,"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_datalake_analytics_test_adla_catalog_items32e3152c/providers/Microsoft.DataLakeStore/accounts/pyarmadls232e3152c","name":"pyarmadls232e3152c","type":"Microsoft.DataLakeStore/accounts"}'}
@@ -328,7 +328,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [dedeb836-bda1-11e6-8850-ecb1d756380e]
     method: PUT
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_datalake_analytics_test_adla_catalog_items32e3152c/providers/Microsoft.DataLakeAnalytics/accounts/pyarmadla232e3152c?api-version=2016-11-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_datalake_analytics_test_adla_catalog_items32e3152c/providers/Microsoft.DataLakeAnalytics/accounts/pyarmadla232e3152c?api-version=2016-11-01
   response:
     body: {string: '{"properties":{"defaultDataLakeStoreAccount":"pyarmadls232e3152c","dataLakeStoreAccounts":[{"properties":{"suffix":"azuredatalakestore.net"},"name":"pyarmadls232e3152c"}],"maxDegreeOfParallelism":30,"maxJobCount":3,"queryStoreRetention":30,"provisioningState":"Creating","state":null,"endpoint":null,"accountId":"4497ea44-02cc-4bbb-bd7a-c2f683b2bcae","creationTime":null,"lastModifiedTime":null},"location":"East
         US 2","tags":null,"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_datalake_analytics_test_adla_catalog_items32e3152c/providers/Microsoft.DataLakeAnalytics/accounts/pyarmadla232e3152c","name":"pyarmadla232e3152c","type":"Microsoft.DataLakeAnalytics/accounts"}'}
@@ -365,7 +365,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [dedeb836-bda1-11e6-8850-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DataLakeAnalytics/locations/EastUS2/operationResults/4497ea44-02cc-4bbb-bd7a-c2f683b2bcae0?api-version=2016-11-01&expanded=true
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DataLakeAnalytics/locations/EastUS2/operationResults/4497ea44-02cc-4bbb-bd7a-c2f683b2bcae0?api-version=2016-11-01&expanded=true
   response:
     body: {string: '{"status":"InProgress"}'}
     headers:
@@ -399,7 +399,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [dedeb836-bda1-11e6-8850-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DataLakeAnalytics/locations/EastUS2/operationResults/4497ea44-02cc-4bbb-bd7a-c2f683b2bcae0?api-version=2016-11-01&expanded=true
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DataLakeAnalytics/locations/EastUS2/operationResults/4497ea44-02cc-4bbb-bd7a-c2f683b2bcae0?api-version=2016-11-01&expanded=true
   response:
     body: {string: '{"status":"Succeeded"}'}
     headers:
@@ -433,7 +433,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [dedeb836-bda1-11e6-8850-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_datalake_analytics_test_adla_catalog_items32e3152c/providers/Microsoft.DataLakeAnalytics/accounts/pyarmadla232e3152c?api-version=2016-11-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_datalake_analytics_test_adla_catalog_items32e3152c/providers/Microsoft.DataLakeAnalytics/accounts/pyarmadla232e3152c?api-version=2016-11-01
   response:
     body: {string: '{"properties":{"defaultDataLakeStoreAccount":"pyarmadls232e3152c","dataLakeStoreAccounts":[{"properties":{"suffix":"azuredatalakestore.net"},"name":"pyarmadls232e3152c"}],"storageAccounts":[],"maxDegreeOfParallelism":30,"maxJobCount":3,"systemMaxDegreeOfParallelism":250,"systemMaxJobCount":20,"queryStoreRetention":30,"hiveMetastores":[],"provisioningState":"Succeeded","state":"Active","endpoint":"pyarmadla232e3152c.azuredatalakeanalytics.net","accountId":"4497ea44-02cc-4bbb-bd7a-c2f683b2bcae","creationTime":"2016-12-08T23:56:04.4792868Z","lastModifiedTime":"2016-12-08T23:56:04.4792868Z"},"location":"East
         US 2","tags":null,"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_datalake_analytics_test_adla_catalog_items32e3152c/providers/Microsoft.DataLakeAnalytics/accounts/pyarmadla232e3152c","name":"pyarmadla232e3152c","type":"Microsoft.DataLakeAnalytics/accounts"}'}
@@ -566,7 +566,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [41213d4c-bda2-11e6-886e-ecb1d756380e]
     method: PUT
-    uri: https:/pyarmadla232e3152c.azuredatalakeanalytics.net/Jobs/00000000-0000-0000-0000-000000000000?api-version=2016-11-01
+    uri: https://pyarmadla232e3152c.azuredatalakeanalytics.net/Jobs/00000000-0000-0000-0000-000000000000?api-version=2016-11-01
   response:
     body: {string: '{"jobId":"00000000-0000-0000-0000-000000000000","name":"testjob32e3152c","type":"USql","submitter":"unittest@myaddomain.onmicrosoft.com","degreeOfParallelism":2,"priority":1000,"submitTime":"2016-12-08T23:58:47.0336359+00:00","state":"Compiling","result":"Succeeded","stateAuditRecords":[{"newState":"New","timeStamp":"2016-12-08T23:58:47.0336359+00:00","details":"userName:;submitMachine:N/A"}],"properties":{"owner":"unittest@myaddomain.onmicrosoft.com","resources":[],"runtimeVersion":"default","rootProcessNodeId":"00000000-0000-0000-0000-000000000000","algebraFilePath":"adl://pyarmadls232e3152c.azuredatalakestore.net/system/jobservice/jobs/Usql/2016/12/08/23/58/00000000-0000-0000-0000-000000000000/algebra.xml","compileMode":"Semantic","errorSource":"Unknown","totalCompilationTime":"PT0S","totalPausedTime":"PT0S","totalQueuedTime":"PT0S","totalRunningTime":"PT0S","type":"USql"}}'}
     headers:
@@ -591,7 +591,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [42548df4-bda2-11e6-bb53-ecb1d756380e]
     method: GET
-    uri: https:/pyarmadla232e3152c.azuredatalakeanalytics.net/Jobs/00000000-0000-0000-0000-000000000000?api-version=2016-11-01
+    uri: https://pyarmadla232e3152c.azuredatalakeanalytics.net/Jobs/00000000-0000-0000-0000-000000000000?api-version=2016-11-01
   response:
     body: {string: '{"jobId":"00000000-0000-0000-0000-000000000000","name":"testjob32e3152c","type":"USql","submitter":"unittest@myaddomain.onmicrosoft.com","degreeOfParallelism":2,"priority":1000,"submitTime":"2016-12-08T23:58:47.0336359+00:00","state":"Compiling","result":"Succeeded","stateAuditRecords":[{"newState":"New","timeStamp":"2016-12-08T23:58:47.0336359+00:00","details":"userName:;submitMachine:N/A"},{"newState":"Compiling","timeStamp":"2016-12-08T23:58:47.6470903+00:00","details":"CcsAttempts:1;Status:Dispatched"}],"properties":{"owner":"unittest@myaddomain.onmicrosoft.com","resources":[{"name":"Profile","resourcePath":"adl://pyarmadls232e3152c.azuredatalakestore.net/system/jobservice/jobs/Usql/2016/12/08/23/58/00000000-0000-0000-0000-000000000000/profile","type":"StatisticsResource"},{"name":"__ScopeRuntimeStatistics__.xml","resourcePath":"adl://pyarmadls232e3152c.azuredatalakestore.net/system/jobservice/jobs/Usql/2016/12/08/23/58/00000000-0000-0000-0000-000000000000/__ScopeRuntimeStatistics__.xml","type":"StatisticsResource"}],"runtimeVersion":"default","rootProcessNodeId":"00000000-0000-0000-0000-000000000000","script":"DROP
         DATABASE IF EXISTS adladb32e3152c; CREATE DATABASE adladb32e3152c; \nCREATE
@@ -641,7 +641,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [45ca3adc-bda2-11e6-acf2-ecb1d756380e]
     method: GET
-    uri: https:/pyarmadla232e3152c.azuredatalakeanalytics.net/Jobs/00000000-0000-0000-0000-000000000000?api-version=2016-11-01
+    uri: https://pyarmadla232e3152c.azuredatalakeanalytics.net/Jobs/00000000-0000-0000-0000-000000000000?api-version=2016-11-01
   response:
     body: {string: '{"jobId":"00000000-0000-0000-0000-000000000000","name":"testjob32e3152c","type":"USql","submitter":"unittest@myaddomain.onmicrosoft.com","degreeOfParallelism":2,"priority":1000,"submitTime":"2016-12-08T23:58:47.0336359+00:00","state":"Compiling","result":"Succeeded","stateAuditRecords":[{"newState":"New","timeStamp":"2016-12-08T23:58:47.0336359+00:00","details":"userName:;submitMachine:N/A"},{"newState":"Compiling","timeStamp":"2016-12-08T23:58:47.6470903+00:00","details":"CcsAttempts:1;Status:Dispatched"}],"properties":{"owner":"unittest@myaddomain.onmicrosoft.com","resources":[{"name":"Profile","resourcePath":"adl://pyarmadls232e3152c.azuredatalakestore.net/system/jobservice/jobs/Usql/2016/12/08/23/58/00000000-0000-0000-0000-000000000000/profile","type":"StatisticsResource"},{"name":"__ScopeRuntimeStatistics__.xml","resourcePath":"adl://pyarmadls232e3152c.azuredatalakestore.net/system/jobservice/jobs/Usql/2016/12/08/23/58/00000000-0000-0000-0000-000000000000/__ScopeRuntimeStatistics__.xml","type":"StatisticsResource"}],"runtimeVersion":"default","rootProcessNodeId":"00000000-0000-0000-0000-000000000000","script":"DROP
         DATABASE IF EXISTS adladb32e3152c; CREATE DATABASE adladb32e3152c; \nCREATE
@@ -691,7 +691,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [490e9348-bda2-11e6-876f-ecb1d756380e]
     method: GET
-    uri: https:/pyarmadla232e3152c.azuredatalakeanalytics.net/Jobs/00000000-0000-0000-0000-000000000000?api-version=2016-11-01
+    uri: https://pyarmadla232e3152c.azuredatalakeanalytics.net/Jobs/00000000-0000-0000-0000-000000000000?api-version=2016-11-01
   response:
     body: {string: '{"jobId":"00000000-0000-0000-0000-000000000000","name":"testjob32e3152c","type":"USql","submitter":"unittest@myaddomain.onmicrosoft.com","degreeOfParallelism":2,"priority":1000,"submitTime":"2016-12-08T23:58:47.0336359+00:00","state":"Starting","result":"Succeeded","stateAuditRecords":[{"newState":"New","timeStamp":"2016-12-08T23:58:47.0336359+00:00","details":"userName:;submitMachine:N/A"},{"newState":"Compiling","timeStamp":"2016-12-08T23:58:47.6470903+00:00","details":"CcsAttempts:1;Status:Dispatched"},{"newState":"Queued","timeStamp":"2016-12-08T23:58:59.1155781+00:00"},{"newState":"Scheduling","timeStamp":"2016-12-08T23:58:59.1266035+00:00","details":"Detail:Dispatching
         job to cluster.;rootProcessId:6b4defb4-f2a4-4890-841a-f17fe15c035a"},{"newState":"Starting","timeStamp":"2016-12-08T23:58:59.133609+00:00","details":"runtimeVersion:kobo_live_signed_5186128"}],"properties":{"owner":"unittest@myaddomain.onmicrosoft.com","resources":[{"name":"__ScopeCodeGen__.dll","resourcePath":"adl://pyarmadls232e3152c.azuredatalakestore.net/system/jobservice/jobs/Usql/2016/12/08/23/58/00000000-0000-0000-0000-000000000000/__ScopeCodeGen__.dll","type":"VertexResource"},{"name":"__ScopeCodeGen__.pdb","resourcePath":"adl://pyarmadls232e3152c.azuredatalakestore.net/system/jobservice/jobs/Usql/2016/12/08/23/58/00000000-0000-0000-0000-000000000000/__ScopeCodeGen__.pdb","type":"VertexResource"},{"name":"__ScopeCodeGenEngine__.dll","resourcePath":"adl://pyarmadls232e3152c.azuredatalakestore.net/system/jobservice/jobs/Usql/2016/12/08/23/58/00000000-0000-0000-0000-000000000000/__ScopeCodeGenEngine__.dll","type":"VertexResource"},{"name":"__ScopeCodeGenEngine__.pdb","resourcePath":"adl://pyarmadls232e3152c.azuredatalakestore.net/system/jobservice/jobs/Usql/2016/12/08/23/58/00000000-0000-0000-0000-000000000000/__ScopeCodeGenEngine__.pdb","type":"VertexResource"},{"name":"ScopeVertexDef.xml","resourcePath":"adl://pyarmadls232e3152c.azuredatalakestore.net/system/jobservice/jobs/Usql/2016/12/08/23/58/00000000-0000-0000-0000-000000000000/ScopeVertexDef.xml","type":"VertexResource"},{"name":"__ScopeCodeGen__.dll.cs","resourcePath":"adl://pyarmadls232e3152c.azuredatalakestore.net/system/jobservice/jobs/Usql/2016/12/08/23/58/00000000-0000-0000-0000-000000000000/__ScopeCodeGen__.dll.cs","type":"StatisticsResource"},{"name":"__ScopeCodeGenEngine__.dll.cpp","resourcePath":"adl://pyarmadls232e3152c.azuredatalakestore.net/system/jobservice/jobs/Usql/2016/12/08/23/58/00000000-0000-0000-0000-000000000000/__ScopeCodeGenEngine__.dll.cpp","type":"StatisticsResource"},{"name":"__ScopeCodeGenCompileOutput__.txt","resourcePath":"adl://pyarmadls232e3152c.azuredatalakestore.net/system/jobservice/jobs/Usql/2016/12/08/23/58/00000000-0000-0000-0000-000000000000/__ScopeCodeGenCompileOutput__.txt","type":"StatisticsResource"},{"name":"__ScopeCodeGenCompileOptions__.txt","resourcePath":"adl://pyarmadls232e3152c.azuredatalakestore.net/system/jobservice/jobs/Usql/2016/12/08/23/58/00000000-0000-0000-0000-000000000000/__ScopeCodeGenCompileOptions__.txt","type":"StatisticsResource"},{"name":"__ScopeCodeGenEngine__.cppresources","resourcePath":"adl://pyarmadls232e3152c.azuredatalakestore.net/system/jobservice/jobs/Usql/2016/12/08/23/58/00000000-0000-0000-0000-000000000000/__ScopeCodeGenEngine__.cppresources","type":"StatisticsResource"},{"name":"__Ast__.bin","resourcePath":"adl://pyarmadls232e3152c.azuredatalakestore.net/system/jobservice/jobs/Usql/2016/12/08/23/58/00000000-0000-0000-0000-000000000000/__Ast__.bin","type":"StatisticsResource"},{"name":"__SystemInternalInfo__.xml","resourcePath":"adl://pyarmadls232e3152c.azuredatalakestore.net/system/jobservice/jobs/Usql/2016/12/08/23/58/00000000-0000-0000-0000-000000000000/__SystemInternalInfo__.xml","type":"StatisticsResource"},{"name":"diagnosticsjson","resourcePath":"adl://pyarmadls232e3152c.azuredatalakestore.net/system/jobservice/jobs/Usql/2016/12/08/23/58/00000000-0000-0000-0000-000000000000/diagnosticsjson","type":"StatisticsResource"},{"name":"query.abr","resourcePath":"adl://pyarmadls232e3152c.azuredatalakestore.net/system/jobservice/jobs/Usql/2016/12/08/23/58/00000000-0000-0000-0000-000000000000/query.abr","type":"StatisticsResource"},{"name":"Profile","resourcePath":"adl://pyarmadls232e3152c.azuredatalakestore.net/system/jobservice/jobs/Usql/2016/12/08/23/58/00000000-0000-0000-0000-000000000000/profile","type":"StatisticsResource"},{"name":"__ScopeRuntimeStatistics__.xml","resourcePath":"adl://pyarmadls232e3152c.azuredatalakestore.net/system/jobservice/jobs/Usql/2016/12/08/23/58/00000000-0000-0000-0000-000000000000/__ScopeRuntimeStatistics__.xml","type":"StatisticsResource"}],"runtimeVersion":"kobo_live_signed_5186128","rootProcessNodeId":"6b4defb4-f2a4-4890-841a-f17fe15c035a","script":"DROP
@@ -742,7 +742,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [555d50ec-bda2-11e6-8292-ecb1d756380e]
     method: GET
-    uri: https:/pyarmadla232e3152c.azuredatalakeanalytics.net/Jobs/00000000-0000-0000-0000-000000000000?api-version=2016-11-01
+    uri: https://pyarmadla232e3152c.azuredatalakeanalytics.net/Jobs/00000000-0000-0000-0000-000000000000?api-version=2016-11-01
   response:
     body: {string: '{"jobId":"00000000-0000-0000-0000-000000000000","name":"testjob32e3152c","type":"USql","submitter":"unittest@myaddomain.onmicrosoft.com","degreeOfParallelism":2,"priority":1000,"submitTime":"2016-12-08T23:58:47.0336359+00:00","startTime":"2016-12-08T23:59:13.0722264+00:00","endTime":"2016-12-08T23:59:18.5261512+00:00","state":"Ended","result":"Succeeded","stateAuditRecords":[{"newState":"New","timeStamp":"2016-12-08T23:58:47.0336359+00:00","details":"userName:;submitMachine:N/A"},{"newState":"Compiling","timeStamp":"2016-12-08T23:58:47.6470903+00:00","details":"CcsAttempts:1;Status:Dispatched"},{"newState":"Queued","timeStamp":"2016-12-08T23:58:59.1155781+00:00"},{"newState":"Scheduling","timeStamp":"2016-12-08T23:58:59.1266035+00:00","details":"Detail:Dispatching
         job to cluster.;rootProcessId:6b4defb4-f2a4-4890-841a-f17fe15c035a"},{"newState":"Starting","timeStamp":"2016-12-08T23:58:59.133609+00:00","details":"runtimeVersion:kobo_live_signed_5186128"},{"newState":"Running","timeStamp":"2016-12-08T23:59:13.0722264+00:00","details":"runAttempt:1"},{"newState":"Ended","timeStamp":"2016-12-08T23:59:18.5261512+00:00","details":"result:Succeeded"}],"properties":{"owner":"unittest@myaddomain.onmicrosoft.com","resources":[{"name":"__ScopeCodeGen__.dll","resourcePath":"adl://pyarmadls232e3152c.azuredatalakestore.net/system/jobservice/jobs/Usql/2016/12/08/23/58/00000000-0000-0000-0000-000000000000/__ScopeCodeGen__.dll","type":"VertexResource"},{"name":"__ScopeCodeGen__.pdb","resourcePath":"adl://pyarmadls232e3152c.azuredatalakestore.net/system/jobservice/jobs/Usql/2016/12/08/23/58/00000000-0000-0000-0000-000000000000/__ScopeCodeGen__.pdb","type":"VertexResource"},{"name":"__ScopeCodeGenEngine__.dll","resourcePath":"adl://pyarmadls232e3152c.azuredatalakestore.net/system/jobservice/jobs/Usql/2016/12/08/23/58/00000000-0000-0000-0000-000000000000/__ScopeCodeGenEngine__.dll","type":"VertexResource"},{"name":"__ScopeCodeGenEngine__.pdb","resourcePath":"adl://pyarmadls232e3152c.azuredatalakestore.net/system/jobservice/jobs/Usql/2016/12/08/23/58/00000000-0000-0000-0000-000000000000/__ScopeCodeGenEngine__.pdb","type":"VertexResource"},{"name":"ScopeVertexDef.xml","resourcePath":"adl://pyarmadls232e3152c.azuredatalakestore.net/system/jobservice/jobs/Usql/2016/12/08/23/58/00000000-0000-0000-0000-000000000000/ScopeVertexDef.xml","type":"VertexResource"},{"name":"__ScopeCodeGen__.dll.cs","resourcePath":"adl://pyarmadls232e3152c.azuredatalakestore.net/system/jobservice/jobs/Usql/2016/12/08/23/58/00000000-0000-0000-0000-000000000000/__ScopeCodeGen__.dll.cs","type":"StatisticsResource"},{"name":"__ScopeCodeGenEngine__.dll.cpp","resourcePath":"adl://pyarmadls232e3152c.azuredatalakestore.net/system/jobservice/jobs/Usql/2016/12/08/23/58/00000000-0000-0000-0000-000000000000/__ScopeCodeGenEngine__.dll.cpp","type":"StatisticsResource"},{"name":"__ScopeCodeGenCompileOutput__.txt","resourcePath":"adl://pyarmadls232e3152c.azuredatalakestore.net/system/jobservice/jobs/Usql/2016/12/08/23/58/00000000-0000-0000-0000-000000000000/__ScopeCodeGenCompileOutput__.txt","type":"StatisticsResource"},{"name":"__ScopeCodeGenCompileOptions__.txt","resourcePath":"adl://pyarmadls232e3152c.azuredatalakestore.net/system/jobservice/jobs/Usql/2016/12/08/23/58/00000000-0000-0000-0000-000000000000/__ScopeCodeGenCompileOptions__.txt","type":"StatisticsResource"},{"name":"__ScopeCodeGenEngine__.cppresources","resourcePath":"adl://pyarmadls232e3152c.azuredatalakestore.net/system/jobservice/jobs/Usql/2016/12/08/23/58/00000000-0000-0000-0000-000000000000/__ScopeCodeGenEngine__.cppresources","type":"StatisticsResource"},{"name":"__Ast__.bin","resourcePath":"adl://pyarmadls232e3152c.azuredatalakestore.net/system/jobservice/jobs/Usql/2016/12/08/23/58/00000000-0000-0000-0000-000000000000/__Ast__.bin","type":"StatisticsResource"},{"name":"__SystemInternalInfo__.xml","resourcePath":"adl://pyarmadls232e3152c.azuredatalakestore.net/system/jobservice/jobs/Usql/2016/12/08/23/58/00000000-0000-0000-0000-000000000000/__SystemInternalInfo__.xml","type":"StatisticsResource"},{"name":"diagnosticsjson","resourcePath":"adl://pyarmadls232e3152c.azuredatalakestore.net/system/jobservice/jobs/Usql/2016/12/08/23/58/00000000-0000-0000-0000-000000000000/diagnosticsjson","type":"StatisticsResource"},{"name":"query.abr","resourcePath":"adl://pyarmadls232e3152c.azuredatalakestore.net/system/jobservice/jobs/Usql/2016/12/08/23/58/00000000-0000-0000-0000-000000000000/query.abr","type":"StatisticsResource"},{"name":"Profile","resourcePath":"adl://pyarmadls232e3152c.azuredatalakestore.net/system/jobservice/jobs/Usql/2016/12/08/23/58/00000000-0000-0000-0000-000000000000/profile","type":"StatisticsResource"},{"name":"__ScopeRuntimeStatistics__.xml","resourcePath":"adl://pyarmadls232e3152c.azuredatalakestore.net/system/jobservice/jobs/Usql/2016/12/08/23/58/00000000-0000-0000-0000-000000000000/__ScopeRuntimeStatistics__.xml","type":"StatisticsResource"}],"runtimeVersion":"kobo_live_signed_5186128","rootProcessNodeId":"6b4defb4-f2a4-4890-841a-f17fe15c035a","script":"DROP
@@ -865,7 +865,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [55a837b4-bda2-11e6-953f-ecb1d756380e]
     method: GET
-    uri: https:/pyarmadla232e3152c.azuredatalakeanalytics.net/catalog/usql/databases?api-version=2016-11-01
+    uri: https://pyarmadla232e3152c.azuredatalakeanalytics.net/catalog/usql/databases?api-version=2016-11-01
   response:
     body: {string: "{\r\n  \"@odata.context\":\"https://pyarmadla232e3152c.azuredatalakeanalytics.net/sqlip/$metadata#databases\",\"value\":[\r\n
         \   {\r\n      \"computeAccountName\":\"pyarmadla232e3152c\",\"databaseName\":\"adladb32e3152c\",\"version\":\"7b5f7563-7171-49ad-9da8-037c406232ff\"\r\n
@@ -894,7 +894,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [565b0ed2-bda2-11e6-b821-ecb1d756380e]
     method: GET
-    uri: https:/pyarmadla232e3152c.azuredatalakeanalytics.net/catalog/usql/databases/adladb32e3152c?api-version=2016-11-01
+    uri: https://pyarmadla232e3152c.azuredatalakeanalytics.net/catalog/usql/databases/adladb32e3152c?api-version=2016-11-01
   response:
     body: {string: "{\r\n  \"@odata.context\":\"https://pyarmadla232e3152c.azuredatalakeanalytics.net/sqlip/$metadata#databases/$entity\",\"computeAccountName\":\"pyarmadla232e3152c\",\"databaseName\":\"adladb32e3152c\",\"version\":\"7b5f7563-7171-49ad-9da8-037c406232ff\"\r\n}"}
     headers:
@@ -920,7 +920,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [56a9e04c-bda2-11e6-9049-ecb1d756380e]
     method: GET
-    uri: https:/pyarmadla232e3152c.azuredatalakeanalytics.net/catalog/usql/databases/adladb32e3152c/schemas/dbo/tables?api-version=2016-11-01
+    uri: https://pyarmadla232e3152c.azuredatalakeanalytics.net/catalog/usql/databases/adladb32e3152c/schemas/dbo/tables?api-version=2016-11-01
   response:
     body: {string: "{\r\n  \"@odata.context\":\"https://pyarmadla232e3152c.azuredatalakeanalytics.net/sqlip/$metadata#tables\",\"value\":[\r\n
         \   {\r\n      \"computeAccountName\":\"pyarmadla232e3152c\",\"databaseName\":\"adladb32e3152c\",\"schemaName\":\"dbo\",\"tableName\":\"adlatable32e3152c\",\"columnList\":[\r\n
@@ -963,7 +963,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [56fe7f18-bda2-11e6-9cea-ecb1d756380e]
     method: GET
-    uri: https:/pyarmadla232e3152c.azuredatalakeanalytics.net/catalog/usql/databases/adladb32e3152c/schemas/dbo/tables/adlatable32e3152c?api-version=2016-11-01
+    uri: https://pyarmadla232e3152c.azuredatalakeanalytics.net/catalog/usql/databases/adladb32e3152c/schemas/dbo/tables/adlatable32e3152c?api-version=2016-11-01
   response:
     body: {string: "{\r\n  \"@odata.context\":\"https://pyarmadla232e3152c.azuredatalakeanalytics.net/sqlip/$metadata#tables/$entity\",\"computeAccountName\":\"pyarmadla232e3152c\",\"databaseName\":\"adladb32e3152c\",\"schemaName\":\"dbo\",\"tableName\":\"adlatable32e3152c\",\"columnList\":[\r\n
         \   {\r\n      \"name\":\"UserId\",\"type\":\"System.Int32\"\r\n    },{\r\n
@@ -1001,7 +1001,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [57475e1e-bda2-11e6-a53a-ecb1d756380e]
     method: GET
-    uri: https:/pyarmadla232e3152c.azuredatalakeanalytics.net/catalog/usql/databases/adladb32e3152c/schemas/dbo/tablevaluedfunctions?api-version=2016-11-01
+    uri: https://pyarmadla232e3152c.azuredatalakeanalytics.net/catalog/usql/databases/adladb32e3152c/schemas/dbo/tablevaluedfunctions?api-version=2016-11-01
   response:
     body: {string: "{\r\n  \"@odata.context\":\"https://pyarmadla232e3152c.azuredatalakeanalytics.net/sqlip/$metadata#tablevaluedfunctions\",\"value\":[\r\n
         \   {\r\n      \"computeAccountName\":\"pyarmadla232e3152c\",\"databaseName\":\"adladb32e3152c\",\"schemaName\":\"dbo\",\"tvfName\":\"adlatvf32e3152c\",\"definition\":\"CREATE
@@ -1044,7 +1044,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [57911140-bda2-11e6-9e94-ecb1d756380e]
     method: GET
-    uri: https:/pyarmadla232e3152c.azuredatalakeanalytics.net/catalog/usql/databases/adladb32e3152c/schemas/dbo/tablevaluedfunctions/adlatvf32e3152c?api-version=2016-11-01
+    uri: https://pyarmadla232e3152c.azuredatalakeanalytics.net/catalog/usql/databases/adladb32e3152c/schemas/dbo/tablevaluedfunctions/adlatvf32e3152c?api-version=2016-11-01
   response:
     body: {string: "{\r\n  \"@odata.context\":\"https://pyarmadla232e3152c.azuredatalakeanalytics.net/sqlip/$metadata#tablevaluedfunctions/$entity\",\"computeAccountName\":\"pyarmadla232e3152c\",\"databaseName\":\"adladb32e3152c\",\"schemaName\":\"dbo\",\"tvfName\":\"adlatvf32e3152c\",\"definition\":\"CREATE
         FUNCTION adladb32e3152c.dbo.adlatvf32e3152c()\\nRETURNS @result TABLE\\n(\\n
@@ -1085,7 +1085,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [57e165ba-bda2-11e6-b686-ecb1d756380e]
     method: GET
-    uri: https:/pyarmadla232e3152c.azuredatalakeanalytics.net/catalog/usql/databases/adladb32e3152c/schemas/dbo/views?api-version=2016-11-01
+    uri: https://pyarmadla232e3152c.azuredatalakeanalytics.net/catalog/usql/databases/adladb32e3152c/schemas/dbo/views?api-version=2016-11-01
   response:
     body: {string: "{\r\n  \"@odata.context\":\"https://pyarmadla232e3152c.azuredatalakeanalytics.net/sqlip/$metadata#views\",\"value\":[\r\n
         \   {\r\n      \"computeAccountName\":\"pyarmadla232e3152c\",\"databaseName\":\"adladb32e3152c\",\"schemaName\":\"dbo\",\"viewName\":\"adlaview32e3152c\",\"definition\":\"CREATE
@@ -1115,7 +1115,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [5831556e-bda2-11e6-add1-ecb1d756380e]
     method: GET
-    uri: https:/pyarmadla232e3152c.azuredatalakeanalytics.net/catalog/usql/databases/adladb32e3152c/schemas/dbo/views/adlaview32e3152c?api-version=2016-11-01
+    uri: https://pyarmadla232e3152c.azuredatalakeanalytics.net/catalog/usql/databases/adladb32e3152c/schemas/dbo/views/adlaview32e3152c?api-version=2016-11-01
   response:
     body: {string: "{\r\n  \"@odata.context\":\"https://pyarmadla232e3152c.azuredatalakeanalytics.net/sqlip/$metadata#views/$entity\",\"computeAccountName\":\"pyarmadla232e3152c\",\"databaseName\":\"adladb32e3152c\",\"schemaName\":\"dbo\",\"viewName\":\"adlaview32e3152c\",\"definition\":\"CREATE
         VIEW adladb32e3152c.dbo.adlaview32e3152c \\nAS \\n    SELECT * FROM \\n    (\\n
@@ -1143,7 +1143,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [587efada-bda2-11e6-b07e-ecb1d756380e]
     method: GET
-    uri: https:/pyarmadla232e3152c.azuredatalakeanalytics.net/catalog/usql/databases/adladb32e3152c/schemas/dbo/procedures?api-version=2016-11-01
+    uri: https://pyarmadla232e3152c.azuredatalakeanalytics.net/catalog/usql/databases/adladb32e3152c/schemas/dbo/procedures?api-version=2016-11-01
   response:
     body: {string: "{\r\n  \"@odata.context\":\"https://pyarmadla232e3152c.azuredatalakeanalytics.net/sqlip/$metadata#procedures\",\"value\":[\r\n
         \   {\r\n      \"computeAccountName\":\"pyarmadla232e3152c\",\"databaseName\":\"adladb32e3152c\",\"schemaName\":\"dbo\",\"procName\":\"adlaproc32e3152c\",\"definition\":\"CREATE
@@ -1174,7 +1174,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [58c9801c-bda2-11e6-9c79-ecb1d756380e]
     method: GET
-    uri: https:/pyarmadla232e3152c.azuredatalakeanalytics.net/catalog/usql/databases/adladb32e3152c/schemas/dbo/procedures/adlaproc32e3152c?api-version=2016-11-01
+    uri: https://pyarmadla232e3152c.azuredatalakeanalytics.net/catalog/usql/databases/adladb32e3152c/schemas/dbo/procedures/adlaproc32e3152c?api-version=2016-11-01
   response:
     body: {string: "{\r\n  \"@odata.context\":\"https://pyarmadla232e3152c.azuredatalakeanalytics.net/sqlip/$metadata#procedures/$entity\",\"computeAccountName\":\"pyarmadla232e3152c\",\"databaseName\":\"adladb32e3152c\",\"schemaName\":\"dbo\",\"procName\":\"adlaproc32e3152c\",\"definition\":\"CREATE
         PROCEDURE adladb32e3152c.dbo.adlaproc32e3152c()\\nAS BEGIN\\n  CREATE VIEW
@@ -1203,7 +1203,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [5914b948-bda2-11e6-9428-ecb1d756380e]
     method: GET
-    uri: https:/pyarmadla232e3152c.azuredatalakeanalytics.net/catalog/usql/databases/adladb32e3152c/schemas/dbo/tables/adlatable32e3152c/partitions?api-version=2016-11-01
+    uri: https://pyarmadla232e3152c.azuredatalakeanalytics.net/catalog/usql/databases/adladb32e3152c/schemas/dbo/tables/adlatable32e3152c/partitions?api-version=2016-11-01
   response:
     body: {string: "{\r\n  \"@odata.context\":\"https://pyarmadla232e3152c.azuredatalakeanalytics.net/sqlip/$metadata#partitions\",\"value\":[\r\n
         \   {\r\n      \"computeAccountName\":\"pyarmadla232e3152c\",\"databaseName\":\"adladb32e3152c\",\"schemaName\":\"dbo\",\"partitionName\":\"adlatable32e3152c_Partition_dd84d528-b7c7-408f-8090-d7154ce359d5\",\"indexId\":1,\"label\":[\r\n
@@ -1234,7 +1234,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [59701636-bda2-11e6-99d7-ecb1d756380e]
     method: GET
-    uri: https:/pyarmadla232e3152c.azuredatalakeanalytics.net/catalog/usql/databases/adladb32e3152c/schemas/dbo/tables/adlatable32e3152c/partitions/adlatable32e3152c_Partition_dd84d528-b7c7-408f-8090-d7154ce359d5?api-version=2016-11-01
+    uri: https://pyarmadla232e3152c.azuredatalakeanalytics.net/catalog/usql/databases/adladb32e3152c/schemas/dbo/tables/adlatable32e3152c/partitions/adlatable32e3152c_Partition_dd84d528-b7c7-408f-8090-d7154ce359d5?api-version=2016-11-01
   response:
     body: {string: "{\r\n  \"@odata.context\":\"https://pyarmadla232e3152c.azuredatalakeanalytics.net/sqlip/$metadata#partitions/$entity\",\"computeAccountName\":\"pyarmadla232e3152c\",\"databaseName\":\"adladb32e3152c\",\"schemaName\":\"dbo\",\"partitionName\":\"adlatable32e3152c_Partition_dd84d528-b7c7-408f-8090-d7154ce359d5\",\"indexId\":1,\"label\":[\r\n
         \   \"1\"\r\n  ],\"createDate\":\"2016-12-08T23:59:13.2-08:00\",\"parentName\":{\r\n
@@ -1263,7 +1263,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [59cad646-bda2-11e6-8f87-ecb1d756380e]
     method: GET
-    uri: https:/pyarmadla232e3152c.azuredatalakeanalytics.net/catalog/usql/databases/adladb32e3152c/schemas/dbo/types?api-version=2016-11-01
+    uri: https://pyarmadla232e3152c.azuredatalakeanalytics.net/catalog/usql/databases/adladb32e3152c/schemas/dbo/types?api-version=2016-11-01
   response:
     body: {string: "{\r\n  \"@odata.context\":\"https://pyarmadla232e3152c.azuredatalakeanalytics.net/sqlip/$metadata#types\",\"value\":[\r\n
         \   {\r\n      \"computeAccountName\":\"pyarmadla232e3152c\",\"databaseName\":\"master\",\"schemaName\":\"sys\",\"typeName\":\"Microsoft.Analytics.Types.Sql.SqlArray\",\"typeFamily\":\"SQL\",\"cSharpName\":\"Microsoft.Analytics.Types.Sql.SqlArray\",\"fullCSharpName\":\"Microsoft.Analytics.Types.Sql.SqlArray\",\"systemTypeId\":100,\"userTypeId\":334,\"schemaId\":0,\"principalId\":null,\"isNullable\":false,\"isUserDefined\":false,\"isAssemblyType\":false,\"isTableType\":false,\"isComplexType\":true,\"version\":\"1137ad93-d19b-4d4e-b726-011f76d4d833\"\r\n

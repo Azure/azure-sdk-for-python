@@ -11,7 +11,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [edd0426c-ad0b-11e6-9b8b-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/microsoft.insights/eventtypes/management/values?$filter=eventTimestamp%20ge%202016-11-17%20and%20eventChannels%20eq%20%27Admin%2C%20Operation%27&$select=eventName%2CoperationName&api-version=2015-04-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/microsoft.insights/eventtypes/management/values?$filter=eventTimestamp%20ge%202016-11-17%20and%20eventChannels%20eq%20%27Admin%2C%20Operation%27&$select=eventName%2CoperationName&api-version=2015-04-01
   response:
     body: {string: '{"value":[{"eventName":{"value":"EndRequest","localizedValue":"End
         request"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_mgmt_monitor_test_activity_log6fd0e97/events/678de021-1695-49e4-aa1e-8c7ccd57dbe1/ticks/636150145041252219","operationName":{"value":"Microsoft.Resources/subscriptions/resourcegroups/delete","localizedValue":"Delete

@@ -14,7 +14,7 @@ interactions:
       client-request-id: [1523c3d4-c24d-11e6-9e6b-ecb1d755839a]
       ocp-date: ['Wed, 14 Dec 2016 22:31:40 GMT']
     method: POST
-    uri: https:/pythonsdktest.eastus.batch.azure.com/pools?api-version=2016-07-01.3.1
+    uri: https://pythonsdktest.eastus.batch.azure.com/pools?api-version=2016-07-01.3.1
   response:
     body: {string: ''}
     headers:
@@ -45,7 +45,7 @@ interactions:
       client-request-id: [27848158-c24d-11e6-8707-ecb1d755839a]
       ocp-date: ['Wed, 14 Dec 2016 22:32:11 GMT']
     method: POST
-    uri: https:/pythonsdktest.eastus.batch.azure.com/pools?api-version=2016-07-01.3.1
+    uri: https://pythonsdktest.eastus.batch.azure.com/pools?api-version=2016-07-01.3.1
   response:
     body: {string: ''}
     headers:
@@ -77,7 +77,7 @@ interactions:
       ocp-date: ['Wed, 14 Dec 2016 22:32:42 GMT']
       return-client-request-id: ['false']
     method: POST
-    uri: https:/pythonsdktest.eastus.batch.azure.com/pools?api-version=2016-07-01.3.1&timeout=45
+    uri: https://pythonsdktest.eastus.batch.azure.com/pools?api-version=2016-07-01.3.1&timeout=45
   response:
     body: {string: "{\r\n  \"odata.metadata\":\"https://pythonsdktest.eastus.batch.azure.com/$metadata#Microsoft.Azure.Batch.Protocol.Entities.Container.errors/@Element\"\
         ,\"code\":\"Forbidden\",\"message\":{\r\n    \"lang\":\"en-US\",\"value\"\
@@ -109,7 +109,7 @@ interactions:
       client-request-id: [3a55588c-c24d-11e6-a659-ecb1d755839a]
       ocp-date: ['Wed, 14 Dec 2016 22:32:42 GMT']
     method: POST
-    uri: https:/pythonsdktest.eastus.batch.azure.com/pools/python_test_pool_1/upgradeos?api-version=2016-07-01.3.1
+    uri: https://pythonsdktest.eastus.batch.azure.com/pools/python_test_pool_1/upgradeos?api-version=2016-07-01.3.1
   response:
     body: {string: "{\r\n  \"odata.metadata\":\"https://pythonsdktest.eastus.batch.azure.com/$metadata#Microsoft.Azure.Batch.Protocol.Entities.Container.errors/@Element\"\
         ,\"code\":\"PoolVersionEqualsUpgradeVersion\",\"message\":{\r\n    \"lang\"\
@@ -140,7 +140,7 @@ interactions:
       client-request-id: [3ab183b6-c24d-11e6-86bc-ecb1d755839a]
       ocp-date: ['Wed, 14 Dec 2016 22:32:43 GMT']
     method: POST
-    uri: https:/pythonsdktest.eastus.batch.azure.com/pools/python_test_pool_1/updateproperties?api-version=2016-07-01.3.1
+    uri: https://pythonsdktest.eastus.batch.azure.com/pools/python_test_pool_1/updateproperties?api-version=2016-07-01.3.1
   response:
     body: {string: ''}
     headers:
@@ -169,7 +169,7 @@ interactions:
       client-request-id: [3b081c2e-c24d-11e6-b3e4-ecb1d755839a]
       ocp-date: ['Wed, 14 Dec 2016 22:32:44 GMT']
     method: PATCH
-    uri: https:/pythonsdktest.eastus.batch.azure.com/pools/python_test_pool_1?api-version=2016-07-01.3.1
+    uri: https://pythonsdktest.eastus.batch.azure.com/pools/python_test_pool_1?api-version=2016-07-01.3.1
   response:
     body: {string: ''}
     headers:
@@ -197,7 +197,7 @@ interactions:
       client-request-id: [3b56a606-c24d-11e6-a742-ecb1d755839a]
       ocp-date: ['Wed, 14 Dec 2016 22:32:44 GMT']
     method: GET
-    uri: https:/pythonsdktest.eastus.batch.azure.com/pools/python_test_pool_1?api-version=2016-07-01.3.1
+    uri: https://pythonsdktest.eastus.batch.azure.com/pools/python_test_pool_1?api-version=2016-07-01.3.1
   response:
     body: {string: "{\r\n  \"odata.metadata\":\"https://pythonsdktest.eastus.batch.azure.com/$metadata#pools/@Element\"\
         ,\"id\":\"python_test_pool_1\",\"url\":\"https://pythonsdktest.eastus.batch.azure.com/pools/python_test_pool_1\"\
@@ -238,7 +238,7 @@ interactions:
       ocp-date: ['Wed, 14 Dec 2016 22:32:44 GMT']
       return-client-request-id: ['false']
     method: GET
-    uri: https:/pythonsdktest.eastus.batch.azure.com/pools/python_test_pool_1?$select=id%2Cstate&timeout=30&api-version=2016-07-01.3.1&$expand=stats
+    uri: https://pythonsdktest.eastus.batch.azure.com/pools/python_test_pool_1?$select=id%2Cstate&timeout=30&api-version=2016-07-01.3.1&$expand=stats
   response:
     body: {string: "{\r\n  \"odata.metadata\":\"https://pythonsdktest.eastus.batch.azure.com/$metadata#pools/@Element\"\
         ,\"id\":\"python_test_pool_1\",\"state\":\"active\"\r\n}"}
@@ -269,7 +269,7 @@ interactions:
       client-request-id: [3bcc6640-c24d-11e6-826d-ecb1d755839a]
       ocp-date: ['Wed, 14 Dec 2016 22:32:45 GMT']
     method: POST
-    uri: https:/pythonsdktest.eastus.batch.azure.com/pools/python_test_pool_1/enableautoscale?api-version=2016-07-01.3.1
+    uri: https://pythonsdktest.eastus.batch.azure.com/pools/python_test_pool_1/enableautoscale?api-version=2016-07-01.3.1
   response:
     body: {string: ''}
     headers:
@@ -298,7 +298,7 @@ interactions:
       client-request-id: [3c3d4970-c24d-11e6-be48-ecb1d755839a]
       ocp-date: ['Wed, 14 Dec 2016 22:32:46 GMT']
     method: POST
-    uri: https:/pythonsdktest.eastus.batch.azure.com/pools/python_test_pool_1/evaluateautoscale?api-version=2016-07-01.3.1
+    uri: https://pythonsdktest.eastus.batch.azure.com/pools/python_test_pool_1/evaluateautoscale?api-version=2016-07-01.3.1
   response:
     body: {string: "{\r\n  \"odata.metadata\":\"https://pythonsdktest.eastus.batch.azure.com/$metadata#Microsoft.Azure.Batch.Protocol.Entities.AutoScaleRun\"\
         ,\"timestamp\":\"2016-12-14T22:32:46.8653158Z\",\"results\":\"$TargetDedicated=3;$NodeDeallocationOption=requeue\"\
@@ -328,7 +328,7 @@ interactions:
       client-request-id: [3c819aa4-c24d-11e6-88af-ecb1d755839a]
       ocp-date: ['Wed, 14 Dec 2016 22:32:46 GMT']
     method: POST
-    uri: https:/pythonsdktest.eastus.batch.azure.com/pools/python_test_pool_1/disableautoscale?api-version=2016-07-01.3.1
+    uri: https://pythonsdktest.eastus.batch.azure.com/pools/python_test_pool_1/disableautoscale?api-version=2016-07-01.3.1
   response:
     body: {string: ''}
     headers:
@@ -356,7 +356,7 @@ interactions:
       client-request-id: [3cce4490-c24d-11e6-9c6e-ecb1d755839a]
       ocp-date: ['Wed, 14 Dec 2016 22:32:46 GMT']
     method: GET
-    uri: https:/pythonsdktest.eastus.batch.azure.com/pools?api-version=2016-07-01.3.1
+    uri: https://pythonsdktest.eastus.batch.azure.com/pools?api-version=2016-07-01.3.1
   response:
     body: {string: "{\r\n  \"odata.metadata\":\"https://pythonsdktest.eastus.batch.azure.com/$metadata#pools\"\
         ,\"value\":[\r\n    {\r\n      \"id\":\"python_test_pool_1\",\"url\":\"https://pythonsdktest.eastus.batch.azure.com/pools/python_test_pool_1\"\
@@ -406,7 +406,7 @@ interactions:
       ocp-date: ['Wed, 14 Dec 2016 22:32:47 GMT']
       return-client-request-id: ['false']
     method: GET
-    uri: https:/pythonsdktest.eastus.batch.azure.com/pools?maxresults=1&api-version=2016-07-01.3.1&timeout=30
+    uri: https://pythonsdktest.eastus.batch.azure.com/pools?maxresults=1&api-version=2016-07-01.3.1&timeout=30
   response:
     body: {string: "{\r\n  \"odata.metadata\":\"https://pythonsdktest.eastus.batch.azure.com/$metadata#pools\"\
         ,\"value\":[\r\n    {\r\n      \"id\":\"python_test_pool_1\",\"url\":\"https://pythonsdktest.eastus.batch.azure.com/pools/python_test_pool_1\"\
@@ -446,7 +446,7 @@ interactions:
       ocp-date: ['Wed, 14 Dec 2016 22:32:47 GMT']
       return-client-request-id: ['false']
     method: GET
-    uri: https:/pythonsdktest.eastus.batch.azure.com/pools?$select=id%2Cstate&maxresults=1000&$expand=stats&$filter=startswith%28id%2C%27python_test_pool_1%27%29&api-version=2016-07-01.3.1&timeout=30
+    uri: https://pythonsdktest.eastus.batch.azure.com/pools?$select=id%2Cstate&maxresults=1000&$expand=stats&$filter=startswith%28id%2C%27python_test_pool_1%27%29&api-version=2016-07-01.3.1&timeout=30
   response:
     body: {string: "{\r\n  \"odata.metadata\":\"https://pythonsdktest.eastus.batch.azure.com/$metadata#pools\"\
         ,\"value\":[\r\n    {\r\n      \"id\":\"python_test_pool_1\",\"state\":\"\
@@ -474,7 +474,7 @@ interactions:
       client-request-id: [3d95c6cc-c24d-11e6-9436-ecb1d755839a]
       ocp-date: ['Wed, 14 Dec 2016 22:32:48 GMT']
     method: HEAD
-    uri: https:/pythonsdktest.eastus.batch.azure.com/pools/python_test_pool_2?api-version=2016-07-01.3.1
+    uri: https://pythonsdktest.eastus.batch.azure.com/pools/python_test_pool_2?api-version=2016-07-01.3.1
   response:
     body: {string: ''}
     headers:
@@ -502,7 +502,7 @@ interactions:
       client-request-id: [3ddc134c-c24d-11e6-83a2-ecb1d755839a]
       ocp-date: ['Wed, 14 Dec 2016 22:32:48 GMT']
     method: POST
-    uri: https:/pythonsdktest.eastus.batch.azure.com/pools/python_test_pool_2/resize?api-version=2016-07-01.3.1
+    uri: https://pythonsdktest.eastus.batch.azure.com/pools/python_test_pool_2/resize?api-version=2016-07-01.3.1
   response:
     body: {string: ''}
     headers:
@@ -531,7 +531,7 @@ interactions:
       client-request-id: [3e38ed00-c24d-11e6-9f51-ecb1d755839a]
       ocp-date: ['Wed, 14 Dec 2016 22:32:49 GMT']
     method: POST
-    uri: https:/pythonsdktest.eastus.batch.azure.com/pools/python_test_pool_2/stopresize?api-version=2016-07-01.3.1
+    uri: https://pythonsdktest.eastus.batch.azure.com/pools/python_test_pool_2/stopresize?api-version=2016-07-01.3.1
   response:
     body: {string: ''}
     headers:
@@ -559,7 +559,7 @@ interactions:
       client-request-id: [3e7f909c-c24d-11e6-862f-ecb1d755839a]
       ocp-date: ['Wed, 14 Dec 2016 22:32:49 GMT']
     method: GET
-    uri: https:/pythonsdktest.eastus.batch.azure.com/lifetimepoolstats?api-version=2016-07-01.3.1
+    uri: https://pythonsdktest.eastus.batch.azure.com/lifetimepoolstats?api-version=2016-07-01.3.1
   response:
     body: {string: "{\r\n  \"odata.metadata\":\"https://pythonsdktest.eastus.batch.azure.com/$metadata#poolstats/@Element\"\
         ,\"url\":\"https://pythonsdktest.eastus.batch.azure.com/lifetimepoolstats\"\
@@ -593,7 +593,7 @@ interactions:
       client-request-id: [3ef4e8d8-c24d-11e6-84b7-ecb1d755839a]
       ocp-date: ['Wed, 14 Dec 2016 22:32:50 GMT']
     method: GET
-    uri: https:/pythonsdktest.eastus.batch.azure.com/poolusagemetrics?api-version=2016-07-01.3.1
+    uri: https://pythonsdktest.eastus.batch.azure.com/poolusagemetrics?api-version=2016-07-01.3.1
   response:
     body: {string: "{\r\n  \"odata.metadata\":\"https://pythonsdktest.eastus.batch.azure.com/$metadata#poolusagemetrics\"\
         ,\"value\":[\r\n    \r\n  ]\r\n}"}
@@ -621,7 +621,7 @@ interactions:
       client-request-id: [3f40e764-c24d-11e6-8dc7-ecb1d755839a]
       ocp-date: ['Wed, 14 Dec 2016 22:32:51 GMT']
     method: DELETE
-    uri: https:/pythonsdktest.eastus.batch.azure.com/pools/python_test_pool_2?api-version=2016-07-01.3.1
+    uri: https://pythonsdktest.eastus.batch.azure.com/pools/python_test_pool_2?api-version=2016-07-01.3.1
   response:
     body: {string: ''}
     headers:
@@ -647,7 +647,7 @@ interactions:
       client-request-id: [3f865ff4-c24d-11e6-b14c-ecb1d755839a]
       ocp-date: ['Wed, 14 Dec 2016 22:32:51 GMT']
     method: DELETE
-    uri: https:/pythonsdktest.eastus.batch.azure.com/pools/python_test_pool_1?api-version=2016-07-01.3.1
+    uri: https://pythonsdktest.eastus.batch.azure.com/pools/python_test_pool_1?api-version=2016-07-01.3.1
   response:
     body: {string: ''}
     headers:

@@ -11,6 +11,7 @@ import os
 import os.path
 import time
 import vcr
+import re
 from vcr.filters import decode_response
 import zlib
 
@@ -111,7 +112,7 @@ class RecordingTestCase(ExtendedTestCase):
         # - Python 2.7 for 2.7/3.3/3.4 (...Microsoft.Compute//availabilitySets...)
         # - Python 3.5 (...Microsoft.Compute/availabilitySets...)
         # I don't know why 3.5 has one / and 2.7-3.4 two /
-        request.uri = request.uri.replace('//','/')
+        request.uri = re.sub('(?<!:)//','/',request.uri)
 
         if not TestMode.is_playback(self.test_mode):
             request.uri = self._scrub(request.uri)

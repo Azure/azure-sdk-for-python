@@ -17,7 +17,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [049a27ca-a1e4-11e6-860a-ecb1d756380e]
     method: PUT
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_test_containerdb8c0d41/providers/Microsoft.ContainerService/containerServices/pycontainerdb8c0d41?api-version=2016-09-30
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_test_containerdb8c0d41/providers/Microsoft.ContainerService/containerServices/pycontainerdb8c0d41?api-version=2016-09-30
   response:
     body: {string: "{\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_test_containerdb8c0d41/providers/Microsoft.ContainerService/containerServices/pycontainerdb8c0d41\",\r\n
         \ \"name\": \"pycontainerdb8c0d41\",\r\n  \"type\": \"Microsoft.ContainerService/ContainerServices\",\r\n
@@ -61,7 +61,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [049a27ca-a1e4-11e6-860a-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.ContainerService/locations/westus/operations/e69a2649-bfdd-4e10-9337-319013623b19?api-version=2016-09-30
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.ContainerService/locations/westus/operations/e69a2649-bfdd-4e10-9337-319013623b19?api-version=2016-09-30
   response:
     body: {string: "{\r\n  \"startTime\": \"2016-11-03T16:38:57.5573944+00:00\",\r\n
         \ \"status\": \"InProgress\",\r\n  \"name\": \"e69a2649-bfdd-4e10-9337-319013623b19\"\r\n}"}
@@ -94,7 +94,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [049a27ca-a1e4-11e6-860a-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.ContainerService/locations/westus/operations/e69a2649-bfdd-4e10-9337-319013623b19?api-version=2016-09-30
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.ContainerService/locations/westus/operations/e69a2649-bfdd-4e10-9337-319013623b19?api-version=2016-09-30
   response:
     body: {string: "{\r\n  \"startTime\": \"2016-11-03T16:38:57.5573944+00:00\",\r\n
         \ \"status\": \"InProgress\",\r\n  \"name\": \"e69a2649-bfdd-4e10-9337-319013623b19\"\r\n}"}
@@ -127,7 +127,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [049a27ca-a1e4-11e6-860a-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.ContainerService/locations/westus/operations/e69a2649-bfdd-4e10-9337-319013623b19?api-version=2016-09-30
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.ContainerService/locations/westus/operations/e69a2649-bfdd-4e10-9337-319013623b19?api-version=2016-09-30
   response:
     body: {string: "{\r\n  \"startTime\": \"2016-11-03T16:38:57.5573944+00:00\",\r\n
         \ \"status\": \"InProgress\",\r\n  \"name\": \"e69a2649-bfdd-4e10-9337-319013623b19\"\r\n}"}
@@ -160,7 +160,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [049a27ca-a1e4-11e6-860a-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.ContainerService/locations/westus/operations/e69a2649-bfdd-4e10-9337-319013623b19?api-version=2016-09-30
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.ContainerService/locations/westus/operations/e69a2649-bfdd-4e10-9337-319013623b19?api-version=2016-09-30
   response:
     body: {string: "{\r\n  \"startTime\": \"2016-11-03T16:38:57.5573944+00:00\",\r\n
         \ \"status\": \"InProgress\",\r\n  \"name\": \"e69a2649-bfdd-4e10-9337-319013623b19\"\r\n}"}
@@ -193,7 +193,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [049a27ca-a1e4-11e6-860a-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.ContainerService/locations/westus/operations/e69a2649-bfdd-4e10-9337-319013623b19?api-version=2016-09-30
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.ContainerService/locations/westus/operations/e69a2649-bfdd-4e10-9337-319013623b19?api-version=2016-09-30
   response:
     body: {string: "{\r\n  \"startTime\": \"2016-11-03T16:38:57.5573944+00:00\",\r\n
         \ \"status\": \"InProgress\",\r\n  \"name\": \"e69a2649-bfdd-4e10-9337-319013623b19\"\r\n}"}
@@ -226,7 +226,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [049a27ca-a1e4-11e6-860a-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.ContainerService/locations/westus/operations/e69a2649-bfdd-4e10-9337-319013623b19?api-version=2016-09-30
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.ContainerService/locations/westus/operations/e69a2649-bfdd-4e10-9337-319013623b19?api-version=2016-09-30
   response:
     body: {string: "{\r\n  \"startTime\": \"2016-11-03T16:38:57.5573944+00:00\",\r\n
         \ \"status\": \"InProgress\",\r\n  \"name\": \"e69a2649-bfdd-4e10-9337-319013623b19\"\r\n}"}
@@ -259,7 +259,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [049a27ca-a1e4-11e6-860a-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.ContainerService/locations/westus/operations/e69a2649-bfdd-4e10-9337-319013623b19?api-version=2016-09-30
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.ContainerService/locations/westus/operations/e69a2649-bfdd-4e10-9337-319013623b19?api-version=2016-09-30
   response:
     body: {string: "{\r\n  \"startTime\": \"2016-11-03T16:38:57.5573944+00:00\",\r\n
         \ \"status\": \"InProgress\",\r\n  \"name\": \"e69a2649-bfdd-4e10-9337-319013623b19\"\r\n}"}
@@ -292,7 +292,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [049a27ca-a1e4-11e6-860a-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.ContainerService/locations/westus/operations/e69a2649-bfdd-4e10-9337-319013623b19?api-version=2016-09-30
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.ContainerService/locations/westus/operations/e69a2649-bfdd-4e10-9337-319013623b19?api-version=2016-09-30
   response:
     body: {string: "{\r\n  \"startTime\": \"2016-11-03T16:38:57.5573944+00:00\",\r\n
         \ \"status\": \"InProgress\",\r\n  \"name\": \"e69a2649-bfdd-4e10-9337-319013623b19\"\r\n}"}
@@ -325,7 +325,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [049a27ca-a1e4-11e6-860a-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.ContainerService/locations/westus/operations/e69a2649-bfdd-4e10-9337-319013623b19?api-version=2016-09-30
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.ContainerService/locations/westus/operations/e69a2649-bfdd-4e10-9337-319013623b19?api-version=2016-09-30
   response:
     body: {string: "{\r\n  \"startTime\": \"2016-11-03T16:38:57.5573944+00:00\",\r\n
         \ \"status\": \"InProgress\",\r\n  \"name\": \"e69a2649-bfdd-4e10-9337-319013623b19\"\r\n}"}
@@ -358,7 +358,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [049a27ca-a1e4-11e6-860a-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.ContainerService/locations/westus/operations/e69a2649-bfdd-4e10-9337-319013623b19?api-version=2016-09-30
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.ContainerService/locations/westus/operations/e69a2649-bfdd-4e10-9337-319013623b19?api-version=2016-09-30
   response:
     body: {string: "{\r\n  \"startTime\": \"2016-11-03T16:38:57.5573944+00:00\",\r\n
         \ \"status\": \"InProgress\",\r\n  \"name\": \"e69a2649-bfdd-4e10-9337-319013623b19\"\r\n}"}
@@ -391,7 +391,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [049a27ca-a1e4-11e6-860a-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.ContainerService/locations/westus/operations/e69a2649-bfdd-4e10-9337-319013623b19?api-version=2016-09-30
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.ContainerService/locations/westus/operations/e69a2649-bfdd-4e10-9337-319013623b19?api-version=2016-09-30
   response:
     body: {string: "{\r\n  \"startTime\": \"2016-11-03T16:38:57.5573944+00:00\",\r\n
         \ \"status\": \"InProgress\",\r\n  \"name\": \"e69a2649-bfdd-4e10-9337-319013623b19\"\r\n}"}
@@ -424,7 +424,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [049a27ca-a1e4-11e6-860a-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.ContainerService/locations/westus/operations/e69a2649-bfdd-4e10-9337-319013623b19?api-version=2016-09-30
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.ContainerService/locations/westus/operations/e69a2649-bfdd-4e10-9337-319013623b19?api-version=2016-09-30
   response:
     body: {string: "{\r\n  \"startTime\": \"2016-11-03T16:38:57.5573944+00:00\",\r\n
         \ \"status\": \"InProgress\",\r\n  \"name\": \"e69a2649-bfdd-4e10-9337-319013623b19\"\r\n}"}
@@ -457,7 +457,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [049a27ca-a1e4-11e6-860a-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.ContainerService/locations/westus/operations/e69a2649-bfdd-4e10-9337-319013623b19?api-version=2016-09-30
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.ContainerService/locations/westus/operations/e69a2649-bfdd-4e10-9337-319013623b19?api-version=2016-09-30
   response:
     body: {string: "{\r\n  \"startTime\": \"2016-11-03T16:38:57.5573944+00:00\",\r\n
         \ \"status\": \"InProgress\",\r\n  \"name\": \"e69a2649-bfdd-4e10-9337-319013623b19\"\r\n}"}
@@ -490,7 +490,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [049a27ca-a1e4-11e6-860a-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.ContainerService/locations/westus/operations/e69a2649-bfdd-4e10-9337-319013623b19?api-version=2016-09-30
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.ContainerService/locations/westus/operations/e69a2649-bfdd-4e10-9337-319013623b19?api-version=2016-09-30
   response:
     body: {string: "{\r\n  \"startTime\": \"2016-11-03T16:38:57.5573944+00:00\",\r\n
         \ \"status\": \"InProgress\",\r\n  \"name\": \"e69a2649-bfdd-4e10-9337-319013623b19\"\r\n}"}
@@ -523,7 +523,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [049a27ca-a1e4-11e6-860a-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.ContainerService/locations/westus/operations/e69a2649-bfdd-4e10-9337-319013623b19?api-version=2016-09-30
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.ContainerService/locations/westus/operations/e69a2649-bfdd-4e10-9337-319013623b19?api-version=2016-09-30
   response:
     body: {string: "{\r\n  \"startTime\": \"2016-11-03T16:38:57.5573944+00:00\",\r\n
         \ \"status\": \"InProgress\",\r\n  \"name\": \"e69a2649-bfdd-4e10-9337-319013623b19\"\r\n}"}
@@ -556,7 +556,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [049a27ca-a1e4-11e6-860a-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.ContainerService/locations/westus/operations/e69a2649-bfdd-4e10-9337-319013623b19?api-version=2016-09-30
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.ContainerService/locations/westus/operations/e69a2649-bfdd-4e10-9337-319013623b19?api-version=2016-09-30
   response:
     body: {string: "{\r\n  \"startTime\": \"2016-11-03T16:38:57.5573944+00:00\",\r\n
         \ \"status\": \"InProgress\",\r\n  \"name\": \"e69a2649-bfdd-4e10-9337-319013623b19\"\r\n}"}
@@ -589,7 +589,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [049a27ca-a1e4-11e6-860a-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.ContainerService/locations/westus/operations/e69a2649-bfdd-4e10-9337-319013623b19?api-version=2016-09-30
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.ContainerService/locations/westus/operations/e69a2649-bfdd-4e10-9337-319013623b19?api-version=2016-09-30
   response:
     body: {string: "{\r\n  \"startTime\": \"2016-11-03T16:38:57.5573944+00:00\",\r\n
         \ \"status\": \"InProgress\",\r\n  \"name\": \"e69a2649-bfdd-4e10-9337-319013623b19\"\r\n}"}
@@ -622,7 +622,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [049a27ca-a1e4-11e6-860a-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.ContainerService/locations/westus/operations/e69a2649-bfdd-4e10-9337-319013623b19?api-version=2016-09-30
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.ContainerService/locations/westus/operations/e69a2649-bfdd-4e10-9337-319013623b19?api-version=2016-09-30
   response:
     body: {string: "{\r\n  \"startTime\": \"2016-11-03T16:38:57.5573944+00:00\",\r\n
         \ \"status\": \"InProgress\",\r\n  \"name\": \"e69a2649-bfdd-4e10-9337-319013623b19\"\r\n}"}
@@ -655,7 +655,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [049a27ca-a1e4-11e6-860a-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.ContainerService/locations/westus/operations/e69a2649-bfdd-4e10-9337-319013623b19?api-version=2016-09-30
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.ContainerService/locations/westus/operations/e69a2649-bfdd-4e10-9337-319013623b19?api-version=2016-09-30
   response:
     body: {string: "{\r\n  \"startTime\": \"2016-11-03T16:38:57.5573944+00:00\",\r\n
         \ \"status\": \"InProgress\",\r\n  \"name\": \"e69a2649-bfdd-4e10-9337-319013623b19\"\r\n}"}
@@ -688,7 +688,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [049a27ca-a1e4-11e6-860a-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.ContainerService/locations/westus/operations/e69a2649-bfdd-4e10-9337-319013623b19?api-version=2016-09-30
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.ContainerService/locations/westus/operations/e69a2649-bfdd-4e10-9337-319013623b19?api-version=2016-09-30
   response:
     body: {string: "{\r\n  \"startTime\": \"2016-11-03T16:38:57.5573944+00:00\",\r\n
         \ \"status\": \"InProgress\",\r\n  \"name\": \"e69a2649-bfdd-4e10-9337-319013623b19\"\r\n}"}
@@ -721,7 +721,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [049a27ca-a1e4-11e6-860a-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.ContainerService/locations/westus/operations/e69a2649-bfdd-4e10-9337-319013623b19?api-version=2016-09-30
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.ContainerService/locations/westus/operations/e69a2649-bfdd-4e10-9337-319013623b19?api-version=2016-09-30
   response:
     body: {string: "{\r\n  \"startTime\": \"2016-11-03T16:38:57.5573944+00:00\",\r\n
         \ \"status\": \"InProgress\",\r\n  \"name\": \"e69a2649-bfdd-4e10-9337-319013623b19\"\r\n}"}
@@ -754,7 +754,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [049a27ca-a1e4-11e6-860a-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.ContainerService/locations/westus/operations/e69a2649-bfdd-4e10-9337-319013623b19?api-version=2016-09-30
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.ContainerService/locations/westus/operations/e69a2649-bfdd-4e10-9337-319013623b19?api-version=2016-09-30
   response:
     body: {string: "{\r\n  \"startTime\": \"2016-11-03T16:38:57.5573944+00:00\",\r\n
         \ \"status\": \"InProgress\",\r\n  \"name\": \"e69a2649-bfdd-4e10-9337-319013623b19\"\r\n}"}
@@ -787,7 +787,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [049a27ca-a1e4-11e6-860a-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.ContainerService/locations/westus/operations/e69a2649-bfdd-4e10-9337-319013623b19?api-version=2016-09-30
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.ContainerService/locations/westus/operations/e69a2649-bfdd-4e10-9337-319013623b19?api-version=2016-09-30
   response:
     body: {string: "{\r\n  \"startTime\": \"2016-11-03T16:38:57.5573944+00:00\",\r\n
         \ \"status\": \"InProgress\",\r\n  \"name\": \"e69a2649-bfdd-4e10-9337-319013623b19\"\r\n}"}
@@ -820,7 +820,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [049a27ca-a1e4-11e6-860a-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.ContainerService/locations/westus/operations/e69a2649-bfdd-4e10-9337-319013623b19?api-version=2016-09-30
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.ContainerService/locations/westus/operations/e69a2649-bfdd-4e10-9337-319013623b19?api-version=2016-09-30
   response:
     body: {string: "{\r\n  \"startTime\": \"2016-11-03T16:38:57.5573944+00:00\",\r\n
         \ \"status\": \"InProgress\",\r\n  \"name\": \"e69a2649-bfdd-4e10-9337-319013623b19\"\r\n}"}
@@ -853,7 +853,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [049a27ca-a1e4-11e6-860a-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.ContainerService/locations/westus/operations/e69a2649-bfdd-4e10-9337-319013623b19?api-version=2016-09-30
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.ContainerService/locations/westus/operations/e69a2649-bfdd-4e10-9337-319013623b19?api-version=2016-09-30
   response:
     body: {string: "{\r\n  \"startTime\": \"2016-11-03T16:38:57.5573944+00:00\",\r\n
         \ \"status\": \"InProgress\",\r\n  \"name\": \"e69a2649-bfdd-4e10-9337-319013623b19\"\r\n}"}
@@ -886,7 +886,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [049a27ca-a1e4-11e6-860a-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.ContainerService/locations/westus/operations/e69a2649-bfdd-4e10-9337-319013623b19?api-version=2016-09-30
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.ContainerService/locations/westus/operations/e69a2649-bfdd-4e10-9337-319013623b19?api-version=2016-09-30
   response:
     body: {string: "{\r\n  \"startTime\": \"2016-11-03T16:38:57.5573944+00:00\",\r\n
         \ \"status\": \"InProgress\",\r\n  \"name\": \"e69a2649-bfdd-4e10-9337-319013623b19\"\r\n}"}
@@ -919,7 +919,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [049a27ca-a1e4-11e6-860a-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.ContainerService/locations/westus/operations/e69a2649-bfdd-4e10-9337-319013623b19?api-version=2016-09-30
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.ContainerService/locations/westus/operations/e69a2649-bfdd-4e10-9337-319013623b19?api-version=2016-09-30
   response:
     body: {string: "{\r\n  \"startTime\": \"2016-11-03T16:38:57.5573944+00:00\",\r\n
         \ \"status\": \"InProgress\",\r\n  \"name\": \"e69a2649-bfdd-4e10-9337-319013623b19\"\r\n}"}
@@ -952,7 +952,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [049a27ca-a1e4-11e6-860a-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.ContainerService/locations/westus/operations/e69a2649-bfdd-4e10-9337-319013623b19?api-version=2016-09-30
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.ContainerService/locations/westus/operations/e69a2649-bfdd-4e10-9337-319013623b19?api-version=2016-09-30
   response:
     body: {string: "{\r\n  \"startTime\": \"2016-11-03T16:38:57.5573944+00:00\",\r\n
         \ \"status\": \"InProgress\",\r\n  \"name\": \"e69a2649-bfdd-4e10-9337-319013623b19\"\r\n}"}
@@ -985,7 +985,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [049a27ca-a1e4-11e6-860a-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.ContainerService/locations/westus/operations/e69a2649-bfdd-4e10-9337-319013623b19?api-version=2016-09-30
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.ContainerService/locations/westus/operations/e69a2649-bfdd-4e10-9337-319013623b19?api-version=2016-09-30
   response:
     body: {string: "{\r\n  \"startTime\": \"2016-11-03T16:38:57.5573944+00:00\",\r\n
         \ \"status\": \"InProgress\",\r\n  \"name\": \"e69a2649-bfdd-4e10-9337-319013623b19\"\r\n}"}
@@ -1018,7 +1018,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [049a27ca-a1e4-11e6-860a-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.ContainerService/locations/westus/operations/e69a2649-bfdd-4e10-9337-319013623b19?api-version=2016-09-30
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.ContainerService/locations/westus/operations/e69a2649-bfdd-4e10-9337-319013623b19?api-version=2016-09-30
   response:
     body: {string: "{\r\n  \"startTime\": \"2016-11-03T16:38:57.5573944+00:00\",\r\n
         \ \"status\": \"InProgress\",\r\n  \"name\": \"e69a2649-bfdd-4e10-9337-319013623b19\"\r\n}"}
@@ -1051,7 +1051,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [049a27ca-a1e4-11e6-860a-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.ContainerService/locations/westus/operations/e69a2649-bfdd-4e10-9337-319013623b19?api-version=2016-09-30
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.ContainerService/locations/westus/operations/e69a2649-bfdd-4e10-9337-319013623b19?api-version=2016-09-30
   response:
     body: {string: "{\r\n  \"startTime\": \"2016-11-03T16:38:57.5573944+00:00\",\r\n
         \ \"status\": \"InProgress\",\r\n  \"name\": \"e69a2649-bfdd-4e10-9337-319013623b19\"\r\n}"}
@@ -1084,7 +1084,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [049a27ca-a1e4-11e6-860a-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.ContainerService/locations/westus/operations/e69a2649-bfdd-4e10-9337-319013623b19?api-version=2016-09-30
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.ContainerService/locations/westus/operations/e69a2649-bfdd-4e10-9337-319013623b19?api-version=2016-09-30
   response:
     body: {string: "{\r\n  \"startTime\": \"2016-11-03T16:38:57.5573944+00:00\",\r\n
         \ \"status\": \"InProgress\",\r\n  \"name\": \"e69a2649-bfdd-4e10-9337-319013623b19\"\r\n}"}
@@ -1117,7 +1117,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [049a27ca-a1e4-11e6-860a-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.ContainerService/locations/westus/operations/e69a2649-bfdd-4e10-9337-319013623b19?api-version=2016-09-30
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.ContainerService/locations/westus/operations/e69a2649-bfdd-4e10-9337-319013623b19?api-version=2016-09-30
   response:
     body: {string: "{\r\n  \"startTime\": \"2016-11-03T16:38:57.5573944+00:00\",\r\n
         \ \"status\": \"InProgress\",\r\n  \"name\": \"e69a2649-bfdd-4e10-9337-319013623b19\"\r\n}"}
@@ -1150,7 +1150,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [049a27ca-a1e4-11e6-860a-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.ContainerService/locations/westus/operations/e69a2649-bfdd-4e10-9337-319013623b19?api-version=2016-09-30
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.ContainerService/locations/westus/operations/e69a2649-bfdd-4e10-9337-319013623b19?api-version=2016-09-30
   response:
     body: {string: "{\r\n  \"startTime\": \"2016-11-03T16:38:57.5573944+00:00\",\r\n
         \ \"status\": \"InProgress\",\r\n  \"name\": \"e69a2649-bfdd-4e10-9337-319013623b19\"\r\n}"}
@@ -1183,7 +1183,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [049a27ca-a1e4-11e6-860a-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.ContainerService/locations/westus/operations/e69a2649-bfdd-4e10-9337-319013623b19?api-version=2016-09-30
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.ContainerService/locations/westus/operations/e69a2649-bfdd-4e10-9337-319013623b19?api-version=2016-09-30
   response:
     body: {string: "{\r\n  \"startTime\": \"2016-11-03T16:38:57.5573944+00:00\",\r\n
         \ \"status\": \"InProgress\",\r\n  \"name\": \"e69a2649-bfdd-4e10-9337-319013623b19\"\r\n}"}
@@ -1216,7 +1216,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [049a27ca-a1e4-11e6-860a-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.ContainerService/locations/westus/operations/e69a2649-bfdd-4e10-9337-319013623b19?api-version=2016-09-30
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.ContainerService/locations/westus/operations/e69a2649-bfdd-4e10-9337-319013623b19?api-version=2016-09-30
   response:
     body: {string: "{\r\n  \"startTime\": \"2016-11-03T16:38:57.5573944+00:00\",\r\n
         \ \"status\": \"InProgress\",\r\n  \"name\": \"e69a2649-bfdd-4e10-9337-319013623b19\"\r\n}"}
@@ -1249,7 +1249,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [049a27ca-a1e4-11e6-860a-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.ContainerService/locations/westus/operations/e69a2649-bfdd-4e10-9337-319013623b19?api-version=2016-09-30
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.ContainerService/locations/westus/operations/e69a2649-bfdd-4e10-9337-319013623b19?api-version=2016-09-30
   response:
     body: {string: "{\r\n  \"startTime\": \"2016-11-03T16:38:57.5573944+00:00\",\r\n
         \ \"status\": \"InProgress\",\r\n  \"name\": \"e69a2649-bfdd-4e10-9337-319013623b19\"\r\n}"}
@@ -1282,7 +1282,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [049a27ca-a1e4-11e6-860a-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.ContainerService/locations/westus/operations/e69a2649-bfdd-4e10-9337-319013623b19?api-version=2016-09-30
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.ContainerService/locations/westus/operations/e69a2649-bfdd-4e10-9337-319013623b19?api-version=2016-09-30
   response:
     body: {string: "{\r\n  \"startTime\": \"2016-11-03T16:38:57.5573944+00:00\",\r\n
         \ \"status\": \"InProgress\",\r\n  \"name\": \"e69a2649-bfdd-4e10-9337-319013623b19\"\r\n}"}
@@ -1315,7 +1315,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [049a27ca-a1e4-11e6-860a-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.ContainerService/locations/westus/operations/e69a2649-bfdd-4e10-9337-319013623b19?api-version=2016-09-30
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.ContainerService/locations/westus/operations/e69a2649-bfdd-4e10-9337-319013623b19?api-version=2016-09-30
   response:
     body: {string: "{\r\n  \"startTime\": \"2016-11-03T16:38:57.5573944+00:00\",\r\n
         \ \"endTime\": \"2016-11-03T16:58:30.526195+00:00\",\r\n  \"status\": \"Succeeded\",\r\n
@@ -1349,7 +1349,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [049a27ca-a1e4-11e6-860a-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_test_containerdb8c0d41/providers/Microsoft.ContainerService/containerServices/pycontainerdb8c0d41?api-version=2016-09-30
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_test_containerdb8c0d41/providers/Microsoft.ContainerService/containerServices/pycontainerdb8c0d41?api-version=2016-09-30
   response:
     body: {string: "{\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_test_containerdb8c0d41/providers/Microsoft.ContainerService/containerServices/pycontainerdb8c0d41\",\r\n
         \ \"name\": \"pycontainerdb8c0d41\",\r\n  \"type\": \"Microsoft.ContainerService/ContainerServices\",\r\n
@@ -1396,7 +1396,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [cb4b9ea2-a1e6-11e6-8892-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_test_containerdb8c0d41/providers/Microsoft.ContainerService/containerServices/pycontainerdb8c0d41?api-version=2016-09-30
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_test_containerdb8c0d41/providers/Microsoft.ContainerService/containerServices/pycontainerdb8c0d41?api-version=2016-09-30
   response:
     body: {string: "{\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_test_containerdb8c0d41/providers/Microsoft.ContainerService/containerServices/pycontainerdb8c0d41\",\r\n
         \ \"name\": \"pycontainerdb8c0d41\",\r\n  \"type\": \"Microsoft.ContainerService/ContainerServices\",\r\n
@@ -1443,7 +1443,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [cbb77b7a-a1e6-11e6-9117-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_test_containerdb8c0d41/providers/Microsoft.ContainerService/containerServices?api-version=2016-09-30
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_test_containerdb8c0d41/providers/Microsoft.ContainerService/containerServices?api-version=2016-09-30
   response:
     body: {string: "{\r\n  \"value\": [\r\n    {\r\n      \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/TEST_MGMT_COMPUTE_TEST_CONTAINERDB8C0D41/providers/Microsoft.ContainerService/containerServices/pycontainerdb8c0d41\",\r\n
         \     \"name\": \"pycontainerdb8c0d41\",\r\n      \"type\": \"Microsoft.ContainerService/ContainerServices\",\r\n
@@ -1492,7 +1492,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [cc060bdc-a1e6-11e6-b46b-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.ContainerService/containerServices?api-version=2016-09-30
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.ContainerService/containerServices?api-version=2016-09-30
   response:
     body: {string: "{\r\n  \"value\": [\r\n    {\r\n      \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/TEST_MGMT_COMPUTE_TEST_CONTAINERDB8C0D41/providers/Microsoft.ContainerService/containerServices/pycontainerdb8c0d41\",\r\n
         \     \"name\": \"pycontainerdb8c0d41\",\r\n      \"type\": \"Microsoft.ContainerService/ContainerServices\",\r\n
@@ -1542,7 +1542,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [cc8661d0-a1e6-11e6-bccd-ecb1d756380e]
     method: DELETE
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_test_containerdb8c0d41/providers/Microsoft.ContainerService/containerServices/pycontainerdb8c0d41?api-version=2016-09-30
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_test_containerdb8c0d41/providers/Microsoft.ContainerService/containerServices/pycontainerdb8c0d41?api-version=2016-09-30
   response:
     body: {string: ''}
     headers:
@@ -1573,7 +1573,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [cc8661d0-a1e6-11e6-bccd-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.ContainerService/locations/westus/operations/d908dc3f-fde8-4fec-92fc-d6809de7d573?api-version=2016-09-30
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.ContainerService/locations/westus/operations/d908dc3f-fde8-4fec-92fc-d6809de7d573?api-version=2016-09-30
   response:
     body: {string: "{\r\n  \"startTime\": \"2016-11-03T16:58:51.6824637+00:00\",\r\n
         \ \"endTime\": \"2016-11-03T16:58:51.8074456+00:00\",\r\n  \"status\": \"Succeeded\",\r\n

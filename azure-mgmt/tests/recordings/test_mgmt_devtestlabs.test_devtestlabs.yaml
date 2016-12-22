@@ -84,7 +84,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [a1c7b50a-bda0-11e6-9d0d-ecb1d756380e]
     method: PUT
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_devtestlabs_test_devtestlabs34410fc3/providers/Microsoft.DevTestLab/labs/pylab34410fc3?api-version=2016-05-15
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_devtestlabs_test_devtestlabs34410fc3/providers/Microsoft.DevTestLab/labs/pylab34410fc3?api-version=2016-05-15
   response:
     body: {string: '{"properties":{"vaultName":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_devtestlabs_test_devtestlabs34410fc3/providers/Microsoft.KeyVault/vaults/pylab34410fc34690","labStorageType":"Premium","createdDate":"2016-12-06T17:47:09.1714421+00:00","premiumDataDisks":"Disabled","provisioningState":"Succeeded","uniqueIdentifier":"06866a64-8a02-45d6-be57-de26110121d3"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_mgmt_devtestlabs_test_devtestlabs34410fc3/providers/microsoft.devtestlab/labs/pylab34410fc3","name":"pylab34410fc3","type":"Microsoft.DevTestLab/labs","location":"westus"}'}
     headers:
@@ -116,7 +116,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [a1c7b50a-bda0-11e6-9d0d-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_devtestlabs_test_devtestlabs34410fc3/providers/Microsoft.DevTestLab/labs/pylab34410fc3?api-version=2016-05-15
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_devtestlabs_test_devtestlabs34410fc3/providers/Microsoft.DevTestLab/labs/pylab34410fc3?api-version=2016-05-15
   response:
     body: {string: '{"properties":{"defaultStorageAccount":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_devtestlabs_test_devtestlabs34410fc3/providers/Microsoft.Storage/storageAccounts/dpylab34410fc38748","defaultPremiumStorageAccount":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_devtestlabs_test_devtestlabs34410fc3/providers/Microsoft.Storage/storageAccounts/dppylab34410fc35851","artifactsStorageAccount":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_devtestlabs_test_devtestlabs34410fc3/providers/Microsoft.Storage/storageAccounts/apylab34410fc33911","vaultName":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_devtestlabs_test_devtestlabs34410fc3/providers/Microsoft.KeyVault/vaults/pylab34410fc34690","labStorageType":"Premium","createdDate":"2016-12-06T17:47:09.1714421+00:00","premiumDataDisks":"Disabled","provisioningState":"Succeeded","uniqueIdentifier":"06866a64-8a02-45d6-be57-de26110121d3"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_mgmt_devtestlabs_test_devtestlabs34410fc3/providers/microsoft.devtestlab/labs/pylab34410fc3","name":"pylab34410fc3","type":"Microsoft.DevTestLab/labs","location":"westus"}'}
     headers:

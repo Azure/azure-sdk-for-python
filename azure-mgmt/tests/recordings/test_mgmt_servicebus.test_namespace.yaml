@@ -12,7 +12,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [bed65370-9c6d-11e6-b29c-ecb1d756380e]
     method: PUT
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_servicebus_test_namespace61e0e69/providers/Microsoft.ServiceBus/namespaces/pyarmns61e0e69?api-version=2015-08-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_servicebus_test_namespace61e0e69/providers/Microsoft.ServiceBus/namespaces/pyarmns61e0e69?api-version=2015-08-01
   response:
     body: {string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_servicebus_test_namespace61e0e69/providers/Microsoft.ServiceBus/namespaces/pyarmns61e0e69","name":"pyarmns61e0e69","type":"Microsoft.ServiceBus/namespaces","location":"West
         US","kind":"Messaging","tags":null,"properties":{"provisioningState":"Unknown","metricId":"00000000-0000-0000-0000-000000000000:pyarmns61e0e69","enabled":false,"namespaceType":"Messaging","messagingSku":2}}'}
@@ -45,7 +45,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [bed65370-9c6d-11e6-b29c-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_servicebus_test_namespace61e0e69/providers/Microsoft.ServiceBus/namespaces/pyarmns61e0e69?api-version=2015-08-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_servicebus_test_namespace61e0e69/providers/Microsoft.ServiceBus/namespaces/pyarmns61e0e69?api-version=2015-08-01
   response:
     body: {string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_servicebus_test_namespace61e0e69/providers/Microsoft.ServiceBus/namespaces/pyarmns61e0e69","name":"pyarmns61e0e69","type":"Microsoft.ServiceBus/namespaces","location":"West
         US","kind":"Messaging","sku":{"name":"Standard","tier":"Standard","capacity":1},"tags":{},"properties":{"provisioningState":"Succeeded","metricId":"00000000-0000-0000-0000-000000000000:pyarmns61e0e69","status":"Active","createdAt":"2016-10-27T17:49:47.567Z","serviceBusEndpoint":"https://pyarmns61e0e69.servicebus.windows.net:443/","enabled":true,"critical":false,"updatedAt":"2016-10-27T17:50:10.737Z","eventHubEnabled":true,"namespaceType":"Messaging","messagingSku":2}}'}
@@ -78,7 +78,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [d1d96a9e-9c6d-11e6-983c-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_servicebus_test_namespace61e0e69/providers/Microsoft.ServiceBus/namespaces/pyarmns61e0e69?api-version=2015-08-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_servicebus_test_namespace61e0e69/providers/Microsoft.ServiceBus/namespaces/pyarmns61e0e69?api-version=2015-08-01
   response:
     body: {string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_servicebus_test_namespace61e0e69/providers/Microsoft.ServiceBus/namespaces/pyarmns61e0e69","name":"pyarmns61e0e69","type":"Microsoft.ServiceBus/namespaces","location":"West
         US","kind":"Messaging","sku":{"name":"Standard","tier":"Standard","capacity":1},"tags":{},"properties":{"provisioningState":"Succeeded","metricId":"00000000-0000-0000-0000-000000000000:pyarmns61e0e69","status":"Active","createdAt":"2016-10-27T17:49:47.567Z","serviceBusEndpoint":"https://pyarmns61e0e69.servicebus.windows.net:443/","enabled":true,"critical":false,"updatedAt":"2016-10-27T17:50:10.737Z","eventHubEnabled":true,"namespaceType":"Messaging","messagingSku":2}}'}
@@ -111,7 +111,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [d225810a-9c6d-11e6-8e83-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_servicebus_test_namespace61e0e69/providers/Microsoft.ServiceBus/namespaces?api-version=2015-08-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_servicebus_test_namespace61e0e69/providers/Microsoft.ServiceBus/namespaces?api-version=2015-08-01
   response:
     body: {string: '{"value":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_servicebus_test_namespace61e0e69/providers/Microsoft.ServiceBus/namespaces/pyarmns61e0e69","name":"pyarmns61e0e69","type":"Microsoft.ServiceBus/namespaces","location":"West
         US","kind":"Messaging","sku":{"name":"Standard","tier":"Standard","capacity":1},"tags":{},"properties":{"provisioningState":"Succeeded","metricId":"00000000-0000-0000-0000-000000000000:pyarmns61e0e69","status":"Active","createdAt":"2016-10-27T17:49:47.567Z","serviceBusEndpoint":"https://pyarmns61e0e69.servicebus.windows.net:443/","enabled":true,"critical":false,"updatedAt":"2016-10-27T17:50:10.737Z","eventHubEnabled":true,"namespaceType":"Messaging","messagingSku":2}}],"nextLink":null}'}
@@ -145,7 +145,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [d2682924-9c6d-11e6-afb2-ecb1d756380e]
     method: DELETE
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_servicebus_test_namespace61e0e69/providers/Microsoft.ServiceBus/namespaces/pyarmns61e0e69?api-version=2015-08-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_servicebus_test_namespace61e0e69/providers/Microsoft.ServiceBus/namespaces/pyarmns61e0e69?api-version=2015-08-01
   response:
     body: {string: ''}
     headers:
@@ -175,7 +175,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [d2682924-9c6d-11e6-afb2-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_servicebus_test_namespace61e0e69/providers/Microsoft.ServiceBus/namespaces/pyarmns61e0e69/operationresults/pyarmns61e0e69?api-version=2015-08-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_servicebus_test_namespace61e0e69/providers/Microsoft.ServiceBus/namespaces/pyarmns61e0e69/operationresults/pyarmns61e0e69?api-version=2015-08-01
   response:
     body: {string: ''}
     headers:
