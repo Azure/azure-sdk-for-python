@@ -24,10 +24,10 @@ class Probe(SubResource):
     :vartype load_balancing_rules: list of :class:`SubResource
      <azure.mgmt.network.models.SubResource>`
     :param protocol: The protocol of the end point. Possible values are:
-     'Http' or 'Tcp'. If 'Tcp' is specified, a received ACK is required for
-     the probe to be successful. If 'Http' is specified, a 200 OK response
-     from the specifies URI is required for the probe to be successful.
-     Possible values include: 'Http', 'Tcp'
+     'Http' or 'Tcp'. If 'Tcp' is specified, a received ACK is required for the
+     probe to be successful. If 'Http' is specified, a 200 OK response from the
+     specifies URI is required for the probe to be successful. Possible values
+     include: 'Http', 'Tcp'
     :type protocol: str or :class:`ProbeProtocol
      <azure.mgmt.network.models.ProbeProtocol>`
     :param port: The port for communicating the probe. Possible values range
@@ -41,8 +41,8 @@ class Probe(SubResource):
     :type interval_in_seconds: int
     :param number_of_probes: The number of probes where if no response, will
      result in stopping further traffic from being delivered to the endpoint.
-     This values allows endpoints to be taken out of rotation faster or
-     slower than the typical times used in Azure.
+     This values allows endpoints to be taken out of rotation faster or slower
+     than the typical times used in Azure.
     :type number_of_probes: int
     :param request_path: The URI used for requesting health status from the
      VM. Path is required if a protocol is set to http. Otherwise, it is not
@@ -57,7 +57,7 @@ class Probe(SubResource):
     :param etag: A unique read-only string that changes whenever the resource
      is updated.
     :type etag: str
-    """ 
+    """
 
     _validation = {
         'load_balancing_rules': {'readonly': True},

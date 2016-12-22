@@ -24,7 +24,7 @@ class ApplicationGatewayBackendHealthPool(Model):
     :type backend_http_settings_collection: list of
      :class:`ApplicationGatewayBackendHealthHttpSettings
      <azure.mgmt.network.models.ApplicationGatewayBackendHealthHttpSettings>`
-    """ 
+    """
 
     _attribute_map = {
         'backend_address_pool': {'key': 'backendAddressPool', 'type': 'ApplicationGatewayBackendAddressPool'},

@@ -19,7 +19,7 @@ class ExpressRouteServiceProviderBandwidthsOffered(Model):
     :type offer_name: str
     :param value_in_mbps: The ValueInMbps.
     :type value_in_mbps: int
-    """ 
+    """
 
     _attribute_map = {
         'offer_name': {'key': 'offerName', 'type': 'str'},

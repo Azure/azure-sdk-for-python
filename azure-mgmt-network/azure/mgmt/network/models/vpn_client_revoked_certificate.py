@@ -22,9 +22,9 @@ class VpnClientRevokedCertificate(SubResource):
     :type id: str
     :param thumbprint: The revoked VPN client certificate thumbprint.
     :type thumbprint: str
-    :ivar provisioning_state: The provisioning state of the VPN client
-     revoked certificate resource. Possible values are: 'Updating',
-     'Deleting', and 'Failed'.
+    :ivar provisioning_state: The provisioning state of the VPN client revoked
+     certificate resource. Possible values are: 'Updating', 'Deleting', and
+     'Failed'.
     :vartype provisioning_state: str
     :param name: The name of the resource that is unique within a resource
      group. This name can be used to access the resource.
@@ -32,7 +32,7 @@ class VpnClientRevokedCertificate(SubResource):
     :param etag: A unique read-only string that changes whenever the resource
      is updated.
     :type etag: str
-    """ 
+    """
 
     _validation = {
         'provisioning_state': {'readonly': True},

@@ -36,7 +36,7 @@ class ExpressRouteServiceProvider(Resource):
      <azure.mgmt.network.models.ExpressRouteServiceProviderBandwidthsOffered>`
     :param provisioning_state: Gets the provisioning state of the resource.
     :type provisioning_state: str
-    """ 
+    """
 
     _validation = {
         'name': {'readonly': True},

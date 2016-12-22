@@ -26,9 +26,9 @@ class Route(SubResource):
      'None'
     :type next_hop_type: str or :class:`RouteNextHopType
      <azure.mgmt.network.models.RouteNextHopType>`
-    :param next_hop_ip_address: The IP address packets should be forwarded
-     to. Next hop values are only allowed in routes where the next hop type
-     is VirtualAppliance.
+    :param next_hop_ip_address: The IP address packets should be forwarded to.
+     Next hop values are only allowed in routes where the next hop type is
+     VirtualAppliance.
     :type next_hop_ip_address: str
     :param provisioning_state: The provisioning state of the resource.
      Possible values are: 'Updating', 'Deleting', and 'Failed'.
@@ -39,7 +39,7 @@ class Route(SubResource):
     :param etag: A unique read-only string that changes whenever the resource
      is updated.
     :type etag: str
-    """ 
+    """
 
     _validation = {
         'next_hop_type': {'required': True},

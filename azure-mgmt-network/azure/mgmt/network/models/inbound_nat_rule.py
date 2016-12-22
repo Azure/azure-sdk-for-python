@@ -24,18 +24,17 @@ class InboundNatRule(SubResource):
     :type frontend_ip_configuration: :class:`SubResource
      <azure.mgmt.network.models.SubResource>`
     :ivar backend_ip_configuration: A reference to a private IP address
-     defined on a network interface of a VM. Traffic sent to the frontend
-     port of each of the frontend IP configurations is forwarded to the
-     backed IP.
-    :vartype backend_ip_configuration:
-     :class:`NetworkInterfaceIPConfiguration <azure.mgmt.network.models.NetworkInterfaceIPConfiguration>`
+     defined on a network interface of a VM. Traffic sent to the frontend port
+     of each of the frontend IP configurations is forwarded to the backed IP.
+    :vartype backend_ip_configuration: :class:`NetworkInterfaceIPConfiguration
+     <azure.mgmt.network.models.NetworkInterfaceIPConfiguration>`
     :param protocol: The transport protocol for the endpoint. Possible values
      are: 'Udp' or 'Tcp'. Possible values include: 'Udp', 'Tcp'
     :type protocol: str or :class:`TransportProtocol
      <azure.mgmt.network.models.TransportProtocol>`
-    :param frontend_port: The port for the external endpoint. Port numbers
-     for each Rule must be unique within the Load Balancer. Acceptable values
-     range from 1 to 65534.
+    :param frontend_port: The port for the external endpoint. Port numbers for
+     each Rule must be unique within the Load Balancer. Acceptable values range
+     from 1 to 65534.
     :type frontend_port: int
     :param backend_port: The port used for the internal endpoint. Acceptable
      values range from 1 to 65535.
@@ -44,11 +43,11 @@ class InboundNatRule(SubResource):
      The value can be set between 4 and 30 minutes. The default value is 4
      minutes. This element is only used when the protocol is set to TCP.
     :type idle_timeout_in_minutes: int
-    :param enable_floating_ip: Configures a virtual machine's endpoint for
-     the floating IP capability required to configure a SQL AlwaysOn
-     Availability Group. This setting is required when using the SQL AlwaysOn
-     Availability Groups in SQL server. This setting can't be changed after
-     you create the endpoint.
+    :param enable_floating_ip: Configures a virtual machine's endpoint for the
+     floating IP capability required to configure a SQL AlwaysOn Availability
+     Group. This setting is required when using the SQL AlwaysOn Availability
+     Groups in SQL server. This setting can't be changed after you create the
+     endpoint.
     :type enable_floating_ip: bool
     :param provisioning_state: Gets the provisioning state of the public IP
      resource. Possible values are: 'Updating', 'Deleting', and 'Failed'.
@@ -59,7 +58,7 @@ class InboundNatRule(SubResource):
     :param etag: A unique read-only string that changes whenever the resource
      is updated.
     :type etag: str
-    """ 
+    """
 
     _validation = {
         'backend_ip_configuration': {'readonly': True},

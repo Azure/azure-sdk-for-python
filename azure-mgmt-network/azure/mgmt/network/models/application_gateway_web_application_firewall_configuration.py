@@ -22,7 +22,7 @@ class ApplicationGatewayWebApplicationFirewallConfiguration(Model):
      'Prevention'
     :type firewall_mode: str or :class:`ApplicationGatewayFirewallMode
      <azure.mgmt.network.models.ApplicationGatewayFirewallMode>`
-    """ 
+    """
 
     _validation = {
         'enabled': {'required': True},

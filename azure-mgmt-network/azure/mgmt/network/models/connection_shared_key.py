@@ -17,7 +17,7 @@ class ConnectionSharedKey(Model):
 
     :param value: The virtual network connection shared key value.
     :type value: str
-    """ 
+    """
 
     _validation = {
         'value': {'required': True},

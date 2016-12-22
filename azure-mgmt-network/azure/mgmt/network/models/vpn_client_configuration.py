@@ -29,7 +29,7 @@ class VpnClientConfiguration(Model):
     :type vpn_client_revoked_certificates: list of
      :class:`VpnClientRevokedCertificate
      <azure.mgmt.network.models.VpnClientRevokedCertificate>`
-    """ 
+    """
 
     _attribute_map = {
         'vpn_client_address_pool': {'key': 'vpnClientAddressPool', 'type': 'AddressSpace'},
