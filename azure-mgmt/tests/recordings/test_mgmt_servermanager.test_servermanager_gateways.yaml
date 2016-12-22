@@ -84,7 +84,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [9b51508c-bda0-11e6-a665-ecb1d756380e]
     method: PUT
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_servermanager_test_servermanager_gateways26e51529/providers/Microsoft.ServerManagement/gateways/pygateway26e51529?api-version=2016-07-01-preview
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_servermanager_test_servermanager_gateways26e51529/providers/Microsoft.ServerManagement/gateways/pygateway26e51529?api-version=2016-07-01-preview
   response:
     body: {string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_mgmt_servermanager_test_servermanager_gateways26e51529/providers/microsoft.servermanagement/gateways/pygateway26e51529","name":"pygateway26e51529","type":"microsoft.servermanagement/gateways","location":"centralus","etag":"W/\"datetime''2016-12-08T23%3A47%3A02.4555328Z''\"","properties":{"created":"2016-12-08T23:46:58.9652921Z","updated":"2016-12-08T23:46:58.9652921Z","autoUpgrade":"On","upgradeMode":"Automatic","desiredVersion":null,"minimumVersion":"1.0.1645.0"}}'}
     headers:
@@ -119,7 +119,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [9b51508c-bda0-11e6-a665-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_servermanager_test_servermanager_gateways26e51529/providers/Microsoft.ServerManagement/gateways/pygateway26e51529?api-version=2016-07-01-preview
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_servermanager_test_servermanager_gateways26e51529/providers/Microsoft.ServerManagement/gateways/pygateway26e51529?api-version=2016-07-01-preview
   response:
     body: {string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_mgmt_servermanager_test_servermanager_gateways26e51529/providers/microsoft.servermanagement/gateways/pygateway26e51529","name":"pygateway26e51529","type":"microsoft.servermanagement/gateways","location":"centralus","etag":"W/\"datetime''2016-12-08T23%3A47%3A02.4555328Z''\"","properties":{"created":"2016-12-08T23:46:58.9652921Z","updated":"2016-12-08T23:46:58.9652921Z","autoUpgrade":"On","upgradeMode":"Automatic","desiredVersion":null,"minimumVersion":"1.0.1645.0"}}'}
     headers:
@@ -154,7 +154,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [9e6a5aca-bda0-11e6-93e6-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_servermanager_test_servermanager_gateways26e51529/providers/Microsoft.ServerManagement/gateways/pygateway26e51529?api-version=2016-07-01-preview
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_servermanager_test_servermanager_gateways26e51529/providers/Microsoft.ServerManagement/gateways/pygateway26e51529?api-version=2016-07-01-preview
   response:
     body: {string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_mgmt_servermanager_test_servermanager_gateways26e51529/providers/microsoft.servermanagement/gateways/pygateway26e51529","name":"pygateway26e51529","type":"microsoft.servermanagement/gateways","location":"centralus","etag":"W/\"datetime''2016-12-08T23%3A47%3A02.4555328Z''\"","properties":{"created":"2016-12-08T23:46:58.9652921Z","updated":"2016-12-08T23:46:58.9652921Z","autoUpgrade":"On","upgradeMode":"Automatic","desiredVersion":null,"minimumVersion":"1.0.1645.0"}}'}
     headers:
@@ -189,7 +189,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [9eba16b8-bda0-11e6-8801-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.ServerManagement/gateways?api-version=2016-07-01-preview
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.ServerManagement/gateways?api-version=2016-07-01-preview
   response:
     body: {string: '{"value":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_mgmt_servermanager_test_servermanager_gateways26e51529/providers/microsoft.servermanagement/gateways/pygateway26e51529","name":"pygateway26e51529","type":"microsoft.servermanagement/gateways","location":"centralus","etag":"W/\"datetime''2016-12-08T23%3A47%3A02.4555328Z''\"","properties":{"created":"2016-12-08T23:46:58.9652921Z","updated":"2016-12-08T23:46:58.9652921Z","autoUpgrade":"On","upgradeMode":"Automatic","desiredVersion":null,"minimumVersion":"1.0.1645.0"}}]}'}
     headers:

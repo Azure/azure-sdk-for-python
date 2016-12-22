@@ -12,7 +12,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [fb7e4a82-9fc3-11e6-8af1-ecb1d756380e]
     method: PUT
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_routesb6760c2d/providers/Microsoft.Network/routeTables/pyroutetableb6760c2d?api-version=2016-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_routesb6760c2d/providers/Microsoft.Network/routeTables/pyroutetableb6760c2d?api-version=2016-09-01
   response:
     body: {string: "{\r\n  \"name\": \"pyroutetableb6760c2d\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_routesb6760c2d/providers/Microsoft.Network/routeTables/pyroutetableb6760c2d\",\r\n
         \ \"etag\": \"W/\\\"fb855676-7fc1-42c8-bef6-d2b4c0936c33\\\"\",\r\n  \"type\":
@@ -47,7 +47,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [fb7e4a82-9fc3-11e6-8af1-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/7bf599ea-5ae6-484c-9c0f-64b333f931ef?api-version=2016-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/7bf599ea-5ae6-484c-9c0f-64b333f931ef?api-version=2016-09-01
   response:
     body: {string: "{\r\n  \"status\": \"Succeeded\"\r\n}"}
     headers:
@@ -78,7 +78,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [fb7e4a82-9fc3-11e6-8af1-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_routesb6760c2d/providers/Microsoft.Network/routeTables/pyroutetableb6760c2d?api-version=2016-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_routesb6760c2d/providers/Microsoft.Network/routeTables/pyroutetableb6760c2d?api-version=2016-09-01
   response:
     body: {string: "{\r\n  \"name\": \"pyroutetableb6760c2d\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_routesb6760c2d/providers/Microsoft.Network/routeTables/pyroutetableb6760c2d\",\r\n
         \ \"etag\": \"W/\\\"6a0c5e80-cd5b-4e44-a478-57d438796e10\\\"\",\r\n  \"type\":
@@ -114,7 +114,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [032ec28c-9fc4-11e6-9378-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_routesb6760c2d/providers/Microsoft.Network/routeTables/pyroutetableb6760c2d?api-version=2016-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_routesb6760c2d/providers/Microsoft.Network/routeTables/pyroutetableb6760c2d?api-version=2016-09-01
   response:
     body: {string: "{\r\n  \"name\": \"pyroutetableb6760c2d\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_routesb6760c2d/providers/Microsoft.Network/routeTables/pyroutetableb6760c2d\",\r\n
         \ \"etag\": \"W/\\\"6a0c5e80-cd5b-4e44-a478-57d438796e10\\\"\",\r\n  \"type\":
@@ -150,7 +150,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [035ce386-9fc4-11e6-a4e9-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_routesb6760c2d/providers/Microsoft.Network/routeTables?api-version=2016-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_routesb6760c2d/providers/Microsoft.Network/routeTables?api-version=2016-09-01
   response:
     body: {string: "{\r\n  \"value\": [\r\n    {\r\n      \"name\": \"pyroutetableb6760c2d\",\r\n
         \     \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_routesb6760c2d/providers/Microsoft.Network/routeTables/pyroutetableb6760c2d\",\r\n
@@ -187,7 +187,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [03b0a488-9fc4-11e6-98c2-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/routeTables?api-version=2016-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/routeTables?api-version=2016-09-01
   response:
     body: {string: "{\r\n  \"value\": [\r\n    {\r\n      \"name\": \"pyroutetableb6760c2d\",\r\n
         \     \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_routesb6760c2d/providers/Microsoft.Network/routeTables/pyroutetableb6760c2d\",\r\n
@@ -225,7 +225,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [03f19664-9fc4-11e6-8a53-ecb1d756380e]
     method: PUT
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_routesb6760c2d/providers/Microsoft.Network/routeTables/pyroutetableb6760c2d/routes/pyrouteb6760c2d?api-version=2016-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_routesb6760c2d/providers/Microsoft.Network/routeTables/pyroutetableb6760c2d/routes/pyrouteb6760c2d?api-version=2016-09-01
   response:
     body: {string: "{\r\n  \"name\": \"pyrouteb6760c2d\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_routesb6760c2d/providers/Microsoft.Network/routeTables/pyroutetableb6760c2d/routes/pyrouteb6760c2d\",\r\n
         \ \"etag\": \"W/\\\"2cdea020-ea0c-4f93-8fd6-ba0f647c46de\\\"\",\r\n  \"properties\":
@@ -259,7 +259,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [03f19664-9fc4-11e6-8a53-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/afd7a66c-6137-4416-992a-82f9b89b53ed?api-version=2016-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/afd7a66c-6137-4416-992a-82f9b89b53ed?api-version=2016-09-01
   response:
     body: {string: "{\r\n  \"status\": \"Succeeded\"\r\n}"}
     headers:
@@ -290,7 +290,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [03f19664-9fc4-11e6-8a53-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_routesb6760c2d/providers/Microsoft.Network/routeTables/pyroutetableb6760c2d/routes/pyrouteb6760c2d?api-version=2016-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_routesb6760c2d/providers/Microsoft.Network/routeTables/pyroutetableb6760c2d/routes/pyrouteb6760c2d?api-version=2016-09-01
   response:
     body: {string: "{\r\n  \"name\": \"pyrouteb6760c2d\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_routesb6760c2d/providers/Microsoft.Network/routeTables/pyroutetableb6760c2d/routes/pyrouteb6760c2d\",\r\n
         \ \"etag\": \"W/\\\"351ccdc4-4e88-4d86-8aaf-fb63edbaa02a\\\"\",\r\n  \"properties\":
@@ -325,7 +325,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [0b272b4c-9fc4-11e6-9016-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_routesb6760c2d/providers/Microsoft.Network/routeTables/pyroutetableb6760c2d/routes/pyrouteb6760c2d?api-version=2016-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_routesb6760c2d/providers/Microsoft.Network/routeTables/pyroutetableb6760c2d/routes/pyrouteb6760c2d?api-version=2016-09-01
   response:
     body: {string: "{\r\n  \"name\": \"pyrouteb6760c2d\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_routesb6760c2d/providers/Microsoft.Network/routeTables/pyroutetableb6760c2d/routes/pyrouteb6760c2d\",\r\n
         \ \"etag\": \"W/\\\"351ccdc4-4e88-4d86-8aaf-fb63edbaa02a\\\"\",\r\n  \"properties\":
@@ -360,7 +360,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [0b61d8d0-9fc4-11e6-bf67-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_routesb6760c2d/providers/Microsoft.Network/routeTables/pyroutetableb6760c2d/routes?api-version=2016-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_routesb6760c2d/providers/Microsoft.Network/routeTables/pyroutetableb6760c2d/routes?api-version=2016-09-01
   response:
     body: {string: "{\r\n  \"value\": [\r\n    {\r\n      \"name\": \"pyrouteb6760c2d\",\r\n
         \     \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_routesb6760c2d/providers/Microsoft.Network/routeTables/pyroutetableb6760c2d/routes/pyrouteb6760c2d\",\r\n
@@ -397,7 +397,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [0bb9f5ba-9fc4-11e6-8c04-ecb1d756380e]
     method: DELETE
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_routesb6760c2d/providers/Microsoft.Network/routeTables/pyroutetableb6760c2d/routes/pyrouteb6760c2d?api-version=2016-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_routesb6760c2d/providers/Microsoft.Network/routeTables/pyroutetableb6760c2d/routes/pyrouteb6760c2d?api-version=2016-09-01
   response:
     body: {string: ''}
     headers:
@@ -428,7 +428,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [0bb9f5ba-9fc4-11e6-8c04-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/367d5cf1-0a16-4b75-ab7e-b0a18b3f4e21?api-version=2016-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/367d5cf1-0a16-4b75-ab7e-b0a18b3f4e21?api-version=2016-09-01
   response:
     body: {string: "{\r\n  \"status\": \"Succeeded\"\r\n}"}
     headers:
@@ -460,7 +460,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [1262504a-9fc4-11e6-8eb6-ecb1d756380e]
     method: DELETE
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_routesb6760c2d/providers/Microsoft.Network/routeTables/pyroutetableb6760c2d?api-version=2016-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_routesb6760c2d/providers/Microsoft.Network/routeTables/pyroutetableb6760c2d?api-version=2016-09-01
   response:
     body: {string: ''}
     headers:
@@ -491,7 +491,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [1262504a-9fc4-11e6-8eb6-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/4f99155a-1e6f-4a6e-bf61-88678ec55655?api-version=2016-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/4f99155a-1e6f-4a6e-bf61-88678ec55655?api-version=2016-09-01
   response:
     body: {string: "{\r\n  \"status\": \"Succeeded\"\r\n}"}
     headers:

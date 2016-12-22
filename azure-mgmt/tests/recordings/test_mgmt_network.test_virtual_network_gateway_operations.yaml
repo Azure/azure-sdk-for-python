@@ -13,7 +13,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [5215a8fa-c651-11e6-9d3e-ecb1d756380e]
     method: PUT
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_virtual_network_gateway_operationsb4d417ef/providers/Microsoft.Network/virtualNetworks/pyvirtnetb4d417ef?api-version=2016-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_virtual_network_gateway_operationsb4d417ef/providers/Microsoft.Network/virtualNetworks/pyvirtnetb4d417ef?api-version=2016-09-01
   response:
     body: {string: "{\r\n  \"name\": \"pyvirtnetb4d417ef\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_virtual_network_gateway_operationsb4d417ef/providers/Microsoft.Network/virtualNetworks/pyvirtnetb4d417ef\",\r\n
         \ \"etag\": \"W/\\\"58192e20-200f-434a-bab6-63ccafad7e61\\\"\",\r\n  \"type\":
@@ -50,7 +50,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [5215a8fa-c651-11e6-9d3e-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/ecdefc05-abb5-4ce5-936f-ebb6437ddd66?api-version=2016-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/ecdefc05-abb5-4ce5-936f-ebb6437ddd66?api-version=2016-09-01
   response:
     body: {string: "{\r\n  \"status\": \"Succeeded\"\r\n}"}
     headers:
@@ -81,7 +81,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [5215a8fa-c651-11e6-9d3e-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_virtual_network_gateway_operationsb4d417ef/providers/Microsoft.Network/virtualNetworks/pyvirtnetb4d417ef?api-version=2016-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_virtual_network_gateway_operationsb4d417ef/providers/Microsoft.Network/virtualNetworks/pyvirtnetb4d417ef?api-version=2016-09-01
   response:
     body: {string: "{\r\n  \"name\": \"pyvirtnetb4d417ef\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_virtual_network_gateway_operationsb4d417ef/providers/Microsoft.Network/virtualNetworks/pyvirtnetb4d417ef\",\r\n
         \ \"etag\": \"W/\\\"4b6e0d62-ac27-416e-a376-99dc319e547f\\\"\",\r\n  \"type\":
@@ -120,7 +120,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [54ec6b52-c651-11e6-a711-ecb1d756380e]
     method: PUT
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_virtual_network_gateway_operationsb4d417ef/providers/Microsoft.Network/virtualNetworks/pyvirtnetb4d417ef/subnets/pysubnetfeb4d417ef?api-version=2016-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_virtual_network_gateway_operationsb4d417ef/providers/Microsoft.Network/virtualNetworks/pyvirtnetb4d417ef/subnets/pysubnetfeb4d417ef?api-version=2016-09-01
   response:
     body: {string: "{\r\n  \"name\": \"pysubnetfeb4d417ef\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_virtual_network_gateway_operationsb4d417ef/providers/Microsoft.Network/virtualNetworks/pyvirtnetb4d417ef/subnets/pysubnetfeb4d417ef\",\r\n
         \ \"etag\": \"W/\\\"2ae598c6-ba6d-4625-aa70-fead6c2f8b64\\\"\",\r\n  \"properties\":
@@ -154,7 +154,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [54ec6b52-c651-11e6-a711-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/1d95ed5c-a919-49f7-94a2-57b438d6cfc1?api-version=2016-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/1d95ed5c-a919-49f7-94a2-57b438d6cfc1?api-version=2016-09-01
   response:
     body: {string: "{\r\n  \"status\": \"Succeeded\"\r\n}"}
     headers:
@@ -185,7 +185,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [54ec6b52-c651-11e6-a711-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_virtual_network_gateway_operationsb4d417ef/providers/Microsoft.Network/virtualNetworks/pyvirtnetb4d417ef/subnets/pysubnetfeb4d417ef?api-version=2016-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_virtual_network_gateway_operationsb4d417ef/providers/Microsoft.Network/virtualNetworks/pyvirtnetb4d417ef/subnets/pysubnetfeb4d417ef?api-version=2016-09-01
   response:
     body: {string: "{\r\n  \"name\": \"pysubnetfeb4d417ef\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_virtual_network_gateway_operationsb4d417ef/providers/Microsoft.Network/virtualNetworks/pyvirtnetb4d417ef/subnets/pysubnetfeb4d417ef\",\r\n
         \ \"etag\": \"W/\\\"cc217744-f916-4c35-bfd8-da7efc81d04e\\\"\",\r\n  \"properties\":
@@ -221,7 +221,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [57d34f28-c651-11e6-b6c7-ecb1d756380e]
     method: PUT
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_virtual_network_gateway_operationsb4d417ef/providers/Microsoft.Network/virtualNetworks/pyvirtnetb4d417ef/subnets/pysubnetbeb4d417ef?api-version=2016-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_virtual_network_gateway_operationsb4d417ef/providers/Microsoft.Network/virtualNetworks/pyvirtnetb4d417ef/subnets/pysubnetbeb4d417ef?api-version=2016-09-01
   response:
     body: {string: "{\r\n  \"name\": \"pysubnetbeb4d417ef\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_virtual_network_gateway_operationsb4d417ef/providers/Microsoft.Network/virtualNetworks/pyvirtnetb4d417ef/subnets/pysubnetbeb4d417ef\",\r\n
         \ \"etag\": \"W/\\\"fe9cf6ee-3c88-4f90-aa9b-1a3c83ee220f\\\"\",\r\n  \"properties\":
@@ -255,7 +255,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [57d34f28-c651-11e6-b6c7-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/995a6459-d96e-48ae-ba9d-51225d90b529?api-version=2016-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/995a6459-d96e-48ae-ba9d-51225d90b529?api-version=2016-09-01
   response:
     body: {string: "{\r\n  \"status\": \"Succeeded\"\r\n}"}
     headers:
@@ -286,7 +286,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [57d34f28-c651-11e6-b6c7-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_virtual_network_gateway_operationsb4d417ef/providers/Microsoft.Network/virtualNetworks/pyvirtnetb4d417ef/subnets/pysubnetbeb4d417ef?api-version=2016-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_virtual_network_gateway_operationsb4d417ef/providers/Microsoft.Network/virtualNetworks/pyvirtnetb4d417ef/subnets/pysubnetbeb4d417ef?api-version=2016-09-01
   response:
     body: {string: "{\r\n  \"name\": \"pysubnetbeb4d417ef\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_virtual_network_gateway_operationsb4d417ef/providers/Microsoft.Network/virtualNetworks/pyvirtnetb4d417ef/subnets/pysubnetbeb4d417ef\",\r\n
         \ \"etag\": \"W/\\\"e25df8c6-1139-4358-9655-9a8e185d020d\\\"\",\r\n  \"properties\":
@@ -322,7 +322,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [5a9df528-c651-11e6-8690-ecb1d756380e]
     method: PUT
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_virtual_network_gateway_operationsb4d417ef/providers/Microsoft.Network/virtualNetworks/pyvirtnetb4d417ef/subnets/GatewaySubnet?api-version=2016-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_virtual_network_gateway_operationsb4d417ef/providers/Microsoft.Network/virtualNetworks/pyvirtnetb4d417ef/subnets/GatewaySubnet?api-version=2016-09-01
   response:
     body: {string: "{\r\n  \"name\": \"GatewaySubnet\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_virtual_network_gateway_operationsb4d417ef/providers/Microsoft.Network/virtualNetworks/pyvirtnetb4d417ef/subnets/GatewaySubnet\",\r\n
         \ \"etag\": \"W/\\\"ee4ae7a4-e610-4989-898e-5ba06c655979\\\"\",\r\n  \"properties\":
@@ -356,7 +356,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [5a9df528-c651-11e6-8690-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/a762cec6-2ab4-44c8-8cd2-c62d60b5cea0?api-version=2016-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/a762cec6-2ab4-44c8-8cd2-c62d60b5cea0?api-version=2016-09-01
   response:
     body: {string: "{\r\n  \"status\": \"Succeeded\"\r\n}"}
     headers:
@@ -387,7 +387,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [5a9df528-c651-11e6-8690-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_virtual_network_gateway_operationsb4d417ef/providers/Microsoft.Network/virtualNetworks/pyvirtnetb4d417ef/subnets/GatewaySubnet?api-version=2016-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_virtual_network_gateway_operationsb4d417ef/providers/Microsoft.Network/virtualNetworks/pyvirtnetb4d417ef/subnets/GatewaySubnet?api-version=2016-09-01
   response:
     body: {string: "{\r\n  \"name\": \"GatewaySubnet\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_virtual_network_gateway_operationsb4d417ef/providers/Microsoft.Network/virtualNetworks/pyvirtnetb4d417ef/subnets/GatewaySubnet\",\r\n
         \ \"etag\": \"W/\\\"7b7a4de4-27e0-40e1-a016-605c9a093626\\\"\",\r\n  \"properties\":
@@ -424,7 +424,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [5d6a3a94-c651-11e6-b860-ecb1d756380e]
     method: PUT
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_virtual_network_gateway_operationsb4d417ef/providers/Microsoft.Network/publicIPAddresses/pyipnameb4d417ef?api-version=2016-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_virtual_network_gateway_operationsb4d417ef/providers/Microsoft.Network/publicIPAddresses/pyipnameb4d417ef?api-version=2016-09-01
   response:
     body: {string: "{\r\n  \"name\": \"pyipnameb4d417ef\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_virtual_network_gateway_operationsb4d417ef/providers/Microsoft.Network/publicIPAddresses/pyipnameb4d417ef\",\r\n
         \ \"etag\": \"W/\\\"9ea1a3c0-0d7f-45e2-8345-8413752a4544\\\"\",\r\n  \"type\":
@@ -461,7 +461,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [5d6a3a94-c651-11e6-b860-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/13f8d5e8-fbd8-4d5d-a2d6-4e2d1cfaa84d?api-version=2016-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/13f8d5e8-fbd8-4d5d-a2d6-4e2d1cfaa84d?api-version=2016-09-01
   response:
     body: {string: "{\r\n  \"status\": \"Succeeded\"\r\n}"}
     headers:
@@ -492,7 +492,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [5d6a3a94-c651-11e6-b860-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_virtual_network_gateway_operationsb4d417ef/providers/Microsoft.Network/publicIPAddresses/pyipnameb4d417ef?api-version=2016-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_virtual_network_gateway_operationsb4d417ef/providers/Microsoft.Network/publicIPAddresses/pyipnameb4d417ef?api-version=2016-09-01
   response:
     body: {string: "{\r\n  \"name\": \"pyipnameb4d417ef\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_virtual_network_gateway_operationsb4d417ef/providers/Microsoft.Network/publicIPAddresses/pyipnameb4d417ef\",\r\n
         \ \"etag\": \"W/\\\"64658676-452f-4cc4-aa06-4c08b2fe64f7\\\"\",\r\n  \"type\":
@@ -535,7 +535,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [61bdecba-c651-11e6-8326-ecb1d756380e]
     method: PUT
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_virtual_network_gateway_operationsb4d417ef/providers/Microsoft.Network/virtualNetworkGateways/pyvngb4d417ef?api-version=2016-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_virtual_network_gateway_operationsb4d417ef/providers/Microsoft.Network/virtualNetworkGateways/pyvngb4d417ef?api-version=2016-09-01
   response:
     body: {string: "{\r\n  \"name\": \"pyvngb4d417ef\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_virtual_network_gateway_operationsb4d417ef/providers/Microsoft.Network/virtualNetworkGateways/pyvngb4d417ef\",\r\n
         \ \"etag\": \"W/\\\"a31f23e2-5529-4871-adc1-307eaa95ff38\\\"\",\r\n  \"type\":
@@ -582,7 +582,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [61bdecba-c651-11e6-8326-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
   response:
     body: {string: "{\r\n  \"status\": \"InProgress\"\r\n}"}
     headers:
@@ -614,7 +614,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [61bdecba-c651-11e6-8326-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
   response:
     body: {string: "{\r\n  \"status\": \"InProgress\"\r\n}"}
     headers:
@@ -646,7 +646,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [61bdecba-c651-11e6-8326-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
   response:
     body: {string: "{\r\n  \"status\": \"InProgress\"\r\n}"}
     headers:
@@ -678,7 +678,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [61bdecba-c651-11e6-8326-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
   response:
     body: {string: "{\r\n  \"status\": \"InProgress\"\r\n}"}
     headers:
@@ -710,7 +710,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [61bdecba-c651-11e6-8326-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
   response:
     body: {string: "{\r\n  \"status\": \"InProgress\"\r\n}"}
     headers:
@@ -742,7 +742,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [61bdecba-c651-11e6-8326-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
   response:
     body: {string: "{\r\n  \"status\": \"InProgress\"\r\n}"}
     headers:
@@ -774,7 +774,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [61bdecba-c651-11e6-8326-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
   response:
     body: {string: "{\r\n  \"status\": \"InProgress\"\r\n}"}
     headers:
@@ -806,7 +806,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [61bdecba-c651-11e6-8326-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
   response:
     body: {string: "{\r\n  \"status\": \"InProgress\"\r\n}"}
     headers:
@@ -838,7 +838,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [61bdecba-c651-11e6-8326-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
   response:
     body: {string: "{\r\n  \"status\": \"InProgress\"\r\n}"}
     headers:
@@ -870,7 +870,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [61bdecba-c651-11e6-8326-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
   response:
     body: {string: "{\r\n  \"status\": \"InProgress\"\r\n}"}
     headers:
@@ -902,7 +902,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [61bdecba-c651-11e6-8326-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
   response:
     body: {string: "{\r\n  \"status\": \"InProgress\"\r\n}"}
     headers:
@@ -934,7 +934,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [61bdecba-c651-11e6-8326-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
   response:
     body: {string: "{\r\n  \"status\": \"InProgress\"\r\n}"}
     headers:
@@ -966,7 +966,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [61bdecba-c651-11e6-8326-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
   response:
     body: {string: "{\r\n  \"status\": \"InProgress\"\r\n}"}
     headers:
@@ -998,7 +998,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [61bdecba-c651-11e6-8326-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
   response:
     body: {string: "{\r\n  \"status\": \"InProgress\"\r\n}"}
     headers:
@@ -1030,7 +1030,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [61bdecba-c651-11e6-8326-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
   response:
     body: {string: "{\r\n  \"status\": \"InProgress\"\r\n}"}
     headers:
@@ -1062,7 +1062,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [61bdecba-c651-11e6-8326-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
   response:
     body: {string: "{\r\n  \"status\": \"InProgress\"\r\n}"}
     headers:
@@ -1094,7 +1094,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [61bdecba-c651-11e6-8326-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
   response:
     body: {string: "{\r\n  \"status\": \"InProgress\"\r\n}"}
     headers:
@@ -1126,7 +1126,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [61bdecba-c651-11e6-8326-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
   response:
     body: {string: "{\r\n  \"status\": \"InProgress\"\r\n}"}
     headers:
@@ -1158,7 +1158,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [61bdecba-c651-11e6-8326-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
   response:
     body: {string: "{\r\n  \"status\": \"InProgress\"\r\n}"}
     headers:
@@ -1190,7 +1190,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [61bdecba-c651-11e6-8326-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
   response:
     body: {string: "{\r\n  \"status\": \"InProgress\"\r\n}"}
     headers:
@@ -1222,7 +1222,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [61bdecba-c651-11e6-8326-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
   response:
     body: {string: "{\r\n  \"status\": \"InProgress\"\r\n}"}
     headers:
@@ -1254,7 +1254,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [61bdecba-c651-11e6-8326-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
   response:
     body: {string: "{\r\n  \"status\": \"InProgress\"\r\n}"}
     headers:
@@ -1286,7 +1286,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [61bdecba-c651-11e6-8326-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
   response:
     body: {string: "{\r\n  \"status\": \"InProgress\"\r\n}"}
     headers:
@@ -1318,7 +1318,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [61bdecba-c651-11e6-8326-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
   response:
     body: {string: "{\r\n  \"status\": \"InProgress\"\r\n}"}
     headers:
@@ -1350,7 +1350,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [61bdecba-c651-11e6-8326-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
   response:
     body: {string: "{\r\n  \"status\": \"InProgress\"\r\n}"}
     headers:
@@ -1382,7 +1382,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [61bdecba-c651-11e6-8326-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
   response:
     body: {string: "{\r\n  \"status\": \"InProgress\"\r\n}"}
     headers:
@@ -1414,7 +1414,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [61bdecba-c651-11e6-8326-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
   response:
     body: {string: "{\r\n  \"status\": \"InProgress\"\r\n}"}
     headers:
@@ -1446,7 +1446,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [61bdecba-c651-11e6-8326-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
   response:
     body: {string: "{\r\n  \"status\": \"InProgress\"\r\n}"}
     headers:
@@ -1478,7 +1478,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [61bdecba-c651-11e6-8326-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
   response:
     body: {string: "{\r\n  \"status\": \"InProgress\"\r\n}"}
     headers:
@@ -1510,7 +1510,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [61bdecba-c651-11e6-8326-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
   response:
     body: {string: "{\r\n  \"status\": \"InProgress\"\r\n}"}
     headers:
@@ -1542,7 +1542,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [61bdecba-c651-11e6-8326-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
   response:
     body: {string: "{\r\n  \"status\": \"InProgress\"\r\n}"}
     headers:
@@ -1574,7 +1574,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [61bdecba-c651-11e6-8326-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
   response:
     body: {string: "{\r\n  \"status\": \"InProgress\"\r\n}"}
     headers:
@@ -1606,7 +1606,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [61bdecba-c651-11e6-8326-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
   response:
     body: {string: "{\r\n  \"status\": \"InProgress\"\r\n}"}
     headers:
@@ -1638,7 +1638,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [61bdecba-c651-11e6-8326-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
   response:
     body: {string: "{\r\n  \"status\": \"InProgress\"\r\n}"}
     headers:
@@ -1670,7 +1670,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [61bdecba-c651-11e6-8326-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
   response:
     body: {string: "{\r\n  \"status\": \"InProgress\"\r\n}"}
     headers:
@@ -1702,7 +1702,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [61bdecba-c651-11e6-8326-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
   response:
     body: {string: "{\r\n  \"status\": \"InProgress\"\r\n}"}
     headers:
@@ -1734,7 +1734,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [61bdecba-c651-11e6-8326-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
   response:
     body: {string: "{\r\n  \"status\": \"InProgress\"\r\n}"}
     headers:
@@ -1766,7 +1766,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [61bdecba-c651-11e6-8326-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
   response:
     body: {string: "{\r\n  \"status\": \"InProgress\"\r\n}"}
     headers:
@@ -1798,7 +1798,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [61bdecba-c651-11e6-8326-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
   response:
     body: {string: "{\r\n  \"status\": \"InProgress\"\r\n}"}
     headers:
@@ -1830,7 +1830,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [61bdecba-c651-11e6-8326-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
   response:
     body: {string: "{\r\n  \"status\": \"InProgress\"\r\n}"}
     headers:
@@ -1862,7 +1862,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [61bdecba-c651-11e6-8326-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
   response:
     body: {string: "{\r\n  \"status\": \"InProgress\"\r\n}"}
     headers:
@@ -1894,7 +1894,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [61bdecba-c651-11e6-8326-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
   response:
     body: {string: "{\r\n  \"status\": \"InProgress\"\r\n}"}
     headers:
@@ -1926,7 +1926,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [61bdecba-c651-11e6-8326-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
   response:
     body: {string: "{\r\n  \"status\": \"InProgress\"\r\n}"}
     headers:
@@ -1958,7 +1958,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [61bdecba-c651-11e6-8326-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
   response:
     body: {string: "{\r\n  \"status\": \"InProgress\"\r\n}"}
     headers:
@@ -1990,7 +1990,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [61bdecba-c651-11e6-8326-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
   response:
     body: {string: "{\r\n  \"status\": \"InProgress\"\r\n}"}
     headers:
@@ -2022,7 +2022,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [61bdecba-c651-11e6-8326-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
   response:
     body: {string: "{\r\n  \"status\": \"InProgress\"\r\n}"}
     headers:
@@ -2054,7 +2054,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [61bdecba-c651-11e6-8326-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
   response:
     body: {string: "{\r\n  \"status\": \"InProgress\"\r\n}"}
     headers:
@@ -2086,7 +2086,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [61bdecba-c651-11e6-8326-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
   response:
     body: {string: "{\r\n  \"status\": \"InProgress\"\r\n}"}
     headers:
@@ -2118,7 +2118,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [61bdecba-c651-11e6-8326-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
   response:
     body: {string: "{\r\n  \"status\": \"InProgress\"\r\n}"}
     headers:
@@ -2150,7 +2150,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [61bdecba-c651-11e6-8326-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
   response:
     body: {string: "{\r\n  \"status\": \"InProgress\"\r\n}"}
     headers:
@@ -2182,7 +2182,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [61bdecba-c651-11e6-8326-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
   response:
     body: {string: "{\r\n  \"status\": \"InProgress\"\r\n}"}
     headers:
@@ -2214,7 +2214,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [61bdecba-c651-11e6-8326-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
   response:
     body: {string: "{\r\n  \"status\": \"InProgress\"\r\n}"}
     headers:
@@ -2246,7 +2246,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [61bdecba-c651-11e6-8326-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
   response:
     body: {string: "{\r\n  \"status\": \"InProgress\"\r\n}"}
     headers:
@@ -2278,7 +2278,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [61bdecba-c651-11e6-8326-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
   response:
     body: {string: "{\r\n  \"status\": \"InProgress\"\r\n}"}
     headers:
@@ -2310,7 +2310,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [61bdecba-c651-11e6-8326-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
   response:
     body: {string: "{\r\n  \"status\": \"InProgress\"\r\n}"}
     headers:
@@ -2342,7 +2342,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [61bdecba-c651-11e6-8326-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
   response:
     body: {string: "{\r\n  \"status\": \"InProgress\"\r\n}"}
     headers:
@@ -2374,7 +2374,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [61bdecba-c651-11e6-8326-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
   response:
     body: {string: "{\r\n  \"status\": \"InProgress\"\r\n}"}
     headers:
@@ -2406,7 +2406,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [61bdecba-c651-11e6-8326-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
   response:
     body: {string: "{\r\n  \"status\": \"InProgress\"\r\n}"}
     headers:
@@ -2438,7 +2438,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [61bdecba-c651-11e6-8326-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
   response:
     body: {string: "{\r\n  \"status\": \"InProgress\"\r\n}"}
     headers:
@@ -2470,7 +2470,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [61bdecba-c651-11e6-8326-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
   response:
     body: {string: "{\r\n  \"status\": \"InProgress\"\r\n}"}
     headers:
@@ -2502,7 +2502,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [61bdecba-c651-11e6-8326-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
   response:
     body: {string: "{\r\n  \"status\": \"InProgress\"\r\n}"}
     headers:
@@ -2534,7 +2534,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [61bdecba-c651-11e6-8326-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
   response:
     body: {string: "{\r\n  \"status\": \"InProgress\"\r\n}"}
     headers:
@@ -2566,7 +2566,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [61bdecba-c651-11e6-8326-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
   response:
     body: {string: "{\r\n  \"status\": \"InProgress\"\r\n}"}
     headers:
@@ -2598,7 +2598,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [61bdecba-c651-11e6-8326-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
   response:
     body: {string: "{\r\n  \"status\": \"InProgress\"\r\n}"}
     headers:
@@ -2630,7 +2630,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [61bdecba-c651-11e6-8326-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
   response:
     body: {string: "{\r\n  \"status\": \"InProgress\"\r\n}"}
     headers:
@@ -2662,7 +2662,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [61bdecba-c651-11e6-8326-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
   response:
     body: {string: "{\r\n  \"status\": \"InProgress\"\r\n}"}
     headers:
@@ -2694,7 +2694,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [61bdecba-c651-11e6-8326-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
   response:
     body: {string: "{\r\n  \"status\": \"InProgress\"\r\n}"}
     headers:
@@ -2726,7 +2726,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [61bdecba-c651-11e6-8326-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
   response:
     body: {string: "{\r\n  \"status\": \"InProgress\"\r\n}"}
     headers:
@@ -2758,7 +2758,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [61bdecba-c651-11e6-8326-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
   response:
     body: {string: "{\r\n  \"status\": \"InProgress\"\r\n}"}
     headers:
@@ -2790,7 +2790,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [61bdecba-c651-11e6-8326-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
   response:
     body: {string: "{\r\n  \"status\": \"InProgress\"\r\n}"}
     headers:
@@ -2822,7 +2822,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [61bdecba-c651-11e6-8326-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
   response:
     body: {string: "{\r\n  \"status\": \"InProgress\"\r\n}"}
     headers:
@@ -2854,7 +2854,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [61bdecba-c651-11e6-8326-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
   response:
     body: {string: "{\r\n  \"status\": \"InProgress\"\r\n}"}
     headers:
@@ -2886,7 +2886,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [61bdecba-c651-11e6-8326-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
   response:
     body: {string: "{\r\n  \"status\": \"InProgress\"\r\n}"}
     headers:
@@ -2918,7 +2918,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [61bdecba-c651-11e6-8326-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
   response:
     body: {string: "{\r\n  \"status\": \"InProgress\"\r\n}"}
     headers:
@@ -2950,7 +2950,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [61bdecba-c651-11e6-8326-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
   response:
     body: {string: "{\r\n  \"status\": \"InProgress\"\r\n}"}
     headers:
@@ -2982,7 +2982,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [61bdecba-c651-11e6-8326-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
   response:
     body: {string: "{\r\n  \"status\": \"InProgress\"\r\n}"}
     headers:
@@ -3014,7 +3014,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [61bdecba-c651-11e6-8326-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
   response:
     body: {string: "{\r\n  \"status\": \"InProgress\"\r\n}"}
     headers:
@@ -3046,7 +3046,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [61bdecba-c651-11e6-8326-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
   response:
     body: {string: "{\r\n  \"status\": \"InProgress\"\r\n}"}
     headers:
@@ -3078,7 +3078,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [61bdecba-c651-11e6-8326-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
   response:
     body: {string: "{\r\n  \"status\": \"InProgress\"\r\n}"}
     headers:
@@ -3110,7 +3110,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [61bdecba-c651-11e6-8326-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
   response:
     body: {string: "{\r\n  \"status\": \"InProgress\"\r\n}"}
     headers:
@@ -3142,7 +3142,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [61bdecba-c651-11e6-8326-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
   response:
     body: {string: "{\r\n  \"status\": \"InProgress\"\r\n}"}
     headers:
@@ -3174,7 +3174,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [61bdecba-c651-11e6-8326-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
   response:
     body: {string: "{\r\n  \"status\": \"InProgress\"\r\n}"}
     headers:
@@ -3206,7 +3206,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [61bdecba-c651-11e6-8326-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
   response:
     body: {string: "{\r\n  \"status\": \"InProgress\"\r\n}"}
     headers:
@@ -3238,7 +3238,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [61bdecba-c651-11e6-8326-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
   response:
     body: {string: "{\r\n  \"status\": \"InProgress\"\r\n}"}
     headers:
@@ -3270,7 +3270,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [61bdecba-c651-11e6-8326-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
   response:
     body: {string: "{\r\n  \"status\": \"InProgress\"\r\n}"}
     headers:
@@ -3302,7 +3302,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [61bdecba-c651-11e6-8326-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
   response:
     body: {string: "{\r\n  \"status\": \"InProgress\"\r\n}"}
     headers:
@@ -3334,7 +3334,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [61bdecba-c651-11e6-8326-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
   response:
     body: {string: "{\r\n  \"status\": \"InProgress\"\r\n}"}
     headers:
@@ -3366,7 +3366,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [61bdecba-c651-11e6-8326-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
   response:
     body: {string: "{\r\n  \"status\": \"InProgress\"\r\n}"}
     headers:
@@ -3398,7 +3398,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [61bdecba-c651-11e6-8326-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
   response:
     body: {string: "{\r\n  \"status\": \"InProgress\"\r\n}"}
     headers:
@@ -3430,7 +3430,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [61bdecba-c651-11e6-8326-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
   response:
     body: {string: "{\r\n  \"status\": \"InProgress\"\r\n}"}
     headers:
@@ -3462,7 +3462,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [61bdecba-c651-11e6-8326-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
   response:
     body: {string: "{\r\n  \"status\": \"InProgress\"\r\n}"}
     headers:
@@ -3494,7 +3494,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [61bdecba-c651-11e6-8326-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
   response:
     body: {string: "{\r\n  \"status\": \"InProgress\"\r\n}"}
     headers:
@@ -3526,7 +3526,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [61bdecba-c651-11e6-8326-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
   response:
     body: {string: "{\r\n  \"status\": \"InProgress\"\r\n}"}
     headers:
@@ -3558,7 +3558,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [61bdecba-c651-11e6-8326-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
   response:
     body: {string: "{\r\n  \"status\": \"InProgress\"\r\n}"}
     headers:
@@ -3590,7 +3590,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [61bdecba-c651-11e6-8326-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
   response:
     body: {string: "{\r\n  \"status\": \"InProgress\"\r\n}"}
     headers:
@@ -3622,7 +3622,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [61bdecba-c651-11e6-8326-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
   response:
     body: {string: "{\r\n  \"status\": \"InProgress\"\r\n}"}
     headers:
@@ -3654,7 +3654,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [61bdecba-c651-11e6-8326-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
   response:
     body: {string: "{\r\n  \"status\": \"InProgress\"\r\n}"}
     headers:
@@ -3686,7 +3686,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [61bdecba-c651-11e6-8326-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
   response:
     body: {string: "{\r\n  \"status\": \"InProgress\"\r\n}"}
     headers:
@@ -3718,7 +3718,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [61bdecba-c651-11e6-8326-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
   response:
     body: {string: "{\r\n  \"status\": \"InProgress\"\r\n}"}
     headers:
@@ -3750,7 +3750,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [61bdecba-c651-11e6-8326-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
   response:
     body: {string: "{\r\n  \"status\": \"InProgress\"\r\n}"}
     headers:
@@ -3782,7 +3782,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [61bdecba-c651-11e6-8326-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
   response:
     body: {string: "{\r\n  \"status\": \"InProgress\"\r\n}"}
     headers:
@@ -3814,7 +3814,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [61bdecba-c651-11e6-8326-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
   response:
     body: {string: "{\r\n  \"status\": \"InProgress\"\r\n}"}
     headers:
@@ -3846,7 +3846,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [61bdecba-c651-11e6-8326-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
   response:
     body: {string: "{\r\n  \"status\": \"InProgress\"\r\n}"}
     headers:
@@ -3878,7 +3878,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [61bdecba-c651-11e6-8326-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
   response:
     body: {string: "{\r\n  \"status\": \"InProgress\"\r\n}"}
     headers:
@@ -3910,7 +3910,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [61bdecba-c651-11e6-8326-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
   response:
     body: {string: "{\r\n  \"status\": \"InProgress\"\r\n}"}
     headers:
@@ -3942,7 +3942,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [61bdecba-c651-11e6-8326-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
   response:
     body: {string: "{\r\n  \"status\": \"InProgress\"\r\n}"}
     headers:
@@ -3974,7 +3974,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [61bdecba-c651-11e6-8326-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
   response:
     body: {string: "{\r\n  \"status\": \"InProgress\"\r\n}"}
     headers:
@@ -4006,7 +4006,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [61bdecba-c651-11e6-8326-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
   response:
     body: {string: "{\r\n  \"status\": \"InProgress\"\r\n}"}
     headers:
@@ -4038,7 +4038,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [61bdecba-c651-11e6-8326-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
   response:
     body: {string: "{\r\n  \"status\": \"InProgress\"\r\n}"}
     headers:
@@ -4070,7 +4070,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [61bdecba-c651-11e6-8326-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
   response:
     body: {string: "{\r\n  \"status\": \"InProgress\"\r\n}"}
     headers:
@@ -4102,7 +4102,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [61bdecba-c651-11e6-8326-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
   response:
     body: {string: "{\r\n  \"status\": \"InProgress\"\r\n}"}
     headers:
@@ -4134,7 +4134,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [61bdecba-c651-11e6-8326-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
   response:
     body: {string: "{\r\n  \"status\": \"InProgress\"\r\n}"}
     headers:
@@ -4166,7 +4166,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [61bdecba-c651-11e6-8326-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
   response:
     body: {string: "{\r\n  \"status\": \"InProgress\"\r\n}"}
     headers:
@@ -4198,7 +4198,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [61bdecba-c651-11e6-8326-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
   response:
     body: {string: "{\r\n  \"status\": \"InProgress\"\r\n}"}
     headers:
@@ -4230,7 +4230,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [61bdecba-c651-11e6-8326-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
   response:
     body: {string: "{\r\n  \"status\": \"InProgress\"\r\n}"}
     headers:
@@ -4262,7 +4262,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [61bdecba-c651-11e6-8326-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
   response:
     body: {string: "{\r\n  \"status\": \"InProgress\"\r\n}"}
     headers:
@@ -4294,7 +4294,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [61bdecba-c651-11e6-8326-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
   response:
     body: {string: "{\r\n  \"status\": \"InProgress\"\r\n}"}
     headers:
@@ -4326,7 +4326,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [61bdecba-c651-11e6-8326-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
   response:
     body: {string: "{\r\n  \"status\": \"InProgress\"\r\n}"}
     headers:
@@ -4358,7 +4358,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [61bdecba-c651-11e6-8326-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
   response:
     body: {string: "{\r\n  \"status\": \"InProgress\"\r\n}"}
     headers:
@@ -4390,7 +4390,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [61bdecba-c651-11e6-8326-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
   response:
     body: {string: "{\r\n  \"status\": \"InProgress\"\r\n}"}
     headers:
@@ -4422,7 +4422,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [61bdecba-c651-11e6-8326-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
   response:
     body: {string: "{\r\n  \"status\": \"InProgress\"\r\n}"}
     headers:
@@ -4454,7 +4454,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [61bdecba-c651-11e6-8326-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
   response:
     body: {string: "{\r\n  \"status\": \"InProgress\"\r\n}"}
     headers:
@@ -4486,7 +4486,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [61bdecba-c651-11e6-8326-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
   response:
     body: {string: "{\r\n  \"status\": \"InProgress\"\r\n}"}
     headers:
@@ -4518,7 +4518,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [61bdecba-c651-11e6-8326-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
   response:
     body: {string: "{\r\n  \"status\": \"InProgress\"\r\n}"}
     headers:
@@ -4550,7 +4550,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [61bdecba-c651-11e6-8326-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
   response:
     body: {string: "{\r\n  \"status\": \"InProgress\"\r\n}"}
     headers:
@@ -4582,7 +4582,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [61bdecba-c651-11e6-8326-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
   response:
     body: {string: "{\r\n  \"status\": \"InProgress\"\r\n}"}
     headers:
@@ -4614,7 +4614,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [61bdecba-c651-11e6-8326-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
   response:
     body: {string: "{\r\n  \"status\": \"InProgress\"\r\n}"}
     headers:
@@ -4646,7 +4646,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [61bdecba-c651-11e6-8326-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
   response:
     body: {string: "{\r\n  \"status\": \"InProgress\"\r\n}"}
     headers:
@@ -4678,7 +4678,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [61bdecba-c651-11e6-8326-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
   response:
     body: {string: "{\r\n  \"status\": \"InProgress\"\r\n}"}
     headers:
@@ -4710,7 +4710,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [61bdecba-c651-11e6-8326-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
   response:
     body: {string: "{\r\n  \"status\": \"InProgress\"\r\n}"}
     headers:
@@ -4742,7 +4742,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [61bdecba-c651-11e6-8326-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
   response:
     body: {string: "{\r\n  \"status\": \"InProgress\"\r\n}"}
     headers:
@@ -4774,7 +4774,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [61bdecba-c651-11e6-8326-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
   response:
     body: {string: "{\r\n  \"status\": \"InProgress\"\r\n}"}
     headers:
@@ -4806,7 +4806,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [61bdecba-c651-11e6-8326-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
   response:
     body: {string: "{\r\n  \"status\": \"InProgress\"\r\n}"}
     headers:
@@ -4838,7 +4838,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [61bdecba-c651-11e6-8326-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
   response:
     body: {string: "{\r\n  \"status\": \"InProgress\"\r\n}"}
     headers:
@@ -4870,7 +4870,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [61bdecba-c651-11e6-8326-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
   response:
     body: {string: "{\r\n  \"status\": \"InProgress\"\r\n}"}
     headers:
@@ -4902,7 +4902,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [61bdecba-c651-11e6-8326-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
   response:
     body: {string: "{\r\n  \"status\": \"InProgress\"\r\n}"}
     headers:
@@ -4934,7 +4934,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [61bdecba-c651-11e6-8326-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
   response:
     body: {string: "{\r\n  \"status\": \"InProgress\"\r\n}"}
     headers:
@@ -4966,7 +4966,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [61bdecba-c651-11e6-8326-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
   response:
     body: {string: "{\r\n  \"status\": \"InProgress\"\r\n}"}
     headers:
@@ -4998,7 +4998,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [61bdecba-c651-11e6-8326-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
   response:
     body: {string: "{\r\n  \"status\": \"InProgress\"\r\n}"}
     headers:
@@ -5030,7 +5030,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [61bdecba-c651-11e6-8326-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
   response:
     body: {string: "{\r\n  \"status\": \"InProgress\"\r\n}"}
     headers:
@@ -5062,7 +5062,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [61bdecba-c651-11e6-8326-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
   response:
     body: {string: "{\r\n  \"status\": \"InProgress\"\r\n}"}
     headers:
@@ -5094,7 +5094,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [61bdecba-c651-11e6-8326-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
   response:
     body: {string: "{\r\n  \"status\": \"InProgress\"\r\n}"}
     headers:
@@ -5126,7 +5126,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [61bdecba-c651-11e6-8326-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
   response:
     body: {string: "{\r\n  \"status\": \"InProgress\"\r\n}"}
     headers:
@@ -5158,7 +5158,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [61bdecba-c651-11e6-8326-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
   response:
     body: {string: "{\r\n  \"status\": \"InProgress\"\r\n}"}
     headers:
@@ -5190,7 +5190,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [61bdecba-c651-11e6-8326-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
   response:
     body: {string: "{\r\n  \"status\": \"InProgress\"\r\n}"}
     headers:
@@ -5222,7 +5222,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [61bdecba-c651-11e6-8326-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
   response:
     body: {string: "{\r\n  \"status\": \"InProgress\"\r\n}"}
     headers:
@@ -5254,7 +5254,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [61bdecba-c651-11e6-8326-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
   response:
     body: {string: "{\r\n  \"status\": \"InProgress\"\r\n}"}
     headers:
@@ -5286,7 +5286,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [61bdecba-c651-11e6-8326-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
   response:
     body: {string: "{\r\n  \"status\": \"InProgress\"\r\n}"}
     headers:
@@ -5318,7 +5318,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [61bdecba-c651-11e6-8326-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
   response:
     body: {string: "{\r\n  \"status\": \"InProgress\"\r\n}"}
     headers:
@@ -5350,7 +5350,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [61bdecba-c651-11e6-8326-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
   response:
     body: {string: "{\r\n  \"status\": \"InProgress\"\r\n}"}
     headers:
@@ -5382,7 +5382,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [61bdecba-c651-11e6-8326-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
   response:
     body: {string: "{\r\n  \"status\": \"InProgress\"\r\n}"}
     headers:
@@ -5414,7 +5414,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [61bdecba-c651-11e6-8326-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
   response:
     body: {string: "{\r\n  \"status\": \"InProgress\"\r\n}"}
     headers:
@@ -5446,7 +5446,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [61bdecba-c651-11e6-8326-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
   response:
     body: {string: "{\r\n  \"status\": \"InProgress\"\r\n}"}
     headers:
@@ -5478,7 +5478,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [61bdecba-c651-11e6-8326-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
   response:
     body: {string: "{\r\n  \"status\": \"InProgress\"\r\n}"}
     headers:
@@ -5510,7 +5510,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [61bdecba-c651-11e6-8326-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
   response:
     body: {string: "{\r\n  \"status\": \"InProgress\"\r\n}"}
     headers:
@@ -5542,7 +5542,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [61bdecba-c651-11e6-8326-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
   response:
     body: {string: "{\r\n  \"status\": \"InProgress\"\r\n}"}
     headers:
@@ -5574,7 +5574,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [61bdecba-c651-11e6-8326-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
   response:
     body: {string: "{\r\n  \"status\": \"InProgress\"\r\n}"}
     headers:
@@ -5606,7 +5606,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [61bdecba-c651-11e6-8326-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
   response:
     body: {string: "{\r\n  \"status\": \"InProgress\"\r\n}"}
     headers:
@@ -5638,7 +5638,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [61bdecba-c651-11e6-8326-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
   response:
     body: {string: "{\r\n  \"status\": \"InProgress\"\r\n}"}
     headers:
@@ -5670,7 +5670,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [61bdecba-c651-11e6-8326-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
   response:
     body: {string: "{\r\n  \"status\": \"InProgress\"\r\n}"}
     headers:
@@ -5702,7 +5702,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [61bdecba-c651-11e6-8326-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
   response:
     body: {string: "{\r\n  \"status\": \"InProgress\"\r\n}"}
     headers:
@@ -5734,7 +5734,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [61bdecba-c651-11e6-8326-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
   response:
     body: {string: "{\r\n  \"status\": \"InProgress\"\r\n}"}
     headers:
@@ -5766,7 +5766,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [61bdecba-c651-11e6-8326-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
   response:
     body: {string: "{\r\n  \"status\": \"InProgress\"\r\n}"}
     headers:
@@ -5798,7 +5798,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [61bdecba-c651-11e6-8326-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
   response:
     body: {string: "{\r\n  \"status\": \"InProgress\"\r\n}"}
     headers:
@@ -5830,7 +5830,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [61bdecba-c651-11e6-8326-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
   response:
     body: {string: "{\r\n  \"status\": \"InProgress\"\r\n}"}
     headers:
@@ -5862,7 +5862,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [61bdecba-c651-11e6-8326-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
   response:
     body: {string: "{\r\n  \"status\": \"InProgress\"\r\n}"}
     headers:
@@ -5894,7 +5894,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [61bdecba-c651-11e6-8326-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
   response:
     body: {string: "{\r\n  \"status\": \"InProgress\"\r\n}"}
     headers:
@@ -5926,7 +5926,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [61bdecba-c651-11e6-8326-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
   response:
     body: {string: "{\r\n  \"status\": \"InProgress\"\r\n}"}
     headers:
@@ -5958,7 +5958,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [61bdecba-c651-11e6-8326-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
   response:
     body: {string: "{\r\n  \"status\": \"InProgress\"\r\n}"}
     headers:
@@ -5990,7 +5990,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [61bdecba-c651-11e6-8326-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
   response:
     body: {string: "{\r\n  \"status\": \"InProgress\"\r\n}"}
     headers:
@@ -6022,7 +6022,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [61bdecba-c651-11e6-8326-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
   response:
     body: {string: "{\r\n  \"status\": \"InProgress\"\r\n}"}
     headers:
@@ -6054,7 +6054,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [61bdecba-c651-11e6-8326-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
   response:
     body: {string: "{\r\n  \"status\": \"InProgress\"\r\n}"}
     headers:
@@ -6086,7 +6086,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [61bdecba-c651-11e6-8326-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
   response:
     body: {string: "{\r\n  \"status\": \"InProgress\"\r\n}"}
     headers:
@@ -6118,7 +6118,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [61bdecba-c651-11e6-8326-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
   response:
     body: {string: "{\r\n  \"status\": \"InProgress\"\r\n}"}
     headers:
@@ -6150,7 +6150,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [61bdecba-c651-11e6-8326-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
   response:
     body: {string: "{\r\n  \"status\": \"InProgress\"\r\n}"}
     headers:
@@ -6182,7 +6182,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [61bdecba-c651-11e6-8326-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
   response:
     body: {string: "{\r\n  \"status\": \"InProgress\"\r\n}"}
     headers:
@@ -6214,7 +6214,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [61bdecba-c651-11e6-8326-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
   response:
     body: {string: "{\r\n  \"status\": \"InProgress\"\r\n}"}
     headers:
@@ -6246,7 +6246,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [61bdecba-c651-11e6-8326-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
   response:
     body: {string: "{\r\n  \"status\": \"InProgress\"\r\n}"}
     headers:
@@ -6278,7 +6278,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [61bdecba-c651-11e6-8326-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
   response:
     body: {string: "{\r\n  \"status\": \"InProgress\"\r\n}"}
     headers:
@@ -6310,7 +6310,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [61bdecba-c651-11e6-8326-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
   response:
     body: {string: "{\r\n  \"status\": \"InProgress\"\r\n}"}
     headers:
@@ -6342,7 +6342,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [61bdecba-c651-11e6-8326-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
   response:
     body: {string: "{\r\n  \"status\": \"InProgress\"\r\n}"}
     headers:
@@ -6374,7 +6374,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [61bdecba-c651-11e6-8326-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
   response:
     body: {string: "{\r\n  \"status\": \"InProgress\"\r\n}"}
     headers:
@@ -6406,7 +6406,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [61bdecba-c651-11e6-8326-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
   response:
     body: {string: "{\r\n  \"status\": \"InProgress\"\r\n}"}
     headers:
@@ -6438,7 +6438,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [61bdecba-c651-11e6-8326-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
   response:
     body: {string: "{\r\n  \"status\": \"InProgress\"\r\n}"}
     headers:
@@ -6470,7 +6470,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [61bdecba-c651-11e6-8326-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
   response:
     body: {string: "{\r\n  \"status\": \"InProgress\"\r\n}"}
     headers:
@@ -6502,7 +6502,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [61bdecba-c651-11e6-8326-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
   response:
     body: {string: "{\r\n  \"status\": \"InProgress\"\r\n}"}
     headers:
@@ -6534,7 +6534,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [61bdecba-c651-11e6-8326-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
   response:
     body: {string: "{\r\n  \"status\": \"InProgress\"\r\n}"}
     headers:
@@ -6566,7 +6566,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [61bdecba-c651-11e6-8326-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
   response:
     body: {string: "{\r\n  \"status\": \"InProgress\"\r\n}"}
     headers:
@@ -6598,7 +6598,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [61bdecba-c651-11e6-8326-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
   response:
     body: {string: "{\r\n  \"status\": \"InProgress\"\r\n}"}
     headers:
@@ -6630,7 +6630,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [61bdecba-c651-11e6-8326-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
   response:
     body: {string: "{\r\n  \"status\": \"InProgress\"\r\n}"}
     headers:
@@ -6662,7 +6662,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [61bdecba-c651-11e6-8326-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/94580ad0-dc58-49b5-8cc1-829eca60d5f1?api-version=2016-09-01
   response:
     body: {string: "{\r\n  \"status\": \"Succeeded\"\r\n}"}
     headers:
@@ -6693,7 +6693,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [61bdecba-c651-11e6-8326-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_virtual_network_gateway_operationsb4d417ef/providers/Microsoft.Network/virtualNetworkGateways/pyvngb4d417ef?api-version=2016-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_virtual_network_gateway_operationsb4d417ef/providers/Microsoft.Network/virtualNetworkGateways/pyvngb4d417ef?api-version=2016-09-01
   response:
     body: {string: "{\r\n  \"name\": \"pyvngb4d417ef\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_network_test_virtual_network_gateway_operationsb4d417ef/providers/Microsoft.Network/virtualNetworkGateways/pyvngb4d417ef\",\r\n
         \ \"etag\": \"W/\\\"b3e64d27-8d3a-4e3d-a96c-06d7ccdf0924\\\"\",\r\n  \"type\":

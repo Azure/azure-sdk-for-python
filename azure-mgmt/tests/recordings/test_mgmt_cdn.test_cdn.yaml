@@ -12,7 +12,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [e2b048d2-c22b-11e6-8227-ecb1d756380e]
     method: POST
-    uri: https:/management.azure.com/providers/Microsoft.Cdn/checkNameAvailability?api-version=2016-10-02
+    uri: https://management.azure.com/providers/Microsoft.Cdn/checkNameAvailability?api-version=2016-10-02
   response:
     body: {string: "{\r\n  \"nameAvailable\":true,\"reason\":null,\"message\":null\r\n}"}
     headers:
