@@ -45,6 +45,11 @@ class DatabaseAccount(Resource):
     :vartype database_account_offer_type: str or
      :class:`DatabaseAccountOfferType
      <azure.mgmt.documentdb.models.DatabaseAccountOfferType>`
+    :param ip_range_filter: DocumentDB Firewall Support: This value specifies
+     the set of IP addresses or IP address ranges in CIDR form to be included
+     as the allowed list of client IPs for a given database account. IP
+     addresses/ranges must be comma separated and must not contain any spaces.
+    :type ip_range_filter: str
     :param consistency_policy: The consistency policy for the DocumentDB
      database account.
     :type consistency_policy: :class:`ConsistencyPolicy
@@ -61,7 +66,7 @@ class DatabaseAccount(Resource):
      their failover priorities.
     :vartype failover_policies: list of :class:`FailoverPolicy
      <azure.mgmt.documentdb.models.FailoverPolicy>`
-    """ 
+    """
 
     _validation = {
         'id': {'readonly': True},
@@ -85,18 +90,20 @@ class DatabaseAccount(Resource):
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'document_endpoint': {'key': 'properties.documentEndpoint', 'type': 'str'},
         'database_account_offer_type': {'key': 'properties.databaseAccountOfferType', 'type': 'DatabaseAccountOfferType'},
+        'ip_range_filter': {'key': 'properties.ipRangeFilter', 'type': 'str'},
         'consistency_policy': {'key': 'properties.consistencyPolicy', 'type': 'ConsistencyPolicy'},
         'write_locations': {'key': 'properties.writeLocations', 'type': '[Location]'},
         'read_locations': {'key': 'properties.readLocations', 'type': '[Location]'},
         'failover_policies': {'key': 'properties.failoverPolicies', 'type': '[FailoverPolicy]'},
     }
 
-    def __init__(self, location, tags=None, kind="GlobalDocumentDB", provisioning_state=None, consistency_policy=None):
+    def __init__(self, location, tags=None, kind="GlobalDocumentDB", provisioning_state=None, ip_range_filter=None, consistency_policy=None):
         super(DatabaseAccount, self).__init__(location=location, tags=tags)
         self.kind = kind
         self.provisioning_state = provisioning_state
         self.document_endpoint = None
         self.database_account_offer_type = None
+        self.ip_range_filter = ip_range_filter
         self.consistency_policy = consistency_policy
         self.write_locations = None
         self.read_locations = None

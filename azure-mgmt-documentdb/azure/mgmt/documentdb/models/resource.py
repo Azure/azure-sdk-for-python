@@ -29,7 +29,7 @@ class Resource(Model):
     :type location: str
     :param tags:
     :type tags: dict
-    """ 
+    """
 
     _validation = {
         'id': {'readonly': True},

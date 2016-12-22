@@ -39,7 +39,12 @@ class DatabaseAccountCreateUpdateParameters(Resource):
      <azure.mgmt.documentdb.models.Location>`
     :ivar database_account_offer_type:  Default value: "Standard" .
     :vartype database_account_offer_type: str
-    """ 
+    :param ip_range_filter: DocumentDB Firewall Support: This value specifies
+     the set of IP addresses or IP address ranges in CIDR form to be included
+     as the allowed list of client IPs for a given database account. IP
+     addresses/ranges must be comma separated and must not contain any spaces.
+    :type ip_range_filter: str
+    """
 
     _validation = {
         'id': {'readonly': True},
@@ -59,11 +64,13 @@ class DatabaseAccountCreateUpdateParameters(Resource):
         'consistency_policy': {'key': 'properties.consistencyPolicy', 'type': 'ConsistencyPolicy'},
         'locations': {'key': 'properties.locations', 'type': '[Location]'},
         'database_account_offer_type': {'key': 'properties.databaseAccountOfferType', 'type': 'str'},
+        'ip_range_filter': {'key': 'properties.ipRangeFilter', 'type': 'str'},
     }
 
     database_account_offer_type = "Standard"
 
-    def __init__(self, location, locations, tags=None, consistency_policy=None):
+    def __init__(self, location, locations, tags=None, consistency_policy=None, ip_range_filter=None):
         super(DatabaseAccountCreateUpdateParameters, self).__init__(location=location, tags=tags)
         self.consistency_policy = consistency_policy
         self.locations = locations
+        self.ip_range_filter = ip_range_filter
