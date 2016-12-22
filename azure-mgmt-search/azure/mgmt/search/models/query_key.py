@@ -23,7 +23,7 @@ class QueryKey(Model):
     :vartype name: str
     :ivar key: The value of the query API key.
     :vartype key: str
-    """ 
+    """
 
     _validation = {
         'name': {'readonly': True},

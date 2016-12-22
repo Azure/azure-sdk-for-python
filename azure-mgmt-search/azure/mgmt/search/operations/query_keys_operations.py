@@ -198,8 +198,8 @@ class QueryKeysOperations(object):
     def delete(
             self, resource_group_name, search_service_name, key, search_management_request_options=None, custom_headers=None, raw=False, **operation_config):
         """Deletes the specified query key. Unlike admin keys, query keys are not
-        regenerated. The process for regenerating a query key is to delete
-        and then recreate it.
+        regenerated. The process for regenerating a query key is to delete and
+        then recreate it.
 
         :param resource_group_name: The name of the resource group within the
          current subscription. You can obtain this value from the Azure

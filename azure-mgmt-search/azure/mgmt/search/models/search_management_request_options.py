@@ -16,10 +16,10 @@ class SearchManagementRequestOptions(Model):
     """Additional parameters for a set of operations.
 
     :param client_request_id: A client-generated GUID value that identifies
-     this request. If specified, this will be included in response
-     information as a way to track the request.
+     this request. If specified, this will be included in response information
+     as a way to track the request.
     :type client_request_id: str
-    """ 
+    """
 
     def __init__(self, client_request_id=None):
         self.client_request_id = client_request_id
