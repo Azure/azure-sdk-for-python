@@ -143,13 +143,21 @@
       },
       "output_dir": "azure-mgmt-logic/azure/mgmt/logic"
     },
-    "machinelearning": {
+    "machinelearning.webservices": {
       "swagger": "arm-machinelearning/2016-05-01-preview/swagger/webservices.json",
       "autorest_options": {
-        "Namespace": "azure.mgmt.machinelearning",
+        "Namespace": "azure.mgmt.machinelearning.webservices",
         "PackageVersion": "0.1.0"
       },
-      "output_dir": "unreleased/azure-mgmt-machinelearning/azure/mgmt/machinelearning"
+      "output_dir": "azure-mgmt-machinelearning/azure/mgmt/machinelearning/webservices"
+    },
+    "machinelearning.commitmentplans": {
+      "swagger": "arm-machinelearning/2016-05-01-preview/swagger/commitmentPlans.json",
+      "autorest_options": {
+        "Namespace": "azure.mgmt.machinelearning.commitmentplans",
+        "PackageVersion": "0.1.0"
+      },
+      "output_dir": "azure-mgmt-machinelearning/azure/mgmt/machinelearning/commitmentplans"
     },
     "media": {
       "swagger": "arm-mediaservices/2015-10-01/swagger/media.json",
