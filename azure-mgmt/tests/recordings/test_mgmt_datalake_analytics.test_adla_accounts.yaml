@@ -12,7 +12,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [7758b5f0-bda3-11e6-954f-ecb1d756380e]
     method: PUT
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_mgmt_datalake_analytics_test_adla_accountscd761330?api-version=2016-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_mgmt_datalake_analytics_test_adla_accountscd761330?api-version=2016-09-01
   response:
     body: {string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_datalake_analytics_test_adla_accountscd761330","name":"test_mgmt_datalake_analytics_test_adla_accountscd761330","location":"eastus2","properties":{"provisioningState":"Succeeded"}}'}
     headers:
@@ -113,7 +113,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [77cf455e-bda3-11e6-b3e5-ecb1d756380e]
     method: PUT
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_datalake_analytics_test_adla_accountscd761330/providers/Microsoft.DataLakeStore/accounts/pyarmadls2cd761330?api-version=2016-11-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_datalake_analytics_test_adla_accountscd761330/providers/Microsoft.DataLakeStore/accounts/pyarmadls2cd761330?api-version=2016-11-01
   response:
     body: {string: '{"properties":{"provisioningState":"Creating","state":null,"endpoint":null,"accountId":"736ddc63-2cc3-4f8a-b568-9f3b1bd3d090","creationTime":null,"lastModifiedTime":null},"location":"East
         US 2","tags":null,"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_datalake_analytics_test_adla_accountscd761330/providers/Microsoft.DataLakeStore/accounts/pyarmadls2cd761330","name":"pyarmadls2cd761330","type":"Microsoft.DataLakeStore/accounts"}'}
@@ -150,7 +150,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [77cf455e-bda3-11e6-b3e5-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DataLakeStore/locations/EastUS2/operationResults/736ddc63-2cc3-4f8a-b568-9f3b1bd3d0900?api-version=2016-11-01&expanded=true
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DataLakeStore/locations/EastUS2/operationResults/736ddc63-2cc3-4f8a-b568-9f3b1bd3d0900?api-version=2016-11-01&expanded=true
   response:
     body: {string: '{"status":"InProgress"}'}
     headers:
@@ -184,7 +184,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [77cf455e-bda3-11e6-b3e5-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DataLakeStore/locations/EastUS2/operationResults/736ddc63-2cc3-4f8a-b568-9f3b1bd3d0900?api-version=2016-11-01&expanded=true
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DataLakeStore/locations/EastUS2/operationResults/736ddc63-2cc3-4f8a-b568-9f3b1bd3d0900?api-version=2016-11-01&expanded=true
   response:
     body: {string: '{"status":"Succeeded"}'}
     headers:
@@ -218,7 +218,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [77cf455e-bda3-11e6-b3e5-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_datalake_analytics_test_adla_accountscd761330/providers/Microsoft.DataLakeStore/accounts/pyarmadls2cd761330?api-version=2016-11-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_datalake_analytics_test_adla_accountscd761330/providers/Microsoft.DataLakeStore/accounts/pyarmadls2cd761330?api-version=2016-11-01
   response:
     body: {string: '{"properties":{"firewallState":"Disabled","firewallRules":[],"trustedIdProviderState":"Disabled","trustedIdProviders":[],"encryptionState":"Enabled","encryptionConfig":{"type":"ServiceManaged"},"provisioningState":"Succeeded","state":"Active","endpoint":"pyarmadls2cd761330.azuredatalakestore.net","accountId":"736ddc63-2cc3-4f8a-b568-9f3b1bd3d090","creationTime":"2016-12-09T00:07:35.9299942Z","lastModifiedTime":"2016-12-09T00:07:35.9299942Z"},"location":"East
         US 2","tags":null,"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_datalake_analytics_test_adla_accountscd761330/providers/Microsoft.DataLakeStore/accounts/pyarmadls2cd761330","name":"pyarmadls2cd761330","type":"Microsoft.DataLakeStore/accounts"}'}
@@ -328,7 +328,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [924f7e0a-bda3-11e6-a0c4-ecb1d756380e]
     method: PUT
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_datalake_analytics_test_adla_accountscd761330/providers/Microsoft.DataLakeAnalytics/accounts/pyarmadlacd761330?api-version=2016-11-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_datalake_analytics_test_adla_accountscd761330/providers/Microsoft.DataLakeAnalytics/accounts/pyarmadlacd761330?api-version=2016-11-01
   response:
     body: {string: '{"properties":{"defaultDataLakeStoreAccount":"pyarmadls2cd761330","dataLakeStoreAccounts":[{"properties":{"suffix":"azuredatalakestore.net"},"name":"pyarmadls2cd761330"}],"maxDegreeOfParallelism":30,"maxJobCount":3,"queryStoreRetention":30,"provisioningState":"Creating","state":null,"endpoint":null,"accountId":"bde5e154-5c53-4ed9-9783-f90b3b2a43f7","creationTime":null,"lastModifiedTime":null},"location":"East
         US 2","tags":{"tag1":"value1"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_datalake_analytics_test_adla_accountscd761330/providers/Microsoft.DataLakeAnalytics/accounts/pyarmadlacd761330","name":"pyarmadlacd761330","type":"Microsoft.DataLakeAnalytics/accounts"}'}
@@ -365,7 +365,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [924f7e0a-bda3-11e6-a0c4-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DataLakeAnalytics/locations/EastUS2/operationResults/bde5e154-5c53-4ed9-9783-f90b3b2a43f70?api-version=2016-11-01&expanded=true
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DataLakeAnalytics/locations/EastUS2/operationResults/bde5e154-5c53-4ed9-9783-f90b3b2a43f70?api-version=2016-11-01&expanded=true
   response:
     body: {string: '{"status":"InProgress"}'}
     headers:
@@ -399,7 +399,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [924f7e0a-bda3-11e6-a0c4-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DataLakeAnalytics/locations/EastUS2/operationResults/bde5e154-5c53-4ed9-9783-f90b3b2a43f70?api-version=2016-11-01&expanded=true
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DataLakeAnalytics/locations/EastUS2/operationResults/bde5e154-5c53-4ed9-9783-f90b3b2a43f70?api-version=2016-11-01&expanded=true
   response:
     body: {string: '{"status":"Succeeded"}'}
     headers:
@@ -433,7 +433,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [924f7e0a-bda3-11e6-a0c4-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_datalake_analytics_test_adla_accountscd761330/providers/Microsoft.DataLakeAnalytics/accounts/pyarmadlacd761330?api-version=2016-11-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_datalake_analytics_test_adla_accountscd761330/providers/Microsoft.DataLakeAnalytics/accounts/pyarmadlacd761330?api-version=2016-11-01
   response:
     body: {string: '{"properties":{"defaultDataLakeStoreAccount":"pyarmadls2cd761330","dataLakeStoreAccounts":[{"properties":{"suffix":"azuredatalakestore.net"},"name":"pyarmadls2cd761330"}],"storageAccounts":[],"maxDegreeOfParallelism":30,"maxJobCount":3,"systemMaxDegreeOfParallelism":250,"systemMaxJobCount":20,"queryStoreRetention":30,"hiveMetastores":[],"provisioningState":"Succeeded","state":"Active","endpoint":"pyarmadlacd761330.azuredatalakeanalytics.net","accountId":"bde5e154-5c53-4ed9-9783-f90b3b2a43f7","creationTime":"2016-12-09T00:08:14.0648423Z","lastModifiedTime":"2016-12-09T00:08:14.0648423Z"},"location":"East
         US 2","tags":{"tag1":"value1"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_datalake_analytics_test_adla_accountscd761330/providers/Microsoft.DataLakeAnalytics/accounts/pyarmadlacd761330","name":"pyarmadlacd761330","type":"Microsoft.DataLakeAnalytics/accounts"}'}
@@ -468,7 +468,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [ac93a47a-bda3-11e6-acfb-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_datalake_analytics_test_adla_accountscd761330/providers/Microsoft.DataLakeAnalytics/accounts/pyarmadlacd761330?api-version=2016-11-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_datalake_analytics_test_adla_accountscd761330/providers/Microsoft.DataLakeAnalytics/accounts/pyarmadlacd761330?api-version=2016-11-01
   response:
     body: {string: '{"properties":{"defaultDataLakeStoreAccount":"pyarmadls2cd761330","dataLakeStoreAccounts":[{"properties":{"suffix":"azuredatalakestore.net"},"name":"pyarmadls2cd761330"}],"storageAccounts":[],"maxDegreeOfParallelism":30,"maxJobCount":3,"systemMaxDegreeOfParallelism":250,"systemMaxJobCount":20,"queryStoreRetention":30,"hiveMetastores":[],"provisioningState":"Succeeded","state":"Active","endpoint":"pyarmadlacd761330.azuredatalakeanalytics.net","accountId":"bde5e154-5c53-4ed9-9783-f90b3b2a43f7","creationTime":"2016-12-09T00:08:14.0648423Z","lastModifiedTime":"2016-12-09T00:08:14.0648423Z"},"location":"East
         US 2","tags":{"tag1":"value1"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_datalake_analytics_test_adla_accountscd761330/providers/Microsoft.DataLakeAnalytics/accounts/pyarmadlacd761330","name":"pyarmadlacd761330","type":"Microsoft.DataLakeAnalytics/accounts"}'}
@@ -503,7 +503,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [acfa7854-bda3-11e6-be87-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_datalake_analytics_test_adla_accountscd761330/providers/Microsoft.DataLakeAnalytics/accounts?api-version=2016-11-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_datalake_analytics_test_adla_accountscd761330/providers/Microsoft.DataLakeAnalytics/accounts?api-version=2016-11-01
   response:
     body: {string: '{"value":[{"properties":{"provisioningState":"Succeeded","state":"Active","endpoint":"pyarmadlacd761330.azuredatalakeanalytics.net","accountId":"bde5e154-5c53-4ed9-9783-f90b3b2a43f7","creationTime":"2016-12-09T00:08:14.0648423Z","lastModifiedTime":"2016-12-09T00:08:14.0648423Z"},"location":"East
         US 2","tags":{"tag1":"value1"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_datalake_analytics_test_adla_accountscd761330/providers/Microsoft.DataLakeAnalytics/accounts/pyarmadlacd761330","name":"pyarmadlacd761330","type":"Microsoft.DataLakeAnalytics/accounts"}]}'}
@@ -538,7 +538,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [ad519348-bda3-11e6-85fb-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DataLakeAnalytics/accounts?api-version=2016-11-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DataLakeAnalytics/accounts?api-version=2016-11-01
   response:
     body: {string: '{"value":[{"properties":{"provisioningState":"Succeeded","state":"Active","endpoint":"pyarmadlacd761330.azuredatalakeanalytics.net","accountId":"bde5e154-5c53-4ed9-9783-f90b3b2a43f7","creationTime":"2016-12-09T00:08:14.0648423Z","lastModifiedTime":"2016-12-09T00:08:14.0648423Z"},"location":"East
         US 2","tags":{"tag1":"value1"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_datalake_analytics_test_adla_accountscd761330/providers/Microsoft.DataLakeAnalytics/accounts/pyarmadlacd761330","name":"pyarmadlacd761330","type":"Microsoft.DataLakeAnalytics/accounts"},{"properties":{"provisioningState":"Succeeded","state":"Active","endpoint":"pyarmadla2b9d51798.azuredatalakeanalytics.net","accountId":"0c18b30c-b9c5-4ba9-8eb0-1f6dfe77aa2a","creationTime":"2016-12-08T20:10:41.7425517Z","lastModifiedTime":"2016-12-08T20:10:41.7425517Z"},"location":"East
@@ -578,7 +578,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [adcd4566-bda3-11e6-9914-ecb1d756380e]
     method: PATCH
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_datalake_analytics_test_adla_accountscd761330/providers/Microsoft.DataLakeAnalytics/accounts/pyarmadlacd761330?api-version=2016-11-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_datalake_analytics_test_adla_accountscd761330/providers/Microsoft.DataLakeAnalytics/accounts/pyarmadlacd761330?api-version=2016-11-01
   response:
     body: {string: '{"properties":{"defaultDataLakeStoreAccount":"pyarmadls2cd761330","dataLakeStoreAccounts":[{"properties":{"suffix":"azuredatalakestore.net"},"name":"pyarmadls2cd761330"}],"storageAccounts":[],"maxDegreeOfParallelism":30,"maxJobCount":3,"queryStoreRetention":30,"hiveMetastores":[],"provisioningState":"Succeeded","state":"Active","endpoint":"pyarmadlacd761330.azuredatalakeanalytics.net","accountId":"bde5e154-5c53-4ed9-9783-f90b3b2a43f7","creationTime":"2016-12-09T00:08:14.0648423Z","lastModifiedTime":"2016-12-09T00:08:57.3595639Z"},"location":"East
         US 2","tags":{"tag2":"value2"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_datalake_analytics_test_adla_accountscd761330/providers/Microsoft.DataLakeAnalytics/accounts/pyarmadlacd761330","name":"pyarmadlacd761330","type":"Microsoft.DataLakeAnalytics/accounts"}'}
@@ -613,7 +613,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [adcd4566-bda3-11e6-9914-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_datalake_analytics_test_adla_accountscd761330/providers/Microsoft.DataLakeAnalytics/accounts/pyarmadlacd761330?api-version=2016-11-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_datalake_analytics_test_adla_accountscd761330/providers/Microsoft.DataLakeAnalytics/accounts/pyarmadlacd761330?api-version=2016-11-01
   response:
     body: {string: '{"properties":{"defaultDataLakeStoreAccount":"pyarmadls2cd761330","dataLakeStoreAccounts":[{"properties":{"suffix":"azuredatalakestore.net"},"name":"pyarmadls2cd761330"}],"storageAccounts":[],"maxDegreeOfParallelism":30,"maxJobCount":3,"systemMaxDegreeOfParallelism":250,"systemMaxJobCount":20,"queryStoreRetention":30,"hiveMetastores":[],"provisioningState":"Succeeded","state":"Active","endpoint":"pyarmadlacd761330.azuredatalakeanalytics.net","accountId":"bde5e154-5c53-4ed9-9783-f90b3b2a43f7","creationTime":"2016-12-09T00:08:14.0648423Z","lastModifiedTime":"2016-12-09T00:08:57.3595639Z"},"location":"East
         US 2","tags":{"tag2":"value2"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_datalake_analytics_test_adla_accountscd761330/providers/Microsoft.DataLakeAnalytics/accounts/pyarmadlacd761330","name":"pyarmadlacd761330","type":"Microsoft.DataLakeAnalytics/accounts"}'}

@@ -11,7 +11,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [de5df7a2-9fc1-11e6-bb88-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/usages?api-version=2016-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/usages?api-version=2016-09-01
   response:
     body: {string: "{\r\n  \"value\": [\r\n    {\r\n      \"currentValue\": 3.0,\r\n
         \     \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/usages/VirtualNetworks\",\r\n

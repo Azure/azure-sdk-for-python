@@ -11,7 +11,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [afcf0ad8-9fc1-11e6-b79b-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/CheckDnsNameAvailability?api-version=2016-09-01&domainNameLabel=pydomain
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/CheckDnsNameAvailability?api-version=2016-09-01&domainNameLabel=pydomain
   response:
     body: {string: "{\r\n  \"available\": true\r\n}"}
     headers:

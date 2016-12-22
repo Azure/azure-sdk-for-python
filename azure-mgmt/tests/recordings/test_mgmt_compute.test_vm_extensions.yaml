@@ -84,7 +84,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [d4012eca-be6c-11e6-91c9-ecb1d756380e]
     method: PUT
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_test_vm_extensions15a60f10/providers/Microsoft.Storage/storageAccounts/pyvmextstor15a60f10?api-version=2016-01-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_test_vm_extensions15a60f10/providers/Microsoft.Storage/storageAccounts/pyvmextstor15a60f10?api-version=2016-01-01
   response:
     body: {string: ''}
     headers:
@@ -114,7 +114,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [d4012eca-be6c-11e6-91c9-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Storage/operations/3255577f-1e83-43ff-b28c-8057fc326cc1?monitor=true&api-version=2016-01-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Storage/operations/3255577f-1e83-43ff-b28c-8057fc326cc1?monitor=true&api-version=2016-01-01
   response:
     body: {string: ''}
     headers:
@@ -144,7 +144,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [d4012eca-be6c-11e6-91c9-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Storage/operations/3255577f-1e83-43ff-b28c-8057fc326cc1?monitor=true&api-version=2016-01-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Storage/operations/3255577f-1e83-43ff-b28c-8057fc326cc1?monitor=true&api-version=2016-01-01
   response:
     body: {string: ''}
     headers:
@@ -174,7 +174,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [d4012eca-be6c-11e6-91c9-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Storage/operations/3255577f-1e83-43ff-b28c-8057fc326cc1?monitor=true&api-version=2016-01-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Storage/operations/3255577f-1e83-43ff-b28c-8057fc326cc1?monitor=true&api-version=2016-01-01
   response:
     body: {string: ''}
     headers:
@@ -204,7 +204,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [d4012eca-be6c-11e6-91c9-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Storage/operations/3255577f-1e83-43ff-b28c-8057fc326cc1?monitor=true&api-version=2016-01-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Storage/operations/3255577f-1e83-43ff-b28c-8057fc326cc1?monitor=true&api-version=2016-01-01
   response:
     body: {string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_test_vm_extensions15a60f10/providers/Microsoft.Storage/storageAccounts/pyvmextstor15a60f10","kind":"Storage","location":"westus","name":"pyvmextstor15a60f10","properties":{"creationTime":"2016-12-10T00:08:51.7963294Z","primaryEndpoints":{"blob":"https://pyvmextstor15a60f10.blob.core.windows.net/","file":"https://pyvmextstor15a60f10.file.core.windows.net/","queue":"https://pyvmextstor15a60f10.queue.core.windows.net/","table":"https://pyvmextstor15a60f10.table.core.windows.net/"},"primaryLocation":"westus","provisioningState":"Succeeded","statusOfPrimary":"available"},"sku":{"name":"Standard_LRS","tier":"Standard"},"tags":{},"type":"Microsoft.Storage/storageAccounts"}
 
@@ -237,7 +237,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [d4012eca-be6c-11e6-91c9-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_test_vm_extensions15a60f10/providers/Microsoft.Storage/storageAccounts/pyvmextstor15a60f10?api-version=2016-01-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_test_vm_extensions15a60f10/providers/Microsoft.Storage/storageAccounts/pyvmextstor15a60f10?api-version=2016-01-01
   response:
     body: {string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_test_vm_extensions15a60f10/providers/Microsoft.Storage/storageAccounts/pyvmextstor15a60f10","kind":"Storage","location":"westus","name":"pyvmextstor15a60f10","properties":{"creationTime":"2016-12-10T00:08:51.7963294Z","primaryEndpoints":{"blob":"https://pyvmextstor15a60f10.blob.core.windows.net/","file":"https://pyvmextstor15a60f10.file.core.windows.net/","queue":"https://pyvmextstor15a60f10.queue.core.windows.net/","table":"https://pyvmextstor15a60f10.table.core.windows.net/"},"primaryLocation":"westus","provisioningState":"Succeeded","statusOfPrimary":"available"},"sku":{"name":"Standard_LRS","tier":"Standard"},"tags":{},"type":"Microsoft.Storage/storageAccounts"}
 
@@ -345,7 +345,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [001e3bee-be6d-11e6-ab41-ecb1d756380e]
     method: PUT
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_test_vm_extensions15a60f10/providers/Microsoft.Network/virtualNetworks/pyvmextnet15a60f10?api-version=2016-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_test_vm_extensions15a60f10/providers/Microsoft.Network/virtualNetworks/pyvmextnet15a60f10?api-version=2016-09-01
   response:
     body: {string: "{\r\n  \"name\": \"pyvmextnet15a60f10\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_test_vm_extensions15a60f10/providers/Microsoft.Network/virtualNetworks/pyvmextnet15a60f10\",\r\n
         \ \"etag\": \"W/\\\"67887714-9324-4c36-8ff2-9a7a218ad557\\\"\",\r\n  \"type\":
@@ -387,7 +387,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [001e3bee-be6d-11e6-ab41-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/77feb98a-ee00-40fa-87ba-652ee5055cd6?api-version=2016-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/77feb98a-ee00-40fa-87ba-652ee5055cd6?api-version=2016-09-01
   response:
     body: {string: "{\r\n  \"status\": \"Succeeded\"\r\n}"}
     headers:
@@ -418,7 +418,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [001e3bee-be6d-11e6-ab41-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_test_vm_extensions15a60f10/providers/Microsoft.Network/virtualNetworks/pyvmextnet15a60f10?api-version=2016-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_test_vm_extensions15a60f10/providers/Microsoft.Network/virtualNetworks/pyvmextnet15a60f10?api-version=2016-09-01
   response:
     body: {string: "{\r\n  \"name\": \"pyvmextnet15a60f10\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_test_vm_extensions15a60f10/providers/Microsoft.Network/virtualNetworks/pyvmextnet15a60f10\",\r\n
         \ \"etag\": \"W/\\\"9d6cc054-ee18-4285-9ee3-7624502d2b2b\\\"\",\r\n  \"type\":
@@ -461,7 +461,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [03ca12be-be6d-11e6-8df9-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_test_vm_extensions15a60f10/providers/Microsoft.Network/virtualNetworks/pyvmextnet15a60f10/subnets/pyvmextsub15a60f10?api-version=2016-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_test_vm_extensions15a60f10/providers/Microsoft.Network/virtualNetworks/pyvmextnet15a60f10/subnets/pyvmextsub15a60f10?api-version=2016-09-01
   response:
     body: {string: "{\r\n  \"name\": \"pyvmextsub15a60f10\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_test_vm_extensions15a60f10/providers/Microsoft.Network/virtualNetworks/pyvmextnet15a60f10/subnets/pyvmextsub15a60f10\",\r\n
         \ \"etag\": \"W/\\\"9d6cc054-ee18-4285-9ee3-7624502d2b2b\\\"\",\r\n  \"properties\":
@@ -501,7 +501,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [04206410-be6d-11e6-84d6-ecb1d756380e]
     method: PUT
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_test_vm_extensions15a60f10/providers/Microsoft.Network/networkInterfaces/pyvmextnic15a60f10?api-version=2016-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_test_vm_extensions15a60f10/providers/Microsoft.Network/networkInterfaces/pyvmextnic15a60f10?api-version=2016-09-01
   response:
     body: {string: "{\r\n  \"name\": \"pyvmextnic15a60f10\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_test_vm_extensions15a60f10/providers/Microsoft.Network/networkInterfaces/pyvmextnic15a60f10\",\r\n
         \ \"etag\": \"W/\\\"02899a5b-a132-4c1f-82d4-a3254aea469a\\\"\",\r\n  \"location\":
@@ -544,7 +544,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [04206410-be6d-11e6-84d6-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/d17b38a4-859d-4de6-abb8-a10f595b9c76?api-version=2016-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/westus/operations/d17b38a4-859d-4de6-abb8-a10f595b9c76?api-version=2016-09-01
   response:
     body: {string: "{\r\n  \"status\": \"Succeeded\"\r\n}"}
     headers:
@@ -575,7 +575,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [04206410-be6d-11e6-84d6-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_test_vm_extensions15a60f10/providers/Microsoft.Network/networkInterfaces/pyvmextnic15a60f10?api-version=2016-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_test_vm_extensions15a60f10/providers/Microsoft.Network/networkInterfaces/pyvmextnic15a60f10?api-version=2016-09-01
   response:
     body: {string: "{\r\n  \"name\": \"pyvmextnic15a60f10\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_test_vm_extensions15a60f10/providers/Microsoft.Network/networkInterfaces/pyvmextnic15a60f10\",\r\n
         \ \"etag\": \"W/\\\"02899a5b-a132-4c1f-82d4-a3254aea469a\\\"\",\r\n  \"location\":
@@ -700,7 +700,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [18cdbf40-be6d-11e6-9554-ecb1d756380e]
     method: PUT
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_test_vm_extensions15a60f10/providers/Microsoft.Compute/virtualMachines/pyvmextvm15a60f10?api-version=2016-03-30
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_test_vm_extensions15a60f10/providers/Microsoft.Compute/virtualMachines/pyvmextvm15a60f10?api-version=2016-03-30
   response:
     body: {string: "{\r\n  \"properties\": {\r\n    \"vmId\": \"949b8543-b8b1-43b2-854b-3db170a246f2\",\r\n
         \   \"hardwareProfile\": {\r\n      \"vmSize\": \"Standard_A0\"\r\n    },\r\n
@@ -747,7 +747,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [18cdbf40-be6d-11e6-9554-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/westus/operations/71ce6d0e-be6e-4562-95c5-0c472fc8adb2?api-version=2016-03-30
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/westus/operations/71ce6d0e-be6e-4562-95c5-0c472fc8adb2?api-version=2016-03-30
   response:
     body: {string: "{\r\n  \"startTime\": \"2016-12-10T00:10:46.408298+00:00\",\r\n
         \ \"status\": \"InProgress\",\r\n  \"name\": \"71ce6d0e-be6e-4562-95c5-0c472fc8adb2\"\r\n}"}
@@ -780,7 +780,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [18cdbf40-be6d-11e6-9554-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/westus/operations/71ce6d0e-be6e-4562-95c5-0c472fc8adb2?api-version=2016-03-30
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/westus/operations/71ce6d0e-be6e-4562-95c5-0c472fc8adb2?api-version=2016-03-30
   response:
     body: {string: "{\r\n  \"startTime\": \"2016-12-10T00:10:46.408298+00:00\",\r\n
         \ \"status\": \"InProgress\",\r\n  \"name\": \"71ce6d0e-be6e-4562-95c5-0c472fc8adb2\"\r\n}"}
@@ -813,7 +813,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [18cdbf40-be6d-11e6-9554-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/westus/operations/71ce6d0e-be6e-4562-95c5-0c472fc8adb2?api-version=2016-03-30
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/westus/operations/71ce6d0e-be6e-4562-95c5-0c472fc8adb2?api-version=2016-03-30
   response:
     body: {string: "{\r\n  \"startTime\": \"2016-12-10T00:10:46.408298+00:00\",\r\n
         \ \"status\": \"InProgress\",\r\n  \"name\": \"71ce6d0e-be6e-4562-95c5-0c472fc8adb2\"\r\n}"}
@@ -846,7 +846,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [18cdbf40-be6d-11e6-9554-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/westus/operations/71ce6d0e-be6e-4562-95c5-0c472fc8adb2?api-version=2016-03-30
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/westus/operations/71ce6d0e-be6e-4562-95c5-0c472fc8adb2?api-version=2016-03-30
   response:
     body: {string: "{\r\n  \"startTime\": \"2016-12-10T00:10:46.408298+00:00\",\r\n
         \ \"status\": \"InProgress\",\r\n  \"name\": \"71ce6d0e-be6e-4562-95c5-0c472fc8adb2\"\r\n}"}
@@ -879,7 +879,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [18cdbf40-be6d-11e6-9554-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/westus/operations/71ce6d0e-be6e-4562-95c5-0c472fc8adb2?api-version=2016-03-30
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/westus/operations/71ce6d0e-be6e-4562-95c5-0c472fc8adb2?api-version=2016-03-30
   response:
     body: {string: "{\r\n  \"startTime\": \"2016-12-10T00:10:46.408298+00:00\",\r\n
         \ \"status\": \"InProgress\",\r\n  \"name\": \"71ce6d0e-be6e-4562-95c5-0c472fc8adb2\"\r\n}"}
@@ -912,7 +912,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [18cdbf40-be6d-11e6-9554-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/westus/operations/71ce6d0e-be6e-4562-95c5-0c472fc8adb2?api-version=2016-03-30
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/westus/operations/71ce6d0e-be6e-4562-95c5-0c472fc8adb2?api-version=2016-03-30
   response:
     body: {string: "{\r\n  \"startTime\": \"2016-12-10T00:10:46.408298+00:00\",\r\n
         \ \"status\": \"InProgress\",\r\n  \"name\": \"71ce6d0e-be6e-4562-95c5-0c472fc8adb2\"\r\n}"}
@@ -945,7 +945,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [18cdbf40-be6d-11e6-9554-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/westus/operations/71ce6d0e-be6e-4562-95c5-0c472fc8adb2?api-version=2016-03-30
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/westus/operations/71ce6d0e-be6e-4562-95c5-0c472fc8adb2?api-version=2016-03-30
   response:
     body: {string: "{\r\n  \"startTime\": \"2016-12-10T00:10:46.408298+00:00\",\r\n
         \ \"status\": \"InProgress\",\r\n  \"name\": \"71ce6d0e-be6e-4562-95c5-0c472fc8adb2\"\r\n}"}
@@ -978,7 +978,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [18cdbf40-be6d-11e6-9554-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/westus/operations/71ce6d0e-be6e-4562-95c5-0c472fc8adb2?api-version=2016-03-30
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/westus/operations/71ce6d0e-be6e-4562-95c5-0c472fc8adb2?api-version=2016-03-30
   response:
     body: {string: "{\r\n  \"startTime\": \"2016-12-10T00:10:46.408298+00:00\",\r\n
         \ \"status\": \"InProgress\",\r\n  \"name\": \"71ce6d0e-be6e-4562-95c5-0c472fc8adb2\"\r\n}"}
@@ -1011,7 +1011,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [18cdbf40-be6d-11e6-9554-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/westus/operations/71ce6d0e-be6e-4562-95c5-0c472fc8adb2?api-version=2016-03-30
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/westus/operations/71ce6d0e-be6e-4562-95c5-0c472fc8adb2?api-version=2016-03-30
   response:
     body: {string: "{\r\n  \"startTime\": \"2016-12-10T00:10:46.408298+00:00\",\r\n
         \ \"status\": \"InProgress\",\r\n  \"name\": \"71ce6d0e-be6e-4562-95c5-0c472fc8adb2\"\r\n}"}
@@ -1044,7 +1044,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [18cdbf40-be6d-11e6-9554-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/westus/operations/71ce6d0e-be6e-4562-95c5-0c472fc8adb2?api-version=2016-03-30
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/westus/operations/71ce6d0e-be6e-4562-95c5-0c472fc8adb2?api-version=2016-03-30
   response:
     body: {string: "{\r\n  \"startTime\": \"2016-12-10T00:10:46.408298+00:00\",\r\n
         \ \"status\": \"InProgress\",\r\n  \"name\": \"71ce6d0e-be6e-4562-95c5-0c472fc8adb2\"\r\n}"}
@@ -1077,7 +1077,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [18cdbf40-be6d-11e6-9554-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/westus/operations/71ce6d0e-be6e-4562-95c5-0c472fc8adb2?api-version=2016-03-30
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/westus/operations/71ce6d0e-be6e-4562-95c5-0c472fc8adb2?api-version=2016-03-30
   response:
     body: {string: "{\r\n  \"startTime\": \"2016-12-10T00:10:46.408298+00:00\",\r\n
         \ \"status\": \"InProgress\",\r\n  \"name\": \"71ce6d0e-be6e-4562-95c5-0c472fc8adb2\"\r\n}"}
@@ -1110,7 +1110,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [18cdbf40-be6d-11e6-9554-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/westus/operations/71ce6d0e-be6e-4562-95c5-0c472fc8adb2?api-version=2016-03-30
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/westus/operations/71ce6d0e-be6e-4562-95c5-0c472fc8adb2?api-version=2016-03-30
   response:
     body: {string: "{\r\n  \"startTime\": \"2016-12-10T00:10:46.408298+00:00\",\r\n
         \ \"status\": \"InProgress\",\r\n  \"name\": \"71ce6d0e-be6e-4562-95c5-0c472fc8adb2\"\r\n}"}
@@ -1143,7 +1143,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [18cdbf40-be6d-11e6-9554-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/westus/operations/71ce6d0e-be6e-4562-95c5-0c472fc8adb2?api-version=2016-03-30
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/westus/operations/71ce6d0e-be6e-4562-95c5-0c472fc8adb2?api-version=2016-03-30
   response:
     body: {string: "{\r\n  \"startTime\": \"2016-12-10T00:10:46.408298+00:00\",\r\n
         \ \"status\": \"InProgress\",\r\n  \"name\": \"71ce6d0e-be6e-4562-95c5-0c472fc8adb2\"\r\n}"}
@@ -1176,7 +1176,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [18cdbf40-be6d-11e6-9554-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/westus/operations/71ce6d0e-be6e-4562-95c5-0c472fc8adb2?api-version=2016-03-30
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/westus/operations/71ce6d0e-be6e-4562-95c5-0c472fc8adb2?api-version=2016-03-30
   response:
     body: {string: "{\r\n  \"startTime\": \"2016-12-10T00:10:46.408298+00:00\",\r\n
         \ \"status\": \"InProgress\",\r\n  \"name\": \"71ce6d0e-be6e-4562-95c5-0c472fc8adb2\"\r\n}"}
@@ -1209,7 +1209,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [18cdbf40-be6d-11e6-9554-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/westus/operations/71ce6d0e-be6e-4562-95c5-0c472fc8adb2?api-version=2016-03-30
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/westus/operations/71ce6d0e-be6e-4562-95c5-0c472fc8adb2?api-version=2016-03-30
   response:
     body: {string: "{\r\n  \"startTime\": \"2016-12-10T00:10:46.408298+00:00\",\r\n
         \ \"status\": \"InProgress\",\r\n  \"name\": \"71ce6d0e-be6e-4562-95c5-0c472fc8adb2\"\r\n}"}
@@ -1242,7 +1242,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [18cdbf40-be6d-11e6-9554-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/westus/operations/71ce6d0e-be6e-4562-95c5-0c472fc8adb2?api-version=2016-03-30
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/westus/operations/71ce6d0e-be6e-4562-95c5-0c472fc8adb2?api-version=2016-03-30
   response:
     body: {string: "{\r\n  \"startTime\": \"2016-12-10T00:10:46.408298+00:00\",\r\n
         \ \"status\": \"InProgress\",\r\n  \"name\": \"71ce6d0e-be6e-4562-95c5-0c472fc8adb2\"\r\n}"}
@@ -1275,7 +1275,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [18cdbf40-be6d-11e6-9554-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/westus/operations/71ce6d0e-be6e-4562-95c5-0c472fc8adb2?api-version=2016-03-30
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/westus/operations/71ce6d0e-be6e-4562-95c5-0c472fc8adb2?api-version=2016-03-30
   response:
     body: {string: "{\r\n  \"startTime\": \"2016-12-10T00:10:46.408298+00:00\",\r\n
         \ \"status\": \"InProgress\",\r\n  \"name\": \"71ce6d0e-be6e-4562-95c5-0c472fc8adb2\"\r\n}"}
@@ -1308,7 +1308,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [18cdbf40-be6d-11e6-9554-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/westus/operations/71ce6d0e-be6e-4562-95c5-0c472fc8adb2?api-version=2016-03-30
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/westus/operations/71ce6d0e-be6e-4562-95c5-0c472fc8adb2?api-version=2016-03-30
   response:
     body: {string: "{\r\n  \"startTime\": \"2016-12-10T00:10:46.408298+00:00\",\r\n
         \ \"status\": \"InProgress\",\r\n  \"name\": \"71ce6d0e-be6e-4562-95c5-0c472fc8adb2\"\r\n}"}
@@ -1341,7 +1341,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [18cdbf40-be6d-11e6-9554-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/westus/operations/71ce6d0e-be6e-4562-95c5-0c472fc8adb2?api-version=2016-03-30
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/westus/operations/71ce6d0e-be6e-4562-95c5-0c472fc8adb2?api-version=2016-03-30
   response:
     body: {string: "{\r\n  \"startTime\": \"2016-12-10T00:10:46.408298+00:00\",\r\n
         \ \"status\": \"InProgress\",\r\n  \"name\": \"71ce6d0e-be6e-4562-95c5-0c472fc8adb2\"\r\n}"}
@@ -1374,7 +1374,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [18cdbf40-be6d-11e6-9554-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/westus/operations/71ce6d0e-be6e-4562-95c5-0c472fc8adb2?api-version=2016-03-30
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/westus/operations/71ce6d0e-be6e-4562-95c5-0c472fc8adb2?api-version=2016-03-30
   response:
     body: {string: "{\r\n  \"startTime\": \"2016-12-10T00:10:46.408298+00:00\",\r\n
         \ \"status\": \"InProgress\",\r\n  \"name\": \"71ce6d0e-be6e-4562-95c5-0c472fc8adb2\"\r\n}"}
@@ -1407,7 +1407,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [18cdbf40-be6d-11e6-9554-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/westus/operations/71ce6d0e-be6e-4562-95c5-0c472fc8adb2?api-version=2016-03-30
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/westus/operations/71ce6d0e-be6e-4562-95c5-0c472fc8adb2?api-version=2016-03-30
   response:
     body: {string: "{\r\n  \"startTime\": \"2016-12-10T00:10:46.408298+00:00\",\r\n
         \ \"status\": \"InProgress\",\r\n  \"name\": \"71ce6d0e-be6e-4562-95c5-0c472fc8adb2\"\r\n}"}
@@ -1440,7 +1440,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [18cdbf40-be6d-11e6-9554-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/westus/operations/71ce6d0e-be6e-4562-95c5-0c472fc8adb2?api-version=2016-03-30
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/westus/operations/71ce6d0e-be6e-4562-95c5-0c472fc8adb2?api-version=2016-03-30
   response:
     body: {string: "{\r\n  \"startTime\": \"2016-12-10T00:10:46.408298+00:00\",\r\n
         \ \"status\": \"InProgress\",\r\n  \"name\": \"71ce6d0e-be6e-4562-95c5-0c472fc8adb2\"\r\n}"}
@@ -1473,7 +1473,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [18cdbf40-be6d-11e6-9554-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/westus/operations/71ce6d0e-be6e-4562-95c5-0c472fc8adb2?api-version=2016-03-30
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/westus/operations/71ce6d0e-be6e-4562-95c5-0c472fc8adb2?api-version=2016-03-30
   response:
     body: {string: "{\r\n  \"startTime\": \"2016-12-10T00:10:46.408298+00:00\",\r\n
         \ \"status\": \"InProgress\",\r\n  \"name\": \"71ce6d0e-be6e-4562-95c5-0c472fc8adb2\"\r\n}"}
@@ -1506,7 +1506,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [18cdbf40-be6d-11e6-9554-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/westus/operations/71ce6d0e-be6e-4562-95c5-0c472fc8adb2?api-version=2016-03-30
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/westus/operations/71ce6d0e-be6e-4562-95c5-0c472fc8adb2?api-version=2016-03-30
   response:
     body: {string: "{\r\n  \"startTime\": \"2016-12-10T00:10:46.408298+00:00\",\r\n
         \ \"status\": \"InProgress\",\r\n  \"name\": \"71ce6d0e-be6e-4562-95c5-0c472fc8adb2\"\r\n}"}
@@ -1539,7 +1539,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [18cdbf40-be6d-11e6-9554-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/westus/operations/71ce6d0e-be6e-4562-95c5-0c472fc8adb2?api-version=2016-03-30
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/westus/operations/71ce6d0e-be6e-4562-95c5-0c472fc8adb2?api-version=2016-03-30
   response:
     body: {string: "{\r\n  \"startTime\": \"2016-12-10T00:10:46.408298+00:00\",\r\n
         \ \"status\": \"InProgress\",\r\n  \"name\": \"71ce6d0e-be6e-4562-95c5-0c472fc8adb2\"\r\n}"}
@@ -1572,7 +1572,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [18cdbf40-be6d-11e6-9554-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/westus/operations/71ce6d0e-be6e-4562-95c5-0c472fc8adb2?api-version=2016-03-30
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/westus/operations/71ce6d0e-be6e-4562-95c5-0c472fc8adb2?api-version=2016-03-30
   response:
     body: {string: "{\r\n  \"startTime\": \"2016-12-10T00:10:46.408298+00:00\",\r\n
         \ \"status\": \"InProgress\",\r\n  \"name\": \"71ce6d0e-be6e-4562-95c5-0c472fc8adb2\"\r\n}"}
@@ -1605,7 +1605,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [18cdbf40-be6d-11e6-9554-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/westus/operations/71ce6d0e-be6e-4562-95c5-0c472fc8adb2?api-version=2016-03-30
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/westus/operations/71ce6d0e-be6e-4562-95c5-0c472fc8adb2?api-version=2016-03-30
   response:
     body: {string: "{\r\n  \"startTime\": \"2016-12-10T00:10:46.408298+00:00\",\r\n
         \ \"status\": \"InProgress\",\r\n  \"name\": \"71ce6d0e-be6e-4562-95c5-0c472fc8adb2\"\r\n}"}
@@ -1638,7 +1638,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [18cdbf40-be6d-11e6-9554-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/westus/operations/71ce6d0e-be6e-4562-95c5-0c472fc8adb2?api-version=2016-03-30
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/westus/operations/71ce6d0e-be6e-4562-95c5-0c472fc8adb2?api-version=2016-03-30
   response:
     body: {string: "{\r\n  \"startTime\": \"2016-12-10T00:10:46.408298+00:00\",\r\n
         \ \"status\": \"InProgress\",\r\n  \"name\": \"71ce6d0e-be6e-4562-95c5-0c472fc8adb2\"\r\n}"}
@@ -1671,7 +1671,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [18cdbf40-be6d-11e6-9554-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/westus/operations/71ce6d0e-be6e-4562-95c5-0c472fc8adb2?api-version=2016-03-30
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/westus/operations/71ce6d0e-be6e-4562-95c5-0c472fc8adb2?api-version=2016-03-30
   response:
     body: {string: "{\r\n  \"startTime\": \"2016-12-10T00:10:46.408298+00:00\",\r\n
         \ \"status\": \"InProgress\",\r\n  \"name\": \"71ce6d0e-be6e-4562-95c5-0c472fc8adb2\"\r\n}"}
@@ -1704,7 +1704,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [18cdbf40-be6d-11e6-9554-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/westus/operations/71ce6d0e-be6e-4562-95c5-0c472fc8adb2?api-version=2016-03-30
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/westus/operations/71ce6d0e-be6e-4562-95c5-0c472fc8adb2?api-version=2016-03-30
   response:
     body: {string: "{\r\n  \"startTime\": \"2016-12-10T00:10:46.408298+00:00\",\r\n
         \ \"status\": \"InProgress\",\r\n  \"name\": \"71ce6d0e-be6e-4562-95c5-0c472fc8adb2\"\r\n}"}
@@ -1737,7 +1737,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [18cdbf40-be6d-11e6-9554-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/westus/operations/71ce6d0e-be6e-4562-95c5-0c472fc8adb2?api-version=2016-03-30
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/westus/operations/71ce6d0e-be6e-4562-95c5-0c472fc8adb2?api-version=2016-03-30
   response:
     body: {string: "{\r\n  \"startTime\": \"2016-12-10T00:10:46.408298+00:00\",\r\n
         \ \"status\": \"InProgress\",\r\n  \"name\": \"71ce6d0e-be6e-4562-95c5-0c472fc8adb2\"\r\n}"}
@@ -1770,7 +1770,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [18cdbf40-be6d-11e6-9554-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/westus/operations/71ce6d0e-be6e-4562-95c5-0c472fc8adb2?api-version=2016-03-30
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/westus/operations/71ce6d0e-be6e-4562-95c5-0c472fc8adb2?api-version=2016-03-30
   response:
     body: {string: "{\r\n  \"startTime\": \"2016-12-10T00:10:46.408298+00:00\",\r\n
         \ \"endTime\": \"2016-12-10T00:26:44.9628212+00:00\",\r\n  \"status\": \"Succeeded\",\r\n
@@ -1804,7 +1804,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [18cdbf40-be6d-11e6-9554-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_test_vm_extensions15a60f10/providers/Microsoft.Compute/virtualMachines/pyvmextvm15a60f10?api-version=2016-03-30
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_test_vm_extensions15a60f10/providers/Microsoft.Compute/virtualMachines/pyvmextvm15a60f10?api-version=2016-03-30
   response:
     body: {string: "{\r\n  \"properties\": {\r\n    \"vmId\": \"949b8543-b8b1-43b2-854b-3db170a246f2\",\r\n
         \   \"hardwareProfile\": {\r\n      \"vmSize\": \"Standard_A0\"\r\n    },\r\n
@@ -1855,7 +1855,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [5ef4a3fa-be6f-11e6-8f35-ecb1d756380e]
     method: PUT
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_test_vm_extensions15a60f10/providers/Microsoft.Compute/virtualMachines/pyvmextvm15a60f10/extensions/pyvmextvm15a60f10AccessAgent?api-version=2016-03-30
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_test_vm_extensions15a60f10/providers/Microsoft.Compute/virtualMachines/pyvmextvm15a60f10/extensions/pyvmextvm15a60f10AccessAgent?api-version=2016-03-30
   response:
     body: {string: "{\r\n  \"properties\": {\r\n    \"publisher\": \"Microsoft.Compute\",\r\n
         \   \"type\": \"VMAccessAgent\",\r\n    \"typeHandlerVersion\": \"2.0\",\r\n
@@ -1891,7 +1891,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [5ef4a3fa-be6f-11e6-8f35-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/westus/operations/9ec9229a-651a-4694-8d3b-f2e35f21c0fd?api-version=2016-03-30
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/westus/operations/9ec9229a-651a-4694-8d3b-f2e35f21c0fd?api-version=2016-03-30
   response:
     body: {string: "{\r\n  \"startTime\": \"2016-12-10T00:27:02.8348137+00:00\",\r\n
         \ \"status\": \"InProgress\",\r\n  \"name\": \"9ec9229a-651a-4694-8d3b-f2e35f21c0fd\"\r\n}"}
@@ -1924,7 +1924,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [5ef4a3fa-be6f-11e6-8f35-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/westus/operations/9ec9229a-651a-4694-8d3b-f2e35f21c0fd?api-version=2016-03-30
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/westus/operations/9ec9229a-651a-4694-8d3b-f2e35f21c0fd?api-version=2016-03-30
   response:
     body: {string: "{\r\n  \"startTime\": \"2016-12-10T00:27:02.8348137+00:00\",\r\n
         \ \"status\": \"InProgress\",\r\n  \"name\": \"9ec9229a-651a-4694-8d3b-f2e35f21c0fd\"\r\n}"}
@@ -1957,7 +1957,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [5ef4a3fa-be6f-11e6-8f35-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/westus/operations/9ec9229a-651a-4694-8d3b-f2e35f21c0fd?api-version=2016-03-30
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/westus/operations/9ec9229a-651a-4694-8d3b-f2e35f21c0fd?api-version=2016-03-30
   response:
     body: {string: "{\r\n  \"startTime\": \"2016-12-10T00:27:02.8348137+00:00\",\r\n
         \ \"status\": \"InProgress\",\r\n  \"name\": \"9ec9229a-651a-4694-8d3b-f2e35f21c0fd\"\r\n}"}
@@ -1990,7 +1990,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [5ef4a3fa-be6f-11e6-8f35-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/westus/operations/9ec9229a-651a-4694-8d3b-f2e35f21c0fd?api-version=2016-03-30
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/westus/operations/9ec9229a-651a-4694-8d3b-f2e35f21c0fd?api-version=2016-03-30
   response:
     body: {string: "{\r\n  \"startTime\": \"2016-12-10T00:27:02.8348137+00:00\",\r\n
         \ \"status\": \"InProgress\",\r\n  \"name\": \"9ec9229a-651a-4694-8d3b-f2e35f21c0fd\"\r\n}"}
@@ -2023,7 +2023,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [5ef4a3fa-be6f-11e6-8f35-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/westus/operations/9ec9229a-651a-4694-8d3b-f2e35f21c0fd?api-version=2016-03-30
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/westus/operations/9ec9229a-651a-4694-8d3b-f2e35f21c0fd?api-version=2016-03-30
   response:
     body: {string: "{\r\n  \"startTime\": \"2016-12-10T00:27:02.8348137+00:00\",\r\n
         \ \"status\": \"InProgress\",\r\n  \"name\": \"9ec9229a-651a-4694-8d3b-f2e35f21c0fd\"\r\n}"}
@@ -2056,7 +2056,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [5ef4a3fa-be6f-11e6-8f35-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/westus/operations/9ec9229a-651a-4694-8d3b-f2e35f21c0fd?api-version=2016-03-30
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/westus/operations/9ec9229a-651a-4694-8d3b-f2e35f21c0fd?api-version=2016-03-30
   response:
     body: {string: "{\r\n  \"startTime\": \"2016-12-10T00:27:02.8348137+00:00\",\r\n
         \ \"status\": \"InProgress\",\r\n  \"name\": \"9ec9229a-651a-4694-8d3b-f2e35f21c0fd\"\r\n}"}
@@ -2089,7 +2089,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [5ef4a3fa-be6f-11e6-8f35-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/westus/operations/9ec9229a-651a-4694-8d3b-f2e35f21c0fd?api-version=2016-03-30
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/westus/operations/9ec9229a-651a-4694-8d3b-f2e35f21c0fd?api-version=2016-03-30
   response:
     body: {string: "{\r\n  \"startTime\": \"2016-12-10T00:27:02.8348137+00:00\",\r\n
         \ \"status\": \"InProgress\",\r\n  \"name\": \"9ec9229a-651a-4694-8d3b-f2e35f21c0fd\"\r\n}"}
@@ -2122,7 +2122,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [5ef4a3fa-be6f-11e6-8f35-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/westus/operations/9ec9229a-651a-4694-8d3b-f2e35f21c0fd?api-version=2016-03-30
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/westus/operations/9ec9229a-651a-4694-8d3b-f2e35f21c0fd?api-version=2016-03-30
   response:
     body: {string: "{\r\n  \"startTime\": \"2016-12-10T00:27:02.8348137+00:00\",\r\n
         \ \"status\": \"InProgress\",\r\n  \"name\": \"9ec9229a-651a-4694-8d3b-f2e35f21c0fd\"\r\n}"}
@@ -2155,7 +2155,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [5ef4a3fa-be6f-11e6-8f35-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/westus/operations/9ec9229a-651a-4694-8d3b-f2e35f21c0fd?api-version=2016-03-30
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/westus/operations/9ec9229a-651a-4694-8d3b-f2e35f21c0fd?api-version=2016-03-30
   response:
     body: {string: "{\r\n  \"startTime\": \"2016-12-10T00:27:02.8348137+00:00\",\r\n
         \ \"status\": \"InProgress\",\r\n  \"name\": \"9ec9229a-651a-4694-8d3b-f2e35f21c0fd\"\r\n}"}
@@ -2188,7 +2188,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [5ef4a3fa-be6f-11e6-8f35-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/westus/operations/9ec9229a-651a-4694-8d3b-f2e35f21c0fd?api-version=2016-03-30
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/westus/operations/9ec9229a-651a-4694-8d3b-f2e35f21c0fd?api-version=2016-03-30
   response:
     body: {string: "{\r\n  \"startTime\": \"2016-12-10T00:27:02.8348137+00:00\",\r\n
         \ \"endTime\": \"2016-12-10T00:31:44.9959436+00:00\",\r\n  \"status\": \"Succeeded\",\r\n
@@ -2222,7 +2222,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [5ef4a3fa-be6f-11e6-8f35-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_test_vm_extensions15a60f10/providers/Microsoft.Compute/virtualMachines/pyvmextvm15a60f10/extensions/pyvmextvm15a60f10AccessAgent?api-version=2016-03-30
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_test_vm_extensions15a60f10/providers/Microsoft.Compute/virtualMachines/pyvmextvm15a60f10/extensions/pyvmextvm15a60f10AccessAgent?api-version=2016-03-30
   response:
     body: {string: "{\r\n  \"properties\": {\r\n    \"publisher\": \"Microsoft.Compute\",\r\n
         \   \"type\": \"VMAccessAgent\",\r\n    \"typeHandlerVersion\": \"2.0\",\r\n
@@ -2259,7 +2259,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [15420da8-be70-11e6-b937-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_test_vm_extensions15a60f10/providers/Microsoft.Compute/virtualMachines/pyvmextvm15a60f10/extensions/pyvmextvm15a60f10AccessAgent?api-version=2016-03-30
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_test_vm_extensions15a60f10/providers/Microsoft.Compute/virtualMachines/pyvmextvm15a60f10/extensions/pyvmextvm15a60f10AccessAgent?api-version=2016-03-30
   response:
     body: {string: "{\r\n  \"properties\": {\r\n    \"publisher\": \"Microsoft.Compute\",\r\n
         \   \"type\": \"VMAccessAgent\",\r\n    \"typeHandlerVersion\": \"2.0\",\r\n
@@ -2297,7 +2297,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [159b9a94-be70-11e6-b1e4-ecb1d756380e]
     method: DELETE
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_test_vm_extensions15a60f10/providers/Microsoft.Compute/virtualMachines/pyvmextvm15a60f10/extensions/pyvmextvm15a60f10AccessAgent?api-version=2016-03-30
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_test_vm_extensions15a60f10/providers/Microsoft.Compute/virtualMachines/pyvmextvm15a60f10/extensions/pyvmextvm15a60f10AccessAgent?api-version=2016-03-30
   response:
     body: {string: ''}
     headers:
@@ -2328,7 +2328,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [159b9a94-be70-11e6-b1e4-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/westus/operations/6ea4f96a-f603-45b7-979b-b0c6dda55869?api-version=2016-03-30
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/westus/operations/6ea4f96a-f603-45b7-979b-b0c6dda55869?api-version=2016-03-30
   response:
     body: {string: "{\r\n  \"startTime\": \"2016-12-10T00:32:08.4923279+00:00\",\r\n
         \ \"status\": \"InProgress\",\r\n  \"name\": \"6ea4f96a-f603-45b7-979b-b0c6dda55869\"\r\n}"}
@@ -2361,7 +2361,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [159b9a94-be70-11e6-b1e4-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/westus/operations/6ea4f96a-f603-45b7-979b-b0c6dda55869?api-version=2016-03-30
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/westus/operations/6ea4f96a-f603-45b7-979b-b0c6dda55869?api-version=2016-03-30
   response:
     body: {string: "{\r\n  \"startTime\": \"2016-12-10T00:32:08.4923279+00:00\",\r\n
         \ \"endTime\": \"2016-12-10T00:32:53.3448039+00:00\",\r\n  \"status\": \"Succeeded\",\r\n

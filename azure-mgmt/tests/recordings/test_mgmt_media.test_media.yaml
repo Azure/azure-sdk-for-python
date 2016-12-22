@@ -12,7 +12,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [72d3219c-a2d1-11e6-a267-ecb1d756380e]
     method: POST
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Media/CheckNameAvailability?api-version=2015-10-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Media/CheckNameAvailability?api-version=2015-10-01
   response:
     body: {string: '{"NameAvailable":true,"Reason":null,"Message":null}'}
     headers:
@@ -48,7 +48,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [73602e36-a2d1-11e6-85a6-ecb1d756380e]
     method: PUT
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_media_test_media8fdd0a81/providers/Microsoft.Media/mediaservices/pymedia8fdd0a81?api-version=2015-10-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_media_test_media8fdd0a81/providers/Microsoft.Media/mediaservices/pymedia8fdd0a81?api-version=2015-10-01
   response:
     body: {string: "{\r\n  \"name\":\"pymedia8fdd0a81\",\"id\":\"/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_mgmt_media_test_media8fdd0a81/providers/Microsoft.Media/mediaservices/pymedia8fdd0a81\",\"type\":\"Microsoft.Media/mediaservices\",\"tags\":null,\"location\":\"West
         US\",\"properties\":{\r\n    \"apiEndpoints\":[\r\n      {\r\n        \"endpoint\":\"https://wamsbayclus001rest-hs.cloudapp.net/api/\",\"majorVersion\":\"2\"\r\n
@@ -84,7 +84,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [7740a706-a2d1-11e6-975f-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_media_test_media8fdd0a81/providers/Microsoft.Media/mediaservices/pymedia8fdd0a81?api-version=2015-10-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_media_test_media8fdd0a81/providers/Microsoft.Media/mediaservices/pymedia8fdd0a81?api-version=2015-10-01
   response:
     body: {string: "{\r\n  \"name\":\"pymedia8fdd0a81\",\"id\":\"/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_mgmt_media_test_media8fdd0a81/providers/Microsoft.Media/mediaservices/pymedia8fdd0a81\",\"type\":\"Microsoft.Media/mediaservices\",\"tags\":null,\"location\":\"West
         US\",\"properties\":{\r\n    \"apiEndpoints\":[\r\n      {\r\n        \"endpoint\":\"https://wamsbayclus001rest-hs.cloudapp.net/api/\",\"majorVersion\":\"2\"\r\n
@@ -122,7 +122,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [77f1a06c-a2d1-11e6-9c33-ecb1d756380e]
     method: GET
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_media_test_media8fdd0a81/providers/Microsoft.Media/mediaservices?api-version=2015-10-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_media_test_media8fdd0a81/providers/Microsoft.Media/mediaservices?api-version=2015-10-01
   response:
     body: {string: "{\r\n  \"value\":[\r\n    {\r\n      \"name\":\"pymedia8fdd0a81\",\"id\":\"/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_mgmt_media_test_media8fdd0a81/providers/Microsoft.Media/mediaservices/pymedia8fdd0a81\",\"type\":\"Microsoft.Media/mediaservices\",\"tags\":null,\"location\":\"West
         US\",\"properties\":{\r\n        \"apiEndpoints\":[\r\n          {\r\n            \"endpoint\":\"https://wamsbayclus001rest-hs.cloudapp.net/api/\",\"majorVersion\":\"2\"\r\n
@@ -161,7 +161,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [7879fcf4-a2d1-11e6-9d32-ecb1d756380e]
     method: POST
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_media_test_media8fdd0a81/providers/Microsoft.Media/mediaservices/pymedia8fdd0a81/listKeys?api-version=2015-10-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_media_test_media8fdd0a81/providers/Microsoft.Media/mediaservices/pymedia8fdd0a81/listKeys?api-version=2015-10-01
   response:
     body: {string: "{\r\n  \"primaryAuthEndpoint\":\"https://wamsprodglobal001acs.accesscontrol.windows.net/\",\"secondaryAuthEndpoint\":\"https://wamsprodglobal002acs.accesscontrol.windows.net/\",\"primaryKey\":\"eUu/DVT52NA2Sukw/xwf6jzDKDY+UssjRborZBn1lH0=\",\"secondaryKey\":\"OgnBIhLooXnJZlZBYSZ1fBwTi5nbMKRkQAw6CKxYyD8=\",\"scope\":\"urn:windowsazuremediaservices\"\r\n}"}
     headers:
@@ -197,7 +197,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [794e2070-a2d1-11e6-8908-ecb1d756380e]
     method: POST
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_media_test_media8fdd0a81/providers/Microsoft.Media/mediaservices/pymedia8fdd0a81/regenerateKey?api-version=2015-10-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_media_test_media8fdd0a81/providers/Microsoft.Media/mediaservices/pymedia8fdd0a81/regenerateKey?api-version=2015-10-01
   response:
     body: {string: "{\r\n  \"key\":\"Ldp8wyUnARv50+ITBpTKmMrLgd032l12tUKUxImE2CE=\"\r\n}"}
     headers:
@@ -233,7 +233,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [7a0655b0-a2d1-11e6-be2d-ecb1d756380e]
     method: POST
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_media_test_media8fdd0a81/providers/Microsoft.Media/mediaservices/pymedia8fdd0a81/syncStorageKeys?api-version=2015-10-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_media_test_media8fdd0a81/providers/Microsoft.Media/mediaservices/pymedia8fdd0a81/syncStorageKeys?api-version=2015-10-01
   response:
     body: {string: ''}
     headers:
@@ -265,7 +265,7 @@ interactions:
       accept-language: [en-US]
       x-ms-client-request-id: [7ad955f4-a2d1-11e6-ac93-ecb1d756380e]
     method: DELETE
-    uri: https:/management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_media_test_media8fdd0a81/providers/Microsoft.Media/mediaservices/pymedia8fdd0a81?api-version=2015-10-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_media_test_media8fdd0a81/providers/Microsoft.Media/mediaservices/pymedia8fdd0a81?api-version=2015-10-01
   response:
     body: {string: ''}
     headers:
