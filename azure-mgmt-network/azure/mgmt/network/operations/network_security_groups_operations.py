@@ -24,6 +24,7 @@ class NetworkSecurityGroupsOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An objec model deserializer.
+    :ivar api_version: Client API version. Constant value: "2016-09-01".
     """
 
     def __init__(self, client, config, serializer, deserializer):
@@ -31,6 +32,7 @@ class NetworkSecurityGroupsOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
+        self.api_version = "2016-09-01"
 
         self.config = config
 
@@ -64,7 +66,7 @@ class NetworkSecurityGroupsOperations(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -145,7 +147,7 @@ class NetworkSecurityGroupsOperations(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
         if expand is not None:
             query_parameters['$expand'] = self._serialize.query("expand", expand, 'str')
 
@@ -189,8 +191,8 @@ class NetworkSecurityGroupsOperations(object):
         :param network_security_group_name: The name of the network security
          group.
         :type network_security_group_name: str
-        :param parameters: Parameters supplied to the create or update
-         network security group operation.
+        :param parameters: Parameters supplied to the create or update network
+         security group operation.
         :type parameters: :class:`NetworkSecurityGroup
          <azure.mgmt.network.models.NetworkSecurityGroup>`
         :param dict custom_headers: headers that will be added to the request
@@ -215,7 +217,7 @@ class NetworkSecurityGroupsOperations(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -301,7 +303,7 @@ class NetworkSecurityGroupsOperations(object):
 
                 # Construct parameters
                 query_parameters = {}
-                query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
+                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
             else:
                 url = next_link
@@ -367,7 +369,7 @@ class NetworkSecurityGroupsOperations(object):
 
                 # Construct parameters
                 query_parameters = {}
-                query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
+                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
             else:
                 url = next_link

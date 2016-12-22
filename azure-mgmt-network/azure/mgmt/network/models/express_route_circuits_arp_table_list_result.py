@@ -20,7 +20,7 @@ class ExpressRouteCircuitsArpTableListResult(Model):
      <azure.mgmt.network.models.ExpressRouteCircuitArpTable>`
     :param next_link: The URL to get the next set of results.
     :type next_link: str
-    """ 
+    """
 
     _attribute_map = {
         'value': {'key': 'value', 'type': '[ExpressRouteCircuitArpTable]'},

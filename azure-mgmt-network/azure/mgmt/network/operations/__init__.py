@@ -10,43 +10,43 @@
 # --------------------------------------------------------------------------
 
 from .application_gateways_operations import ApplicationGatewaysOperations
+from .route_tables_operations import RouteTablesOperations
+from .routes_operations import RoutesOperations
+from .public_ip_addresses_operations import PublicIPAddressesOperations
+from .network_security_groups_operations import NetworkSecurityGroupsOperations
+from .security_rules_operations import SecurityRulesOperations
+from .load_balancers_operations import LoadBalancersOperations
+from .virtual_networks_operations import VirtualNetworksOperations
+from .subnets_operations import SubnetsOperations
+from .virtual_network_peerings_operations import VirtualNetworkPeeringsOperations
+from .network_interfaces_operations import NetworkInterfacesOperations
+from .usages_operations import UsagesOperations
+from .virtual_network_gateways_operations import VirtualNetworkGatewaysOperations
+from .virtual_network_gateway_connections_operations import VirtualNetworkGatewayConnectionsOperations
+from .local_network_gateways_operations import LocalNetworkGatewaysOperations
 from .express_route_circuit_authorizations_operations import ExpressRouteCircuitAuthorizationsOperations
 from .express_route_circuit_peerings_operations import ExpressRouteCircuitPeeringsOperations
 from .express_route_circuits_operations import ExpressRouteCircuitsOperations
 from .express_route_service_providers_operations import ExpressRouteServiceProvidersOperations
-from .load_balancers_operations import LoadBalancersOperations
-from .local_network_gateways_operations import LocalNetworkGatewaysOperations
-from .network_interfaces_operations import NetworkInterfacesOperations
-from .network_security_groups_operations import NetworkSecurityGroupsOperations
-from .public_ip_addresses_operations import PublicIPAddressesOperations
-from .route_tables_operations import RouteTablesOperations
-from .routes_operations import RoutesOperations
-from .security_rules_operations import SecurityRulesOperations
-from .subnets_operations import SubnetsOperations
-from .virtual_network_peerings_operations import VirtualNetworkPeeringsOperations
-from .usages_operations import UsagesOperations
-from .virtual_network_gateway_connections_operations import VirtualNetworkGatewayConnectionsOperations
-from .virtual_network_gateways_operations import VirtualNetworkGatewaysOperations
-from .virtual_networks_operations import VirtualNetworksOperations
 
 __all__ = [
     'ApplicationGatewaysOperations',
+    'RouteTablesOperations',
+    'RoutesOperations',
+    'PublicIPAddressesOperations',
+    'NetworkSecurityGroupsOperations',
+    'SecurityRulesOperations',
+    'LoadBalancersOperations',
+    'VirtualNetworksOperations',
+    'SubnetsOperations',
+    'VirtualNetworkPeeringsOperations',
+    'NetworkInterfacesOperations',
+    'UsagesOperations',
+    'VirtualNetworkGatewaysOperations',
+    'VirtualNetworkGatewayConnectionsOperations',
+    'LocalNetworkGatewaysOperations',
     'ExpressRouteCircuitAuthorizationsOperations',
     'ExpressRouteCircuitPeeringsOperations',
     'ExpressRouteCircuitsOperations',
     'ExpressRouteServiceProvidersOperations',
-    'LoadBalancersOperations',
-    'LocalNetworkGatewaysOperations',
-    'NetworkInterfacesOperations',
-    'NetworkSecurityGroupsOperations',
-    'PublicIPAddressesOperations',
-    'RouteTablesOperations',
-    'RoutesOperations',
-    'SecurityRulesOperations',
-    'SubnetsOperations',
-    'VirtualNetworkPeeringsOperations',
-    'UsagesOperations',
-    'VirtualNetworkGatewayConnectionsOperations',
-    'VirtualNetworkGatewaysOperations',
-    'VirtualNetworksOperations',
 ]

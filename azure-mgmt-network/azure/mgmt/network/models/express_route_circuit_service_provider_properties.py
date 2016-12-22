@@ -21,7 +21,7 @@ class ExpressRouteCircuitServiceProviderProperties(Model):
     :type peering_location: str
     :param bandwidth_in_mbps: The BandwidthInMbps.
     :type bandwidth_in_mbps: int
-    """ 
+    """
 
     _attribute_map = {
         'service_provider_name': {'key': 'serviceProviderName', 'type': 'str'},

@@ -21,7 +21,7 @@ class ErrorDetails(Model):
     :type target: str
     :param message:
     :type message: str
-    """ 
+    """
 
     _attribute_map = {
         'code': {'key': 'code', 'type': 'str'},

@@ -31,16 +31,15 @@ class ApplicationGatewayProbe(SubResource):
      second to 86400 seconds.
     :type interval: int
     :param timeout: the probe timeout in seconds. Probe marked as failed if
-     valid response is not received with this timeout period. Acceptable
-     values are from 1 second to 86400 seconds.
+     valid response is not received with this timeout period. Acceptable values
+     are from 1 second to 86400 seconds.
     :type timeout: int
     :param unhealthy_threshold: The probe retry count. Backend server is
      marked down after consecutive probe failure count reaches
      UnhealthyThreshold. Acceptable values are from 1 second to 20.
     :type unhealthy_threshold: int
-    :param provisioning_state: Provisioning state of the backend http
-     settings resource. Possible values are: 'Updating', 'Deleting', and
-     'Failed'.
+    :param provisioning_state: Provisioning state of the backend http settings
+     resource. Possible values are: 'Updating', 'Deleting', and 'Failed'.
     :type provisioning_state: str
     :param name: Name of the resource that is unique within a resource group.
      This name can be used to access the resource.
@@ -48,7 +47,7 @@ class ApplicationGatewayProbe(SubResource):
     :param etag: A unique read-only string that changes whenever the resource
      is updated.
     :type etag: str
-    """ 
+    """
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},

@@ -19,7 +19,7 @@ class ApplicationGatewayBackendAddress(Model):
     :type fqdn: str
     :param ip_address: IP address
     :type ip_address: str
-    """ 
+    """
 
     _attribute_map = {
         'fqdn': {'key': 'fqdn', 'type': 'str'},

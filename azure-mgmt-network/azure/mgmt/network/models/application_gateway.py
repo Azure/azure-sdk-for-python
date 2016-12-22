@@ -101,7 +101,7 @@ class ApplicationGateway(Resource):
     :param etag: A unique read-only string that changes whenever the resource
      is updated.
     :type etag: str
-    """ 
+    """
 
     _validation = {
         'name': {'readonly': True},

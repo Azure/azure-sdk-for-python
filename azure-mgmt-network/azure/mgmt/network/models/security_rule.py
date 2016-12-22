@@ -30,16 +30,15 @@ class SecurityRule(SubResource):
      range between 0 and 65535. Asterix '*' can also be used to match all
      ports.
     :type destination_port_range: str
-    :param source_address_prefix: The CIDR or source IP range. Asterix '*'
-     can also be used to match all source IPs. Default tags such as
-     'VirtualNetwork', 'AzureLoadBalancer' and 'Internet' can also be used.
-     If this is an ingress rule, specifies where network traffic originates
-     from.
+    :param source_address_prefix: The CIDR or source IP range. Asterix '*' can
+     also be used to match all source IPs. Default tags such as
+     'VirtualNetwork', 'AzureLoadBalancer' and 'Internet' can also be used. If
+     this is an ingress rule, specifies where network traffic originates from.
     :type source_address_prefix: str
-    :param destination_address_prefix: The destination address prefix. CIDR
-     or source IP range. Asterix '*' can also be used to match all source
-     IPs. Default tags such as 'VirtualNetwork', 'AzureLoadBalancer' and
-     'Internet' can also be used.
+    :param destination_address_prefix: The destination address prefix. CIDR or
+     source IP range. Asterix '*' can also be used to match all source IPs.
+     Default tags such as 'VirtualNetwork', 'AzureLoadBalancer' and 'Internet'
+     can also be used.
     :type destination_address_prefix: str
     :param access: The network traffic is allowed or denied. Possible values
      are: 'Allow' and 'Deny'. Possible values include: 'Allow', 'Deny'
@@ -47,8 +46,8 @@ class SecurityRule(SubResource):
      <azure.mgmt.network.models.SecurityRuleAccess>`
     :param priority: The priority of the rule. The value can be between 100
      and 4096. The priority number must be unique for each rule in the
-     collection. The lower the priority number, the higher the priority of
-     the rule.
+     collection. The lower the priority number, the higher the priority of the
+     rule.
     :type priority: int
     :param direction: The direction of the rule. The direction specifies if
      rule will be evaluated on incoming or outcoming traffic. Possible values
@@ -65,7 +64,7 @@ class SecurityRule(SubResource):
     :param etag: A unique read-only string that changes whenever the resource
      is updated.
     :type etag: str
-    """ 
+    """
 
     _validation = {
         'protocol': {'required': True},
