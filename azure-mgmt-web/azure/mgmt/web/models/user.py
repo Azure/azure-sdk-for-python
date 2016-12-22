@@ -13,32 +13,39 @@ from .resource import Resource
 
 
 class User(Resource):
-    """Represents user crendentials used for publishing activity.
+    """User crendentials used for publishing activity.
 
-    :param id: Resource Id
-    :type id: str
-    :param name: Resource Name
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar id: Resource Id.
+    :vartype id: str
+    :param name: Resource Name.
     :type name: str
-    :param kind: Kind of resource
+    :param kind: Kind of resource.
     :type kind: str
-    :param location: Resource Location
+    :param location: Resource Location.
     :type location: str
-    :param type: Resource type
+    :param type: Resource type.
     :type type: str
-    :param tags: Resource tags
+    :param tags: Resource tags.
     :type tags: dict
-    :param user_name: Username (internal)
+    :param user_name: Username (internal).
     :type user_name: str
-    :param publishing_user_name: Username used for publishing
+    :param publishing_user_name: Username used for publishing.
     :type publishing_user_name: str
-    :param publishing_password: Password used for publishing
+    :param publishing_password: Password used for publishing.
     :type publishing_password: str
-    :param scm_uri: Service Control Manager URI, including username and
-     password
-    :type scm_uri: str
-    """ 
+    :param publishing_password_hash: Password hash used for publishing.
+    :type publishing_password_hash: str
+    :param publishing_password_hash_salt: Password hash salt used for
+     publishing.
+    :type publishing_password_hash_salt: str
+    """
 
     _validation = {
+        'id': {'readonly': True},
+        'name': {'required': True},
         'location': {'required': True},
     }
 
@@ -52,12 +59,14 @@ class User(Resource):
         'user_name': {'key': 'properties.name', 'type': 'str'},
         'publishing_user_name': {'key': 'properties.publishingUserName', 'type': 'str'},
         'publishing_password': {'key': 'properties.publishingPassword', 'type': 'str'},
-        'scm_uri': {'key': 'properties.scmUri', 'type': 'str'},
+        'publishing_password_hash': {'key': 'properties.publishingPasswordHash', 'type': 'str'},
+        'publishing_password_hash_salt': {'key': 'properties.publishingPasswordHashSalt', 'type': 'str'},
     }
 
-    def __init__(self, location, id=None, name=None, kind=None, type=None, tags=None, user_name=None, publishing_user_name=None, publishing_password=None, scm_uri=None):
-        super(User, self).__init__(id=id, name=name, kind=kind, location=location, type=type, tags=tags)
+    def __init__(self, name, location, kind=None, type=None, tags=None, user_name=None, publishing_user_name=None, publishing_password=None, publishing_password_hash=None, publishing_password_hash_salt=None):
+        super(User, self).__init__(name=name, kind=kind, location=location, type=type, tags=tags)
         self.user_name = user_name
         self.publishing_user_name = publishing_user_name
         self.publishing_password = publishing_password
-        self.scm_uri = scm_uri
+        self.publishing_password_hash = publishing_password_hash
+        self.publishing_password_hash_salt = publishing_password_hash_salt

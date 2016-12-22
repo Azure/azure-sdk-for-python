@@ -13,13 +13,13 @@ from msrest.serialization import Model
 
 
 class HostingEnvironmentDiagnostics(Model):
-    """Diagnostics for a hosting environment (App Service Environment).
+    """Diagnostics for an App Service Environment.
 
-    :param name: Name/identifier of the diagnostics
+    :param name: Name/identifier of the diagnostics.
     :type name: str
-    :param diagnosics_output: Diagnostics output
+    :param diagnosics_output: Diagnostics output.
     :type diagnosics_output: str
-    """ 
+    """
 
     _attribute_map = {
         'name': {'key': 'name', 'type': 'str'},

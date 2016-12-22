@@ -13,34 +13,42 @@ from .resource import Resource
 
 
 class SiteSourceControl(Resource):
-    """Describes the source control configuration for web app.
+    """Source control configuration for an app.
 
-    :param id: Resource Id
-    :type id: str
-    :param name: Resource Name
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar id: Resource Id.
+    :vartype id: str
+    :param name: Resource Name.
     :type name: str
-    :param kind: Kind of resource
+    :param kind: Kind of resource.
     :type kind: str
-    :param location: Resource Location
+    :param location: Resource Location.
     :type location: str
-    :param type: Resource type
+    :param type: Resource type.
     :type type: str
-    :param tags: Resource tags
+    :param tags: Resource tags.
     :type tags: dict
-    :param repo_url: Repository or source control url
+    :param repo_url: Repository or source control URL.
     :type repo_url: str
-    :param branch: Name of branch to use for deployment
+    :param branch: Name of branch to use for deployment.
     :type branch: str
-    :param is_manual_integration: Whether to manual or continuous integration
+    :param is_manual_integration: <code>true</code> to limit to manual
+     integration; <code>false</code> to enable continuous integration (which
+     configures webhooks into online repos like GitHub).
     :type is_manual_integration: bool
-    :param deployment_rollback_enabled: Whether to manual or continuous
-     integration
+    :param deployment_rollback_enabled: <code>true</code> to enable deployment
+     rollback; otherwise, <code>false</code>.
     :type deployment_rollback_enabled: bool
-    :param is_mercurial: Mercurial or Git repository type
+    :param is_mercurial: <code>true</code> for a Mercurial repository;
+     <code>false</code> for a Git repository.
     :type is_mercurial: bool
-    """ 
+    """
 
     _validation = {
+        'id': {'readonly': True},
+        'name': {'required': True},
         'location': {'required': True},
     }
 
@@ -58,8 +66,8 @@ class SiteSourceControl(Resource):
         'is_mercurial': {'key': 'properties.isMercurial', 'type': 'bool'},
     }
 
-    def __init__(self, location, id=None, name=None, kind=None, type=None, tags=None, repo_url=None, branch=None, is_manual_integration=None, deployment_rollback_enabled=None, is_mercurial=None):
-        super(SiteSourceControl, self).__init__(id=id, name=name, kind=kind, location=location, type=type, tags=tags)
+    def __init__(self, name, location, kind=None, type=None, tags=None, repo_url=None, branch=None, is_manual_integration=None, deployment_rollback_enabled=None, is_mercurial=None):
+        super(SiteSourceControl, self).__init__(name=name, kind=kind, location=location, type=type, tags=tags)
         self.repo_url = repo_url
         self.branch = branch
         self.is_manual_integration = is_manual_integration

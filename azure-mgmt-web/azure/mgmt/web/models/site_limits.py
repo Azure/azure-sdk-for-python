@@ -13,15 +13,15 @@ from msrest.serialization import Model
 
 
 class SiteLimits(Model):
-    """Represents metric limits set on a web app.
+    """Metric limits set on an app.
 
-    :param max_percentage_cpu: Maximum allowed CPU usage percentage
+    :param max_percentage_cpu: Maximum allowed CPU usage percentage.
     :type max_percentage_cpu: float
-    :param max_memory_in_mb: Maximum allowed memory usage in MB
+    :param max_memory_in_mb: Maximum allowed memory usage in MB.
     :type max_memory_in_mb: long
-    :param max_disk_size_in_mb: Maximum allowed disk size usage in MB
+    :param max_disk_size_in_mb: Maximum allowed disk size usage in MB.
     :type max_disk_size_in_mb: long
-    """ 
+    """
 
     _attribute_map = {
         'max_percentage_cpu': {'key': 'maxPercentageCpu', 'type': 'float'},

@@ -26,9 +26,9 @@ class Recommendation(Model):
     :param resource_scope: Name of a resource type this recommendation
      applies, e.g. Subscription, ServerFarm, Site.
     :type resource_scope: str
-    :param rule_name: Unique name of the rule
+    :param rule_name: Unique name of the rule.
     :type rule_name: str
-    :param display_name: UI friendly name of the rule (may not be unique)
+    :param display_name: UI friendly name of the rule (may not be unique).
     :type display_name: str
     :param message: Localized text of recommendation, good for UI.
     :type message: str
@@ -38,7 +38,7 @@ class Recommendation(Model):
     :type level: str or :class:`NotificationLevel
      <azure.mgmt.web.models.NotificationLevel>`
     :param channels: List of channels that this recommendation can apply.
-     Possible values include: 'Notification', 'Api', 'Email', 'All'
+     Possible values include: 'Notification', 'Api', 'Email', 'Webhook', 'All'
     :type channels: str or :class:`Channels <azure.mgmt.web.models.Channels>`
     :param tags: The list of category tags that this recommendation belongs
      to.
@@ -65,12 +65,7 @@ class Recommendation(Model):
     :type notified_time: datetime
     :param score: A metric value measured by the rule.
     :type score: float
-    """ 
-
-    _validation = {
-        'level': {'required': True},
-        'channels': {'required': True},
-    }
+    """
 
     _attribute_map = {
         'creation_time': {'key': 'creationTime', 'type': 'iso-8601'},
@@ -93,7 +88,7 @@ class Recommendation(Model):
         'score': {'key': 'score', 'type': 'float'},
     }
 
-    def __init__(self, level, channels, creation_time=None, recommendation_id=None, resource_id=None, resource_scope=None, rule_name=None, display_name=None, message=None, tags=None, action_name=None, enabled=None, start_time=None, end_time=None, next_notification_time=None, notification_expiration_time=None, notified_time=None, score=None):
+    def __init__(self, creation_time=None, recommendation_id=None, resource_id=None, resource_scope=None, rule_name=None, display_name=None, message=None, level=None, channels=None, tags=None, action_name=None, enabled=None, start_time=None, end_time=None, next_notification_time=None, notification_expiration_time=None, notified_time=None, score=None):
         self.creation_time = creation_time
         self.recommendation_id = recommendation_id
         self.resource_id = resource_id

@@ -15,59 +15,78 @@ from .resource import Resource
 class BackupItem(Resource):
     """Backup description.
 
-    :param id: Resource Id
-    :type id: str
-    :param name: Resource Name
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar id: Resource Id.
+    :vartype id: str
+    :param name: Resource Name.
     :type name: str
-    :param kind: Kind of resource
+    :param kind: Kind of resource.
     :type kind: str
-    :param location: Resource Location
+    :param location: Resource Location.
     :type location: str
-    :param type: Resource type
+    :param type: Resource type.
     :type type: str
-    :param tags: Resource tags
+    :param tags: Resource tags.
     :type tags: dict
-    :param backup_item_id: Id of the backup.
-    :type backup_item_id: int
-    :param storage_account_url: SAS URL for the storage account container
-     which contains this backup
-    :type storage_account_url: str
-    :param blob_name: Name of the blob which contains data for this backup
-    :type blob_name: str
-    :param backup_item_name: Name of this backup
-    :type backup_item_name: str
-    :param status: Backup status. Possible values include: 'InProgress',
+    :ivar backup_item_id: Id of the backup.
+    :vartype backup_item_id: int
+    :ivar storage_account_url: SAS URL for the storage account container which
+     contains this backup.
+    :vartype storage_account_url: str
+    :ivar blob_name: Name of the blob which contains data for this backup.
+    :vartype blob_name: str
+    :ivar backup_item_name: Name of this backup.
+    :vartype backup_item_name: str
+    :ivar status: Backup status. Possible values include: 'InProgress',
      'Failed', 'Succeeded', 'TimedOut', 'Created', 'Skipped',
      'PartiallySucceeded', 'DeleteInProgress', 'DeleteFailed', 'Deleted'
-    :type status: str or :class:`BackupItemStatus
+    :vartype status: str or :class:`BackupItemStatus
      <azure.mgmt.web.models.BackupItemStatus>`
-    :param size_in_bytes: Size of the backup in bytes
-    :type size_in_bytes: long
-    :param created: Timestamp of the backup creation
-    :type created: datetime
-    :param log: Details regarding this backup. Might contain an error message.
-    :type log: str
-    :param databases: List of databases included in the backup
-    :type databases: list of :class:`DatabaseBackupSetting
+    :ivar size_in_bytes: Size of the backup in bytes.
+    :vartype size_in_bytes: long
+    :ivar created: Timestamp of the backup creation.
+    :vartype created: datetime
+    :ivar log: Details regarding this backup. Might contain an error message.
+    :vartype log: str
+    :ivar databases: List of databases included in the backup.
+    :vartype databases: list of :class:`DatabaseBackupSetting
      <azure.mgmt.web.models.DatabaseBackupSetting>`
-    :param scheduled: True if this backup has been created due to a schedule
+    :ivar scheduled: True if this backup has been created due to a schedule
      being triggered.
-    :type scheduled: bool
-    :param last_restore_time_stamp: Timestamp of a last restore operation
-     which used this backup.
-    :type last_restore_time_stamp: datetime
-    :param finished_time_stamp: Timestamp when this backup finished.
-    :type finished_time_stamp: datetime
-    :param correlation_id: Unique correlation identifier. Please use this
-     along with the timestamp while communicating with Azure support.
-    :type correlation_id: str
-    :param website_size_in_bytes: Size of the original web app which has been
-     backed up
-    :type website_size_in_bytes: long
-    """ 
+    :vartype scheduled: bool
+    :ivar last_restore_time_stamp: Timestamp of a last restore operation which
+     used this backup.
+    :vartype last_restore_time_stamp: datetime
+    :ivar finished_time_stamp: Timestamp when this backup finished.
+    :vartype finished_time_stamp: datetime
+    :ivar correlation_id: Unique correlation identifier. Please use this along
+     with the timestamp while communicating with Azure support.
+    :vartype correlation_id: str
+    :ivar website_size_in_bytes: Size of the original web app which has been
+     backed up.
+    :vartype website_size_in_bytes: long
+    """
 
     _validation = {
+        'id': {'readonly': True},
+        'name': {'required': True},
         'location': {'required': True},
+        'backup_item_id': {'readonly': True},
+        'storage_account_url': {'readonly': True},
+        'blob_name': {'readonly': True},
+        'backup_item_name': {'readonly': True},
+        'status': {'readonly': True},
+        'size_in_bytes': {'readonly': True},
+        'created': {'readonly': True},
+        'log': {'readonly': True},
+        'databases': {'readonly': True},
+        'scheduled': {'readonly': True},
+        'last_restore_time_stamp': {'readonly': True},
+        'finished_time_stamp': {'readonly': True},
+        'correlation_id': {'readonly': True},
+        'website_size_in_bytes': {'readonly': True},
     }
 
     _attribute_map = {
@@ -93,19 +112,19 @@ class BackupItem(Resource):
         'website_size_in_bytes': {'key': 'properties.websiteSizeInBytes', 'type': 'long'},
     }
 
-    def __init__(self, location, id=None, name=None, kind=None, type=None, tags=None, backup_item_id=None, storage_account_url=None, blob_name=None, backup_item_name=None, status=None, size_in_bytes=None, created=None, log=None, databases=None, scheduled=None, last_restore_time_stamp=None, finished_time_stamp=None, correlation_id=None, website_size_in_bytes=None):
-        super(BackupItem, self).__init__(id=id, name=name, kind=kind, location=location, type=type, tags=tags)
-        self.backup_item_id = backup_item_id
-        self.storage_account_url = storage_account_url
-        self.blob_name = blob_name
-        self.backup_item_name = backup_item_name
-        self.status = status
-        self.size_in_bytes = size_in_bytes
-        self.created = created
-        self.log = log
-        self.databases = databases
-        self.scheduled = scheduled
-        self.last_restore_time_stamp = last_restore_time_stamp
-        self.finished_time_stamp = finished_time_stamp
-        self.correlation_id = correlation_id
-        self.website_size_in_bytes = website_size_in_bytes
+    def __init__(self, name, location, kind=None, type=None, tags=None):
+        super(BackupItem, self).__init__(name=name, kind=kind, location=location, type=type, tags=tags)
+        self.backup_item_id = None
+        self.storage_account_url = None
+        self.blob_name = None
+        self.backup_item_name = None
+        self.status = None
+        self.size_in_bytes = None
+        self.created = None
+        self.log = None
+        self.databases = None
+        self.scheduled = None
+        self.last_restore_time_stamp = None
+        self.finished_time_stamp = None
+        self.correlation_id = None
+        self.website_size_in_bytes = None

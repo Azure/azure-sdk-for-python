@@ -13,17 +13,17 @@ from msrest.serialization import Model
 
 
 class TldLegalAgreement(Model):
-    """Represents a legal agreement for top level domain.
+    """Legal agreement for a top level domain.
 
-    :param agreement_key: Unique identifier for the agreement
+    :param agreement_key: Unique identifier for the agreement.
     :type agreement_key: str
-    :param title: Agreement title
+    :param title: Agreement title.
     :type title: str
-    :param content: Agreement details
+    :param content: Agreement details.
     :type content: str
-    :param url: Url where a copy of the agreement details is hosted
+    :param url: URL where a copy of the agreement details is hosted.
     :type url: str
-    """ 
+    """
 
     _attribute_map = {
         'agreement_key': {'key': 'agreementKey', 'type': 'str'},

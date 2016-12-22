@@ -13,18 +13,19 @@ from msrest.serialization import Model
 
 
 class VirtualApplication(Model):
-    """VirtualApplication.
+    """Virtual application in an app.
 
-    :param virtual_path:
+    :param virtual_path: Virtual path.
     :type virtual_path: str
-    :param physical_path:
+    :param physical_path: Physical path.
     :type physical_path: str
-    :param preload_enabled:
+    :param preload_enabled: <code>true</code> if preloading is enabled;
+     otherwise, <code>false</code>.
     :type preload_enabled: bool
-    :param virtual_directories:
+    :param virtual_directories: Virtual directories for virtual application.
     :type virtual_directories: list of :class:`VirtualDirectory
      <azure.mgmt.web.models.VirtualDirectory>`
-    """ 
+    """
 
     _attribute_map = {
         'virtual_path': {'key': 'virtualPath', 'type': 'str'},

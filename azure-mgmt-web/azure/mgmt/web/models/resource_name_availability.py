@@ -13,19 +13,23 @@ from msrest.serialization import Model
 
 
 class ResourceNameAvailability(Model):
-    """Describes if a resource name is available.
+    """Information regarding availbility of a resource name.
 
-    :param name_available: True indicates name is valid and available.  False
-     indicates the name is invalid, unavailable, or both.
+    :param name_available: <code>true</code> indicates name is valid and
+     available. <code>false</code> indicates the name is invalid, unavailable,
+     or both.
     :type name_available: bool
-    :param reason: Required if nameAvailable is false. 'Invalid' indicates
-     the name provided does not match Azure WebApp service’s naming
-     requirements. 'AlreadyExists' indicates that the name is already in use
-     and is therefore unavailable.
+    :param reason: <code>Invalid</code> indicates the name provided does not
+     match Azure App Service naming requirements. <code>AlreadyExists</code>
+     indicates that the name is already in use and is therefore unavailable.
     :type reason: str
-    :param message:
+    :param message: If reason == invalid, provide the user with the reason why
+     the given name is invalid, and provide the resource naming requirements so
+     that the user can select a valid name. If reason == AlreadyExists, explain
+     that resource name is already in use, and direct them to select a
+     different name.
     :type message: str
-    """ 
+    """
 
     _attribute_map = {
         'name_available': {'key': 'nameAvailable', 'type': 'bool'},

@@ -13,17 +13,25 @@ from msrest.serialization import Model
 
 
 class VirtualNetworkProfile(Model):
-    """Specification for using a virtual network.
+    """Specification for using a Virtual Network.
 
-    :param id: Resource id of the virtual network
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :param id: Resource id of the Virtual Network.
     :type id: str
-    :param name: Name of the virtual network (read-only)
-    :type name: str
-    :param type: Resource type of the virtual network (read-only)
-    :type type: str
-    :param subnet: Subnet within the virtual network
+    :ivar name: Name of the Virtual Network (read-only).
+    :vartype name: str
+    :ivar type: Resource type of the Virtual Network (read-only).
+    :vartype type: str
+    :param subnet: Subnet within the Virtual Network.
     :type subnet: str
-    """ 
+    """
+
+    _validation = {
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+    }
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
@@ -32,8 +40,8 @@ class VirtualNetworkProfile(Model):
         'subnet': {'key': 'subnet', 'type': 'str'},
     }
 
-    def __init__(self, id=None, name=None, type=None, subnet=None):
+    def __init__(self, id=None, subnet=None):
         self.id = id
-        self.name = name
-        self.type = type
+        self.name = None
+        self.type = None
         self.subnet = subnet

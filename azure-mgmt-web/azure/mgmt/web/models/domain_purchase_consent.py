@@ -13,18 +13,18 @@ from msrest.serialization import Model
 
 
 class DomainPurchaseConsent(Model):
-    """Domain purchase consent object representing acceptance of applicable legal
+    """Domain purchase consent object, representing acceptance of applicable legal
     agreements.
 
     :param agreement_keys: List of applicable legal agreement keys. This list
-     can be retrieved using ListLegalAgreements Api under TopLevelDomain
-     resource
+     can be retrieved using ListLegalAgreements API under
+     <code>TopLevelDomain</code> resource.
     :type agreement_keys: list of str
-    :param agreed_by: Client IP address
+    :param agreed_by: Client IP address.
     :type agreed_by: str
-    :param agreed_at: Timestamp when the agreements were accepted
+    :param agreed_at: Timestamp when the agreements were accepted.
     :type agreed_at: datetime
-    """ 
+    """
 
     _attribute_map = {
         'agreement_keys': {'key': 'agreementKeys', 'type': '[str]'},

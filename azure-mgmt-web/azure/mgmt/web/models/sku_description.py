@@ -13,19 +13,28 @@ from msrest.serialization import Model
 
 
 class SkuDescription(Model):
-    """Describes a sku for a scalable resource.
+    """Description of a SKU for a scalable resource.
 
-    :param name: Name of the resource sku
+    :param name: Name of the resource SKU.
     :type name: str
-    :param tier: Service Tier of the resource sku
+    :param tier: Service tier of the resource SKU.
     :type tier: str
-    :param size: Size specifier of the resource sku
+    :param size: Size specifier of the resource SKU.
     :type size: str
-    :param family: Family code of the resource sku
+    :param family: Family code of the resource SKU.
     :type family: str
-    :param capacity: Current number of instances assigned to the resource
+    :param capacity: Current number of instances assigned to the resource.
     :type capacity: int
-    """ 
+    :param sku_capacity: Min, max, and default scale values of the SKU.
+    :type sku_capacity: :class:`SkuCapacity
+     <azure.mgmt.web.models.SkuCapacity>`
+    :param locations: Locations of the SKU.
+    :type locations: list of str
+    :param capabilities: Capabilities of the SKU, e.g., is traffic manager
+     enabled?
+    :type capabilities: list of :class:`Capability
+     <azure.mgmt.web.models.Capability>`
+    """
 
     _attribute_map = {
         'name': {'key': 'name', 'type': 'str'},
@@ -33,11 +42,17 @@ class SkuDescription(Model):
         'size': {'key': 'size', 'type': 'str'},
         'family': {'key': 'family', 'type': 'str'},
         'capacity': {'key': 'capacity', 'type': 'int'},
+        'sku_capacity': {'key': 'skuCapacity', 'type': 'SkuCapacity'},
+        'locations': {'key': 'locations', 'type': '[str]'},
+        'capabilities': {'key': 'capabilities', 'type': '[Capability]'},
     }
 
-    def __init__(self, name=None, tier=None, size=None, family=None, capacity=None):
+    def __init__(self, name=None, tier=None, size=None, family=None, capacity=None, sku_capacity=None, locations=None, capabilities=None):
         self.name = name
         self.tier = tier
         self.size = size
         self.family = family
         self.capacity = capacity
+        self.sku_capacity = sku_capacity
+        self.locations = locations
+        self.capabilities = capabilities

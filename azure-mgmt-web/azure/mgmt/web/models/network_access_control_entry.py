@@ -13,18 +13,18 @@ from msrest.serialization import Model
 
 
 class NetworkAccessControlEntry(Model):
-    """NetworkAccessControlEntry.
+    """Network access control entry.
 
-    :param action: Possible values include: 'Permit', 'Deny'
+    :param action: Action object. Possible values include: 'Permit', 'Deny'
     :type action: str or :class:`AccessControlEntryAction
      <azure.mgmt.web.models.AccessControlEntryAction>`
-    :param description:
+    :param description: Description.
     :type description: str
-    :param order:
+    :param order: Order of precedence.
     :type order: int
-    :param remote_subnet:
+    :param remote_subnet: Remote subnet.
     :type remote_subnet: str
-    """ 
+    """
 
     _attribute_map = {
         'action': {'key': 'action', 'type': 'AccessControlEntryAction'},

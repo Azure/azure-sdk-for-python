@@ -13,28 +13,45 @@ from msrest.serialization import Model
 
 
 class ResourceMetric(Model):
-    """Object representing a metric for any resource.
+    """Object representing a metric for any resource .
 
-    :param name: Name of metric
-    :type name: :class:`ResourceMetricName
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar name: Name of metric.
+    :vartype name: :class:`ResourceMetricName
      <azure.mgmt.web.models.ResourceMetricName>`
-    :param unit: Metric unit
-    :type unit: str
-    :param time_grain: Metric granularity. E.g PT1H, PT5M, P1D
-    :type time_grain: str
-    :param start_time: Metric start time
-    :type start_time: datetime
-    :param end_time: Metric end time
-    :type end_time: datetime
-    :param resource_id: Metric resource Id
-    :type resource_id: str
-    :param metric_values: Metric values
-    :type metric_values: list of :class:`ResourceMetricValue
+    :ivar unit: Metric unit.
+    :vartype unit: str
+    :ivar time_grain: Metric granularity. E.g PT1H, PT5M, P1D
+    :vartype time_grain: str
+    :ivar start_time: Metric start time.
+    :vartype start_time: datetime
+    :ivar end_time: Metric end time.
+    :vartype end_time: datetime
+    :ivar resource_id: Metric resource Id.
+    :vartype resource_id: str
+    :ivar id: Resource Id.
+    :vartype id: str
+    :ivar metric_values: Metric values.
+    :vartype metric_values: list of :class:`ResourceMetricValue
      <azure.mgmt.web.models.ResourceMetricValue>`
-    :param properties: Properties
-    :type properties: list of :class:`KeyValuePairStringString
-     <azure.mgmt.web.models.KeyValuePairStringString>`
-    """ 
+    :ivar properties: Properties.
+    :vartype properties: list of :class:`ResourceMetricProperty
+     <azure.mgmt.web.models.ResourceMetricProperty>`
+    """
+
+    _validation = {
+        'name': {'readonly': True},
+        'unit': {'readonly': True},
+        'time_grain': {'readonly': True},
+        'start_time': {'readonly': True},
+        'end_time': {'readonly': True},
+        'resource_id': {'readonly': True},
+        'id': {'readonly': True},
+        'metric_values': {'readonly': True},
+        'properties': {'readonly': True},
+    }
 
     _attribute_map = {
         'name': {'key': 'name', 'type': 'ResourceMetricName'},
@@ -43,16 +60,18 @@ class ResourceMetric(Model):
         'start_time': {'key': 'startTime', 'type': 'iso-8601'},
         'end_time': {'key': 'endTime', 'type': 'iso-8601'},
         'resource_id': {'key': 'resourceId', 'type': 'str'},
+        'id': {'key': 'id', 'type': 'str'},
         'metric_values': {'key': 'metricValues', 'type': '[ResourceMetricValue]'},
-        'properties': {'key': 'properties', 'type': '[KeyValuePairStringString]'},
+        'properties': {'key': 'properties', 'type': '[ResourceMetricProperty]'},
     }
 
-    def __init__(self, name=None, unit=None, time_grain=None, start_time=None, end_time=None, resource_id=None, metric_values=None, properties=None):
-        self.name = name
-        self.unit = unit
-        self.time_grain = time_grain
-        self.start_time = start_time
-        self.end_time = end_time
-        self.resource_id = resource_id
-        self.metric_values = metric_values
-        self.properties = properties
+    def __init__(self):
+        self.name = None
+        self.unit = None
+        self.time_grain = None
+        self.start_time = None
+        self.end_time = None
+        self.resource_id = None
+        self.id = None
+        self.metric_values = None
+        self.properties = None

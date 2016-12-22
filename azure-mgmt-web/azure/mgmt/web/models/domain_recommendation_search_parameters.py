@@ -15,11 +15,12 @@ from msrest.serialization import Model
 class DomainRecommendationSearchParameters(Model):
     """Domain recommendation search parameters.
 
-    :param keywords: Keywords to be used for generating domain recommendations
+    :param keywords: Keywords to be used for generating domain
+     recommendations.
     :type keywords: str
-    :param max_domain_recommendations: Maximum number of recommendations
+    :param max_domain_recommendations: Maximum number of recommendations.
     :type max_domain_recommendations: int
-    """ 
+    """
 
     _attribute_map = {
         'keywords': {'key': 'keywords', 'type': 'str'},

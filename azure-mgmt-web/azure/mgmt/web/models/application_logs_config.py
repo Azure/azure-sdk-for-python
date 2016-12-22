@@ -15,17 +15,17 @@ from msrest.serialization import Model
 class ApplicationLogsConfig(Model):
     """Application logs configuration.
 
-    :param file_system: Application logs to file system configuration
+    :param file_system: Application logs to file system configuration.
     :type file_system: :class:`FileSystemApplicationLogsConfig
      <azure.mgmt.web.models.FileSystemApplicationLogsConfig>`
     :param azure_table_storage: Application logs to azure table storage
-     configuration
+     configuration.
     :type azure_table_storage: :class:`AzureTableStorageApplicationLogsConfig
      <azure.mgmt.web.models.AzureTableStorageApplicationLogsConfig>`
-    :param azure_blob_storage: Application logs to blob storage configuration
+    :param azure_blob_storage: Application logs to blob storage configuration.
     :type azure_blob_storage: :class:`AzureBlobStorageApplicationLogsConfig
      <azure.mgmt.web.models.AzureBlobStorageApplicationLogsConfig>`
-    """ 
+    """
 
     _attribute_map = {
         'file_system': {'key': 'fileSystem', 'type': 'FileSystemApplicationLogsConfig'},

@@ -13,34 +13,45 @@ from .resource import Resource
 
 
 class NetworkFeatures(Resource):
-    """This is an object used to store a full view of network features (presently
-    VNET integration and Hybrid Connections)
-    for a web app.
+    """Full view of network features for an app (presently VNET integration and
+    Hybrid Connections).
 
-    :param id: Resource Id
-    :type id: str
-    :param name: Resource Name
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar id: Resource Id.
+    :vartype id: str
+    :param name: Resource Name.
     :type name: str
-    :param kind: Kind of resource
+    :param kind: Kind of resource.
     :type kind: str
-    :param location: Resource Location
+    :param location: Resource Location.
     :type location: str
-    :param type: Resource type
+    :param type: Resource type.
     :type type: str
-    :param tags: Resource tags
+    :param tags: Resource tags.
     :type tags: dict
-    :param virtual_network_name: The Vnet Name
-    :type virtual_network_name: str
-    :param virtual_network_connection: The Vnet Summary view
-    :type virtual_network_connection: :class:`VnetInfo
+    :ivar virtual_network_name: The Virtual Network name.
+    :vartype virtual_network_name: str
+    :ivar virtual_network_connection: The Virtual Network summary view.
+    :vartype virtual_network_connection: :class:`VnetInfo
      <azure.mgmt.web.models.VnetInfo>`
-    :param hybrid_connections: The Hybrid Connections Summary view
-    :type hybrid_connections: list of :class:`RelayServiceConnectionEntity
+    :ivar hybrid_connections: The Hybrid Connections summary view.
+    :vartype hybrid_connections: list of :class:`RelayServiceConnectionEntity
      <azure.mgmt.web.models.RelayServiceConnectionEntity>`
-    """ 
+    :ivar hybrid_connections_v2: The Hybrid Connection V2 (Service Bus) view.
+    :vartype hybrid_connections_v2: list of :class:`HybridConnection
+     <azure.mgmt.web.models.HybridConnection>`
+    """
 
     _validation = {
+        'id': {'readonly': True},
+        'name': {'required': True},
         'location': {'required': True},
+        'virtual_network_name': {'readonly': True},
+        'virtual_network_connection': {'readonly': True},
+        'hybrid_connections': {'readonly': True},
+        'hybrid_connections_v2': {'readonly': True},
     }
 
     _attribute_map = {
@@ -53,10 +64,12 @@ class NetworkFeatures(Resource):
         'virtual_network_name': {'key': 'properties.virtualNetworkName', 'type': 'str'},
         'virtual_network_connection': {'key': 'properties.virtualNetworkConnection', 'type': 'VnetInfo'},
         'hybrid_connections': {'key': 'properties.hybridConnections', 'type': '[RelayServiceConnectionEntity]'},
+        'hybrid_connections_v2': {'key': 'properties.hybridConnectionsV2', 'type': '[HybridConnection]'},
     }
 
-    def __init__(self, location, id=None, name=None, kind=None, type=None, tags=None, virtual_network_name=None, virtual_network_connection=None, hybrid_connections=None):
-        super(NetworkFeatures, self).__init__(id=id, name=name, kind=kind, location=location, type=type, tags=tags)
-        self.virtual_network_name = virtual_network_name
-        self.virtual_network_connection = virtual_network_connection
-        self.hybrid_connections = hybrid_connections
+    def __init__(self, name, location, kind=None, type=None, tags=None):
+        super(NetworkFeatures, self).__init__(name=name, kind=kind, location=location, type=type, tags=tags)
+        self.virtual_network_name = None
+        self.virtual_network_connection = None
+        self.hybrid_connections = None
+        self.hybrid_connections_v2 = None

@@ -13,22 +13,21 @@ from msrest.serialization import Model
 
 
 class CsmSiteRecoveryEntity(Model):
-    """Class containting details about site recovery operation.
+    """Details about app recovery operation.
 
-    :param snapshot_time: Point in time in which the site recover should be
+    :param snapshot_time: Point in time in which the app recovery should be
      attempted.
     :type snapshot_time: datetime
-    :param recover_config: If true, then the website's configuration will be
-     reverted to its state at SnapshotTime
+    :param recover_config: If <code>true</code>, then the app's configuration
+     will be reverted to its state at <code>SnapshotTime</code>.
     :type recover_config: bool
-    :param site_name: [Optional] Destination web app name into which web app
-     should be recovered. This is case when new web app should be created
-     instead.
+    :param site_name: [Optional] Destination app name into which app should be
+     recovered. This is case when new app should be created instead.
     :type site_name: str
-    :param slot_name: [Optional] Destination web app slot name into which web
-     app should be recovered
+    :param slot_name: [Optional] Destination app slot name into which app
+     should be recovered.
     :type slot_name: str
-    """ 
+    """
 
     _attribute_map = {
         'snapshot_time': {'key': 'snapshotTime', 'type': 'iso-8601'},

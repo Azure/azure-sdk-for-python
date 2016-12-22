@@ -15,9 +15,9 @@ from msrest.serialization import Model
 class NameIdentifier(Model):
     """Identifies an object.
 
-    :param name: Name of the object
+    :param name: Name of the object.
     :type name: str
-    """ 
+    """
 
     _attribute_map = {
         'name': {'key': 'name', 'type': 'str'},

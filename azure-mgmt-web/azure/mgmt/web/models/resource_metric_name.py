@@ -13,19 +13,27 @@ from msrest.serialization import Model
 
 
 class ResourceMetricName(Model):
-    """Name of a metric for any resource.
+    """Name of a metric for any resource .
 
-    :param value: metric name value
-    :type value: str
-    :param localized_value: Localized metric name value
-    :type localized_value: str
-    """ 
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar value: metric name value.
+    :vartype value: str
+    :ivar localized_value: Localized metric name value.
+    :vartype localized_value: str
+    """
+
+    _validation = {
+        'value': {'readonly': True},
+        'localized_value': {'readonly': True},
+    }
 
     _attribute_map = {
         'value': {'key': 'value', 'type': 'str'},
         'localized_value': {'key': 'localizedValue', 'type': 'str'},
     }
 
-    def __init__(self, value=None, localized_value=None):
-        self.value = value
-        self.localized_value = localized_value
+    def __init__(self):
+        self.value = None
+        self.localized_value = None

@@ -19,13 +19,13 @@ class AzureBlobStorageApplicationLogsConfig(Model):
      'Information', 'Warning', 'Error'
     :type level: str or :class:`LogLevel <azure.mgmt.web.models.LogLevel>`
     :param sas_url: SAS url to a azure blob container with
-     read/write/list/delete permissions
+     read/write/list/delete permissions.
     :type sas_url: str
     :param retention_in_days: Retention in days.
      Remove blobs older than X days.
      0 or lower means no retention.
     :type retention_in_days: int
-    """ 
+    """
 
     _attribute_map = {
         'level': {'key': 'level', 'type': 'LogLevel'},

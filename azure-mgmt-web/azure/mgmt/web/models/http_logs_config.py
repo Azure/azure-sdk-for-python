@@ -15,13 +15,13 @@ from msrest.serialization import Model
 class HttpLogsConfig(Model):
     """Http logs configuration.
 
-    :param file_system: Http logs to file system configuration
+    :param file_system: Http logs to file system configuration.
     :type file_system: :class:`FileSystemHttpLogsConfig
      <azure.mgmt.web.models.FileSystemHttpLogsConfig>`
-    :param azure_blob_storage: Http logs to azure blob storage configuration
+    :param azure_blob_storage: Http logs to azure blob storage configuration.
     :type azure_blob_storage: :class:`AzureBlobStorageHttpLogsConfig
      <azure.mgmt.web.models.AzureBlobStorageHttpLogsConfig>`
-    """ 
+    """
 
     _attribute_map = {
         'file_system': {'key': 'fileSystem', 'type': 'FileSystemHttpLogsConfig'},

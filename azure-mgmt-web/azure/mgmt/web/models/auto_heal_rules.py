@@ -13,16 +13,16 @@ from msrest.serialization import Model
 
 
 class AutoHealRules(Model):
-    """AutoHealRules - describes the rules which can be defined for auto-heal.
+    """Rules that can be defined for auto-heal.
 
-    :param triggers: Triggers - Conditions that describe when to execute the
-     auto-heal actions
+    :param triggers: Conditions that describe when to execute the auto-heal
+     actions.
     :type triggers: :class:`AutoHealTriggers
      <azure.mgmt.web.models.AutoHealTriggers>`
-    :param actions: Actions - Actions to be executed when a rule is triggered
+    :param actions: Actions to be executed when a rule is triggered.
     :type actions: :class:`AutoHealActions
      <azure.mgmt.web.models.AutoHealActions>`
-    """ 
+    """
 
     _attribute_map = {
         'triggers': {'key': 'triggers', 'type': 'AutoHealTriggers'},

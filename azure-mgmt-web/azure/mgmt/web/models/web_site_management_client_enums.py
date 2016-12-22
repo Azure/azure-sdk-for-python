@@ -23,6 +23,7 @@ class KeyVaultSecretStatus(Enum):
     key_vault_does_not_exist = "KeyVaultDoesNotExist"
     key_vault_secret_does_not_exist = "KeyVaultSecretDoesNotExist"
     unknown_error = "UnknownError"
+    external_private_key = "ExternalPrivateKey"
     unknown = "Unknown"
 
 
@@ -66,6 +67,101 @@ class CertificateOrderActionType(Enum):
     org_name_change = "OrgNameChange"
     org_validation_complete = "OrgValidationComplete"
     san_drop = "SanDrop"
+    fraud_cleared = "FraudCleared"
+    unknown = "Unknown"
+
+
+class HostingEnvironmentStatus(Enum):
+
+    preparing = "Preparing"
+    ready = "Ready"
+    scaling = "Scaling"
+    deleting = "Deleting"
+
+
+class InternalLoadBalancingMode(Enum):
+
+    none = "None"
+    web = "Web"
+    publishing = "Publishing"
+
+
+class ComputeModeOptions(Enum):
+
+    shared = "Shared"
+    dedicated = "Dedicated"
+    dynamic = "Dynamic"
+
+
+class WorkerSizeOptions(Enum):
+
+    default = "Default"
+    small = "Small"
+    medium = "Medium"
+    large = "Large"
+
+
+class AccessControlEntryAction(Enum):
+
+    permit = "Permit"
+    deny = "Deny"
+
+
+class StatusOptions(Enum):
+
+    ready = "Ready"
+    pending = "Pending"
+
+
+class AutoHealActionType(Enum):
+
+    recycle = "Recycle"
+    log_event = "LogEvent"
+    custom_action = "CustomAction"
+
+
+class SslState(Enum):
+
+    disabled = "Disabled"
+    sni_enabled = "SniEnabled"
+    ip_based_enabled = "IpBasedEnabled"
+
+
+class OperationStatus(Enum):
+
+    in_progress = "InProgress"
+    failed = "Failed"
+    succeeded = "Succeeded"
+    timed_out = "TimedOut"
+    created = "Created"
+
+
+class UsageState(Enum):
+
+    normal = "Normal"
+    exceeded = "Exceeded"
+
+
+class SiteAvailabilityState(Enum):
+
+    normal = "Normal"
+    limited = "Limited"
+    disaster_recovery_mode = "DisasterRecoveryMode"
+
+
+class ManagedPipelineMode(Enum):
+
+    integrated = "Integrated"
+    classic = "Classic"
+
+
+class SiteLoadBalancing(Enum):
+
+    weighted_round_robin = "WeightedRoundRobin"
+    least_requests = "LeastRequests"
+    least_response_time = "LeastResponseTime"
+    weighted_total_traffic = "WeightedTotalTraffic"
+    request_hash = "RequestHash"
 
 
 class DomainStatus(Enum):
@@ -111,120 +207,6 @@ class HostNameType(Enum):
     managed = "Managed"
 
 
-class StatusOptions(Enum):
-
-    ready = "Ready"
-    pending = "Pending"
-
-
-class UsageState(Enum):
-
-    normal = "Normal"
-    exceeded = "Exceeded"
-
-
-class SiteAvailabilityState(Enum):
-
-    normal = "Normal"
-    limited = "Limited"
-    disaster_recovery_mode = "DisasterRecoveryMode"
-
-
-class SslState(Enum):
-
-    disabled = "Disabled"
-    sni_enabled = "SniEnabled"
-    ip_based_enabled = "IpBasedEnabled"
-
-
-class DatabaseServerType(Enum):
-
-    my_sql = "MySql"
-    sql_server = "SQLServer"
-    sql_azure = "SQLAzure"
-    custom = "Custom"
-
-
-class ManagedPipelineMode(Enum):
-
-    integrated = "Integrated"
-    classic = "Classic"
-
-
-class SiteLoadBalancing(Enum):
-
-    weighted_round_robin = "WeightedRoundRobin"
-    least_requests = "LeastRequests"
-    least_response_time = "LeastResponseTime"
-    weighted_total_traffic = "WeightedTotalTraffic"
-    request_hash = "RequestHash"
-
-
-class AutoHealActionType(Enum):
-
-    recycle = "Recycle"
-    log_event = "LogEvent"
-    custom_action = "CustomAction"
-
-
-class UnauthenticatedClientAction(Enum):
-
-    redirect_to_login_page = "RedirectToLoginPage"
-    allow_anonymous = "AllowAnonymous"
-
-
-class BuiltInAuthenticationProvider(Enum):
-
-    azure_active_directory = "AzureActiveDirectory"
-    facebook = "Facebook"
-    google = "Google"
-    microsoft_account = "MicrosoftAccount"
-    twitter = "Twitter"
-
-
-class HostingEnvironmentStatus(Enum):
-
-    preparing = "Preparing"
-    ready = "Ready"
-    scaling = "Scaling"
-    deleting = "Deleting"
-
-
-class InternalLoadBalancingMode(Enum):
-
-    none = "None"
-    web = "Web"
-    publishing = "Publishing"
-
-
-class ComputeModeOptions(Enum):
-
-    shared = "Shared"
-    dedicated = "Dedicated"
-    dynamic = "Dynamic"
-
-
-class WorkerSizeOptions(Enum):
-
-    default = "Default"
-    small = "Small"
-    medium = "Medium"
-    large = "Large"
-
-
-class AccessControlEntryAction(Enum):
-
-    permit = "Permit"
-    deny = "Deny"
-
-
-class ManagedHostingEnvironmentStatus(Enum):
-
-    preparing = "Preparing"
-    ready = "Ready"
-    deleting = "Deleting"
-
-
 class DomainType(Enum):
 
     regular = "Regular"
@@ -244,14 +226,31 @@ class Channels(Enum):
     notification = "Notification"
     api = "Api"
     email = "Email"
+    webhook = "Webhook"
     all = "All"
 
 
-class CloneAbilityResult(Enum):
+class AppServicePlanRestrictions(Enum):
 
-    cloneable = "Cloneable"
-    partially_cloneable = "PartiallyCloneable"
-    not_cloneable = "NotCloneable"
+    none = "None"
+    free = "Free"
+    shared = "Shared"
+    basic = "Basic"
+    standard = "Standard"
+    premium = "Premium"
+
+
+class CheckNameResourceTypes(Enum):
+
+    site = "Site"
+    slot = "Slot"
+    hosting_environment = "HostingEnvironment"
+
+
+class ValidateResourceTypes(Enum):
+
+    server_farm = "ServerFarm"
+    site = "Site"
 
 
 class LogLevel(Enum):
@@ -261,6 +260,20 @@ class LogLevel(Enum):
     information = "Information"
     warning = "Warning"
     error = "Error"
+
+
+class BackupItemStatus(Enum):
+
+    in_progress = "InProgress"
+    failed = "Failed"
+    succeeded = "Succeeded"
+    timed_out = "TimedOut"
+    created = "Created"
+    skipped = "Skipped"
+    partially_succeeded = "PartiallySucceeded"
+    delete_in_progress = "DeleteInProgress"
+    delete_failed = "DeleteFailed"
+    deleted = "Deleted"
 
 
 class FrequencyUnit(Enum):
@@ -276,15 +289,44 @@ class BackupRestoreOperationType(Enum):
     relocation = "Relocation"
 
 
-class BackupItemStatus(Enum):
+class ConnectionStringType(Enum):
 
-    in_progress = "InProgress"
+    my_sql = "MySql"
+    sql_server = "SQLServer"
+    sql_azure = "SQLAzure"
+    custom = "Custom"
+    notification_hub = "NotificationHub"
+    service_bus = "ServiceBus"
+    event_hub = "EventHub"
+    api_hub = "ApiHub"
+    doc_db = "DocDb"
+    redis_cache = "RedisCache"
+
+
+class DnsVerificationTestResult(Enum):
+
+    passed = "Passed"
     failed = "Failed"
-    succeeded = "Succeeded"
-    timed_out = "TimedOut"
-    created = "Created"
     skipped = "Skipped"
-    partially_succeeded = "PartiallySucceeded"
-    delete_in_progress = "DeleteInProgress"
-    delete_failed = "DeleteFailed"
-    deleted = "Deleted"
+
+
+class UnauthenticatedClientAction(Enum):
+
+    redirect_to_login_page = "RedirectToLoginPage"
+    allow_anonymous = "AllowAnonymous"
+
+
+class BuiltInAuthenticationProvider(Enum):
+
+    azure_active_directory = "AzureActiveDirectory"
+    facebook = "Facebook"
+    google = "Google"
+    microsoft_account = "MicrosoftAccount"
+    twitter = "Twitter"
+
+
+class CloneAbilityResult(Enum):
+
+    cloneable = "Cloneable"
+    partially_cloneable = "PartiallyCloneable"
+    not_cloneable = "NotCloneable"
