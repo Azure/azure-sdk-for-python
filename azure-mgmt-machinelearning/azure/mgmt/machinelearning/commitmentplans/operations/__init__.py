@@ -9,10 +9,12 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .azure_ml_commitment_plans_management_client import AzureMLCommitmentPlansManagementClient
-from .version import VERSION
+from .commitment_associations_operations import CommitmentAssociationsOperations
+from .commitment_plans_operations import CommitmentPlansOperations
+from .usage_history_operations import UsageHistoryOperations
 
-__all__ = ['AzureMLCommitmentPlansManagementClient']
-
-__version__ = VERSION
-
+__all__ = [
+    'CommitmentAssociationsOperations',
+    'CommitmentPlansOperations',
+    'UsageHistoryOperations',
+]

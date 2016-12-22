@@ -32,13 +32,13 @@ class WebServicePropertiesForGraph(WebServiceProperties):
      service. Valid values are Unknown, Provisioning, Succeeded, and Failed.
      Possible values include: 'Unknown', 'Provisioning', 'Succeeded', 'Failed'
     :vartype provisioning_state: str or :class:`ProvisioningState
-     <azure.mgmt.machinelearning.models.ProvisioningState>`
+     <azure.mgmt.machinelearning.webservices.models.ProvisioningState>`
     :param keys: Contains the web service provisioning keys. If you do not
      specify provisioning keys, the Azure Machine Learning system generates
      them for you. Note: The keys are not returned from calls to GET
      operations.
     :type keys: :class:`WebServiceKeys
-     <azure.mgmt.machinelearning.models.WebServiceKeys>`
+     <azure.mgmt.machinelearning.webservices.models.WebServiceKeys>`
     :param read_only: When set to true, indicates that the web service is
      read-only and can no longer be updated or patched, only removed. Default,
      is false. Note: Once set to true, you cannot change its value.
@@ -52,11 +52,11 @@ class WebServicePropertiesForGraph(WebServiceProperties):
     :param realtime_configuration: Contains the configuration settings for the
      web service endpoint.
     :type realtime_configuration: :class:`RealtimeConfiguration
-     <azure.mgmt.machinelearning.models.RealtimeConfiguration>`
+     <azure.mgmt.machinelearning.webservices.models.RealtimeConfiguration>`
     :param diagnostics: Settings controlling the diagnostics traces collection
      for the web service.
     :type diagnostics: :class:`DiagnosticsConfiguration
-     <azure.mgmt.machinelearning.models.DiagnosticsConfiguration>`
+     <azure.mgmt.machinelearning.webservices.models.DiagnosticsConfiguration>`
     :param storage_account: Specifies the storage account that Azure Machine
      Learning uses to store information about the web service. Only the name of
      the storage account is returned from calls to GET operations. When
@@ -64,30 +64,30 @@ class WebServicePropertiesForGraph(WebServiceProperties):
      necessary assets are available in the new storage account or calls to your
      web service will fail.
     :type storage_account: :class:`StorageAccount
-     <azure.mgmt.machinelearning.models.StorageAccount>`
+     <azure.mgmt.machinelearning.webservices.models.StorageAccount>`
     :param machine_learning_workspace: Specifies the Machine Learning
      workspace containing the experiment that is source for the web service.
     :type machine_learning_workspace: :class:`MachineLearningWorkspace
-     <azure.mgmt.machinelearning.models.MachineLearningWorkspace>`
+     <azure.mgmt.machinelearning.webservices.models.MachineLearningWorkspace>`
     :param commitment_plan: Contains the commitment plan associated with this
      web service. Set at creation time. Once set, this value cannot be changed.
      Note: The commitment plan is not returned from calls to GET operations.
     :type commitment_plan: :class:`CommitmentPlan
-     <azure.mgmt.machinelearning.models.CommitmentPlan>`
+     <azure.mgmt.machinelearning.webservices.models.CommitmentPlan>`
     :param input: Contains the Swagger 2.0 schema describing one or more of
      the web service's inputs. For more information, see the Swagger
      specification.
     :type input: :class:`ServiceInputOutputSpecification
-     <azure.mgmt.machinelearning.models.ServiceInputOutputSpecification>`
+     <azure.mgmt.machinelearning.webservices.models.ServiceInputOutputSpecification>`
     :param output: Contains the Swagger 2.0 schema describing one or more of
      the web service's outputs. For more information, see the Swagger
      specification.
     :type output: :class:`ServiceInputOutputSpecification
-     <azure.mgmt.machinelearning.models.ServiceInputOutputSpecification>`
+     <azure.mgmt.machinelearning.webservices.models.ServiceInputOutputSpecification>`
     :param example_request: Defines sample input data for one or more of the
      service's inputs.
     :type example_request: :class:`ExampleRequest
-     <azure.mgmt.machinelearning.models.ExampleRequest>`
+     <azure.mgmt.machinelearning.webservices.models.ExampleRequest>`
     :param assets: Contains user defined properties describing web service
      assets. Properties are expressed as Key/Value pairs.
     :type assets: dict
@@ -100,7 +100,7 @@ class WebServicePropertiesForGraph(WebServiceProperties):
     :param package: The definition of the graph package making up this web
      service.
     :type package: :class:`GraphPackage
-     <azure.mgmt.machinelearning.models.GraphPackage>`
+     <azure.mgmt.machinelearning.webservices.models.GraphPackage>`
     """
 
     _validation = {

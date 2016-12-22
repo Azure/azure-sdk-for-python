@@ -18,7 +18,7 @@ class OutputPort(Model):
     :param type: Port data type. Possible values include: 'Dataset'. Default
      value: "Dataset" .
     :type type: str or :class:`OutputPortType
-     <azure.mgmt.machinelearning.models.OutputPortType>`
+     <azure.mgmt.machinelearning.webservices.models.OutputPortType>`
     """
 
     _attribute_map = {

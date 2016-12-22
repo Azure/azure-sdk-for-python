@@ -20,13 +20,13 @@ class ColumnSpecification(Model):
     :param type: Data type of the column. Possible values include: 'Boolean',
      'Integer', 'Number', 'String'
     :type type: str or :class:`ColumnType
-     <azure.mgmt.machinelearning.models.ColumnType>`
+     <azure.mgmt.machinelearning.webservices.models.ColumnType>`
     :param format: Additional format information for the data type. Possible
      values include: 'Byte', 'Char', 'Complex64', 'Complex128', 'Date-time',
      'Date-timeOffset', 'Double', 'Duration', 'Float', 'Int8', 'Int16',
      'Int32', 'Int64', 'Uint8', 'Uint16', 'Uint32', 'Uint64'
     :type format: str or :class:`ColumnFormat
-     <azure.mgmt.machinelearning.models.ColumnFormat>`
+     <azure.mgmt.machinelearning.webservices.models.ColumnFormat>`
     :param enum: If the data type is categorical, this provides the list of
      accepted categories.
     :type enum: list of object

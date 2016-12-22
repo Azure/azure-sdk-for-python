@@ -9,10 +9,5 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .azure_ml_commitment_plans_management_client import AzureMLCommitmentPlansManagementClient
-from .version import VERSION
-
-__all__ = ['AzureMLCommitmentPlansManagementClient']
-
-__version__ = VERSION
+VERSION = "0.1.0"
 

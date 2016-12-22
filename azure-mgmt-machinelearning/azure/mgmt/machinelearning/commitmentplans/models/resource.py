@@ -9,36 +9,32 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .resource import Resource
+from msrest.serialization import Model
 
 
-class WebService(Resource):
-    """Instance of an Azure ML web service resource.
+class Resource(Model):
+    """Common properties of an ARM resource.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar id: Specifies the resource ID.
+    :ivar id: Resource Id.
     :vartype id: str
-    :param name: Specifies the name of the resource.
-    :type name: str
-    :param location: Specifies the location of the resource.
+    :ivar name: Resource name.
+    :vartype name: str
+    :param location: Resource location.
     :type location: str
-    :ivar type: Specifies the type of the resource.
+    :ivar type: Resource type.
     :vartype type: str
-    :param tags: Contains resource tags defined as key/value pairs.
+    :param tags: User-defined tags for the resource.
     :type tags: dict
-    :param properties: Contains the property payload that describes the web
-     service.
-    :type properties: :class:`WebServiceProperties
-     <azure.mgmt.machinelearning.webservices.models.WebServiceProperties>`
     """
 
     _validation = {
         'id': {'readonly': True},
+        'name': {'readonly': True},
         'location': {'required': True},
         'type': {'readonly': True},
-        'properties': {'required': True},
     }
 
     _attribute_map = {
@@ -47,9 +43,11 @@ class WebService(Resource):
         'location': {'key': 'location', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
-        'properties': {'key': 'properties', 'type': 'WebServiceProperties'},
     }
 
-    def __init__(self, location, properties, name=None, tags=None):
-        super(WebService, self).__init__(name=name, location=location, tags=tags)
-        self.properties = properties
+    def __init__(self, location, tags=None):
+        self.id = None
+        self.name = None
+        self.location = location
+        self.type = None
+        self.tags = tags

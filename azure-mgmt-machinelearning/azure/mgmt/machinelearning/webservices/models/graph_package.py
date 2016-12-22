@@ -20,7 +20,7 @@ class GraphPackage(Model):
     :type nodes: dict
     :param edges: The list of edges making up the graph.
     :type edges: list of :class:`GraphEdge
-     <azure.mgmt.machinelearning.models.GraphEdge>`
+     <azure.mgmt.machinelearning.webservices.models.GraphEdge>`
     :param graph_parameters: The collection of global parameters for the
      graph, given as a global parameter name to GraphParameter map. Each
      parameter here has a 1:1 match with the global parameters values map

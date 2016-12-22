@@ -21,10 +21,10 @@ class GraphParameter(Model):
      'Int', 'Float', 'Enumerated', 'Script', 'Mode', 'Credential', 'Boolean',
      'Double', 'ColumnPicker', 'ParameterRange', 'DataGatewayName'
     :type type: str or :class:`ParameterType
-     <azure.mgmt.machinelearning.models.ParameterType>`
+     <azure.mgmt.machinelearning.webservices.models.ParameterType>`
     :param links: Association links for this parameter to nodes in the graph.
     :type links: list of :class:`GraphParameterLink
-     <azure.mgmt.machinelearning.models.GraphParameterLink>`
+     <azure.mgmt.machinelearning.webservices.models.GraphParameterLink>`
     """
 
     _validation = {

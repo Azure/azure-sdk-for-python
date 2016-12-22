@@ -49,14 +49,14 @@ class WebServicesOperations(object):
         :param create_or_update_payload: The payload that is used to create or
          update the web service.
         :type create_or_update_payload: :class:`WebService
-         <azure.mgmt.machinelearning.models.WebService>`
+         <azure.mgmt.machinelearning.webservices.models.WebService>`
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :rtype:
          :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
          instance that returns :class:`WebService
-         <azure.mgmt.machinelearning.models.WebService>`
+         <azure.mgmt.machinelearning.webservices.models.WebService>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
@@ -151,7 +151,7 @@ class WebServicesOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`WebService
-         <azure.mgmt.machinelearning.models.WebService>`
+         <azure.mgmt.machinelearning.webservices.models.WebService>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
@@ -212,14 +212,14 @@ class WebServicesOperations(object):
         :type web_service_name: str
         :param patch_payload: The payload to use to patch the web service.
         :type patch_payload: :class:`WebService
-         <azure.mgmt.machinelearning.models.WebService>`
+         <azure.mgmt.machinelearning.webservices.models.WebService>`
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :rtype:
          :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
          instance that returns :class:`WebService
-         <azure.mgmt.machinelearning.models.WebService>`
+         <azure.mgmt.machinelearning.webservices.models.WebService>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
@@ -387,7 +387,7 @@ class WebServicesOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`WebServiceKeys
-         <azure.mgmt.machinelearning.models.WebServiceKeys>`
+         <azure.mgmt.machinelearning.webservices.models.WebServiceKeys>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
@@ -450,7 +450,7 @@ class WebServicesOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`WebServicePaged
-         <azure.mgmt.machinelearning.models.WebServicePaged>`
+         <azure.mgmt.machinelearning.webservices.models.WebServicePaged>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
@@ -518,7 +518,7 @@ class WebServicesOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`WebServicePaged
-         <azure.mgmt.machinelearning.models.WebServicePaged>`
+         <azure.mgmt.machinelearning.webservices.models.WebServicePaged>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):

@@ -20,7 +20,7 @@ class ModeValueInfo(Model):
     :type interface_string: str
     :param parameters: The definition of the parameter.
     :type parameters: list of :class:`ModuleAssetParameter
-     <azure.mgmt.machinelearning.models.ModuleAssetParameter>`
+     <azure.mgmt.machinelearning.webservices.models.ModuleAssetParameter>`
     """
 
     _attribute_map = {

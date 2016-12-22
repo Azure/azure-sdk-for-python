@@ -12,18 +12,21 @@
 from msrest.serialization import Model
 
 
-class InputPort(Model):
-    """Asset input port.
+class CommitmentPlanPatchPayload(Model):
+    """The properties of a commitment plan which may be updated via PATCH.
 
-    :param type: Port data type. Possible values include: 'Dataset'. Default
-     value: "Dataset" .
-    :type type: str or :class:`InputPortType
-     <azure.mgmt.machinelearning.webservices.models.InputPortType>`
+    :param tags: User-defined tags for the commitment plan.
+    :type tags: dict
+    :param sku: The commitment plan SKU.
+    :type sku: :class:`ResourceSku
+     <azure.mgmt.machinelearning.commitmentplans.models.ResourceSku>`
     """
 
     _attribute_map = {
-        'type': {'key': 'type', 'type': 'str'},
+        'tags': {'key': 'tags', 'type': '{str}'},
+        'sku': {'key': 'sku', 'type': 'ResourceSku'},
     }
 
-    def __init__(self, type="Dataset"):
-        self.type = type
+    def __init__(self, tags=None, sku=None):
+        self.tags = tags
+        self.sku = sku

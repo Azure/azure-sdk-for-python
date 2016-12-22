@@ -21,10 +21,10 @@ class AssetItem(Model):
     :type id: str
     :param type: Asset's type. Possible values include: 'Module', 'Resource'
     :type type: str or :class:`AssetType
-     <azure.mgmt.machinelearning.models.AssetType>`
+     <azure.mgmt.machinelearning.webservices.models.AssetType>`
     :param location_info: Access information for the asset.
     :type location_info: :class:`AssetLocation
-     <azure.mgmt.machinelearning.models.AssetLocation>`
+     <azure.mgmt.machinelearning.webservices.models.AssetLocation>`
     :param input_ports: Information about the asset's input ports.
     :type input_ports: dict
     :param output_ports: Information about the asset's output ports.
@@ -35,7 +35,7 @@ class AssetItem(Model):
     :param parameters: If the asset is a custom module, this holds the
      module's parameters.
     :type parameters: list of :class:`ModuleAssetParameter
-     <azure.mgmt.machinelearning.models.ModuleAssetParameter>`
+     <azure.mgmt.machinelearning.webservices.models.ModuleAssetParameter>`
     """
 
     _validation = {

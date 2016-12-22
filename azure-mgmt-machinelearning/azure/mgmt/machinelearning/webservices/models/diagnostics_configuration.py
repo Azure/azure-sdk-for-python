@@ -20,7 +20,7 @@ class DiagnosticsConfiguration(Model):
      traces; All - collects all traces (stdout and stderr). Possible values
      include: 'None', 'Error', 'All'
     :type level: str or :class:`DiagnosticsLevel
-     <azure.mgmt.machinelearning.models.DiagnosticsLevel>`
+     <azure.mgmt.machinelearning.webservices.models.DiagnosticsLevel>`
     :param expiry: Specifies the date and time when the logging will cease. If
      null, diagnostic collection is not time limited.
     :type expiry: datetime

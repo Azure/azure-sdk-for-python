@@ -12,18 +12,17 @@
 from msrest.serialization import Model
 
 
-class InputPort(Model):
-    """Asset input port.
+class MoveCommitmentAssociationRequest(Model):
+    """Specifies the destination Azure ML commitment plan for a move operation.
 
-    :param type: Port data type. Possible values include: 'Dataset'. Default
-     value: "Dataset" .
-    :type type: str or :class:`InputPortType
-     <azure.mgmt.machinelearning.webservices.models.InputPortType>`
+    :param destination_plan_id: The ARM ID of the commitment plan to re-parent
+     the commitment association to.
+    :type destination_plan_id: str
     """
 
     _attribute_map = {
-        'type': {'key': 'type', 'type': 'str'},
+        'destination_plan_id': {'key': 'destinationPlanId', 'type': 'str'},
     }
 
-    def __init__(self, type="Dataset"):
-        self.type = type
+    def __init__(self, destination_plan_id=None):
+        self.destination_plan_id = destination_plan_id

@@ -12,33 +12,35 @@
 from .resource import Resource
 
 
-class WebService(Resource):
-    """Instance of an Azure ML web service resource.
+class CommitmentAssociation(Resource):
+    """Represents the association between a commitment plan and some other
+    resource, such as a Machine Learning web service.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar id: Specifies the resource ID.
+    :ivar id: Resource Id.
     :vartype id: str
-    :param name: Specifies the name of the resource.
-    :type name: str
-    :param location: Specifies the location of the resource.
+    :ivar name: Resource name.
+    :vartype name: str
+    :param location: Resource location.
     :type location: str
-    :ivar type: Specifies the type of the resource.
+    :ivar type: Resource type.
     :vartype type: str
-    :param tags: Contains resource tags defined as key/value pairs.
+    :param tags: User-defined tags for the resource.
     :type tags: dict
-    :param properties: Contains the property payload that describes the web
-     service.
-    :type properties: :class:`WebServiceProperties
-     <azure.mgmt.machinelearning.webservices.models.WebServiceProperties>`
+    :param etag: An entity tag used to enforce optimistic concurrency.
+    :type etag: str
+    :param properties: The properties of the commitment association resource.
+    :type properties: :class:`CommitmentAssociationProperties
+     <azure.mgmt.machinelearning.commitmentplans.models.CommitmentAssociationProperties>`
     """
 
     _validation = {
         'id': {'readonly': True},
+        'name': {'readonly': True},
         'location': {'required': True},
         'type': {'readonly': True},
-        'properties': {'required': True},
     }
 
     _attribute_map = {
@@ -47,9 +49,11 @@ class WebService(Resource):
         'location': {'key': 'location', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
-        'properties': {'key': 'properties', 'type': 'WebServiceProperties'},
+        'etag': {'key': 'etag', 'type': 'str'},
+        'properties': {'key': 'properties', 'type': 'CommitmentAssociationProperties'},
     }
 
-    def __init__(self, location, properties, name=None, tags=None):
-        super(WebService, self).__init__(name=name, location=location, tags=tags)
+    def __init__(self, location, tags=None, etag=None, properties=None):
+        super(CommitmentAssociation, self).__init__(location=location, tags=tags)
+        self.etag = etag
         self.properties = properties

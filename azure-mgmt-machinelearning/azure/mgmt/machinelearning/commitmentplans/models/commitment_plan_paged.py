@@ -9,10 +9,19 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .azure_ml_commitment_plans_management_client import AzureMLCommitmentPlansManagementClient
-from .version import VERSION
+from msrest.paging import Paged
 
-__all__ = ['AzureMLCommitmentPlansManagementClient']
 
-__version__ = VERSION
+class CommitmentPlanPaged(Paged):
+    """
+    A paging container for iterating over a list of CommitmentPlan object
+    """
 
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[CommitmentPlan]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(CommitmentPlanPaged, self).__init__(*args, **kwargs)
