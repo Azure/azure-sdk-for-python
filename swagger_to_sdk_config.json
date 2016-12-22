@@ -17,6 +17,13 @@
     "generated_relative_base_directory": "*client"
   },
   "projects": {
+    "analysisservices": {
+      "swagger": "arm-analysisservices/2016-05-16/swagger/analysisservices.json",
+      "autorest_options": {
+        "Namespace": "azure.mgmt.analysisservices"
+      },
+      "output_dir": "azure-mgmt-analysisservices/azure/mgmt/analysisservices"
+    },
     "authorization": {
       "swagger": "arm-authorization/2015-07-01/swagger/authorization.json",
       "autorest_options": {
