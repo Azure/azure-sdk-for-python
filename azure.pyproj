@@ -1508,6 +1508,7 @@
     <Compile Include="azure-mgmt\tests\test_mgmt_resource_policy.py" />
     <Compile Include="azure-mgmt\tests\test_mgmt_resource_subscriptions.py" />
     <Compile Include="azure-mgmt\tests\test_mgmt_scheduler.py" />
+    <Compile Include="azure-mgmt\tests\test_mgmt_search.py" />
     <Compile Include="azure-mgmt\tests\test_mgmt_servermanager.py" />
     <Compile Include="azure-mgmt\tests\test_mgmt_sql.py" />
     <Compile Include="azure-mgmt\tests\test_mgmt_storage.py" />
