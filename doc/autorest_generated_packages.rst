@@ -36,6 +36,7 @@
   ./ref/azure.mgmt.resource.resources.rst
   ./ref/azure.mgmt.resource.subscriptions.rst
   ./ref/azure.mgmt.scheduler.rst
+  ./ref/azure.mgmt.search.rst
   ./ref/azure.mgmt.servermanager.rst
   ./ref/azure.mgmt.servicebus.rst
   ./ref/azure.mgmt.sql.rst

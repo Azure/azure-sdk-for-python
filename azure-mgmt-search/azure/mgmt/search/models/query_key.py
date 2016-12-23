@@ -12,29 +12,29 @@
 from msrest.serialization import Model
 
 
-class AdminKeyResult(Model):
-    """Response containing the primary and secondary admin API keys for a given
-    Azure Search service.
+class QueryKey(Model):
+    """Describes an API key for a given Azure Search service that has permissions
+    for query operations only.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar primary_key: The primary admin API key of the Search service.
-    :vartype primary_key: str
-    :ivar secondary_key: The secondary admin API key of the Search service.
-    :vartype secondary_key: str
-    """ 
+    :ivar name: The name of the query API key; may be empty.
+    :vartype name: str
+    :ivar key: The value of the query API key.
+    :vartype key: str
+    """
 
     _validation = {
-        'primary_key': {'readonly': True},
-        'secondary_key': {'readonly': True},
+        'name': {'readonly': True},
+        'key': {'readonly': True},
     }
 
     _attribute_map = {
-        'primary_key': {'key': 'primaryKey', 'type': 'str'},
-        'secondary_key': {'key': 'secondaryKey', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'key': {'key': 'key', 'type': 'str'},
     }
 
     def __init__(self):
-        self.primary_key = None
-        self.secondary_key = None
+        self.name = None
+        self.key = None

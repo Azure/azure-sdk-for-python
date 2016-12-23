@@ -31,7 +31,7 @@ class CheckNameAvailabilityOutput(Model):
      provides resource naming requirements. Available only if 'Invalid' is
      returned in the 'reason' property.
     :vartype message: str
-    """ 
+    """
 
     _validation = {
         'is_name_available': {'readonly': True},
