@@ -1,0 +1,105 @@
+interactions:
+- request:
+    body: '{"location": "westus", "sku": {"name": "free"}, "properties": {"hostingMode":
+      "default", "replicaCount": 1, "partitionCount": 1}}'
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['129']
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.5.1 (Windows-10-10.0.14393-SP0) requests/2.12.1 msrest/0.4.4
+          msrest_azure/0.4.6 searchmanagementclient/0.11.0 Azure-SDK-For-Python]
+      accept-language: [en-US]
+      x-ms-client-request-id: [fa2a4500-c8a5-11e6-a051-ecb1d756380e]
+    method: PUT
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_search_test_search_admin_keys3f6f0ff0/providers/Microsoft.Search/searchServices/ptvstestquerykeys?api-version=2015-08-19
+  response:
+    body: {string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_search_test_search_admin_keys3f6f0ff0/providers/Microsoft.Search/searchServices/ptvstestquerykeys","name":"ptvstestquerykeys","type":"Microsoft.Search/searchServices","location":"West
+        US","properties":{"replicaCount":1,"partitionCount":1,"status":"running","statusDetails":null,"provisioningState":"succeeded","hostingMode":"default"},"sku":{"name":"free"}}'}
+    headers:
+      Cache-Control: [no-cache]
+      Content-Length: ['441']
+      Content-Type: [application/json; charset=utf-8]
+      Date: ['Fri, 23 Dec 2016 00:23:09 GMT']
+      ETag: [W/"datetime'2016-12-23T00%3A23%3A10.2711849Z'"]
+      Expires: ['-1']
+      Pragma: [no-cache]
+      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
+      X-AspNet-Version: [4.0.30319]
+      elapsed-time: ['1163']
+      request-id: [fa2a4500-c8a5-11e6-a051-ecb1d756380e]
+      x-ms-correlation-request-id: [e73772be-9a67-42b3-92b9-84c65a78f6c2]
+      x-ms-ratelimit-remaining-subscription-writes: ['1197']
+      x-ms-request-id: [fa2a4500-c8a5-11e6-a051-ecb1d756380e]
+      x-ms-routing-request-id: ['CENTRALUS:20161223T002310Z:e73772be-9a67-42b3-92b9-84c65a78f6c2']
+    status: {code: 201, message: Created}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['0']
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.5.1 (Windows-10-10.0.14393-SP0) requests/2.12.1 msrest/0.4.4
+          msrest_azure/0.4.6 searchmanagementclient/0.11.0 Azure-SDK-For-Python]
+      accept-language: [en-US]
+      x-ms-client-request-id: [fc037518-c8a5-11e6-ad6e-ecb1d756380e]
+    method: POST
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_search_test_search_admin_keys3f6f0ff0/providers/Microsoft.Search/searchServices/ptvstestquerykeys/listAdminKeys?api-version=2015-08-19
+  response:
+    body: {string: '{"primaryKey":"01BF7405A5901538C4F0F3DB31B07B73","secondaryKey":"228E0DA6EC5A817DB1A0BB592BF22723"}'}
+    headers:
+      Cache-Control: [no-cache]
+      Content-Type: [application/json; charset=utf-8]
+      Date: ['Fri, 23 Dec 2016 00:23:11 GMT']
+      Expires: ['-1']
+      Pragma: [no-cache]
+      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
+      Transfer-Encoding: [chunked]
+      Vary: ['Accept-Encoding,Accept-Encoding']
+      X-AspNet-Version: [4.0.30319]
+      content-length: ['99']
+      elapsed-time: ['176']
+      request-id: [fc037518-c8a5-11e6-ad6e-ecb1d756380e]
+      x-ms-correlation-request-id: [d6976bc0-8325-4384-8a80-ff87cba59312]
+      x-ms-ratelimit-remaining-subscription-writes: ['1199']
+      x-ms-request-id: [fc037518-c8a5-11e6-ad6e-ecb1d756380e]
+      x-ms-routing-request-id: ['CENTRALUS:20161223T002311Z:d6976bc0-8325-4384-8a80-ff87cba59312']
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['0']
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.5.1 (Windows-10-10.0.14393-SP0) requests/2.12.1 msrest/0.4.4
+          msrest_azure/0.4.6 searchmanagementclient/0.11.0 Azure-SDK-For-Python]
+      accept-language: [en-US]
+      x-ms-client-request-id: [fca6bd10-c8a5-11e6-a35e-ecb1d756380e]
+    method: POST
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_search_test_search_admin_keys3f6f0ff0/providers/Microsoft.Search/searchServices/ptvstestquerykeys/regenerateAdminKey/primary?api-version=2015-08-19
+  response:
+    body: {string: '{"primaryKey":"160C118CFA43D8555F3171B6D69F2F25","secondaryKey":"228E0DA6EC5A817DB1A0BB592BF22723"}'}
+    headers:
+      Cache-Control: [no-cache]
+      Content-Type: [application/json; charset=utf-8]
+      Date: ['Fri, 23 Dec 2016 00:23:11 GMT']
+      Expires: ['-1']
+      Pragma: [no-cache]
+      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
+      Transfer-Encoding: [chunked]
+      Vary: ['Accept-Encoding,Accept-Encoding']
+      X-AspNet-Version: [4.0.30319]
+      content-length: ['99']
+      elapsed-time: ['378']
+      request-id: [fca6bd10-c8a5-11e6-a35e-ecb1d756380e]
+      x-ms-correlation-request-id: [de432fee-cbd9-45d7-997e-1c5ed37f477f]
+      x-ms-ratelimit-remaining-subscription-writes: ['1198']
+      x-ms-request-id: [fca6bd10-c8a5-11e6-a35e-ecb1d756380e]
+      x-ms-routing-request-id: ['CENTRALUS:20161223T002312Z:de432fee-cbd9-45d7-997e-1c5ed37f477f']
+    status: {code: 200, message: OK}
+version: 1
