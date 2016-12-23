@@ -6,7 +6,8 @@
 # license information.
 #--------------------------------------------------------------------------
 
-from setuptools import setup
+from setuptools import find_packages, setup
+from io import open
 import re
 
 # azure v0.x is not compatible with this package
@@ -32,11 +33,16 @@ with open('azure/mgmt/search/version.py', 'r') as fd:
 if not version:
     raise RuntimeError('Cannot find version information')
 
+with open('README.rst', encoding='utf-8') as f:
+    readme = f.read()
+with open('HISTORY.rst', encoding='utf-8') as f:
+    history = f.read()
+
 setup(
     name='azure-mgmt-search',
     version=version,
     description='Microsoft Azure Search Management Client Library for Python',
-    long_description=open('README.rst', 'r').read(),
+    long_description=readme + '\n\n' + history,
     license='MIT License',
     author='Microsoft Corporation',
     author_email='ptvshelp@microsoft.com',
@@ -53,15 +59,10 @@ setup(
         'License :: OSI Approved :: MIT License',
     ],
     zip_safe=False,
-    packages=[
-        'azure',
-        'azure.mgmt',
-        'azure.mgmt.search',
-        'azure.mgmt.search.models',
-        'azure.mgmt.search.operations',
-    ],
+    packages=find_packages(),
     install_requires=[
-        'azure-common[autorest]==1.1.4',
+        'msrestazure~=0.4.6',
+        'azure-common~=1.1.4',
         'azure-mgmt-nspkg',
     ],
 )
