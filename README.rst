@@ -81,6 +81,7 @@ and will NOT be installed with the 2.0.0rc6 "azure" meta-package. We removed the
 to prepare our customers to the 2.0.0 stable release that will only contains the stable packages
 listed before.
 
+- azure-keyvault 0.1.0
 - azure-graphrbac 0.30.0rc6
 - azure-monitor 0.1.0
 - azure-mgmt-authorization 0.30.0rc6
