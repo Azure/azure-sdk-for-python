@@ -95,6 +95,15 @@
       },
       "output_dir": "azure-mgmt-eventhub/azure/mgmt/eventhub"
     },
+    "fabric": {
+      "swagger": "servicefabric/2016-01-28/swagger/servicefabric.json",
+      "autorest_options": {
+        "CodeGenerator": "Python",
+        "Namespace": "azure.fabric",
+        "PackageVersion": "0.1.0"       
+      },
+      "output_dir": "azure-fabric/azure/fabric"
+    },  
     "graphrbac": {
       "swagger": "arm-graphrbac/compositeGraphRbacManagementClient.json",
       "autorest_options": {
@@ -262,7 +271,7 @@
       "swagger": "arm-search/2015-08-19/swagger/search.json",
       "autorest_options": {
         "Namespace": "azure.mgmt.search",
-		"PackageVersion": "0.1.0"
+        "PackageVersion": "0.1.0"
       },
       "output_dir": "azure-mgmt-search/azure/mgmt/search"
     },
