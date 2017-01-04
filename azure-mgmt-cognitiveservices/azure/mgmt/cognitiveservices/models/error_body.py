@@ -19,7 +19,7 @@ class ErrorBody(Model):
     :type code: str
     :param message: error message
     :type message: str
-    """ 
+    """
 
     _validation = {
         'code': {'required': True},
