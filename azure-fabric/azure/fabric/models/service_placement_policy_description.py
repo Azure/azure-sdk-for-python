@@ -9,10 +9,19 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .service_fabric_client import ServiceFabricClient
-from .version import VERSION
+from msrest.serialization import Model
 
-__all__ = ['ServiceFabricClient']
 
-__version__ = VERSION
+class ServicePlacementPolicyDescription(Model):
+    """The description of the service placement policy.
 
+    :param type:
+    :type type: str
+    """
+
+    _attribute_map = {
+        'type': {'key': 'Type', 'type': 'str'},
+    }
+
+    def __init__(self, type=None):
+        self.type = type

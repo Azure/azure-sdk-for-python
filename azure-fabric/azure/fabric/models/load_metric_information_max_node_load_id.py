@@ -9,10 +9,19 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .service_fabric_client import ServiceFabricClient
-from .version import VERSION
+from msrest.serialization import Model
 
-__all__ = ['ServiceFabricClient']
 
-__version__ = VERSION
+class LoadMetricInformationMaxNodeLoadId(Model):
+    """The id of the max node load.
 
+    :param id:
+    :type id: str
+    """
+
+    _attribute_map = {
+        'id': {'key': 'Id', 'type': 'str'},
+    }
+
+    def __init__(self, id=None):
+        self.id = id

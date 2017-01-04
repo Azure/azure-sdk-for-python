@@ -9,10 +9,23 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .service_fabric_client import ServiceFabricClient
-from .version import VERSION
+from msrest.serialization import Model
 
-__all__ = ['ServiceFabricClient']
 
-__version__ = VERSION
+class ApplicationParametersItem(Model):
+    """The parameters.
 
+    :param key:
+    :type key: str
+    :param value:
+    :type value: str
+    """
+
+    _attribute_map = {
+        'key': {'key': 'Key', 'type': 'str'},
+        'value': {'key': 'Value', 'type': 'str'},
+    }
+
+    def __init__(self, key=None, value=None):
+        self.key = key
+        self.value = value

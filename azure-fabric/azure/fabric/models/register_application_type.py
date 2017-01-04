@@ -9,10 +9,19 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .service_fabric_client import ServiceFabricClient
-from .version import VERSION
+from msrest.serialization import Model
 
-__all__ = ['ServiceFabricClient']
 
-__version__ = VERSION
+class RegisterApplicationType(Model):
+    """The type of the register application.
 
+    :param application_type_build_path:
+    :type application_type_build_path: str
+    """
+
+    _attribute_map = {
+        'application_type_build_path': {'key': 'ApplicationTypeBuildPath', 'type': 'str'},
+    }
+
+    def __init__(self, application_type_build_path=None):
+        self.application_type_build_path = application_type_build_path

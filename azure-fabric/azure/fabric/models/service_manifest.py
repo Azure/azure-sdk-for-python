@@ -9,10 +9,19 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .service_fabric_client import ServiceFabricClient
-from .version import VERSION
+from msrest.serialization import Model
 
-__all__ = ['ServiceFabricClient']
 
-__version__ = VERSION
+class ServiceManifest(Model):
+    """The manifest of the service.
 
+    :param manifest:
+    :type manifest: str
+    """
+
+    _attribute_map = {
+        'manifest': {'key': 'Manifest', 'type': 'str'},
+    }
+
+    def __init__(self, manifest=None):
+        self.manifest = manifest

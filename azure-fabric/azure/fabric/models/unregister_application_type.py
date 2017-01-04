@@ -9,10 +9,19 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .service_fabric_client import ServiceFabricClient
-from .version import VERSION
+from msrest.serialization import Model
 
-__all__ = ['ServiceFabricClient']
 
-__version__ = VERSION
+class UnregisterApplicationType(Model):
+    """The type of the unregister application.
 
+    :param application_type_version:
+    :type application_type_version: str
+    """
+
+    _attribute_map = {
+        'application_type_version': {'key': 'ApplicationTypeVersion', 'type': 'str'},
+    }
+
+    def __init__(self, application_type_version=None):
+        self.application_type_version = application_type_version

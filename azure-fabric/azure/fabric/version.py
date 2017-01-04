@@ -9,10 +9,5 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .service_fabric_client import ServiceFabricClient
-from .version import VERSION
-
-__all__ = ['ServiceFabricClient']
-
-__version__ = VERSION
+VERSION = "0.1.0"
 

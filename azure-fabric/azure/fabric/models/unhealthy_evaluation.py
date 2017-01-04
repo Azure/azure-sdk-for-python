@@ -9,10 +9,20 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .service_fabric_client import ServiceFabricClient
-from .version import VERSION
+from msrest.serialization import Model
 
-__all__ = ['ServiceFabricClient']
 
-__version__ = VERSION
+class UnhealthyEvaluation(Model):
+    """The evaluation of the unhealthy.
 
+    :param health_evaluation:
+    :type health_evaluation: :class:`HealthEvaluation
+     <azure.fabric.models.HealthEvaluation>`
+    """
+
+    _attribute_map = {
+        'health_evaluation': {'key': 'HealthEvaluation', 'type': 'HealthEvaluation'},
+    }
+
+    def __init__(self, health_evaluation=None):
+        self.health_evaluation = health_evaluation

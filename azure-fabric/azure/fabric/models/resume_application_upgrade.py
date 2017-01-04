@@ -9,10 +9,19 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .service_fabric_client import ServiceFabricClient
-from .version import VERSION
+from msrest.serialization import Model
 
-__all__ = ['ServiceFabricClient']
 
-__version__ = VERSION
+class ResumeApplicationUpgrade(Model):
+    """The upgrade of the resume application.
 
+    :param upgrade_domain_name:
+    :type upgrade_domain_name: str
+    """
+
+    _attribute_map = {
+        'upgrade_domain_name': {'key': 'UpgradeDomainName', 'type': 'str'},
+    }
+
+    def __init__(self, upgrade_domain_name=None):
+        self.upgrade_domain_name = upgrade_domain_name

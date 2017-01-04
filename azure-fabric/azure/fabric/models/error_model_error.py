@@ -9,10 +9,23 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .service_fabric_client import ServiceFabricClient
-from .version import VERSION
+from msrest.serialization import Model
 
-__all__ = ['ServiceFabricClient']
 
-__version__ = VERSION
+class ErrorModelError(Model):
+    """The error.
 
+    :param code:
+    :type code: str
+    :param message:
+    :type message: str
+    """
+
+    _attribute_map = {
+        'code': {'key': 'Code', 'type': 'str'},
+        'message': {'key': 'Message', 'type': 'str'},
+    }
+
+    def __init__(self, code=None, message=None):
+        self.code = code
+        self.message = message
