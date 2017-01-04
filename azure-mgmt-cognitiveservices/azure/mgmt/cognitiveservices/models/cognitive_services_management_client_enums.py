@@ -15,11 +15,16 @@ from enum import Enum
 class SkuName(Enum):
 
     f0 = "F0"
+    p0 = "P0"
+    p1 = "P1"
+    p2 = "P2"
     s0 = "S0"
     s1 = "S1"
     s2 = "S2"
     s3 = "S3"
     s4 = "S4"
+    s5 = "S5"
+    s6 = "S6"
 
 
 class SkuTier(Enum):
@@ -31,13 +36,22 @@ class SkuTier(Enum):
 
 class Kind(Enum):
 
+    academic = "Academic"
+    bing_autosuggest = "Bing.Autosuggest"
+    bing_search = "Bing.Search"
+    bing_speech = "Bing.Speech"
+    bing_spell_check = "Bing.SpellCheck"
     computer_vision = "ComputerVision"
+    content_moderator = "ContentModerator"
     emotion = "Emotion"
     face = "Face"
     luis = "LUIS"
     recommendations = "Recommendations"
+    speaker_recognition = "SpeakerRecognition"
     speech = "Speech"
+    speech_translation = "SpeechTranslation"
     text_analytics = "TextAnalytics"
+    text_translation = "TextTranslation"
     web_lm = "WebLM"
 
 

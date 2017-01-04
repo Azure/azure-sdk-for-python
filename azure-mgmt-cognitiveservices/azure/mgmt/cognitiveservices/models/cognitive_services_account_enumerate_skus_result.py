@@ -22,7 +22,7 @@ class CognitiveServicesAccountEnumerateSkusResult(Model):
      properties.
     :vartype value: list of :class:`CognitiveServicesResourceAndSku
      <azure.mgmt.cognitiveservices.models.CognitiveServicesResourceAndSku>`
-    """ 
+    """
 
     _validation = {
         'value': {'readonly': True},
