@@ -48,7 +48,8 @@ class JobErrorDetails(Model):
     :vartype inner_error: :class:`JobInnerError
      <azure.mgmt.datalake.analytics.job.models.JobInnerError>`
     :ivar severity: the severity level of the failure. Possible values
-     include: 'Warning', 'Error', 'Info'
+     include: 'Warning', 'Error', 'Info', 'SevereWarning', 'Deprecated',
+     'UserWarning'
     :vartype severity: str or :class:`SeverityTypes
      <azure.mgmt.datalake.analytics.job.models.SeverityTypes>`
     :ivar source: the ultimate source of the failure (usually either SYSTEM or
