@@ -30,7 +30,7 @@ from .data_lake_store_account_management_client_enums import (
     EncryptionProvisioningState,
     FirewallState,
     TrustedIdProviderState,
-    PricingTierType,
+    TierType,
 )
 
 __all__ = [
@@ -54,5 +54,5 @@ __all__ = [
     'EncryptionProvisioningState',
     'FirewallState',
     'TrustedIdProviderState',
-    'PricingTierType',
+    'TierType',
 ]
