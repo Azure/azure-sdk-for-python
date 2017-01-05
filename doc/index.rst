@@ -197,7 +197,7 @@ This page describes the :doc:`usage and detailed features of Azure Service Manag
 System Requirements:
 --------------------
 
-The supported Python versions are 2.7.x, 3.3.x, 3.4.x, and 3.5.x
+The supported Python versions are 2.7.x, 3.3.x, 3.4.x, 3.5.x and 3.6.x
 To download Python, please visit
 https://www.python.org/download/
 
