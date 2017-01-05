@@ -21,7 +21,7 @@ class KeyOperationsParameters(Model):
      <azure.keyvault.generated.models.JsonWebKeyEncryptionAlgorithm>`
     :param value:
     :type value: bytes
-    """ 
+    """
 
     _validation = {
         'algorithm': {'required': True, 'min_length': 1},

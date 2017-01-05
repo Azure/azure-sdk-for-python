@@ -15,16 +15,16 @@ from msrest.serialization import Model
 class SecretSetParameters(Model):
     """The secret set parameters.
 
-    :param value: The value of the secret
+    :param value: The value of the secret.
     :type value: str
-    :param tags: Application-specific metadata in the form of key-value pairs
+    :param tags: Application specific metadata in the form of key-value pairs.
     :type tags: dict
-    :param content_type: Type of the secret value such as a password
+    :param content_type: Type of the secret value such as a password.
     :type content_type: str
-    :param secret_attributes: The secret management attributes
+    :param secret_attributes: The secret management attributes.
     :type secret_attributes: :class:`SecretAttributes
      <azure.keyvault.generated.models.SecretAttributes>`
-    """ 
+    """
 
     _validation = {
         'value': {'required': True},

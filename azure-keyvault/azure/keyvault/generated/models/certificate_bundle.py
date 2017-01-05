@@ -18,11 +18,11 @@ class CertificateBundle(Model):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar id: The certificate id
+    :ivar id: The certificate id.
     :vartype id: str
-    :ivar kid: The key id
+    :ivar kid: The key id.
     :vartype kid: str
-    :ivar sid: The secret id
+    :ivar sid: The secret id.
     :vartype sid: str
     :ivar x509_thumbprint: Thumbprint of the certificate.
     :vartype x509_thumbprint: bytes
@@ -31,14 +31,14 @@ class CertificateBundle(Model):
      <azure.keyvault.generated.models.CertificatePolicy>`
     :param cer: CER contents of x509 certificate.
     :type cer: bytearray
-    :param content_type: The content type of the secret
+    :param content_type: The content type of the secret.
     :type content_type: str
     :param attributes: The certificate attributes.
     :type attributes: :class:`CertificateAttributes
      <azure.keyvault.generated.models.CertificateAttributes>`
-    :param tags: Application-specific metadata in the form of key-value pairs
+    :param tags: Application specific metadata in the form of key-value pairs
     :type tags: dict
-    """ 
+    """
 
     _validation = {
         'id': {'readonly': True},

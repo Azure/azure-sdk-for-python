@@ -18,19 +18,19 @@ class SecretItem(Model):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :param id: Secret Identifier
+    :param id: Secret identifier.
     :type id: str
-    :param attributes: The secret management attributes
+    :param attributes: The secret management attributes.
     :type attributes: :class:`SecretAttributes
      <azure.keyvault.generated.models.SecretAttributes>`
-    :param tags: Application-specific metadata in the form of key-value pairs
+    :param tags: Application specific metadata in the form of key-value pairs.
     :type tags: dict
-    :param content_type: Type of the secret value such as a password
+    :param content_type: Type of the secret value such as a password.
     :type content_type: str
-    :ivar managed: True if the secret's lifetime is managed by key vault i.e.
-     if this is a key backing a certificate, then managed will be true.
+    :ivar managed: True if the secret's lifetime is managed by key vault. If
+     this is a key backing a certificate, then managed will be true.
     :vartype managed: bool
-    """ 
+    """
 
     _validation = {
         'managed': {'readonly': True},

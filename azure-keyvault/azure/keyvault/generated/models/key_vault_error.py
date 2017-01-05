@@ -14,14 +14,14 @@ from msrest.exceptions import HttpOperationError
 
 
 class KeyVaultError(Model):
-    """the key vault error exception.
+    """The key vault error exception.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
     :ivar error:
     :vartype error: :class:`Error <azure.keyvault.generated.models.Error>`
-    """ 
+    """
 
     _validation = {
         'error': {'readonly': True},
