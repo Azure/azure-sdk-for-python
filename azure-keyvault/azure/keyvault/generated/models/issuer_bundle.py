@@ -32,7 +32,7 @@ class IssuerBundle(Model):
     :param attributes: Attributes of the issuer object.
     :type attributes: :class:`IssuerAttributes
      <azure.keyvault.generated.models.IssuerAttributes>`
-    """ 
+    """
 
     _validation = {
         'id': {'readonly': True},

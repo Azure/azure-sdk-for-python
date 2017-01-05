@@ -13,18 +13,18 @@ from msrest.serialization import Model
 
 
 class IssuerAttributes(Model):
-    """The attributes of an issuer managed by the KeyVault service.
+    """The attributes of an issuer managed by the Key Vault service.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :param enabled: Determines whether the issuer is enabled
+    :param enabled: Determines whether the issuer is enabled.
     :type enabled: bool
-    :ivar created: Creation time in UTC
+    :ivar created: Creation time in UTC.
     :vartype created: datetime
-    :ivar updated: Last updated time in UTC
+    :ivar updated: Last updated time in UTC.
     :vartype updated: datetime
-    """ 
+    """
 
     _validation = {
         'created': {'readonly': True},

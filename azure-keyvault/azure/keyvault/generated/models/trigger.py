@@ -15,12 +15,12 @@ from msrest.serialization import Model
 class Trigger(Model):
     """A condition to be satisfied for an action to be executed.
 
-    :param lifetime_percentage: Percentage of lifetime as which to trigger.
+    :param lifetime_percentage: Percentage of lifetime at which to trigger.
      Value should be between 1 and 99.
     :type lifetime_percentage: int
     :param days_before_expiry: Days before expiry.
     :type days_before_expiry: int
-    """ 
+    """
 
     _validation = {
         'lifetime_percentage': {'maximum': 99, 'minimum': 1},

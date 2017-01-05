@@ -13,18 +13,18 @@ from msrest.serialization import Model
 
 
 class CertificateOperation(Model):
-    """A certificate operation is returned in case of async requests.
+    """A certificate operation is returned in case of asynchronous requests.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar id: The certificate id
+    :ivar id: The certificate id.
     :vartype id: str
     :param issuer_parameters: Parameters for the issuer of the X509 component
      of a certificate.
     :type issuer_parameters: :class:`IssuerParameters
      <azure.keyvault.generated.models.IssuerParameters>`
-    :param csr: The Certificate Signing Request (CSR) that is being used in
+    :param csr: The certificate signing request (CSR) that is being used in
      the certificate operation.
     :type csr: bytearray
     :param cancellation_requested: Indicates if cancellation was requested on
@@ -41,7 +41,7 @@ class CertificateOperation(Model):
     :type target: str
     :param request_id: Identifier for the certificate operation.
     :type request_id: str
-    """ 
+    """
 
     _validation = {
         'id': {'readonly': True},

@@ -19,7 +19,7 @@ class IssuerCredentials(Model):
     :type account_id: str
     :param password: The password/secret/account key.
     :type password: str
-    """ 
+    """
 
     _attribute_map = {
         'account_id': {'key': 'account_id', 'type': 'str'},

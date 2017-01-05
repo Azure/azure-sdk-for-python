@@ -15,36 +15,36 @@ from msrest.serialization import Model
 class JsonWebKey(Model):
     """As of http://tools.ietf.org/html/draft-ietf-jose-json-web-key-18.
 
-    :param kid: Key Identifier
+    :param kid: Key identifier.
     :type kid: str
     :param kty: Supported JsonWebKey key types (kty) for Elliptic Curve, RSA,
-     HSM, Octet, usually RSA. Possible values include: 'EC', 'RSA',
-     'RSA-HSM', 'oct'
+     HSM, Octet. Kty is usually set to RSA. Possible values include: 'EC',
+     'RSA', 'RSA-HSM', 'oct'
     :type kty: str or :class:`JsonWebKeyType
      <azure.keyvault.generated.models.JsonWebKeyType>`
     :param key_ops:
     :type key_ops: list of str
-    :param n: RSA modulus
+    :param n: RSA modulus.
     :type n: bytes
-    :param e: RSA public exponent
+    :param e: RSA public exponent.
     :type e: bytes
-    :param d: RSA private exponent
+    :param d: RSA private exponent.
     :type d: bytes
-    :param dp: RSA Private Key Parameter
+    :param dp: RSA private key parameter.
     :type dp: bytes
-    :param dq: RSA Private Key Parameter
+    :param dq: RSA private key parameter.
     :type dq: bytes
-    :param qi: RSA Private Key Parameter
+    :param qi: RSA private key parameter.
     :type qi: bytes
-    :param p: RSA secret prime
+    :param p: RSA secret prime.
     :type p: bytes
-    :param q: RSA secret prime, with p < q
+    :param q: RSA secret prime, with p < q.
     :type q: bytes
-    :param k: Symmetric key
+    :param k: Symmetric key.
     :type k: bytes
-    :param t: HSM Token, used with Bring Your Own Key
+    :param t: HSM Token, used with 'Bring Your Own Key'.
     :type t: bytes
-    """ 
+    """
 
     _attribute_map = {
         'kid': {'key': 'kid', 'type': 'str'},

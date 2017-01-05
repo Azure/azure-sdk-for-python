@@ -15,11 +15,11 @@ from msrest.serialization import Model
 class CertificateIssuerItem(Model):
     """The certificate issuer item containing certificate issuer metadata.
 
-    :param id: Certificate Identifier
+    :param id: Certificate Identifier.
     :type id: str
     :param provider: The issuer provider.
     :type provider: str
-    """ 
+    """
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},

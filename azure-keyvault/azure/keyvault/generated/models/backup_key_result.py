@@ -18,9 +18,9 @@ class BackupKeyResult(Model):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar value: The backup blob containing the backed up key
+    :ivar value: The backup blob containing the backed up key.
     :vartype value: bytes
-    """ 
+    """
 
     _validation = {
         'value': {'readonly': True},

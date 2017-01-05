@@ -15,17 +15,16 @@ from msrest.serialization import Model
 class KeyVerifyParameters(Model):
     """The key verify parameters.
 
-    :param algorithm: The signing/verification algorithm. For more
-     information on possible algorithm types, see
-     JsonWebKeySignatureAlgorithm. Possible values include: 'RS256', 'RS384',
-     'RS512', 'RSNULL'
+    :param algorithm: The signing/verification algorithm. For more information
+     on possible algorithm types, see JsonWebKeySignatureAlgorithm. Possible
+     values include: 'RS256', 'RS384', 'RS512', 'RSNULL'
     :type algorithm: str or :class:`JsonWebKeySignatureAlgorithm
      <azure.keyvault.generated.models.JsonWebKeySignatureAlgorithm>`
-    :param digest: The digest used for signing
+    :param digest: The digest used for signing.
     :type digest: bytes
-    :param signature: The signature to be verified
+    :param signature: The signature to be verified.
     :type signature: bytes
-    """ 
+    """
 
     _validation = {
         'algorithm': {'required': True, 'min_length': 1},

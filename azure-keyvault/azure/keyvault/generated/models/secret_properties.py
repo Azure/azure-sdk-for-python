@@ -17,7 +17,7 @@ class SecretProperties(Model):
 
     :param content_type: The media type (MIME type).
     :type content_type: str
-    """ 
+    """
 
     _attribute_map = {
         'content_type': {'key': 'contentType', 'type': 'str'},

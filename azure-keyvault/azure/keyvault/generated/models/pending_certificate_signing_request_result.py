@@ -21,7 +21,7 @@ class PendingCertificateSigningRequestResult(Model):
     :ivar value: The pending certificate signing request as Base64 encoded
      string.
     :vartype value: str
-    """ 
+    """
 
     _validation = {
         'value': {'readonly': True},
