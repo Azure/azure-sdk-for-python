@@ -61,7 +61,7 @@ class TrustedIdProviderState(Enum):
     disabled = "Disabled"
 
 
-class PricingTierType(Enum):
+class TierType(Enum):
 
     consumption = "Consumption"
     commitment_1_tb = "Commitment_1TB"

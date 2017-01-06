@@ -33,11 +33,11 @@ class DataLakeStoreAccountUpdateParameters(Model):
     :param default_group: the default owner group for all new folders and
      files created in the Data Lake Store account.
     :type default_group: str
-    :param new_tier: the billing tier to use for next month. Possible values
-     include: 'Consumption', 'Commitment_1TB', 'Commitment_10TB',
+    :param new_tier: the commitment tier to use for next month. Possible
+     values include: 'Consumption', 'Commitment_1TB', 'Commitment_10TB',
      'Commitment_100TB', 'Commitment_500TB', 'Commitment_1PB', 'Commitment_5PB'
-    :type new_tier: str or :class:`PricingTierType
-     <azure.mgmt.datalake.store.models.PricingTierType>`
+    :type new_tier: str or :class:`TierType
+     <azure.mgmt.datalake.store.models.TierType>`
     """
 
     _attribute_map = {
@@ -45,7 +45,7 @@ class DataLakeStoreAccountUpdateParameters(Model):
         'firewall_state': {'key': 'properties.firewallState', 'type': 'FirewallState'},
         'trusted_id_provider_state': {'key': 'properties.trustedIdProviderState', 'type': 'TrustedIdProviderState'},
         'default_group': {'key': 'properties.defaultGroup', 'type': 'str'},
-        'new_tier': {'key': 'properties.newTier', 'type': 'PricingTierType'},
+        'new_tier': {'key': 'properties.newTier', 'type': 'TierType'},
     }
 
     def __init__(self, tags=None, firewall_state=None, trusted_id_provider_state=None, default_group=None, new_tier=None):
