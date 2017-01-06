@@ -15,13 +15,13 @@ from msrest.serialization import Model
 class IssuerParameters(Model):
     """Parameters for the issuer of the X509 component of a certificate.
 
-    :param name: Name of the referenced issuer object or reserved names e.g.
-     'Self', 'Unknown'.
+    :param name: Name of the referenced issuer object or reserved names; for
+     example, 'Self' or 'Unknown'.
     :type name: str
     :param certificate_type: Type of certificate to be requested from the
      issuer provider.
     :type certificate_type: str
-    """ 
+    """
 
     _attribute_map = {
         'name': {'key': 'name', 'type': 'str'},

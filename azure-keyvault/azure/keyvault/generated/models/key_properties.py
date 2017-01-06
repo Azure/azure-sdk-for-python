@@ -19,12 +19,12 @@ class KeyProperties(Model):
     :type exportable: bool
     :param key_type: The key type.
     :type key_type: str
-    :param key_size: The key size in bytes. e.g. 2048.
+    :param key_size: The key size in bytes. For example;  1024 or 2048.
     :type key_size: int
     :param reuse_key: Indicates if the same key pair will be used on
      certificate renewal.
     :type reuse_key: bool
-    """ 
+    """
 
     _attribute_map = {
         'exportable': {'key': 'exportable', 'type': 'bool'},

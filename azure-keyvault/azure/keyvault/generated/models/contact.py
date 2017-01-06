@@ -21,7 +21,7 @@ class Contact(Model):
     :type name: str
     :param phone: Phone number.
     :type phone: str
-    """ 
+    """
 
     _attribute_map = {
         'email_address': {'key': 'email', 'type': 'str'},

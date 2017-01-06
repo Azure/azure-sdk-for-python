@@ -15,16 +15,16 @@ from msrest.serialization import Model
 class CertificateItem(Model):
     """The certificate item containing certificate metadata.
 
-    :param id: Certificate Identifier
+    :param id: Certificate identifier.
     :type id: str
-    :param attributes: The certificate management attributes
+    :param attributes: The certificate management attributes.
     :type attributes: :class:`CertificateAttributes
      <azure.keyvault.generated.models.CertificateAttributes>`
-    :param tags: Application-specific metadata in the form of key-value pairs
+    :param tags: Application specific metadata in the form of key-value pairs.
     :type tags: dict
     :param x509_thumbprint: Thumbprint of the certificate.
     :type x509_thumbprint: bytes
-    """ 
+    """
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},

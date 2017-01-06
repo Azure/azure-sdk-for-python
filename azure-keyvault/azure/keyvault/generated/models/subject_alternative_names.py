@@ -21,7 +21,7 @@ class SubjectAlternativeNames(Model):
     :type dns_names: list of str
     :param upns: User principal names.
     :type upns: list of str
-    """ 
+    """
 
     _attribute_map = {
         'emails': {'key': 'emails', 'type': '[str]'},
