@@ -27,6 +27,9 @@ class SeverityTypes(Enum):
     warning = "Warning"
     error = "Error"
     info = "Info"
+    severe_warning = "SevereWarning"
+    deprecated = "Deprecated"
+    user_warning = "UserWarning"
 
 
 class CompileMode(Enum):

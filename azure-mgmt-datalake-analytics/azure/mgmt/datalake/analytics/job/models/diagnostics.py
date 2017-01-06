@@ -27,7 +27,7 @@ class Diagnostics(Model):
     :ivar message: the error message.
     :vartype message: str
     :ivar severity: the severity of the error. Possible values include:
-     'Warning', 'Error', 'Info'
+     'Warning', 'Error', 'Info', 'SevereWarning', 'Deprecated', 'UserWarning'
     :vartype severity: str or :class:`SeverityTypes
      <azure.mgmt.datalake.analytics.job.models.SeverityTypes>`
     :ivar start: the starting index of the error.
