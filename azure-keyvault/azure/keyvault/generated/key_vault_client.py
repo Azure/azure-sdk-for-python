@@ -26,7 +26,7 @@ class KeyVaultClientConfiguration(AzureConfiguration):
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
      object<msrestazure.azure_active_directory>`
-    :param api_version: Client Api Version.
+    :param api_version: Client API version.
     :type api_version: str
     :param accept_language: Gets or sets the preferred language for the
      response.
@@ -65,7 +65,7 @@ class KeyVaultClientConfiguration(AzureConfiguration):
 
 
 class KeyVaultClient(object):
-    """Performs cryptographic key operations and vault operations against the Key Vault service.
+    """The key vault client performs cryptographic key operations and vault operations against the Key Vault service.
 
     :ivar config: Configuration for client.
     :vartype config: KeyVaultClientConfiguration
@@ -73,7 +73,7 @@ class KeyVaultClient(object):
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
      object<msrestazure.azure_active_directory>`
-    :param api_version: Client Api Version.
+    :param api_version: Client API version.
     :type api_version: str
     :param accept_language: Gets or sets the preferred language for the
      response.
@@ -101,20 +101,25 @@ class KeyVaultClient(object):
 
     def create_key(
             self, vault_base_url, key_name, kty, key_size=None, key_ops=None, key_attributes=None, tags=None, custom_headers=None, raw=False, **operation_config):
-        """Creates a new, named, key in the specified vault.
+        """Creates a new key, stores it, then returns key parameters and
+        attributes to the client. The create key operation can be used to
+        create any key type in Azure Key Vault. If the named key already
+        exists, Azure Key Vault creates a new version of the key.
+        Authorization: Requires the keys/create permission.
 
-        :param vault_base_url: The vault name, e.g.
-         https://myvault.vault.azure.net
+        :param vault_base_url: The vault name, for example
+         https://myvault.vault.azure.net.
         :type vault_base_url: str
-        :param key_name: The name of the key
+        :param key_name: The name for the new key. The system will generate
+         the version name for the new key.
         :type key_name: str
-        :param kty: The type of key to create. Valid key types, see
+        :param kty: The type of key to create. For valid key types, see
          JsonWebKeyType. Supported JsonWebKey key types (kty) for Elliptic
          Curve, RSA, HSM, Octet. Possible values include: 'EC', 'RSA',
          'RSA-HSM', 'oct'
         :type kty: str or :class:`JsonWebKeyType
          <azure.keyvault.generated.models.JsonWebKeyType>`
-        :param key_size: The key size in bytes. e.g. 1024 or 2048.
+        :param key_size: The key size in bytes. For example, 1024 or 2048.
         :type key_size: int
         :param key_ops:
         :type key_ops: list of str or :class:`JsonWebKeyOperation
@@ -122,8 +127,8 @@ class KeyVaultClient(object):
         :param key_attributes:
         :type key_attributes: :class:`KeyAttributes
          <azure.keyvault.generated.models.KeyAttributes>`
-        :param tags: Application-specific metadata in the form of key-value
-         pairs
+        :param tags: Application specific metadata in the form of key-value
+         pairs.
         :type tags: dict
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -184,23 +189,27 @@ class KeyVaultClient(object):
 
     def import_key(
             self, vault_base_url, key_name, key, hsm=None, key_attributes=None, tags=None, custom_headers=None, raw=False, **operation_config):
-        """Imports a key into the specified vault.
+        """Imports an externally created key, stores it, and returns key
+        parameters and attributes to the client. The import key operation may
+        be used to import any key type into an Azure Key Vault. If the named
+        key already exists, Azure Key Vault creates a new version of the key.
+        Authorization: requires the keys/import permission. .
 
-        :param vault_base_url: The vault name, e.g.
-         https://myvault.vault.azure.net
+        :param vault_base_url: The vault name, for example
+         https://myvault.vault.azure.net.
         :type vault_base_url: str
-        :param key_name: The name of the key
+        :param key_name: Name for the imported key.
         :type key_name: str
         :param key: The Json web key
         :type key: :class:`JsonWebKey
          <azure.keyvault.generated.models.JsonWebKey>`
-        :param hsm: Whether to import as a hardware key (HSM) or software key
+        :param hsm: Whether to import as a hardware key (HSM) or software key.
         :type hsm: bool
-        :param key_attributes: The key management attributes
+        :param key_attributes: The key management attributes.
         :type key_attributes: :class:`KeyAttributes
          <azure.keyvault.generated.models.KeyAttributes>`
-        :param tags: Application-specific metadata in the form of key-value
-         pairs
+        :param tags: Application specific metadata in the form of key-value
+         pairs.
         :type tags: dict
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -261,12 +270,17 @@ class KeyVaultClient(object):
 
     def delete_key(
             self, vault_base_url, key_name, custom_headers=None, raw=False, **operation_config):
-        """Deletes the specified key.
+        """Deletes a key of any type from storage in Azure Key Vault. The delete
+        key operation cannot be used to remove individual versions of a key.
+        This operation removes the cryptographic material associated with the
+        key, which means the key is not usable for Sign/Verify, Wrap/Unwrap or
+        Encrypt/Decrypt operations. Authorization: Requires the keys/delete
+        permission.
 
-        :param vault_base_url: The vault name, e.g.
-         https://myvault.vault.azure.net
+        :param vault_base_url: The vault name, for example
+         https://myvault.vault.azure.net.
         :type vault_base_url: str
-        :param key_name: The name of the key
+        :param key_name: The name of the key to delete.
         :type key_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -321,14 +335,18 @@ class KeyVaultClient(object):
 
     def update_key(
             self, vault_base_url, key_name, key_version, key_ops=None, key_attributes=None, tags=None, custom_headers=None, raw=False, **operation_config):
-        """Updates the Key Attributes associated with the specified key.
+        """The update key operation changes specified attributes of a stored key
+        and can be applied to any key type and key version stored in Azure Key
+        Vault. The cryptographic material of a key itself cannot be changed. In
+        order to perform this operation, the key must already exist in the Key
+        Vault. Authorization: requires the keys/update permission.
 
-        :param vault_base_url: The vault name, e.g.
-         https://myvault.vault.azure.net
+        :param vault_base_url: The vault name, for example
+         https://myvault.vault.azure.net.
         :type vault_base_url: str
-        :param key_name: The name of the key
+        :param key_name: The name of key to update.
         :type key_name: str
-        :param key_version: The version of the key
+        :param key_version: The version of the key to update.
         :type key_version: str
         :param key_ops: Json web key operations. For more information on
          possible key operations, see JsonWebKeyOperation.
@@ -337,8 +355,8 @@ class KeyVaultClient(object):
         :param key_attributes:
         :type key_attributes: :class:`KeyAttributes
          <azure.keyvault.generated.models.KeyAttributes>`
-        :param tags: Application-specific metadata in the form of key-value
-         pairs
+        :param tags: Application specific metadata in the form of key-value
+         pairs.
         :type tags: dict
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -400,14 +418,18 @@ class KeyVaultClient(object):
 
     def get_key(
             self, vault_base_url, key_name, key_version, custom_headers=None, raw=False, **operation_config):
-        """Retrieves the public portion of a key plus its attributes.
+        """Gets the public part of a stored key. The get key operation is
+        applicable to all key types. If the requested key is symmetric, then no
+        key material is released in the response. Authorization: Requires the
+        keys/get permission.
 
-        :param vault_base_url: The vault name, e.g.
-         https://myvault.vault.azure.net
+        :param vault_base_url: The vault name, for example
+         https://myvault.vault.azure.net.
         :type vault_base_url: str
-        :param key_name: The name of the key
+        :param key_name: The name of the key to get.
         :type key_name: str
-        :param key_version: The version of the key
+        :param key_version: Adding the version parameter retrieves a specific
+         version of a key.
         :type key_version: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -463,12 +485,14 @@ class KeyVaultClient(object):
 
     def get_key_versions(
             self, vault_base_url, key_name, maxresults=None, custom_headers=None, raw=False, **operation_config):
-        """List the versions of the specified key.
+        """Retrieves a list of individual key versions with the same key name. The
+        full key identifier, attributes, and tags are provided in the response.
+        Authorization: Requires the keys/list permission.
 
-        :param vault_base_url: The vault name, e.g.
-         https://myvault.vault.azure.net
+        :param vault_base_url: The vault name, for example
+         https://myvault.vault.azure.net.
         :type vault_base_url: str
-        :param key_name: The name of the key
+        :param key_name: The name of the key.
         :type key_name: str
         :param maxresults: Maximum number of results to return in a page. If
          not specified the service will return up to 25 results.
@@ -538,8 +562,8 @@ class KeyVaultClient(object):
             self, vault_base_url, maxresults=None, custom_headers=None, raw=False, **operation_config):
         """List keys in the specified vault.
 
-        :param vault_base_url: The vault name, e.g.
-         https://myvault.vault.azure.net
+        :param vault_base_url: The vault name, for example
+         https://myvault.vault.azure.net.
         :type vault_base_url: str
         :param maxresults: Maximum number of results to return in a page. If
          not specified the service will return up to 25 results.
@@ -609,10 +633,10 @@ class KeyVaultClient(object):
         """Requests that a backup of the specified key be downloaded to the
         client.
 
-        :param vault_base_url: The vault name, e.g.
-         https://myvault.vault.azure.net
+        :param vault_base_url: The vault name, for example
+         https://myvault.vault.azure.net.
         :type vault_base_url: str
-        :param key_name: The name of the key
+        :param key_name: The name of the key.
         :type key_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -668,12 +692,13 @@ class KeyVaultClient(object):
 
     def restore_key(
             self, vault_base_url, key_bundle_backup, custom_headers=None, raw=False, **operation_config):
-        """Restores the backup key in to a vault.
+        """Restores a backed up key to a vault.
 
-        :param vault_base_url: The vault name, e.g.
-         https://myvault.vault.azure.net
+        :param vault_base_url: The vault name, for example
+         https://myvault.vault.azure.net.
         :type vault_base_url: str
-        :param key_bundle_backup: the backup blob associated with a key bundle
+        :param key_bundle_backup: The backup blob associated with a key
+         bundle.
         :type key_bundle_backup: bytes
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -733,15 +758,15 @@ class KeyVaultClient(object):
 
     def encrypt(
             self, vault_base_url, key_name, key_version, algorithm, value, custom_headers=None, raw=False, **operation_config):
-        """Encrypts an arbitrary sequence of bytes using an encryption key that
-        is stored in Azure Key Vault.
+        """Encrypts an arbitrary sequence of bytes using an encryption key that is
+        stored in a key vault.
 
-        :param vault_base_url: The vault name, e.g.
-         https://myvault.vault.azure.net
+        :param vault_base_url: The vault name, for example
+         https://myvault.vault.azure.net.
         :type vault_base_url: str
-        :param key_name: The name of the key
+        :param key_name: The name of the key.
         :type key_name: str
-        :param key_version: The version of the key
+        :param key_version: The version of the key.
         :type key_version: str
         :param algorithm: algorithm identifier. Possible values include:
          'RSA-OAEP', 'RSA1_5'
@@ -812,12 +837,12 @@ class KeyVaultClient(object):
             self, vault_base_url, key_name, key_version, algorithm, value, custom_headers=None, raw=False, **operation_config):
         """Decrypts a single block of encrypted data.
 
-        :param vault_base_url: The vault name, e.g.
-         https://myvault.vault.azure.net
+        :param vault_base_url: The vault name, for example
+         https://myvault.vault.azure.net.
         :type vault_base_url: str
-        :param key_name: The name of the key
+        :param key_name: The name of the key.
         :type key_name: str
-        :param key_version: The version of the key
+        :param key_version: The version of the key.
         :type key_version: str
         :param algorithm: algorithm identifier. Possible values include:
          'RSA-OAEP', 'RSA1_5'
@@ -886,14 +911,14 @@ class KeyVaultClient(object):
 
     def sign(
             self, vault_base_url, key_name, key_version, algorithm, value, custom_headers=None, raw=False, **operation_config):
-        """Creates a signature from a digest using the specified key in the vault.
+        """Creates a signature from a digest using the specified key.
 
-        :param vault_base_url: The vault name, e.g.
-         https://myvault.vault.azure.net
+        :param vault_base_url: The vault name, for example
+         https://myvault.vault.azure.net.
         :type vault_base_url: str
-        :param key_name: The name of the key
+        :param key_name: The name of the key.
         :type key_name: str
-        :param key_version: The version of the key
+        :param key_version: The version of the key.
         :type key_version: str
         :param algorithm: The signing/verification algorithm identifier. For
          more information on possible algorithm types, see
@@ -964,14 +989,14 @@ class KeyVaultClient(object):
 
     def verify(
             self, vault_base_url, key_name, key_version, algorithm, digest, signature, custom_headers=None, raw=False, **operation_config):
-        """Verifies a signature using the specified key.
+        """Verifies a signature using a specified key.
 
-        :param vault_base_url: The vault name, e.g.
-         https://myvault.vault.azure.net
+        :param vault_base_url: The vault name, for example
+         https://myvault.vault.azure.net.
         :type vault_base_url: str
-        :param key_name: The name of the key
+        :param key_name: The name of the key.
         :type key_name: str
-        :param key_version: The version of the key
+        :param key_version: The version of the key.
         :type key_version: str
         :param algorithm: The signing/verification algorithm. For more
          information on possible algorithm types, see
@@ -979,9 +1004,9 @@ class KeyVaultClient(object):
          'RS384', 'RS512', 'RSNULL'
         :type algorithm: str or :class:`JsonWebKeySignatureAlgorithm
          <azure.keyvault.generated.models.JsonWebKeySignatureAlgorithm>`
-        :param digest: The digest used for signing
+        :param digest: The digest used for signing.
         :type digest: bytes
-        :param signature: The signature to be verified
+        :param signature: The signature to be verified.
         :type signature: bytes
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -1044,14 +1069,14 @@ class KeyVaultClient(object):
 
     def wrap_key(
             self, vault_base_url, key_name, key_version, algorithm, value, custom_headers=None, raw=False, **operation_config):
-        """Wraps a symmetric key using the specified key.
+        """Wraps a symmetric key using a specified key.
 
-        :param vault_base_url: The vault name, e.g.
-         https://myvault.vault.azure.net
+        :param vault_base_url: The vault name, for example
+         https://myvault.vault.azure.net.
         :type vault_base_url: str
-        :param key_name: The name of the key
+        :param key_name: The name of the key.
         :type key_name: str
-        :param key_version: The version of the key
+        :param key_version: The version of the key.
         :type key_version: str
         :param algorithm: algorithm identifier. Possible values include:
          'RSA-OAEP', 'RSA1_5'
@@ -1120,15 +1145,15 @@ class KeyVaultClient(object):
 
     def unwrap_key(
             self, vault_base_url, key_name, key_version, algorithm, value, custom_headers=None, raw=False, **operation_config):
-        """Unwraps a symmetric key using the specified key in the vault that has
-        initially been used for wrapping the key.
+        """Unwraps a symmetric key using the specified key that was initially used
+        for wrapping that key.
 
-        :param vault_base_url: The vault name, e.g.
-         https://myvault.vault.azure.net
+        :param vault_base_url: The vault name, for example
+         https://myvault.vault.azure.net.
         :type vault_base_url: str
-        :param key_name: The name of the key
+        :param key_name: The name of the key.
         :type key_name: str
-        :param key_version: The version of the key
+        :param key_version: The version of the key.
         :type key_version: str
         :param algorithm: algorithm identifier. Possible values include:
          'RSA-OAEP', 'RSA1_5'
@@ -1197,21 +1222,21 @@ class KeyVaultClient(object):
 
     def set_secret(
             self, vault_base_url, secret_name, value, tags=None, content_type=None, secret_attributes=None, custom_headers=None, raw=False, **operation_config):
-        """Sets a secret in the specified vault.
+        """Sets a secret in a specified key vault.
 
-        :param vault_base_url: The vault name, e.g.
-         https://myvault.vault.azure.net
+        :param vault_base_url: The vault name, for example
+         https://myvault.vault.azure.net.
         :type vault_base_url: str
-        :param secret_name: The name of the secret in the given vault
+        :param secret_name: The name of the secret.
         :type secret_name: str
-        :param value: The value of the secret
+        :param value: The value of the secret.
         :type value: str
-        :param tags: Application-specific metadata in the form of key-value
-         pairs
+        :param tags: Application specific metadata in the form of key-value
+         pairs.
         :type tags: dict
-        :param content_type: Type of the secret value such as a password
+        :param content_type: Type of the secret value such as a password.
         :type content_type: str
-        :param secret_attributes: The secret management attributes
+        :param secret_attributes: The secret management attributes.
         :type secret_attributes: :class:`SecretAttributes
          <azure.keyvault.generated.models.SecretAttributes>`
         :param dict custom_headers: headers that will be added to the request
@@ -1274,12 +1299,12 @@ class KeyVaultClient(object):
 
     def delete_secret(
             self, vault_base_url, secret_name, custom_headers=None, raw=False, **operation_config):
-        """Deletes a secret from the specified vault.
+        """Deletes a secret from a specified key vault.
 
-        :param vault_base_url: The vault name, e.g.
-         https://myvault.vault.azure.net
+        :param vault_base_url: The vault name, for example
+         https://myvault.vault.azure.net.
         :type vault_base_url: str
-        :param secret_name: The name of the secret in the given vault
+        :param secret_name: The name of the secret.
         :type secret_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -1335,22 +1360,23 @@ class KeyVaultClient(object):
 
     def update_secret(
             self, vault_base_url, secret_name, secret_version, content_type=None, secret_attributes=None, tags=None, custom_headers=None, raw=False, **operation_config):
-        """Updates the attributes associated with the specified secret.
+        """Updates the attributes associated with a specified secret in a given
+        key vault.
 
-        :param vault_base_url: The vault name, e.g.
-         https://myvault.vault.azure.net
+        :param vault_base_url: The vault name, for example
+         https://myvault.vault.azure.net.
         :type vault_base_url: str
-        :param secret_name: The name of the secret in the given vault
+        :param secret_name: The name of the secret.
         :type secret_name: str
-        :param secret_version: The version of the secret
+        :param secret_version: The version of the secret.
         :type secret_version: str
-        :param content_type: Type of the secret value such as a password
+        :param content_type: Type of the secret value such as a password.
         :type content_type: str
-        :param secret_attributes: The secret management attributes
+        :param secret_attributes: The secret management attributes.
         :type secret_attributes: :class:`SecretAttributes
          <azure.keyvault.generated.models.SecretAttributes>`
-        :param tags: Application-specific metadata in the form of key-value
-         pairs
+        :param tags: Application specific metadata in the form of key-value
+         pairs.
         :type tags: dict
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -1413,14 +1439,14 @@ class KeyVaultClient(object):
 
     def get_secret(
             self, vault_base_url, secret_name, secret_version, custom_headers=None, raw=False, **operation_config):
-        """Gets a secret.
+        """Get a specified secret from a given key vault.
 
-        :param vault_base_url: The vault name, e.g.
-         https://myvault.vault.azure.net
+        :param vault_base_url: The vault name, for example
+         https://myvault.vault.azure.net.
         :type vault_base_url: str
-        :param secret_name: The name of the secret in the given vault
+        :param secret_name: The name of the secret.
         :type secret_name: str
-        :param secret_version: The version of the secret
+        :param secret_version: The version of the secret.
         :type secret_version: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -1477,10 +1503,10 @@ class KeyVaultClient(object):
 
     def get_secrets(
             self, vault_base_url, maxresults=None, custom_headers=None, raw=False, **operation_config):
-        """List secrets in the specified vault.
+        """List secrets in a specified key vault.
 
-        :param vault_base_url: The vault name, e.g.
-         https://myvault.vault.azure.net
+        :param vault_base_url: The vault name, for example
+         https://myvault.vault.azure.net.
         :type vault_base_url: str
         :param maxresults: Maximum number of results to return in a page. If
          not specified the service will return up to 25 results.
@@ -1549,10 +1575,10 @@ class KeyVaultClient(object):
             self, vault_base_url, secret_name, maxresults=None, custom_headers=None, raw=False, **operation_config):
         """List the versions of the specified secret.
 
-        :param vault_base_url: The vault name, e.g.
-         https://myvault.vault.azure.net
+        :param vault_base_url: The vault name, for example
+         https://myvault.vault.azure.net.
         :type vault_base_url: str
-        :param secret_name: The name of the secret in the given vault
+        :param secret_name: The name of the secret.
         :type secret_name: str
         :param maxresults: Maximum number of results to return in a page. If
          not specified the service will return up to 25 results.
@@ -1620,10 +1646,10 @@ class KeyVaultClient(object):
 
     def get_certificates(
             self, vault_base_url, maxresults=None, custom_headers=None, raw=False, **operation_config):
-        """List certificates in the specified vault.
+        """List certificates in a specified key vault.
 
-        :param vault_base_url: The vault name, e.g.
-         https://myvault.vault.azure.net
+        :param vault_base_url: The vault name, for example
+         https://myvault.vault.azure.net.
         :type vault_base_url: str
         :param maxresults: Maximum number of results to return in a page. If
          not specified the service will return up to 25 results.
@@ -1690,13 +1716,12 @@ class KeyVaultClient(object):
 
     def delete_certificate(
             self, vault_base_url, certificate_name, custom_headers=None, raw=False, **operation_config):
-        """Deletes a certificate from the specified vault.
+        """Deletes a certificate from a specified key vault.
 
-        :param vault_base_url: The vault name, e.g.
-         https://myvault.vault.azure.net
+        :param vault_base_url: The vault name, for example
+         https://myvault.vault.azure.net.
         :type vault_base_url: str
-        :param certificate_name: The name of the certificate in the given
-         vault
+        :param certificate_name: The name of the certificate.
         :type certificate_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -1752,10 +1777,10 @@ class KeyVaultClient(object):
 
     def set_certificate_contacts(
             self, vault_base_url, contact_list=None, custom_headers=None, raw=False, **operation_config):
-        """Sets the certificate contacts for the specified vault.
+        """Sets the certificate contacts for the specified key vault.
 
-        :param vault_base_url: The vault name, e.g.
-         https://myvault.vault.azure.net
+        :param vault_base_url: The vault name, for example
+         https://myvault.vault.azure.net.
         :type vault_base_url: str
         :param contact_list: The contact list for the vault certificates.
         :type contact_list: list of :class:`Contact
@@ -1818,10 +1843,10 @@ class KeyVaultClient(object):
 
     def get_certificate_contacts(
             self, vault_base_url, custom_headers=None, raw=False, **operation_config):
-        """Gets the certificate contacts for the specified vault.
+        """Lists the certificate contacts for a specified key vault.
 
-        :param vault_base_url: The vault name, e.g.
-         https://myvault.vault.azure.net
+        :param vault_base_url: The vault name, for example
+         https://myvault.vault.azure.net.
         :type vault_base_url: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -1875,10 +1900,10 @@ class KeyVaultClient(object):
 
     def delete_certificate_contacts(
             self, vault_base_url, custom_headers=None, raw=False, **operation_config):
-        """Deletes the certificate contacts for the specified vault.
+        """Deletes the certificate contacts for a specified key vault.
 
-        :param vault_base_url: The vault name, e.g.
-         https://myvault.vault.azure.net
+        :param vault_base_url: The vault name, for example
+         https://myvault.vault.azure.net.
         :type vault_base_url: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -1932,10 +1957,10 @@ class KeyVaultClient(object):
 
     def get_certificate_issuers(
             self, vault_base_url, maxresults=None, custom_headers=None, raw=False, **operation_config):
-        """List certificate issuers for the specified vault.
+        """List certificate issuers for a specified key vault.
 
-        :param vault_base_url: The vault name, e.g.
-         https://myvault.vault.azure.net
+        :param vault_base_url: The vault name, for example
+         https://myvault.vault.azure.net.
         :type vault_base_url: str
         :param maxresults: Maximum number of results to return in a page. If
          not specified the service will return up to 25 results.
@@ -2004,8 +2029,8 @@ class KeyVaultClient(object):
             self, vault_base_url, issuer_name, provider, credentials=None, organization_details=None, attributes=None, custom_headers=None, raw=False, **operation_config):
         """Sets the specified certificate issuer.
 
-        :param vault_base_url: The vault name, e.g.
-         https://myvault.vault.azure.net
+        :param vault_base_url: The vault name, for example
+         https://myvault.vault.azure.net.
         :type vault_base_url: str
         :param issuer_name: The name of the issuer.
         :type issuer_name: str
@@ -2083,8 +2108,8 @@ class KeyVaultClient(object):
             self, vault_base_url, issuer_name, provider=None, credentials=None, organization_details=None, attributes=None, custom_headers=None, raw=False, **operation_config):
         """Updates the specified certificate issuer.
 
-        :param vault_base_url: The vault name, e.g.
-         https://myvault.vault.azure.net
+        :param vault_base_url: The vault name, for example
+         https://myvault.vault.azure.net.
         :type vault_base_url: str
         :param issuer_name: The name of the issuer.
         :type issuer_name: str
@@ -2160,10 +2185,10 @@ class KeyVaultClient(object):
 
     def get_certificate_issuer(
             self, vault_base_url, issuer_name, custom_headers=None, raw=False, **operation_config):
-        """Gets the specified certificate issuer.
+        """Lists the specified certificate issuer.
 
-        :param vault_base_url: The vault name, e.g.
-         https://myvault.vault.azure.net
+        :param vault_base_url: The vault name, for example
+         https://myvault.vault.azure.net.
         :type vault_base_url: str
         :param issuer_name: The name of the issuer.
         :type issuer_name: str
@@ -2223,8 +2248,8 @@ class KeyVaultClient(object):
             self, vault_base_url, issuer_name, custom_headers=None, raw=False, **operation_config):
         """Deletes the specified certificate issuer.
 
-        :param vault_base_url: The vault name, e.g.
-         https://myvault.vault.azure.net
+        :param vault_base_url: The vault name, for example
+         https://myvault.vault.azure.net.
         :type vault_base_url: str
         :param issuer_name: The name of the issuer.
         :type issuer_name: str
@@ -2282,23 +2307,23 @@ class KeyVaultClient(object):
 
     def create_certificate(
             self, vault_base_url, certificate_name, certificate_policy=None, certificate_attributes=None, tags=None, custom_headers=None, raw=False, **operation_config):
-        """Creates a new certificate version. If this is the first version, the
+        """Creates a new certificate. If this is the first version, the
         certificate resource is created.
 
-        :param vault_base_url: The vault name, e.g.
-         https://myvault.vault.azure.net
+        :param vault_base_url: The vault name, for example
+         https://myvault.vault.azure.net.
         :type vault_base_url: str
-        :param certificate_name: The name of the certificate
+        :param certificate_name: The name of the certificate.
         :type certificate_name: str
-        :param certificate_policy: The management policy for the certificate
+        :param certificate_policy: The management policy for the certificate.
         :type certificate_policy: :class:`CertificatePolicy
          <azure.keyvault.generated.models.CertificatePolicy>`
         :param certificate_attributes: The attributes of the certificate
-         (optional)
+         (optional).
         :type certificate_attributes: :class:`CertificateAttributes
          <azure.keyvault.generated.models.CertificateAttributes>`
-        :param tags: Application-specific metadata in the form of key-value
-         pairs
+        :param tags: Application specific metadata in the form of key-value
+         pairs.
         :type tags: dict
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -2360,29 +2385,29 @@ class KeyVaultClient(object):
 
     def import_certificate(
             self, vault_base_url, certificate_name, base64_encoded_certificate, password=None, certificate_policy=None, certificate_attributes=None, tags=None, custom_headers=None, raw=False, **operation_config):
-        """Imports a certificate into the specified vault.
+        """Imports a certificate into a specified key vault.
 
-        :param vault_base_url: The vault name, e.g.
-         https://myvault.vault.azure.net
+        :param vault_base_url: The vault name, for example
+         https://myvault.vault.azure.net.
         :type vault_base_url: str
-        :param certificate_name: The name of the certificate
+        :param certificate_name: The name of the certificate.
         :type certificate_name: str
         :param base64_encoded_certificate: Base64 encoded representation of
          the certificate object to import. This certificate needs to contain
          the private key.
         :type base64_encoded_certificate: str
         :param password: If the private key in base64EncodedCertificate is
-         encrypted, the password used for encryption
+         encrypted, the password used for encryption.
         :type password: str
-        :param certificate_policy: The management policy for the certificate
+        :param certificate_policy: The management policy for the certificate.
         :type certificate_policy: :class:`CertificatePolicy
          <azure.keyvault.generated.models.CertificatePolicy>`
         :param certificate_attributes: The attributes of the certificate
-         (optional)
+         (optional).
         :type certificate_attributes: :class:`CertificateAttributes
          <azure.keyvault.generated.models.CertificateAttributes>`
-        :param tags: Application-specific metadata in the form of key-value
-         pairs
+        :param tags: Application specific metadata in the form of key-value
+         pairs.
         :type tags: dict
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -2446,10 +2471,10 @@ class KeyVaultClient(object):
             self, vault_base_url, certificate_name, maxresults=None, custom_headers=None, raw=False, **operation_config):
         """List the versions of a certificate.
 
-        :param vault_base_url: The vault name, e.g.
-         https://myvault.vault.azure.net
+        :param vault_base_url: The vault name, for example
+         https://myvault.vault.azure.net.
         :type vault_base_url: str
-        :param certificate_name: The name of the certificate
+        :param certificate_name: The name of the certificate.
         :type certificate_name: str
         :param maxresults: Maximum number of results to return in a page. If
          not specified the service will return up to 25 results.
@@ -2517,12 +2542,12 @@ class KeyVaultClient(object):
 
     def get_certificate_policy(
             self, vault_base_url, certificate_name, custom_headers=None, raw=False, **operation_config):
-        """Gets the policy for a certificate.
+        """Lists the policy for a certificate.
 
-        :param vault_base_url: The vault name, e.g.
-         https://myvault.vault.azure.net
+        :param vault_base_url: The vault name, for example
+         https://myvault.vault.azure.net.
         :type vault_base_url: str
-        :param certificate_name: The name of the certificate in the given
+        :param certificate_name: The name of the certificate in a given key
          vault.
         :type certificate_name: str
         :param dict custom_headers: headers that will be added to the request
@@ -2579,11 +2604,11 @@ class KeyVaultClient(object):
 
     def update_certificate_policy(
             self, vault_base_url, certificate_name, certificate_policy, custom_headers=None, raw=False, **operation_config):
-        """Updates the policy for a certificate. Set appropriate members in the
-        certificatePolicy that must be updated. Leave others as null.
+        """Updates the policy for a certificate. Set specified members in the
+        certificate policy. Leave others as null.
 
-        :param vault_base_url: The vault name, e.g.
-         https://myvault.vault.azure.net
+        :param vault_base_url: The vault name, for example
+         https://myvault.vault.azure.net.
         :type vault_base_url: str
         :param certificate_name: The name of the certificate in the given
          vault.
@@ -2649,25 +2674,25 @@ class KeyVaultClient(object):
 
     def update_certificate(
             self, vault_base_url, certificate_name, certificate_version, certificate_policy=None, certificate_attributes=None, tags=None, custom_headers=None, raw=False, **operation_config):
-        """Updates the attributes associated with the specified certificate.
+        """Updates the specified attributes associated with the given certificate.
 
-        :param vault_base_url: The vault name, e.g.
-         https://myvault.vault.azure.net
+        :param vault_base_url: The vault name, for example
+         https://myvault.vault.azure.net.
         :type vault_base_url: str
-        :param certificate_name: The name of the certificate in the given
-         vault
+        :param certificate_name: The name of the certificate in the given key
+         vault.
         :type certificate_name: str
-        :param certificate_version: The version of the certificate
+        :param certificate_version: The version of the certificate.
         :type certificate_version: str
-        :param certificate_policy: The management policy for the certificate
+        :param certificate_policy: The management policy for the certificate.
         :type certificate_policy: :class:`CertificatePolicy
          <azure.keyvault.generated.models.CertificatePolicy>`
         :param certificate_attributes: The attributes of the certificate
-         (optional)
+         (optional).
         :type certificate_attributes: :class:`CertificateAttributes
          <azure.keyvault.generated.models.CertificateAttributes>`
-        :param tags: Application-specific metadata in the form of key-value
-         pairs
+        :param tags: Application specific metadata in the form of key-value
+         pairs.
         :type tags: dict
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -2730,15 +2755,15 @@ class KeyVaultClient(object):
 
     def get_certificate(
             self, vault_base_url, certificate_name, certificate_version, custom_headers=None, raw=False, **operation_config):
-        """Gets a Certificate.
+        """Gets information about a specified certificate.
 
-        :param vault_base_url: The vault name, e.g.
-         https://myvault.vault.azure.net
+        :param vault_base_url: The vault name, for example
+         https://myvault.vault.azure.net.
         :type vault_base_url: str
         :param certificate_name: The name of the certificate in the given
-         vault
+         vault.
         :type certificate_name: str
-        :param certificate_version: The version of the certificate
+        :param certificate_version: The version of the certificate.
         :type certificate_version: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -2797,13 +2822,13 @@ class KeyVaultClient(object):
             self, vault_base_url, certificate_name, cancellation_requested, custom_headers=None, raw=False, **operation_config):
         """Updates a certificate operation.
 
-        :param vault_base_url: The vault name, e.g.
-         https://myvault.vault.azure.net
+        :param vault_base_url: The vault name, for example
+         https://myvault.vault.azure.net.
         :type vault_base_url: str
-        :param certificate_name: The name of the certificate
+        :param certificate_name: The name of the certificate.
         :type certificate_name: str
-        :param cancellation_requested: Indicates if cancellation was
-         requested on the certificate operation.
+        :param cancellation_requested: Indicates if cancellation was requested
+         on the certificate operation.
         :type cancellation_requested: bool
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -2865,12 +2890,12 @@ class KeyVaultClient(object):
 
     def get_certificate_operation(
             self, vault_base_url, certificate_name, custom_headers=None, raw=False, **operation_config):
-        """Gets the certificate operation response.
+        """Gets the operation associated with a specified certificate.
 
-        :param vault_base_url: The vault name, e.g.
-         https://myvault.vault.azure.net
+        :param vault_base_url: The vault name, for example
+         https://myvault.vault.azure.net.
         :type vault_base_url: str
-        :param certificate_name: The name of the certificate
+        :param certificate_name: The name of the certificate.
         :type certificate_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -2926,12 +2951,12 @@ class KeyVaultClient(object):
 
     def delete_certificate_operation(
             self, vault_base_url, certificate_name, custom_headers=None, raw=False, **operation_config):
-        """Deletes the certificate operation.
+        """Deletes the operation for a specified certificate.
 
-        :param vault_base_url: The vault name, e.g.
-         https://myvault.vault.azure.net
+        :param vault_base_url: The vault name, for example
+         https://myvault.vault.azure.net.
         :type vault_base_url: str
-        :param certificate_name: The name of the certificate
+        :param certificate_name: The name of the certificate.
         :type certificate_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -2987,23 +3012,23 @@ class KeyVaultClient(object):
 
     def merge_certificate(
             self, vault_base_url, certificate_name, x509_certificates, certificate_attributes=None, tags=None, custom_headers=None, raw=False, **operation_config):
-        """Merges a certificate or a certificate chain with a key pair existing
-        on the server.
+        """Merges a certificate or a certificate chain with a key pair existing on
+        the server.
 
-        :param vault_base_url: The vault name, e.g.
-         https://myvault.vault.azure.net
+        :param vault_base_url: The vault name, for example
+         https://myvault.vault.azure.net.
         :type vault_base_url: str
-        :param certificate_name: The name of the certificate
+        :param certificate_name: The name of the certificate.
         :type certificate_name: str
         :param x509_certificates: The certificate or the certificate chain to
-         merge
+         merge.
         :type x509_certificates: list of bytearray
         :param certificate_attributes: The attributes of the certificate
-         (optional)
+         (optional).
         :type certificate_attributes: :class:`CertificateAttributes
          <azure.keyvault.generated.models.CertificateAttributes>`
-        :param tags: Application-specific metadata in the form of key-value
-         pairs
+        :param tags: Application specific metadata in the form of key-value
+         pairs.
         :type tags: dict
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the

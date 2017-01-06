@@ -15,7 +15,7 @@ from msrest.serialization import Model
 class X509CertificateProperties(Model):
     """Properties of the X509 component of a certificate.
 
-    :param subject: The subject name. Should be a valid X509 Distinguished
+    :param subject: The subject name. Should be a valid X509 distinguished
      Name.
     :type subject: str
     :param ekus: The enhanced key usage.
@@ -29,7 +29,7 @@ class X509CertificateProperties(Model):
     :param validity_in_months: The duration that the ceritifcate is valid in
      months.
     :type validity_in_months: int
-    """ 
+    """
 
     _validation = {
         'validity_in_months': {'minimum': 0},

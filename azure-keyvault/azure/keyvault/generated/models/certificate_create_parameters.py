@@ -15,16 +15,16 @@ from msrest.serialization import Model
 class CertificateCreateParameters(Model):
     """The certificate create parameters.
 
-    :param certificate_policy: The management policy for the certificate
+    :param certificate_policy: The management policy for the certificate.
     :type certificate_policy: :class:`CertificatePolicy
      <azure.keyvault.generated.models.CertificatePolicy>`
     :param certificate_attributes: The attributes of the certificate
-     (optional)
+     (optional).
     :type certificate_attributes: :class:`CertificateAttributes
      <azure.keyvault.generated.models.CertificateAttributes>`
-    :param tags: Application-specific metadata in the form of key-value pairs
+    :param tags: Application specific metadata in the form of key-value pairs.
     :type tags: dict
-    """ 
+    """
 
     _attribute_map = {
         'certificate_policy': {'key': 'policy', 'type': 'CertificatePolicy'},

@@ -18,7 +18,7 @@ class CertificatePolicy(Model):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar id: The certificate id
+    :ivar id: The certificate id.
     :vartype id: str
     :param key_properties: Properties of the key backing a certificate.
     :type key_properties: :class:`KeyProperties
@@ -41,7 +41,7 @@ class CertificatePolicy(Model):
     :param attributes: The certificate attributes.
     :type attributes: :class:`CertificateAttributes
      <azure.keyvault.generated.models.CertificateAttributes>`
-    """ 
+    """
 
     _validation = {
         'id': {'readonly': True},

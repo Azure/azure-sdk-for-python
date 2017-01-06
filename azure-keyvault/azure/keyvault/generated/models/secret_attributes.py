@@ -18,17 +18,17 @@ class SecretAttributes(Attributes):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :param enabled: Determines whether the object is enabled
+    :param enabled: Determines whether the object is enabled.
     :type enabled: bool
-    :param not_before: Not before date in UTC
+    :param not_before: Not before date in UTC.
     :type not_before: datetime
-    :param expires: Expiry date in UTC
+    :param expires: Expiry date in UTC.
     :type expires: datetime
-    :ivar created: Creation time in UTC
+    :ivar created: Creation time in UTC.
     :vartype created: datetime
-    :ivar updated: Last updated time in UTC
+    :ivar updated: Last updated time in UTC.
     :vartype updated: datetime
-    """ 
+    """
 
     _validation = {
         'created': {'readonly': True},

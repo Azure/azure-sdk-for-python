@@ -15,12 +15,12 @@ from msrest.serialization import Model
 class KeyCreateParameters(Model):
     """The key create parameters.
 
-    :param kty: The type of key to create. Valid key types, see
+    :param kty: The type of key to create. For valid key types, see
      JsonWebKeyType. Supported JsonWebKey key types (kty) for Elliptic Curve,
      RSA, HSM, Octet. Possible values include: 'EC', 'RSA', 'RSA-HSM', 'oct'
     :type kty: str or :class:`JsonWebKeyType
      <azure.keyvault.generated.models.JsonWebKeyType>`
-    :param key_size: The key size in bytes. e.g. 1024 or 2048.
+    :param key_size: The key size in bytes. For example, 1024 or 2048.
     :type key_size: int
     :param key_ops:
     :type key_ops: list of str or :class:`JsonWebKeyOperation
@@ -28,9 +28,9 @@ class KeyCreateParameters(Model):
     :param key_attributes:
     :type key_attributes: :class:`KeyAttributes
      <azure.keyvault.generated.models.KeyAttributes>`
-    :param tags: Application-specific metadata in the form of key-value pairs
+    :param tags: Application specific metadata in the form of key-value pairs.
     :type tags: dict
-    """ 
+    """
 
     _validation = {
         'kty': {'required': True, 'min_length': 1},

@@ -23,7 +23,7 @@ class Contacts(Model):
     :param contact_list: The contact list for the vault certificates.
     :type contact_list: list of :class:`Contact
      <azure.keyvault.generated.models.Contact>`
-    """ 
+    """
 
     _validation = {
         'id': {'readonly': True},

@@ -18,17 +18,17 @@ class KeyItem(Model):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :param kid: Key Identifier
+    :param kid: Key identifier.
     :type kid: str
-    :param attributes: The key management attributes
+    :param attributes: The key management attributes.
     :type attributes: :class:`KeyAttributes
      <azure.keyvault.generated.models.KeyAttributes>`
-    :param tags: Application-specific metadata in the form of key-value pairs
+    :param tags: Application specific metadata in the form of key-value pairs.
     :type tags: dict
-    :ivar managed: True if the key's lifetime is managed by key vault i.e. if
-     this is a key backing a certificate, then managed will be true.
+    :ivar managed: True if the key's lifetime is managed by key vault. If this
+     is a key backing a certificate, then managed will be true.
     :vartype managed: bool
-    """ 
+    """
 
     _validation = {
         'managed': {'readonly': True},

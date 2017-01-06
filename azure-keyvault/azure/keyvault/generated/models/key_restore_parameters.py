@@ -15,9 +15,9 @@ from msrest.serialization import Model
 class KeyRestoreParameters(Model):
     """The key restore parameters.
 
-    :param key_bundle_backup: the backup blob associated with a key bundle
+    :param key_bundle_backup: The backup blob associated with a key bundle.
     :type key_bundle_backup: bytes
-    """ 
+    """
 
     _validation = {
         'key_bundle_backup': {'required': True},

@@ -18,9 +18,9 @@ class KeyVerifyResult(Model):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar value: true if the signature is verified, false otherwise.
+    :ivar value: True if the signature is verified, otherwise false.
     :vartype value: bool
-    """ 
+    """
 
     _validation = {
         'value': {'readonly': True},

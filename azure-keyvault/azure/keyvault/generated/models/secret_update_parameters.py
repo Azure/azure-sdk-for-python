@@ -15,14 +15,14 @@ from msrest.serialization import Model
 class SecretUpdateParameters(Model):
     """The secret update parameters.
 
-    :param content_type: Type of the secret value such as a password
+    :param content_type: Type of the secret value such as a password.
     :type content_type: str
-    :param secret_attributes: The secret management attributes
+    :param secret_attributes: The secret management attributes.
     :type secret_attributes: :class:`SecretAttributes
      <azure.keyvault.generated.models.SecretAttributes>`
-    :param tags: Application-specific metadata in the form of key-value pairs
+    :param tags: Application specific metadata in the form of key-value pairs.
     :type tags: dict
-    """ 
+    """
 
     _attribute_map = {
         'content_type': {'key': 'contentType', 'type': 'str'},
