@@ -35,7 +35,7 @@ class _MultiExecutionContextAggregator(_QueryExecutionContextBase):
     and aggregates the corresponding results from each execution context.
     
     When handling an orderby query, _MultiExecutionContextAggregator instantiates one instance of 
-    DocumentProcuder per target partition key range and aggregates the result of each.
+    DocumentProducer per target partition key range and aggregates the result of each.
     
     TODO improvement: this class needs to be parallelized
     """
