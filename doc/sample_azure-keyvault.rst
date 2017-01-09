@@ -75,7 +75,7 @@ Example
     # Print a list of versions for a key
     versions = client.get_key_versions(KEY_VAULT_URI, 'FirstKey')
     for version in versions:
-        print version.kid  # https://myvault.vault.azure.net/keys/FirstKey/000102030405060708090a0b0c0d0e0f
+        print(version.kid)  # https://myvault.vault.azure.net/keys/FirstKey/000102030405060708090a0b0c0d0e0f
 
     # Read a key without version
     client.get_key(key_id.base_id)
@@ -100,7 +100,7 @@ Example
     # Print a list of versions for a secret
     versions = client.get_secret_versions(KEY_VAULT_URI, 'FirstSecret')
     for version in versions:
-        print version.id  # https://myvault.vault.azure.net/secrets/FirstSecret/000102030405060708090a0b0c0d0e0f
+        print(version.id)  # https://myvault.vault.azure.net/secrets/FirstSecret/000102030405060708090a0b0c0d0e0f
 
     # Read a secret without version
     client.get_secret(secret_id.base_id)
