@@ -9,28 +9,47 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.serialization import Model
+from .resource import Resource
 
 
-class EdgeNode(Model):
+class EdgeNode(Resource):
     """Edge node of CDN service.
 
-    :param name: Ip adress group that contains Ipv4 and Ipv6 addresses
-    :type name: str
-    :param resource_group: The resource group of the edge node.
-    :type resource_group: str
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar id: Resource ID.
+    :vartype id: str
+    :ivar name: Resource name.
+    :vartype name: str
+    :ivar type: Resource type.
+    :vartype type: str
+    :param location: Resource location.
+    :type location: str
+    :param tags: Resource tags.
+    :type tags: dict
     :param ip_address_groups: List of ip address groups.
     :type ip_address_groups: list of :class:`IpAddressGroup
      <azure.mgmt.cdn.models.IpAddressGroup>`
     """
 
-    _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'resource_group': {'key': 'resourceGroup', 'type': 'str'},
-        'ip_address_groups': {'key': 'ipAddressGroups', 'type': '[IpAddressGroup]'},
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'location': {'required': True},
+        'ip_address_groups': {'required': True},
     }
 
-    def __init__(self, name=None, resource_group=None, ip_address_groups=None):
-        self.name = name
-        self.resource_group = resource_group
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'location': {'key': 'location', 'type': 'str'},
+        'tags': {'key': 'tags', 'type': '{str}'},
+        'ip_address_groups': {'key': 'properties.ipAddressGroups', 'type': '[IpAddressGroup]'},
+    }
+
+    def __init__(self, location, ip_address_groups, tags=None):
+        super(EdgeNode, self).__init__(location=location, tags=tags)
         self.ip_address_groups = ip_address_groups

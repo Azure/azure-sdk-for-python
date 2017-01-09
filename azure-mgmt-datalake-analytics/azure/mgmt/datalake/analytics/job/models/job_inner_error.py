@@ -21,7 +21,8 @@ class JobInnerError(Model):
     :ivar diagnostic_code: the diagnostic error code.
     :vartype diagnostic_code: int
     :ivar severity: the severity level of the failure. Possible values
-     include: 'Warning', 'Error', 'Info'
+     include: 'Warning', 'Error', 'Info', 'SevereWarning', 'Deprecated',
+     'UserWarning'
     :vartype severity: str or :class:`SeverityTypes
      <azure.mgmt.datalake.analytics.job.models.SeverityTypes>`
     :ivar details: the details of the error message.

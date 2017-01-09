@@ -73,21 +73,21 @@ class DataLakeAnalyticsAccount(Resource):
     :vartype last_modified_time: datetime
     :ivar endpoint: the full CName endpoint for this account.
     :vartype endpoint: str
-    :param new_tier: the billing tier to use for next month. Possible values
+    :param new_tier: the commitment tier for the next month. Possible values
      include: 'Consumption', 'Commitment_100AUHours', 'Commitment_500AUHours',
      'Commitment_1000AUHours', 'Commitment_5000AUHours',
      'Commitment_10000AUHours', 'Commitment_50000AUHours',
      'Commitment_100000AUHours', 'Commitment_500000AUHours'
-    :type new_tier: str or :class:`PricingTierType
-     <azure.mgmt.datalake.analytics.account.models.PricingTierType>`
-    :ivar current_tier: the billing tier in use for the current month.
+    :type new_tier: str or :class:`TierType
+     <azure.mgmt.datalake.analytics.account.models.TierType>`
+    :ivar current_tier: the commitment tier in use for the current month.
      Possible values include: 'Consumption', 'Commitment_100AUHours',
      'Commitment_500AUHours', 'Commitment_1000AUHours',
      'Commitment_5000AUHours', 'Commitment_10000AUHours',
      'Commitment_50000AUHours', 'Commitment_100000AUHours',
      'Commitment_500000AUHours'
-    :vartype current_tier: str or :class:`PricingTierType
-     <azure.mgmt.datalake.analytics.account.models.PricingTierType>`
+    :vartype current_tier: str or :class:`TierType
+     <azure.mgmt.datalake.analytics.account.models.TierType>`
     """
 
     _validation = {
@@ -129,8 +129,8 @@ class DataLakeAnalyticsAccount(Resource):
         'creation_time': {'key': 'properties.creationTime', 'type': 'iso-8601'},
         'last_modified_time': {'key': 'properties.lastModifiedTime', 'type': 'iso-8601'},
         'endpoint': {'key': 'properties.endpoint', 'type': 'str'},
-        'new_tier': {'key': 'properties.newTier', 'type': 'PricingTierType'},
-        'current_tier': {'key': 'properties.currentTier', 'type': 'PricingTierType'},
+        'new_tier': {'key': 'properties.newTier', 'type': 'TierType'},
+        'current_tier': {'key': 'properties.currentTier', 'type': 'TierType'},
     }
 
     def __init__(self, location, default_data_lake_store_account, data_lake_store_accounts, tags=None, max_degree_of_parallelism=30, query_store_retention=30, max_job_count=3, storage_accounts=None, new_tier=None):

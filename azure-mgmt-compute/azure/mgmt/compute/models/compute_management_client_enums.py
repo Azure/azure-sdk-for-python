@@ -140,11 +140,6 @@ class VirtualMachineScaleSetSkuScaleType(Enum):
     none = "None"
 
 
-class InstanceViewTypes(Enum):
-
-    instance_view = "instanceView"
-
-
 class ContainerServiceOchestratorTypes(Enum):
 
     swarm = "Swarm"
@@ -202,3 +197,8 @@ class ContainerServiceVMSizeTypes(Enum):
     standard_gs3 = "Standard_GS3"
     standard_gs4 = "Standard_GS4"
     standard_gs5 = "Standard_GS5"
+
+
+class InstanceViewTypes(Enum):
+
+    instance_view = "instanceView"

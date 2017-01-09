@@ -115,9 +115,9 @@ from .compute_management_client_enums import (
     ProtocolTypes,
     UpgradeMode,
     VirtualMachineScaleSetSkuScaleType,
-    InstanceViewTypes,
     ContainerServiceOchestratorTypes,
     ContainerServiceVMSizeTypes,
+    InstanceViewTypes,
 )
 
 __all__ = [
@@ -226,7 +226,7 @@ __all__ = [
     'ProtocolTypes',
     'UpgradeMode',
     'VirtualMachineScaleSetSkuScaleType',
-    'InstanceViewTypes',
     'ContainerServiceOchestratorTypes',
     'ContainerServiceVMSizeTypes',
+    'InstanceViewTypes',
 ]

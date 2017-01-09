@@ -18,8 +18,10 @@ class CognitiveServicesAccountCreateParameters(Model):
     :param sku:
     :type sku: :class:`Sku <azure.mgmt.cognitiveservices.models.Sku>`
     :param kind: Required. Indicates the type of cognitive service account.
-     Possible values include: 'ComputerVision', 'Emotion', 'Face', 'LUIS',
-     'Recommendations', 'Speech', 'TextAnalytics', 'WebLM'
+     Possible values include: 'Academic', 'Bing.Autosuggest', 'Bing.Search',
+     'Bing.Speech', 'Bing.SpellCheck', 'ComputerVision', 'ContentModerator',
+     'Emotion', 'Face', 'LUIS', 'Recommendations', 'SpeakerRecognition',
+     'Speech', 'SpeechTranslation', 'TextAnalytics', 'TextTranslation', 'WebLM'
     :type kind: str or :class:`Kind
      <azure.mgmt.cognitiveservices.models.Kind>`
     :param location: Required. Gets or sets the location of the resource. This
@@ -47,7 +49,7 @@ class CognitiveServicesAccountCreateParameters(Model):
 
     _attribute_map = {
         'sku': {'key': 'sku', 'type': 'Sku'},
-        'kind': {'key': 'kind', 'type': 'Kind'},
+        'kind': {'key': 'kind', 'type': 'str'},
         'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
         'properties': {'key': 'properties', 'type': 'object'},

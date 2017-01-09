@@ -31,7 +31,7 @@ class DataLakeAnalyticsAccountState(Enum):
     suspended = "Suspended"
 
 
-class PricingTierType(Enum):
+class TierType(Enum):
 
     consumption = "Consumption"
     commitment_100_au_hours = "Commitment_100AUHours"
