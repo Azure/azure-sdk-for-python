@@ -29,23 +29,6 @@ for details on handling Azure Active Directory authentication with the Python SD
         credentials
     )
 
-.. code:: python
-
-    from azure.keyvault import KeyVaultClient
-    from azure.common.credentials import ServicePrincipalCredentials
-    
-    # See above for details on creating different types of AAD credentials
-    credentials = ServicePrincipalCredentials(
-        'client_id',  # Client id of the service
-        'client_key', # Client key/password set while creating the service principal
-        tenant='00000000-0000-0000-0000-000000000000', # Your tenant id
-        resource='https://vault.azure.net'
-    )
-
-    client = KeyVaultClient(
-        credentials
-    )
-
 Access policies
 ---------------
 
