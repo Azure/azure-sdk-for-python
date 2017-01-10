@@ -338,7 +338,7 @@
       "swagger": "arm-datalake-analytics/account/2016-11-01/swagger/account.json",
       "autorest_options": {
         "Namespace": "azure.mgmt.datalake.analytics.account",
-        "PackageVersion": "0.1.1"
+        "PackageVersion": "0.1.2"
       },
       "output_dir": "azure-mgmt-datalake-analytics/azure/mgmt/datalake/analytics/account/"
     },
@@ -346,7 +346,7 @@
       "swagger": "arm-datalake-analytics/catalog/2016-11-01/swagger/catalog.json",
       "autorest_options": {
         "Namespace": "azure.mgmt.datalake.analytics.catalog",
-        "PackageVersion": "0.1.1"
+        "PackageVersion": "0.1.2"
       },
       "output_dir": "azure-mgmt-datalake-analytics/azure/mgmt/datalake/analytics/catalog/"
     },
@@ -354,7 +354,7 @@
       "swagger": "arm-datalake-analytics/job/2016-11-01/swagger/job.json",
       "autorest_options": {
         "Namespace": "azure.mgmt.datalake.analytics.job",
-        "PackageVersion": "0.1.1"
+        "PackageVersion": "0.1.2"
       },
       "output_dir": "azure-mgmt-datalake-analytics/azure/mgmt/datalake/analytics/job/"
     },

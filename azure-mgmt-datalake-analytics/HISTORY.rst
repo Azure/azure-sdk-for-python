@@ -3,6 +3,18 @@
 Release History
 ===============
 
+0.1.2 (2017-01-09)
+++++++++++++++++++
+
+**New features**
+
+* Added the ability to create and update accounts with usage commitment levels for Data Lake Store and Data Lake Analytics
+
+**Bugfixes**
+
+* Fixed a bug where three job diagnostic severity types were missing: SevereWarning, UserWarning and Deprecated
+* Fixed a bug where UpdateSecret, which is deprecated, was incorrectly indicating that it had a return type. It now properly does not have a return value.
+
 0.1.1 (2016-12-12)
 ++++++++++++++++++
 
