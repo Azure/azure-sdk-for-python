@@ -20,7 +20,7 @@ class TemplateLink(Model):
     :param content_version: If included, must match the ContentVersion in the
      template.
     :type content_version: str
-    """ 
+    """
 
     _validation = {
         'uri': {'required': True},

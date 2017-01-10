@@ -19,7 +19,7 @@ class AliasPathType(Model):
     :type path: str
     :param api_versions: The API versions.
     :type api_versions: list of str
-    """ 
+    """
 
     _attribute_map = {
         'path': {'key': 'path', 'type': 'str'},

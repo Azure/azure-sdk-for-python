@@ -27,7 +27,7 @@ class Provider(Model):
     :ivar resource_types: The collection of provider resource types.
     :vartype resource_types: list of :class:`ProviderResourceType
      <azure.mgmt.resource.resources.models.ProviderResourceType>`
-    """ 
+    """
 
     _validation = {
         'id': {'readonly': True},

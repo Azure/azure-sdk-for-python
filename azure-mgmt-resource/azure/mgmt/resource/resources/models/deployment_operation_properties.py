@@ -37,7 +37,7 @@ class DeploymentOperationProperties(Model):
     :ivar response: The HTTP response message.
     :vartype response: :class:`HttpMessage
      <azure.mgmt.resource.resources.models.HttpMessage>`
-    """ 
+    """
 
     _validation = {
         'provisioning_state': {'readonly': True},

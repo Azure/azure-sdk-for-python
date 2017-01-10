@@ -17,7 +17,7 @@ class DeploymentExtendedFilter(Model):
 
     :param provisioning_state: The provisioning state.
     :type provisioning_state: str
-    """ 
+    """
 
     _attribute_map = {
         'provisioning_state': {'key': 'provisioningState', 'type': 'str'},

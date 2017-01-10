@@ -19,7 +19,7 @@ class ResourceGroupFilter(Model):
     :type tag_name: str
     :param tag_value: The tag value.
     :type tag_value: str
-    """ 
+    """
 
     _attribute_map = {
         'tag_name': {'key': 'tagName', 'type': 'str'},
