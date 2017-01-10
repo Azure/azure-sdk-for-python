@@ -54,7 +54,7 @@ class DeploymentPropertiesExtended(Model):
     :param debug_setting: The debug setting of the deployment.
     :type debug_setting: :class:`DebugSetting
      <azure.mgmt.resource.resources.models.DebugSetting>`
-    """ 
+    """
 
     _validation = {
         'provisioning_state': {'readonly': True},

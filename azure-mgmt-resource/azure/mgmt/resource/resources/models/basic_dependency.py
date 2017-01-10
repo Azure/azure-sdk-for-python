@@ -21,7 +21,7 @@ class BasicDependency(Model):
     :type resource_type: str
     :param resource_name: The dependency resource name.
     :type resource_name: str
-    """ 
+    """
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},

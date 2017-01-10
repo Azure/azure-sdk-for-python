@@ -23,7 +23,7 @@ class Plan(Model):
     :type product: str
     :param promotion_code: The promotion code.
     :type promotion_code: str
-    """ 
+    """
 
     _attribute_map = {
         'name': {'key': 'name', 'type': 'str'},

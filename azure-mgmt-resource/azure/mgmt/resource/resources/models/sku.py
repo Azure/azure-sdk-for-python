@@ -27,7 +27,7 @@ class Sku(Model):
     :type model: str
     :param capacity: The SKU capacity.
     :type capacity: int
-    """ 
+    """
 
     _attribute_map = {
         'name': {'key': 'name', 'type': 'str'},

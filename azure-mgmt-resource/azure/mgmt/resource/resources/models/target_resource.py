@@ -21,7 +21,7 @@ class TargetResource(Model):
     :type resource_name: str
     :param resource_type: The type of the resource.
     :type resource_type: str
-    """ 
+    """
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},

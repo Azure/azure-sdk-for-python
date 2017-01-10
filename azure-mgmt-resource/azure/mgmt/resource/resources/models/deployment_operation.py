@@ -25,7 +25,7 @@ class DeploymentOperation(Model):
     :param properties: Deployment properties.
     :type properties: :class:`DeploymentOperationProperties
      <azure.mgmt.resource.resources.models.DeploymentOperationProperties>`
-    """ 
+    """
 
     _validation = {
         'id': {'readonly': True},

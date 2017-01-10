@@ -27,7 +27,7 @@ class ResourceManagementErrorWithDetails(Model):
     :ivar details: Validation error.
     :vartype details: list of :class:`ResourceManagementErrorWithDetails
      <azure.mgmt.resource.resources.models.ResourceManagementErrorWithDetails>`
-    """ 
+    """
 
     _validation = {
         'code': {'readonly': True},

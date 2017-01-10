@@ -157,8 +157,8 @@ class ProvidersOperations(object):
             self, top=None, expand=None, custom_headers=None, raw=False, **operation_config):
         """Gets all resource providers for a subscription.
 
-        :param top: The number of results to return. If null is passed
-         returns all deployments.
+        :param top: The number of results to return. If null is passed returns
+         all deployments.
         :type top: int
         :param expand: The properties to include in the results. For example,
          use &$expand=metadata in the query string to retrieve resource
