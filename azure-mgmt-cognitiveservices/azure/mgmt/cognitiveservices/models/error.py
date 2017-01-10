@@ -16,17 +16,17 @@ from msrest.exceptions import HttpOperationError
 class Error(Model):
     """Error.
 
-    :param errorProperty:
-    :type errorProperty: :class:`ErrorBody
+    :param error:
+    :type error: :class:`ErrorBody
      <azure.mgmt.cognitiveservices.models.ErrorBody>`
-    """ 
+    """
 
     _attribute_map = {
-        'errorProperty': {'key': 'error', 'type': 'ErrorBody'},
+        'error': {'key': 'error', 'type': 'ErrorBody'},
     }
 
-    def __init__(self, errorProperty=None):
-        self.errorProperty = errorProperty
+    def __init__(self, error=None):
+        self.error = error
 
 
 class ErrorException(HttpOperationError):

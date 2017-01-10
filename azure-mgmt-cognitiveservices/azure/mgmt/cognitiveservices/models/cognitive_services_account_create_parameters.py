@@ -18,15 +18,17 @@ class CognitiveServicesAccountCreateParameters(Model):
     :param sku:
     :type sku: :class:`Sku <azure.mgmt.cognitiveservices.models.Sku>`
     :param kind: Required. Indicates the type of cognitive service account.
-     Possible values include: 'ComputerVision', 'Emotion', 'Face', 'LUIS',
-     'Recommendations', 'Speech', 'TextAnalytics', 'WebLM'
+     Possible values include: 'Academic', 'Bing.Autosuggest', 'Bing.Search',
+     'Bing.Speech', 'Bing.SpellCheck', 'ComputerVision', 'ContentModerator',
+     'Emotion', 'Face', 'LUIS', 'Recommendations', 'SpeakerRecognition',
+     'Speech', 'SpeechTranslation', 'TextAnalytics', 'TextTranslation', 'WebLM'
     :type kind: str or :class:`Kind
      <azure.mgmt.cognitiveservices.models.Kind>`
-    :param location: Required. Gets or sets the location of the resource.
-     This will be one of the supported and registered Azure Geo Regions (e.g.
-     West US, East US, Southeast Asia, etc.). The geo region of a resource
-     cannot be changed once it is created, but if an identical geo region is
-     specified on update the request will succeed.
+    :param location: Required. Gets or sets the location of the resource. This
+     will be one of the supported and registered Azure Geo Regions (e.g. West
+     US, East US, Southeast Asia, etc.). The geo region of a resource cannot be
+     changed once it is created, but if an identical geo region is specified on
+     update the request will succeed.
     :type location: str
     :param tags: Gets or sets a list of key value pairs that describe the
      resource. These tags can be used in viewing and grouping this resource
@@ -36,7 +38,7 @@ class CognitiveServicesAccountCreateParameters(Model):
     :type tags: dict
     :param properties: Must exist in the request. Must not be null.
     :type properties: object
-    """ 
+    """
 
     _validation = {
         'sku': {'required': True},
@@ -47,7 +49,7 @@ class CognitiveServicesAccountCreateParameters(Model):
 
     _attribute_map = {
         'sku': {'key': 'sku', 'type': 'Sku'},
-        'kind': {'key': 'kind', 'type': 'Kind'},
+        'kind': {'key': 'kind', 'type': 'str'},
         'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
         'properties': {'key': 'properties', 'type': 'object'},
