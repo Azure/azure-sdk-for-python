@@ -19,7 +19,7 @@ class TagCount(Model):
     :type type: str
     :param value: Value of count.
     :type value: str
-    """ 
+    """
 
     _attribute_map = {
         'type': {'key': 'type', 'type': 'str'},

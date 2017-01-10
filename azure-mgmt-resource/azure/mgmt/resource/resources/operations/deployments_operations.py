@@ -40,15 +40,15 @@ class DeploymentsOperations(object):
 
         A template deployment that is currently running cannot be deleted.
         Deleting a template deployment removes the associated deployment
-        operations. Deleting a template deployment does not affect the state
-        of the resource group. This is an asynchronous operation that returns
-        a status of 202 until the template deployment is successfully
-        deleted. The Location response header contains the URI that is used
-        to obtain the status of the process. While the process is running, a
-        call to the URI in the Location header returns a status of 202. When
-        the process finishes, the URI in the Location header returns a status
-        of 204 on success. If the asynchronous request failed, the URI in the
-        Location header returns an error-level status code.
+        operations. Deleting a template deployment does not affect the state of
+        the resource group. This is an asynchronous operation that returns a
+        status of 202 until the template deployment is successfully deleted.
+        The Location response header contains the URI that is used to obtain
+        the status of the process. While the process is running, a call to the
+        URI in the Location header returns a status of 202. When the process
+        finishes, the URI in the Location header returns a status of 204 on
+        success. If the asynchronous request failed, the URI in the Location
+        header returns an error-level status code.
 
         :param resource_group_name: The name of the resource group with the
          deployment to delete. The name is case insensitive.
@@ -350,10 +350,10 @@ class DeploymentsOperations(object):
         """Cancels a currently running template deployment.
 
         You can cancel a deployment only if the provisioningState is Accepted
-        or Running. After the deployment is canceled, the provisioningState
-        is set to Canceled. Canceling a template deployment stops the
-        currently running template deployment and leaves the resource group
-        partially deployed.
+        or Running. After the deployment is canceled, the provisioningState is
+        set to Canceled. Canceling a template deployment stops the currently
+        running template deployment and leaves the resource group partially
+        deployed.
 
         :param resource_group_name: The name of the resource group. The name
          is case insensitive.

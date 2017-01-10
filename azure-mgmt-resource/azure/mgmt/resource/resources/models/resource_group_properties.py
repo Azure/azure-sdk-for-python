@@ -20,7 +20,7 @@ class ResourceGroupProperties(Model):
 
     :ivar provisioning_state: The provisioning state.
     :vartype provisioning_state: str
-    """ 
+    """
 
     _validation = {
         'provisioning_state': {'readonly': True},

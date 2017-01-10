@@ -41,7 +41,7 @@ class GenericResource(Resource):
     :param identity: The identity of the resource.
     :type identity: :class:`Identity
      <azure.mgmt.resource.resources.models.Identity>`
-    """ 
+    """
 
     _validation = {
         'id': {'readonly': True},
