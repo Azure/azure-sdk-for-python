@@ -68,7 +68,8 @@ setup(
         'azure.mgmt.redis.operations',		
     ],
     install_requires=[
-        'azure-common[autorest]==1.1.4',
+        'azure-common~=1.1.4',
+        'msrestazure~=0.4.6',
         'azure-mgmt-nspkg',
     ],
 )
