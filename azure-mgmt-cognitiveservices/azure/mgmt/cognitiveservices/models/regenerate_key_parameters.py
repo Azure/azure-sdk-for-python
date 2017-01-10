@@ -19,7 +19,7 @@ class RegenerateKeyParameters(Model):
      include: 'Key1', 'Key2'
     :type key_name: str or :class:`KeyName
      <azure.mgmt.cognitiveservices.models.KeyName>`
-    """ 
+    """
 
     _attribute_map = {
         'key_name': {'key': 'keyName', 'type': 'KeyName'},
