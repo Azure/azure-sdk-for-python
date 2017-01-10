@@ -69,6 +69,7 @@ setup(
     ],
     install_requires=[
         'azure-mgmt-nspkg',
-        'azure-common[autorest]==1.1.4',
+        'azure-common~=1.1.4',
+        'msrestazure~=0.4.6',
     ],
 )
