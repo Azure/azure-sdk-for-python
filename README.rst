@@ -89,7 +89,7 @@ listed before.
 - azure-mgmt-cognitiveservices 0.30.0rc6
 - azure-mgmt-containerregistry 0.1.1
 - azure-mgmt-datalake-analytics 0.1.2
-- azure-mgmt-datalake-store 0.1.1
+- azure-mgmt-datalake-store 0.1.2
 - azure-mgmt-commerce 0.30.0rc6
 - azure-mgmt-eventhub 0.2.0
 - azure-mgmt-iothub 0.2.1

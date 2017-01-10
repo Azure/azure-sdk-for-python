@@ -362,7 +362,7 @@
       "swagger": "arm-datalake-store/account/2016-11-01/swagger/account.json",
       "autorest_options": {
         "Namespace": "azure.mgmt.datalake.store",
-        "PackageVersion": "0.1.1"
+        "PackageVersion": "0.1.2"
       },
       "output_dir": "azure-mgmt-datalake-store/azure/mgmt/datalake/store/"
     }
