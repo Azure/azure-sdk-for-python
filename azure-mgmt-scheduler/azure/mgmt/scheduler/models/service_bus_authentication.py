@@ -23,7 +23,7 @@ class ServiceBusAuthentication(Model):
      include: 'NotSpecified', 'SharedAccessKey'
     :type type: str or :class:`ServiceBusAuthenticationType
      <azure.mgmt.scheduler.models.ServiceBusAuthenticationType>`
-    """ 
+    """
 
     _attribute_map = {
         'sas_key': {'key': 'sasKey', 'type': 'str'},

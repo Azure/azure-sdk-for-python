@@ -31,7 +31,7 @@ class JobCollectionDefinition(Model):
     :param properties: Gets or sets the job collection properties.
     :type properties: :class:`JobCollectionProperties
      <azure.mgmt.scheduler.models.JobCollectionProperties>`
-    """ 
+    """
 
     _validation = {
         'id': {'readonly': True},

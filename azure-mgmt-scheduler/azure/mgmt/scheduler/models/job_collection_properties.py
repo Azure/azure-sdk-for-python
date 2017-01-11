@@ -24,7 +24,7 @@ class JobCollectionProperties(Model):
     :param quota: Gets or sets the job collection quota.
     :type quota: :class:`JobCollectionQuota
      <azure.mgmt.scheduler.models.JobCollectionQuota>`
-    """ 
+    """
 
     _attribute_map = {
         'sku': {'key': 'sku', 'type': 'Sku'},

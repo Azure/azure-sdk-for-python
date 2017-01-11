@@ -19,7 +19,7 @@ class JobHistoryFilter(Model):
      include: 'Completed', 'Failed', 'Postponed'
     :type status: str or :class:`JobExecutionStatus
      <azure.mgmt.scheduler.models.JobExecutionStatus>`
-    """ 
+    """
 
     _attribute_map = {
         'status': {'key': 'status', 'type': 'JobExecutionStatus'},

@@ -34,7 +34,7 @@ class ClientCertAuthentication(HttpAuthentication):
     :param certificate_subject_name: Gets or sets the certificate subject
      name.
     :type certificate_subject_name: str
-    """ 
+    """
 
     _attribute_map = {
         'type': {'key': 'type', 'type': 'HttpAuthenticationType'},

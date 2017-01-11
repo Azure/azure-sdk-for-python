@@ -19,7 +19,7 @@ class Sku(Model):
      'Free', 'P10Premium', 'P20Premium'
     :type name: str or :class:`SkuDefinition
      <azure.mgmt.scheduler.models.SkuDefinition>`
-    """ 
+    """
 
     _attribute_map = {
         'name': {'key': 'name', 'type': 'SkuDefinition'},

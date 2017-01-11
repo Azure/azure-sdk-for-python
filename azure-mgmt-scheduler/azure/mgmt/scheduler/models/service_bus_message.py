@@ -34,7 +34,7 @@ class ServiceBusMessage(Model):
      include: 'NotSpecified', 'NetMessaging', 'AMQP'
     :type transport_type: str or :class:`ServiceBusTransportType
      <azure.mgmt.scheduler.models.ServiceBusTransportType>`
-    """ 
+    """
 
     _attribute_map = {
         'authentication': {'key': 'authentication', 'type': 'ServiceBusAuthentication'},
