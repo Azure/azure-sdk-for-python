@@ -27,7 +27,7 @@ class HttpRequest(Model):
     :type body: str
     :param headers: Gets or sets the headers.
     :type headers: dict
-    """ 
+    """
 
     _attribute_map = {
         'authentication': {'key': 'authentication', 'type': 'HttpAuthentication'},

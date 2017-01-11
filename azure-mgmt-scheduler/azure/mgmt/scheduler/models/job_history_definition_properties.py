@@ -39,7 +39,7 @@ class JobHistoryDefinitionProperties(Model):
     :vartype retry_count: int
     :ivar repeat_count: Gets the repeat count for the job.
     :vartype repeat_count: int
-    """ 
+    """
 
     _validation = {
         'start_time': {'readonly': True},

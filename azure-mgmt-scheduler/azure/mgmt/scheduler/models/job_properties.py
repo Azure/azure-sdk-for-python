@@ -32,7 +32,7 @@ class JobProperties(Model):
     :ivar status: Gets the job status.
     :vartype status: :class:`JobStatus
      <azure.mgmt.scheduler.models.JobStatus>`
-    """ 
+    """
 
     _validation = {
         'status': {'readonly': True},
