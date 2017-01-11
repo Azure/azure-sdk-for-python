@@ -25,7 +25,7 @@ class MgmtSqlTest(AzureMgmtTestCase):
 
     @record
     def test_server(self):
-        server_name = self.get_resource_name('mypysqlserver')
+        server_name = self.get_resource_name('tstpysqlserver')
 
         server = self.client.servers.create_or_update(
             self.group_name, # Created by the framework
@@ -55,6 +55,18 @@ class MgmtSqlTest(AzureMgmtTestCase):
 
         usages = list(self.client.servers.list_usages(self.group_name, server_name))
         # FIXME test content of "usages", not just the call
+
+        firewall_rule_name = self.get_resource_name('firewallrule')
+        firewall_rule = self.client.servers.create_or_update_firewall_rule(
+            self.group_name,
+            server_name,
+            firewall_rule_name,
+            "123.123.123.123",
+            "123.123.123.124"
+        )
+        self.assertEquals(firewall_rule.name, firewall_rule_name)
+        self.assertEquals(firewall_rule.start_ip_address, "123.123.123.123")
+        self.assertEquals(firewall_rule.end_ip_address, "123.123.123.124")
 
         self.client.servers.delete(self.group_name, server_name)
 
