@@ -72,7 +72,7 @@ deploy:
   provider: pypi
   user: Laurent.Mazuel
   password: $PYPIPASSWORD
-  server: https://test.pypi.org/legacy/
+  server: https://testpypi.python.org/pypi
   distributions: check # Hack, packages will be created by "before deploy" script
   skip_upload_docs: true
   on:
