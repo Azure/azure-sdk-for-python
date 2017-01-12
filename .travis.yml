@@ -66,3 +66,15 @@ script:
   - python ./azure_nosetests.py
 after_success:
   - bash <(curl -s https://codecov.io/bash)
+before_deploy:
+  - python ./before_deploy.py
+deploy:
+  provider: pypi
+  user: Laurent.Mazuel
+  password: $PYPIPASSWORD
+  server: https://test.pypi.org/legacy/
+  distributions: check # Hack, packages will be created by "before deploy" script
+  on:
+    tags: true
+    branch: testdeploy
+    python: '3.6' # Universal wheel, don't need to deploy with Py2.7
