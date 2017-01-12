@@ -348,6 +348,37 @@ class ServiceBusServiceBusTest(ServiceBusTestCase):
         # Assert
 
     @record
+    def test_send_queue_message_batch(self):
+        # https://docs.microsoft.com/rest/api/servicebus/send-message-batch
+
+        # Arrange
+        self._create_queue(self.queue_name)
+        sent_msg_1 = Message(b'This is the first message',
+                             broker_properties={'Label': 'M1',
+                                                'TimeToLiveTimeSpan': '0.00:00:40'}
+                             )
+        sent_msg_2 = Message(b'This is the second message',
+                             broker_properties={'Label': 'M2'},
+                             custom_properties={'Priority': 'Low'}
+                             )
+        sent_msg_3 = Message(b'This is the third message',
+                             broker_properties={'Label': 'M3'},
+                             custom_properties={'Priority': 'Medium',
+                                                'Customer': 'ABC'}
+                             )
+
+        # Act
+        self.sbs.send_queue_message_batch(self.queue_name, [sent_msg_1, sent_msg_2, sent_msg_3])
+        received_msg_1 = self.sbs.receive_queue_message(self.queue_name, False)
+        received_msg_2 = self.sbs.receive_queue_message(self.queue_name, False)
+        received_msg_3 = self.sbs.receive_queue_message(self.queue_name, False)
+
+        # Assert
+        self.assertEqual(sent_msg_1.body, received_msg_1.body)
+        self.assertEqual(sent_msg_2.body, received_msg_2.body)
+        self.assertEqual(sent_msg_3.body, received_msg_3.body)
+
+    @record
     def test_receive_queue_message_read_delete_mode(self):
         # Assert
         sent_msg = Message(b'receive message')
@@ -1261,6 +1292,40 @@ class ServiceBusServiceBusTest(ServiceBusTestCase):
         # Assert
 
     @record
+    def test_send_topic_message_batch(self):
+        # https://docs.microsoft.com/rest/api/servicebus/send-message-batch
+
+        # Arrange
+        self._create_topic_and_subscription(self.topic_name, 'MySubscription')
+        sent_msg_1 = Message(b'This is the first message',
+                             broker_properties={'Label': 'M1',
+                                                'TimeToLiveTimeSpan': '0.00:00:40'}
+                             )
+        sent_msg_2 = Message(b'This is the second message',
+                             broker_properties={'Label': 'M2'},
+                             custom_properties={'Priority': 'Low'}
+                             )
+        sent_msg_3 = Message(b'This is the third message',
+                             broker_properties={'Label': 'M3'},
+                             custom_properties={'Priority': 'Medium',
+                                                'Customer': 'ABC'}
+                             )
+
+        # Act
+        self.sbs.send_topic_message_batch(self.topic_name, [sent_msg_1, sent_msg_2, sent_msg_3])
+        received_msg_1 = self.sbs.receive_subscription_message(
+            self.topic_name, 'MySubscription', False)
+        received_msg_2 = self.sbs.receive_subscription_message(
+            self.topic_name, 'MySubscription', False)
+        received_msg_3 = self.sbs.receive_subscription_message(
+            self.topic_name, 'MySubscription', False)
+
+        # Assert
+        self.assertEqual(sent_msg_1.body, received_msg_1.body)
+        self.assertEqual(sent_msg_2.body, received_msg_2.body)
+        self.assertEqual(sent_msg_3.body, received_msg_3.body)
+
+    @record
     def test_receive_subscription_message_read_delete_mode(self):
         # Arrange
         self._create_topic_and_subscription(self.topic_name, 'MySubscription')
@@ -1509,10 +1574,8 @@ class ServiceBusServiceBusTest(ServiceBusTestCase):
         # Assert
 
     @record
-    def test_send_queue_message_unicode_python_27(self):
-        '''Test for auto-encoding of unicode text (backwards compatibility).'''
-        if sys.version_info >= (3,):
-            return
+    def test_send_queue_message_unicode(self):
+        '''Test for auto-encoding of unicode text'''
 
         # Arrange
         data = u'receive message啊齄丂狛狜'
@@ -1526,22 +1589,6 @@ class ServiceBusServiceBusTest(ServiceBusTestCase):
         received_msg = self.sbs.receive_queue_message(self.queue_name, False)
         self.assertIsNotNone(received_msg)
         self.assertEqual(received_msg.body, data.encode('utf-8'))
-
-    @record
-    def test_send_queue_message_unicode_python_33(self):
-        if sys.version_info < (3,):
-            return
-
-        # Arrange
-        data = u'receive message啊齄丂狛狜'
-        sent_msg = Message(data)
-        self._create_queue(self.queue_name)
-
-        # Act
-        with self.assertRaises(TypeError):
-            self.sbs.send_queue_message(self.queue_name, sent_msg)
-
-        # Assert
 
     @record
     def test_unicode_receive_queue_message_unicode_data(self):
@@ -1596,11 +1643,8 @@ class ServiceBusServiceBusTest(ServiceBusTestCase):
         # Assert
 
     @record
-    def test_send_topic_message_unicode_python_27(self):
-        '''Test for auto-encoding of unicode text (backwards compatibility).'''
-        if sys.version_info >= (3,):
-            return
-
+    def test_send_topic_message_unicode(self):
+        '''Test for auto-encoding of unicode text.'''
         # Arrange
         data = u'receive message啊齄丂狛狜'
         sent_msg = Message(data)
@@ -1614,22 +1658,6 @@ class ServiceBusServiceBusTest(ServiceBusTestCase):
             self.topic_name, 'MySubscription', False)
         self.assertIsNotNone(received_msg)
         self.assertEqual(received_msg.body, data.encode('utf-8'))
-
-    @record
-    def test_send_topic_message_unicode_python_33(self):
-        if sys.version_info < (3,):
-            return
-
-        # Arrange
-        data = u'receive message啊齄丂狛狜'
-        sent_msg = Message(data)
-        self._create_topic_and_subscription(self.topic_name, 'MySubscription')
-
-        # Act
-        with self.assertRaises(TypeError):
-            self.sbs.send_topic_message(self.topic_name, sent_msg)
-
-        # Assert
 
     @record
     def test_unicode_receive_subscription_message_unicode_data(self):
