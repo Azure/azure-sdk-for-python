@@ -76,5 +76,4 @@ deploy:
   distributions: check # Hack, packages will be created by "before deploy" script
   on:
     tags: true
-    branch: testdeploy
     python: '3.6' # Universal wheel, don't need to deploy with Py2.7
