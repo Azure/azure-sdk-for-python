@@ -67,6 +67,17 @@ message into the queue:
     msg = Message('Hello World!')
     sbs.send_queue_message('taskqueue', msg)
 
+The **send\_queue\_message_batch** method can then be called to 
+send several messages at once:
+
+.. code:: python
+
+    from azure.servicebus import Message
+
+    msg1 = Message('Hello World!')
+    msg2 = Message('Hello World again!')
+    sbs.send_queue_message_batch('taskqueue', [msg1, msg2])
+
 It is then possible to call the **receive\_queue\_message** method to
 dequeue the message.
 
@@ -96,9 +107,20 @@ topic:
     msg = Message(b'Hello World!')
     sbs.send_topic_message('taskdiscussion', msg)
 
-Please consider that the message should be anything, not only readable 
-data, then it has to be bytes in Python 3 and you should have to manage
-your encoding yourself in Python 2.
+The **send\_topic\_message_batch** method can be used to send 
+several messages at once:
+
+.. code:: python
+
+    from azure.servicebus import Message
+
+    msg1 = Message(b'Hello World!')
+    msg2 = Message(b'Hello World again!')
+    sbs.send_topic_message_batch('taskdiscussion', [msg1, msg2])
+
+
+Please consider that in Python 3 a str message will be utf-8 encoded
+and you should have to manage your encoding yourself in Python 2.
 
 A client can then create a subscription and start consuming messages by
 calling the **create\_subscription** method followed by the
@@ -133,3 +155,49 @@ To send an event:
     sbs.send_event('myhub', '{ "DeviceId":"dev-01", "Temperature":"37.0" }')
 
 The event content is the event message or JSON-encoded string that contains multiple messages.
+
+Advanced features
+-----------------
+
+Broker Properties and User Properties
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+This section describes how to use Broker and User properties defined here:
+https://docs.microsoft.com/rest/api/servicebus/message-headers-and-properties
+
+.. code:: python
+
+    sent_msg = Message(b'This is the third message',
+                       broker_properties={'Label': 'M3'},
+                       custom_properties={'Priority': 'Medium',
+                                          'Customer': 'ABC'}
+               )
+
+You can use datetime, int, float or boolean
+
+.. code:: python
+
+    props = {'hello': 'world',
+             'number': 42,
+             'active': True,
+             'deceased': False,
+             'large': 8555111000,
+             'floating': 3.14,
+             'dob': datetime(2011, 12, 14),
+             'double_quote_message': 'This "should" work fine',
+             'quote_message': "This 'should' work fine"}
+    sent_msg = Message(b'message with properties', custom_properties=props)
+
+For compatiblity reason with old version of this library, 
+`broker_properties` could also be defined as a JSON string.
+If this situation, you're responsible to write a valid JSON string, no check
+will be made by Python before sending to the RestAPI.
+
+.. code:: python
+
+    broker_properties = '{"ForcePersistence": false, "Label": "My label"}'
+    sent_msg = Message(b'receive message',
+                       broker_properties = broker_properties
+    )
+
+
