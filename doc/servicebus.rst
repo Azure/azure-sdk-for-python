@@ -188,7 +188,7 @@ You can use datetime, int, float or boolean
              'quote_message': "This 'should' work fine"}
     sent_msg = Message(b'message with properties', custom_properties=props)
 
-For compatiblity reason with old version of this library, 
+For compatibility reason with old version of this library, 
 `broker_properties` could also be defined as a JSON string.
 If this situation, you're responsible to write a valid JSON string, no check
 will be made by Python before sending to the RestAPI.
