@@ -74,6 +74,7 @@ deploy:
   password: $PYPIPASSWORD
   server: https://test.pypi.org/legacy/
   distributions: check # Hack, packages will be created by "before deploy" script
+  skip_upload_docs: true
   on:
     tags: true
     python: '3.6' # Universal wheel, don't need to deploy with Py2.7
