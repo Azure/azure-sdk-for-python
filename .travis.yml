@@ -71,8 +71,8 @@ before_deploy:
 deploy:
   provider: pypi
   user: Laurent.Mazuel
-  password: $PYPIPASSWORD
-  server: https://testpypi.python.org/pypi
+  # password: use $PYPI_PASSWORD
+  # server: $PYPI_SERVER to override PyPI (e.g. https://testpypi.python.org/)
   distributions: check # Hack, packages will be created by "before deploy" script
   skip_upload_docs: true
   on:
