@@ -13,6 +13,7 @@
 # limitations under the License.
 #--------------------------------------------------------------------------
 import sys
+import json
 
 from datetime import datetime
 from azure.common import (
@@ -27,6 +28,7 @@ from ._common_error import (
     _ERROR_MESSAGE_NOT_PEEK_LOCKED_ON_RENEW_LOCK,
 )
 
+from ._common_serialization import _get_request_body
 
 class AzureServiceBusPeekLockError(AzureException):
     '''Indicates that peek-lock is required for this operation.'''
@@ -244,31 +246,73 @@ class Message(WindowsAzureData):
         else:
             raise AzureServiceBusPeekLockError(_ERROR_MESSAGE_NOT_PEEK_LOCKED_ON_RENEW_LOCK)
 
+    def _serialize_escaped_properties_value(self, value):
+        if sys.version_info < (3,) and isinstance(value, unicode):
+            escaped_value = value.replace('"', '\\"')
+            return '"' + escaped_value.encode('utf-8') + '"'
+        elif isinstance(value, str):
+            escaped_value = value.replace('"', '\\"')
+            return '"' + escaped_value + '"'
+        elif isinstance(value, datetime):
+            return '"' + value.strftime('%a, %d %b %Y %H:%M:%S GMT') + '"'
+        else:
+            return str(value).lower()
+
+    def _serialize_basic_properties_value(self, value):
+        if sys.version_info < (3,) and isinstance(value, unicode):
+            return value.encode('utf-8')
+        elif isinstance(value, str):
+            return value
+        elif isinstance(value, datetime):
+            return value.strftime('%a, %d %b %Y %H:%M:%S GMT')
+        else:
+            return str(value).lower()
+
     def add_headers(self, request):
         ''' add addtional headers to request for message request.'''
 
         # Adds custom properties
         if self.custom_properties:
             for name, value in self.custom_properties.items():
-                if sys.version_info < (3,) and isinstance(value, unicode):
-                    escaped_value = value.replace('"', '\\"')
-                    request.headers.append(
-                        (name, '"' + escaped_value.encode('utf-8') + '"'))
-                elif isinstance(value, str):
-                    escaped_value = value.replace('"', '\\"')
-                    request.headers.append((name, '"' + escaped_value + '"'))
-                elif isinstance(value, datetime):
-                    request.headers.append(
-                        (name, '"' + value.strftime('%a, %d %b %Y %H:%M:%S GMT') + '"'))
-                else:
-                    request.headers.append((name, str(value).lower()))
+                request.headers.append((name, self._serialize_escaped_properties_value(value)))
 
         # Adds content-type
         request.headers.append(('Content-Type', self.type))
 
         # Adds BrokerProperties
         if self.broker_properties:
+            if hasattr(self.broker_properties, 'items'):
+                broker_properties = {name: self._serialize_basic_properties_value(value) 
+                                     for name, value 
+                                     in self.broker_properties.items()}
+                broker_properties = json.dumps(broker_properties)
+            else:
+                broker_properties = self.broker_properties
             request.headers.append(
-                ('BrokerProperties', str(self.broker_properties)))
+                ('BrokerProperties', str(broker_properties)))
 
         return request.headers
+
+    def as_batch_body(self):
+        ''' return the current message as expected by batch body format'''
+        if sys.version_info >= (3,) and isinstance(self.body, bytes):
+            # It HAS to be string to be serialized in JSON
+            body = self.body.decode('utf-8')
+        else:
+            # Python 2.7 people handle this themself
+            body = self.body
+        result = {'Body': body}
+
+        # Adds custom properties
+        if self.custom_properties:
+            result['UserProperties'] = {name: self._serialize_basic_properties_value(value) 
+                                        for name, value 
+                                        in self.custom_properties.items()}
+
+        # Adds BrokerProperties
+        if self.broker_properties:
+            result['BrokerProperties'] = {name: self._serialize_basic_properties_value(value) 
+                                          for name, value 
+                                          in self.broker_properties.items()}
+
+        return result
