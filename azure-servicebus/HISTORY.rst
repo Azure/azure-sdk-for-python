@@ -3,6 +3,20 @@
 Release History
 ===============
 
+0.21.0 (2017-01-13)
+-------------------
+
+**Features**
+
+* `str` messages are now accepted in Python 3 and will be encoded in 'utf-8' (will not raise TypeError anymore)
+* `broker_properties` can now be defined as a dict, and not only a JSON `str`. datetime, int, float and boolean are converted.
+* #902 add `send_topic_message_batch` operation (takes an iterable of messages)
+* #902 add `send_queue_message_batch` operation (takes an iterable of messages)
+
+**Bugfixes**
+
+* #820 the code is now more robust to unexpected changes on the SB RestAPI
+
 0.20.3 (2016-08-11)
 -------------------
 

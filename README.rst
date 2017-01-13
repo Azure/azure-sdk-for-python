@@ -72,7 +72,7 @@ The following packages are already released as "stable" and are officially produ
 - azure-mgmt-redis 4.0.0
 - azure-mgmt-scheduler 1.1.1
 - azure-mgmt-servermanager 1.1.0
-- azure-servicebus 0.20.3
+- azure-servicebus 0.21.0
 - azure-servicemanagement-legacy 0.20.5
 - azure-storage 0.33.0
 
