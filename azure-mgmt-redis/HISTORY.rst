@@ -10,7 +10,7 @@ Release History
 
 * Fix error if patching when not exist
 
-**Breaking changes*
+**Breaking change**
 
 * `redis.update` is no longer an async operation
 
