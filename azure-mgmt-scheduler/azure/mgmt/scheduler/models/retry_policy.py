@@ -25,7 +25,7 @@ class RetryPolicy(Model):
     :param retry_count: Gets or sets the number of times a retry should be
      attempted.
     :type retry_count: int
-    """ 
+    """
 
     _attribute_map = {
         'retry_type': {'key': 'retryType', 'type': 'RetryType'},

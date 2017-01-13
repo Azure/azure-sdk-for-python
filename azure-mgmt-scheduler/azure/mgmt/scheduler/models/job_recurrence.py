@@ -30,7 +30,7 @@ class JobRecurrence(Model):
     :param schedule:
     :type schedule: :class:`JobRecurrenceSchedule
      <azure.mgmt.scheduler.models.JobRecurrenceSchedule>`
-    """ 
+    """
 
     _attribute_map = {
         'frequency': {'key': 'frequency', 'type': 'RecurrenceFrequency'},

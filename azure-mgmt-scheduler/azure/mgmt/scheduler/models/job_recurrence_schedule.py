@@ -33,7 +33,7 @@ class JobRecurrenceSchedule(Model):
     :type monthly_occurrences: list of
      :class:`JobRecurrenceScheduleMonthlyOccurrence
      <azure.mgmt.scheduler.models.JobRecurrenceScheduleMonthlyOccurrence>`
-    """ 
+    """
 
     _attribute_map = {
         'week_days': {'key': 'weekDays', 'type': '[DayOfWeek]'},

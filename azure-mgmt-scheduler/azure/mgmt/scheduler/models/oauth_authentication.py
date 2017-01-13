@@ -28,7 +28,7 @@ class OAuthAuthentication(HttpAuthentication):
     :type audience: str
     :param client_id: Gets or sets the client identifier.
     :type client_id: str
-    """ 
+    """
 
     _attribute_map = {
         'type': {'key': 'type', 'type': 'HttpAuthenticationType'},
