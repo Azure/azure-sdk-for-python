@@ -24,6 +24,7 @@ matrix:
       language: generic
   allow_failures:
     - os: osx
+  fast_finish: true
 # Perform the manual steps on osx to install python3 and activate venv
 before_install:
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew update; fi
