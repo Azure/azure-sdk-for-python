@@ -69,7 +69,7 @@ The following packages are already released as "stable" and are officially produ
 - azure-mgmt-devtestlabs 1.0.0
 - azure-mgmt-dns 1.0.0
 - azure-mgmt-logic 1.0.0
-- azure-mgmt-redis 3.0.0
+- azure-mgmt-redis 4.0.0
 - azure-mgmt-scheduler 1.1.1
 - azure-mgmt-servermanager 1.1.0
 - azure-servicebus 0.20.3
