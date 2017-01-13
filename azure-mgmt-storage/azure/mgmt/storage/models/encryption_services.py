@@ -18,7 +18,7 @@ class EncryptionServices(Model):
     :param blob: The encryption function of the blob storage service.
     :type blob: :class:`EncryptionService
      <azure.mgmt.storage.models.EncryptionService>`
-    """ 
+    """
 
     _attribute_map = {
         'blob': {'key': 'blob', 'type': 'EncryptionService'},

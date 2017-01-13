@@ -26,7 +26,7 @@ class Sku(Model):
     :ivar tier: Gets the sku tier. This is based on the SKU name. Possible
      values include: 'Standard', 'Premium'
     :vartype tier: str or :class:`SkuTier <azure.mgmt.storage.models.SkuTier>`
-    """ 
+    """
 
     _validation = {
         'name': {'required': True},

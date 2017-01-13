@@ -13,7 +13,7 @@ from msrest.serialization import Model
 
 
 class Resource(Model):
-    """Resource.
+    """Describes a storage resource.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -29,7 +29,7 @@ class Resource(Model):
     :param tags: Tags assigned to a resource; can be used for viewing and
      grouping a resource (across resource groups).
     :type tags: dict
-    """ 
+    """
 
     _validation = {
         'id': {'readonly': True},
