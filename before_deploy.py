@@ -31,4 +31,4 @@ pattern = "*{}*".format(version)
 packages = list(Path('./dist').glob(pattern))
 if not packages:
     sys.exit("Package version does not match tag {}, abort".format(version))
-print("Package created as expected and will be pushed to {}".format(os.environ.get("PYPI_SERVER", "default PyPI server"))
+print("Package created as expected and will be pushed to {}".format(os.environ.get("PYPI_SERVER", "default PyPI server")))
