@@ -19,7 +19,7 @@ class JobStateFilter(Model):
      'Enabled', 'Disabled', 'Faulted', 'Completed'
     :type state: str or :class:`JobState
      <azure.mgmt.scheduler.models.JobState>`
-    """ 
+    """
 
     _attribute_map = {
         'state': {'key': 'state', 'type': 'JobState'},

@@ -37,7 +37,7 @@ class JobErrorAction(Model):
     :param retry_policy: Gets or sets the retry policy.
     :type retry_policy: :class:`RetryPolicy
      <azure.mgmt.scheduler.models.RetryPolicy>`
-    """ 
+    """
 
     _attribute_map = {
         'type': {'key': 'type', 'type': 'JobActionType'},

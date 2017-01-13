@@ -25,7 +25,7 @@ class BasicAuthentication(HttpAuthentication):
     :param password: Gets or sets the password, return value will always be
      empty.
     :type password: str
-    """ 
+    """
 
     _attribute_map = {
         'type': {'key': 'type', 'type': 'HttpAuthenticationType'},

@@ -31,7 +31,7 @@ class JobStatus(Model):
     :ivar next_execution_time: Gets the time of the next occurrence in
      ISO-8601 format. Could be empty if the job is completed.
     :vartype next_execution_time: datetime
-    """ 
+    """
 
     _validation = {
         'execution_count': {'readonly': True},

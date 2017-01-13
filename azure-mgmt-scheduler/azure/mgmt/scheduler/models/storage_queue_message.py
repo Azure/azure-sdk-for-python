@@ -23,7 +23,7 @@ class StorageQueueMessage(Model):
     :type sas_token: str
     :param message: Gets or sets the message.
     :type message: str
-    """ 
+    """
 
     _attribute_map = {
         'storage_account': {'key': 'storageAccount', 'type': 'str'},

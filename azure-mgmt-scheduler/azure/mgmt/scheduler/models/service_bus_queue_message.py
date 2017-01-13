@@ -36,7 +36,7 @@ class ServiceBusQueueMessage(ServiceBusMessage):
      <azure.mgmt.scheduler.models.ServiceBusTransportType>`
     :param queue_name: Gets or sets the queue name.
     :type queue_name: str
-    """ 
+    """
 
     _attribute_map = {
         'authentication': {'key': 'authentication', 'type': 'ServiceBusAuthentication'},
