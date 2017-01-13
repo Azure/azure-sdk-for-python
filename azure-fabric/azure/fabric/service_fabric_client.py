@@ -62,22 +62,17 @@ class ServiceFabricClientConfiguration(Configuration):
 
     :param api_version: The version of the api
     :type api_version: str
-    :param credentials: Subscription credentials which uniquely identify
-     client subscription.
-    :type credentials: None
     :param str base_url: Service URL
     :param str filepath: Existing config
     """
 
     def __init__(
-            self, api_version, credentials, base_url=None, filepath=None):
+            self, api_version, base_url=None, filepath=None):
 
         if api_version is None:
             raise ValueError("Parameter 'api_version' must not be None.")
         if not isinstance(api_version, str):
             raise TypeError("Parameter 'api_version' must be str.")
-        if credentials is None:
-            raise ValueError("Parameter 'credentials' must not be None.")
         if not base_url:
             base_url = 'http://localhost:19080'
 
@@ -86,7 +81,6 @@ class ServiceFabricClientConfiguration(Configuration):
         self.add_user_agent('servicefabricclient/{}'.format(VERSION))
 
         self.api_version = api_version
-        self.credentials = credentials
 
 
 class ServiceFabricClient(object):
@@ -178,17 +172,14 @@ class ServiceFabricClient(object):
 
     :param api_version: The version of the api
     :type api_version: str
-    :param credentials: Subscription credentials which uniquely identify
-     client subscription.
-    :type credentials: None
     :param str base_url: Service URL
     :param str filepath: Existing config
     """
 
     def __init__(
-            self, api_version, credentials, base_url=None, filepath=None):
+            self, api_version, base_url=None, filepath=None):
 
-        self.config = ServiceFabricClientConfiguration(api_version, credentials, base_url, filepath)
+        self.config = ServiceFabricClientConfiguration(api_version, base_url, filepath)
         self._client = ServiceClient(None, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
