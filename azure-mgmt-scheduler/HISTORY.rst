@@ -3,6 +3,11 @@
 Release History
 ===============
 
+1.1.1 (2017-01-13)
+++++++++++++++++++
+
+* Fix `time_to_live` attribute type for correct parsing
+
 1.1.0 (2016-11-14)
 ++++++++++++++++++
 
