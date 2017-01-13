@@ -3,6 +3,17 @@
 Release History
 ===============
 
+4.0.0 (2017-01-13)
+++++++++++++++++++
+
+**Bugfixes**
+
+* Fix error if patching when not exist
+
+**Breaking changes*
+
+* `redis.update` is no longer an async operation
+
 3.0.0 (2016-11-14)
 ++++++++++++++++++
 
