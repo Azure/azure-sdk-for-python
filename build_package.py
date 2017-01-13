@@ -13,9 +13,9 @@ from subprocess import check_call
 DEFAULT_DEST_FOLDER = "./dist"
 
 def create_package(name, dest_folder=DEFAULT_DEST_FOLDER):
-    os.chdir(name) # Will raise if not exists
-    check_call(['python', 'setup.py', 'bdist_wheel', '-d', dest_folder])
-    check_call(['python', 'setup.py', "sdist", "--format", "zip", '-d', dest_folder])
+    absdirpath = os.path.abspath(name)
+    check_call(['python', 'setup.py', 'bdist_wheel', '-d', dest_folder], cwd=absdirpath)
+    check_call(['python', 'setup.py', "sdist", "--format", "zip", '-d', dest_folder], cwd=absdirpath)
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Build Azure package.')
