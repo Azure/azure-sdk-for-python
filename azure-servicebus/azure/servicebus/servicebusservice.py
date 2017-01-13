@@ -15,6 +15,7 @@
 import datetime
 import os
 import time
+import json
 
 import requests
 
@@ -46,7 +47,6 @@ from ._common_conversion import (
 from ._common_serialization import (
     _ETreeXmlToObject,
     _get_request_body,
-    _get_request_body_bytes_only,
     url_quote,
     url_unquote,
 )
@@ -665,8 +665,32 @@ class ServiceBusService(object):
         request.host = self._get_host()
         request.path = '/' + _str(topic_name) + '/messages'
         request.headers = message.add_headers(request)
-        request.body = _get_request_body_bytes_only(
-            'message.body', message.body)
+        request.body = _get_request_body(message.body)
+        request.path, request.query = self._httpclient._update_request_uri_query(request)
+        request.headers = self._update_service_bus_header(request)
+        self._perform_request(request)
+
+    def send_topic_message_batch(self, topic_name, messages=None):
+        '''
+        Sends a batch of messages into the specified topic. The limit to the number of
+        messages which may be present in the topic is governed by the message
+        size the MaxTopicSizeInMegaBytes. If this message will cause the topic
+        to exceed its quota, a quota exceeded error is returned and the
+        message will be rejected.
+
+        topic_name:
+            Name of the topic.
+        messages:
+            List of message objects containing message body and properties.
+        '''
+        _validate_not_none('topic_name', topic_name)
+        _validate_not_none('messages', messages)
+        request = HTTPRequest()
+        request.method = 'POST'
+        request.host = self._get_host()
+        request.path = '/' + _str(topic_name) + '/messages'
+        request.headers.append(('Content-Type', 'application/vnd.microsoft.servicebus.json'))
+        request.body = _get_request_body(json.dumps([m.as_batch_body() for m in messages]))
         request.path, request.query = self._httpclient._update_request_uri_query(request)
         request.headers = self._update_service_bus_header(request)
         self._perform_request(request)
@@ -843,7 +867,7 @@ class ServiceBusService(object):
     def send_queue_message(self, queue_name, message=None):
         '''
         Sends a message into the specified queue. The limit to the number of
-        messages which may be present in the topic is governed by the message
+        messages which may be present in the queue is governed by the message
         size the MaxTopicSizeInMegaBytes. If this message will cause the queue
         to exceed its quota, a quota exceeded error is returned and the
         message will be rejected.
@@ -860,8 +884,32 @@ class ServiceBusService(object):
         request.host = self._get_host()
         request.path = '/' + _str(queue_name) + '/messages'
         request.headers = message.add_headers(request)
-        request.body = _get_request_body_bytes_only('message.body',
-                                                    message.body)
+        request.body = _get_request_body(message.body)
+        request.path, request.query = self._httpclient._update_request_uri_query(request)
+        request.headers = self._update_service_bus_header(request)
+        self._perform_request(request)
+
+    def send_queue_message_batch(self, queue_name, messages=None):
+        '''
+        Sends a batch of messages into the specified queue. The limit to the number of
+        messages which may be present in the topic is governed by the message
+        size the MaxTopicSizeInMegaBytes. If this message will cause the queue
+        to exceed its quota, a quota exceeded error is returned and the
+        message will be rejected.
+
+        queue_name:
+            Name of the queue.
+        messages:
+            List of message objects containing message body and properties.
+        '''
+        _validate_not_none('queue_name', queue_name)
+        _validate_not_none('messages', messages)
+        request = HTTPRequest()
+        request.method = 'POST'
+        request.host = self._get_host()
+        request.path = '/' + _str(queue_name) + '/messages'
+        request.headers.append(('Content-Type', 'application/vnd.microsoft.servicebus.json'))
+        request.body = _get_request_body(json.dumps([m.as_batch_body() for m in messages]))
         request.path, request.query = self._httpclient._update_request_uri_query(request)
         request.headers = self._update_service_bus_header(request)
         self._perform_request(request)
