@@ -238,7 +238,8 @@ class VirtualMachinesOperations(object):
          deserialized response
         :rtype:
          :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         instance that returns None
+         instance that returns :class:`OperationStatusResponse
+         <azure.mgmt.compute.models.OperationStatusResponse>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
@@ -282,14 +283,21 @@ class VirtualMachinesOperations(object):
 
         def get_long_running_output(response):
 
-            if response.status_code not in [202, 204]:
+            if response.status_code not in [202, 204, 200]:
                 exp = CloudError(response)
                 exp.request_id = response.headers.get('x-ms-request-id')
                 raise exp
 
+            deserialized = None
+
+            if response.status_code == 200:
+                deserialized = self._deserialize('OperationStatusResponse', response)
+
             if raw:
-                client_raw_response = ClientRawResponse(None, response)
+                client_raw_response = ClientRawResponse(deserialized, response)
                 return client_raw_response
+
+            return deserialized
 
         if raw:
             response = long_running_send()
@@ -386,7 +394,8 @@ class VirtualMachinesOperations(object):
          deserialized response
         :rtype:
          :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         instance that returns None
+         instance that returns :class:`OperationStatusResponse
+         <azure.mgmt.compute.models.OperationStatusResponse>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
@@ -430,14 +439,21 @@ class VirtualMachinesOperations(object):
 
         def get_long_running_output(response):
 
-            if response.status_code not in [202]:
+            if response.status_code not in [202, 200]:
                 exp = CloudError(response)
                 exp.request_id = response.headers.get('x-ms-request-id')
                 raise exp
 
+            deserialized = None
+
+            if response.status_code == 200:
+                deserialized = self._deserialize('OperationStatusResponse', response)
+
             if raw:
-                client_raw_response = ClientRawResponse(None, response)
+                client_raw_response = ClientRawResponse(deserialized, response)
                 return client_raw_response
+
+            return deserialized
 
         if raw:
             response = long_running_send()
@@ -722,7 +738,8 @@ class VirtualMachinesOperations(object):
          deserialized response
         :rtype:
          :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         instance that returns None
+         instance that returns :class:`OperationStatusResponse
+         <azure.mgmt.compute.models.OperationStatusResponse>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
@@ -766,14 +783,21 @@ class VirtualMachinesOperations(object):
 
         def get_long_running_output(response):
 
-            if response.status_code not in [202]:
+            if response.status_code not in [202, 200]:
                 exp = CloudError(response)
                 exp.request_id = response.headers.get('x-ms-request-id')
                 raise exp
 
+            deserialized = None
+
+            if response.status_code == 200:
+                deserialized = self._deserialize('OperationStatusResponse', response)
+
             if raw:
-                client_raw_response = ClientRawResponse(None, response)
+                client_raw_response = ClientRawResponse(deserialized, response)
                 return client_raw_response
+
+            return deserialized
 
         if raw:
             response = long_running_send()
@@ -799,7 +823,8 @@ class VirtualMachinesOperations(object):
          deserialized response
         :rtype:
          :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         instance that returns None
+         instance that returns :class:`OperationStatusResponse
+         <azure.mgmt.compute.models.OperationStatusResponse>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
@@ -843,14 +868,21 @@ class VirtualMachinesOperations(object):
 
         def get_long_running_output(response):
 
-            if response.status_code not in [202]:
+            if response.status_code not in [202, 200]:
                 exp = CloudError(response)
                 exp.request_id = response.headers.get('x-ms-request-id')
                 raise exp
 
+            deserialized = None
+
+            if response.status_code == 200:
+                deserialized = self._deserialize('OperationStatusResponse', response)
+
             if raw:
-                client_raw_response = ClientRawResponse(None, response)
+                client_raw_response = ClientRawResponse(deserialized, response)
                 return client_raw_response
+
+            return deserialized
 
         if raw:
             response = long_running_send()
@@ -876,7 +908,8 @@ class VirtualMachinesOperations(object):
          deserialized response
         :rtype:
          :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         instance that returns None
+         instance that returns :class:`OperationStatusResponse
+         <azure.mgmt.compute.models.OperationStatusResponse>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
@@ -920,14 +953,21 @@ class VirtualMachinesOperations(object):
 
         def get_long_running_output(response):
 
-            if response.status_code not in [202]:
+            if response.status_code not in [202, 200]:
                 exp = CloudError(response)
                 exp.request_id = response.headers.get('x-ms-request-id')
                 raise exp
 
+            deserialized = None
+
+            if response.status_code == 200:
+                deserialized = self._deserialize('OperationStatusResponse', response)
+
             if raw:
-                client_raw_response = ClientRawResponse(None, response)
+                client_raw_response = ClientRawResponse(deserialized, response)
                 return client_raw_response
+
+            return deserialized
 
         if raw:
             response = long_running_send()
@@ -953,7 +993,8 @@ class VirtualMachinesOperations(object):
          deserialized response
         :rtype:
          :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         instance that returns None
+         instance that returns :class:`OperationStatusResponse
+         <azure.mgmt.compute.models.OperationStatusResponse>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
@@ -997,14 +1038,21 @@ class VirtualMachinesOperations(object):
 
         def get_long_running_output(response):
 
-            if response.status_code not in [202]:
+            if response.status_code not in [202, 200]:
                 exp = CloudError(response)
                 exp.request_id = response.headers.get('x-ms-request-id')
                 raise exp
 
+            deserialized = None
+
+            if response.status_code == 200:
+                deserialized = self._deserialize('OperationStatusResponse', response)
+
             if raw:
-                client_raw_response = ClientRawResponse(None, response)
+                client_raw_response = ClientRawResponse(deserialized, response)
                 return client_raw_response
+
+            return deserialized
 
         if raw:
             response = long_running_send()

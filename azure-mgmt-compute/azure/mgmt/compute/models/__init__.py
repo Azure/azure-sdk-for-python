@@ -83,6 +83,7 @@ from .inner_error import InnerError
 from .api_error import ApiError
 from .compute_long_running_operation_properties import ComputeLongRunningOperationProperties
 from .resource import Resource
+from .operation_status_response import OperationStatusResponse
 from .container_service_custom_profile import ContainerServiceCustomProfile
 from .container_service_service_principal_profile import ContainerServiceServicePrincipalProfile
 from .container_service_orchestrator_profile import ContainerServiceOrchestratorProfile
@@ -115,9 +116,9 @@ from .compute_management_client_enums import (
     ProtocolTypes,
     UpgradeMode,
     VirtualMachineScaleSetSkuScaleType,
-    InstanceViewTypes,
     ContainerServiceOchestratorTypes,
     ContainerServiceVMSizeTypes,
+    InstanceViewTypes,
 )
 
 __all__ = [
@@ -195,6 +196,7 @@ __all__ = [
     'ApiError',
     'ComputeLongRunningOperationProperties',
     'Resource',
+    'OperationStatusResponse',
     'ContainerServiceCustomProfile',
     'ContainerServiceServicePrincipalProfile',
     'ContainerServiceOrchestratorProfile',
@@ -226,7 +228,7 @@ __all__ = [
     'ProtocolTypes',
     'UpgradeMode',
     'VirtualMachineScaleSetSkuScaleType',
-    'InstanceViewTypes',
     'ContainerServiceOchestratorTypes',
     'ContainerServiceVMSizeTypes',
+    'InstanceViewTypes',
 ]
