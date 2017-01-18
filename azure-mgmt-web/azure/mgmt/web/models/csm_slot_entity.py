@@ -22,11 +22,16 @@ class CsmSlotEntity(Model):
     :type preserve_vnet: bool
     """
 
+    _validation = {
+        'target_slot': {'required': True},
+        'preserve_vnet': {'required': True},
+    }
+
     _attribute_map = {
         'target_slot': {'key': 'targetSlot', 'type': 'str'},
         'preserve_vnet': {'key': 'preserveVnet', 'type': 'bool'},
     }
 
-    def __init__(self, target_slot=None, preserve_vnet=None):
+    def __init__(self, target_slot, preserve_vnet):
         self.target_slot = target_slot
         self.preserve_vnet = preserve_vnet

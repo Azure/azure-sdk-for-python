@@ -25,13 +25,18 @@ class ResourceNameAvailabilityRequest(Model):
     :type is_fqdn: bool
     """
 
+    _validation = {
+        'name': {'required': True},
+        'type': {'required': True},
+    }
+
     _attribute_map = {
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
         'is_fqdn': {'key': 'isFqdn', 'type': 'bool'},
     }
 
-    def __init__(self, name=None, type=None, is_fqdn=None):
+    def __init__(self, name, type, is_fqdn=None):
         self.name = name
         self.type = type
         self.is_fqdn = is_fqdn

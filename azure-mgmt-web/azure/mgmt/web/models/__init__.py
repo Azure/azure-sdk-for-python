@@ -14,9 +14,12 @@ from .certificate_details import CertificateDetails
 from .app_service_certificate_order import AppServiceCertificateOrder
 from .certificate_email import CertificateEmail
 from .certificate_order_action import CertificateOrderAction
+from .name_identifier import NameIdentifier
 from .reissue_certificate_order_request import ReissueCertificateOrderRequest
 from .renew_certificate_order_request import RenewCertificateOrderRequest
 from .resource import Resource
+from .site_seal import SiteSeal
+from .site_seal_request import SiteSealRequest
 from .virtual_ip_mapping import VirtualIPMapping
 from .address_response import AddressResponse
 from .api_definition_info import ApiDefinitionInfo
@@ -39,6 +42,7 @@ from .slow_requests_based_trigger import SlowRequestsBasedTrigger
 from .auto_heal_triggers import AutoHealTriggers
 from .auto_heal_rules import AutoHealRules
 from .cloning_info import CloningInfo
+from .conn_string_info import ConnStringInfo
 from .cors_settings import CorsSettings
 from .localizable_string import LocalizableString
 from .csm_usage_quota import CsmUsageQuota
@@ -86,7 +90,6 @@ from .domain_availablility_check_result import DomainAvailablilityCheckResult
 from .domain_control_center_sso_request import DomainControlCenterSsoRequest
 from .domain_ownership_identifier import DomainOwnershipIdentifier
 from .domain_recommendation_search_parameters import DomainRecommendationSearchParameters
-from .name_identifier import NameIdentifier
 from .recommendation import Recommendation
 from .recommendation_rule import RecommendationRule
 from .csm_move_resource_envelope import CsmMoveResourceEnvelope
@@ -98,7 +101,6 @@ from .resource_name_availability_request import ResourceNameAvailabilityRequest
 from .sku_infos import SkuInfos
 from .source_control import SourceControl
 from .user import User
-from .validate_properties import ValidateProperties
 from .validate_request import ValidateRequest
 from .validate_response_error import ValidateResponseError
 from .validate_response import ValidateResponse
@@ -163,7 +165,9 @@ from .site_paged import SitePaged
 from .app_service_plan_paged import AppServicePlanPaged
 from .csm_usage_quota_paged import CsmUsageQuotaPaged
 from .str_paged import StrPaged
+from .hybrid_connection_paged import HybridConnectionPaged
 from .certificate_paged import CertificatePaged
+from .csr_paged import CsrPaged
 from .domain_paged import DomainPaged
 from .name_identifier_paged import NameIdentifierPaged
 from .domain_ownership_identifier_paged import DomainOwnershipIdentifierPaged
@@ -194,31 +198,37 @@ from .web_site_management_client_enums import (
     AccessControlEntryAction,
     StatusOptions,
     AutoHealActionType,
+    ConnectionStringType,
     SslState,
     OperationStatus,
     UsageState,
     SiteAvailabilityState,
     ManagedPipelineMode,
     SiteLoadBalancing,
+    RouteType,
     DomainStatus,
     AzureResourceType,
     CustomHostNameDnsRecordType,
     HostNameType,
     DomainType,
+    ResourceScopeType,
     NotificationLevel,
     Channels,
     AppServicePlanRestrictions,
+    InAvailabilityReasonType,
     CheckNameResourceTypes,
     ValidateResourceTypes,
     LogLevel,
     BackupItemStatus,
+    DatabaseType,
     FrequencyUnit,
     BackupRestoreOperationType,
-    ConnectionStringType,
+    PublishingProfileFormat,
     DnsVerificationTestResult,
     UnauthenticatedClientAction,
     BuiltInAuthenticationProvider,
     CloneAbilityResult,
+    SkuName,
 )
 
 __all__ = [
@@ -227,9 +237,12 @@ __all__ = [
     'AppServiceCertificateOrder',
     'CertificateEmail',
     'CertificateOrderAction',
+    'NameIdentifier',
     'ReissueCertificateOrderRequest',
     'RenewCertificateOrderRequest',
     'Resource',
+    'SiteSeal',
+    'SiteSealRequest',
     'VirtualIPMapping',
     'AddressResponse',
     'ApiDefinitionInfo',
@@ -252,6 +265,7 @@ __all__ = [
     'AutoHealTriggers',
     'AutoHealRules',
     'CloningInfo',
+    'ConnStringInfo',
     'CorsSettings',
     'LocalizableString',
     'CsmUsageQuota',
@@ -299,7 +313,6 @@ __all__ = [
     'DomainControlCenterSsoRequest',
     'DomainOwnershipIdentifier',
     'DomainRecommendationSearchParameters',
-    'NameIdentifier',
     'Recommendation',
     'RecommendationRule',
     'CsmMoveResourceEnvelope',
@@ -311,7 +324,6 @@ __all__ = [
     'SkuInfos',
     'SourceControl',
     'User',
-    'ValidateProperties',
     'ValidateRequest',
     'ValidateResponseError',
     'ValidateResponse',
@@ -376,7 +388,9 @@ __all__ = [
     'AppServicePlanPaged',
     'CsmUsageQuotaPaged',
     'StrPaged',
+    'HybridConnectionPaged',
     'CertificatePaged',
+    'CsrPaged',
     'DomainPaged',
     'NameIdentifierPaged',
     'DomainOwnershipIdentifierPaged',
@@ -406,29 +420,35 @@ __all__ = [
     'AccessControlEntryAction',
     'StatusOptions',
     'AutoHealActionType',
+    'ConnectionStringType',
     'SslState',
     'OperationStatus',
     'UsageState',
     'SiteAvailabilityState',
     'ManagedPipelineMode',
     'SiteLoadBalancing',
+    'RouteType',
     'DomainStatus',
     'AzureResourceType',
     'CustomHostNameDnsRecordType',
     'HostNameType',
     'DomainType',
+    'ResourceScopeType',
     'NotificationLevel',
     'Channels',
     'AppServicePlanRestrictions',
+    'InAvailabilityReasonType',
     'CheckNameResourceTypes',
     'ValidateResourceTypes',
     'LogLevel',
     'BackupItemStatus',
+    'DatabaseType',
     'FrequencyUnit',
     'BackupRestoreOperationType',
-    'ConnectionStringType',
+    'PublishingProfileFormat',
     'DnsVerificationTestResult',
     'UnauthenticatedClientAction',
     'BuiltInAuthenticationProvider',
     'CloneAbilityResult',
+    'SkuName',
 ]

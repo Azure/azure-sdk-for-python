@@ -16,6 +16,9 @@ class BackupSchedule(Model):
     """Description of a backup schedule. Describes how often should be the backup
     performed and what should be the retention policy.
 
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
     :param frequency_interval: How often should be the backup executed (e.g.
      for weekly backup, this should be set to 7 and FrequencyUnit should be set
      to Day)
@@ -34,9 +37,17 @@ class BackupSchedule(Model):
     :type retention_period_in_days: int
     :param start_time: When the schedule should start working.
     :type start_time: datetime
-    :param last_execution_time: Last time when this schedule was triggered.
-    :type last_execution_time: datetime
+    :ivar last_execution_time: Last time when this schedule was triggered.
+    :vartype last_execution_time: datetime
     """
+
+    _validation = {
+        'frequency_interval': {'required': True},
+        'frequency_unit': {'required': True},
+        'keep_at_least_one_backup': {'required': True},
+        'retention_period_in_days': {'required': True},
+        'last_execution_time': {'readonly': True},
+    }
 
     _attribute_map = {
         'frequency_interval': {'key': 'frequencyInterval', 'type': 'int'},
@@ -47,10 +58,10 @@ class BackupSchedule(Model):
         'last_execution_time': {'key': 'lastExecutionTime', 'type': 'iso-8601'},
     }
 
-    def __init__(self, frequency_interval=None, frequency_unit=None, keep_at_least_one_backup=None, retention_period_in_days=None, start_time=None, last_execution_time=None):
+    def __init__(self, frequency_interval, frequency_unit, keep_at_least_one_backup, retention_period_in_days, start_time=None):
         self.frequency_interval = frequency_interval
         self.frequency_unit = frequency_unit
         self.keep_at_least_one_backup = keep_at_least_one_backup
         self.retention_period_in_days = retention_period_in_days
         self.start_time = start_time
-        self.last_execution_time = last_execution_time
+        self.last_execution_time = None

@@ -36,7 +36,6 @@ class ConnectionStringDictionary(Resource):
 
     _validation = {
         'id': {'readonly': True},
-        'name': {'required': True},
         'location': {'required': True},
     }
 
@@ -50,6 +49,6 @@ class ConnectionStringDictionary(Resource):
         'properties': {'key': 'properties', 'type': '{ConnStringValueTypePair}'},
     }
 
-    def __init__(self, name, location, kind=None, type=None, tags=None, properties=None):
+    def __init__(self, location, name=None, kind=None, type=None, tags=None, properties=None):
         super(ConnectionStringDictionary, self).__init__(name=name, kind=kind, location=location, type=type, tags=tags)
         self.properties = properties

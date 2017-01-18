@@ -30,7 +30,7 @@ class User(Resource):
     :type type: str
     :param tags: Resource tags.
     :type tags: dict
-    :param user_name: Username (internal).
+    :param user_name: Username
     :type user_name: str
     :param publishing_user_name: Username used for publishing.
     :type publishing_user_name: str
@@ -45,7 +45,6 @@ class User(Resource):
 
     _validation = {
         'id': {'readonly': True},
-        'name': {'required': True},
         'location': {'required': True},
     }
 
@@ -63,7 +62,7 @@ class User(Resource):
         'publishing_password_hash_salt': {'key': 'properties.publishingPasswordHashSalt', 'type': 'str'},
     }
 
-    def __init__(self, name, location, kind=None, type=None, tags=None, user_name=None, publishing_user_name=None, publishing_password=None, publishing_password_hash=None, publishing_password_hash_salt=None):
+    def __init__(self, location, name=None, kind=None, type=None, tags=None, user_name=None, publishing_user_name=None, publishing_password=None, publishing_password_hash=None, publishing_password_hash_salt=None):
         super(User, self).__init__(name=name, kind=kind, location=location, type=type, tags=tags)
         self.user_name = user_name
         self.publishing_user_name = publishing_user_name

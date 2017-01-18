@@ -42,7 +42,6 @@ class SitePhpErrorLogFlag(Resource):
 
     _validation = {
         'id': {'readonly': True},
-        'name': {'required': True},
         'location': {'required': True},
     }
 
@@ -59,7 +58,7 @@ class SitePhpErrorLogFlag(Resource):
         'master_log_errors_max_length': {'key': 'properties.masterLogErrorsMaxLength', 'type': 'str'},
     }
 
-    def __init__(self, name, location, kind=None, type=None, tags=None, local_log_errors=None, master_log_errors=None, local_log_errors_max_length=None, master_log_errors_max_length=None):
+    def __init__(self, location, name=None, kind=None, type=None, tags=None, local_log_errors=None, master_log_errors=None, local_log_errors_max_length=None, master_log_errors_max_length=None):
         super(SitePhpErrorLogFlag, self).__init__(name=name, kind=kind, location=location, type=type, tags=tags)
         self.local_log_errors = local_log_errors
         self.master_log_errors = master_log_errors

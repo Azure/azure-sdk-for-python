@@ -61,6 +61,8 @@ class AppServicePlan(Resource):
     :vartype number_of_sites: int
     :ivar resource_group: Resource group of the App Service plan.
     :vartype resource_group: str
+    :param reserved: Reserved. Default value: False .
+    :type reserved: bool
     :param target_worker_count: Scaling worker count.
     :type target_worker_count: int
     :param target_worker_size_id: Scaling worker size ID.
@@ -76,7 +78,6 @@ class AppServicePlan(Resource):
 
     _validation = {
         'id': {'readonly': True},
-        'name': {'required': True},
         'location': {'required': True},
         'status': {'readonly': True},
         'subscription': {'readonly': True},
@@ -105,13 +106,14 @@ class AppServicePlan(Resource):
         'per_site_scaling': {'key': 'properties.perSiteScaling', 'type': 'bool'},
         'number_of_sites': {'key': 'properties.numberOfSites', 'type': 'int'},
         'resource_group': {'key': 'properties.resourceGroup', 'type': 'str'},
+        'reserved': {'key': 'properties.reserved', 'type': 'bool'},
         'target_worker_count': {'key': 'properties.targetWorkerCount', 'type': 'int'},
         'target_worker_size_id': {'key': 'properties.targetWorkerSizeId', 'type': 'int'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'ProvisioningState'},
         'sku': {'key': 'sku', 'type': 'SkuDescription'},
     }
 
-    def __init__(self, name, location, kind=None, type=None, tags=None, app_service_plan_name=None, worker_tier_name=None, admin_site_name=None, hosting_environment_profile=None, per_site_scaling=False, target_worker_count=None, target_worker_size_id=None, sku=None):
+    def __init__(self, location, name=None, kind=None, type=None, tags=None, app_service_plan_name=None, worker_tier_name=None, admin_site_name=None, hosting_environment_profile=None, per_site_scaling=False, reserved=False, target_worker_count=None, target_worker_size_id=None, sku=None):
         super(AppServicePlan, self).__init__(name=name, kind=kind, location=location, type=type, tags=tags)
         self.app_service_plan_name = app_service_plan_name
         self.worker_tier_name = worker_tier_name
@@ -124,6 +126,7 @@ class AppServicePlan(Resource):
         self.per_site_scaling = per_site_scaling
         self.number_of_sites = None
         self.resource_group = None
+        self.reserved = reserved
         self.target_worker_count = target_worker_count
         self.target_worker_size_id = target_worker_size_id
         self.provisioning_state = None

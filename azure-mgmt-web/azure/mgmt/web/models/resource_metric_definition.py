@@ -51,7 +51,6 @@ class ResourceMetricDefinition(Resource):
 
     _validation = {
         'id': {'readonly': True},
-        'name': {'required': True},
         'location': {'required': True},
         'resource_metric_definition_name': {'readonly': True},
         'unit': {'readonly': True},
@@ -78,7 +77,7 @@ class ResourceMetricDefinition(Resource):
         'properties': {'key': 'properties.properties', 'type': '{str}'},
     }
 
-    def __init__(self, name, location, kind=None, type=None, tags=None):
+    def __init__(self, location, name=None, kind=None, type=None, tags=None):
         super(ResourceMetricDefinition, self).__init__(name=name, kind=kind, location=location, type=type, tags=tags)
         self.resource_metric_definition_name = None
         self.unit = None

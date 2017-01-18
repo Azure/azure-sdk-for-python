@@ -46,7 +46,6 @@ class NetworkFeatures(Resource):
 
     _validation = {
         'id': {'readonly': True},
-        'name': {'required': True},
         'location': {'required': True},
         'virtual_network_name': {'readonly': True},
         'virtual_network_connection': {'readonly': True},
@@ -67,7 +66,7 @@ class NetworkFeatures(Resource):
         'hybrid_connections_v2': {'key': 'properties.hybridConnectionsV2', 'type': '[HybridConnection]'},
     }
 
-    def __init__(self, name, location, kind=None, type=None, tags=None):
+    def __init__(self, location, name=None, kind=None, type=None, tags=None):
         super(NetworkFeatures, self).__init__(name=name, kind=kind, location=location, type=type, tags=tags)
         self.virtual_network_name = None
         self.virtual_network_connection = None

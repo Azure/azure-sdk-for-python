@@ -61,7 +61,6 @@ class PremierAddOnOffer(Resource):
 
     _validation = {
         'id': {'readonly': True},
-        'name': {'required': True},
         'location': {'required': True},
     }
 
@@ -85,7 +84,7 @@ class PremierAddOnOffer(Resource):
         'marketplace_offer': {'key': 'properties.marketplaceOffer', 'type': 'str'},
     }
 
-    def __init__(self, name, location, kind=None, type=None, tags=None, sku=None, product=None, vendor=None, premier_add_on_offer_name=None, promo_code_required=None, quota=None, web_hosting_plan_restrictions=None, privacy_policy_url=None, legal_terms_url=None, marketplace_publisher=None, marketplace_offer=None):
+    def __init__(self, location, name=None, kind=None, type=None, tags=None, sku=None, product=None, vendor=None, premier_add_on_offer_name=None, promo_code_required=None, quota=None, web_hosting_plan_restrictions=None, privacy_policy_url=None, legal_terms_url=None, marketplace_publisher=None, marketplace_offer=None):
         super(PremierAddOnOffer, self).__init__(name=name, kind=kind, location=location, type=type, tags=tags)
         self.sku = sku
         self.product = product

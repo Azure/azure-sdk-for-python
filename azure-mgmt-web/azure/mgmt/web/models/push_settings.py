@@ -24,12 +24,19 @@ class PushSettings(Model):
     :param tags_requiring_auth: Gets or sets a JSON string containing a list
      of tags that require user authentication to be used in the push
      registration endpoint.
+     Tags can consist of alphanumeric characters and the following:
+     '_', '@', '#', '.', ':', '-'.
+     Validation should be performed at the PushRequestHandler.
     :type tags_requiring_auth: str
     :param dynamic_tags_json: Gets or sets a JSON string containing a list of
      dynamic tags that will be evaluated from user claims in the push
      registration endpoint.
     :type dynamic_tags_json: str
     """
+
+    _validation = {
+        'is_push_enabled': {'required': True},
+    }
 
     _attribute_map = {
         'is_push_enabled': {'key': 'isPushEnabled', 'type': 'bool'},
@@ -38,7 +45,7 @@ class PushSettings(Model):
         'dynamic_tags_json': {'key': 'dynamicTagsJson', 'type': 'str'},
     }
 
-    def __init__(self, is_push_enabled=None, tag_whitelist_json=None, tags_requiring_auth=None, dynamic_tags_json=None):
+    def __init__(self, is_push_enabled, tag_whitelist_json=None, tags_requiring_auth=None, dynamic_tags_json=None):
         self.is_push_enabled = is_push_enabled
         self.tag_whitelist_json = tag_whitelist_json
         self.tags_requiring_auth = tags_requiring_auth

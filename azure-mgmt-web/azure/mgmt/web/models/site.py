@@ -30,11 +30,11 @@ class Site(Resource):
     :type type: str
     :param tags: Resource tags.
     :type tags: dict
-    :ivar state: Current state of the app. Read-only.
+    :ivar state: Current state of the app.
     :vartype state: str
-    :ivar host_names: Hostnames associated with the app. Read-only.
+    :ivar host_names: Hostnames associated with the app.
     :vartype host_names: list of str
-    :ivar repository_site_name: Name of the repository site. Read-only.
+    :ivar repository_site_name: Name of the repository site.
     :vartype repository_site_name: str
     :ivar usage_state: State indicating whether the app has exceeded its quota
      usage. Read-only. Possible values include: 'Normal', 'Exceeded'
@@ -44,12 +44,12 @@ class Site(Resource):
      <code>false</code>. Setting this value to false disables the app (takes
      the app offline).
     :type enabled: bool
-    :ivar enabled_host_names: Enabled hostnames for the app. Read-only.
-     Hostnames need to be assigned (see HostNames) AND enabled. Otherwise,
+    :ivar enabled_host_names: Enabled hostnames for the app.Hostnames need to
+     be assigned (see HostNames) AND enabled. Otherwise,
      the app is not served on those hostnames.
     :vartype enabled_host_names: list of str
     :ivar availability_state: Management information availability state for
-     the app. Read-only. Possible values include: 'Normal', 'Limited',
+     the app. Possible values include: 'Normal', 'Limited',
      'DisasterRecoveryMode'
     :vartype availability_state: str or :class:`SiteAvailabilityState
      <azure.mgmt.web.models.SiteAvailabilityState>`
@@ -73,7 +73,7 @@ class Site(Resource):
      associated with the app. Read-only.
     :vartype traffic_manager_host_names: list of str
     :ivar premium_app_deployed: Indicates whether app is deployed as a premium
-     app. Read-only.
+     app.
     :vartype premium_app_deployed: bool
     :param scm_site_also_stopped: <code>true</code> to stop SCM (KUDU) site
      when the app is stopped; otherwise, <code>false</code>. The default is
@@ -127,7 +127,7 @@ class Site(Resource):
      Read-only.
     :vartype resource_group: str
     :ivar is_default_container: <code>true</code> if the app is a default
-     container; otherwise, <code>false</code>. Read-only.
+     container; otherwise, <code>false</code>.
     :vartype is_default_container: bool
     :ivar default_host_name: Default hostname of the app. Read-only.
     :vartype default_host_name: str
@@ -138,7 +138,6 @@ class Site(Resource):
 
     _validation = {
         'id': {'readonly': True},
-        'name': {'required': True},
         'location': {'required': True},
         'state': {'readonly': True},
         'host_names': {'readonly': True},
@@ -200,7 +199,7 @@ class Site(Resource):
         'slot_swap_status': {'key': 'properties.slotSwapStatus', 'type': 'SlotSwapStatus'},
     }
 
-    def __init__(self, name, location, kind=None, type=None, tags=None, enabled=None, host_name_ssl_states=None, server_farm_id=None, reserved=False, site_config=None, scm_site_also_stopped=False, hosting_environment_profile=None, micro_service="false", gateway_site_name=None, client_affinity_enabled=None, client_cert_enabled=None, host_names_disabled=None, container_size=None, daily_memory_time_quota=None, cloning_info=None):
+    def __init__(self, location, name=None, kind=None, type=None, tags=None, enabled=None, host_name_ssl_states=None, server_farm_id=None, reserved=False, site_config=None, scm_site_also_stopped=False, hosting_environment_profile=None, micro_service="false", gateway_site_name=None, client_affinity_enabled=None, client_cert_enabled=None, host_names_disabled=None, container_size=None, daily_memory_time_quota=None, cloning_info=None):
         super(Site, self).__init__(name=name, kind=kind, location=location, type=type, tags=tags)
         self.state = None
         self.host_names = None

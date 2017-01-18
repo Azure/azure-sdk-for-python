@@ -20,8 +20,10 @@ class DomainAvailablilityCheckResult(Model):
     :param available: <code>true</code> if domain can be purchased using
      CreateDomain API; otherwise, <code>false</code>.
     :type available: bool
-    :param domain_type: Domain type. Possible values include: 'Regular',
-     'SoftDeleted'
+    :param domain_type: Valid values are Regular domain: Azure will charge the
+     full price of domain registration, SoftDeleted: Purchasing this domain
+     will simply restore it and this operation will not cost anything. Possible
+     values include: 'Regular', 'SoftDeleted'
     :type domain_type: str or :class:`DomainType
      <azure.mgmt.web.models.DomainType>`
     """

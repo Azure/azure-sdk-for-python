@@ -51,11 +51,18 @@ class HostNameBinding(Resource):
      'Managed'
     :type host_name_type: str or :class:`HostNameType
      <azure.mgmt.web.models.HostNameType>`
+    :param ssl_state: SSL type. Possible values include: 'Disabled',
+     'SniEnabled', 'IpBasedEnabled'
+    :type ssl_state: str or :class:`SslState <azure.mgmt.web.models.SslState>`
+    :param thumbprint: SSL certificate thumbprint
+    :type thumbprint: str
+    :param virtual_ip: Virtual IP address assigned to the hostname if IP based
+     SSL is enabled.
+    :type virtual_ip: str
     """
 
     _validation = {
         'id': {'readonly': True},
-        'name': {'required': True},
         'location': {'required': True},
     }
 
@@ -73,9 +80,12 @@ class HostNameBinding(Resource):
         'azure_resource_type': {'key': 'properties.azureResourceType', 'type': 'AzureResourceType'},
         'custom_host_name_dns_record_type': {'key': 'properties.customHostNameDnsRecordType', 'type': 'CustomHostNameDnsRecordType'},
         'host_name_type': {'key': 'properties.hostNameType', 'type': 'HostNameType'},
+        'ssl_state': {'key': 'properties.sslState', 'type': 'SslState'},
+        'thumbprint': {'key': 'properties.thumbprint', 'type': 'str'},
+        'virtual_ip': {'key': 'properties.virtualIP', 'type': 'str'},
     }
 
-    def __init__(self, name, location, kind=None, type=None, tags=None, host_name_binding_name=None, site_name=None, domain_id=None, azure_resource_name=None, azure_resource_type=None, custom_host_name_dns_record_type=None, host_name_type=None):
+    def __init__(self, location, name=None, kind=None, type=None, tags=None, host_name_binding_name=None, site_name=None, domain_id=None, azure_resource_name=None, azure_resource_type=None, custom_host_name_dns_record_type=None, host_name_type=None, ssl_state=None, thumbprint=None, virtual_ip=None):
         super(HostNameBinding, self).__init__(name=name, kind=kind, location=location, type=type, tags=tags)
         self.host_name_binding_name = host_name_binding_name
         self.site_name = site_name
@@ -84,3 +94,6 @@ class HostNameBinding(Resource):
         self.azure_resource_type = azure_resource_type
         self.custom_host_name_dns_record_type = custom_host_name_dns_record_type
         self.host_name_type = host_name_type
+        self.ssl_state = ssl_state
+        self.thumbprint = thumbprint
+        self.virtual_ip = virtual_ip

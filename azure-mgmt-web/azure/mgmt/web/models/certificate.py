@@ -37,7 +37,7 @@ class Certificate(Resource):
     :param host_names: Host names the certificate applies to.
     :type host_names: list of str
     :param pfx_blob: Pfx blob.
-    :type pfx_blob: str
+    :type pfx_blob: bytearray
     :ivar site_name: App name.
     :vartype site_name: str
     :ivar self_link: Self link.
@@ -82,7 +82,6 @@ class Certificate(Resource):
 
     _validation = {
         'id': {'readonly': True},
-        'name': {'required': True},
         'location': {'required': True},
         'friendly_name': {'readonly': True},
         'subject_name': {'readonly': True},
@@ -108,7 +107,7 @@ class Certificate(Resource):
         'friendly_name': {'key': 'properties.friendlyName', 'type': 'str'},
         'subject_name': {'key': 'properties.subjectName', 'type': 'str'},
         'host_names': {'key': 'properties.hostNames', 'type': '[str]'},
-        'pfx_blob': {'key': 'properties.pfxBlob', 'type': 'str'},
+        'pfx_blob': {'key': 'properties.pfxBlob', 'type': 'bytearray'},
         'site_name': {'key': 'properties.siteName', 'type': 'str'},
         'self_link': {'key': 'properties.selfLink', 'type': 'str'},
         'issuer': {'key': 'properties.issuer', 'type': 'str'},
@@ -126,7 +125,7 @@ class Certificate(Resource):
         'server_farm_id': {'key': 'properties.serverFarmId', 'type': 'str'},
     }
 
-    def __init__(self, name, location, kind=None, type=None, tags=None, host_names=None, pfx_blob=None, password=None, cer_blob=None, key_vault_id=None, key_vault_secret_name=None, server_farm_id=None):
+    def __init__(self, location, name=None, kind=None, type=None, tags=None, host_names=None, pfx_blob=None, password=None, cer_blob=None, key_vault_id=None, key_vault_secret_name=None, server_farm_id=None):
         super(Certificate, self).__init__(name=name, kind=kind, location=location, type=type, tags=tags)
         self.friendly_name = None
         self.subject_name = None

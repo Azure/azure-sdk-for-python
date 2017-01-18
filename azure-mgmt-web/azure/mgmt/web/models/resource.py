@@ -34,7 +34,6 @@ class Resource(Model):
 
     _validation = {
         'id': {'readonly': True},
-        'name': {'required': True},
         'location': {'required': True},
     }
 
@@ -47,7 +46,7 @@ class Resource(Model):
         'tags': {'key': 'tags', 'type': '{str}'},
     }
 
-    def __init__(self, name, location, kind=None, type=None, tags=None):
+    def __init__(self, location, name=None, kind=None, type=None, tags=None):
         self.id = None
         self.name = name
         self.kind = kind

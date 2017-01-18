@@ -48,10 +48,10 @@ class RestoreRequest(Resource):
      app with custom domains. <code>true</code> to remove custom domains
      automatically. If <code>false</code>, custom domains are added to
      the app's object when it is being restored, but that might fail due to
-     conflicts during the operation.
+     conflicts during the operation. Default value: False .
     :type ignore_conflicting_host_names: bool
     :param operation_type: Operation type. Possible values include: 'Default',
-     'Clone', 'Relocation'
+     'Clone', 'Relocation'. Default value: "Default" .
     :type operation_type: str or :class:`BackupRestoreOperationType
      <azure.mgmt.web.models.BackupRestoreOperationType>`
     :param adjust_connection_strings: <code>true</code> if
@@ -65,7 +65,6 @@ class RestoreRequest(Resource):
 
     _validation = {
         'id': {'readonly': True},
-        'name': {'required': True},
         'location': {'required': True},
     }
 
@@ -87,7 +86,7 @@ class RestoreRequest(Resource):
         'hosting_environment': {'key': 'properties.hostingEnvironment', 'type': 'str'},
     }
 
-    def __init__(self, name, location, kind=None, type=None, tags=None, storage_account_url=None, blob_name=None, overwrite=None, site_name=None, databases=None, ignore_conflicting_host_names=None, operation_type=None, adjust_connection_strings=None, hosting_environment=None):
+    def __init__(self, location, name=None, kind=None, type=None, tags=None, storage_account_url=None, blob_name=None, overwrite=None, site_name=None, databases=None, ignore_conflicting_host_names=False, operation_type="Default", adjust_connection_strings=None, hosting_environment=None):
         super(RestoreRequest, self).__init__(name=name, kind=kind, location=location, type=type, tags=tags)
         self.storage_account_url = storage_account_url
         self.blob_name = blob_name

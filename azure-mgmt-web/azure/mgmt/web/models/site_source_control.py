@@ -48,7 +48,6 @@ class SiteSourceControl(Resource):
 
     _validation = {
         'id': {'readonly': True},
-        'name': {'required': True},
         'location': {'required': True},
     }
 
@@ -66,7 +65,7 @@ class SiteSourceControl(Resource):
         'is_mercurial': {'key': 'properties.isMercurial', 'type': 'bool'},
     }
 
-    def __init__(self, name, location, kind=None, type=None, tags=None, repo_url=None, branch=None, is_manual_integration=None, deployment_rollback_enabled=None, is_mercurial=None):
+    def __init__(self, location, name=None, kind=None, type=None, tags=None, repo_url=None, branch=None, is_manual_integration=None, deployment_rollback_enabled=None, is_mercurial=None):
         super(SiteSourceControl, self).__init__(name=name, kind=kind, location=location, type=type, tags=tags)
         self.repo_url = repo_url
         self.branch = branch

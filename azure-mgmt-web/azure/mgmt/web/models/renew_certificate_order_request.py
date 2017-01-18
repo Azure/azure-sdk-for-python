@@ -41,7 +41,6 @@ class RenewCertificateOrderRequest(Resource):
 
     _validation = {
         'id': {'readonly': True},
-        'name': {'required': True},
         'location': {'required': True},
     }
 
@@ -57,7 +56,7 @@ class RenewCertificateOrderRequest(Resource):
         'is_private_key_external': {'key': 'properties.isPrivateKeyExternal', 'type': 'bool'},
     }
 
-    def __init__(self, name, location, kind=None, type=None, tags=None, key_size=None, csr=None, is_private_key_external=None):
+    def __init__(self, location, name=None, kind=None, type=None, tags=None, key_size=None, csr=None, is_private_key_external=None):
         super(RenewCertificateOrderRequest, self).__init__(name=name, kind=kind, location=location, type=type, tags=tags)
         self.key_size = key_size
         self.csr = csr

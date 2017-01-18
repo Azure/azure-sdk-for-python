@@ -29,6 +29,14 @@ class Address(Model):
     :type state: str
     """
 
+    _validation = {
+        'address1': {'required': True},
+        'city': {'required': True},
+        'country': {'required': True},
+        'postal_code': {'required': True},
+        'state': {'required': True},
+    }
+
     _attribute_map = {
         'address1': {'key': 'address1', 'type': 'str'},
         'address2': {'key': 'address2', 'type': 'str'},
@@ -38,7 +46,7 @@ class Address(Model):
         'state': {'key': 'state', 'type': 'str'},
     }
 
-    def __init__(self, address1=None, address2=None, city=None, country=None, postal_code=None, state=None):
+    def __init__(self, address1, city, country, postal_code, state, address2=None):
         self.address1 = address1
         self.address2 = address2
         self.city = city

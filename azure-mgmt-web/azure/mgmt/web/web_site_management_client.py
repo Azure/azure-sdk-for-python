@@ -217,15 +217,88 @@ class WebSiteManagementClient(object):
 
         return deserialized
 
+    def update_source_control(
+            self, source_control_type, request_message, custom_headers=None, raw=False, **operation_config):
+        """Updates source control token.
+
+        Updates source control token.
+
+        :param source_control_type: Type of source control
+        :type source_control_type: str
+        :param request_message: Source control token information
+        :type request_message: :class:`SourceControl
+         <azure.mgmt.web.models.SourceControl>`
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :rtype: :class:`SourceControl <azure.mgmt.web.models.SourceControl>`
+        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+         if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        """
+        api_version = "2016-03-01"
+
+        # Construct URL
+        url = '/providers/Microsoft.Web/sourcecontrols/{sourceControlType}'
+        path_format_arguments = {
+            'sourceControlType': self._serialize.url("source_control_type", source_control_type, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+        # Construct body
+        body_content = self._serialize.body(request_message, 'SourceControl')
+
+        # Construct and send request
+        request = self._client.put(url, query_parameters)
+        response = self._client.send(
+            request, header_parameters, body_content, **operation_config)
+
+        if response.status_code not in [200]:
+            exp = CloudError(response)
+            exp.request_id = response.headers.get('x-ms-request-id')
+            raise exp
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('SourceControl', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+
     def check_name_availability(
-            self, request, custom_headers=None, raw=False, **operation_config):
+            self, name, type, is_fqdn=None, custom_headers=None, raw=False, **operation_config):
         """Check if a resource name is available.
 
         Check if a resource name is available.
 
-        :param request: Name availability request.
-        :type request: :class:`ResourceNameAvailabilityRequest
-         <azure.mgmt.web.models.ResourceNameAvailabilityRequest>`
+        :param name: Resource name to verify.
+        :type name: str
+        :param type: Resource type used for verification. Possible values
+         include: 'Site', 'Slot', 'HostingEnvironment'
+        :type type: str or :class:`CheckNameResourceTypes
+         <azure.mgmt.web.models.CheckNameResourceTypes>`
+        :param is_fqdn: Is fully qualified domain name.
+        :type is_fqdn: bool
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -237,6 +310,8 @@ class WebSiteManagementClient(object):
          if raw=true
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
+        request = models.ResourceNameAvailabilityRequest(name=name, type=type, is_fqdn=is_fqdn)
+
         api_version = "2016-03-01"
 
         # Construct URL
@@ -284,14 +359,15 @@ class WebSiteManagementClient(object):
 
         return deserialized
 
-    def get_subscription_geo_regions(
+    def list_geo_regions(
             self, sku=None, custom_headers=None, raw=False, **operation_config):
         """Get a list of available geographical regions.
 
         Get a list of available geographical regions.
 
-        :param sku: Name of SKU used to filter the regions.
-        :type sku: str
+        :param sku: Name of SKU used to filter the regions. Possible values
+         include: 'Free', 'Shared', 'Basic', 'Standard', 'Premium', 'Dynamic'
+        :type sku: str or :class:`SkuName <azure.mgmt.web.models.SkuName>`
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -333,7 +409,7 @@ class WebSiteManagementClient(object):
                 header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
             # Construct and send request
-            request = self._client.get(url, query_parameters)
+            request = self._client.post(url, query_parameters)
             response = self._client.send(
                 request, header_parameters, **operation_config)
 
@@ -635,8 +711,8 @@ class WebSiteManagementClient(object):
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/moveResources'
         path_format_arguments = {
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern='^[-\\w\\._\\(\\)]+[^\\.]$')
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern='^[-\w\._\(\)]+[^\.]$'),
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -672,17 +748,17 @@ class WebSiteManagementClient(object):
             return client_raw_response
 
     def validate(
-            self, validate_request, resource_group_name, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, validate_request, custom_headers=None, raw=False, **operation_config):
         """Validate if a resource can be created.
 
         Validate if a resource can be created.
 
-        :param validate_request: Request with the resources to validate.
-        :type validate_request: :class:`ValidateRequest
-         <azure.mgmt.web.models.ValidateRequest>`
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
         :type resource_group_name: str
+        :param validate_request: Request with the resources to validate.
+        :type validate_request: :class:`ValidateRequest
+         <azure.mgmt.web.models.ValidateRequest>`
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -699,8 +775,8 @@ class WebSiteManagementClient(object):
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/validate'
         path_format_arguments = {
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern='^[-\\w\\._\\(\\)]+[^\\.]$')
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern='^[-\w\._\(\)]+[^\.]$'),
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -772,8 +848,8 @@ class WebSiteManagementClient(object):
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/validateMoveResources'
         path_format_arguments = {
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern='^[-\\w\\._\\(\\)]+[^\\.]$')
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern='^[-\w\._\(\)]+[^\.]$'),
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 

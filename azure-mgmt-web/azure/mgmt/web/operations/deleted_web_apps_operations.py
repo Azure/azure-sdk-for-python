@@ -101,7 +101,7 @@ class DeletedWebAppsOperations(object):
         return deserialized
 
     def list_by_resource_group(
-            self, resource_group_name, properties_to_include=None, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, custom_headers=None, raw=False, **operation_config):
         """Gets deleted web apps in subscription.
 
         Gets deleted web apps in subscription.
@@ -109,9 +109,6 @@ class DeletedWebAppsOperations(object):
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
         :type resource_group_name: str
-        :param properties_to_include: Additional web app properties included
-         in the response
-        :type properties_to_include: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -127,15 +124,13 @@ class DeletedWebAppsOperations(object):
                 # Construct URL
                 url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/deletedSites'
                 path_format_arguments = {
-                    'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern='^[-\\w\\._\\(\\)]+[^\\.]$')
+                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern='^[-\w\._\(\)]+[^\.]$'),
+                    'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
                 }
                 url = self._client.format_url(url, **path_format_arguments)
 
                 # Construct parameters
                 query_parameters = {}
-                if properties_to_include is not None:
-                    query_parameters['propertiesToInclude'] = self._serialize.query("properties_to_include", properties_to_include, 'str')
                 query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
             else:

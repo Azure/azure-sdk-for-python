@@ -322,8 +322,8 @@ class DomainsOperations(object):
                 # Construct URL
                 url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DomainRegistration/domains'
                 path_format_arguments = {
-                    'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern='^[-\\w\\._\\(\\)]+[^\\.]$')
+                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern='^[-\w\._\(\)]+[^\.]$'),
+                    'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
                 }
                 url = self._client.format_url(url, **path_format_arguments)
 
@@ -368,16 +368,16 @@ class DomainsOperations(object):
         return deserialized
 
     def get(
-            self, domain_name, resource_group_name, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, domain_name, custom_headers=None, raw=False, **operation_config):
         """Get a domain.
 
         Get a domain.
 
-        :param domain_name: Name of the domain.
-        :type domain_name: str
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
         :type resource_group_name: str
+        :param domain_name: Name of the domain.
+        :type domain_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -391,9 +391,9 @@ class DomainsOperations(object):
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DomainRegistration/domains/{domainName}'
         path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern='^[-\w\._\(\)]+[^\.]$'),
             'domainName': self._serialize.url("domain_name", domain_name, 'str'),
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern='^[-\\w\\._\\(\\)]+[^\\.]$')
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -432,18 +432,18 @@ class DomainsOperations(object):
         return deserialized
 
     def create_or_update(
-            self, domain_name, domain, resource_group_name, custom_headers=None, raw=False, **operation_config):
-        """Create a domain.
+            self, resource_group_name, domain_name, domain, custom_headers=None, raw=False, **operation_config):
+        """Creates or updates a domain.
 
-        Create a domain.
+        Creates or updates a domain.
 
+        :param resource_group_name: Name of the resource group to which the
+         resource belongs.
+        :type resource_group_name: str
         :param domain_name: Name of the domain.
         :type domain_name: str
         :param domain: Domain registration information.
         :type domain: :class:`Domain <azure.mgmt.web.models.Domain>`
-        :param resource_group_name: Name of the resource group to which the
-         resource belongs.
-        :type resource_group_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -457,9 +457,9 @@ class DomainsOperations(object):
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DomainRegistration/domains/{domainName}'
         path_format_arguments = {
-            'domainName': self._serialize.url("domain_name", domain_name, 'str'),
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern='^[-\\w\\._\\(\\)]+[^\\.]$')
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern='^[-\w\._\(\)]+[^\.]$'),
+            'domainName': self._serialize.url("domain_name", domain_name, 'str', pattern='[a-zA-Z0-9][a-zA-Z0-9\.-]+'),
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -527,16 +527,16 @@ class DomainsOperations(object):
             get_long_running_status, long_running_operation_timeout)
 
     def delete(
-            self, domain_name, resource_group_name, force_hard_delete_domain=None, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, domain_name, force_hard_delete_domain=None, custom_headers=None, raw=False, **operation_config):
         """Delete a domain.
 
         Delete a domain.
 
-        :param domain_name: Name of the domain.
-        :type domain_name: str
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
         :type resource_group_name: str
+        :param domain_name: Name of the domain.
+        :type domain_name: str
         :param force_hard_delete_domain: Specify <code>true</code> to delete
          the domain immediately. The default is <code>false</code> which
          deletes the domain after 24 hours.
@@ -554,9 +554,9 @@ class DomainsOperations(object):
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DomainRegistration/domains/{domainName}'
         path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern='^[-\w\._\(\)]+[^\.]$'),
             'domainName': self._serialize.url("domain_name", domain_name, 'str'),
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern='^[-\\w\\._\\(\\)]+[^\\.]$')
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -590,16 +590,16 @@ class DomainsOperations(object):
             return client_raw_response
 
     def list_ownership_identifiers(
-            self, domain_name, resource_group_name, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, domain_name, custom_headers=None, raw=False, **operation_config):
         """Lists domain ownership identifiers.
 
         Lists domain ownership identifiers.
 
-        :param domain_name: Name of domain.
-        :type domain_name: str
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
         :type resource_group_name: str
+        :param domain_name: Name of domain.
+        :type domain_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -615,9 +615,9 @@ class DomainsOperations(object):
                 # Construct URL
                 url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DomainRegistration/domains/{domainName}/domainOwnershipIdentifiers'
                 path_format_arguments = {
+                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern='^[-\w\._\(\)]+[^\.]$'),
                     'domainName': self._serialize.url("domain_name", domain_name, 'str'),
-                    'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern='^[-\\w\\._\\(\\)]+[^\\.]$')
+                    'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
                 }
                 url = self._client.format_url(url, **path_format_arguments)
 
@@ -662,18 +662,18 @@ class DomainsOperations(object):
         return deserialized
 
     def get_ownership_identifier(
-            self, domain_name, name, resource_group_name, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, domain_name, name, custom_headers=None, raw=False, **operation_config):
         """Get ownership identifier for domain.
 
         Get ownership identifier for domain.
 
+        :param resource_group_name: Name of the resource group to which the
+         resource belongs.
+        :type resource_group_name: str
         :param domain_name: Name of domain.
         :type domain_name: str
         :param name: Name of identifier.
         :type name: str
-        :param resource_group_name: Name of the resource group to which the
-         resource belongs.
-        :type resource_group_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -688,10 +688,10 @@ class DomainsOperations(object):
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DomainRegistration/domains/{domainName}/domainOwnershipIdentifiers/{name}'
         path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern='^[-\w\._\(\)]+[^\.]$'),
             'domainName': self._serialize.url("domain_name", domain_name, 'str'),
             'name': self._serialize.url("name", name, 'str'),
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern='^[-\\w\\._\\(\\)]+[^\\.]$')
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -730,13 +730,16 @@ class DomainsOperations(object):
         return deserialized
 
     def create_or_update_ownership_identifier(
-            self, domain_name, name, domain_ownership_identifier, resource_group_name, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, domain_name, name, domain_ownership_identifier, custom_headers=None, raw=False, **operation_config):
         """Creates an ownership identifier for a domain or updates identifier
         details for an existing identifer.
 
         Creates an ownership identifier for a domain or updates identifier
         details for an existing identifer.
 
+        :param resource_group_name: Name of the resource group to which the
+         resource belongs.
+        :type resource_group_name: str
         :param domain_name: Name of domain.
         :type domain_name: str
         :param name: Name of identifier.
@@ -745,9 +748,6 @@ class DomainsOperations(object):
          domain ownership properties.
         :type domain_ownership_identifier: :class:`DomainOwnershipIdentifier
          <azure.mgmt.web.models.DomainOwnershipIdentifier>`
-        :param resource_group_name: Name of the resource group to which the
-         resource belongs.
-        :type resource_group_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -762,10 +762,10 @@ class DomainsOperations(object):
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DomainRegistration/domains/{domainName}/domainOwnershipIdentifiers/{name}'
         path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern='^[-\w\._\(\)]+[^\.]$'),
             'domainName': self._serialize.url("domain_name", domain_name, 'str'),
             'name': self._serialize.url("name", name, 'str'),
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern='^[-\\w\\._\\(\\)]+[^\\.]$')
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -808,18 +808,18 @@ class DomainsOperations(object):
         return deserialized
 
     def delete_ownership_identifier(
-            self, domain_name, name, resource_group_name, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, domain_name, name, custom_headers=None, raw=False, **operation_config):
         """Delete ownership identifier for domain.
 
         Delete ownership identifier for domain.
 
+        :param resource_group_name: Name of the resource group to which the
+         resource belongs.
+        :type resource_group_name: str
         :param domain_name: Name of domain.
         :type domain_name: str
         :param name: Name of identifier.
         :type name: str
-        :param resource_group_name: Name of the resource group to which the
-         resource belongs.
-        :type resource_group_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -833,10 +833,10 @@ class DomainsOperations(object):
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DomainRegistration/domains/{domainName}/domainOwnershipIdentifiers/{name}'
         path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern='^[-\w\._\(\)]+[^\.]$'),
             'domainName': self._serialize.url("domain_name", domain_name, 'str'),
             'name': self._serialize.url("name", name, 'str'),
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern='^[-\\w\\._\\(\\)]+[^\\.]$')
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -868,13 +868,16 @@ class DomainsOperations(object):
             return client_raw_response
 
     def update_ownership_identifier(
-            self, domain_name, name, domain_ownership_identifier, resource_group_name, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, domain_name, name, domain_ownership_identifier, custom_headers=None, raw=False, **operation_config):
         """Creates an ownership identifier for a domain or updates identifier
         details for an existing identifer.
 
         Creates an ownership identifier for a domain or updates identifier
         details for an existing identifer.
 
+        :param resource_group_name: Name of the resource group to which the
+         resource belongs.
+        :type resource_group_name: str
         :param domain_name: Name of domain.
         :type domain_name: str
         :param name: Name of identifier.
@@ -883,9 +886,6 @@ class DomainsOperations(object):
          domain ownership properties.
         :type domain_ownership_identifier: :class:`DomainOwnershipIdentifier
          <azure.mgmt.web.models.DomainOwnershipIdentifier>`
-        :param resource_group_name: Name of the resource group to which the
-         resource belongs.
-        :type resource_group_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -900,10 +900,10 @@ class DomainsOperations(object):
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DomainRegistration/domains/{domainName}/domainOwnershipIdentifiers/{name}'
         path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern='^[-\w\._\(\)]+[^\.]$'),
             'domainName': self._serialize.url("domain_name", domain_name, 'str'),
             'name': self._serialize.url("name", name, 'str'),
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern='^[-\\w\\._\\(\\)]+[^\\.]$')
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -938,75 +938,6 @@ class DomainsOperations(object):
 
         if response.status_code == 200:
             deserialized = self._deserialize('DomainOwnershipIdentifier', response)
-
-        if raw:
-            client_raw_response = ClientRawResponse(deserialized, response)
-            return client_raw_response
-
-        return deserialized
-
-    def get_operation(
-            self, domain_name, operation_id, resource_group_name, custom_headers=None, raw=False, **operation_config):
-        """Get the status of a domain purchase operation.
-
-        Get the status of a domain purchase operation.
-
-        :param domain_name: Name of the domain.
-        :type domain_name: str
-        :param operation_id: ID of the domain purchase operation.
-        :type operation_id: str
-        :param resource_group_name: Name of the resource group to which the
-         resource belongs.
-        :type resource_group_name: str
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`Domain <azure.mgmt.web.models.Domain>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
-        """
-        # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DomainRegistration/domains/{domainName}/operationresults/{operationId}'
-        path_format_arguments = {
-            'domainName': self._serialize.url("domain_name", domain_name, 'str'),
-            'operationId': self._serialize.url("operation_id", operation_id, 'str'),
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern='^[-\\w\\._\\(\\)]+[^\\.]$')
-        }
-        url = self._client.format_url(url, **path_format_arguments)
-
-        # Construct parameters
-        query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
-
-        # Construct headers
-        header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
-        if self.config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-        if custom_headers:
-            header_parameters.update(custom_headers)
-        if self.config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
-
-        # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
-
-        if response.status_code not in [202, 200, 500]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
-
-        deserialized = None
-
-        if response.status_code == 202:
-            deserialized = self._deserialize('Domain', response)
-        if response.status_code == 200:
-            deserialized = self._deserialize('Domain', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)

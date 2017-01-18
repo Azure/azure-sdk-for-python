@@ -52,7 +52,6 @@ class BackupRequest(Resource):
 
     _validation = {
         'id': {'readonly': True},
-        'name': {'required': True},
         'location': {'required': True},
     }
 
@@ -71,7 +70,7 @@ class BackupRequest(Resource):
         'backup_request_type': {'key': 'properties.type', 'type': 'BackupRestoreOperationType'},
     }
 
-    def __init__(self, name, location, kind=None, type=None, tags=None, backup_request_name=None, enabled=None, storage_account_url=None, backup_schedule=None, databases=None, backup_request_type=None):
+    def __init__(self, location, name=None, kind=None, type=None, tags=None, backup_request_name=None, enabled=None, storage_account_url=None, backup_schedule=None, databases=None, backup_request_type=None):
         super(BackupRequest, self).__init__(name=name, kind=kind, location=location, type=type, tags=tags)
         self.backup_request_name = backup_request_name
         self.enabled = enabled

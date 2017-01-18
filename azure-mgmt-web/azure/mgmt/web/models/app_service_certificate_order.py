@@ -82,9 +82,9 @@ class AppServiceCertificateOrder(Resource):
 
     _validation = {
         'id': {'readonly': True},
-        'name': {'required': True},
         'location': {'required': True},
         'domain_verification_token': {'readonly': True},
+        'validity_in_years': {'maximum': 3, 'minimum': 1},
         'provisioning_state': {'readonly': True},
         'status': {'readonly': True},
         'signed_certificate': {'readonly': True},
@@ -121,7 +121,7 @@ class AppServiceCertificateOrder(Resource):
         'is_private_key_external': {'key': 'properties.isPrivateKeyExternal', 'type': 'bool'},
     }
 
-    def __init__(self, name, location, kind=None, type=None, tags=None, certificates=None, distinguished_name=None, validity_in_years=1, key_size=2048, product_type=None, auto_renew=True, csr=None, is_private_key_external=None):
+    def __init__(self, location, name=None, kind=None, type=None, tags=None, certificates=None, distinguished_name=None, validity_in_years=1, key_size=2048, product_type=None, auto_renew=True, csr=None, is_private_key_external=None):
         super(AppServiceCertificateOrder, self).__init__(name=name, kind=kind, location=location, type=type, tags=tags)
         self.certificates = certificates
         self.distinguished_name = distinguished_name

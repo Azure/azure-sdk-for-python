@@ -51,7 +51,6 @@ class VnetInfo(Resource):
 
     _validation = {
         'id': {'readonly': True},
-        'name': {'required': True},
         'location': {'required': True},
         'cert_thumbprint': {'readonly': True},
         'routes': {'readonly': True},
@@ -73,7 +72,7 @@ class VnetInfo(Resource):
         'dns_servers': {'key': 'properties.dnsServers', 'type': 'str'},
     }
 
-    def __init__(self, name, location, kind=None, type=None, tags=None, vnet_resource_id=None, cert_blob=None, dns_servers=None):
+    def __init__(self, location, name=None, kind=None, type=None, tags=None, vnet_resource_id=None, cert_blob=None, dns_servers=None):
         super(VnetInfo, self).__init__(name=name, kind=kind, location=location, type=type, tags=tags)
         self.vnet_resource_id = vnet_resource_id
         self.cert_thumbprint = None

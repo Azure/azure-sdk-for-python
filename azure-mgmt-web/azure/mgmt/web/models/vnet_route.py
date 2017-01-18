@@ -47,15 +47,13 @@ class VnetRoute(Resource):
      INHERITED - Routes inherited from the real Virtual Network routes
      STATIC - Static route set on the app only
      These values will be used for syncing an app's routes with those from a
-     Virtual Network. This operation will clear all DEFAULT and INHERITED
-     routes and replace them
-     with new INHERITED routes.
-    :type route_type: str
+     Virtual Network. Possible values include: 'DEFAULT', 'INHERITED', 'STATIC'
+    :type route_type: str or :class:`RouteType
+     <azure.mgmt.web.models.RouteType>`
     """
 
     _validation = {
         'id': {'readonly': True},
-        'name': {'required': True},
         'location': {'required': True},
     }
 
@@ -72,7 +70,7 @@ class VnetRoute(Resource):
         'route_type': {'key': 'properties.routeType', 'type': 'str'},
     }
 
-    def __init__(self, name, location, kind=None, type=None, tags=None, vnet_route_name=None, start_address=None, end_address=None, route_type=None):
+    def __init__(self, location, name=None, kind=None, type=None, tags=None, vnet_route_name=None, start_address=None, end_address=None, route_type=None):
         super(VnetRoute, self).__init__(name=name, kind=kind, location=location, type=type, tags=tags)
         self.vnet_route_name = vnet_route_name
         self.start_address = start_address

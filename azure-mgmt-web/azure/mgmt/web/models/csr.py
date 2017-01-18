@@ -49,7 +49,6 @@ class Csr(Resource):
 
     _validation = {
         'id': {'readonly': True},
-        'name': {'required': True},
         'location': {'required': True},
     }
 
@@ -69,7 +68,7 @@ class Csr(Resource):
         'hosting_environment': {'key': 'properties.hostingEnvironment', 'type': 'str'},
     }
 
-    def __init__(self, name, location, kind=None, type=None, tags=None, csr_name=None, distinguished_name=None, csr_string=None, pfx_blob=None, password=None, public_key_hash=None, hosting_environment=None):
+    def __init__(self, location, name=None, kind=None, type=None, tags=None, csr_name=None, distinguished_name=None, csr_string=None, pfx_blob=None, password=None, public_key_hash=None, hosting_environment=None):
         super(Csr, self).__init__(name=name, kind=kind, location=location, type=type, tags=tags)
         self.csr_name = csr_name
         self.distinguished_name = distinguished_name

@@ -36,7 +36,6 @@ class SiteInstance(Resource):
 
     _validation = {
         'id': {'readonly': True},
-        'name': {'required': True},
         'location': {'required': True},
         'site_instance_name': {'readonly': True},
     }
@@ -51,6 +50,6 @@ class SiteInstance(Resource):
         'site_instance_name': {'key': 'properties.name', 'type': 'str'},
     }
 
-    def __init__(self, name, location, kind=None, type=None, tags=None):
+    def __init__(self, location, name=None, kind=None, type=None, tags=None):
         super(SiteInstance, self).__init__(name=name, kind=kind, location=location, type=type, tags=tags)
         self.site_instance_name = None

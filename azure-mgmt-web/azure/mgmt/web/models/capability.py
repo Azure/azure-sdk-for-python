@@ -13,7 +13,7 @@ from msrest.serialization import Model
 
 
 class Capability(Model):
-    """Description of a SKU Capability.
+    """Describes the capabilities/features allowed for a specific SKU.
 
     :param name: Name of the SKU capability.
     :type name: str

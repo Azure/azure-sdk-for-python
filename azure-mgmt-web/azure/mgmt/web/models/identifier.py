@@ -36,7 +36,6 @@ class Identifier(Resource):
 
     _validation = {
         'id': {'readonly': True},
-        'name': {'required': True},
         'location': {'required': True},
     }
 
@@ -50,6 +49,6 @@ class Identifier(Resource):
         'identifier_id': {'key': 'properties.id', 'type': 'str'},
     }
 
-    def __init__(self, name, location, kind=None, type=None, tags=None, identifier_id=None):
+    def __init__(self, location, name=None, kind=None, type=None, tags=None, identifier_id=None):
         super(Identifier, self).__init__(name=name, kind=kind, location=location, type=type, tags=tags)
         self.identifier_id = identifier_id

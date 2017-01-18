@@ -82,7 +82,6 @@ class Domain(Resource):
 
     _validation = {
         'id': {'readonly': True},
-        'name': {'required': True},
         'location': {'required': True},
         'registration_status': {'readonly': True},
         'provisioning_state': {'readonly': True},
@@ -117,7 +116,7 @@ class Domain(Resource):
         'domain_not_renewable_reasons': {'key': 'properties.domainNotRenewableReasons', 'type': '[enum]'},
     }
 
-    def __init__(self, name, location, kind=None, type=None, tags=None, contact_admin=None, contact_billing=None, contact_registrant=None, contact_tech=None, name_servers=None, privacy=None, auto_renew=True, managed_host_names=None, consent=None, domain_not_renewable_reasons=None):
+    def __init__(self, location, name=None, kind=None, type=None, tags=None, contact_admin=None, contact_billing=None, contact_registrant=None, contact_tech=None, name_servers=None, privacy=None, auto_renew=True, managed_host_names=None, consent=None, domain_not_renewable_reasons=None):
         super(Domain, self).__init__(name=name, kind=kind, location=location, type=type, tags=tags)
         self.contact_admin = contact_admin
         self.contact_billing = contact_billing

@@ -132,8 +132,8 @@ class AppServicePlansOperations(object):
                 # Construct URL
                 url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/serverfarms'
                 path_format_arguments = {
-                    'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern='^[-\\w\\._\\(\\)]+[^\\.]$')
+                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern='^[-\w\._\(\)]+[^\.]$'),
+                    'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
                 }
                 url = self._client.format_url(url, **path_format_arguments)
 
@@ -178,16 +178,16 @@ class AppServicePlansOperations(object):
         return deserialized
 
     def get(
-            self, name, resource_group_name, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, name, custom_headers=None, raw=False, **operation_config):
         """Get an App Service plan.
 
         Get an App Service plan.
 
-        :param name: Name of the App Service plan.
-        :type name: str
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
         :type resource_group_name: str
+        :param name: Name of the App Service plan.
+        :type name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -201,9 +201,9 @@ class AppServicePlansOperations(object):
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/serverfarms/{name}'
         path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern='^[-\w\._\(\)]+[^\.]$'),
             'name': self._serialize.url("name", name, 'str'),
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern='^[-\\w\\._\\(\\)]+[^\\.]$')
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -242,22 +242,19 @@ class AppServicePlansOperations(object):
         return deserialized
 
     def create_or_update(
-            self, name, app_service_plan, resource_group_name, allow_pending_state=None, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, name, app_service_plan, custom_headers=None, raw=False, **operation_config):
         """Creates or updates an App Service Plan.
 
         Creates or updates an App Service Plan.
 
+        :param resource_group_name: Name of the resource group to which the
+         resource belongs.
+        :type resource_group_name: str
         :param name: Name of the App Service plan.
         :type name: str
         :param app_service_plan: Details of the App Service plan.
         :type app_service_plan: :class:`AppServicePlan
          <azure.mgmt.web.models.AppServicePlan>`
-        :param resource_group_name: Name of the resource group to which the
-         resource belongs.
-        :type resource_group_name: str
-        :param allow_pending_state: OBSOLETE: If <code>true</code>, allow
-         pending state for App Service plan.
-        :type allow_pending_state: bool
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -272,16 +269,14 @@ class AppServicePlansOperations(object):
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/serverfarms/{name}'
         path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern='^[-\w\._\(\)]+[^\.]$'),
             'name': self._serialize.url("name", name, 'str'),
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern='^[-\\w\\._\\(\\)]+[^\\.]$')
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
-        if allow_pending_state is not None:
-            query_parameters['allowPendingState'] = self._serialize.query("allow_pending_state", allow_pending_state, 'bool')
         query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
@@ -344,16 +339,16 @@ class AppServicePlansOperations(object):
             get_long_running_status, long_running_operation_timeout)
 
     def delete(
-            self, name, resource_group_name, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, name, custom_headers=None, raw=False, **operation_config):
         """Delete an App Service plan.
 
         Delete an App Service plan.
 
-        :param name: Name of the App Service plan.
-        :type name: str
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
         :type resource_group_name: str
+        :param name: Name of the App Service plan.
+        :type name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -367,9 +362,9 @@ class AppServicePlansOperations(object):
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/serverfarms/{name}'
         path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern='^[-\w\._\(\)]+[^\.]$'),
             'name': self._serialize.url("name", name, 'str'),
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern='^[-\\w\\._\\(\\)]+[^\\.]$')
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -401,16 +396,16 @@ class AppServicePlansOperations(object):
             return client_raw_response
 
     def list_capabilities(
-            self, name, resource_group_name, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, name, custom_headers=None, raw=False, **operation_config):
         """List all capabilities of an App Service plan.
 
         List all capabilities of an App Service plan.
 
-        :param name: Name of the App Service plan.
-        :type name: str
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
         :type resource_group_name: str
+        :param name: Name of the App Service plan.
+        :type name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -424,9 +419,9 @@ class AppServicePlansOperations(object):
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/serverfarms/{name}/capabilities'
         path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern='^[-\w\._\(\)]+[^\.]$'),
             'name': self._serialize.url("name", name, 'str'),
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern='^[-\\w\\._\\(\\)]+[^\\.]$')
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -465,20 +460,20 @@ class AppServicePlansOperations(object):
         return deserialized
 
     def get_hybrid_connection(
-            self, name, namespace_name, relay_name, resource_group_name, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, name, namespace_name, relay_name, custom_headers=None, raw=False, **operation_config):
         """Retrieve a Hybrid Connection in use in an App Service plan.
 
         Retrieve a Hybrid Connection in use in an App Service plan.
 
+        :param resource_group_name: Name of the resource group to which the
+         resource belongs.
+        :type resource_group_name: str
         :param name: Name of the App Service plan.
         :type name: str
         :param namespace_name: Name of the Service Bus namespace.
         :type namespace_name: str
         :param relay_name: Name of the Service Bus relay.
         :type relay_name: str
-        :param resource_group_name: Name of the resource group to which the
-         resource belongs.
-        :type resource_group_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -493,11 +488,11 @@ class AppServicePlansOperations(object):
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/serverfarms/{name}/hybridConnectionNamespaces/{namespaceName}/relays/{relayName}'
         path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern='^[-\w\._\(\)]+[^\.]$'),
             'name': self._serialize.url("name", name, 'str'),
             'namespaceName': self._serialize.url("namespace_name", namespace_name, 'str'),
             'relayName': self._serialize.url("relay_name", relay_name, 'str'),
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern='^[-\\w\\._\\(\\)]+[^\\.]$')
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -535,101 +530,21 @@ class AppServicePlansOperations(object):
 
         return deserialized
 
-    def update_hybrid_connection(
-            self, name, namespace_name, relay_name, connection, resource_group_name, custom_headers=None, raw=False, **operation_config):
-        """Update a Hybrid Connection in use in an App Service plan. This
-        operation will fail if the Hybrid Connection does not already exist.
-
-        Update a Hybrid Connection in use in an App Service plan. This
-        operation will fail if the Hybrid Connection does not already exist.
-
-        :param name: Name of the App Service plan.
-        :type name: str
-        :param namespace_name: Name of the Service Bus namespace.
-        :type namespace_name: str
-        :param relay_name: Name of the Service Bus relay.
-        :type relay_name: str
-        :param connection: The Hybrid Connection entity.
-        :type connection: :class:`HybridConnection
-         <azure.mgmt.web.models.HybridConnection>`
-        :param resource_group_name: Name of the resource group to which the
-         resource belongs.
-        :type resource_group_name: str
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`HybridConnection
-         <azure.mgmt.web.models.HybridConnection>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
-        """
-        # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/serverfarms/{name}/hybridConnectionNamespaces/{namespaceName}/relays/{relayName}'
-        path_format_arguments = {
-            'name': self._serialize.url("name", name, 'str'),
-            'namespaceName': self._serialize.url("namespace_name", namespace_name, 'str'),
-            'relayName': self._serialize.url("relay_name", relay_name, 'str'),
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern='^[-\\w\\._\\(\\)]+[^\\.]$')
-        }
-        url = self._client.format_url(url, **path_format_arguments)
-
-        # Construct parameters
-        query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
-
-        # Construct headers
-        header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
-        if self.config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-        if custom_headers:
-            header_parameters.update(custom_headers)
-        if self.config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
-
-        # Construct body
-        body_content = self._serialize.body(connection, 'HybridConnection')
-
-        # Construct and send request
-        request = self._client.put(url, query_parameters)
-        response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
-
-        if response.status_code not in [200]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
-
-        deserialized = None
-
-        if response.status_code == 200:
-            deserialized = self._deserialize('HybridConnection', response)
-
-        if raw:
-            client_raw_response = ClientRawResponse(deserialized, response)
-            return client_raw_response
-
-        return deserialized
-
     def delete_hybrid_connection(
-            self, name, namespace_name, relay_name, resource_group_name, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, name, namespace_name, relay_name, custom_headers=None, raw=False, **operation_config):
         """Delete a Hybrid Connection in use in an App Service plan.
 
         Delete a Hybrid Connection in use in an App Service plan.
 
+        :param resource_group_name: Name of the resource group to which the
+         resource belongs.
+        :type resource_group_name: str
         :param name: Name of the App Service plan.
         :type name: str
         :param namespace_name: Name of the Service Bus namespace.
         :type namespace_name: str
         :param relay_name: Name of the Service Bus relay.
         :type relay_name: str
-        :param resource_group_name: Name of the resource group to which the
-         resource belongs.
-        :type resource_group_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -643,11 +558,11 @@ class AppServicePlansOperations(object):
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/serverfarms/{name}/hybridConnectionNamespaces/{namespaceName}/relays/{relayName}'
         path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern='^[-\w\._\(\)]+[^\.]$'),
             'name': self._serialize.url("name", name, 'str'),
             'namespaceName': self._serialize.url("namespace_name", namespace_name, 'str'),
             'relayName': self._serialize.url("relay_name", relay_name, 'str'),
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern='^[-\\w\\._\\(\\)]+[^\\.]$')
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -679,20 +594,20 @@ class AppServicePlansOperations(object):
             return client_raw_response
 
     def list_hybrid_connection_keys(
-            self, name, namespace_name, relay_name, resource_group_name, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, name, namespace_name, relay_name, custom_headers=None, raw=False, **operation_config):
         """Get the send key name and value of a Hybrid Connection.
 
         Get the send key name and value of a Hybrid Connection.
 
+        :param resource_group_name: Name of the resource group to which the
+         resource belongs.
+        :type resource_group_name: str
         :param name: Name of the App Service plan.
         :type name: str
         :param namespace_name: The name of the Service Bus namespace.
         :type namespace_name: str
         :param relay_name: The name of the Service Bus relay.
         :type relay_name: str
-        :param resource_group_name: Name of the resource group to which the
-         resource belongs.
-        :type resource_group_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -707,11 +622,11 @@ class AppServicePlansOperations(object):
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/serverfarms/{name}/hybridConnectionNamespaces/{namespaceName}/relays/{relayName}/listKeys'
         path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern='^[-\w\._\(\)]+[^\.]$'),
             'name': self._serialize.url("name", name, 'str'),
             'namespaceName': self._serialize.url("namespace_name", namespace_name, 'str'),
             'relayName': self._serialize.url("relay_name", relay_name, 'str'),
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern='^[-\\w\\._\\(\\)]+[^\\.]$')
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -749,21 +664,21 @@ class AppServicePlansOperations(object):
 
         return deserialized
 
-    def list_hybrid_connection_web_apps(
-            self, name, namespace_name, relay_name, resource_group_name, custom_headers=None, raw=False, **operation_config):
+    def list_web_apps_by_hybrid_connection(
+            self, resource_group_name, name, namespace_name, relay_name, custom_headers=None, raw=False, **operation_config):
         """Get all apps that use a Hybrid Connection in an App Service Plan.
 
         Get all apps that use a Hybrid Connection in an App Service Plan.
 
+        :param resource_group_name: Name of the resource group to which the
+         resource belongs.
+        :type resource_group_name: str
         :param name: Name of the App Service plan.
         :type name: str
         :param namespace_name: Name of the Hybrid Connection namespace.
         :type namespace_name: str
         :param relay_name: Name of the Hybrid Connection relay.
         :type relay_name: str
-        :param resource_group_name: Name of the resource group to which the
-         resource belongs.
-        :type resource_group_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -778,11 +693,11 @@ class AppServicePlansOperations(object):
                 # Construct URL
                 url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/serverfarms/{name}/hybridConnectionNamespaces/{namespaceName}/relays/{relayName}/sites'
                 path_format_arguments = {
+                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern='^[-\w\._\(\)]+[^\.]$'),
                     'name': self._serialize.url("name", name, 'str'),
                     'namespaceName': self._serialize.url("namespace_name", namespace_name, 'str'),
                     'relayName': self._serialize.url("relay_name", relay_name, 'str'),
-                    'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern='^[-\\w\\._\\(\\)]+[^\\.]$')
+                    'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
                 }
                 url = self._client.format_url(url, **path_format_arguments)
 
@@ -827,18 +742,18 @@ class AppServicePlansOperations(object):
         return deserialized
 
     def get_hybrid_connection_plan_limit(
-            self, name, resource_group_name, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, name, custom_headers=None, raw=False, **operation_config):
         """Get the maximum number of Hybrid Connections allowed in an App Service
         plan.
 
         Get the maximum number of Hybrid Connections allowed in an App Service
         plan.
 
-        :param name: Name of the App Service plan.
-        :type name: str
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
         :type resource_group_name: str
+        :param name: Name of the App Service plan.
+        :type name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -853,9 +768,9 @@ class AppServicePlansOperations(object):
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/serverfarms/{name}/hybridConnectionPlanLimits/limit'
         path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern='^[-\w\._\(\)]+[^\.]$'),
             'name': self._serialize.url("name", name, 'str'),
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern='^[-\\w\\._\\(\\)]+[^\\.]$')
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -894,83 +809,90 @@ class AppServicePlansOperations(object):
         return deserialized
 
     def list_hybrid_connections(
-            self, name, resource_group_name, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, name, custom_headers=None, raw=False, **operation_config):
         """Retrieve all Hybrid Connections in use in an App Service plan.
 
         Retrieve all Hybrid Connections in use in an App Service plan.
 
-        :param name: Name of the App Service plan.
-        :type name: str
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
         :type resource_group_name: str
+        :param name: Name of the App Service plan.
+        :type name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`HybridConnection
-         <azure.mgmt.web.models.HybridConnection>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :rtype: :class:`HybridConnectionPaged
+         <azure.mgmt.web.models.HybridConnectionPaged>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
-        # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/serverfarms/{name}/hybridConnectionRelays'
-        path_format_arguments = {
-            'name': self._serialize.url("name", name, 'str'),
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern='^[-\\w\\._\\(\\)]+[^\\.]$')
-        }
-        url = self._client.format_url(url, **path_format_arguments)
+        def internal_paging(next_link=None, raw=False):
 
-        # Construct parameters
-        query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+            if not next_link:
+                # Construct URL
+                url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/serverfarms/{name}/hybridConnectionRelays'
+                path_format_arguments = {
+                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern='^[-\w\._\(\)]+[^\.]$'),
+                    'name': self._serialize.url("name", name, 'str'),
+                    'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+                }
+                url = self._client.format_url(url, **path_format_arguments)
 
-        # Construct headers
-        header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
-        if self.config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-        if custom_headers:
-            header_parameters.update(custom_headers)
-        if self.config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+                # Construct parameters
+                query_parameters = {}
+                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
-        # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+            else:
+                url = next_link
+                query_parameters = {}
 
-        if response.status_code not in [200]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            # Construct headers
+            header_parameters = {}
+            header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+            if self.config.generate_client_request_id:
+                header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+            if custom_headers:
+                header_parameters.update(custom_headers)
+            if self.config.accept_language is not None:
+                header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
-        deserialized = None
+            # Construct and send request
+            request = self._client.get(url, query_parameters)
+            response = self._client.send(
+                request, header_parameters, **operation_config)
 
-        if response.status_code == 200:
-            deserialized = self._deserialize('HybridConnection', response)
+            if response.status_code not in [200]:
+                exp = CloudError(response)
+                exp.request_id = response.headers.get('x-ms-request-id')
+                raise exp
+
+            return response
+
+        # Deserialize response
+        deserialized = models.HybridConnectionPaged(internal_paging, self._deserialize.dependencies)
 
         if raw:
-            client_raw_response = ClientRawResponse(deserialized, response)
+            header_dict = {}
+            client_raw_response = models.HybridConnectionPaged(internal_paging, self._deserialize.dependencies, header_dict)
             return client_raw_response
 
         return deserialized
 
     def list_metric_defintions(
-            self, name, resource_group_name, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, name, custom_headers=None, raw=False, **operation_config):
         """Get metrics that can be queried for an App Service plan, and their
         definitions.
 
         Get metrics that can be queried for an App Service plan, and their
         definitions.
 
-        :param name: Name of the App Service plan.
-        :type name: str
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
         :type resource_group_name: str
+        :param name: Name of the App Service plan.
+        :type name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -986,9 +908,9 @@ class AppServicePlansOperations(object):
                 # Construct URL
                 url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/serverfarms/{name}/metricdefinitions'
                 path_format_arguments = {
+                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern='^[-\w\._\(\)]+[^\.]$'),
                     'name': self._serialize.url("name", name, 'str'),
-                    'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern='^[-\\w\\._\\(\\)]+[^\\.]$')
+                    'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
                 }
                 url = self._client.format_url(url, **path_format_arguments)
 
@@ -1033,16 +955,16 @@ class AppServicePlansOperations(object):
         return deserialized
 
     def list_metrics(
-            self, name, resource_group_name, details=None, filter=None, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, name, details=None, filter=None, custom_headers=None, raw=False, **operation_config):
         """Get metrics for an App Serice plan.
 
         Get metrics for an App Serice plan.
 
-        :param name: Name of the App Service plan.
-        :type name: str
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
         :type resource_group_name: str
+        :param name: Name of the App Service plan.
+        :type name: str
         :param details: Specify <code>true</code> to include instance details.
          The default is <code>false</code>.
         :type details: bool
@@ -1067,9 +989,9 @@ class AppServicePlansOperations(object):
                 # Construct URL
                 url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/serverfarms/{name}/metrics'
                 path_format_arguments = {
+                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern='^[-\w\._\(\)]+[^\.]$'),
                     'name': self._serialize.url("name", name, 'str'),
-                    'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern='^[-\\w\\._\\(\\)]+[^\\.]$')
+                    'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
                 }
                 url = self._client.format_url(url, **path_format_arguments)
 
@@ -1117,84 +1039,17 @@ class AppServicePlansOperations(object):
 
         return deserialized
 
-    def get_operation(
-            self, name, operation_id, resource_group_name, custom_headers=None, raw=False, **operation_config):
-        """Get an operation on an App Service plan.
-
-        Get an operation on an App Service plan.
-
-        :param name: Name of the App Service plan.
-        :type name: str
-        :param operation_id: ID of the operation.&gt;
-        :type operation_id: str
-        :param resource_group_name: Name of the resource group to which the
-         resource belongs.
-        :type resource_group_name: str
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`AppServicePlan <azure.mgmt.web.models.AppServicePlan>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
-        """
-        # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/serverfarms/{name}/operationresults/{operationId}'
-        path_format_arguments = {
-            'name': self._serialize.url("name", name, 'str'),
-            'operationId': self._serialize.url("operation_id", operation_id, 'str'),
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern='^[-\\w\\._\\(\\)]+[^\\.]$')
-        }
-        url = self._client.format_url(url, **path_format_arguments)
-
-        # Construct parameters
-        query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
-
-        # Construct headers
-        header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
-        if self.config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-        if custom_headers:
-            header_parameters.update(custom_headers)
-        if self.config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
-
-        # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
-
-        if response.status_code not in [200]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
-
-        deserialized = None
-
-        if response.status_code == 200:
-            deserialized = self._deserialize('AppServicePlan', response)
-
-        if raw:
-            client_raw_response = ClientRawResponse(deserialized, response)
-            return client_raw_response
-
-        return deserialized
-
     def restart_web_apps(
-            self, name, resource_group_name, soft_restart=None, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, name, soft_restart=None, custom_headers=None, raw=False, **operation_config):
         """Restart all apps in an App Service plan.
 
         Restart all apps in an App Service plan.
 
-        :param name: Name of the App Service plan.
-        :type name: str
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
         :type resource_group_name: str
+        :param name: Name of the App Service plan.
+        :type name: str
         :param soft_restart: Specify <code>true</code> to performa a soft
          restart, applies the configuration settings and restarts the apps if
          necessary. The default is <code>false</code>, which always restarts
@@ -1213,9 +1068,9 @@ class AppServicePlansOperations(object):
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/serverfarms/{name}/restartSites'
         path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern='^[-\w\._\(\)]+[^\.]$'),
             'name': self._serialize.url("name", name, 'str'),
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern='^[-\\w\\._\\(\\)]+[^\\.]$')
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -1249,20 +1104,20 @@ class AppServicePlansOperations(object):
             return client_raw_response
 
     def list_web_apps(
-            self, name, resource_group_name, skip_token=None, filter=None, top=None, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, name, skip_token=None, filter=None, top=None, custom_headers=None, raw=False, **operation_config):
         """Get all apps associated with an App Service plan.
 
         Get all apps associated with an App Service plan.
 
-        :param name: Name of the App Service plan.
-        :type name: str
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
         :type resource_group_name: str
-        :param skip_token: Skip to of web apps in a list. If specified, the
-         resulting list will contain web apps starting from (including) the
-         skipToken. Else, the resulting list contains web apps from the start
-         of the list
+        :param name: Name of the App Service plan.
+        :type name: str
+        :param skip_token: Skip to a web app in the list of webapps associated
+         with app service plan. If specified, the resulting list will contain
+         web apps starting from (including) the skipToken. Otherwise, the
+         resulting list contains web apps from the start of the list
         :type skip_token: str
         :param filter: Supported filter: $filter=state eq running. Returns
          only web apps that are currently running
@@ -1283,9 +1138,9 @@ class AppServicePlansOperations(object):
                 # Construct URL
                 url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/serverfarms/{name}/sites'
                 path_format_arguments = {
+                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern='^[-\w\._\(\)]+[^\.]$'),
                     'name': self._serialize.url("name", name, 'str'),
-                    'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern='^[-\\w\\._\\(\\)]+[^\\.]$')
+                    'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
                 }
                 url = self._client.format_url(url, **path_format_arguments)
 
@@ -1336,16 +1191,16 @@ class AppServicePlansOperations(object):
         return deserialized
 
     def list_vnets(
-            self, name, resource_group_name, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, name, custom_headers=None, raw=False, **operation_config):
         """Get all Virtual Networks associated with an App Service plan.
 
         Get all Virtual Networks associated with an App Service plan.
 
-        :param name: Name of the App Service plan.
-        :type name: str
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
         :type resource_group_name: str
+        :param name: Name of the App Service plan.
+        :type name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -1359,9 +1214,9 @@ class AppServicePlansOperations(object):
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/serverfarms/{name}/virtualNetworkConnections'
         path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern='^[-\w\._\(\)]+[^\.]$'),
             'name': self._serialize.url("name", name, 'str'),
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern='^[-\\w\\._\\(\\)]+[^\\.]$')
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -1400,18 +1255,18 @@ class AppServicePlansOperations(object):
         return deserialized
 
     def get_vnet_from_server_farm(
-            self, name, vnet_name, resource_group_name, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, name, vnet_name, custom_headers=None, raw=False, **operation_config):
         """Get a Virtual Network associated with an App Service plan.
 
         Get a Virtual Network associated with an App Service plan.
 
+        :param resource_group_name: Name of the resource group to which the
+         resource belongs.
+        :type resource_group_name: str
         :param name: Name of the App Service plan.
         :type name: str
         :param vnet_name: Name of the Virtual Network.
         :type vnet_name: str
-        :param resource_group_name: Name of the resource group to which the
-         resource belongs.
-        :type resource_group_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -1425,10 +1280,10 @@ class AppServicePlansOperations(object):
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/serverfarms/{name}/virtualNetworkConnections/{vnetName}'
         path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern='^[-\w\._\(\)]+[^\.]$'),
             'name': self._serialize.url("name", name, 'str'),
             'vnetName': self._serialize.url("vnet_name", vnet_name, 'str'),
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern='^[-\\w\\._\\(\\)]+[^\\.]$')
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -1467,11 +1322,14 @@ class AppServicePlansOperations(object):
         return deserialized
 
     def get_vnet_gateway(
-            self, name, vnet_name, gateway_name, resource_group_name, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, name, vnet_name, gateway_name, custom_headers=None, raw=False, **operation_config):
         """Get a Virtual Network gateway.
 
         Get a Virtual Network gateway.
 
+        :param resource_group_name: Name of the resource group to which the
+         resource belongs.
+        :type resource_group_name: str
         :param name: Name of the App Service plan.
         :type name: str
         :param vnet_name: Name of the Virtual Network.
@@ -1479,9 +1337,6 @@ class AppServicePlansOperations(object):
         :param gateway_name: Name of the gateway. Only the 'primary' gateway
          is supported.
         :type gateway_name: str
-        :param resource_group_name: Name of the resource group to which the
-         resource belongs.
-        :type resource_group_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -1495,11 +1350,11 @@ class AppServicePlansOperations(object):
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/serverfarms/{name}/virtualNetworkConnections/{vnetName}/gateways/{gatewayName}'
         path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern='^[-\w\._\(\)]+[^\.]$'),
             'name': self._serialize.url("name", name, 'str'),
             'vnetName': self._serialize.url("vnet_name", vnet_name, 'str'),
             'gatewayName': self._serialize.url("gateway_name", gateway_name, 'str'),
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern='^[-\\w\\._\\(\\)]+[^\\.]$')
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -1538,11 +1393,14 @@ class AppServicePlansOperations(object):
         return deserialized
 
     def update_vnet_gateway(
-            self, name, vnet_name, gateway_name, connection_envelope, resource_group_name, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, name, vnet_name, gateway_name, connection_envelope, custom_headers=None, raw=False, **operation_config):
         """Update a Virtual Network gateway.
 
         Update a Virtual Network gateway.
 
+        :param resource_group_name: Name of the resource group to which the
+         resource belongs.
+        :type resource_group_name: str
         :param name: Name of the App Service plan.
         :type name: str
         :param vnet_name: Name of the Virtual Network.
@@ -1553,9 +1411,6 @@ class AppServicePlansOperations(object):
         :param connection_envelope: Definition of the gateway.
         :type connection_envelope: :class:`VnetGateway
          <azure.mgmt.web.models.VnetGateway>`
-        :param resource_group_name: Name of the resource group to which the
-         resource belongs.
-        :type resource_group_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -1569,11 +1424,11 @@ class AppServicePlansOperations(object):
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/serverfarms/{name}/virtualNetworkConnections/{vnetName}/gateways/{gatewayName}'
         path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern='^[-\w\._\(\)]+[^\.]$'),
             'name': self._serialize.url("name", name, 'str'),
             'vnetName': self._serialize.url("vnet_name", vnet_name, 'str'),
             'gatewayName': self._serialize.url("gateway_name", gateway_name, 'str'),
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern='^[-\\w\\._\\(\\)]+[^\\.]$')
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -1615,21 +1470,21 @@ class AppServicePlansOperations(object):
 
         return deserialized
 
-    def listt_routes_for_vnet(
-            self, name, vnet_name, resource_group_name, custom_headers=None, raw=False, **operation_config):
+    def list_routes_for_vnet(
+            self, resource_group_name, name, vnet_name, custom_headers=None, raw=False, **operation_config):
         """Get all routes that are associated with a Virtual Network in an App
         Service plan.
 
         Get all routes that are associated with a Virtual Network in an App
         Service plan.
 
+        :param resource_group_name: Name of the resource group to which the
+         resource belongs.
+        :type resource_group_name: str
         :param name: Name of the App Service plan.
         :type name: str
         :param vnet_name: Name of the Virtual Network.
         :type vnet_name: str
-        :param resource_group_name: Name of the resource group to which the
-         resource belongs.
-        :type resource_group_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -1643,10 +1498,10 @@ class AppServicePlansOperations(object):
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/serverfarms/{name}/virtualNetworkConnections/{vnetName}/routes'
         path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern='^[-\w\._\(\)]+[^\.]$'),
             'name': self._serialize.url("name", name, 'str'),
             'vnetName': self._serialize.url("vnet_name", vnet_name, 'str'),
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern='^[-\\w\\._\\(\\)]+[^\\.]$')
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -1685,20 +1540,20 @@ class AppServicePlansOperations(object):
         return deserialized
 
     def get_route_for_vnet(
-            self, name, vnet_name, route_name, resource_group_name, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, name, vnet_name, route_name, custom_headers=None, raw=False, **operation_config):
         """Get a Virtual Network route in an App Service plan.
 
         Get a Virtual Network route in an App Service plan.
 
+        :param resource_group_name: Name of the resource group to which the
+         resource belongs.
+        :type resource_group_name: str
         :param name: Name of the App Service plan.
         :type name: str
         :param vnet_name: Name of the Virtual Network.
         :type vnet_name: str
         :param route_name: Name of the Virtual Network route.
         :type route_name: str
-        :param resource_group_name: Name of the resource group to which the
-         resource belongs.
-        :type resource_group_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -1712,11 +1567,11 @@ class AppServicePlansOperations(object):
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/serverfarms/{name}/virtualNetworkConnections/{vnetName}/routes/{routeName}'
         path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern='^[-\w\._\(\)]+[^\.]$'),
             'name': self._serialize.url("name", name, 'str'),
             'vnetName': self._serialize.url("vnet_name", vnet_name, 'str'),
             'routeName': self._serialize.url("route_name", route_name, 'str'),
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern='^[-\\w\\._\\(\\)]+[^\\.]$')
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -1755,11 +1610,14 @@ class AppServicePlansOperations(object):
         return deserialized
 
     def create_or_update_vnet_route(
-            self, name, vnet_name, route_name, route, resource_group_name, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, name, vnet_name, route_name, route, custom_headers=None, raw=False, **operation_config):
         """Create or update a Virtual Network route in an App Service plan.
 
         Create or update a Virtual Network route in an App Service plan.
 
+        :param resource_group_name: Name of the resource group to which the
+         resource belongs.
+        :type resource_group_name: str
         :param name: Name of the App Service plan.
         :type name: str
         :param vnet_name: Name of the Virtual Network.
@@ -1768,9 +1626,6 @@ class AppServicePlansOperations(object):
         :type route_name: str
         :param route: Definition of the Virtual Network route.
         :type route: :class:`VnetRoute <azure.mgmt.web.models.VnetRoute>`
-        :param resource_group_name: Name of the resource group to which the
-         resource belongs.
-        :type resource_group_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -1784,11 +1639,11 @@ class AppServicePlansOperations(object):
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/serverfarms/{name}/virtualNetworkConnections/{vnetName}/routes/{routeName}'
         path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern='^[-\w\._\(\)]+[^\.]$'),
             'name': self._serialize.url("name", name, 'str'),
             'vnetName': self._serialize.url("vnet_name", vnet_name, 'str'),
             'routeName': self._serialize.url("route_name", route_name, 'str'),
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern='^[-\\w\\._\\(\\)]+[^\\.]$')
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -1831,20 +1686,20 @@ class AppServicePlansOperations(object):
         return deserialized
 
     def delete_vnet_route(
-            self, name, vnet_name, route_name, resource_group_name, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, name, vnet_name, route_name, custom_headers=None, raw=False, **operation_config):
         """Delete a Virtual Network route in an App Service plan.
 
         Delete a Virtual Network route in an App Service plan.
 
+        :param resource_group_name: Name of the resource group to which the
+         resource belongs.
+        :type resource_group_name: str
         :param name: Name of the App Service plan.
         :type name: str
         :param vnet_name: Name of the Virtual Network.
         :type vnet_name: str
         :param route_name: Name of the Virtual Network route.
         :type route_name: str
-        :param resource_group_name: Name of the resource group to which the
-         resource belongs.
-        :type resource_group_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -1858,11 +1713,11 @@ class AppServicePlansOperations(object):
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/serverfarms/{name}/virtualNetworkConnections/{vnetName}/routes/{routeName}'
         path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern='^[-\w\._\(\)]+[^\.]$'),
             'name': self._serialize.url("name", name, 'str'),
             'vnetName': self._serialize.url("vnet_name", vnet_name, 'str'),
             'routeName': self._serialize.url("route_name", route_name, 'str'),
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern='^[-\\w\\._\\(\\)]+[^\\.]$')
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -1894,11 +1749,14 @@ class AppServicePlansOperations(object):
             return client_raw_response
 
     def update_vnet_route(
-            self, name, vnet_name, route_name, route, resource_group_name, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, name, vnet_name, route_name, route, custom_headers=None, raw=False, **operation_config):
         """Create or update a Virtual Network route in an App Service plan.
 
         Create or update a Virtual Network route in an App Service plan.
 
+        :param resource_group_name: Name of the resource group to which the
+         resource belongs.
+        :type resource_group_name: str
         :param name: Name of the App Service plan.
         :type name: str
         :param vnet_name: Name of the Virtual Network.
@@ -1907,9 +1765,6 @@ class AppServicePlansOperations(object):
         :type route_name: str
         :param route: Definition of the Virtual Network route.
         :type route: :class:`VnetRoute <azure.mgmt.web.models.VnetRoute>`
-        :param resource_group_name: Name of the resource group to which the
-         resource belongs.
-        :type resource_group_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -1923,11 +1778,11 @@ class AppServicePlansOperations(object):
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/serverfarms/{name}/virtualNetworkConnections/{vnetName}/routes/{routeName}'
         path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern='^[-\w\._\(\)]+[^\.]$'),
             'name': self._serialize.url("name", name, 'str'),
             'vnetName': self._serialize.url("vnet_name", vnet_name, 'str'),
             'routeName': self._serialize.url("route_name", route_name, 'str'),
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern='^[-\\w\\._\\(\\)]+[^\\.]$')
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -1970,19 +1825,19 @@ class AppServicePlansOperations(object):
         return deserialized
 
     def reboot_worker(
-            self, name, worker_name, resource_group_name, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, name, worker_name, custom_headers=None, raw=False, **operation_config):
         """Reboot a worker machine in an App Service plan.
 
         Reboot a worker machine in an App Service plan.
 
+        :param resource_group_name: Name of the resource group to which the
+         resource belongs.
+        :type resource_group_name: str
         :param name: Name of the App Service plan.
         :type name: str
         :param worker_name: Name of worker machine, which typically starts
          with RD.
         :type worker_name: str
-        :param resource_group_name: Name of the resource group to which the
-         resource belongs.
-        :type resource_group_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -1996,10 +1851,10 @@ class AppServicePlansOperations(object):
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/serverfarms/{name}/workers/{workerName}/reboot'
         path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern='^[-\w\._\(\)]+[^\.]$'),
             'name': self._serialize.url("name", name, 'str'),
             'workerName': self._serialize.url("worker_name", worker_name, 'str'),
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern='^[-\\w\\._\\(\\)]+[^\\.]$')
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 

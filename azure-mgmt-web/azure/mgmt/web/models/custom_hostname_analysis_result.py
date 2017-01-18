@@ -67,7 +67,6 @@ class CustomHostnameAnalysisResult(Resource):
 
     _validation = {
         'id': {'readonly': True},
-        'name': {'required': True},
         'location': {'required': True},
         'is_hostname_already_verified': {'readonly': True},
         'custom_domain_verification_test': {'readonly': True},
@@ -97,7 +96,7 @@ class CustomHostnameAnalysisResult(Resource):
         'alternate_txt_records': {'key': 'properties.alternateTxtRecords', 'type': '[str]'},
     }
 
-    def __init__(self, name, location, kind=None, type=None, tags=None, c_name_records=None, txt_records=None, a_records=None, alternate_cname_records=None, alternate_txt_records=None):
+    def __init__(self, location, name=None, kind=None, type=None, tags=None, c_name_records=None, txt_records=None, a_records=None, alternate_cname_records=None, alternate_txt_records=None):
         super(CustomHostnameAnalysisResult, self).__init__(name=name, kind=kind, location=location, type=type, tags=tags)
         self.is_hostname_already_verified = None
         self.custom_domain_verification_test = None

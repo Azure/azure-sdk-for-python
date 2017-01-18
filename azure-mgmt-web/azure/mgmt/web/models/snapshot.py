@@ -36,7 +36,6 @@ class Snapshot(Resource):
 
     _validation = {
         'id': {'readonly': True},
-        'name': {'required': True},
         'location': {'required': True},
         'time': {'readonly': True},
     }
@@ -51,6 +50,6 @@ class Snapshot(Resource):
         'time': {'key': 'properties.time', 'type': 'iso-8601'},
     }
 
-    def __init__(self, name, location, kind=None, type=None, tags=None):
+    def __init__(self, location, name=None, kind=None, type=None, tags=None):
         super(Snapshot, self).__init__(name=name, kind=kind, location=location, type=type, tags=tags)
         self.time = None

@@ -37,7 +37,6 @@ class RestoreResponse(Resource):
 
     _validation = {
         'id': {'readonly': True},
-        'name': {'required': True},
         'location': {'required': True},
         'operation_id': {'readonly': True},
     }
@@ -52,6 +51,6 @@ class RestoreResponse(Resource):
         'operation_id': {'key': 'properties.operationId', 'type': 'str'},
     }
 
-    def __init__(self, name, location, kind=None, type=None, tags=None):
+    def __init__(self, location, name=None, kind=None, type=None, tags=None):
         super(RestoreResponse, self).__init__(name=name, kind=kind, location=location, type=type, tags=tags)
         self.operation_id = None
