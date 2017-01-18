@@ -25,7 +25,7 @@ class ResourceLink(Model):
     :param properties: Properties for resource link.
     :type properties: :class:`ResourceLinkProperties
      <azure.mgmt.resource.links.models.ResourceLinkProperties>`
-    """ 
+    """
 
     _validation = {
         'id': {'readonly': True},

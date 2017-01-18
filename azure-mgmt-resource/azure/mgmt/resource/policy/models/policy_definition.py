@@ -26,27 +26,31 @@ class PolicyDefinition(Model):
     :type description: str
     :param policy_rule: The policy rule.
     :type policy_rule: object
+    :param parameters: Required if a parameter is used in policy rule.
+    :type parameters: object
     :param id: The ID of the policy definition.
     :type id: str
     :param name: The name of the policy definition. If you do not specify a
      value for name, the value is inferred from the name value in the request
      URI.
     :type name: str
-    """ 
+    """
 
     _attribute_map = {
         'policy_type': {'key': 'properties.policyType', 'type': 'str'},
         'display_name': {'key': 'properties.displayName', 'type': 'str'},
         'description': {'key': 'properties.description', 'type': 'str'},
         'policy_rule': {'key': 'properties.policyRule', 'type': 'object'},
+        'parameters': {'key': 'properties.parameters', 'type': 'object'},
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
     }
 
-    def __init__(self, policy_type=None, display_name=None, description=None, policy_rule=None, id=None, name=None):
+    def __init__(self, policy_type=None, display_name=None, description=None, policy_rule=None, parameters=None, id=None, name=None):
         self.policy_type = policy_type
         self.display_name = display_name
         self.description = description
         self.policy_rule = policy_rule
+        self.parameters = parameters
         self.id = id
         self.name = name

@@ -25,11 +25,9 @@ class ManagementLockClientConfiguration(AzureConfiguration):
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
      object<msrestazure.azure_active_directory>`
-    :param subscription_id: Gets subscription credentials which uniquely
-     identify Microsoft Azure subscription. The subscription ID forms part of
-     the URI for every service call.
+    :param subscription_id: The ID of the target subscription.
     :type subscription_id: str
-    :param api_version: Client Api Version.
+    :param api_version: The API version to use for the operation.
     :type api_version: str
     :param accept_language: Gets or sets the preferred language for the
      response.
@@ -46,7 +44,7 @@ class ManagementLockClientConfiguration(AzureConfiguration):
     """
 
     def __init__(
-            self, credentials, subscription_id, api_version='2015-01-01', accept_language='en-US', long_running_operation_retry_timeout=30, generate_client_request_id=True, base_url=None, filepath=None):
+            self, credentials, subscription_id, api_version='2016-09-01', accept_language='en-US', long_running_operation_retry_timeout=30, generate_client_request_id=True, base_url=None, filepath=None):
 
         if credentials is None:
             raise ValueError("Parameter 'credentials' must not be None.")
@@ -75,7 +73,7 @@ class ManagementLockClientConfiguration(AzureConfiguration):
 
 
 class ManagementLockClient(object):
-    """ManagementLockClient
+    """Azure resources can be locked to prevent other users in your organization from deleting or modifying resources.
 
     :ivar config: Configuration for client.
     :vartype config: ManagementLockClientConfiguration
@@ -86,11 +84,9 @@ class ManagementLockClient(object):
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
      object<msrestazure.azure_active_directory>`
-    :param subscription_id: Gets subscription credentials which uniquely
-     identify Microsoft Azure subscription. The subscription ID forms part of
-     the URI for every service call.
+    :param subscription_id: The ID of the target subscription.
     :type subscription_id: str
-    :param api_version: Client Api Version.
+    :param api_version: The API version to use for the operation.
     :type api_version: str
     :param accept_language: Gets or sets the preferred language for the
      response.
@@ -107,7 +103,7 @@ class ManagementLockClient(object):
     """
 
     def __init__(
-            self, credentials, subscription_id, api_version='2015-01-01', accept_language='en-US', long_running_operation_retry_timeout=30, generate_client_request_id=True, base_url=None, filepath=None):
+            self, credentials, subscription_id, api_version='2016-09-01', accept_language='en-US', long_running_operation_retry_timeout=30, generate_client_request_id=True, base_url=None, filepath=None):
 
         self.config = ManagementLockClientConfiguration(credentials, subscription_id, api_version, accept_language, long_running_operation_retry_timeout, generate_client_request_id, base_url, filepath)
         self._client = ServiceClient(self.config.credentials, self.config)

@@ -17,7 +17,7 @@ class ResourceLinkFilter(Model):
 
     :param target_id: The ID of the target resource.
     :type target_id: str
-    """ 
+    """
 
     _validation = {
         'target_id': {'required': True},
