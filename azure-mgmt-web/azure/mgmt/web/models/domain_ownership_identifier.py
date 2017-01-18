@@ -36,7 +36,6 @@ class DomainOwnershipIdentifier(Resource):
 
     _validation = {
         'id': {'readonly': True},
-        'name': {'required': True},
         'location': {'required': True},
     }
 
@@ -50,6 +49,6 @@ class DomainOwnershipIdentifier(Resource):
         'ownership_id': {'key': 'properties.ownershipId', 'type': 'str'},
     }
 
-    def __init__(self, name, location, kind=None, type=None, tags=None, ownership_id=None):
+    def __init__(self, location, name=None, kind=None, type=None, tags=None, ownership_id=None):
         super(DomainOwnershipIdentifier, self).__init__(name=name, kind=kind, location=location, type=type, tags=tags)
         self.ownership_id = ownership_id

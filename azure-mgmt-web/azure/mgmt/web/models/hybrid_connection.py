@@ -51,7 +51,6 @@ class HybridConnection(Resource):
 
     _validation = {
         'id': {'readonly': True},
-        'name': {'required': True},
         'location': {'required': True},
     }
 
@@ -71,7 +70,7 @@ class HybridConnection(Resource):
         'send_key_value': {'key': 'properties.sendKeyValue', 'type': 'str'},
     }
 
-    def __init__(self, name, location, kind=None, type=None, tags=None, service_bus_namespace=None, relay_name=None, relay_arm_uri=None, hostname=None, port=None, send_key_name=None, send_key_value=None):
+    def __init__(self, location, name=None, kind=None, type=None, tags=None, service_bus_namespace=None, relay_name=None, relay_arm_uri=None, hostname=None, port=None, send_key_name=None, send_key_value=None):
         super(HybridConnection, self).__init__(name=name, kind=kind, location=location, type=type, tags=tags)
         self.service_bus_namespace = service_bus_namespace
         self.relay_name = relay_name

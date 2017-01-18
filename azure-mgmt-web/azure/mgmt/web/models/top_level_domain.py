@@ -30,19 +30,17 @@ class TopLevelDomain(Resource):
     :type type: str
     :param tags: Resource tags.
     :type tags: dict
-    :ivar top_level_domain_name: Name of the top level domain.
-    :vartype top_level_domain_name: str
-    :ivar privacy: If <code>true</code>, then the top level domain supports
+    :ivar domain_name: Name of the top level domain.
+    :vartype domain_name: str
+    :param privacy: If <code>true</code>, then the top level domain supports
      domain privacy; otherwise, <code>false</code>.
-    :vartype privacy: bool
+    :type privacy: bool
     """
 
     _validation = {
         'id': {'readonly': True},
-        'name': {'required': True},
         'location': {'required': True},
-        'top_level_domain_name': {'readonly': True},
-        'privacy': {'readonly': True},
+        'domain_name': {'readonly': True},
     }
 
     _attribute_map = {
@@ -52,11 +50,11 @@ class TopLevelDomain(Resource):
         'location': {'key': 'location', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
-        'top_level_domain_name': {'key': 'properties.name', 'type': 'str'},
+        'domain_name': {'key': 'properties.name', 'type': 'str'},
         'privacy': {'key': 'properties.privacy', 'type': 'bool'},
     }
 
-    def __init__(self, name, location, kind=None, type=None, tags=None):
+    def __init__(self, location, name=None, kind=None, type=None, tags=None, privacy=None):
         super(TopLevelDomain, self).__init__(name=name, kind=kind, location=location, type=type, tags=tags)
-        self.top_level_domain_name = None
-        self.privacy = None
+        self.domain_name = None
+        self.privacy = privacy

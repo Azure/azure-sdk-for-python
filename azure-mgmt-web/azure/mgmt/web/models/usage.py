@@ -54,7 +54,6 @@ class Usage(Resource):
 
     _validation = {
         'id': {'readonly': True},
-        'name': {'required': True},
         'location': {'required': True},
         'display_name': {'readonly': True},
         'usage_name': {'readonly': True},
@@ -85,7 +84,7 @@ class Usage(Resource):
         'site_mode': {'key': 'properties.siteMode', 'type': 'str'},
     }
 
-    def __init__(self, name, location, kind=None, type=None, tags=None):
+    def __init__(self, location, name=None, kind=None, type=None, tags=None):
         super(Usage, self).__init__(name=name, kind=kind, location=location, type=type, tags=tags)
         self.display_name = None
         self.usage_name = None

@@ -46,7 +46,6 @@ class AppServiceCertificate(Resource):
 
     _validation = {
         'id': {'readonly': True},
-        'name': {'required': True},
         'location': {'required': True},
         'provisioning_state': {'readonly': True},
     }
@@ -63,7 +62,7 @@ class AppServiceCertificate(Resource):
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'KeyVaultSecretStatus'},
     }
 
-    def __init__(self, name, location, kind=None, type=None, tags=None, key_vault_id=None, key_vault_secret_name=None):
+    def __init__(self, location, name=None, kind=None, type=None, tags=None, key_vault_id=None, key_vault_secret_name=None):
         super(AppServiceCertificate, self).__init__(name=name, kind=kind, location=location, type=type, tags=tags)
         self.key_vault_id = key_vault_id
         self.key_vault_secret_name = key_vault_secret_name

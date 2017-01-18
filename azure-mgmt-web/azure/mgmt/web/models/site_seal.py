@@ -12,18 +12,20 @@
 from msrest.serialization import Model
 
 
-class TopLevelDomainAgreementOption(Model):
-    """Options for retrieving the list of top level domain legal agreements.
+class SiteSeal(Model):
+    """Site seal.
 
-    :param include_privacy: If <code>true</code>, then the list of agreements
-     will include agreements for domain privacy as well; otherwise,
-     <code>false</code>.
-    :type include_privacy: bool
+    :param html: HTML snippet
+    :type html: str
     """
 
-    _attribute_map = {
-        'include_privacy': {'key': 'includePrivacy', 'type': 'bool'},
+    _validation = {
+        'html': {'required': True},
     }
 
-    def __init__(self, include_privacy=None):
-        self.include_privacy = include_privacy
+    _attribute_map = {
+        'html': {'key': 'html', 'type': 'str'},
+    }
+
+    def __init__(self, html):
+        self.html = html

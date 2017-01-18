@@ -40,7 +40,6 @@ class GeoRegion(Resource):
 
     _validation = {
         'id': {'readonly': True},
-        'name': {'required': True},
         'location': {'required': True},
         'geo_region_name': {'readonly': True},
         'description': {'readonly': True},
@@ -59,7 +58,7 @@ class GeoRegion(Resource):
         'display_name': {'key': 'properties.displayName', 'type': 'str'},
     }
 
-    def __init__(self, name, location, kind=None, type=None, tags=None):
+    def __init__(self, location, name=None, kind=None, type=None, tags=None):
         super(GeoRegion, self).__init__(name=name, kind=kind, location=location, type=type, tags=tags)
         self.geo_region_name = None
         self.description = None

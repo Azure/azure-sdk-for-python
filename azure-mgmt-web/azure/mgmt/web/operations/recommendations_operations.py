@@ -35,19 +35,20 @@ class RecommendationsOperations(object):
 
         self.config = config
 
-    def get(
+    def list(
             self, featured=None, filter=None, custom_headers=None, raw=False, **operation_config):
-        """Get all recommendations for a subscription.
+        """List all recommendations for a subscription.
 
-        Get all recommendations for a subscription.
+        List all recommendations for a subscription.
 
         :param featured: Specify <code>true</code> to return only the most
          critical recommendations. The default is <code>false</code>, which
          returns all recommendations.
         :type featured: bool
-        :param filter: Return only channels specified in the filter. Filter is
-         specified by using OData syntax. Example: $filter=channels eq 'Api' or
-         channel eq 'Notification'
+        :param filter: Filter is specified by using OData syntax. Example:
+         $filter=channels eq 'Api' or channel eq 'Notification' and startTime
+         eq '2014-01-01T00:00:00Z' and endTime eq '2014-12-31T23:59:59Z' and
+         timeGrain eq duration'[PT1H|PT1M|P1D]
         :type filter: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -156,26 +157,23 @@ class RecommendationsOperations(object):
             return client_raw_response
 
     def list_history_for_web_app(
-            self, site_name, resource_group_name, start_time=None, end_time=None, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, site_name, filter=None, custom_headers=None, raw=False, **operation_config):
         """Get past recommendations for an app, optionally specified by the time
         range.
 
         Get past recommendations for an app, optionally specified by the time
         range.
 
-        :param site_name: Name of the app.
-        :type site_name: str
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
         :type resource_group_name: str
-        :param start_time: The start time of a time range to query, e.g.
-         $filter=startTime eq '2015-01-01T00:00:00Z' and endTime eq
-         '2015-01-02T00:00:00Z'.
-        :type start_time: str
-        :param end_time: The end time of a time range to query, e.g.
-         $filter=startTime eq '2015-01-01T00:00:00Z' and endTime eq
-         '2015-01-02T00:00:00Z'.
-        :type end_time: str
+        :param site_name: Name of the app.
+        :type site_name: str
+        :param filter: Filter is specified by using OData syntax. Example:
+         $filter=channels eq 'Api' or channel eq 'Notification' and startTime
+         eq '2014-01-01T00:00:00Z' and endTime eq '2014-12-31T23:59:59Z' and
+         timeGrain eq duration'[PT1H|PT1M|P1D]
+        :type filter: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -190,18 +188,16 @@ class RecommendationsOperations(object):
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{siteName}/recommendationHistory'
         path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern='^[-\w\._\(\)]+[^\.]$'),
             'siteName': self._serialize.url("site_name", site_name, 'str'),
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern='^[-\\w\\._\\(\\)]+[^\\.]$')
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
-        if start_time is not None:
-            query_parameters['startTime'] = self._serialize.query("start_time", start_time, 'str')
-        if end_time is not None:
-            query_parameters['endTime'] = self._serialize.query("end_time", end_time, 'str')
+        if filter is not None:
+            query_parameters['$filter'] = self._serialize.query("filter", filter, 'str', skip_quote=True)
         query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
@@ -235,28 +231,24 @@ class RecommendationsOperations(object):
         return deserialized
 
     def list_recommended_rules_for_web_app(
-            self, site_name, resource_group_name, featured=None, web_app_sku=None, num_slots=None, live_hours=None, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, site_name, featured=None, filter=None, custom_headers=None, raw=False, **operation_config):
         """Get all recommendations for an app.
 
         Get all recommendations for an app.
 
-        :param site_name: Name of the app.
-        :type site_name: str
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
         :type resource_group_name: str
+        :param site_name: Name of the app.
+        :type site_name: str
         :param featured: Specify <code>true</code> to return only the most
          critical recommendations. The default is <code>false</code>, which
          returns all recommendations.
         :type featured: bool
-        :param web_app_sku: SKU of the app.
-        :type web_app_sku: str
-        :param num_slots: Number of deployment slots in the app.
-        :type num_slots: int
-        :param live_hours: If greater than zero, this operation scans the last
-         active live site symptoms and dynamically generate on-the-fly
-         recommendations.
-        :type live_hours: int
+        :param filter: Return only channels specified in the filter. Filter is
+         specified by using OData syntax. Example: $filter=channels eq 'Api' or
+         channel eq 'Notification'
+        :type filter: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -271,9 +263,9 @@ class RecommendationsOperations(object):
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{siteName}/recommendations'
         path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern='^[-\w\._\(\)]+[^\.]$'),
             'siteName': self._serialize.url("site_name", site_name, 'str'),
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern='^[-\\w\\._\\(\\)]+[^\\.]$')
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -281,12 +273,8 @@ class RecommendationsOperations(object):
         query_parameters = {}
         if featured is not None:
             query_parameters['featured'] = self._serialize.query("featured", featured, 'bool')
-        if web_app_sku is not None:
-            query_parameters['webAppSku'] = self._serialize.query("web_app_sku", web_app_sku, 'str')
-        if num_slots is not None:
-            query_parameters['numSlots'] = self._serialize.query("num_slots", num_slots, 'int')
-        if live_hours is not None:
-            query_parameters['liveHours'] = self._serialize.query("live_hours", live_hours, 'int')
+        if filter is not None:
+            query_parameters['$filter'] = self._serialize.query("filter", filter, 'str', skip_quote=True)
         query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
@@ -320,16 +308,16 @@ class RecommendationsOperations(object):
         return deserialized
 
     def disable_all_for_web_app(
-            self, site_name, resource_group_name, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, site_name, custom_headers=None, raw=False, **operation_config):
         """Disable all recommendations for an app.
 
         Disable all recommendations for an app.
 
-        :param site_name: Name of the app.
-        :type site_name: str
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
         :type resource_group_name: str
+        :param site_name: Name of the app.
+        :type site_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -343,9 +331,9 @@ class RecommendationsOperations(object):
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{siteName}/recommendations/disable'
         path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern='^[-\w\._\(\)]+[^\.]$'),
             'siteName': self._serialize.url("site_name", site_name, 'str'),
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern='^[-\\w\\._\\(\\)]+[^\\.]$')
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -377,16 +365,16 @@ class RecommendationsOperations(object):
             return client_raw_response
 
     def reset_all_filters_for_web_app(
-            self, site_name, resource_group_name, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, site_name, custom_headers=None, raw=False, **operation_config):
         """Reset all recommendation opt-out settings for an app.
 
         Reset all recommendation opt-out settings for an app.
 
-        :param site_name: Name of the app.
-        :type site_name: str
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
         :type resource_group_name: str
+        :param site_name: Name of the app.
+        :type site_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -400,9 +388,9 @@ class RecommendationsOperations(object):
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{siteName}/recommendations/reset'
         path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern='^[-\w\._\(\)]+[^\.]$'),
             'siteName': self._serialize.url("site_name", site_name, 'str'),
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern='^[-\\w\\._\\(\\)]+[^\\.]$')
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -434,18 +422,18 @@ class RecommendationsOperations(object):
             return client_raw_response
 
     def get_rule_details_by_web_app(
-            self, site_name, name, resource_group_name, update_seen=None, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, site_name, name, update_seen=None, custom_headers=None, raw=False, **operation_config):
         """Get a recommendation rule for an app.
 
         Get a recommendation rule for an app.
 
+        :param resource_group_name: Name of the resource group to which the
+         resource belongs.
+        :type resource_group_name: str
         :param site_name: Name of the app.
         :type site_name: str
         :param name: Name of the recommendation.
         :type name: str
-        :param resource_group_name: Name of the resource group to which the
-         resource belongs.
-        :type resource_group_name: str
         :param update_seen: Specify <code>true</code> to update the last-seen
          timestamp of the recommendation object.
         :type update_seen: bool
@@ -463,10 +451,10 @@ class RecommendationsOperations(object):
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{siteName}/recommendations/{name}'
         path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern='^[-\w\._\(\)]+[^\.]$'),
             'siteName': self._serialize.url("site_name", site_name, 'str'),
             'name': self._serialize.url("name", name, 'str'),
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern='^[-\\w\\._\\(\\)]+[^\\.]$')
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 

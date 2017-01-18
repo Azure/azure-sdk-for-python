@@ -45,7 +45,6 @@ class StorageMigrationOptions(Resource):
 
     _validation = {
         'id': {'readonly': True},
-        'name': {'required': True},
         'location': {'required': True},
     }
 
@@ -62,7 +61,7 @@ class StorageMigrationOptions(Resource):
         'block_write_access_to_site': {'key': 'properties.blockWriteAccessToSite', 'type': 'bool'},
     }
 
-    def __init__(self, name, location, kind=None, type=None, tags=None, azurefiles_connection_string=None, azurefiles_share=None, switch_site_after_migration=False, block_write_access_to_site=False):
+    def __init__(self, location, name=None, kind=None, type=None, tags=None, azurefiles_connection_string=None, azurefiles_share=None, switch_site_after_migration=False, block_write_access_to_site=False):
         super(StorageMigrationOptions, self).__init__(name=name, kind=kind, location=location, type=type, tags=tags)
         self.azurefiles_connection_string = azurefiles_connection_string
         self.azurefiles_share = azurefiles_share

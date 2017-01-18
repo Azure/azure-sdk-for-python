@@ -48,7 +48,6 @@ class RelayServiceConnectionEntity(Resource):
 
     _validation = {
         'id': {'readonly': True},
-        'name': {'required': True},
         'location': {'required': True},
     }
 
@@ -68,7 +67,7 @@ class RelayServiceConnectionEntity(Resource):
         'biztalk_uri': {'key': 'properties.biztalkUri', 'type': 'str'},
     }
 
-    def __init__(self, name, location, kind=None, type=None, tags=None, entity_name=None, entity_connection_string=None, resource_type=None, resource_connection_string=None, hostname=None, port=None, biztalk_uri=None):
+    def __init__(self, location, name=None, kind=None, type=None, tags=None, entity_name=None, entity_connection_string=None, resource_type=None, resource_connection_string=None, hostname=None, port=None, biztalk_uri=None):
         super(RelayServiceConnectionEntity, self).__init__(name=name, kind=kind, location=location, type=type, tags=tags)
         self.entity_name = entity_name
         self.entity_connection_string = entity_connection_string

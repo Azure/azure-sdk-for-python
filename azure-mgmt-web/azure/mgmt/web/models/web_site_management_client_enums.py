@@ -68,6 +68,9 @@ class CertificateOrderActionType(Enum):
     org_validation_complete = "OrgValidationComplete"
     san_drop = "SanDrop"
     fraud_cleared = "FraudCleared"
+    certificate_expired = "CertificateExpired"
+    certificate_expiration_warning = "CertificateExpirationWarning"
+    fraud_documentation_required = "FraudDocumentationRequired"
     unknown = "Unknown"
 
 
@@ -120,6 +123,20 @@ class AutoHealActionType(Enum):
     custom_action = "CustomAction"
 
 
+class ConnectionStringType(Enum):
+
+    my_sql = "MySql"
+    sql_server = "SQLServer"
+    sql_azure = "SQLAzure"
+    custom = "Custom"
+    notification_hub = "NotificationHub"
+    service_bus = "ServiceBus"
+    event_hub = "EventHub"
+    api_hub = "ApiHub"
+    doc_db = "DocDb"
+    redis_cache = "RedisCache"
+
+
 class SslState(Enum):
 
     disabled = "Disabled"
@@ -162,6 +179,13 @@ class SiteLoadBalancing(Enum):
     least_response_time = "LeastResponseTime"
     weighted_total_traffic = "WeightedTotalTraffic"
     request_hash = "RequestHash"
+
+
+class RouteType(Enum):
+
+    default = "DEFAULT"
+    inherited = "INHERITED"
+    static = "STATIC"
 
 
 class DomainStatus(Enum):
@@ -213,6 +237,13 @@ class DomainType(Enum):
     soft_deleted = "SoftDeleted"
 
 
+class ResourceScopeType(Enum):
+
+    server_farm = "ServerFarm"
+    subscription = "Subscription"
+    web_site = "WebSite"
+
+
 class NotificationLevel(Enum):
 
     critical = "Critical"
@@ -238,6 +269,12 @@ class AppServicePlanRestrictions(Enum):
     basic = "Basic"
     standard = "Standard"
     premium = "Premium"
+
+
+class InAvailabilityReasonType(Enum):
+
+    invalid = "Invalid"
+    already_exists = "AlreadyExists"
 
 
 class CheckNameResourceTypes(Enum):
@@ -276,6 +313,13 @@ class BackupItemStatus(Enum):
     deleted = "Deleted"
 
 
+class DatabaseType(Enum):
+
+    sql_azure = "SqlAzure"
+    my_sql = "MySql"
+    local_my_sql = "LocalMySql"
+
+
 class FrequencyUnit(Enum):
 
     day = "Day"
@@ -289,18 +333,11 @@ class BackupRestoreOperationType(Enum):
     relocation = "Relocation"
 
 
-class ConnectionStringType(Enum):
+class PublishingProfileFormat(Enum):
 
-    my_sql = "MySql"
-    sql_server = "SQLServer"
-    sql_azure = "SQLAzure"
-    custom = "Custom"
-    notification_hub = "NotificationHub"
-    service_bus = "ServiceBus"
-    event_hub = "EventHub"
-    api_hub = "ApiHub"
-    doc_db = "DocDb"
-    redis_cache = "RedisCache"
+    file_zilla3 = "FileZilla3"
+    web_deploy = "WebDeploy"
+    ftp = "Ftp"
 
 
 class DnsVerificationTestResult(Enum):
@@ -330,3 +367,13 @@ class CloneAbilityResult(Enum):
     cloneable = "Cloneable"
     partially_cloneable = "PartiallyCloneable"
     not_cloneable = "NotCloneable"
+
+
+class SkuName(Enum):
+
+    free = "Free"
+    shared = "Shared"
+    basic = "Basic"
+    standard = "Standard"
+    premium = "Premium"
+    dynamic = "Dynamic"

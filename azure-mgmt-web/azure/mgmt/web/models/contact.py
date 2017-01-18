@@ -38,6 +38,13 @@ class Contact(Model):
     :type phone: str
     """
 
+    _validation = {
+        'email': {'required': True},
+        'name_first': {'required': True},
+        'name_last': {'required': True},
+        'phone': {'required': True},
+    }
+
     _attribute_map = {
         'address_mailing': {'key': 'addressMailing', 'type': 'Address'},
         'email': {'key': 'email', 'type': 'str'},
@@ -50,7 +57,7 @@ class Contact(Model):
         'phone': {'key': 'phone', 'type': 'str'},
     }
 
-    def __init__(self, address_mailing=None, email=None, fax=None, job_title=None, name_first=None, name_last=None, name_middle=None, organization=None, phone=None):
+    def __init__(self, email, name_first, name_last, phone, address_mailing=None, fax=None, job_title=None, name_middle=None, organization=None):
         self.address_mailing = address_mailing
         self.email = email
         self.fax = fax

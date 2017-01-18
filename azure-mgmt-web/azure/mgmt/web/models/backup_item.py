@@ -30,8 +30,8 @@ class BackupItem(Resource):
     :type type: str
     :param tags: Resource tags.
     :type tags: dict
-    :ivar backup_item_id: Id of the backup.
-    :vartype backup_item_id: int
+    :ivar backup_id: Id of the backup.
+    :vartype backup_id: int
     :ivar storage_account_url: SAS URL for the storage account container which
      contains this backup.
     :vartype storage_account_url: str
@@ -71,9 +71,8 @@ class BackupItem(Resource):
 
     _validation = {
         'id': {'readonly': True},
-        'name': {'required': True},
         'location': {'required': True},
-        'backup_item_id': {'readonly': True},
+        'backup_id': {'readonly': True},
         'storage_account_url': {'readonly': True},
         'blob_name': {'readonly': True},
         'backup_item_name': {'readonly': True},
@@ -96,7 +95,7 @@ class BackupItem(Resource):
         'location': {'key': 'location', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
-        'backup_item_id': {'key': 'properties.id', 'type': 'int'},
+        'backup_id': {'key': 'properties.id', 'type': 'int'},
         'storage_account_url': {'key': 'properties.storageAccountUrl', 'type': 'str'},
         'blob_name': {'key': 'properties.blobName', 'type': 'str'},
         'backup_item_name': {'key': 'properties.name', 'type': 'str'},
@@ -112,9 +111,9 @@ class BackupItem(Resource):
         'website_size_in_bytes': {'key': 'properties.websiteSizeInBytes', 'type': 'long'},
     }
 
-    def __init__(self, name, location, kind=None, type=None, tags=None):
+    def __init__(self, location, name=None, kind=None, type=None, tags=None):
         super(BackupItem, self).__init__(name=name, kind=kind, location=location, type=type, tags=tags)
-        self.backup_item_id = None
+        self.backup_id = None
         self.storage_account_url = None
         self.blob_name = None
         self.backup_item_name = None

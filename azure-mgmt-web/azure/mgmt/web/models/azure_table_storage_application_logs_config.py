@@ -23,11 +23,15 @@ class AzureTableStorageApplicationLogsConfig(Model):
     :type sas_url: str
     """
 
+    _validation = {
+        'sas_url': {'required': True},
+    }
+
     _attribute_map = {
         'level': {'key': 'level', 'type': 'LogLevel'},
         'sas_url': {'key': 'sasUrl', 'type': 'str'},
     }
 
-    def __init__(self, level=None, sas_url=None):
+    def __init__(self, sas_url, level=None):
         self.level = level
         self.sas_url = sas_url

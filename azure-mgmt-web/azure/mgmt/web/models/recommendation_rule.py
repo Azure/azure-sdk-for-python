@@ -31,9 +31,6 @@ class RecommendationRule(Model):
     :param action_name: Name of action that is recommended by this rule in
      string.
     :type action_name: str
-    :param enabled: On/off flag indicating the rule is currently enabled or
-     disabled.
-    :type enabled: int
     :param level: Level of impact indicating how critical this rule is.
      Possible values include: 'Critical', 'Warning', 'Information',
      'NonUrgentSuggestion'
@@ -53,20 +50,18 @@ class RecommendationRule(Model):
         'recommendation_id': {'key': 'recommendationId', 'type': 'str'},
         'description': {'key': 'description', 'type': 'str'},
         'action_name': {'key': 'actionName', 'type': 'str'},
-        'enabled': {'key': 'enabled', 'type': 'int'},
         'level': {'key': 'level', 'type': 'NotificationLevel'},
         'channels': {'key': 'channels', 'type': 'Channels'},
         'tags': {'key': 'tags', 'type': '[str]'},
     }
 
-    def __init__(self, name=None, display_name=None, message=None, recommendation_id=None, description=None, action_name=None, enabled=None, level=None, channels=None, tags=None):
+    def __init__(self, name=None, display_name=None, message=None, recommendation_id=None, description=None, action_name=None, level=None, channels=None, tags=None):
         self.name = name
         self.display_name = display_name
         self.message = message
         self.recommendation_id = recommendation_id
         self.description = description
         self.action_name = action_name
-        self.enabled = enabled
         self.level = level
         self.channels = channels
         self.tags = tags

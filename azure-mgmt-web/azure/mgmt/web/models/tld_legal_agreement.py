@@ -25,6 +25,12 @@ class TldLegalAgreement(Model):
     :type url: str
     """
 
+    _validation = {
+        'agreement_key': {'required': True},
+        'title': {'required': True},
+        'content': {'required': True},
+    }
+
     _attribute_map = {
         'agreement_key': {'key': 'agreementKey', 'type': 'str'},
         'title': {'key': 'title', 'type': 'str'},
@@ -32,7 +38,7 @@ class TldLegalAgreement(Model):
         'url': {'key': 'url', 'type': 'str'},
     }
 
-    def __init__(self, agreement_key=None, title=None, content=None, url=None):
+    def __init__(self, agreement_key, title, content, url=None):
         self.agreement_key = agreement_key
         self.title = title
         self.content = content

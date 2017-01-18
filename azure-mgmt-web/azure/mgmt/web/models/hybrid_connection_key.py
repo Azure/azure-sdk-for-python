@@ -39,7 +39,6 @@ class HybridConnectionKey(Resource):
 
     _validation = {
         'id': {'readonly': True},
-        'name': {'required': True},
         'location': {'required': True},
         'send_key_name': {'readonly': True},
         'send_key_value': {'readonly': True},
@@ -56,7 +55,7 @@ class HybridConnectionKey(Resource):
         'send_key_value': {'key': 'properties.sendKeyValue', 'type': 'str'},
     }
 
-    def __init__(self, name, location, kind=None, type=None, tags=None):
+    def __init__(self, location, name=None, kind=None, type=None, tags=None):
         super(HybridConnectionKey, self).__init__(name=name, kind=kind, location=location, type=type, tags=tags)
         self.send_key_name = None
         self.send_key_value = None

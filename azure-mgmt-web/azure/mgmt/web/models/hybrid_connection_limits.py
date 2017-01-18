@@ -39,7 +39,6 @@ class HybridConnectionLimits(Resource):
 
     _validation = {
         'id': {'readonly': True},
-        'name': {'required': True},
         'location': {'required': True},
         'current': {'readonly': True},
         'maximum': {'readonly': True},
@@ -56,7 +55,7 @@ class HybridConnectionLimits(Resource):
         'maximum': {'key': 'properties.maximum', 'type': 'int'},
     }
 
-    def __init__(self, name, location, kind=None, type=None, tags=None):
+    def __init__(self, location, name=None, kind=None, type=None, tags=None):
         super(HybridConnectionLimits, self).__init__(name=name, kind=kind, location=location, type=type, tags=tags)
         self.current = None
         self.maximum = None

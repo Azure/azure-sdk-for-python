@@ -44,7 +44,6 @@ class SourceControl(Resource):
 
     _validation = {
         'id': {'readonly': True},
-        'name': {'required': True},
         'location': {'required': True},
     }
 
@@ -62,7 +61,7 @@ class SourceControl(Resource):
         'expiration_time': {'key': 'properties.expirationTime', 'type': 'iso-8601'},
     }
 
-    def __init__(self, name, location, kind=None, type=None, tags=None, source_control_name=None, token=None, token_secret=None, refresh_token=None, expiration_time=None):
+    def __init__(self, location, name=None, kind=None, type=None, tags=None, source_control_name=None, token=None, token_secret=None, refresh_token=None, expiration_time=None):
         super(SourceControl, self).__init__(name=name, kind=kind, location=location, type=type, tags=tags)
         self.source_control_name = source_control_name
         self.token = token

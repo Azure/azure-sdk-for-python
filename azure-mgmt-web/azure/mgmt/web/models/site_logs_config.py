@@ -46,7 +46,6 @@ class SiteLogsConfig(Resource):
 
     _validation = {
         'id': {'readonly': True},
-        'name': {'required': True},
         'location': {'required': True},
     }
 
@@ -63,7 +62,7 @@ class SiteLogsConfig(Resource):
         'detailed_error_messages': {'key': 'properties.detailedErrorMessages', 'type': 'EnabledConfig'},
     }
 
-    def __init__(self, name, location, kind=None, type=None, tags=None, application_logs=None, http_logs=None, failed_requests_tracing=None, detailed_error_messages=None):
+    def __init__(self, location, name=None, kind=None, type=None, tags=None, application_logs=None, http_logs=None, failed_requests_tracing=None, detailed_error_messages=None):
         super(SiteLogsConfig, self).__init__(name=name, kind=kind, location=location, type=type, tags=tags)
         self.application_logs = application_logs
         self.http_logs = http_logs

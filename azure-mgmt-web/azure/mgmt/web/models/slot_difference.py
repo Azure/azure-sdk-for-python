@@ -51,7 +51,6 @@ class SlotDifference(Resource):
 
     _validation = {
         'id': {'readonly': True},
-        'name': {'required': True},
         'location': {'required': True},
         'slot_difference_type': {'readonly': True},
         'setting_type': {'readonly': True},
@@ -78,7 +77,7 @@ class SlotDifference(Resource):
         'description': {'key': 'properties.description', 'type': 'str'},
     }
 
-    def __init__(self, name, location, kind=None, type=None, tags=None):
+    def __init__(self, location, name=None, kind=None, type=None, tags=None):
         super(SlotDifference, self).__init__(name=name, kind=kind, location=location, type=type, tags=tags)
         self.slot_difference_type = None
         self.setting_type = None

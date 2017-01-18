@@ -34,7 +34,8 @@ class CertificateOrderAction(Resource):
      include: 'CertificateIssued', 'CertificateOrderCanceled',
      'CertificateOrderCreated', 'CertificateRevoked',
      'DomainValidationComplete', 'FraudDetected', 'OrgNameChange',
-     'OrgValidationComplete', 'SanDrop', 'FraudCleared', 'Unknown'
+     'OrgValidationComplete', 'SanDrop', 'FraudCleared', 'CertificateExpired',
+     'CertificateExpirationWarning', 'FraudDocumentationRequired', 'Unknown'
     :type certificate_order_action_type: str or
      :class:`CertificateOrderActionType
      <azure.mgmt.web.models.CertificateOrderActionType>`
@@ -44,7 +45,6 @@ class CertificateOrderAction(Resource):
 
     _validation = {
         'id': {'readonly': True},
-        'name': {'required': True},
         'location': {'required': True},
     }
 
@@ -59,7 +59,7 @@ class CertificateOrderAction(Resource):
         'created_at': {'key': 'properties.createdAt', 'type': 'iso-8601'},
     }
 
-    def __init__(self, name, location, kind=None, type=None, tags=None, certificate_order_action_type=None, created_at=None):
+    def __init__(self, location, name=None, kind=None, type=None, tags=None, certificate_order_action_type=None, created_at=None):
         super(CertificateOrderAction, self).__init__(name=name, kind=kind, location=location, type=type, tags=tags)
         self.certificate_order_action_type = certificate_order_action_type
         self.created_at = created_at

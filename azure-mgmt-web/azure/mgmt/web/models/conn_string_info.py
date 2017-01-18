@@ -12,11 +12,13 @@
 from msrest.serialization import Model
 
 
-class ConnStringValueTypePair(Model):
-    """Database connection string value to type pair.
+class ConnStringInfo(Model):
+    """Database connection string information.
 
-    :param value: Value of pair.
-    :type value: str
+    :param name: Name of connection string.
+    :type name: str
+    :param connection_string: Connection string value.
+    :type connection_string: str
     :param type: Type of database. Possible values include: 'MySql',
      'SQLServer', 'SQLAzure', 'Custom', 'NotificationHub', 'ServiceBus',
      'EventHub', 'ApiHub', 'DocDb', 'RedisCache'
@@ -24,16 +26,13 @@ class ConnStringValueTypePair(Model):
      <azure.mgmt.web.models.ConnectionStringType>`
     """
 
-    _validation = {
-        'value': {'required': True},
-        'type': {'required': True},
-    }
-
     _attribute_map = {
-        'value': {'key': 'value', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'connection_string': {'key': 'connectionString', 'type': 'str'},
         'type': {'key': 'type', 'type': 'ConnectionStringType'},
     }
 
-    def __init__(self, value, type):
-        self.value = value
+    def __init__(self, name=None, connection_string=None, type=None):
+        self.name = name
+        self.connection_string = connection_string
         self.type = type

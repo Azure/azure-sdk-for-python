@@ -171,7 +171,7 @@ class TopLevelDomainsOperations(object):
         :param name: Name of the top-level domain.
         :type name: str
         :param include_privacy: If <code>true</code>, then the list of
-         agreements will inclue agreements for domain privacy as well;
+         agreements will include agreements for domain privacy as well;
          otherwise, <code>false</code>.
         :type include_privacy: bool
         :param dict custom_headers: headers that will be added to the request

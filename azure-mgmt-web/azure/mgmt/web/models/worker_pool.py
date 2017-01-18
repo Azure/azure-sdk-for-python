@@ -49,7 +49,6 @@ class WorkerPool(Resource):
 
     _validation = {
         'id': {'readonly': True},
-        'name': {'required': True},
         'location': {'required': True},
         'instance_names': {'readonly': True},
     }
@@ -69,7 +68,7 @@ class WorkerPool(Resource):
         'sku': {'key': 'sku', 'type': 'SkuDescription'},
     }
 
-    def __init__(self, name, location, kind=None, type=None, tags=None, worker_size_id=None, compute_mode=None, worker_size=None, worker_count=None, sku=None):
+    def __init__(self, location, name=None, kind=None, type=None, tags=None, worker_size_id=None, compute_mode=None, worker_size=None, worker_count=None, sku=None):
         super(WorkerPool, self).__init__(name=name, kind=kind, location=location, type=type, tags=tags)
         self.worker_size_id = worker_size_id
         self.compute_mode = compute_mode

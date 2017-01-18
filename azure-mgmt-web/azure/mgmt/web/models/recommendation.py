@@ -24,13 +24,15 @@ class Recommendation(Model):
      object is associated with.
     :type resource_id: str
     :param resource_scope: Name of a resource type this recommendation
-     applies, e.g. Subscription, ServerFarm, Site.
-    :type resource_scope: str
+     applies, e.g. Subscription, ServerFarm, Site. Possible values include:
+     'ServerFarm', 'Subscription', 'WebSite'
+    :type resource_scope: str or :class:`ResourceScopeType
+     <azure.mgmt.web.models.ResourceScopeType>`
     :param rule_name: Unique name of the rule.
     :type rule_name: str
     :param display_name: UI friendly name of the rule (may not be unique).
     :type display_name: str
-    :param message: Localized text of recommendation, good for UI.
+    :param message: Recommendation text.
     :type message: str
     :param level: Level indicating how critical this recommendation can
      impact. Possible values include: 'Critical', 'Warning', 'Information',
@@ -45,23 +47,20 @@ class Recommendation(Model):
     :type tags: list of str
     :param action_name: Name of action recommended by this object.
     :type action_name: str
-    :param enabled: On/off flag indicating the rule is currently enabled or
-     disabled.
-    :type enabled: int
-    :param start_time: The beginning time of a range that the recommendation
-     refers to.
+    :param start_time: The beginning time in UTC of a range that the
+     recommendation refers to.
     :type start_time: datetime
-    :param end_time: The end time of a range that the recommendation refers
-     to.
+    :param end_time: The end time in UTC of a range that the recommendation
+     refers to.
     :type end_time: datetime
-    :param next_notification_time: When to notify this recommendation next.
-     Null means that this will never be notified anymore.
+    :param next_notification_time: When to notify this recommendation next in
+     UTC. Null means that this will never be notified anymore.
     :type next_notification_time: datetime
-    :param notification_expiration_time: Date and time when this notification
-     expires.
+    :param notification_expiration_time: Date and time in UTC when this
+     notification expires.
     :type notification_expiration_time: datetime
-    :param notified_time: Last timestamp this instance was actually notified.
-     Null means that this recommendation hasn't been notified yet.
+    :param notified_time: Last timestamp in UTC this instance was actually
+     notified. Null means that this recommendation hasn't been notified yet.
     :type notified_time: datetime
     :param score: A metric value measured by the rule.
     :type score: float
@@ -79,7 +78,6 @@ class Recommendation(Model):
         'channels': {'key': 'channels', 'type': 'Channels'},
         'tags': {'key': 'tags', 'type': '[str]'},
         'action_name': {'key': 'actionName', 'type': 'str'},
-        'enabled': {'key': 'enabled', 'type': 'int'},
         'start_time': {'key': 'startTime', 'type': 'iso-8601'},
         'end_time': {'key': 'endTime', 'type': 'iso-8601'},
         'next_notification_time': {'key': 'nextNotificationTime', 'type': 'iso-8601'},
@@ -88,7 +86,7 @@ class Recommendation(Model):
         'score': {'key': 'score', 'type': 'float'},
     }
 
-    def __init__(self, creation_time=None, recommendation_id=None, resource_id=None, resource_scope=None, rule_name=None, display_name=None, message=None, level=None, channels=None, tags=None, action_name=None, enabled=None, start_time=None, end_time=None, next_notification_time=None, notification_expiration_time=None, notified_time=None, score=None):
+    def __init__(self, creation_time=None, recommendation_id=None, resource_id=None, resource_scope=None, rule_name=None, display_name=None, message=None, level=None, channels=None, tags=None, action_name=None, start_time=None, end_time=None, next_notification_time=None, notification_expiration_time=None, notified_time=None, score=None):
         self.creation_time = creation_time
         self.recommendation_id = recommendation_id
         self.resource_id = resource_id
@@ -100,7 +98,6 @@ class Recommendation(Model):
         self.channels = channels
         self.tags = tags
         self.action_name = action_name
-        self.enabled = enabled
         self.start_time = start_time
         self.end_time = end_time
         self.next_notification_time = next_notification_time

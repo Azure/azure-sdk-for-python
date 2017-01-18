@@ -63,6 +63,12 @@ class SiteConfig(Resource):
     :type detailed_error_logging_enabled: bool
     :param publishing_username: Publishing user name.
     :type publishing_username: str
+    :param app_settings: Application settings.
+    :type app_settings: list of :class:`NameValuePair
+     <azure.mgmt.web.models.NameValuePair>`
+    :param connection_strings: Connection strings.
+    :type connection_strings: list of :class:`ConnStringInfo
+     <azure.mgmt.web.models.ConnStringInfo>`
     :ivar machine_key: Site MachineKey.
     :vartype machine_key: :class:`SiteMachineKey
      <azure.mgmt.web.models.SiteMachineKey>`
@@ -133,11 +139,12 @@ class SiteConfig(Resource):
     :param ip_security_restrictions: IP security restrictions.
     :type ip_security_restrictions: list of :class:`IpSecurityRestriction
      <azure.mgmt.web.models.IpSecurityRestriction>`
+    :param linux_fx_version: Linux App Framework and version
+    :type linux_fx_version: str
     """
 
     _validation = {
         'id': {'readonly': True},
-        'name': {'required': True},
         'location': {'required': True},
         'machine_key': {'readonly': True},
         'scm_type': {'readonly': True},
@@ -164,6 +171,8 @@ class SiteConfig(Resource):
         'logs_directory_size_limit': {'key': 'properties.logsDirectorySizeLimit', 'type': 'int'},
         'detailed_error_logging_enabled': {'key': 'properties.detailedErrorLoggingEnabled', 'type': 'bool'},
         'publishing_username': {'key': 'properties.publishingUsername', 'type': 'str'},
+        'app_settings': {'key': 'properties.appSettings', 'type': '[NameValuePair]'},
+        'connection_strings': {'key': 'properties.connectionStrings', 'type': '[ConnStringInfo]'},
         'machine_key': {'key': 'properties.machineKey', 'type': 'SiteMachineKey'},
         'handler_mappings': {'key': 'properties.handlerMappings', 'type': '[HandlerMapping]'},
         'document_root': {'key': 'properties.documentRoot', 'type': 'str'},
@@ -190,9 +199,10 @@ class SiteConfig(Resource):
         'auto_swap_slot_name': {'key': 'properties.autoSwapSlotName', 'type': 'str'},
         'local_my_sql_enabled': {'key': 'properties.localMySqlEnabled', 'type': 'bool'},
         'ip_security_restrictions': {'key': 'properties.ipSecurityRestrictions', 'type': '[IpSecurityRestriction]'},
+        'linux_fx_version': {'key': 'properties.linuxFxVersion', 'type': 'str'},
     }
 
-    def __init__(self, name, location, kind=None, type=None, tags=None, number_of_workers=None, default_documents=None, net_framework_version="v4.6", php_version=None, python_version=None, node_version=None, request_tracing_enabled=None, request_tracing_expiration_time=None, remote_debugging_enabled=None, remote_debugging_version=None, http_logging_enabled=None, logs_directory_size_limit=None, detailed_error_logging_enabled=None, publishing_username=None, handler_mappings=None, document_root=None, use32_bit_worker_process=None, web_sockets_enabled=None, always_on=None, java_version=None, java_container=None, java_container_version=None, app_command_line=None, managed_pipeline_mode=None, virtual_applications=None, load_balancing=None, experiments=None, limits=None, auto_heal_enabled=None, auto_heal_rules=None, tracing_options=None, vnet_name=None, cors=None, push=None, api_definition=None, auto_swap_slot_name=None, local_my_sql_enabled=False, ip_security_restrictions=None):
+    def __init__(self, location, name=None, kind=None, type=None, tags=None, number_of_workers=None, default_documents=None, net_framework_version="v4.6", php_version=None, python_version=None, node_version=None, request_tracing_enabled=None, request_tracing_expiration_time=None, remote_debugging_enabled=None, remote_debugging_version=None, http_logging_enabled=None, logs_directory_size_limit=None, detailed_error_logging_enabled=None, publishing_username=None, app_settings=None, connection_strings=None, handler_mappings=None, document_root=None, use32_bit_worker_process=None, web_sockets_enabled=None, always_on=None, java_version=None, java_container=None, java_container_version=None, app_command_line=None, managed_pipeline_mode=None, virtual_applications=None, load_balancing=None, experiments=None, limits=None, auto_heal_enabled=None, auto_heal_rules=None, tracing_options=None, vnet_name=None, cors=None, push=None, api_definition=None, auto_swap_slot_name=None, local_my_sql_enabled=False, ip_security_restrictions=None, linux_fx_version=None):
         super(SiteConfig, self).__init__(name=name, kind=kind, location=location, type=type, tags=tags)
         self.number_of_workers = number_of_workers
         self.default_documents = default_documents
@@ -208,6 +218,8 @@ class SiteConfig(Resource):
         self.logs_directory_size_limit = logs_directory_size_limit
         self.detailed_error_logging_enabled = detailed_error_logging_enabled
         self.publishing_username = publishing_username
+        self.app_settings = app_settings
+        self.connection_strings = connection_strings
         self.machine_key = None
         self.handler_mappings = handler_mappings
         self.document_root = document_root
@@ -234,3 +246,4 @@ class SiteConfig(Resource):
         self.auto_swap_slot_name = auto_swap_slot_name
         self.local_my_sql_enabled = local_my_sql_enabled
         self.ip_security_restrictions = ip_security_restrictions
+        self.linux_fx_version = linux_fx_version

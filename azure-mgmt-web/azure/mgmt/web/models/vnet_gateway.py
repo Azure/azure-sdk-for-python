@@ -39,7 +39,6 @@ class VnetGateway(Resource):
 
     _validation = {
         'id': {'readonly': True},
-        'name': {'required': True},
         'location': {'required': True},
     }
 
@@ -54,7 +53,7 @@ class VnetGateway(Resource):
         'vpn_package_uri': {'key': 'properties.vpnPackageUri', 'type': 'str'},
     }
 
-    def __init__(self, name, location, kind=None, type=None, tags=None, vnet_name=None, vpn_package_uri=None):
+    def __init__(self, location, name=None, kind=None, type=None, tags=None, vnet_name=None, vpn_package_uri=None):
         super(VnetGateway, self).__init__(name=name, kind=kind, location=location, type=type, tags=tags)
         self.vnet_name = vnet_name
         self.vpn_package_uri = vpn_package_uri

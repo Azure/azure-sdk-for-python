@@ -28,6 +28,10 @@ class FileSystemHttpLogsConfig(Model):
     :type enabled: bool
     """
 
+    _validation = {
+        'retention_in_mb': {'maximum': 100, 'minimum': 25},
+    }
+
     _attribute_map = {
         'retention_in_mb': {'key': 'retentionInMb', 'type': 'int'},
         'retention_in_days': {'key': 'retentionInDays', 'type': 'int'},

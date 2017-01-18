@@ -54,7 +54,6 @@ class Deployment(Resource):
 
     _validation = {
         'id': {'readonly': True},
-        'name': {'required': True},
         'location': {'required': True},
     }
 
@@ -77,7 +76,7 @@ class Deployment(Resource):
         'details': {'key': 'properties.details', 'type': 'str'},
     }
 
-    def __init__(self, name, location, kind=None, type=None, tags=None, deployment_id=None, status=None, message=None, author=None, deployer=None, author_email=None, start_time=None, end_time=None, active=None, details=None):
+    def __init__(self, location, name=None, kind=None, type=None, tags=None, deployment_id=None, status=None, message=None, author=None, deployer=None, author_email=None, start_time=None, end_time=None, active=None, details=None):
         super(Deployment, self).__init__(name=name, kind=kind, location=location, type=type, tags=tags)
         self.deployment_id = deployment_id
         self.status = status

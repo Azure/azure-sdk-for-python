@@ -37,7 +37,6 @@ class MigrateMySqlRequest(Resource):
 
     _validation = {
         'id': {'readonly': True},
-        'name': {'required': True},
         'location': {'required': True},
     }
 
@@ -51,6 +50,6 @@ class MigrateMySqlRequest(Resource):
         'connection_string': {'key': 'properties.connectionString', 'type': 'str'},
     }
 
-    def __init__(self, name, location, kind=None, type=None, tags=None, connection_string=None):
+    def __init__(self, location, name=None, kind=None, type=None, tags=None, connection_string=None):
         super(MigrateMySqlRequest, self).__init__(name=name, kind=kind, location=location, type=type, tags=tags)
         self.connection_string = connection_string

@@ -38,7 +38,6 @@ class CertificateEmail(Resource):
 
     _validation = {
         'id': {'readonly': True},
-        'name': {'required': True},
         'location': {'required': True},
     }
 
@@ -53,7 +52,7 @@ class CertificateEmail(Resource):
         'time_stamp': {'key': 'properties.timeStamp', 'type': 'iso-8601'},
     }
 
-    def __init__(self, name, location, kind=None, type=None, tags=None, email_id=None, time_stamp=None):
+    def __init__(self, location, name=None, kind=None, type=None, tags=None, email_id=None, time_stamp=None):
         super(CertificateEmail, self).__init__(name=name, kind=kind, location=location, type=type, tags=tags)
         self.email_id = email_id
         self.time_stamp = time_stamp
