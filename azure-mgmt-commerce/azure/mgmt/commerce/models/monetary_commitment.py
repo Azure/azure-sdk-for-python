@@ -21,27 +21,27 @@ class MonetaryCommitment(OfferTermInfo):
     :param excluded_meter_ids: An array of meter ids that are excluded from
      the given offer terms.
     :type excluded_meter_ids: list of str
-    :param Name: Polymorphic Discriminator
-    :type Name: str
+    :param name: Polymorphic Discriminator
+    :type name: str
     :param tiered_discount: The list of key/value pairs for the tiered meter
      rates, in the format 'key':'value' where key = price, and value = the
-     corresponding discount percentage. This field is used only by offer
-     terms of type 'Monetary Commitment'.
+     corresponding discount percentage. This field is used only by offer terms
+     of type 'Monetary Commitment'.
     :type tiered_discount: dict
-    """ 
+    """
 
     _validation = {
-        'Name': {'required': True},
+        'name': {'required': True},
     }
 
     _attribute_map = {
         'effective_date': {'key': 'EffectiveDate', 'type': 'iso-8601'},
         'excluded_meter_ids': {'key': 'ExcludedMeterIds', 'type': '[str]'},
-        'Name': {'key': 'Name', 'type': 'str'},
-        'tiered_discount': {'key': 'TieredDiscount', 'type': '{decimal}'},
+        'name': {'key': 'Name', 'type': 'str'},
+        'tiered_discount': {'key': 'TieredDiscount', 'type': '{Decimal}'},
     }
 
     def __init__(self, effective_date=None, excluded_meter_ids=None, tiered_discount=None):
         super(MonetaryCommitment, self).__init__(effective_date=effective_date, excluded_meter_ids=excluded_meter_ids)
         self.tiered_discount = tiered_discount
-        self.Name = 'Monetary Commitment'
+        self.name = 'Monetary Commitment'
