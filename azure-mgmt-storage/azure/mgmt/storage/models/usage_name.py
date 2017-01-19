@@ -23,7 +23,7 @@ class UsageName(Model):
     :ivar localized_value: Gets a localized string describing the resource
      name.
     :vartype localized_value: str
-    """ 
+    """
 
     _validation = {
         'value': {'readonly': True},

@@ -31,7 +31,7 @@ class Usage(Model):
     :vartype limit: int
     :ivar name: Gets the name of the type of usage.
     :vartype name: :class:`UsageName <azure.mgmt.storage.models.UsageName>`
-    """ 
+    """
 
     _validation = {
         'unit': {'readonly': True},

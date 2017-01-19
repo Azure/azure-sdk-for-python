@@ -3,6 +3,15 @@
 Release History
 ===============
 
+0.31.0 (2017-01-19)
++++++++++++++++++++
+
+* New `list_account_sas` operation
+* New `list_service_sas` operation
+* Name syntax are now checked before RestAPI call, not the server (exception changed)
+
+Based on API version 2016-12-01.
+
 0.30.0 (2016-11-14)
 +++++++++++++++++++
 
