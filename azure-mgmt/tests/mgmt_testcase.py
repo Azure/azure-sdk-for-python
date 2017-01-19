@@ -148,15 +148,14 @@ class AzureMgmtTestCase(RecordingTestCase):
 
         :param wait_timeout: if None, means we don't block at all and let Azure deal with it.
         """
-        if wait_timeout:
-            azure_poller = self.resource_client.resource_groups.delete(self.group_name)
-            try:
+        try:
+            if wait_timeout:
+                azure_poller = self.resource_client.resource_groups.delete(self.group_name)
                 azure_poller.wait(wait_timeout)
                 if azure_poller.done():
                     return
                 self.assertTrue(False, 'Timed out waiting for resource group to be deleted.')            
-            except CloudError:
-                pass
-        else:
-            self.resource_client.resource_groups.delete(self.group_name, raw=True)
-
+            else:
+                self.resource_client.resource_groups.delete(self.group_name, raw=True)
+        except CloudError:
+            pass
