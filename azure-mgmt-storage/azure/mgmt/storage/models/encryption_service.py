@@ -26,7 +26,7 @@ class EncryptionService(Model):
      enabled. There might be some unencrypted blobs which were written after
      this time, as it is just a rough estimate.
     :vartype last_enabled_time: datetime
-    """ 
+    """
 
     _validation = {
         'last_enabled_time': {'readonly': True},

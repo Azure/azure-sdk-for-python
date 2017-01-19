@@ -27,7 +27,7 @@ class Endpoints(Model):
     :vartype table: str
     :ivar file: Gets the file endpoint.
     :vartype file: str
-    """ 
+    """
 
     _validation = {
         'blob': {'readonly': True},
