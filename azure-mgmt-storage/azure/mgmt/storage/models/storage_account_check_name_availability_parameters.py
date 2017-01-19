@@ -13,7 +13,7 @@ from msrest.serialization import Model
 
 
 class StorageAccountCheckNameAvailabilityParameters(Model):
-    """StorageAccountCheckNameAvailabilityParameters.
+    """The parameters used to check the availabity of the storage account name.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -22,7 +22,7 @@ class StorageAccountCheckNameAvailabilityParameters(Model):
     :type name: str
     :ivar type:  Default value: "Microsoft.Storage/storageAccounts" .
     :vartype type: str
-    """ 
+    """
 
     _validation = {
         'name': {'required': True},
