@@ -41,7 +41,7 @@ class StorageAccountUpdateParameters(Model):
      'Hot', 'Cool'
     :type access_tier: str or :class:`AccessTier
      <azure.mgmt.storage.models.AccessTier>`
-    """ 
+    """
 
     _attribute_map = {
         'sku': {'key': 'sku', 'type': 'Sku'},

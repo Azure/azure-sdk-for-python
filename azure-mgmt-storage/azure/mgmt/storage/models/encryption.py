@@ -25,7 +25,7 @@ class Encryption(Model):
      (case-insensitive):  Microsoft.Storage. Default value: "Microsoft.Storage"
      .
     :vartype key_source: str
-    """ 
+    """
 
     _validation = {
         'key_source': {'required': True, 'constant': True},

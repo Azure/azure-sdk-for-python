@@ -26,6 +26,10 @@ from .storage_account_update_parameters import StorageAccountUpdateParameters
 from .usage_name import UsageName
 from .usage import Usage
 from .resource import Resource
+from .account_sas_parameters import AccountSasParameters
+from .list_account_sas_response import ListAccountSasResponse
+from .service_sas_parameters import ServiceSasParameters
+from .list_service_sas_response import ListServiceSasResponse
 from .storage_account_paged import StorageAccountPaged
 from .usage_paged import UsagePaged
 from .storage_management_client_enums import (
@@ -38,6 +42,7 @@ from .storage_management_client_enums import (
     AccountStatus,
     KeyPermission,
     UsageUnit,
+    HttpProtocol,
 )
 
 __all__ = [
@@ -58,6 +63,10 @@ __all__ = [
     'UsageName',
     'Usage',
     'Resource',
+    'AccountSasParameters',
+    'ListAccountSasResponse',
+    'ServiceSasParameters',
+    'ListServiceSasResponse',
     'StorageAccountPaged',
     'UsagePaged',
     'Reason',
@@ -69,4 +78,5 @@ __all__ = [
     'AccountStatus',
     'KeyPermission',
     'UsageUnit',
+    'HttpProtocol',
 ]

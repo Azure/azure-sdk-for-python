@@ -49,7 +49,7 @@ class StorageAccount(Resource):
     :vartype primary_location: str
     :ivar status_of_primary: Gets the status indicating whether the primary
      location of the storage account is available or unavailable. Possible
-     values include: 'Available', 'Unavailable'
+     values include: 'available', 'unavailable'
     :vartype status_of_primary: str or :class:`AccountStatus
      <azure.mgmt.storage.models.AccountStatus>`
     :ivar last_geo_failover_time: Gets the timestamp of the most recent
@@ -65,7 +65,7 @@ class StorageAccount(Resource):
     :ivar status_of_secondary: Gets the status indicating whether the
      secondary location of the storage account is available or unavailable.
      Only available if the SKU name is Standard_GRS or Standard_RAGRS. Possible
-     values include: 'Available', 'Unavailable'
+     values include: 'available', 'unavailable'
     :vartype status_of_secondary: str or :class:`AccountStatus
      <azure.mgmt.storage.models.AccountStatus>`
     :ivar creation_time: Gets the creation date and time of the storage
@@ -89,7 +89,7 @@ class StorageAccount(Resource):
      The access tier used for billing. Possible values include: 'Hot', 'Cool'
     :vartype access_tier: str or :class:`AccessTier
      <azure.mgmt.storage.models.AccessTier>`
-    """ 
+    """
 
     _validation = {
         'id': {'readonly': True},
