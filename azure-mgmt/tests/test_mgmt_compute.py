@@ -156,198 +156,213 @@ class MgmtComputeTest(AzureMgmtTestCase):
             vhd_name,
         )
 
-    @record
     def test_virtual_machines_operations(self):
         names = self.get_resource_names('pyvmir')
         os_vhd_uri = self.get_vhd_uri(names.storage, 'osdisk')
 
-        self.create_storage_account(names.storage)
-        subnet = self.create_virtual_network(names.network, names.subnet)
-        nic_id = self.create_network_interface(names.nic, subnet)
+        if not self.is_playback():
+            self.create_storage_account(names.storage)
+            subnet = self.create_virtual_network(names.network, names.subnet)
+            nic_id = self.create_network_interface(names.nic, subnet)
+        else:
+            nic_id = ("/subscriptions/00000000-0000-0000-0000-000000000000"
+                      "/resourceGroups/test_mgmt_compute_test_virtual_machines_operations122014cf"
+                      "/providers/Microsoft.Network/networkInterfaces/pyvmirnic122014cf")
 
-        storage_profile = self.get_storage_profile(os_vhd_uri)
-        storage_profile.image_reference = azure.mgmt.compute.models.ImageReference(
-            publisher='Canonical',
-            offer='UbuntuServer',
-            sku='16.04.0-LTS',
-            version='latest'
-        )
+        with self.recording():
+            storage_profile = self.get_storage_profile(os_vhd_uri)
+            storage_profile.image_reference = azure.mgmt.compute.models.ImageReference(
+                publisher='Canonical',
+                offer='UbuntuServer',
+                sku='16.04.0-LTS',
+                version='latest'
+            )
 
-        params_create = azure.mgmt.compute.models.VirtualMachine(
-            location=self.region,
-            os_profile=self.get_os_profile(),
-            hardware_profile=self.get_hardware_profile(),
-            network_profile=self.get_network_profile(nic_id),
-            storage_profile=storage_profile,
-        )
+            params_create = azure.mgmt.compute.models.VirtualMachine(
+                location=self.region,
+                os_profile=self.get_os_profile(),
+                hardware_profile=self.get_hardware_profile(),
+                network_profile=self.get_network_profile(nic_id),
+                storage_profile=storage_profile,
+            )
 
-        # Create VM test
-        result_create = self.compute_client.virtual_machines.create_or_update(
-            self.group_name,
-            names.vm,
-            params_create,
-        )
-        vm_result = result_create.result()
-        self.assertEqual(vm_result.name, names.vm)
+            # Create VM test
+            result_create = self.compute_client.virtual_machines.create_or_update(
+                self.group_name,
+                names.vm,
+                params_create,
+            )
+            vm_result = result_create.result()
+            self.assertEqual(vm_result.name, names.vm)
         
-        # Get by name
-        result_get = self.compute_client.virtual_machines.get(
-            self.group_name,
-            names.vm
-        )
-        self.assertEqual(result_get.name, names.vm)
-        self.assertIsNone(result_get.instance_view)
+            # Get by name
+            result_get = self.compute_client.virtual_machines.get(
+                self.group_name,
+                names.vm
+            )
+            self.assertEqual(result_get.name, names.vm)
+            self.assertIsNone(result_get.instance_view)
 
-        # Get instanceView
-        result_iv = self.compute_client.virtual_machines.get(
-            self.group_name,
-            names.vm,
-            expand=InstanceViewTypes.instance_view
-        )
-        self.assertTrue(result_iv.instance_view)
+            # Get instanceView
+            result_iv = self.compute_client.virtual_machines.get(
+                self.group_name,
+                names.vm,
+                expand=InstanceViewTypes.instance_view
+            )
+            self.assertTrue(result_iv.instance_view)
 
-        # Deallocate
-        async_vm_deallocate = self.compute_client.virtual_machines.deallocate(self.group_name, names.vm)
-        async_vm_deallocate.wait()
+            # Deallocate
+            async_vm_deallocate = self.compute_client.virtual_machines.deallocate(self.group_name, names.vm)
+            async_vm_deallocate.wait()
 
-        # Start VM
-        async_vm_start =self.compute_client.virtual_machines.start(self.group_name, names.vm)
-        async_vm_start.wait()
+            # Start VM
+            async_vm_start =self.compute_client.virtual_machines.start(self.group_name, names.vm)
+            async_vm_start.wait()
 
-        # Restart VM
-        async_vm_restart = self.compute_client.virtual_machines.restart(self.group_name, names.vm)
-        async_vm_restart.wait()
+            # Restart VM
+            async_vm_restart = self.compute_client.virtual_machines.restart(self.group_name, names.vm)
+            async_vm_restart.wait()
 
-        # Stop VM
-        async_vm_stop = self.compute_client.virtual_machines.power_off(self.group_name, names.vm)
-        async_vm_stop.wait()
+            # Stop VM
+            async_vm_stop = self.compute_client.virtual_machines.power_off(self.group_name, names.vm)
+            async_vm_stop.wait()
 
-        # List in resouce group
-        vms_rg = list(self.compute_client.virtual_machines.list(self.group_name))
-        self.assertEqual(len(vms_rg), 1)
+            # List in resouce group
+            vms_rg = list(self.compute_client.virtual_machines.list(self.group_name))
+            self.assertEqual(len(vms_rg), 1)
 
-        # Delete
-        async_vm_delete = self.compute_client.virtual_machines.delete(self.group_name, names.vm)
-        async_vm_delete.wait()
+            # Delete
+            async_vm_delete = self.compute_client.virtual_machines.delete(self.group_name, names.vm)
+            async_vm_delete.wait()
 
-    @record
     def test_virtual_machine_capture(self):
         names = self.get_resource_names('pyvmir')
         os_vhd_uri = self.get_vhd_uri(names.storage, 'osdisk')
 
-        self.create_storage_account(names.storage)
-        subnet = self.create_virtual_network(names.network, names.subnet)
-        nic_id = self.create_network_interface(names.nic, subnet)
+        if not self.is_playback():
+            self.create_storage_account(names.storage)
+            subnet = self.create_virtual_network(names.network, names.subnet)
+            nic_id = self.create_network_interface(names.nic, subnet)
+        else:
+            nic_id = ("/subscriptions/00000000-0000-0000-0000-000000000000"
+                      "/resourceGroups/test_mgmt_compute_test_virtual_machine_capturec0f9130c"
+                      "/providers/Microsoft.Network/networkInterfaces/pyvmirnicc0f9130c")
 
-        storage_profile = self.get_storage_profile(os_vhd_uri)
-        storage_profile.image_reference = azure.mgmt.compute.models.ImageReference(
-            publisher='Canonical',
-            offer='UbuntuServer',
-            sku='16.04.0-LTS',
-            version='latest'
-        )
+        with self.recording():
+            storage_profile = self.get_storage_profile(os_vhd_uri)
+            storage_profile.image_reference = azure.mgmt.compute.models.ImageReference(
+                publisher='Canonical',
+                offer='UbuntuServer',
+                sku='16.04.0-LTS',
+                version='latest'
+            )
 
-        params_create = azure.mgmt.compute.models.VirtualMachine(
-            location=self.region,
-            os_profile=self.get_os_profile(),
-            hardware_profile=self.get_hardware_profile(),
-            network_profile=self.get_network_profile(nic_id),
-            storage_profile=storage_profile,
-        )
+            params_create = azure.mgmt.compute.models.VirtualMachine(
+                location=self.region,
+                os_profile=self.get_os_profile(),
+                hardware_profile=self.get_hardware_profile(),
+                network_profile=self.get_network_profile(nic_id),
+                storage_profile=storage_profile,
+            )
 
-        # Create VM test
-        result_create = self.compute_client.virtual_machines.create_or_update(
-            self.group_name,
-            names.vm,
-            params_create,
-        )
-        vm_result = result_create.result()
-        self.assertEqual(vm_result.name, names.vm)
+            # Create VM test
+            result_create = self.compute_client.virtual_machines.create_or_update(
+                self.group_name,
+                names.vm,
+                params_create,
+            )
+            vm_result = result_create.result()
+            self.assertEqual(vm_result.name, names.vm)
 
-        # Deallocate
-        async_vm_deallocate = self.compute_client.virtual_machines.deallocate(self.group_name, names.vm)
-        async_vm_deallocate.wait()
+            # Deallocate
+            async_vm_deallocate = self.compute_client.virtual_machines.deallocate(self.group_name, names.vm)
+            async_vm_deallocate.wait()
 
-        # Generalize (possible because deallocated)
-        self.compute_client.virtual_machines.generalize(self.group_name, names.vm)
+            # Generalize (possible because deallocated)
+            self.compute_client.virtual_machines.generalize(self.group_name, names.vm)
 
-        # Capture VM (VM must be generalized before)
-        async_capture = self.compute_client.virtual_machines.capture(
-            self.group_name,
-            names.vm,
-            {
-               "vhd_prefix":"pslib",
-               "destination_container_name":"dest",
-               "overwrite_vhds": True
-            }
-        )
-        capture_result = async_capture.result()
-        self.assertTrue(hasattr(capture_result, 'output'))
+            # Capture VM (VM must be generalized before)
+            async_capture = self.compute_client.virtual_machines.capture(
+                self.group_name,
+                names.vm,
+                {
+                   "vhd_prefix":"pslib",
+                   "destination_container_name":"dest",
+                   "overwrite_vhds": True
+                }
+            )
+            capture_result = async_capture.result()
+            self.assertTrue(hasattr(capture_result, 'output'))
 
-    @record
     def test_vm_extensions(self):
         #WARNING: this test may take 40 mins to complete against live server
         names = self.get_resource_names('pyvmext')
         os_vhd_uri = self.get_vhd_uri(names.storage, 'osdisk')
         ext_name = names.vm + 'AccessAgent'
 
-        self.create_storage_account(names.storage)
-        subnet = self.create_virtual_network(names.network, names.subnet)
-        nic_id = self.create_network_interface(names.nic, subnet)
+        if not self.is_playback():
+            self.create_storage_account(names.storage)
+            subnet = self.create_virtual_network(names.network, names.subnet)
+            nic_id = self.create_network_interface(names.nic, subnet)
+        else:
+            nic_id = ("/subscriptions/00000000-0000-0000-0000-000000000000"
+                    "/resourceGroups/test_mgmt_compute_test_vm_extensions15a60f10"
+                    "/providers/Microsoft.Network/networkInterfaces/pyvmextnic15a60f10")
 
-        storage_profile = self.get_storage_profile(os_vhd_uri)
-        storage_profile.image_reference = azure.mgmt.compute.models.ImageReference(
-            publisher='MicrosoftWindowsServerEssentials',
-            offer='WindowsServerEssentials',
-            sku='WindowsServerEssentials',
-            version='latest'
-        )
+        with self.recording():
+            storage_profile = self.get_storage_profile(os_vhd_uri)
+            storage_profile.image_reference = azure.mgmt.compute.models.ImageReference(
+                publisher='MicrosoftWindowsServerEssentials',
+                offer='WindowsServerEssentials',
+                sku='WindowsServerEssentials',
+                version='latest'
+            )
 
-        params_create = azure.mgmt.compute.models.VirtualMachine(
-            location=self.region,
-            os_profile=self.get_os_profile(),
-            hardware_profile=self.get_hardware_profile(),
-            network_profile=self.get_network_profile(nic_id),
-            storage_profile=storage_profile,
-        )
+            params_create = azure.mgmt.compute.models.VirtualMachine(
+                location=self.region,
+                os_profile=self.get_os_profile(),
+                hardware_profile=self.get_hardware_profile(),
+                network_profile=self.get_network_profile(nic_id),
+                storage_profile=storage_profile,
+            )
 
-        result_create = self.compute_client.virtual_machines.create_or_update(
-            self.group_name,
-            names.vm,
-            params_create,
-        )
-        result_create.wait()
+            result_create = self.compute_client.virtual_machines.create_or_update(
+                self.group_name,
+                names.vm,
+                params_create,
+            )
+            result_create.wait()
 
-        params_create = azure.mgmt.compute.models.VirtualMachineExtension(
-            location=self.region,
-            publisher='Microsoft.Compute',
-            virtual_machine_extension_type='VMAccessAgent',
-            type_handler_version='2.0',
-            auto_upgrade_minor_version=True,
-            settings={},
-            protected_settings={},
-        )
-        result_create = self.compute_client.virtual_machine_extensions.create_or_update(
-            self.group_name,
-            names.vm,
-            ext_name,
-            params_create,
-        )
-        result_create.wait()
+            params_create = azure.mgmt.compute.models.VirtualMachineExtension(
+                location=self.region,
+                publisher='Microsoft.Compute',
+                virtual_machine_extension_type='VMAccessAgent',
+                type_handler_version='2.0',
+                auto_upgrade_minor_version=True,
+                settings={},
+                protected_settings={},
+            )
+            result_create = self.compute_client.virtual_machine_extensions.create_or_update(
+                self.group_name,
+                names.vm,
+                ext_name,
+                params_create,
+            )
+            result_create.wait()
 
-        result_get = self.compute_client.virtual_machine_extensions.get(
-            self.group_name,
-            names.vm,
-            ext_name,
-        )
-        self.assertEqual(result_get.name, ext_name)
+            result_get = self.compute_client.virtual_machine_extensions.get(
+                self.group_name,
+                names.vm,
+                ext_name,
+            )
+            self.assertEqual(result_get.name, ext_name)
 
-        result_delete = self.compute_client.virtual_machine_extensions.delete(
-            self.group_name,
-            names.vm,
-            ext_name,
-        )
-        result_delete.wait()
+            result_delete = self.compute_client.virtual_machine_extensions.delete(
+                self.group_name,
+                names.vm,
+                ext_name,
+            )
+            result_delete.wait()
 
     @record
     def test_vm_extension_images(self):
