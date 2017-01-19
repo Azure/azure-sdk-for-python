@@ -6,34 +6,31 @@ interactions:
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
       Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.5.1 (Windows-10-10.0.14366-SP0) requests/2.10.0 msrest/0.4.0
-          msrest_azure/0.4.1 storagemanagementclient/0.30.0rc5 Azure-SDK-For-Python]
+      User-Agent: [python/3.5.1 (Windows-10-10.0.14393-SP0) requests/2.12.1 msrest/0.4.4
+          msrest_azure/0.4.6 storagemanagementclient/0.31.0 Azure-SDK-For-Python]
       accept-language: [en-US]
-      x-ms-client-request-id: [64d54f18-3d55-11e6-bd01-ecb1d756380e]
+      x-ms-client-request-id: [ce7d6f98-de77-11e6-9b53-ecb1d756380e]
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Storage/usages?api-version=2016-01-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Storage/usages?api-version=2016-12-01
   response:
-    body:
-      string: !!binary |
-        H4sIAAAAAAAEAO29B2AcSZYlJi9tynt/SvVK1+B0oQiAYBMk2JBAEOzBiM3mkuwdaUcjKasqgcpl
-        VmVdZhZAzO2dvPfee++999577733ujudTif33/8/XGZkAWz2zkrayZ4hgKrIHz9+fB8/In7xb5yk
-        6UeXWbnOP3qUfg9/pSl/iOej9bJo6fOPTqr1sv1oZD+frus6X7Y/qe/dd9+UxYJf2d3ZcR8uswWa
-        Wbj0kenyo9dtVWcX+fF0ij4a1wk1KqtpVhY/yGemI9M6tc1N618iv/CP7//GyS/5fwAjovij2QAA
-        AA==
+    body: {string: "{\r\n  \"value\": [\r\n    {\r\n      \"unit\": \"Count\",\r\n
+        \     \"currentValue\": 8,\r\n      \"limit\": 250,\r\n      \"name\": {\r\n
+        \       \"value\": \"StorageAccounts\",\r\n        \"localizedValue\": \"Storage
+        Accounts\"\r\n      }\r\n    }\r\n  ]\r\n}"}
     headers:
       Cache-Control: [no-cache]
-      Content-Encoding: [gzip]
       Content-Type: [application/json]
-      Date: ['Tue, 28 Jun 2016 17:26:05 GMT']
+      Date: ['Thu, 19 Jan 2017 18:48:03 GMT']
       Expires: ['-1']
       Pragma: [no-cache]
       Server: [Microsoft-Azure-Storage-Resource-Provider/1.0, Microsoft-HTTPAPI/2.0]
       Strict-Transport-Security: [max-age=31536000; includeSubDomains]
       Transfer-Encoding: [chunked]
       Vary: [Accept-Encoding]
-      x-ms-correlation-request-id: [176721cb-2f7c-4607-afee-9d963e062322]
+      content-length: ['217']
+      x-ms-correlation-request-id: [f2daa9e1-292b-4afb-8044-65b5211c1690]
       x-ms-ratelimit-remaining-subscription-reads: ['14999']
-      x-ms-request-id: [176721cb-2f7c-4607-afee-9d963e062322]
-      x-ms-routing-request-id: ['CENTRALUS:20160628T172605Z:176721cb-2f7c-4607-afee-9d963e062322']
+      x-ms-request-id: [f2daa9e1-292b-4afb-8044-65b5211c1690]
+      x-ms-routing-request-id: ['WESTUS2:20170119T184803Z:f2daa9e1-292b-4afb-8044-65b5211c1690']
     status: {code: 200, message: OK}
 version: 1
