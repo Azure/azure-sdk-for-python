@@ -165,7 +165,7 @@ These Azure services have Python data libraries which are directly hosted by the
 
 * `Storage <http://azure-storage.readthedocs.io>`_
 * `Azure Data Lake Store Filesystem <http://azure-datalake-store.readthedocs.io/>`_
-* `Azure IoT device SDK for Python <https://github.com/Azure/azure-iot-sdks/tree/master/python/device>`_
+* `Azure IoT Hub service and device SDKs for Python <https://github.com/Azure/azure-iot-sdk-python>`_
 * `SQL Azure <https://azure.microsoft.com/en-us/documentation/articles/sql-database-develop-python-simple/>`_
 * `DocumentDB <https://azure.microsoft.com/en-us/documentation/articles/documentdb-sdk-python/>`_
 * `Application Insight <https://github.com/Microsoft/ApplicationInsights-Python>`_
