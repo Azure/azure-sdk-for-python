@@ -9,11 +9,11 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.serialization import Model
+from .resource import Resource
 
 
-class Resource(Model):
-    """The Resource model definition.
+class Image(Resource):
+    """Describes an Image.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -28,6 +28,15 @@ class Resource(Model):
     :type location: str
     :param tags: Resource tags
     :type tags: dict
+    :param source_virtual_machine: The source virtual machine from which Image
+     is created.
+    :type source_virtual_machine: :class:`SubResource
+     <azure.mgmt.compute.models.SubResource>`
+    :param storage_profile: The storage profile.
+    :type storage_profile: :class:`ImageStorageProfile
+     <azure.mgmt.compute.models.ImageStorageProfile>`
+    :ivar provisioning_state: The provisioning state.
+    :vartype provisioning_state: str
     """
 
     _validation = {
@@ -35,6 +44,7 @@ class Resource(Model):
         'name': {'readonly': True},
         'type': {'readonly': True},
         'location': {'required': True},
+        'provisioning_state': {'readonly': True},
     }
 
     _attribute_map = {
@@ -43,11 +53,13 @@ class Resource(Model):
         'type': {'key': 'type', 'type': 'str'},
         'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
+        'source_virtual_machine': {'key': 'properties.sourceVirtualMachine', 'type': 'SubResource'},
+        'storage_profile': {'key': 'properties.storageProfile', 'type': 'ImageStorageProfile'},
+        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
     }
 
-    def __init__(self, location, tags=None):
-        self.id = None
-        self.name = None
-        self.type = None
-        self.location = location
-        self.tags = tags
+    def __init__(self, location, tags=None, source_virtual_machine=None, storage_profile=None):
+        super(Image, self).__init__(location=location, tags=tags)
+        self.source_virtual_machine = source_virtual_machine
+        self.storage_profile = storage_profile
+        self.provisioning_state = None

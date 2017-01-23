@@ -19,10 +19,13 @@ from .operations.virtual_machine_extensions_operations import VirtualMachineExte
 from .operations.virtual_machine_images_operations import VirtualMachineImagesOperations
 from .operations.usage_operations import UsageOperations
 from .operations.virtual_machine_sizes_operations import VirtualMachineSizesOperations
+from .operations.images_operations import ImagesOperations
 from .operations.virtual_machines_operations import VirtualMachinesOperations
 from .operations.virtual_machine_scale_sets_operations import VirtualMachineScaleSetsOperations
 from .operations.virtual_machine_scale_set_vms_operations import VirtualMachineScaleSetVMsOperations
 from .operations.container_services_operations import ContainerServicesOperations
+from .operations.disks_operations import DisksOperations
+from .operations.snapshots_operations import SnapshotsOperations
 from . import models
 
 
@@ -34,9 +37,9 @@ class ComputeManagementClientConfiguration(AzureConfiguration):
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
      object<msrestazure.azure_active_directory>`
-    :param subscription_id: Subscription credentials that uniquely identify
-     the Microsoft Azure subscription. The subscription ID forms part of the
-     URI for every service call.
+    :param subscription_id: Subscription credentials which uniquely identify
+     Microsoft Azure subscription. The subscription ID forms part of the URI
+     for every service call.
     :type subscription_id: str
     :param accept_language: Gets or sets the preferred language for the
      response.
@@ -96,6 +99,8 @@ class ComputeManagementClient(object):
     :vartype usage: .operations.UsageOperations
     :ivar virtual_machine_sizes: VirtualMachineSizes operations
     :vartype virtual_machine_sizes: .operations.VirtualMachineSizesOperations
+    :ivar images: Images operations
+    :vartype images: .operations.ImagesOperations
     :ivar virtual_machines: VirtualMachines operations
     :vartype virtual_machines: .operations.VirtualMachinesOperations
     :ivar virtual_machine_scale_sets: VirtualMachineScaleSets operations
@@ -104,13 +109,17 @@ class ComputeManagementClient(object):
     :vartype virtual_machine_scale_set_vms: .operations.VirtualMachineScaleSetVMsOperations
     :ivar container_services: ContainerServices operations
     :vartype container_services: .operations.ContainerServicesOperations
+    :ivar disks: Disks operations
+    :vartype disks: .operations.DisksOperations
+    :ivar snapshots: Snapshots operations
+    :vartype snapshots: .operations.SnapshotsOperations
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
      object<msrestazure.azure_active_directory>`
-    :param subscription_id: Subscription credentials that uniquely identify
-     the Microsoft Azure subscription. The subscription ID forms part of the
-     URI for every service call.
+    :param subscription_id: Subscription credentials which uniquely identify
+     Microsoft Azure subscription. The subscription ID forms part of the URI
+     for every service call.
     :type subscription_id: str
     :param accept_language: Gets or sets the preferred language for the
      response.
@@ -148,6 +157,8 @@ class ComputeManagementClient(object):
             self._client, self.config, self._serialize, self._deserialize)
         self.virtual_machine_sizes = VirtualMachineSizesOperations(
             self._client, self.config, self._serialize, self._deserialize)
+        self.images = ImagesOperations(
+            self._client, self.config, self._serialize, self._deserialize)
         self.virtual_machines = VirtualMachinesOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.virtual_machine_scale_sets = VirtualMachineScaleSetsOperations(
@@ -155,4 +166,8 @@ class ComputeManagementClient(object):
         self.virtual_machine_scale_set_vms = VirtualMachineScaleSetVMsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.container_services = ContainerServicesOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.disks = DisksOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.snapshots = SnapshotsOperations(
             self._client, self.config, self._serialize, self._deserialize)

@@ -12,22 +12,23 @@
 from msrest.serialization import Model
 
 
-class ContainerServiceSshConfiguration(Model):
-    """SSH configuration for Linux-based VMs running on Azure.
+class AccessUri(Model):
+    """A disk access SAS uri.
 
-    :param public_keys: the list of SSH public keys used to authenticate with
-     Linux-based VMs.
-    :type public_keys: list of :class:`ContainerServiceSshPublicKey
-     <azure.mgmt.compute.models.ContainerServiceSshPublicKey>`
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar access_sas: A SAS uri for accessing a disk.
+    :vartype access_sas: str
     """
 
     _validation = {
-        'public_keys': {'required': True},
+        'access_sas': {'readonly': True},
     }
 
     _attribute_map = {
-        'public_keys': {'key': 'publicKeys', 'type': '[ContainerServiceSshPublicKey]'},
+        'access_sas': {'key': 'properties.output.accessSAS', 'type': 'str'},
     }
 
-    def __init__(self, public_keys):
-        self.public_keys = public_keys
+    def __init__(self):
+        self.access_sas = None

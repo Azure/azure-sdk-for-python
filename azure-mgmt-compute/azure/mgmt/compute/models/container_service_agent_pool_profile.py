@@ -23,7 +23,7 @@ class ContainerServiceAgentPoolProfile(Model):
     :type name: str
     :param count: Number of agents (VMs) to host docker containers. Allowed
      values must be in the range of 1 to 100 (inclusive). The default value is
-     1.
+     1. . Default value: 1 .
     :type count: int
     :param vm_size: Size of agent VMs. Possible values include: 'Standard_A0',
      'Standard_A1', 'Standard_A2', 'Standard_A3', 'Standard_A4', 'Standard_A5',
@@ -63,7 +63,7 @@ class ContainerServiceAgentPoolProfile(Model):
         'fqdn': {'key': 'fqdn', 'type': 'str'},
     }
 
-    def __init__(self, name, count, vm_size, dns_prefix):
+    def __init__(self, name, vm_size, dns_prefix, count=1):
         self.name = name
         self.count = count
         self.vm_size = vm_size

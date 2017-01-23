@@ -18,15 +18,15 @@ class VirtualMachineScaleSetVM(Resource):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar id: Resource ID.
+    :ivar id: Resource Id
     :vartype id: str
-    :ivar name: Resource name.
+    :ivar name: Resource name
     :vartype name: str
-    :ivar type: Resource type.
+    :ivar type: Resource type
     :vartype type: str
-    :param location: Resource location.
+    :param location: Resource location
     :type location: str
-    :param tags: Resource tags.
+    :param tags: Resource tags
     :type tags: dict
     :ivar instance_id: The virtual machine instance ID.
     :vartype instance_id: str
@@ -35,6 +35,8 @@ class VirtualMachineScaleSetVM(Resource):
     :ivar latest_model_applied: Specifies whether the latest model has been
      applied to the virtual machine.
     :vartype latest_model_applied: bool
+    :ivar vm_id: Azure VM unique ID.
+    :vartype vm_id: str
     :ivar instance_view: The virtual machine instance view.
     :vartype instance_view: :class:`VirtualMachineInstanceView
      <azure.mgmt.compute.models.VirtualMachineInstanceView>`
@@ -78,6 +80,7 @@ class VirtualMachineScaleSetVM(Resource):
         'instance_id': {'readonly': True},
         'sku': {'readonly': True},
         'latest_model_applied': {'readonly': True},
+        'vm_id': {'readonly': True},
         'instance_view': {'readonly': True},
         'provisioning_state': {'readonly': True},
         'resources': {'readonly': True},
@@ -92,6 +95,7 @@ class VirtualMachineScaleSetVM(Resource):
         'instance_id': {'key': 'instanceId', 'type': 'str'},
         'sku': {'key': 'sku', 'type': 'Sku'},
         'latest_model_applied': {'key': 'properties.latestModelApplied', 'type': 'bool'},
+        'vm_id': {'key': 'properties.vmId', 'type': 'str'},
         'instance_view': {'key': 'properties.instanceView', 'type': 'VirtualMachineInstanceView'},
         'hardware_profile': {'key': 'properties.hardwareProfile', 'type': 'HardwareProfile'},
         'storage_profile': {'key': 'properties.storageProfile', 'type': 'StorageProfile'},
@@ -110,6 +114,7 @@ class VirtualMachineScaleSetVM(Resource):
         self.instance_id = None
         self.sku = None
         self.latest_model_applied = None
+        self.vm_id = None
         self.instance_view = None
         self.hardware_profile = hardware_profile
         self.storage_profile = storage_profile
