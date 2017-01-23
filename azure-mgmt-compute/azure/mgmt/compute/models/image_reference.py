@@ -9,12 +9,14 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.serialization import Model
+from .sub_resource import SubResource
 
 
-class ImageReference(Model):
+class ImageReference(SubResource):
     """The image reference.
 
+    :param id: Resource Id
+    :type id: str
     :param publisher: The image publisher.
     :type publisher: str
     :param offer: The image offer.
@@ -28,13 +30,15 @@ class ImageReference(Model):
     """
 
     _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
         'publisher': {'key': 'publisher', 'type': 'str'},
         'offer': {'key': 'offer', 'type': 'str'},
         'sku': {'key': 'sku', 'type': 'str'},
         'version': {'key': 'version', 'type': 'str'},
     }
 
-    def __init__(self, publisher=None, offer=None, sku=None, version=None):
+    def __init__(self, id=None, publisher=None, offer=None, sku=None, version=None):
+        super(ImageReference, self).__init__(id=id)
         self.publisher = publisher
         self.offer = offer
         self.sku = sku

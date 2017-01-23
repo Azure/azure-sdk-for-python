@@ -9,17 +9,17 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .sub_resource import SubResource
+from .sub_resource_read_only import SubResourceReadOnly
 
 
-class VirtualMachineScaleSetExtension(SubResource):
+class VirtualMachineScaleSetExtension(SubResourceReadOnly):
     """Describes a Virtual Machine Scale Set Extension.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :param id: Resource Id
-    :type id: str
+    :ivar id: Resource Id
+    :vartype id: str
     :param name: The name of the extension.
     :type name: str
     :param publisher: The name of the extension handler publisher.
@@ -42,6 +42,7 @@ class VirtualMachineScaleSetExtension(SubResource):
     """
 
     _validation = {
+        'id': {'readonly': True},
         'provisioning_state': {'readonly': True},
     }
 
@@ -57,8 +58,8 @@ class VirtualMachineScaleSetExtension(SubResource):
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
     }
 
-    def __init__(self, id=None, name=None, publisher=None, type=None, type_handler_version=None, auto_upgrade_minor_version=None, settings=None, protected_settings=None):
-        super(VirtualMachineScaleSetExtension, self).__init__(id=id)
+    def __init__(self, name=None, publisher=None, type=None, type_handler_version=None, auto_upgrade_minor_version=None, settings=None, protected_settings=None):
+        super(VirtualMachineScaleSetExtension, self).__init__()
         self.name = name
         self.publisher = publisher
         self.type = type
