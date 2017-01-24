@@ -1,76 +1,41 @@
 interactions:
 - request:
-    body: '{"location": "westus"}'
+    body: '{"properties": {"platformUpdateDomainCount": 4, "platformFaultDomainCount":
+      2}, "tags": {"tag1": "value1"}, "location": "westus"}'
     headers:
       Accept: [application/json]
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
-      Content-Length: ['22']
+      Content-Length: ['129']
       Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.5.1 (Windows-10-10.0.14372-SP0) requests/2.10.0 msrest/0.4.0
-          msrest_azure/0.4.1 resourcemanagementclient/0.30.0rc5 Azure-SDK-For-Python]
+      User-Agent: [python/3.5.1 (Windows-10-10.0.14393-SP0) requests/2.12.3 msrest/0.4.4
+          msrest_azure/0.4.7 computemanagementclient/0.32.1 Azure-SDK-For-Python]
       accept-language: [en-US]
-      x-ms-client-request-id: [65411b8c-4490-11e6-9b4b-ecb1d756380e]
+      x-ms-client-request-id: [e1a46c4c-e1c8-11e6-8ca1-ecb1d756380e]
     method: PUT
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_mgmt_compute_test_availability_sets53ac1097?api-version=2016-02-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_test_availability_sets53ac1097/providers/Microsoft.Compute/availabilitySets/pyarmset53ac1097?api-version=2016-04-30-preview
   response:
-    body: {string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_test_availability_sets53ac1097","name":"test_mgmt_compute_test_availability_sets53ac1097","location":"westus","properties":{"provisioningState":"Succeeded"}}'}
+    body: {string: "{\r\n  \"properties\": {\r\n    \"platformUpdateDomainCount\":
+        4,\r\n    \"platformFaultDomainCount\": 2,\r\n    \"managed\": false\r\n  },\r\n
+        \ \"type\": \"Microsoft.Compute/availabilitySets\",\r\n  \"location\": \"westus\",\r\n
+        \ \"tags\": {\r\n    \"tag1\": \"value1\"\r\n  },\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_test_availability_sets53ac1097/providers/Microsoft.Compute/availabilitySets/pyarmset53ac1097\",\r\n
+        \ \"name\": \"pyarmset53ac1097\"\r\n}"}
     headers:
       Cache-Control: [no-cache]
-      Content-Length: ['249']
       Content-Type: [application/json; charset=utf-8]
-      Date: ['Thu, 07 Jul 2016 22:16:03 GMT']
-      Expires: ['-1']
-      Pragma: [no-cache]
-      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
-      x-ms-correlation-request-id: [9731e26c-048c-4b9c-8044-49b1fc58873f]
-      x-ms-ratelimit-remaining-subscription-writes: ['1199']
-      x-ms-request-id: [9731e26c-048c-4b9c-8044-49b1fc58873f]
-      x-ms-routing-request-id: ['CENTRALUS:20160707T221603Z:9731e26c-048c-4b9c-8044-49b1fc58873f']
-    status: {code: 201, message: Created}
-- request:
-    body: '{"properties": {"platformFaultDomainCount": 2, "statuses": [{"message":
-      "test1 message", "displayStatus": "test1 display", "code": "test1"}, {"message":
-      "test2 message", "displayStatus": "test2 display", "code": "test2"}], "platformUpdateDomainCount":
-      4}, "location": "westus", "tags": {"tag1": "value1"}}'
-    headers:
-      Accept: [application/json]
-      Accept-Encoding: ['gzip, deflate']
-      Connection: [keep-alive]
-      Content-Length: ['305']
-      Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.5.1 (Windows-10-10.0.14372-SP0) requests/2.10.0 msrest/0.4.0
-          msrest_azure/0.4.1 computemanagementclient/0.30.0rc5 Azure-SDK-For-Python]
-      accept-language: [en-US]
-      x-ms-client-request-id: [65e5e702-4490-11e6-b25d-ecb1d756380e]
-    method: PUT
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_test_availability_sets53ac1097/providers/Microsoft.Compute/availabilitySets/pyarmset53ac1097?api-version=2016-03-30
-  response:
-    body:
-      string: !!binary |
-        H4sIAAAAAAAEAO29B2AcSZYlJi9tynt/SvVK1+B0oQiAYBMk2JBAEOzBiM3mkuwdaUcjKasqgcpl
-        VmVdZhZAzO2dvPfee++999577733ujudTif33/8/XGZkAWz2zkrayZ4hgKrIHz9+fB8/In7xb5yk
-        6UerulrldVvkzUePUv4IH5ZZe17Vi69Ws6zNn1aLrFieVOtlS232R51Gz7J12YZt9tDkl3DDj4oZ
-        ffDR3WY9aaZ1sWqLatncPX84O9h98DDf3r93vrO9/+l0sv3w4XS2ff5gb3KeTXayT+9N7tZ5U63r
-        af55Xa1Xzd02b9rff3GxaH//abVYrdv89+dPssusKLNJURbt9e/f5G1z/1423d15+OAuDe2ymOV1
-        c/eLYlpXTXXejk/k1bv+W6/ppbur66xe0Ovm7Y8E+2W2yIH/wNft9Yq/vrkDfaGsphlIgJeuCP21
-        +aLNLvwZoD936c+PLrNyne9+hE9/yW+c/JL/B/qM6TO0AQAA
-    headers:
-      Cache-Control: [no-cache]
-      Content-Encoding: [gzip]
-      Content-Type: [application/json; charset=utf-8]
-      Date: ['Thu, 07 Jul 2016 22:16:05 GMT']
+      Date: ['Tue, 24 Jan 2017 00:05:58 GMT']
       Expires: ['-1']
       Pragma: [no-cache]
       Server: [Microsoft-HTTPAPI/2.0, Microsoft-HTTPAPI/2.0]
       Strict-Transport-Security: [max-age=31536000; includeSubDomains]
       Transfer-Encoding: [chunked]
       Vary: [Accept-Encoding]
-      x-ms-correlation-request-id: [932673a2-972e-4c39-a785-b418db3cd641]
-      x-ms-ratelimit-remaining-subscription-writes: ['1199']
-      x-ms-request-id: [c97a2f97-e2c6-4d42-b32d-0022e42cd375]
-      x-ms-routing-request-id: ['CENTRALUS:20160707T221605Z:932673a2-972e-4c39-a785-b418db3cd641']
-      x-ms-served-by: [2d78c99a-5cdc-4580-9eb7-b3e168e83a95_131099783644879420]
+      content-length: ['459']
+      x-ms-correlation-request-id: [dc00788b-72d7-45ae-a8f0-0eeb950d39b9]
+      x-ms-ratelimit-remaining-subscription-writes: ['1198']
+      x-ms-request-id: [ff631a25-fd12-4e8a-b0be-e3aabda86919]
+      x-ms-routing-request-id: ['WESTUS2:20170124T000558Z:dc00788b-72d7-45ae-a8f0-0eeb950d39b9']
+      x-ms-served-by: [2d78c99a-5cdc-4580-9eb7-b3e168e83a95_131263266271495896]
     status: {code: 200, message: OK}
 - request:
     body: null
@@ -79,38 +44,35 @@ interactions:
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
       Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.5.1 (Windows-10-10.0.14372-SP0) requests/2.10.0 msrest/0.4.0
-          msrest_azure/0.4.1 computemanagementclient/0.30.0rc5 Azure-SDK-For-Python]
+      User-Agent: [python/3.5.1 (Windows-10-10.0.14393-SP0) requests/2.12.3 msrest/0.4.4
+          msrest_azure/0.4.7 computemanagementclient/0.32.1 Azure-SDK-For-Python]
       accept-language: [en-US]
-      x-ms-client-request-id: [66d269e8-4490-11e6-8016-ecb1d756380e]
+      x-ms-client-request-id: [e26a2d08-e1c8-11e6-84a7-ecb1d756380e]
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_test_availability_sets53ac1097/providers/Microsoft.Compute/availabilitySets/pyarmset53ac1097?api-version=2016-03-30
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_test_availability_sets53ac1097/providers/Microsoft.Compute/availabilitySets/pyarmset53ac1097?api-version=2016-04-30-preview
   response:
-    body:
-      string: !!binary |
-        H4sIAAAAAAAEAO29B2AcSZYlJi9tynt/SvVK1+B0oQiAYBMk2JBAEOzBiM3mkuwdaUcjKasqgcpl
-        VmVdZhZAzO2dvPfee++999577733ujudTif33/8/XGZkAWz2zkrayZ4hgKrIHz9+fB8/In7xb5yk
-        6UerulrldVvkzUePUv4IH5ZZe17Vi69Ws6zNn1aLrFieVOtlS232R51Gz7J12YZt9kyby6Ju11n5
-        RTadF0vu4nvfx1e/hBt8VMzok4/uNutJM62LVVtUy+bu+cPZwe6Dh/n2/r3zne39T6eT7YcPp7Pt
-        8wd7k/NsspN9em9yt86bal1P88/rar1q7rZ50/7+i4tF+/tPq8Vq3ea/P3+SXWZFmU2Ksmivf/8m
-        b5v797Lp7s7DB3dp2JfFLK+bu18U07pqqvN2fCKv3vXfek0v3V1dZ/WCXjdvfyTYL7NFDvwHvm6v
-        V/z1zR3oC2U1zUACvHRF6K/NF212AdKZ2aE/d+nPjy6zcp3vfoRPf8lvnPyS/wdDJLxn0AEAAA==
+    body: {string: "{\r\n  \"properties\": {\r\n    \"platformUpdateDomainCount\":
+        4,\r\n    \"platformFaultDomainCount\": 2,\r\n    \"virtualMachines\": [],\r\n
+        \   \"managed\": false\r\n  },\r\n  \"type\": \"Microsoft.Compute/availabilitySets\",\r\n
+        \ \"location\": \"westus\",\r\n  \"tags\": {\r\n    \"tag1\": \"value1\"\r\n
+        \ },\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_test_availability_sets53ac1097/providers/Microsoft.Compute/availabilitySets/pyarmset53ac1097\",\r\n
+        \ \"name\": \"pyarmset53ac1097\"\r\n}"}
     headers:
       Cache-Control: [no-cache]
-      Content-Encoding: [gzip]
       Content-Type: [application/json; charset=utf-8]
-      Date: ['Thu, 07 Jul 2016 22:16:05 GMT']
+      Date: ['Tue, 24 Jan 2017 00:05:58 GMT']
       Expires: ['-1']
       Pragma: [no-cache]
       Server: [Microsoft-HTTPAPI/2.0, Microsoft-HTTPAPI/2.0]
       Strict-Transport-Security: [max-age=31536000; includeSubDomains]
       Transfer-Encoding: [chunked]
       Vary: [Accept-Encoding]
-      x-ms-correlation-request-id: [74382147-db2b-428c-889f-303e010018c5]
+      content-length: ['487']
+      x-ms-correlation-request-id: [e69751c9-4f73-46e5-a518-f0201a2589b7]
       x-ms-ratelimit-remaining-subscription-reads: ['14999']
-      x-ms-request-id: [ffd9bf95-0f1a-4dab-8778-c1b6d3e6a663]
-      x-ms-routing-request-id: ['CENTRALUS:20160707T221606Z:74382147-db2b-428c-889f-303e010018c5']
-      x-ms-served-by: [2d78c99a-5cdc-4580-9eb7-b3e168e83a95_131099783644879420]
+      x-ms-request-id: [37acb92a-df6f-4ab9-a368-61cd6f31b061]
+      x-ms-routing-request-id: ['WESTUS2:20170124T000559Z:e69751c9-4f73-46e5-a518-f0201a2589b7']
+      x-ms-served-by: [2d78c99a-5cdc-4580-9eb7-b3e168e83a95_131263266271495896]
     status: {code: 200, message: OK}
 - request:
     body: null
@@ -119,39 +81,35 @@ interactions:
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
       Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.5.1 (Windows-10-10.0.14372-SP0) requests/2.10.0 msrest/0.4.0
-          msrest_azure/0.4.1 computemanagementclient/0.30.0rc5 Azure-SDK-For-Python]
+      User-Agent: [python/3.5.1 (Windows-10-10.0.14393-SP0) requests/2.12.3 msrest/0.4.4
+          msrest_azure/0.4.7 computemanagementclient/0.32.1 Azure-SDK-For-Python]
       accept-language: [en-US]
-      x-ms-client-request-id: [671cb966-4490-11e6-8dff-ecb1d756380e]
+      x-ms-client-request-id: [e29beb52-e1c8-11e6-9917-ecb1d756380e]
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_test_availability_sets53ac1097/providers/Microsoft.Compute/availabilitySets?api-version=2016-03-30
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_test_availability_sets53ac1097/providers/Microsoft.Compute/availabilitySets?api-version=2016-04-30-preview
   response:
-    body:
-      string: !!binary |
-        H4sIAAAAAAAEAO29B2AcSZYlJi9tynt/SvVK1+B0oQiAYBMk2JBAEOzBiM3mkuwdaUcjKasqgcpl
-        VmVdZhZAzO2dvPfee++999577733ujudTif33/8/XGZkAWz2zkrayZ4hgKrIHz9+fB8/In7xb5yk
-        6UeXWbnOP3qUfg9/pSl/iOejVV2t8rot8oa+tR/jizJrz6t68dVqlrX502qRFcuTar1sqd3+KNLw
-        WbYu27Ddnt/usqjbdVZ+kU3nxZK7+973/e8X2TK7yGf0+XlWNrn55pfYNh8V+PKju8160kzrYtUW
-        1bK5e/5wdrD74GG+vX/vfGd7/9PpZPvhw+ls+/zB3uQ8m+xkn96b3K3zplrX0/zzulqvmrtt3rS/
-        /+Ji0f7+02qxWrf578+fZJdZUWaToiza69+/ydvm/r1survz8MFdotJlMcvr5u4XxbSumuq8HZ/I
-        q3f9t17TS3dX11m9oNfN2x+5ESyzBWbhow1N2usVN7m5I++lsppmIAdevKKhrP0v2+wC1PYnlz7a
-        pY+ELXY/Mt/8EvmFf3z/N05+yf8DzoRBgzwCAAA=
+    body: {string: "{\r\n  \"value\": [\r\n    {\r\n      \"properties\": {\r\n        \"platformUpdateDomainCount\":
+        4,\r\n        \"platformFaultDomainCount\": 2,\r\n        \"virtualMachines\":
+        [],\r\n        \"managed\": false\r\n      },\r\n      \"type\": \"Microsoft.Compute/availabilitySets\",\r\n
+        \     \"location\": \"westus\",\r\n      \"tags\": {\r\n        \"tag1\":
+        \"value1\"\r\n      },\r\n      \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_test_availability_sets53ac1097/providers/Microsoft.Compute/availabilitySets/pyarmset53ac1097\",\r\n
+        \     \"name\": \"pyarmset53ac1097\"\r\n    }\r\n  ]\r\n}"}
     headers:
       Cache-Control: [no-cache]
-      Content-Encoding: [gzip]
       Content-Type: [application/json; charset=utf-8]
-      Date: ['Thu, 07 Jul 2016 22:16:06 GMT']
+      Date: ['Tue, 24 Jan 2017 00:05:58 GMT']
       Expires: ['-1']
       Pragma: [no-cache]
       Server: [Microsoft-HTTPAPI/2.0, Microsoft-HTTPAPI/2.0]
       Strict-Transport-Security: [max-age=31536000; includeSubDomains]
       Transfer-Encoding: [chunked]
       Vary: [Accept-Encoding]
-      x-ms-correlation-request-id: [32a30fc6-9bd9-4b1e-af3a-4571da24ab16]
+      content-length: ['572']
+      x-ms-correlation-request-id: [d9bc90f8-0b29-4b08-b2ff-e3826236acd3]
       x-ms-ratelimit-remaining-subscription-reads: ['14999']
-      x-ms-request-id: [70cf25ac-f9ba-4487-88bc-9f33fbc2c125]
-      x-ms-routing-request-id: ['CENTRALUS:20160707T221606Z:32a30fc6-9bd9-4b1e-af3a-4571da24ab16']
-      x-ms-served-by: [2d78c99a-5cdc-4580-9eb7-b3e168e83a95_131099783644879420]
+      x-ms-request-id: [70e8af81-6129-407e-924a-28225c113ac9]
+      x-ms-routing-request-id: ['WESTUS2:20170124T000559Z:d9bc90f8-0b29-4b08-b2ff-e3826236acd3']
+      x-ms-served-by: [2d78c99a-5cdc-4580-9eb7-b3e168e83a95_131263266271495896]
     status: {code: 200, message: OK}
 - request:
     body: null
@@ -160,61 +118,288 @@ interactions:
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
       Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.5.1 (Windows-10-10.0.14372-SP0) requests/2.10.0 msrest/0.4.0
-          msrest_azure/0.4.1 computemanagementclient/0.30.0rc5 Azure-SDK-For-Python]
+      User-Agent: [python/3.5.1 (Windows-10-10.0.14393-SP0) requests/2.12.3 msrest/0.4.4
+          msrest_azure/0.4.7 computemanagementclient/0.32.1 Azure-SDK-For-Python]
       accept-language: [en-US]
-      x-ms-client-request-id: [6769eef6-4490-11e6-aa05-ecb1d756380e]
+      x-ms-client-request-id: [e2c8a086-e1c8-11e6-8517-ecb1d756380e]
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_test_availability_sets53ac1097/providers/Microsoft.Compute/availabilitySets/pyarmset53ac1097/vmSizes?api-version=2016-03-30
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_test_availability_sets53ac1097/providers/Microsoft.Compute/availabilitySets/pyarmset53ac1097/vmSizes?api-version=2016-04-30-preview
   response:
-    body:
-      string: !!binary |
-        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
-        mhn8+P5vnPyS/wdn5DpBGToAAA==
+    body: {string: "{\r\n  \"value\": [\r\n    {\r\n      \"name\": \"Standard_A0\",\r\n
+        \     \"numberOfCores\": 1,\r\n      \"osDiskSizeInMB\": 1047552,\r\n      \"resourceDiskSizeInMB\":
+        20480,\r\n      \"memoryInMB\": 768,\r\n      \"maxDataDiskCount\": 1\r\n
+        \   },\r\n    {\r\n      \"name\": \"Standard_A1\",\r\n      \"numberOfCores\":
+        1,\r\n      \"osDiskSizeInMB\": 1047552,\r\n      \"resourceDiskSizeInMB\":
+        71680,\r\n      \"memoryInMB\": 1792,\r\n      \"maxDataDiskCount\": 2\r\n
+        \   },\r\n    {\r\n      \"name\": \"Standard_A2\",\r\n      \"numberOfCores\":
+        2,\r\n      \"osDiskSizeInMB\": 1047552,\r\n      \"resourceDiskSizeInMB\":
+        138240,\r\n      \"memoryInMB\": 3584,\r\n      \"maxDataDiskCount\": 4\r\n
+        \   },\r\n    {\r\n      \"name\": \"Standard_A3\",\r\n      \"numberOfCores\":
+        4,\r\n      \"osDiskSizeInMB\": 1047552,\r\n      \"resourceDiskSizeInMB\":
+        291840,\r\n      \"memoryInMB\": 7168,\r\n      \"maxDataDiskCount\": 8\r\n
+        \   },\r\n    {\r\n      \"name\": \"Standard_A5\",\r\n      \"numberOfCores\":
+        2,\r\n      \"osDiskSizeInMB\": 1047552,\r\n      \"resourceDiskSizeInMB\":
+        138240,\r\n      \"memoryInMB\": 14336,\r\n      \"maxDataDiskCount\": 4\r\n
+        \   },\r\n    {\r\n      \"name\": \"Standard_A4\",\r\n      \"numberOfCores\":
+        8,\r\n      \"osDiskSizeInMB\": 1047552,\r\n      \"resourceDiskSizeInMB\":
+        619520,\r\n      \"memoryInMB\": 14336,\r\n      \"maxDataDiskCount\": 16\r\n
+        \   },\r\n    {\r\n      \"name\": \"Standard_A6\",\r\n      \"numberOfCores\":
+        4,\r\n      \"osDiskSizeInMB\": 1047552,\r\n      \"resourceDiskSizeInMB\":
+        291840,\r\n      \"memoryInMB\": 28672,\r\n      \"maxDataDiskCount\": 8\r\n
+        \   },\r\n    {\r\n      \"name\": \"Standard_A7\",\r\n      \"numberOfCores\":
+        8,\r\n      \"osDiskSizeInMB\": 1047552,\r\n      \"resourceDiskSizeInMB\":
+        619520,\r\n      \"memoryInMB\": 57344,\r\n      \"maxDataDiskCount\": 16\r\n
+        \   },\r\n    {\r\n      \"name\": \"Basic_A0\",\r\n      \"numberOfCores\":
+        1,\r\n      \"osDiskSizeInMB\": 1047552,\r\n      \"resourceDiskSizeInMB\":
+        20480,\r\n      \"memoryInMB\": 768,\r\n      \"maxDataDiskCount\": 1\r\n
+        \   },\r\n    {\r\n      \"name\": \"Basic_A1\",\r\n      \"numberOfCores\":
+        1,\r\n      \"osDiskSizeInMB\": 1047552,\r\n      \"resourceDiskSizeInMB\":
+        40960,\r\n      \"memoryInMB\": 1792,\r\n      \"maxDataDiskCount\": 2\r\n
+        \   },\r\n    {\r\n      \"name\": \"Basic_A2\",\r\n      \"numberOfCores\":
+        2,\r\n      \"osDiskSizeInMB\": 1047552,\r\n      \"resourceDiskSizeInMB\":
+        61440,\r\n      \"memoryInMB\": 3584,\r\n      \"maxDataDiskCount\": 4\r\n
+        \   },\r\n    {\r\n      \"name\": \"Basic_A3\",\r\n      \"numberOfCores\":
+        4,\r\n      \"osDiskSizeInMB\": 1047552,\r\n      \"resourceDiskSizeInMB\":
+        122880,\r\n      \"memoryInMB\": 7168,\r\n      \"maxDataDiskCount\": 8\r\n
+        \   },\r\n    {\r\n      \"name\": \"Basic_A4\",\r\n      \"numberOfCores\":
+        8,\r\n      \"osDiskSizeInMB\": 1047552,\r\n      \"resourceDiskSizeInMB\":
+        245760,\r\n      \"memoryInMB\": 14336,\r\n      \"maxDataDiskCount\": 16\r\n
+        \   },\r\n    {\r\n      \"name\": \"Standard_D1_v2\",\r\n      \"numberOfCores\":
+        1,\r\n      \"osDiskSizeInMB\": 1047552,\r\n      \"resourceDiskSizeInMB\":
+        51200,\r\n      \"memoryInMB\": 3584,\r\n      \"maxDataDiskCount\": 2\r\n
+        \   },\r\n    {\r\n      \"name\": \"Standard_D2_v2\",\r\n      \"numberOfCores\":
+        2,\r\n      \"osDiskSizeInMB\": 1047552,\r\n      \"resourceDiskSizeInMB\":
+        102400,\r\n      \"memoryInMB\": 7168,\r\n      \"maxDataDiskCount\": 4\r\n
+        \   },\r\n    {\r\n      \"name\": \"Standard_D3_v2\",\r\n      \"numberOfCores\":
+        4,\r\n      \"osDiskSizeInMB\": 1047552,\r\n      \"resourceDiskSizeInMB\":
+        204800,\r\n      \"memoryInMB\": 14336,\r\n      \"maxDataDiskCount\": 8\r\n
+        \   },\r\n    {\r\n      \"name\": \"Standard_D4_v2\",\r\n      \"numberOfCores\":
+        8,\r\n      \"osDiskSizeInMB\": 1047552,\r\n      \"resourceDiskSizeInMB\":
+        409600,\r\n      \"memoryInMB\": 28672,\r\n      \"maxDataDiskCount\": 16\r\n
+        \   },\r\n    {\r\n      \"name\": \"Standard_D5_v2\",\r\n      \"numberOfCores\":
+        16,\r\n      \"osDiskSizeInMB\": 1047552,\r\n      \"resourceDiskSizeInMB\":
+        819200,\r\n      \"memoryInMB\": 57344,\r\n      \"maxDataDiskCount\": 32\r\n
+        \   },\r\n    {\r\n      \"name\": \"Standard_D11_v2\",\r\n      \"numberOfCores\":
+        2,\r\n      \"osDiskSizeInMB\": 1047552,\r\n      \"resourceDiskSizeInMB\":
+        102400,\r\n      \"memoryInMB\": 14336,\r\n      \"maxDataDiskCount\": 4\r\n
+        \   },\r\n    {\r\n      \"name\": \"Standard_D12_v2\",\r\n      \"numberOfCores\":
+        4,\r\n      \"osDiskSizeInMB\": 1047552,\r\n      \"resourceDiskSizeInMB\":
+        204800,\r\n      \"memoryInMB\": 28672,\r\n      \"maxDataDiskCount\": 8\r\n
+        \   },\r\n    {\r\n      \"name\": \"Standard_D13_v2\",\r\n      \"numberOfCores\":
+        8,\r\n      \"osDiskSizeInMB\": 1047552,\r\n      \"resourceDiskSizeInMB\":
+        409600,\r\n      \"memoryInMB\": 57344,\r\n      \"maxDataDiskCount\": 16\r\n
+        \   },\r\n    {\r\n      \"name\": \"Standard_D14_v2\",\r\n      \"numberOfCores\":
+        16,\r\n      \"osDiskSizeInMB\": 1047552,\r\n      \"resourceDiskSizeInMB\":
+        819200,\r\n      \"memoryInMB\": 114688,\r\n      \"maxDataDiskCount\": 32\r\n
+        \   },\r\n    {\r\n      \"name\": \"Standard_D15_v2\",\r\n      \"numberOfCores\":
+        20,\r\n      \"osDiskSizeInMB\": 1047552,\r\n      \"resourceDiskSizeInMB\":
+        286720,\r\n      \"memoryInMB\": 143360,\r\n      \"maxDataDiskCount\": 40\r\n
+        \   },\r\n    {\r\n      \"name\": \"Standard_F1\",\r\n      \"numberOfCores\":
+        1,\r\n      \"osDiskSizeInMB\": 1047552,\r\n      \"resourceDiskSizeInMB\":
+        16384,\r\n      \"memoryInMB\": 2048,\r\n      \"maxDataDiskCount\": 2\r\n
+        \   },\r\n    {\r\n      \"name\": \"Standard_F2\",\r\n      \"numberOfCores\":
+        2,\r\n      \"osDiskSizeInMB\": 1047552,\r\n      \"resourceDiskSizeInMB\":
+        32768,\r\n      \"memoryInMB\": 4096,\r\n      \"maxDataDiskCount\": 4\r\n
+        \   },\r\n    {\r\n      \"name\": \"Standard_F4\",\r\n      \"numberOfCores\":
+        4,\r\n      \"osDiskSizeInMB\": 1047552,\r\n      \"resourceDiskSizeInMB\":
+        65536,\r\n      \"memoryInMB\": 8192,\r\n      \"maxDataDiskCount\": 8\r\n
+        \   },\r\n    {\r\n      \"name\": \"Standard_F8\",\r\n      \"numberOfCores\":
+        8,\r\n      \"osDiskSizeInMB\": 1047552,\r\n      \"resourceDiskSizeInMB\":
+        131072,\r\n      \"memoryInMB\": 16384,\r\n      \"maxDataDiskCount\": 16\r\n
+        \   },\r\n    {\r\n      \"name\": \"Standard_F16\",\r\n      \"numberOfCores\":
+        16,\r\n      \"osDiskSizeInMB\": 1047552,\r\n      \"resourceDiskSizeInMB\":
+        262144,\r\n      \"memoryInMB\": 32768,\r\n      \"maxDataDiskCount\": 32\r\n
+        \   },\r\n    {\r\n      \"name\": \"Standard_A1_v2\",\r\n      \"numberOfCores\":
+        1,\r\n      \"osDiskSizeInMB\": 1047552,\r\n      \"resourceDiskSizeInMB\":
+        10240,\r\n      \"memoryInMB\": 2048,\r\n      \"maxDataDiskCount\": 2\r\n
+        \   },\r\n    {\r\n      \"name\": \"Standard_A2m_v2\",\r\n      \"numberOfCores\":
+        2,\r\n      \"osDiskSizeInMB\": 1047552,\r\n      \"resourceDiskSizeInMB\":
+        20480,\r\n      \"memoryInMB\": 16384,\r\n      \"maxDataDiskCount\": 4\r\n
+        \   },\r\n    {\r\n      \"name\": \"Standard_A2_v2\",\r\n      \"numberOfCores\":
+        2,\r\n      \"osDiskSizeInMB\": 1047552,\r\n      \"resourceDiskSizeInMB\":
+        20480,\r\n      \"memoryInMB\": 4096,\r\n      \"maxDataDiskCount\": 4\r\n
+        \   },\r\n    {\r\n      \"name\": \"Standard_A4m_v2\",\r\n      \"numberOfCores\":
+        4,\r\n      \"osDiskSizeInMB\": 1047552,\r\n      \"resourceDiskSizeInMB\":
+        40960,\r\n      \"memoryInMB\": 32768,\r\n      \"maxDataDiskCount\": 8\r\n
+        \   },\r\n    {\r\n      \"name\": \"Standard_A4_v2\",\r\n      \"numberOfCores\":
+        4,\r\n      \"osDiskSizeInMB\": 1047552,\r\n      \"resourceDiskSizeInMB\":
+        40960,\r\n      \"memoryInMB\": 8192,\r\n      \"maxDataDiskCount\": 8\r\n
+        \   },\r\n    {\r\n      \"name\": \"Standard_A8m_v2\",\r\n      \"numberOfCores\":
+        8,\r\n      \"osDiskSizeInMB\": 1047552,\r\n      \"resourceDiskSizeInMB\":
+        81920,\r\n      \"memoryInMB\": 65536,\r\n      \"maxDataDiskCount\": 16\r\n
+        \   },\r\n    {\r\n      \"name\": \"Standard_A8_v2\",\r\n      \"numberOfCores\":
+        8,\r\n      \"osDiskSizeInMB\": 1047552,\r\n      \"resourceDiskSizeInMB\":
+        81920,\r\n      \"memoryInMB\": 16384,\r\n      \"maxDataDiskCount\": 16\r\n
+        \   },\r\n    {\r\n      \"name\": \"Standard_DS1_v2\",\r\n      \"numberOfCores\":
+        1,\r\n      \"osDiskSizeInMB\": 1047552,\r\n      \"resourceDiskSizeInMB\":
+        7168,\r\n      \"memoryInMB\": 3584,\r\n      \"maxDataDiskCount\": 2\r\n
+        \   },\r\n    {\r\n      \"name\": \"Standard_DS2_v2\",\r\n      \"numberOfCores\":
+        2,\r\n      \"osDiskSizeInMB\": 1047552,\r\n      \"resourceDiskSizeInMB\":
+        14336,\r\n      \"memoryInMB\": 7168,\r\n      \"maxDataDiskCount\": 4\r\n
+        \   },\r\n    {\r\n      \"name\": \"Standard_DS3_v2\",\r\n      \"numberOfCores\":
+        4,\r\n      \"osDiskSizeInMB\": 1047552,\r\n      \"resourceDiskSizeInMB\":
+        28672,\r\n      \"memoryInMB\": 14336,\r\n      \"maxDataDiskCount\": 8\r\n
+        \   },\r\n    {\r\n      \"name\": \"Standard_DS4_v2\",\r\n      \"numberOfCores\":
+        8,\r\n      \"osDiskSizeInMB\": 1047552,\r\n      \"resourceDiskSizeInMB\":
+        57344,\r\n      \"memoryInMB\": 28672,\r\n      \"maxDataDiskCount\": 16\r\n
+        \   },\r\n    {\r\n      \"name\": \"Standard_DS5_v2\",\r\n      \"numberOfCores\":
+        16,\r\n      \"osDiskSizeInMB\": 1047552,\r\n      \"resourceDiskSizeInMB\":
+        114688,\r\n      \"memoryInMB\": 57344,\r\n      \"maxDataDiskCount\": 32\r\n
+        \   },\r\n    {\r\n      \"name\": \"Standard_DS11_v2\",\r\n      \"numberOfCores\":
+        2,\r\n      \"osDiskSizeInMB\": 1047552,\r\n      \"resourceDiskSizeInMB\":
+        28672,\r\n      \"memoryInMB\": 14336,\r\n      \"maxDataDiskCount\": 4\r\n
+        \   },\r\n    {\r\n      \"name\": \"Standard_DS12_v2\",\r\n      \"numberOfCores\":
+        4,\r\n      \"osDiskSizeInMB\": 1047552,\r\n      \"resourceDiskSizeInMB\":
+        57344,\r\n      \"memoryInMB\": 28672,\r\n      \"maxDataDiskCount\": 8\r\n
+        \   },\r\n    {\r\n      \"name\": \"Standard_DS13_v2\",\r\n      \"numberOfCores\":
+        8,\r\n      \"osDiskSizeInMB\": 1047552,\r\n      \"resourceDiskSizeInMB\":
+        114688,\r\n      \"memoryInMB\": 57344,\r\n      \"maxDataDiskCount\": 16\r\n
+        \   },\r\n    {\r\n      \"name\": \"Standard_DS14_v2\",\r\n      \"numberOfCores\":
+        16,\r\n      \"osDiskSizeInMB\": 1047552,\r\n      \"resourceDiskSizeInMB\":
+        229376,\r\n      \"memoryInMB\": 114688,\r\n      \"maxDataDiskCount\": 32\r\n
+        \   },\r\n    {\r\n      \"name\": \"Standard_DS15_v2\",\r\n      \"numberOfCores\":
+        20,\r\n      \"osDiskSizeInMB\": 1047552,\r\n      \"resourceDiskSizeInMB\":
+        286720,\r\n      \"memoryInMB\": 143360,\r\n      \"maxDataDiskCount\": 40\r\n
+        \   },\r\n    {\r\n      \"name\": \"Standard_F1s\",\r\n      \"numberOfCores\":
+        1,\r\n      \"osDiskSizeInMB\": 1047552,\r\n      \"resourceDiskSizeInMB\":
+        4096,\r\n      \"memoryInMB\": 2048,\r\n      \"maxDataDiskCount\": 2\r\n
+        \   },\r\n    {\r\n      \"name\": \"Standard_F2s\",\r\n      \"numberOfCores\":
+        2,\r\n      \"osDiskSizeInMB\": 1047552,\r\n      \"resourceDiskSizeInMB\":
+        8192,\r\n      \"memoryInMB\": 4096,\r\n      \"maxDataDiskCount\": 4\r\n
+        \   },\r\n    {\r\n      \"name\": \"Standard_F4s\",\r\n      \"numberOfCores\":
+        4,\r\n      \"osDiskSizeInMB\": 1047552,\r\n      \"resourceDiskSizeInMB\":
+        16384,\r\n      \"memoryInMB\": 8192,\r\n      \"maxDataDiskCount\": 8\r\n
+        \   },\r\n    {\r\n      \"name\": \"Standard_F8s\",\r\n      \"numberOfCores\":
+        8,\r\n      \"osDiskSizeInMB\": 1047552,\r\n      \"resourceDiskSizeInMB\":
+        32768,\r\n      \"memoryInMB\": 16384,\r\n      \"maxDataDiskCount\": 16\r\n
+        \   },\r\n    {\r\n      \"name\": \"Standard_F16s\",\r\n      \"numberOfCores\":
+        16,\r\n      \"osDiskSizeInMB\": 1047552,\r\n      \"resourceDiskSizeInMB\":
+        65536,\r\n      \"memoryInMB\": 32768,\r\n      \"maxDataDiskCount\": 32\r\n
+        \   },\r\n    {\r\n      \"name\": \"Standard_D1\",\r\n      \"numberOfCores\":
+        1,\r\n      \"osDiskSizeInMB\": 1047552,\r\n      \"resourceDiskSizeInMB\":
+        51200,\r\n      \"memoryInMB\": 3584,\r\n      \"maxDataDiskCount\": 2\r\n
+        \   },\r\n    {\r\n      \"name\": \"Standard_D2\",\r\n      \"numberOfCores\":
+        2,\r\n      \"osDiskSizeInMB\": 1047552,\r\n      \"resourceDiskSizeInMB\":
+        102400,\r\n      \"memoryInMB\": 7168,\r\n      \"maxDataDiskCount\": 4\r\n
+        \   },\r\n    {\r\n      \"name\": \"Standard_D3\",\r\n      \"numberOfCores\":
+        4,\r\n      \"osDiskSizeInMB\": 1047552,\r\n      \"resourceDiskSizeInMB\":
+        204800,\r\n      \"memoryInMB\": 14336,\r\n      \"maxDataDiskCount\": 8\r\n
+        \   },\r\n    {\r\n      \"name\": \"Standard_D4\",\r\n      \"numberOfCores\":
+        8,\r\n      \"osDiskSizeInMB\": 1047552,\r\n      \"resourceDiskSizeInMB\":
+        409600,\r\n      \"memoryInMB\": 28672,\r\n      \"maxDataDiskCount\": 16\r\n
+        \   },\r\n    {\r\n      \"name\": \"Standard_D11\",\r\n      \"numberOfCores\":
+        2,\r\n      \"osDiskSizeInMB\": 1047552,\r\n      \"resourceDiskSizeInMB\":
+        102400,\r\n      \"memoryInMB\": 14336,\r\n      \"maxDataDiskCount\": 4\r\n
+        \   },\r\n    {\r\n      \"name\": \"Standard_D12\",\r\n      \"numberOfCores\":
+        4,\r\n      \"osDiskSizeInMB\": 1047552,\r\n      \"resourceDiskSizeInMB\":
+        204800,\r\n      \"memoryInMB\": 28672,\r\n      \"maxDataDiskCount\": 8\r\n
+        \   },\r\n    {\r\n      \"name\": \"Standard_D13\",\r\n      \"numberOfCores\":
+        8,\r\n      \"osDiskSizeInMB\": 1047552,\r\n      \"resourceDiskSizeInMB\":
+        409600,\r\n      \"memoryInMB\": 57344,\r\n      \"maxDataDiskCount\": 16\r\n
+        \   },\r\n    {\r\n      \"name\": \"Standard_D14\",\r\n      \"numberOfCores\":
+        16,\r\n      \"osDiskSizeInMB\": 1047552,\r\n      \"resourceDiskSizeInMB\":
+        819200,\r\n      \"memoryInMB\": 114688,\r\n      \"maxDataDiskCount\": 32\r\n
+        \   },\r\n    {\r\n      \"name\": \"Standard_DS1\",\r\n      \"numberOfCores\":
+        1,\r\n      \"osDiskSizeInMB\": 1047552,\r\n      \"resourceDiskSizeInMB\":
+        7168,\r\n      \"memoryInMB\": 3584,\r\n      \"maxDataDiskCount\": 2\r\n
+        \   },\r\n    {\r\n      \"name\": \"Standard_DS2\",\r\n      \"numberOfCores\":
+        2,\r\n      \"osDiskSizeInMB\": 1047552,\r\n      \"resourceDiskSizeInMB\":
+        14336,\r\n      \"memoryInMB\": 7168,\r\n      \"maxDataDiskCount\": 4\r\n
+        \   },\r\n    {\r\n      \"name\": \"Standard_DS3\",\r\n      \"numberOfCores\":
+        4,\r\n      \"osDiskSizeInMB\": 1047552,\r\n      \"resourceDiskSizeInMB\":
+        28672,\r\n      \"memoryInMB\": 14336,\r\n      \"maxDataDiskCount\": 8\r\n
+        \   },\r\n    {\r\n      \"name\": \"Standard_DS4\",\r\n      \"numberOfCores\":
+        8,\r\n      \"osDiskSizeInMB\": 1047552,\r\n      \"resourceDiskSizeInMB\":
+        57344,\r\n      \"memoryInMB\": 28672,\r\n      \"maxDataDiskCount\": 16\r\n
+        \   },\r\n    {\r\n      \"name\": \"Standard_DS11\",\r\n      \"numberOfCores\":
+        2,\r\n      \"osDiskSizeInMB\": 1047552,\r\n      \"resourceDiskSizeInMB\":
+        28672,\r\n      \"memoryInMB\": 14336,\r\n      \"maxDataDiskCount\": 4\r\n
+        \   },\r\n    {\r\n      \"name\": \"Standard_DS12\",\r\n      \"numberOfCores\":
+        4,\r\n      \"osDiskSizeInMB\": 1047552,\r\n      \"resourceDiskSizeInMB\":
+        57344,\r\n      \"memoryInMB\": 28672,\r\n      \"maxDataDiskCount\": 8\r\n
+        \   },\r\n    {\r\n      \"name\": \"Standard_DS13\",\r\n      \"numberOfCores\":
+        8,\r\n      \"osDiskSizeInMB\": 1047552,\r\n      \"resourceDiskSizeInMB\":
+        114688,\r\n      \"memoryInMB\": 57344,\r\n      \"maxDataDiskCount\": 16\r\n
+        \   },\r\n    {\r\n      \"name\": \"Standard_DS14\",\r\n      \"numberOfCores\":
+        16,\r\n      \"osDiskSizeInMB\": 1047552,\r\n      \"resourceDiskSizeInMB\":
+        229376,\r\n      \"memoryInMB\": 114688,\r\n      \"maxDataDiskCount\": 32\r\n
+        \   },\r\n    {\r\n      \"name\": \"Standard_G1\",\r\n      \"numberOfCores\":
+        2,\r\n      \"osDiskSizeInMB\": 1047552,\r\n      \"resourceDiskSizeInMB\":
+        393216,\r\n      \"memoryInMB\": 28672,\r\n      \"maxDataDiskCount\": 4\r\n
+        \   },\r\n    {\r\n      \"name\": \"Standard_G2\",\r\n      \"numberOfCores\":
+        4,\r\n      \"osDiskSizeInMB\": 1047552,\r\n      \"resourceDiskSizeInMB\":
+        786432,\r\n      \"memoryInMB\": 57344,\r\n      \"maxDataDiskCount\": 8\r\n
+        \   },\r\n    {\r\n      \"name\": \"Standard_G3\",\r\n      \"numberOfCores\":
+        8,\r\n      \"osDiskSizeInMB\": 1047552,\r\n      \"resourceDiskSizeInMB\":
+        1572864,\r\n      \"memoryInMB\": 114688,\r\n      \"maxDataDiskCount\": 16\r\n
+        \   },\r\n    {\r\n      \"name\": \"Standard_G4\",\r\n      \"numberOfCores\":
+        16,\r\n      \"osDiskSizeInMB\": 1047552,\r\n      \"resourceDiskSizeInMB\":
+        3145728,\r\n      \"memoryInMB\": 229376,\r\n      \"maxDataDiskCount\": 32\r\n
+        \   },\r\n    {\r\n      \"name\": \"Standard_G5\",\r\n      \"numberOfCores\":
+        32,\r\n      \"osDiskSizeInMB\": 1047552,\r\n      \"resourceDiskSizeInMB\":
+        6291456,\r\n      \"memoryInMB\": 458752,\r\n      \"maxDataDiskCount\": 64\r\n
+        \   },\r\n    {\r\n      \"name\": \"Standard_GS1\",\r\n      \"numberOfCores\":
+        2,\r\n      \"osDiskSizeInMB\": 1047552,\r\n      \"resourceDiskSizeInMB\":
+        57344,\r\n      \"memoryInMB\": 28672,\r\n      \"maxDataDiskCount\": 4\r\n
+        \   },\r\n    {\r\n      \"name\": \"Standard_GS2\",\r\n      \"numberOfCores\":
+        4,\r\n      \"osDiskSizeInMB\": 1047552,\r\n      \"resourceDiskSizeInMB\":
+        114688,\r\n      \"memoryInMB\": 57344,\r\n      \"maxDataDiskCount\": 8\r\n
+        \   },\r\n    {\r\n      \"name\": \"Standard_GS3\",\r\n      \"numberOfCores\":
+        8,\r\n      \"osDiskSizeInMB\": 1047552,\r\n      \"resourceDiskSizeInMB\":
+        229376,\r\n      \"memoryInMB\": 114688,\r\n      \"maxDataDiskCount\": 16\r\n
+        \   },\r\n    {\r\n      \"name\": \"Standard_GS4\",\r\n      \"numberOfCores\":
+        16,\r\n      \"osDiskSizeInMB\": 1047552,\r\n      \"resourceDiskSizeInMB\":
+        458752,\r\n      \"memoryInMB\": 229376,\r\n      \"maxDataDiskCount\": 32\r\n
+        \   },\r\n    {\r\n      \"name\": \"Standard_GS5\",\r\n      \"numberOfCores\":
+        32,\r\n      \"osDiskSizeInMB\": 1047552,\r\n      \"resourceDiskSizeInMB\":
+        917504,\r\n      \"memoryInMB\": 458752,\r\n      \"maxDataDiskCount\": 64\r\n
+        \   },\r\n    {\r\n      \"name\": \"Standard_A8\",\r\n      \"numberOfCores\":
+        8,\r\n      \"osDiskSizeInMB\": 1047552,\r\n      \"resourceDiskSizeInMB\":
+        391168,\r\n      \"memoryInMB\": 57344,\r\n      \"maxDataDiskCount\": 16\r\n
+        \   },\r\n    {\r\n      \"name\": \"Standard_A9\",\r\n      \"numberOfCores\":
+        16,\r\n      \"osDiskSizeInMB\": 1047552,\r\n      \"resourceDiskSizeInMB\":
+        391168,\r\n      \"memoryInMB\": 114688,\r\n      \"maxDataDiskCount\": 16\r\n
+        \   },\r\n    {\r\n      \"name\": \"Standard_A10\",\r\n      \"numberOfCores\":
+        8,\r\n      \"osDiskSizeInMB\": 1047552,\r\n      \"resourceDiskSizeInMB\":
+        391168,\r\n      \"memoryInMB\": 57344,\r\n      \"maxDataDiskCount\": 16\r\n
+        \   },\r\n    {\r\n      \"name\": \"Standard_A11\",\r\n      \"numberOfCores\":
+        16,\r\n      \"osDiskSizeInMB\": 1047552,\r\n      \"resourceDiskSizeInMB\":
+        391168,\r\n      \"memoryInMB\": 114688,\r\n      \"maxDataDiskCount\": 16\r\n
+        \   },\r\n    {\r\n      \"name\": \"Standard_H8\",\r\n      \"numberOfCores\":
+        8,\r\n      \"osDiskSizeInMB\": 1047552,\r\n      \"resourceDiskSizeInMB\":
+        1024000,\r\n      \"memoryInMB\": 57344,\r\n      \"maxDataDiskCount\": 16\r\n
+        \   },\r\n    {\r\n      \"name\": \"Standard_H16\",\r\n      \"numberOfCores\":
+        16,\r\n      \"osDiskSizeInMB\": 1047552,\r\n      \"resourceDiskSizeInMB\":
+        2048000,\r\n      \"memoryInMB\": 114688,\r\n      \"maxDataDiskCount\": 32\r\n
+        \   },\r\n    {\r\n      \"name\": \"Standard_H8m\",\r\n      \"numberOfCores\":
+        8,\r\n      \"osDiskSizeInMB\": 1047552,\r\n      \"resourceDiskSizeInMB\":
+        1024000,\r\n      \"memoryInMB\": 114688,\r\n      \"maxDataDiskCount\": 16\r\n
+        \   },\r\n    {\r\n      \"name\": \"Standard_H16m\",\r\n      \"numberOfCores\":
+        16,\r\n      \"osDiskSizeInMB\": 1047552,\r\n      \"resourceDiskSizeInMB\":
+        2048000,\r\n      \"memoryInMB\": 229376,\r\n      \"maxDataDiskCount\": 32\r\n
+        \   },\r\n    {\r\n      \"name\": \"Standard_H16r\",\r\n      \"numberOfCores\":
+        16,\r\n      \"osDiskSizeInMB\": 1047552,\r\n      \"resourceDiskSizeInMB\":
+        2048000,\r\n      \"memoryInMB\": 114688,\r\n      \"maxDataDiskCount\": 32\r\n
+        \   },\r\n    {\r\n      \"name\": \"Standard_H16mr\",\r\n      \"numberOfCores\":
+        16,\r\n      \"osDiskSizeInMB\": 1047552,\r\n      \"resourceDiskSizeInMB\":
+        2048000,\r\n      \"memoryInMB\": 229376,\r\n      \"maxDataDiskCount\": 32\r\n
+        \   }\r\n  ]\r\n}"}
     headers:
       Cache-Control: [no-cache]
-      Content-Encoding: [gzip]
       Content-Type: [application/json; charset=utf-8]
-      Date: ['Thu, 07 Jul 2016 22:16:06 GMT']
+      Date: ['Tue, 24 Jan 2017 00:05:58 GMT']
       Expires: ['-1']
       Pragma: [no-cache]
       Server: [Microsoft-HTTPAPI/2.0, Microsoft-HTTPAPI/2.0]
       Strict-Transport-Security: [max-age=31536000; includeSubDomains]
       Transfer-Encoding: [chunked]
       Vary: [Accept-Encoding]
-      x-ms-correlation-request-id: [c40db362-7518-4e10-93f4-216d667407c6]
+      content-length: ['17545']
+      x-ms-correlation-request-id: [62465834-ba60-4781-9dc5-70c4a1bfd1dc]
       x-ms-ratelimit-remaining-subscription-reads: ['14999']
-      x-ms-request-id: [4f985143-680b-4863-a2a9-4f7819af47e3]
-      x-ms-routing-request-id: ['CENTRALUS:20160707T221607Z:c40db362-7518-4e10-93f4-216d667407c6']
-      x-ms-served-by: [2d78c99a-5cdc-4580-9eb7-b3e168e83a95_131099783644879420]
+      x-ms-request-id: [486dd297-dfc7-4e89-9f4b-e5fffa0b50b6]
+      x-ms-routing-request-id: ['WESTUS2:20170124T000559Z:62465834-ba60-4781-9dc5-70c4a1bfd1dc']
+      x-ms-served-by: [2d78c99a-5cdc-4580-9eb7-b3e168e83a95_131263266271495896]
     status: {code: 200, message: OK}
 - request:
     body: null
@@ -224,26 +409,26 @@ interactions:
       Connection: [keep-alive]
       Content-Length: ['0']
       Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.5.1 (Windows-10-10.0.14372-SP0) requests/2.10.0 msrest/0.4.0
-          msrest_azure/0.4.1 computemanagementclient/0.30.0rc5 Azure-SDK-For-Python]
+      User-Agent: [python/3.5.1 (Windows-10-10.0.14393-SP0) requests/2.12.3 msrest/0.4.4
+          msrest_azure/0.4.7 computemanagementclient/0.32.1 Azure-SDK-For-Python]
       accept-language: [en-US]
-      x-ms-client-request-id: [67c3a7ca-4490-11e6-b37e-ecb1d756380e]
+      x-ms-client-request-id: [e304e62c-e1c8-11e6-bc60-ecb1d756380e]
     method: DELETE
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_test_availability_sets53ac1097/providers/Microsoft.Compute/availabilitySets/pyarmset53ac1097?api-version=2016-03-30
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_compute_test_availability_sets53ac1097/providers/Microsoft.Compute/availabilitySets/pyarmset53ac1097?api-version=2016-04-30-preview
   response:
     body: {string: ''}
     headers:
       Cache-Control: [no-cache]
       Content-Length: ['0']
-      Date: ['Thu, 07 Jul 2016 22:16:08 GMT']
+      Date: ['Tue, 24 Jan 2017 00:06:00 GMT']
       Expires: ['-1']
       Pragma: [no-cache]
       Server: [Microsoft-HTTPAPI/2.0, Microsoft-HTTPAPI/2.0]
       Strict-Transport-Security: [max-age=31536000; includeSubDomains]
-      x-ms-correlation-request-id: [76874753-3edf-4458-901a-57de1f5fa5a8]
+      x-ms-correlation-request-id: [056a8afa-de2c-447d-92e8-ab074bb582d7]
       x-ms-ratelimit-remaining-subscription-writes: ['1199']
-      x-ms-request-id: [ebb7e6bb-09b8-4566-a3c8-7aab0508d81f]
-      x-ms-routing-request-id: ['CENTRALUS:20160707T221608Z:76874753-3edf-4458-901a-57de1f5fa5a8']
-      x-ms-served-by: [2d78c99a-5cdc-4580-9eb7-b3e168e83a95_131099783644879420]
+      x-ms-request-id: [969fb04d-519e-4f85-833f-f449fb5139ff]
+      x-ms-routing-request-id: ['WESTUS2:20170124T000601Z:056a8afa-de2c-447d-92e8-ab074bb582d7']
+      x-ms-served-by: [2d78c99a-5cdc-4580-9eb7-b3e168e83a95_131263266271495896]
     status: {code: 200, message: OK}
 version: 1
