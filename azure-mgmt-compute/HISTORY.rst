@@ -3,6 +3,14 @@
 Release History
 ===============
 
+0.33.0 (2017-xx-xx)
++++++++++++++++++++
+
+**Features**
+
+This release adds Managed Disk to compute. This changes the default disk creation behavior
+to use the new Managed Disk feature instead of Storage.
+
 0.32.1 (2016-11-14)
 +++++++++++++++++++
 
