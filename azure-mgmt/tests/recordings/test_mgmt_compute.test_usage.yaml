@@ -2,152 +2,92 @@ interactions:
 - request:
     body: null
     headers:
-      Accept: ['*/*']
-      Accept-Encoding: ['gzip, deflate']
-      Connection: [keep-alive]
-      Content-Type: [application/json]
-      User-Agent: [python-requests/2.4.3 CPython/2.7.9 Windows/8]
-    method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/westus/usages?api-version=2015-05-01-preview
-  response:
-    body:
-      string: !!binary |
-        H4sIAAAAAAAEAO29B2AcSZYlJi9tynt/SvVK1+B0oQiAYBMk2JBAEOzBiM3mkuwdaUcjKasqgcpl
-        VmVdZhZAzO2dvPfee++999577733ujudTif33/8/XGZkAWz2zkrayZ4hgKrIHz9+fB8/In7xb5yk
-        6UeXWbnOP3qUfg9/pSl/iOej9bJo6fOPTqr1sv1oZD+frus6X7Y/qe/tuG/KYsGv7HmfLbMFWlmw
-        9JHp8aNpVeeNg0xfldU0K4sf5DMDnXpHG9Pkl8gv/OP7v3HyS/4fVY1XJsMAAAA=
-    headers:
-      cache-control: [no-cache]
-      content-encoding: [gzip]
-      content-type: [application/json; charset=utf-8]
-      date: ['Mon, 15 Jun 2015 22:40:21 GMT']
-      expires: ['-1']
-      pragma: [no-cache]
-      server: [Microsoft-HTTPAPI/2.0, Microsoft-HTTPAPI/2.0]
-      strict-transport-security: [max-age=31536000; includeSubDomains]
-      transfer-encoding: [chunked]
-      vary: [Accept-Encoding]
-      x-ms-correlation-request-id: [ffc8eff4-6c8f-4064-94e2-1839063a8527]
-      x-ms-ratelimit-remaining-subscription-reads: ['14989']
-      x-ms-request-id: [8e4e5f85-7323-49d2-b2d7-b65a182b23bf]
-      x-ms-routing-request-id: ['WESTUS:20150615T224022Z:ffc8eff4-6c8f-4064-94e2-1839063a8527']
-    status: {code: 200, message: OK}
-- request:
-    body: null
-    headers:
-      Accept: ['*/*']
-      Accept-Encoding: ['gzip, deflate']
-      Connection: [keep-alive]
-      Content-Length: [0]
-      Content-Type: [application/json; charset=utf-8]
-      User-Agent: [compute_management_client/2015-06-15]
-      accept-language: [en-US]
-      x-ms-client-request-id: [5b1923ca-b649-11e5-8f46-dc53600575a2]
-    method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/westus/usages?api-version=2015-06-15
-  response:
-    body:
-      string: !!binary |
-        H4sIAAAAAAAEAO29B2AcSZYlJi9tynt/SvVK1+B0oQiAYBMk2JBAEOzBiM3mkuwdaUcjKasqgcpl
-        VmVdZhZAzO2dvPfee++999577733ujudTif33/8/XGZkAWz2zkrayZ4hgKrIHz9+fB8/In7xb5yk
-        6UeXWbnOP3qUfg9/pSl/iOej9bJo6fOPTqr1sv1oZD+frus6X7Y/qe/tuG/KYsGv7O3seJ8uswXa
-        WcD0kenzo+wyK8psUpRFe/06bxvXDbUqq2lWFj/IZ6arj4695im3N81/ifzyS/R929kHjGLX+2zT
-        GKZVnd+E+Juqzcr0VX5RVEv65YRfMW/8rOBOj/t4E/qXRd2us/KLbDovloSVfYsa9Qfyk9I6tc1N
-        65+FQdz3Prv9CF4Tyjnzhn2bGt84kpTfizMVfnz/N05+yf8DwbZt2DEDAAA=
-    headers:
-      Cache-Control: [no-cache]
-      Content-Encoding: [gzip]
-      Content-Type: [application/json; charset=utf-8]
-      Date: ['Fri, 08 Jan 2016 20:49:48 GMT']
-      Expires: ['-1']
-      Pragma: [no-cache]
-      Server: [Microsoft-HTTPAPI/2.0, Microsoft-HTTPAPI/2.0]
-      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
-      Transfer-Encoding: [chunked]
-      Vary: [Accept-Encoding]
-      x-ms-correlation-request-id: [0b864b63-0edb-4d99-89d6-997df9c80618]
-      x-ms-ratelimit-remaining-subscription-reads: ['14999']
-      x-ms-request-id: [9b3d8e8c-73b5-4d81-802d-20e4069c07a9]
-      x-ms-routing-request-id: ['EASTUS2:20160108T204948Z:0b864b63-0edb-4d99-89d6-997df9c80618']
-      x-ms-served-by: [2d78c99a-5cdc-4580-9eb7-b3e168e83a95_130952805529321336]
-    status: {code: 200, message: OK}
-- request:
-    body: null
-    headers:
-      Accept: ['*/*']
-      Accept-Encoding: ['gzip, deflate']
-      Connection: [keep-alive]
-      Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.5.1 requests/2.7.0 msrest/0.0.1 msrest_azure/0.0.1 computemanagementclient/2015-06-15]
-      accept-language: [en-US]
-      x-ms-client-request-id: [b0afdf26-d4dd-11e5-ab29-54ee7574ca37]
-    method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/westus/usages?api-version=2015-06-15
-  response:
-    body:
-      string: !!binary |
-        H4sIAAAAAAAEAO29B2AcSZYlJi9tynt/SvVK1+B0oQiAYBMk2JBAEOzBiM3mkuwdaUcjKasqgcpl
-        VmVdZhZAzO2dvPfee++999577733ujudTif33/8/XGZkAWz2zkrayZ4hgKrIHz9+fB8/In7xb5yk
-        6UeXWbnOP3qUfg9/pSl/iOej9bJo6fOPTqr1sv1oZD+frus6X7Y/qe/tuG/KYsGv7O3seJ8uswXa
-        WcD0kenzo+wyK8psUpRFe/06bxvXDbUqq2lWFj/IZ6arj4695im3N81/ifzyS/R929kHjGLX+2zT
-        GKZVnd+E+Juqzcr0VX5RVEv65YRfMW/8rOBOj/t4E/qXRd2us/KLbDovloSVfYsa9Qfyk9I6tc1N
-        65+FQdz3Prv9CF4Tyjnzhn2bGt84kpTfizMVfnz/N05+yf8DwbZt2DEDAAA=
-    headers:
-      Cache-Control: [no-cache]
-      Content-Encoding: [gzip]
-      Content-Type: [application/json; charset=utf-8]
-      Date: ['Tue, 16 Feb 2016 18:47:11 GMT']
-      Expires: ['-1']
-      Pragma: [no-cache]
-      Server: [Microsoft-HTTPAPI/2.0, Microsoft-HTTPAPI/2.0]
-      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
-      Transfer-Encoding: [chunked]
-      Vary: [Accept-Encoding]
-      x-ms-correlation-request-id: [01aa97b6-1a8f-472d-ac70-9c8557b77998]
-      x-ms-ratelimit-remaining-subscription-reads: ['14970']
-      x-ms-request-id: [4b24056b-bc61-4e5e-b2f3-bab83aab1018]
-      x-ms-routing-request-id: ['WESTUS:20160216T184712Z:01aa97b6-1a8f-472d-ac70-9c8557b77998']
-      x-ms-served-by: [2d78c99a-5cdc-4580-9eb7-b3e168e83a95_130991581835333371]
-    status: {code: 200, message: OK}
-- request:
-    body: null
-    headers:
       Accept: [application/json]
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
       Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.5.1 requests/2.7.0 msrest/0.1.3 msrest_azure/0.1.2 computemanagementclient/2016-03-30
-          Azure-SDK-For-Python]
+      User-Agent: [python/3.5.1 (Windows-10-10.0.14393-SP0) requests/2.12.3 msrest/0.4.4
+          msrest_azure/0.4.7 computemanagementclient/0.33.0 Azure-SDK-For-Python]
       accept-language: [en-US]
-      x-ms-client-request-id: [aa7af790-f2b6-11e5-a20d-54ee7574ca37]
+      x-ms-client-request-id: [df12cb68-e1ca-11e6-bb3a-ecb1d756380e]
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/westus/usages?api-version=2016-03-30
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/westus/usages?api-version=2016-04-30-preview
   response:
-    body:
-      string: !!binary |
-        H4sIAAAAAAAEAO29B2AcSZYlJi9tynt/SvVK1+B0oQiAYBMk2JBAEOzBiM3mkuwdaUcjKasqgcpl
-        VmVdZhZAzO2dvPfee++999577733ujudTif33/8/XGZkAWz2zkrayZ4hgKrIHz9+fB8/In7xb5yk
-        6UeXWbnOP3qUfg9/pSl/iOej9bJo6fOPTqr1sv1oZD+frus6X7Y/qe/tuG/KYsGv7O3seJ8uswXa
-        WcD0kenzo+wyK8psUpRFe/06bxvXDbUqq2lWFj/IZ6arj4695im3N81/ifzyS/R929ltR7HnvjGj
-        2L3lGKZVnd+E+Juqzcr0VX5RVEv65YRfMW/8rOBOj/t4E/qXRd2us/KLbDovloSVfYsa9Qfyk9I6
-        tc1N6w8dhIetGcR977Pbj+A1oZwzb9i3qfGNI0n5vW+WqXbdN2ZMt2WqSdYU0+Nn2aIor10H1KI/
-        kCdomh6n0vgb5q0PGELTZstZVs+Od37/4weCnOuHGvZH8lrfSI93to8fbB4Qfnz/N05+yf8D/3Fa
-        UMUEAAA=
+    body: {string: "{\r\n  \"value\": [\r\n    {\r\n      \"unit\": \"Count\",\r\n
+        \     \"currentValue\": 1,\r\n      \"limit\": 2000,\r\n      \"name\": {\r\n
+        \       \"value\": \"availabilitySets\",\r\n        \"localizedValue\": \"Availability
+        Sets\"\r\n      }\r\n    },\r\n    {\r\n      \"unit\": \"Count\",\r\n      \"currentValue\":
+        4,\r\n      \"limit\": 10,\r\n      \"name\": {\r\n        \"value\": \"cores\",\r\n
+        \       \"localizedValue\": \"Total Regional Cores\"\r\n      }\r\n    },\r\n
+        \   {\r\n      \"unit\": \"Count\",\r\n      \"currentValue\": 3,\r\n      \"limit\":
+        10000,\r\n      \"name\": {\r\n        \"value\": \"virtualMachines\",\r\n
+        \       \"localizedValue\": \"Virtual Machines\"\r\n      }\r\n    },\r\n
+        \   {\r\n      \"unit\": \"Count\",\r\n      \"currentValue\": 0,\r\n      \"limit\":
+        2000,\r\n      \"name\": {\r\n        \"value\": \"virtualMachineScaleSets\",\r\n
+        \       \"localizedValue\": \"Virtual Machine Scale Sets\"\r\n      }\r\n
+        \   },\r\n    {\r\n      \"unit\": \"Count\",\r\n      \"currentValue\": 1,\r\n
+        \     \"limit\": 10,\r\n      \"name\": {\r\n        \"value\": \"basicAFamily\",\r\n
+        \       \"localizedValue\": \"Basic A Family Cores\"\r\n      }\r\n    },\r\n
+        \   {\r\n      \"unit\": \"Count\",\r\n      \"currentValue\": 1,\r\n      \"limit\":
+        10,\r\n      \"name\": {\r\n        \"value\": \"standardA0_A7Family\",\r\n
+        \       \"localizedValue\": \"Standard A0-A7 Family Cores\"\r\n      }\r\n
+        \   },\r\n    {\r\n      \"unit\": \"Count\",\r\n      \"currentValue\": 2,\r\n
+        \     \"limit\": 10,\r\n      \"name\": {\r\n        \"value\": \"standardDv2Family\",\r\n
+        \       \"localizedValue\": \"Standard Dv2 Family Cores\"\r\n      }\r\n    },\r\n
+        \   {\r\n      \"unit\": \"Count\",\r\n      \"currentValue\": 0,\r\n      \"limit\":
+        10,\r\n      \"name\": {\r\n        \"value\": \"standardA8_A11Family\",\r\n
+        \       \"localizedValue\": \"Standard A8-A11 Family Cores\"\r\n      }\r\n
+        \   },\r\n    {\r\n      \"unit\": \"Count\",\r\n      \"currentValue\": 0,\r\n
+        \     \"limit\": 10,\r\n      \"name\": {\r\n        \"value\": \"standardDFamily\",\r\n
+        \       \"localizedValue\": \"Standard D Family Cores\"\r\n      }\r\n    },\r\n
+        \   {\r\n      \"unit\": \"Count\",\r\n      \"currentValue\": 0,\r\n      \"limit\":
+        10,\r\n      \"name\": {\r\n        \"value\": \"standardGFamily\",\r\n        \"localizedValue\":
+        \"Standard G Family Cores\"\r\n      }\r\n    },\r\n    {\r\n      \"unit\":
+        \"Count\",\r\n      \"currentValue\": 0,\r\n      \"limit\": 10,\r\n      \"name\":
+        {\r\n        \"value\": \"standardDSFamily\",\r\n        \"localizedValue\":
+        \"Standard DS Family Cores\"\r\n      }\r\n    },\r\n    {\r\n      \"unit\":
+        \"Count\",\r\n      \"currentValue\": 0,\r\n      \"limit\": 10,\r\n      \"name\":
+        {\r\n        \"value\": \"standardDSv2Family\",\r\n        \"localizedValue\":
+        \"Standard DSv2 Family Cores\"\r\n      }\r\n    },\r\n    {\r\n      \"unit\":
+        \"Count\",\r\n      \"currentValue\": 0,\r\n      \"limit\": 10,\r\n      \"name\":
+        {\r\n        \"value\": \"standardGSFamily\",\r\n        \"localizedValue\":
+        \"Standard GS Family Cores\"\r\n      }\r\n    },\r\n    {\r\n      \"unit\":
+        \"Count\",\r\n      \"currentValue\": 0,\r\n      \"limit\": 10,\r\n      \"name\":
+        {\r\n        \"value\": \"standardFFamily\",\r\n        \"localizedValue\":
+        \"Standard F Family Cores\"\r\n      }\r\n    },\r\n    {\r\n      \"unit\":
+        \"Count\",\r\n      \"currentValue\": 0,\r\n      \"limit\": 10,\r\n      \"name\":
+        {\r\n        \"value\": \"standardFSFamily\",\r\n        \"localizedValue\":
+        \"Standard FS Family Cores\"\r\n      }\r\n    },\r\n    {\r\n      \"unit\":
+        \"Count\",\r\n      \"currentValue\": 0,\r\n      \"limit\": 12,\r\n      \"name\":
+        {\r\n        \"value\": \"standardNVFamily\",\r\n        \"localizedValue\":
+        \"Standard NV Family Cores\"\r\n      }\r\n    },\r\n    {\r\n      \"unit\":
+        \"Count\",\r\n      \"currentValue\": 0,\r\n      \"limit\": 12,\r\n      \"name\":
+        {\r\n        \"value\": \"standardNCFamily\",\r\n        \"localizedValue\":
+        \"Standard NC Family Cores\"\r\n      }\r\n    },\r\n    {\r\n      \"unit\":
+        \"Count\",\r\n      \"currentValue\": 0,\r\n      \"limit\": 8,\r\n      \"name\":
+        {\r\n        \"value\": \"standardHFamily\",\r\n        \"localizedValue\":
+        \"Standard H Family Cores\"\r\n      }\r\n    },\r\n    {\r\n      \"unit\":
+        \"Count\",\r\n      \"currentValue\": 0,\r\n      \"limit\": 10,\r\n      \"name\":
+        {\r\n        \"value\": \"standardAv2Family\",\r\n        \"localizedValue\":
+        \"Standard Av2 Family Cores\"\r\n      }\r\n    },\r\n    {\r\n      \"unit\":
+        \"Count\",\r\n      \"currentValue\": 0,\r\n      \"limit\": 10,\r\n      \"name\":
+        {\r\n        \"value\": \"standardLSFamily\",\r\n        \"localizedValue\":
+        \"Standard LS Family Cores\"\r\n      }\r\n    }\r\n  ]\r\n}"}
     headers:
       Cache-Control: [no-cache]
-      Content-Encoding: [gzip]
       Content-Type: [application/json; charset=utf-8]
-      Date: ['Fri, 25 Mar 2016 18:23:24 GMT']
+      Date: ['Tue, 24 Jan 2017 00:20:12 GMT']
       Expires: ['-1']
       Pragma: [no-cache]
       Server: [Microsoft-HTTPAPI/2.0, Microsoft-HTTPAPI/2.0]
       Strict-Transport-Security: [max-age=31536000; includeSubDomains]
       Transfer-Encoding: [chunked]
       Vary: [Accept-Encoding]
-      x-ms-correlation-request-id: [b2798733-182e-4ace-b696-363d948f209e]
-      x-ms-ratelimit-remaining-subscription-reads: ['14989']
-      x-ms-request-id: [0064618d-174b-4191-b7e4-13c32382b48f]
-      x-ms-routing-request-id: ['EASTUS:20160325T182324Z:b2798733-182e-4ace-b696-363d948f209e']
-      x-ms-served-by: [2d78c99a-5cdc-4580-9eb7-b3e168e83a95_131027280122225029]
+      content-length: ['4072']
+      x-ms-correlation-request-id: [62cfbc46-5bb8-4af5-9d72-070627a2a4dc]
+      x-ms-ratelimit-remaining-subscription-reads: ['14997']
+      x-ms-request-id: [32fd84cd-acd6-48d9-a996-f743ab9ab05e]
+      x-ms-routing-request-id: ['WESTUS2:20170124T002012Z:62cfbc46-5bb8-4af5-9d72-070627a2a4dc']
+      x-ms-served-by: [2d78c99a-5cdc-4580-9eb7-b3e168e83a95_131263266271495896]
     status: {code: 200, message: OK}
 version: 1
