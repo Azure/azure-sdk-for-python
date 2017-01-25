@@ -28,3 +28,34 @@ All these operations can also raise this set of generic exceptions that are defi
   - :exc:`SerializationError<msrest.exceptions.SerializationError>`: unable to serialize your request. Your Python code didn't respect the expected model. Retry will never work. Please create an issue on Github if you see this exception and are 100% your parameters are correct.
   - :exc:`TokenExpiredError<msrest.exceptions.TokenExpiredError>`: please renew your credentials. Likely retry with new credentials will be ok.
   - :exc:`ValidationError<msrest.exceptions.ValidationError>`: client side check of your request failed. Fix your parameters with expected value. For instance, you didn't respect the regexp for the account name. This will never work on retry.
+
+Asynchronous operation
+++++++++++++++++++++++
+
+An asynchronous operation is an operation that returns an :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
+(like :meth:`create_or_update<azure.mgmt.network.operations.NetworkSecurityGroupsOperations.create_or_update>`). Using this kind of operation
+usually requires two lines:
+
+.. code:: python
+    
+    async_poller = client.network_security_groups.create_or_update(myparameters)
+    result = async_poller.result()
+
+or, if this asynchronous operation is not returning a result:
+
+.. code:: python
+    
+    async_poller = client.network_security_groups.create_or_update(myparameters)
+    async_poller.wait()
+
+Our recommendation is to surround both of the statements with the necessary try/except. More precisely, the first call might fail on the initial call
+and the second one might fail during polling the status of the operation
+
+.. important:: Old version of the packages never failed on the first call, but this behavior was replaced by the one described and you should follow
+               this pattern even for old packages.
+
+Raw operation
++++++++++++++
+
+All operation accept a `raw=True` parameter to indicate that the method must return the `requests.Response` instance directly.
+All the previous exceptions are still corect, but :exc:`DeserializationError<msrest.exceptions.DeserializationError>`, since we do not deserialize the answer.
