@@ -239,6 +239,7 @@ Indices and tables
   installation
   quickstart_authentication
   multicloud
+  exceptions
   
 .. toctree::
   :glob:
