@@ -141,6 +141,7 @@ from .restore_response import RestoreResponse
 from .site_auth_settings import SiteAuthSettings
 from .site_cloneability_criterion import SiteCloneabilityCriterion
 from .site_cloneability import SiteCloneability
+from .site_configuration_snapshot_info import SiteConfigurationSnapshotInfo
 from .site_instance import SiteInstance
 from .site_logs_config import SiteLogsConfig
 from .site_php_error_log_flag import SitePhpErrorLogFlag
@@ -203,6 +204,7 @@ from .web_site_management_client_enums import (
     OperationStatus,
     UsageState,
     SiteAvailabilityState,
+    ScmType,
     ManagedPipelineMode,
     SiteLoadBalancing,
     RouteType,
@@ -364,6 +366,7 @@ __all__ = [
     'SiteAuthSettings',
     'SiteCloneabilityCriterion',
     'SiteCloneability',
+    'SiteConfigurationSnapshotInfo',
     'SiteInstance',
     'SiteLogsConfig',
     'SitePhpErrorLogFlag',
@@ -425,6 +428,7 @@ __all__ = [
     'OperationStatus',
     'UsageState',
     'SiteAvailabilityState',
+    'ScmType',
     'ManagedPipelineMode',
     'SiteLoadBalancing',
     'RouteType',
