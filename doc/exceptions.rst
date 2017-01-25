@@ -58,4 +58,4 @@ Raw operation
 +++++++++++++
 
 All operation accept a `raw=True` parameter to indicate that the method must return the `requests.Response` instance directly.
-All the previous exceptions are still corect, but :exc:`DeserializationError<msrest.exceptions.DeserializationError>`, since we do not deserialize the answer.
+All the previous exceptions are still correct, except for :exc:`DeserializationError<msrest.exceptions.DeserializationError>`, since we do not deserialize the answer.
