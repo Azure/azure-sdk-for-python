@@ -18,9 +18,6 @@ class CsmSiteRecoveryEntity(Model):
     :param snapshot_time: Point in time in which the app recovery should be
      attempted.
     :type snapshot_time: datetime
-    :param recover_config: If <code>true</code>, then the app's configuration
-     will be reverted to its state at <code>SnapshotTime</code>.
-    :type recover_config: bool
     :param site_name: [Optional] Destination app name into which app should be
      recovered. This is case when new app should be created instead.
     :type site_name: str
@@ -31,13 +28,11 @@ class CsmSiteRecoveryEntity(Model):
 
     _attribute_map = {
         'snapshot_time': {'key': 'snapshotTime', 'type': 'iso-8601'},
-        'recover_config': {'key': 'recoverConfig', 'type': 'bool'},
         'site_name': {'key': 'siteName', 'type': 'str'},
         'slot_name': {'key': 'slotName', 'type': 'str'},
     }
 
-    def __init__(self, snapshot_time=None, recover_config=None, site_name=None, slot_name=None):
+    def __init__(self, snapshot_time=None, site_name=None, slot_name=None):
         self.snapshot_time = snapshot_time
-        self.recover_config = recover_config
         self.site_name = site_name
         self.slot_name = slot_name

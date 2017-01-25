@@ -19,10 +19,11 @@ class SiteAuthSettings(Model):
     :param enabled: <code>true</code> if the Authentication / Authorization
      feature is enabled for the current app; otherwise, <code>false</code>.
     :type enabled: bool
-    :param http_api_prefix_path: The relative path prefix used by platform
-     HTTP APIs.
-     Changing this value is not recommended except for compatibility reasons.
-    :type http_api_prefix_path: str
+    :param runtime_version: The RuntimeVersion of the Authentication /
+     Authorization feature in use for the current app.
+     The setting in this value can control the behavior of certain features in
+     the Authentication / Authorization module.
+    :type runtime_version: str
     :param unauthenticated_client_action: The action to take when an
      unauthenticated client attempts to access the app. Possible values
      include: 'RedirectToLoginPage', 'AllowAnonymous'
@@ -89,10 +90,6 @@ class SiteAuthSettings(Model):
      Connect authorization endpoint when
      a user logs in. Each parameter must be in the form "key=value".
     :type additional_login_params: list of str
-    :param aad_client_id:
-    :type aad_client_id: str
-    :param open_id_issuer:
-    :type open_id_issuer: str
     :param google_client_id: The OpenID Connect Client ID for the Google web
      application.
      This setting is required for enabling Google Sign-In.
@@ -162,7 +159,7 @@ class SiteAuthSettings(Model):
 
     _attribute_map = {
         'enabled': {'key': 'enabled', 'type': 'bool'},
-        'http_api_prefix_path': {'key': 'httpApiPrefixPath', 'type': 'str'},
+        'runtime_version': {'key': 'runtimeVersion', 'type': 'str'},
         'unauthenticated_client_action': {'key': 'unauthenticatedClientAction', 'type': 'UnauthenticatedClientAction'},
         'token_store_enabled': {'key': 'tokenStoreEnabled', 'type': 'bool'},
         'allowed_external_redirect_urls': {'key': 'allowedExternalRedirectUrls', 'type': '[str]'},
@@ -173,8 +170,6 @@ class SiteAuthSettings(Model):
         'issuer': {'key': 'issuer', 'type': 'str'},
         'allowed_audiences': {'key': 'allowedAudiences', 'type': '[str]'},
         'additional_login_params': {'key': 'additionalLoginParams', 'type': '[str]'},
-        'aad_client_id': {'key': 'aadClientId', 'type': 'str'},
-        'open_id_issuer': {'key': 'openIdIssuer', 'type': 'str'},
         'google_client_id': {'key': 'googleClientId', 'type': 'str'},
         'google_client_secret': {'key': 'googleClientSecret', 'type': 'str'},
         'google_oauth_scopes': {'key': 'googleOAuthScopes', 'type': '[str]'},
@@ -188,9 +183,9 @@ class SiteAuthSettings(Model):
         'microsoft_account_oauth_scopes': {'key': 'microsoftAccountOAuthScopes', 'type': '[str]'},
     }
 
-    def __init__(self, enabled=None, http_api_prefix_path=None, unauthenticated_client_action=None, token_store_enabled=None, allowed_external_redirect_urls=None, default_provider=None, token_refresh_extension_hours=None, client_id=None, client_secret=None, issuer=None, allowed_audiences=None, additional_login_params=None, aad_client_id=None, open_id_issuer=None, google_client_id=None, google_client_secret=None, google_oauth_scopes=None, facebook_app_id=None, facebook_app_secret=None, facebook_oauth_scopes=None, twitter_consumer_key=None, twitter_consumer_secret=None, microsoft_account_client_id=None, microsoft_account_client_secret=None, microsoft_account_oauth_scopes=None):
+    def __init__(self, enabled=None, runtime_version=None, unauthenticated_client_action=None, token_store_enabled=None, allowed_external_redirect_urls=None, default_provider=None, token_refresh_extension_hours=None, client_id=None, client_secret=None, issuer=None, allowed_audiences=None, additional_login_params=None, google_client_id=None, google_client_secret=None, google_oauth_scopes=None, facebook_app_id=None, facebook_app_secret=None, facebook_oauth_scopes=None, twitter_consumer_key=None, twitter_consumer_secret=None, microsoft_account_client_id=None, microsoft_account_client_secret=None, microsoft_account_oauth_scopes=None):
         self.enabled = enabled
-        self.http_api_prefix_path = http_api_prefix_path
+        self.runtime_version = runtime_version
         self.unauthenticated_client_action = unauthenticated_client_action
         self.token_store_enabled = token_store_enabled
         self.allowed_external_redirect_urls = allowed_external_redirect_urls
@@ -201,8 +196,6 @@ class SiteAuthSettings(Model):
         self.issuer = issuer
         self.allowed_audiences = allowed_audiences
         self.additional_login_params = additional_login_params
-        self.aad_client_id = aad_client_id
-        self.open_id_issuer = open_id_issuer
         self.google_client_id = google_client_id
         self.google_client_secret = google_client_secret
         self.google_oauth_scopes = google_oauth_scopes

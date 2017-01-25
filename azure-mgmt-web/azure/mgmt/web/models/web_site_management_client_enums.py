@@ -166,6 +166,23 @@ class SiteAvailabilityState(Enum):
     disaster_recovery_mode = "DisasterRecoveryMode"
 
 
+class ScmType(Enum):
+
+    none = "None"
+    dropbox = "Dropbox"
+    tfs = "Tfs"
+    local_git = "LocalGit"
+    git_hub = "GitHub"
+    code_plex_git = "CodePlexGit"
+    code_plex_hg = "CodePlexHg"
+    bitbucket_git = "BitbucketGit"
+    bitbucket_hg = "BitbucketHg"
+    external_git = "ExternalGit"
+    external_hg = "ExternalHg"
+    one_drive = "OneDrive"
+    vso = "VSO"
+
+
 class ManagedPipelineMode(Enum):
 
     integrated = "Integrated"

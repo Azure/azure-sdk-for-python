@@ -77,8 +77,10 @@ class SiteConfig(Resource):
      <azure.mgmt.web.models.HandlerMapping>`
     :param document_root: Document root.
     :type document_root: str
-    :ivar scm_type: SCM type.
-    :vartype scm_type: str
+    :ivar scm_type: SCM type. Possible values include: 'None', 'Dropbox',
+     'Tfs', 'LocalGit', 'GitHub', 'CodePlexGit', 'CodePlexHg', 'BitbucketGit',
+     'BitbucketHg', 'ExternalGit', 'ExternalHg', 'OneDrive', 'VSO'
+    :vartype scm_type: str or :class:`ScmType <azure.mgmt.web.models.ScmType>`
     :param use32_bit_worker_process: <code>true</code> to use 32-bit worker
      process; otherwise, <code>false</code>.
     :type use32_bit_worker_process: bool
