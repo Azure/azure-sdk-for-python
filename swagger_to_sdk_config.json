@@ -100,8 +100,7 @@
       "autorest_options": {
         "CodeGenerator": "Python",
         "Namespace": "azure.fabric",
-        "PackageVersion": "0.1.0",
-        "AddCredentials": false
+        "PackageVersion": "0.1.0"
       },
       "output_dir": "azure-fabric/azure/fabric"
     },  
