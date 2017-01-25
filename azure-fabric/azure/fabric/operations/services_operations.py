@@ -202,15 +202,15 @@ class ServicesOperations(object):
         return deserialized
 
     def update(
-            self, service_name, service_kind, flags=None, custom_headers=None, raw=False, **operation_config):
+            self, service_name, update_service_description, custom_headers=None, raw=False, **operation_config):
         """Update services.
 
         :param service_name: The name of the service
         :type service_name: str
-        :param service_kind: Polymorphic Discriminator
-        :type service_kind: str
-        :param flags:
-        :type flags: int
+        :param update_service_description: The description of the service
+         update
+        :type update_service_description: :class:`UpdateServiceDescription
+         <azure.fabric.models.UpdateServiceDescription>`
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -222,8 +222,6 @@ class ServicesOperations(object):
         :raises:
          :class:`ErrorModelException<azure.fabric.models.ErrorModelException>`
         """
-        update_service_description = models.UpdateServiceDescription(flags=flags, service_kind=service_kind)
-
         # Construct URL
         url = '/Services/{serviceName}/$/Update'
         path_format_arguments = {

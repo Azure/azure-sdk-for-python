@@ -97,17 +97,18 @@ class ServiceGroupsOperations(object):
         return deserialized
 
     def update(
-            self, application_name, service_name, service_kind, flags=None, custom_headers=None, raw=False, **operation_config):
+            self, application_name, service_name, update_service_group_description, custom_headers=None, raw=False, **operation_config):
         """Update service groups.
 
         :param application_name: The name of the application
         :type application_name: str
         :param service_name: The name of the service
         :type service_name: str
-        :param service_kind: Polymorphic Discriminator
-        :type service_kind: str
-        :param flags:
-        :type flags: int
+        :param update_service_group_description: The description of the
+         service group update
+        :type update_service_group_description:
+         :class:`UpdateServiceGroupDescription
+         <azure.fabric.models.UpdateServiceGroupDescription>`
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -119,8 +120,6 @@ class ServiceGroupsOperations(object):
         :raises:
          :class:`ErrorModelException<azure.fabric.models.ErrorModelException>`
         """
-        update_service_group_description = models.UpdateServiceGroupDescription(flags=flags, service_kind=service_kind)
-
         # Construct URL
         url = '/Applications/{applicationName}/$/GetServices/{serviceName}/$/UpdateServiceGroup'
         path_format_arguments = {
