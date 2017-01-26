@@ -51,8 +51,8 @@ class SubscriptionResource(Resource):
     :param dead_lettering_on_message_expiration: Value that indicates whether
      a subscription has dead letter support when a message expires.
     :type dead_lettering_on_message_expiration: bool
-    :param enable_batched_operations: Value that indicates whether
-     server-side batched operations are enabled.
+    :param enable_batched_operations: Value that indicates whether server-side
+     batched operations are enabled.
     :type enable_batched_operations: bool
     :param entity_availability_status: Entity availability status for the
      topic. Possible values include: 'Available', 'Limited', 'Renaming',
@@ -79,7 +79,7 @@ class SubscriptionResource(Resource):
      <azure.mgmt.servicebus.models.EntityStatus>`
     :param updated_at: The exact time the message was updated.
     :type updated_at: datetime
-    """ 
+    """
 
     _validation = {
         'id': {'readonly': True},
