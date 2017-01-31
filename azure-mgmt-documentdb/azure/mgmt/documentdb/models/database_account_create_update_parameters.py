@@ -29,6 +29,11 @@ class DatabaseAccountCreateUpdateParameters(Resource):
     :type location: str
     :param tags:
     :type tags: dict
+    :param kind: Indicates the type of database account. This can only be set
+     at database account creation. Possible values include: 'GlobalDocumentDB',
+     'MongoDB', 'Parse'. Default value: "GlobalDocumentDB" .
+    :type kind: str or :class:`DatabaseAccountKind
+     <azure.mgmt.documentdb.models.DatabaseAccountKind>`
     :param consistency_policy: The consistency policy for the DocumentDB
      account.
     :type consistency_policy: :class:`ConsistencyPolicy
@@ -61,6 +66,7 @@ class DatabaseAccountCreateUpdateParameters(Resource):
         'type': {'key': 'type', 'type': 'str'},
         'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
+        'kind': {'key': 'kind', 'type': 'str'},
         'consistency_policy': {'key': 'properties.consistencyPolicy', 'type': 'ConsistencyPolicy'},
         'locations': {'key': 'properties.locations', 'type': '[Location]'},
         'database_account_offer_type': {'key': 'properties.databaseAccountOfferType', 'type': 'str'},
@@ -69,8 +75,9 @@ class DatabaseAccountCreateUpdateParameters(Resource):
 
     database_account_offer_type = "Standard"
 
-    def __init__(self, location, locations, tags=None, consistency_policy=None, ip_range_filter=None):
+    def __init__(self, location, locations, tags=None, kind="GlobalDocumentDB", consistency_policy=None, ip_range_filter=None):
         super(DatabaseAccountCreateUpdateParameters, self).__init__(location=location, tags=tags)
+        self.kind = kind
         self.consistency_policy = consistency_policy
         self.locations = locations
         self.ip_range_filter = ip_range_filter
