@@ -18,7 +18,7 @@ from .subscription_paged import SubscriptionPaged
 from .tenant_id_description_paged import TenantIdDescriptionPaged
 from .subscription_client_enums import (
     SubscriptionState,
-    spendingLimit,
+    SpendingLimit,
 )
 
 __all__ = [
@@ -30,5 +30,5 @@ __all__ = [
     'SubscriptionPaged',
     'TenantIdDescriptionPaged',
     'SubscriptionState',
-    'spendingLimit',
+    'SpendingLimit',
 ]
