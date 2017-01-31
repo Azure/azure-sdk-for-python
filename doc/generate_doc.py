@@ -65,11 +65,11 @@ def generate_doc(config_path, project_pattern=None):
         _LOGGER.info("Working on %s", project)
         namespace = local_conf['autorest_options']['Namespace']
 
-		# Hack for KV, we don't release the generated code, but a wrapper
-		# We do manually the doc
-		if "azure.keyvault.generated" == namespace:
-			package_list_path.append('./ref/azure.keyvault.rst')
-			continue
+        # Hack for KV, we don't release the generated code, but a wrapper
+        # We do manually the doc
+        if "azure.keyvault.generated" == namespace:
+            package_list_path.append('./ref/azure.keyvault.rst')
+            continue
 
         rst_path = './ref/{}.rst'.format(namespace) 
         with Path(rst_path).open('w') as rst_file:

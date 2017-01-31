@@ -66,12 +66,14 @@ setup(
         'Programming Language :: Python :: 3.3',
         'Programming Language :: Python :: 3.4',
         'Programming Language :: Python :: 3.5',
+        'Programming Language :: Python :: 3.6',
         'License :: OSI Approved :: MIT License',
     ],
     zip_safe=False,
     packages=find_packages(),
     install_requires=[
+        'msrestazure~=0.4.7',
+        'azure-common~=1.1.4',
         'azure-mgmt-nspkg',
-        'azure-common[autorest]==1.1.4',
     ],
 )
