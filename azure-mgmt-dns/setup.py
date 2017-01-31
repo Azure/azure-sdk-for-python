@@ -6,8 +6,19 @@
 # license information.
 #--------------------------------------------------------------------------
 
-from setuptools import setup
+from setuptools import find_packages, setup
+from io import open
 import re
+import os.path
+
+# Change the PACKAGE_NAME only to change folder and different name
+PACKAGE_NAME = "azure-mgmt-dns"
+PACKAGE_PPRINT_NAME = "DNS Management"
+
+# a-b-c => a/b/c
+package_folder_path = PACKAGE_NAME.replace('-', '/')
+# a-b-c => a.b.c
+namespace_name = PACKAGE_NAME.replace('-', '.')
 
 # azure v0.x is not compatible with this package
 # azure v0.x used to have a __version__ attribute (newer versions don't)
@@ -25,7 +36,7 @@ except ImportError:
     pass
 
 # Version extraction inspired from 'requests'
-with open('azure/mgmt/dns/version.py', 'r') as fd:
+with open(os.path.join(package_folder_path, 'version.py'), 'r') as fd:
     version = re.search(r'^VERSION\s*=\s*[\'"]([^\'"]*)[\'"]',
                         fd.read(), re.MULTILINE).group(1)
 
@@ -36,11 +47,11 @@ with open('README.rst', encoding='utf-8') as f:
     readme = f.read()
 with open('HISTORY.rst', encoding='utf-8') as f:
     history = f.read()
-	
+
 setup(
-    name='azure-mgmt-dns',
+    name=PACKAGE_NAME,
     version=version,
-    description='Microsoft Azure dns Library for Python',
+    description='Microsoft Azure {} Client Library for Python'.format(PACKAGE_PPRINT_NAME),
     long_description=readme + '\n\n' + history,
     license='MIT License',
     author='Microsoft Corporation',
@@ -59,16 +70,10 @@ setup(
         'License :: OSI Approved :: MIT License',
     ],
     zip_safe=False,
-    packages=[
-        'azure',
-        'azure.mgmt',
-        'azure.mgmt.dns',
-        'azure.mgmt.dns.models',
-        'azure.mgmt.dns.operations',
-    ],
+    packages=find_packages(),
     install_requires=[
         'azure-common~=1.1.4',
-        'msrestazure~=0.4.6',
+        'msrestazure~=0.4.7',
         'azure-mgmt-nspkg',
     ],
 )
