@@ -121,8 +121,8 @@ class AppServiceEnvironment(Resource):
     :vartype resource_group: str
     :param front_end_scale_factor: Scale factor for front-ends.
     :type front_end_scale_factor: int
-    :param default_front_end_scale_factor: Default Scale Factor for FrontEnds.
-    :type default_front_end_scale_factor: int
+    :ivar default_front_end_scale_factor: Default Scale Factor for FrontEnds.
+    :vartype default_front_end_scale_factor: int
     :param api_management_account_id: API Management Account associated with
      the App Service Environment.
     :type api_management_account_id: str
@@ -161,6 +161,7 @@ class AppServiceEnvironment(Resource):
         'environment_is_healthy': {'readonly': True},
         'environment_status': {'readonly': True},
         'resource_group': {'readonly': True},
+        'default_front_end_scale_factor': {'readonly': True},
     }
 
     _attribute_map = {
@@ -207,7 +208,7 @@ class AppServiceEnvironment(Resource):
         'cluster_settings': {'key': 'properties.clusterSettings', 'type': '[NameValuePair]'},
     }
 
-    def __init__(self, location, name=None, kind=None, type=None, tags=None, app_service_environment_name=None, app_service_environment_location=None, vnet_name=None, vnet_resource_group_name=None, vnet_subnet_name=None, virtual_network=None, internal_load_balancing_mode=None, multi_size=None, multi_role_count=None, worker_pools=None, ipssl_address_count=None, dns_suffix=None, network_access_control_list=None, front_end_scale_factor=None, default_front_end_scale_factor=None, api_management_account_id=None, suspended=None, dynamic_cache_enabled=None, cluster_settings=None):
+    def __init__(self, location, name=None, kind=None, type=None, tags=None, app_service_environment_name=None, app_service_environment_location=None, vnet_name=None, vnet_resource_group_name=None, vnet_subnet_name=None, virtual_network=None, internal_load_balancing_mode=None, multi_size=None, multi_role_count=None, worker_pools=None, ipssl_address_count=None, dns_suffix=None, network_access_control_list=None, front_end_scale_factor=None, api_management_account_id=None, suspended=None, dynamic_cache_enabled=None, cluster_settings=None):
         super(AppServiceEnvironment, self).__init__(name=name, kind=kind, location=location, type=type, tags=tags)
         self.app_service_environment_name = app_service_environment_name
         self.app_service_environment_location = app_service_environment_location
@@ -239,7 +240,7 @@ class AppServiceEnvironment(Resource):
         self.environment_status = None
         self.resource_group = None
         self.front_end_scale_factor = front_end_scale_factor
-        self.default_front_end_scale_factor = default_front_end_scale_factor
+        self.default_front_end_scale_factor = None
         self.api_management_account_id = api_management_account_id
         self.suspended = suspended
         self.dynamic_cache_enabled = dynamic_cache_enabled

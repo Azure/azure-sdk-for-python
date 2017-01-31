@@ -43,6 +43,8 @@ class SiteConfig(Resource):
     :type python_version: str
     :param node_version: Version of Node.js.
     :type node_version: str
+    :param linux_fx_version: Linux App Framework and version
+    :type linux_fx_version: str
     :param request_tracing_enabled: <code>true</code> if request tracing is
      enabled; otherwise, <code>false</code>.
     :type request_tracing_enabled: bool
@@ -77,10 +79,10 @@ class SiteConfig(Resource):
      <azure.mgmt.web.models.HandlerMapping>`
     :param document_root: Document root.
     :type document_root: str
-    :ivar scm_type: SCM type. Possible values include: 'None', 'Dropbox',
+    :param scm_type: SCM type. Possible values include: 'None', 'Dropbox',
      'Tfs', 'LocalGit', 'GitHub', 'CodePlexGit', 'CodePlexHg', 'BitbucketGit',
      'BitbucketHg', 'ExternalGit', 'ExternalHg', 'OneDrive', 'VSO'
-    :vartype scm_type: str or :class:`ScmType <azure.mgmt.web.models.ScmType>`
+    :type scm_type: str or :class:`ScmType <azure.mgmt.web.models.ScmType>`
     :param use32_bit_worker_process: <code>true</code> to use 32-bit worker
      process; otherwise, <code>false</code>.
     :type use32_bit_worker_process: bool
@@ -141,15 +143,12 @@ class SiteConfig(Resource):
     :param ip_security_restrictions: IP security restrictions.
     :type ip_security_restrictions: list of :class:`IpSecurityRestriction
      <azure.mgmt.web.models.IpSecurityRestriction>`
-    :param linux_fx_version: Linux App Framework and version
-    :type linux_fx_version: str
     """
 
     _validation = {
         'id': {'readonly': True},
         'location': {'required': True},
         'machine_key': {'readonly': True},
-        'scm_type': {'readonly': True},
     }
 
     _attribute_map = {
@@ -165,6 +164,7 @@ class SiteConfig(Resource):
         'php_version': {'key': 'properties.phpVersion', 'type': 'str'},
         'python_version': {'key': 'properties.pythonVersion', 'type': 'str'},
         'node_version': {'key': 'properties.nodeVersion', 'type': 'str'},
+        'linux_fx_version': {'key': 'properties.linuxFxVersion', 'type': 'str'},
         'request_tracing_enabled': {'key': 'properties.requestTracingEnabled', 'type': 'bool'},
         'request_tracing_expiration_time': {'key': 'properties.requestTracingExpirationTime', 'type': 'iso-8601'},
         'remote_debugging_enabled': {'key': 'properties.remoteDebuggingEnabled', 'type': 'bool'},
@@ -201,10 +201,9 @@ class SiteConfig(Resource):
         'auto_swap_slot_name': {'key': 'properties.autoSwapSlotName', 'type': 'str'},
         'local_my_sql_enabled': {'key': 'properties.localMySqlEnabled', 'type': 'bool'},
         'ip_security_restrictions': {'key': 'properties.ipSecurityRestrictions', 'type': '[IpSecurityRestriction]'},
-        'linux_fx_version': {'key': 'properties.linuxFxVersion', 'type': 'str'},
     }
 
-    def __init__(self, location, name=None, kind=None, type=None, tags=None, number_of_workers=None, default_documents=None, net_framework_version="v4.6", php_version=None, python_version=None, node_version=None, request_tracing_enabled=None, request_tracing_expiration_time=None, remote_debugging_enabled=None, remote_debugging_version=None, http_logging_enabled=None, logs_directory_size_limit=None, detailed_error_logging_enabled=None, publishing_username=None, app_settings=None, connection_strings=None, handler_mappings=None, document_root=None, use32_bit_worker_process=None, web_sockets_enabled=None, always_on=None, java_version=None, java_container=None, java_container_version=None, app_command_line=None, managed_pipeline_mode=None, virtual_applications=None, load_balancing=None, experiments=None, limits=None, auto_heal_enabled=None, auto_heal_rules=None, tracing_options=None, vnet_name=None, cors=None, push=None, api_definition=None, auto_swap_slot_name=None, local_my_sql_enabled=False, ip_security_restrictions=None, linux_fx_version=None):
+    def __init__(self, location, name=None, kind=None, type=None, tags=None, number_of_workers=None, default_documents=None, net_framework_version="v4.6", php_version=None, python_version=None, node_version=None, linux_fx_version=None, request_tracing_enabled=None, request_tracing_expiration_time=None, remote_debugging_enabled=None, remote_debugging_version=None, http_logging_enabled=None, logs_directory_size_limit=None, detailed_error_logging_enabled=None, publishing_username=None, app_settings=None, connection_strings=None, handler_mappings=None, document_root=None, scm_type=None, use32_bit_worker_process=None, web_sockets_enabled=None, always_on=None, java_version=None, java_container=None, java_container_version=None, app_command_line=None, managed_pipeline_mode=None, virtual_applications=None, load_balancing=None, experiments=None, limits=None, auto_heal_enabled=None, auto_heal_rules=None, tracing_options=None, vnet_name=None, cors=None, push=None, api_definition=None, auto_swap_slot_name=None, local_my_sql_enabled=False, ip_security_restrictions=None):
         super(SiteConfig, self).__init__(name=name, kind=kind, location=location, type=type, tags=tags)
         self.number_of_workers = number_of_workers
         self.default_documents = default_documents
@@ -212,6 +211,7 @@ class SiteConfig(Resource):
         self.php_version = php_version
         self.python_version = python_version
         self.node_version = node_version
+        self.linux_fx_version = linux_fx_version
         self.request_tracing_enabled = request_tracing_enabled
         self.request_tracing_expiration_time = request_tracing_expiration_time
         self.remote_debugging_enabled = remote_debugging_enabled
@@ -225,7 +225,7 @@ class SiteConfig(Resource):
         self.machine_key = None
         self.handler_mappings = handler_mappings
         self.document_root = document_root
-        self.scm_type = None
+        self.scm_type = scm_type
         self.use32_bit_worker_process = use32_bit_worker_process
         self.web_sockets_enabled = web_sockets_enabled
         self.always_on = always_on
@@ -248,4 +248,3 @@ class SiteConfig(Resource):
         self.auto_swap_slot_name = auto_swap_slot_name
         self.local_my_sql_enabled = local_my_sql_enabled
         self.ip_security_restrictions = ip_security_restrictions
-        self.linux_fx_version = linux_fx_version
