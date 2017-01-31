@@ -35,9 +35,20 @@ class AnalysisServicesServer(Resource):
     :param as_administrators:
     :type as_administrators: :class:`ServerAdministrators
      <azure.mgmt.analysisservices.models.ServerAdministrators>`
+    :ivar state: The current state of Analysis Services resource. The state is
+     to indicate more states outside of resource provisioning. Possible values
+     include: 'Deleting', 'Succeeded', 'Failed', 'Paused', 'Suspended',
+     'Provisioning', 'Updating', 'Suspending', 'Pausing', 'Resuming',
+     'Preparing', 'Scaling'
+    :vartype state: str or :class:`State
+     <azure.mgmt.analysisservices.models.State>`
     :ivar provisioning_state: The current deployment state of Analysis
-     Services resource.
-    :vartype provisioning_state: str
+     Services resource. The provisioningState is to indicate states for
+     resource provisioning. Possible values include: 'Deleting', 'Succeeded',
+     'Failed', 'Paused', 'Suspended', 'Provisioning', 'Updating', 'Suspending',
+     'Pausing', 'Resuming', 'Preparing', 'Scaling'
+    :vartype provisioning_state: str or :class:`ProvisioningState
+     <azure.mgmt.analysisservices.models.ProvisioningState>`
     :ivar server_full_name: The full name of the Analysis Services resource.
     :vartype server_full_name: str
     """
@@ -48,6 +59,7 @@ class AnalysisServicesServer(Resource):
         'type': {'readonly': True},
         'location': {'required': True},
         'sku': {'required': True},
+        'state': {'readonly': True},
         'provisioning_state': {'readonly': True},
         'server_full_name': {'readonly': True},
     }
@@ -60,6 +72,7 @@ class AnalysisServicesServer(Resource):
         'sku': {'key': 'sku', 'type': 'ResourceSku'},
         'tags': {'key': 'tags', 'type': '{str}'},
         'as_administrators': {'key': 'properties.asAdministrators', 'type': 'ServerAdministrators'},
+        'state': {'key': 'properties.state', 'type': 'str'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'server_full_name': {'key': 'properties.serverFullName', 'type': 'str'},
     }
@@ -67,5 +80,6 @@ class AnalysisServicesServer(Resource):
     def __init__(self, location, sku, tags=None, as_administrators=None):
         super(AnalysisServicesServer, self).__init__(location=location, sku=sku, tags=tags)
         self.as_administrators = as_administrators
+        self.state = None
         self.provisioning_state = None
         self.server_full_name = None

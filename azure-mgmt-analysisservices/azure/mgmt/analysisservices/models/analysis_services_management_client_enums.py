@@ -24,3 +24,35 @@ class SkuTier(Enum):
 
     development = "Development"
     standard = "Standard"
+
+
+class State(Enum):
+
+    deleting = "Deleting"
+    succeeded = "Succeeded"
+    failed = "Failed"
+    paused = "Paused"
+    suspended = "Suspended"
+    provisioning = "Provisioning"
+    updating = "Updating"
+    suspending = "Suspending"
+    pausing = "Pausing"
+    resuming = "Resuming"
+    preparing = "Preparing"
+    scaling = "Scaling"
+
+
+class ProvisioningState(Enum):
+
+    deleting = "Deleting"
+    succeeded = "Succeeded"
+    failed = "Failed"
+    paused = "Paused"
+    suspended = "Suspended"
+    provisioning = "Provisioning"
+    updating = "Updating"
+    suspending = "Suspending"
+    pausing = "Pausing"
+    resuming = "Resuming"
+    preparing = "Preparing"
+    scaling = "Scaling"

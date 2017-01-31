@@ -18,6 +18,8 @@ from .analysis_services_server_paged import AnalysisServicesServerPaged
 from .analysis_services_management_client_enums import (
     SkuName,
     SkuTier,
+    State,
+    ProvisioningState,
 )
 
 __all__ = [
@@ -29,4 +31,6 @@ __all__ = [
     'AnalysisServicesServerPaged',
     'SkuName',
     'SkuTier',
+    'State',
+    'ProvisioningState',
 ]
