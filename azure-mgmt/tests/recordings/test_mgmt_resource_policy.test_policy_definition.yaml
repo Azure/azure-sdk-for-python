@@ -7,10 +7,10 @@ interactions:
       Connection: [keep-alive]
       Content-Length: ['22']
       Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.5.1 (Windows-10-10.0.14393-SP0) requests/2.11.0 msrest/0.4.4
-          msrest_azure/0.4.3 resourcemanagementclient/0.30.0rc6 Azure-SDK-For-Python]
+      User-Agent: [python/3.5.1 (Windows-10-10.0.14393-SP0) requests/2.12.1 msrest/0.4.5rc1
+          msrest_azure/0.4.7 resourcemanagementclient/0.32.0 Azure-SDK-For-Python]
       accept-language: [en-US]
-      x-ms-client-request-id: [42bd814a-7e9b-11e6-b85a-ecb1d756380e]
+      x-ms-client-request-id: [1dfaf12e-e813-11e6-aa1a-ecb1d756380e]
     method: PUT
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_mgmt_resource_policy_test_policy_definitionea4a13f0?api-version=2016-09-01
   response:
@@ -19,47 +19,47 @@ interactions:
       Cache-Control: [no-cache]
       Content-Length: ['265']
       Content-Type: [application/json; charset=utf-8]
-      Date: ['Mon, 19 Sep 2016 18:59:59 GMT']
+      Date: ['Wed, 01 Feb 2017 00:12:28 GMT']
       Expires: ['-1']
       Pragma: [no-cache]
       Strict-Transport-Security: [max-age=31536000; includeSubDomains]
-      x-ms-correlation-request-id: [eb13a319-1e77-46a5-8cd2-5bacd8b2891d]
-      x-ms-ratelimit-remaining-subscription-writes: ['1193']
-      x-ms-request-id: [eb13a319-1e77-46a5-8cd2-5bacd8b2891d]
-      x-ms-routing-request-id: ['CENTRALUS:20160919T185959Z:eb13a319-1e77-46a5-8cd2-5bacd8b2891d']
+      x-ms-correlation-request-id: [a768ca4c-81e9-4a5a-801e-712cd4e26048]
+      x-ms-ratelimit-remaining-subscription-writes: ['1198']
+      x-ms-request-id: [a768ca4c-81e9-4a5a-801e-712cd4e26048]
+      x-ms-routing-request-id: ['WESTUS2:20170201T001229Z:a768ca4c-81e9-4a5a-801e-712cd4e26048']
     status: {code: 201, message: Created}
 - request:
-    body: '{"properties": {"description": "Don''t create a VM anywhere", "policyRule":
-      {"then": {"effect": "deny"}, "if": {"allOf": [{"equals": "Microsoft.Compute/virtualMachines/write",
-      "source": "action"}, {"field": "location", "in": ["eastus", "eastus2", "centralus"]}]}},
-      "policyType": "Custom"}}'
+    body: '{"properties": {"policyType": "Custom", "policyRule": {"if": {"allOf":
+      [{"equals": "Microsoft.Compute/virtualMachines/write", "source": "action"},
+      {"in": ["eastus", "eastus2", "centralus"], "field": "location"}]}, "then": {"effect":
+      "deny"}}, "description": "Don''t create a VM anywhere"}}'
     headers:
       Accept: [application/json]
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
       Content-Length: ['288']
       Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.5.1 (Windows-10-10.0.14393-SP0) requests/2.11.0 msrest/0.4.4
-          msrest_azure/0.4.3 policyclient/0.30.0rc6 Azure-SDK-For-Python]
+      User-Agent: [python/3.5.1 (Windows-10-10.0.14393-SP0) requests/2.12.1 msrest/0.4.5rc1
+          msrest_azure/0.4.7 policyclient/0.32.0 Azure-SDK-For-Python]
       accept-language: [en-US]
-      x-ms-client-request-id: [435d8a9c-7e9b-11e6-8f8a-ecb1d756380e]
+      x-ms-client-request-id: [1e56a592-e813-11e6-a359-ecb1d756380e]
     method: PUT
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Authorization/policydefinitions/pypolicyea4a13f0?api-version=2016-04-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Authorization/policydefinitions/pypolicyea4a13f0?api-version=2016-12-01
   response:
     body: {string: '{"properties":{"policyType":"Custom","description":"Don''t create
-        a VM anywhere","policyRule":{"then":{"effect":"deny"},"if":{"allOf":[{"equals":"Microsoft.Compute/virtualMachines/write","source":"action"},{"field":"location","in":["eastus","eastus2","centralus"]}]}}},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Authorization/policyDefinitions/pypolicyea4a13f0","type":"Microsoft.Authorization/policyDefinitions","name":"pypolicyea4a13f0"}'}
+        a VM anywhere","policyRule":{"if":{"allOf":[{"equals":"Microsoft.Compute/virtualMachines/write","source":"action"},{"in":["eastus","eastus2","centralus"],"field":"location"}]},"then":{"effect":"deny"}}},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Authorization/policyDefinitions/pypolicyea4a13f0","type":"Microsoft.Authorization/policyDefinitions","name":"pypolicyea4a13f0"}'}
     headers:
       Cache-Control: [no-cache]
       Content-Length: ['473']
       Content-Type: [application/json; charset=utf-8]
-      Date: ['Mon, 19 Sep 2016 18:59:59 GMT']
+      Date: ['Wed, 01 Feb 2017 00:12:28 GMT']
       Expires: ['-1']
       Pragma: [no-cache]
       Strict-Transport-Security: [max-age=31536000; includeSubDomains]
-      x-ms-correlation-request-id: [de39ed23-812a-4d19-b064-76d17802dba9]
-      x-ms-ratelimit-remaining-subscription-writes: ['1186']
-      x-ms-request-id: ['centralus:2901036d-f5ee-4e16-9f55-caf3290b409c']
-      x-ms-routing-request-id: ['CENTRALUS:20160919T185959Z:de39ed23-812a-4d19-b064-76d17802dba9']
+      x-ms-correlation-request-id: [04cf7959-eae9-4302-9615-89dc84b8586f]
+      x-ms-ratelimit-remaining-subscription-writes: ['1199']
+      x-ms-request-id: ['westus2:fdd2a3ac-202f-48db-a2ee-09b869acdd7b']
+      x-ms-routing-request-id: ['WESTUS2:20170201T001229Z:04cf7959-eae9-4302-9615-89dc84b8586f']
     status: {code: 201, message: Created}
 - request:
     body: null
@@ -68,29 +68,29 @@ interactions:
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
       Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.5.1 (Windows-10-10.0.14393-SP0) requests/2.11.0 msrest/0.4.4
-          msrest_azure/0.4.3 policyclient/0.30.0rc6 Azure-SDK-For-Python]
+      User-Agent: [python/3.5.1 (Windows-10-10.0.14393-SP0) requests/2.12.1 msrest/0.4.5rc1
+          msrest_azure/0.4.7 policyclient/0.32.0 Azure-SDK-For-Python]
       accept-language: [en-US]
-      x-ms-client-request-id: [439ce546-7e9b-11e6-81ae-ecb1d756380e]
+      x-ms-client-request-id: [1e7661b8-e813-11e6-afe5-ecb1d756380e]
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Authorization/policydefinitions/pypolicyea4a13f0?api-version=2016-04-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Authorization/policydefinitions/pypolicyea4a13f0?api-version=2016-12-01
   response:
     body: {string: '{"properties":{"policyType":"Custom","description":"Don''t create
-        a VM anywhere","policyRule":{"then":{"effect":"deny"},"if":{"allOf":[{"equals":"Microsoft.Compute/virtualMachines/write","source":"action"},{"field":"location","in":["eastus","eastus2","centralus"]}]}}},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Authorization/policyDefinitions/pypolicyea4a13f0","type":"Microsoft.Authorization/policyDefinitions","name":"pypolicyea4a13f0"}'}
+        a VM anywhere","policyRule":{"if":{"allOf":[{"equals":"Microsoft.Compute/virtualMachines/write","source":"action"},{"in":["eastus","eastus2","centralus"],"field":"location"}]},"then":{"effect":"deny"}}},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Authorization/policyDefinitions/pypolicyea4a13f0","type":"Microsoft.Authorization/policyDefinitions","name":"pypolicyea4a13f0"}'}
     headers:
       Cache-Control: [no-cache]
       Content-Type: [application/json; charset=utf-8]
-      Date: ['Mon, 19 Sep 2016 18:59:59 GMT']
+      Date: ['Wed, 01 Feb 2017 00:12:29 GMT']
       Expires: ['-1']
       Pragma: [no-cache]
       Strict-Transport-Security: [max-age=31536000; includeSubDomains]
       Transfer-Encoding: [chunked]
       Vary: ['Accept-Encoding,Accept-Encoding']
       content-length: ['473']
-      x-ms-correlation-request-id: [d6a6d86f-5999-47f3-9bc1-5a7eeda7302d]
-      x-ms-ratelimit-remaining-subscription-reads: ['14991']
-      x-ms-request-id: ['centralus:b0b7f05a-2a23-498a-9f49-84359819d608']
-      x-ms-routing-request-id: ['CENTRALUS:20160919T190000Z:d6a6d86f-5999-47f3-9bc1-5a7eeda7302d']
+      x-ms-correlation-request-id: [4e53c0b6-2582-4418-b0c6-42ff724ecc49]
+      x-ms-ratelimit-remaining-subscription-reads: ['14999']
+      x-ms-request-id: ['westus2:3619504a-aaa9-4535-b338-dcaf7df3d3e1']
+      x-ms-routing-request-id: ['WESTUS2:20170201T001229Z:4e53c0b6-2582-4418-b0c6-42ff724ecc49']
     status: {code: 200, message: OK}
 - request:
     body: null
@@ -99,19 +99,30 @@ interactions:
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
       Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.5.1 (Windows-10-10.0.14393-SP0) requests/2.11.0 msrest/0.4.4
-          msrest_azure/0.4.3 policyclient/0.30.0rc6 Azure-SDK-For-Python]
+      User-Agent: [python/3.5.1 (Windows-10-10.0.14393-SP0) requests/2.12.1 msrest/0.4.5rc1
+          msrest_azure/0.4.7 policyclient/0.32.0 Azure-SDK-For-Python]
       accept-language: [en-US]
-      x-ms-client-request-id: [43dfc2dc-7e9b-11e6-ae93-ecb1d756380e]
+      x-ms-client-request-id: [1ea9312e-e813-11e6-acfb-ecb1d756380e]
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Authorization/policydefinitions?api-version=2016-04-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Authorization/policydefinitions?api-version=2016-12-01
   response:
-    body: {string: '{"value":[{"properties":{"displayName":"Allow resource creation
-        only in India data centers","policyType":"BuiltIn","description":"Allows resource
-        creation in the following locations only: West India, South India, Central
-        India","policyRule":{"if":{"not":{"field":"location","in":["westindia","southindia","centralindia"]}},"then":{"effect":"Deny"}}},"id":"/providers/Microsoft.Authorization/policyDefinitions/5ee85ce5-e7eb-44d6-b4a2-32a24be1ca54","type":"Microsoft.Authorization/policyDefinitions","name":"5ee85ce5-e7eb-44d6-b4a2-32a24be1ca54"},{"properties":{"displayName":"Allow
+    body: {string: '{"value":[{"properties":{"displayName":"SQL Server version 12.0
+        required","policyType":"BuiltIn","description":"This policy ensures all SQL
+        servers use version 12.0.","parameters":{},"policyRule":{"if":{"allOf":[{"field":"type","equals":"Microsoft.SQL/servers"},{"not":{"field":"Microsoft.SQL/servers/version","equals":"12.0"}}]},"then":{"effect":"Deny"}}},"id":"/providers/Microsoft.Authorization/policyDefinitions/464dbb85-3d5f-4a1d-bb09-95a9b5dd19cf","type":"Microsoft.Authorization/policyDefinitions","name":"464dbb85-3d5f-4a1d-bb09-95a9b5dd19cf"},{"properties":{"displayName":"Allow
+        resource creation only in India data centers","policyType":"BuiltIn","description":"Allows
+        resource creation in the following locations only: West India, South India,
+        Central India","policyRule":{"if":{"not":{"field":"location","in":["westindia","southindia","centralindia"]}},"then":{"effect":"Deny"}}},"id":"/providers/Microsoft.Authorization/policyDefinitions/5ee85ce5-e7eb-44d6-b4a2-32a24be1ca54","type":"Microsoft.Authorization/policyDefinitions","name":"5ee85ce5-e7eb-44d6-b4a2-32a24be1ca54"},{"properties":{"displayName":"Prohibited
+        resource types","policyType":"BuiltIn","description":"This policy enables
+        you to specify the resource types that your organization cannot deploy.","parameters":{"listOfResourceTypesNotAllowed":{"type":"Array","metadata":{"description":"An
+        array containing resource types that are not permitted.","displayName":"Not
+        permitted resource types","strongType":"resourceTypes"}}},"policyRule":{"if":{"field":"type","in":"[parameters(''listOfResourceTypesNotAllowed'')]"},"then":{"effect":"Deny"}}},"id":"/providers/Microsoft.Authorization/policyDefinitions/6c112d4e-5bc7-47ae-a041-ea2d9dccd749","type":"Microsoft.Authorization/policyDefinitions","name":"6c112d4e-5bc7-47ae-a041-ea2d9dccd749"},{"properties":{"displayName":"Allow
         resource creation only in Japan data centers","policyType":"BuiltIn","description":"Allows
-        resource creation in the following locations only: Japan East, Japan West","policyRule":{"if":{"not":{"field":"location","in":["japaneast","japanwest"]}},"then":{"effect":"Deny"}}},"id":"/providers/Microsoft.Authorization/policyDefinitions/6fdb9205-3462-4cfc-87d8-16c7860b53f4","type":"Microsoft.Authorization/policyDefinitions","name":"6fdb9205-3462-4cfc-87d8-16c7860b53f4"},{"properties":{"displayName":"Allow
+        resource creation in the following locations only: Japan East, Japan West","policyRule":{"if":{"not":{"field":"location","in":["japaneast","japanwest"]}},"then":{"effect":"Deny"}}},"id":"/providers/Microsoft.Authorization/policyDefinitions/6fdb9205-3462-4cfc-87d8-16c7860b53f4","type":"Microsoft.Authorization/policyDefinitions","name":"6fdb9205-3462-4cfc-87d8-16c7860b53f4"},{"properties":{"displayName":"Storage
+        account SKUs","policyType":"BuiltIn","description":"This policy enables you
+        to specify a set of storage account SKUs that your organization can deploy.","parameters":{"listOfAllowedSKUs":{"type":"Array","metadata":{"description":"a
+        list of permitted SKUs for Storage Accounts","displayName":"List of SKUs","strongType":"StorageSKUs"}}},"policyRule":{"if":{"allOf":[{"field":"type","equals":"Microsoft.Storage/storageAccounts"},{"not":{"field":"Microsoft.Storage/storageAccounts/sku.name","in":"[parameters(''listOfAllowedSKUs'')]"}}]},"then":{"effect":"Deny"}}},"id":"/providers/Microsoft.Authorization/policyDefinitions/7433c107-6db4-4ad1-b57a-a76dce0154a1","type":"Microsoft.Authorization/policyDefinitions","name":"7433c107-6db4-4ad1-b57a-a76dce0154a1"},{"properties":{"displayName":"Storage
+        Account encryption required","policyType":"BuiltIn","description":"This policy
+        ensures encryption for storage accounts is turned on.","parameters":{},"policyRule":{"if":{"allOf":[{"field":"type","equals":"Microsoft.Storage/storageAccounts"},{"not":{"field":"Microsoft.Storage/storageAccounts/enableBlobEncryption","equals":"True"}}]},"then":{"effect":"Deny"}}},"id":"/providers/Microsoft.Authorization/policyDefinitions/7c5a74bf-ae94-4a74-8fcf-644d1e0e6e6f","type":"Microsoft.Authorization/policyDefinitions","name":"7c5a74bf-ae94-4a74-8fcf-644d1e0e6e6f"},{"properties":{"displayName":"Allow
         resource creation only in European data centers","policyType":"BuiltIn","description":"Allows
         resource creation in the following locations only: North Europe, West Europe","policyRule":{"if":{"not":{"field":"location","in":["northeurope","westeurope"]}},"then":{"effect":"Deny"}}},"id":"/providers/Microsoft.Authorization/policyDefinitions/94c19f19-8192-48cd-a11b-e37099d3e36b","type":"Microsoft.Authorization/policyDefinitions","name":"94c19f19-8192-48cd-a11b-e37099d3e36b"},{"properties":{"displayName":"Allow
         resource creation only in United States data centers","policyType":"BuiltIn","description":"Allows
@@ -122,26 +133,33 @@ interactions:
         values: production, dev, test, staging","policyRule":{"if":{"not":{"field":"tags.environment","in":["production","dev","test","staging"]}},"then":{"effect":"Deny"}}},"id":"/providers/Microsoft.Authorization/policyDefinitions/ac7e5fc0-c029-4b12-91d4-a8500ce697f9","type":"Microsoft.Authorization/policyDefinitions","name":"ac7e5fc0-c029-4b12-91d4-a8500ce697f9"},{"properties":{"displayName":"Allow
         resource creation only in Asia data centers","policyType":"BuiltIn","description":"Allows
         resource creation in the following locations only: East Asia, Southeast Asia,
-        West India, South India, Central India, Japan East, Japan West","policyRule":{"if":{"not":{"field":"location","in":["eastasia","southeastasia","westindia","southindia","centralindia","japaneast","japanwest"]}},"then":{"effect":"Deny"}}},"id":"/providers/Microsoft.Authorization/policyDefinitions/c1b9cbed-08e3-427d-b9ce-7c535b1e9b94","type":"Microsoft.Authorization/policyDefinitions","name":"c1b9cbed-08e3-427d-b9ce-7c535b1e9b94"},{"properties":{"displayName":"Allow
+        West India, South India, Central India, Japan East, Japan West","policyRule":{"if":{"not":{"field":"location","in":["eastasia","southeastasia","westindia","southindia","centralindia","japaneast","japanwest"]}},"then":{"effect":"Deny"}}},"id":"/providers/Microsoft.Authorization/policyDefinitions/c1b9cbed-08e3-427d-b9ce-7c535b1e9b94","type":"Microsoft.Authorization/policyDefinitions","name":"c1b9cbed-08e3-427d-b9ce-7c535b1e9b94"},{"properties":{"displayName":"Virtual
+        Machine SKUs","policyType":"BuiltIn","description":"This policy enables you
+        to specify a set of virtual machine SKUs that your organization can deploy.","parameters":{"listOfAllowedSKUs":{"type":"Array","metadata":{"description":"a
+        list of permitted SKUs for Virtual Machines","displayName":"List of SKUs","strongType":"VMSKUs"}}},"policyRule":{"if":{"allOf":[{"field":"type","equals":"Microsoft.Compute/virtualMachines"},{"not":{"field":"Microsoft.Compute/virtualMachines/sku.name","in":"[parameters(''listOfAllowedSKUs'')]"}}]},"then":{"effect":"Deny"}}},"id":"/providers/Microsoft.Authorization/policyDefinitions/cccc23c7-8427-4f53-ad12-b6a63eb452b3","type":"Microsoft.Authorization/policyDefinitions","name":"cccc23c7-8427-4f53-ad12-b6a63eb452b3"},{"properties":{"displayName":"Allow
         resource creation if ''department'' tag set","policyType":"BuiltIn","description":"Allows
         resource creation only if the ''department'' tag is set","policyRule":{"if":{"not":{"field":"tags","containsKey":"department"}},"then":{"effect":"Deny"}}},"id":"/providers/Microsoft.Authorization/policyDefinitions/cd8dc879-a2ae-43c3-8211-1877c5755064","type":"Microsoft.Authorization/policyDefinitions","name":"cd8dc879-a2ae-43c3-8211-1877c5755064"},{"properties":{"displayName":"Allow
         resource creation only in Japan data centers","policyType":"BuiltIn","description":"Allows
-        resource creation in the following locations only: Japan East, Japan West","policyRule":{"if":{"not":{"field":"location","in":["japaneast","japanwest"]}},"then":{"effect":"Deny"}}},"id":"/providers/Microsoft.Authorization/policyDefinitions/e01598e8-6538-41ed-95e8-8b29746cd697","type":"Microsoft.Authorization/policyDefinitions","name":"e01598e8-6538-41ed-95e8-8b29746cd697"},{"properties":{"policyType":"Custom","description":"Don''t
-        create a VM anywhere","policyRule":{"then":{"effect":"deny"},"if":{"allOf":[{"equals":"Microsoft.Compute/virtualMachines/write","source":"action"},{"field":"location","in":["eastus","eastus2","centralus"]}]}}},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Authorization/policyDefinitions/pypolicyea4a13f0","type":"Microsoft.Authorization/policyDefinitions","name":"pypolicyea4a13f0"}]}'}
+        resource creation in the following locations only: Japan East, Japan West","policyRule":{"if":{"not":{"field":"location","in":["japaneast","japanwest"]}},"then":{"effect":"Deny"}}},"id":"/providers/Microsoft.Authorization/policyDefinitions/e01598e8-6538-41ed-95e8-8b29746cd697","type":"Microsoft.Authorization/policyDefinitions","name":"e01598e8-6538-41ed-95e8-8b29746cd697"},{"properties":{"displayName":"Geo-compliance","policyType":"BuiltIn","description":"This
+        policy enables you to restrict the locations your organization can specify
+        when deploying resources. Use to enforce your geo-compliance requirements.","parameters":{"listOfAllowedLocations":{"type":"Array","metadata":{"description":"An
+        array of permitted locations for resources.","strongType":"location","displayName":"List
+        Of Locations"}}},"policyRule":{"if":{"not":{"field":"location","in":"[parameters(''listOfAllowedLocations'')]"}},"then":{"effect":"Deny"}}},"id":"/providers/Microsoft.Authorization/policyDefinitions/e56962a6-4747-49cd-b67b-bf8b01975c4c","type":"Microsoft.Authorization/policyDefinitions","name":"e56962a6-4747-49cd-b67b-bf8b01975c4c"},{"properties":{"policyType":"Custom","description":"Don''t
+        create a VM anywhere","policyRule":{"if":{"allOf":[{"equals":"Microsoft.Compute/virtualMachines/write","source":"action"},{"in":["eastus","eastus2","centralus"],"field":"location"}]},"then":{"effect":"deny"}}},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Authorization/policyDefinitions/pypolicyea4a13f0","type":"Microsoft.Authorization/policyDefinitions","name":"pypolicyea4a13f0"}]}'}
     headers:
       Cache-Control: [no-cache]
       Content-Type: [application/json; charset=utf-8]
-      Date: ['Mon, 19 Sep 2016 19:00:01 GMT']
+      Date: ['Wed, 01 Feb 2017 00:12:29 GMT']
       Expires: ['-1']
       Pragma: [no-cache]
       Strict-Transport-Security: [max-age=31536000; includeSubDomains]
       Transfer-Encoding: [chunked]
       Vary: ['Accept-Encoding,Accept-Encoding']
-      content-length: ['4839']
-      x-ms-correlation-request-id: [12fd8e5a-fd35-4fd4-ac41-23ccaf3454cf]
-      x-ms-ratelimit-remaining-subscription-reads: ['14968']
-      x-ms-request-id: ['centralus:5571f5d0-5294-485b-967f-53d5935e39f4']
-      x-ms-routing-request-id: ['CENTRALUS:20160919T190001Z:12fd8e5a-fd35-4fd4-ac41-23ccaf3454cf']
+      content-length: ['9028']
+      x-ms-correlation-request-id: [668358b3-badb-45a3-91af-5b1d30eab0e1]
+      x-ms-ratelimit-remaining-subscription-reads: ['14999']
+      x-ms-request-id: ['westus2:d3376086-b29c-4d5f-8a5c-c474272a12a3']
+      x-ms-routing-request-id: ['WESTUS2:20170201T001229Z:668358b3-badb-45a3-91af-5b1d30eab0e1']
     status: {code: 200, message: OK}
 - request:
     body: '{"properties": {"policyDefinitionId": "/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Authorization/policyDefinitions/pypolicyea4a13f0"}}'
@@ -151,26 +169,26 @@ interactions:
       Connection: [keep-alive]
       Content-Length: ['162']
       Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.5.1 (Windows-10-10.0.14393-SP0) requests/2.11.0 msrest/0.4.4
-          msrest_azure/0.4.3 policyclient/0.30.0rc6 Azure-SDK-For-Python]
+      User-Agent: [python/3.5.1 (Windows-10-10.0.14393-SP0) requests/2.12.1 msrest/0.4.5rc1
+          msrest_azure/0.4.7 policyclient/0.32.0 Azure-SDK-For-Python]
       accept-language: [en-US]
-      x-ms-client-request-id: [4456fb82-7e9b-11e6-a339-ecb1d756380e]
+      x-ms-client-request-id: [1ec45b02-e813-11e6-b7ff-ecb1d756380e]
     method: PUT
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_resource_policy_test_policy_definitionea4a13f0/providers/Microsoft.Authorization/policyassignments/pypolicyassignmentea4a13f0?api-version=2016-04-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_resource_policy_test_policy_definitionea4a13f0/providers/Microsoft.Authorization/policyassignments/pypolicyassignmentea4a13f0?api-version=2016-12-01
   response:
     body: {string: '{"properties":{"policyDefinitionId":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Authorization/policyDefinitions/pypolicyea4a13f0","scope":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_resource_policy_test_policy_definitionea4a13f0"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_resource_policy_test_policy_definitionea4a13f0/providers/Microsoft.Authorization/policyAssignments/pypolicyassignmentea4a13f0","type":"Microsoft.Authorization/policyAssignments","name":"pypolicyassignmentea4a13f0"}'}
     headers:
       Cache-Control: [no-cache]
       Content-Length: ['591']
       Content-Type: [application/json; charset=utf-8]
-      Date: ['Mon, 19 Sep 2016 19:00:01 GMT']
+      Date: ['Wed, 01 Feb 2017 00:12:29 GMT']
       Expires: ['-1']
       Pragma: [no-cache]
       Strict-Transport-Security: [max-age=31536000; includeSubDomains]
-      x-ms-correlation-request-id: [e1c866f9-a5b2-4784-8431-e9defefc0340]
-      x-ms-ratelimit-remaining-subscription-writes: ['1189']
-      x-ms-request-id: ['centralus:b9f46108-9846-4d9e-b4ea-a98f6fc4b32f']
-      x-ms-routing-request-id: ['CENTRALUS:20160919T190001Z:e1c866f9-a5b2-4784-8431-e9defefc0340']
+      x-ms-correlation-request-id: [fff55a60-8ed2-48c3-be03-086e613b2572]
+      x-ms-ratelimit-remaining-subscription-writes: ['1198']
+      x-ms-request-id: ['westus2:01a80f72-817b-4af6-9e12-4f2c0b7f7b69']
+      x-ms-routing-request-id: ['WESTUS2:20170201T001230Z:fff55a60-8ed2-48c3-be03-086e613b2572']
     status: {code: 201, message: Created}
 - request:
     body: null
@@ -179,28 +197,28 @@ interactions:
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
       Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.5.1 (Windows-10-10.0.14393-SP0) requests/2.11.0 msrest/0.4.4
-          msrest_azure/0.4.3 policyclient/0.30.0rc6 Azure-SDK-For-Python]
+      User-Agent: [python/3.5.1 (Windows-10-10.0.14393-SP0) requests/2.12.1 msrest/0.4.5rc1
+          msrest_azure/0.4.7 policyclient/0.32.0 Azure-SDK-For-Python]
       accept-language: [en-US]
-      x-ms-client-request-id: [44ae69d2-7e9b-11e6-a96b-ecb1d756380e]
+      x-ms-client-request-id: [1f20d312-e813-11e6-964b-ecb1d756380e]
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_resource_policy_test_policy_definitionea4a13f0/providers/Microsoft.Authorization/policyassignments/pypolicyassignmentea4a13f0?api-version=2016-04-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_resource_policy_test_policy_definitionea4a13f0/providers/Microsoft.Authorization/policyassignments/pypolicyassignmentea4a13f0?api-version=2016-12-01
   response:
     body: {string: '{"properties":{"policyDefinitionId":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Authorization/policyDefinitions/pypolicyea4a13f0","scope":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_resource_policy_test_policy_definitionea4a13f0"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_resource_policy_test_policy_definitionea4a13f0/providers/Microsoft.Authorization/policyAssignments/pypolicyassignmentea4a13f0","type":"Microsoft.Authorization/policyAssignments","name":"pypolicyassignmentea4a13f0"}'}
     headers:
       Cache-Control: [no-cache]
       Content-Type: [application/json; charset=utf-8]
-      Date: ['Mon, 19 Sep 2016 19:00:02 GMT']
+      Date: ['Wed, 01 Feb 2017 00:12:30 GMT']
       Expires: ['-1']
       Pragma: [no-cache]
       Strict-Transport-Security: [max-age=31536000; includeSubDomains]
       Transfer-Encoding: [chunked]
       Vary: ['Accept-Encoding,Accept-Encoding']
       content-length: ['591']
-      x-ms-correlation-request-id: [43148870-d571-45a2-b40c-68acfe7d61e8]
-      x-ms-ratelimit-remaining-subscription-reads: ['14952']
-      x-ms-request-id: ['centralus:cda61dc2-a559-45ab-98a4-b1d19ec1cc40']
-      x-ms-routing-request-id: ['CENTRALUS:20160919T190002Z:43148870-d571-45a2-b40c-68acfe7d61e8']
+      x-ms-correlation-request-id: [a7c4f828-2648-4697-b3e6-2f39ffb6b1b1]
+      x-ms-ratelimit-remaining-subscription-reads: ['14998']
+      x-ms-request-id: ['westus2:3262fd2e-e154-4a12-9a77-81c42f0fc7b3']
+      x-ms-routing-request-id: ['WESTUS2:20170201T001230Z:a7c4f828-2648-4697-b3e6-2f39ffb6b1b1']
     status: {code: 200, message: OK}
 - request:
     body: null
@@ -209,28 +227,28 @@ interactions:
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
       Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.5.1 (Windows-10-10.0.14393-SP0) requests/2.11.0 msrest/0.4.4
-          msrest_azure/0.4.3 policyclient/0.30.0rc6 Azure-SDK-For-Python]
+      User-Agent: [python/3.5.1 (Windows-10-10.0.14393-SP0) requests/2.12.1 msrest/0.4.5rc1
+          msrest_azure/0.4.7 policyclient/0.32.0 Azure-SDK-For-Python]
       accept-language: [en-US]
-      x-ms-client-request-id: [44e34986-7e9b-11e6-957f-ecb1d756380e]
+      x-ms-client-request-id: [1f3b38e2-e813-11e6-bf6c-ecb1d756380e]
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Authorization/policyassignments?api-version=2016-04-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Authorization/policyassignments?api-version=2016-12-01
   response:
     body: {string: '{"value":[{"properties":{"policyDefinitionId":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Authorization/policyDefinitions/pypolicyea4a13f0","scope":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_resource_policy_test_policy_definitionea4a13f0"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_resource_policy_test_policy_definitionea4a13f0/providers/Microsoft.Authorization/policyAssignments/pypolicyassignmentea4a13f0","type":"Microsoft.Authorization/policyAssignments","name":"pypolicyassignmentea4a13f0"}]}'}
     headers:
       Cache-Control: [no-cache]
       Content-Type: [application/json; charset=utf-8]
-      Date: ['Mon, 19 Sep 2016 19:00:02 GMT']
+      Date: ['Wed, 01 Feb 2017 00:12:30 GMT']
       Expires: ['-1']
       Pragma: [no-cache]
       Strict-Transport-Security: [max-age=31536000; includeSubDomains]
       Transfer-Encoding: [chunked]
       Vary: ['Accept-Encoding,Accept-Encoding']
       content-length: ['603']
-      x-ms-correlation-request-id: [143bd657-81de-4d04-a593-2d68d96be33d]
-      x-ms-ratelimit-remaining-subscription-reads: ['14967']
-      x-ms-request-id: ['centralus:491113f0-a5f0-4fc4-8a5a-c9c35228f518']
-      x-ms-routing-request-id: ['CENTRALUS:20160919T190002Z:143bd657-81de-4d04-a593-2d68d96be33d']
+      x-ms-correlation-request-id: [3bc04221-d34f-4dfb-b399-8b546dd51fcd]
+      x-ms-ratelimit-remaining-subscription-reads: ['14999']
+      x-ms-request-id: ['westus2:284ffb11-38ec-4cd9-b101-ed220b5e2688']
+      x-ms-routing-request-id: ['WESTUS2:20170201T001230Z:3bc04221-d34f-4dfb-b399-8b546dd51fcd']
     status: {code: 200, message: OK}
 - request:
     body: null
@@ -239,28 +257,28 @@ interactions:
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
       Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.5.1 (Windows-10-10.0.14393-SP0) requests/2.11.0 msrest/0.4.4
-          msrest_azure/0.4.3 policyclient/0.30.0rc6 Azure-SDK-For-Python]
+      User-Agent: [python/3.5.1 (Windows-10-10.0.14393-SP0) requests/2.12.1 msrest/0.4.5rc1
+          msrest_azure/0.4.7 policyclient/0.32.0 Azure-SDK-For-Python]
       accept-language: [en-US]
-      x-ms-client-request-id: [451c5980-7e9b-11e6-9c8b-ecb1d756380e]
+      x-ms-client-request-id: [1f530550-e813-11e6-9a84-ecb1d756380e]
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_resource_policy_test_policy_definitionea4a13f0/providers/Microsoft.Authorization/policyAssignments?api-version=2016-04-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_resource_policy_test_policy_definitionea4a13f0/providers/Microsoft.Authorization/policyAssignments?api-version=2016-12-01
   response:
     body: {string: '{"value":[{"properties":{"policyDefinitionId":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Authorization/policyDefinitions/pypolicyea4a13f0","scope":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_resource_policy_test_policy_definitionea4a13f0"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_resource_policy_test_policy_definitionea4a13f0/providers/Microsoft.Authorization/policyAssignments/pypolicyassignmentea4a13f0","type":"Microsoft.Authorization/policyAssignments","name":"pypolicyassignmentea4a13f0"}]}'}
     headers:
       Cache-Control: [no-cache]
       Content-Type: [application/json; charset=utf-8]
-      Date: ['Mon, 19 Sep 2016 19:00:02 GMT']
+      Date: ['Wed, 01 Feb 2017 00:12:30 GMT']
       Expires: ['-1']
       Pragma: [no-cache]
       Strict-Transport-Security: [max-age=31536000; includeSubDomains]
       Transfer-Encoding: [chunked]
       Vary: ['Accept-Encoding,Accept-Encoding']
       content-length: ['603']
-      x-ms-correlation-request-id: [405ea9dd-44fd-4c07-8294-1d55f8bfb6db]
-      x-ms-ratelimit-remaining-subscription-reads: ['14990']
-      x-ms-request-id: ['centralus:036a70bf-18e3-496d-80a0-17c35a3831f2']
-      x-ms-routing-request-id: ['CENTRALUS:20160919T190002Z:405ea9dd-44fd-4c07-8294-1d55f8bfb6db']
+      x-ms-correlation-request-id: [8886e461-bf91-4952-a862-0d8e1d6ea05a]
+      x-ms-ratelimit-remaining-subscription-reads: ['14997']
+      x-ms-request-id: ['westus2:23e1a9df-36a0-41b6-9cc9-e77d3c745fea']
+      x-ms-routing-request-id: ['WESTUS2:20170201T001230Z:8886e461-bf91-4952-a862-0d8e1d6ea05a']
     status: {code: 200, message: OK}
 - request:
     body: null
@@ -270,28 +288,28 @@ interactions:
       Connection: [keep-alive]
       Content-Length: ['0']
       Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.5.1 (Windows-10-10.0.14393-SP0) requests/2.11.0 msrest/0.4.4
-          msrest_azure/0.4.3 policyclient/0.30.0rc6 Azure-SDK-For-Python]
+      User-Agent: [python/3.5.1 (Windows-10-10.0.14393-SP0) requests/2.12.1 msrest/0.4.5rc1
+          msrest_azure/0.4.7 policyclient/0.32.0 Azure-SDK-For-Python]
       accept-language: [en-US]
-      x-ms-client-request-id: [455d22e4-7e9b-11e6-97b1-ecb1d756380e]
+      x-ms-client-request-id: [1f641c30-e813-11e6-a95b-ecb1d756380e]
     method: DELETE
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_resource_policy_test_policy_definitionea4a13f0/providers/Microsoft.Authorization/policyassignments/pypolicyassignmentea4a13f0?api-version=2016-04-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_resource_policy_test_policy_definitionea4a13f0/providers/Microsoft.Authorization/policyassignments/pypolicyassignmentea4a13f0?api-version=2016-12-01
   response:
     body: {string: '{"properties":{"policyDefinitionId":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Authorization/policyDefinitions/pypolicyea4a13f0","scope":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_resource_policy_test_policy_definitionea4a13f0"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_resource_policy_test_policy_definitionea4a13f0/providers/Microsoft.Authorization/policyAssignments/pypolicyassignmentea4a13f0","type":"Microsoft.Authorization/policyAssignments","name":"pypolicyassignmentea4a13f0"}'}
     headers:
       Cache-Control: [no-cache]
       Content-Type: [application/json; charset=utf-8]
-      Date: ['Mon, 19 Sep 2016 19:00:03 GMT']
+      Date: ['Wed, 01 Feb 2017 00:12:31 GMT']
       Expires: ['-1']
       Pragma: [no-cache]
       Strict-Transport-Security: [max-age=31536000; includeSubDomains]
       Transfer-Encoding: [chunked]
       Vary: ['Accept-Encoding,Accept-Encoding']
       content-length: ['591']
-      x-ms-correlation-request-id: [0220c4af-867e-484c-8a60-e806cc1df621]
-      x-ms-ratelimit-remaining-subscription-writes: ['1189']
-      x-ms-request-id: ['centralus:4d8a1c7f-44e9-4708-b1d4-a0decaba4349']
-      x-ms-routing-request-id: ['CENTRALUS:20160919T190003Z:0220c4af-867e-484c-8a60-e806cc1df621']
+      x-ms-correlation-request-id: [43138b62-334d-4d70-9c0f-1b13fa6de2aa]
+      x-ms-ratelimit-remaining-subscription-writes: ['1198']
+      x-ms-request-id: ['westus2:c3ac728e-9aee-4a2d-b4fe-58efe4dcf490']
+      x-ms-routing-request-id: ['WESTUS2:20170201T001231Z:43138b62-334d-4d70-9c0f-1b13fa6de2aa']
     status: {code: 200, message: OK}
 - request:
     body: '{"properties": {"policyDefinitionId": "/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Authorization/policyDefinitions/pypolicyea4a13f0"}}'
@@ -301,26 +319,26 @@ interactions:
       Connection: [keep-alive]
       Content-Length: ['162']
       Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.5.1 (Windows-10-10.0.14393-SP0) requests/2.11.0 msrest/0.4.4
-          msrest_azure/0.4.3 policyclient/0.30.0rc6 Azure-SDK-For-Python]
+      User-Agent: [python/3.5.1 (Windows-10-10.0.14393-SP0) requests/2.12.1 msrest/0.4.5rc1
+          msrest_azure/0.4.7 policyclient/0.32.0 Azure-SDK-For-Python]
       accept-language: [en-US]
-      x-ms-client-request-id: [45c62fd2-7e9b-11e6-9aa9-ecb1d756380e]
+      x-ms-client-request-id: [1f9cdf68-e813-11e6-bf0b-ecb1d756380e]
     method: PUT
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_resource_policy_test_policy_definitionea4a13f0/providers/Microsoft.Authorization/policyAssignments/pypolicyassignmentea4a13f0?api-version=2016-04-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_resource_policy_test_policy_definitionea4a13f0/providers/Microsoft.Authorization/policyAssignments/pypolicyassignmentea4a13f0?api-version=2016-12-01
   response:
     body: {string: '{"properties":{"policyDefinitionId":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Authorization/policyDefinitions/pypolicyea4a13f0","scope":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_resource_policy_test_policy_definitionea4a13f0"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_resource_policy_test_policy_definitionea4a13f0/providers/Microsoft.Authorization/policyAssignments/pypolicyassignmentea4a13f0","type":"Microsoft.Authorization/policyAssignments","name":"pypolicyassignmentea4a13f0"}'}
     headers:
       Cache-Control: [no-cache]
       Content-Length: ['591']
       Content-Type: [application/json; charset=utf-8]
-      Date: ['Mon, 19 Sep 2016 19:00:03 GMT']
+      Date: ['Wed, 01 Feb 2017 00:12:31 GMT']
       Expires: ['-1']
       Pragma: [no-cache]
       Strict-Transport-Security: [max-age=31536000; includeSubDomains]
-      x-ms-correlation-request-id: [c842e1b7-1f87-4d6e-8de1-0fcc7b292af7]
-      x-ms-ratelimit-remaining-subscription-writes: ['1194']
-      x-ms-request-id: ['centralus:063fff3e-54e2-4cdf-8290-93bc2a796dd3']
-      x-ms-routing-request-id: ['CENTRALUS:20160919T190004Z:c842e1b7-1f87-4d6e-8de1-0fcc7b292af7']
+      x-ms-correlation-request-id: [42255e79-33a4-4296-aa4e-adcac135eb2e]
+      x-ms-ratelimit-remaining-subscription-writes: ['1199']
+      x-ms-request-id: ['westus2:8757cd21-b467-4c06-a4da-43273c9e1198']
+      x-ms-routing-request-id: ['WESTUS2:20170201T001231Z:42255e79-33a4-4296-aa4e-adcac135eb2e']
     status: {code: 201, message: Created}
 - request:
     body: null
@@ -329,28 +347,28 @@ interactions:
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
       Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.5.1 (Windows-10-10.0.14393-SP0) requests/2.11.0 msrest/0.4.4
-          msrest_azure/0.4.3 policyclient/0.30.0rc6 Azure-SDK-For-Python]
+      User-Agent: [python/3.5.1 (Windows-10-10.0.14393-SP0) requests/2.12.1 msrest/0.4.5rc1
+          msrest_azure/0.4.7 policyclient/0.32.0 Azure-SDK-For-Python]
       accept-language: [en-US]
-      x-ms-client-request-id: [46176600-7e9b-11e6-b076-ecb1d756380e]
+      x-ms-client-request-id: [1fd11008-e813-11e6-befa-ecb1d756380e]
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_resource_policy_test_policy_definitionea4a13f0/providers/Microsoft.Authorization/policyAssignments/pypolicyassignmentea4a13f0?api-version=2016-04-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_resource_policy_test_policy_definitionea4a13f0/providers/Microsoft.Authorization/policyAssignments/pypolicyassignmentea4a13f0?api-version=2016-12-01
   response:
     body: {string: '{"properties":{"policyDefinitionId":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Authorization/policyDefinitions/pypolicyea4a13f0","scope":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_resource_policy_test_policy_definitionea4a13f0"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_resource_policy_test_policy_definitionea4a13f0/providers/Microsoft.Authorization/policyAssignments/pypolicyassignmentea4a13f0","type":"Microsoft.Authorization/policyAssignments","name":"pypolicyassignmentea4a13f0"}'}
     headers:
       Cache-Control: [no-cache]
       Content-Type: [application/json; charset=utf-8]
-      Date: ['Mon, 19 Sep 2016 19:00:04 GMT']
+      Date: ['Wed, 01 Feb 2017 00:12:31 GMT']
       Expires: ['-1']
       Pragma: [no-cache]
       Strict-Transport-Security: [max-age=31536000; includeSubDomains]
       Transfer-Encoding: [chunked]
       Vary: ['Accept-Encoding,Accept-Encoding']
       content-length: ['591']
-      x-ms-correlation-request-id: [b601adcf-a379-452e-9a10-e954406d3bf4]
-      x-ms-ratelimit-remaining-subscription-reads: ['14991']
-      x-ms-request-id: ['centralus:3dc72c7e-a218-46a3-b461-65c888b2e1ec']
-      x-ms-routing-request-id: ['CENTRALUS:20160919T190004Z:b601adcf-a379-452e-9a10-e954406d3bf4']
+      x-ms-correlation-request-id: [7f7cd4a5-bfb1-4443-8edb-f4d25788e7c1]
+      x-ms-ratelimit-remaining-subscription-reads: ['14999']
+      x-ms-request-id: ['westus2:f1283fc0-0db3-4678-83f9-86827304c452']
+      x-ms-routing-request-id: ['WESTUS2:20170201T001231Z:7f7cd4a5-bfb1-4443-8edb-f4d25788e7c1']
     status: {code: 200, message: OK}
 - request:
     body: null
@@ -360,28 +378,28 @@ interactions:
       Connection: [keep-alive]
       Content-Length: ['0']
       Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.5.1 (Windows-10-10.0.14393-SP0) requests/2.11.0 msrest/0.4.4
-          msrest_azure/0.4.3 policyclient/0.30.0rc6 Azure-SDK-For-Python]
+      User-Agent: [python/3.5.1 (Windows-10-10.0.14393-SP0) requests/2.12.1 msrest/0.4.5rc1
+          msrest_azure/0.4.7 policyclient/0.32.0 Azure-SDK-For-Python]
       accept-language: [en-US]
-      x-ms-client-request-id: [464f27e8-7e9b-11e6-b403-ecb1d756380e]
+      x-ms-client-request-id: [1fec118a-e813-11e6-be9a-ecb1d756380e]
     method: DELETE
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_resource_policy_test_policy_definitionea4a13f0/providers/Microsoft.Authorization/policyAssignments/pypolicyassignmentea4a13f0?api-version=2016-04-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_resource_policy_test_policy_definitionea4a13f0/providers/Microsoft.Authorization/policyAssignments/pypolicyassignmentea4a13f0?api-version=2016-12-01
   response:
     body: {string: '{"properties":{"policyDefinitionId":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Authorization/policyDefinitions/pypolicyea4a13f0","scope":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_resource_policy_test_policy_definitionea4a13f0"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_resource_policy_test_policy_definitionea4a13f0/providers/Microsoft.Authorization/policyAssignments/pypolicyassignmentea4a13f0","type":"Microsoft.Authorization/policyAssignments","name":"pypolicyassignmentea4a13f0"}'}
     headers:
       Cache-Control: [no-cache]
       Content-Type: [application/json; charset=utf-8]
-      Date: ['Mon, 19 Sep 2016 19:00:04 GMT']
+      Date: ['Wed, 01 Feb 2017 00:12:31 GMT']
       Expires: ['-1']
       Pragma: [no-cache]
       Strict-Transport-Security: [max-age=31536000; includeSubDomains]
       Transfer-Encoding: [chunked]
       Vary: ['Accept-Encoding,Accept-Encoding']
       content-length: ['591']
-      x-ms-correlation-request-id: [7174ef74-fc26-4b9e-8e03-936e90a0e194]
-      x-ms-ratelimit-remaining-subscription-writes: ['1192']
-      x-ms-request-id: ['centralus:e879b339-d908-49d9-8822-4bb8bc472e95']
-      x-ms-routing-request-id: ['CENTRALUS:20160919T190005Z:7174ef74-fc26-4b9e-8e03-936e90a0e194']
+      x-ms-correlation-request-id: [1572f0e4-dd77-49e1-882b-4565f30988df]
+      x-ms-ratelimit-remaining-subscription-writes: ['1197']
+      x-ms-request-id: ['westus2:9041b093-60b9-4c53-9c6f-10e1ac921c50']
+      x-ms-routing-request-id: ['WESTUS2:20170201T001231Z:1572f0e4-dd77-49e1-882b-4565f30988df']
     status: {code: 200, message: OK}
 - request:
     body: null
@@ -391,28 +409,28 @@ interactions:
       Connection: [keep-alive]
       Content-Length: ['0']
       Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.5.1 (Windows-10-10.0.14393-SP0) requests/2.11.0 msrest/0.4.4
-          msrest_azure/0.4.3 policyclient/0.30.0rc6 Azure-SDK-For-Python]
+      User-Agent: [python/3.5.1 (Windows-10-10.0.14393-SP0) requests/2.12.1 msrest/0.4.5rc1
+          msrest_azure/0.4.7 policyclient/0.32.0 Azure-SDK-For-Python]
       accept-language: [en-US]
-      x-ms-client-request-id: [46b61652-7e9b-11e6-a860-ecb1d756380e]
+      x-ms-client-request-id: [200dc968-e813-11e6-a5f0-ecb1d756380e]
     method: DELETE
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Authorization/policydefinitions/pypolicyea4a13f0?api-version=2016-04-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Authorization/policydefinitions/pypolicyea4a13f0?api-version=2016-12-01
   response:
     body: {string: '{"properties":{"policyType":"Custom","description":"Don''t create
-        a VM anywhere","policyRule":{"then":{"effect":"deny"},"if":{"allOf":[{"equals":"Microsoft.Compute/virtualMachines/write","source":"action"},{"field":"location","in":["eastus","eastus2","centralus"]}]}}},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Authorization/policyDefinitions/pypolicyea4a13f0","type":"Microsoft.Authorization/policyDefinitions","name":"pypolicyea4a13f0"}'}
+        a VM anywhere","policyRule":{"if":{"allOf":[{"equals":"Microsoft.Compute/virtualMachines/write","source":"action"},{"in":["eastus","eastus2","centralus"],"field":"location"}]},"then":{"effect":"deny"}}},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Authorization/policyDefinitions/pypolicyea4a13f0","type":"Microsoft.Authorization/policyDefinitions","name":"pypolicyea4a13f0"}'}
     headers:
       Cache-Control: [no-cache]
       Content-Type: [application/json; charset=utf-8]
-      Date: ['Mon, 19 Sep 2016 19:00:05 GMT']
+      Date: ['Wed, 01 Feb 2017 00:12:31 GMT']
       Expires: ['-1']
       Pragma: [no-cache]
       Strict-Transport-Security: [max-age=31536000; includeSubDomains]
       Transfer-Encoding: [chunked]
       Vary: ['Accept-Encoding,Accept-Encoding']
       content-length: ['473']
-      x-ms-correlation-request-id: [e2c1213d-7ce4-48d6-998c-7273aa4f9cdc]
-      x-ms-ratelimit-remaining-subscription-writes: ['1189']
-      x-ms-request-id: ['centralus:592a1e99-fd03-48c4-9a90-d0a1c5564ab1']
-      x-ms-routing-request-id: ['CENTRALUS:20160919T190005Z:e2c1213d-7ce4-48d6-998c-7273aa4f9cdc']
+      x-ms-correlation-request-id: [1c0e3b89-e3bf-43e4-8e3f-e799d05c8d5b]
+      x-ms-ratelimit-remaining-subscription-writes: ['1197']
+      x-ms-request-id: ['westus2:c9c2bc4e-af0e-46d9-ae03-29c615e1e19b']
+      x-ms-routing-request-id: ['WESTUS2:20170201T001232Z:1c0e3b89-e3bf-43e4-8e3f-e799d05c8d5b']
     status: {code: 200, message: OK}
 version: 1
