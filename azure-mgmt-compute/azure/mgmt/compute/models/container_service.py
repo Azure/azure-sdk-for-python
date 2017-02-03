@@ -18,17 +18,17 @@ class ContainerService(Resource):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar id: Resource ID.
+    :ivar id: Resource Id
     :vartype id: str
-    :ivar name: Resource name.
+    :ivar name: Resource name
     :vartype name: str
-    :ivar type: Resource type.
+    :ivar type: Resource type
     :vartype type: str
-    :param location: Resource location.
+    :param location: Resource location
     :type location: str
-    :param tags: Resource tags.
+    :param tags: Resource tags
     :type tags: dict
-    :ivar provisioning_state: The current deployment or provisioning state,
+    :ivar provisioning_state: the current deployment or provisioning state,
      which only appears in the response.
     :vartype provisioning_state: str
     :param orchestrator_profile: Properties of the orchestrator.

@@ -18,15 +18,15 @@ class AvailabilitySet(Resource):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar id: Resource ID.
+    :ivar id: Resource Id
     :vartype id: str
-    :ivar name: Resource name.
+    :ivar name: Resource name
     :vartype name: str
-    :ivar type: Resource type.
+    :ivar type: Resource type
     :vartype type: str
-    :param location: Resource location.
+    :param location: Resource location
     :type location: str
-    :param tags: Resource tags.
+    :param tags: Resource tags
     :type tags: dict
     :param platform_update_domain_count: Update Domain count.
     :type platform_update_domain_count: int
@@ -39,6 +39,10 @@ class AvailabilitySet(Resource):
     :ivar statuses: The resource status information.
     :vartype statuses: list of :class:`InstanceViewStatus
      <azure.mgmt.compute.models.InstanceViewStatus>`
+    :param managed: If the availability set supports managed disks.
+    :type managed: bool
+    :param sku: Sku of the availability set
+    :type sku: :class:`Sku <azure.mgmt.compute.models.Sku>`
     """
 
     _validation = {
@@ -59,11 +63,15 @@ class AvailabilitySet(Resource):
         'platform_fault_domain_count': {'key': 'properties.platformFaultDomainCount', 'type': 'int'},
         'virtual_machines': {'key': 'properties.virtualMachines', 'type': '[SubResource]'},
         'statuses': {'key': 'properties.statuses', 'type': '[InstanceViewStatus]'},
+        'managed': {'key': 'properties.managed', 'type': 'bool'},
+        'sku': {'key': 'sku', 'type': 'Sku'},
     }
 
-    def __init__(self, location, tags=None, platform_update_domain_count=None, platform_fault_domain_count=None, virtual_machines=None):
+    def __init__(self, location, tags=None, platform_update_domain_count=None, platform_fault_domain_count=None, virtual_machines=None, managed=None, sku=None):
         super(AvailabilitySet, self).__init__(location=location, tags=tags)
         self.platform_update_domain_count = platform_update_domain_count
         self.platform_fault_domain_count = platform_fault_domain_count
         self.virtual_machines = virtual_machines
         self.statuses = None
+        self.managed = managed
+        self.sku = sku

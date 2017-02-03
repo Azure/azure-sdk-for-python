@@ -15,7 +15,7 @@ from msrest.serialization import Model
 class ContainerServiceLinuxProfile(Model):
     """Profile for Linux VMs in the container service cluster.
 
-    :param admin_username: The administrator user name to use for Linux VMs.
+    :param admin_username: The administrator username to use for Linux VMs.
     :type admin_username: str
     :param ssh: The ssh key configuration for Linux VMs.
     :type ssh: :class:`ContainerServiceSshConfiguration

@@ -21,13 +21,18 @@ class VirtualMachineScaleSetStorageProfile(Model):
     :param os_disk: The OS disk.
     :type os_disk: :class:`VirtualMachineScaleSetOSDisk
      <azure.mgmt.compute.models.VirtualMachineScaleSetOSDisk>`
+    :param data_disks: The data disks.
+    :type data_disks: list of :class:`VirtualMachineScaleSetDataDisk
+     <azure.mgmt.compute.models.VirtualMachineScaleSetDataDisk>`
     """
 
     _attribute_map = {
         'image_reference': {'key': 'imageReference', 'type': 'ImageReference'},
         'os_disk': {'key': 'osDisk', 'type': 'VirtualMachineScaleSetOSDisk'},
+        'data_disks': {'key': 'dataDisks', 'type': '[VirtualMachineScaleSetDataDisk]'},
     }
 
-    def __init__(self, image_reference=None, os_disk=None):
+    def __init__(self, image_reference=None, os_disk=None, data_disks=None):
         self.image_reference = image_reference
         self.os_disk = os_disk
+        self.data_disks = data_disks
