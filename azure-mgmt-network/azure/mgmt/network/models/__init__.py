@@ -46,9 +46,6 @@ from .application_gateway_url_path_map import ApplicationGatewayUrlPathMap
 from .application_gateway_web_application_firewall_configuration import ApplicationGatewayWebApplicationFirewallConfiguration
 from .application_gateway import ApplicationGateway
 from .resource import Resource
-from .error_details import ErrorDetails
-from .error import Error
-from .azure_async_operation_result import AzureAsyncOperationResult
 from .frontend_ip_configuration import FrontendIPConfiguration
 from .load_balancing_rule import LoadBalancingRule
 from .probe import Probe
@@ -85,7 +82,9 @@ from .connection_shared_key import ConnectionSharedKey
 from .express_route_circuit_authorization import ExpressRouteCircuitAuthorization
 from .express_route_circuit_peering_config import ExpressRouteCircuitPeeringConfig
 from .express_route_circuit_stats import ExpressRouteCircuitStats
+from .route_filter_rule import RouteFilterRule
 from .express_route_circuit_peering import ExpressRouteCircuitPeering
+from .route_filter import RouteFilter
 from .express_route_circuit_sku import ExpressRouteCircuitSku
 from .express_route_circuit_service_provider_properties import ExpressRouteCircuitServiceProviderProperties
 from .express_route_circuit import ExpressRouteCircuit
@@ -97,6 +96,10 @@ from .express_route_circuit_routes_table_summary import ExpressRouteCircuitRoute
 from .express_route_circuits_routes_table_summary_list_result import ExpressRouteCircuitsRoutesTableSummaryListResult
 from .express_route_service_provider_bandwidths_offered import ExpressRouteServiceProviderBandwidthsOffered
 from .express_route_service_provider import ExpressRouteServiceProvider
+from .patch_route_filter_rule import PatchRouteFilterRule
+from .patch_route_filter import PatchRouteFilter
+from .bgp_community import BGPCommunity
+from .bgp_service_community import BgpServiceCommunity
 from .application_gateway_paged import ApplicationGatewayPaged
 from .route_table_paged import RouteTablePaged
 from .route_paged import RoutePaged
@@ -116,6 +119,9 @@ from .express_route_circuit_authorization_paged import ExpressRouteCircuitAuthor
 from .express_route_circuit_peering_paged import ExpressRouteCircuitPeeringPaged
 from .express_route_circuit_paged import ExpressRouteCircuitPaged
 from .express_route_service_provider_paged import ExpressRouteServiceProviderPaged
+from .route_filter_paged import RouteFilterPaged
+from .route_filter_rule_paged import RouteFilterRulePaged
+from .bgp_service_community_paged import BgpServiceCommunityPaged
 from .network_management_client_enums import (
     TransportProtocol,
     IPAllocationMethod,
@@ -133,7 +139,6 @@ from .network_management_client_enums import (
     ApplicationGatewayRequestRoutingRuleType,
     ApplicationGatewayOperationalState,
     ApplicationGatewayFirewallMode,
-    NetworkOperationStatus,
     LoadDistribution,
     ProbeProtocol,
     VirtualNetworkPeeringState,
@@ -150,6 +155,7 @@ from .network_management_client_enums import (
     ExpressRouteCircuitPeeringAdvertisedPublicPrefixState,
     ExpressRouteCircuitPeeringType,
     ExpressRouteCircuitPeeringState,
+    Access,
     ExpressRouteCircuitSkuTier,
     ExpressRouteCircuitSkuFamily,
     ServiceProviderProvisioningState,
@@ -193,9 +199,6 @@ __all__ = [
     'ApplicationGatewayWebApplicationFirewallConfiguration',
     'ApplicationGateway',
     'Resource',
-    'ErrorDetails',
-    'Error',
-    'AzureAsyncOperationResult',
     'FrontendIPConfiguration',
     'LoadBalancingRule',
     'Probe',
@@ -232,7 +235,9 @@ __all__ = [
     'ExpressRouteCircuitAuthorization',
     'ExpressRouteCircuitPeeringConfig',
     'ExpressRouteCircuitStats',
+    'RouteFilterRule',
     'ExpressRouteCircuitPeering',
+    'RouteFilter',
     'ExpressRouteCircuitSku',
     'ExpressRouteCircuitServiceProviderProperties',
     'ExpressRouteCircuit',
@@ -244,6 +249,10 @@ __all__ = [
     'ExpressRouteCircuitsRoutesTableSummaryListResult',
     'ExpressRouteServiceProviderBandwidthsOffered',
     'ExpressRouteServiceProvider',
+    'PatchRouteFilterRule',
+    'PatchRouteFilter',
+    'BGPCommunity',
+    'BgpServiceCommunity',
     'ApplicationGatewayPaged',
     'RouteTablePaged',
     'RoutePaged',
@@ -263,6 +272,9 @@ __all__ = [
     'ExpressRouteCircuitPeeringPaged',
     'ExpressRouteCircuitPaged',
     'ExpressRouteServiceProviderPaged',
+    'RouteFilterPaged',
+    'RouteFilterRulePaged',
+    'BgpServiceCommunityPaged',
     'TransportProtocol',
     'IPAllocationMethod',
     'IPVersion',
@@ -279,7 +291,6 @@ __all__ = [
     'ApplicationGatewayRequestRoutingRuleType',
     'ApplicationGatewayOperationalState',
     'ApplicationGatewayFirewallMode',
-    'NetworkOperationStatus',
     'LoadDistribution',
     'ProbeProtocol',
     'VirtualNetworkPeeringState',
@@ -296,6 +307,7 @@ __all__ = [
     'ExpressRouteCircuitPeeringAdvertisedPublicPrefixState',
     'ExpressRouteCircuitPeeringType',
     'ExpressRouteCircuitPeeringState',
+    'Access',
     'ExpressRouteCircuitSkuTier',
     'ExpressRouteCircuitSkuFamily',
     'ServiceProviderProvisioningState',
