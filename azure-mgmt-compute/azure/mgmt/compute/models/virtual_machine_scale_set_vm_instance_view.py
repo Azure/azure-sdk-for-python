@@ -36,6 +36,9 @@ class VirtualMachineScaleSetVMInstanceView(Model):
     :param statuses: The resource status information.
     :type statuses: list of :class:`InstanceViewStatus
      <azure.mgmt.compute.models.InstanceViewStatus>`
+    :param placement_group_id: The placement group in which the VM is running.
+     If the VM is deallocated it will not have a placementGroupId.
+    :type placement_group_id: str
     """
 
     _attribute_map = {
@@ -47,9 +50,10 @@ class VirtualMachineScaleSetVMInstanceView(Model):
         'extensions': {'key': 'extensions', 'type': '[VirtualMachineExtensionInstanceView]'},
         'boot_diagnostics': {'key': 'bootDiagnostics', 'type': 'BootDiagnosticsInstanceView'},
         'statuses': {'key': 'statuses', 'type': '[InstanceViewStatus]'},
+        'placement_group_id': {'key': 'placementGroupId', 'type': 'str'},
     }
 
-    def __init__(self, platform_update_domain=None, platform_fault_domain=None, rdp_thumb_print=None, vm_agent=None, disks=None, extensions=None, boot_diagnostics=None, statuses=None):
+    def __init__(self, platform_update_domain=None, platform_fault_domain=None, rdp_thumb_print=None, vm_agent=None, disks=None, extensions=None, boot_diagnostics=None, statuses=None, placement_group_id=None):
         self.platform_update_domain = platform_update_domain
         self.platform_fault_domain = platform_fault_domain
         self.rdp_thumb_print = rdp_thumb_print
@@ -58,3 +62,4 @@ class VirtualMachineScaleSetVMInstanceView(Model):
         self.extensions = extensions
         self.boot_diagnostics = boot_diagnostics
         self.statuses = statuses
+        self.placement_group_id = placement_group_id

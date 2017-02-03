@@ -38,12 +38,13 @@ class DataDisk(Model):
     :param disk_size_gb: The initial disk size in GB for blank data disks, and
      the new desired size for resizing existing OS and data disks.
     :type disk_size_gb: int
+    :param managed_disk: The managed disk parameters.
+    :type managed_disk: :class:`ManagedDiskParameters
+     <azure.mgmt.compute.models.ManagedDiskParameters>`
     """
 
     _validation = {
         'lun': {'required': True},
-        'name': {'required': True},
-        'vhd': {'required': True},
         'create_option': {'required': True},
     }
 
@@ -55,9 +56,10 @@ class DataDisk(Model):
         'caching': {'key': 'caching', 'type': 'CachingTypes'},
         'create_option': {'key': 'createOption', 'type': 'DiskCreateOptionTypes'},
         'disk_size_gb': {'key': 'diskSizeGB', 'type': 'int'},
+        'managed_disk': {'key': 'managedDisk', 'type': 'ManagedDiskParameters'},
     }
 
-    def __init__(self, lun, name, vhd, create_option, image=None, caching=None, disk_size_gb=None):
+    def __init__(self, lun, create_option, name=None, vhd=None, image=None, caching=None, disk_size_gb=None, managed_disk=None):
         self.lun = lun
         self.name = name
         self.vhd = vhd
@@ -65,3 +67,4 @@ class DataDisk(Model):
         self.caching = caching
         self.create_option = create_option
         self.disk_size_gb = disk_size_gb
+        self.managed_disk = managed_disk

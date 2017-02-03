@@ -36,10 +36,12 @@ class VirtualMachineScaleSetOSDisk(Model):
      <azure.mgmt.compute.models.VirtualHardDisk>`
     :param vhd_containers: The list of virtual hard disk container uris.
     :type vhd_containers: list of str
+    :param managed_disk: The managed disk parameters.
+    :type managed_disk: :class:`VirtualMachineScaleSetManagedDiskParameters
+     <azure.mgmt.compute.models.VirtualMachineScaleSetManagedDiskParameters>`
     """
 
     _validation = {
-        'name': {'required': True},
         'create_option': {'required': True},
     }
 
@@ -50,12 +52,14 @@ class VirtualMachineScaleSetOSDisk(Model):
         'os_type': {'key': 'osType', 'type': 'OperatingSystemTypes'},
         'image': {'key': 'image', 'type': 'VirtualHardDisk'},
         'vhd_containers': {'key': 'vhdContainers', 'type': '[str]'},
+        'managed_disk': {'key': 'managedDisk', 'type': 'VirtualMachineScaleSetManagedDiskParameters'},
     }
 
-    def __init__(self, name, create_option, caching=None, os_type=None, image=None, vhd_containers=None):
+    def __init__(self, create_option, name=None, caching=None, os_type=None, image=None, vhd_containers=None, managed_disk=None):
         self.name = name
         self.caching = caching
         self.create_option = create_option
         self.os_type = os_type
         self.image = image
         self.vhd_containers = vhd_containers
+        self.managed_disk = managed_disk
