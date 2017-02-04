@@ -16,7 +16,7 @@ class TaskSchedulingError(Model):
     """Information about an error when scheduling a task.
 
     :param category: The category of the task scheduling error. Possible
-     values include: 'usererror', 'servererror', 'unmapped'
+     values include: 'userError', 'serverError', 'unmapped'
     :type category: str or :class:`SchedulingErrorCategory
      <azure.batch.models.SchedulingErrorCategory>`
     :param code: An identifier for the task scheduling error. Codes are
@@ -29,7 +29,7 @@ class TaskSchedulingError(Model):
      scheduling error.
     :type details: list of :class:`NameValuePair
      <azure.batch.models.NameValuePair>`
-    """ 
+    """
 
     _validation = {
         'category': {'required': True},

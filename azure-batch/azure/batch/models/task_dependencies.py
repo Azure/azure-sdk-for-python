@@ -26,7 +26,7 @@ class TaskDependencies(Model):
      dependent task can be scheduled.
     :type task_id_ranges: list of :class:`TaskIdRange
      <azure.batch.models.TaskIdRange>`
-    """ 
+    """
 
     _attribute_map = {
         'task_ids': {'key': 'taskIds', 'type': '[str]'},

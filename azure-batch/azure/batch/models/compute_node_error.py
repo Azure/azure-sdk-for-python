@@ -25,7 +25,7 @@ class ComputeNodeError(Model):
      compute node error.
     :type error_details: list of :class:`NameValuePair
      <azure.batch.models.NameValuePair>`
-    """ 
+    """
 
     _attribute_map = {
         'code': {'key': 'code', 'type': 'str'},

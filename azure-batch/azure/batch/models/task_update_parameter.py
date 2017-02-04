@@ -19,7 +19,7 @@ class TaskUpdateParameter(Model):
      task is given the default constraints.
     :type constraints: :class:`TaskConstraints
      <azure.batch.models.TaskConstraints>`
-    """ 
+    """
 
     _attribute_map = {
         'constraints': {'key': 'constraints', 'type': 'TaskConstraints'},

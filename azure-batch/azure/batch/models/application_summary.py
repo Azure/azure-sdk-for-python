@@ -22,7 +22,7 @@ class ApplicationSummary(Model):
     :type display_name: str
     :param versions: The versions of the application which are available.
     :type versions: list of str
-    """ 
+    """
 
     _validation = {
         'id': {'required': True},

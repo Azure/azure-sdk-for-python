@@ -29,7 +29,7 @@ class JobScheduleExecutionInformation(Model):
     :param end_time: The time at which the schedule ended. This property is
      set only if the job schedule is in the completed state.
     :type end_time: datetime
-    """ 
+    """
 
     _attribute_map = {
         'next_run_time': {'key': 'nextRunTime', 'type': 'iso-8601'},

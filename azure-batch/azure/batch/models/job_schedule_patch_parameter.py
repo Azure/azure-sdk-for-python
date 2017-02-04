@@ -29,7 +29,7 @@ class JobSchedulePatchParameter(Model):
      metadata is left unchanged.
     :type metadata: list of :class:`MetadataItem
      <azure.batch.models.MetadataItem>`
-    """ 
+    """
 
     _attribute_map = {
         'schedule': {'key': 'schedule', 'type': 'Schedule'},

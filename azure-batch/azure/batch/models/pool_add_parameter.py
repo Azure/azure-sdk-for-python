@@ -42,7 +42,9 @@ class PoolAddParameter(Model):
     :type vm_size: str
     :param cloud_service_configuration: The cloud service configuration for
      the pool. This property and virtualMachineConfiguration are mutually
-     exclusive and one of the properties must be specified.
+     exclusive and one of the properties must be specified. This property
+     cannot be specified if the Batch account was created with its
+     poolAllocationMode property set to 'UserSubscription'.
     :type cloud_service_configuration: :class:`CloudServiceConfiguration
      <azure.batch.models.CloudServiceConfiguration>`
     :param virtual_machine_configuration: The virtual machine configuration
@@ -101,9 +103,9 @@ class PoolAddParameter(Model):
      location. For Linux compute nodes, the certificates are stored in a
      directory inside the task working directory and an environment variable
      AZ_BATCH_CERTIFICATES_DIR is supplied to the task to query for this
-     location. For certificates with visibility of remoteuser, a certs
+     location. For certificates with visibility of 'remoteUser', a 'certs'
      directory is created in the user's home directory (e.g.,
-     /home/<user-name>/certs) where certificates are placed.
+     /home/{user-name}/certs) and certificates are placed in that directory.
     :type certificate_references: list of :class:`CertificateReference
      <azure.batch.models.CertificateReference>`
     :param application_package_references: The list of application packages to
@@ -122,12 +124,16 @@ class PoolAddParameter(Model):
      between compute nodes in the pool.
     :type task_scheduling_policy: :class:`TaskSchedulingPolicy
      <azure.batch.models.TaskSchedulingPolicy>`
+    :param user_accounts: The list of user accounts to be created on each node
+     in the pool.
+    :type user_accounts: list of :class:`UserAccount
+     <azure.batch.models.UserAccount>`
     :param metadata: A list of name-value pairs associated with the pool as
      metadata. The Batch service does not assign any meaning to metadata; it is
      solely for the use of user code.
     :type metadata: list of :class:`MetadataItem
      <azure.batch.models.MetadataItem>`
-    """ 
+    """
 
     _validation = {
         'id': {'required': True},
@@ -152,10 +158,11 @@ class PoolAddParameter(Model):
         'application_package_references': {'key': 'applicationPackageReferences', 'type': '[ApplicationPackageReference]'},
         'max_tasks_per_node': {'key': 'maxTasksPerNode', 'type': 'int'},
         'task_scheduling_policy': {'key': 'taskSchedulingPolicy', 'type': 'TaskSchedulingPolicy'},
+        'user_accounts': {'key': 'userAccounts', 'type': '[UserAccount]'},
         'metadata': {'key': 'metadata', 'type': '[MetadataItem]'},
     }
 
-    def __init__(self, id, vm_size, display_name=None, cloud_service_configuration=None, virtual_machine_configuration=None, resize_timeout=None, target_dedicated=None, enable_auto_scale=None, auto_scale_formula=None, auto_scale_evaluation_interval=None, enable_inter_node_communication=None, network_configuration=None, start_task=None, certificate_references=None, application_package_references=None, max_tasks_per_node=None, task_scheduling_policy=None, metadata=None):
+    def __init__(self, id, vm_size, display_name=None, cloud_service_configuration=None, virtual_machine_configuration=None, resize_timeout=None, target_dedicated=None, enable_auto_scale=None, auto_scale_formula=None, auto_scale_evaluation_interval=None, enable_inter_node_communication=None, network_configuration=None, start_task=None, certificate_references=None, application_package_references=None, max_tasks_per_node=None, task_scheduling_policy=None, user_accounts=None, metadata=None):
         self.id = id
         self.display_name = display_name
         self.vm_size = vm_size
@@ -173,4 +180,5 @@ class PoolAddParameter(Model):
         self.application_package_references = application_package_references
         self.max_tasks_per_node = max_tasks_per_node
         self.task_scheduling_policy = task_scheduling_policy
+        self.user_accounts = user_accounts
         self.metadata = metadata

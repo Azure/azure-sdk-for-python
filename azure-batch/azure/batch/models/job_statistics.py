@@ -62,7 +62,7 @@ class JobStatistics(Model):
      This value is only reported in the account lifetime statistics; it is not
      included in the job statistics.
     :type wait_time: timedelta
-    """ 
+    """
 
     _validation = {
         'url': {'required': True},

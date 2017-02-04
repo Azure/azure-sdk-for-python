@@ -19,7 +19,7 @@ class EnvironmentSetting(Model):
     :type name: str
     :param value: The value of the environment variable.
     :type value: str
-    """ 
+    """
 
     _validation = {
         'name': {'required': True},

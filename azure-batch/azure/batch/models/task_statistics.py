@@ -51,7 +51,7 @@ class TaskStatistics(Model):
      the start of task execution. (If the task is retried due to failures, the
      wait time is the time to the most recent task execution.).
     :type wait_time: timedelta
-    """ 
+    """
 
     _validation = {
         'url': {'required': True},

@@ -18,7 +18,7 @@ class JobTerminateParameter(Model):
     :param terminate_reason: The text you want to appear as the job's
      TerminateReason. The default is 'UserTerminate'.
     :type terminate_reason: str
-    """ 
+    """
 
     _attribute_map = {
         'terminate_reason': {'key': 'terminateReason', 'type': 'str'},
