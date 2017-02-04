@@ -26,9 +26,9 @@ class PoolPatchParameter(Model):
      location. For Linux compute nodes, the certificates are stored in a
      directory inside the task working directory and an environment variable
      AZ_BATCH_CERTIFICATES_DIR is supplied to the task to query for this
-     location. For certificates with visibility of remoteuser, a certs
+     location. For certificates with visibility of 'remoteUser', a 'certs'
      directory is created in the user's home directory (e.g.,
-     /home/<user-name>/certs) where certificates are placed.
+     /home/{user-name}/certs) and certificates are placed in that directory.
     :type certificate_references: list of :class:`CertificateReference
      <azure.batch.models.CertificateReference>`
     :param application_package_references: A list of application packages to
@@ -49,7 +49,7 @@ class PoolPatchParameter(Model):
      unchanged.
     :type metadata: list of :class:`MetadataItem
      <azure.batch.models.MetadataItem>`
-    """ 
+    """
 
     _attribute_map = {
         'start_task': {'key': 'startTask', 'type': 'StartTask'},

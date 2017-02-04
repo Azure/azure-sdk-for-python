@@ -18,7 +18,7 @@ class TaskAddCollectionResult(Model):
     :param value: The results of the add task collection operation.
     :type value: list of :class:`TaskAddResult
      <azure.batch.models.TaskAddResult>`
-    """ 
+    """
 
     _attribute_map = {
         'value': {'key': 'value', 'type': '[TaskAddResult]'},

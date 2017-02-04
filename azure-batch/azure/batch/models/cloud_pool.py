@@ -39,11 +39,11 @@ class CloudPool(Model):
     :type last_modified: datetime
     :param creation_time: The creation time of the pool.
     :type creation_time: datetime
-    :param state: The current state of the pool. Possible values are: active –
-     The pool is available to run tasks subject to the availability of compute
-     nodes. deleting – The user has requested that the pool be deleted, but the
-     delete operation has not yet completed. upgrading – The user has requested
-     that the operating system of the pool's nodes be upgraded, but the upgrade
+    :param state: The current state of the pool. active - The pool is
+     available to run tasks subject to the availability of compute nodes.
+     deleting - The user has requested that the pool be deleted, but the delete
+     operation has not yet completed. upgrading - The user has requested that
+     the operating system of the pool's nodes be upgraded, but the upgrade
      operation has not yet completed (that is, some nodes in the pool have not
      yet been upgraded). While upgrading, the pool may be able to run tasks
      (with reduced capacity) but this is not guaranteed. Possible values
@@ -52,14 +52,14 @@ class CloudPool(Model):
     :param state_transition_time: The time at which the pool entered its
      current state.
     :type state_transition_time: datetime
-    :param allocation_state: Whether the pool is resizing. Possible values
-     are: steady – The pool is not resizing. There are no changes to the number
-     of nodes in the pool in progress. A pool enters this state when it is
-     created and when no operations are being performed on the pool to change
-     the number of dedicated nodes. resizing - The pool is resizing; that is,
-     compute nodes are being added to or removed from the pool. stopping - The
-     pool was resizing, but the user has requested that the resize be stopped,
-     but the stop request has not yet been completed. Possible values include:
+    :param allocation_state: Whether the pool is resizing. steady - The pool
+     is not resizing. There are no changes to the number of nodes in the pool
+     in progress. A pool enters this state when it is created and when no
+     operations are being performed on the pool to change the number of
+     dedicated nodes. resizing - The pool is resizing; that is, compute nodes
+     are being added to or removed from the pool. stopping - The pool was
+     resizing, but the user has requested that the resize be stopped, but the
+     stop request has not yet been completed. Possible values include:
      'steady', 'resizing', 'stopping'
     :type allocation_state: str or :class:`AllocationState
      <azure.batch.models.AllocationState>`
@@ -83,7 +83,9 @@ class CloudPool(Model):
     :type vm_size: str
     :param cloud_service_configuration: The cloud service configuration for
      the pool. This property and virtualMachineConfiguration are mutually
-     exclusive and one of the properties must be specified.
+     exclusive and one of the properties must be specified. This property
+     cannot be specified if the Batch account was created with its
+     poolAllocationMode property set to 'UserSubscription'.
     :type cloud_service_configuration: :class:`CloudServiceConfiguration
      <azure.batch.models.CloudServiceConfiguration>`
     :param virtual_machine_configuration: The virtual machine configuration
@@ -143,9 +145,9 @@ class CloudPool(Model):
      location. For Linux compute nodes, the certificates are stored in a
      directory inside the task working directory and an environment variable
      AZ_BATCH_CERTIFICATES_DIR is supplied to the task to query for this
-     location. For certificates with visibility of remoteuser, a certs
+     location. For certificates with visibility of 'remoteUser', a 'certs'
      directory is created in the user's home directory (e.g.,
-     /home/<user-name>/certs) where certificates are placed.
+     /home/{user-name}/certs) and certificates are placed in that directory.
     :type certificate_references: list of :class:`CertificateReference
      <azure.batch.models.CertificateReference>`
     :param application_package_references: The list of application packages to
@@ -160,6 +162,10 @@ class CloudPool(Model):
      between compute nodes in the pool.
     :type task_scheduling_policy: :class:`TaskSchedulingPolicy
      <azure.batch.models.TaskSchedulingPolicy>`
+    :param user_accounts: The list of user accounts to be created on each node
+     in the pool.
+    :type user_accounts: list of :class:`UserAccount
+     <azure.batch.models.UserAccount>`
     :param metadata: A list of name-value pairs associated with the pool as
      metadata.
     :type metadata: list of :class:`MetadataItem
@@ -167,7 +173,7 @@ class CloudPool(Model):
     :param stats: Utilization and resource usage statistics for the entire
      lifetime of the pool.
     :type stats: :class:`PoolStatistics <azure.batch.models.PoolStatistics>`
-    """ 
+    """
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
@@ -198,11 +204,12 @@ class CloudPool(Model):
         'application_package_references': {'key': 'applicationPackageReferences', 'type': '[ApplicationPackageReference]'},
         'max_tasks_per_node': {'key': 'maxTasksPerNode', 'type': 'int'},
         'task_scheduling_policy': {'key': 'taskSchedulingPolicy', 'type': 'TaskSchedulingPolicy'},
+        'user_accounts': {'key': 'userAccounts', 'type': '[UserAccount]'},
         'metadata': {'key': 'metadata', 'type': '[MetadataItem]'},
         'stats': {'key': 'stats', 'type': 'PoolStatistics'},
     }
 
-    def __init__(self, id=None, display_name=None, url=None, e_tag=None, last_modified=None, creation_time=None, state=None, state_transition_time=None, allocation_state=None, allocation_state_transition_time=None, vm_size=None, cloud_service_configuration=None, virtual_machine_configuration=None, resize_timeout=None, resize_error=None, current_dedicated=None, target_dedicated=None, enable_auto_scale=None, auto_scale_formula=None, auto_scale_evaluation_interval=None, auto_scale_run=None, enable_inter_node_communication=None, network_configuration=None, start_task=None, certificate_references=None, application_package_references=None, max_tasks_per_node=None, task_scheduling_policy=None, metadata=None, stats=None):
+    def __init__(self, id=None, display_name=None, url=None, e_tag=None, last_modified=None, creation_time=None, state=None, state_transition_time=None, allocation_state=None, allocation_state_transition_time=None, vm_size=None, cloud_service_configuration=None, virtual_machine_configuration=None, resize_timeout=None, resize_error=None, current_dedicated=None, target_dedicated=None, enable_auto_scale=None, auto_scale_formula=None, auto_scale_evaluation_interval=None, auto_scale_run=None, enable_inter_node_communication=None, network_configuration=None, start_task=None, certificate_references=None, application_package_references=None, max_tasks_per_node=None, task_scheduling_policy=None, user_accounts=None, metadata=None, stats=None):
         self.id = id
         self.display_name = display_name
         self.url = url
@@ -231,5 +238,6 @@ class CloudPool(Model):
         self.application_package_references = application_package_references
         self.max_tasks_per_node = max_tasks_per_node
         self.task_scheduling_policy = task_scheduling_policy
+        self.user_accounts = user_accounts
         self.metadata = metadata
         self.stats = stats

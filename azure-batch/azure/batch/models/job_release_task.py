@@ -56,10 +56,12 @@ class JobReleaseTask(Model):
      infinite, i.e. the task directory will be retained until the compute node
      is removed or reimaged.
     :type retention_time: timedelta
-    :param run_elevated: Whether to run the Job Release task in elevated mode.
-     The default value is false.
-    :type run_elevated: bool
-    """ 
+    :param user_identity: The user identity under which the Job Release task
+     runs. If omitted, the task runs as a non-administrative user unique to the
+     task.
+    :type user_identity: :class:`UserIdentity
+     <azure.batch.models.UserIdentity>`
+    """
 
     _validation = {
         'command_line': {'required': True},
@@ -72,14 +74,14 @@ class JobReleaseTask(Model):
         'environment_settings': {'key': 'environmentSettings', 'type': '[EnvironmentSetting]'},
         'max_wall_clock_time': {'key': 'maxWallClockTime', 'type': 'duration'},
         'retention_time': {'key': 'retentionTime', 'type': 'duration'},
-        'run_elevated': {'key': 'runElevated', 'type': 'bool'},
+        'user_identity': {'key': 'userIdentity', 'type': 'UserIdentity'},
     }
 
-    def __init__(self, command_line, id=None, resource_files=None, environment_settings=None, max_wall_clock_time=None, retention_time=None, run_elevated=None):
+    def __init__(self, command_line, id=None, resource_files=None, environment_settings=None, max_wall_clock_time=None, retention_time=None, user_identity=None):
         self.id = id
         self.command_line = command_line
         self.resource_files = resource_files
         self.environment_settings = environment_settings
         self.max_wall_clock_time = max_wall_clock_time
         self.retention_time = retention_time
-        self.run_elevated = run_elevated
+        self.user_identity = user_identity

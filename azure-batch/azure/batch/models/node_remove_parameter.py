@@ -24,13 +24,14 @@ class NodeRemoveParameter(Model):
      error; if you are calling the REST API directly, the HTTP status code is
      400 (Bad Request).
     :type resize_timeout: timedelta
-    :param node_deallocation_option: When to remove compute nodes and what to
-     do with currently running tasks. The default value is requeue. Possible
-     values include: 'requeue', 'terminate', 'taskcompletion', 'retaineddata'
+    :param node_deallocation_option: Determines what to do with a node and its
+     running task(s) after it has been selected for deallocation. The default
+     value is requeue. Possible values include: 'requeue', 'terminate',
+     'taskCompletion', 'retainedData'
     :type node_deallocation_option: str or
      :class:`ComputeNodeDeallocationOption
      <azure.batch.models.ComputeNodeDeallocationOption>`
-    """ 
+    """
 
     _validation = {
         'node_list': {'required': True, 'max_items': 100},

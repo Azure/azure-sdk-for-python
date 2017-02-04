@@ -35,7 +35,7 @@ class TaskConstraints(Model):
      the Batch service does not retry the task. If the maximum retry count is
      -1, the Batch service retries the task without limit.
     :type max_task_retry_count: int
-    """ 
+    """
 
     _attribute_map = {
         'max_wall_clock_time': {'key': 'maxWallClockTime', 'type': 'duration'},

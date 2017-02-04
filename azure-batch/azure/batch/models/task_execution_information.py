@@ -62,7 +62,7 @@ class TaskExecutionInformation(Model):
      requeued by the Batch service as the result of a user request. This
      property is set only if the requeueCount is nonzero.
     :type last_requeue_time: datetime
-    """ 
+    """
 
     _validation = {
         'retry_count': {'required': True},

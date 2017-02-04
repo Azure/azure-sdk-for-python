@@ -24,7 +24,7 @@ class TaskIdRange(Model):
     :type start: int
     :param end: The last task ID in the range.
     :type end: int
-    """ 
+    """
 
     _validation = {
         'start': {'required': True},

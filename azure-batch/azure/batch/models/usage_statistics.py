@@ -25,7 +25,7 @@ class UsageStatistics(Model):
     :param dedicated_core_time: The aggregated wall-clock time of the
      dedicated compute node cores being part of the pool.
     :type dedicated_core_time: timedelta
-    """ 
+    """
 
     _validation = {
         'start_time': {'required': True},
