@@ -120,13 +120,6 @@ class ApplicationGatewayFirewallMode(Enum):
     prevention = "Prevention"
 
 
-class NetworkOperationStatus(Enum):
-
-    in_progress = "InProgress"
-    succeeded = "Succeeded"
-    failed = "Failed"
-
-
 class LoadDistribution(Enum):
 
     default = "Default"
@@ -189,6 +182,15 @@ class VirtualNetworkGatewaySkuTier(Enum):
     ultra_performance = "UltraPerformance"
 
 
+class BgpPeerState(Enum):
+
+    unknown = "Unknown"
+    stopped = "Stopped"
+    idle = "Idle"
+    connecting = "Connecting"
+    connected = "Connected"
+
+
 class ProcessorArchitecture(Enum):
 
     amd64 = "Amd64"
@@ -236,6 +238,12 @@ class ExpressRouteCircuitPeeringState(Enum):
 
     disabled = "Disabled"
     enabled = "Enabled"
+
+
+class Access(Enum):
+
+    allow = "Allow"
+    deny = "Deny"
 
 
 class ExpressRouteCircuitSkuTier(Enum):
