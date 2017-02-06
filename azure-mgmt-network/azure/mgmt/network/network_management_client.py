@@ -36,6 +36,9 @@ from .operations.express_route_circuit_authorizations_operations import ExpressR
 from .operations.express_route_circuit_peerings_operations import ExpressRouteCircuitPeeringsOperations
 from .operations.express_route_circuits_operations import ExpressRouteCircuitsOperations
 from .operations.express_route_service_providers_operations import ExpressRouteServiceProvidersOperations
+from .operations.route_filters_operations import RouteFiltersOperations
+from .operations.route_filter_rules_operations import RouteFilterRulesOperations
+from .operations.bgp_service_communities_operations import BgpServiceCommunitiesOperations
 from . import models
 
 
@@ -51,22 +54,11 @@ class NetworkManagementClientConfiguration(AzureConfiguration):
      identify the Microsoft Azure subscription. The subscription ID forms part
      of the URI for every service call.
     :type subscription_id: str
-    :param accept_language: Gets or sets the preferred language for the
-     response.
-    :type accept_language: str
-    :param long_running_operation_retry_timeout: Gets or sets the retry
-     timeout in seconds for Long Running Operations. Default value is 30.
-    :type long_running_operation_retry_timeout: int
-    :param generate_client_request_id: When set to true a unique
-     x-ms-client-request-id value is generated and included in each request.
-     Default is true.
-    :type generate_client_request_id: bool
     :param str base_url: Service URL
-    :param str filepath: Existing config
     """
 
     def __init__(
-            self, credentials, subscription_id, accept_language='en-US', long_running_operation_retry_timeout=30, generate_client_request_id=True, base_url=None, filepath=None):
+            self, credentials, subscription_id, base_url=None):
 
         if credentials is None:
             raise ValueError("Parameter 'credentials' must not be None.")
@@ -74,21 +66,16 @@ class NetworkManagementClientConfiguration(AzureConfiguration):
             raise ValueError("Parameter 'subscription_id' must not be None.")
         if not isinstance(subscription_id, str):
             raise TypeError("Parameter 'subscription_id' must be str.")
-        if accept_language is not None and not isinstance(accept_language, str):
-            raise TypeError("Optional parameter 'accept_language' must be str.")
         if not base_url:
             base_url = 'https://management.azure.com'
 
-        super(NetworkManagementClientConfiguration, self).__init__(base_url, filepath)
+        super(NetworkManagementClientConfiguration, self).__init__(base_url)
 
         self.add_user_agent('networkmanagementclient/{}'.format(VERSION))
         self.add_user_agent('Azure-SDK-For-Python')
 
         self.credentials = credentials
         self.subscription_id = subscription_id
-        self.accept_language = accept_language
-        self.long_running_operation_retry_timeout = long_running_operation_retry_timeout
-        self.generate_client_request_id = generate_client_request_id
 
 
 class NetworkManagementClient(object):
@@ -135,6 +122,12 @@ class NetworkManagementClient(object):
     :vartype express_route_circuits: .operations.ExpressRouteCircuitsOperations
     :ivar express_route_service_providers: ExpressRouteServiceProviders operations
     :vartype express_route_service_providers: .operations.ExpressRouteServiceProvidersOperations
+    :ivar route_filters: RouteFilters operations
+    :vartype route_filters: .operations.RouteFiltersOperations
+    :ivar route_filter_rules: RouteFilterRules operations
+    :vartype route_filter_rules: .operations.RouteFilterRulesOperations
+    :ivar bgp_service_communities: BgpServiceCommunities operations
+    :vartype bgp_service_communities: .operations.BgpServiceCommunitiesOperations
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
@@ -143,24 +136,13 @@ class NetworkManagementClient(object):
      identify the Microsoft Azure subscription. The subscription ID forms part
      of the URI for every service call.
     :type subscription_id: str
-    :param accept_language: Gets or sets the preferred language for the
-     response.
-    :type accept_language: str
-    :param long_running_operation_retry_timeout: Gets or sets the retry
-     timeout in seconds for Long Running Operations. Default value is 30.
-    :type long_running_operation_retry_timeout: int
-    :param generate_client_request_id: When set to true a unique
-     x-ms-client-request-id value is generated and included in each request.
-     Default is true.
-    :type generate_client_request_id: bool
     :param str base_url: Service URL
-    :param str filepath: Existing config
     """
 
     def __init__(
-            self, credentials, subscription_id, accept_language='en-US', long_running_operation_retry_timeout=30, generate_client_request_id=True, base_url=None, filepath=None):
+            self, credentials, subscription_id, base_url=None):
 
-        self.config = NetworkManagementClientConfiguration(credentials, subscription_id, accept_language, long_running_operation_retry_timeout, generate_client_request_id, base_url, filepath)
+        self.config = NetworkManagementClientConfiguration(credentials, subscription_id, base_url)
         self._client = ServiceClient(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
@@ -204,6 +186,12 @@ class NetworkManagementClient(object):
         self.express_route_circuits = ExpressRouteCircuitsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.express_route_service_providers = ExpressRouteServiceProvidersOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.route_filters = RouteFiltersOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.route_filter_rules = RouteFilterRulesOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.bgp_service_communities = BgpServiceCommunitiesOperations(
             self._client, self.config, self._serialize, self._deserialize)
 
     def check_dns_name_availability(

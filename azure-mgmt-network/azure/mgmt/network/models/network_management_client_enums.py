@@ -120,13 +120,6 @@ class ApplicationGatewayFirewallMode(Enum):
     prevention = "Prevention"
 
 
-class NetworkOperationStatus(Enum):
-
-    in_progress = "InProgress"
-    succeeded = "Succeeded"
-    failed = "Failed"
-
-
 class LoadDistribution(Enum):
 
     default = "Default"
@@ -236,6 +229,12 @@ class ExpressRouteCircuitPeeringState(Enum):
 
     disabled = "Disabled"
     enabled = "Enabled"
+
+
+class Access(Enum):
+
+    allow = "Allow"
+    deny = "Deny"
 
 
 class ExpressRouteCircuitSkuTier(Enum):
