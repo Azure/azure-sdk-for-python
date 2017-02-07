@@ -24,16 +24,18 @@ class Resource(Model):
     :vartype name: str
     :ivar type: The type of the resource
     :vartype type: str
-    :param location: The location of the resource
-    :type location: str
-    :param tags: The tags of the resource
-    :type tags: dict
-    """ 
+    :ivar location: The location of the resource
+    :vartype location: str
+    :ivar tags: The tags of the resource
+    :vartype tags: dict
+    """
 
     _validation = {
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
+        'location': {'readonly': True},
+        'tags': {'readonly': True},
     }
 
     _attribute_map = {
@@ -44,9 +46,9 @@ class Resource(Model):
         'tags': {'key': 'tags', 'type': '{str}'},
     }
 
-    def __init__(self, location=None, tags=None):
+    def __init__(self):
         self.id = None
         self.name = None
         self.type = None
-        self.location = location
-        self.tags = tags
+        self.location = None
+        self.tags = None

@@ -20,7 +20,7 @@ class AddApplicationParameters(Model):
     :type allow_updates: bool
     :param display_name: The display name for the application.
     :type display_name: str
-    """ 
+    """
 
     _attribute_map = {
         'allow_updates': {'key': 'allowUpdates', 'type': 'bool'},

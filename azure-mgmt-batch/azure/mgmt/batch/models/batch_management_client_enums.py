@@ -12,6 +12,12 @@
 from enum import Enum
 
 
+class PoolAllocationMode(Enum):
+
+    batch_service = "BatchService"
+    user_subscription = "UserSubscription"
+
+
 class ProvisioningState(Enum):
 
     invalid = "Invalid"

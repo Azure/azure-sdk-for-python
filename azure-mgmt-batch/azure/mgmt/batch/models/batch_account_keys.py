@@ -19,7 +19,7 @@ class BatchAccountKeys(Model):
     :type primary: str
     :param secondary: The secondary key associated with the account.
     :type secondary: str
-    """ 
+    """
 
     _attribute_map = {
         'primary': {'key': 'primary', 'type': 'str'},

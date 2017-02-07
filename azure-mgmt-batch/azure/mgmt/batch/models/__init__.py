@@ -10,6 +10,7 @@
 # --------------------------------------------------------------------------
 
 from .auto_storage_base_properties import AutoStorageBaseProperties
+from .key_vault_reference import KeyVaultReference
 from .batch_account_create_parameters import BatchAccountCreateParameters
 from .auto_storage_properties import AutoStorageProperties
 from .batch_account import BatchAccount
@@ -18,16 +19,15 @@ from .batch_account_regenerate_key_parameters import BatchAccountRegenerateKeyPa
 from .batch_account_keys import BatchAccountKeys
 from .activate_application_package_parameters import ActivateApplicationPackageParameters
 from .add_application_parameters import AddApplicationParameters
-from .application import Application
 from .application_package import ApplicationPackage
+from .application import Application
 from .update_application_parameters import UpdateApplicationParameters
 from .batch_location_quota import BatchLocationQuota
 from .resource import Resource
-from .error_detail import ErrorDetail
-from .error_body import ErrorBody, ErrorBodyException
 from .batch_account_paged import BatchAccountPaged
 from .application_paged import ApplicationPaged
 from .batch_management_client_enums import (
+    PoolAllocationMode,
     ProvisioningState,
     AccountKeyType,
     PackageState,
@@ -35,6 +35,7 @@ from .batch_management_client_enums import (
 
 __all__ = [
     'AutoStorageBaseProperties',
+    'KeyVaultReference',
     'BatchAccountCreateParameters',
     'AutoStorageProperties',
     'BatchAccount',
@@ -43,15 +44,14 @@ __all__ = [
     'BatchAccountKeys',
     'ActivateApplicationPackageParameters',
     'AddApplicationParameters',
-    'Application',
     'ApplicationPackage',
+    'Application',
     'UpdateApplicationParameters',
     'BatchLocationQuota',
     'Resource',
-    'ErrorDetail',
-    'ErrorBody', 'ErrorBodyException',
     'BatchAccountPaged',
     'ApplicationPaged',
+    'PoolAllocationMode',
     'ProvisioningState',
     'AccountKeyType',
     'PackageState',
