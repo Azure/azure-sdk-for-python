@@ -1,34 +1,36 @@
 interactions:
 - request:
-    body: '{"displayName": "my_application_name"}'
+    body: !!binary |
+      eyJkaXNwbGF5TmFtZSI6ICJteV9hcHBsaWNhdGlvbl9uYW1lIn0=
     headers:
       Accept: [application/json]
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
       Content-Length: ['38']
       Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/2.7.9 (Windows-8-6.2.9200) requests/2.7.0 msrest/0.4.3 msrest_azure/0.4.2
-          batchmanagementclient/1.0.0 Azure-SDK-For-Python]
+      User-Agent: [python/3.5.1 (Windows-8.1-6.3.9600-SP0) requests/2.9.1 msrest/0.4.4
+          msrest_azure/0.4.3 batchmanagementclient/2.0.0 Azure-SDK-For-Python]
       accept-language: [en-US]
-      x-ms-client-request-id: [3786c740-7e97-11e6-b0bf-54ee750f2fc7]
+      x-ms-client-request-id: [382d9aa8-ec9d-11e6-ad2c-54ee750f2fc7]
     method: PUT
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/python_batch_sdk_test/providers/Microsoft.Batch/batchAccounts/pythonsdktest/applications/my_application_id?api-version=2015-12-01
   response:
-    body: {string: !!python/unicode '{"id":"my_application_id","displayName":"my_application_name","packages":[],"allowUpdates":true}'}
+    body: {string: '{"id":"my_application_id","displayName":"my_application_name","packages":[],"allowUpdates":true}'}
     headers:
-      cache-control: [no-cache]
-      content-length: ['96']
-      content-type: [application/json; charset=utf-8]
-      date: ['Mon, 19 Sep 2016 18:31:02 GMT']
-      expires: ['-1']
-      pragma: [no-cache]
-      request-id: [9082de2d-4101-4f46-8592-9046d2ed5c00]
-      server: [Microsoft-HTTPAPI/2.0]
-      strict-transport-security: [max-age=31536000; includeSubDomains]
-      x-ms-correlation-request-id: [e61ba38d-1bc0-4439-894d-5da075cdd773]
+      Cache-Control: [no-cache]
+      Content-Length: ['96']
+      Content-Type: [application/json; charset=utf-8]
+      Date: ['Mon, 06 Feb 2017 18:51:09 GMT']
+      Expires: ['-1']
+      Pragma: [no-cache]
+      Server: [Microsoft-HTTPAPI/2.0]
+      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
+      X-Content-Type-Options: [nosniff]
+      request-id: [af9e4fac-73b7-423e-9f2e-ab59007ffe39]
+      x-ms-correlation-request-id: [14435705-46bd-4a13-b580-7734fb7fa5ef]
       x-ms-ratelimit-remaining-subscription-writes: ['1199']
-      x-ms-request-id: [e61ba38d-1bc0-4439-894d-5da075cdd773]
-      x-ms-routing-request-id: ['CENTRALUS:20160919T183103Z:e61ba38d-1bc0-4439-894d-5da075cdd773']
+      x-ms-request-id: [14435705-46bd-4a13-b580-7734fb7fa5ef]
+      x-ms-routing-request-id: ['WESTUS:20170206T185109Z:14435705-46bd-4a13-b580-7734fb7fa5ef']
     status: {code: 201, message: Created}
 - request:
     body: null
@@ -38,58 +40,62 @@ interactions:
       Connection: [keep-alive]
       Content-Length: ['0']
       Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/2.7.9 (Windows-8-6.2.9200) requests/2.7.0 msrest/0.4.3 msrest_azure/0.4.2
-          batchmanagementclient/1.0.0 Azure-SDK-For-Python]
+      User-Agent: [python/3.5.1 (Windows-8.1-6.3.9600-SP0) requests/2.9.1 msrest/0.4.4
+          msrest_azure/0.4.3 batchmanagementclient/2.0.0 Azure-SDK-For-Python]
       accept-language: [en-US]
-      x-ms-client-request-id: [383ca9c0-7e97-11e6-bf5d-54ee750f2fc7]
+      x-ms-client-request-id: [39526308-ec9d-11e6-97c9-54ee750f2fc7]
     method: PUT
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/python_batch_sdk_test/providers/Microsoft.Batch/batchAccounts/pythonsdktest/applications/my_application_id/versions/v1.0?api-version=2015-12-01
   response:
-    body: {string: !!python/unicode '{"id":"my_application_id","version":"v1.0","storageUrl":"https://pythonsdkbatchtest.blob.core.windows.net/app-my-application-id-b9dfc2b75e089960a922be9b4180a01f29ca0c78/my_application_id-v1.0-054c3a76-97e9-4115-92fe-e8052e434183?sv=2015-04-05&sr=b&sig=O06PNn4GuW1u298DVQCKFTkyxGtjzJfZjpQF58gm8WE%3D&st=2016-09-19T18%3A26%3A05Z&se=2016-09-19T22%3A31%3A05Z&sp=rw","storageUrlExpiry":"2016-09-19T22:31:05.6536183Z","state":"pending"}'}
+    body: {string: '{"id":"my_application_id","version":"v1.0","storageUrl":"https://pythonsdkbatchtest.blob.core.windows.net/app-my-application-id-b9dfc2b75e089960a922be9b4180a01f29ca0c78/my_application_id-v1.0-5f653d40-429f-4dad-8042-935d2b68765c?sv=2015-04-05&sr=b&sig=Pb%2BJDD4gQhDu1X5MXSgLffuDTu8NUzkQsTzbagm7jks%3D&st=2017-02-06T18%3A46%3A10Z&se=2017-02-06T22%3A51%3A10Z&sp=rw","storageUrlExpiry":"2017-02-06T22:51:10.3853833Z","state":"pending"}'}
     headers:
-      cache-control: [no-cache]
-      content-length: ['430']
-      content-type: [application/json; charset=utf-8]
-      date: ['Mon, 19 Sep 2016 18:31:03 GMT']
-      expires: ['-1']
-      pragma: [no-cache]
-      request-id: [40c63b18-38a4-46b8-831b-bd045a7ae1c6]
-      server: [Microsoft-HTTPAPI/2.0]
-      strict-transport-security: [max-age=31536000; includeSubDomains]
-      x-ms-correlation-request-id: [da7039c5-de13-42f0-980e-89f54c5ba851]
+      Cache-Control: [no-cache]
+      Content-Length: ['432']
+      Content-Type: [application/json; charset=utf-8]
+      Date: ['Mon, 06 Feb 2017 18:51:10 GMT']
+      Expires: ['-1']
+      Pragma: [no-cache]
+      Server: [Microsoft-HTTPAPI/2.0]
+      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
+      X-Content-Type-Options: [nosniff]
+      request-id: [dbb91a04-1c21-444d-8c5f-76f9c7cd7515]
+      x-ms-correlation-request-id: [527d5248-0d32-4203-924a-4c1c7fd531d7]
       x-ms-ratelimit-remaining-subscription-writes: ['1199']
-      x-ms-request-id: [da7039c5-de13-42f0-980e-89f54c5ba851]
-      x-ms-routing-request-id: ['CENTRALUS:20160919T183104Z:da7039c5-de13-42f0-980e-89f54c5ba851']
+      x-ms-request-id: [527d5248-0d32-4203-924a-4c1c7fd531d7]
+      x-ms-routing-request-id: ['WESTUS:20170206T185111Z:527d5248-0d32-4203-924a-4c1c7fd531d7']
     status: {code: 201, message: Created}
 - request:
-    body: '{"id": "python_test_pool_4", "vmSize": "small", "targetDedicated": 2, "cloudServiceConfiguration":
-      {"osFamily": "4"}}'
+    body: !!binary |
+      eyJ0YXJnZXREZWRpY2F0ZWQiOiAyLCAiY2xvdWRTZXJ2aWNlQ29uZmlndXJhdGlvbiI6IHsib3NG
+      YW1pbHkiOiAiNCJ9LCAidm1TaXplIjogInNtYWxsIiwgImlkIjogInB5dGhvbl90ZXN0X3Bvb2xf
+      NCJ9
     headers:
       Accept: [application/json]
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
       Content-Length: ['117']
       Content-Type: [application/json; odata=minimalmetadata; charset=utf-8]
-      User-Agent: [python/2.7.9 (Windows-8-6.2.9200) requests/2.7.0 msrest/0.4.3 msrest_azure/0.4.2
-          batchserviceclient/1.0.0 Azure-SDK-For-Python]
+      User-Agent: [python/3.5.1 (Windows-8.1-6.3.9600-SP0) requests/2.9.1 msrest/0.4.4
+          msrest_azure/0.4.3 batchserviceclient/2.0.0RC1 Azure-SDK-For-Python]
       accept-language: [en-US]
-      client-request-id: [38fc9e61-7e97-11e6-b950-54ee750f2fc7]
-      ocp-date: ['Mon, 19 Sep 2016 18:31:04 GMT']
+      client-request-id: [3a52184c-ec9d-11e6-af15-54ee750f2fc7]
+      ocp-date: ['Mon, 06 Feb 2017 18:51:11 GMT']
     method: POST
-    uri: https://pythonsdktest.eastus.batch.azure.com/pools?api-version=2016-07-01.3.1
+    uri: https://pythonsdktest.eastus.batch.azure.com/pools?api-version=2017-01-01.4.0
   response:
-    body: {string: !!python/unicode ''}
+    body: {string: ''}
     headers:
-      dataserviceid: ['https://pythonsdktest.eastus.batch.azure.com/pools/python_test_pool_4']
-      dataserviceversion: ['3.0']
-      date: ['Mon, 19 Sep 2016 18:31:04 GMT']
-      etag: ['0x8D3E0BB1E1E3902']
-      last-modified: ['Mon, 19 Sep 2016 18:31:05 GMT']
-      location: ['https://pythonsdktest.eastus.batch.azure.com/pools/python_test_pool_4']
-      request-id: [6dded945-5f17-4f64-9444-8e3b2adcc151]
-      server: [Microsoft-HTTPAPI/2.0]
-      strict-transport-security: [max-age=31536000; includeSubDomains]
-      transfer-encoding: [chunked]
+      DataServiceId: ['https://pythonsdktest.eastus.batch.azure.com/pools/python_test_pool_4']
+      DataServiceVersion: ['3.0']
+      Date: ['Mon, 06 Feb 2017 18:51:12 GMT']
+      ETag: ['0x8D44EC11F71F7F5']
+      Last-Modified: ['Mon, 06 Feb 2017 18:51:12 GMT']
+      Location: ['https://pythonsdktest.eastus.batch.azure.com/pools/python_test_pool_4']
+      Server: [Microsoft-HTTPAPI/2.0]
+      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
+      Transfer-Encoding: [chunked]
+      X-Content-Type-Options: [nosniff]
+      request-id: [6030a415-506a-4b3c-bee4-c6cf90321213]
     status: {code: 201, message: Created}
 - request:
     body: null
@@ -98,24 +104,26 @@ interactions:
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
       Content-Type: [application/json; odata=minimalmetadata; charset=utf-8]
-      User-Agent: [python/2.7.9 (Windows-8-6.2.9200) requests/2.7.0 msrest/0.4.3 msrest_azure/0.4.2
-          batchserviceclient/1.0.0 Azure-SDK-For-Python]
+      User-Agent: [python/3.5.1 (Windows-8.1-6.3.9600-SP0) requests/2.9.1 msrest/0.4.4
+          msrest_azure/0.4.3 batchserviceclient/2.0.0RC1 Azure-SDK-For-Python]
       accept-language: [en-US]
-      client-request-id: [4b5c991e-7e97-11e6-a8b2-54ee750f2fc7]
-      ocp-date: ['Mon, 19 Sep 2016 18:31:35 GMT']
+      client-request-id: [4d6d3650-ec9d-11e6-aa85-54ee750f2fc7]
+      ocp-date: ['Mon, 06 Feb 2017 18:51:43 GMT']
+      return-client-request-id: ['false']
     method: GET
-    uri: https://pythonsdktest.eastus.batch.azure.com/pools/python_test_pool_4/nodes?api-version=2016-07-01.3.1&$select=id%2Cstate&timeout=30
+    uri: https://pythonsdktest.eastus.batch.azure.com/pools/python_test_pool_4/nodes?maxresults=1000&timeout=30&api-version=2017-01-01.4.0&$select=id%2Cstate
   response:
-    body: {string: !!python/unicode "{\r\n  \"odata.metadata\":\"https://pythonsdktest.eastus.batch.azure.com/$metadata#nodes\"\
+    body: {string: "{\r\n  \"odata.metadata\":\"https://pythonsdktest.eastus.batch.azure.com/$metadata#nodes\"\
         ,\"value\":[\r\n    \r\n  ]\r\n}"}
     headers:
-      content-type: [application/json;odata=minimalmetadata]
-      dataserviceversion: ['3.0']
-      date: ['Mon, 19 Sep 2016 18:31:35 GMT']
-      request-id: [5492722b-31ce-4d6c-b6f7-0830b148b880]
-      server: [Microsoft-HTTPAPI/2.0]
-      strict-transport-security: [max-age=31536000; includeSubDomains]
-      transfer-encoding: [chunked]
+      Content-Type: [application/json;odata=minimalmetadata]
+      DataServiceVersion: ['3.0']
+      Date: ['Mon, 06 Feb 2017 18:51:43 GMT']
+      Server: [Microsoft-HTTPAPI/2.0]
+      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
+      Transfer-Encoding: [chunked]
+      X-Content-Type-Options: [nosniff]
+      request-id: [5ad60782-a70b-4c02-84ec-bb3efae3662e]
     status: {code: 200, message: OK}
 - request:
     body: null
@@ -124,24 +132,26 @@ interactions:
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
       Content-Type: [application/json; odata=minimalmetadata; charset=utf-8]
-      User-Agent: [python/2.7.9 (Windows-8-6.2.9200) requests/2.7.0 msrest/0.4.3 msrest_azure/0.4.2
-          batchserviceclient/1.0.0 Azure-SDK-For-Python]
+      User-Agent: [python/3.5.1 (Windows-8.1-6.3.9600-SP0) requests/2.9.1 msrest/0.4.4
+          msrest_azure/0.4.3 batchserviceclient/2.0.0RC1 Azure-SDK-For-Python]
       accept-language: [en-US]
-      client-request-id: [5d899d00-7e97-11e6-915f-54ee750f2fc7]
-      ocp-date: ['Mon, 19 Sep 2016 18:32:05 GMT']
+      client-request-id: [5fa2a3f6-ec9d-11e6-9a31-54ee750f2fc7]
+      ocp-date: ['Mon, 06 Feb 2017 18:52:13 GMT']
+      return-client-request-id: ['false']
     method: GET
-    uri: https://pythonsdktest.eastus.batch.azure.com/pools/python_test_pool_4/nodes?api-version=2016-07-01.3.1&$select=id%2Cstate&timeout=30
+    uri: https://pythonsdktest.eastus.batch.azure.com/pools/python_test_pool_4/nodes?maxresults=1000&timeout=30&api-version=2017-01-01.4.0&$select=id%2Cstate
   response:
-    body: {string: !!python/unicode "{\r\n  \"odata.metadata\":\"https://pythonsdktest.eastus.batch.azure.com/$metadata#nodes\"\
+    body: {string: "{\r\n  \"odata.metadata\":\"https://pythonsdktest.eastus.batch.azure.com/$metadata#nodes\"\
         ,\"value\":[\r\n    \r\n  ]\r\n}"}
     headers:
-      content-type: [application/json;odata=minimalmetadata]
-      dataserviceversion: ['3.0']
-      date: ['Mon, 19 Sep 2016 18:32:06 GMT']
-      request-id: [628a1f89-76b2-4526-9636-7cf454b59063]
-      server: [Microsoft-HTTPAPI/2.0]
-      strict-transport-security: [max-age=31536000; includeSubDomains]
-      transfer-encoding: [chunked]
+      Content-Type: [application/json;odata=minimalmetadata]
+      DataServiceVersion: ['3.0']
+      Date: ['Mon, 06 Feb 2017 18:52:13 GMT']
+      Server: [Microsoft-HTTPAPI/2.0]
+      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
+      Transfer-Encoding: [chunked]
+      X-Content-Type-Options: [nosniff]
+      request-id: [64f5042c-8953-4713-82d2-5dc2fc6ed7b9]
     status: {code: 200, message: OK}
 - request:
     body: null
@@ -150,26 +160,28 @@ interactions:
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
       Content-Type: [application/json; odata=minimalmetadata; charset=utf-8]
-      User-Agent: [python/2.7.9 (Windows-8-6.2.9200) requests/2.7.0 msrest/0.4.3 msrest_azure/0.4.2
-          batchserviceclient/1.0.0 Azure-SDK-For-Python]
+      User-Agent: [python/3.5.1 (Windows-8.1-6.3.9600-SP0) requests/2.9.1 msrest/0.4.4
+          msrest_azure/0.4.3 batchserviceclient/2.0.0RC1 Azure-SDK-For-Python]
       accept-language: [en-US]
-      client-request-id: [6fb6c7f0-7e97-11e6-b30c-54ee750f2fc7]
-      ocp-date: ['Mon, 19 Sep 2016 18:32:36 GMT']
+      client-request-id: [71fbae82-ec9d-11e6-a07b-54ee750f2fc7]
+      ocp-date: ['Mon, 06 Feb 2017 18:52:44 GMT']
+      return-client-request-id: ['false']
     method: GET
-    uri: https://pythonsdktest.eastus.batch.azure.com/pools/python_test_pool_4/nodes?api-version=2016-07-01.3.1&$select=id%2Cstate&timeout=30
+    uri: https://pythonsdktest.eastus.batch.azure.com/pools/python_test_pool_4/nodes?maxresults=1000&timeout=30&api-version=2017-01-01.4.0&$select=id%2Cstate
   response:
-    body: {string: !!python/unicode "{\r\n  \"odata.metadata\":\"https://pythonsdktest.eastus.batch.azure.com/$metadata#nodes\"\
-        ,\"value\":[\r\n    {\r\n      \"id\":\"tvm-3657382398_1-20160919t183213z\"\
-        ,\"state\":\"creating\"\r\n    },{\r\n      \"id\":\"tvm-3657382398_2-20160919t183213z\"\
+    body: {string: "{\r\n  \"odata.metadata\":\"https://pythonsdktest.eastus.batch.azure.com/$metadata#nodes\"\
+        ,\"value\":[\r\n    {\r\n      \"id\":\"tvm-587366007_1-20170206t185221z\"\
+        ,\"state\":\"creating\"\r\n    },{\r\n      \"id\":\"tvm-587366007_2-20170206t185221z\"\
         ,\"state\":\"creating\"\r\n    }\r\n  ]\r\n}"}
     headers:
-      content-type: [application/json;odata=minimalmetadata]
-      dataserviceversion: ['3.0']
-      date: ['Mon, 19 Sep 2016 18:32:36 GMT']
-      request-id: [bc875d73-bdb1-4387-81f1-52645c1af383]
-      server: [Microsoft-HTTPAPI/2.0]
-      strict-transport-security: [max-age=31536000; includeSubDomains]
-      transfer-encoding: [chunked]
+      Content-Type: [application/json;odata=minimalmetadata]
+      DataServiceVersion: ['3.0']
+      Date: ['Mon, 06 Feb 2017 18:52:44 GMT']
+      Server: [Microsoft-HTTPAPI/2.0]
+      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
+      Transfer-Encoding: [chunked]
+      X-Content-Type-Options: [nosniff]
+      request-id: [41205678-6678-4082-bdf2-8bd5e9a8a02b]
     status: {code: 200, message: OK}
 - request:
     body: null
@@ -178,26 +190,28 @@ interactions:
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
       Content-Type: [application/json; odata=minimalmetadata; charset=utf-8]
-      User-Agent: [python/2.7.9 (Windows-8-6.2.9200) requests/2.7.0 msrest/0.4.3 msrest_azure/0.4.2
-          batchserviceclient/1.0.0 Azure-SDK-For-Python]
+      User-Agent: [python/3.5.1 (Windows-8.1-6.3.9600-SP0) requests/2.9.1 msrest/0.4.4
+          msrest_azure/0.4.3 batchserviceclient/2.0.0RC1 Azure-SDK-For-Python]
       accept-language: [en-US]
-      client-request-id: [81e72730-7e97-11e6-9858-54ee750f2fc7]
-      ocp-date: ['Mon, 19 Sep 2016 18:33:06 GMT']
+      client-request-id: [845a530c-ec9d-11e6-af61-54ee750f2fc7]
+      ocp-date: ['Mon, 06 Feb 2017 18:53:15 GMT']
+      return-client-request-id: ['false']
     method: GET
-    uri: https://pythonsdktest.eastus.batch.azure.com/pools/python_test_pool_4/nodes?api-version=2016-07-01.3.1&$select=id%2Cstate&timeout=30
+    uri: https://pythonsdktest.eastus.batch.azure.com/pools/python_test_pool_4/nodes?maxresults=1000&timeout=30&api-version=2017-01-01.4.0&$select=id%2Cstate
   response:
-    body: {string: !!python/unicode "{\r\n  \"odata.metadata\":\"https://pythonsdktest.eastus.batch.azure.com/$metadata#nodes\"\
-        ,\"value\":[\r\n    {\r\n      \"id\":\"tvm-3657382398_1-20160919t183213z\"\
-        ,\"state\":\"creating\"\r\n    },{\r\n      \"id\":\"tvm-3657382398_2-20160919t183213z\"\
+    body: {string: "{\r\n  \"odata.metadata\":\"https://pythonsdktest.eastus.batch.azure.com/$metadata#nodes\"\
+        ,\"value\":[\r\n    {\r\n      \"id\":\"tvm-587366007_1-20170206t185221z\"\
+        ,\"state\":\"creating\"\r\n    },{\r\n      \"id\":\"tvm-587366007_2-20170206t185221z\"\
         ,\"state\":\"creating\"\r\n    }\r\n  ]\r\n}"}
     headers:
-      content-type: [application/json;odata=minimalmetadata]
-      dataserviceversion: ['3.0']
-      date: ['Mon, 19 Sep 2016 18:33:07 GMT']
-      request-id: [d4d97115-5fd5-4124-8701-41e4ac3ba9fc]
-      server: [Microsoft-HTTPAPI/2.0]
-      strict-transport-security: [max-age=31536000; includeSubDomains]
-      transfer-encoding: [chunked]
+      Content-Type: [application/json;odata=minimalmetadata]
+      DataServiceVersion: ['3.0']
+      Date: ['Mon, 06 Feb 2017 18:53:15 GMT']
+      Server: [Microsoft-HTTPAPI/2.0]
+      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
+      Transfer-Encoding: [chunked]
+      X-Content-Type-Options: [nosniff]
+      request-id: [1c5d1016-d299-42a2-aeec-6e6acdf6a3ca]
     status: {code: 200, message: OK}
 - request:
     body: null
@@ -206,26 +220,28 @@ interactions:
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
       Content-Type: [application/json; odata=minimalmetadata; charset=utf-8]
-      User-Agent: [python/2.7.9 (Windows-8-6.2.9200) requests/2.7.0 msrest/0.4.3 msrest_azure/0.4.2
-          batchserviceclient/1.0.0 Azure-SDK-For-Python]
+      User-Agent: [python/3.5.1 (Windows-8.1-6.3.9600-SP0) requests/2.9.1 msrest/0.4.4
+          msrest_azure/0.4.3 batchserviceclient/2.0.0RC1 Azure-SDK-For-Python]
       accept-language: [en-US]
-      client-request-id: [9410f6c0-7e97-11e6-845e-54ee750f2fc7]
-      ocp-date: ['Mon, 19 Sep 2016 18:33:37 GMT']
+      client-request-id: [96aab010-ec9d-11e6-8f81-54ee750f2fc7]
+      ocp-date: ['Mon, 06 Feb 2017 18:53:46 GMT']
+      return-client-request-id: ['false']
     method: GET
-    uri: https://pythonsdktest.eastus.batch.azure.com/pools/python_test_pool_4/nodes?api-version=2016-07-01.3.1&$select=id%2Cstate&timeout=30
+    uri: https://pythonsdktest.eastus.batch.azure.com/pools/python_test_pool_4/nodes?maxresults=1000&timeout=30&api-version=2017-01-01.4.0&$select=id%2Cstate
   response:
-    body: {string: !!python/unicode "{\r\n  \"odata.metadata\":\"https://pythonsdktest.eastus.batch.azure.com/$metadata#nodes\"\
-        ,\"value\":[\r\n    {\r\n      \"id\":\"tvm-3657382398_1-20160919t183213z\"\
-        ,\"state\":\"starting\"\r\n    },{\r\n      \"id\":\"tvm-3657382398_2-20160919t183213z\"\
+    body: {string: "{\r\n  \"odata.metadata\":\"https://pythonsdktest.eastus.batch.azure.com/$metadata#nodes\"\
+        ,\"value\":[\r\n    {\r\n      \"id\":\"tvm-587366007_1-20170206t185221z\"\
+        ,\"state\":\"starting\"\r\n    },{\r\n      \"id\":\"tvm-587366007_2-20170206t185221z\"\
         ,\"state\":\"starting\"\r\n    }\r\n  ]\r\n}"}
     headers:
-      content-type: [application/json;odata=minimalmetadata]
-      dataserviceversion: ['3.0']
-      date: ['Mon, 19 Sep 2016 18:33:38 GMT']
-      request-id: [c51b2acf-fa87-4da1-83c6-44a889e6076c]
-      server: [Microsoft-HTTPAPI/2.0]
-      strict-transport-security: [max-age=31536000; includeSubDomains]
-      transfer-encoding: [chunked]
+      Content-Type: [application/json;odata=minimalmetadata]
+      DataServiceVersion: ['3.0']
+      Date: ['Mon, 06 Feb 2017 18:53:46 GMT']
+      Server: [Microsoft-HTTPAPI/2.0]
+      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
+      Transfer-Encoding: [chunked]
+      X-Content-Type-Options: [nosniff]
+      request-id: [3d53cdb3-4388-4a83-ad99-a961d210131c]
     status: {code: 200, message: OK}
 - request:
     body: null
@@ -234,26 +250,28 @@ interactions:
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
       Content-Type: [application/json; odata=minimalmetadata; charset=utf-8]
-      User-Agent: [python/2.7.9 (Windows-8-6.2.9200) requests/2.7.0 msrest/0.4.3 msrest_azure/0.4.2
-          batchserviceclient/1.0.0 Azure-SDK-For-Python]
+      User-Agent: [python/3.5.1 (Windows-8.1-6.3.9600-SP0) requests/2.9.1 msrest/0.4.4
+          msrest_azure/0.4.3 batchserviceclient/2.0.0RC1 Azure-SDK-For-Python]
       accept-language: [en-US]
-      client-request-id: [a6376af0-7e97-11e6-853c-54ee750f2fc7]
-      ocp-date: ['Mon, 19 Sep 2016 18:34:07 GMT']
+      client-request-id: [a8f440c0-ec9d-11e6-bf42-54ee750f2fc7]
+      ocp-date: ['Mon, 06 Feb 2017 18:54:17 GMT']
+      return-client-request-id: ['false']
     method: GET
-    uri: https://pythonsdktest.eastus.batch.azure.com/pools/python_test_pool_4/nodes?api-version=2016-07-01.3.1&$select=id%2Cstate&timeout=30
+    uri: https://pythonsdktest.eastus.batch.azure.com/pools/python_test_pool_4/nodes?maxresults=1000&timeout=30&api-version=2017-01-01.4.0&$select=id%2Cstate
   response:
-    body: {string: !!python/unicode "{\r\n  \"odata.metadata\":\"https://pythonsdktest.eastus.batch.azure.com/$metadata#nodes\"\
-        ,\"value\":[\r\n    {\r\n      \"id\":\"tvm-3657382398_1-20160919t183213z\"\
-        ,\"state\":\"starting\"\r\n    },{\r\n      \"id\":\"tvm-3657382398_2-20160919t183213z\"\
+    body: {string: "{\r\n  \"odata.metadata\":\"https://pythonsdktest.eastus.batch.azure.com/$metadata#nodes\"\
+        ,\"value\":[\r\n    {\r\n      \"id\":\"tvm-587366007_1-20170206t185221z\"\
+        ,\"state\":\"starting\"\r\n    },{\r\n      \"id\":\"tvm-587366007_2-20170206t185221z\"\
         ,\"state\":\"starting\"\r\n    }\r\n  ]\r\n}"}
     headers:
-      content-type: [application/json;odata=minimalmetadata]
-      dataserviceversion: ['3.0']
-      date: ['Mon, 19 Sep 2016 18:34:07 GMT']
-      request-id: [b09caf7d-a71a-4334-8527-57318fc19fe1]
-      server: [Microsoft-HTTPAPI/2.0]
-      strict-transport-security: [max-age=31536000; includeSubDomains]
-      transfer-encoding: [chunked]
+      Content-Type: [application/json;odata=minimalmetadata]
+      DataServiceVersion: ['3.0']
+      Date: ['Mon, 06 Feb 2017 18:54:16 GMT']
+      Server: [Microsoft-HTTPAPI/2.0]
+      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
+      Transfer-Encoding: [chunked]
+      X-Content-Type-Options: [nosniff]
+      request-id: [bc2f3b69-8514-411b-979b-c7c5b900841b]
     status: {code: 200, message: OK}
 - request:
     body: null
@@ -262,26 +280,28 @@ interactions:
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
       Content-Type: [application/json; odata=minimalmetadata; charset=utf-8]
-      User-Agent: [python/2.7.9 (Windows-8-6.2.9200) requests/2.7.0 msrest/0.4.3 msrest_azure/0.4.2
-          batchserviceclient/1.0.0 Azure-SDK-For-Python]
+      User-Agent: [python/3.5.1 (Windows-8.1-6.3.9600-SP0) requests/2.9.1 msrest/0.4.4
+          msrest_azure/0.4.3 batchserviceclient/2.0.0RC1 Azure-SDK-For-Python]
       accept-language: [en-US]
-      client-request-id: [b86e0bc0-7e97-11e6-8d97-54ee750f2fc7]
-      ocp-date: ['Mon, 19 Sep 2016 18:34:38 GMT']
+      client-request-id: [bb8440cc-ec9d-11e6-8a04-54ee750f2fc7]
+      ocp-date: ['Mon, 06 Feb 2017 18:54:48 GMT']
+      return-client-request-id: ['false']
     method: GET
-    uri: https://pythonsdktest.eastus.batch.azure.com/pools/python_test_pool_4/nodes?api-version=2016-07-01.3.1&$select=id%2Cstate&timeout=30
+    uri: https://pythonsdktest.eastus.batch.azure.com/pools/python_test_pool_4/nodes?maxresults=1000&timeout=30&api-version=2017-01-01.4.0&$select=id%2Cstate
   response:
-    body: {string: !!python/unicode "{\r\n  \"odata.metadata\":\"https://pythonsdktest.eastus.batch.azure.com/$metadata#nodes\"\
-        ,\"value\":[\r\n    {\r\n      \"id\":\"tvm-3657382398_1-20160919t183213z\"\
-        ,\"state\":\"starting\"\r\n    },{\r\n      \"id\":\"tvm-3657382398_2-20160919t183213z\"\
+    body: {string: "{\r\n  \"odata.metadata\":\"https://pythonsdktest.eastus.batch.azure.com/$metadata#nodes\"\
+        ,\"value\":[\r\n    {\r\n      \"id\":\"tvm-587366007_1-20170206t185221z\"\
+        ,\"state\":\"starting\"\r\n    },{\r\n      \"id\":\"tvm-587366007_2-20170206t185221z\"\
         ,\"state\":\"starting\"\r\n    }\r\n  ]\r\n}"}
     headers:
-      content-type: [application/json;odata=minimalmetadata]
-      dataserviceversion: ['3.0']
-      date: ['Mon, 19 Sep 2016 18:34:39 GMT']
-      request-id: [c0ca0cd7-15a6-40d2-809b-3195b12f3df0]
-      server: [Microsoft-HTTPAPI/2.0]
-      strict-transport-security: [max-age=31536000; includeSubDomains]
-      transfer-encoding: [chunked]
+      Content-Type: [application/json;odata=minimalmetadata]
+      DataServiceVersion: ['3.0']
+      Date: ['Mon, 06 Feb 2017 18:54:47 GMT']
+      Server: [Microsoft-HTTPAPI/2.0]
+      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
+      Transfer-Encoding: [chunked]
+      X-Content-Type-Options: [nosniff]
+      request-id: [66b5dafd-4a62-4f11-bc5a-6029ed1e5c5b]
     status: {code: 200, message: OK}
 - request:
     body: null
@@ -290,26 +310,28 @@ interactions:
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
       Content-Type: [application/json; odata=minimalmetadata; charset=utf-8]
-      User-Agent: [python/2.7.9 (Windows-8-6.2.9200) requests/2.7.0 msrest/0.4.3 msrest_azure/0.4.2
-          batchserviceclient/1.0.0 Azure-SDK-For-Python]
+      User-Agent: [python/3.5.1 (Windows-8.1-6.3.9600-SP0) requests/2.9.1 msrest/0.4.4
+          msrest_azure/0.4.3 batchserviceclient/2.0.0RC1 Azure-SDK-For-Python]
       accept-language: [en-US]
-      client-request-id: [ca90af61-7e97-11e6-ae07-54ee750f2fc7]
-      ocp-date: ['Mon, 19 Sep 2016 18:35:08 GMT']
+      client-request-id: [cde4e66e-ec9d-11e6-bcfb-54ee750f2fc7]
+      ocp-date: ['Mon, 06 Feb 2017 18:55:18 GMT']
+      return-client-request-id: ['false']
     method: GET
-    uri: https://pythonsdktest.eastus.batch.azure.com/pools/python_test_pool_4/nodes?api-version=2016-07-01.3.1&$select=id%2Cstate&timeout=30
+    uri: https://pythonsdktest.eastus.batch.azure.com/pools/python_test_pool_4/nodes?maxresults=1000&timeout=30&api-version=2017-01-01.4.0&$select=id%2Cstate
   response:
-    body: {string: !!python/unicode "{\r\n  \"odata.metadata\":\"https://pythonsdktest.eastus.batch.azure.com/$metadata#nodes\"\
-        ,\"value\":[\r\n    {\r\n      \"id\":\"tvm-3657382398_1-20160919t183213z\"\
-        ,\"state\":\"starting\"\r\n    },{\r\n      \"id\":\"tvm-3657382398_2-20160919t183213z\"\
+    body: {string: "{\r\n  \"odata.metadata\":\"https://pythonsdktest.eastus.batch.azure.com/$metadata#nodes\"\
+        ,\"value\":[\r\n    {\r\n      \"id\":\"tvm-587366007_1-20170206t185221z\"\
+        ,\"state\":\"starting\"\r\n    },{\r\n      \"id\":\"tvm-587366007_2-20170206t185221z\"\
         ,\"state\":\"starting\"\r\n    }\r\n  ]\r\n}"}
     headers:
-      content-type: [application/json;odata=minimalmetadata]
-      dataserviceversion: ['3.0']
-      date: ['Mon, 19 Sep 2016 18:35:08 GMT']
-      request-id: [6d40d5e8-9566-4b22-a1d4-4bb4f88c99a8]
-      server: [Microsoft-HTTPAPI/2.0]
-      strict-transport-security: [max-age=31536000; includeSubDomains]
-      transfer-encoding: [chunked]
+      Content-Type: [application/json;odata=minimalmetadata]
+      DataServiceVersion: ['3.0']
+      Date: ['Mon, 06 Feb 2017 18:55:18 GMT']
+      Server: [Microsoft-HTTPAPI/2.0]
+      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
+      Transfer-Encoding: [chunked]
+      X-Content-Type-Options: [nosniff]
+      request-id: [ede946b7-bf60-4738-80c7-8df2ec1c0031]
     status: {code: 200, message: OK}
 - request:
     body: null
@@ -318,26 +340,28 @@ interactions:
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
       Content-Type: [application/json; odata=minimalmetadata; charset=utf-8]
-      User-Agent: [python/2.7.9 (Windows-8-6.2.9200) requests/2.7.0 msrest/0.4.3 msrest_azure/0.4.2
-          batchserviceclient/1.0.0 Azure-SDK-For-Python]
+      User-Agent: [python/3.5.1 (Windows-8.1-6.3.9600-SP0) requests/2.9.1 msrest/0.4.4
+          msrest_azure/0.4.3 batchserviceclient/2.0.0RC1 Azure-SDK-For-Python]
       accept-language: [en-US]
-      client-request-id: [dcc5c98f-7e97-11e6-807c-54ee750f2fc7]
-      ocp-date: ['Mon, 19 Sep 2016 18:35:39 GMT']
+      client-request-id: [e06ae152-ec9d-11e6-a47b-54ee750f2fc7]
+      ocp-date: ['Mon, 06 Feb 2017 18:55:50 GMT']
+      return-client-request-id: ['false']
     method: GET
-    uri: https://pythonsdktest.eastus.batch.azure.com/pools/python_test_pool_4/nodes?api-version=2016-07-01.3.1&$select=id%2Cstate&timeout=30
+    uri: https://pythonsdktest.eastus.batch.azure.com/pools/python_test_pool_4/nodes?maxresults=1000&timeout=30&api-version=2017-01-01.4.0&$select=id%2Cstate
   response:
-    body: {string: !!python/unicode "{\r\n  \"odata.metadata\":\"https://pythonsdktest.eastus.batch.azure.com/$metadata#nodes\"\
-        ,\"value\":[\r\n    {\r\n      \"id\":\"tvm-3657382398_1-20160919t183213z\"\
-        ,\"state\":\"starting\"\r\n    },{\r\n      \"id\":\"tvm-3657382398_2-20160919t183213z\"\
+    body: {string: "{\r\n  \"odata.metadata\":\"https://pythonsdktest.eastus.batch.azure.com/$metadata#nodes\"\
+        ,\"value\":[\r\n    {\r\n      \"id\":\"tvm-587366007_1-20170206t185221z\"\
+        ,\"state\":\"starting\"\r\n    },{\r\n      \"id\":\"tvm-587366007_2-20170206t185221z\"\
         ,\"state\":\"starting\"\r\n    }\r\n  ]\r\n}"}
     headers:
-      content-type: [application/json;odata=minimalmetadata]
-      dataserviceversion: ['3.0']
-      date: ['Mon, 19 Sep 2016 18:35:42 GMT']
-      request-id: [401e72ca-6ae1-4057-9ec2-ed8ebcb9246b]
-      server: [Microsoft-HTTPAPI/2.0]
-      strict-transport-security: [max-age=31536000; includeSubDomains]
-      transfer-encoding: [chunked]
+      Content-Type: [application/json;odata=minimalmetadata]
+      DataServiceVersion: ['3.0']
+      Date: ['Mon, 06 Feb 2017 18:55:50 GMT']
+      Server: [Microsoft-HTTPAPI/2.0]
+      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
+      Transfer-Encoding: [chunked]
+      X-Content-Type-Options: [nosniff]
+      request-id: [513d649b-d0a3-4e25-83f6-3c6e403de722]
     status: {code: 200, message: OK}
 - request:
     body: null
@@ -346,143 +370,155 @@ interactions:
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
       Content-Type: [application/json; odata=minimalmetadata; charset=utf-8]
-      User-Agent: [python/2.7.9 (Windows-8-6.2.9200) requests/2.7.0 msrest/0.4.3 msrest_azure/0.4.2
-          batchserviceclient/1.0.0 Azure-SDK-For-Python]
+      User-Agent: [python/3.5.1 (Windows-8.1-6.3.9600-SP0) requests/2.9.1 msrest/0.4.4
+          msrest_azure/0.4.3 batchserviceclient/2.0.0RC1 Azure-SDK-For-Python]
       accept-language: [en-US]
-      client-request-id: [efd73a00-7e97-11e6-a6c9-54ee750f2fc7]
-      ocp-date: ['Mon, 19 Sep 2016 18:36:11 GMT']
+      client-request-id: [f2b56512-ec9d-11e6-ad29-54ee750f2fc7]
+      ocp-date: ['Mon, 06 Feb 2017 18:56:20 GMT']
+      return-client-request-id: ['false']
     method: GET
-    uri: https://pythonsdktest.eastus.batch.azure.com/pools/python_test_pool_4/nodes?api-version=2016-07-01.3.1&$select=id%2Cstate&timeout=30
+    uri: https://pythonsdktest.eastus.batch.azure.com/pools/python_test_pool_4/nodes?maxresults=1000&timeout=30&api-version=2017-01-01.4.0&$select=id%2Cstate
   response:
-    body: {string: !!python/unicode "{\r\n  \"odata.metadata\":\"https://pythonsdktest.eastus.batch.azure.com/$metadata#nodes\"\
-        ,\"value\":[\r\n    {\r\n      \"id\":\"tvm-3657382398_1-20160919t183213z\"\
-        ,\"state\":\"idle\"\r\n    },{\r\n      \"id\":\"tvm-3657382398_2-20160919t183213z\"\
+    body: {string: "{\r\n  \"odata.metadata\":\"https://pythonsdktest.eastus.batch.azure.com/$metadata#nodes\"\
+        ,\"value\":[\r\n    {\r\n      \"id\":\"tvm-587366007_1-20170206t185221z\"\
+        ,\"state\":\"idle\"\r\n    },{\r\n      \"id\":\"tvm-587366007_2-20170206t185221z\"\
         ,\"state\":\"idle\"\r\n    }\r\n  ]\r\n}"}
     headers:
-      content-type: [application/json;odata=minimalmetadata]
-      dataserviceversion: ['3.0']
-      date: ['Mon, 19 Sep 2016 18:36:11 GMT']
-      request-id: [43b353e4-63dd-4da7-9cb1-b3baa88b5fa8]
-      server: [Microsoft-HTTPAPI/2.0]
-      strict-transport-security: [max-age=31536000; includeSubDomains]
-      transfer-encoding: [chunked]
+      Content-Type: [application/json;odata=minimalmetadata]
+      DataServiceVersion: ['3.0']
+      Date: ['Mon, 06 Feb 2017 18:56:20 GMT']
+      Server: [Microsoft-HTTPAPI/2.0]
+      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
+      Transfer-Encoding: [chunked]
+      X-Content-Type-Options: [nosniff]
+      request-id: [7d41fc76-804c-4eab-af06-9f559a02b830]
     status: {code: 200, message: OK}
 - request:
-    body: '{"poolInfo": {"poolId": "python_test_pool_4"}, "id": "python_test_job"}'
+    body: !!binary |
+      eyJwb29sSW5mbyI6IHsicG9vbElkIjogInB5dGhvbl90ZXN0X3Bvb2xfNCJ9LCAiaWQiOiAicHl0
+      aG9uX3Rlc3Rfam9iIn0=
     headers:
       Accept: [application/json]
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
       Content-Length: ['71']
       Content-Type: [application/json; odata=minimalmetadata; charset=utf-8]
-      User-Agent: [python/2.7.9 (Windows-8-6.2.9200) requests/2.7.0 msrest/0.4.3 msrest_azure/0.4.2
-          batchserviceclient/1.0.0 Azure-SDK-For-Python]
+      User-Agent: [python/3.5.1 (Windows-8.1-6.3.9600-SP0) requests/2.9.1 msrest/0.4.4
+          msrest_azure/0.4.3 batchserviceclient/2.0.0RC1 Azure-SDK-For-Python]
       accept-language: [en-US]
-      client-request-id: [0200bb6e-7e98-11e6-b98e-54ee750f2fc7]
-      ocp-date: ['Mon, 19 Sep 2016 18:36:41 GMT']
+      client-request-id: [0543039c-ec9e-11e6-8bf3-54ee750f2fc7]
+      ocp-date: ['Mon, 06 Feb 2017 18:56:51 GMT']
     method: POST
-    uri: https://pythonsdktest.eastus.batch.azure.com/jobs?api-version=2016-07-01.3.1
+    uri: https://pythonsdktest.eastus.batch.azure.com/jobs?api-version=2017-01-01.4.0
   response:
-    body: {string: !!python/unicode ''}
+    body: {string: ''}
     headers:
-      dataserviceid: ['https://pythonsdktest.eastus.batch.azure.com/jobs/job-1']
-      dataserviceversion: ['3.0']
-      date: ['Mon, 19 Sep 2016 18:36:42 GMT']
-      etag: ['0x8D3E0BBE6F6E066']
-      last-modified: ['Mon, 19 Sep 2016 18:36:42 GMT']
-      location: ['https://pythonsdktest.eastus.batch.azure.com/jobs/job-1']
-      request-id: [8f764b1c-81c8-4e4c-801a-91327151ed2b]
-      server: [Microsoft-HTTPAPI/2.0]
-      strict-transport-security: [max-age=31536000; includeSubDomains]
-      transfer-encoding: [chunked]
+      DataServiceId: ['https://pythonsdktest.eastus.batch.azure.com/jobs/job-1']
+      DataServiceVersion: ['3.0']
+      Date: ['Mon, 06 Feb 2017 18:56:51 GMT']
+      ETag: ['0x8D44EC1EA60A700']
+      Last-Modified: ['Mon, 06 Feb 2017 18:56:53 GMT']
+      Location: ['https://pythonsdktest.eastus.batch.azure.com/jobs/job-1']
+      Server: [Microsoft-HTTPAPI/2.0]
+      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
+      Transfer-Encoding: [chunked]
+      X-Content-Type-Options: [nosniff]
+      request-id: [4bb8a6e3-caa5-4e0b-962a-10b22b54ab99]
     status: {code: 201, message: Created}
 - request:
-    body: '{"onAllTasksComplete": "noAction", "poolInfo": {"poolId": "python_test_pool_4"},
-      "onTaskFailure": "performExitOptionsJobAction", "id": "python_test_job_2"}'
+    body: !!binary |
+      eyJvbkFsbFRhc2tzQ29tcGxldGUiOiAibm9BY3Rpb24iLCAib25UYXNrRmFpbHVyZSI6ICJwZXJm
+      b3JtRXhpdE9wdGlvbnNKb2JBY3Rpb24iLCAicG9vbEluZm8iOiB7InBvb2xJZCI6ICJweXRob25f
+      dGVzdF9wb29sXzQifSwgImlkIjogInB5dGhvbl90ZXN0X2pvYl8yIn0=
     headers:
       Accept: [application/json]
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
       Content-Length: ['155']
       Content-Type: [application/json; odata=minimalmetadata; charset=utf-8]
-      User-Agent: [python/2.7.9 (Windows-8-6.2.9200) requests/2.7.0 msrest/0.4.3 msrest_azure/0.4.2
-          batchserviceclient/1.0.0 Azure-SDK-For-Python]
+      User-Agent: [python/3.5.1 (Windows-8.1-6.3.9600-SP0) requests/2.9.1 msrest/0.4.4
+          msrest_azure/0.4.3 batchserviceclient/2.0.0RC1 Azure-SDK-For-Python]
       accept-language: [en-US]
-      client-request-id: [0857f64f-7e98-11e6-b183-54ee750f2fc7]
-      ocp-date: ['Mon, 19 Sep 2016 18:36:52 GMT']
+      client-request-id: [0bb6dff6-ec9e-11e6-a4e8-54ee750f2fc7]
+      ocp-date: ['Mon, 06 Feb 2017 18:57:02 GMT']
     method: POST
-    uri: https://pythonsdktest.eastus.batch.azure.com/jobs?api-version=2016-07-01.3.1
+    uri: https://pythonsdktest.eastus.batch.azure.com/jobs?api-version=2017-01-01.4.0
   response:
-    body: {string: !!python/unicode ''}
+    body: {string: ''}
     headers:
-      dataserviceid: ['https://pythonsdktest.eastus.batch.azure.com/jobs/job-1']
-      dataserviceversion: ['3.0']
-      date: ['Mon, 19 Sep 2016 18:36:51 GMT']
-      etag: ['0x8D3E0BBED4C3DFF']
-      last-modified: ['Mon, 19 Sep 2016 18:36:53 GMT']
-      location: ['https://pythonsdktest.eastus.batch.azure.com/jobs/job-1']
-      request-id: [ea037d8c-c0e6-43b8-9912-928e13e1f248]
-      server: [Microsoft-HTTPAPI/2.0]
-      strict-transport-security: [max-age=31536000; includeSubDomains]
-      transfer-encoding: [chunked]
+      DataServiceId: ['https://pythonsdktest.eastus.batch.azure.com/jobs/job-1']
+      DataServiceVersion: ['3.0']
+      Date: ['Mon, 06 Feb 2017 18:57:02 GMT']
+      ETag: ['0x8D44EC1F0BF0552']
+      Last-Modified: ['Mon, 06 Feb 2017 18:57:04 GMT']
+      Location: ['https://pythonsdktest.eastus.batch.azure.com/jobs/job-1']
+      Server: [Microsoft-HTTPAPI/2.0]
+      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
+      Transfer-Encoding: [chunked]
+      X-Content-Type-Options: [nosniff]
+      request-id: [4dbcd2ba-855e-4e04-959f-e5ec22af389b]
     status: {code: 201, message: Created}
 - request:
-    body: '{"priority": 500, "poolInfo": {"poolId": "python_test_pool_4"}, "constraints":
-      {"maxTaskRetryCount": 3}}'
+    body: !!binary |
+      eyJwcmlvcml0eSI6IDUwMCwgInBvb2xJbmZvIjogeyJwb29sSWQiOiAicHl0aG9uX3Rlc3RfcG9v
+      bF80In0sICJjb25zdHJhaW50cyI6IHsibWF4VGFza1JldHJ5Q291bnQiOiAzfX0=
     headers:
       Accept: [application/json]
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
       Content-Length: ['104']
       Content-Type: [application/json; odata=minimalmetadata; charset=utf-8]
-      User-Agent: [python/2.7.9 (Windows-8-6.2.9200) requests/2.7.0 msrest/0.4.3 msrest_azure/0.4.2
-          batchserviceclient/1.0.0 Azure-SDK-For-Python]
+      User-Agent: [python/3.5.1 (Windows-8.1-6.3.9600-SP0) requests/2.9.1 msrest/0.4.4
+          msrest_azure/0.4.3 batchserviceclient/2.0.0RC1 Azure-SDK-For-Python]
       accept-language: [en-US]
-      client-request-id: [0eadf8b0-7e98-11e6-aeec-54ee750f2fc7]
-      ocp-date: ['Mon, 19 Sep 2016 18:37:02 GMT']
+      client-request-id: [120ccbc0-ec9e-11e6-852e-54ee750f2fc7]
+      ocp-date: ['Mon, 06 Feb 2017 18:57:13 GMT']
     method: PUT
-    uri: https://pythonsdktest.eastus.batch.azure.com/jobs/python_test_job?api-version=2016-07-01.3.1
+    uri: https://pythonsdktest.eastus.batch.azure.com/jobs/python_test_job?api-version=2017-01-01.4.0
   response:
-    body: {string: !!python/unicode ''}
+    body: {string: ''}
     headers:
-      dataserviceid: ['https://pythonsdktest.eastus.batch.azure.com/jobs/python_test_job']
-      dataserviceversion: ['3.0']
-      date: ['Mon, 19 Sep 2016 18:37:00 GMT']
-      etag: ['0x8D3E0BBF383EE9C']
-      last-modified: ['Mon, 19 Sep 2016 18:37:03 GMT']
-      request-id: [8ca07fec-727e-4b7e-bca1-185a57e57d29]
-      server: [Microsoft-HTTPAPI/2.0]
-      strict-transport-security: [max-age=31536000; includeSubDomains]
-      transfer-encoding: [chunked]
+      DataServiceId: ['https://pythonsdktest.eastus.batch.azure.com/jobs/python_test_job']
+      DataServiceVersion: ['3.0']
+      Date: ['Mon, 06 Feb 2017 18:57:12 GMT']
+      ETag: ['0x8D44EC1F7103550']
+      Last-Modified: ['Mon, 06 Feb 2017 18:57:14 GMT']
+      Server: [Microsoft-HTTPAPI/2.0]
+      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
+      Transfer-Encoding: [chunked]
+      X-Content-Type-Options: [nosniff]
+      request-id: [7fc2cfdd-666a-4860-a886-35e44e314416]
     status: {code: 200, message: OK}
 - request:
-    body: '{"priority": 900, "poolInfo": {"poolId": "python_test_pool_4"}, "constraints":
-      {"maxTaskRetryCount": 1}}'
+    body: !!binary |
+      eyJwcmlvcml0eSI6IDkwMCwgInBvb2xJbmZvIjogeyJwb29sSWQiOiAicHl0aG9uX3Rlc3RfcG9v
+      bF80In0sICJjb25zdHJhaW50cyI6IHsibWF4VGFza1JldHJ5Q291bnQiOiAxfX0=
     headers:
       Accept: [application/json]
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
       Content-Length: ['104']
       Content-Type: [application/json; odata=minimalmetadata; charset=utf-8]
-      User-Agent: [python/2.7.9 (Windows-8-6.2.9200) requests/2.7.0 msrest/0.4.3 msrest_azure/0.4.2
-          batchserviceclient/1.0.0 Azure-SDK-For-Python]
+      User-Agent: [python/3.5.1 (Windows-8.1-6.3.9600-SP0) requests/2.9.1 msrest/0.4.4
+          msrest_azure/0.4.3 batchserviceclient/2.0.0RC1 Azure-SDK-For-Python]
       accept-language: [en-US]
-      client-request-id: [0ef5d71e-7e98-11e6-ae94-54ee750f2fc7]
-      ocp-date: ['Mon, 19 Sep 2016 18:37:03 GMT']
+      client-request-id: [128363b6-ec9e-11e6-b1e5-54ee750f2fc7]
+      ocp-date: ['Mon, 06 Feb 2017 18:57:14 GMT']
     method: PATCH
-    uri: https://pythonsdktest.eastus.batch.azure.com/jobs/python_test_job?api-version=2016-07-01.3.1
+    uri: https://pythonsdktest.eastus.batch.azure.com/jobs/python_test_job?api-version=2017-01-01.4.0
   response:
-    body: {string: !!python/unicode ''}
+    body: {string: ''}
     headers:
-      dataserviceid: ['https://pythonsdktest.eastus.batch.azure.com/jobs/python_test_job']
-      dataserviceversion: ['3.0']
-      date: ['Mon, 19 Sep 2016 18:37:03 GMT']
-      etag: ['0x8D3E0BBF3C5A29F']
-      last-modified: ['Mon, 19 Sep 2016 18:37:04 GMT']
-      request-id: [2ca941bf-9559-4e9b-95c2-29c8e29d6a40]
-      server: [Microsoft-HTTPAPI/2.0]
-      strict-transport-security: [max-age=31536000; includeSubDomains]
-      transfer-encoding: [chunked]
+      DataServiceId: ['https://pythonsdktest.eastus.batch.azure.com/jobs/python_test_job']
+      DataServiceVersion: ['3.0']
+      Date: ['Mon, 06 Feb 2017 18:57:13 GMT']
+      ETag: ['0x8D44EC1F784F7DF']
+      Last-Modified: ['Mon, 06 Feb 2017 18:57:15 GMT']
+      Server: [Microsoft-HTTPAPI/2.0]
+      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
+      Transfer-Encoding: [chunked]
+      X-Content-Type-Options: [nosniff]
+      request-id: [bf90fc3e-1444-4a59-bc89-bbc41434f146]
     status: {code: 200, message: OK}
 - request:
     body: null
@@ -491,35 +527,36 @@ interactions:
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
       Content-Type: [application/json; odata=minimalmetadata; charset=utf-8]
-      User-Agent: [python/2.7.9 (Windows-8-6.2.9200) requests/2.7.0 msrest/0.4.3 msrest_azure/0.4.2
-          batchserviceclient/1.0.0 Azure-SDK-For-Python]
+      User-Agent: [python/3.5.1 (Windows-8.1-6.3.9600-SP0) requests/2.9.1 msrest/0.4.4
+          msrest_azure/0.4.3 batchserviceclient/2.0.0RC1 Azure-SDK-For-Python]
       accept-language: [en-US]
-      client-request-id: [0f326af0-7e98-11e6-a3cd-54ee750f2fc7]
-      ocp-date: ['Mon, 19 Sep 2016 18:37:03 GMT']
+      client-request-id: [12df2e06-ec9e-11e6-9e81-54ee750f2fc7]
+      ocp-date: ['Mon, 06 Feb 2017 18:57:14 GMT']
     method: GET
-    uri: https://pythonsdktest.eastus.batch.azure.com/jobs/python_test_job?api-version=2016-07-01.3.1
+    uri: https://pythonsdktest.eastus.batch.azure.com/jobs/python_test_job?api-version=2017-01-01.4.0
   response:
-    body: {string: !!python/unicode "{\r\n  \"odata.metadata\":\"https://pythonsdktest.eastus.batch.azure.com/$metadata#jobs/@Element\"\
+    body: {string: "{\r\n  \"odata.metadata\":\"https://pythonsdktest.eastus.batch.azure.com/$metadata#jobs/@Element\"\
         ,\"id\":\"python_test_job\",\"url\":\"https://pythonsdktest.eastus.batch.azure.com/jobs/python_test_job\"\
-        ,\"eTag\":\"0x8D3E0BBF3C5A29F\",\"lastModified\":\"2016-09-19T18:37:04.2693791Z\"\
-        ,\"creationTime\":\"2016-09-19T18:36:42.7460849Z\",\"state\":\"active\",\"\
-        stateTransitionTime\":\"2016-09-19T18:36:42.7817062Z\",\"priority\":900,\"\
+        ,\"eTag\":\"0x8D44EC1F784F7DF\",\"lastModified\":\"2017-02-06T18:57:15.4423775Z\"\
+        ,\"creationTime\":\"2017-02-06T18:56:53.3343362Z\",\"state\":\"active\",\"\
+        stateTransitionTime\":\"2017-02-06T18:56:53.3939968Z\",\"priority\":900,\"\
         usesTaskDependencies\":false,\"constraints\":{\r\n    \"maxWallClockTime\"\
         :\"P10675199DT2H48M5.4775807S\",\"maxTaskRetryCount\":1\r\n  },\"poolInfo\"\
         :{\r\n    \"poolId\":\"python_test_pool_4\"\r\n  },\"executionInfo\":{\r\n\
-        \    \"startTime\":\"2016-09-19T18:36:42.7817062Z\",\"poolId\":\"python_test_pool_4\"\
+        \    \"startTime\":\"2017-02-06T18:56:53.3939968Z\",\"poolId\":\"python_test_pool_4\"\
         \r\n  },\"onAllTasksComplete\":\"noaction\",\"onTaskFailure\":\"noaction\"\
         \r\n}"}
     headers:
-      content-type: [application/json;odata=minimalmetadata]
-      dataserviceversion: ['3.0']
-      date: ['Mon, 19 Sep 2016 18:37:04 GMT']
-      etag: ['0x8D3E0BBF3C5A29F']
-      last-modified: ['Mon, 19 Sep 2016 18:37:04 GMT']
-      request-id: [bf705121-3247-443b-8bb8-dbb1a2277f30]
-      server: [Microsoft-HTTPAPI/2.0]
-      strict-transport-security: [max-age=31536000; includeSubDomains]
-      transfer-encoding: [chunked]
+      Content-Type: [application/json;odata=minimalmetadata]
+      DataServiceVersion: ['3.0']
+      Date: ['Mon, 06 Feb 2017 18:57:15 GMT']
+      ETag: ['0x8D44EC1F784F7DF']
+      Last-Modified: ['Mon, 06 Feb 2017 18:57:15 GMT']
+      Server: [Microsoft-HTTPAPI/2.0]
+      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
+      Transfer-Encoding: [chunked]
+      X-Content-Type-Options: [nosniff]
+      request-id: [20157090-9634-483a-bcb7-7b54b729d589]
     status: {code: 200, message: OK}
 - request:
     body: null
@@ -528,71 +565,74 @@ interactions:
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
       Content-Type: [application/json; odata=minimalmetadata; charset=utf-8]
-      User-Agent: [python/2.7.9 (Windows-8-6.2.9200) requests/2.7.0 msrest/0.4.3 msrest_azure/0.4.2
-          batchserviceclient/1.0.0 Azure-SDK-For-Python]
+      User-Agent: [python/3.5.1 (Windows-8.1-6.3.9600-SP0) requests/2.9.1 msrest/0.4.4
+          msrest_azure/0.4.3 batchserviceclient/2.0.0RC1 Azure-SDK-For-Python]
       accept-language: [en-US]
-      client-request-id: [0f7121a1-7e98-11e6-b47c-54ee750f2fc7]
-      ocp-date: ['Mon, 19 Sep 2016 18:37:04 GMT']
+      client-request-id: [134247da-ec9e-11e6-b6d2-54ee750f2fc7]
+      ocp-date: ['Mon, 06 Feb 2017 18:57:15 GMT']
     method: GET
-    uri: https://pythonsdktest.eastus.batch.azure.com/jobs?api-version=2016-07-01.3.1
+    uri: https://pythonsdktest.eastus.batch.azure.com/jobs?api-version=2017-01-01.4.0
   response:
-    body: {string: !!python/unicode "{\r\n  \"odata.metadata\":\"https://pythonsdktest.eastus.batch.azure.com/$metadata#jobs\"\
+    body: {string: "{\r\n  \"odata.metadata\":\"https://pythonsdktest.eastus.batch.azure.com/$metadata#jobs\"\
         ,\"value\":[\r\n    {\r\n      \"id\":\"python_test_job\",\"url\":\"https://pythonsdktest.eastus.batch.azure.com/jobs/python_test_job\"\
-        ,\"eTag\":\"0x8D3E0BBF3C5A29F\",\"lastModified\":\"2016-09-19T18:37:04.2693791Z\"\
-        ,\"creationTime\":\"2016-09-19T18:36:42.7460849Z\",\"state\":\"active\",\"\
-        stateTransitionTime\":\"2016-09-19T18:36:42.7817062Z\",\"priority\":900,\"\
+        ,\"eTag\":\"0x8D44EC1F784F7DF\",\"lastModified\":\"2017-02-06T18:57:15.4423775Z\"\
+        ,\"creationTime\":\"2017-02-06T18:56:53.3343362Z\",\"state\":\"active\",\"\
+        stateTransitionTime\":\"2017-02-06T18:56:53.3939968Z\",\"priority\":900,\"\
         usesTaskDependencies\":false,\"constraints\":{\r\n        \"maxWallClockTime\"\
         :\"P10675199DT2H48M5.4775807S\",\"maxTaskRetryCount\":1\r\n      },\"poolInfo\"\
         :{\r\n        \"poolId\":\"python_test_pool_4\"\r\n      },\"executionInfo\"\
-        :{\r\n        \"startTime\":\"2016-09-19T18:36:42.7817062Z\",\"poolId\":\"\
+        :{\r\n        \"startTime\":\"2017-02-06T18:56:53.3939968Z\",\"poolId\":\"\
         python_test_pool_4\"\r\n      },\"onAllTasksComplete\":\"noaction\",\"onTaskFailure\"\
         :\"noaction\"\r\n    },{\r\n      \"id\":\"python_test_job_2\",\"url\":\"\
         https://pythonsdktest.eastus.batch.azure.com/jobs/python_test_job_2\",\"eTag\"\
-        :\"0x8D3E0BBED4C3DFF\",\"lastModified\":\"2016-09-19T18:36:53.4074879Z\",\"\
-        creationTime\":\"2016-09-19T18:36:53.3554142Z\",\"state\":\"active\",\"stateTransitionTime\"\
-        :\"2016-09-19T18:36:53.4074879Z\",\"priority\":0,\"usesTaskDependencies\"\
+        :\"0x8D44EC1F0BF0552\",\"lastModified\":\"2017-02-06T18:57:04.0787794Z\",\"\
+        creationTime\":\"2017-02-06T18:57:04.050755Z\",\"state\":\"active\",\"stateTransitionTime\"\
+        :\"2017-02-06T18:57:04.0787794Z\",\"priority\":0,\"usesTaskDependencies\"\
         :false,\"constraints\":{\r\n        \"maxWallClockTime\":\"P10675199DT2H48M5.4775807S\"\
         ,\"maxTaskRetryCount\":0\r\n      },\"poolInfo\":{\r\n        \"poolId\":\"\
         python_test_pool_4\"\r\n      },\"executionInfo\":{\r\n        \"startTime\"\
-        :\"2016-09-19T18:36:53.4074879Z\",\"poolId\":\"python_test_pool_4\"\r\n  \
+        :\"2017-02-06T18:57:04.0787794Z\",\"poolId\":\"python_test_pool_4\"\r\n  \
         \    },\"onAllTasksComplete\":\"noaction\",\"onTaskFailure\":\"performexitoptionsjobaction\"\
         \r\n    }\r\n  ]\r\n}"}
     headers:
-      content-type: [application/json;odata=minimalmetadata]
-      dataserviceversion: ['3.0']
-      date: ['Mon, 19 Sep 2016 18:37:05 GMT']
-      request-id: [00df8719-c078-467e-a280-f9c988eedbe3]
-      server: [Microsoft-HTTPAPI/2.0]
-      strict-transport-security: [max-age=31536000; includeSubDomains]
-      transfer-encoding: [chunked]
+      Content-Type: [application/json;odata=minimalmetadata]
+      DataServiceVersion: ['3.0']
+      Date: ['Mon, 06 Feb 2017 18:57:15 GMT']
+      Server: [Microsoft-HTTPAPI/2.0]
+      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
+      Transfer-Encoding: [chunked]
+      X-Content-Type-Options: [nosniff]
+      request-id: [4aafa42a-551b-456a-aa22-47a11b4ab8d1]
     status: {code: 200, message: OK}
 - request:
-    body: '{"disableTasks": "requeue"}'
+    body: !!binary |
+      eyJkaXNhYmxlVGFza3MiOiAicmVxdWV1ZSJ9
     headers:
       Accept: [application/json]
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
       Content-Length: ['27']
       Content-Type: [application/json; odata=minimalmetadata; charset=utf-8]
-      User-Agent: [python/2.7.9 (Windows-8-6.2.9200) requests/2.7.0 msrest/0.4.3 msrest_azure/0.4.2
-          batchserviceclient/1.0.0 Azure-SDK-For-Python]
+      User-Agent: [python/3.5.1 (Windows-8.1-6.3.9600-SP0) requests/2.9.1 msrest/0.4.4
+          msrest_azure/0.4.3 batchserviceclient/2.0.0RC1 Azure-SDK-For-Python]
       accept-language: [en-US]
-      client-request-id: [0fb6b61e-7e98-11e6-987d-54ee750f2fc7]
-      ocp-date: ['Mon, 19 Sep 2016 18:37:04 GMT']
+      client-request-id: [13aafad2-ec9e-11e6-aa24-54ee750f2fc7]
+      ocp-date: ['Mon, 06 Feb 2017 18:57:16 GMT']
     method: POST
-    uri: https://pythonsdktest.eastus.batch.azure.com/jobs/python_test_job/disable?api-version=2016-07-01.3.1
+    uri: https://pythonsdktest.eastus.batch.azure.com/jobs/python_test_job/disable?api-version=2017-01-01.4.0
   response:
-    body: {string: !!python/unicode ''}
+    body: {string: ''}
     headers:
-      dataserviceid: ['https://pythonsdktest.eastus.batch.azure.com/jobs/python_test_job/disable']
-      dataserviceversion: ['3.0']
-      date: ['Mon, 19 Sep 2016 18:37:06 GMT']
-      etag: ['0x8D3E0BBF48CAFD6']
-      last-modified: ['Mon, 19 Sep 2016 18:37:05 GMT']
-      request-id: [67aa0948-628f-405f-9a8b-3409eca0df1e]
-      server: [Microsoft-HTTPAPI/2.0]
-      strict-transport-security: [max-age=31536000; includeSubDomains]
-      transfer-encoding: [chunked]
+      DataServiceId: ['https://pythonsdktest.eastus.batch.azure.com/jobs/python_test_job/disable']
+      DataServiceVersion: ['3.0']
+      Date: ['Mon, 06 Feb 2017 18:57:15 GMT']
+      ETag: ['0x8D44EC1F8A32E6E']
+      Last-Modified: ['Mon, 06 Feb 2017 18:57:17 GMT']
+      Server: [Microsoft-HTTPAPI/2.0]
+      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
+      Transfer-Encoding: [chunked]
+      X-Content-Type-Options: [nosniff]
+      request-id: [afcae9bc-f33d-4a03-a531-6d91886ef3c6]
     status: {code: 202, message: Accepted}
 - request:
     body: null
@@ -602,56 +642,60 @@ interactions:
       Connection: [keep-alive]
       Content-Length: ['0']
       Content-Type: [application/json; odata=minimalmetadata; charset=utf-8]
-      User-Agent: [python/2.7.9 (Windows-8-6.2.9200) requests/2.7.0 msrest/0.4.3 msrest_azure/0.4.2
-          batchserviceclient/1.0.0 Azure-SDK-For-Python]
+      User-Agent: [python/3.5.1 (Windows-8.1-6.3.9600-SP0) requests/2.9.1 msrest/0.4.4
+          msrest_azure/0.4.3 batchserviceclient/2.0.0RC1 Azure-SDK-For-Python]
       accept-language: [en-US]
-      client-request-id: [0ff9d99e-7e98-11e6-9754-54ee750f2fc7]
-      ocp-date: ['Mon, 19 Sep 2016 18:37:04 GMT']
+      client-request-id: [13fcfb10-ec9e-11e6-99e1-54ee750f2fc7]
+      ocp-date: ['Mon, 06 Feb 2017 18:57:16 GMT']
     method: POST
-    uri: https://pythonsdktest.eastus.batch.azure.com/jobs/python_test_job/enable?api-version=2016-07-01.3.1
+    uri: https://pythonsdktest.eastus.batch.azure.com/jobs/python_test_job/enable?api-version=2017-01-01.4.0
   response:
-    body: {string: !!python/unicode ''}
+    body: {string: ''}
     headers:
-      dataserviceid: ['https://pythonsdktest.eastus.batch.azure.com/jobs/python_test_job/enable']
-      dataserviceversion: ['3.0']
-      date: ['Mon, 19 Sep 2016 18:37:05 GMT']
-      etag: ['0x8D3E0BBF4D125AA']
-      last-modified: ['Mon, 19 Sep 2016 18:37:06 GMT']
-      request-id: [26c0393a-100a-4145-90de-3d8635d2842b]
-      server: [Microsoft-HTTPAPI/2.0]
-      strict-transport-security: [max-age=31536000; includeSubDomains]
-      transfer-encoding: [chunked]
+      DataServiceId: ['https://pythonsdktest.eastus.batch.azure.com/jobs/python_test_job/enable']
+      DataServiceVersion: ['3.0']
+      Date: ['Mon, 06 Feb 2017 18:57:15 GMT']
+      ETag: ['0x8D44EC1F8F6FC93']
+      Last-Modified: ['Mon, 06 Feb 2017 18:57:17 GMT']
+      Server: [Microsoft-HTTPAPI/2.0]
+      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
+      Transfer-Encoding: [chunked]
+      X-Content-Type-Options: [nosniff]
+      request-id: [8aa602a9-5d7f-4a50-82d3-9681db3c51b0]
     status: {code: 202, message: Accepted}
 - request:
-    body: '{"exitConditions": {"default": {"jobAction": "terminate"}, "exitCodes":
-      [{"exitOptions": {"jobAction": "none"}, "code": 1}]}, "commandLine": "cmd /c
-      echo hello world", "id": "python_task_with_auto_complete"}'
+    body: !!binary |
+      eyJjb21tYW5kTGluZSI6ICJjbWQgL2MgZWNobyBoZWxsbyB3b3JsZCIsICJleGl0Q29uZGl0aW9u
+      cyI6IHsiZXhpdENvZGVzIjogW3siY29kZSI6IDEsICJleGl0T3B0aW9ucyI6IHsiam9iQWN0aW9u
+      IjogIm5vbmUifX1dLCAiZGVmYXVsdCI6IHsiam9iQWN0aW9uIjogInRlcm1pbmF0ZSJ9fSwgImlk
+      IjogInB5dGhvbl90YXNrX3dpdGhfYXV0b19jb21wbGV0ZSJ9
     headers:
       Accept: [application/json]
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
       Content-Length: ['207']
       Content-Type: [application/json; odata=minimalmetadata; charset=utf-8]
-      User-Agent: [python/2.7.9 (Windows-8-6.2.9200) requests/2.7.0 msrest/0.4.3 msrest_azure/0.4.2
-          batchserviceclient/1.0.0 Azure-SDK-For-Python]
+      User-Agent: [python/3.5.1 (Windows-8.1-6.3.9600-SP0) requests/2.9.1 msrest/0.4.4
+          msrest_azure/0.4.3 batchserviceclient/2.0.0RC1 Azure-SDK-For-Python]
       accept-language: [en-US]
-      client-request-id: [103de780-7e98-11e6-9c91-54ee750f2fc7]
-      ocp-date: ['Mon, 19 Sep 2016 18:37:05 GMT']
+      client-request-id: [144fc882-ec9e-11e6-a208-54ee750f2fc7]
+      ocp-date: ['Mon, 06 Feb 2017 18:57:17 GMT']
     method: POST
-    uri: https://pythonsdktest.eastus.batch.azure.com/jobs/python_test_job_2/tasks?api-version=2016-07-01.3.1
+    uri: https://pythonsdktest.eastus.batch.azure.com/jobs/python_test_job_2/tasks?api-version=2017-01-01.4.0
   response:
-    body: {string: !!python/unicode ''}
+    body: {string: ''}
     headers:
-      dataserviceid: ['https://pythonsdktest.eastus.batch.azure.com/jobs/python_test_job_2/tasks/python_task_with_auto_complete']
-      dataserviceversion: ['3.0']
-      date: ['Mon, 19 Sep 2016 18:37:06 GMT']
-      etag: ['0x8D3E0BBF51E5F5E']
-      last-modified: ['Mon, 19 Sep 2016 18:37:06 GMT']
-      location: ['https://pythonsdktest.eastus.batch.azure.com/jobs/python_test_job_2/tasks/python_task_with_auto_complete']
-      request-id: [20935c51-94cb-4d8e-8dda-eb38dc9796d9]
-      server: [Microsoft-HTTPAPI/2.0]
-      strict-transport-security: [max-age=31536000; includeSubDomains]
-      transfer-encoding: [chunked]
+      DataServiceId: ['https://pythonsdktest.eastus.batch.azure.com/jobs/python_test_job_2/tasks/python_task_with_auto_complete']
+      DataServiceVersion: ['3.0']
+      Date: ['Mon, 06 Feb 2017 18:57:16 GMT']
+      ETag: ['0x8D44EC1F80A2695']
+      Last-Modified: ['Mon, 06 Feb 2017 18:57:16 GMT']
+      Location: ['https://pythonsdktest.eastus.batch.azure.com/jobs/python_test_job_2/tasks/python_task_with_auto_complete']
+      Server: [Microsoft-HTTPAPI/2.0]
+      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
+      Transfer-Encoding: [chunked]
+      X-Content-Type-Options: [nosniff]
+      request-id: [30873364-59cb-48f5-ad8a-af3b75d557b6]
     status: {code: 201, message: Created}
 - request:
     body: null
@@ -660,66 +704,72 @@ interactions:
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
       Content-Type: [application/json; odata=minimalmetadata; charset=utf-8]
-      User-Agent: [python/2.7.9 (Windows-8-6.2.9200) requests/2.7.0 msrest/0.4.3 msrest_azure/0.4.2
-          batchserviceclient/1.0.0 Azure-SDK-For-Python]
+      User-Agent: [python/3.5.1 (Windows-8.1-6.3.9600-SP0) requests/2.9.1 msrest/0.4.4
+          msrest_azure/0.4.3 batchserviceclient/2.0.0RC1 Azure-SDK-For-Python]
       accept-language: [en-US]
-      client-request-id: [108836f0-7e98-11e6-947b-54ee750f2fc7]
-      ocp-date: ['Mon, 19 Sep 2016 18:37:05 GMT']
+      client-request-id: [14c46e3e-ec9e-11e6-ba42-54ee750f2fc7]
+      ocp-date: ['Mon, 06 Feb 2017 18:57:17 GMT']
     method: GET
-    uri: https://pythonsdktest.eastus.batch.azure.com/jobs/python_test_job_2/tasks/python_task_with_auto_complete?api-version=2016-07-01.3.1
+    uri: https://pythonsdktest.eastus.batch.azure.com/jobs/python_test_job_2/tasks/python_task_with_auto_complete?api-version=2017-01-01.4.0
   response:
-    body: {string: !!python/unicode "{\r\n  \"odata.metadata\":\"https://pythonsdktest.eastus.batch.azure.com/$metadata#tasks/@Element\"\
+    body: {string: "{\r\n  \"odata.metadata\":\"https://pythonsdktest.eastus.batch.azure.com/$metadata#tasks/@Element\"\
         ,\"id\":\"python_task_with_auto_complete\",\"url\":\"https://pythonsdktest.eastus.batch.azure.com/jobs/python_test_job_2/tasks/python_task_with_auto_complete\"\
-        ,\"eTag\":\"0x8D3E0BBF51E5F5E\",\"creationTime\":\"2016-09-19T18:37:06.5286494Z\"\
-        ,\"lastModified\":\"2016-09-19T18:37:06.5286494Z\",\"state\":\"active\",\"\
-        stateTransitionTime\":\"2016-09-19T18:37:06.5286494Z\",\"commandLine\":\"\
-        cmd /c echo hello world\",\"runElevated\":false,\"exitConditions\":{\r\n \
-        \   \"exitCodes\":[\r\n      {\r\n        \"code\":1,\"exitOptions\":{\r\n\
-        \          \"jobAction\":\"none\"\r\n        }\r\n      }\r\n    ],\"default\"\
-        :{\r\n      \"jobAction\":\"terminate\"\r\n    }\r\n  },\"constraints\":{\r\
-        \n    \"maxWallClockTime\":\"P10675199DT2H48M5.4775807S\",\"retentionTime\"\
-        :\"P10675199DT2H48M5.4775807S\",\"maxTaskRetryCount\":0\r\n  },\"executionInfo\"\
-        :{\r\n    \"retryCount\":0,\"requeueCount\":0\r\n  }\r\n}"}
+        ,\"eTag\":\"0x8D44EC1F80A2695\",\"creationTime\":\"2017-02-06T18:57:16.3152021Z\"\
+        ,\"lastModified\":\"2017-02-06T18:57:16.3152021Z\",\"state\":\"active\",\"\
+        stateTransitionTime\":\"2017-02-06T18:57:16.3152021Z\",\"commandLine\":\"\
+        cmd /c echo hello world\",\"userIdentity\":{\r\n    \"autoUser\":{\r\n   \
+        \   \"scope\":\"task\",\"elevationLevel\":\"nonadmin\"\r\n    }\r\n  },\"\
+        exitConditions\":{\r\n    \"exitCodes\":[\r\n      {\r\n        \"code\":1,\"\
+        exitOptions\":{\r\n          \"jobAction\":\"none\"\r\n        }\r\n     \
+        \ }\r\n    ],\"default\":{\r\n      \"jobAction\":\"terminate\"\r\n    }\r\
+        \n  },\"constraints\":{\r\n    \"maxWallClockTime\":\"P10675199DT2H48M5.4775807S\"\
+        ,\"retentionTime\":\"P10675199DT2H48M5.4775807S\",\"maxTaskRetryCount\":0\r\
+        \n  },\"executionInfo\":{\r\n    \"retryCount\":0,\"requeueCount\":0\r\n \
+        \ }\r\n}"}
     headers:
-      content-type: [application/json;odata=minimalmetadata]
-      dataserviceversion: ['3.0']
-      date: ['Mon, 19 Sep 2016 18:37:06 GMT']
-      etag: ['0x8D3E0BBF51E5F5E']
-      last-modified: ['Mon, 19 Sep 2016 18:37:06 GMT']
-      request-id: [176c6eac-2e82-4684-a437-d888441fc35e]
-      server: [Microsoft-HTTPAPI/2.0]
-      strict-transport-security: [max-age=31536000; includeSubDomains]
-      transfer-encoding: [chunked]
+      Content-Type: [application/json;odata=minimalmetadata]
+      DataServiceVersion: ['3.0']
+      Date: ['Mon, 06 Feb 2017 18:57:16 GMT']
+      ETag: ['0x8D44EC1F80A2695']
+      Last-Modified: ['Mon, 06 Feb 2017 18:57:16 GMT']
+      Server: [Microsoft-HTTPAPI/2.0]
+      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
+      Transfer-Encoding: [chunked]
+      X-Content-Type-Options: [nosniff]
+      request-id: [25b2be65-ac14-48fb-83f1-53469b20f409]
     status: {code: 200, message: OK}
 - request:
-    body: '{"commandLine": "cmd /c echo hello world", "applicationPackageReferences":
-      [{"applicationId": "my_application_id"}], "id": "python_task_with_app_package"}'
+    body: !!binary |
+      eyJjb21tYW5kTGluZSI6ICJjbWQgL2MgZWNobyBoZWxsbyB3b3JsZCIsICJhcHBsaWNhdGlvblBh
+      Y2thZ2VSZWZlcmVuY2VzIjogW3siYXBwbGljYXRpb25JZCI6ICJteV9hcHBsaWNhdGlvbl9pZCJ9
+      XSwgImlkIjogInB5dGhvbl90YXNrX3dpdGhfYXBwX3BhY2thZ2UifQ==
     headers:
       Accept: [application/json]
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
       Content-Length: ['154']
       Content-Type: [application/json; odata=minimalmetadata; charset=utf-8]
-      User-Agent: [python/2.7.9 (Windows-8-6.2.9200) requests/2.7.0 msrest/0.4.3 msrest_azure/0.4.2
-          batchserviceclient/1.0.0 Azure-SDK-For-Python]
+      User-Agent: [python/3.5.1 (Windows-8.1-6.3.9600-SP0) requests/2.9.1 msrest/0.4.4
+          msrest_azure/0.4.3 batchserviceclient/2.0.0RC1 Azure-SDK-For-Python]
       accept-language: [en-US]
-      client-request-id: [10d2d480-7e98-11e6-9013-54ee750f2fc7]
-      ocp-date: ['Mon, 19 Sep 2016 18:37:06 GMT']
+      client-request-id: [152217d2-ec9e-11e6-a3e0-54ee750f2fc7]
+      ocp-date: ['Mon, 06 Feb 2017 18:57:18 GMT']
     method: POST
-    uri: https://pythonsdktest.eastus.batch.azure.com/jobs/python_test_job/tasks?api-version=2016-07-01.3.1
+    uri: https://pythonsdktest.eastus.batch.azure.com/jobs/python_test_job/tasks?api-version=2017-01-01.4.0
   response:
-    body: {string: !!python/unicode ''}
+    body: {string: ''}
     headers:
-      dataserviceid: ['https://pythonsdktest.eastus.batch.azure.com/jobs/python_test_job/tasks/python_task_with_app_package']
-      dataserviceversion: ['3.0']
-      date: ['Mon, 19 Sep 2016 18:37:06 GMT']
-      etag: ['0x8D3E0BBF502C9B0']
-      last-modified: ['Mon, 19 Sep 2016 18:37:06 GMT']
-      location: ['https://pythonsdktest.eastus.batch.azure.com/jobs/python_test_job/tasks/python_task_with_app_package']
-      request-id: [62229957-34d8-47bd-91ad-3c5adc1245e5]
-      server: [Microsoft-HTTPAPI/2.0]
-      strict-transport-security: [max-age=31536000; includeSubDomains]
-      transfer-encoding: [chunked]
+      DataServiceId: ['https://pythonsdktest.eastus.batch.azure.com/jobs/python_test_job/tasks/python_task_with_app_package']
+      DataServiceVersion: ['3.0']
+      Date: ['Mon, 06 Feb 2017 18:57:18 GMT']
+      ETag: ['0x8D44EC1F97C296D']
+      Last-Modified: ['Mon, 06 Feb 2017 18:57:18 GMT']
+      Location: ['https://pythonsdktest.eastus.batch.azure.com/jobs/python_test_job/tasks/python_task_with_app_package']
+      Server: [Microsoft-HTTPAPI/2.0]
+      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
+      Transfer-Encoding: [chunked]
+      X-Content-Type-Options: [nosniff]
+      request-id: [a01d4815-d6e3-446e-8fd8-ab925b561c00]
     status: {code: 201, message: Created}
 - request:
     body: null
@@ -728,314 +778,335 @@ interactions:
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
       Content-Type: [application/json; odata=minimalmetadata; charset=utf-8]
-      User-Agent: [python/2.7.9 (Windows-8-6.2.9200) requests/2.7.0 msrest/0.4.3 msrest_azure/0.4.2
-          batchserviceclient/1.0.0 Azure-SDK-For-Python]
+      User-Agent: [python/3.5.1 (Windows-8.1-6.3.9600-SP0) requests/2.9.1 msrest/0.4.4
+          msrest_azure/0.4.3 batchserviceclient/2.0.0RC1 Azure-SDK-For-Python]
       accept-language: [en-US]
-      client-request-id: [112958f0-7e98-11e6-b4fb-54ee750f2fc7]
-      ocp-date: ['Mon, 19 Sep 2016 18:37:06 GMT']
+      client-request-id: [15790d50-ec9e-11e6-929f-54ee750f2fc7]
+      ocp-date: ['Mon, 06 Feb 2017 18:57:19 GMT']
     method: GET
-    uri: https://pythonsdktest.eastus.batch.azure.com/jobs/python_test_job/tasks/python_task_with_app_package?api-version=2016-07-01.3.1
+    uri: https://pythonsdktest.eastus.batch.azure.com/jobs/python_test_job/tasks/python_task_with_app_package?api-version=2017-01-01.4.0
   response:
-    body: {string: !!python/unicode "{\r\n  \"odata.metadata\":\"https://pythonsdktest.eastus.batch.azure.com/$metadata#tasks/@Element\"\
+    body: {string: "{\r\n  \"odata.metadata\":\"https://pythonsdktest.eastus.batch.azure.com/$metadata#tasks/@Element\"\
         ,\"id\":\"python_task_with_app_package\",\"url\":\"https://pythonsdktest.eastus.batch.azure.com/jobs/python_test_job/tasks/python_task_with_app_package\"\
-        ,\"eTag\":\"0x8D3E0BBF502C9B0\",\"creationTime\":\"2016-09-19T18:37:06.3478704Z\"\
-        ,\"lastModified\":\"2016-09-19T18:37:06.3478704Z\",\"state\":\"active\",\"\
-        stateTransitionTime\":\"2016-09-19T18:37:06.3478704Z\",\"commandLine\":\"\
+        ,\"eTag\":\"0x8D44EC1F97C296D\",\"creationTime\":\"2017-02-06T18:57:18.7401069Z\"\
+        ,\"lastModified\":\"2017-02-06T18:57:18.7401069Z\",\"state\":\"active\",\"\
+        stateTransitionTime\":\"2017-02-06T18:57:18.7401069Z\",\"commandLine\":\"\
         cmd /c echo hello world\",\"applicationPackageReferences\":[\r\n    {\r\n\
-        \      \"applicationId\":\"my_application_id\"\r\n    }\r\n  ],\"runElevated\"\
-        :false,\"constraints\":{\r\n    \"maxWallClockTime\":\"P10675199DT2H48M5.4775807S\"\
+        \      \"applicationId\":\"my_application_id\"\r\n    }\r\n  ],\"userIdentity\"\
+        :{\r\n    \"autoUser\":{\r\n      \"scope\":\"task\",\"elevationLevel\":\"\
+        nonadmin\"\r\n    }\r\n  },\"constraints\":{\r\n    \"maxWallClockTime\":\"\
+        P10675199DT2H48M5.4775807S\",\"retentionTime\":\"P10675199DT2H48M5.4775807S\"\
+        ,\"maxTaskRetryCount\":1\r\n  },\"executionInfo\":{\r\n    \"retryCount\"\
+        :0,\"requeueCount\":0\r\n  }\r\n}"}
+    headers:
+      Content-Type: [application/json;odata=minimalmetadata]
+      DataServiceVersion: ['3.0']
+      Date: ['Mon, 06 Feb 2017 18:57:19 GMT']
+      ETag: ['0x8D44EC1F97C296D']
+      Last-Modified: ['Mon, 06 Feb 2017 18:57:18 GMT']
+      Server: [Microsoft-HTTPAPI/2.0]
+      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
+      Transfer-Encoding: [chunked]
+      X-Content-Type-Options: [nosniff]
+      request-id: [f2eea156-1104-4234-91c9-eda83f46f736]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['0']
+      Content-Type: [application/json; odata=minimalmetadata; charset=utf-8]
+      User-Agent: [python/3.5.1 (Windows-8.1-6.3.9600-SP0) requests/2.9.1 msrest/0.4.4
+          msrest_azure/0.4.3 batchserviceclient/2.0.0RC1 Azure-SDK-For-Python]
+      accept-language: [en-US]
+      client-request-id: [15ddec76-ec9e-11e6-a496-54ee750f2fc7]
+      ocp-date: ['Mon, 06 Feb 2017 18:57:19 GMT']
+    method: DELETE
+    uri: https://pythonsdktest.eastus.batch.azure.com/jobs/python_test_job/tasks/python_task_with_app_package?api-version=2017-01-01.4.0
+  response:
+    body: {string: ''}
+    headers:
+      DataServiceVersion: ['3.0']
+      Date: ['Mon, 06 Feb 2017 18:57:18 GMT']
+      Server: [Microsoft-HTTPAPI/2.0]
+      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
+      Transfer-Encoding: [chunked]
+      X-Content-Type-Options: [nosniff]
+      request-id: [efcd3802-4777-49f3-bc54-85d80f35ad35]
+    status: {code: 200, message: OK}
+- request:
+    body: !!binary |
+      eyJjb21tYW5kTGluZSI6ICJjbWQgL2MgZWNobyBoZWxsbyB3b3JsZCIsICJpZCI6ICJweXRob25f
+      dGFza18xIn0=
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['65']
+      Content-Type: [application/json; odata=minimalmetadata; charset=utf-8]
+      User-Agent: [python/3.5.1 (Windows-8.1-6.3.9600-SP0) requests/2.9.1 msrest/0.4.4
+          msrest_azure/0.4.3 batchserviceclient/2.0.0RC1 Azure-SDK-For-Python]
+      accept-language: [en-US]
+      client-request-id: [163b0612-ec9e-11e6-8ca5-54ee750f2fc7]
+      ocp-date: ['Mon, 06 Feb 2017 18:57:20 GMT']
+    method: POST
+    uri: https://pythonsdktest.eastus.batch.azure.com/jobs/python_test_job/tasks?api-version=2017-01-01.4.0
+  response:
+    body: {string: ''}
+    headers:
+      DataServiceId: ['https://pythonsdktest.eastus.batch.azure.com/jobs/python_test_job/tasks/python_task_1']
+      DataServiceVersion: ['3.0']
+      Date: ['Mon, 06 Feb 2017 18:57:20 GMT']
+      ETag: ['0x8D44EC1FA9456A4']
+      Last-Modified: ['Mon, 06 Feb 2017 18:57:20 GMT']
+      Location: ['https://pythonsdktest.eastus.batch.azure.com/jobs/python_test_job/tasks/python_task_1']
+      Server: [Microsoft-HTTPAPI/2.0]
+      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
+      Transfer-Encoding: [chunked]
+      X-Content-Type-Options: [nosniff]
+      request-id: [2dd65b19-a5d6-48bf-910e-d6a774fe8dde]
+    status: {code: 201, message: Created}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['0']
+      Content-Type: [application/json; odata=minimalmetadata; charset=utf-8]
+      User-Agent: [python/3.5.1 (Windows-8.1-6.3.9600-SP0) requests/2.9.1 msrest/0.4.4
+          msrest_azure/0.4.3 batchserviceclient/2.0.0RC1 Azure-SDK-For-Python]
+      accept-language: [en-US]
+      client-request-id: [169e5fd4-ec9e-11e6-904f-54ee750f2fc7]
+      ocp-date: ['Mon, 06 Feb 2017 18:57:20 GMT']
+    method: POST
+    uri: https://pythonsdktest.eastus.batch.azure.com/jobs/python_test_job/tasks/python_task_1/terminate?api-version=2017-01-01.4.0
+  response:
+    body: {string: ''}
+    headers:
+      Content-Length: ['0']
+      DataServiceId: ['https://pythonsdktest.eastus.batch.azure.com/jobs/python_test_job/tasks/python_task_1/terminate']
+      DataServiceVersion: ['3.0']
+      Date: ['Mon, 06 Feb 2017 18:57:21 GMT']
+      ETag: ['0x8D44EC1FBA727A7']
+      Last-Modified: ['Mon, 06 Feb 2017 18:57:22 GMT']
+      Server: [Microsoft-HTTPAPI/2.0]
+      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
+      X-Content-Type-Options: [nosniff]
+      request-id: [efc83e61-7ad3-43b5-8e37-7d6d0bf00d15]
+    status: {code: 204, message: No Content}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Type: [application/json; odata=minimalmetadata; charset=utf-8]
+      User-Agent: [python/3.5.1 (Windows-8.1-6.3.9600-SP0) requests/2.9.1 msrest/0.4.4
+          msrest_azure/0.4.3 batchserviceclient/2.0.0RC1 Azure-SDK-For-Python]
+      accept-language: [en-US]
+      client-request-id: [1715a394-ec9e-11e6-bdc4-54ee750f2fc7]
+      ocp-date: ['Mon, 06 Feb 2017 18:57:21 GMT']
+    method: GET
+    uri: https://pythonsdktest.eastus.batch.azure.com/jobs/python_test_job/tasks/python_task_1?api-version=2017-01-01.4.0
+  response:
+    body: {string: "{\r\n  \"odata.metadata\":\"https://pythonsdktest.eastus.batch.azure.com/$metadata#tasks/@Element\"\
+        ,\"id\":\"python_task_1\",\"url\":\"https://pythonsdktest.eastus.batch.azure.com/jobs/python_test_job/tasks/python_task_1\"\
+        ,\"eTag\":\"0x8D44EC1FBA727A7\",\"creationTime\":\"2017-02-06T18:57:20.5762724Z\"\
+        ,\"lastModified\":\"2017-02-06T18:57:22.3773095Z\",\"state\":\"completed\"\
+        ,\"stateTransitionTime\":\"2017-02-06T18:57:22.3773095Z\",\"previousState\"\
+        :\"active\",\"previousStateTransitionTime\":\"2017-02-06T18:57:20.5762724Z\"\
+        ,\"commandLine\":\"cmd /c echo hello world\",\"userIdentity\":{\r\n    \"\
+        autoUser\":{\r\n      \"scope\":\"task\",\"elevationLevel\":\"nonadmin\"\r\
+        \n    }\r\n  },\"constraints\":{\r\n    \"maxWallClockTime\":\"P10675199DT2H48M5.4775807S\"\
+        ,\"retentionTime\":\"P10675199DT2H48M5.4775807S\",\"maxTaskRetryCount\":1\r\
+        \n  },\"executionInfo\":{\r\n    \"endTime\":\"2017-02-06T18:57:22.3773095Z\"\
+        ,\"schedulingError\":{\r\n      \"category\":\"UserError\",\"code\":\"TaskEnded\"\
+        ,\"message\":\"Task Was Ended by User Request\"\r\n    },\"retryCount\":0,\"\
+        requeueCount\":0\r\n  },\"nodeInfo\":{\r\n    \r\n  }\r\n}"}
+    headers:
+      Content-Type: [application/json;odata=minimalmetadata]
+      DataServiceVersion: ['3.0']
+      Date: ['Mon, 06 Feb 2017 18:57:21 GMT']
+      ETag: ['0x8D44EC1FBA727A7']
+      Last-Modified: ['Mon, 06 Feb 2017 18:57:22 GMT']
+      Server: [Microsoft-HTTPAPI/2.0]
+      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
+      Transfer-Encoding: [chunked]
+      X-Content-Type-Options: [nosniff]
+      request-id: [7e37aee1-f043-465a-90bb-c77f08f18bed]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['0']
+      Content-Type: [application/json; odata=minimalmetadata; charset=utf-8]
+      User-Agent: [python/3.5.1 (Windows-8.1-6.3.9600-SP0) requests/2.9.1 msrest/0.4.4
+          msrest_azure/0.4.3 batchserviceclient/2.0.0RC1 Azure-SDK-For-Python]
+      accept-language: [en-US]
+      client-request-id: [177a0f38-ec9e-11e6-b312-54ee750f2fc7]
+      ocp-date: ['Mon, 06 Feb 2017 18:57:22 GMT']
+    method: POST
+    uri: https://pythonsdktest.eastus.batch.azure.com/jobs/python_test_job/tasks/python_task_1/reactivate?api-version=2017-01-01.4.0
+  response:
+    body: {string: ''}
+    headers:
+      Content-Length: ['0']
+      DataServiceVersion: ['3.0']
+      Date: ['Mon, 06 Feb 2017 18:57:21 GMT']
+      ETag: ['0x8D44EC1FB91D5A6']
+      Last-Modified: ['Mon, 06 Feb 2017 18:57:22 GMT']
+      Server: [Microsoft-HTTPAPI/2.0]
+      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
+      X-Content-Type-Options: [nosniff]
+      request-id: [42df3a7b-c9c8-4571-bee6-82311563d195]
+    status: {code: 204, message: No Content}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Type: [application/json; odata=minimalmetadata; charset=utf-8]
+      User-Agent: [python/3.5.1 (Windows-8.1-6.3.9600-SP0) requests/2.9.1 msrest/0.4.4
+          msrest_azure/0.4.3 batchserviceclient/2.0.0RC1 Azure-SDK-For-Python]
+      accept-language: [en-US]
+      client-request-id: [17f75d94-ec9e-11e6-8905-54ee750f2fc7]
+      ocp-date: ['Mon, 06 Feb 2017 18:57:23 GMT']
+    method: GET
+    uri: https://pythonsdktest.eastus.batch.azure.com/jobs/python_test_job/tasks/python_task_1?api-version=2017-01-01.4.0
+  response:
+    body: {string: "{\r\n  \"odata.metadata\":\"https://pythonsdktest.eastus.batch.azure.com/$metadata#tasks/@Element\"\
+        ,\"id\":\"python_task_1\",\"url\":\"https://pythonsdktest.eastus.batch.azure.com/jobs/python_test_job/tasks/python_task_1\"\
+        ,\"eTag\":\"0x8D44EC1FB91D5A6\",\"creationTime\":\"2017-02-06T18:57:20.5762724Z\"\
+        ,\"lastModified\":\"2017-02-06T18:57:22.2375846Z\",\"state\":\"active\",\"\
+        stateTransitionTime\":\"2017-02-06T18:57:22.2375846Z\",\"previousState\":\"\
+        completed\",\"previousStateTransitionTime\":\"2017-02-06T18:57:22.3773095Z\"\
+        ,\"commandLine\":\"cmd /c echo hello world\",\"userIdentity\":{\r\n    \"\
+        autoUser\":{\r\n      \"scope\":\"task\",\"elevationLevel\":\"nonadmin\"\r\
+        \n    }\r\n  },\"constraints\":{\r\n    \"maxWallClockTime\":\"P10675199DT2H48M5.4775807S\"\
         ,\"retentionTime\":\"P10675199DT2H48M5.4775807S\",\"maxTaskRetryCount\":1\r\
         \n  },\"executionInfo\":{\r\n    \"retryCount\":0,\"requeueCount\":0\r\n \
         \ }\r\n}"}
     headers:
-      content-type: [application/json;odata=minimalmetadata]
-      dataserviceversion: ['3.0']
-      date: ['Mon, 19 Sep 2016 18:37:05 GMT']
-      etag: ['0x8D3E0BBF502C9B0']
-      last-modified: ['Mon, 19 Sep 2016 18:37:06 GMT']
-      request-id: [fd8b9d48-b2ea-49ac-80b4-b8b332e439bc]
-      server: [Microsoft-HTTPAPI/2.0]
-      strict-transport-security: [max-age=31536000; includeSubDomains]
-      transfer-encoding: [chunked]
+      Content-Type: [application/json;odata=minimalmetadata]
+      DataServiceVersion: ['3.0']
+      Date: ['Mon, 06 Feb 2017 18:57:22 GMT']
+      ETag: ['0x8D44EC1FB91D5A6']
+      Last-Modified: ['Mon, 06 Feb 2017 18:57:22 GMT']
+      Server: [Microsoft-HTTPAPI/2.0]
+      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
+      Transfer-Encoding: [chunked]
+      X-Content-Type-Options: [nosniff]
+      request-id: [c6b17a4d-4b55-421a-ae64-9b39433294d5]
     status: {code: 200, message: OK}
 - request:
-    body: null
-    headers:
-      Accept: [application/json]
-      Accept-Encoding: ['gzip, deflate']
-      Connection: [keep-alive]
-      Content-Length: ['0']
-      Content-Type: [application/json; odata=minimalmetadata; charset=utf-8]
-      User-Agent: [python/2.7.9 (Windows-8-6.2.9200) requests/2.7.0 msrest/0.4.3 msrest_azure/0.4.2
-          batchserviceclient/1.0.0 Azure-SDK-For-Python]
-      accept-language: [en-US]
-      client-request-id: [11629161-7e98-11e6-b29f-54ee750f2fc7]
-      ocp-date: ['Mon, 19 Sep 2016 18:37:07 GMT']
-    method: DELETE
-    uri: https://pythonsdktest.eastus.batch.azure.com/jobs/python_test_job/tasks/python_task_with_app_package?api-version=2016-07-01.3.1
-  response:
-    body: {string: !!python/unicode ''}
-    headers:
-      dataserviceversion: ['3.0']
-      date: ['Mon, 19 Sep 2016 18:37:07 GMT']
-      request-id: [2851291a-4756-46a1-adef-c58438f09064]
-      server: [Microsoft-HTTPAPI/2.0]
-      strict-transport-security: [max-age=31536000; includeSubDomains]
-      transfer-encoding: [chunked]
-    status: {code: 200, message: OK}
-- request:
-    body: '{"commandLine": "cmd /c echo hello world", "id": "python_task_1"}'
+    body: !!binary |
+      eyJjb21tYW5kTGluZSI6ICJjbWQgL2MgZWNobyBoZWxsbyB3b3JsZCIsICJpZCI6ICJweXRob25f
+      dGFza18yIn0=
     headers:
       Accept: [application/json]
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
       Content-Length: ['65']
       Content-Type: [application/json; odata=minimalmetadata; charset=utf-8]
-      User-Agent: [python/2.7.9 (Windows-8-6.2.9200) requests/2.7.0 msrest/0.4.3 msrest_azure/0.4.2
-          batchserviceclient/1.0.0 Azure-SDK-For-Python]
+      User-Agent: [python/3.5.1 (Windows-8.1-6.3.9600-SP0) requests/2.9.1 msrest/0.4.4
+          msrest_azure/0.4.3 batchserviceclient/2.0.0RC1 Azure-SDK-For-Python]
       accept-language: [en-US]
-      client-request-id: [119a6a40-7e98-11e6-9ca6-54ee750f2fc7]
-      ocp-date: ['Mon, 19 Sep 2016 18:37:07 GMT']
+      client-request-id: [189cbe26-ec9e-11e6-bd33-54ee750f2fc7]
+      ocp-date: ['Mon, 06 Feb 2017 18:57:24 GMT']
     method: POST
-    uri: https://pythonsdktest.eastus.batch.azure.com/jobs/python_test_job/tasks?api-version=2016-07-01.3.1
+    uri: https://pythonsdktest.eastus.batch.azure.com/jobs/python_test_job/tasks?api-version=2017-01-01.4.0
   response:
-    body: {string: !!python/unicode ''}
+    body: {string: ''}
     headers:
-      dataserviceid: ['https://pythonsdktest.eastus.batch.azure.com/jobs/python_test_job/tasks/python_task_1']
-      dataserviceversion: ['3.0']
-      date: ['Mon, 19 Sep 2016 18:37:08 GMT']
-      etag: ['0x8D3E0BBF64C3833']
-      last-modified: ['Mon, 19 Sep 2016 18:37:08 GMT']
-      location: ['https://pythonsdktest.eastus.batch.azure.com/jobs/python_test_job/tasks/python_task_1']
-      request-id: [fe325e9a-77c8-4a16-90d9-2a62ff4d5629]
-      server: [Microsoft-HTTPAPI/2.0]
-      strict-transport-security: [max-age=31536000; includeSubDomains]
-      transfer-encoding: [chunked]
+      DataServiceId: ['https://pythonsdktest.eastus.batch.azure.com/jobs/python_test_job/tasks/python_task_2']
+      DataServiceVersion: ['3.0']
+      Date: ['Mon, 06 Feb 2017 18:57:23 GMT']
+      ETag: ['0x8D44EC1FC936DA4']
+      Last-Modified: ['Mon, 06 Feb 2017 18:57:23 GMT']
+      Location: ['https://pythonsdktest.eastus.batch.azure.com/jobs/python_test_job/tasks/python_task_2']
+      Server: [Microsoft-HTTPAPI/2.0]
+      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
+      Transfer-Encoding: [chunked]
+      X-Content-Type-Options: [nosniff]
+      request-id: [c6cacc7a-6dab-41de-963a-3ad32f9dad1b]
     status: {code: 201, message: Created}
 - request:
-    body: null
-    headers:
-      Accept: [application/json]
-      Accept-Encoding: ['gzip, deflate']
-      Connection: [keep-alive]
-      Content-Length: ['0']
-      Content-Type: [application/json; odata=minimalmetadata; charset=utf-8]
-      User-Agent: [python/2.7.9 (Windows-8-6.2.9200) requests/2.7.0 msrest/0.4.3 msrest_azure/0.4.2
-          batchserviceclient/1.0.0 Azure-SDK-For-Python]
-      accept-language: [en-US]
-      client-request-id: [11d5c58f-7e98-11e6-be53-54ee750f2fc7]
-      ocp-date: ['Mon, 19 Sep 2016 18:37:08 GMT']
-    method: POST
-    uri: https://pythonsdktest.eastus.batch.azure.com/jobs/python_test_job/tasks/python_task_1/terminate?api-version=2016-07-01.3.1
-  response:
-    body: {string: !!python/unicode ''}
-    headers:
-      content-length: ['0']
-      dataserviceid: ['https://pythonsdktest.eastus.batch.azure.com/jobs/python_test_job/tasks/python_task_1/terminate']
-      dataserviceversion: ['3.0']
-      date: ['Mon, 19 Sep 2016 18:37:09 GMT']
-      etag: ['0x8D3E0BBF71A9B89']
-      last-modified: ['Mon, 19 Sep 2016 18:37:09 GMT']
-      request-id: [5f1484da-b0b2-4a31-b0f5-d5f2b3070983]
-      server: [Microsoft-HTTPAPI/2.0]
-      strict-transport-security: [max-age=31536000; includeSubDomains]
-    status: {code: 204, message: No Content}
-- request:
-    body: null
-    headers:
-      Accept: [application/json]
-      Accept-Encoding: ['gzip, deflate']
-      Connection: [keep-alive]
-      Content-Type: [application/json; odata=minimalmetadata; charset=utf-8]
-      User-Agent: [python/2.7.9 (Windows-8-6.2.9200) requests/2.7.0 msrest/0.4.3 msrest_azure/0.4.2
-          batchserviceclient/1.0.0 Azure-SDK-For-Python]
-      accept-language: [en-US]
-      client-request-id: [1221e9c0-7e98-11e6-bb5b-54ee750f2fc7]
-      ocp-date: ['Mon, 19 Sep 2016 18:37:08 GMT']
-    method: GET
-    uri: https://pythonsdktest.eastus.batch.azure.com/jobs/python_test_job/tasks/python_task_1?api-version=2016-07-01.3.1
-  response:
-    body: {string: !!python/unicode "{\r\n  \"odata.metadata\":\"https://pythonsdktest.eastus.batch.azure.com/$metadata#tasks/@Element\"\
-        ,\"id\":\"python_task_1\",\"url\":\"https://pythonsdktest.eastus.batch.azure.com/jobs/python_test_job/tasks/python_task_1\"\
-        ,\"eTag\":\"0x8D3E0BBF71A9B89\",\"creationTime\":\"2016-09-19T18:37:08.5068339Z\"\
-        ,\"lastModified\":\"2016-09-19T18:37:09.8594185Z\",\"state\":\"completed\"\
-        ,\"stateTransitionTime\":\"2016-09-19T18:37:09.8594185Z\",\"previousState\"\
-        :\"active\",\"previousStateTransitionTime\":\"2016-09-19T18:37:08.5068339Z\"\
-        ,\"commandLine\":\"cmd /c echo hello world\",\"runElevated\":false,\"constraints\"\
-        :{\r\n    \"maxWallClockTime\":\"P10675199DT2H48M5.4775807S\",\"retentionTime\"\
-        :\"P10675199DT2H48M5.4775807S\",\"maxTaskRetryCount\":1\r\n  },\"executionInfo\"\
-        :{\r\n    \"endTime\":\"2016-09-19T18:37:09.8594185Z\",\"schedulingError\"\
-        :{\r\n      \"category\":\"UserError\",\"code\":\"TaskEnded\",\"message\"\
-        :\"Task Was Ended by User Request\"\r\n    },\"retryCount\":0,\"requeueCount\"\
-        :0\r\n  },\"nodeInfo\":{\r\n    \r\n  }\r\n}"}
-    headers:
-      content-type: [application/json;odata=minimalmetadata]
-      dataserviceversion: ['3.0']
-      date: ['Mon, 19 Sep 2016 18:37:10 GMT']
-      etag: ['0x8D3E0BBF71A9B89']
-      last-modified: ['Mon, 19 Sep 2016 18:37:09 GMT']
-      request-id: [85c0b391-63c2-48a4-8cdf-e38b67419aa7]
-      server: [Microsoft-HTTPAPI/2.0]
-      strict-transport-security: [max-age=31536000; includeSubDomains]
-      transfer-encoding: [chunked]
-    status: {code: 200, message: OK}
-- request:
-    body: null
-    headers:
-      Accept: [application/json]
-      Accept-Encoding: ['gzip, deflate']
-      Connection: [keep-alive]
-      Content-Length: ['0']
-      Content-Type: [application/json; odata=minimalmetadata; charset=utf-8]
-      User-Agent: [python/2.7.9 (Windows-8-6.2.9200) requests/2.7.0 msrest/0.4.3 msrest_azure/0.4.2
-          batchserviceclient/1.0.0 Azure-SDK-For-Python]
-      accept-language: [en-US]
-      client-request-id: [125c5aae-7e98-11e6-a188-54ee750f2fc7]
-      ocp-date: ['Mon, 19 Sep 2016 18:37:08 GMT']
-    method: POST
-    uri: https://pythonsdktest.eastus.batch.azure.com/jobs/python_test_job/tasks/python_task_1/reactivate?api-version=2016-07-01.3.1
-  response:
-    body: {string: !!python/unicode ''}
-    headers:
-      content-length: ['0']
-      dataserviceversion: ['3.0']
-      date: ['Mon, 19 Sep 2016 18:37:11 GMT']
-      etag: ['0x8D3E0BBF7CF8C46']
-      last-modified: ['Mon, 19 Sep 2016 18:37:11 GMT']
-      request-id: [0410fc05-db12-44d4-b5ff-9eb2ed084413]
-      server: [Microsoft-HTTPAPI/2.0]
-      strict-transport-security: [max-age=31536000; includeSubDomains]
-    status: {code: 204, message: No Content}
-- request:
-    body: null
-    headers:
-      Accept: [application/json]
-      Accept-Encoding: ['gzip, deflate']
-      Connection: [keep-alive]
-      Content-Type: [application/json; odata=minimalmetadata; charset=utf-8]
-      User-Agent: [python/2.7.9 (Windows-8-6.2.9200) requests/2.7.0 msrest/0.4.3 msrest_azure/0.4.2
-          batchserviceclient/1.0.0 Azure-SDK-For-Python]
-      accept-language: [en-US]
-      client-request-id: [12b5c54f-7e98-11e6-a41d-54ee750f2fc7]
-      ocp-date: ['Mon, 19 Sep 2016 18:37:09 GMT']
-    method: GET
-    uri: https://pythonsdktest.eastus.batch.azure.com/jobs/python_test_job/tasks/python_task_1?api-version=2016-07-01.3.1
-  response:
-    body: {string: !!python/unicode "{\r\n  \"odata.metadata\":\"https://pythonsdktest.eastus.batch.azure.com/$metadata#tasks/@Element\"\
-        ,\"id\":\"python_task_1\",\"url\":\"https://pythonsdktest.eastus.batch.azure.com/jobs/python_test_job/tasks/python_task_1\"\
-        ,\"eTag\":\"0x8D3E0BBF7CF8C46\",\"creationTime\":\"2016-09-19T18:37:08.5068339Z\"\
-        ,\"lastModified\":\"2016-09-19T18:37:11.0452294Z\",\"state\":\"active\",\"\
-        stateTransitionTime\":\"2016-09-19T18:37:11.0452294Z\",\"previousState\":\"\
-        completed\",\"previousStateTransitionTime\":\"2016-09-19T18:37:09.8594185Z\"\
-        ,\"commandLine\":\"cmd /c echo hello world\",\"runElevated\":false,\"constraints\"\
-        :{\r\n    \"maxWallClockTime\":\"P10675199DT2H48M5.4775807S\",\"retentionTime\"\
-        :\"P10675199DT2H48M5.4775807S\",\"maxTaskRetryCount\":1\r\n  },\"executionInfo\"\
-        :{\r\n    \"retryCount\":0,\"requeueCount\":0\r\n  }\r\n}"}
-    headers:
-      content-type: [application/json;odata=minimalmetadata]
-      dataserviceversion: ['3.0']
-      date: ['Mon, 19 Sep 2016 18:37:10 GMT']
-      etag: ['0x8D3E0BBF7CF8C46']
-      last-modified: ['Mon, 19 Sep 2016 18:37:11 GMT']
-      request-id: [eb4d1518-49c4-478e-aa61-9b976f6cf9e8]
-      server: [Microsoft-HTTPAPI/2.0]
-      strict-transport-security: [max-age=31536000; includeSubDomains]
-      transfer-encoding: [chunked]
-    status: {code: 200, message: OK}
-- request:
-    body: '{"commandLine": "cmd /c echo hello world", "id": "python_task_2"}'
-    headers:
-      Accept: [application/json]
-      Accept-Encoding: ['gzip, deflate']
-      Connection: [keep-alive]
-      Content-Length: ['65']
-      Content-Type: [application/json; odata=minimalmetadata; charset=utf-8]
-      User-Agent: [python/2.7.9 (Windows-8-6.2.9200) requests/2.7.0 msrest/0.4.3 msrest_azure/0.4.2
-          batchserviceclient/1.0.0 Azure-SDK-For-Python]
-      accept-language: [en-US]
-      client-request-id: [12f1e3f0-7e98-11e6-a5bf-54ee750f2fc7]
-      ocp-date: ['Mon, 19 Sep 2016 18:37:09 GMT']
-    method: POST
-    uri: https://pythonsdktest.eastus.batch.azure.com/jobs/python_test_job/tasks?api-version=2016-07-01.3.1
-  response:
-    body: {string: !!python/unicode ''}
-    headers:
-      dataserviceid: ['https://pythonsdktest.eastus.batch.azure.com/jobs/python_test_job/tasks/python_task_2']
-      dataserviceversion: ['3.0']
-      date: ['Mon, 19 Sep 2016 18:37:10 GMT']
-      etag: ['0x8D3E0BBF7C6A438']
-      last-modified: ['Mon, 19 Sep 2016 18:37:10 GMT']
-      location: ['https://pythonsdktest.eastus.batch.azure.com/jobs/python_test_job/tasks/python_task_2']
-      request-id: [4cbf7bfb-f619-4e8a-9be7-4669e454bfdb]
-      server: [Microsoft-HTTPAPI/2.0]
-      strict-transport-security: [max-age=31536000; includeSubDomains]
-      transfer-encoding: [chunked]
-    status: {code: 201, message: Created}
-- request:
-    body: '{"constraints": {"maxTaskRetryCount": 1}}'
+    body: !!binary |
+      eyJjb25zdHJhaW50cyI6IHsibWF4VGFza1JldHJ5Q291bnQiOiAxfX0=
     headers:
       Accept: [application/json]
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
       Content-Length: ['41']
       Content-Type: [application/json; odata=minimalmetadata; charset=utf-8]
-      User-Agent: [python/2.7.9 (Windows-8-6.2.9200) requests/2.7.0 msrest/0.4.3 msrest_azure/0.4.2
-          batchserviceclient/1.0.0 Azure-SDK-For-Python]
+      User-Agent: [python/3.5.1 (Windows-8.1-6.3.9600-SP0) requests/2.9.1 msrest/0.4.4
+          msrest_azure/0.4.3 batchserviceclient/2.0.0RC1 Azure-SDK-For-Python]
       accept-language: [en-US]
-      client-request-id: [132fb040-7e98-11e6-b6ad-54ee750f2fc7]
-      ocp-date: ['Mon, 19 Sep 2016 18:37:10 GMT']
+      client-request-id: [18fa7fa6-ec9e-11e6-8246-54ee750f2fc7]
+      ocp-date: ['Mon, 06 Feb 2017 18:57:24 GMT']
     method: PUT
-    uri: https://pythonsdktest.eastus.batch.azure.com/jobs/python_test_job/tasks/python_task_2?api-version=2016-07-01.3.1
+    uri: https://pythonsdktest.eastus.batch.azure.com/jobs/python_test_job/tasks/python_task_2?api-version=2017-01-01.4.0
   response:
-    body: {string: !!python/unicode ''}
+    body: {string: ''}
     headers:
-      dataserviceid: ['https://pythonsdktest.eastus.batch.azure.com/jobs/python_test_job/tasks/python_task_2']
-      dataserviceversion: ['3.0']
-      date: ['Mon, 19 Sep 2016 18:37:11 GMT']
-      etag: ['0x8D3E0BBF7C9BB00']
-      last-modified: ['Mon, 19 Sep 2016 18:37:11 GMT']
-      request-id: [fc36e309-406b-4a42-b15e-02a20f23da35]
-      server: [Microsoft-HTTPAPI/2.0]
-      strict-transport-security: [max-age=31536000; includeSubDomains]
-      transfer-encoding: [chunked]
+      DataServiceId: ['https://pythonsdktest.eastus.batch.azure.com/jobs/python_test_job/tasks/python_task_2']
+      DataServiceVersion: ['3.0']
+      Date: ['Mon, 06 Feb 2017 18:57:25 GMT']
+      ETag: ['0x8D44EC1FD6B7C2C']
+      Last-Modified: ['Mon, 06 Feb 2017 18:57:25 GMT']
+      Server: [Microsoft-HTTPAPI/2.0]
+      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
+      Transfer-Encoding: [chunked]
+      X-Content-Type-Options: [nosniff]
+      request-id: [4f3d31a6-ba68-43e3-a9c5-098971e6efb9]
     status: {code: 200, message: OK}
 - request:
-    body: '{"value": [{"commandLine": "cmd /c echo hello world", "id": "python_task_3"},
-      {"commandLine": "cmd /c echo hello world", "id": "python_task_4"}, {"commandLine":
-      "cmd /c echo hello world", "id": "python_task_5"}]}'
+    body: !!binary |
+      eyJ2YWx1ZSI6IFt7ImNvbW1hbmRMaW5lIjogImNtZCAvYyBlY2hvIGhlbGxvIHdvcmxkIiwgImlk
+      IjogInB5dGhvbl90YXNrXzMifSwgeyJjb21tYW5kTGluZSI6ICJjbWQgL2MgZWNobyBoZWxsbyB3
+      b3JsZCIsICJpZCI6ICJweXRob25fdGFza180In0sIHsiY29tbWFuZExpbmUiOiAiY21kIC9jIGVj
+      aG8gaGVsbG8gd29ybGQiLCAiaWQiOiAicHl0aG9uX3Rhc2tfNSJ9XX0=
     headers:
       Accept: [application/json]
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
       Content-Length: ['212']
       Content-Type: [application/json; odata=minimalmetadata; charset=utf-8]
-      User-Agent: [python/2.7.9 (Windows-8-6.2.9200) requests/2.7.0 msrest/0.4.3 msrest_azure/0.4.2
-          batchserviceclient/1.0.0 Azure-SDK-For-Python]
+      User-Agent: [python/3.5.1 (Windows-8.1-6.3.9600-SP0) requests/2.9.1 msrest/0.4.4
+          msrest_azure/0.4.3 batchserviceclient/2.0.0RC1 Azure-SDK-For-Python]
       accept-language: [en-US]
-      client-request-id: [13821600-7e98-11e6-a7cd-54ee750f2fc7]
-      ocp-date: ['Mon, 19 Sep 2016 18:37:10 GMT']
+      client-request-id: [1977a40c-ec9e-11e6-b93c-54ee750f2fc7]
+      ocp-date: ['Mon, 06 Feb 2017 18:57:25 GMT']
     method: POST
-    uri: https://pythonsdktest.eastus.batch.azure.com/jobs/python_test_job/addtaskcollection?api-version=2016-07-01.3.1
+    uri: https://pythonsdktest.eastus.batch.azure.com/jobs/python_test_job/addtaskcollection?api-version=2017-01-01.4.0
   response:
-    body: {string: !!python/unicode "{\r\n  \"odata.metadata\":\"https://pythonsdktest.eastus.batch.azure.com/$metadata#taskaddresult\"\
+    body: {string: "{\r\n  \"odata.metadata\":\"https://pythonsdktest.eastus.batch.azure.com/$metadata#taskaddresult\"\
         ,\"value\":[\r\n    {\r\n      \"status\":\"Success\",\"taskId\":\"python_task_3\"\
-        ,\"eTag\":\"0x8D3E0BBF7A8EA5D\",\"lastModified\":\"2016-09-19T18:37:10.7920477Z\"\
+        ,\"eTag\":\"0x8D44EC1FDC77D98\",\"lastModified\":\"2017-02-06T18:57:25.944668Z\"\
         ,\"location\":\"https://pythonsdktest.eastus.batch.azure.com/jobs/python_test_job/tasks/python_task_3\"\
         \r\n    },{\r\n      \"status\":\"Success\",\"taskId\":\"python_task_5\",\"\
-        eTag\":\"0x8D3E0BBF7A9AD94\",\"lastModified\":\"2016-09-19T18:37:10.7970452Z\"\
+        eTag\":\"0x8D44EC1FDCA6BC0\",\"lastModified\":\"2017-02-06T18:57:25.963872Z\"\
         ,\"location\":\"https://pythonsdktest.eastus.batch.azure.com/jobs/python_test_job/tasks/python_task_5\"\
         \r\n    },{\r\n      \"status\":\"Success\",\"taskId\":\"python_task_4\",\"\
-        eTag\":\"0x8D3E0BBF7AF2C14\",\"lastModified\":\"2016-09-19T18:37:10.8330516Z\"\
+        eTag\":\"0x8D44EC1FDCFEA71\",\"lastModified\":\"2017-02-06T18:57:25.9998833Z\"\
         ,\"location\":\"https://pythonsdktest.eastus.batch.azure.com/jobs/python_test_job/tasks/python_task_4\"\
         \r\n    }\r\n  ]\r\n}"}
     headers:
-      content-type: [application/json;odata=minimalmetadata]
-      dataserviceversion: ['3.0']
-      date: ['Mon, 19 Sep 2016 18:37:10 GMT']
-      request-id: [0c98b895-17b4-4c80-b733-09420433e667]
-      server: [Microsoft-HTTPAPI/2.0]
-      strict-transport-security: [max-age=31536000; includeSubDomains]
-      transfer-encoding: [chunked]
+      Content-Type: [application/json;odata=minimalmetadata]
+      DataServiceVersion: ['3.0']
+      Date: ['Mon, 06 Feb 2017 18:57:25 GMT']
+      Server: [Microsoft-HTTPAPI/2.0]
+      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
+      Transfer-Encoding: [chunked]
+      X-Content-Type-Options: [nosniff]
+      request-id: [1cb14440-ae51-4f81-bfd5-650da05dd388]
     status: {code: 200, message: OK}
 - request:
     body: null
@@ -1044,65 +1115,77 @@ interactions:
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
       Content-Type: [application/json; odata=minimalmetadata; charset=utf-8]
-      User-Agent: [python/2.7.9 (Windows-8-6.2.9200) requests/2.7.0 msrest/0.4.3 msrest_azure/0.4.2
-          batchserviceclient/1.0.0 Azure-SDK-For-Python]
+      User-Agent: [python/3.5.1 (Windows-8.1-6.3.9600-SP0) requests/2.9.1 msrest/0.4.4
+          msrest_azure/0.4.3 batchserviceclient/2.0.0RC1 Azure-SDK-For-Python]
       accept-language: [en-US]
-      client-request-id: [13c9a64f-7e98-11e6-b620-54ee750f2fc7]
-      ocp-date: ['Mon, 19 Sep 2016 18:37:11 GMT']
+      client-request-id: [19deaaac-ec9e-11e6-a948-54ee750f2fc7]
+      ocp-date: ['Mon, 06 Feb 2017 18:57:26 GMT']
     method: GET
-    uri: https://pythonsdktest.eastus.batch.azure.com/jobs/python_test_job/tasks?api-version=2016-07-01.3.1
+    uri: https://pythonsdktest.eastus.batch.azure.com/jobs/python_test_job/tasks?api-version=2017-01-01.4.0
   response:
-    body: {string: !!python/unicode "{\r\n  \"odata.metadata\":\"https://pythonsdktest.eastus.batch.azure.com/$metadata#tasks\"\
+    body: {string: "{\r\n  \"odata.metadata\":\"https://pythonsdktest.eastus.batch.azure.com/$metadata#tasks\"\
         ,\"value\":[\r\n    {\r\n      \"id\":\"python_task_1\",\"url\":\"https://pythonsdktest.eastus.batch.azure.com/jobs/python_test_job/tasks/python_task_1\"\
-        ,\"eTag\":\"0x8D3E0BBF7CF8C46\",\"creationTime\":\"2016-09-19T18:37:08.5068339Z\"\
-        ,\"lastModified\":\"2016-09-19T18:37:11.0452294Z\",\"state\":\"active\",\"\
-        stateTransitionTime\":\"2016-09-19T18:37:11.0452294Z\",\"previousState\":\"\
-        completed\",\"previousStateTransitionTime\":\"2016-09-19T18:37:09.8594185Z\"\
-        ,\"commandLine\":\"cmd /c echo hello world\",\"runElevated\":false,\"constraints\"\
-        :{\r\n        \"maxWallClockTime\":\"P10675199DT2H48M5.4775807S\",\"retentionTime\"\
-        :\"P10675199DT2H48M5.4775807S\",\"maxTaskRetryCount\":1\r\n      },\"executionInfo\"\
-        :{\r\n        \"retryCount\":0,\"requeueCount\":0\r\n      }\r\n    },{\r\n\
-        \      \"id\":\"python_task_2\",\"url\":\"https://pythonsdktest.eastus.batch.azure.com/jobs/python_test_job/tasks/python_task_2\"\
-        ,\"eTag\":\"0x8D3E0BBF7C9BB00\",\"creationTime\":\"2016-09-19T18:37:10.98686Z\"\
-        ,\"lastModified\":\"2016-09-19T18:37:11.007104Z\",\"state\":\"active\",\"\
-        stateTransitionTime\":\"2016-09-19T18:37:10.98686Z\",\"commandLine\":\"cmd\
-        \ /c echo hello world\",\"runElevated\":false,\"constraints\":{\r\n      \
-        \  \"maxWallClockTime\":\"P10675199DT2H48M5.4775807S\",\"retentionTime\":\"\
-        P10675199DT2H48M5.4775807S\",\"maxTaskRetryCount\":1\r\n      },\"executionInfo\"\
-        :{\r\n        \"retryCount\":0,\"requeueCount\":0\r\n      }\r\n    },{\r\n\
-        \      \"id\":\"python_task_3\",\"url\":\"https://pythonsdktest.eastus.batch.azure.com/jobs/python_test_job/tasks/python_task_3\"\
-        ,\"eTag\":\"0x8D3E0BBF7A8EA5D\",\"creationTime\":\"2016-09-19T18:37:10.7920477Z\"\
-        ,\"lastModified\":\"2016-09-19T18:37:10.7920477Z\",\"state\":\"active\",\"\
-        stateTransitionTime\":\"2016-09-19T18:37:10.7920477Z\",\"commandLine\":\"\
-        cmd /c echo hello world\",\"runElevated\":false,\"constraints\":{\r\n    \
-        \    \"maxWallClockTime\":\"P10675199DT2H48M5.4775807S\",\"retentionTime\"\
-        :\"P10675199DT2H48M5.4775807S\",\"maxTaskRetryCount\":1\r\n      },\"executionInfo\"\
-        :{\r\n        \"retryCount\":0,\"requeueCount\":0\r\n      }\r\n    },{\r\n\
-        \      \"id\":\"python_task_4\",\"url\":\"https://pythonsdktest.eastus.batch.azure.com/jobs/python_test_job/tasks/python_task_4\"\
-        ,\"eTag\":\"0x8D3E0BBF7AF2C14\",\"creationTime\":\"2016-09-19T18:37:10.8330516Z\"\
-        ,\"lastModified\":\"2016-09-19T18:37:10.8330516Z\",\"state\":\"active\",\"\
-        stateTransitionTime\":\"2016-09-19T18:37:10.8330516Z\",\"commandLine\":\"\
-        cmd /c echo hello world\",\"runElevated\":false,\"constraints\":{\r\n    \
-        \    \"maxWallClockTime\":\"P10675199DT2H48M5.4775807S\",\"retentionTime\"\
-        :\"P10675199DT2H48M5.4775807S\",\"maxTaskRetryCount\":1\r\n      },\"executionInfo\"\
-        :{\r\n        \"retryCount\":0,\"requeueCount\":0\r\n      }\r\n    },{\r\n\
-        \      \"id\":\"python_task_5\",\"url\":\"https://pythonsdktest.eastus.batch.azure.com/jobs/python_test_job/tasks/python_task_5\"\
-        ,\"eTag\":\"0x8D3E0BBF7A9AD94\",\"creationTime\":\"2016-09-19T18:37:10.7970452Z\"\
-        ,\"lastModified\":\"2016-09-19T18:37:10.7970452Z\",\"state\":\"active\",\"\
-        stateTransitionTime\":\"2016-09-19T18:37:10.7970452Z\",\"commandLine\":\"\
-        cmd /c echo hello world\",\"runElevated\":false,\"constraints\":{\r\n    \
-        \    \"maxWallClockTime\":\"P10675199DT2H48M5.4775807S\",\"retentionTime\"\
-        :\"P10675199DT2H48M5.4775807S\",\"maxTaskRetryCount\":1\r\n      },\"executionInfo\"\
-        :{\r\n        \"retryCount\":0,\"requeueCount\":0\r\n      }\r\n    }\r\n\
-        \  ]\r\n}"}
+        ,\"eTag\":\"0x8D44EC1FB91D5A6\",\"creationTime\":\"2017-02-06T18:57:20.5762724Z\"\
+        ,\"lastModified\":\"2017-02-06T18:57:22.2375846Z\",\"state\":\"running\",\"\
+        stateTransitionTime\":\"2017-02-06T18:57:25.9505067Z\",\"previousState\":\"\
+        active\",\"previousStateTransitionTime\":\"2017-02-06T18:57:22.2375846Z\"\
+        ,\"commandLine\":\"cmd /c echo hello world\",\"userIdentity\":{\r\n      \
+        \  \"autoUser\":{\r\n          \"scope\":\"task\",\"elevationLevel\":\"nonadmin\"\
+        \r\n        }\r\n      },\"constraints\":{\r\n        \"maxWallClockTime\"\
+        :\"P10675199DT2H48M5.4775807S\",\"retentionTime\":\"P10675199DT2H48M5.4775807S\"\
+        ,\"maxTaskRetryCount\":1\r\n      },\"executionInfo\":{\r\n        \"startTime\"\
+        :\"2017-02-06T18:57:25.9505067Z\",\"retryCount\":0,\"requeueCount\":0\r\n\
+        \      },\"nodeInfo\":{\r\n        \"affinityId\":\"TVM:tvm-587366007_2-20170206t185221z\"\
+        ,\"nodeUrl\":\"https://pythonsdktest.eastus.batch.azure.com/pools/python_test_pool_4/nodes/tvm-587366007_2-20170206t185221z\"\
+        ,\"poolId\":\"python_test_pool_4\",\"nodeId\":\"tvm-587366007_2-20170206t185221z\"\
+        ,\"taskRootDirectory\":\"workitems\\\\python_test_job\\\\job-1\\\\python_task_1\"\
+        ,\"taskRootDirectoryUrl\":\"https://pythonsdktest.eastus.batch.azure.com/pools/python_test_pool_4/nodes/tvm-587366007_2-20170206t185221z/files/workitems/python_test_job/job-1/python_task_1\"\
+        \r\n      }\r\n    },{\r\n      \"id\":\"python_task_2\",\"url\":\"https://pythonsdktest.eastus.batch.azure.com/jobs/python_test_job/tasks/python_task_2\"\
+        ,\"eTag\":\"0x8D44EC1FD6B7C2C\",\"creationTime\":\"2017-02-06T18:57:23.9257508Z\"\
+        ,\"lastModified\":\"2017-02-06T18:57:25.3417004Z\",\"state\":\"active\",\"\
+        stateTransitionTime\":\"2017-02-06T18:57:23.9257508Z\",\"commandLine\":\"\
+        cmd /c echo hello world\",\"userIdentity\":{\r\n        \"autoUser\":{\r\n\
+        \          \"scope\":\"task\",\"elevationLevel\":\"nonadmin\"\r\n        }\r\
+        \n      },\"constraints\":{\r\n        \"maxWallClockTime\":\"P10675199DT2H48M5.4775807S\"\
+        ,\"retentionTime\":\"P10675199DT2H48M5.4775807S\",\"maxTaskRetryCount\":1\r\
+        \n      },\"executionInfo\":{\r\n        \"retryCount\":0,\"requeueCount\"\
+        :0\r\n      }\r\n    },{\r\n      \"id\":\"python_task_3\",\"url\":\"https://pythonsdktest.eastus.batch.azure.com/jobs/python_test_job/tasks/python_task_3\"\
+        ,\"eTag\":\"0x8D44EC1FDC77D98\",\"creationTime\":\"2017-02-06T18:57:25.944668Z\"\
+        ,\"lastModified\":\"2017-02-06T18:57:25.944668Z\",\"state\":\"active\",\"\
+        stateTransitionTime\":\"2017-02-06T18:57:25.944668Z\",\"commandLine\":\"cmd\
+        \ /c echo hello world\",\"userIdentity\":{\r\n        \"autoUser\":{\r\n \
+        \         \"scope\":\"task\",\"elevationLevel\":\"nonadmin\"\r\n        }\r\
+        \n      },\"constraints\":{\r\n        \"maxWallClockTime\":\"P10675199DT2H48M5.4775807S\"\
+        ,\"retentionTime\":\"P10675199DT2H48M5.4775807S\",\"maxTaskRetryCount\":1\r\
+        \n      },\"executionInfo\":{\r\n        \"retryCount\":0,\"requeueCount\"\
+        :0\r\n      }\r\n    },{\r\n      \"id\":\"python_task_4\",\"url\":\"https://pythonsdktest.eastus.batch.azure.com/jobs/python_test_job/tasks/python_task_4\"\
+        ,\"eTag\":\"0x8D44EC1FDCFEA71\",\"creationTime\":\"2017-02-06T18:57:25.9998833Z\"\
+        ,\"lastModified\":\"2017-02-06T18:57:25.9998833Z\",\"state\":\"active\",\"\
+        stateTransitionTime\":\"2017-02-06T18:57:25.9998833Z\",\"commandLine\":\"\
+        cmd /c echo hello world\",\"userIdentity\":{\r\n        \"autoUser\":{\r\n\
+        \          \"scope\":\"task\",\"elevationLevel\":\"nonadmin\"\r\n        }\r\
+        \n      },\"constraints\":{\r\n        \"maxWallClockTime\":\"P10675199DT2H48M5.4775807S\"\
+        ,\"retentionTime\":\"P10675199DT2H48M5.4775807S\",\"maxTaskRetryCount\":1\r\
+        \n      },\"executionInfo\":{\r\n        \"retryCount\":0,\"requeueCount\"\
+        :0\r\n      }\r\n    },{\r\n      \"id\":\"python_task_5\",\"url\":\"https://pythonsdktest.eastus.batch.azure.com/jobs/python_test_job/tasks/python_task_5\"\
+        ,\"eTag\":\"0x8D44EC1FDCA6BC0\",\"creationTime\":\"2017-02-06T18:57:25.963872Z\"\
+        ,\"lastModified\":\"2017-02-06T18:57:25.963872Z\",\"state\":\"active\",\"\
+        stateTransitionTime\":\"2017-02-06T18:57:25.963872Z\",\"commandLine\":\"cmd\
+        \ /c echo hello world\",\"userIdentity\":{\r\n        \"autoUser\":{\r\n \
+        \         \"scope\":\"task\",\"elevationLevel\":\"nonadmin\"\r\n        }\r\
+        \n      },\"constraints\":{\r\n        \"maxWallClockTime\":\"P10675199DT2H48M5.4775807S\"\
+        ,\"retentionTime\":\"P10675199DT2H48M5.4775807S\",\"maxTaskRetryCount\":1\r\
+        \n      },\"executionInfo\":{\r\n        \"retryCount\":0,\"requeueCount\"\
+        :0\r\n      }\r\n    }\r\n  ]\r\n}"}
     headers:
-      content-type: [application/json;odata=minimalmetadata]
-      dataserviceversion: ['3.0']
-      date: ['Mon, 19 Sep 2016 18:37:10 GMT']
-      request-id: [d6239556-4793-4890-88d5-f71ae4468097]
-      server: [Microsoft-HTTPAPI/2.0]
-      strict-transport-security: [max-age=31536000; includeSubDomains]
-      transfer-encoding: [chunked]
+      Content-Type: [application/json;odata=minimalmetadata]
+      DataServiceVersion: ['3.0']
+      Date: ['Mon, 06 Feb 2017 18:57:26 GMT']
+      Server: [Microsoft-HTTPAPI/2.0]
+      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
+      Transfer-Encoding: [chunked]
+      X-Content-Type-Options: [nosniff]
+      request-id: [6aafdfc3-dc56-4354-bd65-6a83387674aa]
     status: {code: 200, message: OK}
 - request:
     body: null
@@ -1111,33 +1194,36 @@ interactions:
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
       Content-Type: [application/json; odata=minimalmetadata; charset=utf-8]
-      User-Agent: [python/2.7.9 (Windows-8-6.2.9200) requests/2.7.0 msrest/0.4.3 msrest_azure/0.4.2
-          batchserviceclient/1.0.0 Azure-SDK-For-Python]
+      User-Agent: [python/3.5.1 (Windows-8.1-6.3.9600-SP0) requests/2.9.1 msrest/0.4.4
+          msrest_azure/0.4.3 batchserviceclient/2.0.0RC1 Azure-SDK-For-Python]
       accept-language: [en-US]
-      client-request-id: [1407729e-7e98-11e6-9fd8-54ee750f2fc7]
-      ocp-date: ['Mon, 19 Sep 2016 18:37:11 GMT']
+      client-request-id: [1a43e034-ec9e-11e6-9015-54ee750f2fc7]
+      ocp-date: ['Mon, 06 Feb 2017 18:57:27 GMT']
     method: GET
-    uri: https://pythonsdktest.eastus.batch.azure.com/jobs/python_test_job/tasks/python_task_2?api-version=2016-07-01.3.1
+    uri: https://pythonsdktest.eastus.batch.azure.com/jobs/python_test_job/tasks/python_task_2?api-version=2017-01-01.4.0
   response:
-    body: {string: !!python/unicode "{\r\n  \"odata.metadata\":\"https://pythonsdktest.eastus.batch.azure.com/$metadata#tasks/@Element\"\
+    body: {string: "{\r\n  \"odata.metadata\":\"https://pythonsdktest.eastus.batch.azure.com/$metadata#tasks/@Element\"\
         ,\"id\":\"python_task_2\",\"url\":\"https://pythonsdktest.eastus.batch.azure.com/jobs/python_test_job/tasks/python_task_2\"\
-        ,\"eTag\":\"0x8D3E0BBF7C9BB00\",\"creationTime\":\"2016-09-19T18:37:10.98686Z\"\
-        ,\"lastModified\":\"2016-09-19T18:37:11.007104Z\",\"state\":\"active\",\"\
-        stateTransitionTime\":\"2016-09-19T18:37:10.98686Z\",\"commandLine\":\"cmd\
-        \ /c echo hello world\",\"runElevated\":false,\"constraints\":{\r\n    \"\
-        maxWallClockTime\":\"P10675199DT2H48M5.4775807S\",\"retentionTime\":\"P10675199DT2H48M5.4775807S\"\
-        ,\"maxTaskRetryCount\":1\r\n  },\"executionInfo\":{\r\n    \"retryCount\"\
-        :0,\"requeueCount\":0\r\n  }\r\n}"}
+        ,\"eTag\":\"0x8D44EC1FD6B7C2C\",\"creationTime\":\"2017-02-06T18:57:23.9257508Z\"\
+        ,\"lastModified\":\"2017-02-06T18:57:25.3417004Z\",\"state\":\"active\",\"\
+        stateTransitionTime\":\"2017-02-06T18:57:23.9257508Z\",\"commandLine\":\"\
+        cmd /c echo hello world\",\"userIdentity\":{\r\n    \"autoUser\":{\r\n   \
+        \   \"scope\":\"task\",\"elevationLevel\":\"nonadmin\"\r\n    }\r\n  },\"\
+        constraints\":{\r\n    \"maxWallClockTime\":\"P10675199DT2H48M5.4775807S\"\
+        ,\"retentionTime\":\"P10675199DT2H48M5.4775807S\",\"maxTaskRetryCount\":1\r\
+        \n  },\"executionInfo\":{\r\n    \"retryCount\":0,\"requeueCount\":0\r\n \
+        \ }\r\n}"}
     headers:
-      content-type: [application/json;odata=minimalmetadata]
-      dataserviceversion: ['3.0']
-      date: ['Mon, 19 Sep 2016 18:37:11 GMT']
-      etag: ['0x8D3E0BBF7C9BB00']
-      last-modified: ['Mon, 19 Sep 2016 18:37:11 GMT']
-      request-id: [957393df-668e-4297-b527-e4c3e0b4b371]
-      server: [Microsoft-HTTPAPI/2.0]
-      strict-transport-security: [max-age=31536000; includeSubDomains]
-      transfer-encoding: [chunked]
+      Content-Type: [application/json;odata=minimalmetadata]
+      DataServiceVersion: ['3.0']
+      Date: ['Mon, 06 Feb 2017 18:57:27 GMT']
+      ETag: ['0x8D44EC1FD6B7C2C']
+      Last-Modified: ['Mon, 06 Feb 2017 18:57:25 GMT']
+      Server: [Microsoft-HTTPAPI/2.0]
+      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
+      Transfer-Encoding: [chunked]
+      X-Content-Type-Options: [nosniff]
+      request-id: [64f8b5cf-6660-4eb1-b93a-d67acfd7bad0]
     status: {code: 200, message: OK}
 - request:
     body: null
@@ -1146,24 +1232,25 @@ interactions:
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
       Content-Type: [application/json; odata=minimalmetadata; charset=utf-8]
-      User-Agent: [python/2.7.9 (Windows-8-6.2.9200) requests/2.7.0 msrest/0.4.3 msrest_azure/0.4.2
-          batchserviceclient/1.0.0 Azure-SDK-For-Python]
+      User-Agent: [python/3.5.1 (Windows-8.1-6.3.9600-SP0) requests/2.9.1 msrest/0.4.4
+          msrest_azure/0.4.3 batchserviceclient/2.0.0RC1 Azure-SDK-For-Python]
       accept-language: [en-US]
-      client-request-id: [144713b0-7e98-11e6-8bb3-54ee750f2fc7]
-      ocp-date: ['Mon, 19 Sep 2016 18:37:12 GMT']
+      client-request-id: [1aa2fc3a-ec9e-11e6-ac4b-54ee750f2fc7]
+      ocp-date: ['Mon, 06 Feb 2017 18:57:27 GMT']
     method: GET
-    uri: https://pythonsdktest.eastus.batch.azure.com/jobs/python_test_job/tasks/python_task_2/subtasksinfo?api-version=2016-07-01.3.1
+    uri: https://pythonsdktest.eastus.batch.azure.com/jobs/python_test_job/tasks/python_task_2/subtasksinfo?api-version=2017-01-01.4.0
   response:
-    body: {string: !!python/unicode "{\r\n  \"odata.metadata\":\"https://pythonsdktest.eastus.batch.azure.com/$metadata#subtaskinfo\"\
+    body: {string: "{\r\n  \"odata.metadata\":\"https://pythonsdktest.eastus.batch.azure.com/$metadata#subtaskinfo\"\
         ,\"value\":[\r\n    \r\n  ]\r\n}"}
     headers:
-      content-type: [application/json;odata=minimalmetadata]
-      dataserviceversion: ['3.0']
-      date: ['Mon, 19 Sep 2016 18:37:12 GMT']
-      request-id: [43d55b03-5301-4b7e-9d92-9c8097f9daf5]
-      server: [Microsoft-HTTPAPI/2.0]
-      strict-transport-security: [max-age=31536000; includeSubDomains]
-      transfer-encoding: [chunked]
+      Content-Type: [application/json;odata=minimalmetadata]
+      DataServiceVersion: ['3.0']
+      Date: ['Mon, 06 Feb 2017 18:57:27 GMT']
+      Server: [Microsoft-HTTPAPI/2.0]
+      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
+      Transfer-Encoding: [chunked]
+      X-Content-Type-Options: [nosniff]
+      request-id: [82cbc794-a976-4718-ac4a-e706a829fa95]
     status: {code: 200, message: OK}
 - request:
     body: null
@@ -1172,37 +1259,38 @@ interactions:
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
       Content-Type: [application/json; odata=minimalmetadata; charset=utf-8]
-      User-Agent: [python/2.7.9 (Windows-8-6.2.9200) requests/2.7.0 msrest/0.4.3 msrest_azure/0.4.2
-          batchserviceclient/1.0.0 Azure-SDK-For-Python]
+      User-Agent: [python/3.5.1 (Windows-8.1-6.3.9600-SP0) requests/2.9.1 msrest/0.4.4
+          msrest_azure/0.4.3 batchserviceclient/2.0.0RC1 Azure-SDK-For-Python]
       accept-language: [en-US]
-      client-request-id: [2660ddb0-7e98-11e6-95f3-54ee750f2fc7]
-      ocp-date: ['Mon, 19 Sep 2016 18:37:42 GMT']
+      client-request-id: [2cd766d2-ec9e-11e6-af79-54ee750f2fc7]
+      ocp-date: ['Mon, 06 Feb 2017 18:57:58 GMT']
     method: GET
-    uri: https://pythonsdktest.eastus.batch.azure.com/jobs/python_test_job/tasks/python_task_2/files?api-version=2016-07-01.3.1
+    uri: https://pythonsdktest.eastus.batch.azure.com/jobs/python_test_job/tasks/python_task_2/files?api-version=2017-01-01.4.0
   response:
-    body: {string: !!python/unicode "{\r\n  \"odata.metadata\":\"https://pythonsdktest.eastus.batch.azure.com/$metadata#files\"\
+    body: {string: "{\r\n  \"odata.metadata\":\"https://pythonsdktest.eastus.batch.azure.com/$metadata#files\"\
         ,\"value\":[\r\n    {\r\n      \"name\":\"ProcessEnv.cmd\",\"url\":\"https://pythonsdktest.eastus.batch.azure.com/jobs/python_test_job/tasks/python_task_2/files/ProcessEnv.cmd\"\
-        ,\"isDirectory\":false,\"properties\":{\r\n        \"creationTime\":\"2016-09-19T18:37:12.9514264Z\"\
-        ,\"lastModified\":\"2016-09-19T18:37:12.9514264Z\",\"contentLength\":\"2452\"\
+        ,\"isDirectory\":false,\"properties\":{\r\n        \"creationTime\":\"2017-02-06T18:57:29.1114421Z\"\
+        ,\"lastModified\":\"2017-02-06T18:57:29.1114421Z\",\"contentLength\":\"2527\"\
         ,\"contentType\":\"application/octet-stream\"\r\n      }\r\n    },{\r\n  \
         \    \"name\":\"stderr.txt\",\"url\":\"https://pythonsdktest.eastus.batch.azure.com/jobs/python_test_job/tasks/python_task_2/files/stderr.txt\"\
-        ,\"isDirectory\":false,\"properties\":{\r\n        \"creationTime\":\"2016-09-19T18:37:12.8424222Z\"\
-        ,\"lastModified\":\"2016-09-19T18:37:12.8424222Z\",\"contentLength\":\"0\"\
+        ,\"isDirectory\":false,\"properties\":{\r\n        \"creationTime\":\"2017-02-06T18:57:29.0294398Z\"\
+        ,\"lastModified\":\"2017-02-06T18:57:29.0294398Z\",\"contentLength\":\"0\"\
         ,\"contentType\":\"application/octet-stream\"\r\n      }\r\n    },{\r\n  \
         \    \"name\":\"stdout.txt\",\"url\":\"https://pythonsdktest.eastus.batch.azure.com/jobs/python_test_job/tasks/python_task_2/files/stdout.txt\"\
-        ,\"isDirectory\":false,\"properties\":{\r\n        \"creationTime\":\"2016-09-19T18:37:12.8424222Z\"\
-        ,\"lastModified\":\"2016-09-19T18:37:12.9684271Z\",\"contentLength\":\"13\"\
+        ,\"isDirectory\":false,\"properties\":{\r\n        \"creationTime\":\"2017-02-06T18:57:29.0294398Z\"\
+        ,\"lastModified\":\"2017-02-06T18:57:29.1224432Z\",\"contentLength\":\"13\"\
         ,\"contentType\":\"application/octet-stream\"\r\n      }\r\n    },{\r\n  \
         \    \"name\":\"wd\",\"url\":\"https://pythonsdktest.eastus.batch.azure.com/jobs/python_test_job/tasks/python_task_2/files/wd\"\
         ,\"isDirectory\":true\r\n    }\r\n  ]\r\n}"}
     headers:
-      content-type: [application/json;odata=minimalmetadata]
-      dataserviceversion: ['3.0']
-      date: ['Mon, 19 Sep 2016 18:37:43 GMT']
-      request-id: [4818f202-0d2e-4ded-b23c-a93b4720cca5]
-      server: [Microsoft-HTTPAPI/2.0]
-      strict-transport-security: [max-age=31536000; includeSubDomains]
-      transfer-encoding: [chunked]
+      Content-Type: [application/json;odata=minimalmetadata]
+      DataServiceVersion: ['3.0']
+      Date: ['Mon, 06 Feb 2017 18:57:58 GMT']
+      Server: [Microsoft-HTTPAPI/2.0]
+      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
+      Transfer-Encoding: [chunked]
+      X-Content-Type-Options: [nosniff]
+      request-id: [f806b537-c989-4ae4-b436-b27a5e5b72cf]
     status: {code: 200, message: OK}
 - request:
     body: null
@@ -1211,27 +1299,28 @@ interactions:
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
       Content-Type: [application/json; odata=minimalmetadata; charset=utf-8]
-      User-Agent: [python/2.7.9 (Windows-8-6.2.9200) requests/2.7.0 msrest/0.4.3 msrest_azure/0.4.2
-          batchserviceclient/1.0.0 Azure-SDK-For-Python]
+      User-Agent: [python/3.5.1 (Windows-8.1-6.3.9600-SP0) requests/2.9.1 msrest/0.4.4
+          msrest_azure/0.4.3 batchserviceclient/2.0.0RC1 Azure-SDK-For-Python]
       accept-language: [en-US]
-      client-request-id: [27169921-7e98-11e6-976c-54ee750f2fc7]
-      ocp-date: ['Mon, 19 Sep 2016 18:37:43 GMT']
+      client-request-id: [2d5f91dc-ec9e-11e6-bd95-54ee750f2fc7]
+      ocp-date: ['Mon, 06 Feb 2017 18:57:59 GMT']
     method: HEAD
-    uri: https://pythonsdktest.eastus.batch.azure.com/jobs/python_test_job/tasks/python_task_2/files/stdout.txt?api-version=2016-07-01.3.1
+    uri: https://pythonsdktest.eastus.batch.azure.com/jobs/python_test_job/tasks/python_task_2/files/stdout.txt?api-version=2017-01-01.4.0
   response:
-    body: {string: !!python/unicode ''}
+    body: {string: ''}
     headers:
-      content-length: ['13']
-      content-type: [application/octet-stream]
-      dataserviceversion: ['3.0']
-      date: ['Mon, 19 Sep 2016 18:37:43 GMT']
-      last-modified: ['Mon, 19 Sep 2016 18:37:12 GMT']
+      Content-Length: ['13']
+      Content-Type: [application/octet-stream]
+      DataServiceVersion: ['3.0']
+      Date: ['Mon, 06 Feb 2017 18:57:58 GMT']
+      Last-Modified: ['Mon, 06 Feb 2017 18:57:29 GMT']
+      Server: [Microsoft-HTTPAPI/2.0]
+      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
+      X-Content-Type-Options: [nosniff]
       ocp-batch-file-isdirectory: ['False']
       ocp-batch-file-url: [https%3A%2F%2Fpythonsdktest.eastus.batch.azure.com%2Fjobs%2Fpython_test_job%2Ftasks%2Fpython_task_2%2Ffiles%2Fstdout.txt]
-      ocp-creation-time: ['Mon, 19 Sep 2016 18:37:12 GMT']
-      request-id: [c153664d-b27c-4509-a619-1148172f0304]
-      server: [Microsoft-HTTPAPI/2.0]
-      strict-transport-security: [max-age=31536000; includeSubDomains]
+      ocp-creation-time: ['Mon, 06 Feb 2017 18:57:29 GMT']
+      request-id: [ef68ac6f-95f4-4fae-ad2c-19a84e8fc7e7]
     status: {code: 200, message: OK}
 - request:
     body: null
@@ -1240,27 +1329,28 @@ interactions:
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
       Content-Type: [application/json; odata=minimalmetadata; charset=utf-8]
-      User-Agent: [python/2.7.9 (Windows-8-6.2.9200) requests/2.7.0 msrest/0.4.3 msrest_azure/0.4.2
-          batchserviceclient/1.0.0 Azure-SDK-For-Python]
+      User-Agent: [python/3.5.1 (Windows-8.1-6.3.9600-SP0) requests/2.9.1 msrest/0.4.4
+          msrest_azure/0.4.3 batchserviceclient/2.0.0RC1 Azure-SDK-For-Python]
       accept-language: [en-US]
-      client-request-id: [279d554f-7e98-11e6-a442-54ee750f2fc7]
-      ocp-date: ['Mon, 19 Sep 2016 18:37:44 GMT']
+      client-request-id: [2dee81a8-ec9e-11e6-bf66-54ee750f2fc7]
+      ocp-date: ['Mon, 06 Feb 2017 18:58:00 GMT']
     method: GET
-    uri: https://pythonsdktest.eastus.batch.azure.com/jobs/python_test_job/tasks/python_task_2/files/stdout.txt?api-version=2016-07-01.3.1
+    uri: https://pythonsdktest.eastus.batch.azure.com/jobs/python_test_job/tasks/python_task_2/files/stdout.txt?api-version=2017-01-01.4.0
   response:
-    body: {string: !!python/unicode "hello world\r\n"}
+    body: {string: "hello world\r\n"}
     headers:
-      content-type: [application/octet-stream]
-      dataserviceversion: ['3.0']
-      date: ['Mon, 19 Sep 2016 18:37:43 GMT']
-      last-modified: ['Mon, 19 Sep 2016 18:37:12 GMT']
+      Content-Type: [application/octet-stream]
+      DataServiceVersion: ['3.0']
+      Date: ['Mon, 06 Feb 2017 18:58:01 GMT']
+      Last-Modified: ['Mon, 06 Feb 2017 18:57:29 GMT']
+      Server: [Microsoft-HTTPAPI/2.0]
+      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
+      Transfer-Encoding: [chunked]
+      X-Content-Type-Options: [nosniff]
       ocp-batch-file-isdirectory: ['False']
       ocp-batch-file-url: [https%3A%2F%2Fpythonsdktest.eastus.batch.azure.com%2Fjobs%2Fpython_test_job%2Ftasks%2Fpython_task_2%2Ffiles%2Fstdout.txt]
-      ocp-creation-time: ['Mon, 19 Sep 2016 18:37:12 GMT']
-      request-id: [c60e75fa-4d7d-4797-bd75-cb8154455713]
-      server: [Microsoft-HTTPAPI/2.0]
-      strict-transport-security: [max-age=31536000; includeSubDomains]
-      transfer-encoding: [chunked]
+      ocp-creation-time: ['Mon, 06 Feb 2017 18:57:29 GMT']
+      request-id: [93e12be6-4a8c-4684-a5bd-740f4b010c21]
     status: {code: 200, message: OK}
 - request:
     body: null
@@ -1270,22 +1360,23 @@ interactions:
       Connection: [keep-alive]
       Content-Length: ['0']
       Content-Type: [application/json; odata=minimalmetadata; charset=utf-8]
-      User-Agent: [python/2.7.9 (Windows-8-6.2.9200) requests/2.7.0 msrest/0.4.3 msrest_azure/0.4.2
-          batchserviceclient/1.0.0 Azure-SDK-For-Python]
+      User-Agent: [python/3.5.1 (Windows-8.1-6.3.9600-SP0) requests/2.9.1 msrest/0.4.4
+          msrest_azure/0.4.3 batchserviceclient/2.0.0RC1 Azure-SDK-For-Python]
       accept-language: [en-US]
-      client-request-id: [280da34f-7e98-11e6-8e46-54ee750f2fc7]
-      ocp-date: ['Mon, 19 Sep 2016 18:37:45 GMT']
+      client-request-id: [2e85fa0a-ec9e-11e6-950f-54ee750f2fc7]
+      ocp-date: ['Mon, 06 Feb 2017 18:58:01 GMT']
     method: DELETE
-    uri: https://pythonsdktest.eastus.batch.azure.com/jobs/python_test_job/tasks/python_task_2/files/stdout.txt?api-version=2016-07-01.3.1
+    uri: https://pythonsdktest.eastus.batch.azure.com/jobs/python_test_job/tasks/python_task_2/files/stdout.txt?api-version=2017-01-01.4.0
   response:
-    body: {string: !!python/unicode ''}
+    body: {string: ''}
     headers:
-      dataserviceversion: ['3.0']
-      date: ['Mon, 19 Sep 2016 18:37:45 GMT']
-      request-id: [b52790f7-5f9a-4f96-afb4-9a94e9adf407]
-      server: [Microsoft-HTTPAPI/2.0]
-      strict-transport-security: [max-age=31536000; includeSubDomains]
-      transfer-encoding: [chunked]
+      DataServiceVersion: ['3.0']
+      Date: ['Mon, 06 Feb 2017 18:58:01 GMT']
+      Server: [Microsoft-HTTPAPI/2.0]
+      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
+      Transfer-Encoding: [chunked]
+      X-Content-Type-Options: [nosniff]
+      request-id: [6040dd1d-94ba-4ca8-813b-9d12e1814c9a]
     status: {code: 200, message: OK}
 - request:
     body: null
@@ -1295,22 +1386,23 @@ interactions:
       Connection: [keep-alive]
       Content-Length: ['0']
       Content-Type: [application/json; odata=minimalmetadata; charset=utf-8]
-      User-Agent: [python/2.7.9 (Windows-8-6.2.9200) requests/2.7.0 msrest/0.4.3 msrest_azure/0.4.2
-          batchserviceclient/1.0.0 Azure-SDK-For-Python]
+      User-Agent: [python/3.5.1 (Windows-8.1-6.3.9600-SP0) requests/2.9.1 msrest/0.4.4
+          msrest_azure/0.4.3 batchserviceclient/2.0.0RC1 Azure-SDK-For-Python]
       accept-language: [en-US]
-      client-request-id: [2884cf21-7e98-11e6-819d-54ee750f2fc7]
-      ocp-date: ['Mon, 19 Sep 2016 18:37:46 GMT']
+      client-request-id: [2f0a6888-ec9e-11e6-9338-54ee750f2fc7]
+      ocp-date: ['Mon, 06 Feb 2017 18:58:01 GMT']
     method: DELETE
-    uri: https://pythonsdktest.eastus.batch.azure.com/jobs/python_test_job/tasks/python_task_1?api-version=2016-07-01.3.1
+    uri: https://pythonsdktest.eastus.batch.azure.com/jobs/python_test_job/tasks/python_task_1?api-version=2017-01-01.4.0
   response:
-    body: {string: !!python/unicode ''}
+    body: {string: ''}
     headers:
-      dataserviceversion: ['3.0']
-      date: ['Mon, 19 Sep 2016 18:37:47 GMT']
-      request-id: [49c27b66-adb3-456f-b572-8737e49de951]
-      server: [Microsoft-HTTPAPI/2.0]
-      strict-transport-security: [max-age=31536000; includeSubDomains]
-      transfer-encoding: [chunked]
+      DataServiceVersion: ['3.0']
+      Date: ['Mon, 06 Feb 2017 18:58:01 GMT']
+      Server: [Microsoft-HTTPAPI/2.0]
+      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
+      Transfer-Encoding: [chunked]
+      X-Content-Type-Options: [nosniff]
+      request-id: [27d858e4-65c8-4934-93ef-70b780e9344d]
     status: {code: 200, message: OK}
 - request:
     body: null
@@ -1320,22 +1412,23 @@ interactions:
       Connection: [keep-alive]
       Content-Length: ['0']
       Content-Type: [application/json; odata=minimalmetadata; charset=utf-8]
-      User-Agent: [python/2.7.9 (Windows-8-6.2.9200) requests/2.7.0 msrest/0.4.3 msrest_azure/0.4.2
-          batchserviceclient/1.0.0 Azure-SDK-For-Python]
+      User-Agent: [python/3.5.1 (Windows-8.1-6.3.9600-SP0) requests/2.9.1 msrest/0.4.4
+          msrest_azure/0.4.3 batchserviceclient/2.0.0RC1 Azure-SDK-For-Python]
       accept-language: [en-US]
-      client-request-id: [28ec919e-7e98-11e6-949a-54ee750f2fc7]
-      ocp-date: ['Mon, 19 Sep 2016 18:37:46 GMT']
+      client-request-id: [2f8f84b0-ec9e-11e6-9d94-54ee750f2fc7]
+      ocp-date: ['Mon, 06 Feb 2017 18:58:02 GMT']
     method: DELETE
-    uri: https://pythonsdktest.eastus.batch.azure.com/jobs/python_test_job/tasks/python_task_2?api-version=2016-07-01.3.1
+    uri: https://pythonsdktest.eastus.batch.azure.com/jobs/python_test_job/tasks/python_task_2?api-version=2017-01-01.4.0
   response:
-    body: {string: !!python/unicode ''}
+    body: {string: ''}
     headers:
-      dataserviceversion: ['3.0']
-      date: ['Mon, 19 Sep 2016 18:37:48 GMT']
-      request-id: [8a19d830-a683-4565-8144-c6dac6da36ed]
-      server: [Microsoft-HTTPAPI/2.0]
-      strict-transport-security: [max-age=31536000; includeSubDomains]
-      transfer-encoding: [chunked]
+      DataServiceVersion: ['3.0']
+      Date: ['Mon, 06 Feb 2017 18:58:01 GMT']
+      Server: [Microsoft-HTTPAPI/2.0]
+      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
+      Transfer-Encoding: [chunked]
+      X-Content-Type-Options: [nosniff]
+      request-id: [ff2d969a-0501-4ecb-aa83-dfc733af5b23]
     status: {code: 200, message: OK}
 - request:
     body: null
@@ -1345,22 +1438,23 @@ interactions:
       Connection: [keep-alive]
       Content-Length: ['0']
       Content-Type: [application/json; odata=minimalmetadata; charset=utf-8]
-      User-Agent: [python/2.7.9 (Windows-8-6.2.9200) requests/2.7.0 msrest/0.4.3 msrest_azure/0.4.2
-          batchserviceclient/1.0.0 Azure-SDK-For-Python]
+      User-Agent: [python/3.5.1 (Windows-8.1-6.3.9600-SP0) requests/2.9.1 msrest/0.4.4
+          msrest_azure/0.4.3 batchserviceclient/2.0.0RC1 Azure-SDK-For-Python]
       accept-language: [en-US]
-      client-request-id: [2949cccf-7e98-11e6-b13d-54ee750f2fc7]
-      ocp-date: ['Mon, 19 Sep 2016 18:37:47 GMT']
+      client-request-id: [303b93e4-ec9e-11e6-acd5-54ee750f2fc7]
+      ocp-date: ['Mon, 06 Feb 2017 18:58:03 GMT']
     method: DELETE
-    uri: https://pythonsdktest.eastus.batch.azure.com/jobs/python_test_job/tasks/python_task_3?api-version=2016-07-01.3.1
+    uri: https://pythonsdktest.eastus.batch.azure.com/jobs/python_test_job/tasks/python_task_3?api-version=2017-01-01.4.0
   response:
-    body: {string: !!python/unicode ''}
+    body: {string: ''}
     headers:
-      dataserviceversion: ['3.0']
-      date: ['Mon, 19 Sep 2016 18:37:49 GMT']
-      request-id: [4de93528-b749-42fc-9884-607097cde6a2]
-      server: [Microsoft-HTTPAPI/2.0]
-      strict-transport-security: [max-age=31536000; includeSubDomains]
-      transfer-encoding: [chunked]
+      DataServiceVersion: ['3.0']
+      Date: ['Mon, 06 Feb 2017 18:58:02 GMT']
+      Server: [Microsoft-HTTPAPI/2.0]
+      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
+      Transfer-Encoding: [chunked]
+      X-Content-Type-Options: [nosniff]
+      request-id: [073c8689-f84d-4ac6-9c0e-86b2acbadee4]
     status: {code: 200, message: OK}
 - request:
     body: null
@@ -1370,22 +1464,23 @@ interactions:
       Connection: [keep-alive]
       Content-Length: ['0']
       Content-Type: [application/json; odata=minimalmetadata; charset=utf-8]
-      User-Agent: [python/2.7.9 (Windows-8-6.2.9200) requests/2.7.0 msrest/0.4.3 msrest_azure/0.4.2
-          batchserviceclient/1.0.0 Azure-SDK-For-Python]
+      User-Agent: [python/3.5.1 (Windows-8.1-6.3.9600-SP0) requests/2.9.1 msrest/0.4.4
+          msrest_azure/0.4.3 batchserviceclient/2.0.0RC1 Azure-SDK-For-Python]
       accept-language: [en-US]
-      client-request-id: [29b9ccb0-7e98-11e6-990a-54ee750f2fc7]
-      ocp-date: ['Mon, 19 Sep 2016 18:37:48 GMT']
+      client-request-id: [30b13d5a-ec9e-11e6-8486-54ee750f2fc7]
+      ocp-date: ['Mon, 06 Feb 2017 18:58:04 GMT']
     method: DELETE
-    uri: https://pythonsdktest.eastus.batch.azure.com/jobs/python_test_job/tasks/python_task_4?api-version=2016-07-01.3.1
+    uri: https://pythonsdktest.eastus.batch.azure.com/jobs/python_test_job/tasks/python_task_4?api-version=2017-01-01.4.0
   response:
-    body: {string: !!python/unicode ''}
+    body: {string: ''}
     headers:
-      dataserviceversion: ['3.0']
-      date: ['Mon, 19 Sep 2016 18:37:50 GMT']
-      request-id: [a01ea5f6-4b9b-4a52-b689-9de0efa48cb2]
-      server: [Microsoft-HTTPAPI/2.0]
-      strict-transport-security: [max-age=31536000; includeSubDomains]
-      transfer-encoding: [chunked]
+      DataServiceVersion: ['3.0']
+      Date: ['Mon, 06 Feb 2017 18:58:03 GMT']
+      Server: [Microsoft-HTTPAPI/2.0]
+      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
+      Transfer-Encoding: [chunked]
+      X-Content-Type-Options: [nosniff]
+      request-id: [81d7e36f-3639-458e-bb27-7491d3a6408d]
     status: {code: 200, message: OK}
 - request:
     body: null
@@ -1395,22 +1490,23 @@ interactions:
       Connection: [keep-alive]
       Content-Length: ['0']
       Content-Type: [application/json; odata=minimalmetadata; charset=utf-8]
-      User-Agent: [python/2.7.9 (Windows-8-6.2.9200) requests/2.7.0 msrest/0.4.3 msrest_azure/0.4.2
-          batchserviceclient/1.0.0 Azure-SDK-For-Python]
+      User-Agent: [python/3.5.1 (Windows-8.1-6.3.9600-SP0) requests/2.9.1 msrest/0.4.4
+          msrest_azure/0.4.3 batchserviceclient/2.0.0RC1 Azure-SDK-For-Python]
       accept-language: [en-US]
-      client-request-id: [2a220461-7e98-11e6-9820-54ee750f2fc7]
-      ocp-date: ['Mon, 19 Sep 2016 18:37:48 GMT']
+      client-request-id: [3145325e-ec9e-11e6-b135-54ee750f2fc7]
+      ocp-date: ['Mon, 06 Feb 2017 18:58:05 GMT']
     method: DELETE
-    uri: https://pythonsdktest.eastus.batch.azure.com/jobs/python_test_job/tasks/python_task_5?api-version=2016-07-01.3.1
+    uri: https://pythonsdktest.eastus.batch.azure.com/jobs/python_test_job/tasks/python_task_5?api-version=2017-01-01.4.0
   response:
-    body: {string: !!python/unicode ''}
+    body: {string: ''}
     headers:
-      dataserviceversion: ['3.0']
-      date: ['Mon, 19 Sep 2016 18:37:49 GMT']
-      request-id: [a063e7a9-2c1a-4ec9-aeb5-7dcd62326e2b]
-      server: [Microsoft-HTTPAPI/2.0]
-      strict-transport-security: [max-age=31536000; includeSubDomains]
-      transfer-encoding: [chunked]
+      DataServiceVersion: ['3.0']
+      Date: ['Mon, 06 Feb 2017 18:58:06 GMT']
+      Server: [Microsoft-HTTPAPI/2.0]
+      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
+      Transfer-Encoding: [chunked]
+      X-Content-Type-Options: [nosniff]
+      request-id: [ab88cda2-77c2-4682-b1a0-0431a3e639ee]
     status: {code: 200, message: OK}
 - request:
     body: null
@@ -1420,25 +1516,26 @@ interactions:
       Connection: [keep-alive]
       Content-Length: ['0']
       Content-Type: [application/json; odata=minimalmetadata; charset=utf-8]
-      User-Agent: [python/2.7.9 (Windows-8-6.2.9200) requests/2.7.0 msrest/0.4.3 msrest_azure/0.4.2
-          batchserviceclient/1.0.0 Azure-SDK-For-Python]
+      User-Agent: [python/3.5.1 (Windows-8.1-6.3.9600-SP0) requests/2.9.1 msrest/0.4.4
+          msrest_azure/0.4.3 batchserviceclient/2.0.0RC1 Azure-SDK-For-Python]
       accept-language: [en-US]
-      client-request-id: [2a95d4cf-7e98-11e6-8d8d-54ee750f2fc7]
-      ocp-date: ['Mon, 19 Sep 2016 18:37:49 GMT']
+      client-request-id: [31c1ce4c-ec9e-11e6-b7bd-54ee750f2fc7]
+      ocp-date: ['Mon, 06 Feb 2017 18:58:06 GMT']
     method: POST
-    uri: https://pythonsdktest.eastus.batch.azure.com/jobs/python_test_job/terminate?api-version=2016-07-01.3.1
+    uri: https://pythonsdktest.eastus.batch.azure.com/jobs/python_test_job/terminate?api-version=2017-01-01.4.0
   response:
-    body: {string: !!python/unicode ''}
+    body: {string: ''}
     headers:
-      dataserviceid: ['https://pythonsdktest.eastus.batch.azure.com/jobs/python_test_job/terminate']
-      dataserviceversion: ['3.0']
-      date: ['Mon, 19 Sep 2016 18:37:50 GMT']
-      etag: ['0x8D3E0BC0F762B31']
-      last-modified: ['Mon, 19 Sep 2016 18:37:50 GMT']
-      request-id: [a1af4d70-9203-4809-91b4-464f1a47249b]
-      server: [Microsoft-HTTPAPI/2.0]
-      strict-transport-security: [max-age=31536000; includeSubDomains]
-      transfer-encoding: [chunked]
+      DataServiceId: ['https://pythonsdktest.eastus.batch.azure.com/jobs/python_test_job/terminate']
+      DataServiceVersion: ['3.0']
+      Date: ['Mon, 06 Feb 2017 18:58:06 GMT']
+      ETag: ['0x8D44EC216C6A1F3']
+      Last-Modified: ['Mon, 06 Feb 2017 18:58:07 GMT']
+      Server: [Microsoft-HTTPAPI/2.0]
+      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
+      Transfer-Encoding: [chunked]
+      X-Content-Type-Options: [nosniff]
+      request-id: [86a1972b-b2a1-4586-a0cf-b340d007949f]
     status: {code: 202, message: Accepted}
 - request:
     body: null
@@ -1448,26 +1545,27 @@ interactions:
       Connection: [keep-alive]
       Content-Length: ['0']
       Content-Type: [application/json; odata=minimalmetadata; charset=utf-8]
-      User-Agent: [python/2.7.9 (Windows-8-6.2.9200) requests/2.7.0 msrest/0.4.3 msrest_azure/0.4.2
-          batchserviceclient/1.0.0 Azure-SDK-For-Python]
+      User-Agent: [python/3.5.1 (Windows-8.1-6.3.9600-SP0) requests/2.9.1 msrest/0.4.4
+          msrest_azure/0.4.3 batchserviceclient/2.0.0RC1 Azure-SDK-For-Python]
       accept-language: [en-US]
-      client-request-id: [2ae2bc51-7e98-11e6-b78e-54ee750f2fc7]
-      ocp-date: ['Mon, 19 Sep 2016 18:37:50 GMT']
+      client-request-id: [3230223a-ec9e-11e6-bbe4-54ee750f2fc7]
+      ocp-date: ['Mon, 06 Feb 2017 18:58:07 GMT']
     method: DELETE
-    uri: https://pythonsdktest.eastus.batch.azure.com/jobs/python_test_job?api-version=2016-07-01.3.1
+    uri: https://pythonsdktest.eastus.batch.azure.com/jobs/python_test_job?api-version=2017-01-01.4.0
   response:
-    body: {string: !!python/unicode "{\r\n  \"odata.metadata\":\"https://pythonsdktest.eastus.batch.azure.com/$metadata#Microsoft.Azure.Batch.Protocol.Entities.Container.errors/@Element\"\
+    body: {string: "{\r\n  \"odata.metadata\":\"https://pythonsdktest.eastus.batch.azure.com/$metadata#Microsoft.Azure.Batch.Protocol.Entities.Container.errors/@Element\"\
         ,\"code\":\"ServerBusy\",\"message\":{\r\n    \"lang\":\"en-US\",\"value\"\
-        :\"The server is busy.\\nRequestId:75b7f829-ee9f-4c7a-8802-72fbbd22989a\\\
-        nTime:2016-09-19T18:37:59.8561401Z\"\r\n  }\r\n}"}
+        :\"The server is busy.\\nRequestId:e19bb25c-e985-4c51-bc7e-043cac9954e9\\\
+        nTime:2017-02-06T18:58:14.5786967Z\"\r\n  }\r\n}"}
     headers:
-      content-length: ['317']
-      content-type: [application/json;odata=minimalmetadata]
-      dataserviceversion: ['3.0']
-      date: ['Mon, 19 Sep 2016 18:37:59 GMT']
-      request-id: [75b7f829-ee9f-4c7a-8802-72fbbd22989a]
-      server: [Microsoft-HTTPAPI/2.0]
-      strict-transport-security: [max-age=31536000; includeSubDomains]
+      Content-Length: ['317']
+      Content-Type: [application/json;odata=minimalmetadata]
+      DataServiceVersion: ['3.0']
+      Date: ['Mon, 06 Feb 2017 18:58:14 GMT']
+      Server: [Microsoft-HTTPAPI/2.0]
+      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
+      X-Content-Type-Options: [nosniff]
+      request-id: [e19bb25c-e985-4c51-bc7e-043cac9954e9]
     status: {code: 503, message: The server is busy.}
 - request:
     body: null
@@ -1477,26 +1575,27 @@ interactions:
       Connection: [keep-alive]
       Content-Length: ['0']
       Content-Type: [application/json; odata=minimalmetadata; charset=utf-8]
-      User-Agent: [python/2.7.9 (Windows-8-6.2.9200) requests/2.7.0 msrest/0.4.3 msrest_azure/0.4.2
-          batchserviceclient/1.0.0 Azure-SDK-For-Python]
+      User-Agent: [python/3.5.1 (Windows-8.1-6.3.9600-SP0) requests/2.9.1 msrest/0.4.4
+          msrest_azure/0.4.3 batchserviceclient/2.0.0RC1 Azure-SDK-For-Python]
       accept-language: [en-US]
-      client-request-id: [2ae2bc51-7e98-11e6-b78e-54ee750f2fc7]
-      ocp-date: ['Mon, 19 Sep 2016 18:37:50 GMT']
+      client-request-id: [3230223a-ec9e-11e6-bbe4-54ee750f2fc7]
+      ocp-date: ['Mon, 06 Feb 2017 18:58:07 GMT']
     method: DELETE
-    uri: https://pythonsdktest.eastus.batch.azure.com/jobs/python_test_job?api-version=2016-07-01.3.1
+    uri: https://pythonsdktest.eastus.batch.azure.com/jobs/python_test_job?api-version=2017-01-01.4.0
   response:
-    body: {string: !!python/unicode "{\r\n  \"odata.metadata\":\"https://pythonsdktest.eastus.batch.azure.com/$metadata#Microsoft.Azure.Batch.Protocol.Entities.Container.errors/@Element\"\
+    body: {string: "{\r\n  \"odata.metadata\":\"https://pythonsdktest.eastus.batch.azure.com/$metadata#Microsoft.Azure.Batch.Protocol.Entities.Container.errors/@Element\"\
         ,\"code\":\"ServerBusy\",\"message\":{\r\n    \"lang\":\"en-US\",\"value\"\
-        :\"The server is busy.\\nRequestId:fd17f4a4-8d0d-4af6-9f66-2a46d7e47bbc\\\
-        nTime:2016-09-19T18:38:09.3905173Z\"\r\n  }\r\n}"}
+        :\"The server is busy.\\nRequestId:fc54d658-ab50-493e-910f-0a594b73898e\\\
+        nTime:2017-02-06T18:58:22.2719260Z\"\r\n  }\r\n}"}
     headers:
-      content-length: ['317']
-      content-type: [application/json;odata=minimalmetadata]
-      dataserviceversion: ['3.0']
-      date: ['Mon, 19 Sep 2016 18:38:09 GMT']
-      request-id: [fd17f4a4-8d0d-4af6-9f66-2a46d7e47bbc]
-      server: [Microsoft-HTTPAPI/2.0]
-      strict-transport-security: [max-age=31536000; includeSubDomains]
+      Content-Length: ['317']
+      Content-Type: [application/json;odata=minimalmetadata]
+      DataServiceVersion: ['3.0']
+      Date: ['Mon, 06 Feb 2017 18:58:21 GMT']
+      Server: [Microsoft-HTTPAPI/2.0]
+      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
+      X-Content-Type-Options: [nosniff]
+      request-id: [fc54d658-ab50-493e-910f-0a594b73898e]
     status: {code: 503, message: The server is busy.}
 - request:
     body: null
@@ -1506,26 +1605,27 @@ interactions:
       Connection: [keep-alive]
       Content-Length: ['0']
       Content-Type: [application/json; odata=minimalmetadata; charset=utf-8]
-      User-Agent: [python/2.7.9 (Windows-8-6.2.9200) requests/2.7.0 msrest/0.4.3 msrest_azure/0.4.2
-          batchserviceclient/1.0.0 Azure-SDK-For-Python]
+      User-Agent: [python/3.5.1 (Windows-8.1-6.3.9600-SP0) requests/2.9.1 msrest/0.4.4
+          msrest_azure/0.4.3 batchserviceclient/2.0.0RC1 Azure-SDK-For-Python]
       accept-language: [en-US]
-      client-request-id: [2ae2bc51-7e98-11e6-b78e-54ee750f2fc7]
-      ocp-date: ['Mon, 19 Sep 2016 18:37:50 GMT']
+      client-request-id: [3230223a-ec9e-11e6-bbe4-54ee750f2fc7]
+      ocp-date: ['Mon, 06 Feb 2017 18:58:07 GMT']
     method: DELETE
-    uri: https://pythonsdktest.eastus.batch.azure.com/jobs/python_test_job?api-version=2016-07-01.3.1
+    uri: https://pythonsdktest.eastus.batch.azure.com/jobs/python_test_job?api-version=2017-01-01.4.0
   response:
-    body: {string: !!python/unicode "{\r\n  \"odata.metadata\":\"https://pythonsdktest.eastus.batch.azure.com/$metadata#Microsoft.Azure.Batch.Protocol.Entities.Container.errors/@Element\"\
+    body: {string: "{\r\n  \"odata.metadata\":\"https://pythonsdktest.eastus.batch.azure.com/$metadata#Microsoft.Azure.Batch.Protocol.Entities.Container.errors/@Element\"\
         ,\"code\":\"ServerBusy\",\"message\":{\r\n    \"lang\":\"en-US\",\"value\"\
-        :\"The server is busy.\\nRequestId:d6fe4ba5-5f10-4f81-86e3-6f11b563828b\\\
-        nTime:2016-09-19T18:38:20.2339680Z\"\r\n  }\r\n}"}
+        :\"The server is busy.\\nRequestId:f114dc5a-945d-4c59-9317-aa3fd1c094b7\\\
+        nTime:2017-02-06T18:58:33.3508748Z\"\r\n  }\r\n}"}
     headers:
-      content-length: ['317']
-      content-type: [application/json;odata=minimalmetadata]
-      dataserviceversion: ['3.0']
-      date: ['Mon, 19 Sep 2016 18:38:20 GMT']
-      request-id: [d6fe4ba5-5f10-4f81-86e3-6f11b563828b]
-      server: [Microsoft-HTTPAPI/2.0]
-      strict-transport-security: [max-age=31536000; includeSubDomains]
+      Content-Length: ['317']
+      Content-Type: [application/json;odata=minimalmetadata]
+      DataServiceVersion: ['3.0']
+      Date: ['Mon, 06 Feb 2017 18:58:33 GMT']
+      Server: [Microsoft-HTTPAPI/2.0]
+      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
+      X-Content-Type-Options: [nosniff]
+      request-id: [f114dc5a-945d-4c59-9317-aa3fd1c094b7]
     status: {code: 503, message: The server is busy.}
 - request:
     body: null
@@ -1535,22 +1635,23 @@ interactions:
       Connection: [keep-alive]
       Content-Length: ['0']
       Content-Type: [application/json; odata=minimalmetadata; charset=utf-8]
-      User-Agent: [python/2.7.9 (Windows-8-6.2.9200) requests/2.7.0 msrest/0.4.3 msrest_azure/0.4.2
-          batchserviceclient/1.0.0 Azure-SDK-For-Python]
+      User-Agent: [python/3.5.1 (Windows-8.1-6.3.9600-SP0) requests/2.9.1 msrest/0.4.4
+          msrest_azure/0.4.3 batchserviceclient/2.0.0RC1 Azure-SDK-For-Python]
       accept-language: [en-US]
-      client-request-id: [2ae2bc51-7e98-11e6-b78e-54ee750f2fc7]
-      ocp-date: ['Mon, 19 Sep 2016 18:37:50 GMT']
+      client-request-id: [3230223a-ec9e-11e6-bbe4-54ee750f2fc7]
+      ocp-date: ['Mon, 06 Feb 2017 18:58:07 GMT']
     method: DELETE
-    uri: https://pythonsdktest.eastus.batch.azure.com/jobs/python_test_job?api-version=2016-07-01.3.1
+    uri: https://pythonsdktest.eastus.batch.azure.com/jobs/python_test_job?api-version=2017-01-01.4.0
   response:
-    body: {string: !!python/unicode ''}
+    body: {string: ''}
     headers:
-      dataserviceversion: ['3.0']
-      date: ['Mon, 19 Sep 2016 18:38:24 GMT']
-      request-id: [f9966af1-5589-471d-ab87-566d40ca2fbe]
-      server: [Microsoft-HTTPAPI/2.0]
-      strict-transport-security: [max-age=31536000; includeSubDomains]
-      transfer-encoding: [chunked]
+      DataServiceVersion: ['3.0']
+      Date: ['Mon, 06 Feb 2017 18:58:39 GMT']
+      Server: [Microsoft-HTTPAPI/2.0]
+      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
+      Transfer-Encoding: [chunked]
+      X-Content-Type-Options: [nosniff]
+      request-id: [24bca561-0c47-480f-b635-95abb304c5ff]
     status: {code: 202, message: Accepted}
 - request:
     body: null
@@ -1560,22 +1661,23 @@ interactions:
       Connection: [keep-alive]
       Content-Length: ['0']
       Content-Type: [application/json; odata=minimalmetadata; charset=utf-8]
-      User-Agent: [python/2.7.9 (Windows-8-6.2.9200) requests/2.7.0 msrest/0.4.3 msrest_azure/0.4.2
-          batchserviceclient/1.0.0 Azure-SDK-For-Python]
+      User-Agent: [python/3.5.1 (Windows-8.1-6.3.9600-SP0) requests/2.9.1 msrest/0.4.4
+          msrest_azure/0.4.3 batchserviceclient/2.0.0RC1 Azure-SDK-For-Python]
       accept-language: [en-US]
-      client-request-id: [3f032bc0-7e98-11e6-97be-54ee750f2fc7]
-      ocp-date: ['Mon, 19 Sep 2016 18:38:23 GMT']
+      client-request-id: [4663a814-ec9e-11e6-a087-54ee750f2fc7]
+      ocp-date: ['Mon, 06 Feb 2017 18:58:41 GMT']
     method: DELETE
-    uri: https://pythonsdktest.eastus.batch.azure.com/jobs/python_test_job_2?api-version=2016-07-01.3.1
+    uri: https://pythonsdktest.eastus.batch.azure.com/jobs/python_test_job_2?api-version=2017-01-01.4.0
   response:
-    body: {string: !!python/unicode ''}
+    body: {string: ''}
     headers:
-      dataserviceversion: ['3.0']
-      date: ['Mon, 19 Sep 2016 18:38:22 GMT']
-      request-id: [d8cff8f1-7cec-47ef-b2e3-9ddfd3b7c8ca]
-      server: [Microsoft-HTTPAPI/2.0]
-      strict-transport-security: [max-age=31536000; includeSubDomains]
-      transfer-encoding: [chunked]
+      DataServiceVersion: ['3.0']
+      Date: ['Mon, 06 Feb 2017 18:58:40 GMT']
+      Server: [Microsoft-HTTPAPI/2.0]
+      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
+      Transfer-Encoding: [chunked]
+      X-Content-Type-Options: [nosniff]
+      request-id: [d4b29888-b5ea-4b4f-8863-02bab302044e]
     status: {code: 202, message: Accepted}
 - request:
     body: null
@@ -1584,29 +1686,30 @@ interactions:
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
       Content-Type: [application/json; odata=minimalmetadata; charset=utf-8]
-      User-Agent: [python/2.7.9 (Windows-8-6.2.9200) requests/2.7.0 msrest/0.4.3 msrest_azure/0.4.2
-          batchserviceclient/1.0.0 Azure-SDK-For-Python]
+      User-Agent: [python/3.5.1 (Windows-8.1-6.3.9600-SP0) requests/2.9.1 msrest/0.4.4
+          msrest_azure/0.4.3 batchserviceclient/2.0.0RC1 Azure-SDK-For-Python]
       accept-language: [en-US]
-      client-request-id: [3f4787c0-7e98-11e6-9527-54ee750f2fc7]
-      ocp-date: ['Mon, 19 Sep 2016 18:38:24 GMT']
+      client-request-id: [46e4d9ac-ec9e-11e6-8b1b-54ee750f2fc7]
+      ocp-date: ['Mon, 06 Feb 2017 18:58:41 GMT']
     method: GET
-    uri: https://pythonsdktest.eastus.batch.azure.com/lifetimejobstats?api-version=2016-07-01.3.1
+    uri: https://pythonsdktest.eastus.batch.azure.com/lifetimejobstats?api-version=2017-01-01.4.0
   response:
-    body: {string: !!python/unicode "{\r\n  \"odata.metadata\":\"https://pythonsdktest.eastus.batch.azure.com/$metadata#jobstats/@Element\"\
+    body: {string: "{\r\n  \"odata.metadata\":\"https://pythonsdktest.eastus.batch.azure.com/$metadata#jobstats/@Element\"\
         ,\"url\":\"https://pythonsdktest.eastus.batch.azure.com/lifetimejobstats\"\
-        ,\"startTime\":\"2016-09-19T18:30:46.4157754Z\",\"lastUpdateTime\":\"2016-09-19T18:30:46.4157754Z\"\
+        ,\"startTime\":\"2017-02-06T18:50:50.3736455Z\",\"lastUpdateTime\":\"2017-02-06T18:50:50.3736455Z\"\
         ,\"userCPUTime\":\"PT0S\",\"kernelCPUTime\":\"PT0S\",\"wallClockTime\":\"\
         PT0S\",\"readIOps\":\"0\",\"writeIOps\":\"0\",\"readIOGiB\":0.0,\"writeIOGiB\"\
         :0.0,\"numTaskRetries\":\"0\",\"numSucceededTasks\":\"0\",\"numFailedTasks\"\
         :\"0\",\"waitTime\":\"PT0S\"\r\n}"}
     headers:
-      content-type: [application/json;odata=minimalmetadata]
-      dataserviceversion: ['3.0']
-      date: ['Mon, 19 Sep 2016 18:38:24 GMT']
-      request-id: [972f387d-1d74-4ab6-85a7-14a45605c5c6]
-      server: [Microsoft-HTTPAPI/2.0]
-      strict-transport-security: [max-age=31536000; includeSubDomains]
-      transfer-encoding: [chunked]
+      Content-Type: [application/json;odata=minimalmetadata]
+      DataServiceVersion: ['3.0']
+      Date: ['Mon, 06 Feb 2017 18:58:41 GMT']
+      Server: [Microsoft-HTTPAPI/2.0]
+      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
+      Transfer-Encoding: [chunked]
+      X-Content-Type-Options: [nosniff]
+      request-id: [a5aba8a2-eaf7-4fd3-ae39-ac0e9427853d]
     status: {code: 200, message: OK}
 - request:
     body: null
@@ -1616,21 +1719,22 @@ interactions:
       Connection: [keep-alive]
       Content-Length: ['0']
       Content-Type: [application/json; odata=minimalmetadata; charset=utf-8]
-      User-Agent: [python/2.7.9 (Windows-8-6.2.9200) requests/2.7.0 msrest/0.4.3 msrest_azure/0.4.2
-          batchserviceclient/1.0.0 Azure-SDK-For-Python]
+      User-Agent: [python/3.5.1 (Windows-8.1-6.3.9600-SP0) requests/2.9.1 msrest/0.4.4
+          msrest_azure/0.4.3 batchserviceclient/2.0.0RC1 Azure-SDK-For-Python]
       accept-language: [en-US]
-      client-request-id: [3faba0c0-7e98-11e6-a1d8-54ee750f2fc7]
-      ocp-date: ['Mon, 19 Sep 2016 18:38:24 GMT']
+      client-request-id: [476daa50-ec9e-11e6-b08c-54ee750f2fc7]
+      ocp-date: ['Mon, 06 Feb 2017 18:58:42 GMT']
     method: DELETE
-    uri: https://pythonsdktest.eastus.batch.azure.com/pools/python_test_pool_4?api-version=2016-07-01.3.1
+    uri: https://pythonsdktest.eastus.batch.azure.com/pools/python_test_pool_4?api-version=2017-01-01.4.0
   response:
-    body: {string: !!python/unicode ''}
+    body: {string: ''}
     headers:
-      dataserviceversion: ['3.0']
-      date: ['Mon, 19 Sep 2016 18:38:25 GMT']
-      request-id: [9fe5b11c-0cba-47dc-a920-32b5f11de689]
-      server: [Microsoft-HTTPAPI/2.0]
-      strict-transport-security: [max-age=31536000; includeSubDomains]
-      transfer-encoding: [chunked]
+      DataServiceVersion: ['3.0']
+      Date: ['Mon, 06 Feb 2017 18:58:42 GMT']
+      Server: [Microsoft-HTTPAPI/2.0]
+      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
+      Transfer-Encoding: [chunked]
+      X-Content-Type-Options: [nosniff]
+      request-id: [0b813661-b279-4491-917a-a2c4d1676363]
     status: {code: 202, message: Accepted}
 version: 1
