@@ -12,21 +12,21 @@
 from msrest.serialization import Model
 
 
-class AutoStorageBaseProperties(Model):
-    """The properties related to auto storage account.
+class KeyVaultReference(Model):
+    """Identifies the Azure key vault associated with a Batch account.
 
-    :param storage_account_id: The resource ID of the storage account to be
-     used for auto storage account.
-    :type storage_account_id: str
+    :param id: The resource ID of the Azure key vault associated with the
+     Batch account.
+    :type id: str
     """
 
     _validation = {
-        'storage_account_id': {'required': True},
+        'id': {'required': True},
     }
 
     _attribute_map = {
-        'storage_account_id': {'key': 'storageAccountId', 'type': 'str'},
+        'id': {'key': 'id', 'type': 'str'},
     }
 
-    def __init__(self, storage_account_id):
-        self.storage_account_id = storage_account_id
+    def __init__(self, id):
+        self.id = id

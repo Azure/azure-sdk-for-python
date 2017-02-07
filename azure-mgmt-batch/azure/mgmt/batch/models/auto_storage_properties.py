@@ -22,7 +22,7 @@ class AutoStorageProperties(Model):
     :param last_key_sync: The UTC time at which storage keys were last
      synchronized with the Batch account.
     :type last_key_sync: datetime
-    """ 
+    """
 
     _validation = {
         'storage_account_id': {'required': True},
