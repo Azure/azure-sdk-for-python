@@ -530,7 +530,7 @@ class AppServiceCertificateOrdersOperations(object):
             return client_raw_response
 
     def get(
-            self, resource_group_name, name, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, certificate_order_name, custom_headers=None, raw=False, **operation_config):
         """Get a certificate order.
 
         Get a certificate order.
@@ -538,8 +538,8 @@ class AppServiceCertificateOrdersOperations(object):
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
         :type resource_group_name: str
-        :param name: Name of the certificate.
-        :type name: str
+        :param certificate_order_name: Name of the certificate order.
+        :type certificate_order_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -552,10 +552,10 @@ class AppServiceCertificateOrdersOperations(object):
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.CertificateRegistration/certificateOrders/{name}'
+        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.CertificateRegistration/certificateOrders/{certificateOrderName}'
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern='^[-\w\._\(\)]+[^\.]$'),
-            'name': self._serialize.url("name", name, 'str'),
+            'certificateOrderName': self._serialize.url("certificate_order_name", certificate_order_name, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -595,7 +595,7 @@ class AppServiceCertificateOrdersOperations(object):
         return deserialized
 
     def create_or_update(
-            self, resource_group_name, name, certificate_distinguished_name, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, certificate_order_name, certificate_distinguished_name, custom_headers=None, raw=False, **operation_config):
         """Create or update a certificate purchase order.
 
         Create or update a certificate purchase order.
@@ -603,8 +603,8 @@ class AppServiceCertificateOrdersOperations(object):
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
         :type resource_group_name: str
-        :param name: Name of the certificate.
-        :type name: str
+        :param certificate_order_name: Name of the certificate order.
+        :type certificate_order_name: str
         :param certificate_distinguished_name: Distinguished name to to use
          for the certificate order.
         :type certificate_distinguished_name:
@@ -622,10 +622,10 @@ class AppServiceCertificateOrdersOperations(object):
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.CertificateRegistration/certificateOrders/{name}'
+        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.CertificateRegistration/certificateOrders/{certificateOrderName}'
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern='^[-\w\._\(\)]+[^\.]$'),
-            'name': self._serialize.url("name", name, 'str'),
+            'certificateOrderName': self._serialize.url("certificate_order_name", certificate_order_name, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -694,7 +694,7 @@ class AppServiceCertificateOrdersOperations(object):
             get_long_running_status, long_running_operation_timeout)
 
     def delete_certificate_order(
-            self, resource_group_name, name, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, certificate_order_name, custom_headers=None, raw=False, **operation_config):
         """Delete an existing certificate order.
 
         Delete an existing certificate order.
@@ -702,8 +702,8 @@ class AppServiceCertificateOrdersOperations(object):
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
         :type resource_group_name: str
-        :param name: Name of the certificate.
-        :type name: str
+        :param certificate_order_name: Name of the certificate order.
+        :type certificate_order_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -715,10 +715,10 @@ class AppServiceCertificateOrdersOperations(object):
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.CertificateRegistration/certificateOrders/{name}'
+        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.CertificateRegistration/certificateOrders/{certificateOrderName}'
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern='^[-\w\._\(\)]+[^\.]$'),
-            'name': self._serialize.url("name", name, 'str'),
+            'certificateOrderName': self._serialize.url("certificate_order_name", certificate_order_name, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -751,7 +751,7 @@ class AppServiceCertificateOrdersOperations(object):
             return client_raw_response
 
     def reissue(
-            self, resource_group_name, name, reissue_certificate_order_request, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, certificate_order_name, reissue_certificate_order_request, custom_headers=None, raw=False, **operation_config):
         """Reissue an existing certificate order.
 
         Reissue an existing certificate order.
@@ -759,8 +759,8 @@ class AppServiceCertificateOrdersOperations(object):
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
         :type resource_group_name: str
-        :param name: Name of the certificate.
-        :type name: str
+        :param certificate_order_name: Name of the certificate order.
+        :type certificate_order_name: str
         :param reissue_certificate_order_request: Parameters for the reissue.
         :type reissue_certificate_order_request:
          :class:`ReissueCertificateOrderRequest
@@ -776,10 +776,10 @@ class AppServiceCertificateOrdersOperations(object):
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.CertificateRegistration/certificateOrders/{name}/reissue'
+        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.CertificateRegistration/certificateOrders/{certificateOrderName}/reissue'
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern='^[-\w\._\(\)]+[^\.]$'),
-            'name': self._serialize.url("name", name, 'str'),
+            'certificateOrderName': self._serialize.url("certificate_order_name", certificate_order_name, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -816,7 +816,7 @@ class AppServiceCertificateOrdersOperations(object):
             return client_raw_response
 
     def renew(
-            self, resource_group_name, name, renew_certificate_order_request, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, certificate_order_name, renew_certificate_order_request, custom_headers=None, raw=False, **operation_config):
         """Renew an existing certificate order.
 
         Renew an existing certificate order.
@@ -824,8 +824,8 @@ class AppServiceCertificateOrdersOperations(object):
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
         :type resource_group_name: str
-        :param name: Certificate name
-        :type name: str
+        :param certificate_order_name: Name of the certificate order.
+        :type certificate_order_name: str
         :param renew_certificate_order_request: Renew parameters
         :type renew_certificate_order_request:
          :class:`RenewCertificateOrderRequest
@@ -841,10 +841,10 @@ class AppServiceCertificateOrdersOperations(object):
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.CertificateRegistration/certificateOrders/{name}/renew'
+        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.CertificateRegistration/certificateOrders/{certificateOrderName}/renew'
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern='^[-\w\._\(\)]+[^\.]$'),
-            'name': self._serialize.url("name", name, 'str'),
+            'certificateOrderName': self._serialize.url("certificate_order_name", certificate_order_name, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -881,7 +881,7 @@ class AppServiceCertificateOrdersOperations(object):
             return client_raw_response
 
     def resend_email(
-            self, resource_group_name, name, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, certificate_order_name, custom_headers=None, raw=False, **operation_config):
         """Resend certificate email.
 
         Resend certificate email.
@@ -889,8 +889,8 @@ class AppServiceCertificateOrdersOperations(object):
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
         :type resource_group_name: str
-        :param name: Certificate order name
-        :type name: str
+        :param certificate_order_name: Name of the certificate order
+        :type certificate_order_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -902,10 +902,10 @@ class AppServiceCertificateOrdersOperations(object):
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.CertificateRegistration/certificateOrders/{name}/resendEmail'
+        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.CertificateRegistration/certificateOrders/{certificateOrderName}/resendEmail'
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern='^[-\w\._\(\)]+[^\.]$'),
-            'name': self._serialize.url("name", name, 'str'),
+            'certificateOrderName': self._serialize.url("certificate_order_name", certificate_order_name, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -938,7 +938,7 @@ class AppServiceCertificateOrdersOperations(object):
             return client_raw_response
 
     def resend_request_emails(
-            self, resource_group_name, name, name=None, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, certificate_order_name, name=None, custom_headers=None, raw=False, **operation_config):
         """Verify domain ownership for this certificate order.
 
         Verify domain ownership for this certificate order.
@@ -946,8 +946,8 @@ class AppServiceCertificateOrdersOperations(object):
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
         :type resource_group_name: str
-        :param name: Certificate order name
-        :type name: str
+        :param certificate_order_name: Name of the certificate order.
+        :type certificate_order_name: str
         :param name: Name of the object.
         :type name: str
         :param dict custom_headers: headers that will be added to the request
@@ -963,10 +963,10 @@ class AppServiceCertificateOrdersOperations(object):
         name_identifier = models.NameIdentifier(name=name)
 
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.CertificateRegistration/certificateOrders/{name}/resendRequestEmails'
+        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.CertificateRegistration/certificateOrders/{certificateOrderName}/resendRequestEmails'
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern='^[-\w\._\(\)]+[^\.]$'),
-            'name': self._serialize.url("name", name, 'str'),
+            'certificateOrderName': self._serialize.url("certificate_order_name", certificate_order_name, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -1003,7 +1003,7 @@ class AppServiceCertificateOrdersOperations(object):
             return client_raw_response
 
     def retrieve_certificate_actions(
-            self, resource_group_name, name, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, certificate_order_name, custom_headers=None, raw=False, **operation_config):
         """Retrieve the list of certificate actions.
 
         Retrieve the list of certificate actions.
@@ -1011,8 +1011,8 @@ class AppServiceCertificateOrdersOperations(object):
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
         :type resource_group_name: str
-        :param name: Certificate order name
-        :type name: str
+        :param certificate_order_name: Name of the certificate order.
+        :type certificate_order_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -1025,10 +1025,10 @@ class AppServiceCertificateOrdersOperations(object):
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.CertificateRegistration/certificateOrders/{name}/retrieveCertificateActions'
+        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.CertificateRegistration/certificateOrders/{certificateOrderName}/retrieveCertificateActions'
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern='^[-\w\._\(\)]+[^\.]$'),
-            'name': self._serialize.url("name", name, 'str'),
+            'certificateOrderName': self._serialize.url("certificate_order_name", certificate_order_name, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -1068,7 +1068,7 @@ class AppServiceCertificateOrdersOperations(object):
         return deserialized
 
     def retrieve_certificate_email_history(
-            self, resource_group_name, name, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, certificate_order_name, custom_headers=None, raw=False, **operation_config):
         """Retrieve email history.
 
         Retrieve email history.
@@ -1076,8 +1076,8 @@ class AppServiceCertificateOrdersOperations(object):
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
         :type resource_group_name: str
-        :param name: Certificate order name
-        :type name: str
+        :param certificate_order_name: Name of the certificate order.
+        :type certificate_order_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -1090,10 +1090,10 @@ class AppServiceCertificateOrdersOperations(object):
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.CertificateRegistration/certificateOrders/{name}/retrieveEmailHistory'
+        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.CertificateRegistration/certificateOrders/{certificateOrderName}/retrieveEmailHistory'
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern='^[-\w\._\(\)]+[^\.]$'),
-            'name': self._serialize.url("name", name, 'str'),
+            'certificateOrderName': self._serialize.url("certificate_order_name", certificate_order_name, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -1133,7 +1133,7 @@ class AppServiceCertificateOrdersOperations(object):
         return deserialized
 
     def retrieve_site_seal(
-            self, resource_group_name, name, light_theme=None, locale=None, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, certificate_order_name, light_theme=None, locale=None, custom_headers=None, raw=False, **operation_config):
         """Verify domain ownership for this certificate order.
 
         Verify domain ownership for this certificate order.
@@ -1141,8 +1141,8 @@ class AppServiceCertificateOrdersOperations(object):
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
         :type resource_group_name: str
-        :param name: Certificate order name
-        :type name: str
+        :param certificate_order_name: Name of the certificate order.
+        :type certificate_order_name: str
         :param light_theme: Theme
         :type light_theme: bool
         :param locale: Locale
@@ -1160,10 +1160,10 @@ class AppServiceCertificateOrdersOperations(object):
         site_seal_request = models.SiteSealRequest(light_theme=light_theme, locale=locale)
 
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.CertificateRegistration/certificateOrders/{name}/retrieveSiteSeal'
+        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.CertificateRegistration/certificateOrders/{certificateOrderName}/retrieveSiteSeal'
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern='^[-\w\._\(\)]+[^\.]$'),
-            'name': self._serialize.url("name", name, 'str'),
+            'certificateOrderName': self._serialize.url("certificate_order_name", certificate_order_name, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -1207,7 +1207,7 @@ class AppServiceCertificateOrdersOperations(object):
         return deserialized
 
     def verify_domain_ownership(
-            self, resource_group_name, name, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, certificate_order_name, custom_headers=None, raw=False, **operation_config):
         """Verify domain ownership for this certificate order.
 
         Verify domain ownership for this certificate order.
@@ -1215,8 +1215,8 @@ class AppServiceCertificateOrdersOperations(object):
         :param resource_group_name: Name of the resource group to which the
          resource belongs.
         :type resource_group_name: str
-        :param name: Certificate order name
-        :type name: str
+        :param certificate_order_name: Name of the certificate order.
+        :type certificate_order_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -1228,10 +1228,10 @@ class AppServiceCertificateOrdersOperations(object):
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.CertificateRegistration/certificateOrders/{name}/verifyDomainOwnership'
+        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.CertificateRegistration/certificateOrders/{certificateOrderName}/verifyDomainOwnership'
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern='^[-\w\._\(\)]+[^\.]$'),
-            'name': self._serialize.url("name", name, 'str'),
+            'certificateOrderName': self._serialize.url("certificate_order_name", certificate_order_name, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
