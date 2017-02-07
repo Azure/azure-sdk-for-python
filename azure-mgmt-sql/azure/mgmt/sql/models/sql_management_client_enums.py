@@ -36,7 +36,7 @@ class ElasticPoolEditions(Enum):
     premium = "Premium"
 
 
-class createMode(Enum):
+class CreateMode(Enum):
 
     copy = "Copy"
     default = "Default"

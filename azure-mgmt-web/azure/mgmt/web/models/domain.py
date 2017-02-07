@@ -100,7 +100,7 @@ class Domain(Resource):
         'ready_for_dns_record_management': {'key': 'properties.readyForDnsRecordManagement', 'type': 'bool'},
         'managed_host_names': {'key': 'properties.managedHostNames', 'type': '[HostName]'},
         'consent': {'key': 'properties.consent', 'type': 'DomainPurchaseConsent'},
-        'domain_not_renewable_reasons': {'key': 'properties.domainNotRenewableReasons', 'type': '[enum]'},
+        'domain_not_renewable_reasons': {'key': 'properties.domainNotRenewableReasons', 'type': '[str]'},
     }
 
     def __init__(self, location, id=None, name=None, kind=None, type=None, tags=None, contact_admin=None, contact_billing=None, contact_registrant=None, contact_tech=None, registration_status=None, provisioning_state=None, name_servers=None, privacy=None, created_time=None, expiration_time=None, last_renewed_time=None, auto_renew=None, ready_for_dns_record_management=None, managed_host_names=None, consent=None, domain_not_renewable_reasons=None):

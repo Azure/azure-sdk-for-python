@@ -48,8 +48,8 @@ class Database(Resource):
     :param create_mode: Specifies the type of database to create. Possible
      values include: 'Copy', 'Default', 'NonReadableSecondary',
      'OnlineSecondary', 'PointInTimeRestore', 'Recovery', 'Restore'
-    :type create_mode: str or :class:`createMode
-     <azure.mgmt.sql.models.createMode>`
+    :type create_mode: str or :class:`CreateMode
+     <azure.mgmt.sql.models.CreateMode>`
     :param source_database_id: Conditional. Specifies the resource ID of the
      source database. If createMode is not set to Default, then this value must
      be specified. The name of the source database must be the same. NOTE:

@@ -21,7 +21,7 @@ class SubscriptionState(Enum):
     deleted = "Deleted"
 
 
-class spendingLimit(Enum):
+class SpendingLimit(Enum):
 
     on = "On"
     off = "Off"

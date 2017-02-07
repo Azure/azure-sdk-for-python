@@ -24,9 +24,11 @@ class FirewallRule(SubResource):
     :type name: str
     :ivar type: Resource type
     :vartype type: str
-    :param start_ip_address: the start IP address for the firewall rule.
+    :param start_ip_address: the start IP address for the firewall rule. This
+     can be either ipv4 or ipv6. Start and End should be in the same protocol.
     :type start_ip_address: str
-    :param end_ip_address: the end IP address for the firewall rule.
+    :param end_ip_address: the end IP address for the firewall rule. This can
+     be either ipv4 or ipv6. Start and End should be in the same protocol.
     :type end_ip_address: str
     """
 

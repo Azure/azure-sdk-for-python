@@ -29,22 +29,11 @@ class ContainerRegistryManagementClientConfiguration(AzureConfiguration):
     :type subscription_id: str
     :param api_version: The client API version.
     :type api_version: str
-    :param accept_language: Gets or sets the preferred language for the
-     response.
-    :type accept_language: str
-    :param long_running_operation_retry_timeout: Gets or sets the retry
-     timeout in seconds for Long Running Operations. Default value is 30.
-    :type long_running_operation_retry_timeout: int
-    :param generate_client_request_id: When set to true a unique
-     x-ms-client-request-id value is generated and included in each request.
-     Default is true.
-    :type generate_client_request_id: bool
     :param str base_url: Service URL
-    :param str filepath: Existing config
     """
 
     def __init__(
-            self, credentials, subscription_id, api_version='2016-06-27-preview', accept_language='en-US', long_running_operation_retry_timeout=30, generate_client_request_id=True, base_url=None, filepath=None):
+            self, credentials, subscription_id, api_version='2016-06-27-preview', base_url=None):
 
         if credentials is None:
             raise ValueError("Parameter 'credentials' must not be None.")
@@ -54,12 +43,10 @@ class ContainerRegistryManagementClientConfiguration(AzureConfiguration):
             raise TypeError("Parameter 'subscription_id' must be str.")
         if api_version is not None and not isinstance(api_version, str):
             raise TypeError("Optional parameter 'api_version' must be str.")
-        if accept_language is not None and not isinstance(accept_language, str):
-            raise TypeError("Optional parameter 'accept_language' must be str.")
         if not base_url:
             base_url = 'https://management.azure.com'
 
-        super(ContainerRegistryManagementClientConfiguration, self).__init__(base_url, filepath)
+        super(ContainerRegistryManagementClientConfiguration, self).__init__(base_url)
 
         self.add_user_agent('containerregistrymanagementclient/{}'.format(VERSION))
         self.add_user_agent('Azure-SDK-For-Python')
@@ -67,9 +54,6 @@ class ContainerRegistryManagementClientConfiguration(AzureConfiguration):
         self.credentials = credentials
         self.subscription_id = subscription_id
         self.api_version = api_version
-        self.accept_language = accept_language
-        self.long_running_operation_retry_timeout = long_running_operation_retry_timeout
-        self.generate_client_request_id = generate_client_request_id
 
 
 class ContainerRegistryManagementClient(object):
@@ -88,24 +72,13 @@ class ContainerRegistryManagementClient(object):
     :type subscription_id: str
     :param api_version: The client API version.
     :type api_version: str
-    :param accept_language: Gets or sets the preferred language for the
-     response.
-    :type accept_language: str
-    :param long_running_operation_retry_timeout: Gets or sets the retry
-     timeout in seconds for Long Running Operations. Default value is 30.
-    :type long_running_operation_retry_timeout: int
-    :param generate_client_request_id: When set to true a unique
-     x-ms-client-request-id value is generated and included in each request.
-     Default is true.
-    :type generate_client_request_id: bool
     :param str base_url: Service URL
-    :param str filepath: Existing config
     """
 
     def __init__(
-            self, credentials, subscription_id, api_version='2016-06-27-preview', accept_language='en-US', long_running_operation_retry_timeout=30, generate_client_request_id=True, base_url=None, filepath=None):
+            self, credentials, subscription_id, api_version='2016-06-27-preview', base_url=None):
 
-        self.config = ContainerRegistryManagementClientConfiguration(credentials, subscription_id, api_version, accept_language, long_running_operation_retry_timeout, generate_client_request_id, base_url, filepath)
+        self.config = ContainerRegistryManagementClientConfiguration(credentials, subscription_id, api_version, base_url)
         self._client = ServiceClient(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}

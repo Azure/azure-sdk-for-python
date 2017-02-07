@@ -27,9 +27,9 @@ class Permissions(Model):
     """
 
     _attribute_map = {
-        'keys': {'key': 'keys', 'type': '[KeyPermissions]'},
-        'secrets': {'key': 'secrets', 'type': '[SecretPermissions]'},
-        'certificates': {'key': 'certificates', 'type': '[CertificatePermissions]'},
+        'keys': {'key': 'keys', 'type': '[str]'},
+        'secrets': {'key': 'secrets', 'type': '[str]'},
+        'certificates': {'key': 'certificates', 'type': '[str]'},
     }
 
     def __init__(self, keys=None, secrets=None, certificates=None):

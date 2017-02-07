@@ -23,6 +23,12 @@ class DataLakeStoreAccountUpdateParameters(Model):
      re-enabled. Possible values include: 'Enabled', 'Disabled'
     :type firewall_state: str or :class:`FirewallState
      <azure.mgmt.datalake.store.models.FirewallState>`
+    :param firewall_allow_azure_ips: The current state of allowing or
+     disallowing IPs originating within Azure through the firewall. If the
+     firewall is disabled, this is not enforced. Possible values include:
+     'Enabled', 'Disabled'
+    :type firewall_allow_azure_ips: str or :class:`FirewallAllowAzureIpsState
+     <azure.mgmt.datalake.store.models.FirewallAllowAzureIpsState>`
     :param trusted_id_provider_state: The current state of the trusted
      identity provider feature for this Data Lake store account. Disabling
      trusted identity provider functionality does not remove the providers,
@@ -43,14 +49,16 @@ class DataLakeStoreAccountUpdateParameters(Model):
     _attribute_map = {
         'tags': {'key': 'tags', 'type': '{str}'},
         'firewall_state': {'key': 'properties.firewallState', 'type': 'FirewallState'},
+        'firewall_allow_azure_ips': {'key': 'properties.firewallAllowAzureIps', 'type': 'FirewallAllowAzureIpsState'},
         'trusted_id_provider_state': {'key': 'properties.trustedIdProviderState', 'type': 'TrustedIdProviderState'},
         'default_group': {'key': 'properties.defaultGroup', 'type': 'str'},
         'new_tier': {'key': 'properties.newTier', 'type': 'TierType'},
     }
 
-    def __init__(self, tags=None, firewall_state=None, trusted_id_provider_state=None, default_group=None, new_tier=None):
+    def __init__(self, tags=None, firewall_state=None, firewall_allow_azure_ips=None, trusted_id_provider_state=None, default_group=None, new_tier=None):
         self.tags = tags
         self.firewall_state = firewall_state
+        self.firewall_allow_azure_ips = firewall_allow_azure_ips
         self.trusted_id_provider_state = trusted_id_provider_state
         self.default_group = default_group
         self.new_tier = new_tier

@@ -34,9 +34,9 @@ from .error import Error, ErrorException
 from .gateway_resource_paged import GatewayResourcePaged
 from .node_resource_paged import NodeResourcePaged
 from .server_management_enums import (
-    upgradeMode,
-    retentionPeriod,
-    credentialDataFormat,
+    UpgradeMode,
+    RetentionPeriod,
+    CredentialDataFormat,
     PromptFieldType,
     GatewayExpandOption,
     PowerShellExpandOption,
@@ -67,9 +67,9 @@ __all__ = [
     'Error', 'ErrorException',
     'GatewayResourcePaged',
     'NodeResourcePaged',
-    'upgradeMode',
-    'retentionPeriod',
-    'credentialDataFormat',
+    'UpgradeMode',
+    'RetentionPeriod',
+    'CredentialDataFormat',
     'PromptFieldType',
     'GatewayExpandOption',
     'PowerShellExpandOption',

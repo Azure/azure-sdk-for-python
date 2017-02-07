@@ -55,6 +55,12 @@ class FirewallState(Enum):
     disabled = "Disabled"
 
 
+class FirewallAllowAzureIpsState(Enum):
+
+    enabled = "Enabled"
+    disabled = "Disabled"
+
+
 class TrustedIdProviderState(Enum):
 
     enabled = "Enabled"

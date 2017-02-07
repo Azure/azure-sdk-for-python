@@ -50,8 +50,8 @@ class GatewayOperations(object):
          gateway to auto upgrade itself. If properties value not specified,
          then we assume upgradeMode = Automatic. Possible values include:
          'Manual', 'Automatic'
-        :type upgrade_mode: str or :class:`upgradeMode
-         <azure.mgmt.servermanager.models.upgradeMode>`
+        :type upgrade_mode: str or :class:`UpgradeMode
+         <azure.mgmt.servermanager.models.UpgradeMode>`
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -153,8 +153,8 @@ class GatewayOperations(object):
          gateway to auto upgrade itself. If properties value not specified,
          then we assume upgradeMode = Automatic. Possible values include:
          'Manual', 'Automatic'
-        :type upgrade_mode: str or :class:`upgradeMode
-         <azure.mgmt.servermanager.models.upgradeMode>`
+        :type upgrade_mode: str or :class:`UpgradeMode
+         <azure.mgmt.servermanager.models.UpgradeMode>`
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response

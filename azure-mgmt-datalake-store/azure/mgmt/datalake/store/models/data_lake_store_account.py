@@ -61,6 +61,12 @@ class DataLakeStoreAccount(Resource):
      'Disabled'
     :type firewall_state: str or :class:`FirewallState
      <azure.mgmt.datalake.store.models.FirewallState>`
+    :param firewall_allow_azure_ips: The current state of allowing or
+     disallowing IPs originating within Azure through the firewall. If the
+     firewall is disabled, this is not enforced. Possible values include:
+     'Enabled', 'Disabled'
+    :type firewall_allow_azure_ips: str or :class:`FirewallAllowAzureIpsState
+     <azure.mgmt.datalake.store.models.FirewallAllowAzureIpsState>`
     :param firewall_rules: The list of firewall rules associated with this
      Data Lake store account.
     :type firewall_rules: list of :class:`FirewallRule
@@ -122,6 +128,7 @@ class DataLakeStoreAccount(Resource):
         'encryption_provisioning_state': {'key': 'properties.encryptionProvisioningState', 'type': 'EncryptionProvisioningState'},
         'encryption_config': {'key': 'properties.encryptionConfig', 'type': 'EncryptionConfig'},
         'firewall_state': {'key': 'properties.firewallState', 'type': 'FirewallState'},
+        'firewall_allow_azure_ips': {'key': 'properties.firewallAllowAzureIps', 'type': 'FirewallAllowAzureIpsState'},
         'firewall_rules': {'key': 'properties.firewallRules', 'type': '[FirewallRule]'},
         'trusted_id_provider_state': {'key': 'properties.trustedIdProviderState', 'type': 'TrustedIdProviderState'},
         'trusted_id_providers': {'key': 'properties.trustedIdProviders', 'type': '[TrustedIdProvider]'},
@@ -132,7 +139,7 @@ class DataLakeStoreAccount(Resource):
         'current_tier': {'key': 'properties.currentTier', 'type': 'TierType'},
     }
 
-    def __init__(self, location, tags=None, identity=None, encryption_state=None, encryption_config=None, firewall_state=None, firewall_rules=None, trusted_id_provider_state=None, trusted_id_providers=None, default_group=None, new_tier=None):
+    def __init__(self, location, tags=None, identity=None, encryption_state=None, encryption_config=None, firewall_state=None, firewall_allow_azure_ips=None, firewall_rules=None, trusted_id_provider_state=None, trusted_id_providers=None, default_group=None, new_tier=None):
         super(DataLakeStoreAccount, self).__init__(location=location, tags=tags)
         self.identity = identity
         self.provisioning_state = None
@@ -142,6 +149,7 @@ class DataLakeStoreAccount(Resource):
         self.encryption_provisioning_state = None
         self.encryption_config = encryption_config
         self.firewall_state = firewall_state
+        self.firewall_allow_azure_ips = firewall_allow_azure_ips
         self.firewall_rules = firewall_rules
         self.trusted_id_provider_state = trusted_id_provider_state
         self.trusted_id_providers = trusted_id_providers

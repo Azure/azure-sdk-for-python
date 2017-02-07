@@ -37,7 +37,7 @@ class ServiceBusBrokeredMessageProperties(Model):
     :param session_id: Gets or sets the session ID.
     :type session_id: str
     :param time_to_live: Gets or sets the time to live.
-    :type time_to_live: datetime
+    :type time_to_live: timedelta
     :param to: Gets or sets the to.
     :type to: str
     :param via_partition_key: Gets or sets the via partition key.
@@ -55,7 +55,7 @@ class ServiceBusBrokeredMessageProperties(Model):
         'reply_to_session_id': {'key': 'replyToSessionId', 'type': 'str'},
         'scheduled_enqueue_time_utc': {'key': 'scheduledEnqueueTimeUtc', 'type': 'iso-8601'},
         'session_id': {'key': 'sessionId', 'type': 'str'},
-        'time_to_live': {'key': 'timeToLive', 'type': 'iso-8601'},
+        'time_to_live': {'key': 'timeToLive', 'type': 'duration'},
         'to': {'key': 'to', 'type': 'str'},
         'via_partition_key': {'key': 'viaPartitionKey', 'type': 'str'},
     }

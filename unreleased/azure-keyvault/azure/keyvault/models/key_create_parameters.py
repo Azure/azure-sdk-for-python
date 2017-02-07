@@ -39,7 +39,7 @@ class KeyCreateParameters(Model):
     _attribute_map = {
         'kty': {'key': 'kty', 'type': 'str'},
         'key_size': {'key': 'key_size', 'type': 'int'},
-        'key_ops': {'key': 'key_ops', 'type': '[JsonWebKeyOperation]'},
+        'key_ops': {'key': 'key_ops', 'type': '[str]'},
         'key_attributes': {'key': 'attributes', 'type': 'KeyAttributes'},
         'tags': {'key': 'tags', 'type': '{str}'},
     }

@@ -88,6 +88,21 @@ class DataLakeAnalyticsAccount(Resource):
      'Commitment_500000AUHours'
     :vartype current_tier: str or :class:`TierType
      <azure.mgmt.datalake.analytics.account.models.TierType>`
+    :param firewall_state: The current state of the IP address firewall for
+     this Data Lake Analytics account. Possible values include: 'Enabled',
+     'Disabled'
+    :type firewall_state: str or :class:`FirewallState
+     <azure.mgmt.datalake.analytics.account.models.FirewallState>`
+    :param firewall_allow_azure_ips: The current state of allowing or
+     disallowing IPs originating within Azure through the firewall. If the
+     firewall is disabled, this is not enforced. Possible values include:
+     'Enabled', 'Disabled'
+    :type firewall_allow_azure_ips: str or :class:`FirewallAllowAzureIpsState
+     <azure.mgmt.datalake.analytics.account.models.FirewallAllowAzureIpsState>`
+    :param firewall_rules: The list of firewall rules associated with this
+     Data Lake Analytics account.
+    :type firewall_rules: list of :class:`FirewallRule
+     <azure.mgmt.datalake.analytics.account.models.FirewallRule>`
     """
 
     _validation = {
@@ -131,9 +146,12 @@ class DataLakeAnalyticsAccount(Resource):
         'endpoint': {'key': 'properties.endpoint', 'type': 'str'},
         'new_tier': {'key': 'properties.newTier', 'type': 'TierType'},
         'current_tier': {'key': 'properties.currentTier', 'type': 'TierType'},
+        'firewall_state': {'key': 'properties.firewallState', 'type': 'FirewallState'},
+        'firewall_allow_azure_ips': {'key': 'properties.firewallAllowAzureIps', 'type': 'FirewallAllowAzureIpsState'},
+        'firewall_rules': {'key': 'properties.firewallRules', 'type': '[FirewallRule]'},
     }
 
-    def __init__(self, location, default_data_lake_store_account, data_lake_store_accounts, tags=None, max_degree_of_parallelism=30, query_store_retention=30, max_job_count=3, storage_accounts=None, new_tier=None):
+    def __init__(self, location, default_data_lake_store_account, data_lake_store_accounts, tags=None, max_degree_of_parallelism=30, query_store_retention=30, max_job_count=3, storage_accounts=None, new_tier=None, firewall_state=None, firewall_allow_azure_ips=None, firewall_rules=None):
         super(DataLakeAnalyticsAccount, self).__init__(location=location, tags=tags)
         self.provisioning_state = None
         self.state = None
@@ -150,3 +168,6 @@ class DataLakeAnalyticsAccount(Resource):
         self.endpoint = None
         self.new_tier = new_tier
         self.current_tier = None
+        self.firewall_state = firewall_state
+        self.firewall_allow_azure_ips = firewall_allow_azure_ips
+        self.firewall_rules = firewall_rules

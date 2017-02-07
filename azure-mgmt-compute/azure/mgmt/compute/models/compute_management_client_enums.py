@@ -106,6 +106,12 @@ class DiskCreateOptionTypes(Enum):
     attach = "attach"
 
 
+class StorageAccountTypes(Enum):
+
+    standard_lrs = "Standard_LRS"
+    premium_lrs = "Premium_LRS"
+
+
 class PassNames(Enum):
 
     oobe_system = "oobeSystem"
@@ -132,6 +138,12 @@ class UpgradeMode(Enum):
 
     automatic = "Automatic"
     manual = "Manual"
+
+
+class OperatingSystemStateTypes(Enum):
+
+    generalized = "Generalized"
+    specialized = "Specialized"
 
 
 class VirtualMachineScaleSetSkuScaleType(Enum):
@@ -197,6 +209,22 @@ class ContainerServiceVMSizeTypes(Enum):
     standard_gs3 = "Standard_GS3"
     standard_gs4 = "Standard_GS4"
     standard_gs5 = "Standard_GS5"
+
+
+class DiskCreateOption(Enum):
+
+    empty = "Empty"
+    attach = "Attach"
+    from_image = "FromImage"
+    import_enum = "Import"
+    copy = "Copy"
+    restore = "Restore"
+
+
+class AccessLevel(Enum):
+
+    none = "None"
+    read = "Read"
 
 
 class InstanceViewTypes(Enum):
