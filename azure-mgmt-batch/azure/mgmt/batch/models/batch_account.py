@@ -47,7 +47,7 @@ class BatchAccount(Resource):
     :param active_job_and_job_schedule_quota: The active job and job schedule
      quota for this Batch account.
     :type active_job_and_job_schedule_quota: int
-    """ 
+    """
 
     _validation = {
         'id': {'readonly': True},

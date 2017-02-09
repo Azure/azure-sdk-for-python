@@ -36,7 +36,7 @@ class ApplicationPackage(Model):
     :param last_activation_time: The time at which the package was last
      activated, if the package is active.
     :type last_activation_time: datetime
-    """ 
+    """
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},

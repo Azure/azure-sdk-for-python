@@ -22,7 +22,7 @@ class BatchAccountCreateParameters(Model):
     :param auto_storage: The properties related to auto storage account.
     :type auto_storage: :class:`AutoStorageBaseProperties
      <azure.mgmt.batch.models.AutoStorageBaseProperties>`
-    """ 
+    """
 
     _validation = {
         'location': {'required': True},
