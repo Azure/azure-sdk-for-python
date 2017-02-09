@@ -13,33 +13,37 @@ from .resource import Resource
 
 
 class SourceControl(Resource):
-    """Describes the Source Control OAuth Token.
+    """The source control OAuth token.
 
-    :param id: Resource Id
-    :type id: str
-    :param name: Resource Name
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar id: Resource Id.
+    :vartype id: str
+    :param name: Resource Name.
     :type name: str
-    :param kind: Kind of resource
+    :param kind: Kind of resource.
     :type kind: str
-    :param location: Resource Location
+    :param location: Resource Location.
     :type location: str
-    :param type: Resource type
+    :param type: Resource type.
     :type type: str
-    :param tags: Resource tags
+    :param tags: Resource tags.
     :type tags: dict
-    :param source_control_name: Name or Source Control Type
+    :param source_control_name: Name or source control type.
     :type source_control_name: str
-    :param token: OAuth Access Token
+    :param token: OAuth access token.
     :type token: str
-    :param token_secret: OAuth Access Token Secret
+    :param token_secret: OAuth access token secret.
     :type token_secret: str
-    :param refresh_token: OAuth Refresh Token
+    :param refresh_token: OAuth refresh token.
     :type refresh_token: str
-    :param expiration_time: OAuth Token Expiration
+    :param expiration_time: OAuth token expiration.
     :type expiration_time: datetime
-    """ 
+    """
 
     _validation = {
+        'id': {'readonly': True},
         'location': {'required': True},
     }
 
@@ -57,8 +61,8 @@ class SourceControl(Resource):
         'expiration_time': {'key': 'properties.expirationTime', 'type': 'iso-8601'},
     }
 
-    def __init__(self, location, id=None, name=None, kind=None, type=None, tags=None, source_control_name=None, token=None, token_secret=None, refresh_token=None, expiration_time=None):
-        super(SourceControl, self).__init__(id=id, name=name, kind=kind, location=location, type=type, tags=tags)
+    def __init__(self, location, name=None, kind=None, type=None, tags=None, source_control_name=None, token=None, token_secret=None, refresh_token=None, expiration_time=None):
+        super(SourceControl, self).__init__(name=name, kind=kind, location=location, type=type, tags=tags)
         self.source_control_name = source_control_name
         self.token = token
         self.token_secret = token_secret

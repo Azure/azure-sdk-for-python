@@ -13,13 +13,13 @@ from msrest.serialization import Model
 
 
 class SiteCloneabilityCriterion(Model):
-    """Represents a site cloneability criterion.
+    """An app cloneability criterion.
 
-    :param name: Name of criterion
+    :param name: Name of criterion.
     :type name: str
-    :param description: Description of criterion
+    :param description: Description of criterion.
     :type description: str
-    """ 
+    """
 
     _attribute_map = {
         'name': {'key': 'name', 'type': 'str'},

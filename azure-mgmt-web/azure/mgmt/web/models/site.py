@@ -13,117 +13,131 @@ from .resource import Resource
 
 
 class Site(Resource):
-    """Represents a web app.
+    """A web app, a mobile app backend, or an API app.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :param id: Resource Id
-    :type id: str
-    :param name: Resource Name
+    :ivar id: Resource Id.
+    :vartype id: str
+    :param name: Resource Name.
     :type name: str
-    :param kind: Kind of resource
+    :param kind: Kind of resource.
     :type kind: str
-    :param location: Resource Location
+    :param location: Resource Location.
     :type location: str
-    :param type: Resource type
+    :param type: Resource type.
     :type type: str
-    :param tags: Resource tags
+    :param tags: Resource tags.
     :type tags: dict
-    :param site_name: Name of web app
-    :type site_name: str
-    :ivar state: State of the web app
+    :ivar state: Current state of the app.
     :vartype state: str
-    :ivar host_names: Hostnames associated with web app
+    :ivar host_names: Hostnames associated with the app.
     :vartype host_names: list of str
-    :ivar repository_site_name: Name of repository site
+    :ivar repository_site_name: Name of the repository site.
     :vartype repository_site_name: str
-    :ivar usage_state: State indicating whether web app has exceeded its
-     quota usage. Possible values include: 'Normal', 'Exceeded'
+    :ivar usage_state: State indicating whether the app has exceeded its quota
+     usage. Read-only. Possible values include: 'Normal', 'Exceeded'
     :vartype usage_state: str or :class:`UsageState
      <azure.mgmt.web.models.UsageState>`
-    :param enabled: True if the site is enabled; otherwise, false. Setting
-     this  value to false disables the site (takes the site off line).
+    :param enabled: <code>true</code> if the app is enabled; otherwise,
+     <code>false</code>. Setting this value to false disables the app (takes
+     the app offline).
     :type enabled: bool
-    :ivar enabled_host_names: Hostnames for the web app that are enabled.
-     Hostnames need to be assigned and enabled. If some hostnames are
-     assigned but not enabled
-     the app is not served on those hostnames
+    :ivar enabled_host_names: Enabled hostnames for the app.Hostnames need to
+     be assigned (see HostNames) AND enabled. Otherwise,
+     the app is not served on those hostnames.
     :vartype enabled_host_names: list of str
     :ivar availability_state: Management information availability state for
-     the web app. Possible values are Normal or Limited.
-     Normal means that the site is running correctly and that
-     management information for the site is available.
-     Limited means that only partial management information for
-     the site is available and that detailed site information is unavailable.
-     Possible values include: 'Normal', 'Limited', 'DisasterRecoveryMode'
+     the app. Possible values include: 'Normal', 'Limited',
+     'DisasterRecoveryMode'
     :vartype availability_state: str or :class:`SiteAvailabilityState
      <azure.mgmt.web.models.SiteAvailabilityState>`
-    :param host_name_ssl_states: Hostname SSL states are  used to manage the
-     SSL bindings for site's hostnames.
+    :param host_name_ssl_states: Hostname SSL states are used to manage the
+     SSL bindings for app's hostnames.
     :type host_name_ssl_states: list of :class:`HostNameSslState
      <azure.mgmt.web.models.HostNameSslState>`
-    :param server_farm_id:
+    :param server_farm_id: Resource ID of the associated App Service plan,
+     formatted as:
+     "/subscriptions/{subscriptionID}/resourceGroups/{groupName}/providers/Microsoft.Web/serverfarms/{appServicePlanName}".
     :type server_farm_id: str
-    :ivar last_modified_time_utc: Last time web app was modified in UTC
+    :param reserved: <code>true</code> if reserved; otherwise,
+     <code>false</code>. Default value: False .
+    :type reserved: bool
+    :ivar last_modified_time_utc: Last time the app was modified, in UTC.
+     Read-only.
     :vartype last_modified_time_utc: datetime
-    :param site_config: Configuration of web app
+    :param site_config: Configuration of the app.
     :type site_config: :class:`SiteConfig <azure.mgmt.web.models.SiteConfig>`
-    :ivar traffic_manager_host_names: Read-only list of Azure Traffic manager
-     hostnames associated with web app
+    :ivar traffic_manager_host_names: Azure Traffic Manager hostnames
+     associated with the app. Read-only.
     :vartype traffic_manager_host_names: list of str
-    :ivar premium_app_deployed: If set indicates whether web app is deployed
-     as a premium app
+    :ivar premium_app_deployed: Indicates whether app is deployed as a premium
+     app.
     :vartype premium_app_deployed: bool
-    :param scm_site_also_stopped: If set indicates whether to stop SCM (KUDU)
-     site when the web app is stopped. Default is false.
+    :param scm_site_also_stopped: <code>true</code> to stop SCM (KUDU) site
+     when the app is stopped; otherwise, <code>false</code>. The default is
+     <code>false</code>. Default value: False .
     :type scm_site_also_stopped: bool
-    :ivar target_swap_slot: Read-only property that specifies which slot this
-     app will swap into
+    :ivar target_swap_slot: Specifies which deployment slot this app will swap
+     into. Read-only.
     :vartype target_swap_slot: str
-    :param hosting_environment_profile: Specification for the hosting
-     environment (App Service Environment) to use for the web app
+    :param hosting_environment_profile: App Service Environment to use for the
+     app.
     :type hosting_environment_profile: :class:`HostingEnvironmentProfile
      <azure.mgmt.web.models.HostingEnvironmentProfile>`
-    :param micro_service:
+    :param micro_service: Micro services like apps, logic apps. Default value:
+     "false" .
     :type micro_service: str
-    :param gateway_site_name: Name of gateway app associated with web app
+    :param gateway_site_name: Name of gateway app associated with the app.
     :type gateway_site_name: str
-    :param client_affinity_enabled: Specifies if the client affinity is
-     enabled when load balancing http request for multiple instances of the
-     web app
+    :param client_affinity_enabled: <code>true</code> to enable client
+     affinity; <code>false</code> to stop sending session affinity cookies,
+     which route client requests in the same session to the same instance.
+     Default is <code>true</code>.
     :type client_affinity_enabled: bool
-    :param client_cert_enabled: Specifies if the client certificate is
-     enabled for the web app
+    :param client_cert_enabled: <code>true</code> to enable client certificate
+     authentication (TLS mutual authentication); otherwise, <code>false</code>.
+     Default is <code>false</code>.
     :type client_cert_enabled: bool
-    :param host_names_disabled: Specifies if the public hostnames are
-     disabled the web app.
-     If set to true the app is only accessible via API Management
-     process
+    :param host_names_disabled: <code>true</code> to disable the public
+     hostnames of the app; otherwise, <code>false</code>.
+     If <code>true</code>, the app is only accessible via API management
+     process.
     :type host_names_disabled: bool
-    :ivar outbound_ip_addresses: List of comma separated IP addresses that
-     this web app uses for outbound connections. Those can be used when
-     configuring firewall rules for databases accessed by this web app.
+    :ivar outbound_ip_addresses: List of IP addresses that the app uses for
+     outbound connections (e.g. database access). Read-only.
     :vartype outbound_ip_addresses: str
-    :param container_size: Size of a function container
+    :param container_size: Size of the function container.
     :type container_size: int
-    :param max_number_of_workers: Maximum number of workers
-     This only applies to function container
-    :type max_number_of_workers: int
-    :param cloning_info: This is only valid for web app creation. If
-     specified, web app is cloned from
-     a source web app
+    :param daily_memory_time_quota: Maximum allowed daily memory-time quota
+     (applicable on dynamic apps only).
+    :type daily_memory_time_quota: int
+    :ivar suspended_till: App suspended till in case memory-time quota is
+     exceeded.
+    :vartype suspended_till: datetime
+    :ivar max_number_of_workers: Maximum number of workers.
+     This only applies to Functions container.
+    :vartype max_number_of_workers: int
+    :param cloning_info: If specified during app creation, the app is cloned
+     from a source app.
     :type cloning_info: :class:`CloningInfo
      <azure.mgmt.web.models.CloningInfo>`
-    :ivar resource_group: Resource group web app belongs to
+    :ivar resource_group: Name of the resource group the app belongs to.
+     Read-only.
     :vartype resource_group: str
-    :ivar is_default_container: Site is a default container
+    :ivar is_default_container: <code>true</code> if the app is a default
+     container; otherwise, <code>false</code>.
     :vartype is_default_container: bool
-    :ivar default_host_name: Default hostname of the web app
+    :ivar default_host_name: Default hostname of the app. Read-only.
     :vartype default_host_name: str
-    """ 
+    :ivar slot_swap_status: Status of the last deployment slot swap operation.
+    :vartype slot_swap_status: :class:`SlotSwapStatus
+     <azure.mgmt.web.models.SlotSwapStatus>`
+    """
 
     _validation = {
+        'id': {'readonly': True},
         'location': {'required': True},
         'state': {'readonly': True},
         'host_names': {'readonly': True},
@@ -136,9 +150,12 @@ class Site(Resource):
         'premium_app_deployed': {'readonly': True},
         'target_swap_slot': {'readonly': True},
         'outbound_ip_addresses': {'readonly': True},
+        'suspended_till': {'readonly': True},
+        'max_number_of_workers': {'readonly': True},
         'resource_group': {'readonly': True},
         'is_default_container': {'readonly': True},
         'default_host_name': {'readonly': True},
+        'slot_swap_status': {'readonly': True},
     }
 
     _attribute_map = {
@@ -148,7 +165,6 @@ class Site(Resource):
         'location': {'key': 'location', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
-        'site_name': {'key': 'properties.name', 'type': 'str'},
         'state': {'key': 'properties.state', 'type': 'str'},
         'host_names': {'key': 'properties.hostNames', 'type': '[str]'},
         'repository_site_name': {'key': 'properties.repositorySiteName', 'type': 'str'},
@@ -158,6 +174,7 @@ class Site(Resource):
         'availability_state': {'key': 'properties.availabilityState', 'type': 'SiteAvailabilityState'},
         'host_name_ssl_states': {'key': 'properties.hostNameSslStates', 'type': '[HostNameSslState]'},
         'server_farm_id': {'key': 'properties.serverFarmId', 'type': 'str'},
+        'reserved': {'key': 'properties.reserved', 'type': 'bool'},
         'last_modified_time_utc': {'key': 'properties.lastModifiedTimeUtc', 'type': 'iso-8601'},
         'site_config': {'key': 'properties.siteConfig', 'type': 'SiteConfig'},
         'traffic_manager_host_names': {'key': 'properties.trafficManagerHostNames', 'type': '[str]'},
@@ -172,16 +189,18 @@ class Site(Resource):
         'host_names_disabled': {'key': 'properties.hostNamesDisabled', 'type': 'bool'},
         'outbound_ip_addresses': {'key': 'properties.outboundIpAddresses', 'type': 'str'},
         'container_size': {'key': 'properties.containerSize', 'type': 'int'},
+        'daily_memory_time_quota': {'key': 'properties.dailyMemoryTimeQuota', 'type': 'int'},
+        'suspended_till': {'key': 'properties.suspendedTill', 'type': 'iso-8601'},
         'max_number_of_workers': {'key': 'properties.maxNumberOfWorkers', 'type': 'int'},
         'cloning_info': {'key': 'properties.cloningInfo', 'type': 'CloningInfo'},
         'resource_group': {'key': 'properties.resourceGroup', 'type': 'str'},
         'is_default_container': {'key': 'properties.isDefaultContainer', 'type': 'bool'},
         'default_host_name': {'key': 'properties.defaultHostName', 'type': 'str'},
+        'slot_swap_status': {'key': 'properties.slotSwapStatus', 'type': 'SlotSwapStatus'},
     }
 
-    def __init__(self, location, id=None, name=None, kind=None, type=None, tags=None, site_name=None, enabled=None, host_name_ssl_states=None, server_farm_id=None, site_config=None, scm_site_also_stopped=None, hosting_environment_profile=None, micro_service=None, gateway_site_name=None, client_affinity_enabled=None, client_cert_enabled=None, host_names_disabled=None, container_size=None, max_number_of_workers=None, cloning_info=None):
-        super(Site, self).__init__(id=id, name=name, kind=kind, location=location, type=type, tags=tags)
-        self.site_name = site_name
+    def __init__(self, location, name=None, kind=None, type=None, tags=None, enabled=None, host_name_ssl_states=None, server_farm_id=None, reserved=False, site_config=None, scm_site_also_stopped=False, hosting_environment_profile=None, micro_service="false", gateway_site_name=None, client_affinity_enabled=None, client_cert_enabled=None, host_names_disabled=None, container_size=None, daily_memory_time_quota=None, cloning_info=None):
+        super(Site, self).__init__(name=name, kind=kind, location=location, type=type, tags=tags)
         self.state = None
         self.host_names = None
         self.repository_site_name = None
@@ -191,6 +210,7 @@ class Site(Resource):
         self.availability_state = None
         self.host_name_ssl_states = host_name_ssl_states
         self.server_farm_id = server_farm_id
+        self.reserved = reserved
         self.last_modified_time_utc = None
         self.site_config = site_config
         self.traffic_manager_host_names = None
@@ -205,8 +225,11 @@ class Site(Resource):
         self.host_names_disabled = host_names_disabled
         self.outbound_ip_addresses = None
         self.container_size = container_size
-        self.max_number_of_workers = max_number_of_workers
+        self.daily_memory_time_quota = daily_memory_time_quota
+        self.suspended_till = None
+        self.max_number_of_workers = None
         self.cloning_info = cloning_info
         self.resource_group = None
         self.is_default_container = None
         self.default_host_name = None
+        self.slot_swap_status = None

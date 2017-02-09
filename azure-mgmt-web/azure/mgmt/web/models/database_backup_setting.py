@@ -13,25 +13,27 @@ from msrest.serialization import Model
 
 
 class DatabaseBackupSetting(Model):
-    """Note: properties are serialized in JSON format and stored in DB.
-    if new properties are added they might not be in the previous
-    data rows
-    so please handle nulls.
+    """Database backup settings.
 
-    :param database_type: SqlAzure / MySql
-    :type database_type: str
+    :param database_type: Database type (e.g. SqlAzure / MySql). Possible
+     values include: 'SqlAzure', 'MySql', 'LocalMySql'
+    :type database_type: str or :class:`DatabaseType
+     <azure.mgmt.web.models.DatabaseType>`
     :param name:
     :type name: str
     :param connection_string_name: Contains a connection string name that is
      linked to the SiteConfig.ConnectionStrings.
-     This is used during restore with overwrite connection strings
-     options.
+     This is used during restore with overwrite connection strings options.
     :type connection_string_name: str
-    :param connection_string: Contains a connection string to a database
-     which is being backed up/restored. If the restore should happen to a new
+    :param connection_string: Contains a connection string to a database which
+     is being backed up or restored. If the restore should happen to a new
      database, the database name inside is the new one.
     :type connection_string: str
-    """ 
+    """
+
+    _validation = {
+        'database_type': {'required': True},
+    }
 
     _attribute_map = {
         'database_type': {'key': 'databaseType', 'type': 'str'},
@@ -40,7 +42,7 @@ class DatabaseBackupSetting(Model):
         'connection_string': {'key': 'connectionString', 'type': 'str'},
     }
 
-    def __init__(self, database_type=None, name=None, connection_string_name=None, connection_string=None):
+    def __init__(self, database_type, name=None, connection_string_name=None, connection_string=None):
         self.database_type = database_type
         self.name = name
         self.connection_string_name = connection_string_name

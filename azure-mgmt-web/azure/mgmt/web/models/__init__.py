@@ -9,366 +9,450 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .arm_plan import ArmPlan
-from .certificate_order_certificate import CertificateOrderCertificate
-from .sku_description import SkuDescription
-from .certificate_order import CertificateOrder
+from .app_service_certificate import AppServiceCertificate
 from .certificate_details import CertificateDetails
+from .app_service_certificate_order import AppServiceCertificateOrder
+from .certificate_email import CertificateEmail
+from .certificate_order_action import CertificateOrderAction
+from .name_identifier import NameIdentifier
 from .reissue_certificate_order_request import ReissueCertificateOrderRequest
 from .renew_certificate_order_request import RenewCertificateOrderRequest
-from .certificate_order_action import CertificateOrderAction
-from .certificate_email import CertificateEmail
-from .certificate import Certificate
-from .hosting_environment_profile import HostingEnvironmentProfile
-from .csr import Csr
-from .classic_mobile_service import ClassicMobileService
-from .domain import Domain
-from .contact import Contact
-from .address import Address
-from .host_name import HostName
-from .domain_purchase_consent import DomainPurchaseConsent
-from .user import User
-from .geo_region import GeoRegion
-from .server_farm_with_rich_sku import ServerFarmWithRichSku
-from .site_collection import SiteCollection
-from .site import Site
-from .host_name_ssl_state import HostNameSslState
-from .site_config import SiteConfig
+from .resource import Resource
+from .site_seal import SiteSeal
+from .site_seal_request import SiteSealRequest
+from .virtual_ip_mapping import VirtualIPMapping
+from .address_response import AddressResponse
+from .api_definition_info import ApiDefinitionInfo
+from .virtual_network_profile import VirtualNetworkProfile
+from .sku_capacity import SkuCapacity
+from .capability import Capability
+from .sku_description import SkuDescription
+from .worker_pool import WorkerPool
+from .stamp_capacity import StampCapacity
+from .network_access_control_entry import NetworkAccessControlEntry
 from .name_value_pair import NameValuePair
-from .conn_string_info import ConnStringInfo
-from .handler_mapping import HandlerMapping
-from .virtual_application import VirtualApplication
-from .virtual_directory import VirtualDirectory
-from .experiments import Experiments
-from .ramp_up_rule import RampUpRule
-from .site_limits import SiteLimits
-from .auto_heal_rules import AutoHealRules
-from .auto_heal_triggers import AutoHealTriggers
+from .app_service_environment import AppServiceEnvironment
+from .hosting_environment_profile import HostingEnvironmentProfile
+from .app_service_plan import AppServicePlan
+from .auto_heal_custom_action import AutoHealCustomAction
+from .auto_heal_actions import AutoHealActions
 from .requests_based_trigger import RequestsBasedTrigger
 from .status_codes_based_trigger import StatusCodesBasedTrigger
 from .slow_requests_based_trigger import SlowRequestsBasedTrigger
-from .auto_heal_actions import AutoHealActions
-from .auto_heal_custom_action import AutoHealCustomAction
-from .cors_settings import CorsSettings
-from .api_definition_info import ApiDefinitionInfo
-from .ip_security_restriction import IpSecurityRestriction
+from .auto_heal_triggers import AutoHealTriggers
+from .auto_heal_rules import AutoHealRules
 from .cloning_info import CloningInfo
-from .site_properties import SiteProperties
-from .routing_rule import RoutingRule
-from .site_auth_settings import SiteAuthSettings
-from .hosting_environment import HostingEnvironment
-from .virtual_network_profile import VirtualNetworkProfile
-from .worker_pool import WorkerPool
-from .virtual_ip_mapping import VirtualIPMapping
-from .stamp_capacity import StampCapacity
-from .network_access_control_entry import NetworkAccessControlEntry
-from .managed_hosting_environment import ManagedHostingEnvironment
-from .resource_name_availability_request import ResourceNameAvailabilityRequest
-from .resource_name_availability import ResourceNameAvailability
-from .domain_control_center_sso_request import DomainControlCenterSsoRequest
-from .domain_registration_input import DomainRegistrationInput
-from .name_identifier import NameIdentifier
-from .domain_availablility_check_result import DomainAvailablilityCheckResult
-from .domain_recommendation_search_parameters import DomainRecommendationSearchParameters
-from .csm_move_resource_envelope import CsmMoveResourceEnvelope
-from .hosting_environment_diagnostics import HostingEnvironmentDiagnostics
-from .address_response import AddressResponse
-from .resource_metric import ResourceMetric
-from .resource_metric_name import ResourceMetricName
-from .resource_metric_value import ResourceMetricValue
-from .key_value_pair_string_string import KeyValuePairStringString
-from .metric_definition import MetricDefinition
-from .metric_availabilily import MetricAvailabilily
-from .csm_usage_quota import CsmUsageQuota
+from .conn_string_info import ConnStringInfo
+from .cors_settings import CorsSettings
 from .localizable_string import LocalizableString
-from .usage import Usage
+from .csm_usage_quota import CsmUsageQuota
+from .error_entity import ErrorEntity
+from .ramp_up_rule import RampUpRule
+from .experiments import Experiments
+from .handler_mapping import HandlerMapping
+from .host_name_ssl_state import HostNameSslState
+from .hosting_environment_diagnostics import HostingEnvironmentDiagnostics
+from .ip_security_restriction import IpSecurityRestriction
+from .metric_availabilily import MetricAvailabilily
+from .metric_definition import MetricDefinition
+from .operation import Operation
+from .push_settings import PushSettings
+from .resource_metric_name import ResourceMetricName
+from .resource_metric_property import ResourceMetricProperty
+from .resource_metric_value import ResourceMetricValue
+from .resource_metric import ResourceMetric
+from .resource_metric_availability import ResourceMetricAvailability
+from .resource_metric_definition import ResourceMetricDefinition
+from .site_machine_key import SiteMachineKey
+from .virtual_directory import VirtualDirectory
+from .virtual_application import VirtualApplication
+from .site_limits import SiteLimits
+from .site_config import SiteConfig
+from .slot_swap_status import SlotSwapStatus
+from .site import Site
 from .sku_info import SkuInfo
-from .sku_capacity import SkuCapacity
-from .source_control import SourceControl
+from .usage import Usage
+from .web_app_collection import WebAppCollection
+from .hybrid_connection import HybridConnection
+from .hybrid_connection_key import HybridConnectionKey
+from .hybrid_connection_limits import HybridConnectionLimits
+from .vnet_gateway import VnetGateway
+from .vnet_route import VnetRoute
+from .vnet_info import VnetInfo
+from .certificate import Certificate
+from .csr import Csr
+from .address import Address
+from .contact import Contact
+from .host_name import HostName
+from .domain_purchase_consent import DomainPurchaseConsent
+from .domain import Domain
+from .domain_availablility_check_result import DomainAvailablilityCheckResult
+from .domain_control_center_sso_request import DomainControlCenterSsoRequest
+from .domain_ownership_identifier import DomainOwnershipIdentifier
+from .domain_recommendation_search_parameters import DomainRecommendationSearchParameters
 from .recommendation import Recommendation
 from .recommendation_rule import RecommendationRule
-from .vnet_info import VnetInfo
-from .vnet_route import VnetRoute
-from .vnet_gateway import VnetGateway
-from .network_features import NetworkFeatures
-from .relay_service_connection_entity import RelayServiceConnectionEntity
-from .csm_slot_entity import CsmSlotEntity
-from .slot_difference import SlotDifference
-from .slot_config_names_resource import SlotConfigNamesResource
-from .slot_config_names import SlotConfigNames
-from .site_cloneability import SiteCloneability
-from .site_cloneability_criterion import SiteCloneabilityCriterion
-from .csm_site_recovery_entity import CsmSiteRecoveryEntity
-from .deleted_site import DeletedSite
-from .deployment import Deployment
-from .site_instance import SiteInstance
-from .host_name_binding import HostNameBinding
-from .site_source_control import SiteSourceControl
-from .string_dictionary import StringDictionary
-from .connection_string_dictionary import ConnectionStringDictionary
-from .conn_string_value_type_pair import ConnStringValueTypePair
-from .site_logs_config import SiteLogsConfig
-from .application_logs_config import ApplicationLogsConfig
+from .csm_move_resource_envelope import CsmMoveResourceEnvelope
+from .geo_region import GeoRegion
+from .global_csm_sku_description import GlobalCsmSkuDescription
+from .premier_add_on_offer import PremierAddOnOffer
+from .resource_name_availability import ResourceNameAvailability
+from .resource_name_availability_request import ResourceNameAvailabilityRequest
+from .sku_infos import SkuInfos
+from .source_control import SourceControl
+from .user import User
+from .validate_request import ValidateRequest
+from .validate_response_error import ValidateResponseError
+from .validate_response import ValidateResponse
+from .tld_legal_agreement import TldLegalAgreement
+from .top_level_domain import TopLevelDomain
+from .top_level_domain_agreement_option import TopLevelDomainAgreementOption
 from .file_system_application_logs_config import FileSystemApplicationLogsConfig
 from .azure_table_storage_application_logs_config import AzureTableStorageApplicationLogsConfig
 from .azure_blob_storage_application_logs_config import AzureBlobStorageApplicationLogsConfig
-from .http_logs_config import HttpLogsConfig
-from .file_system_http_logs_config import FileSystemHttpLogsConfig
+from .application_logs_config import ApplicationLogsConfig
 from .azure_blob_storage_http_logs_config import AzureBlobStorageHttpLogsConfig
-from .enabled_config import EnabledConfig
-from .premier_add_on_request import PremierAddOnRequest
-from .backup_request import BackupRequest
-from .backup_schedule import BackupSchedule
 from .database_backup_setting import DatabaseBackupSetting
 from .backup_item import BackupItem
+from .backup_schedule import BackupSchedule
+from .backup_request import BackupRequest
+from .conn_string_value_type_pair import ConnStringValueTypePair
+from .connection_string_dictionary import ConnectionStringDictionary
+from .csm_publishing_profile_options import CsmPublishingProfileOptions
+from .csm_site_recovery_entity import CsmSiteRecoveryEntity
+from .csm_slot_entity import CsmSlotEntity
+from .custom_hostname_analysis_result import CustomHostnameAnalysisResult
+from .deployment import Deployment
+from .enabled_config import EnabledConfig
+from .file_system_http_logs_config import FileSystemHttpLogsConfig
+from .host_name_binding import HostNameBinding
+from .http_logs_config import HttpLogsConfig
+from .identifier import Identifier
+from .migrate_my_sql_request import MigrateMySqlRequest
+from .relay_service_connection_entity import RelayServiceConnectionEntity
+from .network_features import NetworkFeatures
+from .perf_mon_sample import PerfMonSample
+from .perf_mon_set import PerfMonSet
+from .perf_mon_response import PerfMonResponse
+from .premier_add_on import PremierAddOn
+from .recover_response import RecoverResponse
 from .restore_request import RestoreRequest
 from .restore_response import RestoreResponse
-from .csm_publishing_profile_options import CsmPublishingProfileOptions
-from .top_level_domain import TopLevelDomain
-from .top_level_domain_agreement_option import TopLevelDomainAgreementOption
-from .tld_legal_agreement import TldLegalAgreement
-from .resource import Resource
-from .certificate_order_paged import CertificateOrderPaged
-from .certificate_order_certificate_paged import CertificateOrderCertificatePaged
-from .certificate_paged import CertificatePaged
-from .classic_mobile_service_paged import ClassicMobileServicePaged
-from .domain_paged import DomainPaged
-from .geo_region_paged import GeoRegionPaged
-from .server_farm_with_rich_sku_paged import ServerFarmWithRichSkuPaged
-from .site_paged import SitePaged
-from .hosting_environment_paged import HostingEnvironmentPaged
-from .managed_hosting_environment_paged import ManagedHostingEnvironmentPaged
-from .name_identifier_paged import NameIdentifierPaged
+from .site_auth_settings import SiteAuthSettings
+from .site_cloneability_criterion import SiteCloneabilityCriterion
+from .site_cloneability import SiteCloneability
+from .site_configuration_snapshot_info import SiteConfigurationSnapshotInfo
+from .site_instance import SiteInstance
+from .site_logs_config import SiteLogsConfig
+from .site_php_error_log_flag import SitePhpErrorLogFlag
+from .site_source_control import SiteSourceControl
+from .slot_config_names_resource import SlotConfigNamesResource
+from .slot_difference import SlotDifference
+from .snapshot import Snapshot
+from .storage_migration_options import StorageMigrationOptions
+from .storage_migration_response import StorageMigrationResponse
+from .string_dictionary import StringDictionary
+from .deleted_site import DeletedSite
+from .app_service_certificate_order_paged import AppServiceCertificateOrderPaged
+from .app_service_certificate_paged import AppServiceCertificatePaged
+from .app_service_environment_paged import AppServiceEnvironmentPaged
 from .stamp_capacity_paged import StampCapacityPaged
 from .resource_metric_paged import ResourceMetricPaged
-from .csm_usage_quota_paged import CsmUsageQuotaPaged
-from .metric_definition_paged import MetricDefinitionPaged
-from .usage_paged import UsagePaged
 from .worker_pool_paged import WorkerPoolPaged
+from .resource_metric_definition_paged import ResourceMetricDefinitionPaged
 from .sku_info_paged import SkuInfoPaged
+from .usage_paged import UsagePaged
+from .site_paged import SitePaged
+from .app_service_plan_paged import AppServicePlanPaged
+from .csm_usage_quota_paged import CsmUsageQuotaPaged
+from .str_paged import StrPaged
+from .hybrid_connection_paged import HybridConnectionPaged
+from .certificate_paged import CertificatePaged
+from .csr_paged import CsrPaged
+from .domain_paged import DomainPaged
+from .name_identifier_paged import NameIdentifierPaged
+from .domain_ownership_identifier_paged import DomainOwnershipIdentifierPaged
 from .source_control_paged import SourceControlPaged
-from .slot_difference_paged import SlotDifferencePaged
-from .deleted_site_paged import DeletedSitePaged
-from .deployment_paged import DeploymentPaged
-from .site_instance_paged import SiteInstancePaged
-from .host_name_binding_paged import HostNameBindingPaged
-from .backup_item_paged import BackupItemPaged
+from .geo_region_paged import GeoRegionPaged
+from .premier_add_on_offer_paged import PremierAddOnOfferPaged
 from .top_level_domain_paged import TopLevelDomainPaged
 from .tld_legal_agreement_paged import TldLegalAgreementPaged
+from .backup_item_paged import BackupItemPaged
+from .deployment_paged import DeploymentPaged
+from .identifier_paged import IdentifierPaged
+from .host_name_binding_paged import HostNameBindingPaged
+from .site_instance_paged import SiteInstancePaged
+from .perf_mon_response_paged import PerfMonResponsePaged
+from .slot_difference_paged import SlotDifferencePaged
+from .snapshot_paged import SnapshotPaged
+from .deleted_site_paged import DeletedSitePaged
 from .web_site_management_client_enums import (
     KeyVaultSecretStatus,
     CertificateProductType,
     ProvisioningState,
     CertificateOrderStatus,
     CertificateOrderActionType,
-    DomainStatus,
-    AzureResourceType,
-    CustomHostNameDnsRecordType,
-    HostNameType,
-    StatusOptions,
-    UsageState,
-    SiteAvailabilityState,
-    SslState,
-    DatabaseServerType,
-    ManagedPipelineMode,
-    SiteLoadBalancing,
-    AutoHealActionType,
-    UnauthenticatedClientAction,
-    BuiltInAuthenticationProvider,
     HostingEnvironmentStatus,
     InternalLoadBalancingMode,
     ComputeModeOptions,
     WorkerSizeOptions,
     AccessControlEntryAction,
-    ManagedHostingEnvironmentStatus,
+    StatusOptions,
+    AutoHealActionType,
+    ConnectionStringType,
+    SslState,
+    OperationStatus,
+    UsageState,
+    SiteAvailabilityState,
+    ScmType,
+    ManagedPipelineMode,
+    SiteLoadBalancing,
+    RouteType,
+    DomainStatus,
+    AzureResourceType,
+    CustomHostNameDnsRecordType,
+    HostNameType,
     DomainType,
+    ResourceScopeType,
     NotificationLevel,
     Channels,
-    CloneAbilityResult,
+    AppServicePlanRestrictions,
+    InAvailabilityReasonType,
+    CheckNameResourceTypes,
+    ValidateResourceTypes,
     LogLevel,
+    BackupItemStatus,
+    DatabaseType,
     FrequencyUnit,
     BackupRestoreOperationType,
-    BackupItemStatus,
+    PublishingProfileFormat,
+    DnsVerificationTestResult,
+    UnauthenticatedClientAction,
+    BuiltInAuthenticationProvider,
+    CloneAbilityResult,
+    SkuName,
 )
 
 __all__ = [
-    'ArmPlan',
-    'CertificateOrderCertificate',
-    'SkuDescription',
-    'CertificateOrder',
+    'AppServiceCertificate',
     'CertificateDetails',
+    'AppServiceCertificateOrder',
+    'CertificateEmail',
+    'CertificateOrderAction',
+    'NameIdentifier',
     'ReissueCertificateOrderRequest',
     'RenewCertificateOrderRequest',
-    'CertificateOrderAction',
-    'CertificateEmail',
-    'Certificate',
-    'HostingEnvironmentProfile',
-    'Csr',
-    'ClassicMobileService',
-    'Domain',
-    'Contact',
-    'Address',
-    'HostName',
-    'DomainPurchaseConsent',
-    'User',
-    'GeoRegion',
-    'ServerFarmWithRichSku',
-    'SiteCollection',
-    'Site',
-    'HostNameSslState',
-    'SiteConfig',
+    'Resource',
+    'SiteSeal',
+    'SiteSealRequest',
+    'VirtualIPMapping',
+    'AddressResponse',
+    'ApiDefinitionInfo',
+    'VirtualNetworkProfile',
+    'SkuCapacity',
+    'Capability',
+    'SkuDescription',
+    'WorkerPool',
+    'StampCapacity',
+    'NetworkAccessControlEntry',
     'NameValuePair',
-    'ConnStringInfo',
-    'HandlerMapping',
-    'VirtualApplication',
-    'VirtualDirectory',
-    'Experiments',
-    'RampUpRule',
-    'SiteLimits',
-    'AutoHealRules',
-    'AutoHealTriggers',
+    'AppServiceEnvironment',
+    'HostingEnvironmentProfile',
+    'AppServicePlan',
+    'AutoHealCustomAction',
+    'AutoHealActions',
     'RequestsBasedTrigger',
     'StatusCodesBasedTrigger',
     'SlowRequestsBasedTrigger',
-    'AutoHealActions',
-    'AutoHealCustomAction',
-    'CorsSettings',
-    'ApiDefinitionInfo',
-    'IpSecurityRestriction',
+    'AutoHealTriggers',
+    'AutoHealRules',
     'CloningInfo',
-    'SiteProperties',
-    'RoutingRule',
-    'SiteAuthSettings',
-    'HostingEnvironment',
-    'VirtualNetworkProfile',
-    'WorkerPool',
-    'VirtualIPMapping',
-    'StampCapacity',
-    'NetworkAccessControlEntry',
-    'ManagedHostingEnvironment',
-    'ResourceNameAvailabilityRequest',
-    'ResourceNameAvailability',
-    'DomainControlCenterSsoRequest',
-    'DomainRegistrationInput',
-    'NameIdentifier',
-    'DomainAvailablilityCheckResult',
-    'DomainRecommendationSearchParameters',
-    'CsmMoveResourceEnvelope',
-    'HostingEnvironmentDiagnostics',
-    'AddressResponse',
-    'ResourceMetric',
-    'ResourceMetricName',
-    'ResourceMetricValue',
-    'KeyValuePairStringString',
-    'MetricDefinition',
-    'MetricAvailabilily',
-    'CsmUsageQuota',
+    'ConnStringInfo',
+    'CorsSettings',
     'LocalizableString',
-    'Usage',
+    'CsmUsageQuota',
+    'ErrorEntity',
+    'RampUpRule',
+    'Experiments',
+    'HandlerMapping',
+    'HostNameSslState',
+    'HostingEnvironmentDiagnostics',
+    'IpSecurityRestriction',
+    'MetricAvailabilily',
+    'MetricDefinition',
+    'Operation',
+    'PushSettings',
+    'ResourceMetricName',
+    'ResourceMetricProperty',
+    'ResourceMetricValue',
+    'ResourceMetric',
+    'ResourceMetricAvailability',
+    'ResourceMetricDefinition',
+    'SiteMachineKey',
+    'VirtualDirectory',
+    'VirtualApplication',
+    'SiteLimits',
+    'SiteConfig',
+    'SlotSwapStatus',
+    'Site',
     'SkuInfo',
-    'SkuCapacity',
-    'SourceControl',
+    'Usage',
+    'WebAppCollection',
+    'HybridConnection',
+    'HybridConnectionKey',
+    'HybridConnectionLimits',
+    'VnetGateway',
+    'VnetRoute',
+    'VnetInfo',
+    'Certificate',
+    'Csr',
+    'Address',
+    'Contact',
+    'HostName',
+    'DomainPurchaseConsent',
+    'Domain',
+    'DomainAvailablilityCheckResult',
+    'DomainControlCenterSsoRequest',
+    'DomainOwnershipIdentifier',
+    'DomainRecommendationSearchParameters',
     'Recommendation',
     'RecommendationRule',
-    'VnetInfo',
-    'VnetRoute',
-    'VnetGateway',
-    'NetworkFeatures',
-    'RelayServiceConnectionEntity',
-    'CsmSlotEntity',
-    'SlotDifference',
-    'SlotConfigNamesResource',
-    'SlotConfigNames',
-    'SiteCloneability',
-    'SiteCloneabilityCriterion',
-    'CsmSiteRecoveryEntity',
-    'DeletedSite',
-    'Deployment',
-    'SiteInstance',
-    'HostNameBinding',
-    'SiteSourceControl',
-    'StringDictionary',
-    'ConnectionStringDictionary',
-    'ConnStringValueTypePair',
-    'SiteLogsConfig',
-    'ApplicationLogsConfig',
+    'CsmMoveResourceEnvelope',
+    'GeoRegion',
+    'GlobalCsmSkuDescription',
+    'PremierAddOnOffer',
+    'ResourceNameAvailability',
+    'ResourceNameAvailabilityRequest',
+    'SkuInfos',
+    'SourceControl',
+    'User',
+    'ValidateRequest',
+    'ValidateResponseError',
+    'ValidateResponse',
+    'TldLegalAgreement',
+    'TopLevelDomain',
+    'TopLevelDomainAgreementOption',
     'FileSystemApplicationLogsConfig',
     'AzureTableStorageApplicationLogsConfig',
     'AzureBlobStorageApplicationLogsConfig',
-    'HttpLogsConfig',
-    'FileSystemHttpLogsConfig',
+    'ApplicationLogsConfig',
     'AzureBlobStorageHttpLogsConfig',
-    'EnabledConfig',
-    'PremierAddOnRequest',
-    'BackupRequest',
-    'BackupSchedule',
     'DatabaseBackupSetting',
     'BackupItem',
+    'BackupSchedule',
+    'BackupRequest',
+    'ConnStringValueTypePair',
+    'ConnectionStringDictionary',
+    'CsmPublishingProfileOptions',
+    'CsmSiteRecoveryEntity',
+    'CsmSlotEntity',
+    'CustomHostnameAnalysisResult',
+    'Deployment',
+    'EnabledConfig',
+    'FileSystemHttpLogsConfig',
+    'HostNameBinding',
+    'HttpLogsConfig',
+    'Identifier',
+    'MigrateMySqlRequest',
+    'RelayServiceConnectionEntity',
+    'NetworkFeatures',
+    'PerfMonSample',
+    'PerfMonSet',
+    'PerfMonResponse',
+    'PremierAddOn',
+    'RecoverResponse',
     'RestoreRequest',
     'RestoreResponse',
-    'CsmPublishingProfileOptions',
-    'TopLevelDomain',
-    'TopLevelDomainAgreementOption',
-    'TldLegalAgreement',
-    'Resource',
-    'CertificateOrderPaged',
-    'CertificateOrderCertificatePaged',
-    'CertificatePaged',
-    'ClassicMobileServicePaged',
-    'DomainPaged',
-    'GeoRegionPaged',
-    'ServerFarmWithRichSkuPaged',
-    'SitePaged',
-    'HostingEnvironmentPaged',
-    'ManagedHostingEnvironmentPaged',
-    'NameIdentifierPaged',
+    'SiteAuthSettings',
+    'SiteCloneabilityCriterion',
+    'SiteCloneability',
+    'SiteConfigurationSnapshotInfo',
+    'SiteInstance',
+    'SiteLogsConfig',
+    'SitePhpErrorLogFlag',
+    'SiteSourceControl',
+    'SlotConfigNamesResource',
+    'SlotDifference',
+    'Snapshot',
+    'StorageMigrationOptions',
+    'StorageMigrationResponse',
+    'StringDictionary',
+    'DeletedSite',
+    'AppServiceCertificateOrderPaged',
+    'AppServiceCertificatePaged',
+    'AppServiceEnvironmentPaged',
     'StampCapacityPaged',
     'ResourceMetricPaged',
-    'CsmUsageQuotaPaged',
-    'MetricDefinitionPaged',
-    'UsagePaged',
     'WorkerPoolPaged',
+    'ResourceMetricDefinitionPaged',
     'SkuInfoPaged',
+    'UsagePaged',
+    'SitePaged',
+    'AppServicePlanPaged',
+    'CsmUsageQuotaPaged',
+    'StrPaged',
+    'HybridConnectionPaged',
+    'CertificatePaged',
+    'CsrPaged',
+    'DomainPaged',
+    'NameIdentifierPaged',
+    'DomainOwnershipIdentifierPaged',
     'SourceControlPaged',
-    'SlotDifferencePaged',
-    'DeletedSitePaged',
-    'DeploymentPaged',
-    'SiteInstancePaged',
-    'HostNameBindingPaged',
-    'BackupItemPaged',
+    'GeoRegionPaged',
+    'PremierAddOnOfferPaged',
     'TopLevelDomainPaged',
     'TldLegalAgreementPaged',
+    'BackupItemPaged',
+    'DeploymentPaged',
+    'IdentifierPaged',
+    'HostNameBindingPaged',
+    'SiteInstancePaged',
+    'PerfMonResponsePaged',
+    'SlotDifferencePaged',
+    'SnapshotPaged',
+    'DeletedSitePaged',
     'KeyVaultSecretStatus',
     'CertificateProductType',
     'ProvisioningState',
     'CertificateOrderStatus',
     'CertificateOrderActionType',
-    'DomainStatus',
-    'AzureResourceType',
-    'CustomHostNameDnsRecordType',
-    'HostNameType',
-    'StatusOptions',
-    'UsageState',
-    'SiteAvailabilityState',
-    'SslState',
-    'DatabaseServerType',
-    'ManagedPipelineMode',
-    'SiteLoadBalancing',
-    'AutoHealActionType',
-    'UnauthenticatedClientAction',
-    'BuiltInAuthenticationProvider',
     'HostingEnvironmentStatus',
     'InternalLoadBalancingMode',
     'ComputeModeOptions',
     'WorkerSizeOptions',
     'AccessControlEntryAction',
-    'ManagedHostingEnvironmentStatus',
+    'StatusOptions',
+    'AutoHealActionType',
+    'ConnectionStringType',
+    'SslState',
+    'OperationStatus',
+    'UsageState',
+    'SiteAvailabilityState',
+    'ScmType',
+    'ManagedPipelineMode',
+    'SiteLoadBalancing',
+    'RouteType',
+    'DomainStatus',
+    'AzureResourceType',
+    'CustomHostNameDnsRecordType',
+    'HostNameType',
     'DomainType',
+    'ResourceScopeType',
     'NotificationLevel',
     'Channels',
-    'CloneAbilityResult',
+    'AppServicePlanRestrictions',
+    'InAvailabilityReasonType',
+    'CheckNameResourceTypes',
+    'ValidateResourceTypes',
     'LogLevel',
+    'BackupItemStatus',
+    'DatabaseType',
     'FrequencyUnit',
     'BackupRestoreOperationType',
-    'BackupItemStatus',
+    'PublishingProfileFormat',
+    'DnsVerificationTestResult',
+    'UnauthenticatedClientAction',
+    'BuiltInAuthenticationProvider',
+    'CloneAbilityResult',
+    'SkuName',
 ]

@@ -15,11 +15,11 @@ from msrest.serialization import Model
 class NameValuePair(Model):
     """Name value pair.
 
-    :param name: Pair name
+    :param name: Pair name.
     :type name: str
-    :param value: Pair value
+    :param value: Pair value.
     :type value: str
-    """ 
+    """
 
     _attribute_map = {
         'name': {'key': 'name', 'type': 'str'},

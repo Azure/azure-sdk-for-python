@@ -13,35 +13,39 @@ from .resource import Resource
 
 
 class SiteLogsConfig(Resource):
-    """Configuration of Azure web site.
+    """Configuration of App Service site logs.
 
-    :param id: Resource Id
-    :type id: str
-    :param name: Resource Name
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar id: Resource Id.
+    :vartype id: str
+    :param name: Resource Name.
     :type name: str
-    :param kind: Kind of resource
+    :param kind: Kind of resource.
     :type kind: str
-    :param location: Resource Location
+    :param location: Resource Location.
     :type location: str
-    :param type: Resource type
+    :param type: Resource type.
     :type type: str
-    :param tags: Resource tags
+    :param tags: Resource tags.
     :type tags: dict
-    :param application_logs: Application logs configuration
+    :param application_logs: Application logs configuration.
     :type application_logs: :class:`ApplicationLogsConfig
      <azure.mgmt.web.models.ApplicationLogsConfig>`
-    :param http_logs: Http logs configuration
+    :param http_logs: HTTP logs configuration.
     :type http_logs: :class:`HttpLogsConfig
      <azure.mgmt.web.models.HttpLogsConfig>`
-    :param failed_requests_tracing: Failed requests tracing configuration
+    :param failed_requests_tracing: Failed requests tracing configuration.
     :type failed_requests_tracing: :class:`EnabledConfig
      <azure.mgmt.web.models.EnabledConfig>`
-    :param detailed_error_messages: Detailed error messages configuration
+    :param detailed_error_messages: Detailed error messages configuration.
     :type detailed_error_messages: :class:`EnabledConfig
      <azure.mgmt.web.models.EnabledConfig>`
-    """ 
+    """
 
     _validation = {
+        'id': {'readonly': True},
         'location': {'required': True},
     }
 
@@ -58,8 +62,8 @@ class SiteLogsConfig(Resource):
         'detailed_error_messages': {'key': 'properties.detailedErrorMessages', 'type': 'EnabledConfig'},
     }
 
-    def __init__(self, location, id=None, name=None, kind=None, type=None, tags=None, application_logs=None, http_logs=None, failed_requests_tracing=None, detailed_error_messages=None):
-        super(SiteLogsConfig, self).__init__(id=id, name=name, kind=kind, location=location, type=type, tags=tags)
+    def __init__(self, location, name=None, kind=None, type=None, tags=None, application_logs=None, http_logs=None, failed_requests_tracing=None, detailed_error_messages=None):
+        super(SiteLogsConfig, self).__init__(name=name, kind=kind, location=location, type=type, tags=tags)
         self.application_logs = application_logs
         self.http_logs = http_logs
         self.failed_requests_tracing = failed_requests_tracing

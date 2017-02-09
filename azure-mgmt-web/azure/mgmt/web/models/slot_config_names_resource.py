@@ -15,25 +15,29 @@ from .resource import Resource
 class SlotConfigNamesResource(Resource):
     """Slot Config names azure resource.
 
-    :param id: Resource Id
-    :type id: str
-    :param name: Resource Name
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar id: Resource Id.
+    :vartype id: str
+    :param name: Resource Name.
     :type name: str
-    :param kind: Kind of resource
+    :param kind: Kind of resource.
     :type kind: str
-    :param location: Resource Location
+    :param location: Resource Location.
     :type location: str
-    :param type: Resource type
+    :param type: Resource type.
     :type type: str
-    :param tags: Resource tags
+    :param tags: Resource tags.
     :type tags: dict
-    :param connection_string_names: List of connection string names
+    :param connection_string_names: List of connection string names.
     :type connection_string_names: list of str
-    :param app_setting_names: List of application settings names
+    :param app_setting_names: List of application settings names.
     :type app_setting_names: list of str
-    """ 
+    """
 
     _validation = {
+        'id': {'readonly': True},
         'location': {'required': True},
     }
 
@@ -48,7 +52,7 @@ class SlotConfigNamesResource(Resource):
         'app_setting_names': {'key': 'properties.appSettingNames', 'type': '[str]'},
     }
 
-    def __init__(self, location, id=None, name=None, kind=None, type=None, tags=None, connection_string_names=None, app_setting_names=None):
-        super(SlotConfigNamesResource, self).__init__(id=id, name=name, kind=kind, location=location, type=type, tags=tags)
+    def __init__(self, location, name=None, kind=None, type=None, tags=None, connection_string_names=None, app_setting_names=None):
+        super(SlotConfigNamesResource, self).__init__(name=name, kind=kind, location=location, type=type, tags=tags)
         self.connection_string_names = connection_string_names
         self.app_setting_names = app_setting_names

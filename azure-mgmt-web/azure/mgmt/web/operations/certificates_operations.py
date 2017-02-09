@@ -23,6 +23,7 @@ class CertificatesOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An objec model deserializer.
+    :ivar api_version: API Version. Constant value: "2016-03-01".
     """
 
     def __init__(self, client, config, serializer, deserializer):
@@ -30,15 +31,16 @@ class CertificatesOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
+        self.api_version = "2016-03-01"
 
         self.config = config
 
-    def get_certificates(
-            self, resource_group_name, custom_headers=None, raw=False, **operation_config):
-        """Get certificates for a subscription in the specified resource group.
+    def list(
+            self, custom_headers=None, raw=False, **operation_config):
+        """Get all certificates for a subscription.
 
-        :param resource_group_name: Name of the resource group
-        :type resource_group_name: str
+        Get all certificates for a subscription.
+
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -52,16 +54,15 @@ class CertificatesOperations(object):
 
             if not next_link:
                 # Construct URL
-                url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/certificates'
+                url = '/subscriptions/{subscriptionId}/providers/Microsoft.Web/certificates'
                 path_format_arguments = {
-                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
                     'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
                 }
                 url = self._client.format_url(url, **path_format_arguments)
 
                 # Construct parameters
                 query_parameters = {}
-                query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
+                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
             else:
                 url = next_link
@@ -99,12 +100,83 @@ class CertificatesOperations(object):
 
         return deserialized
 
-    def get_certificate(
-            self, resource_group_name, name, custom_headers=None, raw=False, **operation_config):
-        """Get a certificate by certificate name for a subscription in the
-        specified resource group.
+    def list_by_resource_group(
+            self, resource_group_name, custom_headers=None, raw=False, **operation_config):
+        """Get all certificates in a resource group.
 
-        :param resource_group_name: Name of the resource group
+        Get all certificates in a resource group.
+
+        :param resource_group_name: Name of the resource group to which the
+         resource belongs.
+        :type resource_group_name: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :rtype: :class:`CertificatePaged
+         <azure.mgmt.web.models.CertificatePaged>`
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        """
+        def internal_paging(next_link=None, raw=False):
+
+            if not next_link:
+                # Construct URL
+                url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/certificates'
+                path_format_arguments = {
+                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern='^[-\w\._\(\)]+[^\.]$'),
+                    'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+                }
+                url = self._client.format_url(url, **path_format_arguments)
+
+                # Construct parameters
+                query_parameters = {}
+                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+
+            else:
+                url = next_link
+                query_parameters = {}
+
+            # Construct headers
+            header_parameters = {}
+            header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+            if self.config.generate_client_request_id:
+                header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+            if custom_headers:
+                header_parameters.update(custom_headers)
+            if self.config.accept_language is not None:
+                header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+            # Construct and send request
+            request = self._client.get(url, query_parameters)
+            response = self._client.send(
+                request, header_parameters, **operation_config)
+
+            if response.status_code not in [200]:
+                exp = CloudError(response)
+                exp.request_id = response.headers.get('x-ms-request-id')
+                raise exp
+
+            return response
+
+        # Deserialize response
+        deserialized = models.CertificatePaged(internal_paging, self._deserialize.dependencies)
+
+        if raw:
+            header_dict = {}
+            client_raw_response = models.CertificatePaged(internal_paging, self._deserialize.dependencies, header_dict)
+            return client_raw_response
+
+        return deserialized
+
+    def get(
+            self, resource_group_name, name, custom_headers=None, raw=False, **operation_config):
+        """Get a certificate.
+
+        Get a certificate.
+
+        :param resource_group_name: Name of the resource group to which the
+         resource belongs.
         :type resource_group_name: str
         :param name: Name of the certificate.
         :type name: str
@@ -121,7 +193,7 @@ class CertificatesOperations(object):
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/certificates/{name}'
         path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern='^[-\w\._\(\)]+[^\.]$'),
             'name': self._serialize.url("name", name, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
@@ -129,7 +201,7 @@ class CertificatesOperations(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -161,15 +233,18 @@ class CertificatesOperations(object):
 
         return deserialized
 
-    def create_or_update_certificate(
+    def create_or_update(
             self, resource_group_name, name, certificate_envelope, custom_headers=None, raw=False, **operation_config):
-        """Creates or modifies an existing certificate.
+        """Create or update a certificate.
 
-        :param resource_group_name: Name of the resource group
+        Create or update a certificate.
+
+        :param resource_group_name: Name of the resource group to which the
+         resource belongs.
         :type resource_group_name: str
         :param name: Name of the certificate.
         :type name: str
-        :param certificate_envelope: Details of certificate if it exists
+        :param certificate_envelope: Details of certificate, if it exists
          already.
         :type certificate_envelope: :class:`Certificate
          <azure.mgmt.web.models.Certificate>`
@@ -186,7 +261,7 @@ class CertificatesOperations(object):
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/certificates/{name}'
         path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern='^[-\w\._\(\)]+[^\.]$'),
             'name': self._serialize.url("name", name, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
@@ -194,7 +269,7 @@ class CertificatesOperations(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -230,21 +305,23 @@ class CertificatesOperations(object):
 
         return deserialized
 
-    def delete_certificate(
+    def delete(
             self, resource_group_name, name, custom_headers=None, raw=False, **operation_config):
-        """Delete a certificate by name in a specificed subscription and
-        resourcegroup.
+        """Delete a certificate.
 
-        :param resource_group_name: Name of the resource group
+        Delete a certificate.
+
+        :param resource_group_name: Name of the resource group to which the
+         resource belongs.
         :type resource_group_name: str
-        :param name: Name of the certificate to be deleted.
+        :param name: Name of the certificate.
         :type name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: object
+        :rtype: None
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
@@ -252,7 +329,7 @@ class CertificatesOperations(object):
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/certificates/{name}'
         path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern='^[-\w\._\(\)]+[^\.]$'),
             'name': self._serialize.url("name", name, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
@@ -260,7 +337,7 @@ class CertificatesOperations(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -276,31 +353,27 @@ class CertificatesOperations(object):
         request = self._client.delete(url, query_parameters)
         response = self._client.send(request, header_parameters, **operation_config)
 
-        if response.status_code not in [200]:
+        if response.status_code not in [200, 204]:
             exp = CloudError(response)
             exp.request_id = response.headers.get('x-ms-request-id')
             raise exp
 
-        deserialized = None
-
-        if response.status_code == 200:
-            deserialized = self._deserialize('object', response)
-
         if raw:
-            client_raw_response = ClientRawResponse(deserialized, response)
+            client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
 
-        return deserialized
-
-    def update_certificate(
+    def update(
             self, resource_group_name, name, certificate_envelope, custom_headers=None, raw=False, **operation_config):
-        """Creates or modifies an existing certificate.
+        """Create or update a certificate.
 
-        :param resource_group_name: Name of the resource group
+        Create or update a certificate.
+
+        :param resource_group_name: Name of the resource group to which the
+         resource belongs.
         :type resource_group_name: str
         :param name: Name of the certificate.
         :type name: str
-        :param certificate_envelope: Details of certificate if it exists
+        :param certificate_envelope: Details of certificate, if it exists
          already.
         :type certificate_envelope: :class:`Certificate
          <azure.mgmt.web.models.Certificate>`
@@ -317,7 +390,7 @@ class CertificatesOperations(object):
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/certificates/{name}'
         path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern='^[-\w\._\(\)]+[^\.]$'),
             'name': self._serialize.url("name", name, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
@@ -325,7 +398,7 @@ class CertificatesOperations(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -361,73 +434,84 @@ class CertificatesOperations(object):
 
         return deserialized
 
-    def get_csrs(
+    def list_signing_request_by_resource_group(
             self, resource_group_name, custom_headers=None, raw=False, **operation_config):
-        """Gets the certificate signing requests for a subscription in the
-        specified resource group.
+        """Get all certificate signing requests in a resource group.
 
-        :param resource_group_name: Name of the resource group
+        Get all certificate signing requests in a resource group.
+
+        :param resource_group_name: Name of the resource group to which the
+         resource belongs.
         :type resource_group_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: list of :class:`Csr <azure.mgmt.web.models.Csr>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :rtype: :class:`CsrPaged <azure.mgmt.web.models.CsrPaged>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
-        # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/csrs'
-        path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
-        }
-        url = self._client.format_url(url, **path_format_arguments)
+        def internal_paging(next_link=None, raw=False):
 
-        # Construct parameters
-        query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
+            if not next_link:
+                # Construct URL
+                url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/csrs'
+                path_format_arguments = {
+                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern='^[-\w\._\(\)]+[^\.]$'),
+                    'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+                }
+                url = self._client.format_url(url, **path_format_arguments)
 
-        # Construct headers
-        header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
-        if self.config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-        if custom_headers:
-            header_parameters.update(custom_headers)
-        if self.config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+                # Construct parameters
+                query_parameters = {}
+                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
-        # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+            else:
+                url = next_link
+                query_parameters = {}
 
-        if response.status_code not in [200]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            # Construct headers
+            header_parameters = {}
+            header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+            if self.config.generate_client_request_id:
+                header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+            if custom_headers:
+                header_parameters.update(custom_headers)
+            if self.config.accept_language is not None:
+                header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
-        deserialized = None
+            # Construct and send request
+            request = self._client.get(url, query_parameters)
+            response = self._client.send(
+                request, header_parameters, **operation_config)
 
-        if response.status_code == 200:
-            deserialized = self._deserialize('[Csr]', response)
+            if response.status_code not in [200]:
+                exp = CloudError(response)
+                exp.request_id = response.headers.get('x-ms-request-id')
+                raise exp
+
+            return response
+
+        # Deserialize response
+        deserialized = models.CsrPaged(internal_paging, self._deserialize.dependencies)
 
         if raw:
-            client_raw_response = ClientRawResponse(deserialized, response)
+            header_dict = {}
+            client_raw_response = models.CsrPaged(internal_paging, self._deserialize.dependencies, header_dict)
             return client_raw_response
 
         return deserialized
 
-    def get_csr(
+    def get_signing_request(
             self, resource_group_name, name, custom_headers=None, raw=False, **operation_config):
-        """Gets a certificate signing request by certificate name for a
-        subscription in the specified resource group.
+        """Get a certificate signing request.
 
-        :param resource_group_name: Name of the resource group
+        Get a certificate signing request.
+
+        :param resource_group_name: Name of the resource group to which the
+         resource belongs.
         :type resource_group_name: str
-        :param name: Name of the certificate.
+        :param name: Name of the certificate signing request.
         :type name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -442,7 +526,7 @@ class CertificatesOperations(object):
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/csrs/{name}'
         path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern='^[-\w\._\(\)]+[^\.]$'),
             'name': self._serialize.url("name", name, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
@@ -450,7 +534,7 @@ class CertificatesOperations(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -482,15 +566,18 @@ class CertificatesOperations(object):
 
         return deserialized
 
-    def create_or_update_csr(
+    def create_or_update_signing_request(
             self, resource_group_name, name, csr_envelope, custom_headers=None, raw=False, **operation_config):
-        """Creates or modifies an existing certificate signing request.
+        """Create or update a certificate signing request.
 
-        :param resource_group_name: Name of the resource group
+        Create or update a certificate signing request.
+
+        :param resource_group_name: Name of the resource group to which the
+         resource belongs.
         :type resource_group_name: str
-        :param name: Name of the certificate.
+        :param name: Name of the certificate signing request.
         :type name: str
-        :param csr_envelope: Details of certificate signing request if it
+        :param csr_envelope: Details of certificate signing request, if it
          exists already.
         :type csr_envelope: :class:`Csr <azure.mgmt.web.models.Csr>`
         :param dict custom_headers: headers that will be added to the request
@@ -506,7 +593,7 @@ class CertificatesOperations(object):
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/csrs/{name}'
         path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern='^[-\w\._\(\)]+[^\.]$'),
             'name': self._serialize.url("name", name, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
@@ -514,7 +601,7 @@ class CertificatesOperations(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -550,11 +637,14 @@ class CertificatesOperations(object):
 
         return deserialized
 
-    def delete_csr(
+    def delete_signing_request(
             self, resource_group_name, name, custom_headers=None, raw=False, **operation_config):
-        """Delete the certificate signing request.
+        """Delete a certificate signing request.
 
-        :param resource_group_name: Name of the resource group
+        Delete a certificate signing request.
+
+        :param resource_group_name: Name of the resource group to which the
+         resource belongs.
         :type resource_group_name: str
         :param name: Name of the certificate signing request.
         :type name: str
@@ -563,7 +653,7 @@ class CertificatesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: object
+        :rtype: None
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
@@ -571,7 +661,7 @@ class CertificatesOperations(object):
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/csrs/{name}'
         path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern='^[-\w\._\(\)]+[^\.]$'),
             'name': self._serialize.url("name", name, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
@@ -579,7 +669,7 @@ class CertificatesOperations(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -595,31 +685,27 @@ class CertificatesOperations(object):
         request = self._client.delete(url, query_parameters)
         response = self._client.send(request, header_parameters, **operation_config)
 
-        if response.status_code not in [200]:
+        if response.status_code not in [200, 204]:
             exp = CloudError(response)
             exp.request_id = response.headers.get('x-ms-request-id')
             raise exp
 
-        deserialized = None
-
-        if response.status_code == 200:
-            deserialized = self._deserialize('object', response)
-
         if raw:
-            client_raw_response = ClientRawResponse(deserialized, response)
+            client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
 
-        return deserialized
-
-    def update_csr(
+    def update_signing_request(
             self, resource_group_name, name, csr_envelope, custom_headers=None, raw=False, **operation_config):
-        """Creates or modifies an existing certificate signing request.
+        """Create or update a certificate signing request.
 
-        :param resource_group_name: Name of the resource group
+        Create or update a certificate signing request.
+
+        :param resource_group_name: Name of the resource group to which the
+         resource belongs.
         :type resource_group_name: str
-        :param name: Name of the certificate.
+        :param name: Name of the certificate signing request.
         :type name: str
-        :param csr_envelope: Details of certificate signing request if it
+        :param csr_envelope: Details of certificate signing request, if it
          exists already.
         :type csr_envelope: :class:`Csr <azure.mgmt.web.models.Csr>`
         :param dict custom_headers: headers that will be added to the request
@@ -635,7 +721,7 @@ class CertificatesOperations(object):
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/csrs/{name}'
         path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern='^[-\w\._\(\)]+[^\.]$'),
             'name': self._serialize.url("name", name, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
@@ -643,7 +729,7 @@ class CertificatesOperations(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
         header_parameters = {}

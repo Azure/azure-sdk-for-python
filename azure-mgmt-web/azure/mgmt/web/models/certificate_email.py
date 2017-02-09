@@ -13,27 +13,31 @@ from .resource import Resource
 
 
 class CertificateEmail(Resource):
-    """Certificate Email.
+    """SSL certificate email.
 
-    :param id: Resource Id
-    :type id: str
-    :param name: Resource Name
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar id: Resource Id.
+    :vartype id: str
+    :param name: Resource Name.
     :type name: str
-    :param kind: Kind of resource
+    :param kind: Kind of resource.
     :type kind: str
-    :param location: Resource Location
+    :param location: Resource Location.
     :type location: str
-    :param type: Resource type
+    :param type: Resource type.
     :type type: str
-    :param tags: Resource tags
+    :param tags: Resource tags.
     :type tags: dict
-    :param email_id: Email id
+    :param email_id: Email id.
     :type email_id: str
-    :param time_stamp: Time stamp
+    :param time_stamp: Time stamp.
     :type time_stamp: datetime
-    """ 
+    """
 
     _validation = {
+        'id': {'readonly': True},
         'location': {'required': True},
     }
 
@@ -48,7 +52,7 @@ class CertificateEmail(Resource):
         'time_stamp': {'key': 'properties.timeStamp', 'type': 'iso-8601'},
     }
 
-    def __init__(self, location, id=None, name=None, kind=None, type=None, tags=None, email_id=None, time_stamp=None):
-        super(CertificateEmail, self).__init__(id=id, name=name, kind=kind, location=location, type=type, tags=tags)
+    def __init__(self, location, name=None, kind=None, type=None, tags=None, email_id=None, time_stamp=None):
+        super(CertificateEmail, self).__init__(name=name, kind=kind, location=location, type=type, tags=tags)
         self.email_id = email_id
         self.time_stamp = time_stamp

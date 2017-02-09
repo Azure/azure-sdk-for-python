@@ -9,38 +9,24 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .certificate_orders_operations import CertificateOrdersOperations
+from .app_service_certificate_orders_operations import AppServiceCertificateOrdersOperations
+from .app_service_environments_operations import AppServiceEnvironmentsOperations
+from .app_service_plans_operations import AppServicePlansOperations
 from .certificates_operations import CertificatesOperations
-from .classic_mobile_services_operations import ClassicMobileServicesOperations
 from .domains_operations import DomainsOperations
-from .global_model_operations import GlobalModelOperations
-from .global_certificate_order_operations import GlobalCertificateOrderOperations
-from .global_domain_registration_operations import GlobalDomainRegistrationOperations
-from .global_resource_groups_operations import GlobalResourceGroupsOperations
-from .hosting_environments_operations import HostingEnvironmentsOperations
-from .managed_hosting_environments_operations import ManagedHostingEnvironmentsOperations
-from .provider_operations import ProviderOperations
 from .recommendations_operations import RecommendationsOperations
-from .server_farms_operations import ServerFarmsOperations
-from .sites_operations import SitesOperations
 from .top_level_domains_operations import TopLevelDomainsOperations
-from .usage_operations import UsageOperations
+from .web_apps_operations import WebAppsOperations
+from .deleted_web_apps_operations import DeletedWebAppsOperations
 
 __all__ = [
-    'CertificateOrdersOperations',
+    'AppServiceCertificateOrdersOperations',
+    'AppServiceEnvironmentsOperations',
+    'AppServicePlansOperations',
     'CertificatesOperations',
-    'ClassicMobileServicesOperations',
     'DomainsOperations',
-    'GlobalModelOperations',
-    'GlobalCertificateOrderOperations',
-    'GlobalDomainRegistrationOperations',
-    'GlobalResourceGroupsOperations',
-    'HostingEnvironmentsOperations',
-    'ManagedHostingEnvironmentsOperations',
-    'ProviderOperations',
     'RecommendationsOperations',
-    'ServerFarmsOperations',
-    'SitesOperations',
     'TopLevelDomainsOperations',
-    'UsageOperations',
+    'WebAppsOperations',
+    'DeletedWebAppsOperations',
 ]

@@ -15,16 +15,18 @@ from msrest.serialization import Model
 class DomainAvailablilityCheckResult(Model):
     """Domain availablility check result.
 
-    :param name: Name of the domain
+    :param name: Name of the domain.
     :type name: str
-    :param available: If true then domain can be purchased using CreateDomain
-     Api
+    :param available: <code>true</code> if domain can be purchased using
+     CreateDomain API; otherwise, <code>false</code>.
     :type available: bool
-    :param domain_type: Domain type. Possible values include: 'Regular',
-     'SoftDeleted'
+    :param domain_type: Valid values are Regular domain: Azure will charge the
+     full price of domain registration, SoftDeleted: Purchasing this domain
+     will simply restore it and this operation will not cost anything. Possible
+     values include: 'Regular', 'SoftDeleted'
     :type domain_type: str or :class:`DomainType
      <azure.mgmt.web.models.DomainType>`
-    """ 
+    """
 
     _attribute_map = {
         'name': {'key': 'name', 'type': 'str'},

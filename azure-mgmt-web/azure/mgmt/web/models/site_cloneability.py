@@ -13,31 +13,26 @@ from msrest.serialization import Model
 
 
 class SiteCloneability(Model):
-    """Represents whether or not a web app is cloneable.
+    """Represents whether or not an app is cloneable.
 
-    :param result: Name of web app. Possible values include: 'Cloneable',
+    :param result: Name of app. Possible values include: 'Cloneable',
      'PartiallyCloneable', 'NotCloneable'
     :type result: str or :class:`CloneAbilityResult
      <azure.mgmt.web.models.CloneAbilityResult>`
-    :param blocking_features: List of features enabled on web app that
-     prevent cloning
+    :param blocking_features: List of features enabled on app that prevent
+     cloning.
     :type blocking_features: list of :class:`SiteCloneabilityCriterion
      <azure.mgmt.web.models.SiteCloneabilityCriterion>`
-    :param unsupported_features: List of features enabled on web app that are
-     non-blocking but cannot be cloned. The web app can still be cloned
-     but the features in this list will not be set up on cloned
-     web app.
+    :param unsupported_features: List of features enabled on app that are
+     non-blocking but cannot be cloned. The app can still be cloned
+     but the features in this list will not be set up on cloned app.
     :type unsupported_features: list of :class:`SiteCloneabilityCriterion
      <azure.mgmt.web.models.SiteCloneabilityCriterion>`
     :param blocking_characteristics: List of blocking application
-     characteristics
+     characteristics.
     :type blocking_characteristics: list of :class:`SiteCloneabilityCriterion
      <azure.mgmt.web.models.SiteCloneabilityCriterion>`
-    """ 
-
-    _validation = {
-        'result': {'required': True},
-    }
+    """
 
     _attribute_map = {
         'result': {'key': 'result', 'type': 'CloneAbilityResult'},
@@ -46,7 +41,7 @@ class SiteCloneability(Model):
         'blocking_characteristics': {'key': 'blockingCharacteristics', 'type': '[SiteCloneabilityCriterion]'},
     }
 
-    def __init__(self, result, blocking_features=None, unsupported_features=None, blocking_characteristics=None):
+    def __init__(self, result=None, blocking_features=None, unsupported_features=None, blocking_characteristics=None):
         self.result = result
         self.blocking_features = blocking_features
         self.unsupported_features = unsupported_features

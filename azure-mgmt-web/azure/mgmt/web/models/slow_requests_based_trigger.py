@@ -13,15 +13,15 @@ from msrest.serialization import Model
 
 
 class SlowRequestsBasedTrigger(Model):
-    """SlowRequestsBasedTrigger.
+    """Trigger based on request execution time.
 
-    :param time_taken: TimeTaken
+    :param time_taken: Time taken.
     :type time_taken: str
-    :param count: Count
+    :param count: Count.
     :type count: int
-    :param time_interval: TimeInterval
+    :param time_interval: Time interval.
     :type time_interval: str
-    """ 
+    """
 
     _attribute_map = {
         'time_taken': {'key': 'timeTaken', 'type': 'str'},

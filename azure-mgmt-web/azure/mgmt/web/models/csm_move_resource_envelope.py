@@ -13,14 +13,18 @@ from msrest.serialization import Model
 
 
 class CsmMoveResourceEnvelope(Model):
-    """Class containing a list of the resources that need to be moved and the
-    resource group they should be moved to.
+    """Object with a list of the resources that need to be moved and the resource
+    group they should be moved to.
 
     :param target_resource_group:
     :type target_resource_group: str
     :param resources:
     :type resources: list of str
-    """ 
+    """
+
+    _validation = {
+        'target_resource_group': {'max_length': 90, 'min_length': 1, 'pattern': ' ^[-\w\._\(\)]+[^\.]$'},
+    }
 
     _attribute_map = {
         'target_resource_group': {'key': 'targetResourceGroup', 'type': 'str'},

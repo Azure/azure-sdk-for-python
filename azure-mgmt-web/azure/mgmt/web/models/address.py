@@ -15,19 +15,27 @@ from msrest.serialization import Model
 class Address(Model):
     """Address information for domain registration.
 
-    :param address1: Address 1
+    :param address1: Address 1.
     :type address1: str
-    :param address2: Address 2
+    :param address2: Address 2.
     :type address2: str
-    :param city: City
+    :param city: City.
     :type city: str
-    :param country: Country
+    :param country: Country.
     :type country: str
-    :param postal_code: Postal code
+    :param postal_code: Postal code.
     :type postal_code: str
-    :param state: State
+    :param state: State.
     :type state: str
-    """ 
+    """
+
+    _validation = {
+        'address1': {'required': True},
+        'city': {'required': True},
+        'country': {'required': True},
+        'postal_code': {'required': True},
+        'state': {'required': True},
+    }
 
     _attribute_map = {
         'address1': {'key': 'address1', 'type': 'str'},
@@ -38,7 +46,7 @@ class Address(Model):
         'state': {'key': 'state', 'type': 'str'},
     }
 
-    def __init__(self, address1=None, address2=None, city=None, country=None, postal_code=None, state=None):
+    def __init__(self, address1, city, country, postal_code, state, address2=None):
         self.address1 = address1
         self.address2 = address2
         self.city = city

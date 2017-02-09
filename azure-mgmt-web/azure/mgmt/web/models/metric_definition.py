@@ -13,36 +13,45 @@ from .resource import Resource
 
 
 class MetricDefinition(Resource):
-    """Class repesenting metadata for the metrics.
+    """Metadata for a metric.
 
-    :param id: Resource Id
-    :type id: str
-    :param name: Resource Name
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar id: Resource Id.
+    :vartype id: str
+    :param name: Resource Name.
     :type name: str
-    :param kind: Kind of resource
+    :param kind: Kind of resource.
     :type kind: str
-    :param location: Resource Location
+    :param location: Resource Location.
     :type location: str
-    :param type: Resource type
+    :param type: Resource type.
     :type type: str
-    :param tags: Resource tags
+    :param tags: Resource tags.
     :type tags: dict
-    :param metric_definition_name: Name of the metric
-    :type metric_definition_name: str
-    :param unit: Unit of the metric
-    :type unit: str
-    :param primary_aggregation_type: Primary aggregation type
-    :type primary_aggregation_type: str
-    :param metric_availabilities: List of time grains supported for the
-     metric together with retention period
-    :type metric_availabilities: list of :class:`MetricAvailabilily
+    :ivar metric_definition_name: Name of the metric.
+    :vartype metric_definition_name: str
+    :ivar unit: Unit of the metric.
+    :vartype unit: str
+    :ivar primary_aggregation_type: Primary aggregation type.
+    :vartype primary_aggregation_type: str
+    :ivar metric_availabilities: List of time grains supported for the metric
+     together with retention period.
+    :vartype metric_availabilities: list of :class:`MetricAvailabilily
      <azure.mgmt.web.models.MetricAvailabilily>`
-    :param display_name: Friendly name shown in the UI
-    :type display_name: str
-    """ 
+    :ivar display_name: Friendly name shown in the UI.
+    :vartype display_name: str
+    """
 
     _validation = {
+        'id': {'readonly': True},
         'location': {'required': True},
+        'metric_definition_name': {'readonly': True},
+        'unit': {'readonly': True},
+        'primary_aggregation_type': {'readonly': True},
+        'metric_availabilities': {'readonly': True},
+        'display_name': {'readonly': True},
     }
 
     _attribute_map = {
@@ -59,10 +68,10 @@ class MetricDefinition(Resource):
         'display_name': {'key': 'properties.displayName', 'type': 'str'},
     }
 
-    def __init__(self, location, id=None, name=None, kind=None, type=None, tags=None, metric_definition_name=None, unit=None, primary_aggregation_type=None, metric_availabilities=None, display_name=None):
-        super(MetricDefinition, self).__init__(id=id, name=name, kind=kind, location=location, type=type, tags=tags)
-        self.metric_definition_name = metric_definition_name
-        self.unit = unit
-        self.primary_aggregation_type = primary_aggregation_type
-        self.metric_availabilities = metric_availabilities
-        self.display_name = display_name
+    def __init__(self, location, name=None, kind=None, type=None, tags=None):
+        super(MetricDefinition, self).__init__(name=name, kind=kind, location=location, type=type, tags=tags)
+        self.metric_definition_name = None
+        self.unit = None
+        self.primary_aggregation_type = None
+        self.metric_availabilities = None
+        self.display_name = None

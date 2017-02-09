@@ -13,16 +13,25 @@ from msrest.serialization import Model
 
 
 class DomainControlCenterSsoRequest(Model):
-    """Single sign on request information for domain management.
+    """Single sign-on request information for domain management.
 
-    :param url: Url where the single sign on request is to be made
-    :type url: str
-    :param post_parameter_key: Post parameter key
-    :type post_parameter_key: str
-    :param post_parameter_value: Post parameter value. Client should use
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar url: URL where the single sign-on request is to be made.
+    :vartype url: str
+    :ivar post_parameter_key: Post parameter key.
+    :vartype post_parameter_key: str
+    :ivar post_parameter_value: Post parameter value. Client should use
      'application/x-www-form-urlencoded' encoding for this value.
-    :type post_parameter_value: str
-    """ 
+    :vartype post_parameter_value: str
+    """
+
+    _validation = {
+        'url': {'readonly': True},
+        'post_parameter_key': {'readonly': True},
+        'post_parameter_value': {'readonly': True},
+    }
 
     _attribute_map = {
         'url': {'key': 'url', 'type': 'str'},
@@ -30,7 +39,7 @@ class DomainControlCenterSsoRequest(Model):
         'post_parameter_value': {'key': 'postParameterValue', 'type': 'str'},
     }
 
-    def __init__(self, url=None, post_parameter_key=None, post_parameter_value=None):
-        self.url = url
-        self.post_parameter_key = post_parameter_key
-        self.post_parameter_value = post_parameter_value
+    def __init__(self):
+        self.url = None
+        self.post_parameter_key = None
+        self.post_parameter_value = None

@@ -23,6 +23,7 @@ class TopLevelDomainsOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An objec model deserializer.
+    :ivar api_version: API Version. Constant value: "2015-04-01".
     """
 
     def __init__(self, client, config, serializer, deserializer):
@@ -30,12 +31,15 @@ class TopLevelDomainsOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
+        self.api_version = "2015-04-01"
 
         self.config = config
 
-    def get_get_top_level_domains(
+    def list(
             self, custom_headers=None, raw=False, **operation_config):
-        """Lists all top level domains supported for registration.
+        """Get all top-level domains supported for registration.
+
+        Get all top-level domains supported for registration.
 
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -58,7 +62,7 @@ class TopLevelDomainsOperations(object):
 
                 # Construct parameters
                 query_parameters = {}
-                query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
+                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
             else:
                 url = next_link
@@ -96,11 +100,13 @@ class TopLevelDomainsOperations(object):
 
         return deserialized
 
-    def get_top_level_domain(
+    def get(
             self, name, custom_headers=None, raw=False, **operation_config):
-        """Gets details of a top level domain.
+        """Get details of a top-level domain.
 
-        :param name: Name of the top level domain
+        Get details of a top-level domain.
+
+        :param name: Name of the top-level domain.
         :type name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -122,7 +128,7 @@ class TopLevelDomainsOperations(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -154,15 +160,19 @@ class TopLevelDomainsOperations(object):
 
         return deserialized
 
-    def list_top_level_domain_agreements(
+    def list_agreements(
             self, name, include_privacy=None, custom_headers=None, raw=False, **operation_config):
-        """Lists legal agreements that user needs to accept before purchasing
+        """Gets all legal agreements that user needs to accept before purchasing a
         domain.
 
-        :param name: Name of the top level domain
+        Gets all legal agreements that user needs to accept before purchasing a
+        domain.
+
+        :param name: Name of the top-level domain.
         :type name: str
-        :param include_privacy: If true then the list of agreements will
-         inclue agreements for domain privacy as well.
+        :param include_privacy: If <code>true</code>, then the list of
+         agreements will include agreements for domain privacy as well;
+         otherwise, <code>false</code>.
         :type include_privacy: bool
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -188,7 +198,7 @@ class TopLevelDomainsOperations(object):
 
                 # Construct parameters
                 query_parameters = {}
-                query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
+                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
             else:
                 url = next_link

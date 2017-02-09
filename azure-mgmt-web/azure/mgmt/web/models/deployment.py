@@ -13,43 +13,47 @@ from .resource import Resource
 
 
 class Deployment(Resource):
-    """Represents user crendentials used for publishing activity.
+    """User crendentials used for publishing activity.
 
-    :param id: Resource Id
-    :type id: str
-    :param name: Resource Name
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar id: Resource Id.
+    :vartype id: str
+    :param name: Resource Name.
     :type name: str
-    :param kind: Kind of resource
+    :param kind: Kind of resource.
     :type kind: str
-    :param location: Resource Location
+    :param location: Resource Location.
     :type location: str
-    :param type: Resource type
+    :param type: Resource type.
     :type type: str
-    :param tags: Resource tags
+    :param tags: Resource tags.
     :type tags: dict
-    :param deployment_id: Id
+    :param deployment_id: ID.
     :type deployment_id: str
-    :param status: Status
+    :param status: Status.
     :type status: int
-    :param message: Message
+    :param message: Message.
     :type message: str
-    :param author: Author
+    :param author: Author.
     :type author: str
-    :param deployer: Deployer
+    :param deployer: Deployer.
     :type deployer: str
-    :param author_email: AuthorEmail
+    :param author_email: Author email.
     :type author_email: str
-    :param start_time: StartTime
+    :param start_time: Start time.
     :type start_time: datetime
-    :param end_time: EndTime
+    :param end_time: End time.
     :type end_time: datetime
-    :param active: Active
+    :param active: Active.
     :type active: bool
-    :param details: Detail
+    :param details: Detail.
     :type details: str
-    """ 
+    """
 
     _validation = {
+        'id': {'readonly': True},
         'location': {'required': True},
     }
 
@@ -72,8 +76,8 @@ class Deployment(Resource):
         'details': {'key': 'properties.details', 'type': 'str'},
     }
 
-    def __init__(self, location, id=None, name=None, kind=None, type=None, tags=None, deployment_id=None, status=None, message=None, author=None, deployer=None, author_email=None, start_time=None, end_time=None, active=None, details=None):
-        super(Deployment, self).__init__(id=id, name=name, kind=kind, location=location, type=type, tags=tags)
+    def __init__(self, location, name=None, kind=None, type=None, tags=None, deployment_id=None, status=None, message=None, author=None, deployer=None, author_email=None, start_time=None, end_time=None, active=None, details=None):
+        super(Deployment, self).__init__(name=name, kind=kind, location=location, type=type, tags=tags)
         self.deployment_id = deployment_id
         self.status = status
         self.message = message

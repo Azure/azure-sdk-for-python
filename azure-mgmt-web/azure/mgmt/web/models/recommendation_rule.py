@@ -16,40 +16,32 @@ class RecommendationRule(Model):
     """Represents a recommendation rule that the recommendation engine can
     perform.
 
-    :param name: Unique name of the rule
+    :param name: Unique name of the rule.
     :type name: str
-    :param display_name: UI friendly name of the rule
+    :param display_name: UI friendly name of the rule.
     :type display_name: str
-    :param message: Localized name of the rule (Good for UI)
+    :param message: Localized name of the rule (Good for UI).
     :type message: str
     :param recommendation_id: Recommendation ID of an associated
      recommendation object tied to the rule, if exists.
      If such an object doesn't exist, it is set to null.
     :type recommendation_id: str
-    :param description: Localized detailed description of the rule
+    :param description: Localized detailed description of the rule.
     :type description: str
     :param action_name: Name of action that is recommended by this rule in
-     string
+     string.
     :type action_name: str
-    :param enabled: On/off flag indicating the rule is currently enabled or
-     disabled.
-    :type enabled: int
     :param level: Level of impact indicating how critical this rule is.
      Possible values include: 'Critical', 'Warning', 'Information',
      'NonUrgentSuggestion'
     :type level: str or :class:`NotificationLevel
      <azure.mgmt.web.models.NotificationLevel>`
     :param channels: List of available channels that this rule applies.
-     Possible values include: 'Notification', 'Api', 'Email', 'All'
+     Possible values include: 'Notification', 'Api', 'Email', 'Webhook', 'All'
     :type channels: str or :class:`Channels <azure.mgmt.web.models.Channels>`
     :param tags: An array of category tags that the rule contains.
     :type tags: list of str
-    """ 
-
-    _validation = {
-        'level': {'required': True},
-        'channels': {'required': True},
-    }
+    """
 
     _attribute_map = {
         'name': {'key': 'name', 'type': 'str'},
@@ -58,20 +50,18 @@ class RecommendationRule(Model):
         'recommendation_id': {'key': 'recommendationId', 'type': 'str'},
         'description': {'key': 'description', 'type': 'str'},
         'action_name': {'key': 'actionName', 'type': 'str'},
-        'enabled': {'key': 'enabled', 'type': 'int'},
         'level': {'key': 'level', 'type': 'NotificationLevel'},
         'channels': {'key': 'channels', 'type': 'Channels'},
         'tags': {'key': 'tags', 'type': '[str]'},
     }
 
-    def __init__(self, level, channels, name=None, display_name=None, message=None, recommendation_id=None, description=None, action_name=None, enabled=None, tags=None):
+    def __init__(self, name=None, display_name=None, message=None, recommendation_id=None, description=None, action_name=None, level=None, channels=None, tags=None):
         self.name = name
         self.display_name = display_name
         self.message = message
         self.recommendation_id = recommendation_id
         self.description = description
         self.action_name = action_name
-        self.enabled = enabled
         self.level = level
         self.channels = channels
         self.tags = tags

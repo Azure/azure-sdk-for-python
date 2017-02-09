@@ -18,9 +18,10 @@ class CsmPublishingProfileOptions(Model):
     :param format: Name of the format. Valid values are:
      FileZilla3
      WebDeploy -- default
-     Ftp
-    :type format: str
-    """ 
+     Ftp. Possible values include: 'FileZilla3', 'WebDeploy', 'Ftp'
+    :type format: str or :class:`PublishingProfileFormat
+     <azure.mgmt.web.models.PublishingProfileFormat>`
+    """
 
     _attribute_map = {
         'format': {'key': 'format', 'type': 'str'},

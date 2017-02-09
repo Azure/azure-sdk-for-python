@@ -15,39 +15,43 @@ from .resource import Resource
 class BackupRequest(Resource):
     """Description of a backup which will be performed.
 
-    :param id: Resource Id
-    :type id: str
-    :param name: Resource Name
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar id: Resource Id.
+    :vartype id: str
+    :param name: Resource Name.
     :type name: str
-    :param kind: Kind of resource
+    :param kind: Kind of resource.
     :type kind: str
-    :param location: Resource Location
+    :param location: Resource Location.
     :type location: str
-    :param type: Resource type
+    :param type: Resource type.
     :type type: str
-    :param tags: Resource tags
+    :param tags: Resource tags.
     :type tags: dict
-    :param backup_request_name: Name of the backup
+    :param backup_request_name: Name of the backup.
     :type backup_request_name: str
     :param enabled: True if the backup schedule is enabled (must be included
-     in that case), false if the backup schedule should be disabled
+     in that case), false if the backup schedule should be disabled.
     :type enabled: bool
-    :param storage_account_url: SAS URL to the container
+    :param storage_account_url: SAS URL to the container.
     :type storage_account_url: str
     :param backup_schedule: Schedule for the backup if it is executed
-     periodically
+     periodically.
     :type backup_schedule: :class:`BackupSchedule
      <azure.mgmt.web.models.BackupSchedule>`
-    :param databases: Databases included in the backup
+    :param databases: Databases included in the backup.
     :type databases: list of :class:`DatabaseBackupSetting
      <azure.mgmt.web.models.DatabaseBackupSetting>`
     :param backup_request_type: Type of the backup. Possible values include:
      'Default', 'Clone', 'Relocation'
     :type backup_request_type: str or :class:`BackupRestoreOperationType
      <azure.mgmt.web.models.BackupRestoreOperationType>`
-    """ 
+    """
 
     _validation = {
+        'id': {'readonly': True},
         'location': {'required': True},
     }
 
@@ -66,8 +70,8 @@ class BackupRequest(Resource):
         'backup_request_type': {'key': 'properties.type', 'type': 'BackupRestoreOperationType'},
     }
 
-    def __init__(self, location, id=None, name=None, kind=None, type=None, tags=None, backup_request_name=None, enabled=None, storage_account_url=None, backup_schedule=None, databases=None, backup_request_type=None):
-        super(BackupRequest, self).__init__(id=id, name=name, kind=kind, location=location, type=type, tags=tags)
+    def __init__(self, location, name=None, kind=None, type=None, tags=None, backup_request_name=None, enabled=None, storage_account_url=None, backup_schedule=None, databases=None, backup_request_type=None):
+        super(BackupRequest, self).__init__(name=name, kind=kind, location=location, type=type, tags=tags)
         self.backup_request_name = backup_request_name
         self.enabled = enabled
         self.storage_account_url = storage_account_url

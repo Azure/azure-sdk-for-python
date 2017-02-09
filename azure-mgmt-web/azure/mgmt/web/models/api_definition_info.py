@@ -13,11 +13,11 @@ from msrest.serialization import Model
 
 
 class ApiDefinitionInfo(Model):
-    """Information about the formal API definition for the web app.
+    """Information about the formal API definition for the app.
 
     :param url: The URL of the API definition.
     :type url: str
-    """ 
+    """
 
     _attribute_map = {
         'url': {'key': 'url', 'type': 'str'},

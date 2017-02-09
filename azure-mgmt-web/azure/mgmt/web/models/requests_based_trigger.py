@@ -13,13 +13,13 @@ from msrest.serialization import Model
 
 
 class RequestsBasedTrigger(Model):
-    """RequestsBasedTrigger.
+    """Trigger based on total requests.
 
-    :param count: Count
+    :param count: Count.
     :type count: int
-    :param time_interval: TimeInterval
+    :param time_interval: Time interval.
     :type time_interval: str
-    """ 
+    """
 
     _attribute_map = {
         'count': {'key': 'count', 'type': 'int'},

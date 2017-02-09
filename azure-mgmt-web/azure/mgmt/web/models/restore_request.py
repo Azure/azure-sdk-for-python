@@ -15,50 +15,56 @@ from .resource import Resource
 class RestoreRequest(Resource):
     """Description of a restore request.
 
-    :param id: Resource Id
-    :type id: str
-    :param name: Resource Name
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar id: Resource Id.
+    :vartype id: str
+    :param name: Resource Name.
     :type name: str
-    :param kind: Kind of resource
+    :param kind: Kind of resource.
     :type kind: str
-    :param location: Resource Location
+    :param location: Resource Location.
     :type location: str
-    :param type: Resource type
+    :param type: Resource type.
     :type type: str
-    :param tags: Resource tags
+    :param tags: Resource tags.
     :type tags: dict
-    :param storage_account_url: SAS URL to the container
+    :param storage_account_url: SAS URL to the container.
     :type storage_account_url: str
-    :param blob_name: Name of a blob which contains the backup
+    :param blob_name: Name of a blob which contains the backup.
     :type blob_name: str
-    :param overwrite: True if the restore operation can overwrite target
-     site. "True" needed if trying to restore over an existing site.
+    :param overwrite: <code>true</code> if the restore operation can overwrite
+     target app; otherwise, <code>false</code>. <code>true</code> is needed if
+     trying to restore over an existing app.
     :type overwrite: bool
-    :param site_name: Name of a site (Web App)
+    :param site_name: Name of an app.
     :type site_name: str
-    :param databases: Collection of databses which should be restored. This
+    :param databases: Collection of databases which should be restored. This
      list has to match the list of databases included in the backup.
     :type databases: list of :class:`DatabaseBackupSetting
      <azure.mgmt.web.models.DatabaseBackupSetting>`
-    :param ignore_conflicting_host_names: Changes a logic when restoring a
-     site with custom domains. If "true", custom domains are removed
-     automatically. If "false", custom domains are added to
-     the site object when it is being restored, but that might
-     fail due to conflicts during the operation.
+    :param ignore_conflicting_host_names: Changes a logic when restoring an
+     app with custom domains. <code>true</code> to remove custom domains
+     automatically. If <code>false</code>, custom domains are added to
+     the app's object when it is being restored, but that might fail due to
+     conflicts during the operation. Default value: False .
     :type ignore_conflicting_host_names: bool
-    :param operation_type: Operation type. Possible values include:
-     'Default', 'Clone', 'Relocation'
+    :param operation_type: Operation type. Possible values include: 'Default',
+     'Clone', 'Relocation'. Default value: "Default" .
     :type operation_type: str or :class:`BackupRestoreOperationType
      <azure.mgmt.web.models.BackupRestoreOperationType>`
-    :param adjust_connection_strings: Gets or sets a flag showing if
-     SiteConfig.ConnectionStrings should be set in new site
+    :param adjust_connection_strings: <code>true</code> if
+     SiteConfig.ConnectionStrings should be set in new app; otherwise,
+     <code>false</code>.
     :type adjust_connection_strings: bool
     :param hosting_environment: App Service Environment name, if needed (only
-     when restoring a site to an App Service Environment)
+     when restoring an app to an App Service Environment).
     :type hosting_environment: str
-    """ 
+    """
 
     _validation = {
+        'id': {'readonly': True},
         'location': {'required': True},
     }
 
@@ -80,8 +86,8 @@ class RestoreRequest(Resource):
         'hosting_environment': {'key': 'properties.hostingEnvironment', 'type': 'str'},
     }
 
-    def __init__(self, location, id=None, name=None, kind=None, type=None, tags=None, storage_account_url=None, blob_name=None, overwrite=None, site_name=None, databases=None, ignore_conflicting_host_names=None, operation_type=None, adjust_connection_strings=None, hosting_environment=None):
-        super(RestoreRequest, self).__init__(id=id, name=name, kind=kind, location=location, type=type, tags=tags)
+    def __init__(self, location, name=None, kind=None, type=None, tags=None, storage_account_url=None, blob_name=None, overwrite=None, site_name=None, databases=None, ignore_conflicting_host_names=False, operation_type="Default", adjust_connection_strings=None, hosting_environment=None):
+        super(RestoreRequest, self).__init__(name=name, kind=kind, location=location, type=type, tags=tags)
         self.storage_account_url = storage_account_url
         self.blob_name = blob_name
         self.overwrite = overwrite

@@ -15,18 +15,18 @@ from msrest.serialization import Model
 class CsmUsageQuota(Model):
     """Usage of the quota resource.
 
-    :param unit: Units of measurement for the quota resourse
+    :param unit: Units of measurement for the quota resourse.
     :type unit: str
-    :param next_reset_time: Next reset time for the resource counter
+    :param next_reset_time: Next reset time for the resource counter.
     :type next_reset_time: datetime
-    :param current_value: The current value of the resource counter
+    :param current_value: The current value of the resource counter.
     :type current_value: long
-    :param limit: The resource limit
+    :param limit: The resource limit.
     :type limit: long
-    :param name: Quota name
+    :param name: Quota name.
     :type name: :class:`LocalizableString
      <azure.mgmt.web.models.LocalizableString>`
-    """ 
+    """
 
     _attribute_map = {
         'unit': {'key': 'unit', 'type': 'str'},

@@ -13,19 +13,19 @@ from msrest.serialization import Model
 
 
 class StatusCodesBasedTrigger(Model):
-    """StatusCodeBasedTrigger.
+    """Trigger based on status code.
 
-    :param status: HTTP status code
+    :param status: HTTP status code.
     :type status: int
-    :param sub_status: SubStatus
+    :param sub_status: SubStatus.
     :type sub_status: int
-    :param win32_status: Win32 error code
+    :param win32_status: Win32 error code.
     :type win32_status: int
-    :param count: Count
+    :param count: Count.
     :type count: int
-    :param time_interval: TimeInterval
+    :param time_interval: Time interval.
     :type time_interval: str
-    """ 
+    """
 
     _attribute_map = {
         'status': {'key': 'status', 'type': 'int'},
