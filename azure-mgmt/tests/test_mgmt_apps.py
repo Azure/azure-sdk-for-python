@@ -29,6 +29,8 @@ class MgmtAppsTest(AzureMgmtTestCase):
 
     @record
     def test_webapp(self):
+        raise unittest.SkipTest("Skipping WebApp test")
+
         app_service_plan_name = self.get_resource_name('pyarmappserviceplan')
         site_name = self.get_resource_name('pyarmsite')
 
