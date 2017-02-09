@@ -23,6 +23,7 @@ class KeyVaultSecretStatus(Enum):
     key_vault_does_not_exist = "KeyVaultDoesNotExist"
     key_vault_secret_does_not_exist = "KeyVaultSecretDoesNotExist"
     unknown_error = "UnknownError"
+    external_private_key = "ExternalPrivateKey"
     unknown = "Unknown"
 
 
@@ -66,6 +67,142 @@ class CertificateOrderActionType(Enum):
     org_name_change = "OrgNameChange"
     org_validation_complete = "OrgValidationComplete"
     san_drop = "SanDrop"
+    fraud_cleared = "FraudCleared"
+    certificate_expired = "CertificateExpired"
+    certificate_expiration_warning = "CertificateExpirationWarning"
+    fraud_documentation_required = "FraudDocumentationRequired"
+    unknown = "Unknown"
+
+
+class HostingEnvironmentStatus(Enum):
+
+    preparing = "Preparing"
+    ready = "Ready"
+    scaling = "Scaling"
+    deleting = "Deleting"
+
+
+class InternalLoadBalancingMode(Enum):
+
+    none = "None"
+    web = "Web"
+    publishing = "Publishing"
+
+
+class ComputeModeOptions(Enum):
+
+    shared = "Shared"
+    dedicated = "Dedicated"
+    dynamic = "Dynamic"
+
+
+class WorkerSizeOptions(Enum):
+
+    default = "Default"
+    small = "Small"
+    medium = "Medium"
+    large = "Large"
+
+
+class AccessControlEntryAction(Enum):
+
+    permit = "Permit"
+    deny = "Deny"
+
+
+class StatusOptions(Enum):
+
+    ready = "Ready"
+    pending = "Pending"
+
+
+class AutoHealActionType(Enum):
+
+    recycle = "Recycle"
+    log_event = "LogEvent"
+    custom_action = "CustomAction"
+
+
+class ConnectionStringType(Enum):
+
+    my_sql = "MySql"
+    sql_server = "SQLServer"
+    sql_azure = "SQLAzure"
+    custom = "Custom"
+    notification_hub = "NotificationHub"
+    service_bus = "ServiceBus"
+    event_hub = "EventHub"
+    api_hub = "ApiHub"
+    doc_db = "DocDb"
+    redis_cache = "RedisCache"
+
+
+class SslState(Enum):
+
+    disabled = "Disabled"
+    sni_enabled = "SniEnabled"
+    ip_based_enabled = "IpBasedEnabled"
+
+
+class OperationStatus(Enum):
+
+    in_progress = "InProgress"
+    failed = "Failed"
+    succeeded = "Succeeded"
+    timed_out = "TimedOut"
+    created = "Created"
+
+
+class UsageState(Enum):
+
+    normal = "Normal"
+    exceeded = "Exceeded"
+
+
+class SiteAvailabilityState(Enum):
+
+    normal = "Normal"
+    limited = "Limited"
+    disaster_recovery_mode = "DisasterRecoveryMode"
+
+
+class ScmType(Enum):
+
+    none = "None"
+    dropbox = "Dropbox"
+    tfs = "Tfs"
+    local_git = "LocalGit"
+    git_hub = "GitHub"
+    code_plex_git = "CodePlexGit"
+    code_plex_hg = "CodePlexHg"
+    bitbucket_git = "BitbucketGit"
+    bitbucket_hg = "BitbucketHg"
+    external_git = "ExternalGit"
+    external_hg = "ExternalHg"
+    one_drive = "OneDrive"
+    vso = "VSO"
+
+
+class ManagedPipelineMode(Enum):
+
+    integrated = "Integrated"
+    classic = "Classic"
+
+
+class SiteLoadBalancing(Enum):
+
+    weighted_round_robin = "WeightedRoundRobin"
+    least_requests = "LeastRequests"
+    least_response_time = "LeastResponseTime"
+    weighted_total_traffic = "WeightedTotalTraffic"
+    request_hash = "RequestHash"
+
+
+class RouteType(Enum):
+
+    default = "DEFAULT"
+    inherited = "INHERITED"
+    static = "STATIC"
 
 
 class DomainStatus(Enum):
@@ -111,60 +248,120 @@ class HostNameType(Enum):
     managed = "Managed"
 
 
-class StatusOptions(Enum):
+class DomainType(Enum):
 
-    ready = "Ready"
-    pending = "Pending"
-
-
-class UsageState(Enum):
-
-    normal = "Normal"
-    exceeded = "Exceeded"
+    regular = "Regular"
+    soft_deleted = "SoftDeleted"
 
 
-class SiteAvailabilityState(Enum):
+class ResourceScopeType(Enum):
 
-    normal = "Normal"
-    limited = "Limited"
-    disaster_recovery_mode = "DisasterRecoveryMode"
-
-
-class SslState(Enum):
-
-    disabled = "Disabled"
-    sni_enabled = "SniEnabled"
-    ip_based_enabled = "IpBasedEnabled"
+    server_farm = "ServerFarm"
+    subscription = "Subscription"
+    web_site = "WebSite"
 
 
-class DatabaseServerType(Enum):
+class NotificationLevel(Enum):
 
+    critical = "Critical"
+    warning = "Warning"
+    information = "Information"
+    non_urgent_suggestion = "NonUrgentSuggestion"
+
+
+class Channels(Enum):
+
+    notification = "Notification"
+    api = "Api"
+    email = "Email"
+    webhook = "Webhook"
+    all = "All"
+
+
+class AppServicePlanRestrictions(Enum):
+
+    none = "None"
+    free = "Free"
+    shared = "Shared"
+    basic = "Basic"
+    standard = "Standard"
+    premium = "Premium"
+
+
+class InAvailabilityReasonType(Enum):
+
+    invalid = "Invalid"
+    already_exists = "AlreadyExists"
+
+
+class CheckNameResourceTypes(Enum):
+
+    site = "Site"
+    slot = "Slot"
+    hosting_environment = "HostingEnvironment"
+
+
+class ValidateResourceTypes(Enum):
+
+    server_farm = "ServerFarm"
+    site = "Site"
+
+
+class LogLevel(Enum):
+
+    off = "Off"
+    verbose = "Verbose"
+    information = "Information"
+    warning = "Warning"
+    error = "Error"
+
+
+class BackupItemStatus(Enum):
+
+    in_progress = "InProgress"
+    failed = "Failed"
+    succeeded = "Succeeded"
+    timed_out = "TimedOut"
+    created = "Created"
+    skipped = "Skipped"
+    partially_succeeded = "PartiallySucceeded"
+    delete_in_progress = "DeleteInProgress"
+    delete_failed = "DeleteFailed"
+    deleted = "Deleted"
+
+
+class DatabaseType(Enum):
+
+    sql_azure = "SqlAzure"
     my_sql = "MySql"
-    sql_server = "SQLServer"
-    sql_azure = "SQLAzure"
-    custom = "Custom"
+    local_my_sql = "LocalMySql"
 
 
-class ManagedPipelineMode(Enum):
+class FrequencyUnit(Enum):
 
-    integrated = "Integrated"
-    classic = "Classic"
-
-
-class SiteLoadBalancing(Enum):
-
-    weighted_round_robin = "WeightedRoundRobin"
-    least_requests = "LeastRequests"
-    least_response_time = "LeastResponseTime"
-    weighted_total_traffic = "WeightedTotalTraffic"
-    request_hash = "RequestHash"
+    day = "Day"
+    hour = "Hour"
 
 
-class AutoHealActionType(Enum):
+class BackupRestoreOperationType(Enum):
 
-    recycle = "Recycle"
-    log_event = "LogEvent"
-    custom_action = "CustomAction"
+    default = "Default"
+    clone = "Clone"
+    relocation = "Relocation"
+
+
+class PublishingProfileFormat(Enum):
+
+    file_zilla3 = "FileZilla3"
+    web_deploy = "WebDeploy"
+    ftp = "Ftp"
+
+
+class DnsVerificationTestResult(Enum):
+
+    passed = "Passed"
+    failed = "Failed"
+    skipped = "Skipped"
 
 
 class UnauthenticatedClientAction(Enum):
@@ -182,71 +379,6 @@ class BuiltInAuthenticationProvider(Enum):
     twitter = "Twitter"
 
 
-class HostingEnvironmentStatus(Enum):
-
-    preparing = "Preparing"
-    ready = "Ready"
-    scaling = "Scaling"
-    deleting = "Deleting"
-
-
-class InternalLoadBalancingMode(Enum):
-
-    none = "None"
-    web = "Web"
-    publishing = "Publishing"
-
-
-class ComputeModeOptions(Enum):
-
-    shared = "Shared"
-    dedicated = "Dedicated"
-    dynamic = "Dynamic"
-
-
-class WorkerSizeOptions(Enum):
-
-    default = "Default"
-    small = "Small"
-    medium = "Medium"
-    large = "Large"
-
-
-class AccessControlEntryAction(Enum):
-
-    permit = "Permit"
-    deny = "Deny"
-
-
-class ManagedHostingEnvironmentStatus(Enum):
-
-    preparing = "Preparing"
-    ready = "Ready"
-    deleting = "Deleting"
-
-
-class DomainType(Enum):
-
-    regular = "Regular"
-    soft_deleted = "SoftDeleted"
-
-
-class NotificationLevel(Enum):
-
-    critical = "Critical"
-    warning = "Warning"
-    information = "Information"
-    non_urgent_suggestion = "NonUrgentSuggestion"
-
-
-class Channels(Enum):
-
-    notification = "Notification"
-    api = "Api"
-    email = "Email"
-    all = "All"
-
-
 class CloneAbilityResult(Enum):
 
     cloneable = "Cloneable"
@@ -254,37 +386,11 @@ class CloneAbilityResult(Enum):
     not_cloneable = "NotCloneable"
 
 
-class LogLevel(Enum):
+class SkuName(Enum):
 
-    off = "Off"
-    verbose = "Verbose"
-    information = "Information"
-    warning = "Warning"
-    error = "Error"
-
-
-class FrequencyUnit(Enum):
-
-    day = "Day"
-    hour = "Hour"
-
-
-class BackupRestoreOperationType(Enum):
-
-    default = "Default"
-    clone = "Clone"
-    relocation = "Relocation"
-
-
-class BackupItemStatus(Enum):
-
-    in_progress = "InProgress"
-    failed = "Failed"
-    succeeded = "Succeeded"
-    timed_out = "TimedOut"
-    created = "Created"
-    skipped = "Skipped"
-    partially_succeeded = "PartiallySucceeded"
-    delete_in_progress = "DeleteInProgress"
-    delete_failed = "DeleteFailed"
-    deleted = "Deleted"
+    free = "Free"
+    shared = "Shared"
+    basic = "Basic"
+    standard = "Standard"
+    premium = "Premium"
+    dynamic = "Dynamic"

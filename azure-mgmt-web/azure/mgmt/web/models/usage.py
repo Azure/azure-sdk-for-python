@@ -13,44 +13,57 @@ from .resource import Resource
 
 
 class Usage(Resource):
-    """Class that represents usage of the quota resource.
+    """Usage of the quota resource.
 
-    :param id: Resource Id
-    :type id: str
-    :param name: Resource Name
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar id: Resource Id.
+    :vartype id: str
+    :param name: Resource Name.
     :type name: str
-    :param kind: Kind of resource
+    :param kind: Kind of resource.
     :type kind: str
-    :param location: Resource Location
+    :param location: Resource Location.
     :type location: str
-    :param type: Resource type
+    :param type: Resource type.
     :type type: str
-    :param tags: Resource tags
+    :param tags: Resource tags.
     :type tags: dict
-    :param display_name: Friendly name shown in the UI
-    :type display_name: str
-    :param usage_name: Name of the quota
-    :type usage_name: str
-    :param resource_name: Name of the quota resource
-    :type resource_name: str
-    :param unit: Units of measurement for the quota resource
-    :type unit: str
-    :param current_value: The current value of the resource counter
-    :type current_value: long
-    :param limit: The resource limit
-    :type limit: long
-    :param next_reset_time: Next reset time for the resource counter
-    :type next_reset_time: datetime
-    :param compute_mode: ComputeMode used for this usage. Possible values
+    :ivar display_name: Friendly name shown in the UI.
+    :vartype display_name: str
+    :ivar usage_name: Name of the quota.
+    :vartype usage_name: str
+    :ivar resource_name: Name of the quota resource.
+    :vartype resource_name: str
+    :ivar unit: Units of measurement for the quota resource.
+    :vartype unit: str
+    :ivar current_value: The current value of the resource counter.
+    :vartype current_value: long
+    :ivar limit: The resource limit.
+    :vartype limit: long
+    :ivar next_reset_time: Next reset time for the resource counter.
+    :vartype next_reset_time: datetime
+    :ivar compute_mode: Compute mode used for this usage. Possible values
      include: 'Shared', 'Dedicated', 'Dynamic'
-    :type compute_mode: str or :class:`ComputeModeOptions
+    :vartype compute_mode: str or :class:`ComputeModeOptions
      <azure.mgmt.web.models.ComputeModeOptions>`
-    :param site_mode: SiteMode used for this usage
-    :type site_mode: str
-    """ 
+    :ivar site_mode: Site mode used for this usage.
+    :vartype site_mode: str
+    """
 
     _validation = {
+        'id': {'readonly': True},
         'location': {'required': True},
+        'display_name': {'readonly': True},
+        'usage_name': {'readonly': True},
+        'resource_name': {'readonly': True},
+        'unit': {'readonly': True},
+        'current_value': {'readonly': True},
+        'limit': {'readonly': True},
+        'next_reset_time': {'readonly': True},
+        'compute_mode': {'readonly': True},
+        'site_mode': {'readonly': True},
     }
 
     _attribute_map = {
@@ -71,14 +84,14 @@ class Usage(Resource):
         'site_mode': {'key': 'properties.siteMode', 'type': 'str'},
     }
 
-    def __init__(self, location, id=None, name=None, kind=None, type=None, tags=None, display_name=None, usage_name=None, resource_name=None, unit=None, current_value=None, limit=None, next_reset_time=None, compute_mode=None, site_mode=None):
-        super(Usage, self).__init__(id=id, name=name, kind=kind, location=location, type=type, tags=tags)
-        self.display_name = display_name
-        self.usage_name = usage_name
-        self.resource_name = resource_name
-        self.unit = unit
-        self.current_value = current_value
-        self.limit = limit
-        self.next_reset_time = next_reset_time
-        self.compute_mode = compute_mode
-        self.site_mode = site_mode
+    def __init__(self, location, name=None, kind=None, type=None, tags=None):
+        super(Usage, self).__init__(name=name, kind=kind, location=location, type=type, tags=tags)
+        self.display_name = None
+        self.usage_name = None
+        self.resource_name = None
+        self.unit = None
+        self.current_value = None
+        self.limit = None
+        self.next_reset_time = None
+        self.compute_mode = None
+        self.site_mode = None

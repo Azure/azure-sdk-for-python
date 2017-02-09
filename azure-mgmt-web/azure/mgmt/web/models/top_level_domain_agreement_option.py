@@ -15,10 +15,11 @@ from msrest.serialization import Model
 class TopLevelDomainAgreementOption(Model):
     """Options for retrieving the list of top level domain legal agreements.
 
-    :param include_privacy: If true then the list of agreements will inclue
-     agreements for domain privacy as well.
+    :param include_privacy: If <code>true</code>, then the list of agreements
+     will include agreements for domain privacy as well; otherwise,
+     <code>false</code>.
     :type include_privacy: bool
-    """ 
+    """
 
     _attribute_map = {
         'include_privacy': {'key': 'includePrivacy', 'type': 'bool'},

@@ -16,30 +16,38 @@ class BackupSchedule(Model):
     """Description of a backup schedule. Describes how often should be the backup
     performed and what should be the retention policy.
 
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
     :param frequency_interval: How often should be the backup executed (e.g.
-     for weekly backup, this should be set to 7 and FrequencyUnit should be
-     set to Day)
+     for weekly backup, this should be set to 7 and FrequencyUnit should be set
+     to Day). Default value: 7 .
     :type frequency_interval: int
-    :param frequency_unit: How often should be the backup executed (e.g. for
-     weekly backup, this should be set to Day and FrequencyInterval should be
-     set to 7). Possible values include: 'Day', 'Hour'
+    :param frequency_unit: The unit of time for how often should be the backup
+     executed (e.g. for weekly backup, this should be set to Day and
+     FrequencyInterval should be set to 7). Possible values include: 'Day',
+     'Hour'. Default value: "Day" .
     :type frequency_unit: str or :class:`FrequencyUnit
      <azure.mgmt.web.models.FrequencyUnit>`
     :param keep_at_least_one_backup: True if the retention policy should
-     always keep at least one backup in the storage account, regardless how
-     old it is; false otherwise.
+     always keep at least one backup in the storage account, regardless how old
+     it is; false otherwise. Default value: True .
     :type keep_at_least_one_backup: bool
     :param retention_period_in_days: After how many days backups should be
-     deleted
+     deleted. Default value: 90 .
     :type retention_period_in_days: int
-    :param start_time: When the schedule should start working
+    :param start_time: When the schedule should start working.
     :type start_time: datetime
-    :param last_execution_time: The last time when this schedule was triggered
-    :type last_execution_time: datetime
-    """ 
+    :ivar last_execution_time: Last time when this schedule was triggered.
+    :vartype last_execution_time: datetime
+    """
 
     _validation = {
+        'frequency_interval': {'required': True},
         'frequency_unit': {'required': True},
+        'keep_at_least_one_backup': {'required': True},
+        'retention_period_in_days': {'required': True},
+        'last_execution_time': {'readonly': True},
     }
 
     _attribute_map = {
@@ -51,10 +59,10 @@ class BackupSchedule(Model):
         'last_execution_time': {'key': 'lastExecutionTime', 'type': 'iso-8601'},
     }
 
-    def __init__(self, frequency_unit, frequency_interval=None, keep_at_least_one_backup=None, retention_period_in_days=None, start_time=None, last_execution_time=None):
+    def __init__(self, frequency_interval=7, frequency_unit="Day", keep_at_least_one_backup=True, retention_period_in_days=90, start_time=None):
         self.frequency_interval = frequency_interval
         self.frequency_unit = frequency_unit
         self.keep_at_least_one_backup = keep_at_least_one_backup
         self.retention_period_in_days = retention_period_in_days
         self.start_time = start_time
-        self.last_execution_time = last_execution_time
+        self.last_execution_time = None

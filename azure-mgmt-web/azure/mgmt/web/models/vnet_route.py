@@ -13,19 +13,23 @@ from .resource import Resource
 
 
 class VnetRoute(Resource):
-    """VnetRoute contract used to pass routing information for a vnet.
+    """Virtual Network route contract used to pass routing information for a
+    Virtual Network.
 
-    :param id: Resource Id
-    :type id: str
-    :param name: Resource Name
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar id: Resource Id.
+    :vartype id: str
+    :param name: Resource Name.
     :type name: str
-    :param kind: Kind of resource
+    :param kind: Kind of resource.
     :type kind: str
-    :param location: Resource Location
+    :param location: Resource Location.
     :type location: str
-    :param type: Resource type
+    :param type: Resource type.
     :type type: str
-    :param tags: Resource tags
+    :param tags: Resource tags.
     :type tags: dict
     :param vnet_route_name: The name of this route. This is only returned by
      the server and does not need to be set by the client.
@@ -38,19 +42,18 @@ class VnetRoute(Resource):
      address is specified in CIDR notation, this must be omitted.
     :type end_address: str
     :param route_type: The type of route this is:
-     DEFAULT - By default, every web app has routes to the local
-     address ranges specified by RFC1918
-     INHERITED - Routes inherited from the real Virtual Network
-     routes
-     STATIC - Static route set on the web app only
-     These values will be used for syncing a Web App's routes with
-     those from a Virtual Network. This operation will clear all DEFAULT and
-     INHERITED routes and replace them
-     with new INHERITED routes.
-    :type route_type: str
-    """ 
+     DEFAULT - By default, every app has routes to the local address ranges
+     specified by RFC1918
+     INHERITED - Routes inherited from the real Virtual Network routes
+     STATIC - Static route set on the app only
+     These values will be used for syncing an app's routes with those from a
+     Virtual Network. Possible values include: 'DEFAULT', 'INHERITED', 'STATIC'
+    :type route_type: str or :class:`RouteType
+     <azure.mgmt.web.models.RouteType>`
+    """
 
     _validation = {
+        'id': {'readonly': True},
         'location': {'required': True},
     }
 
@@ -67,8 +70,8 @@ class VnetRoute(Resource):
         'route_type': {'key': 'properties.routeType', 'type': 'str'},
     }
 
-    def __init__(self, location, id=None, name=None, kind=None, type=None, tags=None, vnet_route_name=None, start_address=None, end_address=None, route_type=None):
-        super(VnetRoute, self).__init__(id=id, name=name, kind=kind, location=location, type=type, tags=tags)
+    def __init__(self, location, name=None, kind=None, type=None, tags=None, vnet_route_name=None, start_address=None, end_address=None, route_type=None):
+        super(VnetRoute, self).__init__(name=name, kind=kind, location=location, type=type, tags=tags)
         self.vnet_route_name = vnet_route_name
         self.start_address = start_address
         self.end_address = end_address

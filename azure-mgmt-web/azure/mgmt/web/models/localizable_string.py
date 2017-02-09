@@ -13,13 +13,13 @@ from msrest.serialization import Model
 
 
 class LocalizableString(Model):
-    """LocalizableString object containing the name and a localized value.
+    """Localizable string object containing the name and a localized value.
 
-    :param value: Non localized name
+    :param value: Non-localized name.
     :type value: str
-    :param localized_value: Localized name
+    :param localized_value: Localized name.
     :type localized_value: str
-    """ 
+    """
 
     _attribute_map = {
         'value': {'key': 'value', 'type': 'str'},

@@ -13,17 +13,17 @@ from msrest.serialization import Model
 
 
 class SkuCapacity(Model):
-    """Description of the App Service Plan scale options.
+    """Description of the App Service plan scale options.
 
-    :param minimum: Minimum number of Workers for this App Service Plan SKU
+    :param minimum: Minimum number of workers for this App Service plan SKU.
     :type minimum: int
-    :param maximum: Maximum number of Workers for this App Service Plan SKU
+    :param maximum: Maximum number of workers for this App Service plan SKU.
     :type maximum: int
-    :param default: Default number of Workers for this App Service Plan SKU
+    :param default: Default number of workers for this App Service plan SKU.
     :type default: int
-    :param scale_type: Available scale configurations for an App Service Plan
+    :param scale_type: Available scale configurations for an App Service plan.
     :type scale_type: str
-    """ 
+    """
 
     _attribute_map = {
         'minimum': {'key': 'minimum', 'type': 'int'},

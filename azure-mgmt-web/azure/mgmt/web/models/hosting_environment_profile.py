@@ -13,18 +13,23 @@ from msrest.serialization import Model
 
 
 class HostingEnvironmentProfile(Model):
-    """Specification for a hostingEnvironment (App Service Environment) to use
-    for this resource.
+    """Specification for an App Service Environment to use for this resource.
 
-    :param id: Resource id of the hostingEnvironment (App Service Environment)
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :param id: Resource ID of the App Service Environment.
     :type id: str
-    :param name: Name of the hostingEnvironment (App Service Environment)
-     (read only)
-    :type name: str
-    :param type: Resource type of the hostingEnvironment (App Service
-     Environment) (read only)
-    :type type: str
-    """ 
+    :ivar name: Name of the App Service Environment.
+    :vartype name: str
+    :ivar type: Resource type of the App Service Environment.
+    :vartype type: str
+    """
+
+    _validation = {
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+    }
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
@@ -32,7 +37,7 @@ class HostingEnvironmentProfile(Model):
         'type': {'key': 'type', 'type': 'str'},
     }
 
-    def __init__(self, id=None, name=None, type=None):
+    def __init__(self, id=None):
         self.id = id
-        self.name = name
-        self.type = type
+        self.name = None
+        self.type = None

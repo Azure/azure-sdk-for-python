@@ -13,21 +13,20 @@ from msrest.serialization import Model
 
 
 class AddressResponse(Model):
-    """Describes main public ip address and any extra vips.
+    """Describes main public IP address and any extra virtual IPs.
 
-    :param service_ip_address: Main public vip
+    :param service_ip_address: Main public virtual IP.
     :type service_ip_address: str
-    :param internal_ip_address: VNET internal ip address of the
-     hostingEnvironment (App Service Environment) if it is in internal
-     load-balancing mode
+    :param internal_ip_address: Virtual Network internal IP address of the App
+     Service Environment if it is in internal load-balancing mode.
     :type internal_ip_address: str
     :param outbound_ip_addresses: IP addresses appearing on outbound
-     connections
+     connections.
     :type outbound_ip_addresses: list of str
-    :param vip_mappings: Additional vips
+    :param vip_mappings: Additional virtual IPs.
     :type vip_mappings: list of :class:`VirtualIPMapping
      <azure.mgmt.web.models.VirtualIPMapping>`
-    """ 
+    """
 
     _attribute_map = {
         'service_ip_address': {'key': 'serviceIpAddress', 'type': 'str'},

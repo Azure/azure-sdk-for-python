@@ -13,14 +13,13 @@ from msrest.serialization import Model
 
 
 class MetricAvailabilily(Model):
-    """Class repesenting metrics availability and retention.
+    """Metric availability and retention.
 
-    :param time_grain: Time grain
+    :param time_grain: Time grain.
     :type time_grain: str
-    :param retention: Retention period for the current
-     {Microsoft.Web.Hosting.Administration.MetricAvailabilily.TimeGrain}
+    :param retention: Retention period for the current time grain.
     :type retention: str
-    """ 
+    """
 
     _attribute_map = {
         'time_grain': {'key': 'timeGrain', 'type': 'str'},

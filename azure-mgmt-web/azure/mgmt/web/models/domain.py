@@ -13,69 +13,82 @@ from .resource import Resource
 
 
 class Domain(Resource):
-    """Represents a domain.
+    """Information about a domain.
 
-    :param id: Resource Id
-    :type id: str
-    :param name: Resource Name
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar id: Resource Id.
+    :vartype id: str
+    :param name: Resource Name.
     :type name: str
-    :param kind: Kind of resource
+    :param kind: Kind of resource.
     :type kind: str
-    :param location: Resource Location
+    :param location: Resource Location.
     :type location: str
-    :param type: Resource type
+    :param type: Resource type.
     :type type: str
-    :param tags: Resource tags
+    :param tags: Resource tags.
     :type tags: dict
-    :param contact_admin: Admin contact information
+    :param contact_admin: Administrative contact.
     :type contact_admin: :class:`Contact <azure.mgmt.web.models.Contact>`
-    :param contact_billing: Billing contact information
+    :param contact_billing: Billing contact.
     :type contact_billing: :class:`Contact <azure.mgmt.web.models.Contact>`
-    :param contact_registrant: Registrant contact information
+    :param contact_registrant: Registrant contact.
     :type contact_registrant: :class:`Contact <azure.mgmt.web.models.Contact>`
-    :param contact_tech: Technical contact information
+    :param contact_tech: Technical contact.
     :type contact_tech: :class:`Contact <azure.mgmt.web.models.Contact>`
-    :param registration_status: Domain registration status. Possible values
+    :ivar registration_status: Domain registration status. Possible values
      include: 'Active', 'Awaiting', 'Cancelled', 'Confiscated', 'Disabled',
      'Excluded', 'Expired', 'Failed', 'Held', 'Locked', 'Parked', 'Pending',
-     'Reserved', 'Reverted', 'Suspended', 'Transferred', 'Unknown',
-     'Unlocked', 'Unparked', 'Updated', 'JsonConverterFailed'
-    :type registration_status: str or :class:`DomainStatus
+     'Reserved', 'Reverted', 'Suspended', 'Transferred', 'Unknown', 'Unlocked',
+     'Unparked', 'Updated', 'JsonConverterFailed'
+    :vartype registration_status: str or :class:`DomainStatus
      <azure.mgmt.web.models.DomainStatus>`
-    :param provisioning_state: Domain provisioning state. Possible values
+    :ivar provisioning_state: Domain provisioning state. Possible values
      include: 'Succeeded', 'Failed', 'Canceled', 'InProgress', 'Deleting'
-    :type provisioning_state: str or :class:`ProvisioningState
+    :vartype provisioning_state: str or :class:`ProvisioningState
      <azure.mgmt.web.models.ProvisioningState>`
-    :param name_servers: Name servers
+    :param name_servers: Name servers.
     :type name_servers: list of str
-    :param privacy: If true then domain privacy is enabled for this domain
+    :param privacy: <code>true</code> if domain privacy is enabled for this
+     domain; otherwise, <code>false</code>.
     :type privacy: bool
-    :param created_time: Domain creation timestamp
-    :type created_time: datetime
-    :param expiration_time: Domain expiration timestamp
-    :type expiration_time: datetime
-    :param last_renewed_time: Timestamp when the domain was renewed last time
-    :type last_renewed_time: datetime
-    :param auto_renew: If true then domain will renewed automatically
+    :ivar created_time: Domain creation timestamp.
+    :vartype created_time: datetime
+    :ivar expiration_time: Domain expiration timestamp.
+    :vartype expiration_time: datetime
+    :ivar last_renewed_time: Timestamp when the domain was renewed last time.
+    :vartype last_renewed_time: datetime
+    :param auto_renew: <code>true</code> if the domain should be automatically
+     renewed; otherwise, <code>false</code>. Default value: True .
     :type auto_renew: bool
-    :param ready_for_dns_record_management: If true then Azure can assign
-     this domain to Web Apps. This value will be true if domain registration
-     status is active and it is hosted on name servers Azure has programmatic
-     access to
-    :type ready_for_dns_record_management: bool
+    :ivar ready_for_dns_record_management: <code>true</code> if Azure can
+     assign this domain to App Service apps; otherwise, <code>false</code>.
+     This value will be <code>true</code> if domain registration status is
+     active and
+     it is hosted on name servers Azure has programmatic access to.
+    :vartype ready_for_dns_record_management: bool
     :param managed_host_names: All hostnames derived from the domain and
-     assigned to Azure resources
+     assigned to Azure resources.
     :type managed_host_names: list of :class:`HostName
      <azure.mgmt.web.models.HostName>`
-    :param consent: Legal agreement consent
+    :param consent: Legal agreement consent.
     :type consent: :class:`DomainPurchaseConsent
      <azure.mgmt.web.models.DomainPurchaseConsent>`
-    :param domain_not_renewable_reasons: Reasons why domain is not renewable
+    :param domain_not_renewable_reasons: Reasons why domain is not renewable.
     :type domain_not_renewable_reasons: list of str
-    """ 
+    """
 
     _validation = {
+        'id': {'readonly': True},
         'location': {'required': True},
+        'registration_status': {'readonly': True},
+        'provisioning_state': {'readonly': True},
+        'created_time': {'readonly': True},
+        'expiration_time': {'readonly': True},
+        'last_renewed_time': {'readonly': True},
+        'ready_for_dns_record_management': {'readonly': True},
     }
 
     _attribute_map = {
@@ -103,21 +116,21 @@ class Domain(Resource):
         'domain_not_renewable_reasons': {'key': 'properties.domainNotRenewableReasons', 'type': '[str]'},
     }
 
-    def __init__(self, location, id=None, name=None, kind=None, type=None, tags=None, contact_admin=None, contact_billing=None, contact_registrant=None, contact_tech=None, registration_status=None, provisioning_state=None, name_servers=None, privacy=None, created_time=None, expiration_time=None, last_renewed_time=None, auto_renew=None, ready_for_dns_record_management=None, managed_host_names=None, consent=None, domain_not_renewable_reasons=None):
-        super(Domain, self).__init__(id=id, name=name, kind=kind, location=location, type=type, tags=tags)
+    def __init__(self, location, name=None, kind=None, type=None, tags=None, contact_admin=None, contact_billing=None, contact_registrant=None, contact_tech=None, name_servers=None, privacy=None, auto_renew=True, managed_host_names=None, consent=None, domain_not_renewable_reasons=None):
+        super(Domain, self).__init__(name=name, kind=kind, location=location, type=type, tags=tags)
         self.contact_admin = contact_admin
         self.contact_billing = contact_billing
         self.contact_registrant = contact_registrant
         self.contact_tech = contact_tech
-        self.registration_status = registration_status
-        self.provisioning_state = provisioning_state
+        self.registration_status = None
+        self.provisioning_state = None
         self.name_servers = name_servers
         self.privacy = privacy
-        self.created_time = created_time
-        self.expiration_time = expiration_time
-        self.last_renewed_time = last_renewed_time
+        self.created_time = None
+        self.expiration_time = None
+        self.last_renewed_time = None
         self.auto_renew = auto_renew
-        self.ready_for_dns_record_management = ready_for_dns_record_management
+        self.ready_for_dns_record_management = None
         self.managed_host_names = managed_host_names
         self.consent = consent
         self.domain_not_renewable_reasons = domain_not_renewable_reasons

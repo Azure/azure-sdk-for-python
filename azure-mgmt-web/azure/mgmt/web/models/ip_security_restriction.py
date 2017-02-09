@@ -13,20 +13,24 @@ from msrest.serialization import Model
 
 
 class IpSecurityRestriction(Model):
-    """Represents an ip security restriction on a web app.
+    """IP security restriction on an app.
 
-    :param ip_address: IP address the security restriction is valid for
+    :param ip_address: IP address the security restriction is valid for.
     :type ip_address: str
     :param subnet_mask: Subnet mask for the range of IP addresses the
-     restriction is valid for
+     restriction is valid for.
     :type subnet_mask: str
-    """ 
+    """
+
+    _validation = {
+        'ip_address': {'required': True},
+    }
 
     _attribute_map = {
         'ip_address': {'key': 'ipAddress', 'type': 'str'},
         'subnet_mask': {'key': 'subnetMask', 'type': 'str'},
     }
 
-    def __init__(self, ip_address=None, subnet_mask=None):
+    def __init__(self, ip_address, subnet_mask=None):
         self.ip_address = ip_address
         self.subnet_mask = subnet_mask

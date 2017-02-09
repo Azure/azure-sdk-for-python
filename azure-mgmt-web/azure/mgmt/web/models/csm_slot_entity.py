@@ -13,21 +13,25 @@ from msrest.serialization import Model
 
 
 class CsmSlotEntity(Model):
-    """Class containing deployment slot parameters.
+    """Deployment slot parameters.
 
-    :param target_slot: Set the destination deployment slot during swap
-     operation
+    :param target_slot: Destination deployment slot during swap operation.
     :type target_slot: str
-    :param preserve_vnet: Get or set the flag indicating it should preserve
-     VNet to the slot during swap
+    :param preserve_vnet: <code>true</code> to preserve Virtual Network to the
+     slot during swap; otherwise, <code>false</code>.
     :type preserve_vnet: bool
-    """ 
+    """
+
+    _validation = {
+        'target_slot': {'required': True},
+        'preserve_vnet': {'required': True},
+    }
 
     _attribute_map = {
         'target_slot': {'key': 'targetSlot', 'type': 'str'},
         'preserve_vnet': {'key': 'preserveVnet', 'type': 'bool'},
     }
 
-    def __init__(self, target_slot=None, preserve_vnet=None):
+    def __init__(self, target_slot, preserve_vnet):
         self.target_slot = target_slot
         self.preserve_vnet = preserve_vnet

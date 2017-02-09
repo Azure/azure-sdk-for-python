@@ -9,74 +9,66 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .resource import Resource
+from msrest.serialization import Model
 
 
-class CertificateDetails(Resource):
-    """Certificate Details.
+class CertificateDetails(Model):
+    """SSL certificate details.
 
-    :param id: Resource Id
-    :type id: str
-    :param name: Resource Name
-    :type name: str
-    :param kind: Kind of resource
-    :type kind: str
-    :param location: Resource Location
-    :type location: str
-    :param type: Resource type
-    :type type: str
-    :param tags: Resource tags
-    :type tags: dict
-    :param version: Version
-    :type version: int
-    :param serial_number: Serial Number
-    :type serial_number: str
-    :param thumbprint: Thumbprint
-    :type thumbprint: str
-    :param subject: Subject
-    :type subject: str
-    :param not_before: Valid from
-    :type not_before: datetime
-    :param not_after: Valid to
-    :type not_after: datetime
-    :param signature_algorithm: Signature Algorithm
-    :type signature_algorithm: str
-    :param issuer: Issuer
-    :type issuer: str
-    :param raw_data: Raw certificate data
-    :type raw_data: str
-    """ 
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar version: Version.
+    :vartype version: int
+    :ivar serial_number: Serial Number.
+    :vartype serial_number: str
+    :ivar thumbprint: Thumbprint.
+    :vartype thumbprint: str
+    :ivar subject: Subject.
+    :vartype subject: str
+    :ivar not_before: Valid from.
+    :vartype not_before: datetime
+    :ivar not_after: Valid to.
+    :vartype not_after: datetime
+    :ivar signature_algorithm: Signature algorithm.
+    :vartype signature_algorithm: str
+    :ivar issuer: Issuer.
+    :vartype issuer: str
+    :ivar raw_data: Raw certificate data.
+    :vartype raw_data: str
+    """
 
     _validation = {
-        'location': {'required': True},
+        'version': {'readonly': True},
+        'serial_number': {'readonly': True},
+        'thumbprint': {'readonly': True},
+        'subject': {'readonly': True},
+        'not_before': {'readonly': True},
+        'not_after': {'readonly': True},
+        'signature_algorithm': {'readonly': True},
+        'issuer': {'readonly': True},
+        'raw_data': {'readonly': True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'kind': {'key': 'kind', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'version': {'key': 'properties.version', 'type': 'int'},
-        'serial_number': {'key': 'properties.serialNumber', 'type': 'str'},
-        'thumbprint': {'key': 'properties.thumbprint', 'type': 'str'},
-        'subject': {'key': 'properties.subject', 'type': 'str'},
-        'not_before': {'key': 'properties.notBefore', 'type': 'iso-8601'},
-        'not_after': {'key': 'properties.notAfter', 'type': 'iso-8601'},
-        'signature_algorithm': {'key': 'properties.signatureAlgorithm', 'type': 'str'},
-        'issuer': {'key': 'properties.issuer', 'type': 'str'},
-        'raw_data': {'key': 'properties.rawData', 'type': 'str'},
+        'version': {'key': 'version', 'type': 'int'},
+        'serial_number': {'key': 'serialNumber', 'type': 'str'},
+        'thumbprint': {'key': 'thumbprint', 'type': 'str'},
+        'subject': {'key': 'subject', 'type': 'str'},
+        'not_before': {'key': 'notBefore', 'type': 'iso-8601'},
+        'not_after': {'key': 'notAfter', 'type': 'iso-8601'},
+        'signature_algorithm': {'key': 'signatureAlgorithm', 'type': 'str'},
+        'issuer': {'key': 'issuer', 'type': 'str'},
+        'raw_data': {'key': 'rawData', 'type': 'str'},
     }
 
-    def __init__(self, location, id=None, name=None, kind=None, type=None, tags=None, version=None, serial_number=None, thumbprint=None, subject=None, not_before=None, not_after=None, signature_algorithm=None, issuer=None, raw_data=None):
-        super(CertificateDetails, self).__init__(id=id, name=name, kind=kind, location=location, type=type, tags=tags)
-        self.version = version
-        self.serial_number = serial_number
-        self.thumbprint = thumbprint
-        self.subject = subject
-        self.not_before = not_before
-        self.not_after = not_after
-        self.signature_algorithm = signature_algorithm
-        self.issuer = issuer
-        self.raw_data = raw_data
+    def __init__(self):
+        self.version = None
+        self.serial_number = None
+        self.thumbprint = None
+        self.subject = None
+        self.not_before = None
+        self.not_after = None
+        self.signature_algorithm = None
+        self.issuer = None
+        self.raw_data = None

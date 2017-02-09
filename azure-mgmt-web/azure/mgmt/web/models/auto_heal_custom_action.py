@@ -13,14 +13,14 @@ from msrest.serialization import Model
 
 
 class AutoHealCustomAction(Model):
-    """AutoHealCustomAction - Describes the custom action to be executed
+    """Custom action to be executed
     when an auto heal rule is triggered.
 
-    :param exe: Executable to be run
+    :param exe: Executable to be run.
     :type exe: str
-    :param parameters: Parameters for the executable
+    :param parameters: Parameters for the executable.
     :type parameters: str
-    """ 
+    """
 
     _attribute_map = {
         'exe': {'key': 'exe', 'type': 'str'},

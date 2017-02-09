@@ -13,29 +13,26 @@ from msrest.serialization import Model
 
 
 class ConnStringInfo(Model):
-    """Represents database connection string information.
+    """Database connection string information.
 
-    :param name: Name of connection string
+    :param name: Name of connection string.
     :type name: str
-    :param connection_string: Connection string value
+    :param connection_string: Connection string value.
     :type connection_string: str
     :param type: Type of database. Possible values include: 'MySql',
-     'SQLServer', 'SQLAzure', 'Custom'
-    :type type: str or :class:`DatabaseServerType
-     <azure.mgmt.web.models.DatabaseServerType>`
-    """ 
-
-    _validation = {
-        'type': {'required': True},
-    }
+     'SQLServer', 'SQLAzure', 'Custom', 'NotificationHub', 'ServiceBus',
+     'EventHub', 'ApiHub', 'DocDb', 'RedisCache'
+    :type type: str or :class:`ConnectionStringType
+     <azure.mgmt.web.models.ConnectionStringType>`
+    """
 
     _attribute_map = {
         'name': {'key': 'name', 'type': 'str'},
         'connection_string': {'key': 'connectionString', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'DatabaseServerType'},
+        'type': {'key': 'type', 'type': 'ConnectionStringType'},
     }
 
-    def __init__(self, type, name=None, connection_string=None):
+    def __init__(self, name=None, connection_string=None, type=None):
         self.name = name
         self.connection_string = connection_string
         self.type = type

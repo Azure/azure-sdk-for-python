@@ -15,8 +15,8 @@ from msrest.serialization import Model
 class HandlerMapping(Model):
     """The IIS handler mappings used to define which handler processes HTTP
     requests with certain extension.
-    For example it is used to configure php-cgi.exe process to
-    handle all HTTP requests with *.php extension.
+    For example, it is used to configure php-cgi.exe process to handle all HTTP
+    requests with *.php extension.
 
     :param extension: Requests with this extension will be handled using the
      specified FastCGI application.
@@ -26,7 +26,7 @@ class HandlerMapping(Model):
     :param arguments: Command-line arguments to be passed to the script
      processor.
     :type arguments: str
-    """ 
+    """
 
     _attribute_map = {
         'extension': {'key': 'extension', 'type': 'str'},

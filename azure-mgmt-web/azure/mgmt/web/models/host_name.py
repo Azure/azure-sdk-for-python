@@ -15,21 +15,21 @@ from msrest.serialization import Model
 class HostName(Model):
     """Details of a hostname derived from a domain.
 
-    :param name: Name of the hostname
+    :param name: Name of the hostname.
     :type name: str
-    :param site_names: List of sites the hostname is assigned to. This list
-     will have more than one site only if the hostname is pointing to a
-     Traffic Manager
+    :param site_names: List of apps the hostname is assigned to. This list
+     will have more than one app only if the hostname is pointing to a Traffic
+     Manager.
     :type site_names: list of str
     :param azure_resource_name: Name of the Azure resource the hostname is
-     assigned to. If it is assigned to a traffic manager then it will be the
-     traffic manager name otherwise it will be the website name
+     assigned to. If it is assigned to a Traffic Manager then it will be the
+     Traffic Manager name otherwise it will be the app name.
     :type azure_resource_name: str
     :param azure_resource_type: Type of the Azure resource the hostname is
      assigned to. Possible values include: 'Website', 'TrafficManager'
     :type azure_resource_type: str or :class:`AzureResourceType
      <azure.mgmt.web.models.AzureResourceType>`
-    :param custom_host_name_dns_record_type: Type of the Dns record. Possible
+    :param custom_host_name_dns_record_type: Type of the DNS record. Possible
      values include: 'CName', 'A'
     :type custom_host_name_dns_record_type: str or
      :class:`CustomHostNameDnsRecordType
@@ -38,7 +38,7 @@ class HostName(Model):
      'Verified', 'Managed'
     :type host_name_type: str or :class:`HostNameType
      <azure.mgmt.web.models.HostNameType>`
-    """ 
+    """
 
     _attribute_map = {
         'name': {'key': 'name', 'type': 'str'},

@@ -13,17 +13,17 @@ from msrest.serialization import Model
 
 
 class VirtualIPMapping(Model):
-    """Class that represents a VIP mapping.
+    """Virtual IP mapping.
 
-    :param virtual_ip: Virtual IP address
+    :param virtual_ip: Virtual IP address.
     :type virtual_ip: str
-    :param internal_http_port: Internal HTTP port
+    :param internal_http_port: Internal HTTP port.
     :type internal_http_port: int
-    :param internal_https_port: Internal HTTPS port
+    :param internal_https_port: Internal HTTPS port.
     :type internal_https_port: int
-    :param in_use: Is VIP mapping in use
+    :param in_use: Is virtual IP mapping in use.
     :type in_use: bool
-    """ 
+    """
 
     _attribute_map = {
         'virtual_ip': {'key': 'virtualIP', 'type': 'str'},

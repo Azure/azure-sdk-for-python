@@ -15,9 +15,9 @@ from msrest.serialization import Model
 class EnabledConfig(Model):
     """Enabled configuration.
 
-    :param enabled: Enabled
+    :param enabled: Enabled.
     :type enabled: bool
-    """ 
+    """
 
     _attribute_map = {
         'enabled': {'key': 'enabled', 'type': 'bool'},

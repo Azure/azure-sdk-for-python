@@ -13,33 +13,38 @@ from .resource import Resource
 
 
 class CertificateOrderAction(Resource):
-    """Represents a certificate action.
+    """Certificate order action.
 
-    :param id: Resource Id
-    :type id: str
-    :param name: Resource Name
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar id: Resource Id.
+    :vartype id: str
+    :param name: Resource Name.
     :type name: str
-    :param kind: Kind of resource
+    :param kind: Kind of resource.
     :type kind: str
-    :param location: Resource Location
+    :param location: Resource Location.
     :type location: str
-    :param type: Resource type
+    :param type: Resource type.
     :type type: str
-    :param tags: Resource tags
+    :param tags: Resource tags.
     :type tags: dict
-    :param certificate_order_action_type: Type. Possible values include:
-     'CertificateIssued', 'CertificateOrderCanceled',
+    :param certificate_order_action_type: Action type. Possible values
+     include: 'CertificateIssued', 'CertificateOrderCanceled',
      'CertificateOrderCreated', 'CertificateRevoked',
      'DomainValidationComplete', 'FraudDetected', 'OrgNameChange',
-     'OrgValidationComplete', 'SanDrop'
+     'OrgValidationComplete', 'SanDrop', 'FraudCleared', 'CertificateExpired',
+     'CertificateExpirationWarning', 'FraudDocumentationRequired', 'Unknown'
     :type certificate_order_action_type: str or
      :class:`CertificateOrderActionType
      <azure.mgmt.web.models.CertificateOrderActionType>`
-    :param created_at: Time at which the certificate action was performed
+    :param created_at: Time at which the certificate action was performed.
     :type created_at: datetime
-    """ 
+    """
 
     _validation = {
+        'id': {'readonly': True},
         'location': {'required': True},
     }
 
@@ -54,7 +59,7 @@ class CertificateOrderAction(Resource):
         'created_at': {'key': 'properties.createdAt', 'type': 'iso-8601'},
     }
 
-    def __init__(self, location, id=None, name=None, kind=None, type=None, tags=None, certificate_order_action_type=None, created_at=None):
-        super(CertificateOrderAction, self).__init__(id=id, name=name, kind=kind, location=location, type=type, tags=tags)
+    def __init__(self, location, name=None, kind=None, type=None, tags=None, certificate_order_action_type=None, created_at=None):
+        super(CertificateOrderAction, self).__init__(name=name, kind=kind, location=location, type=type, tags=tags)
         self.certificate_order_action_type = certificate_order_action_type
         self.created_at = created_at

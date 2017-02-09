@@ -13,85 +13,98 @@ from .resource import Resource
 
 
 class SiteConfig(Resource):
-    """Configuration of Azure web site.
+    """Configuration of an App Service app.
 
-    :param id: Resource Id
-    :type id: str
-    :param name: Resource Name
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar id: Resource Id.
+    :vartype id: str
+    :param name: Resource Name.
     :type name: str
-    :param kind: Kind of resource
+    :param kind: Kind of resource.
     :type kind: str
-    :param location: Resource Location
+    :param location: Resource Location.
     :type location: str
-    :param type: Resource type
+    :param type: Resource type.
     :type type: str
-    :param tags: Resource tags
+    :param tags: Resource tags.
     :type tags: dict
-    :param number_of_workers: Number of workers
+    :param number_of_workers: Number of workers.
     :type number_of_workers: int
-    :param default_documents: Default documents
+    :param default_documents: Default documents.
     :type default_documents: list of str
-    :param net_framework_version: Net Framework Version
+    :param net_framework_version: .NET Framework version. Default value:
+     "v4.6" .
     :type net_framework_version: str
-    :param php_version: Version of PHP
+    :param php_version: Version of PHP.
     :type php_version: str
-    :param python_version: Version of Python
+    :param python_version: Version of Python.
     :type python_version: str
-    :param node_version: Version of Node
+    :param node_version: Version of Node.js.
     :type node_version: str
-    :param request_tracing_enabled: Enable request tracing
+    :param linux_fx_version: Linux App Framework and version
+    :type linux_fx_version: str
+    :param request_tracing_enabled: <code>true</code> if request tracing is
+     enabled; otherwise, <code>false</code>.
     :type request_tracing_enabled: bool
-    :param request_tracing_expiration_time: Request tracing expiration time
+    :param request_tracing_expiration_time: Request tracing expiration time.
     :type request_tracing_expiration_time: datetime
-    :param remote_debugging_enabled: Remote Debugging Enabled
+    :param remote_debugging_enabled: <code>true</code> if remote debugging is
+     enabled; otherwise, <code>false</code>.
     :type remote_debugging_enabled: bool
-    :param remote_debugging_version: Remote Debugging Version
+    :param remote_debugging_version: Remote debugging version.
     :type remote_debugging_version: str
-    :param http_logging_enabled: HTTP logging Enabled
+    :param http_logging_enabled: <code>true</code> if HTTP logging is enabled;
+     otherwise, <code>false</code>.
     :type http_logging_enabled: bool
-    :param logs_directory_size_limit: HTTP Logs Directory size limit
+    :param logs_directory_size_limit: HTTP logs directory size limit.
     :type logs_directory_size_limit: int
-    :param detailed_error_logging_enabled: Detailed error logging enabled
+    :param detailed_error_logging_enabled: <code>true</code> if detailed error
+     logging is enabled; otherwise, <code>false</code>.
     :type detailed_error_logging_enabled: bool
-    :param publishing_username: Publishing user name
+    :param publishing_username: Publishing user name.
     :type publishing_username: str
-    :param publishing_password: Publishing password
-    :type publishing_password: str
-    :param app_settings: Application Settings
+    :param app_settings: Application settings.
     :type app_settings: list of :class:`NameValuePair
      <azure.mgmt.web.models.NameValuePair>`
-    :param metadata: Site Metadata
-    :type metadata: list of :class:`NameValuePair
-     <azure.mgmt.web.models.NameValuePair>`
-    :param connection_strings: Connection strings
+    :param connection_strings: Connection strings.
     :type connection_strings: list of :class:`ConnStringInfo
      <azure.mgmt.web.models.ConnStringInfo>`
-    :param handler_mappings: Handler mappings
+    :ivar machine_key: Site MachineKey.
+    :vartype machine_key: :class:`SiteMachineKey
+     <azure.mgmt.web.models.SiteMachineKey>`
+    :param handler_mappings: Handler mappings.
     :type handler_mappings: list of :class:`HandlerMapping
      <azure.mgmt.web.models.HandlerMapping>`
-    :param document_root: Document root
+    :param document_root: Document root.
     :type document_root: str
-    :param scm_type: SCM type
-    :type scm_type: str
-    :param use32_bit_worker_process: Use 32 bit worker process
+    :param scm_type: SCM type. Possible values include: 'None', 'Dropbox',
+     'Tfs', 'LocalGit', 'GitHub', 'CodePlexGit', 'CodePlexHg', 'BitbucketGit',
+     'BitbucketHg', 'ExternalGit', 'ExternalHg', 'OneDrive', 'VSO'
+    :type scm_type: str or :class:`ScmType <azure.mgmt.web.models.ScmType>`
+    :param use32_bit_worker_process: <code>true</code> to use 32-bit worker
+     process; otherwise, <code>false</code>.
     :type use32_bit_worker_process: bool
-    :param web_sockets_enabled: Web socket enabled.
+    :param web_sockets_enabled: <code>true</code> if WebSocket is enabled;
+     otherwise, <code>false</code>.
     :type web_sockets_enabled: bool
-    :param always_on: Always On
+    :param always_on: <code>true</code> if Always On is enabled; otherwise,
+     <code>false</code>.
     :type always_on: bool
-    :param java_version: Java version
+    :param java_version: Java version.
     :type java_version: str
-    :param java_container: Java container
+    :param java_container: Java container.
     :type java_container: str
-    :param java_container_version: Java container version
+    :param java_container_version: Java container version.
     :type java_container_version: str
-    :param app_command_line: App Command Line to launch
+    :param app_command_line: App command line to launch.
     :type app_command_line: str
     :param managed_pipeline_mode: Managed pipeline mode. Possible values
      include: 'Integrated', 'Classic'
     :type managed_pipeline_mode: str or :class:`ManagedPipelineMode
      <azure.mgmt.web.models.ManagedPipelineMode>`
-    :param virtual_applications: Virtual applications
+    :param virtual_applications: Virtual applications.
     :type virtual_applications: list of :class:`VirtualApplication
      <azure.mgmt.web.models.VirtualApplication>`
     :param load_balancing: Site load balancing. Possible values include:
@@ -99,37 +112,43 @@ class SiteConfig(Resource):
      'WeightedTotalTraffic', 'RequestHash'
     :type load_balancing: str or :class:`SiteLoadBalancing
      <azure.mgmt.web.models.SiteLoadBalancing>`
-    :param experiments: This is work around for polymophic types
+    :param experiments: This is work around for polymophic types.
     :type experiments: :class:`Experiments
      <azure.mgmt.web.models.Experiments>`
-    :param limits: Site limits
+    :param limits: Site limits.
     :type limits: :class:`SiteLimits <azure.mgmt.web.models.SiteLimits>`
-    :param auto_heal_enabled: Auto heal enabled
+    :param auto_heal_enabled: <code>true</code> if Auto Heal is enabled;
+     otherwise, <code>false</code>.
     :type auto_heal_enabled: bool
-    :param auto_heal_rules: Auto heal rules
+    :param auto_heal_rules: Auto Heal rules.
     :type auto_heal_rules: :class:`AutoHealRules
      <azure.mgmt.web.models.AutoHealRules>`
-    :param tracing_options: Tracing options
+    :param tracing_options: Tracing options.
     :type tracing_options: str
-    :param vnet_name: Vnet name
+    :param vnet_name: Virtual Network name.
     :type vnet_name: str
     :param cors: Cross-Origin Resource Sharing (CORS) settings.
     :type cors: :class:`CorsSettings <azure.mgmt.web.models.CorsSettings>`
-    :param api_definition: Information about the formal API definition for
-     the web app.
+    :param push: Push endpoint settings.
+    :type push: :class:`PushSettings <azure.mgmt.web.models.PushSettings>`
+    :param api_definition: Information about the formal API definition for the
+     app.
     :type api_definition: :class:`ApiDefinitionInfo
      <azure.mgmt.web.models.ApiDefinitionInfo>`
-    :param auto_swap_slot_name: Auto swap slot name
+    :param auto_swap_slot_name: Auto-swap slot name.
     :type auto_swap_slot_name: str
-    :param local_my_sql_enabled: Local mysql enabled
+    :param local_my_sql_enabled: <code>true</code> to enable local MySQL;
+     otherwise, <code>false</code>. Default value: False .
     :type local_my_sql_enabled: bool
-    :param ip_security_restrictions: Ip Security restrictions
+    :param ip_security_restrictions: IP security restrictions.
     :type ip_security_restrictions: list of :class:`IpSecurityRestriction
      <azure.mgmt.web.models.IpSecurityRestriction>`
-    """ 
+    """
 
     _validation = {
+        'id': {'readonly': True},
         'location': {'required': True},
+        'machine_key': {'readonly': True},
     }
 
     _attribute_map = {
@@ -145,6 +164,7 @@ class SiteConfig(Resource):
         'php_version': {'key': 'properties.phpVersion', 'type': 'str'},
         'python_version': {'key': 'properties.pythonVersion', 'type': 'str'},
         'node_version': {'key': 'properties.nodeVersion', 'type': 'str'},
+        'linux_fx_version': {'key': 'properties.linuxFxVersion', 'type': 'str'},
         'request_tracing_enabled': {'key': 'properties.requestTracingEnabled', 'type': 'bool'},
         'request_tracing_expiration_time': {'key': 'properties.requestTracingExpirationTime', 'type': 'iso-8601'},
         'remote_debugging_enabled': {'key': 'properties.remoteDebuggingEnabled', 'type': 'bool'},
@@ -153,10 +173,9 @@ class SiteConfig(Resource):
         'logs_directory_size_limit': {'key': 'properties.logsDirectorySizeLimit', 'type': 'int'},
         'detailed_error_logging_enabled': {'key': 'properties.detailedErrorLoggingEnabled', 'type': 'bool'},
         'publishing_username': {'key': 'properties.publishingUsername', 'type': 'str'},
-        'publishing_password': {'key': 'properties.publishingPassword', 'type': 'str'},
         'app_settings': {'key': 'properties.appSettings', 'type': '[NameValuePair]'},
-        'metadata': {'key': 'properties.metadata', 'type': '[NameValuePair]'},
         'connection_strings': {'key': 'properties.connectionStrings', 'type': '[ConnStringInfo]'},
+        'machine_key': {'key': 'properties.machineKey', 'type': 'SiteMachineKey'},
         'handler_mappings': {'key': 'properties.handlerMappings', 'type': '[HandlerMapping]'},
         'document_root': {'key': 'properties.documentRoot', 'type': 'str'},
         'scm_type': {'key': 'properties.scmType', 'type': 'str'},
@@ -177,20 +196,22 @@ class SiteConfig(Resource):
         'tracing_options': {'key': 'properties.tracingOptions', 'type': 'str'},
         'vnet_name': {'key': 'properties.vnetName', 'type': 'str'},
         'cors': {'key': 'properties.cors', 'type': 'CorsSettings'},
+        'push': {'key': 'properties.push', 'type': 'PushSettings'},
         'api_definition': {'key': 'properties.apiDefinition', 'type': 'ApiDefinitionInfo'},
         'auto_swap_slot_name': {'key': 'properties.autoSwapSlotName', 'type': 'str'},
         'local_my_sql_enabled': {'key': 'properties.localMySqlEnabled', 'type': 'bool'},
         'ip_security_restrictions': {'key': 'properties.ipSecurityRestrictions', 'type': '[IpSecurityRestriction]'},
     }
 
-    def __init__(self, location, id=None, name=None, kind=None, type=None, tags=None, number_of_workers=None, default_documents=None, net_framework_version=None, php_version=None, python_version=None, node_version=None, request_tracing_enabled=None, request_tracing_expiration_time=None, remote_debugging_enabled=None, remote_debugging_version=None, http_logging_enabled=None, logs_directory_size_limit=None, detailed_error_logging_enabled=None, publishing_username=None, publishing_password=None, app_settings=None, metadata=None, connection_strings=None, handler_mappings=None, document_root=None, scm_type=None, use32_bit_worker_process=None, web_sockets_enabled=None, always_on=None, java_version=None, java_container=None, java_container_version=None, app_command_line=None, managed_pipeline_mode=None, virtual_applications=None, load_balancing=None, experiments=None, limits=None, auto_heal_enabled=None, auto_heal_rules=None, tracing_options=None, vnet_name=None, cors=None, api_definition=None, auto_swap_slot_name=None, local_my_sql_enabled=None, ip_security_restrictions=None):
-        super(SiteConfig, self).__init__(id=id, name=name, kind=kind, location=location, type=type, tags=tags)
+    def __init__(self, location, name=None, kind=None, type=None, tags=None, number_of_workers=None, default_documents=None, net_framework_version="v4.6", php_version=None, python_version=None, node_version=None, linux_fx_version=None, request_tracing_enabled=None, request_tracing_expiration_time=None, remote_debugging_enabled=None, remote_debugging_version=None, http_logging_enabled=None, logs_directory_size_limit=None, detailed_error_logging_enabled=None, publishing_username=None, app_settings=None, connection_strings=None, handler_mappings=None, document_root=None, scm_type=None, use32_bit_worker_process=None, web_sockets_enabled=None, always_on=None, java_version=None, java_container=None, java_container_version=None, app_command_line=None, managed_pipeline_mode=None, virtual_applications=None, load_balancing=None, experiments=None, limits=None, auto_heal_enabled=None, auto_heal_rules=None, tracing_options=None, vnet_name=None, cors=None, push=None, api_definition=None, auto_swap_slot_name=None, local_my_sql_enabled=False, ip_security_restrictions=None):
+        super(SiteConfig, self).__init__(name=name, kind=kind, location=location, type=type, tags=tags)
         self.number_of_workers = number_of_workers
         self.default_documents = default_documents
         self.net_framework_version = net_framework_version
         self.php_version = php_version
         self.python_version = python_version
         self.node_version = node_version
+        self.linux_fx_version = linux_fx_version
         self.request_tracing_enabled = request_tracing_enabled
         self.request_tracing_expiration_time = request_tracing_expiration_time
         self.remote_debugging_enabled = remote_debugging_enabled
@@ -199,10 +220,9 @@ class SiteConfig(Resource):
         self.logs_directory_size_limit = logs_directory_size_limit
         self.detailed_error_logging_enabled = detailed_error_logging_enabled
         self.publishing_username = publishing_username
-        self.publishing_password = publishing_password
         self.app_settings = app_settings
-        self.metadata = metadata
         self.connection_strings = connection_strings
+        self.machine_key = None
         self.handler_mappings = handler_mappings
         self.document_root = document_root
         self.scm_type = scm_type
@@ -223,6 +243,7 @@ class SiteConfig(Resource):
         self.tracing_options = tracing_options
         self.vnet_name = vnet_name
         self.cors = cors
+        self.push = push
         self.api_definition = api_definition
         self.auto_swap_slot_name = auto_swap_slot_name
         self.local_my_sql_enabled = local_my_sql_enabled

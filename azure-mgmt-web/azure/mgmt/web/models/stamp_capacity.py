@@ -13,19 +13,19 @@ from msrest.serialization import Model
 
 
 class StampCapacity(Model):
-    """Class containing stamp capacity information.
+    """Stamp capacity information.
 
-    :param name: Name of the stamp
+    :param name: Name of the stamp.
     :type name: str
     :param available_capacity: Available capacity (# of machines, bytes of
-     storage etc...)
+     storage etc...).
     :type available_capacity: long
     :param total_capacity: Total capacity (# of machines, bytes of storage
-     etc...)
+     etc...).
     :type total_capacity: long
-    :param unit: Name of the unit
+    :param unit: Name of the unit.
     :type unit: str
-    :param compute_mode: Shared/Dedicated workers. Possible values include:
+    :param compute_mode: Shared/dedicated workers. Possible values include:
      'Shared', 'Dedicated', 'Dynamic'
     :type compute_mode: str or :class:`ComputeModeOptions
      <azure.mgmt.web.models.ComputeModeOptions>`
@@ -33,20 +33,21 @@ class StampCapacity(Model):
      'Default', 'Small', 'Medium', 'Large'
     :type worker_size: str or :class:`WorkerSizeOptions
      <azure.mgmt.web.models.WorkerSizeOptions>`
-    :param worker_size_id: Size Id of machines:
+    :param worker_size_id: Size ID of machines:
      0 - Small
      1 - Medium
      2 - Large
     :type worker_size_id: int
-    :param exclude_from_capacity_allocation: If true it includes basic sites
-     Basic sites are not used for capacity allocation.
+    :param exclude_from_capacity_allocation: If <code>true</code>, it includes
+     basic apps.
+     Basic apps are not used for capacity allocation.
     :type exclude_from_capacity_allocation: bool
-    :param is_applicable_for_all_compute_modes: Is capacity applicable for
-     all sites?
+    :param is_applicable_for_all_compute_modes: <code>true</code> if capacity
+     is applicable for all apps; otherwise, <code>false</code>.
     :type is_applicable_for_all_compute_modes: bool
-    :param site_mode: Shared or Dedicated
+    :param site_mode: Shared or Dedicated.
     :type site_mode: str
-    """ 
+    """
 
     _attribute_map = {
         'name': {'key': 'name', 'type': 'str'},

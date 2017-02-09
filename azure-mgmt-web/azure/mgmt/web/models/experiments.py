@@ -13,13 +13,12 @@ from msrest.serialization import Model
 
 
 class Experiments(Model):
-    """Class containing Routing in production experiments.
+    """Routing rules in production experiments.
 
-    :param ramp_up_rules: List of
-     {Microsoft.Web.Hosting.Administration.RampUpRule} objects.
+    :param ramp_up_rules: List of ramp-up rules.
     :type ramp_up_rules: list of :class:`RampUpRule
      <azure.mgmt.web.models.RampUpRule>`
-    """ 
+    """
 
     _attribute_map = {
         'ramp_up_rules': {'key': 'rampUpRules', 'type': '[RampUpRule]'},
