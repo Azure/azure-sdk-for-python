@@ -16,7 +16,7 @@ for details on handling Azure Active Directory authentication with the Python SD
 .. code:: python
 
     from azure.mgmt.commerce import UsageManagementClient
-	from azure.common.credentials import UserPassCredentials
+    from azure.common.credentials import UserPassCredentials
 
     # Replace this with your subscription id
     subscription_id = '33333333-3333-3333-3333-333333333333'
