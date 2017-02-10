@@ -24,10 +24,15 @@ from .usages_operations import UsagesOperations
 from .virtual_network_gateways_operations import VirtualNetworkGatewaysOperations
 from .virtual_network_gateway_connections_operations import VirtualNetworkGatewayConnectionsOperations
 from .local_network_gateways_operations import LocalNetworkGatewaysOperations
+from .network_watchers_operations import NetworkWatchersOperations
+from .packet_captures_operations import PacketCapturesOperations
 from .express_route_circuit_authorizations_operations import ExpressRouteCircuitAuthorizationsOperations
 from .express_route_circuit_peerings_operations import ExpressRouteCircuitPeeringsOperations
 from .express_route_circuits_operations import ExpressRouteCircuitsOperations
 from .express_route_service_providers_operations import ExpressRouteServiceProvidersOperations
+from .route_filters_operations import RouteFiltersOperations
+from .route_filter_rules_operations import RouteFilterRulesOperations
+from .bgp_service_communities_operations import BgpServiceCommunitiesOperations
 
 __all__ = [
     'ApplicationGatewaysOperations',
@@ -45,8 +50,13 @@ __all__ = [
     'VirtualNetworkGatewaysOperations',
     'VirtualNetworkGatewayConnectionsOperations',
     'LocalNetworkGatewaysOperations',
+    'NetworkWatchersOperations',
+    'PacketCapturesOperations',
     'ExpressRouteCircuitAuthorizationsOperations',
     'ExpressRouteCircuitPeeringsOperations',
     'ExpressRouteCircuitsOperations',
     'ExpressRouteServiceProvidersOperations',
+    'RouteFiltersOperations',
+    'RouteFilterRulesOperations',
+    'BgpServiceCommunitiesOperations',
 ]
