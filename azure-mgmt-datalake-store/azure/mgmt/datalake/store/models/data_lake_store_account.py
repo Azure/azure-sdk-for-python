@@ -92,6 +92,12 @@ class DataLakeStoreAccount(Resource):
      'Commitment_1PB', 'Commitment_5PB'
     :vartype current_tier: str or :class:`TierType
      <azure.mgmt.datalake.store.models.TierType>`
+    :param firewall_allow_azure_ips: The current state of allowing or
+     disallowing IPs originating within Azure through the firewall. If the
+     firewall is disabled, this is not enforced. Possible values include:
+     'Enabled', 'Disabled'
+    :type firewall_allow_azure_ips: str or :class:`FirewallAllowAzureIpsState
+     <azure.mgmt.datalake.store.models.FirewallAllowAzureIpsState>`
     """
 
     _validation = {
@@ -130,9 +136,10 @@ class DataLakeStoreAccount(Resource):
         'default_group': {'key': 'properties.defaultGroup', 'type': 'str'},
         'new_tier': {'key': 'properties.newTier', 'type': 'TierType'},
         'current_tier': {'key': 'properties.currentTier', 'type': 'TierType'},
+        'firewall_allow_azure_ips': {'key': 'properties.firewallAllowAzureIps', 'type': 'FirewallAllowAzureIpsState'},
     }
 
-    def __init__(self, location, tags=None, identity=None, encryption_state=None, encryption_config=None, firewall_state=None, firewall_rules=None, trusted_id_provider_state=None, trusted_id_providers=None, default_group=None, new_tier=None):
+    def __init__(self, location, tags=None, identity=None, encryption_state=None, encryption_config=None, firewall_state=None, firewall_rules=None, trusted_id_provider_state=None, trusted_id_providers=None, default_group=None, new_tier=None, firewall_allow_azure_ips=None):
         super(DataLakeStoreAccount, self).__init__(location=location, tags=tags)
         self.identity = identity
         self.provisioning_state = None
@@ -150,3 +157,4 @@ class DataLakeStoreAccount(Resource):
         self.default_group = default_group
         self.new_tier = new_tier
         self.current_tier = None
+        self.firewall_allow_azure_ips = firewall_allow_azure_ips

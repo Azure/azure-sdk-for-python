@@ -70,3 +70,9 @@ class TierType(Enum):
     commitment_500_tb = "Commitment_500TB"
     commitment_1_pb = "Commitment_1PB"
     commitment_5_pb = "Commitment_5PB"
+
+
+class FirewallAllowAzureIpsState(Enum):
+
+    enabled = "Enabled"
+    disabled = "Disabled"

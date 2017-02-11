@@ -13,7 +13,7 @@ from .sub_resource import SubResource
 
 
 class TrustedIdProvider(SubResource):
-    """Data Lake Store firewall rule information.
+    """Data Lake Store Trusted Identity Provider information.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.

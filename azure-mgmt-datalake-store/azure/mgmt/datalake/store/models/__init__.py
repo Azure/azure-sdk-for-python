@@ -9,7 +9,9 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
+from .update_firewall_rule_parameters import UpdateFirewallRuleParameters
 from .firewall_rule import FirewallRule
+from .update_trusted_id_provider_parameters import UpdateTrustedIdProviderParameters
 from .trusted_id_provider import TrustedIdProvider
 from .encryption_identity import EncryptionIdentity
 from .key_vault_meta_info import KeyVaultMetaInfo
@@ -31,10 +33,13 @@ from .data_lake_store_account_management_client_enums import (
     FirewallState,
     TrustedIdProviderState,
     TierType,
+    FirewallAllowAzureIpsState,
 )
 
 __all__ = [
+    'UpdateFirewallRuleParameters',
     'FirewallRule',
+    'UpdateTrustedIdProviderParameters',
     'TrustedIdProvider',
     'EncryptionIdentity',
     'KeyVaultMetaInfo',
@@ -55,4 +60,5 @@ __all__ = [
     'FirewallState',
     'TrustedIdProviderState',
     'TierType',
+    'FirewallAllowAzureIpsState',
 ]
