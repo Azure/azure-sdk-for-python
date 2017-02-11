@@ -27,6 +27,9 @@ class HostNameSslState(Model):
     :type thumbprint: str
     :param to_update: Set to <code>true</code> to update existing hostname.
     :type to_update: bool
+    :param host_type: Indicates whether the hostname is a standard or
+     repository hostname. Possible values include: 'Standard', 'Repository'
+    :type host_type: str or :class:`HostType <azure.mgmt.web.models.HostType>`
     """
 
     _attribute_map = {
@@ -35,11 +38,13 @@ class HostNameSslState(Model):
         'virtual_ip': {'key': 'virtualIP', 'type': 'str'},
         'thumbprint': {'key': 'thumbprint', 'type': 'str'},
         'to_update': {'key': 'toUpdate', 'type': 'bool'},
+        'host_type': {'key': 'hostType', 'type': 'HostType'},
     }
 
-    def __init__(self, name=None, ssl_state=None, virtual_ip=None, thumbprint=None, to_update=None):
+    def __init__(self, name=None, ssl_state=None, virtual_ip=None, thumbprint=None, to_update=None, host_type=None):
         self.name = name
         self.ssl_state = ssl_state
         self.virtual_ip = virtual_ip
         self.thumbprint = thumbprint
         self.to_update = to_update
+        self.host_type = host_type

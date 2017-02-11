@@ -144,6 +144,12 @@ class SslState(Enum):
     ip_based_enabled = "IpBasedEnabled"
 
 
+class HostType(Enum):
+
+    standard = "Standard"
+    repository = "Repository"
+
+
 class OperationStatus(Enum):
 
     in_progress = "InProgress"
