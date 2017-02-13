@@ -3,6 +3,16 @@
 Release History
 ===============
 
+0.1.3 (2017-02-13)
+++++++++++++++++++
+
+**New features**
+
+* Added extended firewall rule support, enabling allowing/blocking all azure IP traffic
+* Add Update support for existing firewall rules (instead of replace)
+* Added support for updating existing trusted identity providers (instead of replace)
+* Fix various documentation bugs to reflect accurate information.
+
 0.1.2 (2017-01-09)
 ++++++++++++++++++
 
