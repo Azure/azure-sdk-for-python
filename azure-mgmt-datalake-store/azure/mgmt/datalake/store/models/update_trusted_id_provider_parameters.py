@@ -9,14 +9,19 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .firewall_rules_operations import FirewallRulesOperations
-from .storage_accounts_operations import StorageAccountsOperations
-from .data_lake_store_accounts_operations import DataLakeStoreAccountsOperations
-from .account_operations import AccountOperations
+from msrest.serialization import Model
 
-__all__ = [
-    'FirewallRulesOperations',
-    'StorageAccountsOperations',
-    'DataLakeStoreAccountsOperations',
-    'AccountOperations',
-]
+
+class UpdateTrustedIdProviderParameters(Model):
+    """Data Lake Store Trusted Identity Provider update parameters.
+
+    :param id_provider: The URL of this trusted identity provider
+    :type id_provider: str
+    """
+
+    _attribute_map = {
+        'id_provider': {'key': 'properties.idProvider', 'type': 'str'},
+    }
+
+    def __init__(self, id_provider=None):
+        self.id_provider = id_provider
