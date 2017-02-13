@@ -6,8 +6,10 @@
 # license information.
 #--------------------------------------------------------------------------
 
-from setuptools import setup
+from setuptools import find_packages, setup
+from io import open
 import re
+import os.path
 
 # azure v0.x is not compatible with this package
 # azure v0.x used to have a __version__ attribute (newer versions don't)
@@ -32,11 +34,16 @@ with open('azure/mgmt/web/version.py', 'r') as fd:
 if not version:
     raise RuntimeError('Cannot find version information')
 
+with open('README.rst', encoding='utf-8') as f:
+    readme = f.read()
+with open('HISTORY.rst', encoding='utf-8') as f:
+    history = f.read()
+
 setup(
     name='azure-mgmt-web',
     version=version,
     description='Microsoft Azure Web Apps Resource Management Client Library for Python',
-    long_description=open('README.rst', 'r').read(),
+    long_description=readme + '\n\n' + history,
     license='MIT License',
     author='Microsoft Corporation',
     author_email='ptvshelp@microsoft.com',
@@ -54,16 +61,10 @@ setup(
         'License :: OSI Approved :: MIT License',
     ],
     zip_safe=False,
-    packages=[
-        'azure',
-        'azure.mgmt',
-        'azure.mgmt.web',
-        'azure.mgmt.web.models',
-        'azure.mgmt.web.operations',
-    ],
+    packages=find_packages(),
     install_requires=[
+        'msrestazure~=0.4.7',
         'azure-common~=1.1.4',
-        'msrestazure~=0.4.6',
         'azure-mgmt-nspkg',
     ],
 )
