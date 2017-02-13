@@ -13,20 +13,16 @@ from msrest.serialization import Model
 
 
 class StorageAccountCheckNameAvailabilityParameters(Model):
-    """The parameters used to check the availabity of the storage account name.
-
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
+    """StorageAccountCheckNameAvailabilityParameters.
 
     :param name:
     :type name: str
-    :ivar type:  Default value: "Microsoft.Storage/storageAccounts" .
-    :vartype type: str
+    :param type:  Default value: "Microsoft.Storage/storageAccounts" .
+    :type type: str
     """
 
     _validation = {
         'name': {'required': True},
-        'type': {'required': True, 'constant': True},
     }
 
     _attribute_map = {
@@ -34,7 +30,6 @@ class StorageAccountCheckNameAvailabilityParameters(Model):
         'type': {'key': 'type', 'type': 'str'},
     }
 
-    type = "Microsoft.Storage/storageAccounts"
-
-    def __init__(self, name):
+    def __init__(self, name, type="Microsoft.Storage/storageAccounts"):
         self.name = name
+        self.type = type
