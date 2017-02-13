@@ -36,7 +36,7 @@ class StorageManagementClientConfiguration(AzureConfiguration):
     """
 
     def __init__(
-            self, credentials, subscription_id, api_version='2016-12-01', base_url=None):
+            self, credentials, subscription_id, api_version='2016-01-01', base_url=None):
 
         if credentials is None:
             raise ValueError("Parameter 'credentials' must not be None.")
@@ -60,7 +60,7 @@ class StorageManagementClientConfiguration(AzureConfiguration):
 
 
 class StorageManagementClient(object):
-    """The Azure Storage Management API.
+    """The Storage Management Client.
 
     :ivar config: Configuration for client.
     :vartype config: StorageManagementClientConfiguration
@@ -83,7 +83,7 @@ class StorageManagementClient(object):
     """
 
     def __init__(
-            self, credentials, subscription_id, api_version='2016-12-01', base_url=None):
+            self, credentials, subscription_id, api_version='2016-01-01', base_url=None):
 
         self.config = StorageManagementClientConfiguration(credentials, subscription_id, api_version, base_url)
         self._client = ServiceClient(self.config.credentials, self.config)

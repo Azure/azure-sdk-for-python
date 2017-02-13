@@ -23,9 +23,9 @@ class StorageAccountKey(Model):
     :ivar value: Base 64-encoded value of the key.
     :vartype value: str
     :ivar permissions: Permissions for the key -- read-only or full
-     permissions. Possible values include: 'Read', 'Full'
+     permissions. Possible values include: 'READ', 'FULL'
     :vartype permissions: str or :class:`KeyPermission
-     <azure.mgmt.storage.models.KeyPermission>`
+     <azure.mgmt.storage.v20160101.models.KeyPermission>`
     """
 
     _validation = {

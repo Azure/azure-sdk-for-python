@@ -54,14 +54,14 @@ class ProvisioningState(Enum):
 
 class AccountStatus(Enum):
 
-    available = "available"
-    unavailable = "unavailable"
+    available = "Available"
+    unavailable = "Unavailable"
 
 
 class KeyPermission(Enum):
 
-    read = "Read"
-    full = "Full"
+    read = "READ"
+    full = "FULL"
 
 
 class UsageUnit(Enum):
@@ -72,9 +72,3 @@ class UsageUnit(Enum):
     percent = "Percent"
     counts_per_second = "CountsPerSecond"
     bytes_per_second = "BytesPerSecond"
-
-
-class HttpProtocol(Enum):
-
-    httpshttp = "https,http"
-    https = "https"
