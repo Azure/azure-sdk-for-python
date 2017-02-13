@@ -13,6 +13,7 @@ from msrest.service_client import ServiceClient
 from msrest import Serializer, Deserializer
 from msrestazure import AzureConfiguration
 from .version import VERSION
+from .operations.firewall_rules_operations import FirewallRulesOperations
 from .operations.storage_accounts_operations import StorageAccountsOperations
 from .operations.data_lake_store_accounts_operations import DataLakeStoreAccountsOperations
 from .operations.account_operations import AccountOperations
@@ -33,22 +34,11 @@ class DataLakeAnalyticsAccountManagementClientConfiguration(AzureConfiguration):
     :type subscription_id: str
     :param api_version: Client Api Version.
     :type api_version: str
-    :param accept_language: Gets or sets the preferred language for the
-     response.
-    :type accept_language: str
-    :param long_running_operation_retry_timeout: Gets or sets the retry
-     timeout in seconds for Long Running Operations. Default value is 30.
-    :type long_running_operation_retry_timeout: int
-    :param generate_client_request_id: When set to true a unique
-     x-ms-client-request-id value is generated and included in each request.
-     Default is true.
-    :type generate_client_request_id: bool
     :param str base_url: Service URL
-    :param str filepath: Existing config
     """
 
     def __init__(
-            self, credentials, subscription_id, api_version='2016-11-01', accept_language='en-US', long_running_operation_retry_timeout=30, generate_client_request_id=True, base_url=None, filepath=None):
+            self, credentials, subscription_id, api_version='2016-11-01', base_url=None):
 
         if credentials is None:
             raise ValueError("Parameter 'credentials' must not be None.")
@@ -58,12 +48,10 @@ class DataLakeAnalyticsAccountManagementClientConfiguration(AzureConfiguration):
             raise TypeError("Parameter 'subscription_id' must be str.")
         if api_version is not None and not isinstance(api_version, str):
             raise TypeError("Optional parameter 'api_version' must be str.")
-        if accept_language is not None and not isinstance(accept_language, str):
-            raise TypeError("Optional parameter 'accept_language' must be str.")
         if not base_url:
             base_url = 'https://management.azure.com'
 
-        super(DataLakeAnalyticsAccountManagementClientConfiguration, self).__init__(base_url, filepath)
+        super(DataLakeAnalyticsAccountManagementClientConfiguration, self).__init__(base_url)
 
         self.add_user_agent('datalakeanalyticsaccountmanagementclient/{}'.format(VERSION))
         self.add_user_agent('Azure-SDK-For-Python')
@@ -71,9 +59,6 @@ class DataLakeAnalyticsAccountManagementClientConfiguration(AzureConfiguration):
         self.credentials = credentials
         self.subscription_id = subscription_id
         self.api_version = api_version
-        self.accept_language = accept_language
-        self.long_running_operation_retry_timeout = long_running_operation_retry_timeout
-        self.generate_client_request_id = generate_client_request_id
 
 
 class DataLakeAnalyticsAccountManagementClient(object):
@@ -82,6 +67,8 @@ class DataLakeAnalyticsAccountManagementClient(object):
     :ivar config: Configuration for client.
     :vartype config: DataLakeAnalyticsAccountManagementClientConfiguration
 
+    :ivar firewall_rules: FirewallRules operations
+    :vartype firewall_rules: .operations.FirewallRulesOperations
     :ivar storage_accounts: StorageAccounts operations
     :vartype storage_accounts: .operations.StorageAccountsOperations
     :ivar data_lake_store_accounts: DataLakeStoreAccounts operations
@@ -98,30 +85,21 @@ class DataLakeAnalyticsAccountManagementClient(object):
     :type subscription_id: str
     :param api_version: Client Api Version.
     :type api_version: str
-    :param accept_language: Gets or sets the preferred language for the
-     response.
-    :type accept_language: str
-    :param long_running_operation_retry_timeout: Gets or sets the retry
-     timeout in seconds for Long Running Operations. Default value is 30.
-    :type long_running_operation_retry_timeout: int
-    :param generate_client_request_id: When set to true a unique
-     x-ms-client-request-id value is generated and included in each request.
-     Default is true.
-    :type generate_client_request_id: bool
     :param str base_url: Service URL
-    :param str filepath: Existing config
     """
 
     def __init__(
-            self, credentials, subscription_id, api_version='2016-11-01', accept_language='en-US', long_running_operation_retry_timeout=30, generate_client_request_id=True, base_url=None, filepath=None):
+            self, credentials, subscription_id, api_version='2016-11-01', base_url=None):
 
-        self.config = DataLakeAnalyticsAccountManagementClientConfiguration(credentials, subscription_id, api_version, accept_language, long_running_operation_retry_timeout, generate_client_request_id, base_url, filepath)
+        self.config = DataLakeAnalyticsAccountManagementClientConfiguration(credentials, subscription_id, api_version, base_url)
         self._client = ServiceClient(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
 
+        self.firewall_rules = FirewallRulesOperations(
+            self._client, self.config, self._serialize, self._deserialize)
         self.storage_accounts = StorageAccountsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.data_lake_store_accounts = DataLakeStoreAccountsOperations(

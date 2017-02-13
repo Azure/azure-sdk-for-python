@@ -35,6 +35,21 @@ class DataLakeAnalyticsAccountUpdateParameters(Model):
      'Commitment_500000AUHours'
     :type new_tier: str or :class:`TierType
      <azure.mgmt.datalake.analytics.account.models.TierType>`
+    :param firewall_state: The current state of the IP address firewall for
+     this Data Lake Analytics account. Possible values include: 'Enabled',
+     'Disabled'
+    :type firewall_state: str or :class:`FirewallState
+     <azure.mgmt.datalake.analytics.account.models.FirewallState>`
+    :param firewall_allow_azure_ips: The current state of allowing or
+     disallowing IPs originating within Azure through the firewall. If the
+     firewall is disabled, this is not enforced. Possible values include:
+     'Enabled', 'Disabled'
+    :type firewall_allow_azure_ips: str or :class:`FirewallAllowAzureIpsState
+     <azure.mgmt.datalake.analytics.account.models.FirewallAllowAzureIpsState>`
+    :param firewall_rules: The list of firewall rules associated with this
+     Data Lake Analytics account.
+    :type firewall_rules: list of :class:`FirewallRule
+     <azure.mgmt.datalake.analytics.account.models.FirewallRule>`
     """
 
     _validation = {
@@ -49,11 +64,17 @@ class DataLakeAnalyticsAccountUpdateParameters(Model):
         'query_store_retention': {'key': 'properties.queryStoreRetention', 'type': 'int'},
         'max_job_count': {'key': 'properties.maxJobCount', 'type': 'int'},
         'new_tier': {'key': 'properties.newTier', 'type': 'TierType'},
+        'firewall_state': {'key': 'properties.firewallState', 'type': 'FirewallState'},
+        'firewall_allow_azure_ips': {'key': 'properties.firewallAllowAzureIps', 'type': 'FirewallAllowAzureIpsState'},
+        'firewall_rules': {'key': 'properties.firewallRules', 'type': '[FirewallRule]'},
     }
 
-    def __init__(self, tags=None, max_degree_of_parallelism=None, query_store_retention=None, max_job_count=None, new_tier=None):
+    def __init__(self, tags=None, max_degree_of_parallelism=None, query_store_retention=None, max_job_count=None, new_tier=None, firewall_state=None, firewall_allow_azure_ips=None, firewall_rules=None):
         self.tags = tags
         self.max_degree_of_parallelism = max_degree_of_parallelism
         self.query_store_retention = query_store_retention
         self.max_job_count = max_job_count
         self.new_tier = new_tier
+        self.firewall_state = firewall_state
+        self.firewall_allow_azure_ips = firewall_allow_azure_ips
+        self.firewall_rules = firewall_rules
