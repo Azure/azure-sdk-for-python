@@ -3,6 +3,20 @@
 Release History
 ===============
 
+0.1.3 (2017-02-13)
+++++++++++++++++++
+
+**New features**
+
+* Add support for firewall rules
+
+  * Add, Update, Get, List and Delete operations
+  * Enable/Disable the firewall
+  *	Allow/Block Azure IPs
+
+*	Remove minimum value requirement from DegreeOfParallelism. If a value <= 0 is passed in, it will be defaulted automatically to 1.
+*	Remove unused ErrorDetails object
+
 0.1.2 (2017-01-09)
 ++++++++++++++++++
 
