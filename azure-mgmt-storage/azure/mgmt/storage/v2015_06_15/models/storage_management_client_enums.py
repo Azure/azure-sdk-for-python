@@ -18,31 +18,13 @@ class Reason(Enum):
     already_exists = "AlreadyExists"
 
 
-class SkuName(Enum):
+class AccountType(Enum):
 
     standard_lrs = "Standard_LRS"
+    standard_zrs = "Standard_ZRS"
     standard_grs = "Standard_GRS"
     standard_ragrs = "Standard_RAGRS"
-    standard_zrs = "Standard_ZRS"
     premium_lrs = "Premium_LRS"
-
-
-class SkuTier(Enum):
-
-    standard = "Standard"
-    premium = "Premium"
-
-
-class AccessTier(Enum):
-
-    hot = "Hot"
-    cool = "Cool"
-
-
-class Kind(Enum):
-
-    storage = "Storage"
-    blob_storage = "BlobStorage"
 
 
 class ProvisioningState(Enum):
@@ -54,14 +36,8 @@ class ProvisioningState(Enum):
 
 class AccountStatus(Enum):
 
-    available = "available"
-    unavailable = "unavailable"
-
-
-class KeyPermission(Enum):
-
-    read = "Read"
-    full = "Full"
+    available = "Available"
+    unavailable = "Unavailable"
 
 
 class UsageUnit(Enum):
@@ -72,9 +48,3 @@ class UsageUnit(Enum):
     percent = "Percent"
     counts_per_second = "CountsPerSecond"
     bytes_per_second = "BytesPerSecond"
-
-
-class HttpProtocol(Enum):
-
-    httpshttp = "https,http"
-    https = "https"

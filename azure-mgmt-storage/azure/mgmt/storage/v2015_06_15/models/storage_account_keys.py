@@ -12,24 +12,20 @@
 from msrest.serialization import Model
 
 
-class ListServiceSasResponse(Model):
-    """The List service SAS credentials operation response.
+class StorageAccountKeys(Model):
+    """The access keys for the storage account.
 
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
-
-    :ivar service_sas_token: List service SAS credentials of speicific
-     resource.
-    :vartype service_sas_token: str
+    :param key1: Gets the value of key 1.
+    :type key1: str
+    :param key2: Gets the value of key 2.
+    :type key2: str
     """
 
-    _validation = {
-        'service_sas_token': {'readonly': True},
-    }
-
     _attribute_map = {
-        'service_sas_token': {'key': 'serviceSasToken', 'type': 'str'},
+        'key1': {'key': 'key1', 'type': 'str'},
+        'key2': {'key': 'key2', 'type': 'str'},
     }
 
-    def __init__(self):
-        self.service_sas_token = None
+    def __init__(self, key1=None, key2=None):
+        self.key1 = key1
+        self.key2 = key2

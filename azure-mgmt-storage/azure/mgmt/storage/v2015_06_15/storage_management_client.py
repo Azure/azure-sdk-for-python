@@ -27,8 +27,8 @@ class StorageManagementClientConfiguration(AzureConfiguration):
     :type credentials: :mod:`A msrestazure Credentials
      object<msrestazure.azure_active_directory>`
     :param subscription_id: Gets subscription credentials which uniquely
-     identify the Microsoft Azure subscription. The subscription ID forms part
-     of the URI for every service call.
+     identify Microsoft Azure subscription. The subscription ID forms part of
+     the URI for every service call.
     :type subscription_id: str
     :param api_version: Client Api Version.
     :type api_version: str
@@ -36,7 +36,7 @@ class StorageManagementClientConfiguration(AzureConfiguration):
     """
 
     def __init__(
-            self, credentials, subscription_id, api_version='2016-12-01', base_url=None):
+            self, credentials, subscription_id, api_version='2015-06-15', base_url=None):
 
         if credentials is None:
             raise ValueError("Parameter 'credentials' must not be None.")
@@ -60,7 +60,7 @@ class StorageManagementClientConfiguration(AzureConfiguration):
 
 
 class StorageManagementClient(object):
-    """The Azure Storage Management API.
+    """The Storage Management Client.
 
     :ivar config: Configuration for client.
     :vartype config: StorageManagementClientConfiguration
@@ -74,8 +74,8 @@ class StorageManagementClient(object):
     :type credentials: :mod:`A msrestazure Credentials
      object<msrestazure.azure_active_directory>`
     :param subscription_id: Gets subscription credentials which uniquely
-     identify the Microsoft Azure subscription. The subscription ID forms part
-     of the URI for every service call.
+     identify Microsoft Azure subscription. The subscription ID forms part of
+     the URI for every service call.
     :type subscription_id: str
     :param api_version: Client Api Version.
     :type api_version: str
@@ -83,7 +83,7 @@ class StorageManagementClient(object):
     """
 
     def __init__(
-            self, credentials, subscription_id, api_version='2016-12-01', base_url=None):
+            self, credentials, subscription_id, api_version='2015-06-15', base_url=None):
 
         self.config = StorageManagementClientConfiguration(credentials, subscription_id, api_version, base_url)
         self._client = ServiceClient(self.config.credentials, self.config)
