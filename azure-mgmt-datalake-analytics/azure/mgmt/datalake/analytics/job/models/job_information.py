@@ -33,7 +33,8 @@ class JobInformation(Model):
     :vartype error_message: list of :class:`JobErrorDetails
      <azure.mgmt.datalake.analytics.job.models.JobErrorDetails>`
     :param degree_of_parallelism: the degree of parallelism used for this job.
-     This must be greater than 0. Default value: 1 .
+     This must be greater than 0, if set to less than 0 it will default to 1.
+     Default value: 1 .
     :type degree_of_parallelism: int
     :param priority: the priority value for the current job. Lower numbers
      have a higher priority. By default, a job has a priority of 1000. This
@@ -78,7 +79,6 @@ class JobInformation(Model):
         'type': {'required': True},
         'submitter': {'readonly': True},
         'error_message': {'readonly': True},
-        'degree_of_parallelism': {'minimum': 1},
         'submit_time': {'readonly': True},
         'start_time': {'readonly': True},
         'end_time': {'readonly': True},

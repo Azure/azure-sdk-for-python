@@ -42,3 +42,15 @@ class TierType(Enum):
     commitment_50000_au_hours = "Commitment_50000AUHours"
     commitment_100000_au_hours = "Commitment_100000AUHours"
     commitment_500000_au_hours = "Commitment_500000AUHours"
+
+
+class FirewallState(Enum):
+
+    enabled = "Enabled"
+    disabled = "Disabled"
+
+
+class FirewallAllowAzureIpsState(Enum):
+
+    enabled = "Enabled"
+    disabled = "Disabled"

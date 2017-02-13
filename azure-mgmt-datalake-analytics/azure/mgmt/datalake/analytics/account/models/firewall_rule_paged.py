@@ -9,14 +9,19 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .firewall_rules_operations import FirewallRulesOperations
-from .storage_accounts_operations import StorageAccountsOperations
-from .data_lake_store_accounts_operations import DataLakeStoreAccountsOperations
-from .account_operations import AccountOperations
+from msrest.paging import Paged
 
-__all__ = [
-    'FirewallRulesOperations',
-    'StorageAccountsOperations',
-    'DataLakeStoreAccountsOperations',
-    'AccountOperations',
-]
+
+class FirewallRulePaged(Paged):
+    """
+    A paging container for iterating over a list of FirewallRule object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[FirewallRule]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(FirewallRulePaged, self).__init__(*args, **kwargs)

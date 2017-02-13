@@ -40,10 +40,10 @@ class FirewallRulesOperations(object):
         firewall rule.
 
         :param resource_group_name: The name of the Azure resource group that
-         contains the Data Lake Store account.
+         contains the Data Lake Analytics account.
         :type resource_group_name: str
-        :param account_name: The name of the Data Lake Store account to add or
-         replace the firewall rule.
+        :param account_name: The name of the Data Lake Analytics account to
+         add or replace the firewall rule.
         :type account_name: str
         :param firewall_rule_name: The name of the firewall rule to create or
          update.
@@ -51,20 +51,20 @@ class FirewallRulesOperations(object):
         :param parameters: Parameters supplied to create or update the
          firewall rule.
         :type parameters: :class:`FirewallRule
-         <azure.mgmt.datalake.store.models.FirewallRule>`
+         <azure.mgmt.datalake.analytics.account.models.FirewallRule>`
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`FirewallRule
-         <azure.mgmt.datalake.store.models.FirewallRule>`
+         <azure.mgmt.datalake.analytics.account.models.FirewallRule>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataLakeStore/accounts/{accountName}/firewallRules/{firewallRuleName}'
+        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataLakeAnalytics/accounts/{accountName}/firewallRules/{firewallRuleName}'
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'accountName': self._serialize.url("account_name", account_name, 'str'),
@@ -116,10 +116,10 @@ class FirewallRulesOperations(object):
         """Updates the specified firewall rule.
 
         :param resource_group_name: The name of the Azure resource group that
-         contains the Data Lake Store account.
+         contains the Data Lake Analytics account.
         :type resource_group_name: str
-        :param account_name: The name of the Data Lake Store account to which
-         to update the firewall rule.
+        :param account_name: The name of the Data Lake Analytics account to
+         which to update the firewall rule.
         :type account_name: str
         :param firewall_rule_name: The name of the firewall rule to update.
         :type firewall_rule_name: str
@@ -137,7 +137,7 @@ class FirewallRulesOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`FirewallRule
-         <azure.mgmt.datalake.store.models.FirewallRule>`
+         <azure.mgmt.datalake.analytics.account.models.FirewallRule>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
@@ -147,7 +147,7 @@ class FirewallRulesOperations(object):
             parameters = models.UpdateFirewallRuleParameters(start_ip_address=start_ip_address, end_ip_address=end_ip_address)
 
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataLakeStore/accounts/{accountName}/firewallRules/{firewallRuleName}'
+        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataLakeAnalytics/accounts/{accountName}/firewallRules/{firewallRuleName}'
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'accountName': self._serialize.url("account_name", account_name, 'str'),
@@ -199,13 +199,13 @@ class FirewallRulesOperations(object):
 
     def delete(
             self, resource_group_name, account_name, firewall_rule_name, custom_headers=None, raw=False, **operation_config):
-        """Deletes the specified firewall rule from the specified Data Lake Store
-        account.
+        """Deletes the specified firewall rule from the specified Data Lake
+        Analytics account.
 
         :param resource_group_name: The name of the Azure resource group that
-         contains the Data Lake Store account.
+         contains the Data Lake Analytics account.
         :type resource_group_name: str
-        :param account_name: The name of the Data Lake Store account from
+        :param account_name: The name of the Data Lake Analytics account from
          which to delete the firewall rule.
         :type account_name: str
         :param firewall_rule_name: The name of the firewall rule to delete.
@@ -221,7 +221,7 @@ class FirewallRulesOperations(object):
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataLakeStore/accounts/{accountName}/firewallRules/{firewallRuleName}'
+        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataLakeAnalytics/accounts/{accountName}/firewallRules/{firewallRuleName}'
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'accountName': self._serialize.url("account_name", account_name, 'str'),
@@ -259,12 +259,12 @@ class FirewallRulesOperations(object):
 
     def get(
             self, resource_group_name, account_name, firewall_rule_name, custom_headers=None, raw=False, **operation_config):
-        """Gets the specified Data Lake Store firewall rule.
+        """Gets the specified Data Lake Analytics firewall rule.
 
         :param resource_group_name: The name of the Azure resource group that
-         contains the Data Lake Store account.
+         contains the Data Lake Analytics account.
         :type resource_group_name: str
-        :param account_name: The name of the Data Lake Store account from
+        :param account_name: The name of the Data Lake Analytics account from
          which to get the firewall rule.
         :type account_name: str
         :param firewall_rule_name: The name of the firewall rule to retrieve.
@@ -275,13 +275,13 @@ class FirewallRulesOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`FirewallRule
-         <azure.mgmt.datalake.store.models.FirewallRule>`
+         <azure.mgmt.datalake.analytics.account.models.FirewallRule>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataLakeStore/accounts/{accountName}/firewallRules/{firewallRuleName}'
+        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataLakeAnalytics/accounts/{accountName}/firewallRules/{firewallRuleName}'
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'accountName': self._serialize.url("account_name", account_name, 'str'),
@@ -326,13 +326,13 @@ class FirewallRulesOperations(object):
 
     def list_by_account(
             self, resource_group_name, account_name, custom_headers=None, raw=False, **operation_config):
-        """Lists the Data Lake Store firewall rules within the specified Data Lake
-        Store account.
+        """Lists the Data Lake Analytics firewall rules within the specified Data
+        Lake Analytics account.
 
         :param resource_group_name: The name of the Azure resource group that
-         contains the Data Lake Store account.
+         contains the Data Lake Analytics account.
         :type resource_group_name: str
-        :param account_name: The name of the Data Lake Store account from
+        :param account_name: The name of the Data Lake Analytics account from
          which to get the firewall rules.
         :type account_name: str
         :param dict custom_headers: headers that will be added to the request
@@ -341,14 +341,14 @@ class FirewallRulesOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`FirewallRulePaged
-         <azure.mgmt.datalake.store.models.FirewallRulePaged>`
+         <azure.mgmt.datalake.analytics.account.models.FirewallRulePaged>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
 
             if not next_link:
                 # Construct URL
-                url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataLakeStore/accounts/{accountName}/firewallRules'
+                url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataLakeAnalytics/accounts/{accountName}/firewallRules'
                 path_format_arguments = {
                     'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
                     'accountName': self._serialize.url("account_name", account_name, 'str'),
