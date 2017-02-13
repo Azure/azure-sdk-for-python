@@ -17,8 +17,10 @@ class MgmtStorageTest(AzureMgmtTestCase):
     def setUp(self):
         super(MgmtStorageTest, self).setUp()
         self.storage_client = self.create_mgmt_client(
-            azure.mgmt.storage.StorageManagementClient
+            azure.mgmt.storage.client,
+            api_version='2016-12-01'
         )
+        self.storage_models = azure.mgmt.storage.models(api_version='2016-12-01')
         if not self.is_playback():
             self.create_resource_group()
 
@@ -38,9 +40,9 @@ class MgmtStorageTest(AzureMgmtTestCase):
         self.assertFalse(result_check.reason)
         self.assertFalse(result_check.message)
 
-        params_create = azure.mgmt.storage.models.StorageAccountCreateParameters(
-            sku=azure.mgmt.storage.models.Sku(azure.mgmt.storage.models.SkuName.standard_lrs),
-            kind=azure.mgmt.storage.models.Kind.storage,
+        params_create = self.storage_models.StorageAccountCreateParameters(
+            sku=self.storage_models.Sku(self.storage_models.SkuName.standard_lrs),
+            kind=self.storage_models.Kind.storage,
             location=self.region
         )
         result_create = self.storage_client.storage_accounts.create(
@@ -95,8 +97,8 @@ class MgmtStorageTest(AzureMgmtTestCase):
         storage_account = self.storage_client.storage_accounts.update(
             self.group_name,
             account_name,
-            azure.mgmt.storage.models.StorageAccountUpdateParameters(
-                sku=azure.mgmt.storage.models.Sku(azure.mgmt.storage.models.SkuName.standard_grs)
+            self.storage_models.StorageAccountUpdateParameters(
+                sku=self.storage_models.Sku(self.storage_models.SkuName.standard_grs)
             )
         )
 
