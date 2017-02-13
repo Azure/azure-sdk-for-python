@@ -18,7 +18,7 @@ class InfoField(Model):
     :param project: Identifies the name of the instance provisioned by the
      user.
     :type project: str
-    """ 
+    """
 
     _attribute_map = {
         'project': {'key': 'project', 'type': 'str'},
