@@ -120,13 +120,6 @@ class ApplicationGatewayFirewallMode(Enum):
     prevention = "Prevention"
 
 
-class NetworkOperationStatus(Enum):
-
-    in_progress = "InProgress"
-    succeeded = "Succeeded"
-    failed = "Failed"
-
-
 class LoadDistribution(Enum):
 
     default = "Default"
@@ -189,6 +182,15 @@ class VirtualNetworkGatewaySkuTier(Enum):
     ultra_performance = "UltraPerformance"
 
 
+class BgpPeerState(Enum):
+
+    unknown = "Unknown"
+    stopped = "Stopped"
+    idle = "Idle"
+    connecting = "Connecting"
+    connected = "Connected"
+
+
 class ProcessorArchitecture(Enum):
 
     amd64 = "Amd64"
@@ -209,6 +211,73 @@ class VirtualNetworkGatewayConnectionType(Enum):
     vnet2_vnet = "Vnet2Vnet"
     express_route = "ExpressRoute"
     vpn_client = "VPNClient"
+
+
+class ProvisioningState(Enum):
+
+    succeeded = "Succeeded"
+    updating = "Updating"
+    deleting = "Deleting"
+    failed = "Failed"
+
+
+class AssociationType(Enum):
+
+    associated = "Associated"
+    contains = "Contains"
+
+
+class Direction(Enum):
+
+    inbound = "Inbound"
+    outbound = "Outbound"
+
+
+class Protocol(Enum):
+
+    tcp = "TCP"
+    udp = "UDP"
+
+
+class Access(Enum):
+
+    allow = "Allow"
+    deny = "Deny"
+
+
+class NextHopType(Enum):
+
+    internet = "Internet"
+    virtual_appliance = "VirtualAppliance"
+    virtual_network_gateway = "VirtualNetworkGateway"
+    vnet_local = "VnetLocal"
+    hyper_net_gateway = "HyperNetGateway"
+    none = "None"
+
+
+class PcProtocol(Enum):
+
+    tcp = "TCP"
+    udp = "UDP"
+    any = "Any"
+
+
+class PcStatus(Enum):
+
+    not_started = "NotStarted"
+    running = "Running"
+    stopped = "Stopped"
+    error = "Error"
+    unknown = "Unknown"
+
+
+class PcError(Enum):
+
+    internal_error = "InternalError"
+    agent_stopped = "AgentStopped"
+    capture_failed = "CaptureFailed"
+    local_file_failed = "LocalFileFailed"
+    storage_failed = "StorageFailed"
 
 
 class AuthorizationUseStatus(Enum):
@@ -256,3 +325,10 @@ class ServiceProviderProvisioningState(Enum):
     provisioning = "Provisioning"
     provisioned = "Provisioned"
     deprovisioning = "Deprovisioning"
+
+
+class NetworkOperationStatus(Enum):
+
+    in_progress = "InProgress"
+    succeeded = "Succeeded"
+    failed = "Failed"
