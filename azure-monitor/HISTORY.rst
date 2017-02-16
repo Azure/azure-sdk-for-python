@@ -3,6 +3,13 @@
 Release History
 ===============
 
+0.2.0 (2017-02-16)
+++++++++++++++++++
+
+* Rename InsightsClient to MonitorClient
+* Rename "events" to "activity_logs"
+* Several minor models fix
+
 0.1.0 (2016-11-23)
 ++++++++++++++++++
 
