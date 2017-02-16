@@ -9,96 +9,42 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .resource import Resource
-from .scale_capacity import ScaleCapacity
-from .metric_trigger import MetricTrigger
-from .scale_action import ScaleAction
-from .scale_rule import ScaleRule
-from .time_window import TimeWindow
-from .recurrent_schedule import RecurrentSchedule
-from .recurrence import Recurrence
-from .autoscale_profile import AutoscaleProfile
-from .email_notification import EmailNotification
-from .webhook_notification import WebhookNotification
-from .autoscale_notification import AutoscaleNotification
-from .autoscale_setting_resource import AutoscaleSettingResource
-from .retention_policy import RetentionPolicy
-from .metric_settings import MetricSettings
-from .log_settings import LogSettings
-from .service_diagnostic_settings_resource import ServiceDiagnosticSettingsResource
-from .rule_condition import RuleCondition
-from .rule_data_source import RuleDataSource
-from .rule_metric_data_source import RuleMetricDataSource
-from .rule_management_event_claims_data_source import RuleManagementEventClaimsDataSource
-from .rule_management_event_data_source import RuleManagementEventDataSource
-from .threshold_rule_condition import ThresholdRuleCondition
-from .location_threshold_rule_condition import LocationThresholdRuleCondition
-from .management_event_aggregation_condition import ManagementEventAggregationCondition
-from .management_event_rule_condition import ManagementEventRuleCondition
-from .rule_action import RuleAction
-from .rule_email_action import RuleEmailAction
-from .rule_webhook_action import RuleWebhookAction
-from .alert_rule_resource import AlertRuleResource
-from .incident import Incident
-from .log_profile_resource import LogProfileResource
-from .autoscale_setting_resource_paged import AutoscaleSettingResourcePaged
-from .alert_rule_resource_paged import AlertRuleResourcePaged
-from .incident_paged import IncidentPaged
-from .log_profile_resource_paged import LogProfileResourcePaged
-from .monitor_management_client_enums import (
-    MetricStatisticType,
-    TimeAggregationType,
-    ComparisonOperationType,
-    ScaleDirection,
-    ScaleType,
-    RecurrenceFrequency,
-    ConditionOperator,
-    TimeAggregationOperator,
+from .localizable_string import LocalizableString
+from .usage_metric import UsageMetric
+from .sender_authorization import SenderAuthorization
+from .http_request_info import HttpRequestInfo
+from .event_data import EventData
+from .metric_availability import MetricAvailability
+from .metric_definition import MetricDefinition
+from .metric_value import MetricValue
+from .metric import Metric
+from .usage_metric_paged import UsageMetricPaged
+from .localizable_string_paged import LocalizableStringPaged
+from .event_data_paged import EventDataPaged
+from .metric_definition_paged import MetricDefinitionPaged
+from .metric_paged import MetricPaged
+from .monitor_client_enums import (
+    EventLevel,
+    Unit,
+    AggregationType,
 )
 
 __all__ = [
-    'Resource',
-    'ScaleCapacity',
-    'MetricTrigger',
-    'ScaleAction',
-    'ScaleRule',
-    'TimeWindow',
-    'RecurrentSchedule',
-    'Recurrence',
-    'AutoscaleProfile',
-    'EmailNotification',
-    'WebhookNotification',
-    'AutoscaleNotification',
-    'AutoscaleSettingResource',
-    'RetentionPolicy',
-    'MetricSettings',
-    'LogSettings',
-    'ServiceDiagnosticSettingsResource',
-    'RuleCondition',
-    'RuleDataSource',
-    'RuleMetricDataSource',
-    'RuleManagementEventClaimsDataSource',
-    'RuleManagementEventDataSource',
-    'ThresholdRuleCondition',
-    'LocationThresholdRuleCondition',
-    'ManagementEventAggregationCondition',
-    'ManagementEventRuleCondition',
-    'RuleAction',
-    'RuleEmailAction',
-    'RuleWebhookAction',
-    'AlertRuleResource',
-    'Incident',
-    'LogProfileResource',
-    'AutoscaleSettingResourcePaged',
-    'AlertRuleResourcePaged',
-    'IncidentPaged',
-    'LogProfileResourcePaged',
-    'MetricStatisticType',
-    'TimeAggregationType',
-    'ComparisonOperationType',
-    'ScaleDirection',
-    'ScaleType',
-    'RecurrenceFrequency',
-    'ConditionOperator',
-    'TimeAggregationOperator',
+    'LocalizableString',
+    'UsageMetric',
+    'SenderAuthorization',
+    'HttpRequestInfo',
+    'EventData',
+    'MetricAvailability',
+    'MetricDefinition',
+    'MetricValue',
+    'Metric',
+    'UsageMetricPaged',
+    'LocalizableStringPaged',
+    'EventDataPaged',
+    'MetricDefinitionPaged',
+    'MetricPaged',
+    'EventLevel',
+    'Unit',
+    'AggregationType',
 ]

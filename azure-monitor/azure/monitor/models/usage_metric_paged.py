@@ -9,19 +9,19 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.serialization import Model
+from msrest.paging import Paged
 
 
-class RuleManagementEventClaimsDataSource(Model):
-    """The claims for a rule management event data source.
-
-    :param email_address: the email address.
-    :type email_address: str
+class UsageMetricPaged(Paged):
+    """
+    A paging container for iterating over a list of UsageMetric object
     """
 
     _attribute_map = {
-        'email_address': {'key': 'emailAddress', 'type': 'str'},
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[UsageMetric]'}
     }
 
-    def __init__(self, email_address=None):
-        self.email_address = email_address
+    def __init__(self, *args, **kwargs):
+
+        super(UsageMetricPaged, self).__init__(*args, **kwargs)

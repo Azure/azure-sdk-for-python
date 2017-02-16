@@ -9,16 +9,18 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .autoscale_settings_operations import AutoscaleSettingsOperations
-from .service_diagnostic_settings_operations import ServiceDiagnosticSettingsOperations
-from .alert_rules_operations import AlertRulesOperations
-from .alert_rule_incidents_operations import AlertRuleIncidentsOperations
-from .log_profiles_operations import LogProfilesOperations
+from .usage_metrics_operations import UsageMetricsOperations
+from .event_categories_operations import EventCategoriesOperations
+from .activity_logs_operations import ActivityLogsOperations
+from .tenant_activity_logs_operations import TenantActivityLogsOperations
+from .metric_definitions_operations import MetricDefinitionsOperations
+from .metrics_operations import MetricsOperations
 
 __all__ = [
-    'AutoscaleSettingsOperations',
-    'ServiceDiagnosticSettingsOperations',
-    'AlertRulesOperations',
-    'AlertRuleIncidentsOperations',
-    'LogProfilesOperations',
+    'UsageMetricsOperations',
+    'EventCategoriesOperations',
+    'ActivityLogsOperations',
+    'TenantActivityLogsOperations',
+    'MetricDefinitionsOperations',
+    'MetricsOperations',
 ]
