@@ -16,8 +16,8 @@ import uuid
 from .. import models
 
 
-class EventsOperations(object):
-    """EventsOperations operations.
+class TenantActivityLogsOperations(object):
+    """TenantActivityLogsOperations operations.
 
     :param client: Client for service requests.
     :param config: Configuration of service client.
@@ -37,7 +37,12 @@ class EventsOperations(object):
 
     def list(
             self, filter=None, select=None, custom_headers=None, raw=False, **operation_config):
-        """Provides the list of events. The **$filter** is very restricted and
+        """get the Activity Logs for the Tenant. Everything that is applicable to
+        the API to get the Activity Log for the subscription is applicable to
+        this API (the parameters, $filter, etc.). One thing to point out here
+        is that this API does *not* retrieve the logs at the individual
+        subscription of the tenant but only surfaces the logs that were
+        generated at the tenant level. The **$filter** is very restricted and
         allows only the following patterns. - List events for a resource group:
         $filter=eventTimestamp ge '<Start Time>' and eventTimestamp le '<End
         Time>' and eventChannels eq 'Admin, Operation' and resourceGroupName eq
@@ -46,7 +51,7 @@ class EventsOperations(object):
         Time>' and eventChannels eq 'Admin, Operation' and resourceUri eq
         '<ResourceURI>'. - List events for a subscription:
         $filter=eventTimestamp ge '<Start Time>' and eventTimestamp le '<End
-        Time>' and eventChannels eq 'Admin, Operation'. -List events for a
+        Time>' and eventChannels eq 'Admin, Operation'. - List evetns for a
         resource provider: $filter=eventTimestamp ge '<Start Time>' and
         eventTimestamp le '<End Time>' and eventChannels eq 'Admin, Operation'
         and resourceProvider eq '<ResourceProviderName>'. - List events for a
@@ -78,11 +83,7 @@ class EventsOperations(object):
 
             if not next_link:
                 # Construct URL
-                url = '/subscriptions/{subscriptionId}/providers/microsoft.insights/eventtypes/management/values'
-                path_format_arguments = {
-                    'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
-                }
-                url = self._client.format_url(url, **path_format_arguments)
+                url = '/providers/microsoft.insights/eventtypes/management/values'
 
                 # Construct parameters
                 query_parameters = {}

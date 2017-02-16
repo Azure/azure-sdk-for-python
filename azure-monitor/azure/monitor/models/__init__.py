@@ -23,8 +23,7 @@ from .localizable_string_paged import LocalizableStringPaged
 from .event_data_paged import EventDataPaged
 from .metric_definition_paged import MetricDefinitionPaged
 from .metric_paged import MetricPaged
-from .insights_client_enums import (
-    EventChannels,
+from .monitor_client_enums import (
     EventLevel,
     Unit,
     AggregationType,
@@ -45,7 +44,6 @@ __all__ = [
     'EventDataPaged',
     'MetricDefinitionPaged',
     'MetricPaged',
-    'EventChannels',
     'EventLevel',
     'Unit',
     'AggregationType',
