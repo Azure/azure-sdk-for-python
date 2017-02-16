@@ -179,7 +179,7 @@
       "output_dir": "azure-mgmt-monitor/azure/mgmt/monitor"
     },
     "monitor.data": {
-      "swagger": "arm-monitor/compositeMonitorManagementClient.json",
+      "swagger": "monitor/compositeMonitorClient.json",
       "autorest_options": {
         "Namespace": "azure.monitor",
         "Modeler": "CompositeSwagger",
