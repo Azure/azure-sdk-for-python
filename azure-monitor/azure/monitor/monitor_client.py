@@ -13,16 +13,17 @@ from msrest.service_client import ServiceClient
 from msrest import Serializer, Deserializer
 from msrestazure import AzureConfiguration
 from .version import VERSION
-from .operations.autoscale_settings_operations import AutoscaleSettingsOperations
-from .operations.service_diagnostic_settings_operations import ServiceDiagnosticSettingsOperations
-from .operations.alert_rules_operations import AlertRulesOperations
-from .operations.alert_rule_incidents_operations import AlertRuleIncidentsOperations
-from .operations.log_profiles_operations import LogProfilesOperations
+from .operations.usage_metrics_operations import UsageMetricsOperations
+from .operations.event_categories_operations import EventCategoriesOperations
+from .operations.activity_logs_operations import ActivityLogsOperations
+from .operations.tenant_activity_logs_operations import TenantActivityLogsOperations
+from .operations.metric_definitions_operations import MetricDefinitionsOperations
+from .operations.metrics_operations import MetricsOperations
 from . import models
 
 
-class MonitorManagementClientConfiguration(AzureConfiguration):
-    """Configuration for MonitorManagementClient
+class MonitorClientConfiguration(AzureConfiguration):
+    """Configuration for MonitorClient
     Note that all parameters used to create this instance are saved as instance
     attributes.
 
@@ -46,31 +47,33 @@ class MonitorManagementClientConfiguration(AzureConfiguration):
         if not base_url:
             base_url = 'https://management.azure.com'
 
-        super(MonitorManagementClientConfiguration, self).__init__(base_url)
+        super(MonitorClientConfiguration, self).__init__(base_url)
 
-        self.add_user_agent('monitormanagementclient/{}'.format(VERSION))
+        self.add_user_agent('monitorclient/{}'.format(VERSION))
         self.add_user_agent('Azure-SDK-For-Python')
 
         self.credentials = credentials
         self.subscription_id = subscription_id
 
 
-class MonitorManagementClient(object):
-    """Composite Swagger for Monitor Management Client
+class MonitorClient(object):
+    """Composite Swagger for Monitor Client
 
     :ivar config: Configuration for client.
-    :vartype config: MonitorManagementClientConfiguration
+    :vartype config: MonitorClientConfiguration
 
-    :ivar autoscale_settings: AutoscaleSettings operations
-    :vartype autoscale_settings: .operations.AutoscaleSettingsOperations
-    :ivar service_diagnostic_settings: ServiceDiagnosticSettings operations
-    :vartype service_diagnostic_settings: .operations.ServiceDiagnosticSettingsOperations
-    :ivar alert_rules: AlertRules operations
-    :vartype alert_rules: .operations.AlertRulesOperations
-    :ivar alert_rule_incidents: AlertRuleIncidents operations
-    :vartype alert_rule_incidents: .operations.AlertRuleIncidentsOperations
-    :ivar log_profiles: LogProfiles operations
-    :vartype log_profiles: .operations.LogProfilesOperations
+    :ivar usage_metrics: UsageMetrics operations
+    :vartype usage_metrics: .operations.UsageMetricsOperations
+    :ivar event_categories: EventCategories operations
+    :vartype event_categories: .operations.EventCategoriesOperations
+    :ivar activity_logs: ActivityLogs operations
+    :vartype activity_logs: .operations.ActivityLogsOperations
+    :ivar tenant_activity_logs: TenantActivityLogs operations
+    :vartype tenant_activity_logs: .operations.TenantActivityLogsOperations
+    :ivar metric_definitions: MetricDefinitions operations
+    :vartype metric_definitions: .operations.MetricDefinitionsOperations
+    :ivar metrics: Metrics operations
+    :vartype metrics: .operations.MetricsOperations
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
@@ -83,20 +86,22 @@ class MonitorManagementClient(object):
     def __init__(
             self, credentials, subscription_id, base_url=None):
 
-        self.config = MonitorManagementClientConfiguration(credentials, subscription_id, base_url)
+        self.config = MonitorClientConfiguration(credentials, subscription_id, base_url)
         self._client = ServiceClient(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
 
-        self.autoscale_settings = AutoscaleSettingsOperations(
+        self.usage_metrics = UsageMetricsOperations(
             self._client, self.config, self._serialize, self._deserialize)
-        self.service_diagnostic_settings = ServiceDiagnosticSettingsOperations(
+        self.event_categories = EventCategoriesOperations(
             self._client, self.config, self._serialize, self._deserialize)
-        self.alert_rules = AlertRulesOperations(
+        self.activity_logs = ActivityLogsOperations(
             self._client, self.config, self._serialize, self._deserialize)
-        self.alert_rule_incidents = AlertRuleIncidentsOperations(
+        self.tenant_activity_logs = TenantActivityLogsOperations(
             self._client, self.config, self._serialize, self._deserialize)
-        self.log_profiles = LogProfilesOperations(
+        self.metric_definitions = MetricDefinitionsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.metrics = MetricsOperations(
             self._client, self.config, self._serialize, self._deserialize)

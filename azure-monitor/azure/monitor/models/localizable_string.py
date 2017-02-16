@@ -12,24 +12,24 @@
 from msrest.serialization import Model
 
 
-class RuleDataSource(Model):
-    """The resource from which the rule collects its data.
+class LocalizableString(Model):
+    """The localizable string class.
 
-    :param odatatype: Polymorphic Discriminator
-    :type odatatype: str
+    :param value: the invariant value.
+    :type value: str
+    :param localized_value: the locale specific value.
+    :type localized_value: str
     """
 
     _validation = {
-        'odatatype': {'required': True},
+        'value': {'required': True},
     }
 
     _attribute_map = {
-        'odatatype': {'key': 'odata\\.type', 'type': 'str'},
+        'value': {'key': 'value', 'type': 'str'},
+        'localized_value': {'key': 'localizedValue', 'type': 'str'},
     }
 
-    _subtype_map = {
-        'odatatype': {'Microsoft.Azure.Management.Insights.Models.RuleMetricDataSource': 'RuleMetricDataSource', 'Microsoft.Azure.Management.Insights.Models.RuleManagementEventDataSource': 'RuleManagementEventDataSource'}
-    }
-
-    def __init__(self):
-        self.odatatype = None
+    def __init__(self, value, localized_value=None):
+        self.value = value
+        self.localized_value = localized_value

@@ -12,16 +12,16 @@
 from msrest.paging import Paged
 
 
-class LogProfileResourcePaged(Paged):
+class LocalizableStringPaged(Paged):
     """
-    A paging container for iterating over a list of LogProfileResource object
+    A paging container for iterating over a list of LocalizableString object
     """
 
     _attribute_map = {
         'next_link': {'key': 'nextLink', 'type': 'str'},
-        'current_page': {'key': 'value', 'type': '[LogProfileResource]'}
+        'current_page': {'key': 'value', 'type': '[LocalizableString]'}
     }
 
     def __init__(self, *args, **kwargs):
 
-        super(LogProfileResourcePaged, self).__init__(*args, **kwargs)
+        super(LocalizableStringPaged, self).__init__(*args, **kwargs)

@@ -12,16 +12,16 @@
 from msrest.paging import Paged
 
 
-class AutoscaleSettingResourcePaged(Paged):
+class MetricPaged(Paged):
     """
-    A paging container for iterating over a list of AutoscaleSettingResource object
+    A paging container for iterating over a list of Metric object
     """
 
     _attribute_map = {
         'next_link': {'key': 'nextLink', 'type': 'str'},
-        'current_page': {'key': 'value', 'type': '[AutoscaleSettingResource]'}
+        'current_page': {'key': 'value', 'type': '[Metric]'}
     }
 
     def __init__(self, *args, **kwargs):
 
-        super(AutoscaleSettingResourcePaged, self).__init__(*args, **kwargs)
+        super(MetricPaged, self).__init__(*args, **kwargs)

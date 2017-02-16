@@ -12,16 +12,16 @@
 from msrest.paging import Paged
 
 
-class IncidentPaged(Paged):
+class MetricDefinitionPaged(Paged):
     """
-    A paging container for iterating over a list of Incident object
+    A paging container for iterating over a list of MetricDefinition object
     """
 
     _attribute_map = {
         'next_link': {'key': 'nextLink', 'type': 'str'},
-        'current_page': {'key': 'value', 'type': '[Incident]'}
+        'current_page': {'key': 'value', 'type': '[MetricDefinition]'}
     }
 
     def __init__(self, *args, **kwargs):
 
-        super(IncidentPaged, self).__init__(*args, **kwargs)
+        super(MetricDefinitionPaged, self).__init__(*args, **kwargs)
