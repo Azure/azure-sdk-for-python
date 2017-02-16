@@ -9,5 +9,19 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-VERSION = "0.2.0"
+from msrest.paging import Paged
 
+
+class IncidentPaged(Paged):
+    """
+    A paging container for iterating over a list of Incident object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[Incident]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(IncidentPaged, self).__init__(*args, **kwargs)

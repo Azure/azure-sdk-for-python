@@ -9,5 +9,19 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-VERSION = "0.2.0"
+from msrest.paging import Paged
 
+
+class AutoscaleSettingResourcePaged(Paged):
+    """
+    A paging container for iterating over a list of AutoscaleSettingResource object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[AutoscaleSettingResource]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(AutoscaleSettingResourcePaged, self).__init__(*args, **kwargs)

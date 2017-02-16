@@ -12,8 +12,8 @@
 from .resource import Resource
 
 
-class LogProfileResource(Resource):
-    """The log profile resource.
+class ServiceDiagnosticSettingsResource(Resource):
+    """Description of a service diagnostic setting.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -28,32 +28,31 @@ class LogProfileResource(Resource):
     :type location: str
     :param tags: Resource tags
     :type tags: dict
-    :param storage_account_id: the resource id of the storage account to which
-     you would like to send the Activity Log.
+    :param storage_account_id: The resource ID of the storage account to which
+     you would like to send Diagnostic Logs.
     :type storage_account_id: str
     :param service_bus_rule_id: The service bus rule ID of the service bus
      namespace in which you would like to have Event Hubs created for streaming
-     the Activity Log. The rule ID is of the format: '{service bus resource
+     Diagnostic Logs. The rule ID is of the format: '{service bus resource
      ID}/authorizationrules/{key name}'.
     :type service_bus_rule_id: str
-    :param locations: List of regions for which Activity Log events should be
-     stored or streamed. It is a comma separated list of valid ARM locations
-     including the 'global' location.
-    :type locations: list of str
-    :param categories: the categories of the logs. These categories are
-     created as is convenient to the user. Some values are: 'Write', 'Delete',
-     and/or 'Action.'
-    :type categories: list of str
-    :param retention_policy: the retention policy for the events in the log.
-    :type retention_policy: :class:`RetentionPolicy
-     <azure.mgmt.monitor.models.RetentionPolicy>`
+    :param metrics: the list of metric settings.
+    :type metrics: list of :class:`MetricSettings
+     <azure.monitor.models.MetricSettings>`
+    :param logs: the list of logs settings.
+    :type logs: list of :class:`LogSettings
+     <azure.monitor.models.LogSettings>`
+    :param workspace_id: The workspace ID (resource ID of a Log Analytics
+     workspace) for a Log Analytics workspace to which you would like to send
+     Diagnostic Logs. Example:
+     /subscriptions/4b9e8510-67ab-4e9a-95a9-e2f1e570ea9c/resourceGroups/insights-integration/providers/Microsoft.OperationalInsights/workspaces/viruela2
+    :type workspace_id: str
     """
 
     _validation = {
         'id': {'readonly': True},
         'type': {'readonly': True},
         'location': {'required': True},
-        'locations': {'required': True},
     }
 
     _attribute_map = {
@@ -64,15 +63,15 @@ class LogProfileResource(Resource):
         'tags': {'key': 'tags', 'type': '{str}'},
         'storage_account_id': {'key': 'properties.storageAccountId', 'type': 'str'},
         'service_bus_rule_id': {'key': 'properties.serviceBusRuleId', 'type': 'str'},
-        'locations': {'key': 'properties.locations', 'type': '[str]'},
-        'categories': {'key': 'properties.categories', 'type': '[str]'},
-        'retention_policy': {'key': 'properties.retentionPolicy', 'type': 'RetentionPolicy'},
+        'metrics': {'key': 'properties.metrics', 'type': '[MetricSettings]'},
+        'logs': {'key': 'properties.logs', 'type': '[LogSettings]'},
+        'workspace_id': {'key': 'properties.workspaceId', 'type': 'str'},
     }
 
-    def __init__(self, location, locations, name=None, tags=None, storage_account_id=None, service_bus_rule_id=None, categories=None, retention_policy=None):
-        super(LogProfileResource, self).__init__(name=name, location=location, tags=tags)
+    def __init__(self, location, name=None, tags=None, storage_account_id=None, service_bus_rule_id=None, metrics=None, logs=None, workspace_id=None):
+        super(ServiceDiagnosticSettingsResource, self).__init__(name=name, location=location, tags=tags)
         self.storage_account_id = storage_account_id
         self.service_bus_rule_id = service_bus_rule_id
-        self.locations = locations
-        self.categories = categories
-        self.retention_policy = retention_policy
+        self.metrics = metrics
+        self.logs = logs
+        self.workspace_id = workspace_id
