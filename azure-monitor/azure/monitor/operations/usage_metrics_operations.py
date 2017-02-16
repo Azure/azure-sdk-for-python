@@ -23,7 +23,6 @@ class UsageMetricsOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An objec model deserializer.
-    :ivar api_version: Client Api Version. NOTE: This is not a client property, it must be explicit in the call and there is no default value. Constant value: "2014-04-01".
     """
 
     def __init__(self, client, config, serializer, deserializer):
@@ -31,16 +30,19 @@ class UsageMetricsOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2014-04-01"
 
         self.config = config
 
     def list(
-            self, resource_uri, filter=None, custom_headers=None, raw=False, **operation_config):
+            self, resource_uri, api_version, filter=None, custom_headers=None, raw=False, **operation_config):
         """The List operation lists the usage metrics for the resource.
 
         :param resource_uri: The identifier of the resource.
         :type resource_uri: str
+        :param api_version: Client Api Version. NOTE: This is not a client
+         property, it must be explicit in the call and there is no default
+         value.
+        :type api_version: str
         :param filter: The filter to apply on the operation.
         :type filter: str
         :param dict custom_headers: headers that will be added to the request
@@ -64,7 +66,7 @@ class UsageMetricsOperations(object):
 
                 # Construct parameters
                 query_parameters = {}
-                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+                query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
                 if filter is not None:
                     query_parameters['$filter'] = self._serialize.query("filter", filter, 'str')
 

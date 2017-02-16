@@ -15,6 +15,10 @@ from msrest.serialization import Model
 class Metric(Model):
     """A set of metric values in a time range.
 
+    :param id: the id, resourceId, of the metric.
+    :type id: str
+    :param type: the resource type of the metric resource.
+    :type type: str
     :param name: the name and the display name of the metric, i.e. it is
      localizable string.
     :type name: :class:`LocalizableString
@@ -35,12 +39,16 @@ class Metric(Model):
     }
 
     _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
         'name': {'key': 'name', 'type': 'LocalizableString'},
         'unit': {'key': 'unit', 'type': 'Unit'},
         'data': {'key': 'data', 'type': '[MetricValue]'},
     }
 
-    def __init__(self, name, unit, data):
+    def __init__(self, name, unit, data, id=None, type=None):
+        self.id = id
+        self.type = type
         self.name = name
         self.unit = unit
         self.data = data

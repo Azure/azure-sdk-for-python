@@ -55,8 +55,7 @@ class ServiceDiagnosticSettingsOperations(object):
         # Construct URL
         url = '/{resourceUri}/providers/microsoft.insights/diagnosticSettings/service'
         path_format_arguments = {
-            'resourceUri': self._serialize.url("resource_uri", resource_uri, 'str'),
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+            'resourceUri': self._serialize.url("resource_uri", resource_uri, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -101,8 +100,8 @@ class ServiceDiagnosticSettingsOperations(object):
         :param resource_uri: The identifier of the resource.
         :type resource_uri: str
         :param parameters: Parameters supplied to the operation.
-        :type parameters: :class:`ServiceDiagnosticSettings
-         <azure.mgmt.monitor.models.ServiceDiagnosticSettings>`
+        :type parameters: :class:`ServiceDiagnosticSettingsResource
+         <azure.mgmt.monitor.models.ServiceDiagnosticSettingsResource>`
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -117,8 +116,7 @@ class ServiceDiagnosticSettingsOperations(object):
         # Construct URL
         url = '/{resourceUri}/providers/microsoft.insights/diagnosticSettings/service'
         path_format_arguments = {
-            'resourceUri': self._serialize.url("resource_uri", resource_uri, 'str'),
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+            'resourceUri': self._serialize.url("resource_uri", resource_uri, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -137,7 +135,7 @@ class ServiceDiagnosticSettingsOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct body
-        body_content = self._serialize.body(parameters, 'ServiceDiagnosticSettings')
+        body_content = self._serialize.body(parameters, 'ServiceDiagnosticSettingsResource')
 
         # Construct and send request
         request = self._client.put(url, query_parameters)

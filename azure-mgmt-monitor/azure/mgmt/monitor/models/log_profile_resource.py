@@ -53,7 +53,6 @@ class LogProfileResource(Resource):
         'id': {'readonly': True},
         'type': {'readonly': True},
         'location': {'required': True},
-        'storage_account_id': {'required': True},
         'locations': {'required': True},
     }
 
@@ -70,7 +69,7 @@ class LogProfileResource(Resource):
         'retention_policy': {'key': 'properties.retentionPolicy', 'type': 'RetentionPolicy'},
     }
 
-    def __init__(self, location, storage_account_id, locations, name=None, tags=None, service_bus_rule_id=None, categories=None, retention_policy=None):
+    def __init__(self, location, locations, name=None, tags=None, storage_account_id=None, service_bus_rule_id=None, categories=None, retention_policy=None):
         super(LogProfileResource, self).__init__(name=name, location=location, tags=tags)
         self.storage_account_id = storage_account_id
         self.service_bus_rule_id = service_bus_rule_id
