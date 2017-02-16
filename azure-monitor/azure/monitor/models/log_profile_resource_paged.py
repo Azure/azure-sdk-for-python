@@ -9,5 +9,19 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-VERSION = "0.2.0"
+from msrest.paging import Paged
 
+
+class LogProfileResourcePaged(Paged):
+    """
+    A paging container for iterating over a list of LogProfileResource object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[LogProfileResource]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(LogProfileResourcePaged, self).__init__(*args, **kwargs)

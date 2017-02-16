@@ -9,5 +9,19 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-VERSION = "0.2.0"
+from msrest.paging import Paged
 
+
+class AlertRuleResourcePaged(Paged):
+    """
+    A paging container for iterating over a list of AlertRuleResource object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[AlertRuleResource]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(AlertRuleResourcePaged, self).__init__(*args, **kwargs)

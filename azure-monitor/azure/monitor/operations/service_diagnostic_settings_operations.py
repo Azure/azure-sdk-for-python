@@ -47,7 +47,7 @@ class ServiceDiagnosticSettingsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`ServiceDiagnosticSettingsResource
-         <azure.mgmt.monitor.models.ServiceDiagnosticSettingsResource>`
+         <azure.monitor.models.ServiceDiagnosticSettingsResource>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
@@ -101,14 +101,14 @@ class ServiceDiagnosticSettingsOperations(object):
         :type resource_uri: str
         :param parameters: Parameters supplied to the operation.
         :type parameters: :class:`ServiceDiagnosticSettingsResource
-         <azure.mgmt.monitor.models.ServiceDiagnosticSettingsResource>`
+         <azure.monitor.models.ServiceDiagnosticSettingsResource>`
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`ServiceDiagnosticSettingsResource
-         <azure.mgmt.monitor.models.ServiceDiagnosticSettingsResource>`
+         <azure.monitor.models.ServiceDiagnosticSettingsResource>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`

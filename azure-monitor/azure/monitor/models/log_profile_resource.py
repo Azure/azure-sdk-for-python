@@ -46,7 +46,7 @@ class LogProfileResource(Resource):
     :type categories: list of str
     :param retention_policy: the retention policy for the events in the log.
     :type retention_policy: :class:`RetentionPolicy
-     <azure.mgmt.monitor.models.RetentionPolicy>`
+     <azure.monitor.models.RetentionPolicy>`
     """
 
     _validation = {
