@@ -83,7 +83,7 @@ listed before.
 
 - azure-keyvault 0.1.0
 - azure-graphrbac 0.30.0rc6
-- azure-monitor 0.1.0
+- azure-monitor 0.2.0
 - azure-mgmt-authorization 0.30.0rc6
 - azure-mgmt-cdn 0.30.2
 - azure-mgmt-cognitiveservices 0.30.0rc6
@@ -95,6 +95,7 @@ listed before.
 - azure-mgmt-eventhub 0.2.0
 - azure-mgmt-iothub 0.2.1
 - azure-mgmt-media 0.1.1
+- azure-mgmt-monitor 0.1.0
 - azure-mgmt-notificationhubs 0.30.0
 - azure-mgmt-powerbiembedded 0.30.0rc6
 - azure-mgmt-search 0.1.0

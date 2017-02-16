@@ -67,7 +67,7 @@ Preview packages
 Package name                          Version  
 ===================================== =========
 azure-keyvault                        0.1.0
-azure-monitor                         0.1.0
+azure-monitor                         0.2.0
 azure-mgmt-resource                   0.31.0
 azure-mgmt-compute                    0.33.0
 azure-mgmt-network                    0.30.0
@@ -85,6 +85,7 @@ azure-mgmt-documentdb                 0.1.0
 azure-mgmt-eventhub                   0.2.0
 azure-mgmt-iothub                     0.2.1
 azure-mgmt-media                      0.1.1
+azure-mgmt-monitor                    0.1.0
 azure-mgmt-notificationhubs           0.30.0
 azure-mgmt-powerbiembedded            0.30.0rc6
 azure-mgmt-search                     0.1.0
