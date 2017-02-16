@@ -170,7 +170,7 @@
       "output_dir": "azure-mgmt-media/azure/mgmt/media"
     },  
     "monitor.mgmt": {
-      "swagger": "arm-insights/compositeInsightsManagementClient.json",
+      "swagger": "arm-monitor/compositeMonitorManagementClient.json",
       "autorest_options": {
         "Namespace": "azure.mgmt.monitor",
         "Modeler": "CompositeSwagger",
@@ -179,11 +179,11 @@
       "output_dir": "azure-mgmt-monitor/azure/mgmt/monitor"
     },
     "monitor.data": {
-      "swagger": "insights/compositeInsightsClient.json",
+      "swagger": "arm-monitor/compositeMonitorManagementClient.json",
       "autorest_options": {
         "Namespace": "azure.monitor",
         "Modeler": "CompositeSwagger",
-        "PackageVersion": "0.1.0"
+        "PackageVersion": "0.2.0"
       },
       "output_dir": "azure-monitor/azure/monitor"
     },
