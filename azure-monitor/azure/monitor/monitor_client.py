@@ -15,15 +15,15 @@ from msrestazure import AzureConfiguration
 from .version import VERSION
 from .operations.usage_metrics_operations import UsageMetricsOperations
 from .operations.event_categories_operations import EventCategoriesOperations
-from .operations.events_operations import EventsOperations
-from .operations.tenant_events_operations import TenantEventsOperations
+from .operations.activity_logs_operations import ActivityLogsOperations
+from .operations.tenant_activity_logs_operations import TenantActivityLogsOperations
 from .operations.metric_definitions_operations import MetricDefinitionsOperations
 from .operations.metrics_operations import MetricsOperations
 from . import models
 
 
-class InsightsClientConfiguration(AzureConfiguration):
-    """Configuration for InsightsClient
+class MonitorClientConfiguration(AzureConfiguration):
+    """Configuration for MonitorClient
     Note that all parameters used to create this instance are saved as instance
     attributes.
 
@@ -32,22 +32,11 @@ class InsightsClientConfiguration(AzureConfiguration):
      object<msrestazure.azure_active_directory>`
     :param subscription_id: The Azure subscription Id.
     :type subscription_id: str
-    :param accept_language: Gets or sets the preferred language for the
-     response.
-    :type accept_language: str
-    :param long_running_operation_retry_timeout: Gets or sets the retry
-     timeout in seconds for Long Running Operations. Default value is 30.
-    :type long_running_operation_retry_timeout: int
-    :param generate_client_request_id: When set to true a unique
-     x-ms-client-request-id value is generated and included in each request.
-     Default is true.
-    :type generate_client_request_id: bool
     :param str base_url: Service URL
-    :param str filepath: Existing config
     """
 
     def __init__(
-            self, credentials, subscription_id, accept_language='en-US', long_running_operation_retry_timeout=30, generate_client_request_id=True, base_url=None, filepath=None):
+            self, credentials, subscription_id, base_url=None):
 
         if credentials is None:
             raise ValueError("Parameter 'credentials' must not be None.")
@@ -55,37 +44,32 @@ class InsightsClientConfiguration(AzureConfiguration):
             raise ValueError("Parameter 'subscription_id' must not be None.")
         if not isinstance(subscription_id, str):
             raise TypeError("Parameter 'subscription_id' must be str.")
-        if accept_language is not None and not isinstance(accept_language, str):
-            raise TypeError("Optional parameter 'accept_language' must be str.")
         if not base_url:
             base_url = 'https://management.azure.com'
 
-        super(InsightsClientConfiguration, self).__init__(base_url, filepath)
+        super(MonitorClientConfiguration, self).__init__(base_url)
 
-        self.add_user_agent('insightsclient/{}'.format(VERSION))
+        self.add_user_agent('monitorclient/{}'.format(VERSION))
         self.add_user_agent('Azure-SDK-For-Python')
 
         self.credentials = credentials
         self.subscription_id = subscription_id
-        self.accept_language = accept_language
-        self.long_running_operation_retry_timeout = long_running_operation_retry_timeout
-        self.generate_client_request_id = generate_client_request_id
 
 
-class InsightsClient(object):
-    """Composite Swagger for Insights Client
+class MonitorClient(object):
+    """Composite Swagger for Monitor Client
 
     :ivar config: Configuration for client.
-    :vartype config: InsightsClientConfiguration
+    :vartype config: MonitorClientConfiguration
 
     :ivar usage_metrics: UsageMetrics operations
     :vartype usage_metrics: .operations.UsageMetricsOperations
     :ivar event_categories: EventCategories operations
     :vartype event_categories: .operations.EventCategoriesOperations
-    :ivar events: Events operations
-    :vartype events: .operations.EventsOperations
-    :ivar tenant_events: TenantEvents operations
-    :vartype tenant_events: .operations.TenantEventsOperations
+    :ivar activity_logs: ActivityLogs operations
+    :vartype activity_logs: .operations.ActivityLogsOperations
+    :ivar tenant_activity_logs: TenantActivityLogs operations
+    :vartype tenant_activity_logs: .operations.TenantActivityLogsOperations
     :ivar metric_definitions: MetricDefinitions operations
     :vartype metric_definitions: .operations.MetricDefinitionsOperations
     :ivar metrics: Metrics operations
@@ -96,24 +80,13 @@ class InsightsClient(object):
      object<msrestazure.azure_active_directory>`
     :param subscription_id: The Azure subscription Id.
     :type subscription_id: str
-    :param accept_language: Gets or sets the preferred language for the
-     response.
-    :type accept_language: str
-    :param long_running_operation_retry_timeout: Gets or sets the retry
-     timeout in seconds for Long Running Operations. Default value is 30.
-    :type long_running_operation_retry_timeout: int
-    :param generate_client_request_id: When set to true a unique
-     x-ms-client-request-id value is generated and included in each request.
-     Default is true.
-    :type generate_client_request_id: bool
     :param str base_url: Service URL
-    :param str filepath: Existing config
     """
 
     def __init__(
-            self, credentials, subscription_id, accept_language='en-US', long_running_operation_retry_timeout=30, generate_client_request_id=True, base_url=None, filepath=None):
+            self, credentials, subscription_id, base_url=None):
 
-        self.config = InsightsClientConfiguration(credentials, subscription_id, accept_language, long_running_operation_retry_timeout, generate_client_request_id, base_url, filepath)
+        self.config = MonitorClientConfiguration(credentials, subscription_id, base_url)
         self._client = ServiceClient(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
@@ -124,9 +97,9 @@ class InsightsClient(object):
             self._client, self.config, self._serialize, self._deserialize)
         self.event_categories = EventCategoriesOperations(
             self._client, self.config, self._serialize, self._deserialize)
-        self.events = EventsOperations(
+        self.activity_logs = ActivityLogsOperations(
             self._client, self.config, self._serialize, self._deserialize)
-        self.tenant_events = TenantEventsOperations(
+        self.tenant_activity_logs = TenantActivityLogsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.metric_definitions = MetricDefinitionsOperations(
             self._client, self.config, self._serialize, self._deserialize)

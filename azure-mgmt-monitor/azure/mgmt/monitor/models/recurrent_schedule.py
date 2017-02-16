@@ -15,8 +15,8 @@ from msrest.serialization import Model
 class RecurrentSchedule(Model):
     """The scheduling constraints for when the profile begins.
 
-    :param time_zone: the time zone for the hours of the profile. See examples
-     of valid timezone are: Dateline Standard Time, UTC-11, Hawaiian Standard
+    :param time_zone: the timezone for the hours of the profile. Some examples
+     of valid timezones are: Dateline Standard Time, UTC-11, Hawaiian Standard
      Time, Alaskan Standard Time, Pacific Standard Time (Mexico), Pacific
      Standard Time, US Mountain Standard Time, Mountain Standard Time (Mexico),
      Mountain Standard Time, Central America Standard Time, Central Standard
