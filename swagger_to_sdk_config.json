@@ -25,10 +25,10 @@
       "output_dir": "azure-mgmt-authorization/azure/mgmt/authorization"
     },
     "batch.management": {
-      "swagger": "arm-batch/2015-12-01/swagger/BatchManagement.json",
+      "swagger": "arm-batch/2017-01-01/swagger/BatchManagement.json",
       "autorest_options": {
         "Namespace": "azure.mgmt.batch",
-        "PackageVersion": "2.0.0"
+        "PackageVersion": "3.0.0"
       },
       "output_dir": "azure-mgmt-batch/azure/mgmt/batch"
     },
@@ -333,10 +333,10 @@
       "output_dir": "azure-mgmt-web/azure/mgmt/web/"
     },
     "batch": {
-      "swagger": "batch/2016-07-01.3.1/swagger/BatchService.json",
+      "swagger": "batch/2017-01-01.4.0/swagger/BatchService.json",
       "autorest_options": {
         "Namespace": "azure.batch",
-        "PackageVersion": "1.1.0"
+        "PackageVersion": "2.0.0"
       },
       "output_dir": "azure-batch/azure/batch/",
       "wrapper_filesOrDirs": [
