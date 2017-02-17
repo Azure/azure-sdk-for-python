@@ -27,6 +27,7 @@ from testutils.common_recordingtestcase import record
 import azure.mgmt.resource
 import azure.mgmt.storage
 import azure.mgmt.batch
+import azure.mgmt.keyvault
 import azure.batch as batch
 from azure.batch.batch_auth import SharedKeyCredentials
 from msrestazure.azure_active_directory import AADTokenCredentials
@@ -35,13 +36,15 @@ from azure.common.credentials import ServicePrincipalCredentials
 
 AZURE_BATCH_ACCOUNT = 'pythonsdktest'
 AZURE_RESOURCE_GROUP = 'python_batch_sdk_test'
-AZURE_LOCATION = 'eastus'
+AZURE_LOCATION = 'westeurope'
 AZURE_STORAGE_ACCOUNT = 'pythonsdkbatchtest'
+AZURE_KEY_VAULT = 'pythonsdkbatchtest'
+AZURE_TENANT_ID = 'microsoft.onmicrosoft.com'
 EXISTING_RESOURCES = True
 CLEAN_UP = False
 
 LOG = logging.getLogger('batch-python-tests')
-LOG.level = logging.DEBUG
+LOG.level = logging.WARNING
 LOG.addHandler(logging.StreamHandler())
 
 def init_tst_mode(working_folder):
@@ -83,6 +86,31 @@ def create_resource_group(client):
     return result_create
 
 
+def create_keyvault(client):
+    result_create = client.vaults.create_or_update(
+        AZURE_RESOURCE_GROUP,
+        AZURE_KEY_VAULT,
+        {
+            'location': 'eastus2',
+            'properties': {
+                'sku': {'name': 'standard'},
+                'tenant_id': "72f988bf-86f1-41af-91ab-2d7cd011db47",
+                'enabled_for_deployment': True,
+                'enabled_for_disk_encryption': True,
+                'enabled_for_template_deployment': True,
+                'access_policies': [ {
+                    'tenant_id': "72f988bf-86f1-41af-91ab-2d7cd011db47",
+                    'object_id': "f520d84c-3fd3-4cc8-88d4-2ed25b00d27a",
+                    'permissions': {
+                        'keys': ['all'],
+                        'secrets': ['all']
+                    }
+                }]
+            }
+        })
+    return result_create
+
+
 def create_storage_account(client):
     params = azure.mgmt.storage.models.StorageAccountCreateParameters(
         sku=azure.mgmt.storage.models.Sku(
@@ -116,7 +144,7 @@ def create_batch_account(client, settings, live):
         account_keys = client.batch_account.get_keys(AZURE_RESOURCE_GROUP, AZURE_BATCH_ACCOUNT)
         shared_key_creds = SharedKeyCredentials(AZURE_BATCH_ACCOUNT, account_keys.primary)
         aad_creds = ServicePrincipalCredentials(settings.BATCH_CLIENT_ID, settings.BATCH_SECRET,
-            tenant='microsoft.onmicrosoft.com',
+            tenant=AZURE_TENANT_ID,
             resource='https://batch.core.windows.net/')
     else:
         shared_key_creds = SharedKeyCredentials(AZURE_BATCH_ACCOUNT, 'ZmFrZV9hY29jdW50X2tleQ==')
@@ -152,6 +180,10 @@ class BatchMgmtTestCase(RecordingTestCase):
             cls.resource_client = create_mgmt_client(cls.settings,
                 azure.mgmt.resource.resources.ResourceManagementClient
             )
+            LOG.debug('    creating keyvault client')
+            cls.keyvault_client = create_mgmt_client(cls.settings,
+                azure.mgmt.keyvault.KeyVaultManagementClient
+            )
             LOG.debug('    creating storage client')
             cls.storage_client = create_mgmt_client(cls.settings,
                 azure.mgmt.storage.StorageManagementClient
@@ -165,6 +197,8 @@ class BatchMgmtTestCase(RecordingTestCase):
                 create_resource_group(cls.resource_client)
                 LOG.debug('    creating storage')
                 create_storage_account(cls.storage_client)
+                LOG.debug('    creating keyvault')
+                create_keyvault(cls.keyvault_client)
             LOG.debug('    creating batch account')
             cls.batch_client_sk, cls.batch_client_aad = create_batch_account(cls.batch_mgmt_client, cls.settings, cls.live)
         except Exception as err:
@@ -217,6 +251,17 @@ class BatchMgmtTestCase(RecordingTestCase):
         except Exception as err:
             if message not in error:
                 error[message] = "Expected BatchErrorExcption, instead got: {!r}".format(err)
+
+    def assertCloudError(self, error, message, code, func, *args, **kwargs):
+        try:
+            func(*args, **kwargs)
+            if message not in error:
+                error[message] = "CloudError expected but not raised"
+        except azure.common.exceptions.CloudError as err:
+            self.assertTrue(error, message, code in str(err))
+        except Exception as err:
+            if message not in error:
+                error[message] = "Expected CloudError, instead got: {!r}".format(err)
 
     def assertRuns(self, error, message, func, *args, **kwargs):
         try:
@@ -274,7 +319,38 @@ class BatchMgmtTestCase(RecordingTestCase):
                                  AZURE_LOCATION)
         self.assertTrue(_e, _m, isinstance(quotas, azure.mgmt.batch.models.BatchLocationQuota))
         if quotas:
-            self.assertEqual(_e, _m, quotas.account_quota, 1)    
+            self.assertEqual(_e, _m, quotas.account_quota, 1)
+
+        _m = "Test Create BYOS Account"
+        LOG.debug(_m)
+        batch_account = azure.mgmt.batch.models.BatchAccountCreateParameters(
+                location='eastus2',
+                pool_allocation_mode=azure.mgmt.batch.models.PoolAllocationMode.user_subscription)
+        creating = self.assertRuns(_e, _m, self.batch_mgmt_client.batch_account.create,
+                                   AZURE_RESOURCE_GROUP,
+                                   'batchpythonaccounttest',
+                                    batch_account)
+        try:
+            creating.result()
+            _e[_m] = "Expected CloudError to be raised."
+        except Exception as error:
+            # TODO: Figure out why this deserializes to HTTPError rather than CloudError
+            if hasattr(error.inner_exception, 'error'):
+                self.assertEqual(_e, _m, error.inner_exception.error, "InvalidRequestBody")
+
+        _m = "Test Create Account with Key Vault Reference"
+        keyvault_id = "/subscriptions/{}/resourceGroups/{}/providers/Microsoft.KeyVault/vaults/{}".format(
+            self.settings.SUBSCRIPTION_ID, AZURE_RESOURCE_GROUP, AZURE_KEY_VAULT)
+        keyvault_url = "https://{}.vault.azure.net/".format(AZURE_KEY_VAULT)
+        batch_account = azure.mgmt.batch.models.BatchAccountCreateParameters(
+                location='eastus2',
+                pool_allocation_mode=azure.mgmt.batch.models.PoolAllocationMode.user_subscription,
+                key_vault_reference={'id': keyvault_id, 'url': keyvault_url})
+        creating = self.assertRuns(_e, _m, self.batch_mgmt_client.batch_account.create,
+                                   AZURE_RESOURCE_GROUP,
+                                   'batchpythonaccounttest',
+                                    batch_account)
+        self.assertRuns(_e, _m, creating.result)
 
         _m = "Test Get Account"
         LOG.debug(_m)
@@ -284,6 +360,7 @@ class BatchMgmtTestCase(RecordingTestCase):
         if account:
             self.assertEqual(_e, _m, account.core_quota, 20)
             self.assertEqual(_e, _m, account.pool_quota, 20)
+            self.assertEqual(_e, _m, account.pool_allocation_mode.value, 'BatchService')
 
         _m = "Test List Accounts"  #TODO: Need to re-record
         LOG.debug('TODO: ' + _m)
@@ -294,7 +371,7 @@ class BatchMgmtTestCase(RecordingTestCase):
         LOG.debug(_m)
         accounts = self.assertList(_e, _m, self.batch_mgmt_client.batch_account.list_by_resource_group,
                                    AZURE_RESOURCE_GROUP)
-        self.assertEqual(_e, _m, len(accounts), 1)
+        self.assertEqual(_e, _m, len(accounts), 2)
 
         _m = "Test Regenerate Account Key"
         LOG.debug(_m)
@@ -310,13 +387,19 @@ class BatchMgmtTestCase(RecordingTestCase):
 
         _m = "Test Update Account"
         LOG.debug(_m)
-        tags = {'Name': 'tagName', 'Value': 'tagValue'}
+        update_params = {'tags': {'Name': 'tagName', 'Value': 'tagValue'}}
         updated = self.assertRuns(_e, _m, self.batch_mgmt_client.batch_account.update,
-                                   AZURE_RESOURCE_GROUP, AZURE_BATCH_ACCOUNT, tags)
+                                   AZURE_RESOURCE_GROUP, AZURE_BATCH_ACCOUNT, update_params)
         self.assertTrue(_e, _m, isinstance(updated, azure.mgmt.batch.models.BatchAccount))
-        if account:
+        if updated:
             self.assertEqual(_e, _m, updated.tags['Name'], 'tagName')
             self.assertEqual(_e, _m, updated.tags['Value'], 'tagValue')
+
+        _m = "Test Delete Account"
+        LOG.debug(_m)
+        response = self.assertRuns(_e, _m, self.batch_mgmt_client.batch_account.delete,
+                                   AZURE_RESOURCE_GROUP, 'batchpythonaccounttest')
+        self.assertIsNone(_e, _m, response.result())
 
         self.assertSuccess(_e)
 
@@ -497,7 +580,7 @@ class BatchMgmtTestCase(RecordingTestCase):
                 pool = batch.models.PoolAddParameter(
                     'no_pool', 'Standard_A1',
                     virtual_machine_configuration=pool_config)
-                self.assertBatchError(_e, _m, 'Forbidden',
+                self.assertBatchError(_e, _m, 'InvalidPropertyValue',
                                       self.batch_client_sk.pool.add,
                                       pool, batch.models.PoolAddOptions(timeout=45))
 
