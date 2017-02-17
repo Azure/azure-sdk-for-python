@@ -16,27 +16,40 @@ class ApplicationPackage(Model):
     """An application package which represents a particular version of an
     application.
 
-    :param id: The ID of the application.
-    :type id: str
-    :param version: The version of the application package.
-    :type version: str
-    :param state: The current state of the application package. Possible
-     values include: 'pending', 'active', 'unmapped'
-    :type state: str or :class:`PackageState
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar id: The ID of the application.
+    :vartype id: str
+    :ivar version: The version of the application package.
+    :vartype version: str
+    :ivar state: The current state of the application package. Possible values
+     include: 'pending', 'active', 'unmapped'
+    :vartype state: str or :class:`PackageState
      <azure.mgmt.batch.models.PackageState>`
-    :param format: The format of the application package, if the package is
+    :ivar format: The format of the application package, if the package is
      active.
-    :type format: str
-    :param storage_url: The storage URL at which the application package is
+    :vartype format: str
+    :ivar storage_url: The storage URL at which the application package is
      stored.
-    :type storage_url: str
-    :param storage_url_expiry: The UTC time at which the storage URL will
+    :vartype storage_url: str
+    :ivar storage_url_expiry: The UTC time at which the storage URL will
      expire.
-    :type storage_url_expiry: datetime
-    :param last_activation_time: The time at which the package was last
+    :vartype storage_url_expiry: datetime
+    :ivar last_activation_time: The time at which the package was last
      activated, if the package is active.
-    :type last_activation_time: datetime
+    :vartype last_activation_time: datetime
     """
+
+    _validation = {
+        'id': {'readonly': True},
+        'version': {'readonly': True},
+        'state': {'readonly': True},
+        'format': {'readonly': True},
+        'storage_url': {'readonly': True},
+        'storage_url_expiry': {'readonly': True},
+        'last_activation_time': {'readonly': True},
+    }
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
@@ -48,11 +61,11 @@ class ApplicationPackage(Model):
         'last_activation_time': {'key': 'lastActivationTime', 'type': 'iso-8601'},
     }
 
-    def __init__(self, id=None, version=None, state=None, format=None, storage_url=None, storage_url_expiry=None, last_activation_time=None):
-        self.id = id
-        self.version = version
-        self.state = state
-        self.format = format
-        self.storage_url = storage_url
-        self.storage_url_expiry = storage_url_expiry
-        self.last_activation_time = last_activation_time
+    def __init__(self):
+        self.id = None
+        self.version = None
+        self.state = None
+        self.format = None
+        self.storage_url = None
+        self.storage_url_expiry = None
+        self.last_activation_time = None
