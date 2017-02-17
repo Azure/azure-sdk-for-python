@@ -10,9 +10,16 @@ Create the Batch client
 The following code creates an instance of the Batch client.
 The Batch client provides access to create pools, manage and schedule jobs, and access compute nodes.
 
-For creating and managing Batch accounts, including retrieving account URL and keys, 
-see the :doc:`Batch Management Client <resourcemanagementbatch>`.
+A Batch Account that allows the Batch Service to allocate pools can be authenticated either via
+Shared Key authentication, or an Azure Active Directory token. Batch Accounts configured to
+allocate pools into the users subscription must be authenticated with an Azure Active Directory token.
 
+For more information on creating and managing Batch accounts, including retrieving account URL and keys,
+and pool allocation modes, see the :doc:`Batch Management Client <resourcemanagementbatch>`.
+
+
+Shared Key Authentication
+~~~~~~~~~~~~~~~~~~~~~~~~~
 
 .. code:: python
 
@@ -21,6 +28,25 @@ see the :doc:`Batch Management Client <resourcemanagementbatch>`.
 
     credentials = SharedKeyCredentials(BATCH_ACCOUNT_NAME, BATCH_ACCOUNT_KEY)
     batch_client = BatchServiceClient(
+        credentials,
+        base_url=BATCH_ACCOUNT_URL
+    )
+
+Azure Active Directory Authentication
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. code:: python
+
+    from azure.batch import BatchServiceClient
+    from azure.common.credentials import ServicePrincipalCredentials
+
+    credentials = ServicePrincipalCredentials(
+        client_id=CLIENT_ID,
+        secret=SECRET,
+        tenant=TENANT_ID,
+        resource="https://batch.core.windows.net/"
+    )
+	batch_client = BatchServiceClient(
         credentials,
         base_url=BATCH_ACCOUNT_URL
     )
