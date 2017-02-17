@@ -3,6 +3,16 @@
 Release History
 ===============
 
+2.0.0 (2017-02-17)
+++++++++++++++++++
+
+- AAD token authentication now supported.
+- Support for running tasks under a predefined or automatic user account.
+- Tasks now have an optional scoped authentication token.
+- Support for creating pools with a list of user accounts.
+- Support for creating pools using a custom VM image (only supported on accounts created with a "User Subscription" pool allocation mode.).
+
+
 1.1.0 (2016-09-15)
 ++++++++++++++++++
 
