@@ -15,14 +15,21 @@ from msrest.serialization import Model
 class BatchLocationQuota(Model):
     """Quotas associated with a Batch region for a particular subscription.
 
-    :param account_quota: The number of Batch accounts that may be created
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar account_quota: The number of Batch accounts that may be created
      under the subscription in the specified region.
-    :type account_quota: int
+    :vartype account_quota: int
     """
+
+    _validation = {
+        'account_quota': {'readonly': True},
+    }
 
     _attribute_map = {
         'account_quota': {'key': 'accountQuota', 'type': 'int'},
     }
 
-    def __init__(self, account_quota=None):
-        self.account_quota = account_quota
+    def __init__(self):
+        self.account_quota = None

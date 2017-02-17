@@ -19,6 +19,9 @@ class BatchAccountCreateParameters(Model):
     :type location: str
     :param tags: The user specified tags associated with the account.
     :type tags: dict
+    :param auto_storage: The properties related to auto storage account.
+    :type auto_storage: :class:`AutoStorageBaseProperties
+     <azure.mgmt.batch.models.AutoStorageBaseProperties>`
     :param pool_allocation_mode: The allocation mode to use for creating pools
      in the Batch account. The pool allocation mode also affects how clients
      may authenticate to the Batch Service API. If the mode is BatchService,
@@ -32,9 +35,6 @@ class BatchAccountCreateParameters(Model):
      with the Batch account.
     :type key_vault_reference: :class:`KeyVaultReference
      <azure.mgmt.batch.models.KeyVaultReference>`
-    :param auto_storage: The properties related to auto storage account.
-    :type auto_storage: :class:`AutoStorageBaseProperties
-     <azure.mgmt.batch.models.AutoStorageBaseProperties>`
     """
 
     _validation = {
@@ -44,14 +44,14 @@ class BatchAccountCreateParameters(Model):
     _attribute_map = {
         'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
-        'pool_allocation_mode': {'key': 'poolAllocationMode', 'type': 'PoolAllocationMode'},
-        'key_vault_reference': {'key': 'keyVaultReference', 'type': 'KeyVaultReference'},
         'auto_storage': {'key': 'properties.autoStorage', 'type': 'AutoStorageBaseProperties'},
+        'pool_allocation_mode': {'key': 'properties.poolAllocationMode', 'type': 'PoolAllocationMode'},
+        'key_vault_reference': {'key': 'properties.keyVaultReference', 'type': 'KeyVaultReference'},
     }
 
-    def __init__(self, location, tags=None, pool_allocation_mode=None, key_vault_reference=None, auto_storage=None):
+    def __init__(self, location, tags=None, auto_storage=None, pool_allocation_mode=None, key_vault_reference=None):
         self.location = location
         self.tags = tags
+        self.auto_storage = auto_storage
         self.pool_allocation_mode = pool_allocation_mode
         self.key_vault_reference = key_vault_reference
-        self.auto_storage = auto_storage

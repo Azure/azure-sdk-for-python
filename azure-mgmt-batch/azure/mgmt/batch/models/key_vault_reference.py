@@ -18,15 +18,21 @@ class KeyVaultReference(Model):
     :param id: The resource ID of the Azure key vault associated with the
      Batch account.
     :type id: str
+    :param url: The Url of the Azure key vault associated with the Batch
+     account.
+    :type url: str
     """
 
     _validation = {
         'id': {'required': True},
+        'url': {'required': True},
     }
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
+        'url': {'key': 'url', 'type': 'str'},
     }
 
-    def __init__(self, id):
+    def __init__(self, id, url):
         self.id = id
+        self.url = url
