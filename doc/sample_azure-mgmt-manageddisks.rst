@@ -225,7 +225,8 @@ The full sample being:
 Other Operations with Managed Disks
 ===================================
 
-Resizing a managed disk from the Azure CLI is easy and straightforward.
+Resizing a managed disk.
+------------------------
 
 .. code:: python
 
@@ -238,7 +239,8 @@ Resizing a managed disk from the Azure CLI is easy and straightforward.
             )
             async_update.wait()
 
-You can also update the Storage Account type of the Managed Disks.
+Update the Storage Account type of the Managed Disks.
+-----------------------------------------------------
 
 .. code:: python
 
@@ -254,6 +256,7 @@ You can also update the Storage Account type of the Managed Disks.
             async_update.wait()
 
 Create an image from Blob Storage.
+----------------------------------
 
 .. code:: python
 
@@ -274,8 +277,8 @@ Create an image from Blob Storage.
             )
             image = async_create_image.result()
 
-Create a snapshot of a Managed Disk that is currently attached to a
-Virtual Machine.
+Create a snapshot of a Managed Disk that is currently attached to a Virtual Machine.
+------------------------------------------------------------------------------------
 
 .. code:: python
 
