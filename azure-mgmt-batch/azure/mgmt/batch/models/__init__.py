@@ -18,13 +18,11 @@ from .batch_account_regenerate_key_parameters import BatchAccountRegenerateKeyPa
 from .batch_account_keys import BatchAccountKeys
 from .activate_application_package_parameters import ActivateApplicationPackageParameters
 from .add_application_parameters import AddApplicationParameters
-from .application import Application
 from .application_package import ApplicationPackage
+from .application import Application
 from .update_application_parameters import UpdateApplicationParameters
 from .batch_location_quota import BatchLocationQuota
 from .resource import Resource
-from .error_detail import ErrorDetail
-from .error_body import ErrorBody, ErrorBodyException
 from .batch_account_paged import BatchAccountPaged
 from .application_paged import ApplicationPaged
 from .batch_management_client_enums import (
@@ -43,13 +41,11 @@ __all__ = [
     'BatchAccountKeys',
     'ActivateApplicationPackageParameters',
     'AddApplicationParameters',
-    'Application',
     'ApplicationPackage',
+    'Application',
     'UpdateApplicationParameters',
     'BatchLocationQuota',
     'Resource',
-    'ErrorDetail',
-    'ErrorBody', 'ErrorBodyException',
     'BatchAccountPaged',
     'ApplicationPaged',
     'ProvisioningState',

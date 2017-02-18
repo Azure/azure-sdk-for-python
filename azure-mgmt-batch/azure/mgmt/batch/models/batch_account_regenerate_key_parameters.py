@@ -19,7 +19,7 @@ class BatchAccountRegenerateKeyParameters(Model):
      include: 'Primary', 'Secondary'
     :type key_name: str or :class:`AccountKeyType
      <azure.mgmt.batch.models.AccountKeyType>`
-    """ 
+    """
 
     _validation = {
         'key_name': {'required': True},
