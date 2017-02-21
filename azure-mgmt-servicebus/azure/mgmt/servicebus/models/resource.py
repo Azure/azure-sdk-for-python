@@ -13,7 +13,7 @@ from msrest.serialization import Model
 
 
 class Resource(Model):
-    """Resource.
+    """The Resource definition.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -28,7 +28,7 @@ class Resource(Model):
     :type location: str
     :param tags: Resource tags
     :type tags: dict
-    """ 
+    """
 
     _validation = {
         'id': {'readonly': True},

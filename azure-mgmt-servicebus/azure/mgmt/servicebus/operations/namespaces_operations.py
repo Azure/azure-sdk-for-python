@@ -36,8 +36,8 @@ class NamespacesOperations(object):
 
     def list_by_subscription(
             self, custom_headers=None, raw=False, **operation_config):
-        """Gets all the available namespaces within the subscription,
-        irrespective of the resource groups.
+        """Gets all the available namespaces within the subscription, irrespective
+        of the resource groups.
 
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -230,7 +230,7 @@ class NamespacesOperations(object):
 
         def get_long_running_output(response):
 
-            if response.status_code not in [201, 200]:
+            if response.status_code not in [201, 200, 202]:
                 exp = CloudError(response)
                 exp.request_id = response.headers.get('x-ms-request-id')
                 raise exp
