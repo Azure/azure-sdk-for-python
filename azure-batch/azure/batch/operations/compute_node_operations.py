@@ -433,8 +433,8 @@ class ComputeNodeOperations(object):
          <azure.batch.models.ComputeNodeRebootOptions>`
         :param node_reboot_option: When to reboot the compute node and what to
          do with currently running tasks. The default value is requeue.
-         Possible values include: 'requeue', 'terminate', 'taskcompletion',
-         'retaineddata'
+         Possible values include: 'requeue', 'terminate', 'taskCompletion',
+         'retainedData'
         :type node_reboot_option: str or :class:`ComputeNodeRebootOption
          <azure.batch.models.ComputeNodeRebootOption>`
         :param dict custom_headers: headers that will be added to the request
@@ -537,8 +537,8 @@ class ComputeNodeOperations(object):
          <azure.batch.models.ComputeNodeReimageOptions>`
         :param node_reimage_option: When to reimage the compute node and what
          to do with currently running tasks. The default value is requeue.
-         Possible values include: 'requeue', 'terminate', 'taskcompletion',
-         'retaineddata'
+         Possible values include: 'requeue', 'terminate', 'taskCompletion',
+         'retainedData'
         :type node_reimage_option: str or :class:`ComputeNodeReimageOption
          <azure.batch.models.ComputeNodeReimageOption>`
         :param dict custom_headers: headers that will be added to the request
@@ -640,7 +640,7 @@ class ComputeNodeOperations(object):
         :param node_disable_scheduling_option: What to do with currently
          running tasks when disabling task scheduling on the compute node. The
          default value is requeue. Possible values include: 'requeue',
-         'terminate', 'taskcompletion'
+         'terminate', 'taskCompletion'
         :type node_disable_scheduling_option: str or
          :class:`DisableComputeNodeSchedulingOption
          <azure.batch.models.DisableComputeNodeSchedulingOption>`

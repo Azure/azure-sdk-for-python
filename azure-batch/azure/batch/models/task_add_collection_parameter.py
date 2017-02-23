@@ -18,7 +18,7 @@ class TaskAddCollectionParameter(Model):
     :param value: The collection of tasks to add.
     :type value: list of :class:`TaskAddParameter
      <azure.batch.models.TaskAddParameter>`
-    """ 
+    """
 
     _validation = {
         'value': {'required': True, 'max_items': 100},

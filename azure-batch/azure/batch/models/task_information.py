@@ -30,7 +30,7 @@ class TaskInformation(Model):
     :param execution_info: Information about the execution of the task.
     :type execution_info: :class:`TaskExecutionInformation
      <azure.batch.models.TaskExecutionInformation>`
-    """ 
+    """
 
     _validation = {
         'task_state': {'required': True},

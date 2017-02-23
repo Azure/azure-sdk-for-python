@@ -48,7 +48,7 @@ class PoolUsageMetrics(Model):
     :param data_egress_gi_b: The cross data center network egress from the
      pool during this interval, in GiB.
     :type data_egress_gi_b: float
-    """ 
+    """
 
     _validation = {
         'pool_id': {'required': True},

@@ -23,13 +23,14 @@ class PoolResizeParameter(Model):
      5 minutes, the Batch service returns an error; if you are calling the REST
      API directly, the HTTP status code is 400 (Bad Request).
     :type resize_timeout: timedelta
-    :param node_deallocation_option: When nodes may be removed from the pool,
-     if the pool size is decreasing. The default value is requeue. Possible
-     values include: 'requeue', 'terminate', 'taskcompletion', 'retaineddata'
+    :param node_deallocation_option: Determines what to do with a node and its
+     running task(s) if the pool size is decreasing. The default value is
+     requeue. Possible values include: 'requeue', 'terminate',
+     'taskCompletion', 'retainedData'
     :type node_deallocation_option: str or
      :class:`ComputeNodeDeallocationOption
      <azure.batch.models.ComputeNodeDeallocationOption>`
-    """ 
+    """
 
     _validation = {
         'target_dedicated': {'required': True},

@@ -23,7 +23,7 @@ class PoolEvaluateAutoScaleParameter(Model):
      Batch pool
      (https://azure.microsoft.com/en-us/documentation/articles/batch-automatic-scaling).
     :type auto_scale_formula: str
-    """ 
+    """
 
     _validation = {
         'auto_scale_formula': {'required': True},

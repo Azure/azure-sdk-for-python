@@ -19,10 +19,10 @@ class JobPatchParameter(Model):
      -1000 to 1000, with -1000 being the lowest priority and 1000 being the
      highest priority. If omitted, the priority of the job is left unchanged.
     :type priority: int
-    :param on_all_tasks_complete: Specifies an action the Batch service should
-     take when all tasks in the job are in the completed state. If omitted, the
+    :param on_all_tasks_complete: The action the Batch service should take
+     when all tasks in the job are in the completed state. If omitted, the
      completion behavior is left unchanged. You may not change the value from
-     terminatejob to noaction – that is, once you have engaged automatic job
+     terminateJob to noAction - that is, once you have engaged automatic job
      termination, you cannot turn it off again. If you try to do this, the
      request fails with an 'invalid property value' error response; if you are
      calling the REST API directly, the HTTP status code is 400 (Bad Request).
@@ -46,7 +46,7 @@ class JobPatchParameter(Model):
      metadata. If omitted, the existing job metadata is left unchanged.
     :type metadata: list of :class:`MetadataItem
      <azure.batch.models.MetadataItem>`
-    """ 
+    """
 
     _attribute_map = {
         'priority': {'key': 'priority', 'type': 'int'},

@@ -31,9 +31,10 @@ class StartTask(Model):
      the start task.
     :type environment_settings: list of :class:`EnvironmentSetting
      <azure.batch.models.EnvironmentSetting>`
-    :param run_elevated: Whether to run the start task in elevated mode. The
-     default value is false.
-    :type run_elevated: bool
+    :param user_identity: The user identity under which the start task runs.
+     If omitted, the task runs as a non-administrative user unique to the task.
+    :type user_identity: :class:`UserIdentity
+     <azure.batch.models.UserIdentity>`
     :param max_task_retry_count: The maximum number of times the task may be
      retried. The Batch service retries a task if its exit code is nonzero.
      Note that this value specifically controls the number of retries. The
@@ -56,7 +57,7 @@ class StartTask(Model):
      task is still running; and even if the start task fails, new tasks will
      continue to be scheduled on the node. The default is false.
     :type wait_for_success: bool
-    """ 
+    """
 
     _validation = {
         'command_line': {'required': True},
@@ -66,15 +67,15 @@ class StartTask(Model):
         'command_line': {'key': 'commandLine', 'type': 'str'},
         'resource_files': {'key': 'resourceFiles', 'type': '[ResourceFile]'},
         'environment_settings': {'key': 'environmentSettings', 'type': '[EnvironmentSetting]'},
-        'run_elevated': {'key': 'runElevated', 'type': 'bool'},
+        'user_identity': {'key': 'userIdentity', 'type': 'UserIdentity'},
         'max_task_retry_count': {'key': 'maxTaskRetryCount', 'type': 'int'},
         'wait_for_success': {'key': 'waitForSuccess', 'type': 'bool'},
     }
 
-    def __init__(self, command_line, resource_files=None, environment_settings=None, run_elevated=None, max_task_retry_count=None, wait_for_success=None):
+    def __init__(self, command_line, resource_files=None, environment_settings=None, user_identity=None, max_task_retry_count=None, wait_for_success=None):
         self.command_line = command_line
         self.resource_files = resource_files
         self.environment_settings = environment_settings
-        self.run_elevated = run_elevated
+        self.user_identity = user_identity
         self.max_task_retry_count = max_task_retry_count
         self.wait_for_success = wait_for_success

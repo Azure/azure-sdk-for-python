@@ -15,11 +15,11 @@ from msrest.serialization import Model
 class StartTaskInformation(Model):
     """Information about a start task running on a compute node.
 
-    :param state: The state of the start task on the compute node. Possible
-     values are: running – The start task is currently running. completed – The
-     start task has exited with exit code 0, or the start task has failed and
-     the retry limit has reached, or the start task process did not run due to
-     scheduling errors. Possible values include: 'running', 'completed'
+    :param state: The state of the start task on the compute node. running -
+     The start task is currently running. completed - The start task has exited
+     with exit code 0, or the start task has failed and the retry limit has
+     reached, or the start task process did not run due to scheduling errors.
+     Possible values include: 'running', 'completed'
     :type state: str or :class:`StartTaskState
      <azure.batch.models.StartTaskState>`
     :param start_time: The time at which the start task started running. This
@@ -55,7 +55,7 @@ class StartTaskInformation(Model):
      other than retry; for example, if the compute node was rebooted during a
      retry, then the startTime is updated but the lastRetryTime is not.
     :type last_retry_time: datetime
-    """ 
+    """
 
     _validation = {
         'state': {'required': True},

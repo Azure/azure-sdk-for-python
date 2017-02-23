@@ -29,7 +29,7 @@ class Application(Model):
     :param default_version: The package to use if a client requests the
      application but does not specify a version.
     :type default_version: str
-    """ 
+    """
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},

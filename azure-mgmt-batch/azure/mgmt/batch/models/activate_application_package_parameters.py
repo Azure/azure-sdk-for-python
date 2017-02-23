@@ -17,7 +17,7 @@ class ActivateApplicationPackageParameters(Model):
 
     :param format: The format of the application package binary file.
     :type format: str
-    """ 
+    """
 
     _validation = {
         'format': {'required': True},
