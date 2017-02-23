@@ -31,7 +31,7 @@ class ComputeNodeInformation(Model):
     :param task_root_directory_url: The URL to the root directory of the task
      on the compute node.
     :type task_root_directory_url: str
-    """ 
+    """
 
     _attribute_map = {
         'affinity_id': {'key': 'affinityId', 'type': 'str'},

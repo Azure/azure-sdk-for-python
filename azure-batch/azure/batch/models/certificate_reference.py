@@ -22,15 +22,16 @@ class CertificateReference(Model):
     :type thumbprint_algorithm: str
     :param store_location: The location of the certificate store on the
      compute node into which to install the certificate. The default value is
-     CurrentUser. This property is applicable only for pools configured with
+     currentUser. This property is applicable only for pools configured with
      Windows nodes (that is, created with cloudServiceConfiguration, or with
      virtualMachineConfiguration using a Windows image reference). For Linux
      compute nodes, the certificates are stored in a directory inside the task
      working directory and an environment variable AZ_BATCH_CERTIFICATES_DIR is
      supplied to the task to query for this location. For certificates with
-     visibility of remoteuser, a certs directory is created in the user's home
-     directory (e.g., /home/<user-name>/certs) where certificates are placed.
-     Possible values include: 'currentuser', 'localmachine', 'unmapped'
+     visibility of 'remoteUser', a 'certs' directory is created in the user's
+     home directory (e.g., /home/{user-name}/certs) and certificates are placed
+     in that directory. Possible values include: 'currentUser', 'localMachine',
+     'unmapped'
     :type store_location: str or :class:`CertificateStoreLocation
      <azure.batch.models.CertificateStoreLocation>`
     :param store_name: The name of the certificate store on the compute node
@@ -44,7 +45,7 @@ class CertificateReference(Model):
      accounts.
     :type visibility: list of str or :class:`CertificateVisibility
      <azure.batch.models.CertificateVisibility>`
-    """ 
+    """
 
     _validation = {
         'thumbprint': {'required': True},

@@ -18,7 +18,7 @@ class PoolUpgradeOSParameter(Model):
     :param target_os_version: The Azure Guest OS version to be installed on
      the virtual machines in the pool.
     :type target_os_version: str
-    """ 
+    """
 
     _validation = {
         'target_os_version': {'required': True},

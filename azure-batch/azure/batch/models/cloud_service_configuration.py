@@ -17,10 +17,11 @@ class CloudServiceConfiguration(Model):
     platform.
 
     :param os_family: The Azure Guest OS family to be installed on the virtual
-     machines in the pool. Possible values are: 2 – OS Family 2, equivalent to
-     Windows Server 2008 R2 SP1. 3 – OS Family 3, equivalent to Windows Server
-     2012. 4 – OS Family 4, equivalent to Windows Server 2012 R2. For more
-     information, see Azure Guest OS Releases
+     machines in the pool. Possible values are: 2 - OS Family 2, equivalent to
+     Windows Server 2008 R2 SP1. 3 - OS Family 3, equivalent to Windows Server
+     2012. 4 - OS Family 4, equivalent to Windows Server 2012 R2. 5 - OS Family
+     5, equivalent to Windows Server 2016. For more information, see Azure
+     Guest OS Releases
      (https://azure.microsoft.com/documentation/articles/cloud-services-guestos-update-matrix/#releases).
     :type os_family: str
     :param target_os_version: The Azure Guest OS version to be installed on
@@ -34,7 +35,7 @@ class CloudServiceConfiguration(Model):
      upgrade process. Once all virtual machines have upgraded, currentOSVersion
      is updated to be the same as targetOSVersion.
     :type current_os_version: str
-    """ 
+    """
 
     _validation = {
         'os_family': {'required': True},

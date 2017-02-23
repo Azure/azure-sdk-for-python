@@ -32,18 +32,18 @@ class JobSpecification(Model):
     :param on_all_tasks_complete: The action the Batch service should take
      when all tasks in a job created under this schedule are in the completed
      state. Note that if a job contains no tasks, then all tasks are considered
-     complete. This option is therefore most commonly used with a job manager
-     task; if you want to use automatic job termination without a job manager,
-     you should initially set onAllTasksComplete to noaction and update the job
-     properties to set onAllTasksComplete to terminatejob once you have
-     finished adding tasks. The default is noaction. Possible values include:
+     complete. This option is therefore most commonly used with a Job Manager
+     task; if you want to use automatic job termination without a Job Manager,
+     you should initially set onAllTasksComplete to noAction and update the job
+     properties to set onAllTasksComplete to terminateJob once you have
+     finished adding tasks. The default is noAction. Possible values include:
      'noAction', 'terminateJob'
     :type on_all_tasks_complete: str or :class:`OnAllTasksComplete
      <azure.batch.models.OnAllTasksComplete>`
     :param on_task_failure: The action the Batch service should take when any
      task fails in a job created under this schedule. A task is considered to
      have failed if it completes with a non-zero exit code and has exhausted
-     its retry count, or if it had a scheduling error. The default is noaction.
+     its retry count, or if it had a scheduling error. The default is noAction.
      Possible values include: 'noAction', 'performExitOptionsJobAction'
     :type on_task_failure: str or :class:`OnTaskFailure
      <azure.batch.models.OnTaskFailure>`
@@ -92,7 +92,7 @@ class JobSpecification(Model):
      any meaning to metadata; it is solely for the use of user code.
     :type metadata: list of :class:`MetadataItem
      <azure.batch.models.MetadataItem>`
-    """ 
+    """
 
     _validation = {
         'pool_info': {'required': True},

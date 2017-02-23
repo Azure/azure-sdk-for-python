@@ -26,7 +26,7 @@ class BatchError(Model):
      details about the error.
     :type values: list of :class:`BatchErrorDetail
      <azure.batch.models.BatchErrorDetail>`
-    """ 
+    """
 
     _attribute_map = {
         'code': {'key': 'code', 'type': 'str'},

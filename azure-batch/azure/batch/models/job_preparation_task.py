@@ -16,7 +16,7 @@ class JobPreparationTask(Model):
     """A Job Preparation task to run before any tasks of the job on any given
     compute node.
 
-    :param id: A string that uniquely identifies the job preparation task
+    :param id: A string that uniquely identifies the Job Preparation task
      within the job. The ID can contain any combination of alphanumeric
      characters including hyphens and underscores and cannot contain more than
      64 characters. If you do not specify this property, the Batch service
@@ -59,9 +59,11 @@ class JobPreparationTask(Model):
      still running; and even if the Job Preparation task fails, new tasks will
      continue to be scheduled on the node. The default value is true.
     :type wait_for_success: bool
-    :param run_elevated: Whether to run the Job Preparation task in elevated
-     mode. The default value is false.
-    :type run_elevated: bool
+    :param user_identity: The user identity under which the Job Preparation
+     task runs. If omitted, the task runs as a non-administrative user unique
+     to the task.
+    :type user_identity: :class:`UserIdentity
+     <azure.batch.models.UserIdentity>`
     :param rerun_on_node_reboot_after_success: Whether the Batch service
      should rerun the Job Preparation task after a compute node reboots. The
      Job Preparation task is always rerun if a compute node is reimaged, or if
@@ -70,7 +72,7 @@ class JobPreparationTask(Model):
      Job Preparation task to be idempotent and to behave correctly if run
      multiple times. The default value is true.
     :type rerun_on_node_reboot_after_success: bool
-    """ 
+    """
 
     _validation = {
         'command_line': {'required': True},
@@ -83,16 +85,16 @@ class JobPreparationTask(Model):
         'environment_settings': {'key': 'environmentSettings', 'type': '[EnvironmentSetting]'},
         'constraints': {'key': 'constraints', 'type': 'TaskConstraints'},
         'wait_for_success': {'key': 'waitForSuccess', 'type': 'bool'},
-        'run_elevated': {'key': 'runElevated', 'type': 'bool'},
+        'user_identity': {'key': 'userIdentity', 'type': 'UserIdentity'},
         'rerun_on_node_reboot_after_success': {'key': 'rerunOnNodeRebootAfterSuccess', 'type': 'bool'},
     }
 
-    def __init__(self, command_line, id=None, resource_files=None, environment_settings=None, constraints=None, wait_for_success=None, run_elevated=None, rerun_on_node_reboot_after_success=None):
+    def __init__(self, command_line, id=None, resource_files=None, environment_settings=None, constraints=None, wait_for_success=None, user_identity=None, rerun_on_node_reboot_after_success=None):
         self.id = id
         self.command_line = command_line
         self.resource_files = resource_files
         self.environment_settings = environment_settings
         self.constraints = constraints
         self.wait_for_success = wait_for_success
-        self.run_elevated = run_elevated
+        self.user_identity = user_identity
         self.rerun_on_node_reboot_after_success = rerun_on_node_reboot_after_success

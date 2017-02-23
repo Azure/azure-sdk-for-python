@@ -24,11 +24,11 @@ class AutoPoolSpecification(Model):
     :type auto_pool_id_prefix: str
     :param pool_lifetime_option: The minimum lifetime of created auto pools,
      and how multiple jobs on a schedule are assigned to pools. When the pool
-     lifetime scope is jobschedule level, the Batch service keeps track of the
-     last autopool created for the jobschedule, and deletes that pool when the
-     jobschedule completes. Batch will also delete this pool if the user
+     lifetime scope is jobSchedule level, the Batch service keeps track of the
+     last autopool created for the job schedule, and deletes that pool when the
+     job schedule completes. Batch will also delete this pool if the user
      updates the auto pool specification in a way that changes this lifetime.
-     Possible values include: 'jobschedule', 'job', 'unmapped'
+     Possible values include: 'jobSchedule', 'job', 'unmapped'
     :type pool_lifetime_option: str or :class:`PoolLifetimeOption
      <azure.batch.models.PoolLifetimeOption>`
     :param keep_alive: Whether to keep an auto pool alive after its lifetime
@@ -41,7 +41,7 @@ class AutoPoolSpecification(Model):
     :param pool: The pool specification for the auto pool.
     :type pool: :class:`PoolSpecification
      <azure.batch.models.PoolSpecification>`
-    """ 
+    """
 
     _validation = {
         'pool_lifetime_option': {'required': True},

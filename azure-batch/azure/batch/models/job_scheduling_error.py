@@ -16,7 +16,7 @@ class JobSchedulingError(Model):
     """An error encountered by the Batch service when scheduling a job.
 
     :param category: The category of the job scheduling error. Possible values
-     include: 'usererror', 'servererror', 'unmapped'
+     include: 'userError', 'serverError', 'unmapped'
     :type category: str or :class:`SchedulingErrorCategory
      <azure.batch.models.SchedulingErrorCategory>`
     :param code: An identifier for the job scheduling error. Codes are
@@ -29,7 +29,7 @@ class JobSchedulingError(Model):
      scheduling error.
     :type details: list of :class:`NameValuePair
      <azure.batch.models.NameValuePair>`
-    """ 
+    """
 
     _validation = {
         'category': {'required': True},

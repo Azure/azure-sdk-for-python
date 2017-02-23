@@ -33,7 +33,7 @@ class FileOperations(object):
         self.config = config
 
     def delete_from_task(
-            self, job_id, task_id, file_name, recursive=None, file_delete_from_task_options=None, custom_headers=None, raw=False, **operation_config):
+            self, job_id, task_id, file_path, recursive=None, file_delete_from_task_options=None, custom_headers=None, raw=False, **operation_config):
         """Deletes the specified task file from the compute node where the task
         ran.
 
@@ -41,10 +41,10 @@ class FileOperations(object):
         :type job_id: str
         :param task_id: The ID of the task whose file you want to delete.
         :type task_id: str
-        :param file_name: The path to the task file that you want to delete.
-        :type file_name: str
+        :param file_path: The path to the task file that you want to delete.
+        :type file_path: str
         :param recursive: Whether to delete children of a directory. If the
-         fileName parameter represents a directory instead of a file, you can
+         filePath parameter represents a directory instead of a file, you can
          set recursive to true to delete the directory and all of the files and
          subdirectories in it. If recursive is false then the directory must be
          empty or deletion will fail.
@@ -78,11 +78,11 @@ class FileOperations(object):
             ocp_date = file_delete_from_task_options.ocp_date
 
         # Construct URL
-        url = '/jobs/{jobId}/tasks/{taskId}/files/{fileName}'
+        url = '/jobs/{jobId}/tasks/{taskId}/files/{filePath}'
         path_format_arguments = {
             'jobId': self._serialize.url("job_id", job_id, 'str'),
             'taskId': self._serialize.url("task_id", task_id, 'str'),
-            'fileName': self._serialize.url("file_name", file_name, 'str')
+            'filePath': self._serialize.url("file_path", file_path, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -126,16 +126,16 @@ class FileOperations(object):
             return client_raw_response
 
     def get_from_task(
-            self, job_id, task_id, file_name, file_get_from_task_options=None, custom_headers=None, raw=False, callback=None, **operation_config):
+            self, job_id, task_id, file_path, file_get_from_task_options=None, custom_headers=None, raw=False, callback=None, **operation_config):
         """Returns the content of the specified task file.
 
         :param job_id: The ID of the job that contains the task.
         :type job_id: str
         :param task_id: The ID of the task whose file you want to retrieve.
         :type task_id: str
-        :param file_name: The path to the task file that you want to get the
+        :param file_path: The path to the task file that you want to get the
          content of.
-        :type file_name: str
+        :type file_path: str
         :param file_get_from_task_options: Additional parameters for the
          operation
         :type file_get_from_task_options: :class:`FileGetFromTaskOptions
@@ -179,11 +179,11 @@ class FileOperations(object):
             if_unmodified_since = file_get_from_task_options.if_unmodified_since
 
         # Construct URL
-        url = '/jobs/{jobId}/tasks/{taskId}/files/{fileName}'
+        url = '/jobs/{jobId}/tasks/{taskId}/files/{filePath}'
         path_format_arguments = {
             'jobId': self._serialize.url("job_id", job_id, 'str'),
             'taskId': self._serialize.url("task_id", task_id, 'str'),
-            'fileName': self._serialize.url("file_name", file_name, 'str')
+            'filePath': self._serialize.url("file_path", file_path, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -247,8 +247,8 @@ class FileOperations(object):
 
         return deserialized
 
-    def get_node_file_properties_from_task(
-            self, job_id, task_id, file_name, file_get_node_file_properties_from_task_options=None, custom_headers=None, raw=False, **operation_config):
+    def get_properties_from_task(
+            self, job_id, task_id, file_path, file_get_properties_from_task_options=None, custom_headers=None, raw=False, **operation_config):
         """Gets the properties of the specified task file.
 
         :param job_id: The ID of the job that contains the task.
@@ -256,14 +256,14 @@ class FileOperations(object):
         :param task_id: The ID of the task whose file you want to get the
          properties of.
         :type task_id: str
-        :param file_name: The path to the task file that you want to get the
+        :param file_path: The path to the task file that you want to get the
          properties of.
-        :type file_name: str
-        :param file_get_node_file_properties_from_task_options: Additional
-         parameters for the operation
-        :type file_get_node_file_properties_from_task_options:
-         :class:`FileGetNodeFilePropertiesFromTaskOptions
-         <azure.batch.models.FileGetNodeFilePropertiesFromTaskOptions>`
+        :type file_path: str
+        :param file_get_properties_from_task_options: Additional parameters
+         for the operation
+        :type file_get_properties_from_task_options:
+         :class:`FileGetPropertiesFromTaskOptions
+         <azure.batch.models.FileGetPropertiesFromTaskOptions>`
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -276,30 +276,30 @@ class FileOperations(object):
          :class:`BatchErrorException<azure.batch.models.BatchErrorException>`
         """
         timeout = None
-        if file_get_node_file_properties_from_task_options is not None:
-            timeout = file_get_node_file_properties_from_task_options.timeout
+        if file_get_properties_from_task_options is not None:
+            timeout = file_get_properties_from_task_options.timeout
         client_request_id = None
-        if file_get_node_file_properties_from_task_options is not None:
-            client_request_id = file_get_node_file_properties_from_task_options.client_request_id
+        if file_get_properties_from_task_options is not None:
+            client_request_id = file_get_properties_from_task_options.client_request_id
         return_client_request_id = None
-        if file_get_node_file_properties_from_task_options is not None:
-            return_client_request_id = file_get_node_file_properties_from_task_options.return_client_request_id
+        if file_get_properties_from_task_options is not None:
+            return_client_request_id = file_get_properties_from_task_options.return_client_request_id
         ocp_date = None
-        if file_get_node_file_properties_from_task_options is not None:
-            ocp_date = file_get_node_file_properties_from_task_options.ocp_date
+        if file_get_properties_from_task_options is not None:
+            ocp_date = file_get_properties_from_task_options.ocp_date
         if_modified_since = None
-        if file_get_node_file_properties_from_task_options is not None:
-            if_modified_since = file_get_node_file_properties_from_task_options.if_modified_since
+        if file_get_properties_from_task_options is not None:
+            if_modified_since = file_get_properties_from_task_options.if_modified_since
         if_unmodified_since = None
-        if file_get_node_file_properties_from_task_options is not None:
-            if_unmodified_since = file_get_node_file_properties_from_task_options.if_unmodified_since
+        if file_get_properties_from_task_options is not None:
+            if_unmodified_since = file_get_properties_from_task_options.if_unmodified_since
 
         # Construct URL
-        url = '/jobs/{jobId}/tasks/{taskId}/files/{fileName}'
+        url = '/jobs/{jobId}/tasks/{taskId}/files/{filePath}'
         path_format_arguments = {
             'jobId': self._serialize.url("job_id", job_id, 'str'),
             'taskId': self._serialize.url("task_id", task_id, 'str'),
-            'fileName': self._serialize.url("file_name", file_name, 'str')
+            'filePath': self._serialize.url("file_path", file_path, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -353,7 +353,7 @@ class FileOperations(object):
             return client_raw_response
 
     def delete_from_compute_node(
-            self, pool_id, node_id, file_name, recursive=None, file_delete_from_compute_node_options=None, custom_headers=None, raw=False, **operation_config):
+            self, pool_id, node_id, file_path, recursive=None, file_delete_from_compute_node_options=None, custom_headers=None, raw=False, **operation_config):
         """Deletes the specified task file from the compute node.
 
         :param pool_id: The ID of the pool that contains the compute node.
@@ -361,10 +361,10 @@ class FileOperations(object):
         :param node_id: The ID of the compute node from which you want to
          delete the file.
         :type node_id: str
-        :param file_name: The path to the file that you want to delete.
-        :type file_name: str
+        :param file_path: The path to the file that you want to delete.
+        :type file_path: str
         :param recursive: Whether to delete children of a directory. If the
-         fileName parameter represents a directory instead of a file, you can
+         filePath parameter represents a directory instead of a file, you can
          set recursive to true to delete the directory and all of the files and
          subdirectories in it. If recursive is false then the directory must be
          empty or deletion will fail.
@@ -399,11 +399,11 @@ class FileOperations(object):
             ocp_date = file_delete_from_compute_node_options.ocp_date
 
         # Construct URL
-        url = '/pools/{poolId}/nodes/{nodeId}/files/{fileName}'
+        url = '/pools/{poolId}/nodes/{nodeId}/files/{filePath}'
         path_format_arguments = {
             'poolId': self._serialize.url("pool_id", pool_id, 'str'),
             'nodeId': self._serialize.url("node_id", node_id, 'str'),
-            'fileName': self._serialize.url("file_name", file_name, 'str')
+            'filePath': self._serialize.url("file_path", file_path, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -447,16 +447,16 @@ class FileOperations(object):
             return client_raw_response
 
     def get_from_compute_node(
-            self, pool_id, node_id, file_name, file_get_from_compute_node_options=None, custom_headers=None, raw=False, callback=None, **operation_config):
+            self, pool_id, node_id, file_path, file_get_from_compute_node_options=None, custom_headers=None, raw=False, callback=None, **operation_config):
         """Returns the content of the specified task file.
 
         :param pool_id: The ID of the pool that contains the compute node.
         :type pool_id: str
         :param node_id: The ID of the compute node that contains the file.
         :type node_id: str
-        :param file_name: The path to the task file that you want to get the
+        :param file_path: The path to the task file that you want to get the
          content of.
-        :type file_name: str
+        :type file_path: str
         :param file_get_from_compute_node_options: Additional parameters for
          the operation
         :type file_get_from_compute_node_options:
@@ -501,11 +501,11 @@ class FileOperations(object):
             if_unmodified_since = file_get_from_compute_node_options.if_unmodified_since
 
         # Construct URL
-        url = '/pools/{poolId}/nodes/{nodeId}/files/{fileName}'
+        url = '/pools/{poolId}/nodes/{nodeId}/files/{filePath}'
         path_format_arguments = {
             'poolId': self._serialize.url("pool_id", pool_id, 'str'),
             'nodeId': self._serialize.url("node_id", node_id, 'str'),
-            'fileName': self._serialize.url("file_name", file_name, 'str')
+            'filePath': self._serialize.url("file_path", file_path, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -569,22 +569,22 @@ class FileOperations(object):
 
         return deserialized
 
-    def get_node_file_properties_from_compute_node(
-            self, pool_id, node_id, file_name, file_get_node_file_properties_from_compute_node_options=None, custom_headers=None, raw=False, **operation_config):
+    def get_properties_from_compute_node(
+            self, pool_id, node_id, file_path, file_get_properties_from_compute_node_options=None, custom_headers=None, raw=False, **operation_config):
         """Gets the properties of the specified compute node file.
 
         :param pool_id: The ID of the pool that contains the compute node.
         :type pool_id: str
         :param node_id: The ID of the compute node that contains the file.
         :type node_id: str
-        :param file_name: The path to the compute node file that you want to
+        :param file_path: The path to the compute node file that you want to
          get the properties of.
-        :type file_name: str
-        :param file_get_node_file_properties_from_compute_node_options:
-         Additional parameters for the operation
-        :type file_get_node_file_properties_from_compute_node_options:
-         :class:`FileGetNodeFilePropertiesFromComputeNodeOptions
-         <azure.batch.models.FileGetNodeFilePropertiesFromComputeNodeOptions>`
+        :type file_path: str
+        :param file_get_properties_from_compute_node_options: Additional
+         parameters for the operation
+        :type file_get_properties_from_compute_node_options:
+         :class:`FileGetPropertiesFromComputeNodeOptions
+         <azure.batch.models.FileGetPropertiesFromComputeNodeOptions>`
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -597,30 +597,30 @@ class FileOperations(object):
          :class:`BatchErrorException<azure.batch.models.BatchErrorException>`
         """
         timeout = None
-        if file_get_node_file_properties_from_compute_node_options is not None:
-            timeout = file_get_node_file_properties_from_compute_node_options.timeout
+        if file_get_properties_from_compute_node_options is not None:
+            timeout = file_get_properties_from_compute_node_options.timeout
         client_request_id = None
-        if file_get_node_file_properties_from_compute_node_options is not None:
-            client_request_id = file_get_node_file_properties_from_compute_node_options.client_request_id
+        if file_get_properties_from_compute_node_options is not None:
+            client_request_id = file_get_properties_from_compute_node_options.client_request_id
         return_client_request_id = None
-        if file_get_node_file_properties_from_compute_node_options is not None:
-            return_client_request_id = file_get_node_file_properties_from_compute_node_options.return_client_request_id
+        if file_get_properties_from_compute_node_options is not None:
+            return_client_request_id = file_get_properties_from_compute_node_options.return_client_request_id
         ocp_date = None
-        if file_get_node_file_properties_from_compute_node_options is not None:
-            ocp_date = file_get_node_file_properties_from_compute_node_options.ocp_date
+        if file_get_properties_from_compute_node_options is not None:
+            ocp_date = file_get_properties_from_compute_node_options.ocp_date
         if_modified_since = None
-        if file_get_node_file_properties_from_compute_node_options is not None:
-            if_modified_since = file_get_node_file_properties_from_compute_node_options.if_modified_since
+        if file_get_properties_from_compute_node_options is not None:
+            if_modified_since = file_get_properties_from_compute_node_options.if_modified_since
         if_unmodified_since = None
-        if file_get_node_file_properties_from_compute_node_options is not None:
-            if_unmodified_since = file_get_node_file_properties_from_compute_node_options.if_unmodified_since
+        if file_get_properties_from_compute_node_options is not None:
+            if_unmodified_since = file_get_properties_from_compute_node_options.if_unmodified_since
 
         # Construct URL
-        url = '/pools/{poolId}/nodes/{nodeId}/files/{fileName}'
+        url = '/pools/{poolId}/nodes/{nodeId}/files/{filePath}'
         path_format_arguments = {
             'poolId': self._serialize.url("pool_id", pool_id, 'str'),
             'nodeId': self._serialize.url("node_id", node_id, 'str'),
-            'fileName': self._serialize.url("file_name", file_name, 'str')
+            'filePath': self._serialize.url("file_path", file_path, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 

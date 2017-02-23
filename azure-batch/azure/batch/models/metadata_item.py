@@ -22,7 +22,7 @@ class MetadataItem(Model):
     :type name: str
     :param value: The value of the metadata item.
     :type value: str
-    """ 
+    """
 
     _validation = {
         'name': {'required': True},

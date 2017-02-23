@@ -36,15 +36,15 @@ class JobUpdateParameter(Model):
      effect, any existing metadata is deleted.
     :type metadata: list of :class:`MetadataItem
      <azure.batch.models.MetadataItem>`
-    :param on_all_tasks_complete: Specifies an action the Batch service should
-     take when all tasks in the job are in the completed state. If omitted, the
-     completion behavior is set to noaction. If the current value is
-     terminatejob, this is an error because a job's completion behavior may not
-     be changed from terminatejob to noaction. Possible values include:
+    :param on_all_tasks_complete: The action the Batch service should take
+     when all tasks in the job are in the completed state. If omitted, the
+     completion behavior is set to noAction. If the current value is
+     terminateJob, this is an error because a job's completion behavior may not
+     be changed from terminateJob to noAction. Possible values include:
      'noAction', 'terminateJob'
     :type on_all_tasks_complete: str or :class:`OnAllTasksComplete
      <azure.batch.models.OnAllTasksComplete>`
-    """ 
+    """
 
     _validation = {
         'pool_info': {'required': True},

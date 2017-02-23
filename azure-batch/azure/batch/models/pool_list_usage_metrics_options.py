@@ -12,8 +12,8 @@
 from msrest.serialization import Model
 
 
-class PoolListPoolUsageMetricsOptions(Model):
-    """Additional parameters for the Pool_list_pool_usage_metrics operation.
+class PoolListUsageMetricsOptions(Model):
+    """Additional parameters for the Pool_list_usage_metrics operation.
 
     :param start_time: The earliest time from which to include metrics. This
      must be at least two and a half hours before the current time. If not
@@ -42,10 +42,11 @@ class PoolListPoolUsageMetricsOptions(Model):
     :param return_client_request_id: Whether the server should return the
      client-request-id in the response. Default value: False .
     :type return_client_request_id: bool
-    :param ocp_date: The time the request was issued. If not specified, this
-     header will be automatically populated with the current system clock time.
+    :param ocp_date: The time the request was issued. Client libraries
+     typically set this to the current system clock time; set it explicitly if
+     you are calling the REST API directly.
     :type ocp_date: datetime
-    """ 
+    """
 
     def __init__(self, start_time=None, end_time=None, filter=None, max_results=1000, timeout=30, client_request_id=None, return_client_request_id=False, ocp_date=None):
         self.start_time = start_time

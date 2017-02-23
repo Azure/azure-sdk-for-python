@@ -54,13 +54,15 @@ class JobManagerTask(Model):
      Manager creates a set of tasks but then takes no further role in their
      execution. The default value is true. If you are using the
      onAllTasksComplete and onTaskFailure attributes to control job lifetime,
-     and using the job manager task only to create the tasks for the job (not
+     and using the Job Manager task only to create the tasks for the job (not
      to monitor progress), then it is important to set killJobOnCompletion to
      false.
     :type kill_job_on_completion: bool
-    :param run_elevated: Whether to run the Job Manager task in elevated mode.
-     The default value is false.
-    :type run_elevated: bool
+    :param user_identity: The user identity under which the Job Manager task
+     runs. If omitted, the task runs as a non-administrative user unique to the
+     task.
+    :type user_identity: :class:`UserIdentity
+     <azure.batch.models.UserIdentity>`
     :param run_exclusive: Whether the Job Manager task requires exclusive use
      of the compute node where it runs. If true, no other tasks will run on the
      same compute node for as long as the Job Manager is running. If false,
@@ -85,7 +87,18 @@ class JobManagerTask(Model):
     :type application_package_references: list of
      :class:`ApplicationPackageReference
      <azure.batch.models.ApplicationPackageReference>`
-    """ 
+    :param authentication_token_settings: The settings for an authentication
+     token that the task can use to perform Batch service operations. If this
+     property is set, the Batch service provides the task with an
+     authentication token which can be used to authenticate Batch service
+     operations without requiring an account access key. The token is provided
+     via the AZ_BATCH_AUTHENTICATION_TOKEN environment variable. The operations
+     that the task can carry out using the token depend on the settings. For
+     example, a task can request job permissions in order to add other tasks to
+     the job, or check the status of the job or of other tasks under the job.
+    :type authentication_token_settings: :class:`AuthenticationTokenSettings
+     <azure.batch.models.AuthenticationTokenSettings>`
+    """
 
     _validation = {
         'id': {'required': True},
@@ -100,12 +113,13 @@ class JobManagerTask(Model):
         'environment_settings': {'key': 'environmentSettings', 'type': '[EnvironmentSetting]'},
         'constraints': {'key': 'constraints', 'type': 'TaskConstraints'},
         'kill_job_on_completion': {'key': 'killJobOnCompletion', 'type': 'bool'},
-        'run_elevated': {'key': 'runElevated', 'type': 'bool'},
+        'user_identity': {'key': 'userIdentity', 'type': 'UserIdentity'},
         'run_exclusive': {'key': 'runExclusive', 'type': 'bool'},
         'application_package_references': {'key': 'applicationPackageReferences', 'type': '[ApplicationPackageReference]'},
+        'authentication_token_settings': {'key': 'authenticationTokenSettings', 'type': 'AuthenticationTokenSettings'},
     }
 
-    def __init__(self, id, command_line, display_name=None, resource_files=None, environment_settings=None, constraints=None, kill_job_on_completion=None, run_elevated=None, run_exclusive=None, application_package_references=None):
+    def __init__(self, id, command_line, display_name=None, resource_files=None, environment_settings=None, constraints=None, kill_job_on_completion=None, user_identity=None, run_exclusive=None, application_package_references=None, authentication_token_settings=None):
         self.id = id
         self.display_name = display_name
         self.command_line = command_line
@@ -113,6 +127,7 @@ class JobManagerTask(Model):
         self.environment_settings = environment_settings
         self.constraints = constraints
         self.kill_job_on_completion = kill_job_on_completion
-        self.run_elevated = run_elevated
+        self.user_identity = user_identity
         self.run_exclusive = run_exclusive
         self.application_package_references = application_package_references
+        self.authentication_token_settings = authentication_token_settings

@@ -80,8 +80,10 @@ class CloudTask(Model):
     :param constraints: The execution constraints that apply to this task.
     :type constraints: :class:`TaskConstraints
      <azure.batch.models.TaskConstraints>`
-    :param run_elevated: Whether to run the task in elevated mode.
-    :type run_elevated: bool
+    :param user_identity: The user identity under which the task runs. If
+     omitted, the task runs as a non-administrative user unique to the task.
+    :type user_identity: :class:`UserIdentity
+     <azure.batch.models.UserIdentity>`
     :param execution_info: Information about the execution of the task.
     :type execution_info: :class:`TaskExecutionInformation
      <azure.batch.models.TaskExecutionInformation>`
@@ -96,10 +98,10 @@ class CloudTask(Model):
      <azure.batch.models.MultiInstanceSettings>`
     :param stats: Resource usage statistics for the task.
     :type stats: :class:`TaskStatistics <azure.batch.models.TaskStatistics>`
-    :param depends_on: The tasks that this task depends on. The task will not
-     be scheduled until all depended-on tasks have completed successfully. (If
-     any depended-on tasks fail and exhaust their retry counts, the task will
-     never be scheduled.)
+    :param depends_on: The tasks that this task depends on. This task will not
+     be scheduled until all tasks that it depends on have completed
+     successfully. If any of those tasks fail and exhaust their retry counts,
+     this task will never be scheduled.
     :type depends_on: :class:`TaskDependencies
      <azure.batch.models.TaskDependencies>`
     :param application_package_references: A list of application packages that
@@ -108,7 +110,18 @@ class CloudTask(Model):
     :type application_package_references: list of
      :class:`ApplicationPackageReference
      <azure.batch.models.ApplicationPackageReference>`
-    """ 
+    :param authentication_token_settings: The settings for an authentication
+     token that the task can use to perform Batch service operations. If this
+     property is set, the Batch service provides the task with an
+     authentication token which can be used to authenticate Batch service
+     operations without requiring an account access key. The token is provided
+     via the AZ_BATCH_AUTHENTICATION_TOKEN environment variable. The operations
+     that the task can carry out using the token depend on the settings. For
+     example, a task can request job permissions in order to add other tasks to
+     the job, or check the status of the job or of other tasks under the job.
+    :type authentication_token_settings: :class:`AuthenticationTokenSettings
+     <azure.batch.models.AuthenticationTokenSettings>`
+    """
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
@@ -127,16 +140,17 @@ class CloudTask(Model):
         'environment_settings': {'key': 'environmentSettings', 'type': '[EnvironmentSetting]'},
         'affinity_info': {'key': 'affinityInfo', 'type': 'AffinityInformation'},
         'constraints': {'key': 'constraints', 'type': 'TaskConstraints'},
-        'run_elevated': {'key': 'runElevated', 'type': 'bool'},
+        'user_identity': {'key': 'userIdentity', 'type': 'UserIdentity'},
         'execution_info': {'key': 'executionInfo', 'type': 'TaskExecutionInformation'},
         'node_info': {'key': 'nodeInfo', 'type': 'ComputeNodeInformation'},
         'multi_instance_settings': {'key': 'multiInstanceSettings', 'type': 'MultiInstanceSettings'},
         'stats': {'key': 'stats', 'type': 'TaskStatistics'},
         'depends_on': {'key': 'dependsOn', 'type': 'TaskDependencies'},
         'application_package_references': {'key': 'applicationPackageReferences', 'type': '[ApplicationPackageReference]'},
+        'authentication_token_settings': {'key': 'authenticationTokenSettings', 'type': 'AuthenticationTokenSettings'},
     }
 
-    def __init__(self, id=None, display_name=None, url=None, e_tag=None, last_modified=None, creation_time=None, exit_conditions=None, state=None, state_transition_time=None, previous_state=None, previous_state_transition_time=None, command_line=None, resource_files=None, environment_settings=None, affinity_info=None, constraints=None, run_elevated=None, execution_info=None, node_info=None, multi_instance_settings=None, stats=None, depends_on=None, application_package_references=None):
+    def __init__(self, id=None, display_name=None, url=None, e_tag=None, last_modified=None, creation_time=None, exit_conditions=None, state=None, state_transition_time=None, previous_state=None, previous_state_transition_time=None, command_line=None, resource_files=None, environment_settings=None, affinity_info=None, constraints=None, user_identity=None, execution_info=None, node_info=None, multi_instance_settings=None, stats=None, depends_on=None, application_package_references=None, authentication_token_settings=None):
         self.id = id
         self.display_name = display_name
         self.url = url
@@ -153,10 +167,11 @@ class CloudTask(Model):
         self.environment_settings = environment_settings
         self.affinity_info = affinity_info
         self.constraints = constraints
-        self.run_elevated = run_elevated
+        self.user_identity = user_identity
         self.execution_info = execution_info
         self.node_info = node_info
         self.multi_instance_settings = multi_instance_settings
         self.stats = stats
         self.depends_on = depends_on
         self.application_package_references = application_package_references
+        self.authentication_token_settings = authentication_token_settings

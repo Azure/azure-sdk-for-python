@@ -39,7 +39,9 @@ class PoolSpecification(Model):
      with Azure PaaS VMs. This property and virtualMachineConfiguration are
      mutually exclusive and one of the properties must be specified. If neither
      is specified then the Batch service returns an error; if you are calling
-     the REST API directly, the HTTP status code is 400 (Bad Request).
+     the REST API directly, the HTTP status code is 400 (Bad Request). This
+     property cannot be specified if the Batch account was created with its
+     poolAllocationMode property set to 'UserSubscription'.
     :type cloud_service_configuration: :class:`CloudServiceConfiguration
      <azure.batch.models.CloudServiceConfiguration>`
     :param virtual_machine_configuration: The virtual machine configuration
@@ -109,9 +111,9 @@ class PoolSpecification(Model):
      location. For Linux compute nodes, the certificates are stored in a
      directory inside the task working directory and an environment variable
      AZ_BATCH_CERTIFICATES_DIR is supplied to the task to query for this
-     location. For certificates with visibility of remoteuser, a certs
+     location. For certificates with visibility of 'remoteUser', a 'certs'
      directory is created in the user's home directory (e.g.,
-     /home/<user-name>/certs) where certificates are placed.
+     /home/{user-name}/certs) and certificates are placed in that directory.
     :type certificate_references: list of :class:`CertificateReference
      <azure.batch.models.CertificateReference>`
     :param application_package_references: The list of application packages to
@@ -121,12 +123,16 @@ class PoolSpecification(Model):
     :type application_package_references: list of
      :class:`ApplicationPackageReference
      <azure.batch.models.ApplicationPackageReference>`
+    :param user_accounts: The list of user accounts to be created on each node
+     in the pool.
+    :type user_accounts: list of :class:`UserAccount
+     <azure.batch.models.UserAccount>`
     :param metadata: A list of name-value pairs associated with the pool as
      metadata. The Batch service does not assign any meaning to metadata; it is
      solely for the use of user code.
     :type metadata: list of :class:`MetadataItem
      <azure.batch.models.MetadataItem>`
-    """ 
+    """
 
     _validation = {
         'vm_size': {'required': True},
@@ -149,10 +155,11 @@ class PoolSpecification(Model):
         'start_task': {'key': 'startTask', 'type': 'StartTask'},
         'certificate_references': {'key': 'certificateReferences', 'type': '[CertificateReference]'},
         'application_package_references': {'key': 'applicationPackageReferences', 'type': '[ApplicationPackageReference]'},
+        'user_accounts': {'key': 'userAccounts', 'type': '[UserAccount]'},
         'metadata': {'key': 'metadata', 'type': '[MetadataItem]'},
     }
 
-    def __init__(self, vm_size, display_name=None, cloud_service_configuration=None, virtual_machine_configuration=None, max_tasks_per_node=None, task_scheduling_policy=None, resize_timeout=None, target_dedicated=None, enable_auto_scale=None, auto_scale_formula=None, auto_scale_evaluation_interval=None, enable_inter_node_communication=None, network_configuration=None, start_task=None, certificate_references=None, application_package_references=None, metadata=None):
+    def __init__(self, vm_size, display_name=None, cloud_service_configuration=None, virtual_machine_configuration=None, max_tasks_per_node=None, task_scheduling_policy=None, resize_timeout=None, target_dedicated=None, enable_auto_scale=None, auto_scale_formula=None, auto_scale_evaluation_interval=None, enable_inter_node_communication=None, network_configuration=None, start_task=None, certificate_references=None, application_package_references=None, user_accounts=None, metadata=None):
         self.display_name = display_name
         self.vm_size = vm_size
         self.cloud_service_configuration = cloud_service_configuration
@@ -169,4 +176,5 @@ class PoolSpecification(Model):
         self.start_task = start_task
         self.certificate_references = certificate_references
         self.application_package_references = application_package_references
+        self.user_accounts = user_accounts
         self.metadata = metadata

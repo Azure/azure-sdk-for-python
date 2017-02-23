@@ -19,7 +19,7 @@ class TaskSchedulingPolicy(Model):
      nodes. Possible values include: 'spread', 'pack', 'unmapped'
     :type node_fill_type: str or :class:`ComputeNodeFillType
      <azure.batch.models.ComputeNodeFillType>`
-    """ 
+    """
 
     _validation = {
         'node_fill_type': {'required': True},

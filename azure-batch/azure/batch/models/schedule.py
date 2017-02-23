@@ -57,7 +57,7 @@ class Schedule(Model):
      error; if you are calling the REST API directly, the HTTP status code is
      400 (Bad Request).
     :type recurrence_interval: timedelta
-    """ 
+    """
 
     _attribute_map = {
         'do_not_run_until': {'key': 'doNotRunUntil', 'type': 'iso-8601'},

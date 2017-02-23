@@ -19,11 +19,16 @@ class OSType(Enum):
     unmapped = "unmapped"
 
 
+class AccessScope(Enum):
+
+    job = "job"
+
+
 class CertificateState(Enum):
 
     active = "active"
     deleting = "deleting"
-    deletefailed = "deletefailed"
+    delete_failed = "deleteFailed"
 
 
 class CertificateFormat(Enum):
@@ -40,6 +45,24 @@ class JobAction(Enum):
     terminate = "terminate"
 
 
+class DependencyAction(Enum):
+
+    satisfy = "satisfy"
+    block = "block"
+
+
+class AutoUserScope(Enum):
+
+    task = "task"
+    pool = "pool"
+
+
+class ElevationLevel(Enum):
+
+    non_admin = "nonAdmin"
+    admin = "admin"
+
+
 class ComputeNodeFillType(Enum):
 
     spread = "spread"
@@ -49,22 +72,29 @@ class ComputeNodeFillType(Enum):
 
 class CertificateStoreLocation(Enum):
 
-    currentuser = "currentuser"
-    localmachine = "localmachine"
+    current_user = "currentUser"
+    local_machine = "localMachine"
     unmapped = "unmapped"
 
 
 class CertificateVisibility(Enum):
 
-    starttask = "starttask"
+    start_task = "startTask"
     task = "task"
-    remoteuser = "remoteuser"
+    remote_user = "remoteUser"
     unmapped = "unmapped"
+
+
+class CachingType(Enum):
+
+    none = "none"
+    read_only = "readOnly"
+    read_write = "readWrite"
 
 
 class PoolLifetimeOption(Enum):
 
-    jobschedule = "jobschedule"
+    job_schedule = "jobSchedule"
     job = "job"
     unmapped = "unmapped"
 
@@ -92,8 +122,8 @@ class JobScheduleState(Enum):
 
 class SchedulingErrorCategory(Enum):
 
-    usererror = "usererror"
-    servererror = "servererror"
+    user_error = "userError"
+    server_error = "serverError"
     unmapped = "unmapped"
 
 
@@ -145,9 +175,16 @@ class TaskState(Enum):
 class TaskAddStatus(Enum):
 
     success = "success"
-    clienterror = "clienterror"
-    servererror = "servererror"
+    client_error = "clientError"
+    server_error = "serverError"
     unmapped = "unmapped"
+
+
+class SubtaskState(Enum):
+
+    preparing = "preparing"
+    running = "running"
+    completed = "completed"
 
 
 class StartTaskState(Enum):
@@ -165,10 +202,10 @@ class ComputeNodeState(Enum):
     unusable = "unusable"
     creating = "creating"
     starting = "starting"
-    waitingforstarttask = "waitingforstarttask"
-    starttaskfailed = "starttaskfailed"
+    waiting_for_start_task = "waitingForStartTask"
+    start_task_failed = "startTaskFailed"
     unknown = "unknown"
-    leavingpool = "leavingpool"
+    leaving_pool = "leavingPool"
     offline = "offline"
 
 
@@ -189,28 +226,28 @@ class ComputeNodeDeallocationOption(Enum):
 
     requeue = "requeue"
     terminate = "terminate"
-    taskcompletion = "taskcompletion"
-    retaineddata = "retaineddata"
+    task_completion = "taskCompletion"
+    retained_data = "retainedData"
 
 
 class ComputeNodeRebootOption(Enum):
 
     requeue = "requeue"
     terminate = "terminate"
-    taskcompletion = "taskcompletion"
-    retaineddata = "retaineddata"
+    task_completion = "taskCompletion"
+    retained_data = "retainedData"
 
 
 class ComputeNodeReimageOption(Enum):
 
     requeue = "requeue"
     terminate = "terminate"
-    taskcompletion = "taskcompletion"
-    retaineddata = "retaineddata"
+    task_completion = "taskCompletion"
+    retained_data = "retainedData"
 
 
 class DisableComputeNodeSchedulingOption(Enum):
 
     requeue = "requeue"
     terminate = "terminate"
-    taskcompletion = "taskcompletion"
+    task_completion = "taskCompletion"

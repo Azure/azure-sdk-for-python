@@ -16,7 +16,7 @@ class TaskAddResult(Model):
     """Result for a single task added as part of an add task collection operation.
 
     :param status: The status of the add task request. Possible values
-     include: 'success', 'clienterror', 'servererror', 'unmapped'
+     include: 'success', 'clientError', 'serverError', 'unmapped'
     :type status: str or :class:`TaskAddStatus
      <azure.batch.models.TaskAddStatus>`
     :param task_id: The ID of the task for which this is the result.
@@ -29,7 +29,7 @@ class TaskAddResult(Model):
     :type location: str
     :param error: The error encountered while attempting to add the task.
     :type error: :class:`BatchError <azure.batch.models.BatchError>`
-    """ 
+    """
 
     _validation = {
         'status': {'required': True},

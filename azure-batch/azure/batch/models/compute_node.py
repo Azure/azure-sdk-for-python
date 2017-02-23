@@ -24,15 +24,15 @@ class ComputeNode(Model):
     :type url: str
     :param state: The current state of the compute node. Possible values
      include: 'idle', 'rebooting', 'reimaging', 'running', 'unusable',
-     'creating', 'starting', 'waitingforstarttask', 'starttaskfailed',
-     'unknown', 'leavingpool', 'offline'
+     'creating', 'starting', 'waitingForStartTask', 'startTaskFailed',
+     'unknown', 'leavingPool', 'offline'
     :type state: str or :class:`ComputeNodeState
      <azure.batch.models.ComputeNodeState>`
     :param scheduling_state: Whether the compute node is available for task
-     scheduling. Possible values are: enabled – Tasks can be scheduled on the
-     node. disabled – No new tasks will be scheduled on the node. Tasks already
-     running on the node may still run to completion. All nodes start with
-     scheduling enabled. Possible values include: 'enabled', 'disabled'
+     scheduling. enabled - Tasks can be scheduled on the node. disabled - No
+     new tasks will be scheduled on the node. Tasks already running on the node
+     may still run to completion. All nodes start with scheduling enabled.
+     Possible values include: 'enabled', 'disabled'
     :type scheduling_state: str or :class:`SchedulingState
      <azure.batch.models.SchedulingState>`
     :param state_transition_time: The time at which the compute node entered
@@ -98,15 +98,16 @@ class ComputeNode(Model):
      compute nodes, the certificates are stored in a directory inside the task
      working directory and an environment variable AZ_BATCH_CERTIFICATES_DIR is
      supplied to the task to query for this location. For certificates with
-     visibility of remoteuser, a certs directory is created in the user's home
-     directory (e.g., /home/<user-name>/certs) where certificates are placed.
+     visibility of 'remoteUser', a 'certs' directory is created in the user's
+     home directory (e.g., /home/{user-name}/certs) and certificates are placed
+     in that directory.
     :type certificate_references: list of :class:`CertificateReference
      <azure.batch.models.CertificateReference>`
     :param errors: The list of errors that are currently being encountered by
      the compute node.
     :type errors: list of :class:`ComputeNodeError
      <azure.batch.models.ComputeNodeError>`
-    """ 
+    """
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},

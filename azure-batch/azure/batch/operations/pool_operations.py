@@ -32,8 +32,8 @@ class PoolOperations(object):
 
         self.config = config
 
-    def list_pool_usage_metrics(
-            self, pool_list_pool_usage_metrics_options=None, custom_headers=None, raw=False, **operation_config):
+    def list_usage_metrics(
+            self, pool_list_usage_metrics_options=None, custom_headers=None, raw=False, **operation_config):
         """Lists the usage metrics, aggregated by pool across individual time
         intervals, for the specified account.
 
@@ -41,11 +41,11 @@ class PoolOperations(object):
         includes all pools that existed in the account in the time range of the
         returned aggregation intervals.
 
-        :param pool_list_pool_usage_metrics_options: Additional parameters for
-         the operation
-        :type pool_list_pool_usage_metrics_options:
-         :class:`PoolListPoolUsageMetricsOptions
-         <azure.batch.models.PoolListPoolUsageMetricsOptions>`
+        :param pool_list_usage_metrics_options: Additional parameters for the
+         operation
+        :type pool_list_usage_metrics_options:
+         :class:`PoolListUsageMetricsOptions
+         <azure.batch.models.PoolListUsageMetricsOptions>`
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -57,29 +57,29 @@ class PoolOperations(object):
          :class:`BatchErrorException<azure.batch.models.BatchErrorException>`
         """
         start_time = None
-        if pool_list_pool_usage_metrics_options is not None:
-            start_time = pool_list_pool_usage_metrics_options.start_time
+        if pool_list_usage_metrics_options is not None:
+            start_time = pool_list_usage_metrics_options.start_time
         end_time = None
-        if pool_list_pool_usage_metrics_options is not None:
-            end_time = pool_list_pool_usage_metrics_options.end_time
+        if pool_list_usage_metrics_options is not None:
+            end_time = pool_list_usage_metrics_options.end_time
         filter = None
-        if pool_list_pool_usage_metrics_options is not None:
-            filter = pool_list_pool_usage_metrics_options.filter
+        if pool_list_usage_metrics_options is not None:
+            filter = pool_list_usage_metrics_options.filter
         max_results = None
-        if pool_list_pool_usage_metrics_options is not None:
-            max_results = pool_list_pool_usage_metrics_options.max_results
+        if pool_list_usage_metrics_options is not None:
+            max_results = pool_list_usage_metrics_options.max_results
         timeout = None
-        if pool_list_pool_usage_metrics_options is not None:
-            timeout = pool_list_pool_usage_metrics_options.timeout
+        if pool_list_usage_metrics_options is not None:
+            timeout = pool_list_usage_metrics_options.timeout
         client_request_id = None
-        if pool_list_pool_usage_metrics_options is not None:
-            client_request_id = pool_list_pool_usage_metrics_options.client_request_id
+        if pool_list_usage_metrics_options is not None:
+            client_request_id = pool_list_usage_metrics_options.client_request_id
         return_client_request_id = None
-        if pool_list_pool_usage_metrics_options is not None:
-            return_client_request_id = pool_list_pool_usage_metrics_options.return_client_request_id
+        if pool_list_usage_metrics_options is not None:
+            return_client_request_id = pool_list_usage_metrics_options.return_client_request_id
         ocp_date = None
-        if pool_list_pool_usage_metrics_options is not None:
-            ocp_date = pool_list_pool_usage_metrics_options.ocp_date
+        if pool_list_usage_metrics_options is not None:
+            ocp_date = pool_list_usage_metrics_options.ocp_date
 
         def internal_paging(next_link=None, raw=False):
 
@@ -141,8 +141,8 @@ class PoolOperations(object):
 
         return deserialized
 
-    def get_all_pools_lifetime_statistics(
-            self, pool_get_all_pools_lifetime_statistics_options=None, custom_headers=None, raw=False, **operation_config):
+    def get_all_lifetime_statistics(
+            self, pool_get_all_lifetime_statistics_options=None, custom_headers=None, raw=False, **operation_config):
         """Gets lifetime summary statistics for all of the pools in the specified
         account.
 
@@ -150,11 +150,11 @@ class PoolOperations(object):
         the account, from account creation to the last update time of the
         statistics.
 
-        :param pool_get_all_pools_lifetime_statistics_options: Additional
-         parameters for the operation
-        :type pool_get_all_pools_lifetime_statistics_options:
-         :class:`PoolGetAllPoolsLifetimeStatisticsOptions
-         <azure.batch.models.PoolGetAllPoolsLifetimeStatisticsOptions>`
+        :param pool_get_all_lifetime_statistics_options: Additional parameters
+         for the operation
+        :type pool_get_all_lifetime_statistics_options:
+         :class:`PoolGetAllLifetimeStatisticsOptions
+         <azure.batch.models.PoolGetAllLifetimeStatisticsOptions>`
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -167,17 +167,17 @@ class PoolOperations(object):
          :class:`BatchErrorException<azure.batch.models.BatchErrorException>`
         """
         timeout = None
-        if pool_get_all_pools_lifetime_statistics_options is not None:
-            timeout = pool_get_all_pools_lifetime_statistics_options.timeout
+        if pool_get_all_lifetime_statistics_options is not None:
+            timeout = pool_get_all_lifetime_statistics_options.timeout
         client_request_id = None
-        if pool_get_all_pools_lifetime_statistics_options is not None:
-            client_request_id = pool_get_all_pools_lifetime_statistics_options.client_request_id
+        if pool_get_all_lifetime_statistics_options is not None:
+            client_request_id = pool_get_all_lifetime_statistics_options.client_request_id
         return_client_request_id = None
-        if pool_get_all_pools_lifetime_statistics_options is not None:
-            return_client_request_id = pool_get_all_pools_lifetime_statistics_options.return_client_request_id
+        if pool_get_all_lifetime_statistics_options is not None:
+            return_client_request_id = pool_get_all_lifetime_statistics_options.return_client_request_id
         ocp_date = None
-        if pool_get_all_pools_lifetime_statistics_options is not None:
-            ocp_date = pool_get_all_pools_lifetime_statistics_options.ocp_date
+        if pool_get_all_lifetime_statistics_options is not None:
+            ocp_date = pool_get_all_lifetime_statistics_options.ocp_date
 
         # Construct URL
         url = '/lifetimepoolstats'

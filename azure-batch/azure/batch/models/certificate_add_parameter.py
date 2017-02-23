@@ -34,7 +34,7 @@ class CertificateAddParameter(Model):
      This is required if the certificate format is pfx. It should be omitted if
      the certificate format is cer.
     :type password: str
-    """ 
+    """
 
     _validation = {
         'thumbprint': {'required': True},

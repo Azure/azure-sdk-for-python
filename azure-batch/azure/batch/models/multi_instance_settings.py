@@ -33,7 +33,7 @@ class MultiInstanceSettings(Model):
      whereas task resource files are downloaded only for the primary.
     :type common_resource_files: list of :class:`ResourceFile
      <azure.batch.models.ResourceFile>`
-    """ 
+    """
 
     _validation = {
         'number_of_instances': {'required': True},
