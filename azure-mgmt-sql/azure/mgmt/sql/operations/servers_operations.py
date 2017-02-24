@@ -36,7 +36,7 @@ class ServersOperations(object):
         self.config = config
 
     def create_or_update_firewall_rule(
-            self, resource_group_name, server_name, firewall_rule_name, start_ip_address=None, end_ip_address=None, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, server_name, firewall_rule_name, start_ip_address, end_ip_address, custom_headers=None, raw=False, **operation_config):
         """Creates or updates an Azure SQL server firewall rule.
 
         :param resource_group_name: The name of the resource group that
@@ -49,10 +49,13 @@ class ServersOperations(object):
          rule.
         :type firewall_rule_name: str
         :param start_ip_address: The start IP address of the Azure SQL server
-         firewall rule. Must be IPv4 format.
+         firewall rule. Must be IPv4 format. Use value '0.0.0.0' to represent
+         all Azure-internal IP addresses.
         :type start_ip_address: str
         :param end_ip_address: The end IP address of the Azure SQL server
-         firewall rule. Must be IPv4 format.
+         firewall rule. Must be IPv4 format. Must be greater than or equal to
+         startIpAddress. Use value '0.0.0.0' to represent all Azure-internal IP
+         addresses.
         :type end_ip_address: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -380,7 +383,7 @@ class ServersOperations(object):
 
     def create_or_update(
             self, resource_group_name, server_name, parameters, custom_headers=None, raw=False, **operation_config):
-        """Creates a new Azure SQL server.
+        """Creates or updates a new Azure SQL server.
 
         :param resource_group_name: The name of the resource group that
          contains the resource. You can obtain this value from the Azure
