@@ -26,11 +26,16 @@ class ServerFirewallRule(SqlSubResource):
     :vartype kind: str
     :ivar location: Location of the server that contains this firewall rule.
     :vartype location: str
+    :ivar type: Type of resource this is.
+    :vartype type: str
     :param start_ip_address: The start IP address of the Azure SQL server
-     firewall rule. Must be IPv4 format.
+     firewall rule. Must be IPv4 format. Use value '0.0.0.0' to represent all
+     Azure-internal IP addresses.
     :type start_ip_address: str
     :param end_ip_address: The end IP address of the Azure SQL server firewall
-     rule. Must be IPv4 format.
+     rule. Must be IPv4 format. Must be greater than or equal to
+     startIpAddress. Use value '0.0.0.0' to represent all Azure-internal IP
+     addresses.
     :type end_ip_address: str
     """
 
@@ -39,6 +44,9 @@ class ServerFirewallRule(SqlSubResource):
         'id': {'readonly': True},
         'kind': {'readonly': True},
         'location': {'readonly': True},
+        'type': {'readonly': True},
+        'start_ip_address': {'required': True},
+        'end_ip_address': {'required': True},
     }
 
     _attribute_map = {
@@ -46,13 +54,15 @@ class ServerFirewallRule(SqlSubResource):
         'id': {'key': 'id', 'type': 'str'},
         'kind': {'key': 'kind', 'type': 'str'},
         'location': {'key': 'location', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
         'start_ip_address': {'key': 'properties.startIpAddress', 'type': 'str'},
         'end_ip_address': {'key': 'properties.endIpAddress', 'type': 'str'},
     }
 
-    def __init__(self, start_ip_address=None, end_ip_address=None):
+    def __init__(self, start_ip_address, end_ip_address):
         super(ServerFirewallRule, self).__init__()
         self.kind = None
         self.location = None
+        self.type = None
         self.start_ip_address = start_ip_address
         self.end_ip_address = end_ip_address

@@ -744,8 +744,6 @@ class DatabasesOperations(object):
                 deserialized = self._deserialize('Database', response)
             if response.status_code == 201:
                 deserialized = self._deserialize('Database', response)
-            if response.status_code == 202:
-                deserialized = self._deserialize('Database', response)
 
             if raw:
                 client_raw_response = ClientRawResponse(deserialized, response)

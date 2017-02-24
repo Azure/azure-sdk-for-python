@@ -28,7 +28,11 @@ class Database(Resource):
     :type location: str
     :param tags: Resource tags
     :type tags: dict
-    :param collation: The collation of the Azure SQL database.
+    :ivar kind: Kind of database.  This is metadata used for the Azure portal
+     experience.
+    :vartype kind: str
+    :param collation: The collation of the Azure SQL database. If createMode
+     is not Default, this value is ignored.
     :type collation: str
     :ivar creation_date: The creation date of the Azure SQL database (ISO8601
      format).
@@ -41,31 +45,42 @@ class Database(Resource):
     :vartype current_service_objective_id: str
     :ivar database_id: The ID of the Azure SQL database.
     :vartype database_id: str
-    :ivar earliest_restore_date: The recovery period start date of the Azure
-     SQL database. This records the start date and time when recovery is
-     available for this Azure SQL Database (ISO8601 format).
+    :ivar earliest_restore_date: This records the earliest start date and time
+     that restore is available for this Azure SQL Database (ISO8601 format).
     :vartype earliest_restore_date: datetime
-    :param create_mode: Specifies the type of database to create. Possible
-     values include: 'Copy', 'Default', 'NonReadableSecondary',
-     'OnlineSecondary', 'PointInTimeRestore', 'Recovery', 'Restore'
-    :type create_mode: str or :class:`createMode
-     <azure.mgmt.sql.models.createMode>`
-    :param source_database_id: Conditional. Specifies the resource ID of the
-     source database. If createMode is not set to Default, then this value must
-     be specified. The name of the source database must be the same. NOTE:
-     Collation, Edition, and MaxSizeBytes must remain the same while the link
-     is active. Values specified for these parameters will be ignored.
+    :param create_mode: Specifies the type of database to create. If
+     createMode is not set to Default, sourceDatabaseId must be specified. If
+     createMode is set to PointInTimeRestore, then restorePointInTime must be
+     specified. If createMode is set to Restore, then
+     sourceDatabaseDeletionDate must be specified. Possible values include:
+     'Copy', 'Default', 'NonReadableSecondary', 'OnlineSecondary',
+     'PointInTimeRestore', 'Recovery', 'Restore'
+    :type create_mode: str or :class:`CreateMode
+     <azure.mgmt.sql.models.CreateMode>`
+    :param source_database_id: Conditional. If createMode is not set to
+     Default, then this value must be specified. Specifies the resource ID of
+     the source database. If createMode is NonReadableSecondary or
+     OnlineSecondary, the name of the source database must be the same as this
+     new database.
     :type source_database_id: str
+    :param restore_point_in_time: Conditional. If createMode is set to
+     PointInTimeRestore, then this value must be specified. Specifies the point
+     in time (ISO8601 format) of the source database that will be restored to
+     create the new database. Must be greater than or equal to the source
+     database's earliestRestoreDate value.
+    :type restore_point_in_time: datetime
     :param edition: The edition of the Azure SQL database. The
-     DatabaseEditions enumeration contains all the valid editions. Possible
-     values include: 'Web', 'Business', 'Basic', 'Standard', 'Premium', 'Free',
-     'Stretch', 'DataWarehouse'
+     DatabaseEditions enumeration contains all the valid editions. If
+     createMode is NonReadableSecondary or OnlineSecondary, this value is
+     ignored. Possible values include: 'Web', 'Business', 'Basic', 'Standard',
+     'Premium', 'Free', 'Stretch', 'DataWarehouse', 'System'
     :type edition: str or :class:`DatabaseEditions
      <azure.mgmt.sql.models.DatabaseEditions>`
     :param max_size_bytes: The max size of the Azure SQL database expressed in
-     bytes. Note: Only the following sizes are supported (in addition to
-     limitations being placed on each edition): { 100 MB | 500 MB |1 GB | 5 GB
-     | 10 GB | 20 GB | 30 GB … 150 GB | 200 GB … 500 GB }
+     bytes. If createMode is not Default, this value is ignored. Note: Only the
+     following sizes are supported (in addition to limitations being placed on
+     each edition): { 100 MB | 500 MB |1 GB | 5 GB | 10 GB | 20 GB | 30 GB …
+     150 GB | 200 GB … 500 GB }
     :type max_size_bytes: str
     :param requested_service_objective_id: The configured Service Level
      Objective ID of the Azure SQL database. This is the Service Level
@@ -78,12 +93,14 @@ class Database(Resource):
      Level Objective that is in the process of being applied to the Azure SQL
      database. Once successfully updated, it will match the value of
      serviceLevelObjective property. Possible values include: 'Basic', 'S0',
-     'S1', 'S2', 'S3', 'P1', 'P2', 'P3'
+     'S1', 'S2', 'S3', 'P1', 'P2', 'P3', 'P4', 'P6', 'P11', 'P15', 'System',
+     'System1', 'System2', 'System3', 'System4'
     :type requested_service_objective_name: str or
      :class:`ServiceObjectiveName <azure.mgmt.sql.models.ServiceObjectiveName>`
     :ivar service_level_objective: The current Service Level Objective of the
      Azure SQL database. Possible values include: 'Basic', 'S0', 'S1', 'S2',
-     'S3', 'P1', 'P2', 'P3'
+     'S3', 'P1', 'P2', 'P3', 'P4', 'P6', 'P11', 'P15', 'System', 'System1',
+     'System2', 'System3', 'System4'
     :vartype service_level_objective: str or :class:`ServiceObjectiveName
      <azure.mgmt.sql.models.ServiceObjectiveName>`
     :ivar status: The status of the Azure SQL database.
@@ -98,9 +115,6 @@ class Database(Resource):
      database. Expanded property
     :vartype service_tier_advisors: list of :class:`ServiceTierAdvisor
      <azure.mgmt.sql.models.ServiceTierAdvisor>`
-    :ivar upgrade_hint: The upgrade hint for this database.
-    :vartype upgrade_hint: :class:`UpgradeHint
-     <azure.mgmt.sql.models.UpgradeHint>`
     :ivar schemas: The schemas from this database.
     :vartype schemas: list of :class:`Schema <azure.mgmt.sql.models.Schema>`
     :ivar transparent_data_encryption: The transparent data encryption info
@@ -111,6 +125,19 @@ class Database(Resource):
     :ivar recommended_index: The recommended indices for this database.
     :vartype recommended_index: list of :class:`RecommendedIndex
      <azure.mgmt.sql.models.RecommendedIndex>`
+    :ivar failover_group_id: The id indicating the failover group containing
+     this database.
+    :vartype failover_group_id: str
+    :param read_scale: Conditional.  If the database is a geo-secondary,
+     readScale indicates whether read-only connections are allowed to this
+     database or not. Possible values include: 'Enabled', 'Disabled'
+    :type read_scale: str or :class:`ReadScale
+     <azure.mgmt.sql.models.ReadScale>`
+    :param sample_name: Indicates the name of the sample schema to apply when
+     creating this database. If createMode is not Default, this value is
+     ignored. Possible values include: 'AdventureWorksLT'
+    :type sample_name: str or :class:`SampleName
+     <azure.mgmt.sql.models.SampleName>`
     """
 
     _validation = {
@@ -118,6 +145,7 @@ class Database(Resource):
         'id': {'readonly': True},
         'type': {'readonly': True},
         'location': {'required': True},
+        'kind': {'readonly': True},
         'creation_date': {'readonly': True},
         'containment_state': {'readonly': True},
         'current_service_objective_id': {'readonly': True},
@@ -127,10 +155,10 @@ class Database(Resource):
         'status': {'readonly': True},
         'default_secondary_location': {'readonly': True},
         'service_tier_advisors': {'readonly': True},
-        'upgrade_hint': {'readonly': True},
         'schemas': {'readonly': True},
         'transparent_data_encryption': {'readonly': True},
         'recommended_index': {'readonly': True},
+        'failover_group_id': {'readonly': True},
     }
 
     _attribute_map = {
@@ -139,6 +167,7 @@ class Database(Resource):
         'type': {'key': 'type', 'type': 'str'},
         'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
+        'kind': {'key': 'kind', 'type': 'str'},
         'collation': {'key': 'properties.collation', 'type': 'str'},
         'creation_date': {'key': 'properties.creationDate', 'type': 'iso-8601'},
         'containment_state': {'key': 'properties.containmentState', 'type': 'long'},
@@ -147,6 +176,7 @@ class Database(Resource):
         'earliest_restore_date': {'key': 'properties.earliestRestoreDate', 'type': 'iso-8601'},
         'create_mode': {'key': 'properties.createMode', 'type': 'str'},
         'source_database_id': {'key': 'properties.sourceDatabaseId', 'type': 'str'},
+        'restore_point_in_time': {'key': 'properties.restorePointInTime', 'type': 'iso-8601'},
         'edition': {'key': 'properties.edition', 'type': 'str'},
         'max_size_bytes': {'key': 'properties.maxSizeBytes', 'type': 'str'},
         'requested_service_objective_id': {'key': 'properties.requestedServiceObjectiveId', 'type': 'str'},
@@ -156,14 +186,17 @@ class Database(Resource):
         'elastic_pool_name': {'key': 'properties.elasticPoolName', 'type': 'str'},
         'default_secondary_location': {'key': 'properties.defaultSecondaryLocation', 'type': 'str'},
         'service_tier_advisors': {'key': 'properties.serviceTierAdvisors', 'type': '[ServiceTierAdvisor]'},
-        'upgrade_hint': {'key': 'properties.upgradeHint', 'type': 'UpgradeHint'},
         'schemas': {'key': 'properties.schemas', 'type': '[Schema]'},
         'transparent_data_encryption': {'key': 'properties.transparentDataEncryption', 'type': '[TransparentDataEncryption]'},
         'recommended_index': {'key': 'properties.recommendedIndex', 'type': '[RecommendedIndex]'},
+        'failover_group_id': {'key': 'properties.failoverGroupId', 'type': 'str'},
+        'read_scale': {'key': 'properties.readScale', 'type': 'ReadScale'},
+        'sample_name': {'key': 'properties.sampleName', 'type': 'str'},
     }
 
-    def __init__(self, location, tags=None, collation=None, create_mode=None, source_database_id=None, edition=None, max_size_bytes=None, requested_service_objective_id=None, requested_service_objective_name=None, elastic_pool_name=None):
+    def __init__(self, location, tags=None, collation=None, create_mode=None, source_database_id=None, restore_point_in_time=None, edition=None, max_size_bytes=None, requested_service_objective_id=None, requested_service_objective_name=None, elastic_pool_name=None, read_scale=None, sample_name=None):
         super(Database, self).__init__(location=location, tags=tags)
+        self.kind = None
         self.collation = collation
         self.creation_date = None
         self.containment_state = None
@@ -172,6 +205,7 @@ class Database(Resource):
         self.earliest_restore_date = None
         self.create_mode = create_mode
         self.source_database_id = source_database_id
+        self.restore_point_in_time = restore_point_in_time
         self.edition = edition
         self.max_size_bytes = max_size_bytes
         self.requested_service_objective_id = requested_service_objective_id
@@ -181,7 +215,9 @@ class Database(Resource):
         self.elastic_pool_name = elastic_pool_name
         self.default_secondary_location = None
         self.service_tier_advisors = None
-        self.upgrade_hint = None
         self.schemas = None
         self.transparent_data_encryption = None
         self.recommended_index = None
+        self.failover_group_id = None
+        self.read_scale = read_scale
+        self.sample_name = sample_name

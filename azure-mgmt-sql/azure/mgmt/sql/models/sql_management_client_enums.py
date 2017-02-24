@@ -36,7 +36,7 @@ class ElasticPoolEditions(Enum):
     premium = "Premium"
 
 
-class createMode(Enum):
+class CreateMode(Enum):
 
     copy = "Copy"
     default = "Default"
@@ -57,6 +57,7 @@ class DatabaseEditions(Enum):
     free = "Free"
     stretch = "Stretch"
     data_warehouse = "DataWarehouse"
+    system = "System"
 
 
 class ServiceObjectiveName(Enum):
@@ -69,6 +70,15 @@ class ServiceObjectiveName(Enum):
     p1 = "P1"
     p2 = "P2"
     p3 = "P3"
+    p4 = "P4"
+    p6 = "P6"
+    p11 = "P11"
+    p15 = "P15"
+    system = "System"
+    system1 = "System1"
+    system2 = "System2"
+    system3 = "System3"
+    system4 = "System4"
 
 
 class TableType(Enum):
@@ -113,14 +123,15 @@ class TransparentDataEncryptionStates(Enum):
     disabled = "Disabled"
 
 
-class TargetDatabaseEditions(Enum):
+class ReadScale(Enum):
 
-    basic = "Basic"
-    standard = "Standard"
-    premium = "Premium"
-    free = "Free"
-    stretch = "Stretch"
-    data_warehouse = "DataWarehouse"
+    enabled = "Enabled"
+    disabled = "Disabled"
+
+
+class SampleName(Enum):
+
+    adventure_works_lt = "AdventureWorksLT"
 
 
 class ElasticPoolState(Enum):
@@ -134,6 +145,12 @@ class ServerVersion(Enum):
 
     two_full_stop_zero = "2.0"
     one_two_full_stop_zero = "12.0"
+
+
+class ServerState(Enum):
+
+    ready = "Ready"
+    disabled = "Disabled"
 
 
 class TargetElasticPoolEditions(Enum):
