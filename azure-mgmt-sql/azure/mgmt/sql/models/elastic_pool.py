@@ -39,17 +39,20 @@ class ElasticPool(Resource):
      include: 'Basic', 'Standard', 'Premium'
     :type edition: str or :class:`ElasticPoolEditions
      <azure.mgmt.sql.models.ElasticPoolEditions>`
-    :param dtu: The total shared DTU for the SQL Azure Database Elastic Pool.
+    :param dtu: The total shared DTU for the Azure Sql Database Elastic Pool.
     :type dtu: int
-    :param database_dtu_max: The maximum DTU any one SQL Azure Database can
+    :param database_dtu_max: The maximum DTU any one Azure Sql Database can
      consume.
     :type database_dtu_max: int
-    :param database_dtu_min: The minimum DTU all SQL Azure Databases are
+    :param database_dtu_min: The minimum DTU all Azure Sql Databases are
      guaranteed.
     :type database_dtu_min: int
-    :param storage_mb: Gets storage limit for the SQL Azure Database Elastic
+    :param storage_mb: Gets storage limit for the Azure Sql Database Elastic
      Pool in MB.
     :type storage_mb: int
+    :ivar kind: Kind of elastic pool.  This is metadata used for the Azure
+     portal experience.
+    :vartype kind: str
     """
 
     _validation = {
@@ -59,6 +62,7 @@ class ElasticPool(Resource):
         'location': {'required': True},
         'creation_date': {'readonly': True},
         'state': {'readonly': True},
+        'kind': {'readonly': True},
     }
 
     _attribute_map = {
@@ -74,6 +78,7 @@ class ElasticPool(Resource):
         'database_dtu_max': {'key': 'properties.databaseDtuMax', 'type': 'int'},
         'database_dtu_min': {'key': 'properties.databaseDtuMin', 'type': 'int'},
         'storage_mb': {'key': 'properties.storageMB', 'type': 'int'},
+        'kind': {'key': 'kind', 'type': 'str'},
     }
 
     def __init__(self, location, tags=None, edition=None, dtu=None, database_dtu_max=None, database_dtu_min=None, storage_mb=None):
@@ -85,3 +90,4 @@ class ElasticPool(Resource):
         self.database_dtu_max = database_dtu_max
         self.database_dtu_min = database_dtu_min
         self.storage_mb = storage_mb
+        self.kind = None

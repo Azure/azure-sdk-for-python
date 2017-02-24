@@ -65,6 +65,15 @@ class ElasticPoolActivity(Resource):
     :vartype start_time: datetime
     :ivar state: The current state of the operation.
     :vartype state: str
+    :ivar requested_storage_limit_in_mb: The requested storage limit in MB.
+    :vartype requested_storage_limit_in_mb: int
+    :ivar requested_database_dtu_guarantee: The requested per Database DTU
+     guarantee.
+    :vartype requested_database_dtu_guarantee: int
+    :ivar requested_database_dtu_cap: The requested per Database DTU cap.
+    :vartype requested_database_dtu_cap: int
+    :ivar requested_dtu_guarantee: The requested DTU guarantee.
+    :vartype requested_dtu_guarantee: int
     """
 
     _validation = {
@@ -88,6 +97,10 @@ class ElasticPoolActivity(Resource):
         'server_name': {'readonly': True},
         'start_time': {'readonly': True},
         'state': {'readonly': True},
+        'requested_storage_limit_in_mb': {'readonly': True},
+        'requested_database_dtu_guarantee': {'readonly': True},
+        'requested_database_dtu_cap': {'readonly': True},
+        'requested_dtu_guarantee': {'readonly': True},
     }
 
     _attribute_map = {
@@ -112,6 +125,10 @@ class ElasticPoolActivity(Resource):
         'server_name': {'key': 'properties.serverName', 'type': 'str'},
         'start_time': {'key': 'properties.startTime', 'type': 'iso-8601'},
         'state': {'key': 'properties.state', 'type': 'str'},
+        'requested_storage_limit_in_mb': {'key': 'properties.requestedStorageLimitInMB', 'type': 'int'},
+        'requested_database_dtu_guarantee': {'key': 'properties.requestedDatabaseDtuGuarantee', 'type': 'int'},
+        'requested_database_dtu_cap': {'key': 'properties.requestedDatabaseDtuCap', 'type': 'int'},
+        'requested_dtu_guarantee': {'key': 'properties.requestedDtuGuarantee', 'type': 'int'},
     }
 
     def __init__(self, location, tags=None):
@@ -132,3 +149,7 @@ class ElasticPoolActivity(Resource):
         self.server_name = None
         self.start_time = None
         self.state = None
+        self.requested_storage_limit_in_mb = None
+        self.requested_database_dtu_guarantee = None
+        self.requested_database_dtu_cap = None
+        self.requested_dtu_guarantee = None
