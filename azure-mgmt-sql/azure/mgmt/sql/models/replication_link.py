@@ -13,7 +13,7 @@ from .sql_sub_resource import SqlSubResource
 
 
 class ReplicationLink(SqlSubResource):
-    """Represents an Azure SQL database replication link.
+    """Represents a database replication link.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -31,21 +31,19 @@ class ReplicationLink(SqlSubResource):
     :vartype is_termination_allowed: bool
     :ivar replication_mode: Replication mode of this replication link.
     :vartype replication_mode: str
-    :ivar partner_server: The name of the Azure SQL server hosting the partner
-     Azure SQL Database.
+    :ivar partner_server: The name of the server hosting the partner database.
     :vartype partner_server: str
-    :ivar partner_database: The name of the partner Azure SQL Database.
+    :ivar partner_database: The name of the partner database.
     :vartype partner_database: str
-    :ivar partner_location: The Azure Region of the partner Azure SQL
-     Database.
+    :ivar partner_location: The Azure Region of the partner database.
     :vartype partner_location: str
-    :ivar role: The role of the Azure SQL database in the replication link.
-     Possible values include: 'Primary', 'Secondary', 'NonReadableSecondary',
-     'Source', 'Copy'
+    :ivar role: The role of the database in the replication link. Possible
+     values include: 'Primary', 'Secondary', 'NonReadableSecondary', 'Source',
+     'Copy'
     :vartype role: str or :class:`ReplicationRole
      <azure.mgmt.sql.models.ReplicationRole>`
-    :ivar partner_role: The role of the partner Azure SQL Database in the
-     replication link. Possible values include: 'Primary', 'Secondary',
+    :ivar partner_role: The role of the partner database in the replication
+     link. Possible values include: 'Primary', 'Secondary',
      'NonReadableSecondary', 'Source', 'Copy'
     :vartype partner_role: str or :class:`ReplicationRole
      <azure.mgmt.sql.models.ReplicationRole>`

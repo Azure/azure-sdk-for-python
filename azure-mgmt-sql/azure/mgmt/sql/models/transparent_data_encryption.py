@@ -13,7 +13,7 @@ from .sql_sub_resource import SqlSubResource
 
 
 class TransparentDataEncryption(SqlSubResource):
-    """Represents an Azure SQL Database Transparent Data Encryption .
+    """Represents a database transparent data encryption .
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -22,8 +22,8 @@ class TransparentDataEncryption(SqlSubResource):
     :vartype name: str
     :ivar id: The resource ID.
     :vartype id: str
-    :param status: The status of the Azure SQL Database Transparent Data
-     Encryption. Possible values include: 'Enabled', 'Disabled'
+    :param status: The status of the database transparent data encryption.
+     Possible values include: 'Enabled', 'Disabled'
     :type status: str or :class:`TransparentDataEncryptionStates
      <azure.mgmt.sql.models.TransparentDataEncryptionStates>`
     """
