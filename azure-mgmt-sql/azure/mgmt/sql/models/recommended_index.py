@@ -13,7 +13,7 @@ from .resource import Resource
 
 
 class RecommendedIndex(Resource):
-    """Represents an Azure SQL Database recommended index.
+    """Represents a database recommended index.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
