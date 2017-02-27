@@ -13,7 +13,7 @@ from .sql_sub_resource import SqlSubResource
 
 
 class DatabaseMetric(SqlSubResource):
-    """Represents Azure SQL Database metrics.
+    """Represents database metrics.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.

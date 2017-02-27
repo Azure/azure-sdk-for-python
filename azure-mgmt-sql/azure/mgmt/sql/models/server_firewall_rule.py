@@ -13,7 +13,7 @@ from .sql_sub_resource import SqlSubResource
 
 
 class ServerFirewallRule(SqlSubResource):
-    """Represents an Azure SQL server firewall rule.
+    """Represents a server firewall rule.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -28,14 +28,13 @@ class ServerFirewallRule(SqlSubResource):
     :vartype location: str
     :ivar type: Type of resource this is.
     :vartype type: str
-    :param start_ip_address: The start IP address of the Azure SQL server
-     firewall rule. Must be IPv4 format. Use value '0.0.0.0' to represent all
-     Azure-internal IP addresses.
-    :type start_ip_address: str
-    :param end_ip_address: The end IP address of the Azure SQL server firewall
-     rule. Must be IPv4 format. Must be greater than or equal to
-     startIpAddress. Use value '0.0.0.0' to represent all Azure-internal IP
+    :param start_ip_address: The start IP address of the firewall rule. Must
+     be IPv4 format. Use value '0.0.0.0' to represent all Azure-internal IP
      addresses.
+    :type start_ip_address: str
+    :param end_ip_address: The end IP address of the firewall rule. Must be
+     IPv4 format. Must be greater than or equal to startIpAddress. Use value
+     '0.0.0.0' to represent all Azure-internal IP addresses.
     :type end_ip_address: str
     """
 

@@ -37,25 +37,23 @@ class ServersOperations(object):
 
     def create_or_update_firewall_rule(
             self, resource_group_name, server_name, firewall_rule_name, start_ip_address, end_ip_address, custom_headers=None, raw=False, **operation_config):
-        """Creates or updates an Azure SQL server firewall rule.
+        """Creates or updates a firewall rule.
 
         :param resource_group_name: The name of the resource group that
          contains the resource. You can obtain this value from the Azure
          Resource Manager API or the portal.
         :type resource_group_name: str
-        :param server_name: The name of the Azure SQL server.
+        :param server_name: The name of the server.
         :type server_name: str
-        :param firewall_rule_name: The name of the Azure SQL server firewall
-         rule.
+        :param firewall_rule_name: The name of the firewall rule.
         :type firewall_rule_name: str
-        :param start_ip_address: The start IP address of the Azure SQL server
-         firewall rule. Must be IPv4 format. Use value '0.0.0.0' to represent
-         all Azure-internal IP addresses.
+        :param start_ip_address: The start IP address of the firewall rule.
+         Must be IPv4 format. Use value '0.0.0.0' to represent all
+         Azure-internal IP addresses.
         :type start_ip_address: str
-        :param end_ip_address: The end IP address of the Azure SQL server
-         firewall rule. Must be IPv4 format. Must be greater than or equal to
-         startIpAddress. Use value '0.0.0.0' to represent all Azure-internal IP
-         addresses.
+        :param end_ip_address: The end IP address of the firewall rule. Must
+         be IPv4 format. Must be greater than or equal to startIpAddress. Use
+         value '0.0.0.0' to represent all Azure-internal IP addresses.
         :type end_ip_address: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -122,16 +120,15 @@ class ServersOperations(object):
 
     def delete_firewall_rule(
             self, resource_group_name, server_name, firewall_rule_name, custom_headers=None, raw=False, **operation_config):
-        """Deletes an Azure SQL server firewall rule.
+        """Deletes a firewall rule.
 
         :param resource_group_name: The name of the resource group that
          contains the resource. You can obtain this value from the Azure
          Resource Manager API or the portal.
         :type resource_group_name: str
-        :param server_name: The name of the Azure SQL server.
+        :param server_name: The name of the server.
         :type server_name: str
-        :param firewall_rule_name: The name of the Azure SQL server firewall
-         rule.
+        :param firewall_rule_name: The name of the firewall rule.
         :type firewall_rule_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -182,16 +179,15 @@ class ServersOperations(object):
 
     def get_firewall_rule(
             self, resource_group_name, server_name, firewall_rule_name, custom_headers=None, raw=False, **operation_config):
-        """Returns an Azure SQL server firewall rule.
+        """Gets a firewall rule.
 
         :param resource_group_name: The name of the resource group that
          contains the resource. You can obtain this value from the Azure
          Resource Manager API or the portal.
         :type resource_group_name: str
-        :param server_name: The name of the Azure SQL server.
+        :param server_name: The name of the server.
         :type server_name: str
-        :param firewall_rule_name: The name of the Azure SQL server firewall
-         rule.
+        :param firewall_rule_name: The name of the firewall rule.
         :type firewall_rule_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -250,13 +246,13 @@ class ServersOperations(object):
 
     def list_firewall_rules(
             self, resource_group_name, server_name, custom_headers=None, raw=False, **operation_config):
-        """Returns a list of Azure SQL server firewall rules.
+        """Returns a list of firewall rules.
 
         :param resource_group_name: The name of the resource group that
          contains the resource. You can obtain this value from the Azure
          Resource Manager API or the portal.
         :type resource_group_name: str
-        :param server_name: The name of the Azure SQL server.
+        :param server_name: The name of the server.
         :type server_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -321,7 +317,7 @@ class ServersOperations(object):
 
     def list(
             self, custom_headers=None, raw=False, **operation_config):
-        """Returns information about an Azure SQL server.
+        """Returns a list of servers.
 
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -383,13 +379,13 @@ class ServersOperations(object):
 
     def create_or_update(
             self, resource_group_name, server_name, parameters, custom_headers=None, raw=False, **operation_config):
-        """Creates or updates a new Azure SQL server.
+        """Creates or updates a new server.
 
         :param resource_group_name: The name of the resource group that
          contains the resource. You can obtain this value from the Azure
          Resource Manager API or the portal.
         :type resource_group_name: str
-        :param server_name: The name of the Azure SQL server.
+        :param server_name: The name of the server.
         :type server_name: str
         :param parameters: The required parameters for creating or updating a
          server.
@@ -461,7 +457,7 @@ class ServersOperations(object):
          contains the resource. You can obtain this value from the Azure
          Resource Manager API or the portal.
         :type resource_group_name: str
-        :param server_name: The name of the Azure SQL server.
+        :param server_name: The name of the server.
         :type server_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -511,13 +507,13 @@ class ServersOperations(object):
 
     def get_by_resource_group(
             self, resource_group_name, server_name, custom_headers=None, raw=False, **operation_config):
-        """Gets information about an Azure SQL server.
+        """Gets a server.
 
         :param resource_group_name: The name of the resource group that
          contains the resource. You can obtain this value from the Azure
          Resource Manager API or the portal.
         :type resource_group_name: str
-        :param server_name: The name of the Azure SQL server.
+        :param server_name: The name of the server.
         :type server_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -574,7 +570,7 @@ class ServersOperations(object):
 
     def list_by_resource_group(
             self, resource_group_name, custom_headers=None, raw=False, **operation_config):
-        """Returns information about an Azure SQL server.
+        """Returns a server.
 
         :param resource_group_name: The name of the resource group that
          contains the resource. You can obtain this value from the Azure
@@ -641,13 +637,13 @@ class ServersOperations(object):
 
     def list_usages(
             self, resource_group_name, server_name, custom_headers=None, raw=False, **operation_config):
-        """Returns information about Azure SQL server usage.
+        """Returns server usages.
 
         :param resource_group_name: The name of the resource group that
          contains the resource. You can obtain this value from the Azure
          Resource Manager API or the portal.
         :type resource_group_name: str
-        :param server_name: The name of the Azure SQL server.
+        :param server_name: The name of the server.
         :type server_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -712,13 +708,13 @@ class ServersOperations(object):
 
     def get_service_objective(
             self, resource_group_name, server_name, service_objective_name, custom_headers=None, raw=False, **operation_config):
-        """Gets information about an Azure SQL database Service Objective.
+        """Gets a database service objective.
 
         :param resource_group_name: The name of the resource group that
          contains the resource. You can obtain this value from the Azure
          Resource Manager API or the portal.
         :type resource_group_name: str
-        :param server_name: The name of the Azure SQL server.
+        :param server_name: The name of the server.
         :type server_name: str
         :param service_objective_name: The name of the service objective to
          retrieve.
@@ -780,13 +776,13 @@ class ServersOperations(object):
 
     def list_service_objectives(
             self, resource_group_name, server_name, custom_headers=None, raw=False, **operation_config):
-        """Returns information about Azure SQL database Service Objectives.
+        """Returns database service objectives.
 
         :param resource_group_name: The name of the resource group that
          contains the resource. You can obtain this value from the Azure
          Resource Manager API or the portal.
         :type resource_group_name: str
-        :param server_name: The name of the Azure SQL server.
+        :param server_name: The name of the server.
         :type server_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the

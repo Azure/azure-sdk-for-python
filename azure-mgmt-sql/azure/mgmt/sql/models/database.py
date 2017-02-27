@@ -13,7 +13,7 @@ from .resource import Resource
 
 
 class Database(Resource):
-    """Represents an Azure SQL Database.
+    """Represents a database.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -31,22 +31,21 @@ class Database(Resource):
     :ivar kind: Kind of database.  This is metadata used for the Azure portal
      experience.
     :vartype kind: str
-    :param collation: The collation of the Azure SQL database. If createMode
-     is not Default, this value is ignored.
+    :param collation: The collation of the database. If createMode is not
+     Default, this value is ignored.
     :type collation: str
-    :ivar creation_date: The creation date of the Azure SQL database (ISO8601
-     format).
+    :ivar creation_date: The creation date of the database (ISO8601 format).
     :vartype creation_date: datetime
-    :ivar containment_state: The containment state of the Azure SQL database.
+    :ivar containment_state: The containment state of the database.
     :vartype containment_state: long
-    :ivar current_service_objective_id: The current Service Level Objective ID
-     of the Azure SQL database. This is the ID of the Service Level Objective
-     that is currently active.
+    :ivar current_service_objective_id: The current service level objective ID
+     of the database. This is the ID of the service level objective that is
+     currently active.
     :vartype current_service_objective_id: str
-    :ivar database_id: The ID of the Azure SQL database.
+    :ivar database_id: The ID of the database.
     :vartype database_id: str
     :ivar earliest_restore_date: This records the earliest start date and time
-     that restore is available for this Azure SQL Database (ISO8601 format).
+     that restore is available for this database (ISO8601 format).
     :vartype earliest_restore_date: datetime
     :param create_mode: Specifies the type of database to create. If
      createMode is not set to Default, sourceDatabaseId must be specified. If
@@ -69,44 +68,45 @@ class Database(Resource):
      create the new database. Must be greater than or equal to the source
      database's earliestRestoreDate value.
     :type restore_point_in_time: datetime
-    :param edition: The edition of the Azure SQL database. The
-     DatabaseEditions enumeration contains all the valid editions. If
-     createMode is NonReadableSecondary or OnlineSecondary, this value is
-     ignored. Possible values include: 'Web', 'Business', 'Basic', 'Standard',
-     'Premium', 'Free', 'Stretch', 'DataWarehouse', 'System'
+    :param edition: The edition of the database. The DatabaseEditions
+     enumeration contains all the valid editions. If createMode is
+     NonReadableSecondary or OnlineSecondary, this value is ignored. Possible
+     values include: 'Web', 'Business', 'Basic', 'Standard', 'Premium', 'Free',
+     'Stretch', 'DataWarehouse', 'System'
     :type edition: str or :class:`DatabaseEditions
      <azure.mgmt.sql.models.DatabaseEditions>`
-    :param max_size_bytes: The max size of the Azure SQL database expressed in
-     bytes. If createMode is not Default, this value is ignored. Note: Only the
-     following sizes are supported (in addition to limitations being placed on
-     each edition): { 100 MB | 500 MB |1 GB | 5 GB | 10 GB | 20 GB | 30 GB …
-     150 GB | 200 GB … 500 GB }
+    :param max_size_bytes: The max size of the database expressed in bytes. If
+     createMode is not Default, this value is ignored. Note: Only the following
+     sizes are supported (in addition to limitations being placed on each
+     edition): { 100 MB | 500 MB |1 GB | 5 GB | 10 GB | 20 GB | 30 GB … 150 GB
+     | 200 GB … 500 GB }
     :type max_size_bytes: str
-    :param requested_service_objective_id: The configured Service Level
-     Objective ID of the Azure SQL database. This is the Service Level
-     Objective that is in the process of being applied to the Azure SQL
-     database. Once successfully updated, it will match the value of
-     currentServiceObjectiveId property.
+    :param requested_service_objective_id: The configured service level
+     objective ID of the database. This is the service level objective that is
+     in the process of being applied to the database. Once successfully
+     updated, it will match the value of currentServiceObjectiveId property. If
+     requestedServiceObjectiveId and requestedServiceObjectiveName are both
+     updated, the value of requestedServiceObjectiveId overrides the value of
+     requestedServiceObjectiveName.
     :type requested_service_objective_id: str
     :param requested_service_objective_name: The name of the configured
-     Service Level Objective of the Azure SQL database. This is the Service
-     Level Objective that is in the process of being applied to the Azure SQL
-     database. Once successfully updated, it will match the value of
-     serviceLevelObjective property. Possible values include: 'Basic', 'S0',
-     'S1', 'S2', 'S3', 'P1', 'P2', 'P3', 'P4', 'P6', 'P11', 'P15', 'System',
-     'System1', 'System2', 'System3', 'System4'
+     service level objective of the database. This is the service level
+     objective that is in the process of being applied to the database. Once
+     successfully updated, it will match the value of serviceLevelObjective
+     property. Possible values include: 'Basic', 'S0', 'S1', 'S2', 'S3', 'P1',
+     'P2', 'P3', 'P4', 'P6', 'P11', 'P15', 'System', 'ElasticPool'
     :type requested_service_objective_name: str or
      :class:`ServiceObjectiveName <azure.mgmt.sql.models.ServiceObjectiveName>`
-    :ivar service_level_objective: The current Service Level Objective of the
-     Azure SQL database. Possible values include: 'Basic', 'S0', 'S1', 'S2',
-     'S3', 'P1', 'P2', 'P3', 'P4', 'P6', 'P11', 'P15', 'System', 'System1',
-     'System2', 'System3', 'System4'
+    :ivar service_level_objective: The current service level objective of the
+     database. Possible values include: 'Basic', 'S0', 'S1', 'S2', 'S3', 'P1',
+     'P2', 'P3', 'P4', 'P6', 'P11', 'P15', 'System', 'ElasticPool'
     :vartype service_level_objective: str or :class:`ServiceObjectiveName
      <azure.mgmt.sql.models.ServiceObjectiveName>`
-    :ivar status: The status of the Azure SQL database.
+    :ivar status: The status of the database.
     :vartype status: str
-    :param elastic_pool_name: The name of the Azure SQL Elastic Pool the
-     database is in.
+    :param elastic_pool_name: The name of the elastic pool the database is in.
+     If elasticPoolName and requestedServiceObjectiveName are both updated, the
+     value of requestedServiceObjectiveName is ignored.
     :type elastic_pool_name: str
     :ivar default_secondary_location: The default secondary region for this
      database.

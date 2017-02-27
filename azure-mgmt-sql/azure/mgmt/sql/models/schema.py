@@ -13,7 +13,7 @@ from .resource import Resource
 
 
 class Schema(Resource):
-    """Represents an Azure SQL Database schema.
+    """Represents a database schema.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.

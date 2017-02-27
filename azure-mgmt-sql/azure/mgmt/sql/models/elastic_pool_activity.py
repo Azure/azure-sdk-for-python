@@ -13,7 +13,7 @@ from .resource import Resource
 
 
 class ElasticPoolActivity(Resource):
-    """Represents the activity on an Azure SQL Elastic Pool.
+    """Represents the activity on an elastic pool.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -50,16 +50,15 @@ class ElasticPoolActivity(Resource):
     :vartype requested_database_dtu_min: int
     :ivar requested_dtu: The requested DTU for the pool if available.
     :vartype requested_dtu: int
-    :ivar requested_elastic_pool_name: The requested name for the Elastic Pool
+    :ivar requested_elastic_pool_name: The requested name for the elastic pool
      if available.
     :vartype requested_elastic_pool_name: str
     :ivar requested_storage_limit_in_gb: The requested storage limit for the
      pool in GB if available.
     :vartype requested_storage_limit_in_gb: long
-    :ivar elastic_pool_name: The name of the Elastic Pool.
+    :ivar elastic_pool_name: The name of the elastic pool.
     :vartype elastic_pool_name: str
-    :ivar server_name: The name of the Azure SQL server the Elastic Pool is
-     in.
+    :ivar server_name: The name of the server the elastic pool is in.
     :vartype server_name: str
     :ivar start_time: The time the operation started (ISO8601 format).
     :vartype start_time: datetime
@@ -67,10 +66,10 @@ class ElasticPoolActivity(Resource):
     :vartype state: str
     :ivar requested_storage_limit_in_mb: The requested storage limit in MB.
     :vartype requested_storage_limit_in_mb: int
-    :ivar requested_database_dtu_guarantee: The requested per Database DTU
+    :ivar requested_database_dtu_guarantee: The requested per database DTU
      guarantee.
     :vartype requested_database_dtu_guarantee: int
-    :ivar requested_database_dtu_cap: The requested per Database DTU cap.
+    :ivar requested_database_dtu_cap: The requested per database DTU cap.
     :vartype requested_database_dtu_cap: int
     :ivar requested_dtu_guarantee: The requested DTU guarantee.
     :vartype requested_dtu_guarantee: int

@@ -13,7 +13,7 @@ from .resource import Resource
 
 
 class Table(Resource):
-    """Represents an Azure SQL Database table.
+    """Represents a database table.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -28,8 +28,8 @@ class Table(Resource):
     :type location: str
     :param tags: Resource tags
     :type tags: dict
-    :ivar table_type: The type of Azure SQL Database table. Possible values
-     include: 'BaseTable', 'View'
+    :ivar table_type: The type of database table. Possible values include:
+     'BaseTable', 'View'
     :vartype table_type: str or :class:`TableType
      <azure.mgmt.sql.models.TableType>`
     :ivar columns: The columns from this table.
