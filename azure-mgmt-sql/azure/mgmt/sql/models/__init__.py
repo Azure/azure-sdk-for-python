@@ -11,9 +11,6 @@
 
 from .server_firewall_rule import ServerFirewallRule
 from .sql_sub_resource import SqlSubResource
-from .operation_display import OperationDisplay
-from .operation import Operation
-from .operation_list_result import OperationListResult
 from .replication_link import ReplicationLink
 from .recommended_elastic_pool_metric import RecommendedElasticPoolMetric
 from .slo_usage_metric import SloUsageMetric
@@ -38,6 +35,9 @@ from .server_metric import ServerMetric
 from .service_objective import ServiceObjective
 from .transparent_data_encryption_activity import TransparentDataEncryptionActivity
 from .resource import Resource
+from .operation_display import OperationDisplay
+from .operation import Operation
+from .operation_list_result import OperationListResult
 from .server_firewall_rule_paged import ServerFirewallRulePaged
 from .server_paged import ServerPaged
 from .server_metric_paged import ServerMetricPaged
@@ -78,9 +78,6 @@ from .sql_management_client_enums import (
 __all__ = [
     'ServerFirewallRule',
     'SqlSubResource',
-    'OperationDisplay',
-    'Operation',
-    'OperationListResult',
     'ReplicationLink',
     'RecommendedElasticPoolMetric',
     'SloUsageMetric',
@@ -105,6 +102,9 @@ __all__ = [
     'ServiceObjective',
     'TransparentDataEncryptionActivity',
     'Resource',
+    'OperationDisplay',
+    'Operation',
+    'OperationListResult',
     'ServerFirewallRulePaged',
     'ServerPaged',
     'ServerMetricPaged',
