@@ -13,7 +13,7 @@ from .sql_sub_resource import SqlSubResource
 
 
 class ServiceObjective(SqlSubResource):
-    """Represents an Azure SQL Database Service Objective.
+    """Represents a database service objective.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.

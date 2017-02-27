@@ -38,16 +38,15 @@ class DatabasesOperations(object):
 
     def delete_replication_link(
             self, resource_group_name, server_name, database_name, link_id, custom_headers=None, raw=False, **operation_config):
-        """Deletes the Azure SQL database replication link with the given ID.
-        Cannot be done during failover.
+        """Deletes a database replication link. Cannot be done during failover.
 
         :param resource_group_name: The name of the resource group that
          contains the resource. You can obtain this value from the Azure
          Resource Manager API or the portal.
         :type resource_group_name: str
-        :param server_name: The name of the Azure SQL server.
+        :param server_name: The name of the server.
         :type server_name: str
-        :param database_name: The name of the Azure SQL database that has the
+        :param database_name: The name of the database that has the
          replication link to be dropped.
         :type database_name: str
         :param link_id: The ID of the replication link to be deleted.
@@ -102,16 +101,15 @@ class DatabasesOperations(object):
 
     def get_replication_link(
             self, resource_group_name, server_name, database_name, link_id, custom_headers=None, raw=False, **operation_config):
-        """Gets information about an Azure SQL database replication link.
+        """Gets a database replication link.
 
         :param resource_group_name: The name of the resource group that
          contains the resource. You can obtain this value from the Azure
          Resource Manager API or the portal.
         :type resource_group_name: str
-        :param server_name: The name of the Azure SQL server.
+        :param server_name: The name of the server.
         :type server_name: str
-        :param database_name: The name of the Azure SQL database to get the
-         link for.
+        :param database_name: The name of the database to get the link for.
         :type database_name: str
         :param link_id: The replication link ID to be retrieved.
         :type link_id: str
@@ -173,15 +171,15 @@ class DatabasesOperations(object):
 
     def failover_replication_link(
             self, resource_group_name, server_name, database_name, link_id, custom_headers=None, raw=False, **operation_config):
-        """Failover the Azure SQL database replication link with the given ID.
+        """Failover the database replication link.
 
         :param resource_group_name: The name of the resource group that
          contains the resource. You can obtain this value from the Azure
          Resource Manager API or the portal.
         :type resource_group_name: str
-        :param server_name: The name of the Azure SQL server.
+        :param server_name: The name of the server.
         :type server_name: str
-        :param database_name: The name of the Azure SQL database that has the
+        :param database_name: The name of the database that has the
          replication link to be failed over.
         :type database_name: str
         :param link_id: The ID of the replication link to be failed over.
@@ -259,16 +257,16 @@ class DatabasesOperations(object):
 
     def failover_replication_link_allow_data_loss(
             self, resource_group_name, server_name, database_name, link_id, custom_headers=None, raw=False, **operation_config):
-        """Force failover the Azure SQL database replication link with the given
-        ID which may result in data loss.
+        """Force failover the database replication link, which may result in data
+        loss.
 
         :param resource_group_name: The name of the resource group that
          contains the resource. You can obtain this value from the Azure
          Resource Manager API or the portal.
         :type resource_group_name: str
-        :param server_name: The name of the Azure SQL server.
+        :param server_name: The name of the server.
         :type server_name: str
-        :param database_name: The name of the Azure SQL database that has the
+        :param database_name: The name of the database that has the
          replication link to be failed over.
         :type database_name: str
         :param link_id: The ID of the replication link to be failed over.
@@ -346,16 +344,15 @@ class DatabasesOperations(object):
 
     def list_replication_links(
             self, resource_group_name, server_name, database_name, custom_headers=None, raw=False, **operation_config):
-        """Gets information about Azure SQL database replication links.
+        """Lists a database's replication links.
 
         :param resource_group_name: The name of the resource group that
          contains the resource. You can obtain this value from the Azure
          Resource Manager API or the portal.
         :type resource_group_name: str
-        :param server_name: The name of the Azure SQL server.
+        :param server_name: The name of the server.
         :type server_name: str
-        :param database_name: The name of the Azure SQL database to retrieve
-         links for.
+        :param database_name: The name of the database to retrieve links for.
         :type database_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -421,16 +418,15 @@ class DatabasesOperations(object):
 
     def pause_data_warehouse(
             self, resource_group_name, server_name, database_name, custom_headers=None, raw=False, **operation_config):
-        """Pause an Azure SQL Data Warehouse database.
+        """Pauses a data warehouse.
 
         :param resource_group_name: The name of the resource group that
          contains the resource. You can obtain this value from the Azure
          Resource Manager API or the portal.
         :type resource_group_name: str
-        :param server_name: The name of the Azure SQL server.
+        :param server_name: The name of the server.
         :type server_name: str
-        :param database_name: The name of the Azure SQL Data Warehouse
-         database to pause.
+        :param database_name: The name of the data warehouse to pause.
         :type database_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -504,16 +500,15 @@ class DatabasesOperations(object):
 
     def resume_data_warehouse(
             self, resource_group_name, server_name, database_name, custom_headers=None, raw=False, **operation_config):
-        """Resume an Azure SQL Data Warehouse database.
+        """Resumes a data warehouse.
 
         :param resource_group_name: The name of the resource group that
          contains the resource. You can obtain this value from the Azure
          Resource Manager API or the portal.
         :type resource_group_name: str
-        :param server_name: The name of the Azure SQL server.
+        :param server_name: The name of the server.
         :type server_name: str
-        :param database_name: The name of the Azure SQL Data Warehouse
-         database to resume.
+        :param database_name: The name of the data warehouse to resume.
         :type database_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -587,16 +582,16 @@ class DatabasesOperations(object):
 
     def list_restore_points(
             self, resource_group_name, server_name, database_name, custom_headers=None, raw=False, **operation_config):
-        """Returns a list of Azure SQL database restore points.
+        """Returns a list of database restore points.
 
         :param resource_group_name: The name of the resource group that
          contains the resource. You can obtain this value from the Azure
          Resource Manager API or the portal.
         :type resource_group_name: str
-        :param server_name: The name of the Azure SQL server.
+        :param server_name: The name of the server.
         :type server_name: str
-        :param database_name: The name of the Azure SQL database from which to
-         retrieve available restore points.
+        :param database_name: The name of the database from which to retrieve
+         available restore points.
         :type database_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -662,18 +657,18 @@ class DatabasesOperations(object):
 
     def create_or_update(
             self, resource_group_name, server_name, database_name, parameters, custom_headers=None, raw=False, **operation_config):
-        """Creates a new Azure SQL database or updates an existing Azure SQL
-        database. Location is a required property in the request body, and it
-        must be the same as the location of the SQL server.
+        """Creates a new database or updates an existing database. Location is a
+        required property in the request body, and it must be the same as the
+        location of the SQL server.
 
         :param resource_group_name: The name of the resource group that
          contains the resource. You can obtain this value from the Azure
          Resource Manager API or the portal.
         :type resource_group_name: str
-        :param server_name: The name of the Azure SQL server.
+        :param server_name: The name of the server.
         :type server_name: str
-        :param database_name: The name of the Azure SQL database to be
-         operated on (updated or created).
+        :param database_name: The name of the database to be operated on
+         (updated or created).
         :type database_name: str
         :param parameters: The required parameters for creating or updating a
          database.
@@ -764,16 +759,15 @@ class DatabasesOperations(object):
 
     def delete(
             self, resource_group_name, server_name, database_name, custom_headers=None, raw=False, **operation_config):
-        """Deletes an Azure SQL database.
+        """Deletes a database.
 
         :param resource_group_name: The name of the resource group that
          contains the resource. You can obtain this value from the Azure
          Resource Manager API or the portal.
         :type resource_group_name: str
-        :param server_name: The name of the Azure SQL server.
+        :param server_name: The name of the server.
         :type server_name: str
-        :param database_name: The name of the Azure SQL database to be
-         deleted.
+        :param database_name: The name of the database to be deleted.
         :type database_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -824,16 +818,15 @@ class DatabasesOperations(object):
 
     def get(
             self, resource_group_name, server_name, database_name, expand=None, custom_headers=None, raw=False, **operation_config):
-        """Gets information about an Azure SQL database.
+        """Gets a database.
 
         :param resource_group_name: The name of the resource group that
          contains the resource. You can obtain this value from the Azure
          Resource Manager API or the portal.
         :type resource_group_name: str
-        :param server_name: The name of the Azure SQL server.
+        :param server_name: The name of the server.
         :type server_name: str
-        :param database_name: The name of the Azure SQL database to be
-         retrieved.
+        :param database_name: The name of the database to be retrieved.
         :type database_name: str
         :param expand: The comma separated list of child objects to expand in
          the response. Possible properties: serviceTierAdvisors, upgradeHint,
@@ -897,13 +890,13 @@ class DatabasesOperations(object):
 
     def list_by_server(
             self, resource_group_name, server_name, custom_headers=None, raw=False, **operation_config):
-        """Returns information about an Azure SQL database.
+        """Returns a list of databases by server.
 
         :param resource_group_name: The name of the resource group that
          contains the resource. You can obtain this value from the Azure
          Resource Manager API or the portal.
         :type resource_group_name: str
-        :param server_name: The name of the Azure SQL server.
+        :param server_name: The name of the server.
         :type server_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -967,15 +960,15 @@ class DatabasesOperations(object):
 
     def list_usages(
             self, resource_group_name, server_name, database_name, custom_headers=None, raw=False, **operation_config):
-        """Returns information about Azure SQL database usages.
+        """Returns database usages.
 
         :param resource_group_name: The name of the resource group that
          contains the resource. You can obtain this value from the Azure
          Resource Manager API or the portal.
         :type resource_group_name: str
-        :param server_name: The name of the Azure SQL server.
+        :param server_name: The name of the server.
         :type server_name: str
-        :param database_name: The name of the Azure SQL database.
+        :param database_name: The name of the database.
         :type database_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -1041,13 +1034,13 @@ class DatabasesOperations(object):
 
     def get_service_tier_advisor(
             self, resource_group_name, server_name, database_name, service_tier_advisor_name, custom_headers=None, raw=False, **operation_config):
-        """Gets information about a service tier advisor.
+        """Gets a service tier advisor.
 
         :param resource_group_name: The name of the resource group that
          contains the resource. You can obtain this value from the Azure
          Resource Manager API or the portal.
         :type resource_group_name: str
-        :param server_name: The name of the Azure SQL server.
+        :param server_name: The name of the server.
         :type server_name: str
         :param database_name: The name of database.
         :type database_name: str
@@ -1111,13 +1104,13 @@ class DatabasesOperations(object):
 
     def list_service_tier_advisors(
             self, resource_group_name, server_name, database_name, custom_headers=None, raw=False, **operation_config):
-        """Returns information about service tier advisors for specified database.
+        """Returns service tier advisors for specified database.
 
         :param resource_group_name: The name of the resource group that
          contains the resource. You can obtain this value from the Azure
          Resource Manager API or the portal.
         :type resource_group_name: str
-        :param server_name: The name of the Azure SQL server.
+        :param server_name: The name of the server.
         :type server_name: str
         :param database_name: The name of database.
         :type database_name: str
@@ -1185,20 +1178,20 @@ class DatabasesOperations(object):
 
     def create_or_update_transparent_data_encryption_configuration(
             self, resource_group_name, server_name, database_name, status=None, custom_headers=None, raw=False, **operation_config):
-        """Creates or updates an Azure SQL Database Transparent Data Encryption
-        Operation.
+        """Creates or updates a database's transparent data encryption
+        configuration.
 
         :param resource_group_name: The name of the resource group that
          contains the resource. You can obtain this value from the Azure
          Resource Manager API or the portal.
         :type resource_group_name: str
-        :param server_name: The name of the Azure SQL server.
+        :param server_name: The name of the server.
         :type server_name: str
-        :param database_name: The name of the Azure SQL database for which
-         setting the Transparent Data Encryption applies.
+        :param database_name: The name of the database for which setting the
+         transparent data encryption applies.
         :type database_name: str
-        :param status: The status of the Azure SQL Database Transparent Data
-         Encryption. Possible values include: 'Enabled', 'Disabled'
+        :param status: The status of the database transparent data encryption.
+         Possible values include: 'Enabled', 'Disabled'
         :type status: str or :class:`TransparentDataEncryptionStates
          <azure.mgmt.sql.models.TransparentDataEncryptionStates>`
         :param dict custom_headers: headers that will be added to the request
@@ -1266,16 +1259,16 @@ class DatabasesOperations(object):
 
     def get_transparent_data_encryption_configuration(
             self, resource_group_name, server_name, database_name, custom_headers=None, raw=False, **operation_config):
-        """Gets an Azure SQL Database Transparent Data Encryption Response.
+        """Gets a database's transparent data encryption configuration.
 
         :param resource_group_name: The name of the resource group that
          contains the resource. You can obtain this value from the Azure
          Resource Manager API or the portal.
         :type resource_group_name: str
-        :param server_name: The name of the Azure SQL server.
+        :param server_name: The name of the server.
         :type server_name: str
-        :param database_name: The name of the Azure SQL database for which the
-         Transparent Data Encryption applies.
+        :param database_name: The name of the database for which the
+         transparent data encryption applies.
         :type database_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -1334,17 +1327,16 @@ class DatabasesOperations(object):
 
     def list_transparent_data_encryption_activity(
             self, resource_group_name, server_name, database_name, custom_headers=None, raw=False, **operation_config):
-        """Returns an Azure SQL Database Transparent Data Encryption Activity
-        Response.
+        """Returns a database's transparent data encryption operation result.
 
         :param resource_group_name: The name of the resource group that
          contains the resource. You can obtain this value from the Azure
          Resource Manager API or the portal.
         :type resource_group_name: str
-        :param server_name: The name of the Azure SQL server.
+        :param server_name: The name of the server.
         :type server_name: str
-        :param database_name: The name of the Azure SQL database for which the
-         Transparent Data Encryption applies.
+        :param database_name: The name of the database for which the
+         transparent data encryption applies.
         :type database_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the

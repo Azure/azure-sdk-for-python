@@ -13,7 +13,7 @@ from .resource import Resource
 
 
 class Server(Resource):
-    """Represents an Azure SQL server.
+    """Represents a server.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.

@@ -75,10 +75,7 @@ class ServiceObjectiveName(Enum):
     p11 = "P11"
     p15 = "P15"
     system = "System"
-    system1 = "System1"
-    system2 = "System2"
-    system3 = "System3"
-    system4 = "System4"
+    elastic_pool = "ElasticPool"
 
 
 class TableType(Enum):

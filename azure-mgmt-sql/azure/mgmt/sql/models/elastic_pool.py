@@ -13,7 +13,7 @@ from .resource import Resource
 
 
 class ElasticPool(Resource):
-    """Represents an Azure SQL Database elastic pool.
+    """Represents a database elastic pool.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -28,27 +28,24 @@ class ElasticPool(Resource):
     :type location: str
     :param tags: Resource tags
     :type tags: dict
-    :ivar creation_date: The creation date of the Azure SQL Elastic Pool
-     (ISO8601 format).
+    :ivar creation_date: The creation date of the elastic pool (ISO8601
+     format).
     :vartype creation_date: datetime
-    :ivar state: The state of the Azure SQL Elastic Pool. Possible values
-     include: 'Creating', 'Ready', 'Disabled'
+    :ivar state: The state of the elastic pool. Possible values include:
+     'Creating', 'Ready', 'Disabled'
     :vartype state: str or :class:`ElasticPoolState
      <azure.mgmt.sql.models.ElasticPoolState>`
-    :param edition: The edition of the Azure SQL Elastic Pool. Possible values
-     include: 'Basic', 'Standard', 'Premium'
+    :param edition: The edition of the elastic pool. Possible values include:
+     'Basic', 'Standard', 'Premium'
     :type edition: str or :class:`ElasticPoolEditions
      <azure.mgmt.sql.models.ElasticPoolEditions>`
-    :param dtu: The total shared DTU for the Azure Sql Database Elastic Pool.
+    :param dtu: The total shared DTU for the database elastic pool.
     :type dtu: int
-    :param database_dtu_max: The maximum DTU any one Azure Sql Database can
-     consume.
+    :param database_dtu_max: The maximum DTU any one database can consume.
     :type database_dtu_max: int
-    :param database_dtu_min: The minimum DTU all Azure Sql Databases are
-     guaranteed.
+    :param database_dtu_min: The minimum DTU all databases are guaranteed.
     :type database_dtu_min: int
-    :param storage_mb: Gets storage limit for the Azure Sql Database Elastic
-     Pool in MB.
+    :param storage_mb: Gets storage limit for the database elastic pool in MB.
     :type storage_mb: int
     :ivar kind: Kind of elastic pool.  This is metadata used for the Azure
      portal experience.

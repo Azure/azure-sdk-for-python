@@ -13,7 +13,7 @@ from msrest.serialization import Model
 
 
 class RecommendedElasticPoolMetric(Model):
-    """Represents Azure SQL recommended elastic pool metric.
+    """Represents recommended elastic pool metric.
 
     :param date_time_property: The time of metric (ISO8601 format).
     :type date_time_property: datetime
