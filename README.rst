@@ -14,103 +14,70 @@ Microsoft Azure SDK for Python
     :target: https://ci.appveyor.com/project/lmazuel/azure-sdk-for-python/branch/master
 
 This project provides a set of Python packages that make it easy to
-access the Microsoft Azure components such as ServiceManagement, Storage\*, and ServiceBus.
+access Management (Virtual Machines, ...) or Runtime (ServiceBus using HTTP, Batch, Monitor) components of
+`Microsoft Azure <https://azure.microsoft.com/>`_
+Complete feature list of this repo and where to find Python packages not in this repo can be found on our 
+`Azure SDK for Python features chapter on ReadTheDocs <http://azure-sdk-for-python.readthedocs.io/en/latest/index.html#features>`__.
 
 The SDK supports Python 2.7, 3.3, 3.4, 3.5 and 3.6.
 
-\*Looking for the Azure Storage client library?  It moved to a `new GitHub repository <https://github.com/Azure/azure-storage-python>`__.
-
-See important information if you're currently using this SDK < 1.0 in `this issue <https://github.com/Azure/azure-sdk-for-python/issues/440>`__.
+If you're currently using the ``azure`` package < 1.0 then please read important information in `this issue <https://github.com/Azure/azure-sdk-for-python/issues/440>`__.
 
 
 INSTALLATION
 ============
 
-**The latest recommended release is currently a release candidate, tell this to pip to install it!**
+You can install each library individually for each Azure service:
 
-The `azure` bundle meta-package will install all Azure SDKs at once:
+.. code-block:: console
 
-- Use the ``--pre`` flag: ``pip install --pre azure``
+   $ pip install azure-batch         # Install the latest Batch runtime library
+   $ pip install azure-mgmt-storage  # Install the latest Storage management library
 
-- Specify the version:  ``pip install azure==2.0.0rc6``
+Preview packages can be installed using the ``--pre`` flag:
 
-You can also install only what you exactly need:
+.. code-block:: console
 
-- Use the ``--pre`` flag: ``pip install --pre azure-mgmt-compute``
+   $ pip install --pre azure-mgmt-trafficmanager # will install the latest Traffic Manager
 
-- Specify the version:  ``pip install azure-mgmt-compute==0.30.0rc6``
 
-If you want to install ``azure`` from source::
+You can also install a set of Azure libraries in a single line using the ``azure`` meta-package.
+Since not all packages in this meta-package are
+published as stable yet, the ``azure`` meta-package is still a release candidate and not final yet.
+However, the core packages, from code quality/completeness perspectives can at this time be considered "stable" 
+The ``azure`` package will be officially labeled stable in sync with other language SDKs as soon as possible. 
+We are not planning on any further major changes until then.
+
+**Since it's a preview release, you need to use the ``--pre`` flag:**
+
+.. code-block:: console
+
+   $ pip install --pre azure
+   
+or directly
+
+.. code-block:: console
+
+   $ pip install azure==2.0.0rc6
+
+**The azure meta-package 1.0.3 is deprecated and no longer properly functions.**
+
+The full list of available packages and their latest version can be found on our 
+`installation page on ReadTheDocs <azure-sdk-for-python.rtfd.io/en/latest/installation.html>`__.
+
+If you want to install all packages of the repo from source::
 
     git clone git://github.com/Azure/azure-sdk-for-python.git
     cd azure-sdk-for-python
     python setup.py install
-
-DISCLAIMER
-==========
-
-This is a release candidate. However, the core packages, from code quality/completeness perspectives can at this time be considered "stable" - 
-it will be officially labeled as such in September (in sync with other languages).
-
-We are not planning on any further major changes until then.
-
-The following packages are still labeled "preview" but can be considered "stable":
-
-- azure-mgmt-resource 0.31.0
-- azure-mgmt-compute 0.33.0
-- azure-mgmt-network 0.30.0
-- azure-mgmt-storage 0.31.0
-- azure-mgmt-keyvault 0.30.1
-
-The following packages are already released as "stable" and are officially production ready:
-
-- azure-batch 2.0.0
-- azure-mgmt-batch 3.0.0
-- azure-mgmt-devtestlabs 1.0.0
-- azure-mgmt-dns 1.0.0
-- azure-mgmt-logic 1.0.0
-- azure-mgmt-redis 4.0.0
-- azure-mgmt-scheduler 1.1.1
-- azure-mgmt-servermanager 1.1.0
-- azure-servicebus 0.21.0
-- azure-servicemanagement-legacy 0.20.5
-- azure-storage 0.33.0
-
-The following packages are also available as preview only, not ready for production,
-and will NOT be installed with the 2.0.0rc6 "azure" meta-package. We removed then from the 2.0.0rc6
-to prepare our customers to the 2.0.0 stable release that will only contains the stable packages
-listed before.
-
-- azure-keyvault 0.1.0
-- azure-graphrbac 0.30.0rc6
-- azure-monitor 0.2.0
-- azure-mgmt-authorization 0.30.0rc6
-- azure-mgmt-cdn 0.30.2
-- azure-mgmt-cognitiveservices 0.30.0rc6
-- azure-mgmt-containerregistry 0.1.1
-- azure-mgmt-datalake-analytics 0.1.3
-- azure-mgmt-datalake-store 0.1.3
-- azure-mgmt-documentdb 0.1.0
-- azure-mgmt-commerce 0.30.0rc6
-- azure-mgmt-eventhub 0.2.0
-- azure-mgmt-iothub 0.2.1
-- azure-mgmt-media 0.1.1
-- azure-mgmt-monitor 0.1.0
-- azure-mgmt-notificationhubs 0.30.0
-- azure-mgmt-powerbiembedded 0.30.0rc6
-- azure-mgmt-search 0.1.0
-- azure-mgmt-servicebus 0.1.0
-- azure-mgmt-sql 0.3.0
-- azure-mgmt-trafficmanager 0.30.0rc6
-- azure-mgmt-web 0.31.0
-
 
 Usage
 =====
 
 For detailed documentation, please view our `documentation on ReadTheDocs <http://azure-sdk-for-python.readthedocs.org>`__.
 
-For further examples please visit the `Microsoft Azure Python Developer Center <http://azure.microsoft.com/en-us/develop/python/>`__.
+For further examples please visit the `Microsoft Azure Python Developer Center <http://azure.microsoft.com/en-us/develop/python/>`__
+or the `Azure Samples website <https://azure.microsoft.com/en-us/resources/samples/?platform=python>`__.
 
 
 Need Help?
