@@ -100,7 +100,7 @@ listed before.
 - azure-mgmt-powerbiembedded 0.30.0rc6
 - azure-mgmt-search 0.1.0
 - azure-mgmt-servicebus 0.1.0
-- azure-mgmt-sql 0.2.0
+- azure-mgmt-sql 0.3.0
 - azure-mgmt-trafficmanager 0.30.0rc6
 - azure-mgmt-web 0.31.0
 
