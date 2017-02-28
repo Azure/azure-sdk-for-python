@@ -59,7 +59,7 @@ or directly
 
    $ pip install azure==2.0.0rc6
 
-.. important:: The azure meta-package 1.0.3 is deprecated and is not working anymore.
+**The azure meta-package 1.0.3 is deprecated and is not working anymore.**
 
 The full list of available packages and the latest version can be found on our 
 `installation page on ReadTheDocs <azure-sdk-for-python.rtfd.io/en/latest/installation.html>`__.
