@@ -14,19 +14,20 @@ Microsoft Azure SDK for Python
     :target: https://ci.appveyor.com/project/lmazuel/azure-sdk-for-python/branch/master
 
 This project provides a set of Python packages that make it easy to
-access Management of Microsoft Azure components (Virtual Machines, ...) or Runtime (ServiceBus using HTTP, Batch, Monitor).
+access Management (Virtual Machines, ...) or Runtime (ServiceBus using HTTP, Batch, Monitor) components of
+`Microsoft Azure <https://azure.microsoft.com/>`_
 Complete feature list of this repo and where to find Python packages not in this repo can be found on our 
 `Azure SDK for Python features chapter on ReadTheDocs <http://azure-sdk-for-python.readthedocs.io/en/latest/index.html#features>`__.
 
 The SDK supports Python 2.7, 3.3, 3.4, 3.5 and 3.6.
 
-See important information if you're currently using the ``azure`` package < 1.0 in `this issue <https://github.com/Azure/azure-sdk-for-python/issues/440>`__.
+If you're currently using the ``azure`` package < 1.0 then please read important information in `this issue <https://github.com/Azure/azure-sdk-for-python/issues/440>`__.
 
 
 INSTALLATION
 ============
 
-You can install individually each library for each Azure service:
+You can install each library individually for each Azure service:
 
 .. code-block:: console
 
@@ -42,9 +43,9 @@ Preview packages can be installed using the ``--pre`` flag:
 
 You can also install a set of Azure libraries in a single line using the ``azure`` meta-package.
 Since not all packages in this meta-package are
-published as stable yet, the ``azure`` meta-package is still in release candidate.
+published as stable yet, the ``azure`` meta-package is still a release candidate and not final yet.
 However, the core packages, from code quality/completeness perspectives can at this time be considered "stable" 
-- it will be officially labeled as such in sync with other languages as soon as possible. 
+The ``azure`` package will be officially labeled stable in sync with other language SDKs as soon as possible. 
 We are not planning on any further major changes until then.
 
 **Since it's a preview release, you need to use the ``--pre`` flag:**
@@ -59,9 +60,9 @@ or directly
 
    $ pip install azure==2.0.0rc6
 
-**The azure meta-package 1.0.3 is deprecated and is not working anymore.**
+**The azure meta-package 1.0.3 is deprecated and no longer properly functions.**
 
-The full list of available packages and the latest version can be found on our 
+The full list of available packages and their latest version can be found on our 
 `installation page on ReadTheDocs <azure-sdk-for-python.rtfd.io/en/latest/installation.html>`__.
 
 If you want to install all packages of the repo from source::
