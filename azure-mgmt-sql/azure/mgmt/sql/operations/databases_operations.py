@@ -828,7 +828,7 @@ class DatabasesOperations(object):
         :type server_name: str
         :param database_name: The name of the database to be retrieved.
         :type database_name: str
-        :param expand: The comma separated list of child objects to expand in
+        :param expand: A comma separated list of child objects to expand in
          the response. Possible properties: serviceTierAdvisors, upgradeHint,
          transparentDataEncryption.
         :type expand: str
@@ -889,8 +889,8 @@ class DatabasesOperations(object):
         return deserialized
 
     def list_by_server(
-            self, resource_group_name, server_name, custom_headers=None, raw=False, **operation_config):
-        """Returns a list of databases by server.
+            self, resource_group_name, server_name, filter=None, custom_headers=None, raw=False, **operation_config):
+        """Returns a list of databases in a server.
 
         :param resource_group_name: The name of the resource group that
          contains the resource. You can obtain this value from the Azure
@@ -898,6 +898,9 @@ class DatabasesOperations(object):
         :type resource_group_name: str
         :param server_name: The name of the server.
         :type server_name: str
+        :param filter: An OData filter expression that describes a subset of
+         databases to return.
+        :type filter: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -921,6 +924,8 @@ class DatabasesOperations(object):
                 # Construct parameters
                 query_parameters = {}
                 query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+                if filter is not None:
+                    query_parameters['$filter'] = self._serialize.query("filter", filter, 'str')
 
             else:
                 url = next_link
