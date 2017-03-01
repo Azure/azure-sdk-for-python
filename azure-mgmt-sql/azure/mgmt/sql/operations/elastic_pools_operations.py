@@ -265,7 +265,7 @@ class ElasticPoolsOperations(object):
 
     def list_by_server(
             self, resource_group_name, server_name, custom_headers=None, raw=False, **operation_config):
-        """Returns elastic pools.
+        """Returns a list of elastic pools in a server.
 
         :param resource_group_name: The name of the resource group that
          contains the resource. You can obtain this value from the Azure
@@ -555,7 +555,7 @@ class ElasticPoolsOperations(object):
 
     def list_databases(
             self, resource_group_name, server_name, elastic_pool_name, custom_headers=None, raw=False, **operation_config):
-        """Returns a database inside of an elastic pool.
+        """Returns a list of databases in an elastic pool.
 
         :param resource_group_name: The name of the resource group that
          contains the resource. You can obtain this value from the Azure
