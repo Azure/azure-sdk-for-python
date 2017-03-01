@@ -246,7 +246,7 @@ class RecommendedElasticPoolsOperations(object):
 
     def list_databases(
             self, resource_group_name, server_name, recommended_elastic_pool_name, custom_headers=None, raw=False, **operation_config):
-        """Returns a database inside of a recommented elastic pool.
+        """Returns a list of databases inside a recommented elastic pool.
 
         :param resource_group_name: The name of the resource group that
          contains the resource. You can obtain this value from the Azure

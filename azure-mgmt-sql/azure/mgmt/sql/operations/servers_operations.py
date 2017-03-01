@@ -570,7 +570,7 @@ class ServersOperations(object):
 
     def list_by_resource_group(
             self, resource_group_name, custom_headers=None, raw=False, **operation_config):
-        """Returns a server.
+        """Returns a list of servers in a resource group.
 
         :param resource_group_name: The name of the resource group that
          contains the resource. You can obtain this value from the Azure
