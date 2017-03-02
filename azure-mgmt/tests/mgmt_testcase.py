@@ -103,8 +103,8 @@ class AzureMgmtTestCase(RecordingTestCase):
             credentials=self.settings.get_credentials(),
             **kwargs
         )
-        if self.is_playback():
-            client.config.long_running_operation_timeout = 0
+        #if self.is_playback():
+        #    client.config.long_running_operation_timeout = 0
         return client
 
     def create_mgmt_client(self, client_method, **kwargs):
