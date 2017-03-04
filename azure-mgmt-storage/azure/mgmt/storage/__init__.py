@@ -98,6 +98,9 @@ class Client(object):
         self.subscription_id = subscription_id
         self.base_url = base_url
 
+        self.config = ClientConfiguration(self.credentials, self.subscription_id, "FakeValue", self.base_url)
+        self.client = ServiceClient(self.credentials, self.config)
+
     def storage_accounts(self, api_version='2016-12-01'):
         if api_version == '2015-06-15':
             from .v2015_06_15.operations.storage_accounts_operations import StorageAccountsOperations as OperationClass
@@ -109,11 +112,10 @@ class Client(object):
             raise NotImplementedError("APIVersion {} is not available".format(api_version))
         local_models = models(api_version)
         config = ClientConfiguration(self.credentials, self.subscription_id, api_version, self.base_url)
-        client = ServiceClient(self.credentials, config)
         client_models = {k: v for k, v in local_models.__dict__.items() if isinstance(v, type)}
         serialize = Serializer(client_models)
         deserialize = Deserializer(client_models)
-        return OperationClass(client, config, serialize, deserialize)
+        return OperationClass(self.client, config, serialize, deserialize)
 
     def usage(self, api_version='2016-12-01'):
         if api_version == '2015-06-15':
@@ -127,8 +129,7 @@ class Client(object):
 
         local_models = models(api_version)
         config = ClientConfiguration(self.credentials, self.subscription_id, api_version, self.base_url)
-        client = ServiceClient(self.credentials, config)
         client_models = {k: v for k, v in local_models.__dict__.items() if isinstance(v, type)}
         serialize = Serializer(client_models)
         deserialize = Deserializer(client_models)
-        return OperationClass(client, config, serialize, deserialize)
+        return OperationClass(self.client, config, serialize, deserialize)
