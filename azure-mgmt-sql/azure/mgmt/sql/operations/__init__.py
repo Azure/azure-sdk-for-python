@@ -11,12 +11,14 @@
 
 from .servers_operations import ServersOperations
 from .databases_operations import DatabasesOperations
+from .import_export_operations import ImportExportOperations
 from .elastic_pools_operations import ElasticPoolsOperations
 from .recommended_elastic_pools_operations import RecommendedElasticPoolsOperations
 
 __all__ = [
     'ServersOperations',
     'DatabasesOperations',
+    'ImportExportOperations',
     'ElasticPoolsOperations',
     'RecommendedElasticPoolsOperations',
 ]
