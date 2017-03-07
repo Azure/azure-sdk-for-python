@@ -16,17 +16,21 @@ class MgmtResourcePolicyTest(AzureMgmtTestCase):
 
     def setUp(self):
         super(MgmtResourcePolicyTest, self).setUp()
-        self.policy_client = self.create_mgmt_client(
-            azure.mgmt.resource.PolicyClient
+        self.client = self.create_basic_client(
+            azure.mgmt.resource.Client,
+            subscription_id=self.settings.SUBSCRIPTION_ID,
         )
 
     @record
     def test_policy_definition(self):
+        policy_def_operations = self.client.policy_definitions()
+        policy_assignments_operations = self.client.policy_assignments()
+
         self.create_resource_group()
         policy_name = self.get_resource_name('pypolicy')
         policy_assignment_name = self.get_resource_name('pypolicyassignment')
 
-        definition = self.policy_client.policy_definitions.create_or_update(
+        definition = policy_def_operations.create_or_update(
             policy_name,
             {
                 'policy_type':'Custom',
@@ -55,11 +59,11 @@ class MgmtResourcePolicyTest(AzureMgmtTestCase):
             }
         )
 
-        definition = self.policy_client.policy_definitions.get(
+        definition = policy_def_operations.get(
             definition.name
         )
 
-        policies = list(self.policy_client.policy_definitions.list())
+        policies = list(policy_def_operations.list())
         self.assertGreater(len(policies), 0)
 
         # Policy Assignement - By Name
@@ -67,7 +71,7 @@ class MgmtResourcePolicyTest(AzureMgmtTestCase):
             self.settings.SUBSCRIPTION_ID,
             self.group_name
         )
-        assignment = self.policy_client.policy_assignments.create(
+        assignment = policy_assignments_operations.create(
             scope,
             policy_assignment_name,
             {
@@ -75,20 +79,20 @@ class MgmtResourcePolicyTest(AzureMgmtTestCase):
             }
         )
 
-        assignment = self.policy_client.policy_assignments.get(
+        assignment = policy_assignments_operations.get(
             assignment.scope,
             assignment.name
         )
 
-        assignments = list(self.policy_client.policy_assignments.list())
+        assignments = list(policy_assignments_operations.list())
         self.assertGreater(len(assignments), 0)
 
-        assignments = list(self.policy_client.policy_assignments.list_for_resource_group(
+        assignments = list(policy_assignments_operations.list_for_resource_group(
             self.group_name
         ))
         self.assertEqual(len(assignments), 1)
 
-        self.policy_client.policy_assignments.delete(
+        policy_assignments_operations.delete(
             scope,
             policy_assignment_name
         )
@@ -102,23 +106,23 @@ class MgmtResourcePolicyTest(AzureMgmtTestCase):
             scope,
             policy_assignment_name
         )
-        assignment = self.policy_client.policy_assignments.create_by_id(
+        assignment = policy_assignments_operations.create_by_id(
             policy_id,
             {
                 'policy_definition_id': definition.id,
             }
         )            
 
-        assignment = self.policy_client.policy_assignments.get_by_id(
+        assignment = policy_assignments_operations.get_by_id(
             assignment.id,
         )
 
-        self.policy_client.policy_assignments.delete_by_id(
+        policy_assignments_operations.delete_by_id(
             assignment.id
         )
 
         # Delete definitions
-        self.policy_client.policy_definitions.delete(
+        policy_def_operations.delete(
             definition.name
         )
 

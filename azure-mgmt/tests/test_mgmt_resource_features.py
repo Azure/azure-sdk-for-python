@@ -16,28 +16,32 @@ class MgmtResourceFeaturesTest(AzureMgmtTestCase):
 
     def setUp(self):
         super(MgmtResourceFeaturesTest, self).setUp()
-        self.features_client = self.create_mgmt_client(
-            azure.mgmt.resource.FeatureClient
+        self.client = self.create_basic_client(
+            azure.mgmt.resource.Client,
+            subscription_id=self.settings.SUBSCRIPTION_ID,
         )
 
     @record
     def test_features(self):
-        features = list(self.features_client.features.list_all())
+        models = azure.mgmt.resource.models('2015-12-01')
+        features_operations = self.client.features('2015-12-01')
+
+        features = list(features_operations.list_all())
         self.assertGreater(len(features), 0)
-        self.assertTrue(all(isinstance(v, azure.mgmt.resource.features.models.FeatureResult) for v in features))
+        self.assertTrue(all(isinstance(v, models.FeatureResult) for v in features))
 
 
-        features = list(self.features_client.features.list('Microsoft.Compute'))
+        features = list(features_operations.list('Microsoft.Compute'))
         self.assertGreater(len(features), 0)
-        self.assertTrue(all(isinstance(v, azure.mgmt.resource.features.models.FeatureResult) for v in features))
+        self.assertTrue(all(isinstance(v, models.FeatureResult) for v in features))
 
         one_feature = features[0]
-        feature = self.features_client.features.get(
+        feature = features_operations.get(
             'Microsoft.Compute',
             one_feature.name.split('/')[1]
         )
 
-        self.features_client.features.register(
+        features_operations.register(
             'Microsoft.Compute',
             feature.name.split('/')[1]
         )

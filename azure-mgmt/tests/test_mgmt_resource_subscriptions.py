@@ -16,28 +16,34 @@ class MgmtResourceSubscriptionsTest(AzureMgmtTestCase):
 
     def setUp(self):
         super(MgmtResourceSubscriptionsTest, self).setUp()
-        self.subscriptions_client = self.create_basic_client(
-            azure.mgmt.resource.SubscriptionClient
+        self.client = self.create_basic_client(
+            azure.mgmt.resource.Client
         )
 
     @record
     def test_subscriptions(self):
-        subs = list(self.subscriptions_client.subscriptions.list())
+        models = azure.mgmt.resource.models('2016-06-01')
+        subscriptions_operations = self.client.subscriptions('2016-06-01')
+
+        subs = list(subscriptions_operations.list())
         self.assertGreater(len(subs), 0)
-        self.assertTrue(all(isinstance(v, azure.mgmt.resource.subscriptions.models.Subscription) for v in subs))
+        self.assertTrue(all(isinstance(v, models.Subscription) for v in subs))
 
-        locations = list(self.subscriptions_client.subscriptions.list_locations(self.settings.SUBSCRIPTION_ID))
+        locations = list(subscriptions_operations.list_locations(self.settings.SUBSCRIPTION_ID))
         self.assertGreater(len(locations), 0)
-        self.assertTrue(all(isinstance(v, azure.mgmt.resource.subscriptions.models.Location) for v in locations))
+        self.assertTrue(all(isinstance(v, models.Location) for v in locations))
 
-        sub = self.subscriptions_client.subscriptions.get(self.settings.SUBSCRIPTION_ID)
+        sub = subscriptions_operations.get(self.settings.SUBSCRIPTION_ID)
         self.assertEqual(sub.subscription_id, self.settings.SUBSCRIPTION_ID)
 
     @record
     def test_tenants(self):
-        tenants = list(self.subscriptions_client.tenants.list())
+        models = azure.mgmt.resource.models('2016-06-01')
+        tenants_operations = self.client.tenants('2016-06-01')
+
+        tenants = list(tenants_operations.list())
         self.assertGreater(len(tenants), 0)
-        self.assertTrue(all(isinstance(v, azure.mgmt.resource.subscriptions.models.TenantIdDescription) for v in tenants))
+        self.assertTrue(all(isinstance(v, models.TenantIdDescription) for v in tenants))
 
 
 #------------------------------------------------------------------------------
