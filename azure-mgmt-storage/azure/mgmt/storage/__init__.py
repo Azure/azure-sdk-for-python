@@ -101,6 +101,13 @@ class Client(object):
         self.config = ClientConfiguration(self.credentials, self.subscription_id, "FakeValue", self.base_url)
         self.client = ServiceClient(self.credentials, self.config)
 
+    def _instantiate_operation_class(self, api_version, local_models, operation_class):
+        config = ClientConfiguration(self.credentials, self.subscription_id, api_version, self.base_url)
+        client_models = {k: v for k, v in local_models.__dict__.items() if isinstance(v, type)}
+        serialize = Serializer(client_models)
+        deserialize = Deserializer(client_models)
+        return operation_class(self.client, config, serialize, deserialize)
+
     def storage_accounts(self, api_version='2016-12-01'):
         if api_version == '2015-06-15':
             from .v2015_06_15.operations.storage_accounts_operations import StorageAccountsOperations as OperationClass
@@ -110,12 +117,7 @@ class Client(object):
             from .v2016_12_01.operations.storage_accounts_operations import StorageAccountsOperations as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(api_version))
-        local_models = models(api_version)
-        config = ClientConfiguration(self.credentials, self.subscription_id, api_version, self.base_url)
-        client_models = {k: v for k, v in local_models.__dict__.items() if isinstance(v, type)}
-        serialize = Serializer(client_models)
-        deserialize = Deserializer(client_models)
-        return OperationClass(self.client, config, serialize, deserialize)
+        return self._instantiate_operation_class(api_version, models(api_version), OperationClass)
 
     def usage(self, api_version='2016-12-01'):
         if api_version == '2015-06-15':
@@ -127,9 +129,4 @@ class Client(object):
         else:
             raise NotImplementedError("APIVersion {} is not available".format(api_version))
 
-        local_models = models(api_version)
-        config = ClientConfiguration(self.credentials, self.subscription_id, api_version, self.base_url)
-        client_models = {k: v for k, v in local_models.__dict__.items() if isinstance(v, type)}
-        serialize = Serializer(client_models)
-        deserialize = Deserializer(client_models)
-        return OperationClass(self.client, config, serialize, deserialize)
+        return self._instantiate_operation_class(api_version, models(api_version), OperationClass)
