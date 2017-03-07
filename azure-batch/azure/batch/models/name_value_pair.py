@@ -19,7 +19,7 @@ class NameValuePair(Model):
     :type name: str
     :param value: The value in the name-value pair.
     :type value: str
-    """ 
+    """
 
     _attribute_map = {
         'name': {'key': 'name', 'type': 'str'},

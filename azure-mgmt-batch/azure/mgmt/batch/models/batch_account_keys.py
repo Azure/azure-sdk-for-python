@@ -15,17 +15,25 @@ from msrest.serialization import Model
 class BatchAccountKeys(Model):
     """A set of Azure Batch account keys.
 
-    :param primary: The primary key associated with the account.
-    :type primary: str
-    :param secondary: The secondary key associated with the account.
-    :type secondary: str
-    """ 
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar primary: The primary key associated with the account.
+    :vartype primary: str
+    :ivar secondary: The secondary key associated with the account.
+    :vartype secondary: str
+    """
+
+    _validation = {
+        'primary': {'readonly': True},
+        'secondary': {'readonly': True},
+    }
 
     _attribute_map = {
         'primary': {'key': 'primary', 'type': 'str'},
         'secondary': {'key': 'secondary', 'type': 'str'},
     }
 
-    def __init__(self, primary=None, secondary=None):
-        self.primary = primary
-        self.secondary = secondary
+    def __init__(self):
+        self.primary = None
+        self.secondary = None

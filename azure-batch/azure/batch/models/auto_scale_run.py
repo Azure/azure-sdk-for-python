@@ -26,7 +26,7 @@ class AutoScaleRun(Model):
      formula on the pool, if the evaluation was unsuccessful.
     :type error: :class:`AutoScaleRunError
      <azure.batch.models.AutoScaleRunError>`
-    """ 
+    """
 
     _validation = {
         'timestamp': {'required': True},

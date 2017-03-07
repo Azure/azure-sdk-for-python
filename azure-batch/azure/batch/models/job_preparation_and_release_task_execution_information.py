@@ -33,7 +33,7 @@ class JobPreparationAndReleaseTaskExecutionInformation(Model):
     :type job_release_task_execution_info:
      :class:`JobReleaseTaskExecutionInformation
      <azure.batch.models.JobReleaseTaskExecutionInformation>`
-    """ 
+    """
 
     _attribute_map = {
         'pool_id': {'key': 'poolId', 'type': 'str'},

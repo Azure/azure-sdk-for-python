@@ -25,10 +25,10 @@
       "output_dir": "azure-mgmt-authorization/azure/mgmt/authorization"
     },
     "batch.management": {
-      "swagger": "arm-batch/2015-12-01/swagger/BatchManagement.json",
+      "swagger": "arm-batch/2017-01-01/swagger/BatchManagement.json",
       "autorest_options": {
         "Namespace": "azure.mgmt.batch",
-        "PackageVersion": "2.0.0"
+        "PackageVersion": "3.0.0"
       },
       "output_dir": "azure-mgmt-batch/azure/mgmt/batch"
     },
@@ -59,7 +59,7 @@
       "autorest_options": {
         "Namespace": "azure.mgmt.compute",
         "Modeler": "CompositeSwagger",
-        "PackageVersion": "0.33.0"
+        "PackageVersion": "0.33.1"
       },
       "output_dir": "azure-mgmt-compute/azure/mgmt/compute"
     },
@@ -170,7 +170,7 @@
       "output_dir": "azure-mgmt-media/azure/mgmt/media"
     },  
     "monitor.mgmt": {
-      "swagger": "arm-insights/compositeInsightsManagementClient.json",
+      "swagger": "arm-monitor/compositeMonitorManagementClient.json",
       "autorest_options": {
         "Namespace": "azure.mgmt.monitor",
         "Modeler": "CompositeSwagger",
@@ -179,11 +179,11 @@
       "output_dir": "azure-mgmt-monitor/azure/mgmt/monitor"
     },
     "monitor.data": {
-      "swagger": "insights/compositeInsightsClient.json",
+      "swagger": "monitor/compositeMonitorClient.json",
       "autorest_options": {
         "Namespace": "azure.monitor",
         "Modeler": "CompositeSwagger",
-        "PackageVersion": "0.1.0"
+        "PackageVersion": "0.2.0"
       },
       "output_dir": "azure-monitor/azure/monitor"
     },
@@ -306,7 +306,7 @@
       "autorest_options": {
         "Namespace": "azure.mgmt.sql",
         "Modeler": "CompositeSwagger",
-        "PackageVersion": "0.2.0"
+        "PackageVersion": "0.3.1"
       },
       "output_dir": "azure-mgmt-sql/azure/mgmt/sql"
     },
@@ -351,10 +351,10 @@
       "output_dir": "azure-mgmt-web/azure/mgmt/web/"
     },
     "batch": {
-      "swagger": "batch/2016-07-01.3.1/swagger/BatchService.json",
+      "swagger": "batch/2017-01-01.4.0/swagger/BatchService.json",
       "autorest_options": {
         "Namespace": "azure.batch",
-        "PackageVersion": "1.1.0"
+        "PackageVersion": "2.0.0"
       },
       "output_dir": "azure-batch/azure/batch/",
       "wrapper_filesOrDirs": [

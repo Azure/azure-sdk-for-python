@@ -34,7 +34,7 @@ class PoolEnableAutoScaleParameter(Model):
      autoscale evaluation schedule will be started, with its starting time
      being the time when this request was issued.
     :type auto_scale_evaluation_interval: timedelta
-    """ 
+    """
 
     _attribute_map = {
         'auto_scale_formula': {'key': 'autoScaleFormula', 'type': 'str'},

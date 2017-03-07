@@ -32,7 +32,7 @@ class JobConstraints(Model):
      -1, the Batch service retries tasks without limit. The default value is 0
      (no retries).
     :type max_task_retry_count: int
-    """ 
+    """
 
     _attribute_map = {
         'max_wall_clock_time': {'key': 'maxWallClockTime', 'type': 'duration'},

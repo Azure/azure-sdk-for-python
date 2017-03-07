@@ -24,7 +24,7 @@ class NodeFile(Model):
     :param properties: The file properties.
     :type properties: :class:`FileProperties
      <azure.batch.models.FileProperties>`
-    """ 
+    """
 
     _attribute_map = {
         'name': {'key': 'name', 'type': 'str'},

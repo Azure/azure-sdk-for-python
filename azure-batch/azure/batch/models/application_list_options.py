@@ -28,10 +28,11 @@ class ApplicationListOptions(Model):
     :param return_client_request_id: Whether the server should return the
      client-request-id in the response. Default value: False .
     :type return_client_request_id: bool
-    :param ocp_date: The time the request was issued. If not specified, this
-     header will be automatically populated with the current system clock time.
+    :param ocp_date: The time the request was issued. Client libraries
+     typically set this to the current system clock time; set it explicitly if
+     you are calling the REST API directly.
     :type ocp_date: datetime
-    """ 
+    """
 
     def __init__(self, max_results=1000, timeout=30, client_request_id=None, return_client_request_id=False, ocp_date=None):
         self.max_results = max_results

@@ -32,8 +32,8 @@ class JobOperations(object):
 
         self.config = config
 
-    def get_all_jobs_lifetime_statistics(
-            self, job_get_all_jobs_lifetime_statistics_options=None, custom_headers=None, raw=False, **operation_config):
+    def get_all_lifetime_statistics(
+            self, job_get_all_lifetime_statistics_options=None, custom_headers=None, raw=False, **operation_config):
         """Gets lifetime summary statistics for all of the jobs in the specified
         account.
 
@@ -41,11 +41,11 @@ class JobOperations(object):
         account, from account creation to the last update time of the
         statistics.
 
-        :param job_get_all_jobs_lifetime_statistics_options: Additional
-         parameters for the operation
-        :type job_get_all_jobs_lifetime_statistics_options:
-         :class:`JobGetAllJobsLifetimeStatisticsOptions
-         <azure.batch.models.JobGetAllJobsLifetimeStatisticsOptions>`
+        :param job_get_all_lifetime_statistics_options: Additional parameters
+         for the operation
+        :type job_get_all_lifetime_statistics_options:
+         :class:`JobGetAllLifetimeStatisticsOptions
+         <azure.batch.models.JobGetAllLifetimeStatisticsOptions>`
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -58,17 +58,17 @@ class JobOperations(object):
          :class:`BatchErrorException<azure.batch.models.BatchErrorException>`
         """
         timeout = None
-        if job_get_all_jobs_lifetime_statistics_options is not None:
-            timeout = job_get_all_jobs_lifetime_statistics_options.timeout
+        if job_get_all_lifetime_statistics_options is not None:
+            timeout = job_get_all_lifetime_statistics_options.timeout
         client_request_id = None
-        if job_get_all_jobs_lifetime_statistics_options is not None:
-            client_request_id = job_get_all_jobs_lifetime_statistics_options.client_request_id
+        if job_get_all_lifetime_statistics_options is not None:
+            client_request_id = job_get_all_lifetime_statistics_options.client_request_id
         return_client_request_id = None
-        if job_get_all_jobs_lifetime_statistics_options is not None:
-            return_client_request_id = job_get_all_jobs_lifetime_statistics_options.return_client_request_id
+        if job_get_all_lifetime_statistics_options is not None:
+            return_client_request_id = job_get_all_lifetime_statistics_options.return_client_request_id
         ocp_date = None
-        if job_get_all_jobs_lifetime_statistics_options is not None:
-            ocp_date = job_get_all_jobs_lifetime_statistics_options.ocp_date
+        if job_get_all_lifetime_statistics_options is not None:
+            ocp_date = job_get_all_lifetime_statistics_options.ocp_date
 
         # Construct URL
         url = '/lifetimejobstats'
@@ -582,11 +582,11 @@ class JobOperations(object):
         :param job_id: The ID of the job to disable.
         :type job_id: str
         :param disable_tasks: What to do with active tasks associated with the
-         job. Possible values are: requeue – Terminate running tasks and
-         requeue them. The tasks will run again when the job is enabled.
-         terminate – Terminate running tasks. The tasks will not run again.
-         wait – Allow currently running tasks to complete. Possible values
-         include: 'requeue', 'terminate', 'wait'
+         job. requeue - Terminate running tasks and requeue them. The tasks
+         will run again when the job is enabled. terminate - Terminate running
+         tasks. The tasks will not run again. wait - Allow currently running
+         tasks to complete. Possible values include: 'requeue', 'terminate',
+         'wait'
         :type disable_tasks: str or :class:`DisableJobOption
          <azure.batch.models.DisableJobOption>`
         :param job_disable_options: Additional parameters for the operation

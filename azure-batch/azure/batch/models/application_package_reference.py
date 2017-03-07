@@ -23,7 +23,7 @@ class ApplicationPackageReference(Model):
      InvalidApplicationPackageReferences. If you are calling the REST API
      directly, the HTTP status code is 409.
     :type version: str
-    """ 
+    """
 
     _validation = {
         'application_id': {'required': True},

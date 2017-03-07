@@ -43,21 +43,22 @@ class SubtaskInformation(Model):
     :type scheduling_error: :class:`TaskSchedulingError
      <azure.batch.models.TaskSchedulingError>`
     :param state: The current state of the subtask. Possible values include:
-     'active', 'preparing', 'running', 'completed'
-    :type state: str or :class:`TaskState <azure.batch.models.TaskState>`
+     'preparing', 'running', 'completed'
+    :type state: str or :class:`SubtaskState
+     <azure.batch.models.SubtaskState>`
     :param state_transition_time: The time at which the subtask entered its
      current state.
     :type state_transition_time: datetime
     :param previous_state: The previous state of the subtask. This property is
      not set if the subtask is in its initial running state. Possible values
-     include: 'active', 'preparing', 'running', 'completed'
-    :type previous_state: str or :class:`TaskState
-     <azure.batch.models.TaskState>`
+     include: 'preparing', 'running', 'completed'
+    :type previous_state: str or :class:`SubtaskState
+     <azure.batch.models.SubtaskState>`
     :param previous_state_transition_time: The time at which the subtask
      entered its previous state. This property is not set if the subtask is in
      its initial running state.
     :type previous_state_transition_time: datetime
-    """ 
+    """
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'int'},
@@ -66,9 +67,9 @@ class SubtaskInformation(Model):
         'end_time': {'key': 'endTime', 'type': 'iso-8601'},
         'exit_code': {'key': 'exitCode', 'type': 'int'},
         'scheduling_error': {'key': 'schedulingError', 'type': 'TaskSchedulingError'},
-        'state': {'key': 'state', 'type': 'TaskState'},
+        'state': {'key': 'state', 'type': 'SubtaskState'},
         'state_transition_time': {'key': 'stateTransitionTime', 'type': 'iso-8601'},
-        'previous_state': {'key': 'previousState', 'type': 'TaskState'},
+        'previous_state': {'key': 'previousState', 'type': 'SubtaskState'},
         'previous_state_transition_time': {'key': 'previousStateTransitionTime', 'type': 'iso-8601'},
     }
 

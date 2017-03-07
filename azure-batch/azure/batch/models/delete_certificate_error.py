@@ -28,7 +28,7 @@ class DeleteCertificateError(Model):
      first hundred.
     :type values: list of :class:`NameValuePair
      <azure.batch.models.NameValuePair>`
-    """ 
+    """
 
     _attribute_map = {
         'code': {'key': 'code', 'type': 'str'},

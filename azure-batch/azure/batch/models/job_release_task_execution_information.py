@@ -23,10 +23,10 @@ class JobReleaseTaskExecutionInformation(Model):
      property is set only if the task is in the Completed state.
     :type end_time: datetime
     :param state: The current state of the Job Release task on the compute
-     node. Possible values are: running – the task is currently running
-     (including retrying). completed – the task has exited, or the Batch
-     service was unable to start the task due to scheduling errors. Possible
-     values include: 'running', 'completed'
+     node. running - the task is currently running (including retrying).
+     completed - the task has exited, or the Batch service was unable to start
+     the task due to scheduling errors. Possible values include: 'running',
+     'completed'
     :type state: str or :class:`JobReleaseTaskState
      <azure.batch.models.JobReleaseTaskState>`
     :param task_root_directory: The root directory of the Job Release task on
@@ -49,7 +49,7 @@ class JobReleaseTaskExecutionInformation(Model):
      starting the task.
     :type scheduling_error: :class:`TaskSchedulingError
      <azure.batch.models.TaskSchedulingError>`
-    """ 
+    """
 
     _validation = {
         'start_time': {'required': True},

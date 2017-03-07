@@ -24,7 +24,7 @@ class JobAddParameter(Model):
      not be unique and can contain any Unicode characters up to a maximum
      length of 1024.
     :type display_name: str
-    :param priority: The priority of the job.  Priority values can range from
+    :param priority: The priority of the job. Priority values can range from
      -1000 to 1000, with -1000 being the lowest priority and 1000 being the
      highest priority. The default value is 0.
     :type priority: int
@@ -39,7 +39,7 @@ class JobAddParameter(Model):
      scheduling other tasks in the job. The Job Manager task's typical purpose
      is to control and/or monitor job execution, for example by deciding what
      additional tasks to run, determining when the work is complete, etc.
-     (However, a Job Manager task is not restricted to these activities – it is
+     (However, a Job Manager task is not restricted to these activities - it is
      a fully-fledged task in the system and perform whatever actions are
      required for the job.) For example, a Job Manager task might download a
      file specified as a parameter, analyze the contents of that file and
@@ -73,25 +73,24 @@ class JobAddParameter(Model):
     :param on_all_tasks_complete: The action the Batch service should take
      when all tasks in the job are in the completed state. Note that if a job
      contains no tasks, then all tasks are considered complete. This option is
-     therefore most commonly used with a job manager task; if you want to use
-     automatic job termination without a job manager, you should initially set
-     onAllTasksComplete to noaction and update the job properties to set
-     onAllTasksComplete to terminatejob once you have finished adding tasks.
-     Permitted values are: noaction – do nothing. The job remains active unless
-     terminated or disabled by some other means. terminatejob – terminate the
-     job. The job’s terminateReason is set to 'AllTasksComplete'. The default
-     is noaction. Possible values include: 'noAction', 'terminateJob'
+     therefore most commonly used with a Job Manager task; if you want to use
+     automatic job termination without a Job Manager, you should initially set
+     onAllTasksComplete to noAction and update the job properties to set
+     onAllTasksComplete to terminateJob once you have finished adding tasks.
+     Permitted values are: noAction - do nothing. The job remains active unless
+     terminated or disabled by some other means. terminateJob - terminate the
+     job. The job's terminateReason is set to 'AllTasksComplete'. The default
+     is noAction. Possible values include: 'noAction', 'terminateJob'
     :type on_all_tasks_complete: str or :class:`OnAllTasksComplete
      <azure.batch.models.OnAllTasksComplete>`
     :param on_task_failure: The action the Batch service should take when any
      task in the job fails. A task is considered to have failed if it completes
      with a non-zero exit code and has exhausted its retry count, or if it had
-     a scheduling error. Permitted values are: noaction – do nothing.
-     performexitoptionsjobaction – take the action associated with the task
-     exit condition in the task's exitConditions collection. (This may still
-     result in no action being taken, if that is what the task specifies.) The
-     default is noaction. Possible values include: 'noAction',
-     'performExitOptionsJobAction'
+     a scheduling error. noAction - do nothing. performExitOptionsJobAction -
+     take the action associated with the task exit condition in the task's
+     exitConditions collection. (This may still result in no action being
+     taken, if that is what the task specifies.) The default is noAction.
+     Possible values include: 'noAction', 'performExitOptionsJobAction'
     :type on_task_failure: str or :class:`OnTaskFailure
      <azure.batch.models.OnTaskFailure>`
     :param metadata: A list of name-value pairs associated with the job as
@@ -102,7 +101,7 @@ class JobAddParameter(Model):
     :param uses_task_dependencies: The flag that determines if this job will
      use tasks with dependencies.
     :type uses_task_dependencies: bool
-    """ 
+    """
 
     _validation = {
         'id': {'required': True},

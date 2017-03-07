@@ -29,23 +29,30 @@ class TaskGetOptions(Model):
     :param return_client_request_id: Whether the server should return the
      client-request-id in the response. Default value: False .
     :type return_client_request_id: bool
-    :param ocp_date: The time the request was issued. If not specified, this
-     header will be automatically populated with the current system clock time.
+    :param ocp_date: The time the request was issued. Client libraries
+     typically set this to the current system clock time; set it explicitly if
+     you are calling the REST API directly.
     :type ocp_date: datetime
-    :param if_match: An ETag is specified. Specify this header to perform the
-     operation only if the resource's ETag is an exact match as specified.
+    :param if_match: An ETag value associated with the version of the resource
+     known to the client. The operation will be performed only if the
+     resource's current ETag on the service exactly matches the value specified
+     by the client.
     :type if_match: str
-    :param if_none_match: An ETag is specified. Specify this header to perform
-     the operation only if the resource's ETag does not match the specified
-     ETag.
+    :param if_none_match: An ETag value associated with the version of the
+     resource known to the client. The operation will be performed only if the
+     resource's current ETag on the service does not match the value specified
+     by the client.
     :type if_none_match: str
-    :param if_modified_since: Specify this header to perform the operation
-     only if the resource has been modified since the specified date/time.
+    :param if_modified_since: A timestamp indicating the last modified time of
+     the resource known to the client. The operation will be performed only if
+     the resource on the service has been modified since the specified time.
     :type if_modified_since: datetime
-    :param if_unmodified_since: Specify this header to perform the operation
-     only if the resource has not been modified since the specified date/time.
+    :param if_unmodified_since: A timestamp indicating the last modified time
+     of the resource known to the client. The operation will be performed only
+     if the resource on the service has not been modified since the specified
+     time.
     :type if_unmodified_since: datetime
-    """ 
+    """
 
     def __init__(self, select=None, expand=None, timeout=30, client_request_id=None, return_client_request_id=False, ocp_date=None, if_match=None, if_none_match=None, if_modified_since=None, if_unmodified_since=None):
         self.select = select

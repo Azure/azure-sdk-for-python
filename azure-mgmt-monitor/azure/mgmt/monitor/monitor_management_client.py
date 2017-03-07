@@ -21,8 +21,8 @@ from .operations.log_profiles_operations import LogProfilesOperations
 from . import models
 
 
-class InsightsManagementClientConfiguration(AzureConfiguration):
-    """Configuration for InsightsManagementClient
+class MonitorManagementClientConfiguration(AzureConfiguration):
+    """Configuration for MonitorManagementClient
     Note that all parameters used to create this instance are saved as instance
     attributes.
 
@@ -31,22 +31,11 @@ class InsightsManagementClientConfiguration(AzureConfiguration):
      object<msrestazure.azure_active_directory>`
     :param subscription_id: The Azure subscription Id.
     :type subscription_id: str
-    :param accept_language: Gets or sets the preferred language for the
-     response.
-    :type accept_language: str
-    :param long_running_operation_retry_timeout: Gets or sets the retry
-     timeout in seconds for Long Running Operations. Default value is 30.
-    :type long_running_operation_retry_timeout: int
-    :param generate_client_request_id: When set to true a unique
-     x-ms-client-request-id value is generated and included in each request.
-     Default is true.
-    :type generate_client_request_id: bool
     :param str base_url: Service URL
-    :param str filepath: Existing config
     """
 
     def __init__(
-            self, credentials, subscription_id, accept_language='en-US', long_running_operation_retry_timeout=30, generate_client_request_id=True, base_url=None, filepath=None):
+            self, credentials, subscription_id, base_url=None):
 
         if credentials is None:
             raise ValueError("Parameter 'credentials' must not be None.")
@@ -54,28 +43,23 @@ class InsightsManagementClientConfiguration(AzureConfiguration):
             raise ValueError("Parameter 'subscription_id' must not be None.")
         if not isinstance(subscription_id, str):
             raise TypeError("Parameter 'subscription_id' must be str.")
-        if accept_language is not None and not isinstance(accept_language, str):
-            raise TypeError("Optional parameter 'accept_language' must be str.")
         if not base_url:
             base_url = 'https://management.azure.com'
 
-        super(InsightsManagementClientConfiguration, self).__init__(base_url, filepath)
+        super(MonitorManagementClientConfiguration, self).__init__(base_url)
 
-        self.add_user_agent('insightsmanagementclient/{}'.format(VERSION))
+        self.add_user_agent('monitormanagementclient/{}'.format(VERSION))
         self.add_user_agent('Azure-SDK-For-Python')
 
         self.credentials = credentials
         self.subscription_id = subscription_id
-        self.accept_language = accept_language
-        self.long_running_operation_retry_timeout = long_running_operation_retry_timeout
-        self.generate_client_request_id = generate_client_request_id
 
 
-class InsightsManagementClient(object):
-    """Composite Swagger for Insights Management Client
+class MonitorManagementClient(object):
+    """Composite Swagger for Monitor Management Client
 
     :ivar config: Configuration for client.
-    :vartype config: InsightsManagementClientConfiguration
+    :vartype config: MonitorManagementClientConfiguration
 
     :ivar autoscale_settings: AutoscaleSettings operations
     :vartype autoscale_settings: .operations.AutoscaleSettingsOperations
@@ -93,24 +77,13 @@ class InsightsManagementClient(object):
      object<msrestazure.azure_active_directory>`
     :param subscription_id: The Azure subscription Id.
     :type subscription_id: str
-    :param accept_language: Gets or sets the preferred language for the
-     response.
-    :type accept_language: str
-    :param long_running_operation_retry_timeout: Gets or sets the retry
-     timeout in seconds for Long Running Operations. Default value is 30.
-    :type long_running_operation_retry_timeout: int
-    :param generate_client_request_id: When set to true a unique
-     x-ms-client-request-id value is generated and included in each request.
-     Default is true.
-    :type generate_client_request_id: bool
     :param str base_url: Service URL
-    :param str filepath: Existing config
     """
 
     def __init__(
-            self, credentials, subscription_id, accept_language='en-US', long_running_operation_retry_timeout=30, generate_client_request_id=True, base_url=None, filepath=None):
+            self, credentials, subscription_id, base_url=None):
 
-        self.config = InsightsManagementClientConfiguration(credentials, subscription_id, accept_language, long_running_operation_retry_timeout, generate_client_request_id, base_url, filepath)
+        self.config = MonitorManagementClientConfiguration(credentials, subscription_id, base_url)
         self._client = ServiceClient(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}

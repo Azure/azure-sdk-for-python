@@ -33,7 +33,7 @@ class PoolStatistics(Model):
      compute nodes in the pool.
     :type resource_stats: :class:`ResourceStatistics
      <azure.batch.models.ResourceStatistics>`
-    """ 
+    """
 
     _validation = {
         'url': {'required': True},

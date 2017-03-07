@@ -20,10 +20,10 @@ class MgmtMonitorTest(AzureMgmtTestCase):
     def setUp(self):
         super(MgmtMonitorTest, self).setUp()
         self.mgmt_client = self.create_mgmt_client(
-            azure.mgmt.monitor.InsightsManagementClient
+            azure.mgmt.monitor.MonitorManagementClient
         )
         self.data_client = self.create_mgmt_client(
-            azure.monitor.InsightsClient
+            azure.monitor.MonitorClient
         )
         if not self.is_playback():
             self.create_resource_group()
@@ -47,18 +47,18 @@ class MgmtMonitorTest(AzureMgmtTestCase):
         ])
         select = "eventName,operationName"
         filter = filter.format(self.group_name)
-        events = list(self.data_client.events.list(
+        activity_logs = list(self.data_client.activity_logs.list(
             filter=filter,
             select=select
         ))
-        for event in events:
+        for log in activity_logs:
             # azure.monitor.models.EventData
             #print(" ".join([
-            #    event.event_name.localized_value,
-            #    event.operation_name.localized_value
+            #    log.event_name.localized_value,
+            #    log.operation_name.localized_value
             #]))
-            self.assertIsNotNone(event.event_name.localized_value)
-            self.assertIsNotNone(event.operation_name.localized_value)
+            self.assertIsNotNone(log.event_name.localized_value)
+            self.assertIsNotNone(log.operation_name.localized_value)
 
 
     @record
@@ -128,7 +128,7 @@ class MgmtMonitorTest(AzureMgmtTestCase):
             self.assertIsNotNone(cat.value)
             self.assertIsNotNone(cat.localized_value)
 
-
+    @unittest.skip("Deprecated. Monitor team stopped support")
     @record
     def test_usage_metrics(self):
         # Get the DocDB or your resource and use "id" attribute, or build the id yourself from RG and name

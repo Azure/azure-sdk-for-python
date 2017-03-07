@@ -13,7 +13,7 @@ from .resource import Resource
 
 
 class ElasticPoolActivity(Resource):
-    """Represents the activity on an Azure SQL Elastic Pool.
+    """Represents the activity on an elastic pool.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -50,21 +50,29 @@ class ElasticPoolActivity(Resource):
     :vartype requested_database_dtu_min: int
     :ivar requested_dtu: The requested DTU for the pool if available.
     :vartype requested_dtu: int
-    :ivar requested_elastic_pool_name: The requested name for the Elastic Pool
+    :ivar requested_elastic_pool_name: The requested name for the elastic pool
      if available.
     :vartype requested_elastic_pool_name: str
     :ivar requested_storage_limit_in_gb: The requested storage limit for the
      pool in GB if available.
     :vartype requested_storage_limit_in_gb: long
-    :ivar elastic_pool_name: The name of the Elastic Pool.
+    :ivar elastic_pool_name: The name of the elastic pool.
     :vartype elastic_pool_name: str
-    :ivar server_name: The name of the Azure SQL server the Elastic Pool is
-     in.
+    :ivar server_name: The name of the server the elastic pool is in.
     :vartype server_name: str
     :ivar start_time: The time the operation started (ISO8601 format).
     :vartype start_time: datetime
     :ivar state: The current state of the operation.
     :vartype state: str
+    :ivar requested_storage_limit_in_mb: The requested storage limit in MB.
+    :vartype requested_storage_limit_in_mb: int
+    :ivar requested_database_dtu_guarantee: The requested per database DTU
+     guarantee.
+    :vartype requested_database_dtu_guarantee: int
+    :ivar requested_database_dtu_cap: The requested per database DTU cap.
+    :vartype requested_database_dtu_cap: int
+    :ivar requested_dtu_guarantee: The requested DTU guarantee.
+    :vartype requested_dtu_guarantee: int
     """
 
     _validation = {
@@ -88,6 +96,10 @@ class ElasticPoolActivity(Resource):
         'server_name': {'readonly': True},
         'start_time': {'readonly': True},
         'state': {'readonly': True},
+        'requested_storage_limit_in_mb': {'readonly': True},
+        'requested_database_dtu_guarantee': {'readonly': True},
+        'requested_database_dtu_cap': {'readonly': True},
+        'requested_dtu_guarantee': {'readonly': True},
     }
 
     _attribute_map = {
@@ -112,6 +124,10 @@ class ElasticPoolActivity(Resource):
         'server_name': {'key': 'properties.serverName', 'type': 'str'},
         'start_time': {'key': 'properties.startTime', 'type': 'iso-8601'},
         'state': {'key': 'properties.state', 'type': 'str'},
+        'requested_storage_limit_in_mb': {'key': 'properties.requestedStorageLimitInMB', 'type': 'int'},
+        'requested_database_dtu_guarantee': {'key': 'properties.requestedDatabaseDtuGuarantee', 'type': 'int'},
+        'requested_database_dtu_cap': {'key': 'properties.requestedDatabaseDtuCap', 'type': 'int'},
+        'requested_dtu_guarantee': {'key': 'properties.requestedDtuGuarantee', 'type': 'int'},
     }
 
     def __init__(self, location, tags=None):
@@ -132,3 +148,7 @@ class ElasticPoolActivity(Resource):
         self.server_name = None
         self.start_time = None
         self.state = None
+        self.requested_storage_limit_in_mb = None
+        self.requested_database_dtu_guarantee = None
+        self.requested_database_dtu_cap = None
+        self.requested_dtu_guarantee = None

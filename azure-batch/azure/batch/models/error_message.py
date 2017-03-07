@@ -19,7 +19,7 @@ class ErrorMessage(Model):
     :type lang: str
     :param value: The text of the message.
     :type value: str
-    """ 
+    """
 
     _attribute_map = {
         'lang': {'key': 'lang', 'type': 'str'},
