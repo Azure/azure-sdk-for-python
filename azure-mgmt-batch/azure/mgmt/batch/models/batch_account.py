@@ -24,39 +24,54 @@ class BatchAccount(Resource):
     :vartype name: str
     :ivar type: The type of the resource
     :vartype type: str
-    :param location: The location of the resource
-    :type location: str
-    :param tags: The tags of the resource
-    :type tags: dict
+    :ivar location: The location of the resource
+    :vartype location: str
+    :ivar tags: The tags of the resource
+    :vartype tags: dict
     :ivar account_endpoint: The endpoint used by this account to interact with
      the Batch services.
     :vartype account_endpoint: str
-    :param provisioning_state: The provisioned state of the resource. Possible
+    :ivar provisioning_state: The provisioned state of the resource. Possible
      values include: 'Invalid', 'Creating', 'Deleting', 'Succeeded', 'Failed',
      'Cancelled'
-    :type provisioning_state: str or :class:`ProvisioningState
+    :vartype provisioning_state: str or :class:`ProvisioningState
      <azure.mgmt.batch.models.ProvisioningState>`
-    :param auto_storage: The properties and status of any auto storage account
-     associated with the account.
-    :type auto_storage: :class:`AutoStorageProperties
+    :ivar pool_allocation_mode: The allocation mode to use for creating pools
+     in the Batch account. Possible values include: 'BatchService',
+     'UserSubscription'
+    :vartype pool_allocation_mode: str or :class:`PoolAllocationMode
+     <azure.mgmt.batch.models.PoolAllocationMode>`
+    :ivar key_vault_reference: A reference to the Azure key vault associated
+     with the Batch account.
+    :vartype key_vault_reference: :class:`KeyVaultReference
+     <azure.mgmt.batch.models.KeyVaultReference>`
+    :ivar auto_storage: The properties and status of any auto storage account
+     associated with the Batch account.
+    :vartype auto_storage: :class:`AutoStorageProperties
      <azure.mgmt.batch.models.AutoStorageProperties>`
-    :param core_quota: The core quota for this Batch account.
-    :type core_quota: int
-    :param pool_quota: The pool quota for this Batch account.
-    :type pool_quota: int
-    :param active_job_and_job_schedule_quota: The active job and job schedule
+    :ivar core_quota: The core quota for this Batch account.
+    :vartype core_quota: int
+    :ivar pool_quota: The pool quota for this Batch account.
+    :vartype pool_quota: int
+    :ivar active_job_and_job_schedule_quota: The active job and job schedule
      quota for this Batch account.
-    :type active_job_and_job_schedule_quota: int
-    """ 
+    :vartype active_job_and_job_schedule_quota: int
+    """
 
     _validation = {
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
+        'location': {'readonly': True},
+        'tags': {'readonly': True},
         'account_endpoint': {'readonly': True},
-        'core_quota': {'required': True},
-        'pool_quota': {'required': True},
-        'active_job_and_job_schedule_quota': {'required': True},
+        'provisioning_state': {'readonly': True},
+        'pool_allocation_mode': {'readonly': True},
+        'key_vault_reference': {'readonly': True},
+        'auto_storage': {'readonly': True},
+        'core_quota': {'readonly': True},
+        'pool_quota': {'readonly': True},
+        'active_job_and_job_schedule_quota': {'readonly': True},
     }
 
     _attribute_map = {
@@ -67,17 +82,21 @@ class BatchAccount(Resource):
         'tags': {'key': 'tags', 'type': '{str}'},
         'account_endpoint': {'key': 'properties.accountEndpoint', 'type': 'str'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'ProvisioningState'},
+        'pool_allocation_mode': {'key': 'properties.poolAllocationMode', 'type': 'PoolAllocationMode'},
+        'key_vault_reference': {'key': 'properties.keyVaultReference', 'type': 'KeyVaultReference'},
         'auto_storage': {'key': 'properties.autoStorage', 'type': 'AutoStorageProperties'},
         'core_quota': {'key': 'properties.coreQuota', 'type': 'int'},
         'pool_quota': {'key': 'properties.poolQuota', 'type': 'int'},
         'active_job_and_job_schedule_quota': {'key': 'properties.activeJobAndJobScheduleQuota', 'type': 'int'},
     }
 
-    def __init__(self, core_quota, pool_quota, active_job_and_job_schedule_quota, location=None, tags=None, provisioning_state=None, auto_storage=None):
-        super(BatchAccount, self).__init__(location=location, tags=tags)
+    def __init__(self):
+        super(BatchAccount, self).__init__()
         self.account_endpoint = None
-        self.provisioning_state = provisioning_state
-        self.auto_storage = auto_storage
-        self.core_quota = core_quota
-        self.pool_quota = pool_quota
-        self.active_job_and_job_schedule_quota = active_job_and_job_schedule_quota
+        self.provisioning_state = None
+        self.pool_allocation_mode = None
+        self.key_vault_reference = None
+        self.auto_storage = None
+        self.core_quota = None
+        self.pool_quota = None
+        self.active_job_and_job_schedule_quota = None

@@ -13,7 +13,7 @@ from .resource import Resource
 
 
 class Server(Resource):
-    """Represents an Azure SQL server.
+    """Represents a server.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -28,6 +28,9 @@ class Server(Resource):
     :type location: str
     :param tags: Resource tags
     :type tags: dict
+    :ivar kind: Kind of sql server.  This is metadata used for the Azure
+     portal experience.
+    :vartype kind: str
     :ivar fully_qualified_domain_name: The fully qualified domain name of the
      server.
     :vartype fully_qualified_domain_name: str
@@ -42,6 +45,20 @@ class Server(Resource):
     :param administrator_login_password: The administrator login password
      (required for server creation).
     :type administrator_login_password: str
+    :ivar external_administrator_sid: The ID of the Active Azure Directory
+     object with admin permissions on this server. Legacy parameter, always
+     null. To check for Active Directory admin, query
+     .../servers/{serverName}/administrators.
+    :vartype external_administrator_sid: str
+    :ivar external_administrator_login: The display name of the Azure Active
+     Directory object with admin permissions on this server. Legacy parameter,
+     always null. To check for Active Directory admin, query
+     .../servers/{serverName}/administrators
+    :vartype external_administrator_login: str
+    :ivar state: The state of the server. Possible values include: 'Ready',
+     'Disabled'
+    :vartype state: str or :class:`ServerState
+     <azure.mgmt.sql.models.ServerState>`
     """
 
     _validation = {
@@ -49,7 +66,11 @@ class Server(Resource):
         'id': {'readonly': True},
         'type': {'readonly': True},
         'location': {'required': True},
+        'kind': {'readonly': True},
         'fully_qualified_domain_name': {'readonly': True},
+        'external_administrator_sid': {'readonly': True},
+        'external_administrator_login': {'readonly': True},
+        'state': {'readonly': True},
     }
 
     _attribute_map = {
@@ -58,15 +79,23 @@ class Server(Resource):
         'type': {'key': 'type', 'type': 'str'},
         'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
+        'kind': {'key': 'kind', 'type': 'str'},
         'fully_qualified_domain_name': {'key': 'properties.fullyQualifiedDomainName', 'type': 'str'},
         'version': {'key': 'properties.version', 'type': 'str'},
         'administrator_login': {'key': 'properties.administratorLogin', 'type': 'str'},
         'administrator_login_password': {'key': 'properties.administratorLoginPassword', 'type': 'str'},
+        'external_administrator_sid': {'key': 'properties.externalAdministratorSid', 'type': 'str'},
+        'external_administrator_login': {'key': 'properties.externalAdministratorLogin', 'type': 'str'},
+        'state': {'key': 'properties.state', 'type': 'ServerState'},
     }
 
     def __init__(self, location, tags=None, version=None, administrator_login=None, administrator_login_password=None):
         super(Server, self).__init__(location=location, tags=tags)
+        self.kind = None
         self.fully_qualified_domain_name = None
         self.version = version
         self.administrator_login = administrator_login
         self.administrator_login_password = administrator_login_password
+        self.external_administrator_sid = None
+        self.external_administrator_login = None
+        self.state = None

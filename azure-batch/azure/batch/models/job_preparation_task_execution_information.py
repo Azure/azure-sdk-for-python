@@ -23,11 +23,11 @@ class JobPreparationTaskExecutionInformation(Model):
      This property is set only if the task is in the Completed state.
     :type end_time: datetime
     :param state: The current state of the Job Preparation task on the compute
-     node. Possible values are: running – the task is currently running
-     (including retrying). completed – the task has exited with exit code 0, or
-     the task has exhausted its retry limit, or the Batch service was unable to
-     start the task due to scheduling errors. Possible values include:
-     'running', 'completed'
+     node. running - the task is currently running (including retrying).
+     completed - the task has exited with exit code 0, or the task has
+     exhausted its retry limit, or the Batch service was unable to start the
+     task due to scheduling errors. Possible values include: 'running',
+     'completed'
     :type state: str or :class:`JobPreparationTaskState
      <azure.batch.models.JobPreparationTaskState>`
     :param task_root_directory: The root directory of the Job Preparation task
@@ -63,7 +63,7 @@ class JobPreparationTaskExecutionInformation(Model):
      rebooted during a retry, then the startTime is updated but the
      lastRetryTime is not.
     :type last_retry_time: datetime
-    """ 
+    """
 
     _validation = {
         'start_time': {'required': True},

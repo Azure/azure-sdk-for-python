@@ -20,7 +20,7 @@ class BatchErrorDetail(Model):
     :type key: str
     :param value: The additional information included with the error response.
     :type value: str
-    """ 
+    """
 
     _attribute_map = {
         'key': {'key': 'key', 'type': 'str'},

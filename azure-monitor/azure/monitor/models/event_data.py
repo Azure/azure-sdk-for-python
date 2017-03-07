@@ -20,11 +20,6 @@ class EventData(Model):
      the event. These usually include the 'action', 'role' and the 'scope'
     :type authorization: :class:`SenderAuthorization
      <azure.monitor.models.SenderAuthorization>`
-    :param channels: the event channels. The regular event logs, that you see
-     in the Azure Management Portals, flow through the 'Operation' channel.
-     Possible values include: 'Admin', 'Operation', 'Debug', 'Analytics'
-    :type channels: str or :class:`EventChannels
-     <azure.monitor.models.EventChannels>`
     :param claims: key value pairs to identify ARM permissions.
     :type claims: dict
     :param caller: the email address of the user who has performed the
@@ -112,7 +107,6 @@ class EventData(Model):
     """
 
     _validation = {
-        'channels': {'required': True},
         'level': {'required': True},
         'event_timestamp': {'required': True},
         'submission_timestamp': {'required': True},
@@ -120,7 +114,6 @@ class EventData(Model):
 
     _attribute_map = {
         'authorization': {'key': 'authorization', 'type': 'SenderAuthorization'},
-        'channels': {'key': 'channels', 'type': 'EventChannels'},
         'claims': {'key': 'claims', 'type': '{str}'},
         'caller': {'key': 'caller', 'type': 'str'},
         'description': {'key': 'description', 'type': 'str'},
@@ -146,9 +139,8 @@ class EventData(Model):
         'tenant_id': {'key': 'tenantId', 'type': 'str'},
     }
 
-    def __init__(self, channels, level, event_timestamp, submission_timestamp, authorization=None, claims=None, caller=None, description=None, id=None, event_data_id=None, correlation_id=None, event_name=None, category=None, http_request=None, resource_group_name=None, resource_provider_name=None, resource_id=None, resource_type=None, operation_id=None, operation_name=None, properties=None, status=None, sub_status=None, subscription_id=None, tenant_id=None):
+    def __init__(self, level, event_timestamp, submission_timestamp, authorization=None, claims=None, caller=None, description=None, id=None, event_data_id=None, correlation_id=None, event_name=None, category=None, http_request=None, resource_group_name=None, resource_provider_name=None, resource_id=None, resource_type=None, operation_id=None, operation_name=None, properties=None, status=None, sub_status=None, subscription_id=None, tenant_id=None):
         self.authorization = authorization
-        self.channels = channels
         self.claims = claims
         self.caller = caller
         self.description = description

@@ -12,14 +12,6 @@
 from enum import Enum
 
 
-class EventChannels(Enum):
-
-    admin = "Admin"
-    operation = "Operation"
-    debug = "Debug"
-    analytics = "Analytics"
-
-
 class EventLevel(Enum):
 
     critical = "Critical"

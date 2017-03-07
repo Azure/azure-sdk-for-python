@@ -17,9 +17,16 @@ class VirtualMachineConfiguration(Model):
     Machines infrastructure.
 
     :param image_reference: A reference to the Azure Virtual Machines
-     Marketplace image to use.
+     Marketplace image to use. This property and osDisk are mutually exclusive
+     and one of the properties must be specified.
     :type image_reference: :class:`ImageReference
      <azure.batch.models.ImageReference>`
+    :param os_disk: A reference to the OS disk image to use. This property can
+     be specified only if the Batch account was created with its
+     poolAllocationMode property set to 'UserSubscription'. This property and
+     imageReference are mutually exclusive and one of the properties must be
+     specified.
+    :type os_disk: :class:`OSDisk <azure.batch.models.OSDisk>`
     :param node_agent_sku_id: The SKU of the Batch node agent to be
      provisioned on compute nodes in the pool. The Batch node agent is a
      program that runs on each node in the pool, and provides the
@@ -32,23 +39,24 @@ class VirtualMachineConfiguration(Model):
     :type node_agent_sku_id: str
     :param windows_configuration: Windows operating system settings on the
      virtual machine. This property must not be specified if the imageReference
-     property specifies a Linux OS image.
+     or osDisk property specifies a Linux OS image.
     :type windows_configuration: :class:`WindowsConfiguration
      <azure.batch.models.WindowsConfiguration>`
-    """ 
+    """
 
     _validation = {
-        'image_reference': {'required': True},
         'node_agent_sku_id': {'required': True},
     }
 
     _attribute_map = {
         'image_reference': {'key': 'imageReference', 'type': 'ImageReference'},
+        'os_disk': {'key': 'osDisk', 'type': 'OSDisk'},
         'node_agent_sku_id': {'key': 'nodeAgentSKUId', 'type': 'str'},
         'windows_configuration': {'key': 'windowsConfiguration', 'type': 'WindowsConfiguration'},
     }
 
-    def __init__(self, image_reference, node_agent_sku_id, windows_configuration=None):
+    def __init__(self, node_agent_sku_id, image_reference=None, os_disk=None, windows_configuration=None):
         self.image_reference = image_reference
+        self.os_disk = os_disk
         self.node_agent_sku_id = node_agent_sku_id
         self.windows_configuration = windows_configuration

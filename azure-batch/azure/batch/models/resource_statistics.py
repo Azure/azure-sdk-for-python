@@ -55,7 +55,7 @@ class ResourceStatistics(Model):
     :param network_write_gi_b: The total amount of data in GiB of network
      writes across all nodes in the pool.
     :type network_write_gi_b: float
-    """ 
+    """
 
     _validation = {
         'start_time': {'required': True},

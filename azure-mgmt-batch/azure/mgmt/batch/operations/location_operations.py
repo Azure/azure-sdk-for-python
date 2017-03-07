@@ -10,6 +10,7 @@
 # --------------------------------------------------------------------------
 
 from msrest.pipeline import ClientRawResponse
+from msrestazure.azure_exceptions import CloudError
 import uuid
 
 from .. import models
@@ -48,8 +49,7 @@ class LocationOperations(object):
          <azure.mgmt.batch.models.BatchLocationQuota>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
-        :raises:
-         :class:`ErrorBodyException<azure.mgmt.batch.models.ErrorBodyException>`
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/providers/Microsoft.Batch/locations/{locationName}/quotas'
@@ -78,7 +78,9 @@ class LocationOperations(object):
         response = self._client.send(request, header_parameters, **operation_config)
 
         if response.status_code not in [200]:
-            raise models.ErrorBodyException(self._deserialize, response)
+            exp = CloudError(response)
+            exp.request_id = response.headers.get('x-ms-request-id')
+            raise exp
 
         deserialized = None
 

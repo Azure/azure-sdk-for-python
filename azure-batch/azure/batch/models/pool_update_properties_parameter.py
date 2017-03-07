@@ -28,8 +28,9 @@ class PoolUpdatePropertiesParameter(Model):
      certificates are stored in a directory inside the task working directory
      and an environment variable AZ_BATCH_CERTIFICATES_DIR is supplied to the
      task to query for this location. For certificates with visibility of
-     remoteuser, a certs directory is created in the user's home directory
-     (e.g., /home/<user-name>/certs) where certificates are placed.
+     'remoteUser', a 'certs' directory is created in the user's home directory
+     (e.g., /home/{user-name}/certs) and certificates are placed in that
+     directory.
     :type certificate_references: list of :class:`CertificateReference
      <azure.batch.models.CertificateReference>`
     :param application_package_references: A list of application packages to
@@ -48,7 +49,7 @@ class PoolUpdatePropertiesParameter(Model):
      is removed from the pool.
     :type metadata: list of :class:`MetadataItem
      <azure.batch.models.MetadataItem>`
-    """ 
+    """
 
     _validation = {
         'certificate_references': {'required': True},

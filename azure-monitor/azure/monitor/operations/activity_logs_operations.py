@@ -16,8 +16,8 @@ import uuid
 from .. import models
 
 
-class TenantEventsOperations(object):
-    """TenantEventsOperations operations.
+class ActivityLogsOperations(object):
+    """ActivityLogsOperations operations.
 
     :param client: Client for service requests.
     :param config: Configuration of service client.
@@ -37,12 +37,7 @@ class TenantEventsOperations(object):
 
     def list(
             self, filter=None, select=None, custom_headers=None, raw=False, **operation_config):
-        """get the Activity Logs for the Tenant. Everything that is applicable to
-        the API to get the Activity Log for the subscription is applicable to
-        this API (the parameters, $filter, etc.). One thing to point out here
-        is that this API does *not* retrieve the logs at the individual
-        subscription of the tenant but only surfaces the logs that were
-        generated at the tenant level. The **$filter** is very restricted and
+        """Provides the list of events. The **$filter** is very restricted and
         allows only the following patterns. - List events for a resource group:
         $filter=eventTimestamp ge '<Start Time>' and eventTimestamp le '<End
         Time>' and eventChannels eq 'Admin, Operation' and resourceGroupName eq
@@ -51,7 +46,7 @@ class TenantEventsOperations(object):
         Time>' and eventChannels eq 'Admin, Operation' and resourceUri eq
         '<ResourceURI>'. - List events for a subscription:
         $filter=eventTimestamp ge '<Start Time>' and eventTimestamp le '<End
-        Time>' and eventChannels eq 'Admin, Operation'. - List evetns for a
+        Time>' and eventChannels eq 'Admin, Operation'. -List events for a
         resource provider: $filter=eventTimestamp ge '<Start Time>' and
         eventTimestamp le '<End Time>' and eventChannels eq 'Admin, Operation'
         and resourceProvider eq '<ResourceProviderName>'. - List events for a
@@ -83,7 +78,11 @@ class TenantEventsOperations(object):
 
             if not next_link:
                 # Construct URL
-                url = '/providers/microsoft.insights/eventtypes/management/values'
+                url = '/subscriptions/{subscriptionId}/providers/microsoft.insights/eventtypes/management/values'
+                path_format_arguments = {
+                    'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+                }
+                url = self._client.format_url(url, **path_format_arguments)
 
                 # Construct parameters
                 query_parameters = {}

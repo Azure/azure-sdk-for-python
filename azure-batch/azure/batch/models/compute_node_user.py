@@ -13,7 +13,7 @@ from msrest.serialization import Model
 
 
 class ComputeNodeUser(Model):
-    """An user account on a compute node.
+    """A user account on a compute node.
 
     :param name: The user name of the account.
     :type name: str
@@ -37,7 +37,7 @@ class ComputeNodeUser(Model):
      then the Batch service rejects the request; if you are calling the REST
      API directly, the HTTP status code is 400 (Bad Request).
     :type ssh_public_key: str
-    """ 
+    """
 
     _validation = {
         'name': {'required': True},

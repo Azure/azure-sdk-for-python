@@ -18,7 +18,7 @@ class AutoStorageBaseProperties(Model):
     :param storage_account_id: The resource ID of the storage account to be
      used for auto storage account.
     :type storage_account_id: str
-    """ 
+    """
 
     _validation = {
         'storage_account_id': {'required': True},

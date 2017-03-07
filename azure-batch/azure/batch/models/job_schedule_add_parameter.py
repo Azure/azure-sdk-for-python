@@ -37,7 +37,7 @@ class JobScheduleAddParameter(Model):
      is solely for the use of user code.
     :type metadata: list of :class:`MetadataItem
      <azure.batch.models.MetadataItem>`
-    """ 
+    """
 
     _validation = {
         'id': {'required': True},

@@ -33,7 +33,7 @@ class NodeUpdateUserParameter(Model):
      API directly, the HTTP status code is 400 (Bad Request). If omitted, any
      existing SSH public key is removed.
     :type ssh_public_key: str
-    """ 
+    """
 
     _attribute_map = {
         'password': {'key': 'password', 'type': 'str'},

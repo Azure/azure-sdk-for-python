@@ -31,7 +31,7 @@ class JobScheduleUpdateParameter(Model):
      deleted.
     :type metadata: list of :class:`MetadataItem
      <azure.batch.models.MetadataItem>`
-    """ 
+    """
 
     _validation = {
         'schedule': {'required': True},

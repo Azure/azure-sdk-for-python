@@ -16,7 +16,7 @@ for details on handling Azure Active Directory authentication with the Python SD
 
 .. code:: python
 
-    from azure.monitor import InsightsClient
+    from azure.monitor import MonitorClient
     from azure.common.credentials import UserPassCredentials
 
     # Replace this with your subscription id
@@ -28,7 +28,7 @@ for details on handling Azure Active Directory authentication with the Python SD
         'my_password',      # Your password
     )
 
-    client = InsightsClient(
+    client = MonitorClient(
         credentials,
         subscription_id
     )
@@ -59,7 +59,7 @@ https://docs.microsoft.com/cli/azure/role/assignment
 Get the Activity Log
 --------------------
 
-This sample gets the Admin and Operations events from the ActivityLog of today, 
+This sample gets the logs from the ActivityLog of today for resource group ResourceGroupName, 
 filtering the attributes to get only the "eventName" and "operationName".
 
 A complete list of available keywords for filters and available attributes is available
@@ -72,22 +72,22 @@ here: https://msdn.microsoft.com/library/azure/dn931934.aspx
     today = datetime.datetime.now().date()
     filter = " and ".join([
         "eventTimestamp ge {}".format(today),
-        "eventChannels eq 'Admin, Operation'"
+        "resourceGroupName eq 'ResourceGroupName'"
     ])
     select = ",".join([
         "eventName",
         "operationName"
     ])
     
-    events = client.events.list(
+    activity_logs = client.activity_logs.list(
         filter=filter,
         select=select
     )
-    for event in events:
-        # assert isinstance(event, azure.monitor.models.EventData)
+    for log in activity_logs:
+        # assert isinstance(log, azure.monitor.models.EventData)
         print(" ".join([
-            event.event_name.localized_value,
-            event.operation_name.localized_value
+            log.event_name.localized_value,
+            log.operation_name.localized_value
         ]))
 
 Metrics
@@ -180,34 +180,3 @@ here: https://msdn.microsoft.com/en-us/library/azure/mt743622.aspx
     # 2016-11-16 21:00:00+00:00: 146.73
     # 2016-11-16 22:00:00+00:00: 73.86
     # 2016-11-16 23:00:00+00:00: 84.7
-
-Quotas
-------
-
-Some ARM resource like DocumentDB or WebApp expose quotas. You can access these data using
-the `usage_metrics` operation group.
-
-.. code:: python
-
-    # Get the ARM id of your resource. You might chose to do a "get"
-    # using the according management or to build the URL directly
-    # Example for a ARM VM
-    resource_id = (
-        "subscriptions/{}/"
-        "resourceGroups/{}/"
-        "providers/Microsoft.Web/sites/{}"
-    ).format(subscription_id, resource_group_name, webapp_name)
-
-    usage_metrics = client.usage_metrics.list(resource_id)
-
-    for item in usage_metrics:
-        # azure.monitor.models.UsageMetric
-        print("{} ({}): {} / {}".format(
-            item.name.localized_value,
-            item.unit,
-            item.current_value,
-            item.limit 
-        ))
-
-    # Example of result
-    # File System Storage (Bytes): 294487040.0 / 10737418240.0

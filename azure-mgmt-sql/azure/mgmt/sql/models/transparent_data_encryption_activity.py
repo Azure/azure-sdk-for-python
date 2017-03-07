@@ -13,7 +13,7 @@ from .sql_sub_resource import SqlSubResource
 
 
 class TransparentDataEncryptionActivity(SqlSubResource):
-    """Represents an Azure SQL Database Transparent Data Encryption Scan.
+    """Represents a database transparent data encryption Scan.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -22,12 +22,12 @@ class TransparentDataEncryptionActivity(SqlSubResource):
     :vartype name: str
     :ivar id: The resource ID.
     :vartype id: str
-    :ivar status: The status of the Azure SQL database. Possible values
-     include: 'Encrypting', 'Decrypting'
+    :ivar status: The status of the database. Possible values include:
+     'Encrypting', 'Decrypting'
     :vartype status: str or :class:`TransparentDataEncryptionActivityStates
      <azure.mgmt.sql.models.TransparentDataEncryptionActivityStates>`
     :ivar percent_complete: The percent complete of the transparent data
-     encryption scan for a Azure SQL Database.
+     encryption scan for a database.
     :vartype percent_complete: float
     """
 

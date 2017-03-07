@@ -11,16 +11,16 @@
 
 from .usage_metrics_operations import UsageMetricsOperations
 from .event_categories_operations import EventCategoriesOperations
-from .events_operations import EventsOperations
-from .tenant_events_operations import TenantEventsOperations
+from .activity_logs_operations import ActivityLogsOperations
+from .tenant_activity_logs_operations import TenantActivityLogsOperations
 from .metric_definitions_operations import MetricDefinitionsOperations
 from .metrics_operations import MetricsOperations
 
 __all__ = [
     'UsageMetricsOperations',
     'EventCategoriesOperations',
-    'EventsOperations',
-    'TenantEventsOperations',
+    'ActivityLogsOperations',
+    'TenantActivityLogsOperations',
     'MetricDefinitionsOperations',
     'MetricsOperations',
 ]

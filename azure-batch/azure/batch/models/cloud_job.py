@@ -87,22 +87,21 @@ class CloudJob(Model):
     :type pool_info: :class:`PoolInformation
      <azure.batch.models.PoolInformation>`
     :param on_all_tasks_complete: The action the Batch service should take
-     when all tasks in the job are in the completed state. Permitted values
-     are: noaction – do nothing. The job remains active unless terminated or
-     disabled by some other means. terminatejob – terminate the job. The job's
-     terminateReason is set to 'AllTasksComplete'. The default is noaction.
-     Possible values include: 'noAction', 'terminateJob'
+     when all tasks in the job are in the completed state. noAction - do
+     nothing. The job remains active unless terminated or disabled by some
+     other means. terminateJob - terminate the job. The job's terminateReason
+     is set to 'AllTasksComplete'. The default is noAction. Possible values
+     include: 'noAction', 'terminateJob'
     :type on_all_tasks_complete: str or :class:`OnAllTasksComplete
      <azure.batch.models.OnAllTasksComplete>`
     :param on_task_failure: The action the Batch service should take when any
      task in the job fails. A task is considered to have failed if it completes
      with a non-zero exit code and has exhausted its retry count, or if it had
-     a scheduling error. Permitted values are: noaction – do nothing.
-     performexitoptionsjobaction – take the action associated with the task
-     exit condition in the task's exitConditions collection. (This may still
-     result in no action being taken, if that is what the task specifies.) The
-     default is noaction. Possible values include: 'noAction',
-     'performExitOptionsJobAction'
+     a scheduling error. noAction - do nothing. performExitOptionsJobAction -
+     take the action associated with the task exit condition in the task's
+     exitConditions collection. (This may still result in no action being
+     taken, if that is what the task specifies.) The default is noAction.
+     Possible values include: 'noAction', 'performExitOptionsJobAction'
     :type on_task_failure: str or :class:`OnTaskFailure
      <azure.batch.models.OnTaskFailure>`
     :param metadata: A list of name-value pairs associated with the job as
@@ -116,7 +115,7 @@ class CloudJob(Model):
     :param stats: Resource usage statistics for the entire lifetime of the
      job.
     :type stats: :class:`JobStatistics <azure.batch.models.JobStatistics>`
-    """ 
+    """
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},

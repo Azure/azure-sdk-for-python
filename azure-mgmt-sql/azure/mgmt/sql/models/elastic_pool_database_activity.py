@@ -13,7 +13,7 @@ from .resource import Resource
 
 
 class ElasticPoolDatabaseActivity(Resource):
-    """Represents the activity on an Azure SQL Elastic Pool.
+    """Represents the activity on an elastic pool.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -44,10 +44,10 @@ class ElasticPoolDatabaseActivity(Resource):
     :vartype operation_id: str
     :ivar percent_complete: The percentage complete if available.
     :vartype percent_complete: int
-    :ivar requested_elastic_pool_name: The name for the Elastic Pool the
+    :ivar requested_elastic_pool_name: The name for the elastic pool the
      database is moving into if available.
     :vartype requested_elastic_pool_name: str
-    :ivar current_elastic_pool_name: The name of the current Elastic Pool the
+    :ivar current_elastic_pool_name: The name of the current elastic pool the
      database is in if available.
     :vartype current_elastic_pool_name: str
     :ivar current_service_objective: The name of the current service objective
@@ -56,8 +56,7 @@ class ElasticPoolDatabaseActivity(Resource):
     :ivar requested_service_objective: The name of the requested service
      objective if available.
     :vartype requested_service_objective: str
-    :ivar server_name: The name of the Azure SQL server the Elastic Pool is
-     in.
+    :ivar server_name: The name of the server the elastic pool is in.
     :vartype server_name: str
     :ivar start_time: The time the operation started (ISO8601 format).
     :vartype start_time: datetime

@@ -23,7 +23,7 @@ class UpdateApplicationParameters(Model):
     :type default_version: str
     :param display_name: The display name for the application.
     :type display_name: str
-    """ 
+    """
 
     _attribute_map = {
         'allow_updates': {'key': 'allowUpdates', 'type': 'bool'},

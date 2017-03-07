@@ -152,8 +152,8 @@ class LogProfilesOperations(object):
         :param log_profile_name: The name of the log profile.
         :type log_profile_name: str
         :param parameters: Parameters supplied to the operation.
-        :type parameters: :class:`LogProfileProperties
-         <azure.mgmt.monitor.models.LogProfileProperties>`
+        :type parameters: :class:`LogProfileResource
+         <azure.mgmt.monitor.models.LogProfileResource>`
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -188,7 +188,7 @@ class LogProfilesOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct body
-        body_content = self._serialize.body(parameters, 'LogProfileProperties')
+        body_content = self._serialize.body(parameters, 'LogProfileResource')
 
         # Construct and send request
         request = self._client.put(url, query_parameters)

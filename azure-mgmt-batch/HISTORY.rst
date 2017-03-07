@@ -3,6 +3,17 @@
 Release History
 ===============
 
+3.0.0 (2017-02-23)
+++++++++++++++++++
+
+- Updated `BatchAccount` model - support for pool allocation in the user's subscription.
+- Updated `BatchAccount` model - support for referencing an Azure Key Vault for accounts created with a pool allocation mode of UserSubscription.
+- Updated `BatchAccount` model - properties are now read only.
+- Updated `ApplicationPackage` model - properties are now read only.
+- Updated `BatchAccountKeys` model - properties are now read only.
+- Updated `BatchLocationQuota` model - properties are now read only.
+- Update Batch Account operation now takes a `BatchAccountUpdateParameters` object rather than `tags` and `auto_storage` parameters.
+
 2.0.0 (2016-10-04)
 ++++++++++++++++++
 

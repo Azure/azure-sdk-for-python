@@ -27,7 +27,7 @@ class FileProperties(Model):
     :param file_mode: The file mode attribute in octal format. The file mode
      is returned only for files on Linux compute nodes.
     :type file_mode: str
-    """ 
+    """
 
     _validation = {
         'last_modified': {'required': True},

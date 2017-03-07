@@ -9,10 +9,10 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .insights_client import InsightsClient
+from .monitor_client import MonitorClient
 from .version import VERSION
 
-__all__ = ['InsightsClient']
+__all__ = ['MonitorClient']
 
 __version__ = VERSION
 

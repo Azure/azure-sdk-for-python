@@ -13,34 +13,31 @@ from msrest.serialization import Model
 
 
 class UpgradeRecommendedElasticPoolProperties(Model):
-    """Represents the properties of a Azure SQL Recommended Elastic Pool being
-    upgraded.
+    """Represents the properties of a recommended elastic pool being upgraded.
 
-    :param name: The name of the Azure SQL Recommended Elastic Pool being
-     upgraded.
+    :param name: The name of the recommended elastic pool being upgraded.
     :type name: str
-    :param edition: The target edition for the Azure SQL Recommended Elastic
-     Pool being upgraded. Possible values include: 'Basic', 'Standard',
-     'Premium'
+    :param edition: The target edition for the recommended elastic pool being
+     upgraded. Possible values include: 'Basic', 'Standard', 'Premium'
     :type edition: str or :class:`TargetElasticPoolEditions
      <azure.mgmt.sql.models.TargetElasticPoolEditions>`
-    :param dtu: The DTU guarantee for the Azure SQL Recommended Elastic Pool
-     being upgraded.
+    :param dtu: The DTU guarantee for the recommended elastic pool being
+     upgraded.
     :type dtu: int
-    :param storage_mb: The storage limit in MB for the Azure SQL Recommended
-     Elastic Pool being upgraded.
+    :param storage_mb: The storage limit in MB for the recommended elastic
+     pool being upgraded.
     :type storage_mb: int
-    :param database_dtu_min: The DTU guarantee for database for the Azure SQL
-     Recommended Elastic Pool being upgraded.
+    :param database_dtu_min: The DTU guarantee for database for the
+     recommended elastic pool being upgraded.
     :type database_dtu_min: int
-    :param database_dtu_max: The DTU cap for database for the Azure SQL
-     Recommended Elastic Pool being upgraded.
+    :param database_dtu_max: The DTU cap for database for the recommended
+     elastic pool being upgraded.
     :type database_dtu_max: int
     :param database_collection: The list of database names to be put in the
-     Azure SQL Recommended Elastic Pool being upgraded.
+     recommended elastic pool being upgraded.
     :type database_collection: list of str
     :param include_all_databases: Gets or sets whether all databases to be put
-     in the Azure SQL Recommended Elastic Pool being upgraded.
+     in the recommended elastic pool being upgraded.
     :type include_all_databases: bool
     """
 
