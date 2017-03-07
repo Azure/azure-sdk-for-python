@@ -48,7 +48,7 @@ class AzureMgmtTestCase(RecordingTestCase):
             import tests.mgmt_settings_real as real_settings
             self.settings = real_settings
 
-        self.resource_client = azure.mgmt.resource.ResourceManagementClient(
+        self.resource_client = azure.mgmt.resource.Client(
             credentials=self.settings.get_credentials(),
             subscription_id=self.settings.SUBSCRIPTION_ID,
         )
@@ -139,7 +139,7 @@ class AzureMgmtTestCase(RecordingTestCase):
         return val
 
     def create_resource_group(self):
-        self.group = self.resource_client.resource_groups.create_or_update(
+        self.group = self.resource_client.resource_groups().create_or_update(
             self.group_name,
             {
                 'location': self.region
@@ -153,12 +153,12 @@ class AzureMgmtTestCase(RecordingTestCase):
         """
         try:
             if wait_timeout:
-                azure_poller = self.resource_client.resource_groups.delete(self.group_name)
+                azure_poller = self.resource_client.resource_groups().delete(self.group_name)
                 azure_poller.wait(wait_timeout)
                 if azure_poller.done():
                     return
                 self.assertTrue(False, 'Timed out waiting for resource group to be deleted.')            
             else:
-                self.resource_client.resource_groups.delete(self.group_name, raw=True)
+                self.resource_client.resource_groups().delete(self.group_name, raw=True)
         except CloudError:
             pass

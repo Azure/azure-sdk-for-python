@@ -94,7 +94,7 @@
         "PackageVersion": "0.1.0"
       },
       "output_dir": "azure-mgmt-documentdb/azure/mgmt/documentdb",
-	  "generated_relative_base_directory": "documentdb"
+    "generated_relative_base_directory": "documentdb"
     },
     "eventhub": {
       "swagger": "arm-eventhub/2015-08-01/swagger/EventHub.json",
@@ -219,59 +219,60 @@
       },
       "output_dir": "azure-mgmt-redis/azure/mgmt/redis"
     },
-    "resources.lock": {
-      "swagger": "arm-resources/locks/2015-01-01/swagger/locks.json",
-      "autorest_options": {
-        "Namespace": "azure.mgmt.resource.locks",
-        "PackageVersion": "0.31.0"
-      },
-      "output_dir": "azure-mgmt-resource/azure/mgmt/resource/locks"
-    },
-    "resources.features": {
+    "resources.2015-12-01": {
       "swagger": "arm-resources/features/2015-12-01/swagger/features.json",
       "autorest_options": {
-        "Namespace": "azure.mgmt.resource.features",
-        "PackageVersion": "0.31.0"
+        "Namespace": "azure.mgmt.resource.v2015_12_01",
+        "PackageVersion": "0.40.0"
       },
-      "output_dir": "azure-mgmt-resource/azure/mgmt/resource/features"
+      "output_dir": "azure-mgmt-resource/azure/mgmt/resource/v2015_12_01"
     },
-    "resources.resources": {
-      "swagger": "arm-resources/resources/2016-09-01/swagger/resources.json",
-      "autorest_options": {
-        "Namespace": "azure.mgmt.resource.resources",
-        "PackageVersion": "0.31.0"
-      },
-      "output_dir": "azure-mgmt-resource/azure/mgmt/resource/resources"
-    },
-    "resources.subscriptions": {
+    "resources.2016-06-01": {
       "swagger": "arm-resources/subscriptions/2016-06-01/swagger/subscriptions.json",
       "autorest_options": {
-        "Namespace": "azure.mgmt.resource.subscriptions",
-        "PackageVersion": "0.31.0"
+        "Namespace": "azure.mgmt.resource.v2016_06_01",
+        "PackageVersion": "0.40.0"
       },
-      "output_dir": "azure-mgmt-resource/azure/mgmt/resource/subscriptions"
+      "output_dir": "azure-mgmt-resource/azure/mgmt/resource/v2016_06_01"
     },
-    "resources.policy": {
+    
+    "resources.lock.2015-01-01": {
+      "swagger": "arm-resources/locks/2015-01-01/swagger/locks.json",
+      "autorest_options": {
+        "Namespace": "azure.mgmt.resource.locks.v2015_01_01",
+        "PackageVersion": "0.40.0"
+      },
+      "output_dir": "azure-mgmt-resource/azure/mgmt/resource/locks/v2015_01_01"
+    },
+    "resources.resources.2016-09-01": {
+      "swagger": "arm-resources/resources/2016-09-01/swagger/resources.json",
+      "autorest_options": {
+        "Namespace": "azure.mgmt.resource.resources.v2016_09_01",
+        "PackageVersion": "0.40.0"
+      },
+      "output_dir": "azure-mgmt-resource/azure/mgmt/resource/resources/v2016_09_01"
+    },
+    "resources.policy.2016-04-01": {
       "swagger": "arm-resources/policy/2016-04-01/swagger/policy.json",
       "autorest_options": {
         "Namespace": "azure.mgmt.resource.policy",
-        "PackageVersion": "0.31.0"
+        "PackageVersion": "0.40.0"
       },
-      "output_dir": "azure-mgmt-resource/azure/mgmt/resource/policy"
+      "output_dir": "azure-mgmt-resource/azure/mgmt/resource/policy/v2016_04_01"
     },
-    "resources.links": {
+    "resources.links.2016-09-01": {
       "swagger": "arm-resources/links/2016-09-01/swagger/links.json",
       "autorest_options": {
-        "Namespace": "azure.mgmt.resource.links",
-        "PackageVersion": "0.31.0"
+        "Namespace": "azure.mgmt.resource.links.v2016_09_01",
+        "PackageVersion": "0.40.0"
       },
-      "output_dir": "azure-mgmt-resource/azure/mgmt/resource/links"
+      "output_dir": "azure-mgmt-resource/azure/mgmt/resource/links/v2016_09_01"
     },
     "search": {
       "swagger": "arm-search/2015-08-19/swagger/search.json",
       "autorest_options": {
         "Namespace": "azure.mgmt.search",
-		"PackageVersion": "0.1.0"
+    "PackageVersion": "0.1.0"
       },
       "output_dir": "azure-mgmt-search/azure/mgmt/search"
     },
