@@ -102,7 +102,7 @@ class Client(object):
     def availability_sets(self, api_version='2016-04-30-preview'):
         if api_version =='2016-04-30-preview':
             from .v2016_04_30_preview.operations.availability_sets_operations import AvailabilitySetsOperations as OperationClass
-        elif api_version =='2015-16-15':
+        elif api_version =='2015-06-15':
             from .v2015_06_15.operations.availability_sets_operations import AvailabilitySetsOperations as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(api_version))
@@ -111,7 +111,7 @@ class Client(object):
     def virtual_machine_extension_images(self, api_version='2016-04-30-preview'):
         if api_version =='2016-04-30-preview':
             from .v2016_04_30_preview.operations.virtual_machine_extension_images_operations import VirtualMachineExtensionImagesOperations as OperationClass
-        elif api_version =='2015-16-15':
+        elif api_version =='2015-06-15':
             from .v2015_06_15.operations.virtual_machine_extension_images_operations import VirtualMachineExtensionImagesOperations as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(api_version))
@@ -120,7 +120,7 @@ class Client(object):
     def virtual_machine_extensions(self, api_version='2016-04-30-preview'):
         if api_version =='2016-04-30-preview':
             from .v2016_04_30_preview.operations.virtual_machine_extensions_operations import VirtualMachineExtensionsOperations as OperationClass
-        elif api_version =='2015-16-15':
+        elif api_version =='2015-06-15':
             from .v2015_06_15.operations.virtual_machine_extensions_operations import VirtualMachineExtensionsOperations as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(api_version))
@@ -129,7 +129,7 @@ class Client(object):
     def virtual_machine_images(self, api_version='2016-04-30-preview'):
         if api_version =='2016-04-30-preview':
             from .v2016_04_30_preview.operations.virtual_machine_images_operations import VirtualMachineImagesOperations as OperationClass
-        elif api_version =='2015-16-15':
+        elif api_version =='2015-06-15':
             from .v2015_06_15.operations.virtual_machine_images_operations import VirtualMachineImagesOperations as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(api_version))
@@ -138,7 +138,7 @@ class Client(object):
     def usage(self, api_version='2016-04-30-preview'):
         if api_version =='2016-04-30-preview':
             from .v2016_04_30_preview.operations.usage_operations import UsageOperations as OperationClass
-        elif api_version =='2015-16-15':
+        elif api_version =='2015-06-15':
             from .v2015_06_15.operations.usage_operations import UsageOperations as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(api_version))
@@ -147,7 +147,7 @@ class Client(object):
     def virtual_machine_sizes(self, api_version='2016-04-30-preview'):
         if api_version =='2016-04-30-preview':
             from .v2016_04_30_preview.operations.virtual_machine_sizes_operations import VirtualMachineSizesOperations as OperationClass
-        elif api_version =='2015-16-15':
+        elif api_version =='2015-06-15':
             from .v2015_06_15.operations.virtual_machine_sizes_operations import VirtualMachineSizesOperations as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(api_version))
@@ -163,7 +163,7 @@ class Client(object):
     def virtual_machines(self, api_version='2016-04-30-preview'):
         if api_version =='2016-04-30-preview':
             from .v2016_04_30_preview.operations.virtual_machines_operations import VirtualMachinesOperations as OperationClass
-        elif api_version =='2015-16-15':
+        elif api_version =='2015-06-15':
             from .v2015_06_15.operations.virtual_machines_operations import VirtualMachinesOperations as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(api_version))
@@ -172,7 +172,7 @@ class Client(object):
     def virtual_machine_scale_sets(self, api_version='2016-04-30-preview'):
         if api_version =='2016-04-30-preview':
             from .v2016_04_30_preview.operations.virtual_machine_scale_sets_operations import VirtualMachineScaleSetsOperations as OperationClass
-        elif api_version =='2015-16-15':
+        elif api_version =='2015-06-15':
             from .v2015_06_15.operations.virtual_machine_scale_sets_operations import VirtualMachineScaleSetsOperations as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(api_version))
@@ -181,7 +181,7 @@ class Client(object):
     def virtual_machine_scale_set_vms(self, api_version='2016-04-30-preview'):
         if api_version =='2016-04-30-preview':
             from .v2016_04_30_preview.operations.virtual_machine_scale_set_vms_operations import VirtualMachineScaleSetVMsOperations as OperationClass
-        elif api_version =='2015-16-15':
+        elif api_version =='2015-06-15':
             from .v2015_06_15.operations.virtual_machine_scale_set_vms_operations import VirtualMachineScaleSetVMsOperations as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(api_version))
