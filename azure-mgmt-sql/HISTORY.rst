@@ -3,6 +3,12 @@
 Release History
 ===============
 
+0.3.2 (2017-03-08)
+++++++++++++++++++
+
+* Add import/export operations
+* Expanded documentation of create modes
+
 0.3.1 (2017-03-01)
 ++++++++++++++++++
 
