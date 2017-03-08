@@ -15,9 +15,6 @@ def models(api_version=None):
     if api_version == '2015-06-15':
         from .v2015_06_15 import models
         return models
-    elif api_version == '2016-01-01':
-        from .v2016_01_01 import models
-        return models
     elif api_version == '2016-12-01':
         from .v2016_12_01 import models
         return models
@@ -35,13 +32,11 @@ class ClientConfiguration(AzureConfiguration):
      identify Microsoft Azure subscription. The subscription ID forms part of
      the URI for every service call.
     :type subscription_id: str
-    :param api_version: Client Api Version.
-    :type api_version: str
     :param str base_url: Service URL
     """
 
     def __init__(
-            self, credentials, subscription_id, api_version='2015-06-15', base_url=None):
+            self, credentials, subscription_id, base_url=None):
 
         if credentials is None:
             raise ValueError("Parameter 'credentials' must not be None.")
@@ -49,8 +44,6 @@ class ClientConfiguration(AzureConfiguration):
             raise ValueError("Parameter 'subscription_id' must not be None.")
         if not isinstance(subscription_id, str):
             raise TypeError("Parameter 'subscription_id' must be str.")
-        if api_version is not None and not isinstance(api_version, str):
-            raise TypeError("Optional parameter 'api_version' must be str.")
         if not base_url:
             base_url = 'https://management.azure.com'
 
@@ -61,7 +54,6 @@ class ClientConfiguration(AzureConfiguration):
 
         self.credentials = credentials
         self.subscription_id = subscription_id
-        self.api_version = api_version
 
 
 class Client(object):
@@ -98,35 +90,30 @@ class Client(object):
         self.subscription_id = subscription_id
         self.base_url = base_url
 
-        self.config = ClientConfiguration(self.credentials, self.subscription_id, "FakeValue", self.base_url)
+        self.config = ClientConfiguration(self.credentials, self.subscription_id, self.base_url)
         self.client = ServiceClient(self.credentials, self.config)
 
-    def _instantiate_operation_class(self, api_version, local_models, operation_class):
-        config = ClientConfiguration(self.credentials, self.subscription_id, api_version, self.base_url)
+    def _instantiate_operation_class(self, local_models, operation_class):
         client_models = {k: v for k, v in local_models.__dict__.items() if isinstance(v, type)}
         serialize = Serializer(client_models)
         deserialize = Deserializer(client_models)
-        return operation_class(self.client, config, serialize, deserialize)
+        return operation_class(self.client, self.config, serialize, deserialize)
 
     def storage_accounts(self, api_version='2016-12-01'):
         if api_version == '2015-06-15':
             from .v2015_06_15.operations.storage_accounts_operations import StorageAccountsOperations as OperationClass
-        elif api_version == '2016-01-01':
-            from .v2016_01_01.operations.storage_accounts_operations import StorageAccountsOperations as OperationClass
         elif api_version == '2016-12-01':
             from .v2016_12_01.operations.storage_accounts_operations import StorageAccountsOperations as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(api_version))
-        return self._instantiate_operation_class(api_version, models(api_version), OperationClass)
+        return self._instantiate_operation_class(models(api_version), OperationClass)
 
     def usage(self, api_version='2016-12-01'):
         if api_version == '2015-06-15':
             from .v2015_06_15.operations.usage_operations import UsageOperations as OperationClass
-        elif api_version == '2016-01-01':
-            from .v2016_01_01.operations.usage_operations import UsageOperations as OperationClass
         elif api_version == '2016-12-01':
             from .v2016_12_01.operations.usage_operations import UsageOperations as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(api_version))
 
-        return self._instantiate_operation_class(api_version, models(api_version), OperationClass)
+        return self._instantiate_operation_class(models(api_version), OperationClass)

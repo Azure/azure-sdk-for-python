@@ -20,7 +20,7 @@ class Encryption(Model):
 
     :param services: List of services which support encryption.
     :type services: :class:`EncryptionServices
-     <azure.mgmt.storage.models.EncryptionServices>`
+     <azure.mgmt.storage.v20161201.models.EncryptionServices>`
     :ivar key_source: The encryption keySource (provider). Possible values
      (case-insensitive):  Microsoft.Storage. Default value: "Microsoft.Storage"
      .

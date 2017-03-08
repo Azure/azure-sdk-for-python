@@ -13,7 +13,7 @@ from msrest.serialization import Model
 
 
 class Resource(Model):
-    """Resource.
+    """Describes a storage resource.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.

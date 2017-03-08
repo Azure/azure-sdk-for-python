@@ -16,10 +16,11 @@ class StorageAccountCreateParameters(Model):
     """The parameters used when creating a storage account.
 
     :param sku: Required. Gets or sets the sku name.
-    :type sku: :class:`Sku <azure.mgmt.storage.models.Sku>`
+    :type sku: :class:`Sku <azure.mgmt.storage.v20161201.models.Sku>`
     :param kind: Required. Indicates the type of storage account. Possible
      values include: 'Storage', 'BlobStorage'
-    :type kind: str or :class:`Kind <azure.mgmt.storage.models.Kind>`
+    :type kind: str or :class:`Kind
+     <azure.mgmt.storage.v20161201.models.Kind>`
     :param location: Required. Gets or sets the location of the resource. This
      will be one of the supported and registered Azure Geo Regions (e.g. West
      US, East US, Southeast Asia, etc.). The geo region of a resource cannot be
@@ -37,17 +38,17 @@ class StorageAccountCreateParameters(Model):
      at this time. To clear the existing custom domain, use an empty string for
      the custom domain name property.
     :type custom_domain: :class:`CustomDomain
-     <azure.mgmt.storage.models.CustomDomain>`
+     <azure.mgmt.storage.v20161201.models.CustomDomain>`
     :param encryption: Provides the encryption settings on the account. If
      left unspecified the account encryption settings will remain the same. The
      default setting is unencrypted.
     :type encryption: :class:`Encryption
-     <azure.mgmt.storage.models.Encryption>`
+     <azure.mgmt.storage.v20161201.models.Encryption>`
     :param access_tier: Required for storage accounts where kind =
      BlobStorage. The access tier used for billing. Possible values include:
      'Hot', 'Cool'
     :type access_tier: str or :class:`AccessTier
-     <azure.mgmt.storage.models.AccessTier>`
+     <azure.mgmt.storage.v20161201.models.AccessTier>`
     """
 
     _validation = {

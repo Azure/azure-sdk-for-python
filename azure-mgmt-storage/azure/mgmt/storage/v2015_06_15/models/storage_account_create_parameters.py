@@ -15,13 +15,22 @@ from msrest.serialization import Model
 class StorageAccountCreateParameters(Model):
     """The parameters to provide for the account.
 
-    :param location: Resource location
+    :param location: Required. Gets or sets the location of the resource. This
+     will be one of the supported and registered Azure Geo Regions (e.g. West
+     US, East US, Southeast Asia, etc.). The geo region of a resource cannot be
+     changed once it is created, but if an identical geo region is specified on
+     update, the request will succeed.
     :type location: str
-    :param tags: Resource tags
+    :param tags: Gets or sets a list of key value pairs that describe the
+     resource. These tags can be used for viewing and grouping this resource
+     (across resource groups). A maximum of 15 tags can be provided for a
+     resource. Each tag must have a key with a length no greater than 128
+     characters and a value with a length no greater than 256 characters.
     :type tags: dict
-    :param account_type: Gets or sets the account type. Possible values
-     include: 'Standard_LRS', 'Standard_ZRS', 'Standard_GRS', 'Standard_RAGRS',
-     'Premium_LRS'
+    :param account_type: Gets or sets the sku name. Required for account
+     creation; optional for update. Note that in older versions, sku name was
+     called accountType. Possible values include: 'Standard_LRS',
+     'Standard_ZRS', 'Standard_GRS', 'Standard_RAGRS', 'Premium_LRS'
     :type account_type: str or :class:`AccountType
      <azure.mgmt.storage.v20150615.models.AccountType>`
     """
