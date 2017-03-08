@@ -387,9 +387,9 @@ class BatchMgmtTestCase(RecordingTestCase):
 
         _m = "Test Update Account"
         LOG.debug(_m)
-        update_params = {'tags': {'Name': 'tagName', 'Value': 'tagValue'}}
+        update_tags = {'Name': 'tagName', 'Value': 'tagValue'}
         updated = self.assertRuns(_e, _m, self.batch_mgmt_client.batch_account.update,
-                                   AZURE_RESOURCE_GROUP, AZURE_BATCH_ACCOUNT, update_params)
+                                   AZURE_RESOURCE_GROUP, AZURE_BATCH_ACCOUNT, update_tags)
         self.assertTrue(_e, _m, isinstance(updated, azure.mgmt.batch.models.BatchAccount))
         if updated:
             self.assertEqual(_e, _m, updated.tags['Name'], 'tagName')
