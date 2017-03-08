@@ -12,6 +12,18 @@
 from enum import Enum
 
 
+class StorageKeyType(Enum):
+
+    storage_access_key = "StorageAccessKey"
+    shared_access_key = "SharedAccessKey"
+
+
+class AuthenticationType(Enum):
+
+    sql = "SQL"
+    ad_password = "ADPassword"
+
+
 class ReplicationRole(Enum):
 
     primary = "Primary"
@@ -45,6 +57,7 @@ class CreateMode(Enum):
     point_in_time_restore = "PointInTimeRestore"
     recovery = "Recovery"
     restore = "Restore"
+    restore_long_term_retention_backup = "RestoreLongTermRetentionBackup"
 
 
 class DatabaseEditions(Enum):
