@@ -19,6 +19,7 @@ from msrestazure.azure_operation import AzureOperationPoller
 import uuid
 from .operations.servers_operations import ServersOperations
 from .operations.databases_operations import DatabasesOperations
+from .operations.import_export_operations import ImportExportOperations
 from .operations.elastic_pools_operations import ElasticPoolsOperations
 from .operations.recommended_elastic_pools_operations import RecommendedElasticPoolsOperations
 from . import models
@@ -69,6 +70,8 @@ class SqlManagementClient(object):
     :vartype servers: .operations.ServersOperations
     :ivar databases: Databases operations
     :vartype databases: .operations.DatabasesOperations
+    :ivar import_export_operations: ImportExportOperations operations
+    :vartype import_export_operations: .operations.ImportExportOperations
     :ivar elastic_pools: ElasticPools operations
     :vartype elastic_pools: .operations.ElasticPoolsOperations
     :ivar recommended_elastic_pools: RecommendedElasticPools operations
@@ -96,6 +99,8 @@ class SqlManagementClient(object):
         self.servers = ServersOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.databases = DatabasesOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.import_export_operations = ImportExportOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.elastic_pools = ElasticPoolsOperations(
             self._client, self.config, self._serialize, self._deserialize)
