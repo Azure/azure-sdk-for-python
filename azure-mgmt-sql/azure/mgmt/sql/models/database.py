@@ -51,9 +51,10 @@ class Database(Resource):
      createMode is not set to Default, sourceDatabaseId must be specified. If
      createMode is set to PointInTimeRestore, then restorePointInTime must be
      specified. If createMode is set to Restore, then
-     sourceDatabaseDeletionDate must be specified. Possible values include:
-     'Copy', 'Default', 'NonReadableSecondary', 'OnlineSecondary',
-     'PointInTimeRestore', 'Recovery', 'Restore'
+     sourceDatabaseDeletionDate must be specified. Copy, NonReadableSecondary,
+     and OnlineSecondary are not supported for DataWarehouse edition. Possible
+     values include: 'Copy', 'Default', 'NonReadableSecondary',
+     'OnlineSecondary', 'PointInTimeRestore', 'Recovery', 'Restore'
     :type create_mode: str or :class:`CreateMode
      <azure.mgmt.sql.models.CreateMode>`
     :param source_database_id: Conditional. If createMode is not set to
@@ -106,7 +107,8 @@ class Database(Resource):
     :vartype status: str
     :param elastic_pool_name: The name of the elastic pool the database is in.
      If elasticPoolName and requestedServiceObjectiveName are both updated, the
-     value of requestedServiceObjectiveName is ignored.
+     value of requestedServiceObjectiveName is ignored. Not supported for
+     DataWarehouse edition.
     :type elastic_pool_name: str
     :ivar default_secondary_location: The default secondary region for this
      database.
@@ -128,14 +130,16 @@ class Database(Resource):
     :ivar failover_group_id: The id indicating the failover group containing
      this database.
     :vartype failover_group_id: str
-    :param read_scale: Conditional.  If the database is a geo-secondary,
+    :param read_scale: Conditional. If the database is a geo-secondary,
      readScale indicates whether read-only connections are allowed to this
-     database or not. Possible values include: 'Enabled', 'Disabled'
+     database or not. Not supported for DataWarehouse edition. Possible values
+     include: 'Enabled', 'Disabled'
     :type read_scale: str or :class:`ReadScale
      <azure.mgmt.sql.models.ReadScale>`
     :param sample_name: Indicates the name of the sample schema to apply when
      creating this database. If createMode is not Default, this value is
-     ignored. Possible values include: 'AdventureWorksLT'
+     ignored. Not supported for DataWarehouse edition. Possible values include:
+     'AdventureWorksLT'
     :type sample_name: str or :class:`SampleName
      <azure.mgmt.sql.models.SampleName>`
     """
