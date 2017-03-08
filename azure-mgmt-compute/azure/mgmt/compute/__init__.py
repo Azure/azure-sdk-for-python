@@ -35,8 +35,6 @@ class ClientConfiguration(AzureConfiguration):
      identify Microsoft Azure subscription. The subscription ID forms part of
      the URI for every service call.
     :type subscription_id: str
-    :param api_version: Client Api Version.
-    :type api_version: str
     :param str base_url: Service URL
     """
 
@@ -93,7 +91,7 @@ class Client(object):
         self.config = ClientConfiguration(self.credentials, self.subscription_id, self.base_url)
         self.client = ServiceClient(self.credentials, self.config)
 
-    def _instantiate_operation_class(self, api_version, local_models, operation_class):
+    def _instantiate_operation_class(self, local_models, operation_class):
         client_models = {k: v for k, v in local_models.__dict__.items() if isinstance(v, type)}
         serialize = Serializer(client_models)
         deserialize = Deserializer(client_models)
@@ -106,7 +104,7 @@ class Client(object):
             from .v2015_06_15.operations.availability_sets_operations import AvailabilitySetsOperations as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(api_version))
-        return self._instantiate_operation_class(api_version, models(api_version), OperationClass)
+        return self._instantiate_operation_class(models(api_version), OperationClass)
 
     def virtual_machine_extension_images(self, api_version='2016-04-30-preview'):
         if api_version =='2016-04-30-preview':
@@ -115,7 +113,7 @@ class Client(object):
             from .v2015_06_15.operations.virtual_machine_extension_images_operations import VirtualMachineExtensionImagesOperations as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(api_version))
-        return self._instantiate_operation_class(api_version, models(api_version), OperationClass)
+        return self._instantiate_operation_class(models(api_version), OperationClass)
 
     def virtual_machine_extensions(self, api_version='2016-04-30-preview'):
         if api_version =='2016-04-30-preview':
@@ -124,7 +122,7 @@ class Client(object):
             from .v2015_06_15.operations.virtual_machine_extensions_operations import VirtualMachineExtensionsOperations as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(api_version))
-        return self._instantiate_operation_class(api_version, models(api_version), OperationClass)
+        return self._instantiate_operation_class(models(api_version), OperationClass)
 
     def virtual_machine_images(self, api_version='2016-04-30-preview'):
         if api_version =='2016-04-30-preview':
@@ -133,7 +131,7 @@ class Client(object):
             from .v2015_06_15.operations.virtual_machine_images_operations import VirtualMachineImagesOperations as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(api_version))
-        return self._instantiate_operation_class(api_version, models(api_version), OperationClass)
+        return self._instantiate_operation_class(models(api_version), OperationClass)
 
     def usage(self, api_version='2016-04-30-preview'):
         if api_version =='2016-04-30-preview':
@@ -142,7 +140,7 @@ class Client(object):
             from .v2015_06_15.operations.usage_operations import UsageOperations as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(api_version))
-        return self._instantiate_operation_class(api_version, models(api_version), OperationClass)
+        return self._instantiate_operation_class(models(api_version), OperationClass)
 
     def virtual_machine_sizes(self, api_version='2016-04-30-preview'):
         if api_version =='2016-04-30-preview':
@@ -151,14 +149,14 @@ class Client(object):
             from .v2015_06_15.operations.virtual_machine_sizes_operations import VirtualMachineSizesOperations as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(api_version))
-        return self._instantiate_operation_class(api_version, models(api_version), OperationClass)
+        return self._instantiate_operation_class(models(api_version), OperationClass)
 
     def images(self, api_version='2016-04-30-preview'):
         if api_version =='2016-04-30-preview':
             from .v2016_04_30_preview.operations.images_operations import ImagesOperations as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(api_version))
-        return self._instantiate_operation_class(api_version, models(api_version), OperationClass)
+        return self._instantiate_operation_class(models(api_version), OperationClass)
 
     def virtual_machines(self, api_version='2016-04-30-preview'):
         if api_version =='2016-04-30-preview':
@@ -167,7 +165,7 @@ class Client(object):
             from .v2015_06_15.operations.virtual_machines_operations import VirtualMachinesOperations as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(api_version))
-        return self._instantiate_operation_class(api_version, models(api_version), OperationClass)
+        return self._instantiate_operation_class(models(api_version), OperationClass)
 
     def virtual_machine_scale_sets(self, api_version='2016-04-30-preview'):
         if api_version =='2016-04-30-preview':
@@ -176,7 +174,7 @@ class Client(object):
             from .v2015_06_15.operations.virtual_machine_scale_sets_operations import VirtualMachineScaleSetsOperations as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(api_version))
-        return self._instantiate_operation_class(api_version, models(api_version), OperationClass)
+        return self._instantiate_operation_class(models(api_version), OperationClass)
 
     def virtual_machine_scale_set_vms(self, api_version='2016-04-30-preview'):
         if api_version =='2016-04-30-preview':
@@ -185,26 +183,26 @@ class Client(object):
             from .v2015_06_15.operations.virtual_machine_scale_set_vms_operations import VirtualMachineScaleSetVMsOperations as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(api_version))
-        return self._instantiate_operation_class(api_version, models(api_version), OperationClass)
+        return self._instantiate_operation_class(models(api_version), OperationClass)
 
     def disks(self, api_version='2016-04-30-preview'):
         if api_version =='2016-04-30-preview':
             from .v2016_04_30_preview.operations.disks_operations import DisksOperations as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(api_version))
-        return self._instantiate_operation_class(api_version, models(api_version), OperationClass)
+        return self._instantiate_operation_class(models(api_version), OperationClass)
 
     def snapshots(self, api_version='2016-04-30-preview'):
         if api_version =='2016-04-30-preview':
             from .v2016_04_30_preview.operations.snapshots_operations import SnapshotsOperations as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(api_version))
-        return self._instantiate_operation_class(api_version, models(api_version), OperationClass)
+        return self._instantiate_operation_class(models(api_version), OperationClass)
 
     def container_services(self, api_version='2017-01-31'):
         if api_version =='2017-01-31':
             from .v2017_01_31.operations.container_services_operations import ContainerServicesOperations as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(api_version))
-        return self._instantiate_operation_class(api_version, models(api_version), OperationClass)
+        return self._instantiate_operation_class(models(api_version), OperationClass)
 
