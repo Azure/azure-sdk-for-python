@@ -110,7 +110,7 @@ precondition to create a Virtual Machine.
                     image_reference = azure.mgmt.compute.models.ImageReference(
                         publisher='Canonical',
                         offer='UbuntuServer',
-                        sku='16.04.0-LTS',
+                        sku='16.04-LTS',
                         version='latest'
                     )
                 )
@@ -164,7 +164,7 @@ can now be exactly the same as the one used in VM creation:
                             'image_reference': {
                                 "publisher": "Canonical",
                                 "offer": "UbuntuServer",
-                                "sku": "16.04.0-LTS",
+                                "sku": "16.04-LTS",
                                 "version": "latest"
                             }
                         },
@@ -190,7 +190,7 @@ The full sample being:
                             'image_reference': {
                                 "publisher": "Canonical",
                                 "offer": "UbuntuServer",
-                                "sku": "16.04.0-LTS",
+                                "sku": "16.04-LTS",
                                 "version": "latest"
                             }
                         },
