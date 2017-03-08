@@ -24,6 +24,7 @@ class StorageAccountsOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An objec model deserializer.
+    :ivar api_version: Client Api Version. Constant value: "2015-06-15".
     """
 
     def __init__(self, client, config, serializer, deserializer):
@@ -31,12 +32,14 @@ class StorageAccountsOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
+        self.api_version = "2015-06-15"
 
         self.config = config
 
     def check_name_availability(
             self, name, type="Microsoft.Storage/storageAccounts", custom_headers=None, raw=False, **operation_config):
-        """Checks that account name is valid and is not in use.
+        """Checks that the storage account name is valid and is not already in
+        use.
 
         :param name:
         :type name: str
@@ -64,7 +67,7 @@ class StorageAccountsOperations(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -103,13 +106,14 @@ class StorageAccountsOperations(object):
     def create(
             self, resource_group_name, account_name, parameters, custom_headers=None, raw=False, **operation_config):
         """Asynchronously creates a new storage account with the specified
-        parameters. Existing accounts cannot be updated with this API and
-        should instead use the Update Storage Account API. If an account is
-        already created and subsequent PUT request is issued with exact same
-        set of properties, then HTTP 200 would be returned. .
+        parameters. If an account is already created and a subsequent create
+        request is issued with different properties, the account properties
+        will be updated. If an account is already created and a subsequent
+        create or update request is issued with the exact same set of
+        properties, the request will succeed.
 
         :param resource_group_name: The name of the resource group within the
-         user's subscription.
+         user's subscription. The name is case insensitive.
         :type resource_group_name: str
         :param account_name: The name of the storage account within the
          specified resource group. Storage account names must be between 3 and
@@ -132,7 +136,7 @@ class StorageAccountsOperations(object):
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Storage/storageAccounts/{accountName}'
         path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern='^[-\w\._\(\)]+$'),
             'accountName': self._serialize.url("account_name", account_name, 'str', max_length=24, min_length=3),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
@@ -140,7 +144,7 @@ class StorageAccountsOperations(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -204,7 +208,7 @@ class StorageAccountsOperations(object):
         """Deletes a storage account in Microsoft Azure.
 
         :param resource_group_name: The name of the resource group within the
-         user's subscription.
+         user's subscription. The name is case insensitive.
         :type resource_group_name: str
         :param account_name: The name of the storage account within the
          specified resource group. Storage account names must be between 3 and
@@ -223,7 +227,7 @@ class StorageAccountsOperations(object):
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Storage/storageAccounts/{accountName}'
         path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern='^[-\w\._\(\)]+$'),
             'accountName': self._serialize.url("account_name", account_name, 'str', max_length=24, min_length=3),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
@@ -231,7 +235,7 @@ class StorageAccountsOperations(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -259,11 +263,11 @@ class StorageAccountsOperations(object):
     def get_properties(
             self, resource_group_name, account_name, custom_headers=None, raw=False, **operation_config):
         """Returns the properties for the specified storage account including but
-        not limited to name, account type, location, and account status. The
+        not limited to name, SKU name, location, and account status. The
         ListKeys operation should be used to retrieve storage keys.
 
         :param resource_group_name: The name of the resource group within the
-         user's subscription.
+         user's subscription. The name is case insensitive.
         :type resource_group_name: str
         :param account_name: The name of the storage account within the
          specified resource group. Storage account names must be between 3 and
@@ -283,7 +287,7 @@ class StorageAccountsOperations(object):
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Storage/storageAccounts/{accountName}'
         path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern='^[-\w\._\(\)]+$'),
             'accountName': self._serialize.url("account_name", account_name, 'str', max_length=24, min_length=3),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
@@ -291,7 +295,7 @@ class StorageAccountsOperations(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -325,29 +329,25 @@ class StorageAccountsOperations(object):
 
     def update(
             self, resource_group_name, account_name, parameters, custom_headers=None, raw=False, **operation_config):
-        """Updates the account type or tags for a storage account. It can also be
-        used to add a custom domain (note that custom domains cannot be added
-        via the Create operation). Only one custom domain is supported per
-        storage account. In order to replace a custom domain, the old value
-        must be cleared before a new value may be set. To clear a custom
-        domain, simply update the custom domain with empty string. Then call
-        update again with the new cutsom domain name. The update API can only
-        be used to update one of tags, accountType, or customDomain per call.
-        To update multiple of these properties, call the API multiple times
-        with one change per call. This call does not change the storage keys
-        for the account. If you want to change storage account keys, use the
-        RegenerateKey operation. The location and name of the storage account
-        cannot be changed after creation.
+        """The update operation can be used to update the SKU, encryption, access
+        tier, or tags for a storage account. It can also be used to map the
+        account to a custom domain. Only one custom domain is supported per
+        storage account; the replacement/change of custom domain is not
+        supported. In order to replace an old custom domain, the old value must
+        be cleared/unregistered before a new value can be set. The update of
+        multiple properties is supported. This call does not change the storage
+        keys for the account. If you want to change the storage account keys,
+        use the regenerate keys operation. The location and name of the storage
+        account cannot be changed after creation.
 
         :param resource_group_name: The name of the resource group within the
-         user's subscription.
+         user's subscription. The name is case insensitive.
         :type resource_group_name: str
         :param account_name: The name of the storage account within the
          specified resource group. Storage account names must be between 3 and
          24 characters in length and use numbers and lower-case letters only.
         :type account_name: str
-        :param parameters: The parameters to update on the account. Note that
-         only one property can be changed at a time using this API.
+        :param parameters: The parameters to provide for the updated account.
         :type parameters: :class:`StorageAccountUpdateParameters
          <azure.mgmt.storage.v20150615.models.StorageAccountUpdateParameters>`
         :param dict custom_headers: headers that will be added to the request
@@ -364,7 +364,7 @@ class StorageAccountsOperations(object):
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Storage/storageAccounts/{accountName}'
         path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern='^[-\w\._\(\)]+$'),
             'accountName': self._serialize.url("account_name", account_name, 'str', max_length=24, min_length=3),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
@@ -372,7 +372,7 @@ class StorageAccountsOperations(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -408,68 +408,6 @@ class StorageAccountsOperations(object):
 
         return deserialized
 
-    def list_keys(
-            self, resource_group_name, account_name, custom_headers=None, raw=False, **operation_config):
-        """Lists the access keys for the specified storage account.
-
-        :param resource_group_name: The name of the resource group.
-        :type resource_group_name: str
-        :param account_name: The name of the storage account.
-        :type account_name: str
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`StorageAccountKeys
-         <azure.mgmt.storage.v20150615.models.StorageAccountKeys>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
-        """
-        # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Storage/storageAccounts/{accountName}/listKeys'
-        path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            'accountName': self._serialize.url("account_name", account_name, 'str', max_length=24, min_length=3),
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
-        }
-        url = self._client.format_url(url, **path_format_arguments)
-
-        # Construct parameters
-        query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
-
-        # Construct headers
-        header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
-        if self.config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-        if custom_headers:
-            header_parameters.update(custom_headers)
-        if self.config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
-
-        # Construct and send request
-        request = self._client.post(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
-
-        if response.status_code not in [200]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
-
-        deserialized = None
-
-        if response.status_code == 200:
-            deserialized = self._deserialize('StorageAccountKeys', response)
-
-        if raw:
-            client_raw_response = ClientRawResponse(deserialized, response)
-            return client_raw_response
-
-        return deserialized
-
     def list(
             self, custom_headers=None, raw=False, **operation_config):
         """Lists all the storage accounts available under the subscription. Note
@@ -497,7 +435,7 @@ class StorageAccountsOperations(object):
 
                 # Construct parameters
                 query_parameters = {}
-                query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
+                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
             else:
                 url = next_link
@@ -542,7 +480,7 @@ class StorageAccountsOperations(object):
         operation for this.
 
         :param resource_group_name: The name of the resource group within the
-         user's subscription.
+         user's subscription. The name is case insensitive.
         :type resource_group_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -559,14 +497,14 @@ class StorageAccountsOperations(object):
                 # Construct URL
                 url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Storage/storageAccounts'
                 path_format_arguments = {
-                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern='^[-\w\._\(\)]+$'),
                     'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
                 }
                 url = self._client.format_url(url, **path_format_arguments)
 
                 # Construct parameters
                 query_parameters = {}
-                query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
+                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
             else:
                 url = next_link
@@ -604,12 +542,77 @@ class StorageAccountsOperations(object):
 
         return deserialized
 
-    def regenerate_key(
-            self, resource_group_name, account_name, key_name, custom_headers=None, raw=False, **operation_config):
-        """Regenerates the access keys for the specified storage account.
+    def list_keys(
+            self, resource_group_name, account_name, custom_headers=None, raw=False, **operation_config):
+        """Lists the access keys for the specified storage account.
 
         :param resource_group_name: The name of the resource group within the
-         user's subscription.
+         user's subscription. The name is case insensitive.
+        :type resource_group_name: str
+        :param account_name: The name of the storage account within the
+         specified resource group. Storage account names must be between 3 and
+         24 characters in length and use numbers and lower-case letters only.
+        :type account_name: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :rtype: :class:`StorageAccountKeys
+         <azure.mgmt.storage.v20150615.models.StorageAccountKeys>`
+        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+         if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        """
+        # Construct URL
+        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Storage/storageAccounts/{accountName}/listKeys'
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern='^[-\w\._\(\)]+$'),
+            'accountName': self._serialize.url("account_name", account_name, 'str', max_length=24, min_length=3),
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+        # Construct and send request
+        request = self._client.post(url, query_parameters)
+        response = self._client.send(request, header_parameters, **operation_config)
+
+        if response.status_code not in [200]:
+            exp = CloudError(response)
+            exp.request_id = response.headers.get('x-ms-request-id')
+            raise exp
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('StorageAccountKeys', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+
+    def regenerate_key(
+            self, resource_group_name, account_name, key_name, custom_headers=None, raw=False, **operation_config):
+        """Regenerates one of the access keys for the specified storage account.
+
+        :param resource_group_name: The name of the resource group within the
+         user's subscription. The name is case insensitive.
         :type resource_group_name: str
         :param account_name: The name of the storage account within the
          specified resource group. Storage account names must be between 3 and
@@ -633,7 +636,7 @@ class StorageAccountsOperations(object):
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Storage/storageAccounts/{accountName}/regenerateKey'
         path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern='^[-\w\._\(\)]+$'),
             'accountName': self._serialize.url("account_name", account_name, 'str', max_length=24, min_length=3),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
@@ -641,7 +644,7 @@ class StorageAccountsOperations(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
         header_parameters = {}

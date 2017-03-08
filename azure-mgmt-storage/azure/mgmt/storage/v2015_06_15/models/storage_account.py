@@ -39,12 +39,12 @@ class StorageAccount(Resource):
     :type account_type: str or :class:`AccountType
      <azure.mgmt.storage.v20150615.models.AccountType>`
     :param primary_endpoints: Gets the URLs that are used to perform a
-     retrieval of a public blob, queue or table object.Note that StandardZRS
-     and PremiumLRS accounts only return the blob endpoint.
+     retrieval of a public blob, queue, or table object. Note that Standard_ZRS
+     and Premium_LRS accounts only return the blob endpoint.
     :type primary_endpoints: :class:`Endpoints
      <azure.mgmt.storage.v20150615.models.Endpoints>`
-    :param primary_location: Gets the location of the primary for the storage
-     account.
+    :param primary_location: Gets the location of the primary data center for
+     the storage account.
     :type primary_location: str
     :param status_of_primary: Gets the status indicating whether the primary
      location of the storage account is available or unavailable. Possible
@@ -54,30 +54,30 @@ class StorageAccount(Resource):
     :param last_geo_failover_time: Gets the timestamp of the most recent
      instance of a failover to the secondary location. Only the most recent
      timestamp is retained. This element is not returned if there has never
-     been a failover instance. Only available if the accountType is StandardGRS
-     or StandardRAGRS.
+     been a failover instance. Only available if the accountType is
+     Standard_GRS or Standard_RAGRS.
     :type last_geo_failover_time: datetime
-    :param secondary_location: Gets the location of the geo replicated
+    :param secondary_location: Gets the location of the geo-replicated
      secondary for the storage account. Only available if the accountType is
-     StandardGRS or StandardRAGRS.
+     Standard_GRS or Standard_RAGRS.
     :type secondary_location: str
     :param status_of_secondary: Gets the status indicating whether the
      secondary location of the storage account is available or unavailable.
-     Only available if the accountType is StandardGRS or StandardRAGRS.
-     Possible values include: 'Available', 'Unavailable'
+     Only available if the SKU name is Standard_GRS or Standard_RAGRS. Possible
+     values include: 'Available', 'Unavailable'
     :type status_of_secondary: str or :class:`AccountStatus
      <azure.mgmt.storage.v20150615.models.AccountStatus>`
     :param creation_time: Gets the creation date and time of the storage
      account in UTC.
     :type creation_time: datetime
-    :param custom_domain: Gets the user assigned custom domain assigned to
-     this storage account.
+    :param custom_domain: Gets the custom domain the user assigned to this
+     storage account.
     :type custom_domain: :class:`CustomDomain
      <azure.mgmt.storage.v20150615.models.CustomDomain>`
     :param secondary_endpoints: Gets the URLs that are used to perform a
-     retrieval of a public blob, queue or table object from the secondary
-     location of the storage account. Only available if the accountType is
-     StandardRAGRS.
+     retrieval of a public blob, queue, or table object from the secondary
+     location of the storage account. Only available if the SKU name is
+     Standard_RAGRS.
     :type secondary_endpoints: :class:`Endpoints
      <azure.mgmt.storage.v20150615.models.Endpoints>`
     """
