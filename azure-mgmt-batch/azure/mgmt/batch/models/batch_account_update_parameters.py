@@ -20,30 +20,13 @@ class BatchAccountUpdateParameters(Model):
     :param auto_storage: The properties related to auto storage account.
     :type auto_storage: :class:`AutoStorageBaseProperties
      <azure.mgmt.batch.models.AutoStorageBaseProperties>`
-    :param pool_allocation_mode: The allocation mode to use for creating pools
-     in the Batch account. The pool allocation mode also affects how clients
-     may authenticate to the Batch Service API. If the mode is BatchService,
-     clients may authenticate using access keys or Azure Active Directory. If
-     the mode is UserSubscription, clients must use Azure Active Directory. The
-     default is BatchService. Possible values include: 'BatchService',
-     'UserSubscription'
-    :type pool_allocation_mode: str or :class:`PoolAllocationMode
-     <azure.mgmt.batch.models.PoolAllocationMode>`
-    :param key_vault_reference: A reference to the Azure key vault associated
-     with the Batch account.
-    :type key_vault_reference: :class:`KeyVaultReference
-     <azure.mgmt.batch.models.KeyVaultReference>`
     """
 
     _attribute_map = {
         'tags': {'key': 'tags', 'type': '{str}'},
         'auto_storage': {'key': 'properties.autoStorage', 'type': 'AutoStorageBaseProperties'},
-        'pool_allocation_mode': {'key': 'properties.poolAllocationMode', 'type': 'PoolAllocationMode'},
-        'key_vault_reference': {'key': 'properties.keyVaultReference', 'type': 'KeyVaultReference'},
     }
 
-    def __init__(self, tags=None, auto_storage=None, pool_allocation_mode=None, key_vault_reference=None):
+    def __init__(self, tags=None, auto_storage=None):
         self.tags = tags
         self.auto_storage = auto_storage
-        self.pool_allocation_mode = pool_allocation_mode
-        self.key_vault_reference = key_vault_reference
