@@ -11,6 +11,11 @@
 
 from .server_firewall_rule import ServerFirewallRule
 from .sql_sub_resource import SqlSubResource
+from .import_extension_request_parameters import ImportExtensionRequestParameters
+from .import_export_operation_response import ImportExportOperationResponse
+from .import_export_operation_response_properties_model import ImportExportOperationResponsePropertiesModel
+from .import_request_parameters import ImportRequestParameters
+from .export_request_parameters import ExportRequestParameters
 from .replication_link import ReplicationLink
 from .recommended_elastic_pool_metric import RecommendedElasticPoolMetric
 from .slo_usage_metric import SloUsageMetric
@@ -48,12 +53,15 @@ from .database_paged import DatabasePaged
 from .database_metric_paged import DatabaseMetricPaged
 from .service_tier_advisor_paged import ServiceTierAdvisorPaged
 from .transparent_data_encryption_activity_paged import TransparentDataEncryptionActivityPaged
+from .import_export_operation_response_paged import ImportExportOperationResponsePaged
 from .elastic_pool_paged import ElasticPoolPaged
 from .elastic_pool_activity_paged import ElasticPoolActivityPaged
 from .elastic_pool_database_activity_paged import ElasticPoolDatabaseActivityPaged
 from .recommended_elastic_pool_paged import RecommendedElasticPoolPaged
 from .recommended_elastic_pool_metric_paged import RecommendedElasticPoolMetricPaged
 from .sql_management_client_enums import (
+    StorageKeyType,
+    AuthenticationType,
     ReplicationRole,
     ReplicationState,
     ElasticPoolEditions,
@@ -78,6 +86,11 @@ from .sql_management_client_enums import (
 __all__ = [
     'ServerFirewallRule',
     'SqlSubResource',
+    'ImportExtensionRequestParameters',
+    'ImportExportOperationResponse',
+    'ImportExportOperationResponsePropertiesModel',
+    'ImportRequestParameters',
+    'ExportRequestParameters',
     'ReplicationLink',
     'RecommendedElasticPoolMetric',
     'SloUsageMetric',
@@ -115,11 +128,14 @@ __all__ = [
     'DatabaseMetricPaged',
     'ServiceTierAdvisorPaged',
     'TransparentDataEncryptionActivityPaged',
+    'ImportExportOperationResponsePaged',
     'ElasticPoolPaged',
     'ElasticPoolActivityPaged',
     'ElasticPoolDatabaseActivityPaged',
     'RecommendedElasticPoolPaged',
     'RecommendedElasticPoolMetricPaged',
+    'StorageKeyType',
+    'AuthenticationType',
     'ReplicationRole',
     'ReplicationState',
     'ElasticPoolEditions',
