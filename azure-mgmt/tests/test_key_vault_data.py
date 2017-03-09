@@ -35,7 +35,7 @@ from tests.keyvault_testcase import HttpStatusCode, AzureKeyVaultTestCase
 # subscription using the following CLI commands:
 #
 # az keyvault create -g {resource-group}  -n python-sdk-test-keyvault --sku premium -l westus
-# az keyvault set-policy -g {resource-group}  -n python-sdk-test-keyvault --object-id {obtain from keyvault create response} --tenant-id {obtain from keyvault create response} --key-permissions all
+# az keyvault set-policy -g {resource-group}  -n python-sdk-test-keyvault --object-id {obtain from keyvault create response} --spn {tenantId from keyvault create response} --key-permissions all
 #
 # You must use a premium keyvault to allow importing keys to hardware and you must update the
 # key permissions to 'all' to permit testing of encrypt/decrypt/wrap/unwrap/sign/verify commands
@@ -307,11 +307,12 @@ class KeyVaultKeyTest(AzureKeyVaultTestCase):
             updating_bundle = copy.deepcopy(created_bundle)
             updating_bundle.attributes.expires = date_parse.parse('2050-02-02T08:00:00.000Z')
             updating_bundle.key.key_ops = ['encrypt', 'decrypt']
-            updating_bundle.tags = { 'foo': binascii.b2a_hex(os.urandom(100)) }
+            updating_bundle.tags = { 'foo': 'updated tag' }
             key_bundle = self.client.update_key(
                 key_uri, updating_bundle.key.key_ops, updating_bundle.attributes, updating_bundle.tags)
-            updating_bundle.attributes.updated = key_bundle.attributes.updated
-            self.assertEqual(updating_bundle, key_bundle)
+            self.assertEqual(updating_bundle.tags, key_bundle.tags)
+            self.assertEqual(updating_bundle.key.kid, key_bundle.key.kid)
+            self.assertNotEqual(str(updating_bundle.attributes.updated), str(key_bundle.attributes.updated))
             return key_bundle
 
         # update key without version
@@ -321,7 +322,7 @@ class KeyVaultKeyTest(AzureKeyVaultTestCase):
         created_bundle = _update_key(key_id.id)
 
         # delete key
-        self.assertEqual(created_bundle, self.client.delete_key(key_id.vault, key_id.name))
+        self.client.delete_key(key_id.vault, key_id.name)
 
         # get key returns not found
         try:
@@ -552,13 +553,13 @@ class KeyVaultSecretTest(AzureKeyVaultTestCase):
             updating_bundle = copy.deepcopy(created_bundle)
             updating_bundle.content_type = 'text/plain'
             updating_bundle.attributes.expires = date_parse.parse('2050-02-02T08:00:00.000Z')
-            updating_bundle.tags = { 'foo': binascii.b2a_hex(os.urandom(100)) }
+            updating_bundle.tags = { 'foo': 'updated tag' }
             secret_bundle = self.client.update_secret(
                 secret_uri, updating_bundle.content_type, updating_bundle.attributes,
                 updating_bundle.tags)
-            del updating_bundle.value
-            updating_bundle.attributes.updated = secret_bundle.attributes.updated
-            self.assertEqual(updating_bundle, secret_bundle)
+            self.assertEqual(updating_bundle.tags, secret_bundle.tags)
+            self.assertEqual(updating_bundle.id, secret_bundle.id)
+            self.assertNotEqual(str(updating_bundle.attributes.updated), str(secret_bundle.attributes.updated))
             return secret_bundle
 
         # update secret without version
@@ -568,7 +569,7 @@ class KeyVaultSecretTest(AzureKeyVaultTestCase):
         secret_bundle = _update_secret(secret_id.id)
 
         # delete secret
-        self.assertEqual(created_bundle, self.client.delete_secret(secret_id.vault, secret_id.name))
+        self.client.delete_secret(secret_id.vault, secret_id.name)
 
         # get secret returns not found
         try:
