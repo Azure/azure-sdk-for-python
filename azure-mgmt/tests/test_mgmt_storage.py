@@ -17,22 +17,22 @@ class MgmtStorageTest(AzureMgmtTestCase):
     def setUp(self):
         super(MgmtStorageTest, self).setUp()
         self.storage_client = self.create_mgmt_client(
-            azure.mgmt.storage.Client
+            azure.mgmt.storage.StorageManagementClient
         )
-        self.storage_models = azure.mgmt.storage.models(api_version='2016-12-01')
+        self.storage_models = azure.mgmt.storage.StorageManagementClient.models(api_version='2016-12-01')
         if not self.is_playback():
             self.create_resource_group()
 
     @record
     def test_storage_usage(self):
-        usages = list(self.storage_client.usage(api_version='2016-12-01').list())
+        usages = list(self.storage_client.usage.list())
         self.assertGreater(len(usages), 0)
 
     @record
     def test_storage_accounts(self):
         account_name = self.get_resource_name('pyarmstorage')
 
-        result_check = self.storage_client.storage_accounts(api_version='2016-12-01').check_name_availability(
+        result_check = self.storage_client.storage_accounts.check_name_availability(
             account_name
         )
         self.assertTrue(result_check.name_available)
@@ -44,7 +44,7 @@ class MgmtStorageTest(AzureMgmtTestCase):
             kind=self.storage_models.Kind.storage,
             location=self.region
         )
-        result_create = self.storage_client.storage_accounts(api_version='2016-12-01').create(
+        result_create = self.storage_client.storage_accounts.create(
             self.group_name,
             account_name,
             params_create,
@@ -52,13 +52,13 @@ class MgmtStorageTest(AzureMgmtTestCase):
         storage_account = result_create.result()
         self.assertEqual(storage_account.name, account_name)
 
-        storage_account = self.storage_client.storage_accounts(api_version='2016-12-01').get_properties(
+        storage_account = self.storage_client.storage_accounts.get_properties(
             self.group_name,
             account_name,
         )
         self.assertEqual(storage_account.name, account_name)
 
-        result_list_keys = self.storage_client.storage_accounts(api_version='2016-12-01').list_keys(
+        result_list_keys = self.storage_client.storage_accounts.list_keys(
             self.group_name,
             account_name,
         )
@@ -67,7 +67,7 @@ class MgmtStorageTest(AzureMgmtTestCase):
         self.assertGreater(len(keys['key1'][0]), 0)
         self.assertGreater(len(keys['key1'][0]), 0)
 
-        result_regen_keys = self.storage_client.storage_accounts(api_version='2016-12-01').regenerate_key(
+        result_regen_keys = self.storage_client.storage_accounts.regenerate_key(
             self.group_name,
             account_name,
             "key1"
@@ -83,17 +83,17 @@ class MgmtStorageTest(AzureMgmtTestCase):
             keys['key2'][0],
         )
 
-        result_list = self.storage_client.storage_accounts(api_version='2016-12-01').list_by_resource_group(
+        result_list = self.storage_client.storage_accounts.list_by_resource_group(
             self.group_name,
         )
         result_list = list(result_list)
         self.assertGreater(len(result_list), 0)
 
-        result_list = self.storage_client.storage_accounts(api_version='2016-12-01').list()
+        result_list = self.storage_client.storage_accounts.list()
         result_list = list(result_list)
         self.assertGreater(len(result_list), 0)
 
-        storage_account = self.storage_client.storage_accounts(api_version='2016-12-01').update(
+        storage_account = self.storage_client.storage_accounts.update(
             self.group_name,
             account_name,
             self.storage_models.StorageAccountUpdateParameters(
@@ -101,7 +101,7 @@ class MgmtStorageTest(AzureMgmtTestCase):
             )
         )
 
-        self.storage_client.storage_accounts(api_version='2016-12-01').delete(
+        self.storage_client.storage_accounts.delete(
             self.group_name,
             account_name,
         )
