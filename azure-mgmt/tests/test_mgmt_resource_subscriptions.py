@@ -16,32 +16,30 @@ class MgmtResourceSubscriptionsTest(AzureMgmtTestCase):
 
     def setUp(self):
         super(MgmtResourceSubscriptionsTest, self).setUp()
-        self.client = self.create_basic_client(
-            azure.mgmt.resource.Client
+        self.subscriptions_client = self.create_basic_client(
+            azure.mgmt.resource.SubscriptionClient
         )
 
     @record
     def test_subscriptions(self):
-        models = azure.mgmt.resource.models('2016-06-01')
-        subscriptions_operations = self.client.subscriptions('2016-06-01')
+        models = azure.mgmt.resource.SubscriptionClient.models('2016-06-01')
 
-        subs = list(subscriptions_operations.list())
+        subs = list(self.subscriptions_client.subscriptions.list())
         self.assertGreater(len(subs), 0)
         self.assertTrue(all(isinstance(v, models.Subscription) for v in subs))
 
-        locations = list(subscriptions_operations.list_locations(self.settings.SUBSCRIPTION_ID))
+        locations = list(self.subscriptions_client.subscriptions.list_locations(self.settings.SUBSCRIPTION_ID))
         self.assertGreater(len(locations), 0)
         self.assertTrue(all(isinstance(v, models.Location) for v in locations))
 
-        sub = subscriptions_operations.get(self.settings.SUBSCRIPTION_ID)
+        sub = self.subscriptions_client.subscriptions.get(self.settings.SUBSCRIPTION_ID)
         self.assertEqual(sub.subscription_id, self.settings.SUBSCRIPTION_ID)
 
     @record
     def test_tenants(self):
-        models = azure.mgmt.resource.models('2016-06-01')
-        tenants_operations = self.client.tenants('2016-06-01')
+        models = azure.mgmt.resource.SubscriptionClient.models('2016-06-01')
 
-        tenants = list(tenants_operations.list())
+        tenants = list(self.subscriptions_client.tenants.list())
         self.assertGreater(len(tenants), 0)
         self.assertTrue(all(isinstance(v, models.TenantIdDescription) for v in tenants))
 
