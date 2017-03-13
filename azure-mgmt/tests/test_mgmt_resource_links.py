@@ -16,19 +16,14 @@ class MgmtResourceLinksTest(AzureMgmtTestCase):
 
     def setUp(self):
         super(MgmtResourceLinksTest, self).setUp()
-        self.client = self.create_basic_client(
-            azure.mgmt.resource.Client,
-            subscription_id=self.settings.SUBSCRIPTION_ID,
+        self.client = self.create_mgmt_client(
+            azure.mgmt.resource.ManagementLinkClient
         )
 
     @record
     def test_links(self):
-        resource_groups_operations = self.client.resource_groups()
-        resources_operations = self.client.resources()
-        links_operations = self.client.resource_links()
-
         self.create_resource_group() # self.group_name
-        group1 = resource_groups_operations.create_or_update(
+        group1 = self.resource_client.resource_groups.create_or_update(
             "FakeGroup1ForLinksTest",
             {
                 'location': self.region
@@ -36,7 +31,7 @@ class MgmtResourceLinksTest(AzureMgmtTestCase):
         )
 
         resource_name = self.get_resource_name("pytestavset")
-        create_result = resources_operations.create_or_update(
+        create_result = self.resource_client.resources.create_or_update(
             resource_group_name=self.group_name,
             resource_provider_namespace="Microsoft.Compute",
             parent_resource_path="",
@@ -48,7 +43,7 @@ class MgmtResourceLinksTest(AzureMgmtTestCase):
         result = create_result.result()
 
 
-        link = links_operations.create_or_update(
+        link = self.client.resource_links.create_or_update(
             self.group.id+'/providers/Microsoft.Resources/links/myLink',
             {
                 'target_id' : result.id,
@@ -61,20 +56,20 @@ class MgmtResourceLinksTest(AzureMgmtTestCase):
             import time
             time.sleep(10)
 
-        link = links_operations.get(link.id)
+        link = self.client.resource_links.get(link.id)
         self.assertEqual(link.name, 'myLink')
 
-        links = list(links_operations.list_at_subscription())
+        links = list(self.client.resource_links.list_at_subscription())
         self.assertTrue(any(link.name=='myLink' for link in links))
 
-        links = list(links_operations.list_at_source_scope(self.group.id))
+        links = list(self.client.resource_links.list_at_source_scope(self.group.id))
         self.assertTrue(any(link.name=='myLink' for link in links))
 
-        links = list(links_operations.list_at_source_scope(self.group.id, 'atScope()'))
+        links = list(self.client.resource_links.list_at_source_scope(self.group.id, 'atScope()'))
         self.assertTrue(any(link.name=='myLink' for link in links))
 
-        links_operations.delete(link.id)
-        resource_groups_operations.delete(group1.name)
+        self.client.resource_links.delete(link.id)
+        self.resource_client.resource_groups.delete(group1.name)
 
 #------------------------------------------------------------------------------
 if __name__ == '__main__':

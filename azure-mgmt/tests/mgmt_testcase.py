@@ -48,12 +48,9 @@ class AzureMgmtTestCase(RecordingTestCase):
             import tests.mgmt_settings_real as real_settings
             self.settings = real_settings
 
-        self.resource_client = azure.mgmt.resource.Client(
-            credentials=self.settings.get_credentials(),
-            subscription_id=self.settings.SUBSCRIPTION_ID,
+        self.resource_client = self.create_mgmt_client(
+            azure.mgmt.resource.ResourceManagementClient
         )
-        if self.is_playback():
-            self.resource_client.config.long_running_operation_timeout = 0
 
         # Every test uses a different resource group name calculated from its
         # qualified test name.
@@ -83,23 +80,23 @@ class AzureMgmtTestCase(RecordingTestCase):
             self.delete_resource_group(wait_timeout=None)
         return super(AzureMgmtTestCase, self).tearDown()
 
-    def create_basic_client(self, client_method, **kwargs):
+    def create_basic_client(self, client_class, **kwargs):
         # Whatever the client, if credentials is None, fail
         with self.assertRaises(ValueError):
-            client_method(
+            client = client_class(
                 credentials=None,
                 **kwargs
             )
         # Whatever the client, if accept_language is not str, fail
         with self.assertRaises(TypeError):
-            client_method(
+            client = client_class(
                 credentials=self.settings.get_credentials(),
                 accept_language=42,
                 **kwargs
             )
 
         # Real client creation
-        client = client_method(
+        client = client_class(
             credentials=self.settings.get_credentials(),
             **kwargs
         )
@@ -107,24 +104,24 @@ class AzureMgmtTestCase(RecordingTestCase):
             client.config.long_running_operation_timeout = 0
         return client
 
-    def create_mgmt_client(self, client_method, **kwargs):
+    def create_mgmt_client(self, client_class, **kwargs):
         # Whatever the client, if subscription_id is None, fail
         with self.assertRaises(ValueError):
             self.create_basic_client(
-                client_method,
+                client_class,
                 subscription_id=None,
                 **kwargs
             )
         # Whatever the client, if subscription_id is not a string, fail
         with self.assertRaises(TypeError):
             self.create_basic_client(
-                client_method,
+                client_class,
                 subscription_id=42,
                 **kwargs
             )
 
         return self.create_basic_client(
-            client_method,
+            client_class,
             subscription_id=self.settings.SUBSCRIPTION_ID,
             **kwargs
         )
@@ -139,7 +136,7 @@ class AzureMgmtTestCase(RecordingTestCase):
         return val
 
     def create_resource_group(self):
-        self.group = self.resource_client.resource_groups().create_or_update(
+        self.group = self.resource_client.resource_groups.create_or_update(
             self.group_name,
             {
                 'location': self.region
@@ -153,12 +150,12 @@ class AzureMgmtTestCase(RecordingTestCase):
         """
         try:
             if wait_timeout:
-                azure_poller = self.resource_client.resource_groups().delete(self.group_name)
+                azure_poller = self.resource_client.resource_groups.delete(self.group_name)
                 azure_poller.wait(wait_timeout)
                 if azure_poller.done():
                     return
                 self.assertTrue(False, 'Timed out waiting for resource group to be deleted.')            
             else:
-                self.resource_client.resource_groups().delete(self.group_name, raw=True)
+                self.resource_client.resource_groups.delete(self.group_name, raw=True)
         except CloudError:
             pass
