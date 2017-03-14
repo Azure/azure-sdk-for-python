@@ -24,7 +24,7 @@ class ExpressRouteCircuitPeeringConfig(Model):
      'NotConfigured', 'Configuring', 'Configured', 'ValidationNeeded'
     :type advertised_public_prefixes_state: str or
      :class:`ExpressRouteCircuitPeeringAdvertisedPublicPrefixState
-     <azure.mgmt.network.models.ExpressRouteCircuitPeeringAdvertisedPublicPrefixState>`
+     <azure.mgmt.network.v20160901.models.ExpressRouteCircuitPeeringAdvertisedPublicPrefixState>`
     :param customer_asn: The CustomerASN of the peering.
     :type customer_asn: int
     :param routing_registry_name: The RoutingRegistryName of the

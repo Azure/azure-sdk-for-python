@@ -23,7 +23,7 @@ class Error(Model):
     :type target: str
     :param details:
     :type details: list of :class:`ErrorDetails
-     <azure.mgmt.network.models.ErrorDetails>`
+     <azure.mgmt.network.v20160901.models.ErrorDetails>`
     :param inner_error:
     :type inner_error: str
     """

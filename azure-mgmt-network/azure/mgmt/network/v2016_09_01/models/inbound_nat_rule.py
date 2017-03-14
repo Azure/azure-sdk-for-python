@@ -22,16 +22,16 @@ class InboundNatRule(SubResource):
     :type id: str
     :param frontend_ip_configuration: A reference to frontend IP addresses.
     :type frontend_ip_configuration: :class:`SubResource
-     <azure.mgmt.network.models.SubResource>`
+     <azure.mgmt.network.v20160901.models.SubResource>`
     :ivar backend_ip_configuration: A reference to a private IP address
      defined on a network interface of a VM. Traffic sent to the frontend port
      of each of the frontend IP configurations is forwarded to the backed IP.
     :vartype backend_ip_configuration: :class:`NetworkInterfaceIPConfiguration
-     <azure.mgmt.network.models.NetworkInterfaceIPConfiguration>`
+     <azure.mgmt.network.v20160901.models.NetworkInterfaceIPConfiguration>`
     :param protocol: The transport protocol for the endpoint. Possible values
      are: 'Udp' or 'Tcp'. Possible values include: 'Udp', 'Tcp'
     :type protocol: str or :class:`TransportProtocol
-     <azure.mgmt.network.models.TransportProtocol>`
+     <azure.mgmt.network.v20160901.models.TransportProtocol>`
     :param frontend_port: The port for the external endpoint. Port numbers for
      each Rule must be unique within the Load Balancer. Acceptable values range
      from 1 to 65534.

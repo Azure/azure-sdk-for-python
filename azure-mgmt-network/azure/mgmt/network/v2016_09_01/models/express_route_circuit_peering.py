@@ -22,11 +22,11 @@ class ExpressRouteCircuitPeering(SubResource):
      Possible values include: 'AzurePublicPeering', 'AzurePrivatePeering',
      'MicrosoftPeering'
     :type peering_type: str or :class:`ExpressRouteCircuitPeeringType
-     <azure.mgmt.network.models.ExpressRouteCircuitPeeringType>`
+     <azure.mgmt.network.v20160901.models.ExpressRouteCircuitPeeringType>`
     :param state: The state of peering. Possible values are: 'Disabled' and
-     'Enbaled'. Possible values include: 'Disabled', 'Enabled'
+     'Enabled'. Possible values include: 'Disabled', 'Enabled'
     :type state: str or :class:`ExpressRouteCircuitPeeringState
-     <azure.mgmt.network.models.ExpressRouteCircuitPeeringState>`
+     <azure.mgmt.network.v20160901.models.ExpressRouteCircuitPeeringState>`
     :param azure_asn: The Azure ASN.
     :type azure_asn: int
     :param peer_asn: The peer ASN.
@@ -45,10 +45,10 @@ class ExpressRouteCircuitPeering(SubResource):
     :type vlan_id: int
     :param microsoft_peering_config: The Microsoft peering configuration.
     :type microsoft_peering_config: :class:`ExpressRouteCircuitPeeringConfig
-     <azure.mgmt.network.models.ExpressRouteCircuitPeeringConfig>`
+     <azure.mgmt.network.v20160901.models.ExpressRouteCircuitPeeringConfig>`
     :param stats: Gets peering stats.
     :type stats: :class:`ExpressRouteCircuitStats
-     <azure.mgmt.network.models.ExpressRouteCircuitStats>`
+     <azure.mgmt.network.v20160901.models.ExpressRouteCircuitStats>`
     :param provisioning_state: Gets the provisioning state of the public IP
      resource. Possible values are: 'Updating', 'Deleting', and 'Failed'.
     :type provisioning_state: str

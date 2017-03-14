@@ -133,7 +133,8 @@ class SecurityRulesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`SecurityRule <azure.mgmt.network.models.SecurityRule>`
+        :rtype: :class:`SecurityRule
+         <azure.mgmt.network.v20160901.models.SecurityRule>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
@@ -197,14 +198,14 @@ class SecurityRulesOperations(object):
         :param security_rule_parameters: Parameters supplied to the create or
          update network security rule operation.
         :type security_rule_parameters: :class:`SecurityRule
-         <azure.mgmt.network.models.SecurityRule>`
+         <azure.mgmt.network.v20160901.models.SecurityRule>`
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :rtype:
          :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
          instance that returns :class:`SecurityRule
-         <azure.mgmt.network.models.SecurityRule>`
+         <azure.mgmt.network.v20160901.models.SecurityRule>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
@@ -297,7 +298,7 @@ class SecurityRulesOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`SecurityRulePaged
-         <azure.mgmt.network.models.SecurityRulePaged>`
+         <azure.mgmt.network.v20160901.models.SecurityRulePaged>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
