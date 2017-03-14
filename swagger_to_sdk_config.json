@@ -305,7 +305,7 @@
       "autorest_options": {
         "Namespace": "azure.mgmt.sql",
         "Modeler": "CompositeSwagger",
-        "PackageVersion": "0.3.2"
+        "PackageVersion": "0.3.3"
       },
       "output_dir": "azure-mgmt-sql/azure/mgmt/sql"
     },
