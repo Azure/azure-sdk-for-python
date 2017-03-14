@@ -14,6 +14,8 @@ from .databases_operations import DatabasesOperations
 from .import_export_operations import ImportExportOperations
 from .elastic_pools_operations import ElasticPoolsOperations
 from .recommended_elastic_pools_operations import RecommendedElasticPoolsOperations
+from .database_threat_detection_policies_operations import DatabaseThreatDetectionPoliciesOperations
+from .database_blob_auditing_policies_operations import DatabaseBlobAuditingPoliciesOperations
 
 __all__ = [
     'ServersOperations',
@@ -21,4 +23,6 @@ __all__ = [
     'ImportExportOperations',
     'ElasticPoolsOperations',
     'RecommendedElasticPoolsOperations',
+    'DatabaseThreatDetectionPoliciesOperations',
+    'DatabaseBlobAuditingPoliciesOperations',
 ]
