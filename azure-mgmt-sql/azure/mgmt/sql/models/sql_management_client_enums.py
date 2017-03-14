@@ -180,3 +180,37 @@ class TransparentDataEncryptionActivityStates(Enum):
 
     encrypting = "Encrypting"
     decrypting = "Decrypting"
+
+
+class SecurityAlertPolicyState(Enum):
+
+    new = "New"
+    enabled = "Enabled"
+    disabled = "Disabled"
+
+
+class SecurityAlert(Enum):
+
+    sql_injection = "Sql_Injection"
+    sql_injection_vulnerability = "Sql_Injection_Vulnerability"
+    access_anomaly = "Access_Anomaly"
+    usage_anomaly = "Usage_Anomaly"
+    preview = "Preview"
+
+
+class SecurityAlertPolicyEmailAccountAdmins(Enum):
+
+    enabled = "Enabled"
+    disabled = "Disabled"
+
+
+class SecurityAlertPolicyUseServerDefault(Enum):
+
+    enabled = "Enabled"
+    disabled = "Disabled"
+
+
+class BlobAuditingPolicyState(Enum):
+
+    enabled = "Enabled"
+    disabled = "Disabled"

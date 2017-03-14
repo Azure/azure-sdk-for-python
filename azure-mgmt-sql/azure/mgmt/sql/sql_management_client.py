@@ -22,6 +22,8 @@ from .operations.databases_operations import DatabasesOperations
 from .operations.import_export_operations import ImportExportOperations
 from .operations.elastic_pools_operations import ElasticPoolsOperations
 from .operations.recommended_elastic_pools_operations import RecommendedElasticPoolsOperations
+from .operations.database_threat_detection_policies_operations import DatabaseThreatDetectionPoliciesOperations
+from .operations.database_blob_auditing_policies_operations import DatabaseBlobAuditingPoliciesOperations
 from . import models
 
 
@@ -76,6 +78,10 @@ class SqlManagementClient(object):
     :vartype elastic_pools: .operations.ElasticPoolsOperations
     :ivar recommended_elastic_pools: RecommendedElasticPools operations
     :vartype recommended_elastic_pools: .operations.RecommendedElasticPoolsOperations
+    :ivar database_threat_detection_policies: DatabaseThreatDetectionPolicies operations
+    :vartype database_threat_detection_policies: .operations.DatabaseThreatDetectionPoliciesOperations
+    :ivar database_blob_auditing_policies: DatabaseBlobAuditingPolicies operations
+    :vartype database_blob_auditing_policies: .operations.DatabaseBlobAuditingPoliciesOperations
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
@@ -105,6 +111,10 @@ class SqlManagementClient(object):
         self.elastic_pools = ElasticPoolsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.recommended_elastic_pools = RecommendedElasticPoolsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.database_threat_detection_policies = DatabaseThreatDetectionPoliciesOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.database_blob_auditing_policies = DatabaseBlobAuditingPoliciesOperations(
             self._client, self.config, self._serialize, self._deserialize)
 
     def list_operations(
