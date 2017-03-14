@@ -25,7 +25,7 @@ class TunnelConnectionHealth(Model):
      'NotConnected'
     :vartype connection_status: str or
      :class:`VirtualNetworkGatewayConnectionStatus
-     <azure.mgmt.network.models.VirtualNetworkGatewayConnectionStatus>`
+     <azure.mgmt.network.v20160901.models.VirtualNetworkGatewayConnectionStatus>`
     :ivar ingress_bytes_transferred: The Ingress Bytes Transferred in this
      connection
     :vartype ingress_bytes_transferred: long

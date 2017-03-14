@@ -134,7 +134,7 @@ class VirtualNetworkPeeringsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`VirtualNetworkPeering
-         <azure.mgmt.network.models.VirtualNetworkPeering>`
+         <azure.mgmt.network.v20160901.models.VirtualNetworkPeering>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
@@ -197,14 +197,14 @@ class VirtualNetworkPeeringsOperations(object):
          create or update virtual network peering operation.
         :type virtual_network_peering_parameters:
          :class:`VirtualNetworkPeering
-         <azure.mgmt.network.models.VirtualNetworkPeering>`
+         <azure.mgmt.network.v20160901.models.VirtualNetworkPeering>`
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :rtype:
          :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
          instance that returns :class:`VirtualNetworkPeering
-         <azure.mgmt.network.models.VirtualNetworkPeering>`
+         <azure.mgmt.network.v20160901.models.VirtualNetworkPeering>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
@@ -296,7 +296,7 @@ class VirtualNetworkPeeringsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`VirtualNetworkPeeringPaged
-         <azure.mgmt.network.models.VirtualNetworkPeeringPaged>`
+         <azure.mgmt.network.v20160901.models.VirtualNetworkPeeringPaged>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
