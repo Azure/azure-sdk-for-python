@@ -40,9 +40,12 @@ from .server_metric import ServerMetric
 from .service_objective import ServiceObjective
 from .transparent_data_encryption_activity import TransparentDataEncryptionActivity
 from .resource import Resource
+from .sql_typed_sub_resource import SqlTypedSubResource
 from .operation_display import OperationDisplay
 from .operation import Operation
 from .operation_list_result import OperationListResult
+from .database_security_alert_policy import DatabaseSecurityAlertPolicy
+from .database_blob_auditing_policy import DatabaseBlobAuditingPolicy
 from .server_firewall_rule_paged import ServerFirewallRulePaged
 from .server_paged import ServerPaged
 from .server_metric_paged import ServerMetricPaged
@@ -81,6 +84,11 @@ from .sql_management_client_enums import (
     TargetElasticPoolEditions,
     RestorePointTypes,
     TransparentDataEncryptionActivityStates,
+    SecurityAlertPolicyState,
+    SecurityAlert,
+    SecurityAlertPolicyEmailAccountAdmins,
+    SecurityAlertPolicyUseServerDefault,
+    BlobAuditingPolicyState,
 )
 
 __all__ = [
@@ -115,9 +123,12 @@ __all__ = [
     'ServiceObjective',
     'TransparentDataEncryptionActivity',
     'Resource',
+    'SqlTypedSubResource',
     'OperationDisplay',
     'Operation',
     'OperationListResult',
+    'DatabaseSecurityAlertPolicy',
+    'DatabaseBlobAuditingPolicy',
     'ServerFirewallRulePaged',
     'ServerPaged',
     'ServerMetricPaged',
@@ -155,4 +166,9 @@ __all__ = [
     'TargetElasticPoolEditions',
     'RestorePointTypes',
     'TransparentDataEncryptionActivityStates',
+    'SecurityAlertPolicyState',
+    'SecurityAlert',
+    'SecurityAlertPolicyEmailAccountAdmins',
+    'SecurityAlertPolicyUseServerDefault',
+    'BlobAuditingPolicyState',
 ]
