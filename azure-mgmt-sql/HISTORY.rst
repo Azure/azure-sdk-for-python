@@ -3,6 +3,11 @@
 Release History
 ===============
 
+0.3.3 (2017-03-14)
+++++++++++++++++++
+
+* Add database blob auditing and threat detection operations
+
 0.3.2 (2017-03-08)
 ++++++++++++++++++
 
