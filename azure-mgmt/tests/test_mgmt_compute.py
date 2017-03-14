@@ -24,8 +24,11 @@ class MgmtComputeTest(AzureMgmtTestCase):
 
     def setUp(self):
         super(MgmtComputeTest, self).setUp()
-        self.client = self.create_mgmt_client(
-            azure.mgmt.compute.Client
+        self.compute_client = self.create_mgmt_client(
+            azure.mgmt.compute.ComputeManagementClient
+        )
+        self.cs_client = self.create_mgmt_client(
+            azure.mgmt.compute.ContainerServiceClient
         )
 
         self.linux_img_ref_id = "/" + self.settings.SUBSCRIPTION_ID + "/services/images/b4590d9e3ed742e4a1d46e5424aa335e__sles12-azure-guest-priority.x86-64-0.4.3-build1.1"
@@ -117,7 +120,7 @@ class MgmtComputeTest(AzureMgmtTestCase):
         return result_create.id
 
     def get_os_profile(self):
-       models = azure.mgmt.compute.models('2016-04-30-preview')
+       models = azure.mgmt.compute.ComputeManagementClient.models('2016-04-30-preview')
        return models.OSProfile(
            admin_username='Foo12',
            admin_password='BaR@123' + self.group_name,
@@ -125,13 +128,13 @@ class MgmtComputeTest(AzureMgmtTestCase):
        )
 
     def get_hardware_profile(self):
-        models = azure.mgmt.compute.models('2016-04-30-preview')
+        models = azure.mgmt.compute.ComputeManagementClient.models('2016-04-30-preview')
         return models.HardwareProfile(
             vm_size=models.VirtualMachineSizeTypes.standard_a0
         )
 
     def get_storage_profile(self, os_vhd_uri):
-        models = azure.mgmt.compute.models('2016-04-30-preview')
+        models = azure.mgmt.compute.ComputeManagementClient.models('2016-04-30-preview')
         return models.StorageProfile(
             os_disk=models.OSDisk(
                 caching=models.CachingTypes.none,
@@ -144,7 +147,7 @@ class MgmtComputeTest(AzureMgmtTestCase):
         )
 
     def get_network_profile(self, network_interface_id):
-        models = azure.mgmt.compute.models('2016-04-30-preview')
+        models = azure.mgmt.compute.ComputeManagementClient.models('2016-04-30-preview')
         return models.NetworkProfile(
             network_interfaces=[
                 models.NetworkInterfaceReference(
@@ -160,8 +163,7 @@ class MgmtComputeTest(AzureMgmtTestCase):
         )
 
     def test_virtual_machines_operations(self):
-        virtual_machines_operations = self.client.virtual_machines()
-        models = azure.mgmt.compute.models('2016-04-30-preview')
+        models = azure.mgmt.compute.ComputeManagementClient.models('2016-04-30-preview')
 
         names = self.get_resource_names('pyvmir')
         os_vhd_uri = self.get_vhd_uri(names.storage, 'osdisk')
@@ -193,7 +195,7 @@ class MgmtComputeTest(AzureMgmtTestCase):
             )
 
             # Create VM test
-            result_create = virtual_machines_operations.create_or_update(
+            result_create = self.compute_client.virtual_machines.create_or_update(
                 self.group_name,
                 names.vm,
                 params_create,
@@ -202,7 +204,7 @@ class MgmtComputeTest(AzureMgmtTestCase):
             self.assertEqual(vm_result.name, names.vm)
         
             # Get by name
-            result_get = virtual_machines_operations.get(
+            result_get = self.compute_client.virtual_machines.get(
                 self.group_name,
                 names.vm
             )
@@ -210,7 +212,7 @@ class MgmtComputeTest(AzureMgmtTestCase):
             self.assertIsNone(result_get.instance_view)
 
             # Get instanceView
-            result_iv = virtual_machines_operations.get(
+            result_iv = self.compute_client.virtual_machines.get(
                 self.group_name,
                 names.vm,
                 expand=models.InstanceViewTypes.instance_view
@@ -218,32 +220,31 @@ class MgmtComputeTest(AzureMgmtTestCase):
             self.assertTrue(result_iv.instance_view)
 
             # Deallocate
-            async_vm_deallocate = virtual_machines_operations.deallocate(self.group_name, names.vm)
+            async_vm_deallocate = self.compute_client.virtual_machines.deallocate(self.group_name, names.vm)
             async_vm_deallocate.wait()
 
             # Start VM
-            async_vm_start = virtual_machines_operations.start(self.group_name, names.vm)
+            async_vm_start =self.compute_client.virtual_machines.start(self.group_name, names.vm)
             async_vm_start.wait()
 
             # Restart VM
-            async_vm_restart = virtual_machines_operations.restart(self.group_name, names.vm)
+            async_vm_restart = self.compute_client.virtual_machines.restart(self.group_name, names.vm)
             async_vm_restart.wait()
 
             # Stop VM
-            async_vm_stop = virtual_machines_operations.power_off(self.group_name, names.vm)
+            async_vm_stop = self.compute_client.virtual_machines.power_off(self.group_name, names.vm)
             async_vm_stop.wait()
 
             # List in resouce group
-            vms_rg = list(virtual_machines_operations.list(self.group_name))
+            vms_rg = list(self.compute_client.virtual_machines.list(self.group_name))
             self.assertEqual(len(vms_rg), 1)
 
             # Delete
-            async_vm_delete = virtual_machines_operations.delete(self.group_name, names.vm)
+            async_vm_delete = self.compute_client.virtual_machines.delete(self.group_name, names.vm)
             async_vm_delete.wait()
 
     def test_virtual_machine_capture(self):
-        virtual_machines_operations = self.client.virtual_machines()
-        models = azure.mgmt.compute.models('2016-04-30-preview')
+        models = azure.mgmt.compute.ComputeManagementClient.models('2016-04-30-preview')
 
         names = self.get_resource_names('pyvmir')
         os_vhd_uri = self.get_vhd_uri(names.storage, 'osdisk')
@@ -275,7 +276,7 @@ class MgmtComputeTest(AzureMgmtTestCase):
             )
 
             # Create VM test
-            result_create = virtual_machines_operations.create_or_update(
+            result_create = self.compute_client.virtual_machines.create_or_update(
                 self.group_name,
                 names.vm,
                 params_create,
@@ -284,14 +285,14 @@ class MgmtComputeTest(AzureMgmtTestCase):
             self.assertEqual(vm_result.name, names.vm)
 
             # Deallocate
-            async_vm_deallocate = virtual_machines_operations.deallocate(self.group_name, names.vm)
+            async_vm_deallocate = self.compute_client.virtual_machines.deallocate(self.group_name, names.vm)
             async_vm_deallocate.wait()
 
             # Generalize (possible because deallocated)
-            virtual_machines_operations.generalize(self.group_name, names.vm)
+            self.compute_client.virtual_machines.generalize(self.group_name, names.vm)
 
             # Capture VM (VM must be generalized before)
-            async_capture = virtual_machines_operations.capture(
+            async_capture = self.compute_client.virtual_machines.capture(
                 self.group_name,
                 names.vm,
                 {
@@ -304,9 +305,7 @@ class MgmtComputeTest(AzureMgmtTestCase):
             self.assertTrue(hasattr(capture_result, 'output'))
 
     def test_vm_extensions(self):
-        virtual_machines_operations = self.client.virtual_machines()
-        virtual_machine_extensions = self.client.virtual_machine_extensions()
-        models = azure.mgmt.compute.models('2016-04-30-preview')
+        models = azure.mgmt.compute.ComputeManagementClient.models('2016-04-30-preview')
 
         #WARNING: this test may take 40 mins to complete against live server
         names = self.get_resource_names('pyvmext')
@@ -339,7 +338,7 @@ class MgmtComputeTest(AzureMgmtTestCase):
                 storage_profile=storage_profile,
             )
 
-            result_create = virtual_machines_operations.create_or_update(
+            result_create = self.compute_client.virtual_machines.create_or_update(
                 self.group_name,
                 names.vm,
                 params_create,
@@ -355,7 +354,7 @@ class MgmtComputeTest(AzureMgmtTestCase):
                 settings={},
                 protected_settings={},
             )
-            result_create = virtual_machine_extensions.create_or_update(
+            result_create = self.compute_client.virtual_machine_extensions.create_or_update(
                 self.group_name,
                 names.vm,
                 ext_name,
@@ -363,14 +362,14 @@ class MgmtComputeTest(AzureMgmtTestCase):
             )
             result_create.wait()
 
-            result_get = virtual_machine_extensions.get(
+            result_get = self.compute_client.virtual_machine_extensions.get(
                 self.group_name,
                 names.vm,
                 ext_name,
             )
             self.assertEqual(result_get.name, ext_name)
 
-            result_delete = virtual_machine_extensions.delete(
+            result_delete = self.compute_client.virtual_machine_extensions.delete(
                 self.group_name,
                 names.vm,
                 ext_name,
@@ -379,18 +378,16 @@ class MgmtComputeTest(AzureMgmtTestCase):
 
     @record
     def test_vm_extension_images(self):
-        virtual_machine_images = self.client.virtual_machine_images()
-        virtual_machine_extension_images = self.client.virtual_machine_extension_images()
-        models = azure.mgmt.compute.models('2016-04-30-preview')
+        models = azure.mgmt.compute.ComputeManagementClient.models('2016-04-30-preview')
 
-        result_list_pub = virtual_machine_images.list_publishers(
+        result_list_pub = self.compute_client.virtual_machine_images.list_publishers(
             self.region,
         )
 
         for res in result_list_pub:
             publisher_name = res.name
 
-            result_list = virtual_machine_extension_images.list_types(
+            result_list = self.compute_client.virtual_machine_extension_images.list_types(
                 self.region,
                 publisher_name,
             )
@@ -398,7 +395,7 @@ class MgmtComputeTest(AzureMgmtTestCase):
             for res in result_list:
                 type_name = res.name
 
-                result_list_versions = virtual_machine_extension_images.list_versions(
+                result_list_versions = self.compute_client.virtual_machine_extension_images.list_versions(
                     self.region,
                     publisher_name,
                     type_name,
@@ -407,7 +404,7 @@ class MgmtComputeTest(AzureMgmtTestCase):
                 for res in result_list_versions:
                     version = res.name
 
-                    result_get = virtual_machine_extension_images.get(
+                    result_get = self.compute_client.virtual_machine_extension_images.get(
                         self.region,
                         publisher_name,
                         type_name,
@@ -417,9 +414,7 @@ class MgmtComputeTest(AzureMgmtTestCase):
 
     @record
     def test_vm_images(self):
-        virtual_machine_images = self.client.virtual_machine_images()
-
-        result_list_pub = virtual_machine_images.list_publishers(
+        result_list_pub = self.compute_client.virtual_machine_images.list_publishers(
             self.region
         )
         #self.assertEqual(result_list_pub.status_code, HttpStatusCode.OK)
@@ -428,7 +423,7 @@ class MgmtComputeTest(AzureMgmtTestCase):
         for res in result_list_pub:
             publisher_name = res.name
 
-            result_list_offers = virtual_machine_images.list_offers(
+            result_list_offers = self.compute_client.virtual_machine_images.list_offers(
                 self.region,
                 publisher_name
             )
@@ -437,7 +432,7 @@ class MgmtComputeTest(AzureMgmtTestCase):
             for res in result_list_offers:
                 offer = res.name
 
-                result_list_skus = virtual_machine_images.list_skus(
+                result_list_skus = self.compute_client.virtual_machine_images.list_skus(
                     self.region,
                     publisher_name,
                     offer
@@ -447,7 +442,7 @@ class MgmtComputeTest(AzureMgmtTestCase):
                 for res in result_list_skus:
                     skus = res.name
 
-                    result_list = virtual_machine_images.list(
+                    result_list = self.compute_client.virtual_machine_images.list(
                         self.region,
                         publisher_name,
                         offer,
@@ -458,7 +453,7 @@ class MgmtComputeTest(AzureMgmtTestCase):
                     for res in result_list:
                         version = res.name
 
-                        result_get = virtual_machine_images.get(
+                        result_get = self.compute_client.virtual_machine_images.get(
                             self.region,
                             publisher_name,
                             offer,
@@ -477,8 +472,8 @@ class MgmtComputeTest(AzureMgmtTestCase):
 
     @record
     def test_availability_sets(self):
-        availability_sets_operations = self.client.availability_sets()
-        models = azure.mgmt.compute.models('2016-04-30-preview')
+        api_version = '2016-04-30-preview'
+        models = azure.mgmt.compute.ComputeManagementClient.models(api_version)
 
         availability_set_name = self.get_resource_name('pyarmset')
 
@@ -490,14 +485,14 @@ class MgmtComputeTest(AzureMgmtTestCase):
                 'tag1': 'value1',
             },
         )
-        result_create = availability_sets_operations.create_or_update(
+        result_create = self.compute_client.availability_sets.create_or_update(
             self.group_name,
             availability_set_name,
             params_create,
         )
         self.assertEqual(result_create.name, availability_set_name)
 
-        result_get = availability_sets_operations.get(
+        result_get = self.compute_client.availability_sets.get(
             self.group_name,
             availability_set_name,
         )
@@ -511,43 +506,42 @@ class MgmtComputeTest(AzureMgmtTestCase):
             params_create.platform_update_domain_count,
         )
 
-        result_list = availability_sets_operations.list(
+        result_list = self.compute_client.availability_sets.list(
             self.group_name,
         )
         result_list = list(result_list)
 
-        result_list_sizes = availability_sets_operations.list_available_sizes(
+        result_list_sizes = self.compute_client.availability_sets.list_available_sizes(
             self.group_name,
             availability_set_name,
         )
         result_list_sizes = list(result_list_sizes)
 
-        availability_sets_operations.delete(
+        self.compute_client.availability_sets.delete(
             self.group_name,
             availability_set_name,
         )
 
     @record
     def test_usage(self):
-        usages = self.client.usage().list(self.region)
+        usages = self.compute_client.usage.list(self.region)
         #self.assertEqual(result_list.status_code, HttpStatusCode.OK)
         usages = list(usages)
         self.assertGreater(len(usages), 0)
 
     @record
     def test_vm_sizes(self):
-        virtual_machine_sizes = self.client.virtual_machine_sizes().list(self.region)
+        virtual_machine_sizes = self.compute_client.virtual_machine_sizes.list(self.region)
         #self.assertEqual(result_list.status_code, HttpStatusCode.OK)
         virtual_machine_sizes = list(virtual_machine_sizes)
         self.assertGreater(len(virtual_machine_sizes), 0)
 
     @record
     def test_container(self):
-        container_services_operations = self.client.container_services()
         container_name = self.get_resource_name('pycontainer')
         
         # https://msdn.microsoft.com/en-us/library/azure/mt711471.aspx
-        async_create = container_services_operations.create_or_update(
+        async_create = self.cs_client.container_services.create_or_update(
             self.group_name,
             container_name,
             {
@@ -578,20 +572,20 @@ class MgmtComputeTest(AzureMgmtTestCase):
         )
         container = async_create.result()
 
-        container = container_services_operations.get(
+        container = self.cs_client.container_services.get(
             self.group_name,
             container.name
         )
 
-        containers = list(container_services_operations.list_by_resource_group(
+        containers = list(self.cs_client.container_services.list_by_resource_group(
             self.group_name
         ))
         self.assertEqual(len(containers), 1)
 
-        containers = list(container_services_operations.list())
+        containers = list(self.cs_client.container_services.list())
         self.assertEqual(len(containers), 1)
 
-        async_delete = container_services_operations.delete(
+        async_delete = self.cs_client.container_services.delete(
             self.group_name,
             container.name
         )
