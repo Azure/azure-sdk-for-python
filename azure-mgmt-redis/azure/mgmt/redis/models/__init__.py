@@ -21,6 +21,7 @@ from .export_rdb_parameters import ExportRDBParameters
 from .import_rdb_parameters import ImportRDBParameters
 from .schedule_entry import ScheduleEntry
 from .redis_patch_schedule import RedisPatchSchedule
+from .redis_force_reboot_response import RedisForceRebootResponse
 from .redis_resource_paged import RedisResourcePaged
 from .redis_management_client_enums import (
     SkuName,
@@ -43,6 +44,7 @@ __all__ = [
     'ImportRDBParameters',
     'ScheduleEntry',
     'RedisPatchSchedule',
+    'RedisForceRebootResponse',
     'RedisResourcePaged',
     'SkuName',
     'SkuFamily',

@@ -89,7 +89,7 @@ class PatchSchedulesOperations(object):
         response = self._client.send(
             request, header_parameters, body_content, **operation_config)
 
-        if response.status_code not in [200]:
+        if response.status_code not in [200, 201]:
             exp = CloudError(response)
             exp.request_id = response.headers.get('x-ms-request-id')
             raise exp
@@ -97,6 +97,8 @@ class PatchSchedulesOperations(object):
         deserialized = None
 
         if response.status_code == 200:
+            deserialized = self._deserialize('RedisPatchSchedule', response)
+        if response.status_code == 201:
             deserialized = self._deserialize('RedisPatchSchedule', response)
 
         if raw:
@@ -205,7 +207,7 @@ class PatchSchedulesOperations(object):
         request = self._client.get(url, query_parameters)
         response = self._client.send(request, header_parameters, **operation_config)
 
-        if response.status_code not in [200, 404]:
+        if response.status_code not in [200]:
             exp = CloudError(response)
             exp.request_id = response.headers.get('x-ms-request-id')
             raise exp
