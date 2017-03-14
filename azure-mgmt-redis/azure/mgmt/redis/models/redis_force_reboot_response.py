@@ -12,24 +12,23 @@
 from msrest.serialization import Model
 
 
-class ImportRDBParameters(Model):
-    """Parameters for Redis import operation.
+class RedisForceRebootResponse(Model):
+    """Response to force reboot for Redis cache.
 
-    :param format: File format.
-    :type format: str
-    :param files: files to import.
-    :type files: list of str
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar message: Status message
+    :vartype message: str
     """
 
     _validation = {
-        'files': {'required': True},
+        'message': {'readonly': True},
     }
 
     _attribute_map = {
-        'format': {'key': 'format', 'type': 'str'},
-        'files': {'key': 'files', 'type': '[str]'},
+        'message': {'key': 'Message', 'type': 'str'},
     }
 
-    def __init__(self, files, format=None):
-        self.format = format
-        self.files = files
+    def __init__(self):
+        self.message = None

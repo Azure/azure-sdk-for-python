@@ -59,6 +59,10 @@ class RedisResource(Resource):
     :vartype port: int
     :ivar ssl_port: Redis SSL port.
     :vartype ssl_port: int
+    :ivar access_keys: The keys of the Redis cache - not set if this object is
+     not the response to Create or Update redis cache
+    :vartype access_keys: :class:`RedisAccessKeys
+     <azure.mgmt.redis.models.RedisAccessKeys>`
     """
 
     _validation = {
@@ -73,6 +77,7 @@ class RedisResource(Resource):
         'host_name': {'readonly': True},
         'port': {'readonly': True},
         'ssl_port': {'readonly': True},
+        'access_keys': {'readonly': True},
     }
 
     _attribute_map = {
@@ -93,6 +98,7 @@ class RedisResource(Resource):
         'host_name': {'key': 'properties.hostName', 'type': 'str'},
         'port': {'key': 'properties.port', 'type': 'int'},
         'ssl_port': {'key': 'properties.sslPort', 'type': 'int'},
+        'access_keys': {'key': 'properties.accessKeys', 'type': 'RedisAccessKeys'},
     }
 
     def __init__(self, location, tags=None, redis_configuration=None, enable_non_ssl_port=None, tenant_settings=None, shard_count=None, subnet_id=None, static_ip=None, sku=None):
@@ -109,3 +115,4 @@ class RedisResource(Resource):
         self.host_name = None
         self.port = None
         self.ssl_port = None
+        self.access_keys = None

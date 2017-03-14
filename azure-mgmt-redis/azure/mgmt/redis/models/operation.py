@@ -12,24 +12,21 @@
 from msrest.serialization import Model
 
 
-class ImportRDBParameters(Model):
-    """Parameters for Redis import operation.
+class Operation(Model):
+    """REST API operation.
 
-    :param format: File format.
-    :type format: str
-    :param files: files to import.
-    :type files: list of str
+    :param name: Operation name: {provider}/{resource}/{operation}
+    :type name: str
+    :param display: The object that describes the operation.
+    :type display: :class:`OperationDisplay
+     <azure.mgmt.redis.models.OperationDisplay>`
     """
 
-    _validation = {
-        'files': {'required': True},
-    }
-
     _attribute_map = {
-        'format': {'key': 'format', 'type': 'str'},
-        'files': {'key': 'files', 'type': '[str]'},
+        'name': {'key': 'name', 'type': 'str'},
+        'display': {'key': 'display', 'type': 'OperationDisplay'},
     }
 
-    def __init__(self, files, format=None):
-        self.format = format
-        self.files = files
+    def __init__(self, name=None, display=None):
+        self.name = name
+        self.display = display
