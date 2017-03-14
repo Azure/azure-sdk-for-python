@@ -12,44 +12,45 @@
 from msrest.serialization import Model
 
 
-class RedisPatchSchedule(Model):
-    """Response to put/get patch schedules for Redis cache.
+class RedisFirewallRule(Model):
+    """A firewall rule on a redis cache has a name, and describes a contiguous
+    range of IP addresses permitted to connect.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar id: Resource ID.
+    :ivar id: resource ID (of the firewall rule)
     :vartype id: str
-    :ivar name: Resource name.
+    :ivar name: name of the firewall rule
     :vartype name: str
-    :ivar type: Resource type.
+    :ivar type: type (of the firewall rule resource =
+     'Microsoft.Cache/redis/firewallRule')
     :vartype type: str
-    :ivar location: Resource location.
-    :vartype location: str
-    :param schedule_entries: List of patch schedules for a Redis cache.
-    :type schedule_entries: list of :class:`ScheduleEntry
-     <azure.mgmt.redis.models.ScheduleEntry>`
+    :param start_ip: lowest IP address included in the range
+    :type start_ip: str
+    :param end_ip: highest IP address included in the range
+    :type end_ip: str
     """
 
     _validation = {
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
-        'location': {'readonly': True},
-        'schedule_entries': {'required': True},
+        'start_ip': {'required': True},
+        'end_ip': {'required': True},
     }
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'schedule_entries': {'key': 'properties.scheduleEntries', 'type': '[ScheduleEntry]'},
+        'start_ip': {'key': 'properties.startIP', 'type': 'str'},
+        'end_ip': {'key': 'properties.endIP', 'type': 'str'},
     }
 
-    def __init__(self, schedule_entries):
+    def __init__(self, start_ip, end_ip):
         self.id = None
         self.name = None
         self.type = None
-        self.location = None
-        self.schedule_entries = schedule_entries
+        self.start_ip = start_ip
+        self.end_ip = end_ip
