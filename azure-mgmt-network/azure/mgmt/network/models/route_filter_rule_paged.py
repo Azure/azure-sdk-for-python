@@ -9,27 +9,19 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.serialization import Model
+from msrest.paging import Paged
 
 
-class ErrorDetails(Model):
-    """ErrorDetails.
-
-    :param code:
-    :type code: str
-    :param target:
-    :type target: str
-    :param message:
-    :type message: str
+class RouteFilterRulePaged(Paged):
+    """
+    A paging container for iterating over a list of RouteFilterRule object
     """
 
     _attribute_map = {
-        'code': {'key': 'code', 'type': 'str'},
-        'target': {'key': 'target', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[RouteFilterRule]'}
     }
 
-    def __init__(self, code=None, target=None, message=None):
-        self.code = code
-        self.target = target
-        self.message = message
+    def __init__(self, *args, **kwargs):
+
+        super(RouteFilterRulePaged, self).__init__(*args, **kwargs)

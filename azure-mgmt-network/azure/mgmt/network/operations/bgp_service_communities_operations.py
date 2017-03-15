@@ -16,8 +16,8 @@ import uuid
 from .. import models
 
 
-class ExpressRouteServiceProvidersOperations(object):
-    """ExpressRouteServiceProvidersOperations operations.
+class BgpServiceCommunitiesOperations(object):
+    """BgpServiceCommunitiesOperations operations.
 
     :param client: Client for service requests.
     :param config: Configuration of service client.
@@ -37,22 +37,22 @@ class ExpressRouteServiceProvidersOperations(object):
 
     def list(
             self, custom_headers=None, raw=False, **operation_config):
-        """Gets all the available express route service providers.
+        """Gets all the available bgp service communities.
 
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`ExpressRouteServiceProviderPaged
-         <azure.mgmt.network.models.ExpressRouteServiceProviderPaged>`
+        :rtype: :class:`BgpServiceCommunityPaged
+         <azure.mgmt.network.models.BgpServiceCommunityPaged>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
 
             if not next_link:
                 # Construct URL
-                url = '/subscriptions/{subscriptionId}/providers/Microsoft.Network/expressRouteServiceProviders'
+                url = '/subscriptions/{subscriptionId}/providers/Microsoft.Network/bgpServiceCommunities'
                 path_format_arguments = {
                     'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
                 }
@@ -89,11 +89,11 @@ class ExpressRouteServiceProvidersOperations(object):
             return response
 
         # Deserialize response
-        deserialized = models.ExpressRouteServiceProviderPaged(internal_paging, self._deserialize.dependencies)
+        deserialized = models.BgpServiceCommunityPaged(internal_paging, self._deserialize.dependencies)
 
         if raw:
             header_dict = {}
-            client_raw_response = models.ExpressRouteServiceProviderPaged(internal_paging, self._deserialize.dependencies, header_dict)
+            client_raw_response = models.BgpServiceCommunityPaged(internal_paging, self._deserialize.dependencies, header_dict)
             return client_raw_response
 
         return deserialized
