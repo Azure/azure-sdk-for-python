@@ -17,8 +17,8 @@ import uuid
 from .. import models
 
 
-class ExpressRouteCircuitPeeringsOperations(object):
-    """ExpressRouteCircuitPeeringsOperations operations.
+class RouteFilterRulesOperations(object):
+    """RouteFilterRulesOperations operations.
 
     :param client: Client for service requests.
     :param config: Configuration of service client.
@@ -37,15 +37,15 @@ class ExpressRouteCircuitPeeringsOperations(object):
         self.config = config
 
     def delete(
-            self, resource_group_name, circuit_name, peering_name, custom_headers=None, raw=False, **operation_config):
-        """Deletes the specified peering from the specified express route circuit.
+            self, resource_group_name, route_filter_name, rule_name, custom_headers=None, raw=False, **operation_config):
+        """Deletes the specified rule from a route filter.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
-        :param circuit_name: The name of the express route circuit.
-        :type circuit_name: str
-        :param peering_name: The name of the peering.
-        :type peering_name: str
+        :param route_filter_name: The name of the route filter.
+        :type route_filter_name: str
+        :param rule_name: The name of the rule.
+        :type rule_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -57,11 +57,11 @@ class ExpressRouteCircuitPeeringsOperations(object):
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/expressRouteCircuits/{circuitName}/peerings/{peeringName}'
+        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/routeFilters/{routeFilterName}/routeFilterRules/{ruleName}'
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            'circuitName': self._serialize.url("circuit_name", circuit_name, 'str'),
-            'peeringName': self._serialize.url("peering_name", peering_name, 'str'),
+            'routeFilterName': self._serialize.url("route_filter_name", route_filter_name, 'str'),
+            'ruleName': self._serialize.url("rule_name", rule_name, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -96,7 +96,7 @@ class ExpressRouteCircuitPeeringsOperations(object):
 
         def get_long_running_output(response):
 
-            if response.status_code not in [200, 202, 204]:
+            if response.status_code not in [202, 200, 204]:
                 exp = CloudError(response)
                 exp.request_id = response.headers.get('x-ms-request-id')
                 raise exp
@@ -117,33 +117,32 @@ class ExpressRouteCircuitPeeringsOperations(object):
             get_long_running_status, long_running_operation_timeout)
 
     def get(
-            self, resource_group_name, circuit_name, peering_name, custom_headers=None, raw=False, **operation_config):
-        """Gets the specified authorization from the specified express route
-        circuit.
+            self, resource_group_name, route_filter_name, rule_name, custom_headers=None, raw=False, **operation_config):
+        """Gets the specified rule from a route filter.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
-        :param circuit_name: The name of the express route circuit.
-        :type circuit_name: str
-        :param peering_name: The name of the peering.
-        :type peering_name: str
+        :param route_filter_name: The name of the route filter.
+        :type route_filter_name: str
+        :param rule_name: The name of the rule.
+        :type rule_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`ExpressRouteCircuitPeering
-         <azure.mgmt.network.models.ExpressRouteCircuitPeering>`
+        :rtype: :class:`RouteFilterRule
+         <azure.mgmt.network.models.RouteFilterRule>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/expressRouteCircuits/{circuitName}/peerings/{peeringName}'
+        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/routeFilters/{routeFilterName}/routeFilterRules/{ruleName}'
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            'circuitName': self._serialize.url("circuit_name", circuit_name, 'str'),
-            'peeringName': self._serialize.url("peering_name", peering_name, 'str'),
+            'routeFilterName': self._serialize.url("route_filter_name", route_filter_name, 'str'),
+            'ruleName': self._serialize.url("rule_name", rule_name, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -174,7 +173,7 @@ class ExpressRouteCircuitPeeringsOperations(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('ExpressRouteCircuitPeering', response)
+            deserialized = self._deserialize('RouteFilterRule', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
@@ -183,36 +182,36 @@ class ExpressRouteCircuitPeeringsOperations(object):
         return deserialized
 
     def create_or_update(
-            self, resource_group_name, circuit_name, peering_name, peering_parameters, custom_headers=None, raw=False, **operation_config):
-        """Creates or updates a peering in the specified express route circuits.
+            self, resource_group_name, route_filter_name, rule_name, route_filter_rule_parameters, custom_headers=None, raw=False, **operation_config):
+        """Creates or updates a route in the specified route filter.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
-        :param circuit_name: The name of the express route circuit.
-        :type circuit_name: str
-        :param peering_name: The name of the peering.
-        :type peering_name: str
-        :param peering_parameters: Parameters supplied to the create or update
-         express route circuit peering operation.
-        :type peering_parameters: :class:`ExpressRouteCircuitPeering
-         <azure.mgmt.network.models.ExpressRouteCircuitPeering>`
+        :param route_filter_name: The name of the route filter.
+        :type route_filter_name: str
+        :param rule_name: The name of the route filter rule.
+        :type rule_name: str
+        :param route_filter_rule_parameters: Parameters supplied to the create
+         or update route filter rule operation.
+        :type route_filter_rule_parameters: :class:`RouteFilterRule
+         <azure.mgmt.network.models.RouteFilterRule>`
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :rtype:
          :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         instance that returns :class:`ExpressRouteCircuitPeering
-         <azure.mgmt.network.models.ExpressRouteCircuitPeering>`
+         instance that returns :class:`RouteFilterRule
+         <azure.mgmt.network.models.RouteFilterRule>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/expressRouteCircuits/{circuitName}/peerings/{peeringName}'
+        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/routeFilters/{routeFilterName}/routeFilterRules/{ruleName}'
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            'circuitName': self._serialize.url("circuit_name", circuit_name, 'str'),
-            'peeringName': self._serialize.url("peering_name", peering_name, 'str'),
+            'routeFilterName': self._serialize.url("route_filter_name", route_filter_name, 'str'),
+            'ruleName': self._serialize.url("rule_name", rule_name, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -232,7 +231,7 @@ class ExpressRouteCircuitPeeringsOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct body
-        body_content = self._serialize.body(peering_parameters, 'ExpressRouteCircuitPeering')
+        body_content = self._serialize.body(route_filter_rule_parameters, 'RouteFilterRule')
 
         # Construct and send request
         def long_running_send():
@@ -259,9 +258,9 @@ class ExpressRouteCircuitPeeringsOperations(object):
             deserialized = None
 
             if response.status_code == 200:
-                deserialized = self._deserialize('ExpressRouteCircuitPeering', response)
+                deserialized = self._deserialize('RouteFilterRule', response)
             if response.status_code == 201:
-                deserialized = self._deserialize('ExpressRouteCircuitPeering', response)
+                deserialized = self._deserialize('RouteFilterRule', response)
 
             if raw:
                 client_raw_response = ClientRawResponse(deserialized, response)
@@ -280,31 +279,127 @@ class ExpressRouteCircuitPeeringsOperations(object):
             long_running_send, get_long_running_output,
             get_long_running_status, long_running_operation_timeout)
 
-    def list(
-            self, resource_group_name, circuit_name, custom_headers=None, raw=False, **operation_config):
-        """Gets all peerings in a specified express route circuit.
+    def update(
+            self, resource_group_name, route_filter_name, rule_name, route_filter_rule_parameters, custom_headers=None, raw=False, **operation_config):
+        """Updates a route in the specified route filter.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
-        :param circuit_name: The name of the express route circuit.
-        :type circuit_name: str
+        :param route_filter_name: The name of the route filter.
+        :type route_filter_name: str
+        :param rule_name: The name of the route filter rule.
+        :type rule_name: str
+        :param route_filter_rule_parameters: Parameters supplied to the update
+         route filter rule operation.
+        :type route_filter_rule_parameters: :class:`PatchRouteFilterRule
+         <azure.mgmt.network.models.PatchRouteFilterRule>`
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :rtype:
+         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
+         instance that returns :class:`RouteFilterRule
+         <azure.mgmt.network.models.RouteFilterRule>`
+        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+         if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        """
+        # Construct URL
+        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/routeFilters/{routeFilterName}/routeFilterRules/{ruleName}'
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'routeFilterName': self._serialize.url("route_filter_name", route_filter_name, 'str'),
+            'ruleName': self._serialize.url("rule_name", rule_name, 'str'),
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+        # Construct body
+        body_content = self._serialize.body(route_filter_rule_parameters, 'PatchRouteFilterRule')
+
+        # Construct and send request
+        def long_running_send():
+
+            request = self._client.patch(url, query_parameters)
+            return self._client.send(
+                request, header_parameters, body_content, **operation_config)
+
+        def get_long_running_status(status_link, headers=None):
+
+            request = self._client.get(status_link)
+            if headers:
+                request.headers.update(headers)
+            return self._client.send(
+                request, header_parameters, **operation_config)
+
+        def get_long_running_output(response):
+
+            if response.status_code not in [200]:
+                exp = CloudError(response)
+                exp.request_id = response.headers.get('x-ms-request-id')
+                raise exp
+
+            deserialized = None
+
+            if response.status_code == 200:
+                deserialized = self._deserialize('RouteFilterRule', response)
+
+            if raw:
+                client_raw_response = ClientRawResponse(deserialized, response)
+                return client_raw_response
+
+            return deserialized
+
+        if raw:
+            response = long_running_send()
+            return get_long_running_output(response)
+
+        long_running_operation_timeout = operation_config.get(
+            'long_running_operation_timeout',
+            self.config.long_running_operation_timeout)
+        return AzureOperationPoller(
+            long_running_send, get_long_running_output,
+            get_long_running_status, long_running_operation_timeout)
+
+    def list_by_route_filter(
+            self, resource_group_name, route_filter_name, custom_headers=None, raw=False, **operation_config):
+        """Gets all RouteFilterRules in a route filter.
+
+        :param resource_group_name: The name of the resource group.
+        :type resource_group_name: str
+        :param route_filter_name: The name of the route filter.
+        :type route_filter_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`ExpressRouteCircuitPeeringPaged
-         <azure.mgmt.network.models.ExpressRouteCircuitPeeringPaged>`
+        :rtype: :class:`RouteFilterRulePaged
+         <azure.mgmt.network.models.RouteFilterRulePaged>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
 
             if not next_link:
                 # Construct URL
-                url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/expressRouteCircuits/{circuitName}/peerings'
+                url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/routeFilters/{routeFilterName}/routeFilterRules'
                 path_format_arguments = {
                     'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-                    'circuitName': self._serialize.url("circuit_name", circuit_name, 'str'),
+                    'routeFilterName': self._serialize.url("route_filter_name", route_filter_name, 'str'),
                     'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
                 }
                 url = self._client.format_url(url, **path_format_arguments)
@@ -340,11 +435,11 @@ class ExpressRouteCircuitPeeringsOperations(object):
             return response
 
         # Deserialize response
-        deserialized = models.ExpressRouteCircuitPeeringPaged(internal_paging, self._deserialize.dependencies)
+        deserialized = models.RouteFilterRulePaged(internal_paging, self._deserialize.dependencies)
 
         if raw:
             header_dict = {}
-            client_raw_response = models.ExpressRouteCircuitPeeringPaged(internal_paging, self._deserialize.dependencies, header_dict)
+            client_raw_response = models.RouteFilterRulePaged(internal_paging, self._deserialize.dependencies, header_dict)
             return client_raw_response
 
         return deserialized
