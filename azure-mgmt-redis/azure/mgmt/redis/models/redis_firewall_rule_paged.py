@@ -9,10 +9,19 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .redis_management_client import RedisManagementClient
-from .version import VERSION
+from msrest.paging import Paged
 
-__all__ = ['RedisManagementClient']
 
-__version__ = VERSION
+class RedisFirewallRulePaged(Paged):
+    """
+    A paging container for iterating over a list of RedisFirewallRule object
+    """
 
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[RedisFirewallRule]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(RedisFirewallRulePaged, self).__init__(*args, **kwargs)
