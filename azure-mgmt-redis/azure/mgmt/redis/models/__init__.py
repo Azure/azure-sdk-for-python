@@ -14,6 +14,7 @@ from .resource import Resource
 from .redis_create_parameters import RedisCreateParameters
 from .redis_update_parameters import RedisUpdateParameters
 from .redis_access_keys import RedisAccessKeys
+from .redis_firewall_rule import RedisFirewallRule
 from .redis_resource import RedisResource
 from .redis_regenerate_key_parameters import RedisRegenerateKeyParameters
 from .redis_reboot_parameters import RedisRebootParameters
@@ -21,7 +22,12 @@ from .export_rdb_parameters import ExportRDBParameters
 from .import_rdb_parameters import ImportRDBParameters
 from .schedule_entry import ScheduleEntry
 from .redis_patch_schedule import RedisPatchSchedule
+from .redis_force_reboot_response import RedisForceRebootResponse
+from .operation_display import OperationDisplay
+from .operation import Operation
+from .operation_paged import OperationPaged
 from .redis_resource_paged import RedisResourcePaged
+from .redis_firewall_rule_paged import RedisFirewallRulePaged
 from .redis_management_client_enums import (
     SkuName,
     SkuFamily,
@@ -36,6 +42,7 @@ __all__ = [
     'RedisCreateParameters',
     'RedisUpdateParameters',
     'RedisAccessKeys',
+    'RedisFirewallRule',
     'RedisResource',
     'RedisRegenerateKeyParameters',
     'RedisRebootParameters',
@@ -43,7 +50,12 @@ __all__ = [
     'ImportRDBParameters',
     'ScheduleEntry',
     'RedisPatchSchedule',
+    'RedisForceRebootResponse',
+    'OperationDisplay',
+    'Operation',
+    'OperationPaged',
     'RedisResourcePaged',
+    'RedisFirewallRulePaged',
     'SkuName',
     'SkuFamily',
     'RedisKeyType',
