@@ -28,6 +28,9 @@ from .express_route_circuit_authorizations_operations import ExpressRouteCircuit
 from .express_route_circuit_peerings_operations import ExpressRouteCircuitPeeringsOperations
 from .express_route_circuits_operations import ExpressRouteCircuitsOperations
 from .express_route_service_providers_operations import ExpressRouteServiceProvidersOperations
+from .route_filters_operations import RouteFiltersOperations
+from .route_filter_rules_operations import RouteFilterRulesOperations
+from .bgp_service_communities_operations import BgpServiceCommunitiesOperations
 
 __all__ = [
     'ApplicationGatewaysOperations',
@@ -49,4 +52,7 @@ __all__ = [
     'ExpressRouteCircuitPeeringsOperations',
     'ExpressRouteCircuitsOperations',
     'ExpressRouteServiceProvidersOperations',
+    'RouteFiltersOperations',
+    'RouteFilterRulesOperations',
+    'BgpServiceCommunitiesOperations',
 ]

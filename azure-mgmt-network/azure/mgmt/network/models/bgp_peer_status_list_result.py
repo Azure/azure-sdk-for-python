@@ -12,24 +12,17 @@
 from msrest.serialization import Model
 
 
-class ErrorDetails(Model):
-    """ErrorDetails.
+class BgpPeerStatusListResult(Model):
+    """Response for list BGP peer status API service call.
 
-    :param code:
-    :type code: str
-    :param target:
-    :type target: str
-    :param message:
-    :type message: str
+    :param value: List of BGP peers
+    :type value: list of :class:`BgpPeerStatus
+     <azure.mgmt.network.models.BgpPeerStatus>`
     """
 
     _attribute_map = {
-        'code': {'key': 'code', 'type': 'str'},
-        'target': {'key': 'target', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
+        'value': {'key': 'value', 'type': '[BgpPeerStatus]'},
     }
 
-    def __init__(self, code=None, target=None, message=None):
-        self.code = code
-        self.target = target
-        self.message = message
+    def __init__(self, value=None):
+        self.value = value

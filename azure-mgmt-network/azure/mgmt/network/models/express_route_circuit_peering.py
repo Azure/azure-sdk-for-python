@@ -15,6 +15,9 @@ from .sub_resource import SubResource
 class ExpressRouteCircuitPeering(SubResource):
     """Peering in an ExpressRouteCircuit resource.
 
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
     :param id: Resource ID.
     :type id: str
     :param peering_type: The PeeringType. Possible values are:
@@ -24,7 +27,7 @@ class ExpressRouteCircuitPeering(SubResource):
     :type peering_type: str or :class:`ExpressRouteCircuitPeeringType
      <azure.mgmt.network.models.ExpressRouteCircuitPeeringType>`
     :param state: The state of peering. Possible values are: 'Disabled' and
-     'Enbaled'. Possible values include: 'Disabled', 'Enabled'
+     'Enabled'. Possible values include: 'Disabled', 'Enabled'
     :type state: str or :class:`ExpressRouteCircuitPeeringState
      <azure.mgmt.network.models.ExpressRouteCircuitPeeringState>`
     :param azure_asn: The Azure ASN.
@@ -46,6 +49,9 @@ class ExpressRouteCircuitPeering(SubResource):
     :param microsoft_peering_config: The Microsoft peering configuration.
     :type microsoft_peering_config: :class:`ExpressRouteCircuitPeeringConfig
      <azure.mgmt.network.models.ExpressRouteCircuitPeeringConfig>`
+    :param route_filter: The reference of the RouteFilter resource.
+    :type route_filter: :class:`RouteFilter
+     <azure.mgmt.network.models.RouteFilter>`
     :param stats: Gets peering stats.
     :type stats: :class:`ExpressRouteCircuitStats
      <azure.mgmt.network.models.ExpressRouteCircuitStats>`
@@ -60,10 +66,14 @@ class ExpressRouteCircuitPeering(SubResource):
     :param name: Gets name of the resource that is unique within a resource
      group. This name can be used to access the resource.
     :type name: str
-    :param etag: A unique read-only string that changes whenever the resource
+    :ivar etag: A unique read-only string that changes whenever the resource
      is updated.
-    :type etag: str
+    :vartype etag: str
     """
+
+    _validation = {
+        'etag': {'readonly': True},
+    }
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
@@ -78,6 +88,7 @@ class ExpressRouteCircuitPeering(SubResource):
         'shared_key': {'key': 'properties.sharedKey', 'type': 'str'},
         'vlan_id': {'key': 'properties.vlanId', 'type': 'int'},
         'microsoft_peering_config': {'key': 'properties.microsoftPeeringConfig', 'type': 'ExpressRouteCircuitPeeringConfig'},
+        'route_filter': {'key': 'properties.routeFilter', 'type': 'RouteFilter'},
         'stats': {'key': 'properties.stats', 'type': 'ExpressRouteCircuitStats'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'gateway_manager_etag': {'key': 'properties.gatewayManagerEtag', 'type': 'str'},
@@ -86,7 +97,7 @@ class ExpressRouteCircuitPeering(SubResource):
         'etag': {'key': 'etag', 'type': 'str'},
     }
 
-    def __init__(self, id=None, peering_type=None, state=None, azure_asn=None, peer_asn=None, primary_peer_address_prefix=None, secondary_peer_address_prefix=None, primary_azure_port=None, secondary_azure_port=None, shared_key=None, vlan_id=None, microsoft_peering_config=None, stats=None, provisioning_state=None, gateway_manager_etag=None, last_modified_by=None, name=None, etag=None):
+    def __init__(self, id=None, peering_type=None, state=None, azure_asn=None, peer_asn=None, primary_peer_address_prefix=None, secondary_peer_address_prefix=None, primary_azure_port=None, secondary_azure_port=None, shared_key=None, vlan_id=None, microsoft_peering_config=None, route_filter=None, stats=None, provisioning_state=None, gateway_manager_etag=None, last_modified_by=None, name=None):
         super(ExpressRouteCircuitPeering, self).__init__(id=id)
         self.peering_type = peering_type
         self.state = state
@@ -99,9 +110,10 @@ class ExpressRouteCircuitPeering(SubResource):
         self.shared_key = shared_key
         self.vlan_id = vlan_id
         self.microsoft_peering_config = microsoft_peering_config
+        self.route_filter = route_filter
         self.stats = stats
         self.provisioning_state = provisioning_state
         self.gateway_manager_etag = gateway_manager_etag
         self.last_modified_by = last_modified_by
         self.name = name
-        self.etag = etag
+        self.etag = None
