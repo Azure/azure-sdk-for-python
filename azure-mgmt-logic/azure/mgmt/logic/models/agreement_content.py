@@ -13,10 +13,10 @@ from msrest.serialization import Model
 
 
 class AgreementContent(Model):
-    """AgreementContent.
+    """The integration account agreement content.
 
-    :param as2: The AS2 agreement content.
-    :type as2: :class:`AS2AgreementContent
+    :param a_s2: The AS2 agreement content.
+    :type a_s2: :class:`AS2AgreementContent
      <azure.mgmt.logic.models.AS2AgreementContent>`
     :param x12: The X12 agreement content.
     :type x12: :class:`X12AgreementContent
@@ -24,15 +24,15 @@ class AgreementContent(Model):
     :param edifact: The EDIFACT agreement content.
     :type edifact: :class:`EdifactAgreementContent
      <azure.mgmt.logic.models.EdifactAgreementContent>`
-    """ 
+    """
 
     _attribute_map = {
-        'as2': {'key': 'AS2', 'type': 'AS2AgreementContent'},
-        'x12': {'key': 'X12', 'type': 'X12AgreementContent'},
-        'edifact': {'key': 'Edifact', 'type': 'EdifactAgreementContent'},
+        'a_s2': {'key': 'aS2', 'type': 'AS2AgreementContent'},
+        'x12': {'key': 'x12', 'type': 'X12AgreementContent'},
+        'edifact': {'key': 'edifact', 'type': 'EdifactAgreementContent'},
     }
 
-    def __init__(self, as2=None, x12=None, edifact=None):
-        self.as2 = as2
+    def __init__(self, a_s2=None, x12=None, edifact=None):
+        self.a_s2 = a_s2
         self.x12 = x12
         self.edifact = edifact

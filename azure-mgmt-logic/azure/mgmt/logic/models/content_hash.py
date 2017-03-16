@@ -13,13 +13,13 @@ from msrest.serialization import Model
 
 
 class ContentHash(Model):
-    """ContentHash.
+    """The content hash.
 
-    :param algorithm: The algorithm.
+    :param algorithm: The algorithm of the content hash.
     :type algorithm: str
-    :param value: The value.
+    :param value: The value of the content hash.
     :type value: str
-    """ 
+    """
 
     _attribute_map = {
         'algorithm': {'key': 'algorithm', 'type': 'str'},

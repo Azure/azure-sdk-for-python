@@ -10,20 +10,19 @@
 # --------------------------------------------------------------------------
 
 from msrest.pipeline import ClientRawResponse
-from msrestazure.azure_exceptions import CloudError
 import uuid
 
 from .. import models
 
 
-class IntegrationAccountPartnersOperations(object):
-    """IntegrationAccountPartnersOperations operations.
+class SessionsOperations(object):
+    """SessionsOperations operations.
 
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An objec model deserializer.
-    :ivar api_version: The API version. Constant value: "2015-08-01-preview".
+    :ivar api_version: The API version. Constant value: "2016-06-01".
     """
 
     def __init__(self, client, config, serializer, deserializer):
@@ -31,13 +30,13 @@ class IntegrationAccountPartnersOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2015-08-01-preview"
+        self.api_version = "2016-06-01"
 
         self.config = config
 
-    def list(
+    def list_by_integration_accounts(
             self, resource_group_name, integration_account_name, top=None, filter=None, custom_headers=None, raw=False, **operation_config):
-        """Gets a list of integration account partners.
+        """Gets a list of integration account sessions.
 
         :param resource_group_name: The resource group name.
         :type resource_group_name: str
@@ -52,14 +51,16 @@ class IntegrationAccountPartnersOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`IntegrationAccountPartnerPaged
-         <azure.mgmt.logic.models.IntegrationAccountPartnerPaged>`
+        :rtype: :class:`IntegrationAccountSessionPaged
+         <azure.mgmt.logic.models.IntegrationAccountSessionPaged>`
+        :raises:
+         :class:`ErrorResponseException<azure.mgmt.logic.models.ErrorResponseException>`
         """
         def internal_paging(next_link=None, raw=False):
 
             if not next_link:
                 # Construct URL
-                url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Logic/integrationAccounts/{integrationAccountName}/partners'
+                url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Logic/integrationAccounts/{integrationAccountName}/sessions'
                 path_format_arguments = {
                     'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
                     'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
@@ -95,49 +96,49 @@ class IntegrationAccountPartnersOperations(object):
                 request, header_parameters, **operation_config)
 
             if response.status_code not in [200]:
-                exp = CloudError(response)
-                exp.request_id = response.headers.get('x-ms-request-id')
-                raise exp
+                raise models.ErrorResponseException(self._deserialize, response)
 
             return response
 
         # Deserialize response
-        deserialized = models.IntegrationAccountPartnerPaged(internal_paging, self._deserialize.dependencies)
+        deserialized = models.IntegrationAccountSessionPaged(internal_paging, self._deserialize.dependencies)
 
         if raw:
             header_dict = {}
-            client_raw_response = models.IntegrationAccountPartnerPaged(internal_paging, self._deserialize.dependencies, header_dict)
+            client_raw_response = models.IntegrationAccountSessionPaged(internal_paging, self._deserialize.dependencies, header_dict)
             return client_raw_response
 
         return deserialized
 
     def get(
-            self, resource_group_name, integration_account_name, partner_name, custom_headers=None, raw=False, **operation_config):
-        """Gets an integration account partner.
+            self, resource_group_name, integration_account_name, session_name, custom_headers=None, raw=False, **operation_config):
+        """Gets an integration account session.
 
         :param resource_group_name: The resource group name.
         :type resource_group_name: str
         :param integration_account_name: The integration account name.
         :type integration_account_name: str
-        :param partner_name: The integration account partner name.
-        :type partner_name: str
+        :param session_name: The integration account session name.
+        :type session_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`IntegrationAccountPartner
-         <azure.mgmt.logic.models.IntegrationAccountPartner>`
+        :rtype: :class:`IntegrationAccountSession
+         <azure.mgmt.logic.models.IntegrationAccountSession>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`ErrorResponseException<azure.mgmt.logic.models.ErrorResponseException>`
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Logic/integrationAccounts/{integrationAccountName}/partners/{partnerName}'
+        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Logic/integrationAccounts/{integrationAccountName}/sessions/{sessionName}'
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'integrationAccountName': self._serialize.url("integration_account_name", integration_account_name, 'str'),
-            'partnerName': self._serialize.url("partner_name", partner_name, 'str')
+            'sessionName': self._serialize.url("session_name", session_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -160,14 +161,12 @@ class IntegrationAccountPartnersOperations(object):
         response = self._client.send(request, header_parameters, **operation_config)
 
         if response.status_code not in [200]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.ErrorResponseException(self._deserialize, response)
 
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('IntegrationAccountPartner', response)
+            deserialized = self._deserialize('IntegrationAccountSession', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
@@ -176,35 +175,37 @@ class IntegrationAccountPartnersOperations(object):
         return deserialized
 
     def create_or_update(
-            self, resource_group_name, integration_account_name, partner_name, partner, custom_headers=None, raw=False, **operation_config):
-        """Creates or updates an integration account partner.
+            self, resource_group_name, integration_account_name, session_name, session, custom_headers=None, raw=False, **operation_config):
+        """Creates or updates an integration account session.
 
         :param resource_group_name: The resource group name.
         :type resource_group_name: str
         :param integration_account_name: The integration account name.
         :type integration_account_name: str
-        :param partner_name: The integration account partner name.
-        :type partner_name: str
-        :param partner: The integration account partner.
-        :type partner: :class:`IntegrationAccountPartner
-         <azure.mgmt.logic.models.IntegrationAccountPartner>`
+        :param session_name: The integration account session name.
+        :type session_name: str
+        :param session: The integration account session.
+        :type session: :class:`IntegrationAccountSession
+         <azure.mgmt.logic.models.IntegrationAccountSession>`
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`IntegrationAccountPartner
-         <azure.mgmt.logic.models.IntegrationAccountPartner>`
+        :rtype: :class:`IntegrationAccountSession
+         <azure.mgmt.logic.models.IntegrationAccountSession>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`ErrorResponseException<azure.mgmt.logic.models.ErrorResponseException>`
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Logic/integrationAccounts/{integrationAccountName}/partners/{partnerName}'
+        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Logic/integrationAccounts/{integrationAccountName}/sessions/{sessionName}'
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'integrationAccountName': self._serialize.url("integration_account_name", integration_account_name, 'str'),
-            'partnerName': self._serialize.url("partner_name", partner_name, 'str')
+            'sessionName': self._serialize.url("session_name", session_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -223,7 +224,7 @@ class IntegrationAccountPartnersOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct body
-        body_content = self._serialize.body(partner, 'IntegrationAccountPartner')
+        body_content = self._serialize.body(session, 'IntegrationAccountSession')
 
         # Construct and send request
         request = self._client.put(url, query_parameters)
@@ -231,16 +232,14 @@ class IntegrationAccountPartnersOperations(object):
             request, header_parameters, body_content, **operation_config)
 
         if response.status_code not in [200, 201]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.ErrorResponseException(self._deserialize, response)
 
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('IntegrationAccountPartner', response)
+            deserialized = self._deserialize('IntegrationAccountSession', response)
         if response.status_code == 201:
-            deserialized = self._deserialize('IntegrationAccountPartner', response)
+            deserialized = self._deserialize('IntegrationAccountSession', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
@@ -249,15 +248,15 @@ class IntegrationAccountPartnersOperations(object):
         return deserialized
 
     def delete(
-            self, resource_group_name, integration_account_name, partner_name, custom_headers=None, raw=False, **operation_config):
-        """Deletes an integration account partner.
+            self, resource_group_name, integration_account_name, session_name, custom_headers=None, raw=False, **operation_config):
+        """Deletes an integration account session.
 
         :param resource_group_name: The resource group name.
         :type resource_group_name: str
         :param integration_account_name: The integration account name.
         :type integration_account_name: str
-        :param partner_name: The integration account partner name.
-        :type partner_name: str
+        :param session_name: The integration account session name.
+        :type session_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -266,14 +265,16 @@ class IntegrationAccountPartnersOperations(object):
         :rtype: None
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`ErrorResponseException<azure.mgmt.logic.models.ErrorResponseException>`
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Logic/integrationAccounts/{integrationAccountName}/partners/{partnerName}'
+        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Logic/integrationAccounts/{integrationAccountName}/sessions/{sessionName}'
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'integrationAccountName': self._serialize.url("integration_account_name", integration_account_name, 'str'),
-            'partnerName': self._serialize.url("partner_name", partner_name, 'str')
+            'sessionName': self._serialize.url("session_name", session_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -296,9 +297,7 @@ class IntegrationAccountPartnersOperations(object):
         response = self._client.send(request, header_parameters, **operation_config)
 
         if response.status_code not in [200, 204]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.ErrorResponseException(self._deserialize, response)
 
         if raw:
             client_raw_response = ClientRawResponse(None, response)

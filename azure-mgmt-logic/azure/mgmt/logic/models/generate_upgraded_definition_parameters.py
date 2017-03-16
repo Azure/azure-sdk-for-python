@@ -13,11 +13,11 @@ from msrest.serialization import Model
 
 
 class GenerateUpgradedDefinitionParameters(Model):
-    """GenerateUpgradedDefinitionParameters.
+    """The parameters to generate upgraded definition.
 
     :param target_schema_version: The target schema version.
     :type target_schema_version: str
-    """ 
+    """
 
     _attribute_map = {
         'target_schema_version': {'key': 'targetSchemaVersion', 'type': 'str'},

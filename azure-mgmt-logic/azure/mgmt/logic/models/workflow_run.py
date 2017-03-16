@@ -13,13 +13,13 @@ from .sub_resource import SubResource
 
 
 class WorkflowRun(SubResource):
-    """WorkflowRun.
+    """The workflow run.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :param id: The resource id.
-    :type id: str
+    :ivar id: The resource id.
+    :vartype id: str
     :ivar start_time: Gets the start time.
     :vartype start_time: datetime
     :ivar end_time: Gets the end time.
@@ -53,9 +53,10 @@ class WorkflowRun(SubResource):
     :vartype name: str
     :ivar type: Gets the workflow run type.
     :vartype type: str
-    """ 
+    """
 
     _validation = {
+        'id': {'readonly': True},
         'start_time': {'readonly': True},
         'end_time': {'readonly': True},
         'status': {'readonly': True},
@@ -87,8 +88,8 @@ class WorkflowRun(SubResource):
         'type': {'key': 'type', 'type': 'str'},
     }
 
-    def __init__(self, id=None, correlation=None):
-        super(WorkflowRun, self).__init__(id=id)
+    def __init__(self, correlation=None):
+        super(WorkflowRun, self).__init__()
         self.start_time = None
         self.end_time = None
         self.status = None

@@ -13,7 +13,7 @@ from msrest.serialization import Model
 
 
 class X12EnvelopeSettings(Model):
-    """X12EnvelopeSettings.
+    """The X12 agreement envelope settings.
 
     :param control_standards_id: The controls standards id.
     :type control_standards_id: int
@@ -83,7 +83,31 @@ class X12EnvelopeSettings(Model):
      'NotSpecified', 'Test', 'Information', 'Production'
     :type usage_indicator: str or :class:`UsageIndicator
      <azure.mgmt.logic.models.UsageIndicator>`
-    """ 
+    """
+
+    _validation = {
+        'control_standards_id': {'required': True},
+        'use_control_standards_id_as_repetition_character': {'required': True},
+        'sender_application_id': {'required': True},
+        'receiver_application_id': {'required': True},
+        'control_version_number': {'required': True},
+        'interchange_control_number_lower_bound': {'required': True},
+        'interchange_control_number_upper_bound': {'required': True},
+        'rollover_interchange_control_number': {'required': True},
+        'enable_default_group_headers': {'required': True},
+        'group_control_number_lower_bound': {'required': True},
+        'group_control_number_upper_bound': {'required': True},
+        'rollover_group_control_number': {'required': True},
+        'group_header_agency_code': {'required': True},
+        'group_header_version': {'required': True},
+        'transaction_set_control_number_lower_bound': {'required': True},
+        'transaction_set_control_number_upper_bound': {'required': True},
+        'rollover_transaction_set_control_number': {'required': True},
+        'overwrite_existing_transaction_set_control_number': {'required': True},
+        'group_header_date_format': {'required': True},
+        'group_header_time_format': {'required': True},
+        'usage_indicator': {'required': True},
+    }
 
     _attribute_map = {
         'control_standards_id': {'key': 'controlStandardsId', 'type': 'int'},
@@ -112,7 +136,7 @@ class X12EnvelopeSettings(Model):
         'usage_indicator': {'key': 'usageIndicator', 'type': 'UsageIndicator'},
     }
 
-    def __init__(self, control_standards_id=None, use_control_standards_id_as_repetition_character=None, sender_application_id=None, receiver_application_id=None, control_version_number=None, interchange_control_number_lower_bound=None, interchange_control_number_upper_bound=None, rollover_interchange_control_number=None, enable_default_group_headers=None, functional_group_id=None, group_control_number_lower_bound=None, group_control_number_upper_bound=None, rollover_group_control_number=None, group_header_agency_code=None, group_header_version=None, transaction_set_control_number_lower_bound=None, transaction_set_control_number_upper_bound=None, rollover_transaction_set_control_number=None, transaction_set_control_number_prefix=None, transaction_set_control_number_suffix=None, overwrite_existing_transaction_set_control_number=None, group_header_date_format=None, group_header_time_format=None, usage_indicator=None):
+    def __init__(self, control_standards_id, use_control_standards_id_as_repetition_character, sender_application_id, receiver_application_id, control_version_number, interchange_control_number_lower_bound, interchange_control_number_upper_bound, rollover_interchange_control_number, enable_default_group_headers, group_control_number_lower_bound, group_control_number_upper_bound, rollover_group_control_number, group_header_agency_code, group_header_version, transaction_set_control_number_lower_bound, transaction_set_control_number_upper_bound, rollover_transaction_set_control_number, overwrite_existing_transaction_set_control_number, group_header_date_format, group_header_time_format, usage_indicator, functional_group_id=None, transaction_set_control_number_prefix=None, transaction_set_control_number_suffix=None):
         self.control_standards_id = control_standards_id
         self.use_control_standards_id_as_repetition_character = use_control_standards_id_as_repetition_character
         self.sender_application_id = sender_application_id

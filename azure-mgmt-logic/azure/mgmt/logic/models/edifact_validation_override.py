@@ -13,7 +13,7 @@ from msrest.serialization import Model
 
 
 class EdifactValidationOverride(Model):
-    """EdifactValidationOverride.
+    """The Edifact validation override settings.
 
     :param message_id: The message id on which the validation settings has to
      be applied.
@@ -37,19 +37,29 @@ class EdifactValidationOverride(Model):
     :param trim_leading_and_trailing_spaces_and_zeroes: The value indicating
      whether to trim leading and trailing spaces and zeroes.
     :type trim_leading_and_trailing_spaces_and_zeroes: bool
-    """ 
+    """
+
+    _validation = {
+        'message_id': {'required': True},
+        'enforce_character_set': {'required': True},
+        'validate_edi_types': {'required': True},
+        'validate_xsd_types': {'required': True},
+        'allow_leading_and_trailing_spaces_and_zeroes': {'required': True},
+        'trailing_separator_policy': {'required': True},
+        'trim_leading_and_trailing_spaces_and_zeroes': {'required': True},
+    }
 
     _attribute_map = {
         'message_id': {'key': 'messageId', 'type': 'str'},
         'enforce_character_set': {'key': 'enforceCharacterSet', 'type': 'bool'},
-        'validate_edi_types': {'key': 'validateEDITypes', 'type': 'bool'},
-        'validate_xsd_types': {'key': 'validateXSDTypes', 'type': 'bool'},
+        'validate_edi_types': {'key': 'validateEdiTypes', 'type': 'bool'},
+        'validate_xsd_types': {'key': 'validateXsdTypes', 'type': 'bool'},
         'allow_leading_and_trailing_spaces_and_zeroes': {'key': 'allowLeadingAndTrailingSpacesAndZeroes', 'type': 'bool'},
         'trailing_separator_policy': {'key': 'trailingSeparatorPolicy', 'type': 'TrailingSeparatorPolicy'},
         'trim_leading_and_trailing_spaces_and_zeroes': {'key': 'trimLeadingAndTrailingSpacesAndZeroes', 'type': 'bool'},
     }
 
-    def __init__(self, message_id=None, enforce_character_set=None, validate_edi_types=None, validate_xsd_types=None, allow_leading_and_trailing_spaces_and_zeroes=None, trailing_separator_policy=None, trim_leading_and_trailing_spaces_and_zeroes=None):
+    def __init__(self, message_id, enforce_character_set, validate_edi_types, validate_xsd_types, allow_leading_and_trailing_spaces_and_zeroes, trailing_separator_policy, trim_leading_and_trailing_spaces_and_zeroes):
         self.message_id = message_id
         self.enforce_character_set = enforce_character_set
         self.validate_edi_types = validate_edi_types

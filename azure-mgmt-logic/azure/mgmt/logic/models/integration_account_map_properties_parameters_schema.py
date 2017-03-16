@@ -12,16 +12,16 @@
 from msrest.serialization import Model
 
 
-class Correlation(Model):
-    """The correlation property.
+class IntegrationAccountMapPropertiesParametersSchema(Model):
+    """The parameters schema of integration account map.
 
-    :param client_tracking_id: The client tracking id.
-    :type client_tracking_id: str
+    :param ref: The reference name.
+    :type ref: str
     """
 
     _attribute_map = {
-        'client_tracking_id': {'key': 'clientTrackingId', 'type': 'str'},
+        'ref': {'key': 'ref', 'type': 'str'},
     }
 
-    def __init__(self, client_tracking_id=None):
-        self.client_tracking_id = client_tracking_id
+    def __init__(self, ref=None):
+        self.ref = ref

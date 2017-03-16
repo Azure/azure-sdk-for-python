@@ -13,7 +13,7 @@ from msrest.serialization import Model
 
 
 class AS2MdnSettings(Model):
-    """AS2MdnSettings.
+    """The AS2 agreement mdn settings.
 
     :param need_mdn: The value indicating whether to send or request a MDN.
     :type need_mdn: bool
@@ -25,11 +25,11 @@ class AS2MdnSettings(Model):
     :type send_mdn_asynchronously: bool
     :param receipt_delivery_url: The receipt delivery URL.
     :type receipt_delivery_url: str
-    :param disposition_notification_to: The disposition notification to
-     header value.
+    :param disposition_notification_to: The disposition notification to header
+     value.
     :type disposition_notification_to: str
-    :param sign_outbound_mdn_if_optional: The value indicating whether to
-     sign the outbound MDN if optional.
+    :param sign_outbound_mdn_if_optional: The value indicating whether to sign
+     the outbound MDN if optional.
     :type sign_outbound_mdn_if_optional: bool
     :param mdn_text: The MDN text.
     :type mdn_text: str
@@ -37,10 +37,20 @@ class AS2MdnSettings(Model):
      send inbound MDN to message box.
     :type send_inbound_mdn_to_message_box: bool
     :param mic_hashing_algorithm: The signing or hashing algorithm. Possible
-     values include: 'NotSpecified', 'None', 'SHA2256', 'SHA2384', 'SHA2512'
+     values include: 'NotSpecified', 'None', 'MD5', 'SHA1', 'SHA2256',
+     'SHA2384', 'SHA2512'
     :type mic_hashing_algorithm: str or :class:`HashingAlgorithm
      <azure.mgmt.logic.models.HashingAlgorithm>`
-    """ 
+    """
+
+    _validation = {
+        'need_mdn': {'required': True},
+        'sign_mdn': {'required': True},
+        'send_mdn_asynchronously': {'required': True},
+        'sign_outbound_mdn_if_optional': {'required': True},
+        'send_inbound_mdn_to_message_box': {'required': True},
+        'mic_hashing_algorithm': {'required': True},
+    }
 
     _attribute_map = {
         'need_mdn': {'key': 'needMdn', 'type': 'bool'},
@@ -54,7 +64,7 @@ class AS2MdnSettings(Model):
         'mic_hashing_algorithm': {'key': 'micHashingAlgorithm', 'type': 'HashingAlgorithm'},
     }
 
-    def __init__(self, need_mdn=None, sign_mdn=None, send_mdn_asynchronously=None, receipt_delivery_url=None, disposition_notification_to=None, sign_outbound_mdn_if_optional=None, mdn_text=None, send_inbound_mdn_to_message_box=None, mic_hashing_algorithm=None):
+    def __init__(self, need_mdn, sign_mdn, send_mdn_asynchronously, sign_outbound_mdn_if_optional, send_inbound_mdn_to_message_box, mic_hashing_algorithm, receipt_delivery_url=None, disposition_notification_to=None, mdn_text=None):
         self.need_mdn = need_mdn
         self.sign_mdn = sign_mdn
         self.send_mdn_asynchronously = send_mdn_asynchronously

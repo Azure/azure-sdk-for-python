@@ -13,17 +13,17 @@ from .resource import Resource
 
 
 class Workflow(Resource):
-    """Workflow.
+    """The workflow type.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :param id: The resource id.
-    :type id: str
-    :param name: Gets the resource name.
-    :type name: str
-    :param type: Gets the resource type.
-    :type type: str
+    :ivar id: The resource id.
+    :vartype id: str
+    :ivar name: Gets the resource name.
+    :vartype name: str
+    :ivar type: Gets the resource type.
+    :vartype type: str
     :param location: The resource location.
     :type location: str
     :param tags: The resource tags.
@@ -56,9 +56,12 @@ class Workflow(Resource):
     :type definition: object
     :param parameters: The parameters.
     :type parameters: dict
-    """ 
+    """
 
     _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
         'provisioning_state': {'readonly': True},
         'created_time': {'readonly': True},
         'changed_time': {'readonly': True},
@@ -84,8 +87,8 @@ class Workflow(Resource):
         'parameters': {'key': 'properties.parameters', 'type': '{WorkflowParameter}'},
     }
 
-    def __init__(self, id=None, name=None, type=None, location=None, tags=None, state=None, sku=None, integration_account=None, definition=None, parameters=None):
-        super(Workflow, self).__init__(id=id, name=name, type=type, location=location, tags=tags)
+    def __init__(self, location=None, tags=None, state=None, sku=None, integration_account=None, definition=None, parameters=None):
+        super(Workflow, self).__init__(location=location, tags=tags)
         self.provisioning_state = None
         self.created_time = None
         self.changed_time = None

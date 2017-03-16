@@ -13,17 +13,21 @@ from msrest.serialization import Model
 
 
 class IntegrationAccountPartnerFilter(Model):
-    """IntegrationAccountPartnerFilter.
+    """The integration account partner filter for odata query.
 
     :param partner_type: The partner type of integration account partner.
      Possible values include: 'NotSpecified', 'B2B'
     :type partner_type: str or :class:`PartnerType
      <azure.mgmt.logic.models.PartnerType>`
-    """ 
+    """
+
+    _validation = {
+        'partner_type': {'required': True},
+    }
 
     _attribute_map = {
         'partner_type': {'key': 'partnerType', 'type': 'PartnerType'},
     }
 
-    def __init__(self, partner_type=None):
+    def __init__(self, partner_type):
         self.partner_type = partner_type

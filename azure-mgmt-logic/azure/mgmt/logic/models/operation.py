@@ -12,16 +12,21 @@
 from msrest.serialization import Model
 
 
-class Correlation(Model):
-    """The correlation property.
+class Operation(Model):
+    """Logic REST API operation.
 
-    :param client_tracking_id: The client tracking id.
-    :type client_tracking_id: str
+    :param name: Operation name: {provider}/{resource}/{operation}
+    :type name: str
+    :param display: The object that represents the operation.
+    :type display: :class:`OperationDisplay
+     <azure.mgmt.logic.models.OperationDisplay>`
     """
 
     _attribute_map = {
-        'client_tracking_id': {'key': 'clientTrackingId', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'display': {'key': 'display', 'type': 'OperationDisplay'},
     }
 
-    def __init__(self, client_tracking_id=None):
-        self.client_tracking_id = client_tracking_id
+    def __init__(self, name=None, display=None):
+        self.name = name
+        self.display = display

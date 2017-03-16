@@ -13,7 +13,7 @@ from msrest.serialization import Model
 
 
 class EdifactFramingSettings(Model):
-    """EdifactFramingSettings.
+    """The Edifact agreement framing settings.
 
     :param service_code_list_directory_version: The service code list
      directory version.
@@ -42,11 +42,23 @@ class EdifactFramingSettings(Model):
     :type decimal_point_indicator: str or :class:`EdifactDecimalIndicator
      <azure.mgmt.logic.models.EdifactDecimalIndicator>`
     :param segment_terminator_suffix: The EDIFACT frame setting segment
-     terminator suffix. Possible values include: 'NotSpecified', 'None',
-     'CR', 'LF', 'CRLF'
+     terminator suffix. Possible values include: 'NotSpecified', 'None', 'CR',
+     'LF', 'CRLF'
     :type segment_terminator_suffix: str or :class:`SegmentTerminatorSuffix
      <azure.mgmt.logic.models.SegmentTerminatorSuffix>`
-    """ 
+    """
+
+    _validation = {
+        'protocol_version': {'required': True},
+        'data_element_separator': {'required': True},
+        'component_separator': {'required': True},
+        'segment_terminator': {'required': True},
+        'release_indicator': {'required': True},
+        'repetition_separator': {'required': True},
+        'character_set': {'required': True},
+        'decimal_point_indicator': {'required': True},
+        'segment_terminator_suffix': {'required': True},
+    }
 
     _attribute_map = {
         'service_code_list_directory_version': {'key': 'serviceCodeListDirectoryVersion', 'type': 'str'},
@@ -62,7 +74,7 @@ class EdifactFramingSettings(Model):
         'segment_terminator_suffix': {'key': 'segmentTerminatorSuffix', 'type': 'SegmentTerminatorSuffix'},
     }
 
-    def __init__(self, service_code_list_directory_version=None, character_encoding=None, protocol_version=None, data_element_separator=None, component_separator=None, segment_terminator=None, release_indicator=None, repetition_separator=None, character_set=None, decimal_point_indicator=None, segment_terminator_suffix=None):
+    def __init__(self, protocol_version, data_element_separator, component_separator, segment_terminator, release_indicator, repetition_separator, character_set, decimal_point_indicator, segment_terminator_suffix, service_code_list_directory_version=None, character_encoding=None):
         self.service_code_list_directory_version = service_code_list_directory_version
         self.character_encoding = character_encoding
         self.protocol_version = protocol_version

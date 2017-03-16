@@ -23,7 +23,7 @@ class IntegrationAccountsOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An objec model deserializer.
-    :ivar api_version: The API version. Constant value: "2015-08-01-preview".
+    :ivar api_version: The API version. Constant value: "2016-06-01".
     """
 
     def __init__(self, client, config, serializer, deserializer):
@@ -31,7 +31,7 @@ class IntegrationAccountsOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2015-08-01-preview"
+        self.api_version = "2016-06-01"
 
         self.config = config
 
@@ -48,6 +48,7 @@ class IntegrationAccountsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`IntegrationAccountPaged
          <azure.mgmt.logic.models.IntegrationAccountPaged>`
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -116,6 +117,7 @@ class IntegrationAccountsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`IntegrationAccountPaged
          <azure.mgmt.logic.models.IntegrationAccountPaged>`
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -187,6 +189,7 @@ class IntegrationAccountsOperations(object):
          <azure.mgmt.logic.models.IntegrationAccount>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Logic/integrationAccounts/{integrationAccountName}'
@@ -251,6 +254,7 @@ class IntegrationAccountsOperations(object):
          <azure.mgmt.logic.models.IntegrationAccount>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Logic/integrationAccounts/{integrationAccountName}'
@@ -321,6 +325,7 @@ class IntegrationAccountsOperations(object):
          <azure.mgmt.logic.models.IntegrationAccount>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Logic/integrationAccounts/{integrationAccountName}'
@@ -385,6 +390,7 @@ class IntegrationAccountsOperations(object):
         :rtype: None
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Logic/integrationAccounts/{integrationAccountName}'
@@ -422,9 +428,9 @@ class IntegrationAccountsOperations(object):
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
 
-    def list_callback_url(
-            self, resource_group_name, integration_account_name, not_after=None, custom_headers=None, raw=False, **operation_config):
-        """Lists the integration account callback URL.
+    def get_callback_url(
+            self, resource_group_name, integration_account_name, not_after=None, key_type=None, custom_headers=None, raw=False, **operation_config):
+        """Gets the integration account callback URL.
 
         :param resource_group_name: The resource group name.
         :type resource_group_name: str
@@ -432,6 +438,10 @@ class IntegrationAccountsOperations(object):
         :type integration_account_name: str
         :param not_after: The expiry time.
         :type not_after: datetime
+        :param key_type: The key type. Possible values include:
+         'NotSpecified', 'Primary', 'Secondary'
+        :type key_type: str or :class:`KeyType
+         <azure.mgmt.logic.models.KeyType>`
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -440,8 +450,9 @@ class IntegrationAccountsOperations(object):
         :rtype: :class:`CallbackUrl <azure.mgmt.logic.models.CallbackUrl>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
-        parameters = models.ListCallbackUrlParameters(not_after=not_after)
+        parameters = models.GetCallbackUrlParameters(not_after=not_after, key_type=key_type)
 
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Logic/integrationAccounts/{integrationAccountName}/listCallbackUrl'
@@ -467,7 +478,7 @@ class IntegrationAccountsOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct body
-        body_content = self._serialize.body(parameters, 'ListCallbackUrlParameters')
+        body_content = self._serialize.body(parameters, 'GetCallbackUrlParameters')
 
         # Construct and send request
         request = self._client.post(url, query_parameters)

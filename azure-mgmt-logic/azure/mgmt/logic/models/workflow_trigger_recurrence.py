@@ -13,7 +13,7 @@ from msrest.serialization import Model
 
 
 class WorkflowTriggerRecurrence(Model):
-    """WorkflowTriggerRecurrence.
+    """The workflow trigger recurrence.
 
     :param frequency: The frequency. Possible values include: 'NotSpecified',
      'Second', 'Minute', 'Hour', 'Day', 'Week', 'Month', 'Year'
@@ -30,7 +30,7 @@ class WorkflowTriggerRecurrence(Model):
     :param schedule: The recurrence schedule.
     :type schedule: :class:`RecurrenceSchedule
      <azure.mgmt.logic.models.RecurrenceSchedule>`
-    """ 
+    """
 
     _attribute_map = {
         'frequency': {'key': 'frequency', 'type': 'RecurrenceFrequency'},
