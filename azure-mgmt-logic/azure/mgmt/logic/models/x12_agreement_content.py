@@ -13,7 +13,7 @@ from msrest.serialization import Model
 
 
 class X12AgreementContent(Model):
-    """X12AgreementContent.
+    """The X12 agreement content.
 
     :param receive_agreement: The X12 one-way receive agreement.
     :type receive_agreement: :class:`X12OneWayAgreement
@@ -21,13 +21,18 @@ class X12AgreementContent(Model):
     :param send_agreement: The X12 one-way send agreement.
     :type send_agreement: :class:`X12OneWayAgreement
      <azure.mgmt.logic.models.X12OneWayAgreement>`
-    """ 
+    """
+
+    _validation = {
+        'receive_agreement': {'required': True},
+        'send_agreement': {'required': True},
+    }
 
     _attribute_map = {
         'receive_agreement': {'key': 'receiveAgreement', 'type': 'X12OneWayAgreement'},
         'send_agreement': {'key': 'sendAgreement', 'type': 'X12OneWayAgreement'},
     }
 
-    def __init__(self, receive_agreement=None, send_agreement=None):
+    def __init__(self, receive_agreement, send_agreement):
         self.receive_agreement = receive_agreement
         self.send_agreement = send_agreement

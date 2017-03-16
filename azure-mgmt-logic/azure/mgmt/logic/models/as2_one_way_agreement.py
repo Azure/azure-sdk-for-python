@@ -13,7 +13,7 @@ from msrest.serialization import Model
 
 
 class AS2OneWayAgreement(Model):
-    """AS2OneWayAgreement.
+    """The integration account AS2 oneway agreement.
 
     :param sender_business_identity: The sender business identity
     :type sender_business_identity: :class:`BusinessIdentity
@@ -24,7 +24,13 @@ class AS2OneWayAgreement(Model):
     :param protocol_settings: The AS2 protocol settings.
     :type protocol_settings: :class:`AS2ProtocolSettings
      <azure.mgmt.logic.models.AS2ProtocolSettings>`
-    """ 
+    """
+
+    _validation = {
+        'sender_business_identity': {'required': True},
+        'receiver_business_identity': {'required': True},
+        'protocol_settings': {'required': True},
+    }
 
     _attribute_map = {
         'sender_business_identity': {'key': 'senderBusinessIdentity', 'type': 'BusinessIdentity'},
@@ -32,7 +38,7 @@ class AS2OneWayAgreement(Model):
         'protocol_settings': {'key': 'protocolSettings', 'type': 'AS2ProtocolSettings'},
     }
 
-    def __init__(self, sender_business_identity=None, receiver_business_identity=None, protocol_settings=None):
+    def __init__(self, sender_business_identity, receiver_business_identity, protocol_settings):
         self.sender_business_identity = sender_business_identity
         self.receiver_business_identity = receiver_business_identity
         self.protocol_settings = protocol_settings

@@ -12,16 +12,20 @@
 from msrest.serialization import Model
 
 
-class Correlation(Model):
-    """The correlation property.
+class IntegrationAccountSessionFilter(Model):
+    """The integration account session filter.
 
-    :param client_tracking_id: The client tracking id.
-    :type client_tracking_id: str
+    :param changed_time: The changed time of integration account sessions.
+    :type changed_time: datetime
     """
 
-    _attribute_map = {
-        'client_tracking_id': {'key': 'clientTrackingId', 'type': 'str'},
+    _validation = {
+        'changed_time': {'required': True},
     }
 
-    def __init__(self, client_tracking_id=None):
-        self.client_tracking_id = client_tracking_id
+    _attribute_map = {
+        'changed_time': {'key': 'changedTime', 'type': 'iso-8601'},
+    }
+
+    def __init__(self, changed_time):
+        self.changed_time = changed_time

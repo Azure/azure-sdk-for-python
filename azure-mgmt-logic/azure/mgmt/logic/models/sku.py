@@ -13,7 +13,7 @@ from msrest.serialization import Model
 
 
 class Sku(Model):
-    """Sku.
+    """The sku type.
 
     :param name: The name. Possible values include: 'NotSpecified', 'Free',
      'Shared', 'Basic', 'Standard', 'Premium'
@@ -21,13 +21,17 @@ class Sku(Model):
     :param plan: The reference to plan.
     :type plan: :class:`ResourceReference
      <azure.mgmt.logic.models.ResourceReference>`
-    """ 
+    """
+
+    _validation = {
+        'name': {'required': True},
+    }
 
     _attribute_map = {
         'name': {'key': 'name', 'type': 'SkuName'},
         'plan': {'key': 'plan', 'type': 'ResourceReference'},
     }
 
-    def __init__(self, name=None, plan=None):
+    def __init__(self, name, plan=None):
         self.name = name
         self.plan = plan

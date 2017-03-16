@@ -13,7 +13,7 @@ from msrest.serialization import Model
 
 
 class AS2ErrorSettings(Model):
-    """AS2ErrorSettings.
+    """The AS2 agreement error settings.
 
     :param suspend_duplicate_message: The value indicating whether to suspend
      duplicate message.
@@ -21,13 +21,18 @@ class AS2ErrorSettings(Model):
     :param resend_if_mdn_not_received: The value indicating whether to resend
      message If MDN is not received.
     :type resend_if_mdn_not_received: bool
-    """ 
+    """
 
-    _attribute_map = {
-        'suspend_duplicate_message': {'key': 'SuspendDuplicateMessage', 'type': 'bool'},
-        'resend_if_mdn_not_received': {'key': 'ResendIfMdnNotReceived', 'type': 'bool'},
+    _validation = {
+        'suspend_duplicate_message': {'required': True},
+        'resend_if_mdn_not_received': {'required': True},
     }
 
-    def __init__(self, suspend_duplicate_message=None, resend_if_mdn_not_received=None):
+    _attribute_map = {
+        'suspend_duplicate_message': {'key': 'suspendDuplicateMessage', 'type': 'bool'},
+        'resend_if_mdn_not_received': {'key': 'resendIfMdnNotReceived', 'type': 'bool'},
+    }
+
+    def __init__(self, suspend_duplicate_message, resend_if_mdn_not_received):
         self.suspend_duplicate_message = suspend_duplicate_message
         self.resend_if_mdn_not_received = resend_if_mdn_not_received

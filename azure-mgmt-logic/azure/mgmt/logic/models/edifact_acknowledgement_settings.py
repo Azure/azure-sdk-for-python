@@ -13,7 +13,7 @@ from msrest.serialization import Model
 
 
 class EdifactAcknowledgementSettings(Model):
-    """EdifactAcknowledgementSettings.
+    """The Edifact agreement acknowledgement settings.
 
     :param need_technical_acknowledgement: The value indicating whether
      technical acknowledgement is needed.
@@ -48,7 +48,19 @@ class EdifactAcknowledgementSettings(Model):
     :param rollover_acknowledgement_control_number: The value indicating
      whether to rollover acknowledgement control number.
     :type rollover_acknowledgement_control_number: bool
-    """ 
+    """
+
+    _validation = {
+        'need_technical_acknowledgement': {'required': True},
+        'batch_technical_acknowledgements': {'required': True},
+        'need_functional_acknowledgement': {'required': True},
+        'batch_functional_acknowledgements': {'required': True},
+        'need_loop_for_valid_messages': {'required': True},
+        'send_synchronous_acknowledgement': {'required': True},
+        'acknowledgement_control_number_lower_bound': {'required': True},
+        'acknowledgement_control_number_upper_bound': {'required': True},
+        'rollover_acknowledgement_control_number': {'required': True},
+    }
 
     _attribute_map = {
         'need_technical_acknowledgement': {'key': 'needTechnicalAcknowledgement', 'type': 'bool'},
@@ -64,7 +76,7 @@ class EdifactAcknowledgementSettings(Model):
         'rollover_acknowledgement_control_number': {'key': 'rolloverAcknowledgementControlNumber', 'type': 'bool'},
     }
 
-    def __init__(self, need_technical_acknowledgement=None, batch_technical_acknowledgements=None, need_functional_acknowledgement=None, batch_functional_acknowledgements=None, need_loop_for_valid_messages=None, send_synchronous_acknowledgement=None, acknowledgement_control_number_prefix=None, acknowledgement_control_number_suffix=None, acknowledgement_control_number_lower_bound=None, acknowledgement_control_number_upper_bound=None, rollover_acknowledgement_control_number=None):
+    def __init__(self, need_technical_acknowledgement, batch_technical_acknowledgements, need_functional_acknowledgement, batch_functional_acknowledgements, need_loop_for_valid_messages, send_synchronous_acknowledgement, acknowledgement_control_number_lower_bound, acknowledgement_control_number_upper_bound, rollover_acknowledgement_control_number, acknowledgement_control_number_prefix=None, acknowledgement_control_number_suffix=None):
         self.need_technical_acknowledgement = need_technical_acknowledgement
         self.batch_technical_acknowledgements = batch_technical_acknowledgements
         self.need_functional_acknowledgement = need_functional_acknowledgement

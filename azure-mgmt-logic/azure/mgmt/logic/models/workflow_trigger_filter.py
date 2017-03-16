@@ -13,14 +13,13 @@ from msrest.serialization import Model
 
 
 class WorkflowTriggerFilter(Model):
-    """WorkflowTriggerFilter.
+    """The workflow trigger filter.
 
     :param state: The state of workflow trigger. Possible values include:
-     'NotSpecified', 'Completed', 'Enabled', 'Disabled', 'Deleted',
-     'Suspended'
+     'NotSpecified', 'Completed', 'Enabled', 'Disabled', 'Deleted', 'Suspended'
     :type state: str or :class:`WorkflowState
      <azure.mgmt.logic.models.WorkflowState>`
-    """ 
+    """
 
     _attribute_map = {
         'state': {'key': 'state', 'type': 'WorkflowState'},

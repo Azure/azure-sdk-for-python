@@ -13,7 +13,7 @@ from msrest.serialization import Model
 
 
 class EdifactEnvelopeSettings(Model):
-    """EdifactEnvelopeSettings.
+    """The Edifact agreement envelope settings.
 
     :param group_association_assigned_code: The group association assigned
      code.
@@ -124,7 +124,24 @@ class EdifactEnvelopeSettings(Model):
     :param receiver_internal_sub_identification: The receiver internal sub
      identification.
     :type receiver_internal_sub_identification: str
-    """ 
+    """
+
+    _validation = {
+        'apply_delimiter_string_advice': {'required': True},
+        'create_grouping_segments': {'required': True},
+        'enable_default_group_headers': {'required': True},
+        'interchange_control_number_lower_bound': {'required': True},
+        'interchange_control_number_upper_bound': {'required': True},
+        'rollover_interchange_control_number': {'required': True},
+        'group_control_number_lower_bound': {'required': True},
+        'group_control_number_upper_bound': {'required': True},
+        'rollover_group_control_number': {'required': True},
+        'overwrite_existing_transaction_set_control_number': {'required': True},
+        'transaction_set_control_number_lower_bound': {'required': True},
+        'transaction_set_control_number_upper_bound': {'required': True},
+        'rollover_transaction_set_control_number': {'required': True},
+        'is_test_interchange': {'required': True},
+    }
 
     _attribute_map = {
         'group_association_assigned_code': {'key': 'groupAssociationAssignedCode', 'type': 'str'},
@@ -170,7 +187,7 @@ class EdifactEnvelopeSettings(Model):
         'receiver_internal_sub_identification': {'key': 'receiverInternalSubIdentification', 'type': 'str'},
     }
 
-    def __init__(self, group_association_assigned_code=None, communication_agreement_id=None, apply_delimiter_string_advice=None, create_grouping_segments=None, enable_default_group_headers=None, recipient_reference_password_value=None, recipient_reference_password_qualifier=None, application_reference_id=None, processing_priority_code=None, interchange_control_number_lower_bound=None, interchange_control_number_upper_bound=None, rollover_interchange_control_number=None, interchange_control_number_prefix=None, interchange_control_number_suffix=None, sender_reverse_routing_address=None, receiver_reverse_routing_address=None, functional_group_id=None, group_controlling_agency_code=None, group_message_version=None, group_message_release=None, group_control_number_lower_bound=None, group_control_number_upper_bound=None, rollover_group_control_number=None, group_control_number_prefix=None, group_control_number_suffix=None, group_application_receiver_qualifier=None, group_application_receiver_id=None, group_application_sender_qualifier=None, group_application_sender_id=None, group_application_password=None, overwrite_existing_transaction_set_control_number=None, transaction_set_control_number_prefix=None, transaction_set_control_number_suffix=None, transaction_set_control_number_lower_bound=None, transaction_set_control_number_upper_bound=None, rollover_transaction_set_control_number=None, is_test_interchange=None, sender_internal_identification=None, sender_internal_sub_identification=None, receiver_internal_identification=None, receiver_internal_sub_identification=None):
+    def __init__(self, apply_delimiter_string_advice, create_grouping_segments, enable_default_group_headers, interchange_control_number_lower_bound, interchange_control_number_upper_bound, rollover_interchange_control_number, group_control_number_lower_bound, group_control_number_upper_bound, rollover_group_control_number, overwrite_existing_transaction_set_control_number, transaction_set_control_number_lower_bound, transaction_set_control_number_upper_bound, rollover_transaction_set_control_number, is_test_interchange, group_association_assigned_code=None, communication_agreement_id=None, recipient_reference_password_value=None, recipient_reference_password_qualifier=None, application_reference_id=None, processing_priority_code=None, interchange_control_number_prefix=None, interchange_control_number_suffix=None, sender_reverse_routing_address=None, receiver_reverse_routing_address=None, functional_group_id=None, group_controlling_agency_code=None, group_message_version=None, group_message_release=None, group_control_number_prefix=None, group_control_number_suffix=None, group_application_receiver_qualifier=None, group_application_receiver_id=None, group_application_sender_qualifier=None, group_application_sender_id=None, group_application_password=None, transaction_set_control_number_prefix=None, transaction_set_control_number_suffix=None, sender_internal_identification=None, sender_internal_sub_identification=None, receiver_internal_identification=None, receiver_internal_sub_identification=None):
         self.group_association_assigned_code = group_association_assigned_code
         self.communication_agreement_id = communication_agreement_id
         self.apply_delimiter_string_advice = apply_delimiter_string_advice

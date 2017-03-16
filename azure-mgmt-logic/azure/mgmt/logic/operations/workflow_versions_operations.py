@@ -52,6 +52,7 @@ class WorkflowVersionsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`WorkflowVersionPaged
          <azure.mgmt.logic.models.WorkflowVersionPaged>`
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -126,6 +127,7 @@ class WorkflowVersionsOperations(object):
          <azure.mgmt.logic.models.WorkflowVersion>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Logic/workflows/{workflowName}/versions/{versionId}'

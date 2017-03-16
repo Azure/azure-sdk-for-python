@@ -9,18 +9,21 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .integration_account_resource import IntegrationAccountResource
+from .resource import Resource
 
 
-class IntegrationAccount(IntegrationAccountResource):
-    """IntegrationAccount.
+class IntegrationAccount(Resource):
+    """The integration account.
 
-    :param id: The resource id.
-    :type id: str
-    :param name: The resource name.
-    :type name: str
-    :param type: The resource type.
-    :type type: str
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar id: The resource id.
+    :vartype id: str
+    :ivar name: Gets the resource name.
+    :vartype name: str
+    :ivar type: Gets the resource type.
+    :vartype type: str
     :param location: The resource location.
     :type location: str
     :param tags: The resource tags.
@@ -30,7 +33,13 @@ class IntegrationAccount(IntegrationAccountResource):
     :param sku: The sku.
     :type sku: :class:`IntegrationAccountSku
      <azure.mgmt.logic.models.IntegrationAccountSku>`
-    """ 
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+    }
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
@@ -42,7 +51,7 @@ class IntegrationAccount(IntegrationAccountResource):
         'sku': {'key': 'sku', 'type': 'IntegrationAccountSku'},
     }
 
-    def __init__(self, id=None, name=None, type=None, location=None, tags=None, properties=None, sku=None):
-        super(IntegrationAccount, self).__init__(id=id, name=name, type=type, location=location, tags=tags)
+    def __init__(self, location=None, tags=None, properties=None, sku=None):
+        super(IntegrationAccount, self).__init__(location=location, tags=tags)
         self.properties = properties
         self.sku = sku

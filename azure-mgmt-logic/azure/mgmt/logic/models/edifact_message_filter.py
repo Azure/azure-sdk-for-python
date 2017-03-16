@@ -13,17 +13,21 @@ from msrest.serialization import Model
 
 
 class EdifactMessageFilter(Model):
-    """EdifactMessageFilter.
+    """The Edifact message filter for odata query.
 
     :param message_filter_type: The message filter type. Possible values
      include: 'NotSpecified', 'Include', 'Exclude'
     :type message_filter_type: str or :class:`MessageFilterType
      <azure.mgmt.logic.models.MessageFilterType>`
-    """ 
+    """
+
+    _validation = {
+        'message_filter_type': {'required': True},
+    }
 
     _attribute_map = {
         'message_filter_type': {'key': 'messageFilterType', 'type': 'MessageFilterType'},
     }
 
-    def __init__(self, message_filter_type=None):
+    def __init__(self, message_filter_type):
         self.message_filter_type = message_filter_type

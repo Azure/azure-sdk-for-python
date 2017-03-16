@@ -16,11 +16,12 @@ from .workflow_trigger_histories_operations import WorkflowTriggerHistoriesOpera
 from .workflow_runs_operations import WorkflowRunsOperations
 from .workflow_run_actions_operations import WorkflowRunActionsOperations
 from .integration_accounts_operations import IntegrationAccountsOperations
-from .integration_account_schemas_operations import IntegrationAccountSchemasOperations
-from .integration_account_maps_operations import IntegrationAccountMapsOperations
-from .integration_account_partners_operations import IntegrationAccountPartnersOperations
-from .integration_account_agreements_operations import IntegrationAccountAgreementsOperations
-from .integration_account_certificates_operations import IntegrationAccountCertificatesOperations
+from .schemas_operations import SchemasOperations
+from .maps_operations import MapsOperations
+from .partners_operations import PartnersOperations
+from .agreements_operations import AgreementsOperations
+from .certificates_operations import CertificatesOperations
+from .sessions_operations import SessionsOperations
 
 __all__ = [
     'WorkflowsOperations',
@@ -30,9 +31,10 @@ __all__ = [
     'WorkflowRunsOperations',
     'WorkflowRunActionsOperations',
     'IntegrationAccountsOperations',
-    'IntegrationAccountSchemasOperations',
-    'IntegrationAccountMapsOperations',
-    'IntegrationAccountPartnersOperations',
-    'IntegrationAccountAgreementsOperations',
-    'IntegrationAccountCertificatesOperations',
+    'SchemasOperations',
+    'MapsOperations',
+    'PartnersOperations',
+    'AgreementsOperations',
+    'CertificatesOperations',
+    'SessionsOperations',
 ]

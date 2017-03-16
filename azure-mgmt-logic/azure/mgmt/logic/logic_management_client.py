@@ -13,6 +13,9 @@ from msrest.service_client import ServiceClient
 from msrest import Serializer, Deserializer
 from msrestazure import AzureConfiguration
 from .version import VERSION
+from msrest.pipeline import ClientRawResponse
+from msrestazure.azure_exceptions import CloudError
+import uuid
 from .operations.workflows_operations import WorkflowsOperations
 from .operations.workflow_versions_operations import WorkflowVersionsOperations
 from .operations.workflow_triggers_operations import WorkflowTriggersOperations
@@ -20,11 +23,12 @@ from .operations.workflow_trigger_histories_operations import WorkflowTriggerHis
 from .operations.workflow_runs_operations import WorkflowRunsOperations
 from .operations.workflow_run_actions_operations import WorkflowRunActionsOperations
 from .operations.integration_accounts_operations import IntegrationAccountsOperations
-from .operations.integration_account_schemas_operations import IntegrationAccountSchemasOperations
-from .operations.integration_account_maps_operations import IntegrationAccountMapsOperations
-from .operations.integration_account_partners_operations import IntegrationAccountPartnersOperations
-from .operations.integration_account_agreements_operations import IntegrationAccountAgreementsOperations
-from .operations.integration_account_certificates_operations import IntegrationAccountCertificatesOperations
+from .operations.schemas_operations import SchemasOperations
+from .operations.maps_operations import MapsOperations
+from .operations.partners_operations import PartnersOperations
+from .operations.agreements_operations import AgreementsOperations
+from .operations.certificates_operations import CertificatesOperations
+from .operations.sessions_operations import SessionsOperations
 from . import models
 
 
@@ -38,22 +42,11 @@ class LogicManagementClientConfiguration(AzureConfiguration):
      object<msrestazure.azure_active_directory>`
     :param subscription_id: The subscription id.
     :type subscription_id: str
-    :param accept_language: Gets or sets the preferred language for the
-     response.
-    :type accept_language: str
-    :param long_running_operation_retry_timeout: Gets or sets the retry
-     timeout in seconds for Long Running Operations. Default value is 30.
-    :type long_running_operation_retry_timeout: int
-    :param generate_client_request_id: When set to true a unique
-     x-ms-client-request-id value is generated and included in each request.
-     Default is true.
-    :type generate_client_request_id: bool
     :param str base_url: Service URL
-    :param str filepath: Existing config
     """
 
     def __init__(
-            self, credentials, subscription_id, accept_language='en-US', long_running_operation_retry_timeout=30, generate_client_request_id=True, base_url=None, filepath=None):
+            self, credentials, subscription_id, base_url=None):
 
         if credentials is None:
             raise ValueError("Parameter 'credentials' must not be None.")
@@ -61,25 +54,20 @@ class LogicManagementClientConfiguration(AzureConfiguration):
             raise ValueError("Parameter 'subscription_id' must not be None.")
         if not isinstance(subscription_id, str):
             raise TypeError("Parameter 'subscription_id' must be str.")
-        if accept_language is not None and not isinstance(accept_language, str):
-            raise TypeError("Optional parameter 'accept_language' must be str.")
         if not base_url:
             base_url = 'https://management.azure.com'
 
-        super(LogicManagementClientConfiguration, self).__init__(base_url, filepath)
+        super(LogicManagementClientConfiguration, self).__init__(base_url)
 
         self.add_user_agent('logicmanagementclient/{}'.format(VERSION))
         self.add_user_agent('Azure-SDK-For-Python')
 
         self.credentials = credentials
         self.subscription_id = subscription_id
-        self.accept_language = accept_language
-        self.long_running_operation_retry_timeout = long_running_operation_retry_timeout
-        self.generate_client_request_id = generate_client_request_id
 
 
 class LogicManagementClient(object):
-    """Composite Swagger for Logic Management Client
+    """REST API for Azure Logic Apps.
 
     :ivar config: Configuration for client.
     :vartype config: LogicManagementClientConfiguration
@@ -98,43 +86,35 @@ class LogicManagementClient(object):
     :vartype workflow_run_actions: .operations.WorkflowRunActionsOperations
     :ivar integration_accounts: IntegrationAccounts operations
     :vartype integration_accounts: .operations.IntegrationAccountsOperations
-    :ivar integration_account_schemas: IntegrationAccountSchemas operations
-    :vartype integration_account_schemas: .operations.IntegrationAccountSchemasOperations
-    :ivar integration_account_maps: IntegrationAccountMaps operations
-    :vartype integration_account_maps: .operations.IntegrationAccountMapsOperations
-    :ivar integration_account_partners: IntegrationAccountPartners operations
-    :vartype integration_account_partners: .operations.IntegrationAccountPartnersOperations
-    :ivar integration_account_agreements: IntegrationAccountAgreements operations
-    :vartype integration_account_agreements: .operations.IntegrationAccountAgreementsOperations
-    :ivar integration_account_certificates: IntegrationAccountCertificates operations
-    :vartype integration_account_certificates: .operations.IntegrationAccountCertificatesOperations
+    :ivar schemas: Schemas operations
+    :vartype schemas: .operations.SchemasOperations
+    :ivar maps: Maps operations
+    :vartype maps: .operations.MapsOperations
+    :ivar partners: Partners operations
+    :vartype partners: .operations.PartnersOperations
+    :ivar agreements: Agreements operations
+    :vartype agreements: .operations.AgreementsOperations
+    :ivar certificates: Certificates operations
+    :vartype certificates: .operations.CertificatesOperations
+    :ivar sessions: Sessions operations
+    :vartype sessions: .operations.SessionsOperations
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
      object<msrestazure.azure_active_directory>`
     :param subscription_id: The subscription id.
     :type subscription_id: str
-    :param accept_language: Gets or sets the preferred language for the
-     response.
-    :type accept_language: str
-    :param long_running_operation_retry_timeout: Gets or sets the retry
-     timeout in seconds for Long Running Operations. Default value is 30.
-    :type long_running_operation_retry_timeout: int
-    :param generate_client_request_id: When set to true a unique
-     x-ms-client-request-id value is generated and included in each request.
-     Default is true.
-    :type generate_client_request_id: bool
     :param str base_url: Service URL
-    :param str filepath: Existing config
     """
 
     def __init__(
-            self, credentials, subscription_id, accept_language='en-US', long_running_operation_retry_timeout=30, generate_client_request_id=True, base_url=None, filepath=None):
+            self, credentials, subscription_id, base_url=None):
 
-        self.config = LogicManagementClientConfiguration(credentials, subscription_id, accept_language, long_running_operation_retry_timeout, generate_client_request_id, base_url, filepath)
+        self.config = LogicManagementClientConfiguration(credentials, subscription_id, base_url)
         self._client = ServiceClient(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
+        self.api_version = '2016-06-01'
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
 
@@ -152,13 +132,73 @@ class LogicManagementClient(object):
             self._client, self.config, self._serialize, self._deserialize)
         self.integration_accounts = IntegrationAccountsOperations(
             self._client, self.config, self._serialize, self._deserialize)
-        self.integration_account_schemas = IntegrationAccountSchemasOperations(
+        self.schemas = SchemasOperations(
             self._client, self.config, self._serialize, self._deserialize)
-        self.integration_account_maps = IntegrationAccountMapsOperations(
+        self.maps = MapsOperations(
             self._client, self.config, self._serialize, self._deserialize)
-        self.integration_account_partners = IntegrationAccountPartnersOperations(
+        self.partners = PartnersOperations(
             self._client, self.config, self._serialize, self._deserialize)
-        self.integration_account_agreements = IntegrationAccountAgreementsOperations(
+        self.agreements = AgreementsOperations(
             self._client, self.config, self._serialize, self._deserialize)
-        self.integration_account_certificates = IntegrationAccountCertificatesOperations(
+        self.certificates = CertificatesOperations(
             self._client, self.config, self._serialize, self._deserialize)
+        self.sessions = SessionsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+
+    def list_operations(
+            self, custom_headers=None, raw=False, **operation_config):
+        """Lists all of the available Logic REST API operations.
+
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :rtype: :class:`OperationPaged
+         <azure.mgmt.logic.models.OperationPaged>`
+        :raises:
+         :class:`ErrorResponseException<azure.mgmt.logic.models.ErrorResponseException>`
+        """
+        def internal_paging(next_link=None, raw=False):
+
+            if not next_link:
+                # Construct URL
+                url = '/providers/Microsoft.Logic/operations'
+
+                # Construct parameters
+                query_parameters = {}
+                query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
+
+            else:
+                url = next_link
+                query_parameters = {}
+
+            # Construct headers
+            header_parameters = {}
+            header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+            if self.config.generate_client_request_id:
+                header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+            if custom_headers:
+                header_parameters.update(custom_headers)
+            if self.config.accept_language is not None:
+                header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+            # Construct and send request
+            request = self._client.get(url, query_parameters)
+            response = self._client.send(
+                request, header_parameters, **operation_config)
+
+            if response.status_code not in [200]:
+                raise models.ErrorResponseException(self._deserialize, response)
+
+            return response
+
+        # Deserialize response
+        deserialized = models.OperationPaged(internal_paging, self._deserialize.dependencies)
+
+        if raw:
+            header_dict = {}
+            client_raw_response = models.OperationPaged(internal_paging, self._deserialize.dependencies, header_dict)
+            return client_raw_response
+
+        return deserialized

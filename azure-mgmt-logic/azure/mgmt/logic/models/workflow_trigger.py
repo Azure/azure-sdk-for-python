@@ -13,13 +13,13 @@ from .sub_resource import SubResource
 
 
 class WorkflowTrigger(SubResource):
-    """WorkflowTrigger.
+    """The workflow trigger.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :param id: The resource id.
-    :type id: str
+    :ivar id: The resource id.
+    :vartype id: str
     :ivar provisioning_state: Gets the provisioning state. Possible values
      include: 'NotSpecified', 'Accepted', 'Running', 'Ready', 'Creating',
      'Created', 'Deleting', 'Deleted', 'Canceled', 'Failed', 'Succeeded',
@@ -55,9 +55,10 @@ class WorkflowTrigger(SubResource):
     :vartype name: str
     :ivar type: Gets the workflow trigger type.
     :vartype type: str
-    """ 
+    """
 
     _validation = {
+        'id': {'readonly': True},
         'provisioning_state': {'readonly': True},
         'created_time': {'readonly': True},
         'changed_time': {'readonly': True},
@@ -86,8 +87,8 @@ class WorkflowTrigger(SubResource):
         'type': {'key': 'type', 'type': 'str'},
     }
 
-    def __init__(self, id=None):
-        super(WorkflowTrigger, self).__init__(id=id)
+    def __init__(self):
+        super(WorkflowTrigger, self).__init__()
         self.provisioning_state = None
         self.created_time = None
         self.changed_time = None

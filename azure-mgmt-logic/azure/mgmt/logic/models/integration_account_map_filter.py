@@ -13,17 +13,20 @@ from msrest.serialization import Model
 
 
 class IntegrationAccountMapFilter(Model):
-    """IntegrationAccountMapFilter.
+    """The integration account map filter for odata query.
 
-    :param schema_type: The map type of integration account map. Possible
-     values include: 'NotSpecified', 'Xslt'
-    :type schema_type: str or :class:`MapType
-     <azure.mgmt.logic.models.MapType>`
-    """ 
+    :param map_type: The map type of integration account map. Possible values
+     include: 'NotSpecified', 'Xslt'
+    :type map_type: str or :class:`MapType <azure.mgmt.logic.models.MapType>`
+    """
 
-    _attribute_map = {
-        'schema_type': {'key': 'schemaType', 'type': 'MapType'},
+    _validation = {
+        'map_type': {'required': True},
     }
 
-    def __init__(self, schema_type=None):
-        self.schema_type = schema_type
+    _attribute_map = {
+        'map_type': {'key': 'mapType', 'type': 'MapType'},
+    }
+
+    def __init__(self, map_type):
+        self.map_type = map_type
