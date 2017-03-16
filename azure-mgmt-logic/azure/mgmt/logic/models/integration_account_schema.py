@@ -9,21 +9,21 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .integration_account_resource import IntegrationAccountResource
+from .resource import Resource
 
 
-class IntegrationAccountSchema(IntegrationAccountResource):
-    """IntegrationAccountSchema.
+class IntegrationAccountSchema(Resource):
+    """The integration account schema.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :param id: The resource id.
-    :type id: str
-    :param name: The resource name.
-    :type name: str
-    :param type: The resource type.
-    :type type: str
+    :ivar id: The resource id.
+    :vartype id: str
+    :ivar name: Gets the resource name.
+    :vartype name: str
+    :ivar type: Gets the resource type.
+    :vartype type: str
     :param location: The resource location.
     :type location: str
     :param tags: The resource tags.
@@ -32,24 +32,32 @@ class IntegrationAccountSchema(IntegrationAccountResource):
      'NotSpecified', 'Xml'
     :type schema_type: str or :class:`SchemaType
      <azure.mgmt.logic.models.SchemaType>`
-    :param target_namespace: The target namespace.
+    :param target_namespace: The target namespace of the schema.
     :type target_namespace: str
+    :param document_name: The document name.
+    :type document_name: str
+    :param file_name: The file name.
+    :type file_name: str
     :ivar created_time: The created time.
     :vartype created_time: datetime
     :ivar changed_time: The changed time.
     :vartype changed_time: datetime
+    :param metadata: The metadata.
+    :type metadata: object
     :param content: The content.
-    :type content: object
+    :type content: str
     :param content_type: The content type.
     :type content_type: str
     :ivar content_link: The content link.
-    :vartype content_link: :class:`IntegrationAccountContentLink
-     <azure.mgmt.logic.models.IntegrationAccountContentLink>`
-    :param metadata: The metadata.
-    :type metadata: object
-    """ 
+    :vartype content_link: :class:`ContentLink
+     <azure.mgmt.logic.models.ContentLink>`
+    """
 
     _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'schema_type': {'required': True},
         'created_time': {'readonly': True},
         'changed_time': {'readonly': True},
         'content_link': {'readonly': True},
@@ -63,21 +71,25 @@ class IntegrationAccountSchema(IntegrationAccountResource):
         'tags': {'key': 'tags', 'type': '{str}'},
         'schema_type': {'key': 'properties.schemaType', 'type': 'SchemaType'},
         'target_namespace': {'key': 'properties.targetNamespace', 'type': 'str'},
+        'document_name': {'key': 'properties.documentName', 'type': 'str'},
+        'file_name': {'key': 'properties.fileName', 'type': 'str'},
         'created_time': {'key': 'properties.createdTime', 'type': 'iso-8601'},
         'changed_time': {'key': 'properties.changedTime', 'type': 'iso-8601'},
-        'content': {'key': 'properties.content', 'type': 'object'},
-        'content_type': {'key': 'properties.contentType', 'type': 'str'},
-        'content_link': {'key': 'properties.contentLink', 'type': 'IntegrationAccountContentLink'},
         'metadata': {'key': 'properties.metadata', 'type': 'object'},
+        'content': {'key': 'properties.content', 'type': 'str'},
+        'content_type': {'key': 'properties.contentType', 'type': 'str'},
+        'content_link': {'key': 'properties.contentLink', 'type': 'ContentLink'},
     }
 
-    def __init__(self, id=None, name=None, type=None, location=None, tags=None, schema_type=None, target_namespace=None, content=None, content_type=None, metadata=None):
-        super(IntegrationAccountSchema, self).__init__(id=id, name=name, type=type, location=location, tags=tags)
+    def __init__(self, schema_type, location=None, tags=None, target_namespace=None, document_name=None, file_name=None, metadata=None, content=None, content_type=None):
+        super(IntegrationAccountSchema, self).__init__(location=location, tags=tags)
         self.schema_type = schema_type
         self.target_namespace = target_namespace
+        self.document_name = document_name
+        self.file_name = file_name
         self.created_time = None
         self.changed_time = None
+        self.metadata = metadata
         self.content = content
         self.content_type = content_type
         self.content_link = None
-        self.metadata = metadata

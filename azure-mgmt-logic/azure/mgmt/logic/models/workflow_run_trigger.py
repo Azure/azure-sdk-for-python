@@ -13,7 +13,7 @@ from msrest.serialization import Model
 
 
 class WorkflowRunTrigger(Model):
-    """WorkflowRunTrigger.
+    """The workflow run trigger.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -50,7 +50,7 @@ class WorkflowRunTrigger(Model):
     :vartype error: object
     :ivar tracked_properties: Gets the tracked properties.
     :vartype tracked_properties: object
-    """ 
+    """
 
     _validation = {
         'name': {'readonly': True},

@@ -9,21 +9,21 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .integration_account_resource import IntegrationAccountResource
+from .resource import Resource
 
 
-class IntegrationAccountAgreement(IntegrationAccountResource):
-    """IntegrationAccountAgreement.
+class IntegrationAccountAgreement(Resource):
+    """The integration account agreement.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :param id: The resource id.
-    :type id: str
-    :param name: The resource name.
-    :type name: str
-    :param type: The resource type.
-    :type type: str
+    :ivar id: The resource id.
+    :vartype id: str
+    :ivar name: Gets the resource name.
+    :vartype name: str
+    :ivar type: Gets the resource type.
+    :vartype type: str
     :param location: The resource location.
     :type location: str
     :param tags: The resource tags.
@@ -38,24 +38,35 @@ class IntegrationAccountAgreement(IntegrationAccountResource):
      'NotSpecified', 'AS2', 'X12', 'Edifact'
     :type agreement_type: str or :class:`AgreementType
      <azure.mgmt.logic.models.AgreementType>`
-    :param host_partner: The host partner.
+    :param host_partner: The integration account partner that is set as host
+     partner for this agreement.
     :type host_partner: str
-    :param guest_partner: The guest partner.
+    :param guest_partner: The integration account partner that is set as guest
+     partner for this agreement.
     :type guest_partner: str
-    :param host_identity: The host identity.
+    :param host_identity: The business identity of the host partner.
     :type host_identity: :class:`BusinessIdentity
      <azure.mgmt.logic.models.BusinessIdentity>`
-    :param guest_identity: The guest identity.
+    :param guest_identity: The business identity of the guest partner.
     :type guest_identity: :class:`BusinessIdentity
      <azure.mgmt.logic.models.BusinessIdentity>`
     :param content: The agreement content.
     :type content: :class:`AgreementContent
      <azure.mgmt.logic.models.AgreementContent>`
-    """ 
+    """
 
     _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
         'created_time': {'readonly': True},
         'changed_time': {'readonly': True},
+        'agreement_type': {'required': True},
+        'host_partner': {'required': True},
+        'guest_partner': {'required': True},
+        'host_identity': {'required': True},
+        'guest_identity': {'required': True},
+        'content': {'required': True},
     }
 
     _attribute_map = {
@@ -75,8 +86,8 @@ class IntegrationAccountAgreement(IntegrationAccountResource):
         'content': {'key': 'properties.content', 'type': 'AgreementContent'},
     }
 
-    def __init__(self, id=None, name=None, type=None, location=None, tags=None, metadata=None, agreement_type=None, host_partner=None, guest_partner=None, host_identity=None, guest_identity=None, content=None):
-        super(IntegrationAccountAgreement, self).__init__(id=id, name=name, type=type, location=location, tags=tags)
+    def __init__(self, agreement_type, host_partner, guest_partner, host_identity, guest_identity, content, location=None, tags=None, metadata=None):
+        super(IntegrationAccountAgreement, self).__init__(location=location, tags=tags)
         self.created_time = None
         self.changed_time = None
         self.metadata = metadata

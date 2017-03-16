@@ -12,20 +12,21 @@
 from msrest.serialization import Model
 
 
-class IntegrationAccountContentHash(Model):
-    """IntegrationAccountContentHash.
+class ErrorProperties(Model):
+    """Error properties indicate why the Logic service was not able to process the
+    incoming request. The reason is provided in the error message.
 
-    :param algorithm: The conetnt hash algorithm.
-    :type algorithm: str
-    :param value: The content hash value.
-    :type value: str
-    """ 
+    :param code: Error code.
+    :type code: str
+    :param message: Error message indicating why the operation failed.
+    :type message: str
+    """
 
     _attribute_map = {
-        'algorithm': {'key': 'algorithm', 'type': 'str'},
-        'value': {'key': 'value', 'type': 'str'},
+        'code': {'key': 'code', 'type': 'str'},
+        'message': {'key': 'message', 'type': 'str'},
     }
 
-    def __init__(self, algorithm=None, value=None):
-        self.algorithm = algorithm
-        self.value = value
+    def __init__(self, code=None, message=None):
+        self.code = code
+        self.message = message

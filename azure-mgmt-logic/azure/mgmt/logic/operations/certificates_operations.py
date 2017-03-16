@@ -16,14 +16,14 @@ import uuid
 from .. import models
 
 
-class IntegrationAccountCertificatesOperations(object):
-    """IntegrationAccountCertificatesOperations operations.
+class CertificatesOperations(object):
+    """CertificatesOperations operations.
 
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An objec model deserializer.
-    :ivar api_version: The API version. Constant value: "2015-08-01-preview".
+    :ivar api_version: The API version. Constant value: "2016-06-01".
     """
 
     def __init__(self, client, config, serializer, deserializer):
@@ -31,11 +31,11 @@ class IntegrationAccountCertificatesOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2015-08-01-preview"
+        self.api_version = "2016-06-01"
 
         self.config = config
 
-    def list(
+    def list_by_integration_accounts(
             self, resource_group_name, integration_account_name, top=None, custom_headers=None, raw=False, **operation_config):
         """Gets a list of integration account certificates.
 
@@ -52,6 +52,7 @@ class IntegrationAccountCertificatesOperations(object):
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`IntegrationAccountCertificatePaged
          <azure.mgmt.logic.models.IntegrationAccountCertificatePaged>`
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -126,6 +127,7 @@ class IntegrationAccountCertificatesOperations(object):
          <azure.mgmt.logic.models.IntegrationAccountCertificate>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Logic/integrationAccounts/{integrationAccountName}/certificates/{certificateName}'
@@ -193,6 +195,7 @@ class IntegrationAccountCertificatesOperations(object):
          <azure.mgmt.logic.models.IntegrationAccountCertificate>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Logic/integrationAccounts/{integrationAccountName}/certificates/{certificateName}'
@@ -262,6 +265,7 @@ class IntegrationAccountCertificatesOperations(object):
         :rtype: None
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Logic/integrationAccounts/{integrationAccountName}/certificates/{certificateName}'

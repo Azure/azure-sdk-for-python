@@ -13,7 +13,7 @@ from msrest.serialization import Model
 
 
 class EdifactEnvelopeOverride(Model):
-    """EdifactEnvelopeOverride.
+    """The Edifact enevlope override settings.
 
     :param message_id: The message id on which this envelope settings has to
      be applied.
@@ -21,11 +21,11 @@ class EdifactEnvelopeOverride(Model):
     :param message_version: The message version on which this envelope
      settings has to be applied.
     :type message_version: str
-    :param message_release: The message release version on which this
-     envelope settings has to be applied.
+    :param message_release: The message release version on which this envelope
+     settings has to be applied.
     :type message_release: str
-    :param message_association_assigned_code: The message association
-     assigned code.
+    :param message_association_assigned_code: The message association assigned
+     code.
     :type message_association_assigned_code: str
     :param target_namespace: The target namespace on which this envelope
      settings has to be applied.
@@ -50,7 +50,7 @@ class EdifactEnvelopeOverride(Model):
     :type association_assigned_code: str
     :param application_password: The application password.
     :type application_password: str
-    """ 
+    """
 
     _attribute_map = {
         'message_id': {'key': 'messageId', 'type': 'str'},

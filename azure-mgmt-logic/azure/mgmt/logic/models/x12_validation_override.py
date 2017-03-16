@@ -13,7 +13,7 @@ from msrest.serialization import Model
 
 
 class X12ValidationOverride(Model):
-    """X12ValidationOverride.
+    """The X12 validation override settings.
 
     :param message_id: The message id on which the validation settings has to
      be applied.
@@ -37,19 +37,29 @@ class X12ValidationOverride(Model):
      values include: 'NotSpecified', 'NotAllowed', 'Optional', 'Mandatory'
     :type trailing_separator_policy: str or :class:`TrailingSeparatorPolicy
      <azure.mgmt.logic.models.TrailingSeparatorPolicy>`
-    """ 
+    """
+
+    _validation = {
+        'message_id': {'required': True},
+        'validate_edi_types': {'required': True},
+        'validate_xsd_types': {'required': True},
+        'allow_leading_and_trailing_spaces_and_zeroes': {'required': True},
+        'validate_character_set': {'required': True},
+        'trim_leading_and_trailing_spaces_and_zeroes': {'required': True},
+        'trailing_separator_policy': {'required': True},
+    }
 
     _attribute_map = {
         'message_id': {'key': 'messageId', 'type': 'str'},
-        'validate_edi_types': {'key': 'validateEDITypes', 'type': 'bool'},
-        'validate_xsd_types': {'key': 'validateXSDTypes', 'type': 'bool'},
+        'validate_edi_types': {'key': 'validateEdiTypes', 'type': 'bool'},
+        'validate_xsd_types': {'key': 'validateXsdTypes', 'type': 'bool'},
         'allow_leading_and_trailing_spaces_and_zeroes': {'key': 'allowLeadingAndTrailingSpacesAndZeroes', 'type': 'bool'},
         'validate_character_set': {'key': 'validateCharacterSet', 'type': 'bool'},
         'trim_leading_and_trailing_spaces_and_zeroes': {'key': 'trimLeadingAndTrailingSpacesAndZeroes', 'type': 'bool'},
         'trailing_separator_policy': {'key': 'trailingSeparatorPolicy', 'type': 'TrailingSeparatorPolicy'},
     }
 
-    def __init__(self, message_id=None, validate_edi_types=None, validate_xsd_types=None, allow_leading_and_trailing_spaces_and_zeroes=None, validate_character_set=None, trim_leading_and_trailing_spaces_and_zeroes=None, trailing_separator_policy=None):
+    def __init__(self, message_id, validate_edi_types, validate_xsd_types, allow_leading_and_trailing_spaces_and_zeroes, validate_character_set, trim_leading_and_trailing_spaces_and_zeroes, trailing_separator_policy):
         self.message_id = message_id
         self.validate_edi_types = validate_edi_types
         self.validate_xsd_types = validate_xsd_types

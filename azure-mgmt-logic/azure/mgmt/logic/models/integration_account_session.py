@@ -12,8 +12,8 @@
 from .resource import Resource
 
 
-class IntegrationAccountPartner(Resource):
-    """The integration account partner.
+class IntegrationAccountSession(Resource):
+    """The integration account session.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -28,29 +28,20 @@ class IntegrationAccountPartner(Resource):
     :type location: str
     :param tags: The resource tags.
     :type tags: dict
-    :param partner_type: The partner type. Possible values include:
-     'NotSpecified', 'B2B'
-    :type partner_type: str or :class:`PartnerType
-     <azure.mgmt.logic.models.PartnerType>`
     :ivar created_time: The created time.
     :vartype created_time: datetime
     :ivar changed_time: The changed time.
     :vartype changed_time: datetime
-    :param metadata: The metadata.
-    :type metadata: object
-    :param content: The partner content.
-    :type content: :class:`PartnerContent
-     <azure.mgmt.logic.models.PartnerContent>`
+    :param content: The session content.
+    :type content: object
     """
 
     _validation = {
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
-        'partner_type': {'required': True},
         'created_time': {'readonly': True},
         'changed_time': {'readonly': True},
-        'content': {'required': True},
     }
 
     _attribute_map = {
@@ -59,17 +50,13 @@ class IntegrationAccountPartner(Resource):
         'type': {'key': 'type', 'type': 'str'},
         'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
-        'partner_type': {'key': 'properties.partnerType', 'type': 'PartnerType'},
         'created_time': {'key': 'properties.createdTime', 'type': 'iso-8601'},
         'changed_time': {'key': 'properties.changedTime', 'type': 'iso-8601'},
-        'metadata': {'key': 'properties.metadata', 'type': 'object'},
-        'content': {'key': 'properties.content', 'type': 'PartnerContent'},
+        'content': {'key': 'properties.content', 'type': 'object'},
     }
 
-    def __init__(self, partner_type, content, location=None, tags=None, metadata=None):
-        super(IntegrationAccountPartner, self).__init__(location=location, tags=tags)
-        self.partner_type = partner_type
+    def __init__(self, location=None, tags=None, content=None):
+        super(IntegrationAccountSession, self).__init__(location=location, tags=tags)
         self.created_time = None
         self.changed_time = None
-        self.metadata = metadata
         self.content = content

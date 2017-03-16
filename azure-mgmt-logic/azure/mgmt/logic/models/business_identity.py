@@ -13,19 +13,25 @@ from msrest.serialization import Model
 
 
 class BusinessIdentity(Model):
-    """BusinessIdentity.
+    """The integration account partner's business identity.
 
-    :param qualifier: The business identity qualifier.
+    :param qualifier: The business identity qualifier e.g. as2identity, ZZ,
+     ZZZ, 31, 32
     :type qualifier: str
-    :param value: The business identity value.
+    :param value: The user defined business identity value.
     :type value: str
-    """ 
+    """
 
-    _attribute_map = {
-        'qualifier': {'key': 'Qualifier', 'type': 'str'},
-        'value': {'key': 'Value', 'type': 'str'},
+    _validation = {
+        'qualifier': {'required': True},
+        'value': {'required': True},
     }
 
-    def __init__(self, qualifier=None, value=None):
+    _attribute_map = {
+        'qualifier': {'key': 'qualifier', 'type': 'str'},
+        'value': {'key': 'value', 'type': 'str'},
+    }
+
+    def __init__(self, qualifier, value):
         self.qualifier = qualifier
         self.value = value

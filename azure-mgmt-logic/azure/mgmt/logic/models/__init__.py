@@ -12,50 +12,43 @@
 from .resource import Resource
 from .sub_resource import SubResource
 from .resource_reference import ResourceReference
-from .workflow import Workflow
 from .sku import Sku
 from .workflow_parameter import WorkflowParameter
+from .workflow import Workflow
 from .workflow_filter import WorkflowFilter
 from .workflow_version import WorkflowVersion
-from .workflow_trigger import WorkflowTrigger
-from .workflow_trigger_recurrence import WorkflowTriggerRecurrence
-from .recurrence_schedule import RecurrenceSchedule
 from .recurrence_schedule_occurrence import RecurrenceScheduleOccurrence
+from .recurrence_schedule import RecurrenceSchedule
+from .workflow_trigger_recurrence import WorkflowTriggerRecurrence
+from .workflow_trigger import WorkflowTrigger
 from .workflow_trigger_filter import WorkflowTriggerFilter
 from .workflow_trigger_callback_url import WorkflowTriggerCallbackUrl
-from .workflow_trigger_history import WorkflowTriggerHistory
 from .correlation import Correlation
-from .content_link import ContentLink
 from .content_hash import ContentHash
+from .content_link import ContentLink
+from .workflow_trigger_history import WorkflowTriggerHistory
 from .workflow_trigger_history_filter import WorkflowTriggerHistoryFilter
-from .workflow_run import WorkflowRun
 from .workflow_run_trigger import WorkflowRunTrigger
 from .workflow_output_parameter import WorkflowOutputParameter
+from .workflow_run import WorkflowRun
 from .workflow_run_filter import WorkflowRunFilter
 from .workflow_run_action import WorkflowRunAction
 from .workflow_run_action_filter import WorkflowRunActionFilter
 from .generate_upgraded_definition_parameters import GenerateUpgradedDefinitionParameters
-from .integration_account_resource import IntegrationAccountResource
-from .integration_account_content_link import IntegrationAccountContentLink
-from .integration_account_content_hash import IntegrationAccountContentHash
-from .integration_account import IntegrationAccount
 from .integration_account_sku import IntegrationAccountSku
-from .list_callback_url_parameters import ListCallbackUrlParameters
+from .integration_account import IntegrationAccount
+from .get_callback_url_parameters import GetCallbackUrlParameters
 from .callback_url import CallbackUrl
 from .integration_account_schema import IntegrationAccountSchema
 from .integration_account_schema_filter import IntegrationAccountSchemaFilter
+from .integration_account_map_properties_parameters_schema import IntegrationAccountMapPropertiesParametersSchema
 from .integration_account_map import IntegrationAccountMap
 from .integration_account_map_filter import IntegrationAccountMapFilter
-from .integration_account_partner import IntegrationAccountPartner
-from .partner_content import PartnerContent
-from .b2_bpartner_content import B2BPartnerContent
 from .business_identity import BusinessIdentity
+from .b2_bpartner_content import B2BPartnerContent
+from .partner_content import PartnerContent
+from .integration_account_partner import IntegrationAccountPartner
 from .integration_account_partner_filter import IntegrationAccountPartnerFilter
-from .integration_account_agreement import IntegrationAccountAgreement
-from .agreement_content import AgreementContent
-from .as2_agreement_content import AS2AgreementContent
-from .as2_one_way_agreement import AS2OneWayAgreement
-from .as2_protocol_settings import AS2ProtocolSettings
 from .as2_message_connection_settings import AS2MessageConnectionSettings
 from .as2_acknowledgement_connection_settings import AS2AcknowledgementConnectionSettings
 from .as2_mdn_settings import AS2MdnSettings
@@ -63,9 +56,9 @@ from .as2_security_settings import AS2SecuritySettings
 from .as2_validation_settings import AS2ValidationSettings
 from .as2_envelope_settings import AS2EnvelopeSettings
 from .as2_error_settings import AS2ErrorSettings
-from .x12_agreement_content import X12AgreementContent
-from .x12_one_way_agreement import X12OneWayAgreement
-from .x12_protocol_settings import X12ProtocolSettings
+from .as2_protocol_settings import AS2ProtocolSettings
+from .as2_one_way_agreement import AS2OneWayAgreement
+from .as2_agreement_content import AS2AgreementContent
 from .x12_validation_settings import X12ValidationSettings
 from .x12_framing_settings import X12FramingSettings
 from .x12_envelope_settings import X12EnvelopeSettings
@@ -78,9 +71,9 @@ from .x12_validation_override import X12ValidationOverride
 from .x12_message_identifier import X12MessageIdentifier
 from .x12_schema_reference import X12SchemaReference
 from .x12_delimiter_overrides import X12DelimiterOverrides
-from .edifact_agreement_content import EdifactAgreementContent
-from .edifact_one_way_agreement import EdifactOneWayAgreement
-from .edifact_protocol_settings import EdifactProtocolSettings
+from .x12_protocol_settings import X12ProtocolSettings
+from .x12_one_way_agreement import X12OneWayAgreement
+from .x12_agreement_content import X12AgreementContent
 from .edifact_validation_settings import EdifactValidationSettings
 from .edifact_framing_settings import EdifactFramingSettings
 from .edifact_envelope_settings import EdifactEnvelopeSettings
@@ -92,10 +85,21 @@ from .edifact_message_identifier import EdifactMessageIdentifier
 from .edifact_schema_reference import EdifactSchemaReference
 from .edifact_validation_override import EdifactValidationOverride
 from .edifact_delimiter_override import EdifactDelimiterOverride
+from .edifact_protocol_settings import EdifactProtocolSettings
+from .edifact_one_way_agreement import EdifactOneWayAgreement
+from .edifact_agreement_content import EdifactAgreementContent
+from .agreement_content import AgreementContent
+from .integration_account_agreement import IntegrationAccountAgreement
 from .integration_account_agreement_filter import IntegrationAccountAgreementFilter
-from .integration_account_certificate import IntegrationAccountCertificate
-from .key_vault_key_reference import KeyVaultKeyReference
 from .key_vault_key_reference_key_vault import KeyVaultKeyReferenceKeyVault
+from .key_vault_key_reference import KeyVaultKeyReference
+from .integration_account_certificate import IntegrationAccountCertificate
+from .integration_account_session_filter import IntegrationAccountSessionFilter
+from .integration_account_session import IntegrationAccountSession
+from .operation_display import OperationDisplay
+from .operation import Operation
+from .error_properties import ErrorProperties
+from .error_response import ErrorResponse, ErrorResponseException
 from .workflow_paged import WorkflowPaged
 from .workflow_version_paged import WorkflowVersionPaged
 from .workflow_trigger_paged import WorkflowTriggerPaged
@@ -108,6 +112,8 @@ from .integration_account_map_paged import IntegrationAccountMapPaged
 from .integration_account_partner_paged import IntegrationAccountPartnerPaged
 from .integration_account_agreement_paged import IntegrationAccountAgreementPaged
 from .integration_account_certificate_paged import IntegrationAccountCertificatePaged
+from .integration_account_session_paged import IntegrationAccountSessionPaged
+from .operation_paged import OperationPaged
 from .logic_management_client_enums import (
     WorkflowProvisioningState,
     WorkflowState,
@@ -119,6 +125,7 @@ from .logic_management_client_enums import (
     DaysOfWeek,
     DayOfWeek,
     KeyType,
+    IntegrationAccountSkuName,
     SchemaType,
     MapType,
     PartnerType,
@@ -140,50 +147,43 @@ __all__ = [
     'Resource',
     'SubResource',
     'ResourceReference',
-    'Workflow',
     'Sku',
     'WorkflowParameter',
+    'Workflow',
     'WorkflowFilter',
     'WorkflowVersion',
-    'WorkflowTrigger',
-    'WorkflowTriggerRecurrence',
-    'RecurrenceSchedule',
     'RecurrenceScheduleOccurrence',
+    'RecurrenceSchedule',
+    'WorkflowTriggerRecurrence',
+    'WorkflowTrigger',
     'WorkflowTriggerFilter',
     'WorkflowTriggerCallbackUrl',
-    'WorkflowTriggerHistory',
     'Correlation',
-    'ContentLink',
     'ContentHash',
+    'ContentLink',
+    'WorkflowTriggerHistory',
     'WorkflowTriggerHistoryFilter',
-    'WorkflowRun',
     'WorkflowRunTrigger',
     'WorkflowOutputParameter',
+    'WorkflowRun',
     'WorkflowRunFilter',
     'WorkflowRunAction',
     'WorkflowRunActionFilter',
     'GenerateUpgradedDefinitionParameters',
-    'IntegrationAccountResource',
-    'IntegrationAccountContentLink',
-    'IntegrationAccountContentHash',
-    'IntegrationAccount',
     'IntegrationAccountSku',
-    'ListCallbackUrlParameters',
+    'IntegrationAccount',
+    'GetCallbackUrlParameters',
     'CallbackUrl',
     'IntegrationAccountSchema',
     'IntegrationAccountSchemaFilter',
+    'IntegrationAccountMapPropertiesParametersSchema',
     'IntegrationAccountMap',
     'IntegrationAccountMapFilter',
-    'IntegrationAccountPartner',
-    'PartnerContent',
-    'B2BPartnerContent',
     'BusinessIdentity',
+    'B2BPartnerContent',
+    'PartnerContent',
+    'IntegrationAccountPartner',
     'IntegrationAccountPartnerFilter',
-    'IntegrationAccountAgreement',
-    'AgreementContent',
-    'AS2AgreementContent',
-    'AS2OneWayAgreement',
-    'AS2ProtocolSettings',
     'AS2MessageConnectionSettings',
     'AS2AcknowledgementConnectionSettings',
     'AS2MdnSettings',
@@ -191,9 +191,9 @@ __all__ = [
     'AS2ValidationSettings',
     'AS2EnvelopeSettings',
     'AS2ErrorSettings',
-    'X12AgreementContent',
-    'X12OneWayAgreement',
-    'X12ProtocolSettings',
+    'AS2ProtocolSettings',
+    'AS2OneWayAgreement',
+    'AS2AgreementContent',
     'X12ValidationSettings',
     'X12FramingSettings',
     'X12EnvelopeSettings',
@@ -206,9 +206,9 @@ __all__ = [
     'X12MessageIdentifier',
     'X12SchemaReference',
     'X12DelimiterOverrides',
-    'EdifactAgreementContent',
-    'EdifactOneWayAgreement',
-    'EdifactProtocolSettings',
+    'X12ProtocolSettings',
+    'X12OneWayAgreement',
+    'X12AgreementContent',
     'EdifactValidationSettings',
     'EdifactFramingSettings',
     'EdifactEnvelopeSettings',
@@ -220,10 +220,21 @@ __all__ = [
     'EdifactSchemaReference',
     'EdifactValidationOverride',
     'EdifactDelimiterOverride',
+    'EdifactProtocolSettings',
+    'EdifactOneWayAgreement',
+    'EdifactAgreementContent',
+    'AgreementContent',
+    'IntegrationAccountAgreement',
     'IntegrationAccountAgreementFilter',
-    'IntegrationAccountCertificate',
-    'KeyVaultKeyReference',
     'KeyVaultKeyReferenceKeyVault',
+    'KeyVaultKeyReference',
+    'IntegrationAccountCertificate',
+    'IntegrationAccountSessionFilter',
+    'IntegrationAccountSession',
+    'OperationDisplay',
+    'Operation',
+    'ErrorProperties',
+    'ErrorResponse', 'ErrorResponseException',
     'WorkflowPaged',
     'WorkflowVersionPaged',
     'WorkflowTriggerPaged',
@@ -236,6 +247,8 @@ __all__ = [
     'IntegrationAccountPartnerPaged',
     'IntegrationAccountAgreementPaged',
     'IntegrationAccountCertificatePaged',
+    'IntegrationAccountSessionPaged',
+    'OperationPaged',
     'WorkflowProvisioningState',
     'WorkflowState',
     'SkuName',
@@ -246,6 +259,7 @@ __all__ = [
     'DaysOfWeek',
     'DayOfWeek',
     'KeyType',
+    'IntegrationAccountSkuName',
     'SchemaType',
     'MapType',
     'PartnerType',

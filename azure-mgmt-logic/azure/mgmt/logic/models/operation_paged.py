@@ -9,19 +9,19 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.serialization import Model
+from msrest.paging import Paged
 
 
-class ListCallbackUrlParameters(Model):
-    """ListCallbackUrlParameters.
-
-    :param not_after: The expiry time.
-    :type not_after: datetime
-    """ 
+class OperationPaged(Paged):
+    """
+    A paging container for iterating over a list of Operation object
+    """
 
     _attribute_map = {
-        'not_after': {'key': 'NotAfter', 'type': 'iso-8601'},
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[Operation]'}
     }
 
-    def __init__(self, not_after=None):
-        self.not_after = not_after
+    def __init__(self, *args, **kwargs):
+
+        super(OperationPaged, self).__init__(*args, **kwargs)

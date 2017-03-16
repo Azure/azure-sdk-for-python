@@ -13,7 +13,7 @@ from msrest.serialization import Model
 
 
 class EdifactAgreementContent(Model):
-    """EdifactAgreementContent.
+    """The Edifact agreement content.
 
     :param receive_agreement: The EDIFACT one-way receive agreement.
     :type receive_agreement: :class:`EdifactOneWayAgreement
@@ -21,13 +21,18 @@ class EdifactAgreementContent(Model):
     :param send_agreement: The EDIFACT one-way send agreement.
     :type send_agreement: :class:`EdifactOneWayAgreement
      <azure.mgmt.logic.models.EdifactOneWayAgreement>`
-    """ 
+    """
+
+    _validation = {
+        'receive_agreement': {'required': True},
+        'send_agreement': {'required': True},
+    }
 
     _attribute_map = {
         'receive_agreement': {'key': 'receiveAgreement', 'type': 'EdifactOneWayAgreement'},
         'send_agreement': {'key': 'sendAgreement', 'type': 'EdifactOneWayAgreement'},
     }
 
-    def __init__(self, receive_agreement=None, send_agreement=None):
+    def __init__(self, receive_agreement, send_agreement):
         self.receive_agreement = receive_agreement
         self.send_agreement = send_agreement
