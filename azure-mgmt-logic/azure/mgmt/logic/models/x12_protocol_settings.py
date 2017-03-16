@@ -13,7 +13,7 @@ from msrest.serialization import Model
 
 
 class X12ProtocolSettings(Model):
-    """X12ProtocolSettings.
+    """The X12 agreement protocol settings.
 
     :param validation_settings: The X12 validation settings.
     :type validation_settings: :class:`X12ValidationSettings
@@ -51,7 +51,18 @@ class X12ProtocolSettings(Model):
     :param x12_delimiter_overrides: The X12 delimiter override settings.
     :type x12_delimiter_overrides: list of :class:`X12DelimiterOverrides
      <azure.mgmt.logic.models.X12DelimiterOverrides>`
-    """ 
+    """
+
+    _validation = {
+        'validation_settings': {'required': True},
+        'framing_settings': {'required': True},
+        'envelope_settings': {'required': True},
+        'acknowledgement_settings': {'required': True},
+        'message_filter': {'required': True},
+        'security_settings': {'required': True},
+        'processing_settings': {'required': True},
+        'schema_references': {'required': True},
+    }
 
     _attribute_map = {
         'validation_settings': {'key': 'validationSettings', 'type': 'X12ValidationSettings'},
@@ -68,7 +79,7 @@ class X12ProtocolSettings(Model):
         'x12_delimiter_overrides': {'key': 'x12DelimiterOverrides', 'type': '[X12DelimiterOverrides]'},
     }
 
-    def __init__(self, validation_settings=None, framing_settings=None, envelope_settings=None, acknowledgement_settings=None, message_filter=None, security_settings=None, processing_settings=None, envelope_overrides=None, validation_overrides=None, message_filter_list=None, schema_references=None, x12_delimiter_overrides=None):
+    def __init__(self, validation_settings, framing_settings, envelope_settings, acknowledgement_settings, message_filter, security_settings, processing_settings, schema_references, envelope_overrides=None, validation_overrides=None, message_filter_list=None, x12_delimiter_overrides=None):
         self.validation_settings = validation_settings
         self.framing_settings = framing_settings
         self.envelope_settings = envelope_settings

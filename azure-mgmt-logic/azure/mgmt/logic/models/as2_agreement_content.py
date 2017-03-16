@@ -13,7 +13,7 @@ from msrest.serialization import Model
 
 
 class AS2AgreementContent(Model):
-    """AS2AgreementContent.
+    """The integration account AS2 agreement content.
 
     :param receive_agreement: The AS2 one-way receive agreement.
     :type receive_agreement: :class:`AS2OneWayAgreement
@@ -21,13 +21,18 @@ class AS2AgreementContent(Model):
     :param send_agreement: The AS2 one-way send agreement.
     :type send_agreement: :class:`AS2OneWayAgreement
      <azure.mgmt.logic.models.AS2OneWayAgreement>`
-    """ 
+    """
+
+    _validation = {
+        'receive_agreement': {'required': True},
+        'send_agreement': {'required': True},
+    }
 
     _attribute_map = {
         'receive_agreement': {'key': 'receiveAgreement', 'type': 'AS2OneWayAgreement'},
         'send_agreement': {'key': 'sendAgreement', 'type': 'AS2OneWayAgreement'},
     }
 
-    def __init__(self, receive_agreement=None, send_agreement=None):
+    def __init__(self, receive_agreement, send_agreement):
         self.receive_agreement = receive_agreement
         self.send_agreement = send_agreement

@@ -9,19 +9,19 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.serialization import Model
+from msrest.paging import Paged
 
 
-class Correlation(Model):
-    """The correlation property.
-
-    :param client_tracking_id: The client tracking id.
-    :type client_tracking_id: str
+class IntegrationAccountSessionPaged(Paged):
+    """
+    A paging container for iterating over a list of IntegrationAccountSession object
     """
 
     _attribute_map = {
-        'client_tracking_id': {'key': 'clientTrackingId', 'type': 'str'},
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[IntegrationAccountSession]'}
     }
 
-    def __init__(self, client_tracking_id=None):
-        self.client_tracking_id = client_tracking_id
+    def __init__(self, *args, **kwargs):
+
+        super(IntegrationAccountSessionPaged, self).__init__(*args, **kwargs)

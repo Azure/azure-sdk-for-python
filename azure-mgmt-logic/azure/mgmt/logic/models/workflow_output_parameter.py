@@ -13,7 +13,7 @@ from .workflow_parameter import WorkflowParameter
 
 
 class WorkflowOutputParameter(WorkflowParameter):
-    """WorkflowOutputParameter.
+    """The workflow output parameter.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -30,7 +30,7 @@ class WorkflowOutputParameter(WorkflowParameter):
     :type description: str
     :ivar error: Gets the error.
     :vartype error: object
-    """ 
+    """
 
     _validation = {
         'error': {'readonly': True},

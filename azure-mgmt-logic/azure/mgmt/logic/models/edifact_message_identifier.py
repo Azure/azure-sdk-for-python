@@ -13,16 +13,20 @@ from msrest.serialization import Model
 
 
 class EdifactMessageIdentifier(Model):
-    """EdifactMessageIdentifier.
+    """The Edifact message identifier.
 
     :param message_id: The message id on which this envelope settings has to
      be applied.
     :type message_id: str
-    """ 
+    """
+
+    _validation = {
+        'message_id': {'required': True},
+    }
 
     _attribute_map = {
         'message_id': {'key': 'messageId', 'type': 'str'},
     }
 
-    def __init__(self, message_id=None):
+    def __init__(self, message_id):
         self.message_id = message_id

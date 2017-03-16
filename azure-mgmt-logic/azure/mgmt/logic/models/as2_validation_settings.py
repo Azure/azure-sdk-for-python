@@ -13,13 +13,13 @@ from msrest.serialization import Model
 
 
 class AS2ValidationSettings(Model):
-    """AS2ValidationSettings.
+    """The AS2 agreement validation settings.
 
     :param override_message_properties: The value indicating whether to
      override incoming message properties with those in agreement.
     :type override_message_properties: bool
-    :param encrypt_message: The value indicating whether the message has to
-     be encrypted.
+    :param encrypt_message: The value indicating whether the message has to be
+     encrypted.
     :type encrypt_message: bool
     :param sign_message: The value indicating whether the message has to be
      signed.
@@ -44,7 +44,19 @@ class AS2ValidationSettings(Model):
      'AES256'
     :type encryption_algorithm: str or :class:`EncryptionAlgorithm
      <azure.mgmt.logic.models.EncryptionAlgorithm>`
-    """ 
+    """
+
+    _validation = {
+        'override_message_properties': {'required': True},
+        'encrypt_message': {'required': True},
+        'sign_message': {'required': True},
+        'compress_message': {'required': True},
+        'check_duplicate_message': {'required': True},
+        'interchange_duplicates_validity_days': {'required': True},
+        'check_certificate_revocation_list_on_send': {'required': True},
+        'check_certificate_revocation_list_on_receive': {'required': True},
+        'encryption_algorithm': {'required': True},
+    }
 
     _attribute_map = {
         'override_message_properties': {'key': 'overrideMessageProperties', 'type': 'bool'},
@@ -58,7 +70,7 @@ class AS2ValidationSettings(Model):
         'encryption_algorithm': {'key': 'encryptionAlgorithm', 'type': 'EncryptionAlgorithm'},
     }
 
-    def __init__(self, override_message_properties=None, encrypt_message=None, sign_message=None, compress_message=None, check_duplicate_message=None, interchange_duplicates_validity_days=None, check_certificate_revocation_list_on_send=None, check_certificate_revocation_list_on_receive=None, encryption_algorithm=None):
+    def __init__(self, override_message_properties, encrypt_message, sign_message, compress_message, check_duplicate_message, interchange_duplicates_validity_days, check_certificate_revocation_list_on_send, check_certificate_revocation_list_on_receive, encryption_algorithm):
         self.override_message_properties = override_message_properties
         self.encrypt_message = encrypt_message
         self.sign_message = sign_message

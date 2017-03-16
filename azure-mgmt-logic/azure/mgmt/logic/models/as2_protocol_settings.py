@@ -13,13 +13,13 @@ from msrest.serialization import Model
 
 
 class AS2ProtocolSettings(Model):
-    """AS2ProtocolSettings.
+    """The AS2 agreement protocol settings.
 
     :param message_connection_settings: The message connection settings.
     :type message_connection_settings: :class:`AS2MessageConnectionSettings
      <azure.mgmt.logic.models.AS2MessageConnectionSettings>`
-    :param acknowledgement_connection_settings: The acknowledgement
-     connection settings.
+    :param acknowledgement_connection_settings: The acknowledgement connection
+     settings.
     :type acknowledgement_connection_settings:
      :class:`AS2AcknowledgementConnectionSettings
      <azure.mgmt.logic.models.AS2AcknowledgementConnectionSettings>`
@@ -38,7 +38,17 @@ class AS2ProtocolSettings(Model):
     :param error_settings: The error settings.
     :type error_settings: :class:`AS2ErrorSettings
      <azure.mgmt.logic.models.AS2ErrorSettings>`
-    """ 
+    """
+
+    _validation = {
+        'message_connection_settings': {'required': True},
+        'acknowledgement_connection_settings': {'required': True},
+        'mdn_settings': {'required': True},
+        'security_settings': {'required': True},
+        'validation_settings': {'required': True},
+        'envelope_settings': {'required': True},
+        'error_settings': {'required': True},
+    }
 
     _attribute_map = {
         'message_connection_settings': {'key': 'messageConnectionSettings', 'type': 'AS2MessageConnectionSettings'},
@@ -50,7 +60,7 @@ class AS2ProtocolSettings(Model):
         'error_settings': {'key': 'errorSettings', 'type': 'AS2ErrorSettings'},
     }
 
-    def __init__(self, message_connection_settings=None, acknowledgement_connection_settings=None, mdn_settings=None, security_settings=None, validation_settings=None, envelope_settings=None, error_settings=None):
+    def __init__(self, message_connection_settings, acknowledgement_connection_settings, mdn_settings, security_settings, validation_settings, envelope_settings, error_settings):
         self.message_connection_settings = message_connection_settings
         self.acknowledgement_connection_settings = acknowledgement_connection_settings
         self.mdn_settings = mdn_settings

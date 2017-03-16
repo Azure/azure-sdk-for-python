@@ -13,18 +13,22 @@ from msrest.serialization import Model
 
 
 class IntegrationAccountAgreementFilter(Model):
-    """IntegrationAccountAgreementFilter.
+    """The integration account agreement filter for odata query.
 
     :param agreement_type: The agreement type of integration account
      agreement. Possible values include: 'NotSpecified', 'AS2', 'X12',
      'Edifact'
     :type agreement_type: str or :class:`AgreementType
      <azure.mgmt.logic.models.AgreementType>`
-    """ 
+    """
+
+    _validation = {
+        'agreement_type': {'required': True},
+    }
 
     _attribute_map = {
         'agreement_type': {'key': 'agreementType', 'type': 'AgreementType'},
     }
 
-    def __init__(self, agreement_type=None):
+    def __init__(self, agreement_type):
         self.agreement_type = agreement_type

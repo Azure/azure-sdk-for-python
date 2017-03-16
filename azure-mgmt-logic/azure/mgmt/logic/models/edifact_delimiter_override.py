@@ -13,7 +13,7 @@ from msrest.serialization import Model
 
 
 class EdifactDelimiterOverride(Model):
-    """EdifactDelimiterOverride.
+    """The Edifact delimiter override settings.
 
     :param message_id: The message id.
     :type message_id: str
@@ -39,13 +39,23 @@ class EdifactDelimiterOverride(Model):
      <azure.mgmt.logic.models.EdifactDecimalIndicator>`
     :param release_indicator: The release indicator.
     :type release_indicator: int
-    :param message_association_assigned_code: The message association
-     assigned code.
+    :param message_association_assigned_code: The message association assigned
+     code.
     :type message_association_assigned_code: str
     :param target_namespace: The target namespace on which this delimiter
      settings has to be applied.
     :type target_namespace: str
-    """ 
+    """
+
+    _validation = {
+        'data_element_separator': {'required': True},
+        'component_separator': {'required': True},
+        'segment_terminator': {'required': True},
+        'repetition_separator': {'required': True},
+        'segment_terminator_suffix': {'required': True},
+        'decimal_point_indicator': {'required': True},
+        'release_indicator': {'required': True},
+    }
 
     _attribute_map = {
         'message_id': {'key': 'messageId', 'type': 'str'},
@@ -62,7 +72,7 @@ class EdifactDelimiterOverride(Model):
         'target_namespace': {'key': 'targetNamespace', 'type': 'str'},
     }
 
-    def __init__(self, message_id=None, message_version=None, message_release=None, data_element_separator=None, component_separator=None, segment_terminator=None, repetition_separator=None, segment_terminator_suffix=None, decimal_point_indicator=None, release_indicator=None, message_association_assigned_code=None, target_namespace=None):
+    def __init__(self, data_element_separator, component_separator, segment_terminator, repetition_separator, segment_terminator_suffix, decimal_point_indicator, release_indicator, message_id=None, message_version=None, message_release=None, message_association_assigned_code=None, target_namespace=None):
         self.message_id = message_id
         self.message_version = message_version
         self.message_release = message_release

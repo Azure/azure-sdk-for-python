@@ -145,11 +145,10 @@
       "output_dir": "azure-keyvault/azure/keyvault/generated"
     },
     "logic": {
-      "swagger": "arm-logic/CompositeLogicClient.json",
+      "swagger": "arm-logic/2016-06-01/swagger/logic.json",
       "autorest_options": {
         "Namespace": "azure.mgmt.logic",
-        "Modeler": "CompositeSwagger",
-        "PackageVersion": "1.0.0"
+        "PackageVersion": "2.0.0"
       },
       "output_dir": "azure-mgmt-logic/azure/mgmt/logic"
     },
