@@ -12,43 +12,40 @@
 from .resource import Resource
 
 
-class Schema(Resource):
-    """Represents a database schema.
+class TrackedResource(Resource):
+    """ARM tracked top level resource.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar name: Resource name
-    :vartype name: str
-    :ivar id: Resource ID
+    :ivar id: Resource ID.
     :vartype id: str
-    :ivar type: Resource type
+    :ivar name: Resource name.
+    :vartype name: str
+    :ivar type: Resource type.
     :vartype type: str
-    :param location: Resource location
-    :type location: str
-    :param tags: Resource tags
+    :param tags: Resource tags.
     :type tags: dict
-    :ivar tables: The tables from this database.
-    :vartype tables: list of :class:`Table <azure.mgmt.sql.models.Table>`
+    :param location: Resource location.
+    :type location: str
     """
 
     _validation = {
-        'name': {'readonly': True},
         'id': {'readonly': True},
+        'name': {'readonly': True},
         'type': {'readonly': True},
         'location': {'required': True},
-        'tables': {'readonly': True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
         'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
-        'tables': {'key': 'properties.tables', 'type': '[Table]'},
+        'location': {'key': 'location', 'type': 'str'},
     }
 
     def __init__(self, location, tags=None):
-        super(Schema, self).__init__(location=location, tags=tags)
-        self.tables = None
+        super(TrackedResource, self).__init__()
+        self.tags = tags
+        self.location = location
