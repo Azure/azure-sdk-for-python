@@ -9,21 +9,25 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .sql_typed_sub_resource import SqlTypedSubResource
+from .proxy_resource import ProxyResource
 
 
-class DatabaseBlobAuditingPolicy(SqlTypedSubResource):
+class DatabaseBlobAuditingPolicy(ProxyResource):
     """Contains information about a database Blob Auditing policy.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar name: Resource name
-    :vartype name: str
-    :ivar id: The resource ID.
+    :ivar id: Resource ID.
     :vartype id: str
-    :ivar type: Resource type
+    :ivar name: Resource name.
+    :vartype name: str
+    :ivar type: Resource type.
     :vartype type: str
+    :param location: The geo-location where the resource lives
+    :type location: str
+    :ivar kind: Resource kind.
+    :vartype kind: str
     :param state: Specifies the state of the policy. If state is Enabled,
      storageEndpoint and storageAccountAccessKey are required. Possible values
      include: 'Enabled', 'Disabled'
@@ -52,16 +56,19 @@ class DatabaseBlobAuditingPolicy(SqlTypedSubResource):
     """
 
     _validation = {
-        'name': {'readonly': True},
         'id': {'readonly': True},
+        'name': {'readonly': True},
         'type': {'readonly': True},
+        'kind': {'readonly': True},
         'state': {'required': True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
         'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
+        'location': {'key': 'location', 'type': 'str'},
+        'kind': {'key': 'kind', 'type': 'str'},
         'state': {'key': 'properties.state', 'type': 'BlobAuditingPolicyState'},
         'storage_endpoint': {'key': 'properties.storageEndpoint', 'type': 'str'},
         'storage_account_access_key': {'key': 'properties.storageAccountAccessKey', 'type': 'str'},
@@ -71,8 +78,10 @@ class DatabaseBlobAuditingPolicy(SqlTypedSubResource):
         'is_storage_secondary_key_in_use': {'key': 'properties.isStorageSecondaryKeyInUse', 'type': 'bool'},
     }
 
-    def __init__(self, state, storage_endpoint=None, storage_account_access_key=None, retention_days=None, audit_actions_and_groups=None, storage_account_subscription_id=None, is_storage_secondary_key_in_use=None):
+    def __init__(self, state, location=None, storage_endpoint=None, storage_account_access_key=None, retention_days=None, audit_actions_and_groups=None, storage_account_subscription_id=None, is_storage_secondary_key_in_use=None):
         super(DatabaseBlobAuditingPolicy, self).__init__()
+        self.location = location
+        self.kind = None
         self.state = state
         self.storage_endpoint = storage_endpoint
         self.storage_account_access_key = storage_account_access_key
