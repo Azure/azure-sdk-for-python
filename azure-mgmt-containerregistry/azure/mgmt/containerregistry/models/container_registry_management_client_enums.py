@@ -9,10 +9,21 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .container_registry_management_client import ContainerRegistryManagementClient
-from .version import VERSION
+from enum import Enum
 
-__all__ = ['ContainerRegistryManagementClient']
 
-__version__ = VERSION
+class SkuTier(Enum):
 
+    basic = "Basic"
+
+
+class ProvisioningState(Enum):
+
+    creating = "Creating"
+    succeeded = "Succeeded"
+
+
+class PasswordName(Enum):
+
+    password = "password"
+    password2 = "password2"
