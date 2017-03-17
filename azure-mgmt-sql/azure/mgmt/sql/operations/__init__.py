@@ -9,6 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
+from .capabilities_operations import CapabilitiesOperations
 from .servers_operations import ServersOperations
 from .databases_operations import DatabasesOperations
 from .import_export_operations import ImportExportOperations
@@ -18,6 +19,7 @@ from .database_threat_detection_policies_operations import DatabaseThreatDetecti
 from .database_blob_auditing_policies_operations import DatabaseBlobAuditingPoliciesOperations
 
 __all__ = [
+    'CapabilitiesOperations',
     'ServersOperations',
     'DatabasesOperations',
     'ImportExportOperations',
