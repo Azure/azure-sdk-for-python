@@ -11,6 +11,7 @@
 
 from msrest.pipeline import ClientRawResponse
 from msrestazure.azure_exceptions import CloudError
+from msrestazure.azure_operation import AzureOperationPoller
 import uuid
 
 from .. import models
@@ -23,6 +24,7 @@ class RegistriesOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An objec model deserializer.
+    :ivar api_version: The client API version. Constant value: "2017-03-01".
     """
 
     def __init__(self, client, config, serializer, deserializer):
@@ -30,6 +32,7 @@ class RegistriesOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
+        self.api_version = "2017-03-01"
 
         self.config = config
 
@@ -63,7 +66,7 @@ class RegistriesOperations(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -99,7 +102,7 @@ class RegistriesOperations(object):
 
         return deserialized
 
-    def get_properties(
+    def get(
             self, resource_group_name, registry_name, custom_headers=None, raw=False, **operation_config):
         """Gets the properties of the specified container registry.
 
@@ -124,13 +127,13 @@ class RegistriesOperations(object):
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            'registryName': self._serialize.url("registry_name", registry_name, 'str')
+            'registryName': self._serialize.url("registry_name", registry_name, 'str', max_length=50, min_length=5, pattern='^[a-zA-Z0-9]*$')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -162,25 +165,25 @@ class RegistriesOperations(object):
 
         return deserialized
 
-    def create_or_update(
-            self, resource_group_name, registry_name, registry, custom_headers=None, raw=False, **operation_config):
-        """Creates or updates a container registry with the specified parameters.
+    def create(
+            self, resource_group_name, registry_name, registry_create_parameters, custom_headers=None, raw=False, **operation_config):
+        """Creates a container registry with the specified parameters.
 
         :param resource_group_name: The name of the resource group to which
          the container registry belongs.
         :type resource_group_name: str
         :param registry_name: The name of the container registry.
         :type registry_name: str
-        :param registry: The parameters for creating or updating a container
-         registry.
-        :type registry: :class:`Registry
-         <azure.mgmt.containerregistry.models.Registry>`
+        :param registry_create_parameters: The parameters for creating a
+         container registry.
+        :type registry_create_parameters: :class:`RegistryCreateParameters
+         <azure.mgmt.containerregistry.models.RegistryCreateParameters>`
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`Registry
+        :rtype:
+         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
+         instance that returns :class:`Registry
          <azure.mgmt.containerregistry.models.Registry>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
@@ -191,13 +194,13 @@ class RegistriesOperations(object):
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            'registryName': self._serialize.url("registry_name", registry_name, 'str')
+            'registryName': self._serialize.url("registry_name", registry_name, 'str', max_length=50, min_length=5, pattern='^[a-zA-Z0-9]*$')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -210,28 +213,51 @@ class RegistriesOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct body
-        body_content = self._serialize.body(registry, 'Registry')
+        body_content = self._serialize.body(registry_create_parameters, 'RegistryCreateParameters')
 
         # Construct and send request
-        request = self._client.put(url, query_parameters)
-        response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+        def long_running_send():
 
-        if response.status_code not in [200, 202]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            request = self._client.put(url, query_parameters)
+            return self._client.send(
+                request, header_parameters, body_content, **operation_config)
 
-        deserialized = None
+        def get_long_running_status(status_link, headers=None):
 
-        if response.status_code == 200:
-            deserialized = self._deserialize('Registry', response)
+            request = self._client.get(status_link)
+            if headers:
+                request.headers.update(headers)
+            return self._client.send(
+                request, header_parameters, **operation_config)
+
+        def get_long_running_output(response):
+
+            if response.status_code not in [200, 202]:
+                exp = CloudError(response)
+                exp.request_id = response.headers.get('x-ms-request-id')
+                raise exp
+
+            deserialized = None
+
+            if response.status_code == 200:
+                deserialized = self._deserialize('Registry', response)
+
+            if raw:
+                client_raw_response = ClientRawResponse(deserialized, response)
+                return client_raw_response
+
+            return deserialized
 
         if raw:
-            client_raw_response = ClientRawResponse(deserialized, response)
-            return client_raw_response
+            response = long_running_send()
+            return get_long_running_output(response)
 
-        return deserialized
+        long_running_operation_timeout = operation_config.get(
+            'long_running_operation_timeout',
+            self.config.long_running_operation_timeout)
+        return AzureOperationPoller(
+            long_running_send, get_long_running_output,
+            get_long_running_status, long_running_operation_timeout)
 
     def delete(
             self, resource_group_name, registry_name, custom_headers=None, raw=False, **operation_config):
@@ -257,13 +283,13 @@ class RegistriesOperations(object):
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            'registryName': self._serialize.url("registry_name", registry_name, 'str')
+            'registryName': self._serialize.url("registry_name", registry_name, 'str', max_length=50, min_length=5, pattern='^[a-zA-Z0-9]*$')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -317,13 +343,13 @@ class RegistriesOperations(object):
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            'registryName': self._serialize.url("registry_name", registry_name, 'str')
+            'registryName': self._serialize.url("registry_name", registry_name, 'str', max_length=50, min_length=5, pattern='^[a-zA-Z0-9]*$')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -361,8 +387,7 @@ class RegistriesOperations(object):
 
     def list_by_resource_group(
             self, resource_group_name, custom_headers=None, raw=False, **operation_config):
-        """Lists all the available container registries under the specified
-        resource group.
+        """Lists all the container registries under the specified resource group.
 
         :param resource_group_name: The name of the resource group to which
          the container registry belongs.
@@ -389,7 +414,7 @@ class RegistriesOperations(object):
 
                 # Construct parameters
                 query_parameters = {}
-                query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
+                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
             else:
                 url = next_link
@@ -429,8 +454,7 @@ class RegistriesOperations(object):
 
     def list(
             self, custom_headers=None, raw=False, **operation_config):
-        """Lists all the available container registries under the specified
-        subscription.
+        """Lists all the container registries under the specified subscription.
 
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -453,7 +477,7 @@ class RegistriesOperations(object):
 
                 # Construct parameters
                 query_parameters = {}
-                query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
+                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
             else:
                 url = next_link
@@ -491,10 +515,9 @@ class RegistriesOperations(object):
 
         return deserialized
 
-    def get_credentials(
+    def list_credentials(
             self, resource_group_name, registry_name, custom_headers=None, raw=False, **operation_config):
-        """Gets the administrator login credentials for the specified container
-        registry.
+        """Lists the login credentials for the specified container registry.
 
         :param resource_group_name: The name of the resource group to which
          the container registry belongs.
@@ -506,24 +529,24 @@ class RegistriesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`RegistryCredentials
-         <azure.mgmt.containerregistry.models.RegistryCredentials>`
+        :rtype: :class:`RegistryListCredentialsResult
+         <azure.mgmt.containerregistry.models.RegistryListCredentialsResult>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ContainerRegistry/registries/{registryName}/getCredentials'
+        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ContainerRegistry/registries/{registryName}/listCredentials'
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            'registryName': self._serialize.url("registry_name", registry_name, 'str')
+            'registryName': self._serialize.url("registry_name", registry_name, 'str', max_length=50, min_length=5, pattern='^[a-zA-Z0-9]*$')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -547,7 +570,7 @@ class RegistriesOperations(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('RegistryCredentials', response)
+            deserialized = self._deserialize('RegistryListCredentialsResult', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
@@ -555,39 +578,46 @@ class RegistriesOperations(object):
 
         return deserialized
 
-    def regenerate_credentials(
-            self, resource_group_name, registry_name, custom_headers=None, raw=False, **operation_config):
-        """Regenerates the administrator login credentials for the specified
-        container registry.
+    def regenerate_credential(
+            self, resource_group_name, registry_name, name, custom_headers=None, raw=False, **operation_config):
+        """Regenerates one of the login credentials for the specified container
+        registry.
 
         :param resource_group_name: The name of the resource group to which
          the container registry belongs.
         :type resource_group_name: str
         :param registry_name: The name of the container registry.
         :type registry_name: str
+        :param name: Specifies name of the password which should be
+         regenerated -- password or password2. Possible values include:
+         'password', 'password2'
+        :type name: str or :class:`PasswordName
+         <azure.mgmt.containerregistry.models.PasswordName>`
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`RegistryCredentials
-         <azure.mgmt.containerregistry.models.RegistryCredentials>`
+        :rtype: :class:`RegistryListCredentialsResult
+         <azure.mgmt.containerregistry.models.RegistryListCredentialsResult>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
+        regenerate_credential_parameters = models.RegenerateCredentialParameters(name=name)
+
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ContainerRegistry/registries/{registryName}/regenerateCredentials'
+        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ContainerRegistry/registries/{registryName}/regenerateCredential'
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            'registryName': self._serialize.url("registry_name", registry_name, 'str')
+            'registryName': self._serialize.url("registry_name", registry_name, 'str', max_length=50, min_length=5, pattern='^[a-zA-Z0-9]*$')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -599,9 +629,13 @@ class RegistriesOperations(object):
         if self.config.accept_language is not None:
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
+        # Construct body
+        body_content = self._serialize.body(regenerate_credential_parameters, 'RegenerateCredentialParameters')
+
         # Construct and send request
         request = self._client.post(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(
+            request, header_parameters, body_content, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)
@@ -611,7 +645,7 @@ class RegistriesOperations(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('RegistryCredentials', response)
+            deserialized = self._deserialize('RegistryListCredentialsResult', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)

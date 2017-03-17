@@ -12,16 +12,25 @@
 from msrest.serialization import Model
 
 
-class StorageAccountProperties(Model):
-    """The properties of a storage account for a container registry.
+class StorageAccountParameters(Model):
+    """The parameters of a storage account for a container registry.
 
     :param name: The name of the storage account.
     :type name: str
+    :param access_key: The access key to the storage account.
+    :type access_key: str
     """
+
+    _validation = {
+        'name': {'required': True},
+        'access_key': {'required': True},
+    }
 
     _attribute_map = {
         'name': {'key': 'name', 'type': 'str'},
+        'access_key': {'key': 'accessKey', 'type': 'str'},
     }
 
-    def __init__(self, name=None):
+    def __init__(self, name, access_key):
         self.name = name
+        self.access_key = access_key
