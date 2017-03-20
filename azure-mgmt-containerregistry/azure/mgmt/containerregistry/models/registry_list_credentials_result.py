@@ -12,21 +12,21 @@
 from msrest.serialization import Model
 
 
-class RegistryCredentials(Model):
-    """The result of a request to get the administrator login credentials for a
-    container registry.
+class RegistryListCredentialsResult(Model):
+    """The response from the ListCredentials operation.
 
-    :param username: The administrator username.
+    :param username: The username for a container registry.
     :type username: str
-    :param password: The administrator password.
-    :type password: str
+    :param passwords: The list of passwords for a container registry.
+    :type passwords: list of :class:`RegistryPassword
+     <azure.mgmt.containerregistry.models.RegistryPassword>`
     """
 
     _attribute_map = {
         'username': {'key': 'username', 'type': 'str'},
-        'password': {'key': 'password', 'type': 'str'},
+        'passwords': {'key': 'passwords', 'type': '[RegistryPassword]'},
     }
 
-    def __init__(self, username=None, password=None):
+    def __init__(self, username=None, passwords=None):
         self.username = username
-        self.password = password
+        self.passwords = passwords

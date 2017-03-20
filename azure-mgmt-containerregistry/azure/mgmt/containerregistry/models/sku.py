@@ -12,31 +12,31 @@
 from msrest.serialization import Model
 
 
-class RegistryNameCheckRequest(Model):
-    """A request to check whether a container registry name is available.
+class Sku(Model):
+    """The SKU of a container registry.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :param name: The name of the container registry.
+    :param name: The SKU name of the the container registry. Required for
+     registry creation. Allowed value: Basic.
     :type name: str
-    :ivar type: The resource type of the container registry. This field must
-     be set to "Microsoft.ContainerRegistry/registries". Default value:
-     "Microsoft.ContainerRegistry/registries" .
-    :vartype type: str
+    :ivar tier: The SKU tier based on the SKU name. Possible values include:
+     'Basic'
+    :vartype tier: str or :class:`SkuTier
+     <azure.mgmt.containerregistry.models.SkuTier>`
     """
 
     _validation = {
-        'name': {'required': True, 'max_length': 50, 'min_length': 5, 'pattern': '^[a-zA-Z0-9]*$'},
-        'type': {'required': True, 'constant': True},
+        'name': {'required': True},
+        'tier': {'readonly': True},
     }
 
     _attribute_map = {
         'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
+        'tier': {'key': 'tier', 'type': 'str'},
     }
-
-    type = "Microsoft.ContainerRegistry/registries"
 
     def __init__(self, name):
         self.name = name
+        self.tier = None
