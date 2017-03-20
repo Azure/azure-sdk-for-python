@@ -64,10 +64,10 @@
       "output_dir": "azure-mgmt-compute/azure/mgmt/compute"
     },
     "containerregistry": {
-      "swagger": "arm-containerregistry/2016-06-27-preview/swagger/containerregistry.json",
+      "swagger": "arm-containerregistry/2017-03-01/swagger/containerregistry.json",
       "autorest_options": {
         "Namespace": "azure.mgmt.containerregistry",
-        "PackageVersion": "0.1.1"
+        "PackageVersion": "0.2.0"
       },
       "output_dir": "azure-mgmt-containerregistry/azure/mgmt/containerregistry"
     },

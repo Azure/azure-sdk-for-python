@@ -12,16 +12,22 @@
 from msrest.serialization import Model
 
 
-class StorageAccountProperties(Model):
-    """The properties of a storage account for a container registry.
+class RegistryPassword(Model):
+    """The login password for the container registry.
 
-    :param name: The name of the storage account.
-    :type name: str
+    :param name: The password name. Possible values include: 'password',
+     'password2'
+    :type name: str or :class:`PasswordName
+     <azure.mgmt.containerregistry.models.PasswordName>`
+    :param value: The password value.
+    :type value: str
     """
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'PasswordName'},
+        'value': {'key': 'value', 'type': 'str'},
     }
 
-    def __init__(self, name=None):
+    def __init__(self, name=None, value=None):
         self.name = name
+        self.value = value

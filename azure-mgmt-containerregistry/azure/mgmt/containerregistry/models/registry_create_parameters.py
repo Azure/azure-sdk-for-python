@@ -12,11 +12,16 @@
 from msrest.serialization import Model
 
 
-class RegistryUpdateParameters(Model):
-    """The parameters for updating a container registry.
+class RegistryCreateParameters(Model):
+    """The parameters for creating a container registry.
 
     :param tags: The tags for the container registry.
     :type tags: dict
+    :param location: The location of the container registry. This cannot be
+     changed after the resource is created.
+    :type location: str
+    :param sku: The SKU of the container registry.
+    :type sku: :class:`Sku <azure.mgmt.containerregistry.models.Sku>`
     :param admin_user_enabled: The value that indicates whether the admin user
      is enabled. This value is false by default.
     :type admin_user_enabled: bool
@@ -27,13 +32,23 @@ class RegistryUpdateParameters(Model):
      <azure.mgmt.containerregistry.models.StorageAccountParameters>`
     """
 
+    _validation = {
+        'location': {'required': True},
+        'sku': {'required': True},
+        'storage_account': {'required': True},
+    }
+
     _attribute_map = {
         'tags': {'key': 'tags', 'type': '{str}'},
+        'location': {'key': 'location', 'type': 'str'},
+        'sku': {'key': 'sku', 'type': 'Sku'},
         'admin_user_enabled': {'key': 'properties.adminUserEnabled', 'type': 'bool'},
         'storage_account': {'key': 'properties.storageAccount', 'type': 'StorageAccountParameters'},
     }
 
-    def __init__(self, tags=None, admin_user_enabled=None, storage_account=None):
+    def __init__(self, location, sku, storage_account, tags=None, admin_user_enabled=None):
         self.tags = tags
+        self.location = location
+        self.sku = sku
         self.admin_user_enabled = admin_user_enabled
         self.storage_account = storage_account

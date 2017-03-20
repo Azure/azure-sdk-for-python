@@ -11,20 +11,44 @@
 
 from .registry_name_check_request import RegistryNameCheckRequest
 from .registry_name_status import RegistryNameStatus
+from .operation_display_definition import OperationDisplayDefinition
+from .operation_definition import OperationDefinition
+from .sku import Sku
 from .storage_account_properties import StorageAccountProperties
 from .registry import Registry
+from .storage_account_parameters import StorageAccountParameters
+from .registry_create_parameters import RegistryCreateParameters
 from .registry_update_parameters import RegistryUpdateParameters
-from .registry_credentials import RegistryCredentials
+from .registry_password import RegistryPassword
+from .registry_list_credentials_result import RegistryListCredentialsResult
+from .regenerate_credential_parameters import RegenerateCredentialParameters
 from .resource import Resource
 from .registry_paged import RegistryPaged
+from .operation_definition_paged import OperationDefinitionPaged
+from .container_registry_management_client_enums import (
+    SkuTier,
+    ProvisioningState,
+    PasswordName,
+)
 
 __all__ = [
     'RegistryNameCheckRequest',
     'RegistryNameStatus',
+    'OperationDisplayDefinition',
+    'OperationDefinition',
+    'Sku',
     'StorageAccountProperties',
     'Registry',
+    'StorageAccountParameters',
+    'RegistryCreateParameters',
     'RegistryUpdateParameters',
-    'RegistryCredentials',
+    'RegistryPassword',
+    'RegistryListCredentialsResult',
+    'RegenerateCredentialParameters',
     'Resource',
     'RegistryPaged',
+    'OperationDefinitionPaged',
+    'SkuTier',
+    'ProvisioningState',
+    'PasswordName',
 ]
