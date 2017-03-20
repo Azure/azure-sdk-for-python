@@ -19,6 +19,8 @@ from .database_account_create_update_parameters import DatabaseAccountCreateUpda
 from .database_account_patch_parameters import DatabaseAccountPatchParameters
 from .database_account_list_read_only_keys_result import DatabaseAccountListReadOnlyKeysResult
 from .database_account_list_keys_result import DatabaseAccountListKeysResult
+from .database_account_connection_string import DatabaseAccountConnectionString
+from .database_account_list_connection_strings_result import DatabaseAccountListConnectionStringsResult
 from .database_account_regenerate_key_parameters import DatabaseAccountRegenerateKeyParameters
 from .database_account_paged import DatabaseAccountPaged
 from .document_db_enums import (
@@ -39,6 +41,8 @@ __all__ = [
     'DatabaseAccountPatchParameters',
     'DatabaseAccountListReadOnlyKeysResult',
     'DatabaseAccountListKeysResult',
+    'DatabaseAccountConnectionString',
+    'DatabaseAccountListConnectionStringsResult',
     'DatabaseAccountRegenerateKeyParameters',
     'DatabaseAccountPaged',
     'DatabaseAccountKind',
