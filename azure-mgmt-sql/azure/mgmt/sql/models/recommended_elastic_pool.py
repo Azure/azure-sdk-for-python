@@ -9,26 +9,30 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .proxy_resource import ProxyResource
+from .resource import Resource
 
 
-class RecommendedElasticPool(ProxyResource):
+class RecommendedElasticPool(Resource):
     """Represents a recommented elastic pool.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar id: Resource ID.
-    :vartype id: str
-    :ivar name: Resource name.
+    :ivar name: Resource name
     :vartype name: str
-    :ivar type: Resource type.
+    :ivar id: Resource ID
+    :vartype id: str
+    :ivar type: Resource type
     :vartype type: str
+    :param location: Resource location
+    :type location: str
+    :param tags: Resource tags
+    :type tags: dict
     :ivar database_edition: The edition of the recommended elastic pool. The
-     ElasticPoolEdition enumeration contains all the valid editions. Possible
+     ElasticPoolEditions enumeration contains all the valid editions. Possible
      values include: 'Basic', 'Standard', 'Premium'
-    :vartype database_edition: str or :class:`ElasticPoolEdition
-     <azure.mgmt.sql.models.ElasticPoolEdition>`
+    :vartype database_edition: str or :class:`ElasticPoolEditions
+     <azure.mgmt.sql.models.ElasticPoolEditions>`
     :param dtu: The DTU for the recommended elastic pool.
     :type dtu: float
     :param database_dtu_min: The minimum DTU for the database.
@@ -57,9 +61,10 @@ class RecommendedElasticPool(ProxyResource):
     """
 
     _validation = {
-        'id': {'readonly': True},
         'name': {'readonly': True},
+        'id': {'readonly': True},
         'type': {'readonly': True},
+        'location': {'required': True},
         'database_edition': {'readonly': True},
         'observation_period_start': {'readonly': True},
         'observation_period_end': {'readonly': True},
@@ -70,9 +75,11 @@ class RecommendedElasticPool(ProxyResource):
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
+        'id': {'key': 'id', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
+        'location': {'key': 'location', 'type': 'str'},
+        'tags': {'key': 'tags', 'type': '{str}'},
         'database_edition': {'key': 'properties.databaseEdition', 'type': 'str'},
         'dtu': {'key': 'properties.dtu', 'type': 'float'},
         'database_dtu_min': {'key': 'properties.databaseDtuMin', 'type': 'float'},
@@ -86,8 +93,8 @@ class RecommendedElasticPool(ProxyResource):
         'metrics': {'key': 'properties.metrics', 'type': '[RecommendedElasticPoolMetric]'},
     }
 
-    def __init__(self, dtu=None, database_dtu_min=None, database_dtu_max=None, storage_mb=None):
-        super(RecommendedElasticPool, self).__init__()
+    def __init__(self, location, tags=None, dtu=None, database_dtu_min=None, database_dtu_max=None, storage_mb=None):
+        super(RecommendedElasticPool, self).__init__(location=location, tags=tags)
         self.database_edition = None
         self.dtu = dtu
         self.database_dtu_min = database_dtu_min

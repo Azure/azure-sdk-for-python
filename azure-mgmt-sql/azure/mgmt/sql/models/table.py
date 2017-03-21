@@ -9,11 +9,11 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.serialization import Model
+from .resource import Resource
 
 
-class Resource(Model):
-    """Resource properties.
+class Table(Resource):
+    """Represents a database table.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -28,6 +28,15 @@ class Resource(Model):
     :type location: str
     :param tags: Resource tags
     :type tags: dict
+    :ivar table_type: The type of database table. Possible values include:
+     'BaseTable', 'View'
+    :vartype table_type: str or :class:`TableType
+     <azure.mgmt.sql.models.TableType>`
+    :ivar columns: The columns from this table.
+    :vartype columns: list of :class:`Column <azure.mgmt.sql.models.Column>`
+    :ivar recommended_indexes: The recommended indices for this table.
+    :vartype recommended_indexes: list of :class:`RecommendedIndex
+     <azure.mgmt.sql.models.RecommendedIndex>`
     """
 
     _validation = {
@@ -35,6 +44,9 @@ class Resource(Model):
         'id': {'readonly': True},
         'type': {'readonly': True},
         'location': {'required': True},
+        'table_type': {'readonly': True},
+        'columns': {'readonly': True},
+        'recommended_indexes': {'readonly': True},
     }
 
     _attribute_map = {
@@ -43,11 +55,13 @@ class Resource(Model):
         'type': {'key': 'type', 'type': 'str'},
         'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
+        'table_type': {'key': 'properties.tableType', 'type': 'TableType'},
+        'columns': {'key': 'properties.columns', 'type': '[Column]'},
+        'recommended_indexes': {'key': 'properties.recommendedIndexes', 'type': '[RecommendedIndex]'},
     }
 
     def __init__(self, location, tags=None):
-        self.name = None
-        self.id = None
-        self.type = None
-        self.location = location
-        self.tags = tags
+        super(Table, self).__init__(location=location, tags=tags)
+        self.table_type = None
+        self.columns = None
+        self.recommended_indexes = None

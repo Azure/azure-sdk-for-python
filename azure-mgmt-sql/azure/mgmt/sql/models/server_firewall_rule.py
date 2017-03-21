@@ -9,10 +9,10 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .sub_resource import SubResource
+from .sql_sub_resource import SqlSubResource
 
 
-class FirewallRule(SubResource):
+class ServerFirewallRule(SqlSubResource):
     """Represents a server firewall rule.
 
     Variables are only populated by the server, and will be ignored when
@@ -59,7 +59,7 @@ class FirewallRule(SubResource):
     }
 
     def __init__(self, start_ip_address, end_ip_address):
-        super(FirewallRule, self).__init__()
+        super(ServerFirewallRule, self).__init__()
         self.kind = None
         self.location = None
         self.type = None

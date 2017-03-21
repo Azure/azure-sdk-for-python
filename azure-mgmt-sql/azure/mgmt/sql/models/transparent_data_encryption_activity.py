@@ -9,10 +9,10 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .sub_resource import SubResource
+from .sql_sub_resource import SqlSubResource
 
 
-class TransparentDataEncryptionActivity(SubResource):
+class TransparentDataEncryptionActivity(SqlSubResource):
     """Represents a database transparent data encryption Scan.
 
     Variables are only populated by the server, and will be ignored when
@@ -24,8 +24,8 @@ class TransparentDataEncryptionActivity(SubResource):
     :vartype id: str
     :ivar status: The status of the database. Possible values include:
      'Encrypting', 'Decrypting'
-    :vartype status: str or :class:`TransparentDataEncryptionActivityStatus
-     <azure.mgmt.sql.models.TransparentDataEncryptionActivityStatus>`
+    :vartype status: str or :class:`TransparentDataEncryptionActivityStates
+     <azure.mgmt.sql.models.TransparentDataEncryptionActivityStates>`
     :ivar percent_complete: The percent complete of the transparent data
      encryption scan for a database.
     :vartype percent_complete: float

@@ -9,28 +9,31 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .resource import Resource
+from msrest.serialization import Model
 
 
-class ProxyResource(Resource):
-    """ARM proxy resource.
+class SqlSubResource(Model):
+    """Subresource properties.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar id: Resource ID.
-    :vartype id: str
-    :ivar name: Resource name.
+    :ivar name: Resource name
     :vartype name: str
-    :ivar type: Resource type.
-    :vartype type: str
+    :ivar id: The resource ID.
+    :vartype id: str
     """
 
     _validation = {
-        'id': {'readonly': True},
         'name': {'readonly': True},
-        'type': {'readonly': True},
+        'id': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'name': {'key': 'name', 'type': 'str'},
+        'id': {'key': 'id', 'type': 'str'},
     }
 
     def __init__(self):
-        super(ProxyResource, self).__init__()
+        self.name = None
+        self.id = None

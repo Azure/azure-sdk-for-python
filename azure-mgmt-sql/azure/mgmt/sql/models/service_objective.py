@@ -9,10 +9,10 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .sub_resource import SubResource
+from .sql_sub_resource import SqlSubResource
 
 
-class ServiceObjective(SubResource):
+class ServiceObjective(SqlSubResource):
     """Represents a database service objective.
 
     Variables are only populated by the server, and will be ignored when

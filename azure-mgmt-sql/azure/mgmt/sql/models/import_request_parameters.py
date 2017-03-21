@@ -9,11 +9,11 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.serialization import Model
+from .export_request_parameters import ExportRequestParameters
 
 
-class ExportRequest(Model):
-    """Export database parameters.
+class ImportRequestParameters(ExportRequestParameters):
+    """Import database parameters.
 
     :param storage_key_type: The type of the storage key to use. Valid values
      are StorageAccessKey and SharedAccessKey. Possible values include:
@@ -29,10 +29,19 @@ class ExportRequest(Model):
     :param administrator_login_password: The password of the SQL
      administrator.
     :type administrator_login_password: str
-    :param authentication_type: The authentication type. Possible values
-     include: 'SQL', 'ADPassword'. Default value: "SQL" .
+    :param authentication_type: The authentication type - if not specified,
+     will default to SQL. Possible values include: 'SQL', 'ADPassword'
     :type authentication_type: str or :class:`AuthenticationType
      <azure.mgmt.sql.models.AuthenticationType>`
+    :param database_name: The name of the database to import.
+    :type database_name: str
+    :param edition: The edition for the database being created.
+    :type edition: str
+    :param service_objective_name: The name of the service objective to assign
+     to the database.
+    :type service_objective_name: str
+    :param max_size_bytes: The maximum size for the newly imported database.
+    :type max_size_bytes: str
     """
 
     _validation = {
@@ -41,6 +50,10 @@ class ExportRequest(Model):
         'storage_uri': {'required': True},
         'administrator_login': {'required': True},
         'administrator_login_password': {'required': True},
+        'database_name': {'required': True},
+        'edition': {'required': True},
+        'service_objective_name': {'required': True},
+        'max_size_bytes': {'required': True},
     }
 
     _attribute_map = {
@@ -50,12 +63,15 @@ class ExportRequest(Model):
         'administrator_login': {'key': 'administratorLogin', 'type': 'str'},
         'administrator_login_password': {'key': 'administratorLoginPassword', 'type': 'str'},
         'authentication_type': {'key': 'authenticationType', 'type': 'AuthenticationType'},
+        'database_name': {'key': 'databaseName', 'type': 'str'},
+        'edition': {'key': 'edition', 'type': 'str'},
+        'service_objective_name': {'key': 'serviceObjectiveName', 'type': 'str'},
+        'max_size_bytes': {'key': 'maxSizeBytes', 'type': 'str'},
     }
 
-    def __init__(self, storage_key_type, storage_key, storage_uri, administrator_login, administrator_login_password, authentication_type="SQL"):
-        self.storage_key_type = storage_key_type
-        self.storage_key = storage_key
-        self.storage_uri = storage_uri
-        self.administrator_login = administrator_login
-        self.administrator_login_password = administrator_login_password
-        self.authentication_type = authentication_type
+    def __init__(self, storage_key_type, storage_key, storage_uri, administrator_login, administrator_login_password, database_name, edition, service_objective_name, max_size_bytes, authentication_type=None):
+        super(ImportRequestParameters, self).__init__(storage_key_type=storage_key_type, storage_key=storage_key, storage_uri=storage_uri, administrator_login=administrator_login, administrator_login_password=administrator_login_password, authentication_type=authentication_type)
+        self.database_name = database_name
+        self.edition = edition
+        self.service_objective_name = service_objective_name
+        self.max_size_bytes = max_size_bytes

@@ -9,31 +9,46 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.serialization import Model
+from .resource import Resource
 
 
-class SubResource(Model):
-    """Subresource properties.
+class Column(Resource):
+    """Represents a database table column.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
     :ivar name: Resource name
     :vartype name: str
-    :ivar id: The resource ID.
+    :ivar id: Resource ID
     :vartype id: str
+    :ivar type: Resource type
+    :vartype type: str
+    :param location: Resource location
+    :type location: str
+    :param tags: Resource tags
+    :type tags: dict
+    :ivar column_type: The type of database table column.
+    :vartype column_type: str
     """
 
     _validation = {
         'name': {'readonly': True},
         'id': {'readonly': True},
+        'type': {'readonly': True},
+        'location': {'required': True},
+        'column_type': {'readonly': True},
     }
 
     _attribute_map = {
         'name': {'key': 'name', 'type': 'str'},
         'id': {'key': 'id', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'location': {'key': 'location', 'type': 'str'},
+        'tags': {'key': 'tags', 'type': '{str}'},
+        'column_type': {'key': 'properties.columnType', 'type': 'str'},
     }
 
-    def __init__(self):
-        self.name = None
-        self.id = None
+    def __init__(self, location, tags=None):
+        super(Column, self).__init__(location=location, tags=tags)
+        self.column_type = None

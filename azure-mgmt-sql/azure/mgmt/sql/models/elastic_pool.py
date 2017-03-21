@@ -9,25 +9,25 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .tracked_resource import TrackedResource
+from .resource import Resource
 
 
-class ElasticPool(TrackedResource):
+class ElasticPool(Resource):
     """Represents a database elastic pool.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar id: Resource ID.
-    :vartype id: str
-    :ivar name: Resource name.
+    :ivar name: Resource name
     :vartype name: str
-    :ivar type: Resource type.
+    :ivar id: Resource ID
+    :vartype id: str
+    :ivar type: Resource type
     :vartype type: str
-    :param tags: Resource tags.
-    :type tags: dict
-    :param location: Resource location.
+    :param location: Resource location
     :type location: str
+    :param tags: Resource tags
+    :type tags: dict
     :ivar creation_date: The creation date of the elastic pool (ISO8601
      format).
     :vartype creation_date: datetime
@@ -37,8 +37,8 @@ class ElasticPool(TrackedResource):
      <azure.mgmt.sql.models.ElasticPoolState>`
     :param edition: The edition of the elastic pool. Possible values include:
      'Basic', 'Standard', 'Premium'
-    :type edition: str or :class:`ElasticPoolEdition
-     <azure.mgmt.sql.models.ElasticPoolEdition>`
+    :type edition: str or :class:`ElasticPoolEditions
+     <azure.mgmt.sql.models.ElasticPoolEditions>`
     :param dtu: The total shared DTU for the database elastic pool.
     :type dtu: int
     :param database_dtu_max: The maximum DTU any one database can consume.
@@ -53,8 +53,8 @@ class ElasticPool(TrackedResource):
     """
 
     _validation = {
-        'id': {'readonly': True},
         'name': {'readonly': True},
+        'id': {'readonly': True},
         'type': {'readonly': True},
         'location': {'required': True},
         'creation_date': {'readonly': True},
@@ -63,11 +63,11 @@ class ElasticPool(TrackedResource):
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
+        'id': {'key': 'id', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
         'location': {'key': 'location', 'type': 'str'},
+        'tags': {'key': 'tags', 'type': '{str}'},
         'creation_date': {'key': 'properties.creationDate', 'type': 'iso-8601'},
         'state': {'key': 'properties.state', 'type': 'str'},
         'edition': {'key': 'properties.edition', 'type': 'str'},
@@ -79,7 +79,7 @@ class ElasticPool(TrackedResource):
     }
 
     def __init__(self, location, tags=None, edition=None, dtu=None, database_dtu_max=None, database_dtu_min=None, storage_mb=None):
-        super(ElasticPool, self).__init__(tags=tags, location=location)
+        super(ElasticPool, self).__init__(location=location, tags=tags)
         self.creation_date = None
         self.state = None
         self.edition = edition

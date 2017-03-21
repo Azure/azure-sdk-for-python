@@ -12,60 +12,6 @@
 from enum import Enum
 
 
-class CapabilityStatus(Enum):
-
-    visible = "Visible"
-    available = "Available"
-    default = "Default"
-    disabled = "Disabled"
-
-
-class MaxSizeUnits(Enum):
-
-    megabytes = "Megabytes"
-    gigabytes = "Gigabytes"
-    terabytes = "Terabytes"
-    petabytes = "Petabytes"
-
-
-class PerformanceLevelUnit(Enum):
-
-    dtu = "DTU"
-
-
-class DatabaseEdition(Enum):
-
-    web = "Web"
-    business = "Business"
-    basic = "Basic"
-    standard = "Standard"
-    premium = "Premium"
-    free = "Free"
-    stretch = "Stretch"
-    data_warehouse = "DataWarehouse"
-    system = "System"
-    system2 = "System2"
-
-
-class ServiceObjectiveName(Enum):
-
-    basic = "Basic"
-    s0 = "S0"
-    s1 = "S1"
-    s2 = "S2"
-    s3 = "S3"
-    p1 = "P1"
-    p2 = "P2"
-    p3 = "P3"
-    p4 = "P4"
-    p6 = "P6"
-    p11 = "P11"
-    p15 = "P15"
-    system = "System"
-    system2 = "System2"
-    elastic_pool = "ElasticPool"
-
-
 class StorageKeyType(Enum):
 
     storage_access_key = "StorageAccessKey"
@@ -95,7 +41,7 @@ class ReplicationState(Enum):
     suspended = "SUSPENDED"
 
 
-class ElasticPoolEdition(Enum):
+class ElasticPoolEditions(Enum):
 
     basic = "Basic"
     standard = "Standard"
@@ -111,23 +57,53 @@ class CreateMode(Enum):
     point_in_time_restore = "PointInTimeRestore"
     recovery = "Recovery"
     restore = "Restore"
-    restore_long_term_retention_backup = "RestoreLongTermRetentionBackup"
 
 
-class TransparentDataEncryptionStatus(Enum):
+class DatabaseEditions(Enum):
 
-    enabled = "Enabled"
-    disabled = "Disabled"
+    web = "Web"
+    business = "Business"
+    basic = "Basic"
+    standard = "Standard"
+    premium = "Premium"
+    free = "Free"
+    stretch = "Stretch"
+    data_warehouse = "DataWarehouse"
+    system = "System"
 
 
-class RecommendedIndexAction(Enum):
+class ServiceObjectiveName(Enum):
+
+    basic = "Basic"
+    s0 = "S0"
+    s1 = "S1"
+    s2 = "S2"
+    s3 = "S3"
+    p1 = "P1"
+    p2 = "P2"
+    p3 = "P3"
+    p4 = "P4"
+    p6 = "P6"
+    p11 = "P11"
+    p15 = "P15"
+    system = "System"
+    elastic_pool = "ElasticPool"
+
+
+class TableType(Enum):
+
+    base_table = "BaseTable"
+    view = "View"
+
+
+class RecommendedIndexActions(Enum):
 
     create = "Create"
     drop = "Drop"
     rebuild = "Rebuild"
 
 
-class RecommendedIndexState(Enum):
+class RecommendedIndexStates(Enum):
 
     active = "Active"
     pending = "Pending"
@@ -142,12 +118,18 @@ class RecommendedIndexState(Enum):
     success = "Success"
 
 
-class RecommendedIndexType(Enum):
+class RecommendedIndexTypes(Enum):
 
     clustered = "CLUSTERED"
     nonclustered = "NONCLUSTERED"
     columnstore = "COLUMNSTORE"
     clusteredcolumnstore = "CLUSTERED COLUMNSTORE"
+
+
+class TransparentDataEncryptionStates(Enum):
+
+    enabled = "Enabled"
+    disabled = "Disabled"
 
 
 class ReadScale(Enum):
@@ -180,38 +162,20 @@ class ServerState(Enum):
     disabled = "Disabled"
 
 
+class TargetElasticPoolEditions(Enum):
+
+    basic = "Basic"
+    standard = "Standard"
+    premium = "Premium"
+
+
 class RestorePointTypes(Enum):
 
     discrete = "DISCRETE"
     continuous = "CONTINUOUS"
 
 
-class TransparentDataEncryptionActivityStatus(Enum):
+class TransparentDataEncryptionActivityStates(Enum):
 
     encrypting = "Encrypting"
     decrypting = "Decrypting"
-
-
-class SecurityAlertPolicyState(Enum):
-
-    new = "New"
-    enabled = "Enabled"
-    disabled = "Disabled"
-
-
-class SecurityAlertPolicyEmailAccountAdmins(Enum):
-
-    enabled = "Enabled"
-    disabled = "Disabled"
-
-
-class SecurityAlertPolicyUseServerDefault(Enum):
-
-    enabled = "Enabled"
-    disabled = "Disabled"
-
-
-class BlobAuditingPolicyState(Enum):
-
-    enabled = "Enabled"
-    disabled = "Disabled"

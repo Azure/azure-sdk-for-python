@@ -9,31 +9,35 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .proxy_resource import ProxyResource
+from .resource import Resource
 
 
-class RecommendedIndex(ProxyResource):
+class RecommendedIndex(Resource):
     """Represents a database recommended index.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar id: Resource ID.
-    :vartype id: str
-    :ivar name: Resource name.
+    :ivar name: Resource name
     :vartype name: str
-    :ivar type: Resource type.
+    :ivar id: Resource ID
+    :vartype id: str
+    :ivar type: Resource type
     :vartype type: str
+    :param location: Resource location
+    :type location: str
+    :param tags: Resource tags
+    :type tags: dict
     :ivar action: The proposed index action. You can create a missing index,
      drop an unused index, or rebuild an existing index to improve its
      performance. Possible values include: 'Create', 'Drop', 'Rebuild'
-    :vartype action: str or :class:`RecommendedIndexAction
-     <azure.mgmt.sql.models.RecommendedIndexAction>`
+    :vartype action: str or :class:`RecommendedIndexActions
+     <azure.mgmt.sql.models.RecommendedIndexActions>`
     :ivar state: The current recommendation state. Possible values include:
      'Active', 'Pending', 'Executing', 'Verifying', 'Pending Revert',
      'Reverting', 'Reverted', 'Ignored', 'Expired', 'Blocked', 'Success'
-    :vartype state: str or :class:`RecommendedIndexState
-     <azure.mgmt.sql.models.RecommendedIndexState>`
+    :vartype state: str or :class:`RecommendedIndexStates
+     <azure.mgmt.sql.models.RecommendedIndexStates>`
     :ivar created: The UTC datetime showing when this resource was created
      (ISO8601 format).
     :vartype created: datetime
@@ -43,8 +47,8 @@ class RecommendedIndex(ProxyResource):
     :ivar index_type: The type of index (CLUSTERED, NONCLUSTERED, COLUMNSTORE,
      CLUSTERED COLUMNSTORE). Possible values include: 'CLUSTERED',
      'NONCLUSTERED', 'COLUMNSTORE', 'CLUSTERED COLUMNSTORE'
-    :vartype index_type: str or :class:`RecommendedIndexType
-     <azure.mgmt.sql.models.RecommendedIndexType>`
+    :vartype index_type: str or :class:`RecommendedIndexTypes
+     <azure.mgmt.sql.models.RecommendedIndexTypes>`
     :ivar schema: The schema where table to build index over resides
     :vartype schema: str
     :ivar table: The table on which to build index.
@@ -66,9 +70,10 @@ class RecommendedIndex(ProxyResource):
     """
 
     _validation = {
-        'id': {'readonly': True},
         'name': {'readonly': True},
+        'id': {'readonly': True},
         'type': {'readonly': True},
+        'location': {'required': True},
         'action': {'readonly': True},
         'state': {'readonly': True},
         'created': {'readonly': True},
@@ -84,14 +89,16 @@ class RecommendedIndex(ProxyResource):
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
+        'id': {'key': 'id', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'action': {'key': 'properties.action', 'type': 'RecommendedIndexAction'},
-        'state': {'key': 'properties.state', 'type': 'RecommendedIndexState'},
+        'location': {'key': 'location', 'type': 'str'},
+        'tags': {'key': 'tags', 'type': '{str}'},
+        'action': {'key': 'properties.action', 'type': 'RecommendedIndexActions'},
+        'state': {'key': 'properties.state', 'type': 'RecommendedIndexStates'},
         'created': {'key': 'properties.created', 'type': 'iso-8601'},
         'last_modified': {'key': 'properties.lastModified', 'type': 'iso-8601'},
-        'index_type': {'key': 'properties.indexType', 'type': 'RecommendedIndexType'},
+        'index_type': {'key': 'properties.indexType', 'type': 'RecommendedIndexTypes'},
         'schema': {'key': 'properties.schema', 'type': 'str'},
         'table': {'key': 'properties.table', 'type': 'str'},
         'columns': {'key': 'properties.columns', 'type': '[str]'},
@@ -101,8 +108,8 @@ class RecommendedIndex(ProxyResource):
         'reported_impact': {'key': 'properties.reportedImpact', 'type': '[OperationImpact]'},
     }
 
-    def __init__(self):
-        super(RecommendedIndex, self).__init__()
+    def __init__(self, location, tags=None):
+        super(RecommendedIndex, self).__init__(location=location, tags=tags)
         self.action = None
         self.state = None
         self.created = None

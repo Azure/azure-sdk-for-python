@@ -12,16 +12,16 @@
 from msrest.paging import Paged
 
 
-class FirewallRulePaged(Paged):
+class ServerFirewallRulePaged(Paged):
     """
-    A paging container for iterating over a list of FirewallRule object
+    A paging container for iterating over a list of ServerFirewallRule object
     """
 
     _attribute_map = {
         'next_link': {'key': 'nextLink', 'type': 'str'},
-        'current_page': {'key': 'value', 'type': '[FirewallRule]'}
+        'current_page': {'key': 'value', 'type': '[ServerFirewallRule]'}
     }
 
     def __init__(self, *args, **kwargs):
 
-        super(FirewallRulePaged, self).__init__(*args, **kwargs)
+        super(ServerFirewallRulePaged, self).__init__(*args, **kwargs)

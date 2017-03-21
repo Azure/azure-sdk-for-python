@@ -9,10 +9,10 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .sub_resource import SubResource
+from .sql_sub_resource import SqlSubResource
 
 
-class ReplicationLink(SubResource):
+class ReplicationLink(SqlSubResource):
     """Represents a database replication link.
 
     Variables are only populated by the server, and will be ignored when
