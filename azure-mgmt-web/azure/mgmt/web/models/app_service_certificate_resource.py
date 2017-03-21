@@ -9,15 +9,28 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.serialization import Model
+from .resource import Resource
 
 
-class AppServiceCertificate(Model):
-    """Key Vault container for a certificate that is purchased through Azure.
+class AppServiceCertificateResource(Resource):
+    """Key Vault container ARM resource for a certificate that is purchased
+    through Azure.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
+    :ivar id: Resource Id.
+    :vartype id: str
+    :param name: Resource Name.
+    :type name: str
+    :param kind: Kind of resource.
+    :type kind: str
+    :param location: Resource Location.
+    :type location: str
+    :param type: Resource type.
+    :type type: str
+    :param tags: Resource tags.
+    :type tags: dict
     :param key_vault_id: Key Vault resource Id.
     :type key_vault_id: str
     :param key_vault_secret_name: Key Vault secret name.
@@ -33,16 +46,25 @@ class AppServiceCertificate(Model):
     """
 
     _validation = {
+        'id': {'readonly': True},
+        'location': {'required': True},
         'provisioning_state': {'readonly': True},
     }
 
     _attribute_map = {
-        'key_vault_id': {'key': 'keyVaultId', 'type': 'str'},
-        'key_vault_secret_name': {'key': 'keyVaultSecretName', 'type': 'str'},
-        'provisioning_state': {'key': 'provisioningState', 'type': 'KeyVaultSecretStatus'},
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'kind': {'key': 'kind', 'type': 'str'},
+        'location': {'key': 'location', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'tags': {'key': 'tags', 'type': '{str}'},
+        'key_vault_id': {'key': 'properties.keyVaultId', 'type': 'str'},
+        'key_vault_secret_name': {'key': 'properties.keyVaultSecretName', 'type': 'str'},
+        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'KeyVaultSecretStatus'},
     }
 
-    def __init__(self, key_vault_id=None, key_vault_secret_name=None):
+    def __init__(self, location, name=None, kind=None, type=None, tags=None, key_vault_id=None, key_vault_secret_name=None):
+        super(AppServiceCertificateResource, self).__init__(name=name, kind=kind, location=location, type=type, tags=tags)
         self.key_vault_id = key_vault_id
         self.key_vault_secret_name = key_vault_secret_name
         self.provisioning_state = None
