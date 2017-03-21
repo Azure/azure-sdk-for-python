@@ -17,13 +17,12 @@ from msrest.pipeline import ClientRawResponse
 from msrestazure.azure_exceptions import CloudError
 from msrestazure.azure_operation import AzureOperationPoller
 import uuid
-from .operations.servers_operations import ServersOperations
+from .operations.capabilities_operations import CapabilitiesOperations
+from .operations.firewall_rules_operations import FirewallRulesOperations
 from .operations.databases_operations import DatabasesOperations
-from .operations.import_export_operations import ImportExportOperations
+from .operations.servers_operations import ServersOperations
 from .operations.elastic_pools_operations import ElasticPoolsOperations
 from .operations.recommended_elastic_pools_operations import RecommendedElasticPoolsOperations
-from .operations.database_threat_detection_policies_operations import DatabaseThreatDetectionPoliciesOperations
-from .operations.database_blob_auditing_policies_operations import DatabaseBlobAuditingPoliciesOperations
 from . import models
 
 
@@ -68,20 +67,18 @@ class SqlManagementClient(object):
     :ivar config: Configuration for client.
     :vartype config: SqlManagementClientConfiguration
 
-    :ivar servers: Servers operations
-    :vartype servers: .operations.ServersOperations
+    :ivar capabilities: Capabilities operations
+    :vartype capabilities: .operations.CapabilitiesOperations
+    :ivar firewall_rules: FirewallRules operations
+    :vartype firewall_rules: .operations.FirewallRulesOperations
     :ivar databases: Databases operations
     :vartype databases: .operations.DatabasesOperations
-    :ivar import_export_operations: ImportExportOperations operations
-    :vartype import_export_operations: .operations.ImportExportOperations
+    :ivar servers: Servers operations
+    :vartype servers: .operations.ServersOperations
     :ivar elastic_pools: ElasticPools operations
     :vartype elastic_pools: .operations.ElasticPoolsOperations
     :ivar recommended_elastic_pools: RecommendedElasticPools operations
     :vartype recommended_elastic_pools: .operations.RecommendedElasticPoolsOperations
-    :ivar database_threat_detection_policies: DatabaseThreatDetectionPolicies operations
-    :vartype database_threat_detection_policies: .operations.DatabaseThreatDetectionPoliciesOperations
-    :ivar database_blob_auditing_policies: DatabaseBlobAuditingPolicies operations
-    :vartype database_blob_auditing_policies: .operations.DatabaseBlobAuditingPoliciesOperations
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
@@ -102,19 +99,17 @@ class SqlManagementClient(object):
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
 
-        self.servers = ServersOperations(
+        self.capabilities = CapabilitiesOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.firewall_rules = FirewallRulesOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.databases = DatabasesOperations(
             self._client, self.config, self._serialize, self._deserialize)
-        self.import_export_operations = ImportExportOperations(
+        self.servers = ServersOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.elastic_pools = ElasticPoolsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.recommended_elastic_pools = RecommendedElasticPoolsOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.database_threat_detection_policies = DatabaseThreatDetectionPoliciesOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.database_blob_auditing_policies = DatabaseBlobAuditingPoliciesOperations(
             self._client, self.config, self._serialize, self._deserialize)
 
     def list_operations(

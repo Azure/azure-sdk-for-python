@@ -9,25 +9,21 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .resource import Resource
+from .proxy_resource import ProxyResource
 
 
-class RestorePoint(Resource):
+class RestorePoint(ProxyResource):
     """Represents a database restore point.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar name: Resource name
-    :vartype name: str
-    :ivar id: Resource ID
+    :ivar id: Resource ID.
     :vartype id: str
-    :ivar type: Resource type
+    :ivar name: Resource name.
+    :vartype name: str
+    :ivar type: Resource type.
     :vartype type: str
-    :param location: Resource location
-    :type location: str
-    :param tags: Resource tags
-    :type tags: dict
     :ivar restore_point_type: The restore point type of the database restore
      point. Possible values include: 'DISCRETE', 'CONTINUOUS'
     :vartype restore_point_type: str or :class:`RestorePointTypes
@@ -41,28 +37,25 @@ class RestorePoint(Resource):
     """
 
     _validation = {
-        'name': {'readonly': True},
         'id': {'readonly': True},
+        'name': {'readonly': True},
         'type': {'readonly': True},
-        'location': {'required': True},
         'restore_point_type': {'readonly': True},
         'restore_point_creation_date': {'readonly': True},
         'earliest_restore_date': {'readonly': True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
         'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
         'restore_point_type': {'key': 'properties.restorePointType', 'type': 'RestorePointTypes'},
         'restore_point_creation_date': {'key': 'properties.restorePointCreationDate', 'type': 'iso-8601'},
         'earliest_restore_date': {'key': 'properties.earliestRestoreDate', 'type': 'iso-8601'},
     }
 
-    def __init__(self, location, tags=None):
-        super(RestorePoint, self).__init__(location=location, tags=tags)
+    def __init__(self):
+        super(RestorePoint, self).__init__()
         self.restore_point_type = None
         self.restore_point_creation_date = None
         self.earliest_restore_date = None
