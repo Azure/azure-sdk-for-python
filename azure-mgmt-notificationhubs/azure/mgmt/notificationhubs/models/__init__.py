@@ -9,8 +9,8 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .check_availability_parameters import CheckAvailabilityParameters
 from .sku import Sku
+from .check_availability_parameters import CheckAvailabilityParameters
 from .check_availability_result import CheckAvailabilityResult
 from .namespace_create_or_update_parameters import NamespaceCreateOrUpdateParameters
 from .namespace_patch_parameters import NamespacePatchParameters
@@ -41,8 +41,8 @@ from .notification_hubs_management_client_enums import (
 )
 
 __all__ = [
-    'CheckAvailabilityParameters',
     'Sku',
+    'CheckAvailabilityParameters',
     'CheckAvailabilityResult',
     'NamespaceCreateOrUpdateParameters',
     'NamespacePatchParameters',

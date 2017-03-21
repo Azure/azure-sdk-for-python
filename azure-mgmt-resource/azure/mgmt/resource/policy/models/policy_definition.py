@@ -18,8 +18,8 @@ class PolicyDefinition(Model):
     :param policy_type: The type of policy definition. Possible values are
      NotSpecified, BuiltIn, and Custom. Possible values include:
      'NotSpecified', 'BuiltIn', 'Custom'
-    :type policy_type: str or :class:`policyType
-     <azure.mgmt.resource.policy.models.policyType>`
+    :type policy_type: str or :class:`PolicyType
+     <azure.mgmt.resource.policy.models.PolicyType>`
     :param display_name: The display name of the policy definition.
     :type display_name: str
     :param description: The policy definition description.
@@ -32,7 +32,7 @@ class PolicyDefinition(Model):
      value for name, the value is inferred from the name value in the request
      URI.
     :type name: str
-    """ 
+    """
 
     _attribute_map = {
         'policy_type': {'key': 'properties.policyType', 'type': 'str'},

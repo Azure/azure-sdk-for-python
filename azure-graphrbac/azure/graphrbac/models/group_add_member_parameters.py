@@ -21,7 +21,7 @@ class GroupAddMemberParameters(Model):
      "f260bbc4-c254-447b-94cf-293b5ec434dd" is the objectId of the member
      (user, application, servicePrincipal, group) to be added.
     :type url: str
-    """ 
+    """
 
     _validation = {
         'url': {'required': True},

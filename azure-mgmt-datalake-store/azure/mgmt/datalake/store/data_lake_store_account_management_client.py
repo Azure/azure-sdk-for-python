@@ -31,13 +31,11 @@ class DataLakeStoreAccountManagementClientConfiguration(AzureConfiguration):
      identify Microsoft Azure subscription. The subscription ID forms part of
      the URI for every service call.
     :type subscription_id: str
-    :param api_version: Client Api Version.
-    :type api_version: str
     :param str base_url: Service URL
     """
 
     def __init__(
-            self, credentials, subscription_id, api_version='2016-11-01', base_url=None):
+            self, credentials, subscription_id, base_url=None):
 
         if credentials is None:
             raise ValueError("Parameter 'credentials' must not be None.")
@@ -45,8 +43,6 @@ class DataLakeStoreAccountManagementClientConfiguration(AzureConfiguration):
             raise ValueError("Parameter 'subscription_id' must not be None.")
         if not isinstance(subscription_id, str):
             raise TypeError("Parameter 'subscription_id' must be str.")
-        if api_version is not None and not isinstance(api_version, str):
-            raise TypeError("Optional parameter 'api_version' must be str.")
         if not base_url:
             base_url = 'https://management.azure.com'
 
@@ -57,7 +53,6 @@ class DataLakeStoreAccountManagementClientConfiguration(AzureConfiguration):
 
         self.credentials = credentials
         self.subscription_id = subscription_id
-        self.api_version = api_version
 
 
 class DataLakeStoreAccountManagementClient(object):
@@ -80,18 +75,17 @@ class DataLakeStoreAccountManagementClient(object):
      identify Microsoft Azure subscription. The subscription ID forms part of
      the URI for every service call.
     :type subscription_id: str
-    :param api_version: Client Api Version.
-    :type api_version: str
     :param str base_url: Service URL
     """
 
     def __init__(
-            self, credentials, subscription_id, api_version='2016-11-01', base_url=None):
+            self, credentials, subscription_id, base_url=None):
 
-        self.config = DataLakeStoreAccountManagementClientConfiguration(credentials, subscription_id, api_version, base_url)
+        self.config = DataLakeStoreAccountManagementClientConfiguration(credentials, subscription_id, base_url)
         self._client = ServiceClient(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
+        self.api_version = '2016-11-01'
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
 

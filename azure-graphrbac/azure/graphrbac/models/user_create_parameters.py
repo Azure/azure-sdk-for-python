@@ -33,7 +33,7 @@ class UserCreateParameters(Model):
      user account. It is used to associate an on-premises Active Directory user
      account with their Azure AD user object.
     :type immutable_id: str
-    """ 
+    """
 
     _validation = {
         'account_enabled': {'required': True},

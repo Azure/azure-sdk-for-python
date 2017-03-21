@@ -28,7 +28,7 @@ class Resource(Model):
     :type tags: dict
     :param location: Resource Location
     :type location: str
-    """ 
+    """
 
     _validation = {
         'id': {'readonly': True},

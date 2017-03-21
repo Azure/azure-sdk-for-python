@@ -20,8 +20,8 @@ class Resource(Model):
 
     :ivar id: Azure resource Id
     :vartype id: str
-    :param name: Azure resource name
-    :type name: str
+    :ivar name: Azure resource name
+    :vartype name: str
     :ivar type: Azure resource type
     :vartype type: str
     :param location: Resource location
@@ -32,6 +32,7 @@ class Resource(Model):
 
     _validation = {
         'id': {'readonly': True},
+        'name': {'readonly': True},
         'type': {'readonly': True},
         'location': {'required': True},
     }
@@ -44,9 +45,9 @@ class Resource(Model):
         'tags': {'key': 'tags', 'type': '{str}'},
     }
 
-    def __init__(self, location, name=None, tags=None):
+    def __init__(self, location, tags=None):
         self.id = None
-        self.name = name
+        self.name = None
         self.type = None
         self.location = location
         self.tags = tags

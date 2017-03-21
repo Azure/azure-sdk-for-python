@@ -16,13 +16,13 @@ class Operation(Model):
     """Operation.
 
     :param name: The name of the operation being performed on this particular
-     object. This name should match the action name that appears in RBAC /
-     the event service.
+     object. This name should match the action name that appears in RBAC / the
+     event service.
     :type name: str
     :param display:
     :type display: :class:`Display
      <azure.mgmt.powerbiembedded.models.Display>`
-    """ 
+    """
 
     _attribute_map = {
         'name': {'key': 'name', 'type': 'str'},

@@ -19,17 +19,17 @@ class SubscriptionPolicies(Model):
     sending a request.
 
     :ivar location_placement_id: The subscription location placement ID. The
-     ID indicates which regions are visible for a subscription. For example,
-     a subscription with a location placement Id of Public_2014-09-01 has
-     access to Azure public regions.
+     ID indicates which regions are visible for a subscription. For example, a
+     subscription with a location placement Id of Public_2014-09-01 has access
+     to Azure public regions.
     :vartype location_placement_id: str
     :ivar quota_id: The subscription quota ID.
     :vartype quota_id: str
     :ivar spending_limit: The subscription spending limit. Possible values
      include: 'On', 'Off', 'CurrentPeriodOff'
-    :vartype spending_limit: str or :class:`spendingLimit
-     <azure.mgmt.resource.subscriptions.models.spendingLimit>`
-    """ 
+    :vartype spending_limit: str or :class:`SpendingLimit
+     <azure.mgmt.resource.subscriptions.models.SpendingLimit>`
+    """
 
     _validation = {
         'location_placement_id': {'readonly': True},
@@ -40,7 +40,7 @@ class SubscriptionPolicies(Model):
     _attribute_map = {
         'location_placement_id': {'key': 'locationPlacementId', 'type': 'str'},
         'quota_id': {'key': 'quotaId', 'type': 'str'},
-        'spending_limit': {'key': 'spendingLimit', 'type': 'spendingLimit'},
+        'spending_limit': {'key': 'spendingLimit', 'type': 'SpendingLimit'},
     }
 
     def __init__(self):

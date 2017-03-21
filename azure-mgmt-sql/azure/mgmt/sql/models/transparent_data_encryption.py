@@ -9,10 +9,10 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .sql_sub_resource import SqlSubResource
+from .sub_resource import SubResource
 
 
-class TransparentDataEncryption(SqlSubResource):
+class TransparentDataEncryption(SubResource):
     """Represents a database transparent data encryption .
 
     Variables are only populated by the server, and will be ignored when
@@ -24,8 +24,8 @@ class TransparentDataEncryption(SqlSubResource):
     :vartype id: str
     :param status: The status of the database transparent data encryption.
      Possible values include: 'Enabled', 'Disabled'
-    :type status: str or :class:`TransparentDataEncryptionStates
-     <azure.mgmt.sql.models.TransparentDataEncryptionStates>`
+    :type status: str or :class:`TransparentDataEncryptionStatus
+     <azure.mgmt.sql.models.TransparentDataEncryptionStatus>`
     """
 
     _validation = {
@@ -36,7 +36,7 @@ class TransparentDataEncryption(SqlSubResource):
     _attribute_map = {
         'name': {'key': 'name', 'type': 'str'},
         'id': {'key': 'id', 'type': 'str'},
-        'status': {'key': 'properties.status', 'type': 'TransparentDataEncryptionStates'},
+        'status': {'key': 'properties.status', 'type': 'TransparentDataEncryptionStatus'},
     }
 
     def __init__(self, status=None):

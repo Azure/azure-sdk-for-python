@@ -39,7 +39,7 @@ class PowerShellCommandStatus(Resource):
     :type command: str
     :param completed:
     :type completed: bool
-    """ 
+    """
 
     _validation = {
         'id': {'readonly': True},

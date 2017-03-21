@@ -13,10 +13,7 @@ from msrest.service_client import ServiceClient
 from msrest import Serializer, Deserializer
 from msrestazure import AzureConfiguration
 from .version import VERSION
-from .operations.operations import Operations
 from .operations.redis_operations import RedisOperations
-from .operations.firewall_rules_operations import FirewallRulesOperations
-from .operations.redis_firewall_rule_operations import RedisFirewallRuleOperations
 from .operations.patch_schedules_operations import PatchSchedulesOperations
 from . import models
 
@@ -63,14 +60,8 @@ class RedisManagementClient(object):
     :ivar config: Configuration for client.
     :vartype config: RedisManagementClientConfiguration
 
-    :ivar operations: Operations operations
-    :vartype operations: .operations.Operations
     :ivar redis: Redis operations
     :vartype redis: .operations.RedisOperations
-    :ivar firewall_rules: FirewallRules operations
-    :vartype firewall_rules: .operations.FirewallRulesOperations
-    :ivar redis_firewall_rule: RedisFirewallRule operations
-    :vartype redis_firewall_rule: .operations.RedisFirewallRuleOperations
     :ivar patch_schedules: PatchSchedules operations
     :vartype patch_schedules: .operations.PatchSchedulesOperations
 
@@ -95,13 +86,7 @@ class RedisManagementClient(object):
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
 
-        self.operations = Operations(
-            self._client, self.config, self._serialize, self._deserialize)
         self.redis = RedisOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.firewall_rules = FirewallRulesOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.redis_firewall_rule = RedisFirewallRuleOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.patch_schedules = PatchSchedulesOperations(
             self._client, self.config, self._serialize, self._deserialize)

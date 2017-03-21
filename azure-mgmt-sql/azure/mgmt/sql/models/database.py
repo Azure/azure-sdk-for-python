@@ -9,25 +9,25 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .resource import Resource
+from .tracked_resource import TrackedResource
 
 
-class Database(Resource):
+class Database(TrackedResource):
     """Represents a database.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar name: Resource name
-    :vartype name: str
-    :ivar id: Resource ID
+    :ivar id: Resource ID.
     :vartype id: str
-    :ivar type: Resource type
+    :ivar name: Resource name.
+    :vartype name: str
+    :ivar type: Resource type.
     :vartype type: str
-    :param location: Resource location
-    :type location: str
-    :param tags: Resource tags
+    :param tags: Resource tags.
     :type tags: dict
+    :param location: Resource location.
+    :type location: str
     :ivar kind: Kind of database.  This is metadata used for the Azure portal
      experience.
     :vartype kind: str
@@ -103,16 +103,19 @@ class Database(Resource):
     :type recovery_services_recovery_point_resource_id: datetime
     :param edition: The edition of the database. The DatabaseEditions
      enumeration contains all the valid editions. If createMode is
-     NonReadableSecondary or OnlineSecondary, this value is ignored. Possible
+     NonReadableSecondary or OnlineSecondary, this value is ignored. To see
+     possible values, query the capabilities API
+     (/subscriptions/{subscriptionId}/providers/Microsoft.Sql/locations/{locationID}/capabilities)
+     referred to by operationId: "Capabilities_ListByLocation.". Possible
      values include: 'Web', 'Business', 'Basic', 'Standard', 'Premium', 'Free',
-     'Stretch', 'DataWarehouse', 'System'
-    :type edition: str or :class:`DatabaseEditions
-     <azure.mgmt.sql.models.DatabaseEditions>`
+     'Stretch', 'DataWarehouse', 'System', 'System2'
+    :type edition: str or :class:`DatabaseEdition
+     <azure.mgmt.sql.models.DatabaseEdition>`
     :param max_size_bytes: The max size of the database expressed in bytes. If
-     createMode is not Default, this value is ignored. Note: Only the following
-     sizes are supported (in addition to limitations being placed on each
-     edition): { 100 MB | 500 MB |1 GB | 5 GB | 10 GB | 20 GB | 30 GB … 150 GB
-     | 200 GB … 500 GB }
+     createMode is not Default, this value is ignored. To see possible values,
+     query the capabilities API
+     (/subscriptions/{subscriptionId}/providers/Microsoft.Sql/locations/{locationID}/capabilities)
+     referred to by operationId: "Capabilities_ListByLocation."
     :type max_size_bytes: str
     :param requested_service_objective_id: The configured service level
      objective ID of the database. This is the service level objective that is
@@ -120,19 +123,25 @@ class Database(Resource):
      updated, it will match the value of currentServiceObjectiveId property. If
      requestedServiceObjectiveId and requestedServiceObjectiveName are both
      updated, the value of requestedServiceObjectiveId overrides the value of
-     requestedServiceObjectiveName.
+     requestedServiceObjectiveName. To see possible values, query the
+     capabilities API
+     (/subscriptions/{subscriptionId}/providers/Microsoft.Sql/locations/{locationID}/capabilities)
+     referred to by operationId: "Capabilities_ListByLocation."
     :type requested_service_objective_id: str
     :param requested_service_objective_name: The name of the configured
      service level objective of the database. This is the service level
      objective that is in the process of being applied to the database. Once
      successfully updated, it will match the value of serviceLevelObjective
-     property. Possible values include: 'Basic', 'S0', 'S1', 'S2', 'S3', 'P1',
-     'P2', 'P3', 'P4', 'P6', 'P11', 'P15', 'System', 'ElasticPool'
+     property. To see possible values, query the capabilities API
+     (/subscriptions/{subscriptionId}/providers/Microsoft.Sql/locations/{locationID}/capabilities)
+     referred to by operationId: "Capabilities_ListByLocation.". Possible
+     values include: 'Basic', 'S0', 'S1', 'S2', 'S3', 'P1', 'P2', 'P3', 'P4',
+     'P6', 'P11', 'P15', 'System', 'System2', 'ElasticPool'
     :type requested_service_objective_name: str or
      :class:`ServiceObjectiveName <azure.mgmt.sql.models.ServiceObjectiveName>`
     :ivar service_level_objective: The current service level objective of the
      database. Possible values include: 'Basic', 'S0', 'S1', 'S2', 'S3', 'P1',
-     'P2', 'P3', 'P4', 'P6', 'P11', 'P15', 'System', 'ElasticPool'
+     'P2', 'P3', 'P4', 'P6', 'P11', 'P15', 'System', 'System2', 'ElasticPool'
     :vartype service_level_objective: str or :class:`ServiceObjectiveName
      <azure.mgmt.sql.models.ServiceObjectiveName>`
     :ivar status: The status of the database.
@@ -149,8 +158,6 @@ class Database(Resource):
      database. Expanded property
     :vartype service_tier_advisors: list of :class:`ServiceTierAdvisor
      <azure.mgmt.sql.models.ServiceTierAdvisor>`
-    :ivar schemas: The schemas from this database.
-    :vartype schemas: list of :class:`Schema <azure.mgmt.sql.models.Schema>`
     :ivar transparent_data_encryption: The transparent data encryption info
      for this database.
     :vartype transparent_data_encryption: list of
@@ -177,8 +184,8 @@ class Database(Resource):
     """
 
     _validation = {
-        'name': {'readonly': True},
         'id': {'readonly': True},
+        'name': {'readonly': True},
         'type': {'readonly': True},
         'location': {'required': True},
         'kind': {'readonly': True},
@@ -191,18 +198,17 @@ class Database(Resource):
         'status': {'readonly': True},
         'default_secondary_location': {'readonly': True},
         'service_tier_advisors': {'readonly': True},
-        'schemas': {'readonly': True},
         'transparent_data_encryption': {'readonly': True},
         'recommended_index': {'readonly': True},
         'failover_group_id': {'readonly': True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
         'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
+        'location': {'key': 'location', 'type': 'str'},
         'kind': {'key': 'kind', 'type': 'str'},
         'collation': {'key': 'properties.collation', 'type': 'str'},
         'creation_date': {'key': 'properties.creationDate', 'type': 'iso-8601'},
@@ -224,7 +230,6 @@ class Database(Resource):
         'elastic_pool_name': {'key': 'properties.elasticPoolName', 'type': 'str'},
         'default_secondary_location': {'key': 'properties.defaultSecondaryLocation', 'type': 'str'},
         'service_tier_advisors': {'key': 'properties.serviceTierAdvisors', 'type': '[ServiceTierAdvisor]'},
-        'schemas': {'key': 'properties.schemas', 'type': '[Schema]'},
         'transparent_data_encryption': {'key': 'properties.transparentDataEncryption', 'type': '[TransparentDataEncryption]'},
         'recommended_index': {'key': 'properties.recommendedIndex', 'type': '[RecommendedIndex]'},
         'failover_group_id': {'key': 'properties.failoverGroupId', 'type': 'str'},
@@ -233,7 +238,7 @@ class Database(Resource):
     }
 
     def __init__(self, location, tags=None, collation=None, create_mode=None, source_database_id=None, source_database_deletion_date=None, restore_point_in_time=None, recovery_services_recovery_point_resource_id=None, edition=None, max_size_bytes=None, requested_service_objective_id=None, requested_service_objective_name=None, elastic_pool_name=None, read_scale=None, sample_name=None):
-        super(Database, self).__init__(location=location, tags=tags)
+        super(Database, self).__init__(tags=tags, location=location)
         self.kind = None
         self.collation = collation
         self.creation_date = None
@@ -255,7 +260,6 @@ class Database(Resource):
         self.elastic_pool_name = elastic_pool_name
         self.default_secondary_location = None
         self.service_tier_advisors = None
-        self.schemas = None
         self.transparent_data_encryption = None
         self.recommended_index = None
         self.failover_group_id = None

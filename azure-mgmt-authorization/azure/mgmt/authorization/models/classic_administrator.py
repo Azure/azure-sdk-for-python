@@ -24,7 +24,7 @@ class ClassicAdministrator(Model):
     :param properties: Properties for the classic administrator.
     :type properties: :class:`ClassicAdministratorProperties
      <azure.mgmt.authorization.models.ClassicAdministratorProperties>`
-    """ 
+    """
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},

@@ -66,6 +66,9 @@ class VirtualMachine(Resource):
     :ivar resources: The virtual machine child extension resources.
     :vartype resources: list of :class:`VirtualMachineExtension
      <azure.mgmt.compute.models.VirtualMachineExtension>`
+    :param identity: The identity of the virtual machine, if configured.
+    :type identity: :class:`VirtualMachineIdentity
+     <azure.mgmt.compute.models.VirtualMachineIdentity>`
     """
 
     _validation = {
@@ -97,9 +100,10 @@ class VirtualMachine(Resource):
         'license_type': {'key': 'properties.licenseType', 'type': 'str'},
         'vm_id': {'key': 'properties.vmId', 'type': 'str'},
         'resources': {'key': 'resources', 'type': '[VirtualMachineExtension]'},
+        'identity': {'key': 'identity', 'type': 'VirtualMachineIdentity'},
     }
 
-    def __init__(self, location, tags=None, plan=None, hardware_profile=None, storage_profile=None, os_profile=None, network_profile=None, diagnostics_profile=None, availability_set=None, license_type=None):
+    def __init__(self, location, tags=None, plan=None, hardware_profile=None, storage_profile=None, os_profile=None, network_profile=None, diagnostics_profile=None, availability_set=None, license_type=None, identity=None):
         super(VirtualMachine, self).__init__(location=location, tags=tags)
         self.plan = plan
         self.hardware_profile = hardware_profile
@@ -113,3 +117,4 @@ class VirtualMachine(Resource):
         self.license_type = license_type
         self.vm_id = None
         self.resources = None
+        self.identity = identity

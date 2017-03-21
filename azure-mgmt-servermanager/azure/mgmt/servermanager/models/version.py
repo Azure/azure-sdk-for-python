@@ -27,7 +27,7 @@ class Version(Model):
     :type major_revision: int
     :param minor_revision: The LSW of the fourth part.
     :type minor_revision: int
-    """ 
+    """
 
     _attribute_map = {
         'major': {'key': 'major', 'type': 'int'},

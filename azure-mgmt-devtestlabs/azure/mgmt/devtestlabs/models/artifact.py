@@ -37,7 +37,7 @@ class Artifact(Model):
     :type location: str
     :param tags: The tags of the resource.
     :type tags: dict
-    """ 
+    """
 
     _attribute_map = {
         'title': {'key': 'properties.title', 'type': 'str'},

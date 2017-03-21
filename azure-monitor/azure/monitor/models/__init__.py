@@ -11,6 +11,7 @@
 
 from .localizable_string import LocalizableString
 from .usage_metric import UsageMetric
+from .error_response import ErrorResponse, ErrorResponseException
 from .sender_authorization import SenderAuthorization
 from .http_request_info import HttpRequestInfo
 from .event_data import EventData
@@ -32,6 +33,7 @@ from .monitor_client_enums import (
 __all__ = [
     'LocalizableString',
     'UsageMetric',
+    'ErrorResponse', 'ErrorResponseException',
     'SenderAuthorization',
     'HttpRequestInfo',
     'EventData',

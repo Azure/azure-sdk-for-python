@@ -41,6 +41,10 @@ class ApplicationGatewayBackendHttpSettings(SubResource):
     :param provisioning_state: Provisioning state of the backend http settings
      resource. Possible values are: 'Updating', 'Deleting', and 'Failed'.
     :type provisioning_state: str
+    :param connection_draining: Connection draining of the backend http
+     settings resource.
+    :type connection_draining: :class:`ApplicationGatewayConnectionDraining
+     <azure.mgmt.network.models.ApplicationGatewayConnectionDraining>`
     :param name: Name of the resource that is unique within a resource group.
      This name can be used to access the resource.
     :type name: str
@@ -58,11 +62,12 @@ class ApplicationGatewayBackendHttpSettings(SubResource):
         'probe': {'key': 'properties.probe', 'type': 'SubResource'},
         'authentication_certificates': {'key': 'properties.authenticationCertificates', 'type': '[SubResource]'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        'connection_draining': {'key': 'properties.connectionDraining', 'type': 'ApplicationGatewayConnectionDraining'},
         'name': {'key': 'name', 'type': 'str'},
         'etag': {'key': 'etag', 'type': 'str'},
     }
 
-    def __init__(self, id=None, port=None, protocol=None, cookie_based_affinity=None, request_timeout=None, probe=None, authentication_certificates=None, provisioning_state=None, name=None, etag=None):
+    def __init__(self, id=None, port=None, protocol=None, cookie_based_affinity=None, request_timeout=None, probe=None, authentication_certificates=None, provisioning_state=None, connection_draining=None, name=None, etag=None):
         super(ApplicationGatewayBackendHttpSettings, self).__init__(id=id)
         self.port = port
         self.protocol = protocol
@@ -71,5 +76,6 @@ class ApplicationGatewayBackendHttpSettings(SubResource):
         self.probe = probe
         self.authentication_certificates = authentication_certificates
         self.provisioning_state = provisioning_state
+        self.connection_draining = connection_draining
         self.name = name
         self.etag = etag
