@@ -87,7 +87,7 @@ class Site(Resource):
     :type hosting_environment_profile: :class:`HostingEnvironmentProfile
      <azure.mgmt.web.models.HostingEnvironmentProfile>`
     :param micro_service: Micro services like apps, logic apps. Default value:
-     "false" .
+     "WebSites" .
     :type micro_service: str
     :param gateway_site_name: Name of gateway app associated with the app.
     :type gateway_site_name: str
@@ -199,7 +199,7 @@ class Site(Resource):
         'slot_swap_status': {'key': 'properties.slotSwapStatus', 'type': 'SlotSwapStatus'},
     }
 
-    def __init__(self, location, name=None, kind=None, type=None, tags=None, enabled=None, host_name_ssl_states=None, server_farm_id=None, reserved=False, site_config=None, scm_site_also_stopped=False, hosting_environment_profile=None, micro_service="false", gateway_site_name=None, client_affinity_enabled=None, client_cert_enabled=None, host_names_disabled=None, container_size=None, daily_memory_time_quota=None, cloning_info=None):
+    def __init__(self, location, name=None, kind=None, type=None, tags=None, enabled=None, host_name_ssl_states=None, server_farm_id=None, reserved=False, site_config=None, scm_site_also_stopped=False, hosting_environment_profile=None, micro_service="WebSites", gateway_site_name=None, client_affinity_enabled=None, client_cert_enabled=None, host_names_disabled=None, container_size=None, daily_memory_time_quota=None, cloning_info=None):
         super(Site, self).__init__(name=name, kind=kind, location=location, type=type, tags=tags)
         self.state = None
         self.host_names = None

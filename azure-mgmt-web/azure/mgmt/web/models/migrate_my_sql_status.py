@@ -12,9 +12,8 @@
 from .resource import Resource
 
 
-class HybridConnectionKey(Resource):
-    """Hybrid Connection key contract. This has the send key name and value for a
-    Hybrid Connection.
+class MigrateMySqlStatus(Resource):
+    """MySQL migration status.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -31,17 +30,22 @@ class HybridConnectionKey(Resource):
     :type type: str
     :param tags: Resource tags.
     :type tags: dict
-    :ivar send_key_name: The name of the send key.
-    :vartype send_key_name: str
-    :ivar send_key_value: The value of the send key.
-    :vartype send_key_value: str
+    :ivar migration_operation_status: Status of the migration task. Possible
+     values include: 'InProgress', 'Failed', 'Succeeded', 'TimedOut', 'Created'
+    :vartype migration_operation_status: str or :class:`OperationStatus
+     <azure.mgmt.web.models.OperationStatus>`
+    :ivar operation_id: Operation ID for the migration task.
+    :vartype operation_id: str
+    :ivar local_my_sql_enabled: True if the web app has in app MySql enabled
+    :vartype local_my_sql_enabled: bool
     """
 
     _validation = {
         'id': {'readonly': True},
         'location': {'required': True},
-        'send_key_name': {'readonly': True},
-        'send_key_value': {'readonly': True},
+        'migration_operation_status': {'readonly': True},
+        'operation_id': {'readonly': True},
+        'local_my_sql_enabled': {'readonly': True},
     }
 
     _attribute_map = {
@@ -51,11 +55,13 @@ class HybridConnectionKey(Resource):
         'location': {'key': 'location', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
-        'send_key_name': {'key': 'properties.sendKeyName', 'type': 'str'},
-        'send_key_value': {'key': 'properties.sendKeyValue', 'type': 'str'},
+        'migration_operation_status': {'key': 'properties.migrationOperationStatus', 'type': 'OperationStatus'},
+        'operation_id': {'key': 'properties.operationId', 'type': 'str'},
+        'local_my_sql_enabled': {'key': 'properties.localMySqlEnabled', 'type': 'bool'},
     }
 
     def __init__(self, location, name=None, kind=None, type=None, tags=None):
-        super(HybridConnectionKey, self).__init__(name=name, kind=kind, location=location, type=type, tags=tags)
-        self.send_key_name = None
-        self.send_key_value = None
+        super(MigrateMySqlStatus, self).__init__(name=name, kind=kind, location=location, type=type, tags=tags)
+        self.migration_operation_status = None
+        self.operation_id = None
+        self.local_my_sql_enabled = None

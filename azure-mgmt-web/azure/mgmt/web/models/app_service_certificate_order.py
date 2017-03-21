@@ -78,6 +78,9 @@ class AppServiceCertificateOrder(Resource):
     :param is_private_key_external: <code>true</code> if private key is
      external; otherwise, <code>false</code>.
     :type is_private_key_external: bool
+    :param app_service_certificate_not_renewable_reasons: Reasons why App
+     Service Certificate is not renewable at the current moment.
+    :type app_service_certificate_not_renewable_reasons: list of str
     """
 
     _validation = {
@@ -119,9 +122,10 @@ class AppServiceCertificateOrder(Resource):
         'last_certificate_issuance_time': {'key': 'properties.lastCertificateIssuanceTime', 'type': 'iso-8601'},
         'expiration_time': {'key': 'properties.expirationTime', 'type': 'iso-8601'},
         'is_private_key_external': {'key': 'properties.isPrivateKeyExternal', 'type': 'bool'},
+        'app_service_certificate_not_renewable_reasons': {'key': 'properties.appServiceCertificateNotRenewableReasons', 'type': '[str]'},
     }
 
-    def __init__(self, location, name=None, kind=None, type=None, tags=None, certificates=None, distinguished_name=None, validity_in_years=1, key_size=2048, product_type=None, auto_renew=True, csr=None, is_private_key_external=None):
+    def __init__(self, location, name=None, kind=None, type=None, tags=None, certificates=None, distinguished_name=None, validity_in_years=1, key_size=2048, product_type=None, auto_renew=True, csr=None, is_private_key_external=None, app_service_certificate_not_renewable_reasons=None):
         super(AppServiceCertificateOrder, self).__init__(name=name, kind=kind, location=location, type=type, tags=tags)
         self.certificates = certificates
         self.distinguished_name = distinguished_name
@@ -140,3 +144,4 @@ class AppServiceCertificateOrder(Resource):
         self.last_certificate_issuance_time = None
         self.expiration_time = None
         self.is_private_key_external = is_private_key_external
+        self.app_service_certificate_not_renewable_reasons = app_service_certificate_not_renewable_reasons
