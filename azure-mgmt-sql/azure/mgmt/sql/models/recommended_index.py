@@ -13,7 +13,7 @@ from .resource import Resource
 
 
 class RecommendedIndex(Resource):
-    """Represents a database recommended index.
+    """Represents an Azure SQL Database recommended index.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -30,12 +30,16 @@ class RecommendedIndex(Resource):
     :type tags: dict
     :ivar action: The proposed index action. You can create a missing index,
      drop an unused index, or rebuild an existing index to improve its
-     performance. Possible values include: 'Create', 'Drop', 'Rebuild'
+     performance. Possible values are 'Create', 'Drop', 'Rebuild'. Possible
+     values include: 'Create', 'Drop', 'Rebuild'
     :vartype action: str or :class:`RecommendedIndexActions
      <azure.mgmt.sql.models.RecommendedIndexActions>`
-    :ivar state: The current recommendation state. Possible values include:
+    :ivar state: The current recommendation state. Current options are:
      'Active', 'Pending', 'Executing', 'Verifying', 'Pending Revert',
-     'Reverting', 'Reverted', 'Ignored', 'Expired', 'Blocked', 'Success'
+     'Reverting', 'Reverted', 'Ignored', 'Expired', 'Blocked', 'Success'.
+     Possible values include: 'Active', 'Pending', 'Executing', 'Verifying',
+     'Pending Revert', 'Reverting', 'Reverted', 'Ignored', 'Expired',
+     'Blocked', 'Success'
     :vartype state: str or :class:`RecommendedIndexStates
      <azure.mgmt.sql.models.RecommendedIndexStates>`
     :ivar created: The UTC datetime showing when this resource was created

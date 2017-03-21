@@ -12,18 +12,6 @@
 from enum import Enum
 
 
-class StorageKeyType(Enum):
-
-    storage_access_key = "StorageAccessKey"
-    shared_access_key = "SharedAccessKey"
-
-
-class AuthenticationType(Enum):
-
-    sql = "SQL"
-    ad_password = "ADPassword"
-
-
 class ReplicationRole(Enum):
 
     primary = "Primary"
@@ -69,7 +57,6 @@ class DatabaseEditions(Enum):
     free = "Free"
     stretch = "Stretch"
     data_warehouse = "DataWarehouse"
-    system = "System"
 
 
 class ServiceObjectiveName(Enum):
@@ -82,12 +69,6 @@ class ServiceObjectiveName(Enum):
     p1 = "P1"
     p2 = "P2"
     p3 = "P3"
-    p4 = "P4"
-    p6 = "P6"
-    p11 = "P11"
-    p15 = "P15"
-    system = "System"
-    elastic_pool = "ElasticPool"
 
 
 class TableType(Enum):
@@ -132,15 +113,14 @@ class TransparentDataEncryptionStates(Enum):
     disabled = "Disabled"
 
 
-class ReadScale(Enum):
+class TargetDatabaseEditions(Enum):
 
-    enabled = "Enabled"
-    disabled = "Disabled"
-
-
-class SampleName(Enum):
-
-    adventure_works_lt = "AdventureWorksLT"
+    basic = "Basic"
+    standard = "Standard"
+    premium = "Premium"
+    free = "Free"
+    stretch = "Stretch"
+    data_warehouse = "DataWarehouse"
 
 
 class ElasticPoolState(Enum):
@@ -154,12 +134,6 @@ class ServerVersion(Enum):
 
     two_full_stop_zero = "2.0"
     one_two_full_stop_zero = "12.0"
-
-
-class ServerState(Enum):
-
-    ready = "Ready"
-    disabled = "Disabled"
 
 
 class TargetElasticPoolEditions(Enum):

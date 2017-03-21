@@ -13,7 +13,7 @@ from .resource import Resource
 
 
 class RestorePoint(Resource):
-    """Represents a database restore point.
+    """Represents an Azure SQL Database restore point.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -28,8 +28,8 @@ class RestorePoint(Resource):
     :type location: str
     :param tags: Resource tags
     :type tags: dict
-    :ivar restore_point_type: The restore point type of the database restore
-     point. Possible values include: 'DISCRETE', 'CONTINUOUS'
+    :ivar restore_point_type: The restore point type of the Azure SQL database
+     restore point. Possible values include: 'DISCRETE', 'CONTINUOUS'
     :vartype restore_point_type: str or :class:`RestorePointTypes
      <azure.mgmt.sql.models.RestorePointTypes>`
     :ivar restore_point_creation_date: Restore point creation time (ISO8601
