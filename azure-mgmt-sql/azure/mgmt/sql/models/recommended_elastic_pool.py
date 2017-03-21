@@ -13,7 +13,7 @@ from .resource import Resource
 
 
 class RecommendedElasticPool(Resource):
-    """Represents a recommented elastic pool.
+    """Represents an Azure SQL Recommended Elastic Pool.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -28,12 +28,12 @@ class RecommendedElasticPool(Resource):
     :type location: str
     :param tags: Resource tags
     :type tags: dict
-    :ivar database_edition: The edition of the recommended elastic pool. The
-     ElasticPoolEditions enumeration contains all the valid editions. Possible
-     values include: 'Basic', 'Standard', 'Premium'
+    :ivar database_edition: The edition of the Azure SQL Recommended Elastic
+     Pool. The ElasticPoolEditions enumeration contains all the valid editions.
+     Possible values include: 'Basic', 'Standard', 'Premium'
     :vartype database_edition: str or :class:`ElasticPoolEditions
      <azure.mgmt.sql.models.ElasticPoolEditions>`
-    :param dtu: The DTU for the recommended elastic pool.
+    :param dtu: The DTU for the SQL Azure Recommended Elastic Pool.
     :type dtu: float
     :param database_dtu_min: The minimum DTU for the database.
     :type database_dtu_min: float
@@ -51,11 +51,12 @@ class RecommendedElasticPool(Resource):
     :vartype max_observed_dtu: float
     :ivar max_observed_storage_mb: Gets maximum observed storage in megabytes.
     :vartype max_observed_storage_mb: float
-    :ivar databases: The list of databases in this pool. Expanded property
+    :ivar databases: The list of Azure SQL Databases in this pool. Expanded
+     property
     :vartype databases: list of :class:`Database
      <azure.mgmt.sql.models.Database>`
-    :ivar metrics: The list of databases housed in the server. Expanded
-     property
+    :ivar metrics: The list of Azure SQL Databases housed in the server.
+     Expanded property
     :vartype metrics: list of :class:`RecommendedElasticPoolMetric
      <azure.mgmt.sql.models.RecommendedElasticPoolMetric>`
     """

@@ -120,11 +120,57 @@ class ApplicationGatewayFirewallMode(Enum):
     prevention = "Prevention"
 
 
-class NetworkOperationStatus(Enum):
+class AuthorizationUseStatus(Enum):
 
-    in_progress = "InProgress"
-    succeeded = "Succeeded"
-    failed = "Failed"
+    available = "Available"
+    in_use = "InUse"
+
+
+class ExpressRouteCircuitPeeringAdvertisedPublicPrefixState(Enum):
+
+    not_configured = "NotConfigured"
+    configuring = "Configuring"
+    configured = "Configured"
+    validation_needed = "ValidationNeeded"
+
+
+class ExpressRouteCircuitPeeringType(Enum):
+
+    azure_public_peering = "AzurePublicPeering"
+    azure_private_peering = "AzurePrivatePeering"
+    microsoft_peering = "MicrosoftPeering"
+
+
+class ExpressRouteCircuitPeeringState(Enum):
+
+    disabled = "Disabled"
+    enabled = "Enabled"
+
+
+class Access(Enum):
+
+    allow = "Allow"
+    deny = "Deny"
+
+
+class ExpressRouteCircuitSkuTier(Enum):
+
+    standard = "Standard"
+    premium = "Premium"
+
+
+class ExpressRouteCircuitSkuFamily(Enum):
+
+    unlimited_data = "UnlimitedData"
+    metered_data = "MeteredData"
+
+
+class ServiceProviderProvisioningState(Enum):
+
+    not_provisioned = "NotProvisioned"
+    provisioning = "Provisioning"
+    provisioned = "Provisioned"
+    deprovisioning = "Deprovisioning"
 
 
 class LoadDistribution(Enum):
@@ -140,11 +186,11 @@ class ProbeProtocol(Enum):
     tcp = "Tcp"
 
 
-class VirtualNetworkPeeringState(Enum):
+class NetworkOperationStatus(Enum):
 
-    initiated = "Initiated"
-    connected = "Connected"
-    disconnected = "Disconnected"
+    in_progress = "InProgress"
+    succeeded = "Succeeded"
+    failed = "Failed"
 
 
 class EffectiveRouteSource(Enum):
@@ -159,6 +205,74 @@ class EffectiveRouteState(Enum):
 
     active = "Active"
     invalid = "Invalid"
+
+
+class ProvisioningState(Enum):
+
+    succeeded = "Succeeded"
+    updating = "Updating"
+    deleting = "Deleting"
+    failed = "Failed"
+
+
+class AssociationType(Enum):
+
+    associated = "Associated"
+    contains = "Contains"
+
+
+class Direction(Enum):
+
+    inbound = "Inbound"
+    outbound = "Outbound"
+
+
+class Protocol(Enum):
+
+    tcp = "TCP"
+    udp = "UDP"
+
+
+class NextHopType(Enum):
+
+    internet = "Internet"
+    virtual_appliance = "VirtualAppliance"
+    virtual_network_gateway = "VirtualNetworkGateway"
+    vnet_local = "VnetLocal"
+    hyper_net_gateway = "HyperNetGateway"
+    none = "None"
+
+
+class PcProtocol(Enum):
+
+    tcp = "TCP"
+    udp = "UDP"
+    any = "Any"
+
+
+class PcStatus(Enum):
+
+    not_started = "NotStarted"
+    running = "Running"
+    stopped = "Stopped"
+    error = "Error"
+    unknown = "Unknown"
+
+
+class PcError(Enum):
+
+    internal_error = "InternalError"
+    agent_stopped = "AgentStopped"
+    capture_failed = "CaptureFailed"
+    local_file_failed = "LocalFileFailed"
+    storage_failed = "StorageFailed"
+
+
+class VirtualNetworkPeeringState(Enum):
+
+    initiated = "Initiated"
+    connected = "Connected"
+    disconnected = "Disconnected"
 
 
 class VirtualNetworkGatewayType(Enum):
@@ -189,6 +303,15 @@ class VirtualNetworkGatewaySkuTier(Enum):
     ultra_performance = "UltraPerformance"
 
 
+class BgpPeerState(Enum):
+
+    unknown = "Unknown"
+    stopped = "Stopped"
+    idle = "Idle"
+    connecting = "Connecting"
+    connected = "Connected"
+
+
 class ProcessorArchitecture(Enum):
 
     amd64 = "Amd64"
@@ -209,50 +332,3 @@ class VirtualNetworkGatewayConnectionType(Enum):
     vnet2_vnet = "Vnet2Vnet"
     express_route = "ExpressRoute"
     vpn_client = "VPNClient"
-
-
-class AuthorizationUseStatus(Enum):
-
-    available = "Available"
-    in_use = "InUse"
-
-
-class ExpressRouteCircuitPeeringAdvertisedPublicPrefixState(Enum):
-
-    not_configured = "NotConfigured"
-    configuring = "Configuring"
-    configured = "Configured"
-    validation_needed = "ValidationNeeded"
-
-
-class ExpressRouteCircuitPeeringType(Enum):
-
-    azure_public_peering = "AzurePublicPeering"
-    azure_private_peering = "AzurePrivatePeering"
-    microsoft_peering = "MicrosoftPeering"
-
-
-class ExpressRouteCircuitPeeringState(Enum):
-
-    disabled = "Disabled"
-    enabled = "Enabled"
-
-
-class ExpressRouteCircuitSkuTier(Enum):
-
-    standard = "Standard"
-    premium = "Premium"
-
-
-class ExpressRouteCircuitSkuFamily(Enum):
-
-    unlimited_data = "UnlimitedData"
-    metered_data = "MeteredData"
-
-
-class ServiceProviderProvisioningState(Enum):
-
-    not_provisioned = "NotProvisioned"
-    provisioning = "Provisioning"
-    provisioned = "Provisioned"
-    deprovisioning = "Deprovisioning"

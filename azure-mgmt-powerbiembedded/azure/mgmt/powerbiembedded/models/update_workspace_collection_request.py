@@ -24,7 +24,7 @@ class UpdateWorkspaceCollectionRequest(Model):
     :ivar sku:
     :vartype sku: :class:`AzureSku
      <azure.mgmt.powerbiembedded.models.AzureSku>`
-    """ 
+    """
 
     _validation = {
         'sku': {'constant': True},

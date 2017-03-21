@@ -17,7 +17,7 @@ class PtrRecord(Model):
 
     :param ptrdname: The PTR target domain name for this PTR record.
     :type ptrdname: str
-    """ 
+    """
 
     _attribute_map = {
         'ptrdname': {'key': 'ptrdname', 'type': 'str'},

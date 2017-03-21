@@ -30,7 +30,7 @@ class Location(Resource):
     :type location: str
     :param host_name:
     :type host_name: str
-    """ 
+    """
 
     _validation = {
         'id': {'readonly': True},

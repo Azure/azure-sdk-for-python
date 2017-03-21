@@ -19,15 +19,15 @@ class TrafficManagerNameAvailability(Model):
     :type name: str
     :param type: Traffic Manager profile resource type.
     :type type: str
-    :param name_available: Describes whether the relative name is available
-     or not.
+    :param name_available: Describes whether the relative name is available or
+     not.
     :type name_available: bool
     :param reason: The reason why the name is not available, when applicable.
     :type reason: str
     :param message: Descriptive message that explains why the name is not
      available, when applicable.
     :type message: str
-    """ 
+    """
 
     _attribute_map = {
         'name': {'key': 'name', 'type': 'str'},

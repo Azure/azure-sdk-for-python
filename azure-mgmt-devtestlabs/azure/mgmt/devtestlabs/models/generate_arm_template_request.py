@@ -22,7 +22,7 @@ class GenerateArmTemplateRequest(Model):
      <azure.mgmt.devtestlabs.models.ParameterInfo>`
     :param location: The location of the virtual machine.
     :type location: str
-    """ 
+    """
 
     _attribute_map = {
         'virtual_machine_name': {'key': 'virtualMachineName', 'type': 'str'},

@@ -55,6 +55,7 @@ from .virtual_machine_extension_handler_instance_view import VirtualMachineExten
 from .virtual_machine_agent_instance_view import VirtualMachineAgentInstanceView
 from .disk_instance_view import DiskInstanceView
 from .boot_diagnostics_instance_view import BootDiagnosticsInstanceView
+from .virtual_machine_identity import VirtualMachineIdentity
 from .virtual_machine_instance_view import VirtualMachineInstanceView
 from .virtual_machine import VirtualMachine
 from .upgrade_policy import UpgradePolicy
@@ -62,6 +63,7 @@ from .image_os_disk import ImageOSDisk
 from .image_data_disk import ImageDataDisk
 from .image_storage_profile import ImageStorageProfile
 from .image import Image
+from .virtual_machine_scale_set_identity import VirtualMachineScaleSetIdentity
 from .virtual_machine_scale_set_os_profile import VirtualMachineScaleSetOSProfile
 from .virtual_machine_scale_set_managed_disk_parameters import VirtualMachineScaleSetManagedDiskParameters
 from .virtual_machine_scale_set_os_disk import VirtualMachineScaleSetOSDisk
@@ -139,6 +141,7 @@ from .compute_management_client_enums import (
     ComponentNames,
     SettingNames,
     ProtocolTypes,
+    ResourceIdentityType,
     UpgradeMode,
     OperatingSystemStateTypes,
     VirtualMachineScaleSetSkuScaleType,
@@ -196,6 +199,7 @@ __all__ = [
     'VirtualMachineAgentInstanceView',
     'DiskInstanceView',
     'BootDiagnosticsInstanceView',
+    'VirtualMachineIdentity',
     'VirtualMachineInstanceView',
     'VirtualMachine',
     'UpgradePolicy',
@@ -203,6 +207,7 @@ __all__ = [
     'ImageDataDisk',
     'ImageStorageProfile',
     'Image',
+    'VirtualMachineScaleSetIdentity',
     'VirtualMachineScaleSetOSProfile',
     'VirtualMachineScaleSetManagedDiskParameters',
     'VirtualMachineScaleSetOSDisk',
@@ -279,6 +284,7 @@ __all__ = [
     'ComponentNames',
     'SettingNames',
     'ProtocolTypes',
+    'ResourceIdentityType',
     'UpgradeMode',
     'OperatingSystemStateTypes',
     'VirtualMachineScaleSetSkuScaleType',

@@ -13,7 +13,7 @@ from .resource import Resource
 
 
 class Column(Resource):
-    """Represents a database table column.
+    """Represents an Azure SQL Database table column.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -28,7 +28,7 @@ class Column(Resource):
     :type location: str
     :param tags: Resource tags
     :type tags: dict
-    :ivar column_type: The type of database table column.
+    :ivar column_type: The type of Azure SQL Database table column.
     :vartype column_type: str
     """
 

@@ -15,12 +15,12 @@ from .rule_condition import RuleCondition
 class LocationThresholdRuleCondition(RuleCondition):
     """A rule condition based on a certain number of locations failing.
 
-    :param odatatype: Polymorphic Discriminator
-    :type odatatype: str
     :param data_source: the resource from which the rule collects its data.
      For this type dataSource will always be of type RuleMetricDataSource.
     :type data_source: :class:`RuleDataSource
      <azure.mgmt.monitor.models.RuleDataSource>`
+    :param odatatype: Polymorphic Discriminator
+    :type odatatype: str
     :param window_size: the period of time (in ISO 8601 duration format) that
      is used to monitor alert activity based on the threshold. If specified
      then it must be between 5 minutes and 1 day.
@@ -36,15 +36,14 @@ class LocationThresholdRuleCondition(RuleCondition):
     }
 
     _attribute_map = {
-        'odatatype': {'key': 'odata\\.type', 'type': 'str'},
         'data_source': {'key': 'dataSource', 'type': 'RuleDataSource'},
+        'odatatype': {'key': 'odata\\.type', 'type': 'str'},
         'window_size': {'key': 'windowSize', 'type': 'duration'},
         'failed_location_count': {'key': 'failedLocationCount', 'type': 'int'},
     }
 
     def __init__(self, failed_location_count, data_source=None, window_size=None):
-        super(LocationThresholdRuleCondition, self).__init__()
-        self.data_source = data_source
+        super(LocationThresholdRuleCondition, self).__init__(data_source=data_source)
         self.window_size = window_size
         self.failed_location_count = failed_location_count
         self.odatatype = 'Microsoft.Azure.Management.Insights.Models.LocationThresholdRuleCondition'

@@ -23,6 +23,7 @@ class ResourceLinksOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An objec model deserializer.
+    :ivar api_version: The API version to use for the operation. Constant value: "2016-09-01".
     """
 
     def __init__(self, client, config, serializer, deserializer):
@@ -30,6 +31,7 @@ class ResourceLinksOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
+        self.api_version = "2016-09-01"
 
         self.config = config
 
@@ -62,7 +64,7 @@ class ResourceLinksOperations(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -122,7 +124,7 @@ class ResourceLinksOperations(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -188,7 +190,7 @@ class ResourceLinksOperations(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -251,7 +253,7 @@ class ResourceLinksOperations(object):
                 query_parameters = {}
                 if filter is not None:
                     query_parameters['$filter'] = self._serialize.query("filter", filter, 'str')
-                query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
+                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
             else:
                 url = next_link
@@ -298,8 +300,8 @@ class ResourceLinksOperations(object):
          resource group, set the scope to
          /subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myGroup.
         :type scope: str
-        :param filter: The filter to apply when getting resource links. To
-         get links only at the specified scope (not below the scope), use
+        :param filter: The filter to apply when getting resource links. To get
+         links only at the specified scope (not below the scope), use
          Filter.atScope().
         :type filter: str
         :param dict custom_headers: headers that will be added to the request
@@ -325,7 +327,7 @@ class ResourceLinksOperations(object):
                 query_parameters = {}
                 if filter is not None:
                     query_parameters['$filter'] = self._serialize.query("filter", filter, 'str')
-                query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
+                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
             else:
                 url = next_link

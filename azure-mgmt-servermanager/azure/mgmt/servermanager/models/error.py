@@ -22,7 +22,7 @@ class Error(Model):
     :type message: str
     :param fields:
     :type fields: str
-    """ 
+    """
 
     _attribute_map = {
         'code': {'key': 'code', 'type': 'int'},

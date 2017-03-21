@@ -39,7 +39,7 @@ class NodeResource(Resource):
     :type created: datetime
     :param updated: UTC date and time when node was last updated.
     :type updated: datetime
-    """ 
+    """
 
     _validation = {
         'id': {'readonly': True},

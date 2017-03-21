@@ -32,7 +32,7 @@ class ApplicationCreateParameters(Model):
     :param password_credentials: The list of PasswordCredential objects.
     :type password_credentials: list of :class:`PasswordCredential
      <azure.graphrbac.models.PasswordCredential>`
-    """ 
+    """
 
     _validation = {
         'available_to_other_tenants': {'required': True},

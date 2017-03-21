@@ -21,7 +21,7 @@ class MpnsCredential(Model):
     :type certificate_key: str
     :param thumbprint: The Mpns certificate Thumbprint
     :type thumbprint: str
-    """ 
+    """
 
     _attribute_map = {
         'mpns_certificate': {'key': 'properties.mpnsCertificate', 'type': 'str'},

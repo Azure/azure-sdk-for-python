@@ -10,8 +10,8 @@
 # --------------------------------------------------------------------------
 
 from .resource_link_filter import ResourceLinkFilter
-from .resource_link import ResourceLink
 from .resource_link_properties import ResourceLinkProperties
+from .resource_link import ResourceLink
 from .resource_link_paged import ResourceLinkPaged
 from .management_link_client_enums import (
     Filter,
@@ -19,8 +19,8 @@ from .management_link_client_enums import (
 
 __all__ = [
     'ResourceLinkFilter',
-    'ResourceLink',
     'ResourceLinkProperties',
+    'ResourceLink',
     'ResourceLinkPaged',
     'Filter',
 ]

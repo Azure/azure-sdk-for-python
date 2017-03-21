@@ -19,7 +19,7 @@ class PolicyViolation(Model):
     :type code: str
     :param message: The message of the policy violation.
     :type message: str
-    """ 
+    """
 
     _attribute_map = {
         'code': {'key': 'code', 'type': 'str'},

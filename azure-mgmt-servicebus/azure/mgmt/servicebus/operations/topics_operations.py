@@ -23,6 +23,7 @@ class TopicsOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An objec model deserializer.
+    :ivar api_version: Client API version. Constant value: "2015-08-01".
     """
 
     def __init__(self, client, config, serializer, deserializer):
@@ -30,24 +31,25 @@ class TopicsOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
+        self.api_version = "2015-08-01"
 
         self.config = config
 
-    def list_all(
+    def list_by_namespace(
             self, resource_group_name, namespace_name, custom_headers=None, raw=False, **operation_config):
         """Gets all the topics in a namespace.
 
-        :param resource_group_name: The name of the resource group.
+        :param resource_group_name: Name of the Resource group within the
+         Azure subscription.
         :type resource_group_name: str
-        :param namespace_name: The namespace name.
+        :param namespace_name: The namespace name
         :type namespace_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`TopicResourcePaged
-         <azure.mgmt.servicebus.models.TopicResourcePaged>`
+        :rtype: :class:`TopicPaged <azure.mgmt.servicebus.models.TopicPaged>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
@@ -56,15 +58,15 @@ class TopicsOperations(object):
                 # Construct URL
                 url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ServiceBus/namespaces/{namespaceName}/topics'
                 path_format_arguments = {
-                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-                    'namespaceName': self._serialize.url("namespace_name", namespace_name, 'str'),
+                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
+                    'namespaceName': self._serialize.url("namespace_name", namespace_name, 'str', max_length=50, min_length=6),
                     'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
                 }
                 url = self._client.format_url(url, **path_format_arguments)
 
                 # Construct parameters
                 query_parameters = {}
-                query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
+                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
             else:
                 url = next_link
@@ -93,11 +95,11 @@ class TopicsOperations(object):
             return response
 
         # Deserialize response
-        deserialized = models.TopicResourcePaged(internal_paging, self._deserialize.dependencies)
+        deserialized = models.TopicPaged(internal_paging, self._deserialize.dependencies)
 
         if raw:
             header_dict = {}
-            client_raw_response = models.TopicResourcePaged(internal_paging, self._deserialize.dependencies, header_dict)
+            client_raw_response = models.TopicPaged(internal_paging, self._deserialize.dependencies, header_dict)
             return client_raw_response
 
         return deserialized
@@ -106,22 +108,21 @@ class TopicsOperations(object):
             self, resource_group_name, namespace_name, topic_name, parameters, custom_headers=None, raw=False, **operation_config):
         """Creates a topic in the specified namespace.
 
-        :param resource_group_name: The name of the resource group.
+        :param resource_group_name: Name of the Resource group within the
+         Azure subscription.
         :type resource_group_name: str
-        :param namespace_name: The namespace name.
+        :param namespace_name: The namespace name
         :type namespace_name: str
         :param topic_name: The topic name.
         :type topic_name: str
         :param parameters: Parameters supplied to create a topic resource.
-        :type parameters: :class:`TopicCreateOrUpdateParameters
-         <azure.mgmt.servicebus.models.TopicCreateOrUpdateParameters>`
+        :type parameters: :class:`Topic <azure.mgmt.servicebus.models.Topic>`
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`TopicResource
-         <azure.mgmt.servicebus.models.TopicResource>`
+        :rtype: :class:`Topic <azure.mgmt.servicebus.models.Topic>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
@@ -129,16 +130,16 @@ class TopicsOperations(object):
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ServiceBus/namespaces/{namespaceName}/topics/{topicName}'
         path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            'namespaceName': self._serialize.url("namespace_name", namespace_name, 'str'),
-            'topicName': self._serialize.url("topic_name", topic_name, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
+            'namespaceName': self._serialize.url("namespace_name", namespace_name, 'str', max_length=50, min_length=6),
+            'topicName': self._serialize.url("topic_name", topic_name, 'str', max_length=50, min_length=1),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -151,7 +152,7 @@ class TopicsOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct body
-        body_content = self._serialize.body(parameters, 'TopicCreateOrUpdateParameters')
+        body_content = self._serialize.body(parameters, 'Topic')
 
         # Construct and send request
         request = self._client.put(url, query_parameters)
@@ -166,7 +167,7 @@ class TopicsOperations(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('TopicResource', response)
+            deserialized = self._deserialize('Topic', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
@@ -178,11 +179,12 @@ class TopicsOperations(object):
             self, resource_group_name, namespace_name, topic_name, custom_headers=None, raw=False, **operation_config):
         """Deletes a topic from the specified namespace and resource group.
 
-        :param resource_group_name: The name of the resource group.
+        :param resource_group_name: Name of the Resource group within the
+         Azure subscription.
         :type resource_group_name: str
-        :param namespace_name: The namespace name.
+        :param namespace_name: The namespace name
         :type namespace_name: str
-        :param topic_name: The name of the topic to delete.
+        :param topic_name: The topic name.
         :type topic_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -197,16 +199,16 @@ class TopicsOperations(object):
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ServiceBus/namespaces/{namespaceName}/topics/{topicName}'
         path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            'namespaceName': self._serialize.url("namespace_name", namespace_name, 'str'),
-            'topicName': self._serialize.url("topic_name", topic_name, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
+            'namespaceName': self._serialize.url("namespace_name", namespace_name, 'str', max_length=50, min_length=6),
+            'topicName': self._serialize.url("topic_name", topic_name, 'str', max_length=50, min_length=1),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -235,9 +237,10 @@ class TopicsOperations(object):
             self, resource_group_name, namespace_name, topic_name, custom_headers=None, raw=False, **operation_config):
         """Returns a description for the specified topic.
 
-        :param resource_group_name: The name of the resource group.
+        :param resource_group_name: Name of the Resource group within the
+         Azure subscription.
         :type resource_group_name: str
-        :param namespace_name: The namespace name.
+        :param namespace_name: The namespace name
         :type namespace_name: str
         :param topic_name: The topic name.
         :type topic_name: str
@@ -246,8 +249,7 @@ class TopicsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`TopicResource
-         <azure.mgmt.servicebus.models.TopicResource>`
+        :rtype: :class:`Topic <azure.mgmt.servicebus.models.Topic>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
@@ -255,16 +257,16 @@ class TopicsOperations(object):
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ServiceBus/namespaces/{namespaceName}/topics/{topicName}'
         path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            'namespaceName': self._serialize.url("namespace_name", namespace_name, 'str'),
-            'topicName': self._serialize.url("topic_name", topic_name, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
+            'namespaceName': self._serialize.url("namespace_name", namespace_name, 'str', max_length=50, min_length=6),
+            'topicName': self._serialize.url("topic_name", topic_name, 'str', max_length=50, min_length=1),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -288,7 +290,7 @@ class TopicsOperations(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('TopicResource', response)
+            deserialized = self._deserialize('Topic', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
@@ -300,9 +302,10 @@ class TopicsOperations(object):
             self, resource_group_name, namespace_name, topic_name, custom_headers=None, raw=False, **operation_config):
         """Gets authorization rules for a topic.
 
-        :param resource_group_name: The name of the resource group.
+        :param resource_group_name: Name of the Resource group within the
+         Azure subscription.
         :type resource_group_name: str
-        :param namespace_name: The namespace name.
+        :param namespace_name: The namespace name
         :type namespace_name: str
         :param topic_name: The topic name.
         :type topic_name: str
@@ -311,8 +314,8 @@ class TopicsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`SharedAccessAuthorizationRuleResourcePaged
-         <azure.mgmt.servicebus.models.SharedAccessAuthorizationRuleResourcePaged>`
+        :rtype: :class:`SharedAccessAuthorizationRulePaged
+         <azure.mgmt.servicebus.models.SharedAccessAuthorizationRulePaged>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
@@ -321,16 +324,16 @@ class TopicsOperations(object):
                 # Construct URL
                 url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ServiceBus/namespaces/{namespaceName}/topics/{topicName}/authorizationRules'
                 path_format_arguments = {
-                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-                    'namespaceName': self._serialize.url("namespace_name", namespace_name, 'str'),
-                    'topicName': self._serialize.url("topic_name", topic_name, 'str'),
+                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
+                    'namespaceName': self._serialize.url("namespace_name", namespace_name, 'str', max_length=50, min_length=6),
+                    'topicName': self._serialize.url("topic_name", topic_name, 'str', max_length=50, min_length=1),
                     'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
                 }
                 url = self._client.format_url(url, **path_format_arguments)
 
                 # Construct parameters
                 query_parameters = {}
-                query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
+                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
             else:
                 url = next_link
@@ -359,56 +362,58 @@ class TopicsOperations(object):
             return response
 
         # Deserialize response
-        deserialized = models.SharedAccessAuthorizationRuleResourcePaged(internal_paging, self._deserialize.dependencies)
+        deserialized = models.SharedAccessAuthorizationRulePaged(internal_paging, self._deserialize.dependencies)
 
         if raw:
             header_dict = {}
-            client_raw_response = models.SharedAccessAuthorizationRuleResourcePaged(internal_paging, self._deserialize.dependencies, header_dict)
+            client_raw_response = models.SharedAccessAuthorizationRulePaged(internal_paging, self._deserialize.dependencies, header_dict)
             return client_raw_response
 
         return deserialized
 
     def create_or_update_authorization_rule(
-            self, resource_group_name, namespace_name, topic_name, authorization_rule_name, parameters, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, namespace_name, topic_name, authorization_rule_name, rights, custom_headers=None, raw=False, **operation_config):
         """Creates an authorizatio rule for the specified topic.
 
-        :param resource_group_name: The name of the resource group.
+        :param resource_group_name: Name of the Resource group within the
+         Azure subscription.
         :type resource_group_name: str
-        :param namespace_name: The namespace name.
+        :param namespace_name: The namespace name
         :type namespace_name: str
         :param topic_name: The topic name.
         :type topic_name: str
-        :param authorization_rule_name: Authorization rule name.
+        :param authorization_rule_name: The authorizationrule name.
         :type authorization_rule_name: str
-        :param parameters: The shared access authorization rule.
-        :type parameters:
-         :class:`SharedAccessAuthorizationRuleCreateOrUpdateParameters
-         <azure.mgmt.servicebus.models.SharedAccessAuthorizationRuleCreateOrUpdateParameters>`
+        :param rights: The rights associated with the rule.
+        :type rights: list of str or :class:`AccessRights
+         <azure.mgmt.servicebus.models.AccessRights>`
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`SharedAccessAuthorizationRuleResource
-         <azure.mgmt.servicebus.models.SharedAccessAuthorizationRuleResource>`
+        :rtype: :class:`SharedAccessAuthorizationRule
+         <azure.mgmt.servicebus.models.SharedAccessAuthorizationRule>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
+        parameters = models.SharedAccessAuthorizationRule(rights=rights)
+
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ServiceBus/namespaces/{namespaceName}/topics/{topicName}/authorizationRules/{authorizationRuleName}'
         path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            'namespaceName': self._serialize.url("namespace_name", namespace_name, 'str'),
-            'topicName': self._serialize.url("topic_name", topic_name, 'str'),
-            'authorizationRuleName': self._serialize.url("authorization_rule_name", authorization_rule_name, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
+            'namespaceName': self._serialize.url("namespace_name", namespace_name, 'str', max_length=50, min_length=6),
+            'topicName': self._serialize.url("topic_name", topic_name, 'str', max_length=50, min_length=1),
+            'authorizationRuleName': self._serialize.url("authorization_rule_name", authorization_rule_name, 'str', max_length=50, min_length=1),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -421,7 +426,7 @@ class TopicsOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct body
-        body_content = self._serialize.body(parameters, 'SharedAccessAuthorizationRuleCreateOrUpdateParameters')
+        body_content = self._serialize.body(parameters, 'SharedAccessAuthorizationRule')
 
         # Construct and send request
         request = self._client.put(url, query_parameters)
@@ -436,7 +441,7 @@ class TopicsOperations(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('SharedAccessAuthorizationRuleResource', response)
+            deserialized = self._deserialize('SharedAccessAuthorizationRule', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
@@ -448,21 +453,22 @@ class TopicsOperations(object):
             self, resource_group_name, namespace_name, topic_name, authorization_rule_name, custom_headers=None, raw=False, **operation_config):
         """Returns the specified authorization rule.
 
-        :param resource_group_name: The name of the resource group.
+        :param resource_group_name: Name of the Resource group within the
+         Azure subscription.
         :type resource_group_name: str
-        :param namespace_name: The namespace name.
+        :param namespace_name: The namespace name
         :type namespace_name: str
         :param topic_name: The topic name.
         :type topic_name: str
-        :param authorization_rule_name: Authorization rule name.
+        :param authorization_rule_name: The authorizationrule name.
         :type authorization_rule_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`SharedAccessAuthorizationRuleResource
-         <azure.mgmt.servicebus.models.SharedAccessAuthorizationRuleResource>`
+        :rtype: :class:`SharedAccessAuthorizationRule
+         <azure.mgmt.servicebus.models.SharedAccessAuthorizationRule>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
@@ -470,17 +476,17 @@ class TopicsOperations(object):
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ServiceBus/namespaces/{namespaceName}/topics/{topicName}/authorizationRules/{authorizationRuleName}'
         path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            'namespaceName': self._serialize.url("namespace_name", namespace_name, 'str'),
-            'topicName': self._serialize.url("topic_name", topic_name, 'str'),
-            'authorizationRuleName': self._serialize.url("authorization_rule_name", authorization_rule_name, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
+            'namespaceName': self._serialize.url("namespace_name", namespace_name, 'str', max_length=50, min_length=6),
+            'topicName': self._serialize.url("topic_name", topic_name, 'str', max_length=50, min_length=1),
+            'authorizationRuleName': self._serialize.url("authorization_rule_name", authorization_rule_name, 'str', max_length=50, min_length=1),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -504,7 +510,7 @@ class TopicsOperations(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('SharedAccessAuthorizationRuleResource', response)
+            deserialized = self._deserialize('SharedAccessAuthorizationRule', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
@@ -516,13 +522,14 @@ class TopicsOperations(object):
             self, resource_group_name, namespace_name, topic_name, authorization_rule_name, custom_headers=None, raw=False, **operation_config):
         """Deletes a topic authorization rule.
 
-        :param resource_group_name: The name of the resource group.
+        :param resource_group_name: Name of the Resource group within the
+         Azure subscription.
         :type resource_group_name: str
-        :param namespace_name: The namespace name.
+        :param namespace_name: The namespace name
         :type namespace_name: str
         :param topic_name: The topic name.
         :type topic_name: str
-        :param authorization_rule_name: Authorization rule name.
+        :param authorization_rule_name: The authorizationrule name.
         :type authorization_rule_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -537,17 +544,17 @@ class TopicsOperations(object):
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ServiceBus/namespaces/{namespaceName}/topics/{topicName}/authorizationRules/{authorizationRuleName}'
         path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            'namespaceName': self._serialize.url("namespace_name", namespace_name, 'str'),
-            'topicName': self._serialize.url("topic_name", topic_name, 'str'),
-            'authorizationRuleName': self._serialize.url("authorization_rule_name", authorization_rule_name, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
+            'namespaceName': self._serialize.url("namespace_name", namespace_name, 'str', max_length=50, min_length=6),
+            'topicName': self._serialize.url("topic_name", topic_name, 'str', max_length=50, min_length=1),
+            'authorizationRuleName': self._serialize.url("authorization_rule_name", authorization_rule_name, 'str', max_length=50, min_length=1),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -576,13 +583,14 @@ class TopicsOperations(object):
             self, resource_group_name, namespace_name, topic_name, authorization_rule_name, custom_headers=None, raw=False, **operation_config):
         """Gets the primary and secondary connection strings for the topic.
 
-        :param resource_group_name: The name of the resource group.
+        :param resource_group_name: Name of the Resource group within the
+         Azure subscription.
         :type resource_group_name: str
-        :param namespace_name: The namespace name.
+        :param namespace_name: The namespace name
         :type namespace_name: str
         :param topic_name: The topic name.
         :type topic_name: str
-        :param authorization_rule_name: The authorization rule name.
+        :param authorization_rule_name: The authorizationrule name.
         :type authorization_rule_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -598,17 +606,17 @@ class TopicsOperations(object):
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ServiceBus/namespaces/{namespaceName}/topics/{topicName}/authorizationRules/{authorizationRuleName}/ListKeys'
         path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            'namespaceName': self._serialize.url("namespace_name", namespace_name, 'str'),
-            'topicName': self._serialize.url("topic_name", topic_name, 'str'),
-            'authorizationRuleName': self._serialize.url("authorization_rule_name", authorization_rule_name, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
+            'namespaceName': self._serialize.url("namespace_name", namespace_name, 'str', max_length=50, min_length=6),
+            'topicName': self._serialize.url("topic_name", topic_name, 'str', max_length=50, min_length=1),
+            'authorizationRuleName': self._serialize.url("authorization_rule_name", authorization_rule_name, 'str', max_length=50, min_length=1),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -644,13 +652,14 @@ class TopicsOperations(object):
             self, resource_group_name, namespace_name, topic_name, authorization_rule_name, policykey=None, custom_headers=None, raw=False, **operation_config):
         """Regenerates primary or secondary connection strings for the topic.
 
-        :param resource_group_name: The name of the resource group.
+        :param resource_group_name: Name of the Resource group within the
+         Azure subscription.
         :type resource_group_name: str
-        :param namespace_name: The namespace name.
+        :param namespace_name: The namespace name
         :type namespace_name: str
         :param topic_name: The topic name.
         :type topic_name: str
-        :param authorization_rule_name: The authorization rule name.
+        :param authorization_rule_name: The authorizationrule name.
         :type authorization_rule_name: str
         :param policykey: Key that needs to be regenerated. Possible values
          include: 'PrimaryKey', 'SecondaryKey'
@@ -672,17 +681,17 @@ class TopicsOperations(object):
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ServiceBus/namespaces/{namespaceName}/topics/{topicName}/authorizationRules/{authorizationRuleName}/regenerateKeys'
         path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            'namespaceName': self._serialize.url("namespace_name", namespace_name, 'str'),
-            'topicName': self._serialize.url("topic_name", topic_name, 'str'),
-            'authorizationRuleName': self._serialize.url("authorization_rule_name", authorization_rule_name, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
+            'namespaceName': self._serialize.url("namespace_name", namespace_name, 'str', max_length=50, min_length=6),
+            'topicName': self._serialize.url("topic_name", topic_name, 'str', max_length=50, min_length=1),
+            'authorizationRuleName': self._serialize.url("authorization_rule_name", authorization_rule_name, 'str', max_length=50, min_length=1),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
         header_parameters = {}

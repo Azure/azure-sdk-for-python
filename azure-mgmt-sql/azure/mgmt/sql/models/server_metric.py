@@ -13,13 +13,11 @@ from msrest.serialization import Model
 
 
 class ServerMetric(Model):
-    """Represents server metrics.
+    """Represents Azure SQL server metrics.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar name: Name of the server usage metric.
-    :vartype name: str
     :ivar resource_name: The name of the resource.
     :vartype resource_name: str
     :ivar display_name: The metric display name.
@@ -36,7 +34,6 @@ class ServerMetric(Model):
     """
 
     _validation = {
-        'name': {'readonly': True},
         'resource_name': {'readonly': True},
         'display_name': {'readonly': True},
         'current_value': {'readonly': True},
@@ -46,7 +43,6 @@ class ServerMetric(Model):
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
         'resource_name': {'key': 'resourceName', 'type': 'str'},
         'display_name': {'key': 'displayName', 'type': 'str'},
         'current_value': {'key': 'currentValue', 'type': 'float'},
@@ -56,7 +52,6 @@ class ServerMetric(Model):
     }
 
     def __init__(self):
-        self.name = None
         self.resource_name = None
         self.display_name = None
         self.current_value = None

@@ -9,19 +9,15 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .sql_sub_resource import SqlSubResource
+from msrest.serialization import Model
 
 
-class DatabaseMetric(SqlSubResource):
-    """Represents database metrics.
+class DatabaseMetric(Model):
+    """Represents Azure SQL Database metrics.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar name: Resource name
-    :vartype name: str
-    :ivar id: The resource ID.
-    :vartype id: str
     :ivar resource_name: The name of the resource.
     :vartype resource_name: str
     :ivar display_name: The metric display name.
@@ -38,8 +34,6 @@ class DatabaseMetric(SqlSubResource):
     """
 
     _validation = {
-        'name': {'readonly': True},
-        'id': {'readonly': True},
         'resource_name': {'readonly': True},
         'display_name': {'readonly': True},
         'current_value': {'readonly': True},
@@ -49,8 +43,6 @@ class DatabaseMetric(SqlSubResource):
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'id': {'key': 'id', 'type': 'str'},
         'resource_name': {'key': 'resourceName', 'type': 'str'},
         'display_name': {'key': 'displayName', 'type': 'str'},
         'current_value': {'key': 'currentValue', 'type': 'float'},
@@ -60,7 +52,6 @@ class DatabaseMetric(SqlSubResource):
     }
 
     def __init__(self):
-        super(DatabaseMetric, self).__init__()
         self.resource_name = None
         self.display_name = None
         self.current_value = None

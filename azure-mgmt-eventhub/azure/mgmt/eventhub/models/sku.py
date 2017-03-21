@@ -16,12 +16,12 @@ class Sku(Model):
     """SKU of the namespace.
 
     :param name: Name of this SKU. Possible values include: 'Basic',
-     'Standard', 'Premium'
+     'Standard'
     :type name: str or :class:`SkuName <azure.mgmt.eventhub.models.SkuName>`
     :param tier: The billing tier of this particular SKU. Possible values
      include: 'Basic', 'Standard', 'Premium'
     :type tier: str or :class:`SkuTier <azure.mgmt.eventhub.models.SkuTier>`
-    :param capacity: The Event Hubs throughput units.
+    :param capacity: The EventHubs throughput units.
     :type capacity: int
     """
 

@@ -22,7 +22,7 @@ class FlaggedEnrolledAppError(Model):
     :vartype error_code: str
     :ivar severity:
     :vartype severity: str
-    """ 
+    """
 
     _validation = {
         'error_code': {'readonly': True},

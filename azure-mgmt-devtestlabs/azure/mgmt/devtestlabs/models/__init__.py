@@ -9,47 +9,47 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .apply_artifacts_request import ApplyArtifactsRequest
-from .artifact_install_properties import ArtifactInstallProperties
 from .artifact_parameter_properties import ArtifactParameterProperties
+from .artifact_install_properties import ArtifactInstallProperties
+from .apply_artifacts_request import ApplyArtifactsRequest
 from .arm_template_info import ArmTemplateInfo
 from .artifact import Artifact
 from .artifact_deployment_status_properties import ArtifactDeploymentStatusProperties
 from .artifact_source import ArtifactSource
-from .cost import Cost
 from .cost_per_day_properties import CostPerDayProperties
 from .resource_cost_properties import ResourceCostProperties
-from .custom_image import CustomImage
-from .custom_image_properties_from_vm import CustomImagePropertiesFromVm
+from .cost import Cost
 from .windows_os_info import WindowsOsInfo
 from .linux_os_info import LinuxOsInfo
+from .custom_image_properties_from_vm import CustomImagePropertiesFromVm
 from .custom_image_properties_custom import CustomImagePropertiesCustom
+from .custom_image import CustomImage
 from .day_details import DayDetails
 from .evaluate_policies_properties import EvaluatePoliciesProperties
 from .evaluate_policies_request import EvaluatePoliciesRequest
-from .evaluate_policies_response import EvaluatePoliciesResponse
-from .policy_set_result import PolicySetResult
 from .policy_violation import PolicyViolation
-from .formula import Formula
-from .lab_virtual_machine import LabVirtualMachine
+from .policy_set_result import PolicySetResult
+from .evaluate_policies_response import EvaluatePoliciesResponse
 from .gallery_image_reference import GalleryImageReference
+from .lab_virtual_machine import LabVirtualMachine
 from .formula_properties_from_vm import FormulaPropertiesFromVm
+from .formula import Formula
 from .gallery_image import GalleryImage
-from .generate_arm_template_request import GenerateArmTemplateRequest
 from .parameter_info import ParameterInfo
+from .generate_arm_template_request import GenerateArmTemplateRequest
 from .generate_upload_uri_parameter import GenerateUploadUriParameter
 from .generate_upload_uri_response import GenerateUploadUriResponse
 from .hour_details import HourDetails
 from .lab import Lab
 from .lab_vhd import LabVhd
 from .policy import Policy
-from .schedule import Schedule
 from .week_details import WeekDetails
-from .virtual_network import VirtualNetwork
+from .schedule import Schedule
 from .subnet import Subnet
 from .subnet_override import SubnetOverride
-from .subscription_notification import SubscriptionNotification
+from .virtual_network import VirtualNetwork
 from .subscription_notification_properties import SubscriptionNotificationProperties
+from .subscription_notification import SubscriptionNotification
 from .lab_paged import LabPaged
 from .lab_vhd_paged import LabVhdPaged
 from .artifact_source_paged import ArtifactSourcePaged
@@ -77,47 +77,47 @@ from .dev_test_labs_client_enums import (
 )
 
 __all__ = [
-    'ApplyArtifactsRequest',
-    'ArtifactInstallProperties',
     'ArtifactParameterProperties',
+    'ArtifactInstallProperties',
+    'ApplyArtifactsRequest',
     'ArmTemplateInfo',
     'Artifact',
     'ArtifactDeploymentStatusProperties',
     'ArtifactSource',
-    'Cost',
     'CostPerDayProperties',
     'ResourceCostProperties',
-    'CustomImage',
-    'CustomImagePropertiesFromVm',
+    'Cost',
     'WindowsOsInfo',
     'LinuxOsInfo',
+    'CustomImagePropertiesFromVm',
     'CustomImagePropertiesCustom',
+    'CustomImage',
     'DayDetails',
     'EvaluatePoliciesProperties',
     'EvaluatePoliciesRequest',
-    'EvaluatePoliciesResponse',
-    'PolicySetResult',
     'PolicyViolation',
-    'Formula',
-    'LabVirtualMachine',
+    'PolicySetResult',
+    'EvaluatePoliciesResponse',
     'GalleryImageReference',
+    'LabVirtualMachine',
     'FormulaPropertiesFromVm',
+    'Formula',
     'GalleryImage',
-    'GenerateArmTemplateRequest',
     'ParameterInfo',
+    'GenerateArmTemplateRequest',
     'GenerateUploadUriParameter',
     'GenerateUploadUriResponse',
     'HourDetails',
     'Lab',
     'LabVhd',
     'Policy',
-    'Schedule',
     'WeekDetails',
-    'VirtualNetwork',
+    'Schedule',
     'Subnet',
     'SubnetOverride',
-    'SubscriptionNotification',
+    'VirtualNetwork',
     'SubscriptionNotificationProperties',
+    'SubscriptionNotification',
     'LabPaged',
     'LabVhdPaged',
     'ArtifactSourcePaged',

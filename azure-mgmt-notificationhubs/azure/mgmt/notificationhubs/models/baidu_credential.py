@@ -21,7 +21,7 @@ class BaiduCredential(Model):
     :type baidu_end_point: str
     :param baidu_secret_key: Baidu Secret Key
     :type baidu_secret_key: str
-    """ 
+    """
 
     _attribute_map = {
         'baidu_api_key': {'key': 'properties.baiduApiKey', 'type': 'str'},

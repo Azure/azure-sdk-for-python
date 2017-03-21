@@ -20,7 +20,7 @@ class ArtifactInstallProperties(Model):
     :param parameters: The parameters of the artifact.
     :type parameters: list of :class:`ArtifactParameterProperties
      <azure.mgmt.devtestlabs.models.ArtifactParameterProperties>`
-    """ 
+    """
 
     _attribute_map = {
         'artifact_id': {'key': 'artifactId', 'type': 'str'},

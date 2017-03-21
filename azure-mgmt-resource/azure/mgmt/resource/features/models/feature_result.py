@@ -24,7 +24,7 @@ class FeatureResult(Model):
     :type id: str
     :param type: The resource type of the feature.
     :type type: str
-    """ 
+    """
 
     _attribute_map = {
         'name': {'key': 'name', 'type': 'str'},

@@ -34,7 +34,7 @@ class CheckAvailabilityParameters(Model):
     :param is_availiable: True if the name is available and can be used to
      create new Namespace/NotificationHub. Otherwise false.
     :type is_availiable: bool
-    """ 
+    """
 
     _validation = {
         'id': {'readonly': True},

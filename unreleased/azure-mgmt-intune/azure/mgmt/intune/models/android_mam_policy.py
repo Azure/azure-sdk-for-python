@@ -34,34 +34,40 @@ class AndroidMAMPolicy(Resource):
     :type description: str
     :param app_sharing_from_level: Possible values include: 'none',
      'policyManagedApps', 'allApps'. Default value: "none" .
-    :type app_sharing_from_level: str
+    :type app_sharing_from_level: str or :class:`enum
+     <azure.mgmt.intune.models.enum>`
     :param app_sharing_to_level: Possible values include: 'none',
      'policyManagedApps', 'allApps'. Default value: "none" .
-    :type app_sharing_to_level: str
-    :param authentication: Possible values include: 'required',
-     'notRequired'. Default value: "required" .
-    :type authentication: str
+    :type app_sharing_to_level: str or :class:`enum
+     <azure.mgmt.intune.models.enum>`
+    :param authentication: Possible values include: 'required', 'notRequired'.
+     Default value: "required" .
+    :type authentication: str or :class:`enum <azure.mgmt.intune.models.enum>`
     :param clipboard_sharing_level: Possible values include: 'blocked',
      'policyManagedApps', 'policyManagedAppsWithPasteIn', 'allApps'. Default
      value: "blocked" .
-    :type clipboard_sharing_level: str
+    :type clipboard_sharing_level: str or :class:`enum
+     <azure.mgmt.intune.models.enum>`
     :param data_backup: Possible values include: 'allow', 'block'. Default
      value: "allow" .
-    :type data_backup: str
+    :type data_backup: str or :class:`enum <azure.mgmt.intune.models.enum>`
     :param file_sharing_save_as: Possible values include: 'allow', 'block'.
      Default value: "allow" .
-    :type file_sharing_save_as: str
+    :type file_sharing_save_as: str or :class:`enum
+     <azure.mgmt.intune.models.enum>`
     :param pin: Possible values include: 'required', 'notRequired'. Default
      value: "required" .
-    :type pin: str
+    :type pin: str or :class:`enum <azure.mgmt.intune.models.enum>`
     :param pin_num_retry:
     :type pin_num_retry: int
     :param device_compliance: Possible values include: 'enable', 'disable'.
      Default value: "enable" .
-    :type device_compliance: str
+    :type device_compliance: str or :class:`enum
+     <azure.mgmt.intune.models.enum>`
     :param managed_browser: Possible values include: 'required',
      'notRequired'. Default value: "required" .
-    :type managed_browser: str
+    :type managed_browser: str or :class:`enum
+     <azure.mgmt.intune.models.enum>`
     :param access_recheck_offline_timeout:
     :type access_recheck_offline_timeout: timedelta
     :param access_recheck_online_timeout:
@@ -72,16 +78,18 @@ class AndroidMAMPolicy(Resource):
     :vartype num_of_apps: int
     :ivar group_status: Possible values include: 'notTargeted', 'targeted'.
      Default value: "notTargeted" .
-    :vartype group_status: str
+    :vartype group_status: str or :class:`enum
+     <azure.mgmt.intune.models.enum>`
     :ivar last_modified_time:
     :vartype last_modified_time: datetime
     :param screen_capture: Possible values include: 'allow', 'block'. Default
      value: "allow" .
-    :type screen_capture: str
+    :type screen_capture: str or :class:`enum <azure.mgmt.intune.models.enum>`
     :param file_encryption: Possible values include: 'required',
      'notRequired'. Default value: "required" .
-    :type file_encryption: str
-    """ 
+    :type file_encryption: str or :class:`enum
+     <azure.mgmt.intune.models.enum>`
+    """
 
     _validation = {
         'id': {'readonly': True},

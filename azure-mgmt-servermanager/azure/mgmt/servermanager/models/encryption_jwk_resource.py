@@ -23,7 +23,7 @@ class EncryptionJwkResource(Model):
     :type e: str
     :param n:
     :type n: str
-    """ 
+    """
 
     _attribute_map = {
         'kty': {'key': 'kty', 'type': 'str'},

@@ -37,16 +37,16 @@ class RecommendedElasticPoolsOperations(object):
 
     def get(
             self, resource_group_name, server_name, recommended_elastic_pool_name, custom_headers=None, raw=False, **operation_config):
-        """Gets a recommented elastic pool.
+        """Gets information about an Azure SQL Recommended Elastic Pool.
 
         :param resource_group_name: The name of the resource group that
          contains the resource. You can obtain this value from the Azure
          Resource Manager API or the portal.
         :type resource_group_name: str
-        :param server_name: The name of the server.
+        :param server_name: The name of the Azure SQL server.
         :type server_name: str
-        :param recommended_elastic_pool_name: The name of the recommended
-         elastic pool to be retrieved.
+        :param recommended_elastic_pool_name: The name of the Azure SQL
+         Recommended Elastic Pool to be retrieved.
         :type recommended_elastic_pool_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -105,18 +105,20 @@ class RecommendedElasticPoolsOperations(object):
 
     def get_databases(
             self, resource_group_name, server_name, recommended_elastic_pool_name, database_name, custom_headers=None, raw=False, **operation_config):
-        """Gets a database inside of a recommented elastic pool.
+        """Gets information about an Azure SQL database inside of an Azure SQL
+        Recommended Elastic Pool.
 
         :param resource_group_name: The name of the resource group that
          contains the resource. You can obtain this value from the Azure
          Resource Manager API or the portal.
         :type resource_group_name: str
-        :param server_name: The name of the server.
+        :param server_name: The name of the Azure SQL server.
         :type server_name: str
-        :param recommended_elastic_pool_name: The name of the elastic pool to
-         be retrieved.
+        :param recommended_elastic_pool_name: The name of the Azure SQL
+         Elastic Pool to be retrieved.
         :type recommended_elastic_pool_name: str
-        :param database_name: The name of the database to be retrieved.
+        :param database_name: The name of the Azure SQL database to be
+         retrieved.
         :type database_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -175,13 +177,13 @@ class RecommendedElasticPoolsOperations(object):
 
     def list(
             self, resource_group_name, server_name, custom_headers=None, raw=False, **operation_config):
-        """Returns recommended elastic pools.
+        """Returns information about Azure SQL Recommended Elastic Pools.
 
         :param resource_group_name: The name of the resource group that
          contains the resource. You can obtain this value from the Azure
          Resource Manager API or the portal.
         :type resource_group_name: str
-        :param server_name: The name of the server.
+        :param server_name: The name of the Azure SQL server.
         :type server_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -246,16 +248,17 @@ class RecommendedElasticPoolsOperations(object):
 
     def list_databases(
             self, resource_group_name, server_name, recommended_elastic_pool_name, custom_headers=None, raw=False, **operation_config):
-        """Returns a list of databases inside a recommented elastic pool.
+        """Returns information about an Azure SQL database inside of an Azure SQL
+        Recommended Elastic Pool.
 
         :param resource_group_name: The name of the resource group that
          contains the resource. You can obtain this value from the Azure
          Resource Manager API or the portal.
         :type resource_group_name: str
-        :param server_name: The name of the server.
+        :param server_name: The name of the Azure SQL server.
         :type server_name: str
-        :param recommended_elastic_pool_name: The name of the recommended
-         elastic pool to be retrieved.
+        :param recommended_elastic_pool_name: The name of the Azure SQL
+         Recommended Elastic Pool to be retrieved.
         :type recommended_elastic_pool_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -320,16 +323,16 @@ class RecommendedElasticPoolsOperations(object):
 
     def list_metrics(
             self, resource_group_name, server_name, recommended_elastic_pool_name, custom_headers=None, raw=False, **operation_config):
-        """Returns a recommented elastic pool metrics.
+        """Returns information about an recommended elastic pool metrics.
 
         :param resource_group_name: The name of the resource group that
          contains the resource. You can obtain this value from the Azure
          Resource Manager API or the portal.
         :type resource_group_name: str
-        :param server_name: The name of the server.
+        :param server_name: The name of the Azure SQL server.
         :type server_name: str
-        :param recommended_elastic_pool_name: The name of the recommended
-         elastic pool to be retrieved.
+        :param recommended_elastic_pool_name: The name of the Azure SQL
+         Recommended Elastic Pool to be retrieved.
         :type recommended_elastic_pool_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the

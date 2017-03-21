@@ -36,7 +36,7 @@ class AADObject(Model):
     :type service_principal_names: list of str
     :param user_type: The user type of the object.
     :type user_type: str
-    """ 
+    """
 
     _attribute_map = {
         'object_id': {'key': 'objectId', 'type': 'str'},
