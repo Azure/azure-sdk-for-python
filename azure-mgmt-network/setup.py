@@ -6,7 +6,7 @@
 # license information.
 #--------------------------------------------------------------------------
 
-from setuptools import setup
+from setuptools import find_packages, setup
 from io import open
 import re
 
@@ -60,16 +60,10 @@ setup(
         'License :: OSI Approved :: MIT License',
     ],
     zip_safe=False,
-    packages=[
-        'azure',
-        'azure.mgmt',
-        'azure.mgmt.network',
-        'azure.mgmt.network.models',
-        'azure.mgmt.network.operations',
-    ],
+    packages=find_packages(),
     install_requires=[
-        'azure-mgmt-nspkg',
+        'msrestazure~=0.4.7',
         'azure-common~=1.1.4',
-        'msrestazure~=0.4.6',
+        'azure-mgmt-nspkg',
     ],
 )
