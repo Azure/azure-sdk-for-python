@@ -9,10 +9,10 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .sql_sub_resource import SqlSubResource
+from .sub_resource import SubResource
 
 
-class ServiceTierAdvisor(SqlSubResource):
+class ServiceTierAdvisor(SubResource):
     """Represents a Service Tier Advisor.
 
     Variables are only populated by the server, and will be ignored when

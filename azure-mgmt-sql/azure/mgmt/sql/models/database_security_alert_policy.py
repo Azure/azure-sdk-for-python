@@ -9,32 +9,34 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .sql_typed_sub_resource import SqlTypedSubResource
+from .proxy_resource import ProxyResource
 
 
-class DatabaseSecurityAlertPolicy(SqlTypedSubResource):
+class DatabaseSecurityAlertPolicy(ProxyResource):
     """Contains information about a database Threat Detection policy.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar name: Resource name
-    :vartype name: str
-    :ivar id: The resource ID.
+    :ivar id: Resource ID.
     :vartype id: str
-    :ivar type: Resource type
+    :ivar name: Resource name.
+    :vartype name: str
+    :ivar type: Resource type.
     :vartype type: str
+    :param location: The geo-location where the resource lives
+    :type location: str
+    :ivar kind: Resource kind.
+    :vartype kind: str
     :param state: Specifies the state of the policy. If state is Enabled,
      storageEndpoint and storageAccountAccessKey are required. Possible values
      include: 'New', 'Enabled', 'Disabled'
     :type state: str or :class:`SecurityAlertPolicyState
      <azure.mgmt.sql.models.SecurityAlertPolicyState>`
-    :param disabled_alerts: Specifies the comma-separated list of alerts that
-     are disabled, or empty string to disable no alerts. Possible values
-     include: 'Sql_Injection', 'Sql_Injection_Vulnerability', 'Access_Anomaly',
-     'Usage_Anomaly', 'Preview'
-    :type disabled_alerts: str or :class:`SecurityAlert
-     <azure.mgmt.sql.models.SecurityAlert>`
+    :param disabled_alerts: Specifies the semicolon-separated list of alerts
+     that are disabled, or empty string to disable no alerts. Possible values:
+     Sql_Injection; Sql_Injection_Vulnerability; Access_Anomaly; Usage_Anomaly.
+    :type disabled_alerts: str
     :param email_addresses: Specifies the semicolon-separated list of e-mail
      addresses to which the alert is sent.
     :type email_addresses: str
@@ -63,16 +65,19 @@ class DatabaseSecurityAlertPolicy(SqlTypedSubResource):
     """
 
     _validation = {
-        'name': {'readonly': True},
         'id': {'readonly': True},
+        'name': {'readonly': True},
         'type': {'readonly': True},
+        'kind': {'readonly': True},
         'state': {'required': True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
         'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
+        'location': {'key': 'location', 'type': 'str'},
+        'kind': {'key': 'kind', 'type': 'str'},
         'state': {'key': 'properties.state', 'type': 'SecurityAlertPolicyState'},
         'disabled_alerts': {'key': 'properties.disabledAlerts', 'type': 'str'},
         'email_addresses': {'key': 'properties.emailAddresses', 'type': 'str'},
@@ -83,8 +88,10 @@ class DatabaseSecurityAlertPolicy(SqlTypedSubResource):
         'use_server_default': {'key': 'properties.useServerDefault', 'type': 'SecurityAlertPolicyUseServerDefault'},
     }
 
-    def __init__(self, state, disabled_alerts=None, email_addresses=None, email_account_admins=None, storage_endpoint=None, storage_account_access_key=None, retention_days=None, use_server_default=None):
+    def __init__(self, state, location=None, disabled_alerts=None, email_addresses=None, email_account_admins=None, storage_endpoint=None, storage_account_access_key=None, retention_days=None, use_server_default=None):
         super(DatabaseSecurityAlertPolicy, self).__init__()
+        self.location = location
+        self.kind = None
         self.state = state
         self.disabled_alerts = disabled_alerts
         self.email_addresses = email_addresses
