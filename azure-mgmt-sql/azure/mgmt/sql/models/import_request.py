@@ -9,18 +9,18 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .export_request_parameters import ExportRequestParameters
+from .export_request import ExportRequest
 
 
-class ImportRequestParameters(ExportRequestParameters):
+class ImportRequest(ExportRequest):
     """Import database parameters.
 
-    :param storage_key_type: The type of the storage key to use. Valid values
-     are StorageAccessKey and SharedAccessKey. Possible values include:
-     'StorageAccessKey', 'SharedAccessKey'
+    :param storage_key_type: The type of the storage key to use. Possible
+     values include: 'StorageAccessKey', 'SharedAccessKey'
     :type storage_key_type: str or :class:`StorageKeyType
      <azure.mgmt.sql.models.StorageKeyType>`
-    :param storage_key: The storage key to use.
+    :param storage_key: The storage key to use.  If storage key type is
+     SharedAccessKey, it must be preceded with a "?."
     :type storage_key: str
     :param storage_uri: The storage uri to use.
     :type storage_uri: str
@@ -29,17 +29,23 @@ class ImportRequestParameters(ExportRequestParameters):
     :param administrator_login_password: The password of the SQL
      administrator.
     :type administrator_login_password: str
-    :param authentication_type: The authentication type - if not specified,
-     will default to SQL. Possible values include: 'SQL', 'ADPassword'
+    :param authentication_type: The authentication type. Possible values
+     include: 'SQL', 'ADPassword'. Default value: "SQL" .
     :type authentication_type: str or :class:`AuthenticationType
      <azure.mgmt.sql.models.AuthenticationType>`
     :param database_name: The name of the database to import.
     :type database_name: str
-    :param edition: The edition for the database being created.
-    :type edition: str
+    :param edition: The edition for the database being created. Possible
+     values include: 'Web', 'Business', 'Basic', 'Standard', 'Premium', 'Free',
+     'Stretch', 'DataWarehouse', 'System', 'System2'
+    :type edition: str or :class:`DatabaseEdition
+     <azure.mgmt.sql.models.DatabaseEdition>`
     :param service_objective_name: The name of the service objective to assign
-     to the database.
-    :type service_objective_name: str
+     to the database. Possible values include: 'Basic', 'S0', 'S1', 'S2', 'S3',
+     'P1', 'P2', 'P3', 'P4', 'P6', 'P11', 'P15', 'System', 'System2',
+     'ElasticPool'
+    :type service_objective_name: str or :class:`ServiceObjectiveName
+     <azure.mgmt.sql.models.ServiceObjectiveName>`
     :param max_size_bytes: The maximum size for the newly imported database.
     :type max_size_bytes: str
     """
@@ -69,8 +75,8 @@ class ImportRequestParameters(ExportRequestParameters):
         'max_size_bytes': {'key': 'maxSizeBytes', 'type': 'str'},
     }
 
-    def __init__(self, storage_key_type, storage_key, storage_uri, administrator_login, administrator_login_password, database_name, edition, service_objective_name, max_size_bytes, authentication_type=None):
-        super(ImportRequestParameters, self).__init__(storage_key_type=storage_key_type, storage_key=storage_key, storage_uri=storage_uri, administrator_login=administrator_login, administrator_login_password=administrator_login_password, authentication_type=authentication_type)
+    def __init__(self, storage_key_type, storage_key, storage_uri, administrator_login, administrator_login_password, database_name, edition, service_objective_name, max_size_bytes, authentication_type="SQL"):
+        super(ImportRequest, self).__init__(storage_key_type=storage_key_type, storage_key=storage_key, storage_uri=storage_uri, administrator_login=administrator_login, administrator_login_password=administrator_login_password, authentication_type=authentication_type)
         self.database_name = database_name
         self.edition = edition
         self.service_objective_name = service_objective_name
