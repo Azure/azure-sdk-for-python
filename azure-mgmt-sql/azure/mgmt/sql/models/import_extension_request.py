@@ -12,9 +12,16 @@
 from msrest.serialization import Model
 
 
-class ExportRequestParameters(Model):
-    """Export database parameters.
+class ImportExtensionRequest(Model):
+    """Import database parameters.
 
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :param name: The name of the extension.
+    :type name: str
+    :param type: The type of the extension.
+    :type type: str
     :param storage_key_type: The type of the storage key to use. Valid values
      are StorageAccessKey and SharedAccessKey. Possible values include:
      'StorageAccessKey', 'SharedAccessKey'
@@ -29,10 +36,13 @@ class ExportRequestParameters(Model):
     :param administrator_login_password: The password of the SQL
      administrator.
     :type administrator_login_password: str
-    :param authentication_type: The authentication type - if not specified,
-     will default to SQL. Possible values include: 'SQL', 'ADPassword'
+    :param authentication_type: The authentication type. Possible values
+     include: 'SQL', 'ADPassword'. Default value: "SQL" .
     :type authentication_type: str or :class:`AuthenticationType
      <azure.mgmt.sql.models.AuthenticationType>`
+    :ivar operation_mode: The type of import operation being performed. This
+     is always Import. Default value: "Import" .
+    :vartype operation_mode: str
     """
 
     _validation = {
@@ -41,18 +51,26 @@ class ExportRequestParameters(Model):
         'storage_uri': {'required': True},
         'administrator_login': {'required': True},
         'administrator_login_password': {'required': True},
+        'operation_mode': {'required': True, 'constant': True},
     }
 
     _attribute_map = {
-        'storage_key_type': {'key': 'storageKeyType', 'type': 'StorageKeyType'},
-        'storage_key': {'key': 'storageKey', 'type': 'str'},
-        'storage_uri': {'key': 'storageUri', 'type': 'str'},
-        'administrator_login': {'key': 'administratorLogin', 'type': 'str'},
-        'administrator_login_password': {'key': 'administratorLoginPassword', 'type': 'str'},
-        'authentication_type': {'key': 'authenticationType', 'type': 'AuthenticationType'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'storage_key_type': {'key': 'properties.storageKeyType', 'type': 'StorageKeyType'},
+        'storage_key': {'key': 'properties.storageKey', 'type': 'str'},
+        'storage_uri': {'key': 'properties.storageUri', 'type': 'str'},
+        'administrator_login': {'key': 'properties.administratorLogin', 'type': 'str'},
+        'administrator_login_password': {'key': 'properties.administratorLoginPassword', 'type': 'str'},
+        'authentication_type': {'key': 'properties.authenticationType', 'type': 'AuthenticationType'},
+        'operation_mode': {'key': 'properties.operationMode', 'type': 'str'},
     }
 
-    def __init__(self, storage_key_type, storage_key, storage_uri, administrator_login, administrator_login_password, authentication_type=None):
+    operation_mode = "Import"
+
+    def __init__(self, storage_key_type, storage_key, storage_uri, administrator_login, administrator_login_password, name=None, type=None, authentication_type="SQL"):
+        self.name = name
+        self.type = type
         self.storage_key_type = storage_key_type
         self.storage_key = storage_key
         self.storage_uri = storage_uri

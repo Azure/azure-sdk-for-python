@@ -9,20 +9,20 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.serialization import Model
+from .proxy_resource import ProxyResource
 
 
-class ImportExportOperationResponse(Model):
+class ImportExportResponse(ProxyResource):
     """Response for Import/Export Get operation.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar id: The id returned from the server.
+    :ivar id: Resource ID.
     :vartype id: str
-    :ivar name: The name returned from the server.
+    :ivar name: Resource name.
     :vartype name: str
-    :ivar type: The type returned from the server.
+    :ivar type: Resource type.
     :vartype type: str
     :ivar request_type: The request type of the operation.
     :vartype request_type: str
@@ -75,9 +75,7 @@ class ImportExportOperationResponse(Model):
     }
 
     def __init__(self):
-        self.id = None
-        self.name = None
-        self.type = None
+        super(ImportExportResponse, self).__init__()
         self.request_type = None
         self.request_id = None
         self.server_name = None
