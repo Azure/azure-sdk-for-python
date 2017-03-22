@@ -9,6 +9,11 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
+from .max_size_capability import MaxSizeCapability
+from .service_objective_capability import ServiceObjectiveCapability
+from .edition_capability import EditionCapability
+from .server_version_capability import ServerVersionCapability
+from .location_capabilities import LocationCapabilities
 from .server_firewall_rule import ServerFirewallRule
 from .sql_sub_resource import SqlSubResource
 from .import_extension_request_parameters import ImportExtensionRequestParameters
@@ -63,6 +68,9 @@ from .elastic_pool_database_activity_paged import ElasticPoolDatabaseActivityPag
 from .recommended_elastic_pool_paged import RecommendedElasticPoolPaged
 from .recommended_elastic_pool_metric_paged import RecommendedElasticPoolMetricPaged
 from .sql_management_client_enums import (
+    CapabilityStatus,
+    MaxSizeUnits,
+    PerformanceLevelUnit,
     StorageKeyType,
     AuthenticationType,
     ReplicationRole,
@@ -92,6 +100,11 @@ from .sql_management_client_enums import (
 )
 
 __all__ = [
+    'MaxSizeCapability',
+    'ServiceObjectiveCapability',
+    'EditionCapability',
+    'ServerVersionCapability',
+    'LocationCapabilities',
     'ServerFirewallRule',
     'SqlSubResource',
     'ImportExtensionRequestParameters',
@@ -145,6 +158,9 @@ __all__ = [
     'ElasticPoolDatabaseActivityPaged',
     'RecommendedElasticPoolPaged',
     'RecommendedElasticPoolMetricPaged',
+    'CapabilityStatus',
+    'MaxSizeUnits',
+    'PerformanceLevelUnit',
     'StorageKeyType',
     'AuthenticationType',
     'ReplicationRole',

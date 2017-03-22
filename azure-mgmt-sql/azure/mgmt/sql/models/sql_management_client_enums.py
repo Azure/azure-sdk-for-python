@@ -12,6 +12,27 @@
 from enum import Enum
 
 
+class CapabilityStatus(Enum):
+
+    visible = "Visible"
+    available = "Available"
+    default = "Default"
+    disabled = "Disabled"
+
+
+class MaxSizeUnits(Enum):
+
+    megabytes = "Megabytes"
+    gigabytes = "Gigabytes"
+    terabytes = "Terabytes"
+    petabytes = "Petabytes"
+
+
+class PerformanceLevelUnit(Enum):
+
+    dtu = "DTU"
+
+
 class StorageKeyType(Enum):
 
     storage_access_key = "StorageAccessKey"

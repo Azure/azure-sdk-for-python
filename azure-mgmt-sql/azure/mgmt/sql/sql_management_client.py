@@ -17,6 +17,7 @@ from msrest.pipeline import ClientRawResponse
 from msrestazure.azure_exceptions import CloudError
 from msrestazure.azure_operation import AzureOperationPoller
 import uuid
+from .operations.capabilities_operations import CapabilitiesOperations
 from .operations.servers_operations import ServersOperations
 from .operations.databases_operations import DatabasesOperations
 from .operations.import_export_operations import ImportExportOperations
@@ -68,6 +69,8 @@ class SqlManagementClient(object):
     :ivar config: Configuration for client.
     :vartype config: SqlManagementClientConfiguration
 
+    :ivar capabilities: Capabilities operations
+    :vartype capabilities: .operations.CapabilitiesOperations
     :ivar servers: Servers operations
     :vartype servers: .operations.ServersOperations
     :ivar databases: Databases operations
@@ -102,6 +105,8 @@ class SqlManagementClient(object):
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
 
+        self.capabilities = CapabilitiesOperations(
+            self._client, self.config, self._serialize, self._deserialize)
         self.servers = ServersOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.databases = DatabasesOperations(
