@@ -15,6 +15,9 @@ from .sub_resource import SubResource
 class ExpressRouteCircuitAuthorization(SubResource):
     """Authorization in an ExpressRouteCircuit resource.
 
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
     :param id: Resource ID.
     :type id: str
     :param authorization_key: The authorization key.
@@ -30,10 +33,14 @@ class ExpressRouteCircuitAuthorization(SubResource):
     :param name: Gets name of the resource that is unique within a resource
      group. This name can be used to access the resource.
     :type name: str
-    :param etag: A unique read-only string that changes whenever the resource
+    :ivar etag: A unique read-only string that changes whenever the resource
      is updated.
-    :type etag: str
+    :vartype etag: str
     """
+
+    _validation = {
+        'etag': {'readonly': True},
+    }
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
@@ -44,10 +51,10 @@ class ExpressRouteCircuitAuthorization(SubResource):
         'etag': {'key': 'etag', 'type': 'str'},
     }
 
-    def __init__(self, id=None, authorization_key=None, authorization_use_status=None, provisioning_state=None, name=None, etag=None):
+    def __init__(self, id=None, authorization_key=None, authorization_use_status=None, provisioning_state=None, name=None):
         super(ExpressRouteCircuitAuthorization, self).__init__(id=id)
         self.authorization_key = authorization_key
         self.authorization_use_status = authorization_use_status
         self.provisioning_state = provisioning_state
         self.name = name
-        self.etag = etag
+        self.etag = None
