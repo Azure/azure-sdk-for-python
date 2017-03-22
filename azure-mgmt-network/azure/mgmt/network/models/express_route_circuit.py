@@ -63,14 +63,15 @@ class ExpressRouteCircuit(Resource):
     :type provisioning_state: str
     :param gateway_manager_etag: The GatewayManager Etag.
     :type gateway_manager_etag: str
-    :param etag: Gets a unique read-only string that changes whenever the
+    :ivar etag: Gets a unique read-only string that changes whenever the
      resource is updated.
-    :type etag: str
+    :vartype etag: str
     """
 
     _validation = {
         'name': {'readonly': True},
         'type': {'readonly': True},
+        'etag': {'readonly': True},
     }
 
     _attribute_map = {
@@ -93,7 +94,7 @@ class ExpressRouteCircuit(Resource):
         'etag': {'key': 'etag', 'type': 'str'},
     }
 
-    def __init__(self, id=None, location=None, tags=None, sku=None, allow_classic_operations=None, circuit_provisioning_state=None, service_provider_provisioning_state=None, authorizations=None, peerings=None, service_key=None, service_provider_notes=None, service_provider_properties=None, provisioning_state=None, gateway_manager_etag=None, etag=None):
+    def __init__(self, id=None, location=None, tags=None, sku=None, allow_classic_operations=None, circuit_provisioning_state=None, service_provider_provisioning_state=None, authorizations=None, peerings=None, service_key=None, service_provider_notes=None, service_provider_properties=None, provisioning_state=None, gateway_manager_etag=None):
         super(ExpressRouteCircuit, self).__init__(id=id, location=location, tags=tags)
         self.sku = sku
         self.allow_classic_operations = allow_classic_operations
@@ -106,4 +107,4 @@ class ExpressRouteCircuit(Resource):
         self.service_provider_properties = service_provider_properties
         self.provisioning_state = provisioning_state
         self.gateway_manager_etag = gateway_manager_etag
-        self.etag = etag
+        self.etag = None

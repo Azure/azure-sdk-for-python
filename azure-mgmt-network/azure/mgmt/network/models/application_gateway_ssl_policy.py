@@ -23,7 +23,7 @@ class ApplicationGatewaySslPolicy(Model):
     """
 
     _attribute_map = {
-        'disabled_ssl_protocols': {'key': 'disabledSslProtocols', 'type': '[ApplicationGatewaySslProtocol]'},
+        'disabled_ssl_protocols': {'key': 'disabledSslProtocols', 'type': '[str]'},
     }
 
     def __init__(self, disabled_ssl_protocols=None):
