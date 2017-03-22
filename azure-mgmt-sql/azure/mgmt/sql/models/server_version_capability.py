@@ -12,28 +12,36 @@
 from msrest.serialization import Model
 
 
-class SqlSubResource(Model):
-    """Subresource properties.
+class ServerVersionCapability(Model):
+    """The server capabilities.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar name: Resource name
+    :ivar name: The server version name.
     :vartype name: str
-    :ivar id: The resource ID.
-    :vartype id: str
+    :ivar status: The status of the server version. Possible values include:
+     'Visible', 'Available', 'Default', 'Disabled'
+    :vartype status: str or :class:`CapabilityStatus
+     <azure.mgmt.sql.models.CapabilityStatus>`
+    :ivar supported_editions: The list of supported server editions.
+    :vartype supported_editions: list of :class:`EditionCapability
+     <azure.mgmt.sql.models.EditionCapability>`
     """
 
     _validation = {
         'name': {'readonly': True},
-        'id': {'readonly': True},
+        'status': {'readonly': True},
+        'supported_editions': {'readonly': True},
     }
 
     _attribute_map = {
         'name': {'key': 'name', 'type': 'str'},
-        'id': {'key': 'id', 'type': 'str'},
+        'status': {'key': 'status', 'type': 'CapabilityStatus'},
+        'supported_editions': {'key': 'supportedEditions', 'type': '[EditionCapability]'},
     }
 
     def __init__(self):
         self.name = None
-        self.id = None
+        self.status = None
+        self.supported_editions = None

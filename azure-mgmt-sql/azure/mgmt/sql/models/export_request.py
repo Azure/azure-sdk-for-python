@@ -12,15 +12,15 @@
 from msrest.serialization import Model
 
 
-class ExportRequestParameters(Model):
+class ExportRequest(Model):
     """Export database parameters.
 
-    :param storage_key_type: The type of the storage key to use. Valid values
-     are StorageAccessKey and SharedAccessKey. Possible values include:
-     'StorageAccessKey', 'SharedAccessKey'
+    :param storage_key_type: The type of the storage key to use. Possible
+     values include: 'StorageAccessKey', 'SharedAccessKey'
     :type storage_key_type: str or :class:`StorageKeyType
      <azure.mgmt.sql.models.StorageKeyType>`
-    :param storage_key: The storage key to use.
+    :param storage_key: The storage key to use.  If storage key type is
+     SharedAccessKey, it must be preceded with a "?."
     :type storage_key: str
     :param storage_uri: The storage uri to use.
     :type storage_uri: str
@@ -29,8 +29,8 @@ class ExportRequestParameters(Model):
     :param administrator_login_password: The password of the SQL
      administrator.
     :type administrator_login_password: str
-    :param authentication_type: The authentication type - if not specified,
-     will default to SQL. Possible values include: 'SQL', 'ADPassword'
+    :param authentication_type: The authentication type. Possible values
+     include: 'SQL', 'ADPassword'. Default value: "SQL" .
     :type authentication_type: str or :class:`AuthenticationType
      <azure.mgmt.sql.models.AuthenticationType>`
     """
@@ -52,7 +52,7 @@ class ExportRequestParameters(Model):
         'authentication_type': {'key': 'authenticationType', 'type': 'AuthenticationType'},
     }
 
-    def __init__(self, storage_key_type, storage_key, storage_uri, administrator_login, administrator_login_password, authentication_type=None):
+    def __init__(self, storage_key_type, storage_key, storage_uri, administrator_login, administrator_login_password, authentication_type="SQL"):
         self.storage_key_type = storage_key_type
         self.storage_key = storage_key
         self.storage_uri = storage_uri
