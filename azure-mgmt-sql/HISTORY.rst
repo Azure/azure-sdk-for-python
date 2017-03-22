@@ -3,6 +3,50 @@
 Release History
 ===============
 
+0.4.0 (2017-03-22)
+++++++++++++++++++
+
+Capabilities and security policy features.
+
+Also renamed several types and operations for improved clarify and
+consistency.
+
+Additions:
+
+* BlobAuditingPolicy APIs (e.g. databases.create_or_update_blob_auditing_policy)
+* ThreatDetectionPolicy APIs (e.g. databases.create_or_update_threat_detection_policy)
+* databases.list_by_server now supports $expand parameter
+* Capabilities APIs (e.g. capabilities.list_by_location)
+
+Classes and enums renamed:
+
+* ServerFirewallRule -> FirewallRule
+* DatabaseEditions -> DatabaseEdition
+* ElasticPoolEditions -> ElasticPoolEdition
+* ImportRequestParameters -> ImportRequest
+* ExportRequestParameters -> ExportRequest
+* ImportExportOperationResponse -> ImportExportResponse
+* OperationMode -> ImportOperationMode
+* TransparentDataEncryptionStates -> TransparentDataEncryptionStatus
+
+Classes removed:
+
+* Unused types: UpgradeHint, Schema, Table, Column
+
+Operations renamed:
+
+* servers.get_by_resource_group -> servers.get
+* servers.create_or_update_firewall_rule -> firewall_rules.create_or_update, and similar for get, list, and delete
+* databases.import -> databases.create_import_operation
+* servers.import -> databases.import
+* databases.pause_data_warehouse -> databases.pause
+* databases.resume_data_warehouse -> databases.resume
+* recommended_elastic_pools.list -> recommended_elastic_pools.list_by_server
+
+Operations removed:
+
+* Removed ImportExport operation results APIs since these are handled automatically by Azure async pattern.
+
 0.3.3 (2017-03-14)
 ++++++++++++++++++
 
