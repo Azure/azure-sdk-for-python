@@ -31,7 +31,7 @@ class Location(Model):
     :vartype latitude: str
     :ivar longitude: The longitude of the location.
     :vartype longitude: str
-    """ 
+    """
 
     _validation = {
         'id': {'readonly': True},

@@ -25,7 +25,7 @@ class ServicePrincipal(Model):
     :type app_id: str
     :param service_principal_names: A collection of service principal names.
     :type service_principal_names: list of str
-    """ 
+    """
 
     _attribute_map = {
         'object_id': {'key': 'objectId', 'type': 'str'},

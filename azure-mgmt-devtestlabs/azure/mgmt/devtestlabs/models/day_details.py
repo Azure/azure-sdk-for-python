@@ -17,7 +17,7 @@ class DayDetails(Model):
 
     :param time:
     :type time: str
-    """ 
+    """
 
     _attribute_map = {
         'time': {'key': 'time', 'type': 'str'},

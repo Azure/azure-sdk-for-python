@@ -19,7 +19,7 @@ class WindowsOsInfo(Model):
      include: 'NonSysprepped', 'SysprepRequested', 'SysprepApplied'
     :type windows_os_state: str or :class:`WindowsOsState
      <azure.mgmt.devtestlabs.models.WindowsOsState>`
-    """ 
+    """
 
     _attribute_map = {
         'windows_os_state': {'key': 'windowsOsState', 'type': 'str'},

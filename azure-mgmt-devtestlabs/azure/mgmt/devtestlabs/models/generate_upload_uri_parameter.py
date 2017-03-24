@@ -17,7 +17,7 @@ class GenerateUploadUriParameter(Model):
 
     :param blob_name: The blob name of the upload URI.
     :type blob_name: str
-    """ 
+    """
 
     _attribute_map = {
         'blob_name': {'key': 'blobName', 'type': 'str'},

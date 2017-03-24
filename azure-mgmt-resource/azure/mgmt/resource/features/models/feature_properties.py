@@ -17,7 +17,7 @@ class FeatureProperties(Model):
 
     :param state: The registration state of the feature for the subscription.
     :type state: str
-    """ 
+    """
 
     _attribute_map = {
         'state': {'key': 'state', 'type': 'str'},

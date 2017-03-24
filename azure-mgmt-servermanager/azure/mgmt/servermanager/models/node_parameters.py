@@ -27,7 +27,7 @@ class NodeParameters(Model):
     :type user_name: str
     :param password: Password associated with user name.
     :type password: str
-    """ 
+    """
 
     _attribute_map = {
         'location': {'key': 'location', 'type': 'str'},

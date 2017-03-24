@@ -27,7 +27,7 @@ class PolicyAssignment(Model):
     :type type: str
     :param name: The name of the policy assignment.
     :type name: str
-    """ 
+    """
 
     _attribute_map = {
         'display_name': {'key': 'properties.displayName', 'type': 'str'},

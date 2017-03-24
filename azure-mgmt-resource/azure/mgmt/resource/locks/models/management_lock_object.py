@@ -27,7 +27,7 @@ class ManagementLockObject(Model):
     :type type: str
     :param name: The name of the lock.
     :type name: str
-    """ 
+    """
 
     _attribute_map = {
         'level': {'key': 'properties.level', 'type': 'str'},

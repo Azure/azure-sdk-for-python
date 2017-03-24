@@ -19,7 +19,7 @@ class CheckTrafficManagerRelativeDnsNameAvailabilityParameters(Model):
     :type name: str
     :param type: Gets or sets the type of the resource.
     :type type: str
-    """ 
+    """
 
     _attribute_map = {
         'name': {'key': 'name', 'type': 'str'},

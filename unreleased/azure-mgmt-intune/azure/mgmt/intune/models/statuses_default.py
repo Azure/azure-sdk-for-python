@@ -48,7 +48,7 @@ class StatusesDefault(Resource):
     :vartype wipe_succeeded_apps: int
     :ivar nextlink: Gets the URL to get the next set of results.
     :vartype nextlink: str
-    """ 
+    """
 
     _validation = {
         'id': {'readonly': True},

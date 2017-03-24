@@ -29,7 +29,7 @@ class SubnetOverride(Model):
      values include: 'Default', 'Deny', 'Allow'
     :type use_public_ip_address_permission: str or :class:`UsagePermissionType
      <azure.mgmt.devtestlabs.models.UsagePermissionType>`
-    """ 
+    """
 
     _attribute_map = {
         'resource_id': {'key': 'resourceId', 'type': 'str'},

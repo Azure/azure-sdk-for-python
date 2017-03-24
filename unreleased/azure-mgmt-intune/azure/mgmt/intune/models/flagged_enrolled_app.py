@@ -39,7 +39,7 @@ class FlaggedEnrolledApp(Resource):
     :param errors:
     :type errors: list of :class:`FlaggedEnrolledAppError
      <azure.mgmt.intune.models.FlaggedEnrolledAppError>`
-    """ 
+    """
 
     _validation = {
         'id': {'readonly': True},

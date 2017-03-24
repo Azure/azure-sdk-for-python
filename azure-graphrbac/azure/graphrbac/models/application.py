@@ -34,7 +34,7 @@ class Application(Model):
     :type reply_urls: list of str
     :param homepage: The home page of the application.
     :type homepage: str
-    """ 
+    """
 
     _attribute_map = {
         'object_id': {'key': 'objectId', 'type': 'str'},

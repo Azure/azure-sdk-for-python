@@ -17,7 +17,7 @@ class CnameRecord(Model):
 
     :param cname: The canonical name for this CNAME record.
     :type cname: str
-    """ 
+    """
 
     _attribute_map = {
         'cname': {'key': 'cname', 'type': 'str'},
