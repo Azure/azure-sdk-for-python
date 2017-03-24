@@ -16,14 +16,14 @@ import uuid
 from .. import models
 
 
-class TagsOperations(object):
-    """TagsOperations operations.
+class PolicyDefinitionsOperations(object):
+    """PolicyDefinitionsOperations operations.
 
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An objec model deserializer.
-    :ivar api_version: The API version to use for this operation. Constant value: "2016-09-01".
+    :ivar api_version: The API version to use for the operation. Constant value: "2016-04-01".
     """
 
     def __init__(self, client, config, serializer, deserializer):
@@ -31,153 +31,35 @@ class TagsOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2016-09-01"
+        self.api_version = "2016-04-01"
 
         self.config = config
 
-    def delete_value(
-            self, tag_name, tag_value, custom_headers=None, raw=False, **operation_config):
-        """Deletes a tag value.
-
-        :param tag_name: The name of the tag.
-        :type tag_name: str
-        :param tag_value: The value of the tag to delete.
-        :type tag_value: str
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :rtype: None
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
-        """
-        # Construct URL
-        url = '/subscriptions/{subscriptionId}/tagNames/{tagName}/tagValues/{tagValue}'
-        path_format_arguments = {
-            'tagName': self._serialize.url("tag_name", tag_name, 'str'),
-            'tagValue': self._serialize.url("tag_value", tag_value, 'str'),
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
-        }
-        url = self._client.format_url(url, **path_format_arguments)
-
-        # Construct parameters
-        query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
-
-        # Construct headers
-        header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
-        if self.config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-        if custom_headers:
-            header_parameters.update(custom_headers)
-        if self.config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
-
-        # Construct and send request
-        request = self._client.delete(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
-
-        if response.status_code not in [200, 204]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
-
-        if raw:
-            client_raw_response = ClientRawResponse(None, response)
-            return client_raw_response
-
-    def create_or_update_value(
-            self, tag_name, tag_value, custom_headers=None, raw=False, **operation_config):
-        """Creates a tag value. The name of the tag must already exist.
-
-        :param tag_name: The name of the tag.
-        :type tag_name: str
-        :param tag_value: The value of the tag to create.
-        :type tag_value: str
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`TagValue
-         <azure.mgmt.resource.resources.v20160901.models.TagValue>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
-        """
-        # Construct URL
-        url = '/subscriptions/{subscriptionId}/tagNames/{tagName}/tagValues/{tagValue}'
-        path_format_arguments = {
-            'tagName': self._serialize.url("tag_name", tag_name, 'str'),
-            'tagValue': self._serialize.url("tag_value", tag_value, 'str'),
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
-        }
-        url = self._client.format_url(url, **path_format_arguments)
-
-        # Construct parameters
-        query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
-
-        # Construct headers
-        header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
-        if self.config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-        if custom_headers:
-            header_parameters.update(custom_headers)
-        if self.config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
-
-        # Construct and send request
-        request = self._client.put(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
-
-        if response.status_code not in [200, 201]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
-
-        deserialized = None
-
-        if response.status_code == 200:
-            deserialized = self._deserialize('TagValue', response)
-        if response.status_code == 201:
-            deserialized = self._deserialize('TagValue', response)
-
-        if raw:
-            client_raw_response = ClientRawResponse(deserialized, response)
-            return client_raw_response
-
-        return deserialized
-
     def create_or_update(
-            self, tag_name, custom_headers=None, raw=False, **operation_config):
-        """Creates a tag in the subscription.
+            self, policy_definition_name, parameters, custom_headers=None, raw=False, **operation_config):
+        """Creates or updates a policy definition.
 
-        The tag name can have a maximum of 512 characters and is case
-        insensitive. Tag names created by Azure have prefixes of microsoft,
-        azure, or windows. You cannot create tags with one of these prefixes.
-
-        :param tag_name: The name of the tag to create.
-        :type tag_name: str
+        :param policy_definition_name: The name of the policy definition to
+         create.
+        :type policy_definition_name: str
+        :param parameters: The policy definition properties.
+        :type parameters: :class:`PolicyDefinition
+         <azure.mgmt.resource.policy.v20160401.models.PolicyDefinition>`
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`TagDetails
-         <azure.mgmt.resource.resources.v20160901.models.TagDetails>`
+        :rtype: :class:`PolicyDefinition
+         <azure.mgmt.resource.policy.v20160401.models.PolicyDefinition>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/tagNames/{tagName}'
+        url = '/subscriptions/{subscriptionId}/providers/Microsoft.Authorization/policydefinitions/{policyDefinitionName}'
         path_format_arguments = {
-            'tagName': self._serialize.url("tag_name", tag_name, 'str'),
+            'policyDefinitionName': self._serialize.url("policy_definition_name", policy_definition_name, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -196,21 +78,23 @@ class TagsOperations(object):
         if self.config.accept_language is not None:
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
+        # Construct body
+        body_content = self._serialize.body(parameters, 'PolicyDefinition')
+
         # Construct and send request
         request = self._client.put(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        response = self._client.send(
+            request, header_parameters, body_content, **operation_config)
 
-        if response.status_code not in [200, 201]:
+        if response.status_code not in [201]:
             exp = CloudError(response)
             exp.request_id = response.headers.get('x-ms-request-id')
             raise exp
 
         deserialized = None
 
-        if response.status_code == 200:
-            deserialized = self._deserialize('TagDetails', response)
         if response.status_code == 201:
-            deserialized = self._deserialize('TagDetails', response)
+            deserialized = self._deserialize('PolicyDefinition', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
@@ -219,14 +103,12 @@ class TagsOperations(object):
         return deserialized
 
     def delete(
-            self, tag_name, custom_headers=None, raw=False, **operation_config):
-        """Deletes a tag from the subscription.
+            self, policy_definition_name, custom_headers=None, raw=False, **operation_config):
+        """Deletes a policy definition.
 
-        You must remove all values from a resource tag before you can delete
-        it.
-
-        :param tag_name: The name of the tag.
-        :type tag_name: str
+        :param policy_definition_name: The name of the policy definition to
+         delete.
+        :type policy_definition_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -238,9 +120,9 @@ class TagsOperations(object):
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/tagNames/{tagName}'
+        url = '/subscriptions/{subscriptionId}/providers/Microsoft.Authorization/policydefinitions/{policyDefinitionName}'
         path_format_arguments = {
-            'tagName': self._serialize.url("tag_name", tag_name, 'str'),
+            'policyDefinitionName': self._serialize.url("policy_definition_name", policy_definition_name, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -263,7 +145,7 @@ class TagsOperations(object):
         request = self._client.delete(url, query_parameters)
         response = self._client.send(request, header_parameters, **operation_config)
 
-        if response.status_code not in [200, 204]:
+        if response.status_code not in [204, 200]:
             exp = CloudError(response)
             exp.request_id = response.headers.get('x-ms-request-id')
             raise exp
@@ -272,25 +154,86 @@ class TagsOperations(object):
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
 
-    def list(
-            self, custom_headers=None, raw=False, **operation_config):
-        """Gets the names and values of all resource tags that are defined in a
-        subscription.
+    def get(
+            self, policy_definition_name, custom_headers=None, raw=False, **operation_config):
+        """Gets the policy definition.
 
+        :param policy_definition_name: The name of the policy definition to
+         get.
+        :type policy_definition_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`TagDetailsPaged
-         <azure.mgmt.resource.resources.v20160901.models.TagDetailsPaged>`
+        :rtype: :class:`PolicyDefinition
+         <azure.mgmt.resource.policy.v20160401.models.PolicyDefinition>`
+        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+         if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        """
+        # Construct URL
+        url = '/subscriptions/{subscriptionId}/providers/Microsoft.Authorization/policydefinitions/{policyDefinitionName}'
+        path_format_arguments = {
+            'policyDefinitionName': self._serialize.url("policy_definition_name", policy_definition_name, 'str'),
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+        # Construct and send request
+        request = self._client.get(url, query_parameters)
+        response = self._client.send(request, header_parameters, **operation_config)
+
+        if response.status_code not in [200]:
+            exp = CloudError(response)
+            exp.request_id = response.headers.get('x-ms-request-id')
+            raise exp
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('PolicyDefinition', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+
+    def list(
+            self, filter=None, custom_headers=None, raw=False, **operation_config):
+        """Gets all the policy definitions for a subscription.
+
+        :param filter: The filter to apply on the operation.
+        :type filter: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :rtype: :class:`PolicyDefinitionPaged
+         <azure.mgmt.resource.policy.v20160401.models.PolicyDefinitionPaged>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
 
             if not next_link:
                 # Construct URL
-                url = '/subscriptions/{subscriptionId}/tagNames'
+                url = '/subscriptions/{subscriptionId}/providers/Microsoft.Authorization/policydefinitions'
                 path_format_arguments = {
                     'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
                 }
@@ -298,6 +241,8 @@ class TagsOperations(object):
 
                 # Construct parameters
                 query_parameters = {}
+                if filter is not None:
+                    query_parameters['$filter'] = self._serialize.query("filter", filter, 'str')
                 query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
             else:
@@ -327,11 +272,11 @@ class TagsOperations(object):
             return response
 
         # Deserialize response
-        deserialized = models.TagDetailsPaged(internal_paging, self._deserialize.dependencies)
+        deserialized = models.PolicyDefinitionPaged(internal_paging, self._deserialize.dependencies)
 
         if raw:
             header_dict = {}
-            client_raw_response = models.TagDetailsPaged(internal_paging, self._deserialize.dependencies, header_dict)
+            client_raw_response = models.PolicyDefinitionPaged(internal_paging, self._deserialize.dependencies, header_dict)
             return client_raw_response
 
         return deserialized

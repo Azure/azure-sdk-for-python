@@ -24,7 +24,7 @@ class DeploymentsOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An objec model deserializer.
-    :ivar api_version: The API version to use for this operation. Constant value: "2016-09-01".
+    :ivar api_version: Client Api Version. Constant value: "2016-02-01".
     """
 
     def __init__(self, client, config, serializer, deserializer):
@@ -32,30 +32,18 @@ class DeploymentsOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2016-09-01"
+        self.api_version = "2016-02-01"
 
         self.config = config
 
     def delete(
             self, resource_group_name, deployment_name, custom_headers=None, raw=False, **operation_config):
-        """Deletes a deployment from the deployment history.
+        """Delete deployment.
 
-        A template deployment that is currently running cannot be deleted.
-        Deleting a template deployment removes the associated deployment
-        operations. Deleting a template deployment does not affect the state of
-        the resource group. This is an asynchronous operation that returns a
-        status of 202 until the template deployment is successfully deleted.
-        The Location response header contains the URI that is used to obtain
-        the status of the process. While the process is running, a call to the
-        URI in the Location header returns a status of 202. When the process
-        finishes, the URI in the Location header returns a status of 204 on
-        success. If the asynchronous request failed, the URI in the Location
-        header returns an error-level status code.
-
-        :param resource_group_name: The name of the resource group with the
-         deployment to delete. The name is case insensitive.
+        :param resource_group_name: The name of the resource group. The name
+         is case insensitive.
         :type resource_group_name: str
-        :param deployment_name: The name of the deployment to delete.
+        :param deployment_name: The name of the deployment to be deleted.
         :type deployment_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -71,7 +59,7 @@ class DeploymentsOperations(object):
         url = '/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/Microsoft.Resources/deployments/{deploymentName}'
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern='^[-\w\._\(\)]+$'),
-            'deploymentName': self._serialize.url("deployment_name", deployment_name, 'str', max_length=64, min_length=1, pattern='^[-\w\._\(\)]+$'),
+            'deploymentName': self._serialize.url("deployment_name", deployment_name, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -128,12 +116,12 @@ class DeploymentsOperations(object):
 
     def check_existence(
             self, resource_group_name, deployment_name, custom_headers=None, raw=False, **operation_config):
-        """Checks whether the deployment exists.
+        """Checks whether deployment exists.
 
-        :param resource_group_name: The name of the resource group with the
-         deployment to check. The name is case insensitive.
+        :param resource_group_name: The name of the resource group to check.
+         The name is case insensitive.
         :type resource_group_name: str
-        :param deployment_name: The name of the deployment to check.
+        :param deployment_name: The name of the deployment.
         :type deployment_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -149,7 +137,7 @@ class DeploymentsOperations(object):
         url = '/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/Microsoft.Resources/deployments/{deploymentName}'
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern='^[-\w\._\(\)]+$'),
-            'deploymentName': self._serialize.url("deployment_name", deployment_name, 'str', max_length=64, min_length=1, pattern='^[-\w\._\(\)]+$'),
+            'deploymentName': self._serialize.url("deployment_name", deployment_name, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -185,27 +173,23 @@ class DeploymentsOperations(object):
 
     def create_or_update(
             self, resource_group_name, deployment_name, properties=None, custom_headers=None, raw=False, **operation_config):
-        """Deploys resources to a resource group.
+        """Create a named template deployment using a template.
 
-        You can provide the template and parameters directly in the request or
-        link to JSON files.
-
-        :param resource_group_name: The name of the resource group to deploy
-         the resources to. The name is case insensitive. The resource group
-         must already exist.
+        :param resource_group_name: The name of the resource group. The name
+         is case insensitive.
         :type resource_group_name: str
         :param deployment_name: The name of the deployment.
         :type deployment_name: str
         :param properties: The deployment properties.
         :type properties: :class:`DeploymentProperties
-         <azure.mgmt.resource.resources.v20160901.models.DeploymentProperties>`
+         <azure.mgmt.resource.resources.v20160201.models.DeploymentProperties>`
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :rtype:
          :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
          instance that returns :class:`DeploymentExtended
-         <azure.mgmt.resource.resources.v20160901.models.DeploymentExtended>`
+         <azure.mgmt.resource.resources.v20160201.models.DeploymentExtended>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
@@ -216,7 +200,7 @@ class DeploymentsOperations(object):
         url = '/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/Microsoft.Resources/deployments/{deploymentName}'
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern='^[-\w\._\(\)]+$'),
-            'deploymentName': self._serialize.url("deployment_name", deployment_name, 'str', max_length=64, min_length=1, pattern='^[-\w\._\(\)]+$'),
+            'deploymentName': self._serialize.url("deployment_name", deployment_name, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -286,12 +270,12 @@ class DeploymentsOperations(object):
 
     def get(
             self, resource_group_name, deployment_name, custom_headers=None, raw=False, **operation_config):
-        """Gets a deployment.
+        """Get a deployment.
 
-        :param resource_group_name: The name of the resource group. The name
-         is case insensitive.
+        :param resource_group_name: The name of the resource group to get. The
+         name is case insensitive.
         :type resource_group_name: str
-        :param deployment_name: The name of the deployment to get.
+        :param deployment_name: The name of the deployment.
         :type deployment_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -299,7 +283,7 @@ class DeploymentsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`DeploymentExtended
-         <azure.mgmt.resource.resources.v20160901.models.DeploymentExtended>`
+         <azure.mgmt.resource.resources.v20160201.models.DeploymentExtended>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
@@ -308,7 +292,7 @@ class DeploymentsOperations(object):
         url = '/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/Microsoft.Resources/deployments/{deploymentName}'
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern='^[-\w\._\(\)]+$'),
-            'deploymentName': self._serialize.url("deployment_name", deployment_name, 'str', max_length=64, min_length=1, pattern='^[-\w\._\(\)]+$'),
+            'deploymentName': self._serialize.url("deployment_name", deployment_name, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -349,18 +333,12 @@ class DeploymentsOperations(object):
 
     def cancel(
             self, resource_group_name, deployment_name, custom_headers=None, raw=False, **operation_config):
-        """Cancels a currently running template deployment.
-
-        You can cancel a deployment only if the provisioningState is Accepted
-        or Running. After the deployment is canceled, the provisioningState is
-        set to Canceled. Canceling a template deployment stops the currently
-        running template deployment and leaves the resource group partially
-        deployed.
+        """Cancel a currently running template deployment.
 
         :param resource_group_name: The name of the resource group. The name
          is case insensitive.
         :type resource_group_name: str
-        :param deployment_name: The name of the deployment to cancel.
+        :param deployment_name: The name of the deployment.
         :type deployment_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -376,7 +354,7 @@ class DeploymentsOperations(object):
         url = '/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/Microsoft.Resources/deployments/{deploymentName}/cancel'
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern='^[-\w\._\(\)]+$'),
-            'deploymentName': self._serialize.url("deployment_name", deployment_name, 'str', max_length=64, min_length=1, pattern='^[-\w\._\(\)]+$'),
+            'deploymentName': self._serialize.url("deployment_name", deployment_name, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -410,24 +388,23 @@ class DeploymentsOperations(object):
 
     def validate(
             self, resource_group_name, deployment_name, properties=None, custom_headers=None, raw=False, **operation_config):
-        """Validates whether the specified template is syntactically correct and
-        will be accepted by Azure Resource Manager..
+        """Validate a deployment template.
 
-        :param resource_group_name: The name of the resource group the
-         template will be deployed to. The name is case insensitive.
+        :param resource_group_name: The name of the resource group. The name
+         is case insensitive.
         :type resource_group_name: str
         :param deployment_name: The name of the deployment.
         :type deployment_name: str
         :param properties: The deployment properties.
         :type properties: :class:`DeploymentProperties
-         <azure.mgmt.resource.resources.v20160901.models.DeploymentProperties>`
+         <azure.mgmt.resource.resources.v20160201.models.DeploymentProperties>`
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`DeploymentValidateResult
-         <azure.mgmt.resource.resources.v20160901.models.DeploymentValidateResult>`
+         <azure.mgmt.resource.resources.v20160201.models.DeploymentValidateResult>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
@@ -438,7 +415,7 @@ class DeploymentsOperations(object):
         url = '/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/Microsoft.Resources/deployments/{deploymentName}/validate'
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern='^[-\w\._\(\)]+$'),
-            'deploymentName': self._serialize.url("deployment_name", deployment_name, 'str', max_length=64, min_length=1, pattern='^[-\w\._\(\)]+$'),
+            'deploymentName': self._serialize.url("deployment_name", deployment_name, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -485,13 +462,12 @@ class DeploymentsOperations(object):
 
     def export_template(
             self, resource_group_name, deployment_name, custom_headers=None, raw=False, **operation_config):
-        """Exports the template used for specified deployment.
+        """Exports a deployment template.
 
         :param resource_group_name: The name of the resource group. The name
          is case insensitive.
         :type resource_group_name: str
-        :param deployment_name: The name of the deployment from which to get
-         the template.
+        :param deployment_name: The name of the deployment.
         :type deployment_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -499,7 +475,7 @@ class DeploymentsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`DeploymentExportResult
-         <azure.mgmt.resource.resources.v20160901.models.DeploymentExportResult>`
+         <azure.mgmt.resource.resources.v20160201.models.DeploymentExportResult>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
@@ -508,7 +484,7 @@ class DeploymentsOperations(object):
         url = '/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/Microsoft.Resources/deployments/{deploymentName}/exportTemplate'
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern='^[-\w\._\(\)]+$'),
-            'deploymentName': self._serialize.url("deployment_name", deployment_name, 'str', max_length=64, min_length=1, pattern='^[-\w\._\(\)]+$'),
+            'deploymentName': self._serialize.url("deployment_name", deployment_name, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -549,16 +525,15 @@ class DeploymentsOperations(object):
 
     def list(
             self, resource_group_name, filter=None, top=None, custom_headers=None, raw=False, **operation_config):
-        """Get all the deployments for a resource group.
+        """Get a list of deployments.
 
-        :param resource_group_name: The name of the resource group with the
-         deployments to get. The name is case insensitive.
+        :param resource_group_name: The name of the resource group to filter
+         by. The name is case insensitive.
         :type resource_group_name: str
-        :param filter: The filter to apply on the operation. For example, you
-         can use $filter=provisioningState eq '{state}'.
+        :param filter: The filter to apply on the operation.
         :type filter: str
-        :param top: The number of results to get. If null is passed, returns
-         all deployments.
+        :param top: Query parameters. If null is passed returns all
+         deployments.
         :type top: int
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -566,7 +541,7 @@ class DeploymentsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`DeploymentExtendedPaged
-         <azure.mgmt.resource.resources.v20160901.models.DeploymentExtendedPaged>`
+         <azure.mgmt.resource.resources.v20160201.models.DeploymentExtendedPaged>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):

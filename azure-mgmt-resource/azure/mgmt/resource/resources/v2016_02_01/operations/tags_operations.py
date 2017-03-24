@@ -23,7 +23,7 @@ class TagsOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An objec model deserializer.
-    :ivar api_version: The API version to use for this operation. Constant value: "2016-09-01".
+    :ivar api_version: Client Api Version. Constant value: "2016-02-01".
     """
 
     def __init__(self, client, config, serializer, deserializer):
@@ -31,17 +31,17 @@ class TagsOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2016-09-01"
+        self.api_version = "2016-02-01"
 
         self.config = config
 
     def delete_value(
             self, tag_name, tag_value, custom_headers=None, raw=False, **operation_config):
-        """Deletes a tag value.
+        """Delete a subscription resource tag value.
 
         :param tag_name: The name of the tag.
         :type tag_name: str
-        :param tag_value: The value of the tag to delete.
+        :param tag_value: The value of the tag.
         :type tag_value: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -91,11 +91,11 @@ class TagsOperations(object):
 
     def create_or_update_value(
             self, tag_name, tag_value, custom_headers=None, raw=False, **operation_config):
-        """Creates a tag value. The name of the tag must already exist.
+        """Create a subscription resource tag value.
 
         :param tag_name: The name of the tag.
         :type tag_name: str
-        :param tag_value: The value of the tag to create.
+        :param tag_value: The value of the tag.
         :type tag_value: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -103,7 +103,7 @@ class TagsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`TagValue
-         <azure.mgmt.resource.resources.v20160901.models.TagValue>`
+         <azure.mgmt.resource.resources.v20160201.models.TagValue>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
@@ -155,13 +155,9 @@ class TagsOperations(object):
 
     def create_or_update(
             self, tag_name, custom_headers=None, raw=False, **operation_config):
-        """Creates a tag in the subscription.
+        """Create a subscription resource tag.
 
-        The tag name can have a maximum of 512 characters and is case
-        insensitive. Tag names created by Azure have prefixes of microsoft,
-        azure, or windows. You cannot create tags with one of these prefixes.
-
-        :param tag_name: The name of the tag to create.
+        :param tag_name: The name of the tag.
         :type tag_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -169,7 +165,7 @@ class TagsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`TagDetails
-         <azure.mgmt.resource.resources.v20160901.models.TagDetails>`
+         <azure.mgmt.resource.resources.v20160201.models.TagDetails>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
@@ -220,10 +216,7 @@ class TagsOperations(object):
 
     def delete(
             self, tag_name, custom_headers=None, raw=False, **operation_config):
-        """Deletes a tag from the subscription.
-
-        You must remove all values from a resource tag before you can delete
-        it.
+        """Delete a subscription resource tag.
 
         :param tag_name: The name of the tag.
         :type tag_name: str
@@ -274,8 +267,7 @@ class TagsOperations(object):
 
     def list(
             self, custom_headers=None, raw=False, **operation_config):
-        """Gets the names and values of all resource tags that are defined in a
-        subscription.
+        """Get a list of subscription resource tags.
 
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -283,7 +275,7 @@ class TagsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`TagDetailsPaged
-         <azure.mgmt.resource.resources.v20160901.models.TagDetailsPaged>`
+         <azure.mgmt.resource.resources.v20160201.models.TagDetailsPaged>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):

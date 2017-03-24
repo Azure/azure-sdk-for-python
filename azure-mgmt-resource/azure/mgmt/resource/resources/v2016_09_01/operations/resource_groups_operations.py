@@ -24,7 +24,7 @@ class ResourceGroupsOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An objec model deserializer.
-    :ivar api_version: The API version to use for the operation. Constant value: "2016-09-01".
+    :ivar api_version: The API version to use for this operation. Constant value: "2016-09-01".
     """
 
     def __init__(self, client, config, serializer, deserializer):
