@@ -92,6 +92,9 @@ class ResourceManagementClient(object):
         if api_version =='2016-09-01':
             from .resources.v2016_09_01 import models
             return models
+        elif api_version =='2016-02-01':
+            from .resources.v2016_02_01 import models
+            return models
         else:
             raise NotImplementedError("APIVersion {} is not available".format(api_version))
 
@@ -99,6 +102,8 @@ class ResourceManagementClient(object):
     def deployments(self):
         if self.api_version =='2016-09-01':
             from .resources.v2016_09_01.operations.deployments_operations import DeploymentsOperations as OperationClass
+        elif self.api_version =='2016-02-01':
+            from .resources.v2016_02_01.operations.deployments_operations import DeploymentsOperations as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(api_version))
         return OperationClass(self._client, self.config, self._serialize, self._deserialize)
@@ -107,6 +112,8 @@ class ResourceManagementClient(object):
     def providers(self):
         if self.api_version =='2016-09-01':
             from .resources.v2016_09_01.operations.providers_operations import ProvidersOperations as OperationClass
+        elif self.api_version =='2016-02-01':
+            from .resources.v2016_02_01.operations.providers_operations import ProvidersOperations as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(api_version))
         return OperationClass(self._client, self.config, self._serialize, self._deserialize)
@@ -115,6 +122,8 @@ class ResourceManagementClient(object):
     def resource_groups(self):
         if self.api_version =='2016-09-01':
             from .resources.v2016_09_01.operations.resource_groups_operations import ResourceGroupsOperations as OperationClass
+        elif self.api_version =='2016-02-01':
+            from .resources.v2016_02_01.operations.resource_groups_operations import ResourceGroupsOperations as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(api_version))
         return OperationClass(self._client, self.config, self._serialize, self._deserialize)
@@ -123,6 +132,8 @@ class ResourceManagementClient(object):
     def resources(self):
         if self.api_version =='2016-09-01':
             from .resources.v2016_09_01.operations.resources_operations import ResourcesOperations as OperationClass
+        elif self.api_version =='2016-02-01':
+            from .resources.v2016_02_01.operations.resources_operations import ResourcesOperations as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(api_version))
         return OperationClass(self._client, self.config, self._serialize, self._deserialize)
@@ -131,6 +142,8 @@ class ResourceManagementClient(object):
     def tags(self):
         if self.api_version =='2016-09-01':
             from .resources.v2016_09_01.operations.tags_operations import TagsOperations as OperationClass
+        elif self.api_version =='2016-02-01':
+            from .resources.v2016_02_01.operations.tags_operations import TagsOperations as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(api_version))
         return OperationClass(self._client, self.config, self._serialize, self._deserialize)
@@ -139,6 +152,8 @@ class ResourceManagementClient(object):
     def deployment_operations(self):
         if self.api_version =='2016-09-01':
             from .resources.v2016_09_01.operations.deployment_operations import DeploymentOperations as OperationClass
+        elif self.api_version =='2016-02-01':
+            from .resources.v2016_02_01.operations.deployment_operations import DeploymentOperations as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(api_version))
         return OperationClass(self._client, self.config, self._serialize, self._deserialize)

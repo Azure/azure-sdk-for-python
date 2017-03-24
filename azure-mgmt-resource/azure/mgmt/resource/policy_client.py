@@ -84,6 +84,9 @@ class PolicyClient(object):
         if api_version =='2016-12-01':
             from .policy.v2016_12_01 import models
             return models
+        elif api_version =='2016-04-01':
+            from .policy.v2016_04_01 import models
+            return models
         else:
             raise NotImplementedError("APIVersion {} is not available".format(api_version))
 
@@ -91,6 +94,8 @@ class PolicyClient(object):
     def policy_assignments(self):
         if self.api_version =='2016-12-01':
             from .policy.v2016_12_01.operations.policy_assignments_operations import PolicyAssignmentsOperations as OperationClass
+        elif self.api_version =='2016-04-01':
+            from .policy.v2016_04_01.operations.policy_assignments_operations import PolicyAssignmentsOperations as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(api_version))
         return OperationClass(self._client, self.config, self._serialize, self._deserialize)
@@ -99,6 +104,8 @@ class PolicyClient(object):
     def policy_definitions(self):
         if self.api_version =='2016-12-01':
             from .policy.v2016_12_01.operations.policy_definitions_operations import PolicyDefinitionsOperations as OperationClass
+        if self.api_version =='2016-04-01':
+            from .policy.v2016_04_01.operations.policy_definitions_operations import PolicyDefinitionsOperations as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(api_version))
         return OperationClass(self._client, self.config, self._serialize, self._deserialize)
