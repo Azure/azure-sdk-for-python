@@ -23,7 +23,7 @@ class DeploymentOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An objec model deserializer.
-    :ivar api_version: The API version to use for this operation. Constant value: "2016-09-01".
+    :ivar api_version: Client Api Version. Constant value: "2016-02-01".
     """
 
     def __init__(self, client, config, serializer, deserializer):
@@ -31,20 +31,20 @@ class DeploymentOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2016-09-01"
+        self.api_version = "2016-02-01"
 
         self.config = config
 
     def get(
             self, resource_group_name, deployment_name, operation_id, custom_headers=None, raw=False, **operation_config):
-        """Gets a deployments operation.
+        """Get a list of deployments operations.
 
         :param resource_group_name: The name of the resource group. The name
          is case insensitive.
         :type resource_group_name: str
         :param deployment_name: The name of the deployment.
         :type deployment_name: str
-        :param operation_id: The ID of the operation to get.
+        :param operation_id: Operation Id.
         :type operation_id: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -52,7 +52,7 @@ class DeploymentOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`DeploymentOperation
-         <azure.mgmt.resource.resources.v20160901.models.DeploymentOperation>`
+         <azure.mgmt.resource.resources.v20160201.models.DeploymentOperation>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
@@ -61,7 +61,7 @@ class DeploymentOperations(object):
         url = '/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/deployments/{deploymentName}/operations/{operationId}'
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern='^[-\w\._\(\)]+$'),
-            'deploymentName': self._serialize.url("deployment_name", deployment_name, 'str', max_length=64, min_length=1, pattern='^[-\w\._\(\)]+$'),
+            'deploymentName': self._serialize.url("deployment_name", deployment_name, 'str'),
             'operationId': self._serialize.url("operation_id", operation_id, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
@@ -103,15 +103,14 @@ class DeploymentOperations(object):
 
     def list(
             self, resource_group_name, deployment_name, top=None, custom_headers=None, raw=False, **operation_config):
-        """Gets all deployments operations for a deployment.
+        """Gets a list of deployments operations.
 
         :param resource_group_name: The name of the resource group. The name
          is case insensitive.
         :type resource_group_name: str
-        :param deployment_name: The name of the deployment with the operation
-         to get.
+        :param deployment_name: The name of the deployment.
         :type deployment_name: str
-        :param top: The number of results to return.
+        :param top: Query parameters.
         :type top: int
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -119,7 +118,7 @@ class DeploymentOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`DeploymentOperationPaged
-         <azure.mgmt.resource.resources.v20160901.models.DeploymentOperationPaged>`
+         <azure.mgmt.resource.resources.v20160201.models.DeploymentOperationPaged>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
@@ -129,7 +128,7 @@ class DeploymentOperations(object):
                 url = '/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/deployments/{deploymentName}/operations'
                 path_format_arguments = {
                     'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern='^[-\w\._\(\)]+$'),
-                    'deploymentName': self._serialize.url("deployment_name", deployment_name, 'str', max_length=64, min_length=1, pattern='^[-\w\._\(\)]+$'),
+                    'deploymentName': self._serialize.url("deployment_name", deployment_name, 'str'),
                     'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
                 }
                 url = self._client.format_url(url, **path_format_arguments)
