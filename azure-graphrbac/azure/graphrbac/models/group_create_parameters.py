@@ -30,7 +30,7 @@ class GroupCreateParameters(Model):
      true. This is because only pure security groups can be created using the
      Graph API. Default value: True .
     :vartype security_enabled: bool
-    """ 
+    """
 
     _validation = {
         'display_name': {'required': True},

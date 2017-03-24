@@ -31,22 +31,11 @@ class GraphRbacManagementClientConfiguration(AzureConfiguration):
      object<msrestazure.azure_active_directory>`
     :param tenant_id: The tenant ID.
     :type tenant_id: str
-    :param accept_language: Gets or sets the preferred language for the
-     response.
-    :type accept_language: str
-    :param long_running_operation_retry_timeout: Gets or sets the retry
-     timeout in seconds for Long Running Operations. Default value is 30.
-    :type long_running_operation_retry_timeout: int
-    :param generate_client_request_id: When set to true a unique
-     x-ms-client-request-id value is generated and included in each request.
-     Default is true.
-    :type generate_client_request_id: bool
     :param str base_url: Service URL
-    :param str filepath: Existing config
     """
 
     def __init__(
-            self, credentials, tenant_id, accept_language='en-US', long_running_operation_retry_timeout=30, generate_client_request_id=True, base_url=None, filepath=None):
+            self, credentials, tenant_id, base_url=None):
 
         if credentials is None:
             raise ValueError("Parameter 'credentials' must not be None.")
@@ -54,21 +43,16 @@ class GraphRbacManagementClientConfiguration(AzureConfiguration):
             raise ValueError("Parameter 'tenant_id' must not be None.")
         if not isinstance(tenant_id, str):
             raise TypeError("Parameter 'tenant_id' must be str.")
-        if accept_language is not None and not isinstance(accept_language, str):
-            raise TypeError("Optional parameter 'accept_language' must be str.")
         if not base_url:
             base_url = 'https://graph.windows.net'
 
-        super(GraphRbacManagementClientConfiguration, self).__init__(base_url, filepath)
+        super(GraphRbacManagementClientConfiguration, self).__init__(base_url)
 
         self.add_user_agent('graphrbacmanagementclient/{}'.format(VERSION))
         self.add_user_agent('Azure-SDK-For-Python')
 
         self.credentials = credentials
         self.tenant_id = tenant_id
-        self.accept_language = accept_language
-        self.long_running_operation_retry_timeout = long_running_operation_retry_timeout
-        self.generate_client_request_id = generate_client_request_id
 
 
 class GraphRbacManagementClient(object):
@@ -93,24 +77,13 @@ class GraphRbacManagementClient(object):
      object<msrestazure.azure_active_directory>`
     :param tenant_id: The tenant ID.
     :type tenant_id: str
-    :param accept_language: Gets or sets the preferred language for the
-     response.
-    :type accept_language: str
-    :param long_running_operation_retry_timeout: Gets or sets the retry
-     timeout in seconds for Long Running Operations. Default value is 30.
-    :type long_running_operation_retry_timeout: int
-    :param generate_client_request_id: When set to true a unique
-     x-ms-client-request-id value is generated and included in each request.
-     Default is true.
-    :type generate_client_request_id: bool
     :param str base_url: Service URL
-    :param str filepath: Existing config
     """
 
     def __init__(
-            self, credentials, tenant_id, accept_language='en-US', long_running_operation_retry_timeout=30, generate_client_request_id=True, base_url=None, filepath=None):
+            self, credentials, tenant_id, base_url=None):
 
-        self.config = GraphRbacManagementClientConfiguration(credentials, tenant_id, accept_language, long_running_operation_retry_timeout, generate_client_request_id, base_url, filepath)
+        self.config = GraphRbacManagementClientConfiguration(credentials, tenant_id, base_url)
         self._client = ServiceClient(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}

@@ -23,7 +23,7 @@ class CostPerDayProperties(Model):
      'Unavailable', 'Reported', 'Projected'
     :type cost_type: str or :class:`LabCostType
      <azure.mgmt.devtestlabs.models.LabCostType>`
-    """ 
+    """
 
     _attribute_map = {
         'date_property': {'key': 'date', 'type': 'iso-8601'},

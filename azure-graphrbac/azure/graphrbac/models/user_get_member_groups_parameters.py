@@ -19,7 +19,7 @@ class UserGetMemberGroupsParameters(Model):
      groups should be checked. Otherwise, membership in all groups should be
      checked.
     :type security_enabled_only: bool
-    """ 
+    """
 
     _validation = {
         'security_enabled_only': {'required': True},

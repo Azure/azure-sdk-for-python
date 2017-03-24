@@ -17,7 +17,7 @@ class SubResource(Model):
 
     :param id: Resource Id
     :type id: str
-    """ 
+    """
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},

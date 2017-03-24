@@ -33,7 +33,6 @@ from .operation import Operation
 from .cidr_ip_address import CidrIpAddress
 from .ip_address_group import IpAddressGroup
 from .edge_node import EdgeNode
-from .edgenode_result import EdgenodeResult
 from .resource import Resource
 from .error_response import ErrorResponse, ErrorResponseException
 from .profile_paged import ProfilePaged
@@ -42,6 +41,7 @@ from .endpoint_paged import EndpointPaged
 from .origin_paged import OriginPaged
 from .custom_domain_paged import CustomDomainPaged
 from .operation_paged import OperationPaged
+from .edge_node_paged import EdgeNodePaged
 from .cdn_management_client_enums import (
     SkuName,
     ProfileResourceState,
@@ -50,6 +50,7 @@ from .cdn_management_client_enums import (
     GeoFilterActions,
     OriginResourceState,
     CustomDomainResourceState,
+    CustomHttpsProvisioningState,
     ResourceType,
 )
 
@@ -78,7 +79,6 @@ __all__ = [
     'CidrIpAddress',
     'IpAddressGroup',
     'EdgeNode',
-    'EdgenodeResult',
     'Resource',
     'ErrorResponse', 'ErrorResponseException',
     'ProfilePaged',
@@ -87,6 +87,7 @@ __all__ = [
     'OriginPaged',
     'CustomDomainPaged',
     'OperationPaged',
+    'EdgeNodePaged',
     'SkuName',
     'ProfileResourceState',
     'EndpointResourceState',
@@ -94,5 +95,6 @@ __all__ = [
     'GeoFilterActions',
     'OriginResourceState',
     'CustomDomainResourceState',
+    'CustomHttpsProvisioningState',
     'ResourceType',
 ]

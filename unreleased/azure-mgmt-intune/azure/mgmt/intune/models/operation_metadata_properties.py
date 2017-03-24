@@ -19,7 +19,7 @@ class OperationMetadataProperties(Model):
     :type name: str
     :param value:
     :type value: str
-    """ 
+    """
 
     _validation = {
         'name': {'required': True},

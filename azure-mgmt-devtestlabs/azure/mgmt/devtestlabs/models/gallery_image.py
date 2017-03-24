@@ -38,7 +38,7 @@ class GalleryImage(Model):
     :type location: str
     :param tags: The tags of the resource.
     :type tags: dict
-    """ 
+    """
 
     _attribute_map = {
         'author': {'key': 'properties.author', 'type': 'str'},

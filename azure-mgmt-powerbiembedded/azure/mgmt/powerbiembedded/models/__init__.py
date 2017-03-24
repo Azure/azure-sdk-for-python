@@ -9,14 +9,14 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .error import Error, ErrorException
 from .error_detail import ErrorDetail
-from .workspace_collection import WorkspaceCollection
+from .error import Error, ErrorException
 from .azure_sku import AzureSku
+from .workspace_collection import WorkspaceCollection
 from .workspace import Workspace
-from .operation_list import OperationList
-from .operation import Operation
 from .display import Display
+from .operation import Operation
+from .operation_list import OperationList
 from .workspace_collection_access_keys import WorkspaceCollectionAccessKeys
 from .workspace_collection_access_key import WorkspaceCollectionAccessKey
 from .create_workspace_collection_request import CreateWorkspaceCollectionRequest
@@ -32,14 +32,14 @@ from .power_bi_embedded_management_client_enums import (
 )
 
 __all__ = [
-    'Error', 'ErrorException',
     'ErrorDetail',
-    'WorkspaceCollection',
+    'Error', 'ErrorException',
     'AzureSku',
+    'WorkspaceCollection',
     'Workspace',
-    'OperationList',
-    'Operation',
     'Display',
+    'Operation',
+    'OperationList',
     'WorkspaceCollectionAccessKeys',
     'WorkspaceCollectionAccessKey',
     'CreateWorkspaceCollectionRequest',

@@ -10,7 +10,6 @@
 # --------------------------------------------------------------------------
 
 from msrest.pipeline import ClientRawResponse
-from msrestazure.azure_exceptions import CloudError
 import uuid
 
 from .. import models
@@ -36,6 +35,7 @@ class UsageMetricsOperations(object):
     def list(
             self, resource_uri, api_version, filter=None, custom_headers=None, raw=False, **operation_config):
         """The List operation lists the usage metrics for the resource.
+        **WARNING**: Operation to be deprecated.
 
         :param resource_uri: The identifier of the resource.
         :type resource_uri: str
@@ -52,7 +52,8 @@ class UsageMetricsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`UsageMetricPaged
          <azure.monitor.models.UsageMetricPaged>`
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`ErrorResponseException<azure.monitor.models.ErrorResponseException>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -90,9 +91,7 @@ class UsageMetricsOperations(object):
                 request, header_parameters, **operation_config)
 
             if response.status_code not in [200]:
-                exp = CloudError(response)
-                exp.request_id = response.headers.get('x-ms-request-id')
-                raise exp
+                raise models.ErrorResponseException(self._deserialize, response)
 
             return response
 

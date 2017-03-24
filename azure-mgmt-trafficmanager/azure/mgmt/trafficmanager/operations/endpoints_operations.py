@@ -23,6 +23,7 @@ class EndpointsOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An objec model deserializer.
+    :ivar api_version: Client Api Version. Constant value: "2015-11-01".
     """
 
     def __init__(self, client, config, serializer, deserializer):
@@ -30,6 +31,7 @@ class EndpointsOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
+        self.api_version = "2015-11-01"
 
         self.config = config
 
@@ -48,8 +50,8 @@ class EndpointsOperations(object):
         :param endpoint_name: The name of the Traffic Manager endpoint to be
          updated.
         :type endpoint_name: str
-        :param parameters: The Traffic Manager endpoint parameters supplied
-         to the Update operation.
+        :param parameters: The Traffic Manager endpoint parameters supplied to
+         the Update operation.
         :type parameters: :class:`Endpoint
          <azure.mgmt.trafficmanager.models.Endpoint>`
         :param dict custom_headers: headers that will be added to the request
@@ -60,6 +62,7 @@ class EndpointsOperations(object):
         :rtype: :class:`Endpoint <azure.mgmt.trafficmanager.models.Endpoint>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/trafficmanagerprofiles/{profileName}/{endpointType}/{endpointName}'
@@ -74,7 +77,7 @@ class EndpointsOperations(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -131,6 +134,7 @@ class EndpointsOperations(object):
         :rtype: :class:`Endpoint <azure.mgmt.trafficmanager.models.Endpoint>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/trafficmanagerprofiles/{profileName}/{endpointType}/{endpointName}'
@@ -145,7 +149,7 @@ class EndpointsOperations(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -192,8 +196,8 @@ class EndpointsOperations(object):
         :param endpoint_name: The name of the Traffic Manager endpoint to be
          created or updated.
         :type endpoint_name: str
-        :param parameters: The Traffic Manager endpoint parameters supplied
-         to the CreateOrUpdate operation.
+        :param parameters: The Traffic Manager endpoint parameters supplied to
+         the CreateOrUpdate operation.
         :type parameters: :class:`Endpoint
          <azure.mgmt.trafficmanager.models.Endpoint>`
         :param dict custom_headers: headers that will be added to the request
@@ -204,6 +208,7 @@ class EndpointsOperations(object):
         :rtype: :class:`Endpoint <azure.mgmt.trafficmanager.models.Endpoint>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/trafficmanagerprofiles/{profileName}/{endpointType}/{endpointName}'
@@ -218,7 +223,7 @@ class EndpointsOperations(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -279,6 +284,7 @@ class EndpointsOperations(object):
         :rtype: None
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/trafficmanagerprofiles/{profileName}/{endpointType}/{endpointName}'
@@ -293,7 +299,7 @@ class EndpointsOperations(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
         header_parameters = {}

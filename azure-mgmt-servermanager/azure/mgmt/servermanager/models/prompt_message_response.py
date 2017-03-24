@@ -17,7 +17,7 @@ class PromptMessageResponse(Model):
 
     :param response: The list of responses a cmdlet expects.
     :type response: list of str
-    """ 
+    """
 
     _attribute_map = {
         'response': {'key': 'response', 'type': '[str]'},

@@ -17,7 +17,7 @@ class MAMPolicyAppOrGroupIdProperties(Model):
 
     :param url:
     :type url: str
-    """ 
+    """
 
     _validation = {
         'url': {'required': True},

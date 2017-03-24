@@ -20,7 +20,7 @@ class PowerShellSessionResources(Model):
      <azure.mgmt.servermanager.models.PowerShellSessionResource>`
     :param next_link: The URL to the next set of resources.
     :type next_link: str
-    """ 
+    """
 
     _attribute_map = {
         'value': {'key': 'value', 'type': '[PowerShellSessionResource]'},

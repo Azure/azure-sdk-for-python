@@ -17,7 +17,7 @@ class LabVhd(Model):
 
     :param id: The absolute URI of the VHD.
     :type id: str
-    """ 
+    """
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},

@@ -28,17 +28,22 @@ class MeterInfo(Model):
     :param unit: The unit in which the meter consumption is charged, e.g.,
      'Hours', 'GB', etc.
     :type unit: str
+    :param meter_tags: Provides additional meter data. 'Third Party' indicates
+     a meter with no discount. Blanks indicate First Party.
+    :type meter_tags: list of str
+    :param meter_region: The region in which the Azure service is available.
+    :type meter_region: str
     :param meter_rates: The list of key/value pairs for the meter rates, in
      the format 'key':'value' where key = the meter quantity, and value = the
      corresponding price
     :type meter_rates: dict
-    :param effective_date: Indicates the date from which the meter rate or
-     offer term is effective.
+    :param effective_date: Indicates the date from which the meter rate is
+     effective.
     :type effective_date: datetime
     :param included_quantity: The resource quantity that is included in the
      offer at no cost. Consumption beyond this quantity will be charged.
     :type included_quantity: float
-    """ 
+    """
 
     _attribute_map = {
         'meter_id': {'key': 'MeterId', 'type': 'str'},
@@ -46,17 +51,21 @@ class MeterInfo(Model):
         'meter_category': {'key': 'MeterCategory', 'type': 'str'},
         'meter_sub_category': {'key': 'MeterSubCategory', 'type': 'str'},
         'unit': {'key': 'Unit', 'type': 'str'},
+        'meter_tags': {'key': 'MeterTags', 'type': '[str]'},
+        'meter_region': {'key': 'MeterRegion', 'type': 'str'},
         'meter_rates': {'key': 'MeterRates', 'type': '{float}'},
         'effective_date': {'key': 'EffectiveDate', 'type': 'iso-8601'},
         'included_quantity': {'key': 'IncludedQuantity', 'type': 'float'},
     }
 
-    def __init__(self, meter_id=None, meter_name=None, meter_category=None, meter_sub_category=None, unit=None, meter_rates=None, effective_date=None, included_quantity=None):
+    def __init__(self, meter_id=None, meter_name=None, meter_category=None, meter_sub_category=None, unit=None, meter_tags=None, meter_region=None, meter_rates=None, effective_date=None, included_quantity=None):
         self.meter_id = meter_id
         self.meter_name = meter_name
         self.meter_category = meter_category
         self.meter_sub_category = meter_sub_category
         self.unit = unit
+        self.meter_tags = meter_tags
+        self.meter_region = meter_region
         self.meter_rates = meter_rates
         self.effective_date = effective_date
         self.included_quantity = included_quantity

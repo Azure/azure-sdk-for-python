@@ -22,34 +22,25 @@ class ResourceRateCardInfo(Model):
     :param is_tax_included: All rates are pretax, so this will always be
      returned as 'false'.
     :type is_tax_included: bool
-    :param meter_region: The region in which the Azure service is available.
-    :type meter_region: str
-    :param tags: Provides additional meter data. 'Third Party' indicates a
-     meter with no discount. Blanks indicate First Party.
-    :type tags: list of str
     :param offer_terms: A list of offer terms.
     :type offer_terms: list of :class:`OfferTermInfo
      <azure.mgmt.commerce.models.OfferTermInfo>`
     :param meters: A list of meters.
     :type meters: list of :class:`MeterInfo
      <azure.mgmt.commerce.models.MeterInfo>`
-    """ 
+    """
 
     _attribute_map = {
         'currency': {'key': 'Currency', 'type': 'str'},
         'locale': {'key': 'Locale', 'type': 'str'},
         'is_tax_included': {'key': 'IsTaxIncluded', 'type': 'bool'},
-        'meter_region': {'key': 'MeterRegion', 'type': 'str'},
-        'tags': {'key': 'Tags', 'type': '[str]'},
         'offer_terms': {'key': 'OfferTerms', 'type': '[OfferTermInfo]'},
         'meters': {'key': 'Meters', 'type': '[MeterInfo]'},
     }
 
-    def __init__(self, currency=None, locale=None, is_tax_included=None, meter_region=None, tags=None, offer_terms=None, meters=None):
+    def __init__(self, currency=None, locale=None, is_tax_included=None, offer_terms=None, meters=None):
         self.currency = currency
         self.locale = locale
         self.is_tax_included = is_tax_included
-        self.meter_region = meter_region
-        self.tags = tags
         self.offer_terms = offer_terms
         self.meters = meters
