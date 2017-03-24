@@ -120,97 +120,6 @@ class ApplicationGatewayFirewallMode(Enum):
     prevention = "Prevention"
 
 
-class NetworkOperationStatus(Enum):
-
-    in_progress = "InProgress"
-    succeeded = "Succeeded"
-    failed = "Failed"
-
-
-class LoadDistribution(Enum):
-
-    default = "Default"
-    source_ip = "SourceIP"
-    source_ip_protocol = "SourceIPProtocol"
-
-
-class ProbeProtocol(Enum):
-
-    http = "Http"
-    tcp = "Tcp"
-
-
-class VirtualNetworkPeeringState(Enum):
-
-    initiated = "Initiated"
-    connected = "Connected"
-    disconnected = "Disconnected"
-
-
-class EffectiveRouteSource(Enum):
-
-    unknown = "Unknown"
-    user = "User"
-    virtual_network_gateway = "VirtualNetworkGateway"
-    default = "Default"
-
-
-class EffectiveRouteState(Enum):
-
-    active = "Active"
-    invalid = "Invalid"
-
-
-class VirtualNetworkGatewayType(Enum):
-
-    vpn = "Vpn"
-    express_route = "ExpressRoute"
-
-
-class VpnType(Enum):
-
-    policy_based = "PolicyBased"
-    route_based = "RouteBased"
-
-
-class VirtualNetworkGatewaySkuName(Enum):
-
-    basic = "Basic"
-    high_performance = "HighPerformance"
-    standard = "Standard"
-    ultra_performance = "UltraPerformance"
-
-
-class VirtualNetworkGatewaySkuTier(Enum):
-
-    basic = "Basic"
-    high_performance = "HighPerformance"
-    standard = "Standard"
-    ultra_performance = "UltraPerformance"
-
-
-class ProcessorArchitecture(Enum):
-
-    amd64 = "Amd64"
-    x86 = "X86"
-
-
-class VirtualNetworkGatewayConnectionStatus(Enum):
-
-    unknown = "Unknown"
-    connecting = "Connecting"
-    connected = "Connected"
-    not_connected = "NotConnected"
-
-
-class VirtualNetworkGatewayConnectionType(Enum):
-
-    ipsec = "IPsec"
-    vnet2_vnet = "Vnet2Vnet"
-    express_route = "ExpressRoute"
-    vpn_client = "VPNClient"
-
-
 class AuthorizationUseStatus(Enum):
 
     available = "Available"
@@ -256,3 +165,170 @@ class ServiceProviderProvisioningState(Enum):
     provisioning = "Provisioning"
     provisioned = "Provisioned"
     deprovisioning = "Deprovisioning"
+
+
+class LoadDistribution(Enum):
+
+    default = "Default"
+    source_ip = "SourceIP"
+    source_ip_protocol = "SourceIPProtocol"
+
+
+class ProbeProtocol(Enum):
+
+    http = "Http"
+    tcp = "Tcp"
+
+
+class NetworkOperationStatus(Enum):
+
+    in_progress = "InProgress"
+    succeeded = "Succeeded"
+    failed = "Failed"
+
+
+class EffectiveRouteSource(Enum):
+
+    unknown = "Unknown"
+    user = "User"
+    virtual_network_gateway = "VirtualNetworkGateway"
+    default = "Default"
+
+
+class EffectiveRouteState(Enum):
+
+    active = "Active"
+    invalid = "Invalid"
+
+
+class ProvisioningState(Enum):
+
+    succeeded = "Succeeded"
+    updating = "Updating"
+    deleting = "Deleting"
+    failed = "Failed"
+
+
+class AssociationType(Enum):
+
+    associated = "Associated"
+    contains = "Contains"
+
+
+class Direction(Enum):
+
+    inbound = "Inbound"
+    outbound = "Outbound"
+
+
+class Protocol(Enum):
+
+    tcp = "TCP"
+    udp = "UDP"
+
+
+class Access(Enum):
+
+    allow = "Allow"
+    deny = "Deny"
+
+
+class NextHopType(Enum):
+
+    internet = "Internet"
+    virtual_appliance = "VirtualAppliance"
+    virtual_network_gateway = "VirtualNetworkGateway"
+    vnet_local = "VnetLocal"
+    hyper_net_gateway = "HyperNetGateway"
+    none = "None"
+
+
+class PcProtocol(Enum):
+
+    tcp = "TCP"
+    udp = "UDP"
+    any = "Any"
+
+
+class PcStatus(Enum):
+
+    not_started = "NotStarted"
+    running = "Running"
+    stopped = "Stopped"
+    error = "Error"
+    unknown = "Unknown"
+
+
+class PcError(Enum):
+
+    internal_error = "InternalError"
+    agent_stopped = "AgentStopped"
+    capture_failed = "CaptureFailed"
+    local_file_failed = "LocalFileFailed"
+    storage_failed = "StorageFailed"
+
+
+class VirtualNetworkPeeringState(Enum):
+
+    initiated = "Initiated"
+    connected = "Connected"
+    disconnected = "Disconnected"
+
+
+class VirtualNetworkGatewayType(Enum):
+
+    vpn = "Vpn"
+    express_route = "ExpressRoute"
+
+
+class VpnType(Enum):
+
+    policy_based = "PolicyBased"
+    route_based = "RouteBased"
+
+
+class VirtualNetworkGatewaySkuName(Enum):
+
+    basic = "Basic"
+    high_performance = "HighPerformance"
+    standard = "Standard"
+    ultra_performance = "UltraPerformance"
+
+
+class VirtualNetworkGatewaySkuTier(Enum):
+
+    basic = "Basic"
+    high_performance = "HighPerformance"
+    standard = "Standard"
+    ultra_performance = "UltraPerformance"
+
+
+class BgpPeerState(Enum):
+
+    unknown = "Unknown"
+    stopped = "Stopped"
+    idle = "Idle"
+    connecting = "Connecting"
+    connected = "Connected"
+
+
+class ProcessorArchitecture(Enum):
+
+    amd64 = "Amd64"
+    x86 = "X86"
+
+
+class VirtualNetworkGatewayConnectionStatus(Enum):
+
+    unknown = "Unknown"
+    connecting = "Connecting"
+    connected = "Connected"
+    not_connected = "NotConnected"
+
+
+class VirtualNetworkGatewayConnectionType(Enum):
+
+    ipsec = "IPsec"
+    vnet2_vnet = "Vnet2Vnet"
+    express_route = "ExpressRoute"
+    vpn_client = "VPNClient"
