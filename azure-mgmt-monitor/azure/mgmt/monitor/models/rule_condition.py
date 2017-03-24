@@ -15,6 +15,10 @@ from msrest.serialization import Model
 class RuleCondition(Model):
     """The condition that results in the alert rule being activated.
 
+    :param data_source: the resource from which the rule collects its data.
+     For this type dataSource will always be of type RuleMetricDataSource.
+    :type data_source: :class:`RuleDataSource
+     <azure.mgmt.monitor.models.RuleDataSource>`
     :param odatatype: Polymorphic Discriminator
     :type odatatype: str
     """
@@ -24,6 +28,7 @@ class RuleCondition(Model):
     }
 
     _attribute_map = {
+        'data_source': {'key': 'dataSource', 'type': 'RuleDataSource'},
         'odatatype': {'key': 'odata\\.type', 'type': 'str'},
     }
 
@@ -31,5 +36,6 @@ class RuleCondition(Model):
         'odatatype': {'Microsoft.Azure.Management.Insights.Models.ThresholdRuleCondition': 'ThresholdRuleCondition', 'Microsoft.Azure.Management.Insights.Models.LocationThresholdRuleCondition': 'LocationThresholdRuleCondition', 'Microsoft.Azure.Management.Insights.Models.ManagementEventRuleCondition': 'ManagementEventRuleCondition'}
     }
 
-    def __init__(self):
+    def __init__(self, data_source=None):
+        self.data_source = data_source
         self.odatatype = None

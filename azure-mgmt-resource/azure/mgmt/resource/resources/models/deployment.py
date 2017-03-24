@@ -20,9 +20,13 @@ class Deployment(Model):
      <azure.mgmt.resource.resources.models.DeploymentProperties>`
     """
 
+    _validation = {
+        'properties': {'required': True},
+    }
+
     _attribute_map = {
         'properties': {'key': 'properties', 'type': 'DeploymentProperties'},
     }
 
-    def __init__(self, properties=None):
+    def __init__(self, properties):
         self.properties = properties

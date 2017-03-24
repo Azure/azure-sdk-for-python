@@ -9,32 +9,19 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .resource import Resource
+from msrest.serialization import Model
 
 
-class AppServiceEnvironment(Resource):
+class AppServiceEnvironment(Model):
     """Description of an App Service Environment.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar id: Resource Id.
-    :vartype id: str
-    :param name: Resource Name.
+    :param name: Name of the App Service Environment.
     :type name: str
-    :param kind: Kind of resource.
-    :type kind: str
-    :param location: Resource Location.
+    :param location: Location of the App Service Environment, e.g. "West US".
     :type location: str
-    :param type: Resource type.
-    :type type: str
-    :param tags: Resource tags.
-    :type tags: dict
-    :param app_service_environment_name: Name of the App Service Environment.
-    :type app_service_environment_name: str
-    :param app_service_environment_location: Location of the App Service
-     Environment, e.g. "West US".
-    :type app_service_environment_location: str
     :ivar provisioning_state: Provisioning state of the App Service
      Environment. Possible values include: 'Succeeded', 'Failed', 'Canceled',
      'InProgress', 'Deleting'
@@ -117,6 +104,8 @@ class AppServiceEnvironment(Resource):
     :ivar environment_status: Detailed message about with results of the last
      check of the App Service Environment.
     :vartype environment_status: str
+    :param kind: Kind of the app service environment
+    :type kind: str
     :ivar resource_group: Resource group of the App Service Environment.
     :vartype resource_group: str
     :param front_end_scale_factor: Scale factor for front-ends.
@@ -143,10 +132,12 @@ class AppServiceEnvironment(Resource):
     """
 
     _validation = {
-        'id': {'readonly': True},
+        'name': {'required': True},
         'location': {'required': True},
         'provisioning_state': {'readonly': True},
         'status': {'readonly': True},
+        'virtual_network': {'required': True},
+        'worker_pools': {'required': True},
         'database_edition': {'readonly': True},
         'database_service_objective': {'readonly': True},
         'upgrade_domains': {'readonly': True},
@@ -165,53 +156,47 @@ class AppServiceEnvironment(Resource):
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
-        'kind': {'key': 'kind', 'type': 'str'},
         'location': {'key': 'location', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'app_service_environment_name': {'key': 'properties.name', 'type': 'str'},
-        'app_service_environment_location': {'key': 'properties.location', 'type': 'str'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'ProvisioningState'},
-        'status': {'key': 'properties.status', 'type': 'HostingEnvironmentStatus'},
-        'vnet_name': {'key': 'properties.vnetName', 'type': 'str'},
-        'vnet_resource_group_name': {'key': 'properties.vnetResourceGroupName', 'type': 'str'},
-        'vnet_subnet_name': {'key': 'properties.vnetSubnetName', 'type': 'str'},
-        'virtual_network': {'key': 'properties.virtualNetwork', 'type': 'VirtualNetworkProfile'},
-        'internal_load_balancing_mode': {'key': 'properties.internalLoadBalancingMode', 'type': 'InternalLoadBalancingMode'},
-        'multi_size': {'key': 'properties.multiSize', 'type': 'str'},
-        'multi_role_count': {'key': 'properties.multiRoleCount', 'type': 'int'},
-        'worker_pools': {'key': 'properties.workerPools', 'type': '[WorkerPool]'},
-        'ipssl_address_count': {'key': 'properties.ipsslAddressCount', 'type': 'int'},
-        'database_edition': {'key': 'properties.databaseEdition', 'type': 'str'},
-        'database_service_objective': {'key': 'properties.databaseServiceObjective', 'type': 'str'},
-        'upgrade_domains': {'key': 'properties.upgradeDomains', 'type': 'int'},
-        'subscription_id': {'key': 'properties.subscriptionId', 'type': 'str'},
-        'dns_suffix': {'key': 'properties.dnsSuffix', 'type': 'str'},
-        'last_action': {'key': 'properties.lastAction', 'type': 'str'},
-        'last_action_result': {'key': 'properties.lastActionResult', 'type': 'str'},
-        'allowed_multi_sizes': {'key': 'properties.allowedMultiSizes', 'type': 'str'},
-        'allowed_worker_sizes': {'key': 'properties.allowedWorkerSizes', 'type': 'str'},
-        'maximum_number_of_machines': {'key': 'properties.maximumNumberOfMachines', 'type': 'int'},
-        'vip_mappings': {'key': 'properties.vipMappings', 'type': '[VirtualIPMapping]'},
-        'environment_capacities': {'key': 'properties.environmentCapacities', 'type': '[StampCapacity]'},
-        'network_access_control_list': {'key': 'properties.networkAccessControlList', 'type': '[NetworkAccessControlEntry]'},
-        'environment_is_healthy': {'key': 'properties.environmentIsHealthy', 'type': 'bool'},
-        'environment_status': {'key': 'properties.environmentStatus', 'type': 'str'},
-        'resource_group': {'key': 'properties.resourceGroup', 'type': 'str'},
-        'front_end_scale_factor': {'key': 'properties.frontEndScaleFactor', 'type': 'int'},
-        'default_front_end_scale_factor': {'key': 'properties.defaultFrontEndScaleFactor', 'type': 'int'},
-        'api_management_account_id': {'key': 'properties.apiManagementAccountId', 'type': 'str'},
-        'suspended': {'key': 'properties.suspended', 'type': 'bool'},
-        'dynamic_cache_enabled': {'key': 'properties.dynamicCacheEnabled', 'type': 'bool'},
-        'cluster_settings': {'key': 'properties.clusterSettings', 'type': '[NameValuePair]'},
+        'provisioning_state': {'key': 'provisioningState', 'type': 'ProvisioningState'},
+        'status': {'key': 'status', 'type': 'HostingEnvironmentStatus'},
+        'vnet_name': {'key': 'vnetName', 'type': 'str'},
+        'vnet_resource_group_name': {'key': 'vnetResourceGroupName', 'type': 'str'},
+        'vnet_subnet_name': {'key': 'vnetSubnetName', 'type': 'str'},
+        'virtual_network': {'key': 'virtualNetwork', 'type': 'VirtualNetworkProfile'},
+        'internal_load_balancing_mode': {'key': 'internalLoadBalancingMode', 'type': 'InternalLoadBalancingMode'},
+        'multi_size': {'key': 'multiSize', 'type': 'str'},
+        'multi_role_count': {'key': 'multiRoleCount', 'type': 'int'},
+        'worker_pools': {'key': 'workerPools', 'type': '[WorkerPool]'},
+        'ipssl_address_count': {'key': 'ipsslAddressCount', 'type': 'int'},
+        'database_edition': {'key': 'databaseEdition', 'type': 'str'},
+        'database_service_objective': {'key': 'databaseServiceObjective', 'type': 'str'},
+        'upgrade_domains': {'key': 'upgradeDomains', 'type': 'int'},
+        'subscription_id': {'key': 'subscriptionId', 'type': 'str'},
+        'dns_suffix': {'key': 'dnsSuffix', 'type': 'str'},
+        'last_action': {'key': 'lastAction', 'type': 'str'},
+        'last_action_result': {'key': 'lastActionResult', 'type': 'str'},
+        'allowed_multi_sizes': {'key': 'allowedMultiSizes', 'type': 'str'},
+        'allowed_worker_sizes': {'key': 'allowedWorkerSizes', 'type': 'str'},
+        'maximum_number_of_machines': {'key': 'maximumNumberOfMachines', 'type': 'int'},
+        'vip_mappings': {'key': 'vipMappings', 'type': '[VirtualIPMapping]'},
+        'environment_capacities': {'key': 'environmentCapacities', 'type': '[StampCapacity]'},
+        'network_access_control_list': {'key': 'networkAccessControlList', 'type': '[NetworkAccessControlEntry]'},
+        'environment_is_healthy': {'key': 'environmentIsHealthy', 'type': 'bool'},
+        'environment_status': {'key': 'environmentStatus', 'type': 'str'},
+        'kind': {'key': 'kind', 'type': 'str'},
+        'resource_group': {'key': 'resourceGroup', 'type': 'str'},
+        'front_end_scale_factor': {'key': 'frontEndScaleFactor', 'type': 'int'},
+        'default_front_end_scale_factor': {'key': 'defaultFrontEndScaleFactor', 'type': 'int'},
+        'api_management_account_id': {'key': 'apiManagementAccountId', 'type': 'str'},
+        'suspended': {'key': 'suspended', 'type': 'bool'},
+        'dynamic_cache_enabled': {'key': 'dynamicCacheEnabled', 'type': 'bool'},
+        'cluster_settings': {'key': 'clusterSettings', 'type': '[NameValuePair]'},
     }
 
-    def __init__(self, location, name=None, kind=None, type=None, tags=None, app_service_environment_name=None, app_service_environment_location=None, vnet_name=None, vnet_resource_group_name=None, vnet_subnet_name=None, virtual_network=None, internal_load_balancing_mode=None, multi_size=None, multi_role_count=None, worker_pools=None, ipssl_address_count=None, dns_suffix=None, network_access_control_list=None, front_end_scale_factor=None, api_management_account_id=None, suspended=None, dynamic_cache_enabled=None, cluster_settings=None):
-        super(AppServiceEnvironment, self).__init__(name=name, kind=kind, location=location, type=type, tags=tags)
-        self.app_service_environment_name = app_service_environment_name
-        self.app_service_environment_location = app_service_environment_location
+    def __init__(self, name, location, virtual_network, worker_pools, vnet_name=None, vnet_resource_group_name=None, vnet_subnet_name=None, internal_load_balancing_mode=None, multi_size=None, multi_role_count=None, ipssl_address_count=None, dns_suffix=None, network_access_control_list=None, kind=None, front_end_scale_factor=None, api_management_account_id=None, suspended=None, dynamic_cache_enabled=None, cluster_settings=None):
+        self.name = name
+        self.location = location
         self.provisioning_state = None
         self.status = None
         self.vnet_name = vnet_name
@@ -238,6 +223,7 @@ class AppServiceEnvironment(Resource):
         self.network_access_control_list = network_access_control_list
         self.environment_is_healthy = None
         self.environment_status = None
+        self.kind = kind
         self.resource_group = None
         self.front_end_scale_factor = front_end_scale_factor
         self.default_front_end_scale_factor = None

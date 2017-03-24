@@ -19,7 +19,7 @@ class MxRecord(Model):
     :type preference: int
     :param exchange: The domain name of the mail host for this MX record.
     :type exchange: str
-    """ 
+    """
 
     _attribute_map = {
         'preference': {'key': 'preference', 'type': 'int'},

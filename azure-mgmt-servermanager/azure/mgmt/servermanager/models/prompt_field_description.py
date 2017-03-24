@@ -28,7 +28,7 @@ class PromptFieldDescription(Model):
      'SecureString', 'Credential'
     :type prompt_field_type: str or :class:`PromptFieldType
      <azure.mgmt.servermanager.models.PromptFieldType>`
-    """ 
+    """
 
     _attribute_map = {
         'name': {'key': 'name', 'type': 'str'},

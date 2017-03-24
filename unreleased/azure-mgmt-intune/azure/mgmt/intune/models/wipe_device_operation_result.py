@@ -30,7 +30,7 @@ class WipeDeviceOperationResult(Resource):
     :type location: str
     :param value:
     :type value: str
-    """ 
+    """
 
     _validation = {
         'id': {'readonly': True},

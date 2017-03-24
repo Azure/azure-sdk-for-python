@@ -31,7 +31,7 @@ class ResourceCostProperties(Model):
     :param resource_type: The logical resource type (ex. virtualmachine,
      storageaccount)
     :type resource_type: str
-    """ 
+    """
 
     _attribute_map = {
         'resourcename': {'key': 'resourcename', 'type': 'str'},

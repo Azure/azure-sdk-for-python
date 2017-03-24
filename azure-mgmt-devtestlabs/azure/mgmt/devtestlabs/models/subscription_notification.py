@@ -24,7 +24,7 @@ class SubscriptionNotification(Model):
     :param properties:
     :type properties: :class:`SubscriptionNotificationProperties
      <azure.mgmt.devtestlabs.models.SubscriptionNotificationProperties>`
-    """ 
+    """
 
     _attribute_map = {
         'registration_date': {'key': 'registrationDate', 'type': 'str'},

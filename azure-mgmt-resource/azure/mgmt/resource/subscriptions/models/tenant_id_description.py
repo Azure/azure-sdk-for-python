@@ -24,7 +24,7 @@ class TenantIdDescription(Model):
     :ivar tenant_id: The tenant ID. For example,
      00000000-0000-0000-0000-000000000000.
     :vartype tenant_id: str
-    """ 
+    """
 
     _validation = {
         'id': {'readonly': True},

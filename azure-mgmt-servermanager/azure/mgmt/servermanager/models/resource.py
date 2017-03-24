@@ -30,7 +30,7 @@ class Resource(Model):
     :type tags: dict
     :param etag:
     :type etag: str
-    """ 
+    """
 
     _validation = {
         'id': {'readonly': True},
