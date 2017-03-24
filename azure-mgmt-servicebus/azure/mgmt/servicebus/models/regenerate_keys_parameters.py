@@ -19,10 +19,10 @@ class RegenerateKeysParameters(Model):
      include: 'PrimaryKey', 'SecondaryKey'
     :type policykey: str or :class:`Policykey
      <azure.mgmt.servicebus.models.Policykey>`
-    """ 
+    """
 
     _attribute_map = {
-        'policykey': {'key': 'Policykey', 'type': 'Policykey'},
+        'policykey': {'key': 'policykey', 'type': 'Policykey'},
     }
 
     def __init__(self, policykey=None):

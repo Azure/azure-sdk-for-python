@@ -23,6 +23,7 @@ class SessionOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An objec model deserializer.
+    :ivar api_version: Client API Version. Constant value: "2016-07-01-preview".
     """
 
     def __init__(self, client, config, serializer, deserializer):
@@ -30,6 +31,7 @@ class SessionOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
+        self.api_version = "2016-07-01-preview"
 
         self.config = config
 
@@ -50,12 +52,12 @@ class SessionOperations(object):
         :type password: str
         :param retention_period: Session retention period. Possible values
          include: 'Session', 'Persistent'
-        :type retention_period: str or :class:`retentionPeriod
-         <azure.mgmt.servermanager.models.retentionPeriod>`
+        :type retention_period: str or :class:`RetentionPeriod
+         <azure.mgmt.servermanager.models.RetentionPeriod>`
         :param credential_data_format: Credential data format. Possible values
          include: 'RsaEncrypted'
-        :type credential_data_format: str or :class:`credentialDataFormat
-         <azure.mgmt.servermanager.models.credentialDataFormat>`
+        :type credential_data_format: str or :class:`CredentialDataFormat
+         <azure.mgmt.servermanager.models.CredentialDataFormat>`
         :param encryption_certificate_thumbprint: Encryption certificate
          thumbprint.
         :type encryption_certificate_thumbprint: str
@@ -85,7 +87,7 @@ class SessionOperations(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -178,7 +180,7 @@ class SessionOperations(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -236,7 +238,7 @@ class SessionOperations(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
         header_parameters = {}

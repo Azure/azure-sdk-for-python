@@ -10,25 +10,25 @@
 # --------------------------------------------------------------------------
 
 from .location import Location
-from .subscription import Subscription
 from .subscription_policies import SubscriptionPolicies
+from .subscription import Subscription
 from .tenant_id_description import TenantIdDescription
 from .location_paged import LocationPaged
 from .subscription_paged import SubscriptionPaged
 from .tenant_id_description_paged import TenantIdDescriptionPaged
 from .subscription_client_enums import (
     SubscriptionState,
-    spendingLimit,
+    SpendingLimit,
 )
 
 __all__ = [
     'Location',
-    'Subscription',
     'SubscriptionPolicies',
+    'Subscription',
     'TenantIdDescription',
     'LocationPaged',
     'SubscriptionPaged',
     'TenantIdDescriptionPaged',
     'SubscriptionState',
-    'spendingLimit',
+    'SpendingLimit',
 ]

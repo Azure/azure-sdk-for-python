@@ -23,7 +23,7 @@ class Subnet(Model):
      'Allow'
     :type allow_public_ip: str or :class:`UsagePermissionType
      <azure.mgmt.devtestlabs.models.UsagePermissionType>`
-    """ 
+    """
 
     _attribute_map = {
         'resource_id': {'key': 'resourceId', 'type': 'str'},

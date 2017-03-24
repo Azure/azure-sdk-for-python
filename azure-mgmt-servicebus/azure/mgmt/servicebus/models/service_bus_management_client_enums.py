@@ -26,23 +26,6 @@ class SkuTier(Enum):
     premium = "Premium"
 
 
-class NamespaceState(Enum):
-
-    unknown = "Unknown"
-    creating = "Creating"
-    created = "Created"
-    activating = "Activating"
-    enabling = "Enabling"
-    active = "Active"
-    disabling = "Disabling"
-    disabled = "Disabled"
-    soft_deleting = "SoftDeleting"
-    soft_deleted = "SoftDeleted"
-    removing = "Removing"
-    removed = "Removed"
-    failed = "Failed"
-
-
 class AccessRights(Enum):
 
     manage = "Manage"
@@ -56,15 +39,6 @@ class Policykey(Enum):
     secondary_key = "SecondaryKey"
 
 
-class EntityAvailabilityStatus(Enum):
-
-    available = "Available"
-    limited = "Limited"
-    renaming = "Renaming"
-    restoring = "Restoring"
-    unknown = "Unknown"
-
-
 class EntityStatus(Enum):
 
     active = "Active"
@@ -76,3 +50,13 @@ class EntityStatus(Enum):
     restoring = "Restoring"
     send_disabled = "SendDisabled"
     unknown = "Unknown"
+
+
+class UnavailableReason(Enum):
+
+    none = "None"
+    invalid_name = "InvalidName"
+    subscription_is_disabled = "SubscriptionIsDisabled"
+    name_in_use = "NameInUse"
+    name_in_lockdown = "NameInLockdown"
+    too_many_namespace_in_current_subscription = "TooManyNamespaceInCurrentSubscription"

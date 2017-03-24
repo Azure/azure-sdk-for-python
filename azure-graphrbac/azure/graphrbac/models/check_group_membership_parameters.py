@@ -20,7 +20,7 @@ class CheckGroupMembershipParameters(Model):
     :param member_id: The object ID of the contact, group, user, or service
      principal to check for membership in the specified group.
     :type member_id: str
-    """ 
+    """
 
     _validation = {
         'group_id': {'required': True},

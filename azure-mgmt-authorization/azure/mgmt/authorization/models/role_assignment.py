@@ -24,7 +24,7 @@ class RoleAssignment(Model):
     :param properties: Role assignment properties.
     :type properties: :class:`RoleAssignmentPropertiesWithScope
      <azure.mgmt.authorization.models.RoleAssignmentPropertiesWithScope>`
-    """ 
+    """
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},

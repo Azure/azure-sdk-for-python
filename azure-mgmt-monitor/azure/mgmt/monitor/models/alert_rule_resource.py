@@ -20,8 +20,8 @@ class AlertRuleResource(Resource):
 
     :ivar id: Azure resource Id
     :vartype id: str
-    :param name: Azure resource name
-    :type name: str
+    :ivar name: Azure resource name
+    :vartype name: str
     :ivar type: Azure resource type
     :vartype type: str
     :param location: Resource location
@@ -50,10 +50,12 @@ class AlertRuleResource(Resource):
 
     _validation = {
         'id': {'readonly': True},
+        'name': {'readonly': True},
         'type': {'readonly': True},
         'location': {'required': True},
         'alert_rule_resource_name': {'required': True},
         'is_enabled': {'required': True},
+        'condition': {'required': True},
         'last_updated_time': {'readonly': True},
     }
 
@@ -71,8 +73,8 @@ class AlertRuleResource(Resource):
         'last_updated_time': {'key': 'properties.lastUpdatedTime', 'type': 'iso-8601'},
     }
 
-    def __init__(self, location, alert_rule_resource_name, is_enabled, name=None, tags=None, description=None, condition=None, actions=None):
-        super(AlertRuleResource, self).__init__(name=name, location=location, tags=tags)
+    def __init__(self, location, alert_rule_resource_name, is_enabled, condition, tags=None, description=None, actions=None):
+        super(AlertRuleResource, self).__init__(location=location, tags=tags)
         self.alert_rule_resource_name = alert_rule_resource_name
         self.description = description
         self.is_enabled = is_enabled

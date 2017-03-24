@@ -18,24 +18,29 @@ from msrestazure.azure_exceptions import CloudError
 from msrestazure.azure_operation import AzureOperationPoller
 import uuid
 from .operations.application_gateways_operations import ApplicationGatewaysOperations
-from .operations.route_tables_operations import RouteTablesOperations
-from .operations.routes_operations import RoutesOperations
-from .operations.public_ip_addresses_operations import PublicIPAddressesOperations
-from .operations.network_security_groups_operations import NetworkSecurityGroupsOperations
-from .operations.security_rules_operations import SecurityRulesOperations
-from .operations.load_balancers_operations import LoadBalancersOperations
-from .operations.virtual_networks_operations import VirtualNetworksOperations
-from .operations.subnets_operations import SubnetsOperations
-from .operations.virtual_network_peerings_operations import VirtualNetworkPeeringsOperations
-from .operations.network_interfaces_operations import NetworkInterfacesOperations
-from .operations.usages_operations import UsagesOperations
-from .operations.virtual_network_gateways_operations import VirtualNetworkGatewaysOperations
-from .operations.virtual_network_gateway_connections_operations import VirtualNetworkGatewayConnectionsOperations
-from .operations.local_network_gateways_operations import LocalNetworkGatewaysOperations
 from .operations.express_route_circuit_authorizations_operations import ExpressRouteCircuitAuthorizationsOperations
 from .operations.express_route_circuit_peerings_operations import ExpressRouteCircuitPeeringsOperations
 from .operations.express_route_circuits_operations import ExpressRouteCircuitsOperations
 from .operations.express_route_service_providers_operations import ExpressRouteServiceProvidersOperations
+from .operations.load_balancers_operations import LoadBalancersOperations
+from .operations.network_interfaces_operations import NetworkInterfacesOperations
+from .operations.network_security_groups_operations import NetworkSecurityGroupsOperations
+from .operations.security_rules_operations import SecurityRulesOperations
+from .operations.network_watchers_operations import NetworkWatchersOperations
+from .operations.packet_captures_operations import PacketCapturesOperations
+from .operations.public_ip_addresses_operations import PublicIPAddressesOperations
+from .operations.route_filters_operations import RouteFiltersOperations
+from .operations.route_filter_rules_operations import RouteFilterRulesOperations
+from .operations.route_tables_operations import RouteTablesOperations
+from .operations.routes_operations import RoutesOperations
+from .operations.bgp_service_communities_operations import BgpServiceCommunitiesOperations
+from .operations.usages_operations import UsagesOperations
+from .operations.virtual_networks_operations import VirtualNetworksOperations
+from .operations.subnets_operations import SubnetsOperations
+from .operations.virtual_network_peerings_operations import VirtualNetworkPeeringsOperations
+from .operations.virtual_network_gateways_operations import VirtualNetworkGatewaysOperations
+from .operations.virtual_network_gateway_connections_operations import VirtualNetworkGatewayConnectionsOperations
+from .operations.local_network_gateways_operations import LocalNetworkGatewaysOperations
 from . import models
 
 
@@ -51,22 +56,11 @@ class NetworkManagementClientConfiguration(AzureConfiguration):
      identify the Microsoft Azure subscription. The subscription ID forms part
      of the URI for every service call.
     :type subscription_id: str
-    :param accept_language: Gets or sets the preferred language for the
-     response.
-    :type accept_language: str
-    :param long_running_operation_retry_timeout: Gets or sets the retry
-     timeout in seconds for Long Running Operations. Default value is 30.
-    :type long_running_operation_retry_timeout: int
-    :param generate_client_request_id: When set to true a unique
-     x-ms-client-request-id value is generated and included in each request.
-     Default is true.
-    :type generate_client_request_id: bool
     :param str base_url: Service URL
-    :param str filepath: Existing config
     """
 
     def __init__(
-            self, credentials, subscription_id, accept_language='en-US', long_running_operation_retry_timeout=30, generate_client_request_id=True, base_url=None, filepath=None):
+            self, credentials, subscription_id, base_url=None):
 
         if credentials is None:
             raise ValueError("Parameter 'credentials' must not be None.")
@@ -74,21 +68,16 @@ class NetworkManagementClientConfiguration(AzureConfiguration):
             raise ValueError("Parameter 'subscription_id' must not be None.")
         if not isinstance(subscription_id, str):
             raise TypeError("Parameter 'subscription_id' must be str.")
-        if accept_language is not None and not isinstance(accept_language, str):
-            raise TypeError("Optional parameter 'accept_language' must be str.")
         if not base_url:
             base_url = 'https://management.azure.com'
 
-        super(NetworkManagementClientConfiguration, self).__init__(base_url, filepath)
+        super(NetworkManagementClientConfiguration, self).__init__(base_url)
 
         self.add_user_agent('networkmanagementclient/{}'.format(VERSION))
         self.add_user_agent('Azure-SDK-For-Python')
 
         self.credentials = credentials
         self.subscription_id = subscription_id
-        self.accept_language = accept_language
-        self.long_running_operation_retry_timeout = long_running_operation_retry_timeout
-        self.generate_client_request_id = generate_client_request_id
 
 
 class NetworkManagementClient(object):
@@ -99,34 +88,6 @@ class NetworkManagementClient(object):
 
     :ivar application_gateways: ApplicationGateways operations
     :vartype application_gateways: .operations.ApplicationGatewaysOperations
-    :ivar route_tables: RouteTables operations
-    :vartype route_tables: .operations.RouteTablesOperations
-    :ivar routes: Routes operations
-    :vartype routes: .operations.RoutesOperations
-    :ivar public_ip_addresses: PublicIPAddresses operations
-    :vartype public_ip_addresses: .operations.PublicIPAddressesOperations
-    :ivar network_security_groups: NetworkSecurityGroups operations
-    :vartype network_security_groups: .operations.NetworkSecurityGroupsOperations
-    :ivar security_rules: SecurityRules operations
-    :vartype security_rules: .operations.SecurityRulesOperations
-    :ivar load_balancers: LoadBalancers operations
-    :vartype load_balancers: .operations.LoadBalancersOperations
-    :ivar virtual_networks: VirtualNetworks operations
-    :vartype virtual_networks: .operations.VirtualNetworksOperations
-    :ivar subnets: Subnets operations
-    :vartype subnets: .operations.SubnetsOperations
-    :ivar virtual_network_peerings: VirtualNetworkPeerings operations
-    :vartype virtual_network_peerings: .operations.VirtualNetworkPeeringsOperations
-    :ivar network_interfaces: NetworkInterfaces operations
-    :vartype network_interfaces: .operations.NetworkInterfacesOperations
-    :ivar usages: Usages operations
-    :vartype usages: .operations.UsagesOperations
-    :ivar virtual_network_gateways: VirtualNetworkGateways operations
-    :vartype virtual_network_gateways: .operations.VirtualNetworkGatewaysOperations
-    :ivar virtual_network_gateway_connections: VirtualNetworkGatewayConnections operations
-    :vartype virtual_network_gateway_connections: .operations.VirtualNetworkGatewayConnectionsOperations
-    :ivar local_network_gateways: LocalNetworkGateways operations
-    :vartype local_network_gateways: .operations.LocalNetworkGatewaysOperations
     :ivar express_route_circuit_authorizations: ExpressRouteCircuitAuthorizations operations
     :vartype express_route_circuit_authorizations: .operations.ExpressRouteCircuitAuthorizationsOperations
     :ivar express_route_circuit_peerings: ExpressRouteCircuitPeerings operations
@@ -135,6 +96,44 @@ class NetworkManagementClient(object):
     :vartype express_route_circuits: .operations.ExpressRouteCircuitsOperations
     :ivar express_route_service_providers: ExpressRouteServiceProviders operations
     :vartype express_route_service_providers: .operations.ExpressRouteServiceProvidersOperations
+    :ivar load_balancers: LoadBalancers operations
+    :vartype load_balancers: .operations.LoadBalancersOperations
+    :ivar network_interfaces: NetworkInterfaces operations
+    :vartype network_interfaces: .operations.NetworkInterfacesOperations
+    :ivar network_security_groups: NetworkSecurityGroups operations
+    :vartype network_security_groups: .operations.NetworkSecurityGroupsOperations
+    :ivar security_rules: SecurityRules operations
+    :vartype security_rules: .operations.SecurityRulesOperations
+    :ivar network_watchers: NetworkWatchers operations
+    :vartype network_watchers: .operations.NetworkWatchersOperations
+    :ivar packet_captures: PacketCaptures operations
+    :vartype packet_captures: .operations.PacketCapturesOperations
+    :ivar public_ip_addresses: PublicIPAddresses operations
+    :vartype public_ip_addresses: .operations.PublicIPAddressesOperations
+    :ivar route_filters: RouteFilters operations
+    :vartype route_filters: .operations.RouteFiltersOperations
+    :ivar route_filter_rules: RouteFilterRules operations
+    :vartype route_filter_rules: .operations.RouteFilterRulesOperations
+    :ivar route_tables: RouteTables operations
+    :vartype route_tables: .operations.RouteTablesOperations
+    :ivar routes: Routes operations
+    :vartype routes: .operations.RoutesOperations
+    :ivar bgp_service_communities: BgpServiceCommunities operations
+    :vartype bgp_service_communities: .operations.BgpServiceCommunitiesOperations
+    :ivar usages: Usages operations
+    :vartype usages: .operations.UsagesOperations
+    :ivar virtual_networks: VirtualNetworks operations
+    :vartype virtual_networks: .operations.VirtualNetworksOperations
+    :ivar subnets: Subnets operations
+    :vartype subnets: .operations.SubnetsOperations
+    :ivar virtual_network_peerings: VirtualNetworkPeerings operations
+    :vartype virtual_network_peerings: .operations.VirtualNetworkPeeringsOperations
+    :ivar virtual_network_gateways: VirtualNetworkGateways operations
+    :vartype virtual_network_gateways: .operations.VirtualNetworkGatewaysOperations
+    :ivar virtual_network_gateway_connections: VirtualNetworkGatewayConnections operations
+    :vartype virtual_network_gateway_connections: .operations.VirtualNetworkGatewayConnectionsOperations
+    :ivar local_network_gateways: LocalNetworkGateways operations
+    :vartype local_network_gateways: .operations.LocalNetworkGatewaysOperations
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
@@ -143,24 +142,13 @@ class NetworkManagementClient(object):
      identify the Microsoft Azure subscription. The subscription ID forms part
      of the URI for every service call.
     :type subscription_id: str
-    :param accept_language: Gets or sets the preferred language for the
-     response.
-    :type accept_language: str
-    :param long_running_operation_retry_timeout: Gets or sets the retry
-     timeout in seconds for Long Running Operations. Default value is 30.
-    :type long_running_operation_retry_timeout: int
-    :param generate_client_request_id: When set to true a unique
-     x-ms-client-request-id value is generated and included in each request.
-     Default is true.
-    :type generate_client_request_id: bool
     :param str base_url: Service URL
-    :param str filepath: Existing config
     """
 
     def __init__(
-            self, credentials, subscription_id, accept_language='en-US', long_running_operation_retry_timeout=30, generate_client_request_id=True, base_url=None, filepath=None):
+            self, credentials, subscription_id, base_url=None):
 
-        self.config = NetworkManagementClientConfiguration(credentials, subscription_id, accept_language, long_running_operation_retry_timeout, generate_client_request_id, base_url, filepath)
+        self.config = NetworkManagementClientConfiguration(credentials, subscription_id, base_url)
         self._client = ServiceClient(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
@@ -169,34 +157,6 @@ class NetworkManagementClient(object):
 
         self.application_gateways = ApplicationGatewaysOperations(
             self._client, self.config, self._serialize, self._deserialize)
-        self.route_tables = RouteTablesOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.routes = RoutesOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.public_ip_addresses = PublicIPAddressesOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.network_security_groups = NetworkSecurityGroupsOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.security_rules = SecurityRulesOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.load_balancers = LoadBalancersOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.virtual_networks = VirtualNetworksOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.subnets = SubnetsOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.virtual_network_peerings = VirtualNetworkPeeringsOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.network_interfaces = NetworkInterfacesOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.usages = UsagesOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.virtual_network_gateways = VirtualNetworkGatewaysOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.virtual_network_gateway_connections = VirtualNetworkGatewayConnectionsOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.local_network_gateways = LocalNetworkGatewaysOperations(
-            self._client, self.config, self._serialize, self._deserialize)
         self.express_route_circuit_authorizations = ExpressRouteCircuitAuthorizationsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.express_route_circuit_peerings = ExpressRouteCircuitPeeringsOperations(
@@ -204,6 +164,44 @@ class NetworkManagementClient(object):
         self.express_route_circuits = ExpressRouteCircuitsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.express_route_service_providers = ExpressRouteServiceProvidersOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.load_balancers = LoadBalancersOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.network_interfaces = NetworkInterfacesOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.network_security_groups = NetworkSecurityGroupsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.security_rules = SecurityRulesOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.network_watchers = NetworkWatchersOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.packet_captures = PacketCapturesOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.public_ip_addresses = PublicIPAddressesOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.route_filters = RouteFiltersOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.route_filter_rules = RouteFilterRulesOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.route_tables = RouteTablesOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.routes = RoutesOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.bgp_service_communities = BgpServiceCommunitiesOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.usages = UsagesOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.virtual_networks = VirtualNetworksOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.subnets = SubnetsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.virtual_network_peerings = VirtualNetworkPeeringsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.virtual_network_gateways = VirtualNetworkGatewaysOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.virtual_network_gateway_connections = VirtualNetworkGatewayConnectionsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.local_network_gateways = LocalNetworkGatewaysOperations(
             self._client, self.config, self._serialize, self._deserialize)
 
     def check_dns_name_availability(
@@ -228,7 +226,7 @@ class NetworkManagementClient(object):
          if raw=true
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
-        api_version = "2016-09-01"
+        api_version = "2017-03-01"
 
         # Construct URL
         url = '/subscriptions/{subscriptionId}/providers/Microsoft.Network/locations/{location}/CheckDnsNameAvailability'

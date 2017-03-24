@@ -37,7 +37,7 @@ class GatewayProfile(Model):
     :type response_topic: str
     :param status_blob_signature: The gateway status blob SAS URL.
     :type status_blob_signature: str
-    """ 
+    """
 
     _attribute_map = {
         'data_plane_service_base_address': {'key': 'dataPlaneServiceBaseAddress', 'type': 'str'},

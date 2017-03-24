@@ -23,7 +23,7 @@ class CustomImagePropertiesCustom(Model):
      'Windows', 'Linux', 'None'
     :type os_type: str or :class:`CustomImageOsType
      <azure.mgmt.devtestlabs.models.CustomImageOsType>`
-    """ 
+    """
 
     _attribute_map = {
         'image_name': {'key': 'imageName', 'type': 'str'},

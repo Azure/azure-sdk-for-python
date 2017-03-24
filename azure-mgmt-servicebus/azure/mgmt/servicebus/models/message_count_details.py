@@ -15,21 +15,32 @@ from msrest.serialization import Model
 class MessageCountDetails(Model):
     """Message Count Details.
 
-    :param active_message_count: Number of active messages in the queue,
-     topic, or subscription.
-    :type active_message_count: long
-    :param dead_letter_message_count: Number of messages that are dead
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar active_message_count: Number of active messages in the queue, topic,
+     or subscription.
+    :vartype active_message_count: long
+    :ivar dead_letter_message_count: Number of messages that are dead
      lettered.
-    :type dead_letter_message_count: long
-    :param scheduled_message_count: Number of scheduled messages.
-    :type scheduled_message_count: long
-    :param transfer_dead_letter_message_count: Number of messages transferred
+    :vartype dead_letter_message_count: long
+    :ivar scheduled_message_count: Number of scheduled messages.
+    :vartype scheduled_message_count: long
+    :ivar transfer_dead_letter_message_count: Number of messages transferred
      into dead letters.
-    :type transfer_dead_letter_message_count: long
-    :param transfer_message_count: Number of messages transferred to another
+    :vartype transfer_dead_letter_message_count: long
+    :ivar transfer_message_count: Number of messages transferred to another
      queue, topic, or subscription.
-    :type transfer_message_count: long
-    """ 
+    :vartype transfer_message_count: long
+    """
+
+    _validation = {
+        'active_message_count': {'readonly': True},
+        'dead_letter_message_count': {'readonly': True},
+        'scheduled_message_count': {'readonly': True},
+        'transfer_dead_letter_message_count': {'readonly': True},
+        'transfer_message_count': {'readonly': True},
+    }
 
     _attribute_map = {
         'active_message_count': {'key': 'activeMessageCount', 'type': 'long'},
@@ -39,9 +50,9 @@ class MessageCountDetails(Model):
         'transfer_message_count': {'key': 'transferMessageCount', 'type': 'long'},
     }
 
-    def __init__(self, active_message_count=None, dead_letter_message_count=None, scheduled_message_count=None, transfer_dead_letter_message_count=None, transfer_message_count=None):
-        self.active_message_count = active_message_count
-        self.dead_letter_message_count = dead_letter_message_count
-        self.scheduled_message_count = scheduled_message_count
-        self.transfer_dead_letter_message_count = transfer_dead_letter_message_count
-        self.transfer_message_count = transfer_message_count
+    def __init__(self):
+        self.active_message_count = None
+        self.dead_letter_message_count = None
+        self.scheduled_message_count = None
+        self.transfer_dead_letter_message_count = None
+        self.transfer_message_count = None

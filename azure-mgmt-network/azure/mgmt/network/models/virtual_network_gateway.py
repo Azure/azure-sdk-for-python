@@ -81,7 +81,6 @@ class VirtualNetworkGateway(Resource):
         'type': {'readonly': True},
         'ip_configurations': {'required': True},
         'gateway_type': {'required': True},
-        'vpn_type': {'required': True},
         'provisioning_state': {'readonly': True},
     }
 
@@ -105,7 +104,7 @@ class VirtualNetworkGateway(Resource):
         'etag': {'key': 'etag', 'type': 'str'},
     }
 
-    def __init__(self, ip_configurations, gateway_type, vpn_type, id=None, location=None, tags=None, enable_bgp=None, active_active=None, gateway_default_site=None, sku=None, vpn_client_configuration=None, bgp_settings=None, resource_guid=None, etag=None):
+    def __init__(self, ip_configurations, gateway_type, id=None, location=None, tags=None, vpn_type=None, enable_bgp=None, active_active=None, gateway_default_site=None, sku=None, vpn_client_configuration=None, bgp_settings=None, resource_guid=None, etag=None):
         super(VirtualNetworkGateway, self).__init__(id=id, location=location, tags=tags)
         self.ip_configurations = ip_configurations
         self.gateway_type = gateway_type

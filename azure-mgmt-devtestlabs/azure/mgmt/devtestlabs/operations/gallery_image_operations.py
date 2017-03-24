@@ -23,6 +23,7 @@ class GalleryImageOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An objec model deserializer.
+    :ivar api_version: Client API version. Constant value: "2016-05-15".
     """
 
     def __init__(self, client, config, serializer, deserializer):
@@ -30,6 +31,7 @@ class GalleryImageOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
+        self.api_version = "2016-05-15"
 
         self.config = config
 
@@ -78,7 +80,7 @@ class GalleryImageOperations(object):
                     query_parameters['$top'] = self._serialize.query("top", top, 'int')
                 if order_by is not None:
                     query_parameters['$orderBy'] = self._serialize.query("order_by", order_by, 'str')
-                query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
+                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
             else:
                 url = next_link

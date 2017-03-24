@@ -13,7 +13,7 @@ from msrest.serialization import Model
 
 
 class VpnClientParameters(Model):
-    """VpnClientParameters.
+    """Vpn Client Parameters for package generation.
 
     :param processor_architecture: VPN client Processor Architecture. Possible
      values are: 'AMD64' and 'X86'. Possible values include: 'Amd64', 'X86'
@@ -26,7 +26,7 @@ class VpnClientParameters(Model):
     }
 
     _attribute_map = {
-        'processor_architecture': {'key': 'ProcessorArchitecture', 'type': 'str'},
+        'processor_architecture': {'key': 'processorArchitecture', 'type': 'str'},
     }
 
     def __init__(self, processor_architecture):

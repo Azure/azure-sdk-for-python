@@ -30,7 +30,7 @@ class GroupItem(Resource):
     :type location: str
     :param friendly_name:
     :type friendly_name: str
-    """ 
+    """
 
     _validation = {
         'id': {'readonly': True},

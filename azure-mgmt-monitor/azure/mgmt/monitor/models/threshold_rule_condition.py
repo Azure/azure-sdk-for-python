@@ -15,12 +15,12 @@ from .rule_condition import RuleCondition
 class ThresholdRuleCondition(RuleCondition):
     """A rule condition based on a metric crossing a threshold.
 
-    :param odatatype: Polymorphic Discriminator
-    :type odatatype: str
     :param data_source: the resource from which the rule collects its data.
      For this type dataSource will always be of type RuleMetricDataSource.
     :type data_source: :class:`RuleDataSource
      <azure.mgmt.monitor.models.RuleDataSource>`
+    :param odatatype: Polymorphic Discriminator
+    :type odatatype: str
     :param operator: the operator used to compare the data and the threshold.
      Possible values include: 'GreaterThan', 'GreaterThanOrEqual', 'LessThan',
      'LessThanOrEqual'
@@ -47,8 +47,8 @@ class ThresholdRuleCondition(RuleCondition):
     }
 
     _attribute_map = {
-        'odatatype': {'key': 'odata\\.type', 'type': 'str'},
         'data_source': {'key': 'dataSource', 'type': 'RuleDataSource'},
+        'odatatype': {'key': 'odata\\.type', 'type': 'str'},
         'operator': {'key': 'operator', 'type': 'ConditionOperator'},
         'threshold': {'key': 'threshold', 'type': 'float'},
         'window_size': {'key': 'windowSize', 'type': 'duration'},
@@ -56,8 +56,7 @@ class ThresholdRuleCondition(RuleCondition):
     }
 
     def __init__(self, operator, threshold, data_source=None, window_size=None, time_aggregation=None):
-        super(ThresholdRuleCondition, self).__init__()
-        self.data_source = data_source
+        super(ThresholdRuleCondition, self).__init__(data_source=data_source)
         self.operator = operator
         self.threshold = threshold
         self.window_size = window_size

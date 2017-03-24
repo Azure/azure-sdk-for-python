@@ -17,7 +17,7 @@ class HourDetails(Model):
 
     :param minute: Minutes of the hour the schedule will run.
     :type minute: int
-    """ 
+    """
 
     _attribute_map = {
         'minute': {'key': 'minute', 'type': 'int'},

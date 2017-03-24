@@ -17,7 +17,7 @@ class RoleDefinitionFilter(Model):
 
     :param role_name: Returns role definition with the specific name.
     :type role_name: str
-    """ 
+    """
 
     _attribute_map = {
         'role_name': {'key': 'roleName', 'type': 'str'},
