@@ -9,5 +9,19 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-VERSION = "0.30.1"
+from msrest.paging import Paged
 
+
+class NetworkWatcherPaged(Paged):
+    """
+    A paging container for iterating over a list of NetworkWatcher object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[NetworkWatcher]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(NetworkWatcherPaged, self).__init__(*args, **kwargs)
