@@ -9,6 +9,8 @@
 from setuptools import find_packages, setup
 from io import open
 import re
+import sys
+from azure_wheel import cmdclass
 
 # azure v0.x is not compatible with this package
 # azure v0.x used to have a __version__ attribute (newer versions don't)
@@ -38,6 +40,13 @@ with open('README.rst', encoding='utf-8') as f:
 with open('HISTORY.rst', encoding='utf-8') as f:
     history = f.read()
 
+INSTALL_REQUIRES=[
+    'azure-common~=1.1.5',
+    'msrestazure~=0.4.7',
+]
+if "bdist_wheel" in sys.argv:
+    INSTALL_REQUIRES.append('azure-mgmt-nspkg>=2.0.0')
+
 setup(
     name='azure-mgmt-resource',
     version=version,
@@ -61,9 +70,6 @@ setup(
     ],
     zip_safe=False,
     packages=find_packages(),
-    install_requires=[
-        'azure-mgmt-nspkg',
-        'azure-common~=1.1.4',
-        'msrestazure~=0.4.6',
-    ],
+    install_requires=INSTALL_REQUIRES,
+    cmdclass=cmdclass,
 )
