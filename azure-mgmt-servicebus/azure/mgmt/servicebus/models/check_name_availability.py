@@ -12,33 +12,23 @@
 from msrest.serialization import Model
 
 
-class Resource(Model):
-    """The Resource definition for other than namespace.
+class CheckNameAvailability(Model):
+    """Description of a Check Name availability request properties.
 
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
-
-    :ivar id: Resource Id
-    :vartype id: str
-    :ivar name: Resource name
-    :vartype name: str
-    :ivar type: Resource type
-    :vartype type: str
+    :param name: The Name to check the namespce name availability and The
+     namespace name can contain only letters, numbers, and hyphens. The
+     namespace must start with a letter, and it must end with a letter or
+     number.
+    :type name: str
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
+        'name': {'required': True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
     }
 
-    def __init__(self):
-        self.id = None
-        self.name = None
-        self.type = None
+    def __init__(self, name):
+        self.name = name
