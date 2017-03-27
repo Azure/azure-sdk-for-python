@@ -9,5 +9,20 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-VERSION = "0.30.1"
+from msrest.serialization import Model
 
+
+class GatewayRouteListResult(Model):
+    """List of virtual network gateway routes.
+
+    :param value: List of gateway routes
+    :type value: list of :class:`GatewayRoute
+     <azure.mgmt.network.models.GatewayRoute>`
+    """
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': '[GatewayRoute]'},
+    }
+
+    def __init__(self, value=None):
+        self.value = value
