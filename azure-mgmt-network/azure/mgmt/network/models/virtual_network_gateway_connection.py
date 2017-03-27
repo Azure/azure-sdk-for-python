@@ -69,6 +69,13 @@ class VirtualNetworkGatewayConnection(Resource):
     :type peer: :class:`SubResource <azure.mgmt.network.models.SubResource>`
     :param enable_bgp: EnableBgp flag
     :type enable_bgp: bool
+    :param use_policy_based_traffic_selectors: Enable policy-based traffic
+     selectors.
+    :type use_policy_based_traffic_selectors: bool
+    :param ipsec_policies: The IPSec Policies to be considered by this
+     connection.
+    :type ipsec_policies: list of :class:`IpsecPolicy
+     <azure.mgmt.network.models.IpsecPolicy>`
     :param resource_guid: The resource GUID property of the
      VirtualNetworkGatewayConnection resource.
     :type resource_guid: str
@@ -112,12 +119,14 @@ class VirtualNetworkGatewayConnection(Resource):
         'ingress_bytes_transferred': {'key': 'properties.ingressBytesTransferred', 'type': 'long'},
         'peer': {'key': 'properties.peer', 'type': 'SubResource'},
         'enable_bgp': {'key': 'properties.enableBgp', 'type': 'bool'},
+        'use_policy_based_traffic_selectors': {'key': 'properties.usePolicyBasedTrafficSelectors', 'type': 'bool'},
+        'ipsec_policies': {'key': 'properties.ipsecPolicies', 'type': '[IpsecPolicy]'},
         'resource_guid': {'key': 'properties.resourceGuid', 'type': 'str'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'etag': {'key': 'etag', 'type': 'str'},
     }
 
-    def __init__(self, virtual_network_gateway1, connection_type, id=None, location=None, tags=None, authorization_key=None, virtual_network_gateway2=None, local_network_gateway2=None, routing_weight=None, shared_key=None, peer=None, enable_bgp=None, resource_guid=None, etag=None):
+    def __init__(self, virtual_network_gateway1, connection_type, id=None, location=None, tags=None, authorization_key=None, virtual_network_gateway2=None, local_network_gateway2=None, routing_weight=None, shared_key=None, peer=None, enable_bgp=None, use_policy_based_traffic_selectors=None, ipsec_policies=None, resource_guid=None, etag=None):
         super(VirtualNetworkGatewayConnection, self).__init__(id=id, location=location, tags=tags)
         self.authorization_key = authorization_key
         self.virtual_network_gateway1 = virtual_network_gateway1
@@ -132,6 +141,8 @@ class VirtualNetworkGatewayConnection(Resource):
         self.ingress_bytes_transferred = None
         self.peer = peer
         self.enable_bgp = enable_bgp
+        self.use_policy_based_traffic_selectors = use_policy_based_traffic_selectors
+        self.ipsec_policies = ipsec_policies
         self.resource_guid = resource_guid
         self.provisioning_state = None
         self.etag = etag
