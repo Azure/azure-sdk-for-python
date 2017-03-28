@@ -76,6 +76,7 @@ class ApplicationGatewayBackendHealthServerHealth(Enum):
     up = "Up"
     down = "Down"
     partial = "Partial"
+    draining = "Draining"
 
 
 class ApplicationGatewaySkuName(Enum):
@@ -145,6 +146,12 @@ class ExpressRouteCircuitPeeringState(Enum):
 
     disabled = "Disabled"
     enabled = "Enabled"
+
+
+class Access(Enum):
+
+    allow = "Allow"
+    deny = "Deny"
 
 
 class ExpressRouteCircuitSkuTier(Enum):
@@ -225,12 +232,6 @@ class Protocol(Enum):
 
     tcp = "TCP"
     udp = "UDP"
-
-
-class Access(Enum):
-
-    allow = "Allow"
-    deny = "Deny"
 
 
 class NextHopType(Enum):
@@ -332,3 +333,66 @@ class VirtualNetworkGatewayConnectionType(Enum):
     vnet2_vnet = "Vnet2Vnet"
     express_route = "ExpressRoute"
     vpn_client = "VPNClient"
+
+
+class IpsecEncryption(Enum):
+
+    none = "None"
+    des = "DES"
+    des3 = "DES3"
+    aes128 = "AES128"
+    aes192 = "AES192"
+    aes256 = "AES256"
+    gcmaes128 = "GCMAES128"
+    gcmaes192 = "GCMAES192"
+    gcmaes256 = "GCMAES256"
+
+
+class IpsecIntegrity(Enum):
+
+    md5 = "MD5"
+    sha1 = "SHA1"
+    sha256 = "SHA256"
+    gcmaes128 = "GCMAES128"
+    gcmaes192 = "GCMAES192"
+    gcmaes256 = "GCMAES256"
+
+
+class IkeEncryption(Enum):
+
+    des = "DES"
+    des3 = "DES3"
+    aes128 = "AES128"
+    aes192 = "AES192"
+    aes256 = "AES256"
+
+
+class IkeIntegrity(Enum):
+
+    md5 = "MD5"
+    sha1 = "SHA1"
+    sha256 = "SHA256"
+    sha384 = "SHA384"
+
+
+class DhGroup(Enum):
+
+    none = "None"
+    dh_group1 = "DHGroup1"
+    dh_group2 = "DHGroup2"
+    dh_group14 = "DHGroup14"
+    dh_group2048 = "DHGroup2048"
+    ecp256 = "ECP256"
+    ecp384 = "ECP384"
+    dh_group24 = "DHGroup24"
+
+
+class PfsGroup(Enum):
+
+    none = "None"
+    pfs1 = "PFS1"
+    pfs2 = "PFS2"
+    pfs2048 = "PFS2048"
+    ecp256 = "ECP256"
+    ecp384 = "ECP384"
+    pfs24 = "PFS24"

@@ -35,8 +35,7 @@ class ApplicationGateway(Resource):
     :type ssl_policy: :class:`ApplicationGatewaySslPolicy
      <azure.mgmt.network.models.ApplicationGatewaySslPolicy>`
     :ivar operational_state: Operational state of the application gateway
-     resource. Possible values are: 'Stopped', 'Started', 'Running', and
-     'Stopping'. Possible values include: 'Stopped', 'Starting', 'Running',
+     resource. Possible values include: 'Stopped', 'Starting', 'Running',
      'Stopping'
     :vartype operational_state: str or
      :class:`ApplicationGatewayOperationalState

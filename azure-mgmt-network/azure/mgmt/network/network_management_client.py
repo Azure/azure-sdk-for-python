@@ -29,8 +29,11 @@ from .operations.security_rules_operations import SecurityRulesOperations
 from .operations.network_watchers_operations import NetworkWatchersOperations
 from .operations.packet_captures_operations import PacketCapturesOperations
 from .operations.public_ip_addresses_operations import PublicIPAddressesOperations
+from .operations.route_filters_operations import RouteFiltersOperations
+from .operations.route_filter_rules_operations import RouteFilterRulesOperations
 from .operations.route_tables_operations import RouteTablesOperations
 from .operations.routes_operations import RoutesOperations
+from .operations.bgp_service_communities_operations import BgpServiceCommunitiesOperations
 from .operations.usages_operations import UsagesOperations
 from .operations.virtual_networks_operations import VirtualNetworksOperations
 from .operations.subnets_operations import SubnetsOperations
@@ -107,10 +110,16 @@ class NetworkManagementClient(object):
     :vartype packet_captures: .operations.PacketCapturesOperations
     :ivar public_ip_addresses: PublicIPAddresses operations
     :vartype public_ip_addresses: .operations.PublicIPAddressesOperations
+    :ivar route_filters: RouteFilters operations
+    :vartype route_filters: .operations.RouteFiltersOperations
+    :ivar route_filter_rules: RouteFilterRules operations
+    :vartype route_filter_rules: .operations.RouteFilterRulesOperations
     :ivar route_tables: RouteTables operations
     :vartype route_tables: .operations.RouteTablesOperations
     :ivar routes: Routes operations
     :vartype routes: .operations.RoutesOperations
+    :ivar bgp_service_communities: BgpServiceCommunities operations
+    :vartype bgp_service_communities: .operations.BgpServiceCommunitiesOperations
     :ivar usages: Usages operations
     :vartype usages: .operations.UsagesOperations
     :ivar virtual_networks: VirtualNetworks operations
@@ -170,9 +179,15 @@ class NetworkManagementClient(object):
             self._client, self.config, self._serialize, self._deserialize)
         self.public_ip_addresses = PublicIPAddressesOperations(
             self._client, self.config, self._serialize, self._deserialize)
+        self.route_filters = RouteFiltersOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.route_filter_rules = RouteFilterRulesOperations(
+            self._client, self.config, self._serialize, self._deserialize)
         self.route_tables = RouteTablesOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.routes = RoutesOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.bgp_service_communities = BgpServiceCommunitiesOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.usages = UsagesOperations(
             self._client, self.config, self._serialize, self._deserialize)
@@ -211,7 +226,7 @@ class NetworkManagementClient(object):
          if raw=true
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
-        api_version = "2016-09-01"
+        api_version = "2017-03-01"
 
         # Construct URL
         url = '/subscriptions/{subscriptionId}/providers/Microsoft.Network/locations/{location}/CheckDnsNameAvailability'

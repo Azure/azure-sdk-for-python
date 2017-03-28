@@ -24,8 +24,7 @@ class ApplicationGatewayHttpListener(SubResource):
     :param frontend_port: Frontend port resource of an application gateway.
     :type frontend_port: :class:`SubResource
      <azure.mgmt.network.models.SubResource>`
-    :param protocol: Protocol. Possible values are: 'Http' and 'Https'.
-     Possible values include: 'Http', 'Https'
+    :param protocol: Protocol. Possible values include: 'Http', 'Https'
     :type protocol: str or :class:`ApplicationGatewayProtocol
      <azure.mgmt.network.models.ApplicationGatewayProtocol>`
     :param host_name: Host name of HTTP listener.
