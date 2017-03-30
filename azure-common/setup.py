@@ -25,10 +25,6 @@ try:
 except ImportError:
     pass
 
-INSTALL_REQUIRES=[]
-if "bdist_wheel" in sys.argv:
-    INSTALL_REQUIRES.append('azure-nspkg>=2.0.0')
-
 setup(
     name='azure-common',
     version='1.1.5',
@@ -55,7 +51,6 @@ setup(
         'azure',
         'azure.common',
     ],
-    install_requires=INSTALL_REQUIRES,
     extras_require={
         'autorest':[
             'msrestazure>=0.4.0,<0.5.0',

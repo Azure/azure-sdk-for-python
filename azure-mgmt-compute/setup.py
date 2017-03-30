@@ -40,13 +40,6 @@ with open('README.rst', encoding='utf-8') as f:
 with open('HISTORY.rst', encoding='utf-8') as f:
     history = f.read()
 
-INSTALL_REQUIRES=[
-    'azure-common~=1.1.5',
-    'msrestazure~=0.4.7',
-]
-if "bdist_wheel" in sys.argv:
-    INSTALL_REQUIRES.append('azure-mgmt-nspkg>=2.0.0')
-
 setup(
     name='azure-mgmt-compute',
     version=version,
@@ -70,6 +63,9 @@ setup(
     ],
     zip_safe=False,
     packages=find_packages(),
-    install_requires=INSTALL_REQUIRES,
+    install_requires=[
+        'azure-common~=1.1.5',
+        'msrestazure~=0.4.7',
+    ],
     cmdclass=cmdclass
 )
