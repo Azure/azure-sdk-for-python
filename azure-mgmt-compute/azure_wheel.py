@@ -8,7 +8,7 @@ from distutils import log as logger
 import os.path
 try:
     from wheel.bdist_wheel import bdist_wheel as original_bdist_wheel
-    class azure_bdist_wheel(original_bdist_wheel):
+    class bdist_wheel(original_bdist_wheel):
 
         description = "Create an Azure wheel distribution"
 
@@ -46,7 +46,7 @@ try:
                     raise ValueError("Unable to find {}. Are you sure of your namespace package?".format(init_file))
             original_bdist_wheel.write_record(self, bdist_dir, distinfo_dir)
     cmdclass = {
-        'azure_bdist_wheel': azure_bdist_wheel,
+        'bdist_wheel': bdist_wheel,
     }
 except ImportError:
     logger.warn("Wheel is not available, disabling bdist_wheel hook")
