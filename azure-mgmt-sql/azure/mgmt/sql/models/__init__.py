@@ -46,6 +46,11 @@ from .operation import Operation
 from .operation_list_result import OperationListResult
 from .database_security_alert_policy import DatabaseSecurityAlertPolicy
 from .database_blob_auditing_policy import DatabaseBlobAuditingPolicy
+from .failover_group_read_write_endpoint import FailoverGroupReadWriteEndpoint
+from .failover_group_read_only_endpoint import FailoverGroupReadOnlyEndpoint
+from .partner_info import PartnerInfo
+from .failover_group_resource import FailoverGroupResource
+from .failover_group_resource_list import FailoverGroupResourceList
 from .firewall_rule_paged import FirewallRulePaged
 from .replication_link_paged import ReplicationLinkPaged
 from .restore_point_paged import RestorePointPaged
@@ -88,6 +93,9 @@ from .sql_management_client_enums import (
     SecurityAlertPolicyEmailAccountAdmins,
     SecurityAlertPolicyUseServerDefault,
     BlobAuditingPolicyState,
+    ReadWriteEndpointFailoverPolicy,
+    ReadOnlyEndpointFailoverPolicy,
+    FailoverGroupReplicationRole,
 )
 
 __all__ = [
@@ -128,6 +136,11 @@ __all__ = [
     'OperationListResult',
     'DatabaseSecurityAlertPolicy',
     'DatabaseBlobAuditingPolicy',
+    'FailoverGroupReadWriteEndpoint',
+    'FailoverGroupReadOnlyEndpoint',
+    'PartnerInfo',
+    'FailoverGroupResource',
+    'FailoverGroupResourceList',
     'FirewallRulePaged',
     'ReplicationLinkPaged',
     'RestorePointPaged',
@@ -169,4 +182,7 @@ __all__ = [
     'SecurityAlertPolicyEmailAccountAdmins',
     'SecurityAlertPolicyUseServerDefault',
     'BlobAuditingPolicyState',
+    'ReadWriteEndpointFailoverPolicy',
+    'ReadOnlyEndpointFailoverPolicy',
+    'FailoverGroupReplicationRole',
 ]

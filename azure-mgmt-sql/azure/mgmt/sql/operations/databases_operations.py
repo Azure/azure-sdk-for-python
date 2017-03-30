@@ -205,14 +205,14 @@ class DatabasesOperations(object):
 
         def get_long_running_output(response):
 
-            if response.status_code not in [200, 202]:
+            if response.status_code not in [201, 202]:
                 exp = CloudError(response)
                 exp.request_id = response.headers.get('x-ms-request-id')
                 raise exp
 
             deserialized = None
 
-            if response.status_code == 200:
+            if response.status_code == 201:
                 deserialized = self._deserialize('ImportExportResponse', response)
 
             if raw:
@@ -470,7 +470,8 @@ class DatabasesOperations(object):
 
     def failover_replication_link(
             self, resource_group_name, server_name, database_name, link_id, custom_headers=None, raw=False, **operation_config):
-        """Failover the database replication link.
+        """Sets which replica database is primary by failing over from the current
+        primary replica database.
 
         :param resource_group_name: The name of the resource group that
          contains the resource. You can obtain this value from the Azure
@@ -558,8 +559,8 @@ class DatabasesOperations(object):
 
     def failover_replication_link_allow_data_loss(
             self, resource_group_name, server_name, database_name, link_id, custom_headers=None, raw=False, **operation_config):
-        """Force failover the database replication link, which may result in data
-        loss.
+        """Sets which replica database is primary by failing over from the current
+        primary replica database. This operation might result in data loss.
 
         :param resource_group_name: The name of the resource group that
          contains the resource. You can obtain this value from the Azure

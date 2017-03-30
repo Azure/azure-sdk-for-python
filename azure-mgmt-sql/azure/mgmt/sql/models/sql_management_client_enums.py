@@ -215,3 +215,21 @@ class BlobAuditingPolicyState(Enum):
 
     enabled = "Enabled"
     disabled = "Disabled"
+
+
+class ReadWriteEndpointFailoverPolicy(Enum):
+
+    manual = "Manual"
+    automatic = "Automatic"
+
+
+class ReadOnlyEndpointFailoverPolicy(Enum):
+
+    disabled = "Disabled"
+    enabled = "Enabled"
+
+
+class FailoverGroupReplicationRole(Enum):
+
+    primary = "Primary"
+    secondary = "Secondary"
