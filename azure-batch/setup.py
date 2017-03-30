@@ -7,6 +7,7 @@
 #--------------------------------------------------------------------------
 
 from setuptools import find_packages, setup
+from azure_wheel import cmdclass
 from io import open
 import re
 import os.path
@@ -75,4 +76,5 @@ setup(
         'azure-common~=1.1.4',
         'msrestazure~=0.4.7',
     ],
+    cmdclass=cmdclass
 )

@@ -26,13 +26,13 @@ try:
                 raise ValueError("azure_namespace_package must finish by -nspkg")
 
         def run(self):
+            if not self.distribution.install_requires:
+                self.distribution.install_requires = []
             self.distribution.install_requires.append(
                 "{}>=2.0.0".format(self.azure_namespace_package))
             original_bdist_wheel.run(self)
 
         def write_record(self, bdist_dir, distinfo_dir):
-            # following check could be improved, by parsing the package name
-            # package_name = self.distribution.get_name()
             if self.azure_namespace_package:
                 # Split and remove last part, assuming it's "nspkg"
                 subparts = self.azure_namespace_package.split('-')[0:-1]

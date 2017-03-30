@@ -16,6 +16,7 @@
 #--------------------------------------------------------------------------
 
 from setuptools import setup
+from azure_wheel import cmdclass
 
 # azure v0.x is not compatible with this package
 # azure v0.x used to have a __version__ attribute (newer versions don't)
@@ -60,7 +61,8 @@ setup(
         'azure.servicebus._http',
     ],
     install_requires=[
-        'azure-common',
+        'azure-common>=1.1.5',
         'requests',
     ],
+    cmdclass=cmdclass
 )

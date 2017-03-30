@@ -16,6 +16,7 @@
 #--------------------------------------------------------------------------
 
 from setuptools import setup
+from azure_wheel import cmdclass
 
 # azure v0.x is not compatible with this package
 # azure v0.x used to have a __version__ attribute (newer versions don't)
@@ -60,10 +61,11 @@ setup(
         'azure.servicemanagement._http',
     ],
     install_requires=[
-        'azure-common',
+        'azure-common>=1.1.5',
         'requests',
     ],
     extras_require = { 
         'get_certificate_from_publish_settings' : ['pyopenssl'] 
     },
+    cmdclass=cmdclass
 )
