@@ -7,6 +7,7 @@
 #--------------------------------------------------------------------------
 
 from setuptools import setup
+from azure_wheel import cmdclass
 import re
 
 # azure v0.x is not compatible with this package
@@ -66,4 +67,5 @@ setup(
         'msrestazure~=0.4.6',
         'azure-mgmt-nspkg',
     ],
+    cmdclass=cmdclass
 )

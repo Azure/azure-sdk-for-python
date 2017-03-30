@@ -7,10 +7,10 @@
 #--------------------------------------------------------------------------
 
 from setuptools import find_packages, setup
+from azure_wheel import cmdclass
 from io import open
 import re
 import sys
-from azure_wheel import cmdclass
 
 # azure v0.x is not compatible with this package
 # azure v0.x used to have a __version__ attribute (newer versions don't)

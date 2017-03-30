@@ -7,6 +7,7 @@
 #--------------------------------------------------------------------------
 
 from setuptools import setup
+from azure_wheel import cmdclass
 from io import open
 import re
 
@@ -72,4 +73,5 @@ setup(
         'azure-common~=1.1.4',
         'azure-mgmt-nspkg',
     ],
+    cmdclass=cmdclass
 )

@@ -7,6 +7,7 @@
 #--------------------------------------------------------------------------
 
 from setuptools import find_packages, setup
+from azure_wheel import cmdclass
 from io import open
 import re
 import os.path
@@ -37,7 +38,7 @@ except ImportError:
 
 #For KeyVault only
 package_folder_path = os.path.join(package_folder_path, 'generated')
-	
+    
 # Version extraction inspired from 'requests'
 with open(os.path.join(package_folder_path, 'version.py'), 'r') as fd:
     version = re.search(r'^VERSION\s*=\s*[\'"]([^\'"]*)[\'"]',
@@ -78,4 +79,5 @@ setup(
         'azure-common~=1.1.4',
         'msrestazure~=0.4.6',
     ],
+    cmdclass=cmdclass
 )
