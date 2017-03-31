@@ -69,9 +69,8 @@ setup(
         'azure.mgmt.cdn.operations',
     ],
     install_requires=[
-        'msrestazure~=0.4.6',
-        'azure-common~=1.1.4',
-        'azure-mgmt-nspkg',
+        'msrestazure~=0.4.7',
+        'azure-common~=1.1.5',
     ],
     cmdclass=cmdclass
 )

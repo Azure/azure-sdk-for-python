@@ -35,7 +35,7 @@ except ImportError:
 
 setup(
     name='azure-servicebus',
-    version='0.21.0',
+    version='0.21.1',
     description='Microsoft Azure Service Bus Client Library for Python',
     long_description=open('README.rst', 'r').read(),
     license='Apache License 2.0',
