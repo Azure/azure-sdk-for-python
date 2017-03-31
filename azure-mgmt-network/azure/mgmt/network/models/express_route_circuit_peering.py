@@ -24,7 +24,7 @@ class ExpressRouteCircuitPeering(SubResource):
     :type peering_type: str or :class:`ExpressRouteCircuitPeeringType
      <azure.mgmt.network.models.ExpressRouteCircuitPeeringType>`
     :param state: The state of peering. Possible values are: 'Disabled' and
-     'Enbaled'. Possible values include: 'Disabled', 'Enabled'
+     'Enabled'. Possible values include: 'Disabled', 'Enabled'
     :type state: str or :class:`ExpressRouteCircuitPeeringState
      <azure.mgmt.network.models.ExpressRouteCircuitPeeringState>`
     :param azure_asn: The Azure ASN.
