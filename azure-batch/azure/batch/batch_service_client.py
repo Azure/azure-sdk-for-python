@@ -33,18 +33,14 @@ class BatchServiceClientConfiguration(AzureConfiguration):
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
      object<msrestazure.azure_active_directory>`
-    :param api_version: Client API Version.
-    :type api_version: str
     :param str base_url: Service URL
     """
 
     def __init__(
-            self, credentials, api_version='2017-01-01.4.0', base_url=None):
+            self, credentials, base_url=None):
 
         if credentials is None:
             raise ValueError("Parameter 'credentials' must not be None.")
-        if api_version is not None and not isinstance(api_version, str):
-            raise TypeError("Optional parameter 'api_version' must be str.")
         if not base_url:
             base_url = 'https://batch.core.windows.net'
 
@@ -54,7 +50,6 @@ class BatchServiceClientConfiguration(AzureConfiguration):
         self.add_user_agent('Azure-SDK-For-Python')
 
         self.credentials = credentials
-        self.api_version = api_version
 
 
 class BatchServiceClient(object):
@@ -85,18 +80,17 @@ class BatchServiceClient(object):
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
      object<msrestazure.azure_active_directory>`
-    :param api_version: Client API Version.
-    :type api_version: str
     :param str base_url: Service URL
     """
 
     def __init__(
-            self, credentials, api_version='2017-01-01.4.0', base_url=None):
+            self, credentials, base_url=None):
 
-        self.config = BatchServiceClientConfiguration(credentials, api_version, base_url)
+        self.config = BatchServiceClientConfiguration(credentials, base_url)
         self._client = ServiceClient(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
+        self.api_version = '2017-01-01.4.0'
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
 
