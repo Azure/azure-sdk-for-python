@@ -73,9 +73,8 @@ setup(
     zip_safe=False,
     packages=find_packages(),
     install_requires=[
-        'azure-common~=1.1.4',
+        'azure-common~=1.1.5',
         'msrestazure~=0.4.7',
-        'azure-mgmt-nspkg',
     ],
     cmdclass=cmdclass
 )
