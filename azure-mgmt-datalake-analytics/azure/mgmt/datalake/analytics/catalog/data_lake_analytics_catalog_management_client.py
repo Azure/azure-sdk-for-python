@@ -25,20 +25,16 @@ class DataLakeAnalyticsCatalogManagementClientConfiguration(AzureConfiguration):
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
      object<msrestazure.azure_active_directory>`
-    :param api_version: Client Api Version.
-    :type api_version: str
     :param adla_catalog_dns_suffix: Gets the DNS suffix used as the base for
      all Azure Data Lake Analytics Catalog service requests.
     :type adla_catalog_dns_suffix: str
     """
 
     def __init__(
-            self, credentials, adla_catalog_dns_suffix, api_version='2016-11-01'):
+            self, credentials, adla_catalog_dns_suffix):
 
         if credentials is None:
             raise ValueError("Parameter 'credentials' must not be None.")
-        if api_version is not None and not isinstance(api_version, str):
-            raise TypeError("Optional parameter 'api_version' must be str.")
         if adla_catalog_dns_suffix is None:
             raise ValueError("Parameter 'adla_catalog_dns_suffix' must not be None.")
         if not isinstance(adla_catalog_dns_suffix, str):
@@ -51,7 +47,6 @@ class DataLakeAnalyticsCatalogManagementClientConfiguration(AzureConfiguration):
         self.add_user_agent('Azure-SDK-For-Python')
 
         self.credentials = credentials
-        self.api_version = api_version
         self.adla_catalog_dns_suffix = adla_catalog_dns_suffix
 
 
@@ -67,20 +62,19 @@ class DataLakeAnalyticsCatalogManagementClient(object):
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
      object<msrestazure.azure_active_directory>`
-    :param api_version: Client Api Version.
-    :type api_version: str
     :param adla_catalog_dns_suffix: Gets the DNS suffix used as the base for
      all Azure Data Lake Analytics Catalog service requests.
     :type adla_catalog_dns_suffix: str
     """
 
     def __init__(
-            self, credentials, adla_catalog_dns_suffix, api_version='2016-11-01'):
+            self, credentials, adla_catalog_dns_suffix):
 
-        self.config = DataLakeAnalyticsCatalogManagementClientConfiguration(credentials, adla_catalog_dns_suffix, api_version)
+        self.config = DataLakeAnalyticsCatalogManagementClientConfiguration(credentials, adla_catalog_dns_suffix)
         self._client = ServiceClient(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
+        self.api_version = '2016-11-01'
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
 
