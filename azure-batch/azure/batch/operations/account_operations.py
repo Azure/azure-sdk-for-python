@@ -22,6 +22,7 @@ class AccountOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An objec model deserializer.
+    :ivar api_version: Client API Version. Constant value: "2017-01-01.4.0".
     """
 
     def __init__(self, client, config, serializer, deserializer):
@@ -29,6 +30,7 @@ class AccountOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
+        self.api_version = "2017-01-01.4.0"
 
         self.config = config
 
@@ -78,7 +80,7 @@ class AccountOperations(object):
 
                 # Construct parameters
                 query_parameters = {}
-                query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
+                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
                 if filter is not None:
                     query_parameters['$filter'] = self._serialize.query("filter", filter, 'str')
                 if max_results is not None:
