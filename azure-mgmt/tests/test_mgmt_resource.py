@@ -87,7 +87,7 @@ class MgmtResourceTest(AzureMgmtTestCase):
         self.assertGreater(len(result_list), 0)
 
         result_list_top = self.resource_client.resource_groups.list(top=2)
-        result_list_top = result_list_top.next()
+        result_list_top = result_list_top.advance_page()
         self.assertEqual(len(result_list_top), 2)
 
         # Patch
