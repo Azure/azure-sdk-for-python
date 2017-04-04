@@ -21,8 +21,7 @@ class ApplicationGatewayFrontendIPConfiguration(SubResource):
      Configuration.
     :type private_ip_address: str
     :param private_ip_allocation_method: PrivateIP allocation method. Possible
-     values are: 'Static' and 'Dynamic'. Possible values include: 'Static',
-     'Dynamic'
+     values include: 'Static', 'Dynamic'
     :type private_ip_allocation_method: str or :class:`IPAllocationMethod
      <azure.mgmt.network.models.IPAllocationMethod>`
     :param subnet: Reference of the subnet resource.

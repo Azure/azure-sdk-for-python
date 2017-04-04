@@ -17,8 +17,7 @@ class ApplicationGatewayProbe(SubResource):
 
     :param id: Resource ID.
     :type id: str
-    :param protocol: Protocol. Possible values are: 'Http' and 'Https'.
-     Possible values include: 'Http', 'Https'
+    :param protocol: Protocol. Possible values include: 'Http', 'Https'
     :type protocol: str or :class:`ApplicationGatewayProtocol
      <azure.mgmt.network.models.ApplicationGatewayProtocol>`
     :param host: Host name to send the probe to.
