@@ -47,7 +47,7 @@ for pkg_name in packages:
 
         result = runpy.run_path(pkg_setup_path)
     except Exception as e:
-        print(e)
+        print(e, file=sys.stderr)
     finally:
         os.chdir(saved_dir)
         sys.path = saved_syspath

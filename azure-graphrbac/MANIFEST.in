@@ -1,2 +1,2 @@
 include *.rst
-include azure_wheel.py
+include azure_bdist_wheel.py

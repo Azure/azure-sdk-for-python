@@ -16,7 +16,12 @@
 #--------------------------------------------------------------------------
 
 from setuptools import setup
-from azure_wheel import cmdclass
+try:
+    from azure_bdist_wheel import cmdclass
+except ImportError:
+    from distutils import log as logger
+    logger.warn("Wheel is not available, disabling bdist_wheel hook")
+    cmdclass = {}
 
 # azure v0.x is not compatible with this package
 # azure v0.x used to have a __version__ attribute (newer versions don't)

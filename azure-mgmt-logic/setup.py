@@ -7,7 +7,12 @@
 #--------------------------------------------------------------------------
 
 from setuptools import setup
-from azure_wheel import cmdclass
+try:
+    from azure_bdist_wheel import cmdclass
+except ImportError:
+    from distutils import log as logger
+    logger.warn("Wheel is not available, disabling bdist_wheel hook")
+    cmdclass = {}
 from io import open
 import re
 
