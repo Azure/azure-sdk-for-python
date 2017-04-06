@@ -26,6 +26,7 @@ from .subnet import Subnet
 from .network_interface_ip_configuration import NetworkInterfaceIPConfiguration
 from .application_gateway_backend_address import ApplicationGatewayBackendAddress
 from .application_gateway_backend_address_pool import ApplicationGatewayBackendAddressPool
+from .application_gateway_connection_draining import ApplicationGatewayConnectionDraining
 from .application_gateway_backend_http_settings import ApplicationGatewayBackendHttpSettings
 from .application_gateway_backend_health_server import ApplicationGatewayBackendHealthServer
 from .application_gateway_backend_health_http_settings import ApplicationGatewayBackendHealthHttpSettings
@@ -43,14 +44,21 @@ from .application_gateway_path_rule import ApplicationGatewayPathRule
 from .application_gateway_probe import ApplicationGatewayProbe
 from .application_gateway_request_routing_rule import ApplicationGatewayRequestRoutingRule
 from .application_gateway_url_path_map import ApplicationGatewayUrlPathMap
+from .application_gateway_firewall_disabled_rule_group import ApplicationGatewayFirewallDisabledRuleGroup
 from .application_gateway_web_application_firewall_configuration import ApplicationGatewayWebApplicationFirewallConfiguration
 from .application_gateway import ApplicationGateway
+from .application_gateway_firewall_rule import ApplicationGatewayFirewallRule
+from .application_gateway_firewall_rule_group import ApplicationGatewayFirewallRuleGroup
+from .application_gateway_firewall_rule_set import ApplicationGatewayFirewallRuleSet
+from .application_gateway_available_waf_rule_sets_result import ApplicationGatewayAvailableWafRuleSetsResult
 from .resource import Resource
 from .dns_name_availability_result import DnsNameAvailabilityResult
 from .express_route_circuit_authorization import ExpressRouteCircuitAuthorization
 from .express_route_circuit_peering_config import ExpressRouteCircuitPeeringConfig
 from .express_route_circuit_stats import ExpressRouteCircuitStats
+from .route_filter_rule import RouteFilterRule
 from .express_route_circuit_peering import ExpressRouteCircuitPeering
+from .route_filter import RouteFilter
 from .express_route_circuit_sku import ExpressRouteCircuitSku
 from .express_route_circuit_service_provider_properties import ExpressRouteCircuitServiceProviderProperties
 from .express_route_circuit import ExpressRouteCircuit
@@ -106,6 +114,10 @@ from .troubleshooting_result import TroubleshootingResult
 from .retention_policy_parameters import RetentionPolicyParameters
 from .flow_log_status_parameters import FlowLogStatusParameters
 from .flow_log_information import FlowLogInformation
+from .patch_route_filter_rule import PatchRouteFilterRule
+from .patch_route_filter import PatchRouteFilter
+from .bgp_community import BGPCommunity
+from .bgp_service_community import BgpServiceCommunity
 from .usage_name import UsageName
 from .usage import Usage
 from .virtual_network_peering import VirtualNetworkPeering
@@ -127,6 +139,7 @@ from .bgp_peer_status_list_result import BgpPeerStatusListResult
 from .gateway_route_list_result import GatewayRouteListResult
 from .tunnel_connection_health import TunnelConnectionHealth
 from .local_network_gateway import LocalNetworkGateway
+from .ipsec_policy import IpsecPolicy
 from .virtual_network_gateway_connection import VirtualNetworkGatewayConnection
 from .connection_reset_shared_key import ConnectionResetSharedKey
 from .connection_shared_key import ConnectionSharedKey
@@ -142,8 +155,11 @@ from .security_rule_paged import SecurityRulePaged
 from .network_watcher_paged import NetworkWatcherPaged
 from .packet_capture_result_paged import PacketCaptureResultPaged
 from .public_ip_address_paged import PublicIPAddressPaged
+from .route_filter_paged import RouteFilterPaged
+from .route_filter_rule_paged import RouteFilterRulePaged
 from .route_table_paged import RouteTablePaged
 from .route_paged import RoutePaged
+from .bgp_service_community_paged import BgpServiceCommunityPaged
 from .usage_paged import UsagePaged
 from .virtual_network_paged import VirtualNetworkPaged
 from .subnet_paged import SubnetPaged
@@ -172,6 +188,7 @@ from .network_management_client_enums import (
     ExpressRouteCircuitPeeringAdvertisedPublicPrefixState,
     ExpressRouteCircuitPeeringType,
     ExpressRouteCircuitPeeringState,
+    Access,
     ExpressRouteCircuitSkuTier,
     ExpressRouteCircuitSkuFamily,
     ServiceProviderProvisioningState,
@@ -184,7 +201,6 @@ from .network_management_client_enums import (
     AssociationType,
     Direction,
     Protocol,
-    Access,
     NextHopType,
     PcProtocol,
     PcStatus,
@@ -198,6 +214,12 @@ from .network_management_client_enums import (
     ProcessorArchitecture,
     VirtualNetworkGatewayConnectionStatus,
     VirtualNetworkGatewayConnectionType,
+    IpsecEncryption,
+    IpsecIntegrity,
+    IkeEncryption,
+    IkeIntegrity,
+    DhGroup,
+    PfsGroup,
 )
 
 __all__ = [
@@ -218,6 +240,7 @@ __all__ = [
     'NetworkInterfaceIPConfiguration',
     'ApplicationGatewayBackendAddress',
     'ApplicationGatewayBackendAddressPool',
+    'ApplicationGatewayConnectionDraining',
     'ApplicationGatewayBackendHttpSettings',
     'ApplicationGatewayBackendHealthServer',
     'ApplicationGatewayBackendHealthHttpSettings',
@@ -235,14 +258,21 @@ __all__ = [
     'ApplicationGatewayProbe',
     'ApplicationGatewayRequestRoutingRule',
     'ApplicationGatewayUrlPathMap',
+    'ApplicationGatewayFirewallDisabledRuleGroup',
     'ApplicationGatewayWebApplicationFirewallConfiguration',
     'ApplicationGateway',
+    'ApplicationGatewayFirewallRule',
+    'ApplicationGatewayFirewallRuleGroup',
+    'ApplicationGatewayFirewallRuleSet',
+    'ApplicationGatewayAvailableWafRuleSetsResult',
     'Resource',
     'DnsNameAvailabilityResult',
     'ExpressRouteCircuitAuthorization',
     'ExpressRouteCircuitPeeringConfig',
     'ExpressRouteCircuitStats',
+    'RouteFilterRule',
     'ExpressRouteCircuitPeering',
+    'RouteFilter',
     'ExpressRouteCircuitSku',
     'ExpressRouteCircuitServiceProviderProperties',
     'ExpressRouteCircuit',
@@ -298,6 +328,10 @@ __all__ = [
     'RetentionPolicyParameters',
     'FlowLogStatusParameters',
     'FlowLogInformation',
+    'PatchRouteFilterRule',
+    'PatchRouteFilter',
+    'BGPCommunity',
+    'BgpServiceCommunity',
     'UsageName',
     'Usage',
     'VirtualNetworkPeering',
@@ -319,6 +353,7 @@ __all__ = [
     'GatewayRouteListResult',
     'TunnelConnectionHealth',
     'LocalNetworkGateway',
+    'IpsecPolicy',
     'VirtualNetworkGatewayConnection',
     'ConnectionResetSharedKey',
     'ConnectionSharedKey',
@@ -334,8 +369,11 @@ __all__ = [
     'NetworkWatcherPaged',
     'PacketCaptureResultPaged',
     'PublicIPAddressPaged',
+    'RouteFilterPaged',
+    'RouteFilterRulePaged',
     'RouteTablePaged',
     'RoutePaged',
+    'BgpServiceCommunityPaged',
     'UsagePaged',
     'VirtualNetworkPaged',
     'SubnetPaged',
@@ -363,6 +401,7 @@ __all__ = [
     'ExpressRouteCircuitPeeringAdvertisedPublicPrefixState',
     'ExpressRouteCircuitPeeringType',
     'ExpressRouteCircuitPeeringState',
+    'Access',
     'ExpressRouteCircuitSkuTier',
     'ExpressRouteCircuitSkuFamily',
     'ServiceProviderProvisioningState',
@@ -375,7 +414,6 @@ __all__ = [
     'AssociationType',
     'Direction',
     'Protocol',
-    'Access',
     'NextHopType',
     'PcProtocol',
     'PcStatus',
@@ -389,4 +427,10 @@ __all__ = [
     'ProcessorArchitecture',
     'VirtualNetworkGatewayConnectionStatus',
     'VirtualNetworkGatewayConnectionType',
+    'IpsecEncryption',
+    'IpsecIntegrity',
+    'IkeEncryption',
+    'IkeIntegrity',
+    'DhGroup',
+    'PfsGroup',
 ]

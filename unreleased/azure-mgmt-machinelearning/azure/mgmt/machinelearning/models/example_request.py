@@ -24,7 +24,7 @@ class ExampleRequest(Model):
     """
 
     _attribute_map = {
-        'inputs': {'key': 'inputs', 'type': '{list}'},
+        'inputs': {'key': 'inputs', 'type': '{[[object]]}'},
         'global_parameters': {'key': 'globalParameters', 'type': '{object}'},
     }
 

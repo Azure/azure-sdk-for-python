@@ -20,9 +20,8 @@ class ApplicationGatewayBackendHealthServer(Model):
     :param ip_configuration: Reference of IP configuration of backend server.
     :type ip_configuration: :class:`SubResource
      <azure.mgmt.network.models.SubResource>`
-    :param health: Health of backend server. Possible values are: 'Unknown',
-     'Up', 'Down', and 'Partial'. Possible values include: 'Unknown', 'Up',
-     'Down', 'Partial'
+    :param health: Health of backend server. Possible values include:
+     'Unknown', 'Up', 'Down', 'Partial', 'Draining'
     :type health: str or :class:`ApplicationGatewayBackendHealthServerHealth
      <azure.mgmt.network.models.ApplicationGatewayBackendHealthServerHealth>`
     """

@@ -22,6 +22,7 @@ class AndroidOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An objec model deserializer.
+    :ivar api_version: Service Api Version. Constant value: "2015-01-14-preview".
     """
 
     def __init__(self, client, config, serializer, deserializer):
@@ -29,6 +30,7 @@ class AndroidOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
+        self.api_version = "2015-01-14-preview"
 
         self.config = config
 
@@ -51,6 +53,8 @@ class AndroidOperations(object):
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`AndroidMAMPolicyPaged
          <azure.mgmt.intune.models.AndroidMAMPolicyPaged>`
+        :raises:
+         :class:`ErrorException<azure.mgmt.intune.models.ErrorException>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -64,7 +68,7 @@ class AndroidOperations(object):
 
                 # Construct parameters
                 query_parameters = {}
-                query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
+                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
                 if filter is not None:
                     query_parameters['$filter'] = self._serialize.query("filter", filter, 'str')
                 if top is not None:
@@ -125,6 +129,8 @@ class AndroidOperations(object):
          <azure.mgmt.intune.models.AndroidMAMPolicy>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`ErrorException<azure.mgmt.intune.models.ErrorException>`
         """
         # Construct URL
         url = '/providers/Microsoft.Intune/locations/{hostName}/androidPolicies/{policyName}'
@@ -136,7 +142,7 @@ class AndroidOperations(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
         if select is not None:
             query_parameters['$select'] = self._serialize.query("select", select, 'str')
 
@@ -189,6 +195,8 @@ class AndroidOperations(object):
          <azure.mgmt.intune.models.AndroidMAMPolicy>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`ErrorException<azure.mgmt.intune.models.ErrorException>`
         """
         # Construct URL
         url = '/providers/Microsoft.Intune/locations/{hostName}/androidPolicies/{policyName}'
@@ -200,7 +208,7 @@ class AndroidOperations(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -255,6 +263,8 @@ class AndroidOperations(object):
          <azure.mgmt.intune.models.AndroidMAMPolicy>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`ErrorException<azure.mgmt.intune.models.ErrorException>`
         """
         # Construct URL
         url = '/providers/Microsoft.Intune/locations/{hostName}/androidPolicies/{policyName}'
@@ -266,7 +276,7 @@ class AndroidOperations(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -316,6 +326,8 @@ class AndroidOperations(object):
         :rtype: None
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`ErrorException<azure.mgmt.intune.models.ErrorException>`
         """
         # Construct URL
         url = '/providers/Microsoft.Intune/locations/{hostName}/androidPolicies/{policyName}'
@@ -327,7 +339,7 @@ class AndroidOperations(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -371,6 +383,8 @@ class AndroidOperations(object):
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`ApplicationPaged
          <azure.mgmt.intune.models.ApplicationPaged>`
+        :raises:
+         :class:`ErrorException<azure.mgmt.intune.models.ErrorException>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -385,7 +399,7 @@ class AndroidOperations(object):
 
                 # Construct parameters
                 query_parameters = {}
-                query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
+                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
                 if filter is not None:
                     query_parameters['$filter'] = self._serialize.query("filter", filter, 'str')
                 if top is not None:
@@ -448,6 +462,8 @@ class AndroidOperations(object):
         :rtype: None
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`ErrorException<azure.mgmt.intune.models.ErrorException>`
         """
         parameters = models.MAMPolicyAppIdOrGroupIdPayload(properties=properties)
 
@@ -462,7 +478,7 @@ class AndroidOperations(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -507,6 +523,8 @@ class AndroidOperations(object):
         :rtype: None
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`ErrorException<azure.mgmt.intune.models.ErrorException>`
         """
         # Construct URL
         url = '/providers/Microsoft.Intune/locations/{hostName}/androidPolicies/{policyName}/apps/{appName}'
@@ -519,7 +537,7 @@ class AndroidOperations(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -557,6 +575,8 @@ class AndroidOperations(object):
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`GroupItemPaged
          <azure.mgmt.intune.models.GroupItemPaged>`
+        :raises:
+         :class:`ErrorException<azure.mgmt.intune.models.ErrorException>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -571,7 +591,7 @@ class AndroidOperations(object):
 
                 # Construct parameters
                 query_parameters = {}
-                query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
+                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
             else:
                 url = next_link
@@ -628,6 +648,8 @@ class AndroidOperations(object):
         :rtype: None
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`ErrorException<azure.mgmt.intune.models.ErrorException>`
         """
         parameters = models.MAMPolicyAppIdOrGroupIdPayload(properties=properties)
 
@@ -642,7 +664,7 @@ class AndroidOperations(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -687,6 +709,8 @@ class AndroidOperations(object):
         :rtype: None
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`ErrorException<azure.mgmt.intune.models.ErrorException>`
         """
         # Construct URL
         url = '/providers/Microsoft.Intune/locations/{hostName}/androidPolicies/{policyName}/groups/{groupId}'
@@ -699,7 +723,7 @@ class AndroidOperations(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
         header_parameters = {}

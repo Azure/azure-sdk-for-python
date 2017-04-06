@@ -18,7 +18,7 @@ class RecordSetUpdateParameters(Model):
     :param record_set: Specifies information about the record set being
      updated.
     :type record_set: :class:`RecordSet <azure.mgmt.dns.models.RecordSet>`
-    """ 
+    """
 
     _attribute_map = {
         'record_set': {'key': 'RecordSet', 'type': 'RecordSet'},

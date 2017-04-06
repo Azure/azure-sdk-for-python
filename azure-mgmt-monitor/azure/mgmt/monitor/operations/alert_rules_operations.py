@@ -57,7 +57,8 @@ class AlertRulesOperations(object):
          <azure.mgmt.monitor.models.AlertRuleResource>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`ErrorResponseException<azure.mgmt.monitor.models.ErrorResponseException>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/microsoft.insights/alertrules/{ruleName}'
@@ -91,9 +92,7 @@ class AlertRulesOperations(object):
             request, header_parameters, body_content, **operation_config)
 
         if response.status_code not in [200, 201]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.ErrorResponseException(self._deserialize, response)
 
         deserialized = None
 
@@ -225,15 +224,11 @@ class AlertRulesOperations(object):
         return deserialized
 
     def list_by_resource_group(
-            self, resource_group_name, filter=None, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, custom_headers=None, raw=False, **operation_config):
         """List the alert rules within a resource group.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
-        :param filter: The filter to apply on the operation. For more
-         information please see
-         https://msdn.microsoft.com/en-us/library/azure/dn931934.aspx
-        :type filter: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -257,8 +252,6 @@ class AlertRulesOperations(object):
                 # Construct parameters
                 query_parameters = {}
                 query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
-                if filter is not None:
-                    query_parameters['$filter'] = self._serialize.query("filter", filter, 'str')
 
             else:
                 url = next_link

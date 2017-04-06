@@ -17,8 +17,8 @@ class ApplicationGatewayRequestRoutingRule(SubResource):
 
     :param id: Resource ID.
     :type id: str
-    :param rule_type: Rule type. Possible values are: 'Basic' and
-     'PathBasedRouting'. Possible values include: 'Basic', 'PathBasedRouting'
+    :param rule_type: Rule type. Possible values include: 'Basic',
+     'PathBasedRouting'
     :type rule_type: str or :class:`ApplicationGatewayRequestRoutingRuleType
      <azure.mgmt.network.models.ApplicationGatewayRequestRoutingRuleType>`
     :param backend_address_pool: Backend address pool resource of the

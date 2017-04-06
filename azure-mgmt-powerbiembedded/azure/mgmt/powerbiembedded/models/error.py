@@ -25,7 +25,7 @@ class Error(Model):
     :param details:
     :type details: list of :class:`ErrorDetail
      <azure.mgmt.powerbiembedded.models.ErrorDetail>`
-    """ 
+    """
 
     _attribute_map = {
         'code': {'key': 'code', 'type': 'str'},

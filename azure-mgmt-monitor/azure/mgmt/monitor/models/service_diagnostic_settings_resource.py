@@ -20,8 +20,8 @@ class ServiceDiagnosticSettingsResource(Resource):
 
     :ivar id: Azure resource Id
     :vartype id: str
-    :param name: Azure resource name
-    :type name: str
+    :ivar name: Azure resource name
+    :vartype name: str
     :ivar type: Azure resource type
     :vartype type: str
     :param location: Resource location
@@ -51,6 +51,7 @@ class ServiceDiagnosticSettingsResource(Resource):
 
     _validation = {
         'id': {'readonly': True},
+        'name': {'readonly': True},
         'type': {'readonly': True},
         'location': {'required': True},
     }
@@ -68,8 +69,8 @@ class ServiceDiagnosticSettingsResource(Resource):
         'workspace_id': {'key': 'properties.workspaceId', 'type': 'str'},
     }
 
-    def __init__(self, location, name=None, tags=None, storage_account_id=None, service_bus_rule_id=None, metrics=None, logs=None, workspace_id=None):
-        super(ServiceDiagnosticSettingsResource, self).__init__(name=name, location=location, tags=tags)
+    def __init__(self, location, tags=None, storage_account_id=None, service_bus_rule_id=None, metrics=None, logs=None, workspace_id=None):
+        super(ServiceDiagnosticSettingsResource, self).__init__(location=location, tags=tags)
         self.storage_account_id = storage_account_id
         self.service_bus_rule_id = service_bus_rule_id
         self.metrics = metrics

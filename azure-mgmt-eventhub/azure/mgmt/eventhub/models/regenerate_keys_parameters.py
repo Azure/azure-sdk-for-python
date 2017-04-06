@@ -22,7 +22,7 @@ class RegenerateKeysParameters(Model):
     """
 
     _attribute_map = {
-        'policykey': {'key': 'Policykey', 'type': 'Policykey'},
+        'policykey': {'key': 'policykey', 'type': 'Policykey'},
     }
 
     def __init__(self, policykey=None):

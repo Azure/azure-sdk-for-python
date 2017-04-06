@@ -9,27 +9,15 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .resource import Resource
+from msrest.serialization import Model
 
 
-class SiteConfig(Resource):
+class SiteConfig(Model):
     """Configuration of an App Service app.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar id: Resource Id.
-    :vartype id: str
-    :param name: Resource Name.
-    :type name: str
-    :param kind: Kind of resource.
-    :type kind: str
-    :param location: Resource Location.
-    :type location: str
-    :param type: Resource type.
-    :type type: str
-    :param tags: Resource tags.
-    :type tags: dict
     :param number_of_workers: Number of workers.
     :type number_of_workers: int
     :param default_documents: Default documents.
@@ -146,65 +134,56 @@ class SiteConfig(Resource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'location': {'required': True},
         'machine_key': {'readonly': True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'kind': {'key': 'kind', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'number_of_workers': {'key': 'properties.numberOfWorkers', 'type': 'int'},
-        'default_documents': {'key': 'properties.defaultDocuments', 'type': '[str]'},
-        'net_framework_version': {'key': 'properties.netFrameworkVersion', 'type': 'str'},
-        'php_version': {'key': 'properties.phpVersion', 'type': 'str'},
-        'python_version': {'key': 'properties.pythonVersion', 'type': 'str'},
-        'node_version': {'key': 'properties.nodeVersion', 'type': 'str'},
-        'linux_fx_version': {'key': 'properties.linuxFxVersion', 'type': 'str'},
-        'request_tracing_enabled': {'key': 'properties.requestTracingEnabled', 'type': 'bool'},
-        'request_tracing_expiration_time': {'key': 'properties.requestTracingExpirationTime', 'type': 'iso-8601'},
-        'remote_debugging_enabled': {'key': 'properties.remoteDebuggingEnabled', 'type': 'bool'},
-        'remote_debugging_version': {'key': 'properties.remoteDebuggingVersion', 'type': 'str'},
-        'http_logging_enabled': {'key': 'properties.httpLoggingEnabled', 'type': 'bool'},
-        'logs_directory_size_limit': {'key': 'properties.logsDirectorySizeLimit', 'type': 'int'},
-        'detailed_error_logging_enabled': {'key': 'properties.detailedErrorLoggingEnabled', 'type': 'bool'},
-        'publishing_username': {'key': 'properties.publishingUsername', 'type': 'str'},
-        'app_settings': {'key': 'properties.appSettings', 'type': '[NameValuePair]'},
-        'connection_strings': {'key': 'properties.connectionStrings', 'type': '[ConnStringInfo]'},
-        'machine_key': {'key': 'properties.machineKey', 'type': 'SiteMachineKey'},
-        'handler_mappings': {'key': 'properties.handlerMappings', 'type': '[HandlerMapping]'},
-        'document_root': {'key': 'properties.documentRoot', 'type': 'str'},
-        'scm_type': {'key': 'properties.scmType', 'type': 'str'},
-        'use32_bit_worker_process': {'key': 'properties.use32BitWorkerProcess', 'type': 'bool'},
-        'web_sockets_enabled': {'key': 'properties.webSocketsEnabled', 'type': 'bool'},
-        'always_on': {'key': 'properties.alwaysOn', 'type': 'bool'},
-        'java_version': {'key': 'properties.javaVersion', 'type': 'str'},
-        'java_container': {'key': 'properties.javaContainer', 'type': 'str'},
-        'java_container_version': {'key': 'properties.javaContainerVersion', 'type': 'str'},
-        'app_command_line': {'key': 'properties.appCommandLine', 'type': 'str'},
-        'managed_pipeline_mode': {'key': 'properties.managedPipelineMode', 'type': 'ManagedPipelineMode'},
-        'virtual_applications': {'key': 'properties.virtualApplications', 'type': '[VirtualApplication]'},
-        'load_balancing': {'key': 'properties.loadBalancing', 'type': 'SiteLoadBalancing'},
-        'experiments': {'key': 'properties.experiments', 'type': 'Experiments'},
-        'limits': {'key': 'properties.limits', 'type': 'SiteLimits'},
-        'auto_heal_enabled': {'key': 'properties.autoHealEnabled', 'type': 'bool'},
-        'auto_heal_rules': {'key': 'properties.autoHealRules', 'type': 'AutoHealRules'},
-        'tracing_options': {'key': 'properties.tracingOptions', 'type': 'str'},
-        'vnet_name': {'key': 'properties.vnetName', 'type': 'str'},
-        'cors': {'key': 'properties.cors', 'type': 'CorsSettings'},
-        'push': {'key': 'properties.push', 'type': 'PushSettings'},
-        'api_definition': {'key': 'properties.apiDefinition', 'type': 'ApiDefinitionInfo'},
-        'auto_swap_slot_name': {'key': 'properties.autoSwapSlotName', 'type': 'str'},
-        'local_my_sql_enabled': {'key': 'properties.localMySqlEnabled', 'type': 'bool'},
-        'ip_security_restrictions': {'key': 'properties.ipSecurityRestrictions', 'type': '[IpSecurityRestriction]'},
+        'number_of_workers': {'key': 'numberOfWorkers', 'type': 'int'},
+        'default_documents': {'key': 'defaultDocuments', 'type': '[str]'},
+        'net_framework_version': {'key': 'netFrameworkVersion', 'type': 'str'},
+        'php_version': {'key': 'phpVersion', 'type': 'str'},
+        'python_version': {'key': 'pythonVersion', 'type': 'str'},
+        'node_version': {'key': 'nodeVersion', 'type': 'str'},
+        'linux_fx_version': {'key': 'linuxFxVersion', 'type': 'str'},
+        'request_tracing_enabled': {'key': 'requestTracingEnabled', 'type': 'bool'},
+        'request_tracing_expiration_time': {'key': 'requestTracingExpirationTime', 'type': 'iso-8601'},
+        'remote_debugging_enabled': {'key': 'remoteDebuggingEnabled', 'type': 'bool'},
+        'remote_debugging_version': {'key': 'remoteDebuggingVersion', 'type': 'str'},
+        'http_logging_enabled': {'key': 'httpLoggingEnabled', 'type': 'bool'},
+        'logs_directory_size_limit': {'key': 'logsDirectorySizeLimit', 'type': 'int'},
+        'detailed_error_logging_enabled': {'key': 'detailedErrorLoggingEnabled', 'type': 'bool'},
+        'publishing_username': {'key': 'publishingUsername', 'type': 'str'},
+        'app_settings': {'key': 'appSettings', 'type': '[NameValuePair]'},
+        'connection_strings': {'key': 'connectionStrings', 'type': '[ConnStringInfo]'},
+        'machine_key': {'key': 'machineKey', 'type': 'SiteMachineKey'},
+        'handler_mappings': {'key': 'handlerMappings', 'type': '[HandlerMapping]'},
+        'document_root': {'key': 'documentRoot', 'type': 'str'},
+        'scm_type': {'key': 'scmType', 'type': 'str'},
+        'use32_bit_worker_process': {'key': 'use32BitWorkerProcess', 'type': 'bool'},
+        'web_sockets_enabled': {'key': 'webSocketsEnabled', 'type': 'bool'},
+        'always_on': {'key': 'alwaysOn', 'type': 'bool'},
+        'java_version': {'key': 'javaVersion', 'type': 'str'},
+        'java_container': {'key': 'javaContainer', 'type': 'str'},
+        'java_container_version': {'key': 'javaContainerVersion', 'type': 'str'},
+        'app_command_line': {'key': 'appCommandLine', 'type': 'str'},
+        'managed_pipeline_mode': {'key': 'managedPipelineMode', 'type': 'ManagedPipelineMode'},
+        'virtual_applications': {'key': 'virtualApplications', 'type': '[VirtualApplication]'},
+        'load_balancing': {'key': 'loadBalancing', 'type': 'SiteLoadBalancing'},
+        'experiments': {'key': 'experiments', 'type': 'Experiments'},
+        'limits': {'key': 'limits', 'type': 'SiteLimits'},
+        'auto_heal_enabled': {'key': 'autoHealEnabled', 'type': 'bool'},
+        'auto_heal_rules': {'key': 'autoHealRules', 'type': 'AutoHealRules'},
+        'tracing_options': {'key': 'tracingOptions', 'type': 'str'},
+        'vnet_name': {'key': 'vnetName', 'type': 'str'},
+        'cors': {'key': 'cors', 'type': 'CorsSettings'},
+        'push': {'key': 'push', 'type': 'PushSettings'},
+        'api_definition': {'key': 'apiDefinition', 'type': 'ApiDefinitionInfo'},
+        'auto_swap_slot_name': {'key': 'autoSwapSlotName', 'type': 'str'},
+        'local_my_sql_enabled': {'key': 'localMySqlEnabled', 'type': 'bool'},
+        'ip_security_restrictions': {'key': 'ipSecurityRestrictions', 'type': '[IpSecurityRestriction]'},
     }
 
-    def __init__(self, location, name=None, kind=None, type=None, tags=None, number_of_workers=None, default_documents=None, net_framework_version="v4.6", php_version=None, python_version=None, node_version=None, linux_fx_version=None, request_tracing_enabled=None, request_tracing_expiration_time=None, remote_debugging_enabled=None, remote_debugging_version=None, http_logging_enabled=None, logs_directory_size_limit=None, detailed_error_logging_enabled=None, publishing_username=None, app_settings=None, connection_strings=None, handler_mappings=None, document_root=None, scm_type=None, use32_bit_worker_process=None, web_sockets_enabled=None, always_on=None, java_version=None, java_container=None, java_container_version=None, app_command_line=None, managed_pipeline_mode=None, virtual_applications=None, load_balancing=None, experiments=None, limits=None, auto_heal_enabled=None, auto_heal_rules=None, tracing_options=None, vnet_name=None, cors=None, push=None, api_definition=None, auto_swap_slot_name=None, local_my_sql_enabled=False, ip_security_restrictions=None):
-        super(SiteConfig, self).__init__(name=name, kind=kind, location=location, type=type, tags=tags)
+    def __init__(self, number_of_workers=None, default_documents=None, net_framework_version="v4.6", php_version=None, python_version=None, node_version=None, linux_fx_version=None, request_tracing_enabled=None, request_tracing_expiration_time=None, remote_debugging_enabled=None, remote_debugging_version=None, http_logging_enabled=None, logs_directory_size_limit=None, detailed_error_logging_enabled=None, publishing_username=None, app_settings=None, connection_strings=None, handler_mappings=None, document_root=None, scm_type=None, use32_bit_worker_process=None, web_sockets_enabled=None, always_on=None, java_version=None, java_container=None, java_container_version=None, app_command_line=None, managed_pipeline_mode=None, virtual_applications=None, load_balancing=None, experiments=None, limits=None, auto_heal_enabled=None, auto_heal_rules=None, tracing_options=None, vnet_name=None, cors=None, push=None, api_definition=None, auto_swap_slot_name=None, local_my_sql_enabled=False, ip_security_restrictions=None):
         self.number_of_workers = number_of_workers
         self.default_documents = default_documents
         self.net_framework_version = net_framework_version

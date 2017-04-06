@@ -13,7 +13,9 @@ from msrest.serialization import Model
 
 
 class SenderAuthorization(Model):
-    """The RBAC properties of the event.
+    """the authorization used by the user who has performed the operation that led
+    to this event. This captures the RBAC properties of the event. These
+    usually include the 'action', 'role' and the 'scope'.
 
     :param action: the permissible actions. For instance:
      microsoft.support/supporttickets/write

@@ -13,7 +13,7 @@ from msrest.serialization import Model
 
 
 class GatewayRoute(Model):
-    """GatewayRoute.
+    """Gateway routing details.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.

@@ -42,7 +42,7 @@ class Lab(Model):
     :type location: str
     :param tags: The tags of the resource.
     :type tags: dict
-    """ 
+    """
 
     _attribute_map = {
         'default_storage_account': {'key': 'properties.defaultStorageAccount', 'type': 'str'},

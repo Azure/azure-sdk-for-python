@@ -39,8 +39,8 @@ class GatewayResource(Resource):
      gateway to auto upgrade itself. If properties value not specified, then we
      assume upgradeMode = Automatic. Possible values include: 'Manual',
      'Automatic'
-    :type upgrade_mode: str or :class:`upgradeMode
-     <azure.mgmt.servermanager.models.upgradeMode>`
+    :type upgrade_mode: str or :class:`UpgradeMode
+     <azure.mgmt.servermanager.models.UpgradeMode>`
     :param desired_version: Latest available MSI version.
     :type desired_version: str
     :param instances: Names of the nodes in the gateway.
@@ -56,7 +56,7 @@ class GatewayResource(Resource):
     :vartype installer_download: str
     :ivar minimum_version: Minimum gateway version.
     :vartype minimum_version: str
-    """ 
+    """
 
     _validation = {
         'id': {'readonly': True},
@@ -76,7 +76,7 @@ class GatewayResource(Resource):
         'etag': {'key': 'etag', 'type': 'str'},
         'created': {'key': 'properties.created', 'type': 'iso-8601'},
         'updated': {'key': 'properties.updated', 'type': 'iso-8601'},
-        'upgrade_mode': {'key': 'properties.upgradeMode', 'type': 'upgradeMode'},
+        'upgrade_mode': {'key': 'properties.upgradeMode', 'type': 'UpgradeMode'},
         'desired_version': {'key': 'properties.desiredVersion', 'type': 'str'},
         'instances': {'key': 'properties.instances', 'type': '[GatewayStatus]'},
         'active_message_count': {'key': 'properties.activeMessageCount', 'type': 'int'},

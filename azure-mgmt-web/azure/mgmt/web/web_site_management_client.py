@@ -449,7 +449,7 @@ class WebSiteManagementClient(object):
         return deserialized
 
     def list_geo_regions(
-            self, sku=None, custom_headers=None, raw=False, **operation_config):
+            self, sku=None, linux_workers_enabled=None, custom_headers=None, raw=False, **operation_config):
         """Get a list of available geographical regions.
 
         Get a list of available geographical regions.
@@ -457,6 +457,9 @@ class WebSiteManagementClient(object):
         :param sku: Name of SKU used to filter the regions. Possible values
          include: 'Free', 'Shared', 'Basic', 'Standard', 'Premium', 'Dynamic'
         :type sku: str or :class:`SkuName <azure.mgmt.web.models.SkuName>`
+        :param linux_workers_enabled: Specify <code>true</code> if you want to
+         filter to only regions that support Linux workers.
+        :type linux_workers_enabled: bool
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -481,6 +484,8 @@ class WebSiteManagementClient(object):
                 query_parameters = {}
                 if sku is not None:
                     query_parameters['sku'] = self._serialize.query("sku", sku, 'str')
+                if linux_workers_enabled is not None:
+                    query_parameters['linuxWorkersEnabled'] = self._serialize.query("linux_workers_enabled", linux_workers_enabled, 'bool')
                 query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
             else:

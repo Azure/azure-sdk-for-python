@@ -42,8 +42,6 @@ class VirtualNetworkGatewayIPConfiguration(SubResource):
     """
 
     _validation = {
-        'subnet': {'required': True},
-        'public_ip_address': {'required': True},
         'provisioning_state': {'readonly': True},
     }
 
@@ -57,7 +55,7 @@ class VirtualNetworkGatewayIPConfiguration(SubResource):
         'etag': {'key': 'etag', 'type': 'str'},
     }
 
-    def __init__(self, subnet, public_ip_address, id=None, private_ip_allocation_method=None, name=None, etag=None):
+    def __init__(self, id=None, private_ip_allocation_method=None, subnet=None, public_ip_address=None, name=None, etag=None):
         super(VirtualNetworkGatewayIPConfiguration, self).__init__(id=id)
         self.private_ip_allocation_method = private_ip_allocation_method
         self.subnet = subnet

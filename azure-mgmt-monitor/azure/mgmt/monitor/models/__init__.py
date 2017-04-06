@@ -22,12 +22,13 @@ from .email_notification import EmailNotification
 from .webhook_notification import WebhookNotification
 from .autoscale_notification import AutoscaleNotification
 from .autoscale_setting_resource import AutoscaleSettingResource
+from .error_response import ErrorResponse, ErrorResponseException
 from .retention_policy import RetentionPolicy
 from .metric_settings import MetricSettings
 from .log_settings import LogSettings
 from .service_diagnostic_settings_resource import ServiceDiagnosticSettingsResource
-from .rule_condition import RuleCondition
 from .rule_data_source import RuleDataSource
+from .rule_condition import RuleCondition
 from .rule_metric_data_source import RuleMetricDataSource
 from .rule_management_event_claims_data_source import RuleManagementEventClaimsDataSource
 from .rule_management_event_data_source import RuleManagementEventDataSource
@@ -70,12 +71,13 @@ __all__ = [
     'WebhookNotification',
     'AutoscaleNotification',
     'AutoscaleSettingResource',
+    'ErrorResponse', 'ErrorResponseException',
     'RetentionPolicy',
     'MetricSettings',
     'LogSettings',
     'ServiceDiagnosticSettingsResource',
-    'RuleCondition',
     'RuleDataSource',
+    'RuleCondition',
     'RuleMetricDataSource',
     'RuleManagementEventClaimsDataSource',
     'RuleManagementEventDataSource',
