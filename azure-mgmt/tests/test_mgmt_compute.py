@@ -9,9 +9,10 @@ import unittest
 
 from collections import namedtuple
 
-import azure.mgmt.compute
-import azure.mgmt.network
-import azure.mgmt.storage
+import azure.mgmt.compute.models
+import azure.mgmt.network.models
+import azure.mgmt.storage.models
+from azure.mgmt.compute.models import InstanceViewTypes
 from testutils.common_recordingtestcase import record
 from tests.mgmt_testcase import HttpStatusCode, AzureMgmtTestCase
 
@@ -31,8 +32,8 @@ class MgmtComputeTest(AzureMgmtTestCase):
             azure.mgmt.compute.ContainerServiceClient
         )
 
-        self.linux_img_ref_id = "/" + self.settings.SUBSCRIPTION_ID + "/services/images/b4590d9e3ed742e4a1d46e5424aa335e__sles12-azure-guest-priority.x86-64-0.4.3-build1.1"
-        self.windows_img_ref_id = "/" + self.settings.SUBSCRIPTION_ID + "/services/images/a699494373c04fc0bc8f2bb1389d6106__Windows-Server-2012-Datacenter-201503.01-en.us-127GB.vhd"
+        self.linux_img_ref_id = "/" + self.compute_client.config.subscription_id + "/services/images/b4590d9e3ed742e4a1d46e5424aa335e__sles12-azure-guest-priority.x86-64-0.4.3-build1.1"
+        self.windows_img_ref_id = "/" + self.compute_client.config.subscription_id + "/services/images/a699494373c04fc0bc8f2bb1389d6106__Windows-Server-2012-Datacenter-201503.01-en.us-127GB.vhd"
         if not self.is_playback():
             self.storage_client = self.create_mgmt_client(
                 azure.mgmt.storage.StorageManagementClient
@@ -120,37 +121,33 @@ class MgmtComputeTest(AzureMgmtTestCase):
         return result_create.id
 
     def get_os_profile(self):
-       models = azure.mgmt.compute.ComputeManagementClient.models('2016-04-30-preview')
-       return models.OSProfile(
+       return azure.mgmt.compute.models.OSProfile(
            admin_username='Foo12',
            admin_password='BaR@123' + self.group_name,
            computer_name='test',
        )
 
     def get_hardware_profile(self):
-        models = azure.mgmt.compute.ComputeManagementClient.models('2016-04-30-preview')
-        return models.HardwareProfile(
-            vm_size=models.VirtualMachineSizeTypes.standard_a0
+        return azure.mgmt.compute.models.HardwareProfile(
+            vm_size=azure.mgmt.compute.models.VirtualMachineSizeTypes.standard_a0
         )
 
     def get_storage_profile(self, os_vhd_uri):
-        models = azure.mgmt.compute.ComputeManagementClient.models('2016-04-30-preview')
-        return models.StorageProfile(
-            os_disk=models.OSDisk(
-                caching=models.CachingTypes.none,
-                create_option=models.DiskCreateOptionTypes.from_image,
+        return azure.mgmt.compute.models.StorageProfile(
+            os_disk=azure.mgmt.compute.models.OSDisk(
+                caching=azure.mgmt.compute.models.CachingTypes.none,
+                create_option=azure.mgmt.compute.models.DiskCreateOptionTypes.from_image,
                 name='test',
-                vhd=models.VirtualHardDisk(
+                vhd=azure.mgmt.compute.models.VirtualHardDisk(
                     uri=os_vhd_uri,
                 ),
             ),
         )
 
     def get_network_profile(self, network_interface_id):
-        models = azure.mgmt.compute.ComputeManagementClient.models('2016-04-30-preview')
-        return models.NetworkProfile(
+        return azure.mgmt.compute.models.NetworkProfile(
             network_interfaces=[
-                models.NetworkInterfaceReference(
+                azure.mgmt.compute.models.NetworkInterfaceReference(
                     id=network_interface_id,
                 ),
             ],
@@ -163,8 +160,6 @@ class MgmtComputeTest(AzureMgmtTestCase):
         )
 
     def test_virtual_machines_operations(self):
-        models = azure.mgmt.compute.ComputeManagementClient.models('2016-04-30-preview')
-
         names = self.get_resource_names('pyvmir')
         os_vhd_uri = self.get_vhd_uri(names.storage, 'osdisk')
 
@@ -179,14 +174,14 @@ class MgmtComputeTest(AzureMgmtTestCase):
 
         with self.recording():
             storage_profile = self.get_storage_profile(os_vhd_uri)
-            storage_profile.image_reference = models.ImageReference(
+            storage_profile.image_reference = azure.mgmt.compute.models.ImageReference(
                 publisher='Canonical',
                 offer='UbuntuServer',
                 sku='16.04.0-LTS',
                 version='latest'
             )
 
-            params_create = models.VirtualMachine(
+            params_create = azure.mgmt.compute.models.VirtualMachine(
                 location=self.region,
                 os_profile=self.get_os_profile(),
                 hardware_profile=self.get_hardware_profile(),
@@ -215,7 +210,7 @@ class MgmtComputeTest(AzureMgmtTestCase):
             result_iv = self.compute_client.virtual_machines.get(
                 self.group_name,
                 names.vm,
-                expand=models.InstanceViewTypes.instance_view
+                expand=InstanceViewTypes.instance_view
             )
             self.assertTrue(result_iv.instance_view)
 
@@ -244,8 +239,6 @@ class MgmtComputeTest(AzureMgmtTestCase):
             async_vm_delete.wait()
 
     def test_virtual_machine_capture(self):
-        models = azure.mgmt.compute.ComputeManagementClient.models('2016-04-30-preview')
-
         names = self.get_resource_names('pyvmir')
         os_vhd_uri = self.get_vhd_uri(names.storage, 'osdisk')
 
@@ -260,14 +253,14 @@ class MgmtComputeTest(AzureMgmtTestCase):
 
         with self.recording():
             storage_profile = self.get_storage_profile(os_vhd_uri)
-            storage_profile.image_reference = models.ImageReference(
+            storage_profile.image_reference = azure.mgmt.compute.models.ImageReference(
                 publisher='Canonical',
                 offer='UbuntuServer',
                 sku='16.04.0-LTS',
                 version='latest'
             )
 
-            params_create = models.VirtualMachine(
+            params_create = azure.mgmt.compute.models.VirtualMachine(
                 location=self.region,
                 os_profile=self.get_os_profile(),
                 hardware_profile=self.get_hardware_profile(),
@@ -305,8 +298,6 @@ class MgmtComputeTest(AzureMgmtTestCase):
             self.assertTrue(hasattr(capture_result, 'output'))
 
     def test_vm_extensions(self):
-        models = azure.mgmt.compute.ComputeManagementClient.models('2016-04-30-preview')
-
         #WARNING: this test may take 40 mins to complete against live server
         names = self.get_resource_names('pyvmext')
         os_vhd_uri = self.get_vhd_uri(names.storage, 'osdisk')
@@ -323,14 +314,14 @@ class MgmtComputeTest(AzureMgmtTestCase):
 
         with self.recording():
             storage_profile = self.get_storage_profile(os_vhd_uri)
-            storage_profile.image_reference = models.ImageReference(
+            storage_profile.image_reference = azure.mgmt.compute.models.ImageReference(
                 publisher='MicrosoftWindowsServerEssentials',
                 offer='WindowsServerEssentials',
                 sku='WindowsServerEssentials',
                 version='latest'
             )
 
-            params_create = models.VirtualMachine(
+            params_create = azure.mgmt.compute.models.VirtualMachine(
                 location=self.region,
                 os_profile=self.get_os_profile(),
                 hardware_profile=self.get_hardware_profile(),
@@ -345,7 +336,7 @@ class MgmtComputeTest(AzureMgmtTestCase):
             )
             result_create.wait()
 
-            params_create = models.VirtualMachineExtension(
+            params_create = azure.mgmt.compute.models.VirtualMachineExtension(
                 location=self.region,
                 publisher='Microsoft.Compute',
                 virtual_machine_extension_type='VMAccessAgent',
@@ -378,8 +369,6 @@ class MgmtComputeTest(AzureMgmtTestCase):
 
     @record
     def test_vm_extension_images(self):
-        models = azure.mgmt.compute.ComputeManagementClient.models('2016-04-30-preview')
-
         result_list_pub = self.compute_client.virtual_machine_images.list_publishers(
             self.region,
         )
@@ -472,12 +461,9 @@ class MgmtComputeTest(AzureMgmtTestCase):
 
     @record
     def test_availability_sets(self):
-        api_version = '2016-04-30-preview'
-        models = azure.mgmt.compute.ComputeManagementClient.models(api_version)
-
         availability_set_name = self.get_resource_name('pyarmset')
 
-        params_create = models.AvailabilitySet(
+        params_create = azure.mgmt.compute.models.AvailabilitySet(
             location=self.region,
             platform_fault_domain_count=2,
             platform_update_domain_count=4,

@@ -4,3 +4,5 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+
+from .container_service_client import ContainerServiceClient
