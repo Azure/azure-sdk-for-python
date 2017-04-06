@@ -7,7 +7,7 @@
 #--------------------------------------------------------------------------
 import unittest
 
-import azure.mgmt.network
+import azure.mgmt.network.models
 from testutils.common_recordingtestcase import record
 from tests.mgmt_testcase import HttpStatusCode, AzureMgmtTestCase
 
@@ -247,13 +247,11 @@ class MgmtNetworkTest(AzureMgmtTestCase):
 
     @record
     def test_public_ip_addresses(self):
-        models = azure.mgmt.network.NetworkManagementClient.models('2016-09-01')
-
         public_ip_name = self.get_resource_name('pyipname')
 
-        params_create = models.PublicIPAddress(
+        params_create = azure.mgmt.network.models.PublicIPAddress(
             location=self.region,
-            public_ip_allocation_method=models.IPAllocationMethod.dynamic,
+            public_ip_allocation_method=azure.mgmt.network.models.IPAllocationMethod.dynamic,
             tags={
                 'key': 'value',
             },
@@ -298,31 +296,29 @@ class MgmtNetworkTest(AzureMgmtTestCase):
 
     @record
     def test_virtual_networks(self):
-        models = azure.mgmt.network.NetworkManagementClient.models('2016-09-01')
-
         network_name = self.get_resource_name('pyvnet')
         subnet1_name = self.get_resource_name('pyvnetsubnetone')
         subnet2_name = self.get_resource_name('pyvnetsubnettwo')
 
-        params_create = models.VirtualNetwork(
+        params_create = azure.mgmt.network.models.VirtualNetwork(
             location=self.region,
-            address_space=models.AddressSpace(
+            address_space=azure.mgmt.network.models.AddressSpace(
                 address_prefixes=[
                     '10.0.0.0/16',
                 ],
             ),
-            dhcp_options=models.DhcpOptions(
+            dhcp_options=azure.mgmt.network.models.DhcpOptions(
                 dns_servers=[
                     '10.1.1.1',
                     '10.1.2.4',
                 ],
             ),
             subnets=[
-                models.Subnet(
+                azure.mgmt.network.models.Subnet(
                     name=subnet1_name,
                     address_prefix='10.0.1.0/24',
                 ),
-                models.Subnet(
+                azure.mgmt.network.models.Subnet(
                     name=subnet2_name,
                     address_prefix='10.0.2.0/24',
                 ),
@@ -372,27 +368,25 @@ class MgmtNetworkTest(AzureMgmtTestCase):
 
     @record
     def test_subnets(self):
-        models = azure.mgmt.network.NetworkManagementClient.models('2016-09-01')
-
         network_name = self.get_resource_name('pysubnet')
         subnet1_name = self.get_resource_name('pysubnetone')
         subnet2_name = self.get_resource_name('pysubnettwo')
 
-        params_create = models.VirtualNetwork(
+        params_create = azure.mgmt.network.models.VirtualNetwork(
             location=self.region,
-            address_space=models.AddressSpace(
+            address_space=azure.mgmt.network.models.AddressSpace(
                 address_prefixes=[
                     '10.0.0.0/16',
                 ],
             ),
-            dhcp_options=models.DhcpOptions(
+            dhcp_options=azure.mgmt.network.models.DhcpOptions(
                 dns_servers=[
                     '10.1.1.1',
                     '10.1.2.4',
                 ],
             ),
             subnets=[
-                models.Subnet(
+                azure.mgmt.network.models.Subnet(
                     name=subnet1_name,
                     address_prefix='10.0.1.0/24',
                 ),
@@ -405,7 +399,7 @@ class MgmtNetworkTest(AzureMgmtTestCase):
         )
         result_create.wait() # AzureOperationPoller
 
-        params_create = models.Subnet(
+        params_create = azure.mgmt.network.models.Subnet(
             name=subnet2_name,
             address_prefix='10.0.2.0/24',
         )
@@ -444,23 +438,21 @@ class MgmtNetworkTest(AzureMgmtTestCase):
 
     @record
     def test_network_security_groups(self):
-        models = azure.mgmt.network.NetworkManagementClient.models('2016-09-01')
-
         security_group_name = self.get_resource_name('pysecgroup')
         security_rule_name = self.get_resource_name('pysecgrouprule')
 
-        params_create = models.NetworkSecurityGroup(
+        params_create = azure.mgmt.network.models.NetworkSecurityGroup(
             location=self.region,
             security_rules=[
-                models.SecurityRule(
+                azure.mgmt.network.models.SecurityRule(
                     name=security_rule_name,
-                    access=models.SecurityRuleAccess.allow,
+                    access=azure.mgmt.network.models.SecurityRuleAccess.allow,
                     description='Test security rule',
                     destination_address_prefix='*',
                     destination_port_range='123-3500',
-                    direction=models.SecurityRuleDirection.inbound,
+                    direction=azure.mgmt.network.models.SecurityRuleDirection.inbound,
                     priority=500,
-                    protocol=models.SecurityRuleProtocol.tcp,
+                    protocol=azure.mgmt.network.models.SecurityRuleProtocol.tcp,
                     source_address_prefix='*',
                     source_port_range='655',
                 ),
@@ -492,13 +484,13 @@ class MgmtNetworkTest(AzureMgmtTestCase):
             security_group_name,
             new_security_rule_name,
             {
-                    'access':models.SecurityRuleAccess.allow,
+                    'access':azure.mgmt.network.models.SecurityRuleAccess.allow,
                     'description':'New Test security rule',
                     'destination_address_prefix':'*',
                     'destination_port_range':'123-3500',
-                    'direction':models.SecurityRuleDirection.outbound,
+                    'direction':azure.mgmt.network.models.SecurityRuleDirection.outbound,
                     'priority':400,
-                    'protocol':models.SecurityRuleProtocol.tcp,
+                    'protocol':azure.mgmt.network.models.SecurityRuleProtocol.tcp,
                     'source_address_prefix':'*',
                     'source_port_range':'655',
             }
@@ -724,8 +716,6 @@ class MgmtNetworkTest(AzureMgmtTestCase):
 
     @record
     def test_virtual_network_gateway_operations(self):
-        models = azure.mgmt.network.NetworkManagementClient.models('2016-09-01')
-
         # https://docs.microsoft.com/en-us/azure/vpn-gateway/vpn-gateway-howto-site-to-site-resource-manager-portal
 
         vnet_name = self.get_resource_name('pyvirtnet')
@@ -778,9 +768,9 @@ class MgmtNetworkTest(AzureMgmtTestCase):
 
         # Public IP Address
         public_ip_name = self.get_resource_name('pyipname')
-        params_create = models.PublicIPAddress(
+        params_create = azure.mgmt.network.models.PublicIPAddress(
             location=self.region,
-            public_ip_allocation_method=models.IPAllocationMethod.dynamic,
+            public_ip_allocation_method=azure.mgmt.network.models.IPAllocationMethod.dynamic,
             tags={
                 'key': 'value',
             },
