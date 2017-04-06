@@ -7,7 +7,7 @@
 #--------------------------------------------------------------------------
 import unittest
 
-import azure.mgmt.resource
+import azure.mgmt.resource.subscriptions.models
 from testutils.common_recordingtestcase import record
 from tests.mgmt_testcase import HttpStatusCode, AzureMgmtTestCase
 
@@ -22,26 +22,22 @@ class MgmtResourceSubscriptionsTest(AzureMgmtTestCase):
 
     @record
     def test_subscriptions(self):
-        models = azure.mgmt.resource.SubscriptionClient.models('2016-06-01')
-
         subs = list(self.subscriptions_client.subscriptions.list())
         self.assertGreater(len(subs), 0)
-        self.assertTrue(all(isinstance(v, models.Subscription) for v in subs))
+        self.assertTrue(all(isinstance(v, azure.mgmt.resource.subscriptions.models.Subscription) for v in subs))
 
         locations = list(self.subscriptions_client.subscriptions.list_locations(self.settings.SUBSCRIPTION_ID))
         self.assertGreater(len(locations), 0)
-        self.assertTrue(all(isinstance(v, models.Location) for v in locations))
+        self.assertTrue(all(isinstance(v, azure.mgmt.resource.subscriptions.models.Location) for v in locations))
 
         sub = self.subscriptions_client.subscriptions.get(self.settings.SUBSCRIPTION_ID)
         self.assertEqual(sub.subscription_id, self.settings.SUBSCRIPTION_ID)
 
     @record
     def test_tenants(self):
-        models = azure.mgmt.resource.SubscriptionClient.models('2016-06-01')
-
         tenants = list(self.subscriptions_client.tenants.list())
         self.assertGreater(len(tenants), 0)
-        self.assertTrue(all(isinstance(v, models.TenantIdDescription) for v in tenants))
+        self.assertTrue(all(isinstance(v, azure.mgmt.resource.subscriptions.models.TenantIdDescription) for v in tenants))
 
 
 #------------------------------------------------------------------------------

@@ -5,3 +5,4 @@
 # license information.
 # --------------------------------------------------------------------------
 
+from .resource_management_client import ResourceManagementClient

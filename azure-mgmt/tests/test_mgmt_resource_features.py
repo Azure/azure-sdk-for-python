@@ -7,7 +7,7 @@
 #--------------------------------------------------------------------------
 import unittest
 
-import azure.mgmt.resource
+import azure.mgmt.resource.features.models
 from testutils.common_recordingtestcase import record
 from tests.mgmt_testcase import HttpStatusCode, AzureMgmtTestCase
 
@@ -22,16 +22,14 @@ class MgmtResourceFeaturesTest(AzureMgmtTestCase):
 
     @record
     def test_features(self):
-        models = azure.mgmt.resource.FeatureClient.models('2015-12-01')
-
         features = list(self.features_client.features.list_all())
         self.assertGreater(len(features), 0)
-        self.assertTrue(all(isinstance(v, models.FeatureResult) for v in features))
+        self.assertTrue(all(isinstance(v, azure.mgmt.resource.features.models.FeatureResult) for v in features))
 
 
         features = list(self.features_client.features.list('Microsoft.Compute'))
         self.assertGreater(len(features), 0)
-        self.assertTrue(all(isinstance(v, models.FeatureResult) for v in features))
+        self.assertTrue(all(isinstance(v, azure.mgmt.resource.features.models.FeatureResult) for v in features))
 
         one_feature = features[0]
         feature = self.features_client.features.get(

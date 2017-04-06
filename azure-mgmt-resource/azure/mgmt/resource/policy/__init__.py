@@ -5,3 +5,4 @@
 # license information.
 # --------------------------------------------------------------------------
 
+from .policy_client import PolicyClient
