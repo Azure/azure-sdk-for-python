@@ -172,7 +172,7 @@ class NetworkManagementClient(object):
         elif self.api_version =='2016-09-01':
             from .v2016_09_01.operations import VirtualNetworkGatewaysOperations as OperationClass
         else:
-            raise NotImplementedError("APIVersion {{}} is not available".format(api_version))
+            raise NotImplementedError("APIVersion {} is not available".format(self.api_version))
         return OperationClass(self._client, self.config, self._serialize, self._deserialize)
 
     @property
@@ -182,7 +182,7 @@ class NetworkManagementClient(object):
         elif self.api_version =='2016-09-01':
             from .v2016_09_01.operations import ExpressRouteCircuitAuthorizationsOperations as OperationClass
         else:
-            raise NotImplementedError("APIVersion {{}} is not available".format(api_version))
+            raise NotImplementedError("APIVersion {} is not available".format(self.api_version))
         return OperationClass(self._client, self.config, self._serialize, self._deserialize)
 
     @property
@@ -192,7 +192,7 @@ class NetworkManagementClient(object):
         elif self.api_version =='2016-09-01':
             from .v2016_09_01.operations import ApplicationGatewaysOperations as OperationClass
         else:
-            raise NotImplementedError("APIVersion {{}} is not available".format(api_version))
+            raise NotImplementedError("APIVersion {} is not available".format(self.api_version))
         return OperationClass(self._client, self.config, self._serialize, self._deserialize)
 
     @property
@@ -202,7 +202,7 @@ class NetworkManagementClient(object):
         elif self.api_version =='2016-09-01':
             from .v2016_09_01.operations import VirtualNetworksOperations as OperationClass
         else:
-            raise NotImplementedError("APIVersion {{}} is not available".format(api_version))
+            raise NotImplementedError("APIVersion {} is not available".format(self.api_version))
         return OperationClass(self._client, self.config, self._serialize, self._deserialize)
 
     @property
@@ -212,7 +212,7 @@ class NetworkManagementClient(object):
         elif self.api_version =='2016-09-01':
             from .v2016_09_01.operations import NetworkSecurityGroupsOperations as OperationClass
         else:
-            raise NotImplementedError("APIVersion {{}} is not available".format(api_version))
+            raise NotImplementedError("APIVersion {} is not available".format(self.api_version))
         return OperationClass(self._client, self.config, self._serialize, self._deserialize)
 
     @property
@@ -222,7 +222,7 @@ class NetworkManagementClient(object):
         elif self.api_version =='2016-09-01':
             from .v2016_09_01.operations import SubnetsOperations as OperationClass
         else:
-            raise NotImplementedError("APIVersion {{}} is not available".format(api_version))
+            raise NotImplementedError("APIVersion {} is not available".format(self.api_version))
         return OperationClass(self._client, self.config, self._serialize, self._deserialize)
 
     @property
@@ -232,7 +232,7 @@ class NetworkManagementClient(object):
         elif self.api_version =='2016-09-01':
             from .v2016_09_01.operations import LocalNetworkGatewaysOperations as OperationClass
         else:
-            raise NotImplementedError("APIVersion {{}} is not available".format(api_version))
+            raise NotImplementedError("APIVersion {} is not available".format(self.api_version))
         return OperationClass(self._client, self.config, self._serialize, self._deserialize)
 
     @property
@@ -242,7 +242,7 @@ class NetworkManagementClient(object):
         elif self.api_version =='2016-09-01':
             from .v2016_09_01.operations import ExpressRouteServiceProvidersOperations as OperationClass
         else:
-            raise NotImplementedError("APIVersion {{}} is not available".format(api_version))
+            raise NotImplementedError("APIVersion {} is not available".format(self.api_version))
         return OperationClass(self._client, self.config, self._serialize, self._deserialize)
 
     @property
@@ -252,7 +252,7 @@ class NetworkManagementClient(object):
         elif self.api_version =='2016-09-01':
             from .v2016_09_01.operations import RoutesOperations as OperationClass
         else:
-            raise NotImplementedError("APIVersion {{}} is not available".format(api_version))
+            raise NotImplementedError("APIVersion {} is not available".format(self.api_version))
         return OperationClass(self._client, self.config, self._serialize, self._deserialize)
 
     @property
@@ -262,7 +262,7 @@ class NetworkManagementClient(object):
         elif self.api_version =='2016-09-01':
             from .v2016_09_01.operations import LoadBalancersOperations as OperationClass
         else:
-            raise NotImplementedError("APIVersion {{}} is not available".format(api_version))
+            raise NotImplementedError("APIVersion {} is not available".format(self.api_version))
         return OperationClass(self._client, self.config, self._serialize, self._deserialize)
 
     @property
@@ -272,7 +272,7 @@ class NetworkManagementClient(object):
         elif self.api_version =='2016-09-01':
             from .v2016_09_01.operations import VirtualNetworkPeeringsOperations as OperationClass
         else:
-            raise NotImplementedError("APIVersion {{}} is not available".format(api_version))
+            raise NotImplementedError("APIVersion {} is not available".format(self.api_version))
         return OperationClass(self._client, self.config, self._serialize, self._deserialize)
 
     @property
@@ -282,7 +282,7 @@ class NetworkManagementClient(object):
         elif self.api_version =='2016-09-01':
             from .v2016_09_01.operations import UsagesOperations as OperationClass
         else:
-            raise NotImplementedError("APIVersion {{}} is not available".format(api_version))
+            raise NotImplementedError("APIVersion {} is not available".format(self.api_version))
         return OperationClass(self._client, self.config, self._serialize, self._deserialize)
 
     @property
@@ -292,7 +292,7 @@ class NetworkManagementClient(object):
         elif self.api_version =='2016-09-01':
             from .v2016_09_01.operations import RouteTablesOperations as OperationClass
         else:
-            raise NotImplementedError("APIVersion {{}} is not available".format(api_version))
+            raise NotImplementedError("APIVersion {} is not available".format(self.api_version))
         return OperationClass(self._client, self.config, self._serialize, self._deserialize)
 
     @property
@@ -302,7 +302,7 @@ class NetworkManagementClient(object):
         elif self.api_version =='2016-09-01':
             from .v2016_09_01.operations import ExpressRouteCircuitsOperations as OperationClass
         else:
-            raise NotImplementedError("APIVersion {{}} is not available".format(api_version))
+            raise NotImplementedError("APIVersion {} is not available".format(self.api_version))
         return OperationClass(self._client, self.config, self._serialize, self._deserialize)
 
     @property
@@ -312,7 +312,7 @@ class NetworkManagementClient(object):
         elif self.api_version =='2016-09-01':
             from .v2016_09_01.operations import VirtualNetworkGatewayConnectionsOperations as OperationClass
         else:
-            raise NotImplementedError("APIVersion {{}} is not available".format(api_version))
+            raise NotImplementedError("APIVersion {} is not available".format(self.api_version))
         return OperationClass(self._client, self.config, self._serialize, self._deserialize)
 
     @property
@@ -322,7 +322,7 @@ class NetworkManagementClient(object):
         elif self.api_version =='2016-09-01':
             from .v2016_09_01.operations import SecurityRulesOperations as OperationClass
         else:
-            raise NotImplementedError("APIVersion {{}} is not available".format(api_version))
+            raise NotImplementedError("APIVersion {} is not available".format(self.api_version))
         return OperationClass(self._client, self.config, self._serialize, self._deserialize)
 
     @property
@@ -332,7 +332,7 @@ class NetworkManagementClient(object):
         elif self.api_version =='2016-09-01':
             from .v2016_09_01.operations import ExpressRouteCircuitPeeringsOperations as OperationClass
         else:
-            raise NotImplementedError("APIVersion {{}} is not available".format(api_version))
+            raise NotImplementedError("APIVersion {} is not available".format(self.api_version))
         return OperationClass(self._client, self.config, self._serialize, self._deserialize)
 
     @property
@@ -342,7 +342,7 @@ class NetworkManagementClient(object):
         elif self.api_version =='2016-09-01':
             from .v2016_09_01.operations import PublicIPAddressesOperations as OperationClass
         else:
-            raise NotImplementedError("APIVersion {{}} is not available".format(api_version))
+            raise NotImplementedError("APIVersion {} is not available".format(self.api_version))
         return OperationClass(self._client, self.config, self._serialize, self._deserialize)
 
     @property
@@ -352,5 +352,5 @@ class NetworkManagementClient(object):
         elif self.api_version =='2016-09-01':
             from .v2016_09_01.operations import NetworkInterfacesOperations as OperationClass
         else:
-            raise NotImplementedError("APIVersion {{}} is not available".format(api_version))
+            raise NotImplementedError("APIVersion {} is not available".format(self.api_version))
         return OperationClass(self._client, self.config, self._serialize, self._deserialize)
