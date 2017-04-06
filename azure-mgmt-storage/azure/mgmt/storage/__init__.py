@@ -101,7 +101,7 @@ class StorageManagementClient(object):
         elif self.api_version =='2015-06-15':
             from .v2015_06_15.operations import StorageAccountsOperations as OperationClass
         else:
-            raise NotImplementedError("APIVersion {} is not available".format(api_version))
+            raise NotImplementedError("APIVersion {} is not available".format(self.api_version))
         return OperationClass(self._client, self.config, self._serialize, self._deserialize)
 
     @property
@@ -111,5 +111,5 @@ class StorageManagementClient(object):
         elif self.api_version =='2015-06-15':
             from .v2015_06_15.operations import UsageOperations as OperationClass
         else:
-            raise NotImplementedError("APIVersion {} is not available".format(api_version))
+            raise NotImplementedError("APIVersion {} is not available".format(self.api_version))
         return OperationClass(self._client, self.config, self._serialize, self._deserialize)
