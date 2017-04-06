@@ -18,7 +18,7 @@ class SharedAccessAuthorizationRuleProperties(Model):
     :param rights: The rights associated with the rule.
     :type rights: list of str or :class:`AccessRights
      <azure.mgmt.notificationhubs.models.AccessRights>`
-    """ 
+    """
 
     _attribute_map = {
         'rights': {'key': 'rights', 'type': '[AccessRights]'},

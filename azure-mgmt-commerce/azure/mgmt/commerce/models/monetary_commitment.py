@@ -13,35 +13,36 @@ from .offer_term_info import OfferTermInfo
 
 
 class MonetaryCommitment(OfferTermInfo):
-    """MonetaryCommitment.
+    """Indicates that a monetary commitment is required for this offer.
 
-    :param effective_date: Indicates the date from which the meter rate or
-     offer term is effective.
+    :param effective_date: Indicates the date from which the offer term is
+     effective.
     :type effective_date: datetime
+    :param name: Polymorphic Discriminator
+    :type name: str
+    :param tiered_discount: The list of key/value pairs for the tiered meter
+     rates, in the format 'key':'value' where key = price, and value = the
+     corresponding discount percentage. This field is used only by offer terms
+     of type 'Monetary Commitment'.
+    :type tiered_discount: dict
     :param excluded_meter_ids: An array of meter ids that are excluded from
      the given offer terms.
     :type excluded_meter_ids: list of str
-    :param Name: Polymorphic Discriminator
-    :type Name: str
-    :param tiered_discount: The list of key/value pairs for the tiered meter
-     rates, in the format 'key':'value' where key = price, and value = the
-     corresponding discount percentage. This field is used only by offer
-     terms of type 'Monetary Commitment'.
-    :type tiered_discount: dict
-    """ 
+    """
 
     _validation = {
-        'Name': {'required': True},
+        'name': {'required': True},
     }
 
     _attribute_map = {
         'effective_date': {'key': 'EffectiveDate', 'type': 'iso-8601'},
+        'name': {'key': 'Name', 'type': 'str'},
+        'tiered_discount': {'key': 'TieredDiscount', 'type': '{Decimal}'},
         'excluded_meter_ids': {'key': 'ExcludedMeterIds', 'type': '[str]'},
-        'Name': {'key': 'Name', 'type': 'str'},
-        'tiered_discount': {'key': 'TieredDiscount', 'type': '{decimal}'},
     }
 
-    def __init__(self, effective_date=None, excluded_meter_ids=None, tiered_discount=None):
-        super(MonetaryCommitment, self).__init__(effective_date=effective_date, excluded_meter_ids=excluded_meter_ids)
+    def __init__(self, effective_date=None, tiered_discount=None, excluded_meter_ids=None):
+        super(MonetaryCommitment, self).__init__(effective_date=effective_date)
         self.tiered_discount = tiered_discount
-        self.Name = 'Monetary Commitment'
+        self.excluded_meter_ids = excluded_meter_ids
+        self.name = 'Monetary Commitment'

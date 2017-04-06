@@ -17,7 +17,7 @@ class SubscriptionNotificationProperties(Model):
 
     :param tenant_id:
     :type tenant_id: str
-    """ 
+    """
 
     _attribute_map = {
         'tenant_id': {'key': 'tenantId', 'type': 'str'},

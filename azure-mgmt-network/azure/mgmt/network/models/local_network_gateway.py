@@ -51,7 +51,6 @@ class LocalNetworkGateway(Resource):
     _validation = {
         'name': {'readonly': True},
         'type': {'readonly': True},
-        'local_network_address_space': {'required': True},
         'provisioning_state': {'readonly': True},
     }
 
@@ -69,7 +68,7 @@ class LocalNetworkGateway(Resource):
         'etag': {'key': 'etag', 'type': 'str'},
     }
 
-    def __init__(self, local_network_address_space, id=None, location=None, tags=None, gateway_ip_address=None, bgp_settings=None, resource_guid=None, etag=None):
+    def __init__(self, id=None, location=None, tags=None, local_network_address_space=None, gateway_ip_address=None, bgp_settings=None, resource_guid=None, etag=None):
         super(LocalNetworkGateway, self).__init__(id=id, location=location, tags=tags)
         self.local_network_address_space = local_network_address_space
         self.gateway_ip_address = gateway_ip_address

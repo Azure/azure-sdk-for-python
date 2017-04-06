@@ -21,8 +21,11 @@ from .security_rules_operations import SecurityRulesOperations
 from .network_watchers_operations import NetworkWatchersOperations
 from .packet_captures_operations import PacketCapturesOperations
 from .public_ip_addresses_operations import PublicIPAddressesOperations
+from .route_filters_operations import RouteFiltersOperations
+from .route_filter_rules_operations import RouteFilterRulesOperations
 from .route_tables_operations import RouteTablesOperations
 from .routes_operations import RoutesOperations
+from .bgp_service_communities_operations import BgpServiceCommunitiesOperations
 from .usages_operations import UsagesOperations
 from .virtual_networks_operations import VirtualNetworksOperations
 from .subnets_operations import SubnetsOperations
@@ -44,8 +47,11 @@ __all__ = [
     'NetworkWatchersOperations',
     'PacketCapturesOperations',
     'PublicIPAddressesOperations',
+    'RouteFiltersOperations',
+    'RouteFilterRulesOperations',
     'RouteTablesOperations',
     'RoutesOperations',
+    'BgpServiceCommunitiesOperations',
     'UsagesOperations',
     'VirtualNetworksOperations',
     'SubnetsOperations',

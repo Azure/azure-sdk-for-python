@@ -17,7 +17,7 @@ class NsRecord(Model):
 
     :param nsdname: The name server name for this NS record.
     :type nsdname: str
-    """ 
+    """
 
     _attribute_map = {
         'nsdname': {'key': 'nsdname', 'type': 'str'},

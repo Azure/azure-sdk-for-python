@@ -14,7 +14,7 @@ from .policy_assignment import PolicyAssignment
 from .policy_assignment_paged import PolicyAssignmentPaged
 from .policy_definition_paged import PolicyDefinitionPaged
 from .policy_client_enums import (
-    policyType,
+    PolicyType,
 )
 
 __all__ = [
@@ -22,5 +22,5 @@ __all__ = [
     'PolicyAssignment',
     'PolicyAssignmentPaged',
     'PolicyDefinitionPaged',
-    'policyType',
+    'PolicyType',
 ]

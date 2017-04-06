@@ -47,7 +47,7 @@ class Profile(Resource):
      Manager profile.
     :type endpoints: list of :class:`Endpoint
      <azure.mgmt.trafficmanager.models.Endpoint>`
-    """ 
+    """
 
     _validation = {
         'id': {'readonly': True},

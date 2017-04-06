@@ -12,33 +12,32 @@
 from .resource import Resource
 
 
-class SharedAccessAuthorizationRuleResource(Resource):
-    """Description of a namespace authorization rule.
+class BgpServiceCommunity(Resource):
+    """Service Community Properties.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar id: Resource Id
-    :vartype id: str
-    :ivar name: Resource name
+    :param id: Resource ID.
+    :type id: str
+    :ivar name: Resource name.
     :vartype name: str
-    :ivar type: Resource type
+    :ivar type: Resource type.
     :vartype type: str
-    :param location: Resource location
+    :param location: Resource location.
     :type location: str
-    :param tags: Resource tags
+    :param tags: Resource tags.
     :type tags: dict
-    :param rights: The rights associated with the rule.
-    :type rights: list of str or :class:`AccessRights
-     <azure.mgmt.eventhub.models.AccessRights>`
+    :param service_name: The name of the bgp community. e.g. Skype.
+    :type service_name: str
+    :param bgp_communities: Get a list of bgp communities.
+    :type bgp_communities: list of :class:`BGPCommunity
+     <azure.mgmt.network.models.BGPCommunity>`
     """
 
     _validation = {
-        'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
-        'location': {'required': True},
-        'rights': {'required': True},
     }
 
     _attribute_map = {
@@ -47,9 +46,11 @@ class SharedAccessAuthorizationRuleResource(Resource):
         'type': {'key': 'type', 'type': 'str'},
         'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
-        'rights': {'key': 'properties.rights', 'type': '[AccessRights]'},
+        'service_name': {'key': 'properties.serviceName', 'type': 'str'},
+        'bgp_communities': {'key': 'properties.bgpCommunities', 'type': '[BGPCommunity]'},
     }
 
-    def __init__(self, location, rights, tags=None):
-        super(SharedAccessAuthorizationRuleResource, self).__init__(location=location, tags=tags)
-        self.rights = rights
+    def __init__(self, id=None, location=None, tags=None, service_name=None, bgp_communities=None):
+        super(BgpServiceCommunity, self).__init__(id=id, location=location, tags=tags)
+        self.service_name = service_name
+        self.bgp_communities = bgp_communities

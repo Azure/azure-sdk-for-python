@@ -21,7 +21,7 @@ class EvaluatePoliciesProperties(Model):
     :type fact_data: str
     :param value_offset: The value offset.
     :type value_offset: str
-    """ 
+    """
 
     _attribute_map = {
         'fact_name': {'key': 'factName', 'type': 'str'},

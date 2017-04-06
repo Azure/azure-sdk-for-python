@@ -23,6 +23,7 @@ class SubscriptionsOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An objec model deserializer.
+    :ivar api_version: Client API version. Constant value: "2015-08-01".
     """
 
     def __init__(self, client, config, serializer, deserializer):
@@ -30,16 +31,18 @@ class SubscriptionsOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
+        self.api_version = "2015-08-01"
 
         self.config = config
 
     def list_all(
             self, resource_group_name, namespace_name, topic_name, custom_headers=None, raw=False, **operation_config):
-        """Lsit all the subscriptions under a specified topic.
+        """List all the subscriptions under a specified topic.
 
-        :param resource_group_name: The name of the resource group.
+        :param resource_group_name: Name of the Resource group within the
+         Azure subscription.
         :type resource_group_name: str
-        :param namespace_name: The namespace name.
+        :param namespace_name: The namespace name
         :type namespace_name: str
         :param topic_name: The topic name.
         :type topic_name: str
@@ -58,16 +61,16 @@ class SubscriptionsOperations(object):
                 # Construct URL
                 url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ServiceBus/namespaces/{namespaceName}/topics/{topicName}/subscriptions'
                 path_format_arguments = {
-                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-                    'namespaceName': self._serialize.url("namespace_name", namespace_name, 'str'),
-                    'topicName': self._serialize.url("topic_name", topic_name, 'str'),
+                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
+                    'namespaceName': self._serialize.url("namespace_name", namespace_name, 'str', max_length=50, min_length=6),
+                    'topicName': self._serialize.url("topic_name", topic_name, 'str', max_length=50, min_length=1),
                     'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
                 }
                 url = self._client.format_url(url, **path_format_arguments)
 
                 # Construct parameters
                 query_parameters = {}
-                query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
+                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
             else:
                 url = next_link
@@ -109,9 +112,10 @@ class SubscriptionsOperations(object):
             self, resource_group_name, namespace_name, topic_name, subscription_name, parameters, custom_headers=None, raw=False, **operation_config):
         """Creates a topic subscription.
 
-        :param resource_group_name: The name of the resource group.
+        :param resource_group_name: Name of the Resource group within the
+         Azure subscription.
         :type resource_group_name: str
-        :param namespace_name: The namespace name.
+        :param namespace_name: The namespace name
         :type namespace_name: str
         :param topic_name: The topic name.
         :type topic_name: str
@@ -135,17 +139,17 @@ class SubscriptionsOperations(object):
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ServiceBus/namespaces/{namespaceName}/topics/{topicName}/subscriptions/{subscriptionName}'
         path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            'namespaceName': self._serialize.url("namespace_name", namespace_name, 'str'),
-            'topicName': self._serialize.url("topic_name", topic_name, 'str'),
-            'subscriptionName': self._serialize.url("subscription_name", subscription_name, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
+            'namespaceName': self._serialize.url("namespace_name", namespace_name, 'str', max_length=50, min_length=6),
+            'topicName': self._serialize.url("topic_name", topic_name, 'str', max_length=50, min_length=1),
+            'subscriptionName': self._serialize.url("subscription_name", subscription_name, 'str', max_length=50, min_length=1),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -185,9 +189,10 @@ class SubscriptionsOperations(object):
             self, resource_group_name, namespace_name, topic_name, subscription_name, custom_headers=None, raw=False, **operation_config):
         """Deletes a subscription from the specified topic.
 
-        :param resource_group_name: The name of the resource group.
+        :param resource_group_name: Name of the Resource group within the
+         Azure subscription.
         :type resource_group_name: str
-        :param namespace_name: The namespace name.
+        :param namespace_name: The namespace name
         :type namespace_name: str
         :param topic_name: The topic name.
         :type topic_name: str
@@ -206,17 +211,17 @@ class SubscriptionsOperations(object):
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ServiceBus/namespaces/{namespaceName}/topics/{topicName}/subscriptions/{subscriptionName}'
         path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            'namespaceName': self._serialize.url("namespace_name", namespace_name, 'str'),
-            'topicName': self._serialize.url("topic_name", topic_name, 'str'),
-            'subscriptionName': self._serialize.url("subscription_name", subscription_name, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
+            'namespaceName': self._serialize.url("namespace_name", namespace_name, 'str', max_length=50, min_length=6),
+            'topicName': self._serialize.url("topic_name", topic_name, 'str', max_length=50, min_length=1),
+            'subscriptionName': self._serialize.url("subscription_name", subscription_name, 'str', max_length=50, min_length=1),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -245,9 +250,10 @@ class SubscriptionsOperations(object):
             self, resource_group_name, namespace_name, topic_name, subscription_name, custom_headers=None, raw=False, **operation_config):
         """Returns a subscription description for the specified topic.
 
-        :param resource_group_name: The name of the resource group.
+        :param resource_group_name: Name of the Resource group within the
+         Azure subscription.
         :type resource_group_name: str
-        :param namespace_name: The namespace name.
+        :param namespace_name: The namespace name
         :type namespace_name: str
         :param topic_name: The topic name.
         :type topic_name: str
@@ -267,17 +273,17 @@ class SubscriptionsOperations(object):
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ServiceBus/namespaces/{namespaceName}/topics/{topicName}/subscriptions/{subscriptionName}'
         path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            'namespaceName': self._serialize.url("namespace_name", namespace_name, 'str'),
-            'topicName': self._serialize.url("topic_name", topic_name, 'str'),
-            'subscriptionName': self._serialize.url("subscription_name", subscription_name, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
+            'namespaceName': self._serialize.url("namespace_name", namespace_name, 'str', max_length=50, min_length=6),
+            'topicName': self._serialize.url("topic_name", topic_name, 'str', max_length=50, min_length=1),
+            'subscriptionName': self._serialize.url("subscription_name", subscription_name, 'str', max_length=50, min_length=1),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
         header_parameters = {}

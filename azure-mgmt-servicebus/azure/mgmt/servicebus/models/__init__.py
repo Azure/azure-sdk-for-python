@@ -9,21 +9,28 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
+from .tracked_resource import TrackedResource
 from .resource import Resource
-from .namespace_create_or_update_parameters import NamespaceCreateOrUpdateParameters
 from .sku import Sku
+from .namespace_create_or_update_parameters import NamespaceCreateOrUpdateParameters
 from .namespace_resource import NamespaceResource
+from .namespace_update_parameters import NamespaceUpdateParameters
 from .shared_access_authorization_rule_create_or_update_parameters import SharedAccessAuthorizationRuleCreateOrUpdateParameters
 from .shared_access_authorization_rule_resource import SharedAccessAuthorizationRuleResource
 from .resource_list_keys import ResourceListKeys
 from .regenerate_keys_parameters import RegenerateKeysParameters
-from .queue_create_or_update_parameters import QueueCreateOrUpdateParameters
 from .message_count_details import MessageCountDetails
+from .queue_create_or_update_parameters import QueueCreateOrUpdateParameters
 from .queue_resource import QueueResource
 from .topic_create_or_update_parameters import TopicCreateOrUpdateParameters
 from .topic_resource import TopicResource
 from .subscription_create_or_update_parameters import SubscriptionCreateOrUpdateParameters
 from .subscription_resource import SubscriptionResource
+from .check_name_availability import CheckNameAvailability
+from .check_name_availability_result import CheckNameAvailabilityResult
+from .operation_display import OperationDisplay
+from .operation import Operation
+from .operation_paged import OperationPaged
 from .namespace_resource_paged import NamespaceResourcePaged
 from .shared_access_authorization_rule_resource_paged import SharedAccessAuthorizationRuleResourcePaged
 from .queue_resource_paged import QueueResourcePaged
@@ -37,24 +44,32 @@ from .service_bus_management_client_enums import (
     Policykey,
     EntityAvailabilityStatus,
     EntityStatus,
+    UnavailableReason,
 )
 
 __all__ = [
+    'TrackedResource',
     'Resource',
-    'NamespaceCreateOrUpdateParameters',
     'Sku',
+    'NamespaceCreateOrUpdateParameters',
     'NamespaceResource',
+    'NamespaceUpdateParameters',
     'SharedAccessAuthorizationRuleCreateOrUpdateParameters',
     'SharedAccessAuthorizationRuleResource',
     'ResourceListKeys',
     'RegenerateKeysParameters',
-    'QueueCreateOrUpdateParameters',
     'MessageCountDetails',
+    'QueueCreateOrUpdateParameters',
     'QueueResource',
     'TopicCreateOrUpdateParameters',
     'TopicResource',
     'SubscriptionCreateOrUpdateParameters',
     'SubscriptionResource',
+    'CheckNameAvailability',
+    'CheckNameAvailabilityResult',
+    'OperationDisplay',
+    'Operation',
+    'OperationPaged',
     'NamespaceResourcePaged',
     'SharedAccessAuthorizationRuleResourcePaged',
     'QueueResourcePaged',
@@ -67,4 +82,5 @@ __all__ = [
     'Policykey',
     'EntityAvailabilityStatus',
     'EntityStatus',
+    'UnavailableReason',
 ]

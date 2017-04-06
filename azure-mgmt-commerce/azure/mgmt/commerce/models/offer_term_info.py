@@ -15,31 +15,26 @@ from msrest.serialization import Model
 class OfferTermInfo(Model):
     """Describes the offer term.
 
-    :param effective_date: Indicates the date from which the meter rate or
-     offer term is effective.
+    :param effective_date: Indicates the date from which the offer term is
+     effective.
     :type effective_date: datetime
-    :param excluded_meter_ids: An array of meter ids that are excluded from
-     the given offer terms.
-    :type excluded_meter_ids: list of str
-    :param Name: Polymorphic Discriminator
-    :type Name: str
-    """ 
+    :param name: Polymorphic Discriminator
+    :type name: str
+    """
 
     _validation = {
-        'Name': {'required': True},
+        'name': {'required': True},
     }
 
     _attribute_map = {
         'effective_date': {'key': 'EffectiveDate', 'type': 'iso-8601'},
-        'excluded_meter_ids': {'key': 'ExcludedMeterIds', 'type': '[str]'},
-        'Name': {'key': 'Name', 'type': 'str'},
+        'name': {'key': 'Name', 'type': 'str'},
     }
 
     _subtype_map = {
-        'Name': {'Monetary Credit': 'MonetaryCredit', 'Monetary Commitment': 'MonetaryCommitment', 'Recurring Charge': 'RecurringCharge'}
+        'name': {'Monetary Credit': 'MonetaryCredit', 'Monetary Commitment': 'MonetaryCommitment', 'Recurring Charge': 'RecurringCharge'}
     }
 
-    def __init__(self, effective_date=None, excluded_meter_ids=None):
+    def __init__(self, effective_date=None):
         self.effective_date = effective_date
-        self.excluded_meter_ids = excluded_meter_ids
-        self.Name = None
+        self.name = None

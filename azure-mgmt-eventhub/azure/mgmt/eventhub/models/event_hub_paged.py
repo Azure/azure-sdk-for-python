@@ -12,16 +12,16 @@
 from msrest.paging import Paged
 
 
-class WorkerPoolPaged(Paged):
+class EventHubPaged(Paged):
     """
-    A paging container for iterating over a list of WorkerPool object
+    A paging container for iterating over a list of EventHub object
     """
 
     _attribute_map = {
         'next_link': {'key': 'nextLink', 'type': 'str'},
-        'current_page': {'key': 'value', 'type': '[WorkerPool]'}
+        'current_page': {'key': 'value', 'type': '[EventHub]'}
     }
 
     def __init__(self, *args, **kwargs):
 
-        super(WorkerPoolPaged, self).__init__(*args, **kwargs)
+        super(EventHubPaged, self).__init__(*args, **kwargs)

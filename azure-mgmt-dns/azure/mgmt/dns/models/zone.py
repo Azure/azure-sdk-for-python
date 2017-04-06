@@ -35,13 +35,13 @@ class Zone(Resource):
      attempt to set this value will be ignored.
     :type max_number_of_record_sets: long
     :param number_of_record_sets: The current number of record sets in this
-     DNS zone.  This is a read-only property and any attempt to set this
-     value will be ignored.
+     DNS zone.  This is a read-only property and any attempt to set this value
+     will be ignored.
     :type number_of_record_sets: long
     :ivar name_servers: The name servers for this DNS zone. This is a
      read-only property and any attempt to set this value will be ignored.
     :vartype name_servers: list of str
-    """ 
+    """
 
     _validation = {
         'id': {'readonly': True},

@@ -19,7 +19,7 @@ class WorkspaceCollectionAccessKeys(Model):
     :type key1: str
     :param key2: Access key 2
     :type key2: str
-    """ 
+    """
 
     _attribute_map = {
         'key1': {'key': 'key1', 'type': 'str'},

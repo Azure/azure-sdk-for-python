@@ -28,44 +28,23 @@ class IntuneResourceManagementClientConfiguration(AzureConfiguration):
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
      object<msrestazure.azure_active_directory>`
-    :param api_version: Service Api Version.
-    :type api_version: str
-    :param accept_language: Gets or sets the preferred language for the
-     response.
-    :type accept_language: str
-    :param long_running_operation_retry_timeout: Gets or sets the retry
-     timeout in seconds for Long Running Operations. Default value is 30.
-    :type long_running_operation_retry_timeout: int
-    :param generate_client_request_id: When set to true a unique
-     x-ms-client-request-id value is generated and included in each request.
-     Default is true.
-    :type generate_client_request_id: bool
     :param str base_url: Service URL
-    :param str filepath: Existing config
     """
 
     def __init__(
-            self, credentials, api_version='2015-01-14-preview', accept_language='en-US', long_running_operation_retry_timeout=30, generate_client_request_id=True, base_url=None, filepath=None):
+            self, credentials, base_url=None):
 
         if credentials is None:
             raise ValueError("Parameter 'credentials' must not be None.")
-        if api_version is not None and not isinstance(api_version, str):
-            raise TypeError("Optional parameter 'api_version' must be str.")
-        if accept_language is not None and not isinstance(accept_language, str):
-            raise TypeError("Optional parameter 'accept_language' must be str.")
         if not base_url:
             base_url = 'https://management.azure.com'
 
-        super(IntuneResourceManagementClientConfiguration, self).__init__(base_url, filepath)
+        super(IntuneResourceManagementClientConfiguration, self).__init__(base_url)
 
         self.add_user_agent('intuneresourcemanagementclient/{}'.format(VERSION))
         self.add_user_agent('Azure-SDK-For-Python')
 
         self.credentials = credentials
-        self.api_version = api_version
-        self.accept_language = accept_language
-        self.long_running_operation_retry_timeout = long_running_operation_retry_timeout
-        self.generate_client_request_id = generate_client_request_id
 
 
 class IntuneResourceManagementClient(object):
@@ -82,29 +61,17 @@ class IntuneResourceManagementClient(object):
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
      object<msrestazure.azure_active_directory>`
-    :param api_version: Service Api Version.
-    :type api_version: str
-    :param accept_language: Gets or sets the preferred language for the
-     response.
-    :type accept_language: str
-    :param long_running_operation_retry_timeout: Gets or sets the retry
-     timeout in seconds for Long Running Operations. Default value is 30.
-    :type long_running_operation_retry_timeout: int
-    :param generate_client_request_id: When set to true a unique
-     x-ms-client-request-id value is generated and included in each request.
-     Default is true.
-    :type generate_client_request_id: bool
     :param str base_url: Service URL
-    :param str filepath: Existing config
     """
 
     def __init__(
-            self, credentials, api_version='2015-01-14-preview', accept_language='en-US', long_running_operation_retry_timeout=30, generate_client_request_id=True, base_url=None, filepath=None):
+            self, credentials, base_url=None):
 
-        self.config = IntuneResourceManagementClientConfiguration(credentials, api_version, accept_language, long_running_operation_retry_timeout, generate_client_request_id, base_url, filepath)
+        self.config = IntuneResourceManagementClientConfiguration(credentials, base_url)
         self._client = ServiceClient(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
+        self.api_version = '2015-01-14-preview'
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
 
@@ -124,6 +91,8 @@ class IntuneResourceManagementClient(object):
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`LocationPaged
          <azure.mgmt.intune.models.LocationPaged>`
+        :raises:
+         :class:`ErrorException<azure.mgmt.intune.models.ErrorException>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -181,6 +150,8 @@ class IntuneResourceManagementClient(object):
         :rtype: :class:`Location <azure.mgmt.intune.models.Location>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`ErrorException<azure.mgmt.intune.models.ErrorException>`
         """
         # Construct URL
         url = '/providers/Microsoft.Intune/locations/hostName'
@@ -236,6 +207,8 @@ class IntuneResourceManagementClient(object):
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`ApplicationPaged
          <azure.mgmt.intune.models.ApplicationPaged>`
+        :raises:
+         :class:`ErrorException<azure.mgmt.intune.models.ErrorException>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -311,6 +284,8 @@ class IntuneResourceManagementClient(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`DevicePaged <azure.mgmt.intune.models.DevicePaged>`
+        :raises:
+         :class:`ErrorException<azure.mgmt.intune.models.ErrorException>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -387,6 +362,8 @@ class IntuneResourceManagementClient(object):
         :rtype: :class:`Device <azure.mgmt.intune.models.Device>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`ErrorException<azure.mgmt.intune.models.ErrorException>`
         """
         # Construct URL
         url = '/providers/Microsoft.Intune/locations/{hostName}/users/{userName}/devices/{deviceName}'
@@ -450,6 +427,8 @@ class IntuneResourceManagementClient(object):
          <azure.mgmt.intune.models.WipeDeviceOperationResult>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`ErrorException<azure.mgmt.intune.models.ErrorException>`
         """
         # Construct URL
         url = '/providers/Microsoft.Intune/locations/{hostName}/users/{userName}/devices/{deviceName}/wipe'
@@ -511,6 +490,8 @@ class IntuneResourceManagementClient(object):
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`OperationResultPaged
          <azure.mgmt.intune.models.OperationResultPaged>`
+        :raises:
+         :class:`ErrorException<azure.mgmt.intune.models.ErrorException>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -579,6 +560,8 @@ class IntuneResourceManagementClient(object):
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`StatusesDefault
          <azure.mgmt.intune.models.StatusesDefault>`
+        :raises:
+         :class:`ErrorException<azure.mgmt.intune.models.ErrorException>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -647,6 +630,8 @@ class IntuneResourceManagementClient(object):
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`FlaggedUserPaged
          <azure.mgmt.intune.models.FlaggedUserPaged>`
+        :raises:
+         :class:`ErrorException<azure.mgmt.intune.models.ErrorException>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -720,6 +705,8 @@ class IntuneResourceManagementClient(object):
         :rtype: :class:`FlaggedUser <azure.mgmt.intune.models.FlaggedUser>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises:
+         :class:`ErrorException<azure.mgmt.intune.models.ErrorException>`
         """
         # Construct URL
         url = '/providers/Microsoft.Intune/locations/{hostName}/flaggedUsers/{userName}'
@@ -784,6 +771,8 @@ class IntuneResourceManagementClient(object):
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`FlaggedEnrolledAppPaged
          <azure.mgmt.intune.models.FlaggedEnrolledAppPaged>`
+        :raises:
+         :class:`ErrorException<azure.mgmt.intune.models.ErrorException>`
         """
         def internal_paging(next_link=None, raw=False):
 

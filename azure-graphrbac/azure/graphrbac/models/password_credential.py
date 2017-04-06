@@ -23,7 +23,7 @@ class PasswordCredential(Model):
     :type key_id: str
     :param value: Key value.
     :type value: str
-    """ 
+    """
 
     _attribute_map = {
         'start_date': {'key': 'startDate', 'type': 'iso-8601'},

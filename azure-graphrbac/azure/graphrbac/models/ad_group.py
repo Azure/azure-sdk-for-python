@@ -25,7 +25,7 @@ class ADGroup(Model):
     :type security_enabled: bool
     :param mail: The primary email address of the group.
     :type mail: str
-    """ 
+    """
 
     _attribute_map = {
         'object_id': {'key': 'objectId', 'type': 'str'},

@@ -9,13 +9,28 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.serialization import Model
+from .resource import Resource
 
 
-class SiteAuthSettings(Model):
+class SiteAuthSettings(Resource):
     """Configuration settings for the Azure App Service Authentication /
     Authorization feature.
 
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar id: Resource Id.
+    :vartype id: str
+    :param name: Resource Name.
+    :type name: str
+    :param kind: Kind of resource.
+    :type kind: str
+    :param location: Resource Location.
+    :type location: str
+    :param type: Resource type.
+    :type type: str
+    :param tags: Resource tags.
+    :type tags: dict
     :param enabled: <code>true</code> if the Authentication / Authorization
      feature is enabled for the current app; otherwise, <code>false</code>.
     :type enabled: bool
@@ -157,33 +172,45 @@ class SiteAuthSettings(Model):
     :type microsoft_account_oauth_scopes: list of str
     """
 
-    _attribute_map = {
-        'enabled': {'key': 'enabled', 'type': 'bool'},
-        'runtime_version': {'key': 'runtimeVersion', 'type': 'str'},
-        'unauthenticated_client_action': {'key': 'unauthenticatedClientAction', 'type': 'UnauthenticatedClientAction'},
-        'token_store_enabled': {'key': 'tokenStoreEnabled', 'type': 'bool'},
-        'allowed_external_redirect_urls': {'key': 'allowedExternalRedirectUrls', 'type': '[str]'},
-        'default_provider': {'key': 'defaultProvider', 'type': 'BuiltInAuthenticationProvider'},
-        'token_refresh_extension_hours': {'key': 'tokenRefreshExtensionHours', 'type': 'float'},
-        'client_id': {'key': 'clientId', 'type': 'str'},
-        'client_secret': {'key': 'clientSecret', 'type': 'str'},
-        'issuer': {'key': 'issuer', 'type': 'str'},
-        'allowed_audiences': {'key': 'allowedAudiences', 'type': '[str]'},
-        'additional_login_params': {'key': 'additionalLoginParams', 'type': '[str]'},
-        'google_client_id': {'key': 'googleClientId', 'type': 'str'},
-        'google_client_secret': {'key': 'googleClientSecret', 'type': 'str'},
-        'google_oauth_scopes': {'key': 'googleOAuthScopes', 'type': '[str]'},
-        'facebook_app_id': {'key': 'facebookAppId', 'type': 'str'},
-        'facebook_app_secret': {'key': 'facebookAppSecret', 'type': 'str'},
-        'facebook_oauth_scopes': {'key': 'facebookOAuthScopes', 'type': '[str]'},
-        'twitter_consumer_key': {'key': 'twitterConsumerKey', 'type': 'str'},
-        'twitter_consumer_secret': {'key': 'twitterConsumerSecret', 'type': 'str'},
-        'microsoft_account_client_id': {'key': 'microsoftAccountClientId', 'type': 'str'},
-        'microsoft_account_client_secret': {'key': 'microsoftAccountClientSecret', 'type': 'str'},
-        'microsoft_account_oauth_scopes': {'key': 'microsoftAccountOAuthScopes', 'type': '[str]'},
+    _validation = {
+        'id': {'readonly': True},
+        'location': {'required': True},
     }
 
-    def __init__(self, enabled=None, runtime_version=None, unauthenticated_client_action=None, token_store_enabled=None, allowed_external_redirect_urls=None, default_provider=None, token_refresh_extension_hours=None, client_id=None, client_secret=None, issuer=None, allowed_audiences=None, additional_login_params=None, google_client_id=None, google_client_secret=None, google_oauth_scopes=None, facebook_app_id=None, facebook_app_secret=None, facebook_oauth_scopes=None, twitter_consumer_key=None, twitter_consumer_secret=None, microsoft_account_client_id=None, microsoft_account_client_secret=None, microsoft_account_oauth_scopes=None):
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'kind': {'key': 'kind', 'type': 'str'},
+        'location': {'key': 'location', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'tags': {'key': 'tags', 'type': '{str}'},
+        'enabled': {'key': 'properties.enabled', 'type': 'bool'},
+        'runtime_version': {'key': 'properties.runtimeVersion', 'type': 'str'},
+        'unauthenticated_client_action': {'key': 'properties.unauthenticatedClientAction', 'type': 'UnauthenticatedClientAction'},
+        'token_store_enabled': {'key': 'properties.tokenStoreEnabled', 'type': 'bool'},
+        'allowed_external_redirect_urls': {'key': 'properties.allowedExternalRedirectUrls', 'type': '[str]'},
+        'default_provider': {'key': 'properties.defaultProvider', 'type': 'BuiltInAuthenticationProvider'},
+        'token_refresh_extension_hours': {'key': 'properties.tokenRefreshExtensionHours', 'type': 'float'},
+        'client_id': {'key': 'properties.clientId', 'type': 'str'},
+        'client_secret': {'key': 'properties.clientSecret', 'type': 'str'},
+        'issuer': {'key': 'properties.issuer', 'type': 'str'},
+        'allowed_audiences': {'key': 'properties.allowedAudiences', 'type': '[str]'},
+        'additional_login_params': {'key': 'properties.additionalLoginParams', 'type': '[str]'},
+        'google_client_id': {'key': 'properties.googleClientId', 'type': 'str'},
+        'google_client_secret': {'key': 'properties.googleClientSecret', 'type': 'str'},
+        'google_oauth_scopes': {'key': 'properties.googleOAuthScopes', 'type': '[str]'},
+        'facebook_app_id': {'key': 'properties.facebookAppId', 'type': 'str'},
+        'facebook_app_secret': {'key': 'properties.facebookAppSecret', 'type': 'str'},
+        'facebook_oauth_scopes': {'key': 'properties.facebookOAuthScopes', 'type': '[str]'},
+        'twitter_consumer_key': {'key': 'properties.twitterConsumerKey', 'type': 'str'},
+        'twitter_consumer_secret': {'key': 'properties.twitterConsumerSecret', 'type': 'str'},
+        'microsoft_account_client_id': {'key': 'properties.microsoftAccountClientId', 'type': 'str'},
+        'microsoft_account_client_secret': {'key': 'properties.microsoftAccountClientSecret', 'type': 'str'},
+        'microsoft_account_oauth_scopes': {'key': 'properties.microsoftAccountOAuthScopes', 'type': '[str]'},
+    }
+
+    def __init__(self, location, name=None, kind=None, type=None, tags=None, enabled=None, runtime_version=None, unauthenticated_client_action=None, token_store_enabled=None, allowed_external_redirect_urls=None, default_provider=None, token_refresh_extension_hours=None, client_id=None, client_secret=None, issuer=None, allowed_audiences=None, additional_login_params=None, google_client_id=None, google_client_secret=None, google_oauth_scopes=None, facebook_app_id=None, facebook_app_secret=None, facebook_oauth_scopes=None, twitter_consumer_key=None, twitter_consumer_secret=None, microsoft_account_client_id=None, microsoft_account_client_secret=None, microsoft_account_oauth_scopes=None):
+        super(SiteAuthSettings, self).__init__(name=name, kind=kind, location=location, type=type, tags=tags)
         self.enabled = enabled
         self.runtime_version = runtime_version
         self.unauthenticated_client_action = unauthenticated_client_action

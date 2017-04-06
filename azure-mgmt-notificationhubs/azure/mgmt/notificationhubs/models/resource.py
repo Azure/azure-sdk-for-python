@@ -30,7 +30,7 @@ class Resource(Model):
     :type tags: dict
     :param sku: The sku of the created namespace
     :type sku: :class:`Sku <azure.mgmt.notificationhubs.models.Sku>`
-    """ 
+    """
 
     _validation = {
         'id': {'readonly': True},
