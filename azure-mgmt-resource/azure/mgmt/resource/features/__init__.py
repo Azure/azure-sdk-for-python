@@ -5,3 +5,4 @@
 # license information.
 # --------------------------------------------------------------------------
 
+from .feature_client import FeatureClient

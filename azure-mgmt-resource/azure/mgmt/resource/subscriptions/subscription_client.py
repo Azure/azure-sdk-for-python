@@ -12,7 +12,7 @@
 from msrest.service_client import ServiceClient
 from msrest import Serializer, Deserializer
 from msrestazure import AzureConfiguration
-from .version import VERSION
+from ..version import VERSION
 
 
 class SubscriptionClientConfiguration(AzureConfiguration):
@@ -73,7 +73,7 @@ class SubscriptionClient(object):
     @classmethod
     def models(cls, api_version = '2016-06-01'):
         if api_version =='2016-06-01':
-            from .subscriptions.v2016_06_01 import models
+            from .v2016_06_01 import models
             return models
         else:
             raise NotImplementedError("APIVersion {} is not available".format(api_version))
@@ -81,15 +81,15 @@ class SubscriptionClient(object):
     @property
     def subscriptions(self):
         if self.api_version =='2016-06-01':
-            from .subscriptions.v2016_06_01.operations.subscriptions_operations import SubscriptionsOperations as OperationClass
+            from .v2016_06_01.operations.subscriptions_operations import SubscriptionsOperations as OperationClass
         else:
-            raise NotImplementedError("APIVersion {} is not available".format(api_version))
+            raise NotImplementedError("APIVersion {} is not available".format(self.api_version))
         return OperationClass(self._client, self.config, self._serialize, self._deserialize)
 
     @property
     def tenants(self):
         if self.api_version =='2016-06-01':
-            from .subscriptions.v2016_06_01.operations.tenants_operations import TenantsOperations as OperationClass
+            from .v2016_06_01.operations.tenants_operations import TenantsOperations as OperationClass
         else:
-            raise NotImplementedError("APIVersion {} is not available".format(api_version))
+            raise NotImplementedError("APIVersion {} is not available".format(self.api_version))
         return OperationClass(self._client, self.config, self._serialize, self._deserialize)

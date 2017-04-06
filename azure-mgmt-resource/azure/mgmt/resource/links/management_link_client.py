@@ -12,7 +12,7 @@
 from msrest.service_client import ServiceClient
 from msrest import Serializer, Deserializer
 from msrestazure import AzureConfiguration
-from .version import VERSION
+from ..version import VERSION
 
 
 class ManagementLinkClientConfiguration(AzureConfiguration):
@@ -79,7 +79,7 @@ class ManagementLinkClient(object):
     @classmethod
     def models(cls, api_version = '2016-09-01'):
         if api_version =='2016-09-01':
-            from .links.v2016_09_01 import models
+            from .v2016_09_01 import models
             return models
         else:
             raise NotImplementedError("APIVersion {} is not available".format(api_version))
@@ -87,7 +87,7 @@ class ManagementLinkClient(object):
     @property
     def resource_links(self):
         if self.api_version =='2016-09-01':
-            from .links.v2016_09_01.operations.resource_links_operations import ResourceLinksOperations as OperationClass
+            from .v2016_09_01.operations.resource_links_operations import ResourceLinksOperations as OperationClass
         else:
-            raise NotImplementedError("APIVersion {} is not available".format(api_version))
+            raise NotImplementedError("APIVersion {} is not available".format(self.api_version))
         return OperationClass(self._client, self.config, self._serialize, self._deserialize)

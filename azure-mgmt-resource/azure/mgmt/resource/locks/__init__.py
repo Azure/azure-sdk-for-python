@@ -5,3 +5,4 @@
 # license information.
 # --------------------------------------------------------------------------
 
+from .management_lock_client import ManagementLockClient

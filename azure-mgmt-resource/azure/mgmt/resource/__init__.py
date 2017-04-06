@@ -5,12 +5,13 @@
 # license information.
 # --------------------------------------------------------------------------
 
-from .feature_client import FeatureClient
-from .management_link_client import ManagementLinkClient
-from .management_lock_client import ManagementLockClient
-from .policy_client import PolicyClient
-from .resource_management_client import ResourceManagementClient
-from .subscription_client import SubscriptionClient
+from .features import FeatureClient
+from .locks import ManagementLockClient
+from .policy import PolicyClient
+from .resources import ResourceManagementClient
+from .subscriptions import SubscriptionClient
+from .links import ManagementLinkClient
+
 from .version import VERSION
 
-
+__version__ = VERSION

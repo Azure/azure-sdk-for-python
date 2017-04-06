@@ -5,3 +5,4 @@
 # license information.
 # --------------------------------------------------------------------------
 
+from .subscription_client import SubscriptionClient

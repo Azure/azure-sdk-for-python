@@ -12,7 +12,7 @@
 from msrest.service_client import ServiceClient
 from msrest import Serializer, Deserializer
 from msrestazure import AzureConfiguration
-from .version import VERSION
+from ..version import VERSION
 
 
 class ManagementLockClientConfiguration(AzureConfiguration):
@@ -80,10 +80,10 @@ class ManagementLockClient(object):
     @classmethod
     def models(cls, api_version = '2016-09-01'):
         if api_version =='2016-09-01':
-            from .locks.v2016_09_01 import models
+            from .v2016_09_01 import models
             return models
         elif api_version =='2015-01-01':
-            from .locks.v2015_01_01 import models
+            from .v2015_01_01 import models
             return models
         else:
             raise NotImplementedError("APIVersion {} is not available".format(api_version))
@@ -91,9 +91,9 @@ class ManagementLockClient(object):
     @property
     def management_locks(self):
         if self.api_version =='2016-09-01':
-            from .locks.v2016_09_01.operations.management_locks_operations import ManagementLocksOperations as OperationClass
+            from .v2016_09_01.operations.management_locks_operations import ManagementLocksOperations as OperationClass
         elif self.api_version =='2015-01-01':
-            from .locks.v2015_01_01.operations.management_locks_operations import ManagementLocksOperations as OperationClass
+            from .v2015_01_01.operations.management_locks_operations import ManagementLocksOperations as OperationClass
         else:
-            raise NotImplementedError("APIVersion {} is not available".format(api_version))
+            raise NotImplementedError("APIVersion {} is not available".format(self.api_version))
         return OperationClass(self._client, self.config, self._serialize, self._deserialize)

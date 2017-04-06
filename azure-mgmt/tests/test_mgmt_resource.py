@@ -7,7 +7,7 @@
 #--------------------------------------------------------------------------
 import unittest
 
-import azure.mgmt.resource
+import azure.mgmt.resource.resources.models
 import azure.common.exceptions
 from testutils.common_recordingtestcase import record
 from tests.mgmt_testcase import HttpStatusCode, AzureMgmtTestCase
@@ -53,10 +53,8 @@ class MgmtResourceTest(AzureMgmtTestCase):
 
     @record
     def test_resource_groups(self):
-        models = azure.mgmt.resource.ResourceManagementClient.models('2016-09-01')
-
         # Create or update
-        params_create = models.ResourceGroup(
+        params_create = azure.mgmt.resource.resources.models.ResourceGroup(
             location=self.region,
             tags={
                 'tag1': 'value1',
@@ -89,11 +87,11 @@ class MgmtResourceTest(AzureMgmtTestCase):
         self.assertGreater(len(result_list), 0)
 
         result_list_top = self.resource_client.resource_groups.list(top=2)
-        result_list_top = result_list_top.next()
+        result_list_top = result_list_top.advance_page()
         self.assertEqual(len(result_list_top), 2)
 
         # Patch
-        params_patch = models.ResourceGroup(
+        params_patch = azure.mgmt.resource.resources.models.ResourceGroup(
             location=self.region,
             tags={
                 'tag1': 'valueA',
@@ -125,8 +123,6 @@ class MgmtResourceTest(AzureMgmtTestCase):
 
     @record
     def test_resources(self):
-        models = azure.mgmt.resource.ResourceManagementClient.models('2016-09-01')
-
         # WARNING: For some strange url parsing reason, this test has to be recorded twice:
         # - Once in Python 2.7 for 2.7/3.3/3.4 (...Microsoft.Compute//availabilitySets...)
         # - Once in Python 3.5 (...Microsoft.Compute/availabilitySets...)
@@ -204,8 +200,6 @@ class MgmtResourceTest(AzureMgmtTestCase):
 
     @record
     def test_deployments(self):
-        models = azure.mgmt.resource.ResourceManagementClient.models('2016-09-01')
-
         self.create_resource_group()
 
         # for more sample templates, see https://github.com/Azure/azure-quickstart-templates
@@ -253,8 +247,8 @@ class MgmtResourceTest(AzureMgmtTestCase):
 }
         # Note: when specifying values for parameters, omit the outer elements
         parameters = {"location": { "value": "West US"}}
-        deployment_params = models.DeploymentProperties(
-            mode = models.DeploymentMode.incremental,
+        deployment_params = azure.mgmt.resource.resources.models.DeploymentProperties(
+            mode = azure.mgmt.resource.resources.models.DeploymentMode.incremental,
             template=template,
             parameters=parameters,
         )
@@ -326,21 +320,19 @@ class MgmtResourceTest(AzureMgmtTestCase):
 
     @record
     def test_deployments_linked_template(self):
-        models = azure.mgmt.resource.ResourceManagementClient.models('2016-09-01')
-
         self.create_resource_group()
 
         # for more sample templates, see https://github.com/Azure/azure-quickstart-templates
         deployment_name = self.get_resource_name("pytestlinked")
-        template = models.TemplateLink(
+        template = azure.mgmt.resource.resources.models.TemplateLink(
             uri='https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/101-availability-set-create-3FDs-20UDs/azuredeploy.json',
         )
-        parameters = models.ParametersLink(
+        parameters = azure.mgmt.resource.resources.models.ParametersLink(
             uri='https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/101-availability-set-create-3FDs-20UDs/azuredeploy.parameters.json',
         )
 
-        deployment_params = models.DeploymentProperties(
-            mode = models.DeploymentMode.incremental,
+        deployment_params = azure.mgmt.resource.resources.models.DeploymentProperties(
+            mode = azure.mgmt.resource.resources.models.DeploymentMode.incremental,
             template_link=template,
             parameters_link=parameters,
         )
@@ -369,21 +361,19 @@ class MgmtResourceTest(AzureMgmtTestCase):
 
     @record
     def test_deployments_linked_template_error(self):
-        models = azure.mgmt.resource.ResourceManagementClient.models('2016-09-01')
-
         self.create_resource_group()
 
         # for more sample templates, see https://github.com/Azure/azure-quickstart-templates
         deployment_name = self.get_resource_name("pytestlinked")
-        template = models.TemplateLink(
+        template = azure.mgmt.resource.resources.models.TemplateLink(
             uri='https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/101-vm-simple-linux/azuredeploy.json',
         )
-        parameters = models.ParametersLink(
+        parameters = azure.mgmt.resource.resources.models.ParametersLink(
             uri='https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/101-vm-simple-linux/azuredeploy.parameters.json',
         )
 
-        deployment_params = models.DeploymentProperties(
-            mode = models.DeploymentMode.incremental,
+        deployment_params = azure.mgmt.resource.resources.models.DeploymentProperties(
+            mode = azure.mgmt.resource.resources.models.DeploymentMode.incremental,
             template_link=template,
             parameters_link=parameters,
         )
