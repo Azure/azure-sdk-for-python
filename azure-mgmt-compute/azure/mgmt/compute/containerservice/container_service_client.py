@@ -12,7 +12,7 @@
 from msrest.service_client import ServiceClient
 from msrest import Serializer, Deserializer
 from msrestazure import AzureConfiguration
-from .version import VERSION
+from ..version import VERSION
 
 
 class ContainerServiceClientConfiguration(AzureConfiguration):
@@ -84,7 +84,7 @@ class ContainerServiceClient(object):
     @classmethod
     def models(cls, api_version = '2017-01-31'):
         if api_version =='2017-01-31':
-            from .containerservice.v2017_01_31 import models
+            from .v2017_01_31 import models
             return models
         else:
             raise NotImplementedError("APIVersion {} is not available".format(api_version))
@@ -92,7 +92,7 @@ class ContainerServiceClient(object):
     @property
     def container_services(self):
         if self.api_version =='2017-01-31':
-            from .containerservice.v2017_01_31.operations import ContainerServicesOperations as OperationClass
+            from .v2017_01_31.operations import ContainerServicesOperations as OperationClass
         else:
-            raise NotImplementedError("APIVersion {{}} is not available".format(api_version))
+            raise NotImplementedError("APIVersion {{}} is not available".format(self.api_version))
         return OperationClass(self._client, self.config, self._serialize, self._deserialize)

@@ -5,6 +5,8 @@
 # license information.
 # --------------------------------------------------------------------------
 
-from .compute_management_client import ComputeManagementClient
-from .container_service_client import ContainerServiceClient
+from .compute import ComputeManagementClient
+from .containerservice import ContainerServiceClient
 from .version import VERSION
+
+__version__ = VERSION
