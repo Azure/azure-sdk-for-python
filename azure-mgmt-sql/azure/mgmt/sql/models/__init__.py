@@ -46,6 +46,12 @@ from .operation import Operation
 from .operation_list_result import OperationListResult
 from .database_security_alert_policy import DatabaseSecurityAlertPolicy
 from .database_blob_auditing_policy import DatabaseBlobAuditingPolicy
+from .failover_group_read_write_endpoint import FailoverGroupReadWriteEndpoint
+from .failover_group_read_only_endpoint import FailoverGroupReadOnlyEndpoint
+from .partner_info import PartnerInfo
+from .failover_group_resource import FailoverGroupResource
+from .failover_group_resource_list import FailoverGroupResourceList
+from .vnet_firewall_rule import VnetFirewallRule
 from .firewall_rule_paged import FirewallRulePaged
 from .replication_link_paged import ReplicationLinkPaged
 from .restore_point_paged import RestorePointPaged
@@ -61,6 +67,7 @@ from .elastic_pool_activity_paged import ElasticPoolActivityPaged
 from .elastic_pool_database_activity_paged import ElasticPoolDatabaseActivityPaged
 from .recommended_elastic_pool_paged import RecommendedElasticPoolPaged
 from .recommended_elastic_pool_metric_paged import RecommendedElasticPoolMetricPaged
+from .vnet_firewall_rule_paged import VnetFirewallRulePaged
 from .sql_management_client_enums import (
     CapabilityStatus,
     MaxSizeUnits,
@@ -88,6 +95,9 @@ from .sql_management_client_enums import (
     SecurityAlertPolicyEmailAccountAdmins,
     SecurityAlertPolicyUseServerDefault,
     BlobAuditingPolicyState,
+    ReadWriteEndpointFailoverPolicy,
+    ReadOnlyEndpointFailoverPolicy,
+    FailoverGroupReplicationRole,
 )
 
 __all__ = [
@@ -128,6 +138,12 @@ __all__ = [
     'OperationListResult',
     'DatabaseSecurityAlertPolicy',
     'DatabaseBlobAuditingPolicy',
+    'FailoverGroupReadWriteEndpoint',
+    'FailoverGroupReadOnlyEndpoint',
+    'PartnerInfo',
+    'FailoverGroupResource',
+    'FailoverGroupResourceList',
+    'VnetFirewallRule',
     'FirewallRulePaged',
     'ReplicationLinkPaged',
     'RestorePointPaged',
@@ -143,6 +159,7 @@ __all__ = [
     'ElasticPoolDatabaseActivityPaged',
     'RecommendedElasticPoolPaged',
     'RecommendedElasticPoolMetricPaged',
+    'VnetFirewallRulePaged',
     'CapabilityStatus',
     'MaxSizeUnits',
     'PerformanceLevelUnit',
@@ -169,4 +186,7 @@ __all__ = [
     'SecurityAlertPolicyEmailAccountAdmins',
     'SecurityAlertPolicyUseServerDefault',
     'BlobAuditingPolicyState',
+    'ReadWriteEndpointFailoverPolicy',
+    'ReadOnlyEndpointFailoverPolicy',
+    'FailoverGroupReplicationRole',
 ]
