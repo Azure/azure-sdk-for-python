@@ -13,14 +13,14 @@ from msrest.serialization import Model
 
 
 class WorkflowTriggerCallbackUrl(Model):
-    """WorkflowTriggerCallbackUrl.
+    """The workflow trigger callback URL.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
     :ivar value: Gets the workflow trigger callback URL.
     :vartype value: str
-    """ 
+    """
 
     _validation = {
         'value': {'readonly': True},

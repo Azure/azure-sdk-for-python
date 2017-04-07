@@ -141,7 +141,7 @@ class BatchAccountOperations(object):
             get_long_running_status, long_running_operation_timeout)
 
     def update(
-            self, resource_group_name, account_name, parameters, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, account_name, tags=None, auto_storage=None, custom_headers=None, raw=False, **operation_config):
         """Updates the properties of an existing Batch account.
 
         :param resource_group_name: The name of the resource group that
@@ -149,9 +149,11 @@ class BatchAccountOperations(object):
         :type resource_group_name: str
         :param account_name: The name of the account.
         :type account_name: str
-        :param parameters: Additional parameters for account update.
-        :type parameters: :class:`BatchAccountUpdateParameters
-         <azure.mgmt.batch.models.BatchAccountUpdateParameters>`
+        :param tags: The user specified tags associated with the account.
+        :type tags: dict
+        :param auto_storage: The properties related to auto storage account.
+        :type auto_storage: :class:`AutoStorageBaseProperties
+         <azure.mgmt.batch.models.AutoStorageBaseProperties>`
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -162,6 +164,8 @@ class BatchAccountOperations(object):
          if raw=true
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
+        parameters = models.BatchAccountUpdateParameters(tags=tags, auto_storage=auto_storage)
+
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Batch/batchAccounts/{accountName}'
         path_format_arguments = {

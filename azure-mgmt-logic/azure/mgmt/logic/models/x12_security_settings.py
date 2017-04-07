@@ -13,7 +13,7 @@ from msrest.serialization import Model
 
 
 class X12SecuritySettings(Model):
-    """X12SecuritySettings.
+    """The X12 agreement security settings.
 
     :param authorization_qualifier: The authorization qualifier.
     :type authorization_qualifier: str
@@ -23,7 +23,12 @@ class X12SecuritySettings(Model):
     :type security_qualifier: str
     :param password_value: The password value.
     :type password_value: str
-    """ 
+    """
+
+    _validation = {
+        'authorization_qualifier': {'required': True},
+        'security_qualifier': {'required': True},
+    }
 
     _attribute_map = {
         'authorization_qualifier': {'key': 'authorizationQualifier', 'type': 'str'},
@@ -32,7 +37,7 @@ class X12SecuritySettings(Model):
         'password_value': {'key': 'passwordValue', 'type': 'str'},
     }
 
-    def __init__(self, authorization_qualifier=None, authorization_value=None, security_qualifier=None, password_value=None):
+    def __init__(self, authorization_qualifier, security_qualifier, authorization_value=None, password_value=None):
         self.authorization_qualifier = authorization_qualifier
         self.authorization_value = authorization_value
         self.security_qualifier = security_qualifier

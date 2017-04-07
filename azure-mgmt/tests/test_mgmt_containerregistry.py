@@ -16,6 +16,8 @@ from tests.mgmt_testcase import HttpStatusCode, AzureMgmtTestCase
 class MgmtACRTest(AzureMgmtTestCase):
 
     def setUp(self):
+        self.region = 'eastus'
+
         super(MgmtACRTest, self).setUp()
         self.client = self.create_mgmt_client(
             azure.mgmt.containerregistry.ContainerRegistryManagementClient
@@ -44,7 +46,7 @@ class MgmtACRTest(AzureMgmtTestCase):
             self.storage_key = storage_keys['key1']
         else:
             # If you record this test, change this one by the one in the record
-            self.storage_key = 'r75KiBFOlsW0hKgh0hlnzDyZcpSwrTYa7+XBOyOJKjb7HqyAtp4HXldIPvR+HoLl0WfGcg+JrYGBiRageox9RQ=='
+            self.storage_key = 'BbDRMu3dSOcnBKQKls+ZvJmw1ZWezQ/6k1feiExRDEUHMTForgY6OvWz84yJ5XYlq1Lt4ajnRs7eJq+WUVKkOw=='
 
     @record
     def test_acr(self):
@@ -53,34 +55,33 @@ class MgmtACRTest(AzureMgmtTestCase):
         name_status = self.client.registries.check_name_availability(account_name)
         self.assertTrue(name_status.name_available)
 
-        registry = self.client.registries.create_or_update(
+        async_registry_creation = self.client.registries.create(
             self.group_name,
             account_name,
             {
-                'location': 'eastus',
+                'location': self.region,
+                'sku': {
+                    'name': 'Basic'
+                },
                 'storage_account': {
                     'name': self.storage_name,
                     'access_key': self.storage_key
                 }
             }
         )
+        registry = async_registry_creation.result()
         self.assertEqual(registry.name, account_name)
 
-        registry = self.client.registries.create_or_update(
+        registry = self.client.registries.update(
             self.group_name,
             account_name,
             {
-                'location': 'eastus',
-                'storage_account': {
-                    'name': self.storage_name,
-                    'access_key': self.storage_key
-                },
                 'admin_user_enabled': True
             }
         )
         self.assertEqual(registry.name, account_name)
 
-        registry = self.client.registries.get_properties(self.group_name, account_name)
+        registry = self.client.registries.get(self.group_name, account_name)
         self.assertEqual(registry.name, account_name)
 
         containers = list(self.client.registries.list())
@@ -89,9 +90,9 @@ class MgmtACRTest(AzureMgmtTestCase):
         containers = list(self.client.registries.list_by_resource_group(self.group_name))
         self.assertEqual(len(containers), 1)
 
-        credentials = self.client.registries.get_credentials(self.group_name, account_name)
+        credentials = self.client.registries.list_credentials(self.group_name, account_name)
 
-        credentials = self.client.registries.regenerate_credentials(self.group_name, account_name)
+        credentials = self.client.registries.regenerate_credential(self.group_name, account_name, 'password')
 
         self.client.registries.delete(self.group_name, account_name)
 

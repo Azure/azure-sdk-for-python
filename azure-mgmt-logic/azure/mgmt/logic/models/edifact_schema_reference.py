@@ -13,7 +13,7 @@ from msrest.serialization import Model
 
 
 class EdifactSchemaReference(Model):
-    """EdifactSchemaReference.
+    """The Edifact schema reference.
 
     :param message_id: The message id.
     :type message_id: str
@@ -29,7 +29,14 @@ class EdifactSchemaReference(Model):
     :type association_assigned_code: str
     :param schema_name: The schema name.
     :type schema_name: str
-    """ 
+    """
+
+    _validation = {
+        'message_id': {'required': True},
+        'message_version': {'required': True},
+        'message_release': {'required': True},
+        'schema_name': {'required': True},
+    }
 
     _attribute_map = {
         'message_id': {'key': 'messageId', 'type': 'str'},
@@ -41,7 +48,7 @@ class EdifactSchemaReference(Model):
         'schema_name': {'key': 'schemaName', 'type': 'str'},
     }
 
-    def __init__(self, message_id=None, message_version=None, message_release=None, sender_application_id=None, sender_application_qualifier=None, association_assigned_code=None, schema_name=None):
+    def __init__(self, message_id, message_version, message_release, schema_name, sender_application_id=None, sender_application_qualifier=None, association_assigned_code=None):
         self.message_id = message_id
         self.message_version = message_version
         self.message_release = message_release

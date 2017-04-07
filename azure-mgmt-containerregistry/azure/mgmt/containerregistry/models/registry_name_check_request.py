@@ -13,7 +13,7 @@ from msrest.serialization import Model
 
 
 class RegistryNameCheckRequest(Model):
-    """A request to check whether the container registry name is available.
+    """A request to check whether a container registry name is available.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -27,7 +27,7 @@ class RegistryNameCheckRequest(Model):
     """
 
     _validation = {
-        'name': {'required': True},
+        'name': {'required': True, 'max_length': 50, 'min_length': 5, 'pattern': '^[a-zA-Z0-9]*$'},
         'type': {'required': True, 'constant': True},
     }
 

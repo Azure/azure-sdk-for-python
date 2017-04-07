@@ -13,7 +13,7 @@ from msrest.serialization import Model
 
 
 class X12DelimiterOverrides(Model):
-    """X12DelimiterOverrides.
+    """The X12 delimiter override settings.
 
     :param protocol_version: The protocol version.
     :type protocol_version: str
@@ -37,7 +37,16 @@ class X12DelimiterOverrides(Model):
     :param target_namespace: The target namespace on which this delimiter
      settings has to be applied.
     :type target_namespace: str
-    """ 
+    """
+
+    _validation = {
+        'data_element_separator': {'required': True},
+        'component_separator': {'required': True},
+        'segment_terminator': {'required': True},
+        'segment_terminator_suffix': {'required': True},
+        'replace_character': {'required': True},
+        'replace_separators_in_payload': {'required': True},
+    }
 
     _attribute_map = {
         'protocol_version': {'key': 'protocolVersion', 'type': 'str'},
@@ -51,7 +60,7 @@ class X12DelimiterOverrides(Model):
         'target_namespace': {'key': 'targetNamespace', 'type': 'str'},
     }
 
-    def __init__(self, protocol_version=None, message_id=None, data_element_separator=None, component_separator=None, segment_terminator=None, segment_terminator_suffix=None, replace_character=None, replace_separators_in_payload=None, target_namespace=None):
+    def __init__(self, data_element_separator, component_separator, segment_terminator, segment_terminator_suffix, replace_character, replace_separators_in_payload, protocol_version=None, message_id=None, target_namespace=None):
         self.protocol_version = protocol_version
         self.message_id = message_id
         self.data_element_separator = data_element_separator

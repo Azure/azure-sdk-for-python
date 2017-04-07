@@ -13,7 +13,7 @@ from msrest.serialization import Model
 
 
 class WorkflowTriggerHistoryFilter(Model):
-    """WorkflowTriggerHistoryFilter.
+    """The workflow trigger history filter.
 
     :param status: The status of workflow trigger history. Possible values
      include: 'NotSpecified', 'Paused', 'Running', 'Waiting', 'Succeeded',
@@ -21,7 +21,7 @@ class WorkflowTriggerHistoryFilter(Model):
      'Aborted', 'Ignored'
     :type status: str or :class:`WorkflowStatus
      <azure.mgmt.logic.models.WorkflowStatus>`
-    """ 
+    """
 
     _attribute_map = {
         'status': {'key': 'status', 'type': 'WorkflowStatus'},

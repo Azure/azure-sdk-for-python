@@ -13,7 +13,7 @@ from msrest.serialization import Model
 
 
 class X12ProcessingSettings(Model):
-    """X12ProcessingSettings.
+    """The X12 processing settings.
 
     :param mask_security_info: The value indicating whether to mask security
      information.
@@ -27,13 +27,22 @@ class X12ProcessingSettings(Model):
     :param suspend_interchange_on_error: The value indicating whether to
      suspend interchange on error.
     :type suspend_interchange_on_error: bool
-    :param create_empty_xml_tags_for_trailing_separators: The value
-     indicating whether to create empty xml tags for trailing separators.
+    :param create_empty_xml_tags_for_trailing_separators: The value indicating
+     whether to create empty xml tags for trailing separators.
     :type create_empty_xml_tags_for_trailing_separators: bool
     :param use_dot_as_decimal_separator: The value indicating whether to use
      dot as decimal separator.
     :type use_dot_as_decimal_separator: bool
-    """ 
+    """
+
+    _validation = {
+        'mask_security_info': {'required': True},
+        'convert_implied_decimal': {'required': True},
+        'preserve_interchange': {'required': True},
+        'suspend_interchange_on_error': {'required': True},
+        'create_empty_xml_tags_for_trailing_separators': {'required': True},
+        'use_dot_as_decimal_separator': {'required': True},
+    }
 
     _attribute_map = {
         'mask_security_info': {'key': 'maskSecurityInfo', 'type': 'bool'},
@@ -44,7 +53,7 @@ class X12ProcessingSettings(Model):
         'use_dot_as_decimal_separator': {'key': 'useDotAsDecimalSeparator', 'type': 'bool'},
     }
 
-    def __init__(self, mask_security_info=None, convert_implied_decimal=None, preserve_interchange=None, suspend_interchange_on_error=None, create_empty_xml_tags_for_trailing_separators=None, use_dot_as_decimal_separator=None):
+    def __init__(self, mask_security_info, convert_implied_decimal, preserve_interchange, suspend_interchange_on_error, create_empty_xml_tags_for_trailing_separators, use_dot_as_decimal_separator):
         self.mask_security_info = mask_security_info
         self.convert_implied_decimal = convert_implied_decimal
         self.preserve_interchange = preserve_interchange

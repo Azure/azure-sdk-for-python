@@ -13,11 +13,11 @@ from msrest.serialization import Model
 
 
 class Correlation(Model):
-    """Correlation.
+    """The correlation property.
 
     :param client_tracking_id: The client tracking id.
     :type client_tracking_id: str
-    """ 
+    """
 
     _attribute_map = {
         'client_tracking_id': {'key': 'clientTrackingId', 'type': 'str'},

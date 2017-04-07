@@ -39,7 +39,7 @@ class MgmtSqlTest(AzureMgmtTestCase):
         )
         self.assertEqual(server.name, server_name)
 
-        server = self.client.servers.get_by_resource_group(
+        server = self.client.servers.get(
             self.group_name,
             server_name
         )
@@ -57,7 +57,7 @@ class MgmtSqlTest(AzureMgmtTestCase):
         # FIXME test content of "usages", not just the call
 
         firewall_rule_name = self.get_resource_name('firewallrule')
-        firewall_rule = self.client.servers.create_or_update_firewall_rule(
+        firewall_rule = self.client.firewall_rules.create_or_update(
             self.group_name,
             server_name,
             firewall_rule_name,

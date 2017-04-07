@@ -13,7 +13,7 @@ from msrest.serialization import Model
 
 
 class EdifactProtocolSettings(Model):
-    """EdifactProtocolSettings.
+    """The Edifact agreement protocol settings.
 
     :param validation_settings: The EDIFACT validation settings.
     :type validation_settings: :class:`EdifactValidationSettings
@@ -50,7 +50,17 @@ class EdifactProtocolSettings(Model):
     :type edifact_delimiter_overrides: list of
      :class:`EdifactDelimiterOverride
      <azure.mgmt.logic.models.EdifactDelimiterOverride>`
-    """ 
+    """
+
+    _validation = {
+        'validation_settings': {'required': True},
+        'framing_settings': {'required': True},
+        'envelope_settings': {'required': True},
+        'acknowledgement_settings': {'required': True},
+        'message_filter': {'required': True},
+        'processing_settings': {'required': True},
+        'schema_references': {'required': True},
+    }
 
     _attribute_map = {
         'validation_settings': {'key': 'validationSettings', 'type': 'EdifactValidationSettings'},
@@ -66,7 +76,7 @@ class EdifactProtocolSettings(Model):
         'edifact_delimiter_overrides': {'key': 'edifactDelimiterOverrides', 'type': '[EdifactDelimiterOverride]'},
     }
 
-    def __init__(self, validation_settings=None, framing_settings=None, envelope_settings=None, acknowledgement_settings=None, message_filter=None, processing_settings=None, envelope_overrides=None, message_filter_list=None, schema_references=None, validation_overrides=None, edifact_delimiter_overrides=None):
+    def __init__(self, validation_settings, framing_settings, envelope_settings, acknowledgement_settings, message_filter, processing_settings, schema_references, envelope_overrides=None, message_filter_list=None, validation_overrides=None, edifact_delimiter_overrides=None):
         self.validation_settings = validation_settings
         self.framing_settings = framing_settings
         self.envelope_settings = envelope_settings

@@ -9,25 +9,25 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .resource import Resource
+from .tracked_resource import TrackedResource
 
 
-class Server(Resource):
+class Server(TrackedResource):
     """Represents a server.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar name: Resource name
-    :vartype name: str
-    :ivar id: Resource ID
+    :ivar id: Resource ID.
     :vartype id: str
-    :ivar type: Resource type
+    :ivar name: Resource name.
+    :vartype name: str
+    :ivar type: Resource type.
     :vartype type: str
-    :param location: Resource location
-    :type location: str
-    :param tags: Resource tags
+    :param tags: Resource tags.
     :type tags: dict
+    :param location: Resource location.
+    :type location: str
     :ivar kind: Kind of sql server.  This is metadata used for the Azure
      portal experience.
     :vartype kind: str
@@ -62,8 +62,8 @@ class Server(Resource):
     """
 
     _validation = {
-        'name': {'readonly': True},
         'id': {'readonly': True},
+        'name': {'readonly': True},
         'type': {'readonly': True},
         'location': {'required': True},
         'kind': {'readonly': True},
@@ -74,11 +74,11 @@ class Server(Resource):
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
         'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
+        'location': {'key': 'location', 'type': 'str'},
         'kind': {'key': 'kind', 'type': 'str'},
         'fully_qualified_domain_name': {'key': 'properties.fullyQualifiedDomainName', 'type': 'str'},
         'version': {'key': 'properties.version', 'type': 'str'},
@@ -90,7 +90,7 @@ class Server(Resource):
     }
 
     def __init__(self, location, tags=None, version=None, administrator_login=None, administrator_login_password=None):
-        super(Server, self).__init__(location=location, tags=tags)
+        super(Server, self).__init__(tags=tags, location=location)
         self.kind = None
         self.fully_qualified_domain_name = None
         self.version = version

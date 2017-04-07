@@ -17,8 +17,10 @@ from msrest.pipeline import ClientRawResponse
 from msrestazure.azure_exceptions import CloudError
 from msrestazure.azure_operation import AzureOperationPoller
 import uuid
-from .operations.servers_operations import ServersOperations
+from .operations.capabilities_operations import CapabilitiesOperations
+from .operations.firewall_rules_operations import FirewallRulesOperations
 from .operations.databases_operations import DatabasesOperations
+from .operations.servers_operations import ServersOperations
 from .operations.elastic_pools_operations import ElasticPoolsOperations
 from .operations.recommended_elastic_pools_operations import RecommendedElasticPoolsOperations
 from . import models
@@ -65,10 +67,14 @@ class SqlManagementClient(object):
     :ivar config: Configuration for client.
     :vartype config: SqlManagementClientConfiguration
 
-    :ivar servers: Servers operations
-    :vartype servers: .operations.ServersOperations
+    :ivar capabilities: Capabilities operations
+    :vartype capabilities: .operations.CapabilitiesOperations
+    :ivar firewall_rules: FirewallRules operations
+    :vartype firewall_rules: .operations.FirewallRulesOperations
     :ivar databases: Databases operations
     :vartype databases: .operations.DatabasesOperations
+    :ivar servers: Servers operations
+    :vartype servers: .operations.ServersOperations
     :ivar elastic_pools: ElasticPools operations
     :vartype elastic_pools: .operations.ElasticPoolsOperations
     :ivar recommended_elastic_pools: RecommendedElasticPools operations
@@ -93,9 +99,13 @@ class SqlManagementClient(object):
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
 
-        self.servers = ServersOperations(
+        self.capabilities = CapabilitiesOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.firewall_rules = FirewallRulesOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.databases = DatabasesOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.servers = ServersOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.elastic_pools = ElasticPoolsOperations(
             self._client, self.config, self._serialize, self._deserialize)

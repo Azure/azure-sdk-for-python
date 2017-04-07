@@ -9,25 +9,23 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .resource import Resource
+from .proxy_resource import ProxyResource
 
 
-class ElasticPoolDatabaseActivity(Resource):
+class ElasticPoolDatabaseActivity(ProxyResource):
     """Represents the activity on an elastic pool.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar name: Resource name
-    :vartype name: str
-    :ivar id: Resource ID
+    :ivar id: Resource ID.
     :vartype id: str
-    :ivar type: Resource type
+    :ivar name: Resource name.
+    :vartype name: str
+    :ivar type: Resource type.
     :vartype type: str
-    :param location: Resource location
+    :param location: The geo-location where the resource lives
     :type location: str
-    :param tags: Resource tags
-    :type tags: dict
     :ivar database_name: The database name.
     :vartype database_name: str
     :ivar end_time: The time the operation finished (ISO8601 format).
@@ -65,10 +63,9 @@ class ElasticPoolDatabaseActivity(Resource):
     """
 
     _validation = {
-        'name': {'readonly': True},
         'id': {'readonly': True},
+        'name': {'readonly': True},
         'type': {'readonly': True},
-        'location': {'required': True},
         'database_name': {'readonly': True},
         'end_time': {'readonly': True},
         'error_code': {'readonly': True},
@@ -87,11 +84,10 @@ class ElasticPoolDatabaseActivity(Resource):
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
         'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
         'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
         'database_name': {'key': 'properties.databaseName', 'type': 'str'},
         'end_time': {'key': 'properties.endTime', 'type': 'iso-8601'},
         'error_code': {'key': 'properties.errorCode', 'type': 'int'},
@@ -109,8 +105,9 @@ class ElasticPoolDatabaseActivity(Resource):
         'state': {'key': 'properties.state', 'type': 'str'},
     }
 
-    def __init__(self, location, tags=None):
-        super(ElasticPoolDatabaseActivity, self).__init__(location=location, tags=tags)
+    def __init__(self, location=None):
+        super(ElasticPoolDatabaseActivity, self).__init__()
+        self.location = location
         self.database_name = None
         self.end_time = None
         self.error_code = None

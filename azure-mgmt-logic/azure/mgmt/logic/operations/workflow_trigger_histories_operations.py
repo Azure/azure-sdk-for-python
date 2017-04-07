@@ -56,6 +56,7 @@ class WorkflowTriggerHistoriesOperations(object):
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`WorkflowTriggerHistoryPaged
          <azure.mgmt.logic.models.WorkflowTriggerHistoryPaged>`
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -135,6 +136,7 @@ class WorkflowTriggerHistoriesOperations(object):
          <azure.mgmt.logic.models.WorkflowTriggerHistory>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Logic/workflows/{workflowName}/triggers/{triggerName}/histories/{historyName}'

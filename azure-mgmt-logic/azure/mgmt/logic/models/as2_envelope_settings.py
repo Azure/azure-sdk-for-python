@@ -13,7 +13,7 @@ from msrest.serialization import Model
 
 
 class AS2EnvelopeSettings(Model):
-    """AS2EnvelopeSettings.
+    """The AS2 agreement envelope settings.
 
     :param message_content_type: The message content type.
     :type message_content_type: str
@@ -22,23 +22,31 @@ class AS2EnvelopeSettings(Model):
     :type transmit_file_name_in_mime_header: bool
     :param file_name_template: The template for file name.
     :type file_name_template: str
-    :param suspend_message_on_file_name_generation_error: The value
-     indicating whether to suspend message on file name generation error.
+    :param suspend_message_on_file_name_generation_error: The value indicating
+     whether to suspend message on file name generation error.
     :type suspend_message_on_file_name_generation_error: bool
     :param autogenerate_file_name: The value indicating whether to auto
      generate file name.
     :type autogenerate_file_name: bool
-    """ 
+    """
+
+    _validation = {
+        'message_content_type': {'required': True},
+        'transmit_file_name_in_mime_header': {'required': True},
+        'file_name_template': {'required': True},
+        'suspend_message_on_file_name_generation_error': {'required': True},
+        'autogenerate_file_name': {'required': True},
+    }
 
     _attribute_map = {
         'message_content_type': {'key': 'messageContentType', 'type': 'str'},
         'transmit_file_name_in_mime_header': {'key': 'transmitFileNameInMimeHeader', 'type': 'bool'},
         'file_name_template': {'key': 'fileNameTemplate', 'type': 'str'},
-        'suspend_message_on_file_name_generation_error': {'key': 'SuspendMessageOnFileNameGenerationError', 'type': 'bool'},
-        'autogenerate_file_name': {'key': 'AutogenerateFileName', 'type': 'bool'},
+        'suspend_message_on_file_name_generation_error': {'key': 'suspendMessageOnFileNameGenerationError', 'type': 'bool'},
+        'autogenerate_file_name': {'key': 'autogenerateFileName', 'type': 'bool'},
     }
 
-    def __init__(self, message_content_type=None, transmit_file_name_in_mime_header=None, file_name_template=None, suspend_message_on_file_name_generation_error=None, autogenerate_file_name=None):
+    def __init__(self, message_content_type, transmit_file_name_in_mime_header, file_name_template, suspend_message_on_file_name_generation_error, autogenerate_file_name):
         self.message_content_type = message_content_type
         self.transmit_file_name_in_mime_header = transmit_file_name_in_mime_header
         self.file_name_template = file_name_template

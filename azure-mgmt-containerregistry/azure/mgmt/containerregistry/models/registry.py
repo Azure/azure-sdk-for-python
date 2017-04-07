@@ -29,18 +29,23 @@ class Registry(Resource):
     :type location: str
     :param tags: The tags of the resource.
     :type tags: dict
+    :param sku: The SKU of the container registry.
+    :type sku: :class:`Sku <azure.mgmt.containerregistry.models.Sku>`
     :ivar login_server: The URL that can be used to log into the container
      registry.
     :vartype login_server: str
     :ivar creation_date: The creation date of the container registry in
      ISO8601 format.
     :vartype creation_date: datetime
+    :ivar provisioning_state: The status of the container registry at the time
+     the operation was called. Possible values include: 'Creating', 'Succeeded'
+    :vartype provisioning_state: str or :class:`ProvisioningState
+     <azure.mgmt.containerregistry.models.ProvisioningState>`
     :param admin_user_enabled: The value that indicates whether the admin user
      is enabled. This value is false by default. Default value: False .
     :type admin_user_enabled: bool
     :param storage_account: The properties of the storage account for the
-     container registry. If specified, the storage account must be in the same
-     physical location as the container registry.
+     container registry.
     :type storage_account: :class:`StorageAccountProperties
      <azure.mgmt.containerregistry.models.StorageAccountProperties>`
     """
@@ -50,9 +55,10 @@ class Registry(Resource):
         'name': {'readonly': True},
         'type': {'readonly': True},
         'location': {'required': True},
+        'sku': {'required': True},
         'login_server': {'readonly': True},
         'creation_date': {'readonly': True},
-        'storage_account': {'required': True},
+        'provisioning_state': {'readonly': True},
     }
 
     _attribute_map = {
@@ -61,15 +67,19 @@ class Registry(Resource):
         'type': {'key': 'type', 'type': 'str'},
         'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
+        'sku': {'key': 'sku', 'type': 'Sku'},
         'login_server': {'key': 'properties.loginServer', 'type': 'str'},
         'creation_date': {'key': 'properties.creationDate', 'type': 'iso-8601'},
+        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'ProvisioningState'},
         'admin_user_enabled': {'key': 'properties.adminUserEnabled', 'type': 'bool'},
         'storage_account': {'key': 'properties.storageAccount', 'type': 'StorageAccountProperties'},
     }
 
-    def __init__(self, location, storage_account, tags=None, admin_user_enabled=False):
+    def __init__(self, location, sku, tags=None, admin_user_enabled=False, storage_account=None):
         super(Registry, self).__init__(location=location, tags=tags)
+        self.sku = sku
         self.login_server = None
         self.creation_date = None
+        self.provisioning_state = None
         self.admin_user_enabled = admin_user_enabled
         self.storage_account = storage_account

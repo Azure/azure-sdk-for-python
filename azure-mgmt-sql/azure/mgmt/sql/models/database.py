@@ -9,25 +9,25 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .resource import Resource
+from .tracked_resource import TrackedResource
 
 
-class Database(Resource):
+class Database(TrackedResource):
     """Represents a database.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar name: Resource name
-    :vartype name: str
-    :ivar id: Resource ID
+    :ivar id: Resource ID.
     :vartype id: str
-    :ivar type: Resource type
+    :ivar name: Resource name.
+    :vartype name: str
+    :ivar type: Resource type.
     :vartype type: str
-    :param location: Resource location
-    :type location: str
-    :param tags: Resource tags
+    :param tags: Resource tags.
     :type tags: dict
+    :param location: Resource location.
+    :type location: str
     :ivar kind: Kind of database.  This is metadata used for the Azure portal
      experience.
     :vartype kind: str
@@ -47,39 +47,75 @@ class Database(Resource):
     :ivar earliest_restore_date: This records the earliest start date and time
      that restore is available for this database (ISO8601 format).
     :vartype earliest_restore_date: datetime
-    :param create_mode: Specifies the type of database to create. If
-     createMode is not set to Default, sourceDatabaseId must be specified. If
-     createMode is set to PointInTimeRestore, then restorePointInTime must be
-     specified. If createMode is set to Restore, then
-     sourceDatabaseDeletionDate must be specified. Possible values include:
-     'Copy', 'Default', 'NonReadableSecondary', 'OnlineSecondary',
-     'PointInTimeRestore', 'Recovery', 'Restore'
+    :param create_mode: Specifies the mode of database creation.
+     Default: regular database creation.
+     Copy: creates a database as a copy of an existing database.
+     sourceDatabaseId must be specified as the resource ID of the source
+     database.
+     OnlineSecondary/NonReadableSecondary: creates a database as a (readable or
+     nonreadable) secondary replica of an existing database. sourceDatabaseId
+     must be specified as the resource ID of the existing primary database.
+     PointInTimeRestore: Creates a database by restoring a point in time backup
+     of an existing database. sourceDatabaseId must be specified as the
+     resource ID of the existing database, and restorePointInTime must be
+     specified.
+     Recovery: Creates a database by restoring a geo-replicated backup.
+     sourceDatabaseId must be specified as the recoverable database resource ID
+     to restore.
+     Restore: Creates a database by restoring a backup of a deleted database.
+     sourceDatabaseId must be specified. If sourceDatabaseId is the database's
+     original resource ID, then sourceDatabaseDeletionDate must be specified.
+     Otherwise sourceDatabaseId must be the restorable dropped database
+     resource ID and sourceDatabaseDeletionDate is ignored. restorePointInTime
+     may also be specified to restore from an earlier point in time.
+     RestoreLongTermRetentionBackup: Creates a database by restoring from a
+     long term retention vault. recoveryServicesRecoveryPointResourceId must be
+     specified as the recovery point resource ID.
+     Copy, NonReadableSecondary, OnlineSecondary and
+     RestoreLongTermRetentionBackup are not supported for DataWarehouse
+     edition. Possible values include: 'Copy', 'Default',
+     'NonReadableSecondary', 'OnlineSecondary', 'PointInTimeRestore',
+     'Recovery', 'Restore', 'RestoreLongTermRetentionBackup'
     :type create_mode: str or :class:`CreateMode
      <azure.mgmt.sql.models.CreateMode>`
-    :param source_database_id: Conditional. If createMode is not set to
-     Default, then this value must be specified. Specifies the resource ID of
-     the source database. If createMode is NonReadableSecondary or
-     OnlineSecondary, the name of the source database must be the same as this
-     new database.
+    :param source_database_id: Conditional. If createMode is Copy,
+     NonReadableSecondary, OnlineSecondary, PointInTimeRestore, Recovery, or
+     Restore, then this value is required. Specifies the resource ID of the
+     source database. If createMode is NonReadableSecondary or OnlineSecondary,
+     the name of the source database must be the same as the new database being
+     created.
     :type source_database_id: str
-    :param restore_point_in_time: Conditional. If createMode is set to
-     PointInTimeRestore, then this value must be specified. Specifies the point
-     in time (ISO8601 format) of the source database that will be restored to
-     create the new database. Must be greater than or equal to the source
-     database's earliestRestoreDate value.
+    :param source_database_deletion_date: Conditional. If createMode is
+     Restore and sourceDatabaseId is the deleted database's original resource
+     id when it existed (as opposed to its current restorable dropped database
+     id), then this value is required. Specifies the time that the database was
+     deleted.
+    :type source_database_deletion_date: datetime
+    :param restore_point_in_time: Conditional. If createMode is
+     PointInTimeRestore, this value is required. If createMode is Restore, this
+     value is optional. Specifies the point in time (ISO8601 format) of the
+     source database that will be restored to create the new database. Must be
+     greater than or equal to the source database's earliestRestoreDate value.
     :type restore_point_in_time: datetime
+    :param recovery_services_recovery_point_resource_id: Conditional. If
+     createMode is RestoreLongTermRetentionBackup, then this value is required.
+     Specifies the resource ID of the recovery point to restore from.
+    :type recovery_services_recovery_point_resource_id: datetime
     :param edition: The edition of the database. The DatabaseEditions
      enumeration contains all the valid editions. If createMode is
-     NonReadableSecondary or OnlineSecondary, this value is ignored. Possible
+     NonReadableSecondary or OnlineSecondary, this value is ignored. To see
+     possible values, query the capabilities API
+     (/subscriptions/{subscriptionId}/providers/Microsoft.Sql/locations/{locationID}/capabilities)
+     referred to by operationId: "Capabilities_ListByLocation.". Possible
      values include: 'Web', 'Business', 'Basic', 'Standard', 'Premium', 'Free',
-     'Stretch', 'DataWarehouse', 'System'
-    :type edition: str or :class:`DatabaseEditions
-     <azure.mgmt.sql.models.DatabaseEditions>`
+     'Stretch', 'DataWarehouse', 'System', 'System2'
+    :type edition: str or :class:`DatabaseEdition
+     <azure.mgmt.sql.models.DatabaseEdition>`
     :param max_size_bytes: The max size of the database expressed in bytes. If
-     createMode is not Default, this value is ignored. Note: Only the following
-     sizes are supported (in addition to limitations being placed on each
-     edition): { 100 MB | 500 MB |1 GB | 5 GB | 10 GB | 20 GB | 30 GB … 150 GB
-     | 200 GB … 500 GB }
+     createMode is not Default, this value is ignored. To see possible values,
+     query the capabilities API
+     (/subscriptions/{subscriptionId}/providers/Microsoft.Sql/locations/{locationID}/capabilities)
+     referred to by operationId: "Capabilities_ListByLocation."
     :type max_size_bytes: str
     :param requested_service_objective_id: The configured service level
      objective ID of the database. This is the service level objective that is
@@ -87,26 +123,33 @@ class Database(Resource):
      updated, it will match the value of currentServiceObjectiveId property. If
      requestedServiceObjectiveId and requestedServiceObjectiveName are both
      updated, the value of requestedServiceObjectiveId overrides the value of
-     requestedServiceObjectiveName.
+     requestedServiceObjectiveName. To see possible values, query the
+     capabilities API
+     (/subscriptions/{subscriptionId}/providers/Microsoft.Sql/locations/{locationID}/capabilities)
+     referred to by operationId: "Capabilities_ListByLocation."
     :type requested_service_objective_id: str
     :param requested_service_objective_name: The name of the configured
      service level objective of the database. This is the service level
      objective that is in the process of being applied to the database. Once
      successfully updated, it will match the value of serviceLevelObjective
-     property. Possible values include: 'Basic', 'S0', 'S1', 'S2', 'S3', 'P1',
-     'P2', 'P3', 'P4', 'P6', 'P11', 'P15', 'System', 'ElasticPool'
+     property. To see possible values, query the capabilities API
+     (/subscriptions/{subscriptionId}/providers/Microsoft.Sql/locations/{locationID}/capabilities)
+     referred to by operationId: "Capabilities_ListByLocation.". Possible
+     values include: 'Basic', 'S0', 'S1', 'S2', 'S3', 'P1', 'P2', 'P3', 'P4',
+     'P6', 'P11', 'P15', 'System', 'System2', 'ElasticPool'
     :type requested_service_objective_name: str or
      :class:`ServiceObjectiveName <azure.mgmt.sql.models.ServiceObjectiveName>`
     :ivar service_level_objective: The current service level objective of the
      database. Possible values include: 'Basic', 'S0', 'S1', 'S2', 'S3', 'P1',
-     'P2', 'P3', 'P4', 'P6', 'P11', 'P15', 'System', 'ElasticPool'
+     'P2', 'P3', 'P4', 'P6', 'P11', 'P15', 'System', 'System2', 'ElasticPool'
     :vartype service_level_objective: str or :class:`ServiceObjectiveName
      <azure.mgmt.sql.models.ServiceObjectiveName>`
     :ivar status: The status of the database.
     :vartype status: str
     :param elastic_pool_name: The name of the elastic pool the database is in.
      If elasticPoolName and requestedServiceObjectiveName are both updated, the
-     value of requestedServiceObjectiveName is ignored.
+     value of requestedServiceObjectiveName is ignored. Not supported for
+     DataWarehouse edition.
     :type elastic_pool_name: str
     :ivar default_secondary_location: The default secondary region for this
      database.
@@ -115,8 +158,6 @@ class Database(Resource):
      database. Expanded property
     :vartype service_tier_advisors: list of :class:`ServiceTierAdvisor
      <azure.mgmt.sql.models.ServiceTierAdvisor>`
-    :ivar schemas: The schemas from this database.
-    :vartype schemas: list of :class:`Schema <azure.mgmt.sql.models.Schema>`
     :ivar transparent_data_encryption: The transparent data encryption info
      for this database.
     :vartype transparent_data_encryption: list of
@@ -128,21 +169,23 @@ class Database(Resource):
     :ivar failover_group_id: The id indicating the failover group containing
      this database.
     :vartype failover_group_id: str
-    :param read_scale: Conditional.  If the database is a geo-secondary,
+    :param read_scale: Conditional. If the database is a geo-secondary,
      readScale indicates whether read-only connections are allowed to this
-     database or not. Possible values include: 'Enabled', 'Disabled'
+     database or not. Not supported for DataWarehouse edition. Possible values
+     include: 'Enabled', 'Disabled'
     :type read_scale: str or :class:`ReadScale
      <azure.mgmt.sql.models.ReadScale>`
     :param sample_name: Indicates the name of the sample schema to apply when
      creating this database. If createMode is not Default, this value is
-     ignored. Possible values include: 'AdventureWorksLT'
+     ignored. Not supported for DataWarehouse edition. Possible values include:
+     'AdventureWorksLT'
     :type sample_name: str or :class:`SampleName
      <azure.mgmt.sql.models.SampleName>`
     """
 
     _validation = {
-        'name': {'readonly': True},
         'id': {'readonly': True},
+        'name': {'readonly': True},
         'type': {'readonly': True},
         'location': {'required': True},
         'kind': {'readonly': True},
@@ -155,18 +198,17 @@ class Database(Resource):
         'status': {'readonly': True},
         'default_secondary_location': {'readonly': True},
         'service_tier_advisors': {'readonly': True},
-        'schemas': {'readonly': True},
         'transparent_data_encryption': {'readonly': True},
         'recommended_index': {'readonly': True},
         'failover_group_id': {'readonly': True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
         'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
+        'location': {'key': 'location', 'type': 'str'},
         'kind': {'key': 'kind', 'type': 'str'},
         'collation': {'key': 'properties.collation', 'type': 'str'},
         'creation_date': {'key': 'properties.creationDate', 'type': 'iso-8601'},
@@ -176,7 +218,9 @@ class Database(Resource):
         'earliest_restore_date': {'key': 'properties.earliestRestoreDate', 'type': 'iso-8601'},
         'create_mode': {'key': 'properties.createMode', 'type': 'str'},
         'source_database_id': {'key': 'properties.sourceDatabaseId', 'type': 'str'},
+        'source_database_deletion_date': {'key': 'properties.sourceDatabaseDeletionDate', 'type': 'iso-8601'},
         'restore_point_in_time': {'key': 'properties.restorePointInTime', 'type': 'iso-8601'},
+        'recovery_services_recovery_point_resource_id': {'key': 'properties.recoveryServicesRecoveryPointResourceId', 'type': 'iso-8601'},
         'edition': {'key': 'properties.edition', 'type': 'str'},
         'max_size_bytes': {'key': 'properties.maxSizeBytes', 'type': 'str'},
         'requested_service_objective_id': {'key': 'properties.requestedServiceObjectiveId', 'type': 'str'},
@@ -186,7 +230,6 @@ class Database(Resource):
         'elastic_pool_name': {'key': 'properties.elasticPoolName', 'type': 'str'},
         'default_secondary_location': {'key': 'properties.defaultSecondaryLocation', 'type': 'str'},
         'service_tier_advisors': {'key': 'properties.serviceTierAdvisors', 'type': '[ServiceTierAdvisor]'},
-        'schemas': {'key': 'properties.schemas', 'type': '[Schema]'},
         'transparent_data_encryption': {'key': 'properties.transparentDataEncryption', 'type': '[TransparentDataEncryption]'},
         'recommended_index': {'key': 'properties.recommendedIndex', 'type': '[RecommendedIndex]'},
         'failover_group_id': {'key': 'properties.failoverGroupId', 'type': 'str'},
@@ -194,8 +237,8 @@ class Database(Resource):
         'sample_name': {'key': 'properties.sampleName', 'type': 'str'},
     }
 
-    def __init__(self, location, tags=None, collation=None, create_mode=None, source_database_id=None, restore_point_in_time=None, edition=None, max_size_bytes=None, requested_service_objective_id=None, requested_service_objective_name=None, elastic_pool_name=None, read_scale=None, sample_name=None):
-        super(Database, self).__init__(location=location, tags=tags)
+    def __init__(self, location, tags=None, collation=None, create_mode=None, source_database_id=None, source_database_deletion_date=None, restore_point_in_time=None, recovery_services_recovery_point_resource_id=None, edition=None, max_size_bytes=None, requested_service_objective_id=None, requested_service_objective_name=None, elastic_pool_name=None, read_scale=None, sample_name=None):
+        super(Database, self).__init__(tags=tags, location=location)
         self.kind = None
         self.collation = collation
         self.creation_date = None
@@ -205,7 +248,9 @@ class Database(Resource):
         self.earliest_restore_date = None
         self.create_mode = create_mode
         self.source_database_id = source_database_id
+        self.source_database_deletion_date = source_database_deletion_date
         self.restore_point_in_time = restore_point_in_time
+        self.recovery_services_recovery_point_resource_id = recovery_services_recovery_point_resource_id
         self.edition = edition
         self.max_size_bytes = max_size_bytes
         self.requested_service_objective_id = requested_service_objective_id
@@ -215,7 +260,6 @@ class Database(Resource):
         self.elastic_pool_name = elastic_pool_name
         self.default_secondary_location = None
         self.service_tier_advisors = None
-        self.schemas = None
         self.transparent_data_encryption = None
         self.recommended_index = None
         self.failover_group_id = None
