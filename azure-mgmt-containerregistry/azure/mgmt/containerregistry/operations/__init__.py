@@ -10,7 +10,9 @@
 # --------------------------------------------------------------------------
 
 from .registries_operations import RegistriesOperations
+from .operations import Operations
 
 __all__ = [
     'RegistriesOperations',
+    'Operations',
 ]

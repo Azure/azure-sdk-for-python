@@ -9,21 +9,21 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .integration_account_resource import IntegrationAccountResource
+from .resource import Resource
 
 
-class IntegrationAccountPartner(IntegrationAccountResource):
-    """IntegrationAccountPartner.
+class IntegrationAccountPartner(Resource):
+    """The integration account partner.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :param id: The resource id.
-    :type id: str
-    :param name: The resource name.
-    :type name: str
-    :param type: The resource type.
-    :type type: str
+    :ivar id: The resource id.
+    :vartype id: str
+    :ivar name: Gets the resource name.
+    :vartype name: str
+    :ivar type: Gets the resource type.
+    :vartype type: str
     :param location: The resource location.
     :type location: str
     :param tags: The resource tags.
@@ -41,11 +41,16 @@ class IntegrationAccountPartner(IntegrationAccountResource):
     :param content: The partner content.
     :type content: :class:`PartnerContent
      <azure.mgmt.logic.models.PartnerContent>`
-    """ 
+    """
 
     _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'partner_type': {'required': True},
         'created_time': {'readonly': True},
         'changed_time': {'readonly': True},
+        'content': {'required': True},
     }
 
     _attribute_map = {
@@ -61,8 +66,8 @@ class IntegrationAccountPartner(IntegrationAccountResource):
         'content': {'key': 'properties.content', 'type': 'PartnerContent'},
     }
 
-    def __init__(self, id=None, name=None, type=None, location=None, tags=None, partner_type=None, metadata=None, content=None):
-        super(IntegrationAccountPartner, self).__init__(id=id, name=name, type=type, location=location, tags=tags)
+    def __init__(self, partner_type, content, location=None, tags=None, metadata=None):
+        super(IntegrationAccountPartner, self).__init__(location=location, tags=tags)
         self.partner_type = partner_type
         self.created_time = None
         self.changed_time = None

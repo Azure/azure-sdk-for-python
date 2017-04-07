@@ -13,7 +13,7 @@ from msrest.serialization import Model
 
 
 class EdifactValidationSettings(Model):
-    """EdifactValidationSettings.
+    """The Edifact agreement validation settings.
 
     :param validate_character_set: The value indicating whether to validate
      character set in the message.
@@ -46,7 +46,20 @@ class EdifactValidationSettings(Model):
      values include: 'NotSpecified', 'NotAllowed', 'Optional', 'Mandatory'
     :type trailing_separator_policy: str or :class:`TrailingSeparatorPolicy
      <azure.mgmt.logic.models.TrailingSeparatorPolicy>`
-    """ 
+    """
+
+    _validation = {
+        'validate_character_set': {'required': True},
+        'check_duplicate_interchange_control_number': {'required': True},
+        'interchange_control_number_validity_days': {'required': True},
+        'check_duplicate_group_control_number': {'required': True},
+        'check_duplicate_transaction_set_control_number': {'required': True},
+        'validate_edi_types': {'required': True},
+        'validate_xsd_types': {'required': True},
+        'allow_leading_and_trailing_spaces_and_zeroes': {'required': True},
+        'trim_leading_and_trailing_spaces_and_zeroes': {'required': True},
+        'trailing_separator_policy': {'required': True},
+    }
 
     _attribute_map = {
         'validate_character_set': {'key': 'validateCharacterSet', 'type': 'bool'},
@@ -54,14 +67,14 @@ class EdifactValidationSettings(Model):
         'interchange_control_number_validity_days': {'key': 'interchangeControlNumberValidityDays', 'type': 'int'},
         'check_duplicate_group_control_number': {'key': 'checkDuplicateGroupControlNumber', 'type': 'bool'},
         'check_duplicate_transaction_set_control_number': {'key': 'checkDuplicateTransactionSetControlNumber', 'type': 'bool'},
-        'validate_edi_types': {'key': 'validateEDITypes', 'type': 'bool'},
-        'validate_xsd_types': {'key': 'validateXSDTypes', 'type': 'bool'},
+        'validate_edi_types': {'key': 'validateEdiTypes', 'type': 'bool'},
+        'validate_xsd_types': {'key': 'validateXsdTypes', 'type': 'bool'},
         'allow_leading_and_trailing_spaces_and_zeroes': {'key': 'allowLeadingAndTrailingSpacesAndZeroes', 'type': 'bool'},
         'trim_leading_and_trailing_spaces_and_zeroes': {'key': 'trimLeadingAndTrailingSpacesAndZeroes', 'type': 'bool'},
         'trailing_separator_policy': {'key': 'trailingSeparatorPolicy', 'type': 'TrailingSeparatorPolicy'},
     }
 
-    def __init__(self, validate_character_set=None, check_duplicate_interchange_control_number=None, interchange_control_number_validity_days=None, check_duplicate_group_control_number=None, check_duplicate_transaction_set_control_number=None, validate_edi_types=None, validate_xsd_types=None, allow_leading_and_trailing_spaces_and_zeroes=None, trim_leading_and_trailing_spaces_and_zeroes=None, trailing_separator_policy=None):
+    def __init__(self, validate_character_set, check_duplicate_interchange_control_number, interchange_control_number_validity_days, check_duplicate_group_control_number, check_duplicate_transaction_set_control_number, validate_edi_types, validate_xsd_types, allow_leading_and_trailing_spaces_and_zeroes, trim_leading_and_trailing_spaces_and_zeroes, trailing_separator_policy):
         self.validate_character_set = validate_character_set
         self.check_duplicate_interchange_control_number = check_duplicate_interchange_control_number
         self.interchange_control_number_validity_days = interchange_control_number_validity_days

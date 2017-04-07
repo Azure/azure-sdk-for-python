@@ -173,7 +173,7 @@ class RecommendedElasticPoolsOperations(object):
 
         return deserialized
 
-    def list(
+    def list_by_server(
             self, resource_group_name, server_name, custom_headers=None, raw=False, **operation_config):
         """Returns recommended elastic pools.
 

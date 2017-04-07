@@ -54,6 +54,7 @@ class WorkflowRunsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`WorkflowRunPaged
          <azure.mgmt.logic.models.WorkflowRunPaged>`
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -129,6 +130,7 @@ class WorkflowRunsOperations(object):
         :rtype: :class:`WorkflowRun <azure.mgmt.logic.models.WorkflowRun>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Logic/workflows/{workflowName}/runs/{runName}'
@@ -192,6 +194,7 @@ class WorkflowRunsOperations(object):
         :rtype: None
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Logic/workflows/{workflowName}/runs/{runName}/cancel'

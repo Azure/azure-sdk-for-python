@@ -13,7 +13,7 @@ from msrest.serialization import Model
 
 
 class AS2MessageConnectionSettings(Model):
-    """AS2MessageConnectionSettings.
+    """The AS2 agreement message connection settings.
 
     :param ignore_certificate_name_mismatch: The value indicating whether to
      ignore mismatch in certificate name.
@@ -27,7 +27,14 @@ class AS2MessageConnectionSettings(Model):
     :param unfold_http_headers: The value indicating whether to unfold the
      HTTP headers.
     :type unfold_http_headers: bool
-    """ 
+    """
+
+    _validation = {
+        'ignore_certificate_name_mismatch': {'required': True},
+        'support_http_status_code_continue': {'required': True},
+        'keep_http_connection_alive': {'required': True},
+        'unfold_http_headers': {'required': True},
+    }
 
     _attribute_map = {
         'ignore_certificate_name_mismatch': {'key': 'ignoreCertificateNameMismatch', 'type': 'bool'},
@@ -36,7 +43,7 @@ class AS2MessageConnectionSettings(Model):
         'unfold_http_headers': {'key': 'unfoldHttpHeaders', 'type': 'bool'},
     }
 
-    def __init__(self, ignore_certificate_name_mismatch=None, support_http_status_code_continue=None, keep_http_connection_alive=None, unfold_http_headers=None):
+    def __init__(self, ignore_certificate_name_mismatch, support_http_status_code_continue, keep_http_connection_alive, unfold_http_headers):
         self.ignore_certificate_name_mismatch = ignore_certificate_name_mismatch
         self.support_http_status_code_continue = support_http_status_code_continue
         self.keep_http_connection_alive = keep_http_connection_alive

@@ -13,7 +13,7 @@ from msrest.serialization import Model
 
 
 class X12EnvelopeOverride(Model):
-    """X12EnvelopeOverride.
+    """The X12 envelope override settings.
 
     :param target_namespace: The target namespace on which this envelope
      settings has to be applied.
@@ -25,7 +25,7 @@ class X12EnvelopeOverride(Model):
      be applied.
     :type message_id: str
     :param responsible_agency_code: The responsible agency code.
-    :type responsible_agency_code: int
+    :type responsible_agency_code: str
     :param header_version: The header version.
     :type header_version: str
     :param sender_application_id: The sender application id.
@@ -42,13 +42,25 @@ class X12EnvelopeOverride(Model):
      'NotSpecified', 'HHMM', 'HHMMSS', 'HHMMSSdd', 'HHMMSSd'
     :type time_format: str or :class:`X12TimeFormat
      <azure.mgmt.logic.models.X12TimeFormat>`
-    """ 
+    """
+
+    _validation = {
+        'target_namespace': {'required': True},
+        'protocol_version': {'required': True},
+        'message_id': {'required': True},
+        'responsible_agency_code': {'required': True},
+        'header_version': {'required': True},
+        'sender_application_id': {'required': True},
+        'receiver_application_id': {'required': True},
+        'date_format': {'required': True},
+        'time_format': {'required': True},
+    }
 
     _attribute_map = {
         'target_namespace': {'key': 'targetNamespace', 'type': 'str'},
         'protocol_version': {'key': 'protocolVersion', 'type': 'str'},
         'message_id': {'key': 'messageId', 'type': 'str'},
-        'responsible_agency_code': {'key': 'responsibleAgencyCode', 'type': 'int'},
+        'responsible_agency_code': {'key': 'responsibleAgencyCode', 'type': 'str'},
         'header_version': {'key': 'headerVersion', 'type': 'str'},
         'sender_application_id': {'key': 'senderApplicationId', 'type': 'str'},
         'receiver_application_id': {'key': 'receiverApplicationId', 'type': 'str'},
@@ -57,7 +69,7 @@ class X12EnvelopeOverride(Model):
         'time_format': {'key': 'timeFormat', 'type': 'X12TimeFormat'},
     }
 
-    def __init__(self, target_namespace=None, protocol_version=None, message_id=None, responsible_agency_code=None, header_version=None, sender_application_id=None, receiver_application_id=None, functional_identifier_code=None, date_format=None, time_format=None):
+    def __init__(self, target_namespace, protocol_version, message_id, responsible_agency_code, header_version, sender_application_id, receiver_application_id, date_format, time_format, functional_identifier_code=None):
         self.target_namespace = target_namespace
         self.protocol_version = protocol_version
         self.message_id = message_id

@@ -13,11 +13,11 @@ from msrest.serialization import Model
 
 
 class CallbackUrl(Model):
-    """CallbackUrl.
+    """The callback url.
 
     :param value: The URL value.
     :type value: str
-    """ 
+    """
 
     _attribute_map = {
         'value': {'key': 'value', 'type': 'str'},

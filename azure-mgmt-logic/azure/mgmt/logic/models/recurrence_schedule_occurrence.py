@@ -13,14 +13,14 @@ from msrest.serialization import Model
 
 
 class RecurrenceScheduleOccurrence(Model):
-    """RecurrenceScheduleOccurrence.
+    """The recurrence schedule occurence.
 
     :param day: The day of the week. Possible values include: 'Sunday',
      'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'
     :type day: str or :class:`DayOfWeek <azure.mgmt.logic.models.DayOfWeek>`
     :param occurrence: The occurrence.
     :type occurrence: int
-    """ 
+    """
 
     _attribute_map = {
         'day': {'key': 'day', 'type': 'DayOfWeek'},

@@ -13,7 +13,7 @@ from msrest.serialization import Model
 
 
 class X12SchemaReference(Model):
-    """X12SchemaReference.
+    """The X12 schema reference.
 
     :param message_id: The message id.
     :type message_id: str
@@ -23,7 +23,13 @@ class X12SchemaReference(Model):
     :type schema_version: str
     :param schema_name: The schema name.
     :type schema_name: str
-    """ 
+    """
+
+    _validation = {
+        'message_id': {'required': True},
+        'schema_version': {'required': True},
+        'schema_name': {'required': True},
+    }
 
     _attribute_map = {
         'message_id': {'key': 'messageId', 'type': 'str'},
@@ -32,7 +38,7 @@ class X12SchemaReference(Model):
         'schema_name': {'key': 'schemaName', 'type': 'str'},
     }
 
-    def __init__(self, message_id=None, sender_application_id=None, schema_version=None, schema_name=None):
+    def __init__(self, message_id, schema_version, schema_name, sender_application_id=None):
         self.message_id = message_id
         self.sender_application_id = sender_application_id
         self.schema_version = schema_version

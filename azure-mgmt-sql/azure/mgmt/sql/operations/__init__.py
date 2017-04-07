@@ -9,14 +9,18 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .servers_operations import ServersOperations
+from .capabilities_operations import CapabilitiesOperations
+from .firewall_rules_operations import FirewallRulesOperations
 from .databases_operations import DatabasesOperations
+from .servers_operations import ServersOperations
 from .elastic_pools_operations import ElasticPoolsOperations
 from .recommended_elastic_pools_operations import RecommendedElasticPoolsOperations
 
 __all__ = [
-    'ServersOperations',
+    'CapabilitiesOperations',
+    'FirewallRulesOperations',
     'DatabasesOperations',
+    'ServersOperations',
     'ElasticPoolsOperations',
     'RecommendedElasticPoolsOperations',
 ]

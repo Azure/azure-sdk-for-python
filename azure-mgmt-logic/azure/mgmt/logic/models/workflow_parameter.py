@@ -13,7 +13,7 @@ from msrest.serialization import Model
 
 
 class WorkflowParameter(Model):
-    """WorkflowParameter.
+    """The workflow parameters.
 
     :param type: The type. Possible values include: 'NotSpecified', 'String',
      'SecureString', 'Int', 'Float', 'Bool', 'Array', 'Object', 'SecureObject'
@@ -25,7 +25,7 @@ class WorkflowParameter(Model):
     :type metadata: object
     :param description: The description.
     :type description: str
-    """ 
+    """
 
     _attribute_map = {
         'type': {'key': 'type', 'type': 'ParameterType'},

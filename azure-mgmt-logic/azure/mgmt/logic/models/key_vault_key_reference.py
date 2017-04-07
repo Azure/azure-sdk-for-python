@@ -13,7 +13,7 @@ from msrest.serialization import Model
 
 
 class KeyVaultKeyReference(Model):
-    """KeyVaultKeyReference.
+    """The reference to the key vault key.
 
     :param key_vault: The key vault reference.
     :type key_vault: :class:`KeyVaultKeyReferenceKeyVault
@@ -22,7 +22,12 @@ class KeyVaultKeyReference(Model):
     :type key_name: str
     :param key_version: The private key version in key vault.
     :type key_version: str
-    """ 
+    """
+
+    _validation = {
+        'key_vault': {'required': True},
+        'key_name': {'required': True},
+    }
 
     _attribute_map = {
         'key_vault': {'key': 'keyVault', 'type': 'KeyVaultKeyReferenceKeyVault'},
@@ -30,7 +35,7 @@ class KeyVaultKeyReference(Model):
         'key_version': {'key': 'keyVersion', 'type': 'str'},
     }
 
-    def __init__(self, key_vault=None, key_name=None, key_version=None):
+    def __init__(self, key_vault, key_name, key_version=None):
         self.key_vault = key_vault
         self.key_name = key_name
         self.key_version = key_version

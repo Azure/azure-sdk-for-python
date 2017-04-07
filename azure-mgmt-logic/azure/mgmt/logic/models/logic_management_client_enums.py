@@ -147,6 +147,13 @@ class KeyType(Enum):
     secondary = "Secondary"
 
 
+class IntegrationAccountSkuName(Enum):
+
+    not_specified = "NotSpecified"
+    free = "Free"
+    standard = "Standard"
+
+
 class SchemaType(Enum):
 
     not_specified = "NotSpecified"
@@ -177,6 +184,8 @@ class HashingAlgorithm(Enum):
 
     not_specified = "NotSpecified"
     none = "None"
+    md5 = "MD5"
+    sha1 = "SHA1"
     sha2256 = "SHA2256"
     sha2384 = "SHA2384"
     sha2512 = "SHA2512"
