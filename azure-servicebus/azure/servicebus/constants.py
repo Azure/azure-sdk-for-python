@@ -14,7 +14,7 @@
 #--------------------------------------------------------------------------
 
 __author__ = 'Microsoft Corp. <ptvshelp@microsoft.com>'
-__version__ = '0.21.0'
+__version__ = '0.21.1'
 
 _USER_AGENT_STRING = 'pyazure/' + __version__
 

@@ -25,7 +25,7 @@ except ImportError:
 
 setup(
     name='azure-mgmt-nspkg',
-    version='1.0.0',
+    version='2.0.0',
     description='Microsoft Azure Resource Management Namespace Package [Internal]',
     long_description=open('README.rst', 'r').read(),
     license='MIT License',
@@ -50,6 +50,6 @@ setup(
         'azure.mgmt',
     ],
     install_requires=[
-        'azure-nspkg',
-    ],
+        'azure-nspkg>=2.0.0',
+    ]
 )

@@ -7,8 +7,15 @@
 #--------------------------------------------------------------------------
 
 from setuptools import find_packages, setup
+try:
+    from azure_bdist_wheel import cmdclass
+except ImportError:
+    from distutils import log as logger
+    logger.warn("Wheel is not available, disabling bdist_wheel hook")
+    cmdclass = {}
 from io import open
 import re
+import sys
 
 # azure v0.x is not compatible with this package
 # azure v0.x used to have a __version__ attribute (newer versions don't)
@@ -62,8 +69,8 @@ setup(
     zip_safe=False,
     packages=find_packages(),
     install_requires=[
+        'azure-common~=1.1.5',
         'msrestazure~=0.4.7',
-        'azure-common~=1.1.4',
-        'azure-mgmt-nspkg',
     ],
+    cmdclass=cmdclass
 )
