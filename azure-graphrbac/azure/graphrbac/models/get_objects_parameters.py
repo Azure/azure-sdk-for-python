@@ -22,7 +22,7 @@ class GetObjectsParameters(Model):
     :param include_directory_object_references: If true, also searches for
      object IDs in the partner tenant.
     :type include_directory_object_references: bool
-    """ 
+    """
 
     _validation = {
         'include_directory_object_references': {'required': True},

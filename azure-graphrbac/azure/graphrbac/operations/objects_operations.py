@@ -23,6 +23,7 @@ class ObjectsOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An objec model deserializer.
+    :ivar api_version: Client API version. Constant value: "1.6".
     """
 
     def __init__(self, client, config, serializer, deserializer):
@@ -30,6 +31,7 @@ class ObjectsOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
+        self.api_version = "1.6"
 
         self.config = config
 
@@ -48,8 +50,6 @@ class ObjectsOperations(object):
         :raises:
          :class:`GraphErrorException<azure.graphrbac.models.GraphErrorException>`
         """
-        api_version = "1.6"
-
         # Construct URL
         url = '/{tenantID}/me'
         path_format_arguments = {
@@ -59,7 +59,7 @@ class ObjectsOperations(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -105,8 +105,6 @@ class ObjectsOperations(object):
          <azure.graphrbac.models.AADObjectPaged>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
-        api_version = "1.6-internal"
-
         def internal_paging(next_link=None, raw=False):
 
             if not next_link:
@@ -119,7 +117,7 @@ class ObjectsOperations(object):
 
                 # Construct parameters
                 query_parameters = {}
-                query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
             else:
                 url = '/{tenantID}/{nextLink}'
@@ -129,7 +127,7 @@ class ObjectsOperations(object):
                 }
                 url = self._client.format_url(url, **path_format_arguments)
                 query_parameters = {}
-                query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
             # Construct headers
             header_parameters = {}
