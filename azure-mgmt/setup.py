@@ -25,7 +25,7 @@ except ImportError:
 
 setup(
     name='azure-mgmt',
-    version='0.30.0',
+    version='1.0.0rc1',
     description='Microsoft Azure Resource Management Client Libraries for Python',
     long_description=open('README.rst', 'r').read(),
     license='MIT License',
