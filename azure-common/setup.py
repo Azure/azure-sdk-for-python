@@ -7,6 +7,14 @@
 #--------------------------------------------------------------------------
 
 from setuptools import setup
+import sys
+try:
+    from azure_bdist_wheel import cmdclass
+except ImportError:
+    from distutils import log as logger
+    logger.warn("Wheel is not available, disabling bdist_wheel hook")
+    cmdclass = {}
+
 
 # azure v0.x is not compatible with this package
 # azure v0.x used to have a __version__ attribute (newer versions don't)
@@ -25,7 +33,7 @@ except ImportError:
 
 setup(
     name='azure-common',
-    version='1.1.4',
+    version='1.1.5',
     description='Microsoft Azure Client Library for Python (Common)',
     long_description=open('README.rst', 'r').read(),
     license='MIT License',
@@ -49,13 +57,10 @@ setup(
         'azure',
         'azure.common',
     ],
-    install_requires=[
-        'azure-nspkg',
-    ],
     extras_require={
         'autorest':[
             'msrestazure>=0.4.0,<0.5.0',
-            'msrest>=0.4.0,<0.5.0'
         ]
-    }
+    },
+    cmdclass=cmdclass
 )
