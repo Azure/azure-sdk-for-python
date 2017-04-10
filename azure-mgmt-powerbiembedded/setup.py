@@ -7,6 +7,12 @@
 #--------------------------------------------------------------------------
 
 from setuptools import setup
+try:
+    from azure_bdist_wheel import cmdclass
+except ImportError:
+    from distutils import log as logger
+    logger.warn("Wheel is not available, disabling bdist_wheel hook")
+    cmdclass = {}
 import re
 
 # azure v0.x is not compatible with this package
@@ -62,8 +68,8 @@ setup(
         'azure.mgmt.powerbiembedded.operations',
     ],
     install_requires=[
-        'azure-common~=1.1.4',
-        'msrestazure~=0.4.6',
-        'azure-mgmt-nspkg',
+        'azure-common~=1.1.5',
+        'msrestazure~=0.4.7',
     ],
+    cmdclass=cmdclass
 )

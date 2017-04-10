@@ -16,6 +16,12 @@
 #--------------------------------------------------------------------------
 
 from setuptools import setup
+try:
+    from azure_bdist_wheel import cmdclass
+except ImportError:
+    from distutils import log as logger
+    logger.warn("Wheel is not available, disabling bdist_wheel hook")
+    cmdclass = {}
 
 # azure v0.x is not compatible with this package
 # azure v0.x used to have a __version__ attribute (newer versions don't)
@@ -34,7 +40,7 @@ except ImportError:
 
 setup(
     name='azure-servicebus',
-    version='0.21.0',
+    version='0.21.1',
     description='Microsoft Azure Service Bus Client Library for Python',
     long_description=open('README.rst', 'r').read(),
     license='Apache License 2.0',
@@ -60,7 +66,8 @@ setup(
         'azure.servicebus._http',
     ],
     install_requires=[
-        'azure-common',
+        'azure-common>=1.1.5',
         'requests',
     ],
+    cmdclass=cmdclass
 )

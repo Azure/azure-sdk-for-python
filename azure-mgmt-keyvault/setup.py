@@ -7,6 +7,12 @@
 #--------------------------------------------------------------------------
 
 from setuptools import setup
+try:
+    from azure_bdist_wheel import cmdclass
+except ImportError:
+    from distutils import log as logger
+    logger.warn("Wheel is not available, disabling bdist_wheel hook")
+    cmdclass = {}
 from io import open
 import re
 
@@ -68,8 +74,8 @@ setup(
         'azure.mgmt.keyvault.operations',
     ],
     install_requires=[
-        'msrestazure~=0.4.6',
-        'azure-common~=1.1.4',
-        'azure-mgmt-nspkg',
+        'msrestazure~=0.4.7',
+        'azure-common~=1.1.5',
     ],
+    cmdclass=cmdclass
 )
