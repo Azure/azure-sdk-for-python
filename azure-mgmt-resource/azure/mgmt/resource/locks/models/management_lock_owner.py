@@ -12,20 +12,16 @@
 from msrest.serialization import Model
 
 
-class TagCount(Model):
-    """Tag count.
+class ManagementLockOwner(Model):
+    """Lock owner properties.
 
-    :param type: Type of count.
-    :type type: str
-    :param value: Value of count.
-    :type value: int
+    :param application_id: The application ID of the lock owner.
+    :type application_id: str
     """
 
     _attribute_map = {
-        'type': {'key': 'type', 'type': 'str'},
-        'value': {'key': 'value', 'type': 'int'},
+        'application_id': {'key': 'applicationId', 'type': 'str'},
     }
 
-    def __init__(self, type=None, value=None):
-        self.type = type
-        self.value = value
+    def __init__(self, application_id=None):
+        self.application_id = application_id

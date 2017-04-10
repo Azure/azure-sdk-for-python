@@ -13,33 +13,50 @@ from msrest.serialization import Model
 
 
 class ManagementLockObject(Model):
-    """Management lock information.
+    """The lock information.
 
-    :param level: The lock level of the management lock. Possible values
-     include: 'NotSpecified', 'CanNotDelete', 'ReadOnly'
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :param level: The level of the lock. Possible values are: NotSpecified,
+     CanNotDelete, ReadOnly. CanNotDelete means authorized users are able to
+     read and modify the resources, but not delete. ReadOnly means authorized
+     users can only read from a resource, but they can't modify or delete it.
+     Possible values include: 'NotSpecified', 'CanNotDelete', 'ReadOnly'
     :type level: str or :class:`LockLevel
      <azure.mgmt.resource.locks.models.LockLevel>`
-    :param notes: The notes of the management lock.
+    :param notes: Notes about the lock. Maximum of 512 characters.
     :type notes: str
-    :param id: The Id of the lock.
-    :type id: str
-    :param type: The type of the lock.
-    :type type: str
+    :param owners: The owners of the lock.
+    :type owners: list of :class:`ManagementLockOwner
+     <azure.mgmt.resource.locks.models.ManagementLockOwner>`
+    :ivar id: The resource ID of the lock.
+    :vartype id: str
+    :ivar type: The resource type of the lock - Microsoft.Authorization/locks.
+    :vartype type: str
     :param name: The name of the lock.
     :type name: str
-    """ 
+    """
+
+    _validation = {
+        'level': {'required': True},
+        'id': {'readonly': True},
+        'type': {'readonly': True},
+    }
 
     _attribute_map = {
         'level': {'key': 'properties.level', 'type': 'str'},
         'notes': {'key': 'properties.notes', 'type': 'str'},
+        'owners': {'key': 'properties.owners', 'type': '[ManagementLockOwner]'},
         'id': {'key': 'id', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
     }
 
-    def __init__(self, level=None, notes=None, id=None, type=None, name=None):
+    def __init__(self, level, notes=None, owners=None, name=None):
         self.level = level
         self.notes = notes
-        self.id = id
-        self.type = type
+        self.owners = owners
+        self.id = None
+        self.type = None
         self.name = name
