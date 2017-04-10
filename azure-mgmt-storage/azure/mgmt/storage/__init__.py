@@ -9,10 +9,107 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .storage_management_client import StorageManagementClient
+from msrest.service_client import ServiceClient
+from msrest import Serializer, Deserializer
+from msrestazure import AzureConfiguration
 from .version import VERSION
 
-__all__ = ['StorageManagementClient']
 
-__version__ = VERSION
+class StorageManagementClientConfiguration(AzureConfiguration):
+    """Configuration for StorageManagementClient
+    Note that all parameters used to create this instance are saved as instance
+    attributes.
 
+    :param credentials: Credentials needed for the client to connect to Azure.
+    :type credentials: :mod:`A msrestazure Credentials
+     object<msrestazure.azure_active_directory>`
+    :param subscription_id: Gets subscription credentials which uniquely
+     identify the Microsoft Azure subscription. The subscription ID forms part
+     of the URI for every service call.
+    :type subscription_id: str
+    :param str base_url: Service URL
+    """
+
+    def __init__(
+            self, credentials, subscription_id, base_url=None):
+
+        if credentials is None:
+            raise ValueError("Parameter 'credentials' must not be None.")
+        if subscription_id is None:
+            raise ValueError("Parameter 'subscription_id' must not be None.")
+        if not isinstance(subscription_id, str):
+            raise TypeError("Parameter 'subscription_id' must be str.")
+        if not base_url:
+            base_url = 'https://management.azure.com'
+
+        super(StorageManagementClientConfiguration, self).__init__(base_url)
+
+        self.add_user_agent('storagemanagementclient/{}'.format(VERSION))
+        self.add_user_agent('Azure-SDK-For-Python')
+
+        self.credentials = credentials
+        self.subscription_id = subscription_id
+
+
+class StorageManagementClient(object):
+    """The Azure Storage Management API.
+
+    :ivar config: Configuration for client.
+    :vartype config: StorageManagementClientConfiguration
+
+    :ivar storage_accounts: StorageAccounts operations
+    :vartype storage_accounts: .operations.StorageAccountsOperations
+    :ivar usage: Usage operations
+    :vartype usage: .operations.UsageOperations
+
+    :param credentials: Credentials needed for the client to connect to Azure.
+    :type credentials: :mod:`A msrestazure Credentials
+     object<msrestazure.azure_active_directory>`
+    :param subscription_id: Gets subscription credentials which uniquely
+     identify the Microsoft Azure subscription. The subscription ID forms part
+     of the URI for every service call.
+    :type subscription_id: str
+    :param str base_url: Service URL
+    """
+
+    def __init__(
+            self, credentials, subscription_id, api_version = '2016-12-01', base_url=None):
+
+        self.config = StorageManagementClientConfiguration(credentials, subscription_id, base_url)
+        self._client = ServiceClient(self.config.credentials, self.config)
+
+        client_models = {k: v for k, v in self.models(api_version).__dict__.items() if isinstance(v, type)}
+        self.api_version = api_version
+        self._serialize = Serializer(client_models)
+        self._deserialize = Deserializer(client_models)
+
+    @classmethod
+    def models(cls, api_version = '2016-12-01'):
+        if api_version =='2016-12-01':
+            from .v2016_12_01 import models
+            return models
+        elif api_version =='2015-06-15':
+            from .v2015_06_15 import models
+            return models
+        else:
+            raise NotImplementedError("APIVersion {} is not available".format(api_version))
+
+    @property
+    def storage_accounts(self):
+        if self.api_version =='2016-12-01':
+            from .v2016_12_01.operations import StorageAccountsOperations as OperationClass
+        elif self.api_version =='2015-06-15':
+            from .v2015_06_15.operations import StorageAccountsOperations as OperationClass
+        else:
+            raise NotImplementedError("APIVersion {} is not available".format(self.api_version))
+        return OperationClass(self._client, self.config, self._serialize, self._deserialize)
+
+    @property
+    def usage(self):
+        if self.api_version =='2016-12-01':
+            from .v2016_12_01.operations import UsageOperations as OperationClass
+        elif self.api_version =='2015-06-15':
+            from .v2015_06_15.operations import UsageOperations as OperationClass
+        else:
+            raise NotImplementedError("APIVersion {} is not available".format(self.api_version))
+        return OperationClass(self._client, self.config, self._serialize, self._deserialize)

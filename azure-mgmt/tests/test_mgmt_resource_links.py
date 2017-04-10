@@ -51,6 +51,10 @@ class MgmtResourceLinksTest(AzureMgmtTestCase):
             }
         )
         self.assertEqual(link.name, 'myLink')
+        
+        if not self.is_playback():
+            import time
+            time.sleep(10)
 
         link = self.client.resource_links.get(link.id)
         self.assertEqual(link.name, 'myLink')

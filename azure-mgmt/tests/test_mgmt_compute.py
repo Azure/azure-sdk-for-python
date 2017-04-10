@@ -28,16 +28,19 @@ class MgmtComputeTest(AzureMgmtTestCase):
         self.compute_client = self.create_mgmt_client(
             azure.mgmt.compute.ComputeManagementClient
         )
-        self.storage_client = self.create_mgmt_client(
-            azure.mgmt.storage.StorageManagementClient
-        )
-        self.network_client = self.create_mgmt_client(
-            azure.mgmt.network.NetworkManagementClient
+        self.cs_client = self.create_mgmt_client(
+            azure.mgmt.compute.ContainerServiceClient
         )
 
         self.linux_img_ref_id = "/" + self.compute_client.config.subscription_id + "/services/images/b4590d9e3ed742e4a1d46e5424aa335e__sles12-azure-guest-priority.x86-64-0.4.3-build1.1"
         self.windows_img_ref_id = "/" + self.compute_client.config.subscription_id + "/services/images/a699494373c04fc0bc8f2bb1389d6106__Windows-Server-2012-Datacenter-201503.01-en.us-127GB.vhd"
         if not self.is_playback():
+            self.storage_client = self.create_mgmt_client(
+                azure.mgmt.storage.StorageManagementClient
+            )
+            self.network_client = self.create_mgmt_client(
+                azure.mgmt.network.NetworkManagementClient
+            )
             self.create_resource_group()
 
     def get_resource_names(self, base):
@@ -524,7 +527,7 @@ class MgmtComputeTest(AzureMgmtTestCase):
         container_name = self.get_resource_name('pycontainer')
         
         # https://msdn.microsoft.com/en-us/library/azure/mt711471.aspx
-        async_create = self.compute_client.container_services.create_or_update(
+        async_create = self.cs_client.container_services.create_or_update(
             self.group_name,
             container_name,
             {
@@ -555,20 +558,20 @@ class MgmtComputeTest(AzureMgmtTestCase):
         )
         container = async_create.result()
 
-        container = self.compute_client.container_services.get(
+        container = self.cs_client.container_services.get(
             self.group_name,
             container.name
         )
 
-        containers = list(self.compute_client.container_services.list_by_resource_group(
+        containers = list(self.cs_client.container_services.list_by_resource_group(
             self.group_name
         ))
         self.assertEqual(len(containers), 1)
 
-        containers = list(self.compute_client.container_services.list())
+        containers = list(self.cs_client.container_services.list())
         self.assertEqual(len(containers), 1)
 
-        async_delete = self.compute_client.container_services.delete(
+        async_delete = self.cs_client.container_services.delete(
             self.group_name,
             container.name
         )
