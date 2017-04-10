@@ -25,6 +25,8 @@ packages = [os.path.dirname(p) for p in glob.glob('azure*/setup.py')]
 # Extract nspkg and sort nspkg by number of "-"
 nspkg_packages = [p for p in packages if "nspkg" in p]
 nspkg_packages.sort(key = lambda x: len([c for c in x if c == '-']))
+# Consider "azure-common" as a power nspkg : has to be installed first after real nspkg
+nspkg_packages.append("azure-common")
 
 # Manually push meta-packages at the end
 meta_package = ['azure', 'azure-mgmt']
@@ -46,6 +48,7 @@ for pkg_name in packages:
         os.chdir(pkg_setup_folder)
         sys.path = [pkg_setup_folder] + copy.copy(saved_syspath)
 
+        print("Start ", pkg_setup_path)
         result = runpy.run_path(pkg_setup_path)
     except Exception as e:
         print(e, file=sys.stderr)
