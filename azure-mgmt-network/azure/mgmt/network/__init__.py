@@ -1,4 +1,4 @@
-# coding=utf-8
+﻿# coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for
@@ -9,10 +9,348 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .network_management_client import NetworkManagementClient
+from msrest.service_client import ServiceClient
+from msrest import Serializer, Deserializer
+from msrestazure import AzureConfiguration
 from .version import VERSION
+from msrest.pipeline import ClientRawResponse
+from msrestazure.azure_exceptions import CloudError
+from msrestazure.azure_operation import AzureOperationPoller
+import uuid
 
-__all__ = ['NetworkManagementClient']
 
-__version__ = VERSION
+class NetworkManagementClientConfiguration(AzureConfiguration):
+    """Configuration for NetworkManagementClient
+    Note that all parameters used to create this instance are saved as instance
+    attributes.
 
+    :param credentials: Credentials needed for the client to connect to Azure.
+    :type credentials: :mod:`A msrestazure Credentials
+     object<msrestazure.azure_active_directory>`
+    :param subscription_id: The subscription credentials which uniquely
+     identify the Microsoft Azure subscription. The subscription ID forms part
+     of the URI for every service call.
+    :type subscription_id: str
+    :param str base_url: Service URL
+    """
+
+    def __init__(
+            self, credentials, subscription_id, base_url=None):
+
+        if credentials is None:
+            raise ValueError("Parameter 'credentials' must not be None.")
+        if subscription_id is None:
+            raise ValueError("Parameter 'subscription_id' must not be None.")
+        if not isinstance(subscription_id, str):
+            raise TypeError("Parameter 'subscription_id' must be str.")
+        if not base_url:
+            base_url = 'https://management.azure.com'
+
+        super(NetworkManagementClientConfiguration, self).__init__(base_url)
+
+        self.add_user_agent('networkmanagementclient/{}'.format(VERSION))
+        self.add_user_agent('Azure-SDK-For-Python')
+
+        self.credentials = credentials
+        self.subscription_id = subscription_id
+
+
+class NetworkManagementClient(object):
+    """Composite Swagger for Network Client
+
+    :ivar config: Configuration for client.
+    :vartype config: NetworkManagementClientConfiguration
+
+    :ivar application_gateways: ApplicationGateways operations
+    :vartype application_gateways: .operations.ApplicationGatewaysOperations
+    :ivar route_tables: RouteTables operations
+    :vartype route_tables: .operations.RouteTablesOperations
+    :ivar routes: Routes operations
+    :vartype routes: .operations.RoutesOperations
+    :ivar public_ip_addresses: PublicIPAddresses operations
+    :vartype public_ip_addresses: .operations.PublicIPAddressesOperations
+    :ivar network_security_groups: NetworkSecurityGroups operations
+    :vartype network_security_groups: .operations.NetworkSecurityGroupsOperations
+    :ivar security_rules: SecurityRules operations
+    :vartype security_rules: .operations.SecurityRulesOperations
+    :ivar load_balancers: LoadBalancers operations
+    :vartype load_balancers: .operations.LoadBalancersOperations
+    :ivar virtual_networks: VirtualNetworks operations
+    :vartype virtual_networks: .operations.VirtualNetworksOperations
+    :ivar subnets: Subnets operations
+    :vartype subnets: .operations.SubnetsOperations
+    :ivar network_interfaces: NetworkInterfaces operations
+    :vartype network_interfaces: .operations.NetworkInterfacesOperations
+    :ivar usages: Usages operations
+    :vartype usages: .operations.UsagesOperations
+    :ivar virtual_network_gateways: VirtualNetworkGateways operations
+    :vartype virtual_network_gateways: .operations.VirtualNetworkGatewaysOperations
+    :ivar virtual_network_gateway_connections: VirtualNetworkGatewayConnections operations
+    :vartype virtual_network_gateway_connections: .operations.VirtualNetworkGatewayConnectionsOperations
+    :ivar local_network_gateways: LocalNetworkGateways operations
+    :vartype local_network_gateways: .operations.LocalNetworkGatewaysOperations
+    :ivar express_route_circuit_authorizations: ExpressRouteCircuitAuthorizations operations
+    :vartype express_route_circuit_authorizations: .operations.ExpressRouteCircuitAuthorizationsOperations
+    :ivar express_route_circuit_peerings: ExpressRouteCircuitPeerings operations
+    :vartype express_route_circuit_peerings: .operations.ExpressRouteCircuitPeeringsOperations
+    :ivar express_route_circuits: ExpressRouteCircuits operations
+    :vartype express_route_circuits: .operations.ExpressRouteCircuitsOperations
+    :ivar express_route_service_providers: ExpressRouteServiceProviders operations
+    :vartype express_route_service_providers: .operations.ExpressRouteServiceProvidersOperations
+
+    :param credentials: Credentials needed for the client to connect to Azure.
+    :type credentials: :mod:`A msrestazure Credentials
+     object<msrestazure.azure_active_directory>`
+    :param subscription_id: The subscription credentials which uniquely
+     identify the Microsoft Azure subscription. The subscription ID forms part
+     of the URI for every service call.
+    :type subscription_id: str
+    :param str base_url: Service URL
+    """
+
+    def __init__(
+            self, credentials, subscription_id, api_version = '2016-09-01', base_url=None):
+
+        self.config = NetworkManagementClientConfiguration(credentials, subscription_id, base_url)
+        self._client = ServiceClient(self.config.credentials, self.config)
+
+        client_models = {k: v for k, v in self.models(api_version).__dict__.items() if isinstance(v, type)}
+        self.api_version = api_version
+        self._serialize = Serializer(client_models)
+        self._deserialize = Deserializer(client_models)
+
+    def check_dns_name_availability(
+            self, location, domain_name_label=None, custom_headers=None, raw=False, **operation_config):
+        """Checks whether a domain name in the cloudapp.net zone is available for
+        use.
+
+        :param location: The location of the domain name.
+        :type location: str
+        :param domain_name_label: The domain name to be verified. It must
+         conform to the following regular expression:
+         ^[a-z][a-z0-9-]{1,61}[a-z0-9]$.
+        :type domain_name_label: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :rtype: :class:`DnsNameAvailabilityResult
+         <azure.mgmt.network.v20160901.models.DnsNameAvailabilityResult>`
+        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+         if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        """
+        if self.api_version == '2016-09-01':
+            from .v2016_09_01 import NetworkManagementClient as ClientClass
+        elif self.api_version == '2015-06-15':
+            from .v2015_06_15 import NetworkManagementClient as ClientClass
+        localclient = ClientClass(self.config.credentials,
+                                  self.config.subscription_id,
+                                  self.config.base_url)
+        return localclient.check_dns_name_availability(location,
+                                                       domain_name_label,
+                                                       custom_headers,
+                                                       raw,
+                                                       **operation_config)
+
+    @classmethod
+    def models(cls, api_version = '2016-09-01'):
+        if api_version =='2016-09-01':
+            from .v2016_09_01 import models
+            return models
+        elif api_version =='2015-06-15':
+            from .v2015_06_15 import models
+            return models
+        else:
+            raise NotImplementedError("APIVersion {} is not available".format(api_version))
+
+    @property
+    def virtual_network_gateways(self):
+        if self.api_version =='2015-06-15':
+            from .v2015_06_15.operations import VirtualNetworkGatewaysOperations as OperationClass
+        elif self.api_version =='2016-09-01':
+            from .v2016_09_01.operations import VirtualNetworkGatewaysOperations as OperationClass
+        else:
+            raise NotImplementedError("APIVersion {} is not available".format(self.api_version))
+        return OperationClass(self._client, self.config, self._serialize, self._deserialize)
+
+    @property
+    def express_route_circuit_authorizations(self):
+        if self.api_version =='2015-06-15':
+            from .v2015_06_15.operations import ExpressRouteCircuitAuthorizationsOperations as OperationClass
+        elif self.api_version =='2016-09-01':
+            from .v2016_09_01.operations import ExpressRouteCircuitAuthorizationsOperations as OperationClass
+        else:
+            raise NotImplementedError("APIVersion {} is not available".format(self.api_version))
+        return OperationClass(self._client, self.config, self._serialize, self._deserialize)
+
+    @property
+    def application_gateways(self):
+        if self.api_version =='2015-06-15':
+            from .v2015_06_15.operations import ApplicationGatewaysOperations as OperationClass
+        elif self.api_version =='2016-09-01':
+            from .v2016_09_01.operations import ApplicationGatewaysOperations as OperationClass
+        else:
+            raise NotImplementedError("APIVersion {} is not available".format(self.api_version))
+        return OperationClass(self._client, self.config, self._serialize, self._deserialize)
+
+    @property
+    def virtual_networks(self):
+        if self.api_version =='2015-06-15':
+            from .v2015_06_15.operations import VirtualNetworksOperations as OperationClass
+        elif self.api_version =='2016-09-01':
+            from .v2016_09_01.operations import VirtualNetworksOperations as OperationClass
+        else:
+            raise NotImplementedError("APIVersion {} is not available".format(self.api_version))
+        return OperationClass(self._client, self.config, self._serialize, self._deserialize)
+
+    @property
+    def network_security_groups(self):
+        if self.api_version =='2015-06-15':
+            from .v2015_06_15.operations import NetworkSecurityGroupsOperations as OperationClass
+        elif self.api_version =='2016-09-01':
+            from .v2016_09_01.operations import NetworkSecurityGroupsOperations as OperationClass
+        else:
+            raise NotImplementedError("APIVersion {} is not available".format(self.api_version))
+        return OperationClass(self._client, self.config, self._serialize, self._deserialize)
+
+    @property
+    def subnets(self):
+        if self.api_version =='2015-06-15':
+            from .v2015_06_15.operations import SubnetsOperations as OperationClass
+        elif self.api_version =='2016-09-01':
+            from .v2016_09_01.operations import SubnetsOperations as OperationClass
+        else:
+            raise NotImplementedError("APIVersion {} is not available".format(self.api_version))
+        return OperationClass(self._client, self.config, self._serialize, self._deserialize)
+
+    @property
+    def local_network_gateways(self):
+        if self.api_version =='2015-06-15':
+            from .v2015_06_15.operations import LocalNetworkGatewaysOperations as OperationClass
+        elif self.api_version =='2016-09-01':
+            from .v2016_09_01.operations import LocalNetworkGatewaysOperations as OperationClass
+        else:
+            raise NotImplementedError("APIVersion {} is not available".format(self.api_version))
+        return OperationClass(self._client, self.config, self._serialize, self._deserialize)
+
+    @property
+    def express_route_service_providers(self):
+        if self.api_version =='2015-06-15':
+            from .v2015_06_15.operations import ExpressRouteServiceProvidersOperations as OperationClass
+        elif self.api_version =='2016-09-01':
+            from .v2016_09_01.operations import ExpressRouteServiceProvidersOperations as OperationClass
+        else:
+            raise NotImplementedError("APIVersion {} is not available".format(self.api_version))
+        return OperationClass(self._client, self.config, self._serialize, self._deserialize)
+
+    @property
+    def routes(self):
+        if self.api_version =='2015-06-15':
+            from .v2015_06_15.operations import RoutesOperations as OperationClass
+        elif self.api_version =='2016-09-01':
+            from .v2016_09_01.operations import RoutesOperations as OperationClass
+        else:
+            raise NotImplementedError("APIVersion {} is not available".format(self.api_version))
+        return OperationClass(self._client, self.config, self._serialize, self._deserialize)
+
+    @property
+    def load_balancers(self):
+        if self.api_version =='2015-06-15':
+            from .v2015_06_15.operations import LoadBalancersOperations as OperationClass
+        elif self.api_version =='2016-09-01':
+            from .v2016_09_01.operations import LoadBalancersOperations as OperationClass
+        else:
+            raise NotImplementedError("APIVersion {} is not available".format(self.api_version))
+        return OperationClass(self._client, self.config, self._serialize, self._deserialize)
+
+    @property
+    def virtual_network_peerings(self):
+        if self.api_version =='2015-06-15':
+            from .v2015_06_15.operations import VirtualNetworkPeeringsOperations as OperationClass
+        elif self.api_version =='2016-09-01':
+            from .v2016_09_01.operations import VirtualNetworkPeeringsOperations as OperationClass
+        else:
+            raise NotImplementedError("APIVersion {} is not available".format(self.api_version))
+        return OperationClass(self._client, self.config, self._serialize, self._deserialize)
+
+    @property
+    def usages(self):
+        if self.api_version =='2015-06-15':
+            from .v2015_06_15.operations import UsagesOperations as OperationClass
+        elif self.api_version =='2016-09-01':
+            from .v2016_09_01.operations import UsagesOperations as OperationClass
+        else:
+            raise NotImplementedError("APIVersion {} is not available".format(self.api_version))
+        return OperationClass(self._client, self.config, self._serialize, self._deserialize)
+
+    @property
+    def route_tables(self):
+        if self.api_version =='2015-06-15':
+            from .v2015_06_15.operations import RouteTablesOperations as OperationClass
+        elif self.api_version =='2016-09-01':
+            from .v2016_09_01.operations import RouteTablesOperations as OperationClass
+        else:
+            raise NotImplementedError("APIVersion {} is not available".format(self.api_version))
+        return OperationClass(self._client, self.config, self._serialize, self._deserialize)
+
+    @property
+    def express_route_circuits(self):
+        if self.api_version =='2015-06-15':
+            from .v2015_06_15.operations import ExpressRouteCircuitsOperations as OperationClass
+        elif self.api_version =='2016-09-01':
+            from .v2016_09_01.operations import ExpressRouteCircuitsOperations as OperationClass
+        else:
+            raise NotImplementedError("APIVersion {} is not available".format(self.api_version))
+        return OperationClass(self._client, self.config, self._serialize, self._deserialize)
+
+    @property
+    def virtual_network_gateway_connections(self):
+        if self.api_version =='2015-06-15':
+            from .v2015_06_15.operations import VirtualNetworkGatewayConnectionsOperations as OperationClass
+        elif self.api_version =='2016-09-01':
+            from .v2016_09_01.operations import VirtualNetworkGatewayConnectionsOperations as OperationClass
+        else:
+            raise NotImplementedError("APIVersion {} is not available".format(self.api_version))
+        return OperationClass(self._client, self.config, self._serialize, self._deserialize)
+
+    @property
+    def security_rules(self):
+        if self.api_version =='2015-06-15':
+            from .v2015_06_15.operations import SecurityRulesOperations as OperationClass
+        elif self.api_version =='2016-09-01':
+            from .v2016_09_01.operations import SecurityRulesOperations as OperationClass
+        else:
+            raise NotImplementedError("APIVersion {} is not available".format(self.api_version))
+        return OperationClass(self._client, self.config, self._serialize, self._deserialize)
+
+    @property
+    def express_route_circuit_peerings(self):
+        if self.api_version =='2015-06-15':
+            from .v2015_06_15.operations import ExpressRouteCircuitPeeringsOperations as OperationClass
+        elif self.api_version =='2016-09-01':
+            from .v2016_09_01.operations import ExpressRouteCircuitPeeringsOperations as OperationClass
+        else:
+            raise NotImplementedError("APIVersion {} is not available".format(self.api_version))
+        return OperationClass(self._client, self.config, self._serialize, self._deserialize)
+
+    @property
+    def public_ip_addresses(self):
+        if self.api_version =='2015-06-15':
+            from .v2015_06_15.operations import PublicIPAddressesOperations as OperationClass
+        elif self.api_version =='2016-09-01':
+            from .v2016_09_01.operations import PublicIPAddressesOperations as OperationClass
+        else:
+            raise NotImplementedError("APIVersion {} is not available".format(self.api_version))
+        return OperationClass(self._client, self.config, self._serialize, self._deserialize)
+
+    @property
+    def network_interfaces(self):
+        if self.api_version =='2015-06-15':
+            from .v2015_06_15.operations import NetworkInterfacesOperations as OperationClass
+        elif self.api_version =='2016-09-01':
+            from .v2016_09_01.operations import NetworkInterfacesOperations as OperationClass
+        else:
+            raise NotImplementedError("APIVersion {} is not available".format(self.api_version))
+        return OperationClass(self._client, self.config, self._serialize, self._deserialize)
