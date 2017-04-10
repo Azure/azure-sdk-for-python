@@ -7,6 +7,12 @@
 #--------------------------------------------------------------------------
 
 from setuptools import find_packages, setup
+try:
+    from azure_bdist_wheel import cmdclass
+except ImportError:
+    from distutils import log as logger
+    logger.warn("Wheel is not available, disabling bdist_wheel hook")
+    cmdclass = {}
 from io import open
 import re
 import os.path
@@ -64,7 +70,7 @@ setup(
     packages=find_packages(),
     install_requires=[
         'msrestazure~=0.4.7',
-        'azure-common~=1.1.4',
-        'azure-mgmt-nspkg',
+        'azure-common~=1.1.5',
     ],
+    cmdclass=cmdclass
 )

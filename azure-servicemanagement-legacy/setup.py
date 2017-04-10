@@ -16,6 +16,12 @@
 #--------------------------------------------------------------------------
 
 from setuptools import setup
+try:
+    from azure_bdist_wheel import cmdclass
+except ImportError:
+    from distutils import log as logger
+    logger.warn("Wheel is not available, disabling bdist_wheel hook")
+    cmdclass = {}
 
 # azure v0.x is not compatible with this package
 # azure v0.x used to have a __version__ attribute (newer versions don't)
@@ -34,7 +40,7 @@ except ImportError:
 
 setup(
     name='azure-servicemanagement-legacy',
-    version='0.20.5',
+    version='0.20.6',
     description='Microsoft Azure Legacy Service Management Client Library for Python',
     long_description=open('README.rst', 'r').read(),
     license='Apache License 2.0',
@@ -60,10 +66,11 @@ setup(
         'azure.servicemanagement._http',
     ],
     install_requires=[
-        'azure-common',
+        'azure-common>=1.1.5',
         'requests',
     ],
     extras_require = { 
         'get_certificate_from_publish_settings' : ['pyopenssl'] 
     },
+    cmdclass=cmdclass
 )
