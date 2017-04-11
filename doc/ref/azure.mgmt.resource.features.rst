@@ -1,14 +1,6 @@
 azure.mgmt.resource.features package
 ==========================
 
-Submodules
-----------
-
-.. toctree::
-
-   azure.mgmt.resource.features.models
-   azure.mgmt.resource.features.operations
-
 Module contents
 ---------------
 
@@ -16,3 +8,10 @@ Module contents
     :members:
     :undoc-members:
     :show-inheritance:
+
+Submodules
+----------
+
+.. toctree::
+
+   azure.mgmt.resource.features.v2015_12_01

@@ -1,7 +1,7 @@
-azure.mgmt.resource.links.models module
+azure.mgmt.network.v2015_06_15.models module
 ===========================================
 
-.. automodule:: azure.mgmt.resource.links.models
+.. automodule:: azure.mgmt.network.v2015_06_15.models
     :members:
     :undoc-members:
     :show-inheritance:

@@ -1,14 +1,6 @@
 azure.mgmt.resource.subscriptions package
 ==========================
 
-Submodules
-----------
-
-.. toctree::
-
-   azure.mgmt.resource.subscriptions.models
-   azure.mgmt.resource.subscriptions.operations
-
 Module contents
 ---------------
 
@@ -16,3 +8,10 @@ Module contents
     :members:
     :undoc-members:
     :show-inheritance:
+
+Submodules
+----------
+
+.. toctree::
+
+   azure.mgmt.resource.subscriptions.v2016_06_01

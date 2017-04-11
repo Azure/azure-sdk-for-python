@@ -1,14 +1,6 @@
 azure.mgmt.resource.locks package
 ==========================
 
-Submodules
-----------
-
-.. toctree::
-
-   azure.mgmt.resource.locks.models
-   azure.mgmt.resource.locks.operations
-
 Module contents
 ---------------
 
@@ -16,3 +8,11 @@ Module contents
     :members:
     :undoc-members:
     :show-inheritance:
+
+Submodules
+----------
+
+.. toctree::
+
+   azure.mgmt.resource.locks.v2016_09_01
+   azure.mgmt.resource.locks.v2015_01_01

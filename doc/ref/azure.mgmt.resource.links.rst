@@ -1,14 +1,6 @@
 azure.mgmt.resource.links package
 ==========================
 
-Submodules
-----------
-
-.. toctree::
-
-   azure.mgmt.resource.links.models
-   azure.mgmt.resource.links.operations
-
 Module contents
 ---------------
 
@@ -16,3 +8,10 @@ Module contents
     :members:
     :undoc-members:
     :show-inheritance:
+
+Submodules
+----------
+
+.. toctree::
+
+   azure.mgmt.resource.links.v2016_09_01
