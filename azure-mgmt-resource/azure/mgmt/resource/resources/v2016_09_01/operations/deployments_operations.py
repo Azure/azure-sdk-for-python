@@ -184,7 +184,7 @@ class DeploymentsOperations(object):
         return deserialized
 
     def create_or_update(
-            self, resource_group_name, deployment_name, properties=None, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, deployment_name, properties, custom_headers=None, raw=False, **operation_config):
         """Deploys resources to a resource group.
 
         You can provide the template and parameters directly in the request or
@@ -409,7 +409,7 @@ class DeploymentsOperations(object):
             return client_raw_response
 
     def validate(
-            self, resource_group_name, deployment_name, properties=None, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, deployment_name, properties, custom_headers=None, raw=False, **operation_config):
         """Validates whether the specified template is syntactically correct and
         will be accepted by Azure Resource Manager..
 
