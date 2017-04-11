@@ -56,8 +56,7 @@
     "compute.compute.2015-06-15": {
       "swagger": "arm-compute/2015-06-15/swagger/compute.json",
       "autorest_options": {
-        "Namespace": "azure.mgmt.compute.compute.v2015_06_15",
-        "PackageVersion": "0.40.0"
+        "Namespace": "azure.mgmt.compute.compute.v2015_06_15"
       },
       "output_dir": "azure-mgmt-compute/azure/mgmt/compute/compute/v2015_06_15"
     },
@@ -65,16 +64,14 @@
       "swagger": "arm-compute/compositeComputeClient_2016_04_30_preview.json",
       "autorest_options": {
         "Namespace": "azure.mgmt.compute.compute.v2016_04_30_preview",
-        "Modeler": "CompositeSwagger",
-        "PackageVersion": "0.40.0"
+        "Modeler": "CompositeSwagger"
       },
       "output_dir": "azure-mgmt-compute/azure/mgmt/compute/compute/v2016_04_30_preview"
     },
     "compute.containerservice.2017-01-31": {
       "swagger": "arm-compute/2017-01-31/swagger/containerService.json",
       "autorest_options": {
-        "Namespace": "azure.mgmt.compute.containerservice.v2017_01_31",
-        "PackageVersion": "0.40.0"
+        "Namespace": "azure.mgmt.compute.containerservice.v2017_01_31"
       },
       "output_dir": "azure-mgmt-compute/azure/mgmt/compute/containerservice/v2017_01_31"
     },
