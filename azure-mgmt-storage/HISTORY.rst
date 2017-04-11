@@ -3,6 +3,14 @@
 Release History
 ===============
 
+1.0.0rc1 (2017-04-11)
++++++++++++++++++++++
+
+**Features**
+
+To help customers with sovereign clouds (not general Azure),
+this version has official multi ApiVersion support for 2015-06-15 and 2016-12-01
+
 0.31.0 (2017-01-19)
 +++++++++++++++++++
 
