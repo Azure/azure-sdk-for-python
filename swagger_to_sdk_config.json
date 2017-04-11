@@ -205,8 +205,7 @@
       "swagger": "arm-network/compositeNetworkClient_2015_06_15.json",
       "autorest_options": {
         "Namespace": "azure.mgmt.network.v2015_06_15",
-        "Modeler": "CompositeSwagger",
-        "PackageVersion": "0.40.0"
+        "Modeler": "CompositeSwagger"
       },
       "output_dir": "azure-mgmt-network/azure/mgmt/network/v2015_06_15"
     },
@@ -214,8 +213,7 @@
       "swagger": "arm-network/compositeNetworkClient_2016_09_01.json",
       "autorest_options": {
         "Namespace": "azure.mgmt.network.v2016_09_01",
-        "Modeler": "CompositeSwagger",
-        "PackageVersion": "0.40.0"
+        "Modeler": "CompositeSwagger"
       },
       "output_dir": "azure-mgmt-network/azure/mgmt/network/v2016_09_01"
     },
