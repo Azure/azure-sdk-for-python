@@ -1,14 +1,6 @@
 azure.mgmt.network package
 ==========================
 
-Submodules
-----------
-
-.. toctree::
-
-   azure.mgmt.network.models
-   azure.mgmt.network.operations
-
 Module contents
 ---------------
 
@@ -16,3 +8,11 @@ Module contents
     :members:
     :undoc-members:
     :show-inheritance:
+
+Submodules
+----------
+
+.. toctree::
+
+   azure.mgmt.network.v2016_09_01
+   azure.mgmt.network.v2015_06_15

@@ -1,14 +1,6 @@
 azure.mgmt.resource.resources package
 ==========================
 
-Submodules
-----------
-
-.. toctree::
-
-   azure.mgmt.resource.resources.models
-   azure.mgmt.resource.resources.operations
-
 Module contents
 ---------------
 
@@ -16,3 +8,11 @@ Module contents
     :members:
     :undoc-members:
     :show-inheritance:
+
+Submodules
+----------
+
+.. toctree::
+
+   azure.mgmt.resource.resources.v2016_09_01
+   azure.mgmt.resource.resources.v2016_02_01

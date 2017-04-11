@@ -1,14 +1,6 @@
 azure.mgmt.storage package
 ==========================
 
-Submodules
-----------
-
-.. toctree::
-
-   azure.mgmt.storage.models
-   azure.mgmt.storage.operations
-
 Module contents
 ---------------
 
@@ -16,3 +8,11 @@ Module contents
     :members:
     :undoc-members:
     :show-inheritance:
+
+Submodules
+----------
+
+.. toctree::
+
+   azure.mgmt.storage.v2016_12_01
+   azure.mgmt.storage.v2015_06_15

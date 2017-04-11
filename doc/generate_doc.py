@@ -47,7 +47,41 @@ RST_AUTODOC_TOCTREE = """.. toctree::
   ref/azure.servicebus
   ref/azure.servicemanagement  
 """
+
+MULTIAPI_VERSION_PACKAGE_TEMPLATE = """{namespace} package
+==========================
+
+Module contents
+---------------
+
+.. automodule:: {namespace}
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+Submodules
+----------
+
+.. toctree::
+
+"""
+
+# Update the code to compute this list automatically
+MULTIAPI_VERSION_NAMESPACE = [
+    "azure.mgmt.storage",
+    "azure.mgmt.network",
+    "azure.mgmt.compute",
+    "azure.mgmt.resource.resources",
+    "azure.mgmt.resource.features",
+    "azure.mgmt.resource.links",
+    "azure.mgmt.resource.locks",
+    "azure.mgmt.resource.policy",
+    "azure.mgmt.resource.subscriptions",
+]
+
 def generate_doc(config_path, project_pattern=None):
+
+    multiapi_found_apiversion = {}
 
     with Path(config_path).open() as config_fd:
         config = json.load(config_fd)
@@ -77,14 +111,35 @@ def generate_doc(config_path, project_pattern=None):
                 namespace=namespace
             ))
 
-        package_list_path.append(rst_path)
-
         for module in ["operations", "models"]:
             with Path('./ref/{}.{}.rst'.format(namespace, module)).open('w') as rst_file:
                 rst_file.write(SUBMODULE_TEMPLATE.format(
                     namespace=namespace,
                     submodule=module
                 ))
+
+        for multiapi_namespace in MULTIAPI_VERSION_NAMESPACE:
+            if namespace.startswith(multiapi_namespace):
+                api_package = namespace.split(multiapi_namespace+".")[1]
+                multiapi_found_apiversion.setdefault(multiapi_namespace, []).append(api_package)
+                break
+        else:
+            package_list_path.append(rst_path)
+
+    for multiapi_namespace, apilist in multiapi_found_apiversion.items():
+        apilist.sort()
+        apilist.reverse()
+        rst_path = './ref/{}.rst'.format(multiapi_namespace)
+        with Path(rst_path).open('w') as rst_file:
+            rst_file.write(MULTIAPI_VERSION_PACKAGE_TEMPLATE.format(
+                namespace=multiapi_namespace
+            ))
+            for version in apilist:
+                rst_file.write("   {namespace}.{version}\n".format(
+                    namespace=multiapi_namespace,
+                    version=version))
+        package_list_path.append(rst_path)
+
     package_list_path.sort()
     with Path(GENERATED_PACKAGES_LIST_FILE).open('w') as generate_file_list_fd:
         lines_to_write = "\n".join(["  "+package for package in package_list_path])

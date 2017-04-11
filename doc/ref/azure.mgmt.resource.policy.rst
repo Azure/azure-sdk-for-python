@@ -1,14 +1,6 @@
 azure.mgmt.resource.policy package
 ==========================
 
-Submodules
-----------
-
-.. toctree::
-
-   azure.mgmt.resource.policy.models
-   azure.mgmt.resource.policy.operations
-
 Module contents
 ---------------
 
@@ -16,3 +8,11 @@ Module contents
     :members:
     :undoc-members:
     :show-inheritance:
+
+Submodules
+----------
+
+.. toctree::
+
+   azure.mgmt.resource.policy.v2016_12_01
+   azure.mgmt.resource.policy.v2016_04_01

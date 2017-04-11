@@ -1,14 +1,6 @@
 azure.mgmt.compute package
 ==========================
 
-Submodules
-----------
-
-.. toctree::
-
-   azure.mgmt.compute.models
-   azure.mgmt.compute.operations
-
 Module contents
 ---------------
 
@@ -16,3 +8,12 @@ Module contents
     :members:
     :undoc-members:
     :show-inheritance:
+
+Submodules
+----------
+
+.. toctree::
+
+   azure.mgmt.compute.containerservice.v2017_01_31
+   azure.mgmt.compute.compute.v2016_04_30_preview
+   azure.mgmt.compute.compute.v2015_06_15
