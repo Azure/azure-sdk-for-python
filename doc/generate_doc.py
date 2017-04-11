@@ -70,7 +70,8 @@ Submodules
 MULTIAPI_VERSION_NAMESPACE = [
     "azure.mgmt.storage",
     "azure.mgmt.network",
-    "azure.mgmt.compute",
+    "azure.mgmt.compute.compute",
+    "azure.mgmt.compute.containerservice",
     "azure.mgmt.resource.resources",
     "azure.mgmt.resource.features",
     "azure.mgmt.resource.links",
