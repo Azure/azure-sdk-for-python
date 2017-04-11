@@ -12,7 +12,8 @@
   ./ref/azure.mgmt.cdn.rst
   ./ref/azure.mgmt.cognitiveservices.rst
   ./ref/azure.mgmt.commerce.rst
-  ./ref/azure.mgmt.compute.rst
+  ./ref/azure.mgmt.compute.compute.rst
+  ./ref/azure.mgmt.compute.containerservice.rst
   ./ref/azure.mgmt.containerregistry.rst
   ./ref/azure.mgmt.datalake.analytics.account.rst
   ./ref/azure.mgmt.datalake.analytics.catalog.rst
