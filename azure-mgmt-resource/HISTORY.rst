@@ -3,6 +3,33 @@
 Release History
 ===============
 
+1.0.0rc1 (2017-04-11)
++++++++++++++++++++++
+
+**Bug fixes**
+
+- tag_count is now correctly an int and not a string
+- deployment_properties is now required for all deployments operations as expected
+
+**Breaking Changes**
+
+- Locks moves to a new ApiVersion and brings several consistent naming refactoring and new methods
+
+**Features**
+
+To help customers with sovereign clouds (not general Azure),
+this version has official multi ApiVersion support for the following resource type:
+
+- Locks: 2015-01-01 and 2016-09-01
+- Policy: 2016-04-01 and 2016-12-01
+- Resources: 2016-02-01 and 2016-09-01
+
+The following resource types support one ApiVersion:
+
+- Features: 2015-12-01
+- Links: 2016-09-01
+- Subscriptions: 2016-06-01
+
 0.31.0 (2016-11-10)
 +++++++++++++++++++
 
