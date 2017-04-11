@@ -32,8 +32,12 @@ from .workflow_run_trigger import WorkflowRunTrigger
 from .workflow_output_parameter import WorkflowOutputParameter
 from .workflow_run import WorkflowRun
 from .workflow_run_filter import WorkflowRunFilter
+from .error_properties import ErrorProperties
+from .error_response import ErrorResponse, ErrorResponseException
+from .retry_history import RetryHistory
 from .workflow_run_action import WorkflowRunAction
 from .workflow_run_action_filter import WorkflowRunActionFilter
+from .regenerate_action_parameter import RegenerateActionParameter
 from .generate_upgraded_definition_parameters import GenerateUpgradedDefinitionParameters
 from .integration_account_sku import IntegrationAccountSku
 from .integration_account import IntegrationAccount
@@ -98,8 +102,6 @@ from .integration_account_session_filter import IntegrationAccountSessionFilter
 from .integration_account_session import IntegrationAccountSession
 from .operation_display import OperationDisplay
 from .operation import Operation
-from .error_properties import ErrorProperties
-from .error_response import ErrorResponse, ErrorResponseException
 from .workflow_paged import WorkflowPaged
 from .workflow_version_paged import WorkflowVersionPaged
 from .workflow_trigger_paged import WorkflowTriggerPaged
@@ -132,6 +134,7 @@ from .logic_management_client_enums import (
     AgreementType,
     HashingAlgorithm,
     EncryptionAlgorithm,
+    SigningAlgorithm,
     TrailingSeparatorPolicy,
     X12CharacterSet,
     SegmentTerminatorSuffix,
@@ -167,8 +170,12 @@ __all__ = [
     'WorkflowOutputParameter',
     'WorkflowRun',
     'WorkflowRunFilter',
+    'ErrorProperties',
+    'ErrorResponse', 'ErrorResponseException',
+    'RetryHistory',
     'WorkflowRunAction',
     'WorkflowRunActionFilter',
+    'RegenerateActionParameter',
     'GenerateUpgradedDefinitionParameters',
     'IntegrationAccountSku',
     'IntegrationAccount',
@@ -233,8 +240,6 @@ __all__ = [
     'IntegrationAccountSession',
     'OperationDisplay',
     'Operation',
-    'ErrorProperties',
-    'ErrorResponse', 'ErrorResponseException',
     'WorkflowPaged',
     'WorkflowVersionPaged',
     'WorkflowTriggerPaged',
@@ -266,6 +271,7 @@ __all__ = [
     'AgreementType',
     'HashingAlgorithm',
     'EncryptionAlgorithm',
+    'SigningAlgorithm',
     'TrailingSeparatorPolicy',
     'X12CharacterSet',
     'SegmentTerminatorSuffix',
