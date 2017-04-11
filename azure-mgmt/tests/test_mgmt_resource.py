@@ -300,7 +300,8 @@ class MgmtResourceTest(AzureMgmtTestCase):
         # Validate
         validation =self.resource_client.deployments.validate(
             self.group_name,
-            deployment_name
+            deployment_name,
+            {'mode': azure.mgmt.resource.resources.models.DeploymentMode.incremental}
         )
         self.assertTrue(hasattr(validation, 'properties'))
 
