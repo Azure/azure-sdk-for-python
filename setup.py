@@ -28,8 +28,8 @@ nspkg_packages.sort(key = lambda x: len([c for c in x if c == '-']))
 # Consider "azure-common" as a power nspkg : has to be installed first after real nspkg
 nspkg_packages.append("azure-common")
 
-# Manually push meta-packages at the end
-meta_package = ['azure', 'azure-mgmt']
+# Manually push meta-packages at the end, in reverse dependency order
+meta_package = ['azure-mgmt', 'azure']
 
 # So content packages are:
 content_package = [p for p in packages if p not in meta_package+nspkg_packages]
