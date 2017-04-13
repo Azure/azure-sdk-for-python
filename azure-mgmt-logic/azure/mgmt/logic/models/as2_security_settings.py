@@ -41,6 +41,9 @@ class AS2SecuritySettings(Model):
     :param enable_nrr_for_inbound_mdn: The value indicating whether to enable
      NRR for inbound MDN.
     :type enable_nrr_for_inbound_mdn: bool
+    :param sha2_algorithm_format: The Sha2 algorithm format. Valid values are
+     Sha2, ShaHashSize, ShaHyphenHashSize, Sha2UnderscoreHashSize.
+    :type sha2_algorithm_format: str
     """
 
     _validation = {
@@ -63,9 +66,10 @@ class AS2SecuritySettings(Model):
         'enable_nrr_for_outbound_encoded_messages': {'key': 'enableNrrForOutboundEncodedMessages', 'type': 'bool'},
         'enable_nrr_for_outbound_decoded_messages': {'key': 'enableNrrForOutboundDecodedMessages', 'type': 'bool'},
         'enable_nrr_for_inbound_mdn': {'key': 'enableNrrForInboundMdn', 'type': 'bool'},
+        'sha2_algorithm_format': {'key': 'sha2AlgorithmFormat', 'type': 'str'},
     }
 
-    def __init__(self, override_group_signing_certificate, enable_nrr_for_inbound_encoded_messages, enable_nrr_for_inbound_decoded_messages, enable_nrr_for_outbound_mdn, enable_nrr_for_outbound_encoded_messages, enable_nrr_for_outbound_decoded_messages, enable_nrr_for_inbound_mdn, signing_certificate_name=None, encryption_certificate_name=None):
+    def __init__(self, override_group_signing_certificate, enable_nrr_for_inbound_encoded_messages, enable_nrr_for_inbound_decoded_messages, enable_nrr_for_outbound_mdn, enable_nrr_for_outbound_encoded_messages, enable_nrr_for_outbound_decoded_messages, enable_nrr_for_inbound_mdn, signing_certificate_name=None, encryption_certificate_name=None, sha2_algorithm_format=None):
         self.override_group_signing_certificate = override_group_signing_certificate
         self.signing_certificate_name = signing_certificate_name
         self.encryption_certificate_name = encryption_certificate_name
@@ -75,3 +79,4 @@ class AS2SecuritySettings(Model):
         self.enable_nrr_for_outbound_encoded_messages = enable_nrr_for_outbound_encoded_messages
         self.enable_nrr_for_outbound_decoded_messages = enable_nrr_for_outbound_decoded_messages
         self.enable_nrr_for_inbound_mdn = enable_nrr_for_inbound_mdn
+        self.sha2_algorithm_format = sha2_algorithm_format

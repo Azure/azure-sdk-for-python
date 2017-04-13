@@ -202,6 +202,16 @@ class EncryptionAlgorithm(Enum):
     aes256 = "AES256"
 
 
+class SigningAlgorithm(Enum):
+
+    not_specified = "NotSpecified"
+    default = "Default"
+    sha1 = "SHA1"
+    sha2256 = "SHA2256"
+    sha2384 = "SHA2384"
+    sha2512 = "SHA2512"
+
+
 class TrailingSeparatorPolicy(Enum):
 
     not_specified = "NotSpecified"

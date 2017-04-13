@@ -20,15 +20,40 @@ class WorkflowTriggerCallbackUrl(Model):
 
     :ivar value: Gets the workflow trigger callback URL.
     :vartype value: str
+    :ivar method: Gets the workflow trigger callback URL HTTP method.
+    :vartype method: str
+    :ivar base_path: Gets the workflow trigger callback URL base path.
+    :vartype base_path: str
+    :ivar relative_path: Gets the workflow trigger callback URL relative path.
+    :vartype relative_path: str
+    :param relative_path_parameters: Gets the workflow trigger callback URL
+     relative path parameters.
+    :type relative_path_parameters: list of str
+    :param queries: Gets the workflow trigger callback URL query parameters.
+    :type queries: :class:`WorkflowTriggerListCallbackUrlQueries
+     <azure.mgmt.logic.models.WorkflowTriggerListCallbackUrlQueries>`
     """
 
     _validation = {
         'value': {'readonly': True},
+        'method': {'readonly': True},
+        'base_path': {'readonly': True},
+        'relative_path': {'readonly': True},
     }
 
     _attribute_map = {
         'value': {'key': 'value', 'type': 'str'},
+        'method': {'key': 'method', 'type': 'str'},
+        'base_path': {'key': 'basePath', 'type': 'str'},
+        'relative_path': {'key': 'relativePath', 'type': 'str'},
+        'relative_path_parameters': {'key': 'relativePathParameters', 'type': '[str]'},
+        'queries': {'key': 'queries', 'type': 'WorkflowTriggerListCallbackUrlQueries'},
     }
 
-    def __init__(self):
+    def __init__(self, relative_path_parameters=None, queries=None):
         self.value = None
+        self.method = None
+        self.base_path = None
+        self.relative_path = None
+        self.relative_path_parameters = relative_path_parameters
+        self.queries = queries
