@@ -9,11 +9,11 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.serialization import Model
+from .resource import Resource
 
 
-class Resource(Model):
-    """An azure resource object.
+class ActivityLogAlertResourcePatch(Resource):
+    """An activity log alert resource for patch operations.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -28,6 +28,10 @@ class Resource(Model):
     :type location: str
     :param tags: Resource tags
     :type tags: dict
+    :param enabled: Indicates whether this activity log alert is enabled. If
+     an activity log alert is not enabled, then none of its actions will be
+     activated. Default value: True .
+    :type enabled: bool
     """
 
     _validation = {
@@ -43,11 +47,9 @@ class Resource(Model):
         'type': {'key': 'type', 'type': 'str'},
         'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
+        'enabled': {'key': 'properties.enabled', 'type': 'bool'},
     }
 
-    def __init__(self, location, tags=None):
-        self.id = None
-        self.name = None
-        self.type = None
-        self.location = location
-        self.tags = tags
+    def __init__(self, location, tags=None, enabled=True):
+        super(ActivityLogAlertResourcePatch, self).__init__(location=location, tags=tags)
+        self.enabled = enabled

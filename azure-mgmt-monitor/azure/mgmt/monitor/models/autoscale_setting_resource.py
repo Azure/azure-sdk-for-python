@@ -20,8 +20,8 @@ class AutoscaleSettingResource(Resource):
 
     :ivar id: Azure resource Id
     :vartype id: str
-    :param name: Azure resource name
-    :type name: str
+    :ivar name: Azure resource name
+    :vartype name: str
     :ivar type: Azure resource type
     :vartype type: str
     :param location: Resource location
@@ -49,10 +49,10 @@ class AutoscaleSettingResource(Resource):
 
     _validation = {
         'id': {'readonly': True},
+        'name': {'readonly': True},
         'type': {'readonly': True},
         'location': {'required': True},
         'profiles': {'required': True, 'max_items': 20},
-        'autoscale_setting_resource_name': {'required': True},
     }
 
     _attribute_map = {
@@ -68,8 +68,8 @@ class AutoscaleSettingResource(Resource):
         'target_resource_uri': {'key': 'properties.targetResourceUri', 'type': 'str'},
     }
 
-    def __init__(self, location, profiles, autoscale_setting_resource_name, name=None, tags=None, notifications=None, enabled=True, target_resource_uri=None):
-        super(AutoscaleSettingResource, self).__init__(name=name, location=location, tags=tags)
+    def __init__(self, location, profiles, tags=None, notifications=None, enabled=True, autoscale_setting_resource_name=None, target_resource_uri=None):
+        super(AutoscaleSettingResource, self).__init__(location=location, tags=tags)
         self.profiles = profiles
         self.notifications = notifications
         self.enabled = enabled

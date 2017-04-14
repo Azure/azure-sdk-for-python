@@ -22,12 +22,9 @@ from .email_notification import EmailNotification
 from .webhook_notification import WebhookNotification
 from .autoscale_notification import AutoscaleNotification
 from .autoscale_setting_resource import AutoscaleSettingResource
-from .retention_policy import RetentionPolicy
-from .metric_settings import MetricSettings
-from .log_settings import LogSettings
-from .service_diagnostic_settings_resource import ServiceDiagnosticSettingsResource
-from .rule_condition import RuleCondition
+from .error_response import ErrorResponse, ErrorResponseException
 from .rule_data_source import RuleDataSource
+from .rule_condition import RuleCondition
 from .rule_metric_data_source import RuleMetricDataSource
 from .rule_management_event_claims_data_source import RuleManagementEventClaimsDataSource
 from .rule_management_event_data_source import RuleManagementEventDataSource
@@ -40,10 +37,22 @@ from .rule_email_action import RuleEmailAction
 from .rule_webhook_action import RuleWebhookAction
 from .alert_rule_resource import AlertRuleResource
 from .incident import Incident
+from .activity_log_alert_leaf_condition import ActivityLogAlertLeafCondition
+from .activity_log_alert_all_of_condition import ActivityLogAlertAllOfCondition
+from .activity_log_alert_action_group import ActivityLogAlertActionGroup
+from .activity_log_alert_action_list import ActivityLogAlertActionList
+from .activity_log_alert_resource import ActivityLogAlertResource
+from .activity_log_alert_resource_patch import ActivityLogAlertResourcePatch
+from .retention_policy import RetentionPolicy
+from .metric_settings import MetricSettings
+from .log_settings import LogSettings
+from .diagnostic_settings_resource import DiagnosticSettingsResource
 from .log_profile_resource import LogProfileResource
+from .service_diagnostic_settings_resource import ServiceDiagnosticSettingsResource
 from .autoscale_setting_resource_paged import AutoscaleSettingResourcePaged
 from .alert_rule_resource_paged import AlertRuleResourcePaged
 from .incident_paged import IncidentPaged
+from .activity_log_alert_resource_paged import ActivityLogAlertResourcePaged
 from .log_profile_resource_paged import LogProfileResourcePaged
 from .monitor_management_client_enums import (
     MetricStatisticType,
@@ -70,12 +79,9 @@ __all__ = [
     'WebhookNotification',
     'AutoscaleNotification',
     'AutoscaleSettingResource',
-    'RetentionPolicy',
-    'MetricSettings',
-    'LogSettings',
-    'ServiceDiagnosticSettingsResource',
-    'RuleCondition',
+    'ErrorResponse', 'ErrorResponseException',
     'RuleDataSource',
+    'RuleCondition',
     'RuleMetricDataSource',
     'RuleManagementEventClaimsDataSource',
     'RuleManagementEventDataSource',
@@ -88,10 +94,22 @@ __all__ = [
     'RuleWebhookAction',
     'AlertRuleResource',
     'Incident',
+    'ActivityLogAlertLeafCondition',
+    'ActivityLogAlertAllOfCondition',
+    'ActivityLogAlertActionGroup',
+    'ActivityLogAlertActionList',
+    'ActivityLogAlertResource',
+    'ActivityLogAlertResourcePatch',
+    'RetentionPolicy',
+    'MetricSettings',
+    'LogSettings',
+    'DiagnosticSettingsResource',
     'LogProfileResource',
+    'ServiceDiagnosticSettingsResource',
     'AutoscaleSettingResourcePaged',
     'AlertRuleResourcePaged',
     'IncidentPaged',
+    'ActivityLogAlertResourcePaged',
     'LogProfileResourcePaged',
     'MetricStatisticType',
     'TimeAggregationType',
