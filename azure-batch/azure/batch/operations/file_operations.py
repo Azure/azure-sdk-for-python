@@ -450,14 +450,14 @@ class FileOperations(object):
 
     def get_from_compute_node(
             self, pool_id, node_id, file_path, file_get_from_compute_node_options=None, custom_headers=None, raw=False, callback=None, **operation_config):
-        """Returns the content of the specified task file.
+        """Returns the content of the specified compute node file.
 
         :param pool_id: The ID of the pool that contains the compute node.
         :type pool_id: str
         :param node_id: The ID of the compute node that contains the file.
         :type node_id: str
-        :param file_path: The path to the task file that you want to get the
-         content of.
+        :param file_path: The path to the compute node file that you want to
+         get the content of.
         :type file_path: str
         :param file_get_from_compute_node_options: Additional parameters for
          the operation

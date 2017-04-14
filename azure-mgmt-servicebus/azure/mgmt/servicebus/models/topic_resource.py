@@ -12,7 +12,7 @@
 from .resource import Resource
 
 
-class Topic(Resource):
+class TopicResource(Resource):
     """Description of topic resource.
 
     Variables are only populated by the server, and will be ignored when
@@ -28,12 +28,14 @@ class Topic(Resource):
      received, for this topic.
     :vartype accessed_at: datetime
     :param auto_delete_on_idle: TimeSpan idle interval after which the topic
-     is automatically deleted. The minimum duration is 5 minutes. The service
-     accepts a C# Standard TimeSpan Format for loc duration
-     https://msdn.microsoft.com/en-us/library/ee372286(v=vs.110).aspx . Format
-     is 'DD.HH:MM:SS' and default value of this property is 10675199 days
+     is automatically deleted. The minimum duration is 5 minutes.
     :type auto_delete_on_idle: str
-    :ivar created_at: Exact time the Tpoic was created.
+    :param entity_availability_status: Entity availability status for the
+     topic. Possible values include: 'Available', 'Limited', 'Renaming',
+     'Restoring', 'Unknown'
+    :type entity_availability_status: str or :class:`EntityAvailabilityStatus
+     <azure.mgmt.servicebus.models.EntityAvailabilityStatus>`
+    :ivar created_at: Exact time the message was created.
     :vartype created_at: datetime
     :ivar count_details:
     :vartype count_details: :class:`MessageCountDetails
@@ -41,17 +43,11 @@ class Topic(Resource):
     :param default_message_time_to_live: Default message time to live value.
      This is the duration after which the message expires, starting from when
      the message is sent to Service Bus. This is the default value used when
-     TimeToLive is not set on a message itself. The service accepts a C#
-     Standard TimeSpan Format for loc duration
-     https://msdn.microsoft.com/en-us/library/ee372286(v=vs.110).aspx . Format
-     is 'DD.HH:MM:SS' and default value of this property is 10675199 days
+     TimeToLive is not set on a message itself.
     :type default_message_time_to_live: str
     :param duplicate_detection_history_time_window: TimeSpan structure that
      defines the duration of the duplicate detection history. The default value
-     is 10 minutes. The service accepts a C# Standard TimeSpan Format for loc
-     duration https://msdn.microsoft.com/en-us/library/ee372286(v=vs.110).aspx
-     . Format is 'DD.HH:MM:SS' and default value of this property is 10675199
-     days
+     is 10 minutes.
     :type duplicate_detection_history_time_window: str
     :param enable_batched_operations: Value that indicates whether server-side
      batched operations are enabled.
@@ -63,6 +59,17 @@ class Topic(Resource):
     :param enable_partitioning: Value that indicates whether the topic to be
      partitioned across multiple message brokers is enabled.
     :type enable_partitioning: bool
+    :param enable_subscription_partitioning: Value that indicates whether
+     partitioning is enabled or disabled.
+    :type enable_subscription_partitioning: bool
+    :param filtering_messages_before_publishing: Whether messages should be
+     filtered before publishing.
+    :type filtering_messages_before_publishing: bool
+    :param is_anonymous_accessible: Value that indicates whether the message
+     is accessible anonymously.
+    :type is_anonymous_accessible: bool
+    :param is_express:
+    :type is_express: bool
     :param max_size_in_megabytes: Maximum size of the topic in megabytes,
      which is the size of the memory allocated for the topic.
     :type max_size_in_megabytes: long
@@ -71,18 +78,18 @@ class Topic(Resource):
     :type requires_duplicate_detection: bool
     :ivar size_in_bytes: Size of the topic, in bytes.
     :vartype size_in_bytes: long
-    :ivar status: Enumerates the possible values for the status of a messaging
-     entity. Possible values include: 'Active', 'Creating', 'Deleting',
-     'Disabled', 'ReceiveDisabled', 'Renaming', 'Restoring', 'SendDisabled',
-     'Unknown'
-    :vartype status: str or :class:`EntityStatus
+    :param status: Enumerates the possible values for the status of a
+     messaging entity. Possible values include: 'Active', 'Creating',
+     'Deleting', 'Disabled', 'ReceiveDisabled', 'Renaming', 'Restoring',
+     'SendDisabled', 'Unknown'
+    :type status: str or :class:`EntityStatus
      <azure.mgmt.servicebus.models.EntityStatus>`
     :ivar subscription_count: Number of subscriptions.
     :vartype subscription_count: int
     :param support_ordering: Value that indicates whether the topic supports
      ordering.
     :type support_ordering: bool
-    :ivar updated_at: The exact time the Topic was updated.
+    :ivar updated_at: The exact time the message was updated.
     :vartype updated_at: datetime
     """
 
@@ -94,7 +101,6 @@ class Topic(Resource):
         'created_at': {'readonly': True},
         'count_details': {'readonly': True},
         'size_in_bytes': {'readonly': True},
-        'status': {'readonly': True},
         'subscription_count': {'readonly': True},
         'updated_at': {'readonly': True},
     }
@@ -105,6 +111,7 @@ class Topic(Resource):
         'type': {'key': 'type', 'type': 'str'},
         'accessed_at': {'key': 'properties.accessedAt', 'type': 'iso-8601'},
         'auto_delete_on_idle': {'key': 'properties.autoDeleteOnIdle', 'type': 'str'},
+        'entity_availability_status': {'key': 'properties.entityAvailabilityStatus', 'type': 'EntityAvailabilityStatus'},
         'created_at': {'key': 'properties.createdAt', 'type': 'iso-8601'},
         'count_details': {'key': 'properties.countDetails', 'type': 'MessageCountDetails'},
         'default_message_time_to_live': {'key': 'properties.defaultMessageTimeToLive', 'type': 'str'},
@@ -112,6 +119,10 @@ class Topic(Resource):
         'enable_batched_operations': {'key': 'properties.enableBatchedOperations', 'type': 'bool'},
         'enable_express': {'key': 'properties.enableExpress', 'type': 'bool'},
         'enable_partitioning': {'key': 'properties.enablePartitioning', 'type': 'bool'},
+        'enable_subscription_partitioning': {'key': 'properties.enableSubscriptionPartitioning', 'type': 'bool'},
+        'filtering_messages_before_publishing': {'key': 'properties.filteringMessagesBeforePublishing', 'type': 'bool'},
+        'is_anonymous_accessible': {'key': 'properties.isAnonymousAccessible', 'type': 'bool'},
+        'is_express': {'key': 'properties.isExpress', 'type': 'bool'},
         'max_size_in_megabytes': {'key': 'properties.maxSizeInMegabytes', 'type': 'long'},
         'requires_duplicate_detection': {'key': 'properties.requiresDuplicateDetection', 'type': 'bool'},
         'size_in_bytes': {'key': 'properties.sizeInBytes', 'type': 'long'},
@@ -121,10 +132,11 @@ class Topic(Resource):
         'updated_at': {'key': 'properties.updatedAt', 'type': 'iso-8601'},
     }
 
-    def __init__(self, auto_delete_on_idle=None, default_message_time_to_live=None, duplicate_detection_history_time_window=None, enable_batched_operations=None, enable_express=None, enable_partitioning=None, max_size_in_megabytes=None, requires_duplicate_detection=None, support_ordering=None):
-        super(Topic, self).__init__()
+    def __init__(self, auto_delete_on_idle=None, entity_availability_status=None, default_message_time_to_live=None, duplicate_detection_history_time_window=None, enable_batched_operations=None, enable_express=None, enable_partitioning=None, enable_subscription_partitioning=None, filtering_messages_before_publishing=None, is_anonymous_accessible=None, is_express=None, max_size_in_megabytes=None, requires_duplicate_detection=None, status=None, support_ordering=None):
+        super(TopicResource, self).__init__()
         self.accessed_at = None
         self.auto_delete_on_idle = auto_delete_on_idle
+        self.entity_availability_status = entity_availability_status
         self.created_at = None
         self.count_details = None
         self.default_message_time_to_live = default_message_time_to_live
@@ -132,10 +144,14 @@ class Topic(Resource):
         self.enable_batched_operations = enable_batched_operations
         self.enable_express = enable_express
         self.enable_partitioning = enable_partitioning
+        self.enable_subscription_partitioning = enable_subscription_partitioning
+        self.filtering_messages_before_publishing = filtering_messages_before_publishing
+        self.is_anonymous_accessible = is_anonymous_accessible
+        self.is_express = is_express
         self.max_size_in_megabytes = max_size_in_megabytes
         self.requires_duplicate_detection = requires_duplicate_detection
         self.size_in_bytes = None
-        self.status = None
+        self.status = status
         self.subscription_count = None
         self.support_ordering = support_ordering
         self.updated_at = None

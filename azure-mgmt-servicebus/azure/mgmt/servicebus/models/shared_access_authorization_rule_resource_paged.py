@@ -9,21 +9,19 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.serialization import Model
+from msrest.paging import Paged
 
 
-class RegenerateKeysParameters(Model):
-    """Parameters supplied to the Regenerate Authorization Rule operation.
-
-    :param policykey: Key that needs to be regenerated. Possible values
-     include: 'PrimaryKey', 'SecondaryKey'
-    :type policykey: str or :class:`Policykey
-     <azure.mgmt.servicebus.models.Policykey>`
+class SharedAccessAuthorizationRuleResourcePaged(Paged):
+    """
+    A paging container for iterating over a list of SharedAccessAuthorizationRuleResource object
     """
 
     _attribute_map = {
-        'policykey': {'key': 'Policykey', 'type': 'Policykey'},
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[SharedAccessAuthorizationRuleResource]'}
     }
 
-    def __init__(self, policykey=None):
-        self.policykey = policykey
+    def __init__(self, *args, **kwargs):
+
+        super(SharedAccessAuthorizationRuleResourcePaged, self).__init__(*args, **kwargs)

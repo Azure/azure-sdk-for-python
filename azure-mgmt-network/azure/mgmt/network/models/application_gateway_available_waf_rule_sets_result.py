@@ -12,18 +12,17 @@
 from msrest.serialization import Model
 
 
-class RegenerateKeysParameters(Model):
-    """Parameters supplied to the Regenerate Authorization Rule operation.
+class ApplicationGatewayAvailableWafRuleSetsResult(Model):
+    """Response for ApplicationGatewayAvailableWafRuleSets API service call.
 
-    :param policykey: Key that needs to be regenerated. Possible values
-     include: 'PrimaryKey', 'SecondaryKey'
-    :type policykey: str or :class:`Policykey
-     <azure.mgmt.servicebus.models.Policykey>`
+    :param value: The list of application gateway rule sets.
+    :type value: list of :class:`ApplicationGatewayFirewallRuleSet
+     <azure.mgmt.network.models.ApplicationGatewayFirewallRuleSet>`
     """
 
     _attribute_map = {
-        'policykey': {'key': 'Policykey', 'type': 'Policykey'},
+        'value': {'key': 'value', 'type': '[ApplicationGatewayFirewallRuleSet]'},
     }
 
-    def __init__(self, policykey=None):
-        self.policykey = policykey
+    def __init__(self, value=None):
+        self.value = value

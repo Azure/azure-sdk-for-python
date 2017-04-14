@@ -26,6 +26,23 @@ class SkuTier(Enum):
     premium = "Premium"
 
 
+class NamespaceState(Enum):
+
+    unknown = "Unknown"
+    creating = "Creating"
+    created = "Created"
+    activating = "Activating"
+    enabling = "Enabling"
+    active = "Active"
+    disabling = "Disabling"
+    disabled = "Disabled"
+    soft_deleting = "SoftDeleting"
+    soft_deleted = "SoftDeleted"
+    removing = "Removing"
+    removed = "Removed"
+    failed = "Failed"
+
+
 class AccessRights(Enum):
 
     manage = "Manage"
@@ -37,6 +54,15 @@ class Policykey(Enum):
 
     primary_key = "PrimaryKey"
     secondary_key = "SecondaryKey"
+
+
+class EntityAvailabilityStatus(Enum):
+
+    available = "Available"
+    limited = "Limited"
+    renaming = "Renaming"
+    restoring = "Restoring"
+    unknown = "Unknown"
 
 
 class EntityStatus(Enum):

@@ -9,42 +9,34 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .resource import Resource
+from msrest.serialization import Model
 
 
-class Subscription(Resource):
-    """Description of subscription resource.
+class SubscriptionCreateOrUpdateParameters(Model):
+    """Parameters supplied to the Create Or Update Subscription operation.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar id: Resource Id
-    :vartype id: str
-    :ivar name: Resource name
-    :vartype name: str
-    :ivar type: Resource type
-    :vartype type: str
+    :param location: Subscription data center location.
+    :type location: str
+    :param type: Resource manager type of the resource.
+    :type type: str
     :ivar accessed_at: Last time there was a receive request to this
      subscription.
     :vartype accessed_at: datetime
     :param auto_delete_on_idle: TimeSpan idle interval after which the topic
-     is automatically deleted. The minimum duration is 5 minutes. The service
-     accepts a C# Standard TimeSpan Format for loc duration
-     https://msdn.microsoft.com/en-us/library/ee372286(v=vs.110).aspx. Format
-     is 'DD.HH:MM:SS' and default value of this property is 10675199 days
+     is automatically deleted. The minimum duration is 5 minutes.
     :type auto_delete_on_idle: str
     :ivar count_details:
     :vartype count_details: :class:`MessageCountDetails
      <azure.mgmt.servicebus.models.MessageCountDetails>`
-    :ivar created_at: Exact time the Subscription was created.
+    :ivar created_at: Exact time the message was created.
     :vartype created_at: datetime
     :param default_message_time_to_live: Default message time to live value.
      This is the duration after which the message expires, starting from when
      the message is sent to Service Bus. This is the default value used when
-     TimeToLive is not set on a message itself. The service accepts a C#
-     Standard TimeSpan Format for loc duration
-     https://msdn.microsoft.com/en-us/library/ee372286(v=vs.110).aspx . Format
-     is 'DD.HH:MM:SS' and default value of this property is 10675199 days
+     TimeToLive is not set on a message itself.
     :type default_message_time_to_live: str
     :param dead_lettering_on_filter_evaluation_exceptions: Value that
      indicates whether a subscription has dead letter support on filter
@@ -56,9 +48,15 @@ class Subscription(Resource):
     :param enable_batched_operations: Value that indicates whether server-side
      batched operations are enabled.
     :type enable_batched_operations: bool
+    :param entity_availability_status: Entity availability status for the
+     topic. Possible values include: 'Available', 'Limited', 'Renaming',
+     'Restoring', 'Unknown'
+    :type entity_availability_status: str or :class:`EntityAvailabilityStatus
+     <azure.mgmt.servicebus.models.EntityAvailabilityStatus>`
+    :param is_read_only: Value that indicates whether the entity description
+     is read-only.
+    :type is_read_only: bool
     :param lock_duration: The lock duration time span for the subscription.
-     The service accepts a C# Standard TimeSpan Format for loc duration
-     https://msdn.microsoft.com/en-us/library/ee372286(v=vs.110).aspx
     :type lock_duration: str
     :param max_delivery_count: Number of maximum deliveries.
     :type max_delivery_count: int
@@ -73,14 +71,12 @@ class Subscription(Resource):
      'SendDisabled', 'Unknown'
     :type status: str or :class:`EntityStatus
      <azure.mgmt.servicebus.models.EntityStatus>`
-    :ivar updated_at: The exact time the subscription was updated.
+    :ivar updated_at: The exact time the message was updated.
     :vartype updated_at: datetime
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
+        'location': {'required': True},
         'accessed_at': {'readonly': True},
         'count_details': {'readonly': True},
         'created_at': {'readonly': True},
@@ -89,8 +85,7 @@ class Subscription(Resource):
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
+        'location': {'key': 'location', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
         'accessed_at': {'key': 'properties.accessedAt', 'type': 'iso-8601'},
         'auto_delete_on_idle': {'key': 'properties.autoDeleteOnIdle', 'type': 'str'},
@@ -100,6 +95,8 @@ class Subscription(Resource):
         'dead_lettering_on_filter_evaluation_exceptions': {'key': 'properties.deadLetteringOnFilterEvaluationExceptions', 'type': 'bool'},
         'dead_lettering_on_message_expiration': {'key': 'properties.deadLetteringOnMessageExpiration', 'type': 'bool'},
         'enable_batched_operations': {'key': 'properties.enableBatchedOperations', 'type': 'bool'},
+        'entity_availability_status': {'key': 'properties.entityAvailabilityStatus', 'type': 'EntityAvailabilityStatus'},
+        'is_read_only': {'key': 'properties.isReadOnly', 'type': 'bool'},
         'lock_duration': {'key': 'properties.lockDuration', 'type': 'str'},
         'max_delivery_count': {'key': 'properties.maxDeliveryCount', 'type': 'int'},
         'message_count': {'key': 'properties.messageCount', 'type': 'long'},
@@ -108,8 +105,9 @@ class Subscription(Resource):
         'updated_at': {'key': 'properties.updatedAt', 'type': 'iso-8601'},
     }
 
-    def __init__(self, auto_delete_on_idle=None, default_message_time_to_live=None, dead_lettering_on_filter_evaluation_exceptions=None, dead_lettering_on_message_expiration=None, enable_batched_operations=None, lock_duration=None, max_delivery_count=None, requires_session=None, status=None):
-        super(Subscription, self).__init__()
+    def __init__(self, location, type=None, auto_delete_on_idle=None, default_message_time_to_live=None, dead_lettering_on_filter_evaluation_exceptions=None, dead_lettering_on_message_expiration=None, enable_batched_operations=None, entity_availability_status=None, is_read_only=None, lock_duration=None, max_delivery_count=None, requires_session=None, status=None):
+        self.location = location
+        self.type = type
         self.accessed_at = None
         self.auto_delete_on_idle = auto_delete_on_idle
         self.count_details = None
@@ -118,6 +116,8 @@ class Subscription(Resource):
         self.dead_lettering_on_filter_evaluation_exceptions = dead_lettering_on_filter_evaluation_exceptions
         self.dead_lettering_on_message_expiration = dead_lettering_on_message_expiration
         self.enable_batched_operations = enable_batched_operations
+        self.entity_availability_status = entity_availability_status
+        self.is_read_only = is_read_only
         self.lock_duration = lock_duration
         self.max_delivery_count = max_delivery_count
         self.message_count = None

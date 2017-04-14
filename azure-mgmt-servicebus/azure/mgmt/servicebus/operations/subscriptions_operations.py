@@ -35,7 +35,7 @@ class SubscriptionsOperations(object):
 
         self.config = config
 
-    def list_by_topic(
+    def list_all(
             self, resource_group_name, namespace_name, topic_name, custom_headers=None, raw=False, **operation_config):
         """List all the subscriptions under a specified topic.
 
@@ -51,8 +51,8 @@ class SubscriptionsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`SubscriptionPaged
-         <azure.mgmt.servicebus.models.SubscriptionPaged>`
+        :rtype: :class:`SubscriptionResourcePaged
+         <azure.mgmt.servicebus.models.SubscriptionResourcePaged>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
@@ -99,11 +99,11 @@ class SubscriptionsOperations(object):
             return response
 
         # Deserialize response
-        deserialized = models.SubscriptionPaged(internal_paging, self._deserialize.dependencies)
+        deserialized = models.SubscriptionResourcePaged(internal_paging, self._deserialize.dependencies)
 
         if raw:
             header_dict = {}
-            client_raw_response = models.SubscriptionPaged(internal_paging, self._deserialize.dependencies, header_dict)
+            client_raw_response = models.SubscriptionResourcePaged(internal_paging, self._deserialize.dependencies, header_dict)
             return client_raw_response
 
         return deserialized
@@ -123,15 +123,15 @@ class SubscriptionsOperations(object):
         :type subscription_name: str
         :param parameters: Parameters supplied to create a subscription
          resource.
-        :type parameters: :class:`Subscription
-         <azure.mgmt.servicebus.models.Subscription>`
+        :type parameters: :class:`SubscriptionCreateOrUpdateParameters
+         <azure.mgmt.servicebus.models.SubscriptionCreateOrUpdateParameters>`
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`Subscription
-         <azure.mgmt.servicebus.models.Subscription>`
+        :rtype: :class:`SubscriptionResource
+         <azure.mgmt.servicebus.models.SubscriptionResource>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
@@ -162,7 +162,7 @@ class SubscriptionsOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct body
-        body_content = self._serialize.body(parameters, 'Subscription')
+        body_content = self._serialize.body(parameters, 'SubscriptionCreateOrUpdateParameters')
 
         # Construct and send request
         request = self._client.put(url, query_parameters)
@@ -177,7 +177,7 @@ class SubscriptionsOperations(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('Subscription', response)
+            deserialized = self._deserialize('SubscriptionResource', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
@@ -264,8 +264,8 @@ class SubscriptionsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`Subscription
-         <azure.mgmt.servicebus.models.Subscription>`
+        :rtype: :class:`SubscriptionResource
+         <azure.mgmt.servicebus.models.SubscriptionResource>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
@@ -307,7 +307,7 @@ class SubscriptionsOperations(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('Subscription', response)
+            deserialized = self._deserialize('SubscriptionResource', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)

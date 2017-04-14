@@ -24,8 +24,8 @@ class ResourceListKeys(Model):
     :param primary_key: A base64-encoded 256-bit primary key for signing and
      validating the SAS token.
     :type primary_key: str
-    :param secondary_key: A base64-encoded 256-bit secondary key for signing
-     and validating the SAS token.
+    :param secondary_key: A base64-encoded 256-bit primary key for signing and
+     validating the SAS token.
     :type secondary_key: str
     :param key_name: A string that describes the authorization rule.
     :type key_name: str

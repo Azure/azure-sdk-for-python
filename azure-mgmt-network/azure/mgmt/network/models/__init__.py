@@ -44,8 +44,13 @@ from .application_gateway_path_rule import ApplicationGatewayPathRule
 from .application_gateway_probe import ApplicationGatewayProbe
 from .application_gateway_request_routing_rule import ApplicationGatewayRequestRoutingRule
 from .application_gateway_url_path_map import ApplicationGatewayUrlPathMap
+from .application_gateway_firewall_disabled_rule_group import ApplicationGatewayFirewallDisabledRuleGroup
 from .application_gateway_web_application_firewall_configuration import ApplicationGatewayWebApplicationFirewallConfiguration
 from .application_gateway import ApplicationGateway
+from .application_gateway_firewall_rule import ApplicationGatewayFirewallRule
+from .application_gateway_firewall_rule_group import ApplicationGatewayFirewallRuleGroup
+from .application_gateway_firewall_rule_set import ApplicationGatewayFirewallRuleSet
+from .application_gateway_available_waf_rule_sets_result import ApplicationGatewayAvailableWafRuleSetsResult
 from .resource import Resource
 from .dns_name_availability_result import DnsNameAvailabilityResult
 from .express_route_circuit_authorization import ExpressRouteCircuitAuthorization
@@ -253,8 +258,13 @@ __all__ = [
     'ApplicationGatewayProbe',
     'ApplicationGatewayRequestRoutingRule',
     'ApplicationGatewayUrlPathMap',
+    'ApplicationGatewayFirewallDisabledRuleGroup',
     'ApplicationGatewayWebApplicationFirewallConfiguration',
     'ApplicationGateway',
+    'ApplicationGatewayFirewallRule',
+    'ApplicationGatewayFirewallRuleGroup',
+    'ApplicationGatewayFirewallRuleSet',
+    'ApplicationGatewayAvailableWafRuleSetsResult',
     'Resource',
     'DnsNameAvailabilityResult',
     'ExpressRouteCircuitAuthorization',

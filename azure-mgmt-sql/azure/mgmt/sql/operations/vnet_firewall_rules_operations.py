@@ -17,14 +17,14 @@ import uuid
 from .. import models
 
 
-class LocalNetworkGatewaysOperations(object):
-    """LocalNetworkGatewaysOperations operations.
+class VnetFirewallRulesOperations(object):
+    """VnetFirewallRulesOperations operations.
 
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An objec model deserializer.
-    :ivar api_version: Client API version. Constant value: "2017-03-01".
+    :ivar api_version: The API version to use for the request. Constant value: "2015-05-01-preview".
     """
 
     def __init__(self, client, config, serializer, deserializer):
@@ -32,133 +32,40 @@ class LocalNetworkGatewaysOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2017-03-01"
+        self.api_version = "2015-05-01-preview"
 
         self.config = config
 
-    def create_or_update(
-            self, resource_group_name, local_network_gateway_name, parameters, custom_headers=None, raw=False, **operation_config):
-        """Creates or updates a local network gateway in the specified resource
-        group.
-
-        :param resource_group_name: The name of the resource group.
-        :type resource_group_name: str
-        :param local_network_gateway_name: The name of the local network
-         gateway.
-        :type local_network_gateway_name: str
-        :param parameters: Parameters supplied to the create or update local
-         network gateway operation.
-        :type parameters: :class:`LocalNetworkGateway
-         <azure.mgmt.network.models.LocalNetworkGateway>`
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :rtype:
-         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         instance that returns :class:`LocalNetworkGateway
-         <azure.mgmt.network.models.LocalNetworkGateway>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
-        """
-        # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/localNetworkGateways/{localNetworkGatewayName}'
-        path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            'localNetworkGatewayName': self._serialize.url("local_network_gateway_name", local_network_gateway_name, 'str', min_length=1),
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
-        }
-        url = self._client.format_url(url, **path_format_arguments)
-
-        # Construct parameters
-        query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
-
-        # Construct headers
-        header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
-        if self.config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-        if custom_headers:
-            header_parameters.update(custom_headers)
-        if self.config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
-
-        # Construct body
-        body_content = self._serialize.body(parameters, 'LocalNetworkGateway')
-
-        # Construct and send request
-        def long_running_send():
-
-            request = self._client.put(url, query_parameters)
-            return self._client.send(
-                request, header_parameters, body_content, **operation_config)
-
-        def get_long_running_status(status_link, headers=None):
-
-            request = self._client.get(status_link)
-            if headers:
-                request.headers.update(headers)
-            return self._client.send(
-                request, header_parameters, **operation_config)
-
-        def get_long_running_output(response):
-
-            if response.status_code not in [201, 200]:
-                exp = CloudError(response)
-                exp.request_id = response.headers.get('x-ms-request-id')
-                raise exp
-
-            deserialized = None
-
-            if response.status_code == 201:
-                deserialized = self._deserialize('LocalNetworkGateway', response)
-            if response.status_code == 200:
-                deserialized = self._deserialize('LocalNetworkGateway', response)
-
-            if raw:
-                client_raw_response = ClientRawResponse(deserialized, response)
-                return client_raw_response
-
-            return deserialized
-
-        if raw:
-            response = long_running_send()
-            return get_long_running_output(response)
-
-        long_running_operation_timeout = operation_config.get(
-            'long_running_operation_timeout',
-            self.config.long_running_operation_timeout)
-        return AzureOperationPoller(
-            long_running_send, get_long_running_output,
-            get_long_running_status, long_running_operation_timeout)
-
     def get(
-            self, resource_group_name, local_network_gateway_name, custom_headers=None, raw=False, **operation_config):
-        """Gets the specified local network gateway in a resource group.
+            self, resource_group_name, server_name, vnet_firewall_rule_name, custom_headers=None, raw=False, **operation_config):
+        """Gets a virtual network rule.
 
-        :param resource_group_name: The name of the resource group.
+        :param resource_group_name: The name of the resource group that
+         contains the resource. You can obtain this value from the Azure
+         Resource Manager API or the portal.
         :type resource_group_name: str
-        :param local_network_gateway_name: The name of the local network
-         gateway.
-        :type local_network_gateway_name: str
+        :param server_name: The name of the server.
+        :type server_name: str
+        :param vnet_firewall_rule_name: The name of the virtual network rule.
+        :type vnet_firewall_rule_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`LocalNetworkGateway
-         <azure.mgmt.network.models.LocalNetworkGateway>`
+        :rtype: :class:`VnetFirewallRule
+         <azure.mgmt.sql.models.VnetFirewallRule>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/localNetworkGateways/{localNetworkGatewayName}'
+        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/virtualNetworkRules/{vnetFirewallRuleName}'
         path_format_arguments = {
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            'localNetworkGatewayName': self._serialize.url("local_network_gateway_name", local_network_gateway_name, 'str', min_length=1),
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+            'serverName': self._serialize.url("server_name", server_name, 'str'),
+            'vnetFirewallRuleName': self._serialize.url("vnet_firewall_rule_name", vnet_firewall_rule_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -188,7 +95,7 @@ class LocalNetworkGatewaysOperations(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('LocalNetworkGateway', response)
+            deserialized = self._deserialize('VnetFirewallRule', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
@@ -196,15 +103,118 @@ class LocalNetworkGatewaysOperations(object):
 
         return deserialized
 
-    def delete(
-            self, resource_group_name, local_network_gateway_name, custom_headers=None, raw=False, **operation_config):
-        """Deletes the specified local network gateway.
+    def create_or_update(
+            self, resource_group_name, server_name, vnet_firewall_rule_name, virtual_network_subnet_id=None, custom_headers=None, raw=False, **operation_config):
+        """Creates or updates an existing virtual network rule.
 
-        :param resource_group_name: The name of the resource group.
+        :param resource_group_name: The name of the resource group that
+         contains the resource. You can obtain this value from the Azure
+         Resource Manager API or the portal.
         :type resource_group_name: str
-        :param local_network_gateway_name: The name of the local network
-         gateway.
-        :type local_network_gateway_name: str
+        :param server_name: The name of the server.
+        :type server_name: str
+        :param vnet_firewall_rule_name: The name of the virtual network rule.
+        :type vnet_firewall_rule_name: str
+        :param virtual_network_subnet_id: The VnetSubnetId
+        :type virtual_network_subnet_id: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :rtype:
+         :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
+         instance that returns :class:`VnetFirewallRule
+         <azure.mgmt.sql.models.VnetFirewallRule>`
+        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+         if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        """
+        parameters = models.VnetFirewallRule(virtual_network_subnet_id=virtual_network_subnet_id)
+
+        # Construct URL
+        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/virtualNetworkRules/{vnetFirewallRuleName}'
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'serverName': self._serialize.url("server_name", server_name, 'str'),
+            'vnetFirewallRuleName': self._serialize.url("vnet_firewall_rule_name", vnet_firewall_rule_name, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+        # Construct body
+        body_content = self._serialize.body(parameters, 'VnetFirewallRule')
+
+        # Construct and send request
+        def long_running_send():
+
+            request = self._client.put(url, query_parameters)
+            return self._client.send(
+                request, header_parameters, body_content, **operation_config)
+
+        def get_long_running_status(status_link, headers=None):
+
+            request = self._client.get(status_link)
+            if headers:
+                request.headers.update(headers)
+            return self._client.send(
+                request, header_parameters, **operation_config)
+
+        def get_long_running_output(response):
+
+            if response.status_code not in [200, 202, 201]:
+                exp = CloudError(response)
+                exp.request_id = response.headers.get('x-ms-request-id')
+                raise exp
+
+            deserialized = None
+
+            if response.status_code == 200:
+                deserialized = self._deserialize('VnetFirewallRule', response)
+            if response.status_code == 201:
+                deserialized = self._deserialize('VnetFirewallRule', response)
+
+            if raw:
+                client_raw_response = ClientRawResponse(deserialized, response)
+                return client_raw_response
+
+            return deserialized
+
+        if raw:
+            response = long_running_send()
+            return get_long_running_output(response)
+
+        long_running_operation_timeout = operation_config.get(
+            'long_running_operation_timeout',
+            self.config.long_running_operation_timeout)
+        return AzureOperationPoller(
+            long_running_send, get_long_running_output,
+            get_long_running_status, long_running_operation_timeout)
+
+    def delete(
+            self, resource_group_name, server_name, vnet_firewall_rule_name, custom_headers=None, raw=False, **operation_config):
+        """Deletes the virtual network rule with the given name.
+
+        :param resource_group_name: The name of the resource group that
+         contains the resource. You can obtain this value from the Azure
+         Resource Manager API or the portal.
+        :type resource_group_name: str
+        :param server_name: The name of the server.
+        :type server_name: str
+        :param vnet_firewall_rule_name: The name of the virtual network rule.
+        :type vnet_firewall_rule_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -216,11 +226,12 @@ class LocalNetworkGatewaysOperations(object):
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/localNetworkGateways/{localNetworkGatewayName}'
+        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/virtualNetworkRules/{vnetFirewallRuleName}'
         path_format_arguments = {
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            'localNetworkGatewayName': self._serialize.url("local_network_gateway_name", local_network_gateway_name, 'str', min_length=1),
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+            'serverName': self._serialize.url("server_name", server_name, 'str'),
+            'vnetFirewallRuleName': self._serialize.url("vnet_firewall_rule_name", vnet_firewall_rule_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -254,7 +265,7 @@ class LocalNetworkGatewaysOperations(object):
 
         def get_long_running_output(response):
 
-            if response.status_code not in [204, 200, 202]:
+            if response.status_code not in [200, 202, 204]:
                 exp = CloudError(response)
                 exp.request_id = response.headers.get('x-ms-request-id')
                 raise exp
@@ -274,29 +285,34 @@ class LocalNetworkGatewaysOperations(object):
             long_running_send, get_long_running_output,
             get_long_running_status, long_running_operation_timeout)
 
-    def list(
-            self, resource_group_name, custom_headers=None, raw=False, **operation_config):
-        """Gets all the local network gateways in a resource group.
+    def list_by_server(
+            self, resource_group_name, server_name, custom_headers=None, raw=False, **operation_config):
+        """Gets a list of virtual network rules in a server.
 
-        :param resource_group_name: The name of the resource group.
+        :param resource_group_name: The name of the resource group that
+         contains the resource. You can obtain this value from the Azure
+         Resource Manager API or the portal.
         :type resource_group_name: str
+        :param server_name: The name of the server.
+        :type server_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`LocalNetworkGatewayPaged
-         <azure.mgmt.network.models.LocalNetworkGatewayPaged>`
+        :rtype: :class:`VnetFirewallRulePaged
+         <azure.mgmt.sql.models.VnetFirewallRulePaged>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
 
             if not next_link:
                 # Construct URL
-                url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/localNetworkGateways'
+                url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/virtualNetworkRules'
                 path_format_arguments = {
+                    'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
                     'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-                    'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+                    'serverName': self._serialize.url("server_name", server_name, 'str')
                 }
                 url = self._client.format_url(url, **path_format_arguments)
 
@@ -331,11 +347,11 @@ class LocalNetworkGatewaysOperations(object):
             return response
 
         # Deserialize response
-        deserialized = models.LocalNetworkGatewayPaged(internal_paging, self._deserialize.dependencies)
+        deserialized = models.VnetFirewallRulePaged(internal_paging, self._deserialize.dependencies)
 
         if raw:
             header_dict = {}
-            client_raw_response = models.LocalNetworkGatewayPaged(internal_paging, self._deserialize.dependencies, header_dict)
+            client_raw_response = models.VnetFirewallRulePaged(internal_paging, self._deserialize.dependencies, header_dict)
             return client_raw_response
 
         return deserialized

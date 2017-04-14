@@ -35,7 +35,7 @@ class TopicsOperations(object):
 
         self.config = config
 
-    def list_by_namespace(
+    def list_all(
             self, resource_group_name, namespace_name, custom_headers=None, raw=False, **operation_config):
         """Gets all the topics in a namespace.
 
@@ -49,7 +49,8 @@ class TopicsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`TopicPaged <azure.mgmt.servicebus.models.TopicPaged>`
+        :rtype: :class:`TopicResourcePaged
+         <azure.mgmt.servicebus.models.TopicResourcePaged>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
@@ -95,11 +96,11 @@ class TopicsOperations(object):
             return response
 
         # Deserialize response
-        deserialized = models.TopicPaged(internal_paging, self._deserialize.dependencies)
+        deserialized = models.TopicResourcePaged(internal_paging, self._deserialize.dependencies)
 
         if raw:
             header_dict = {}
-            client_raw_response = models.TopicPaged(internal_paging, self._deserialize.dependencies, header_dict)
+            client_raw_response = models.TopicResourcePaged(internal_paging, self._deserialize.dependencies, header_dict)
             return client_raw_response
 
         return deserialized
@@ -116,13 +117,15 @@ class TopicsOperations(object):
         :param topic_name: The topic name.
         :type topic_name: str
         :param parameters: Parameters supplied to create a topic resource.
-        :type parameters: :class:`Topic <azure.mgmt.servicebus.models.Topic>`
+        :type parameters: :class:`TopicCreateOrUpdateParameters
+         <azure.mgmt.servicebus.models.TopicCreateOrUpdateParameters>`
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`Topic <azure.mgmt.servicebus.models.Topic>`
+        :rtype: :class:`TopicResource
+         <azure.mgmt.servicebus.models.TopicResource>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
@@ -152,7 +155,7 @@ class TopicsOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct body
-        body_content = self._serialize.body(parameters, 'Topic')
+        body_content = self._serialize.body(parameters, 'TopicCreateOrUpdateParameters')
 
         # Construct and send request
         request = self._client.put(url, query_parameters)
@@ -167,7 +170,7 @@ class TopicsOperations(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('Topic', response)
+            deserialized = self._deserialize('TopicResource', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
@@ -249,7 +252,8 @@ class TopicsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`Topic <azure.mgmt.servicebus.models.Topic>`
+        :rtype: :class:`TopicResource
+         <azure.mgmt.servicebus.models.TopicResource>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
@@ -290,7 +294,7 @@ class TopicsOperations(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('Topic', response)
+            deserialized = self._deserialize('TopicResource', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
@@ -314,8 +318,8 @@ class TopicsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`SharedAccessAuthorizationRulePaged
-         <azure.mgmt.servicebus.models.SharedAccessAuthorizationRulePaged>`
+        :rtype: :class:`SharedAccessAuthorizationRuleResourcePaged
+         <azure.mgmt.servicebus.models.SharedAccessAuthorizationRuleResourcePaged>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
@@ -362,17 +366,17 @@ class TopicsOperations(object):
             return response
 
         # Deserialize response
-        deserialized = models.SharedAccessAuthorizationRulePaged(internal_paging, self._deserialize.dependencies)
+        deserialized = models.SharedAccessAuthorizationRuleResourcePaged(internal_paging, self._deserialize.dependencies)
 
         if raw:
             header_dict = {}
-            client_raw_response = models.SharedAccessAuthorizationRulePaged(internal_paging, self._deserialize.dependencies, header_dict)
+            client_raw_response = models.SharedAccessAuthorizationRuleResourcePaged(internal_paging, self._deserialize.dependencies, header_dict)
             return client_raw_response
 
         return deserialized
 
     def create_or_update_authorization_rule(
-            self, resource_group_name, namespace_name, topic_name, authorization_rule_name, rights, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, namespace_name, topic_name, authorization_rule_name, parameters, custom_headers=None, raw=False, **operation_config):
         """Creates an authorizatio rule for the specified topic.
 
         :param resource_group_name: Name of the Resource group within the
@@ -384,22 +388,21 @@ class TopicsOperations(object):
         :type topic_name: str
         :param authorization_rule_name: The authorizationrule name.
         :type authorization_rule_name: str
-        :param rights: The rights associated with the rule.
-        :type rights: list of str or :class:`AccessRights
-         <azure.mgmt.servicebus.models.AccessRights>`
+        :param parameters: The shared access authorization rule.
+        :type parameters:
+         :class:`SharedAccessAuthorizationRuleCreateOrUpdateParameters
+         <azure.mgmt.servicebus.models.SharedAccessAuthorizationRuleCreateOrUpdateParameters>`
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`SharedAccessAuthorizationRule
-         <azure.mgmt.servicebus.models.SharedAccessAuthorizationRule>`
+        :rtype: :class:`SharedAccessAuthorizationRuleResource
+         <azure.mgmt.servicebus.models.SharedAccessAuthorizationRuleResource>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
-        parameters = models.SharedAccessAuthorizationRule(rights=rights)
-
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ServiceBus/namespaces/{namespaceName}/topics/{topicName}/authorizationRules/{authorizationRuleName}'
         path_format_arguments = {
@@ -426,7 +429,7 @@ class TopicsOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct body
-        body_content = self._serialize.body(parameters, 'SharedAccessAuthorizationRule')
+        body_content = self._serialize.body(parameters, 'SharedAccessAuthorizationRuleCreateOrUpdateParameters')
 
         # Construct and send request
         request = self._client.put(url, query_parameters)
@@ -441,7 +444,7 @@ class TopicsOperations(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('SharedAccessAuthorizationRule', response)
+            deserialized = self._deserialize('SharedAccessAuthorizationRuleResource', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
@@ -467,8 +470,8 @@ class TopicsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`SharedAccessAuthorizationRule
-         <azure.mgmt.servicebus.models.SharedAccessAuthorizationRule>`
+        :rtype: :class:`SharedAccessAuthorizationRuleResource
+         <azure.mgmt.servicebus.models.SharedAccessAuthorizationRuleResource>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
@@ -510,7 +513,7 @@ class TopicsOperations(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('SharedAccessAuthorizationRule', response)
+            deserialized = self._deserialize('SharedAccessAuthorizationRuleResource', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)

@@ -76,6 +76,7 @@ class ApplicationGatewayBackendHealthServerHealth(Enum):
     up = "Up"
     down = "Down"
     partial = "Partial"
+    draining = "Draining"
 
 
 class ApplicationGatewaySkuName(Enum):

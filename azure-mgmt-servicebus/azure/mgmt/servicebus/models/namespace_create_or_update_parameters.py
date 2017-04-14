@@ -9,29 +9,28 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .tracked_resource import TrackedResource
+from msrest.serialization import Model
 
 
-class Namespace(TrackedResource):
-    """Description of a namespace resource.
+class NamespaceCreateOrUpdateParameters(Model):
+    """Parameters supplied to the Create Or Update Namespace operation.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar id: Resource Id
-    :vartype id: str
-    :ivar name: Resource name
-    :vartype name: str
-    :ivar type: Resource type
-    :vartype type: str
-    :param location: Resource location
+    :param location: Namespace location.
     :type location: str
-    :param tags: Resource tags
-    :type tags: dict
     :param sku:
     :type sku: :class:`Sku <azure.mgmt.servicebus.models.Sku>`
+    :param tags: Namespace tags.
+    :type tags: dict
     :ivar provisioning_state: Provisioning state of the namespace.
     :vartype provisioning_state: str
+    :param status: State of the namespace. Possible values include: 'Unknown',
+     'Creating', 'Created', 'Activating', 'Enabling', 'Active', 'Disabling',
+     'Disabled', 'SoftDeleting', 'SoftDeleted', 'Removing', 'Removed', 'Failed'
+    :type status: str or :class:`NamespaceState
+     <azure.mgmt.servicebus.models.NamespaceState>`
     :ivar created_at: The time the namespace was created.
     :vartype created_at: datetime
     :ivar updated_at: The time the namespace was updated.
@@ -39,41 +38,41 @@ class Namespace(TrackedResource):
     :ivar service_bus_endpoint: Endpoint you can use to perform Service Bus
      operations.
     :vartype service_bus_endpoint: str
-    :ivar metric_id: Identifier for Azure Insights metrics
-    :vartype metric_id: str
+    :param create_acs_namespace: Indicates whether to create an ACS namespace.
+    :type create_acs_namespace: bool
+    :param enabled: Specifies whether this instance is enabled.
+    :type enabled: bool
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
         'location': {'required': True},
         'provisioning_state': {'readonly': True},
         'created_at': {'readonly': True},
         'updated_at': {'readonly': True},
         'service_bus_endpoint': {'readonly': True},
-        'metric_id': {'readonly': True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
         'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
         'sku': {'key': 'sku', 'type': 'Sku'},
+        'tags': {'key': 'tags', 'type': '{str}'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        'status': {'key': 'properties.status', 'type': 'NamespaceState'},
         'created_at': {'key': 'properties.createdAt', 'type': 'iso-8601'},
         'updated_at': {'key': 'properties.updatedAt', 'type': 'iso-8601'},
         'service_bus_endpoint': {'key': 'properties.serviceBusEndpoint', 'type': 'str'},
-        'metric_id': {'key': 'properties.metricId', 'type': 'str'},
+        'create_acs_namespace': {'key': 'properties.createACSNamespace', 'type': 'bool'},
+        'enabled': {'key': 'properties.enabled', 'type': 'bool'},
     }
 
-    def __init__(self, location, tags=None, sku=None):
-        super(Namespace, self).__init__(location=location, tags=tags)
+    def __init__(self, location, sku=None, tags=None, status=None, create_acs_namespace=None, enabled=None):
+        self.location = location
         self.sku = sku
+        self.tags = tags
         self.provisioning_state = None
+        self.status = status
         self.created_at = None
         self.updated_at = None
         self.service_bus_endpoint = None
-        self.metric_id = None
+        self.create_acs_namespace = create_acs_namespace
+        self.enabled = enabled

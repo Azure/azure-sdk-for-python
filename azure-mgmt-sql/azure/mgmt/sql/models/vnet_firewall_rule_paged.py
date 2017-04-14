@@ -12,16 +12,16 @@
 from msrest.paging import Paged
 
 
-class SubscriptionPaged(Paged):
+class VnetFirewallRulePaged(Paged):
     """
-    A paging container for iterating over a list of Subscription object
+    A paging container for iterating over a list of VnetFirewallRule object
     """
 
     _attribute_map = {
         'next_link': {'key': 'nextLink', 'type': 'str'},
-        'current_page': {'key': 'value', 'type': '[Subscription]'}
+        'current_page': {'key': 'value', 'type': '[VnetFirewallRule]'}
     }
 
     def __init__(self, *args, **kwargs):
 
-        super(SubscriptionPaged, self).__init__(*args, **kwargs)
+        super(VnetFirewallRulePaged, self).__init__(*args, **kwargs)

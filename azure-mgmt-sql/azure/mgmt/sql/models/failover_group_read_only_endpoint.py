@@ -12,18 +12,18 @@
 from msrest.serialization import Model
 
 
-class RegenerateKeysParameters(Model):
-    """Parameters supplied to the Regenerate Authorization Rule operation.
+class FailoverGroupReadOnlyEndpoint(Model):
+    """Read-only endpoint of the failover group instance.
 
-    :param policykey: Key that needs to be regenerated. Possible values
-     include: 'PrimaryKey', 'SecondaryKey'
-    :type policykey: str or :class:`Policykey
-     <azure.mgmt.servicebus.models.Policykey>`
+    :param failover_policy: Failover policy of the read-only endpoint for the
+     failover group. Possible values include: 'Disabled', 'Enabled'
+    :type failover_policy: str or :class:`ReadOnlyEndpointFailoverPolicy
+     <azure.mgmt.sql.models.ReadOnlyEndpointFailoverPolicy>`
     """
 
     _attribute_map = {
-        'policykey': {'key': 'Policykey', 'type': 'Policykey'},
+        'failover_policy': {'key': 'failoverPolicy', 'type': 'str'},
     }
 
-    def __init__(self, policykey=None):
-        self.policykey = policykey
+    def __init__(self, failover_policy=None):
+        self.failover_policy = failover_policy

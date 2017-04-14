@@ -17,22 +17,39 @@ class ApplicationGatewayWebApplicationFirewallConfiguration(Model):
 
     :param enabled: Whether the web application firewall is enabled or not.
     :type enabled: bool
-    :param firewall_mode: Web application firewall mode. Possible values are:
-     'Detection' and 'Prevention'. Possible values include: 'Detection',
-     'Prevention'
+    :param firewall_mode: Web application firewall mode. Possible values
+     include: 'Detection', 'Prevention'
     :type firewall_mode: str or :class:`ApplicationGatewayFirewallMode
      <azure.mgmt.network.models.ApplicationGatewayFirewallMode>`
+    :param rule_set_type: The type of the web application firewall rule set.
+     Possible values are: 'OWASP'.
+    :type rule_set_type: str
+    :param rule_set_version: The version of the rule set type.
+    :type rule_set_version: str
+    :param disabled_rule_groups: The disabled rule groups.
+    :type disabled_rule_groups: list of
+     :class:`ApplicationGatewayFirewallDisabledRuleGroup
+     <azure.mgmt.network.models.ApplicationGatewayFirewallDisabledRuleGroup>`
     """
 
     _validation = {
         'enabled': {'required': True},
+        'firewall_mode': {'required': True},
+        'rule_set_type': {'required': True},
+        'rule_set_version': {'required': True},
     }
 
     _attribute_map = {
         'enabled': {'key': 'enabled', 'type': 'bool'},
         'firewall_mode': {'key': 'firewallMode', 'type': 'str'},
+        'rule_set_type': {'key': 'ruleSetType', 'type': 'str'},
+        'rule_set_version': {'key': 'ruleSetVersion', 'type': 'str'},
+        'disabled_rule_groups': {'key': 'disabledRuleGroups', 'type': '[ApplicationGatewayFirewallDisabledRuleGroup]'},
     }
 
-    def __init__(self, enabled, firewall_mode=None):
+    def __init__(self, enabled, firewall_mode, rule_set_type, rule_set_version, disabled_rule_groups=None):
         self.enabled = enabled
         self.firewall_mode = firewall_mode
+        self.rule_set_type = rule_set_type
+        self.rule_set_version = rule_set_version
+        self.disabled_rule_groups = disabled_rule_groups

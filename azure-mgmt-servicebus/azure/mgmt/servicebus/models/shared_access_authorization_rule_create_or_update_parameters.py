@@ -9,40 +9,32 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .resource import Resource
+from msrest.serialization import Model
 
 
-class SharedAccessAuthorizationRule(Resource):
-    """Description of a namespace authorization rule.
+class SharedAccessAuthorizationRuleCreateOrUpdateParameters(Model):
+    """Parameters supplied to the Create Or Update Authorization Rules operation.
 
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
-
-    :ivar id: Resource Id
-    :vartype id: str
-    :ivar name: Resource name
-    :vartype name: str
-    :ivar type: Resource type
-    :vartype type: str
+    :param location: data center location.
+    :type location: str
+    :param name: Name of the authorization rule.
+    :type name: str
     :param rights: The rights associated with the rule.
     :type rights: list of str or :class:`AccessRights
      <azure.mgmt.servicebus.models.AccessRights>`
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
         'rights': {'required': True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
+        'location': {'key': 'location', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
         'rights': {'key': 'properties.rights', 'type': '[AccessRights]'},
     }
 
-    def __init__(self, rights):
-        super(SharedAccessAuthorizationRule, self).__init__()
+    def __init__(self, rights, location=None, name=None):
+        self.location = location
+        self.name = name
         self.rights = rights

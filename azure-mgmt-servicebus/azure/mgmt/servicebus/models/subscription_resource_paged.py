@@ -12,16 +12,16 @@
 from msrest.paging import Paged
 
 
-class NamespacePaged(Paged):
+class SubscriptionResourcePaged(Paged):
     """
-    A paging container for iterating over a list of Namespace object
+    A paging container for iterating over a list of SubscriptionResource object
     """
 
     _attribute_map = {
         'next_link': {'key': 'nextLink', 'type': 'str'},
-        'current_page': {'key': 'value', 'type': '[Namespace]'}
+        'current_page': {'key': 'value', 'type': '[SubscriptionResource]'}
     }
 
     def __init__(self, *args, **kwargs):
 
-        super(NamespacePaged, self).__init__(*args, **kwargs)
+        super(SubscriptionResourcePaged, self).__init__(*args, **kwargs)

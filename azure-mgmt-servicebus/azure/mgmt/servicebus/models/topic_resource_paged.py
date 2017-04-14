@@ -12,16 +12,16 @@
 from msrest.paging import Paged
 
 
-class TopicPaged(Paged):
+class TopicResourcePaged(Paged):
     """
-    A paging container for iterating over a list of Topic object
+    A paging container for iterating over a list of TopicResource object
     """
 
     _attribute_map = {
         'next_link': {'key': 'nextLink', 'type': 'str'},
-        'current_page': {'key': 'value', 'type': '[Topic]'}
+        'current_page': {'key': 'value', 'type': '[TopicResource]'}
     }
 
     def __init__(self, *args, **kwargs):
 
-        super(TopicPaged, self).__init__(*args, **kwargs)
+        super(TopicResourcePaged, self).__init__(*args, **kwargs)

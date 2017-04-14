@@ -12,18 +12,17 @@
 from msrest.serialization import Model
 
 
-class RegenerateKeysParameters(Model):
-    """Parameters supplied to the Regenerate Authorization Rule operation.
+class RegenerateActionParameter(Model):
+    """The access key regenerate action content.
 
-    :param policykey: Key that needs to be regenerated. Possible values
-     include: 'PrimaryKey', 'SecondaryKey'
-    :type policykey: str or :class:`Policykey
-     <azure.mgmt.servicebus.models.Policykey>`
+    :param key_type: The key type. Possible values include: 'NotSpecified',
+     'Primary', 'Secondary'
+    :type key_type: str or :class:`KeyType <azure.mgmt.logic.models.KeyType>`
     """
 
     _attribute_map = {
-        'policykey': {'key': 'Policykey', 'type': 'Policykey'},
+        'key_type': {'key': 'keyType', 'type': 'KeyType'},
     }
 
-    def __init__(self, policykey=None):
-        self.policykey = policykey
+    def __init__(self, key_type=None):
+        self.key_type = key_type

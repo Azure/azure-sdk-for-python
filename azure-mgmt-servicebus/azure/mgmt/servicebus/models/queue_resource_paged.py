@@ -9,21 +9,19 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.serialization import Model
+from msrest.paging import Paged
 
 
-class RegenerateKeysParameters(Model):
-    """Parameters supplied to the Regenerate Authorization Rule operation.
-
-    :param policykey: Key that needs to be regenerated. Possible values
-     include: 'PrimaryKey', 'SecondaryKey'
-    :type policykey: str or :class:`Policykey
-     <azure.mgmt.servicebus.models.Policykey>`
+class QueueResourcePaged(Paged):
+    """
+    A paging container for iterating over a list of QueueResource object
     """
 
     _attribute_map = {
-        'policykey': {'key': 'Policykey', 'type': 'Policykey'},
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[QueueResource]'}
     }
 
-    def __init__(self, policykey=None):
-        self.policykey = policykey
+    def __init__(self, *args, **kwargs):
+
+        super(QueueResourcePaged, self).__init__(*args, **kwargs)

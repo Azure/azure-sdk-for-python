@@ -12,16 +12,16 @@
 from msrest.paging import Paged
 
 
-class SharedAccessAuthorizationRulePaged(Paged):
+class FailoverGroupPaged(Paged):
     """
-    A paging container for iterating over a list of SharedAccessAuthorizationRule object
+    A paging container for iterating over a list of FailoverGroup object
     """
 
     _attribute_map = {
         'next_link': {'key': 'nextLink', 'type': 'str'},
-        'current_page': {'key': 'value', 'type': '[SharedAccessAuthorizationRule]'}
+        'current_page': {'key': 'value', 'type': '[FailoverGroup]'}
     }
 
     def __init__(self, *args, **kwargs):
 
-        super(SharedAccessAuthorizationRulePaged, self).__init__(*args, **kwargs)
+        super(FailoverGroupPaged, self).__init__(*args, **kwargs)

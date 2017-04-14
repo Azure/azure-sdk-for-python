@@ -19,12 +19,11 @@ class ApplicationGatewayBackendHttpSettings(SubResource):
     :type id: str
     :param port: Port
     :type port: int
-    :param protocol: Protocol. Possible values are: 'Http' and 'Https'.
-     Possible values include: 'Http', 'Https'
+    :param protocol: Protocol. Possible values include: 'Http', 'Https'
     :type protocol: str or :class:`ApplicationGatewayProtocol
      <azure.mgmt.network.models.ApplicationGatewayProtocol>`
-    :param cookie_based_affinity: Cookie based affinity. Possible values are:
-     'Enabled' and 'Disabled'. Possible values include: 'Enabled', 'Disabled'
+    :param cookie_based_affinity: Cookie based affinity. Possible values
+     include: 'Enabled', 'Disabled'
     :type cookie_based_affinity: str or
      :class:`ApplicationGatewayCookieBasedAffinity
      <azure.mgmt.network.models.ApplicationGatewayCookieBasedAffinity>`
