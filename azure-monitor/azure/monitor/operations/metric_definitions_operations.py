@@ -10,7 +10,6 @@
 # --------------------------------------------------------------------------
 
 from msrest.pipeline import ClientRawResponse
-from msrestazure.azure_exceptions import CloudError
 import uuid
 
 from .. import models
@@ -37,13 +36,13 @@ class MetricDefinitionsOperations(object):
 
     def list(
             self, resource_uri, filter=None, custom_headers=None, raw=False, **operation_config):
-        """Lists the metric definitions for the resource. The **$filter**
+        """Lists the metric definitions for the resource.<br>The **$filter**
         parameter is optional, and can be used to only retrieve certain metric
-        definitions. For example, get just the definition for the CPU
+        definitions.<br>For example, get just the definition for the CPU
         percentage counter: $filter=name.value eq '\Processor(_Total)\%
-        Processor Time'. This $filter is very restricted and allows only these
-        'name eq <value>' clauses separated by or operators. No other syntax is
-        allowed.
+        Processor Time'.<br>This **$filter** is very restricted and allows only
+        clauses of the form **'name eq <value>'** separated by **or** logical
+        operators.<br>**NOTE**: No other syntax is allowed.
 
         :param resource_uri: The identifier of the resource.
         :type resource_uri: str
@@ -57,7 +56,8 @@ class MetricDefinitionsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`MetricDefinitionPaged
          <azure.monitor.models.MetricDefinitionPaged>`
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`ErrorResponseException<azure.monitor.models.ErrorResponseException>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -95,9 +95,7 @@ class MetricDefinitionsOperations(object):
                 request, header_parameters, **operation_config)
 
             if response.status_code not in [200]:
-                exp = CloudError(response)
-                exp.request_id = response.headers.get('x-ms-request-id')
-                raise exp
+                raise models.ErrorResponseException(self._deserialize, response)
 
             return response
 

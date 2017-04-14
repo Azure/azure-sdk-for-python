@@ -9,19 +9,20 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.paging import Paged
+from msrest.serialization import Model
 
 
-class AlertRuleResourcePaged(Paged):
-    """
-    A paging container for iterating over a list of AlertRuleResource object
+class ActivityLogAlertActionList(Model):
+    """A list of activity log alert actions.
+
+    :param action_groups: The list of activity log alerts.
+    :type action_groups: list of :class:`ActivityLogAlertActionGroup
+     <azure.mgmt.monitor.models.ActivityLogAlertActionGroup>`
     """
 
     _attribute_map = {
-        'next_link': {'key': 'nextLink', 'type': 'str'},
-        'current_page': {'key': 'value', 'type': '[AlertRuleResource]'}
+        'action_groups': {'key': 'actionGroups', 'type': '[ActivityLogAlertActionGroup]'},
     }
 
-    def __init__(self, *args, **kwargs):
-
-        super(AlertRuleResourcePaged, self).__init__(*args, **kwargs)
+    def __init__(self, action_groups=None):
+        self.action_groups = action_groups

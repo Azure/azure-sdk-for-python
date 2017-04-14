@@ -15,6 +15,9 @@ from msrest.serialization import Model
 class RuleDataSource(Model):
     """The resource from which the rule collects its data.
 
+    :param resource_uri: the resource identifier of the resource the rule
+     monitors.
+    :type resource_uri: str
     :param odatatype: Polymorphic Discriminator
     :type odatatype: str
     """
@@ -24,6 +27,7 @@ class RuleDataSource(Model):
     }
 
     _attribute_map = {
+        'resource_uri': {'key': 'resourceUri', 'type': 'str'},
         'odatatype': {'key': 'odata\\.type', 'type': 'str'},
     }
 
@@ -31,5 +35,6 @@ class RuleDataSource(Model):
         'odatatype': {'Microsoft.Azure.Management.Insights.Models.RuleMetricDataSource': 'RuleMetricDataSource', 'Microsoft.Azure.Management.Insights.Models.RuleManagementEventDataSource': 'RuleManagementEventDataSource'}
     }
 
-    def __init__(self):
+    def __init__(self, resource_uri=None):
+        self.resource_uri = resource_uri
         self.odatatype = None

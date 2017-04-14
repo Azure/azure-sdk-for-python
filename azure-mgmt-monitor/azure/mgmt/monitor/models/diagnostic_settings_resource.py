@@ -12,8 +12,8 @@
 from .resource import Resource
 
 
-class ServiceDiagnosticSettingsResource(Resource):
-    """Description of a service diagnostic setting.
+class DiagnosticSettingsResource(Resource):
+    """Description of diagnostic setting.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -74,7 +74,7 @@ class ServiceDiagnosticSettingsResource(Resource):
     }
 
     def __init__(self, location, tags=None, storage_account_id=None, service_bus_rule_id=None, event_hub_authorization_rule_id=None, metrics=None, logs=None, workspace_id=None):
-        super(ServiceDiagnosticSettingsResource, self).__init__(location=location, tags=tags)
+        super(DiagnosticSettingsResource, self).__init__(location=location, tags=tags)
         self.storage_account_id = storage_account_id
         self.service_bus_rule_id = service_bus_rule_id
         self.event_hub_authorization_rule_id = event_hub_authorization_rule_id
