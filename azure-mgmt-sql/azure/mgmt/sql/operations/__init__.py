@@ -9,18 +9,24 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
+from .databases_operations import DatabasesOperations
 from .capabilities_operations import CapabilitiesOperations
 from .firewall_rules_operations import FirewallRulesOperations
-from .databases_operations import DatabasesOperations
+from .operations import Operations
 from .servers_operations import ServersOperations
 from .elastic_pools_operations import ElasticPoolsOperations
 from .recommended_elastic_pools_operations import RecommendedElasticPoolsOperations
+from .failover_groups_operations import FailoverGroupsOperations
+from .vnet_firewall_rules_operations import VnetFirewallRulesOperations
 
 __all__ = [
+    'DatabasesOperations',
     'CapabilitiesOperations',
     'FirewallRulesOperations',
-    'DatabasesOperations',
+    'Operations',
     'ServersOperations',
     'ElasticPoolsOperations',
     'RecommendedElasticPoolsOperations',
+    'FailoverGroupsOperations',
+    'VnetFirewallRulesOperations',
 ]
