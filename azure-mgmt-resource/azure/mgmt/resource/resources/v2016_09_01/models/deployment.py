@@ -17,7 +17,7 @@ class Deployment(Model):
 
     :param properties: The deployment properties.
     :type properties: :class:`DeploymentProperties
-     <azure.mgmt.resource.resources.v20160901.models.DeploymentProperties>`
+     <azure.mgmt.resource.resources.v2016_09_01.models.DeploymentProperties>`
     """
 
     _validation = {

@@ -31,10 +31,10 @@ class Subscription(Model):
      PastDue, Disabled, and Deleted. Possible values include: 'Enabled',
      'Warned', 'PastDue', 'Disabled', 'Deleted'
     :vartype state: str or :class:`SubscriptionState
-     <azure.mgmt.resource.subscriptions.v20160601.models.SubscriptionState>`
+     <azure.mgmt.resource.subscriptions.v2016_06_01.models.SubscriptionState>`
     :param subscription_policies: The subscription policies.
     :type subscription_policies: :class:`SubscriptionPolicies
-     <azure.mgmt.resource.subscriptions.v20160601.models.SubscriptionPolicies>`
+     <azure.mgmt.resource.subscriptions.v2016_06_01.models.SubscriptionPolicies>`
     :param authorization_source: The authorization source of the request.
      Valid values are one or more combinations of Legacy, RoleBased, Bypassed,
      Direct and Management. For example, 'Legacy, RoleBased'.

@@ -144,7 +144,7 @@ class ResourcesOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`GenericResourcePaged
-         <azure.mgmt.resource.resources.v20160901.models.GenericResourcePaged>`
+         <azure.mgmt.resource.resources.v2016_09_01.models.GenericResourcePaged>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
@@ -383,14 +383,14 @@ class ResourcesOperations(object):
         :type api_version: str
         :param parameters: Parameters for creating or updating the resource.
         :type parameters: :class:`GenericResource
-         <azure.mgmt.resource.resources.v20160901.models.GenericResource>`
+         <azure.mgmt.resource.resources.v2016_09_01.models.GenericResource>`
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :rtype:
          :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
          instance that returns :class:`GenericResource
-         <azure.mgmt.resource.resources.v20160901.models.GenericResource>`
+         <azure.mgmt.resource.resources.v2016_09_01.models.GenericResource>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
@@ -494,7 +494,7 @@ class ResourcesOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`GenericResource
-         <azure.mgmt.resource.resources.v20160901.models.GenericResource>`
+         <azure.mgmt.resource.resources.v2016_09_01.models.GenericResource>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
@@ -690,14 +690,14 @@ class ResourcesOperations(object):
         :type api_version: str
         :param parameters: Create or update resource parameters.
         :type parameters: :class:`GenericResource
-         <azure.mgmt.resource.resources.v20160901.models.GenericResource>`
+         <azure.mgmt.resource.resources.v2016_09_01.models.GenericResource>`
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :rtype:
          :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
          instance that returns :class:`GenericResource
-         <azure.mgmt.resource.resources.v20160901.models.GenericResource>`
+         <azure.mgmt.resource.resources.v2016_09_01.models.GenericResource>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
@@ -788,7 +788,7 @@ class ResourcesOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`GenericResource
-         <azure.mgmt.resource.resources.v20160901.models.GenericResource>`
+         <azure.mgmt.resource.resources.v2016_09_01.models.GenericResource>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`

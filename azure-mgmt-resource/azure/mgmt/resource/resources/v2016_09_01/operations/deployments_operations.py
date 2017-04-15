@@ -198,14 +198,14 @@ class DeploymentsOperations(object):
         :type deployment_name: str
         :param properties: The deployment properties.
         :type properties: :class:`DeploymentProperties
-         <azure.mgmt.resource.resources.v20160901.models.DeploymentProperties>`
+         <azure.mgmt.resource.resources.v2016_09_01.models.DeploymentProperties>`
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :rtype:
          :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
          instance that returns :class:`DeploymentExtended
-         <azure.mgmt.resource.resources.v20160901.models.DeploymentExtended>`
+         <azure.mgmt.resource.resources.v2016_09_01.models.DeploymentExtended>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
@@ -299,7 +299,7 @@ class DeploymentsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`DeploymentExtended
-         <azure.mgmt.resource.resources.v20160901.models.DeploymentExtended>`
+         <azure.mgmt.resource.resources.v2016_09_01.models.DeploymentExtended>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
@@ -420,14 +420,14 @@ class DeploymentsOperations(object):
         :type deployment_name: str
         :param properties: The deployment properties.
         :type properties: :class:`DeploymentProperties
-         <azure.mgmt.resource.resources.v20160901.models.DeploymentProperties>`
+         <azure.mgmt.resource.resources.v2016_09_01.models.DeploymentProperties>`
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`DeploymentValidateResult
-         <azure.mgmt.resource.resources.v20160901.models.DeploymentValidateResult>`
+         <azure.mgmt.resource.resources.v2016_09_01.models.DeploymentValidateResult>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
@@ -499,7 +499,7 @@ class DeploymentsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`DeploymentExportResult
-         <azure.mgmt.resource.resources.v20160901.models.DeploymentExportResult>`
+         <azure.mgmt.resource.resources.v2016_09_01.models.DeploymentExportResult>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
@@ -566,7 +566,7 @@ class DeploymentsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`DeploymentExtendedPaged
-         <azure.mgmt.resource.resources.v20160901.models.DeploymentExtendedPaged>`
+         <azure.mgmt.resource.resources.v2016_09_01.models.DeploymentExtendedPaged>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):

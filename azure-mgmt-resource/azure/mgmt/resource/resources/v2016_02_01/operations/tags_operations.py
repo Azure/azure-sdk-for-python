@@ -103,7 +103,7 @@ class TagsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`TagValue
-         <azure.mgmt.resource.resources.v20160201.models.TagValue>`
+         <azure.mgmt.resource.resources.v2016_02_01.models.TagValue>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
@@ -165,7 +165,7 @@ class TagsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`TagDetails
-         <azure.mgmt.resource.resources.v20160201.models.TagDetails>`
+         <azure.mgmt.resource.resources.v2016_02_01.models.TagDetails>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
@@ -275,7 +275,7 @@ class TagsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`TagDetailsPaged
-         <azure.mgmt.resource.resources.v20160201.models.TagDetailsPaged>`
+         <azure.mgmt.resource.resources.v2016_02_01.models.TagDetailsPaged>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):

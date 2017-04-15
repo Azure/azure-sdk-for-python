@@ -56,7 +56,7 @@ class ResourceGroupsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`GenericResourcePaged
-         <azure.mgmt.resource.resources.v20160201.models.GenericResourcePaged>`
+         <azure.mgmt.resource.resources.v2016_02_01.models.GenericResourcePaged>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
@@ -180,14 +180,14 @@ class ResourceGroupsOperations(object):
         :param parameters: Parameters supplied to the create or update
          resource group service operation.
         :type parameters: :class:`ResourceGroup
-         <azure.mgmt.resource.resources.v20160201.models.ResourceGroup>`
+         <azure.mgmt.resource.resources.v2016_02_01.models.ResourceGroup>`
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`ResourceGroup
-         <azure.mgmt.resource.resources.v20160201.models.ResourceGroup>`
+         <azure.mgmt.resource.resources.v2016_02_01.models.ResourceGroup>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
@@ -328,7 +328,7 @@ class ResourceGroupsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`ResourceGroup
-         <azure.mgmt.resource.resources.v20160201.models.ResourceGroup>`
+         <azure.mgmt.resource.resources.v2016_02_01.models.ResourceGroup>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
@@ -388,14 +388,14 @@ class ResourceGroupsOperations(object):
         :param parameters: Parameters supplied to the update state resource
          group service operation.
         :type parameters: :class:`ResourceGroup
-         <azure.mgmt.resource.resources.v20160201.models.ResourceGroup>`
+         <azure.mgmt.resource.resources.v2016_02_01.models.ResourceGroup>`
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`ResourceGroup
-         <azure.mgmt.resource.resources.v20160201.models.ResourceGroup>`
+         <azure.mgmt.resource.resources.v2016_02_01.models.ResourceGroup>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
@@ -467,7 +467,7 @@ class ResourceGroupsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`ResourceGroupExportResult
-         <azure.mgmt.resource.resources.v20160201.models.ResourceGroupExportResult>`
+         <azure.mgmt.resource.resources.v2016_02_01.models.ResourceGroupExportResult>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
@@ -535,7 +535,7 @@ class ResourceGroupsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`ResourceGroupPaged
-         <azure.mgmt.resource.resources.v20160201.models.ResourceGroupPaged>`
+         <azure.mgmt.resource.resources.v2016_02_01.models.ResourceGroupPaged>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
