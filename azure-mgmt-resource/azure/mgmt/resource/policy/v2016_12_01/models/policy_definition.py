@@ -19,7 +19,7 @@ class PolicyDefinition(Model):
      NotSpecified, BuiltIn, and Custom. Possible values include:
      'NotSpecified', 'BuiltIn', 'Custom'
     :type policy_type: str or :class:`PolicyType
-     <azure.mgmt.resource.policy.v20161201.models.PolicyType>`
+     <azure.mgmt.resource.policy.v2016_12_01.models.PolicyType>`
     :param display_name: The display name of the policy definition.
     :type display_name: str
     :param description: The policy definition description.

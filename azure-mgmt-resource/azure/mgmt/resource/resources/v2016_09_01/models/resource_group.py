@@ -24,7 +24,7 @@ class ResourceGroup(Model):
     :type name: str
     :param properties:
     :type properties: :class:`ResourceGroupProperties
-     <azure.mgmt.resource.resources.v20160901.models.ResourceGroupProperties>`
+     <azure.mgmt.resource.resources.v2016_09_01.models.ResourceGroupProperties>`
     :param location: The location of the resource group. It cannot be changed
      after the resource group has been created. It muct be one of the supported
      Azure locations.

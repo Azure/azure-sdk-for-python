@@ -50,7 +50,7 @@ class PolicyAssignmentsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`PolicyAssignment
-         <azure.mgmt.resource.policy.v20160401.models.PolicyAssignment>`
+         <azure.mgmt.resource.policy.v2016_04_01.models.PolicyAssignment>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
@@ -111,14 +111,14 @@ class PolicyAssignmentsOperations(object):
         :type policy_assignment_name: str
         :param parameters: Parameters for the policy assignment.
         :type parameters: :class:`PolicyAssignment
-         <azure.mgmt.resource.policy.v20160401.models.PolicyAssignment>`
+         <azure.mgmt.resource.policy.v2016_04_01.models.PolicyAssignment>`
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`PolicyAssignment
-         <azure.mgmt.resource.policy.v20160401.models.PolicyAssignment>`
+         <azure.mgmt.resource.policy.v2016_04_01.models.PolicyAssignment>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
@@ -184,7 +184,7 @@ class PolicyAssignmentsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`PolicyAssignment
-         <azure.mgmt.resource.policy.v20160401.models.PolicyAssignment>`
+         <azure.mgmt.resource.policy.v2016_04_01.models.PolicyAssignment>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
@@ -246,7 +246,7 @@ class PolicyAssignmentsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`PolicyAssignmentPaged
-         <azure.mgmt.resource.policy.v20160401.models.PolicyAssignmentPaged>`
+         <azure.mgmt.resource.policy.v2016_04_01.models.PolicyAssignmentPaged>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
@@ -327,7 +327,7 @@ class PolicyAssignmentsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`PolicyAssignmentPaged
-         <azure.mgmt.resource.policy.v20160401.models.PolicyAssignmentPaged>`
+         <azure.mgmt.resource.policy.v2016_04_01.models.PolicyAssignmentPaged>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
@@ -399,7 +399,7 @@ class PolicyAssignmentsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`PolicyAssignmentPaged
-         <azure.mgmt.resource.policy.v20160401.models.PolicyAssignmentPaged>`
+         <azure.mgmt.resource.policy.v2016_04_01.models.PolicyAssignmentPaged>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
@@ -475,7 +475,7 @@ class PolicyAssignmentsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`PolicyAssignment
-         <azure.mgmt.resource.policy.v20160401.models.PolicyAssignment>`
+         <azure.mgmt.resource.policy.v2016_04_01.models.PolicyAssignment>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
@@ -540,14 +540,14 @@ class PolicyAssignmentsOperations(object):
         :type policy_assignment_id: str
         :param parameters: Parameters for policy assignment.
         :type parameters: :class:`PolicyAssignment
-         <azure.mgmt.resource.policy.v20160401.models.PolicyAssignment>`
+         <azure.mgmt.resource.policy.v2016_04_01.models.PolicyAssignment>`
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`PolicyAssignment
-         <azure.mgmt.resource.policy.v20160401.models.PolicyAssignment>`
+         <azure.mgmt.resource.policy.v2016_04_01.models.PolicyAssignment>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
@@ -618,7 +618,7 @@ class PolicyAssignmentsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`PolicyAssignment
-         <azure.mgmt.resource.policy.v20160401.models.PolicyAssignment>`
+         <azure.mgmt.resource.policy.v2016_04_01.models.PolicyAssignment>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`

@@ -53,14 +53,14 @@ class ManagementLocksOperations(object):
         :type lock_name: str
         :param parameters: The management lock parameters.
         :type parameters: :class:`ManagementLockObject
-         <azure.mgmt.resource.locks.v20160901.models.ManagementLockObject>`
+         <azure.mgmt.resource.locks.v2016_09_01.models.ManagementLockObject>`
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`ManagementLockObject
-         <azure.mgmt.resource.locks.v20160901.models.ManagementLockObject>`
+         <azure.mgmt.resource.locks.v2016_09_01.models.ManagementLockObject>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
@@ -188,7 +188,7 @@ class ManagementLocksOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`ManagementLockObject
-         <azure.mgmt.resource.locks.v20160901.models.ManagementLockObject>`
+         <azure.mgmt.resource.locks.v2016_09_01.models.ManagementLockObject>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
@@ -251,14 +251,14 @@ class ManagementLocksOperations(object):
         :type lock_name: str
         :param parameters: Create or update management lock parameters.
         :type parameters: :class:`ManagementLockObject
-         <azure.mgmt.resource.locks.v20160901.models.ManagementLockObject>`
+         <azure.mgmt.resource.locks.v2016_09_01.models.ManagementLockObject>`
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`ManagementLockObject
-         <azure.mgmt.resource.locks.v20160901.models.ManagementLockObject>`
+         <azure.mgmt.resource.locks.v2016_09_01.models.ManagementLockObject>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
@@ -378,7 +378,7 @@ class ManagementLocksOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`ManagementLockObject
-         <azure.mgmt.resource.locks.v20160901.models.ManagementLockObject>`
+         <azure.mgmt.resource.locks.v2016_09_01.models.ManagementLockObject>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
@@ -455,14 +455,14 @@ class ManagementLocksOperations(object):
         :param parameters: Parameters for creating or updating a  management
          lock.
         :type parameters: :class:`ManagementLockObject
-         <azure.mgmt.resource.locks.v20160901.models.ManagementLockObject>`
+         <azure.mgmt.resource.locks.v2016_09_01.models.ManagementLockObject>`
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`ManagementLockObject
-         <azure.mgmt.resource.locks.v20160901.models.ManagementLockObject>`
+         <azure.mgmt.resource.locks.v2016_09_01.models.ManagementLockObject>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
@@ -620,7 +620,7 @@ class ManagementLocksOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`ManagementLockObject
-         <azure.mgmt.resource.locks.v20160901.models.ManagementLockObject>`
+         <azure.mgmt.resource.locks.v2016_09_01.models.ManagementLockObject>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
@@ -688,14 +688,14 @@ class ManagementLocksOperations(object):
         :type lock_name: str
         :param parameters: The management lock parameters.
         :type parameters: :class:`ManagementLockObject
-         <azure.mgmt.resource.locks.v20160901.models.ManagementLockObject>`
+         <azure.mgmt.resource.locks.v2016_09_01.models.ManagementLockObject>`
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`ManagementLockObject
-         <azure.mgmt.resource.locks.v20160901.models.ManagementLockObject>`
+         <azure.mgmt.resource.locks.v2016_09_01.models.ManagementLockObject>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
@@ -816,7 +816,7 @@ class ManagementLocksOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`ManagementLockObject
-         <azure.mgmt.resource.locks.v20160901.models.ManagementLockObject>`
+         <azure.mgmt.resource.locks.v2016_09_01.models.ManagementLockObject>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
@@ -878,7 +878,7 @@ class ManagementLocksOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`ManagementLockObjectPaged
-         <azure.mgmt.resource.locks.v20160901.models.ManagementLockObjectPaged>`
+         <azure.mgmt.resource.locks.v2016_09_01.models.ManagementLockObjectPaged>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
@@ -959,7 +959,7 @@ class ManagementLocksOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`ManagementLockObjectPaged
-         <azure.mgmt.resource.locks.v20160901.models.ManagementLockObjectPaged>`
+         <azure.mgmt.resource.locks.v2016_09_01.models.ManagementLockObjectPaged>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
@@ -1031,7 +1031,7 @@ class ManagementLocksOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`ManagementLockObjectPaged
-         <azure.mgmt.resource.locks.v20160901.models.ManagementLockObjectPaged>`
+         <azure.mgmt.resource.locks.v2016_09_01.models.ManagementLockObjectPaged>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):

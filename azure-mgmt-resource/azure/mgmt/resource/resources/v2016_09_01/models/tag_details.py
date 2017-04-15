@@ -23,10 +23,10 @@ class TagDetails(Model):
      When a tag is initially created and has no associated resources, the value
      is 0.
     :type count: :class:`TagCount
-     <azure.mgmt.resource.resources.v20160901.models.TagCount>`
+     <azure.mgmt.resource.resources.v2016_09_01.models.TagCount>`
     :param values: The list of tag values.
     :type values: list of :class:`TagValue
-     <azure.mgmt.resource.resources.v20160901.models.TagValue>`
+     <azure.mgmt.resource.resources.v2016_09_01.models.TagValue>`
     """
 
     _attribute_map = {

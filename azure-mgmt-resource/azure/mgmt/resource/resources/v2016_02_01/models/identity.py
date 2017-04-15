@@ -24,7 +24,7 @@ class Identity(Model):
     :vartype tenant_id: str
     :param type: The identity type. Possible values include: 'SystemAssigned'
     :type type: str or :class:`ResourceIdentityType
-     <azure.mgmt.resource.resources.v20160201.models.ResourceIdentityType>`
+     <azure.mgmt.resource.resources.v2016_02_01.models.ResourceIdentityType>`
     """
 
     _validation = {

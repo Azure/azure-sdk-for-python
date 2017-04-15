@@ -30,13 +30,13 @@ class DeploymentOperationProperties(Model):
     :vartype status_message: object
     :ivar target_resource: The target resource.
     :vartype target_resource: :class:`TargetResource
-     <azure.mgmt.resource.resources.v20160901.models.TargetResource>`
+     <azure.mgmt.resource.resources.v2016_09_01.models.TargetResource>`
     :ivar request: The HTTP request message.
     :vartype request: :class:`HttpMessage
-     <azure.mgmt.resource.resources.v20160901.models.HttpMessage>`
+     <azure.mgmt.resource.resources.v2016_09_01.models.HttpMessage>`
     :ivar response: The HTTP response message.
     :vartype response: :class:`HttpMessage
-     <azure.mgmt.resource.resources.v20160901.models.HttpMessage>`
+     <azure.mgmt.resource.resources.v2016_09_01.models.HttpMessage>`
     """
 
     _validation = {

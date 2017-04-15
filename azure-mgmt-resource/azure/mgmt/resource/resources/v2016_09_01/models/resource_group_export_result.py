@@ -19,7 +19,7 @@ class ResourceGroupExportResult(Model):
     :type template: object
     :param error: The error.
     :type error: :class:`ResourceManagementErrorWithDetails
-     <azure.mgmt.resource.resources.v20160901.models.ResourceManagementErrorWithDetails>`
+     <azure.mgmt.resource.resources.v2016_09_01.models.ResourceManagementErrorWithDetails>`
     """
 
     _attribute_map = {

@@ -101,14 +101,14 @@ class ResourceLinksOperations(object):
         :type link_id: str
         :param properties: Properties for resource link.
         :type properties: :class:`ResourceLinkProperties
-         <azure.mgmt.resource.links.v20160901.models.ResourceLinkProperties>`
+         <azure.mgmt.resource.links.v2016_09_01.models.ResourceLinkProperties>`
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`ResourceLink
-         <azure.mgmt.resource.links.v20160901.models.ResourceLink>`
+         <azure.mgmt.resource.links.v2016_09_01.models.ResourceLink>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
@@ -176,7 +176,7 @@ class ResourceLinksOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`ResourceLink
-         <azure.mgmt.resource.links.v20160901.models.ResourceLink>`
+         <azure.mgmt.resource.links.v2016_09_01.models.ResourceLink>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
@@ -236,7 +236,7 @@ class ResourceLinksOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`ResourceLinkPaged
-         <azure.mgmt.resource.links.v20160901.models.ResourceLinkPaged>`
+         <azure.mgmt.resource.links.v2016_09_01.models.ResourceLinkPaged>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
@@ -310,7 +310,7 @@ class ResourceLinksOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`ResourceLinkPaged
-         <azure.mgmt.resource.links.v20160901.models.ResourceLinkPaged>`
+         <azure.mgmt.resource.links.v2016_09_01.models.ResourceLinkPaged>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):

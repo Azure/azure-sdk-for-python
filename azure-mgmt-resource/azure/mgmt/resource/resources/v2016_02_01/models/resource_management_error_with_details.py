@@ -23,7 +23,7 @@ class ResourceManagementErrorWithDetails(Model):
     :type target: str
     :param details: Validation error.
     :type details: list of :class:`ResourceManagementErrorWithDetails
-     <azure.mgmt.resource.resources.v20160201.models.ResourceManagementErrorWithDetails>`
+     <azure.mgmt.resource.resources.v2016_02_01.models.ResourceManagementErrorWithDetails>`
     """
 
     _validation = {
