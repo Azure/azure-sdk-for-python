@@ -19,7 +19,7 @@ class ContainerServiceOrchestratorProfile(Model):
      service cluster resources. Valid values are Swarm, DCOS, and Custom.
      Possible values include: 'Swarm', 'DCOS', 'Custom', 'Kubernetes'
     :type orchestrator_type: str or :class:`ContainerServiceOchestratorTypes
-     <azure.mgmt.compute.containerservice.v20170131.models.ContainerServiceOchestratorTypes>`
+     <azure.mgmt.compute.containerservice.v2017_01_31.models.ContainerServiceOchestratorTypes>`
     """
 
     _validation = {
