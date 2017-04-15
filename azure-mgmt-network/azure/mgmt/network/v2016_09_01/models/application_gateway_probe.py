@@ -20,7 +20,7 @@ class ApplicationGatewayProbe(SubResource):
     :param protocol: Protocol. Possible values are: 'Http' and 'Https'.
      Possible values include: 'Http', 'Https'
     :type protocol: str or :class:`ApplicationGatewayProtocol
-     <azure.mgmt.network.v20160901.models.ApplicationGatewayProtocol>`
+     <azure.mgmt.network.v2016_09_01.models.ApplicationGatewayProtocol>`
     :param host: Host name to send the probe to.
     :type host: str
     :param path: Relative path of probe. Valid path starts from '/'. Probe is

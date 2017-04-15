@@ -18,7 +18,7 @@ class ApplicationGatewayBackendHealth(Model):
     :param backend_address_pools:
     :type backend_address_pools: list of
      :class:`ApplicationGatewayBackendHealthPool
-     <azure.mgmt.network.v20160901.models.ApplicationGatewayBackendHealthPool>`
+     <azure.mgmt.network.v2016_09_01.models.ApplicationGatewayBackendHealthPool>`
     """
 
     _attribute_map = {

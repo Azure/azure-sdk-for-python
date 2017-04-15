@@ -31,14 +31,14 @@ class VirtualNetwork(Resource):
     :param address_space: The AddressSpace that contains an array of IP
      address ranges that can be used by subnets.
     :type address_space: :class:`AddressSpace
-     <azure.mgmt.network.v20150615.models.AddressSpace>`
+     <azure.mgmt.network.v2015_06_15.models.AddressSpace>`
     :param dhcp_options: The dhcpOptions that contains an array of DNS servers
      available to VMs deployed in the virtual network.
     :type dhcp_options: :class:`DhcpOptions
-     <azure.mgmt.network.v20150615.models.DhcpOptions>`
+     <azure.mgmt.network.v2015_06_15.models.DhcpOptions>`
     :param subnets: A list of subnets in a Virtual Network.
     :type subnets: list of :class:`Subnet
-     <azure.mgmt.network.v20150615.models.Subnet>`
+     <azure.mgmt.network.v2015_06_15.models.Subnet>`
     :param resource_guid: The resourceGuid property of the Virtual Network
      resource.
     :type resource_guid: str

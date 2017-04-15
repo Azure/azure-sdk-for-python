@@ -127,7 +127,7 @@ class ApplicationGatewaysOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`ApplicationGateway
-         <azure.mgmt.network.v20160901.models.ApplicationGateway>`
+         <azure.mgmt.network.v2016_09_01.models.ApplicationGateway>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
@@ -186,14 +186,14 @@ class ApplicationGatewaysOperations(object):
         :param parameters: Parameters supplied to the create or update
          application gateway operation.
         :type parameters: :class:`ApplicationGateway
-         <azure.mgmt.network.v20160901.models.ApplicationGateway>`
+         <azure.mgmt.network.v2016_09_01.models.ApplicationGateway>`
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :rtype:
          :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
          instance that returns :class:`ApplicationGateway
-         <azure.mgmt.network.v20160901.models.ApplicationGateway>`
+         <azure.mgmt.network.v2016_09_01.models.ApplicationGateway>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
@@ -282,7 +282,7 @@ class ApplicationGatewaysOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`ApplicationGatewayPaged
-         <azure.mgmt.network.v20160901.models.ApplicationGatewayPaged>`
+         <azure.mgmt.network.v2016_09_01.models.ApplicationGatewayPaged>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
@@ -346,7 +346,7 @@ class ApplicationGatewaysOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`ApplicationGatewayPaged
-         <azure.mgmt.network.v20160901.models.ApplicationGatewayPaged>`
+         <azure.mgmt.network.v2016_09_01.models.ApplicationGatewayPaged>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
@@ -571,7 +571,7 @@ class ApplicationGatewaysOperations(object):
         :rtype:
          :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
          instance that returns :class:`ApplicationGatewayBackendHealth
-         <azure.mgmt.network.v20160901.models.ApplicationGatewayBackendHealth>`
+         <azure.mgmt.network.v2016_09_01.models.ApplicationGatewayBackendHealth>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`

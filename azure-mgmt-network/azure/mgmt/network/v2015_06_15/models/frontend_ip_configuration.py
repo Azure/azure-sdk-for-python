@@ -20,31 +20,32 @@ class FrontendIPConfiguration(SubResource):
     :param inbound_nat_rules: Read only. Inbound rules URIs that use this
      frontend IP.
     :type inbound_nat_rules: list of :class:`SubResource
-     <azure.mgmt.network.v20150615.models.SubResource>`
+     <azure.mgmt.network.v2015_06_15.models.SubResource>`
     :param inbound_nat_pools: Read only. Inbound pools URIs that use this
      frontend IP.
     :type inbound_nat_pools: list of :class:`SubResource
-     <azure.mgmt.network.v20150615.models.SubResource>`
+     <azure.mgmt.network.v2015_06_15.models.SubResource>`
     :param outbound_nat_rules: Read only. Outbound rules URIs that use this
      frontend IP.
     :type outbound_nat_rules: list of :class:`SubResource
-     <azure.mgmt.network.v20150615.models.SubResource>`
+     <azure.mgmt.network.v2015_06_15.models.SubResource>`
     :param load_balancing_rules: Gets load balancing rules URIs that use this
      frontend IP.
     :type load_balancing_rules: list of :class:`SubResource
-     <azure.mgmt.network.v20150615.models.SubResource>`
+     <azure.mgmt.network.v2015_06_15.models.SubResource>`
     :param private_ip_address: The private IP address of the IP configuration.
     :type private_ip_address: str
     :param private_ip_allocation_method: The Private IP allocation method.
      Possible values are: 'Static' and 'Dynamic'. Possible values include:
      'Static', 'Dynamic'
     :type private_ip_allocation_method: str or :class:`IPAllocationMethod
-     <azure.mgmt.network.v20150615.models.IPAllocationMethod>`
+     <azure.mgmt.network.v2015_06_15.models.IPAllocationMethod>`
     :param subnet: The reference of the subnet resource.
-    :type subnet: :class:`Subnet <azure.mgmt.network.v20150615.models.Subnet>`
+    :type subnet: :class:`Subnet
+     <azure.mgmt.network.v2015_06_15.models.Subnet>`
     :param public_ip_address: The reference of the Public IP resource.
     :type public_ip_address: :class:`PublicIPAddress
-     <azure.mgmt.network.v20150615.models.PublicIPAddress>`
+     <azure.mgmt.network.v2015_06_15.models.PublicIPAddress>`
     :param provisioning_state: Gets the provisioning state of the public IP
      resource. Possible values are: 'Updating', 'Deleting', and 'Failed'.
     :type provisioning_state: str

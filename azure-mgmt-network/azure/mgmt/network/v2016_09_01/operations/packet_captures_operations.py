@@ -49,14 +49,14 @@ class PacketCapturesOperations(object):
         :param parameters: Parameters that define the create packet capture
          operation.
         :type parameters: :class:`PacketCapture
-         <azure.mgmt.network.v20160901.models.PacketCapture>`
+         <azure.mgmt.network.v2016_09_01.models.PacketCapture>`
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :rtype:
          :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
          instance that returns :class:`PacketCaptureResult
-         <azure.mgmt.network.v20160901.models.PacketCaptureResult>`
+         <azure.mgmt.network.v2016_09_01.models.PacketCaptureResult>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
@@ -148,7 +148,7 @@ class PacketCapturesOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`PacketCaptureResult
-         <azure.mgmt.network.v20160901.models.PacketCaptureResult>`
+         <azure.mgmt.network.v2016_09_01.models.PacketCaptureResult>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
@@ -374,7 +374,7 @@ class PacketCapturesOperations(object):
         :rtype:
          :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
          instance that returns :class:`PacketCaptureQueryStatusResult
-         <azure.mgmt.network.v20160901.models.PacketCaptureQueryStatusResult>`
+         <azure.mgmt.network.v2016_09_01.models.PacketCaptureQueryStatusResult>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
@@ -462,7 +462,7 @@ class PacketCapturesOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`PacketCaptureResultPaged
-         <azure.mgmt.network.v20160901.models.PacketCaptureResultPaged>`
+         <azure.mgmt.network.v2016_09_01.models.PacketCaptureResultPaged>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):

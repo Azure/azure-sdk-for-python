@@ -129,7 +129,7 @@ class NetworkInterfacesOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`NetworkInterface
-         <azure.mgmt.network.v20150615.models.NetworkInterface>`
+         <azure.mgmt.network.v2015_06_15.models.NetworkInterface>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
@@ -190,14 +190,14 @@ class NetworkInterfacesOperations(object):
         :param parameters: Parameters supplied to the create or update network
          interface operation.
         :type parameters: :class:`NetworkInterface
-         <azure.mgmt.network.v20150615.models.NetworkInterface>`
+         <azure.mgmt.network.v2015_06_15.models.NetworkInterface>`
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :rtype:
          :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
          instance that returns :class:`NetworkInterface
-         <azure.mgmt.network.v20150615.models.NetworkInterface>`
+         <azure.mgmt.network.v2015_06_15.models.NetworkInterface>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
@@ -284,7 +284,7 @@ class NetworkInterfacesOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`NetworkInterfacePaged
-         <azure.mgmt.network.v20150615.models.NetworkInterfacePaged>`
+         <azure.mgmt.network.v2015_06_15.models.NetworkInterfacePaged>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
@@ -349,7 +349,7 @@ class NetworkInterfacesOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`NetworkInterfacePaged
-         <azure.mgmt.network.v20150615.models.NetworkInterfacePaged>`
+         <azure.mgmt.network.v2015_06_15.models.NetworkInterfacePaged>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
@@ -421,7 +421,7 @@ class NetworkInterfacesOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`NetworkInterfacePaged
-         <azure.mgmt.network.v20150615.models.NetworkInterfacePaged>`
+         <azure.mgmt.network.v2015_06_15.models.NetworkInterfacePaged>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
@@ -492,7 +492,7 @@ class NetworkInterfacesOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`NetworkInterfacePaged
-         <azure.mgmt.network.v20150615.models.NetworkInterfacePaged>`
+         <azure.mgmt.network.v2015_06_15.models.NetworkInterfacePaged>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
@@ -568,7 +568,7 @@ class NetworkInterfacesOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`NetworkInterface
-         <azure.mgmt.network.v20150615.models.NetworkInterface>`
+         <azure.mgmt.network.v2015_06_15.models.NetworkInterface>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`

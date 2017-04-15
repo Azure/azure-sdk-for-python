@@ -21,23 +21,24 @@ class NetworkInterfaceIPConfiguration(SubResource):
      LoadBalancerBackendAddressPool resource.
     :type load_balancer_backend_address_pools: list of
      :class:`BackendAddressPool
-     <azure.mgmt.network.v20150615.models.BackendAddressPool>`
+     <azure.mgmt.network.v2015_06_15.models.BackendAddressPool>`
     :param load_balancer_inbound_nat_rules: A list of references of
      LoadBalancerInboundNatRules.
     :type load_balancer_inbound_nat_rules: list of :class:`InboundNatRule
-     <azure.mgmt.network.v20150615.models.InboundNatRule>`
+     <azure.mgmt.network.v2015_06_15.models.InboundNatRule>`
     :param private_ip_address:
     :type private_ip_address: str
     :param private_ip_allocation_method: Defines how a private IP address is
      assigned. Possible values are: 'Static' and 'Dynamic'. Possible values
      include: 'Static', 'Dynamic'
     :type private_ip_allocation_method: str or :class:`IPAllocationMethod
-     <azure.mgmt.network.v20150615.models.IPAllocationMethod>`
+     <azure.mgmt.network.v2015_06_15.models.IPAllocationMethod>`
     :param subnet:
-    :type subnet: :class:`Subnet <azure.mgmt.network.v20150615.models.Subnet>`
+    :type subnet: :class:`Subnet
+     <azure.mgmt.network.v2015_06_15.models.Subnet>`
     :param public_ip_address:
     :type public_ip_address: :class:`PublicIPAddress
-     <azure.mgmt.network.v20150615.models.PublicIPAddress>`
+     <azure.mgmt.network.v2015_06_15.models.PublicIPAddress>`
     :param provisioning_state:
     :type provisioning_state: str
     :param name: The name of the resource that is unique within a resource

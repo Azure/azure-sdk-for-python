@@ -21,7 +21,7 @@ class ApplicationGatewayWebApplicationFirewallConfiguration(Model):
      'Detection' and 'Prevention'. Possible values include: 'Detection',
      'Prevention'
     :type firewall_mode: str or :class:`ApplicationGatewayFirewallMode
-     <azure.mgmt.network.v20160901.models.ApplicationGatewayFirewallMode>`
+     <azure.mgmt.network.v2016_09_01.models.ApplicationGatewayFirewallMode>`
     """
 
     _validation = {
