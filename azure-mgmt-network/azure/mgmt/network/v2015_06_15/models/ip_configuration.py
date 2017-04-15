@@ -23,12 +23,13 @@ class IPConfiguration(SubResource):
      Possible values are 'Static' and 'Dynamic'. Possible values include:
      'Static', 'Dynamic'
     :type private_ip_allocation_method: str or :class:`IPAllocationMethod
-     <azure.mgmt.network.v20150615.models.IPAllocationMethod>`
+     <azure.mgmt.network.v2015_06_15.models.IPAllocationMethod>`
     :param subnet: The reference of the subnet resource.
-    :type subnet: :class:`Subnet <azure.mgmt.network.v20150615.models.Subnet>`
+    :type subnet: :class:`Subnet
+     <azure.mgmt.network.v2015_06_15.models.Subnet>`
     :param public_ip_address: The reference of the public IP resource.
     :type public_ip_address: :class:`PublicIPAddress
-     <azure.mgmt.network.v20150615.models.PublicIPAddress>`
+     <azure.mgmt.network.v2015_06_15.models.PublicIPAddress>`
     :param provisioning_state: Gets the provisioning state of the public IP
      resource. Possible values are: 'Updating', 'Deleting', and 'Failed'.
     :type provisioning_state: str

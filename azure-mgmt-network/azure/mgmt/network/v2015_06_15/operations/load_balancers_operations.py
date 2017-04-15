@@ -129,7 +129,7 @@ class LoadBalancersOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`LoadBalancer
-         <azure.mgmt.network.v20150615.models.LoadBalancer>`
+         <azure.mgmt.network.v2015_06_15.models.LoadBalancer>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
@@ -190,14 +190,14 @@ class LoadBalancersOperations(object):
         :param parameters: Parameters supplied to the create or update load
          balancer operation.
         :type parameters: :class:`LoadBalancer
-         <azure.mgmt.network.v20150615.models.LoadBalancer>`
+         <azure.mgmt.network.v2015_06_15.models.LoadBalancer>`
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :rtype:
          :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
          instance that returns :class:`LoadBalancer
-         <azure.mgmt.network.v20150615.models.LoadBalancer>`
+         <azure.mgmt.network.v2015_06_15.models.LoadBalancer>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
@@ -284,7 +284,7 @@ class LoadBalancersOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`LoadBalancerPaged
-         <azure.mgmt.network.v20150615.models.LoadBalancerPaged>`
+         <azure.mgmt.network.v2015_06_15.models.LoadBalancerPaged>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
@@ -349,7 +349,7 @@ class LoadBalancersOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`LoadBalancerPaged
-         <azure.mgmt.network.v20150615.models.LoadBalancerPaged>`
+         <azure.mgmt.network.v2015_06_15.models.LoadBalancerPaged>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):

@@ -20,11 +20,11 @@ class ApplicationGatewaySku(Model):
      'WAF_Large'. Possible values include: 'Standard_Small', 'Standard_Medium',
      'Standard_Large'
     :type name: str or :class:`ApplicationGatewaySkuName
-     <azure.mgmt.network.v20150615.models.ApplicationGatewaySkuName>`
+     <azure.mgmt.network.v2015_06_15.models.ApplicationGatewaySkuName>`
     :param tier: Tier of an application gateway. Possible values include:
      'Standard'
     :type tier: str or :class:`ApplicationGatewayTier
-     <azure.mgmt.network.v20150615.models.ApplicationGatewayTier>`
+     <azure.mgmt.network.v2015_06_15.models.ApplicationGatewayTier>`
     :param capacity: Capacity (instance count) of an application gateway.
     :type capacity: int
     """

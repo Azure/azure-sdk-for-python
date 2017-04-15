@@ -17,7 +17,7 @@ class GatewayRouteListResult(Model):
 
     :param value: List of gateway routes
     :type value: list of :class:`GatewayRoute
-     <azure.mgmt.network.v20160901.models.GatewayRoute>`
+     <azure.mgmt.network.v2016_09_01.models.GatewayRoute>`
     """
 
     _attribute_map = {

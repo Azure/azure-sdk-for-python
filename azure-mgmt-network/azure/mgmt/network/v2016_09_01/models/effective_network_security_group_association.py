@@ -17,10 +17,10 @@ class EffectiveNetworkSecurityGroupAssociation(Model):
 
     :param subnet: The ID of the subnet if assigned.
     :type subnet: :class:`SubResource
-     <azure.mgmt.network.v20160901.models.SubResource>`
+     <azure.mgmt.network.v2016_09_01.models.SubResource>`
     :param network_interface: The ID of the network interface if assigned.
     :type network_interface: :class:`SubResource
-     <azure.mgmt.network.v20160901.models.SubResource>`
+     <azure.mgmt.network.v2016_09_01.models.SubResource>`
     """
 
     _attribute_map = {

@@ -19,7 +19,7 @@ class ApplicationGatewaySslPolicy(Model):
      gateway. Possible values are: 'TLSv1_0', 'TLSv1_1', and 'TLSv1_2'.
     :type disabled_ssl_protocols: list of str or
      :class:`ApplicationGatewaySslProtocol
-     <azure.mgmt.network.v20160901.models.ApplicationGatewaySslProtocol>`
+     <azure.mgmt.network.v2016_09_01.models.ApplicationGatewaySslProtocol>`
     """
 
     _attribute_map = {

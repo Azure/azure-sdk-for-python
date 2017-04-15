@@ -18,10 +18,10 @@ class ApplicationGatewayBackendHealthHttpSettings(Model):
     :param backend_http_settings: Reference of an
      ApplicationGatewayBackendHttpSettings resource.
     :type backend_http_settings: :class:`ApplicationGatewayBackendHttpSettings
-     <azure.mgmt.network.v20160901.models.ApplicationGatewayBackendHttpSettings>`
+     <azure.mgmt.network.v2016_09_01.models.ApplicationGatewayBackendHttpSettings>`
     :param servers: List of ApplicationGatewayBackendHealthServer resources.
     :type servers: list of :class:`ApplicationGatewayBackendHealthServer
-     <azure.mgmt.network.v20160901.models.ApplicationGatewayBackendHealthServer>`
+     <azure.mgmt.network.v2016_09_01.models.ApplicationGatewayBackendHealthServer>`
     """
 
     _attribute_map = {

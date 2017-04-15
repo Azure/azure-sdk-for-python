@@ -22,7 +22,7 @@ class SubnetAssociation(Model):
     :vartype id: str
     :param security_rules: Collection of custom security rules.
     :type security_rules: list of :class:`SecurityRule
-     <azure.mgmt.network.v20160901.models.SecurityRule>`
+     <azure.mgmt.network.v2016_09_01.models.SecurityRule>`
     """
 
     _validation = {

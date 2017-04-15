@@ -131,7 +131,7 @@ class NetworkSecurityGroupsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`NetworkSecurityGroup
-         <azure.mgmt.network.v20150615.models.NetworkSecurityGroup>`
+         <azure.mgmt.network.v2015_06_15.models.NetworkSecurityGroup>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
@@ -194,14 +194,14 @@ class NetworkSecurityGroupsOperations(object):
         :param parameters: Parameters supplied to the create or update network
          security group operation.
         :type parameters: :class:`NetworkSecurityGroup
-         <azure.mgmt.network.v20150615.models.NetworkSecurityGroup>`
+         <azure.mgmt.network.v2015_06_15.models.NetworkSecurityGroup>`
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :rtype:
          :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
          instance that returns :class:`NetworkSecurityGroup
-         <azure.mgmt.network.v20150615.models.NetworkSecurityGroup>`
+         <azure.mgmt.network.v2015_06_15.models.NetworkSecurityGroup>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
@@ -288,7 +288,7 @@ class NetworkSecurityGroupsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`NetworkSecurityGroupPaged
-         <azure.mgmt.network.v20150615.models.NetworkSecurityGroupPaged>`
+         <azure.mgmt.network.v2015_06_15.models.NetworkSecurityGroupPaged>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
@@ -353,7 +353,7 @@ class NetworkSecurityGroupsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`NetworkSecurityGroupPaged
-         <azure.mgmt.network.v20150615.models.NetworkSecurityGroupPaged>`
+         <azure.mgmt.network.v2015_06_15.models.NetworkSecurityGroupPaged>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
