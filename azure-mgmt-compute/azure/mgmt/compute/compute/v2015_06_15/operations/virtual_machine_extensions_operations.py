@@ -50,14 +50,14 @@ class VirtualMachineExtensionsOperations(object):
         :param extension_parameters: Parameters supplied to the Create Virtual
          Machine Extension operation.
         :type extension_parameters: :class:`VirtualMachineExtension
-         <azure.mgmt.compute.compute.v20150615.models.VirtualMachineExtension>`
+         <azure.mgmt.compute.compute.v2015_06_15.models.VirtualMachineExtension>`
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :rtype:
          :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
          instance that returns :class:`VirtualMachineExtension
-         <azure.mgmt.compute.compute.v20150615.models.VirtualMachineExtension>`
+         <azure.mgmt.compute.compute.v2015_06_15.models.VirtualMachineExtension>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
@@ -152,7 +152,7 @@ class VirtualMachineExtensionsOperations(object):
         :rtype:
          :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
          instance that returns :class:`OperationStatusResponse
-         <azure.mgmt.compute.compute.v20150615.models.OperationStatusResponse>`
+         <azure.mgmt.compute.compute.v2015_06_15.models.OperationStatusResponse>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
@@ -243,7 +243,7 @@ class VirtualMachineExtensionsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`VirtualMachineExtension
-         <azure.mgmt.compute.compute.v20150615.models.VirtualMachineExtension>`
+         <azure.mgmt.compute.compute.v2015_06_15.models.VirtualMachineExtension>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
