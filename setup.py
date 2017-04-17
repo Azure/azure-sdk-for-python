@@ -17,15 +17,13 @@ root_folder = os.path.abspath(os.path.dirname(__file__))
 
 packages = [os.path.dirname(p) for p in glob.glob('azure*/setup.py')]
 
-# order is significant for "install":
-# - Install nspkg first
-# - Then install content package
-# - Then install meta-package
+# "install" is used by ReadTheDocs, do not install "nspkg"
 
 # Extract nspkg and sort nspkg by number of "-"
 nspkg_packages = [p for p in packages if "nspkg" in p]
 nspkg_packages.sort(key = lambda x: len([c for c in x if c == '-']))
-# Consider "azure-common" as a power nspkg : has to be installed first after real nspkg
+
+# Consider "azure-common" as a power nspkg : has to be installed first
 nspkg_packages.append("azure-common")
 
 # Manually push meta-packages at the end, in reverse dependency order
@@ -33,9 +31,13 @@ meta_package = ['azure-mgmt', 'azure']
 
 # So content packages are:
 content_package = [p for p in packages if p not in meta_package+nspkg_packages]
+content_package.insert(0, "azure-common")
 
-# Package final order:
-packages = nspkg_packages + content_package + meta_package
+# Package final:
+if "install" in sys.argv:
+    packages = content_package
+else:
+    packages = nspkg_packages + content_package + meta_package
 
 for pkg_name in packages:
     pkg_setup_folder = os.path.join(root_folder, pkg_name)
