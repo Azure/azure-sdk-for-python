@@ -9,11 +9,19 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from enum import Enum
+from msrest.paging import Paged
 
 
-class FileType(Enum):
+class USqlPackagePaged(Paged):
+    """
+    A paging container for iterating over a list of USqlPackage object
+    """
 
-    assembly = "Assembly"
-    resource = "Resource"
-    nodeploy = "Nodeploy"
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[USqlPackage]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(USqlPackagePaged, self).__init__(*args, **kwargs)
