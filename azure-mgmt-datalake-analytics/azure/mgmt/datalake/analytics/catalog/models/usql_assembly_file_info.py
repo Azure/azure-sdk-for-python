@@ -16,7 +16,7 @@ class USqlAssemblyFileInfo(Model):
     """A Data Lake Analytics catalog U-SQL assembly file information item.
 
     :param type: the assembly file type. Possible values include: 'Assembly',
-     'Resource'
+     'Resource', 'Nodeploy'
     :type type: str or :class:`FileType
      <azure.mgmt.datalake.analytics.catalog.models.FileType>`
     :param original_path: the the original path to the assembly file.
@@ -26,7 +26,7 @@ class USqlAssemblyFileInfo(Model):
     """
 
     _attribute_map = {
-        'type': {'key': 'type', 'type': 'FileType'},
+        'type': {'key': 'type', 'type': 'str'},
         'original_path': {'key': 'originalPath', 'type': 'str'},
         'content_path': {'key': 'contentPath', 'type': 'str'},
     }

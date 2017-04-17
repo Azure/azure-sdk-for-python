@@ -1274,6 +1274,113 @@ class CatalogOperations(object):
 
         return deserialized
 
+    def list_table_statistics_by_database_and_schema(
+            self, account_name, database_name, schema_name, filter=None, top=None, skip=None, select=None, orderby=None, count=None, custom_headers=None, raw=False, **operation_config):
+        """Retrieves the list of all table statistics within the specified schema
+        from the Data Lake Analytics catalog.
+
+        :param account_name: The Azure Data Lake Analytics account upon which
+         to execute catalog operations.
+        :type account_name: str
+        :param database_name: The name of the database containing the
+         statistics.
+        :type database_name: str
+        :param schema_name: The name of the schema containing the statistics.
+        :type schema_name: str
+        :param filter: OData filter. Optional.
+        :type filter: str
+        :param top: The number of items to return. Optional.
+        :type top: int
+        :param skip: The number of items to skip over before returning
+         elements. Optional.
+        :type skip: int
+        :param select: OData Select statement. Limits the properties on each
+         entry to just those requested, e.g.
+         Categories?$select=CategoryName,Description. Optional.
+        :type select: str
+        :param orderby: OrderBy clause. One or more comma-separated
+         expressions with an optional "asc" (the default) or "desc" depending
+         on the order you'd like the values sorted, e.g.
+         Categories?$orderby=CategoryName desc. Optional.
+        :type orderby: str
+        :param count: The Boolean value of true or false to request a count of
+         the matching resources included with the resources in the response,
+         e.g. Categories?$count=true. Optional.
+        :type count: bool
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :rtype: :class:`USqlTableStatisticsPaged
+         <azure.mgmt.datalake.analytics.catalog.models.USqlTableStatisticsPaged>`
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        """
+        def internal_paging(next_link=None, raw=False):
+
+            if not next_link:
+                # Construct URL
+                url = '/catalog/usql/databases/{databaseName}/schemas/{schemaName}/statistics'
+                path_format_arguments = {
+                    'accountName': self._serialize.url("account_name", account_name, 'str', skip_quote=True),
+                    'adlaCatalogDnsSuffix': self._serialize.url("self.config.adla_catalog_dns_suffix", self.config.adla_catalog_dns_suffix, 'str', skip_quote=True),
+                    'databaseName': self._serialize.url("database_name", database_name, 'str'),
+                    'schemaName': self._serialize.url("schema_name", schema_name, 'str')
+                }
+                url = self._client.format_url(url, **path_format_arguments)
+
+                # Construct parameters
+                query_parameters = {}
+                if filter is not None:
+                    query_parameters['$filter'] = self._serialize.query("filter", filter, 'str')
+                if top is not None:
+                    query_parameters['$top'] = self._serialize.query("top", top, 'int', minimum=1)
+                if skip is not None:
+                    query_parameters['$skip'] = self._serialize.query("skip", skip, 'int', minimum=1)
+                if select is not None:
+                    query_parameters['$select'] = self._serialize.query("select", select, 'str')
+                if orderby is not None:
+                    query_parameters['$orderby'] = self._serialize.query("orderby", orderby, 'str')
+                if count is not None:
+                    query_parameters['$count'] = self._serialize.query("count", count, 'bool')
+                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+
+            else:
+                url = next_link
+                query_parameters = {}
+
+            # Construct headers
+            header_parameters = {}
+            header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+            if self.config.generate_client_request_id:
+                header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+            if custom_headers:
+                header_parameters.update(custom_headers)
+            if self.config.accept_language is not None:
+                header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+            # Construct and send request
+            request = self._client.get(url, query_parameters)
+            response = self._client.send(
+                request, header_parameters, **operation_config)
+
+            if response.status_code not in [200]:
+                exp = CloudError(response)
+                exp.request_id = response.headers.get('x-ms-request-id')
+                raise exp
+
+            return response
+
+        # Deserialize response
+        deserialized = models.USqlTableStatisticsPaged(internal_paging, self._deserialize.dependencies)
+
+        if raw:
+            header_dict = {}
+            client_raw_response = models.USqlTableStatisticsPaged(internal_paging, self._deserialize.dependencies, header_dict)
+            return client_raw_response
+
+        return deserialized
+
     def get_table_type(
             self, account_name, database_name, schema_name, table_type_name, custom_headers=None, raw=False, **operation_config):
         """Retrieves the specified table type from the Data Lake Analytics
@@ -1447,6 +1554,181 @@ class CatalogOperations(object):
         if raw:
             header_dict = {}
             client_raw_response = models.USqlTableTypePaged(internal_paging, self._deserialize.dependencies, header_dict)
+            return client_raw_response
+
+        return deserialized
+
+    def get_package(
+            self, account_name, database_name, schema_name, package_name, custom_headers=None, raw=False, **operation_config):
+        """Retrieves the specified package from the Data Lake Analytics catalog.
+
+        :param account_name: The Azure Data Lake Analytics account upon which
+         to execute catalog operations.
+        :type account_name: str
+        :param database_name: The name of the database containing the package.
+        :type database_name: str
+        :param schema_name: The name of the schema containing the package.
+        :type schema_name: str
+        :param package_name: The name of the package.
+        :type package_name: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :rtype: :class:`USqlPackage
+         <azure.mgmt.datalake.analytics.catalog.models.USqlPackage>`
+        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+         if raw=true
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        """
+        # Construct URL
+        url = '/catalog/usql/databases/{databaseName}/schemas/{schemaName}/packages/{packageName}'
+        path_format_arguments = {
+            'accountName': self._serialize.url("account_name", account_name, 'str', skip_quote=True),
+            'adlaCatalogDnsSuffix': self._serialize.url("self.config.adla_catalog_dns_suffix", self.config.adla_catalog_dns_suffix, 'str', skip_quote=True),
+            'databaseName': self._serialize.url("database_name", database_name, 'str'),
+            'schemaName': self._serialize.url("schema_name", schema_name, 'str'),
+            'packageName': self._serialize.url("package_name", package_name, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+        # Construct and send request
+        request = self._client.get(url, query_parameters)
+        response = self._client.send(request, header_parameters, **operation_config)
+
+        if response.status_code not in [200]:
+            exp = CloudError(response)
+            exp.request_id = response.headers.get('x-ms-request-id')
+            raise exp
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('USqlPackage', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+
+    def list_packages(
+            self, account_name, database_name, schema_name, filter=None, top=None, skip=None, select=None, orderby=None, count=None, custom_headers=None, raw=False, **operation_config):
+        """Retrieves the list of packages from the Data Lake Analytics catalog.
+
+        :param account_name: The Azure Data Lake Analytics account upon which
+         to execute catalog operations.
+        :type account_name: str
+        :param database_name: The name of the database containing the
+         packages.
+        :type database_name: str
+        :param schema_name: The name of the schema containing the packages.
+        :type schema_name: str
+        :param filter: OData filter. Optional.
+        :type filter: str
+        :param top: The number of items to return. Optional.
+        :type top: int
+        :param skip: The number of items to skip over before returning
+         elements. Optional.
+        :type skip: int
+        :param select: OData Select statement. Limits the properties on each
+         entry to just those requested, e.g.
+         Categories?$select=CategoryName,Description. Optional.
+        :type select: str
+        :param orderby: OrderBy clause. One or more comma-separated
+         expressions with an optional "asc" (the default) or "desc" depending
+         on the order you'd like the values sorted, e.g.
+         Categories?$orderby=CategoryName desc. Optional.
+        :type orderby: str
+        :param count: The Boolean value of true or false to request a count of
+         the matching resources included with the resources in the response,
+         e.g. Categories?$count=true. Optional.
+        :type count: bool
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :rtype: :class:`USqlPackagePaged
+         <azure.mgmt.datalake.analytics.catalog.models.USqlPackagePaged>`
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        """
+        def internal_paging(next_link=None, raw=False):
+
+            if not next_link:
+                # Construct URL
+                url = '/catalog/usql/databases/{databaseName}/schemas/{schemaName}/packages'
+                path_format_arguments = {
+                    'accountName': self._serialize.url("account_name", account_name, 'str', skip_quote=True),
+                    'adlaCatalogDnsSuffix': self._serialize.url("self.config.adla_catalog_dns_suffix", self.config.adla_catalog_dns_suffix, 'str', skip_quote=True),
+                    'databaseName': self._serialize.url("database_name", database_name, 'str'),
+                    'schemaName': self._serialize.url("schema_name", schema_name, 'str')
+                }
+                url = self._client.format_url(url, **path_format_arguments)
+
+                # Construct parameters
+                query_parameters = {}
+                if filter is not None:
+                    query_parameters['$filter'] = self._serialize.query("filter", filter, 'str')
+                if top is not None:
+                    query_parameters['$top'] = self._serialize.query("top", top, 'int', minimum=1)
+                if skip is not None:
+                    query_parameters['$skip'] = self._serialize.query("skip", skip, 'int', minimum=1)
+                if select is not None:
+                    query_parameters['$select'] = self._serialize.query("select", select, 'str')
+                if orderby is not None:
+                    query_parameters['$orderby'] = self._serialize.query("orderby", orderby, 'str')
+                if count is not None:
+                    query_parameters['$count'] = self._serialize.query("count", count, 'bool')
+                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+
+            else:
+                url = next_link
+                query_parameters = {}
+
+            # Construct headers
+            header_parameters = {}
+            header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+            if self.config.generate_client_request_id:
+                header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+            if custom_headers:
+                header_parameters.update(custom_headers)
+            if self.config.accept_language is not None:
+                header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+            # Construct and send request
+            request = self._client.get(url, query_parameters)
+            response = self._client.send(
+                request, header_parameters, **operation_config)
+
+            if response.status_code not in [200]:
+                exp = CloudError(response)
+                exp.request_id = response.headers.get('x-ms-request-id')
+                raise exp
+
+            return response
+
+        # Deserialize response
+        deserialized = models.USqlPackagePaged(internal_paging, self._deserialize.dependencies)
+
+        if raw:
+            header_dict = {}
+            client_raw_response = models.USqlPackagePaged(internal_paging, self._deserialize.dependencies, header_dict)
             return client_raw_response
 
         return deserialized
@@ -2614,6 +2896,420 @@ class CatalogOperations(object):
         if raw:
             header_dict = {}
             client_raw_response = models.USqlSchemaPaged(internal_paging, self._deserialize.dependencies, header_dict)
+            return client_raw_response
+
+        return deserialized
+
+    def list_table_statistics_by_database(
+            self, account_name, database_name, filter=None, top=None, skip=None, select=None, orderby=None, count=None, custom_headers=None, raw=False, **operation_config):
+        """Retrieves the list of all statistics in a database from the Data Lake
+        Analytics catalog.
+
+        :param account_name: The Azure Data Lake Analytics account upon which
+         to execute catalog operations.
+        :type account_name: str
+        :param database_name: The name of the database containing the table
+         statistics.
+        :type database_name: str
+        :param filter: OData filter. Optional.
+        :type filter: str
+        :param top: The number of items to return. Optional.
+        :type top: int
+        :param skip: The number of items to skip over before returning
+         elements. Optional.
+        :type skip: int
+        :param select: OData Select statement. Limits the properties on each
+         entry to just those requested, e.g.
+         Categories?$select=CategoryName,Description. Optional.
+        :type select: str
+        :param orderby: OrderBy clause. One or more comma-separated
+         expressions with an optional "asc" (the default) or "desc" depending
+         on the order you'd like the values sorted, e.g.
+         Categories?$orderby=CategoryName desc. Optional.
+        :type orderby: str
+        :param count: The Boolean value of true or false to request a count of
+         the matching resources included with the resources in the response,
+         e.g. Categories?$count=true. Optional.
+        :type count: bool
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :rtype: :class:`USqlTableStatisticsPaged
+         <azure.mgmt.datalake.analytics.catalog.models.USqlTableStatisticsPaged>`
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        """
+        def internal_paging(next_link=None, raw=False):
+
+            if not next_link:
+                # Construct URL
+                url = '/catalog/usql/databases/{databaseName}/statistics'
+                path_format_arguments = {
+                    'accountName': self._serialize.url("account_name", account_name, 'str', skip_quote=True),
+                    'adlaCatalogDnsSuffix': self._serialize.url("self.config.adla_catalog_dns_suffix", self.config.adla_catalog_dns_suffix, 'str', skip_quote=True),
+                    'databaseName': self._serialize.url("database_name", database_name, 'str')
+                }
+                url = self._client.format_url(url, **path_format_arguments)
+
+                # Construct parameters
+                query_parameters = {}
+                if filter is not None:
+                    query_parameters['$filter'] = self._serialize.query("filter", filter, 'str')
+                if top is not None:
+                    query_parameters['$top'] = self._serialize.query("top", top, 'int', minimum=1)
+                if skip is not None:
+                    query_parameters['$skip'] = self._serialize.query("skip", skip, 'int', minimum=1)
+                if select is not None:
+                    query_parameters['$select'] = self._serialize.query("select", select, 'str')
+                if orderby is not None:
+                    query_parameters['$orderby'] = self._serialize.query("orderby", orderby, 'str')
+                if count is not None:
+                    query_parameters['$count'] = self._serialize.query("count", count, 'bool')
+                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+
+            else:
+                url = next_link
+                query_parameters = {}
+
+            # Construct headers
+            header_parameters = {}
+            header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+            if self.config.generate_client_request_id:
+                header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+            if custom_headers:
+                header_parameters.update(custom_headers)
+            if self.config.accept_language is not None:
+                header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+            # Construct and send request
+            request = self._client.get(url, query_parameters)
+            response = self._client.send(
+                request, header_parameters, **operation_config)
+
+            if response.status_code not in [200]:
+                exp = CloudError(response)
+                exp.request_id = response.headers.get('x-ms-request-id')
+                raise exp
+
+            return response
+
+        # Deserialize response
+        deserialized = models.USqlTableStatisticsPaged(internal_paging, self._deserialize.dependencies)
+
+        if raw:
+            header_dict = {}
+            client_raw_response = models.USqlTableStatisticsPaged(internal_paging, self._deserialize.dependencies, header_dict)
+            return client_raw_response
+
+        return deserialized
+
+    def list_tables_by_database(
+            self, account_name, database_name, filter=None, top=None, skip=None, select=None, orderby=None, count=None, custom_headers=None, raw=False, **operation_config):
+        """Retrieves the list of all tables in a database from the Data Lake
+        Analytics catalog.
+
+        :param account_name: The Azure Data Lake Analytics account upon which
+         to execute catalog operations.
+        :type account_name: str
+        :param database_name: The name of the database containing the tables.
+        :type database_name: str
+        :param filter: OData filter. Optional.
+        :type filter: str
+        :param top: The number of items to return. Optional.
+        :type top: int
+        :param skip: The number of items to skip over before returning
+         elements. Optional.
+        :type skip: int
+        :param select: OData Select statement. Limits the properties on each
+         entry to just those requested, e.g.
+         Categories?$select=CategoryName,Description. Optional.
+        :type select: str
+        :param orderby: OrderBy clause. One or more comma-separated
+         expressions with an optional "asc" (the default) or "desc" depending
+         on the order you'd like the values sorted, e.g.
+         Categories?$orderby=CategoryName desc. Optional.
+        :type orderby: str
+        :param count: The Boolean value of true or false to request a count of
+         the matching resources included with the resources in the response,
+         e.g. Categories?$count=true. Optional.
+        :type count: bool
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :rtype: :class:`USqlTablePaged
+         <azure.mgmt.datalake.analytics.catalog.models.USqlTablePaged>`
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        """
+        def internal_paging(next_link=None, raw=False):
+
+            if not next_link:
+                # Construct URL
+                url = '/catalog/usql/databases/{databaseName}/tables'
+                path_format_arguments = {
+                    'accountName': self._serialize.url("account_name", account_name, 'str', skip_quote=True),
+                    'adlaCatalogDnsSuffix': self._serialize.url("self.config.adla_catalog_dns_suffix", self.config.adla_catalog_dns_suffix, 'str', skip_quote=True),
+                    'databaseName': self._serialize.url("database_name", database_name, 'str')
+                }
+                url = self._client.format_url(url, **path_format_arguments)
+
+                # Construct parameters
+                query_parameters = {}
+                if filter is not None:
+                    query_parameters['$filter'] = self._serialize.query("filter", filter, 'str')
+                if top is not None:
+                    query_parameters['$top'] = self._serialize.query("top", top, 'int', minimum=1)
+                if skip is not None:
+                    query_parameters['$skip'] = self._serialize.query("skip", skip, 'int', minimum=1)
+                if select is not None:
+                    query_parameters['$select'] = self._serialize.query("select", select, 'str')
+                if orderby is not None:
+                    query_parameters['$orderby'] = self._serialize.query("orderby", orderby, 'str')
+                if count is not None:
+                    query_parameters['$count'] = self._serialize.query("count", count, 'bool')
+                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+
+            else:
+                url = next_link
+                query_parameters = {}
+
+            # Construct headers
+            header_parameters = {}
+            header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+            if self.config.generate_client_request_id:
+                header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+            if custom_headers:
+                header_parameters.update(custom_headers)
+            if self.config.accept_language is not None:
+                header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+            # Construct and send request
+            request = self._client.get(url, query_parameters)
+            response = self._client.send(
+                request, header_parameters, **operation_config)
+
+            if response.status_code not in [200]:
+                exp = CloudError(response)
+                exp.request_id = response.headers.get('x-ms-request-id')
+                raise exp
+
+            return response
+
+        # Deserialize response
+        deserialized = models.USqlTablePaged(internal_paging, self._deserialize.dependencies)
+
+        if raw:
+            header_dict = {}
+            client_raw_response = models.USqlTablePaged(internal_paging, self._deserialize.dependencies, header_dict)
+            return client_raw_response
+
+        return deserialized
+
+    def list_table_valued_functions_by_database(
+            self, account_name, database_name, filter=None, top=None, skip=None, select=None, orderby=None, count=None, custom_headers=None, raw=False, **operation_config):
+        """Retrieves the list of all table valued functions in a database from the
+        Data Lake Analytics catalog.
+
+        :param account_name: The Azure Data Lake Analytics account upon which
+         to execute catalog operations.
+        :type account_name: str
+        :param database_name: The name of the database containing the table
+         valued functions.
+        :type database_name: str
+        :param filter: OData filter. Optional.
+        :type filter: str
+        :param top: The number of items to return. Optional.
+        :type top: int
+        :param skip: The number of items to skip over before returning
+         elements. Optional.
+        :type skip: int
+        :param select: OData Select statement. Limits the properties on each
+         entry to just those requested, e.g.
+         Categories?$select=CategoryName,Description. Optional.
+        :type select: str
+        :param orderby: OrderBy clause. One or more comma-separated
+         expressions with an optional "asc" (the default) or "desc" depending
+         on the order you'd like the values sorted, e.g.
+         Categories?$orderby=CategoryName desc. Optional.
+        :type orderby: str
+        :param count: The Boolean value of true or false to request a count of
+         the matching resources included with the resources in the response,
+         e.g. Categories?$count=true. Optional.
+        :type count: bool
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :rtype: :class:`USqlTableValuedFunctionPaged
+         <azure.mgmt.datalake.analytics.catalog.models.USqlTableValuedFunctionPaged>`
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        """
+        def internal_paging(next_link=None, raw=False):
+
+            if not next_link:
+                # Construct URL
+                url = '/catalog/usql/databases/{databaseName}/tablevaluedfunctions'
+                path_format_arguments = {
+                    'accountName': self._serialize.url("account_name", account_name, 'str', skip_quote=True),
+                    'adlaCatalogDnsSuffix': self._serialize.url("self.config.adla_catalog_dns_suffix", self.config.adla_catalog_dns_suffix, 'str', skip_quote=True),
+                    'databaseName': self._serialize.url("database_name", database_name, 'str')
+                }
+                url = self._client.format_url(url, **path_format_arguments)
+
+                # Construct parameters
+                query_parameters = {}
+                if filter is not None:
+                    query_parameters['$filter'] = self._serialize.query("filter", filter, 'str')
+                if top is not None:
+                    query_parameters['$top'] = self._serialize.query("top", top, 'int', minimum=1)
+                if skip is not None:
+                    query_parameters['$skip'] = self._serialize.query("skip", skip, 'int', minimum=1)
+                if select is not None:
+                    query_parameters['$select'] = self._serialize.query("select", select, 'str')
+                if orderby is not None:
+                    query_parameters['$orderby'] = self._serialize.query("orderby", orderby, 'str')
+                if count is not None:
+                    query_parameters['$count'] = self._serialize.query("count", count, 'bool')
+                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+
+            else:
+                url = next_link
+                query_parameters = {}
+
+            # Construct headers
+            header_parameters = {}
+            header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+            if self.config.generate_client_request_id:
+                header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+            if custom_headers:
+                header_parameters.update(custom_headers)
+            if self.config.accept_language is not None:
+                header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+            # Construct and send request
+            request = self._client.get(url, query_parameters)
+            response = self._client.send(
+                request, header_parameters, **operation_config)
+
+            if response.status_code not in [200]:
+                exp = CloudError(response)
+                exp.request_id = response.headers.get('x-ms-request-id')
+                raise exp
+
+            return response
+
+        # Deserialize response
+        deserialized = models.USqlTableValuedFunctionPaged(internal_paging, self._deserialize.dependencies)
+
+        if raw:
+            header_dict = {}
+            client_raw_response = models.USqlTableValuedFunctionPaged(internal_paging, self._deserialize.dependencies, header_dict)
+            return client_raw_response
+
+        return deserialized
+
+    def list_views_by_database(
+            self, account_name, database_name, filter=None, top=None, skip=None, select=None, orderby=None, count=None, custom_headers=None, raw=False, **operation_config):
+        """Retrieves the list of all views in a database from the Data Lake
+        Analytics catalog.
+
+        :param account_name: The Azure Data Lake Analytics account upon which
+         to execute catalog operations.
+        :type account_name: str
+        :param database_name: The name of the database containing the views.
+        :type database_name: str
+        :param filter: OData filter. Optional.
+        :type filter: str
+        :param top: The number of items to return. Optional.
+        :type top: int
+        :param skip: The number of items to skip over before returning
+         elements. Optional.
+        :type skip: int
+        :param select: OData Select statement. Limits the properties on each
+         entry to just those requested, e.g.
+         Categories?$select=CategoryName,Description. Optional.
+        :type select: str
+        :param orderby: OrderBy clause. One or more comma-separated
+         expressions with an optional "asc" (the default) or "desc" depending
+         on the order you'd like the values sorted, e.g.
+         Categories?$orderby=CategoryName desc. Optional.
+        :type orderby: str
+        :param count: The Boolean value of true or false to request a count of
+         the matching resources included with the resources in the response,
+         e.g. Categories?$count=true. Optional.
+        :type count: bool
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :rtype: :class:`USqlViewPaged
+         <azure.mgmt.datalake.analytics.catalog.models.USqlViewPaged>`
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        """
+        def internal_paging(next_link=None, raw=False):
+
+            if not next_link:
+                # Construct URL
+                url = '/catalog/usql/databases/{databaseName}/views'
+                path_format_arguments = {
+                    'accountName': self._serialize.url("account_name", account_name, 'str', skip_quote=True),
+                    'adlaCatalogDnsSuffix': self._serialize.url("self.config.adla_catalog_dns_suffix", self.config.adla_catalog_dns_suffix, 'str', skip_quote=True),
+                    'databaseName': self._serialize.url("database_name", database_name, 'str')
+                }
+                url = self._client.format_url(url, **path_format_arguments)
+
+                # Construct parameters
+                query_parameters = {}
+                if filter is not None:
+                    query_parameters['$filter'] = self._serialize.query("filter", filter, 'str')
+                if top is not None:
+                    query_parameters['$top'] = self._serialize.query("top", top, 'int', minimum=1)
+                if skip is not None:
+                    query_parameters['$skip'] = self._serialize.query("skip", skip, 'int', minimum=1)
+                if select is not None:
+                    query_parameters['$select'] = self._serialize.query("select", select, 'str')
+                if orderby is not None:
+                    query_parameters['$orderby'] = self._serialize.query("orderby", orderby, 'str')
+                if count is not None:
+                    query_parameters['$count'] = self._serialize.query("count", count, 'bool')
+                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+
+            else:
+                url = next_link
+                query_parameters = {}
+
+            # Construct headers
+            header_parameters = {}
+            header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+            if self.config.generate_client_request_id:
+                header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+            if custom_headers:
+                header_parameters.update(custom_headers)
+            if self.config.accept_language is not None:
+                header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+            # Construct and send request
+            request = self._client.get(url, query_parameters)
+            response = self._client.send(
+                request, header_parameters, **operation_config)
+
+            if response.status_code not in [200]:
+                exp = CloudError(response)
+                exp.request_id = response.headers.get('x-ms-request-id')
+                raise exp
+
+            return response
+
+        # Deserialize response
+        deserialized = models.USqlViewPaged(internal_paging, self._deserialize.dependencies)
+
+        if raw:
+            header_dict = {}
+            client_raw_response = models.USqlViewPaged(internal_paging, self._deserialize.dependencies, header_dict)
             return client_raw_response
 
         return deserialized
