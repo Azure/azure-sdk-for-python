@@ -31,32 +31,32 @@ class VirtualMachine(Resource):
     :param plan: The purchase plan when deploying virtual machine from VM
      Marketplace images.
     :type plan: :class:`Plan
-     <azure.mgmt.compute.compute.v20160430preview.models.Plan>`
+     <azure.mgmt.compute.compute.v2016_04_30_preview.models.Plan>`
     :param hardware_profile: The hardware profile.
     :type hardware_profile: :class:`HardwareProfile
-     <azure.mgmt.compute.compute.v20160430preview.models.HardwareProfile>`
+     <azure.mgmt.compute.compute.v2016_04_30_preview.models.HardwareProfile>`
     :param storage_profile: The storage profile.
     :type storage_profile: :class:`StorageProfile
-     <azure.mgmt.compute.compute.v20160430preview.models.StorageProfile>`
+     <azure.mgmt.compute.compute.v2016_04_30_preview.models.StorageProfile>`
     :param os_profile: The OS profile.
     :type os_profile: :class:`OSProfile
-     <azure.mgmt.compute.compute.v20160430preview.models.OSProfile>`
+     <azure.mgmt.compute.compute.v2016_04_30_preview.models.OSProfile>`
     :param network_profile: The network profile.
     :type network_profile: :class:`NetworkProfile
-     <azure.mgmt.compute.compute.v20160430preview.models.NetworkProfile>`
+     <azure.mgmt.compute.compute.v2016_04_30_preview.models.NetworkProfile>`
     :param diagnostics_profile: The diagnostics profile.
     :type diagnostics_profile: :class:`DiagnosticsProfile
-     <azure.mgmt.compute.compute.v20160430preview.models.DiagnosticsProfile>`
+     <azure.mgmt.compute.compute.v2016_04_30_preview.models.DiagnosticsProfile>`
     :param availability_set: The reference Id of the availability set to which
      the virtual machine belongs.
     :type availability_set: :class:`SubResource
-     <azure.mgmt.compute.compute.v20160430preview.models.SubResource>`
+     <azure.mgmt.compute.compute.v2016_04_30_preview.models.SubResource>`
     :ivar provisioning_state: The provisioning state, which only appears in
      the response.
     :vartype provisioning_state: str
     :ivar instance_view: The virtual machine instance view.
     :vartype instance_view: :class:`VirtualMachineInstanceView
-     <azure.mgmt.compute.compute.v20160430preview.models.VirtualMachineInstanceView>`
+     <azure.mgmt.compute.compute.v2016_04_30_preview.models.VirtualMachineInstanceView>`
     :param license_type: Specifies that the image or disk that is being used
      was licensed on-premises. This element is only used for images that
      contain the Windows Server operating system.
@@ -67,7 +67,10 @@ class VirtualMachine(Resource):
     :vartype vm_id: str
     :ivar resources: The virtual machine child extension resources.
     :vartype resources: list of :class:`VirtualMachineExtension
-     <azure.mgmt.compute.compute.v20160430preview.models.VirtualMachineExtension>`
+     <azure.mgmt.compute.compute.v2016_04_30_preview.models.VirtualMachineExtension>`
+    :param identity: The identity of the virtual machine, if configured.
+    :type identity: :class:`VirtualMachineIdentity
+     <azure.mgmt.compute.compute.v2016_04_30_preview.models.VirtualMachineIdentity>`
     """
 
     _validation = {
@@ -99,9 +102,10 @@ class VirtualMachine(Resource):
         'license_type': {'key': 'properties.licenseType', 'type': 'str'},
         'vm_id': {'key': 'properties.vmId', 'type': 'str'},
         'resources': {'key': 'resources', 'type': '[VirtualMachineExtension]'},
+        'identity': {'key': 'identity', 'type': 'VirtualMachineIdentity'},
     }
 
-    def __init__(self, location, tags=None, plan=None, hardware_profile=None, storage_profile=None, os_profile=None, network_profile=None, diagnostics_profile=None, availability_set=None, license_type=None):
+    def __init__(self, location, tags=None, plan=None, hardware_profile=None, storage_profile=None, os_profile=None, network_profile=None, diagnostics_profile=None, availability_set=None, license_type=None, identity=None):
         super(VirtualMachine, self).__init__(location=location, tags=tags)
         self.plan = plan
         self.hardware_profile = hardware_profile
@@ -115,3 +119,4 @@ class VirtualMachine(Resource):
         self.license_type = license_type
         self.vm_id = None
         self.resources = None
+        self.identity = identity

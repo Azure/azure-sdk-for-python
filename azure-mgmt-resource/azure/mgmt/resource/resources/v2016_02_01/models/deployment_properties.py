@@ -21,21 +21,21 @@ class DeploymentProperties(Model):
     :param template_link: The template URI. Use only one of Template or
      TemplateLink.
     :type template_link: :class:`TemplateLink
-     <azure.mgmt.resource.resources.v20160201.models.TemplateLink>`
+     <azure.mgmt.resource.resources.v2016_02_01.models.TemplateLink>`
     :param parameters: Deployment parameters. It can be a JObject or a well
      formed JSON string. Use only one of Parameters or ParametersLink.
     :type parameters: object
     :param parameters_link: The parameters URI. Use only one of Parameters or
      ParametersLink.
     :type parameters_link: :class:`ParametersLink
-     <azure.mgmt.resource.resources.v20160201.models.ParametersLink>`
+     <azure.mgmt.resource.resources.v2016_02_01.models.ParametersLink>`
     :param mode: The deployment mode. Possible values include: 'Incremental',
      'Complete'
     :type mode: str or :class:`DeploymentMode
-     <azure.mgmt.resource.resources.v20160201.models.DeploymentMode>`
+     <azure.mgmt.resource.resources.v2016_02_01.models.DeploymentMode>`
     :param debug_setting: The debug setting of the deployment.
     :type debug_setting: :class:`DebugSetting
-     <azure.mgmt.resource.resources.v20160201.models.DebugSetting>`
+     <azure.mgmt.resource.resources.v2016_02_01.models.DebugSetting>`
     """
 
     _validation = {

@@ -24,7 +24,7 @@ class ResourceLink(Model):
     :vartype name: str
     :param properties: Properties for resource link.
     :type properties: :class:`ResourceLinkProperties
-     <azure.mgmt.resource.links.v20160901.models.ResourceLinkProperties>`
+     <azure.mgmt.resource.links.v2016_09_01.models.ResourceLinkProperties>`
     """
 
     _validation = {

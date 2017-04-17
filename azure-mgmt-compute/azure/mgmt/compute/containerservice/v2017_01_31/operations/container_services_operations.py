@@ -51,7 +51,7 @@ class ContainerServicesOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`ContainerServicePaged
-         <azure.mgmt.compute.containerservice.v20170131.models.ContainerServicePaged>`
+         <azure.mgmt.compute.containerservice.v2017_01_31.models.ContainerServicePaged>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
@@ -119,14 +119,14 @@ class ContainerServicesOperations(object):
         :param parameters: Parameters supplied to the Create or Update a
          Container Service operation.
         :type parameters: :class:`ContainerService
-         <azure.mgmt.compute.containerservice.v20170131.models.ContainerService>`
+         <azure.mgmt.compute.containerservice.v2017_01_31.models.ContainerService>`
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :rtype:
          :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
          instance that returns :class:`ContainerService
-         <azure.mgmt.compute.containerservice.v20170131.models.ContainerService>`
+         <azure.mgmt.compute.containerservice.v2017_01_31.models.ContainerService>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
@@ -225,7 +225,7 @@ class ContainerServicesOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`ContainerService
-         <azure.mgmt.compute.containerservice.v20170131.models.ContainerService>`
+         <azure.mgmt.compute.containerservice.v2017_01_31.models.ContainerService>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
@@ -375,7 +375,7 @@ class ContainerServicesOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`ContainerServicePaged
-         <azure.mgmt.compute.containerservice.v20170131.models.ContainerServicePaged>`
+         <azure.mgmt.compute.containerservice.v2017_01_31.models.ContainerServicePaged>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):

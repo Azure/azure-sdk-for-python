@@ -52,7 +52,7 @@ class DeploymentOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`DeploymentOperation
-         <azure.mgmt.resource.resources.v20160201.models.DeploymentOperation>`
+         <azure.mgmt.resource.resources.v2016_02_01.models.DeploymentOperation>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
@@ -118,7 +118,7 @@ class DeploymentOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`DeploymentOperationPaged
-         <azure.mgmt.resource.resources.v20160201.models.DeploymentOperationPaged>`
+         <azure.mgmt.resource.resources.v2016_02_01.models.DeploymentOperationPaged>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):

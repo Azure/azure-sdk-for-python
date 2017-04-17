@@ -30,17 +30,17 @@ class VirtualMachineScaleSet(Resource):
     :type tags: dict
     :param sku: The virtual machine scale set sku.
     :type sku: :class:`Sku
-     <azure.mgmt.compute.compute.v20160430preview.models.Sku>`
+     <azure.mgmt.compute.compute.v2016_04_30_preview.models.Sku>`
     :param plan: The purchase plan when deploying a virtual machine scale set
      from VM Marketplace images.
     :type plan: :class:`Plan
-     <azure.mgmt.compute.compute.v20160430preview.models.Plan>`
+     <azure.mgmt.compute.compute.v2016_04_30_preview.models.Plan>`
     :param upgrade_policy: The upgrade policy.
     :type upgrade_policy: :class:`UpgradePolicy
-     <azure.mgmt.compute.compute.v20160430preview.models.UpgradePolicy>`
+     <azure.mgmt.compute.compute.v2016_04_30_preview.models.UpgradePolicy>`
     :param virtual_machine_profile: The virtual machine profile.
     :type virtual_machine_profile: :class:`VirtualMachineScaleSetVMProfile
-     <azure.mgmt.compute.compute.v20160430preview.models.VirtualMachineScaleSetVMProfile>`
+     <azure.mgmt.compute.compute.v2016_04_30_preview.models.VirtualMachineScaleSetVMProfile>`
     :ivar provisioning_state: The provisioning state, which only appears in
      the response.
     :vartype provisioning_state: str
@@ -50,6 +50,10 @@ class VirtualMachineScaleSet(Resource):
     :param single_placement_group: When true this limits the scale set to a
      single placement group, of max size 100 virtual machines.
     :type single_placement_group: bool
+    :param identity: The identity of the virtual machine scale set, if
+     configured.
+    :type identity: :class:`VirtualMachineScaleSetIdentity
+     <azure.mgmt.compute.compute.v2016_04_30_preview.models.VirtualMachineScaleSetIdentity>`
     """
 
     _validation = {
@@ -73,9 +77,10 @@ class VirtualMachineScaleSet(Resource):
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'overprovision': {'key': 'properties.overprovision', 'type': 'bool'},
         'single_placement_group': {'key': 'properties.singlePlacementGroup', 'type': 'bool'},
+        'identity': {'key': 'identity', 'type': 'VirtualMachineScaleSetIdentity'},
     }
 
-    def __init__(self, location, tags=None, sku=None, plan=None, upgrade_policy=None, virtual_machine_profile=None, overprovision=None, single_placement_group=None):
+    def __init__(self, location, tags=None, sku=None, plan=None, upgrade_policy=None, virtual_machine_profile=None, overprovision=None, single_placement_group=None, identity=None):
         super(VirtualMachineScaleSet, self).__init__(location=location, tags=tags)
         self.sku = sku
         self.plan = plan
@@ -84,3 +89,4 @@ class VirtualMachineScaleSet(Resource):
         self.provisioning_state = None
         self.overprovision = overprovision
         self.single_placement_group = single_placement_group
+        self.identity = identity

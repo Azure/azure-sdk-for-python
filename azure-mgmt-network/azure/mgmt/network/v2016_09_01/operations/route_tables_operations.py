@@ -129,7 +129,7 @@ class RouteTablesOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`RouteTable
-         <azure.mgmt.network.v20160901.models.RouteTable>`
+         <azure.mgmt.network.v2016_09_01.models.RouteTable>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
@@ -190,14 +190,14 @@ class RouteTablesOperations(object):
         :param parameters: Parameters supplied to the create or update route
          table operation.
         :type parameters: :class:`RouteTable
-         <azure.mgmt.network.v20160901.models.RouteTable>`
+         <azure.mgmt.network.v2016_09_01.models.RouteTable>`
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :rtype:
          :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
          instance that returns :class:`RouteTable
-         <azure.mgmt.network.v20160901.models.RouteTable>`
+         <azure.mgmt.network.v2016_09_01.models.RouteTable>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
@@ -286,7 +286,7 @@ class RouteTablesOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`RouteTablePaged
-         <azure.mgmt.network.v20160901.models.RouteTablePaged>`
+         <azure.mgmt.network.v2016_09_01.models.RouteTablePaged>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
@@ -350,7 +350,7 @@ class RouteTablesOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`RouteTablePaged
-         <azure.mgmt.network.v20160901.models.RouteTablePaged>`
+         <azure.mgmt.network.v2016_09_01.models.RouteTablePaged>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):

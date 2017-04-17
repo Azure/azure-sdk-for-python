@@ -21,7 +21,7 @@ class ExpressRouteCircuitRoutesTable(Model):
      'VirtualNetworkGateway', 'VnetLocal', 'Internet', 'VirtualAppliance',
      'None'
     :type next_hop_type: str or :class:`RouteNextHopType
-     <azure.mgmt.network.v20150615.models.RouteNextHopType>`
+     <azure.mgmt.network.v2015_06_15.models.RouteNextHopType>`
     :param next_hop_ip: Gets NextHopIP.
     :type next_hop_ip: str
     :param as_path: Gets AsPath.

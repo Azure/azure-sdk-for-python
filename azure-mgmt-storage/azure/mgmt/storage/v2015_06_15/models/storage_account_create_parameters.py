@@ -32,7 +32,7 @@ class StorageAccountCreateParameters(Model):
      called accountType. Possible values include: 'Standard_LRS',
      'Standard_ZRS', 'Standard_GRS', 'Standard_RAGRS', 'Premium_LRS'
     :type account_type: str or :class:`AccountType
-     <azure.mgmt.storage.v20150615.models.AccountType>`
+     <azure.mgmt.storage.v2015_06_15.models.AccountType>`
     """
 
     _validation = {

@@ -20,21 +20,21 @@ class ApplicationGatewayRequestRoutingRule(SubResource):
     :param rule_type: Rule type. Possible values are: 'Basic' and
      'PathBasedRouting'. Possible values include: 'Basic', 'PathBasedRouting'
     :type rule_type: str or :class:`ApplicationGatewayRequestRoutingRuleType
-     <azure.mgmt.network.v20150615.models.ApplicationGatewayRequestRoutingRuleType>`
+     <azure.mgmt.network.v2015_06_15.models.ApplicationGatewayRequestRoutingRuleType>`
     :param backend_address_pool: Backend address pool resource of the
      application gateway.
     :type backend_address_pool: :class:`SubResource
-     <azure.mgmt.network.v20150615.models.SubResource>`
+     <azure.mgmt.network.v2015_06_15.models.SubResource>`
     :param backend_http_settings: Frontend port resource of the application
      gateway.
     :type backend_http_settings: :class:`SubResource
-     <azure.mgmt.network.v20150615.models.SubResource>`
+     <azure.mgmt.network.v2015_06_15.models.SubResource>`
     :param http_listener: Http listener resource of the application gateway.
     :type http_listener: :class:`SubResource
-     <azure.mgmt.network.v20150615.models.SubResource>`
+     <azure.mgmt.network.v2015_06_15.models.SubResource>`
     :param url_path_map: URL path map resource of the application gateway.
     :type url_path_map: :class:`SubResource
-     <azure.mgmt.network.v20150615.models.SubResource>`
+     <azure.mgmt.network.v2015_06_15.models.SubResource>`
     :param provisioning_state: Provisioning state of the request routing rule
      resource. Possible values are: 'Updating', 'Deleting', and 'Failed'.
     :type provisioning_state: str

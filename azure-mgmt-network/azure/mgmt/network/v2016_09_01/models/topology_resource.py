@@ -24,7 +24,7 @@ class TopologyResource(Model):
     :param associations: Holds the associations the resource has with other
      resources in the resource group.
     :type associations: list of :class:`TopologyAssociation
-     <azure.mgmt.network.v20160901.models.TopologyAssociation>`
+     <azure.mgmt.network.v2016_09_01.models.TopologyAssociation>`
     """
 
     _attribute_map = {

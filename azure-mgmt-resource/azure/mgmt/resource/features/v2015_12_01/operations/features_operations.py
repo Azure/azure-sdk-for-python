@@ -46,7 +46,7 @@ class FeaturesOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`FeatureResultPaged
-         <azure.mgmt.resource.features.v20151201.models.FeatureResultPaged>`
+         <azure.mgmt.resource.features.v2015_12_01.models.FeatureResultPaged>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
@@ -113,7 +113,7 @@ class FeaturesOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`FeatureResultPaged
-         <azure.mgmt.resource.features.v20151201.models.FeatureResultPaged>`
+         <azure.mgmt.resource.features.v2015_12_01.models.FeatureResultPaged>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
@@ -182,7 +182,7 @@ class FeaturesOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`FeatureResult
-         <azure.mgmt.resource.features.v20151201.models.FeatureResult>`
+         <azure.mgmt.resource.features.v2015_12_01.models.FeatureResult>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
@@ -245,7 +245,7 @@ class FeaturesOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`FeatureResult
-         <azure.mgmt.resource.features.v20151201.models.FeatureResult>`
+         <azure.mgmt.resource.features.v2015_12_01.models.FeatureResult>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`

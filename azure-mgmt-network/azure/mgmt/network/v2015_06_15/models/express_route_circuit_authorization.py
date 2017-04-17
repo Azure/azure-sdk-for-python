@@ -23,7 +23,7 @@ class ExpressRouteCircuitAuthorization(SubResource):
      are: 'Available' and 'InUse'. Possible values include: 'Available',
      'InUse'
     :type authorization_use_status: str or :class:`AuthorizationUseStatus
-     <azure.mgmt.network.v20150615.models.AuthorizationUseStatus>`
+     <azure.mgmt.network.v2015_06_15.models.AuthorizationUseStatus>`
     :param provisioning_state: Gets the provisioning state of the public IP
      resource. Possible values are: 'Updating', 'Deleting', and 'Failed'.
     :type provisioning_state: str

@@ -17,10 +17,10 @@ class DeploymentValidateResult(Model):
 
     :param error: Validation error.
     :type error: :class:`ResourceManagementErrorWithDetails
-     <azure.mgmt.resource.resources.v20160201.models.ResourceManagementErrorWithDetails>`
+     <azure.mgmt.resource.resources.v2016_02_01.models.ResourceManagementErrorWithDetails>`
     :param properties: The template deployment properties.
     :type properties: :class:`DeploymentPropertiesExtended
-     <azure.mgmt.resource.resources.v20160201.models.DeploymentPropertiesExtended>`
+     <azure.mgmt.resource.resources.v2016_02_01.models.DeploymentPropertiesExtended>`
     """
 
     _attribute_map = {

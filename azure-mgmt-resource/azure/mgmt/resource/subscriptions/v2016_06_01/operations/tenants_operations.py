@@ -45,7 +45,7 @@ class TenantsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`TenantIdDescriptionPaged
-         <azure.mgmt.resource.subscriptions.v20160601.models.TenantIdDescriptionPaged>`
+         <azure.mgmt.resource.subscriptions.v2016_06_01.models.TenantIdDescriptionPaged>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):

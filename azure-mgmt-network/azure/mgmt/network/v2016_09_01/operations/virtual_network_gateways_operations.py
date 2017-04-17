@@ -49,14 +49,14 @@ class VirtualNetworkGatewaysOperations(object):
         :param parameters: Parameters supplied to create or update virtual
          network gateway operation.
         :type parameters: :class:`VirtualNetworkGateway
-         <azure.mgmt.network.v20160901.models.VirtualNetworkGateway>`
+         <azure.mgmt.network.v2016_09_01.models.VirtualNetworkGateway>`
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :rtype:
          :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
          instance that returns :class:`VirtualNetworkGateway
-         <azure.mgmt.network.v20160901.models.VirtualNetworkGateway>`
+         <azure.mgmt.network.v2016_09_01.models.VirtualNetworkGateway>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
@@ -148,7 +148,7 @@ class VirtualNetworkGatewaysOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`VirtualNetworkGateway
-         <azure.mgmt.network.v20160901.models.VirtualNetworkGateway>`
+         <azure.mgmt.network.v2016_09_01.models.VirtualNetworkGateway>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
@@ -286,7 +286,7 @@ class VirtualNetworkGatewaysOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`VirtualNetworkGatewayPaged
-         <azure.mgmt.network.v20160901.models.VirtualNetworkGatewayPaged>`
+         <azure.mgmt.network.v2016_09_01.models.VirtualNetworkGatewayPaged>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
@@ -359,7 +359,7 @@ class VirtualNetworkGatewaysOperations(object):
         :rtype:
          :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
          instance that returns :class:`VirtualNetworkGateway
-         <azure.mgmt.network.v20160901.models.VirtualNetworkGateway>`
+         <azure.mgmt.network.v2016_09_01.models.VirtualNetworkGateway>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
@@ -446,7 +446,7 @@ class VirtualNetworkGatewaysOperations(object):
          Possible values are: 'AMD64' and 'X86'. Possible values include:
          'Amd64', 'X86'
         :type processor_architecture: str or :class:`ProcessorArchitecture
-         <azure.mgmt.network.v20160901.models.ProcessorArchitecture>`
+         <azure.mgmt.network.v2016_09_01.models.ProcessorArchitecture>`
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -523,7 +523,7 @@ class VirtualNetworkGatewaysOperations(object):
         :rtype:
          :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
          instance that returns :class:`BgpPeerStatusListResult
-         <azure.mgmt.network.v20160901.models.BgpPeerStatusListResult>`
+         <azure.mgmt.network.v2016_09_01.models.BgpPeerStatusListResult>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
@@ -612,7 +612,7 @@ class VirtualNetworkGatewaysOperations(object):
         :rtype:
          :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
          instance that returns :class:`GatewayRouteListResult
-         <azure.mgmt.network.v20160901.models.GatewayRouteListResult>`
+         <azure.mgmt.network.v2016_09_01.models.GatewayRouteListResult>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
@@ -701,7 +701,7 @@ class VirtualNetworkGatewaysOperations(object):
         :rtype:
          :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
          instance that returns :class:`GatewayRouteListResult
-         <azure.mgmt.network.v20160901.models.GatewayRouteListResult>`
+         <azure.mgmt.network.v2016_09_01.models.GatewayRouteListResult>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`

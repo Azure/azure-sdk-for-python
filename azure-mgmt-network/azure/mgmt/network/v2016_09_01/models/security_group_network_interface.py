@@ -19,7 +19,7 @@ class SecurityGroupNetworkInterface(Model):
     :type id: str
     :param security_rule_associations:
     :type security_rule_associations: :class:`SecurityRuleAssociations
-     <azure.mgmt.network.v20160901.models.SecurityRuleAssociations>`
+     <azure.mgmt.network.v2016_09_01.models.SecurityRuleAssociations>`
     """
 
     _attribute_map = {
