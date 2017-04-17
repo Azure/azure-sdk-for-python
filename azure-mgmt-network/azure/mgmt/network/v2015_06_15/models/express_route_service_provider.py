@@ -33,7 +33,7 @@ class ExpressRouteServiceProvider(Resource):
     :param bandwidths_offered: Gets bandwidths offered.
     :type bandwidths_offered: list of
      :class:`ExpressRouteServiceProviderBandwidthsOffered
-     <azure.mgmt.network.v20150615.models.ExpressRouteServiceProviderBandwidthsOffered>`
+     <azure.mgmt.network.v2015_06_15.models.ExpressRouteServiceProviderBandwidthsOffered>`
     :param provisioning_state: Gets the provisioning state of the resource.
     :type provisioning_state: str
     """

@@ -44,14 +44,14 @@ class PolicyDefinitionsOperations(object):
         :type policy_definition_name: str
         :param parameters: The policy definition properties.
         :type parameters: :class:`PolicyDefinition
-         <azure.mgmt.resource.policy.v20161201.models.PolicyDefinition>`
+         <azure.mgmt.resource.policy.v2016_12_01.models.PolicyDefinition>`
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`PolicyDefinition
-         <azure.mgmt.resource.policy.v20161201.models.PolicyDefinition>`
+         <azure.mgmt.resource.policy.v2016_12_01.models.PolicyDefinition>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
@@ -167,7 +167,7 @@ class PolicyDefinitionsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`PolicyDefinition
-         <azure.mgmt.resource.policy.v20161201.models.PolicyDefinition>`
+         <azure.mgmt.resource.policy.v2016_12_01.models.PolicyDefinition>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
@@ -226,7 +226,7 @@ class PolicyDefinitionsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`PolicyDefinitionPaged
-         <azure.mgmt.resource.policy.v20161201.models.PolicyDefinitionPaged>`
+         <azure.mgmt.resource.policy.v2016_12_01.models.PolicyDefinitionPaged>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):

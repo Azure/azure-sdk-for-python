@@ -17,7 +17,7 @@ class EffectiveNetworkSecurityGroupListResult(Model):
 
     :param value: A list of effective network security groups.
     :type value: list of :class:`EffectiveNetworkSecurityGroup
-     <azure.mgmt.network.v20160901.models.EffectiveNetworkSecurityGroup>`
+     <azure.mgmt.network.v2016_09_01.models.EffectiveNetworkSecurityGroup>`
     :param next_link: The URL to get the next set of results.
     :type next_link: str
     """

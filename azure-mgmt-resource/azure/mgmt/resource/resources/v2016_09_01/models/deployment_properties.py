@@ -23,7 +23,7 @@ class DeploymentProperties(Model):
     :param template_link: The URI of the template. Use either the templateLink
      property or the template property, but not both.
     :type template_link: :class:`TemplateLink
-     <azure.mgmt.resource.resources.v20160901.models.TemplateLink>`
+     <azure.mgmt.resource.resources.v2016_09_01.models.TemplateLink>`
     :param parameters: Name and value pairs that define the deployment
      parameters for the template. You use this element when you want to provide
      the parameter values directly in the request rather than link to an
@@ -35,7 +35,7 @@ class DeploymentProperties(Model):
      to link to an existing parameters file. Use either the parametersLink
      property or the parameters property, but not both.
     :type parameters_link: :class:`ParametersLink
-     <azure.mgmt.resource.resources.v20160901.models.ParametersLink>`
+     <azure.mgmt.resource.resources.v2016_09_01.models.ParametersLink>`
     :param mode: The mode that is used to deploy resources. This value can be
      either Incremental or Complete. In Incremental mode, resources are
      deployed without deleting existing resources that are not included in the
@@ -44,10 +44,10 @@ class DeploymentProperties(Model):
      Be careful when using Complete mode as you may unintentionally delete
      resources. Possible values include: 'Incremental', 'Complete'
     :type mode: str or :class:`DeploymentMode
-     <azure.mgmt.resource.resources.v20160901.models.DeploymentMode>`
+     <azure.mgmt.resource.resources.v2016_09_01.models.DeploymentMode>`
     :param debug_setting: The debug setting of the deployment.
     :type debug_setting: :class:`DebugSetting
-     <azure.mgmt.resource.resources.v20160901.models.DebugSetting>`
+     <azure.mgmt.resource.resources.v2016_09_01.models.DebugSetting>`
     """
 
     _validation = {

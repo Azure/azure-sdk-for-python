@@ -21,10 +21,10 @@ class TagDetails(Model):
     :type tag_name: str
     :param count: The tag count.
     :type count: :class:`TagCount
-     <azure.mgmt.resource.resources.v20160201.models.TagCount>`
+     <azure.mgmt.resource.resources.v2016_02_01.models.TagCount>`
     :param values: The list of tag values.
     :type values: list of :class:`TagValue
-     <azure.mgmt.resource.resources.v20160201.models.TagValue>`
+     <azure.mgmt.resource.resources.v2016_02_01.models.TagValue>`
     """
 
     _attribute_map = {

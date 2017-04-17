@@ -25,7 +25,7 @@ class FlowLogInformation(Model):
     :type enabled: bool
     :param retention_policy:
     :type retention_policy: :class:`RetentionPolicyParameters
-     <azure.mgmt.network.v20160901.models.RetentionPolicyParameters>`
+     <azure.mgmt.network.v2016_09_01.models.RetentionPolicyParameters>`
     """
 
     _validation = {

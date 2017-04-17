@@ -22,7 +22,7 @@ class ProviderResourceType(Model):
     :type locations: list of str
     :param aliases: The aliases that are supported by this resource type.
     :type aliases: list of :class:`AliasType
-     <azure.mgmt.resource.resources.v20160901.models.AliasType>`
+     <azure.mgmt.resource.resources.v2016_09_01.models.AliasType>`
     :param api_versions: The API version.
     :type api_versions: list of str
     :param properties: The properties.

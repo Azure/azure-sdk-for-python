@@ -134,6 +134,11 @@ class ProtocolTypes(Enum):
     https = "Https"
 
 
+class ResourceIdentityType(Enum):
+
+    system_assigned = "SystemAssigned"
+
+
 class UpgradeMode(Enum):
 
     automatic = "Automatic"

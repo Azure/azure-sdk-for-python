@@ -127,7 +127,7 @@ class ExpressRouteCircuitsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`ExpressRouteCircuit
-         <azure.mgmt.network.v20150615.models.ExpressRouteCircuit>`
+         <azure.mgmt.network.v2015_06_15.models.ExpressRouteCircuit>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
@@ -186,14 +186,14 @@ class ExpressRouteCircuitsOperations(object):
         :param parameters: Parameters supplied to the create or update express
          route circuit operation.
         :type parameters: :class:`ExpressRouteCircuit
-         <azure.mgmt.network.v20150615.models.ExpressRouteCircuit>`
+         <azure.mgmt.network.v2015_06_15.models.ExpressRouteCircuit>`
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :rtype:
          :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
          instance that returns :class:`ExpressRouteCircuit
-         <azure.mgmt.network.v20150615.models.ExpressRouteCircuit>`
+         <azure.mgmt.network.v2015_06_15.models.ExpressRouteCircuit>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
@@ -286,7 +286,7 @@ class ExpressRouteCircuitsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`ExpressRouteCircuitArpTablePaged
-         <azure.mgmt.network.v20150615.models.ExpressRouteCircuitArpTablePaged>`
+         <azure.mgmt.network.v2015_06_15.models.ExpressRouteCircuitArpTablePaged>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
@@ -357,7 +357,7 @@ class ExpressRouteCircuitsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`ExpressRouteCircuitRoutesTablePaged
-         <azure.mgmt.network.v20150615.models.ExpressRouteCircuitRoutesTablePaged>`
+         <azure.mgmt.network.v2015_06_15.models.ExpressRouteCircuitRoutesTablePaged>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
@@ -427,7 +427,7 @@ class ExpressRouteCircuitsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`ExpressRouteCircuitStatsPaged
-         <azure.mgmt.network.v20150615.models.ExpressRouteCircuitStatsPaged>`
+         <azure.mgmt.network.v2015_06_15.models.ExpressRouteCircuitStatsPaged>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
@@ -494,7 +494,7 @@ class ExpressRouteCircuitsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`ExpressRouteCircuitPaged
-         <azure.mgmt.network.v20150615.models.ExpressRouteCircuitPaged>`
+         <azure.mgmt.network.v2015_06_15.models.ExpressRouteCircuitPaged>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
@@ -558,7 +558,7 @@ class ExpressRouteCircuitsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`ExpressRouteCircuitPaged
-         <azure.mgmt.network.v20150615.models.ExpressRouteCircuitPaged>`
+         <azure.mgmt.network.v2015_06_15.models.ExpressRouteCircuitPaged>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):

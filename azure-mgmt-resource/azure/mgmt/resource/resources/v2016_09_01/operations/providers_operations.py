@@ -48,7 +48,7 @@ class ProvidersOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`Provider
-         <azure.mgmt.resource.resources.v20160901.models.Provider>`
+         <azure.mgmt.resource.resources.v2016_09_01.models.Provider>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
@@ -108,7 +108,7 @@ class ProvidersOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`Provider
-         <azure.mgmt.resource.resources.v20160901.models.Provider>`
+         <azure.mgmt.resource.resources.v2016_09_01.models.Provider>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
@@ -173,7 +173,7 @@ class ProvidersOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`ProviderPaged
-         <azure.mgmt.resource.resources.v20160901.models.ProviderPaged>`
+         <azure.mgmt.resource.resources.v2016_09_01.models.ProviderPaged>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
@@ -246,7 +246,7 @@ class ProvidersOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`Provider
-         <azure.mgmt.resource.resources.v20160901.models.Provider>`
+         <azure.mgmt.resource.resources.v2016_09_01.models.Provider>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`

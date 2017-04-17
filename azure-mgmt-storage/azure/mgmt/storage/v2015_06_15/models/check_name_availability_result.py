@@ -23,7 +23,7 @@ class CheckNameAvailabilityResult(Model):
      used. The Reason element is only returned if NameAvailable is false.
      Possible values include: 'AccountNameInvalid', 'AlreadyExists'
     :type reason: str or :class:`Reason
-     <azure.mgmt.storage.v20150615.models.Reason>`
+     <azure.mgmt.storage.v2015_06_15.models.Reason>`
     :param message: Gets an error message explaining the Reason value in more
      detail.
     :type message: str

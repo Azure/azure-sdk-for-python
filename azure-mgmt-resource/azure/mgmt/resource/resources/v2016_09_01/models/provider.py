@@ -26,7 +26,7 @@ class Provider(Model):
     :vartype registration_state: str
     :ivar resource_types: The collection of provider resource types.
     :vartype resource_types: list of :class:`ProviderResourceType
-     <azure.mgmt.resource.resources.v20160901.models.ProviderResourceType>`
+     <azure.mgmt.resource.resources.v2016_09_01.models.ProviderResourceType>`
     """
 
     _validation = {

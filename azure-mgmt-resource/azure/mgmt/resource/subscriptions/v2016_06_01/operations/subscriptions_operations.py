@@ -51,7 +51,7 @@ class SubscriptionsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`LocationPaged
-         <azure.mgmt.resource.subscriptions.v20160601.models.LocationPaged>`
+         <azure.mgmt.resource.subscriptions.v2016_06_01.models.LocationPaged>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
@@ -116,7 +116,7 @@ class SubscriptionsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`Subscription
-         <azure.mgmt.resource.subscriptions.v20160601.models.Subscription>`
+         <azure.mgmt.resource.subscriptions.v2016_06_01.models.Subscription>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
@@ -172,7 +172,7 @@ class SubscriptionsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`SubscriptionPaged
-         <azure.mgmt.resource.subscriptions.v20160601.models.SubscriptionPaged>`
+         <azure.mgmt.resource.subscriptions.v2016_06_01.models.SubscriptionPaged>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):

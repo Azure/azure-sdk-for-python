@@ -206,7 +206,7 @@ class NetworkManagementClient(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`DnsNameAvailabilityResult
-         <azure.mgmt.network.v20160901.models.DnsNameAvailabilityResult>`
+         <azure.mgmt.network.v2016_09_01.models.DnsNameAvailabilityResult>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
