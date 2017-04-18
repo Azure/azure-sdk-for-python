@@ -106,6 +106,8 @@ class NetworkManagementClient(object):
         """
         if self.api_version == '2017-03-01':
             from .v2017_03_01 import NetworkManagementClient as ClientClass
+        elif self.api_version == '2016-12-01':
+            from .v2016_12_01 import NetworkManagementClient as ClientClass
         elif self.api_version == '2016-09-01':
             from .v2016_09_01 import NetworkManagementClient as ClientClass
         elif self.api_version == '2015-06-15':
@@ -120,252 +122,164 @@ class NetworkManagementClient(object):
                                                        **operation_config)
 
     @classmethod
-    def models(cls, api_version = '2017-03-01'):
-        if api_version =='2017-03-01':
-            from .v2017_03_01 import models
-            return models
-        elif api_version =='2016-09-01':
-            from .v2016_09_01 import models
-            return models
-        elif api_version =='2015-06-15':
+    def models(cls, api_version='2017-03-01'):
+        if api_version == '2015-06-15':
             from .v2015_06_15 import models
             return models
-        else:
-            raise NotImplementedError("APIVersion {} is not available".format(api_version))
-
-    @property
-    def virtual_network_gateways(self):
-        if self.api_version =='2015-06-15':
-            from .v2015_06_15.operations import VirtualNetworkGatewaysOperations as OperationClass
-        elif self.api_version =='2016-09-01':
-            from .v2016_09_01.operations import VirtualNetworkGatewaysOperations as OperationClass
-        elif self.api_version =='2017-03-01':
-            from .v2017_03_01.operations import VirtualNetworkGatewaysOperations as OperationClass
-        else:
-            raise NotImplementedError("APIVersion {} is not available".format(self.api_version))
-        return OperationClass(self._client, self.config, self._serialize, self._deserialize)
-
-    @property
-    def express_route_circuit_authorizations(self):
-        if self.api_version =='2015-06-15':
-            from .v2015_06_15.operations import ExpressRouteCircuitAuthorizationsOperations as OperationClass
-        elif self.api_version =='2016-09-01':
-            from .v2016_09_01.operations import ExpressRouteCircuitAuthorizationsOperations as OperationClass
-        elif self.api_version =='2017-03-01':
-            from .v2017_03_01.operations import ExpressRouteCircuitAuthorizationsOperations as OperationClass
-        else:
-            raise NotImplementedError("APIVersion {} is not available".format(self.api_version))
-        return OperationClass(self._client, self.config, self._serialize, self._deserialize)
+        elif api_version == '2016-09-01':
+            from .v2016_09_01 import models
+            return models
+        elif api_version == '2016-12-01':
+            from .v2016_12_01 import models
+            return models
+        elif api_version == '2017-03-01':
+            from .v2017_03_01 import models
+            return models
+        raise NotImplementedError("APIVersion {} is not available".format(api_version))
 
     @property
     def application_gateways(self):
-        if self.api_version =='2015-06-15':
+        if self.api_version == '2015-06-15':
             from .v2015_06_15.operations import ApplicationGatewaysOperations as OperationClass
-        elif self.api_version =='2016-09-01':
+        elif self.api_version == '2016-09-01':
             from .v2016_09_01.operations import ApplicationGatewaysOperations as OperationClass
-        elif self.api_version =='2017-03-01':
+        elif self.api_version == '2016-12-01':
+            from .v2016_12_01.operations import ApplicationGatewaysOperations as OperationClass
+        elif self.api_version == '2017-03-01':
             from .v2017_03_01.operations import ApplicationGatewaysOperations as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(self.api_version))
         return OperationClass(self._client, self.config, self._serialize, self._deserialize)
 
     @property
-    def virtual_networks(self):
-        if self.api_version =='2015-06-15':
-            from .v2015_06_15.operations import VirtualNetworksOperations as OperationClass
-        elif self.api_version =='2016-09-01':
-            from .v2016_09_01.operations import VirtualNetworksOperations as OperationClass
-        elif self.api_version =='2017-03-01':
-            from .v2017_03_01.operations import VirtualNetworksOperations as OperationClass
+    def bgp_service_communities(self):
+        if self.api_version == '2016-12-01':
+            from .v2016_12_01.operations import BgpServiceCommunitiesOperations as OperationClass
+        elif self.api_version == '2017-03-01':
+            from .v2017_03_01.operations import BgpServiceCommunitiesOperations as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(self.api_version))
         return OperationClass(self._client, self.config, self._serialize, self._deserialize)
 
     @property
-    def network_security_groups(self):
-        if self.api_version =='2015-06-15':
-            from .v2015_06_15.operations import NetworkSecurityGroupsOperations as OperationClass
-        elif self.api_version =='2016-09-01':
-            from .v2016_09_01.operations import NetworkSecurityGroupsOperations as OperationClass
-        elif self.api_version =='2017-03-01':
-            from .v2017_03_01.operations import NetworkSecurityGroupsOperations as OperationClass
-        else:
-            raise NotImplementedError("APIVersion {} is not available".format(self.api_version))
-        return OperationClass(self._client, self.config, self._serialize, self._deserialize)
-
-    @property
-    def subnets(self):
-        if self.api_version =='2015-06-15':
-            from .v2015_06_15.operations import SubnetsOperations as OperationClass
-        elif self.api_version =='2016-09-01':
-            from .v2016_09_01.operations import SubnetsOperations as OperationClass
-        elif self.api_version =='2017-03-01':
-            from .v2017_03_01.operations import SubnetsOperations as OperationClass
-        else:
-            raise NotImplementedError("APIVersion {} is not available".format(self.api_version))
-        return OperationClass(self._client, self.config, self._serialize, self._deserialize)
-
-    @property
-    def local_network_gateways(self):
-        if self.api_version =='2015-06-15':
-            from .v2015_06_15.operations import LocalNetworkGatewaysOperations as OperationClass
-        elif self.api_version =='2016-09-01':
-            from .v2016_09_01.operations import LocalNetworkGatewaysOperations as OperationClass
-        elif self.api_version =='2017-03-01':
-            from .v2017_03_01.operations import LocalNetworkGatewaysOperations as OperationClass
-        else:
-            raise NotImplementedError("APIVersion {} is not available".format(self.api_version))
-        return OperationClass(self._client, self.config, self._serialize, self._deserialize)
-
-    @property
-    def express_route_service_providers(self):
-        if self.api_version =='2015-06-15':
-            from .v2015_06_15.operations import ExpressRouteServiceProvidersOperations as OperationClass
-        elif self.api_version =='2016-09-01':
-            from .v2016_09_01.operations import ExpressRouteServiceProvidersOperations as OperationClass
-        elif self.api_version =='2017-03-01':
-            from .v2017_03_01.operations import ExpressRouteServiceProvidersOperations as OperationClass
-        else:
-            raise NotImplementedError("APIVersion {} is not available".format(self.api_version))
-        return OperationClass(self._client, self.config, self._serialize, self._deserialize)
-
-    @property
-    def routes(self):
-        if self.api_version =='2015-06-15':
-            from .v2015_06_15.operations import RoutesOperations as OperationClass
-        elif self.api_version =='2016-09-01':
-            from .v2016_09_01.operations import RoutesOperations as OperationClass
-        elif self.api_version =='2017-03-01':
-            from .v2017_03_01.operations import RoutesOperations as OperationClass
-        else:
-            raise NotImplementedError("APIVersion {} is not available".format(self.api_version))
-        return OperationClass(self._client, self.config, self._serialize, self._deserialize)
-
-    @property
-    def load_balancers(self):
-        if self.api_version =='2015-06-15':
-            from .v2015_06_15.operations import LoadBalancersOperations as OperationClass
-        elif self.api_version =='2016-09-01':
-            from .v2016_09_01.operations import LoadBalancersOperations as OperationClass
-        elif self.api_version =='2017-03-01':
-            from .v2017_03_01.operations import LoadBalancersOperations as OperationClass
-        else:
-            raise NotImplementedError("APIVersion {} is not available".format(self.api_version))
-        return OperationClass(self._client, self.config, self._serialize, self._deserialize)
-
-    @property
-    def virtual_network_peerings(self):
-        if self.api_version =='2015-06-15':
-            from .v2015_06_15.operations import VirtualNetworkPeeringsOperations as OperationClass
-        elif self.api_version =='2016-09-01':
-            from .v2016_09_01.operations import VirtualNetworkPeeringsOperations as OperationClass
-        elif self.api_version =='2017-03-01':
-            from .v2017_03_01.operations import VirtualNetworkPeeringsOperations as OperationClass
-        else:
-            raise NotImplementedError("APIVersion {} is not available".format(self.api_version))
-        return OperationClass(self._client, self.config, self._serialize, self._deserialize)
-
-    @property
-    def usages(self):
-        if self.api_version =='2015-06-15':
-            from .v2015_06_15.operations import UsagesOperations as OperationClass
-        elif self.api_version =='2016-09-01':
-            from .v2016_09_01.operations import UsagesOperations as OperationClass
-        elif self.api_version =='2017-03-01':
-            from .v2017_03_01.operations import UsagesOperations as OperationClass
-        else:
-            raise NotImplementedError("APIVersion {} is not available".format(self.api_version))
-        return OperationClass(self._client, self.config, self._serialize, self._deserialize)
-
-    @property
-    def route_tables(self):
-        if self.api_version =='2015-06-15':
-            from .v2015_06_15.operations import RouteTablesOperations as OperationClass
-        elif self.api_version =='2016-09-01':
-            from .v2016_09_01.operations import RouteTablesOperations as OperationClass
-        elif self.api_version =='2017-03-01':
-            from .v2017_03_01.operations import RouteTablesOperations as OperationClass
-        else:
-            raise NotImplementedError("APIVersion {} is not available".format(self.api_version))
-        return OperationClass(self._client, self.config, self._serialize, self._deserialize)
-
-    @property
-    def express_route_circuits(self):
-        if self.api_version =='2015-06-15':
-            from .v2015_06_15.operations import ExpressRouteCircuitsOperations as OperationClass
-        elif self.api_version =='2016-09-01':
-            from .v2016_09_01.operations import ExpressRouteCircuitsOperations as OperationClass
-        elif self.api_version =='2017-03-01':
-            from .v2017_03_01.operations import ExpressRouteCircuitsOperations as OperationClass
-        else:
-            raise NotImplementedError("APIVersion {} is not available".format(self.api_version))
-        return OperationClass(self._client, self.config, self._serialize, self._deserialize)
-
-    @property
-    def virtual_network_gateway_connections(self):
-        if self.api_version =='2015-06-15':
-            from .v2015_06_15.operations import VirtualNetworkGatewayConnectionsOperations as OperationClass
-        elif self.api_version =='2016-09-01':
-            from .v2016_09_01.operations import VirtualNetworkGatewayConnectionsOperations as OperationClass
-        elif self.api_version =='2017-03-01':
-            from .v2017_03_01.operations import VirtualNetworkGatewayConnectionsOperations as OperationClass
-        else:
-            raise NotImplementedError("APIVersion {} is not available".format(self.api_version))
-        return OperationClass(self._client, self.config, self._serialize, self._deserialize)
-
-    @property
-    def security_rules(self):
-        if self.api_version =='2015-06-15':
-            from .v2015_06_15.operations import SecurityRulesOperations as OperationClass
-        elif self.api_version =='2016-09-01':
-            from .v2016_09_01.operations import SecurityRulesOperations as OperationClass
-        elif self.api_version =='2017-03-01':
-            from .v2017_03_01.operations import SecurityRulesOperations as OperationClass
+    def express_route_circuit_authorizations(self):
+        if self.api_version == '2015-06-15':
+            from .v2015_06_15.operations import ExpressRouteCircuitAuthorizationsOperations as OperationClass
+        elif self.api_version == '2016-09-01':
+            from .v2016_09_01.operations import ExpressRouteCircuitAuthorizationsOperations as OperationClass
+        elif self.api_version == '2016-12-01':
+            from .v2016_12_01.operations import ExpressRouteCircuitAuthorizationsOperations as OperationClass
+        elif self.api_version == '2017-03-01':
+            from .v2017_03_01.operations import ExpressRouteCircuitAuthorizationsOperations as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(self.api_version))
         return OperationClass(self._client, self.config, self._serialize, self._deserialize)
 
     @property
     def express_route_circuit_peerings(self):
-        if self.api_version =='2015-06-15':
+        if self.api_version == '2015-06-15':
             from .v2015_06_15.operations import ExpressRouteCircuitPeeringsOperations as OperationClass
-        elif self.api_version =='2016-09-01':
+        elif self.api_version == '2016-09-01':
             from .v2016_09_01.operations import ExpressRouteCircuitPeeringsOperations as OperationClass
-        elif self.api_version =='2017-03-01':
+        elif self.api_version == '2016-12-01':
+            from .v2016_12_01.operations import ExpressRouteCircuitPeeringsOperations as OperationClass
+        elif self.api_version == '2017-03-01':
             from .v2017_03_01.operations import ExpressRouteCircuitPeeringsOperations as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(self.api_version))
         return OperationClass(self._client, self.config, self._serialize, self._deserialize)
 
     @property
-    def public_ip_addresses(self):
-        if self.api_version =='2015-06-15':
-            from .v2015_06_15.operations import PublicIPAddressesOperations as OperationClass
-        elif self.api_version =='2016-09-01':
-            from .v2016_09_01.operations import PublicIPAddressesOperations as OperationClass
-        elif self.api_version =='2017-03-01':
-            from .v2017_03_01.operations import PublicIPAddressesOperations as OperationClass
+    def express_route_circuits(self):
+        if self.api_version == '2015-06-15':
+            from .v2015_06_15.operations import ExpressRouteCircuitsOperations as OperationClass
+        elif self.api_version == '2016-09-01':
+            from .v2016_09_01.operations import ExpressRouteCircuitsOperations as OperationClass
+        elif self.api_version == '2016-12-01':
+            from .v2016_12_01.operations import ExpressRouteCircuitsOperations as OperationClass
+        elif self.api_version == '2017-03-01':
+            from .v2017_03_01.operations import ExpressRouteCircuitsOperations as OperationClass
+        else:
+            raise NotImplementedError("APIVersion {} is not available".format(self.api_version))
+        return OperationClass(self._client, self.config, self._serialize, self._deserialize)
+
+    @property
+    def express_route_service_providers(self):
+        if self.api_version == '2015-06-15':
+            from .v2015_06_15.operations import ExpressRouteServiceProvidersOperations as OperationClass
+        elif self.api_version == '2016-09-01':
+            from .v2016_09_01.operations import ExpressRouteServiceProvidersOperations as OperationClass
+        elif self.api_version == '2016-12-01':
+            from .v2016_12_01.operations import ExpressRouteServiceProvidersOperations as OperationClass
+        elif self.api_version == '2017-03-01':
+            from .v2017_03_01.operations import ExpressRouteServiceProvidersOperations as OperationClass
+        else:
+            raise NotImplementedError("APIVersion {} is not available".format(self.api_version))
+        return OperationClass(self._client, self.config, self._serialize, self._deserialize)
+
+    @property
+    def load_balancers(self):
+        if self.api_version == '2015-06-15':
+            from .v2015_06_15.operations import LoadBalancersOperations as OperationClass
+        elif self.api_version == '2016-09-01':
+            from .v2016_09_01.operations import LoadBalancersOperations as OperationClass
+        elif self.api_version == '2016-12-01':
+            from .v2016_12_01.operations import LoadBalancersOperations as OperationClass
+        elif self.api_version == '2017-03-01':
+            from .v2017_03_01.operations import LoadBalancersOperations as OperationClass
+        else:
+            raise NotImplementedError("APIVersion {} is not available".format(self.api_version))
+        return OperationClass(self._client, self.config, self._serialize, self._deserialize)
+
+    @property
+    def local_network_gateways(self):
+        if self.api_version == '2015-06-15':
+            from .v2015_06_15.operations import LocalNetworkGatewaysOperations as OperationClass
+        elif self.api_version == '2016-09-01':
+            from .v2016_09_01.operations import LocalNetworkGatewaysOperations as OperationClass
+        elif self.api_version == '2016-12-01':
+            from .v2016_12_01.operations import LocalNetworkGatewaysOperations as OperationClass
+        elif self.api_version == '2017-03-01':
+            from .v2017_03_01.operations import LocalNetworkGatewaysOperations as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(self.api_version))
         return OperationClass(self._client, self.config, self._serialize, self._deserialize)
 
     @property
     def network_interfaces(self):
-        if self.api_version =='2015-06-15':
+        if self.api_version == '2015-06-15':
             from .v2015_06_15.operations import NetworkInterfacesOperations as OperationClass
-        elif self.api_version =='2016-09-01':
+        elif self.api_version == '2016-09-01':
             from .v2016_09_01.operations import NetworkInterfacesOperations as OperationClass
-        elif self.api_version =='2017-03-01':
+        elif self.api_version == '2016-12-01':
+            from .v2016_12_01.operations import NetworkInterfacesOperations as OperationClass
+        elif self.api_version == '2017-03-01':
             from .v2017_03_01.operations import NetworkInterfacesOperations as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(self.api_version))
         return OperationClass(self._client, self.config, self._serialize, self._deserialize)
 
     @property
+    def network_security_groups(self):
+        if self.api_version == '2015-06-15':
+            from .v2015_06_15.operations import NetworkSecurityGroupsOperations as OperationClass
+        elif self.api_version == '2016-09-01':
+            from .v2016_09_01.operations import NetworkSecurityGroupsOperations as OperationClass
+        elif self.api_version == '2016-12-01':
+            from .v2016_12_01.operations import NetworkSecurityGroupsOperations as OperationClass
+        elif self.api_version == '2017-03-01':
+            from .v2017_03_01.operations import NetworkSecurityGroupsOperations as OperationClass
+        else:
+            raise NotImplementedError("APIVersion {} is not available".format(self.api_version))
+        return OperationClass(self._client, self.config, self._serialize, self._deserialize)
+
+    @property
     def network_watchers(self):
-        if self.api_version =='2016-09-01':
+        if self.api_version == '2016-09-01':
             from .v2016_09_01.operations import NetworkWatchersOperations as OperationClass
-        elif self.api_version =='2017-03-01':
+        elif self.api_version == '2016-12-01':
+            from .v2016_12_01.operations import NetworkWatchersOperations as OperationClass
+        elif self.api_version == '2017-03-01':
             from .v2017_03_01.operations import NetworkWatchersOperations as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(self.api_version))
@@ -373,34 +287,170 @@ class NetworkManagementClient(object):
 
     @property
     def packet_captures(self):
-        if self.api_version =='2016-09-01':
+        if self.api_version == '2016-09-01':
             from .v2016_09_01.operations import PacketCapturesOperations as OperationClass
-        elif self.api_version =='2017-03-01':
+        elif self.api_version == '2016-12-01':
+            from .v2016_12_01.operations import PacketCapturesOperations as OperationClass
+        elif self.api_version == '2017-03-01':
             from .v2017_03_01.operations import PacketCapturesOperations as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(self.api_version))
         return OperationClass(self._client, self.config, self._serialize, self._deserialize)
 
     @property
-    def route_filters(self):
-        if self.api_version =='2017-03-01':
-            from .v2017_03_01.operations import RouteFiltersOperations as OperationClass
+    def public_ip_addresses(self):
+        if self.api_version == '2015-06-15':
+            from .v2015_06_15.operations import PublicIPAddressesOperations as OperationClass
+        elif self.api_version == '2016-09-01':
+            from .v2016_09_01.operations import PublicIPAddressesOperations as OperationClass
+        elif self.api_version == '2016-12-01':
+            from .v2016_12_01.operations import PublicIPAddressesOperations as OperationClass
+        elif self.api_version == '2017-03-01':
+            from .v2017_03_01.operations import PublicIPAddressesOperations as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(self.api_version))
         return OperationClass(self._client, self.config, self._serialize, self._deserialize)
 
     @property
     def route_filter_rules(self):
-        if self.api_version =='2017-03-01':
+        if self.api_version == '2016-12-01':
+            from .v2016_12_01.operations import RouteFilterRulesOperations as OperationClass
+        elif self.api_version == '2017-03-01':
             from .v2017_03_01.operations import RouteFilterRulesOperations as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(self.api_version))
         return OperationClass(self._client, self.config, self._serialize, self._deserialize)
 
     @property
-    def bgp_service_communities(self):
-        if self.api_version =='2017-03-01':
-            from .v2017_03_01.operations import BgpServiceCommunitiesOperations as OperationClass
+    def route_filters(self):
+        if self.api_version == '2016-12-01':
+            from .v2016_12_01.operations import RouteFiltersOperations as OperationClass
+        elif self.api_version == '2017-03-01':
+            from .v2017_03_01.operations import RouteFiltersOperations as OperationClass
+        else:
+            raise NotImplementedError("APIVersion {} is not available".format(self.api_version))
+        return OperationClass(self._client, self.config, self._serialize, self._deserialize)
+
+    @property
+    def route_tables(self):
+        if self.api_version == '2015-06-15':
+            from .v2015_06_15.operations import RouteTablesOperations as OperationClass
+        elif self.api_version == '2016-09-01':
+            from .v2016_09_01.operations import RouteTablesOperations as OperationClass
+        elif self.api_version == '2016-12-01':
+            from .v2016_12_01.operations import RouteTablesOperations as OperationClass
+        elif self.api_version == '2017-03-01':
+            from .v2017_03_01.operations import RouteTablesOperations as OperationClass
+        else:
+            raise NotImplementedError("APIVersion {} is not available".format(self.api_version))
+        return OperationClass(self._client, self.config, self._serialize, self._deserialize)
+
+    @property
+    def routes(self):
+        if self.api_version == '2015-06-15':
+            from .v2015_06_15.operations import RoutesOperations as OperationClass
+        elif self.api_version == '2016-09-01':
+            from .v2016_09_01.operations import RoutesOperations as OperationClass
+        elif self.api_version == '2016-12-01':
+            from .v2016_12_01.operations import RoutesOperations as OperationClass
+        elif self.api_version == '2017-03-01':
+            from .v2017_03_01.operations import RoutesOperations as OperationClass
+        else:
+            raise NotImplementedError("APIVersion {} is not available".format(self.api_version))
+        return OperationClass(self._client, self.config, self._serialize, self._deserialize)
+
+    @property
+    def security_rules(self):
+        if self.api_version == '2015-06-15':
+            from .v2015_06_15.operations import SecurityRulesOperations as OperationClass
+        elif self.api_version == '2016-09-01':
+            from .v2016_09_01.operations import SecurityRulesOperations as OperationClass
+        elif self.api_version == '2016-12-01':
+            from .v2016_12_01.operations import SecurityRulesOperations as OperationClass
+        elif self.api_version == '2017-03-01':
+            from .v2017_03_01.operations import SecurityRulesOperations as OperationClass
+        else:
+            raise NotImplementedError("APIVersion {} is not available".format(self.api_version))
+        return OperationClass(self._client, self.config, self._serialize, self._deserialize)
+
+    @property
+    def subnets(self):
+        if self.api_version == '2015-06-15':
+            from .v2015_06_15.operations import SubnetsOperations as OperationClass
+        elif self.api_version == '2016-09-01':
+            from .v2016_09_01.operations import SubnetsOperations as OperationClass
+        elif self.api_version == '2016-12-01':
+            from .v2016_12_01.operations import SubnetsOperations as OperationClass
+        elif self.api_version == '2017-03-01':
+            from .v2017_03_01.operations import SubnetsOperations as OperationClass
+        else:
+            raise NotImplementedError("APIVersion {} is not available".format(self.api_version))
+        return OperationClass(self._client, self.config, self._serialize, self._deserialize)
+
+    @property
+    def usages(self):
+        if self.api_version == '2015-06-15':
+            from .v2015_06_15.operations import UsagesOperations as OperationClass
+        elif self.api_version == '2016-09-01':
+            from .v2016_09_01.operations import UsagesOperations as OperationClass
+        elif self.api_version == '2016-12-01':
+            from .v2016_12_01.operations import UsagesOperations as OperationClass
+        elif self.api_version == '2017-03-01':
+            from .v2017_03_01.operations import UsagesOperations as OperationClass
+        else:
+            raise NotImplementedError("APIVersion {} is not available".format(self.api_version))
+        return OperationClass(self._client, self.config, self._serialize, self._deserialize)
+
+    @property
+    def virtual_network_gateway_connections(self):
+        if self.api_version == '2015-06-15':
+            from .v2015_06_15.operations import VirtualNetworkGatewayConnectionsOperations as OperationClass
+        elif self.api_version == '2016-09-01':
+            from .v2016_09_01.operations import VirtualNetworkGatewayConnectionsOperations as OperationClass
+        elif self.api_version == '2016-12-01':
+            from .v2016_12_01.operations import VirtualNetworkGatewayConnectionsOperations as OperationClass
+        elif self.api_version == '2017-03-01':
+            from .v2017_03_01.operations import VirtualNetworkGatewayConnectionsOperations as OperationClass
+        else:
+            raise NotImplementedError("APIVersion {} is not available".format(self.api_version))
+        return OperationClass(self._client, self.config, self._serialize, self._deserialize)
+
+    @property
+    def virtual_network_gateways(self):
+        if self.api_version == '2015-06-15':
+            from .v2015_06_15.operations import VirtualNetworkGatewaysOperations as OperationClass
+        elif self.api_version == '2016-09-01':
+            from .v2016_09_01.operations import VirtualNetworkGatewaysOperations as OperationClass
+        elif self.api_version == '2016-12-01':
+            from .v2016_12_01.operations import VirtualNetworkGatewaysOperations as OperationClass
+        elif self.api_version == '2017-03-01':
+            from .v2017_03_01.operations import VirtualNetworkGatewaysOperations as OperationClass
+        else:
+            raise NotImplementedError("APIVersion {} is not available".format(self.api_version))
+        return OperationClass(self._client, self.config, self._serialize, self._deserialize)
+
+    @property
+    def virtual_network_peerings(self):
+        if self.api_version == '2016-09-01':
+            from .v2016_09_01.operations import VirtualNetworkPeeringsOperations as OperationClass
+        elif self.api_version == '2016-12-01':
+            from .v2016_12_01.operations import VirtualNetworkPeeringsOperations as OperationClass
+        elif self.api_version == '2017-03-01':
+            from .v2017_03_01.operations import VirtualNetworkPeeringsOperations as OperationClass
+        else:
+            raise NotImplementedError("APIVersion {} is not available".format(self.api_version))
+        return OperationClass(self._client, self.config, self._serialize, self._deserialize)
+
+    @property
+    def virtual_networks(self):
+        if self.api_version == '2015-06-15':
+            from .v2015_06_15.operations import VirtualNetworksOperations as OperationClass
+        elif self.api_version == '2016-09-01':
+            from .v2016_09_01.operations import VirtualNetworksOperations as OperationClass
+        elif self.api_version == '2016-12-01':
+            from .v2016_12_01.operations import VirtualNetworksOperations as OperationClass
+        elif self.api_version == '2017-03-01':
+            from .v2017_03_01.operations import VirtualNetworksOperations as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(self.api_version))
         return OperationClass(self._client, self.config, self._serialize, self._deserialize)
