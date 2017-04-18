@@ -44,6 +44,10 @@ class AS2ValidationSettings(Model):
      'AES256'
     :type encryption_algorithm: str or :class:`EncryptionAlgorithm
      <azure.mgmt.logic.models.EncryptionAlgorithm>`
+    :param signing_algorithm: The signing algorithm. Possible values include:
+     'NotSpecified', 'Default', 'SHA1', 'SHA2256', 'SHA2384', 'SHA2512'
+    :type signing_algorithm: str or :class:`SigningAlgorithm
+     <azure.mgmt.logic.models.SigningAlgorithm>`
     """
 
     _validation = {
@@ -68,9 +72,10 @@ class AS2ValidationSettings(Model):
         'check_certificate_revocation_list_on_send': {'key': 'checkCertificateRevocationListOnSend', 'type': 'bool'},
         'check_certificate_revocation_list_on_receive': {'key': 'checkCertificateRevocationListOnReceive', 'type': 'bool'},
         'encryption_algorithm': {'key': 'encryptionAlgorithm', 'type': 'EncryptionAlgorithm'},
+        'signing_algorithm': {'key': 'signingAlgorithm', 'type': 'str'},
     }
 
-    def __init__(self, override_message_properties, encrypt_message, sign_message, compress_message, check_duplicate_message, interchange_duplicates_validity_days, check_certificate_revocation_list_on_send, check_certificate_revocation_list_on_receive, encryption_algorithm):
+    def __init__(self, override_message_properties, encrypt_message, sign_message, compress_message, check_duplicate_message, interchange_duplicates_validity_days, check_certificate_revocation_list_on_send, check_certificate_revocation_list_on_receive, encryption_algorithm, signing_algorithm=None):
         self.override_message_properties = override_message_properties
         self.encrypt_message = encrypt_message
         self.sign_message = sign_message
@@ -80,3 +85,4 @@ class AS2ValidationSettings(Model):
         self.check_certificate_revocation_list_on_send = check_certificate_revocation_list_on_send
         self.check_certificate_revocation_list_on_receive = check_certificate_revocation_list_on_receive
         self.encryption_algorithm = encryption_algorithm
+        self.signing_algorithm = signing_algorithm
