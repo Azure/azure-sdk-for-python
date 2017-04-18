@@ -1,5 +1,5 @@
 azure.mgmt.commerce.models module
-===========================================
+=================================
 
 .. automodule:: azure.mgmt.commerce.models
     :members:

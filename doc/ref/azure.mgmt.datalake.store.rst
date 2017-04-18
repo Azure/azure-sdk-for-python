@@ -1,5 +1,5 @@
 azure.mgmt.datalake.store package
-==========================
+=================================
 
 Submodules
 ----------

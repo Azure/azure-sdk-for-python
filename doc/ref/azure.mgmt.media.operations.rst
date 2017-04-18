@@ -1,5 +1,5 @@
 azure.mgmt.media.operations module
-===========================================
+==================================
 
 .. automodule:: azure.mgmt.media.operations
     :members:

@@ -1,5 +1,5 @@
 azure.mgmt.resource.policy package
-==========================
+==================================
 
 Module contents
 ---------------

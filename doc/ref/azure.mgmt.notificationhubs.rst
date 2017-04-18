@@ -1,5 +1,5 @@
 azure.mgmt.notificationhubs package
-==========================
+===================================
 
 Submodules
 ----------

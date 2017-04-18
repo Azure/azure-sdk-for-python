@@ -1,5 +1,5 @@
 azure.mgmt.compute.containerservice package
-==========================
+===========================================
 
 Module contents
 ---------------

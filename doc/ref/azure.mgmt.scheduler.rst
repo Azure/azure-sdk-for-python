@@ -1,5 +1,5 @@
 azure.mgmt.scheduler package
-==========================
+============================
 
 Submodules
 ----------
