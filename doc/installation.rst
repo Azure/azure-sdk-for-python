@@ -53,7 +53,7 @@ azure-mgmt-devtestlabs                1.0.0
 azure-mgmt-dns                        1.0.0
 azure-mgmt-logic                      2.1.0
 azure-mgmt-redis                      4.0.0
-azure-mgmt-scheduler                  1.1.1
+azure-mgmt-scheduler                  1.1.2
 azure-mgmt-servermanager              1.0.0
 azure-servicebus                      0.21.0
 azure-servicemanagement-legacy        0.20.5
