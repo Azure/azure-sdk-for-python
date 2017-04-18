@@ -13,7 +13,7 @@ from msrest.serialization import Model
 
 
 class ServiceObjectiveCapability(Model):
-    """The service objectives capabilities.
+    """The service objectives capability.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -36,6 +36,10 @@ class ServiceObjectiveCapability(Model):
      for this service objective.
     :vartype supported_max_sizes: list of :class:`MaxSizeCapability
      <azure.mgmt.sql.models.MaxSizeCapability>`
+    :ivar included_max_size: The included (free) max size for this service
+     level objective.
+    :vartype included_max_size: :class:`MaxSizeCapability
+     <azure.mgmt.sql.models.MaxSizeCapability>`
     """
 
     _validation = {
@@ -45,6 +49,7 @@ class ServiceObjectiveCapability(Model):
         'value': {'readonly': True},
         'id': {'readonly': True},
         'supported_max_sizes': {'readonly': True},
+        'included_max_size': {'readonly': True},
     }
 
     _attribute_map = {
@@ -54,6 +59,7 @@ class ServiceObjectiveCapability(Model):
         'value': {'key': 'performanceLevel.value', 'type': 'int'},
         'id': {'key': 'id', 'type': 'str'},
         'supported_max_sizes': {'key': 'supportedMaxSizes', 'type': '[MaxSizeCapability]'},
+        'included_max_size': {'key': 'includedMaxSize', 'type': 'MaxSizeCapability'},
     }
 
     def __init__(self):
@@ -63,3 +69,4 @@ class ServiceObjectiveCapability(Model):
         self.value = None
         self.id = None
         self.supported_max_sizes = None
+        self.included_max_size = None
