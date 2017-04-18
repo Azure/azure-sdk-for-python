@@ -142,7 +142,7 @@
         "PackageVersion": "0.1.0"
       },
       "output_dir": "unreleased/azure-mgmt-intune/azure/mgmt/intune"
-    },  
+    },
     "keyvault": {
       "swagger": "arm-keyvault/2015-06-01/swagger/keyvault.json",
       "autorest_options": {
@@ -183,7 +183,7 @@
         "PackageVersion": "0.1.1"
       },
       "output_dir": "azure-mgmt-media/azure/mgmt/media"
-    },  
+    },
     "monitor.mgmt": {
       "swagger": "arm-monitor/compositeMonitorManagementClient.json",
       "autorest_options": {
@@ -220,6 +220,24 @@
       },
       "output_dir": "azure-mgmt-network/azure/mgmt/network/v2016_09_01",
       "generated_relative_base_directory": "azure/mgmt/network/v2016_09_01"
+    },
+    "network.2016-12-01": {
+      "swagger": "arm-network/compositeNetworkClient_2016_12_01.json",
+      "autorest_options": {
+        "Namespace": "azure.mgmt.network.v2016_12_01",
+        "Modeler": "CompositeSwagger"
+      },
+      "output_dir": "azure-mgmt-network/azure/mgmt/network/v2016_12_01",
+      "generated_relative_base_directory": "azure/mgmt/network/v2016_12_01"
+    },
+    "network.2017-03-01": {
+      "swagger": "arm-network/compositeNetworkClient.json",
+      "autorest_options": {
+        "Namespace": "azure.mgmt.network.v2017_03_01",
+        "Modeler": "CompositeSwagger"
+      },
+      "output_dir": "azure-mgmt-network/azure/mgmt/network/v2017_03_01",
+      "generated_relative_base_directory": "azure/mgmt/network/v2017_03_01"
     },
     "notificationhubs": {
       "swagger": "arm-notificationhubs/2016-03-01/swagger/notificationhubs.json",
@@ -267,7 +285,7 @@
       },
       "output_dir": "azure-mgmt-resource/azure/mgmt/resource/locks/v2015_01_01",
       "generated_relative_base_directory": "azure/mgmt/resource/locks/v2015_01_01"
-    },    
+    },
     "resources.locks.2016-09-01": {
       "swagger": "arm-resources/locks/2016-09-01/swagger/locks.json",
       "autorest_options": {
@@ -339,7 +357,7 @@
         "PackageVersion": "0.1.0"
       },
       "output_dir": "azure-mgmt-servicebus/azure/mgmt/servicebus"
-    },  
+    },
     "scheduler": {
       "swagger": "arm-scheduler/2016-03-01/swagger/scheduler.json",
       "autorest_options": {
@@ -372,7 +390,7 @@
       },
       "output_dir": "azure-mgmt-storage/azure/mgmt/storage/v2016_12_01",
       "generated_relative_base_directory": "azure/mgmt/storage/v2016_12_01"
-    },    
+    },
     "trafficmanager": {
       "swagger": "arm-trafficmanager/2015-11-01/swagger/trafficmanager.json",
       "autorest_options": {
