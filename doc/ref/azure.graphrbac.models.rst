@@ -1,5 +1,5 @@
 azure.graphrbac.models module
-===========================================
+=============================
 
 .. automodule:: azure.graphrbac.models
     :members:

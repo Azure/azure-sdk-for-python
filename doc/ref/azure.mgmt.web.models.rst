@@ -1,5 +1,5 @@
 azure.mgmt.web.models module
-===========================================
+============================
 
 .. automodule:: azure.mgmt.web.models
     :members:

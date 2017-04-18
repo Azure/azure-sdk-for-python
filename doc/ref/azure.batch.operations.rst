@@ -1,5 +1,5 @@
 azure.batch.operations module
-===========================================
+=============================
 
 .. automodule:: azure.batch.operations
     :members:

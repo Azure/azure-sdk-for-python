@@ -1,5 +1,5 @@
 azure.mgmt.cdn.models module
-===========================================
+============================
 
 .. automodule:: azure.mgmt.cdn.models
     :members:

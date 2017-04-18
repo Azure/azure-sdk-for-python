@@ -8,16 +8,18 @@ GENERATED_PACKAGES_LIST_FILE = 'autorest_generated_packages.rst'
 
 _LOGGER = logging.getLogger(__name__)
 
-SUBMODULE_TEMPLATE = """{namespace}.{submodule} module
-===========================================
+def make_title(title):
+    """Create a underlined title with the correct number of =."""
+    return "\n".join([title, len(title)*"="])
+
+SUBMODULE_TEMPLATE = """{title}
 
 .. automodule:: {namespace}.{submodule}
     :members:
     :undoc-members:
     :show-inheritance:
 """
-PACKAGE_TEMPLATE = """{namespace} package
-==========================
+PACKAGE_TEMPLATE = """{title}
 
 Submodules
 ----------
@@ -48,8 +50,7 @@ RST_AUTODOC_TOCTREE = """.. toctree::
   ref/azure.servicemanagement  
 """
 
-MULTIAPI_VERSION_PACKAGE_TEMPLATE = """{namespace} package
-==========================
+MULTIAPI_VERSION_PACKAGE_TEMPLATE = """{title}
 
 Module contents
 ---------------
@@ -95,7 +96,7 @@ def generate_doc(config_path, project_pattern=None):
 
         if 'unreleased' in local_conf['output_dir'].lower():
             _LOGGER.info("Skip unreleased project %s", project)
-            continue            
+            continue
 
         _LOGGER.info("Working on %s", project)
         namespace = local_conf['autorest_options']['Namespace']
@@ -109,12 +110,14 @@ def generate_doc(config_path, project_pattern=None):
         rst_path = './ref/{}.rst'.format(namespace) 
         with Path(rst_path).open('w') as rst_file:
             rst_file.write(PACKAGE_TEMPLATE.format(
+                title=make_title(namespace+" package"),
                 namespace=namespace
             ))
 
         for module in ["operations", "models"]:
             with Path('./ref/{}.{}.rst'.format(namespace, module)).open('w') as rst_file:
                 rst_file.write(SUBMODULE_TEMPLATE.format(
+                    title=make_title(namespace+"."+module+" module"),
                     namespace=namespace,
                     submodule=module
                 ))
@@ -133,6 +136,7 @@ def generate_doc(config_path, project_pattern=None):
         rst_path = './ref/{}.rst'.format(multiapi_namespace)
         with Path(rst_path).open('w') as rst_file:
             rst_file.write(MULTIAPI_VERSION_PACKAGE_TEMPLATE.format(
+                title=make_title(multiapi_namespace+" package"),
                 namespace=multiapi_namespace
             ))
             for version in apilist:

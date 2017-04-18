@@ -1,5 +1,5 @@
 azure.mgmt.compute.compute package
-==========================
+==================================
 
 Module contents
 ---------------

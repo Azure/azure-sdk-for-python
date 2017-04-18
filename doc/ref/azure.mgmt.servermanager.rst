@@ -1,5 +1,5 @@
 azure.mgmt.servermanager package
-==========================
+================================
 
 Submodules
 ----------

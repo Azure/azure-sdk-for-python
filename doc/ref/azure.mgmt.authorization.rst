@@ -1,5 +1,5 @@
 azure.mgmt.authorization package
-==========================
+================================
 
 Submodules
 ----------

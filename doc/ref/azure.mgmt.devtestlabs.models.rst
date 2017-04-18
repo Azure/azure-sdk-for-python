@@ -1,5 +1,5 @@
 azure.mgmt.devtestlabs.models module
-===========================================
+====================================
 
 .. automodule:: azure.mgmt.devtestlabs.models
     :members:

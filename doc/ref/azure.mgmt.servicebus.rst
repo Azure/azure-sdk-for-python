@@ -1,5 +1,5 @@
 azure.mgmt.servicebus package
-==========================
+=============================
 
 Submodules
 ----------

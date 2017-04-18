@@ -1,5 +1,5 @@
 azure.mgmt.trafficmanager package
-==========================
+=================================
 
 Submodules
 ----------

@@ -1,5 +1,5 @@
 azure.mgmt.devtestlabs package
-==========================
+==============================
 
 Submodules
 ----------

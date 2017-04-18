@@ -1,5 +1,5 @@
 azure.mgmt.documentdb package
-==========================
+=============================
 
 Submodules
 ----------

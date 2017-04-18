@@ -1,5 +1,5 @@
 azure.mgmt.resource.resources package
-==========================
+=====================================
 
 Module contents
 ---------------

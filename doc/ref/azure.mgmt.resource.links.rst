@@ -1,5 +1,5 @@
 azure.mgmt.resource.links package
-==========================
+=================================
 
 Module contents
 ---------------

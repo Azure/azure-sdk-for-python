@@ -1,5 +1,5 @@
 azure.mgmt.datalake.analytics.catalog package
-==========================
+=============================================
 
 Submodules
 ----------

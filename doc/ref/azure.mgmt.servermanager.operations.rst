@@ -1,5 +1,5 @@
 azure.mgmt.servermanager.operations module
-===========================================
+==========================================
 
 .. automodule:: azure.mgmt.servermanager.operations
     :members:

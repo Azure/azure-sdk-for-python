@@ -1,5 +1,5 @@
 azure.mgmt.sql.models module
-===========================================
+============================
 
 .. automodule:: azure.mgmt.sql.models
     :members:
