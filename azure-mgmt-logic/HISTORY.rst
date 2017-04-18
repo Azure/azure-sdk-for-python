@@ -3,6 +3,15 @@
 Release History
 ===============
 
+2.1.0 (2017-04-18)
+++++++++++++++++++
+
+* Add several new workflows methods
+
+**Note**
+
+This wheel package is now built with the azure wheel extension
+
 2.0.0 (2017-03-16)
 ++++++++++++++++++
 

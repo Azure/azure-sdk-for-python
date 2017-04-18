@@ -164,7 +164,7 @@
       "swagger": "arm-logic/2016-06-01/swagger/logic.json",
       "autorest_options": {
         "Namespace": "azure.mgmt.logic",
-        "PackageVersion": "2.0.0"
+        "PackageVersion": "2.1.0"
       },
       "output_dir": "azure-mgmt-logic/azure/mgmt/logic"
     },
