@@ -46,6 +46,9 @@ class WorkflowRunAction(SubResource):
      <azure.mgmt.logic.models.ContentLink>`
     :ivar tracked_properties: Gets the tracked properties.
     :vartype tracked_properties: object
+    :param retry_history: Gets the retry histories.
+    :type retry_history: list of :class:`RetryHistory
+     <azure.mgmt.logic.models.RetryHistory>`
     :ivar name: Gets the workflow run action name.
     :vartype name: str
     :ivar type: Gets the workflow run action type.
@@ -79,11 +82,12 @@ class WorkflowRunAction(SubResource):
         'inputs_link': {'key': 'properties.inputsLink', 'type': 'ContentLink'},
         'outputs_link': {'key': 'properties.outputsLink', 'type': 'ContentLink'},
         'tracked_properties': {'key': 'properties.trackedProperties', 'type': 'object'},
+        'retry_history': {'key': 'properties.retryHistory', 'type': '[RetryHistory]'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
     }
 
-    def __init__(self, correlation=None):
+    def __init__(self, correlation=None, retry_history=None):
         super(WorkflowRunAction, self).__init__()
         self.start_time = None
         self.end_time = None
@@ -95,5 +99,6 @@ class WorkflowRunAction(SubResource):
         self.inputs_link = None
         self.outputs_link = None
         self.tracked_properties = None
+        self.retry_history = retry_history
         self.name = None
         self.type = None
