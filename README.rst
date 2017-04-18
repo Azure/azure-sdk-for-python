@@ -63,7 +63,7 @@ or directly
 **The azure meta-package 1.0.3 is deprecated and no longer properly functions.**
 
 The full list of available packages and their latest version can be found on our 
-`installation page on ReadTheDocs <azure-sdk-for-python.rtfd.io/en/latest/installation.html>`__.
+`installation page on ReadTheDocs <http://azure-sdk-for-python.rtfd.io/en/latest/installation.html>`__.
 
 If you want to install all packages of the repo from source::
 
