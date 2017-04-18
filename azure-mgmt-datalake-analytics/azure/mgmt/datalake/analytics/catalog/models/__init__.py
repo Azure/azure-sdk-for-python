@@ -28,6 +28,7 @@ from .type_field_info import TypeFieldInfo
 from .usql_table import USqlTable
 from .usql_table_type import USqlTableType
 from .usql_view import USqlView
+from .usql_package import USqlPackage
 from .usql_table_partition import USqlTablePartition
 from .usql_table_statistics import USqlTableStatistics
 from .usql_type import USqlType
@@ -44,9 +45,10 @@ from .usql_credential_paged import USqlCredentialPaged
 from .usql_external_data_source_paged import USqlExternalDataSourcePaged
 from .usql_procedure_paged import USqlProcedurePaged
 from .usql_table_paged import USqlTablePaged
-from .usql_table_type_paged import USqlTableTypePaged
-from .usql_view_paged import USqlViewPaged
 from .usql_table_statistics_paged import USqlTableStatisticsPaged
+from .usql_table_type_paged import USqlTableTypePaged
+from .usql_package_paged import USqlPackagePaged
+from .usql_view_paged import USqlViewPaged
 from .usql_table_partition_paged import USqlTablePartitionPaged
 from .usql_type_paged import USqlTypePaged
 from .usql_table_valued_function_paged import USqlTableValuedFunctionPaged
@@ -77,6 +79,7 @@ __all__ = [
     'USqlTable',
     'USqlTableType',
     'USqlView',
+    'USqlPackage',
     'USqlTablePartition',
     'USqlTableStatistics',
     'USqlType',
@@ -93,9 +96,10 @@ __all__ = [
     'USqlExternalDataSourcePaged',
     'USqlProcedurePaged',
     'USqlTablePaged',
-    'USqlTableTypePaged',
-    'USqlViewPaged',
     'USqlTableStatisticsPaged',
+    'USqlTableTypePaged',
+    'USqlPackagePaged',
+    'USqlViewPaged',
     'USqlTablePartitionPaged',
     'USqlTypePaged',
     'USqlTableValuedFunctionPaged',
