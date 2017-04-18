@@ -70,7 +70,7 @@ azure-keyvault                        0.1.0
 azure-monitor                         0.2.0
 azure-mgmt-resource                   1.0.0rc1
 azure-mgmt-compute                    1.0.0rc1
-azure-mgmt-network                    1.0.0rc1
+azure-mgmt-network                    1.0.0rc2
 azure-mgmt-storage                    1.0.0rc1
 azure-mgmt-keyvault                   0.30.1
 azure-graphrbac                       0.30.0rc6

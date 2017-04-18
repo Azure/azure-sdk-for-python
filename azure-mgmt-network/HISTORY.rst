@@ -3,6 +3,18 @@
 Release History
 ===============
 
+1.0.0rc2 (2017-04-18)
++++++++++++++++++++++
+
+**Features**
+
+- Add ApiVersion 2016-12-01 and 2017-03-01
+- 2017-03-01 is now default ApiVersion
+
+**Bugfixes**
+
+- Restore access to NetworkWatcher and PacketCapture from 2016-09-01
+
 1.0.0rc1 (2017-04-11)
 +++++++++++++++++++++
 
