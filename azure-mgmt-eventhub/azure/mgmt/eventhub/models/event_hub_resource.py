@@ -28,23 +28,23 @@ class EventHubResource(Resource):
     :type location: str
     :param tags: Resource tags
     :type tags: dict
-    :param created_at: Exact time the Event Hub was created.
-    :type created_at: datetime
+    :ivar created_at: Exact time the Event Hub was created.
+    :vartype created_at: datetime
     :param message_retention_in_days: Number of days to retain the events for
      this Event Hub.
     :type message_retention_in_days: long
     :param partition_count: Number of partitions created for the Event Hub.
     :type partition_count: long
-    :param partition_ids: Current number of shards on the Event Hub.
-    :type partition_ids: list of str
+    :ivar partition_ids: Current number of shards on the Event Hub.
+    :vartype partition_ids: list of str
     :param status: Enumerates the possible values for the status of the Event
      Hub. Possible values include: 'Active', 'Disabled', 'Restoring',
      'SendDisabled', 'ReceiveDisabled', 'Creating', 'Deleting', 'Renaming',
      'Unknown'
     :type status: str or :class:`EntityStatus
      <azure.mgmt.eventhub.models.EntityStatus>`
-    :param updated_at: The exact time the message was updated.
-    :type updated_at: datetime
+    :ivar updated_at: The exact time the message was updated.
+    :vartype updated_at: datetime
     """
 
     _validation = {
@@ -52,6 +52,9 @@ class EventHubResource(Resource):
         'name': {'readonly': True},
         'type': {'readonly': True},
         'location': {'required': True},
+        'created_at': {'readonly': True},
+        'partition_ids': {'readonly': True},
+        'updated_at': {'readonly': True},
     }
 
     _attribute_map = {
@@ -68,11 +71,11 @@ class EventHubResource(Resource):
         'updated_at': {'key': 'properties.updatedAt', 'type': 'iso-8601'},
     }
 
-    def __init__(self, location, tags=None, created_at=None, message_retention_in_days=None, partition_count=None, partition_ids=None, status=None, updated_at=None):
+    def __init__(self, location, tags=None, message_retention_in_days=None, partition_count=None, status=None):
         super(EventHubResource, self).__init__(location=location, tags=tags)
-        self.created_at = created_at
+        self.created_at = None
         self.message_retention_in_days = message_retention_in_days
         self.partition_count = partition_count
-        self.partition_ids = partition_ids
+        self.partition_ids = None
         self.status = status
-        self.updated_at = updated_at
+        self.updated_at = None

@@ -28,7 +28,6 @@ from .consumer_group_resource_paged import ConsumerGroupResourcePaged
 from .event_hub_management_client_enums import (
     SkuName,
     SkuTier,
-    NamespaceState,
     AccessRights,
     Policykey,
     EntityStatus,
@@ -53,7 +52,6 @@ __all__ = [
     'ConsumerGroupResourcePaged',
     'SkuName',
     'SkuTier',
-    'NamespaceState',
     'AccessRights',
     'Policykey',
     'EntityStatus',
