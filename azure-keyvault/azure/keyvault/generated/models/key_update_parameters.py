@@ -27,7 +27,7 @@ class KeyUpdateParameters(Model):
     """
 
     _attribute_map = {
-        'key_ops': {'key': 'key_ops', 'type': '[JsonWebKeyOperation]'},
+        'key_ops': {'key': 'key_ops', 'type': '[str]'},
         'key_attributes': {'key': 'attributes', 'type': 'KeyAttributes'},
         'tags': {'key': 'tags', 'type': '{str}'},
     }
