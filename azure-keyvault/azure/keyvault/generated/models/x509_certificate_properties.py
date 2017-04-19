@@ -39,7 +39,7 @@ class X509CertificateProperties(Model):
         'subject': {'key': 'subject', 'type': 'str'},
         'ekus': {'key': 'ekus', 'type': '[str]'},
         'subject_alternative_names': {'key': 'sans', 'type': 'SubjectAlternativeNames'},
-        'key_usage': {'key': 'key_usage', 'type': '[KeyUsageType]'},
+        'key_usage': {'key': 'key_usage', 'type': '[str]'},
         'validity_in_months': {'key': 'validity_months', 'type': 'int'},
     }
 
