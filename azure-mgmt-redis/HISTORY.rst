@@ -3,6 +3,17 @@
 Release History
 ===============
 
+4.1.0 (2017-04-18)
+++++++++++++++++++
+
+**Features**
+
+- Add firewall rules operations
+
+**Notes**
+
+- This wheel package is now built with the azure wheel extension
+
 4.0.0 (2017-01-13)
 ++++++++++++++++++
 
