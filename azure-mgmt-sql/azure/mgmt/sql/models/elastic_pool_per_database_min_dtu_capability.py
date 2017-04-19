@@ -12,38 +12,30 @@
 from msrest.serialization import Model
 
 
-class EditionCapability(Model):
-    """The database edition capabilities.
+class ElasticPoolPerDatabaseMinDtuCapability(Model):
+    """The minimum per-database DTU capability.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar name: The edition name.
-    :vartype name: str
-    :ivar status: The status of the edition. Possible values include:
+    :ivar limit: The maximum DTUs per database.
+    :vartype limit: long
+    :ivar status: The status of the capability. Possible values include:
      'Visible', 'Available', 'Default', 'Disabled'
     :vartype status: str or :class:`CapabilityStatus
      <azure.mgmt.sql.models.CapabilityStatus>`
-    :ivar supported_service_level_objectives: The list of supported service
-     objectives for the edition.
-    :vartype supported_service_level_objectives: list of
-     :class:`ServiceObjectiveCapability
-     <azure.mgmt.sql.models.ServiceObjectiveCapability>`
     """
 
     _validation = {
-        'name': {'readonly': True},
+        'limit': {'readonly': True},
         'status': {'readonly': True},
-        'supported_service_level_objectives': {'readonly': True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
+        'limit': {'key': 'limit', 'type': 'long'},
         'status': {'key': 'status', 'type': 'CapabilityStatus'},
-        'supported_service_level_objectives': {'key': 'supportedServiceLevelObjectives', 'type': '[ServiceObjectiveCapability]'},
     }
 
     def __init__(self):
-        self.name = None
+        self.limit = None
         self.status = None
-        self.supported_service_level_objectives = None

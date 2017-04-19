@@ -12,6 +12,12 @@
 from enum import Enum
 
 
+class RestorePointTypes(Enum):
+
+    discrete = "DISCRETE"
+    continuous = "CONTINUOUS"
+
+
 class CapabilityStatus(Enum):
 
     visible = "Visible"
@@ -95,6 +101,18 @@ class ReplicationState(Enum):
     suspended = "SUSPENDED"
 
 
+class ServerVersion(Enum):
+
+    two_full_stop_zero = "2.0"
+    one_two_full_stop_zero = "12.0"
+
+
+class ServerState(Enum):
+
+    ready = "Ready"
+    disabled = "Disabled"
+
+
 class ElasticPoolEdition(Enum):
 
     basic = "Basic"
@@ -166,24 +184,6 @@ class ElasticPoolState(Enum):
     creating = "Creating"
     ready = "Ready"
     disabled = "Disabled"
-
-
-class ServerVersion(Enum):
-
-    two_full_stop_zero = "2.0"
-    one_two_full_stop_zero = "12.0"
-
-
-class ServerState(Enum):
-
-    ready = "Ready"
-    disabled = "Disabled"
-
-
-class RestorePointTypes(Enum):
-
-    discrete = "DISCRETE"
-    continuous = "CONTINUOUS"
 
 
 class TransparentDataEncryptionActivityStatus(Enum):

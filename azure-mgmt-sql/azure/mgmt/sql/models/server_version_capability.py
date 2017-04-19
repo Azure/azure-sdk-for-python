@@ -24,24 +24,32 @@ class ServerVersionCapability(Model):
      'Visible', 'Available', 'Default', 'Disabled'
     :vartype status: str or :class:`CapabilityStatus
      <azure.mgmt.sql.models.CapabilityStatus>`
-    :ivar supported_editions: The list of supported server editions.
+    :ivar supported_editions: The list of supported database editions.
     :vartype supported_editions: list of :class:`EditionCapability
      <azure.mgmt.sql.models.EditionCapability>`
+    :ivar supported_elastic_pool_editions: The list of supported elastic pool
+     editions.
+    :vartype supported_elastic_pool_editions: list of
+     :class:`ElasticPoolEditionCapability
+     <azure.mgmt.sql.models.ElasticPoolEditionCapability>`
     """
 
     _validation = {
         'name': {'readonly': True},
         'status': {'readonly': True},
         'supported_editions': {'readonly': True},
+        'supported_elastic_pool_editions': {'readonly': True},
     }
 
     _attribute_map = {
         'name': {'key': 'name', 'type': 'str'},
         'status': {'key': 'status', 'type': 'CapabilityStatus'},
         'supported_editions': {'key': 'supportedEditions', 'type': '[EditionCapability]'},
+        'supported_elastic_pool_editions': {'key': 'supportedElasticPoolEditions', 'type': '[ElasticPoolEditionCapability]'},
     }
 
     def __init__(self):
         self.name = None
         self.status = None
         self.supported_editions = None
+        self.supported_elastic_pool_editions = None
