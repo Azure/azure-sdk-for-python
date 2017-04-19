@@ -254,7 +254,7 @@ class KeyVaultClient(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self.keyvault._serialize.query("self.keyvault.config.api_version", self.keyvault.config.api_version, 'str')
+        query_parameters['api-version'] = self.keyvault._serialize.query("self.keyvault.api_version", self.keyvault.api_version, 'str')
 
         # Construct headers
         header_parameters = {}
