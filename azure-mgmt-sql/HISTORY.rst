@@ -3,6 +3,17 @@
 Release History
 ===============
 
+0.5.0 (2017-04-19)
+++++++++++++++++++
+
+**Breaking changes**
+
+- `SqlManagementClient.list_operations` is now `SqlManagementClient.operations.list`
+
+**New features**
+
+- Added elastic pool capabilities to capabilities API.
+
 0.4.0 (2017-03-22)
 ++++++++++++++++++
 
