@@ -120,7 +120,7 @@ class KeyVaultClient(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -201,7 +201,7 @@ class KeyVaultClient(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -270,7 +270,7 @@ class KeyVaultClient(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -349,7 +349,7 @@ class KeyVaultClient(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -420,7 +420,7 @@ class KeyVaultClient(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -489,7 +489,7 @@ class KeyVaultClient(object):
                 query_parameters = {}
                 if maxresults is not None:
                     query_parameters['maxresults'] = self._serialize.query("maxresults", maxresults, 'int', maximum=25, minimum=1)
-                query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
+                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
             else:
                 url = next_link
@@ -559,7 +559,7 @@ class KeyVaultClient(object):
                 query_parameters = {}
                 if maxresults is not None:
                     query_parameters['maxresults'] = self._serialize.query("maxresults", maxresults, 'int', maximum=25, minimum=1)
-                query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
+                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
             else:
                 url = next_link
@@ -627,7 +627,7 @@ class KeyVaultClient(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -689,7 +689,7 @@ class KeyVaultClient(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -766,7 +766,7 @@ class KeyVaultClient(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -842,7 +842,7 @@ class KeyVaultClient(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -920,7 +920,7 @@ class KeyVaultClient(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -1000,7 +1000,7 @@ class KeyVaultClient(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -1076,7 +1076,7 @@ class KeyVaultClient(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -1153,7 +1153,7 @@ class KeyVaultClient(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -1230,7 +1230,7 @@ class KeyVaultClient(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -1295,7 +1295,7 @@ class KeyVaultClient(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -1370,7 +1370,7 @@ class KeyVaultClient(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -1438,7 +1438,7 @@ class KeyVaultClient(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -1502,7 +1502,7 @@ class KeyVaultClient(object):
                 query_parameters = {}
                 if maxresults is not None:
                     query_parameters['maxresults'] = self._serialize.query("maxresults", maxresults, 'int', maximum=25, minimum=1)
-                query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
+                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
             else:
                 url = next_link
@@ -1575,7 +1575,7 @@ class KeyVaultClient(object):
                 query_parameters = {}
                 if maxresults is not None:
                     query_parameters['maxresults'] = self._serialize.query("maxresults", maxresults, 'int', maximum=25, minimum=1)
-                query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
+                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
             else:
                 url = next_link
@@ -1645,7 +1645,7 @@ class KeyVaultClient(object):
                 query_parameters = {}
                 if maxresults is not None:
                     query_parameters['maxresults'] = self._serialize.query("maxresults", maxresults, 'int', maximum=25, minimum=1)
-                query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
+                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
             else:
                 url = next_link
@@ -1712,7 +1712,7 @@ class KeyVaultClient(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -1774,7 +1774,7 @@ class KeyVaultClient(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -1835,7 +1835,7 @@ class KeyVaultClient(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -1892,7 +1892,7 @@ class KeyVaultClient(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -1956,7 +1956,7 @@ class KeyVaultClient(object):
                 query_parameters = {}
                 if maxresults is not None:
                     query_parameters['maxresults'] = self._serialize.query("maxresults", maxresults, 'int', maximum=25, minimum=1)
-                query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
+                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
             else:
                 url = next_link
@@ -2037,7 +2037,7 @@ class KeyVaultClient(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -2116,7 +2116,7 @@ class KeyVaultClient(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -2181,7 +2181,7 @@ class KeyVaultClient(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -2242,7 +2242,7 @@ class KeyVaultClient(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -2316,7 +2316,7 @@ class KeyVaultClient(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -2400,7 +2400,7 @@ class KeyVaultClient(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -2471,7 +2471,7 @@ class KeyVaultClient(object):
                 query_parameters = {}
                 if maxresults is not None:
                     query_parameters['maxresults'] = self._serialize.query("maxresults", maxresults, 'int', maximum=25, minimum=1)
-                query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
+                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
             else:
                 url = next_link
@@ -2539,7 +2539,7 @@ class KeyVaultClient(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -2605,7 +2605,7 @@ class KeyVaultClient(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -2686,7 +2686,7 @@ class KeyVaultClient(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -2755,7 +2755,7 @@ class KeyVaultClient(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -2821,7 +2821,7 @@ class KeyVaultClient(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -2886,7 +2886,7 @@ class KeyVaultClient(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -2947,7 +2947,7 @@ class KeyVaultClient(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -3021,7 +3021,7 @@ class KeyVaultClient(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
         header_parameters = {}
