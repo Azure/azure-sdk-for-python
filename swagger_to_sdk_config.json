@@ -411,7 +411,7 @@
       "swagger": "batch/2017-01-01.4.0/swagger/BatchService.json",
       "autorest_options": {
         "Namespace": "azure.batch",
-        "PackageVersion": "2.0.0"
+        "PackageVersion": "2.0.1"
       },
       "output_dir": "azure-batch/azure/batch/",
       "generated_relative_base_directory": "azure/batch",
