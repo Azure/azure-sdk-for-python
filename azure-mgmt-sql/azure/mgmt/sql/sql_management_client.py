@@ -13,16 +13,15 @@ from msrest.service_client import ServiceClient
 from msrest import Serializer, Deserializer
 from msrestazure import AzureConfiguration
 from .version import VERSION
-from msrest.pipeline import ClientRawResponse
-from msrestazure.azure_exceptions import CloudError
-from msrestazure.azure_operation import AzureOperationPoller
-import uuid
 from .operations.capabilities_operations import CapabilitiesOperations
 from .operations.firewall_rules_operations import FirewallRulesOperations
 from .operations.databases_operations import DatabasesOperations
 from .operations.servers_operations import ServersOperations
 from .operations.elastic_pools_operations import ElasticPoolsOperations
 from .operations.recommended_elastic_pools_operations import RecommendedElasticPoolsOperations
+from .operations.operations import Operations
+from .operations.failover_groups_operations import FailoverGroupsOperations
+from .operations.vnet_firewall_rules_operations import VnetFirewallRulesOperations
 from . import models
 
 
@@ -37,11 +36,14 @@ class SqlManagementClientConfiguration(AzureConfiguration):
     :param subscription_id: The subscription ID that identifies an Azure
      subscription.
     :type subscription_id: str
+    :param failover_group: The failover group.
+    :type failover_group: :class:`FailoverGroupResource
+     <azure.mgmt.sql.models.FailoverGroupResource>`
     :param str base_url: Service URL
     """
 
     def __init__(
-            self, credentials, subscription_id, base_url=None):
+            self, credentials, subscription_id, failover_group, base_url=None):
 
         if credentials is None:
             raise ValueError("Parameter 'credentials' must not be None.")
@@ -49,6 +51,8 @@ class SqlManagementClientConfiguration(AzureConfiguration):
             raise ValueError("Parameter 'subscription_id' must not be None.")
         if not isinstance(subscription_id, str):
             raise TypeError("Parameter 'subscription_id' must be str.")
+        if failover_group is None:
+            raise ValueError("Parameter 'failover_group' must not be None.")
         if not base_url:
             base_url = 'https://management.azure.com'
 
@@ -59,6 +63,7 @@ class SqlManagementClientConfiguration(AzureConfiguration):
 
         self.credentials = credentials
         self.subscription_id = subscription_id
+        self.failover_group = failover_group
 
 
 class SqlManagementClient(object):
@@ -79,6 +84,12 @@ class SqlManagementClient(object):
     :vartype elastic_pools: .operations.ElasticPoolsOperations
     :ivar recommended_elastic_pools: RecommendedElasticPools operations
     :vartype recommended_elastic_pools: .operations.RecommendedElasticPoolsOperations
+    :ivar operations: Operations operations
+    :vartype operations: .operations.Operations
+    :ivar failover_groups: FailoverGroups operations
+    :vartype failover_groups: .operations.FailoverGroupsOperations
+    :ivar vnet_firewall_rules: VnetFirewallRules operations
+    :vartype vnet_firewall_rules: .operations.VnetFirewallRulesOperations
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
@@ -86,13 +97,16 @@ class SqlManagementClient(object):
     :param subscription_id: The subscription ID that identifies an Azure
      subscription.
     :type subscription_id: str
+    :param failover_group: The failover group.
+    :type failover_group: :class:`FailoverGroupResource
+     <azure.mgmt.sql.models.FailoverGroupResource>`
     :param str base_url: Service URL
     """
 
     def __init__(
-            self, credentials, subscription_id, base_url=None):
+            self, credentials, subscription_id, failover_group, base_url=None):
 
-        self.config = SqlManagementClientConfiguration(credentials, subscription_id, base_url)
+        self.config = SqlManagementClientConfiguration(credentials, subscription_id, failover_group, base_url)
         self._client = ServiceClient(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
@@ -111,57 +125,9 @@ class SqlManagementClient(object):
             self._client, self.config, self._serialize, self._deserialize)
         self.recommended_elastic_pools = RecommendedElasticPoolsOperations(
             self._client, self.config, self._serialize, self._deserialize)
-
-    def list_operations(
-            self, custom_headers=None, raw=False, **operation_config):
-        """Lists all of the available SQL Rest API operations.
-
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`OperationListResult
-         <azure.mgmt.sql.models.OperationListResult>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
-        """
-        api_version = "2014-04-01"
-
-        # Construct URL
-        url = '/providers/Microsoft.Sql/operations'
-
-        # Construct parameters
-        query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
-
-        # Construct headers
-        header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
-        if self.config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-        if custom_headers:
-            header_parameters.update(custom_headers)
-        if self.config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
-
-        # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
-
-        if response.status_code not in [200]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
-
-        deserialized = None
-
-        if response.status_code == 200:
-            deserialized = self._deserialize('OperationListResult', response)
-
-        if raw:
-            client_raw_response = ClientRawResponse(deserialized, response)
-            return client_raw_response
-
-        return deserialized
+        self.operations = Operations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.failover_groups = FailoverGroupsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.vnet_firewall_rules = VnetFirewallRulesOperations(
+            self._client, self.config, self._serialize, self._deserialize)
