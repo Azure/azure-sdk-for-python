@@ -90,6 +90,9 @@ class StorageAccount(Resource):
      The access tier used for billing. Possible values include: 'Hot', 'Cool'
     :vartype access_tier: str or :class:`AccessTier
      <azure.mgmt.storage.v2016_12_01.models.AccessTier>`
+    :param enable_https_traffic_only: Allows https traffic only to storage
+     service if sets to true. Default value: False .
+    :type enable_https_traffic_only: bool
     """
 
     _validation = {
@@ -132,9 +135,10 @@ class StorageAccount(Resource):
         'secondary_endpoints': {'key': 'properties.secondaryEndpoints', 'type': 'Endpoints'},
         'encryption': {'key': 'properties.encryption', 'type': 'Encryption'},
         'access_tier': {'key': 'properties.accessTier', 'type': 'AccessTier'},
+        'enable_https_traffic_only': {'key': 'properties.supportsHttpsTrafficOnly', 'type': 'bool'},
     }
 
-    def __init__(self, location=None, tags=None):
+    def __init__(self, location=None, tags=None, enable_https_traffic_only=False):
         super(StorageAccount, self).__init__(location=location, tags=tags)
         self.sku = None
         self.kind = None
@@ -150,3 +154,4 @@ class StorageAccount(Resource):
         self.secondary_endpoints = None
         self.encryption = None
         self.access_tier = None
+        self.enable_https_traffic_only = enable_https_traffic_only
