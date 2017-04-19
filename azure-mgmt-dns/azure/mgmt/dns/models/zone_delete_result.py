@@ -26,21 +26,21 @@ class ZoneDeleteResult(Model):
      'SwitchingProtocols', 'OK', 'Created', 'Accepted',
      'NonAuthoritativeInformation', 'NoContent', 'ResetContent',
      'PartialContent', 'MultipleChoices', 'Ambiguous', 'MovedPermanently',
-     'Moved', 'Found', 'Redirect', 'SeeOther', 'RedirectMethod',
-     'NotModified', 'UseProxy', 'Unused', 'TemporaryRedirect',
-     'RedirectKeepVerb', 'BadRequest', 'Unauthorized', 'PaymentRequired',
-     'Forbidden', 'NotFound', 'MethodNotAllowed', 'NotAcceptable',
-     'ProxyAuthenticationRequired', 'RequestTimeout', 'Conflict', 'Gone',
-     'LengthRequired', 'PreconditionFailed', 'RequestEntityTooLarge',
-     'RequestUriTooLong', 'UnsupportedMediaType',
-     'RequestedRangeNotSatisfiable', 'ExpectationFailed', 'UpgradeRequired',
-     'InternalServerError', 'NotImplemented', 'BadGateway',
-     'ServiceUnavailable', 'GatewayTimeout', 'HttpVersionNotSupported'
+     'Moved', 'Found', 'Redirect', 'SeeOther', 'RedirectMethod', 'NotModified',
+     'UseProxy', 'Unused', 'TemporaryRedirect', 'RedirectKeepVerb',
+     'BadRequest', 'Unauthorized', 'PaymentRequired', 'Forbidden', 'NotFound',
+     'MethodNotAllowed', 'NotAcceptable', 'ProxyAuthenticationRequired',
+     'RequestTimeout', 'Conflict', 'Gone', 'LengthRequired',
+     'PreconditionFailed', 'RequestEntityTooLarge', 'RequestUriTooLong',
+     'UnsupportedMediaType', 'RequestedRangeNotSatisfiable',
+     'ExpectationFailed', 'UpgradeRequired', 'InternalServerError',
+     'NotImplemented', 'BadGateway', 'ServiceUnavailable', 'GatewayTimeout',
+     'HttpVersionNotSupported'
     :type status_code: str or :class:`HttpStatusCode
      <azure.mgmt.dns.models.HttpStatusCode>`
     :param request_id:
     :type request_id: str
-    """ 
+    """
 
     _attribute_map = {
         'azure_async_operation': {'key': 'azureAsyncOperation', 'type': 'str'},

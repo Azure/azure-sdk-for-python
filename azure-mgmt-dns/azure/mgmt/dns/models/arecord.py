@@ -17,7 +17,7 @@ class ARecord(Model):
 
     :param ipv4_address: The IPv4 address of this A record.
     :type ipv4_address: str
-    """ 
+    """
 
     _attribute_map = {
         'ipv4_address': {'key': 'ipv4Address', 'type': 'str'},

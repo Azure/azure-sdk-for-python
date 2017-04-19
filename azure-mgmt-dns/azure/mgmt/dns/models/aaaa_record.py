@@ -17,7 +17,7 @@ class AaaaRecord(Model):
 
     :param ipv6_address: The IPv6 address of this AAAA record.
     :type ipv6_address: str
-    """ 
+    """
 
     _attribute_map = {
         'ipv6_address': {'key': 'ipv6Address', 'type': 'str'},

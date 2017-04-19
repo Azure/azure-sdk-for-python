@@ -15,8 +15,8 @@ from msrest.serialization import Model
 class SoaRecord(Model):
     """An SOA record.
 
-    :param host: The domain name of the authoritative name server for this
-     SOA record.
+    :param host: The domain name of the authoritative name server for this SOA
+     record.
     :type host: str
     :param email: The email contact for this SOA record.
     :type email: str
@@ -31,7 +31,7 @@ class SoaRecord(Model):
     :param minimum_ttl: The minimum value for this SOA record. By convention
      this is used to determine the negative caching duration.
     :type minimum_ttl: long
-    """ 
+    """
 
     _attribute_map = {
         'host': {'key': 'host', 'type': 'str'},
