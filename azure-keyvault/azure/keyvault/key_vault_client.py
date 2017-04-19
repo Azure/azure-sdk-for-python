@@ -42,13 +42,8 @@ def _patch_docstring(docstring):
 
 class KeyVaultClient(object):
 
-    def __init__(self, credentials, accept_language='en-US', long_running_operation_retry_timeout=30, generate_client_request_id=True, filepath=None):
-        self.keyvault = _KeyVaultClient(
-            credentials,
-            accept_language=accept_language,
-            long_running_operation_retry_timeout=long_running_operation_retry_timeout,
-            generate_client_request_id=generate_client_request_id,
-            filepath=filepath)
+    def __init__(self, credentials):
+        self.keyvault = _KeyVaultClient(credentials)
 
     def create_key(self, vault_base_url, key_name, kty, key_size=None, key_ops=None, key_attributes=None, tags=None, custom_headers=None, raw=False, **operation_config):
         return self.keyvault.create_key(vault_base_url, key_name, kty, key_size, key_ops, key_attributes, tags, custom_headers, raw, **operation_config)
