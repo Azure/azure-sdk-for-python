@@ -20,8 +20,8 @@ class LogProfileResource(Resource):
 
     :ivar id: Azure resource Id
     :vartype id: str
-    :param name: Azure resource name
-    :type name: str
+    :ivar name: Azure resource name
+    :vartype name: str
     :ivar type: Azure resource type
     :vartype type: str
     :param location: Resource location
@@ -51,9 +51,12 @@ class LogProfileResource(Resource):
 
     _validation = {
         'id': {'readonly': True},
+        'name': {'readonly': True},
         'type': {'readonly': True},
         'location': {'required': True},
         'locations': {'required': True},
+        'categories': {'required': True},
+        'retention_policy': {'required': True},
     }
 
     _attribute_map = {
@@ -69,8 +72,8 @@ class LogProfileResource(Resource):
         'retention_policy': {'key': 'properties.retentionPolicy', 'type': 'RetentionPolicy'},
     }
 
-    def __init__(self, location, locations, name=None, tags=None, storage_account_id=None, service_bus_rule_id=None, categories=None, retention_policy=None):
-        super(LogProfileResource, self).__init__(name=name, location=location, tags=tags)
+    def __init__(self, location, locations, categories, retention_policy, tags=None, storage_account_id=None, service_bus_rule_id=None):
+        super(LogProfileResource, self).__init__(location=location, tags=tags)
         self.storage_account_id = storage_account_id
         self.service_bus_rule_id = service_bus_rule_id
         self.locations = locations

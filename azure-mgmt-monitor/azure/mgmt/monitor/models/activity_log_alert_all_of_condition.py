@@ -12,24 +12,22 @@
 from msrest.serialization import Model
 
 
-class LocalizableString(Model):
-    """The localizable string class.
+class ActivityLogAlertAllOfCondition(Model):
+    """An Activity Log alert condition that is met when all its member conditions
+    are met.
 
-    :param value: the invariant value.
-    :type value: str
-    :param localized_value: the locale specific value.
-    :type localized_value: str
+    :param all_of: The list of activity log alert conditions.
+    :type all_of: list of :class:`ActivityLogAlertLeafCondition
+     <azure.mgmt.monitor.models.ActivityLogAlertLeafCondition>`
     """
 
     _validation = {
-        'value': {'required': True},
+        'all_of': {'required': True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': 'str'},
-        'localized_value': {'key': 'localizedValue', 'type': 'str'},
+        'all_of': {'key': 'allOf', 'type': '[ActivityLogAlertLeafCondition]'},
     }
 
-    def __init__(self, value, localized_value=None):
-        self.value = value
-        self.localized_value = localized_value
+    def __init__(self, all_of):
+        self.all_of = all_of

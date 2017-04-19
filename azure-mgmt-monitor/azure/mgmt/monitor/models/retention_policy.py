@@ -25,7 +25,7 @@ class RetentionPolicy(Model):
 
     _validation = {
         'enabled': {'required': True},
-        'days': {'required': True},
+        'days': {'required': True, 'minimum': 0},
     }
 
     _attribute_map = {
