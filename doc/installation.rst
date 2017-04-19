@@ -72,7 +72,7 @@ azure-mgmt-resource                   1.0.0rc1
 azure-mgmt-compute                    1.0.0rc1
 azure-mgmt-network                    1.0.0rc2
 azure-mgmt-storage                    1.0.0rc1
-azure-mgmt-keyvault                   0.30.1
+azure-mgmt-keyvault                   0.31.0
 azure-graphrbac                       0.30.0rc6
 azure-mgmt-authorization              0.30.0rc6
 azure-mgmt-cdn                        0.30.2
