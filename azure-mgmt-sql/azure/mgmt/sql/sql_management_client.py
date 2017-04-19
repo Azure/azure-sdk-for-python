@@ -13,13 +13,10 @@ from msrest.service_client import ServiceClient
 from msrest import Serializer, Deserializer
 from msrestazure import AzureConfiguration
 from .version import VERSION
-from msrest.pipeline import ClientRawResponse
-from msrestazure.azure_exceptions import CloudError
-from msrestazure.azure_operation import AzureOperationPoller
-import uuid
+from .operations.databases_operations import DatabasesOperations
 from .operations.capabilities_operations import CapabilitiesOperations
 from .operations.firewall_rules_operations import FirewallRulesOperations
-from .operations.databases_operations import DatabasesOperations
+from .operations.operations import Operations
 from .operations.servers_operations import ServersOperations
 from .operations.elastic_pools_operations import ElasticPoolsOperations
 from .operations.recommended_elastic_pools_operations import RecommendedElasticPoolsOperations
@@ -67,12 +64,14 @@ class SqlManagementClient(object):
     :ivar config: Configuration for client.
     :vartype config: SqlManagementClientConfiguration
 
+    :ivar databases: Databases operations
+    :vartype databases: .operations.DatabasesOperations
     :ivar capabilities: Capabilities operations
     :vartype capabilities: .operations.CapabilitiesOperations
     :ivar firewall_rules: FirewallRules operations
     :vartype firewall_rules: .operations.FirewallRulesOperations
-    :ivar databases: Databases operations
-    :vartype databases: .operations.DatabasesOperations
+    :ivar operations: Operations operations
+    :vartype operations: .operations.Operations
     :ivar servers: Servers operations
     :vartype servers: .operations.ServersOperations
     :ivar elastic_pools: ElasticPools operations
@@ -99,11 +98,13 @@ class SqlManagementClient(object):
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
 
+        self.databases = DatabasesOperations(
+            self._client, self.config, self._serialize, self._deserialize)
         self.capabilities = CapabilitiesOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.firewall_rules = FirewallRulesOperations(
             self._client, self.config, self._serialize, self._deserialize)
-        self.databases = DatabasesOperations(
+        self.operations = Operations(
             self._client, self.config, self._serialize, self._deserialize)
         self.servers = ServersOperations(
             self._client, self.config, self._serialize, self._deserialize)
@@ -111,57 +112,3 @@ class SqlManagementClient(object):
             self._client, self.config, self._serialize, self._deserialize)
         self.recommended_elastic_pools = RecommendedElasticPoolsOperations(
             self._client, self.config, self._serialize, self._deserialize)
-
-    def list_operations(
-            self, custom_headers=None, raw=False, **operation_config):
-        """Lists all of the available SQL Rest API operations.
-
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`OperationListResult
-         <azure.mgmt.sql.models.OperationListResult>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
-        """
-        api_version = "2014-04-01"
-
-        # Construct URL
-        url = '/providers/Microsoft.Sql/operations'
-
-        # Construct parameters
-        query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
-
-        # Construct headers
-        header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
-        if self.config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-        if custom_headers:
-            header_parameters.update(custom_headers)
-        if self.config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
-
-        # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
-
-        if response.status_code not in [200]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
-
-        deserialized = None
-
-        if response.status_code == 200:
-            deserialized = self._deserialize('OperationListResult', response)
-
-        if raw:
-            client_raw_response = ClientRawResponse(deserialized, response)
-            return client_raw_response
-
-        return deserialized

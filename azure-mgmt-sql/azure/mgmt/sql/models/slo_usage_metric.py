@@ -15,18 +15,27 @@ from msrest.serialization import Model
 class SloUsageMetric(Model):
     """Represents a Slo Usage Metric.
 
-    :param service_level_objective: The serviceLevelObjective for SLO usage
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar service_level_objective: The serviceLevelObjective for SLO usage
      metric. Possible values include: 'Basic', 'S0', 'S1', 'S2', 'S3', 'P1',
      'P2', 'P3', 'P4', 'P6', 'P11', 'P15', 'System', 'System2', 'ElasticPool'
-    :type service_level_objective: str or :class:`ServiceObjectiveName
+    :vartype service_level_objective: str or :class:`ServiceObjectiveName
      <azure.mgmt.sql.models.ServiceObjectiveName>`
-    :param service_level_objective_id: The serviceLevelObjectiveId for SLO
+    :ivar service_level_objective_id: The serviceLevelObjectiveId for SLO
      usage metric.
-    :type service_level_objective_id: str
-    :param in_range_time_ratio: Gets or sets inRangeTimeRatio for SLO usage
+    :vartype service_level_objective_id: str
+    :ivar in_range_time_ratio: Gets or sets inRangeTimeRatio for SLO usage
      metric.
-    :type in_range_time_ratio: float
+    :vartype in_range_time_ratio: float
     """
+
+    _validation = {
+        'service_level_objective': {'readonly': True},
+        'service_level_objective_id': {'readonly': True},
+        'in_range_time_ratio': {'readonly': True},
+    }
 
     _attribute_map = {
         'service_level_objective': {'key': 'serviceLevelObjective', 'type': 'str'},
@@ -34,7 +43,7 @@ class SloUsageMetric(Model):
         'in_range_time_ratio': {'key': 'inRangeTimeRatio', 'type': 'float'},
     }
 
-    def __init__(self, service_level_objective=None, service_level_objective_id=None, in_range_time_ratio=None):
-        self.service_level_objective = service_level_objective
-        self.service_level_objective_id = service_level_objective_id
-        self.in_range_time_ratio = in_range_time_ratio
+    def __init__(self):
+        self.service_level_objective = None
+        self.service_level_objective_id = None
+        self.in_range_time_ratio = None

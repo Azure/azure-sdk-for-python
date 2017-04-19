@@ -100,7 +100,7 @@ class Database(TrackedResource):
     :param recovery_services_recovery_point_resource_id: Conditional. If
      createMode is RestoreLongTermRetentionBackup, then this value is required.
      Specifies the resource ID of the recovery point to restore from.
-    :type recovery_services_recovery_point_resource_id: datetime
+    :type recovery_services_recovery_point_resource_id: str
     :param edition: The edition of the database. The DatabaseEditions
      enumeration contains all the valid editions. If createMode is
      NonReadableSecondary or OnlineSecondary, this value is ignored. To see
@@ -220,7 +220,7 @@ class Database(TrackedResource):
         'source_database_id': {'key': 'properties.sourceDatabaseId', 'type': 'str'},
         'source_database_deletion_date': {'key': 'properties.sourceDatabaseDeletionDate', 'type': 'iso-8601'},
         'restore_point_in_time': {'key': 'properties.restorePointInTime', 'type': 'iso-8601'},
-        'recovery_services_recovery_point_resource_id': {'key': 'properties.recoveryServicesRecoveryPointResourceId', 'type': 'iso-8601'},
+        'recovery_services_recovery_point_resource_id': {'key': 'properties.recoveryServicesRecoveryPointResourceId', 'type': 'str'},
         'edition': {'key': 'properties.edition', 'type': 'str'},
         'max_size_bytes': {'key': 'properties.maxSizeBytes', 'type': 'str'},
         'requested_service_objective_id': {'key': 'properties.requestedServiceObjectiveId', 'type': 'str'},
