@@ -15,6 +15,8 @@ from .databases_operations import DatabasesOperations
 from .servers_operations import ServersOperations
 from .elastic_pools_operations import ElasticPoolsOperations
 from .recommended_elastic_pools_operations import RecommendedElasticPoolsOperations
+from .failover_groups_operations import FailoverGroupsOperations
+from .vnet_firewall_rules_operations import VnetFirewallRulesOperations
 
 __all__ = [
     'CapabilitiesOperations',
@@ -23,4 +25,6 @@ __all__ = [
     'ServersOperations',
     'ElasticPoolsOperations',
     'RecommendedElasticPoolsOperations',
+    'FailoverGroupsOperations',
+    'VnetFirewallRulesOperations',
 ]
