@@ -135,14 +135,6 @@
       },
       "output_dir": "azure-mgmt-iothub/azure/mgmt/iothub"
     },
-    "intune": {
-      "swagger": "arm-intune/2015-01-14-preview/swagger/intune.json",
-      "autorest_options": {
-        "Namespace": "azure.mgmt.intune",
-        "PackageVersion": "0.1.0"
-      },
-      "output_dir": "unreleased/azure-mgmt-intune/azure/mgmt/intune"
-    },  
     "keyvault.mgmt": {
       "swagger": "arm-keyvault/2015-06-01/swagger/keyvault.json",
       "autorest_options": {
