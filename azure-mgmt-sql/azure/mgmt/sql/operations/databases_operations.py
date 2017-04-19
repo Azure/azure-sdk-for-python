@@ -470,7 +470,8 @@ class DatabasesOperations(object):
 
     def failover_replication_link(
             self, resource_group_name, server_name, database_name, link_id, custom_headers=None, raw=False, **operation_config):
-        """Failover the database replication link.
+        """Sets which replica database is primary by failing over from the current
+        primary replica database.
 
         :param resource_group_name: The name of the resource group that
          contains the resource. You can obtain this value from the Azure
@@ -558,8 +559,8 @@ class DatabasesOperations(object):
 
     def failover_replication_link_allow_data_loss(
             self, resource_group_name, server_name, database_name, link_id, custom_headers=None, raw=False, **operation_config):
-        """Force failover the database replication link, which may result in data
-        loss.
+        """Sets which replica database is primary by failing over from the current
+        primary replica database. This operation might result in data loss.
 
         :param resource_group_name: The name of the resource group that
          contains the resource. You can obtain this value from the Azure
