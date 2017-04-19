@@ -181,7 +181,7 @@
       "autorest_options": {
         "Namespace": "azure.mgmt.monitor",
         "Modeler": "CompositeSwagger",
-        "PackageVersion": "0.1.0"
+        "PackageVersion": "0.2.0"
       },
       "output_dir": "azure-mgmt-monitor/azure/mgmt/monitor"
     },
