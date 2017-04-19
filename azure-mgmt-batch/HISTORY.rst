@@ -3,6 +3,11 @@
 Release History
 ===============
 
+3.0.1 (2017-04-19)
+++++++++++++++++++
+
+This wheel package is now built with the azure wheel extension
+
 3.0.0 (2017-03-07)
 ++++++++++++++++++
 
