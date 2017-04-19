@@ -15,9 +15,7 @@ from msrest.serialization import Model
 class EventData(Model):
     """The Azure event log entries are of type EventData.
 
-    :param authorization: the authorization used by the user who has performed
-     the operation that led to this event. This captures the RBAC properties of
-     the event. These usually include the 'action', 'role' and the 'scope'
+    :param authorization:
     :type authorization: :class:`SenderAuthorization
      <azure.monitor.models.SenderAuthorization>`
     :param claims: key value pairs to identify ARM permissions.

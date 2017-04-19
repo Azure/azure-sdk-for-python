@@ -14,10 +14,12 @@ from msrest import Serializer, Deserializer
 from msrestazure import AzureConfiguration
 from .version import VERSION
 from .operations.autoscale_settings_operations import AutoscaleSettingsOperations
-from .operations.service_diagnostic_settings_operations import ServiceDiagnosticSettingsOperations
 from .operations.alert_rules_operations import AlertRulesOperations
 from .operations.alert_rule_incidents_operations import AlertRuleIncidentsOperations
+from .operations.activity_log_alerts_operations import ActivityLogAlertsOperations
+from .operations.diagnostic_settings_operations import DiagnosticSettingsOperations
 from .operations.log_profiles_operations import LogProfilesOperations
+from .operations.service_diagnostic_settings_operations import ServiceDiagnosticSettingsOperations
 from . import models
 
 
@@ -63,14 +65,18 @@ class MonitorManagementClient(object):
 
     :ivar autoscale_settings: AutoscaleSettings operations
     :vartype autoscale_settings: .operations.AutoscaleSettingsOperations
-    :ivar service_diagnostic_settings: ServiceDiagnosticSettings operations
-    :vartype service_diagnostic_settings: .operations.ServiceDiagnosticSettingsOperations
     :ivar alert_rules: AlertRules operations
     :vartype alert_rules: .operations.AlertRulesOperations
     :ivar alert_rule_incidents: AlertRuleIncidents operations
     :vartype alert_rule_incidents: .operations.AlertRuleIncidentsOperations
+    :ivar activity_log_alerts: ActivityLogAlerts operations
+    :vartype activity_log_alerts: .operations.ActivityLogAlertsOperations
+    :ivar diagnostic_settings: DiagnosticSettings operations
+    :vartype diagnostic_settings: .operations.DiagnosticSettingsOperations
     :ivar log_profiles: LogProfiles operations
     :vartype log_profiles: .operations.LogProfilesOperations
+    :ivar service_diagnostic_settings: ServiceDiagnosticSettings operations
+    :vartype service_diagnostic_settings: .operations.ServiceDiagnosticSettingsOperations
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
@@ -92,11 +98,15 @@ class MonitorManagementClient(object):
 
         self.autoscale_settings = AutoscaleSettingsOperations(
             self._client, self.config, self._serialize, self._deserialize)
-        self.service_diagnostic_settings = ServiceDiagnosticSettingsOperations(
-            self._client, self.config, self._serialize, self._deserialize)
         self.alert_rules = AlertRulesOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.alert_rule_incidents = AlertRuleIncidentsOperations(
             self._client, self.config, self._serialize, self._deserialize)
+        self.activity_log_alerts = ActivityLogAlertsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.diagnostic_settings = DiagnosticSettingsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
         self.log_profiles = LogProfilesOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.service_diagnostic_settings = ServiceDiagnosticSettingsOperations(
             self._client, self.config, self._serialize, self._deserialize)

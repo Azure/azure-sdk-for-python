@@ -15,14 +15,14 @@ import uuid
 from .. import models
 
 
-class AutoscaleSettingsOperations(object):
-    """AutoscaleSettingsOperations operations.
+class DiagnosticSettingsOperations(object):
+    """DiagnosticSettingsOperations operations.
 
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An objec model deserializer.
-    :ivar api_version: Client Api Version. Constant value: "2015-04-01".
+    :ivar api_version: Client Api Version. Constant value: "2016-09-01".
     """
 
     def __init__(self, client, config, serializer, deserializer):
@@ -30,104 +30,98 @@ class AutoscaleSettingsOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2015-04-01"
+        self.api_version = "2016-09-01"
 
         self.config = config
 
-    def list_by_resource_group(
-            self, resource_group_name, custom_headers=None, raw=False, **operation_config):
-        """Lists the autoscale settings for a resource group.
+    def get(
+            self, resource_uri, name, custom_headers=None, raw=False, **operation_config):
+        """Gets the active diagnostic settings for the specified resource.
 
-        :param resource_group_name: The name of the resource group.
-        :type resource_group_name: str
+        :param resource_uri: The identifier of the resource.
+        :type resource_uri: str
+        :param name: The name of the diagnostic setting.
+        :type name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`AutoscaleSettingResourcePaged
-         <azure.mgmt.monitor.models.AutoscaleSettingResourcePaged>`
-        :raises:
-         :class:`ErrorResponseException<azure.mgmt.monitor.models.ErrorResponseException>`
-        """
-        def internal_paging(next_link=None, raw=False):
-
-            if not next_link:
-                # Construct URL
-                url = '/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/microsoft.insights/autoscalesettings'
-                path_format_arguments = {
-                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-                    'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
-                }
-                url = self._client.format_url(url, **path_format_arguments)
-
-                # Construct parameters
-                query_parameters = {}
-                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
-
-            else:
-                url = next_link
-                query_parameters = {}
-
-            # Construct headers
-            header_parameters = {}
-            header_parameters['Content-Type'] = 'application/json; charset=utf-8'
-            if self.config.generate_client_request_id:
-                header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-            if custom_headers:
-                header_parameters.update(custom_headers)
-            if self.config.accept_language is not None:
-                header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
-
-            # Construct and send request
-            request = self._client.get(url, query_parameters)
-            response = self._client.send(
-                request, header_parameters, **operation_config)
-
-            if response.status_code not in [200]:
-                raise models.ErrorResponseException(self._deserialize, response)
-
-            return response
-
-        # Deserialize response
-        deserialized = models.AutoscaleSettingResourcePaged(internal_paging, self._deserialize.dependencies)
-
-        if raw:
-            header_dict = {}
-            client_raw_response = models.AutoscaleSettingResourcePaged(internal_paging, self._deserialize.dependencies, header_dict)
-            return client_raw_response
-
-        return deserialized
-
-    def create_or_update(
-            self, resource_group_name, autoscale_setting_name, parameters, custom_headers=None, raw=False, **operation_config):
-        """Creates or updates an autoscale setting.
-
-        :param resource_group_name: The name of the resource group.
-        :type resource_group_name: str
-        :param autoscale_setting_name: The autoscale setting name.
-        :type autoscale_setting_name: str
-        :param parameters: Parameters supplied to the operation.
-        :type parameters: :class:`AutoscaleSettingResource
-         <azure.mgmt.monitor.models.AutoscaleSettingResource>`
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`AutoscaleSettingResource
-         <azure.mgmt.monitor.models.AutoscaleSettingResource>`
+        :rtype: :class:`DiagnosticSettingsResource
+         <azure.mgmt.monitor.models.DiagnosticSettingsResource>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         :raises:
          :class:`ErrorResponseException<azure.mgmt.monitor.models.ErrorResponseException>`
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/microsoft.insights/autoscalesettings/{autoscaleSettingName}'
+        url = '/{resourceUri}/providers/microsoft.insights/diagnosticSettings/{name}'
         path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            'autoscaleSettingName': self._serialize.url("autoscale_setting_name", autoscale_setting_name, 'str'),
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+            'resourceUri': self._serialize.url("resource_uri", resource_uri, 'str'),
+            'name': self._serialize.url("name", name, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+        # Construct and send request
+        request = self._client.get(url, query_parameters)
+        response = self._client.send(request, header_parameters, **operation_config)
+
+        if response.status_code not in [200]:
+            raise models.ErrorResponseException(self._deserialize, response)
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('DiagnosticSettingsResource', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+
+    def create_or_update(
+            self, resource_uri, parameters, name, custom_headers=None, raw=False, **operation_config):
+        """Creates or updates diagnostic settings for the specified resource.
+
+        :param resource_uri: The identifier of the resource.
+        :type resource_uri: str
+        :param parameters: Parameters supplied to the operation.
+        :type parameters: :class:`DiagnosticSettingsResource
+         <azure.mgmt.monitor.models.DiagnosticSettingsResource>`
+        :param name: The name of the diagnostic setting.
+        :type name: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :rtype: :class:`DiagnosticSettingsResource
+         <azure.mgmt.monitor.models.DiagnosticSettingsResource>`
+        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+         if raw=true
+        :raises:
+         :class:`ErrorResponseException<azure.mgmt.monitor.models.ErrorResponseException>`
+        """
+        # Construct URL
+        url = '/{resourceUri}/providers/microsoft.insights/diagnosticSettings/{name}'
+        path_format_arguments = {
+            'resourceUri': self._serialize.url("resource_uri", resource_uri, 'str'),
+            'name': self._serialize.url("name", name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -146,22 +140,20 @@ class AutoscaleSettingsOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct body
-        body_content = self._serialize.body(parameters, 'AutoscaleSettingResource')
+        body_content = self._serialize.body(parameters, 'DiagnosticSettingsResource')
 
         # Construct and send request
         request = self._client.put(url, query_parameters)
         response = self._client.send(
             request, header_parameters, body_content, **operation_config)
 
-        if response.status_code not in [200, 201]:
+        if response.status_code not in [200]:
             raise models.ErrorResponseException(self._deserialize, response)
 
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('AutoscaleSettingResource', response)
-        if response.status_code == 201:
-            deserialized = self._deserialize('AutoscaleSettingResource', response)
+            deserialized = self._deserialize('DiagnosticSettingsResource', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
@@ -170,13 +162,13 @@ class AutoscaleSettingsOperations(object):
         return deserialized
 
     def delete(
-            self, resource_group_name, autoscale_setting_name, custom_headers=None, raw=False, **operation_config):
-        """Deletes and autoscale setting.
+            self, resource_uri, name, custom_headers=None, raw=False, **operation_config):
+        """Deletes existing diagnostic settings for the specified resource.
 
-        :param resource_group_name: The name of the resource group.
-        :type resource_group_name: str
-        :param autoscale_setting_name: The autoscale setting name.
-        :type autoscale_setting_name: str
+        :param resource_uri: The identifier of the resource.
+        :type resource_uri: str
+        :param name: The name of the diagnostic setting.
+        :type name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -189,11 +181,10 @@ class AutoscaleSettingsOperations(object):
          :class:`ErrorResponseException<azure.mgmt.monitor.models.ErrorResponseException>`
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/microsoft.insights/autoscalesettings/{autoscaleSettingName}'
+        url = '/{resourceUri}/providers/microsoft.insights/diagnosticSettings/{name}'
         path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            'autoscaleSettingName': self._serialize.url("autoscale_setting_name", autoscale_setting_name, 'str'),
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+            'resourceUri': self._serialize.url("resource_uri", resource_uri, 'str'),
+            'name': self._serialize.url("name", name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -222,32 +213,36 @@ class AutoscaleSettingsOperations(object):
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
 
-    def get(
-            self, resource_group_name, autoscale_setting_name, custom_headers=None, raw=False, **operation_config):
-        """Gets an autoscale setting.
+    def update(
+            self, resource_uri, diagnostic_setting_resource, name, custom_headers=None, raw=False, **operation_config):
+        """Updates an existing DiagnosticSettingsResource tags. To update other
+        fields use the CreateOrUpdate method.
 
-        :param resource_group_name: The name of the resource group.
-        :type resource_group_name: str
-        :param autoscale_setting_name: The autoscale setting name.
-        :type autoscale_setting_name: str
+        :param resource_uri: The identifier of the resource.
+        :type resource_uri: str
+        :param diagnostic_setting_resource: Parameters supplied to the
+         operation.
+        :type diagnostic_setting_resource: :class:`DiagnosticSettingsResource
+         <azure.mgmt.monitor.models.DiagnosticSettingsResource>`
+        :param name: The name of the diagnostic setting.
+        :type name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`AutoscaleSettingResource
-         <azure.mgmt.monitor.models.AutoscaleSettingResource>`
+        :rtype: :class:`DiagnosticSettingsResource
+         <azure.mgmt.monitor.models.DiagnosticSettingsResource>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         :raises:
          :class:`ErrorResponseException<azure.mgmt.monitor.models.ErrorResponseException>`
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/microsoft.insights/autoscalesettings/{autoscaleSettingName}'
+        url = '/{resourceUri}/providers/microsoft.insights/diagnosticSettings/{name}'
         path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            'autoscaleSettingName': self._serialize.url("autoscale_setting_name", autoscale_setting_name, 'str'),
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+            'resourceUri': self._serialize.url("resource_uri", resource_uri, 'str'),
+            'name': self._serialize.url("name", name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -265,9 +260,13 @@ class AutoscaleSettingsOperations(object):
         if self.config.accept_language is not None:
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
+        # Construct body
+        body_content = self._serialize.body(diagnostic_setting_resource, 'DiagnosticSettingsResource')
+
         # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        request = self._client.patch(url, query_parameters)
+        response = self._client.send(
+            request, header_parameters, body_content, **operation_config)
 
         if response.status_code not in [200]:
             raise models.ErrorResponseException(self._deserialize, response)
@@ -275,7 +274,7 @@ class AutoscaleSettingsOperations(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('AutoscaleSettingResource', response)
+            deserialized = self._deserialize('DiagnosticSettingsResource', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)

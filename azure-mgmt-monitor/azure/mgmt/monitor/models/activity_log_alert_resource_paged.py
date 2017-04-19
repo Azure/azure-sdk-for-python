@@ -9,10 +9,19 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .monitor_client import MonitorClient
-from .version import VERSION
+from msrest.paging import Paged
 
-__all__ = ['MonitorClient']
 
-__version__ = VERSION
+class ActivityLogAlertResourcePaged(Paged):
+    """
+    A paging container for iterating over a list of ActivityLogAlertResource object
+    """
 
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[ActivityLogAlertResource]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(ActivityLogAlertResourcePaged, self).__init__(*args, **kwargs)

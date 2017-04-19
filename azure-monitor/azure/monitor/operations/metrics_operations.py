@@ -10,7 +10,6 @@
 # --------------------------------------------------------------------------
 
 from msrest.pipeline import ClientRawResponse
-from msrestazure.azure_exceptions import CloudError
 import uuid
 
 from .. import models
@@ -37,25 +36,26 @@ class MetricsOperations(object):
 
     def list(
             self, resource_uri, filter=None, custom_headers=None, raw=False, **operation_config):
-        """**Lists the metric values for a resource**.<br>The **$filter** is used
-        to reduce the set of metric data returned. Some common properties for
-        this expression will be: name.value, aggregationType, startTime,
-        endTime, timeGrain. The filter expression uses these properties with
+        """Lists the metric values for a resource.<br>The **$filter** is used to
+        reduce the set of metric data returned. Some common properties for this
+        expression will be: name.value, aggregationType, startTime, endTime,
+        timeGrain.<br>The filter expression uses these properties with
         comparison operators (eg. eq, gt, lt) and multiple expressions can be
-        combined with parentheses and 'and/or' operators.<br>Some example
-        filter expressions are:<br>- $filter=(name.value eq 'RunsSucceeded')
-        and aggregationType eq 'Total' and startTime eq 2016-02-20 and endTime
-        eq 2016-02-21 and timeGrain eq duration'PT1M',<br>- $filter=(name.value
-        eq 'RunsSucceeded') and (aggregationType eq 'Total' or aggregationType
-        eq 'Average') and startTime eq 2016-02-20 and endTime eq 2016-02-21 and
-        timeGrain eq duration'PT1H',<br>- $filter=(name.value eq
-        'ActionsCompleted' or name.value eq 'RunsSucceeded') and
+        combined with parentheses and 'and/or' logical operators.<br>Some
+        example filter expressions are:<br>- $filter=(name.value eq
+        'RunsSucceeded') and aggregationType eq 'Total' and startTime eq
+        2016-02-20 and endTime eq 2016-02-21 and timeGrain eq
+        duration'PT1M',<br>- $filter=(name.value eq 'RunsSucceeded') and
         (aggregationType eq 'Total' or aggregationType eq 'Average') and
         startTime eq 2016-02-20 and endTime eq 2016-02-21 and timeGrain eq
-        duration'PT1M'.<br><br> >**NOTE**: When a metrics query comes in with
-        multiple metrics, but with no aggregation types defined, the service
-        will pick the Primary aggregation type of the first metrics to be used
-        as the default aggregation type for all the metrics.
+        duration'PT1H',<br>- $filter=(name.value eq 'ActionsCompleted' or
+        name.value eq 'RunsSucceeded') and (aggregationType eq 'Total' or
+        aggregationType eq 'Average') and startTime eq 2016-02-20 and endTime
+        eq 2016-02-21 and timeGrain eq duration'PT1M'.<br><br> >**NOTE**: When
+        a metrics query comes in with multiple metrics, but with no aggregation
+        types defined, the service will pick the Primary aggregation type of
+        the first metrics to be used as the default aggregation type for all
+        the metrics.
 
         :param resource_uri: The identifier of the resource.
         :type resource_uri: str
@@ -68,7 +68,8 @@ class MetricsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`MetricPaged <azure.monitor.models.MetricPaged>`
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`ErrorResponseException<azure.monitor.models.ErrorResponseException>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -106,9 +107,7 @@ class MetricsOperations(object):
                 request, header_parameters, **operation_config)
 
             if response.status_code not in [200]:
-                exp = CloudError(response)
-                exp.request_id = response.headers.get('x-ms-request-id')
-                raise exp
+                raise models.ErrorResponseException(self._deserialize, response)
 
             return response
 

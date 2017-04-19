@@ -10,7 +10,6 @@
 # --------------------------------------------------------------------------
 
 from msrest.pipeline import ClientRawResponse
-from msrestazure.azure_exceptions import CloudError
 import uuid
 
 from .. import models
@@ -37,9 +36,9 @@ class EventCategoriesOperations(object):
 
     def list(
             self, custom_headers=None, raw=False, **operation_config):
-        """get the list of available event categories supported in the Activity
-        Log Service. The current list includes the following: Aministrative,
-        Security, ServiceHealth, Alert, Recommendation, Policy.
+        """Get the list of available event categories supported in the Activity
+        Logs Service.<br>The current list includes the following:
+        Aministrative, Security, ServiceHealth, Alert, Recommendation, Policy.
 
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -48,7 +47,8 @@ class EventCategoriesOperations(object):
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`LocalizableStringPaged
          <azure.monitor.models.LocalizableStringPaged>`
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`ErrorResponseException<azure.monitor.models.ErrorResponseException>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -80,9 +80,7 @@ class EventCategoriesOperations(object):
                 request, header_parameters, **operation_config)
 
             if response.status_code not in [200]:
-                exp = CloudError(response)
-                exp.request_id = response.headers.get('x-ms-request-id')
-                raise exp
+                raise models.ErrorResponseException(self._deserialize, response)
 
             return response
 

@@ -10,7 +10,6 @@
 # --------------------------------------------------------------------------
 
 from msrest.pipeline import ClientRawResponse
-from msrestazure.azure_exceptions import CloudError
 import uuid
 
 from .. import models
@@ -37,23 +36,25 @@ class ActivityLogsOperations(object):
 
     def list(
             self, filter=None, select=None, custom_headers=None, raw=False, **operation_config):
-        """Provides the list of events. The **$filter** is very restricted and
-        allows only the following patterns. - List events for a resource group:
-        $filter=eventTimestamp ge '<Start Time>' and eventTimestamp le '<End
-        Time>' and eventChannels eq 'Admin, Operation' and resourceGroupName eq
-        '<ResourceGroupName>'. - List events for resource:
-        $filter=eventTimestamp ge '<Start Time>' and eventTimestamp le '<End
-        Time>' and eventChannels eq 'Admin, Operation' and resourceUri eq
-        '<ResourceURI>'. - List events for a subscription:
-        $filter=eventTimestamp ge '<Start Time>' and eventTimestamp le '<End
-        Time>' and eventChannels eq 'Admin, Operation'. -List events for a
-        resource provider: $filter=eventTimestamp ge '<Start Time>' and
+        """Provides the list of records from the activity logs.<br>The **$filter**
+        is very restricted and allows only the following patterns.<br>- List
+        events for a resource group: $filter=eventTimestamp ge '<Start Time>'
+        and eventTimestamp le '<End Time>' and eventChannels eq 'Admin,
+        Operation' and resourceGroupName eq '<ResourceGroupName>'.<br>- List
+        events for resource: $filter=eventTimestamp ge '<Start Time>' and
         eventTimestamp le '<End Time>' and eventChannels eq 'Admin, Operation'
-        and resourceProvider eq '<ResourceProviderName>'. - List events for a
-        correlation Id: api-version=2014-04-01&$filter=eventTimestamp ge
+        and resourceUri eq '<ResourceURI>'.<br>- List events for a
+        subscription: $filter=eventTimestamp ge '<Start Time>' and
+        eventTimestamp le '<End Time>' and eventChannels eq 'Admin,
+        Operation'.<br>-List events for a resource provider:
+        $filter=eventTimestamp ge '<Start Time>' and eventTimestamp le '<End
+        Time>' and eventChannels eq 'Admin, Operation' and resourceProvider eq
+        '<ResourceProviderName>'.<br>- List events for a correlation Id:
+        api-version=2014-04-01&$filter=eventTimestamp ge
         '2014-07-16T04:36:37.6407898Z' and eventTimestamp le
         '2014-07-20T04:36:37.6407898Z' and eventChannels eq 'Admin, Operation'
-        and correlationId eq '<CorrelationID>'. No other syntax is allowed.
+        and correlationId eq '<CorrelationID>'.<br><br>**NOTE**: No other
+        syntax is allowed.
 
         :param filter: Reduces the set of data collected. The syntax allowed
          depends on the operation. See the operation's description for details.
@@ -72,7 +73,8 @@ class ActivityLogsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`EventDataPaged <azure.monitor.models.EventDataPaged>`
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`ErrorResponseException<azure.monitor.models.ErrorResponseException>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -112,9 +114,7 @@ class ActivityLogsOperations(object):
                 request, header_parameters, **operation_config)
 
             if response.status_code not in [200]:
-                exp = CloudError(response)
-                exp.request_id = response.headers.get('x-ms-request-id')
-                raise exp
+                raise models.ErrorResponseException(self._deserialize, response)
 
             return response
 
