@@ -19,7 +19,8 @@
     "authorization": {
       "swagger": "arm-authorization/2015-07-01/swagger/authorization.json",
       "autorest_options": {
-        "Namespace": "azure.mgmt.authorization"
+        "Namespace": "azure.mgmt.authorization",
+        "PackageVersion": "0.30.0"
       },
       "output_dir": "azure-mgmt-authorization/azure/mgmt/authorization"
     },
@@ -82,7 +83,7 @@
       "swagger": "arm-containerregistry/2017-03-01/swagger/containerregistry.json",
       "autorest_options": {
         "Namespace": "azure.mgmt.containerregistry",
-        "PackageVersion": "0.2.0"
+        "PackageVersion": "0.2.1"
       },
       "output_dir": "azure-mgmt-containerregistry/azure/mgmt/containerregistry"
     },
@@ -98,7 +99,7 @@
       "swagger": "arm-dns/2016-04-01/swagger/dns.json",
       "autorest_options": {
         "Namespace": "azure.mgmt.dns",
-        "PackageVersion": "1.0.0"
+        "PackageVersion": "1.0.1"
       },
       "output_dir": "azure-mgmt-dns/azure/mgmt/dns"
     },
@@ -106,7 +107,7 @@
       "swagger": "arm-documentdb/2015-04-08/swagger/documentdb.json",
       "autorest_options": {
         "Namespace": "azure.mgmt.documentdb",
-        "PackageVersion": "0.1.1"
+        "PackageVersion": "0.1.2"
       },
       "output_dir": "azure-mgmt-documentdb/azure/mgmt/documentdb"
     },
@@ -131,7 +132,7 @@
       "swagger": "arm-iothub/2016-02-03/swagger/iothub.json",
       "autorest_options": {
         "Namespace": "azure.mgmt.iothub",
-        "PackageVersion": "0.2.1"
+        "PackageVersion": "0.2.2"
       },
       "output_dir": "azure-mgmt-iothub/azure/mgmt/iothub"
     },
@@ -395,7 +396,7 @@
       "autorest_options": {
         "Namespace": "azure.mgmt.web",
         "Modeler": "CompositeSwagger",
-        "PackageVersion": "0.31.0"
+        "PackageVersion": "0.31.1"
       },
       "output_dir": "azure-mgmt-web/azure/mgmt/web/"
     },
