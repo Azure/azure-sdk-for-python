@@ -142,12 +142,12 @@
         "PackageVersion": "0.1.0"
       },
       "output_dir": "unreleased/azure-mgmt-intune/azure/mgmt/intune"
-    },
-    "keyvault": {
+    },  
+    "keyvault.mgmt": {
       "swagger": "arm-keyvault/2015-06-01/swagger/keyvault.json",
       "autorest_options": {
         "Namespace": "azure.mgmt.keyvault",
-        "PackageVersion": "0.30.1"
+        "PackageVersion": "0.31.0"
       },
       "output_dir": "azure-mgmt-keyvault/azure/mgmt/keyvault"
     },
@@ -155,7 +155,7 @@
       "swagger": "keyvault/2016-10-01/swagger/keyvault.json",
       "autorest_options": {
         "Namespace": "azure.keyvault.generated",
-        "PackageVersion": "0.1.0"
+        "PackageVersion": "0.1.1"
       },
       "output_dir": "azure-keyvault/azure/keyvault/generated",
       "generated_relative_base_directory": "azure/keyvault/generated"
