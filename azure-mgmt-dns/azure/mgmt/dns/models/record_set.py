@@ -53,7 +53,7 @@ class RecordSet(Model):
      <azure.mgmt.dns.models.CnameRecord>`
     :param soa_record: The SOA record in the record set.
     :type soa_record: :class:`SoaRecord <azure.mgmt.dns.models.SoaRecord>`
-    """ 
+    """
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
