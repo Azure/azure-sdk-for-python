@@ -29,7 +29,7 @@ class ProviderOperationsMetadata(Model):
     :param operations: The provider operations.
     :type operations: list of :class:`ProviderOperation
      <azure.mgmt.authorization.models.ProviderOperation>`
-    """ 
+    """
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},

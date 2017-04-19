@@ -25,7 +25,7 @@ class ProviderOperation(Model):
     :type origin: str
     :param properties: The operation properties.
     :type properties: object
-    """ 
+    """
 
     _attribute_map = {
         'name': {'key': 'name', 'type': 'str'},

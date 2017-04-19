@@ -21,7 +21,7 @@ class RoleAssignmentPropertiesWithScope(Model):
     :type role_definition_id: str
     :param principal_id: The principal ID.
     :type principal_id: str
-    """ 
+    """
 
     _attribute_map = {
         'scope': {'key': 'scope', 'type': 'str'},
