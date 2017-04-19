@@ -24,7 +24,7 @@ class RoleDefinition(Model):
     :param properties: Role definition properties.
     :type properties: :class:`RoleDefinitionProperties
      <azure.mgmt.authorization.models.RoleDefinitionProperties>`
-    """ 
+    """
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},

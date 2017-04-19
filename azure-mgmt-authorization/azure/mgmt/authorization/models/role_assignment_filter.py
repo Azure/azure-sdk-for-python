@@ -17,7 +17,7 @@ class RoleAssignmentFilter(Model):
 
     :param principal_id: Returns role assignment of the specific principal.
     :type principal_id: str
-    """ 
+    """
 
     _attribute_map = {
         'principal_id': {'key': 'principalId', 'type': 'str'},
