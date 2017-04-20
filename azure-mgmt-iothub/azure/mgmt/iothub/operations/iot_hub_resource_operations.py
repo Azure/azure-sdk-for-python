@@ -623,11 +623,11 @@ class IotHubResourceOperations(object):
             return response
 
         # Deserialize response
-        deserialized = models.strPaged(internal_paging, self._deserialize.dependencies)
+        deserialized = models.StrPaged(internal_paging, self._deserialize.dependencies)
 
         if raw:
             header_dict = {}
-            client_raw_response = models.strPaged(internal_paging, self._deserialize.dependencies, header_dict)
+            client_raw_response = models.StrPaged(internal_paging, self._deserialize.dependencies, header_dict)
             return client_raw_response
 
         return deserialized
