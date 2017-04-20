@@ -16,9 +16,9 @@ class DnsConfig(Model):
     """Class containing DNS settings in a Traffic Manager profile.
 
     :param relative_name: Gets or sets the relative DNS name provided by this
-     Traffic Manager profile.  This value is combined with the DNS domain
-     name used by Azure Traffic Manager to form the fully-qualified domain
-     name (FQDN) of the profile.
+     Traffic Manager profile.  This value is combined with the DNS domain name
+     used by Azure Traffic Manager to form the fully-qualified domain name
+     (FQDN) of the profile.
     :type relative_name: str
     :param fqdn: Gets or sets the fully-qualified domain name (FQDN) of the
      Traffic Manager profile.  This is formed from the concatenation of the
@@ -28,7 +28,7 @@ class DnsConfig(Model):
      informs the local DNS resolvers and DNS clients how long to cache DNS
      responses provided by this Traffic Manager profile.
     :type ttl: long
-    """ 
+    """
 
     _attribute_map = {
         'relative_name': {'key': 'relativeName', 'type': 'str'},
