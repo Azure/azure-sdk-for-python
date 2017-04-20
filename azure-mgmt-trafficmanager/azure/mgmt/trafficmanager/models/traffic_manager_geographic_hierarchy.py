@@ -9,11 +9,12 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.serialization import Model
+from .resource import Resource
 
 
-class Resource(Model):
-    """The Resource model definition.
+class TrafficManagerGeographicHierarchy(Resource):
+    """Class representing the Geographic hierarchy used with the Geographic
+    traffic routing method.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -28,6 +29,10 @@ class Resource(Model):
     :type location: str
     :param tags: Resource tags
     :type tags: dict
+    :param geographic_hierarchy: The region at the root of the hierarchy from
+     all the regions in the hierarchy can be retrieved.
+    :type geographic_hierarchy: :class:`Region
+     <azure.mgmt.trafficmanager.models.Region>`
     """
 
     _validation = {
@@ -42,11 +47,9 @@ class Resource(Model):
         'type': {'key': 'type', 'type': 'str'},
         'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
+        'geographic_hierarchy': {'key': 'properties.geographicHierarchy', 'type': 'Region'},
     }
 
-    def __init__(self, location=None, tags=None):
-        self.id = None
-        self.name = None
-        self.type = None
-        self.location = location
-        self.tags = tags
+    def __init__(self, location=None, tags=None, geographic_hierarchy=None):
+        super(TrafficManagerGeographicHierarchy, self).__init__(location=location, tags=tags)
+        self.geographic_hierarchy = geographic_hierarchy

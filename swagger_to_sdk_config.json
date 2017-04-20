@@ -385,9 +385,10 @@
       "generated_relative_base_directory": "azure/mgmt/storage/v2016_12_01"
     },
     "trafficmanager": {
-      "swagger": "arm-trafficmanager/2015-11-01/swagger/trafficmanager.json",
+      "swagger": "arm-trafficmanager/2017-03-01/swagger/trafficmanager.json",
       "autorest_options": {
-        "Namespace": "azure.mgmt.trafficmanager"
+        "Namespace": "azure.mgmt.trafficmanager",
+        "PackageVersion": "0.30.0"
       },
       "output_dir": "azure-mgmt-trafficmanager/azure/mgmt/trafficmanager"
     },
