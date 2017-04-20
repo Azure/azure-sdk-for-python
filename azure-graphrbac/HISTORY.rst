@@ -3,6 +3,12 @@
 Release History
 ===============
 
+0.30.0 (2017-04-20)
++++++++++++++++++++
+
+* ApiVersion is now 1.6 for the whole package
+* This wheel package is now built with the azure wheel extension
+
 0.30.0rc6 (2016-09-14)
 ++++++++++++++++++++++
 
