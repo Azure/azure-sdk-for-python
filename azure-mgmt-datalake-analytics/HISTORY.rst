@@ -2,6 +2,19 @@
 
 Release History
 ===============
+0.1.4 (2017-04-20)
+++++++++++++++++++
+
+**New features**
+
+  * Catalog item get and list support for Packages
+  * Update to allow listing certain catalog items from within a database (no schema required to list):
+  
+    * list_tables_by_database
+    * list_table_valued_functions_by_database
+    * list_views_by_database
+    * list_table_statistics_by_database
+    * list_table_statistics_by_database_and_schema
 
 0.1.3 (2017-02-13)
 ++++++++++++++++++
