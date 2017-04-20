@@ -26,25 +26,24 @@ class Endpoint(Model):
      the endpoint.  Not applicable to endpoints of type 'ExternalEndpoints'.
     :type target_resource_id: str
     :param target: Gets or sets the fully-qualified DNS name of the endpoint.
-     Traffic Manager returns this value in DNS responses to direct traffic
-     to this endpoint.
+     Traffic Manager returns this value in DNS responses to direct traffic to
+     this endpoint.
     :type target: str
     :param endpoint_status: Gets or sets the status of the endpoint..  If the
      endpoint is Enabled, it is probed for endpoint health and is included in
-     the traffic routing method.  Possible values are 'Enabled' and
-     'Disabled'.
+     the traffic routing method.  Possible values are 'Enabled' and 'Disabled'.
     :type endpoint_status: str
     :param weight: Gets or sets the weight of this endpoint when using the
      'Weighted' traffic routing method. Possible values are from 1 to 1000.
     :type weight: long
-    :param priority: Gets or sets the priority of this endpoint when using
-     the ‘Priority’ traffic routing method. Possible values are from 1 to
-     1000, lower values represent higher priority. This is an optional
-     parameter.  If specified, it must be specified on all endpoints, and no
-     two endpoints can share the same priority value.
+    :param priority: Gets or sets the priority of this endpoint when using the
+     ‘Priority’ traffic routing method. Possible values are from 1 to 1000,
+     lower values represent higher priority. This is an optional parameter.  If
+     specified, it must be specified on all endpoints, and no two endpoints can
+     share the same priority value.
     :type priority: long
-    :param endpoint_location: Specifies the location of the external or
-     nested endpoints when using the ‘Performance’ traffic routing method.
+    :param endpoint_location: Specifies the location of the external or nested
+     endpoints when using the ‘Performance’ traffic routing method.
     :type endpoint_location: str
     :param endpoint_monitor_status: Gets or sets the monitoring status of the
      endpoint.
@@ -54,7 +53,12 @@ class Endpoint(Model):
      profile to be considered available. Only applicable to endpoint of type
      'NestedEndpoints'.
     :type min_child_endpoints: long
-    """ 
+    :param geo_mapping: Gets or sets the list of countries/regions mapped to
+     this endpoint when using the ‘Geographic’ traffic routing method. Please
+     consult Traffic Manager Geographic documentation for a full list of
+     accepted values.
+    :type geo_mapping: list of str
+    """
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
@@ -68,9 +72,10 @@ class Endpoint(Model):
         'endpoint_location': {'key': 'properties.endpointLocation', 'type': 'str'},
         'endpoint_monitor_status': {'key': 'properties.endpointMonitorStatus', 'type': 'str'},
         'min_child_endpoints': {'key': 'properties.minChildEndpoints', 'type': 'long'},
+        'geo_mapping': {'key': 'properties.geoMapping', 'type': '[str]'},
     }
 
-    def __init__(self, id=None, name=None, type=None, target_resource_id=None, target=None, endpoint_status=None, weight=None, priority=None, endpoint_location=None, endpoint_monitor_status=None, min_child_endpoints=None):
+    def __init__(self, id=None, name=None, type=None, target_resource_id=None, target=None, endpoint_status=None, weight=None, priority=None, endpoint_location=None, endpoint_monitor_status=None, min_child_endpoints=None, geo_mapping=None):
         self.id = id
         self.name = name
         self.type = type
@@ -82,3 +87,4 @@ class Endpoint(Model):
         self.endpoint_location = endpoint_location
         self.endpoint_monitor_status = endpoint_monitor_status
         self.min_child_endpoints = min_child_endpoints
+        self.geo_mapping = geo_mapping

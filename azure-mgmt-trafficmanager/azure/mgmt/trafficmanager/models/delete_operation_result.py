@@ -12,20 +12,23 @@
 from msrest.serialization import Model
 
 
-class CheckTrafficManagerRelativeDnsNameAvailabilityParameters(Model):
-    """Parameters supplied to check Traffic Manager name operation.
+class DeleteOperationResult(Model):
+    """The result of the request or operation.
 
-    :param name: Gets or sets the name of the resource.
-    :type name: str
-    :param type: Gets or sets the type of the resource.
-    :type type: str
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar operation_result: The result of the operation or request.
+    :vartype operation_result: bool
     """
 
-    _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
+    _validation = {
+        'operation_result': {'readonly': True},
     }
 
-    def __init__(self, name=None, type=None):
-        self.name = name
-        self.type = type
+    _attribute_map = {
+        'operation_result': {'key': 'boolean', 'type': 'bool'},
+    }
+
+    def __init__(self):
+        self.operation_result = None
