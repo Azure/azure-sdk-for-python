@@ -16,6 +16,10 @@ Release History
     * list_table_statistics_by_database
     * list_table_statistics_by_database_and_schema
 
+**Notes**
+
+* This wheel package is now built with the azure wheel extension
+
 0.1.3 (2017-02-13)
 ++++++++++++++++++
 
