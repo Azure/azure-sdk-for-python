@@ -17,7 +17,7 @@ class SharedAccessAuthorizationRuleCreateOrUpdateParameters(Model):
 
     :param location: Data center location.
     :type location: str
-    :param name: Name of the authorization rule.
+    :param name: Name of the AuthorizationRule.
     :type name: str
     :param rights: The rights associated with the rule.
     :type rights: list of str or :class:`AccessRights

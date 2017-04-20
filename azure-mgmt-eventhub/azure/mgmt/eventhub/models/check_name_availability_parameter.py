@@ -9,19 +9,23 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.paging import Paged
+from msrest.serialization import Model
 
 
-class NamespaceResourcePaged(Paged):
+class CheckNameAvailabilityParameter(Model):
+    """Parameter supplied to check Namespace name availability operation .
+
+    :param name: Name to check the namespace name availability
+    :type name: str
     """
-    A paging container for iterating over a list of NamespaceResource object
-    """
 
-    _attribute_map = {
-        'next_link': {'key': 'nextLink', 'type': 'str'},
-        'current_page': {'key': 'value', 'type': '[NamespaceResource]'}
+    _validation = {
+        'name': {'required': True},
     }
 
-    def __init__(self, *args, **kwargs):
+    _attribute_map = {
+        'name': {'key': 'name', 'type': 'str'},
+    }
 
-        super(NamespaceResourcePaged, self).__init__(*args, **kwargs)
+    def __init__(self, name):
+        self.name = name

@@ -13,7 +13,7 @@ from msrest.serialization import Model
 
 
 class RegenerateKeysParameters(Model):
-    """Parameters supplied to the Regenerate Authorization Rule operation.
+    """Parameters supplied to the Regenerate Authorization Rule keys operation.
 
     :param policykey: Key that needs to be regenerated. Possible values
      include: 'PrimaryKey', 'SecondaryKey'
@@ -22,7 +22,7 @@ class RegenerateKeysParameters(Model):
     """
 
     _attribute_map = {
-        'policykey': {'key': 'Policykey', 'type': 'Policykey'},
+        'policykey': {'key': 'policykey', 'type': 'Policykey'},
     }
 
     def __init__(self, policykey=None):

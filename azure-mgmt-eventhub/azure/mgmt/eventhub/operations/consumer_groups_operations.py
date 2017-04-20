@@ -23,6 +23,7 @@ class ConsumerGroupsOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An objec model deserializer.
+    :ivar api_version: Client API Version. Constant value: "2015-08-01".
     """
 
     def __init__(self, client, config, serializer, deserializer):
@@ -30,24 +31,26 @@ class ConsumerGroupsOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
+        self.api_version = "2015-08-01"
 
         self.config = config
 
     def create_or_update(
             self, resource_group_name, namespace_name, event_hub_name, consumer_group_name, parameters, custom_headers=None, raw=False, **operation_config):
         """Creates or updates an Event Hubs consumer group as a nested resource
-        within a namespace.
+        within a Namespace.
 
-        :param resource_group_name: The name of the resource group.
+        :param resource_group_name: Name of the resource group within the
+         azure subscription.
         :type resource_group_name: str
-        :param namespace_name: The namespace name.
+        :param namespace_name: The Namespace name
         :type namespace_name: str
-        :param event_hub_name: The Event Hub name.
+        :param event_hub_name: The Event Hub name
         :type event_hub_name: str
-        :param consumer_group_name: The consumer group name.
+        :param consumer_group_name: The consumer group name
         :type consumer_group_name: str
-        :param parameters: Parameters supplied to create a consumer group
-         resource.
+        :param parameters: Parameters supplied to create or update a consumer
+         group resource.
         :type parameters: :class:`ConsumerGroupCreateOrUpdateParameters
          <azure.mgmt.eventhub.models.ConsumerGroupCreateOrUpdateParameters>`
         :param dict custom_headers: headers that will be added to the request
@@ -64,17 +67,17 @@ class ConsumerGroupsOperations(object):
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventHub/namespaces/{namespaceName}/eventhubs/{eventHubName}/consumergroups/{consumerGroupName}'
         path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            'namespaceName': self._serialize.url("namespace_name", namespace_name, 'str'),
-            'eventHubName': self._serialize.url("event_hub_name", event_hub_name, 'str'),
-            'consumerGroupName': self._serialize.url("consumer_group_name", consumer_group_name, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
+            'namespaceName': self._serialize.url("namespace_name", namespace_name, 'str', max_length=50, min_length=6),
+            'eventHubName': self._serialize.url("event_hub_name", event_hub_name, 'str', max_length=50, min_length=1),
+            'consumerGroupName': self._serialize.url("consumer_group_name", consumer_group_name, 'str', max_length=50, min_length=1),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -115,13 +118,14 @@ class ConsumerGroupsOperations(object):
         """Deletes a consumer group from the specified Event Hub and resource
         group.
 
-        :param resource_group_name: The name of the resource group.
+        :param resource_group_name: Name of the resource group within the
+         azure subscription.
         :type resource_group_name: str
-        :param namespace_name: The namespace name.
+        :param namespace_name: The Namespace name
         :type namespace_name: str
-        :param event_hub_name: The Event Hub name.
+        :param event_hub_name: The Event Hub name
         :type event_hub_name: str
-        :param consumer_group_name: The Cconsumer group name.
+        :param consumer_group_name: The consumer group name
         :type consumer_group_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -136,17 +140,17 @@ class ConsumerGroupsOperations(object):
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventHub/namespaces/{namespaceName}/eventhubs/{eventHubName}/consumergroups/{consumerGroupName}'
         path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            'namespaceName': self._serialize.url("namespace_name", namespace_name, 'str'),
-            'eventHubName': self._serialize.url("event_hub_name", event_hub_name, 'str'),
-            'consumerGroupName': self._serialize.url("consumer_group_name", consumer_group_name, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
+            'namespaceName': self._serialize.url("namespace_name", namespace_name, 'str', max_length=50, min_length=6),
+            'eventHubName': self._serialize.url("event_hub_name", event_hub_name, 'str', max_length=50, min_length=1),
+            'consumerGroupName': self._serialize.url("consumer_group_name", consumer_group_name, 'str', max_length=50, min_length=1),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -175,13 +179,14 @@ class ConsumerGroupsOperations(object):
             self, resource_group_name, namespace_name, event_hub_name, consumer_group_name, custom_headers=None, raw=False, **operation_config):
         """Gets a description for the specified consumer group.
 
-        :param resource_group_name: The name of the resource group.
+        :param resource_group_name: Name of the resource group within the
+         azure subscription.
         :type resource_group_name: str
-        :param namespace_name: The namespace name.
+        :param namespace_name: The Namespace name
         :type namespace_name: str
-        :param event_hub_name: The Event Hub name.
+        :param event_hub_name: The Event Hub name
         :type event_hub_name: str
-        :param consumer_group_name: The consumer group name.
+        :param consumer_group_name: The consumer group name
         :type consumer_group_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -197,17 +202,17 @@ class ConsumerGroupsOperations(object):
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventHub/namespaces/{namespaceName}/eventhubs/{eventHubName}/consumergroups/{consumerGroupName}'
         path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            'namespaceName': self._serialize.url("namespace_name", namespace_name, 'str'),
-            'eventHubName': self._serialize.url("event_hub_name", event_hub_name, 'str'),
-            'consumerGroupName': self._serialize.url("consumer_group_name", consumer_group_name, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
+            'namespaceName': self._serialize.url("namespace_name", namespace_name, 'str', max_length=50, min_length=6),
+            'eventHubName': self._serialize.url("event_hub_name", event_hub_name, 'str', max_length=50, min_length=1),
+            'consumerGroupName': self._serialize.url("consumer_group_name", consumer_group_name, 'str', max_length=50, min_length=1),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -241,14 +246,15 @@ class ConsumerGroupsOperations(object):
 
     def list_all(
             self, resource_group_name, namespace_name, event_hub_name, custom_headers=None, raw=False, **operation_config):
-        """Gets all the consumer groups in a namespace. An empty feed is returned
-        if no consumer group exists in the namespace.
+        """Gets all the consumer groups in a Namespace. An empty feed is returned
+        if no consumer group exists in the Namespace.
 
-        :param resource_group_name: The name of the resource group.
+        :param resource_group_name: Name of the resource group within the
+         azure subscription.
         :type resource_group_name: str
-        :param namespace_name: The namespace name.
+        :param namespace_name: The Namespace name
         :type namespace_name: str
-        :param event_hub_name: The Event Hub name.
+        :param event_hub_name: The Event Hub name
         :type event_hub_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -265,16 +271,16 @@ class ConsumerGroupsOperations(object):
                 # Construct URL
                 url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventHub/namespaces/{namespaceName}/eventhubs/{eventHubName}/consumergroups'
                 path_format_arguments = {
-                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-                    'namespaceName': self._serialize.url("namespace_name", namespace_name, 'str'),
-                    'eventHubName': self._serialize.url("event_hub_name", event_hub_name, 'str'),
+                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
+                    'namespaceName': self._serialize.url("namespace_name", namespace_name, 'str', max_length=50, min_length=6),
+                    'eventHubName': self._serialize.url("event_hub_name", event_hub_name, 'str', max_length=50, min_length=1),
                     'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
                 }
                 url = self._client.format_url(url, **path_format_arguments)
 
                 # Construct parameters
                 query_parameters = {}
-                query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
+                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
             else:
                 url = next_link

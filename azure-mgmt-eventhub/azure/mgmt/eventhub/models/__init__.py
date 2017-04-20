@@ -9,6 +9,9 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
+from .operation_display import OperationDisplay
+from .operation import Operation
+from .tracked_resource import TrackedResource
 from .resource import Resource
 from .sku import Sku
 from .namespace_create_or_update_parameters import NamespaceCreateOrUpdateParameters
@@ -21,6 +24,10 @@ from .event_hub_create_or_update_parameters import EventHubCreateOrUpdateParamet
 from .event_hub_resource import EventHubResource
 from .consumer_group_create_or_update_parameters import ConsumerGroupCreateOrUpdateParameters
 from .consumer_group_resource import ConsumerGroupResource
+from .check_name_availability_parameter import CheckNameAvailabilityParameter
+from .check_name_availability_result import CheckNameAvailabilityResult
+from .namespace_update_parameter import NamespaceUpdateParameter
+from .operation_paged import OperationPaged
 from .namespace_resource_paged import NamespaceResourcePaged
 from .shared_access_authorization_rule_resource_paged import SharedAccessAuthorizationRuleResourcePaged
 from .event_hub_resource_paged import EventHubResourcePaged
@@ -32,9 +39,13 @@ from .event_hub_management_client_enums import (
     AccessRights,
     Policykey,
     EntityStatus,
+    UnavailableReason,
 )
 
 __all__ = [
+    'OperationDisplay',
+    'Operation',
+    'TrackedResource',
     'Resource',
     'Sku',
     'NamespaceCreateOrUpdateParameters',
@@ -47,6 +58,10 @@ __all__ = [
     'EventHubResource',
     'ConsumerGroupCreateOrUpdateParameters',
     'ConsumerGroupResource',
+    'CheckNameAvailabilityParameter',
+    'CheckNameAvailabilityResult',
+    'NamespaceUpdateParameter',
+    'OperationPaged',
     'NamespaceResourcePaged',
     'SharedAccessAuthorizationRuleResourcePaged',
     'EventHubResourcePaged',
@@ -57,4 +72,5 @@ __all__ = [
     'AccessRights',
     'Policykey',
     'EntityStatus',
+    'UnavailableReason',
 ]

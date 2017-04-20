@@ -9,19 +9,23 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.paging import Paged
+from msrest.serialization import Model
 
 
-class NamespaceResourcePaged(Paged):
-    """
-    A paging container for iterating over a list of NamespaceResource object
+class NamespaceUpdateParameter(Model):
+    """Parameters supplied to the Patch/update Namespace operation.
+
+    :param tags: Resource tags
+    :type tags: dict
+    :param sku: The sku of the created Namespace
+    :type sku: :class:`Sku <azure.mgmt.eventhub.models.Sku>`
     """
 
     _attribute_map = {
-        'next_link': {'key': 'nextLink', 'type': 'str'},
-        'current_page': {'key': 'value', 'type': '[NamespaceResource]'}
+        'tags': {'key': 'tags', 'type': '{str}'},
+        'sku': {'key': 'sku', 'type': 'Sku'},
     }
 
-    def __init__(self, *args, **kwargs):
-
-        super(NamespaceResourcePaged, self).__init__(*args, **kwargs)
+    def __init__(self, tags=None, sku=None):
+        self.tags = tags
+        self.sku = sku

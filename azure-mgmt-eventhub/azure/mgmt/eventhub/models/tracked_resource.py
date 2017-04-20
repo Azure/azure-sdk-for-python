@@ -12,8 +12,8 @@
 from .resource import Resource
 
 
-class SharedAccessAuthorizationRuleResource(Resource):
-    """Single item in a List or Get AuthorizationRule operation.
+class TrackedResource(Resource):
+    """Definition of Resource.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -24,25 +24,28 @@ class SharedAccessAuthorizationRuleResource(Resource):
     :vartype name: str
     :ivar type: Resource type
     :vartype type: str
-    :param rights: The rights associated with the rule.
-    :type rights: list of str or :class:`AccessRights
-     <azure.mgmt.eventhub.models.AccessRights>`
+    :param location: Resource location
+    :type location: str
+    :param tags: Resource tags
+    :type tags: dict
     """
 
     _validation = {
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
-        'rights': {'required': True},
+        'location': {'required': True},
     }
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'rights': {'key': 'properties.rights', 'type': '[AccessRights]'},
+        'location': {'key': 'location', 'type': 'str'},
+        'tags': {'key': 'tags', 'type': '{str}'},
     }
 
-    def __init__(self, rights):
-        super(SharedAccessAuthorizationRuleResource, self).__init__()
-        self.rights = rights
+    def __init__(self, location, tags=None):
+        super(TrackedResource, self).__init__()
+        self.location = location
+        self.tags = tags
