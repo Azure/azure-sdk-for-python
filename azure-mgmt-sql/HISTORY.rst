@@ -14,6 +14,10 @@ Release History
 
 - Added elastic pool capabilities to capabilities API.
 
+**Notes**
+
+* This wheel package is now built with the azure wheel extension
+
 0.4.0 (2017-03-22)
 ++++++++++++++++++
 
