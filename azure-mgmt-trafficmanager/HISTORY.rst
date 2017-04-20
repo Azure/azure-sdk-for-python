@@ -3,7 +3,9 @@
 Release History
 ===============
 
-0.30.0RC5 (2016-08-09)
-++++++++++++++++++++++
+0.30.0 (2017-04-20)
++++++++++++++++++++
 
-* Initial Release
+* Initial Release (ApiVersion 2017-03-01)
+
+This wheel package is built with the azure wheel extension
