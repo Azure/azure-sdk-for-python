@@ -20,7 +20,7 @@ class GraphError(Model):
     :type code: str
     :param message: Error message value.
     :type message: str
-    """ 
+    """
 
     _attribute_map = {
         'code': {'key': 'odata\\.error.code', 'type': 'str'},
