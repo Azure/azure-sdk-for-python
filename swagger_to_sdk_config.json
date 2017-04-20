@@ -123,7 +123,8 @@
       "swagger": "arm-graphrbac/compositeGraphRbacManagementClient.json",
       "autorest_options": {
         "Namespace": "azure.graphrbac",
-        "Modeler": "CompositeSwagger"
+        "Modeler": "CompositeSwagger",
+        "PackageVersion": "0.30.0"
       },
       "output_dir": "azure-graphrbac/azure/graphrbac",
       "generated_relative_base_directory": "azure/graphrbac"
