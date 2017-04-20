@@ -23,6 +23,7 @@ class RecordSetsOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An objec model deserializer.
+    :ivar api_version: Specifies the API version. Constant value: "2016-04-01".
     """
 
     def __init__(self, client, config, serializer, deserializer):
@@ -30,6 +31,7 @@ class RecordSetsOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
+        self.api_version = "2016-04-01"
 
         self.config = config
 
@@ -52,9 +54,9 @@ class RecordSetsOperations(object):
          <azure.mgmt.dns.models.RecordType>`
         :param parameters: Parameters supplied to the Update operation.
         :type parameters: :class:`RecordSet <azure.mgmt.dns.models.RecordSet>`
-        :param if_match: The etag of the record set. Omit this value to
-         always overwrite the current record set. Specify the last-seen etag
-         value to prevent accidentally overwritting concurrent changes.
+        :param if_match: The etag of the record set. Omit this value to always
+         overwrite the current record set. Specify the last-seen etag value to
+         prevent accidentally overwritting concurrent changes.
         :type if_match: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -79,7 +81,7 @@ class RecordSetsOperations(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -130,21 +132,21 @@ class RecordSetsOperations(object):
          to the name of the zone.
         :type relative_record_set_name: str
         :param record_type: The type of DNS record in this record set. Record
-         sets of type SOA can be updated but not created (they are created
-         when the DNS zone is created). Possible values include: 'A', 'AAAA',
+         sets of type SOA can be updated but not created (they are created when
+         the DNS zone is created). Possible values include: 'A', 'AAAA',
          'CNAME', 'MX', 'NS', 'PTR', 'SOA', 'SRV', 'TXT'
         :type record_type: str or :class:`RecordType
          <azure.mgmt.dns.models.RecordType>`
         :param parameters: Parameters supplied to the CreateOrUpdate
          operation.
         :type parameters: :class:`RecordSet <azure.mgmt.dns.models.RecordSet>`
-        :param if_match: The etag of the record set. Omit this value to
-         always overwrite the current record set. Specify the last-seen etag
-         value to prevent accidentally overwritting any concurrent changes.
+        :param if_match: The etag of the record set. Omit this value to always
+         overwrite the current record set. Specify the last-seen etag value to
+         prevent accidentally overwritting any concurrent changes.
         :type if_match: str
         :param if_none_match: Set to '*' to allow a new record set to be
-         created, but to prevent updating an existing record set. Other
-         values will be ignored.
+         created, but to prevent updating an existing record set. Other values
+         will be ignored.
         :type if_none_match: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -169,7 +171,7 @@ class RecordSetsOperations(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -224,14 +226,14 @@ class RecordSetsOperations(object):
          to the name of the zone.
         :type relative_record_set_name: str
         :param record_type: The type of DNS record in this record set. Record
-         sets of type SOA cannot be deleted (they are deleted when the DNS
-         zone is deleted). Possible values include: 'A', 'AAAA', 'CNAME',
-         'MX', 'NS', 'PTR', 'SOA', 'SRV', 'TXT'
+         sets of type SOA cannot be deleted (they are deleted when the DNS zone
+         is deleted). Possible values include: 'A', 'AAAA', 'CNAME', 'MX',
+         'NS', 'PTR', 'SOA', 'SRV', 'TXT'
         :type record_type: str or :class:`RecordType
          <azure.mgmt.dns.models.RecordType>`
-        :param if_match: The etag of the record set. Omit this value to
-         always delete the current record set. Specify the last-seen etag
-         value to prevent accidentally deleting any concurrent changes.
+        :param if_match: The etag of the record set. Omit this value to always
+         delete the current record set. Specify the last-seen etag value to
+         prevent accidentally deleting any concurrent changes.
         :type if_match: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -256,7 +258,7 @@ class RecordSetsOperations(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -323,7 +325,7 @@ class RecordSetsOperations(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -365,8 +367,8 @@ class RecordSetsOperations(object):
          dot).
         :type zone_name: str
         :param record_type: The type of record sets to enumerate. Possible
-         values include: 'A', 'AAAA', 'CNAME', 'MX', 'NS', 'PTR', 'SOA',
-         'SRV', 'TXT'
+         values include: 'A', 'AAAA', 'CNAME', 'MX', 'NS', 'PTR', 'SOA', 'SRV',
+         'TXT'
         :type record_type: str or :class:`RecordType
          <azure.mgmt.dns.models.RecordType>`
         :param top: The maximum number of record sets to return. If not
@@ -397,7 +399,7 @@ class RecordSetsOperations(object):
                 query_parameters = {}
                 if top is not None:
                     query_parameters['$top'] = self._serialize.query("top", top, 'int')
-                query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
+                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
             else:
                 url = next_link
@@ -471,7 +473,7 @@ class RecordSetsOperations(object):
                 query_parameters = {}
                 if top is not None:
                     query_parameters['$top'] = self._serialize.query("top", top, 'int')
-                query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
+                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
             else:
                 url = next_link
