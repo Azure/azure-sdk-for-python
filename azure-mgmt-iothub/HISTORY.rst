@@ -3,6 +3,17 @@
 Release History
 ===============
 
+0.2.2 (2017-04-20)
+++++++++++++++++++
+
+**Bugfixes**
+
+- Fix possible deserialization error, but updating from dict<str, enumtype> to dict<str, str> when applicable
+
+**Notes**
+
+- This wheel package is now built with the azure wheel extension
+
 0.2.1 (2016-12-16)
 ++++++++++++++++++
 
