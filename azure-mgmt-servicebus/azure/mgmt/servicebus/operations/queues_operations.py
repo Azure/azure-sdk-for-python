@@ -23,6 +23,7 @@ class QueuesOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An objec model deserializer.
+    :ivar api_version: Client API version. Constant value: "2015-08-01".
     """
 
     def __init__(self, client, config, serializer, deserializer):
@@ -30,6 +31,7 @@ class QueuesOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
+        self.api_version = "2015-08-01"
 
         self.config = config
 
@@ -37,9 +39,10 @@ class QueuesOperations(object):
             self, resource_group_name, namespace_name, custom_headers=None, raw=False, **operation_config):
         """Gets the queues within a namespace.
 
-        :param resource_group_name: The name of the resource group.
+        :param resource_group_name: Name of the Resource group within the
+         Azure subscription.
         :type resource_group_name: str
-        :param namespace_name: The namespace name.
+        :param namespace_name: The namespace name
         :type namespace_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -56,15 +59,15 @@ class QueuesOperations(object):
                 # Construct URL
                 url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ServiceBus/namespaces/{namespaceName}/queues'
                 path_format_arguments = {
-                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-                    'namespaceName': self._serialize.url("namespace_name", namespace_name, 'str'),
+                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
+                    'namespaceName': self._serialize.url("namespace_name", namespace_name, 'str', max_length=50, min_length=6),
                     'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
                 }
                 url = self._client.format_url(url, **path_format_arguments)
 
                 # Construct parameters
                 query_parameters = {}
-                query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
+                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
             else:
                 url = next_link
@@ -106,9 +109,10 @@ class QueuesOperations(object):
             self, resource_group_name, namespace_name, queue_name, parameters, custom_headers=None, raw=False, **operation_config):
         """Creates or updates a Service Bus queue. This operation is idempotent.
 
-        :param resource_group_name: The name of the resource group.
+        :param resource_group_name: Name of the Resource group within the
+         Azure subscription.
         :type resource_group_name: str
-        :param namespace_name: The namespace name.
+        :param namespace_name: The namespace name
         :type namespace_name: str
         :param queue_name: The queue name.
         :type queue_name: str
@@ -130,16 +134,16 @@ class QueuesOperations(object):
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ServiceBus/namespaces/{namespaceName}/queues/{queueName}'
         path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            'namespaceName': self._serialize.url("namespace_name", namespace_name, 'str'),
-            'queueName': self._serialize.url("queue_name", queue_name, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
+            'namespaceName': self._serialize.url("namespace_name", namespace_name, 'str', max_length=50, min_length=6),
+            'queueName': self._serialize.url("queue_name", queue_name, 'str', max_length=50, min_length=1),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -179,11 +183,12 @@ class QueuesOperations(object):
             self, resource_group_name, namespace_name, queue_name, custom_headers=None, raw=False, **operation_config):
         """Deletes a queue from the specified namespace in a resource group.
 
-        :param resource_group_name: The name of the resource group.
+        :param resource_group_name: Name of the Resource group within the
+         Azure subscription.
         :type resource_group_name: str
-        :param namespace_name: The namespace name.
+        :param namespace_name: The namespace name
         :type namespace_name: str
-        :param queue_name: The name of the queue to be deleted.
+        :param queue_name: The queue name.
         :type queue_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -198,16 +203,16 @@ class QueuesOperations(object):
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ServiceBus/namespaces/{namespaceName}/queues/{queueName}'
         path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            'namespaceName': self._serialize.url("namespace_name", namespace_name, 'str'),
-            'queueName': self._serialize.url("queue_name", queue_name, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
+            'namespaceName': self._serialize.url("namespace_name", namespace_name, 'str', max_length=50, min_length=6),
+            'queueName': self._serialize.url("queue_name", queue_name, 'str', max_length=50, min_length=1),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -236,9 +241,10 @@ class QueuesOperations(object):
             self, resource_group_name, namespace_name, queue_name, custom_headers=None, raw=False, **operation_config):
         """Returns a description for the specified queue.
 
-        :param resource_group_name: The name of the resource group.
+        :param resource_group_name: Name of the Resource group within the
+         Azure subscription.
         :type resource_group_name: str
-        :param namespace_name: The namespace name.
+        :param namespace_name: The namespace name
         :type namespace_name: str
         :param queue_name: The queue name.
         :type queue_name: str
@@ -256,16 +262,16 @@ class QueuesOperations(object):
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ServiceBus/namespaces/{namespaceName}/queues/{queueName}'
         path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            'namespaceName': self._serialize.url("namespace_name", namespace_name, 'str'),
-            'queueName': self._serialize.url("queue_name", queue_name, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
+            'namespaceName': self._serialize.url("namespace_name", namespace_name, 'str', max_length=50, min_length=6),
+            'queueName': self._serialize.url("queue_name", queue_name, 'str', max_length=50, min_length=1),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -301,7 +307,8 @@ class QueuesOperations(object):
             self, resource_group_name, namespace_name, queue_name, custom_headers=None, raw=False, **operation_config):
         """Gets all authorization rules for a queue.
 
-        :param resource_group_name: The name of the resource group.
+        :param resource_group_name: Name of the Resource group within the
+         Azure subscription.
         :type resource_group_name: str
         :param namespace_name: The namespace name
         :type namespace_name: str
@@ -322,16 +329,16 @@ class QueuesOperations(object):
                 # Construct URL
                 url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ServiceBus/namespaces/{namespaceName}/queues/{queueName}/authorizationRules'
                 path_format_arguments = {
-                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-                    'namespaceName': self._serialize.url("namespace_name", namespace_name, 'str'),
-                    'queueName': self._serialize.url("queue_name", queue_name, 'str'),
+                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
+                    'namespaceName': self._serialize.url("namespace_name", namespace_name, 'str', max_length=50, min_length=6),
+                    'queueName': self._serialize.url("queue_name", queue_name, 'str', max_length=50, min_length=1),
                     'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
                 }
                 url = self._client.format_url(url, **path_format_arguments)
 
                 # Construct parameters
                 query_parameters = {}
-                query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
+                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
             else:
                 url = next_link
@@ -373,13 +380,14 @@ class QueuesOperations(object):
             self, resource_group_name, namespace_name, queue_name, authorization_rule_name, parameters, custom_headers=None, raw=False, **operation_config):
         """Creates an authorization rule for a queue.
 
-        :param resource_group_name: The name of the resource group.
+        :param resource_group_name: Name of the Resource group within the
+         Azure subscription.
         :type resource_group_name: str
-        :param namespace_name: The namespace name.
+        :param namespace_name: The namespace name
         :type namespace_name: str
         :param queue_name: The queue name.
         :type queue_name: str
-        :param authorization_rule_name: Authorization rule name.
+        :param authorization_rule_name: The authorizationrule name.
         :type authorization_rule_name: str
         :param parameters: The shared access authorization rule.
         :type parameters:
@@ -399,17 +407,17 @@ class QueuesOperations(object):
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ServiceBus/namespaces/{namespaceName}/queues/{queueName}/authorizationRules/{authorizationRuleName}'
         path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            'namespaceName': self._serialize.url("namespace_name", namespace_name, 'str'),
-            'queueName': self._serialize.url("queue_name", queue_name, 'str'),
-            'authorizationRuleName': self._serialize.url("authorization_rule_name", authorization_rule_name, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
+            'namespaceName': self._serialize.url("namespace_name", namespace_name, 'str', max_length=50, min_length=6),
+            'queueName': self._serialize.url("queue_name", queue_name, 'str', max_length=50, min_length=1),
+            'authorizationRuleName': self._serialize.url("authorization_rule_name", authorization_rule_name, 'str', max_length=50, min_length=1),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -449,13 +457,14 @@ class QueuesOperations(object):
             self, resource_group_name, namespace_name, queue_name, authorization_rule_name, custom_headers=None, raw=False, **operation_config):
         """Deletes a queue authorization rule.
 
-        :param resource_group_name: The name of the resource group.
+        :param resource_group_name: Name of the Resource group within the
+         Azure subscription.
         :type resource_group_name: str
-        :param namespace_name: The namespace name.
+        :param namespace_name: The namespace name
         :type namespace_name: str
         :param queue_name: The queue name.
         :type queue_name: str
-        :param authorization_rule_name: Authorization rule name.
+        :param authorization_rule_name: The authorizationrule name.
         :type authorization_rule_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -470,17 +479,17 @@ class QueuesOperations(object):
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ServiceBus/namespaces/{namespaceName}/queues/{queueName}/authorizationRules/{authorizationRuleName}'
         path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            'namespaceName': self._serialize.url("namespace_name", namespace_name, 'str'),
-            'queueName': self._serialize.url("queue_name", queue_name, 'str'),
-            'authorizationRuleName': self._serialize.url("authorization_rule_name", authorization_rule_name, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
+            'namespaceName': self._serialize.url("namespace_name", namespace_name, 'str', max_length=50, min_length=6),
+            'queueName': self._serialize.url("queue_name", queue_name, 'str', max_length=50, min_length=1),
+            'authorizationRuleName': self._serialize.url("authorization_rule_name", authorization_rule_name, 'str', max_length=50, min_length=1),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -509,13 +518,14 @@ class QueuesOperations(object):
             self, resource_group_name, namespace_name, queue_name, authorization_rule_name, custom_headers=None, raw=False, **operation_config):
         """Gets an authorization rule for a queue by rule name.
 
-        :param resource_group_name: The name of the resource group.
+        :param resource_group_name: Name of the Resource group within the
+         Azure subscription.
         :type resource_group_name: str
-        :param namespace_name: The namespace name.
+        :param namespace_name: The namespace name
         :type namespace_name: str
         :param queue_name: The queue name.
         :type queue_name: str
-        :param authorization_rule_name: Authorization rule name.
+        :param authorization_rule_name: The authorizationrule name.
         :type authorization_rule_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -531,17 +541,17 @@ class QueuesOperations(object):
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ServiceBus/namespaces/{namespaceName}/queues/{queueName}/authorizationRules/{authorizationRuleName}'
         path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            'namespaceName': self._serialize.url("namespace_name", namespace_name, 'str'),
-            'queueName': self._serialize.url("queue_name", queue_name, 'str'),
-            'authorizationRuleName': self._serialize.url("authorization_rule_name", authorization_rule_name, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
+            'namespaceName': self._serialize.url("namespace_name", namespace_name, 'str', max_length=50, min_length=6),
+            'queueName': self._serialize.url("queue_name", queue_name, 'str', max_length=50, min_length=1),
+            'authorizationRuleName': self._serialize.url("authorization_rule_name", authorization_rule_name, 'str', max_length=50, min_length=1),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -577,13 +587,14 @@ class QueuesOperations(object):
             self, resource_group_name, namespace_name, queue_name, authorization_rule_name, custom_headers=None, raw=False, **operation_config):
         """Primary and secondary connection strings to the queue.
 
-        :param resource_group_name: The name of the resource group.
+        :param resource_group_name: Name of the Resource group within the
+         Azure subscription.
         :type resource_group_name: str
-        :param namespace_name: The namespace name.
+        :param namespace_name: The namespace name
         :type namespace_name: str
         :param queue_name: The queue name.
         :type queue_name: str
-        :param authorization_rule_name: The authorization rule name.
+        :param authorization_rule_name: The authorizationrule name.
         :type authorization_rule_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -599,17 +610,17 @@ class QueuesOperations(object):
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ServiceBus/namespaces/{namespaceName}/queues/{queueName}/authorizationRules/{authorizationRuleName}/ListKeys'
         path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            'namespaceName': self._serialize.url("namespace_name", namespace_name, 'str'),
-            'queueName': self._serialize.url("queue_name", queue_name, 'str'),
-            'authorizationRuleName': self._serialize.url("authorization_rule_name", authorization_rule_name, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
+            'namespaceName': self._serialize.url("namespace_name", namespace_name, 'str', max_length=50, min_length=6),
+            'queueName': self._serialize.url("queue_name", queue_name, 'str', max_length=50, min_length=1),
+            'authorizationRuleName': self._serialize.url("authorization_rule_name", authorization_rule_name, 'str', max_length=50, min_length=1),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -645,13 +656,14 @@ class QueuesOperations(object):
             self, resource_group_name, namespace_name, queue_name, authorization_rule_name, policykey=None, custom_headers=None, raw=False, **operation_config):
         """Regenerates the primary or secondary connection strings to the queue.
 
-        :param resource_group_name: The name of the resource group.
+        :param resource_group_name: Name of the Resource group within the
+         Azure subscription.
         :type resource_group_name: str
-        :param namespace_name: The namespace name.
+        :param namespace_name: The namespace name
         :type namespace_name: str
         :param queue_name: The queue name.
         :type queue_name: str
-        :param authorization_rule_name: The authorization rule name.
+        :param authorization_rule_name: The authorizationrule name.
         :type authorization_rule_name: str
         :param policykey: Key that needs to be regenerated. Possible values
          include: 'PrimaryKey', 'SecondaryKey'
@@ -673,17 +685,17 @@ class QueuesOperations(object):
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ServiceBus/namespaces/{namespaceName}/queues/{queueName}/authorizationRules/{authorizationRuleName}/regenerateKeys'
         path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            'namespaceName': self._serialize.url("namespace_name", namespace_name, 'str'),
-            'queueName': self._serialize.url("queue_name", queue_name, 'str'),
-            'authorizationRuleName': self._serialize.url("authorization_rule_name", authorization_rule_name, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
+            'namespaceName': self._serialize.url("namespace_name", namespace_name, 'str', max_length=50, min_length=6),
+            'queueName': self._serialize.url("queue_name", queue_name, 'str', max_length=50, min_length=1),
+            'authorizationRuleName': self._serialize.url("authorization_rule_name", authorization_rule_name, 'str', max_length=50, min_length=1),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
         header_parameters = {}

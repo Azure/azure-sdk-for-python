@@ -15,13 +15,16 @@ from msrest.serialization import Model
 class TopicCreateOrUpdateParameters(Model):
     """Parameters supplied to the Create Or Update Topic operation.
 
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
     :param name: Topic name.
     :type name: str
     :param location: Location of the resource.
     :type location: str
-    :param accessed_at: Last time the message was sent, or a request was
+    :ivar accessed_at: Last time the message was sent, or a request was
      received, for this topic.
-    :type accessed_at: datetime
+    :vartype accessed_at: datetime
     :param auto_delete_on_idle: TimeSpan idle interval after which the topic
      is automatically deleted. The minimum duration is 5 minutes.
     :type auto_delete_on_idle: str
@@ -30,10 +33,10 @@ class TopicCreateOrUpdateParameters(Model):
      'Restoring', 'Unknown'
     :type entity_availability_status: str or :class:`EntityAvailabilityStatus
      <azure.mgmt.servicebus.models.EntityAvailabilityStatus>`
-    :param created_at: Exact time the message was created.
-    :type created_at: datetime
-    :param count_details:
-    :type count_details: :class:`MessageCountDetails
+    :ivar created_at: Exact time the message was created.
+    :vartype created_at: datetime
+    :ivar count_details:
+    :vartype count_details: :class:`MessageCountDetails
      <azure.mgmt.servicebus.models.MessageCountDetails>`
     :param default_message_time_to_live: Default message time to live value.
      This is the duration after which the message expires, starting from when
@@ -41,11 +44,11 @@ class TopicCreateOrUpdateParameters(Model):
      TimeToLive is not set on a message itself.
     :type default_message_time_to_live: str
     :param duplicate_detection_history_time_window: TimeSpan structure that
-     defines the duration of the duplicate detection history. The default
-     value is 10 minutes.
+     defines the duration of the duplicate detection history. The default value
+     is 10 minutes.
     :type duplicate_detection_history_time_window: str
-    :param enable_batched_operations: Value that indicates whether
-     server-side batched operations are enabled.
+    :param enable_batched_operations: Value that indicates whether server-side
+     batched operations are enabled.
     :type enable_batched_operations: bool
     :param enable_express: Value that indicates whether Express Entities are
      enabled. An express topic holds a message in memory temporarily before
@@ -71,25 +74,31 @@ class TopicCreateOrUpdateParameters(Model):
     :param requires_duplicate_detection: Value indicating if this topic
      requires duplicate detection.
     :type requires_duplicate_detection: bool
-    :param size_in_bytes: Size of the topic, in bytes.
-    :type size_in_bytes: long
+    :ivar size_in_bytes: Size of the topic, in bytes.
+    :vartype size_in_bytes: long
     :param status: Enumerates the possible values for the status of a
      messaging entity. Possible values include: 'Active', 'Creating',
      'Deleting', 'Disabled', 'ReceiveDisabled', 'Renaming', 'Restoring',
      'SendDisabled', 'Unknown'
     :type status: str or :class:`EntityStatus
      <azure.mgmt.servicebus.models.EntityStatus>`
-    :param subscription_count: Number of subscriptions.
-    :type subscription_count: int
+    :ivar subscription_count: Number of subscriptions.
+    :vartype subscription_count: int
     :param support_ordering: Value that indicates whether the topic supports
      ordering.
     :type support_ordering: bool
-    :param updated_at: The exact time the message was updated.
-    :type updated_at: datetime
-    """ 
+    :ivar updated_at: The exact time the message was updated.
+    :vartype updated_at: datetime
+    """
 
     _validation = {
         'location': {'required': True},
+        'accessed_at': {'readonly': True},
+        'created_at': {'readonly': True},
+        'count_details': {'readonly': True},
+        'size_in_bytes': {'readonly': True},
+        'subscription_count': {'readonly': True},
+        'updated_at': {'readonly': True},
     }
 
     _attribute_map = {
@@ -97,11 +106,11 @@ class TopicCreateOrUpdateParameters(Model):
         'location': {'key': 'location', 'type': 'str'},
         'accessed_at': {'key': 'properties.accessedAt', 'type': 'iso-8601'},
         'auto_delete_on_idle': {'key': 'properties.autoDeleteOnIdle', 'type': 'str'},
-        'entity_availability_status': {'key': 'properties.entityAvailabilityStatus ', 'type': 'EntityAvailabilityStatus'},
+        'entity_availability_status': {'key': 'properties.entityAvailabilityStatus', 'type': 'EntityAvailabilityStatus'},
         'created_at': {'key': 'properties.createdAt', 'type': 'iso-8601'},
         'count_details': {'key': 'properties.countDetails', 'type': 'MessageCountDetails'},
         'default_message_time_to_live': {'key': 'properties.defaultMessageTimeToLive', 'type': 'str'},
-        'duplicate_detection_history_time_window': {'key': 'properties.duplicateDetectionHistoryTimeWindow ', 'type': 'str'},
+        'duplicate_detection_history_time_window': {'key': 'properties.duplicateDetectionHistoryTimeWindow', 'type': 'str'},
         'enable_batched_operations': {'key': 'properties.enableBatchedOperations', 'type': 'bool'},
         'enable_express': {'key': 'properties.enableExpress', 'type': 'bool'},
         'enable_partitioning': {'key': 'properties.enablePartitioning', 'type': 'bool'},
@@ -118,14 +127,14 @@ class TopicCreateOrUpdateParameters(Model):
         'updated_at': {'key': 'properties.updatedAt', 'type': 'iso-8601'},
     }
 
-    def __init__(self, location, name=None, accessed_at=None, auto_delete_on_idle=None, entity_availability_status=None, created_at=None, count_details=None, default_message_time_to_live=None, duplicate_detection_history_time_window=None, enable_batched_operations=None, enable_express=None, enable_partitioning=None, enable_subscription_partitioning=None, filtering_messages_before_publishing=None, is_anonymous_accessible=None, is_express=None, max_size_in_megabytes=None, requires_duplicate_detection=None, size_in_bytes=None, status=None, subscription_count=None, support_ordering=None, updated_at=None):
+    def __init__(self, location, name=None, auto_delete_on_idle=None, entity_availability_status=None, default_message_time_to_live=None, duplicate_detection_history_time_window=None, enable_batched_operations=None, enable_express=None, enable_partitioning=None, enable_subscription_partitioning=None, filtering_messages_before_publishing=None, is_anonymous_accessible=None, is_express=None, max_size_in_megabytes=None, requires_duplicate_detection=None, status=None, support_ordering=None):
         self.name = name
         self.location = location
-        self.accessed_at = accessed_at
+        self.accessed_at = None
         self.auto_delete_on_idle = auto_delete_on_idle
         self.entity_availability_status = entity_availability_status
-        self.created_at = created_at
-        self.count_details = count_details
+        self.created_at = None
+        self.count_details = None
         self.default_message_time_to_live = default_message_time_to_live
         self.duplicate_detection_history_time_window = duplicate_detection_history_time_window
         self.enable_batched_operations = enable_batched_operations
@@ -137,8 +146,8 @@ class TopicCreateOrUpdateParameters(Model):
         self.is_express = is_express
         self.max_size_in_megabytes = max_size_in_megabytes
         self.requires_duplicate_detection = requires_duplicate_detection
-        self.size_in_bytes = size_in_bytes
+        self.size_in_bytes = None
         self.status = status
-        self.subscription_count = subscription_count
+        self.subscription_count = None
         self.support_ordering = support_ordering
-        self.updated_at = updated_at
+        self.updated_at = None

@@ -9,11 +9,11 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.serialization import Model
+from .resource import Resource
 
 
-class Resource(Model):
-    """The Resource definition for other than namespace.
+class TrackedResource(Resource):
+    """The Resource definition.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -26,6 +26,8 @@ class Resource(Model):
     :type location: str
     :ivar type: Resource type
     :vartype type: str
+    :param tags: Resource tags
+    :type tags: dict
     """
 
     _validation = {
@@ -39,10 +41,9 @@ class Resource(Model):
         'name': {'key': 'name', 'type': 'str'},
         'location': {'key': 'location', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
+        'tags': {'key': 'tags', 'type': '{str}'},
     }
 
-    def __init__(self, location=None):
-        self.id = None
-        self.name = None
-        self.location = location
-        self.type = None
+    def __init__(self, location=None, tags=None):
+        super(TrackedResource, self).__init__(location=location)
+        self.tags = tags
