@@ -19,7 +19,7 @@ class CheckGroupMembershipResult(Model):
      principal has either direct or transitive membership in the specified
      group; otherwise, false.
     :type value: bool
-    """ 
+    """
 
     _attribute_map = {
         'value': {'key': 'value', 'type': 'bool'},

@@ -28,7 +28,7 @@ class KeyCredential(Model):
     :param type: Type. Acceptable values are 'AsymmetricX509Cert' and
      'Symmetric'.
     :type type: str
-    """ 
+    """
 
     _attribute_map = {
         'start_date': {'key': 'startDate', 'type': 'iso-8601'},

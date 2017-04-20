@@ -29,7 +29,7 @@ class User(Model):
     :type mail: str
     :param mail_nickname: The mail alias for the user.
     :type mail_nickname: str
-    """ 
+    """
 
     _attribute_map = {
         'object_id': {'key': 'objectId', 'type': 'str'},
