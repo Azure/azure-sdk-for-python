@@ -22,7 +22,7 @@ class OperationsMonitoringProperties(Model):
     """
 
     _attribute_map = {
-        'events': {'key': 'events', 'type': '{OperationMonitoringLevel}'},
+        'events': {'key': 'events', 'type': '{str}'},
     }
 
     def __init__(self, events=None):
