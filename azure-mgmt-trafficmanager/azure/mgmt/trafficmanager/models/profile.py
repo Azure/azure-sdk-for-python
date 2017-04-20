@@ -33,7 +33,7 @@ class Profile(Resource):
     :type profile_status: str
     :param traffic_routing_method: Gets or sets the traffic routing method of
      the Traffic Manager profile.  Possible values are 'Performance',
-     'Weighted', or 'Priority'.
+     'Weighted', 'Priority' or 'Geographic'.
     :type traffic_routing_method: str
     :param dns_config: Gets or sets the DNS settings of the Traffic Manager
      profile.
@@ -47,7 +47,7 @@ class Profile(Resource):
      Manager profile.
     :type endpoints: list of :class:`Endpoint
      <azure.mgmt.trafficmanager.models.Endpoint>`
-    """ 
+    """
 
     _validation = {
         'id': {'readonly': True},

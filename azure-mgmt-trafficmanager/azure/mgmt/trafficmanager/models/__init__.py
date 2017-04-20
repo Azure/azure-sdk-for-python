@@ -9,22 +9,28 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
+from .delete_operation_result import DeleteOperationResult
 from .endpoint import Endpoint
 from .check_traffic_manager_relative_dns_name_availability_parameters import CheckTrafficManagerRelativeDnsNameAvailabilityParameters
 from .dns_config import DnsConfig
 from .monitor_config import MonitorConfig
 from .profile import Profile
 from .traffic_manager_name_availability import TrafficManagerNameAvailability
+from .region import Region
+from .traffic_manager_geographic_hierarchy import TrafficManagerGeographicHierarchy
 from .resource import Resource
 from .profile_paged import ProfilePaged
 
 __all__ = [
+    'DeleteOperationResult',
     'Endpoint',
     'CheckTrafficManagerRelativeDnsNameAvailabilityParameters',
     'DnsConfig',
     'MonitorConfig',
     'Profile',
     'TrafficManagerNameAvailability',
+    'Region',
+    'TrafficManagerGeographicHierarchy',
     'Resource',
     'ProfilePaged',
 ]

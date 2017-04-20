@@ -26,7 +26,7 @@ class MonitorConfig(Model):
     :param path: Gets or sets the path relative to the endpoint domain name
      used to probe for endpoint health.
     :type path: str
-    """ 
+    """
 
     _attribute_map = {
         'profile_monitor_status': {'key': 'profileMonitorStatus', 'type': 'str'},

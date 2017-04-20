@@ -11,8 +11,10 @@
 
 from .endpoints_operations import EndpointsOperations
 from .profiles_operations import ProfilesOperations
+from .geographic_hierarchies_operations import GeographicHierarchiesOperations
 
 __all__ = [
     'EndpointsOperations',
     'ProfilesOperations',
+    'GeographicHierarchiesOperations',
 ]
