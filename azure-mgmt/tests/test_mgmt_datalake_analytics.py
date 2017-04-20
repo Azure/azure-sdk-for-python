@@ -64,7 +64,7 @@ CREATE TABLE {0}.dbo.{1}
         ClickedUrls     string,
     INDEX idx1 
     CLUSTERED (Region ASC) 
-    PARTITIONED BY BUCKETS (UserId) HASH (Region)
+    PARTITIONED BY (UserId) HASH (Region)
 );
 
 ALTER TABLE {0}.dbo.{1} ADD IF NOT EXISTS PARTITION (1);
@@ -312,6 +312,7 @@ END;""".format(self.db_name, self.table_name, self.tvf_name, self.view_name, sel
     @record
     def test_adla_catalog_items(self):
         self.run_prereqs(create_job_acct= True, create_catalog = True)
+        
         # get all databases, there should be at least 2 and the specific database
         dbList = list(self.adla_catalog_client.catalog.list_databases(self.job_account_name))
         self.assertGreater(len(dbList), 1)
@@ -321,12 +322,21 @@ END;""".format(self.db_name, self.table_name, self.tvf_name, self.view_name, sel
         specific_db = self.adla_catalog_client.catalog.get_database(self.job_account_name, self.db_name)
         self.assertEqual(specific_db.name, dbMatch[0].name)
 
-        # get the table list and specific table
+        # get the table list, table list from within a DB and specific table
         table_list = list(self.adla_catalog_client.catalog.list_tables(self.job_account_name, self.db_name, self.schema_name))
         self.assertGreater(len(table_list), 0)
         table_match = [item for item in table_list if item.name == self.table_name]
         self.assertIsNotNone(table_match)
         self.assertEqual(len(table_match), 1)
+        
+        # get table list in database
+        table_list = list(self.adla_catalog_client.catalog.list_tables_by_database(self.job_account_name, self.db_name))
+        self.assertGreater(len(table_list), 0)
+        table_match = [item for item in table_list if item.name == self.table_name]
+        self.assertIsNotNone(table_match)
+        self.assertEqual(len(table_match), 1)
+
+        # get specific table
         specific_table = self.adla_catalog_client.catalog.get_table(self.job_account_name, self.db_name, self.schema_name, self.table_name)
         self.assertEqual(specific_table.name, table_match[0].name)
 
@@ -336,6 +346,15 @@ END;""".format(self.db_name, self.table_name, self.tvf_name, self.view_name, sel
         tvf_match = [item for item in tvf_list if item.name == self.tvf_name]
         self.assertIsNotNone(tvf_list)
         self.assertEqual(len(tvf_list), 1)
+        
+        # get tvf list by database
+        tvf_list = list(self.adla_catalog_client.catalog.list_table_valued_functions_by_database(self.job_account_name, self.db_name))
+        self.assertGreater(len(tvf_list), 0)
+        tvf_match = [item for item in tvf_list if item.name == self.tvf_name]
+        self.assertIsNotNone(tvf_list)
+        self.assertEqual(len(tvf_list), 1)
+        
+        # get specific tvf
         specific_tvf = self.adla_catalog_client.catalog.get_table_valued_function(self.job_account_name, self.db_name, self.schema_name, self.tvf_name)
         self.assertEqual(specific_tvf.name, tvf_match[0].name)
 
@@ -345,6 +364,15 @@ END;""".format(self.db_name, self.table_name, self.tvf_name, self.view_name, sel
         view_match = [item for item in view_list if item.name == self.view_name]
         self.assertIsNotNone(view_match)
         self.assertEqual(len(view_match), 1)
+
+        # get the views by database
+        view_list = list(self.adla_catalog_client.catalog.list_views_by_database(self.job_account_name, self.db_name))
+        self.assertGreater(len(view_list), 0)
+        view_match = [item for item in view_list if item.name == self.view_name]
+        self.assertIsNotNone(view_match)
+        self.assertEqual(len(view_match), 1)
+
+        # get specific view
         specific_view = self.adla_catalog_client.catalog.get_view(self.job_account_name, self.db_name, self.schema_name, self.view_name)
         self.assertEqual(specific_view.name, view_match[0].name)
 
