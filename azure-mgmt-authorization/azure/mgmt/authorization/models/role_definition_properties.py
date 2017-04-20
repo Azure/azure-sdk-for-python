@@ -26,7 +26,7 @@ class RoleDefinitionProperties(Model):
      <azure.mgmt.authorization.models.Permission>`
     :param assignable_scopes: Role definition assignable scopes.
     :type assignable_scopes: list of str
-    """ 
+    """
 
     _attribute_map = {
         'role_name': {'key': 'roleName', 'type': 'str'},

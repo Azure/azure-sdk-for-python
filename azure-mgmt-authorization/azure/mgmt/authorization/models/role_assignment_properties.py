@@ -22,7 +22,7 @@ class RoleAssignmentProperties(Model):
      the ID inside the Active Directory. It can point to a user, service
      principal, or security group.
     :type principal_id: str
-    """ 
+    """
 
     _attribute_map = {
         'role_definition_id': {'key': 'roleDefinitionId', 'type': 'str'},
