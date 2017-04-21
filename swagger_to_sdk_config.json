@@ -32,6 +32,14 @@
       },
       "output_dir": "azure-mgmt-batch/azure/mgmt/batch"
     },
+    "billing": {
+      "swagger": "arm-billing/2017-04-24-preview/swagger/billing.json",
+      "autorest_options": {
+        "Namespace": "azure.mgmt.billing",
+        "PackageVersion": "0.1.0"
+      },
+      "output_dir": "azure-mgmt-billing/azure/mgmt/billing"
+    },
     "cdn": {
       "swagger": "arm-cdn/2016-10-02/swagger/cdn.json",
       "autorest_options": {
@@ -39,6 +47,14 @@
         "PackageVersion": "0.30.2"
       },
       "output_dir": "azure-mgmt-cdn/azure/mgmt/cdn"
+    },
+    "consumption": {
+      "swagger": "arm-consumption/2017-04-24-preview/swagger/consumption.json",
+      "autorest_options": {
+        "Namespace": "azure.mgmt.consumption",
+        "PackageVersion": "0.1.0"
+      },
+      "output_dir": "azure-mgmt-consumption/azure/mgmt/consumption"
     },
     "cognitiveservices": {
       "swagger": "arm-cognitiveservices/2016-02-01-preview/swagger/cognitiveservices.json",
