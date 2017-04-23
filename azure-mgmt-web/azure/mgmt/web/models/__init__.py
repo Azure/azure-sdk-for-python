@@ -10,6 +10,7 @@
 # --------------------------------------------------------------------------
 
 from .app_service_certificate import AppServiceCertificate
+from .app_service_certificate_resource import AppServiceCertificateResource
 from .certificate_details import CertificateDetails
 from .app_service_certificate_order import AppServiceCertificateOrder
 from .certificate_email import CertificateEmail
@@ -24,15 +25,16 @@ from .virtual_ip_mapping import VirtualIPMapping
 from .address_response import AddressResponse
 from .api_definition_info import ApiDefinitionInfo
 from .virtual_network_profile import VirtualNetworkProfile
-from .sku_capacity import SkuCapacity
-from .capability import Capability
-from .sku_description import SkuDescription
 from .worker_pool import WorkerPool
 from .stamp_capacity import StampCapacity
 from .network_access_control_entry import NetworkAccessControlEntry
 from .name_value_pair import NameValuePair
 from .app_service_environment import AppServiceEnvironment
+from .app_service_environment_resource import AppServiceEnvironmentResource
 from .hosting_environment_profile import HostingEnvironmentProfile
+from .sku_capacity import SkuCapacity
+from .capability import Capability
+from .sku_description import SkuDescription
 from .app_service_plan import AppServicePlan
 from .auto_heal_custom_action import AutoHealCustomAction
 from .auto_heal_actions import AutoHealActions
@@ -73,6 +75,7 @@ from .site import Site
 from .sku_info import SkuInfo
 from .usage import Usage
 from .web_app_collection import WebAppCollection
+from .worker_pool_resource import WorkerPoolResource
 from .hybrid_connection import HybridConnection
 from .hybrid_connection_key import HybridConnectionKey
 from .hybrid_connection_limits import HybridConnectionLimits
@@ -129,6 +132,7 @@ from .host_name_binding import HostNameBinding
 from .http_logs_config import HttpLogsConfig
 from .identifier import Identifier
 from .migrate_my_sql_request import MigrateMySqlRequest
+from .migrate_my_sql_status import MigrateMySqlStatus
 from .relay_service_connection_entity import RelayServiceConnectionEntity
 from .network_features import NetworkFeatures
 from .perf_mon_sample import PerfMonSample
@@ -141,6 +145,7 @@ from .restore_response import RestoreResponse
 from .site_auth_settings import SiteAuthSettings
 from .site_cloneability_criterion import SiteCloneabilityCriterion
 from .site_cloneability import SiteCloneability
+from .site_config_resource import SiteConfigResource
 from .site_configuration_snapshot_info import SiteConfigurationSnapshotInfo
 from .site_instance import SiteInstance
 from .site_logs_config import SiteLogsConfig
@@ -154,11 +159,11 @@ from .storage_migration_response import StorageMigrationResponse
 from .string_dictionary import StringDictionary
 from .deleted_site import DeletedSite
 from .app_service_certificate_order_paged import AppServiceCertificateOrderPaged
-from .app_service_certificate_paged import AppServiceCertificatePaged
+from .app_service_certificate_resource_paged import AppServiceCertificateResourcePaged
 from .app_service_environment_paged import AppServiceEnvironmentPaged
 from .stamp_capacity_paged import StampCapacityPaged
 from .resource_metric_paged import ResourceMetricPaged
-from .worker_pool_paged import WorkerPoolPaged
+from .worker_pool_resource_paged import WorkerPoolResourcePaged
 from .resource_metric_definition_paged import ResourceMetricDefinitionPaged
 from .sku_info_paged import SkuInfoPaged
 from .usage_paged import UsagePaged
@@ -236,6 +241,7 @@ from .web_site_management_client_enums import (
 
 __all__ = [
     'AppServiceCertificate',
+    'AppServiceCertificateResource',
     'CertificateDetails',
     'AppServiceCertificateOrder',
     'CertificateEmail',
@@ -250,15 +256,16 @@ __all__ = [
     'AddressResponse',
     'ApiDefinitionInfo',
     'VirtualNetworkProfile',
-    'SkuCapacity',
-    'Capability',
-    'SkuDescription',
     'WorkerPool',
     'StampCapacity',
     'NetworkAccessControlEntry',
     'NameValuePair',
     'AppServiceEnvironment',
+    'AppServiceEnvironmentResource',
     'HostingEnvironmentProfile',
+    'SkuCapacity',
+    'Capability',
+    'SkuDescription',
     'AppServicePlan',
     'AutoHealCustomAction',
     'AutoHealActions',
@@ -299,6 +306,7 @@ __all__ = [
     'SkuInfo',
     'Usage',
     'WebAppCollection',
+    'WorkerPoolResource',
     'HybridConnection',
     'HybridConnectionKey',
     'HybridConnectionLimits',
@@ -355,6 +363,7 @@ __all__ = [
     'HttpLogsConfig',
     'Identifier',
     'MigrateMySqlRequest',
+    'MigrateMySqlStatus',
     'RelayServiceConnectionEntity',
     'NetworkFeatures',
     'PerfMonSample',
@@ -367,6 +376,7 @@ __all__ = [
     'SiteAuthSettings',
     'SiteCloneabilityCriterion',
     'SiteCloneability',
+    'SiteConfigResource',
     'SiteConfigurationSnapshotInfo',
     'SiteInstance',
     'SiteLogsConfig',
@@ -380,11 +390,11 @@ __all__ = [
     'StringDictionary',
     'DeletedSite',
     'AppServiceCertificateOrderPaged',
-    'AppServiceCertificatePaged',
+    'AppServiceCertificateResourcePaged',
     'AppServiceEnvironmentPaged',
     'StampCapacityPaged',
     'ResourceMetricPaged',
-    'WorkerPoolPaged',
+    'WorkerPoolResourcePaged',
     'ResourceMetricDefinitionPaged',
     'SkuInfoPaged',
     'UsagePaged',
