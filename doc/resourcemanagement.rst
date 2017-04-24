@@ -5,7 +5,7 @@ Resource Management
 Resource Management libraries
 -----------------------------
 
-The azure-mgmt-resource package is splitted into several sub-librairies:
+The azure-mgmt-resource package is split into several sub-librairies:
 
 * resources : manage resources groups, template, etc (`Introduction to ARM <https://azure.microsoft.com/en-us/documentation/articles/resource-group-overview/>`__)
 * features : manage features of provider (`RestAPI reference <https://msdn.microsoft.com/en-us/library/azure/mt592690.aspx>`__)
