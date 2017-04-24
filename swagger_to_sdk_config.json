@@ -41,7 +41,7 @@
       "output_dir": "azure-mgmt-cdn/azure/mgmt/cdn"
     },
     "cognitiveservices": {
-      "swagger": "arm-cognitiveservices/2016-02-01-preview/swagger/cognitiveservices.json",
+      "swagger": "arm-cognitiveservices/2017-04-18/swagger/cognitiveservices.json",
       "autorest_options": {
         "Namespace": "azure.mgmt.cognitiveservices"
       },
