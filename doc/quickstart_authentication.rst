@@ -23,9 +23,9 @@ https://azure.microsoft.com/en-us/documentation/articles/resource-group-create-s
 
 At this point, you must have:
 
-* Your client id. Found in the "client id" box in the "Configure" page of your application in the Azure portal.
+* Your client id. Found in the "client id" box in the "Settings" page of your application in the Azure portal.
 * Your secret key. Generated when you have created the application. You cannot show the key after creation.
-  If you've lost the current key, you must create a new one in the "Configure" page of your application.
+  If you've lost the current key, you must create a new one in the "Settings" page of your application.
 * Your AD tenant id. It's an UUID (e.g. ABCDEFAB-1234-ABCD-1234-ABCDEFABCDEF) which points to the AD containing your application.
   You will find it in the URL when you are in the Azure portal in your AD, or in the "view endpoints" in any of the given url.
 
