@@ -5,14 +5,14 @@ For general information on resource management, see :doc:`Resource Management<re
 
 To be able to use use the ARM library, you need to obtain one of these instances:
 
-* azure.common.credentials.UserPassCredentials
 * azure.common.credentials.ServicePrincipalCredentials
+* azure.common.credentials.UserPassCredentials
 * msrestazure.azure_active_directory.AdalAuthentication
  
 And use it as credentials in your management configuration client. These three instances correspond to:
 
-* OAuth authentication using Azure Active Directory user/password
 * OAuth authentication using Active Directory application and service principal
+* OAuth authentication using Azure Active Directory user/password
 * A wrapper on top of `ADAL for Python <https://github.com/AzureAD/azure-activedirectory-library-for-python>`
 
 Using Service Principal
@@ -23,7 +23,7 @@ https://azure.microsoft.com/en-us/documentation/articles/resource-group-create-s
 
 At this point, you must have:
 
-* Your client id. Found in the "client id" box in the "Configure" page of your application in the Azure portal
+* Your client id. Found in the "client id" box in the "Configure" page of your application in the Azure portal.
 * Your secret key. Generated when you have created the application. You cannot show the key after creation.
   If you've lost the current key, you must create a new one in the "Configure" page of your application.
 * You AD tenant id. It's an UUID (e.g. ABCDEFAB-1234-ABCD-1234-ABCDEFABCDEF) which point to the AD containing your application.
