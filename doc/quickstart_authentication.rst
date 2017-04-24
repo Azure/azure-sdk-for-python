@@ -18,7 +18,7 @@ And use it as credentials in your management configuration client. These three i
 Using Service Principal
 ------------------------
 
-There is now a detailled official tutorial to describe this:
+There is now a detailed official tutorial to describe this:
 https://azure.microsoft.com/en-us/documentation/articles/resource-group-create-service-principal-portal/
 
 At this point, you must have:
