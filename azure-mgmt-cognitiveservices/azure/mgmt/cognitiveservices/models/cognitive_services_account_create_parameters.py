@@ -15,13 +15,14 @@ from msrest.serialization import Model
 class CognitiveServicesAccountCreateParameters(Model):
     """The parameters to provide for the account.
 
-    :param sku:
+    :param sku: Required. Gets or sets the SKU of the resource.
     :type sku: :class:`Sku <azure.mgmt.cognitiveservices.models.Sku>`
-    :param kind: Required. Indicates the type of cognitive service account.
-     Possible values include: 'Academic', 'Bing.Autosuggest', 'Bing.Search',
+    :param kind: Required. Gets or sets the Kind of the resource. Possible
+     values include: 'Academic', 'Bing.Autosuggest', 'Bing.Search',
      'Bing.Speech', 'Bing.SpellCheck', 'ComputerVision', 'ContentModerator',
-     'Emotion', 'Face', 'LUIS', 'Recommendations', 'SpeakerRecognition',
-     'Speech', 'SpeechTranslation', 'TextAnalytics', 'TextTranslation', 'WebLM'
+     'CustomSpeech', 'Emotion', 'Face', 'LUIS', 'Recommendations',
+     'SpeakerRecognition', 'Speech', 'SpeechTranslation', 'TextAnalytics',
+     'TextTranslation', 'WebLM'
     :type kind: str or :class:`Kind
      <azure.mgmt.cognitiveservices.models.Kind>`
     :param location: Required. Gets or sets the location of the resource. This
@@ -36,7 +37,8 @@ class CognitiveServicesAccountCreateParameters(Model):
      resource. Each tag must have a key no greater than 128 characters and
      value no greater than 256 characters.
     :type tags: dict
-    :param properties: Must exist in the request. Must not be null.
+    :param properties: Must exist in the request. Must be an empty object.
+     Must not be null.
     :type properties: object
     """
 
