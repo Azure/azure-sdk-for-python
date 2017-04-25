@@ -23,8 +23,6 @@ class Subscription(Model):
     :vartype id: str
     :ivar subscription_id: The subscription ID.
     :vartype subscription_id: str
-    :ivar tenant_id: The tenant ID.
-    :vartype tenant_id: str
     :ivar display_name: The subscription display name.
     :vartype display_name: str
     :ivar state: The subscription state. Possible values are Enabled, Warned,
@@ -44,7 +42,6 @@ class Subscription(Model):
     _validation = {
         'id': {'readonly': True},
         'subscription_id': {'readonly': True},
-        'tenant_id': {'readonly': True},
         'display_name': {'readonly': True},
         'state': {'readonly': True},
     }
@@ -52,7 +49,6 @@ class Subscription(Model):
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
         'subscription_id': {'key': 'subscriptionId', 'type': 'str'},
-        'tenant_id': {'key': 'tenantId', 'type': 'str'},
         'display_name': {'key': 'displayName', 'type': 'str'},
         'state': {'key': 'state', 'type': 'SubscriptionState'},
         'subscription_policies': {'key': 'subscriptionPolicies', 'type': 'SubscriptionPolicies'},
@@ -62,7 +58,6 @@ class Subscription(Model):
     def __init__(self, subscription_policies=None, authorization_source=None):
         self.id = None
         self.subscription_id = None
-        self.tenant_id = None
         self.display_name = None
         self.state = None
         self.subscription_policies = subscription_policies
