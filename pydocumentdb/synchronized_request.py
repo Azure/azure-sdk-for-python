@@ -94,11 +94,14 @@ def _Request(connection_policy, requests_session, resource_url, request_options,
 
     parse_result = urlparse(resource_url)
 
-    # We are disabling the SSL verification for local emulator(localhost) because in order to enable it we need to provide a path
-    # for the emulator certificate and assign it to REQUESTS_CA_BUNDLE environment variable, so for security reasons we wanted to avoid
-    # checking in that certificate on the file system. 
-    is_ssl_enabled = (parse_result.hostname != 'localhost')
+    # The requests library now expects header values to be strings only starting 2.11, 
+    # and will raise an error on validation if they are not, so casting all header values to strings.
+    request_options['headers'] = { header: str(value) for header, value in request_options['headers'].items() } 
 
+    # We are disabling the SSL verification for local emulator(localhost/127.0.0.1) or if the user
+    # has explicitly specified to disable SSL verification.
+    is_ssl_enabled = (parse_result.hostname != 'localhost' and parse_result.hostname != '127.0.0.1' and not connection_policy.DisableSSLVerification)
+    
     if connection_policy.SSLConfiguration:
         ca_certs = connection_policy.SSLConfiguration.SSLCaCerts
         cert_files = (connection_policy.SSLConfiguration.SSLCertFile, connection_policy.SSLConfiguration.SSLKeyFile)
@@ -118,6 +121,7 @@ def _Request(connection_policy, requests_session, resource_url, request_options,
                                     headers = request_options['headers'],
                                     timeout = connection_timeout / 1000.0,
                                     stream = is_media_stream,
+                                    # If SSL is disabled, verify = false
                                     verify = is_ssl_enabled)
 
     headers = dict(response.headers)

@@ -28,6 +28,7 @@ import pydocumentdb.errors as errors
 import pydocumentdb.constants as constants
 import pydocumentdb.global_endpoint_manager as global_endpoint_manager
 import pydocumentdb.retry_utility as retry_utility
+import test.test_config as test_config
 
 location_changed = False
 
@@ -105,13 +106,13 @@ class MockGlobalEndpointManager:
 
 class Test_globaldb_mock_tests(unittest.TestCase):
     
-    host = '[YOUR_GLOBAL_ENDPOINT_HERE]'
-    write_location_host = '[YOUR_WRITE_ENDPOINT_HERE]'
-    read_location_host = '[YOUR_READ_ENDPOINT_HERE]'
-    masterKey = '[YOUR_KEY_HERE]'
+    host = test_config._test_config.global_host
+    write_location_host = test_config._test_config.write_location_host
+    read_location_host = test_config._test_config.read_location_host
+    masterKey = test_config._test_config.global_masterKey
 
-    write_location = '[YOUR_WRITE_LOCATION_HERE]'
-    read_location = '[YOUR_READ_LOCATION_HERE]'
+    write_location = test_config._test_config.write_location
+    read_location = test_config._test_config.read_location
 
     @classmethod
     def setUpClass(cls):

@@ -25,6 +25,7 @@ import pydocumentdb.documents as documents
 import pydocumentdb.document_client as document_client
 from pydocumentdb.execution_context import base_execution_context as base_execution_context
 import pydocumentdb.base as base
+import test.test_config as test_config
 
 #IMPORTANT NOTES:
   
@@ -38,8 +39,8 @@ class QueryExecutionContextEndToEndTests(unittest.TestCase):
     """Routing Map Functionalities end to end Tests.
     """
 
-    host = '[YOUR_ENDPOINT_HERE]'
-    masterKey = '[YOUR_KEY_HERE]'
+    host = test_config._test_config.host
+    masterKey = test_config._test_config.masterKey
     testDbName = 'sample database'
 
     @classmethod

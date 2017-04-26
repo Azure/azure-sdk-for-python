@@ -25,6 +25,7 @@ import pydocumentdb.document_client as document_client
 from pydocumentdb import query_iterable
 import pydocumentdb.base as base
 from six.moves import xrange
+import test.test_config as test_config
 
 #IMPORTANT NOTES:
   
@@ -38,8 +39,8 @@ class CrossPartitionTopOrderByTest(unittest.TestCase):
     """Orderby Tests.
     """
     
-    host = '[YOUR_ENDPOINT_HERE]'
-    masterKey = '[YOUR_KEY_HERE]'
+    host = test_config._test_config.host
+    masterKey = test_config._test_config.masterKey
     testDbName = 'sample database'
     
     @classmethod

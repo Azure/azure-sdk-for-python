@@ -111,6 +111,7 @@ class HttpHeaders:
     EmitVerboseTracesInQuery = 'x-ms-documentdb-query-emit-traces'
     SubStatus = 'x-ms-substatus'
     AlternateContentPath = 'x-ms-alt-content-path'
+    IsContinuationExpected = "x-ms-documentdb-query-iscontinuationexpected"
 
     # Quota Info
     MaxEntityCount = 'x-ms-root-entity-max-count'
@@ -171,6 +172,10 @@ class HttpHeaders:
     # Client generated retry count response header
     ThrottleRetryCount = 'x-ms-throttle-retry-count'
     ThrottleRetryWaitTimeInMs = 'x-ms-throttle-retry-wait-time-ms'
+
+    # StoredProcedure related headers
+    EnableScriptLogging = 'x-ms-documentdb-script-enable-logging'
+    ScriptLogResults = 'x-ms-documentdb-script-log-results'
 
 class HttpHeaderPreferenceTokens:
     """Constants of http header preference tokens.
@@ -233,9 +238,9 @@ class CookieHeaders:
 class Versions:
     """Constants of versions.
     """
-    CurrentVersion = '2016-07-11'
+    CurrentVersion = '2017-01-19'
     SDKName = 'documentdb-python-sdk'
-    SDKVersion = '2.0.1'
+    SDKVersion = '2.1.0'
 
 
 class Delimiters:

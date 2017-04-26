@@ -24,6 +24,7 @@ import pydocumentdb.documents as documents
 import pydocumentdb.document_client as document_client
 from pydocumentdb.routing.routing_map_provider import _PartitionKeyRangeCache
 from pydocumentdb.routing import routing_range as routing_range
+import test.test_config as test_config
 
 #IMPORTANT NOTES:
   
@@ -37,8 +38,8 @@ class RoutingMapEndToEndTests(unittest.TestCase):
     """Routing Map Functionalities end to end Tests.
     """
 
-    host = '[YOUR_ENDPOINT_HERE]'
-    masterKey = '[YOUR_KEY_HERE]'
+    host = test_config._test_config.host
+    masterKey = test_config._test_config.masterKey
     testDbName = 'sample database'
 
     @classmethod

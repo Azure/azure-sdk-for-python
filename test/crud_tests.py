@@ -42,6 +42,7 @@ import pydocumentdb.http_constants as http_constants
 import pydocumentdb.murmur_hash as murmur_hash
 import pydocumentdb.range_partition_resolver as range_partition_resolver
 import pydocumentdb.range as partition_range
+import test.test_config as test_config
 import test.test_partition_resolver as test_partition_resolver
 import pydocumentdb.base as base
 
@@ -58,8 +59,8 @@ class CRUDTests(unittest.TestCase):
     """Python CRUD Tests.
     """
 
-    host = '[YOUR_ENDPOINT_HERE]'
-    masterKey = '[YOUR_KEY_HERE]'
+    host = test_config._test_config.host
+    masterKey = test_config._test_config.masterKey
     testDbName = 'sample database'
 
     def __AssertHTTPFailureWithStatus(self, status_code, func, *args, **kwargs):
@@ -3004,6 +3005,52 @@ class CRUDTests(unittest.TestCase):
         self.assertEqual(len(sprocs),
                          before_create_sprocs_count,
                          'delete should keep the number of sprocs same')
+
+    def test_scipt_logging_execute_stored_procedure(self):
+        client = document_client.DocumentClient(CRUDTests.host, {'masterKey': CRUDTests.masterKey})
+
+        created_db = client.CreateDatabase({ 'id': CRUDTests.testDbName })
+
+        collection_definition = {   'id': 'sample collection' }
+
+        created_collection = client.CreateCollection(self.GetDatabaseLink(created_db), collection_definition)
+        
+        sproc = {
+            'id': 'storedProcedure',
+            'body': (
+                'function () {' +
+                '   var mytext = \'x\';' +
+                '   var myval = 1;' +
+                '   try {' +
+                '       console.log(\'The value of %s is %s.\', mytext, myval);' +
+                '       getContext().getResponse().setBody(\'Success!\');' +
+                '   }' +
+                '   catch (err) {' +
+                '       getContext().getResponse().setBody(\'inline err: [\' + err.number + \'] \' + err);' +
+                '   }'
+                '}')
+            }
+
+        created_sproc = client.CreateStoredProcedure(self.GetDocumentCollectionLink(created_db, created_collection), sproc)
+
+        result = client.ExecuteStoredProcedure(self.GetStoredProcedureLink(created_db, created_collection, created_sproc), None)
+
+        self.assertEqual(result, 'Success!')
+        self.assertFalse(http_constants.HttpHeaders.ScriptLogResults in client.last_response_headers)
+
+        options = { 'enableScriptLogging': True }
+        result = client.ExecuteStoredProcedure(self.GetStoredProcedureLink(created_db, created_collection, created_sproc), None, options)
+
+        self.assertEqual(result, 'Success!')
+        self.assertEqual('The value of x is 1.', client.last_response_headers.get(http_constants.HttpHeaders.ScriptLogResults))
+
+        options = { 'enableScriptLogging': False }
+        result = client.ExecuteStoredProcedure(self.GetStoredProcedureLink(created_db, created_collection, created_sproc), None, options)
+
+        self.assertEqual(result, 'Success!')
+        self.assertFalse(http_constants.HttpHeaders.ScriptLogResults in client.last_response_headers)
+        
+        client.DeleteCollection(self.GetDocumentCollectionLink(created_db, created_collection))
         
 
     def test_collection_indexing_policy_self_link(self):
