@@ -17,7 +17,6 @@ from .operations.autoscale_settings_operations import AutoscaleSettingsOperation
 from .operations.alert_rules_operations import AlertRulesOperations
 from .operations.alert_rule_incidents_operations import AlertRuleIncidentsOperations
 from .operations.activity_log_alerts_operations import ActivityLogAlertsOperations
-from .operations.diagnostic_settings_operations import DiagnosticSettingsOperations
 from .operations.log_profiles_operations import LogProfilesOperations
 from .operations.service_diagnostic_settings_operations import ServiceDiagnosticSettingsOperations
 from . import models
@@ -71,8 +70,6 @@ class MonitorManagementClient(object):
     :vartype alert_rule_incidents: .operations.AlertRuleIncidentsOperations
     :ivar activity_log_alerts: ActivityLogAlerts operations
     :vartype activity_log_alerts: .operations.ActivityLogAlertsOperations
-    :ivar diagnostic_settings: DiagnosticSettings operations
-    :vartype diagnostic_settings: .operations.DiagnosticSettingsOperations
     :ivar log_profiles: LogProfiles operations
     :vartype log_profiles: .operations.LogProfilesOperations
     :ivar service_diagnostic_settings: ServiceDiagnosticSettings operations
@@ -103,8 +100,6 @@ class MonitorManagementClient(object):
         self.alert_rule_incidents = AlertRuleIncidentsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.activity_log_alerts = ActivityLogAlertsOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.diagnostic_settings = DiagnosticSettingsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.log_profiles = LogProfilesOperations(
             self._client, self.config, self._serialize, self._deserialize)
