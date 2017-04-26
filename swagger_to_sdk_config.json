@@ -414,7 +414,7 @@
       "autorest_options": {
         "Namespace": "azure.mgmt.web",
         "Modeler": "CompositeSwagger",
-        "PackageVersion": "0.31.1"
+        "PackageVersion": "0.32.0"
       },
       "output_dir": "azure-mgmt-web/azure/mgmt/web/"
     },
