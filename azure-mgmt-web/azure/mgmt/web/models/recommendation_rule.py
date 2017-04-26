@@ -41,6 +41,18 @@ class RecommendationRule(Model):
     :type channels: str or :class:`Channels <azure.mgmt.web.models.Channels>`
     :param tags: An array of category tags that the rule contains.
     :type tags: list of str
+    :param is_dynamic: True if this is associated with a dynamically added
+     rule
+    :type is_dynamic: bool
+    :param extension_name: Extension name of the portal if exists. Applicable
+     to dynamic rule only.
+    :type extension_name: str
+    :param blade_name: Deep link to a blade on the portal. Applicable to
+     dynamic rule only.
+    :type blade_name: str
+    :param forward_link: Forward link to an external document associated with
+     the rule. Applicable to dynamic rule only.
+    :type forward_link: str
     """
 
     _attribute_map = {
@@ -53,9 +65,13 @@ class RecommendationRule(Model):
         'level': {'key': 'level', 'type': 'NotificationLevel'},
         'channels': {'key': 'channels', 'type': 'Channels'},
         'tags': {'key': 'tags', 'type': '[str]'},
+        'is_dynamic': {'key': 'isDynamic', 'type': 'bool'},
+        'extension_name': {'key': 'extensionName', 'type': 'str'},
+        'blade_name': {'key': 'bladeName', 'type': 'str'},
+        'forward_link': {'key': 'forwardLink', 'type': 'str'},
     }
 
-    def __init__(self, name=None, display_name=None, message=None, recommendation_id=None, description=None, action_name=None, level=None, channels=None, tags=None):
+    def __init__(self, name=None, display_name=None, message=None, recommendation_id=None, description=None, action_name=None, level=None, channels=None, tags=None, is_dynamic=None, extension_name=None, blade_name=None, forward_link=None):
         self.name = name
         self.display_name = display_name
         self.message = message
@@ -65,3 +81,7 @@ class RecommendationRule(Model):
         self.level = level
         self.channels = channels
         self.tags = tags
+        self.is_dynamic = is_dynamic
+        self.extension_name = extension_name
+        self.blade_name = blade_name
+        self.forward_link = forward_link

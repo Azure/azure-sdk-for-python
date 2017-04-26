@@ -54,8 +54,8 @@ class Certificate(Resource):
     :vartype thumbprint: str
     :ivar valid: Is the certificate valid?.
     :vartype valid: bool
-    :param cer_blob: Raw bytes of .cer file
-    :type cer_blob: str
+    :ivar cer_blob: Raw bytes of .cer file
+    :vartype cer_blob: str
     :ivar public_key_hash: Public key hash.
     :vartype public_key_hash: str
     :ivar hosting_environment_profile: Specification for the App Service
@@ -74,6 +74,10 @@ class Certificate(Resource):
      'Unknown'
     :vartype key_vault_secret_status: str or :class:`KeyVaultSecretStatus
      <azure.mgmt.web.models.KeyVaultSecretStatus>`
+    :ivar geo_region: Region of the certificate.
+    :vartype geo_region: str
+    :ivar certificate_name: Resource name of the certificate.
+    :vartype certificate_name: str
     :param server_farm_id: Resource ID of the associated App Service plan,
      formatted as:
      "/subscriptions/{subscriptionID}/resourceGroups/{groupName}/providers/Microsoft.Web/serverfarms/{appServicePlanName}".
@@ -92,9 +96,12 @@ class Certificate(Resource):
         'expiration_date': {'readonly': True},
         'thumbprint': {'readonly': True},
         'valid': {'readonly': True},
+        'cer_blob': {'readonly': True},
         'public_key_hash': {'readonly': True},
         'hosting_environment_profile': {'readonly': True},
         'key_vault_secret_status': {'readonly': True},
+        'geo_region': {'readonly': True},
+        'certificate_name': {'readonly': True},
     }
 
     _attribute_map = {
@@ -122,10 +129,12 @@ class Certificate(Resource):
         'key_vault_id': {'key': 'properties.keyVaultId', 'type': 'str'},
         'key_vault_secret_name': {'key': 'properties.keyVaultSecretName', 'type': 'str'},
         'key_vault_secret_status': {'key': 'properties.keyVaultSecretStatus', 'type': 'KeyVaultSecretStatus'},
+        'geo_region': {'key': 'properties.geoRegion', 'type': 'str'},
+        'certificate_name': {'key': 'properties.name', 'type': 'str'},
         'server_farm_id': {'key': 'properties.serverFarmId', 'type': 'str'},
     }
 
-    def __init__(self, location, name=None, kind=None, type=None, tags=None, host_names=None, pfx_blob=None, password=None, cer_blob=None, key_vault_id=None, key_vault_secret_name=None, server_farm_id=None):
+    def __init__(self, location, name=None, kind=None, type=None, tags=None, host_names=None, pfx_blob=None, password=None, key_vault_id=None, key_vault_secret_name=None, server_farm_id=None):
         super(Certificate, self).__init__(name=name, kind=kind, location=location, type=type, tags=tags)
         self.friendly_name = None
         self.subject_name = None
@@ -139,10 +148,12 @@ class Certificate(Resource):
         self.password = password
         self.thumbprint = None
         self.valid = None
-        self.cer_blob = cer_blob
+        self.cer_blob = None
         self.public_key_hash = None
         self.hosting_environment_profile = None
         self.key_vault_id = key_vault_id
         self.key_vault_secret_name = key_vault_secret_name
         self.key_vault_secret_status = None
+        self.geo_region = None
+        self.certificate_name = None
         self.server_farm_id = server_farm_id
