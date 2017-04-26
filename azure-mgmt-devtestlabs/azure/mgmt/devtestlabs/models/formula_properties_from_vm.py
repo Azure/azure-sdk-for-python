@@ -18,7 +18,7 @@ class FormulaPropertiesFromVm(Model):
     :param lab_vm_id: The identifier of the VM from which a formula is to be
      created.
     :type lab_vm_id: str
-    """ 
+    """
 
     _attribute_map = {
         'lab_vm_id': {'key': 'labVmId', 'type': 'str'},
