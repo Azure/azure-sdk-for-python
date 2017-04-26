@@ -161,7 +161,7 @@ class TopLevelDomainsOperations(object):
         return deserialized
 
     def list_agreements(
-            self, name, include_privacy=None, custom_headers=None, raw=False, **operation_config):
+            self, name, include_privacy=None, for_transfer=None, custom_headers=None, raw=False, **operation_config):
         """Gets all legal agreements that user needs to accept before purchasing a
         domain.
 
@@ -174,6 +174,10 @@ class TopLevelDomainsOperations(object):
          agreements will include agreements for domain privacy as well;
          otherwise, <code>false</code>.
         :type include_privacy: bool
+        :param for_transfer: If <code>true</code>, then the list of agreements
+         will include agreements for domain transfer as well; otherwise,
+         <code>false</code>.
+        :type for_transfer: bool
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -183,7 +187,7 @@ class TopLevelDomainsOperations(object):
          <azure.mgmt.web.models.TldLegalAgreementPaged>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
-        agreement_option = models.TopLevelDomainAgreementOption(include_privacy=include_privacy)
+        agreement_option = models.TopLevelDomainAgreementOption(include_privacy=include_privacy, for_transfer=for_transfer)
 
         def internal_paging(next_link=None, raw=False):
 

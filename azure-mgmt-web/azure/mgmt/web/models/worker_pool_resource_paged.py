@@ -12,16 +12,16 @@
 from msrest.paging import Paged
 
 
-class AppServiceCertificatePaged(Paged):
+class WorkerPoolResourcePaged(Paged):
     """
-    A paging container for iterating over a list of AppServiceCertificate object
+    A paging container for iterating over a list of WorkerPoolResource object
     """
 
     _attribute_map = {
         'next_link': {'key': 'nextLink', 'type': 'str'},
-        'current_page': {'key': 'value', 'type': '[AppServiceCertificate]'}
+        'current_page': {'key': 'value', 'type': '[WorkerPoolResource]'}
     }
 
     def __init__(self, *args, **kwargs):
 
-        super(AppServiceCertificatePaged, self).__init__(*args, **kwargs)
+        super(WorkerPoolResourcePaged, self).__init__(*args, **kwargs)

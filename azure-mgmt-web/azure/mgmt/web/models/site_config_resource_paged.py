@@ -12,16 +12,16 @@
 from msrest.paging import Paged
 
 
-class CsrPaged(Paged):
+class SiteConfigResourcePaged(Paged):
     """
-    A paging container for iterating over a list of Csr object
+    A paging container for iterating over a list of SiteConfigResource object
     """
 
     _attribute_map = {
         'next_link': {'key': 'nextLink', 'type': 'str'},
-        'current_page': {'key': 'value', 'type': '[Csr]'}
+        'current_page': {'key': 'value', 'type': '[SiteConfigResource]'}
     }
 
     def __init__(self, *args, **kwargs):
 
-        super(CsrPaged, self).__init__(*args, **kwargs)
+        super(SiteConfigResourcePaged, self).__init__(*args, **kwargs)
