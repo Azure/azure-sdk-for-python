@@ -10,6 +10,7 @@
 # --------------------------------------------------------------------------
 
 from .app_service_certificate import AppServiceCertificate
+from .app_service_certificate_resource import AppServiceCertificateResource
 from .certificate_details import CertificateDetails
 from .app_service_certificate_order import AppServiceCertificateOrder
 from .certificate_email import CertificateEmail
@@ -24,15 +25,16 @@ from .virtual_ip_mapping import VirtualIPMapping
 from .address_response import AddressResponse
 from .api_definition_info import ApiDefinitionInfo
 from .virtual_network_profile import VirtualNetworkProfile
-from .sku_capacity import SkuCapacity
-from .capability import Capability
-from .sku_description import SkuDescription
 from .worker_pool import WorkerPool
 from .stamp_capacity import StampCapacity
 from .network_access_control_entry import NetworkAccessControlEntry
 from .name_value_pair import NameValuePair
 from .app_service_environment import AppServiceEnvironment
+from .app_service_environment_resource import AppServiceEnvironmentResource
 from .hosting_environment_profile import HostingEnvironmentProfile
+from .sku_capacity import SkuCapacity
+from .capability import Capability
+from .sku_description import SkuDescription
 from .app_service_plan import AppServicePlan
 from .auto_heal_custom_action import AutoHealCustomAction
 from .auto_heal_actions import AutoHealActions
@@ -73,6 +75,7 @@ from .site import Site
 from .sku_info import SkuInfo
 from .usage import Usage
 from .web_app_collection import WebAppCollection
+from .worker_pool_resource import WorkerPoolResource
 from .hybrid_connection import HybridConnection
 from .hybrid_connection_key import HybridConnectionKey
 from .hybrid_connection_limits import HybridConnectionLimits
@@ -80,7 +83,6 @@ from .vnet_gateway import VnetGateway
 from .vnet_route import VnetRoute
 from .vnet_info import VnetInfo
 from .certificate import Certificate
-from .csr import Csr
 from .address import Address
 from .contact import Contact
 from .host_name import HostName
@@ -129,6 +131,7 @@ from .host_name_binding import HostNameBinding
 from .http_logs_config import HttpLogsConfig
 from .identifier import Identifier
 from .migrate_my_sql_request import MigrateMySqlRequest
+from .migrate_my_sql_status import MigrateMySqlStatus
 from .relay_service_connection_entity import RelayServiceConnectionEntity
 from .network_features import NetworkFeatures
 from .perf_mon_sample import PerfMonSample
@@ -136,11 +139,13 @@ from .perf_mon_set import PerfMonSet
 from .perf_mon_response import PerfMonResponse
 from .premier_add_on import PremierAddOn
 from .recover_response import RecoverResponse
+from .resource_health_metadata import ResourceHealthMetadata
 from .restore_request import RestoreRequest
 from .restore_response import RestoreResponse
 from .site_auth_settings import SiteAuthSettings
 from .site_cloneability_criterion import SiteCloneabilityCriterion
 from .site_cloneability import SiteCloneability
+from .site_config_resource import SiteConfigResource
 from .site_configuration_snapshot_info import SiteConfigurationSnapshotInfo
 from .site_instance import SiteInstance
 from .site_logs_config import SiteLogsConfig
@@ -154,11 +159,11 @@ from .storage_migration_response import StorageMigrationResponse
 from .string_dictionary import StringDictionary
 from .deleted_site import DeletedSite
 from .app_service_certificate_order_paged import AppServiceCertificateOrderPaged
-from .app_service_certificate_paged import AppServiceCertificatePaged
+from .app_service_certificate_resource_paged import AppServiceCertificateResourcePaged
 from .app_service_environment_paged import AppServiceEnvironmentPaged
 from .stamp_capacity_paged import StampCapacityPaged
 from .resource_metric_paged import ResourceMetricPaged
-from .worker_pool_paged import WorkerPoolPaged
+from .worker_pool_resource_paged import WorkerPoolResourcePaged
 from .resource_metric_definition_paged import ResourceMetricDefinitionPaged
 from .sku_info_paged import SkuInfoPaged
 from .usage_paged import UsagePaged
@@ -168,7 +173,6 @@ from .csm_usage_quota_paged import CsmUsageQuotaPaged
 from .str_paged import StrPaged
 from .hybrid_connection_paged import HybridConnectionPaged
 from .certificate_paged import CertificatePaged
-from .csr_paged import CsrPaged
 from .domain_paged import DomainPaged
 from .name_identifier_paged import NameIdentifierPaged
 from .domain_ownership_identifier_paged import DomainOwnershipIdentifierPaged
@@ -178,6 +182,7 @@ from .premier_add_on_offer_paged import PremierAddOnOfferPaged
 from .top_level_domain_paged import TopLevelDomainPaged
 from .tld_legal_agreement_paged import TldLegalAgreementPaged
 from .backup_item_paged import BackupItemPaged
+from .site_config_resource_paged import SiteConfigResourcePaged
 from .deployment_paged import DeploymentPaged
 from .identifier_paged import IdentifierPaged
 from .host_name_binding_paged import HostNameBindingPaged
@@ -213,6 +218,7 @@ from .web_site_management_client_enums import (
     AzureResourceType,
     CustomHostNameDnsRecordType,
     HostNameType,
+    DnsType,
     DomainType,
     ResourceScopeType,
     NotificationLevel,
@@ -236,6 +242,7 @@ from .web_site_management_client_enums import (
 
 __all__ = [
     'AppServiceCertificate',
+    'AppServiceCertificateResource',
     'CertificateDetails',
     'AppServiceCertificateOrder',
     'CertificateEmail',
@@ -250,15 +257,16 @@ __all__ = [
     'AddressResponse',
     'ApiDefinitionInfo',
     'VirtualNetworkProfile',
-    'SkuCapacity',
-    'Capability',
-    'SkuDescription',
     'WorkerPool',
     'StampCapacity',
     'NetworkAccessControlEntry',
     'NameValuePair',
     'AppServiceEnvironment',
+    'AppServiceEnvironmentResource',
     'HostingEnvironmentProfile',
+    'SkuCapacity',
+    'Capability',
+    'SkuDescription',
     'AppServicePlan',
     'AutoHealCustomAction',
     'AutoHealActions',
@@ -299,6 +307,7 @@ __all__ = [
     'SkuInfo',
     'Usage',
     'WebAppCollection',
+    'WorkerPoolResource',
     'HybridConnection',
     'HybridConnectionKey',
     'HybridConnectionLimits',
@@ -306,7 +315,6 @@ __all__ = [
     'VnetRoute',
     'VnetInfo',
     'Certificate',
-    'Csr',
     'Address',
     'Contact',
     'HostName',
@@ -355,6 +363,7 @@ __all__ = [
     'HttpLogsConfig',
     'Identifier',
     'MigrateMySqlRequest',
+    'MigrateMySqlStatus',
     'RelayServiceConnectionEntity',
     'NetworkFeatures',
     'PerfMonSample',
@@ -362,11 +371,13 @@ __all__ = [
     'PerfMonResponse',
     'PremierAddOn',
     'RecoverResponse',
+    'ResourceHealthMetadata',
     'RestoreRequest',
     'RestoreResponse',
     'SiteAuthSettings',
     'SiteCloneabilityCriterion',
     'SiteCloneability',
+    'SiteConfigResource',
     'SiteConfigurationSnapshotInfo',
     'SiteInstance',
     'SiteLogsConfig',
@@ -380,11 +391,11 @@ __all__ = [
     'StringDictionary',
     'DeletedSite',
     'AppServiceCertificateOrderPaged',
-    'AppServiceCertificatePaged',
+    'AppServiceCertificateResourcePaged',
     'AppServiceEnvironmentPaged',
     'StampCapacityPaged',
     'ResourceMetricPaged',
-    'WorkerPoolPaged',
+    'WorkerPoolResourcePaged',
     'ResourceMetricDefinitionPaged',
     'SkuInfoPaged',
     'UsagePaged',
@@ -394,7 +405,6 @@ __all__ = [
     'StrPaged',
     'HybridConnectionPaged',
     'CertificatePaged',
-    'CsrPaged',
     'DomainPaged',
     'NameIdentifierPaged',
     'DomainOwnershipIdentifierPaged',
@@ -404,6 +414,7 @@ __all__ = [
     'TopLevelDomainPaged',
     'TldLegalAgreementPaged',
     'BackupItemPaged',
+    'SiteConfigResourcePaged',
     'DeploymentPaged',
     'IdentifierPaged',
     'HostNameBindingPaged',
@@ -438,6 +449,7 @@ __all__ = [
     'AzureResourceType',
     'CustomHostNameDnsRecordType',
     'HostNameType',
+    'DnsType',
     'DomainType',
     'ResourceScopeType',
     'NotificationLevel',

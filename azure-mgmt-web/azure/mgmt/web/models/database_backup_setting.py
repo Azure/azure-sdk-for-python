@@ -16,7 +16,7 @@ class DatabaseBackupSetting(Model):
     """Database backup settings.
 
     :param database_type: Database type (e.g. SqlAzure / MySql). Possible
-     values include: 'SqlAzure', 'MySql', 'LocalMySql'
+     values include: 'SqlAzure', 'MySql', 'LocalMySql', 'PostgreSql'
     :type database_type: str or :class:`DatabaseType
      <azure.mgmt.web.models.DatabaseType>`
     :param name:

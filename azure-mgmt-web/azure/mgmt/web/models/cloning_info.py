@@ -53,6 +53,9 @@ class CloningInfo(Model):
      create. This is only needed if Traffic Manager profile does not already
      exist.
     :type traffic_manager_profile_name: str
+    :param ignore_quotas: <code>true</code> if quotas should be ignored;
+     otherwise, <code>false</code>.
+    :type ignore_quotas: bool
     """
 
     _validation = {
@@ -70,9 +73,10 @@ class CloningInfo(Model):
         'configure_load_balancing': {'key': 'configureLoadBalancing', 'type': 'bool'},
         'traffic_manager_profile_id': {'key': 'trafficManagerProfileId', 'type': 'str'},
         'traffic_manager_profile_name': {'key': 'trafficManagerProfileName', 'type': 'str'},
+        'ignore_quotas': {'key': 'ignoreQuotas', 'type': 'bool'},
     }
 
-    def __init__(self, source_web_app_id, correlation_id=None, overwrite=None, clone_custom_host_names=None, clone_source_control=None, hosting_environment=None, app_settings_overrides=None, configure_load_balancing=None, traffic_manager_profile_id=None, traffic_manager_profile_name=None):
+    def __init__(self, source_web_app_id, correlation_id=None, overwrite=None, clone_custom_host_names=None, clone_source_control=None, hosting_environment=None, app_settings_overrides=None, configure_load_balancing=None, traffic_manager_profile_id=None, traffic_manager_profile_name=None, ignore_quotas=None):
         self.correlation_id = correlation_id
         self.overwrite = overwrite
         self.clone_custom_host_names = clone_custom_host_names
@@ -83,3 +87,4 @@ class CloningInfo(Model):
         self.configure_load_balancing = configure_load_balancing
         self.traffic_manager_profile_id = traffic_manager_profile_id
         self.traffic_manager_profile_name = traffic_manager_profile_name
+        self.ignore_quotas = ignore_quotas

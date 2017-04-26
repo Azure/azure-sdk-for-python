@@ -19,11 +19,17 @@ class TopLevelDomainAgreementOption(Model):
      will include agreements for domain privacy as well; otherwise,
      <code>false</code>.
     :type include_privacy: bool
+    :param for_transfer: If <code>true</code>, then the list of agreements
+     will include agreements for domain transfer as well; otherwise,
+     <code>false</code>.
+    :type for_transfer: bool
     """
 
     _attribute_map = {
         'include_privacy': {'key': 'includePrivacy', 'type': 'bool'},
+        'for_transfer': {'key': 'forTransfer', 'type': 'bool'},
     }
 
-    def __init__(self, include_privacy=None):
+    def __init__(self, include_privacy=None, for_transfer=None):
         self.include_privacy = include_privacy
+        self.for_transfer = for_transfer
