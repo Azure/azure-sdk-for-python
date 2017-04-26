@@ -31,6 +31,7 @@
     <Compile Include="pydocumentdb\execution_context\execution_dispatcher.py" />
     <Compile Include="pydocumentdb\execution_context\multi_execution_aggregator.py" />
     <Compile Include="pydocumentdb\execution_context\query_execution_info.py" />
+    <Compile Include="pydocumentdb\execution_context\aggregators.py" />
     <Compile Include="pydocumentdb\global_endpoint_manager.py" />
     <Compile Include="pydocumentdb\hash_partition_resolver.py" />
     <Compile Include="pydocumentdb\http_constants.py" />
@@ -52,6 +53,7 @@
     <Compile Include="setup.py" />
     <Compile Include="test\crud_tests.py" />
     <Compile Include="test\orderby_tests.py" />
+    <Compile Include="test\aggregate_tests.py" />
     <Compile Include="test\globaldb_tests.py" />
     <Compile Include="test\globaldb_mock_tests.py" />
     <Compile Include="test\retry_policy_tests.py" />
@@ -61,6 +63,7 @@
     <Compile Include="test\query_execution_context_tests.py" />
     <Compile Include="test\routing\__init__.py" />
     <Compile Include="test\session_container_tests.py" />
+    <Compile Include="test\test_config.py" />
     <Compile Include="test\ttl_tests.py" />
     <Compile Include="pydocumentdb\auth.py" />
     <Compile Include="pydocumentdb\base.py" />

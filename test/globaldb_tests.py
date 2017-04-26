@@ -32,6 +32,7 @@ import pydocumentdb.global_endpoint_manager as global_endpoint_manager
 import pydocumentdb.endpoint_discovery_retry_policy as endpoint_discovery_retry_policy
 import pydocumentdb.retry_utility as retry_utility
 import pydocumentdb.http_constants as http_constants
+import test.test_config as test_config
 
 #IMPORTANT NOTES: 
   
@@ -43,15 +44,15 @@ import pydocumentdb.http_constants as http_constants
 
 class Test_globaldb_tests(unittest.TestCase):
 
-    host = '[YOUR_GLOBAL_ENDPOINT_HERE]'
-    write_location_host = '[YOUR_WRITE_ENDPOINT_HERE]'
-    read_location_host = '[YOUR_READ_ENDPOINT_HERE]'
-    read_location2_host = '[YOUR_READ_ENDPOINT2_HERE]'
-    masterKey = '[YOUR_KEY_HERE]'
+    host = test_config._test_config.global_host
+    write_location_host = test_config._test_config.write_location_host
+    read_location_host = test_config._test_config.read_location_host
+    read_location2_host = test_config._test_config.read_location2_host
+    masterKey = test_config._test_config.global_masterKey
 
-    write_location = '[YOUR_WRITE_LOCATION_HERE]'
-    read_location = '[YOUR_READ_LOCATION_HERE]'
-    read_location2 = '[YOUR_READ_LOCATION2_HERE]'
+    write_location = test_config._test_config.write_location
+    read_location = test_config._test_config.read_location
+    read_location2 = test_config._test_config.read_location2
 
     test_database_id = 'testdb'
     test_collection_id = 'testcoll'

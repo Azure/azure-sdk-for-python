@@ -303,6 +303,10 @@ class ConnectionPolicy(object):
            the client will use this list to evaluate the final location, taking into consideration
            the order specified in PreferredLocations list. The locations in this list are specified as the names of
            the azure documentdb locations like, 'West US', 'East US', 'Central India' and so on.
+        - `RetryOptions`: RetryOptions, gets or sets the retry options to be applied to all requests when retrying.
+        - `DisableSSLVerification` : boolean, flag to disable SSL verification for the requests. SSL verification is enabled by default. 
+           Don't set this when targeting production endpoints.
+           This is intended to be used only when targeting emulator endpoint to avoid failing your requests with SSL related error.
     """
 
     __defaultRequestTimeout = 60000  # milliseconds
@@ -320,6 +324,7 @@ class ConnectionPolicy(object):
         self.EnableEndpointDiscovery = True
         self.PreferredLocations = []
         self.RetryOptions = retry_options.RetryOptions()
+        self.DisableSSLVerification = False;
 
 class Undefined(object):
     """Represents undefined value for partitionKey when it's mising.

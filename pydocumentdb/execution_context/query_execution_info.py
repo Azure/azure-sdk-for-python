@@ -33,6 +33,7 @@ class _PartitionedQueryExecutionInfo(object):
     QueryInfoPath = 'queryInfo'
     TopPath = [QueryInfoPath, 'top']
     OrderByPath = [QueryInfoPath, 'orderBy']
+    AggregatesPath = [QueryInfoPath, 'aggregates']
     QueryRangesPath = 'queryRanges'
     RewrittenQueryPath = [QueryInfoPath, 'rewrittenQuery']
 
@@ -54,6 +55,11 @@ class _PartitionedQueryExecutionInfo(object):
         """
         return self._extract(_PartitionedQueryExecutionInfo.OrderByPath)
 
+    def get_aggregates(self):
+        """Returns aggregators (if any) or None
+        """
+        return self._extract(_PartitionedQueryExecutionInfo.AggregatesPath)
+
     def get_query_ranges(self):
         """Returns query partition ranges (if any) or None
         """
@@ -62,7 +68,11 @@ class _PartitionedQueryExecutionInfo(object):
     def get_rewritten_query(self):
         """Returns rewritten query or None (if any)
         """
-        return self._extract(_PartitionedQueryExecutionInfo.RewrittenQueryPath)
+        rewrittenQuery = self._extract(_PartitionedQueryExecutionInfo.RewrittenQueryPath)
+        if rewrittenQuery is not None:
+            # Hardcode formattable filter to true for now 
+            rewrittenQuery = rewrittenQuery.replace('{documentdb-formattableorderbyquery-filter}', 'true')
+        return rewrittenQuery
 
     def _extract(self, path):
         

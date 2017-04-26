@@ -27,6 +27,7 @@ import pydocumentdb.errors as errors
 import pydocumentdb.retry_options as retry_options
 import pydocumentdb.http_constants as http_constants
 import pydocumentdb.retry_utility as retry_utility
+import test.test_config as test_config
 
 
 #IMPORTANT NOTES: 
@@ -39,8 +40,8 @@ import pydocumentdb.retry_utility as retry_utility
 
 class Test_retry_policy_tests(unittest.TestCase):
 
-    host = '[YOUR_ENDPOINT_HERE]'
-    masterKey = '[YOUR_KEY_HERE]'
+    host = test_config._test_config.host
+    masterKey = test_config._test_config.masterKey
     test_db_name = 'sample database' 
     test_coll_name = 'sample collection'
 

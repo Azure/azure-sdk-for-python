@@ -4,7 +4,7 @@ from distutils.core import setup
 import setuptools
 
 setup(name='pydocumentdb',
-      version='2.0.1',
+      version='2.1.0',
       description='Azure DocumentDB Python SDK',
       author="Microsoft",
       author_email="askdocdb@microsoft.com",
@@ -12,7 +12,7 @@ setup(name='pydocumentdb',
       maintainer_email="askdocdb@microsoft.com",
       url="https://github.com/Azure/azure-documentdb-python",
       license='MIT',
-      install_requires=['six >=1.6', 'requests==2.10.0'],
+      install_requires=['six >=1.6', 'requests>=2.10.0'],
       classifiers=[
         'License :: OSI Approved :: MIT License',
         'Intended Audience :: Developers',
@@ -20,7 +20,9 @@ setup(name='pydocumentdb',
         'Operating System :: OS Independent',
         'Programming Language :: Python',
         'Programming Language :: Python :: 2.7',
+        'Programming Language :: Python :: 3.3',
         'Programming Language :: Python :: 3.4',
+        'Programming Language :: Python :: 3.5',
         'Programming Language :: Python :: Implementation :: CPython',
         'Topic :: Software Development :: Libraries :: Python Modules'
       ],

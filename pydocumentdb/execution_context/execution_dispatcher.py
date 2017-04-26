@@ -129,6 +129,10 @@ class _PipelineExecutionContext(_QueryExecutionContextBase):
         top = query_execution_info.get_top()
         if not (top is None):
             self._endpoint = endpoint_component._QueryExecutionTopEndpointComponent(self._endpoint, top)
+
+        aggregates = query_execution_info.get_aggregates()
+        if aggregates:
+            self._endpoint = endpoint_component._QueryExecutionAggregateEndpointComponent(self._endpoint, aggregates)
    
         
     def next(self):

@@ -143,11 +143,7 @@ def GetHeaders(document_client,
     if 'partitionKey' in options:
         # if partitionKey value is Undefined, serialize it as {} to be consistent with other SDKs
         if options.get('partitionKey') is documents.Undefined:
-            if six.PY2:
-                headers[http_constants.HttpHeaders.PartitionKey] = [{}]
-            else:
-                # python 3 compatible
-                headers[http_constants.HttpHeaders.PartitionKey] = '[{}]'.encode('utf-8')
+            headers[http_constants.HttpHeaders.PartitionKey] = [{}]
         # else serialize using json dumps method which apart from regular values will serialize None into null
         else:
             headers[http_constants.HttpHeaders.PartitionKey] = json.dumps([options['partitionKey']])
@@ -181,6 +177,10 @@ def GetHeaders(document_client,
 
     if partition_key_range_id is not None:
         headers[http_constants.HttpHeaders.PartitionKeyRangeID] = partition_key_range_id
+
+    if options.get('enableScriptLogging'):
+        headers[http_constants.HttpHeaders.EnableScriptLogging] = options['enableScriptLogging']
+
     return headers
 
 

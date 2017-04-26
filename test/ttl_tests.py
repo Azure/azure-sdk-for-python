@@ -24,6 +24,7 @@ import time
 
 import pydocumentdb.document_client as document_client
 import pydocumentdb.errors as errors
+import test.test_config as test_config
 
 
 #IMPORTANT NOTES:
@@ -38,8 +39,8 @@ class Test_ttl_tests(unittest.TestCase):
     """TTL Unit Tests.
     """
 
-    host = '[YOUR_ENDPOINT_HERE]'
-    masterKey = '[YOUR_KEY_HERE]'
+    host = test_config._test_config.host
+    masterKey = test_config._test_config.masterKey
     testDbName = 'sample database'
 
     def __AssertHTTPFailureWithStatus(self, status_code, func, *args, **kwargs):
