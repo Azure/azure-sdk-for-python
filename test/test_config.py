@@ -21,7 +21,17 @@
 
 class _test_config(object):
 
+    host = '[YOUR_ENDPOINT_HERE]'
+    masterKey = '[YOUR_KEY_HERE]'
 
+    global_host = '[YOUR_GLOBAL_ENDPOINT_HERE]'
+    write_location_host = '[YOUR_WRITE_ENDPOINT_HERE]'
+    read_location_host = '[YOUR_READ_ENDPOINT_HERE]'
+    read_location2_host = '[YOUR_READ_ENDPOINT2_HERE]'
+    global_masterKey = '[YOUR_KEY_HERE]'
 
+    write_location = '[YOUR_WRITE_LOCATION_HERE]'
+    read_location = '[YOUR_READ_LOCATION_HERE]'
+    read_location2 = '[YOUR_READ_LOCATION2_HERE]'
 
 
