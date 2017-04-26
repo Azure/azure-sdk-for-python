@@ -13,13 +13,13 @@ from msrest.serialization import Model
 
 
 class ParameterInfo(Model):
-    """ParameterInfo.
+    """Information about an artifact's parameter.
 
-    :param name:
+    :param name: The name of the artifact parameter.
     :type name: str
-    :param value:
+    :param value: The value of the artifact parameter.
     :type value: str
-    """ 
+    """
 
     _attribute_map = {
         'name': {'key': 'name', 'type': 'str'},
