@@ -75,9 +75,15 @@ class AppServiceCertificateOrder(Resource):
     :vartype last_certificate_issuance_time: datetime
     :ivar expiration_time: Certificate expiration time.
     :vartype expiration_time: datetime
-    :param is_private_key_external: <code>true</code> if private key is
+    :ivar is_private_key_external: <code>true</code> if private key is
      external; otherwise, <code>false</code>.
-    :type is_private_key_external: bool
+    :vartype is_private_key_external: bool
+    :ivar app_service_certificate_not_renewable_reasons: Reasons why App
+     Service Certificate is not renewable at the current moment.
+    :vartype app_service_certificate_not_renewable_reasons: list of str
+    :ivar next_auto_renewal_time_stamp: Time stamp when the certificate would
+     be auto renewed next
+    :vartype next_auto_renewal_time_stamp: datetime
     """
 
     _validation = {
@@ -93,6 +99,9 @@ class AppServiceCertificateOrder(Resource):
         'serial_number': {'readonly': True},
         'last_certificate_issuance_time': {'readonly': True},
         'expiration_time': {'readonly': True},
+        'is_private_key_external': {'readonly': True},
+        'app_service_certificate_not_renewable_reasons': {'readonly': True},
+        'next_auto_renewal_time_stamp': {'readonly': True},
     }
 
     _attribute_map = {
@@ -119,9 +128,11 @@ class AppServiceCertificateOrder(Resource):
         'last_certificate_issuance_time': {'key': 'properties.lastCertificateIssuanceTime', 'type': 'iso-8601'},
         'expiration_time': {'key': 'properties.expirationTime', 'type': 'iso-8601'},
         'is_private_key_external': {'key': 'properties.isPrivateKeyExternal', 'type': 'bool'},
+        'app_service_certificate_not_renewable_reasons': {'key': 'properties.appServiceCertificateNotRenewableReasons', 'type': '[str]'},
+        'next_auto_renewal_time_stamp': {'key': 'properties.nextAutoRenewalTimeStamp', 'type': 'iso-8601'},
     }
 
-    def __init__(self, location, name=None, kind=None, type=None, tags=None, certificates=None, distinguished_name=None, validity_in_years=1, key_size=2048, product_type=None, auto_renew=True, csr=None, is_private_key_external=None):
+    def __init__(self, location, name=None, kind=None, type=None, tags=None, certificates=None, distinguished_name=None, validity_in_years=1, key_size=2048, product_type=None, auto_renew=True, csr=None):
         super(AppServiceCertificateOrder, self).__init__(name=name, kind=kind, location=location, type=type, tags=tags)
         self.certificates = certificates
         self.distinguished_name = distinguished_name
@@ -139,4 +150,6 @@ class AppServiceCertificateOrder(Resource):
         self.serial_number = None
         self.last_certificate_issuance_time = None
         self.expiration_time = None
-        self.is_private_key_external = is_private_key_external
+        self.is_private_key_external = None
+        self.app_service_certificate_not_renewable_reasons = None
+        self.next_auto_renewal_time_stamp = None

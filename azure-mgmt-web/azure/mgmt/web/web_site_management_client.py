@@ -26,6 +26,7 @@ from .operations.recommendations_operations import RecommendationsOperations
 from .operations.top_level_domains_operations import TopLevelDomainsOperations
 from .operations.web_apps_operations import WebAppsOperations
 from .operations.deleted_web_apps_operations import DeletedWebAppsOperations
+from .operations.provider_operations import ProviderOperations
 from . import models
 
 
@@ -88,6 +89,8 @@ class WebSiteManagementClient(object):
     :vartype web_apps: .operations.WebAppsOperations
     :ivar deleted_web_apps: DeletedWebApps operations
     :vartype deleted_web_apps: .operations.DeletedWebAppsOperations
+    :ivar provider: Provider operations
+    :vartype provider: .operations.ProviderOperations
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
@@ -125,6 +128,8 @@ class WebSiteManagementClient(object):
         self.web_apps = WebAppsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.deleted_web_apps = DeletedWebAppsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.provider = ProviderOperations(
             self._client, self.config, self._serialize, self._deserialize)
 
     def get_publishing_user(
@@ -449,14 +454,18 @@ class WebSiteManagementClient(object):
         return deserialized
 
     def list_geo_regions(
-            self, sku=None, custom_headers=None, raw=False, **operation_config):
+            self, sku=None, linux_workers_enabled=None, custom_headers=None, raw=False, **operation_config):
         """Get a list of available geographical regions.
 
         Get a list of available geographical regions.
 
         :param sku: Name of SKU used to filter the regions. Possible values
-         include: 'Free', 'Shared', 'Basic', 'Standard', 'Premium', 'Dynamic'
+         include: 'Free', 'Shared', 'Basic', 'Standard', 'Premium', 'Dynamic',
+         'Isolated'
         :type sku: str or :class:`SkuName <azure.mgmt.web.models.SkuName>`
+        :param linux_workers_enabled: Specify <code>true</code> if you want to
+         filter to only regions that support Linux workers.
+        :type linux_workers_enabled: bool
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -481,6 +490,8 @@ class WebSiteManagementClient(object):
                 query_parameters = {}
                 if sku is not None:
                     query_parameters['sku'] = self._serialize.query("sku", sku, 'str')
+                if linux_workers_enabled is not None:
+                    query_parameters['linuxWorkersEnabled'] = self._serialize.query("linux_workers_enabled", linux_workers_enabled, 'bool')
                 query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
             else:
