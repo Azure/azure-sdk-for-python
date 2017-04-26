@@ -3,6 +3,11 @@
 Release History
 ===============
 
+0.2.1 (2017-04-26)
+++++++++++++++++++
+
+* Removal of a REST endpoint not ready to release.
+
 0.2.0 (2017-04-19)
 ++++++++++++++++++
 

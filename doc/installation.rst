@@ -85,7 +85,7 @@ azure-mgmt-documentdb                 0.1.2
 azure-mgmt-eventhub                   0.2.0
 azure-mgmt-iothub                     0.2.2
 azure-mgmt-media                      0.1.1
-azure-mgmt-monitor                    0.2.0
+azure-mgmt-monitor                    0.2.1
 azure-mgmt-notificationhubs           0.30.0
 azure-mgmt-powerbiembedded            0.30.0rc6
 azure-mgmt-search                     0.1.0
