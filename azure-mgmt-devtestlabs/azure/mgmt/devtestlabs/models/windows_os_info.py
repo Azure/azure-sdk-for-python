@@ -15,11 +15,12 @@ from msrest.serialization import Model
 class WindowsOsInfo(Model):
     """Information about a Windows OS.
 
-    :param windows_os_state: The state of the Windows OS. Possible values
-     include: 'NonSysprepped', 'SysprepRequested', 'SysprepApplied'
+    :param windows_os_state: The state of the Windows OS (i.e. NonSysprepped,
+     SysprepRequested, SysprepApplied). Possible values include:
+     'NonSysprepped', 'SysprepRequested', 'SysprepApplied'
     :type windows_os_state: str or :class:`WindowsOsState
      <azure.mgmt.devtestlabs.models.WindowsOsState>`
-    """ 
+    """
 
     _attribute_map = {
         'windows_os_state': {'key': 'windowsOsState', 'type': 'str'},

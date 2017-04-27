@@ -21,7 +21,7 @@ class PolicySetResult(Model):
     :param policy_violations: The list of policy violations.
     :type policy_violations: list of :class:`PolicyViolation
      <azure.mgmt.devtestlabs.models.PolicyViolation>`
-    """ 
+    """
 
     _attribute_map = {
         'has_error': {'key': 'hasError', 'type': 'bool'},
