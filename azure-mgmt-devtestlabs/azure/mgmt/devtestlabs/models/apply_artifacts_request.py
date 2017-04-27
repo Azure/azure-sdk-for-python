@@ -18,7 +18,7 @@ class ApplyArtifactsRequest(Model):
     :param artifacts: The list of artifacts to apply.
     :type artifacts: list of :class:`ArtifactInstallProperties
      <azure.mgmt.devtestlabs.models.ArtifactInstallProperties>`
-    """ 
+    """
 
     _attribute_map = {
         'artifacts': {'key': 'artifacts', 'type': '[ArtifactInstallProperties]'},

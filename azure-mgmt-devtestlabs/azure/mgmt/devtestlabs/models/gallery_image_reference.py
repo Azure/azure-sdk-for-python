@@ -25,7 +25,7 @@ class GalleryImageReference(Model):
     :type os_type: str
     :param version: The version of the gallery image.
     :type version: str
-    """ 
+    """
 
     _attribute_map = {
         'offer': {'key': 'offer', 'type': 'str'},
