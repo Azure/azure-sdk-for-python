@@ -45,7 +45,7 @@ class ConsumptionManagementClientConfiguration(AzureConfiguration):
 
         super(ConsumptionManagementClientConfiguration, self).__init__(base_url)
 
-        self.add_user_agent('azure-mgmt-consumption/{}'.format(VERSION))
+        self.add_user_agent('consumptionmanagementclient/{}'.format(VERSION))
         self.add_user_agent('Azure-SDK-For-Python')
 
         self.credentials = credentials
