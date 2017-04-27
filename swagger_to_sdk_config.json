@@ -107,7 +107,7 @@
       "swagger": "arm-devtestlabs/2016-05-15/swagger/DTL.json",
       "autorest_options": {
         "Namespace": "azure.mgmt.devtestlabs",
-        "PackageVersion": "1.0.0"
+        "PackageVersion": "2.0.0"
       },
       "output_dir": "azure-mgmt-devtestlabs/azure/mgmt/devtestlabs"
     },
