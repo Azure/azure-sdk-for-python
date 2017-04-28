@@ -13,7 +13,7 @@ And use it as credentials in your management configuration client. These three i
 
 * OAuth authentication using Active Directory application and service principal
 * OAuth authentication using Azure Active Directory user/password
-* A wrapper on top of `ADAL for Python <https://github.com/AzureAD/azure-activedirectory-library-for-python>`
+* A wrapper on top of `ADAL for Python <https://github.com/AzureAD/azure-activedirectory-library-for-python>`__
 
 Using Service Principal
 ------------------------
