@@ -19,7 +19,7 @@ class ArmTemplateInfo(Model):
     :type template: object
     :param parameters: The parameters of the ARM template.
     :type parameters: object
-    """ 
+    """
 
     _attribute_map = {
         'template': {'key': 'template', 'type': 'object'},

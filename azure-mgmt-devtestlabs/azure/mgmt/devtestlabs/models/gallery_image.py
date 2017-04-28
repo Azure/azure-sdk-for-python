@@ -9,16 +9,29 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.serialization import Model
+from .resource import Resource
 
 
-class GalleryImage(Model):
+class GalleryImage(Resource):
     """A gallery image.
 
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar id: The identifier of the resource.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource.
+    :vartype type: str
+    :param location: The location of the resource.
+    :type location: str
+    :param tags: The tags of the resource.
+    :type tags: dict
     :param author: The author of the gallery image.
     :type author: str
-    :param created_date: The creation date of the gallery image.
-    :type created_date: datetime
+    :ivar created_date: The creation date of the gallery image.
+    :vartype created_date: datetime
     :param description: The description of the gallery image.
     :type description: str
     :param image_reference: The image reference of the gallery image.
@@ -28,41 +41,34 @@ class GalleryImage(Model):
     :type icon: str
     :param enabled: Indicates whether this gallery image is enabled.
     :type enabled: bool
-    :param id: The identifier of the resource.
-    :type id: str
-    :param name: The name of the resource.
-    :type name: str
-    :param type: The type of the resource.
-    :type type: str
-    :param location: The location of the resource.
-    :type location: str
-    :param tags: The tags of the resource.
-    :type tags: dict
-    """ 
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'created_date': {'readonly': True},
+    }
 
     _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'location': {'key': 'location', 'type': 'str'},
+        'tags': {'key': 'tags', 'type': '{str}'},
         'author': {'key': 'properties.author', 'type': 'str'},
         'created_date': {'key': 'properties.createdDate', 'type': 'iso-8601'},
         'description': {'key': 'properties.description', 'type': 'str'},
         'image_reference': {'key': 'properties.imageReference', 'type': 'GalleryImageReference'},
         'icon': {'key': 'properties.icon', 'type': 'str'},
         'enabled': {'key': 'properties.enabled', 'type': 'bool'},
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
     }
 
-    def __init__(self, author=None, created_date=None, description=None, image_reference=None, icon=None, enabled=None, id=None, name=None, type=None, location=None, tags=None):
+    def __init__(self, location=None, tags=None, author=None, description=None, image_reference=None, icon=None, enabled=None):
+        super(GalleryImage, self).__init__(location=location, tags=tags)
         self.author = author
-        self.created_date = created_date
+        self.created_date = None
         self.description = description
         self.image_reference = image_reference
         self.icon = icon
         self.enabled = enabled
-        self.id = id
-        self.name = name
-        self.type = type
-        self.location = location
-        self.tags = tags

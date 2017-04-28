@@ -44,10 +44,9 @@ from .activity_log_alert_action_list import ActivityLogAlertActionList
 from .activity_log_alert_resource import ActivityLogAlertResource
 from .activity_log_alert_resource_patch import ActivityLogAlertResourcePatch
 from .retention_policy import RetentionPolicy
+from .log_profile_resource import LogProfileResource
 from .metric_settings import MetricSettings
 from .log_settings import LogSettings
-from .diagnostic_settings_resource import DiagnosticSettingsResource
-from .log_profile_resource import LogProfileResource
 from .service_diagnostic_settings_resource import ServiceDiagnosticSettingsResource
 from .autoscale_setting_resource_paged import AutoscaleSettingResourcePaged
 from .alert_rule_resource_paged import AlertRuleResourcePaged
@@ -101,10 +100,9 @@ __all__ = [
     'ActivityLogAlertResource',
     'ActivityLogAlertResourcePatch',
     'RetentionPolicy',
+    'LogProfileResource',
     'MetricSettings',
     'LogSettings',
-    'DiagnosticSettingsResource',
-    'LogProfileResource',
     'ServiceDiagnosticSettingsResource',
     'AutoscaleSettingResourcePaged',
     'AlertRuleResourcePaged',

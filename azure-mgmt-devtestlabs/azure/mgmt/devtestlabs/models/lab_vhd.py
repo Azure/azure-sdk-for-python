@@ -15,9 +15,9 @@ from msrest.serialization import Model
 class LabVhd(Model):
     """Properties of a VHD in the lab.
 
-    :param id: The absolute URI of the VHD.
+    :param id: The URI to the VHD.
     :type id: str
-    """ 
+    """
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},

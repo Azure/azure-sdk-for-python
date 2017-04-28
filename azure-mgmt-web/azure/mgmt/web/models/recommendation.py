@@ -64,6 +64,16 @@ class Recommendation(Model):
     :type notified_time: datetime
     :param score: A metric value measured by the rule.
     :type score: float
+    :param is_dynamic: True if this is associated with a dynamically added
+     rule
+    :type is_dynamic: bool
+    :param extension_name: Extension name of the portal if exists.
+    :type extension_name: str
+    :param blade_name: Deep link to a blade on the portal.
+    :type blade_name: str
+    :param forward_link: Forward link to an external document associated with
+     the rule.
+    :type forward_link: str
     """
 
     _attribute_map = {
@@ -84,9 +94,13 @@ class Recommendation(Model):
         'notification_expiration_time': {'key': 'notificationExpirationTime', 'type': 'iso-8601'},
         'notified_time': {'key': 'notifiedTime', 'type': 'iso-8601'},
         'score': {'key': 'score', 'type': 'float'},
+        'is_dynamic': {'key': 'isDynamic', 'type': 'bool'},
+        'extension_name': {'key': 'extensionName', 'type': 'str'},
+        'blade_name': {'key': 'bladeName', 'type': 'str'},
+        'forward_link': {'key': 'forwardLink', 'type': 'str'},
     }
 
-    def __init__(self, creation_time=None, recommendation_id=None, resource_id=None, resource_scope=None, rule_name=None, display_name=None, message=None, level=None, channels=None, tags=None, action_name=None, start_time=None, end_time=None, next_notification_time=None, notification_expiration_time=None, notified_time=None, score=None):
+    def __init__(self, creation_time=None, recommendation_id=None, resource_id=None, resource_scope=None, rule_name=None, display_name=None, message=None, level=None, channels=None, tags=None, action_name=None, start_time=None, end_time=None, next_notification_time=None, notification_expiration_time=None, notified_time=None, score=None, is_dynamic=None, extension_name=None, blade_name=None, forward_link=None):
         self.creation_time = creation_time
         self.recommendation_id = recommendation_id
         self.resource_id = resource_id
@@ -104,3 +118,7 @@ class Recommendation(Model):
         self.notification_expiration_time = notification_expiration_time
         self.notified_time = notified_time
         self.score = score
+        self.is_dynamic = is_dynamic
+        self.extension_name = extension_name
+        self.blade_name = blade_name
+        self.forward_link = forward_link
