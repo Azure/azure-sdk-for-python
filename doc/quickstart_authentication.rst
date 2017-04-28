@@ -25,8 +25,8 @@ To set up Service Principal authentication, you must have:
 * Your Active Directory tenant id,
   referred to in the Azure portal as the directory ID.
 
-The following tutorial describes where to find these values in the Azure portal:
-https://azure.microsoft.com/en-us/documentation/articles/resource-group-create-service-principal-portal/
+For help finding these values in the Azure portal, please refer to
+`this tutorial <https://azure.microsoft.com/en-us/documentation/articles/resource-group-create-service-principal-portal/>`__.
 
 Once you have the three required values, use them to instantiate a ``ServicePrincipalCredentials`` object:
 
@@ -39,8 +39,6 @@ Once you have the three required values, use them to instantiate a ``ServicePrin
         secret = 'XXXXXXXXXXXXXXXXXXXXXXXX',
         tenant = 'ABCDEFAB-1234-ABCD-1234-ABCDEFABCDEF'
     )
-
-
 
 Using AD User/Password
 ----------------------
