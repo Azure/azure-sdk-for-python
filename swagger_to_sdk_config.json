@@ -320,6 +320,15 @@
       "output_dir": "azure-mgmt-resource/azure/mgmt/resource/resources/v2016_09_01",
       "generated_relative_base_directory": "azure/mgmt/resource/resources/v2016_09_01"
     },
+    "resources.resources.2017-05-10": {
+      "swagger": "arm-resources/resources/2017-05-10/swagger/resources.json",
+      "autorest_options": {
+        "Namespace": "azure.mgmt.resource.resources.v2017_05_10"
+      },
+      "output_dir": "azure-mgmt-resource/azure/mgmt/resource/resources/v2017_05_10",
+      "generated_relative_base_directory": "azure/mgmt/resource/resources/v2017_05_10",
+      "build_dir": "azure-mgmt-resource"
+    },
     "resources.policy.2016-04-01": {
       "swagger": "arm-resources/policy/2016-04-01/swagger/policy.json",
       "autorest_options": {
