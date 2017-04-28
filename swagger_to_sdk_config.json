@@ -22,7 +22,8 @@
         "Namespace": "azure.mgmt.authorization",
         "PackageVersion": "0.30.0"
       },
-      "output_dir": "azure-mgmt-authorization/azure/mgmt/authorization"
+      "output_dir": "azure-mgmt-authorization/azure/mgmt/authorization",
+      "build_dir": "azure-mgmt-authorization"
     },
     "batch.management": {
       "swagger": "arm-batch/2017-01-01/swagger/BatchManagement.json",
