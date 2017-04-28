@@ -9,10 +9,5 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .resource_management_client import ResourceManagementClient
-from .version import VERSION
-
-__all__ = ['ResourceManagementClient']
-
-__version__ = VERSION
+VERSION = "2017-05-10"
 

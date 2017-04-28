@@ -9,10 +9,15 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .resource_management_client import ResourceManagementClient
-from .version import VERSION
+from enum import Enum
 
-__all__ = ['ResourceManagementClient']
 
-__version__ = VERSION
+class DeploymentMode(Enum):
 
+    incremental = "Incremental"
+    complete = "Complete"
+
+
+class ResourceIdentityType(Enum):
+
+    system_assigned = "SystemAssigned"

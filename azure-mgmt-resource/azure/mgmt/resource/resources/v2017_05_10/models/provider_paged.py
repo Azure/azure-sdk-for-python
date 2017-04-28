@@ -9,10 +9,19 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .resource_management_client import ResourceManagementClient
-from .version import VERSION
+from msrest.paging import Paged
 
-__all__ = ['ResourceManagementClient']
 
-__version__ = VERSION
+class ProviderPaged(Paged):
+    """
+    A paging container for iterating over a list of Provider object
+    """
 
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[Provider]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(ProviderPaged, self).__init__(*args, **kwargs)
