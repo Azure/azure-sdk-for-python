@@ -18,18 +18,17 @@ And use it as credentials in your management configuration client. These three i
 Using Service Principal
 ------------------------
 
-There is now a detailed official tutorial to describe this:
+To set up Service Principal authentication, you must have:
+
+* Your client ID, referred to in the Azure portal as the application ID.
+* A secret authentication key for the application.
+* Your Active Directory tenant id,
+  referred to in the Azure portal as the directory ID.
+
+The following tutorial describes where to find these values in the Azure portal:
 https://azure.microsoft.com/en-us/documentation/articles/resource-group-create-service-principal-portal/
 
-At this point, you must have:
-
-* Your client id. Found in the "client id" box in the "Settings" page of your application in the Azure portal.
-* Your secret key. Generated when you have created the application. You cannot show the key after creation.
-  If you've lost the current key, you must create a new one in the "Settings" page of your application.
-* Your AD tenant id. It's an UUID (e.g. ABCDEFAB-1234-ABCD-1234-ABCDEFABCDEF) which points to the AD containing your application.
-  You will find it in the URL when you are in the Azure portal in your AD, or in the "view endpoints" in any of the given url.
-
-Then, you can create your credentials instance:
+Once you have the three required values, use them to instantiate a ``ServicePrincipalCredentials`` object:
 
 .. code:: python
 
@@ -48,7 +47,6 @@ Using AD User/Password
 
 1. Connect to the Azure Classic Portal with your admin account
 2. `Create a user in your default AAD <https://azure.microsoft.com/en-us/documentation/articles/active-directory-create-users/>`__. **You must NOT activate Multi-Factor Authentication!**
-
 3. Go to Settings - Administrators
 4. Click on Add and enter the email of the new user. Check the checkbox of the subscription you want to test with this user.
 5. Login to Azure Portal with this new user to change the temporary password to a new one. You will not be able to use the temporary password for OAuth login.
