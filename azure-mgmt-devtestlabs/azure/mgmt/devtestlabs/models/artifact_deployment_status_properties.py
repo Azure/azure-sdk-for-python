@@ -23,7 +23,7 @@ class ArtifactDeploymentStatusProperties(Model):
     :param total_artifacts: The total count of the artifacts that were
      tentatively applied.
     :type total_artifacts: int
-    """ 
+    """
 
     _attribute_map = {
         'deployment_status': {'key': 'deploymentStatus', 'type': 'str'},

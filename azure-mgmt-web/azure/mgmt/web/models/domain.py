@@ -49,8 +49,8 @@ class Domain(Resource):
      include: 'Succeeded', 'Failed', 'Canceled', 'InProgress', 'Deleting'
     :vartype provisioning_state: str or :class:`ProvisioningState
      <azure.mgmt.web.models.ProvisioningState>`
-    :param name_servers: Name servers.
-    :type name_servers: list of str
+    :ivar name_servers: Name servers.
+    :vartype name_servers: list of str
     :param privacy: <code>true</code> if domain privacy is enabled for this
      domain; otherwise, <code>false</code>.
     :type privacy: bool
@@ -69,15 +69,26 @@ class Domain(Resource):
      active and
      it is hosted on name servers Azure has programmatic access to.
     :vartype ready_for_dns_record_management: bool
-    :param managed_host_names: All hostnames derived from the domain and
+    :ivar managed_host_names: All hostnames derived from the domain and
      assigned to Azure resources.
-    :type managed_host_names: list of :class:`HostName
+    :vartype managed_host_names: list of :class:`HostName
      <azure.mgmt.web.models.HostName>`
     :param consent: Legal agreement consent.
     :type consent: :class:`DomainPurchaseConsent
      <azure.mgmt.web.models.DomainPurchaseConsent>`
-    :param domain_not_renewable_reasons: Reasons why domain is not renewable.
-    :type domain_not_renewable_reasons: list of str
+    :ivar domain_not_renewable_reasons: Reasons why domain is not renewable.
+    :vartype domain_not_renewable_reasons: list of str
+    :param dns_type: Current DNS type. Possible values include: 'AzureDns',
+     'DefaultDomainRegistrarDns'
+    :type dns_type: str or :class:`DnsType <azure.mgmt.web.models.DnsType>`
+    :param dns_zone_id: Azure DNS Zone to use
+    :type dns_zone_id: str
+    :param target_dns_type: Target DNS type (would be used for migration).
+     Possible values include: 'AzureDns', 'DefaultDomainRegistrarDns'
+    :type target_dns_type: str or :class:`DnsType
+     <azure.mgmt.web.models.DnsType>`
+    :ivar auth_code:
+    :vartype auth_code: str
     """
 
     _validation = {
@@ -85,10 +96,14 @@ class Domain(Resource):
         'location': {'required': True},
         'registration_status': {'readonly': True},
         'provisioning_state': {'readonly': True},
+        'name_servers': {'readonly': True},
         'created_time': {'readonly': True},
         'expiration_time': {'readonly': True},
         'last_renewed_time': {'readonly': True},
         'ready_for_dns_record_management': {'readonly': True},
+        'managed_host_names': {'readonly': True},
+        'domain_not_renewable_reasons': {'readonly': True},
+        'auth_code': {'readonly': True},
     }
 
     _attribute_map = {
@@ -114,9 +129,13 @@ class Domain(Resource):
         'managed_host_names': {'key': 'properties.managedHostNames', 'type': '[HostName]'},
         'consent': {'key': 'properties.consent', 'type': 'DomainPurchaseConsent'},
         'domain_not_renewable_reasons': {'key': 'properties.domainNotRenewableReasons', 'type': '[str]'},
+        'dns_type': {'key': 'properties.dnsType', 'type': 'DnsType'},
+        'dns_zone_id': {'key': 'properties.dnsZoneId', 'type': 'str'},
+        'target_dns_type': {'key': 'properties.targetDnsType', 'type': 'DnsType'},
+        'auth_code': {'key': 'properties.authCode', 'type': 'str'},
     }
 
-    def __init__(self, location, name=None, kind=None, type=None, tags=None, contact_admin=None, contact_billing=None, contact_registrant=None, contact_tech=None, name_servers=None, privacy=None, auto_renew=True, managed_host_names=None, consent=None, domain_not_renewable_reasons=None):
+    def __init__(self, location, name=None, kind=None, type=None, tags=None, contact_admin=None, contact_billing=None, contact_registrant=None, contact_tech=None, privacy=None, auto_renew=True, consent=None, dns_type=None, dns_zone_id=None, target_dns_type=None):
         super(Domain, self).__init__(name=name, kind=kind, location=location, type=type, tags=tags)
         self.contact_admin = contact_admin
         self.contact_billing = contact_billing
@@ -124,13 +143,17 @@ class Domain(Resource):
         self.contact_tech = contact_tech
         self.registration_status = None
         self.provisioning_state = None
-        self.name_servers = name_servers
+        self.name_servers = None
         self.privacy = privacy
         self.created_time = None
         self.expiration_time = None
         self.last_renewed_time = None
         self.auto_renew = auto_renew
         self.ready_for_dns_record_management = None
-        self.managed_host_names = managed_host_names
+        self.managed_host_names = None
         self.consent = consent
-        self.domain_not_renewable_reasons = domain_not_renewable_reasons
+        self.domain_not_renewable_reasons = None
+        self.dns_type = dns_type
+        self.dns_zone_id = dns_zone_id
+        self.target_dns_type = target_dns_type
+        self.auth_code = None

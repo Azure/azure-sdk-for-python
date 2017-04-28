@@ -69,9 +69,9 @@ class Deployment(Resource):
         'message': {'key': 'properties.message', 'type': 'str'},
         'author': {'key': 'properties.author', 'type': 'str'},
         'deployer': {'key': 'properties.deployer', 'type': 'str'},
-        'author_email': {'key': 'properties.author_email', 'type': 'str'},
-        'start_time': {'key': 'properties.start_time', 'type': 'iso-8601'},
-        'end_time': {'key': 'properties.end_time', 'type': 'iso-8601'},
+        'author_email': {'key': 'properties.authorEmail', 'type': 'str'},
+        'start_time': {'key': 'properties.startTime', 'type': 'iso-8601'},
+        'end_time': {'key': 'properties.endTime', 'type': 'iso-8601'},
         'active': {'key': 'properties.active', 'type': 'bool'},
         'details': {'key': 'properties.details', 'type': 'str'},
     }

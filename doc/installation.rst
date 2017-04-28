@@ -49,14 +49,14 @@ Package name                          Version
 ===================================== =======
 azure-batch                           2.0.1
 azure-mgmt-batch                      3.0.1
-azure-mgmt-devtestlabs                1.0.0
+azure-mgmt-devtestlabs                2.0.0
 azure-mgmt-dns                        1.0.1
 azure-mgmt-logic                      2.1.0
 azure-mgmt-redis                      4.1.0
 azure-mgmt-scheduler                  1.1.2
 azure-mgmt-servermanager              1.0.0
-azure-servicebus                      0.21.0
-azure-servicemanagement-legacy        0.20.5
+azure-servicebus                      0.21.1
+azure-servicemanagement-legacy        0.20.6
 azure-storage                         0.33.0
 ===================================== =======
 
@@ -85,14 +85,14 @@ azure-mgmt-documentdb                 0.1.2
 azure-mgmt-eventhub                   0.2.0
 azure-mgmt-iothub                     0.2.2
 azure-mgmt-media                      0.1.1
-azure-mgmt-monitor                    0.2.0
+azure-mgmt-monitor                    0.2.1
 azure-mgmt-notificationhubs           0.30.0
 azure-mgmt-powerbiembedded            0.30.0rc6
 azure-mgmt-search                     0.1.0
 azure-mgmt-servicebus                 0.1.0
 azure-mgmt-sql                        0.5.0
 azure-mgmt-trafficmanager             0.30.0
-azure-mgmt-web                        0.31.1
+azure-mgmt-web                        0.32.0
 ===================================== =========
 
 Install from Github

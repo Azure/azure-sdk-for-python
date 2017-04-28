@@ -92,7 +92,7 @@ class UsageDetailsOperations(object):
                 if skiptoken is not None:
                     query_parameters['$skiptoken'] = self._serialize.query("skiptoken", skiptoken, 'str')
                 if top is not None:
-                    query_parameters['$top'] = self._serialize.query("top", top, 'int', maximum=100, minimum=1)
+                    query_parameters['$top'] = self._serialize.query("top", top, 'int', maximum=1000, minimum=1)
                 query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
             else:

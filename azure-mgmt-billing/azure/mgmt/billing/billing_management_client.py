@@ -46,7 +46,7 @@ class BillingManagementClientConfiguration(AzureConfiguration):
 
         super(BillingManagementClientConfiguration, self).__init__(base_url)
 
-        self.add_user_agent('azure-mgmt-billing/{}'.format(VERSION))
+        self.add_user_agent('billingmanagementclient/{}'.format(VERSION))
         self.add_user_agent('Azure-SDK-For-Python')
 
         self.credentials = credentials

@@ -9,30 +9,48 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .lab_operations import LabOperations
-from .artifact_source_operations import ArtifactSourceOperations
-from .artifact_operations import ArtifactOperations
-from .cost_operations import CostOperations
-from .custom_image_operations import CustomImageOperations
-from .formula_operations import FormulaOperations
-from .gallery_image_operations import GalleryImageOperations
-from .policy_set_operations import PolicySetOperations
-from .policy_operations import PolicyOperations
-from .schedule_operations import ScheduleOperations
-from .virtual_machine_operations import VirtualMachineOperations
-from .virtual_network_operations import VirtualNetworkOperations
+from .labs_operations import LabsOperations
+from .global_schedules_operations import GlobalSchedulesOperations
+from .artifact_sources_operations import ArtifactSourcesOperations
+from .arm_templates_operations import ArmTemplatesOperations
+from .artifacts_operations import ArtifactsOperations
+from .costs_operations import CostsOperations
+from .custom_images_operations import CustomImagesOperations
+from .formulas_operations import FormulasOperations
+from .gallery_images_operations import GalleryImagesOperations
+from .notification_channels_operations import NotificationChannelsOperations
+from .policy_sets_operations import PolicySetsOperations
+from .policies_operations import PoliciesOperations
+from .schedules_operations import SchedulesOperations
+from .service_runners_operations import ServiceRunnersOperations
+from .users_operations import UsersOperations
+from .disks_operations import DisksOperations
+from .environments_operations import EnvironmentsOperations
+from .secrets_operations import SecretsOperations
+from .virtual_machines_operations import VirtualMachinesOperations
+from .virtual_machine_schedules_operations import VirtualMachineSchedulesOperations
+from .virtual_networks_operations import VirtualNetworksOperations
 
 __all__ = [
-    'LabOperations',
-    'ArtifactSourceOperations',
-    'ArtifactOperations',
-    'CostOperations',
-    'CustomImageOperations',
-    'FormulaOperations',
-    'GalleryImageOperations',
-    'PolicySetOperations',
-    'PolicyOperations',
-    'ScheduleOperations',
-    'VirtualMachineOperations',
-    'VirtualNetworkOperations',
+    'LabsOperations',
+    'GlobalSchedulesOperations',
+    'ArtifactSourcesOperations',
+    'ArmTemplatesOperations',
+    'ArtifactsOperations',
+    'CostsOperations',
+    'CustomImagesOperations',
+    'FormulasOperations',
+    'GalleryImagesOperations',
+    'NotificationChannelsOperations',
+    'PolicySetsOperations',
+    'PoliciesOperations',
+    'SchedulesOperations',
+    'ServiceRunnersOperations',
+    'UsersOperations',
+    'DisksOperations',
+    'EnvironmentsOperations',
+    'SecretsOperations',
+    'VirtualMachinesOperations',
+    'VirtualMachineSchedulesOperations',
+    'VirtualNetworksOperations',
 ]

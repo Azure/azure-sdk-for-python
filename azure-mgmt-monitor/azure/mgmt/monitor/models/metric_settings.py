@@ -18,11 +18,6 @@ class MetricSettings(Model):
 
     :param time_grain: the timegrain of the metric in ISO8601 format.
     :type time_grain: timedelta
-    :param category: Name of a Diagnostic Metric category for a resource type
-     this setting is applied to. To obtain the list of Diagnostic metric
-     categories for a resource, first perform a GET diagnostic settings
-     operation.
-    :type category: str
     :param enabled: a value indicating whether this timegrain is enabled.
     :type enabled: bool
     :param retention_policy: the retention policy for this timegrain.
@@ -37,13 +32,11 @@ class MetricSettings(Model):
 
     _attribute_map = {
         'time_grain': {'key': 'timeGrain', 'type': 'duration'},
-        'category': {'key': 'category', 'type': 'str'},
         'enabled': {'key': 'enabled', 'type': 'bool'},
         'retention_policy': {'key': 'retentionPolicy', 'type': 'RetentionPolicy'},
     }
 
-    def __init__(self, time_grain, enabled, category=None, retention_policy=None):
+    def __init__(self, time_grain, enabled, retention_policy=None):
         self.time_grain = time_grain
-        self.category = category
         self.enabled = enabled
         self.retention_policy = retention_policy
