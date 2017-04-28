@@ -9,10 +9,19 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .resource_management_client import ResourceManagementClient
-from .version import VERSION
+from msrest.paging import Paged
 
-__all__ = ['ResourceManagementClient']
 
-__version__ = VERSION
+class DeploymentExtendedPaged(Paged):
+    """
+    A paging container for iterating over a list of DeploymentExtended object
+    """
 
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[DeploymentExtended]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(DeploymentExtendedPaged, self).__init__(*args, **kwargs)

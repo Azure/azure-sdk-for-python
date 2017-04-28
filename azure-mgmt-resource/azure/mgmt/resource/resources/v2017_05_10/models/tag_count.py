@@ -9,10 +9,23 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .resource_management_client import ResourceManagementClient
-from .version import VERSION
+from msrest.serialization import Model
 
-__all__ = ['ResourceManagementClient']
 
-__version__ = VERSION
+class TagCount(Model):
+    """Tag count.
 
+    :param type: Type of count.
+    :type type: str
+    :param value: Value of count.
+    :type value: int
+    """
+
+    _attribute_map = {
+        'type': {'key': 'type', 'type': 'str'},
+        'value': {'key': 'value', 'type': 'int'},
+    }
+
+    def __init__(self, type=None, value=None):
+        self.type = type
+        self.value = value

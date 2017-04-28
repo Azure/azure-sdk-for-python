@@ -9,10 +9,19 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .resource_management_client import ResourceManagementClient
-from .version import VERSION
+from msrest.serialization import Model
 
-__all__ = ['ResourceManagementClient']
 
-__version__ = VERSION
+class SubResource(Model):
+    """Sub-resource.
 
+    :param id: Resource ID
+    :type id: str
+    """
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+    }
+
+    def __init__(self, id=None):
+        self.id = id

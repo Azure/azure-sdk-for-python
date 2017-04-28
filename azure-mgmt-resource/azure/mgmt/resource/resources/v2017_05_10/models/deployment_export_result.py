@@ -9,10 +9,19 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .resource_management_client import ResourceManagementClient
-from .version import VERSION
+from msrest.serialization import Model
 
-__all__ = ['ResourceManagementClient']
 
-__version__ = VERSION
+class DeploymentExportResult(Model):
+    """The deployment export result. .
 
+    :param template: The template content.
+    :type template: object
+    """
+
+    _attribute_map = {
+        'template': {'key': 'template', 'type': 'object'},
+    }
+
+    def __init__(self, template=None):
+        self.template = template

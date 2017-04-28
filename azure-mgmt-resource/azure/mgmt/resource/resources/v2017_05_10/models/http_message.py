@@ -9,10 +9,19 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .resource_management_client import ResourceManagementClient
-from .version import VERSION
+from msrest.serialization import Model
 
-__all__ = ['ResourceManagementClient']
 
-__version__ = VERSION
+class HttpMessage(Model):
+    """HTTP message.
 
+    :param content: HTTP message content.
+    :type content: object
+    """
+
+    _attribute_map = {
+        'content': {'key': 'content', 'type': 'object'},
+    }
+
+    def __init__(self, content=None):
+        self.content = content
