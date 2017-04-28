@@ -3,6 +3,13 @@
 Release History
 ===============
 
+0.5.1 (2017-04-28)
+++++++++++++++++++
+
+**Bugfixes**
+
+- Fix return exception in import/export
+
 0.5.0 (2017-04-19)
 ++++++++++++++++++
 
