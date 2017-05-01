@@ -273,13 +273,14 @@
       },
       "output_dir": "azure-mgmt-redis/azure/mgmt/redis"
     },
-    "resources.appliances.2016-09-01-preview": {
-      "swagger": "arm-resources/appliances/2016-09-01-preview/swagger/appliances.json",
+    "resources.managedapplications.2016-09-01-preview": {
+      "swagger": "arm-resources/managedapplications/2016-09-01-preview/swagger/managedapplications.json",
       "autorest_options": {
-        "Namespace": "azure.mgmt.resource.appliances"
+        "Namespace": "azure.mgmt.resource.managedapplications"
       },
-      "output_dir": "azure-mgmt-resource/azure/mgmt/resource/appliances",
-      "generated_relative_base_directory": "azure/mgmt/resource/appliances"
+      "output_dir": "azure-mgmt-resource/azure/mgmt/resource/managedapplications",
+      "generated_relative_base_directory": "azure/mgmt/resource/managedapplications",
+      "build_dir": "azure-mgmt-resource"
     },
     "resources.features.2015-12-01": {
       "swagger": "arm-resources/features/2015-12-01/swagger/features.json",

@@ -23,7 +23,7 @@ from .resource import Resource
 from .appliance_definition_list_result import ApplianceDefinitionListResult
 from .error_response import ErrorResponse, ErrorResponseException
 from .appliance_paged import AppliancePaged
-from .appliance_client_enums import (
+from .managed_application_client_enums import (
     ProvisioningState,
     ApplianceLockLevel,
     ApplianceArtifactType,

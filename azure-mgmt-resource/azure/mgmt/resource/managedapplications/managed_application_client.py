@@ -18,8 +18,8 @@ from .operations.appliance_definitions_operations import ApplianceDefinitionsOpe
 from . import models
 
 
-class ApplianceClientConfiguration(AzureConfiguration):
-    """Configuration for ApplianceClient
+class ManagedApplicationClientConfiguration(AzureConfiguration):
+    """Configuration for ManagedApplicationClient
     Note that all parameters used to create this instance are saved as instance
     attributes.
 
@@ -43,20 +43,20 @@ class ApplianceClientConfiguration(AzureConfiguration):
         if not base_url:
             base_url = 'https://management.azure.com'
 
-        super(ApplianceClientConfiguration, self).__init__(base_url)
+        super(ManagedApplicationClientConfiguration, self).__init__(base_url)
 
-        self.add_user_agent('applianceclient/{}'.format(VERSION))
+        self.add_user_agent('managedapplicationclient/{}'.format(VERSION))
         self.add_user_agent('Azure-SDK-For-Python')
 
         self.credentials = credentials
         self.subscription_id = subscription_id
 
 
-class ApplianceClient(object):
-    """ARM appliances
+class ManagedApplicationClient(object):
+    """ARM managed applications (appliances)
 
     :ivar config: Configuration for client.
-    :vartype config: ApplianceClientConfiguration
+    :vartype config: ManagedApplicationClientConfiguration
 
     :ivar appliances: Appliances operations
     :vartype appliances: .operations.AppliancesOperations
@@ -74,7 +74,7 @@ class ApplianceClient(object):
     def __init__(
             self, credentials, subscription_id, base_url=None):
 
-        self.config = ApplianceClientConfiguration(credentials, subscription_id, base_url)
+        self.config = ManagedApplicationClientConfiguration(credentials, subscription_id, base_url)
         self._client = ServiceClient(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}

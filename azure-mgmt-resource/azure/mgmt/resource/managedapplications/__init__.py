@@ -9,10 +9,10 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .appliance_client import ApplianceClient
+from .managed_application_client import ManagedApplicationClient
 from .version import VERSION
 
-__all__ = ['ApplianceClient']
+__all__ = ['ManagedApplicationClient']
 
 __version__ = VERSION
 

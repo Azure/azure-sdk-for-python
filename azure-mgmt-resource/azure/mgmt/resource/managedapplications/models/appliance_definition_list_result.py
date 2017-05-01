@@ -17,7 +17,7 @@ class ApplianceDefinitionListResult(Model):
 
     :param value: The array of appliance definitions.
     :type value: list of :class:`ApplianceDefinition
-     <azure.mgmt.resource.appliances.models.ApplianceDefinition>`
+     <azure.mgmt.resource.managedapplications.models.ApplianceDefinition>`
     :param next_link: The URL to use for getting the next set of results.
     :type next_link: str
     """

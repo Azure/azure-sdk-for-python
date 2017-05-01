@@ -9,11 +9,11 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .generic_resource import GenericResource
+from .resource import Resource
 
 
-class ApplianceDefinition(GenericResource):
-    """Information about appliance definition.
+class GenericResource(Resource):
+    """Resource information.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -31,20 +31,17 @@ class ApplianceDefinition(GenericResource):
     :param managed_by: ID of the resource that manages this resource.
     :type managed_by: str
     :param sku: The SKU of the resource.
-    :type sku: :class:`Sku <azure.mgmt.resource.appliances.models.Sku>`
+    :type sku: :class:`Sku
+     <azure.mgmt.resource.managedapplications.models.Sku>`
     :param identity: The identity of the resource.
     :type identity: :class:`Identity
-     <azure.mgmt.resource.appliances.models.Identity>`
-    :param properties: The appliance definition properties.
-    :type properties: :class:`ApplianceDefinitionProperties
-     <azure.mgmt.resource.appliances.models.ApplianceDefinitionProperties>`
+     <azure.mgmt.resource.managedapplications.models.Identity>`
     """
 
     _validation = {
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
-        'properties': {'required': True},
     }
 
     _attribute_map = {
@@ -56,9 +53,10 @@ class ApplianceDefinition(GenericResource):
         'managed_by': {'key': 'managedBy', 'type': 'str'},
         'sku': {'key': 'sku', 'type': 'Sku'},
         'identity': {'key': 'identity', 'type': 'Identity'},
-        'properties': {'key': 'properties', 'type': 'ApplianceDefinitionProperties'},
     }
 
-    def __init__(self, properties, location=None, tags=None, managed_by=None, sku=None, identity=None):
-        super(ApplianceDefinition, self).__init__(location=location, tags=tags, managed_by=managed_by, sku=sku, identity=identity)
-        self.properties = properties
+    def __init__(self, location=None, tags=None, managed_by=None, sku=None, identity=None):
+        super(GenericResource, self).__init__(location=location, tags=tags)
+        self.managed_by = managed_by
+        self.sku = sku
+        self.identity = identity
