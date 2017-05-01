@@ -13,7 +13,8 @@ from msrest.serialization import Model
 
 
 class UserAccount(Model):
-    """Properties used to create a user on an Azure Batch node.
+    """Properties used to create a user used to execute tasks on an Azure Batch
+    node.
 
     :param name: The name of the user account.
     :type name: str
@@ -26,11 +27,11 @@ class UserAccount(Model):
      include: 'nonAdmin', 'admin'
     :type elevation_level: str or :class:`ElevationLevel
      <azure.batch.models.ElevationLevel>`
-    :param ssh_private_key: The SSH private key for the user account. The SSH
-     private key establishes password-less SSH between nodes in a Linux pool
-     when the pool's enableInterNodeCommunication property is true. This
-     property will be ignored in a Windows pool.
-    :type ssh_private_key: str
+    :param linux_user_configuration: The Linux-specific user configuration for
+     the user account. This property is ignored if specified on a Windows pool.
+     If not specified, the user is created with the default options.
+    :type linux_user_configuration: :class:`LinuxUserConfiguration
+     <azure.batch.models.LinuxUserConfiguration>`
     """
 
     _validation = {
@@ -42,11 +43,11 @@ class UserAccount(Model):
         'name': {'key': 'name', 'type': 'str'},
         'password': {'key': 'password', 'type': 'str'},
         'elevation_level': {'key': 'elevationLevel', 'type': 'ElevationLevel'},
-        'ssh_private_key': {'key': 'sshPrivateKey', 'type': 'str'},
+        'linux_user_configuration': {'key': 'linuxUserConfiguration', 'type': 'LinuxUserConfiguration'},
     }
 
-    def __init__(self, name, password, elevation_level=None, ssh_private_key=None):
+    def __init__(self, name, password, elevation_level=None, linux_user_configuration=None):
         self.name = name
         self.password = password
         self.elevation_level = elevation_level
-        self.ssh_private_key = ssh_private_key
+        self.linux_user_configuration = linux_user_configuration

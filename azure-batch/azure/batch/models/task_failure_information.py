@@ -12,21 +12,20 @@
 from msrest.serialization import Model
 
 
-class JobSchedulingError(Model):
-    """An error encountered by the Batch service when scheduling a job.
+class TaskFailureInformation(Model):
+    """Information about a task failure.
 
-    :param category: The category of the job scheduling error. Possible values
-     include: 'userError', 'serverError'
+    :param category: The category of the task error. Possible values include:
+     'userError', 'serverError'
     :type category: str or :class:`ErrorCategory
      <azure.batch.models.ErrorCategory>`
-    :param code: An identifier for the job scheduling error. Codes are
-     invariant and are intended to be consumed programmatically.
+    :param code: An identifier for the task error. Codes are invariant and are
+     intended to be consumed programmatically.
     :type code: str
-    :param message: A message describing the job scheduling error, intended to
-     be suitable for display in a user interface.
+    :param message: A message describing the task error, intended to be
+     suitable for display in a user interface.
     :type message: str
-    :param details: A list of additional error details related to the
-     scheduling error.
+    :param details: A list of additional details related to the error.
     :type details: list of :class:`NameValuePair
      <azure.batch.models.NameValuePair>`
     """
