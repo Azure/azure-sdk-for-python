@@ -634,16 +634,17 @@ class BatchMgmtTestCase(RecordingTestCase):
                 LOG.debug(_m)
                 interval = datetime.timedelta(minutes=6)
                 response = self.assertRuns(_e, _m, self.batch_client_sk.pool.enable_auto_scale, pool_id,
-                                           auto_scale_formula='$TargetDedicated=2',
+                                           auto_scale_formula='$TargetDedicatedNodes=2',
                                            auto_scale_evaluation_interval=interval)
                 self.assertIsNone(_e, _m, response)
 
                 _m = "Test Evaluate Autoscale"
                 LOG.debug(_m)
-                result = self.assertRuns(_e, _m, self.batch_client_sk.pool.evaluate_auto_scale, pool_id, '$TargetDedicated=3')
+                result = self.assertRuns(_e, _m, self.batch_client_sk.pool.evaluate_auto_scale,
+                                         pool_id, '$TargetDedicatedNodes=3')
                 if result:
                     self.assertTrue(_e, _m, isinstance(result, batch.models.AutoScaleRun))
-                    self.assertEqual(_e, _m, result.results, '$TargetDedicated=3;$NodeDeallocationOption=requeue')
+                    self.assertEqual(_e, _m, result.results, '$TargetDedicatedNodes=3;$NodeDeallocationOption=requeue')
 
                 _m = "Test Disable Autoscale"
                 LOG.debug(_m)
@@ -679,7 +680,7 @@ class BatchMgmtTestCase(RecordingTestCase):
 
                 _m = "Test Pool Resize"
                 LOG.debug(_m)
-                params = batch.models.PoolResizeParameter(target_dedicated=3)
+                params = batch.models.PoolResizeParameter(target_dedicated_nodes=3, target_low_priority_nodes=0)
                 response = self.assertRuns(_e, _m, self.batch_client_sk.pool.resize, pool_id_2, params)
                 self.assertIsNone(_e, _m, response)
 
@@ -712,7 +713,7 @@ class BatchMgmtTestCase(RecordingTestCase):
         with BatchPool(self.live,
                        self.batch_client_sk,
                        'python_test_pool_3',
-                       target_dedicated=2) as pool_id:
+                       target_dedicated_nodes=2) as pool_id:
 
             _m = "Test List Compute Nodes"
             LOG.debug(_m)
@@ -835,7 +836,7 @@ class BatchMgmtTestCase(RecordingTestCase):
         with BatchPool(self.live,
                        self.batch_client_sk,
                        'python_test_pool_4',
-                       target_dedicated=2, user_accounts=users) as pool_id:
+                       target_dedicated_nodes=2, user_accounts=users) as pool_id:
 
             _m = "Test Create Job"
             LOG.debug(_m)
@@ -1087,7 +1088,7 @@ class BatchMgmtTestCase(RecordingTestCase):
         with BatchPool(self.live,
                        self.batch_client_sk,
                        'python_test_pool_5',
-                       target_dedicated=2) as pool_id:
+                       target_dedicated_nodes=2) as pool_id:
 
             _m = "Test Create Job Schedule"
             LOG.debug(_m)
@@ -1167,7 +1168,7 @@ class BatchPool(object):
         self.client = client
         self.id = id
         self.kwargs = kwargs
-        self.nodes = kwargs.get('target_dedicated', 0)
+        self.nodes = kwargs.get('target_dedicated_nodes', 0)
         self.timeout = datetime.datetime.now() + datetime.timedelta(minutes=20)
 
     def __enter__(self):
