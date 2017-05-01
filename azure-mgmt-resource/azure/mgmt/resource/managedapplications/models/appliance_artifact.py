@@ -22,7 +22,7 @@ class ApplianceArtifact(Model):
     :param type: The the appliance artifact type. Possible values include:
      'Template', 'Custom'
     :type type: str or :class:`ApplianceArtifactType
-     <azure.mgmt.resource.appliances.models.ApplianceArtifactType>`
+     <azure.mgmt.resource.managedapplications.models.ApplianceArtifactType>`
     """
 
     _attribute_map = {

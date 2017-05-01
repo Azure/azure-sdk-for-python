@@ -18,17 +18,17 @@ class ApplianceDefinitionProperties(Model):
     :param lock_level: The appliance lock level. Possible values include:
      'CanNotDelete', 'ReadOnly', 'None'
     :type lock_level: str or :class:`ApplianceLockLevel
-     <azure.mgmt.resource.appliances.models.ApplianceLockLevel>`
+     <azure.mgmt.resource.managedapplications.models.ApplianceLockLevel>`
     :param display_name: The appliance definition display name.
     :type display_name: str
     :param authorizations: The appliance provider authorizations.
     :type authorizations: list of :class:`ApplianceProviderAuthorization
-     <azure.mgmt.resource.appliances.models.ApplianceProviderAuthorization>`
+     <azure.mgmt.resource.managedapplications.models.ApplianceProviderAuthorization>`
     :param artifacts: The collection of appliance artifacts. The portal will
      use the files specified as artifacts to construct the user experience of
      creating an appliance from an appliance definition.
     :type artifacts: list of :class:`ApplianceArtifact
-     <azure.mgmt.resource.appliances.models.ApplianceArtifact>`
+     <azure.mgmt.resource.managedapplications.models.ApplianceArtifact>`
     :param description: The appliance definition description.
     :type description: str
     :param package_file_uri: The appliance definition package file Uri.

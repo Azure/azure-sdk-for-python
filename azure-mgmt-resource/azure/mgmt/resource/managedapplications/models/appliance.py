@@ -31,15 +31,17 @@ class Appliance(GenericResource):
     :param managed_by: ID of the resource that manages this resource.
     :type managed_by: str
     :param sku: The SKU of the resource.
-    :type sku: :class:`Sku <azure.mgmt.resource.appliances.models.Sku>`
+    :type sku: :class:`Sku
+     <azure.mgmt.resource.managedapplications.models.Sku>`
     :param identity: The identity of the resource.
     :type identity: :class:`Identity
-     <azure.mgmt.resource.appliances.models.Identity>`
+     <azure.mgmt.resource.managedapplications.models.Identity>`
     :param properties: The appliance properties.
     :type properties: :class:`ApplianceProperties
-     <azure.mgmt.resource.appliances.models.ApplianceProperties>`
+     <azure.mgmt.resource.managedapplications.models.ApplianceProperties>`
     :param plan: The plan information.
-    :type plan: :class:`Plan <azure.mgmt.resource.appliances.models.Plan>`
+    :type plan: :class:`Plan
+     <azure.mgmt.resource.managedapplications.models.Plan>`
     :param kind: The kind of the appliance. Allowed values are MarketPlace and
      ServiceCatalog.
     :type kind: str

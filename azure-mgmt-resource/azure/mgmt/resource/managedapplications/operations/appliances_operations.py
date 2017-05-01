@@ -50,11 +50,11 @@ class AppliancesOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`Appliance
-         <azure.mgmt.resource.appliances.models.Appliance>`
+         <azure.mgmt.resource.managedapplications.models.Appliance>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         :raises:
-         :class:`ErrorResponseException<azure.mgmt.resource.appliances.models.ErrorResponseException>`
+         :class:`ErrorResponseException<azure.mgmt.resource.managedapplications.models.ErrorResponseException>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Solutions/appliances/{applianceName}'
@@ -115,7 +115,7 @@ class AppliancesOperations(object):
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         :raises:
-         :class:`ErrorResponseException<azure.mgmt.resource.appliances.models.ErrorResponseException>`
+         :class:`ErrorResponseException<azure.mgmt.resource.managedapplications.models.ErrorResponseException>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Solutions/appliances/{applianceName}'
@@ -186,18 +186,18 @@ class AppliancesOperations(object):
         :param parameters: Parameters supplied to the create or update an
          appliance.
         :type parameters: :class:`Appliance
-         <azure.mgmt.resource.appliances.models.Appliance>`
+         <azure.mgmt.resource.managedapplications.models.Appliance>`
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :rtype:
          :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
          instance that returns :class:`Appliance
-         <azure.mgmt.resource.appliances.models.Appliance>`
+         <azure.mgmt.resource.managedapplications.models.Appliance>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         :raises:
-         :class:`ErrorResponseException<azure.mgmt.resource.appliances.models.ErrorResponseException>`
+         :class:`ErrorResponseException<azure.mgmt.resource.managedapplications.models.ErrorResponseException>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Solutions/appliances/{applianceName}'
@@ -271,7 +271,8 @@ class AppliancesOperations(object):
 
     def update(
             self, resource_group_name, appliance_name, parameters, custom_headers=None, raw=False, **operation_config):
-        """Updates an existing appliance.
+        """Updates an existing appliance. The only value that can be updated via
+        PATCH currently is the tags.
 
         :param resource_group_name: The name of the resource group. The name
          is case insensitive.
@@ -281,18 +282,18 @@ class AppliancesOperations(object):
         :param parameters: Parameters supplied to update an existing
          appliance.
         :type parameters: :class:`Appliance
-         <azure.mgmt.resource.appliances.models.Appliance>`
+         <azure.mgmt.resource.managedapplications.models.Appliance>`
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`Appliance
-         <azure.mgmt.resource.appliances.models.Appliance>`
+         <azure.mgmt.resource.managedapplications.models.Appliance>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         :raises:
-         :class:`ErrorResponseException<azure.mgmt.resource.appliances.models.ErrorResponseException>`
+         :class:`ErrorResponseException<azure.mgmt.resource.managedapplications.models.ErrorResponseException>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Solutions/appliances/{applianceName}'
@@ -352,9 +353,9 @@ class AppliancesOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`AppliancePaged
-         <azure.mgmt.resource.appliances.models.AppliancePaged>`
+         <azure.mgmt.resource.managedapplications.models.AppliancePaged>`
         :raises:
-         :class:`ErrorResponseException<azure.mgmt.resource.appliances.models.ErrorResponseException>`
+         :class:`ErrorResponseException<azure.mgmt.resource.managedapplications.models.ErrorResponseException>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -415,9 +416,9 @@ class AppliancesOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`AppliancePaged
-         <azure.mgmt.resource.appliances.models.AppliancePaged>`
+         <azure.mgmt.resource.managedapplications.models.AppliancePaged>`
         :raises:
-         :class:`ErrorResponseException<azure.mgmt.resource.appliances.models.ErrorResponseException>`
+         :class:`ErrorResponseException<azure.mgmt.resource.managedapplications.models.ErrorResponseException>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -482,11 +483,11 @@ class AppliancesOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`Appliance
-         <azure.mgmt.resource.appliances.models.Appliance>`
+         <azure.mgmt.resource.managedapplications.models.Appliance>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         :raises:
-         :class:`ErrorResponseException<azure.mgmt.resource.appliances.models.ErrorResponseException>`
+         :class:`ErrorResponseException<azure.mgmt.resource.managedapplications.models.ErrorResponseException>`
         """
         # Construct URL
         url = '/{applianceId}'
@@ -546,7 +547,7 @@ class AppliancesOperations(object):
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         :raises:
-         :class:`ErrorResponseException<azure.mgmt.resource.appliances.models.ErrorResponseException>`
+         :class:`ErrorResponseException<azure.mgmt.resource.managedapplications.models.ErrorResponseException>`
         """
         # Construct URL
         url = '/{applianceId}'
@@ -616,18 +617,18 @@ class AppliancesOperations(object):
         :param parameters: Parameters supplied to the create or update an
          appliance.
         :type parameters: :class:`Appliance
-         <azure.mgmt.resource.appliances.models.Appliance>`
+         <azure.mgmt.resource.managedapplications.models.Appliance>`
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :rtype:
          :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
          instance that returns :class:`Appliance
-         <azure.mgmt.resource.appliances.models.Appliance>`
+         <azure.mgmt.resource.managedapplications.models.Appliance>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         :raises:
-         :class:`ErrorResponseException<azure.mgmt.resource.appliances.models.ErrorResponseException>`
+         :class:`ErrorResponseException<azure.mgmt.resource.managedapplications.models.ErrorResponseException>`
         """
         # Construct URL
         url = '/{applianceId}'
@@ -700,7 +701,8 @@ class AppliancesOperations(object):
 
     def update_by_id(
             self, appliance_id, parameters, custom_headers=None, raw=False, **operation_config):
-        """Updates an existing appliance.
+        """Updates an existing appliance. The only value that can be updated via
+        PATCH currently is the tags.
 
         :param appliance_id: The fully qualified ID of the appliance,
          including the appliance name and the appliance resource type. Use the
@@ -710,18 +712,18 @@ class AppliancesOperations(object):
         :param parameters: Parameters supplied to update an existing
          appliance.
         :type parameters: :class:`Appliance
-         <azure.mgmt.resource.appliances.models.Appliance>`
+         <azure.mgmt.resource.managedapplications.models.Appliance>`
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`Appliance
-         <azure.mgmt.resource.appliances.models.Appliance>`
+         <azure.mgmt.resource.managedapplications.models.Appliance>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         :raises:
-         :class:`ErrorResponseException<azure.mgmt.resource.appliances.models.ErrorResponseException>`
+         :class:`ErrorResponseException<azure.mgmt.resource.managedapplications.models.ErrorResponseException>`
         """
         # Construct URL
         url = '/{applianceId}'

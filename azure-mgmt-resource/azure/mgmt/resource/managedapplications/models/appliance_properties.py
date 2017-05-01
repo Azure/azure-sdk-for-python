@@ -32,7 +32,7 @@ class ApplianceProperties(Model):
      values include: 'Accepted', 'Running', 'Ready', 'Creating', 'Created',
      'Deleting', 'Deleted', 'Canceled', 'Failed', 'Succeeded', 'Updating'
     :vartype provisioning_state: str or :class:`ProvisioningState
-     <azure.mgmt.resource.appliances.models.ProvisioningState>`
+     <azure.mgmt.resource.managedapplications.models.ProvisioningState>`
     :param ui_definition_uri: The blob URI where the UI definition file is
      located.
     :type ui_definition_uri: str

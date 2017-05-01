@@ -11,7 +11,7 @@ from .policy import PolicyClient
 from .resources import ResourceManagementClient
 from .subscriptions import SubscriptionClient
 from .links import ManagementLinkClient
-from .appliances import ApplianceClient
+from .managedapplications import ManagedApplicationClient
 
 from .version import VERSION
 

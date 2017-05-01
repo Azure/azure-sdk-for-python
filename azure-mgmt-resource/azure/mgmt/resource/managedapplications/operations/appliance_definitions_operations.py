@@ -51,11 +51,11 @@ class ApplianceDefinitionsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`ApplianceDefinition
-         <azure.mgmt.resource.appliances.models.ApplianceDefinition>`
+         <azure.mgmt.resource.managedapplications.models.ApplianceDefinition>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         :raises:
-         :class:`ErrorResponseException<azure.mgmt.resource.appliances.models.ErrorResponseException>`
+         :class:`ErrorResponseException<azure.mgmt.resource.managedapplications.models.ErrorResponseException>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Solutions/applianceDefinitions/{applianceDefinitionName}'
@@ -117,7 +117,7 @@ class ApplianceDefinitionsOperations(object):
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         :raises:
-         :class:`ErrorResponseException<azure.mgmt.resource.appliances.models.ErrorResponseException>`
+         :class:`ErrorResponseException<azure.mgmt.resource.managedapplications.models.ErrorResponseException>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Solutions/applianceDefinitions/{applianceDefinitionName}'
@@ -189,18 +189,18 @@ class ApplianceDefinitionsOperations(object):
         :param parameters: Parameters supplied to the create or update an
          appliance definition.
         :type parameters: :class:`ApplianceDefinition
-         <azure.mgmt.resource.appliances.models.ApplianceDefinition>`
+         <azure.mgmt.resource.managedapplications.models.ApplianceDefinition>`
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :rtype:
          :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
          instance that returns :class:`ApplianceDefinition
-         <azure.mgmt.resource.appliances.models.ApplianceDefinition>`
+         <azure.mgmt.resource.managedapplications.models.ApplianceDefinition>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         :raises:
-         :class:`ErrorResponseException<azure.mgmt.resource.appliances.models.ErrorResponseException>`
+         :class:`ErrorResponseException<azure.mgmt.resource.managedapplications.models.ErrorResponseException>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Solutions/applianceDefinitions/{applianceDefinitionName}'
@@ -285,11 +285,11 @@ class ApplianceDefinitionsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`ApplianceDefinitionListResult
-         <azure.mgmt.resource.appliances.models.ApplianceDefinitionListResult>`
+         <azure.mgmt.resource.managedapplications.models.ApplianceDefinitionListResult>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         :raises:
-         :class:`ErrorResponseException<azure.mgmt.resource.appliances.models.ErrorResponseException>`
+         :class:`ErrorResponseException<azure.mgmt.resource.managedapplications.models.ErrorResponseException>`
         """
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Solutions/applianceDefinitions'
@@ -346,11 +346,11 @@ class ApplianceDefinitionsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`ApplianceDefinition
-         <azure.mgmt.resource.appliances.models.ApplianceDefinition>`
+         <azure.mgmt.resource.managedapplications.models.ApplianceDefinition>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         :raises:
-         :class:`ErrorResponseException<azure.mgmt.resource.appliances.models.ErrorResponseException>`
+         :class:`ErrorResponseException<azure.mgmt.resource.managedapplications.models.ErrorResponseException>`
         """
         # Construct URL
         url = '/{applianceDefinitionId}'
@@ -410,7 +410,7 @@ class ApplianceDefinitionsOperations(object):
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         :raises:
-         :class:`ErrorResponseException<azure.mgmt.resource.appliances.models.ErrorResponseException>`
+         :class:`ErrorResponseException<azure.mgmt.resource.managedapplications.models.ErrorResponseException>`
         """
         # Construct URL
         url = '/{applianceDefinitionId}'
@@ -480,18 +480,18 @@ class ApplianceDefinitionsOperations(object):
         :param parameters: Parameters supplied to the create or update an
          appliance definition.
         :type parameters: :class:`ApplianceDefinition
-         <azure.mgmt.resource.appliances.models.ApplianceDefinition>`
+         <azure.mgmt.resource.managedapplications.models.ApplianceDefinition>`
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :rtype:
          :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
          instance that returns :class:`ApplianceDefinition
-         <azure.mgmt.resource.appliances.models.ApplianceDefinition>`
+         <azure.mgmt.resource.managedapplications.models.ApplianceDefinition>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         :raises:
-         :class:`ErrorResponseException<azure.mgmt.resource.appliances.models.ErrorResponseException>`
+         :class:`ErrorResponseException<azure.mgmt.resource.managedapplications.models.ErrorResponseException>`
         """
         # Construct URL
         url = '/{applianceDefinitionId}'
