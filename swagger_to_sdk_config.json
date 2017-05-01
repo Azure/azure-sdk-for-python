@@ -273,6 +273,14 @@
       },
       "output_dir": "azure-mgmt-redis/azure/mgmt/redis"
     },
+    "resources.appliances.2016-09-01-preview": {
+      "swagger": "arm-resources/appliances/2016-09-01-preview/swagger/appliances.json",
+      "autorest_options": {
+        "Namespace": "azure.mgmt.resource.appliances"
+      },
+      "output_dir": "azure-mgmt-resource/azure/mgmt/resource/appliances",
+      "generated_relative_base_directory": "azure/mgmt/resource/appliances"
+    },
     "resources.features.2015-12-01": {
       "swagger": "arm-resources/features/2015-12-01/swagger/features.json",
       "autorest_options": {
