@@ -181,14 +181,14 @@ class DatabasesOperations(object):
 
         def get_long_running_output(response):
 
-            if response.status_code not in [201, 202]:
+            if response.status_code not in [200, 202]:
                 exp = CloudError(response)
                 exp.request_id = response.headers.get('x-ms-request-id')
                 raise exp
 
             deserialized = None
 
-            if response.status_code == 201:
+            if response.status_code == 200:
                 deserialized = self._deserialize('ImportExportResponse', response)
 
             if raw:

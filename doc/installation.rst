@@ -74,7 +74,7 @@ azure-mgmt-network                    1.0.0rc2
 azure-mgmt-storage                    1.0.0rc1
 azure-mgmt-keyvault                   0.31.0
 azure-graphrbac                       0.30.0
-azure-mgmt-authorization              0.30.0rc6
+azure-mgmt-authorization              0.30.0
 azure-mgmt-cdn                        0.30.2
 azure-mgmt-cognitiveservices          0.30.0rc6
 azure-mgmt-containerregistry          0.2.1
@@ -90,7 +90,7 @@ azure-mgmt-notificationhubs           0.30.0
 azure-mgmt-powerbiembedded            0.30.0rc6
 azure-mgmt-search                     0.1.0
 azure-mgmt-servicebus                 0.1.0
-azure-mgmt-sql                        0.5.0
+azure-mgmt-sql                        0.5.1
 azure-mgmt-trafficmanager             0.30.0
 azure-mgmt-web                        0.32.0
 ===================================== =========
