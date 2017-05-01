@@ -20,7 +20,7 @@ class JobResponse(Model):
 
     :ivar job_id: The job identifier.
     :vartype job_id: str
-    :ivar start_time_utc: The start time of the Job.
+    :ivar start_time_utc: The start time of the job.
     :vartype start_time_utc: datetime
     :ivar end_time_utc: The time the job stopped processing.
     :vartype end_time_utc: datetime

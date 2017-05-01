@@ -52,7 +52,7 @@ class IotHubClientConfiguration(AzureConfiguration):
 
 
 class IotHubClient(object):
-    """Use this API to manage the IoT hubs in your subscription.
+    """Use this API to manage the IoT hubs in your Azure subscription.
 
     :ivar config: Configuration for client.
     :vartype config: IotHubClientConfiguration
