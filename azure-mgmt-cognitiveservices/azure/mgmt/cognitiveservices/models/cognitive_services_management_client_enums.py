@@ -43,6 +43,7 @@ class Kind(Enum):
     bing_spell_check = "Bing.SpellCheck"
     computer_vision = "ComputerVision"
     content_moderator = "ContentModerator"
+    custom_speech = "CustomSpeech"
     emotion = "Emotion"
     face = "Face"
     luis = "LUIS"

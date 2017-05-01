@@ -12,20 +12,17 @@
 from msrest.serialization import Model
 
 
-class CognitiveServicesResourceAndSku(Model):
-    """Cognitive Services resource type and SKU.
+class CheckSkuAvailabilityResultList(Model):
+    """Check SKU availability result list.
 
-    :param resource_type: Resource Namespace and Type
-    :type resource_type: str
-    :param sku: The SKU of Cognitive Services account.
-    :type sku: :class:`Sku <azure.mgmt.cognitiveservices.models.Sku>`
+    :param value: Check SKU availability result list.
+    :type value: list of :class:`CheckSkuAvailabilityResult
+     <azure.mgmt.cognitiveservices.models.CheckSkuAvailabilityResult>`
     """
 
     _attribute_map = {
-        'resource_type': {'key': 'resourceType', 'type': 'str'},
-        'sku': {'key': 'sku', 'type': 'Sku'},
+        'value': {'key': 'value', 'type': '[CheckSkuAvailabilityResult]'},
     }
 
-    def __init__(self, resource_type=None, sku=None):
-        self.resource_type = resource_type
-        self.sku = sku
+    def __init__(self, value=None):
+        self.value = value
