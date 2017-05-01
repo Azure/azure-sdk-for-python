@@ -36,10 +36,10 @@ class TaskExecutionInformation(Model):
      termination via the API) you may see an operating system-defined exit
      code.
     :type exit_code: int
-    :param scheduling_error: Details of any error encountered scheduling the
-     task. This property is set only if the task is in the completed state.
-    :type scheduling_error: :class:`TaskSchedulingError
-     <azure.batch.models.TaskSchedulingError>`
+    :param failure_info: Information describing the task failure. This
+     property is set only if the task is in the completed state.
+    :type failure_info: :class:`TaskFailureInformation
+     <azure.batch.models.TaskFailureInformation>`
     :param retry_count: The number of times the task has been retried by the
      Batch service. The task is retried if it exits with a nonzero exit code,
      up to the specified maxTaskRetryCount.
@@ -62,6 +62,11 @@ class TaskExecutionInformation(Model):
      requeued by the Batch service as the result of a user request. This
      property is set only if the requeueCount is nonzero.
     :type last_requeue_time: datetime
+    :param result: The result of the task execution. If the value is 'failed',
+     then the details of the failure can be found in the failureInfo property.
+     Possible values include: 'success', 'failure'
+    :type result: str or :class:`TaskExecutionResult
+     <azure.batch.models.TaskExecutionResult>`
     """
 
     _validation = {
@@ -73,19 +78,21 @@ class TaskExecutionInformation(Model):
         'start_time': {'key': 'startTime', 'type': 'iso-8601'},
         'end_time': {'key': 'endTime', 'type': 'iso-8601'},
         'exit_code': {'key': 'exitCode', 'type': 'int'},
-        'scheduling_error': {'key': 'schedulingError', 'type': 'TaskSchedulingError'},
+        'failure_info': {'key': 'failureInfo', 'type': 'TaskFailureInformation'},
         'retry_count': {'key': 'retryCount', 'type': 'int'},
         'last_retry_time': {'key': 'lastRetryTime', 'type': 'iso-8601'},
         'requeue_count': {'key': 'requeueCount', 'type': 'int'},
         'last_requeue_time': {'key': 'lastRequeueTime', 'type': 'iso-8601'},
+        'result': {'key': 'result', 'type': 'TaskExecutionResult'},
     }
 
-    def __init__(self, retry_count, requeue_count, start_time=None, end_time=None, exit_code=None, scheduling_error=None, last_retry_time=None, last_requeue_time=None):
+    def __init__(self, retry_count, requeue_count, start_time=None, end_time=None, exit_code=None, failure_info=None, last_retry_time=None, last_requeue_time=None, result=None):
         self.start_time = start_time
         self.end_time = end_time
         self.exit_code = exit_code
-        self.scheduling_error = scheduling_error
+        self.failure_info = failure_info
         self.retry_count = retry_count
         self.last_retry_time = last_retry_time
         self.requeue_count = requeue_count
         self.last_requeue_time = last_requeue_time
+        self.result = result

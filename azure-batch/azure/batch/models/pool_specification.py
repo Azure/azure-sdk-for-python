@@ -24,9 +24,9 @@ class PoolSpecification(Model):
      sizes of virtual machines for Cloud Services pools (pools created with
      cloudServiceConfiguration), see Sizes for Cloud Services
      (http://azure.microsoft.com/documentation/articles/cloud-services-sizes-specs/).
-     Batch supports all Cloud Services VM sizes except ExtraSmall. For
-     information about available VM sizes for pools using images from the
-     Virtual Machines Marketplace (pools created with
+     Batch supports all Cloud Services VM sizes except ExtraSmall, A1V2 and
+     A2V2. For information about available VM sizes for pools using images from
+     the Virtual Machines Marketplace (pools created with
      virtualMachineConfiguration) see Sizes for Virtual Machines (Linux)
      (https://azure.microsoft.com/documentation/articles/virtual-machines-linux-sizes/)
      or Sizes for Virtual Machines (Windows)
@@ -68,10 +68,16 @@ class PoolSpecification(Model):
      the Batch service rejects the request with an error; if you are calling
      the REST API directly, the HTTP status code is 400 (Bad Request).
     :type resize_timeout: timedelta
-    :param target_dedicated: The desired number of compute nodes in the pool.
-     This property must not be specified if enableAutoScale is set to true. It
-     is required if enableAutoScale is set to false.
-    :type target_dedicated: int
+    :param target_dedicated_nodes: The desired number of dedicated compute
+     nodes in the pool. This property must not be specified if enableAutoScale
+     is set to true. If enableAutoScale is set to false, then you must set
+     either targetDedicatedNodes, targetLowPriorityNodes, or both.
+    :type target_dedicated_nodes: int
+    :param target_low_priority_nodes: The desired number of low-priority
+     compute nodes in the pool. This property must not be specified if
+     enableAutoScale is set to true. If enableAutoScale is set to false, then
+     you must set either targetDedicatedNodes, targetLowPriorityNodes, or both.
+    :type target_low_priority_nodes: int
     :param enable_auto_scale: Whether the pool size should automatically
      adjust over time. If false, the targetDedicated element is required. If
      true, the autoScaleFormula element is required. The pool automatically
@@ -123,6 +129,12 @@ class PoolSpecification(Model):
     :type application_package_references: list of
      :class:`ApplicationPackageReference
      <azure.batch.models.ApplicationPackageReference>`
+    :param application_licenses: The list of application licenses the Batch
+     service will make available on each compute node in the pool. The list of
+     application licenses must be a subset of available Batch service
+     application licenses. If a license is requested which is not supported,
+     pool creation will fail.
+    :type application_licenses: list of str
     :param user_accounts: The list of user accounts to be created on each node
      in the pool.
     :type user_accounts: list of :class:`UserAccount
@@ -146,7 +158,8 @@ class PoolSpecification(Model):
         'max_tasks_per_node': {'key': 'maxTasksPerNode', 'type': 'int'},
         'task_scheduling_policy': {'key': 'taskSchedulingPolicy', 'type': 'TaskSchedulingPolicy'},
         'resize_timeout': {'key': 'resizeTimeout', 'type': 'duration'},
-        'target_dedicated': {'key': 'targetDedicated', 'type': 'int'},
+        'target_dedicated_nodes': {'key': 'targetDedicatedNodes', 'type': 'int'},
+        'target_low_priority_nodes': {'key': 'targetLowPriorityNodes', 'type': 'int'},
         'enable_auto_scale': {'key': 'enableAutoScale', 'type': 'bool'},
         'auto_scale_formula': {'key': 'autoScaleFormula', 'type': 'str'},
         'auto_scale_evaluation_interval': {'key': 'autoScaleEvaluationInterval', 'type': 'duration'},
@@ -155,11 +168,12 @@ class PoolSpecification(Model):
         'start_task': {'key': 'startTask', 'type': 'StartTask'},
         'certificate_references': {'key': 'certificateReferences', 'type': '[CertificateReference]'},
         'application_package_references': {'key': 'applicationPackageReferences', 'type': '[ApplicationPackageReference]'},
+        'application_licenses': {'key': 'applicationLicenses', 'type': '[str]'},
         'user_accounts': {'key': 'userAccounts', 'type': '[UserAccount]'},
         'metadata': {'key': 'metadata', 'type': '[MetadataItem]'},
     }
 
-    def __init__(self, vm_size, display_name=None, cloud_service_configuration=None, virtual_machine_configuration=None, max_tasks_per_node=None, task_scheduling_policy=None, resize_timeout=None, target_dedicated=None, enable_auto_scale=None, auto_scale_formula=None, auto_scale_evaluation_interval=None, enable_inter_node_communication=None, network_configuration=None, start_task=None, certificate_references=None, application_package_references=None, user_accounts=None, metadata=None):
+    def __init__(self, vm_size, display_name=None, cloud_service_configuration=None, virtual_machine_configuration=None, max_tasks_per_node=None, task_scheduling_policy=None, resize_timeout=None, target_dedicated_nodes=None, target_low_priority_nodes=None, enable_auto_scale=None, auto_scale_formula=None, auto_scale_evaluation_interval=None, enable_inter_node_communication=None, network_configuration=None, start_task=None, certificate_references=None, application_package_references=None, application_licenses=None, user_accounts=None, metadata=None):
         self.display_name = display_name
         self.vm_size = vm_size
         self.cloud_service_configuration = cloud_service_configuration
@@ -167,7 +181,8 @@ class PoolSpecification(Model):
         self.max_tasks_per_node = max_tasks_per_node
         self.task_scheduling_policy = task_scheduling_policy
         self.resize_timeout = resize_timeout
-        self.target_dedicated = target_dedicated
+        self.target_dedicated_nodes = target_dedicated_nodes
+        self.target_low_priority_nodes = target_low_priority_nodes
         self.enable_auto_scale = enable_auto_scale
         self.auto_scale_formula = auto_scale_formula
         self.auto_scale_evaluation_interval = auto_scale_evaluation_interval
@@ -176,5 +191,6 @@ class PoolSpecification(Model):
         self.start_task = start_task
         self.certificate_references = certificate_references
         self.application_package_references = application_package_references
+        self.application_licenses = application_licenses
         self.user_accounts = user_accounts
         self.metadata = metadata
