@@ -9,21 +9,19 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.serialization import Model
+from msrest.paging import Paged
 
 
-class RegenerateKeyParameters(Model):
-    """Regenerate key parameters.
-
-    :param key_name: key name to generate (Key1|Key2). Possible values
-     include: 'Key1', 'Key2'
-    :type key_name: str or :class:`KeyName
-     <azure.mgmt.cognitiveservices.models.KeyName>`
+class OperationEntityPaged(Paged):
+    """
+    A paging container for iterating over a list of OperationEntity object
     """
 
     _attribute_map = {
-        'key_name': {'key': 'keyName', 'type': 'KeyName'},
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[OperationEntity]'}
     }
 
-    def __init__(self, key_name=None):
-        self.key_name = key_name
+    def __init__(self, *args, **kwargs):
+
+        super(OperationEntityPaged, self).__init__(*args, **kwargs)

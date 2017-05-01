@@ -6,14 +6,25 @@
 # license information.
 #--------------------------------------------------------------------------
 
-from setuptools import setup
+import re
+import os.path
+from io import open
+from setuptools import find_packages, setup
 try:
     from azure_bdist_wheel import cmdclass
 except ImportError:
     from distutils import log as logger
     logger.warn("Wheel is not available, disabling bdist_wheel hook")
     cmdclass = {}
-import re
+
+# Change the PACKAGE_NAME only to change folder and different name
+PACKAGE_NAME = "azure-mgmt-cognitiveservices"
+PACKAGE_PPRINT_NAME = "Cognitive Services Management"
+
+# a-b-c => a/b/c
+package_folder_path = PACKAGE_NAME.replace('-', '/')
+# a-b-c => a.b.c
+namespace_name = PACKAGE_NAME.replace('-', '.')
 
 # azure v0.x is not compatible with this package
 # azure v0.x used to have a __version__ attribute (newer versions don't)
@@ -31,18 +42,23 @@ except ImportError:
     pass
 
 # Version extraction inspired from 'requests'
-with open('azure/mgmt/cognitiveservices/version.py', 'r') as fd:
+with open(os.path.join(package_folder_path, 'version.py'), 'r') as fd:
     version = re.search(r'^VERSION\s*=\s*[\'"]([^\'"]*)[\'"]',
                         fd.read(), re.MULTILINE).group(1)
 
 if not version:
     raise RuntimeError('Cannot find version information')
 
+with open('README.rst', encoding='utf-8') as f:
+    readme = f.read()
+with open('HISTORY.rst', encoding='utf-8') as f:
+    history = f.read()
+
 setup(
-    name='azure-mgmt-cognitiveservices',
+    name=PACKAGE_NAME,
     version=version,
-    description='Microsoft Azure Cognitive Services Library for Python',
-    long_description=open('README.rst', 'r').read(),
+    description='Microsoft Azure {} Client Library for Python'.format(PACKAGE_PPRINT_NAME),
+    long_description=readme + '\n\n' + history,
     license='MIT License',
     author='Microsoft Corporation',
     author_email='ptvshelp@microsoft.com',
@@ -60,16 +76,10 @@ setup(
         'License :: OSI Approved :: MIT License',
     ],
     zip_safe=False,
-    packages=[
-        'azure',
-        'azure.mgmt',
-        'azure.mgmt.cognitiveservices',
-        'azure.mgmt.cognitiveservices.models',
-        'azure.mgmt.cognitiveservices.operations',
-    ],
+    packages=find_packages(),
     install_requires=[
-        'azure-common~=1.1.5',
         'msrestazure~=0.4.7',
+        'azure-common~=1.1.5',
     ],
     cmdclass=cmdclass
 )
