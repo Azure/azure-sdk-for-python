@@ -20,6 +20,7 @@ from .operations.operations import Operations
 from .operations.servers_operations import ServersOperations
 from .operations.elastic_pools_operations import ElasticPoolsOperations
 from .operations.recommended_elastic_pools_operations import RecommendedElasticPoolsOperations
+from .operations.failover_groups_operations import FailoverGroupsOperations
 from . import models
 
 
@@ -65,19 +66,21 @@ class SqlManagementClient(object):
     :vartype config: SqlManagementClientConfiguration
 
     :ivar databases: Databases operations
-    :vartype databases: .operations.DatabasesOperations
+    :vartype databases: azure.mgmt.sql.operations.DatabasesOperations
     :ivar capabilities: Capabilities operations
-    :vartype capabilities: .operations.CapabilitiesOperations
+    :vartype capabilities: azure.mgmt.sql.operations.CapabilitiesOperations
     :ivar firewall_rules: FirewallRules operations
-    :vartype firewall_rules: .operations.FirewallRulesOperations
+    :vartype firewall_rules: azure.mgmt.sql.operations.FirewallRulesOperations
     :ivar operations: Operations operations
-    :vartype operations: .operations.Operations
+    :vartype operations: azure.mgmt.sql.operations.Operations
     :ivar servers: Servers operations
-    :vartype servers: .operations.ServersOperations
+    :vartype servers: azure.mgmt.sql.operations.ServersOperations
     :ivar elastic_pools: ElasticPools operations
-    :vartype elastic_pools: .operations.ElasticPoolsOperations
+    :vartype elastic_pools: azure.mgmt.sql.operations.ElasticPoolsOperations
     :ivar recommended_elastic_pools: RecommendedElasticPools operations
-    :vartype recommended_elastic_pools: .operations.RecommendedElasticPoolsOperations
+    :vartype recommended_elastic_pools: azure.mgmt.sql.operations.RecommendedElasticPoolsOperations
+    :ivar failover_groups: FailoverGroups operations
+    :vartype failover_groups: azure.mgmt.sql.operations.FailoverGroupsOperations
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
@@ -111,4 +114,6 @@ class SqlManagementClient(object):
         self.elastic_pools = ElasticPoolsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.recommended_elastic_pools = RecommendedElasticPoolsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.failover_groups = FailoverGroupsOperations(
             self._client, self.config, self._serialize, self._deserialize)
