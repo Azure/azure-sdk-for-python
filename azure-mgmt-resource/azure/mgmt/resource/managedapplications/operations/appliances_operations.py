@@ -270,7 +270,7 @@ class AppliancesOperations(object):
             get_long_running_status, long_running_operation_timeout)
 
     def update(
-            self, resource_group_name, appliance_name, parameters, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, appliance_name, parameters=None, custom_headers=None, raw=False, **operation_config):
         """Updates an existing appliance. The only value that can be updated via
         PATCH currently is the tags.
 
@@ -319,7 +319,10 @@ class AppliancesOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct body
-        body_content = self._serialize.body(parameters, 'Appliance')
+        if parameters is not None:
+            body_content = self._serialize.body(parameters, 'Appliance')
+        else:
+            body_content = None
 
         # Construct and send request
         request = self._client.patch(url, query_parameters)
@@ -340,7 +343,7 @@ class AppliancesOperations(object):
 
         return deserialized
 
-    def list_at_resource_group(
+    def list_by_resource_group(
             self, resource_group_name, custom_headers=None, raw=False, **operation_config):
         """Gets all the appliances within a resource group.
 
@@ -406,7 +409,7 @@ class AppliancesOperations(object):
 
         return deserialized
 
-    def list_at_subscription(
+    def list_by_subscription(
             self, custom_headers=None, raw=False, **operation_config):
         """Gets all the appliances within a subscription.
 
@@ -700,7 +703,7 @@ class AppliancesOperations(object):
             get_long_running_status, long_running_operation_timeout)
 
     def update_by_id(
-            self, appliance_id, parameters, custom_headers=None, raw=False, **operation_config):
+            self, appliance_id, parameters=None, custom_headers=None, raw=False, **operation_config):
         """Updates an existing appliance. The only value that can be updated via
         PATCH currently is the tags.
 
@@ -748,7 +751,10 @@ class AppliancesOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct body
-        body_content = self._serialize.body(parameters, 'Appliance')
+        if parameters is not None:
+            body_content = self._serialize.body(parameters, 'Appliance')
+        else:
+            body_content = None
 
         # Construct and send request
         request = self._client.patch(url, query_parameters)
