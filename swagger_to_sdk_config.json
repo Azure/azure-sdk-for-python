@@ -125,7 +125,7 @@
       "swagger": "arm-documentdb/2015-04-08/swagger/documentdb.json",
       "autorest_options": {
         "Namespace": "azure.mgmt.documentdb",
-        "PackageVersion": "0.1.2"
+        "PackageVersion": "0.1.3"
       },
       "output_dir": "azure-mgmt-documentdb/azure/mgmt/documentdb"
     },
