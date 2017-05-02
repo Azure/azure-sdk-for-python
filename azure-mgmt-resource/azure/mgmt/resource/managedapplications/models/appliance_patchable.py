@@ -12,7 +12,7 @@
 from .generic_resource import GenericResource
 
 
-class Appliance(GenericResource):
+class AppliancePatchable(GenericResource):
     """Information about appliance.
 
     Variables are only populated by the server, and will be ignored when
@@ -55,8 +55,8 @@ class Appliance(GenericResource):
      located.
     :type ui_definition_uri: str
     :param plan: The plan information.
-    :type plan: :class:`Plan
-     <azure.mgmt.resource.managedapplications.models.Plan>`
+    :type plan: :class:`PlanPatchable
+     <azure.mgmt.resource.managedapplications.models.PlanPatchable>`
     :param kind: The kind of the appliance. Allowed values are MarketPlace and
      ServiceCatalog.
     :type kind: str
@@ -66,10 +66,9 @@ class Appliance(GenericResource):
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
-        'managed_resource_group_id': {'required': True},
         'outputs': {'readonly': True},
         'provisioning_state': {'readonly': True},
-        'kind': {'required': True, 'pattern': '^[-\w\._,\(\)]+$'},
+        'kind': {'pattern': '^[-\w\._,\(\)]+$'},
     }
 
     _attribute_map = {
@@ -87,12 +86,12 @@ class Appliance(GenericResource):
         'outputs': {'key': 'properties.outputs', 'type': 'object'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'ui_definition_uri': {'key': 'properties.uiDefinitionUri', 'type': 'str'},
-        'plan': {'key': 'plan', 'type': 'Plan'},
+        'plan': {'key': 'plan', 'type': 'PlanPatchable'},
         'kind': {'key': 'kind', 'type': 'str'},
     }
 
-    def __init__(self, managed_resource_group_id, kind, location=None, tags=None, managed_by=None, sku=None, identity=None, appliance_definition_id=None, parameters=None, ui_definition_uri=None, plan=None):
-        super(Appliance, self).__init__(location=location, tags=tags, managed_by=managed_by, sku=sku, identity=identity)
+    def __init__(self, location=None, tags=None, managed_by=None, sku=None, identity=None, managed_resource_group_id=None, appliance_definition_id=None, parameters=None, ui_definition_uri=None, plan=None, kind=None):
+        super(AppliancePatchable, self).__init__(location=location, tags=tags, managed_by=managed_by, sku=sku, identity=identity)
         self.managed_resource_group_id = managed_resource_group_id
         self.appliance_definition_id = appliance_definition_id
         self.parameters = parameters

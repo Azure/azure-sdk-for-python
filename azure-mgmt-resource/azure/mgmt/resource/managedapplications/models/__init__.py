@@ -9,12 +9,12 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .appliance_properties import ApplianceProperties
 from .plan import Plan
 from .appliance import Appliance
+from .plan_patchable import PlanPatchable
+from .appliance_patchable import AppliancePatchable
 from .appliance_provider_authorization import ApplianceProviderAuthorization
 from .appliance_artifact import ApplianceArtifact
-from .appliance_definition_properties import ApplianceDefinitionProperties
 from .appliance_definition import ApplianceDefinition
 from .sku import Sku
 from .identity import Identity
@@ -31,12 +31,12 @@ from .managed_application_client_enums import (
 )
 
 __all__ = [
-    'ApplianceProperties',
     'Plan',
     'Appliance',
+    'PlanPatchable',
+    'AppliancePatchable',
     'ApplianceProviderAuthorization',
     'ApplianceArtifact',
-    'ApplianceDefinitionProperties',
     'ApplianceDefinition',
     'Sku',
     'Identity',
