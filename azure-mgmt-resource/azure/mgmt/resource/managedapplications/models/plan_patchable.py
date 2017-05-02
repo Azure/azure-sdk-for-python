@@ -12,7 +12,7 @@
 from msrest.serialization import Model
 
 
-class Plan(Model):
+class PlanPatchable(Model):
     """Plan for the appliance.
 
     :param name: The plan name.
@@ -27,13 +27,6 @@ class Plan(Model):
     :type version: str
     """
 
-    _validation = {
-        'name': {'required': True},
-        'publisher': {'required': True},
-        'product': {'required': True},
-        'version': {'required': True},
-    }
-
     _attribute_map = {
         'name': {'key': 'name', 'type': 'str'},
         'publisher': {'key': 'publisher', 'type': 'str'},
@@ -42,7 +35,7 @@ class Plan(Model):
         'version': {'key': 'version', 'type': 'str'},
     }
 
-    def __init__(self, name, publisher, product, version, promotion_code=None):
+    def __init__(self, name=None, publisher=None, product=None, promotion_code=None, version=None):
         self.name = name
         self.publisher = publisher
         self.product = product

@@ -272,7 +272,7 @@ class ApplianceDefinitionsOperations(object):
             long_running_send, get_long_running_output,
             get_long_running_status, long_running_operation_timeout)
 
-    def list_at_resource_group(
+    def list_by_resource_group(
             self, resource_group_name, custom_headers=None, raw=False, **operation_config):
         """Lists the appliance definitions in a resource group.
 
