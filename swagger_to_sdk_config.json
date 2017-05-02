@@ -61,7 +61,7 @@
       "swagger": "arm-cognitiveservices/2017-04-18/swagger/cognitiveservices.json",
       "autorest_options": {
         "Namespace": "azure.mgmt.cognitiveservices",
-        "PackageVersion": "0.30.0"
+        "PackageVersion": "1.0.0"
       },
       "output_dir": "azure-mgmt-cognitiveservices/azure/mgmt/cognitiveservices"
     },
