@@ -325,7 +325,7 @@ class KeyVaultKeyTest(AzureKeyVaultTestCase):
 
         # get key returns not found
         try:
-            self.client.get_key(key_id.base_id)
+            self.client.get_key(key_id.vault, key_id.name, '')
             self.fail('Get should fail')
         except Exception as ex:
             if not hasattr(ex, 'message') or 'Not Found' not in ex.message:
@@ -493,7 +493,7 @@ class KeyVaultKeyTest(AzureKeyVaultTestCase):
         self.assertTrue(result.value)
 
         # sign with version
-        signature = self.client.sign(key_id.vault, key_id.name, key_id.version, 'RS256', digest).result
+        signature = self.client.sign(key_id.vault, key_id.name, '', 'RS256', digest).result
 
         # verify with version
         result = self.client.verify(key_id.vault, key_id.name, key_id.version, 'RS256', digest, signature)
@@ -555,7 +555,7 @@ class KeyVaultSecretTest(AzureKeyVaultTestCase):
             updating_bundle.tags = { 'foo': 'updated tag' }
             sid = KeyVaultId.parse_secret_id(secret_uri)
             secret_bundle = self.client.update_secret(
-                secret_id.vault, secret_id.name, secret_id.version, updating_bundle.content_type, updating_bundle.attributes,
+                sid.vault, sid.name, sid.version, updating_bundle.content_type, updating_bundle.attributes,
                 updating_bundle.tags)
             self.assertEqual(updating_bundle.tags, secret_bundle.tags)
             self.assertEqual(updating_bundle.id, secret_bundle.id)
@@ -592,7 +592,7 @@ class KeyVaultSecretTest(AzureKeyVaultTestCase):
             while not secret_bundle:
                 try:
                     secret_bundle = self.client.set_secret(KEY_VAULT_URI, secret_name, self.secret_value)
-                    sid = keyvaultid.parse_secret_id(secret_bundle.id).base_id
+                    sid = KeyVaultId.parse_secret_id(secret_bundle.id).base_id
                     expected[sid] = secret_bundle.attributes
                 except Exception as ex:
                     self.fail()
