@@ -53,7 +53,7 @@ class AzureKeyVaultTestCase(RecordingTestCase):
         self.fake_settings = fake_settings
         if TestMode.is_playback(self.test_mode):
             self.settings = self.fake_settings
-            azure.keyvault.key_vault_authentication.KeyVaultAuthBase.__call__ = mock_key_vault_auth_base
+            KeyVaultAuthBase.__call__ = mock_key_vault_auth_base
         else:
             import tests.mgmt_settings_real as real_settings
             self.settings = real_settings

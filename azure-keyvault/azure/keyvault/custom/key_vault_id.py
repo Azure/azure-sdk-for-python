@@ -36,7 +36,7 @@ class KeyVaultId(object):
         """
         self.vault = vault
         self.name = name
-        self.version = version
+        self.version = version or ''
         self.base_id = '{}/{}/{}'.format(vault, collection, name)
         self.id = '{}/{}'.format(self.base_id, version) if version else self.base_id
 
@@ -179,7 +179,7 @@ class KeyVaultId(object):
         """
         obj_id = KeyVaultId.create_object_id(KeyVaultCollectionType.certificates.value, vault, name, 'pending')
         obj_id.base_id = obj_id.id
-        obj_id.version = None
+        obj_id.version = ''
         return obj_id
 
     @staticmethod
@@ -191,7 +191,7 @@ class KeyVaultId(object):
         """
         obj_id = KeyVaultId.parse_object_id(KeyVaultCollectionType.certificates.value, id)
         obj_id.base_id = obj_id.id
-        obj_id.version = None
+        obj_id.version = ''
         return obj_id
 
     @staticmethod
