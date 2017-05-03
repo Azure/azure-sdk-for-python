@@ -20,7 +20,7 @@ except ImportError:
 
 from azure.keyvault import KeyVaultId
 from azure.keyvault import HttpBearerChallenge
-from azure.keyvault import HttpBearerChallengeCache 
+from azure.keyvault import HttpBearerChallengeCache
 from azure.keyvault.generated.models import \
     (CertificatePolicy, KeyProperties, SecretProperties, IssuerParameters,
      X509CertificateProperties, IssuerBundle, IssuerCredentials, OrganizationDetails,
@@ -46,7 +46,7 @@ class KeyVaultCustomLayerTest(unittest.TestCase):
         return {
             'vault': 'https://{}.vault.azure.net'.format(vault),
             'name': name,
-            'version': version,
+            'version': version or '',
             'id': 'https://{}.vault.azure.net/{}/{}{}'.format(
                 vault, collection, name,
                 '' if not version else '/{}'.format(version)),
@@ -149,14 +149,14 @@ class KeyVaultCustomLayerTest(unittest.TestCase):
     def test_create_certificate_operation_id(self):
         expected = self._get_expected('certificates', 'myvault', 'mycert', 'pending')
         expected['base_id'] = expected['id']
-        expected['version'] = None
+        expected['version'] = ''
         res = KeyVaultId.create_certificate_operation_id('https://myvault.vault.azure.net', ' mycert')
         self.assertEqual(res.__dict__, expected)
 
     def test_parse_certificate_operation_id(self):
         expected = self._get_expected('certificates', 'myvault', 'mycert', 'pending')
         expected['base_id'] = expected['id']
-        expected['version'] = None
+        expected['version'] = ''
         res = KeyVaultId.parse_certificate_operation_id('https://myvault.vault.azure.net/certificates/mycert/pending')
         self.assertEqual(res.__dict__, expected)
 
@@ -296,18 +296,19 @@ class KeyVaultKeyTest(AzureKeyVaultTestCase):
         key_id = KeyVaultId.parse_key_id(created_bundle.key.kid)
 
         # get key without version
-        self.assertEqual(created_bundle, self.client.get_key(key_id.base_id))
+        self.assertEqual(created_bundle, self.client.get_key(key_id.vault, key_id.name, ''))
 
         # get key with version
-        self.assertEqual(created_bundle, self.client.get_key(key_id.id))
+        self.assertEqual(created_bundle, self.client.get_key(key_id.vault, key_id.name, key_id.version))
 
         def _update_key(key_uri):
             updating_bundle = copy.deepcopy(created_bundle)
             updating_bundle.attributes.expires = date_parse.parse('2050-02-02T08:00:00.000Z')
             updating_bundle.key.key_ops = ['encrypt', 'decrypt']
             updating_bundle.tags = { 'foo': 'updated tag' }
+            kid = KeyVaultId.parse_key_id(key_uri)
             key_bundle = self.client.update_key(
-                key_uri, updating_bundle.key.key_ops, updating_bundle.attributes, updating_bundle.tags)
+                kid.vault, kid.name, kid.version, updating_bundle.key.key_ops, updating_bundle.attributes, updating_bundle.tags)
             self.assertEqual(updating_bundle.tags, key_bundle.tags)
             self.assertEqual(updating_bundle.key.kid, key_bundle.key.kid)
             self.assertNotEqual(str(updating_bundle.attributes.updated), str(key_bundle.attributes.updated))
@@ -425,21 +426,21 @@ class KeyVaultKeyTest(AzureKeyVaultTestCase):
         imported_key = self._import_test_key(key_id)
         key_id = KeyVaultId.parse_key_id(imported_key.key.kid)
 
-        # encrypt with version
-        result = self.client.encrypt(key_id.base_id, 'RSA-OAEP', plain_text)
+        # encrypt without version
+        result = self.client.encrypt(key_id.vault, key_id.name, '', 'RSA-OAEP', plain_text)
         cipher_text = result.result
 
-        # decrypt with version
-        result = self.client.decrypt(key_id.base_id, 'RSA-OAEP', cipher_text)
+        # decrypt without version
+        result = self.client.decrypt(key_id.vault, key_id.name, '', 'RSA-OAEP', cipher_text)
         if not self.is_playback():
             self.assertEqual(plain_text, result.result)
 
         # encrypt with version
-        result = self.client.encrypt(key_id.id, 'RSA-OAEP', plain_text)
+        result = self.client.encrypt(key_id.vault, key_id.name, key_id.version, 'RSA-OAEP', plain_text)
         cipher_text = result.result
 
         # decrypt with version
-        result = self.client.decrypt(key_id.id, 'RSA-OAEP', cipher_text)
+        result = self.client.decrypt(key_id.vault, key_id.name, key_id.version, 'RSA-OAEP', cipher_text)
         if not self.is_playback():
             self.assertEqual(plain_text, result.result)
 
@@ -454,20 +455,20 @@ class KeyVaultKeyTest(AzureKeyVaultTestCase):
         key_id = KeyVaultId.parse_key_id(imported_key.key.kid)
 
         # wrap without version
-        result = self.client.wrap_key(key_id.base_id, 'RSA-OAEP', plain_text)
+        result = self.client.wrap_key(key_id.vault, key_id.name, '', 'RSA-OAEP', plain_text)
         cipher_text = result.result
 
         # unwrap without version
-        result = self.client.unwrap_key(key_id.base_id, 'RSA-OAEP', cipher_text)
+        result = self.client.unwrap_key(key_id.vault, key_id.name, '', 'RSA-OAEP', cipher_text)
         if not self.is_playback():
             self.assertEqual(plain_text, result.result)
 
         # wrap with version
-        result = self.client.wrap_key(key_id.id, 'RSA-OAEP', plain_text)
+        result = self.client.wrap_key(key_id.vault, key_id.name, key_id.version, 'RSA-OAEP', plain_text)
         cipher_text = result.result
 
         # unwrap with version
-        result = self.client.unwrap_key(key_id.id, 'RSA-OAEP', cipher_text)
+        result = self.client.unwrap_key(key_id.vault, key_id.name, key_id.version, 'RSA-OAEP', cipher_text)
         if not self.is_playback():
             self.assertEqual(plain_text, result.result)
 
@@ -485,17 +486,17 @@ class KeyVaultKeyTest(AzureKeyVaultTestCase):
         key_id = KeyVaultId.parse_key_id(imported_key.key.kid)
 
         # sign without version
-        signature = self.client.sign(key_id.base_id, 'RS256', digest).result
+        signature = self.client.sign(key_id.vault, key_id.name, '', 'RS256', digest).result
 
         # verify without version
-        result = self.client.verify(key_id.base_id, 'RS256', digest, signature)
+        result = self.client.verify(key_id.vault, key_id.name, '', 'RS256', digest, signature)
         self.assertTrue(result.value)
 
         # sign with version
-        signature = self.client.sign(key_id.base_id, 'RS256', digest).result
+        signature = self.client.sign(key_id.vault, key_id.name, key_id.version, 'RS256', digest).result
 
         # verify with version
-        result = self.client.verify(key_id.id, 'RS256', digest, signature)
+        result = self.client.verify(key_id.vault, key_id.name, key_id.version, 'RS256', digest, signature)
         self.assertTrue(result.value)
 
 class KeyVaultSecretTest(AzureKeyVaultTestCase):
@@ -527,7 +528,7 @@ class KeyVaultSecretTest(AzureKeyVaultTestCase):
 
     def _validate_secret_list(self, secrets, expected):
         for secret in secrets:
-            keyvaultid.parse_secret_id(secret.id)
+            KeyVaultId.parse_secret_id(secret.id)
             attributes = expected[secret.id]
             self.assertEqual(attributes, secret.attributes)
             del expected[secret.id]
@@ -542,18 +543,19 @@ class KeyVaultSecretTest(AzureKeyVaultTestCase):
         secret_id = KeyVaultId.parse_secret_id(created_bundle.id)
 
         # get secret without version
-        self.assertEqual(created_bundle, self.client.get_secret(secret_id.base_id))
+        self.assertEqual(created_bundle, self.client.get_secret(secret_id.vault, secret_id.name, ''))
 
         # get secret with version
-        self.assertEqual(created_bundle, self.client.get_secret(secret_id.id))
+        self.assertEqual(created_bundle, self.client.get_secret(secret_id.vault, secret_id.name, secret_id.version))
 
         def _update_secret(secret_uri):
             updating_bundle = copy.deepcopy(created_bundle)
             updating_bundle.content_type = 'text/plain'
             updating_bundle.attributes.expires = date_parse.parse('2050-02-02T08:00:00.000Z')
             updating_bundle.tags = { 'foo': 'updated tag' }
+            sid = KeyVaultId.parse_secret_id(secret_uri)
             secret_bundle = self.client.update_secret(
-                secret_uri, updating_bundle.content_type, updating_bundle.attributes,
+                secret_id.vault, secret_id.name, secret_id.version, updating_bundle.content_type, updating_bundle.attributes,
                 updating_bundle.tags)
             self.assertEqual(updating_bundle.tags, secret_bundle.tags)
             self.assertEqual(updating_bundle.id, secret_bundle.id)
@@ -571,7 +573,7 @@ class KeyVaultSecretTest(AzureKeyVaultTestCase):
 
         # get secret returns not found
         try:
-            self.client.get_secret(secret_id.base_id)
+            self.client.get_secret(secret_id.vault, secret_id.name, '')
         except Exception as ex:
             if not hasattr(ex, 'message') or 'Not Found' not in ex.message:
                 raise ex
@@ -759,15 +761,16 @@ class KeyVaultCertificateTest(AzureKeyVaultTestCase):
             time.sleep(interval_time)
 
         # get certificate
-        cert_bundle = self.client.get_certificate(cert_id.base_id)
+        cert_bundle = self.client.get_certificate(cert_id.vault, cert_id.name, '')
         self._validate_certificate_bundle(cert_bundle, KEY_VAULT_URI, self.cert_name, cert_policy)
 
         # get certificate as secret
-        secret_bundle = self.client.get_secret(cert_bundle.sid)
+        secret_id = KeyVaultId.parse_secret_id(cert_bundle.sid)
+        secret_bundle = self.client.get_secret(secret_id.vault, secret_id.name, secret_id.version)
 
         # update certificate
         cert_policy.tags = {'tag1': 'value1'}
-        cert_bundle = self.client.update_certificate(cert_id.id, cert_policy)
+        cert_bundle = self.client.update_certificate(cert_id.vault, cert_id.name, cert_id.version, cert_policy)
         self._validate_certificate_bundle(cert_bundle, KEY_VAULT_URI, self.cert_name, cert_policy)
 
         # delete certificate
@@ -776,7 +779,7 @@ class KeyVaultCertificateTest(AzureKeyVaultTestCase):
 
         # get certificate returns not found
         try:
-            self.client.get_certificate(cert_id.base_id)
+            self.client.get_certificate(cert_id.vault, cert_id.name, '')
             self.fail('Get should fail')
         except Exception as ex:
             if not hasattr(ex, 'message') or 'Not Found' not in ex.message:
