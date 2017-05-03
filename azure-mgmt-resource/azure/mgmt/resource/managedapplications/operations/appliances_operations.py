@@ -83,7 +83,7 @@ class AppliancesOperations(object):
         request = self._client.get(url, query_parameters)
         response = self._client.send(request, header_parameters, **operation_config)
 
-        if response.status_code not in [200]:
+        if response.status_code not in [200, 404]:
             raise models.ErrorResponseException(self._deserialize, response)
 
         deserialized = None
@@ -355,56 +355,49 @@ class AppliancesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`AppliancePaged
-         <azure.mgmt.resource.managedapplications.models.AppliancePaged>`
+        :rtype: :class:`ApplianceListResult
+         <azure.mgmt.resource.managedapplications.models.ApplianceListResult>`
+        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+         if raw=true
         :raises:
          :class:`ErrorResponseException<azure.mgmt.resource.managedapplications.models.ErrorResponseException>`
         """
-        def internal_paging(next_link=None, raw=False):
+        # Construct URL
+        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Solutions/appliances'
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern='^[-\w\._\(\)]+$'),
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
 
-            if not next_link:
-                # Construct URL
-                url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Solutions/appliances'
-                path_format_arguments = {
-                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern='^[-\w\._\(\)]+$'),
-                    'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
-                }
-                url = self._client.format_url(url, **path_format_arguments)
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
-                # Construct parameters
-                query_parameters = {}
-                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
-            else:
-                url = next_link
-                query_parameters = {}
+        # Construct and send request
+        request = self._client.get(url, query_parameters)
+        response = self._client.send(request, header_parameters, **operation_config)
 
-            # Construct headers
-            header_parameters = {}
-            header_parameters['Content-Type'] = 'application/json; charset=utf-8'
-            if self.config.generate_client_request_id:
-                header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-            if custom_headers:
-                header_parameters.update(custom_headers)
-            if self.config.accept_language is not None:
-                header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+        if response.status_code not in [200]:
+            raise models.ErrorResponseException(self._deserialize, response)
 
-            # Construct and send request
-            request = self._client.get(url, query_parameters)
-            response = self._client.send(
-                request, header_parameters, **operation_config)
+        deserialized = None
 
-            if response.status_code not in [200]:
-                raise models.ErrorResponseException(self._deserialize, response)
-
-            return response
-
-        # Deserialize response
-        deserialized = models.AppliancePaged(internal_paging, self._deserialize.dependencies)
+        if response.status_code == 200:
+            deserialized = self._deserialize('ApplianceListResult', response)
 
         if raw:
-            header_dict = {}
-            client_raw_response = models.AppliancePaged(internal_paging, self._deserialize.dependencies, header_dict)
+            client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
@@ -418,55 +411,48 @@ class AppliancesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`AppliancePaged
-         <azure.mgmt.resource.managedapplications.models.AppliancePaged>`
+        :rtype: :class:`ApplianceListResult
+         <azure.mgmt.resource.managedapplications.models.ApplianceListResult>`
+        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+         if raw=true
         :raises:
          :class:`ErrorResponseException<azure.mgmt.resource.managedapplications.models.ErrorResponseException>`
         """
-        def internal_paging(next_link=None, raw=False):
+        # Construct URL
+        url = '/subscriptions/{subscriptionId}/providers/Microsoft.Solutions/appliances'
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
 
-            if not next_link:
-                # Construct URL
-                url = '/subscriptions/{subscriptionId}/providers/Microsoft.Solutions/appliances'
-                path_format_arguments = {
-                    'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
-                }
-                url = self._client.format_url(url, **path_format_arguments)
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
-                # Construct parameters
-                query_parameters = {}
-                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
-            else:
-                url = next_link
-                query_parameters = {}
+        # Construct and send request
+        request = self._client.get(url, query_parameters)
+        response = self._client.send(request, header_parameters, **operation_config)
 
-            # Construct headers
-            header_parameters = {}
-            header_parameters['Content-Type'] = 'application/json; charset=utf-8'
-            if self.config.generate_client_request_id:
-                header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-            if custom_headers:
-                header_parameters.update(custom_headers)
-            if self.config.accept_language is not None:
-                header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+        if response.status_code not in [200]:
+            raise models.ErrorResponseException(self._deserialize, response)
 
-            # Construct and send request
-            request = self._client.get(url, query_parameters)
-            response = self._client.send(
-                request, header_parameters, **operation_config)
+        deserialized = None
 
-            if response.status_code not in [200]:
-                raise models.ErrorResponseException(self._deserialize, response)
-
-            return response
-
-        # Deserialize response
-        deserialized = models.AppliancePaged(internal_paging, self._deserialize.dependencies)
+        if response.status_code == 200:
+            deserialized = self._deserialize('ApplianceListResult', response)
 
         if raw:
-            header_dict = {}
-            client_raw_response = models.AppliancePaged(internal_paging, self._deserialize.dependencies, header_dict)
+            client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
@@ -518,7 +504,7 @@ class AppliancesOperations(object):
         request = self._client.get(url, query_parameters)
         response = self._client.send(request, header_parameters, **operation_config)
 
-        if response.status_code not in [200]:
+        if response.status_code not in [200, 404]:
             raise models.ErrorResponseException(self._deserialize, response)
 
         deserialized = None
