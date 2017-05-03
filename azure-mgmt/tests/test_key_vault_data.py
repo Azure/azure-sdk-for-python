@@ -20,7 +20,7 @@ except ImportError:
 
 from azure.keyvault import KeyVaultId
 from azure.keyvault import HttpBearerChallenge
-from azure.keyvault.http_bearer_challenge_cache import \
+from azure.keyvault.HttpBearerChallengeCache import \
     (_cache as challenge_cache, get_challenge_for_url, set_challenge_for_url, clear,
      remove_challenge_for_url)
 from azure.keyvault.generated.models import \
