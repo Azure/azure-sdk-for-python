@@ -114,6 +114,12 @@ from .troubleshooting_result import TroubleshootingResult
 from .retention_policy_parameters import RetentionPolicyParameters
 from .flow_log_status_parameters import FlowLogStatusParameters
 from .flow_log_information import FlowLogInformation
+from .connectivity_source import ConnectivitySource
+from .connectivity_destination import ConnectivityDestination
+from .connectivity_parameters import ConnectivityParameters
+from .connectivity_issue import ConnectivityIssue
+from .connectivity_hop import ConnectivityHop
+from .connectivity_information import ConnectivityInformation
 from .patch_route_filter_rule import PatchRouteFilterRule
 from .patch_route_filter import PatchRouteFilter
 from .bgp_community import BGPCommunity
@@ -205,6 +211,10 @@ from .network_management_client_enums import (
     PcProtocol,
     PcStatus,
     PcError,
+    Origin,
+    Severity,
+    IssueType,
+    ConnectionStatus,
     VirtualNetworkPeeringState,
     VirtualNetworkGatewayType,
     VpnType,
@@ -328,6 +338,12 @@ __all__ = [
     'RetentionPolicyParameters',
     'FlowLogStatusParameters',
     'FlowLogInformation',
+    'ConnectivitySource',
+    'ConnectivityDestination',
+    'ConnectivityParameters',
+    'ConnectivityIssue',
+    'ConnectivityHop',
+    'ConnectivityInformation',
     'PatchRouteFilterRule',
     'PatchRouteFilter',
     'BGPCommunity',
@@ -418,6 +434,10 @@ __all__ = [
     'PcProtocol',
     'PcStatus',
     'PcError',
+    'Origin',
+    'Severity',
+    'IssueType',
+    'ConnectionStatus',
     'VirtualNetworkPeeringState',
     'VirtualNetworkGatewayType',
     'VpnType',
