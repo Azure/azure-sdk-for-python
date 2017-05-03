@@ -20,9 +20,9 @@ from .sku import Sku
 from .identity import Identity
 from .generic_resource import GenericResource
 from .resource import Resource
+from .appliance_list_result import ApplianceListResult
 from .appliance_definition_list_result import ApplianceDefinitionListResult
 from .error_response import ErrorResponse, ErrorResponseException
-from .appliance_paged import AppliancePaged
 from .managed_application_client_enums import (
     ProvisioningState,
     ApplianceLockLevel,
@@ -42,9 +42,9 @@ __all__ = [
     'Identity',
     'GenericResource',
     'Resource',
+    'ApplianceListResult',
     'ApplianceDefinitionListResult',
     'ErrorResponse', 'ErrorResponseException',
-    'AppliancePaged',
     'ProvisioningState',
     'ApplianceLockLevel',
     'ApplianceArtifactType',

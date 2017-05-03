@@ -9,19 +9,24 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.paging import Paged
+from msrest.serialization import Model
 
 
-class AppliancePaged(Paged):
-    """
-    A paging container for iterating over a list of Appliance object
+class ApplianceListResult(Model):
+    """List of appliances.
+
+    :param value: The array of appliances.
+    :type value: list of :class:`Appliance
+     <azure.mgmt.resource.managedapplications.models.Appliance>`
+    :param next_link: The URL to use for getting the next set of results.
+    :type next_link: str
     """
 
     _attribute_map = {
+        'value': {'key': 'value', 'type': '[Appliance]'},
         'next_link': {'key': 'nextLink', 'type': 'str'},
-        'current_page': {'key': 'value', 'type': '[Appliance]'}
     }
 
-    def __init__(self, *args, **kwargs):
-
-        super(AppliancePaged, self).__init__(*args, **kwargs)
+    def __init__(self, value=None, next_link=None):
+        self.value = value
+        self.next_link = next_link
