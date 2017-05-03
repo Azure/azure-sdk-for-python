@@ -9,8 +9,9 @@ import requests
 
 from msrest.authentication import Authentication
 
-from . import HttpBearerChallenge
-from . import HttpBearerChallengeCache as ChallengeCache
+from azure.keyvault import HttpBearerChallenge
+from azure.keyvault import HttpBearerChallengeCache as ChallengeCache
+
 
 class KeyVaultAuthBase(AuthBase):
 
@@ -44,6 +45,7 @@ class KeyVaultAuthBase(AuthBase):
             challenge.get_resource(),
             challenge.get_scope())
         request.headers['Authorization'] = '{} {}'.format(auth[0], auth[1])
+
 
 class KeyVaultAuthentication(Authentication):
 
