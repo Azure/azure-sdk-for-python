@@ -68,23 +68,23 @@ class ComputeManagementClient(object):
     :vartype config: ComputeManagementClientConfiguration
 
     :ivar availability_sets: AvailabilitySets operations
-    :vartype availability_sets: .operations.AvailabilitySetsOperations
+    :vartype availability_sets: azure.mgmt.compute.compute.v2015_06_15.operations.AvailabilitySetsOperations
     :ivar virtual_machine_extension_images: VirtualMachineExtensionImages operations
-    :vartype virtual_machine_extension_images: .operations.VirtualMachineExtensionImagesOperations
+    :vartype virtual_machine_extension_images: azure.mgmt.compute.compute.v2015_06_15.operations.VirtualMachineExtensionImagesOperations
     :ivar virtual_machine_extensions: VirtualMachineExtensions operations
-    :vartype virtual_machine_extensions: .operations.VirtualMachineExtensionsOperations
+    :vartype virtual_machine_extensions: azure.mgmt.compute.compute.v2015_06_15.operations.VirtualMachineExtensionsOperations
     :ivar virtual_machine_images: VirtualMachineImages operations
-    :vartype virtual_machine_images: .operations.VirtualMachineImagesOperations
+    :vartype virtual_machine_images: azure.mgmt.compute.compute.v2015_06_15.operations.VirtualMachineImagesOperations
     :ivar usage: Usage operations
-    :vartype usage: .operations.UsageOperations
+    :vartype usage: azure.mgmt.compute.compute.v2015_06_15.operations.UsageOperations
     :ivar virtual_machine_sizes: VirtualMachineSizes operations
-    :vartype virtual_machine_sizes: .operations.VirtualMachineSizesOperations
+    :vartype virtual_machine_sizes: azure.mgmt.compute.compute.v2015_06_15.operations.VirtualMachineSizesOperations
     :ivar virtual_machines: VirtualMachines operations
-    :vartype virtual_machines: .operations.VirtualMachinesOperations
+    :vartype virtual_machines: azure.mgmt.compute.compute.v2015_06_15.operations.VirtualMachinesOperations
     :ivar virtual_machine_scale_sets: VirtualMachineScaleSets operations
-    :vartype virtual_machine_scale_sets: .operations.VirtualMachineScaleSetsOperations
+    :vartype virtual_machine_scale_sets: azure.mgmt.compute.compute.v2015_06_15.operations.VirtualMachineScaleSetsOperations
     :ivar virtual_machine_scale_set_vms: VirtualMachineScaleSetVMs operations
-    :vartype virtual_machine_scale_set_vms: .operations.VirtualMachineScaleSetVMsOperations
+    :vartype virtual_machine_scale_set_vms: azure.mgmt.compute.compute.v2015_06_15.operations.VirtualMachineScaleSetVMsOperations
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
