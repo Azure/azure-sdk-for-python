@@ -20,9 +20,7 @@ except ImportError:
 
 from azure.keyvault import KeyVaultId
 from azure.keyvault import HttpBearerChallenge
-from azure.keyvault.HttpBearerChallengeCache import \
-    (_cache as challenge_cache, get_challenge_for_url, set_challenge_for_url, clear,
-     remove_challenge_for_url)
+from azure.keyvault import HttpBearerChallengeCache 
 from azure.keyvault.generated.models import \
     (CertificatePolicy, KeyProperties, SecretProperties, IssuerParameters,
      X509CertificateProperties, IssuerBundle, IssuerCredentials, OrganizationDetails,
@@ -174,7 +172,7 @@ class KeyVaultCustomLayerTest(unittest.TestCase):
 
     def test_bearer_challenge_cache(self):
         test_challenges = []
-        clear()
+        HttpBearerChallengeCache.clear()
         for x in range(0, 3):
             challenge = MagicMock()
             challenge.source_authority = 'mytest{}.url.com'.format(x)
@@ -183,24 +181,24 @@ class KeyVaultCustomLayerTest(unittest.TestCase):
                 'url': url,
                 'challenge': challenge
             })
-            set_challenge_for_url(url, challenge)
+            HttpBearerChallengeCache.set_challenge_for_url(url, challenge)
 
-        self.assertEqual(len(challenge_cache), 3)
+        self.assertEqual(len(HttpBearerChallengeCache._cache), 3)
 
-        cached_challenge = get_challenge_for_url(test_challenges[1]['url'])
+        cached_challenge = HttpBearerChallengeCache.get_challenge_for_url(test_challenges[1]['url'])
         self.assertTrue(cached_challenge.source_authority in test_challenges[1]['url'])
 
         # test remove
-        remove_challenge_for_url(test_challenges[0]['url'])
-        self.assertIsNone(get_challenge_for_url(test_challenges[0]['url']))
+        HttpBearerChallengeCache.remove_challenge_for_url(test_challenges[0]['url'])
+        self.assertIsNone(HttpBearerChallengeCache.get_challenge_for_url(test_challenges[0]['url']))
 
         # test clear
-        self.assertEqual(len(challenge_cache), 2)
-        clear()
-        self.assertEqual(len(challenge_cache), 0)
+        self.assertEqual(len(HttpBearerChallengeCache._cache), 2)
+        HttpBearerChallengeCache.clear()
+        self.assertEqual(len(HttpBearerChallengeCache._cache), 0)
 
         with self.assertRaises(ValueError):
-            set_challenge_for_url('https://diffurl.com', test_challenges[0]['challenge'])
+            HttpBearerChallengeCache.set_challenge_for_url('https://diffurl.com', test_challenges[0]['challenge'])
 
     def test_bearer_challenge(self):
         mock_bearer_challenge = '  Bearer authorization="https://login.windows.net/mock-id", resource="https://vault.azure.net"'
