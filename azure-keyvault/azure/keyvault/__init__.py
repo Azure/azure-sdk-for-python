@@ -11,7 +11,7 @@
 
 from .key_vault_client import KeyVaultClient
 from .custom.key_vault_id import KeyVaultId
-from azure.keyvault import http_bearer_challenge_cache as HttpBearerChallengeCache
+from .custom import http_bearer_challenge_cache as HttpBearerChallengeCache
 from .custom.http_bearer_challenge import HttpBearerChallenge
 from .custom.key_vault_authentication import KeyVaultAuthentication
 from .version import VERSION
