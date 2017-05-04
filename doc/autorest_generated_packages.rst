@@ -47,5 +47,6 @@
   ./ref/azure.mgmt.trafficmanager.rst
   ./ref/azure.mgmt.web.rst
   ./ref/azure.monitor.rst
+  ./ref/azure.servicefabric.rst
   ref/azure.servicebus
   ref/azure.servicemanagement  
