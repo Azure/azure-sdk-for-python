@@ -22,6 +22,7 @@ class KeyVaultId(object):
     """ 
     An identifier for an Azure Key Vault resource.
     """
+    version_none = ''
 
     def __init__(self, collection, vault, name, version):
         """
@@ -36,9 +37,8 @@ class KeyVaultId(object):
         """
         self.vault = vault
         self.name = name
-        self.version = version or ''
-        self.base_id = '{}/{}/{}'.format(vault, collection, name)
-        self.id = '{}/{}'.format(self.base_id, version) if version else self.base_id
+        self.collection = collection
+        self.version = version or KeyVaultId.version_none
 
     def __str__(self):
         """
@@ -46,6 +46,14 @@ class KeyVaultId(object):
         :rtype: str
         """
         return self.id
+
+    @property
+    def id(self):
+        return '{}/{}'.format(self.base_id, self.version) if self.version != KeyVaultId.version_none else self.base_id
+
+    @property
+    def base_id(self):
+        return '{}/{}/{}'.format(self.vault, self.collection, self.name)
 
     @staticmethod
     def create_object_id(collection, vault, name, version):
@@ -178,8 +186,6 @@ class KeyVaultId(object):
         :rtype: KeyVaultId
         """
         obj_id = KeyVaultId.create_object_id(KeyVaultCollectionType.certificates.value, vault, name, 'pending')
-        obj_id.base_id = obj_id.id
-        obj_id.version = ''
         return obj_id
 
     @staticmethod
@@ -190,8 +196,6 @@ class KeyVaultId(object):
         :rtype: KeyVaultId
         """
         obj_id = KeyVaultId.parse_object_id(KeyVaultCollectionType.certificates.value, id)
-        obj_id.base_id = obj_id.id
-        obj_id.version = ''
         return obj_id
 
     @staticmethod
