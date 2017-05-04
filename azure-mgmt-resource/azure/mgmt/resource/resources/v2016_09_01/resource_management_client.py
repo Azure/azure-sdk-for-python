@@ -63,17 +63,17 @@ class ResourceManagementClient(object):
     :vartype config: ResourceManagementClientConfiguration
 
     :ivar deployments: Deployments operations
-    :vartype deployments: .operations.DeploymentsOperations
+    :vartype deployments: azure.mgmt.resource.resources.v2016_09_01.operations.DeploymentsOperations
     :ivar providers: Providers operations
-    :vartype providers: .operations.ProvidersOperations
+    :vartype providers: azure.mgmt.resource.resources.v2016_09_01.operations.ProvidersOperations
     :ivar resource_groups: ResourceGroups operations
-    :vartype resource_groups: .operations.ResourceGroupsOperations
+    :vartype resource_groups: azure.mgmt.resource.resources.v2016_09_01.operations.ResourceGroupsOperations
     :ivar resources: Resources operations
-    :vartype resources: .operations.ResourcesOperations
+    :vartype resources: azure.mgmt.resource.resources.v2016_09_01.operations.ResourcesOperations
     :ivar tags: Tags operations
-    :vartype tags: .operations.TagsOperations
+    :vartype tags: azure.mgmt.resource.resources.v2016_09_01.operations.TagsOperations
     :ivar deployment_operations: DeploymentOperations operations
-    :vartype deployment_operations: .operations.DeploymentOperations
+    :vartype deployment_operations: azure.mgmt.resource.resources.v2016_09_01.operations.DeploymentOperations
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
