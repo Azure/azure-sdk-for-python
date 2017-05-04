@@ -58,7 +58,7 @@ class FeatureClient(object):
     :vartype config: FeatureClientConfiguration
 
     :ivar features: Features operations
-    :vartype features: .operations.FeaturesOperations
+    :vartype features: azure.mgmt.resource.features.v2015_12_01.operations.FeaturesOperations
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials

@@ -289,6 +289,7 @@
         "Namespace": "azure.mgmt.resource.features.v2015_12_01"
       },
       "output_dir": "azure-mgmt-resource/azure/mgmt/resource/features/v2015_12_01",
+      "build_dir": "azure-mgmt-resource/azure/mgmt/resource/features/v2015_12_01",
       "generated_relative_base_directory": "azure/mgmt/resource/features/v2015_12_01"
     },
     "resources.subscriptions.2016-06-01": {
@@ -297,6 +298,7 @@
         "Namespace": "azure.mgmt.resource.subscriptions.v2016_06_01"
       },
       "output_dir": "azure-mgmt-resource/azure/mgmt/resource/subscriptions/v2016_06_01",
+      "build_dir": "azure-mgmt-resource/azure/mgmt/resource/subscriptions/v2016_06_01",
       "generated_relative_base_directory": "azure/mgmt/resource/subscriptions/v2016_06_01"
     },
     "resources.locks.2015-01-01": {
@@ -305,6 +307,7 @@
         "Namespace": "azure.mgmt.resource.locks.v2015_01_01"
       },
       "output_dir": "azure-mgmt-resource/azure/mgmt/resource/locks/v2015_01_01",
+      "build_dir": "azure-mgmt-resource/azure/mgmt/resource/locks/v2015_01_01",
       "generated_relative_base_directory": "azure/mgmt/resource/locks/v2015_01_01"
     },
     "resources.locks.2016-09-01": {
@@ -313,6 +316,7 @@
         "Namespace": "azure.mgmt.resource.locks.v2016_09_01"
       },
       "output_dir": "azure-mgmt-resource/azure/mgmt/resource/locks/v2016_09_01",
+      "build_dir": "azure-mgmt-resource/azure/mgmt/resource/locks/v2016_09_01",
       "generated_relative_base_directory": "azure/mgmt/resource/locks/v2016_09_01"
     },
     "resources.resources.2016-02-01": {
@@ -321,6 +325,7 @@
         "Namespace": "azure.mgmt.resource.resources.v2016_02_01"
       },
       "output_dir": "azure-mgmt-resource/azure/mgmt/resource/resources/v2016_02_01",
+      "build_dir": "azure-mgmt-resource/azure/mgmt/resource/resources/v2016_02_01",
       "generated_relative_base_directory": "azure/mgmt/resource/resources/v2016_02_01"
     },
     "resources.resources.2016-09-01": {
@@ -329,7 +334,17 @@
         "Namespace": "azure.mgmt.resource.resources.v2016_09_01"
       },
       "output_dir": "azure-mgmt-resource/azure/mgmt/resource/resources/v2016_09_01",
+      "build_dir": "azure-mgmt-resource/azure/mgmt/resource/resources/v2016_09_01",
       "generated_relative_base_directory": "azure/mgmt/resource/resources/v2016_09_01"
+    },
+    "resources.resources.2017-05-10": {
+      "swagger": "arm-resources/resources/2017-05-10/swagger/resources.json",
+      "autorest_options": {
+        "Namespace": "azure.mgmt.resource.resources.v2017_05_10"
+      },
+      "output_dir": "azure-mgmt-resource/azure/mgmt/resource/resources/v2017_05_10",
+      "build_dir": "azure-mgmt-resource/azure/mgmt/resource/resources/v2017_05_10",
+      "generated_relative_base_directory": "azure/mgmt/resource/resources/v2017_05_10"
     },
     "resources.policy.2016-04-01": {
       "swagger": "arm-resources/policy/2016-04-01/swagger/policy.json",
@@ -337,6 +352,7 @@
         "Namespace": "azure.mgmt.resource.policy.v2016_04_01"
       },
       "output_dir": "azure-mgmt-resource/azure/mgmt/resource/policy/v2016_04_01",
+      "build_dir": "azure-mgmt-resource/azure/mgmt/resource/policy/v2016_04_01",
       "generated_relative_base_directory": "azure/mgmt/resource/policy/v2016_04_01"
     },
     "resources.policy.2016-12-01": {
@@ -345,6 +361,7 @@
         "Namespace": "azure.mgmt.resource.policy.v2016_12_01"
       },
       "output_dir": "azure-mgmt-resource/azure/mgmt/resource/policy/v2016_12_01",
+      "build_dir": "azure-mgmt-resource/azure/mgmt/resource/policy/v2016_12_01",
       "generated_relative_base_directory": "azure/mgmt/resource/policy/v2016_12_01"
     },
     "resources.links.2016-09-01": {
@@ -353,6 +370,7 @@
         "Namespace": "azure.mgmt.resource.links.v2016_09_01"
       },
       "output_dir": "azure-mgmt-resource/azure/mgmt/resource/links/v2016_09_01",
+      "build_dir": "azure-mgmt-resource/azure/mgmt/resource/links/v2016_09_01",
       "generated_relative_base_directory": "azure/mgmt/resource/links/v2016_09_01"
     },
     "search": {

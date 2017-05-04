@@ -58,7 +58,7 @@ class ManagementLockClient(object):
     :vartype config: ManagementLockClientConfiguration
 
     :ivar management_locks: ManagementLocks operations
-    :vartype management_locks: .operations.ManagementLocksOperations
+    :vartype management_locks: azure.mgmt.resource.locks.v2016_09_01.operations.ManagementLocksOperations
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials

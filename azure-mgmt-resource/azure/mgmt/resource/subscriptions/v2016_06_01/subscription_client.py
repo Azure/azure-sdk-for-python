@@ -52,9 +52,9 @@ class SubscriptionClient(object):
     :vartype config: SubscriptionClientConfiguration
 
     :ivar subscriptions: Subscriptions operations
-    :vartype subscriptions: .operations.SubscriptionsOperations
+    :vartype subscriptions: azure.mgmt.resource.subscriptions.v2016_06_01.operations.SubscriptionsOperations
     :ivar tenants: Tenants operations
-    :vartype tenants: .operations.TenantsOperations
+    :vartype tenants: azure.mgmt.resource.subscriptions.v2016_06_01.operations.TenantsOperations
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
