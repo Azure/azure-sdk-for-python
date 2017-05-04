@@ -22,7 +22,8 @@
         "Namespace": "azure.mgmt.authorization",
         "PackageVersion": "0.30.0"
       },
-      "output_dir": "azure-mgmt-authorization/azure/mgmt/authorization"
+      "output_dir": "azure-mgmt-authorization/azure/mgmt/authorization",
+      "build_dir": "azure-mgmt-authorization"
     },
     "batch.management": {
       "swagger": "arm-batch/2017-01-01/swagger/BatchManagement.json",
@@ -57,9 +58,10 @@
       "output_dir": "azure-mgmt-consumption/azure/mgmt/consumption"
     },
     "cognitiveservices": {
-      "swagger": "arm-cognitiveservices/2016-02-01-preview/swagger/cognitiveservices.json",
+      "swagger": "arm-cognitiveservices/2017-04-18/swagger/cognitiveservices.json",
       "autorest_options": {
-        "Namespace": "azure.mgmt.cognitiveservices"
+        "Namespace": "azure.mgmt.cognitiveservices",
+        "PackageVersion": "1.0.0"
       },
       "output_dir": "azure-mgmt-cognitiveservices/azure/mgmt/cognitiveservices"
     },
@@ -123,7 +125,7 @@
       "swagger": "arm-documentdb/2015-04-08/swagger/documentdb.json",
       "autorest_options": {
         "Namespace": "azure.mgmt.documentdb",
-        "PackageVersion": "0.1.2"
+        "PackageVersion": "0.1.3"
       },
       "output_dir": "azure-mgmt-documentdb/azure/mgmt/documentdb"
     },
@@ -271,6 +273,15 @@
         "PackageVersion": "4.1.0"
       },
       "output_dir": "azure-mgmt-redis/azure/mgmt/redis"
+    },
+    "resources.managedapplications.2016-09-01-preview": {
+      "swagger": "arm-resources/managedapplications/2016-09-01-preview/swagger/managedapplications.json",
+      "autorest_options": {
+        "Namespace": "azure.mgmt.resource.managedapplications"
+      },
+      "output_dir": "azure-mgmt-resource/azure/mgmt/resource/managedapplications",
+      "generated_relative_base_directory": "azure/mgmt/resource/managedapplications",
+      "build_dir": "azure-mgmt-resource"
     },
     "resources.features.2015-12-01": {
       "swagger": "arm-resources/features/2015-12-01/swagger/features.json",

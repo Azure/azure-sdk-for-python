@@ -14,9 +14,9 @@ from msrest.exceptions import HttpOperationError
 
 
 class Error(Model):
-    """Error.
+    """Cognitive Services error object.
 
-    :param error:
+    :param error: The error body.
     :type error: :class:`ErrorBody
      <azure.mgmt.cognitiveservices.models.ErrorBody>`
     """

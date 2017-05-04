@@ -30,6 +30,7 @@ class DefaultConsistencyLevel(Enum):
     session = "Session"
     bounded_staleness = "BoundedStaleness"
     strong = "Strong"
+    consistent_prefix = "ConsistentPrefix"
 
 
 class KeyKind(Enum):
