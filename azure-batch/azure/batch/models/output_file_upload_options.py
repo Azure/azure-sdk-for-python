@@ -13,12 +13,12 @@ from msrest.serialization import Model
 
 
 class OutputFileUploadOptions(Model):
-    """Details about file upload, including under what conditions to perform the
-    upload.
+    """Details about an output file upload operation, including under what
+    conditions to perform the upload.
 
-    :param upload_condition: The conditions under which a task output file or
-     set of files should be uploaded. The default is taskCompletion. Possible
-     values include: 'taskSuccess', 'taskFailure', 'taskCompletion'
+    :param upload_condition: The conditions under which the task output file
+     or set of files should be uploaded. The default is taskCompletion.
+     Possible values include: 'taskSuccess', 'taskFailure', 'taskCompletion'
     :type upload_condition: str or :class:`OutputFileUploadCondition
      <azure.batch.models.OutputFileUploadCondition>`
     """

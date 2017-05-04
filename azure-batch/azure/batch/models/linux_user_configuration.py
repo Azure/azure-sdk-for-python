@@ -13,7 +13,7 @@ from msrest.serialization import Model
 
 
 class LinuxUserConfiguration(Model):
-    """Properties used to create a Linux-specific user on an Azure Batch node.
+    """Properties used to create a user account on a Linux node.
 
     :param uid: The user ID of the user account. The uid and gid properties
      must be specified together or not at all. If not specified the underlying
@@ -24,9 +24,10 @@ class LinuxUserConfiguration(Model):
      operating system picks the gid.
     :type gid: int
     :param ssh_private_key: The SSH private key for the user account. The SSH
-     private key establishes password-less SSH between nodes in a Linux pool
-     when the pool's enableInterNodeCommunication property is true. If not
-     specified, password-less SSH is not established between nodes.
+     private key is used to automatically configure password-less SSH between
+     nodes in a Linux pool when the pool's enableInterNodeCommunication
+     property is true. If not specified, password-less SSH is not configured
+     between nodes.
     :type ssh_private_key: str
     """
 

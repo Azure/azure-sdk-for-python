@@ -38,8 +38,9 @@ class SubtaskInformation(Model):
      user termination via the API) you may see an operating system-defined exit
      code.
     :type exit_code: int
-    :param failure_info: Information describing the task failure. This
-     property is set only if the task is in the completed state.
+    :param failure_info: Information describing the task failure, if any. This
+     property is set only if the task is in the completed state and encountered
+     a failure.
     :type failure_info: :class:`TaskFailureInformation
      <azure.batch.models.TaskFailureInformation>`
     :param state: The current state of the subtask. Possible values include:
