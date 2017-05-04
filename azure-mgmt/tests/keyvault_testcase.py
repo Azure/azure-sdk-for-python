@@ -12,7 +12,7 @@ import azure.mgmt.resource
 from azure.mgmt.keyvault import KeyVaultManagementClient
 from azure.mgmt.keyvault.models import \
     (VaultCreateOrUpdateParameters, VaultProperties, Sku, AccessPolicyEntry, Permissions)
-from azure.keyvault import KeyVaultClient, KeyVaultAuthentication, HttpBearerChallenge
+from azure.keyvault import KeyVaultClient, KeyVaultAuthentication, KeyVaultAuthBase, HttpBearerChallenge
 
 from azure.common.exceptions import (
     CloudError
