@@ -19,6 +19,7 @@ from .operations.alert_rule_incidents_operations import AlertRuleIncidentsOperat
 from .operations.activity_log_alerts_operations import ActivityLogAlertsOperations
 from .operations.log_profiles_operations import LogProfilesOperations
 from .operations.service_diagnostic_settings_operations import ServiceDiagnosticSettingsOperations
+from .operations.action_groups_operations import ActionGroupsOperations
 from . import models
 
 
@@ -63,17 +64,19 @@ class MonitorManagementClient(object):
     :vartype config: MonitorManagementClientConfiguration
 
     :ivar autoscale_settings: AutoscaleSettings operations
-    :vartype autoscale_settings: .operations.AutoscaleSettingsOperations
+    :vartype autoscale_settings: azure.mgmt.monitor.operations.AutoscaleSettingsOperations
     :ivar alert_rules: AlertRules operations
-    :vartype alert_rules: .operations.AlertRulesOperations
+    :vartype alert_rules: azure.mgmt.monitor.operations.AlertRulesOperations
     :ivar alert_rule_incidents: AlertRuleIncidents operations
-    :vartype alert_rule_incidents: .operations.AlertRuleIncidentsOperations
+    :vartype alert_rule_incidents: azure.mgmt.monitor.operations.AlertRuleIncidentsOperations
     :ivar activity_log_alerts: ActivityLogAlerts operations
-    :vartype activity_log_alerts: .operations.ActivityLogAlertsOperations
+    :vartype activity_log_alerts: azure.mgmt.monitor.operations.ActivityLogAlertsOperations
     :ivar log_profiles: LogProfiles operations
-    :vartype log_profiles: .operations.LogProfilesOperations
+    :vartype log_profiles: azure.mgmt.monitor.operations.LogProfilesOperations
     :ivar service_diagnostic_settings: ServiceDiagnosticSettings operations
-    :vartype service_diagnostic_settings: .operations.ServiceDiagnosticSettingsOperations
+    :vartype service_diagnostic_settings: azure.mgmt.monitor.operations.ServiceDiagnosticSettingsOperations
+    :ivar action_groups: ActionGroups operations
+    :vartype action_groups: azure.mgmt.monitor.operations.ActionGroupsOperations
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
@@ -104,4 +107,6 @@ class MonitorManagementClient(object):
         self.log_profiles = LogProfilesOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.service_diagnostic_settings = ServiceDiagnosticSettingsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.action_groups = ActionGroupsOperations(
             self._client, self.config, self._serialize, self._deserialize)
