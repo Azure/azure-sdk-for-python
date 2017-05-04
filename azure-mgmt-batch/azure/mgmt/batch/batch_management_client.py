@@ -17,6 +17,7 @@ from .operations.batch_account_operations import BatchAccountOperations
 from .operations.application_package_operations import ApplicationPackageOperations
 from .operations.application_operations import ApplicationOperations
 from .operations.location_operations import LocationOperations
+from .operations.operations import Operations
 from . import models
 
 
@@ -28,9 +29,8 @@ class BatchManagementClientConfiguration(AzureConfiguration):
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
      object<msrestazure.azure_active_directory>`
-    :param subscription_id: A unique identifier of a Microsoft Azure
-     subscription. The subscription ID forms part of the URI for every service
-     call.
+    :param subscription_id: The Azure subscription ID. This is a
+     GUID-formatted string (e.g. 00000000-0000-0000-0000-000000000000)
     :type subscription_id: str
     :param str base_url: Service URL
     """
@@ -70,13 +70,14 @@ class BatchManagementClient(object):
     :vartype application: .operations.ApplicationOperations
     :ivar location: Location operations
     :vartype location: .operations.LocationOperations
+    :ivar operations: Operations operations
+    :vartype operations: .operations.Operations
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
      object<msrestazure.azure_active_directory>`
-    :param subscription_id: A unique identifier of a Microsoft Azure
-     subscription. The subscription ID forms part of the URI for every service
-     call.
+    :param subscription_id: The Azure subscription ID. This is a
+     GUID-formatted string (e.g. 00000000-0000-0000-0000-000000000000)
     :type subscription_id: str
     :param str base_url: Service URL
     """
@@ -99,4 +100,6 @@ class BatchManagementClient(object):
         self.application = ApplicationOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.location = LocationOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.operations = Operations(
             self._client, self.config, self._serialize, self._deserialize)

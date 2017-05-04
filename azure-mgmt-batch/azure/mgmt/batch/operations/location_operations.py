@@ -40,7 +40,8 @@ class LocationOperations(object):
         """Gets the Batch service quotas for the specified subscription at the
         given location.
 
-        :param location_name: The desired region for the quotas.
+        :param location_name: The region for which to retrieve Batch service
+         quotas.
         :type location_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
