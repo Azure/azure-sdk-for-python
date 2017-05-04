@@ -13,11 +13,11 @@ from msrest.serialization import Model
 
 
 class CognitiveServicesResourceAndSku(Model):
-    """CognitiveServicesResourceAndSku.
+    """Cognitive Services resource type and SKU.
 
     :param resource_type: Resource Namespace and Type
     :type resource_type: str
-    :param sku:
+    :param sku: The SKU of Cognitive Services account.
     :type sku: :class:`Sku <azure.mgmt.cognitiveservices.models.Sku>`
     """
 
