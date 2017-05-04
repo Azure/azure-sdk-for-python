@@ -13,13 +13,17 @@ from msrest.service_client import ServiceClient
 from msrest import Serializer, Deserializer
 from msrestazure import AzureConfiguration
 from .version import VERSION
-from .operations.policy_assignments_operations import PolicyAssignmentsOperations
-from .operations.policy_definitions_operations import PolicyDefinitionsOperations
+from .operations.deployments_operations import DeploymentsOperations
+from .operations.providers_operations import ProvidersOperations
+from .operations.resources_operations import ResourcesOperations
+from .operations.resource_groups_operations import ResourceGroupsOperations
+from .operations.tags_operations import TagsOperations
+from .operations.deployment_operations import DeploymentOperations
 from . import models
 
 
-class PolicyClientConfiguration(AzureConfiguration):
-    """Configuration for PolicyClient
+class ResourceManagementClientConfiguration(AzureConfiguration):
+    """Configuration for ResourceManagementClient
     Note that all parameters used to create this instance are saved as instance
     attributes.
 
@@ -43,25 +47,33 @@ class PolicyClientConfiguration(AzureConfiguration):
         if not base_url:
             base_url = 'https://management.azure.com'
 
-        super(PolicyClientConfiguration, self).__init__(base_url)
+        super(ResourceManagementClientConfiguration, self).__init__(base_url)
 
-        self.add_user_agent('policyclient/{}'.format(VERSION))
+        self.add_user_agent('resourcemanagementclient/{}'.format(VERSION))
         self.add_user_agent('Azure-SDK-For-Python')
 
         self.credentials = credentials
         self.subscription_id = subscription_id
 
 
-class PolicyClient(object):
-    """To manage and control access to your resources, you can define customized policies and assign them at a scope.
+class ResourceManagementClient(object):
+    """Provides operations for working with resources and resource groups.
 
     :ivar config: Configuration for client.
-    :vartype config: PolicyClientConfiguration
+    :vartype config: ResourceManagementClientConfiguration
 
-    :ivar policy_assignments: PolicyAssignments operations
-    :vartype policy_assignments: azure.mgmt.resource.policy.v2016_12_01.operations.PolicyAssignmentsOperations
-    :ivar policy_definitions: PolicyDefinitions operations
-    :vartype policy_definitions: azure.mgmt.resource.policy.v2016_12_01.operations.PolicyDefinitionsOperations
+    :ivar deployments: Deployments operations
+    :vartype deployments: azure.mgmt.resource.resources.v2017_05_10.operations.DeploymentsOperations
+    :ivar providers: Providers operations
+    :vartype providers: azure.mgmt.resource.resources.v2017_05_10.operations.ProvidersOperations
+    :ivar resources: Resources operations
+    :vartype resources: azure.mgmt.resource.resources.v2017_05_10.operations.ResourcesOperations
+    :ivar resource_groups: ResourceGroups operations
+    :vartype resource_groups: azure.mgmt.resource.resources.v2017_05_10.operations.ResourceGroupsOperations
+    :ivar tags: Tags operations
+    :vartype tags: azure.mgmt.resource.resources.v2017_05_10.operations.TagsOperations
+    :ivar deployment_operations: DeploymentOperations operations
+    :vartype deployment_operations: azure.mgmt.resource.resources.v2017_05_10.operations.DeploymentOperations
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
@@ -74,15 +86,23 @@ class PolicyClient(object):
     def __init__(
             self, credentials, subscription_id, base_url=None):
 
-        self.config = PolicyClientConfiguration(credentials, subscription_id, base_url)
+        self.config = ResourceManagementClientConfiguration(credentials, subscription_id, base_url)
         self._client = ServiceClient(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
-        self.api_version = '2016-12-01'
+        self.api_version = '2017-05-10'
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
 
-        self.policy_assignments = PolicyAssignmentsOperations(
+        self.deployments = DeploymentsOperations(
             self._client, self.config, self._serialize, self._deserialize)
-        self.policy_definitions = PolicyDefinitionsOperations(
+        self.providers = ProvidersOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.resources = ResourcesOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.resource_groups = ResourceGroupsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.tags = TagsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.deployment_operations = DeploymentOperations(
             self._client, self.config, self._serialize, self._deserialize)
