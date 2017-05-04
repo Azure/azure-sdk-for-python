@@ -45,12 +45,9 @@ class KeyVaultCustomLayerTest(unittest.TestCase):
     def _get_expected(self, collection, vault, name, version=None):
         return {
             'vault': 'https://{}.vault.azure.net'.format(vault),
+            'collection': collection,
             'name': name,
-            'version': version or '',
-            'id': 'https://{}.vault.azure.net/{}/{}{}'.format(
-                vault, collection, name,
-                '' if not version else '/{}'.format(version)),
-            'base_id': 'https://{}.vault.azure.net/{}/{}'.format(vault, collection, name)
+            'version': version or KeyVaultId.version_none
         }
 
     def test_create_object_id(self):
@@ -148,15 +145,11 @@ class KeyVaultCustomLayerTest(unittest.TestCase):
 
     def test_create_certificate_operation_id(self):
         expected = self._get_expected('certificates', 'myvault', 'mycert', 'pending')
-        expected['base_id'] = expected['id']
-        expected['version'] = ''
         res = KeyVaultId.create_certificate_operation_id('https://myvault.vault.azure.net', ' mycert')
         self.assertEqual(res.__dict__, expected)
 
     def test_parse_certificate_operation_id(self):
         expected = self._get_expected('certificates', 'myvault', 'mycert', 'pending')
-        expected['base_id'] = expected['id']
-        expected['version'] = ''
         res = KeyVaultId.parse_certificate_operation_id('https://myvault.vault.azure.net/certificates/mycert/pending')
         self.assertEqual(res.__dict__, expected)
 

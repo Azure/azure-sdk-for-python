@@ -12,9 +12,6 @@ from ..models import KeyVaultErrorException
 
 class CustomKeyVaultClient(KeyVaultClientBase):
 
-    def __init__(self, credentials):
-        super(CustomKeyVaultClient, self).__init__(credentials)
-
     def get_pending_certificate_signing_request(self, vault_base_url, certificate_name, custom_headers=None, raw=False, **operation_config):
         """Gets the Base64 pending certificate signing request (PKCS-10).
 
@@ -43,7 +40,7 @@ class CustomKeyVaultClient(KeyVaultClientBase):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.keyvault.api_version", self.api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -54,7 +51,7 @@ class CustomKeyVaultClient(KeyVaultClientBase):
         if custom_headers:
             header_parameters.update(custom_headers)
         if self.config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self.keyvault.config.accept_language", self.config.accept_language, 'str')
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct and send request
         request = self._client.get(url, query_parameters)

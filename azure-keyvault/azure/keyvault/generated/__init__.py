@@ -77,7 +77,7 @@ from ..models import JsonWebKeySignatureAlgorithm as __models_JsonWebKeySignatur
 
 import warnings
 
-warnings.warn("deprecated", DeprecationWarning)
+warnings.warn("The namespace azure.keyvault.generated has been deprecated and it's contents moved to azure.keyvault", DeprecationWarning)
 
 __all__ = ['KeyVaultClient',
            '__models_Attributes',
