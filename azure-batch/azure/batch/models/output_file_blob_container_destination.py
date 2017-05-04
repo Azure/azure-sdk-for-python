@@ -16,13 +16,17 @@ class OutputFileBlobContainerDestination(Model):
     """Specifies a file upload destination within an Azure blob storage container.
 
     :param path: The destination blob or virtual directory within the Azure
-     Storage container. If filePattern contains one or more wildcards, then
-     path is the name of the blob virtual directory (blob name prefix). If
-     filePattern contains no wildcards, then path is the name of the blob.
+     Storage container. If filePattern refers to a specific file (i.e. contains
+     no wildcards), then path is the name of the blob to which to upload that
+     file. If filePattern contains one or more wildcards (and therefore may
+     match multiple files), then path is the name of the blob virtual directory
+     (which is prepended to each blob name) to which to upload the file(s). If
+     omitted, file(s) are uploaded to the root of the container with a blob
+     name matching their file name.
     :type path: str
-    :param container_url: A SAS URL granting write access to the Azure storage
-     container. The Batch service uses the SAS URL to authenticate to Azure
-     Storage in order to write the output files to the container.
+    :param container_url: The URL of the container within Azure Blob Storage
+     to which to upload the file(s). The URL must include a Shared Access
+     Signature (SAS) granting write permissions to the container.
     :type container_url: str
     """
 

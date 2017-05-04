@@ -108,7 +108,8 @@ class CloudPool(Model):
      currently in the pool.
     :type current_dedicated_nodes: int
     :param current_low_priority_nodes: The number of low-priority compute
-     nodes currently in the pool.
+     nodes currently in the pool. Low-priority compute nodes which have been
+     preempted are included in this count.
     :type current_low_priority_nodes: int
     :param target_dedicated_nodes: The desired number of dedicated compute
      nodes in the pool.
