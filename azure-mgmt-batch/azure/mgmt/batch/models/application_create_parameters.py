@@ -12,8 +12,8 @@
 from msrest.serialization import Model
 
 
-class AddApplicationParameters(Model):
-    """Parameters for an ApplicationOperations.AddApplication request.
+class ApplicationCreateParameters(Model):
+    """Parameters for adding an Application.
 
     :param allow_updates: A value indicating whether packages within the
      application may be overwritten using the same version string.

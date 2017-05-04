@@ -18,18 +18,18 @@ class BatchAccount(Resource):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar id: The ID of the resource
+    :ivar id: The ID of the resource.
     :vartype id: str
-    :ivar name: The name of the resource
+    :ivar name: The name of the resource.
     :vartype name: str
-    :ivar type: The type of the resource
+    :ivar type: The type of the resource.
     :vartype type: str
-    :ivar location: The location of the resource
+    :ivar location: The location of the resource.
     :vartype location: str
-    :ivar tags: The tags of the resource
+    :ivar tags: The tags of the resource.
     :vartype tags: dict
-    :ivar account_endpoint: The endpoint used by this account to interact with
-     the Batch services.
+    :ivar account_endpoint: The account endpoint used to interact with the
+     Batch service.
     :vartype account_endpoint: str
     :ivar provisioning_state: The provisioned state of the resource. Possible
      values include: 'Invalid', 'Creating', 'Deleting', 'Succeeded', 'Failed',
@@ -45,14 +45,14 @@ class BatchAccount(Resource):
      with the Batch account.
     :vartype key_vault_reference: :class:`KeyVaultReference
      <azure.mgmt.batch.models.KeyVaultReference>`
-    :ivar auto_storage: The properties and status of any auto storage account
+    :ivar auto_storage: The properties and status of any auto-storage account
      associated with the Batch account.
     :vartype auto_storage: :class:`AutoStorageProperties
      <azure.mgmt.batch.models.AutoStorageProperties>`
     :ivar dedicated_core_quota: The dedicated core quota for this Batch
      account.
     :vartype dedicated_core_quota: int
-    :ivar low_priority_core_quota: The low priority core quota for this Batch
+    :ivar low_priority_core_quota: The low-priority core quota for this Batch
      account.
     :vartype low_priority_core_quota: int
     :ivar pool_quota: The pool quota for this Batch account.
