@@ -13,12 +13,12 @@ Release History
 
 **New Resources ApiVersion 2017-05-10**
 
-  - The default is still 2016-09-01 in this package
-  - Some breaking changes are introduced compared to previous version:
+- Deploy resources to multiple resource groups from one template
+- Some breaking changes are introduced compared to previous versions:
 
-     - deployments.list has been renamed deployments.list_by_resource_group
-     - resource_groups.list_resources has been moved to resources.list_by_resource_group
-     - resource_groups.patch has been renamed to resource_groups.update and now takes an instance of ResourceGroupPatchable (and not ResourceGroup).
+   - deployments.list has been renamed deployments.list_by_resource_group
+   - resource_groups.list_resources has been moved to resources.list_by_resource_group
+   - resource_groups.patch has been renamed to resource_groups.update and now takes an instance of ResourceGroupPatchable (and not ResourceGroup).
 
 The default is still 2016-09-01 in this package, waiting for the ApiVersion to be widely available.
 
