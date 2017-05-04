@@ -59,9 +59,9 @@ class ManagedApplicationClient(object):
     :vartype config: ManagedApplicationClientConfiguration
 
     :ivar appliances: Appliances operations
-    :vartype appliances: .operations.AppliancesOperations
+    :vartype appliances: azure.mgmt.resource.managedapplications.operations.AppliancesOperations
     :ivar appliance_definitions: ApplianceDefinitions operations
-    :vartype appliance_definitions: .operations.ApplianceDefinitionsOperations
+    :vartype appliance_definitions: azure.mgmt.resource.managedapplications.operations.ApplianceDefinitionsOperations
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
