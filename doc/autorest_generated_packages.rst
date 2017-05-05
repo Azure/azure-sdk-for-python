@@ -9,11 +9,13 @@
   ./ref/azure.keyvault.rst
   ./ref/azure.mgmt.authorization.rst
   ./ref/azure.mgmt.batch.rst
+  ./ref/azure.mgmt.billing.rst
   ./ref/azure.mgmt.cdn.rst
   ./ref/azure.mgmt.cognitiveservices.rst
   ./ref/azure.mgmt.commerce.rst
   ./ref/azure.mgmt.compute.compute.rst
   ./ref/azure.mgmt.compute.containerservice.rst
+  ./ref/azure.mgmt.consumption.rst
   ./ref/azure.mgmt.containerregistry.rst
   ./ref/azure.mgmt.datalake.analytics.account.rst
   ./ref/azure.mgmt.datalake.analytics.catalog.rst
@@ -35,6 +37,7 @@
   ./ref/azure.mgmt.resource.features.rst
   ./ref/azure.mgmt.resource.links.rst
   ./ref/azure.mgmt.resource.locks.rst
+  ./ref/azure.mgmt.resource.managedapplications.rst
   ./ref/azure.mgmt.resource.policy.rst
   ./ref/azure.mgmt.resource.resources.rst
   ./ref/azure.mgmt.resource.subscriptions.rst
