@@ -59,9 +59,9 @@ class ConsumptionManagementClient(object):
     :vartype config: ConsumptionManagementClientConfiguration
 
     :ivar usage_details: UsageDetails operations
-    :vartype usage_details: .operations.UsageDetailsOperations
+    :vartype usage_details: azure.mgmt.consumption.operations.UsageDetailsOperations
     :ivar operations: Operations operations
-    :vartype operations: .operations.Operations
+    :vartype operations: azure.mgmt.consumption.operations.Operations
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
