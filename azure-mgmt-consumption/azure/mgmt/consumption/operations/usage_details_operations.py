@@ -41,7 +41,7 @@ class UsageDetailsOperations(object):
         January 1, 2017 or later.
 
         :param scope: The scope of the usage details. The scope can be
-         '/subscriptions/{subscriptionId}/' for a subscription, or
+         '/subscriptions/{subscriptionId}' for a subscription, or
          '/subscriptions/{subscriptionId}/providers/Microsoft.Billing/invoices/{invoiceName}'
          for an invoice or
          '/subscriptions/{subscriptionId}/providers/Microsoft.Billing/billingPeriods/{billingPeriodName}'
@@ -79,7 +79,7 @@ class UsageDetailsOperations(object):
                 # Construct URL
                 url = '/{scope}/providers/Microsoft.Consumption/usageDetails'
                 path_format_arguments = {
-                    'scope': self._serialize.url("scope", scope, 'str')
+                    'scope': self._serialize.url("scope", scope, 'str', skip_quote=True)
                 }
                 url = self._client.format_url(url, **path_format_arguments)
 
