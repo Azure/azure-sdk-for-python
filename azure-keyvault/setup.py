@@ -6,6 +6,9 @@
 # license information.
 #--------------------------------------------------------------------------
 
+import re
+import os.path
+from io import open
 from setuptools import find_packages, setup
 try:
     from azure_bdist_wheel import cmdclass
@@ -13,13 +16,10 @@ except ImportError:
     from distutils import log as logger
     logger.warn("Wheel is not available, disabling bdist_wheel hook")
     cmdclass = {}
-from io import open
-import re
-import os.path
 
 # Change the PACKAGE_NAME only to change folder and different name
 PACKAGE_NAME = "azure-keyvault"
-PACKAGE_PPRINT_NAME = "KeyVault"
+PACKAGE_PPRINT_NAME = "Key Vault"
 
 # a-b-c => a/b/c
 package_folder_path = PACKAGE_NAME.replace('-', '/')
@@ -41,9 +41,6 @@ try:
 except ImportError:
     pass
 
-#For KeyVault only
-package_folder_path = os.path.join(package_folder_path, 'generated')
-    
 # Version extraction inspired from 'requests'
 with open(os.path.join(package_folder_path, 'version.py'), 'r') as fd:
     version = re.search(r'^VERSION\s*=\s*[\'"]([^\'"]*)[\'"]',
@@ -81,8 +78,8 @@ setup(
     zip_safe=False,
     packages=find_packages(),
     install_requires=[
-        'azure-common~=1.1.5',
         'msrestazure~=0.4.7',
+        'azure-common~=1.1.5',
     ],
     cmdclass=cmdclass
 )

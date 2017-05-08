@@ -8,6 +8,7 @@ try:
 except ImportError:
     import urlparse as parse # pylint: disable=import-error
 
+
 class HttpBearerChallenge(object):
 
     def __init__(self, request_uri, challenge):
