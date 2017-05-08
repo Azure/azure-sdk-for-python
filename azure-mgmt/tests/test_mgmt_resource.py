@@ -91,14 +91,13 @@ class MgmtResourceTest(AzureMgmtTestCase):
         self.assertEqual(len(result_list_top), 2)
 
         # Patch
-        params_patch = azure.mgmt.resource.resources.models.ResourceGroup(
-            location=self.region,
+        params_patch = azure.mgmt.resource.resources.models.ResourceGroupPatchable(
             tags={
                 'tag1': 'valueA',
                 'tag2': 'valueB',
             },
         )
-        result_patch = self.resource_client.resource_groups.patch(
+        result_patch = self.resource_client.resource_groups.update(
             self.group_name,
             params_patch,
         )
@@ -106,7 +105,7 @@ class MgmtResourceTest(AzureMgmtTestCase):
         self.assertEqual(result_patch.tags['tag2'], 'valueB')
 
         # List resources
-        resources = list(self.resource_client.resource_groups.list_resources(
+        resources = list(self.resource_client.resources.list_by_resource_group(
             self.group_name
         ))
 
@@ -261,7 +260,7 @@ class MgmtResourceTest(AzureMgmtTestCase):
         deployment_create_result = deployment_create_result.result()
         self.assertEqual(deployment_name, deployment_create_result.name)
 
-        deployment_list_result = self.resource_client.deployments.list(
+        deployment_list_result = self.resource_client.deployments.list_by_resource_group(
             self.group_name,
             None,
         )
@@ -346,7 +345,7 @@ class MgmtResourceTest(AzureMgmtTestCase):
         deployment_create_result = deployment_create_result.result()
         self.assertEqual(deployment_name, deployment_create_result.name)
 
-        deployment_list_result = self.resource_client.deployments.list(
+        deployment_list_result = self.resource_client.deployments.list_by_resource_group(
             self.group_name,
             None,
         )
