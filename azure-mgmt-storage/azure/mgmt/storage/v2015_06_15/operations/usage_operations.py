@@ -37,7 +37,7 @@ class UsageOperations(object):
 
     def list(
             self, custom_headers=None, raw=False, **operation_config):
-        """Gets the current usage count and the limit for the resources under the
+        """Lists the current usage count and the limit for the resources under the
         subscription.
 
         :param dict custom_headers: headers that will be added to the request
