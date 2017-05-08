@@ -63,7 +63,7 @@ class ResourceManagementClient(object):
     :param str base_url: Service URL
     """
 
-    LATEST_API_VERSION = '2016-09-01'
+    LATEST_API_VERSION = '2017-05-10'
 
     def __init__(
             self, credentials, subscription_id, api_version=LATEST_API_VERSION, base_url=None):
