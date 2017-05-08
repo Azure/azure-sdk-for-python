@@ -19,10 +19,11 @@ class MgmtResourcePolicyTest(AzureMgmtTestCase):
         self.policy_client = self.create_mgmt_client(
             azure.mgmt.resource.PolicyClient
         )
+        if not self.is_playback():
+            self.create_resource_group()
 
     @record
     def test_policy_definition(self):
-        self.create_resource_group()
         policy_name = self.get_resource_name('pypolicy')
         policy_assignment_name = self.get_resource_name('pypolicyassignment')
 
