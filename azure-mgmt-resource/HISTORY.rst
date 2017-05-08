@@ -3,6 +3,11 @@
 Release History
 ===============
 
+1.1.0rc1 (2017-05-08)
++++++++++++++++++++++
+
+- New default ApiVersion is now 2017-05-10. Breaking changes described in 1.0.0rc3 are now applied by default.
+
 1.0.0rc3 (2017-05-04)
 +++++++++++++++++++++
 
