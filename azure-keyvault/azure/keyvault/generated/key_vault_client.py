@@ -69,10 +69,11 @@ class KeyVaultClient(object):
     def create_key(
             self, vault_base_url, key_name, kty, key_size=None, key_ops=None, key_attributes=None, tags=None, custom_headers=None, raw=False, **operation_config):
         """Creates a new key, stores it, then returns key parameters and
-        attributes to the client. The create key operation can be used to
-        create any key type in Azure Key Vault. If the named key already
-        exists, Azure Key Vault creates a new version of the key.
-        Authorization: Requires the keys/create permission.
+        attributes to the client.
+
+        The create key operation can be used to create any key type in Azure
+        Key Vault. If the named key already exists, Azure Key Vault creates a
+        new version of the key.
 
         :param vault_base_url: The vault name, for example
          https://myvault.vault.azure.net.
@@ -120,7 +121,7 @@ class KeyVaultClient(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -157,10 +158,11 @@ class KeyVaultClient(object):
     def import_key(
             self, vault_base_url, key_name, key, hsm=None, key_attributes=None, tags=None, custom_headers=None, raw=False, **operation_config):
         """Imports an externally created key, stores it, and returns key
-        parameters and attributes to the client. The import key operation may
-        be used to import any key type into an Azure Key Vault. If the named
-        key already exists, Azure Key Vault creates a new version of the key.
-        Authorization: requires the keys/import permission. .
+        parameters and attributes to the client.
+
+        The import key operation may be used to import any key type into an
+        Azure Key Vault. If the named key already exists, Azure Key Vault
+        creates a new version of the key.
 
         :param vault_base_url: The vault name, for example
          https://myvault.vault.azure.net.
@@ -201,7 +203,7 @@ class KeyVaultClient(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -237,12 +239,12 @@ class KeyVaultClient(object):
 
     def delete_key(
             self, vault_base_url, key_name, custom_headers=None, raw=False, **operation_config):
-        """Deletes a key of any type from storage in Azure Key Vault. The delete
-        key operation cannot be used to remove individual versions of a key.
-        This operation removes the cryptographic material associated with the
-        key, which means the key is not usable for Sign/Verify, Wrap/Unwrap or
-        Encrypt/Decrypt operations. Authorization: Requires the keys/delete
-        permission.
+        """Deletes a key of any type from storage in Azure Key Vault.
+
+        The delete key operation cannot be used to remove individual versions
+        of a key. This operation removes the cryptographic material associated
+        with the key, which means the key is not usable for Sign/Verify,
+        Wrap/Unwrap or Encrypt/Decrypt operations.
 
         :param vault_base_url: The vault name, for example
          https://myvault.vault.azure.net.
@@ -270,7 +272,7 @@ class KeyVaultClient(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -304,9 +306,11 @@ class KeyVaultClient(object):
             self, vault_base_url, key_name, key_version, key_ops=None, key_attributes=None, tags=None, custom_headers=None, raw=False, **operation_config):
         """The update key operation changes specified attributes of a stored key
         and can be applied to any key type and key version stored in Azure Key
-        Vault. The cryptographic material of a key itself cannot be changed. In
-        order to perform this operation, the key must already exist in the Key
-        Vault. Authorization: requires the keys/update permission.
+        Vault.
+
+        In order to perform this operation, the key must already exist in the
+        Key Vault. Note: The cryptographic material of a key itself cannot be
+        changed.
 
         :param vault_base_url: The vault name, for example
          https://myvault.vault.azure.net.
@@ -349,7 +353,7 @@ class KeyVaultClient(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -385,10 +389,10 @@ class KeyVaultClient(object):
 
     def get_key(
             self, vault_base_url, key_name, key_version, custom_headers=None, raw=False, **operation_config):
-        """Gets the public part of a stored key. The get key operation is
-        applicable to all key types. If the requested key is symmetric, then no
-        key material is released in the response. Authorization: Requires the
-        keys/get permission.
+        """Gets the public part of a stored key.
+
+        The get key operation is applicable to all key types. If the requested
+        key is symmetric, then no key material is released in the response.
 
         :param vault_base_url: The vault name, for example
          https://myvault.vault.azure.net.
@@ -420,7 +424,7 @@ class KeyVaultClient(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -452,9 +456,10 @@ class KeyVaultClient(object):
 
     def get_key_versions(
             self, vault_base_url, key_name, maxresults=None, custom_headers=None, raw=False, **operation_config):
-        """Retrieves a list of individual key versions with the same key name. The
-        full key identifier, attributes, and tags are provided in the response.
-        Authorization: Requires the keys/list permission.
+        """Retrieves a list of individual key versions with the same key name.
+
+        The full key identifier, attributes, and tags are provided in the
+        response.
 
         :param vault_base_url: The vault name, for example
          https://myvault.vault.azure.net.
@@ -489,7 +494,7 @@ class KeyVaultClient(object):
                 query_parameters = {}
                 if maxresults is not None:
                     query_parameters['maxresults'] = self._serialize.query("maxresults", maxresults, 'int', maximum=25, minimum=1)
-                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+                query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
 
             else:
                 url = next_link
@@ -529,6 +534,13 @@ class KeyVaultClient(object):
             self, vault_base_url, maxresults=None, custom_headers=None, raw=False, **operation_config):
         """List keys in the specified vault.
 
+        Retrieves a list of the keys in the Key Vault as JSON Web Key
+        structures that contain the public part of a stored key. The LIST
+        operation is applicable to all key types, however only the base key
+        identifier,attributes, and tags are provided in the response.
+        Individual versions of a key are not listed in the response.
+        Authorization: Requires the keys/list permission.
+
         :param vault_base_url: The vault name, for example
          https://myvault.vault.azure.net.
         :type vault_base_url: str
@@ -559,7 +571,7 @@ class KeyVaultClient(object):
                 query_parameters = {}
                 if maxresults is not None:
                     query_parameters['maxresults'] = self._serialize.query("maxresults", maxresults, 'int', maximum=25, minimum=1)
-                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+                query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
 
             else:
                 url = next_link
@@ -600,6 +612,20 @@ class KeyVaultClient(object):
         """Requests that a backup of the specified key be downloaded to the
         client.
 
+        The Key Backup operation exports a key from Azure Key Vault in a
+        protected form. Note that this operation does NOT return key material
+        in a form that can be used outside the Azure Key Vault system, the
+        returned key material is either protected to a Azure Key Vault HSM or
+        to Azure Key Vault itself. The intent of this operation is to allow a
+        client to GENERATE a key in one Azure Key Vault instance, BACKUP the
+        key, and then RESTORE it into another Azure Key Vault instance. The
+        BACKUP operation may be used to export, in protected form, any key type
+        from Azure Key Vault. Individual versions of a key cannot be backed up.
+        BACKUP / RESTORE can be performed within geographical boundaries only;
+        meaning that a BACKUP from one geographical area cannot be restored to
+        another geographical area. For example, a backup from the US
+        geographical area cannot be restored in an EU geographical area.
+
         :param vault_base_url: The vault name, for example
          https://myvault.vault.azure.net.
         :type vault_base_url: str
@@ -627,7 +653,7 @@ class KeyVaultClient(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -661,6 +687,20 @@ class KeyVaultClient(object):
             self, vault_base_url, key_bundle_backup, custom_headers=None, raw=False, **operation_config):
         """Restores a backed up key to a vault.
 
+        Imports a previously backed up key into Azure Key Vault, restoring the
+        key, its key identifier, attributes and access control policies. The
+        RESTORE operation may be used to import a previously backed up key.
+        Individual versions of a key cannot be restored. The key is restored in
+        its entirety with the same key name as it had when it was backed up. If
+        the key name is not available in the target Key Vault, the RESTORE
+        operation will be rejected. While the key name is retained during
+        restore, the final key identifier will change if the key is restored to
+        a different vault. Restore will restore all versions and preserve
+        version identifiers. The RESTORE operation is subject to security
+        constraints: The target Key Vault must be owned by the same Microsoft
+        Azure Subscription as the source Key Vault The user must have RESTORE
+        permission in the target Key Vault.
+
         :param vault_base_url: The vault name, for example
          https://myvault.vault.azure.net.
         :type vault_base_url: str
@@ -689,7 +729,7 @@ class KeyVaultClient(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -727,6 +767,16 @@ class KeyVaultClient(object):
             self, vault_base_url, key_name, key_version, algorithm, value, custom_headers=None, raw=False, **operation_config):
         """Encrypts an arbitrary sequence of bytes using an encryption key that is
         stored in a key vault.
+
+        The ENCRYPT operation encrypts an arbitrary sequence of bytes using an
+        encryption key that is stored in Azure Key Vault. Note that the ENCRYPT
+        operation only supports a single block of data, the size of which is
+        dependent on the target key and the encryption algorithm to be used.
+        The ENCRYPT operation is only strictly necessary for symmetric keys
+        stored in Azure Key Vault since protection with an asymmetric key can
+        be performed using public portion of the key. This operation is
+        supported for asymmetric keys as a convenience for callers that have a
+        key-reference but do not have access to the public key material.
 
         :param vault_base_url: The vault name, for example
          https://myvault.vault.azure.net.
@@ -766,7 +816,7 @@ class KeyVaultClient(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -803,6 +853,14 @@ class KeyVaultClient(object):
     def decrypt(
             self, vault_base_url, key_name, key_version, algorithm, value, custom_headers=None, raw=False, **operation_config):
         """Decrypts a single block of encrypted data.
+
+        The DECRYPT operation decrypts a well-formed block of ciphertext using
+        the target encryption key and specified algorithm. This operation is
+        the reverse of the ENCRYPT operation; only a single block of data may
+        be decrypted, the size of this block is dependent on the target key and
+        the algorithm to be used. The DECRYPT operation applies to asymmetric
+        and symmetric keys stored in Azure Key Vault since it uses the private
+        portion of the key.
 
         :param vault_base_url: The vault name, for example
          https://myvault.vault.azure.net.
@@ -842,7 +900,7 @@ class KeyVaultClient(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -879,6 +937,10 @@ class KeyVaultClient(object):
     def sign(
             self, vault_base_url, key_name, key_version, algorithm, value, custom_headers=None, raw=False, **operation_config):
         """Creates a signature from a digest using the specified key.
+
+        The SIGN operation is applicable to asymmetric and symmetric keys
+        stored in Azure Key Vault since this operation uses the private portion
+        of the key.
 
         :param vault_base_url: The vault name, for example
          https://myvault.vault.azure.net.
@@ -920,7 +982,7 @@ class KeyVaultClient(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -957,6 +1019,13 @@ class KeyVaultClient(object):
     def verify(
             self, vault_base_url, key_name, key_version, algorithm, digest, signature, custom_headers=None, raw=False, **operation_config):
         """Verifies a signature using a specified key.
+
+        The VERIFY operation is applicable to symmetric keys stored in Azure
+        Key Vault. VERIFY is not strictly necessary for asymmetric keys stored
+        in Azure Key Vault since signature verification can be performed using
+        the public portion of the key but this operation is supported as a
+        convenience for callers that only have a key-reference and not the
+        public portion of the key.
 
         :param vault_base_url: The vault name, for example
          https://myvault.vault.azure.net.
@@ -1000,7 +1069,7 @@ class KeyVaultClient(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -1037,6 +1106,14 @@ class KeyVaultClient(object):
     def wrap_key(
             self, vault_base_url, key_name, key_version, algorithm, value, custom_headers=None, raw=False, **operation_config):
         """Wraps a symmetric key using a specified key.
+
+        The WRAP operation supports encryption of a symmetric key using a key
+        encryption key that has previously been stored in an Azure Key Vault.
+        The WRAP operation is only strictly necessary for symmetric keys stored
+        in Azure Key Vault since protection with an asymmetric key can be
+        performed using the public portion of the key. This operation is
+        supported for asymmetric keys as a convenience for callers that have a
+        key-reference but do not have access to the public key material.
 
         :param vault_base_url: The vault name, for example
          https://myvault.vault.azure.net.
@@ -1076,7 +1153,7 @@ class KeyVaultClient(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -1114,6 +1191,12 @@ class KeyVaultClient(object):
             self, vault_base_url, key_name, key_version, algorithm, value, custom_headers=None, raw=False, **operation_config):
         """Unwraps a symmetric key using the specified key that was initially used
         for wrapping that key.
+
+        The UNWRAP operation supports decryption of a symmetric key using the
+        target key encryption key. This operation is the reverse of the WRAP
+        operation. The UNWRAP operation applies to asymmetric and symmetric
+        keys stored in Azure Key Vault since it uses the private portion of the
+        key.
 
         :param vault_base_url: The vault name, for example
          https://myvault.vault.azure.net.
@@ -1153,7 +1236,7 @@ class KeyVaultClient(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -1190,6 +1273,10 @@ class KeyVaultClient(object):
     def set_secret(
             self, vault_base_url, secret_name, value, tags=None, content_type=None, secret_attributes=None, custom_headers=None, raw=False, **operation_config):
         """Sets a secret in a specified key vault.
+
+        The SET operation adds a secret to the Azure Key Vault. If the named
+        secret already exists, Azure Key Vault creates a new version of that
+        secret.
 
         :param vault_base_url: The vault name, for example
          https://myvault.vault.azure.net.
@@ -1230,7 +1317,7 @@ class KeyVaultClient(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -1268,6 +1355,9 @@ class KeyVaultClient(object):
             self, vault_base_url, secret_name, custom_headers=None, raw=False, **operation_config):
         """Deletes a secret from a specified key vault.
 
+        The DELETE operation applies to any secret stored in Azure Key Vault.
+        DELETE cannot be applied to an individual version of a secret.
+
         :param vault_base_url: The vault name, for example
          https://myvault.vault.azure.net.
         :type vault_base_url: str
@@ -1295,7 +1385,7 @@ class KeyVaultClient(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -1329,6 +1419,10 @@ class KeyVaultClient(object):
             self, vault_base_url, secret_name, secret_version, content_type=None, secret_attributes=None, tags=None, custom_headers=None, raw=False, **operation_config):
         """Updates the attributes associated with a specified secret in a given
         key vault.
+
+        The UPDATE operation changes specified attributes of an existing stored
+        secret. Attributes that are not specified in the request are left
+        unchanged. The value of a secret itself cannot be changed.
 
         :param vault_base_url: The vault name, for example
          https://myvault.vault.azure.net.
@@ -1370,7 +1464,7 @@ class KeyVaultClient(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -1408,6 +1502,9 @@ class KeyVaultClient(object):
             self, vault_base_url, secret_name, secret_version, custom_headers=None, raw=False, **operation_config):
         """Get a specified secret from a given key vault.
 
+        The GET operation is applicable to any secret stored in Azure Key
+        Vault.
+
         :param vault_base_url: The vault name, for example
          https://myvault.vault.azure.net.
         :type vault_base_url: str
@@ -1438,7 +1535,7 @@ class KeyVaultClient(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -1472,6 +1569,10 @@ class KeyVaultClient(object):
             self, vault_base_url, maxresults=None, custom_headers=None, raw=False, **operation_config):
         """List secrets in a specified key vault.
 
+        The LIST operation is applicable to the entire vault, however only the
+        base secret identifier and attributes are provided in the response.
+        Individual secret versions are not listed in the response.
+
         :param vault_base_url: The vault name, for example
          https://myvault.vault.azure.net.
         :type vault_base_url: str
@@ -1502,7 +1603,7 @@ class KeyVaultClient(object):
                 query_parameters = {}
                 if maxresults is not None:
                     query_parameters['maxresults'] = self._serialize.query("maxresults", maxresults, 'int', maximum=25, minimum=1)
-                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+                query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
 
             else:
                 url = next_link
@@ -1542,6 +1643,11 @@ class KeyVaultClient(object):
             self, vault_base_url, secret_name, maxresults=None, custom_headers=None, raw=False, **operation_config):
         """List the versions of the specified secret.
 
+        The LIST VERSIONS operation can be applied to all versions having the
+        same secret name in the same key vault. The full secret identifier and
+        attributes are provided in the response. No values are returned for the
+        secrets and only current versions of a secret are listed.
+
         :param vault_base_url: The vault name, for example
          https://myvault.vault.azure.net.
         :type vault_base_url: str
@@ -1575,7 +1681,7 @@ class KeyVaultClient(object):
                 query_parameters = {}
                 if maxresults is not None:
                     query_parameters['maxresults'] = self._serialize.query("maxresults", maxresults, 'int', maximum=25, minimum=1)
-                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+                query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
 
             else:
                 url = next_link
@@ -1615,6 +1721,9 @@ class KeyVaultClient(object):
             self, vault_base_url, maxresults=None, custom_headers=None, raw=False, **operation_config):
         """List certificates in a specified key vault.
 
+        The GetCertificates operation returns the set of certificates resources
+        in the specified key vault.
+
         :param vault_base_url: The vault name, for example
          https://myvault.vault.azure.net.
         :type vault_base_url: str
@@ -1645,7 +1754,7 @@ class KeyVaultClient(object):
                 query_parameters = {}
                 if maxresults is not None:
                     query_parameters['maxresults'] = self._serialize.query("maxresults", maxresults, 'int', maximum=25, minimum=1)
-                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+                query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
 
             else:
                 url = next_link
@@ -1685,6 +1794,10 @@ class KeyVaultClient(object):
             self, vault_base_url, certificate_name, custom_headers=None, raw=False, **operation_config):
         """Deletes a certificate from a specified key vault.
 
+        Deletes all versions of a certificate object along with its associated
+        policy. Delete certificate cannot be used to remove individual versions
+        of a certificate object.
+
         :param vault_base_url: The vault name, for example
          https://myvault.vault.azure.net.
         :type vault_base_url: str
@@ -1712,7 +1825,7 @@ class KeyVaultClient(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -1746,6 +1859,8 @@ class KeyVaultClient(object):
             self, vault_base_url, contact_list=None, custom_headers=None, raw=False, **operation_config):
         """Sets the certificate contacts for the specified key vault.
 
+        .
+
         :param vault_base_url: The vault name, for example
          https://myvault.vault.azure.net.
         :type vault_base_url: str
@@ -1774,7 +1889,7 @@ class KeyVaultClient(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -1812,6 +1927,9 @@ class KeyVaultClient(object):
             self, vault_base_url, custom_headers=None, raw=False, **operation_config):
         """Lists the certificate contacts for a specified key vault.
 
+        The GetCertificateContacts operation returns the set of certificate
+        contact resources in the specified key vault.
+
         :param vault_base_url: The vault name, for example
          https://myvault.vault.azure.net.
         :type vault_base_url: str
@@ -1835,7 +1953,7 @@ class KeyVaultClient(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -1869,6 +1987,8 @@ class KeyVaultClient(object):
             self, vault_base_url, custom_headers=None, raw=False, **operation_config):
         """Deletes the certificate contacts for a specified key vault.
 
+        .
+
         :param vault_base_url: The vault name, for example
          https://myvault.vault.azure.net.
         :type vault_base_url: str
@@ -1892,7 +2012,7 @@ class KeyVaultClient(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -1926,6 +2046,9 @@ class KeyVaultClient(object):
             self, vault_base_url, maxresults=None, custom_headers=None, raw=False, **operation_config):
         """List certificate issuers for a specified key vault.
 
+        The GetCertificateIssuers operation returns the set of certificate
+        issuer resources in the specified key vault.
+
         :param vault_base_url: The vault name, for example
          https://myvault.vault.azure.net.
         :type vault_base_url: str
@@ -1956,7 +2079,7 @@ class KeyVaultClient(object):
                 query_parameters = {}
                 if maxresults is not None:
                     query_parameters['maxresults'] = self._serialize.query("maxresults", maxresults, 'int', maximum=25, minimum=1)
-                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+                query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
 
             else:
                 url = next_link
@@ -1995,6 +2118,8 @@ class KeyVaultClient(object):
     def set_certificate_issuer(
             self, vault_base_url, issuer_name, provider, credentials=None, organization_details=None, attributes=None, custom_headers=None, raw=False, **operation_config):
         """Sets the specified certificate issuer.
+
+        .
 
         :param vault_base_url: The vault name, for example
          https://myvault.vault.azure.net.
@@ -2037,7 +2162,7 @@ class KeyVaultClient(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -2074,6 +2199,8 @@ class KeyVaultClient(object):
     def update_certificate_issuer(
             self, vault_base_url, issuer_name, provider=None, credentials=None, organization_details=None, attributes=None, custom_headers=None, raw=False, **operation_config):
         """Updates the specified certificate issuer.
+
+        .
 
         :param vault_base_url: The vault name, for example
          https://myvault.vault.azure.net.
@@ -2116,7 +2243,7 @@ class KeyVaultClient(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -2154,6 +2281,9 @@ class KeyVaultClient(object):
             self, vault_base_url, issuer_name, custom_headers=None, raw=False, **operation_config):
         """Lists the specified certificate issuer.
 
+        The GetCertificateIssuer operation returns the specified certificate
+        issuer resources in the specified key vault.
+
         :param vault_base_url: The vault name, for example
          https://myvault.vault.azure.net.
         :type vault_base_url: str
@@ -2181,7 +2311,7 @@ class KeyVaultClient(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -2215,6 +2345,8 @@ class KeyVaultClient(object):
             self, vault_base_url, issuer_name, custom_headers=None, raw=False, **operation_config):
         """Deletes the specified certificate issuer.
 
+        .
+
         :param vault_base_url: The vault name, for example
          https://myvault.vault.azure.net.
         :type vault_base_url: str
@@ -2242,7 +2374,7 @@ class KeyVaultClient(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -2274,8 +2406,9 @@ class KeyVaultClient(object):
 
     def create_certificate(
             self, vault_base_url, certificate_name, certificate_policy=None, certificate_attributes=None, tags=None, custom_headers=None, raw=False, **operation_config):
-        """Creates a new certificate. If this is the first version, the
-        certificate resource is created.
+        """Creates a new certificate. .
+
+        If this is the first version, the certificate resource is created.
 
         :param vault_base_url: The vault name, for example
          https://myvault.vault.azure.net.
@@ -2316,7 +2449,7 @@ class KeyVaultClient(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -2353,6 +2486,11 @@ class KeyVaultClient(object):
     def import_certificate(
             self, vault_base_url, certificate_name, base64_encoded_certificate, password=None, certificate_policy=None, certificate_attributes=None, tags=None, custom_headers=None, raw=False, **operation_config):
         """Imports a certificate into a specified key vault.
+
+        Imports an existing valid certificate, containing a private key, into
+        Azure Key Vault. The certificate to be imported can be in either PFX or
+        PEM format. If the certificate is in PEM format the PEM file must
+        contain the key as well as x509 certificates.
 
         :param vault_base_url: The vault name, for example
          https://myvault.vault.azure.net.
@@ -2400,7 +2538,7 @@ class KeyVaultClient(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -2438,6 +2576,9 @@ class KeyVaultClient(object):
             self, vault_base_url, certificate_name, maxresults=None, custom_headers=None, raw=False, **operation_config):
         """List the versions of a certificate.
 
+        The GetCertificateVersions operation returns the versions of a
+        certificate in the specified key vault.
+
         :param vault_base_url: The vault name, for example
          https://myvault.vault.azure.net.
         :type vault_base_url: str
@@ -2471,7 +2612,7 @@ class KeyVaultClient(object):
                 query_parameters = {}
                 if maxresults is not None:
                     query_parameters['maxresults'] = self._serialize.query("maxresults", maxresults, 'int', maximum=25, minimum=1)
-                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+                query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
 
             else:
                 url = next_link
@@ -2511,6 +2652,9 @@ class KeyVaultClient(object):
             self, vault_base_url, certificate_name, custom_headers=None, raw=False, **operation_config):
         """Lists the policy for a certificate.
 
+        The GetCertificatePolicy operation returns the specified certificate
+        policy resources in the specified key vault.
+
         :param vault_base_url: The vault name, for example
          https://myvault.vault.azure.net.
         :type vault_base_url: str
@@ -2539,7 +2683,7 @@ class KeyVaultClient(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -2571,8 +2715,9 @@ class KeyVaultClient(object):
 
     def update_certificate_policy(
             self, vault_base_url, certificate_name, certificate_policy, custom_headers=None, raw=False, **operation_config):
-        """Updates the policy for a certificate. Set specified members in the
-        certificate policy. Leave others as null.
+        """Updates the policy for a certificate.
+
+        Set specified members in the certificate policy. Leave others as null.
 
         :param vault_base_url: The vault name, for example
          https://myvault.vault.azure.net.
@@ -2605,7 +2750,7 @@ class KeyVaultClient(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -2642,6 +2787,8 @@ class KeyVaultClient(object):
     def update_certificate(
             self, vault_base_url, certificate_name, certificate_version, certificate_policy=None, certificate_attributes=None, tags=None, custom_headers=None, raw=False, **operation_config):
         """Updates the specified attributes associated with the given certificate.
+
+        .
 
         :param vault_base_url: The vault name, for example
          https://myvault.vault.azure.net.
@@ -2686,7 +2833,7 @@ class KeyVaultClient(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -2724,6 +2871,9 @@ class KeyVaultClient(object):
             self, vault_base_url, certificate_name, certificate_version, custom_headers=None, raw=False, **operation_config):
         """Gets information about a specified certificate.
 
+        The GetCertificate operation returns information about a specific
+        certificate in the specified key vault.
+
         :param vault_base_url: The vault name, for example
          https://myvault.vault.azure.net.
         :type vault_base_url: str
@@ -2755,7 +2905,7 @@ class KeyVaultClient(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -2789,6 +2939,8 @@ class KeyVaultClient(object):
             self, vault_base_url, certificate_name, cancellation_requested, custom_headers=None, raw=False, **operation_config):
         """Updates a certificate operation.
 
+        .
+
         :param vault_base_url: The vault name, for example
          https://myvault.vault.azure.net.
         :type vault_base_url: str
@@ -2821,7 +2973,7 @@ class KeyVaultClient(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -2859,6 +3011,9 @@ class KeyVaultClient(object):
             self, vault_base_url, certificate_name, custom_headers=None, raw=False, **operation_config):
         """Gets the operation associated with a specified certificate.
 
+        The GetCertificateOperation operation returns the certificate operation
+        associated with the certificate.
+
         :param vault_base_url: The vault name, for example
          https://myvault.vault.azure.net.
         :type vault_base_url: str
@@ -2886,7 +3041,7 @@ class KeyVaultClient(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -2920,6 +3075,8 @@ class KeyVaultClient(object):
             self, vault_base_url, certificate_name, custom_headers=None, raw=False, **operation_config):
         """Deletes the operation for a specified certificate.
 
+        .
+
         :param vault_base_url: The vault name, for example
          https://myvault.vault.azure.net.
         :type vault_base_url: str
@@ -2947,7 +3104,7 @@ class KeyVaultClient(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -2981,6 +3138,8 @@ class KeyVaultClient(object):
             self, vault_base_url, certificate_name, x509_certificates, certificate_attributes=None, tags=None, custom_headers=None, raw=False, **operation_config):
         """Merges a certificate or a certificate chain with a key pair existing on
         the server.
+
+        .
 
         :param vault_base_url: The vault name, for example
          https://myvault.vault.azure.net.
@@ -3021,7 +3180,7 @@ class KeyVaultClient(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.config.api_version", self.config.api_version, 'str')
 
         # Construct headers
         header_parameters = {}
