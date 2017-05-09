@@ -33,7 +33,7 @@ class CloudPool(Model):
      meantime.
     :type e_tag: str
     :param last_modified: The last modified time of the pool. This is the last
-     time at which the pool level data, such as the targetDedicated or
+     time at which the pool level data, such as the targetDedicatedNodes or
      enableAutoscale settings, changed. It does not factor in node-level
      changes such as a compute node changing state.
     :type last_modified: datetime

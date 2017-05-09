@@ -79,9 +79,10 @@ class PoolSpecification(Model):
      you must set either targetDedicatedNodes, targetLowPriorityNodes, or both.
     :type target_low_priority_nodes: int
     :param enable_auto_scale: Whether the pool size should automatically
-     adjust over time. If false, the targetDedicated element is required. If
-     true, the autoScaleFormula element is required. The pool automatically
-     resizes according to the formula. The default value is false.
+     adjust over time. If false, at least one of targetDedicateNodes and
+     targetLowPriorityNodes must be specified. If true, the autoScaleFormula
+     element is required. The pool automatically resizes according to the
+     formula. The default value is false.
     :type enable_auto_scale: bool
     :param auto_scale_formula: The formula for the desired number of compute
      nodes in the pool. This property must not be specified if enableAutoScale

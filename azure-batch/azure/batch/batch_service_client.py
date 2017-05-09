@@ -59,23 +59,23 @@ class BatchServiceClient(object):
     :vartype config: BatchServiceClientConfiguration
 
     :ivar application: Application operations
-    :vartype application: .operations.ApplicationOperations
+    :vartype application: azure.batch.operations.ApplicationOperations
     :ivar pool: Pool operations
-    :vartype pool: .operations.PoolOperations
+    :vartype pool: azure.batch.operations.PoolOperations
     :ivar account: Account operations
-    :vartype account: .operations.AccountOperations
+    :vartype account: azure.batch.operations.AccountOperations
     :ivar job: Job operations
-    :vartype job: .operations.JobOperations
+    :vartype job: azure.batch.operations.JobOperations
     :ivar certificate: Certificate operations
-    :vartype certificate: .operations.CertificateOperations
+    :vartype certificate: azure.batch.operations.CertificateOperations
     :ivar file: File operations
-    :vartype file: .operations.FileOperations
+    :vartype file: azure.batch.operations.FileOperations
     :ivar job_schedule: JobSchedule operations
-    :vartype job_schedule: .operations.JobScheduleOperations
+    :vartype job_schedule: azure.batch.operations.JobScheduleOperations
     :ivar task: Task operations
-    :vartype task: .operations.TaskOperations
+    :vartype task: azure.batch.operations.TaskOperations
     :ivar compute_node: ComputeNode operations
-    :vartype compute_node: .operations.ComputeNodeOperations
+    :vartype compute_node: azure.batch.operations.ComputeNodeOperations
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials

@@ -356,7 +356,7 @@ class FileOperations(object):
 
     def delete_from_compute_node(
             self, pool_id, node_id, file_path, recursive=None, file_delete_from_compute_node_options=None, custom_headers=None, raw=False, **operation_config):
-        """Deletes the specified task file from the compute node.
+        """Deletes the specified file from the compute node.
 
         :param pool_id: The ID of the pool that contains the compute node.
         :type pool_id: str
