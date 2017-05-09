@@ -23,11 +23,14 @@ class LinuxUserConfiguration(Model):
      must be specified together or not at all. If not specified the underlying
      operating system picks the gid.
     :type gid: int
-    :param ssh_private_key: The SSH private key for the user account. The SSH
-     private key is used to automatically configure password-less SSH between
-     nodes in a Linux pool when the pool's enableInterNodeCommunication
-     property is true. If not specified, password-less SSH is not configured
-     between nodes.
+    :param ssh_private_key: The SSH private key for the user account. The
+     private key must not be password protected. The private key is used to
+     automatically configure asymmetric-key based authentication for SSH
+     between nodes in a Linux pool when the pool's enableInterNodeCommunication
+     property is true (it is ignored if enableInterNodeCommunication is false).
+     It does this by placing the key pair into the user's .ssh directory. If
+     not specified, password-less SSH is not configured between nodes (no
+     modification of the user's .ssh directory is done).
     :type ssh_private_key: str
     """
 
