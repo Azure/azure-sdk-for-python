@@ -274,7 +274,7 @@ class BatchAccountOperations(object):
 
         def get_long_running_output(response):
 
-            if response.status_code not in [200, 202]:
+            if response.status_code not in [200, 202, 204]:
                 exp = CloudError(response)
                 exp.request_id = response.headers.get('x-ms-request-id')
                 raise exp

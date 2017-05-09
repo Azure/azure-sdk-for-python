@@ -63,15 +63,15 @@ class BatchManagementClient(object):
     :vartype config: BatchManagementClientConfiguration
 
     :ivar batch_account: BatchAccount operations
-    :vartype batch_account: .operations.BatchAccountOperations
+    :vartype batch_account: azure.mgmt.batch.operations.BatchAccountOperations
     :ivar application_package: ApplicationPackage operations
-    :vartype application_package: .operations.ApplicationPackageOperations
+    :vartype application_package: azure.mgmt.batch.operations.ApplicationPackageOperations
     :ivar application: Application operations
-    :vartype application: .operations.ApplicationOperations
+    :vartype application: azure.mgmt.batch.operations.ApplicationOperations
     :ivar location: Location operations
-    :vartype location: .operations.LocationOperations
+    :vartype location: azure.mgmt.batch.operations.LocationOperations
     :ivar operations: Operations operations
-    :vartype operations: .operations.Operations
+    :vartype operations: azure.mgmt.batch.operations.Operations
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
