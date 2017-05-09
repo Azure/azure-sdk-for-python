@@ -41,8 +41,8 @@ AZURE_STORAGE_ACCOUNT = 'batchpythonsdktest'
 AZURE_KEY_VAULT = 'batchpythonsdktest'
 AZURE_TENANT_ID = 'microsoft.onmicrosoft.com'
 OUTPUT_CONTAINER = 'batch-sdk-test-outputs'
-EXISTING_RESOURCES = True
-CLEAN_UP = False
+EXISTING_RESOURCES = False
+CLEAN_UP = True
 
 LOG = logging.getLogger('batch-python-tests')
 LOG.level = logging.WARNING
