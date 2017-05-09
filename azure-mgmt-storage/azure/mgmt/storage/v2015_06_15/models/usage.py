@@ -15,18 +15,17 @@ from msrest.serialization import Model
 class Usage(Model):
     """Describes Storage Resource Usage.
 
-    :param unit: Gets the unit of measurement. Possible values include:
-     'Count', 'Bytes', 'Seconds', 'Percent', 'CountsPerSecond',
-     'BytesPerSecond'
+    :param unit: The unit of measurement. Possible values include: 'Count',
+     'Bytes', 'Seconds', 'Percent', 'CountsPerSecond', 'BytesPerSecond'
     :type unit: str or :class:`UsageUnit
      <azure.mgmt.storage.v2015_06_15.models.UsageUnit>`
-    :param current_value: Gets the current count of the allocated resources in
-     the subscription.
+    :param current_value: The current count of the allocated resources in the
+     subscription.
     :type current_value: int
-    :param limit: Gets the maximum count of the resources that can be
-     allocated in the subscription.
+    :param limit: The maximum count of the resources that can be allocated in
+     the subscription.
     :type limit: int
-    :param name: Gets the name of the type of usage.
+    :param name: The name of the type of usage.
     :type name: :class:`UsageName
      <azure.mgmt.storage.v2015_06_15.models.UsageName>`
     """
