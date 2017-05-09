@@ -6,6 +6,7 @@
 import urllib
 from requests.auth import AuthBase
 import requests
+import os
 
 from msrest.authentication import Authentication
 
@@ -30,7 +31,7 @@ class KeyVaultAuthBase(AuthBase):
                 # send the request to retrieve the challenge, then request the token and update
                 # the request
                 # TODO: wire up commons flag for things like Fiddler, logging, etc.
-                response = requests.Session().request(request)
+                response = requests.Session().send(request, verify=os.environ.get('REQUESTS_CA_BUNDLE') or os.environ.get('CURL_CA_BUNDLE'))
                 if response.status_code == 401:
                     auth_header = response.headers['WWW-Authenticate']
                     if HttpBearerChallenge.is_bearer_challenge(auth_header):
