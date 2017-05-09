@@ -3,10 +3,34 @@
 Release History
 ===============
 
+3.0.0 (2017-05-10)
+++++++++++++++++++
+
+- Added support for the new low-priority node type; `AddPoolParameter` and `PoolSpecification` now have an additional property `target_low_priority_nodes`.
+- `target_dedicated` and `current_dedicated` on `CloudPool`, `AddPoolParameter` and `PoolSpecification` have been renamed to `target_dedicated_nodes` and `current_dedicated_nodes`.
+- `resize_error` on `CloudPool` is now a collection called `resize_errors`.
+- Added a new `is_dedicated` property on `ComputeNode`, which is `false` for low-priority nodes.
+- Added a new `allow_low_priority_node` property to `JobManagerTask`, which if `true` allows the `JobManagerTask` to run on a low-priority compute node.
+- `PoolResizeParameter` now takes two optional parameters, `target_dedicated_nodes` and `target_low_priority_nodes`, instead of one required parameter `target_dedicated`.
+  At least one of these two parameters must be specified.
+- Added support for uploading task output files to persistent storage, via the `OutputFiles` property on `CloudTask` and `JobManagerTask`. 
+- Added support for specifying actions to take based on a task's output file upload status, via the `file_upload_error` property on `ExitConditions`. 
+- Added support for determining if a task was a success or a failure via the new `result` property on all task execution information objects.
+- Renamed `scheduling_error` on all task execution information objects to `failure_information`. `TaskFailureInformation` replaces `TaskSchedulingError` and is returned any
+  time there is a task failure. This includes all previous scheduling error cases, as well as nonzero task exit codes, and file upload failures from the new output files feature. 
+- Renamed `SchedulingErrorCategory` enum to `ErrorCategory`.
+- Renamed `scheduling_error` on `ExitConditions` to `pre_processing_error` to more clearly clarify when the error took place in the task life-cycle.
+- Added support for provisioning application licenses to your pool, via a new `application_licenses` property on `PoolAddParameter`, `CloudPool` and `PoolSpecification`.
+  Please note that this feature is in gated public preview, and you must request access to it via a support ticket.
+- The `ssh_private_key` attribute of a `UserAccount` object has been replaced with an expanded `LinuxUserConfiguration` object with additional settings for a user ID and group ID of the 
+  user account.
+- Removed `unmapped` enum state from `AddTaskStatus`, `CertificateFormat`, `CertificateVisibility`, `CertStoreLocation`, `ComputeNodeFillType`, `OSType`, and `PoolLifetimeOption` as they were not ever used.
+- Improved and clarified documentation.
+
 2.0.1 (2017-04-19)
 ++++++++++++++++++
 
-This wheel package is now built with the azure wheel extension
+- This wheel package is now built with the azure wheel extension
 
 2.0.0 (2017-02-23)
 ++++++++++++++++++
@@ -41,4 +65,4 @@ This wheel package is now built with the azure wheel extension
 0.30.0rc5
 +++++++++
 
-* Initial Release
+- Initial Release
