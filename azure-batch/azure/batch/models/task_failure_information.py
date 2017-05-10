@@ -12,21 +12,20 @@
 from msrest.serialization import Model
 
 
-class TaskSchedulingError(Model):
-    """Information about an error when scheduling a task.
+class TaskFailureInformation(Model):
+    """Information about a task failure.
 
-    :param category: The category of the task scheduling error. Possible
-     values include: 'userError', 'serverError', 'unmapped'
-    :type category: str or :class:`SchedulingErrorCategory
-     <azure.batch.models.SchedulingErrorCategory>`
-    :param code: An identifier for the task scheduling error. Codes are
-     invariant and are intended to be consumed programmatically.
+    :param category: The category of the task error. Possible values include:
+     'userError', 'serverError'
+    :type category: str or :class:`ErrorCategory
+     <azure.batch.models.ErrorCategory>`
+    :param code: An identifier for the task error. Codes are invariant and are
+     intended to be consumed programmatically.
     :type code: str
-    :param message: A message describing the task scheduling error, intended
-     to be suitable for display in a user interface.
+    :param message: A message describing the task error, intended to be
+     suitable for display in a user interface.
     :type message: str
-    :param details: The list of additional error details related to the
-     scheduling error.
+    :param details: A list of additional details related to the error.
     :type details: list of :class:`NameValuePair
      <azure.batch.models.NameValuePair>`
     """
@@ -36,7 +35,7 @@ class TaskSchedulingError(Model):
     }
 
     _attribute_map = {
-        'category': {'key': 'category', 'type': 'SchedulingErrorCategory'},
+        'category': {'key': 'category', 'type': 'ErrorCategory'},
         'code': {'key': 'code', 'type': 'str'},
         'message': {'key': 'message', 'type': 'str'},
         'details': {'key': 'details', 'type': '[NameValuePair]'},

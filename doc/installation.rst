@@ -47,8 +47,8 @@ Stable packages
 ===================================== =======
 Package name                          Version
 ===================================== =======
-azure-batch                           2.0.1
-azure-mgmt-batch                      3.0.1
+azure-batch                           3.0.0
+azure-mgmt-batch                      4.0.0
 azure-mgmt-cognitiveservices          1.0.0
 azure-mgmt-devtestlabs                2.0.0
 azure-mgmt-dns                        1.0.1

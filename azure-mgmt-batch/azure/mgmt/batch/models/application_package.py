@@ -30,10 +30,9 @@ class ApplicationPackage(Model):
     :ivar format: The format of the application package, if the package is
      active.
     :vartype format: str
-    :ivar storage_url: The storage URL at which the application package is
-     stored.
+    :ivar storage_url: The URL for the application package in Azure Storage.
     :vartype storage_url: str
-    :ivar storage_url_expiry: The UTC time at which the storage URL will
+    :ivar storage_url_expiry: The UTC time at which the Azure Storage URL will
      expire.
     :vartype storage_url_expiry: datetime
     :ivar last_activation_time: The time at which the package was last
