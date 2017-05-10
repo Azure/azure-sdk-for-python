@@ -31,7 +31,8 @@
         "Namespace": "azure.mgmt.batch",
         "PackageVersion": "4.0.0"
       },
-      "output_dir": "azure-mgmt-batch/azure/mgmt/batch"
+      "output_dir": "azure-mgmt-batch/azure/mgmt/batch",
+      "build_dir": "azure-mgmt-batch"
     },
     "billing": {
       "swagger": "arm-billing/2017-04-24-preview/swagger/billing.json",
@@ -466,6 +467,7 @@
         "PackageVersion": "3.0.0"
       },
       "output_dir": "azure-batch/azure/batch/",
+      "build_dir": "azure-batch",
       "generated_relative_base_directory": "azure/batch",
       "wrapper_filesOrDirs": [
         "batch_auth.py"
