@@ -1,0 +1,55 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{e60b72bf-ac42-4615-b1e7-57cb627260ae}</ProjectGuid>
+    <ProjectHome>.</ProjectHome>
+    <StartupFile>
+    </StartupFile>
+    <SearchPath>
+    </SearchPath>
+    <WorkingDirectory>.</WorkingDirectory>
+    <OutputPath>.</OutputPath>
+    <Name>windowsazure</Name>
+    <RootNamespace>windowsazure</RootNamespace>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
+    <DebugSymbols>true</DebugSymbols>
+    <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
+    <DebugSymbols>true</DebugSymbols>
+    <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
+  </PropertyGroup>
+  <ItemGroup>
+    <Folder Include="windowsazure\" />
+    <Folder Include="windowsazure\http\" />
+    <Folder Include="windowsazure\servicebus\" />
+    <Folder Include="windowsazure\storage\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="setup.py" />
+    <Compile Include="windowsazure\http\batchclient.py" />
+    <Compile Include="windowsazure\http\httpclient.py" />
+    <Compile Include="windowsazure\http\winhttp.py" />
+    <Compile Include="windowsazure\http\__init__.py" />
+    <Compile Include="windowsazure\servicebus\servicebusservice.py" />
+    <Compile Include="windowsazure\servicebus\__init__.py" />
+    <Compile Include="windowsazure\storage\cloudblobclient.py" />
+    <Compile Include="windowsazure\storage\cloudqueueclient.py" />
+    <Compile Include="windowsazure\storage\cloudstorageaccount.py" />
+    <Compile Include="windowsazure\storage\cloudtableclient.py" />
+    <Compile Include="windowsazure\storage\sharedaccesssignature.py" />
+    <Compile Include="windowsazure\storage\storageclient.py" />
+    <Compile Include="windowsazure\storage\__init__.py" />
+    <Compile Include="windowsazure\__init__.py" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="build.bat" />
+    <Content Include="install.bat" />
+    <Content Include="installfrompip.bat" />
+    <Content Include="upload.bat" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.Common.targets" />
+</Project>
