@@ -65,6 +65,7 @@
     <Compile Include="test\session_container_tests.py" />
     <Compile Include="test\test_config.py" />
     <Compile Include="test\ttl_tests.py" />
+	<Compile Include="test\ru_per_min_tests.py" />
     <Compile Include="pydocumentdb\auth.py" />
     <Compile Include="pydocumentdb\base.py" />
     <Compile Include="pydocumentdb\documents.py" />

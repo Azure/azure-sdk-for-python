@@ -181,6 +181,12 @@ def GetHeaders(document_client,
     if options.get('enableScriptLogging'):
         headers[http_constants.HttpHeaders.EnableScriptLogging] = options['enableScriptLogging']
 
+    if options.get('offerEnableRUPerMinuteThroughput'):
+        headers[http_constants.HttpHeaders.OfferIsRUPerMinuteThroughputEnabled] = options['offerEnableRUPerMinuteThroughput']
+
+    if options.get('disableRUPerMinuteUsage'):
+        headers[http_constants.HttpHeaders.DisableRUPerMinuteUsage] = options['disableRUPerMinuteUsage']
+
     return headers
 
 
