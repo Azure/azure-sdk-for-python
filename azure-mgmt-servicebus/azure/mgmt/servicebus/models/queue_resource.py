@@ -29,8 +29,8 @@ class QueueResource(Resource):
     :param tags: Resource tags
     :type tags: dict
     :param lock_duration: The duration of a peek-lock; that is, the amount of
-     time that the message is locked for other receivers. The maximum value
-     for LockDuration is 5 minutes; the default value is 1 minute.
+     time that the message is locked for other receivers. The maximum value for
+     LockDuration is 5 minutes; the default value is 1 minute.
     :type lock_duration: str
     :param accessed_at: Last time a message was sent, or the last time there
      was a receive request to this queue.
@@ -46,13 +46,13 @@ class QueueResource(Resource):
     :param created_at: The exact time the message was created.
     :type created_at: datetime
     :param default_message_time_to_live: The default message time to live
-     value. This is the duration after which the message expires, starting
-     from when the message is sent to Service Bus. This is the default value
-     used when TimeToLive is not set on a message itself.
+     value. This is the duration after which the message expires, starting from
+     when the message is sent to Service Bus. This is the default value used
+     when TimeToLive is not set on a message itself.
     :type default_message_time_to_live: str
     :param duplicate_detection_history_time_window: TimeSpan structure that
-     defines the duration of the duplicate detection history. The default
-     value is 10 minutes.
+     defines the duration of the duplicate detection history. The default value
+     is 10 minutes.
     :type duplicate_detection_history_time_window: str
     :param enable_batched_operations: A value that indicates whether
      server-side batched operations are enabled.
@@ -60,15 +60,15 @@ class QueueResource(Resource):
     :param dead_lettering_on_message_expiration: A value that indicates
      whether this queue has dead letter support when a message expires.
     :type dead_lettering_on_message_expiration: bool
-    :param enable_express: A value that indicates whether Express Entities
-     are enabled. An express queue holds a message in memory temporarily
-     before writing it to persistent storage.
+    :param enable_express: A value that indicates whether Express Entities are
+     enabled. An express queue holds a message in memory temporarily before
+     writing it to persistent storage.
     :type enable_express: bool
-    :param enable_partitioning: A value that indicates whether the queue is
-     to be partitioned across multiple message brokers.
+    :param enable_partitioning: A value that indicates whether the queue is to
+     be partitioned across multiple message brokers.
     :type enable_partitioning: bool
-    :param is_anonymous_accessible: A value that indicates whether the
-     message is accessible anonymously.
+    :param is_anonymous_accessible: A value that indicates whether the message
+     is accessible anonymously.
     :type is_anonymous_accessible: bool
     :param max_delivery_count: The maximum delivery count. A message is
      automatically deadlettered after this number of deliveries.
@@ -84,8 +84,8 @@ class QueueResource(Resource):
     :param requires_duplicate_detection: A value indicating if this queue
      requires duplicate detection.
     :type requires_duplicate_detection: bool
-    :param requires_session: A value that indicates whether the queue
-     supports the concept of sessions.
+    :param requires_session: A value that indicates whether the queue supports
+     the concept of sessions.
     :type requires_session: bool
     :param size_in_bytes: The size of the queue, in bytes.
     :type size_in_bytes: long
@@ -95,12 +95,12 @@ class QueueResource(Resource):
      'SendDisabled', 'Unknown'
     :type status: str or :class:`EntityStatus
      <azure.mgmt.servicebus.models.EntityStatus>`
-    :param support_ordering: A value that indicates whether the queue
-     supports ordering.
+    :param support_ordering: A value that indicates whether the queue supports
+     ordering.
     :type support_ordering: bool
     :param updated_at: The exact time the message was updated.
     :type updated_at: datetime
-    """ 
+    """
 
     _validation = {
         'id': {'readonly': True},
@@ -115,25 +115,25 @@ class QueueResource(Resource):
         'type': {'key': 'type', 'type': 'str'},
         'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
-        'lock_duration': {'key': 'properties.lockDuration ', 'type': 'str'},
+        'lock_duration': {'key': 'properties.lockDuration', 'type': 'str'},
         'accessed_at': {'key': 'properties.accessedAt', 'type': 'iso-8601'},
         'auto_delete_on_idle': {'key': 'properties.autoDeleteOnIdle', 'type': 'str'},
-        'entity_availability_status': {'key': 'properties.entityAvailabilityStatus ', 'type': 'EntityAvailabilityStatus'},
+        'entity_availability_status': {'key': 'properties.entityAvailabilityStatus', 'type': 'EntityAvailabilityStatus'},
         'created_at': {'key': 'properties.createdAt', 'type': 'iso-8601'},
         'default_message_time_to_live': {'key': 'properties.defaultMessageTimeToLive', 'type': 'str'},
-        'duplicate_detection_history_time_window': {'key': 'properties.duplicateDetectionHistoryTimeWindow ', 'type': 'str'},
+        'duplicate_detection_history_time_window': {'key': 'properties.duplicateDetectionHistoryTimeWindow', 'type': 'str'},
         'enable_batched_operations': {'key': 'properties.enableBatchedOperations', 'type': 'bool'},
         'dead_lettering_on_message_expiration': {'key': 'properties.deadLetteringOnMessageExpiration', 'type': 'bool'},
         'enable_express': {'key': 'properties.enableExpress', 'type': 'bool'},
         'enable_partitioning': {'key': 'properties.enablePartitioning', 'type': 'bool'},
         'is_anonymous_accessible': {'key': 'properties.isAnonymousAccessible', 'type': 'bool'},
-        'max_delivery_count': {'key': 'properties.maxDeliveryCount ', 'type': 'int'},
+        'max_delivery_count': {'key': 'properties.maxDeliveryCount', 'type': 'int'},
         'max_size_in_megabytes': {'key': 'properties.maxSizeInMegabytes', 'type': 'long'},
-        'message_count': {'key': 'properties.messageCount ', 'type': 'long'},
+        'message_count': {'key': 'properties.messageCount', 'type': 'long'},
         'count_details': {'key': 'properties.countDetails', 'type': 'MessageCountDetails'},
         'requires_duplicate_detection': {'key': 'properties.requiresDuplicateDetection', 'type': 'bool'},
         'requires_session': {'key': 'properties.requiresSession', 'type': 'bool'},
-        'size_in_bytes': {'key': 'properties.sizeInBytes ', 'type': 'long'},
+        'size_in_bytes': {'key': 'properties.sizeInBytes', 'type': 'long'},
         'status': {'key': 'properties.status', 'type': 'EntityStatus'},
         'support_ordering': {'key': 'properties.supportOrdering', 'type': 'bool'},
         'updated_at': {'key': 'properties.updatedAt', 'type': 'iso-8601'},

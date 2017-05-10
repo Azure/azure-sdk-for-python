@@ -29,7 +29,7 @@ class MessageCountDetails(Model):
     :param transfer_message_count: Number of messages transferred to another
      queue, topic, or subscription.
     :type transfer_message_count: long
-    """ 
+    """
 
     _attribute_map = {
         'active_message_count': {'key': 'activeMessageCount', 'type': 'long'},
