@@ -60,7 +60,7 @@ class KeyVaultManagementClient(object):
     :vartype config: KeyVaultManagementClientConfiguration
 
     :ivar vaults: Vaults operations
-    :vartype vaults: .operations.VaultsOperations
+    :vartype vaults: azure.mgmt.keyvault.operations.VaultsOperations
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials

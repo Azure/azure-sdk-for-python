@@ -9,11 +9,12 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.serialization import Model
+from .key_item import KeyItem
 
 
-class KeyItem(Model):
-    """The key item containing key metadata.
+class DeletedKeyItem(KeyItem):
+    """The deleted key item containing the deleted key metadata and information
+    about deletion.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -28,10 +29,20 @@ class KeyItem(Model):
     :ivar managed: True if the key's lifetime is managed by key vault. If this
      is a key backing a certificate, then managed will be true.
     :vartype managed: bool
+    :param recovery_id: The url of the recovery object, used to identify and
+     recover the deleted key.
+    :type recovery_id: str
+    :ivar scheduled_purge_date: The time when the key is scheduled to be
+     purged, in UTC
+    :vartype scheduled_purge_date: datetime
+    :ivar deleted_date: The time when the key was deleted, in UTC
+    :vartype deleted_date: datetime
     """
 
     _validation = {
         'managed': {'readonly': True},
+        'scheduled_purge_date': {'readonly': True},
+        'deleted_date': {'readonly': True},
     }
 
     _attribute_map = {
@@ -39,10 +50,13 @@ class KeyItem(Model):
         'attributes': {'key': 'attributes', 'type': 'KeyAttributes'},
         'tags': {'key': 'tags', 'type': '{str}'},
         'managed': {'key': 'managed', 'type': 'bool'},
+        'recovery_id': {'key': 'recoveryId', 'type': 'str'},
+        'scheduled_purge_date': {'key': 'scheduledPurgeDate', 'type': 'unix-time'},
+        'deleted_date': {'key': 'deletedDate', 'type': 'unix-time'},
     }
 
-    def __init__(self, kid=None, attributes=None, tags=None):
-        self.kid = kid
-        self.attributes = attributes
-        self.tags = tags
-        self.managed = None
+    def __init__(self, kid=None, attributes=None, tags=None, recovery_id=None):
+        super(DeletedKeyItem, self).__init__(kid=kid, attributes=attributes, tags=tags)
+        self.recovery_id = recovery_id
+        self.scheduled_purge_date = None
+        self.deleted_date = None

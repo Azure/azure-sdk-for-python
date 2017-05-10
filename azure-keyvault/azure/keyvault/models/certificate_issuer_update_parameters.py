@@ -19,14 +19,14 @@ class CertificateIssuerUpdateParameters(Model):
     :type provider: str
     :param credentials: The credentials to be used for the issuer.
     :type credentials: :class:`IssuerCredentials
-     <azure.keyvault.generated.models.IssuerCredentials>`
+     <azure.keyvault.models.IssuerCredentials>`
     :param organization_details: Details of the organization as provided to
      the issuer.
     :type organization_details: :class:`OrganizationDetails
-     <azure.keyvault.generated.models.OrganizationDetails>`
+     <azure.keyvault.models.OrganizationDetails>`
     :param attributes: Attributes of the issuer object.
     :type attributes: :class:`IssuerAttributes
-     <azure.keyvault.generated.models.IssuerAttributes>`
+     <azure.keyvault.models.IssuerAttributes>`
     """
 
     _attribute_map = {
