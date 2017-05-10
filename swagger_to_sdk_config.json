@@ -81,6 +81,15 @@
       "output_dir": "azure-mgmt-compute/azure/mgmt/compute/compute/v2015_06_15",
       "generated_relative_base_directory": "azure/mgmt/compute/compute/v2015_06_15"
     },
+    "compute.compute.2016-03-30": {
+      "swagger": "arm-compute/2016-03-30/swagger/compute.json",
+      "autorest_options": {
+        "Namespace": "azure.mgmt.compute.compute.v2016_03_30"
+      },
+      "output_dir": "azure-mgmt-compute/azure/mgmt/compute/compute/v2016_03_30",
+      "build_dir": "azure-mgmt-compute/azure/mgmt/compute/compute/v2016_03_30",
+      "generated_relative_base_directory": "azure/mgmt/compute/compute/v2016_03_30"
+    },
     "compute.compute.2016-04-30-preview": {
       "swagger": "arm-compute/compositeComputeClient_2016_04_30_preview.json",
       "autorest_options": {
