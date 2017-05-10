@@ -15,4 +15,5 @@ Submodules
 .. toctree::
 
    azure.mgmt.compute.compute.v2016_04_30_preview
+   azure.mgmt.compute.compute.v2016_03_30
    azure.mgmt.compute.compute.v2015_06_15
