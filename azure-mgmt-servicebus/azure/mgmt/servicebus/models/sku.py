@@ -23,7 +23,7 @@ class Sku(Model):
     :type tier: str or :class:`SkuTier <azure.mgmt.servicebus.models.SkuTier>`
     :param capacity: The specified messaging units for the tier.
     :type capacity: int
-    """ 
+    """
 
     _validation = {
         'tier': {'required': True},

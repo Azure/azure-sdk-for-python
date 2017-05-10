@@ -15,35 +15,41 @@ from msrest.serialization import Model
 class NamespaceCreateOrUpdateParameters(Model):
     """Parameters supplied to the Create Or Update Namespace operation.
 
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
     :param location: Namespace location.
     :type location: str
     :param sku:
     :type sku: :class:`Sku <azure.mgmt.servicebus.models.Sku>`
     :param tags: Namespace tags.
     :type tags: dict
-    :param provisioning_state: Provisioning state of the namespace.
-    :type provisioning_state: str
-    :param status: State of the namespace. Possible values include:
-     'Unknown', 'Creating', 'Created', 'Activating', 'Enabling', 'Active',
-     'Disabling', 'Disabled', 'SoftDeleting', 'SoftDeleted', 'Removing',
-     'Removed', 'Failed'
+    :ivar provisioning_state: Provisioning state of the namespace.
+    :vartype provisioning_state: str
+    :param status: State of the namespace. Possible values include: 'Unknown',
+     'Creating', 'Created', 'Activating', 'Enabling', 'Active', 'Disabling',
+     'Disabled', 'SoftDeleting', 'SoftDeleted', 'Removing', 'Removed', 'Failed'
     :type status: str or :class:`NamespaceState
      <azure.mgmt.servicebus.models.NamespaceState>`
-    :param created_at: The time the namespace was created.
-    :type created_at: datetime
-    :param updated_at: The time the namespace was updated.
-    :type updated_at: datetime
-    :param service_bus_endpoint: Endpoint you can use to perform Service Bus
+    :ivar created_at: The time the namespace was created.
+    :vartype created_at: datetime
+    :ivar updated_at: The time the namespace was updated.
+    :vartype updated_at: datetime
+    :ivar service_bus_endpoint: Endpoint you can use to perform Service Bus
      operations.
-    :type service_bus_endpoint: str
+    :vartype service_bus_endpoint: str
     :param create_acs_namespace: Indicates whether to create an ACS namespace.
     :type create_acs_namespace: bool
     :param enabled: Specifies whether this instance is enabled.
     :type enabled: bool
-    """ 
+    """
 
     _validation = {
         'location': {'required': True},
+        'provisioning_state': {'readonly': True},
+        'created_at': {'readonly': True},
+        'updated_at': {'readonly': True},
+        'service_bus_endpoint': {'readonly': True},
     }
 
     _attribute_map = {
@@ -59,14 +65,14 @@ class NamespaceCreateOrUpdateParameters(Model):
         'enabled': {'key': 'properties.enabled', 'type': 'bool'},
     }
 
-    def __init__(self, location, sku=None, tags=None, provisioning_state=None, status=None, created_at=None, updated_at=None, service_bus_endpoint=None, create_acs_namespace=None, enabled=None):
+    def __init__(self, location, sku=None, tags=None, status=None, create_acs_namespace=None, enabled=None):
         self.location = location
         self.sku = sku
         self.tags = tags
-        self.provisioning_state = provisioning_state
+        self.provisioning_state = None
         self.status = status
-        self.created_at = created_at
-        self.updated_at = updated_at
-        self.service_bus_endpoint = service_bus_endpoint
+        self.created_at = None
+        self.updated_at = None
+        self.service_bus_endpoint = None
         self.create_acs_namespace = create_acs_namespace
         self.enabled = enabled
