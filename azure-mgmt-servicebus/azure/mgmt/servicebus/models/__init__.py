@@ -9,62 +9,64 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
+from .tracked_resource import TrackedResource
 from .resource import Resource
-from .namespace_create_or_update_parameters import NamespaceCreateOrUpdateParameters
 from .sku import Sku
-from .namespace_resource import NamespaceResource
-from .shared_access_authorization_rule_create_or_update_parameters import SharedAccessAuthorizationRuleCreateOrUpdateParameters
-from .shared_access_authorization_rule_resource import SharedAccessAuthorizationRuleResource
+from .namespace import Namespace
+from .namespace_update_parameters import NamespaceUpdateParameters
+from .shared_access_authorization_rule import SharedAccessAuthorizationRule
 from .resource_list_keys import ResourceListKeys
 from .regenerate_keys_parameters import RegenerateKeysParameters
-from .queue_create_or_update_parameters import QueueCreateOrUpdateParameters
 from .message_count_details import MessageCountDetails
-from .queue_resource import QueueResource
-from .topic_create_or_update_parameters import TopicCreateOrUpdateParameters
-from .topic_resource import TopicResource
-from .subscription_create_or_update_parameters import SubscriptionCreateOrUpdateParameters
-from .subscription_resource import SubscriptionResource
-from .namespace_resource_paged import NamespaceResourcePaged
-from .shared_access_authorization_rule_resource_paged import SharedAccessAuthorizationRuleResourcePaged
-from .queue_resource_paged import QueueResourcePaged
-from .topic_resource_paged import TopicResourcePaged
-from .subscription_resource_paged import SubscriptionResourcePaged
+from .queue import Queue
+from .topic import Topic
+from .subscription import Subscription
+from .check_name_availability import CheckNameAvailability
+from .check_name_availability_result import CheckNameAvailabilityResult
+from .operation_display import OperationDisplay
+from .operation import Operation
+from .operation_paged import OperationPaged
+from .namespace_paged import NamespacePaged
+from .shared_access_authorization_rule_paged import SharedAccessAuthorizationRulePaged
+from .queue_paged import QueuePaged
+from .topic_paged import TopicPaged
+from .subscription_paged import SubscriptionPaged
 from .service_bus_management_client_enums import (
     SkuName,
     SkuTier,
-    NamespaceState,
     AccessRights,
     Policykey,
-    EntityAvailabilityStatus,
     EntityStatus,
+    UnavailableReason,
 )
 
 __all__ = [
+    'TrackedResource',
     'Resource',
-    'NamespaceCreateOrUpdateParameters',
     'Sku',
-    'NamespaceResource',
-    'SharedAccessAuthorizationRuleCreateOrUpdateParameters',
-    'SharedAccessAuthorizationRuleResource',
+    'Namespace',
+    'NamespaceUpdateParameters',
+    'SharedAccessAuthorizationRule',
     'ResourceListKeys',
     'RegenerateKeysParameters',
-    'QueueCreateOrUpdateParameters',
     'MessageCountDetails',
-    'QueueResource',
-    'TopicCreateOrUpdateParameters',
-    'TopicResource',
-    'SubscriptionCreateOrUpdateParameters',
-    'SubscriptionResource',
-    'NamespaceResourcePaged',
-    'SharedAccessAuthorizationRuleResourcePaged',
-    'QueueResourcePaged',
-    'TopicResourcePaged',
-    'SubscriptionResourcePaged',
+    'Queue',
+    'Topic',
+    'Subscription',
+    'CheckNameAvailability',
+    'CheckNameAvailabilityResult',
+    'OperationDisplay',
+    'Operation',
+    'OperationPaged',
+    'NamespacePaged',
+    'SharedAccessAuthorizationRulePaged',
+    'QueuePaged',
+    'TopicPaged',
+    'SubscriptionPaged',
     'SkuName',
     'SkuTier',
-    'NamespaceState',
     'AccessRights',
     'Policykey',
-    'EntityAvailabilityStatus',
     'EntityStatus',
+    'UnavailableReason',
 ]

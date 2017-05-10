@@ -12,18 +12,23 @@
 from msrest.serialization import Model
 
 
-class RegenerateKeysParameters(Model):
-    """Parameters supplied to the Regenerate Authorization Rule operation.
+class CheckNameAvailability(Model):
+    """Description of a Check Name availability request properties.
 
-    :param policykey: Key that needs to be regenerated. Possible values
-     include: 'PrimaryKey', 'SecondaryKey'
-    :type policykey: str or :class:`Policykey
-     <azure.mgmt.servicebus.models.Policykey>`
+    :param name: The Name to check the namespce name availability and The
+     namespace name can contain only letters, numbers, and hyphens. The
+     namespace must start with a letter, and it must end with a letter or
+     number.
+    :type name: str
     """
 
-    _attribute_map = {
-        'policykey': {'key': 'policykey', 'type': 'Policykey'},
+    _validation = {
+        'name': {'required': True},
     }
 
-    def __init__(self, policykey=None):
-        self.policykey = policykey
+    _attribute_map = {
+        'name': {'key': 'name', 'type': 'str'},
+    }
+
+    def __init__(self, name):
+        self.name = name

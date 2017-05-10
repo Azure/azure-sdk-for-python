@@ -12,18 +12,20 @@
 from msrest.serialization import Model
 
 
-class RegenerateKeysParameters(Model):
-    """Parameters supplied to the Regenerate Authorization Rule operation.
+class NamespaceUpdateParameters(Model):
+    """Parameters supplied to the Patch Namespace operation.
 
-    :param policykey: Key that needs to be regenerated. Possible values
-     include: 'PrimaryKey', 'SecondaryKey'
-    :type policykey: str or :class:`Policykey
-     <azure.mgmt.servicebus.models.Policykey>`
+    :param tags: Resource tags
+    :type tags: dict
+    :param sku: The sku of the created namespace
+    :type sku: :class:`Sku <azure.mgmt.servicebus.models.Sku>`
     """
 
     _attribute_map = {
-        'policykey': {'key': 'policykey', 'type': 'Policykey'},
+        'tags': {'key': 'tags', 'type': '{str}'},
+        'sku': {'key': 'sku', 'type': 'Sku'},
     }
 
-    def __init__(self, policykey=None):
-        self.policykey = policykey
+    def __init__(self, tags=None, sku=None):
+        self.tags = tags
+        self.sku = sku
