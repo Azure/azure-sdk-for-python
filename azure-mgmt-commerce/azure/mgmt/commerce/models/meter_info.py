@@ -38,7 +38,7 @@ class MeterInfo(Model):
     :param included_quantity: The resource quantity that is included in the
      offer at no cost. Consumption beyond this quantity will be charged.
     :type included_quantity: float
-    """ 
+    """
 
     _attribute_map = {
         'meter_id': {'key': 'MeterId', 'type': 'str'},
