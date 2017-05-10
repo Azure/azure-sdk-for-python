@@ -35,6 +35,8 @@ class KeyPermissions(Enum):
     delete = "delete"
     backup = "backup"
     restore = "restore"
+    recover = "recover"
+    purge = "purge"
 
 
 class SecretPermissions(Enum):
@@ -44,6 +46,10 @@ class SecretPermissions(Enum):
     list = "list"
     set = "set"
     delete = "delete"
+    backup = "backup"
+    restore = "restore"
+    recover = "recover"
+    purge = "purge"
 
 
 class CertificatePermissions(Enum):
@@ -61,3 +67,5 @@ class CertificatePermissions(Enum):
     setissuers = "setissuers"
     deleteissuers = "deleteissuers"
     manageissuers = "manageissuers"
+    recover = "recover"
+    purge = "purge"

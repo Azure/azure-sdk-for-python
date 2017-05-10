@@ -19,7 +19,7 @@ class SecretUpdateParameters(Model):
     :type content_type: str
     :param secret_attributes: The secret management attributes.
     :type secret_attributes: :class:`SecretAttributes
-     <azure.keyvault.generated.models.SecretAttributes>`
+     <azure.keyvault.models.SecretAttributes>`
     :param tags: Application specific metadata in the form of key-value pairs.
     :type tags: dict
     """

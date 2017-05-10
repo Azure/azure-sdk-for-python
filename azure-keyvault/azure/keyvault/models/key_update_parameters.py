@@ -18,10 +18,10 @@ class KeyUpdateParameters(Model):
     :param key_ops: Json web key operations. For more information on possible
      key operations, see JsonWebKeyOperation.
     :type key_ops: list of str or :class:`JsonWebKeyOperation
-     <azure.keyvault.generated.models.JsonWebKeyOperation>`
+     <azure.keyvault.models.JsonWebKeyOperation>`
     :param key_attributes:
     :type key_attributes: :class:`KeyAttributes
-     <azure.keyvault.generated.models.KeyAttributes>`
+     <azure.keyvault.models.KeyAttributes>`
     :param tags: Application specific metadata in the form of key-value pairs.
     :type tags: dict
     """

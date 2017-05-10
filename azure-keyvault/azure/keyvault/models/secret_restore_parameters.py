@@ -12,28 +12,21 @@
 from msrest.serialization import Model
 
 
-class KeyOperationResult(Model):
-    """The key operation result.
+class SecretRestoreParameters(Model):
+    """The secret restore parameters.
 
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
-
-    :ivar kid: Key identifier
-    :vartype kid: str
-    :ivar result:
-    :vartype result: bytes
+    :param secret_bundle_backup: The backup blob associated with a secret
+     bundle.
+    :type secret_bundle_backup: bytes
     """
 
     _validation = {
-        'kid': {'readonly': True},
-        'result': {'readonly': True},
+        'secret_bundle_backup': {'required': True},
     }
 
     _attribute_map = {
-        'kid': {'key': 'kid', 'type': 'str'},
-        'result': {'key': 'value', 'type': 'base64'},
+        'secret_bundle_backup': {'key': 'value', 'type': 'base64'},
     }
 
-    def __init__(self):
-        self.kid = None
-        self.result = None
+    def __init__(self, secret_bundle_backup):
+        self.secret_bundle_backup = secret_bundle_backup

@@ -39,6 +39,9 @@ class VaultProperties(Model):
     :param enabled_for_template_deployment: Property to specify whether Azure
      Resource Manager is permitted to retrieve secrets from the key vault.
     :type enabled_for_template_deployment: bool
+    :param enable_soft_delete: Property to specify whether the 'soft delete'
+     functionality is enabled for this key vault.
+    :type enable_soft_delete: bool
     """
 
     _validation = {
@@ -55,9 +58,10 @@ class VaultProperties(Model):
         'enabled_for_deployment': {'key': 'enabledForDeployment', 'type': 'bool'},
         'enabled_for_disk_encryption': {'key': 'enabledForDiskEncryption', 'type': 'bool'},
         'enabled_for_template_deployment': {'key': 'enabledForTemplateDeployment', 'type': 'bool'},
+        'enable_soft_delete': {'key': 'enableSoftDelete', 'type': 'bool'},
     }
 
-    def __init__(self, tenant_id, sku, access_policies, vault_uri=None, enabled_for_deployment=None, enabled_for_disk_encryption=None, enabled_for_template_deployment=None):
+    def __init__(self, tenant_id, sku, access_policies, vault_uri=None, enabled_for_deployment=None, enabled_for_disk_encryption=None, enabled_for_template_deployment=None, enable_soft_delete=None):
         self.vault_uri = vault_uri
         self.tenant_id = tenant_id
         self.sku = sku
@@ -65,3 +69,4 @@ class VaultProperties(Model):
         self.enabled_for_deployment = enabled_for_deployment
         self.enabled_for_disk_encryption = enabled_for_disk_encryption
         self.enabled_for_template_deployment = enabled_for_template_deployment
+        self.enable_soft_delete = enable_soft_delete
