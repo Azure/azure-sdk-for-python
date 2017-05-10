@@ -155,9 +155,14 @@ class HttpHeaders:
 
     # Offer type.
     OfferType = 'x-ms-offer-type'
-    
-    # Partitioned collection headers
     OfferThroughput = "x-ms-offer-throughput"
+
+    # Custom RUs/minute headers
+    DisableRUPerMinuteUsage = "x-ms-documentdb-disable-ru-per-minute-usage"
+    IsRUPerMinuteUsed = "x-ms-documentdb-is-ru-per-minute-used"
+    OfferIsRUPerMinuteThroughputEnabled = "x-ms-offer-is-ru-per-minute-throughput-enabled"
+
+    # Partitioned collection headers
     PartitionKey = "x-ms-documentdb-partitionkey"
     EnableCrossPartitionQuery = "x-ms-documentdb-query-enablecrosspartition"
     PartitionKeyRangeID = 'x-ms-documentdb-partitionkeyrangeid'
@@ -240,7 +245,7 @@ class Versions:
     """
     CurrentVersion = '2017-01-19'
     SDKName = 'documentdb-python-sdk'
-    SDKVersion = '2.1.0'
+    SDKVersion = '2.2.0'
 
 
 class Delimiters:

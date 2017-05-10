@@ -81,7 +81,7 @@ class ConsistencyLevel(object):
     for the database account. Consistency levels.
 
     Consistency levels by order of strength are Strong, BoundedStaleness,
-    Session and Eventual.
+    Session, ConsistentPrefix and Eventual.
 
     :Attributes:
         - `Strong`: Strong Consistency guarantees that read operations always
@@ -96,11 +96,15 @@ class ConsistencyLevel(object):
         - `Eventual`: Eventual Consistency guarantees that reads will return
           a subset of writes. All writes will be eventually be available for
           reads.
+        - `ConsistentPrefix`: ConsistentPrefix Consistency guarantees that
+          reads will return some prefix of all writes with no gaps. All writes
+          will be eventually be available for reads.
     """
     Strong = 'Strong'
     BoundedStaleness = 'BoundedStaleness'
     Session = 'Session'
     Eventual = 'Eventual'
+    ConsistentPrefix = 'ConsistentPrefix'
 
 
 class IndexingMode(object):
