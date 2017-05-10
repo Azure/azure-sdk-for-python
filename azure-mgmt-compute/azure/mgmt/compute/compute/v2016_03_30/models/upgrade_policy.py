@@ -9,10 +9,21 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .compute_management_client import ComputeManagementClient
-from .version import VERSION
+from msrest.serialization import Model
 
-__all__ = ['ComputeManagementClient']
 
-__version__ = VERSION
+class UpgradePolicy(Model):
+    """Describes an upgrade policy - automatic or manual.
 
+    :param mode: The upgrade mode. Possible values include: 'Automatic',
+     'Manual'
+    :type mode: str or :class:`UpgradeMode
+     <azure.mgmt.compute.compute.v2016_03_30.models.UpgradeMode>`
+    """
+
+    _attribute_map = {
+        'mode': {'key': 'mode', 'type': 'UpgradeMode'},
+    }
+
+    def __init__(self, mode=None):
+        self.mode = mode

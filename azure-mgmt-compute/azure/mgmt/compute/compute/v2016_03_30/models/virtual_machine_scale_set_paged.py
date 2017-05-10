@@ -9,10 +9,19 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .compute_management_client import ComputeManagementClient
-from .version import VERSION
+from msrest.paging import Paged
 
-__all__ = ['ComputeManagementClient']
 
-__version__ = VERSION
+class VirtualMachineScaleSetPaged(Paged):
+    """
+    A paging container for iterating over a list of VirtualMachineScaleSet object
+    """
 
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[VirtualMachineScaleSet]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(VirtualMachineScaleSetPaged, self).__init__(*args, **kwargs)

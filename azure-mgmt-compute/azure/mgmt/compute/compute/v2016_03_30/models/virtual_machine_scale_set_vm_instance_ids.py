@@ -9,10 +9,19 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .compute_management_client import ComputeManagementClient
-from .version import VERSION
+from msrest.serialization import Model
 
-__all__ = ['ComputeManagementClient']
 
-__version__ = VERSION
+class VirtualMachineScaleSetVMInstanceIDs(Model):
+    """Specifies a list of virtual machine instance IDs from the VM scale set.
 
+    :param instance_ids: The virtual machine scale set instance ids.
+    :type instance_ids: list of str
+    """
+
+    _attribute_map = {
+        'instance_ids': {'key': 'instanceIds', 'type': '[str]'},
+    }
+
+    def __init__(self, instance_ids=None):
+        self.instance_ids = instance_ids
