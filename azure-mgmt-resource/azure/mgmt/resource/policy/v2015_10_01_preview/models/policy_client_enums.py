@@ -9,10 +9,11 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .policy_client import PolicyClient
-from .version import VERSION
+from enum import Enum
 
-__all__ = ['PolicyClient']
 
-__version__ = VERSION
+class PolicyType(Enum):
 
+    not_specified = "NotSpecified"
+    built_in = "BuiltIn"
+    custom = "Custom"

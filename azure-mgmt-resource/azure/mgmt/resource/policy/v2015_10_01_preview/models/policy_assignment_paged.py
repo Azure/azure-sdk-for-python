@@ -9,10 +9,19 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .policy_client import PolicyClient
-from .version import VERSION
+from msrest.paging import Paged
 
-__all__ = ['PolicyClient']
 
-__version__ = VERSION
+class PolicyAssignmentPaged(Paged):
+    """
+    A paging container for iterating over a list of PolicyAssignment object
+    """
 
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[PolicyAssignment]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(PolicyAssignmentPaged, self).__init__(*args, **kwargs)
