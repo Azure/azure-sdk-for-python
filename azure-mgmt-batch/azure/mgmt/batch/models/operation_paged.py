@@ -9,16 +9,19 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .batch_account_operations import BatchAccountOperations
-from .application_package_operations import ApplicationPackageOperations
-from .application_operations import ApplicationOperations
-from .location_operations import LocationOperations
-from .operations import Operations
+from msrest.paging import Paged
 
-__all__ = [
-    'BatchAccountOperations',
-    'ApplicationPackageOperations',
-    'ApplicationOperations',
-    'LocationOperations',
-    'Operations',
-]
+
+class OperationPaged(Paged):
+    """
+    A paging container for iterating over a list of Operation object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[Operation]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(OperationPaged, self).__init__(*args, **kwargs)

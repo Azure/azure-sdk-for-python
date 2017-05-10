@@ -16,7 +16,6 @@ class OSType(Enum):
 
     linux = "linux"
     windows = "windows"
-    unmapped = "unmapped"
 
 
 class AccessScope(Enum):
@@ -35,7 +34,6 @@ class CertificateFormat(Enum):
 
     pfx = "pfx"
     cer = "cer"
-    unmapped = "unmapped"
 
 
 class JobAction(Enum):
@@ -63,18 +61,23 @@ class ElevationLevel(Enum):
     admin = "admin"
 
 
+class OutputFileUploadCondition(Enum):
+
+    task_success = "taskSuccess"
+    task_failure = "taskFailure"
+    task_completion = "taskCompletion"
+
+
 class ComputeNodeFillType(Enum):
 
     spread = "spread"
     pack = "pack"
-    unmapped = "unmapped"
 
 
 class CertificateStoreLocation(Enum):
 
     current_user = "currentUser"
     local_machine = "localMachine"
-    unmapped = "unmapped"
 
 
 class CertificateVisibility(Enum):
@@ -82,7 +85,6 @@ class CertificateVisibility(Enum):
     start_task = "startTask"
     task = "task"
     remote_user = "remoteUser"
-    unmapped = "unmapped"
 
 
 class CachingType(Enum):
@@ -96,7 +98,6 @@ class PoolLifetimeOption(Enum):
 
     job_schedule = "jobSchedule"
     job = "job"
-    unmapped = "unmapped"
 
 
 class OnAllTasksComplete(Enum):
@@ -120,11 +121,10 @@ class JobScheduleState(Enum):
     deleting = "deleting"
 
 
-class SchedulingErrorCategory(Enum):
+class ErrorCategory(Enum):
 
     user_error = "userError"
     server_error = "serverError"
-    unmapped = "unmapped"
 
 
 class JobState(Enum):
@@ -142,6 +142,12 @@ class JobPreparationTaskState(Enum):
 
     running = "running"
     completed = "completed"
+
+
+class TaskExecutionResult(Enum):
+
+    success = "success"
+    failure = "failure"
 
 
 class JobReleaseTaskState(Enum):
@@ -177,7 +183,6 @@ class TaskAddStatus(Enum):
     success = "success"
     client_error = "clientError"
     server_error = "serverError"
-    unmapped = "unmapped"
 
 
 class SubtaskState(Enum):
@@ -207,6 +212,7 @@ class ComputeNodeState(Enum):
     unknown = "unknown"
     leaving_pool = "leavingPool"
     offline = "offline"
+    preempted = "preempted"
 
 
 class SchedulingState(Enum):

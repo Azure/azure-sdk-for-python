@@ -25,7 +25,7 @@ class ComputeNode(Model):
     :param state: The current state of the compute node. Possible values
      include: 'idle', 'rebooting', 'reimaging', 'running', 'unusable',
      'creating', 'starting', 'waitingForStartTask', 'startTaskFailed',
-     'unknown', 'leavingPool', 'offline'
+     'unknown', 'leavingPool', 'offline', 'preempted'
     :type state: str or :class:`ComputeNodeState
      <azure.batch.models.ComputeNodeState>`
     :param scheduling_state: Whether the compute node is available for task
@@ -58,9 +58,9 @@ class ComputeNode(Model):
      Services pools (pools created with cloudServiceConfiguration), see Sizes
      for Cloud Services
      (http://azure.microsoft.com/documentation/articles/cloud-services-sizes-specs/).
-     Batch supports all Cloud Services VM sizes except ExtraSmall. For
-     information about available VM sizes for pools using images from the
-     Virtual Machines Marketplace (pools created with
+     Batch supports all Cloud Services VM sizes except ExtraSmall, A1V2 and
+     A2V2. For information about available VM sizes for pools using images from
+     the Virtual Machines Marketplace (pools created with
      virtualMachineConfiguration) see Sizes for Virtual Machines (Linux)
      (https://azure.microsoft.com/documentation/articles/virtual-machines-linux-sizes/)
      or Sizes for Virtual Machines (Windows)
@@ -107,6 +107,9 @@ class ComputeNode(Model):
      the compute node.
     :type errors: list of :class:`ComputeNodeError
      <azure.batch.models.ComputeNodeError>`
+    :param is_dedicated: Whether this compute node is a dedicated node. If
+     false, the node is a low-priority node.
+    :type is_dedicated: bool
     """
 
     _attribute_map = {
@@ -128,9 +131,10 @@ class ComputeNode(Model):
         'start_task_info': {'key': 'startTaskInfo', 'type': 'StartTaskInformation'},
         'certificate_references': {'key': 'certificateReferences', 'type': '[CertificateReference]'},
         'errors': {'key': 'errors', 'type': '[ComputeNodeError]'},
+        'is_dedicated': {'key': 'isDedicated', 'type': 'bool'},
     }
 
-    def __init__(self, id=None, url=None, state=None, scheduling_state=None, state_transition_time=None, last_boot_time=None, allocation_time=None, ip_address=None, affinity_id=None, vm_size=None, total_tasks_run=None, running_tasks_count=None, total_tasks_succeeded=None, recent_tasks=None, start_task=None, start_task_info=None, certificate_references=None, errors=None):
+    def __init__(self, id=None, url=None, state=None, scheduling_state=None, state_transition_time=None, last_boot_time=None, allocation_time=None, ip_address=None, affinity_id=None, vm_size=None, total_tasks_run=None, running_tasks_count=None, total_tasks_succeeded=None, recent_tasks=None, start_task=None, start_task_info=None, certificate_references=None, errors=None, is_dedicated=None):
         self.id = id
         self.url = url
         self.state = state
@@ -149,3 +153,4 @@ class ComputeNode(Model):
         self.start_task_info = start_task_info
         self.certificate_references = certificate_references
         self.errors = errors
+        self.is_dedicated = is_dedicated

@@ -23,7 +23,7 @@ class ApplicationOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An objec model deserializer.
-    :ivar api_version: The API version to be used with the HTTP request. Constant value: "2017-01-01".
+    :ivar api_version: The API version to be used with the HTTP request. Constant value: "2017-05-01".
     """
 
     def __init__(self, client, config, serializer, deserializer):
@@ -31,7 +31,7 @@ class ApplicationOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2017-01-01"
+        self.api_version = "2017-05-01"
 
         self.config = config
 
@@ -63,7 +63,7 @@ class ApplicationOperations(object):
         """
         parameters = None
         if allow_updates is not None or display_name is not None:
-            parameters = models.AddApplicationParameters(allow_updates=allow_updates, display_name=display_name)
+            parameters = models.ApplicationCreateParameters(allow_updates=allow_updates, display_name=display_name)
 
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Batch/batchAccounts/{accountName}/applications/{applicationId}'
@@ -91,7 +91,7 @@ class ApplicationOperations(object):
 
         # Construct body
         if parameters is not None:
-            body_content = self._serialize.body(parameters, 'AddApplicationParameters')
+            body_content = self._serialize.body(parameters, 'ApplicationCreateParameters')
         else:
             body_content = None
 
@@ -251,8 +251,8 @@ class ApplicationOperations(object):
         :param application_id: The ID of the application.
         :type application_id: str
         :param parameters: The parameters for the request.
-        :type parameters: :class:`UpdateApplicationParameters
-         <azure.mgmt.batch.models.UpdateApplicationParameters>`
+        :type parameters: :class:`ApplicationUpdateParameters
+         <azure.mgmt.batch.models.ApplicationUpdateParameters>`
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -288,7 +288,7 @@ class ApplicationOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct body
-        body_content = self._serialize.body(parameters, 'UpdateApplicationParameters')
+        body_content = self._serialize.body(parameters, 'ApplicationUpdateParameters')
 
         # Construct and send request
         request = self._client.patch(url, query_parameters)

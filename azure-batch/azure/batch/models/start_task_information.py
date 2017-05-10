@@ -41,12 +41,17 @@ class StartTaskInformation(Model):
      timeout, or user termination via the API) you may see an operating
      system-defined exit code.
     :type exit_code: int
-    :param scheduling_error: Any error encountered scheduling the start task.
-    :type scheduling_error: :class:`TaskSchedulingError
-     <azure.batch.models.TaskSchedulingError>`
+    :param failure_info: Information describing the task failure, if any. This
+     property is set only if the task is in the completed state and encountered
+     a failure.
+    :type failure_info: :class:`TaskFailureInformation
+     <azure.batch.models.TaskFailureInformation>`
     :param retry_count: The number of times the task has been retried by the
-     Batch service. The task is retried if it exits with a nonzero exit code,
-     up to the specified MaxTaskRetryCount.
+     Batch service. The number of times the task has been retried by the Batch
+     service. Task application failures (non-zero exit code) are retried,
+     pre-processing errors (the task could not be run) and file upload errors
+     are not retried. The Batch service will retry the task up to the limit
+     specified by the constraints.
     :type retry_count: int
     :param last_retry_time: The most recent time at which a retry of the task
      started running. This element is present only if the task was retried
@@ -55,6 +60,11 @@ class StartTaskInformation(Model):
      other than retry; for example, if the compute node was rebooted during a
      retry, then the startTime is updated but the lastRetryTime is not.
     :type last_retry_time: datetime
+    :param result: The result of the task execution. If the value is 'failed',
+     then the details of the failure can be found in the failureInfo property.
+     Possible values include: 'success', 'failure'
+    :type result: str or :class:`TaskExecutionResult
+     <azure.batch.models.TaskExecutionResult>`
     """
 
     _validation = {
@@ -68,16 +78,18 @@ class StartTaskInformation(Model):
         'start_time': {'key': 'startTime', 'type': 'iso-8601'},
         'end_time': {'key': 'endTime', 'type': 'iso-8601'},
         'exit_code': {'key': 'exitCode', 'type': 'int'},
-        'scheduling_error': {'key': 'schedulingError', 'type': 'TaskSchedulingError'},
+        'failure_info': {'key': 'failureInfo', 'type': 'TaskFailureInformation'},
         'retry_count': {'key': 'retryCount', 'type': 'int'},
         'last_retry_time': {'key': 'lastRetryTime', 'type': 'iso-8601'},
+        'result': {'key': 'result', 'type': 'TaskExecutionResult'},
     }
 
-    def __init__(self, state, start_time, retry_count, end_time=None, exit_code=None, scheduling_error=None, last_retry_time=None):
+    def __init__(self, state, start_time, retry_count, end_time=None, exit_code=None, failure_info=None, last_retry_time=None, result=None):
         self.state = state
         self.start_time = start_time
         self.end_time = end_time
         self.exit_code = exit_code
-        self.scheduling_error = scheduling_error
+        self.failure_info = failure_info
         self.retry_count = retry_count
         self.last_retry_time = last_retry_time
+        self.result = result

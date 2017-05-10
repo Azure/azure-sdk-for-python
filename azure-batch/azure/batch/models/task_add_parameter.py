@@ -44,6 +44,12 @@ class TaskAddParameter(Model):
      compute node on which the primary task is executed.
     :type resource_files: list of :class:`ResourceFile
      <azure.batch.models.ResourceFile>`
+    :param output_files: A list of files that the Batch service will upload
+     from the compute node after running the command line. For multi-instance
+     tasks, the files will only be uploaded from the compute node on which the
+     primary task is executed.
+    :type output_files: list of :class:`OutputFile
+     <azure.batch.models.OutputFile>`
     :param environment_settings: A list of environment variable settings for
      the task.
     :type environment_settings: list of :class:`EnvironmentSetting
@@ -105,6 +111,7 @@ class TaskAddParameter(Model):
         'command_line': {'key': 'commandLine', 'type': 'str'},
         'exit_conditions': {'key': 'exitConditions', 'type': 'ExitConditions'},
         'resource_files': {'key': 'resourceFiles', 'type': '[ResourceFile]'},
+        'output_files': {'key': 'outputFiles', 'type': '[OutputFile]'},
         'environment_settings': {'key': 'environmentSettings', 'type': '[EnvironmentSetting]'},
         'affinity_info': {'key': 'affinityInfo', 'type': 'AffinityInformation'},
         'constraints': {'key': 'constraints', 'type': 'TaskConstraints'},
@@ -115,12 +122,13 @@ class TaskAddParameter(Model):
         'authentication_token_settings': {'key': 'authenticationTokenSettings', 'type': 'AuthenticationTokenSettings'},
     }
 
-    def __init__(self, id, command_line, display_name=None, exit_conditions=None, resource_files=None, environment_settings=None, affinity_info=None, constraints=None, user_identity=None, multi_instance_settings=None, depends_on=None, application_package_references=None, authentication_token_settings=None):
+    def __init__(self, id, command_line, display_name=None, exit_conditions=None, resource_files=None, output_files=None, environment_settings=None, affinity_info=None, constraints=None, user_identity=None, multi_instance_settings=None, depends_on=None, application_package_references=None, authentication_token_settings=None):
         self.id = id
         self.display_name = display_name
         self.command_line = command_line
         self.exit_conditions = exit_conditions
         self.resource_files = resource_files
+        self.output_files = output_files
         self.environment_settings = environment_settings
         self.affinity_info = affinity_info
         self.constraints = constraints

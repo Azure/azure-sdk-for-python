@@ -12,21 +12,18 @@
 from msrest.serialization import Model
 
 
-class AutoStorageBaseProperties(Model):
-    """The properties related to the auto-storage account.
+class OutputFileDestination(Model):
+    """The destination to which a file should be uploaded.
 
-    :param storage_account_id: The resource ID of the storage account to be
-     used for auto-storage account.
-    :type storage_account_id: str
+    :param container: A location in Azure blob storage to which files are
+     uploaded.
+    :type container: :class:`OutputFileBlobContainerDestination
+     <azure.batch.models.OutputFileBlobContainerDestination>`
     """
 
-    _validation = {
-        'storage_account_id': {'required': True},
-    }
-
     _attribute_map = {
-        'storage_account_id': {'key': 'storageAccountId', 'type': 'str'},
+        'container': {'key': 'container', 'type': 'OutputFileBlobContainerDestination'},
     }
 
-    def __init__(self, storage_account_id):
-        self.storage_account_id = storage_account_id
+    def __init__(self, container=None):
+        self.container = container

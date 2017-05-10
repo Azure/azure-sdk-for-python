@@ -23,29 +23,38 @@ class ExitConditions(Model):
      service should respond to them.
     :type exit_code_ranges: list of :class:`ExitCodeRangeMapping
      <azure.batch.models.ExitCodeRangeMapping>`
-    :param scheduling_error: How the Batch service should respond if the task
-     fails with a scheduling error.
-    :type scheduling_error: :class:`ExitOptions
+    :param pre_processing_error: How the Batch service should respond if the
+     task fails to start due to an error.
+    :type pre_processing_error: :class:`ExitOptions
+     <azure.batch.models.ExitOptions>`
+    :param file_upload_error: How the Batch service should respond if a file
+     upload error occurs. If the task exited with an exit code that was
+     specified via exitCodes or exitCodeRanges, and then encountered a file
+     upload error, then the action specified by the exit code takes precedence.
+    :type file_upload_error: :class:`ExitOptions
      <azure.batch.models.ExitOptions>`
     :param default: How the Batch service should respond if the task fails
-     with an exit condition not covered by any of the other properties - that
-     is, any nonzero exit code not listed in the exitCodes or exitCodeRanges
-     collection, or a scheduling error if the schedulingError property is not
-     present. Note that the default condition does not include exit code 0. If
-     you want non-default behaviour on exit code 0, you must list it explicitly
-     using the exitCodes or exitCodeRanges collection.
+     with an exit condition not covered by any of the other properties. This
+     value is used if the task exits with any nonzero exit code not listed in
+     the exitCodes or exitCodeRanges collection, with a pre-processing error if
+     the preProcessingError property is not present, or with a file upload
+     error if the fileUploadError property is not present. If you want
+     non-default behaviour on exit code 0, you must list it explicitly using
+     the exitCodes or exitCodeRanges collection.
     :type default: :class:`ExitOptions <azure.batch.models.ExitOptions>`
     """
 
     _attribute_map = {
         'exit_codes': {'key': 'exitCodes', 'type': '[ExitCodeMapping]'},
         'exit_code_ranges': {'key': 'exitCodeRanges', 'type': '[ExitCodeRangeMapping]'},
-        'scheduling_error': {'key': 'schedulingError', 'type': 'ExitOptions'},
+        'pre_processing_error': {'key': 'preProcessingError', 'type': 'ExitOptions'},
+        'file_upload_error': {'key': 'fileUploadError', 'type': 'ExitOptions'},
         'default': {'key': 'default', 'type': 'ExitOptions'},
     }
 
-    def __init__(self, exit_codes=None, exit_code_ranges=None, scheduling_error=None, default=None):
+    def __init__(self, exit_codes=None, exit_code_ranges=None, pre_processing_error=None, file_upload_error=None, default=None):
         self.exit_codes = exit_codes
         self.exit_code_ranges = exit_code_ranges
-        self.scheduling_error = scheduling_error
+        self.pre_processing_error = pre_processing_error
+        self.file_upload_error = file_upload_error
         self.default = default
