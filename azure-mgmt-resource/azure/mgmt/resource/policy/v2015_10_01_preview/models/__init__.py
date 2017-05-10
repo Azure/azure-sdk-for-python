@@ -9,10 +9,18 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .policy_client import PolicyClient
-from .version import VERSION
+from .policy_definition import PolicyDefinition
+from .policy_assignment import PolicyAssignment
+from .policy_assignment_paged import PolicyAssignmentPaged
+from .policy_definition_paged import PolicyDefinitionPaged
+from .policy_client_enums import (
+    PolicyType,
+)
 
-__all__ = ['PolicyClient']
-
-__version__ = VERSION
-
+__all__ = [
+    'PolicyDefinition',
+    'PolicyAssignment',
+    'PolicyAssignmentPaged',
+    'PolicyDefinitionPaged',
+    'PolicyType',
+]
