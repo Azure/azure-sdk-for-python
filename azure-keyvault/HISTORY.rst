@@ -3,6 +3,12 @@
 Release History
 ===============
 
+0.3.2 (2017-05-09)
+++++++++++++++++++
+
+* Fix critical regression on 0.3.1 (#1157)
+* Now the client respects 'REQUESTS_CA_BUNDLE' and 'CURL_CA_BUNDLE'
+
 0.3.1 (2017-05-09)
 ++++++++++++++++++
 
