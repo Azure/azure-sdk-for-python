@@ -172,6 +172,7 @@
       },
       "wrapper_filesOrDirs": [
         "custom",
+        "generated",
         "__init__.py"
       ],
       "output_dir": "azure-keyvault/azure/keyvault",
