@@ -3,6 +3,11 @@
 Release History
 ===============
 
+0.3.3 (2017-05-10)
+++++++++++++++++++
+
+* Reverting to 0.3.0, since behavior of 0.3.2 is not satisfaying either.
+
 0.3.2 (2017-05-09)
 ++++++++++++++++++
 
