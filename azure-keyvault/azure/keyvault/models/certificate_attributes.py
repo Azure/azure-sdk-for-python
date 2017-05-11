@@ -28,12 +28,32 @@ class CertificateAttributes(Attributes):
     :vartype created: datetime
     :ivar updated: Last updated time in UTC.
     :vartype updated: datetime
+    :ivar recovery_level: Reflects the deletion recovery level currently in
+     effect for certificates in the current vault. If it contains 'Purgeable',
+     the certificate can be permanently deleted by a privileged user;
+     otherwise, only the system can purge the certificate, at the end of the
+     retention interval. Possible values include: 'Purgeable',
+     'Recoverable+Purgeable', 'Recoverable',
+     'Recoverable+ProtectedSubscription'
+    :vartype recovery_level: str or :class:`DeletionRecoveryLevel
+     <azure.keyvault.models.DeletionRecoveryLevel>`
     """
 
     _validation = {
         'created': {'readonly': True},
         'updated': {'readonly': True},
+        'recovery_level': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'enabled': {'key': 'enabled', 'type': 'bool'},
+        'not_before': {'key': 'nbf', 'type': 'unix-time'},
+        'expires': {'key': 'exp', 'type': 'unix-time'},
+        'created': {'key': 'created', 'type': 'unix-time'},
+        'updated': {'key': 'updated', 'type': 'unix-time'},
+        'recovery_level': {'key': 'recoveryLevel', 'type': 'str'},
     }
 
     def __init__(self, enabled=None, not_before=None, expires=None):
         super(CertificateAttributes, self).__init__(enabled=enabled, not_before=not_before, expires=expires)
+        self.recovery_level = None

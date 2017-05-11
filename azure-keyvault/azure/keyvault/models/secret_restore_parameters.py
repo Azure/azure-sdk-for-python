@@ -12,18 +12,21 @@
 from msrest.serialization import Model
 
 
-class Action(Model):
-    """The action that will be executed.
+class SecretRestoreParameters(Model):
+    """The secret restore parameters.
 
-    :param action_type: The type of the action. Possible values include:
-     'EmailContacts', 'AutoRenew'
-    :type action_type: str or :class:`ActionType
-     <azure.keyvault.models.ActionType>`
+    :param secret_bundle_backup: The backup blob associated with a secret
+     bundle.
+    :type secret_bundle_backup: bytes
     """
 
-    _attribute_map = {
-        'action_type': {'key': 'action_type', 'type': 'ActionType'},
+    _validation = {
+        'secret_bundle_backup': {'required': True},
     }
 
-    def __init__(self, action_type=None):
-        self.action_type = action_type
+    _attribute_map = {
+        'secret_bundle_backup': {'key': 'value', 'type': 'base64'},
+    }
+
+    def __init__(self, secret_bundle_backup):
+        self.secret_bundle_backup = secret_bundle_backup
