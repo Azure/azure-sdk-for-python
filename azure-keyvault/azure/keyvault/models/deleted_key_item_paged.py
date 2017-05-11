@@ -9,21 +9,19 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.serialization import Model
+from msrest.paging import Paged
 
 
-class Action(Model):
-    """The action that will be executed.
-
-    :param action_type: The type of the action. Possible values include:
-     'EmailContacts', 'AutoRenew'
-    :type action_type: str or :class:`ActionType
-     <azure.keyvault.models.ActionType>`
+class DeletedKeyItemPaged(Paged):
+    """
+    A paging container for iterating over a list of DeletedKeyItem object
     """
 
     _attribute_map = {
-        'action_type': {'key': 'action_type', 'type': 'ActionType'},
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[DeletedKeyItem]'}
     }
 
-    def __init__(self, action_type=None):
-        self.action_type = action_type
+    def __init__(self, *args, **kwargs):
+
+        super(DeletedKeyItemPaged, self).__init__(*args, **kwargs)
