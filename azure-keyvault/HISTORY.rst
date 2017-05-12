@@ -3,6 +3,13 @@
 Release History
 ===============
 
+0.3.4 (2017-05-12)
+++++++++++++++++++
+
+* Adding Preview Features
+  - Key Vault "Soft Delete" allowing for recovery of deleted keys, secrets and certificates
+  - Secret Backup and Restore for secret recovery and migration
+
 0.3.3 (2017-05-10)
 ++++++++++++++++++
 
