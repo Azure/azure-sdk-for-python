@@ -14,9 +14,14 @@ from .json_web_key import JsonWebKey
 from .key_attributes import KeyAttributes
 from .key_bundle import KeyBundle
 from .key_item import KeyItem
+from .deleted_key_bundle import DeletedKeyBundle
+from .deleted_key_item import DeletedKeyItem
 from .secret_attributes import SecretAttributes
 from .secret_bundle import SecretBundle
 from .secret_item import SecretItem
+from .deleted_secret_bundle import DeletedSecretBundle
+from .deleted_secret_item import DeletedSecretItem
+from .secret_restore_parameters import SecretRestoreParameters
 from .certificate_attributes import CertificateAttributes
 from .certificate_item import CertificateItem
 from .certificate_issuer_item import CertificateIssuerItem
@@ -30,6 +35,8 @@ from .lifetime_action import LifetimeAction
 from .issuer_parameters import IssuerParameters
 from .certificate_policy import CertificatePolicy
 from .certificate_bundle import CertificateBundle
+from .deleted_certificate_bundle import DeletedCertificateBundle
+from .deleted_certificate_item import DeletedCertificateItem
 from .error import Error
 from .certificate_operation import CertificateOperation
 from .issuer_credentials import IssuerCredentials
@@ -58,14 +65,19 @@ from .certificate_operation_update_parameter import CertificateOperationUpdatePa
 from .key_operation_result import KeyOperationResult
 from .key_verify_result import KeyVerifyResult
 from .backup_key_result import BackupKeyResult
+from .backup_secret_result import BackupSecretResult
 from .pending_certificate_signing_request_result import PendingCertificateSigningRequestResult
 from .key_vault_error import KeyVaultError, KeyVaultErrorException
 from .key_item_paged import KeyItemPaged
+from .deleted_key_item_paged import DeletedKeyItemPaged
 from .secret_item_paged import SecretItemPaged
+from .deleted_secret_item_paged import DeletedSecretItemPaged
 from .certificate_item_paged import CertificateItemPaged
 from .certificate_issuer_item_paged import CertificateIssuerItemPaged
+from .deleted_certificate_item_paged import DeletedCertificateItemPaged
 from .key_vault_client_enums import (
     JsonWebKeyType,
+    DeletionRecoveryLevel,
     KeyUsageType,
     ActionType,
     JsonWebKeyOperation,
@@ -79,9 +91,14 @@ __all__ = [
     'KeyAttributes',
     'KeyBundle',
     'KeyItem',
+    'DeletedKeyBundle',
+    'DeletedKeyItem',
     'SecretAttributes',
     'SecretBundle',
     'SecretItem',
+    'DeletedSecretBundle',
+    'DeletedSecretItem',
+    'SecretRestoreParameters',
     'CertificateAttributes',
     'CertificateItem',
     'CertificateIssuerItem',
@@ -95,6 +112,8 @@ __all__ = [
     'IssuerParameters',
     'CertificatePolicy',
     'CertificateBundle',
+    'DeletedCertificateBundle',
+    'DeletedCertificateItem',
     'Error',
     'CertificateOperation',
     'IssuerCredentials',
@@ -123,13 +142,18 @@ __all__ = [
     'KeyOperationResult',
     'KeyVerifyResult',
     'BackupKeyResult',
+    'BackupSecretResult',
     'PendingCertificateSigningRequestResult',
     'KeyVaultError', 'KeyVaultErrorException',
     'KeyItemPaged',
+    'DeletedKeyItemPaged',
     'SecretItemPaged',
+    'DeletedSecretItemPaged',
     'CertificateItemPaged',
     'CertificateIssuerItemPaged',
+    'DeletedCertificateItemPaged',
     'JsonWebKeyType',
+    'DeletionRecoveryLevel',
     'KeyUsageType',
     'ActionType',
     'JsonWebKeyOperation',
