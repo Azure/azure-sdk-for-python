@@ -3,6 +3,11 @@
 Release History
 ===============
 
+1.1.0rc2 (2017-05-12)
++++++++++++++++++++++
+
+- Add Policy ApiVersion 2015-10-01-preview (AzureStack default)
+
 1.1.0rc1 (2017-05-08)
 +++++++++++++++++++++
 
