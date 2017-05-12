@@ -3,6 +3,13 @@
 Release History
 ===============
 
+1.0.0rc2 (2017-05-12)
++++++++++++++++++++++
+
+**Features**
+
+- Add Compute ApiVersion 2016-03-30 (AzureStack default)
+
 1.0.0rc1 (2017-04-11)
 +++++++++++++++++++++
 
