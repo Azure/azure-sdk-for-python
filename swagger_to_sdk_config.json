@@ -81,6 +81,15 @@
       "output_dir": "azure-mgmt-compute/azure/mgmt/compute/compute/v2015_06_15",
       "generated_relative_base_directory": "azure/mgmt/compute/compute/v2015_06_15"
     },
+    "compute.compute.2016-03-30": {
+      "swagger": "arm-compute/2016-03-30/swagger/compute.json",
+      "autorest_options": {
+        "Namespace": "azure.mgmt.compute.compute.v2016_03_30"
+      },
+      "output_dir": "azure-mgmt-compute/azure/mgmt/compute/compute/v2016_03_30",
+      "build_dir": "azure-mgmt-compute/azure/mgmt/compute/compute/v2016_03_30",
+      "generated_relative_base_directory": "azure/mgmt/compute/compute/v2016_03_30"
+    },
     "compute.compute.2016-04-30-preview": {
       "swagger": "arm-compute/compositeComputeClient_2016_04_30_preview.json",
       "autorest_options": {
@@ -369,6 +378,15 @@
       "output_dir": "azure-mgmt-resource/azure/mgmt/resource/resources/v2017_05_10",
       "build_dir": "azure-mgmt-resource/azure/mgmt/resource/resources/v2017_05_10",
       "generated_relative_base_directory": "azure/mgmt/resource/resources/v2017_05_10"
+    },
+    "resources.policy.2015-10-01-preview": {
+      "swagger": "arm-resources/policy/2015-10-01-preview/swagger/policy.json",
+      "autorest_options": {
+        "Namespace": "azure.mgmt.resource.policy.v2015_10_01_preview"
+      },
+      "output_dir": "azure-mgmt-resource/azure/mgmt/resource/policy/v2015_10_01_preview",
+      "build_dir": "azure-mgmt-resource/azure/mgmt/resource/policy/v2015_10_01_preview",
+      "generated_relative_base_directory": "azure/mgmt/resource/policy/v2015_10_01_preview"
     },
     "resources.policy.2016-04-01": {
       "swagger": "arm-resources/policy/2016-04-01/swagger/policy.json",

@@ -12,7 +12,10 @@
 from msrest.service_client import ServiceClient
 from msrest import Serializer, Deserializer
 from msrestazure import AzureConfiguration
-from ..version import VERSION
+from .version import VERSION
+from .operations.policy_assignments_operations import PolicyAssignmentsOperations
+from .operations.policy_definitions_operations import PolicyDefinitionsOperations
+from . import models
 
 
 class PolicyClientConfiguration(AzureConfiguration):
@@ -55,6 +58,11 @@ class PolicyClient(object):
     :ivar config: Configuration for client.
     :vartype config: PolicyClientConfiguration
 
+    :ivar policy_assignments: PolicyAssignments operations
+    :vartype policy_assignments: azure.mgmt.resource.policy.v2015_10_01_preview.operations.PolicyAssignmentsOperations
+    :ivar policy_definitions: PolicyDefinitions operations
+    :vartype policy_definitions: azure.mgmt.resource.policy.v2015_10_01_preview.operations.PolicyDefinitionsOperations
+
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
      object<msrestazure.azure_active_directory>`
@@ -64,49 +72,17 @@ class PolicyClient(object):
     """
 
     def __init__(
-            self, credentials, subscription_id, api_version = '2016-12-01', base_url=None):
+            self, credentials, subscription_id, base_url=None):
 
         self.config = PolicyClientConfiguration(credentials, subscription_id, base_url)
         self._client = ServiceClient(self.config.credentials, self.config)
 
-        client_models = {k: v for k, v in self.models(api_version).__dict__.items() if isinstance(v, type)}
-        self.api_version = api_version
+        client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
+        self.api_version = '2015-10-01-preview'
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
 
-    @classmethod
-    def models(cls, api_version='2016-12-01'):
-        if api_version == '2015-10-01-preview':
-            from .v2015_10_01_preview import models
-            return models
-        elif api_version == '2016-04-01':
-            from .v2016_04_01 import models
-            return models
-        elif api_version == '2016-12-01':
-            from .v2016_12_01 import models
-            return models
-        raise NotImplementedError("APIVersion {} is not available".format(api_version))
-
-    @property
-    def policy_assignments(self):
-        if self.api_version == '2015-10-01-preview':
-            from .v2015_10_01_preview.operations import PolicyAssignmentsOperations as OperationClass
-        elif self.api_version == '2016-04-01':
-            from .v2016_04_01.operations import PolicyAssignmentsOperations as OperationClass
-        elif self.api_version == '2016-12-01':
-            from .v2016_12_01.operations import PolicyAssignmentsOperations as OperationClass
-        else:
-            raise NotImplementedError("APIVersion {} is not available".format(self.api_version))
-        return OperationClass(self._client, self.config, self._serialize, self._deserialize)
-
-    @property
-    def policy_definitions(self):
-        if self.api_version == '2015-10-01-preview':
-            from .v2015_10_01_preview.operations import PolicyDefinitionsOperations as OperationClass
-        elif self.api_version == '2016-04-01':
-            from .v2016_04_01.operations import PolicyDefinitionsOperations as OperationClass
-        elif self.api_version == '2016-12-01':
-            from .v2016_12_01.operations import PolicyDefinitionsOperations as OperationClass
-        else:
-            raise NotImplementedError("APIVersion {} is not available".format(self.api_version))
-        return OperationClass(self._client, self.config, self._serialize, self._deserialize)
+        self.policy_assignments = PolicyAssignmentsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.policy_definitions = PolicyDefinitionsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
