@@ -9,5 +9,19 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-VERSION = "0.3.4"
+from msrest.paging import Paged
 
+
+class DeletedKeyItemPaged(Paged):
+    """
+    A paging container for iterating over a list of DeletedKeyItem object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[DeletedKeyItem]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(DeletedKeyItemPaged, self).__init__(*args, **kwargs)

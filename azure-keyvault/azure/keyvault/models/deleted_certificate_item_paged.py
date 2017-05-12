@@ -9,5 +9,19 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-VERSION = "0.3.4"
+from msrest.paging import Paged
 
+
+class DeletedCertificateItemPaged(Paged):
+    """
+    A paging container for iterating over a list of DeletedCertificateItem object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[DeletedCertificateItem]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(DeletedCertificateItemPaged, self).__init__(*args, **kwargs)

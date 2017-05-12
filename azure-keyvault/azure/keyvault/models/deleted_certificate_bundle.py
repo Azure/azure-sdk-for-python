@@ -9,11 +9,12 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.serialization import Model
+from .certificate_bundle import CertificateBundle
 
 
-class CertificateBundle(Model):
-    """A certificate bundle consists of a certificate (X509) plus its attributes.
+class DeletedCertificateBundle(CertificateBundle):
+    """A Deleted Certificate consisting of its previous id, attributes and its
+    tags, as well as information on when it will be purged.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -38,6 +39,14 @@ class CertificateBundle(Model):
      <azure.keyvault.models.CertificateAttributes>`
     :param tags: Application specific metadata in the form of key-value pairs
     :type tags: dict
+    :param recovery_id: The url of the recovery object, used to identify and
+     recover the deleted certificate.
+    :type recovery_id: str
+    :ivar scheduled_purge_date: The time when the certificate is scheduled to
+     be purged, in UTC
+    :vartype scheduled_purge_date: datetime
+    :ivar deleted_date: The time when the certificate was deleted, in UTC
+    :vartype deleted_date: datetime
     """
 
     _validation = {
@@ -46,6 +55,8 @@ class CertificateBundle(Model):
         'sid': {'readonly': True},
         'x509_thumbprint': {'readonly': True},
         'policy': {'readonly': True},
+        'scheduled_purge_date': {'readonly': True},
+        'deleted_date': {'readonly': True},
     }
 
     _attribute_map = {
@@ -58,15 +69,13 @@ class CertificateBundle(Model):
         'content_type': {'key': 'contentType', 'type': 'str'},
         'attributes': {'key': 'attributes', 'type': 'CertificateAttributes'},
         'tags': {'key': 'tags', 'type': '{str}'},
+        'recovery_id': {'key': 'recoveryId', 'type': 'str'},
+        'scheduled_purge_date': {'key': 'scheduledPurgeDate', 'type': 'unix-time'},
+        'deleted_date': {'key': 'deletedDate', 'type': 'unix-time'},
     }
 
-    def __init__(self, cer=None, content_type=None, attributes=None, tags=None):
-        self.id = None
-        self.kid = None
-        self.sid = None
-        self.x509_thumbprint = None
-        self.policy = None
-        self.cer = cer
-        self.content_type = content_type
-        self.attributes = attributes
-        self.tags = tags
+    def __init__(self, cer=None, content_type=None, attributes=None, tags=None, recovery_id=None):
+        super(DeletedCertificateBundle, self).__init__(cer=cer, content_type=content_type, attributes=attributes, tags=tags)
+        self.recovery_id = recovery_id
+        self.scheduled_purge_date = None
+        self.deleted_date = None

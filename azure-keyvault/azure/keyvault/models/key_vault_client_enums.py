@@ -20,6 +20,14 @@ class JsonWebKeyType(Enum):
     oct = "oct"
 
 
+class DeletionRecoveryLevel(Enum):
+
+    purgeable = "Purgeable"
+    recoverable_purgeable = "Recoverable+Purgeable"
+    recoverable = "Recoverable"
+    recoverable_protected_subscription = "Recoverable+ProtectedSubscription"
+
+
 class KeyUsageType(Enum):
 
     digital_signature = "digitalSignature"
@@ -52,11 +60,15 @@ class JsonWebKeyOperation(Enum):
 class JsonWebKeyEncryptionAlgorithm(Enum):
 
     rsa_oaep = "RSA-OAEP"
+    rsa_oaep_256 = "RSA-OAEP-256"
     rsa1_5 = "RSA1_5"
 
 
 class JsonWebKeySignatureAlgorithm(Enum):
 
+    ps256 = "PS256"
+    ps384 = "PS384"
+    ps512 = "PS512"
     rs256 = "RS256"
     rs384 = "RS384"
     rs512 = "RS512"

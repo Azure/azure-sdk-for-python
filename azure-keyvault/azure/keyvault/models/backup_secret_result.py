@@ -12,28 +12,23 @@
 from msrest.serialization import Model
 
 
-class Contacts(Model):
-    """The contacts for the vault certificates.
+class BackupSecretResult(Model):
+    """The backup secret result, containing the backup blob.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar id: Identifier for the contacts collection.
-    :vartype id: str
-    :param contact_list: The contact list for the vault certificates.
-    :type contact_list: list of :class:`Contact
-     <azure.keyvault.models.Contact>`
+    :ivar value: The backup blob containing the backed up secret.
+    :vartype value: bytes
     """
 
     _validation = {
-        'id': {'readonly': True},
+        'value': {'readonly': True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'contact_list': {'key': 'contacts', 'type': '[Contact]'},
+        'value': {'key': 'value', 'type': 'base64'},
     }
 
-    def __init__(self, contact_list=None):
-        self.id = None
-        self.contact_list = contact_list
+    def __init__(self):
+        self.value = None
