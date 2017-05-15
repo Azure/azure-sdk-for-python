@@ -16,7 +16,8 @@ class CheckSkuAvailabilityParameter(Model):
     """Check SKU availability parameter.
 
     :param skus: The SKU of the resource.
-    :type skus: list of :class:`Sku <azure.mgmt.cognitiveservices.models.Sku>`
+    :type skus: list of str or :class:`SkuName
+     <azure.mgmt.cognitiveservices.models.SkuName>`
     :param kind: The Kind of the resource. Possible values include:
      'Academic', 'Bing.Autosuggest', 'Bing.Search', 'Bing.Speech',
      'Bing.SpellCheck', 'ComputerVision', 'ContentModerator', 'CustomSpeech',
@@ -28,13 +29,19 @@ class CheckSkuAvailabilityParameter(Model):
     :type type: str
     """
 
+    _validation = {
+        'skus': {'required': True},
+        'kind': {'required': True},
+        'type': {'required': True},
+    }
+
     _attribute_map = {
-        'skus': {'key': 'skus', 'type': '[Sku]'},
+        'skus': {'key': 'skus', 'type': '[str]'},
         'kind': {'key': 'kind', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
     }
 
-    def __init__(self, skus=None, kind=None, type=None):
+    def __init__(self, skus, kind, type):
         self.skus = skus
         self.kind = kind
         self.type = type

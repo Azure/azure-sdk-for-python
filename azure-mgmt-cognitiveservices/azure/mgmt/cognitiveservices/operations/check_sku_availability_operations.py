@@ -36,12 +36,12 @@ class CheckSkuAvailabilityOperations(object):
         self.config = config
 
     def list(
-            self, skus=None, kind=None, type=None, custom_headers=None, raw=False, **operation_config):
+            self, skus, kind, type, custom_headers=None, raw=False, **operation_config):
         """Check available SKUs.
 
         :param skus: The SKU of the resource.
-        :type skus: list of :class:`Sku
-         <azure.mgmt.cognitiveservices.models.Sku>`
+        :type skus: list of str or :class:`SkuName
+         <azure.mgmt.cognitiveservices.models.SkuName>`
         :param kind: The Kind of the resource. Possible values include:
          'Academic', 'Bing.Autosuggest', 'Bing.Search', 'Bing.Speech',
          'Bing.SpellCheck', 'ComputerVision', 'ContentModerator',
