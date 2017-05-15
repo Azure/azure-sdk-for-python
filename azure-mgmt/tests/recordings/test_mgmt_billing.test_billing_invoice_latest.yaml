@@ -1,0 +1,35 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.6.1 (Windows-10-10.0.15063-SP0) requests/2.14.2 msrest/0.4.7
+          msrest_azure/0.4.7 billingmanagementclient/0.1.0 Azure-SDK-For-Python]
+      accept-language: [en-US]
+      x-ms-client-request-id: [21d2c4ee-37a5-11e7-a1e3-1866da24a76d]
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Billing/invoices/latest?api-version=2017-04-24-preview
+  response:
+    body: {string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Billing/invoices/201705-217089190378988","type":"Microsoft.Billing/invoices","name":"201705-217089190378988","properties":{"downloadUrl":{"expiryTime":"2017-05-13T07:26:46Z","url":"https://billinginsightsstore02.blob.core.windows.net/invoices/00000000-0000-0000-0000-000000000000-201705-217089190378988.pdf?sv=2014-02-14&sr=b&sig=VItizs2Bez8hxhvUrJZVue3hRv29Qy%2BiqWtlrUDdAjc%3D&se=2017-05-13T07%3A26%3A46Z&sp=r"},"invoicePeriodEndDate":"2017-04-26","invoicePeriodStartDate":"2017-03-27","billingPeriodIds":["/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Billing/billingPeriods/201705-1"]}}'}
+    headers:
+      Cache-Control: [no-cache]
+      Content-Type: [application/json; charset=utf-8]
+      Date: ['Sat, 13 May 2017 06:26:45 GMT']
+      Expires: ['-1']
+      Pragma: [no-cache]
+      Server: [Microsoft-IIS/8.5]
+      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
+      Transfer-Encoding: [chunked]
+      Vary: [Accept-Encoding]
+      X-AspNet-Version: [4.0.30319]
+      X-Powered-By: [ASP.NET]
+      content-length: ['695']
+      x-ms-correlation-request-id: [f2654d20-0cca-46e8-b0dc-f7306f34cf2e]
+      x-ms-ratelimit-remaining-subscription-resource-requests: ['99']
+      x-ms-request-id: [f2654d20-0cca-46e8-b0dc-f7306f34cf2e]
+      x-ms-routing-request-id: ['WESTUS:20170513T062645Z:f2654d20-0cca-46e8-b0dc-f7306f34cf2e']
+    status: {code: 200, message: OK}
+version: 1
