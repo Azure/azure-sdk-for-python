@@ -7,6 +7,9 @@ import inspect
 import functools
 import os
 
+from azure.mgmt.resource.resources import ResourceManagementClient
+from azure.mgmt.storage import StorageManagementClient
+
 from .base import ScenarioTest, execute
 from .exceptions import CliTestError
 from .utilities import create_random_name
@@ -124,18 +127,30 @@ class ResourceGroupPreparer(AbstractPreparer, SingleValueReplacer):
         self.dev_setting_name = os.environ.get(dev_setting_name, None)
         self.dev_setting_location = os.environ.get(dev_setting_location, location)
 
+        # This should work with 'az login'
+        self.client = ResourceManagementClient()
+
     def create_resource(self, name, **kwargs):
         if self.dev_setting_name:
             return {self.parameter_name: self.dev_setting_name,
                     self.parameter_name_for_location: self.dev_setting_location}
         else:
-            template = 'az group create --location {} --name {} --tag use=az-test'
-            execute(template.format(self.location, name))
+            # template = 'az group create --location {} --name {} --tag use=az-test'
+            self.client.resource_groups.create_or_update(
+                name,
+                {
+                    'location': self.location,
+                    'tags': {
+                        'use': 'az-test',
+                    }
+                }
+            )
             return {self.parameter_name: name, self.parameter_name_for_location: self.location}
 
     def remove_resource(self, name, **kwargs):
         if not self.dev_setting_name:
-            execute('az group delete --name {} --yes --no-wait'.format(name))
+            # execute('az group delete --name {} --yes --no-wait'.format(name))
+            self.client.resource_groups.delete(name)
 
 
 # Storage Account Preparer and its shorthand decorator
@@ -153,24 +168,38 @@ class StorageAccountPreparer(AbstractPreparer, SingleValueReplacer):
         self.parameter_name = parameter_name
 
         self.dev_setting_name = os.environ.get(dev_setting_name, None)
+        self.client = StorageManagementClient()
 
     def create_resource(self, name, **kwargs):
         group = self._get_resource_group(**kwargs)
 
         if not self.dev_setting_name:
-            template = 'az storage account create -n {} -g {} -l {} --sku {}'
-            execute(template.format(name, group, self.location, self.sku))
+            # template = 'az storage account create -n {} -g {} -l {} --sku {}'
+            # execute(template.format(name, group, self.location, self.sku))
+            storage_async_operation = self.client.storage_accounts.create(
+                group,
+                name,
+                {
+                    'sku': self.sku,
+                    'location': self.location,
+                }
+            )
+            storage_async_operation.wait()
         else:
             name = self.dev_setting_name
 
-        account_key = execute('storage account keys list -n {} -g {} --query "[0].value" -otsv'
-                              .format(name, group)).output
+        # account_key = execute('storage account keys list -n {} -g {} --query "[0].value" -otsv'
+        #                       .format(name, group)).output
+        # What is -otsv?
+        storage_keys = self.client.storage_accounts.list_keys(group, name)
+        account_key = storage_keys[0].value
         return {self.parameter_name: name, self.parameter_name + '_info': (name, account_key)}
 
     def remove_resource(self, name, **kwargs):
         if not self.skip_delete and not self.dev_setting_name:
             group = self._get_resource_group(**kwargs)
-            execute('az storage account delete -n {} -g {} --yes'.format(name, group))
+            # execute('az storage account delete -n {} -g {} --yes'.format(name, group))
+            self.storage_client.storage_accounts.delete(group, name)
 
     def _get_resource_group(self, **kwargs):
         try:
