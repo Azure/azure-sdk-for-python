@@ -13,10 +13,12 @@ from .batch_account_operations import BatchAccountOperations
 from .application_package_operations import ApplicationPackageOperations
 from .application_operations import ApplicationOperations
 from .location_operations import LocationOperations
+from .operations import Operations
 
 __all__ = [
     'BatchAccountOperations',
     'ApplicationPackageOperations',
     'ApplicationOperations',
     'LocationOperations',
+    'Operations',
 ]

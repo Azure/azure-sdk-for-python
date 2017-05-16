@@ -16,3 +16,4 @@ Submodules
 
    azure.mgmt.resource.policy.v2016_12_01
    azure.mgmt.resource.policy.v2016_04_01
+   azure.mgmt.resource.policy.v2015_10_01_preview

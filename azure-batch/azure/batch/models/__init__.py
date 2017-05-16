@@ -35,8 +35,13 @@ from .exit_code_range_mapping import ExitCodeRangeMapping
 from .exit_conditions import ExitConditions
 from .auto_user_specification import AutoUserSpecification
 from .user_identity import UserIdentity
+from .linux_user_configuration import LinuxUserConfiguration
 from .user_account import UserAccount
 from .task_constraints import TaskConstraints
+from .output_file_blob_container_destination import OutputFileBlobContainerDestination
+from .output_file_destination import OutputFileDestination
+from .output_file_upload_options import OutputFileUploadOptions
+from .output_file import OutputFile
 from .job_manager_task import JobManagerTask
 from .job_preparation_task import JobPreparationTask
 from .job_release_task import JobReleaseTask
@@ -62,7 +67,7 @@ from .job_scheduling_error import JobSchedulingError
 from .job_execution_information import JobExecutionInformation
 from .cloud_job import CloudJob
 from .job_add_parameter import JobAddParameter
-from .task_scheduling_error import TaskSchedulingError
+from .task_failure_information import TaskFailureInformation
 from .job_preparation_task_execution_information import JobPreparationTaskExecutionInformation
 from .job_release_task_execution_information import JobReleaseTaskExecutionInformation
 from .job_preparation_and_release_task_execution_information import JobPreparationAndReleaseTaskExecutionInformation
@@ -206,6 +211,7 @@ from .batch_service_client_enums import (
     DependencyAction,
     AutoUserScope,
     ElevationLevel,
+    OutputFileUploadCondition,
     ComputeNodeFillType,
     CertificateStoreLocation,
     CertificateVisibility,
@@ -214,9 +220,10 @@ from .batch_service_client_enums import (
     OnAllTasksComplete,
     OnTaskFailure,
     JobScheduleState,
-    SchedulingErrorCategory,
+    ErrorCategory,
     JobState,
     JobPreparationTaskState,
+    TaskExecutionResult,
     JobReleaseTaskState,
     PoolState,
     AllocationState,
@@ -260,8 +267,13 @@ __all__ = [
     'ExitConditions',
     'AutoUserSpecification',
     'UserIdentity',
+    'LinuxUserConfiguration',
     'UserAccount',
     'TaskConstraints',
+    'OutputFileBlobContainerDestination',
+    'OutputFileDestination',
+    'OutputFileUploadOptions',
+    'OutputFile',
     'JobManagerTask',
     'JobPreparationTask',
     'JobReleaseTask',
@@ -287,7 +299,7 @@ __all__ = [
     'JobExecutionInformation',
     'CloudJob',
     'JobAddParameter',
-    'TaskSchedulingError',
+    'TaskFailureInformation',
     'JobPreparationTaskExecutionInformation',
     'JobReleaseTaskExecutionInformation',
     'JobPreparationAndReleaseTaskExecutionInformation',
@@ -430,6 +442,7 @@ __all__ = [
     'DependencyAction',
     'AutoUserScope',
     'ElevationLevel',
+    'OutputFileUploadCondition',
     'ComputeNodeFillType',
     'CertificateStoreLocation',
     'CertificateVisibility',
@@ -438,9 +451,10 @@ __all__ = [
     'OnAllTasksComplete',
     'OnTaskFailure',
     'JobScheduleState',
-    'SchedulingErrorCategory',
+    'ErrorCategory',
     'JobState',
     'JobPreparationTaskState',
+    'TaskExecutionResult',
     'JobReleaseTaskState',
     'PoolState',
     'AllocationState',
