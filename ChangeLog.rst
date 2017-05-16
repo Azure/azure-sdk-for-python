@@ -30,7 +30,7 @@ Configuration from the CLI is:
 Note: CLI and SDK have different versioning story. We do recommend using two different virtual environments. Information will be shared
 automatically since the CLI saves it in the $HOME folder. You do need the `azure-cli-core` package in your SDK environment to use this feature.
 
-***Multiple API Versions support***
+***Multiple API Version support***
 
 To help support of sovereign cloud (i.e. AzureStack, Azure Government, Azure Germany, Microsoft Azure operated by 21Vianet - China), the following packages
 now officially support several API versions in the same package:
