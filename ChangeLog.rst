@@ -1,13 +1,13 @@
-2017-04-27 azure 2.0.0rc7
-+++++++++++++++++++++++++
+2017-05-16 azure 2.0.0
+++++++++++++++++++++++
 
 **Disclaimer**
 
 Starting with this release, we fixed several packaging issues to improve our package generation system
-- Uninstalling of packages using "pip uninstall" now work properly (#1150)
+- Uninstalling of packages using "pip uninstall" now works properly (#1150)
 - setuptools install of "azure" works properly (#728)
 
-Update from 2.0.0rc6 *might* work, but we strongly suggest to create a fresh virtual environment.
+Update from 2.0.0rc6 *might* work, but we strongly suggest creating a fresh virtual environment.
 
 **Features**
 
@@ -27,13 +27,13 @@ Configuration from the CLI is:
 - `az account set --subscriptions <https://docs.microsoft.com/en-us/cli/azure/manage-azure-subscriptions-azure-cli>`__: access to subscription_id
 - `az cloud set --name <https://docs.microsoft.com/en-us/cli/azure/cloud#set>`__: access to base_url (sovereign cloud, Government, Germany, etc.)
 
-Note: CLI and SDK have different versionning story. We do recommend using two different virtual environment. Information will be shared
-automatically since the CLI saves them in the $HOME folder. You do require to install the `azure-cli-core` package in your SDK environment to use this feature.
+Note: CLI and SDK have different versioning story. We do recommend using two different virtual environments. Information will be shared
+automatically since the CLI saves it in the $HOME folder. You do need the `azure-cli-core` package in your SDK environment to use this feature.
 
-***Multiple ApiVersion support***
+***Multiple API Versions support***
 
 To help support of sovereign cloud (i.e. AzureStack, Azure Government, Azure Germany, Microsoft Azure operated by 21Vianet - China), the following packages
-now support officially several ApiVersion in the same package:
+now officially support several API versions in the same package:
 
 -  `azure-mgmt-resource v1.1.x <https://pypi.python.org/pypi/azure-mgmt-resource/1.1.0>`__
 -  `azure-mgmt-compute v1.0.x <https://pypi.python.org/pypi/azure-mgmt-compute/1.0.0>`__
@@ -44,7 +44,7 @@ Please refer to the PyPI page of these packages for supported ApiVersion.
 
 **Breaking changes**
 
-The Azure SDK for Python has now too much services to provide an unique ChangeLog. Please refer to each package HISTORY.txt for details compared to 2.0.0rc6.
+The Azure SDK for Python now has too many services to provide an unique ChangeLog. Please refer to each package's HISTORY.txt for details compared to 2.0.0rc6.
 
 The complete list of packages installed is:
 -  `azure-batch v3.0.0 <https://pypi.python.org/pypi/azure-batch/3.0.0>`__

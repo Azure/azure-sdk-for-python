@@ -8,7 +8,7 @@ of packages that provide Microsoft Azure functionality.
 
 All packages in this bundle have been tested with Python 2.7, 3.3, 3.4, 3.5 and 3.6.
 
-This package uses PEP440 syntax, and then requires pip >= 6.0 and/or setuptools >= 8.0
+This package uses PEP440 syntax, and thus requires pip >= 6.0 and/or setuptools >= 8.0
 to be installed.
 
 

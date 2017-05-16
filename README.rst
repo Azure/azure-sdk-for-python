@@ -27,12 +27,12 @@ If you're currently using the ``azure`` package < 1.0 then please read important
 INSTALLATION
 ============
 
-You can install individually each library for each Azure service:
+You can install each Azure service's library individually:
 
 .. code-block:: console
 
    $ pip install azure-batch          # Install the latest Batch runtime library
-   $ pip install azure-mgmt-scheduler # Install the latest Storage management library
+   $ pip install azure-mgmt-storage   # Install the latest Storage management library
 
 Preview packages can be installed using the ``--pre`` flag:
 
@@ -47,7 +47,7 @@ You can also install a set of Azure libraries in a single line using the ``azure
 
    $ pip install azure
 
-We publish preview version of this package, that you can access using the `--pre` flag:
+We publish a preview version of this package, which you can access using the `--pre` flag:
 
 .. code-block:: console
 

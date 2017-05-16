@@ -4,7 +4,7 @@ Installation
 Installation with pip
 ---------------------
 
-You can install individually each library for each Azure service:
+You can install each Azure service's library individually:
 
 .. code-block:: console
 
@@ -24,7 +24,7 @@ You can also install a set of Azure libraries in a single line using the ``azure
 
    $ pip install azure
    
-We publish preview version of this package, that you can access using the `--pre` flag:
+We publish a preview version of this package, which you can access using the `--pre` flag:
 
 .. code-block:: console
 
