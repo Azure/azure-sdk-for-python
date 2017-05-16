@@ -57,7 +57,7 @@ class DataLakeAnalyticsCatalogManagementClient(object):
     :vartype config: DataLakeAnalyticsCatalogManagementClientConfiguration
 
     :ivar catalog: Catalog operations
-    :vartype catalog: .operations.CatalogOperations
+    :vartype catalog: azure.mgmt.datalake.analytics.catalog.operations.CatalogOperations
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
