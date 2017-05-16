@@ -4,7 +4,7 @@ Installation
 Installation with pip
 ---------------------
 
-You can install individually each library for each Azure service:
+You can install each Azure service's library individually:
 
 .. code-block:: console
 
@@ -18,26 +18,18 @@ Preview packages can be installed using the ``--pre`` flag:
    $ pip install --pre azure-mgmt-compute # will install only the latest Compute Management library
 
 
-You can also install a set of Azure libraries in a single line using the ``azure`` meta-package. Since not all packages in this meta-package are
-published as stable yet, the ``azure`` meta-package is still in preview. 
-However, the core packages, from code quality/completeness perspectives can at this time be considered "stable" 
-- it will be officially labeled as such in sync with other languages as soon as possible. 
-We are not planning on any further major changes until then.
+You can also install a set of Azure libraries in a single line using the ``azure`` meta-package. 
 
-Since it's a preview release, you need to use the ``--pre`` flag:
+.. code-block:: console
+
+   $ pip install azure
+   
+We publish a preview version of this package, which you can access using the `--pre` flag:
 
 .. code-block:: console
 
    $ pip install --pre azure
-   
-or directly
 
-.. code-block:: console
-
-   $ pip install azure==2.0.0rc6
-
-.. important:: The azure meta-package 1.0.3 is deprecated and is not working anymore.
-   
 Available packages
 ------------------
 
