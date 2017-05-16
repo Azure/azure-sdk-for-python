@@ -73,7 +73,7 @@ azure-monitor                         0.3.0
 azure-mgmt-resource                   1.1.0
 azure-mgmt-compute                    1.0.0
 azure-mgmt-network                    1.0.0
-azure-mgmt-storage                    1.0.0rc1
+azure-mgmt-storage                    1.0.0
 azure-mgmt-keyvault                   0.31.0
 azure-graphrbac                       0.30.0
 azure-mgmt-authorization              0.30.0
