@@ -1,0 +1,68 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.6.1 (Windows-10-10.0.15063-SP0) requests/2.14.2 msrest/0.4.7
+          msrest_azure/0.4.7 billingmanagementclient/0.1.0 Azure-SDK-For-Python]
+      accept-language: [en-US]
+      x-ms-client-request-id: [3f839874-37a5-11e7-946c-1866da24a76d]
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Billing/billingPeriods?api-version=2017-04-24-preview
+  response:
+    body: {string: '{"value":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Billing/billingPeriods/201706-1","type":"Microsoft.Billing/billingPeriods","name":"201706-1","properties":{"billingPeriodStartDate":"2017-04-27","billingPeriodEndDate":"2017-05-26"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Billing/billingPeriods/201705-1","type":"Microsoft.Billing/billingPeriods","name":"201705-1","properties":{"billingPeriodStartDate":"2017-03-27","billingPeriodEndDate":"2017-04-26","invoiceIds":["/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Billing/invoices/201705-217089190378988"]}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Billing/billingPeriods/201704-1","type":"Microsoft.Billing/billingPeriods","name":"201704-1","properties":{"billingPeriodStartDate":"2017-02-27","billingPeriodEndDate":"2017-03-26","invoiceIds":["/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Billing/invoices/201704-117949190364043"]}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Billing/billingPeriods/201703-1","type":"Microsoft.Billing/billingPeriods","name":"201703-1","properties":{"billingPeriodStartDate":"2017-01-27","billingPeriodEndDate":"2017-02-26"}}]}'}
+    headers:
+      Cache-Control: [no-cache]
+      Content-Type: [application/json; charset=utf-8]
+      Date: ['Sat, 13 May 2017 06:27:37 GMT']
+      Expires: ['-1']
+      Pragma: [no-cache]
+      Server: [Microsoft-IIS/8.5]
+      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
+      Transfer-Encoding: [chunked]
+      Vary: [Accept-Encoding]
+      X-AspNet-Version: [4.0.30319]
+      X-Powered-By: [ASP.NET]
+      content-length: ['1317']
+      x-ms-correlation-request-id: [519d0615-db72-4278-a286-c8a957e64712]
+      x-ms-ratelimit-remaining-subscription-resource-requests: ['99']
+      x-ms-request-id: [519d0615-db72-4278-a286-c8a957e64712]
+      x-ms-routing-request-id: ['WESTUS2:20170513T062737Z:519d0615-db72-4278-a286-c8a957e64712']
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.6.1 (Windows-10-10.0.15063-SP0) requests/2.14.2 msrest/0.4.7
+          msrest_azure/0.4.7 billingmanagementclient/0.1.0 Azure-SDK-For-Python]
+      accept-language: [en-US]
+      x-ms-client-request-id: [423f16ba-37a5-11e7-af4b-1866da24a76d]
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Billing/billingPeriods/201706-1?api-version=2017-04-24-preview
+  response:
+    body: {string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Billing/billingPeriods/201706-1","type":"Microsoft.Billing/billingPeriods","name":"201706-1","properties":{"billingPeriodStartDate":"2017-04-27","billingPeriodEndDate":"2017-05-26"}}'}
+    headers:
+      Cache-Control: [no-cache]
+      Content-Type: [application/json; charset=utf-8]
+      Date: ['Sat, 13 May 2017 06:27:46 GMT']
+      Expires: ['-1']
+      Pragma: [no-cache]
+      Server: [Microsoft-IIS/8.5]
+      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
+      Transfer-Encoding: [chunked]
+      Vary: [Accept-Encoding]
+      X-AspNet-Version: [4.0.30319]
+      X-Powered-By: [ASP.NET]
+      content-length: ['261']
+      x-ms-correlation-request-id: [3fde8d34-27c8-443b-8601-1900fc3f90b3]
+      x-ms-ratelimit-remaining-subscription-resource-requests: ['99']
+      x-ms-request-id: [3fde8d34-27c8-443b-8601-1900fc3f90b3]
+      x-ms-routing-request-id: ['WESTUS2:20170513T062747Z:3fde8d34-27c8-443b-8601-1900fc3f90b3']
+    status: {code: 200, message: OK}
+version: 1
