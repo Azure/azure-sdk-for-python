@@ -27,40 +27,31 @@ If you're currently using the ``azure`` package < 1.0 then please read important
 INSTALLATION
 ============
 
-You can install each library individually for each Azure service:
+You can install individually each library for each Azure service:
 
 .. code-block:: console
 
-   $ pip install azure-batch         # Install the latest Batch runtime library
-   $ pip install azure-mgmt-storage  # Install the latest Storage management library
+   $ pip install azure-batch          # Install the latest Batch runtime library
+   $ pip install azure-mgmt-scheduler # Install the latest Storage management library
 
 Preview packages can be installed using the ``--pre`` flag:
 
 .. code-block:: console
 
-   $ pip install --pre azure-mgmt-trafficmanager # will install the latest Traffic Manager
+   $ pip install --pre azure-mgmt-compute # will install only the latest Compute Management library
 
 
-You can also install a set of Azure libraries in a single line using the ``azure`` meta-package.
-Since not all packages in this meta-package are
-published as stable yet, the ``azure`` meta-package is still a release candidate and not final yet.
-However, the core packages, from code quality/completeness perspectives can at this time be considered "stable" 
-The ``azure`` package will be officially labeled stable in sync with other language SDKs as soon as possible. 
-We are not planning on any further major changes until then.
+You can also install a set of Azure libraries in a single line using the ``azure`` meta-package. 
 
-**Since it's a preview release, you need to use the ``--pre`` flag:**
+.. code-block:: console
+
+   $ pip install azure
+
+We publish preview version of this package, that you can access using the `--pre` flag:
 
 .. code-block:: console
 
    $ pip install --pre azure
-   
-or directly
-
-.. code-block:: console
-
-   $ pip install azure==2.0.0rc6
-
-**The azure meta-package 1.0.3 is deprecated and no longer properly functions.**
 
 The full list of available packages and their latest version can be found on our 
 `installation page on ReadTheDocs <http://azure-sdk-for-python.rtfd.io/en/latest/installation.html>`__.
