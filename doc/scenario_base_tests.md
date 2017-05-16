@@ -103,9 +103,9 @@ class StorageAccountTests(ScenarioTest):
 ```
 Note:
 
-One of the most important features of `ScenarioTest` is names managements. For the tests to be able to run in a live environment and avoid name collision a strong name randomization is required. On the other hand, for the tests to be recorded and replay, the naming mechanism must be repeatable during playback mode. The `self.create_randome_name` assist the test to achieve the goal.
+One of the most important features of `ScenarioTest` is name management. For the tests to be able to run in a live environment and avoid name collision a strong name randomization is required. On the other hand, for the tests to be recorded and replay, the naming mechanism must be repeatable during playback mode. The `self.create_random_name` method helps the test achieve the goal.
 
-The method will create a random name during recording, and when it is called during playback, it returns a name (internally it is called moniker) based on the sequence of the name request. The order won't change once the test is written. Peak into the recording file, you find no random name. For example, note the names like 'clitest.rg000001', they aren't the names of the resources which are actually created in Azure. They're placed before the requests are persisted.
+The method will create a random name during recording, and when it is called during playback, it returns a name (internally it is called moniker) based on the sequence of the name request. The order won't change once the test is written. Peek into the recording file, you find no random name. For example, note the names like 'clitest.rg000001', they aren't the names of the resources which are actually created in Azure. They're placed before the requests are persisted.
 ``` Yaml
 - request:
     body: '{"location": "westus", "tags": {"use": "az-test"}}'
@@ -136,7 +136,7 @@ The method will create a random name during recording, and when it is called dur
     status: {code: 201, message: Created}
 ```
 
-In short, for the names of any Azure resources used in the tests, always use the `self.create_random_name` to generate its value. Also make sure the correct length is given to the method because different resource have different limitation of the name length. The method will always try to create the longest name possible to fully randomize the name. 
+In short, for the names of any Azure resources used in the tests, always use `self.create_random_name` to generate its value. Also make sure the correct length is given to the method because different resource have different limitation of the name length. The method will always try to create the longest name possible to fully randomize the name. 
 
 
 ### Sample 7. Prepare storage account for tests
@@ -161,7 +161,7 @@ Note:
 @StorageAccountPreparer(sku='Standard_LRS', location='southcentralus', parameter_name='storage')
 ```
 
-### Sampel 8. Prepare multiple storage accounts for tests
+### Sample 8. Prepare multiple storage accounts for tests
 ``` Python
 class StorageAccountTests(ScenarioTest):
     @ResourceGroupPreparer()
