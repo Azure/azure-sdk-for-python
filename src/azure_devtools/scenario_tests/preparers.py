@@ -6,7 +6,12 @@
 import inspect
 import functools
 import os
+import uuid
 
+from azure.common.client_factory import get_client_from_cli_profile
+from azure.graphrbac import GraphRbacManagementClient
+from azure.mgmt.authorization import AuthorizationManagementClient
+from azure.mgmt.graphrbac.models import PasswordCredential
 from azure.mgmt.resource.resources import ResourceManagementClient
 from azure.mgmt.storage import StorageManagementClient
 
@@ -128,7 +133,7 @@ class ResourceGroupPreparer(AbstractPreparer, SingleValueReplacer):
         self.dev_setting_location = os.environ.get(dev_setting_location, location)
 
         # This should work with 'az login'
-        self.client = ResourceManagementClient()
+        self.client = get_client_from_cli_profile(ResourceManagementClient)
 
     def create_resource(self, name, **kwargs):
         if self.dev_setting_name:
@@ -168,7 +173,7 @@ class StorageAccountPreparer(AbstractPreparer, SingleValueReplacer):
         self.parameter_name = parameter_name
 
         self.dev_setting_name = os.environ.get(dev_setting_name, None)
-        self.client = StorageManagementClient()
+        self.client = get_client_from_cli_profile(StorageManagementClient)
 
     def create_resource(self, name, **kwargs):
         group = self._get_resource_group(**kwargs)
@@ -229,8 +234,8 @@ class KeyVaultPreparer(AbstractPreparer, SingleValueReplacer):
     def create_resource(self, name, **kwargs):
         if not self.dev_setting_name:
             group = self._get_resource_group(**kwargs)
-            template = 'az keyvault create -n {} -g {} -l {} --sku {}'
-            execute(template.format(name, group, self.location, self.sku))
+            # template = 'az keyvault create -n {} -g {} -l {} --sku {}'
+            # execute(template.format(name, group, self.location, self.sku))
             return {self.parameter_name: name}
         else:
             return {self.parameter_name: self.dev_setting_name}
@@ -238,7 +243,7 @@ class KeyVaultPreparer(AbstractPreparer, SingleValueReplacer):
     def remove_resource(self, name, **kwargs):
         if not self.skip_delete and not self.dev_setting_name:
             group = self._get_resource_group(**kwargs)
-            execute('az keyvault delete -n {} -g {} --yes'.format(name, group))
+            # execute('az keyvault delete -n {} -g {} --yes'.format(name, group))
 
     def _get_resource_group(self, **kwargs):
         try:
@@ -258,25 +263,47 @@ class RoleBasedServicePrincipalPreparer(AbstractPreparer, SingleValueReplacer):
                  dev_setting_sp_password='AZURE_CLI_TEST_DEV_SP_PASSWORD'):
         super(RoleBasedServicePrincipalPreparer, self).__init__(name_prefix, 24)
         self.skip_assignment = skip_assignment
-        self.result = {}
+        self.result = None
         self.parameter_name = parameter_name
         self.parameter_password = parameter_password
         self.dev_setting_sp_name = os.environ.get(dev_setting_sp_name, None)
         self.dev_setting_sp_password = os.environ.get(dev_setting_sp_password, None)
 
+        self.graph_client = get_client_from_cli_profile(GraphRbacManagementClient)
+
     def create_resource(self, name, **kwargs):
         if not self.dev_setting_sp_name:
-            command = 'az ad sp create-for-rbac -n {}{}' \
-                .format(name, ' --skip-assignment' if self.skip_assignment else '')
-            self.result = execute(command).get_output_in_json()
-            return {self.parameter_name: name, self.parameter_password: self.result['password']}
+            # command = 'az ad sp create-for-rbac -n {}{}' \
+            #     .format(name, ' --skip-assignment' if self.skip_assignment else '')
+            # self.result = execute(command).get_output_in_json()
+            password = uuid.uuid4()
+            app = self.graph_client.applications.create(
+                {
+                    'available_to_other_tenants': False,
+                    'display_name': name,
+                    'identifier_uris': [name],
+                    'password_creds': [
+                        PasswordCredential(
+                            value=password,
+                        )
+                    ]
+                }
+            )
+            self.result = self.graph_client.service_principals.create(
+                {
+                    'app_id': app.app_id,
+                    'account_enabled': True,
+                }
+            )
+            return {self.parameter_name: name, self.parameter_password: password}
         else:
             return {self.parameter_name: self.dev_setting_sp_name,
                     self.parameter_password: self.dev_setting_sp_password}
 
     def remove_resource(self, name, **kwargs):
         if not self.dev_setting_sp_name:
-            execute('az ad sp delete --id {}'.format(self.result['appId']))
+            # execute('az ad sp delete --id {}'.format(self.result['appId']))
+            self.graph_client.service_principals.delete(self.result.object_id)
 
 
 # Utility
