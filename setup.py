@@ -27,7 +27,13 @@ CLASSIFIERS = [
 
 
 DEPENDENCIES = [
-    'setuptools-markdown'
+    'azure-common~=1.1.6',
+    'azure-mgmt-keyvault~=0.31.0',
+    'azure-mgmt-resource~=1.0.0rc1',
+    'azure-mgmt-storage~=1.0.0rc1',
+    'mock',
+    'setuptools-markdown',
+    'vcrpy==1.10.3',
 ]
 
 with open('README.rst', 'r', encoding='utf-8') as f:
@@ -39,19 +45,17 @@ with open('HISTORY.rst', 'r', encoding='utf-8') as f:
 setup(
     name='azure-devtools',
     version=VERSION,
-    description='Microsoft Azure Developing Tools for SDK',
-    long_description_markdown_file='README.md'
+    description='Microsoft Azure Development Tools for SDK',
+    long_description_markdown_file='README.md',
     license='MIT',
     author='Microsoft Corporation',
     author_email='azpycli@microsoft.com',
-    url='https://github.com/Azure/azure-cli',
+    url='https://github.com/Azure/azure-python-devtools',
     zip_safe=False,
     classifiers=CLASSIFIERS,
     packages=[
-        'azure',
-        'azure.devtools',
-        'azure.devtools.automationsdk'
+        'azure_devtools',
+        'azure_devtools.scenario_tests'
     ],
     install_requires=DEPENDENCIES,
-    cmdclass=cmdclass
 )
