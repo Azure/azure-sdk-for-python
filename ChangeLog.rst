@@ -27,7 +27,7 @@ Configuration from the CLI is:
 - `az account set --subscriptions <https://docs.microsoft.com/en-us/cli/azure/manage-azure-subscriptions-azure-cli>`__: access to subscription_id
 - `az cloud set --name <https://docs.microsoft.com/en-us/cli/azure/cloud#set>`__: access to base_url (sovereign cloud, Government, Germany, etc.)
 
-Note: CLI and SDK have different versioning story. We do recommend using two different virtual environments. Information will be shared
+Note: CLI and SDK are versioned separately. We do recommend using two different virtual environments. Information will be shared
 automatically since the CLI saves it in the $HOME folder. You do need the `azure-cli-core` package in your SDK environment to use this feature.
 
 ***Multiple API Version support***
