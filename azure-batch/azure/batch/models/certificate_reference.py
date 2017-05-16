@@ -30,8 +30,7 @@ class CertificateReference(Model):
      supplied to the task to query for this location. For certificates with
      visibility of 'remoteUser', a 'certs' directory is created in the user's
      home directory (e.g., /home/{user-name}/certs) and certificates are placed
-     in that directory. Possible values include: 'currentUser', 'localMachine',
-     'unmapped'
+     in that directory. Possible values include: 'currentUser', 'localMachine'
     :type store_location: str or :class:`CertificateStoreLocation
      <azure.batch.models.CertificateStoreLocation>`
     :param store_name: The name of the certificate store on the compute node

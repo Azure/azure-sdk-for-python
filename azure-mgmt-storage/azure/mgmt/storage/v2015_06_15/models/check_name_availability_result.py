@@ -15,16 +15,16 @@ from msrest.serialization import Model
 class CheckNameAvailabilityResult(Model):
     """The CheckNameAvailability operation response.
 
-    :param name_available: Gets a boolean value that indicates whether the
-     name is available for you to use. If true, the name is available. If
-     false, the name has already been taken or is invalid and cannot be used.
+    :param name_available: Boolean value that indicates whether the name is
+     available for you to use. If true, the name is available. If false, the
+     name has already been taken or is invalid and cannot be used.
     :type name_available: bool
-    :param reason: Gets the reason that a storage account name could not be
-     used. The Reason element is only returned if NameAvailable is false.
-     Possible values include: 'AccountNameInvalid', 'AlreadyExists'
+    :param reason: The reason that a storage account name could not be used.
+     The Reason element is only returned if NameAvailable is false. Possible
+     values include: 'AccountNameInvalid', 'AlreadyExists'
     :type reason: str or :class:`Reason
      <azure.mgmt.storage.v2015_06_15.models.Reason>`
-    :param message: Gets an error message explaining the Reason value in more
+    :param message: The error message explaining the Reason value in more
      detail.
     :type message: str
     """

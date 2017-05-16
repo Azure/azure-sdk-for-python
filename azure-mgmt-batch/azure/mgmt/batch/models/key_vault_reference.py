@@ -18,7 +18,7 @@ class KeyVaultReference(Model):
     :param id: The resource ID of the Azure key vault associated with the
      Batch account.
     :type id: str
-    :param url: The Url of the Azure key vault associated with the Batch
+    :param url: The URL of the Azure key vault associated with the Batch
      account.
     :type url: str
     """

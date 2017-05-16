@@ -18,18 +18,18 @@ class BatchAccount(Resource):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar id: The ID of the resource
+    :ivar id: The ID of the resource.
     :vartype id: str
-    :ivar name: The name of the resource
+    :ivar name: The name of the resource.
     :vartype name: str
-    :ivar type: The type of the resource
+    :ivar type: The type of the resource.
     :vartype type: str
-    :ivar location: The location of the resource
+    :ivar location: The location of the resource.
     :vartype location: str
-    :ivar tags: The tags of the resource
+    :ivar tags: The tags of the resource.
     :vartype tags: dict
-    :ivar account_endpoint: The endpoint used by this account to interact with
-     the Batch services.
+    :ivar account_endpoint: The account endpoint used to interact with the
+     Batch service.
     :vartype account_endpoint: str
     :ivar provisioning_state: The provisioned state of the resource. Possible
      values include: 'Invalid', 'Creating', 'Deleting', 'Succeeded', 'Failed',
@@ -45,12 +45,16 @@ class BatchAccount(Resource):
      with the Batch account.
     :vartype key_vault_reference: :class:`KeyVaultReference
      <azure.mgmt.batch.models.KeyVaultReference>`
-    :ivar auto_storage: The properties and status of any auto storage account
+    :ivar auto_storage: The properties and status of any auto-storage account
      associated with the Batch account.
     :vartype auto_storage: :class:`AutoStorageProperties
      <azure.mgmt.batch.models.AutoStorageProperties>`
-    :ivar core_quota: The core quota for this Batch account.
-    :vartype core_quota: int
+    :ivar dedicated_core_quota: The dedicated core quota for this Batch
+     account.
+    :vartype dedicated_core_quota: int
+    :ivar low_priority_core_quota: The low-priority core quota for this Batch
+     account.
+    :vartype low_priority_core_quota: int
     :ivar pool_quota: The pool quota for this Batch account.
     :vartype pool_quota: int
     :ivar active_job_and_job_schedule_quota: The active job and job schedule
@@ -69,7 +73,8 @@ class BatchAccount(Resource):
         'pool_allocation_mode': {'readonly': True},
         'key_vault_reference': {'readonly': True},
         'auto_storage': {'readonly': True},
-        'core_quota': {'readonly': True},
+        'dedicated_core_quota': {'readonly': True},
+        'low_priority_core_quota': {'readonly': True},
         'pool_quota': {'readonly': True},
         'active_job_and_job_schedule_quota': {'readonly': True},
     }
@@ -85,7 +90,8 @@ class BatchAccount(Resource):
         'pool_allocation_mode': {'key': 'properties.poolAllocationMode', 'type': 'PoolAllocationMode'},
         'key_vault_reference': {'key': 'properties.keyVaultReference', 'type': 'KeyVaultReference'},
         'auto_storage': {'key': 'properties.autoStorage', 'type': 'AutoStorageProperties'},
-        'core_quota': {'key': 'properties.coreQuota', 'type': 'int'},
+        'dedicated_core_quota': {'key': 'properties.dedicatedCoreQuota', 'type': 'int'},
+        'low_priority_core_quota': {'key': 'properties.lowPriorityCoreQuota', 'type': 'int'},
         'pool_quota': {'key': 'properties.poolQuota', 'type': 'int'},
         'active_job_and_job_schedule_quota': {'key': 'properties.activeJobAndJobScheduleQuota', 'type': 'int'},
     }
@@ -97,6 +103,7 @@ class BatchAccount(Resource):
         self.pool_allocation_mode = None
         self.key_vault_reference = None
         self.auto_storage = None
-        self.core_quota = None
+        self.dedicated_core_quota = None
+        self.low_priority_core_quota = None
         self.pool_quota = None
         self.active_job_and_job_schedule_quota = None

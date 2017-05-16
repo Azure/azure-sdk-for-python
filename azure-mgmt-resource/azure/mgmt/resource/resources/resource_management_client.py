@@ -55,19 +55,6 @@ class ResourceManagementClient(object):
     :ivar config: Configuration for client.
     :vartype config: ResourceManagementClientConfiguration
 
-    :ivar deployments: Deployments operations
-    :vartype deployments: .operations.DeploymentsOperations
-    :ivar providers: Providers operations
-    :vartype providers: .operations.ProvidersOperations
-    :ivar resource_groups: ResourceGroups operations
-    :vartype resource_groups: .operations.ResourceGroupsOperations
-    :ivar resources: Resources operations
-    :vartype resources: .operations.ResourcesOperations
-    :ivar tags: Tags operations
-    :vartype tags: .operations.TagsOperations
-    :ivar deployment_operations: DeploymentOperations operations
-    :vartype deployment_operations: .operations.DeploymentOperations
-
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
      object<msrestazure.azure_active_directory>`
@@ -76,8 +63,10 @@ class ResourceManagementClient(object):
     :param str base_url: Service URL
     """
 
+    LATEST_API_VERSION = '2017-05-10'
+
     def __init__(
-            self, credentials, subscription_id, api_version = '2016-09-01', base_url=None):
+            self, credentials, subscription_id, api_version=LATEST_API_VERSION, base_url=None):
 
         self.config = ResourceManagementClientConfiguration(credentials, subscription_id, base_url)
         self._client = ServiceClient(self.config.credentials, self.config)
@@ -88,72 +77,86 @@ class ResourceManagementClient(object):
         self._deserialize = Deserializer(client_models)
 
     @classmethod
-    def models(cls, api_version = '2016-09-01'):
-        if api_version =='2016-09-01':
-            from .v2016_09_01 import models
-            return models
-        elif api_version =='2016-02-01':
+    def models(cls, api_version=LATEST_API_VERSION):
+        if api_version == '2016-02-01':
             from .v2016_02_01 import models
             return models
+        elif api_version == '2016-09-01':
+            from .v2016_09_01 import models
+            return models
+        elif api_version == '2017-05-10':
+            from .v2017_05_10 import models
+            return models
+        raise NotImplementedError("APIVersion {} is not available".format(api_version))
+
+    @property
+    def deployment_operations(self):
+        if self.api_version == '2016-02-01':
+            from .v2016_02_01.operations import DeploymentOperations as OperationClass
+        elif self.api_version == '2016-09-01':
+            from .v2016_09_01.operations import DeploymentOperations as OperationClass
+        elif self.api_version == '2017-05-10':
+            from .v2017_05_10.operations import DeploymentOperations as OperationClass
         else:
-            raise NotImplementedError("APIVersion {} is not available".format(api_version))
+            raise NotImplementedError("APIVersion {} is not available".format(self.api_version))
+        return OperationClass(self._client, self.config, self._serialize, self._deserialize)
 
     @property
     def deployments(self):
-        if self.api_version =='2016-09-01':
-            from .v2016_09_01.operations.deployments_operations import DeploymentsOperations as OperationClass
-        elif self.api_version =='2016-02-01':
-            from .v2016_02_01.operations.deployments_operations import DeploymentsOperations as OperationClass
+        if self.api_version == '2016-02-01':
+            from .v2016_02_01.operations import DeploymentsOperations as OperationClass
+        elif self.api_version == '2016-09-01':
+            from .v2016_09_01.operations import DeploymentsOperations as OperationClass
+        elif self.api_version == '2017-05-10':
+            from .v2017_05_10.operations import DeploymentsOperations as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(self.api_version))
         return OperationClass(self._client, self.config, self._serialize, self._deserialize)
 
     @property
     def providers(self):
-        if self.api_version =='2016-09-01':
-            from .v2016_09_01.operations.providers_operations import ProvidersOperations as OperationClass
-        elif self.api_version =='2016-02-01':
-            from .v2016_02_01.operations.providers_operations import ProvidersOperations as OperationClass
+        if self.api_version == '2016-02-01':
+            from .v2016_02_01.operations import ProvidersOperations as OperationClass
+        elif self.api_version == '2016-09-01':
+            from .v2016_09_01.operations import ProvidersOperations as OperationClass
+        elif self.api_version == '2017-05-10':
+            from .v2017_05_10.operations import ProvidersOperations as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(self.api_version))
         return OperationClass(self._client, self.config, self._serialize, self._deserialize)
 
     @property
     def resource_groups(self):
-        if self.api_version =='2016-09-01':
-            from .v2016_09_01.operations.resource_groups_operations import ResourceGroupsOperations as OperationClass
-        elif self.api_version =='2016-02-01':
-            from .v2016_02_01.operations.resource_groups_operations import ResourceGroupsOperations as OperationClass
+        if self.api_version == '2016-02-01':
+            from .v2016_02_01.operations import ResourceGroupsOperations as OperationClass
+        elif self.api_version == '2016-09-01':
+            from .v2016_09_01.operations import ResourceGroupsOperations as OperationClass
+        elif self.api_version == '2017-05-10':
+            from .v2017_05_10.operations import ResourceGroupsOperations as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(self.api_version))
         return OperationClass(self._client, self.config, self._serialize, self._deserialize)
 
     @property
     def resources(self):
-        if self.api_version =='2016-09-01':
-            from .v2016_09_01.operations.resources_operations import ResourcesOperations as OperationClass
-        elif self.api_version =='2016-02-01':
-            from .v2016_02_01.operations.resources_operations import ResourcesOperations as OperationClass
+        if self.api_version == '2016-02-01':
+            from .v2016_02_01.operations import ResourcesOperations as OperationClass
+        elif self.api_version == '2016-09-01':
+            from .v2016_09_01.operations import ResourcesOperations as OperationClass
+        elif self.api_version == '2017-05-10':
+            from .v2017_05_10.operations import ResourcesOperations as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(self.api_version))
         return OperationClass(self._client, self.config, self._serialize, self._deserialize)
 
     @property
     def tags(self):
-        if self.api_version =='2016-09-01':
-            from .v2016_09_01.operations.tags_operations import TagsOperations as OperationClass
-        elif self.api_version =='2016-02-01':
-            from .v2016_02_01.operations.tags_operations import TagsOperations as OperationClass
-        else:
-            raise NotImplementedError("APIVersion {} is not available".format(self.api_version))
-        return OperationClass(self._client, self.config, self._serialize, self._deserialize)
-
-    @property
-    def deployment_operations(self):
-        if self.api_version =='2016-09-01':
-            from .v2016_09_01.operations.deployment_operations import DeploymentOperations as OperationClass
-        elif self.api_version =='2016-02-01':
-            from .v2016_02_01.operations.deployment_operations import DeploymentOperations as OperationClass
+        if self.api_version == '2016-02-01':
+            from .v2016_02_01.operations import TagsOperations as OperationClass
+        elif self.api_version == '2016-09-01':
+            from .v2016_09_01.operations import TagsOperations as OperationClass
+        elif self.api_version == '2017-05-10':
+            from .v2017_05_10.operations import TagsOperations as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(self.api_version))
         return OperationClass(self._client, self.config, self._serialize, self._deserialize)

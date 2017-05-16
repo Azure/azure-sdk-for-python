@@ -13,7 +13,7 @@ from msrest.serialization import Model
 
 
 class ErrorBody(Model):
-    """ErrorBody.
+    """Cognitive Services error body.
 
     :param code: error code
     :type code: str

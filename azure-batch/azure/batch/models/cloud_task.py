@@ -69,6 +69,12 @@ class CloudTask(Model):
      compute node on which the primary task is executed.
     :type resource_files: list of :class:`ResourceFile
      <azure.batch.models.ResourceFile>`
+    :param output_files: A list of files that the Batch service will upload
+     from the compute node after running the command line. For multi-instance
+     tasks, the files will only be uploaded from the compute node on which the
+     primary task is executed.
+    :type output_files: list of :class:`OutputFile
+     <azure.batch.models.OutputFile>`
     :param environment_settings: A list of environment variable settings for
      the task.
     :type environment_settings: list of :class:`EnvironmentSetting
@@ -137,6 +143,7 @@ class CloudTask(Model):
         'previous_state_transition_time': {'key': 'previousStateTransitionTime', 'type': 'iso-8601'},
         'command_line': {'key': 'commandLine', 'type': 'str'},
         'resource_files': {'key': 'resourceFiles', 'type': '[ResourceFile]'},
+        'output_files': {'key': 'outputFiles', 'type': '[OutputFile]'},
         'environment_settings': {'key': 'environmentSettings', 'type': '[EnvironmentSetting]'},
         'affinity_info': {'key': 'affinityInfo', 'type': 'AffinityInformation'},
         'constraints': {'key': 'constraints', 'type': 'TaskConstraints'},
@@ -150,7 +157,7 @@ class CloudTask(Model):
         'authentication_token_settings': {'key': 'authenticationTokenSettings', 'type': 'AuthenticationTokenSettings'},
     }
 
-    def __init__(self, id=None, display_name=None, url=None, e_tag=None, last_modified=None, creation_time=None, exit_conditions=None, state=None, state_transition_time=None, previous_state=None, previous_state_transition_time=None, command_line=None, resource_files=None, environment_settings=None, affinity_info=None, constraints=None, user_identity=None, execution_info=None, node_info=None, multi_instance_settings=None, stats=None, depends_on=None, application_package_references=None, authentication_token_settings=None):
+    def __init__(self, id=None, display_name=None, url=None, e_tag=None, last_modified=None, creation_time=None, exit_conditions=None, state=None, state_transition_time=None, previous_state=None, previous_state_transition_time=None, command_line=None, resource_files=None, output_files=None, environment_settings=None, affinity_info=None, constraints=None, user_identity=None, execution_info=None, node_info=None, multi_instance_settings=None, stats=None, depends_on=None, application_package_references=None, authentication_token_settings=None):
         self.id = id
         self.display_name = display_name
         self.url = url
@@ -164,6 +171,7 @@ class CloudTask(Model):
         self.previous_state_transition_time = previous_state_transition_time
         self.command_line = command_line
         self.resource_files = resource_files
+        self.output_files = output_files
         self.environment_settings = environment_settings
         self.affinity_info = affinity_info
         self.constraints = constraints

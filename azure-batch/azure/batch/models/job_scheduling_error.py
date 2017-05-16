@@ -16,9 +16,9 @@ class JobSchedulingError(Model):
     """An error encountered by the Batch service when scheduling a job.
 
     :param category: The category of the job scheduling error. Possible values
-     include: 'userError', 'serverError', 'unmapped'
-    :type category: str or :class:`SchedulingErrorCategory
-     <azure.batch.models.SchedulingErrorCategory>`
+     include: 'userError', 'serverError'
+    :type category: str or :class:`ErrorCategory
+     <azure.batch.models.ErrorCategory>`
     :param code: An identifier for the job scheduling error. Codes are
      invariant and are intended to be consumed programmatically.
     :type code: str
@@ -36,7 +36,7 @@ class JobSchedulingError(Model):
     }
 
     _attribute_map = {
-        'category': {'key': 'category', 'type': 'SchedulingErrorCategory'},
+        'category': {'key': 'category', 'type': 'ErrorCategory'},
         'code': {'key': 'code', 'type': 'str'},
         'message': {'key': 'message', 'type': 'str'},
         'details': {'key': 'details', 'type': '[NameValuePair]'},

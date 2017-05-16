@@ -3,6 +3,45 @@
 Release History
 ===============
 
+1.1.0 (2017-05-15)
+++++++++++++++++++
+
+- Tag 1.1.0rc2 as stable (same content)
+
+1.1.0rc2 (2017-05-12)
++++++++++++++++++++++
+
+- Add Policy ApiVersion 2015-10-01-preview (AzureStack default)
+
+1.1.0rc1 (2017-05-08)
++++++++++++++++++++++
+
+- New default ApiVersion is now 2017-05-10. Breaking changes described in 1.0.0rc3 are now applied by default.
+
+1.0.0rc3 (2017-05-04)
++++++++++++++++++++++
+
+**Bug fixes**
+
+- Subscriptions: Removed deprecated tenant ID
+- Managed Applications: All list methods return an iterator
+
+**New Resources ApiVersion 2017-05-10**
+
+- Deploy resources to multiple resource groups from one template
+- Some breaking changes are introduced compared to previous versions:
+
+   - deployments.list has been renamed deployments.list_by_resource_group
+   - resource_groups.list_resources has been moved to resources.list_by_resource_group
+   - resource_groups.patch has been renamed to resource_groups.update and now takes an instance of ResourceGroupPatchable (and not ResourceGroup).
+
+The default is still 2016-09-01 in this package, waiting for the ApiVersion to be widely available.
+
+1.0.0rc2 (2017-05-02)
++++++++++++++++++++++
+
+- Add Managed Applications client
+
 1.0.0rc1 (2017-04-11)
 +++++++++++++++++++++
 

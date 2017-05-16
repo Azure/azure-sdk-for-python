@@ -3,6 +3,11 @@
 Release History
 ===============
 
+0.1.3 (2017-05-02)
+++++++++++++++++++
+
+* Added property enableAutomaticFailover and consistencyPolicy ConsistentPrefix
+
 0.1.2 (2017-04-20)
 ++++++++++++++++++
 

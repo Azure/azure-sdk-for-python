@@ -38,10 +38,11 @@ class SubtaskInformation(Model):
      user termination via the API) you may see an operating system-defined exit
      code.
     :type exit_code: int
-    :param scheduling_error: Details of any error encountered scheduling the
-     subtask.
-    :type scheduling_error: :class:`TaskSchedulingError
-     <azure.batch.models.TaskSchedulingError>`
+    :param failure_info: Information describing the task failure, if any. This
+     property is set only if the task is in the completed state and encountered
+     a failure.
+    :type failure_info: :class:`TaskFailureInformation
+     <azure.batch.models.TaskFailureInformation>`
     :param state: The current state of the subtask. Possible values include:
      'preparing', 'running', 'completed'
     :type state: str or :class:`SubtaskState
@@ -58,6 +59,11 @@ class SubtaskInformation(Model):
      entered its previous state. This property is not set if the subtask is in
      its initial running state.
     :type previous_state_transition_time: datetime
+    :param result: The result of the task execution. If the value is 'failed',
+     then the details of the failure can be found in the failureInfo property.
+     Possible values include: 'success', 'failure'
+    :type result: str or :class:`TaskExecutionResult
+     <azure.batch.models.TaskExecutionResult>`
     """
 
     _attribute_map = {
@@ -66,21 +72,23 @@ class SubtaskInformation(Model):
         'start_time': {'key': 'startTime', 'type': 'iso-8601'},
         'end_time': {'key': 'endTime', 'type': 'iso-8601'},
         'exit_code': {'key': 'exitCode', 'type': 'int'},
-        'scheduling_error': {'key': 'schedulingError', 'type': 'TaskSchedulingError'},
+        'failure_info': {'key': 'failureInfo', 'type': 'TaskFailureInformation'},
         'state': {'key': 'state', 'type': 'SubtaskState'},
         'state_transition_time': {'key': 'stateTransitionTime', 'type': 'iso-8601'},
         'previous_state': {'key': 'previousState', 'type': 'SubtaskState'},
         'previous_state_transition_time': {'key': 'previousStateTransitionTime', 'type': 'iso-8601'},
+        'result': {'key': 'result', 'type': 'TaskExecutionResult'},
     }
 
-    def __init__(self, id=None, node_info=None, start_time=None, end_time=None, exit_code=None, scheduling_error=None, state=None, state_transition_time=None, previous_state=None, previous_state_transition_time=None):
+    def __init__(self, id=None, node_info=None, start_time=None, end_time=None, exit_code=None, failure_info=None, state=None, state_transition_time=None, previous_state=None, previous_state_transition_time=None, result=None):
         self.id = id
         self.node_info = node_info
         self.start_time = start_time
         self.end_time = end_time
         self.exit_code = exit_code
-        self.scheduling_error = scheduling_error
+        self.failure_info = failure_info
         self.state = state
         self.state_transition_time = state_transition_time
         self.previous_state = previous_state
         self.previous_state_transition_time = previous_state_transition_time
+        self.result = result
