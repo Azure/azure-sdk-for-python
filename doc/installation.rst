@@ -70,7 +70,7 @@ Package name                          Version
 ===================================== =========
 azure-keyvault                        0.3.4
 azure-monitor                         0.3.0
-azure-mgmt-resource                   1.1.0rc2
+azure-mgmt-resource                   1.1.0
 azure-mgmt-compute                    1.0.0rc2
 azure-mgmt-network                    1.0.0rc3
 azure-mgmt-storage                    1.0.0rc1
