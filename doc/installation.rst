@@ -69,6 +69,7 @@ azure-mgmt-storage                    1.0.0
 azure-mgmt-keyvault                   0.31.0
 azure-graphrbac                       0.30.0
 azure-mgmt-authorization              0.30.0
+azure-mgmt-billing                    0.1.0
 azure-mgmt-cdn                        0.30.3
 azure-mgmt-containerregistry          0.2.1
 azure-mgmt-commerce                   0.30.0rc6
