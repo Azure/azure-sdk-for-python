@@ -73,6 +73,7 @@ azure-mgmt-billing                    0.1.0
 azure-mgmt-cdn                        0.30.3
 azure-mgmt-containerregistry          0.2.1
 azure-mgmt-commerce                   0.30.0rc6
+azure-mgmt-consumption                0.1.0
 azure-mgmt-datalake-analytics         0.1.4
 azure-mgmt-datalake-store             0.1.3
 azure-mgmt-documentdb                 0.1.3
