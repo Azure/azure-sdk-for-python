@@ -33,6 +33,11 @@ class UserCreateParameters(Model):
      user account. It is used to associate an on-premises Active Directory user
      account with their Azure AD user object.
     :type immutable_id: str
+    :param usage_location: A two letter country code (ISO standard 3166).
+     Required for users that will be assigned licenses due to legal requirement
+     to check for availability of services in countries. Examples include:
+     "US", "JP", and "GB".
+    :type usage_location: str
     """
 
     _validation = {
@@ -50,12 +55,14 @@ class UserCreateParameters(Model):
         'user_principal_name': {'key': 'userPrincipalName', 'type': 'str'},
         'mail_nickname': {'key': 'mailNickname', 'type': 'str'},
         'immutable_id': {'key': 'immutableId', 'type': 'str'},
+        'usage_location': {'key': 'usageLocation', 'type': 'str'},
     }
 
-    def __init__(self, account_enabled, display_name, password_profile, user_principal_name, mail_nickname, immutable_id=None):
+    def __init__(self, account_enabled, display_name, password_profile, user_principal_name, mail_nickname, immutable_id=None, usage_location=None):
         self.account_enabled = account_enabled
         self.display_name = display_name
         self.password_profile = password_profile
         self.user_principal_name = user_principal_name
         self.mail_nickname = mail_nickname
         self.immutable_id = immutable_id
+        self.usage_location = usage_location
