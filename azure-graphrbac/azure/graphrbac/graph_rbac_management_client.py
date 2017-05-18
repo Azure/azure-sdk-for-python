@@ -62,15 +62,15 @@ class GraphRbacManagementClient(object):
     :vartype config: GraphRbacManagementClientConfiguration
 
     :ivar objects: Objects operations
-    :vartype objects: .operations.ObjectsOperations
+    :vartype objects: azure.graphrbac.operations.ObjectsOperations
     :ivar applications: Applications operations
-    :vartype applications: .operations.ApplicationsOperations
+    :vartype applications: azure.graphrbac.operations.ApplicationsOperations
     :ivar groups: Groups operations
-    :vartype groups: .operations.GroupsOperations
+    :vartype groups: azure.graphrbac.operations.GroupsOperations
     :ivar service_principals: ServicePrincipals operations
-    :vartype service_principals: .operations.ServicePrincipalsOperations
+    :vartype service_principals: azure.graphrbac.operations.ServicePrincipalsOperations
     :ivar users: Users operations
-    :vartype users: .operations.UsersOperations
+    :vartype users: azure.graphrbac.operations.UsersOperations
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
