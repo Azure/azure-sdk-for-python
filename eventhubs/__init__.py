@@ -24,8 +24,10 @@ class EventHubClient(Container):
     The client to access the Event Hubs service.
     """
     def __init__(self, address=None, *handlers, **kwargs):
-        super(EventHubClient, self).__init__(self, **kwargs)
-        if address:
+        if not address:
+            super(EventHubClient, self).__init__(**kwargs)
+        else:
+            super(EventHubClient, self).__init__(self, **kwargs)
             self.address = Url(address)
             self.receivers = []
             self.shared_connection = None
@@ -143,9 +145,10 @@ class PartitionReceiver(Handler):
         client.create_receiver(client.shared_connection, self.source, name=link_name, handler=self, options=selector)
 
     def on_message(self, event):
-        if self.delegate != None:
-            dispatch(self.delegate, "on_event_data", event.message)
-        self.offset = EventData.offset(event.message)
+        _message = event.message
+        if self.delegate:
+            dispatch(self.delegate, "on_event_data", _message)
+        self.offset = EventData.offset(_message)
 
     def on_link_local_open(self, event):
         logging.info("Link starts. entity=%s offset=%s", self.source, self.offset)
