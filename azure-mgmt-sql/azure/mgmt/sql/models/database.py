@@ -166,8 +166,8 @@ class Database(TrackedResource):
     :ivar recommended_index: The recommended indices for this database.
     :vartype recommended_index: list of :class:`RecommendedIndex
      <azure.mgmt.sql.models.RecommendedIndex>`
-    :ivar failover_group_id: The id indicating the failover group containing
-     this database.
+    :ivar failover_group_id: The resource identifier of the failover group
+     containing this database.
     :vartype failover_group_id: str
     :param read_scale: Conditional. If the database is a geo-secondary,
      readScale indicates whether read-only connections are allowed to this
