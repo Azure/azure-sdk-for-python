@@ -8,8 +8,6 @@ import functools
 import os
 import uuid
 
-from azure.common.client_factory import get_client_from_cli_profile
-
 from .base import ScenarioTest, execute
 from .utilities import create_random_name
 from .recording_processors import RecordingProcessor

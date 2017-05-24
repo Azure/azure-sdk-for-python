@@ -1,5 +1,4 @@
 setuptools-markdown
-azure-common~=1.1.6
 jmespath
 mock
 vcrpy==1.10.3

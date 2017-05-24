@@ -27,7 +27,6 @@ CLASSIFIERS = [
 
 
 DEPENDENCIES = [
-    'azure-common~=1.1.6',
     'jmespath',
     'mock',
     'setuptools-markdown',
