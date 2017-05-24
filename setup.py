@@ -30,6 +30,7 @@ DEPENDENCIES = [
     'jmespath',
     'mock',
     'setuptools-markdown',
+    'six',
     'vcrpy==1.10.3',
 ]
 

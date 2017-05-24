@@ -1,4 +1,5 @@
 setuptools-markdown
 jmespath
 mock
+six
 vcrpy==1.10.3
