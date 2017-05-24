@@ -161,9 +161,7 @@ def create_batch_account(client, settings, live):
         aad_creds = AADTokenCredentials(token={'access_token':'faked_token'})
     url = "https://{}.{}.batch.azure.com/".format(AZURE_BATCH_ACCOUNT, AZURE_LOCATION)
     sk_client = azure.batch.BatchServiceClient(shared_key_creds, base_url=url)
-    sk_client._client._adapter.add_hook("request", validate_shared_key_auth)
     aad_client = azure.batch.BatchServiceClient(aad_creds, base_url=url)
-    aad_client._client._adapter.add_hook("request", validate_token_auth)
     return (sk_client, aad_client)
 
 
