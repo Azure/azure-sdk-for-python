@@ -12,13 +12,13 @@
 from msrest.serialization import Model
 
 
-class IssuerAttributes(Model):
-    """The attributes of an issuer managed by the Key Vault service.
+class SasDefinitionAttributes(Model):
+    """The SAS definition management attributes.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :param enabled: Determines whether the issuer is enabled.
+    :param enabled: the enabled state of the object.
     :type enabled: bool
     :ivar created: Creation time in UTC.
     :vartype created: datetime
