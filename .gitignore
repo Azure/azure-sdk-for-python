@@ -90,3 +90,6 @@ ENV/
 
 # Editor caches
 .vscode
+.vs
+*.pyproj
+*.sln
