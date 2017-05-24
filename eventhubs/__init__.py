@@ -9,7 +9,7 @@ The module provides a client to connect to Azure Event Hubs.
 """
 
 import logging
-
+import datetime
 from proton import dispatch, Url, generate_uuid, DELEGATED
 from proton.reactor import Container, Selector
 from proton.handlers import Handler, EndpointStateHandler
@@ -33,7 +33,7 @@ class EventHubClient(Container):
             self.shared_connection = None
             self.shared_session = None
 
-    def subscribe(self, handler, consumer_group, partition, offset, prefetch=300):
+    def subscribe(self, handler, consumer_group, partition, position=None, prefetch=300):
         """
         Subscribes to an Event Hub partition to receive events.
 
@@ -47,16 +47,21 @@ class EventHubClient(Container):
 
         @param partition: the id of the event hub partition
 
-        @param offset: the offset to start receiving events. Use '-1' to start
-        from the beginning, '@latest' from the end, and a checkpoint to resume
-        previous processing
+        @param position: the start point to read events. It can be None, a datetime
+        or a string object.
+        string: specifies the offset of an event after which events are returned.
+        Besides an actual offset, it can also be '-1' (beginning of the event stream)
+        or '@latest' (end of the stream).
+        datetime: specifies the enqueued time of the first event that should be
+        returned.
+        None: no filter will be sent. This is the same as '-1'.
 
         @param prefetch: the number of events that will be proactively prefetched
         by the library into a local buffer queue
 
         """
         source = "%s/ConsumerGroups/%s/Partitions/%s" % (self.address.path, consumer_group, partition)
-        receiver = PartitionReceiver(handler, source, offset, prefetch)
+        receiver = PartitionReceiver(handler, source, position, prefetch)
         self.receivers.append(receiver)
         return self
 
@@ -123,7 +128,7 @@ class PartitionReceiver(Handler):
     """
     The receiver to read events from an Event Hub partition.
     """
-    def __init__(self, delegate, source, offset, prefetch):
+    def __init__(self, delegate, source, position, prefetch):
         super(PartitionReceiver, self).__init__()
         self.handlers = []
         if prefetch:
@@ -132,7 +137,7 @@ class PartitionReceiver(Handler):
         self.fatal_conditions = ["amqp:unauthorized-access", "amqp:not-found"]
         self.delegate = delegate
         self.source = source
-        self.offset = offset
+        self.position = position
         self.name = str(generate_uuid())[:8]
         self.iteration = 0
         self.client = None
@@ -141,20 +146,26 @@ class PartitionReceiver(Handler):
         self.client = client
         self.iteration += 1
         link_name = "py-receiver-%s-%d" % (self.name, self.iteration)
-        selector = Selector(u"amqp.annotation.x-opt-offset > '" + self.offset + "'")
+        selector = None
+        if isinstance(self.position, datetime.datetime):
+            _epoch = datetime.datetime.utcfromtimestamp(0)
+            _timestamp = long((self.position - _epoch).total_seconds() * 1000.0)
+            selector = Selector(u"amqp.annotation.x-opt-enqueued-time > '" + str(_timestamp) + "'")
+        elif self.position:
+            selector = Selector(u"amqp.annotation.x-opt-offset > '" + self.position + "'")
         client.create_receiver(client.shared_connection, self.source, name=link_name, handler=self, options=selector)
 
     def on_message(self, event):
         _message = event.message
         if self.delegate:
             dispatch(self.delegate, "on_event_data", _message)
-        self.offset = EventData.offset(_message)
+        self.position = EventData.offset(_message)
 
     def on_link_local_open(self, event):
-        logging.info("Link starts. entity=%s offset=%s", self.source, self.offset)
+        logging.info("Link starts. entity=%s offset=%s", self.source, self.position)
 
     def on_link_remote_open(self, event):
-        logging.info("Link Opened. entity=%s offset=%s", self.source, self.offset)
+        logging.info("Link Opened. entity=%s offset=%s", self.source, self.position)
 
     def on_link_remote_close(self, event):
         if EndpointStateHandler.is_local_closed(event.link):
