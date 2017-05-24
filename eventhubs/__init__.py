@@ -10,7 +10,7 @@ The module provides a client to connect to Azure Event Hubs.
 
 import logging
 import datetime
-from proton import dispatch, Url, generate_uuid, DELEGATED
+from proton import timestamp, dispatch, Url, generate_uuid, DELEGATED
 from proton.reactor import Container, Selector
 from proton.handlers import Handler, EndpointStateHandler
 from proton.handlers import CFlowController, IncomingMessageHandler
@@ -48,12 +48,13 @@ class EventHubClient(Container):
         @param partition: the id of the event hub partition
 
         @param position: the start point to read events. It can be None, a datetime
-        or a string object.
+        a proton.timestamp or a string object.
         string: specifies the offset of an event after which events are returned.
         Besides an actual offset, it can also be '-1' (beginning of the event stream)
         or '@latest' (end of the stream).
         datetime: specifies the enqueued time of the first event that should be
         returned.
+        timestamp: same as datetime except that the value is an AMQP timestamp.
         None: no filter will be sent. This is the same as '-1'.
 
         @param prefetch: the number of events that will be proactively prefetched
@@ -151,6 +152,8 @@ class PartitionReceiver(Handler):
             _epoch = datetime.datetime.utcfromtimestamp(0)
             _timestamp = long((self.position - _epoch).total_seconds() * 1000.0)
             selector = Selector(u"amqp.annotation.x-opt-enqueued-time > '" + str(_timestamp) + "'")
+        elif isinstance(self.position, timestamp):
+            selector = Selector(u"amqp.annotation.x-opt-enqueued-time > '" + str(self.position) + "'")
         elif self.position:
             selector = Selector(u"amqp.annotation.x-opt-offset > '" + self.position + "'")
         client.create_receiver(client.shared_connection, self.source, name=link_name, handler=self, options=selector)
