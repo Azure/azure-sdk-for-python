@@ -29,7 +29,7 @@ from .recording_processors import (SubscriptionRecordingProcessor, OAuthRequestR
 from .utilities import create_random_name
 from .decorators import live_only
 
-logger = logging.getLogger('azuer.cli.testsdk')
+logger = logging.getLogger('azure.cli.testsdk')
 
 
 class IntegrationTestBase(unittest.TestCase):

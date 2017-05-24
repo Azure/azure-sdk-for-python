@@ -3,7 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
 
-from .exceptions import CliExecutionError, CliTestError
+from .exceptions import CliExecutionError, AzureTestError
 from .const import MOCKED_SUBSCRIPTION_ID, MOCKED_TENANT_ID
 
 
@@ -73,7 +73,7 @@ def _mock_in_unit_test(unit_test, target, replacement):
     import unittest
 
     if not isinstance(unit_test, unittest.TestCase):
-        raise CliTestError('The patch_main_exception_handler can be only used in unit test')
+        raise AzureTestError('The patch_main_exception_handler can be only used in unit test')
 
     mp = mock.patch(target, replacement)
     mp.__enter__()
