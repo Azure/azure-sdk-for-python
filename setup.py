@@ -28,19 +28,14 @@ CLASSIFIERS = [
 
 DEPENDENCIES = [
     'azure-common~=1.1.6',
-    'azure-mgmt-keyvault~=0.31.0',
-    'azure-mgmt-resource~=1.0.0rc1',
-    'azure-mgmt-storage~=1.0.0rc1',
+    'jmespath',
     'mock',
     'setuptools-markdown',
     'vcrpy==1.10.3',
 ]
 
-with open('README.rst', 'r', encoding='utf-8') as f:
+with open('README.md', 'r', encoding='utf-8') as f:
     README = f.read()
-
-with open('HISTORY.rst', 'r', encoding='utf-8') as f:
-    HISTORY = f.read()
 
 setup(
     name='azure-devtools',
@@ -57,5 +52,6 @@ setup(
         'azure_devtools',
         'azure_devtools.scenario_tests'
     ],
+    package_dir={'': 'src'},
     install_requires=DEPENDENCIES,
 )

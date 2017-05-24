@@ -1,7 +1,5 @@
 setuptools-markdown
 azure-common~=1.1.6
-azure-mgmt-keyvault~=0.31.0
-azure-mgmt-resource~=1.0.0rc1
-azure-mgmt-storage~=1.0.0rc1
+jmespath
 mock
 vcrpy==1.10.3
