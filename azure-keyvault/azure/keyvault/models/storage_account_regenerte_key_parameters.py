@@ -12,28 +12,20 @@
 from msrest.serialization import Model
 
 
-class KeyOperationResult(Model):
-    """The key operation result.
+class StorageAccountRegenerteKeyParameters(Model):
+    """The storage account key regenerate parameters.
 
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
-
-    :ivar kid: Key identifier
-    :vartype kid: str
-    :ivar result:
-    :vartype result: bytes
+    :param key_name: storage account key name.
+    :type key_name: str
     """
 
     _validation = {
-        'kid': {'readonly': True},
-        'result': {'readonly': True},
+        'key_name': {'required': True},
     }
 
     _attribute_map = {
-        'kid': {'key': 'kid', 'type': 'str'},
-        'result': {'key': 'value', 'type': 'base64'},
+        'key_name': {'key': 'keyName', 'type': 'str'},
     }
 
-    def __init__(self):
-        self.kid = None
-        self.result = None
+    def __init__(self, key_name):
+        self.key_name = key_name
