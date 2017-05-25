@@ -9,5 +9,19 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-VERSION = "0.5.0"
+from msrest.paging import Paged
 
+
+class VnetFirewallRulePaged(Paged):
+    """
+    A paging container for iterating over a list of VnetFirewallRule object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[VnetFirewallRule]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(VnetFirewallRulePaged, self).__init__(*args, **kwargs)
