@@ -12,16 +12,16 @@
 from msrest.paging import Paged
 
 
-class KeyItemPaged(Paged):
+class SasDefinitionItemPaged(Paged):
     """
-    A paging container for iterating over a list of KeyItem object
+    A paging container for iterating over a list of SasDefinitionItem object
     """
 
     _attribute_map = {
         'next_link': {'key': 'nextLink', 'type': 'str'},
-        'current_page': {'key': 'value', 'type': '[KeyItem]'}
+        'current_page': {'key': 'value', 'type': '[SasDefinitionItem]'}
     }
 
     def __init__(self, *args, **kwargs):
 
-        super(KeyItemPaged, self).__init__(*args, **kwargs)
+        super(SasDefinitionItemPaged, self).__init__(*args, **kwargs)
