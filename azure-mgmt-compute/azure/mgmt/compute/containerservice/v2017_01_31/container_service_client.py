@@ -60,7 +60,7 @@ class ContainerServiceClient(object):
     :vartype config: ContainerServiceClientConfiguration
 
     :ivar container_services: ContainerServices operations
-    :vartype container_services: .operations.ContainerServicesOperations
+    :vartype container_services: azure.mgmt.compute.containerservice.v2017_01_31.operations.ContainerServicesOperations
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
