@@ -20,7 +20,6 @@ class SkuName(Enum):
 
 class KeyPermissions(Enum):
 
-    all = "all"
     encrypt = "encrypt"
     decrypt = "decrypt"
     wrap_key = "wrapKey"
@@ -35,20 +34,24 @@ class KeyPermissions(Enum):
     delete = "delete"
     backup = "backup"
     restore = "restore"
+    recover = "recover"
+    purge = "purge"
 
 
 class SecretPermissions(Enum):
 
-    all = "all"
     get = "get"
     list = "list"
     set = "set"
     delete = "delete"
+    backup = "backup"
+    restore = "restore"
+    recover = "recover"
+    purge = "purge"
 
 
 class CertificatePermissions(Enum):
 
-    all = "all"
     get = "get"
     list = "list"
     delete = "delete"
@@ -61,3 +64,25 @@ class CertificatePermissions(Enum):
     setissuers = "setissuers"
     deleteissuers = "deleteissuers"
     manageissuers = "manageissuers"
+    recover = "recover"
+    purge = "purge"
+
+
+class StoragePermissions(Enum):
+
+    get = "get"
+    list = "list"
+    delete = "delete"
+    set = "set"
+    update = "update"
+    regeneratekey = "regeneratekey"
+    setsas = "setsas"
+    listsas = "listsas"
+    getsas = "getsas"
+    deletesas = "deletesas"
+
+
+class CreateMode(Enum):
+
+    recover = "recover"
+    default = "default"
