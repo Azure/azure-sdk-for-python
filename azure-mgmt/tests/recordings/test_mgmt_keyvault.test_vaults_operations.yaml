@@ -1,54 +1,25 @@
 interactions:
 - request:
-    body: '{"location": "westus"}'
-    headers:
-      Accept: [application/json]
-      Accept-Encoding: ['gzip, deflate']
-      Connection: [keep-alive]
-      Content-Length: ['22']
-      Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.5.1 (Windows-10-10.0.14372-SP0) requests/2.10.0 msrest/0.4.0
-          msrest_azure/0.4.1 resourcemanagementclient/0.30.0rc5 Azure-SDK-For-Python]
-      accept-language: [en-US]
-      x-ms-client-request-id: [f5fd457e-487d-11e6-8fc4-ecb1d756380e]
-    method: PUT
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_mgmt_keyvault_test_vaults_operations68b91138?api-version=2016-02-01
-  response:
-    body: {string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_keyvault_test_vaults_operations68b91138","name":"test_mgmt_keyvault_test_vaults_operations68b91138","location":"westus","properties":{"provisioningState":"Succeeded"}}'}
-    headers:
-      Cache-Control: [no-cache]
-      Content-Length: ['251']
-      Content-Type: [application/json; charset=utf-8]
-      Date: ['Tue, 12 Jul 2016 22:14:08 GMT']
-      Expires: ['-1']
-      Pragma: [no-cache]
-      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
-      x-ms-correlation-request-id: [dea0bcc5-c311-43b7-98b5-14a095533d3f]
-      x-ms-ratelimit-remaining-subscription-writes: ['1197']
-      x-ms-request-id: [dea0bcc5-c311-43b7-98b5-14a095533d3f]
-      x-ms-routing-request-id: ['WESTUS:20160712T221408Z:dea0bcc5-c311-43b7-98b5-14a095533d3f']
-    status: {code: 201, message: Created}
-- request:
-    body: '{"location": "westus", "properties": {"accessPolicies": [], "sku": {"family":
-      "A", "name": "standard"}, "tenantId": "6819f86e-5d41-47b0-9297-334f33d7922d"}}'
+    body: '{"properties": {"sku": {"name": "standard", "family": "A"}, "accessPolicies":
+      [], "tenantId": "6819f86e-5d41-47b0-9297-334f33d7922d"}, "location": "westus"}'
     headers:
       Accept: [application/json]
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
       Content-Length: ['156']
       Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.5.1 (Windows-10-10.0.14372-SP0) requests/2.10.0 msrest/0.4.0
-          msrest_azure/0.4.1 keyvaultmanagementclient/0.30.0rc5 Azure-SDK-For-Python]
+      User-Agent: [python/3.5.2 (Windows-10-10.0.15063-SP0) requests/2.14.2 msrest/0.4.8
+          msrest_azure/0.4.7 keyvaultmanagementclient/0.32.0 Azure-SDK-For-Python]
       accept-language: [en-US]
-      x-ms-client-request-id: [f636f330-487d-11e6-be8c-ecb1d756380e]
+      x-ms-client-request-id: [7a19e2e2-40ce-11e7-a5a5-5065f34efe31]
     method: PUT
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_keyvault_test_vaults_operations68b91138/providers/Microsoft.KeyVault/vaults/pykv68b91138?api-version=2015-06-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_keyvault_test_vaults_operations68b91138/providers/Microsoft.KeyVault/vaults/pykv68b91138?api-version=2016-10-01
   response:
     body: {string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_keyvault_test_vaults_operations68b91138/providers/Microsoft.KeyVault/vaults/pykv68b91138","name":"pykv68b91138","type":"Microsoft.KeyVault/vaults","location":"westus","tags":{},"properties":{"sku":{"family":"A","name":"standard"},"tenantId":"6819f86e-5d41-47b0-9297-334f33d7922d","accessPolicies":[],"enabledForDeployment":false,"vaultUri":"https://pykv68b91138.vault.azure.net"}}'}
     headers:
       Cache-Control: [no-cache]
       Content-Type: [application/json; charset=utf-8]
-      Date: ['Tue, 12 Jul 2016 22:14:09 GMT']
+      Date: ['Wed, 24 May 2017 22:15:21 GMT']
       Expires: ['-1']
       Pragma: [no-cache]
       Server: [Microsoft-IIS/8.5]
@@ -59,10 +30,11 @@ interactions:
       X-Content-Type-Options: [nosniff]
       X-Powered-By: [ASP.NET]
       content-length: ['464']
-      x-ms-correlation-request-id: [3a4cbc97-2302-4a5f-9aef-58819ae1df9f]
-      x-ms-ratelimit-remaining-subscription-writes: ['1198']
-      x-ms-request-id: [3a4cbc97-2302-4a5f-9aef-58819ae1df9f]
-      x-ms-routing-request-id: ['WESTUS:20160712T221409Z:3a4cbc97-2302-4a5f-9aef-58819ae1df9f']
+      x-ms-correlation-request-id: [21e6fbdc-07cd-41b0-8161-77ffe428526c]
+      x-ms-keyvault-service-version: [1.0.0.157]
+      x-ms-ratelimit-remaining-subscription-writes: ['1199']
+      x-ms-request-id: [21e6fbdc-07cd-41b0-8161-77ffe428526c]
+      x-ms-routing-request-id: ['WESTUS:20170524T221522Z:21e6fbdc-07cd-41b0-8161-77ffe428526c']
     status: {code: 200, message: OK}
 - request:
     body: null
@@ -71,18 +43,18 @@ interactions:
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
       Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.5.1 (Windows-10-10.0.14372-SP0) requests/2.10.0 msrest/0.4.0
-          msrest_azure/0.4.1 keyvaultmanagementclient/0.30.0rc5 Azure-SDK-For-Python]
+      User-Agent: [python/3.5.2 (Windows-10-10.0.15063-SP0) requests/2.14.2 msrest/0.4.8
+          msrest_azure/0.4.7 keyvaultmanagementclient/0.32.0 Azure-SDK-For-Python]
       accept-language: [en-US]
-      x-ms-client-request-id: [f6dcf71c-487d-11e6-8e17-ecb1d756380e]
+      x-ms-client-request-id: [7aacb802-40ce-11e7-8cea-5065f34efe31]
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_keyvault_test_vaults_operations68b91138/providers/Microsoft.KeyVault/vaults/pykv68b91138?api-version=2015-06-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_keyvault_test_vaults_operations68b91138/providers/Microsoft.KeyVault/vaults/pykv68b91138?api-version=2016-10-01
   response:
     body: {string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_keyvault_test_vaults_operations68b91138/providers/Microsoft.KeyVault/vaults/pykv68b91138","name":"pykv68b91138","type":"Microsoft.KeyVault/vaults","location":"westus","tags":{},"properties":{"sku":{"family":"A","name":"standard"},"tenantId":"6819f86e-5d41-47b0-9297-334f33d7922d","accessPolicies":[],"enabledForDeployment":false,"vaultUri":"https://pykv68b91138.vault.azure.net/"}}'}
     headers:
       Cache-Control: [no-cache]
       Content-Type: [application/json; charset=utf-8]
-      Date: ['Tue, 12 Jul 2016 22:14:10 GMT']
+      Date: ['Wed, 24 May 2017 22:15:21 GMT']
       Expires: ['-1']
       Pragma: [no-cache]
       Server: [Microsoft-IIS/8.5]
@@ -93,10 +65,11 @@ interactions:
       X-Content-Type-Options: [nosniff]
       X-Powered-By: [ASP.NET]
       content-length: ['465']
-      x-ms-correlation-request-id: [8b84a091-6c09-4360-aaa6-8a30c9760b29]
+      x-ms-correlation-request-id: [2e978826-bf75-40dd-b01e-a702843129c6]
+      x-ms-keyvault-service-version: [1.0.0.157]
       x-ms-ratelimit-remaining-subscription-reads: ['14998']
-      x-ms-request-id: [8b84a091-6c09-4360-aaa6-8a30c9760b29]
-      x-ms-routing-request-id: ['WESTUS:20160712T221410Z:8b84a091-6c09-4360-aaa6-8a30c9760b29']
+      x-ms-request-id: [2e978826-bf75-40dd-b01e-a702843129c6]
+      x-ms-routing-request-id: ['WESTUS:20170524T221522Z:2e978826-bf75-40dd-b01e-a702843129c6']
     status: {code: 200, message: OK}
 - request:
     body: null
@@ -105,18 +78,18 @@ interactions:
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
       Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.5.1 (Windows-10-10.0.14372-SP0) requests/2.10.0 msrest/0.4.0
-          msrest_azure/0.4.1 keyvaultmanagementclient/0.30.0rc5 Azure-SDK-For-Python]
+      User-Agent: [python/3.5.2 (Windows-10-10.0.15063-SP0) requests/2.14.2 msrest/0.4.8
+          msrest_azure/0.4.7 keyvaultmanagementclient/0.32.0 Azure-SDK-For-Python]
       accept-language: [en-US]
-      x-ms-client-request-id: [f7116cc8-487d-11e6-ae85-ecb1d756380e]
+      x-ms-client-request-id: [7afdfb88-40ce-11e7-b131-5065f34efe31]
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_keyvault_test_vaults_operations68b91138/providers/Microsoft.KeyVault/vaults?api-version=2015-06-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_keyvault_test_vaults_operations68b91138/providers/Microsoft.KeyVault/vaults?api-version=2016-10-01
   response:
-    body: {string: '{"value":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_keyvault_test_vaults_operations68b91138/providers/Microsoft.KeyVault/vaults/pykv68b91138","name":"pykv68b91138","type":"Microsoft.KeyVault/vaults","location":"westus","tags":{},"properties":{"sku":{"family":"A","name":"standard"},"tenantId":"6819f86e-5d41-47b0-9297-334f33d7922d","accessPolicies":[],"enabledForDeployment":false,"vaultUri":"https://pykv68b91138.vault.azure.net/"}}],"nextLink":"https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_keyvault_test_vaults_operations68b91138/providers/Microsoft.KeyVault/vaults?api-version=2015-06-01&$skiptoken=cHlrdjY4YjkxMTM4"}'}
+    body: {string: '{"value":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_keyvault_test_vaults_operations68b91138/providers/Microsoft.KeyVault/vaults/pykv68b91138","name":"pykv68b91138","type":"Microsoft.KeyVault/vaults","location":"westus","tags":{},"properties":{"sku":{"family":"A","name":"standard"},"tenantId":"6819f86e-5d41-47b0-9297-334f33d7922d","accessPolicies":[],"enabledForDeployment":false,"vaultUri":"https://pykv68b91138.vault.azure.net/"}}],"nextLink":"https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_keyvault_test_vaults_operations68b91138/providers/Microsoft.KeyVault/vaults?api-version=2016-10-01&$skiptoken=cHlrdjY4YjkxMTM4"}'}
     headers:
       Cache-Control: [no-cache]
       Content-Type: [application/json; charset=utf-8]
-      Date: ['Tue, 12 Jul 2016 22:14:10 GMT']
+      Date: ['Wed, 24 May 2017 22:15:22 GMT']
       Expires: ['-1']
       Pragma: [no-cache]
       Server: [Microsoft-IIS/8.5]
@@ -127,10 +100,11 @@ interactions:
       X-Content-Type-Options: [nosniff]
       X-Powered-By: [ASP.NET]
       content-length: ['722']
-      x-ms-correlation-request-id: [28128cac-b227-4053-8f7b-4930e48a909d]
-      x-ms-ratelimit-remaining-subscription-reads: ['14997']
-      x-ms-request-id: [28128cac-b227-4053-8f7b-4930e48a909d]
-      x-ms-routing-request-id: ['WESTUS:20160712T221410Z:28128cac-b227-4053-8f7b-4930e48a909d']
+      x-ms-correlation-request-id: [ce8e1de6-e500-4599-8b8a-53e03164d7a5]
+      x-ms-keyvault-service-version: [1.0.0.157]
+      x-ms-ratelimit-remaining-subscription-reads: ['14999']
+      x-ms-request-id: [ce8e1de6-e500-4599-8b8a-53e03164d7a5]
+      x-ms-routing-request-id: ['WESTUS:20170524T221523Z:ce8e1de6-e500-4599-8b8a-53e03164d7a5']
     status: {code: 200, message: OK}
 - request:
     body: null
@@ -139,18 +113,18 @@ interactions:
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
       Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.5.1 (Windows-10-10.0.14372-SP0) requests/2.10.0 msrest/0.4.0
-          msrest_azure/0.4.1 keyvaultmanagementclient/0.30.0rc5 Azure-SDK-For-Python]
+      User-Agent: [python/3.5.2 (Windows-10-10.0.15063-SP0) requests/2.14.2 msrest/0.4.8
+          msrest_azure/0.4.7 keyvaultmanagementclient/0.32.0 Azure-SDK-For-Python]
       accept-language: [en-US]
-      x-ms-client-request-id: [f745c4a8-487d-11e6-8522-ecb1d756380e]
+      x-ms-client-request-id: [7b39aa64-40ce-11e7-a799-5065f34efe31]
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_keyvault_test_vaults_operations68b91138/providers/Microsoft.KeyVault/vaults?api-version=2015-06-01&$skiptoken=cHlrdjY4YjkxMTM4
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_keyvault_test_vaults_operations68b91138/providers/Microsoft.KeyVault/vaults?api-version=2016-10-01&$skiptoken=cHlrdjY4YjkxMTM4
   response:
     body: {string: '{"value":[]}'}
     headers:
       Cache-Control: [no-cache]
       Content-Type: [application/json; charset=utf-8]
-      Date: ['Tue, 12 Jul 2016 22:14:10 GMT']
+      Date: ['Wed, 24 May 2017 22:15:22 GMT']
       Expires: ['-1']
       Pragma: [no-cache]
       Server: [Microsoft-IIS/8.5]
@@ -161,10 +135,11 @@ interactions:
       X-Content-Type-Options: [nosniff]
       X-Powered-By: [ASP.NET]
       content-length: ['12']
-      x-ms-correlation-request-id: [9d11184b-8664-4189-a2a6-7da24c1a511b]
+      x-ms-correlation-request-id: [1a528ac7-f765-41dc-9828-fd0ff4e839dd]
+      x-ms-keyvault-service-version: [1.0.0.157]
       x-ms-ratelimit-remaining-subscription-reads: ['14997']
-      x-ms-request-id: [9d11184b-8664-4189-a2a6-7da24c1a511b]
-      x-ms-routing-request-id: ['WESTUS:20160712T221410Z:9d11184b-8664-4189-a2a6-7da24c1a511b']
+      x-ms-request-id: [1a528ac7-f765-41dc-9828-fd0ff4e839dd]
+      x-ms-routing-request-id: ['WESTUS:20170524T221523Z:1a528ac7-f765-41dc-9828-fd0ff4e839dd']
     status: {code: 200, message: OK}
 - request:
     body: null
@@ -173,27 +148,27 @@ interactions:
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
       Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.5.1 (Windows-10-10.0.14372-SP0) requests/2.10.0 msrest/0.4.0
-          msrest_azure/0.4.1 keyvaultmanagementclient/0.30.0rc5 Azure-SDK-For-Python]
+      User-Agent: [python/3.5.2 (Windows-10-10.0.15063-SP0) requests/2.14.2 msrest/0.4.8
+          msrest_azure/0.4.7 keyvaultmanagementclient/0.32.0 Azure-SDK-For-Python]
       accept-language: [en-US]
-      x-ms-client-request-id: [f7732efe-487d-11e6-9903-ecb1d756380e]
+      x-ms-client-request-id: [7b68121c-40ce-11e7-b656-5065f34efe31]
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resources?api-version=2015-11-01&$filter=resourceType%20eq%20%27Microsoft.KeyVault%2Fvaults%27
   response:
-    body: {string: '{"value":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_keyvault_test_vaults_operations68b91138/providers/Microsoft.KeyVault/vaults/pykv68b91138","name":"pykv68b91138","type":"Microsoft.KeyVault/vaults","location":"westus","tags":{}}]}'}
+    body: {string: '{"value":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/ssrg/providers/Microsoft.KeyVault/vaults/cli-vault","name":"cli-vault","type":"Microsoft.KeyVault/vaults","location":"westus","tags":{}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_keyvault_test_vaults_operations68b91138/providers/Microsoft.KeyVault/vaults/pykv68b91138","name":"pykv68b91138","type":"Microsoft.KeyVault/vaults","location":"westus","tags":{}}]}'}
     headers:
       Cache-Control: [no-cache]
       Content-Type: [application/json; charset=utf-8]
-      Date: ['Tue, 12 Jul 2016 22:14:10 GMT']
+      Date: ['Wed, 24 May 2017 22:15:22 GMT']
       Expires: ['-1']
       Pragma: [no-cache]
       Strict-Transport-Security: [max-age=31536000; includeSubDomains]
       Vary: [Accept-Encoding]
-      content-length: ['273']
-      x-ms-correlation-request-id: [3b18b1ec-e406-4dc6-adcb-47f56b428f1a]
-      x-ms-ratelimit-remaining-subscription-reads: ['14998']
-      x-ms-request-id: [3b18b1ec-e406-4dc6-adcb-47f56b428f1a]
-      x-ms-routing-request-id: ['WESTUS:20160712T221411Z:3b18b1ec-e406-4dc6-adcb-47f56b428f1a']
+      content-length: ['484']
+      x-ms-correlation-request-id: [144bce90-c466-4cbc-a777-4ff54eedb777]
+      x-ms-ratelimit-remaining-subscription-reads: ['14996']
+      x-ms-request-id: [144bce90-c466-4cbc-a777-4ff54eedb777]
+      x-ms-routing-request-id: ['WESTUS:20170524T221523Z:144bce90-c466-4cbc-a777-4ff54eedb777']
     status: {code: 200, message: OK}
 - request:
     body: null
@@ -203,18 +178,18 @@ interactions:
       Connection: [keep-alive]
       Content-Length: ['0']
       Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.5.1 (Windows-10-10.0.14372-SP0) requests/2.10.0 msrest/0.4.0
-          msrest_azure/0.4.1 keyvaultmanagementclient/0.30.0rc5 Azure-SDK-For-Python]
+      User-Agent: [python/3.5.2 (Windows-10-10.0.15063-SP0) requests/2.14.2 msrest/0.4.8
+          msrest_azure/0.4.7 keyvaultmanagementclient/0.32.0 Azure-SDK-For-Python]
       accept-language: [en-US]
-      x-ms-client-request-id: [f7900846-487d-11e6-a9ab-ecb1d756380e]
+      x-ms-client-request-id: [7b984ca4-40ce-11e7-9cfa-5065f34efe31]
     method: DELETE
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_keyvault_test_vaults_operations68b91138/providers/Microsoft.KeyVault/vaults/pykv68b91138?api-version=2015-06-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_keyvault_test_vaults_operations68b91138/providers/Microsoft.KeyVault/vaults/pykv68b91138?api-version=2016-10-01
   response:
     body: {string: ''}
     headers:
       Cache-Control: [no-cache]
       Content-Length: ['0']
-      Date: ['Tue, 12 Jul 2016 22:14:11 GMT']
+      Date: ['Wed, 24 May 2017 22:15:24 GMT']
       Expires: ['-1']
       Pragma: [no-cache]
       Server: [Microsoft-IIS/8.5]
@@ -222,9 +197,10 @@ interactions:
       X-AspNet-Version: [4.0.30319]
       X-Content-Type-Options: [nosniff]
       X-Powered-By: [ASP.NET]
-      x-ms-correlation-request-id: [6d323553-7403-464a-b49e-e21787718d43]
+      x-ms-correlation-request-id: [605373a9-6b2f-4f97-be4e-4ffbc202bccf]
+      x-ms-keyvault-service-version: [1.0.0.157]
       x-ms-ratelimit-remaining-subscription-writes: ['1198']
-      x-ms-request-id: [6d323553-7403-464a-b49e-e21787718d43]
-      x-ms-routing-request-id: ['WESTUS:20160712T221412Z:6d323553-7403-464a-b49e-e21787718d43']
+      x-ms-request-id: [605373a9-6b2f-4f97-be4e-4ffbc202bccf]
+      x-ms-routing-request-id: ['WESTUS:20170524T221524Z:605373a9-6b2f-4f97-be4e-4ffbc202bccf']
     status: {code: 200, message: OK}
 version: 1

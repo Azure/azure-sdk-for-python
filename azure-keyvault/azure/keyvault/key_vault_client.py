@@ -4463,6 +4463,7 @@ class KeyVaultClient(object):
         :param storage_account_name: The name of the storage account.
         :type storage_account_name: str
         :param key_name: The storage account key name.
+
         :type key_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -4524,7 +4525,7 @@ class KeyVaultClient(object):
     def get_sas_definitions(
             self, vault_base_url, storage_account_name, maxresults=None, custom_headers=None, raw=False, **operation_config):
         """List storage SAS definitions for the given storage account.
-
+        
         :param vault_base_url: The vault name, for example
          https://myvault.vault.azure.net.
         :type vault_base_url: str
@@ -4596,6 +4597,7 @@ class KeyVaultClient(object):
 
     def delete_sas_definition(
             self, vault_base_url, storage_account_name, sas_definition_name, custom_headers=None, raw=False, **operation_config):
+
         """Deletes a SAS definition from a specified storage account.
 
         :param vault_base_url: The vault name, for example
@@ -4660,6 +4662,7 @@ class KeyVaultClient(object):
 
     def get_sas_definition(
             self, vault_base_url, storage_account_name, sas_definition_name, custom_headers=None, raw=False, **operation_config):
+
         """Gets information about a SAS definition for the specified storage
         account.
 
