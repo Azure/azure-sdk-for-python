@@ -13,20 +13,20 @@ from msrest.serialization import Model
 
 
 class SasDefinitionBundle(Model):
-    """A sas definition bundle consists of key vault sas definition details plus
+    """A SAS definition bundle consists of key vault SAS definition details plus
     its attributes.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar id: The sas definition id.
+    :ivar id: The SAS definition id.
     :vartype id: str
-    :ivar secret_id: Storage account sas definition secret id.
+    :ivar secret_id: Storage account SAS definition secret id.
     :vartype secret_id: str
-    :ivar parameters: The sas definition metadata in the form of key-value
+    :ivar parameters: The SAS definition metadata in the form of key-value
      pairs.
     :vartype parameters: dict
-    :ivar attributes: The sas definition attributes.
+    :ivar attributes: The SAS definition attributes.
     :vartype attributes: :class:`SasDefinitionAttributes
      <azure.keyvault.models.SasDefinitionAttributes>`
     :ivar tags: Application specific metadata in the form of key-value pairs

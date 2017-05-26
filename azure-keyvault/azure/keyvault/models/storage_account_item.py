@@ -20,7 +20,7 @@ class StorageAccountItem(Model):
 
     :ivar id: Storage identifier.
     :vartype id: str
-    :ivar resource_id: Storage acount resource Id.
+    :ivar resource_id: Storage account resource Id.
     :vartype resource_id: str
     :ivar attributes: The storage account management attributes.
     :vartype attributes: :class:`StorageAccountAttributes

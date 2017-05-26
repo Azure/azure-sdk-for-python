@@ -13,12 +13,12 @@ from msrest.serialization import Model
 
 
 class SasDefinitionCreateParameters(Model):
-    """The sas definition create parameters.
+    """The SAS definition create parameters.
 
     :param parameters: Sas definition creation metadata in the form of
      key-value pairs.
     :type parameters: dict
-    :param sas_definition_attributes: The attributes of the sas definition.
+    :param sas_definition_attributes: The attributes of the SAS definition.
     :type sas_definition_attributes: :class:`SasDefinitionAttributes
      <azure.keyvault.models.SasDefinitionAttributes>`
     :param tags: Application specific metadata in the form of key-value pairs.

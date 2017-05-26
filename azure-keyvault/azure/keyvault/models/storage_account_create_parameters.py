@@ -19,8 +19,8 @@ class StorageAccountCreateParameters(Model):
     :type resource_id: str
     :param active_key_name: Current active storage account key name.
     :type active_key_name: str
-    :param auto_regenerate_key: Determines whether keyvault should manage the
-     storage account for user.
+    :param auto_regenerate_key: whether keyvault should manage the storage
+     account for the user.
     :type auto_regenerate_key: bool
     :param regeneration_period: The key regeneration time duration specified
      in ISO-8601 format.

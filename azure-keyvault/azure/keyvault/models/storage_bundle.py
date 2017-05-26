@@ -21,12 +21,12 @@ class StorageBundle(Model):
 
     :ivar id: The storage account id.
     :vartype id: str
-    :ivar resource_id: Storage account resource id.
+    :ivar resource_id: The storage account resource id.
     :vartype resource_id: str
-    :ivar active_key_name: Current active storage account key name.
+    :ivar active_key_name: The current active storage account key name.
     :vartype active_key_name: str
-    :ivar auto_regenerate_key: Determines whether keyvault should manage the
-     storage account.
+    :ivar auto_regenerate_key: whether keyvault should manage the storage
+     account for the user.
     :vartype auto_regenerate_key: bool
     :ivar regeneration_period: The key regeneration time duration specified in
      ISO-8601 format.

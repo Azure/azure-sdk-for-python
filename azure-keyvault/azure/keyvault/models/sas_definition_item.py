@@ -13,16 +13,16 @@ from msrest.serialization import Model
 
 
 class SasDefinitionItem(Model):
-    """The sas definition item containing storage sas definition metadata.
+    """The SAS definition item containing storage SAS definition metadata.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar id: Storage sas identifier.
+    :ivar id: The storage SAS identifier.
     :vartype id: str
-    :ivar secret_id: Storage account sas definition secret id.
+    :ivar secret_id: The storage account SAS definition secret id.
     :vartype secret_id: str
-    :ivar attributes: The sas definition management attributes.
+    :ivar attributes: The SAS definition management attributes.
     :vartype attributes: :class:`SasDefinitionAttributes
      <azure.keyvault.models.SasDefinitionAttributes>`
     :ivar tags: Application specific metadata in the form of key-value pairs.
