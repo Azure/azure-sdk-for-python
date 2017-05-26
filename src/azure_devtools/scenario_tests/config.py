@@ -10,11 +10,11 @@ class TestConfig(object):
             help='Path to a configuration file in YAML format.'
         )
         self.parser.add_argument(
-            '-m', '--mode', choices=['playback', 'live', 'record'], default='playback',
-            env_var='AZURE_TESTS_RECORDING_MODE',
+            '-m', '--record-mode', choices=['once', 'all'], default='once',
+            env_var='AZURE_TESTS_RECORD_MODE',
             help='Test recording mode.'
         )
-        self.args = configargparse.Namespace()
-
-    def parse_args(self):
         self.args = self.parser.parse_args()
+
+    def record_mode(self):
+        return self.args.mode

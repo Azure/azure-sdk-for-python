@@ -17,7 +17,9 @@ import logging
 import six
 import vcr
 
-from .const import (ENV_LIVE_TEST, ENV_SKIP_ASSERT, ENV_TEST_DIAGNOSE, MOCKED_SUBSCRIPTION_ID)
+from .config import TestConfig
+from .const import (ENV_LIVE_TEST, ENV_SKIP_ASSERT, ENV_TEST_DIAGNOSE, MOCKED_SUBSCRIPTION_ID,
+                    DUMMY_HEADER_DEACTIVATE_VCR_RECORDING)
 from .patches import patch_time_sleep_api
 from .recording_processors import (SubscriptionRecordingProcessor, OAuthRequestResponsesFilter,
                                    GeneralNameReplacer, LargeRequestBodyProcessor,
@@ -108,6 +110,8 @@ class ScenarioTest(IntegrationTestBase):  # pylint: disable=too-many-instance-at
         self.recording_patches = []
         self.replay_patches = [patch_time_sleep_api]
 
+        self.config = TestConfig()
+
         test_file_path = inspect.getfile(self.__class__)
         recordings_dir = os.path.join(os.path.dirname(test_file_path), 'recordings')
         live_test = os.environ.get(ENV_LIVE_TEST, None) == 'True'
@@ -117,7 +121,7 @@ class ScenarioTest(IntegrationTestBase):  # pylint: disable=too-many-instance-at
             before_record_request=self._process_request_recording,
             before_record_response=self._process_response_recording,
             decode_compressed_response=True,
-            record_mode='once' if not live_test else 'all',
+            record_mode=config.record_mode,
             filter_headers=self.FILTER_HEADERS
         )
         self.vcr.register_matcher('query', self._custom_request_query_matcher)
@@ -179,6 +183,9 @@ class ScenarioTest(IntegrationTestBase):  # pylint: disable=too-many-instance-at
             # make header name lower case and filter unwanted headers
             headers = {}
             for key in response['headers']:
+                if key.lower() == DUMMY_HEADER_DEACTIVATE_VCR_RECORDING:
+                    # Disable recording
+                    return None
                 if key.lower() not in self.FILTER_HEADERS:
                     headers[key.lower()] = response['headers'][key]
             response['headers'] = headers
