@@ -9,5 +9,19 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-VERSION = "0.32.0"
+from msrest.paging import Paged
 
+
+class DeletedVaultPaged(Paged):
+    """
+    A paging container for iterating over a list of DeletedVault object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[DeletedVault]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(DeletedVaultPaged, self).__init__(*args, **kwargs)

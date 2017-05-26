@@ -15,9 +15,6 @@ from msrest.serialization import Model
 class VaultProperties(Model):
     """Properties of the vault.
 
-    :param vault_uri: The URI of the vault for performing operations on keys
-     and secrets.
-    :type vault_uri: str
     :param tenant_id: The Azure Active Directory tenant ID that should be used
      for authenticating requests to the key vault.
     :type tenant_id: str
@@ -28,6 +25,9 @@ class VaultProperties(Model):
      the key vault's tenant ID.
     :type access_policies: list of :class:`AccessPolicyEntry
      <azure.mgmt.keyvault.models.AccessPolicyEntry>`
+    :param vault_uri: The URI of the vault for performing operations on keys
+     and secrets.
+    :type vault_uri: str
     :param enabled_for_deployment: Property to specify whether Azure Virtual
      Machines are permitted to retrieve certificates stored as secrets from the
      key vault.
@@ -39,29 +39,41 @@ class VaultProperties(Model):
     :param enabled_for_template_deployment: Property to specify whether Azure
      Resource Manager is permitted to retrieve secrets from the key vault.
     :type enabled_for_template_deployment: bool
+    :param enable_soft_delete: Property to specify whether the 'soft delete'
+     functionality is enabled for this key vault. It does not accept false
+     value.
+    :type enable_soft_delete: bool
+    :param create_mode: The vault's create mode to indicate whether the vault
+     need to be recovered or not. Possible values include: 'recover', 'default'
+    :type create_mode: str or :class:`CreateMode
+     <azure.mgmt.keyvault.models.CreateMode>`
     """
 
     _validation = {
         'tenant_id': {'required': True},
         'sku': {'required': True},
-        'access_policies': {'required': True, 'max_items': 16},
+        'access_policies': {'max_items': 16},
     }
 
     _attribute_map = {
-        'vault_uri': {'key': 'vaultUri', 'type': 'str'},
         'tenant_id': {'key': 'tenantId', 'type': 'str'},
         'sku': {'key': 'sku', 'type': 'Sku'},
         'access_policies': {'key': 'accessPolicies', 'type': '[AccessPolicyEntry]'},
+        'vault_uri': {'key': 'vaultUri', 'type': 'str'},
         'enabled_for_deployment': {'key': 'enabledForDeployment', 'type': 'bool'},
         'enabled_for_disk_encryption': {'key': 'enabledForDiskEncryption', 'type': 'bool'},
         'enabled_for_template_deployment': {'key': 'enabledForTemplateDeployment', 'type': 'bool'},
+        'enable_soft_delete': {'key': 'enableSoftDelete', 'type': 'bool'},
+        'create_mode': {'key': 'createMode', 'type': 'CreateMode'},
     }
 
-    def __init__(self, tenant_id, sku, access_policies, vault_uri=None, enabled_for_deployment=None, enabled_for_disk_encryption=None, enabled_for_template_deployment=None):
-        self.vault_uri = vault_uri
+    def __init__(self, tenant_id, sku, access_policies=None, vault_uri=None, enabled_for_deployment=None, enabled_for_disk_encryption=None, enabled_for_template_deployment=None, enable_soft_delete=None, create_mode=None):
         self.tenant_id = tenant_id
         self.sku = sku
         self.access_policies = access_policies
+        self.vault_uri = vault_uri
         self.enabled_for_deployment = enabled_for_deployment
         self.enabled_for_disk_encryption = enabled_for_disk_encryption
         self.enabled_for_template_deployment = enabled_for_template_deployment
+        self.enable_soft_delete = enable_soft_delete
+        self.create_mode = create_mode
