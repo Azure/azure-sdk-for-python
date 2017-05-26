@@ -4301,8 +4301,8 @@ class KeyVaultClient(object):
         :type resource_id: str
         :param active_key_name: Current active storage account key name.
         :type active_key_name: str
-        :param auto_regenerate_key: Determines whether keyvault should manage
-         the storage account for user.
+        :param auto_regenerate_key: whether keyvault should manage the storage
+         account for the user.
         :type auto_regenerate_key: bool
         :param regeneration_period: The key regeneration time duration
          specified in ISO-8601 format.
@@ -4381,10 +4381,10 @@ class KeyVaultClient(object):
         :type vault_base_url: str
         :param storage_account_name: The name of the storage account.
         :type storage_account_name: str
-        :param active_key_name: Current active storage account key name.
+        :param active_key_name: The current active storage account key name.
         :type active_key_name: str
-        :param auto_regenerate_key: Determines whether keyvault should manage
-         the storage account for user.
+        :param auto_regenerate_key: whether keyvault should manage the storage
+         account for the user.
         :type auto_regenerate_key: bool
         :param regeneration_period: The key regeneration time duration
          specified in ISO-8601 format.
@@ -4462,7 +4462,8 @@ class KeyVaultClient(object):
         :type vault_base_url: str
         :param storage_account_name: The name of the storage account.
         :type storage_account_name: str
-        :param key_name: storage account key name.
+        :param key_name: The storage account key name.
+
         :type key_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -4523,8 +4524,8 @@ class KeyVaultClient(object):
 
     def get_sas_definitions(
             self, vault_base_url, storage_account_name, maxresults=None, custom_headers=None, raw=False, **operation_config):
-        """List storage sas definitions for the given storage account.
-
+        """List storage SAS definitions for the given storage account.
+        
         :param vault_base_url: The vault name, for example
          https://myvault.vault.azure.net.
         :type vault_base_url: str
@@ -4596,14 +4597,15 @@ class KeyVaultClient(object):
 
     def delete_sas_definition(
             self, vault_base_url, storage_account_name, sas_definition_name, custom_headers=None, raw=False, **operation_config):
-        """Deletes a sas definition from a specified storage account.
+
+        """Deletes a SAS definition from a specified storage account.
 
         :param vault_base_url: The vault name, for example
          https://myvault.vault.azure.net.
         :type vault_base_url: str
         :param storage_account_name: The name of the storage account.
         :type storage_account_name: str
-        :param sas_definition_name: The name of the sas definition.
+        :param sas_definition_name: The name of the SAS definition.
         :type sas_definition_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -4660,7 +4662,8 @@ class KeyVaultClient(object):
 
     def get_sas_definition(
             self, vault_base_url, storage_account_name, sas_definition_name, custom_headers=None, raw=False, **operation_config):
-        """Gets information about a sas definition for the specified storage
+
+        """Gets information about a SAS definition for the specified storage
         account.
 
         :param vault_base_url: The vault name, for example
@@ -4668,7 +4671,7 @@ class KeyVaultClient(object):
         :type vault_base_url: str
         :param storage_account_name: The name of the storage account.
         :type storage_account_name: str
-        :param sas_definition_name: The name of the sas definition.
+        :param sas_definition_name: The name of the SAS definition.
         :type sas_definition_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -4725,7 +4728,7 @@ class KeyVaultClient(object):
 
     def set_sas_definition(
             self, vault_base_url, storage_account_name, sas_definition_name, parameters, sas_definition_attributes=None, tags=None, custom_headers=None, raw=False, **operation_config):
-        """Creates or updates a new sas definition for the specified storage
+        """Creates or updates a new SAS definition for the specified storage
         account.
 
         :param vault_base_url: The vault name, for example
@@ -4733,12 +4736,12 @@ class KeyVaultClient(object):
         :type vault_base_url: str
         :param storage_account_name: The name of the storage account.
         :type storage_account_name: str
-        :param sas_definition_name: The name of the sas definition.
+        :param sas_definition_name: The name of the SAS definition.
         :type sas_definition_name: str
         :param parameters: Sas definition creation metadata in the form of
          key-value pairs.
         :type parameters: dict
-        :param sas_definition_attributes: The attributes of the sas
+        :param sas_definition_attributes: The attributes of the SAS
          definition.
         :type sas_definition_attributes: :class:`SasDefinitionAttributes
          <azure.keyvault.models.SasDefinitionAttributes>`
@@ -4806,7 +4809,7 @@ class KeyVaultClient(object):
 
     def update_sas_definition(
             self, vault_base_url, storage_account_name, sas_definition_name, parameters=None, sas_definition_attributes=None, tags=None, custom_headers=None, raw=False, **operation_config):
-        """Updates the specified attributes associated with the given sas
+        """Updates the specified attributes associated with the given SAS
         definition.
 
         :param vault_base_url: The vault name, for example
@@ -4814,12 +4817,12 @@ class KeyVaultClient(object):
         :type vault_base_url: str
         :param storage_account_name: The name of the storage account.
         :type storage_account_name: str
-        :param sas_definition_name: The name of the sas definition.
+        :param sas_definition_name: The name of the SAS definition.
         :type sas_definition_name: str
         :param parameters: Sas definition update metadata in the form of
          key-value pairs.
         :type parameters: dict
-        :param sas_definition_attributes: The attributes of the sas
+        :param sas_definition_attributes: The attributes of the SAS
          definition.
         :type sas_definition_attributes: :class:`SasDefinitionAttributes
          <azure.keyvault.models.SasDefinitionAttributes>`

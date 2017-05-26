@@ -13,12 +13,12 @@ from msrest.serialization import Model
 
 
 class SasDefinitionUpdateParameters(Model):
-    """The sas definition update parameters.
+    """The SAS definition update parameters.
 
     :param parameters: Sas definition update metadata in the form of key-value
      pairs.
     :type parameters: dict
-    :param sas_definition_attributes: The attributes of the sas definition.
+    :param sas_definition_attributes: The attributes of the SAS definition.
     :type sas_definition_attributes: :class:`SasDefinitionAttributes
      <azure.keyvault.models.SasDefinitionAttributes>`
     :param tags: Application specific metadata in the form of key-value pairs.

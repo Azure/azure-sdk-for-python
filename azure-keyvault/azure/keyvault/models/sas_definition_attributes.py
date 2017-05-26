@@ -13,12 +13,12 @@ from msrest.serialization import Model
 
 
 class SasDefinitionAttributes(Model):
-    """The sas definition management attributes.
+    """The SAS definition management attributes.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :param enabled: Determines whether the object is enabled.
+    :param enabled: the enabled state of the object.
     :type enabled: bool
     :ivar created: Creation time in UTC.
     :vartype created: datetime
