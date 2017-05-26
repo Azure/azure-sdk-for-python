@@ -17,10 +17,6 @@ import logging
 import six
 import vcr
 
-from .patches import (patch_load_cached_subscriptions, patch_main_exception_handler,
-                      patch_retrieve_token_for_user, patch_long_run_operation_delay,
-                      patch_time_sleep_api)
-from .exceptions import CliExecutionError
 from .const import (ENV_LIVE_TEST, ENV_SKIP_ASSERT, ENV_TEST_DIAGNOSE, MOCKED_SUBSCRIPTION_ID)
 from .recording_processors import (SubscriptionRecordingProcessor, OAuthRequestResponsesFilter,
                                    GeneralNameReplacer, LargeRequestBodyProcessor,
@@ -29,27 +25,13 @@ from .recording_processors import (SubscriptionRecordingProcessor, OAuthRequestR
 from .utilities import create_random_name
 from .decorators import live_only
 
-logger = logging.getLogger('azure.cli.testsdk')
+logger = logging.getLogger('azure.devtools.testsdk')
 
 
 class IntegrationTestBase(unittest.TestCase):
     def __init__(self, method_name):
         super(IntegrationTestBase, self).__init__(method_name)
         self.diagnose = os.environ.get(ENV_TEST_DIAGNOSE, None) == 'True'
-
-    def cmd(self, command, checks=None, expect_failure=False):
-        if self.diagnose:
-            begin = datetime.datetime.now()
-            print('\nExecuting command: {}'.format(command))
-
-        result = execute(command, expect_failure=expect_failure)
-
-        if self.diagnose:
-            duration = datetime.datetime.now() - begin
-            print('\nCommand accomplished in {} s. Exit code {}.\n{}'.format(
-                duration.total_seconds(), result.exit_code, result.output))
-
-        return result.assert_with_checks(checks)
 
     def create_random_name(self, prefix, length):  # pylint: disable=no-self-use
         return create_random_name(prefix=prefix, length=length)
@@ -122,6 +104,9 @@ class ScenarioTest(IntegrationTestBase):  # pylint: disable=too-many-instance-at
                                      self.name_replacer]
         self.replay_processors = [LargeResponseBodyReplacer(), DeploymentNameReplacer()]
 
+        self.recording_patches = []
+        self.replay_patches = []
+
         test_file_path = inspect.getfile(self.__class__)
         recordings_dir = os.path.join(os.path.dirname(test_file_path), 'recordings')
         live_test = os.environ.get(ENV_LIVE_TEST, None) == 'True'
@@ -153,13 +138,12 @@ class ScenarioTest(IntegrationTestBase):  # pylint: disable=too-many-instance-at
         self.addCleanup(cm.__exit__)
 
         # set up mock patches
-        patch_main_exception_handler(self)
-
-        if not self.in_recording:
-            patch_time_sleep_api(self)
-            patch_long_run_operation_delay(self)
-            patch_load_cached_subscriptions(self)
-            patch_retrieve_token_for_user(self)
+        if self.in_recording:
+            for patch in self.recording_patches:
+                patch(self)
+        else:
+            for patch in self.replay_patches:
+                patch(self)
 
     def tearDown(self):
         os.environ = self.original_env
@@ -234,85 +218,3 @@ class ScenarioTest(IntegrationTestBase):  # pylint: disable=too-many-instance-at
                 return False
 
         return True
-
-
-class ExecutionResult(object):  # pylint: disable=too-few-public-methods
-    def __init__(self, command, expect_failure=False, in_process=True):
-        logger.info('Execute command %s', command)
-        if in_process:
-            self._in_process_execute(command)
-        else:
-            self._out_of_process_execute(command)
-
-        if expect_failure and self.exit_code == 0:
-            raise AssertionError('The command is expected to fail but it doesn\'.')
-        elif not expect_failure and self.exit_code != 0:
-            raise AssertionError('The command failed. Exit code: {}'.format(self.exit_code))
-
-        self.json_value = None
-        self.skip_assert = os.environ.get(ENV_SKIP_ASSERT, None) == 'True'
-
-    def assert_with_checks(self, *args):
-        checks = []
-        for each in args:
-            if isinstance(each, list):
-                checks.extend(each)
-            elif callable(each):
-                checks.append(each)
-
-        logger.info('Checkers to be executed %s', len(checks))
-
-        if not self.skip_assert:
-            for c in checks:
-                c(self)
-
-        return self
-
-    def get_output_in_json(self):
-        if not self.json_value:
-            self.json_value = json.loads(self.output)
-
-        if self.json_value is None:
-            raise AssertionError('The command output cannot be parsed in json.')
-
-        return self.json_value
-
-    def _in_process_execute(self, command):
-        # from azure.cli import  as cli_main
-        from azure.cli.main import main as cli_main
-        from six import StringIO
-        from vcr.errors import CannotOverwriteExistingCassetteException
-
-        if command.startswith('az '):
-            command = command[3:]
-
-        output_buffer = StringIO()
-        try:
-            # issue: stderr cannot be redirect in this form, as a result some failure information
-            # is lost when command fails.
-            self.exit_code = cli_main(shlex.split(command), file=output_buffer) or 0
-            self.output = output_buffer.getvalue()
-        except CannotOverwriteExistingCassetteException as ex:
-            raise AssertionError(ex)
-        except CliExecutionError as ex:
-            if ex.exception:
-                raise ex.exception
-            else:
-                raise ex
-        except Exception as ex:  # pylint: disable=broad-except
-            self.exit_code = 1
-            self.output = output_buffer.getvalue()
-            self.process_error = ex
-        finally:
-            output_buffer.close()
-
-    def _out_of_process_execute(self, command):
-        try:
-            self.output = subprocess.check_output(shlex.split(command)).decode('utf-8')
-            self.exit_code = 0
-        except subprocess.CalledProcessError as error:
-            self.exit_code, self.output = error.returncode, error.output.decode('utf-8')
-            self.process_error = error
-
-
-execute = ExecutionResult
