@@ -1,4 +1,5 @@
 setuptools-markdown
+ConfigArgParse
 jmespath
 mock
 six
