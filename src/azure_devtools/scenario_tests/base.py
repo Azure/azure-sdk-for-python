@@ -18,6 +18,7 @@ import six
 import vcr
 
 from .const import (ENV_LIVE_TEST, ENV_SKIP_ASSERT, ENV_TEST_DIAGNOSE, MOCKED_SUBSCRIPTION_ID)
+from .patches import patch_time_sleep_api
 from .recording_processors import (SubscriptionRecordingProcessor, OAuthRequestResponsesFilter,
                                    GeneralNameReplacer, LargeRequestBodyProcessor,
                                    LargeResponseBodyProcessor, LargeResponseBodyReplacer,
@@ -105,7 +106,7 @@ class ScenarioTest(IntegrationTestBase):  # pylint: disable=too-many-instance-at
         self.replay_processors = [LargeResponseBodyReplacer(), DeploymentNameReplacer()]
 
         self.recording_patches = []
-        self.replay_patches = []
+        self.replay_patches = [patch_time_sleep_api]
 
         test_file_path = inspect.getfile(self.__class__)
         recordings_dir = os.path.join(os.path.dirname(test_file_path), 'recordings')
