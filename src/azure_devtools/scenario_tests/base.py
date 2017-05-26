@@ -165,6 +165,10 @@ class ScenarioTest(IntegrationTestBase):  # pylint: disable=too-many-instance-at
             return moniker
 
     def _process_request_recording(self, request):
+        if DUMMY_HEADER_DEACTIVATE_VCR_RECORDING in request.headers:
+            # Disable recording
+            return None
+
         if self.in_recording:
             for processor in self.recording_processors:
                 request = processor.process_request(request)
@@ -183,9 +187,6 @@ class ScenarioTest(IntegrationTestBase):  # pylint: disable=too-many-instance-at
             # make header name lower case and filter unwanted headers
             headers = {}
             for key in response['headers']:
-                if key.lower() == DUMMY_HEADER_DEACTIVATE_VCR_RECORDING:
-                    # Disable recording
-                    return None
                 if key.lower() not in self.FILTER_HEADERS:
                     headers[key.lower()] = response['headers'][key]
             response['headers'] = headers
