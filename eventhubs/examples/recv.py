@@ -11,17 +11,19 @@ An example to show receiving events from an Event Hub partition.
 
 import sys
 import logging
-from eventhubs import EventHubClient, EventData
+from eventhubs.client import EventHubClient, EventData
+from eventhubs.client import Receiver
 
-class MyReceiver(object):
+class MyReceiver(Receiver):
     """
     The event data handler.
     """
 
-    def __init__(self):
+    def __init__(self, consumer_group, partition, offset):
+        super(MyReceiver, self).__init__(consumer_group, partition, offset)
         self.total = 0
         self.last_sn = -1
-        self.last_offset = None
+        self.last_offset = "-1"
 
     def on_event_data(self, message):
         """
@@ -32,7 +34,7 @@ class MyReceiver(object):
         # message.properties (dict) - application defined properties
         # message.body (object) - application set object
         self.total += 1
-        if self.total % 50 == 0:
+        if self.total % 100 == 0:
             # do checkpoint for every 50 events received
             logging.info("Received %s, sn=%d offset=%s",
                          self.total,
@@ -54,6 +56,7 @@ try:
     CONSUMER_GROUP = "$default"
     PARTITION = "1"
     OFFSET = "-1"
-    EventHubClient(ADDRESS).subscribe(MyReceiver(), CONSUMER_GROUP, PARTITION, OFFSET).run()
+
+    EventHubClient(ADDRESS, MyReceiver(CONSUMER_GROUP, PARTITION, OFFSET)).run()
 except KeyboardInterrupt:
     pass
