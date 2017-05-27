@@ -13,16 +13,24 @@ from .databases_operations import DatabasesOperations
 from .capabilities_operations import CapabilitiesOperations
 from .firewall_rules_operations import FirewallRulesOperations
 from .operations import Operations
-from .servers_operations import ServersOperations
 from .elastic_pools_operations import ElasticPoolsOperations
 from .recommended_elastic_pools_operations import RecommendedElasticPoolsOperations
+from .server_azure_ad_administrators_operations import ServerAzureADAdministratorsOperations
+from .servers_operations import ServersOperations
+from .failover_groups_operations import FailoverGroupsOperations
+from .vnet_firewall_rules_operations import VnetFirewallRulesOperations
+from .server_keys_operations import ServerKeysOperations
 
 __all__ = [
     'DatabasesOperations',
     'CapabilitiesOperations',
     'FirewallRulesOperations',
     'Operations',
-    'ServersOperations',
     'ElasticPoolsOperations',
     'RecommendedElasticPoolsOperations',
+    'ServerAzureADAdministratorsOperations',
+    'ServersOperations',
+    'FailoverGroupsOperations',
+    'VnetFirewallRulesOperations',
+    'ServerKeysOperations',
 ]

@@ -101,18 +101,6 @@ class ReplicationState(Enum):
     suspended = "SUSPENDED"
 
 
-class ServerVersion(Enum):
-
-    two_full_stop_zero = "2.0"
-    one_two_full_stop_zero = "12.0"
-
-
-class ServerState(Enum):
-
-    ready = "Ready"
-    disabled = "Disabled"
-
-
 class ElasticPoolEdition(Enum):
 
     basic = "Basic"
@@ -215,3 +203,32 @@ class BlobAuditingPolicyState(Enum):
 
     enabled = "Enabled"
     disabled = "Disabled"
+
+
+class ReadWriteEndpointFailoverPolicy(Enum):
+
+    manual = "Manual"
+    automatic = "Automatic"
+
+
+class ReadOnlyEndpointFailoverPolicy(Enum):
+
+    disabled = "Disabled"
+    enabled = "Enabled"
+
+
+class FailoverGroupReplicationRole(Enum):
+
+    primary = "Primary"
+    secondary = "Secondary"
+
+
+class IdentityType(Enum):
+
+    system_assigned = "SystemAssigned"
+
+
+class ServerKeyType(Enum):
+
+    service_managed = "ServiceManaged"
+    azure_key_vault = "AzureKeyVault"
