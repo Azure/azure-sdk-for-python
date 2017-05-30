@@ -17,7 +17,7 @@ import logging
 import six
 import vcr
 
-from .config import TestConfig
+from .config import TestConfig, RecordMode
 from .const import (ENV_LIVE_TEST, ENV_SKIP_ASSERT, ENV_TEST_DIAGNOSE, MOCKED_SUBSCRIPTION_ID,
                     DUMMY_HEADER_DEACTIVATE_VCR_RECORDING)
 from .patches import patch_time_sleep_api
@@ -96,6 +96,8 @@ class ScenarioTest(IntegrationTestBase):  # pylint: disable=too-many-instance-at
         'x-ms-served-by',
     ]
 
+    TEST_CONFIG_FILE = None
+
     def __init__(self, method_name):
         super(ScenarioTest, self).__init__(method_name)
         self.name_replacer = GeneralNameReplacer()
@@ -110,11 +112,11 @@ class ScenarioTest(IntegrationTestBase):  # pylint: disable=too-many-instance-at
         self.recording_patches = []
         self.replay_patches = [patch_time_sleep_api]
 
-        self.config = TestConfig()
+        self.config = TestConfig(config_file=self.TEST_CONFIG_FILE)
 
         test_file_path = inspect.getfile(self.__class__)
         recordings_dir = os.path.join(os.path.dirname(test_file_path), 'recordings')
-        live_test = os.environ.get(ENV_LIVE_TEST, None) == 'True'
+        live_test = self.config.record_mode == RecordMode.all
 
         self.vcr = vcr.VCR(
             cassette_library_dir=recordings_dir,
