@@ -32,8 +32,6 @@ from .operation_display import OperationDisplay
 from .operation import Operation
 from .operation_list_result import OperationListResult
 from .replication_link import ReplicationLink
-from .server import Server
-from .server_metric import ServerMetric
 from .recommended_elastic_pool_metric import RecommendedElasticPoolMetric
 from .slo_usage_metric import SloUsageMetric
 from .service_tier_advisor import ServiceTierAdvisor
@@ -46,10 +44,22 @@ from .elastic_pool import ElasticPool
 from .elastic_pool_activity import ElasticPoolActivity
 from .elastic_pool_database_activity import ElasticPoolDatabaseActivity
 from .database_metric import DatabaseMetric
-from .service_objective import ServiceObjective
+from .server_metric import ServerMetric
 from .transparent_data_encryption_activity import TransparentDataEncryptionActivity
+from .server_azure_ad_administrator import ServerAzureADAdministrator
+from .sql_sub_resource import SqlSubResource
 from .database_security_alert_policy import DatabaseSecurityAlertPolicy
+from .service_objective import ServiceObjective
 from .database_blob_auditing_policy import DatabaseBlobAuditingPolicy
+from .failover_group_read_write_endpoint import FailoverGroupReadWriteEndpoint
+from .failover_group_read_only_endpoint import FailoverGroupReadOnlyEndpoint
+from .partner_info import PartnerInfo
+from .failover_group import FailoverGroup
+from .vnet_firewall_rule import VnetFirewallRule
+from .resource_identity import ResourceIdentity
+from .server import Server
+from .server_key import ServerKey
+from .encryption_protector import EncryptionProtector
 from .restore_point_paged import RestorePointPaged
 from .replication_link_paged import ReplicationLinkPaged
 from .database_paged import DatabasePaged
@@ -57,14 +67,19 @@ from .database_metric_paged import DatabaseMetricPaged
 from .service_tier_advisor_paged import ServiceTierAdvisorPaged
 from .transparent_data_encryption_activity_paged import TransparentDataEncryptionActivityPaged
 from .firewall_rule_paged import FirewallRulePaged
-from .server_paged import ServerPaged
-from .server_metric_paged import ServerMetricPaged
-from .service_objective_paged import ServiceObjectivePaged
 from .elastic_pool_paged import ElasticPoolPaged
 from .elastic_pool_activity_paged import ElasticPoolActivityPaged
 from .elastic_pool_database_activity_paged import ElasticPoolDatabaseActivityPaged
 from .recommended_elastic_pool_paged import RecommendedElasticPoolPaged
 from .recommended_elastic_pool_metric_paged import RecommendedElasticPoolMetricPaged
+from .server_azure_ad_administrator_paged import ServerAzureADAdministratorPaged
+from .service_objective_paged import ServiceObjectivePaged
+from .server_metric_paged import ServerMetricPaged
+from .server_paged import ServerPaged
+from .encryption_protector_paged import EncryptionProtectorPaged
+from .failover_group_paged import FailoverGroupPaged
+from .vnet_firewall_rule_paged import VnetFirewallRulePaged
+from .server_key_paged import ServerKeyPaged
 from .sql_management_client_enums import (
     RestorePointTypes,
     CapabilityStatus,
@@ -76,8 +91,6 @@ from .sql_management_client_enums import (
     AuthenticationType,
     ReplicationRole,
     ReplicationState,
-    ServerVersion,
-    ServerState,
     ElasticPoolEdition,
     CreateMode,
     TransparentDataEncryptionStatus,
@@ -92,6 +105,11 @@ from .sql_management_client_enums import (
     SecurityAlertPolicyEmailAccountAdmins,
     SecurityAlertPolicyUseServerDefault,
     BlobAuditingPolicyState,
+    ReadWriteEndpointFailoverPolicy,
+    ReadOnlyEndpointFailoverPolicy,
+    FailoverGroupReplicationRole,
+    IdentityType,
+    ServerKeyType,
 )
 
 __all__ = [
@@ -118,8 +136,6 @@ __all__ = [
     'Operation',
     'OperationListResult',
     'ReplicationLink',
-    'Server',
-    'ServerMetric',
     'RecommendedElasticPoolMetric',
     'SloUsageMetric',
     'ServiceTierAdvisor',
@@ -132,10 +148,22 @@ __all__ = [
     'ElasticPoolActivity',
     'ElasticPoolDatabaseActivity',
     'DatabaseMetric',
-    'ServiceObjective',
+    'ServerMetric',
     'TransparentDataEncryptionActivity',
+    'ServerAzureADAdministrator',
+    'SqlSubResource',
     'DatabaseSecurityAlertPolicy',
+    'ServiceObjective',
     'DatabaseBlobAuditingPolicy',
+    'FailoverGroupReadWriteEndpoint',
+    'FailoverGroupReadOnlyEndpoint',
+    'PartnerInfo',
+    'FailoverGroup',
+    'VnetFirewallRule',
+    'ResourceIdentity',
+    'Server',
+    'ServerKey',
+    'EncryptionProtector',
     'RestorePointPaged',
     'ReplicationLinkPaged',
     'DatabasePaged',
@@ -143,14 +171,19 @@ __all__ = [
     'ServiceTierAdvisorPaged',
     'TransparentDataEncryptionActivityPaged',
     'FirewallRulePaged',
-    'ServerPaged',
-    'ServerMetricPaged',
-    'ServiceObjectivePaged',
     'ElasticPoolPaged',
     'ElasticPoolActivityPaged',
     'ElasticPoolDatabaseActivityPaged',
     'RecommendedElasticPoolPaged',
     'RecommendedElasticPoolMetricPaged',
+    'ServerAzureADAdministratorPaged',
+    'ServiceObjectivePaged',
+    'ServerMetricPaged',
+    'ServerPaged',
+    'EncryptionProtectorPaged',
+    'FailoverGroupPaged',
+    'VnetFirewallRulePaged',
+    'ServerKeyPaged',
     'RestorePointTypes',
     'CapabilityStatus',
     'MaxSizeUnits',
@@ -161,8 +194,6 @@ __all__ = [
     'AuthenticationType',
     'ReplicationRole',
     'ReplicationState',
-    'ServerVersion',
-    'ServerState',
     'ElasticPoolEdition',
     'CreateMode',
     'TransparentDataEncryptionStatus',
@@ -177,4 +208,9 @@ __all__ = [
     'SecurityAlertPolicyEmailAccountAdmins',
     'SecurityAlertPolicyUseServerDefault',
     'BlobAuditingPolicyState',
+    'ReadWriteEndpointFailoverPolicy',
+    'ReadOnlyEndpointFailoverPolicy',
+    'FailoverGroupReplicationRole',
+    'IdentityType',
+    'ServerKeyType',
 ]

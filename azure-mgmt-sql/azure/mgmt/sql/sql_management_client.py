@@ -17,9 +17,13 @@ from .operations.databases_operations import DatabasesOperations
 from .operations.capabilities_operations import CapabilitiesOperations
 from .operations.firewall_rules_operations import FirewallRulesOperations
 from .operations.operations import Operations
-from .operations.servers_operations import ServersOperations
 from .operations.elastic_pools_operations import ElasticPoolsOperations
 from .operations.recommended_elastic_pools_operations import RecommendedElasticPoolsOperations
+from .operations.server_azure_ad_administrators_operations import ServerAzureADAdministratorsOperations
+from .operations.servers_operations import ServersOperations
+from .operations.failover_groups_operations import FailoverGroupsOperations
+from .operations.vnet_firewall_rules_operations import VnetFirewallRulesOperations
+from .operations.server_keys_operations import ServerKeysOperations
 from . import models
 
 
@@ -65,19 +69,27 @@ class SqlManagementClient(object):
     :vartype config: SqlManagementClientConfiguration
 
     :ivar databases: Databases operations
-    :vartype databases: .operations.DatabasesOperations
+    :vartype databases: azure.mgmt.sql.operations.DatabasesOperations
     :ivar capabilities: Capabilities operations
-    :vartype capabilities: .operations.CapabilitiesOperations
+    :vartype capabilities: azure.mgmt.sql.operations.CapabilitiesOperations
     :ivar firewall_rules: FirewallRules operations
-    :vartype firewall_rules: .operations.FirewallRulesOperations
+    :vartype firewall_rules: azure.mgmt.sql.operations.FirewallRulesOperations
     :ivar operations: Operations operations
-    :vartype operations: .operations.Operations
-    :ivar servers: Servers operations
-    :vartype servers: .operations.ServersOperations
+    :vartype operations: azure.mgmt.sql.operations.Operations
     :ivar elastic_pools: ElasticPools operations
-    :vartype elastic_pools: .operations.ElasticPoolsOperations
+    :vartype elastic_pools: azure.mgmt.sql.operations.ElasticPoolsOperations
     :ivar recommended_elastic_pools: RecommendedElasticPools operations
-    :vartype recommended_elastic_pools: .operations.RecommendedElasticPoolsOperations
+    :vartype recommended_elastic_pools: azure.mgmt.sql.operations.RecommendedElasticPoolsOperations
+    :ivar server_azure_ad_administrators: ServerAzureADAdministrators operations
+    :vartype server_azure_ad_administrators: azure.mgmt.sql.operations.ServerAzureADAdministratorsOperations
+    :ivar servers: Servers operations
+    :vartype servers: azure.mgmt.sql.operations.ServersOperations
+    :ivar failover_groups: FailoverGroups operations
+    :vartype failover_groups: azure.mgmt.sql.operations.FailoverGroupsOperations
+    :ivar vnet_firewall_rules: VnetFirewallRules operations
+    :vartype vnet_firewall_rules: azure.mgmt.sql.operations.VnetFirewallRulesOperations
+    :ivar server_keys: ServerKeys operations
+    :vartype server_keys: azure.mgmt.sql.operations.ServerKeysOperations
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
@@ -106,9 +118,17 @@ class SqlManagementClient(object):
             self._client, self.config, self._serialize, self._deserialize)
         self.operations = Operations(
             self._client, self.config, self._serialize, self._deserialize)
-        self.servers = ServersOperations(
-            self._client, self.config, self._serialize, self._deserialize)
         self.elastic_pools = ElasticPoolsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.recommended_elastic_pools = RecommendedElasticPoolsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.server_azure_ad_administrators = ServerAzureADAdministratorsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.servers = ServersOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.failover_groups = FailoverGroupsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.vnet_firewall_rules = VnetFirewallRulesOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.server_keys = ServerKeysOperations(
             self._client, self.config, self._serialize, self._deserialize)
