@@ -366,12 +366,11 @@ class BatchMgmtTestCase(RecordingTestCase):
         batch_account = azure.mgmt.batch.models.BatchAccountCreateParameters(
                 location='eastus2',
                 pool_allocation_mode=azure.mgmt.batch.models.PoolAllocationMode.user_subscription)
-        creating = self.assertRuns(_e, _m, self.batch_mgmt_client.batch_account.create,
-                                   AZURE_RESOURCE_GROUP,
-                                   'batchpythonaccounttest',
-                                    batch_account)
         try:
-            creating.result()
+            self.batch_mgmt_client.batch_account.create(
+                AZURE_RESOURCE_GROUP,
+                'batchpythonaccounttest',
+                batch_account)
             _e[_m] = "Expected CloudError to be raised."
         except Exception as error:
             # TODO: Figure out why this deserializes to HTTPError rather than CloudError
