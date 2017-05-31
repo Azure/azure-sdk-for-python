@@ -1,9 +1,6 @@
 import configargparse
 
-
-class RecordMode(object):
-    once = 'once'
-    all = 'all'
+from config import ENV_LIVE_TEST
 
 
 class TestConfig(object):
@@ -15,10 +12,9 @@ class TestConfig(object):
             help='Path to a configuration file in YAML format.'
         )
         self.parser.add_argument(
-            '-m', '--record-mode', choices=[RecordMode.once, RecordMode.all],
-            default=RecordMode.once,
-            env_var='AZURE_TESTS_RECORD_MODE',
-            help='Test recording mode.'
+            '-m', '--record-mode', action='store_true', dest='record_mode',
+            env_var=ENV_LIVE_TEST,
+            help='Activate "live" recording mode for tests.'
         )
         self.args = self.parser.parse_args([])
 

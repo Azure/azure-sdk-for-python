@@ -18,9 +18,8 @@ import six
 import vcr
 
 from .config import TestConfig, RecordMode
-from .const import (ENV_LIVE_TEST, ENV_SKIP_ASSERT, ENV_TEST_DIAGNOSE, MOCKED_SUBSCRIPTION_ID,
-                    DUMMY_HEADER_DEACTIVATE_VCR_RECORDING)
-from .patches import patch_time_sleep_api
+from .const import ENV_LIVE_TEST, ENV_SKIP_ASSERT, ENV_TEST_DIAGNOSE, MOCKED_SUBSCRIPTION_ID
+from .patches import patch_time_sleep_api, patch_long_run_operation_delay
 from .recording_processors import (SubscriptionRecordingProcessor, OAuthRequestResponsesFilter,
                                    GeneralNameReplacer, LargeRequestBodyProcessor,
                                    LargeResponseBodyProcessor, LargeResponseBodyReplacer,
@@ -96,9 +95,7 @@ class ScenarioTest(IntegrationTestBase):  # pylint: disable=too-many-instance-at
         'x-ms-served-by',
     ]
 
-    TEST_CONFIG_FILE = None
-
-    def __init__(self, method_name):
+    def __init__(self, method_name, config_file=None):
         super(ScenarioTest, self).__init__(method_name)
         self.name_replacer = GeneralNameReplacer()
         self.recording_processors = [SubscriptionRecordingProcessor(MOCKED_SUBSCRIPTION_ID),
@@ -110,13 +107,16 @@ class ScenarioTest(IntegrationTestBase):  # pylint: disable=too-many-instance-at
         self.replay_processors = [LargeResponseBodyReplacer(), DeploymentNameReplacer()]
 
         self.recording_patches = []
-        self.replay_patches = [patch_time_sleep_api]
+        self.replay_patches = [patch_time_sleep_api,
+                               patch_long_run_operation_delay]
 
-        self.config = TestConfig(config_file=self.TEST_CONFIG_FILE)
+        self.config = TestConfig(config_file=config_file)
+
+        self.disable_recording = False
 
         test_file_path = inspect.getfile(self.__class__)
         recordings_dir = os.path.join(os.path.dirname(test_file_path), 'recordings')
-        live_test = self.config.record_mode == RecordMode.all
+        self.is_live = not self.config.record_mode
 
         self.vcr = vcr.VCR(
             cassette_library_dir=recordings_dir,
@@ -129,10 +129,10 @@ class ScenarioTest(IntegrationTestBase):  # pylint: disable=too-many-instance-at
         self.vcr.register_matcher('query', self._custom_request_query_matcher)
 
         self.recording_file = os.path.join(recordings_dir, '{}.yaml'.format(method_name))
-        if live_test and os.path.exists(self.recording_file):
+        if self.is_live and os.path.exists(self.recording_file):
             os.remove(self.recording_file)
 
-        self.in_recording = live_test or not os.path.exists(self.recording_file)
+        self.in_recording = self.is_live or not os.path.exists(self.recording_file)
         self.test_resources_count = 0
         self.original_env = os.environ.copy()
 
@@ -167,8 +167,7 @@ class ScenarioTest(IntegrationTestBase):  # pylint: disable=too-many-instance-at
             return moniker
 
     def _process_request_recording(self, request):
-        if DUMMY_HEADER_DEACTIVATE_VCR_RECORDING in request.headers:
-            # Disable recording
+        if self.disable_recording:
             return None
 
         if self.in_recording:
