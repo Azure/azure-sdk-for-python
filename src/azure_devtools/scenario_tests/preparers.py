@@ -3,6 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
 
+import contextlib
 import inspect
 import functools
 import os
@@ -16,13 +17,14 @@ from .recording_processors import RecordingProcessor
 # Core Utility
 
 class AbstractPreparer(object):
-    def __init__(self, name_prefix, name_len):
+    def __init__(self, name_prefix, name_len, disable_recording=False):
         self.name_prefix = name_prefix
         self.name_len = name_len
         self.resource_moniker = None
         self.resource_random_name = None
         self.test_class_instance = None
         self.live_test = False
+        self.disable_recording = False
 
     def __call__(self, fn):
         def _preparer_wrapper(test_class_instance, **kwargs):
@@ -36,8 +38,14 @@ class AbstractPreparer(object):
             else:
                 resource_name = self.moniker
 
-            parameter_update = self.create_resource(resource_name, **kwargs)
-            test_class_instance.addCleanup(lambda: self.remove_resource(resource_name, **kwargs))
+            with self.override_disable_recording():
+                parameter_update = self.create_resource(
+                    resource_name,
+                    **kwargs
+                )
+            test_class_instance.addCleanup(
+                lambda: self.remove_resource_with_record_override(resource_name, **kwargs)
+            )
 
             if parameter_update:
                 kwargs.update(parameter_update)
@@ -56,6 +64,16 @@ class AbstractPreparer(object):
         setattr(_preparer_wrapper, '__is_preparer', True)
         functools.update_wrapper(_preparer_wrapper, fn)
         return _preparer_wrapper
+
+    @contextlib.contextmanager
+    def override_disable_recording(self):
+        if self.test_class_instance.hasattr('disable_recording'):
+            orig_enabled = self.test_class_instance.disable_recording
+            self.test_class_instance.disable_recording = self.disable_recording
+            yield
+            self.test_class_instance.disable_recording = orig_enabled
+        else:
+            yield
 
     @property
     def moniker(self):
@@ -76,6 +94,10 @@ class AbstractPreparer(object):
 
     def remove_resource(self, name, **kwargs):  # pylint: disable=unused-argument
         pass
+
+    def remove_resource_with_record_override(self, name, **kwargs):
+        with self.override_disable_recording():
+            self.remove_resource(name, **kwargs)
 
 
 # TODO: replaced by GeneralNameReplacer
