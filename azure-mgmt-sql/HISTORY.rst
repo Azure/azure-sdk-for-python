@@ -3,6 +3,11 @@
 Release History
 ===============
 
+0.5.3 (2017-06-01)
+++++++++++++++++++
+
+- Update minimal dependency to msrestazure 0.4.8
+
 0.5.2 (2017-05-31)
 ++++++++++++++++++
 
