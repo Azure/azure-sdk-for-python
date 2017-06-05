@@ -12,7 +12,7 @@ class TestConfig(object):
             help='Path to a configuration file in YAML format.'
         )
         self.parser.add_argument(
-            '-m', '--record-mode', action='store_true', dest='record_mode',
+            '-l', '--live-mode', action='store_true', dest='live_mode',
             env_var=ENV_LIVE_TEST,
             help='Activate "live" recording mode for tests.'
         )
@@ -20,4 +20,4 @@ class TestConfig(object):
 
     @property
     def record_mode(self):
-        return self.args.record_mode
+        return self.args.live_mode
