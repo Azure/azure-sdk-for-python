@@ -9,12 +9,19 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .pipeline_operations import PipelineOperations
-from .recurrence_operations import RecurrenceOperations
-from .job_operations import JobOperations
+from msrest.paging import Paged
 
-__all__ = [
-    'PipelineOperations',
-    'RecurrenceOperations',
-    'JobOperations',
-]
+
+class JobRecurrenceInformationPaged(Paged):
+    """
+    A paging container for iterating over a list of JobRecurrenceInformation object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[JobRecurrenceInformation]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(JobRecurrenceInformationPaged, self).__init__(*args, **kwargs)
