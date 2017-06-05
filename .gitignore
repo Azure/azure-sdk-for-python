@@ -92,4 +92,5 @@ ENV/
 .vscode
 .vs
 *.pyproj
+*.pyproj.user
 *.sln
