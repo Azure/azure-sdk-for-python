@@ -5,6 +5,7 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
 
+import io
 import os.path
 from setuptools import setup
 
@@ -33,7 +34,7 @@ DEPENDENCIES = [
     'vcrpy==1.11.1',
 ]
 
-with open('README.md', 'r', encoding='utf-8') as f:
+with io.open('README.rst', 'r', encoding='utf-8') as f:
     README = f.read()
 
 setup(
