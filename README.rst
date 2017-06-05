@@ -1,5 +1,5 @@
-.. image:: https://travis-ci.org/Azure/azure-sdk-for-python.svg?branch=master
-    :target: https://travis-ci.org/Azure/azure-sdk-for-python
+.. image:: https://travis-ci.org/Azure/azure-python-devtools.svg?branch=master
+    :target: https://travis-ci.org/Azure/azure-python-devtools
 
 Development tools for Python-based Azure tools
 ==============================================
