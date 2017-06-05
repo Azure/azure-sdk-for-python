@@ -1,6 +1,6 @@
 import configargparse
 
-from config import ENV_LIVE_TEST
+from .const import ENV_LIVE_TEST
 
 
 class TestConfig(object):
@@ -20,4 +20,4 @@ class TestConfig(object):
 
     @property
     def record_mode(self):
-        return self.args.mode
+        return self.args.record_mode

@@ -9,7 +9,7 @@ import functools
 import os
 import uuid
 
-from .base import ScenarioTest, execute
+from .base import ScenarioTest
 from .utilities import create_random_name
 from .recording_processors import RecordingProcessor
 
@@ -67,7 +67,7 @@ class AbstractPreparer(object):
 
     @contextlib.contextmanager
     def override_disable_recording(self):
-        if self.test_class_instance.hasattr('disable_recording'):
+        if hasattr(self.test_class_instance, 'disable_recording'):
             orig_enabled = self.test_class_instance.disable_recording
             self.test_class_instance.disable_recording = self.disable_recording
             yield

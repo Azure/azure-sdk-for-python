@@ -8,10 +8,3 @@ class AzureTestError(Exception):
     def __init__(self, error_message):
         message = 'An error caused by the Azure test harness failed the test: {}'
         super(AzureTestError, self).__init__(message.format(error_message))
-
-
-class JMESPathCheckAssertionError(AssertionError):
-    def __init__(self, query, expected, actual, json_data):
-        message = "Query '{}' doesn't yield expected value '{}', instead the actual value " \
-                  "is '{}'. Data: \n{}\n".format(query, expected, actual, json_data)
-        super(JMESPathCheckAssertionError, self).__init__(message)
