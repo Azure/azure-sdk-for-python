@@ -1,6 +1,5 @@
 setuptools-markdown
 ConfigArgParse
-jmespath
 mock
 six
-vcrpy==1.10.3
+vcrpy==1.11.1
