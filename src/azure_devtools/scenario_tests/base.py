@@ -17,17 +17,12 @@ import logging
 import six
 import vcr
 
-from .config import TestConfig, RecordMode
+from .config import TestConfig
 from .const import ENV_LIVE_TEST, ENV_SKIP_ASSERT, ENV_TEST_DIAGNOSE, MOCKED_SUBSCRIPTION_ID
-from .patches import patch_time_sleep_api, patch_long_run_operation_delay
-from .recording_processors import (SubscriptionRecordingProcessor, OAuthRequestResponsesFilter,
-                                   GeneralNameReplacer, LargeRequestBodyProcessor,
-                                   LargeResponseBodyProcessor, LargeResponseBodyReplacer,
-                                   DeploymentNameReplacer)
 from .utilities import create_random_name
 from .decorators import live_only
 
-logger = logging.getLogger('azure.devtools.testsdk')
+logger = logging.getLogger('azure_devtools.scenario_tests')
 
 
 class IntegrationTestBase(unittest.TestCase):
@@ -85,6 +80,7 @@ class ScenarioTest(IntegrationTestBase):  # pylint: disable=too-many-instance-at
     FILTER_HEADERS = [
         'authorization',
         'client-request-id',
+        'retry-after',
         'x-ms-client-request-id',
         'x-ms-correlation-request-id',
         'x-ms-ratelimit-remaining-subscription-reads',
@@ -95,40 +91,41 @@ class ScenarioTest(IntegrationTestBase):  # pylint: disable=too-many-instance-at
         'x-ms-served-by',
     ]
 
-    def __init__(self, method_name, config_file=None):
+    def __init__(self, method_name, config_file=None,
+                 recording_dir=None, recording_name=None,
+                 recording_processors=None, replay_processors=None,
+                 recording_patches=None, replay_patches=None):
         super(ScenarioTest, self).__init__(method_name)
-        self.name_replacer = GeneralNameReplacer()
-        self.recording_processors = [SubscriptionRecordingProcessor(MOCKED_SUBSCRIPTION_ID),
-                                     OAuthRequestResponsesFilter(),
-                                     LargeRequestBodyProcessor(),
-                                     LargeResponseBodyProcessor(),
-                                     DeploymentNameReplacer(),
-                                     self.name_replacer]
-        self.replay_processors = [LargeResponseBodyReplacer(), DeploymentNameReplacer()]
 
-        self.recording_patches = []
-        self.replay_patches = [patch_time_sleep_api,
-                               patch_long_run_operation_delay]
+        self.recording_processors = recording_processors or []
+        self.replay_processors = replay_processors or []
+
+        self.recording_patches = recording_patches or []
+        self.replay_patches = replay_patches or []
 
         self.config = TestConfig(config_file=config_file)
 
         self.disable_recording = False
 
         test_file_path = inspect.getfile(self.__class__)
-        recordings_dir = os.path.join(os.path.dirname(test_file_path), 'recordings')
-        self.is_live = not self.config.record_mode
+        recording_dir = recording_dir or os.path.join(os.path.dirname(test_file_path),
+                                                      'recordings')
+        self.is_live = self.config.record_mode
 
         self.vcr = vcr.VCR(
-            cassette_library_dir=recordings_dir,
+            cassette_library_dir=recording_dir,
             before_record_request=self._process_request_recording,
             before_record_response=self._process_response_recording,
             decode_compressed_response=True,
-            record_mode=config.record_mode,
+            record_mode=self.config.record_mode,
             filter_headers=self.FILTER_HEADERS
         )
         self.vcr.register_matcher('query', self._custom_request_query_matcher)
 
-        self.recording_file = os.path.join(recordings_dir, '{}.yaml'.format(method_name))
+        self.recording_file = os.path.join(
+            recording_dir,
+            '{}.yaml'.format(recording_name or method_name)
+        )
         if self.is_live and os.path.exists(self.recording_file):
             os.remove(self.recording_file)
 
@@ -154,17 +151,6 @@ class ScenarioTest(IntegrationTestBase):  # pylint: disable=too-many-instance-at
 
     def tearDown(self):
         os.environ = self.original_env
-
-    def create_random_name(self, prefix, length):
-        self.test_resources_count += 1
-        moniker = '{}{:06}'.format(prefix, self.test_resources_count)
-
-        if self.in_recording:
-            name = create_random_name(prefix, length)
-            self.name_replacer.register_name_pair(name, moniker)
-            return name
-        else:
-            return moniker
 
     def _process_request_recording(self, request):
         if self.disable_recording:
