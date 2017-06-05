@@ -8,5 +8,6 @@ from .exceptions import AzureTestError
 from .decorators import live_only, record_only
 from .utilities import get_sha1_hash
 
-__all__ = ['ScenarioTest', 'LiveTest', 'AzureTestError', 'live_only', 'record_only', 'get_sha1_hash']
+__all__ = ['ScenarioTest', 'LiveTest', 'AzureTestError', 'get_sha1_hash',
+           'live_only', 'record_only']
 __version__ = '0.1.0+dev'
