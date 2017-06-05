@@ -9,7 +9,7 @@ import os.path
 from setuptools import setup
 
 
-VERSION = "0.1.0+dev"
+VERSION = "0.1.0"
 
 
 CLASSIFIERS = [
@@ -31,7 +31,7 @@ DEPENDENCIES = [
     'mock',
     'setuptools-markdown',
     'six',
-    'vcrpy==1.10.3',
+    'vcrpy==1.11.1',
 ]
 
 with open('README.md', 'r', encoding='utf-8') as f:
