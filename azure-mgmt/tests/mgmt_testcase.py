@@ -130,7 +130,9 @@ class AzureMgmtTestCase(RecordingTestCase):
         val = super(AzureMgmtTestCase, self)._scrub(val)
         real_to_fake_dict = {
             self.settings.SUBSCRIPTION_ID: self.fake_settings.SUBSCRIPTION_ID,
-            self.settings.AD_DOMAIN:  self.fake_settings.AD_DOMAIN
+            self.settings.AD_DOMAIN:  self.fake_settings.AD_DOMAIN,
+            self.settings.TENANT_ID: self.fake_settings.TENANT_ID,
+            self.settings.CLIENT_OID: self.fake_settings.CLIENT_OID
         }
         val = self._scrub_using_dict(val, real_to_fake_dict)
         return val
