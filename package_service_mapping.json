@@ -103,10 +103,14 @@
 		"service_name": "Power BI",
 		"category ": "Management"
 	},
-	"azure-mgmt-rdbms": {
-		"service_name": "MySQL / PostgreSQL",
-		"category ": "Management"
-	},
+  "azure-mgmt-rdbms": {
+    "service_name": "MySQL / PostgreSQL",
+    "category ": "Management"
+  },
+  "azure-mgmt-recoveryservicesbackup": {
+    "service_name": "Recovery Services Backup",
+    "category":  "Management"
+  },
 	"azure-mgmt-redis": {
 		"service_name": "Redis",
 		"category ": "Management"

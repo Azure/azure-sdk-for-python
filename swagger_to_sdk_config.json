@@ -294,11 +294,16 @@
     "rdbms.postgres": {
       "swagger": "arm-rdbms/2017-04-30-preview/swagger/Rdms.PostgreSQL.json",
       "autorest_options": {
-        "Namespace": "azure.mgmt.rdbms.postgresql", 
+        "Namespace": "azure.mgmt.rdbms.postgresql",
         "PackageVersion": "0.1.0"
       },
       "generated_relative_base_directory": "azure/mgmt/rdbms/postgresql",
       "output_dir": "azure-mgmt-rdbms/azure/mgmt/rdbms/postgresql"
+    },
+    "recoveryservicesbackup": {
+      "swagger": "arm-recoveryservicesbackup/readme.md",
+      "generated_relative_base_directory": "azure/mgmt/recoveryservicesbackup",
+      "output_dir":  "azure-mgmt-recoveryservicesbackup/azure/mgmt/recoveryservicesbackup"
     },
     "redis": {
       "swagger": "arm-redis/2016-04-01/swagger/redis.json",
