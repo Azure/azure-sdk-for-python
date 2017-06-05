@@ -1,5 +1,6 @@
 setuptools-markdown
 ConfigArgParse
 mock
+nose
 six
 vcrpy==1.11.1

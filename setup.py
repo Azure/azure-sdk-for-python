@@ -27,8 +27,7 @@ CLASSIFIERS = [
 
 
 DEPENDENCIES = [
-    'jmespath',
-    'mock',
+    'ConfigArgParse',
     'setuptools-markdown',
     'six',
     'vcrpy==1.11.1',
