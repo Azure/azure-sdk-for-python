@@ -4,13 +4,9 @@
 # --------------------------------------------------------------------------------------------
 
 from __future__ import print_function
-import datetime
 import unittest
 import os
 import inspect
-import subprocess
-import json
-import shlex
 import tempfile
 import shutil
 import logging
@@ -18,7 +14,7 @@ import six
 import vcr
 
 from .config import TestConfig
-from .const import ENV_LIVE_TEST, ENV_SKIP_ASSERT, ENV_TEST_DIAGNOSE, MOCKED_SUBSCRIPTION_ID
+from .const import ENV_TEST_DIAGNOSE
 from .utilities import create_random_name
 from .decorators import live_only
 
