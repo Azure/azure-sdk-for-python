@@ -12,16 +12,16 @@
 from msrest.paging import Paged
 
 
-class DatabasePaged(Paged):
+class ServerKeyPaged(Paged):
     """
-    A paging container for iterating over a list of Database object
+    A paging container for iterating over a list of ServerKey object
     """
 
     _attribute_map = {
         'next_link': {'key': 'nextLink', 'type': 'str'},
-        'current_page': {'key': 'value', 'type': '[Database]'}
+        'current_page': {'key': 'value', 'type': '[ServerKey]'}
     }
 
     def __init__(self, *args, **kwargs):
 
-        super(DatabasePaged, self).__init__(*args, **kwargs)
+        super(ServerKeyPaged, self).__init__(*args, **kwargs)

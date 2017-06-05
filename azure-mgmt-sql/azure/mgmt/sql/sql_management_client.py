@@ -23,6 +23,7 @@ from .operations.recommended_elastic_pools_operations import RecommendedElasticP
 from .operations.server_azure_ad_administrators_operations import ServerAzureADAdministratorsOperations
 from .operations.failover_groups_operations import FailoverGroupsOperations
 from .operations.vnet_firewall_rules_operations import VnetFirewallRulesOperations
+from .operations.server_keys_operations import ServerKeysOperations
 from . import models
 
 
@@ -87,6 +88,8 @@ class SqlManagementClient(object):
     :vartype failover_groups: azure.mgmt.sql.operations.FailoverGroupsOperations
     :ivar vnet_firewall_rules: VnetFirewallRules operations
     :vartype vnet_firewall_rules: azure.mgmt.sql.operations.VnetFirewallRulesOperations
+    :ivar server_keys: ServerKeys operations
+    :vartype server_keys: azure.mgmt.sql.operations.ServerKeysOperations
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
@@ -126,4 +129,6 @@ class SqlManagementClient(object):
         self.failover_groups = FailoverGroupsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.vnet_firewall_rules = VnetFirewallRulesOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.server_keys = ServerKeysOperations(
             self._client, self.config, self._serialize, self._deserialize)
