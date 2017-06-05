@@ -43,7 +43,7 @@ setup(
     long_description_markdown_file='README.md',
     license='MIT',
     author='Microsoft Corporation',
-    author_email='azpycli@microsoft.com',
+    author_email='ptvshelp@microsoft.com',
     url='https://github.com/Azure/azure-python-devtools',
     zip_safe=False,
     classifiers=CLASSIFIERS,
