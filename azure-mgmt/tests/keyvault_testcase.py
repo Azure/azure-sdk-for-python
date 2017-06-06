@@ -38,16 +38,16 @@ def privatevault(permissions=None, enabled_for_deployment=True, enabled_for_disk
     def testvault_decorator(f):
         def wrapper(self):
             with self.recording():
+                vault = self.setup_private_vault(permissions=permissions,
+                                                 enabled_for_deployment=enabled_for_deployment,
+                                                 enabled_for_disk_encryption=enabled_for_disk_encryption,
+                                                 enabled_for_template_deployment=enabled_for_template_deployment,
+                                                 enable_soft_delete=enable_soft_delete)
                 try:
-                    vault = self.setup_private_vault(permissions=permissions,
-                                                  enabled_for_deployment=enabled_for_deployment,
-                                                  enabled_for_disk_encryption=enabled_for_disk_encryption,
-                                                  enabled_for_template_deployment=enabled_for_template_deployment,
-                                                  enable_soft_delete=enable_soft_delete)
                     f(self, vault=vault)
                 finally:
                     self.cleanup_private_vault(vault)
-            wrapper.__name__ = f.__name__
+        wrapper.__name__ = f.__name__
         testvault_decorator.__name__ = f.__name__
         return wrapper
     return testvault_decorator
@@ -174,7 +174,8 @@ class AzureKeyVaultTestCase(AzureMgmtTestCase):
 
     def setup_private_vault(self, permissions=None, enabled_for_deployment=True, enabled_for_disk_encryption=True,
                          enabled_for_template_deployment=True, enable_soft_delete=None, sku=None):
-        vault = self.create_vault(self.group_name, self.group_name + '-vault',
+        vault_name = self.get_resource_name('vault-')
+        vault = self.create_vault(self.group_name, vault_name,
                                   permissions=permissions,enabled_for_deployment=enabled_for_deployment,
                                   enabled_for_template_deployment=enabled_for_template_deployment, enable_soft_delete=enable_soft_delete,
                                   sku=sku)

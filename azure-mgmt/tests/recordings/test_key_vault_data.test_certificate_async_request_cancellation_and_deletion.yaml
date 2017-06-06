@@ -10,7 +10,7 @@ interactions:
       User-Agent: [python/3.5.2 (Windows-10-10.0.15063-SP0) requests/2.17.3 msrest/0.4.8
           msrest_azure/0.4.8 resourcemanagementclient/1.1.0 Azure-SDK-For-Python]
       accept-language: [en-US]
-      x-ms-client-request-id: [e19b1a26-4a46-11e7-93cf-5065f34efe31]
+      x-ms-client-request-id: [3287efc0-4ad6-11e7-b923-5065f34efe31]
     method: PUT
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/azkv-pytest?api-version=2017-05-10
   response:
@@ -18,31 +18,31 @@ interactions:
     headers:
       Cache-Control: [no-cache]
       Content-Type: [application/json; charset=utf-8]
-      Date: ['Mon, 05 Jun 2017 23:29:55 GMT']
+      Date: ['Tue, 06 Jun 2017 16:35:48 GMT']
       Expires: ['-1']
       Pragma: [no-cache]
       Strict-Transport-Security: [max-age=31536000; includeSubDomains]
       Transfer-Encoding: [chunked]
       Vary: [Accept-Encoding]
       content-length: ['175']
-      x-ms-correlation-request-id: [e1280aed-41c8-47a5-a92a-62542a41c96c]
-      x-ms-ratelimit-remaining-subscription-writes: ['1197']
-      x-ms-request-id: [e1280aed-41c8-47a5-a92a-62542a41c96c]
-      x-ms-routing-request-id: ['WESTUS:20170605T232955Z:e1280aed-41c8-47a5-a92a-62542a41c96c']
+      x-ms-correlation-request-id: [b38dc9bc-16ac-4c31-8987-4761cea3ecfc]
+      x-ms-ratelimit-remaining-subscription-writes: ['1196']
+      x-ms-request-id: [b38dc9bc-16ac-4c31-8987-4761cea3ecfc]
+      x-ms-routing-request-id: ['WESTUS:20170606T163549Z:b38dc9bc-16ac-4c31-8987-4761cea3ecfc']
     status: {code: 200, message: OK}
 - request:
-    body: '{"location": "westus", "properties": {"accessPolicies": [{"permissions":
-      {"keys": ["encrypt", "decrypt", "wrapKey", "unwrapKey", "sign", "verify", "get",
+    body: '{"location": "westus", "properties": {"tenantId": "00000000-0000-0000-0000-000000000000",
+      "enabledForDeployment": true, "enabledForDiskEncryption": true, "enabledForTemplateDeployment":
+      true, "accessPolicies": [{"tenantId": "00000000-0000-0000-0000-000000000000",
+      "objectId": "00000000-0000-0000-0000-000000000000", "permissions": {"certificates":
+      ["get", "list", "delete", "create", "import", "update", "managecontacts", "getissuers",
+      "listissuers", "setissuers", "deleteissuers", "manageissuers", "recover", "purge"],
+      "keys": ["encrypt", "decrypt", "wrapKey", "unwrapKey", "sign", "verify", "get",
       "list", "create", "update", "import", "delete", "backup", "restore", "recover",
+      "purge"], "secrets": ["get", "list", "set", "delete", "backup", "restore", "recover",
       "purge"], "storage": ["get", "list", "delete", "set", "update", "regeneratekey",
-      "setsas", "listsas", "getsas", "deletesas"], "secrets": ["get", "list", "set",
-      "delete", "backup", "restore", "recover", "purge"], "certificates": ["get",
-      "list", "delete", "create", "import", "update", "managecontacts", "getissuers",
-      "listissuers", "setissuers", "deleteissuers", "manageissuers", "recover", "purge"]},
-      "tenantId": "00000000-0000-0000-0000-000000000000", "objectId": "00000000-0000-0000-0000-000000000000"}],
-      "sku": {"family": "A", "name": "premium"}, "tenantId": "00000000-0000-0000-0000-000000000000",
-      "enabledForDiskEncryption": true, "enabledForTemplateDeployment": true, "enabledForDeployment":
-      true}}'
+      "setsas", "listsas", "getsas", "deletesas"]}}], "sku": {"name": "premium", "family":
+      "A"}}}'
     headers:
       Accept: [application/json]
       Accept-Encoding: ['gzip, deflate']
@@ -52,15 +52,15 @@ interactions:
       User-Agent: [python/3.5.2 (Windows-10-10.0.15063-SP0) requests/2.17.3 msrest/0.4.8
           msrest_azure/0.4.8 keyvaultmanagementclient/0.32.0 Azure-SDK-For-Python]
       accept-language: [en-US]
-      x-ms-client-request-id: [e1fd0fd2-4a46-11e7-97a6-5065f34efe31]
+      x-ms-client-request-id: [32e5a61e-4ad6-11e7-88f6-5065f34efe31]
     method: PUT
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/azkv-pytest/providers/Microsoft.KeyVault/vaults/pytest-shared-vault?api-version=2016-10-01
   response:
-    body: {string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/azkv-pytest/providers/Microsoft.KeyVault/vaults/pytest-shared-vault","name":"pytest-shared-vault","type":"Microsoft.KeyVault/vaults","location":"westus","tags":{},"properties":{"sku":{"family":"A","name":"premium"},"tenantId":"00000000-0000-0000-0000-000000000000","accessPolicies":[{"tenantId":"00000000-0000-0000-0000-000000000000","objectId":"00000000-0000-0000-0000-000000000000","permissions":{"keys":["encrypt","decrypt","wrapKey","unwrapKey","sign","verify","get","list","create","update","import","delete","backup","restore","recover","purge"],"storage":["get","list","delete","set","update","regeneratekey","setsas","listsas","getsas","deletesas"],"secrets":["get","list","set","delete","backup","restore","recover","purge"],"certificates":["get","list","delete","create","import","update","managecontacts","getissuers","listissuers","setissuers","deleteissuers","manageissuers","recover","purge"]}}],"enabledForDeployment":true,"enabledForDiskEncryption":true,"enabledForTemplateDeployment":true,"vaultUri":"https://pytest-shared-vault.vault.azure.net/"}}'}
+    body: {string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/azkv-pytest/providers/Microsoft.KeyVault/vaults/pytest-shared-vault","name":"pytest-shared-vault","type":"Microsoft.KeyVault/vaults","location":"westus","tags":{},"properties":{"sku":{"family":"A","name":"premium"},"tenantId":"00000000-0000-0000-0000-000000000000","accessPolicies":[{"tenantId":"00000000-0000-0000-0000-000000000000","objectId":"00000000-0000-0000-0000-000000000000","permissions":{"certificates":["get","list","delete","create","import","update","managecontacts","getissuers","listissuers","setissuers","deleteissuers","manageissuers","recover","purge"],"keys":["encrypt","decrypt","wrapKey","unwrapKey","sign","verify","get","list","create","update","import","delete","backup","restore","recover","purge"],"secrets":["get","list","set","delete","backup","restore","recover","purge"],"storage":["get","list","delete","set","update","regeneratekey","setsas","listsas","getsas","deletesas"]}}],"enabledForDeployment":true,"enabledForDiskEncryption":true,"enabledForTemplateDeployment":true,"vaultUri":"https://pytest-shared-vault.vault.azure.net/"}}'}
     headers:
       Cache-Control: [no-cache]
       Content-Type: [application/json; charset=utf-8]
-      Date: ['Mon, 05 Jun 2017 23:29:55 GMT']
+      Date: ['Tue, 06 Jun 2017 16:35:49 GMT']
       Expires: ['-1']
       Pragma: [no-cache]
       Server: [Microsoft-IIS/8.5]
@@ -71,17 +71,18 @@ interactions:
       X-Content-Type-Options: [nosniff]
       X-Powered-By: [ASP.NET]
       content-length: ['1139']
-      x-ms-correlation-request-id: [dec11bdd-49b3-4e04-9d73-b12bb6ec7051]
+      x-ms-correlation-request-id: [e030237f-baf5-4017-a285-710d11d145ed]
       x-ms-keyvault-service-version: [1.0.0.164]
-      x-ms-ratelimit-remaining-subscription-writes: ['1197']
-      x-ms-request-id: [dec11bdd-49b3-4e04-9d73-b12bb6ec7051]
-      x-ms-routing-request-id: ['WESTUS:20170605T232956Z:dec11bdd-49b3-4e04-9d73-b12bb6ec7051']
+      x-ms-ratelimit-remaining-subscription-writes: ['1192']
+      x-ms-request-id: [e030237f-baf5-4017-a285-710d11d145ed]
+      x-ms-routing-request-id: ['WESTUS:20170606T163550Z:e030237f-baf5-4017-a285-710d11d145ed']
     status: {code: 200, message: OK}
 - request:
-    body: '{"policy": {"secret_props": {"contentType": "application/x-pkcs12"}, "issuer":
-      {"name": "Self"}, "x509_props": {"subject": "CN=*.microsoft.com", "sans": {"dns_names":
-      ["onedrive.microsoft.com", "xbox.microsoft.com"]}, "validity_months": 24}, "key_props":
-      {"key_size": 2048, "exportable": true, "kty": "RSA", "reuse_key": false}}}'
+    body: '{"policy": {"x509_props": {"validity_months": 24, "sans": {"dns_names":
+      ["onedrive.microsoft.com", "xbox.microsoft.com"]}, "subject": "CN=*.microsoft.com"},
+      "key_props": {"exportable": true, "kty": "RSA", "key_size": 2048, "reuse_key":
+      false}, "secret_props": {"contentType": "application/x-pkcs12"}, "issuer": {"name":
+      "Self"}}}'
     headers:
       Accept: [application/json]
       Accept-Encoding: ['gzip, deflate']
@@ -91,20 +92,20 @@ interactions:
       User-Agent: [python/3.5.2 (Windows-10-10.0.15063-SP0) requests/2.17.3 msrest/0.4.8
           msrest_azure/0.4.8 keyvaultclient/0.3.4 Azure-SDK-For-Python]
       accept-language: [en-US]
-      x-ms-client-request-id: [e852997e-4a46-11e7-adcc-5065f34efe31]
+      x-ms-client-request-id: [393d80b6-4ad6-11e7-bcf9-5065f34efe31]
     method: POST
     uri: https://pytest-shared-vault.vault.azure.net/certificates/asyncCanceledDeletedCert/create?api-version=2016-10-01
   response:
-    body: {string: '{"id":"https://pytest-shared-vault.vault.azure.net/certificates/asyncCanceledDeletedCert/pending","issuer":{"name":"Self"},"csr":"MIIC4zCCAcsCAQAwGjEYMBYGA1UEAwwPKi5taWNyb3NvZnQuY29tMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEApgCD58sVWMT4B0kBF9xcQHAGZeVUApOTbJktobLzlbsRXq1GzSzunO0H0M2phzMeGH3M0q9DvHsafdK7IfaFKek02aApeeIJNvtqtOQCga2KjNPjjQPOc7FBJ5Tv9OHrYSZDY45lGL7XhyQpEE40cCXJtqwDWHBNRoNweDStwKgYtCr2IkMAPFjl5DMmoONbRALl1miM71ho5RucGvOn1lQ4n38MRjkJAlICzIVHrFOqpPRQ8lpgSa9XezhQpR61JP7oRhpEXEI2WU1LhINPNJIoBpaRp1vS+ArS8uoDvtBc8+XDk+KjIO9Nz8IgV/XfEFzHw0yLnicHdnovca5HOwIDAQABoIGDMIGABgkqhkiG9w0BCQ4xczBxMA4GA1UdDwEB/wQEAwIFoDAdBgNVHSUEFjAUBggrBgEFBQcDAQYIKwYBBQUHAwIwNQYDVR0RBC4wLIIWb25lZHJpdmUubWljcm9zb2Z0LmNvbYISeGJveC5taWNyb3NvZnQuY29tMAkGA1UdEwQCMAAwDQYJKoZIhvcNAQELBQADggEBABJ3Dpz7R85wdZ0KjNOD//5WHgteEwWYc9Yax2iBtHwFnYnnpW1TgZcqj4+2qamtHzwKCn8O+tusD9+IINzyNAlDgFvOABXNBfdzqlXxsK8/KGjSBhPkS9aAiSQnz46oMP/vdNjP+AkvjUFjx6Rs7ZBo9DVKfAh9fQvWOQnmzdVuukDcoglKkgG4Pdotxv2gzS1zVsudrRFcu/j4MBkymQXSQDKMxPHjQoOfGKlgQCxLInCrN0U2bgCz7nVCSrAXg8euRwL4CaRcKlby1YRm/+9RpGkqliYTMbW0remi7ZjQvyTlH68fjCA9Wd6N9ZglZq2vMUHDOlGu4wtQkxzuKsY=","cancellation_requested":false,"status":"inProgress","status_details":"Pending
+    body: {string: '{"id":"https://pytest-shared-vault.vault.azure.net/certificates/asyncCanceledDeletedCert/pending","issuer":{"name":"Self"},"csr":"MIIC4zCCAcsCAQAwGjEYMBYGA1UEAwwPKi5taWNyb3NvZnQuY29tMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAlbG0TROXjdmWvD3gh+OR4D8YBa1zBRs4wSjCKDNEeG9dq1R76UKzhGgBLgzOO4bvq+iyw7dQ9yLpNE+UxhmL+LBOsqxrvQGob+1MA1xoBBs7Nu08c8+dTNSY8s2cEFEP/noi6hg8t7+HN6FZknZJ1L69KP6LHXRaDAMT/A8cRokW9gBKh0vQSZTOACSw5HFpC2dM9UzHI147VuGjSfnf0uY4/g/XePRN6S/BXz5OYrUFt9ihXBc9JKynWn63faTO0csimP38CM0Htrz3eCuGiu8vt6N4KUfBLDydiBBDJFgfamwCV3pg3UWXUC21rp0L6hik3euZImN0ZCFLkq6W3wIDAQABoIGDMIGABgkqhkiG9w0BCQ4xczBxMA4GA1UdDwEB/wQEAwIFoDAdBgNVHSUEFjAUBggrBgEFBQcDAQYIKwYBBQUHAwIwNQYDVR0RBC4wLIIWb25lZHJpdmUubWljcm9zb2Z0LmNvbYISeGJveC5taWNyb3NvZnQuY29tMAkGA1UdEwQCMAAwDQYJKoZIhvcNAQELBQADggEBAD74Z0nZUCpm/QGlAcPdHtrmr1hWQANk+z18R9Y6x66tuNbmcOWxALefzWHqGVq4IJlisZ+WAGk2MTUds9/gqsZDLn+2NS5MAWFiseYsNpKCOsWQNh6gwcbtUtcWU2uZoPl3AC3NxQU3Xp1eZ1Wek9NRFsX0jXdKTM0S0kL4Kyaz8QK8vzihSHScKOADRjC3w8Sngumd+/rm8BAtljiRjKGNShw7/ZFe7kda+jwj47G6RfcxkuZ1LnzdEpWBROKiy5r3R7GlT55afJp0GiPtUTD9FTAA+BHSYBFN/MXVJti5Gt7+9y/afEDCETS7CvFbFsl6qtah8mri9UsaPU4W/ig=","cancellation_requested":false,"status":"inProgress","status_details":"Pending
         certificate created. Certificate request is in progress. This may take some
-        time based on the issuer provider. Please check again later.","request_id":"22316bad2bca41f5a4d02c7227c01877"}'}
+        time based on the issuer provider. Please check again later.","request_id":"8e61c0dfe1f049fca58fb07d10174229"}'}
     headers:
       Cache-Control: [no-cache]
       Content-Length: ['1389']
       Content-Type: [application/json; charset=utf-8]
-      Date: ['Mon, 05 Jun 2017 23:30:08 GMT']
+      Date: ['Tue, 06 Jun 2017 16:36:02 GMT']
       Expires: ['-1']
-      Location: ['https://pytest-shared-vault.vault.azure.net/certificates/asyncCanceledDeletedCert/pending?api-version=2016-10-01&request_id=22316bad2bca41f5a4d02c7227c01877']
+      Location: ['https://pytest-shared-vault.vault.azure.net/certificates/asyncCanceledDeletedCert/pending?api-version=2016-10-01&request_id=8e61c0dfe1f049fca58fb07d10174229']
       Pragma: [no-cache]
       Retry-After: ['0']
       Server: [Microsoft-IIS/8.5]
@@ -114,7 +115,7 @@ interactions:
       X-Powered-By: [ASP.NET]
       x-ms-keyvault-region: [westus]
       x-ms-keyvault-service-version: [1.0.0.813]
-      x-ms-request-id: [2a6e03f8-6767-4c4d-8270-d88ed6a58cbf]
+      x-ms-request-id: [5b4dc0e9-6e47-40c1-9077-a7ffacfa4a20]
     status: {code: 202, message: Accepted}
 - request:
     body: '{"cancellation_requested": true}'
@@ -127,18 +128,18 @@ interactions:
       User-Agent: [python/3.5.2 (Windows-10-10.0.15063-SP0) requests/2.17.3 msrest/0.4.8
           msrest_azure/0.4.8 keyvaultclient/0.3.4 Azure-SDK-For-Python]
       accept-language: [en-US]
-      x-ms-client-request-id: [e9806974-4a46-11e7-8922-5065f34efe31]
+      x-ms-client-request-id: [3b2112de-4ad6-11e7-a6aa-5065f34efe31]
     method: PATCH
     uri: https://pytest-shared-vault.vault.azure.net/certificates/asyncCanceledDeletedCert/pending?api-version=2016-10-01
   response:
-    body: {string: '{"id":"https://pytest-shared-vault.vault.azure.net/certificates/asyncCanceledDeletedCert/pending","issuer":{"name":"Self"},"csr":"MIIC4zCCAcsCAQAwGjEYMBYGA1UEAwwPKi5taWNyb3NvZnQuY29tMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEApgCD58sVWMT4B0kBF9xcQHAGZeVUApOTbJktobLzlbsRXq1GzSzunO0H0M2phzMeGH3M0q9DvHsafdK7IfaFKek02aApeeIJNvtqtOQCga2KjNPjjQPOc7FBJ5Tv9OHrYSZDY45lGL7XhyQpEE40cCXJtqwDWHBNRoNweDStwKgYtCr2IkMAPFjl5DMmoONbRALl1miM71ho5RucGvOn1lQ4n38MRjkJAlICzIVHrFOqpPRQ8lpgSa9XezhQpR61JP7oRhpEXEI2WU1LhINPNJIoBpaRp1vS+ArS8uoDvtBc8+XDk+KjIO9Nz8IgV/XfEFzHw0yLnicHdnovca5HOwIDAQABoIGDMIGABgkqhkiG9w0BCQ4xczBxMA4GA1UdDwEB/wQEAwIFoDAdBgNVHSUEFjAUBggrBgEFBQcDAQYIKwYBBQUHAwIwNQYDVR0RBC4wLIIWb25lZHJpdmUubWljcm9zb2Z0LmNvbYISeGJveC5taWNyb3NvZnQuY29tMAkGA1UdEwQCMAAwDQYJKoZIhvcNAQELBQADggEBABJ3Dpz7R85wdZ0KjNOD//5WHgteEwWYc9Yax2iBtHwFnYnnpW1TgZcqj4+2qamtHzwKCn8O+tusD9+IINzyNAlDgFvOABXNBfdzqlXxsK8/KGjSBhPkS9aAiSQnz46oMP/vdNjP+AkvjUFjx6Rs7ZBo9DVKfAh9fQvWOQnmzdVuukDcoglKkgG4Pdotxv2gzS1zVsudrRFcu/j4MBkymQXSQDKMxPHjQoOfGKlgQCxLInCrN0U2bgCz7nVCSrAXg8euRwL4CaRcKlby1YRm/+9RpGkqliYTMbW0remi7ZjQvyTlH68fjCA9Wd6N9ZglZq2vMUHDOlGu4wtQkxzuKsY=","cancellation_requested":true,"status":"inProgress","status_details":"Pending
+    body: {string: '{"id":"https://pytest-shared-vault.vault.azure.net/certificates/asyncCanceledDeletedCert/pending","issuer":{"name":"Self"},"csr":"MIIC4zCCAcsCAQAwGjEYMBYGA1UEAwwPKi5taWNyb3NvZnQuY29tMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAlbG0TROXjdmWvD3gh+OR4D8YBa1zBRs4wSjCKDNEeG9dq1R76UKzhGgBLgzOO4bvq+iyw7dQ9yLpNE+UxhmL+LBOsqxrvQGob+1MA1xoBBs7Nu08c8+dTNSY8s2cEFEP/noi6hg8t7+HN6FZknZJ1L69KP6LHXRaDAMT/A8cRokW9gBKh0vQSZTOACSw5HFpC2dM9UzHI147VuGjSfnf0uY4/g/XePRN6S/BXz5OYrUFt9ihXBc9JKynWn63faTO0csimP38CM0Htrz3eCuGiu8vt6N4KUfBLDydiBBDJFgfamwCV3pg3UWXUC21rp0L6hik3euZImN0ZCFLkq6W3wIDAQABoIGDMIGABgkqhkiG9w0BCQ4xczBxMA4GA1UdDwEB/wQEAwIFoDAdBgNVHSUEFjAUBggrBgEFBQcDAQYIKwYBBQUHAwIwNQYDVR0RBC4wLIIWb25lZHJpdmUubWljcm9zb2Z0LmNvbYISeGJveC5taWNyb3NvZnQuY29tMAkGA1UdEwQCMAAwDQYJKoZIhvcNAQELBQADggEBAD74Z0nZUCpm/QGlAcPdHtrmr1hWQANk+z18R9Y6x66tuNbmcOWxALefzWHqGVq4IJlisZ+WAGk2MTUds9/gqsZDLn+2NS5MAWFiseYsNpKCOsWQNh6gwcbtUtcWU2uZoPl3AC3NxQU3Xp1eZ1Wek9NRFsX0jXdKTM0S0kL4Kyaz8QK8vzihSHScKOADRjC3w8Sngumd+/rm8BAtljiRjKGNShw7/ZFe7kda+jwj47G6RfcxkuZ1LnzdEpWBROKiy5r3R7GlT55afJp0GiPtUTD9FTAA+BHSYBFN/MXVJti5Gt7+9y/afEDCETS7CvFbFsl6qtah8mri9UsaPU4W/ig=","cancellation_requested":true,"status":"inProgress","status_details":"Pending
         certificate created. Certificate request is in progress. This may take some
-        time based on the issuer provider. Please check again later.","request_id":"22316bad2bca41f5a4d02c7227c01877"}'}
+        time based on the issuer provider. Please check again later.","request_id":"8e61c0dfe1f049fca58fb07d10174229"}'}
     headers:
       Cache-Control: [no-cache]
       Content-Length: ['1388']
       Content-Type: [application/json; charset=utf-8]
-      Date: ['Mon, 05 Jun 2017 23:30:08 GMT']
+      Date: ['Tue, 06 Jun 2017 16:36:04 GMT']
       Expires: ['-1']
       Pragma: [no-cache]
       Server: [Microsoft-IIS/8.5]
@@ -148,7 +149,7 @@ interactions:
       X-Powered-By: [ASP.NET]
       x-ms-keyvault-region: [westus]
       x-ms-keyvault-service-version: [1.0.0.813]
-      x-ms-request-id: [66d2d8d1-b512-4bc9-84ea-922ea1c412db]
+      x-ms-request-id: [cb4343aa-00fb-4b09-ace8-5d4065cb6d39]
     status: {code: 200, message: OK}
 - request:
     body: null
@@ -160,18 +161,18 @@ interactions:
       User-Agent: [python/3.5.2 (Windows-10-10.0.15063-SP0) requests/2.17.3 msrest/0.4.8
           msrest_azure/0.4.8 keyvaultclient/0.3.4 Azure-SDK-For-Python]
       accept-language: [en-US]
-      x-ms-client-request-id: [ea3995fa-4a46-11e7-ae22-5065f34efe31]
+      x-ms-client-request-id: [3be7a89a-4ad6-11e7-bf31-5065f34efe31]
     method: GET
     uri: https://pytest-shared-vault.vault.azure.net/certificates/asyncCanceledDeletedCert/pending?api-version=2016-10-01
   response:
-    body: {string: '{"id":"https://pytest-shared-vault.vault.azure.net/certificates/asyncCanceledDeletedCert/pending","issuer":{"name":"Self"},"csr":"MIIC4zCCAcsCAQAwGjEYMBYGA1UEAwwPKi5taWNyb3NvZnQuY29tMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEApgCD58sVWMT4B0kBF9xcQHAGZeVUApOTbJktobLzlbsRXq1GzSzunO0H0M2phzMeGH3M0q9DvHsafdK7IfaFKek02aApeeIJNvtqtOQCga2KjNPjjQPOc7FBJ5Tv9OHrYSZDY45lGL7XhyQpEE40cCXJtqwDWHBNRoNweDStwKgYtCr2IkMAPFjl5DMmoONbRALl1miM71ho5RucGvOn1lQ4n38MRjkJAlICzIVHrFOqpPRQ8lpgSa9XezhQpR61JP7oRhpEXEI2WU1LhINPNJIoBpaRp1vS+ArS8uoDvtBc8+XDk+KjIO9Nz8IgV/XfEFzHw0yLnicHdnovca5HOwIDAQABoIGDMIGABgkqhkiG9w0BCQ4xczBxMA4GA1UdDwEB/wQEAwIFoDAdBgNVHSUEFjAUBggrBgEFBQcDAQYIKwYBBQUHAwIwNQYDVR0RBC4wLIIWb25lZHJpdmUubWljcm9zb2Z0LmNvbYISeGJveC5taWNyb3NvZnQuY29tMAkGA1UdEwQCMAAwDQYJKoZIhvcNAQELBQADggEBABJ3Dpz7R85wdZ0KjNOD//5WHgteEwWYc9Yax2iBtHwFnYnnpW1TgZcqj4+2qamtHzwKCn8O+tusD9+IINzyNAlDgFvOABXNBfdzqlXxsK8/KGjSBhPkS9aAiSQnz46oMP/vdNjP+AkvjUFjx6Rs7ZBo9DVKfAh9fQvWOQnmzdVuukDcoglKkgG4Pdotxv2gzS1zVsudrRFcu/j4MBkymQXSQDKMxPHjQoOfGKlgQCxLInCrN0U2bgCz7nVCSrAXg8euRwL4CaRcKlby1YRm/+9RpGkqliYTMbW0remi7ZjQvyTlH68fjCA9Wd6N9ZglZq2vMUHDOlGu4wtQkxzuKsY=","cancellation_requested":true,"status":"inProgress","status_details":"Pending
+    body: {string: '{"id":"https://pytest-shared-vault.vault.azure.net/certificates/asyncCanceledDeletedCert/pending","issuer":{"name":"Self"},"csr":"MIIC4zCCAcsCAQAwGjEYMBYGA1UEAwwPKi5taWNyb3NvZnQuY29tMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAlbG0TROXjdmWvD3gh+OR4D8YBa1zBRs4wSjCKDNEeG9dq1R76UKzhGgBLgzOO4bvq+iyw7dQ9yLpNE+UxhmL+LBOsqxrvQGob+1MA1xoBBs7Nu08c8+dTNSY8s2cEFEP/noi6hg8t7+HN6FZknZJ1L69KP6LHXRaDAMT/A8cRokW9gBKh0vQSZTOACSw5HFpC2dM9UzHI147VuGjSfnf0uY4/g/XePRN6S/BXz5OYrUFt9ihXBc9JKynWn63faTO0csimP38CM0Htrz3eCuGiu8vt6N4KUfBLDydiBBDJFgfamwCV3pg3UWXUC21rp0L6hik3euZImN0ZCFLkq6W3wIDAQABoIGDMIGABgkqhkiG9w0BCQ4xczBxMA4GA1UdDwEB/wQEAwIFoDAdBgNVHSUEFjAUBggrBgEFBQcDAQYIKwYBBQUHAwIwNQYDVR0RBC4wLIIWb25lZHJpdmUubWljcm9zb2Z0LmNvbYISeGJveC5taWNyb3NvZnQuY29tMAkGA1UdEwQCMAAwDQYJKoZIhvcNAQELBQADggEBAD74Z0nZUCpm/QGlAcPdHtrmr1hWQANk+z18R9Y6x66tuNbmcOWxALefzWHqGVq4IJlisZ+WAGk2MTUds9/gqsZDLn+2NS5MAWFiseYsNpKCOsWQNh6gwcbtUtcWU2uZoPl3AC3NxQU3Xp1eZ1Wek9NRFsX0jXdKTM0S0kL4Kyaz8QK8vzihSHScKOADRjC3w8Sngumd+/rm8BAtljiRjKGNShw7/ZFe7kda+jwj47G6RfcxkuZ1LnzdEpWBROKiy5r3R7GlT55afJp0GiPtUTD9FTAA+BHSYBFN/MXVJti5Gt7+9y/afEDCETS7CvFbFsl6qtah8mri9UsaPU4W/ig=","cancellation_requested":true,"status":"inProgress","status_details":"Pending
         certificate created. Certificate request is in progress. This may take some
-        time based on the issuer provider. Please check again later.","request_id":"22316bad2bca41f5a4d02c7227c01877"}'}
+        time based on the issuer provider. Please check again later.","request_id":"8e61c0dfe1f049fca58fb07d10174229"}'}
     headers:
       Cache-Control: [no-cache]
       Content-Length: ['1388']
       Content-Type: [application/json; charset=utf-8]
-      Date: ['Mon, 05 Jun 2017 23:30:10 GMT']
+      Date: ['Tue, 06 Jun 2017 16:36:05 GMT']
       Expires: ['-1']
       Pragma: [no-cache]
       Retry-After: ['0']
@@ -182,7 +183,7 @@ interactions:
       X-Powered-By: [ASP.NET]
       x-ms-keyvault-region: [westus]
       x-ms-keyvault-service-version: [1.0.0.813]
-      x-ms-request-id: [9c9878ba-dabe-43a0-98bd-c902e866f18c]
+      x-ms-request-id: [bb133497-7fad-4f55-aeff-f3ac07fe892d]
     status: {code: 200, message: OK}
 - request:
     body: null
@@ -195,18 +196,18 @@ interactions:
       User-Agent: [python/3.5.2 (Windows-10-10.0.15063-SP0) requests/2.17.3 msrest/0.4.8
           msrest_azure/0.4.8 keyvaultclient/0.3.4 Azure-SDK-For-Python]
       accept-language: [en-US]
-      x-ms-client-request-id: [eacd2eee-4a46-11e7-803b-5065f34efe31]
+      x-ms-client-request-id: [3c677518-4ad6-11e7-860b-5065f34efe31]
     method: DELETE
     uri: https://pytest-shared-vault.vault.azure.net/certificates/asyncCanceledDeletedCert/pending?api-version=2016-10-01
   response:
-    body: {string: '{"id":"https://pytest-shared-vault.vault.azure.net/certificates/asyncCanceledDeletedCert/pending","issuer":{"name":"Self"},"csr":"MIIC4zCCAcsCAQAwGjEYMBYGA1UEAwwPKi5taWNyb3NvZnQuY29tMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEApgCD58sVWMT4B0kBF9xcQHAGZeVUApOTbJktobLzlbsRXq1GzSzunO0H0M2phzMeGH3M0q9DvHsafdK7IfaFKek02aApeeIJNvtqtOQCga2KjNPjjQPOc7FBJ5Tv9OHrYSZDY45lGL7XhyQpEE40cCXJtqwDWHBNRoNweDStwKgYtCr2IkMAPFjl5DMmoONbRALl1miM71ho5RucGvOn1lQ4n38MRjkJAlICzIVHrFOqpPRQ8lpgSa9XezhQpR61JP7oRhpEXEI2WU1LhINPNJIoBpaRp1vS+ArS8uoDvtBc8+XDk+KjIO9Nz8IgV/XfEFzHw0yLnicHdnovca5HOwIDAQABoIGDMIGABgkqhkiG9w0BCQ4xczBxMA4GA1UdDwEB/wQEAwIFoDAdBgNVHSUEFjAUBggrBgEFBQcDAQYIKwYBBQUHAwIwNQYDVR0RBC4wLIIWb25lZHJpdmUubWljcm9zb2Z0LmNvbYISeGJveC5taWNyb3NvZnQuY29tMAkGA1UdEwQCMAAwDQYJKoZIhvcNAQELBQADggEBABJ3Dpz7R85wdZ0KjNOD//5WHgteEwWYc9Yax2iBtHwFnYnnpW1TgZcqj4+2qamtHzwKCn8O+tusD9+IINzyNAlDgFvOABXNBfdzqlXxsK8/KGjSBhPkS9aAiSQnz46oMP/vdNjP+AkvjUFjx6Rs7ZBo9DVKfAh9fQvWOQnmzdVuukDcoglKkgG4Pdotxv2gzS1zVsudrRFcu/j4MBkymQXSQDKMxPHjQoOfGKlgQCxLInCrN0U2bgCz7nVCSrAXg8euRwL4CaRcKlby1YRm/+9RpGkqliYTMbW0remi7ZjQvyTlH68fjCA9Wd6N9ZglZq2vMUHDOlGu4wtQkxzuKsY=","cancellation_requested":true,"status":"inProgress","status_details":"Pending
+    body: {string: '{"id":"https://pytest-shared-vault.vault.azure.net/certificates/asyncCanceledDeletedCert/pending","issuer":{"name":"Self"},"csr":"MIIC4zCCAcsCAQAwGjEYMBYGA1UEAwwPKi5taWNyb3NvZnQuY29tMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAlbG0TROXjdmWvD3gh+OR4D8YBa1zBRs4wSjCKDNEeG9dq1R76UKzhGgBLgzOO4bvq+iyw7dQ9yLpNE+UxhmL+LBOsqxrvQGob+1MA1xoBBs7Nu08c8+dTNSY8s2cEFEP/noi6hg8t7+HN6FZknZJ1L69KP6LHXRaDAMT/A8cRokW9gBKh0vQSZTOACSw5HFpC2dM9UzHI147VuGjSfnf0uY4/g/XePRN6S/BXz5OYrUFt9ihXBc9JKynWn63faTO0csimP38CM0Htrz3eCuGiu8vt6N4KUfBLDydiBBDJFgfamwCV3pg3UWXUC21rp0L6hik3euZImN0ZCFLkq6W3wIDAQABoIGDMIGABgkqhkiG9w0BCQ4xczBxMA4GA1UdDwEB/wQEAwIFoDAdBgNVHSUEFjAUBggrBgEFBQcDAQYIKwYBBQUHAwIwNQYDVR0RBC4wLIIWb25lZHJpdmUubWljcm9zb2Z0LmNvbYISeGJveC5taWNyb3NvZnQuY29tMAkGA1UdEwQCMAAwDQYJKoZIhvcNAQELBQADggEBAD74Z0nZUCpm/QGlAcPdHtrmr1hWQANk+z18R9Y6x66tuNbmcOWxALefzWHqGVq4IJlisZ+WAGk2MTUds9/gqsZDLn+2NS5MAWFiseYsNpKCOsWQNh6gwcbtUtcWU2uZoPl3AC3NxQU3Xp1eZ1Wek9NRFsX0jXdKTM0S0kL4Kyaz8QK8vzihSHScKOADRjC3w8Sngumd+/rm8BAtljiRjKGNShw7/ZFe7kda+jwj47G6RfcxkuZ1LnzdEpWBROKiy5r3R7GlT55afJp0GiPtUTD9FTAA+BHSYBFN/MXVJti5Gt7+9y/afEDCETS7CvFbFsl6qtah8mri9UsaPU4W/ig=","cancellation_requested":true,"status":"inProgress","status_details":"Pending
         certificate created. Certificate request is in progress. This may take some
-        time based on the issuer provider. Please check again later.","request_id":"22316bad2bca41f5a4d02c7227c01877"}'}
+        time based on the issuer provider. Please check again later.","request_id":"8e61c0dfe1f049fca58fb07d10174229"}'}
     headers:
       Cache-Control: [no-cache]
       Content-Length: ['1388']
       Content-Type: [application/json; charset=utf-8]
-      Date: ['Mon, 05 Jun 2017 23:30:10 GMT']
+      Date: ['Tue, 06 Jun 2017 16:36:05 GMT']
       Expires: ['-1']
       Pragma: [no-cache]
       Server: [Microsoft-IIS/8.5]
@@ -216,7 +217,7 @@ interactions:
       X-Powered-By: [ASP.NET]
       x-ms-keyvault-region: [westus]
       x-ms-keyvault-service-version: [1.0.0.813]
-      x-ms-request-id: [353f852e-3cb7-4fb1-8121-b7396476e9ad]
+      x-ms-request-id: [370208ac-2080-47b6-80b5-45cd86e957de]
     status: {code: 200, message: OK}
 - request:
     body: null
@@ -228,7 +229,7 @@ interactions:
       User-Agent: [python/3.5.2 (Windows-10-10.0.15063-SP0) requests/2.17.3 msrest/0.4.8
           msrest_azure/0.4.8 keyvaultclient/0.3.4 Azure-SDK-For-Python]
       accept-language: [en-US]
-      x-ms-client-request-id: [eb74884a-4a46-11e7-bb77-5065f34efe31]
+      x-ms-client-request-id: [3d0d8efe-4ad6-11e7-a01a-5065f34efe31]
     method: GET
     uri: https://pytest-shared-vault.vault.azure.net/certificates/asyncCanceledDeletedCert/pending?api-version=2016-10-01
   response:
@@ -238,7 +239,7 @@ interactions:
       Cache-Control: [no-cache]
       Content-Length: ['115']
       Content-Type: [application/json; charset=utf-8]
-      Date: ['Mon, 05 Jun 2017 23:30:12 GMT']
+      Date: ['Tue, 06 Jun 2017 16:36:06 GMT']
       Expires: ['-1']
       Pragma: [no-cache]
       Server: [Microsoft-IIS/8.5]
@@ -248,7 +249,7 @@ interactions:
       X-Powered-By: [ASP.NET]
       x-ms-keyvault-region: [westus]
       x-ms-keyvault-service-version: [1.0.0.813]
-      x-ms-request-id: [89c0a1bf-1187-4f2b-9851-4fbfa0317918]
+      x-ms-request-id: [3fbe9c9a-41f9-4ac7-a832-56ce5b9d3796]
     status: {code: 404, message: Not Found}
 - request:
     body: null
@@ -261,16 +262,16 @@ interactions:
       User-Agent: [python/3.5.2 (Windows-10-10.0.15063-SP0) requests/2.17.3 msrest/0.4.8
           msrest_azure/0.4.8 keyvaultclient/0.3.4 Azure-SDK-For-Python]
       accept-language: [en-US]
-      x-ms-client-request-id: [ec060e06-4a46-11e7-bf0e-5065f34efe31]
+      x-ms-client-request-id: [3d93d7f6-4ad6-11e7-be49-5065f34efe31]
     method: DELETE
     uri: https://pytest-shared-vault.vault.azure.net/certificates/asyncCanceledDeletedCert?api-version=2016-10-01
   response:
-    body: {string: '{"id":"https://pytest-shared-vault.vault.azure.net/certificates/asyncCanceledDeletedCert/19a62395788c4784b01370c02cbcffc2","attributes":{"enabled":false,"nbf":1496704808,"exp":1559777408,"created":1496705408,"updated":1496705408,"recoverylevel":"Purgeable"},"policy":{"id":"https://pytest-shared-vault.vault.azure.net/certificates/asyncCanceledDeletedCert/policy","key_props":{"exportable":true,"kty":"RSA","key_size":2048,"reuse_key":false},"secret_props":{"contentType":"application/x-pkcs12"},"x509_props":{"subject":"CN=*.microsoft.com","sans":{"dns_names":["onedrive.microsoft.com","xbox.microsoft.com"]},"ekus":["1.3.6.1.5.5.7.3.1","1.3.6.1.5.5.7.3.2"],"key_usage":["digitalSignature","keyEncipherment"],"validity_months":24,"basic_constraints":{"ca":false}},"lifetime_actions":[{"trigger":{"lifetime_percentage":80},"action":{"action_type":"AutoRenew"}}],"issuer":{"name":"Self"},"attributes":{"enabled":true,"created":1496705408,"updated":1496705408}}}'}
+    body: {string: '{"id":"https://pytest-shared-vault.vault.azure.net/certificates/asyncCanceledDeletedCert/73317c36b42d44f9b654ca9cadc3c15c","attributes":{"enabled":false,"nbf":1496766361,"exp":1559838961,"created":1496766962,"updated":1496766962,"recoverylevel":"Purgeable"},"policy":{"id":"https://pytest-shared-vault.vault.azure.net/certificates/asyncCanceledDeletedCert/policy","key_props":{"exportable":true,"kty":"RSA","key_size":2048,"reuse_key":false},"secret_props":{"contentType":"application/x-pkcs12"},"x509_props":{"subject":"CN=*.microsoft.com","sans":{"dns_names":["onedrive.microsoft.com","xbox.microsoft.com"]},"ekus":["1.3.6.1.5.5.7.3.1","1.3.6.1.5.5.7.3.2"],"key_usage":["digitalSignature","keyEncipherment"],"validity_months":24,"basic_constraints":{"ca":false}},"lifetime_actions":[{"trigger":{"lifetime_percentage":80},"action":{"action_type":"AutoRenew"}}],"issuer":{"name":"Self"},"attributes":{"enabled":true,"created":1496766962,"updated":1496766962}}}'}
     headers:
       Cache-Control: [no-cache]
       Content-Length: ['960']
       Content-Type: [application/json; charset=utf-8]
-      Date: ['Mon, 05 Jun 2017 23:30:13 GMT']
+      Date: ['Tue, 06 Jun 2017 16:36:09 GMT']
       Expires: ['-1']
       Pragma: [no-cache]
       Server: [Microsoft-IIS/8.5]
@@ -280,6 +281,6 @@ interactions:
       X-Powered-By: [ASP.NET]
       x-ms-keyvault-region: [westus]
       x-ms-keyvault-service-version: [1.0.0.813]
-      x-ms-request-id: [647b6cc2-2376-49af-afdc-cc3e8e7daec7]
+      x-ms-request-id: [16aba8ec-e608-46d6-84e5-9e04dea2e669]
     status: {code: 200, message: OK}
 version: 1

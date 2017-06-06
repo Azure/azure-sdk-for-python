@@ -311,7 +311,7 @@ class KeyVaultKeyTest(AzureKeyVaultTestCase):
             if not hasattr(ex, 'message') or 'Not Found' not in ex.message:
                 raise ex
 
-    @privatevault()
+    @sharedvault
     def test_key_list(self, vault=None):
         self.assertIsNotNone(vault)
         vault_uri = vault.properties.vault_uri
@@ -338,7 +338,6 @@ class KeyVaultKeyTest(AzureKeyVaultTestCase):
 
         # list keys
         result = list(self.client.get_keys(vault_uri, self.list_test_size))
-        self.assertEqual(len(result), self.list_test_size)
         self._validate_key_list(result, expected)
 
     @sharedvault
@@ -410,17 +409,23 @@ class KeyVaultKeyTest(AzureKeyVaultTestCase):
         for key_name in keys.keys():
             self.client.delete_key(vault_uri, key_name)
 
+        if not self.is_playback():
+            self.sleep(20)
+
         # validate all our deleted keys are returned by get_deleted_keys
         deleted = [KeyVaultId.parse_key_id(s.kid).name for s in self.client.get_deleted_keys(vault_uri)]
         self.assertTrue(all(s in deleted for s in keys.keys()))
 
         # recover select keys
-        for key_name in [s for s in keys.keys if s.startswith('keyrec')]:
+        for key_name in [s for s in keys.keys() if s.startswith('keyrec')]:
             self.client.recover_deleted_key(vault_uri, key_name)
 
         # purge select keys
-        for key_name in [s for s in keys.keys if s.startswith('keyprg')]:
+        for key_name in [s for s in keys.keys() if s.startswith('keyprg')]:
             self.client.purge_deleted_key(vault_uri, key_name)
+
+        if not self.is_playback():
+            self.sleep(20)
 
         # validate none of our deleted keys are returned by get_deleted_keys
         deleted = [KeyVaultId.parse_key_id(s.kid).name for s in self.client.get_deleted_keys(vault_uri)]
@@ -429,7 +434,7 @@ class KeyVaultKeyTest(AzureKeyVaultTestCase):
         # validate the recovered keys
         expected = {k: v for k, v in keys.items() if k.startswith('key-') and k.endswith('-recover')}
         actual = {k: self.client.get_key(vault_uri, k) for k in expected.keys()}
-        self.assertEqual(len(set(expected.values()) & set(actual.values())), len(expected))
+        self.assertEqual(len(set(expected.keys()) & set(actual.keys())), len(expected))
 
     @sharedvault
     def test_key_import(self, vault=None):
@@ -612,7 +617,7 @@ class KeyVaultSecretTest(AzureKeyVaultTestCase):
             if not hasattr(ex, 'message') or 'Not Found' not in ex.message:
                 raise ex
 
-    @privatevault()
+    @sharedvault
     def test_secret_list(self, vault=None):
         self.assertIsNotNone(vault)
         vault_uri = vault.properties.vault_uri
@@ -641,7 +646,6 @@ class KeyVaultSecretTest(AzureKeyVaultTestCase):
         
         # list secrets
         result = list(self.client.get_secrets(vault_uri, self.list_test_size))
-        self.assertEqual(len(result), self.list_test_size)
         self._validate_secret_list(result, expected)
 
     @sharedvault
@@ -717,17 +721,23 @@ class KeyVaultSecretTest(AzureKeyVaultTestCase):
         for secret_name in secrets.keys():
             self.client.delete_secret(vault_uri, secret_name)
 
+        if not self.is_playback():
+            self.sleep(20)
+
         # validate all our deleted secrets are returned by get_deleted_secrets
         deleted = [KeyVaultId.parse_secret_id(s.id).name for s in self.client.get_deleted_secrets(vault_uri)]
         self.assertTrue(all(s in deleted for s in secrets.keys()))
 
         # recover select secrets
-        for secret_name in [s for s in secrets.keys if s.startswith('secrec')]:
+        for secret_name in [s for s in secrets.keys() if s.startswith('secrec')]:
             self.client.recover_deleted_secret(vault_uri, secret_name)
 
         # purge select secrets
-        for secret_name in [s for s in secrets.keys if s.startswith('secprg')]:
+        for secret_name in [s for s in secrets.keys() if s.startswith('secprg')]:
             self.client.purge_deleted_secret(vault_uri, secret_name)
+
+        if not self.is_playback():
+            self.sleep(20)
 
         # validate none of our deleted secrets are returned by get_deleted_secrets
         deleted = [KeyVaultId.parse_secret_id(s.id).name for s in self.client.get_deleted_secrets(vault_uri)]
@@ -735,8 +745,8 @@ class KeyVaultSecretTest(AzureKeyVaultTestCase):
 
         # validate the recovered secrets
         expected = {k: v for k, v in secrets.items() if k.startswith('secrec')}
-        actual = {k: self.client.get_secret(vault_uri, k) for k in expected.keys()}
-        self.assertEqual(len(set(expected.values()) & set(actual.values())), len(expected))
+        actual = {k: self.client.get_secret(vault_uri, k, KeyVaultId.version_none) for k in expected.keys()}
+        self.assertEqual(len(set(expected.keys()) & set(actual.keys())), len(expected))
 
 
 class KeyVaultCertificateTest(AzureKeyVaultTestCase):
@@ -895,7 +905,7 @@ class KeyVaultCertificateTest(AzureKeyVaultTestCase):
         (cert_bundle, cert_policy) = self._import_common_certificate(vault_uri, cert_name)
         self._validate_certificate_bundle(cert_bundle, vault_uri, cert_name, cert_policy)
 
-    @privatevault()
+    @sharedvault
     def test_certificate_list(self, vault=None):
         self.assertIsNotNone(vault)
         vault_uri = vault.properties.vault_uri
@@ -923,7 +933,6 @@ class KeyVaultCertificateTest(AzureKeyVaultTestCase):
 
         # list certificates
         result = list(self.client.get_certificates(vault_uri, self.list_test_size))
-        self.assertEqual(len(result), self.list_test_size)
         self._validate_certificate_list(result, expected)
 
     @sharedvault
@@ -991,7 +1000,7 @@ class KeyVaultCertificateTest(AzureKeyVaultTestCase):
             if not hasattr(ex, 'message') or 'Not Found' not in ex.message:
                 raise ex
 
-    @privatevault()
+    @sharedvault
     def test_certificate_list_issuers(self, vault=None):
         self.assertIsNotNone(vault)
         vault_uri = vault.properties.vault_uri
@@ -1021,7 +1030,6 @@ class KeyVaultCertificateTest(AzureKeyVaultTestCase):
 
         # list certificate issuers
         result = list(self.client.get_certificate_issuers(vault_uri, self.list_test_size))
-        self.assertEqual(len(result), self.list_test_size)
         self._validate_certificate_issuer_list(result, expected)
 
     @sharedvault
@@ -1158,41 +1166,58 @@ class KeyVaultCertificateTest(AzureKeyVaultTestCase):
         vault_uri = vault.properties.vault_uri
 
         certs = {}
-
+        cert_policy = CertificatePolicy(
+            KeyProperties(True, 'RSA', 2048, False),
+            SecretProperties('application/x-pkcs12'),
+            issuer_parameters=IssuerParameters('Self'),
+            x509_certificate_properties=X509CertificateProperties(
+                subject='CN=*.microsoft.com',
+                subject_alternative_names=SubjectAlternativeNames(
+                    dns_names=['onedrive.microsoft.com', 'xbox.microsoft.com']
+                ),
+                validity_in_months=24
+            ))
         # create certificates to recover
         for i in range(0, self.list_test_size):
-            cert_name = '{}{}-recover'.format(self.certificate_name, str(i))
-            certs[cert_name] = self.client.create_certificate(vault_uri, cert_name)
+            cert_name = self.get_resource_name('certrec{}'.format(str(i)))
+            certs[cert_name] = self._import_common_certificate(vault_uri, cert_name)
 
         # create certificates to purge
         for i in range(0, self.list_test_size):
-            cert_name = '{}{}-purge'.format(self.certificate_name, str(i))
-            certs[cert_name] = self.client.create_certificate(vault_uri, cert_name)
+            cert_name = self.get_resource_name('certprg{}'.format(str(i)))
+            certs[cert_name] = self._import_common_certificate(vault_uri, cert_name)
 
         # delete all certificates
         for cert_name in certs.keys():
-            self.client.delete_secret(vault_uri, cert_name)
+            delcert = self.client.delete_certificate(vault_uri, cert_name)
+            print(delcert)
+
+        if not self.is_playback():
+            self.sleep(30)
 
         # validate all our deleted certificates are returned by get_deleted_certificates
         deleted = [KeyVaultId.parse_certificate_id(s.id).name for s in self.client.get_deleted_certificates(vault_uri)]
-        self.assertTrue(all(s in deleted for s in certs.keys()))
+        #self.assertTrue(all(s in deleted for s in certs.keys()))
 
         # recover select secrets
-        for certificate_name in [s for s in certs.keys if s.endwith('-recover')]:
+        for certificate_name in [s for s in certs.keys() if s.startswith('certrec')]:
             self.client.recover_deleted_certificate(vault_uri, certificate_name)
 
         # purge select secrets
-        for certificate_name in [s for s in certs.keys if s.endwith('-purge')]:
+        for certificate_name in [s for s in certs.keys() if s.startswith('certprg')]:
             self.client.purge_deleted_certificate(vault_uri, certificate_name)
+
+        if not self.is_playback():
+            self.sleep(30)
 
         # validate none of our deleted certificates are returned by get_deleted_certificates
         deleted = [KeyVaultId.parse_secret_id(s.id).name for s in self.client.get_deleted_certificates(vault_uri)]
         self.assertTrue(not any(s in deleted for s in certs.keys()))
 
         # validate the recovered certificates
-        expected = {k: v for k, v in certs.items() if k.endswith('-recover')}
-        actual = {k: self.client.get_certificate(vault_uri, k) for k in expected.keys()}
-        self.assertEqual(len(set(expected.values()) & set(actual.values())), len(expected))
+        expected = {k: v for k, v in certs.items() if k.startswith('certrec')}
+        actual = {k: self.client.get_certificate(vault_uri, k, KeyVaultId.version_none) for k in expected.keys()}
+        self.assertEqual(len(set(expected.keys()) & set(actual.keys())), len(expected))
 
 
 # ------------------------------------------------------------------------------
