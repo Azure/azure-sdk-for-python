@@ -6,10 +6,8 @@
 import contextlib
 import inspect
 import functools
-import os
-import uuid
 
-from .base import ScenarioTest
+from .base import ReplayableTest
 from .utilities import create_random_name
 from .recording_processors import RecordingProcessor
 
@@ -28,7 +26,7 @@ class AbstractPreparer(object):
 
     def __call__(self, fn):
         def _preparer_wrapper(test_class_instance, **kwargs):
-            self.live_test = not isinstance(test_class_instance, ScenarioTest)
+            self.live_test = not isinstance(test_class_instance, ReplayableTest)
             self.test_class_instance = test_class_instance
 
             if self.live_test or test_class_instance.in_recording:
