@@ -4,7 +4,6 @@
 # --------------------------------------------------------------------------------------------
 
 from .exceptions import AzureTestError
-from .const import MOCKED_SUBSCRIPTION_ID, MOCKED_TENANT_ID
 
 
 def patch_time_sleep_api(unit_test):
