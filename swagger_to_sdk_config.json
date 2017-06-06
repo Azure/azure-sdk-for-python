@@ -169,7 +169,7 @@
       "swagger": "arm-keyvault/2016-10-01/swagger/keyvault.json",
       "autorest_options": {
         "Namespace": "azure.mgmt.keyvault",
-        "PackageVersion": "0.32.0"
+        "PackageVersion": "0.40.0"
       },
       "build_dir": "azure-mgmt-keyvault",
       "output_dir": "azure-mgmt-keyvault/azure/mgmt/keyvault"
