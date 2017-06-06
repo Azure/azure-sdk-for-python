@@ -3,6 +3,16 @@
 Release History
 ===============
 
+0.40.0 (2017-06-06)
++++++++++++++++++++
+
+- upgrading to API version 2016-10-01
+- adding keyvault management plane updates to enable the soft delete feature for a new or existing keyvault
+
+**Notes**
+
+- this contains a backwards breaking change removing the All value from KeyPermissions, SecretPermissions and CertificatePermissions
+
 0.31.0 (2017-04-19)
 +++++++++++++++++++
 
