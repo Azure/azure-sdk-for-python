@@ -91,7 +91,7 @@ class ReplayableTest(IntegrationTestBase):  # pylint: disable=too-many-instance-
                  recording_dir=None, recording_name=None,
                  recording_processors=None, replay_processors=None,
                  recording_patches=None, replay_patches=None):
-        super(ScenarioTest, self).__init__(method_name)
+        super(ReplayableTest, self).__init__(method_name)
 
         self.recording_processors = recording_processors or []
         self.replay_processors = replay_processors or []
