@@ -130,7 +130,7 @@ class ReplayableTest(IntegrationTestBase):  # pylint: disable=too-many-instance-
         self.original_env = os.environ.copy()
 
     def setUp(self):
-        super(ScenarioTest, self).setUp()
+        super(ReplayableTest, self).setUp()
 
         # set up cassette
         cm = self.vcr.use_cassette(self.recording_file)
