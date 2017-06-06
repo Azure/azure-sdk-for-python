@@ -27,7 +27,7 @@ class ContainerServiceOrchestratorProfile(Model):
     }
 
     _attribute_map = {
-        'orchestrator_type': {'key': 'orchestratorType', 'type': 'ContainerServiceOchestratorTypes'},
+        'orchestrator_type': {'key': 'orchestratorType', 'type': 'ContainerServiceOrchestratorTypes'},
     }
 
     def __init__(self, orchestrator_type):

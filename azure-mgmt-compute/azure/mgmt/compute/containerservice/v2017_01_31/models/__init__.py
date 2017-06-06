@@ -24,7 +24,7 @@ from .container_service_diagnostics_profile import ContainerServiceDiagnosticsPr
 from .container_service import ContainerService
 from .container_service_paged import ContainerServicePaged
 from .container_service_client_enums import (
-    ContainerServiceOchestratorTypes,
+    ContainerServiceOrchestratorTypes,
     ContainerServiceVMSizeTypes,
 )
 
@@ -43,6 +43,6 @@ __all__ = [
     'ContainerServiceDiagnosticsProfile',
     'ContainerService',
     'ContainerServicePaged',
-    'ContainerServiceOchestratorTypes',
+    'ContainerServiceOrchestratorTypes',
     'ContainerServiceVMSizeTypes',
 ]

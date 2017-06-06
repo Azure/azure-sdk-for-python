@@ -43,7 +43,7 @@ class ContainerServiceAgentPoolProfile(Model):
     :param dns_prefix: DNS prefix to be used to create the FQDN for the agent
      pool.
     :type dns_prefix: str
-    :ivar fqdn: FDQN for the agent pool.
+    :ivar fqdn: FQDN for the agent pool.
     :vartype fqdn: str
     """
 
