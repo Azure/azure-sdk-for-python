@@ -23,11 +23,6 @@ class NamespaceCreateOrUpdateParameters(Model):
     :type tags: dict
     :param provisioning_state: Provisioning state of the namespace.
     :type provisioning_state: str
-    :param status: State of the namespace. Possible values include: 'Unknown',
-     'Creating', 'Created', 'Activating', 'Enabling', 'Active', 'Disabling',
-     'Disabled', 'SoftDeleting', 'SoftDeleted', 'Removing', 'Removed', 'Failed'
-    :type status: str or :class:`NamespaceState
-     <azure.mgmt.eventhub.models.NamespaceState>`
     :param created_at: The time the namespace was created.
     :type created_at: datetime
     :param updated_at: The time the namespace was updated.
@@ -35,10 +30,6 @@ class NamespaceCreateOrUpdateParameters(Model):
     :param service_bus_endpoint: Endpoint you can use to perform Service Bus
      operations.
     :type service_bus_endpoint: str
-    :param create_acs_namespace: Indicates whether to create an ACS namespace.
-    :type create_acs_namespace: bool
-    :param enabled: Specifies whether this instance is enabled.
-    :type enabled: bool
     """
 
     _validation = {
@@ -50,22 +41,16 @@ class NamespaceCreateOrUpdateParameters(Model):
         'sku': {'key': 'sku', 'type': 'Sku'},
         'tags': {'key': 'tags', 'type': '{str}'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'status': {'key': 'properties.status', 'type': 'NamespaceState'},
         'created_at': {'key': 'properties.createdAt', 'type': 'iso-8601'},
         'updated_at': {'key': 'properties.updatedAt', 'type': 'iso-8601'},
         'service_bus_endpoint': {'key': 'properties.serviceBusEndpoint', 'type': 'str'},
-        'create_acs_namespace': {'key': 'properties.createACSNamespace', 'type': 'bool'},
-        'enabled': {'key': 'properties.enabled', 'type': 'bool'},
     }
 
-    def __init__(self, location, sku=None, tags=None, provisioning_state=None, status=None, created_at=None, updated_at=None, service_bus_endpoint=None, create_acs_namespace=None, enabled=None):
+    def __init__(self, location, sku=None, tags=None, provisioning_state=None, created_at=None, updated_at=None, service_bus_endpoint=None):
         self.location = location
         self.sku = sku
         self.tags = tags
         self.provisioning_state = provisioning_state
-        self.status = status
         self.created_at = created_at
         self.updated_at = updated_at
         self.service_bus_endpoint = service_bus_endpoint
-        self.create_acs_namespace = create_acs_namespace
-        self.enabled = enabled

@@ -15,24 +15,30 @@ from msrest.serialization import Model
 class ConsumerGroupCreateOrUpdateParameters(Model):
     """Parameters supplied to the Create Or Update Consumer Group operation.
 
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
     :param location: Location of the resource.
     :type location: str
     :param type: ARM type of the namespace.
     :type type: str
     :param name: Name of the consumer group.
     :type name: str
-    :param created_at: Exact time the message was created.
-    :type created_at: datetime
-    :param event_hub_path: The path of the Event Hub.
-    :type event_hub_path: str
-    :param updated_at: The exact time the message was updated.
-    :type updated_at: datetime
+    :ivar created_at: Exact time the message was created.
+    :vartype created_at: datetime
+    :ivar event_hub_path: The path of the Event Hub.
+    :vartype event_hub_path: str
+    :ivar updated_at: The exact time the message was updated.
+    :vartype updated_at: datetime
     :param user_metadata: The user metadata.
     :type user_metadata: str
     """
 
     _validation = {
         'location': {'required': True},
+        'created_at': {'readonly': True},
+        'event_hub_path': {'readonly': True},
+        'updated_at': {'readonly': True},
     }
 
     _attribute_map = {
@@ -45,11 +51,11 @@ class ConsumerGroupCreateOrUpdateParameters(Model):
         'user_metadata': {'key': 'properties.userMetadata', 'type': 'str'},
     }
 
-    def __init__(self, location, type=None, name=None, created_at=None, event_hub_path=None, updated_at=None, user_metadata=None):
+    def __init__(self, location, type=None, name=None, user_metadata=None):
         self.location = location
         self.type = type
         self.name = name
-        self.created_at = created_at
-        self.event_hub_path = event_hub_path
-        self.updated_at = updated_at
+        self.created_at = None
+        self.event_hub_path = None
+        self.updated_at = None
         self.user_metadata = user_metadata
