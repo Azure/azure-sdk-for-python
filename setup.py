@@ -10,7 +10,7 @@ import os.path
 from setuptools import setup
 
 
-VERSION = "0.1.0"
+VERSION = "0.2.0"
 
 
 CLASSIFIERS = [
