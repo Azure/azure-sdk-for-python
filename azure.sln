@@ -1,11 +1,9 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
-VisualStudioVersion = 14.0.25420.1
+# Visual Studio 15
+VisualStudioVersion = 15.0.26602.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{888888A0-9F3D-457C-B088-3A5042F75D52}") = "azure", "azure.pyproj", "{25B2C65A-0553-4452-8907-8B5B17544E68}"
-EndProject
-Project("{888888A0-9F3D-457C-B088-3A5042F75D52}") = "AzureResourceViewer", "examples\AzureResourceViewer\AzureResourceViewer.pyproj", "{27A0D52F-03C0-4BF5-B6B3-4634BECC05B9}"
 EndProject
 Project("{888888A0-9F3D-457C-B088-3A5042F75D52}") = "Python.Tests.Azure", "..\autorest\src\generator\AutoRest.Python.Azure.Tests\Python.Tests.Azure.pyproj", "{74BE0601-FF65-4B46-8A8B-E670056061C4}"
 EndProject
@@ -23,10 +21,6 @@ Global
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{25B2C65A-0553-4452-8907-8B5B17544E68}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{25B2C65A-0553-4452-8907-8B5B17544E68}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{27A0D52F-03C0-4BF5-B6B3-4634BECC05B9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{27A0D52F-03C0-4BF5-B6B3-4634BECC05B9}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{27A0D52F-03C0-4BF5-B6B3-4634BECC05B9}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{27A0D52F-03C0-4BF5-B6B3-4634BECC05B9}.Release|Any CPU.Build.0 = Release|Any CPU
 		{74BE0601-FF65-4B46-8A8B-E670056061C4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{74BE0601-FF65-4B46-8A8B-E670056061C4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8523BA22-21D4-4F69-A73E-958B617C9D37}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
