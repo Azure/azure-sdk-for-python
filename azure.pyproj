@@ -248,6 +248,12 @@
     <Compile Include="azure-batch\azure\batch\__init__.py" />
     <Compile Include="azure-batch\azure\__init__.py" />
     <Compile Include="azure-batch\setup.py" />
+    <Compile Include="azure-common\azure\common\client_factory.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="azure-common\azure\common\cloud.py">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="azure-common\azure\common\credentials.py" />
     <Compile Include="azure-common\azure\common\exceptions.py" />
     <Compile Include="azure-common\azure\__init__.py" />
@@ -1848,6 +1854,9 @@
     <Compile Include="azure-mgmt\tests\mgmt_testcase.py" />
     <Compile Include="azure-mgmt\tests\recoveryservicesbackup_testcase.py" />
     <Compile Include="azure-mgmt\tests\test_batch.py" />
+    <Compile Include="azure-mgmt\tests\test_common.py">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="azure-mgmt\tests\test_graphrbac.py" />
     <Compile Include="azure-mgmt\tests\test_key_vault_data.py" />
     <Compile Include="azure-mgmt\tests\test_mgmt_authorization.py" />
