@@ -3,7 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
 
-from .base import IntegrationTestBase, ScenarioTest, LiveTest
+from .base import IntegrationTestBase, ReplayableTest, LiveTest
 from .exceptions import AzureTestError
 from .decorators import live_only, record_only
 from .patches import patch_time_sleep_api, patch_long_run_operation_delay
@@ -15,7 +15,7 @@ from .recording_processors import (
 )
 from .utilities import create_random_name, get_sha1_hash
 
-__all__ = ['IntegrationTestBase', 'ScenarioTest', 'LiveTest',
+__all__ = ['IntegrationTestBase', 'ReplayableTest', 'LiveTest',
            'AzureTestError',
            'patch_time_sleep_api', 'patch_long_run_operation_delay',
            'AbstractPreparer', 'SingleValueReplacer',
@@ -24,4 +24,4 @@ __all__ = ['IntegrationTestBase', 'ScenarioTest', 'LiveTest',
            'OAuthRequestResponsesFilter', 'DeploymentNameReplacer', 'GeneralNameReplacer',
            'live_only', 'record_only',
            'create_random_name', 'get_sha1_hash']
-__version__ = '0.1.0+dev'
+__version__ = '0.2.0'

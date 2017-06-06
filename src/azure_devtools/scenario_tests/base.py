@@ -72,7 +72,7 @@ class LiveTest(IntegrationTestBase):
     pass
 
 
-class ScenarioTest(IntegrationTestBase):  # pylint: disable=too-many-instance-attributes
+class ReplayableTest(IntegrationTestBase):  # pylint: disable=too-many-instance-attributes
     FILTER_HEADERS = [
         'authorization',
         'client-request-id',
