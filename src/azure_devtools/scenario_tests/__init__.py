@@ -24,4 +24,4 @@ __all__ = ['IntegrationTestBase', 'ReplayableTest', 'LiveTest',
            'OAuthRequestResponsesFilter', 'DeploymentNameReplacer', 'GeneralNameReplacer',
            'live_only', 'record_only',
            'create_random_name', 'get_sha1_hash']
-__version__ = '0.2.0'
+__version__ = '0.2.1'

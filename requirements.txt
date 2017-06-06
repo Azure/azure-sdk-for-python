@@ -3,4 +3,4 @@ ConfigArgParse
 mock
 nose
 six
-vcrpy==1.11.1
+vcrpy==1.10.3
