@@ -9,7 +9,7 @@ import os
 import base64
 
 
-def create_random_name(prefix='clitest', length=24):
+def create_random_name(prefix='aztest', length=24):
     if len(prefix) > length:
         raise 'The length of the prefix must not be longer than random name length'
 
