@@ -16,6 +16,8 @@ from .trusted_id_provider import TrustedIdProvider
 from .encryption_identity import EncryptionIdentity
 from .key_vault_meta_info import KeyVaultMetaInfo
 from .encryption_config import EncryptionConfig
+from .update_key_vault_meta_info import UpdateKeyVaultMetaInfo
+from .update_encryption_config import UpdateEncryptionConfig
 from .data_lake_store_account_update_parameters import DataLakeStoreAccountUpdateParameters
 from .data_lake_store_account import DataLakeStoreAccount
 from .error_details import ErrorDetails
@@ -44,6 +46,8 @@ __all__ = [
     'EncryptionIdentity',
     'KeyVaultMetaInfo',
     'EncryptionConfig',
+    'UpdateKeyVaultMetaInfo',
+    'UpdateEncryptionConfig',
     'DataLakeStoreAccountUpdateParameters',
     'DataLakeStoreAccount',
     'ErrorDetails',
