@@ -81,10 +81,13 @@ class AbstractPreparer(object):
                                                      self.test_class_instance.test_resources_count)
         return self.resource_moniker
 
+    def create_random_name(self):
+        return create_random_name(self.name_prefix, self.name_len)
+
     @property
     def random_name(self):
         if not self.resource_random_name:
-            self.resource_random_name = create_random_name(self.name_prefix, self.name_len)
+            self.resource_random_name = self.create_random_name()
         return self.resource_random_name
 
     def create_resource(self, name, **kwargs):  # pylint: disable=unused-argument,no-self-use
