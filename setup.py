@@ -30,7 +30,7 @@ DEPENDENCIES = [
     'ConfigArgParse',
     'setuptools-markdown',
     'six',
-    'vcrpy==1.10.3',
+    'vcrpy',
 ]
 
 with io.open('README.rst', 'r', encoding='utf-8') as f:
