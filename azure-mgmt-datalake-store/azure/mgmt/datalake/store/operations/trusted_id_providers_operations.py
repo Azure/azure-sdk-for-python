@@ -36,7 +36,7 @@ class TrustedIdProvidersOperations(object):
         self.config = config
 
     def create_or_update(
-            self, resource_group_name, account_name, trusted_id_provider_name, id_provider, name=None, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, account_name, trusted_id_provider_name, parameters, custom_headers=None, raw=False, **operation_config):
         """Creates or updates the specified trusted identity provider. During
         update, the trusted identity provider with the specified name will be
         replaced with this new provider.
@@ -51,10 +51,10 @@ class TrustedIdProvidersOperations(object):
          provider. This is used for differentiation of providers in the
          account.
         :type trusted_id_provider_name: str
-        :param id_provider: The URL of this trusted identity provider
-        :type id_provider: str
-        :param name: Resource name
-        :type name: str
+        :param parameters: Parameters supplied to create or replace the
+         trusted identity provider.
+        :type parameters: :class:`TrustedIdProvider
+         <azure.mgmt.datalake.store.models.TrustedIdProvider>`
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -66,8 +66,6 @@ class TrustedIdProvidersOperations(object):
          if raw=true
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
-        parameters = models.TrustedIdProvider(name=name, id_provider=id_provider)
-
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataLakeStore/accounts/{accountName}/trustedIdProviders/{trustedIdProviderName}'
         path_format_arguments = {
@@ -117,7 +115,7 @@ class TrustedIdProvidersOperations(object):
         return deserialized
 
     def update(
-            self, resource_group_name, account_name, trusted_id_provider_name, id_provider=None, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, account_name, trusted_id_provider_name, parameters=None, custom_headers=None, raw=False, **operation_config):
         """Updates the specified trusted identity provider.
 
         :param resource_group_name: The name of the Azure resource group that
@@ -130,8 +128,10 @@ class TrustedIdProvidersOperations(object):
          provider. This is used for differentiation of providers in the
          account.
         :type trusted_id_provider_name: str
-        :param id_provider: The URL of this trusted identity provider
-        :type id_provider: str
+        :param parameters: Parameters supplied to update the trusted identity
+         provider.
+        :type parameters: :class:`UpdateTrustedIdProviderParameters
+         <azure.mgmt.datalake.store.models.UpdateTrustedIdProviderParameters>`
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -143,10 +143,6 @@ class TrustedIdProvidersOperations(object):
          if raw=true
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
-        parameters = None
-        if id_provider is not None:
-            parameters = models.UpdateTrustedIdProviderParameters(id_provider=id_provider)
-
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataLakeStore/accounts/{accountName}/trustedIdProviders/{trustedIdProviderName}'
         path_format_arguments = {

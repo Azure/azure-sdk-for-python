@@ -54,3 +54,10 @@ class FirewallAllowAzureIpsState(Enum):
 
     enabled = "Enabled"
     disabled = "Disabled"
+
+
+class AADObjectType(Enum):
+
+    user = "User"
+    group = "Group"
+    service_principal = "ServicePrincipal"

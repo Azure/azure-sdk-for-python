@@ -9,12 +9,14 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
+from .compute_policies_operations import ComputePoliciesOperations
 from .firewall_rules_operations import FirewallRulesOperations
 from .storage_accounts_operations import StorageAccountsOperations
 from .data_lake_store_accounts_operations import DataLakeStoreAccountsOperations
 from .account_operations import AccountOperations
 
 __all__ = [
+    'ComputePoliciesOperations',
     'FirewallRulesOperations',
     'StorageAccountsOperations',
     'DataLakeStoreAccountsOperations',
