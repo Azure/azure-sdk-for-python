@@ -37,6 +37,9 @@ class MgmtDataLakeAnalyticsTest(AzureMgmtTestCase):
         # define all names
         self.adls_account_name = self.get_resource_name('pyarmadls2')
         self.job_account_name = self.get_resource_name('pyarmadla2')
+        self.pipeline_name = self.get_resource_name('pipeline')
+        self.recurrence_name = self.get_resource_name('recurrence')
+        self.pipeline_uri = 'https://{}.contoso.com/myJob'.format(self.get_resource_name('pipelineuri'))
 
         # construct the catalog script
         self.db_name = self.get_resource_name('adladb')
@@ -149,12 +152,20 @@ END;""".format(self.db_name, self.table_name, self.tvf_name, self.view_name, sel
             self.catalog_id = self.fake_settings.ADLA_JOB_ID
             self.cred_create_id = self.fake_settings.ADLA_JOB_ID
             self.cred_drop_id = self.fake_settings.ADLA_JOB_ID
+            self.pipeline_id = self.fake_settings.ADLA_JOB_ID
+            self.recurrence_id = self.fake_settings.ADLA_JOB_ID
+            self.run_id_2 = self.fake_settings.ADLA_JOB_ID
+            self.run_id_3 = self.fake_settings.ADLA_JOB_ID
         else:
             self.cancel_id = str(uuid.uuid1())
             self.run_id = str(uuid.uuid1())
             self.catalog_id = str(uuid.uuid1())
             self.cred_create_id = str(uuid.uuid1())
             self.cred_drop_id = str(uuid.uuid1())
+            self.pipeline_id = str(uuid.uuid1())
+            self.recurrence_id = str(uuid.uuid1())
+            self.run_id_2 = str(uuid.uuid1())
+            self.run_id_3 = str(uuid.uuid1())
 
     def _scrub(self, val):
         val = super(MgmtDataLakeAnalyticsTest, self)._scrub(val)
@@ -163,7 +174,11 @@ END;""".format(self.db_name, self.table_name, self.tvf_name, self.view_name, sel
             self.run_id:  self.fake_settings.ADLA_JOB_ID,
             self.catalog_id:  self.fake_settings.ADLA_JOB_ID,
             self.cred_create_id: self.fake_settings.ADLA_JOB_ID,
-            self.cred_drop_id: self.fake_settings.ADLA_JOB_ID
+            self.cred_drop_id: self.fake_settings.ADLA_JOB_ID,
+            self.pipeline_id: self.fake_settings.ADLA_JOB_ID,
+            self.recurrence_id: self.fake_settings.ADLA_JOB_ID,
+            self.run_id_2: self.fake_settings.ADLA_JOB_ID,
+            self.run_id_3: self.fake_settings.ADLA_JOB_ID
         }
         val = self._scrub_using_dict(val, real_to_fake_dict)
         return val
@@ -212,15 +227,16 @@ END;""".format(self.db_name, self.table_name, self.tvf_name, self.view_name, sel
             if(create_catalog):
                 self.run_job_to_completion(self.job_account_name, self.catalog_id, self.catalog_script)
 
-    def run_job_to_completion(self, adla_account_name, job_id, script_to_run):
-        job_params = azure.mgmt.datalake.analytics.job.models.JobInformation(
-            name = self.get_resource_name('testjob'),
-            type = azure.mgmt.datalake.analytics.job.models.JobType.usql,
-            degree_of_parallelism = 2,
-            properties = azure.mgmt.datalake.analytics.job.models.USqlJobProperties(
-                script = script_to_run,
+    def run_job_to_completion(self, adla_account_name, job_id, script_to_run, job_params=None):
+        if not job_params:
+            job_params = azure.mgmt.datalake.analytics.job.models.JobInformation(
+                name = self.get_resource_name('testjob'),
+                type = azure.mgmt.datalake.analytics.job.models.JobType.usql,
+                degree_of_parallelism = 2,
+                properties = azure.mgmt.datalake.analytics.job.models.USqlJobProperties(
+                    script = script_to_run,
+                )
             )
-        )
         create_response = self.adla_job_client.job.create(
             adla_account_name,
             job_id,
@@ -257,6 +273,14 @@ END;""".format(self.db_name, self.table_name, self.tvf_name, self.view_name, sel
             type = azure.mgmt.datalake.analytics.job.models.JobType.usql,
             properties = azure.mgmt.datalake.analytics.job.models.USqlJobProperties(
                 script = 'DROP DATABASE IF EXISTS testdb; CREATE DATABASE testdb;'
+            ),
+            related = azure.mgmt.datalake.analytics.job.models.JobRelationshipProperties(
+                pipeline_id = self.pipeline_id,
+                pipeline_name = self.pipeline_name,
+                pipeline_uri = self.pipeline_uri,
+                recurrence_id = self.recurrence_id,
+                recurrence_name = self.recurrence_name,
+                run_id = self.run_id_2
             )
         )
 
@@ -284,13 +308,49 @@ END;""".format(self.db_name, self.table_name, self.tvf_name, self.view_name, sel
         self.assertIsNotNone(adla_job.error_message)
 
         # resubmit and allow to run to completion.
-        self.run_job_to_completion(self.job_account_name, self.run_id, job_to_submit.properties.script)
+        # before hand, update the runId.
+        job_to_submit.related.run_id = self.run_id_3
+        self.run_job_to_completion(self.job_account_name, self.run_id, job_to_submit.properties.script, job_params=job_to_submit)
 
         # list the jobs that have been submitted
         list_of_jobs = self.adla_job_client.job.list(self.job_account_name)
         self.assertIsNotNone(list_of_jobs)
         list_of_jobs = list(list_of_jobs)
         self.assertGreater(len(list_of_jobs), 1)
+
+        # get the specific job and validate the job relationship properties
+        adla_job = self.adla_job_client.job.get(
+            self.job_account_name,
+            self.run_id
+        )
+
+        self.assertEqual(self.run_id_3, adla_job.related.run_id)
+        self.assertEqual(self.recurrence_id, adla_job.related.recurrence_id)
+        self.assertEqual(self.pipeline_id, adla_job.related.pipeline_id)
+        self.assertEqual(self.pipeline_name, adla_job.related.pipeline_name)
+        self.assertEqual(self.recurrence_name, adla_job.related.recurrence_name)
+        self.assertEqual(self.pipeline_uri, adla_job.related.pipeline_uri)
+
+        # validate job relationship APIs
+        recurrence_get =  self.adla_job_client.recurrence.get(self.job_account_name, self.recurrence_id)
+        self.assertEqual(self.recurrence_id, recurrence_get.recurrence_id)
+        self.assertEqual(self.recurrence_name, recurrence_get.recurrence_name)
+
+        recurrence_list =  self.adla_job_client.recurrence.list(self.job_account_name)
+        self.assertIsNotNone(recurrence_list)
+        recurrence_list = list(recurrence_list)
+        self.assertEqual(1, len(recurrence_list))
+
+        pipeline_get =  self.adla_job_client.pipeline.get(self.job_account_name, self.pipeline_id)
+        self.assertEqual(self.pipeline_id, pipeline_get.pipeline_id)
+        self.assertEqual(self.pipeline_name, pipeline_get.pipeline_name)
+        self.assertEqual(self.pipeline_uri, pipeline_get.pipeline_uri)
+        self.assertGreater(len(pipeline_get.runs), 1)
+
+        pipeline_list =  self.adla_job_client.pipeline.list(self.job_account_name)
+        self.assertIsNotNone(pipeline_list)
+        pipeline_list = list(pipeline_list)
+        self.assertEqual(1, len(pipeline_list))
 
         # compile a job
         compile_response = self.adla_job_client.job.build(self.job_account_name, job_to_submit)
