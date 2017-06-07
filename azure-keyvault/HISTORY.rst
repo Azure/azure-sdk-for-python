@@ -3,10 +3,11 @@
 Release History
 ===============
 
-0.3.4 (2017-05-12)
+0.3.4 (2017-06-07)
 ++++++++++++++++++
 
 * Adding Preview Features
+  - Managed Storage Account keys for managing storage credentials and provisioning SAS tokens
   - Key Vault "Soft Delete" allowing for recovery of deleted keys, secrets and certificates
   - Secret Backup and Restore for secret recovery and migration
 
