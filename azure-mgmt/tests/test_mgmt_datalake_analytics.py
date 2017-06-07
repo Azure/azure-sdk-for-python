@@ -618,6 +618,111 @@ END;""".format(self.db_name, self.table_name, self.tvf_name, self.view_name, sel
         )
 
     @record
+    def test_adla_compute_policy(self):
+        
+        # create resource group and store account
+        self.run_prereqs()
+
+        # define account params
+        account_name = self.get_resource_name('pyarmadla')
+        user_id = '8ce05900-7a9e-4895-b3f0-0fbcee507803'
+        user_policy_name = self.get_resource_name('adlapolicy1')
+        group_id = '0583cfd7-60f5-43f0-9597-68b85591fc69'
+        group_policy_name = self.get_resource_name('adlapolicy2')
+
+        params_create = azure.mgmt.datalake.analytics.account.models.DataLakeAnalyticsAccount(
+            location = self.region,
+            default_data_lake_store_account = self.adls_account_name,
+            data_lake_store_accounts = [azure.mgmt.datalake.analytics.account.models.DataLakeStoreAccountInfo(name = self.adls_account_name)],
+            compute_policies = [azure.mgmt.datalake.analytics.account.models.ComputePolicyAccountCreateParameters(
+                max_degree_of_parallelism_per_job = 1,
+                min_priority_per_job = 1,
+                object_id = user_id,
+                object_type = azure.mgmt.datalake.analytics.account.models.AADObjectType.user,
+                name = user_policy_name)]
+        )
+
+        # create and validate an ADLA account
+        result_create = self.adla_account_client.account.create(
+            self.group_name,
+            account_name,
+            params_create,
+        )
+
+        adla_account = result_create.result()
+        
+        # full validation of the create
+        self.assertEqual(adla_account.name, account_name)
+        
+        self.assertIsNotNone(adla_account.id)
+        self.assertIn(account_name, adla_account.id)
+        self.assertEqual(self.region, adla_account.location)
+        self.assertEqual('Microsoft.DataLakeAnalytics/accounts', adla_account.type)
+        self.assertEqual(1, len(adla_account.data_lake_store_accounts))
+        self.assertEqual(self.adls_account_name, adla_account.default_data_lake_store_account)
+
+        # get the account and validate compute policy exists
+        adla_account = self.adla_account_client.account.get(
+            self.group_name,
+            account_name
+        )
+
+        self.assertEqual(1, len(list(adla_account.compute_policies)))
+        self.assertEqual(user_policy_name, list(adla_account.compute_policies)[0].name)
+
+        # validate compute policy CRUD
+        new_policy = self.adla_account_client.compute_policies.create_or_update(
+            self.group_name,
+            account_name,
+            group_policy_name,
+            azure.mgmt.datalake.analytics.account.models.ComputePolicyCreateOrUpdateParameters(
+                max_degree_of_parallelism_per_job = 1,
+                min_priority_per_job = 1,
+                object_id = group_id,
+                object_type = azure.mgmt.datalake.analytics.account.models.AADObjectType.group))
+        
+        self.assertEqual(1, new_policy.max_degree_of_parallelism_per_job)
+        self.assertEqual(1, new_policy.min_priority_per_job)
+        self.assertEqual(group_id, new_policy.object_id)
+        self.assertEqual(azure.mgmt.datalake.analytics.account.models.AADObjectType.group.value, new_policy.object_type)
+
+        # get policy
+        new_policy = self.adla_account_client.compute_policies.get(
+            self.group_name,
+            account_name,
+            group_policy_name)
+
+        self.assertEqual(1, new_policy.max_degree_of_parallelism_per_job)
+        self.assertEqual(1, new_policy.min_priority_per_job)
+        self.assertEqual(group_id, new_policy.object_id)
+        self.assertEqual(azure.mgmt.datalake.analytics.account.models.AADObjectType.group.value, new_policy.object_type)
+
+        # list all policie
+        list_policy = list(self.adla_account_client.compute_policies.list_by_account(
+            self.group_name,
+            account_name))
+
+        self.assertEqual(2, len(list_policy))
+
+        # remove the group policy and verify list length is 1
+        self.adla_account_client.compute_policies.delete(
+            self.group_name,
+            account_name,
+            group_policy_name)
+
+        list_policy = list(self.adla_account_client.compute_policies.list_by_account(
+            self.group_name,
+            account_name))
+
+        self.assertEqual(1, len(list_policy))
+
+        # delete account
+        self.adla_account_client.account.delete(
+            self.group_name,
+            account_name
+        )
+
+    @record
     def test_adla_accounts(self):
         
         # create resource group and store account
