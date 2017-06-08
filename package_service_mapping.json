@@ -116,7 +116,7 @@
 		"category ": "Management"
 	},
 	"azure-mgmt-servermanager": {
-		"service_name": "Batch",
+		"service_name": "Server Manager",
 		"category ": "Management"
 	},
 	"azure-mgmt-servicebus": {
