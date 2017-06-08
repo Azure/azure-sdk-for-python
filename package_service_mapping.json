@@ -1,16 +1,4 @@
 {
-	"azure-batch": {
-		"service_name": "Batch",
-		"category": "Client"
-	},
-	"azure-graphrbac": {
-		"service_name": "Graph RBAC",
-		"category": "Client"
-	},
-	"azure-keyvault": {
-		"service_name": "Key Vault",
-		"category": "Client"
-	},
 	"azure-mgmt-authorization": {
 		"service_name": "Authorization",
 		"category ": "Management"
@@ -150,17 +138,5 @@
 	"azure-mgmt-web": {
 		"service_name": "Web Apps",
 		"category ": "Management"
-	},
-	"azure-monitor": {
-		"service_name": "Monitor",
-		"category": "Client"
-	},
-	"azure-servicebus": {
-		"service_name": "Service Bus",
-		"category": "Client"
-	},
-	"azure-servicefabric": {
-		"service_name": "Service Fabric",
-		"category": "Client"
 	}
 }
