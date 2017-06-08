@@ -292,7 +292,7 @@
     },
     "recoveryservicesbackup": {
       "markdown": "arm-recoveryservicesbackup/readme.md",
-      "generated_relative_base_directory": "azure/mgmt/recoveryservicesbackup",
+      "generated_relative_base_directory": "Generated/Python/azure/mgmt/recoveryservicesbackup",
       "output_dir":  "azure-mgmt-recoveryservicesbackup/azure/mgmt/recoveryservicesbackup"
     },
     "redis": {
@@ -428,11 +428,12 @@
     },
     "servicefabric": {
       "autorest_options": {
-        "input-file": "servicefabric/5.6.130/swagger/servicefabric.json",
+        "input-file": "servicefabric/5.6/swagger/servicefabric.json",
         "namespace": "azure.servicefabric",
         "package-version": "5.6.130"
       },
-      "output_dir": "azure-servicefabric/azure/servicefabric"
+      "output_dir": "azure-servicefabric/azure/servicefabric",
+      "generated_relative_base_directory": "azure/servicefabric"
     },
     "scheduler": {
       "autorest_options": {
