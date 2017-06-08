@@ -697,7 +697,7 @@ END;""".format(self.db_name, self.table_name, self.tvf_name, self.view_name, sel
         self.assertEqual(group_id, new_policy.object_id)
         self.assertEqual(azure.mgmt.datalake.analytics.account.models.AADObjectType.group.value, new_policy.object_type)
 
-        # list all policie
+        # list all policies
         list_policy = list(self.adla_account_client.compute_policies.list_by_account(
             self.group_name,
             account_name))
@@ -720,7 +720,7 @@ END;""".format(self.db_name, self.table_name, self.tvf_name, self.view_name, sel
         self.adla_account_client.account.delete(
             self.group_name,
             account_name
-        )
+        ).wait()
 
     @record
     def test_adla_accounts(self):
@@ -805,7 +805,7 @@ END;""".format(self.db_name, self.table_name, self.tvf_name, self.view_name, sel
         self.adla_account_client.account.delete(
             self.group_name,
             account_name
-        )
+        ).wait()
 
 #------------------------------------------------------------------------------
 if __name__ == '__main__':
