@@ -13,7 +13,7 @@ from msrest.serialization import Model
 
 
 class OperationImpact(Model):
-    """Represents impact of an operation, both in absolute and relative terms.
+    """The impact of an operation, both in absolute and relative terms.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
