@@ -12,20 +12,26 @@
 from msrest.serialization import Model
 
 
-class WebhookNotification(Model):
-    """Webhook notification of an autoscale event.
+class WebhookReceiver(Model):
+    """A webhook receiver.
 
-    :param service_uri: the service address to receive the notification.
+    :param name: The name of the webhook receiver. Names must be unique across
+     all receivers within an action group.
+    :type name: str
+    :param service_uri: The URI where webhooks should be sent.
     :type service_uri: str
-    :param properties: a property bag of settings. This value can be empty.
-    :type properties: dict
     """
 
-    _attribute_map = {
-        'service_uri': {'key': 'serviceUri', 'type': 'str'},
-        'properties': {'key': 'properties', 'type': '{str}'},
+    _validation = {
+        'name': {'required': True},
+        'service_uri': {'required': True},
     }
 
-    def __init__(self, service_uri=None, properties=None):
+    _attribute_map = {
+        'name': {'key': 'name', 'type': 'str'},
+        'service_uri': {'key': 'serviceUri', 'type': 'str'},
+    }
+
+    def __init__(self, name, service_uri):
+        self.name = name
         self.service_uri = service_uri
-        self.properties = properties

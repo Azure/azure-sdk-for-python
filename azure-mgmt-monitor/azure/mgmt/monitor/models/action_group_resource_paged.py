@@ -12,16 +12,16 @@
 from msrest.paging import Paged
 
 
-class AlertRuleResourcePaged(Paged):
+class ActionGroupResourcePaged(Paged):
     """
-    A paging container for iterating over a list of AlertRuleResource object
+    A paging container for iterating over a list of ActionGroupResource object
     """
 
     _attribute_map = {
         'next_link': {'key': 'nextLink', 'type': 'str'},
-        'current_page': {'key': 'value', 'type': '[AlertRuleResource]'}
+        'current_page': {'key': 'value', 'type': '[ActionGroupResource]'}
     }
 
     def __init__(self, *args, **kwargs):
 
-        super(AlertRuleResourcePaged, self).__init__(*args, **kwargs)
+        super(ActionGroupResourcePaged, self).__init__(*args, **kwargs)

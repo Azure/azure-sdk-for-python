@@ -9,23 +9,12 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .resource import Resource
+from msrest.serialization import Model
 
 
-class ServiceDiagnosticSettingsResource(Resource):
-    """Description of a service diagnostic setting.
+class ServiceDiagnosticSettingsResourcePatch(Model):
+    """Service diagnostic setting resource for patch operations.
 
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
-
-    :ivar id: Azure resource Id
-    :vartype id: str
-    :ivar name: Azure resource name
-    :vartype name: str
-    :ivar type: Azure resource type
-    :vartype type: str
-    :param location: Resource location
-    :type location: str
     :param tags: Resource tags
     :type tags: dict
     :param storage_account_id: The resource ID of the storage account to which
@@ -52,18 +41,7 @@ class ServiceDiagnosticSettingsResource(Resource):
     :type workspace_id: str
     """
 
-    _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'location': {'required': True},
-    }
-
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
         'storage_account_id': {'key': 'properties.storageAccountId', 'type': 'str'},
         'service_bus_rule_id': {'key': 'properties.serviceBusRuleId', 'type': 'str'},
@@ -73,8 +51,8 @@ class ServiceDiagnosticSettingsResource(Resource):
         'workspace_id': {'key': 'properties.workspaceId', 'type': 'str'},
     }
 
-    def __init__(self, location, tags=None, storage_account_id=None, service_bus_rule_id=None, event_hub_authorization_rule_id=None, metrics=None, logs=None, workspace_id=None):
-        super(ServiceDiagnosticSettingsResource, self).__init__(location=location, tags=tags)
+    def __init__(self, tags=None, storage_account_id=None, service_bus_rule_id=None, event_hub_authorization_rule_id=None, metrics=None, logs=None, workspace_id=None):
+        self.tags = tags
         self.storage_account_id = storage_account_id
         self.service_bus_rule_id = service_bus_rule_id
         self.event_hub_authorization_rule_id = event_hub_authorization_rule_id

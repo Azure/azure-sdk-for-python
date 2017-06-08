@@ -9,19 +9,23 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.paging import Paged
+from msrest.serialization import Model
 
 
-class AlertRuleResourcePaged(Paged):
+class EnableRequest(Model):
+    """Describes a receiver that should be resubscribed.
+
+    :param receiver_name: The name of the receiver to resubscribe.
+    :type receiver_name: str
     """
-    A paging container for iterating over a list of AlertRuleResource object
-    """
 
-    _attribute_map = {
-        'next_link': {'key': 'nextLink', 'type': 'str'},
-        'current_page': {'key': 'value', 'type': '[AlertRuleResource]'}
+    _validation = {
+        'receiver_name': {'required': True},
     }
 
-    def __init__(self, *args, **kwargs):
+    _attribute_map = {
+        'receiver_name': {'key': 'receiverName', 'type': 'str'},
+    }
 
-        super(AlertRuleResourcePaged, self).__init__(*args, **kwargs)
+    def __init__(self, receiver_name):
+        self.receiver_name = receiver_name

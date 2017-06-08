@@ -12,27 +12,22 @@
 from msrest.serialization import Model
 
 
-class RetentionPolicy(Model):
-    """Specifies the retention policy for the log.
+class ActivityLogAlertPatchBody(Model):
+    """An activity log alert object for the body of patch operations.
 
-    :param enabled: a value indicating whether the retention policy is
-     enabled.
+    :param tags: Resource tags
+    :type tags: dict
+    :param enabled: Indicates whether this activity log alert is enabled. If
+     an activity log alert is not enabled, then none of its actions will be
+     activated. Default value: True .
     :type enabled: bool
-    :param days: the number of days for the retention in days. A value of 0
-     will retain the events indefinitely.
-    :type days: int
     """
 
-    _validation = {
-        'enabled': {'required': True},
-        'days': {'required': True, 'minimum': 0},
-    }
-
     _attribute_map = {
-        'enabled': {'key': 'enabled', 'type': 'bool'},
-        'days': {'key': 'days', 'type': 'int'},
+        'tags': {'key': 'tags', 'type': '{str}'},
+        'enabled': {'key': 'properties.enabled', 'type': 'bool'},
     }
 
-    def __init__(self, enabled, days):
+    def __init__(self, tags=None, enabled=True):
+        self.tags = tags
         self.enabled = enabled
-        self.days = days
