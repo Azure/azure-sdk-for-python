@@ -48,7 +48,7 @@
 		"category ": "Management"
 	},
 	"azure-mgmt-devtestlabs": {
-		"service_name": "DevTest Labs",
+		"service_name": "Dev Test Labs",
 		"category ": "Management"
 	},
 	"azure-mgmt-dns": {
@@ -60,7 +60,7 @@
 		"category ": "Management"
 	},
 	"azure-mgmt-eventhub": {
-		"service_name": "Event Hub",
+		"service_name": "Event Hubs",
 		"category ": "Management"
 	},
 	"azure-mgmt-iothub": {
@@ -72,12 +72,12 @@
 		"category ": "Management"
 	},
 	"azure-mgmt-logic": {
-		"service_name": "Logic",
+		"service_name": "Logic Apps",
 		"category ": "Management"
 	},
 	"azure-mgmt-media": {
-		"service_name": "Media",
-		"category ": "Management"
+		"service_name": "Media Services",
+			"category ": "Management"
 	},
 	"azure-mgmt-monitor": {
 		"service_name": "Monitor",
@@ -92,23 +92,23 @@
 		"category ": "Management"
 	},
 	"azure-mgmt-powerbiembedded": {
-		"service_name": "Power BI",
+		"service_name": "Power BI Embedded",
 		"category ": "Management"
 	},
-  "azure-mgmt-rdbms": {
-    "service_name": "MySQL / PostgreSQL",
-    "category ": "Management"
-  },
-  "azure-mgmt-recoveryservicesbackup": {
-    "service_name": "Recovery Services Backup",
-    "category":  "Management"
-  },
+ 	"azure-mgmt-rdbms": {
+    		"service_name": "MySQL / PostgreSQL",
+   		 "category ": "Management"
+ 	 },
+  	"azure-mgmt-recoveryservicesbackup": {
+   		 "service_name": "Recovery Services Backup",
+    		"category":  "Management"
+ 	 },
 	"azure-mgmt-redis": {
-		"service_name": "Redis",
+		"service_name": "Redis Cache",
 		"category ": "Management"
 	},
 	"azure-mgmt-resource": {
-		"service_name": "Resources",
+		"service_name": "Resource Management",
 		"category ": "Management"
 	},
 	"azure-mgmt-scheduler": {
@@ -116,11 +116,11 @@
 		"category ": "Management"
 	},
 	"azure-mgmt-search": {
-		"service_name": "Search",
+		"service_name": "Search Management",
 		"category ": "Management"
 	},
 	"azure-mgmt-servermanager": {
-		"service_name": "Server Manager",
+		"service_name": "Server Management",
 		"category ": "Management"
 	},
 	"azure-mgmt-servicebus": {
