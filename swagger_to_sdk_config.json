@@ -1,12 +1,12 @@
 {
   "meta": {
-    "version": "0.1.0",
-    "language": "Python",
+    "version": "0.2.0",
     "autorest": "latest",
     "autorest_options": {
-      "Header": "MICROSOFT_MIT_NO_VERSION",
-      "AddCredentials": true,
-      "ft": 2
+      "license-header": "MICROSOFT_MIT_NO_VERSION",
+      "payload-flattening-threshold": 2,
+      "python": "",
+      "azure-arm": true
     },
     "wrapper_filesOrDirs": [],
     "delete_filesOrDirs": [
@@ -17,168 +17,164 @@
   },
   "projects": {
     "authorization": {
-      "swagger": "arm-authorization/2015-07-01/swagger/authorization.json",
       "autorest_options": {
-        "Namespace": "azure.mgmt.authorization",
-        "PackageVersion": "0.30.0"
+        "input-file": "arm-authorization/2015-07-01/swagger/authorization.json",
+        "namespace": "azure.mgmt.authorization",
+        "package-version": "0.30.0"
       },
       "output_dir": "azure-mgmt-authorization/azure/mgmt/authorization",
       "build_dir": "azure-mgmt-authorization"
     },
     "batch.management": {
-      "swagger": "arm-batch/2017-05-01/swagger/BatchManagement.json",
       "autorest_options": {
-        "Namespace": "azure.mgmt.batch",
-        "PackageVersion": "4.0.0"
+        "input-file": "arm-batch/2017-05-01/swagger/BatchManagement.json",
+        "namespace": "azure.mgmt.batch",
+        "package-version": "4.0.0"
       },
-      "output_dir": "azure-mgmt-batch/azure/mgmt/batch",
-      "build_dir": "azure-mgmt-batch"
+      "output_dir": "azure-mgmt-batch/azure/mgmt/batch"
     },
     "billing": {
-      "swagger": "arm-billing/2017-04-24-preview/swagger/billing.json",
       "autorest_options": {
-        "Namespace": "azure.mgmt.billing",
-        "PackageVersion": "0.1.0"
+        "input-file": "arm-billing/2017-04-24-preview/swagger/billing.json",
+        "namespace": "azure.mgmt.billing",
+        "package-version": "0.1.0"
       },
       "output_dir": "azure-mgmt-billing/azure/mgmt/billing"
     },
     "cdn": {
-      "swagger": "arm-cdn/2016-10-02/swagger/cdn.json",
       "autorest_options": {
-        "Namespace": "azure.mgmt.cdn",
-        "PackageVersion": "0.30.3"
+        "input-file": "arm-cdn/2016-10-02/swagger/cdn.json",
+        "namespace": "azure.mgmt.cdn",
+        "package-version": "0.30.3"
       },
       "output_dir": "azure-mgmt-cdn/azure/mgmt/cdn"
     },
     "consumption": {
-      "swagger": "arm-consumption/2017-04-24-preview/swagger/consumption.json",
       "autorest_options": {
-        "Namespace": "azure.mgmt.consumption",
-        "PackageVersion": "0.1.0"
+        "input-file": "arm-consumption/2017-04-24-preview/swagger/consumption.json",
+        "namespace": "azure.mgmt.consumption",
+        "package-version": "0.1.0"
       },
       "output_dir": "azure-mgmt-consumption/azure/mgmt/consumption"
     },
     "cognitiveservices": {
-      "swagger": "arm-cognitiveservices/2017-04-18/swagger/cognitiveservices.json",
       "autorest_options": {
-        "Namespace": "azure.mgmt.cognitiveservices",
-        "PackageVersion": "1.0.0"
+        "input-file": "arm-cognitiveservices/2017-04-18/swagger/cognitiveservices.json",
+        "namespace": "azure.mgmt.cognitiveservices",
+        "package-version": "1.0.0"
       },
       "output_dir": "azure-mgmt-cognitiveservices/azure/mgmt/cognitiveservices"
     },
     "commerce": {
-      "swagger": "arm-commerce/2015-06-01-preview/swagger/commerce.json",
       "autorest_options": {
-        "Namespace": "azure.mgmt.commerce"
+        "input-file": "arm-commerce/2015-06-01-preview/swagger/commerce.json",
+        "namespace": "azure.mgmt.commerce"
       },
       "output_dir": "azure-mgmt-commerce/azure/mgmt/commerce"
     },
     "compute.compute.2015-06-15": {
-      "swagger": "arm-compute/2015-06-15/swagger/compute.json",
       "autorest_options": {
-        "Namespace": "azure.mgmt.compute.compute.v2015_06_15"
+        "input-file": "arm-compute/2015-06-15/swagger/compute.json",
+        "namespace": "azure.mgmt.compute.compute.v2015_06_15"
       },
       "output_dir": "azure-mgmt-compute/azure/mgmt/compute/compute/v2015_06_15",
       "generated_relative_base_directory": "azure/mgmt/compute/compute/v2015_06_15"
     },
     "compute.compute.2016-03-30": {
-      "swagger": "arm-compute/2016-03-30/swagger/compute.json",
       "autorest_options": {
-        "Namespace": "azure.mgmt.compute.compute.v2016_03_30"
+        "namespace": "azure.mgmt.compute.compute.v2016_03_30",
+        "input-file": "arm-compute/2016-03-30/swagger/compute.json"
       },
       "output_dir": "azure-mgmt-compute/azure/mgmt/compute/compute/v2016_03_30",
       "build_dir": "azure-mgmt-compute/azure/mgmt/compute/compute/v2016_03_30",
       "generated_relative_base_directory": "azure/mgmt/compute/compute/v2016_03_30"
     },
     "compute.compute.2016-04-30-preview": {
-      "swagger": "arm-compute/compositeComputeClient_2016_04_30_preview.json",
+      "composite": "arm-compute/compositeComputeClient_2016_04_30_preview.json",
       "autorest_options": {
-        "Namespace": "azure.mgmt.compute.compute.v2016_04_30_preview",
-        "Modeler": "CompositeSwagger"
+        "namespace": "azure.mgmt.compute.compute.v2016_04_30_preview"
       },
       "output_dir": "azure-mgmt-compute/azure/mgmt/compute/compute/v2016_04_30_preview",
       "generated_relative_base_directory": "azure/mgmt/compute/compute/v2016_04_30_preview"
     },
     "compute.containerservice.2017-01-31": {
-      "swagger": "arm-compute/2017-01-31/swagger/containerService.json",
       "autorest_options": {
-        "Namespace": "azure.mgmt.compute.containerservice.v2017_01_31"
+        "input-file": "arm-compute/2017-01-31/swagger/containerService.json",
+        "namespace": "azure.mgmt.compute.containerservice.v2017_01_31"
       },
       "output_dir": "azure-mgmt-compute/azure/mgmt/compute/containerservice/v2017_01_31",
       "generated_relative_base_directory": "azure/mgmt/compute/containerservice/v2017_01_31"
     },
     "containerregistry": {
-      "swagger": "arm-containerregistry/2017-03-01/swagger/containerregistry.json",
       "autorest_options": {
-        "Namespace": "azure.mgmt.containerregistry",
-        "PackageVersion": "0.2.1"
+        "input-file": "arm-containerregistry/2017-03-01/swagger/containerregistry.json",
+        "namespace": "azure.mgmt.containerregistry",
+        "package-version": "0.2.1"
       },
       "output_dir": "azure-mgmt-containerregistry/azure/mgmt/containerregistry"
     },
     "devtestlabs": {
-      "swagger": "arm-devtestlabs/2016-05-15/swagger/DTL.json",
       "autorest_options": {
-        "Namespace": "azure.mgmt.devtestlabs",
-        "PackageVersion": "2.0.0"
+        "input-file": "arm-devtestlabs/2016-05-15/swagger/DTL.json",
+        "namespace": "azure.mgmt.devtestlabs",
+        "package-version": "2.0.0"
       },
       "output_dir": "azure-mgmt-devtestlabs/azure/mgmt/devtestlabs"
     },
     "dns": {
-      "swagger": "arm-dns/2016-04-01/swagger/dns.json",
       "autorest_options": {
-        "Namespace": "azure.mgmt.dns",
-        "PackageVersion": "1.0.1"
+        "input-file": "arm-dns/2016-04-01/swagger/dns.json",
+        "namespace": "azure.mgmt.dns",
+        "package-version": "1.0.1"
       },
       "output_dir": "azure-mgmt-dns/azure/mgmt/dns"
     },
     "documentdb": {
-      "swagger": "arm-documentdb/2015-04-08/swagger/documentdb.json",
       "autorest_options": {
-        "Namespace": "azure.mgmt.documentdb",
-        "PackageVersion": "0.1.3"
+        "input-file": "arm-documentdb/2015-04-08/swagger/documentdb.json",
+        "namespace": "azure.mgmt.documentdb",
+        "package-version": "0.1.3"
       },
       "output_dir": "azure-mgmt-documentdb/azure/mgmt/documentdb"
     },
     "eventhub": {
-      "swagger": "arm-eventhub/2015-08-01/swagger/EventHub.json",
       "autorest_options": {
-        "Namespace": "azure.mgmt.eventhub",
-        "PackageVersion": "0.2.0"
+        "input-file": "arm-eventhub/2015-08-01/swagger/EventHub.json",
+        "namespace": "azure.mgmt.eventhub",
+        "package-version": "0.2.0"
       },
       "output_dir": "azure-mgmt-eventhub/azure/mgmt/eventhub"
     },
     "graphrbac": {
-      "swagger": "arm-graphrbac/compositeGraphRbacManagementClient.json",
+      "composite": "arm-graphrbac/compositeGraphRbacManagementClient.json",
       "autorest_options": {
-        "Namespace": "azure.graphrbac",
-        "Modeler": "CompositeSwagger",
-        "PackageVersion": "0.30.0"
+        "namespace": "azure.graphrbac",
+        "package-version": "0.30.0"
       },
       "output_dir": "azure-graphrbac/azure/graphrbac",
       "generated_relative_base_directory": "azure/graphrbac"
     },
     "iothub": {
-      "swagger": "arm-iothub/2016-02-03/swagger/iothub.json",
       "autorest_options": {
-        "Namespace": "azure.mgmt.iothub",
-        "PackageVersion": "0.2.2"
+        "input-file": "arm-iothub/2016-02-03/swagger/iothub.json",
+        "namespace": "azure.mgmt.iothub",
+        "package-version": "0.2.2"
       },
       "output_dir": "azure-mgmt-iothub/azure/mgmt/iothub"
     },
     "keyvault.mgmt": {
-      "swagger": "arm-keyvault/2016-10-01/swagger/keyvault.json",
       "autorest_options": {
-        "Namespace": "azure.mgmt.keyvault",
-        "PackageVersion": "0.40.0"
+        "input-file": "arm-keyvault/2016-10-01/swagger/keyvault.json",
+        "namespace": "azure.mgmt.keyvault",
+        "package-version": "0.40.0"
       },
-      "build_dir": "azure-mgmt-keyvault",
       "output_dir": "azure-mgmt-keyvault/azure/mgmt/keyvault"
     },
     "keyvault.data": {
-      "swagger": "keyvault/2016-10-01/swagger/keyvault.json",
       "autorest_options": {
-        "Namespace": "azure.keyvault",
-        "PackageVersion": "0.3.4"
+        "input-file": "keyvault/2016-10-01/swagger/keyvault.json",
+        "namespace": "azure.keyvault",
+        "package-version": "0.3.4"
       },
       "wrapper_filesOrDirs": [
         "custom",
@@ -189,325 +185,309 @@
       "generated_relative_base_directory": "azure/keyvault"
     },
     "logic": {
-      "swagger": "arm-logic/2016-06-01/swagger/logic.json",
       "autorest_options": {
-        "Namespace": "azure.mgmt.logic",
-        "PackageVersion": "2.1.0"
+        "input-file": "arm-logic/2016-06-01/swagger/logic.json",
+        "namespace": "azure.mgmt.logic",
+        "package-version": "2.1.0"
       },
       "output_dir": "azure-mgmt-logic/azure/mgmt/logic"
     },
     "machinelearning": {
-      "swagger": "arm-machinelearning/2016-05-01-preview/swagger/webservices.json",
       "autorest_options": {
-        "Namespace": "azure.mgmt.machinelearning",
-        "PackageVersion": "0.1.0"
+        "input-file": "arm-machinelearning/2016-05-01-preview/swagger/webservices.json",
+        "namespace": "azure.mgmt.machinelearning",
+        "package-version": "0.1.0"
       },
       "output_dir": "unreleased/azure-mgmt-machinelearning/azure/mgmt/machinelearning"
     },
     "media": {
-      "swagger": "arm-mediaservices/2015-10-01/swagger/media.json",
       "autorest_options": {
-        "Namespace": "azure.mgmt.media",
-        "PackageVersion": "0.1.1"
+        "input-file": "arm-mediaservices/2015-10-01/swagger/media.json",
+        "namespace": "azure.mgmt.media",
+        "package-version": "0.1.1"
       },
       "output_dir": "azure-mgmt-media/azure/mgmt/media"
     },
     "monitor.mgmt": {
-      "swagger": "arm-monitor/compositeMonitorManagementClient.json",
+      "composite": "arm-monitor/compositeMonitorManagementClient.json",
       "autorest_options": {
-        "Namespace": "azure.mgmt.monitor",
-        "Modeler": "CompositeSwagger",
-        "PackageVersion": "0.2.0"
+        "namespace": "azure.mgmt.monitor",
+        "package-version": "0.2.0"
       },
       "output_dir": "azure-mgmt-monitor/azure/mgmt/monitor"
     },
     "monitor.data": {
-      "swagger": "monitor/compositeMonitorClient.json",
+      "composite": "monitor/compositeMonitorClient.json",
       "autorest_options": {
-        "Namespace": "azure.monitor",
-        "Modeler": "CompositeSwagger",
-        "PackageVersion": "0.3.0"
+        "namespace": "azure.monitor",
+        "package-version": "0.3.0"
       },
       "output_dir": "azure-monitor/azure/monitor",
       "generated_relative_base_directory": "azure/monitor"
     },
     "network.2015-06-15": {
-      "swagger": "arm-network/compositeNetworkClient_2015_06_15.json",
+      "composite": "arm-network/compositeNetworkClient_2015_06_15.json",
       "autorest_options": {
-        "Namespace": "azure.mgmt.network.v2015_06_15",
-        "Modeler": "CompositeSwagger"
+        "namespace": "azure.mgmt.network.v2015_06_15"
       },
       "output_dir": "azure-mgmt-network/azure/mgmt/network/v2015_06_15",
       "generated_relative_base_directory": "azure/mgmt/network/v2015_06_15"
     },
     "network.2016-09-01": {
-      "swagger": "arm-network/compositeNetworkClient_2016_09_01.json",
+      "composite": "arm-network/compositeNetworkClient_2016_09_01.json",
       "autorest_options": {
-        "Namespace": "azure.mgmt.network.v2016_09_01",
-        "Modeler": "CompositeSwagger"
+        "namespace": "azure.mgmt.network.v2016_09_01"
       },
       "output_dir": "azure-mgmt-network/azure/mgmt/network/v2016_09_01",
       "generated_relative_base_directory": "azure/mgmt/network/v2016_09_01"
     },
     "network.2016-12-01": {
-      "swagger": "arm-network/compositeNetworkClient_2016_12_01.json",
+      "composite": "arm-network/compositeNetworkClient_2016_12_01.json",
       "autorest_options": {
-        "Namespace": "azure.mgmt.network.v2016_12_01",
-        "Modeler": "CompositeSwagger"
+        "namespace": "azure.mgmt.network.v2016_12_01"
       },
       "output_dir": "azure-mgmt-network/azure/mgmt/network/v2016_12_01",
       "generated_relative_base_directory": "azure/mgmt/network/v2016_12_01"
     },
     "network.2017-03-01": {
-      "swagger": "arm-network/compositeNetworkClient.json",
+      "composite": "arm-network/compositeNetworkClient.json",
       "autorest_options": {
-        "Namespace": "azure.mgmt.network.v2017_03_01",
-        "Modeler": "CompositeSwagger"
+        "namespace": "azure.mgmt.network.v2017_03_01"
       },
       "output_dir": "azure-mgmt-network/azure/mgmt/network/v2017_03_01",
       "generated_relative_base_directory": "azure/mgmt/network/v2017_03_01"
     },
     "notificationhubs": {
-      "swagger": "arm-notificationhubs/2016-03-01/swagger/notificationhubs.json",
       "autorest_options": {
-        "Namespace": "azure.mgmt.notificationhubs",
-        "PackageVersion": "0.30.0"
+        "input-file": "arm-notificationhubs/2016-03-01/swagger/notificationhubs.json",
+        "namespace": "azure.mgmt.notificationhubs",
+        "package-version": "0.30.0"
       },
       "output_dir": "azure-mgmt-notificationhubs/azure/mgmt/notificationhubs"
     },
     "powerbiembedded": {
-      "swagger": "arm-powerbiembedded/2016-01-29/swagger/powerbiembedded.json",
       "autorest_options": {
-        "Namespace": "azure.mgmt.powerbiembedded"
+        "input-file": "arm-powerbiembedded/2016-01-29/swagger/powerbiembedded.json",
+        "namespace": "azure.mgmt.powerbiembedded"
       },
       "output_dir": "azure-mgmt-powerbiembedded/azure/mgmt/powerbiembedded"
     },
     "rdbms.mysql": {
-      "swagger": "arm-rdbms/2017-04-30-preview/swagger/Rdms.MySQL.json",
       "autorest_options": {
-        "Namespace": "azure.mgmt.rdbms.mysql",
-        "PackageVersion": "0.1.0"
+        "input-file": "arm-rdbms/2017-04-30-preview/swagger/Rdms.MySQL.json",
+        "namespace": "azure.mgmt.rdbms.mysql",
+        "package-version": "0.1.0"
       },
       "generated_relative_base_directory": "azure/mgmt/rdbms/mysql",
       "output_dir": "azure-mgmt-rdbms/azure/mgmt/rdbms/mysql"
     },
     "rdbms.postgres": {
-      "swagger": "arm-rdbms/2017-04-30-preview/swagger/Rdms.PostgreSQL.json",
       "autorest_options": {
-        "Namespace": "azure.mgmt.rdbms.postgresql",
-        "PackageVersion": "0.1.0"
+        "input-file": "arm-rdbms/2017-04-30-preview/swagger/Rdms.PostgreSQL.json",
+        "namespace": "azure.mgmt.rdbms.postgresql",
+        "package-version": "0.1.0"
       },
       "generated_relative_base_directory": "azure/mgmt/rdbms/postgresql",
       "output_dir": "azure-mgmt-rdbms/azure/mgmt/rdbms/postgresql"
     },
     "recoveryservicesbackup": {
-      "swagger": "arm-recoveryservicesbackup/readme.md",
-      "generated_relative_base_directory": "azure/mgmt/recoveryservicesbackup",
+      "markdown": "arm-recoveryservicesbackup/readme.md",
+      "generated_relative_base_directory": "Generated/Python/azure/mgmt/recoveryservicesbackup",
       "output_dir":  "azure-mgmt-recoveryservicesbackup/azure/mgmt/recoveryservicesbackup"
     },
     "redis": {
-      "swagger": "arm-redis/2016-04-01/swagger/redis.json",
       "autorest_options": {
-        "Namespace": "azure.mgmt.redis",
-        "PackageVersion": "4.1.0"
+        "input-file": "arm-redis/2016-04-01/swagger/redis.json",
+        "namespace": "azure.mgmt.redis",
+        "package-version": "4.1.0"
       },
       "output_dir": "azure-mgmt-redis/azure/mgmt/redis"
     },
     "resources.managedapplications.2016-09-01-preview": {
-      "swagger": "arm-resources/managedapplications/2016-09-01-preview/swagger/managedapplications.json",
       "autorest_options": {
-        "Namespace": "azure.mgmt.resource.managedapplications"
+        "input-file": "arm-resources/managedapplications/2016-09-01-preview/swagger/managedapplications.json",
+        "namespace": "azure.mgmt.resource.managedapplications"
       },
       "output_dir": "azure-mgmt-resource/azure/mgmt/resource/managedapplications",
       "generated_relative_base_directory": "azure/mgmt/resource/managedapplications",
       "build_dir": "azure-mgmt-resource"
     },
     "resources.features.2015-12-01": {
-      "swagger": "arm-resources/features/2015-12-01/swagger/features.json",
       "autorest_options": {
-        "Namespace": "azure.mgmt.resource.features.v2015_12_01"
+        "input-file": "arm-resources/features/2015-12-01/swagger/features.json",
+        "namespace": "azure.mgmt.resource.features.v2015_12_01"
       },
       "output_dir": "azure-mgmt-resource/azure/mgmt/resource/features/v2015_12_01",
-      "build_dir": "azure-mgmt-resource/azure/mgmt/resource/features/v2015_12_01",
       "generated_relative_base_directory": "azure/mgmt/resource/features/v2015_12_01"
     },
     "resources.subscriptions.2016-06-01": {
-      "swagger": "arm-resources/subscriptions/2016-06-01/swagger/subscriptions.json",
       "autorest_options": {
-        "Namespace": "azure.mgmt.resource.subscriptions.v2016_06_01"
+        "input-file": "arm-resources/subscriptions/2016-06-01/swagger/subscriptions.json",
+        "namespace": "azure.mgmt.resource.subscriptions.v2016_06_01"
       },
       "output_dir": "azure-mgmt-resource/azure/mgmt/resource/subscriptions/v2016_06_01",
-      "build_dir": "azure-mgmt-resource/azure/mgmt/resource/subscriptions/v2016_06_01",
       "generated_relative_base_directory": "azure/mgmt/resource/subscriptions/v2016_06_01"
     },
     "resources.locks.2015-01-01": {
-      "swagger": "arm-resources/locks/2015-01-01/swagger/locks.json",
       "autorest_options": {
-        "Namespace": "azure.mgmt.resource.locks.v2015_01_01"
+        "input-file": "arm-resources/locks/2015-01-01/swagger/locks.json",
+        "namespace": "azure.mgmt.resource.locks.v2015_01_01"
       },
       "output_dir": "azure-mgmt-resource/azure/mgmt/resource/locks/v2015_01_01",
-      "build_dir": "azure-mgmt-resource/azure/mgmt/resource/locks/v2015_01_01",
       "generated_relative_base_directory": "azure/mgmt/resource/locks/v2015_01_01"
     },
     "resources.locks.2016-09-01": {
-      "swagger": "arm-resources/locks/2016-09-01/swagger/locks.json",
       "autorest_options": {
-        "Namespace": "azure.mgmt.resource.locks.v2016_09_01"
+        "input-file": "arm-resources/locks/2016-09-01/swagger/locks.json",
+        "namespace": "azure.mgmt.resource.locks.v2016_09_01"
       },
       "output_dir": "azure-mgmt-resource/azure/mgmt/resource/locks/v2016_09_01",
-      "build_dir": "azure-mgmt-resource/azure/mgmt/resource/locks/v2016_09_01",
       "generated_relative_base_directory": "azure/mgmt/resource/locks/v2016_09_01"
     },
     "resources.resources.2016-02-01": {
-      "swagger": "arm-resources/resources/2016-02-01/swagger/resources.json",
       "autorest_options": {
-        "Namespace": "azure.mgmt.resource.resources.v2016_02_01"
+        "input-file": "arm-resources/resources/2016-02-01/swagger/resources.json",
+        "namespace": "azure.mgmt.resource.resources.v2016_02_01"
       },
       "output_dir": "azure-mgmt-resource/azure/mgmt/resource/resources/v2016_02_01",
-      "build_dir": "azure-mgmt-resource/azure/mgmt/resource/resources/v2016_02_01",
       "generated_relative_base_directory": "azure/mgmt/resource/resources/v2016_02_01"
     },
     "resources.resources.2016-09-01": {
-      "swagger": "arm-resources/resources/2016-09-01/swagger/resources.json",
       "autorest_options": {
-        "Namespace": "azure.mgmt.resource.resources.v2016_09_01"
+        "input-file": "arm-resources/resources/2016-09-01/swagger/resources.json",
+        "namespace": "azure.mgmt.resource.resources.v2016_09_01"
       },
       "output_dir": "azure-mgmt-resource/azure/mgmt/resource/resources/v2016_09_01",
-      "build_dir": "azure-mgmt-resource/azure/mgmt/resource/resources/v2016_09_01",
       "generated_relative_base_directory": "azure/mgmt/resource/resources/v2016_09_01"
     },
     "resources.resources.2017-05-10": {
-      "swagger": "arm-resources/resources/2017-05-10/swagger/resources.json",
       "autorest_options": {
-        "Namespace": "azure.mgmt.resource.resources.v2017_05_10"
+        "input-file": "arm-resources/resources/2017-05-10/swagger/resources.json",
+        "namespace": "azure.mgmt.resource.resources.v2017_05_10"
       },
       "output_dir": "azure-mgmt-resource/azure/mgmt/resource/resources/v2017_05_10",
       "build_dir": "azure-mgmt-resource/azure/mgmt/resource/resources/v2017_05_10",
       "generated_relative_base_directory": "azure/mgmt/resource/resources/v2017_05_10"
     },
     "resources.policy.2015-10-01-preview": {
-      "swagger": "arm-resources/policy/2015-10-01-preview/swagger/policy.json",
       "autorest_options": {
-        "Namespace": "azure.mgmt.resource.policy.v2015_10_01_preview"
+        "input-file": "arm-resources/policy/2015-10-01-preview/swagger/policy.json",
+        "namespace": "azure.mgmt.resource.policy.v2015_10_01_preview"
       },
       "output_dir": "azure-mgmt-resource/azure/mgmt/resource/policy/v2015_10_01_preview",
       "build_dir": "azure-mgmt-resource/azure/mgmt/resource/policy/v2015_10_01_preview",
       "generated_relative_base_directory": "azure/mgmt/resource/policy/v2015_10_01_preview"
     },
     "resources.policy.2016-04-01": {
-      "swagger": "arm-resources/policy/2016-04-01/swagger/policy.json",
       "autorest_options": {
-        "Namespace": "azure.mgmt.resource.policy.v2016_04_01"
+        "input-file": "arm-resources/policy/2016-04-01/swagger/policy.json",
+        "namespace": "azure.mgmt.resource.policy.v2016_04_01"
       },
       "output_dir": "azure-mgmt-resource/azure/mgmt/resource/policy/v2016_04_01",
-      "build_dir": "azure-mgmt-resource/azure/mgmt/resource/policy/v2016_04_01",
       "generated_relative_base_directory": "azure/mgmt/resource/policy/v2016_04_01"
     },
     "resources.policy.2016-12-01": {
-      "swagger": "arm-resources/policy/2016-12-01/swagger/policy.json",
       "autorest_options": {
-        "Namespace": "azure.mgmt.resource.policy.v2016_12_01"
+        "input-file": "arm-resources/policy/2016-12-01/swagger/policy.json",
+        "namespace": "azure.mgmt.resource.policy.v2016_12_01"
       },
       "output_dir": "azure-mgmt-resource/azure/mgmt/resource/policy/v2016_12_01",
-      "build_dir": "azure-mgmt-resource/azure/mgmt/resource/policy/v2016_12_01",
       "generated_relative_base_directory": "azure/mgmt/resource/policy/v2016_12_01"
     },
     "resources.links.2016-09-01": {
-      "swagger": "arm-resources/links/2016-09-01/swagger/links.json",
       "autorest_options": {
-        "Namespace": "azure.mgmt.resource.links.v2016_09_01"
+        "input-file": "arm-resources/links/2016-09-01/swagger/links.json",
+        "namespace": "azure.mgmt.resource.links.v2016_09_01"
       },
       "output_dir": "azure-mgmt-resource/azure/mgmt/resource/links/v2016_09_01",
-      "build_dir": "azure-mgmt-resource/azure/mgmt/resource/links/v2016_09_01",
       "generated_relative_base_directory": "azure/mgmt/resource/links/v2016_09_01"
     },
     "search": {
-      "swagger": "arm-search/2015-08-19/swagger/search.json",
       "autorest_options": {
-        "Namespace": "azure.mgmt.search",
+        "input-file": "arm-search/2015-08-19/swagger/search.json",
+        "namespace": "azure.mgmt.search",
         "PackageVersion": "0.1.0"
       },
       "output_dir": "azure-mgmt-search/azure/mgmt/search"
     },
     "servermanager": {
-      "swagger": "arm-servermanagement/2016-07-01-preview/swagger/servermanagement.json",
       "autorest_options": {
-        "Namespace": "azure.mgmt.servermanager",
-        "PackageVersion": "1.1.0"
+        "input-file": "arm-servermanagement/2016-07-01-preview/swagger/servermanagement.json",
+        "namespace": "azure.mgmt.servermanager",
+        "package-version": "1.1.0"
       },
       "output_dir": "azure-mgmt-servermanager/azure/mgmt/servermanager"
     },
     "servicebus": {
-      "swagger": "arm-servicebus/2015-08-01/swagger/servicebus.json",
       "autorest_options": {
-        "Namespace": "azure.mgmt.servicebus",
-        "PackageVersion": "0.1.0"
+        "input-file": "arm-servicebus/2015-08-01/swagger/servicebus.json",
+        "namespace": "azure.mgmt.servicebus",
+        "package-version": "0.1.0"
       },
       "output_dir": "azure-mgmt-servicebus/azure/mgmt/servicebus"
     },
     "servicefabric": {
-      "swagger": "servicefabric/5.6.130/swagger/servicefabric.json",
       "autorest_options": {
-        "Namespace": "azure.servicefabric",
-        "PackageVersion": "5.6.130"
+        "input-file": "servicefabric/5.6/swagger/servicefabric.json",
+        "namespace": "azure.servicefabric",
+        "package-version": "5.6.130"
       },
-      "output_dir": "azure-servicefabric/azure/servicefabric"
+      "output_dir": "azure-servicefabric/azure/servicefabric",
+      "generated_relative_base_directory": "azure/servicefabric"
     },
     "scheduler": {
-      "swagger": "arm-scheduler/2016-03-01/swagger/scheduler.json",
       "autorest_options": {
-        "Namespace": "azure.mgmt.scheduler",
-        "PackageVersion": "1.1.2"
+        "input-file": "arm-scheduler/2016-03-01/swagger/scheduler.json",
+        "namespace": "azure.mgmt.scheduler",
+        "package-version": "1.1.2"
       },
       "output_dir": "azure-mgmt-scheduler/azure/mgmt/scheduler"
     },
     "sql": {
-      "swagger": "arm-sql/compositeSql.json",
+      "composite": "arm-sql/compositeSql.json",
       "autorest_options": {
-        "Namespace": "azure.mgmt.sql",
-        "Modeler": "CompositeSwagger",
-        "PackageVersion": "0.5.4"
+        "namespace": "azure.mgmt.sql",
+        "package-version": "0.5.0"
       },
       "output_dir": "azure-mgmt-sql/azure/mgmt/sql"
     },
     "storage.2015-06-15": {
-      "swagger": "arm-storage/2015-06-15/swagger/storage.json",
       "autorest_options": {
-        "Namespace": "azure.mgmt.storage.v2015_06_15"
+        "input-file": "arm-storage/2015-06-15/swagger/storage.json",
+        "namespace": "azure.mgmt.storage.v2015_06_15"
       },
       "output_dir": "azure-mgmt-storage/azure/mgmt/storage/v2015_06_15",
       "generated_relative_base_directory": "azure/mgmt/storage/v2015_06_15"
     },
     "storage.2016-12-01": {
-      "swagger": "arm-storage/2016-12-01/swagger/storage.json",
       "autorest_options": {
-        "Namespace": "azure.mgmt.storage.v2016_12_01"
+        "input-file": "arm-storage/2016-12-01/swagger/storage.json",
+        "namespace": "azure.mgmt.storage.v2016_12_01"
       },
       "output_dir": "azure-mgmt-storage/azure/mgmt/storage/v2016_12_01",
       "generated_relative_base_directory": "azure/mgmt/storage/v2016_12_01"
     },
     "trafficmanager": {
-      "swagger": "arm-trafficmanager/2017-03-01/swagger/trafficmanager.json",
       "autorest_options": {
-        "Namespace": "azure.mgmt.trafficmanager",
-        "PackageVersion": "0.30.0"
+        "input-file": "arm-trafficmanager/2017-03-01/swagger/trafficmanager.json",
+        "namespace": "azure.mgmt.trafficmanager",
+        "package-version": "0.30.0"
       },
       "output_dir": "azure-mgmt-trafficmanager/azure/mgmt/trafficmanager"
     },
     "web": {
-      "swagger": "arm-web/compositeWebAppClient.json",
+      "composite": "arm-web/compositeWebAppClient.json",
       "autorest_options": {
-        "Namespace": "azure.mgmt.web",
-        "Modeler": "CompositeSwagger",
-        "PackageVersion": "0.32.0"
+        "namespace": "azure.mgmt.web",
+        "package-version": "0.32.0"
       },
       "output_dir": "azure-mgmt-web/azure/mgmt/web/"
     },
     "batch": {
-      "swagger": "batch/2017-05-01.5.0/swagger/BatchService.json",
       "autorest_options": {
-        "Namespace": "azure.batch",
-        "PackageVersion": "3.0.0"
+        "input-file": "batch/2017-05-01.5.0/swagger/BatchService.json",
+        "namespace": "azure.batch",
+        "package-version": "3.0.0"
       },
       "output_dir": "azure-batch/azure/batch/",
       "build_dir": "azure-batch",
@@ -517,37 +497,37 @@
       ]
     },
     "datalake.analytics.account": {
-      "swagger": "arm-datalake-analytics/account/2016-11-01/swagger/account.json",
       "autorest_options": {
-        "Namespace": "azure.mgmt.datalake.analytics.account",
-        "PackageVersion": "0.1.4"
+        "input-file": "arm-datalake-analytics/account/2016-11-01/swagger/account.json",
+        "namespace": "azure.mgmt.datalake.analytics.account",
+        "package-version": "0.1.4"
       },
       "output_dir": "azure-mgmt-datalake-analytics/azure/mgmt/datalake/analytics/account/",
       "generated_relative_base_directory": "azure/mgmt/datalake/analytics/account"
     },
     "datalake.analytics.catalog": {
-      "swagger": "arm-datalake-analytics/catalog/2016-11-01/swagger/catalog.json",
       "autorest_options": {
-        "Namespace": "azure.mgmt.datalake.analytics.catalog",
-        "PackageVersion": "0.1.4"
+        "input-file": "arm-datalake-analytics/catalog/2016-11-01/swagger/catalog.json",
+        "namespace": "azure.mgmt.datalake.analytics.catalog",
+        "package-version": "0.1.4"
       },
       "output_dir": "azure-mgmt-datalake-analytics/azure/mgmt/datalake/analytics/catalog/",
       "generated_relative_base_directory": "azure/mgmt/datalake/analytics/catalog"
     },
     "datalake.analytics.job": {
-      "swagger": "arm-datalake-analytics/job/2016-11-01/swagger/job.json",
       "autorest_options": {
-        "Namespace": "azure.mgmt.datalake.analytics.job",
-        "PackageVersion": "0.1.4"
+        "input-file": "arm-datalake-analytics/job/2016-11-01/swagger/job.json",
+        "namespace": "azure.mgmt.datalake.analytics.job",
+        "package-version": "0.1.4"
       },
       "output_dir": "azure-mgmt-datalake-analytics/azure/mgmt/datalake/analytics/job/",
       "generated_relative_base_directory": "azure/mgmt/datalake/analytics/job"
     },
     "datalake.store.account": {
-      "swagger": "arm-datalake-store/account/2016-11-01/swagger/account.json",
       "autorest_options": {
-        "Namespace": "azure.mgmt.datalake.store",
-        "PackageVersion": "0.1.4"
+        "input-file": "arm-datalake-store/account/2016-11-01/swagger/account.json",
+        "namespace": "azure.mgmt.datalake.store",
+        "package-version": "0.1.4"
       },
       "output_dir": "azure-mgmt-datalake-store/azure/mgmt/datalake/store/",
       "generated_relative_base_directory": "azure/mgmt/datalake/store"
