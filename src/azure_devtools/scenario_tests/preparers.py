@@ -22,7 +22,7 @@ class AbstractPreparer(object):
         self.resource_random_name = None
         self.test_class_instance = None
         self.live_test = False
-        self.disable_recording = False
+        self.disable_recording = disable_recording
 
     def __call__(self, fn):
         def _preparer_wrapper(test_class_instance, **kwargs):
