@@ -23,8 +23,12 @@
 		"service_name": "Commerce Usage",
 		"category ": "Management"
 	},
-	"azure-mgmt-compute": {
-		"service_name": "Compute",
+	"azure-mgmt-compute/azure.mgmt.compute.compute": {
+		"service_name": "Virtual Machines",
+		"category ": "Management"
+	},
+	"azure-mgmt-compute/azure.mgmt.compute.containerservice": {
+		"service_name": "Container Service",
 		"category ": "Management"
 	},
 	"azure-mgmt-consumption": {
@@ -138,5 +142,11 @@
 	"azure-mgmt-web": {
 		"service_name": "Web Apps",
 		"category ": "Management"
+	},
+	"azure-common": {
+		"service_name": "Other"
+	},
+	"azure-servicemanagement-legacy": {
+		"service_name": "Other"
 	}
 }
