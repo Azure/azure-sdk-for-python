@@ -84,6 +84,36 @@ class AuthenticationType(Enum):
     ad_password = "ADPassword"
 
 
+class UnitType(Enum):
+
+    count = "count"
+    bytes = "bytes"
+    seconds = "seconds"
+    percent = "percent"
+    count_per_second = "countPerSecond"
+    bytes_per_second = "bytesPerSecond"
+
+
+class PrimaryAggregationType(Enum):
+
+    none = "None"
+    average = "Average"
+    count = "Count"
+    minimum = "Minimum"
+    maximum = "Maximum"
+    total = "Total"
+
+
+class UnitDefinitionType(Enum):
+
+    count = "Count"
+    bytes = "Bytes"
+    seconds = "Seconds"
+    percent = "Percent"
+    count_per_second = "CountPerSecond"
+    bytes_per_second = "BytesPerSecond"
+
+
 class ReplicationRole(Enum):
 
     primary = "Primary"
@@ -101,16 +131,10 @@ class ReplicationState(Enum):
     suspended = "SUSPENDED"
 
 
-class ServerVersion(Enum):
+class CheckNameAvailabilityReason(Enum):
 
-    two_full_stop_zero = "2.0"
-    one_two_full_stop_zero = "12.0"
-
-
-class ServerState(Enum):
-
-    ready = "Ready"
-    disabled = "Disabled"
+    invalid = "Invalid"
+    already_exists = "AlreadyExists"
 
 
 class ElasticPoolEdition(Enum):
@@ -233,3 +257,14 @@ class FailoverGroupReplicationRole(Enum):
 
     primary = "Primary"
     secondary = "Secondary"
+
+
+class IdentityType(Enum):
+
+    system_assigned = "SystemAssigned"
+
+
+class ServerKeyType(Enum):
+
+    service_managed = "ServiceManaged"
+    azure_key_vault = "AzureKeyVault"
