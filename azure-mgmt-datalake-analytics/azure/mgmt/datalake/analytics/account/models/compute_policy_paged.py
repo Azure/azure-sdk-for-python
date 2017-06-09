@@ -12,16 +12,16 @@
 from msrest.paging import Paged
 
 
-class DataLakeStoreAccountPaged(Paged):
+class ComputePolicyPaged(Paged):
     """
-    A paging container for iterating over a list of DataLakeStoreAccount object
+    A paging container for iterating over a list of ComputePolicy object
     """
 
     _attribute_map = {
         'next_link': {'key': 'nextLink', 'type': 'str'},
-        'current_page': {'key': 'value', 'type': '[DataLakeStoreAccount]'}
+        'current_page': {'key': 'value', 'type': '[ComputePolicy]'}
     }
 
     def __init__(self, *args, **kwargs):
 
-        super(DataLakeStoreAccountPaged, self).__init__(*args, **kwargs)
+        super(ComputePolicyPaged, self).__init__(*args, **kwargs)

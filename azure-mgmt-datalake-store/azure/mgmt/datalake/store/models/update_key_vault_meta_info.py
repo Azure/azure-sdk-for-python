@@ -9,19 +9,20 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.paging import Paged
+from msrest.serialization import Model
 
 
-class DataLakeStoreAccountPaged(Paged):
-    """
-    A paging container for iterating over a list of DataLakeStoreAccount object
+class UpdateKeyVaultMetaInfo(Model):
+    """The Key Vault update information used for user managed key rotation.
+
+    :param encryption_key_version: The version of the user managed encryption
+     key to update through a key rotation.
+    :type encryption_key_version: str
     """
 
     _attribute_map = {
-        'next_link': {'key': 'nextLink', 'type': 'str'},
-        'current_page': {'key': 'value', 'type': '[DataLakeStoreAccount]'}
+        'encryption_key_version': {'key': 'encryptionKeyVersion', 'type': 'str'},
     }
 
-    def __init__(self, *args, **kwargs):
-
-        super(DataLakeStoreAccountPaged, self).__init__(*args, **kwargs)
+    def __init__(self, encryption_key_version=None):
+        self.encryption_key_version = encryption_key_version

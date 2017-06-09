@@ -103,6 +103,17 @@ class DataLakeAnalyticsAccount(Resource):
      Data Lake Analytics account.
     :type firewall_rules: list of :class:`FirewallRule
      <azure.mgmt.datalake.analytics.account.models.FirewallRule>`
+    :param max_degree_of_parallelism_per_job: the maximum supported degree of
+     parallelism per job for this account.
+    :type max_degree_of_parallelism_per_job: int
+    :param min_priority_per_job: the minimum supported priority per job for
+     this account.
+    :type min_priority_per_job: int
+    :param compute_policies: the list of compute policies to create in this
+     account.
+    :type compute_policies: list of
+     :class:`ComputePolicyAccountCreateParameters
+     <azure.mgmt.datalake.analytics.account.models.ComputePolicyAccountCreateParameters>`
     """
 
     _validation = {
@@ -123,6 +134,8 @@ class DataLakeAnalyticsAccount(Resource):
         'last_modified_time': {'readonly': True},
         'endpoint': {'readonly': True},
         'current_tier': {'readonly': True},
+        'max_degree_of_parallelism_per_job': {'minimum': 1},
+        'min_priority_per_job': {'minimum': 1},
     }
 
     _attribute_map = {
@@ -149,9 +162,12 @@ class DataLakeAnalyticsAccount(Resource):
         'firewall_state': {'key': 'properties.firewallState', 'type': 'FirewallState'},
         'firewall_allow_azure_ips': {'key': 'properties.firewallAllowAzureIps', 'type': 'FirewallAllowAzureIpsState'},
         'firewall_rules': {'key': 'properties.firewallRules', 'type': '[FirewallRule]'},
+        'max_degree_of_parallelism_per_job': {'key': 'properties.maxDegreeOfParallelismPerJob', 'type': 'int'},
+        'min_priority_per_job': {'key': 'properties.minPriorityPerJob', 'type': 'int'},
+        'compute_policies': {'key': 'properties.computePolicies', 'type': '[ComputePolicyAccountCreateParameters]'},
     }
 
-    def __init__(self, location, default_data_lake_store_account, data_lake_store_accounts, tags=None, max_degree_of_parallelism=30, query_store_retention=30, max_job_count=3, storage_accounts=None, new_tier=None, firewall_state=None, firewall_allow_azure_ips=None, firewall_rules=None):
+    def __init__(self, location, default_data_lake_store_account, data_lake_store_accounts, tags=None, max_degree_of_parallelism=30, query_store_retention=30, max_job_count=3, storage_accounts=None, new_tier=None, firewall_state=None, firewall_allow_azure_ips=None, firewall_rules=None, max_degree_of_parallelism_per_job=None, min_priority_per_job=None, compute_policies=None):
         super(DataLakeAnalyticsAccount, self).__init__(location=location, tags=tags)
         self.provisioning_state = None
         self.state = None
@@ -171,3 +187,6 @@ class DataLakeAnalyticsAccount(Resource):
         self.firewall_state = firewall_state
         self.firewall_allow_azure_ips = firewall_allow_azure_ips
         self.firewall_rules = firewall_rules
+        self.max_degree_of_parallelism_per_job = max_degree_of_parallelism_per_job
+        self.min_priority_per_job = min_priority_per_job
+        self.compute_policies = compute_policies
