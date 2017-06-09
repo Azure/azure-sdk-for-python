@@ -95,8 +95,12 @@
 		"service_name": "Power BI Embedded",
 		"category ": "Management"
 	},
- 	"azure-mgmt-rdbms": {
-    		"service_name": "MySQL / PostgreSQL",
+ 	"azure-mgmt-rdbms/azure.mgmt.rdbms.mysql": {
+    		"service_name": "MySQL",
+   		 "category ": "Management"
+ 	 },
+	 "azure-mgmt-rdbms/azure.mgmt.rdbms.postgresql": {
+    		"service_name": "PostgreSQL",
    		 "category ": "Management"
  	 },
   	"azure-mgmt-recoveryservicesbackup": {
