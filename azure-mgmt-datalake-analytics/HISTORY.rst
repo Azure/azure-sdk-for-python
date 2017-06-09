@@ -2,6 +2,14 @@
 
 Release History
 ===============
+0.1.5 (2017-06-07)
+++++++++++++++++++
+
+**New features**
+
+  * Support for Compute Policies on accounts. These will limit specific user and groups to certain job parallelism and priority.
+  * Support for job relationship properties. These can be populated in the `related` property when submitting a job and can be retrieved with the `pipeline` and `recurrence` operation methods.
+
 0.1.4 (2017-04-20)
 ++++++++++++++++++
 

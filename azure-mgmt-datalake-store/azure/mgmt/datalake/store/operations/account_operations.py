@@ -371,7 +371,7 @@ class AccountOperations(object):
 
     def enable_key_vault(
             self, resource_group_name, account_name, custom_headers=None, raw=False, **operation_config):
-        """Attempts to enable a user managed key vault for encryption of the
+        """Attempts to enable a user managed Key Vault for encryption of the
         specified Data Lake Store account.
 
         :param resource_group_name: The name of the Azure resource group that

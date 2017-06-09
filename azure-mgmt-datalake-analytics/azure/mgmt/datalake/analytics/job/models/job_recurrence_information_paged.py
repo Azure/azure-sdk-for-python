@@ -9,5 +9,19 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-VERSION = "0.1.5"
+from msrest.paging import Paged
 
+
+class JobRecurrenceInformationPaged(Paged):
+    """
+    A paging container for iterating over a list of JobRecurrenceInformation object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[JobRecurrenceInformation]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(JobRecurrenceInformationPaged, self).__init__(*args, **kwargs)

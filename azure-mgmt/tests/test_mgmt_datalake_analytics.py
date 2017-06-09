@@ -37,6 +37,9 @@ class MgmtDataLakeAnalyticsTest(AzureMgmtTestCase):
         # define all names
         self.adls_account_name = self.get_resource_name('pyarmadls2')
         self.job_account_name = self.get_resource_name('pyarmadla2')
+        self.pipeline_name = self.get_resource_name('pipeline')
+        self.recurrence_name = self.get_resource_name('recurrence')
+        self.pipeline_uri = 'https://{}.contoso.com/myJob'.format(self.get_resource_name('pipelineuri'))
 
         # construct the catalog script
         self.db_name = self.get_resource_name('adladb')
@@ -149,12 +152,20 @@ END;""".format(self.db_name, self.table_name, self.tvf_name, self.view_name, sel
             self.catalog_id = self.fake_settings.ADLA_JOB_ID
             self.cred_create_id = self.fake_settings.ADLA_JOB_ID
             self.cred_drop_id = self.fake_settings.ADLA_JOB_ID
+            self.pipeline_id = self.fake_settings.ADLA_JOB_ID
+            self.recurrence_id = self.fake_settings.ADLA_JOB_ID
+            self.run_id_2 = self.fake_settings.ADLA_JOB_ID
+            self.run_id_3 = self.fake_settings.ADLA_JOB_ID
         else:
             self.cancel_id = str(uuid.uuid1())
             self.run_id = str(uuid.uuid1())
             self.catalog_id = str(uuid.uuid1())
             self.cred_create_id = str(uuid.uuid1())
             self.cred_drop_id = str(uuid.uuid1())
+            self.pipeline_id = str(uuid.uuid1())
+            self.recurrence_id = str(uuid.uuid1())
+            self.run_id_2 = str(uuid.uuid1())
+            self.run_id_3 = str(uuid.uuid1())
 
     def _scrub(self, val):
         val = super(MgmtDataLakeAnalyticsTest, self)._scrub(val)
@@ -163,7 +174,11 @@ END;""".format(self.db_name, self.table_name, self.tvf_name, self.view_name, sel
             self.run_id:  self.fake_settings.ADLA_JOB_ID,
             self.catalog_id:  self.fake_settings.ADLA_JOB_ID,
             self.cred_create_id: self.fake_settings.ADLA_JOB_ID,
-            self.cred_drop_id: self.fake_settings.ADLA_JOB_ID
+            self.cred_drop_id: self.fake_settings.ADLA_JOB_ID,
+            self.pipeline_id: self.fake_settings.ADLA_JOB_ID,
+            self.recurrence_id: self.fake_settings.ADLA_JOB_ID,
+            self.run_id_2: self.fake_settings.ADLA_JOB_ID,
+            self.run_id_3: self.fake_settings.ADLA_JOB_ID
         }
         val = self._scrub_using_dict(val, real_to_fake_dict)
         return val
@@ -212,15 +227,16 @@ END;""".format(self.db_name, self.table_name, self.tvf_name, self.view_name, sel
             if(create_catalog):
                 self.run_job_to_completion(self.job_account_name, self.catalog_id, self.catalog_script)
 
-    def run_job_to_completion(self, adla_account_name, job_id, script_to_run):
-        job_params = azure.mgmt.datalake.analytics.job.models.JobInformation(
-            name = self.get_resource_name('testjob'),
-            type = azure.mgmt.datalake.analytics.job.models.JobType.usql,
-            degree_of_parallelism = 2,
-            properties = azure.mgmt.datalake.analytics.job.models.USqlJobProperties(
-                script = script_to_run,
+    def run_job_to_completion(self, adla_account_name, job_id, script_to_run, job_params=None):
+        if not job_params:
+            job_params = azure.mgmt.datalake.analytics.job.models.JobInformation(
+                name = self.get_resource_name('testjob'),
+                type = azure.mgmt.datalake.analytics.job.models.JobType.usql,
+                degree_of_parallelism = 2,
+                properties = azure.mgmt.datalake.analytics.job.models.USqlJobProperties(
+                    script = script_to_run,
+                )
             )
-        )
         create_response = self.adla_job_client.job.create(
             adla_account_name,
             job_id,
@@ -257,6 +273,14 @@ END;""".format(self.db_name, self.table_name, self.tvf_name, self.view_name, sel
             type = azure.mgmt.datalake.analytics.job.models.JobType.usql,
             properties = azure.mgmt.datalake.analytics.job.models.USqlJobProperties(
                 script = 'DROP DATABASE IF EXISTS testdb; CREATE DATABASE testdb;'
+            ),
+            related = azure.mgmt.datalake.analytics.job.models.JobRelationshipProperties(
+                pipeline_id = self.pipeline_id,
+                pipeline_name = self.pipeline_name,
+                pipeline_uri = self.pipeline_uri,
+                recurrence_id = self.recurrence_id,
+                recurrence_name = self.recurrence_name,
+                run_id = self.run_id_2
             )
         )
 
@@ -284,13 +308,49 @@ END;""".format(self.db_name, self.table_name, self.tvf_name, self.view_name, sel
         self.assertIsNotNone(adla_job.error_message)
 
         # resubmit and allow to run to completion.
-        self.run_job_to_completion(self.job_account_name, self.run_id, job_to_submit.properties.script)
+        # before hand, update the runId.
+        job_to_submit.related.run_id = self.run_id_3
+        self.run_job_to_completion(self.job_account_name, self.run_id, job_to_submit.properties.script, job_params=job_to_submit)
 
         # list the jobs that have been submitted
         list_of_jobs = self.adla_job_client.job.list(self.job_account_name)
         self.assertIsNotNone(list_of_jobs)
         list_of_jobs = list(list_of_jobs)
         self.assertGreater(len(list_of_jobs), 1)
+
+        # get the specific job and validate the job relationship properties
+        adla_job = self.adla_job_client.job.get(
+            self.job_account_name,
+            self.run_id
+        )
+
+        self.assertEqual(self.run_id_3, adla_job.related.run_id)
+        self.assertEqual(self.recurrence_id, adla_job.related.recurrence_id)
+        self.assertEqual(self.pipeline_id, adla_job.related.pipeline_id)
+        self.assertEqual(self.pipeline_name, adla_job.related.pipeline_name)
+        self.assertEqual(self.recurrence_name, adla_job.related.recurrence_name)
+        self.assertEqual(self.pipeline_uri, adla_job.related.pipeline_uri)
+
+        # validate job relationship APIs
+        recurrence_get =  self.adla_job_client.recurrence.get(self.job_account_name, self.recurrence_id)
+        self.assertEqual(self.recurrence_id, recurrence_get.recurrence_id)
+        self.assertEqual(self.recurrence_name, recurrence_get.recurrence_name)
+
+        recurrence_list =  self.adla_job_client.recurrence.list(self.job_account_name)
+        self.assertIsNotNone(recurrence_list)
+        recurrence_list = list(recurrence_list)
+        self.assertEqual(1, len(recurrence_list))
+
+        pipeline_get =  self.adla_job_client.pipeline.get(self.job_account_name, self.pipeline_id)
+        self.assertEqual(self.pipeline_id, pipeline_get.pipeline_id)
+        self.assertEqual(self.pipeline_name, pipeline_get.pipeline_name)
+        self.assertEqual(self.pipeline_uri, pipeline_get.pipeline_uri)
+        self.assertGreater(len(pipeline_get.runs), 1)
+
+        pipeline_list =  self.adla_job_client.pipeline.list(self.job_account_name)
+        self.assertIsNotNone(pipeline_list)
+        pipeline_list = list(pipeline_list)
+        self.assertEqual(1, len(pipeline_list))
 
         # compile a job
         compile_response = self.adla_job_client.job.build(self.job_account_name, job_to_submit)
@@ -558,6 +618,111 @@ END;""".format(self.db_name, self.table_name, self.tvf_name, self.view_name, sel
         )
 
     @record
+    def test_adla_compute_policy(self):
+        
+        # create resource group and store account
+        self.run_prereqs()
+
+        # define account params
+        account_name = self.get_resource_name('pyarmadla')
+        user_id = '8ce05900-7a9e-4895-b3f0-0fbcee507803'
+        user_policy_name = self.get_resource_name('adlapolicy1')
+        group_id = '0583cfd7-60f5-43f0-9597-68b85591fc69'
+        group_policy_name = self.get_resource_name('adlapolicy2')
+
+        params_create = azure.mgmt.datalake.analytics.account.models.DataLakeAnalyticsAccount(
+            location = self.region,
+            default_data_lake_store_account = self.adls_account_name,
+            data_lake_store_accounts = [azure.mgmt.datalake.analytics.account.models.DataLakeStoreAccountInfo(name = self.adls_account_name)],
+            compute_policies = [azure.mgmt.datalake.analytics.account.models.ComputePolicyAccountCreateParameters(
+                max_degree_of_parallelism_per_job = 1,
+                min_priority_per_job = 1,
+                object_id = user_id,
+                object_type = azure.mgmt.datalake.analytics.account.models.AADObjectType.user,
+                name = user_policy_name)]
+        )
+
+        # create and validate an ADLA account
+        result_create = self.adla_account_client.account.create(
+            self.group_name,
+            account_name,
+            params_create,
+        )
+
+        adla_account = result_create.result()
+        
+        # full validation of the create
+        self.assertEqual(adla_account.name, account_name)
+        
+        self.assertIsNotNone(adla_account.id)
+        self.assertIn(account_name, adla_account.id)
+        self.assertEqual(self.region, adla_account.location)
+        self.assertEqual('Microsoft.DataLakeAnalytics/accounts', adla_account.type)
+        self.assertEqual(1, len(adla_account.data_lake_store_accounts))
+        self.assertEqual(self.adls_account_name, adla_account.default_data_lake_store_account)
+
+        # get the account and validate compute policy exists
+        adla_account = self.adla_account_client.account.get(
+            self.group_name,
+            account_name
+        )
+
+        self.assertEqual(1, len(list(adla_account.compute_policies)))
+        self.assertEqual(user_policy_name, list(adla_account.compute_policies)[0].name)
+
+        # validate compute policy CRUD
+        new_policy = self.adla_account_client.compute_policies.create_or_update(
+            self.group_name,
+            account_name,
+            group_policy_name,
+            azure.mgmt.datalake.analytics.account.models.ComputePolicyCreateOrUpdateParameters(
+                max_degree_of_parallelism_per_job = 1,
+                min_priority_per_job = 1,
+                object_id = group_id,
+                object_type = azure.mgmt.datalake.analytics.account.models.AADObjectType.group))
+        
+        self.assertEqual(1, new_policy.max_degree_of_parallelism_per_job)
+        self.assertEqual(1, new_policy.min_priority_per_job)
+        self.assertEqual(group_id, new_policy.object_id)
+        self.assertEqual(azure.mgmt.datalake.analytics.account.models.AADObjectType.group.value, new_policy.object_type)
+
+        # get policy
+        new_policy = self.adla_account_client.compute_policies.get(
+            self.group_name,
+            account_name,
+            group_policy_name)
+
+        self.assertEqual(1, new_policy.max_degree_of_parallelism_per_job)
+        self.assertEqual(1, new_policy.min_priority_per_job)
+        self.assertEqual(group_id, new_policy.object_id)
+        self.assertEqual(azure.mgmt.datalake.analytics.account.models.AADObjectType.group.value, new_policy.object_type)
+
+        # list all policies
+        list_policy = list(self.adla_account_client.compute_policies.list_by_account(
+            self.group_name,
+            account_name))
+
+        self.assertEqual(2, len(list_policy))
+
+        # remove the group policy and verify list length is 1
+        self.adla_account_client.compute_policies.delete(
+            self.group_name,
+            account_name,
+            group_policy_name)
+
+        list_policy = list(self.adla_account_client.compute_policies.list_by_account(
+            self.group_name,
+            account_name))
+
+        self.assertEqual(1, len(list_policy))
+
+        # delete account
+        self.adla_account_client.account.delete(
+            self.group_name,
+            account_name
+        ).wait()
+
+    @record
     def test_adla_accounts(self):
         
         # create resource group and store account
@@ -640,7 +805,7 @@ END;""".format(self.db_name, self.table_name, self.tvf_name, self.view_name, sel
         self.adla_account_client.account.delete(
             self.group_name,
             account_name
-        )
+        ).wait()
 
 #------------------------------------------------------------------------------
 if __name__ == '__main__':

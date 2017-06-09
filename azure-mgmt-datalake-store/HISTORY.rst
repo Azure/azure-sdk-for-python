@@ -3,6 +3,13 @@
 Release History
 ===============
 
+0.1.5 (2017-06-07)
+++++++++++++++++++
+
+**New features**
+
+* Add support for updating a User Managed KeyVault key.
+
 0.1.4 (2017-04-20)
 ++++++++++++++++++
 

@@ -62,11 +62,11 @@ class DataLakeStoreAccountManagementClient(object):
     :vartype config: DataLakeStoreAccountManagementClientConfiguration
 
     :ivar firewall_rules: FirewallRules operations
-    :vartype firewall_rules: .operations.FirewallRulesOperations
+    :vartype firewall_rules: azure.mgmt.datalake.store.operations.FirewallRulesOperations
     :ivar trusted_id_providers: TrustedIdProviders operations
-    :vartype trusted_id_providers: .operations.TrustedIdProvidersOperations
+    :vartype trusted_id_providers: azure.mgmt.datalake.store.operations.TrustedIdProvidersOperations
     :ivar account: Account operations
-    :vartype account: .operations.AccountOperations
+    :vartype account: azure.mgmt.datalake.store.operations.AccountOperations
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
