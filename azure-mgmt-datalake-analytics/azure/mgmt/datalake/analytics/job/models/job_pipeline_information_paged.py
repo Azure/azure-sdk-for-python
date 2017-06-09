@@ -9,5 +9,19 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-VERSION = "0.1.5"
+from msrest.paging import Paged
 
+
+class JobPipelineInformationPaged(Paged):
+    """
+    A paging container for iterating over a list of JobPipelineInformation object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[JobPipelineInformation]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(JobPipelineInformationPaged, self).__init__(*args, **kwargs)

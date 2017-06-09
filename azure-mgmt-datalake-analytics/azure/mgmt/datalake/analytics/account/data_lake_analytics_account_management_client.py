@@ -13,6 +13,7 @@ from msrest.service_client import ServiceClient
 from msrest import Serializer, Deserializer
 from msrestazure import AzureConfiguration
 from .version import VERSION
+from .operations.compute_policies_operations import ComputePoliciesOperations
 from .operations.firewall_rules_operations import FirewallRulesOperations
 from .operations.storage_accounts_operations import StorageAccountsOperations
 from .operations.data_lake_store_accounts_operations import DataLakeStoreAccountsOperations
@@ -32,13 +33,11 @@ class DataLakeAnalyticsAccountManagementClientConfiguration(AzureConfiguration):
      identify Microsoft Azure subscription. The subscription ID forms part of
      the URI for every service call.
     :type subscription_id: str
-    :param api_version: Client Api Version.
-    :type api_version: str
     :param str base_url: Service URL
     """
 
     def __init__(
-            self, credentials, subscription_id, api_version='2016-11-01', base_url=None):
+            self, credentials, subscription_id, base_url=None):
 
         if credentials is None:
             raise ValueError("Parameter 'credentials' must not be None.")
@@ -46,8 +45,6 @@ class DataLakeAnalyticsAccountManagementClientConfiguration(AzureConfiguration):
             raise ValueError("Parameter 'subscription_id' must not be None.")
         if not isinstance(subscription_id, str):
             raise TypeError("Parameter 'subscription_id' must be str.")
-        if api_version is not None and not isinstance(api_version, str):
-            raise TypeError("Optional parameter 'api_version' must be str.")
         if not base_url:
             base_url = 'https://management.azure.com'
 
@@ -58,7 +55,6 @@ class DataLakeAnalyticsAccountManagementClientConfiguration(AzureConfiguration):
 
         self.credentials = credentials
         self.subscription_id = subscription_id
-        self.api_version = api_version
 
 
 class DataLakeAnalyticsAccountManagementClient(object):
@@ -67,14 +63,16 @@ class DataLakeAnalyticsAccountManagementClient(object):
     :ivar config: Configuration for client.
     :vartype config: DataLakeAnalyticsAccountManagementClientConfiguration
 
+    :ivar compute_policies: ComputePolicies operations
+    :vartype compute_policies: azure.mgmt.datalake.analytics.account.operations.ComputePoliciesOperations
     :ivar firewall_rules: FirewallRules operations
-    :vartype firewall_rules: .operations.FirewallRulesOperations
+    :vartype firewall_rules: azure.mgmt.datalake.analytics.account.operations.FirewallRulesOperations
     :ivar storage_accounts: StorageAccounts operations
-    :vartype storage_accounts: .operations.StorageAccountsOperations
+    :vartype storage_accounts: azure.mgmt.datalake.analytics.account.operations.StorageAccountsOperations
     :ivar data_lake_store_accounts: DataLakeStoreAccounts operations
-    :vartype data_lake_store_accounts: .operations.DataLakeStoreAccountsOperations
+    :vartype data_lake_store_accounts: azure.mgmt.datalake.analytics.account.operations.DataLakeStoreAccountsOperations
     :ivar account: Account operations
-    :vartype account: .operations.AccountOperations
+    :vartype account: azure.mgmt.datalake.analytics.account.operations.AccountOperations
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
@@ -83,21 +81,22 @@ class DataLakeAnalyticsAccountManagementClient(object):
      identify Microsoft Azure subscription. The subscription ID forms part of
      the URI for every service call.
     :type subscription_id: str
-    :param api_version: Client Api Version.
-    :type api_version: str
     :param str base_url: Service URL
     """
 
     def __init__(
-            self, credentials, subscription_id, api_version='2016-11-01', base_url=None):
+            self, credentials, subscription_id, base_url=None):
 
-        self.config = DataLakeAnalyticsAccountManagementClientConfiguration(credentials, subscription_id, api_version, base_url)
+        self.config = DataLakeAnalyticsAccountManagementClientConfiguration(credentials, subscription_id, base_url)
         self._client = ServiceClient(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
+        self.api_version = '2016-11-01'
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
 
+        self.compute_policies = ComputePoliciesOperations(
+            self._client, self.config, self._serialize, self._deserialize)
         self.firewall_rules = FirewallRulesOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.storage_accounts = StorageAccountsOperations(
