@@ -17,7 +17,7 @@ You will also need the tenant id of the AD you want to manage. Could be the AD U
 .. code:: python
 
     from azure.graphrbac import GraphRbacManagementClient
-	from azure.common.credentials import UserPassCredentials
+    from azure.common.credentials import UserPassCredentials
 
     # See above for details on creating different types of AAD credentials
     credentials = UserPassCredentials(
