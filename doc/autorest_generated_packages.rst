@@ -35,6 +35,7 @@
   ./ref/azure.mgmt.powerbiembedded.rst
   ./ref/azure.mgmt.rdbms.mysql.rst
   ./ref/azure.mgmt.rdbms.postgresql.rst
+  ./ref/azure.mgmt.recoveryservicesbackup.rst
   ./ref/azure.mgmt.redis.rst
   ./ref/azure.mgmt.resource.features.rst
   ./ref/azure.mgmt.resource.links.rst
