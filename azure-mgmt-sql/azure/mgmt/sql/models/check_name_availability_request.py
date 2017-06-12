@@ -12,33 +12,30 @@
 from msrest.serialization import Model
 
 
-class Resource(Model):
-    """ARM resource.
+class CheckNameAvailabilityRequest(Model):
+    """A request to check whether the specified name for a resource is available.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar id: Resource ID.
-    :vartype id: str
-    :ivar name: Resource name.
-    :vartype name: str
-    :ivar type: Resource type.
+    :param name: The name whose availability is to be checked.
+    :type name: str
+    :ivar type: The type of resource that is used as the scope of the
+     availability check. Default value: "Microsoft.Sql/servers" .
     :vartype type: str
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
+        'name': {'required': True},
+        'type': {'required': True, 'constant': True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
     }
 
-    def __init__(self):
-        self.id = None
-        self.name = None
-        self.type = None
+    type = "Microsoft.Sql/servers"
+
+    def __init__(self, name):
+        self.name = name

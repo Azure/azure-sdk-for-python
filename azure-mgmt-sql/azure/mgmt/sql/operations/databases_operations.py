@@ -1516,7 +1516,7 @@ class DatabasesOperations(object):
         return deserialized
 
     def create_or_update_transparent_data_encryption_configuration(
-            self, resource_group_name, server_name, database_name, status=None, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, server_name, database_name, parameters, custom_headers=None, raw=False, **operation_config):
         """Creates or updates a database's transparent data encryption
         configuration.
 
@@ -1529,10 +1529,10 @@ class DatabasesOperations(object):
         :param database_name: The name of the database for which setting the
          transparent data encryption applies.
         :type database_name: str
-        :param status: The status of the database transparent data encryption.
-         Possible values include: 'Enabled', 'Disabled'
-        :type status: str or :class:`TransparentDataEncryptionStatus
-         <azure.mgmt.sql.models.TransparentDataEncryptionStatus>`
+        :param parameters: The required parameters for creating or updating
+         transparent data encryption.
+        :type parameters: :class:`TransparentDataEncryption
+         <azure.mgmt.sql.models.TransparentDataEncryption>`
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -1544,8 +1544,6 @@ class DatabasesOperations(object):
          if raw=true
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
-        parameters = models.TransparentDataEncryption(status=status)
-
         api_version = "2014-04-01"
 
         # Construct URL

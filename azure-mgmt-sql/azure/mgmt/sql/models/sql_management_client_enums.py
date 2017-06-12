@@ -101,16 +101,10 @@ class ReplicationState(Enum):
     suspended = "SUSPENDED"
 
 
-class ServerVersion(Enum):
+class CheckNameAvailabilityReason(Enum):
 
-    two_full_stop_zero = "2.0"
-    one_two_full_stop_zero = "12.0"
-
-
-class ServerState(Enum):
-
-    ready = "Ready"
-    disabled = "Disabled"
+    invalid = "Invalid"
+    already_exists = "AlreadyExists"
 
 
 class ElasticPoolEdition(Enum):
@@ -233,3 +227,14 @@ class FailoverGroupReplicationRole(Enum):
 
     primary = "Primary"
     secondary = "Secondary"
+
+
+class IdentityType(Enum):
+
+    system_assigned = "SystemAssigned"
+
+
+class ServerKeyType(Enum):
+
+    service_managed = "ServiceManaged"
+    azure_key_vault = "AzureKeyVault"

@@ -19,6 +19,7 @@ from .recommended_elastic_pools_operations import RecommendedElasticPoolsOperati
 from .server_azure_ad_administrators_operations import ServerAzureADAdministratorsOperations
 from .failover_groups_operations import FailoverGroupsOperations
 from .vnet_firewall_rules_operations import VnetFirewallRulesOperations
+from .server_keys_operations import ServerKeysOperations
 
 __all__ = [
     'DatabasesOperations',
@@ -31,4 +32,5 @@ __all__ = [
     'ServerAzureADAdministratorsOperations',
     'FailoverGroupsOperations',
     'VnetFirewallRulesOperations',
+    'ServerKeysOperations',
 ]

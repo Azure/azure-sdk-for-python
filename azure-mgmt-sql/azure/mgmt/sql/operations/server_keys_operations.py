@@ -17,8 +17,8 @@ import uuid
 from .. import models
 
 
-class VnetFirewallRulesOperations(object):
-    """VnetFirewallRulesOperations operations.
+class ServerKeysOperations(object):
+    """ServerKeysOperations operations.
 
     :param client: Client for service requests.
     :param config: Configuration of service client.
@@ -36,9 +36,9 @@ class VnetFirewallRulesOperations(object):
 
         self.config = config
 
-    def get(
-            self, resource_group_name, server_name, vnet_firewall_rule_name, custom_headers=None, raw=False, **operation_config):
-        """Gets a virtual network rule.
+    def list_by_server(
+            self, resource_group_name, server_name, custom_headers=None, raw=False, **operation_config):
+        """Returns a list of server keys.
 
         :param resource_group_name: The name of the resource group that
          contains the resource. You can obtain this value from the Azure
@@ -46,26 +46,95 @@ class VnetFirewallRulesOperations(object):
         :type resource_group_name: str
         :param server_name: The name of the server.
         :type server_name: str
-        :param vnet_firewall_rule_name: The name of the virtual network rule.
-        :type vnet_firewall_rule_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`VnetFirewallRule
-         <azure.mgmt.sql.models.VnetFirewallRule>`
+        :rtype: :class:`ServerKeyPaged <azure.mgmt.sql.models.ServerKeyPaged>`
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        """
+        def internal_paging(next_link=None, raw=False):
+
+            if not next_link:
+                # Construct URL
+                url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/keys'
+                path_format_arguments = {
+                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+                    'serverName': self._serialize.url("server_name", server_name, 'str'),
+                    'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+                }
+                url = self._client.format_url(url, **path_format_arguments)
+
+                # Construct parameters
+                query_parameters = {}
+                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+
+            else:
+                url = next_link
+                query_parameters = {}
+
+            # Construct headers
+            header_parameters = {}
+            header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+            if self.config.generate_client_request_id:
+                header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+            if custom_headers:
+                header_parameters.update(custom_headers)
+            if self.config.accept_language is not None:
+                header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+            # Construct and send request
+            request = self._client.get(url, query_parameters)
+            response = self._client.send(
+                request, header_parameters, **operation_config)
+
+            if response.status_code not in [200]:
+                exp = CloudError(response)
+                exp.request_id = response.headers.get('x-ms-request-id')
+                raise exp
+
+            return response
+
+        # Deserialize response
+        deserialized = models.ServerKeyPaged(internal_paging, self._deserialize.dependencies)
+
+        if raw:
+            header_dict = {}
+            client_raw_response = models.ServerKeyPaged(internal_paging, self._deserialize.dependencies, header_dict)
+            return client_raw_response
+
+        return deserialized
+
+    def get(
+            self, resource_group_name, server_name, key_name, custom_headers=None, raw=False, **operation_config):
+        """Returns a server key.
+
+        :param resource_group_name: The name of the resource group that
+         contains the resource. You can obtain this value from the Azure
+         Resource Manager API or the portal.
+        :type resource_group_name: str
+        :param server_name: The name of the server.
+        :type server_name: str
+        :param key_name: The name of the server key to be retrieved.
+        :type key_name: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :rtype: :class:`ServerKey <azure.mgmt.sql.models.ServerKey>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/virtualNetworkRules/{vnetFirewallRuleName}'
+        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/keys/{keyName}'
         path_format_arguments = {
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'serverName': self._serialize.url("server_name", server_name, 'str'),
-            'vnetFirewallRuleName': self._serialize.url("vnet_firewall_rule_name", vnet_firewall_rule_name, 'str')
+            'keyName': self._serialize.url("key_name", key_name, 'str'),
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -95,7 +164,7 @@ class VnetFirewallRulesOperations(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('VnetFirewallRule', response)
+            deserialized = self._deserialize('ServerKey', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
@@ -104,8 +173,8 @@ class VnetFirewallRulesOperations(object):
         return deserialized
 
     def create_or_update(
-            self, resource_group_name, server_name, vnet_firewall_rule_name, parameters, custom_headers=None, raw=False, **operation_config):
-        """Creates or updates an existing virtual network rule.
+            self, resource_group_name, server_name, key_name, parameters, custom_headers=None, raw=False, **operation_config):
+        """Creates or updates a server key.
 
         :param resource_group_name: The name of the resource group that
          contains the resource. You can obtain this value from the Azure
@@ -113,29 +182,33 @@ class VnetFirewallRulesOperations(object):
         :type resource_group_name: str
         :param server_name: The name of the server.
         :type server_name: str
-        :param vnet_firewall_rule_name: The name of the virtual network rule.
-        :type vnet_firewall_rule_name: str
-        :param parameters: The requested vnetFirewall Resource state.
-        :type parameters: :class:`VnetFirewallRule
-         <azure.mgmt.sql.models.VnetFirewallRule>`
+        :param key_name: The name of the server key to be operated on (updated
+         or created). The key name is required to be in the format of
+         'vault_key_version'. For example, if the keyId is
+         https://YourVaultName.vault.azure.net/keys/YourKeyName/01234567890123456789012345678901,
+         then the server key name should be formatted as:
+         YourVaultName_YourKeyName_01234567890123456789012345678901
+        :type key_name: str
+        :param parameters: The requested server key resource state.
+        :type parameters: :class:`ServerKey <azure.mgmt.sql.models.ServerKey>`
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :rtype:
          :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         instance that returns :class:`VnetFirewallRule
-         <azure.mgmt.sql.models.VnetFirewallRule>`
+         instance that returns :class:`ServerKey
+         <azure.mgmt.sql.models.ServerKey>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/virtualNetworkRules/{vnetFirewallRuleName}'
+        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/keys/{keyName}'
         path_format_arguments = {
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'serverName': self._serialize.url("server_name", server_name, 'str'),
-            'vnetFirewallRuleName': self._serialize.url("vnet_firewall_rule_name", vnet_firewall_rule_name, 'str')
+            'keyName': self._serialize.url("key_name", key_name, 'str'),
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -154,7 +227,7 @@ class VnetFirewallRulesOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct body
-        body_content = self._serialize.body(parameters, 'VnetFirewallRule')
+        body_content = self._serialize.body(parameters, 'ServerKey')
 
         # Construct and send request
         def long_running_send():
@@ -181,9 +254,9 @@ class VnetFirewallRulesOperations(object):
             deserialized = None
 
             if response.status_code == 200:
-                deserialized = self._deserialize('VnetFirewallRule', response)
+                deserialized = self._deserialize('ServerKey', response)
             if response.status_code == 201:
-                deserialized = self._deserialize('VnetFirewallRule', response)
+                deserialized = self._deserialize('ServerKey', response)
 
             if raw:
                 client_raw_response = ClientRawResponse(deserialized, response)
@@ -203,8 +276,8 @@ class VnetFirewallRulesOperations(object):
             get_long_running_status, long_running_operation_timeout)
 
     def delete(
-            self, resource_group_name, server_name, vnet_firewall_rule_name, custom_headers=None, raw=False, **operation_config):
-        """Deletes the virtual network rule with the given name.
+            self, resource_group_name, server_name, key_name, custom_headers=None, raw=False, **operation_config):
+        """Deletes the server key with the given name.
 
         :param resource_group_name: The name of the resource group that
          contains the resource. You can obtain this value from the Azure
@@ -212,8 +285,8 @@ class VnetFirewallRulesOperations(object):
         :type resource_group_name: str
         :param server_name: The name of the server.
         :type server_name: str
-        :param vnet_firewall_rule_name: The name of the virtual network rule.
-        :type vnet_firewall_rule_name: str
+        :param key_name: The name of the server key to be deleted.
+        :type key_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -225,12 +298,12 @@ class VnetFirewallRulesOperations(object):
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/virtualNetworkRules/{vnetFirewallRuleName}'
+        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/keys/{keyName}'
         path_format_arguments = {
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'serverName': self._serialize.url("server_name", server_name, 'str'),
-            'vnetFirewallRuleName': self._serialize.url("vnet_firewall_rule_name", vnet_firewall_rule_name, 'str')
+            'keyName': self._serialize.url("key_name", key_name, 'str'),
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -283,74 +356,3 @@ class VnetFirewallRulesOperations(object):
         return AzureOperationPoller(
             long_running_send, get_long_running_output,
             get_long_running_status, long_running_operation_timeout)
-
-    def list_by_server(
-            self, resource_group_name, server_name, custom_headers=None, raw=False, **operation_config):
-        """Gets a list of virtual network rules in a server.
-
-        :param resource_group_name: The name of the resource group that
-         contains the resource. You can obtain this value from the Azure
-         Resource Manager API or the portal.
-        :type resource_group_name: str
-        :param server_name: The name of the server.
-        :type server_name: str
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`VnetFirewallRulePaged
-         <azure.mgmt.sql.models.VnetFirewallRulePaged>`
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
-        """
-        def internal_paging(next_link=None, raw=False):
-
-            if not next_link:
-                # Construct URL
-                url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/virtualNetworkRules'
-                path_format_arguments = {
-                    'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-                    'serverName': self._serialize.url("server_name", server_name, 'str')
-                }
-                url = self._client.format_url(url, **path_format_arguments)
-
-                # Construct parameters
-                query_parameters = {}
-                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
-
-            else:
-                url = next_link
-                query_parameters = {}
-
-            # Construct headers
-            header_parameters = {}
-            header_parameters['Content-Type'] = 'application/json; charset=utf-8'
-            if self.config.generate_client_request_id:
-                header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-            if custom_headers:
-                header_parameters.update(custom_headers)
-            if self.config.accept_language is not None:
-                header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
-
-            # Construct and send request
-            request = self._client.get(url, query_parameters)
-            response = self._client.send(
-                request, header_parameters, **operation_config)
-
-            if response.status_code not in [200]:
-                exp = CloudError(response)
-                exp.request_id = response.headers.get('x-ms-request-id')
-                raise exp
-
-            return response
-
-        # Deserialize response
-        deserialized = models.VnetFirewallRulePaged(internal_paging, self._deserialize.dependencies)
-
-        if raw:
-            header_dict = {}
-            client_raw_response = models.VnetFirewallRulePaged(internal_paging, self._deserialize.dependencies, header_dict)
-            return client_raw_response
-
-        return deserialized
