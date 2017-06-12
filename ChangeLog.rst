@@ -15,14 +15,15 @@ Update from 2.0.0rc6 *might* work, but we strongly suggest creating a fresh virt
 
 You can now execute your SDK script using the configuration of the `AzureCLI <https://github.com/Azure/azure-cli>`__
 
-Example:
+Example::
 
-    from azure.common.client_factory import get_client_from_cli_profile
-    from azure.mgmt.compute import ComputeManagementClient
-    client = get_client_from_cli_profile(ComputeManagementClient)
-    client.virtual_machines.get('rg', 'vm')
+     from azure.common.client_factory import get_client_from_cli_profile
+     from azure.mgmt.compute import ComputeManagementClient
+     client = get_client_from_cli_profile(ComputeManagementClient)
+     client.virtual_machines.get('rg', 'vm')
 
 Configuration from the CLI is:
+
 - `az login <https://docs.microsoft.com/en-us/cli/azure/authenticate-azure-cli>`__: access to credentials
 - `az account set --subscriptions <https://docs.microsoft.com/en-us/cli/azure/manage-azure-subscriptions-azure-cli>`__: access to subscription_id
 - `az cloud set --name <https://docs.microsoft.com/en-us/cli/azure/cloud#set>`__: access to base_url (sovereign cloud, Government, Germany, etc.)
@@ -47,6 +48,7 @@ Please refer to the PyPI page of these packages for supported ApiVersion.
 The Azure SDK for Python now has too many services to provide an unique ChangeLog. Please refer to each package's HISTORY.txt for details compared to 2.0.0rc6.
 
 The complete list of packages installed is:
+
 -  `azure-batch v3.0.0 <https://pypi.python.org/pypi/azure-batch/3.0.0>`__
 -  `azure-datalake-store v0.0.x <https://pypi.python.org/pypi/azure-datalake-store/0.0.9>`__
 -  `azure-graphrbac v0.30.x <https://pypi.python.org/pypi/azure-graphrbac/0.30.0>`__

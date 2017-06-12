@@ -4097,3 +4097,793 @@ class KeyVaultClient(object):
             return client_raw_response
 
         return deserialized
+
+    def get_storage_accounts(
+            self, vault_base_url, maxresults=None, custom_headers=None, raw=False, **operation_config):
+        """List storage accounts managed by specified key vault.
+
+        :param vault_base_url: The vault name, for example
+         https://myvault.vault.azure.net.
+        :type vault_base_url: str
+        :param maxresults: Maximum number of results to return in a page. If
+         not specified the service will return up to 25 results.
+        :type maxresults: int
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :rtype: :class:`StorageAccountItemPaged
+         <azure.keyvault.models.StorageAccountItemPaged>`
+        :raises:
+         :class:`KeyVaultErrorException<azure.keyvault.models.KeyVaultErrorException>`
+        """
+        def internal_paging(next_link=None, raw=False):
+
+            if not next_link:
+                # Construct URL
+                url = '/storage'
+                path_format_arguments = {
+                    'vaultBaseUrl': self._serialize.url("vault_base_url", vault_base_url, 'str', skip_quote=True)
+                }
+                url = self._client.format_url(url, **path_format_arguments)
+
+                # Construct parameters
+                query_parameters = {}
+                if maxresults is not None:
+                    query_parameters['maxresults'] = self._serialize.query("maxresults", maxresults, 'int', maximum=25, minimum=1)
+                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+
+            else:
+                url = next_link
+                query_parameters = {}
+
+            # Construct headers
+            header_parameters = {}
+            header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+            if self.config.generate_client_request_id:
+                header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+            if custom_headers:
+                header_parameters.update(custom_headers)
+            if self.config.accept_language is not None:
+                header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+            # Construct and send request
+            request = self._client.get(url, query_parameters)
+            response = self._client.send(
+                request, header_parameters, **operation_config)
+
+            if response.status_code not in [200]:
+                raise models.KeyVaultErrorException(self._deserialize, response)
+
+            return response
+
+        # Deserialize response
+        deserialized = models.StorageAccountItemPaged(internal_paging, self._deserialize.dependencies)
+
+        if raw:
+            header_dict = {}
+            client_raw_response = models.StorageAccountItemPaged(internal_paging, self._deserialize.dependencies, header_dict)
+            return client_raw_response
+
+        return deserialized
+
+    def delete_storage_account(
+            self, vault_base_url, storage_account_name, custom_headers=None, raw=False, **operation_config):
+        """Deletes a storage account.
+
+        :param vault_base_url: The vault name, for example
+         https://myvault.vault.azure.net.
+        :type vault_base_url: str
+        :param storage_account_name: The name of the storage account.
+        :type storage_account_name: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :rtype: :class:`StorageBundle <azure.keyvault.models.StorageBundle>`
+        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+         if raw=true
+        :raises:
+         :class:`KeyVaultErrorException<azure.keyvault.models.KeyVaultErrorException>`
+        """
+        # Construct URL
+        url = '/storage/{storage-account-name}'
+        path_format_arguments = {
+            'vaultBaseUrl': self._serialize.url("vault_base_url", vault_base_url, 'str', skip_quote=True),
+            'storage-account-name': self._serialize.url("storage_account_name", storage_account_name, 'str', pattern='^[0-9a-zA-Z]+$')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+        # Construct and send request
+        request = self._client.delete(url, query_parameters)
+        response = self._client.send(request, header_parameters, **operation_config)
+
+        if response.status_code not in [200]:
+            raise models.KeyVaultErrorException(self._deserialize, response)
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('StorageBundle', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+
+    def get_storage_account(
+            self, vault_base_url, storage_account_name, custom_headers=None, raw=False, **operation_config):
+        """Gets information about a specified storage account.
+
+        :param vault_base_url: The vault name, for example
+         https://myvault.vault.azure.net.
+        :type vault_base_url: str
+        :param storage_account_name: The name of the storage account.
+        :type storage_account_name: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :rtype: :class:`StorageBundle <azure.keyvault.models.StorageBundle>`
+        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+         if raw=true
+        :raises:
+         :class:`KeyVaultErrorException<azure.keyvault.models.KeyVaultErrorException>`
+        """
+        # Construct URL
+        url = '/storage/{storage-account-name}'
+        path_format_arguments = {
+            'vaultBaseUrl': self._serialize.url("vault_base_url", vault_base_url, 'str', skip_quote=True),
+            'storage-account-name': self._serialize.url("storage_account_name", storage_account_name, 'str', pattern='^[0-9a-zA-Z]+$')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+        # Construct and send request
+        request = self._client.get(url, query_parameters)
+        response = self._client.send(request, header_parameters, **operation_config)
+
+        if response.status_code not in [200]:
+            raise models.KeyVaultErrorException(self._deserialize, response)
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('StorageBundle', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+
+    def set_storage_account(
+            self, vault_base_url, storage_account_name, resource_id, active_key_name, auto_regenerate_key, regeneration_period=None, storage_account_attributes=None, tags=None, custom_headers=None, raw=False, **operation_config):
+        """Creates or updates a new storage account.
+
+        :param vault_base_url: The vault name, for example
+         https://myvault.vault.azure.net.
+        :type vault_base_url: str
+        :param storage_account_name: The name of the storage account.
+        :type storage_account_name: str
+        :param resource_id: Storage account resource id.
+        :type resource_id: str
+        :param active_key_name: Current active storage account key name.
+        :type active_key_name: str
+        :param auto_regenerate_key: whether keyvault should manage the storage
+         account for the user.
+        :type auto_regenerate_key: bool
+        :param regeneration_period: The key regeneration time duration
+         specified in ISO-8601 format.
+        :type regeneration_period: str
+        :param storage_account_attributes: The attributes of the storage
+         account.
+        :type storage_account_attributes: :class:`StorageAccountAttributes
+         <azure.keyvault.models.StorageAccountAttributes>`
+        :param tags: Application specific metadata in the form of key-value
+         pairs.
+        :type tags: dict
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :rtype: :class:`StorageBundle <azure.keyvault.models.StorageBundle>`
+        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+         if raw=true
+        :raises:
+         :class:`KeyVaultErrorException<azure.keyvault.models.KeyVaultErrorException>`
+        """
+        parameters = models.StorageAccountCreateParameters(resource_id=resource_id, active_key_name=active_key_name, auto_regenerate_key=auto_regenerate_key, regeneration_period=regeneration_period, storage_account_attributes=storage_account_attributes, tags=tags)
+
+        # Construct URL
+        url = '/storage/{storage-account-name}'
+        path_format_arguments = {
+            'vaultBaseUrl': self._serialize.url("vault_base_url", vault_base_url, 'str', skip_quote=True),
+            'storage-account-name': self._serialize.url("storage_account_name", storage_account_name, 'str', pattern='^[0-9a-zA-Z]+$')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+        # Construct body
+        body_content = self._serialize.body(parameters, 'StorageAccountCreateParameters')
+
+        # Construct and send request
+        request = self._client.put(url, query_parameters)
+        response = self._client.send(
+            request, header_parameters, body_content, **operation_config)
+
+        if response.status_code not in [200]:
+            raise models.KeyVaultErrorException(self._deserialize, response)
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('StorageBundle', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+
+    def update_storage_account(
+            self, vault_base_url, storage_account_name, active_key_name=None, auto_regenerate_key=None, regeneration_period=None, storage_account_attributes=None, tags=None, custom_headers=None, raw=False, **operation_config):
+        """Updates the specified attributes associated with the given storage
+        account.
+
+        :param vault_base_url: The vault name, for example
+         https://myvault.vault.azure.net.
+        :type vault_base_url: str
+        :param storage_account_name: The name of the storage account.
+        :type storage_account_name: str
+        :param active_key_name: The current active storage account key name.
+        :type active_key_name: str
+        :param auto_regenerate_key: whether keyvault should manage the storage
+         account for the user.
+        :type auto_regenerate_key: bool
+        :param regeneration_period: The key regeneration time duration
+         specified in ISO-8601 format.
+        :type regeneration_period: str
+        :param storage_account_attributes: The attributes of the storage
+         account.
+        :type storage_account_attributes: :class:`StorageAccountAttributes
+         <azure.keyvault.models.StorageAccountAttributes>`
+        :param tags: Application specific metadata in the form of key-value
+         pairs.
+        :type tags: dict
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :rtype: :class:`StorageBundle <azure.keyvault.models.StorageBundle>`
+        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+         if raw=true
+        :raises:
+         :class:`KeyVaultErrorException<azure.keyvault.models.KeyVaultErrorException>`
+        """
+        parameters = models.StorageAccountUpdateParameters(active_key_name=active_key_name, auto_regenerate_key=auto_regenerate_key, regeneration_period=regeneration_period, storage_account_attributes=storage_account_attributes, tags=tags)
+
+        # Construct URL
+        url = '/storage/{storage-account-name}'
+        path_format_arguments = {
+            'vaultBaseUrl': self._serialize.url("vault_base_url", vault_base_url, 'str', skip_quote=True),
+            'storage-account-name': self._serialize.url("storage_account_name", storage_account_name, 'str', pattern='^[0-9a-zA-Z]+$')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+        # Construct body
+        body_content = self._serialize.body(parameters, 'StorageAccountUpdateParameters')
+
+        # Construct and send request
+        request = self._client.patch(url, query_parameters)
+        response = self._client.send(
+            request, header_parameters, body_content, **operation_config)
+
+        if response.status_code not in [200]:
+            raise models.KeyVaultErrorException(self._deserialize, response)
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('StorageBundle', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+
+    def regenerate_storage_account_key(
+            self, vault_base_url, storage_account_name, key_name, custom_headers=None, raw=False, **operation_config):
+        """Regenerates the specified key value for the given storage account.
+
+        :param vault_base_url: The vault name, for example
+         https://myvault.vault.azure.net.
+        :type vault_base_url: str
+        :param storage_account_name: The name of the storage account.
+        :type storage_account_name: str
+        :param key_name: The storage account key name.
+
+        :type key_name: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :rtype: :class:`StorageBundle <azure.keyvault.models.StorageBundle>`
+        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+         if raw=true
+        :raises:
+         :class:`KeyVaultErrorException<azure.keyvault.models.KeyVaultErrorException>`
+        """
+        parameters = models.StorageAccountRegenerteKeyParameters(key_name=key_name)
+
+        # Construct URL
+        url = '/storage/{storage-account-name}/regeneratekey'
+        path_format_arguments = {
+            'vaultBaseUrl': self._serialize.url("vault_base_url", vault_base_url, 'str', skip_quote=True),
+            'storage-account-name': self._serialize.url("storage_account_name", storage_account_name, 'str', pattern='^[0-9a-zA-Z]+$')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+        # Construct body
+        body_content = self._serialize.body(parameters, 'StorageAccountRegenerteKeyParameters')
+
+        # Construct and send request
+        request = self._client.post(url, query_parameters)
+        response = self._client.send(
+            request, header_parameters, body_content, **operation_config)
+
+        if response.status_code not in [200]:
+            raise models.KeyVaultErrorException(self._deserialize, response)
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('StorageBundle', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+
+    def get_sas_definitions(
+            self, vault_base_url, storage_account_name, maxresults=None, custom_headers=None, raw=False, **operation_config):
+        """List storage SAS definitions for the given storage account.
+        
+        :param vault_base_url: The vault name, for example
+         https://myvault.vault.azure.net.
+        :type vault_base_url: str
+        :param storage_account_name: The name of the storage account.
+        :type storage_account_name: str
+        :param maxresults: Maximum number of results to return in a page. If
+         not specified the service will return up to 25 results.
+        :type maxresults: int
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :rtype: :class:`SasDefinitionItemPaged
+         <azure.keyvault.models.SasDefinitionItemPaged>`
+        :raises:
+         :class:`KeyVaultErrorException<azure.keyvault.models.KeyVaultErrorException>`
+        """
+        def internal_paging(next_link=None, raw=False):
+
+            if not next_link:
+                # Construct URL
+                url = '/storage/{storage-account-name}/sas'
+                path_format_arguments = {
+                    'vaultBaseUrl': self._serialize.url("vault_base_url", vault_base_url, 'str', skip_quote=True),
+                    'storage-account-name': self._serialize.url("storage_account_name", storage_account_name, 'str', pattern='^[0-9a-zA-Z]+$')
+                }
+                url = self._client.format_url(url, **path_format_arguments)
+
+                # Construct parameters
+                query_parameters = {}
+                if maxresults is not None:
+                    query_parameters['maxresults'] = self._serialize.query("maxresults", maxresults, 'int', maximum=25, minimum=1)
+                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+
+            else:
+                url = next_link
+                query_parameters = {}
+
+            # Construct headers
+            header_parameters = {}
+            header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+            if self.config.generate_client_request_id:
+                header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+            if custom_headers:
+                header_parameters.update(custom_headers)
+            if self.config.accept_language is not None:
+                header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+            # Construct and send request
+            request = self._client.get(url, query_parameters)
+            response = self._client.send(
+                request, header_parameters, **operation_config)
+
+            if response.status_code not in [200]:
+                raise models.KeyVaultErrorException(self._deserialize, response)
+
+            return response
+
+        # Deserialize response
+        deserialized = models.SasDefinitionItemPaged(internal_paging, self._deserialize.dependencies)
+
+        if raw:
+            header_dict = {}
+            client_raw_response = models.SasDefinitionItemPaged(internal_paging, self._deserialize.dependencies, header_dict)
+            return client_raw_response
+
+        return deserialized
+
+    def delete_sas_definition(
+            self, vault_base_url, storage_account_name, sas_definition_name, custom_headers=None, raw=False, **operation_config):
+
+        """Deletes a SAS definition from a specified storage account.
+
+        :param vault_base_url: The vault name, for example
+         https://myvault.vault.azure.net.
+        :type vault_base_url: str
+        :param storage_account_name: The name of the storage account.
+        :type storage_account_name: str
+        :param sas_definition_name: The name of the SAS definition.
+        :type sas_definition_name: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :rtype: :class:`SasDefinitionBundle
+         <azure.keyvault.models.SasDefinitionBundle>`
+        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+         if raw=true
+        :raises:
+         :class:`KeyVaultErrorException<azure.keyvault.models.KeyVaultErrorException>`
+        """
+        # Construct URL
+        url = '/storage/{storage-account-name}/sas/{sas-definition-name}'
+        path_format_arguments = {
+            'vaultBaseUrl': self._serialize.url("vault_base_url", vault_base_url, 'str', skip_quote=True),
+            'storage-account-name': self._serialize.url("storage_account_name", storage_account_name, 'str', pattern='^[0-9a-zA-Z]+$'),
+            'sas-definition-name': self._serialize.url("sas_definition_name", sas_definition_name, 'str', pattern='^[0-9a-zA-Z]+$')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+        # Construct and send request
+        request = self._client.delete(url, query_parameters)
+        response = self._client.send(request, header_parameters, **operation_config)
+
+        if response.status_code not in [200]:
+            raise models.KeyVaultErrorException(self._deserialize, response)
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('SasDefinitionBundle', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+
+    def get_sas_definition(
+            self, vault_base_url, storage_account_name, sas_definition_name, custom_headers=None, raw=False, **operation_config):
+
+        """Gets information about a SAS definition for the specified storage
+        account.
+
+        :param vault_base_url: The vault name, for example
+         https://myvault.vault.azure.net.
+        :type vault_base_url: str
+        :param storage_account_name: The name of the storage account.
+        :type storage_account_name: str
+        :param sas_definition_name: The name of the SAS definition.
+        :type sas_definition_name: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :rtype: :class:`SasDefinitionBundle
+         <azure.keyvault.models.SasDefinitionBundle>`
+        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+         if raw=true
+        :raises:
+         :class:`KeyVaultErrorException<azure.keyvault.models.KeyVaultErrorException>`
+        """
+        # Construct URL
+        url = '/storage/{storage-account-name}/sas/{sas-definition-name}'
+        path_format_arguments = {
+            'vaultBaseUrl': self._serialize.url("vault_base_url", vault_base_url, 'str', skip_quote=True),
+            'storage-account-name': self._serialize.url("storage_account_name", storage_account_name, 'str', pattern='^[0-9a-zA-Z]+$'),
+            'sas-definition-name': self._serialize.url("sas_definition_name", sas_definition_name, 'str', pattern='^[0-9a-zA-Z]+$')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+        # Construct and send request
+        request = self._client.get(url, query_parameters)
+        response = self._client.send(request, header_parameters, **operation_config)
+
+        if response.status_code not in [200]:
+            raise models.KeyVaultErrorException(self._deserialize, response)
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('SasDefinitionBundle', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+
+    def set_sas_definition(
+            self, vault_base_url, storage_account_name, sas_definition_name, parameters, sas_definition_attributes=None, tags=None, custom_headers=None, raw=False, **operation_config):
+        """Creates or updates a new SAS definition for the specified storage
+        account.
+
+        :param vault_base_url: The vault name, for example
+         https://myvault.vault.azure.net.
+        :type vault_base_url: str
+        :param storage_account_name: The name of the storage account.
+        :type storage_account_name: str
+        :param sas_definition_name: The name of the SAS definition.
+        :type sas_definition_name: str
+        :param parameters: Sas definition creation metadata in the form of
+         key-value pairs.
+        :type parameters: dict
+        :param sas_definition_attributes: The attributes of the SAS
+         definition.
+        :type sas_definition_attributes: :class:`SasDefinitionAttributes
+         <azure.keyvault.models.SasDefinitionAttributes>`
+        :param tags: Application specific metadata in the form of key-value
+         pairs.
+        :type tags: dict
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :rtype: :class:`SasDefinitionBundle
+         <azure.keyvault.models.SasDefinitionBundle>`
+        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+         if raw=true
+        :raises:
+         :class:`KeyVaultErrorException<azure.keyvault.models.KeyVaultErrorException>`
+        """
+        parameters1 = models.SasDefinitionCreateParameters(parameters=parameters, sas_definition_attributes=sas_definition_attributes, tags=tags)
+
+        # Construct URL
+        url = '/storage/{storage-account-name}/sas/{sas-definition-name}'
+        path_format_arguments = {
+            'vaultBaseUrl': self._serialize.url("vault_base_url", vault_base_url, 'str', skip_quote=True),
+            'storage-account-name': self._serialize.url("storage_account_name", storage_account_name, 'str', pattern='^[0-9a-zA-Z]+$'),
+            'sas-definition-name': self._serialize.url("sas_definition_name", sas_definition_name, 'str', pattern='^[0-9a-zA-Z]+$')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+        # Construct body
+        body_content = self._serialize.body(parameters1, 'SasDefinitionCreateParameters')
+
+        # Construct and send request
+        request = self._client.put(url, query_parameters)
+        response = self._client.send(
+            request, header_parameters, body_content, **operation_config)
+
+        if response.status_code not in [200]:
+            raise models.KeyVaultErrorException(self._deserialize, response)
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('SasDefinitionBundle', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+
+    def update_sas_definition(
+            self, vault_base_url, storage_account_name, sas_definition_name, parameters=None, sas_definition_attributes=None, tags=None, custom_headers=None, raw=False, **operation_config):
+        """Updates the specified attributes associated with the given SAS
+        definition.
+
+        :param vault_base_url: The vault name, for example
+         https://myvault.vault.azure.net.
+        :type vault_base_url: str
+        :param storage_account_name: The name of the storage account.
+        :type storage_account_name: str
+        :param sas_definition_name: The name of the SAS definition.
+        :type sas_definition_name: str
+        :param parameters: Sas definition update metadata in the form of
+         key-value pairs.
+        :type parameters: dict
+        :param sas_definition_attributes: The attributes of the SAS
+         definition.
+        :type sas_definition_attributes: :class:`SasDefinitionAttributes
+         <azure.keyvault.models.SasDefinitionAttributes>`
+        :param tags: Application specific metadata in the form of key-value
+         pairs.
+        :type tags: dict
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :rtype: :class:`SasDefinitionBundle
+         <azure.keyvault.models.SasDefinitionBundle>`
+        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
+         if raw=true
+        :raises:
+         :class:`KeyVaultErrorException<azure.keyvault.models.KeyVaultErrorException>`
+        """
+        parameters1 = models.SasDefinitionUpdateParameters(parameters=parameters, sas_definition_attributes=sas_definition_attributes, tags=tags)
+
+        # Construct URL
+        url = '/storage/{storage-account-name}/sas/{sas-definition-name}'
+        path_format_arguments = {
+            'vaultBaseUrl': self._serialize.url("vault_base_url", vault_base_url, 'str', skip_quote=True),
+            'storage-account-name': self._serialize.url("storage_account_name", storage_account_name, 'str', pattern='^[0-9a-zA-Z]+$'),
+            'sas-definition-name': self._serialize.url("sas_definition_name", sas_definition_name, 'str', pattern='^[0-9a-zA-Z]+$')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+        # Construct body
+        body_content = self._serialize.body(parameters1, 'SasDefinitionUpdateParameters')
+
+        # Construct and send request
+        request = self._client.patch(url, query_parameters)
+        response = self._client.send(
+            request, header_parameters, body_content, **operation_config)
+
+        if response.status_code not in [200]:
+            raise models.KeyVaultErrorException(self._deserialize, response)
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('SasDefinitionBundle', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized

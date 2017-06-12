@@ -1,0 +1,2 @@
+include *.rst
+include azure_bdist_wheel.py

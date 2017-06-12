@@ -378,13 +378,12 @@ class MgmtResourceTest(AzureMgmtTestCase):
             parameters_link=parameters,
         )
 
-        deployment_create_result = self.resource_client.deployments.create_or_update(
-            self.group_name,
-            deployment_name,
-            deployment_params,
-        )   
         with self.assertRaises(azure.common.exceptions.CloudError) as err:
-            deployment_create_result = deployment_create_result.result()
+            self.resource_client.deployments.create_or_update(
+                self.group_name,
+                deployment_name,
+                deployment_params,
+            )
         cloud_error = err.exception
         self.assertTrue(cloud_error.message)        
 
