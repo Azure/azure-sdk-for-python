@@ -20,7 +20,7 @@
 		"category ": "Management"
 	},
 	"azure-mgmt-commerce": {
-		"service_name": "Commerce Usage",
+		"service_name": "Commerce",
 		"category ": "Management"
 	},
 	"azure-mgmt-compute/azure.mgmt.compute.compute": {
@@ -56,7 +56,7 @@
 		"category ": "Management"
 	},
 	"azure-mgmt-documentdb": {
-		"service_name": "Cosmos DB / DocumentDB",
+		"service_name": "Cosmos DB",
 		"category ": "Management"
 	},
 	"azure-mgmt-eventhub": {
@@ -80,7 +80,7 @@
 			"category ": "Management"
 	},
 	"azure-mgmt-monitor": {
-		"service_name": "Monitor",
+		"service_name": "Monitoring",
 		"category ": "Management"
 	},
 	"azure-mgmt-network": {
@@ -95,8 +95,12 @@
 		"service_name": "Power BI Embedded",
 		"category ": "Management"
 	},
- 	"azure-mgmt-rdbms": {
-    		"service_name": "MySQL / PostgreSQL",
+ 	"azure-mgmt-rdbms/azure.mgmt.rdbms.mysql": {
+    		"service_name": "MySQL",
+   		 "category ": "Management"
+ 	 },
+	 "azure-mgmt-rdbms/azure.mgmt.rdbms.postgresql": {
+    		"service_name": "PostgreSQL",
    		 "category ": "Management"
  	 },
   	"azure-mgmt-recoveryservicesbackup": {
@@ -128,7 +132,7 @@
 		"category ": "Management"
 	},
 	"azure-mgmt-sql": {
-		"service_name": "SQL Azure",
+		"service_name": "SQL",
 		"category ": "Management"
 	},
 	"azure-mgmt-storage": {

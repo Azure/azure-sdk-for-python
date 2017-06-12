@@ -292,6 +292,9 @@
     },
     "recoveryservicesbackup": {
       "markdown": "arm-recoveryservicesbackup/readme.md",
+      "autorest_options": {
+        "namespace": "azure.mgmt.recoveryservicesbackup"
+      },
       "generated_relative_base_directory": "Generated/Python/azure/mgmt/recoveryservicesbackup",
       "output_dir":  "azure-mgmt-recoveryservicesbackup/azure/mgmt/recoveryservicesbackup"
     },

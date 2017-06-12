@@ -6,8 +6,8 @@ Submodules
 
 .. toctree::
 
-   azure.keyvault.key_vault_id
-   azure.keyvault.generated
+   azure.keyvault.models
+   azure.keyvault.operations
 
 Module contents
 ---------------
