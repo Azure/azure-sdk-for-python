@@ -389,12 +389,25 @@ END;""".format(self.db_name, self.table_name, self.tvf_name, self.view_name, sel
         self.assertIsNotNone(table_match)
         self.assertEqual(len(table_match), 1)
         
-        # get table list in database
+        # get the tabe list with only basic info and verify that extended properties are empty
+        table_list = list(self.adla_catalog_client.catalog.list_tables(self.job_account_name, self.db_name, self.schema_name, basic=True))
+        self.assertGreater(len(table_list), 0)
+        table_match = [item for item in table_list if item.name == self.table_name]
+        self.assertIsNotNone(table_match)
+        self.assertEqual(len(table_match), 1)
+        self.assertEqual(len(table_match[0].column_list), 0)
+        self.assertEqual(len(table_match[0].index_list), 0)
+        self.assertEqual(len(table_match[0].partition_key_list), 0)
+        self.assertIsNone(table_match[0].external_table)
+        self.assertIsNone(table_match[0].distribution_info)
+
+        # get table list in database and verify that at least one extended property is populated.
         table_list = list(self.adla_catalog_client.catalog.list_tables_by_database(self.job_account_name, self.db_name))
         self.assertGreater(len(table_list), 0)
         table_match = [item for item in table_list if item.name == self.table_name]
         self.assertIsNotNone(table_match)
         self.assertEqual(len(table_match), 1)
+        self.assertIsNotNone(table_match[0].column_list)
 
         # get specific table
         specific_table = self.adla_catalog_client.catalog.get_table(self.job_account_name, self.db_name, self.schema_name, self.table_name)
