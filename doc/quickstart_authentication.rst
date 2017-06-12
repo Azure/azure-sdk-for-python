@@ -26,7 +26,7 @@ To set up Service Principal authentication, you must have:
   referred to in the Azure portal as the directory ID.
 
 For help finding these values in the Azure portal, please refer to
-`this tutorial <https://azure.microsoft.com/en-us/documentation/articles/resource-group-create-service-principal-portal/>`__.
+`the Service Principal authentication tutorial <https://azure.microsoft.com/documentation/articles/resource-group-create-service-principal-portal/>`__.
 
 Once you have the three required values, use them to instantiate a ``ServicePrincipalCredentials`` object:
 
@@ -44,7 +44,7 @@ Using AD User/Password
 ----------------------
 
 1. Connect to the Azure Classic Portal with your admin account
-2. `Create a user in your default AAD <https://azure.microsoft.com/en-us/documentation/articles/active-directory-create-users/>`__. **You must NOT activate Multi-Factor Authentication!**
+2. `Create a user in your default AAD <https://azure.microsoft.com/documentation/articles/active-directory-create-users/>`__. **You must NOT activate Multi-Factor Authentication!**
 3. Go to Settings - Administrators
 4. Click on Add and enter the email of the new user. Check the checkbox of the subscription you want to test with this user.
 5. Login to Azure Portal with this new user to change the temporary password to a new one. You will not be able to use the temporary password for OAuth login.
