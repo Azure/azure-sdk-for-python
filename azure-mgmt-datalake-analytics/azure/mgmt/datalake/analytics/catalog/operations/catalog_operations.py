@@ -1165,7 +1165,7 @@ class CatalogOperations(object):
         return deserialized
 
     def list_tables(
-            self, account_name, database_name, schema_name, filter=None, top=None, skip=None, select=None, orderby=None, count=None, custom_headers=None, raw=False, **operation_config):
+            self, account_name, database_name, schema_name, filter=None, top=None, skip=None, select=None, orderby=None, count=None, basic=False, custom_headers=None, raw=False, **operation_config):
         """Retrieves the list of tables from the Data Lake Analytics catalog.
 
         :param account_name: The Azure Data Lake Analytics account upon which
@@ -1195,6 +1195,11 @@ class CatalogOperations(object):
          the matching resources included with the resources in the response,
          e.g. Categories?$count=true. Optional.
         :type count: bool
+        :param basic: The basic switch indicates what level of information to
+         return when listing tables. When basic is true, only database_name,
+         schema_name, table_name and version are returned for each table,
+         otherwise all table metadata is returned. By default, it is false
+        :type basic: bool
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -1231,6 +1236,8 @@ class CatalogOperations(object):
                     query_parameters['$orderby'] = self._serialize.query("orderby", orderby, 'str')
                 if count is not None:
                     query_parameters['$count'] = self._serialize.query("count", count, 'bool')
+                if basic is not None:
+                    query_parameters['basic'] = self._serialize.query("basic", basic, 'bool')
                 query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
             else:

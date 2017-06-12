@@ -83,6 +83,7 @@ azure-mgmt-media                      0.1.1
 azure-mgmt-monitor                    0.2.1
 azure-mgmt-notificationhubs           0.30.0
 azure-mgmt-powerbiembedded            0.30.0rc6
+azure-mgmt-recoveryservicesbackup     0.1.0
 azure-mgmt-search                     0.1.0
 azure-mgmt-servicebus                 0.1.0
 azure-mgmt-sql                        0.5.3
