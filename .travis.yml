@@ -64,7 +64,10 @@ install:
   - pip install nose
   - pip uninstall -y azure-common  # Use azure-common from this repo, not the PyPI version azure-storage pulls in.
 script: 
-  - python ./azure_nosetests.py
+  - python ./azure_nosetests.py */tests
+  # If you get "argument list too long" you have to switch to this:
+  # find azure-* -name tests | xargs python ./azure_nosetests.py
+  # coverage combine
 after_success:
   - bash <(curl -s https://codecov.io/bash)
 before_deploy:

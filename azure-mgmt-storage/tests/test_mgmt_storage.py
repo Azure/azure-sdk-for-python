@@ -8,8 +8,8 @@
 import unittest
 
 import azure.mgmt.storage.models
-from testutils.common_recordingtestcase import record
-from tests.mgmt_testcase import HttpStatusCode, AzureMgmtTestCase
+
+from devtools_testutils import AzureMgmtTestCase, ResourceGroupPreparer
 
 
 class MgmtStorageTest(AzureMgmtTestCase):
@@ -19,16 +19,13 @@ class MgmtStorageTest(AzureMgmtTestCase):
         self.storage_client = self.create_mgmt_client(
             azure.mgmt.storage.StorageManagementClient
         )
-        if not self.is_playback():
-            self.create_resource_group()
 
-    @record
     def test_storage_usage(self):
         usages = list(self.storage_client.usage.list())
         self.assertGreater(len(usages), 0)
 
-    @record
-    def test_storage_accounts(self):
+    @ResourceGroupPreparer()
+    def test_storage_accounts(self, resource_group, location):
         account_name = self.get_resource_name('pyarmstorage')
 
         result_check = self.storage_client.storage_accounts.check_name_availability(
@@ -41,10 +38,10 @@ class MgmtStorageTest(AzureMgmtTestCase):
         params_create = azure.mgmt.storage.models.StorageAccountCreateParameters(
             sku=azure.mgmt.storage.models.Sku(azure.mgmt.storage.models.SkuName.standard_lrs),
             kind=azure.mgmt.storage.models.Kind.storage,
-            location=self.region
+            location=location,
         )
         result_create = self.storage_client.storage_accounts.create(
-            self.group_name,
+            resource_group.name,
             account_name,
             params_create,
         )
@@ -52,13 +49,13 @@ class MgmtStorageTest(AzureMgmtTestCase):
         self.assertEqual(storage_account.name, account_name)
 
         storage_account = self.storage_client.storage_accounts.get_properties(
-            self.group_name,
+            resource_group.name,
             account_name,
         )
         self.assertEqual(storage_account.name, account_name)
 
         result_list_keys = self.storage_client.storage_accounts.list_keys(
-            self.group_name,
+            resource_group.name,
             account_name,
         )
         keys = {v.key_name: (v.value, v.permissions) for v in result_list_keys.keys}
@@ -67,7 +64,7 @@ class MgmtStorageTest(AzureMgmtTestCase):
         self.assertGreater(len(keys['key1'][0]), 0)
 
         result_regen_keys = self.storage_client.storage_accounts.regenerate_key(
-            self.group_name,
+            resource_group.name,
             account_name,
             "key1"
         )
@@ -83,7 +80,7 @@ class MgmtStorageTest(AzureMgmtTestCase):
         )
 
         result_list = self.storage_client.storage_accounts.list_by_resource_group(
-            self.group_name,
+            resource_group.name,
         )
         result_list = list(result_list)
         self.assertGreater(len(result_list), 0)
@@ -93,15 +90,17 @@ class MgmtStorageTest(AzureMgmtTestCase):
         self.assertGreater(len(result_list), 0)
 
         storage_account = self.storage_client.storage_accounts.update(
-            self.group_name,
+            resource_group.name,
             account_name,
             azure.mgmt.storage.models.StorageAccountUpdateParameters(
                 sku=azure.mgmt.storage.models.Sku(azure.mgmt.storage.models.SkuName.standard_grs)
             )
         )
 
+        # should there be a test of the update operation?
+
         self.storage_client.storage_accounts.delete(
-            self.group_name,
+            resource_group.name,
             account_name,
         )
 
