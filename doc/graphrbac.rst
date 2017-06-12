@@ -17,7 +17,7 @@ You will also need the tenant id of the AD you want to manage. Could be the AD U
 .. code:: python
 
     from azure.graphrbac import GraphRbacManagementClient
-	from azure.common.credentials import UserPassCredentials
+    from azure.common.credentials import UserPassCredentials
 
     # See above for details on creating different types of AAD credentials
     credentials = UserPassCredentials(
@@ -41,15 +41,15 @@ The following code creates a user, get it directly and by list filtering, and th
 
 .. code:: python
 
-    from azure.graphrbac.models import UserCreateParameters, UserCreateParametersPasswordProfile
+    from azure.graphrbac.models import UserCreateParameters, PasswordProfile
 
-    user = graphrbac_client.user_operations.create(
+    user = graphrbac_client.users.create(
         UserCreateParameters(
             user_principal_name="testbuddy@{}".format(MY_AD_DOMAIN),
             account_enabled=False,
             display_name='Test Buddy',
             mail_nickname='testbuddy',
-            password_profile=UserCreateParametersPasswordProfile(
+            password_profile=PasswordProfile(
                 password='MyStr0ngP4ssword',
                 force_change_password_next_login=True
             )
@@ -58,10 +58,10 @@ The following code creates a user, get it directly and by list filtering, and th
     # user is a User instance
     self.assertEqual(user.display_name, 'Test Buddy')
 
-    user = graphrbac_client.user.get(user.object_id)
+    user = graphrbac_client.users.get(user.object_id)
     self.assertEqual(user.display_name, 'Test Buddy')
 
-    for user in graphrbac_client.user_operations.list(filter="displayName eq 'Test Buddy'"):
+    for user in graphrbac_client.users.list(filter="displayName eq 'Test Buddy'"):
         self.assertEqual(user.display_name, 'Test Buddy')
 
-    graphrbac_client.user_operations.delete(user.object_id)
+    graphrbac_client.users.delete(user.object_id)
