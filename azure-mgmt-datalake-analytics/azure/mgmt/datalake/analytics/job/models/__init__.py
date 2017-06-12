@@ -20,7 +20,13 @@ from .hive_job_properties import HiveJobProperties
 from .job_properties import JobProperties
 from .job_inner_error import JobInnerError
 from .job_error_details import JobErrorDetails
+from .job_relationship_properties import JobRelationshipProperties
+from .job_pipeline_run_information import JobPipelineRunInformation
+from .job_pipeline_information import JobPipelineInformation
+from .job_recurrence_information import JobRecurrenceInformation
 from .job_information import JobInformation
+from .job_pipeline_information_paged import JobPipelineInformationPaged
+from .job_recurrence_information_paged import JobRecurrenceInformationPaged
 from .job_information_paged import JobInformationPaged
 from .data_lake_analytics_job_management_client_enums import (
     JobResourceType,
@@ -43,7 +49,13 @@ __all__ = [
     'JobProperties',
     'JobInnerError',
     'JobErrorDetails',
+    'JobRelationshipProperties',
+    'JobPipelineRunInformation',
+    'JobPipelineInformation',
+    'JobRecurrenceInformation',
     'JobInformation',
+    'JobPipelineInformationPaged',
+    'JobRecurrenceInformationPaged',
     'JobInformationPaged',
     'JobResourceType',
     'SeverityTypes',

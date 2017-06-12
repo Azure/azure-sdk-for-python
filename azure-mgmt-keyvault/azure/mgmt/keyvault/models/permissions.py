@@ -13,7 +13,7 @@ from msrest.serialization import Model
 
 
 class Permissions(Model):
-    """Permissions the identity has for keys, secrets and certificates.
+    """Permissions the identity has for keys, secrets, certificates and storage.
 
     :param keys: Permissions to keys
     :type keys: list of str or :class:`KeyPermissions
@@ -24,15 +24,20 @@ class Permissions(Model):
     :param certificates: Permissions to certificates
     :type certificates: list of str or :class:`CertificatePermissions
      <azure.mgmt.keyvault.models.CertificatePermissions>`
+    :param storage: Permissions to storage accounts
+    :type storage: list of str or :class:`StoragePermissions
+     <azure.mgmt.keyvault.models.StoragePermissions>`
     """
 
     _attribute_map = {
         'keys': {'key': 'keys', 'type': '[str]'},
         'secrets': {'key': 'secrets', 'type': '[str]'},
         'certificates': {'key': 'certificates', 'type': '[str]'},
+        'storage': {'key': 'storage', 'type': '[str]'},
     }
 
-    def __init__(self, keys=None, secrets=None, certificates=None):
+    def __init__(self, keys=None, secrets=None, certificates=None, storage=None):
         self.keys = keys
         self.secrets = secrets
         self.certificates = certificates
+        self.storage = storage

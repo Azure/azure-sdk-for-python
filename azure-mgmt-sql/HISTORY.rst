@@ -3,6 +3,29 @@
 Release History
 ===============
 
+<<<<<<< HEAD
+=======
+0.5.3 (2017-06-01)
+++++++++++++++++++
+
+- Update minimal dependency to msrestazure 0.4.8
+
+0.5.2 (2017-05-31)
+++++++++++++++++++
+
+**Features**
+
+- Added support for server active directory administrator, failover groups, and virtual network rules
+- Minor changes to database auditing support
+
+0.5.1 (2017-04-28)
+++++++++++++++++++
+
+**Bugfixes**
+
+- Fix return exception in import/export
+
+>>>>>>> 91a4d87dcf30f501115b9dd2dea7aef7a6017cd3
 0.5.0 (2017-04-19)
 ++++++++++++++++++
 

@@ -44,6 +44,10 @@ class DataLakeStoreAccountUpdateParameters(Model):
      'Enabled', 'Disabled'
     :type firewall_allow_azure_ips: str or :class:`FirewallAllowAzureIpsState
      <azure.mgmt.datalake.store.models.FirewallAllowAzureIpsState>`
+    :param encryption_config: Used for rotation of user managed Key Vault
+     keys. Can only be used to rotate a user managed encryption Key Vault key.
+    :type encryption_config: :class:`UpdateEncryptionConfig
+     <azure.mgmt.datalake.store.models.UpdateEncryptionConfig>`
     """
 
     _attribute_map = {
@@ -53,12 +57,14 @@ class DataLakeStoreAccountUpdateParameters(Model):
         'default_group': {'key': 'properties.defaultGroup', 'type': 'str'},
         'new_tier': {'key': 'properties.newTier', 'type': 'TierType'},
         'firewall_allow_azure_ips': {'key': 'properties.firewallAllowAzureIps', 'type': 'FirewallAllowAzureIpsState'},
+        'encryption_config': {'key': 'properties.encryptionConfig', 'type': 'UpdateEncryptionConfig'},
     }
 
-    def __init__(self, tags=None, firewall_state=None, trusted_id_provider_state=None, default_group=None, new_tier=None, firewall_allow_azure_ips=None):
+    def __init__(self, tags=None, firewall_state=None, trusted_id_provider_state=None, default_group=None, new_tier=None, firewall_allow_azure_ips=None, encryption_config=None):
         self.tags = tags
         self.firewall_state = firewall_state
         self.trusted_id_provider_state = trusted_id_provider_state
         self.default_group = default_group
         self.new_tier = new_tier
         self.firewall_allow_azure_ips = firewall_allow_azure_ips
+        self.encryption_config = encryption_config

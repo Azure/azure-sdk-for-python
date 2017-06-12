@@ -9,8 +9,12 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
+from .pipeline_operations import PipelineOperations
+from .recurrence_operations import RecurrenceOperations
 from .job_operations import JobOperations
 
 __all__ = [
+    'PipelineOperations',
+    'RecurrenceOperations',
     'JobOperations',
 ]

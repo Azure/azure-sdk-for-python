@@ -146,7 +146,7 @@ class MgmtDataLakeStoreTest(AzureMgmtTestCase):
         self.adls_account_client.account.delete(
             self.group_name,
             account_name
-        )
+        ).wait()
 
 #------------------------------------------------------------------------------
 if __name__ == '__main__':

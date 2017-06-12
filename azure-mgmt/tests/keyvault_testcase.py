@@ -11,12 +11,19 @@ import time
 import azure.mgmt.resource
 from azure.mgmt.keyvault import KeyVaultManagementClient
 from azure.mgmt.keyvault.models import \
+<<<<<<< HEAD
     (VaultCreateOrUpdateParameters, VaultProperties, Sku, AccessPolicyEntry, Permissions)
 from azure.keyvault import KeyVaultClient, KeyVaultAuthentication, HttpBearerChallenge
+=======
+    (VaultCreateOrUpdateParameters, VaultProperties, Sku, AccessPolicyEntry, Permissions, KeyPermissions, SecretPermissions, SkuName,
+     CertificatePermissions, StoragePermissions)
+from azure.keyvault import KeyVaultClient, KeyVaultAuthentication, KeyVaultAuthBase, HttpBearerChallenge
+>>>>>>> 91a4d87dcf30f501115b9dd2dea7aef7a6017cd3
 
 from azure.common.exceptions import (
     CloudError
 )
+from tests.mgmt_testcase import HttpStatusCode, AzureMgmtTestCase
 from testutils.common_recordingtestcase import (
     RecordingTestCase,
     TestMode,
@@ -30,15 +37,91 @@ if should_log.lower() == 'true' or should_log == '1':
     logger.setLevel(logging.DEBUG)
     logger.addHandler(logging.StreamHandler())
 
-class HttpStatusCode(object):
-    OK = 200
-    Created = 201
-    Accepted = 202
-    NoContent = 204
-    NotFound = 404
-    Unauthorized = 401
 
-class AzureKeyVaultTestCase(RecordingTestCase):
+def privatevault(permissions=None, enabled_for_deployment=True, enabled_for_disk_encryption=True,
+             enabled_for_template_deployment=True, enable_soft_delete=None):
+    def testvault_decorator(f):
+        def wrapper(self):
+            with self.recording():
+                vault = self.setup_private_vault(permissions=permissions,
+                                                 enabled_for_deployment=enabled_for_deployment,
+                                                 enabled_for_disk_encryption=enabled_for_disk_encryption,
+                                                 enabled_for_template_deployment=enabled_for_template_deployment,
+                                                 enable_soft_delete=enable_soft_delete)
+                try:
+                    f(self, vault=vault)
+                finally:
+                    self.cleanup_private_vault(vault)
+        wrapper.__name__ = f.__name__
+        testvault_decorator.__name__ = f.__name__
+        return wrapper
+    return testvault_decorator
+
+def sharedvault(f):
+    def wrapper(self):
+        with self.recording():
+            vault = self.setup_shared_vault()
+            f(self, vault=vault)
+    wrapper.__name__ = f.__name__
+    return wrapper
+
+class AzureKeyVaultTestCase(AzureMgmtTestCase):
+
+    shared_vault = None
+    default_group = 'azkv-pytest'
+    default_vault = 'pytest-shared-vault'
+    default_permissions = Permissions(keys=[
+                                          KeyPermissions.encrypt,
+                                          KeyPermissions.decrypt,
+                                          KeyPermissions.wrap_key,
+                                          KeyPermissions.unwrap_key,
+                                          KeyPermissions.sign,
+                                          KeyPermissions.verify,
+                                          KeyPermissions.get,
+                                          KeyPermissions.list,
+                                          KeyPermissions.create,
+                                          KeyPermissions.update,
+                                          KeyPermissions.import_enum,
+                                          KeyPermissions.delete,
+                                          KeyPermissions.backup,
+                                          KeyPermissions.restore,
+                                          KeyPermissions.recover,
+                                          KeyPermissions.purge],
+                                      secrets=[
+                                          SecretPermissions.get,
+                                          SecretPermissions.list,
+                                          SecretPermissions.set,
+                                          SecretPermissions.delete,
+                                          SecretPermissions.backup,
+                                          SecretPermissions.restore,
+                                          SecretPermissions.recover,
+                                          SecretPermissions.purge],
+                                      certificates=[
+                                          CertificatePermissions.get,
+                                          CertificatePermissions.list,
+                                          CertificatePermissions.delete,
+                                          CertificatePermissions.create,
+                                          CertificatePermissions.import_enum,
+                                          CertificatePermissions.update,
+                                          CertificatePermissions.managecontacts,
+                                          CertificatePermissions.getissuers,
+                                          CertificatePermissions.listissuers,
+                                          CertificatePermissions.setissuers,
+                                          CertificatePermissions.deleteissuers,
+                                          CertificatePermissions.manageissuers,
+                                          CertificatePermissions.recover,
+                                          CertificatePermissions.purge],
+                                      storage=[
+                                          StoragePermissions.get,
+                                          StoragePermissions.list,
+                                          StoragePermissions.delete,
+                                          StoragePermissions.set,
+                                          StoragePermissions.update,
+                                          StoragePermissions.regeneratekey,
+                                          StoragePermissions.setsas,
+                                          StoragePermissions.listsas,
+                                          StoragePermissions.getsas,
+                                          StoragePermissions.deletesas])
 
     def setUp(self):
         self.working_folder = os.path.dirname(__file__)
@@ -59,6 +142,11 @@ class AzureKeyVaultTestCase(RecordingTestCase):
             self.settings = real_settings
 
         self.client = self.create_keyvault_client()
+        self.mgmt_client = self.create_mgmt_client(azure.mgmt.keyvault.KeyVaultManagementClient)
+
+        if not self.is_playback():
+            self.create_resource_group()
+
 
     def tearDown(self):
         return super(AzureKeyVaultTestCase, self).tearDown()
@@ -73,6 +161,63 @@ class AzureKeyVaultTestCase(RecordingTestCase):
             credentials.set_token()
             return credentials.scheme, credentials.__dict__['token']['access_token']
         return KeyVaultClient(KeyVaultAuthentication(_auth_callback))
+
+    def _ensure_resource_group(self, group_name):
+        return self.resource_client.resource_groups.create_or_update(
+            group_name,
+            {
+                'location': self.region
+            }
+        )
+
+    def setup_shared_vault(self):
+        if not self.is_playback():
+            self._ensure_resource_group(self.default_group)
+        if not AzureKeyVaultTestCase.shared_vault:
+            AzureKeyVaultTestCase.shared_vault = self.create_vault(self.default_group, self.default_vault)
+        return AzureKeyVaultTestCase.shared_vault;
+
+    def setup_private_vault(self, permissions=None, enabled_for_deployment=True, enabled_for_disk_encryption=True,
+                         enabled_for_template_deployment=True, enable_soft_delete=None, sku=None):
+        vault_name = self.get_resource_name('vault-')
+        vault = self.create_vault(self.group_name, vault_name,
+                                  permissions=permissions,enabled_for_deployment=enabled_for_deployment,
+                                  enabled_for_template_deployment=enabled_for_template_deployment, enable_soft_delete=enable_soft_delete,
+                                  sku=sku)
+
+        return vault
+
+    def create_vault(self, group_name, vault_name, permissions=None, enabled_for_deployment=True, enabled_for_disk_encryption=True,
+                         enabled_for_template_deployment=True, enable_soft_delete=None, sku=None):
+        creds = self.settings.get_credentials()
+        access_policies = [AccessPolicyEntry(tenant_id=self.settings.TENANT_ID,
+                                             object_id=self.settings.CLIENT_OID,
+                                             permissions=permissions or self.default_permissions)]
+        properties = VaultProperties(tenant_id=self.settings.TENANT_ID,
+                                     sku=Sku(sku or SkuName.premium.value),
+                                     access_policies=access_policies,
+                                     vault_uri=None,
+                                     enabled_for_deployment=enabled_for_deployment,
+                                     enabled_for_disk_encryption=enabled_for_disk_encryption,
+                                     enabled_for_template_deployment=enabled_for_template_deployment,
+                                     enable_soft_delete=enable_soft_delete)
+        parameters = VaultCreateOrUpdateParameters(location='westus',
+                                                   properties=properties)
+
+        vault = self.mgmt_client.vaults.create_or_update(group_name, vault_name, parameters)
+
+        if not self.is_playback():
+            self.sleep(10)
+
+        return vault
+
+    def cleanup_private_vault(self, vault):
+        # we only need to cleanup if the vault has soft delete enabled otherwise base teardown will
+        # delete when the resource group is deleted
+        if not self.is_playback() and vault.properties.enable_soft_delete:
+            self.mgmt_client.vaults.delete(self.group_name, vault.name)
+            self.sleep(10)
+            self.mgmt_client.vaults.purge_deleted(vault.name, vault.location)
 
     def _scrub_sensitive_request_info(self, request):
         request = super(AzureKeyVaultTestCase, self)._scrub_sensitive_request_info(request)

@@ -71,6 +71,9 @@ class JobInformation(Model):
     :param properties: the job specific properties.
     :type properties: :class:`JobProperties
      <azure.mgmt.datalake.analytics.job.models.JobProperties>`
+    :param related: the recurring job relationship information properties.
+    :type related: :class:`JobRelationshipProperties
+     <azure.mgmt.datalake.analytics.job.models.JobRelationshipProperties>`
     """
 
     _validation = {
@@ -106,9 +109,10 @@ class JobInformation(Model):
         'log_file_patterns': {'key': 'logFilePatterns', 'type': '[str]'},
         'state_audit_records': {'key': 'stateAuditRecords', 'type': '[JobStateAuditRecord]'},
         'properties': {'key': 'properties', 'type': 'JobProperties'},
+        'related': {'key': 'related', 'type': 'JobRelationshipProperties'},
     }
 
-    def __init__(self, name, type, properties, degree_of_parallelism=1, priority=None, log_file_patterns=None):
+    def __init__(self, name, type, properties, degree_of_parallelism=1, priority=None, log_file_patterns=None, related=None):
         self.job_id = None
         self.name = name
         self.type = type
@@ -125,3 +129,4 @@ class JobInformation(Model):
         self.log_file_patterns = log_file_patterns
         self.state_audit_records = None
         self.properties = properties
+        self.related = related
