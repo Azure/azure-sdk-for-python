@@ -128,11 +128,10 @@ class AzureMgmtTestCase(RecordingTestCase):
 
     def _scrub(self, val):
         val = super(AzureMgmtTestCase, self)._scrub(val)
-
-        constants_to_scrub = ['SUBSCRIPTION_ID', 'AD_DOMAIN', 'TENANT_ID', 'CLIENT_OID']
-
-        real_to_fake_dict = {getattr(self.settings, key): getattr(self.fake_settings, key) for key in constants_to_scrub if
-                             hasattr(self.settings, key) and hasattr(self.fake_settings, key)}
+        real_to_fake_dict = {
+            self.settings.SUBSCRIPTION_ID: self.fake_settings.SUBSCRIPTION_ID,
+            self.settings.AD_DOMAIN:  self.fake_settings.AD_DOMAIN
+        }
         val = self._scrub_using_dict(val, real_to_fake_dict)
         return val
 

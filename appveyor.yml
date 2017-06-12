@@ -17,4 +17,5 @@ install:
 
 build: off
 
-test_script: "%PYTHON%\\python.exe ./azure_nosetests.py"
+test_script:
+  - ps: & ${env:PYTHON}/python.exe ./azure_nosetests.py azure-mgmt/tests azure-mgmt-media/tests
