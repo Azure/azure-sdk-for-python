@@ -18,17 +18,14 @@ from .batch_account_update_parameters import BatchAccountUpdateParameters
 from .batch_account_regenerate_key_parameters import BatchAccountRegenerateKeyParameters
 from .batch_account_keys import BatchAccountKeys
 from .activate_application_package_parameters import ActivateApplicationPackageParameters
-from .application_create_parameters import ApplicationCreateParameters
+from .add_application_parameters import AddApplicationParameters
 from .application_package import ApplicationPackage
 from .application import Application
-from .application_update_parameters import ApplicationUpdateParameters
+from .update_application_parameters import UpdateApplicationParameters
 from .batch_location_quota import BatchLocationQuota
 from .resource import Resource
-from .operation_display import OperationDisplay
-from .operation import Operation
 from .batch_account_paged import BatchAccountPaged
 from .application_paged import ApplicationPaged
-from .operation_paged import OperationPaged
 from .batch_management_client_enums import (
     PoolAllocationMode,
     ProvisioningState,
@@ -46,17 +43,14 @@ __all__ = [
     'BatchAccountRegenerateKeyParameters',
     'BatchAccountKeys',
     'ActivateApplicationPackageParameters',
-    'ApplicationCreateParameters',
+    'AddApplicationParameters',
     'ApplicationPackage',
     'Application',
-    'ApplicationUpdateParameters',
+    'UpdateApplicationParameters',
     'BatchLocationQuota',
     'Resource',
-    'OperationDisplay',
-    'Operation',
     'BatchAccountPaged',
     'ApplicationPaged',
-    'OperationPaged',
     'PoolAllocationMode',
     'ProvisioningState',
     'AccountKeyType',

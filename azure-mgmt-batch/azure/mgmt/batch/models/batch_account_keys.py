@@ -18,8 +18,6 @@ class BatchAccountKeys(Model):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar account_name: The Batch account name.
-    :vartype account_name: str
     :ivar primary: The primary key associated with the account.
     :vartype primary: str
     :ivar secondary: The secondary key associated with the account.
@@ -27,18 +25,15 @@ class BatchAccountKeys(Model):
     """
 
     _validation = {
-        'account_name': {'readonly': True},
         'primary': {'readonly': True},
         'secondary': {'readonly': True},
     }
 
     _attribute_map = {
-        'account_name': {'key': 'accountName', 'type': 'str'},
         'primary': {'key': 'primary', 'type': 'str'},
         'secondary': {'key': 'secondary', 'type': 'str'},
     }
 
     def __init__(self):
-        self.account_name = None
         self.primary = None
         self.secondary = None

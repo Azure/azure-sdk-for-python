@@ -17,7 +17,7 @@ class ConsistencyPolicy(Model):
 
     :param default_consistency_level: The default consistency level and
      configuration settings of the DocumentDB account. Possible values include:
-     'Eventual', 'Session', 'BoundedStaleness', 'Strong', 'ConsistentPrefix'
+     'Eventual', 'Session', 'BoundedStaleness', 'Strong'
     :type default_consistency_level: str or :class:`DefaultConsistencyLevel
      <azure.mgmt.documentdb.models.DefaultConsistencyLevel>`
     :param max_staleness_prefix: When used with the Bounded Staleness

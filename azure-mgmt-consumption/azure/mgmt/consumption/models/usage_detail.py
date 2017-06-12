@@ -51,11 +51,11 @@ class UsageDetail(Resource):
      example, USD.
     :vartype currency: str
     :ivar usage_quantity: The quantity of usage.
-    :vartype usage_quantity: decimal.Decimal
+    :vartype usage_quantity: Decimal
     :ivar billable_quantity: The billable usage quantity.
-    :vartype billable_quantity: decimal.Decimal
+    :vartype billable_quantity: Decimal
     :ivar pretax_cost: The amount of cost before tax.
-    :vartype pretax_cost: decimal.Decimal
+    :vartype pretax_cost: Decimal
     :ivar is_estimated: The estimated usage is subject to change.
     :vartype is_estimated: bool
     :ivar meter_id: The meter id.
@@ -106,9 +106,9 @@ class UsageDetail(Resource):
         'instance_id': {'key': 'properties.instanceId', 'type': 'str'},
         'instance_location': {'key': 'properties.instanceLocation', 'type': 'str'},
         'currency': {'key': 'properties.currency', 'type': 'str'},
-        'usage_quantity': {'key': 'properties.usageQuantity', 'type': 'decimal'},
-        'billable_quantity': {'key': 'properties.billableQuantity', 'type': 'decimal'},
-        'pretax_cost': {'key': 'properties.pretaxCost', 'type': 'decimal'},
+        'usage_quantity': {'key': 'properties.usageQuantity', 'type': 'Decimal'},
+        'billable_quantity': {'key': 'properties.billableQuantity', 'type': 'Decimal'},
+        'pretax_cost': {'key': 'properties.pretaxCost', 'type': 'Decimal'},
         'is_estimated': {'key': 'properties.isEstimated', 'type': 'bool'},
         'meter_id': {'key': 'properties.meterId', 'type': 'str'},
         'meter_details': {'key': 'properties.meterDetails', 'type': 'MeterDetails'},

@@ -33,7 +33,7 @@ class CloudPool(Model):
      meantime.
     :type e_tag: str
     :param last_modified: The last modified time of the pool. This is the last
-     time at which the pool level data, such as the targetDedicatedNodes or
+     time at which the pool level data, such as the targetDedicated or
      enableAutoscale settings, changed. It does not factor in node-level
      changes such as a compute node changing state.
     :type last_modified: datetime
@@ -71,9 +71,9 @@ class CloudPool(Model):
      sizes of virtual machines for Cloud Services pools (pools created with
      cloudServiceConfiguration), see Sizes for Cloud Services
      (http://azure.microsoft.com/documentation/articles/cloud-services-sizes-specs/).
-     Batch supports all Cloud Services VM sizes except ExtraSmall, A1V2 and
-     A2V2. For information about available VM sizes for pools using images from
-     the Virtual Machines Marketplace (pools created with
+     Batch supports all Cloud Services VM sizes except ExtraSmall. For
+     information about available VM sizes for pools using images from the
+     Virtual Machines Marketplace (pools created with
      virtualMachineConfiguration) see Sizes for Virtual Machines (Linux)
      (https://azure.microsoft.com/documentation/articles/virtual-machines-linux-sizes/)
      or Sizes for Virtual Machines (Windows)
@@ -98,30 +98,21 @@ class CloudPool(Model):
      initial sizing when the pool is created counts as a resize.) The default
      value is 15 minutes.
     :type resize_timeout: timedelta
-    :param resize_errors: A list of errors encountered while performing the
-     last resize on the pool. This property is set only if one or more errors
-     occurred during the last pool resize, and only when the pool
-     allocationState is Steady.
-    :type resize_errors: list of :class:`ResizeError
-     <azure.batch.models.ResizeError>`
-    :param current_dedicated_nodes: The number of dedicated compute nodes
-     currently in the pool.
-    :type current_dedicated_nodes: int
-    :param current_low_priority_nodes: The number of low-priority compute
-     nodes currently in the pool. Low-priority compute nodes which have been
-     preempted are included in this count.
-    :type current_low_priority_nodes: int
-    :param target_dedicated_nodes: The desired number of dedicated compute
-     nodes in the pool.
-    :type target_dedicated_nodes: int
-    :param target_low_priority_nodes: The desired number of low-priority
-     compute nodes in the pool.
-    :type target_low_priority_nodes: int
+    :param resize_error: Details of any error encountered while performing the
+     last resize on the pool. This property is set only if an error occurred
+     during the last pool resize, and only when the pool allocationState is
+     Steady.
+    :type resize_error: :class:`ResizeError <azure.batch.models.ResizeError>`
+    :param current_dedicated: The number of compute nodes currently in the
+     pool.
+    :type current_dedicated: int
+    :param target_dedicated: The desired number of compute nodes in the pool.
+     This property is not set if enableAutoScale is true. It is required if
+     enableAutoScale is false.
+    :type target_dedicated: int
     :param enable_auto_scale: Whether the pool size should automatically
-     adjust over time. If false, at least one of targetDedicateNodes and
-     targetLowPriorityNodes must be specified. If true, the autoScaleFormula
-     property is required and the pool automatically resizes according to the
-     formula. The default value is false.
+     adjust over time. If true, the autoScaleFormula property must be set. If
+     false, the targetDedicated property must be set.
     :type enable_auto_scale: bool
     :param auto_scale_formula: A formula for the desired number of compute
      nodes in the pool. This property is set only if the pool automatically
@@ -164,12 +155,6 @@ class CloudPool(Model):
     :type application_package_references: list of
      :class:`ApplicationPackageReference
      <azure.batch.models.ApplicationPackageReference>`
-    :param application_licenses: The list of application licenses the Batch
-     service will make available on each compute node in the pool. The list of
-     application licenses must be a subset of available Batch service
-     application licenses. If a license is requested which is not supported,
-     pool creation will fail.
-    :type application_licenses: list of str
     :param max_tasks_per_node: The maximum number of tasks that can run
      concurrently on a single compute node in the pool.
     :type max_tasks_per_node: int
@@ -205,11 +190,9 @@ class CloudPool(Model):
         'cloud_service_configuration': {'key': 'cloudServiceConfiguration', 'type': 'CloudServiceConfiguration'},
         'virtual_machine_configuration': {'key': 'virtualMachineConfiguration', 'type': 'VirtualMachineConfiguration'},
         'resize_timeout': {'key': 'resizeTimeout', 'type': 'duration'},
-        'resize_errors': {'key': 'resizeErrors', 'type': '[ResizeError]'},
-        'current_dedicated_nodes': {'key': 'currentDedicatedNodes', 'type': 'int'},
-        'current_low_priority_nodes': {'key': 'currentLowPriorityNodes', 'type': 'int'},
-        'target_dedicated_nodes': {'key': 'targetDedicatedNodes', 'type': 'int'},
-        'target_low_priority_nodes': {'key': 'targetLowPriorityNodes', 'type': 'int'},
+        'resize_error': {'key': 'resizeError', 'type': 'ResizeError'},
+        'current_dedicated': {'key': 'currentDedicated', 'type': 'int'},
+        'target_dedicated': {'key': 'targetDedicated', 'type': 'int'},
         'enable_auto_scale': {'key': 'enableAutoScale', 'type': 'bool'},
         'auto_scale_formula': {'key': 'autoScaleFormula', 'type': 'str'},
         'auto_scale_evaluation_interval': {'key': 'autoScaleEvaluationInterval', 'type': 'duration'},
@@ -219,7 +202,6 @@ class CloudPool(Model):
         'start_task': {'key': 'startTask', 'type': 'StartTask'},
         'certificate_references': {'key': 'certificateReferences', 'type': '[CertificateReference]'},
         'application_package_references': {'key': 'applicationPackageReferences', 'type': '[ApplicationPackageReference]'},
-        'application_licenses': {'key': 'applicationLicenses', 'type': '[str]'},
         'max_tasks_per_node': {'key': 'maxTasksPerNode', 'type': 'int'},
         'task_scheduling_policy': {'key': 'taskSchedulingPolicy', 'type': 'TaskSchedulingPolicy'},
         'user_accounts': {'key': 'userAccounts', 'type': '[UserAccount]'},
@@ -227,7 +209,7 @@ class CloudPool(Model):
         'stats': {'key': 'stats', 'type': 'PoolStatistics'},
     }
 
-    def __init__(self, id=None, display_name=None, url=None, e_tag=None, last_modified=None, creation_time=None, state=None, state_transition_time=None, allocation_state=None, allocation_state_transition_time=None, vm_size=None, cloud_service_configuration=None, virtual_machine_configuration=None, resize_timeout=None, resize_errors=None, current_dedicated_nodes=None, current_low_priority_nodes=None, target_dedicated_nodes=None, target_low_priority_nodes=None, enable_auto_scale=None, auto_scale_formula=None, auto_scale_evaluation_interval=None, auto_scale_run=None, enable_inter_node_communication=None, network_configuration=None, start_task=None, certificate_references=None, application_package_references=None, application_licenses=None, max_tasks_per_node=None, task_scheduling_policy=None, user_accounts=None, metadata=None, stats=None):
+    def __init__(self, id=None, display_name=None, url=None, e_tag=None, last_modified=None, creation_time=None, state=None, state_transition_time=None, allocation_state=None, allocation_state_transition_time=None, vm_size=None, cloud_service_configuration=None, virtual_machine_configuration=None, resize_timeout=None, resize_error=None, current_dedicated=None, target_dedicated=None, enable_auto_scale=None, auto_scale_formula=None, auto_scale_evaluation_interval=None, auto_scale_run=None, enable_inter_node_communication=None, network_configuration=None, start_task=None, certificate_references=None, application_package_references=None, max_tasks_per_node=None, task_scheduling_policy=None, user_accounts=None, metadata=None, stats=None):
         self.id = id
         self.display_name = display_name
         self.url = url
@@ -242,11 +224,9 @@ class CloudPool(Model):
         self.cloud_service_configuration = cloud_service_configuration
         self.virtual_machine_configuration = virtual_machine_configuration
         self.resize_timeout = resize_timeout
-        self.resize_errors = resize_errors
-        self.current_dedicated_nodes = current_dedicated_nodes
-        self.current_low_priority_nodes = current_low_priority_nodes
-        self.target_dedicated_nodes = target_dedicated_nodes
-        self.target_low_priority_nodes = target_low_priority_nodes
+        self.resize_error = resize_error
+        self.current_dedicated = current_dedicated
+        self.target_dedicated = target_dedicated
         self.enable_auto_scale = enable_auto_scale
         self.auto_scale_formula = auto_scale_formula
         self.auto_scale_evaluation_interval = auto_scale_evaluation_interval
@@ -256,7 +236,6 @@ class CloudPool(Model):
         self.start_task = start_task
         self.certificate_references = certificate_references
         self.application_package_references = application_package_references
-        self.application_licenses = application_licenses
         self.max_tasks_per_node = max_tasks_per_node
         self.task_scheduling_policy = task_scheduling_policy
         self.user_accounts = user_accounts

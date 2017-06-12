@@ -3,13 +3,6 @@
 Release History
 ===============
 
-0.32.0 (2017-04-26)
-+++++++++++++++++++
-
-* Support list web runtime stacks
-* Expose non resource based model type for SiteConfig, SiteAuthSettings, etc, to be used as property
-* Support list linux web available regions
-
 0.31.1 (2017-04-20)
 +++++++++++++++++++
 

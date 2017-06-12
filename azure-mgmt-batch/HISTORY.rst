@@ -3,15 +3,6 @@
 Release History
 ===============
 
-4.0.0 (2017-05-10)
-++++++++++++++++++
-
-- New operation to list the operations available for the Microsoft.Batch provider, includes new `Operation` and `OperationDisplay` models.
-- Renamed `AddApplicationParameters` to `ApplicationCreateParameters`.
-- Renamed `UpdateApplicationParameters` to `ApplicationUpdateParameters`.
-- Removed `core_quota` attribute from `BatchAccount` object, now replaced by separate `dedicated_core_quota` and `low_priority_core_quota`.
-- `BatchAccountKeys` object now has additional `account_name` attribute.
-
 3.0.1 (2017-04-19)
 ++++++++++++++++++
 

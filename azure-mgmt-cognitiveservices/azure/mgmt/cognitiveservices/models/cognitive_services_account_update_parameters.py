@@ -15,7 +15,7 @@ from msrest.serialization import Model
 class CognitiveServicesAccountUpdateParameters(Model):
     """The parameters to provide for the account.
 
-    :param sku: Gets or sets the SKU of the resource.
+    :param sku:
     :type sku: :class:`Sku <azure.mgmt.cognitiveservices.models.Sku>`
     :param tags: Gets or sets a list of key value pairs that describe the
      resource. These tags can be used in viewing and grouping this resource

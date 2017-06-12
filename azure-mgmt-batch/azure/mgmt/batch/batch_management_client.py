@@ -17,7 +17,6 @@ from .operations.batch_account_operations import BatchAccountOperations
 from .operations.application_package_operations import ApplicationPackageOperations
 from .operations.application_operations import ApplicationOperations
 from .operations.location_operations import LocationOperations
-from .operations.operations import Operations
 from . import models
 
 
@@ -29,8 +28,9 @@ class BatchManagementClientConfiguration(AzureConfiguration):
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
      object<msrestazure.azure_active_directory>`
-    :param subscription_id: The Azure subscription ID. This is a
-     GUID-formatted string (e.g. 00000000-0000-0000-0000-000000000000)
+    :param subscription_id: A unique identifier of a Microsoft Azure
+     subscription. The subscription ID forms part of the URI for every service
+     call.
     :type subscription_id: str
     :param str base_url: Service URL
     """
@@ -63,21 +63,20 @@ class BatchManagementClient(object):
     :vartype config: BatchManagementClientConfiguration
 
     :ivar batch_account: BatchAccount operations
-    :vartype batch_account: azure.mgmt.batch.operations.BatchAccountOperations
+    :vartype batch_account: .operations.BatchAccountOperations
     :ivar application_package: ApplicationPackage operations
-    :vartype application_package: azure.mgmt.batch.operations.ApplicationPackageOperations
+    :vartype application_package: .operations.ApplicationPackageOperations
     :ivar application: Application operations
-    :vartype application: azure.mgmt.batch.operations.ApplicationOperations
+    :vartype application: .operations.ApplicationOperations
     :ivar location: Location operations
-    :vartype location: azure.mgmt.batch.operations.LocationOperations
-    :ivar operations: Operations operations
-    :vartype operations: azure.mgmt.batch.operations.Operations
+    :vartype location: .operations.LocationOperations
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
      object<msrestazure.azure_active_directory>`
-    :param subscription_id: The Azure subscription ID. This is a
-     GUID-formatted string (e.g. 00000000-0000-0000-0000-000000000000)
+    :param subscription_id: A unique identifier of a Microsoft Azure
+     subscription. The subscription ID forms part of the URI for every service
+     call.
     :type subscription_id: str
     :param str base_url: Service URL
     """
@@ -89,7 +88,7 @@ class BatchManagementClient(object):
         self._client = ServiceClient(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
-        self.api_version = '2017-05-01'
+        self.api_version = '2017-01-01'
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
 
@@ -100,6 +99,4 @@ class BatchManagementClient(object):
         self.application = ApplicationOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.location = LocationOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.operations = Operations(
             self._client, self.config, self._serialize, self._deserialize)

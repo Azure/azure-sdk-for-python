@@ -12,34 +12,23 @@
 from enum import Enum
 
 
-class EnableStatus(Enum):
-
-    enabled = "Enabled"
-    disabled = "Disabled"
-
-
-class NotificationStatus(Enum):
-
-    disabled = "Disabled"
-    enabled = "Enabled"
-
-
 class SourceControlType(Enum):
 
     vso_git = "VsoGit"
     git_hub = "GitHub"
 
 
-class StorageType(Enum):
-
-    standard = "Standard"
-    premium = "Premium"
-
-
-class CostThresholdStatus(Enum):
+class EnableStatus(Enum):
 
     enabled = "Enabled"
     disabled = "Disabled"
+
+
+class LabCostType(Enum):
+
+    unavailable = "Unavailable"
+    reported = "Reported"
+    projected = "Projected"
 
 
 class WindowsOsState(Enum):
@@ -63,60 +52,10 @@ class CustomImageOsType(Enum):
     none = "None"
 
 
-class HostCachingOptions(Enum):
+class LabStorageType(Enum):
 
-    none = "None"
-    read_only = "ReadOnly"
-    read_write = "ReadWrite"
-
-
-class NotificationChannelEventType(Enum):
-
-    auto_shutdown = "AutoShutdown"
-    cost = "Cost"
-
-
-class TransportProtocol(Enum):
-
-    tcp = "Tcp"
-    udp = "Udp"
-
-
-class VirtualMachineCreationSource(Enum):
-
-    from_custom_image = "FromCustomImage"
-    from_gallery_image = "FromGalleryImage"
-
-
-class FileUploadOptions(Enum):
-
-    upload_files_and_generate_sas_tokens = "UploadFilesAndGenerateSasTokens"
-    none = "None"
-
-
-class PremiumDataDisk(Enum):
-
-    disabled = "Disabled"
-    enabled = "Enabled"
-
-
-class TargetCostStatus(Enum):
-
-    enabled = "Enabled"
-    disabled = "Disabled"
-
-
-class ReportingCycleType(Enum):
-
-    calendar_month = "CalendarMonth"
-    custom = "Custom"
-
-
-class CostType(Enum):
-
-    unavailable = "Unavailable"
-    reported = "Reported"
-    projected = "Projected"
+    standard = "Standard"
+    premium = "Premium"
 
 
 class PolicyStatus(Enum):
@@ -128,13 +67,10 @@ class PolicyStatus(Enum):
 class PolicyFactName(Enum):
 
     user_owned_lab_vm_count = "UserOwnedLabVmCount"
-    user_owned_lab_premium_vm_count = "UserOwnedLabPremiumVmCount"
     lab_vm_count = "LabVmCount"
-    lab_premium_vm_count = "LabPremiumVmCount"
     lab_vm_size = "LabVmSize"
     gallery_image = "GalleryImage"
     user_owned_lab_vm_count_in_subnet = "UserOwnedLabVmCountInSubnet"
-    lab_target_cost = "LabTargetCost"
 
 
 class PolicyEvaluatorType(Enum):
@@ -148,3 +84,13 @@ class UsagePermissionType(Enum):
     default = "Default"
     deny = "Deny"
     allow = "Allow"
+
+
+class SubscriptionNotificationState(Enum):
+
+    not_defined = "NotDefined"
+    registered = "Registered"
+    unregistered = "Unregistered"
+    warned = "Warned"
+    suspended = "Suspended"
+    deleted = "Deleted"

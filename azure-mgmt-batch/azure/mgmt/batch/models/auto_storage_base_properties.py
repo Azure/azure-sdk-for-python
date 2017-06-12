@@ -13,10 +13,10 @@ from msrest.serialization import Model
 
 
 class AutoStorageBaseProperties(Model):
-    """The properties related to the auto-storage account.
+    """The properties related to auto storage account.
 
     :param storage_account_id: The resource ID of the storage account to be
-     used for auto-storage account.
+     used for auto storage account.
     :type storage_account_id: str
     """
 

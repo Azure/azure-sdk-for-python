@@ -13,7 +13,7 @@ from msrest.serialization import Model
 
 
 class ActivateApplicationPackageParameters(Model):
-    """Parameters for an activating an application package.
+    """Parameters for an ApplicationOperations.ActivateApplicationPackage request.
 
     :param format: The format of the application package binary file.
     :type format: str

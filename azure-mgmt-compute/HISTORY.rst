@@ -3,18 +3,6 @@
 Release History
 ===============
 
-1.0.0 (2017-05-15)
-++++++++++++++++++
-
-- Tag 1.0.0rc2 as stable (same content)
-
-1.0.0rc2 (2017-05-12)
-+++++++++++++++++++++
-
-**Features**
-
-- Add Compute ApiVersion 2016-03-30 (AzureStack default)
-
 1.0.0rc1 (2017-04-11)
 +++++++++++++++++++++
 

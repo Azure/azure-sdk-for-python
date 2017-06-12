@@ -36,10 +36,6 @@ class JobManagerTask(Model):
      under this element are located in the task's working directory.
     :type resource_files: list of :class:`ResourceFile
      <azure.batch.models.ResourceFile>`
-    :param output_files: A list of files that the Batch service will upload
-     from the compute node after running the command line.
-    :type output_files: list of :class:`OutputFile
-     <azure.batch.models.OutputFile>`
     :param environment_settings: A list of environment variable settings for
      the Job Manager task.
     :type environment_settings: list of :class:`EnvironmentSetting
@@ -102,9 +98,6 @@ class JobManagerTask(Model):
      the job, or check the status of the job or of other tasks under the job.
     :type authentication_token_settings: :class:`AuthenticationTokenSettings
      <azure.batch.models.AuthenticationTokenSettings>`
-    :param allow_low_priority_node: Whether the Job Manager task may run on a
-     low-priority compute node. The default value is false.
-    :type allow_low_priority_node: bool
     """
 
     _validation = {
@@ -117,7 +110,6 @@ class JobManagerTask(Model):
         'display_name': {'key': 'displayName', 'type': 'str'},
         'command_line': {'key': 'commandLine', 'type': 'str'},
         'resource_files': {'key': 'resourceFiles', 'type': '[ResourceFile]'},
-        'output_files': {'key': 'outputFiles', 'type': '[OutputFile]'},
         'environment_settings': {'key': 'environmentSettings', 'type': '[EnvironmentSetting]'},
         'constraints': {'key': 'constraints', 'type': 'TaskConstraints'},
         'kill_job_on_completion': {'key': 'killJobOnCompletion', 'type': 'bool'},
@@ -125,15 +117,13 @@ class JobManagerTask(Model):
         'run_exclusive': {'key': 'runExclusive', 'type': 'bool'},
         'application_package_references': {'key': 'applicationPackageReferences', 'type': '[ApplicationPackageReference]'},
         'authentication_token_settings': {'key': 'authenticationTokenSettings', 'type': 'AuthenticationTokenSettings'},
-        'allow_low_priority_node': {'key': 'allowLowPriorityNode', 'type': 'bool'},
     }
 
-    def __init__(self, id, command_line, display_name=None, resource_files=None, output_files=None, environment_settings=None, constraints=None, kill_job_on_completion=None, user_identity=None, run_exclusive=None, application_package_references=None, authentication_token_settings=None, allow_low_priority_node=None):
+    def __init__(self, id, command_line, display_name=None, resource_files=None, environment_settings=None, constraints=None, kill_job_on_completion=None, user_identity=None, run_exclusive=None, application_package_references=None, authentication_token_settings=None):
         self.id = id
         self.display_name = display_name
         self.command_line = command_line
         self.resource_files = resource_files
-        self.output_files = output_files
         self.environment_settings = environment_settings
         self.constraints = constraints
         self.kill_job_on_completion = kill_job_on_completion
@@ -141,4 +131,3 @@ class JobManagerTask(Model):
         self.run_exclusive = run_exclusive
         self.application_package_references = application_package_references
         self.authentication_token_settings = authentication_token_settings
-        self.allow_low_priority_node = allow_low_priority_node

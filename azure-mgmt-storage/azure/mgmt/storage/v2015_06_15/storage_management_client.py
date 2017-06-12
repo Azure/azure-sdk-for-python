@@ -26,9 +26,9 @@ class StorageManagementClientConfiguration(AzureConfiguration):
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
      object<msrestazure.azure_active_directory>`
-    :param subscription_id: Subscription credentials which uniquely identify
-     the Microsoft Azure subscription. The subscription ID forms part of the
-     URI for every service call.
+    :param subscription_id: Gets subscription credentials which uniquely
+     identify the Microsoft Azure subscription. The subscription ID forms part
+     of the URI for every service call.
     :type subscription_id: str
     :param str base_url: Service URL
     """
@@ -61,16 +61,16 @@ class StorageManagementClient(object):
     :vartype config: StorageManagementClientConfiguration
 
     :ivar storage_accounts: StorageAccounts operations
-    :vartype storage_accounts: azure.mgmt.storage.v2015_06_15.operations.StorageAccountsOperations
+    :vartype storage_accounts: .operations.StorageAccountsOperations
     :ivar usage: Usage operations
-    :vartype usage: azure.mgmt.storage.v2015_06_15.operations.UsageOperations
+    :vartype usage: .operations.UsageOperations
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
      object<msrestazure.azure_active_directory>`
-    :param subscription_id: Subscription credentials which uniquely identify
-     the Microsoft Azure subscription. The subscription ID forms part of the
-     URI for every service call.
+    :param subscription_id: Gets subscription credentials which uniquely
+     identify the Microsoft Azure subscription. The subscription ID forms part
+     of the URI for every service call.
     :type subscription_id: str
     :param str base_url: Service URL
     """

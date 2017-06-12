@@ -186,8 +186,8 @@ class AppServiceEnvironmentsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`AppServiceEnvironmentResource
-         <azure.mgmt.web.models.AppServiceEnvironmentResource>`
+        :rtype: :class:`AppServiceEnvironment
+         <azure.mgmt.web.models.AppServiceEnvironment>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
@@ -227,7 +227,7 @@ class AppServiceEnvironmentsOperations(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('AppServiceEnvironmentResource', response)
+            deserialized = self._deserialize('AppServiceEnvironment', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
@@ -248,16 +248,15 @@ class AppServiceEnvironmentsOperations(object):
         :type name: str
         :param hosting_environment_envelope: Configuration details of the App
          Service Environment.
-        :type hosting_environment_envelope:
-         :class:`AppServiceEnvironmentResource
-         <azure.mgmt.web.models.AppServiceEnvironmentResource>`
+        :type hosting_environment_envelope: :class:`AppServiceEnvironment
+         <azure.mgmt.web.models.AppServiceEnvironment>`
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :rtype:
          :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         instance that returns :class:`AppServiceEnvironmentResource
-         <azure.mgmt.web.models.AppServiceEnvironmentResource>`
+         instance that returns :class:`AppServiceEnvironment
+         <azure.mgmt.web.models.AppServiceEnvironment>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
@@ -286,7 +285,7 @@ class AppServiceEnvironmentsOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct body
-        body_content = self._serialize.body(hosting_environment_envelope, 'AppServiceEnvironmentResource')
+        body_content = self._serialize.body(hosting_environment_envelope, 'AppServiceEnvironment')
 
         # Construct and send request
         def long_running_send():
@@ -313,9 +312,9 @@ class AppServiceEnvironmentsOperations(object):
             deserialized = None
 
             if response.status_code == 200:
-                deserialized = self._deserialize('AppServiceEnvironmentResource', response)
+                deserialized = self._deserialize('AppServiceEnvironment', response)
             if response.status_code == 202:
-                deserialized = self._deserialize('AppServiceEnvironmentResource', response)
+                deserialized = self._deserialize('AppServiceEnvironment', response)
 
             if raw:
                 client_raw_response = ClientRawResponse(deserialized, response)
@@ -858,8 +857,8 @@ class AppServiceEnvironmentsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`WorkerPoolResourcePaged
-         <azure.mgmt.web.models.WorkerPoolResourcePaged>`
+        :rtype: :class:`WorkerPoolPaged
+         <azure.mgmt.web.models.WorkerPoolPaged>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
@@ -905,11 +904,11 @@ class AppServiceEnvironmentsOperations(object):
             return response
 
         # Deserialize response
-        deserialized = models.WorkerPoolResourcePaged(internal_paging, self._deserialize.dependencies)
+        deserialized = models.WorkerPoolPaged(internal_paging, self._deserialize.dependencies)
 
         if raw:
             header_dict = {}
-            client_raw_response = models.WorkerPoolResourcePaged(internal_paging, self._deserialize.dependencies, header_dict)
+            client_raw_response = models.WorkerPoolPaged(internal_paging, self._deserialize.dependencies, header_dict)
             return client_raw_response
 
         return deserialized
@@ -930,8 +929,7 @@ class AppServiceEnvironmentsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`WorkerPoolResource
-         <azure.mgmt.web.models.WorkerPoolResource>`
+        :rtype: :class:`WorkerPool <azure.mgmt.web.models.WorkerPool>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
@@ -971,7 +969,7 @@ class AppServiceEnvironmentsOperations(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('WorkerPoolResource', response)
+            deserialized = self._deserialize('WorkerPool', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
@@ -991,15 +989,15 @@ class AppServiceEnvironmentsOperations(object):
         :param name: Name of the App Service Environment.
         :type name: str
         :param multi_role_pool_envelope: Properties of the multi-role pool.
-        :type multi_role_pool_envelope: :class:`WorkerPoolResource
-         <azure.mgmt.web.models.WorkerPoolResource>`
+        :type multi_role_pool_envelope: :class:`WorkerPool
+         <azure.mgmt.web.models.WorkerPool>`
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :rtype:
          :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         instance that returns :class:`WorkerPoolResource
-         <azure.mgmt.web.models.WorkerPoolResource>`
+         instance that returns :class:`WorkerPool
+         <azure.mgmt.web.models.WorkerPool>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
@@ -1028,7 +1026,7 @@ class AppServiceEnvironmentsOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct body
-        body_content = self._serialize.body(multi_role_pool_envelope, 'WorkerPoolResource')
+        body_content = self._serialize.body(multi_role_pool_envelope, 'WorkerPool')
 
         # Construct and send request
         def long_running_send():
@@ -1055,9 +1053,9 @@ class AppServiceEnvironmentsOperations(object):
             deserialized = None
 
             if response.status_code == 200:
-                deserialized = self._deserialize('WorkerPoolResource', response)
+                deserialized = self._deserialize('WorkerPool', response)
             if response.status_code == 202:
-                deserialized = self._deserialize('WorkerPoolResource', response)
+                deserialized = self._deserialize('WorkerPool', response)
 
             if raw:
                 client_raw_response = ClientRawResponse(deserialized, response)
@@ -2055,8 +2053,8 @@ class AppServiceEnvironmentsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`WorkerPoolResourcePaged
-         <azure.mgmt.web.models.WorkerPoolResourcePaged>`
+        :rtype: :class:`WorkerPoolPaged
+         <azure.mgmt.web.models.WorkerPoolPaged>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
@@ -2102,11 +2100,11 @@ class AppServiceEnvironmentsOperations(object):
             return response
 
         # Deserialize response
-        deserialized = models.WorkerPoolResourcePaged(internal_paging, self._deserialize.dependencies)
+        deserialized = models.WorkerPoolPaged(internal_paging, self._deserialize.dependencies)
 
         if raw:
             header_dict = {}
-            client_raw_response = models.WorkerPoolResourcePaged(internal_paging, self._deserialize.dependencies, header_dict)
+            client_raw_response = models.WorkerPoolPaged(internal_paging, self._deserialize.dependencies, header_dict)
             return client_raw_response
 
         return deserialized
@@ -2129,8 +2127,7 @@ class AppServiceEnvironmentsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`WorkerPoolResource
-         <azure.mgmt.web.models.WorkerPoolResource>`
+        :rtype: :class:`WorkerPool <azure.mgmt.web.models.WorkerPool>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
@@ -2171,7 +2168,7 @@ class AppServiceEnvironmentsOperations(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('WorkerPoolResource', response)
+            deserialized = self._deserialize('WorkerPool', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
@@ -2193,15 +2190,15 @@ class AppServiceEnvironmentsOperations(object):
         :param worker_pool_name: Name of the worker pool.
         :type worker_pool_name: str
         :param worker_pool_envelope: Properties of the worker pool.
-        :type worker_pool_envelope: :class:`WorkerPoolResource
-         <azure.mgmt.web.models.WorkerPoolResource>`
+        :type worker_pool_envelope: :class:`WorkerPool
+         <azure.mgmt.web.models.WorkerPool>`
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :rtype:
          :class:`AzureOperationPoller<msrestazure.azure_operation.AzureOperationPoller>`
-         instance that returns :class:`WorkerPoolResource
-         <azure.mgmt.web.models.WorkerPoolResource>`
+         instance that returns :class:`WorkerPool
+         <azure.mgmt.web.models.WorkerPool>`
         :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
          if raw=true
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
@@ -2231,7 +2228,7 @@ class AppServiceEnvironmentsOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct body
-        body_content = self._serialize.body(worker_pool_envelope, 'WorkerPoolResource')
+        body_content = self._serialize.body(worker_pool_envelope, 'WorkerPool')
 
         # Construct and send request
         def long_running_send():
@@ -2258,9 +2255,9 @@ class AppServiceEnvironmentsOperations(object):
             deserialized = None
 
             if response.status_code == 200:
-                deserialized = self._deserialize('WorkerPoolResource', response)
+                deserialized = self._deserialize('WorkerPool', response)
             if response.status_code == 202:
-                deserialized = self._deserialize('WorkerPoolResource', response)
+                deserialized = self._deserialize('WorkerPool', response)
 
             if raw:
                 client_raw_response = ClientRawResponse(deserialized, response)

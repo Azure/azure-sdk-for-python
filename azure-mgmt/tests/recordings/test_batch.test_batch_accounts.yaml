@@ -6,91 +6,23 @@ interactions:
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
       Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.5.1 (Windows-10-10.0.15063-SP0) requests/2.13.0 msrest/0.4.7
-          msrest_azure/0.4.7 batchmanagementclient/4.0.0 Azure-SDK-For-Python]
+      User-Agent: [python/3.5.1 (Windows-8.1-6.3.9600-SP0) requests/2.13.0 msrest/0.4.5
+          msrest_azure/0.4.7 batchmanagementclient/3.0.0 Azure-SDK-For-Python]
       accept-language: [en-US]
-      x-ms-client-request-id: [e5c9a58a-34f5-11e7-bc0c-ecb1d755839a]
+      x-ms-client-request-id: [46bc99be-f562-11e6-bc20-54ee750f2fc7]
     method: GET
-    uri: https://management.azure.com/providers/Microsoft.Batch/operations?api-version=2017-05-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Batch/locations/westeurope/quotas?api-version=2017-01-01
   response:
-    body: {string: '{"value":[{"name":"Microsoft.Batch/batchAccounts/providers/Microsoft.Insights/diagnosticSettings/read","display":{"provider":"Microsoft
-        Batch","resource":"Batch Accounts","operation":"Read diagnostic setting","description":"Gets
-        the diagnostic setting for the resource"},"origin":"system"},{"name":"Microsoft.Batch/batchAccounts/providers/Microsoft.Insights/diagnosticSettings/write","display":{"provider":"Microsoft
-        Batch","resource":"Batch Accounts","operation":"Write diagnostic setting","description":"Creates
-        or updates the diagnostic setting for the resource"},"origin":"system"},{"name":"Microsoft.Batch/batchAccounts/providers/Microsoft.Insights/logDefinitions/read","display":{"provider":"Microsoft
-        Batch","resource":"Batch Account Log Definitions","operation":"Read Batch
-        service log definitions","description":"Gets the available logs for the Batch
-        service"},"origin":"system","properties":{"serviceSpecification":{"logSpecifications":[{"name":"ServiceLog","displayName":"Service
-        Logs","blobDuration":"PT1H"}]}}},{"name":"Microsoft.Batch/batchAccounts/providers/Microsoft.Insights/metricDefinitions/read","display":{"provider":"Microsoft
-        Batch","resource":"Batch Account Metric Definitions","operation":"Read Batch
-        service metric definitions","description":"Gets the available metrics for
-        the Batch service"},"origin":"system","properties":{"serviceSpecification":{"metricSpecifications":[{"name":"CoreCount","displayName":"Core
-        Count","displayDescription":"Total number of cores in the batch account","unit":"Count","aggregationType":"Total","availabilities":[{"timeGrain":"PT1M","blobDuration":"PT1H"}],"supportsInstanceLevelAggregation":false,"enableRegionalMdmAccount":false},{"name":"TotalNodeCount","displayName":"Node
-        Count","displayDescription":"Total number of nodes in the batch account","unit":"Count","aggregationType":"Total","availabilities":[{"timeGrain":"PT1M","blobDuration":"PT1H"}],"supportsInstanceLevelAggregation":false,"enableRegionalMdmAccount":false},{"name":"CreatingNodeCount","displayName":"Creating
-        Node Count","displayDescription":"Number of nodes being created","unit":"Count","aggregationType":"Total","availabilities":[{"timeGrain":"PT1M","blobDuration":"PT1H"}],"supportsInstanceLevelAggregation":false,"enableRegionalMdmAccount":false},{"name":"StartingNodeCount","displayName":"Starting
-        Node Count","displayDescription":"Number of nodes starting","unit":"Count","aggregationType":"Total","availabilities":[{"timeGrain":"PT1M","blobDuration":"PT1H"}],"supportsInstanceLevelAggregation":false,"enableRegionalMdmAccount":false},{"name":"WaitingForStartTaskNodeCount","displayName":"Waiting
-        For Start Task Node Count","displayDescription":"Number of nodes waiting for
-        the Start Task to complete","unit":"Count","aggregationType":"Total","availabilities":[{"timeGrain":"PT1M","blobDuration":"PT1H"}],"supportsInstanceLevelAggregation":false,"enableRegionalMdmAccount":false},{"name":"StartTaskFailedNodeCount","displayName":"Start
-        Task Failed Node Count","displayDescription":"Number of nodes where the Start
-        Task has failed","unit":"Count","aggregationType":"Total","availabilities":[{"timeGrain":"PT1M","blobDuration":"PT1H"}],"supportsInstanceLevelAggregation":false,"enableRegionalMdmAccount":false},{"name":"IdleNodeCount","displayName":"Idle
-        Node Count","displayDescription":"Number of idle nodes","unit":"Count","aggregationType":"Total","availabilities":[{"timeGrain":"PT1M","blobDuration":"PT1H"}],"supportsInstanceLevelAggregation":false,"enableRegionalMdmAccount":false},{"name":"OfflineNodeCount","displayName":"Offline
-        Node Count","displayDescription":"Number of offline nodes","unit":"Count","aggregationType":"Total","availabilities":[{"timeGrain":"PT1M","blobDuration":"PT1H"}],"supportsInstanceLevelAggregation":false,"enableRegionalMdmAccount":false},{"name":"RebootingNodeCount","displayName":"Rebooting
-        Node Count","displayDescription":"Number of rebooting nodes","unit":"Count","aggregationType":"Total","availabilities":[{"timeGrain":"PT1M","blobDuration":"PT1H"}],"supportsInstanceLevelAggregation":false,"enableRegionalMdmAccount":false},{"name":"ReimagingNodeCount","displayName":"Reimaging
-        Node Count","displayDescription":"Number of reimaging nodes","unit":"Count","aggregationType":"Total","availabilities":[{"timeGrain":"PT1M","blobDuration":"PT1H"}],"supportsInstanceLevelAggregation":false,"enableRegionalMdmAccount":false},{"name":"RunningNodeCount","displayName":"Running
-        Node Count","displayDescription":"Number of running nodes","unit":"Count","aggregationType":"Total","availabilities":[{"timeGrain":"PT1M","blobDuration":"PT1H"}],"supportsInstanceLevelAggregation":false,"enableRegionalMdmAccount":false},{"name":"LeavingPoolNodeCount","displayName":"Leaving
-        Pool Node Count","displayDescription":"Number of nodes leaving the Pool","unit":"Count","aggregationType":"Total","availabilities":[{"timeGrain":"PT1M","blobDuration":"PT1H"}],"supportsInstanceLevelAggregation":false,"enableRegionalMdmAccount":false},{"name":"UnusableNodeCount","displayName":"Unusable
-        Node Count","displayDescription":"Number of unusable nodes","unit":"Count","aggregationType":"Total","availabilities":[{"timeGrain":"PT1M","blobDuration":"PT1H"}],"supportsInstanceLevelAggregation":false,"enableRegionalMdmAccount":false},{"name":"TaskStartEvent","displayName":"Task
-        Start Events","displayDescription":"Total number of tasks that have started","unit":"Count","aggregationType":"Total","availabilities":[{"timeGrain":"PT1M","blobDuration":"PT1H"}],"supportsInstanceLevelAggregation":false,"enableRegionalMdmAccount":false},{"name":"TaskCompleteEvent","displayName":"Task
-        Complete Events","displayDescription":"Total number of tasks that have completed","unit":"Count","aggregationType":"Total","availabilities":[{"timeGrain":"PT1M","blobDuration":"PT1H"}],"supportsInstanceLevelAggregation":false,"enableRegionalMdmAccount":false},{"name":"TaskFailEvent","displayName":"Task
-        Fail Events","displayDescription":"Total number of tasks that have completed
-        in a failed state","unit":"Count","aggregationType":"Total","availabilities":[{"timeGrain":"PT1M","blobDuration":"PT1H"}],"supportsInstanceLevelAggregation":false,"enableRegionalMdmAccount":false},{"name":"PoolCreateEvent","displayName":"Pool
-        Create Events","displayDescription":"Total number of pools that have been
-        created","unit":"Count","aggregationType":"Total","availabilities":[{"timeGrain":"PT1M","blobDuration":"PT1H"}],"supportsInstanceLevelAggregation":false,"enableRegionalMdmAccount":false},{"name":"PoolResizeStartEvent","displayName":"Pool
-        Resize Start Events","displayDescription":"Total number of pool resizes that
-        have started","unit":"Count","aggregationType":"Total","availabilities":[{"timeGrain":"PT1M","blobDuration":"PT1H"}],"supportsInstanceLevelAggregation":false,"enableRegionalMdmAccount":false},{"name":"PoolResizeCompleteEvent","displayName":"Pool
-        Resize Complete Events","displayDescription":"Total number of pool resizes
-        that have completed","unit":"Count","aggregationType":"Total","availabilities":[{"timeGrain":"PT1M","blobDuration":"PT1H"}],"supportsInstanceLevelAggregation":false,"enableRegionalMdmAccount":false},{"name":"PoolDeleteStartEvent","displayName":"Pool
-        Delete Start Events","displayDescription":"Total number of pool deletes that
-        have started","unit":"Count","aggregationType":"Total","availabilities":[{"timeGrain":"PT1M","blobDuration":"PT1H"}],"supportsInstanceLevelAggregation":false,"enableRegionalMdmAccount":false},{"name":"PoolDeleteCompleteEvent","displayName":"Pool
-        Delete Complete Events","displayDescription":"Total number of pool deletes
-        that have completed","unit":"Count","aggregationType":"Total","availabilities":[{"timeGrain":"PT1M","blobDuration":"PT1H"}],"supportsInstanceLevelAggregation":false,"enableRegionalMdmAccount":false}]}}},{"name":"Microsoft.Batch/batchAccounts/read","display":{"provider":"Microsoft
-        Batch","resource":"Batch Accounts","operation":"List or Get Batch Accounts","description":"Lists
-        Batch accounts or gets the properties of a Batch account"},"origin":"user,system"},{"name":"Microsoft.Batch/batchAccounts/write","display":{"provider":"Microsoft
-        Batch","resource":"Batch Accounts","operation":"Create or Update Batch Account","description":"Creates
-        a new Batch account or updates an existing Batch account"},"origin":"user,system"},{"name":"Microsoft.Batch/batchAccounts/delete","display":{"provider":"Microsoft
-        Batch","resource":"Batch Accounts","operation":"Delete Batch Account","description":"Deletes
-        a Batch account"},"origin":"user,system"},{"name":"Microsoft.Batch/batchAccounts/listkeys/action","display":{"provider":"Microsoft
-        Batch","resource":"Batch Accounts","operation":"List Batch Account Keys","description":"Lists
-        access keys for a Batch account"},"origin":"user,system"},{"name":"Microsoft.Batch/batchAccounts/regeneratekeys/action","display":{"provider":"Microsoft
-        Batch","resource":"Batch Accounts","operation":"Regenerate Batch Account Keys","description":"Regenerates
-        access keys for a Batch account"},"origin":"user,system"},{"name":"Microsoft.Batch/locations/quotas/read","display":{"provider":"Microsoft
-        Batch","resource":"Batch Quotas","operation":"Get Batch Quotas","description":"Gets
-        Batch quotas of the specified subscription at the specified Azure region"},"origin":"user,system"},{"name":"Microsoft.Batch/register/action","display":{"provider":"Microsoft
-        Batch","resource":"Batch Resource Provider","operation":"Register the Batch
-        Resource Provider","description":"Registers the subscription for the Batch
-        Resource Provider and enables the creation of Batch accounts"},"origin":"user,system"},{"name":"Microsoft.Batch/batchAccounts/syncAutoStorageKeys/action","display":{"provider":"Microsoft
-        Batch","resource":"Batch Accounts","operation":"Synchronize Auto Storage Account
-        Keys","description":"Synchronizes access keys for the auto storage account
-        configured for a Batch account"},"origin":"user,system"},{"name":"Microsoft.Batch/batchAccounts/applications/read","display":{"provider":"Microsoft
-        Batch","resource":"Applications","operation":"List or Get Applications","description":"Lists
-        applications or gets the properties of an application"},"origin":"user,system"},{"name":"Microsoft.Batch/batchAccounts/applications/write","display":{"provider":"Microsoft
-        Batch","resource":"Applications","operation":"Create or Update Application","description":"Creates
-        a new application or updates an existing application"},"origin":"user,system"},{"name":"Microsoft.Batch/batchAccounts/applications/delete","display":{"provider":"Microsoft
-        Batch","resource":"Applications","operation":"Delete Application","description":"Deletes
-        an application"},"origin":"user,system"},{"name":"Microsoft.Batch/batchAccounts/applications/versions/read","display":{"provider":"Microsoft
-        Batch","resource":"Application Packages","operation":"Get Application Package","description":"Gets
-        the properties of an application package"},"origin":"user,system"},{"name":"Microsoft.Batch/batchAccounts/applications/versions/write","display":{"provider":"Microsoft
-        Batch","resource":"Application Packages","operation":"Create or Update Application
-        Package","description":"Creates a new application package or updates an existing
-        application package"},"origin":"user,system"},{"name":"Microsoft.Batch/batchAccounts/applications/versions/delete","display":{"provider":"Microsoft
-        Batch","resource":"Application Packages","operation":"Delete Application Package","description":"Deletes
-        an application package"},"origin":"user,system"},{"name":"Microsoft.Batch/batchAccounts/applications/versions/activate/action","display":{"provider":"Microsoft
-        Batch","resource":"Application Packages","operation":"Activate Application
-        Package","description":"Activates an application package"},"origin":"user,system"}]}'}
+    body:
+      string: !!binary |
+        H4sIAAAAAAAEAO29B2AcSZYlJi9tynt/SvVK1+B0oQiAYBMk2JBAEOzBiM3mkuwdaUcjKasqgcpl
+        VmVdZhZAzO2dvPfee++999577733ujudTif33/8/XGZkAWz2zkrayZ4hgKrIHz9+fB8/In7xR9l0
+        Wq2X7U+sqzb76NHuL/l/AFyYL/YSAAAA
     headers:
       Cache-Control: [no-cache]
+      Content-Encoding: [gzip]
       Content-Type: [application/json; charset=utf-8]
-      Date: ['Tue, 09 May 2017 20:27:18 GMT']
+      Date: ['Fri, 17 Feb 2017 22:41:53 GMT']
       Expires: ['-1']
       Pragma: [no-cache]
       Server: [Microsoft-HTTPAPI/2.0]
@@ -98,45 +30,11 @@ interactions:
       Transfer-Encoding: [chunked]
       Vary: [Accept-Encoding]
       X-Content-Type-Options: [nosniff]
-      content-length: ['11800']
-      request-id: [8cf1fcaa-e5ab-416d-9791-bf8bb52705f2]
-      x-ms-correlation-request-id: [aaeccaf4-be74-4ca7-a888-fc141e05cc4e]
-      x-ms-ratelimit-remaining-tenant-reads: ['14999']
-      x-ms-request-id: [aaeccaf4-be74-4ca7-a888-fc141e05cc4e]
-      x-ms-routing-request-id: ['WESTUS:20170509T202718Z:aaeccaf4-be74-4ca7-a888-fc141e05cc4e']
-    status: {code: 200, message: OK}
-- request:
-    body: null
-    headers:
-      Accept: [application/json]
-      Accept-Encoding: ['gzip, deflate']
-      Connection: [keep-alive]
-      Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.5.1 (Windows-10-10.0.15063-SP0) requests/2.13.0 msrest/0.4.7
-          msrest_azure/0.4.7 batchmanagementclient/4.0.0 Azure-SDK-For-Python]
-      accept-language: [en-US]
-      x-ms-client-request-id: [e5e31aca-34f5-11e7-9bfa-ecb1d755839a]
-    method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Batch/locations/brazilsouth/quotas?api-version=2017-05-01
-  response:
-    body: {string: '{"accountQuota":1}'}
-    headers:
-      Cache-Control: [no-cache]
-      Content-Type: [application/json; charset=utf-8]
-      Date: ['Tue, 09 May 2017 20:27:18 GMT']
-      Expires: ['-1']
-      Pragma: [no-cache]
-      Server: [Microsoft-HTTPAPI/2.0]
-      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
-      Transfer-Encoding: [chunked]
-      Vary: [Accept-Encoding]
-      X-Content-Type-Options: [nosniff]
-      content-length: ['18']
-      request-id: [a20642a7-0cc4-4fd3-920e-441803d064a6]
-      x-ms-correlation-request-id: [f49325d3-a195-4d01-9293-09bafe998926]
-      x-ms-ratelimit-remaining-subscription-reads: ['14979']
-      x-ms-request-id: [f49325d3-a195-4d01-9293-09bafe998926]
-      x-ms-routing-request-id: ['WESTUS:20170509T202719Z:f49325d3-a195-4d01-9293-09bafe998926']
+      request-id: [e5bdf0d7-389f-4183-a9d7-8087eaa07b78]
+      x-ms-correlation-request-id: [7bf28eb8-7357-4e1e-a12f-b2aef922559c]
+      x-ms-ratelimit-remaining-subscription-reads: ['14994']
+      x-ms-request-id: [7bf28eb8-7357-4e1e-a12f-b2aef922559c]
+      x-ms-routing-request-id: ['CENTRALUS:20170217T224153Z:7bf28eb8-7357-4e1e-a12f-b2aef922559c']
     status: {code: 200, message: OK}
 - request:
     body: '{"location": "eastus2", "properties": {"poolAllocationMode": "UserSubscription"}}'
@@ -146,67 +44,67 @@ interactions:
       Connection: [keep-alive]
       Content-Length: ['81']
       Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.5.1 (Windows-10-10.0.15063-SP0) requests/2.13.0 msrest/0.4.7
-          msrest_azure/0.4.7 batchmanagementclient/4.0.0 Azure-SDK-For-Python]
+      User-Agent: [python/3.5.1 (Windows-8.1-6.3.9600-SP0) requests/2.13.0 msrest/0.4.5
+          msrest_azure/0.4.7 batchmanagementclient/3.0.0 Azure-SDK-For-Python]
       accept-language: [en-US]
-      x-ms-client-request-id: [e66f01be-34f5-11e7-b4d2-ecb1d755839a]
+      x-ms-client-request-id: [479d865e-f562-11e6-a3e7-54ee750f2fc7]
     method: PUT
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/python_batch_sdk_test/providers/Microsoft.Batch/batchAccounts/batchpythonaccounttest?api-version=2017-05-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/python_batch_sdk_test/providers/Microsoft.Batch/batchAccounts/batchpythonaccounttest?api-version=2017-01-01
   response:
-    body: {string: '{"error":{"code":"InvalidRequestBody","message":"The specified
-        Request Body is not syntactically valid.\nRequestId:91631754-5617-4e7a-844f-49da74cb1335\nTime:2017-05-09T20:27:25.0032982Z","target":"BatchAccount","details":[{"code":"Reason","message":"keyVaultReference
+    body: {string: '{"code":"InvalidRequestBody","message":"The specified Request
+        Body is not syntactically valid.\nRequestId:4b79f341-1452-4d9e-b237-19fffb40421f\nTime:2017-02-17T22:41:55.4393555Z","target":"BatchAccount","details":[{"message":"keyVaultReference
         must be set if poolAllocationMode is specified as ''UserSubscription'' on
-        a PUT request"}]}}'}
+        a PUT request"}]}'}
     headers:
       Cache-Control: [no-cache]
-      Content-Length: ['359']
+      Content-Length: ['333']
       Content-Type: [application/json; charset=utf-8]
-      Date: ['Tue, 09 May 2017 20:27:22 GMT']
+      Date: ['Fri, 17 Feb 2017 22:41:56 GMT']
       Expires: ['-1']
       Pragma: [no-cache]
       Server: [Microsoft-HTTPAPI/2.0]
       Strict-Transport-Security: [max-age=31536000; includeSubDomains]
       X-Content-Type-Options: [nosniff]
-      request-id: [91631754-5617-4e7a-844f-49da74cb1335]
-      x-ms-correlation-request-id: [00857592-9619-4b41-9d4d-69dbf08d8e1e]
-      x-ms-ratelimit-remaining-subscription-writes: ['1198']
-      x-ms-request-id: [00857592-9619-4b41-9d4d-69dbf08d8e1e]
-      x-ms-routing-request-id: ['WESTUS:20170509T202723Z:00857592-9619-4b41-9d4d-69dbf08d8e1e']
+      request-id: [4b79f341-1452-4d9e-b237-19fffb40421f]
+      x-ms-correlation-request-id: [74952815-a904-4212-a02c-deafb7db59ed]
+      x-ms-ratelimit-remaining-subscription-writes: ['1195']
+      x-ms-request-id: [74952815-a904-4212-a02c-deafb7db59ed]
+      x-ms-routing-request-id: ['CENTRALUS:20170217T224157Z:74952815-a904-4212-a02c-deafb7db59ed']
     status: {code: 400, message: The specified Request Body is not syntactically valid.}
 - request:
     body: '{"location": "eastus2", "properties": {"poolAllocationMode": "UserSubscription",
-      "keyVaultReference": {"id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/python_batch_sdk_test/providers/Microsoft.KeyVault/vaults/batchpythonsdktest",
-      "url": "https://batchpythonsdktest.vault.azure.net/"}}}'
+      "keyVaultReference": {"url": "https://pythonsdkbatchtest.vault.azure.net/",
+      "id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/python_batch_sdk_test/providers/Microsoft.KeyVault/vaults/pythonsdkbatchtest"}}}'
     headers:
       Accept: [application/json]
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
       Content-Length: ['311']
       Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.5.1 (Windows-10-10.0.15063-SP0) requests/2.13.0 msrest/0.4.7
-          msrest_azure/0.4.7 batchmanagementclient/4.0.0 Azure-SDK-For-Python]
+      User-Agent: [python/3.5.1 (Windows-8.1-6.3.9600-SP0) requests/2.13.0 msrest/0.4.5
+          msrest_azure/0.4.7 batchmanagementclient/3.0.0 Azure-SDK-For-Python]
       accept-language: [en-US]
-      x-ms-client-request-id: [e8ba7534-34f5-11e7-8b8f-ecb1d755839a]
+      x-ms-client-request-id: [49d4ca62-f562-11e6-89e7-54ee750f2fc7]
     method: PUT
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/python_batch_sdk_test/providers/Microsoft.Batch/batchAccounts/batchpythonaccounttest?api-version=2017-05-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/python_batch_sdk_test/providers/Microsoft.Batch/batchAccounts/batchpythonaccounttest?api-version=2017-01-01
   response:
     body: {string: ''}
     headers:
       Cache-Control: [no-cache]
       Content-Length: ['0']
-      Date: ['Tue, 09 May 2017 20:27:27 GMT']
+      Date: ['Fri, 17 Feb 2017 22:42:03 GMT']
       Expires: ['-1']
-      Location: ['https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/python_batch_sdk_test/providers/Microsoft.Batch/batchAccounts/batchpythonaccounttest/operationResults/45401047-f13c-4352-b640-67102e24daa2?api-version=2017-05-01']
+      Location: ['https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/python_batch_sdk_test/providers/Microsoft.Batch/batchAccounts/batchpythonaccounttest/operationResults/87575611-9e42-487f-a87f-8f963c9981de?api-version=2017-01-01']
       Pragma: [no-cache]
       Retry-After: ['0']
       Server: [Microsoft-HTTPAPI/2.0]
       Strict-Transport-Security: [max-age=31536000; includeSubDomains]
       X-Content-Type-Options: [nosniff]
-      request-id: [45401047-f13c-4352-b640-67102e24daa2]
-      x-ms-correlation-request-id: [eb3cbba6-7250-4e1d-b7ce-c895c1dcff12]
+      request-id: [87575611-9e42-487f-a87f-8f963c9981de]
+      x-ms-correlation-request-id: [18279c24-1594-4cf6-af4a-740f6e2b9eb0]
       x-ms-ratelimit-remaining-subscription-writes: ['1198']
-      x-ms-request-id: [eb3cbba6-7250-4e1d-b7ce-c895c1dcff12]
-      x-ms-routing-request-id: ['WESTUS:20170509T202727Z:eb3cbba6-7250-4e1d-b7ce-c895c1dcff12']
+      x-ms-request-id: [18279c24-1594-4cf6-af4a-740f6e2b9eb0]
+      x-ms-routing-request-id: ['CENTRALUS:20170217T224204Z:18279c24-1594-4cf6-af4a-740f6e2b9eb0']
     status: {code: 202, message: Accepted}
 - request:
     body: null
@@ -215,33 +113,43 @@ interactions:
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
       Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.5.1 (Windows-10-10.0.15063-SP0) requests/2.13.0 msrest/0.4.7
-          msrest_azure/0.4.7 batchmanagementclient/4.0.0 Azure-SDK-For-Python]
+      User-Agent: [python/3.5.1 (Windows-8.1-6.3.9600-SP0) requests/2.13.0 msrest/0.4.5
+          msrest_azure/0.4.7 batchmanagementclient/3.0.0 Azure-SDK-For-Python]
       accept-language: [en-US]
-      x-ms-client-request-id: [e8ba7534-34f5-11e7-8b8f-ecb1d755839a]
+      x-ms-client-request-id: [49d4ca62-f562-11e6-89e7-54ee750f2fc7]
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/python_batch_sdk_test/providers/Microsoft.Batch/batchAccounts/batchpythonaccounttest/operationResults/45401047-f13c-4352-b640-67102e24daa2?api-version=2017-05-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/python_batch_sdk_test/providers/Microsoft.Batch/batchAccounts/batchpythonaccounttest/operationResults/87575611-9e42-487f-a87f-8f963c9981de?api-version=2017-01-01
   response:
-    body: {string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/python_batch_sdk_test/providers/Microsoft.Batch/batchAccounts/batchpythonaccounttest","name":"batchpythonaccounttest","type":"Microsoft.Batch/batchAccounts","location":"eastus2","properties":{"accountEndpoint":"batchpythonaccounttest.eastus2.batch.azure.com","provisioningState":"Succeeded","dedicatedCoreQuota":2147483647,"lowPriorityCoreQuota":0,"poolQuota":20,"activeJobAndJobScheduleQuota":20,"poolAllocationMode":"usersubscription","keyVaultReference":{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/python_batch_sdk_test/providers/Microsoft.KeyVault/vaults/batchpythonsdktest","url":"https://batchpythonsdktest.vault.azure.net/"}}}'}
+    body:
+      string: !!binary |
+        H4sIAAAAAAAEAO29B2AcSZYlJi9tynt/SvVK1+B0oQiAYBMk2JBAEOzBiM3mkuwdaUcjKasqgcpl
+        VmVdZhZAzO2dvPfee++999577733ujudTif33/8/XGZkAWz2zkrayZ4hgKrIHz9+fB8/In7xR8ts
+        kX/06KNJ1k7nq+t2Xi2z6bRaL9s2b9qPRh+V1TRri2pJbfKsadfNHn24qqtVXrdF3nz06Bd/pC+c
+        Lmerqli21DIObawAxvz1OPvBus7H02ohAC+Lhroplhev26wFSq/X02mez/IZfT+t6vwn1lWbffRo
+        b3f/wf7BvU/3H9BrVVWaj3dGhEhbXObfqSbHyxn9+3o6z2fr0r5ILfDCcWnG9EU1Q0frJq+b9aSZ
+        1sUKH1N/b/Prn8zWZfsqP8/rfDmlZr/4o2JGje/6LZu7n+7c+/TTe/nD7Qc7O9Pt/U9n+fbD2f7u
+        dr5zsHN+vjvb/3Q3v1vnTbWup/nndbVeNXeFML8/U+H3b2Zvf38Q5y6TYEaY3P2imNZVU523499L
+        0bh7iX/Nm/QKv4vXCNd1XRJe87ZdNY/uRpqM+WUl9zJv7370S37J6KMf/mCeoMldbngsTNHIXwLC
+        YxQaVHu9Ipp/tPHtj37J/wPDYAPGvwIAAA==
     headers:
       Cache-Control: [no-cache]
+      Content-Encoding: [gzip]
       Content-Type: [application/json; charset=utf-8]
-      Date: ['Tue, 09 May 2017 20:27:43 GMT']
-      ETag: ['"0x8D49719D8B7BFBE"']
+      Date: ['Fri, 17 Feb 2017 22:42:20 GMT']
+      ETag: ['0x8D457863A7CDF7C']
       Expires: ['-1']
-      Last-Modified: ['Tue, 09 May 2017 20:27:43 GMT']
+      Last-Modified: ['Fri, 17 Feb 2017 22:42:18 GMT']
       Pragma: [no-cache]
       Server: [Microsoft-HTTPAPI/2.0]
       Strict-Transport-Security: [max-age=31536000; includeSubDomains]
       Transfer-Encoding: [chunked]
       Vary: [Accept-Encoding]
       X-Content-Type-Options: [nosniff]
-      content-length: ['737']
-      request-id: [79f1acbb-1699-43e4-9cf0-5eaf10a15c99]
-      x-ms-correlation-request-id: [c239f1b3-6a61-418d-bef6-45f50d73720c]
-      x-ms-ratelimit-remaining-subscription-reads: ['14985']
-      x-ms-request-id: [c239f1b3-6a61-418d-bef6-45f50d73720c]
-      x-ms-routing-request-id: ['WESTUS:20170509T202743Z:c239f1b3-6a61-418d-bef6-45f50d73720c']
+      request-id: [7c367c60-f3f3-4323-99ac-f3148e53cc9c]
+      x-ms-correlation-request-id: [cb13f9e3-7729-4ba1-a8ad-8928dfa6c87c]
+      x-ms-ratelimit-remaining-subscription-reads: ['14995']
+      x-ms-request-id: [cb13f9e3-7729-4ba1-a8ad-8928dfa6c87c]
+      x-ms-routing-request-id: ['CENTRALUS:20170217T224220Z:cb13f9e3-7729-4ba1-a8ad-8928dfa6c87c']
     status: {code: 200, message: OK}
 - request:
     body: null
@@ -250,33 +158,43 @@ interactions:
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
       Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.5.1 (Windows-10-10.0.15063-SP0) requests/2.13.0 msrest/0.4.7
-          msrest_azure/0.4.7 batchmanagementclient/4.0.0 Azure-SDK-For-Python]
+      User-Agent: [python/3.5.1 (Windows-8.1-6.3.9600-SP0) requests/2.13.0 msrest/0.4.5
+          msrest_azure/0.4.7 batchmanagementclient/3.0.0 Azure-SDK-For-Python]
       accept-language: [en-US]
-      x-ms-client-request-id: [f48f8d7a-34f5-11e7-8300-ecb1d755839a]
+      x-ms-client-request-id: [5773b506-f562-11e6-9f3d-54ee750f2fc7]
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/python_batch_sdk_test/providers/Microsoft.Batch/batchAccounts/pythonsdktest?api-version=2017-05-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/python_batch_sdk_test/providers/Microsoft.Batch/batchAccounts/pythonsdktest?api-version=2017-01-01
   response:
-    body: {string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/python_batch_sdk_test/providers/Microsoft.Batch/batchAccounts/pythonsdktest","name":"pythonsdktest","type":"Microsoft.Batch/batchAccounts","location":"brazilsouth","properties":{"accountEndpoint":"pythonsdktest.brazilsouth.batch.azure.com","provisioningState":"Succeeded","dedicatedCoreQuota":20,"lowPriorityCoreQuota":50,"poolQuota":20,"activeJobAndJobScheduleQuota":20,"autoStorage":{"storageAccountId":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/python_batch_sdk_test/providers/Microsoft.Storage/storageAccounts/batchpythonsdktest","lastKeySync":"2017-05-09T20:26:28.5741279Z"},"poolAllocationMode":"batchservice"},"tags":{"Name":"tagName","Value":"tagValue"}}'}
+    body:
+      string: !!binary |
+        H4sIAAAAAAAEAO29B2AcSZYlJi9tynt/SvVK1+B0oQiAYBMk2JBAEOzBiM3mkuwdaUcjKasqgcpl
+        VmVdZhZAzO2dvPfee++999577733ujudTif33/8/XGZkAWz2zkrayZ4hgKrIHz9+fB8/In7xR8ts
+        kX/06KPVdTuvls3sbZs37Uejj8pqmrVFtaSvruiTfF1Xq5w+b7OL5qNHv/ijF/Ia/cm/jT76yaxc
+        6yfy6y8ZfbTCS3Vb5PxKNp1W62V7upytqmLZUtug07HrZzzJ2ul8nP1gXefjabUg8ATqsmgIoWJ5
+        8brNWnT1ej2d5vksn9H306rOf2JdtdlHj/Z2qHlVld6f2bQtLvPvVJPj5Yz+fT2d57N16b+Qrdvq
+        dVvV2QVB/sUfNfLrsaB8NqPe7jbrSTOtixXI0tz9dOfep5/eyx9uP9jZmW7vfzrLtx/O9ne3852D
+        nfPz3dn+p7v53TpvqnU9zT+vq/WquSvj/f15dL8/Dfv3x7jv8tBmed3c/aKY1lVTnbdjReVuiIeB
+        QK8yDLxOYy+zpv298uvX18sp4bm3s/tge2dve/fBm729R/s7j+7vj3d2Pt1/sLP7UzwpRJrj0szv
+        F9WMBvwRg2vy+rKY8swVP/QRP0GTu9ywP1q8RQNtr4kHH3208aWPfsn/A0DShkPUAgAA
     headers:
       Cache-Control: [no-cache]
+      Content-Encoding: [gzip]
       Content-Type: [application/json; charset=utf-8]
-      Date: ['Tue, 09 May 2017 20:27:44 GMT']
-      ETag: ['"0x8D49719AD753BEA"']
+      Date: ['Fri, 17 Feb 2017 22:42:21 GMT']
+      ETag: ['0x8D457863CC6A9CC']
       Expires: ['-1']
-      Last-Modified: ['Tue, 09 May 2017 20:26:30 GMT']
+      Last-Modified: ['Fri, 17 Feb 2017 22:42:22 GMT']
       Pragma: [no-cache]
       Server: [Microsoft-HTTPAPI/2.0]
       Strict-Transport-Security: [max-age=31536000; includeSubDomains]
       Transfer-Encoding: [chunked]
       Vary: [Accept-Encoding]
       X-Content-Type-Options: [nosniff]
-      content-length: ['762']
-      request-id: [9bf1ad4e-753c-495f-8ea9-9a43711cdebd]
-      x-ms-correlation-request-id: [48771745-13e2-4dbc-9d73-18a46b00b763]
-      x-ms-ratelimit-remaining-subscription-reads: ['14984']
-      x-ms-request-id: [48771745-13e2-4dbc-9d73-18a46b00b763]
-      x-ms-routing-request-id: ['WESTUS:20170509T202744Z:48771745-13e2-4dbc-9d73-18a46b00b763']
+      request-id: [462a965d-ab2b-465b-a5de-008cb85412fa]
+      x-ms-correlation-request-id: [b4ae1d75-cb8a-41d2-a791-c2212a17a36d]
+      x-ms-ratelimit-remaining-subscription-reads: ['14993']
+      x-ms-request-id: [b4ae1d75-cb8a-41d2-a791-c2212a17a36d]
+      x-ms-routing-request-id: ['CENTRALUS:20170217T224221Z:b4ae1d75-cb8a-41d2-a791-c2212a17a36d']
     status: {code: 200, message: OK}
 - request:
     body: null
@@ -285,62 +203,42 @@ interactions:
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
       Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.5.1 (Windows-10-10.0.15063-SP0) requests/2.13.0 msrest/0.4.7
-          msrest_azure/0.4.7 batchmanagementclient/4.0.0 Azure-SDK-For-Python]
+      User-Agent: [python/3.5.1 (Windows-8.1-6.3.9600-SP0) requests/2.13.0 msrest/0.4.5
+          msrest_azure/0.4.7 batchmanagementclient/3.0.0 Azure-SDK-For-Python]
       accept-language: [en-US]
-      x-ms-client-request-id: [f534097a-34f5-11e7-b5ff-ecb1d755839a]
+      x-ms-client-request-id: [585cf36e-f562-11e6-a45d-54ee750f2fc7]
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/python_batch_sdk_test/providers/Microsoft.Batch/batchAccounts?api-version=2017-05-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/python_batch_sdk_test/providers/Microsoft.Batch/batchAccounts?api-version=2017-01-01
   response:
-    body: {string: '{"value":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/python_batch_sdk_test/providers/Microsoft.Batch/batchAccounts/batchpythonaccounttest","name":"batchpythonaccounttest","type":"Microsoft.Batch/batchAccounts","location":"eastus2","properties":{"accountEndpoint":"batchpythonaccounttest.eastus2.batch.azure.com","provisioningState":"Succeeded","dedicatedCoreQuota":2147483647,"lowPriorityCoreQuota":0,"poolQuota":20,"activeJobAndJobScheduleQuota":20,"poolAllocationMode":"usersubscription","keyVaultReference":{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/python_batch_sdk_test/providers/Microsoft.KeyVault/vaults/batchpythonsdktest","url":"https://batchpythonsdktest.vault.azure.net/"}}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/python_batch_sdk_test/providers/Microsoft.Batch/batchAccounts/pythonsdktest","name":"pythonsdktest","type":"Microsoft.Batch/batchAccounts","location":"brazilsouth","properties":{"accountEndpoint":"pythonsdktest.brazilsouth.batch.azure.com","provisioningState":"Succeeded","dedicatedCoreQuota":20,"lowPriorityCoreQuota":50,"poolQuota":20,"activeJobAndJobScheduleQuota":20,"autoStorage":{"storageAccountId":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/python_batch_sdk_test/providers/Microsoft.Storage/storageAccounts/batchpythonsdktest","lastKeySync":"2017-05-09T20:26:28.5741279Z"},"poolAllocationMode":"batchservice"},"tags":{"Name":"tagName","Value":"tagValue"}}]}'}
+    body:
+      string: !!binary |
+        H4sIAAAAAAAEAO29B2AcSZYlJi9tynt/SvVK1+B0oQiAYBMk2JBAEOzBiM3mkuwdaUcjKasqgcpl
+        VmVdZhZAzO2dvPfee++999577733ujudTif33/8/XGZkAWz2zkrayZ4hgKrIHz9+fB8/In7xR5dZ
+        uc4/evS9X/zRMlvQLx+trtt5tWxmb9u8aT8afVRW06wtqiV9dUWf5Ou6WuX0eZtdNB89+sUfvZDX
+        6E/+bfTRT2YMEZ/Ir79k9NEKL9VtkfMr2XRarZft6XK2qoplS22DTseun/Eka6fzcfaDdZ2Pp9WC
+        wBOoy6IhhIrlxes2a9HV6/V0muezfEbfT6s6/4l11WYfPdrboeZVVXp/ZtO2uMy/U02OlzP69/V0
+        ns/Wpf9Ctm6r121VZxcE+Rd/1Mivx4Ly2Yx6u9usJ820LlYgS3P30517n356L3+4/WBnZ7q9/+ks
+        334429/dzncOds7Pd2f7n+7md+u8qdb1NP+8rtar5q6M9/fn0f3+NOzfH+O+y0Ob5XVz94tiWldN
+        dd6OFZW7IR4GAr3KMPA6jb3Mmvb3yq9fXy+nhOfezu6D7Z297d0Hb/b2Hu3vPLq/P97Z+XT/wc7u
+        T/GkEGmOSzO/X1QzGvBHDK7J68tiyjNX/NBH/ARN7nLD/mjxFg20vSYefPTRxpcIe8vU/IUAUeZT
+        QGb01CYn4q2bPfqQsNrIrXFoYwXwgTy7u/9g/+AezRK9RhNkPgZn3si7eKE3o2uaTX/+qL+3+fVP
+        ZuuyfZWf53W+pJmmcf7wZ5pYldG4e4l/zZv0Cr+L1wjXdV0SXvO2XTWP7kaajPllJfcyb+9+9Ev+
+        X8O2/JeA8BiFBnU7/v3+L/l/AMfI2QSgBQAA
     headers:
       Cache-Control: [no-cache]
+      Content-Encoding: [gzip]
+      Content-Length: ['654']
       Content-Type: [application/json; charset=utf-8]
-      Date: ['Tue, 09 May 2017 20:27:44 GMT']
+      Date: ['Fri, 17 Feb 2017 22:42:22 GMT']
       Expires: ['-1']
       Pragma: [no-cache]
       Strict-Transport-Security: [max-age=31536000; includeSubDomains]
       Vary: [Accept-Encoding]
-      content-length: ['1512']
-      x-ms-correlation-request-id: [9a17327e-b068-4f40-8beb-9540d459b59b]
+      x-ms-correlation-request-id: [e5f1159e-64e8-44e9-9ed3-c8849804a57d]
       x-ms-original-request-ids: ['', '']
-      x-ms-ratelimit-remaining-subscription-reads: ['14904']
-      x-ms-request-id: [9a17327e-b068-4f40-8beb-9540d459b59b]
-      x-ms-routing-request-id: ['WESTUS:20170509T202745Z:9a17327e-b068-4f40-8beb-9540d459b59b']
-    status: {code: 200, message: OK}
-- request:
-    body: null
-    headers:
-      Accept: [application/json]
-      Accept-Encoding: ['gzip, deflate']
-      Connection: [keep-alive]
-      Content-Length: ['0']
-      Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.5.1 (Windows-10-10.0.15063-SP0) requests/2.13.0 msrest/0.4.7
-          msrest_azure/0.4.7 batchmanagementclient/4.0.0 Azure-SDK-For-Python]
-      accept-language: [en-US]
-      x-ms-client-request-id: [f5d320d4-34f5-11e7-a872-ecb1d755839a]
-    method: POST
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/python_batch_sdk_test/providers/Microsoft.Batch/batchAccounts/pythonsdktest/listKeys?api-version=2017-05-01
-  response:
-    body: {string: '{"accountName":"pythonsdktest","primary":"QLixBlAbSvbOVWILkPxQqYySx4+8GZ70nfuoKQYSjzNL2FxZlZPC6tUY871KXnw==","secondary":"f2ndj9x0Lpn6Ah9FUjqpZoyobNfUHRjOcINqZlArASGyucLBGJ3N9Iaqg=="}'}
-    headers:
-      Cache-Control: [no-cache]
-      Content-Type: [application/json; charset=utf-8]
-      Date: ['Tue, 09 May 2017 20:27:45 GMT']
-      Expires: ['-1']
-      Pragma: [no-cache]
-      Server: [Microsoft-HTTPAPI/2.0]
-      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
-      Transfer-Encoding: [chunked]
-      Vary: [Accept-Encoding]
-      X-Content-Type-Options: [nosniff]
-      content-length: ['235']
-      request-id: [105dbcf5-d7b6-4f24-8d60-2f2835368a10]
-      x-ms-correlation-request-id: [a7eee1cc-b15a-4372-8c36-49536daae6a2]
-      x-ms-ratelimit-remaining-subscription-writes: ['1198']
-      x-ms-request-id: [a7eee1cc-b15a-4372-8c36-49536daae6a2]
-      x-ms-routing-request-id: ['WESTUS:20170509T202745Z:a7eee1cc-b15a-4372-8c36-49536daae6a2']
+      x-ms-ratelimit-remaining-subscription-reads: ['14998']
+      x-ms-request-id: [e5f1159e-64e8-44e9-9ed3-c8849804a57d]
+      x-ms-routing-request-id: ['CENTRALUS:20170217T224223Z:e5f1159e-64e8-44e9-9ed3-c8849804a57d']
     status: {code: 200, message: OK}
 - request:
     body: '{"keyName": "Secondary"}'
@@ -350,18 +248,27 @@ interactions:
       Connection: [keep-alive]
       Content-Length: ['24']
       Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.5.1 (Windows-10-10.0.15063-SP0) requests/2.13.0 msrest/0.4.7
-          msrest_azure/0.4.7 batchmanagementclient/4.0.0 Azure-SDK-For-Python]
+      User-Agent: [python/3.5.1 (Windows-8.1-6.3.9600-SP0) requests/2.13.0 msrest/0.4.5
+          msrest_azure/0.4.7 batchmanagementclient/3.0.0 Azure-SDK-For-Python]
       accept-language: [en-US]
-      x-ms-client-request-id: [f60e7852-34f5-11e7-834a-ecb1d755839a]
+      x-ms-client-request-id: [59380836-f562-11e6-9d27-54ee750f2fc7]
     method: POST
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/python_batch_sdk_test/providers/Microsoft.Batch/batchAccounts/pythonsdktest/regenerateKeys?api-version=2017-05-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/python_batch_sdk_test/providers/Microsoft.Batch/batchAccounts/pythonsdktest/regenerateKeys?api-version=2017-01-01
   response:
-    body: {string: '{"accountName":"pythonsdktest","primary":"QLixBlAbSvbOVWILkPxQqYySx4+8GZ70nfuoKQYSjzNL2FxZlZPC6tUY871KXnw==","secondary":"DchwZrJBwLRD8bm3mFWf1QJOGTnkV6n0BMl0i9MCLmLboclZE+a8884Rw=="}'}
+    body:
+      string: !!binary |
+        H4sIAAAAAAAEAO29B2AcSZYlJi9tynt/SvVK1+B0oQiAYBMk2JBAEOzBiM3mkuwdaUcjKasqgcpl
+        VmVdZhZAzO2dvPfee++999577733ujudTif33/8/XGZkAWz2zkrayZ4hgKrIHz9+fB8/In7xR9l0
+        Wq2X7YtskX/06KPVdTuvls3sbZs37Uejj1Z1scjqa/qm+qmfvF/U+5N8efcn6idv9xc7nx+/+4ls
+        tZg9mB/83gfnP303m2VXP/mT2e/10weX7z75yWX7+V777eynTnaK0+XecvpTP3h1v2qOf+L64e/z
+        7S9/cv70/pfT47OLzz6jTpp8Wi1n0s3qp7568tO/95dvy+uffPfyi+Ynv/N73SumpzuzTyez9our
+        Nz9Zn3158OXV6uqn8s/P3i6+eHd+//e6W3/yPH/2ZLr71b0X51fHz6fX+Xevn/3k8tPL/Oz57/PT
+        P/FggW5+yf8DZxFSOusAAAA=
     headers:
       Cache-Control: [no-cache]
+      Content-Encoding: [gzip]
       Content-Type: [application/json; charset=utf-8]
-      Date: ['Tue, 09 May 2017 20:27:46 GMT']
+      Date: ['Fri, 17 Feb 2017 22:42:24 GMT']
       Expires: ['-1']
       Pragma: [no-cache]
       Server: [Microsoft-HTTPAPI/2.0]
@@ -369,12 +276,11 @@ interactions:
       Transfer-Encoding: [chunked]
       Vary: [Accept-Encoding]
       X-Content-Type-Options: [nosniff]
-      content-length: ['235']
-      request-id: [73440011-ac79-4a90-9c64-8c9e399f47fa]
-      x-ms-correlation-request-id: [cc20417d-8cb3-4a49-ac45-94b594498ea0]
-      x-ms-ratelimit-remaining-subscription-writes: ['1199']
-      x-ms-request-id: [cc20417d-8cb3-4a49-ac45-94b594498ea0]
-      x-ms-routing-request-id: ['WESTUS:20170509T202746Z:cc20417d-8cb3-4a49-ac45-94b594498ea0']
+      request-id: [55fd8024-9a07-48af-9237-227e2d2aa696]
+      x-ms-correlation-request-id: [77a593f8-25e8-4cc5-ba35-5556d93e0197]
+      x-ms-ratelimit-remaining-subscription-writes: ['1198']
+      x-ms-request-id: [77a593f8-25e8-4cc5-ba35-5556d93e0197]
+      x-ms-routing-request-id: ['CENTRALUS:20170217T224224Z:77a593f8-25e8-4cc5-ba35-5556d93e0197']
     status: {code: 200, message: OK}
 - request:
     body: null
@@ -384,64 +290,74 @@ interactions:
       Connection: [keep-alive]
       Content-Length: ['0']
       Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.5.1 (Windows-10-10.0.15063-SP0) requests/2.13.0 msrest/0.4.7
-          msrest_azure/0.4.7 batchmanagementclient/4.0.0 Azure-SDK-For-Python]
+      User-Agent: [python/3.5.1 (Windows-8.1-6.3.9600-SP0) requests/2.13.0 msrest/0.4.5
+          msrest_azure/0.4.7 batchmanagementclient/3.0.0 Azure-SDK-For-Python]
       accept-language: [en-US]
-      x-ms-client-request-id: [f6af9a5a-34f5-11e7-9719-ecb1d755839a]
+      x-ms-client-request-id: [5a3b5bbe-f562-11e6-bfaa-54ee750f2fc7]
     method: POST
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/python_batch_sdk_test/providers/Microsoft.Batch/batchAccounts/pythonsdktest/syncAutoStorageKeys?api-version=2017-05-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/python_batch_sdk_test/providers/Microsoft.Batch/batchAccounts/pythonsdktest/syncAutoStorageKeys?api-version=2017-01-01
   response:
     body: {string: ''}
     headers:
       Cache-Control: [no-cache]
       Content-Length: ['0']
-      Date: ['Tue, 09 May 2017 20:27:48 GMT']
+      Date: ['Fri, 17 Feb 2017 22:42:25 GMT']
       Expires: ['-1']
       Pragma: [no-cache]
       Server: [Microsoft-HTTPAPI/2.0]
       Strict-Transport-Security: [max-age=31536000; includeSubDomains]
       X-Content-Type-Options: [nosniff]
-      request-id: [bb3aade4-8612-4362-942a-6332a3d93b8e]
-      x-ms-correlation-request-id: [5dfe9821-4875-42cf-8935-750b8c5efba0]
-      x-ms-ratelimit-remaining-subscription-writes: ['1199']
-      x-ms-request-id: [5dfe9821-4875-42cf-8935-750b8c5efba0]
-      x-ms-routing-request-id: ['WESTUS:20170509T202748Z:5dfe9821-4875-42cf-8935-750b8c5efba0']
+      request-id: [be01fa66-d62e-4a2c-9278-29744c262b89]
+      x-ms-correlation-request-id: [4cc910d0-3fe7-40e2-b9cc-696820dc75aa]
+      x-ms-ratelimit-remaining-subscription-writes: ['1198']
+      x-ms-request-id: [4cc910d0-3fe7-40e2-b9cc-696820dc75aa]
+      x-ms-routing-request-id: ['CENTRALUS:20170217T224226Z:4cc910d0-3fe7-40e2-b9cc-696820dc75aa']
     status: {code: 204, message: No Content}
 - request:
-    body: '{"tags": {"Name": "tagName", "Value": "tagValue"}}'
+    body: '{"tags": {"Value": "tagValue", "Name": "tagName"}}'
     headers:
       Accept: [application/json]
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
       Content-Length: ['50']
       Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.5.1 (Windows-10-10.0.15063-SP0) requests/2.13.0 msrest/0.4.7
-          msrest_azure/0.4.7 batchmanagementclient/4.0.0 Azure-SDK-For-Python]
+      User-Agent: [python/3.5.1 (Windows-8.1-6.3.9600-SP0) requests/2.13.0 msrest/0.4.5
+          msrest_azure/0.4.7 batchmanagementclient/3.0.0 Azure-SDK-For-Python]
       accept-language: [en-US]
-      x-ms-client-request-id: [f7ac4334-34f5-11e7-bb25-ecb1d755839a]
+      x-ms-client-request-id: [5b370180-f562-11e6-8685-54ee750f2fc7]
     method: PATCH
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/python_batch_sdk_test/providers/Microsoft.Batch/batchAccounts/pythonsdktest?api-version=2017-05-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/python_batch_sdk_test/providers/Microsoft.Batch/batchAccounts/pythonsdktest?api-version=2017-01-01
   response:
-    body: {string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/python_batch_sdk_test/providers/Microsoft.Batch/batchAccounts/pythonsdktest","name":"pythonsdktest","type":"Microsoft.Batch/batchAccounts","location":"brazilsouth","properties":{"accountEndpoint":"pythonsdktest.brazilsouth.batch.azure.com","provisioningState":"Succeeded","dedicatedCoreQuota":20,"lowPriorityCoreQuota":50,"poolQuota":20,"activeJobAndJobScheduleQuota":20,"autoStorage":{"storageAccountId":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/python_batch_sdk_test/providers/Microsoft.Storage/storageAccounts/batchpythonsdktest","lastKeySync":"2017-05-09T20:27:48.876362Z"},"poolAllocationMode":"batchservice"},"tags":{"Name":"tagName","Value":"tagValue"}}'}
+    body:
+      string: !!binary |
+        H4sIAAAAAAAEAO29B2AcSZYlJi9tynt/SvVK1+B0oQiAYBMk2JBAEOzBiM3mkuwdaUcjKasqgcpl
+        VmVdZhZAzO2dvPfee++999577733ujudTif33/8/XGZkAWz2zkrayZ4hgKrIHz9+fB8/In7xR8ts
+        kX/06KPVdTuvls3sbZs37Uejj8pqmrVFtaSvruiTfF1Xq5w+b7OL5qNHv/ijn8zKNd6jv+XX0Ucv
+        MoZEn/Bvv2T00Qov1W2R8yvZdFqtl+3pcraqimVLTYNOx66f8SRrp/Nx9oN1nY+n1YKAE6jLoiGE
+        iuXF6zZr0dPr9XSa57N8Rt9Pqzr/iXXVZh892tuh5lVVen9m07a4zL9TTY6XM/r39XSez9al/0K2
+        bqvXbVVnFwT5F3/UyK/HgvLZjHq726wnzbQuViBLc/fTnXuffnovf7j9YGdnur3/6Szffjjb393O
+        dw52zs93Z/uf7uZ367yp1vU0/7yu1qvmroz39+fR/f407N8f477LQ5vldXP3i2JaV0113o4Vlbsh
+        HgYCvcow8DqNvcya9vfKr19fL6eE597O7oPtnb3t3Qdv9vYe7e892tsff7q7v7+3//CneFKINMel
+        md8vqhkN+CMG1+T1ZTHlmSt+6CN+giZ3uWF/tHiLBtpeEw8++mjjSx/9kv8HQzE3atQCAAA=
     headers:
       Cache-Control: [no-cache]
+      Content-Encoding: [gzip]
       Content-Type: [application/json; charset=utf-8]
-      Date: ['Tue, 09 May 2017 20:27:52 GMT']
-      ETag: ['"0x8D49719DD6D468B"']
+      Date: ['Fri, 17 Feb 2017 22:42:29 GMT']
+      ETag: ['0x8D457864018C102']
       Expires: ['-1']
-      Last-Modified: ['Tue, 09 May 2017 20:27:51 GMT']
+      Last-Modified: ['Fri, 17 Feb 2017 22:42:27 GMT']
       Pragma: [no-cache]
       Server: [Microsoft-HTTPAPI/2.0]
       Strict-Transport-Security: [max-age=31536000; includeSubDomains]
       Transfer-Encoding: [chunked]
       Vary: [Accept-Encoding]
       X-Content-Type-Options: [nosniff]
-      content-length: ['761']
-      request-id: [9c92ed85-3dd0-4c1a-8bca-f0d95efbf9b2]
-      x-ms-correlation-request-id: [53440d1b-6bbe-431c-a131-ec1475d2bb55]
+      request-id: [536550d0-85e3-4b48-b209-c059e9922952]
+      x-ms-correlation-request-id: [88b2c703-2dba-4905-9a9a-53d70cc5aa6a]
       x-ms-ratelimit-remaining-subscription-writes: ['1199']
-      x-ms-request-id: [53440d1b-6bbe-431c-a131-ec1475d2bb55]
-      x-ms-routing-request-id: ['WESTUS:20170509T202752Z:53440d1b-6bbe-431c-a131-ec1475d2bb55']
+      x-ms-request-id: [88b2c703-2dba-4905-9a9a-53d70cc5aa6a]
+      x-ms-routing-request-id: ['CENTRALUS:20170217T224229Z:88b2c703-2dba-4905-9a9a-53d70cc5aa6a']
     status: {code: 200, message: OK}
 - request:
     body: null
@@ -451,30 +367,30 @@ interactions:
       Connection: [keep-alive]
       Content-Length: ['0']
       Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.5.1 (Windows-10-10.0.15063-SP0) requests/2.13.0 msrest/0.4.7
-          msrest_azure/0.4.7 batchmanagementclient/4.0.0 Azure-SDK-For-Python]
+      User-Agent: [python/3.5.1 (Windows-8.1-6.3.9600-SP0) requests/2.13.0 msrest/0.4.5
+          msrest_azure/0.4.7 batchmanagementclient/3.0.0 Azure-SDK-For-Python]
       accept-language: [en-US]
-      x-ms-client-request-id: [fa02efe8-34f5-11e7-a754-ecb1d755839a]
+      x-ms-client-request-id: [5d36a8be-f562-11e6-afa9-54ee750f2fc7]
     method: DELETE
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/python_batch_sdk_test/providers/Microsoft.Batch/batchAccounts/batchpythonaccounttest?api-version=2017-05-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/python_batch_sdk_test/providers/Microsoft.Batch/batchAccounts/batchpythonaccounttest?api-version=2017-01-01
   response:
     body: {string: ''}
     headers:
       Cache-Control: [no-cache]
       Content-Length: ['0']
-      Date: ['Tue, 09 May 2017 20:27:53 GMT']
+      Date: ['Fri, 17 Feb 2017 22:42:32 GMT']
       Expires: ['-1']
-      Location: ['https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/python_batch_sdk_test/providers/Microsoft.Batch/batchAccounts/batchpythonaccounttest/operationResults/caa9ed06-b646-4c60-9067-db46df603c6c?api-version=2017-05-01']
+      Location: ['https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/python_batch_sdk_test/providers/Microsoft.Batch/batchAccounts/batchpythonaccounttest/operationResults/6863cad8-a6be-47cf-93e4-273a7904dc12?api-version=2017-01-01']
       Pragma: [no-cache]
       Retry-After: ['0']
       Server: [Microsoft-HTTPAPI/2.0]
       Strict-Transport-Security: [max-age=31536000; includeSubDomains]
       X-Content-Type-Options: [nosniff]
-      request-id: [caa9ed06-b646-4c60-9067-db46df603c6c]
-      x-ms-correlation-request-id: [68dbe4a3-f51b-41fb-b3cf-ac560c47d615]
-      x-ms-ratelimit-remaining-subscription-writes: ['1199']
-      x-ms-request-id: [68dbe4a3-f51b-41fb-b3cf-ac560c47d615]
-      x-ms-routing-request-id: ['WESTUS:20170509T202753Z:68dbe4a3-f51b-41fb-b3cf-ac560c47d615']
+      request-id: [6863cad8-a6be-47cf-93e4-273a7904dc12]
+      x-ms-correlation-request-id: [e88f9e42-aebb-4e06-8645-b09396032d2f]
+      x-ms-ratelimit-remaining-subscription-writes: ['1195']
+      x-ms-request-id: [e88f9e42-aebb-4e06-8645-b09396032d2f]
+      x-ms-routing-request-id: ['WESTUS2:20170217T224232Z:e88f9e42-aebb-4e06-8645-b09396032d2f']
     status: {code: 202, message: Accepted}
 - request:
     body: null
@@ -483,27 +399,29 @@ interactions:
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
       Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.5.1 (Windows-10-10.0.15063-SP0) requests/2.13.0 msrest/0.4.7
-          msrest_azure/0.4.7 batchmanagementclient/4.0.0 Azure-SDK-For-Python]
+      User-Agent: [python/3.5.1 (Windows-8.1-6.3.9600-SP0) requests/2.13.0 msrest/0.4.5
+          msrest_azure/0.4.7 batchmanagementclient/3.0.0 Azure-SDK-For-Python]
       accept-language: [en-US]
-      x-ms-client-request-id: [fa02efe8-34f5-11e7-a754-ecb1d755839a]
+      x-ms-client-request-id: [5d36a8be-f562-11e6-afa9-54ee750f2fc7]
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/python_batch_sdk_test/providers/Microsoft.Batch/batchAccounts/batchpythonaccounttest/operationResults/caa9ed06-b646-4c60-9067-db46df603c6c?api-version=2017-05-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/python_batch_sdk_test/providers/Microsoft.Batch/batchAccounts/batchpythonaccounttest/operationResults/6863cad8-a6be-47cf-93e4-273a7904dc12?api-version=2017-01-01
   response:
     body: {string: ''}
     headers:
       Cache-Control: [no-cache]
       Content-Length: ['0']
-      Date: ['Tue, 09 May 2017 20:28:09 GMT']
+      Date: ['Fri, 17 Feb 2017 22:42:47 GMT']
+      ETag: ['0x8D457864B6626B9']
       Expires: ['-1']
+      Last-Modified: ['Fri, 17 Feb 2017 22:42:46 GMT']
       Pragma: [no-cache]
       Server: [Microsoft-HTTPAPI/2.0]
       Strict-Transport-Security: [max-age=31536000; includeSubDomains]
       X-Content-Type-Options: [nosniff]
-      request-id: [41a80b83-a400-4398-9964-a7d9d69ce2f3]
-      x-ms-correlation-request-id: [a0843e3a-8924-413e-997e-f520d0266db8]
-      x-ms-ratelimit-remaining-subscription-reads: ['14986']
-      x-ms-request-id: [a0843e3a-8924-413e-997e-f520d0266db8]
-      x-ms-routing-request-id: ['WESTUS:20170509T202809Z:a0843e3a-8924-413e-997e-f520d0266db8']
+      request-id: [51d3e80c-a1c3-47a0-ae0f-bad4e48eb2a9]
+      x-ms-correlation-request-id: [531e1620-8359-4c04-a996-a2890ef71090]
+      x-ms-ratelimit-remaining-subscription-reads: ['14968']
+      x-ms-request-id: [531e1620-8359-4c04-a996-a2890ef71090]
+      x-ms-routing-request-id: ['WESTUS2:20170217T224248Z:531e1620-8359-4c04-a996-a2890ef71090']
     status: {code: 200, message: OK}
 version: 1

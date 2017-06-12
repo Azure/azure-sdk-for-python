@@ -34,9 +34,9 @@ class MeterDetails(Model):
     :vartype meter_location: str
     :ivar total_included_quantity: The total included quantity associated with
      the offer.
-    :vartype total_included_quantity: decimal.Decimal
+    :vartype total_included_quantity: Decimal
     :ivar pretax_standard_rate: The pretax listing price.
-    :vartype pretax_standard_rate: decimal.Decimal
+    :vartype pretax_standard_rate: Decimal
     """
 
     _validation = {
@@ -55,8 +55,8 @@ class MeterDetails(Model):
         'meter_sub_category': {'key': 'meterSubCategory', 'type': 'str'},
         'unit': {'key': 'unit', 'type': 'str'},
         'meter_location': {'key': 'meterLocation', 'type': 'str'},
-        'total_included_quantity': {'key': 'totalIncludedQuantity', 'type': 'decimal'},
-        'pretax_standard_rate': {'key': 'pretaxStandardRate', 'type': 'decimal'},
+        'total_included_quantity': {'key': 'totalIncludedQuantity', 'type': 'Decimal'},
+        'pretax_standard_rate': {'key': 'pretaxStandardRate', 'type': 'Decimal'},
     }
 
     def __init__(self):

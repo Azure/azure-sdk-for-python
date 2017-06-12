@@ -23,7 +23,7 @@ class LocationOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An objec model deserializer.
-    :ivar api_version: The API version to be used with the HTTP request. Constant value: "2017-05-01".
+    :ivar api_version: The API version to be used with the HTTP request. Constant value: "2017-01-01".
     """
 
     def __init__(self, client, config, serializer, deserializer):
@@ -31,7 +31,7 @@ class LocationOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2017-05-01"
+        self.api_version = "2017-01-01"
 
         self.config = config
 
@@ -40,8 +40,7 @@ class LocationOperations(object):
         """Gets the Batch service quotas for the specified subscription at the
         given location.
 
-        :param location_name: The region for which to retrieve Batch service
-         quotas.
+        :param location_name: The desired region for the quotas.
         :type location_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the

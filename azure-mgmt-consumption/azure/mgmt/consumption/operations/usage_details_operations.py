@@ -41,7 +41,7 @@ class UsageDetailsOperations(object):
         January 1, 2017 or later.
 
         :param scope: The scope of the usage details. The scope can be
-         '/subscriptions/{subscriptionId}' for a subscription, or
+         '/subscriptions/{subscriptionId}/' for a subscription, or
          '/subscriptions/{subscriptionId}/providers/Microsoft.Billing/invoices/{invoiceName}'
          for an invoice or
          '/subscriptions/{subscriptionId}/providers/Microsoft.Billing/billingPeriods/{billingPeriodName}'
@@ -79,7 +79,7 @@ class UsageDetailsOperations(object):
                 # Construct URL
                 url = '/{scope}/providers/Microsoft.Consumption/usageDetails'
                 path_format_arguments = {
-                    'scope': self._serialize.url("scope", scope, 'str', skip_quote=True)
+                    'scope': self._serialize.url("scope", scope, 'str')
                 }
                 url = self._client.format_url(url, **path_format_arguments)
 
@@ -92,7 +92,7 @@ class UsageDetailsOperations(object):
                 if skiptoken is not None:
                     query_parameters['$skiptoken'] = self._serialize.query("skiptoken", skiptoken, 'str')
                 if top is not None:
-                    query_parameters['$top'] = self._serialize.query("top", top, 'int', maximum=1000, minimum=1)
+                    query_parameters['$top'] = self._serialize.query("top", top, 'int', maximum=100, minimum=1)
                 query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
             else:

@@ -9,44 +9,26 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .resource import Resource
+from msrest.serialization import Model
 
 
-class LabVirtualMachine(Resource):
+class LabVirtualMachine(Model):
     """A virtual machine.
 
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
-
-    :ivar id: The identifier of the resource.
-    :vartype id: str
-    :ivar name: The name of the resource.
-    :vartype name: str
-    :ivar type: The type of the resource.
-    :vartype type: str
-    :param location: The location of the resource.
-    :type location: str
-    :param tags: The tags of the resource.
-    :type tags: dict
     :param notes: The notes of the virtual machine.
     :type notes: str
     :param owner_object_id: The object identifier of the owner of the virtual
      machine.
     :type owner_object_id: str
-    :param owner_user_principal_name: The user principal name of the virtual
-     machine owner.
-    :type owner_user_principal_name: str
     :param created_by_user_id: The object identifier of the creator of the
      virtual machine.
     :type created_by_user_id: str
     :param created_by_user: The email address of creator of the virtual
      machine.
     :type created_by_user: str
-    :param created_date: The creation date of the virtual machine.
-    :type created_date: datetime
-    :ivar compute_id: The resource identifier (Microsoft.Compute) of the
+    :param compute_id: The resource identifier (Microsoft.Compute) of the
      virtual machine.
-    :vartype compute_id: str
+    :type compute_id: str
     :param custom_image_id: The custom image identifier of the virtual
      machine.
     :type custom_image_id: str
@@ -60,8 +42,8 @@ class LabVirtualMachine(Resource):
     :type password: str
     :param ssh_key: The SSH key of the virtual machine administrator.
     :type ssh_key: str
-    :param is_authentication_with_ssh_key: Indicates whether this virtual
-     machine uses an SSH key for authentication.
+    :param is_authentication_with_ssh_key: A value indicating whether this
+     virtual machine uses an SSH key for authentication.
     :type is_authentication_with_ssh_key: bool
     :param fqdn: The fully-qualified domain name of the virtual machine.
     :type fqdn: str
@@ -85,59 +67,28 @@ class LabVirtualMachine(Resource):
      reference of the virtual machine.
     :type gallery_image_reference: :class:`GalleryImageReference
      <azure.mgmt.devtestlabs.models.GalleryImageReference>`
-    :param compute_vm: The compute virtual machine properties.
-    :type compute_vm: :class:`ComputeVmProperties
-     <azure.mgmt.devtestlabs.models.ComputeVmProperties>`
-    :param network_interface: The network interface properties.
-    :type network_interface: :class:`NetworkInterfaceProperties
-     <azure.mgmt.devtestlabs.models.NetworkInterfaceProperties>`
-    :param applicable_schedule: The applicable schedule for the virtual
-     machine.
-    :type applicable_schedule: :class:`ApplicableSchedule
-     <azure.mgmt.devtestlabs.models.ApplicableSchedule>`
-    :param expiration_date: The expiration date for VM.
-    :type expiration_date: datetime
-    :param allow_claim: Indicates whether another user can take ownership of
-     the virtual machine
-    :type allow_claim: bool
-    :param storage_type: Storage type to use for virtual machine (i.e.
-     Standard, Premium).
-    :type storage_type: str
-    :param virtual_machine_creation_source: Tells source of creation of lab
-     virtual machine. Output property only. Possible values include:
-     'FromCustomImage', 'FromGalleryImage'
-    :type virtual_machine_creation_source: str or
-     :class:`VirtualMachineCreationSource
-     <azure.mgmt.devtestlabs.models.VirtualMachineCreationSource>`
-    :param environment_id: The resource ID of the environment that contains
-     this virtual machine, if any.
-    :type environment_id: str
     :param provisioning_state: The provisioning status of the resource.
     :type provisioning_state: str
     :param unique_identifier: The unique immutable identifier of a resource
      (Guid).
     :type unique_identifier: str
-    """
-
-    _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'compute_id': {'readonly': True},
-    }
+    :param id: The identifier of the resource.
+    :type id: str
+    :param name: The name of the resource.
+    :type name: str
+    :param type: The type of the resource.
+    :type type: str
+    :param location: The location of the resource.
+    :type location: str
+    :param tags: The tags of the resource.
+    :type tags: dict
+    """ 
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
         'notes': {'key': 'properties.notes', 'type': 'str'},
         'owner_object_id': {'key': 'properties.ownerObjectId', 'type': 'str'},
-        'owner_user_principal_name': {'key': 'properties.ownerUserPrincipalName', 'type': 'str'},
         'created_by_user_id': {'key': 'properties.createdByUserId', 'type': 'str'},
         'created_by_user': {'key': 'properties.createdByUser', 'type': 'str'},
-        'created_date': {'key': 'properties.createdDate', 'type': 'iso-8601'},
         'compute_id': {'key': 'properties.computeId', 'type': 'str'},
         'custom_image_id': {'key': 'properties.customImageId', 'type': 'str'},
         'os_type': {'key': 'properties.osType', 'type': 'str'},
@@ -153,27 +104,21 @@ class LabVirtualMachine(Resource):
         'artifacts': {'key': 'properties.artifacts', 'type': '[ArtifactInstallProperties]'},
         'artifact_deployment_status': {'key': 'properties.artifactDeploymentStatus', 'type': 'ArtifactDeploymentStatusProperties'},
         'gallery_image_reference': {'key': 'properties.galleryImageReference', 'type': 'GalleryImageReference'},
-        'compute_vm': {'key': 'properties.computeVm', 'type': 'ComputeVmProperties'},
-        'network_interface': {'key': 'properties.networkInterface', 'type': 'NetworkInterfaceProperties'},
-        'applicable_schedule': {'key': 'properties.applicableSchedule', 'type': 'ApplicableSchedule'},
-        'expiration_date': {'key': 'properties.expirationDate', 'type': 'iso-8601'},
-        'allow_claim': {'key': 'properties.allowClaim', 'type': 'bool'},
-        'storage_type': {'key': 'properties.storageType', 'type': 'str'},
-        'virtual_machine_creation_source': {'key': 'properties.virtualMachineCreationSource', 'type': 'str'},
-        'environment_id': {'key': 'properties.environmentId', 'type': 'str'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'unique_identifier': {'key': 'properties.uniqueIdentifier', 'type': 'str'},
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'location': {'key': 'location', 'type': 'str'},
+        'tags': {'key': 'tags', 'type': '{str}'},
     }
 
-    def __init__(self, location=None, tags=None, notes=None, owner_object_id=None, owner_user_principal_name=None, created_by_user_id=None, created_by_user=None, created_date=None, custom_image_id=None, os_type=None, size=None, user_name=None, password=None, ssh_key=None, is_authentication_with_ssh_key=None, fqdn=None, lab_subnet_name=None, lab_virtual_network_id=None, disallow_public_ip_address=None, artifacts=None, artifact_deployment_status=None, gallery_image_reference=None, compute_vm=None, network_interface=None, applicable_schedule=None, expiration_date=None, allow_claim=None, storage_type=None, virtual_machine_creation_source=None, environment_id=None, provisioning_state=None, unique_identifier=None):
-        super(LabVirtualMachine, self).__init__(location=location, tags=tags)
+    def __init__(self, notes=None, owner_object_id=None, created_by_user_id=None, created_by_user=None, compute_id=None, custom_image_id=None, os_type=None, size=None, user_name=None, password=None, ssh_key=None, is_authentication_with_ssh_key=None, fqdn=None, lab_subnet_name=None, lab_virtual_network_id=None, disallow_public_ip_address=None, artifacts=None, artifact_deployment_status=None, gallery_image_reference=None, provisioning_state=None, unique_identifier=None, id=None, name=None, type=None, location=None, tags=None):
         self.notes = notes
         self.owner_object_id = owner_object_id
-        self.owner_user_principal_name = owner_user_principal_name
         self.created_by_user_id = created_by_user_id
         self.created_by_user = created_by_user
-        self.created_date = created_date
-        self.compute_id = None
+        self.compute_id = compute_id
         self.custom_image_id = custom_image_id
         self.os_type = os_type
         self.size = size
@@ -188,13 +133,10 @@ class LabVirtualMachine(Resource):
         self.artifacts = artifacts
         self.artifact_deployment_status = artifact_deployment_status
         self.gallery_image_reference = gallery_image_reference
-        self.compute_vm = compute_vm
-        self.network_interface = network_interface
-        self.applicable_schedule = applicable_schedule
-        self.expiration_date = expiration_date
-        self.allow_claim = allow_claim
-        self.storage_type = storage_type
-        self.virtual_machine_creation_source = virtual_machine_creation_source
-        self.environment_id = environment_id
         self.provisioning_state = provisioning_state
         self.unique_identifier = unique_identifier
+        self.id = id
+        self.name = name
+        self.type = type
+        self.location = location
+        self.tags = tags

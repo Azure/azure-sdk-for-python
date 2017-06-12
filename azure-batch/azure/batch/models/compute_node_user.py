@@ -13,7 +13,7 @@ from msrest.serialization import Model
 
 
 class ComputeNodeUser(Model):
-    """A user account for RDP or SSH access on a compute node.
+    """A user account on a compute node.
 
     :param name: The user name of the account.
     :type name: str

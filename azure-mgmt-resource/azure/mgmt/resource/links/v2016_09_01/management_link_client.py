@@ -58,7 +58,7 @@ class ManagementLinkClient(object):
     :vartype config: ManagementLinkClientConfiguration
 
     :ivar resource_links: ResourceLinks operations
-    :vartype resource_links: azure.mgmt.resource.links.v2016_09_01.operations.ResourceLinksOperations
+    :vartype resource_links: .operations.ResourceLinksOperations
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials

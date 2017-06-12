@@ -15,9 +15,9 @@ from msrest.serialization import Model
 class StorageAccountKeys(Model):
     """The access keys for the storage account.
 
-    :param key1: The value of key 1.
+    :param key1: Gets the value of key 1.
     :type key1: str
-    :param key2: The value of key 2.
+    :param key2: Gets the value of key 2.
     :type key2: str
     """
 

@@ -58,7 +58,7 @@ class DocumentDB(object):
     :vartype config: DocumentDBConfiguration
 
     :ivar database_accounts: DatabaseAccounts operations
-    :vartype database_accounts: azure.mgmt.documentdb.operations.DatabaseAccountsOperations
+    :vartype database_accounts: .operations.DatabaseAccountsOperations
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials

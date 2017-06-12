@@ -269,40 +269,6 @@ class PcError(Enum):
     storage_failed = "StorageFailed"
 
 
-class Origin(Enum):
-
-    local = "Local"
-    inbound = "Inbound"
-    outbound = "Outbound"
-
-
-class Severity(Enum):
-
-    error = "Error"
-    warning = "Warning"
-
-
-class IssueType(Enum):
-
-    unknown = "Unknown"
-    agent_stopped = "AgentStopped"
-    guest_firewall = "GuestFirewall"
-    dns_resolution = "DnsResolution"
-    socket_bind = "SocketBind"
-    network_security_rule = "NetworkSecurityRule"
-    user_defined_route = "UserDefinedRoute"
-    port_throttled = "PortThrottled"
-    platform = "Platform"
-
-
-class ConnectionStatus(Enum):
-
-    unknown = "Unknown"
-    connected = "Connected"
-    disconnected = "Disconnected"
-    degraded = "Degraded"
-
-
 class VirtualNetworkPeeringState(Enum):
 
     initiated = "Initiated"
@@ -328,9 +294,6 @@ class VirtualNetworkGatewaySkuName(Enum):
     high_performance = "HighPerformance"
     standard = "Standard"
     ultra_performance = "UltraPerformance"
-    vpn_gw1 = "VpnGw1"
-    vpn_gw2 = "VpnGw2"
-    vpn_gw3 = "VpnGw3"
 
 
 class VirtualNetworkGatewaySkuTier(Enum):
@@ -339,9 +302,6 @@ class VirtualNetworkGatewaySkuTier(Enum):
     high_performance = "HighPerformance"
     standard = "Standard"
     ultra_performance = "UltraPerformance"
-    vpn_gw1 = "VpnGw1"
-    vpn_gw2 = "VpnGw2"
-    vpn_gw3 = "VpnGw3"
 
 
 class BgpPeerState(Enum):

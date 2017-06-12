@@ -9,80 +9,59 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .resource import Resource
+from msrest.serialization import Model
 
 
-class Artifact(Resource):
+class Artifact(Model):
     """An artifact.
 
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
-
-    :ivar id: The identifier of the resource.
-    :vartype id: str
-    :ivar name: The name of the resource.
-    :vartype name: str
-    :ivar type: The type of the resource.
-    :vartype type: str
+    :param title: The title of the artifact.
+    :type title: str
+    :param description: The description of the artifact.
+    :type description: str
+    :param file_path: The file path of the artifact.
+    :type file_path: str
+    :param icon: The icon of the artifact.
+    :type icon: str
+    :param target_os_type: Gets or sets the type of the target os.
+    :type target_os_type: str
+    :param parameters: The parameters of the artifact.
+    :type parameters: object
+    :param id: The identifier of the resource.
+    :type id: str
+    :param name: The name of the resource.
+    :type name: str
+    :param type: The type of the resource.
+    :type type: str
     :param location: The location of the resource.
     :type location: str
     :param tags: The tags of the resource.
     :type tags: dict
-    :ivar title: The artifact's title.
-    :vartype title: str
-    :ivar description: The artifact's description.
-    :vartype description: str
-    :ivar publisher: The artifact's publisher.
-    :vartype publisher: str
-    :ivar file_path: The file path to the artifact.
-    :vartype file_path: str
-    :ivar icon: The URI to the artifact icon.
-    :vartype icon: str
-    :ivar target_os_type: The artifact's target OS.
-    :vartype target_os_type: str
-    :ivar parameters: The artifact's parameters.
-    :vartype parameters: object
-    :ivar created_date: The artifact's creation date.
-    :vartype created_date: datetime
-    """
-
-    _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'title': {'readonly': True},
-        'description': {'readonly': True},
-        'publisher': {'readonly': True},
-        'file_path': {'readonly': True},
-        'icon': {'readonly': True},
-        'target_os_type': {'readonly': True},
-        'parameters': {'readonly': True},
-        'created_date': {'readonly': True},
-    }
+    """ 
 
     _attribute_map = {
+        'title': {'key': 'properties.title', 'type': 'str'},
+        'description': {'key': 'properties.description', 'type': 'str'},
+        'file_path': {'key': 'properties.filePath', 'type': 'str'},
+        'icon': {'key': 'properties.icon', 'type': 'str'},
+        'target_os_type': {'key': 'properties.targetOsType', 'type': 'str'},
+        'parameters': {'key': 'properties.parameters', 'type': 'object'},
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
         'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
-        'title': {'key': 'properties.title', 'type': 'str'},
-        'description': {'key': 'properties.description', 'type': 'str'},
-        'publisher': {'key': 'properties.publisher', 'type': 'str'},
-        'file_path': {'key': 'properties.filePath', 'type': 'str'},
-        'icon': {'key': 'properties.icon', 'type': 'str'},
-        'target_os_type': {'key': 'properties.targetOsType', 'type': 'str'},
-        'parameters': {'key': 'properties.parameters', 'type': 'object'},
-        'created_date': {'key': 'properties.createdDate', 'type': 'iso-8601'},
     }
 
-    def __init__(self, location=None, tags=None):
-        super(Artifact, self).__init__(location=location, tags=tags)
-        self.title = None
-        self.description = None
-        self.publisher = None
-        self.file_path = None
-        self.icon = None
-        self.target_os_type = None
-        self.parameters = None
-        self.created_date = None
+    def __init__(self, title=None, description=None, file_path=None, icon=None, target_os_type=None, parameters=None, id=None, name=None, type=None, location=None, tags=None):
+        self.title = title
+        self.description = description
+        self.file_path = file_path
+        self.icon = icon
+        self.target_os_type = target_os_type
+        self.parameters = parameters
+        self.id = id
+        self.name = name
+        self.type = type
+        self.location = location
+        self.tags = tags
