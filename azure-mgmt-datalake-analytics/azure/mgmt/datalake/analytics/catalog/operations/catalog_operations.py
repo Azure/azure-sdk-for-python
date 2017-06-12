@@ -36,7 +36,7 @@ class CatalogOperations(object):
         self.config = config
 
     def create_secret(
-            self, account_name, database_name, secret_name, password, uri=None, custom_headers=None, raw=False, **operation_config):
+            self, account_name, database_name, secret_name, parameters, custom_headers=None, raw=False, **operation_config):
         """Creates the specified secret for use with external data sources in the
         specified database. This is deprecated and will be removed in the next
         release. Please use CreateCredential instead.
@@ -49,11 +49,11 @@ class CatalogOperations(object):
         :type database_name: str
         :param secret_name: The name of the secret.
         :type secret_name: str
-        :param password: the password for the secret to pass in
-        :type password: str
-        :param uri: the URI identifier for the secret in the format
-         <hostname>:<port>
-        :type uri: str
+        :param parameters: The parameters required to create the secret (name
+         and password)
+        :type parameters:
+         :class:`DataLakeAnalyticsCatalogSecretCreateOrUpdateParameters
+         <azure.mgmt.datalake.analytics.catalog.models.DataLakeAnalyticsCatalogSecretCreateOrUpdateParameters>`
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -64,8 +64,6 @@ class CatalogOperations(object):
          if raw=true
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
-        parameters = models.DataLakeAnalyticsCatalogSecretCreateOrUpdateParameters(password=password, uri=uri)
-
         # Construct URL
         url = '/catalog/usql/databases/{databaseName}/secrets/{secretName}'
         path_format_arguments = {
@@ -108,7 +106,7 @@ class CatalogOperations(object):
             return client_raw_response
 
     def update_secret(
-            self, account_name, database_name, secret_name, password, uri=None, custom_headers=None, raw=False, **operation_config):
+            self, account_name, database_name, secret_name, parameters, custom_headers=None, raw=False, **operation_config):
         """Modifies the specified secret for use with external data sources in the
         specified database. This is deprecated and will be removed in the next
         release. Please use UpdateCredential instead.
@@ -120,11 +118,11 @@ class CatalogOperations(object):
         :type database_name: str
         :param secret_name: The name of the secret.
         :type secret_name: str
-        :param password: the password for the secret to pass in
-        :type password: str
-        :param uri: the URI identifier for the secret in the format
-         <hostname>:<port>
-        :type uri: str
+        :param parameters: The parameters required to modify the secret (name
+         and password)
+        :type parameters:
+         :class:`DataLakeAnalyticsCatalogSecretCreateOrUpdateParameters
+         <azure.mgmt.datalake.analytics.catalog.models.DataLakeAnalyticsCatalogSecretCreateOrUpdateParameters>`
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -135,8 +133,6 @@ class CatalogOperations(object):
          if raw=true
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
-        parameters = models.DataLakeAnalyticsCatalogSecretCreateOrUpdateParameters(password=password, uri=uri)
-
         # Construct URL
         url = '/catalog/usql/databases/{databaseName}/secrets/{secretName}'
         path_format_arguments = {
@@ -571,7 +567,7 @@ class CatalogOperations(object):
         return deserialized
 
     def delete_credential(
-            self, account_name, database_name, credential_name, cascade=False, password=None, custom_headers=None, raw=False, **operation_config):
+            self, account_name, database_name, credential_name, parameters=None, cascade=False, custom_headers=None, raw=False, **operation_config):
         """Deletes the specified credential in the specified database.
 
         :param account_name: The Azure Data Lake Analytics account upon which
@@ -582,15 +578,16 @@ class CatalogOperations(object):
         :type database_name: str
         :param credential_name: The name of the credential to delete
         :type credential_name: str
+        :param parameters: The parameters to delete a credential if the
+         current user is not the account owner.
+        :type parameters:
+         :class:`DataLakeAnalyticsCatalogCredentialDeleteParameters
+         <azure.mgmt.datalake.analytics.catalog.models.DataLakeAnalyticsCatalogCredentialDeleteParameters>`
         :param cascade: Indicates if the delete should be a cascading delete
          (which deletes all resources dependent on the credential as well as
          the credential) or not. If false will fail if there are any resources
          relying on the credential.
         :type cascade: bool
-        :param password: the current password for the credential and user with
-         access to the data source. This is required if the requester is not
-         the account owner.
-        :type password: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -601,10 +598,6 @@ class CatalogOperations(object):
          if raw=true
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
-        parameters = None
-        if password is not None:
-            parameters = models.DataLakeAnalyticsCatalogCredentialDeleteParameters(password=password)
-
         # Construct URL
         url = '/catalog/usql/databases/{databaseName}/credentials/{credentialName}'
         path_format_arguments = {

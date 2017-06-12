@@ -69,9 +69,11 @@ azure-mgmt-storage                    1.0.0
 azure-mgmt-keyvault                   0.31.0
 azure-graphrbac                       0.30.0
 azure-mgmt-authorization              0.30.0
+azure-mgmt-billing                    0.1.0
 azure-mgmt-cdn                        0.30.3
 azure-mgmt-containerregistry          0.2.1
 azure-mgmt-commerce                   0.30.0rc6
+azure-mgmt-consumption                0.1.0
 azure-mgmt-datalake-analytics         0.1.4
 azure-mgmt-datalake-store             0.1.3
 azure-mgmt-documentdb                 0.1.3
@@ -81,9 +83,10 @@ azure-mgmt-media                      0.1.1
 azure-mgmt-monitor                    0.2.1
 azure-mgmt-notificationhubs           0.30.0
 azure-mgmt-powerbiembedded            0.30.0rc6
+azure-mgmt-recoveryservicesbackup     0.1.0
 azure-mgmt-search                     0.1.0
 azure-mgmt-servicebus                 0.1.0
-azure-mgmt-sql                        0.5.1
+azure-mgmt-sql                        0.5.3
 azure-mgmt-trafficmanager             0.30.0
 azure-mgmt-web                        0.32.0
 ===================================== =========

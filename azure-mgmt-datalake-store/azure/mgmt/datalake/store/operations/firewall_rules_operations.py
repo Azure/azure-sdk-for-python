@@ -114,7 +114,7 @@ class FirewallRulesOperations(object):
         return deserialized
 
     def update(
-            self, resource_group_name, account_name, firewall_rule_name, start_ip_address=None, end_ip_address=None, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, account_name, firewall_rule_name, parameters=None, custom_headers=None, raw=False, **operation_config):
         """Updates the specified firewall rule.
 
         :param resource_group_name: The name of the Azure resource group that
@@ -125,14 +125,9 @@ class FirewallRulesOperations(object):
         :type account_name: str
         :param firewall_rule_name: The name of the firewall rule to update.
         :type firewall_rule_name: str
-        :param start_ip_address: the start IP address for the firewall rule.
-         This can be either ipv4 or ipv6. Start and End should be in the same
-         protocol.
-        :type start_ip_address: str
-        :param end_ip_address: the end IP address for the firewall rule. This
-         can be either ipv4 or ipv6. Start and End should be in the same
-         protocol.
-        :type end_ip_address: str
+        :param parameters: Parameters supplied to update the firewall rule.
+        :type parameters: :class:`UpdateFirewallRuleParameters
+         <azure.mgmt.datalake.store.models.UpdateFirewallRuleParameters>`
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -144,10 +139,6 @@ class FirewallRulesOperations(object):
          if raw=true
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
-        parameters = None
-        if start_ip_address is not None or end_ip_address is not None:
-            parameters = models.UpdateFirewallRuleParameters(start_ip_address=start_ip_address, end_ip_address=end_ip_address)
-
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataLakeStore/accounts/{accountName}/firewallRules/{firewallRuleName}'
         path_format_arguments = {

@@ -161,9 +161,7 @@ def create_batch_account(client, settings, live):
         aad_creds = AADTokenCredentials(token={'access_token':'faked_token'})
     url = "https://{}.{}.batch.azure.com/".format(AZURE_BATCH_ACCOUNT, AZURE_LOCATION)
     sk_client = azure.batch.BatchServiceClient(shared_key_creds, base_url=url)
-    sk_client._client._adapter.add_hook("request", validate_shared_key_auth)
     aad_client = azure.batch.BatchServiceClient(aad_creds, base_url=url)
-    aad_client._client._adapter.add_hook("request", validate_token_auth)
     return (sk_client, aad_client)
 
 
@@ -368,12 +366,11 @@ class BatchMgmtTestCase(RecordingTestCase):
         batch_account = azure.mgmt.batch.models.BatchAccountCreateParameters(
                 location='eastus2',
                 pool_allocation_mode=azure.mgmt.batch.models.PoolAllocationMode.user_subscription)
-        creating = self.assertRuns(_e, _m, self.batch_mgmt_client.batch_account.create,
-                                   AZURE_RESOURCE_GROUP,
-                                   'batchpythonaccounttest',
-                                    batch_account)
         try:
-            creating.result()
+            self.batch_mgmt_client.batch_account.create(
+                AZURE_RESOURCE_GROUP,
+                'batchpythonaccounttest',
+                batch_account)
             _e[_m] = "Expected CloudError to be raised."
         except Exception as error:
             # TODO: Figure out why this deserializes to HTTPError rather than CloudError

@@ -24,6 +24,7 @@ class DatabasesOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An objec model deserializer.
+    :ivar blob_auditing_policy_name: The name of the blob auditing policy. Constant value: "default".
     """
 
     def __init__(self, client, config, serializer, deserializer):
@@ -31,6 +32,7 @@ class DatabasesOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
+        self.blob_auditing_policy_name = "default"
 
         self.config = config
 
@@ -1902,7 +1904,7 @@ class DatabasesOperations(object):
         :type resource_group_name: str
         :param server_name: The name of the server.
         :type server_name: str
-        :param database_name: The name of the database for which database blob
+        :param database_name: The name of the database for which the blob
          audit policy is defined.
         :type database_name: str
         :param dict custom_headers: headers that will be added to the request
@@ -1919,12 +1921,13 @@ class DatabasesOperations(object):
         api_version = "2015-05-01-preview"
 
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/databases/{databaseName}/auditingSettings/default'
+        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/databases/{databaseName}/auditingSettings/{blobAuditingPolicyName}'
         path_format_arguments = {
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'serverName': self._serialize.url("server_name", server_name, 'str'),
-            'databaseName': self._serialize.url("database_name", database_name, 'str')
+            'databaseName': self._serialize.url("database_name", database_name, 'str'),
+            'blobAuditingPolicyName': self._serialize.url("self.blob_auditing_policy_name", self.blob_auditing_policy_name, 'str'),
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -1972,8 +1975,8 @@ class DatabasesOperations(object):
         :type resource_group_name: str
         :param server_name: The name of the server.
         :type server_name: str
-        :param database_name: The name of the database for which database blob
-         audit policy will be defined.
+        :param database_name: The name of the database for which the blob
+         auditing policy will be defined.
         :type database_name: str
         :param parameters: The database blob auditing policy.
         :type parameters: :class:`DatabaseBlobAuditingPolicy
@@ -1992,12 +1995,13 @@ class DatabasesOperations(object):
         api_version = "2015-05-01-preview"
 
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/databases/{databaseName}/auditingSettings/default'
+        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/databases/{databaseName}/auditingSettings/{blobAuditingPolicyName}'
         path_format_arguments = {
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'serverName': self._serialize.url("server_name", server_name, 'str'),
-            'databaseName': self._serialize.url("database_name", database_name, 'str')
+            'databaseName': self._serialize.url("database_name", database_name, 'str'),
+            'blobAuditingPolicyName': self._serialize.url("self.blob_auditing_policy_name", self.blob_auditing_policy_name, 'str'),
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 

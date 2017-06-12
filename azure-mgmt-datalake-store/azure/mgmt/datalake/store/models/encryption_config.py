@@ -20,7 +20,7 @@ class EncryptionConfig(Model):
      values include: 'UserManaged', 'ServiceManaged'
     :type type: str or :class:`EncryptionConfigType
      <azure.mgmt.datalake.store.models.EncryptionConfigType>`
-    :param key_vault_meta_info: The Key vault information for connecting to
+    :param key_vault_meta_info: The Key Vault information for connecting to
      user managed encryption keys.
     :type key_vault_meta_info: :class:`KeyVaultMetaInfo
      <azure.mgmt.datalake.store.models.KeyVaultMetaInfo>`

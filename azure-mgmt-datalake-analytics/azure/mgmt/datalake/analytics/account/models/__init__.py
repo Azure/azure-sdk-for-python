@@ -14,15 +14,19 @@ from .storage_container import StorageContainer
 from .sas_token_info import SasTokenInfo
 from .data_lake_store_account_info import DataLakeStoreAccountInfo
 from .firewall_rule import FirewallRule
+from .compute_policy_account_create_parameters import ComputePolicyAccountCreateParameters
+from .compute_policy import ComputePolicy
 from .add_data_lake_store_parameters import AddDataLakeStoreParameters
 from .add_storage_account_parameters import AddStorageAccountParameters
 from .update_storage_account_parameters import UpdateStorageAccountParameters
+from .compute_policy_create_or_update_parameters import ComputePolicyCreateOrUpdateParameters
 from .data_lake_analytics_account_update_parameters import DataLakeAnalyticsAccountUpdateParameters
 from .data_lake_analytics_account import DataLakeAnalyticsAccount
 from .update_firewall_rule_parameters import UpdateFirewallRuleParameters
 from .resource import Resource
 from .optional_sub_resource import OptionalSubResource
 from .sub_resource import SubResource
+from .compute_policy_paged import ComputePolicyPaged
 from .firewall_rule_paged import FirewallRulePaged
 from .storage_container_paged import StorageContainerPaged
 from .sas_token_info_paged import SasTokenInfoPaged
@@ -35,6 +39,7 @@ from .data_lake_analytics_account_management_client_enums import (
     TierType,
     FirewallState,
     FirewallAllowAzureIpsState,
+    AADObjectType,
 )
 
 __all__ = [
@@ -43,15 +48,19 @@ __all__ = [
     'SasTokenInfo',
     'DataLakeStoreAccountInfo',
     'FirewallRule',
+    'ComputePolicyAccountCreateParameters',
+    'ComputePolicy',
     'AddDataLakeStoreParameters',
     'AddStorageAccountParameters',
     'UpdateStorageAccountParameters',
+    'ComputePolicyCreateOrUpdateParameters',
     'DataLakeAnalyticsAccountUpdateParameters',
     'DataLakeAnalyticsAccount',
     'UpdateFirewallRuleParameters',
     'Resource',
     'OptionalSubResource',
     'SubResource',
+    'ComputePolicyPaged',
     'FirewallRulePaged',
     'StorageContainerPaged',
     'SasTokenInfoPaged',
@@ -63,4 +72,5 @@ __all__ = [
     'TierType',
     'FirewallState',
     'FirewallAllowAzureIpsState',
+    'AADObjectType',
 ]

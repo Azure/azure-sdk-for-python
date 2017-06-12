@@ -28,7 +28,7 @@ class DataLakeStoreAccount(Resource):
     :type location: str
     :param tags: Resource tags
     :type tags: dict
-    :param identity: The Key vault encryption identity, if any.
+    :param identity: The Key Vault encryption identity, if any.
     :type identity: :class:`EncryptionIdentity
      <azure.mgmt.datalake.store.models.EncryptionIdentity>`
     :ivar provisioning_state: the status of the Data Lake Store account while
@@ -53,7 +53,7 @@ class DataLakeStoreAccount(Resource):
     :vartype encryption_provisioning_state: str or
      :class:`EncryptionProvisioningState
      <azure.mgmt.datalake.store.models.EncryptionProvisioningState>`
-    :param encryption_config: The Key vault encryption configuration.
+    :param encryption_config: The Key Vault encryption configuration.
     :type encryption_config: :class:`EncryptionConfig
      <azure.mgmt.datalake.store.models.EncryptionConfig>`
     :param firewall_state: The current state of the IP address firewall for
