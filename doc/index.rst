@@ -126,7 +126,7 @@ Azure Resource Management
 
 All documentation of management libraries for Azure are on this website. This includes:
 
-* :doc:`Authorization <sample_azure-mgmt-authorization>` : Permissions, roles and more
+* :doc:`Authorization <resourcemanagementauthorization>` : Permissions, roles and more
 * :doc:`Batch<resourcemanagementbatch>` : Manage Batch accounts and applications
 * :doc:`Content Delivery Network<resourcemanagementcdn>` : Profiles, endpoints creation and more
 * :doc:`Cognitive Services<sample_azure-mgmt-cognitiveservices>` : Create CS accounts and more

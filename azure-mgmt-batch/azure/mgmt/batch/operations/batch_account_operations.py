@@ -24,7 +24,7 @@ class BatchAccountOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An objec model deserializer.
-    :ivar api_version: The API version to be used with the HTTP request. Constant value: "2017-05-01".
+    :ivar api_version: The API version to be used with the HTTP request. Constant value: "2017-01-01".
     """
 
     def __init__(self, client, config, serializer, deserializer):
@@ -32,7 +32,7 @@ class BatchAccountOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2017-05-01"
+        self.api_version = "2017-01-01"
 
         self.config = config
 
@@ -43,7 +43,7 @@ class BatchAccountOperations(object):
         with the Update Batch Account API.
 
         :param resource_group_name: The name of the resource group that
-         contains the Batch account.
+         contains the new Batch account.
         :type resource_group_name: str
         :param account_name: A name for the Batch account which must be unique
          within the region. Batch account names must be between 3 and 24
@@ -149,12 +149,11 @@ class BatchAccountOperations(object):
         :param resource_group_name: The name of the resource group that
          contains the Batch account.
         :type resource_group_name: str
-        :param account_name: The name of the Batch account.
+        :param account_name: The name of the account.
         :type account_name: str
-        :param tags: The user-specified tags associated with the account.
+        :param tags: The user specified tags associated with the account.
         :type tags: dict
-        :param auto_storage: The properties related to the auto-storage
-         account.
+        :param auto_storage: The properties related to auto storage account.
         :type auto_storage: :class:`AutoStorageBaseProperties
          <azure.mgmt.batch.models.AutoStorageBaseProperties>`
         :param dict custom_headers: headers that will be added to the request
@@ -221,9 +220,9 @@ class BatchAccountOperations(object):
         """Deletes the specified Batch account.
 
         :param resource_group_name: The name of the resource group that
-         contains the Batch account.
+         contains the Batch account to be deleted.
         :type resource_group_name: str
-        :param account_name: The name of the Batch account.
+        :param account_name: The name of the account to be deleted.
         :type account_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -274,7 +273,7 @@ class BatchAccountOperations(object):
 
         def get_long_running_output(response):
 
-            if response.status_code not in [200, 202, 204]:
+            if response.status_code not in [200, 202]:
                 exp = CloudError(response)
                 exp.request_id = response.headers.get('x-ms-request-id')
                 raise exp
@@ -305,7 +304,7 @@ class BatchAccountOperations(object):
         :param resource_group_name: The name of the resource group that
          contains the Batch account.
         :type resource_group_name: str
-        :param account_name: The name of the Batch account.
+        :param account_name: The name of the account.
         :type account_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -426,11 +425,11 @@ class BatchAccountOperations(object):
 
     def list_by_resource_group(
             self, resource_group_name, custom_headers=None, raw=False, **operation_config):
-        """Gets information about the Batch accounts associated with the specified
-        resource group.
+        """Gets information about the Batch accounts associated within the
+        specified resource group.
 
-        :param resource_group_name: The name of the resource group that
-         contains the Batch account.
+        :param resource_group_name: The name of the resource group whose Batch
+         accounts to list.
         :type resource_group_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -494,7 +493,7 @@ class BatchAccountOperations(object):
 
     def synchronize_auto_storage_keys(
             self, resource_group_name, account_name, custom_headers=None, raw=False, **operation_config):
-        """Synchronizes access keys for the auto-storage account configured for
+        """Synchronizes access keys for the auto storage account configured for
         the specified Batch account.
 
         :param resource_group_name: The name of the resource group that
@@ -555,7 +554,7 @@ class BatchAccountOperations(object):
         :param resource_group_name: The name of the resource group that
          contains the Batch account.
         :type resource_group_name: str
-        :param account_name: The name of the Batch account.
+        :param account_name: The name of the account.
         :type account_name: str
         :param key_name: The type of account key to regenerate. Possible
          values include: 'Primary', 'Secondary'
@@ -634,7 +633,7 @@ class BatchAccountOperations(object):
         :param resource_group_name: The name of the resource group that
          contains the Batch account.
         :type resource_group_name: str
-        :param account_name: The name of the Batch account.
+        :param account_name: The name of the account.
         :type account_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the

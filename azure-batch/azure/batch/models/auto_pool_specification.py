@@ -28,7 +28,7 @@ class AutoPoolSpecification(Model):
      last autopool created for the job schedule, and deletes that pool when the
      job schedule completes. Batch will also delete this pool if the user
      updates the auto pool specification in a way that changes this lifetime.
-     Possible values include: 'jobSchedule', 'job'
+     Possible values include: 'jobSchedule', 'job', 'unmapped'
     :type pool_lifetime_option: str or :class:`PoolLifetimeOption
      <azure.batch.models.PoolLifetimeOption>`
     :param keep_alive: Whether to keep an auto pool alive after its lifetime

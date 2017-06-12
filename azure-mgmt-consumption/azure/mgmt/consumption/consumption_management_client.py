@@ -45,7 +45,7 @@ class ConsumptionManagementClientConfiguration(AzureConfiguration):
 
         super(ConsumptionManagementClientConfiguration, self).__init__(base_url)
 
-        self.add_user_agent('consumptionmanagementclient/{}'.format(VERSION))
+        self.add_user_agent('azure-mgmt-consumption/{}'.format(VERSION))
         self.add_user_agent('Azure-SDK-For-Python')
 
         self.credentials = credentials
@@ -59,9 +59,9 @@ class ConsumptionManagementClient(object):
     :vartype config: ConsumptionManagementClientConfiguration
 
     :ivar usage_details: UsageDetails operations
-    :vartype usage_details: azure.mgmt.consumption.operations.UsageDetailsOperations
+    :vartype usage_details: .operations.UsageDetailsOperations
     :ivar operations: Operations operations
-    :vartype operations: azure.mgmt.consumption.operations.Operations
+    :vartype operations: .operations.Operations
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials

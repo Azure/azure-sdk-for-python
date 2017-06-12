@@ -9,15 +9,15 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .auto_storage_base_properties import AutoStorageBaseProperties
+from msrest.serialization import Model
 
 
-class AutoStorageProperties(AutoStorageBaseProperties):
-    """Contains information about the auto-storage account associated with a Batch
+class AutoStorageProperties(Model):
+    """Contains information about the auto storage account associated with a Batch
     account.
 
     :param storage_account_id: The resource ID of the storage account to be
-     used for auto-storage account.
+     used for auto storage account.
     :type storage_account_id: str
     :param last_key_sync: The UTC time at which storage keys were last
      synchronized with the Batch account.
@@ -35,5 +35,5 @@ class AutoStorageProperties(AutoStorageBaseProperties):
     }
 
     def __init__(self, storage_account_id, last_key_sync):
-        super(AutoStorageProperties, self).__init__(storage_account_id=storage_account_id)
+        self.storage_account_id = storage_account_id
         self.last_key_sync = last_key_sync

@@ -19,13 +19,7 @@ from .cognitive_services_resource_and_sku import CognitiveServicesResourceAndSku
 from .cognitive_services_account_enumerate_skus_result import CognitiveServicesAccountEnumerateSkusResult
 from .error_body import ErrorBody
 from .error import Error, ErrorException
-from .operation_display_info import OperationDisplayInfo
-from .operation_entity import OperationEntity
-from .check_sku_availability_parameter import CheckSkuAvailabilityParameter
-from .check_sku_availability_result import CheckSkuAvailabilityResult
-from .check_sku_availability_result_list import CheckSkuAvailabilityResultList
 from .cognitive_services_account_paged import CognitiveServicesAccountPaged
-from .operation_entity_paged import OperationEntityPaged
 from .cognitive_services_management_client_enums import (
     SkuName,
     SkuTier,
@@ -45,13 +39,7 @@ __all__ = [
     'CognitiveServicesAccountEnumerateSkusResult',
     'ErrorBody',
     'Error', 'ErrorException',
-    'OperationDisplayInfo',
-    'OperationEntity',
-    'CheckSkuAvailabilityParameter',
-    'CheckSkuAvailabilityResult',
-    'CheckSkuAvailabilityResultList',
     'CognitiveServicesAccountPaged',
-    'OperationEntityPaged',
     'SkuName',
     'SkuTier',
     'Kind',

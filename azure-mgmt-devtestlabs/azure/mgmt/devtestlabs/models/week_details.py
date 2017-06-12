@@ -15,12 +15,11 @@ from msrest.serialization import Model
 class WeekDetails(Model):
     """Properties of a weekly schedule.
 
-    :param weekdays: The days of the week for which the schedule is set (e.g.
-     Sunday, Monday, Tuesday, etc.).
+    :param weekdays: The days of the week.
     :type weekdays: list of str
-    :param time: The time of the day the schedule will occur.
+    :param time: The time of the day.
     :type time: str
-    """
+    """ 
 
     _attribute_map = {
         'weekdays': {'key': 'weekdays', 'type': '[str]'},

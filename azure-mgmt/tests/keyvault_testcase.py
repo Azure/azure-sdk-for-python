@@ -11,9 +11,14 @@ import time
 import azure.mgmt.resource
 from azure.mgmt.keyvault import KeyVaultManagementClient
 from azure.mgmt.keyvault.models import \
+<<<<<<< HEAD
+    (VaultCreateOrUpdateParameters, VaultProperties, Sku, AccessPolicyEntry, Permissions)
+from azure.keyvault import KeyVaultClient, KeyVaultAuthentication, HttpBearerChallenge
+=======
     (VaultCreateOrUpdateParameters, VaultProperties, Sku, AccessPolicyEntry, Permissions, KeyPermissions, SecretPermissions, SkuName,
      CertificatePermissions, StoragePermissions)
 from azure.keyvault import KeyVaultClient, KeyVaultAuthentication, KeyVaultAuthBase, HttpBearerChallenge
+>>>>>>> 91a4d87dcf30f501115b9dd2dea7aef7a6017cd3
 
 from azure.common.exceptions import (
     CloudError
@@ -131,7 +136,7 @@ class AzureKeyVaultTestCase(AzureMgmtTestCase):
         self.fake_settings = fake_settings
         if TestMode.is_playback(self.test_mode):
             self.settings = self.fake_settings
-            KeyVaultAuthBase.__call__ = mock_key_vault_auth_base
+            azure.keyvault.key_vault_authentication.KeyVaultAuthBase.__call__ = mock_key_vault_auth_base
         else:
             import tests.mgmt_settings_real as real_settings
             self.settings = real_settings

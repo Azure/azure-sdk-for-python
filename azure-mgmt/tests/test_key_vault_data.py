@@ -21,9 +21,11 @@ try:
 except ImportError:
     from mock import MagicMock
 
-from azure.keyvault import KeyVaultId
+import azure.keyvault.key_vault_id as keyvaultid
 from azure.keyvault import HttpBearerChallenge
-from azure.keyvault import HttpBearerChallengeCache
+from azure.keyvault.http_bearer_challenge_cache import \
+    (_cache as challenge_cache, get_challenge_for_url, set_challenge_for_url, clear,
+     remove_challenge_for_url)
 from azure.keyvault.generated.models import \
     (CertificatePolicy, KeyProperties, SecretProperties, IssuerParameters,
      X509CertificateProperties, IssuerBundle, IssuerCredentials, OrganizationDetails,
@@ -38,127 +40,134 @@ class KeyVaultCustomLayerTest(unittest.TestCase):
     def _get_expected(self, collection, vault, name, version=None):
         return {
             'vault': 'https://{}.vault.azure.net'.format(vault),
-            'collection': collection,
             'name': name,
-            'version': version or KeyVaultId.version_none
+            'version': version,
+            'id': 'https://{}.vault.azure.net/{}/{}{}'.format(
+                vault, collection, name,
+                '' if not version else '/{}'.format(version)),
+            'base_id': 'https://{}.vault.azure.net/{}/{}'.format(vault, collection, name)
         }
 
     def test_create_object_id(self):
         # success scenarios
         expected = self._get_expected('keys', 'myvault', 'mykey')
-        res = KeyVaultId.create_object_id('keys', 'https://myvault.vault.azure.net', ' mykey', None)
+        res = keyvaultid.create_object_id('keys', 'https://myvault.vault.azure.net', ' mykey', None)
         self.assertEqual(res.__dict__, expected)
 
-        res = KeyVaultId.create_object_id('keys', 'https://myvault.vault.azure.net', ' mykey', ' ')
+        res = keyvaultid.create_object_id('keys', 'https://myvault.vault.azure.net', ' mykey', ' ')
         self.assertEqual(res.__dict__, expected)
 
         expected = self._get_expected('keys', 'myvault', 'mykey', 'abc123')
-        res = KeyVaultId.create_object_id(' keys ', 'https://myvault.vault.azure.net', ' mykey ', ' abc123 ')
+        res = keyvaultid.create_object_id(' keys ', 'https://myvault.vault.azure.net', ' mykey ', ' abc123 ')
         self.assertEqual(res.__dict__, expected)
         
         # failure scenarios
         with self.assertRaises(TypeError):
-            KeyVaultId.create_object_id('keys', 'https://myvault.vault.azure.net', ['stuff'], '')
+            keyvaultid.create_object_id('keys', 'https://myvault.vault.azure.net', ['stuff'], '')
         with self.assertRaises(ValueError):
-            KeyVaultId.create_object_id('keys', 'https://myvault.vault.azure.net', ' ', '')
+            keyvaultid.create_object_id('keys', 'https://myvault.vault.azure.net', ' ', '')
         with self.assertRaises(ValueError):
-            KeyVaultId.create_object_id('keys', 'myvault.vault.azure.net', 'mykey', '')
+            keyvaultid.create_object_id('keys', 'myvault.vault.azure.net', 'mykey', '')
 
     def test_parse_object_id(self):
         # success scenarios
         expected = self._get_expected('keys', 'myvault', 'mykey', 'abc123')
-        res = KeyVaultId.parse_object_id('keys', 'https://myvault.vault.azure.net/keys/mykey/abc123')
+        res = keyvaultid.parse_object_id('keys', 'https://myvault.vault.azure.net/keys/mykey/abc123')
         self.assertEqual(res.__dict__, expected)
 
         expected = self._get_expected('keys', 'myvault', 'mykey')
-        res = KeyVaultId.parse_object_id('keys', 'https://myvault.vault.azure.net/keys/mykey')
+        res = keyvaultid.parse_object_id('keys', 'https://myvault.vault.azure.net/keys/mykey')
         self.assertEqual(res.__dict__, expected)
 
         # failure scenarios
         with self.assertRaises(ValueError):
-            KeyVaultId.parse_object_id('secret', 'https://myvault.vault.azure.net/keys/mykey/abc123')
+            keyvaultid.parse_object_id('secret', 'https://myvault.vault.azure.net/keys/mykey/abc123')
         with self.assertRaises(ValueError):
-            KeyVaultId.parse_object_id('keys', 'https://myvault.vault.azure.net/keys/mykey/abc123/extra')
+            keyvaultid.parse_object_id('keys', 'https://myvault.vault.azure.net/keys/mykey/abc123/extra')
         with self.assertRaises(ValueError):
-            KeyVaultId.parse_object_id('keys', 'https://myvault.vault.azure.net')
+            keyvaultid.parse_object_id('keys', 'https://myvault.vault.azure.net')
 
     def test_create_key_id(self):
         expected = self._get_expected('keys', 'myvault', 'mykey')
-        res = KeyVaultId.create_key_id('https://myvault.vault.azure.net', ' mykey', None)
+        res = keyvaultid.create_key_id('https://myvault.vault.azure.net', ' mykey', None)
         self.assertEqual(res.__dict__, expected)
 
         expected = self._get_expected('keys', 'myvault', 'mykey', 'abc123')
-        res = KeyVaultId.create_key_id('https://myvault.vault.azure.net', ' mykey ', ' abc123 ')
+        res = keyvaultid.create_key_id('https://myvault.vault.azure.net', ' mykey ', ' abc123 ')
         self.assertEqual(res.__dict__, expected)
 
     def test_parse_key_id(self):
         expected = self._get_expected('keys', 'myvault', 'mykey', 'abc123')
-        res = KeyVaultId.parse_key_id('https://myvault.vault.azure.net/keys/mykey/abc123')
+        res = keyvaultid.parse_key_id('https://myvault.vault.azure.net/keys/mykey/abc123')
         self.assertEqual(res.__dict__, expected)
 
         expected = self._get_expected('keys', 'myvault', 'mykey')
-        res = KeyVaultId.parse_key_id('https://myvault.vault.azure.net/keys/mykey')
+        res = keyvaultid.parse_key_id('https://myvault.vault.azure.net/keys/mykey')
         self.assertEqual(res.__dict__, expected)
 
     def test_create_secret_id(self):
         expected = self._get_expected('secrets', 'myvault', 'mysecret')
-        res = KeyVaultId.create_secret_id('https://myvault.vault.azure.net', ' mysecret', None)
+        res = keyvaultid.create_secret_id('https://myvault.vault.azure.net', ' mysecret', None)
         self.assertEqual(res.__dict__, expected)
 
         expected = self._get_expected('secrets', 'myvault', 'mysecret', 'abc123')
-        res = KeyVaultId.create_secret_id('https://myvault.vault.azure.net', ' mysecret ', ' abc123 ')
+        res = keyvaultid.create_secret_id('https://myvault.vault.azure.net', ' mysecret ', ' abc123 ')
         self.assertEqual(res.__dict__, expected)
 
     def test_parse_secret_id(self):
         expected = self._get_expected('secrets', 'myvault', 'mysecret', 'abc123')
-        res = KeyVaultId.parse_secret_id('https://myvault.vault.azure.net/secrets/mysecret/abc123')
+        res = keyvaultid.parse_secret_id('https://myvault.vault.azure.net/secrets/mysecret/abc123')
         self.assertEqual(res.__dict__, expected)
 
         expected = self._get_expected('secrets', 'myvault', 'mysecret')
-        res = KeyVaultId.parse_secret_id('https://myvault.vault.azure.net/secrets/mysecret')
+        res = keyvaultid.parse_secret_id('https://myvault.vault.azure.net/secrets/mysecret')
         self.assertEqual(res.__dict__, expected)
 
     def test_create_certificate_id(self):
         expected = self._get_expected('certificates', 'myvault', 'mycert')
-        res = KeyVaultId.create_certificate_id('https://myvault.vault.azure.net', ' mycert', None)
+        res = keyvaultid.create_certificate_id('https://myvault.vault.azure.net', ' mycert', None)
         self.assertEqual(res.__dict__, expected)
 
         expected = self._get_expected('certificates', 'myvault', 'mycert', 'abc123')
-        res = KeyVaultId.create_certificate_id('https://myvault.vault.azure.net', 'mycert', ' abc123')
+        res = keyvaultid.create_certificate_id('https://myvault.vault.azure.net', 'mycert', ' abc123')
         self.assertEqual(res.__dict__, expected)
 
     def test_parse_certificate_id(self):
         expected = self._get_expected('certificates', 'myvault', 'mycert', 'abc123')
-        res = KeyVaultId.parse_certificate_id('https://myvault.vault.azure.net/certificates/mycert/abc123')
+        res = keyvaultid.parse_certificate_id('https://myvault.vault.azure.net/certificates/mycert/abc123')
         self.assertEqual(res.__dict__, expected)
 
         expected = self._get_expected('certificates', 'myvault', 'mycert')
-        res = KeyVaultId.parse_certificate_id('https://myvault.vault.azure.net/certificates/mycert')
+        res = keyvaultid.parse_certificate_id('https://myvault.vault.azure.net/certificates/mycert')
         self.assertEqual(res.__dict__, expected)
 
     def test_create_certificate_operation_id(self):
         expected = self._get_expected('certificates', 'myvault', 'mycert', 'pending')
-        res = KeyVaultId.create_certificate_operation_id('https://myvault.vault.azure.net', ' mycert')
+        expected['base_id'] = expected['id']
+        expected['version'] = None
+        res = keyvaultid.create_certificate_operation_id('https://myvault.vault.azure.net', ' mycert')
         self.assertEqual(res.__dict__, expected)
 
     def test_parse_certificate_operation_id(self):
         expected = self._get_expected('certificates', 'myvault', 'mycert', 'pending')
-        res = KeyVaultId.parse_certificate_operation_id('https://myvault.vault.azure.net/certificates/mycert/pending')
+        expected['base_id'] = expected['id']
+        expected['version'] = None
+        res = keyvaultid.parse_certificate_operation_id('https://myvault.vault.azure.net/certificates/mycert/pending')
         self.assertEqual(res.__dict__, expected)
 
     def test_create_certificate_issuer_id(self):
         expected = self._get_expected('certificates/issuers', 'myvault', 'myissuer')
-        res = KeyVaultId.create_certificate_issuer_id('https://myvault.vault.azure.net', 'myissuer')
+        res = keyvaultid.create_certificate_issuer_id('https://myvault.vault.azure.net', 'myissuer')
         self.assertEqual(res.__dict__, expected)
 
     def test_parse_certificate_issuer_id(self):
         expected = self._get_expected('certificates/issuers', 'myvault', 'myissuer')
-        res = KeyVaultId.parse_certificate_issuer_id('https://myvault.vault.azure.net/certificates/issuers/myissuer')
+        res = keyvaultid.parse_certificate_issuer_id('https://myvault.vault.azure.net/certificates/issuers/myissuer')
         self.assertEqual(res.__dict__, expected)
 
     def test_bearer_challenge_cache(self):
         test_challenges = []
-        HttpBearerChallengeCache.clear()
+        clear()
         for x in range(0, 3):
             challenge = MagicMock()
             challenge.source_authority = 'mytest{}.url.com'.format(x)
@@ -167,24 +176,24 @@ class KeyVaultCustomLayerTest(unittest.TestCase):
                 'url': url,
                 'challenge': challenge
             })
-            HttpBearerChallengeCache.set_challenge_for_url(url, challenge)
+            set_challenge_for_url(url, challenge)
 
-        self.assertEqual(len(HttpBearerChallengeCache._cache), 3)
+        self.assertEqual(len(challenge_cache), 3)
 
-        cached_challenge = HttpBearerChallengeCache.get_challenge_for_url(test_challenges[1]['url'])
+        cached_challenge = get_challenge_for_url(test_challenges[1]['url'])
         self.assertTrue(cached_challenge.source_authority in test_challenges[1]['url'])
 
         # test remove
-        HttpBearerChallengeCache.remove_challenge_for_url(test_challenges[0]['url'])
-        self.assertIsNone(HttpBearerChallengeCache.get_challenge_for_url(test_challenges[0]['url']))
+        remove_challenge_for_url(test_challenges[0]['url'])
+        self.assertIsNone(get_challenge_for_url(test_challenges[0]['url']))
 
         # test clear
-        self.assertEqual(len(HttpBearerChallengeCache._cache), 2)
-        HttpBearerChallengeCache.clear()
-        self.assertEqual(len(HttpBearerChallengeCache._cache), 0)
+        self.assertEqual(len(challenge_cache), 2)
+        clear()
+        self.assertEqual(len(challenge_cache), 0)
 
         with self.assertRaises(ValueError):
-            HttpBearerChallengeCache.set_challenge_for_url('https://diffurl.com', test_challenges[0]['challenge'])
+            set_challenge_for_url('https://diffurl.com', test_challenges[0]['challenge'])
 
     def test_bearer_challenge(self):
         mock_bearer_challenge = '  Bearer authorization="https://login.windows.net/mock-id", resource="https://vault.azure.net"'
@@ -260,6 +269,26 @@ class KeyVaultKeyTest(AzureKeyVaultTestCase):
 
     def _validate_key_list(self, keys, expected):
         for key in keys:
+<<<<<<< HEAD
+            keyvaultid.parse_key_id(key.kid)
+            attributes = expected[key.kid]
+            self.assertEqual(attributes, key.attributes)
+            del expected[key.kid]
+
+    def cleanup_created_keys(self):
+        if not self.is_playback():
+            for key in self.client.get_keys(KEY_VAULT_URI):
+                id = keyvaultid.parse_key_id(key.kid)
+                self.client.delete_key(id.vault, id.name)
+
+    @record
+    def test_key_crud_operations(self):
+
+        # create key
+        created_bundle = self.client.create_key(KEY_VAULT_URI, self.key_name, 'RSA')
+        self._validate_rsa_key_bundle(created_bundle, KEY_VAULT_URI, self.key_name, 'RSA')
+        key_id = keyvaultid.parse_key_id(created_bundle.key.kid)
+=======
             if key.kid in expected.keys():
                 attributes = expected[key.kid]
                 self.assertEqual(attributes, key.attributes)
@@ -275,21 +304,26 @@ class KeyVaultKeyTest(AzureKeyVaultTestCase):
         created_bundle = self.client.create_key(vault_uri, key_name, 'RSA')
         self._validate_rsa_key_bundle(created_bundle, vault_uri, key_name, 'RSA')
         key_id = KeyVaultId.parse_key_id(created_bundle.key.kid)
+>>>>>>> 91a4d87dcf30f501115b9dd2dea7aef7a6017cd3
 
         # get key without version
-        self.assertEqual(created_bundle, self.client.get_key(key_id.vault, key_id.name, ''))
+        self.assertEqual(created_bundle, self.client.get_key(key_id.base_id))
 
         # get key with version
-        self.assertEqual(created_bundle, self.client.get_key(key_id.vault, key_id.name, key_id.version))
+        self.assertEqual(created_bundle, self.client.get_key(key_id.id))
 
         def _update_key(key_uri):
             updating_bundle = copy.deepcopy(created_bundle)
             updating_bundle.attributes.expires = date_parse.parse('2050-02-02T08:00:00.000Z')
             updating_bundle.key.key_ops = ['encrypt', 'decrypt']
+<<<<<<< HEAD
+            updating_bundle.tags = { 'foo': 'updated tag' }
+=======
             updating_bundle.tags = {'foo': 'updated tag'}
             kid = KeyVaultId.parse_key_id(key_uri)
+>>>>>>> 91a4d87dcf30f501115b9dd2dea7aef7a6017cd3
             key_bundle = self.client.update_key(
-                kid.vault, kid.name, kid.version, updating_bundle.key.key_ops, updating_bundle.attributes, updating_bundle.tags)
+                key_uri, updating_bundle.key.key_ops, updating_bundle.attributes, updating_bundle.tags)
             self.assertEqual(updating_bundle.tags, key_bundle.tags)
             self.assertEqual(updating_bundle.key.kid, key_bundle.key.kid)
             return key_bundle
@@ -305,7 +339,7 @@ class KeyVaultKeyTest(AzureKeyVaultTestCase):
 
         # get key returns not found
         try:
-            self.client.get_key(key_id.vault, key_id.name, '')
+            self.client.get_key(key_id.base_id)
             self.fail('Get should fail')
         except Exception as ex:
             if not hasattr(ex, 'message') or 'Not Found' not in ex.message:
@@ -325,8 +359,13 @@ class KeyVaultKeyTest(AzureKeyVaultTestCase):
             error_count = 0
             while not key_bundle:
                 try:
+<<<<<<< HEAD
+                    key_bundle = self.client.create_key(KEY_VAULT_URI, key_name, 'RSA')
+                    kid = keyvaultid.parse_key_id(key_bundle.key.kid).base_id
+=======
                     key_bundle = self.client.create_key(vault_uri, key_name, 'RSA')
                     kid = KeyVaultId.parse_key_id(key_bundle.key.kid).base_id.strip('/')
+>>>>>>> 91a4d87dcf30f501115b9dd2dea7aef7a6017cd3
                     expected[kid] = key_bundle.attributes
                 except Exception as ex:
                     if hasattr(ex, 'message') and 'Throttled' in ex.message:
@@ -355,8 +394,13 @@ class KeyVaultKeyTest(AzureKeyVaultTestCase):
             error_count = 0
             while not key_bundle:
                 try:
+<<<<<<< HEAD
+                    key_bundle = self.client.create_key(KEY_VAULT_URI, key_name, 'RSA')
+                    kid = keyvaultid.parse_key_id(key_bundle.key.kid).id
+=======
                     key_bundle = self.client.create_key(vault_uri, key_name, 'RSA')
                     kid = KeyVaultId.parse_key_id(key_bundle.key.kid).id.strip('/')
+>>>>>>> 91a4d87dcf30f501115b9dd2dea7aef7a6017cd3
                     expected[kid] = key_bundle.attributes
                 except Exception as ex:
                     if hasattr(ex, 'message') and 'Throttled' in ex.message:
@@ -376,8 +420,13 @@ class KeyVaultKeyTest(AzureKeyVaultTestCase):
         key_name = self.get_resource_name('keybak')
 
         # create key
+<<<<<<< HEAD
+        created_bundle = self.client.create_key(KEY_VAULT_URI, key_name, 'RSA')
+        key_id = keyvaultid.parse_key_id(created_bundle.key.kid)
+=======
         created_bundle = self.client.create_key(vault_uri, key_name, 'RSA')
         key_id = KeyVaultId.parse_key_id(created_bundle.key.kid)
+>>>>>>> 91a4d87dcf30f501115b9dd2dea7aef7a6017cd3
 
         # backup key
         key_backup = self.client.backup_key(key_id.vault, key_id.name).value
@@ -442,7 +491,11 @@ class KeyVaultKeyTest(AzureKeyVaultTestCase):
         vault_uri = vault.properties.vault_uri
         key_name = self.get_resource_name('keyimp')
 
+<<<<<<< HEAD
+        key_id = keyvaultid.create_key_id(KEY_VAULT_URI, 'importedKey')
+=======
         key_id = KeyVaultId.create_key_id(vault_uri, key_name)
+>>>>>>> 91a4d87dcf30f501115b9dd2dea7aef7a6017cd3
 
         # import to software
         self._import_test_key(vault, key_id, False)
@@ -456,28 +509,37 @@ class KeyVaultKeyTest(AzureKeyVaultTestCase):
         vault_uri = vault.properties.vault_uri
         key_name = self.get_resource_name('keycrypt')
 
+<<<<<<< HEAD
+        key_id = keyvaultid.create_key_id(KEY_VAULT_URI, self.key_name)
+        plain_text = self.plain_text
+
+        # import key
+        imported_key = self._import_test_key(key_id)
+        key_id = keyvaultid.parse_key_id(imported_key.key.kid)
+=======
         key_id = KeyVaultId.create_key_id(vault_uri, key_name)
         plain_text = self.plain_text
 
         # import key
         imported_key = self._import_test_key(vault, key_id)
         key_id = KeyVaultId.parse_key_id(imported_key.key.kid)
+>>>>>>> 91a4d87dcf30f501115b9dd2dea7aef7a6017cd3
 
-        # encrypt without version
-        result = self.client.encrypt(key_id.vault, key_id.name, '', 'RSA-OAEP', plain_text)
+        # encrypt with version
+        result = self.client.encrypt(key_id.base_id, 'RSA-OAEP', plain_text)
         cipher_text = result.result
 
-        # decrypt without version
-        result = self.client.decrypt(key_id.vault, key_id.name, '', 'RSA-OAEP', cipher_text)
+        # decrypt with version
+        result = self.client.decrypt(key_id.base_id, 'RSA-OAEP', cipher_text)
         if not self.is_playback():
             self.assertEqual(plain_text, result.result)
 
         # encrypt with version
-        result = self.client.encrypt(key_id.vault, key_id.name, key_id.version, 'RSA-OAEP', plain_text)
+        result = self.client.encrypt(key_id.id, 'RSA-OAEP', plain_text)
         cipher_text = result.result
 
         # decrypt with version
-        result = self.client.decrypt(key_id.vault, key_id.name, key_id.version, 'RSA-OAEP', cipher_text)
+        result = self.client.decrypt(key_id.id, 'RSA-OAEP', cipher_text)
         if not self.is_playback():
             self.assertEqual(plain_text, result.result)
 
@@ -487,28 +549,37 @@ class KeyVaultKeyTest(AzureKeyVaultTestCase):
         vault_uri = vault.properties.vault_uri
         key_name = self.get_resource_name('keywrap')
 
+<<<<<<< HEAD
+        key_id = keyvaultid.create_key_id(KEY_VAULT_URI, self.key_name)
+        plain_text = self.plain_text
+
+        # import key
+        imported_key = self._import_test_key(key_id)
+        key_id = keyvaultid.parse_key_id(imported_key.key.kid)
+=======
         key_id = KeyVaultId.create_key_id(vault_uri, key_name)
         plain_text = self.plain_text
 
         # import key
         imported_key = self._import_test_key(vault, key_id)
         key_id = KeyVaultId.parse_key_id(imported_key.key.kid)
+>>>>>>> 91a4d87dcf30f501115b9dd2dea7aef7a6017cd3
 
         # wrap without version
-        result = self.client.wrap_key(key_id.vault, key_id.name, '', 'RSA-OAEP', plain_text)
+        result = self.client.wrap_key(key_id.base_id, 'RSA-OAEP', plain_text)
         cipher_text = result.result
 
         # unwrap without version
-        result = self.client.unwrap_key(key_id.vault, key_id.name, '', 'RSA-OAEP', cipher_text)
+        result = self.client.unwrap_key(key_id.base_id, 'RSA-OAEP', cipher_text)
         if not self.is_playback():
             self.assertEqual(plain_text, result.result)
 
         # wrap with version
-        result = self.client.wrap_key(key_id.vault, key_id.name, key_id.version, 'RSA-OAEP', plain_text)
+        result = self.client.wrap_key(key_id.id, 'RSA-OAEP', plain_text)
         cipher_text = result.result
 
         # unwrap with version
-        result = self.client.unwrap_key(key_id.vault, key_id.name, key_id.version, 'RSA-OAEP', cipher_text)
+        result = self.client.unwrap_key(key_id.id, 'RSA-OAEP', cipher_text)
         if not self.is_playback():
             self.assertEqual(plain_text, result.result)
 
@@ -518,29 +589,38 @@ class KeyVaultKeyTest(AzureKeyVaultTestCase):
         vault_uri = vault.properties.vault_uri
         key_name = self.get_resource_name('keysign')
 
+<<<<<<< HEAD
+        key_id = keyvaultid.create_key_id(KEY_VAULT_URI, self.key_name)
+=======
 
         key_id = KeyVaultId.create_key_id(vault_uri, key_name)
+>>>>>>> 91a4d87dcf30f501115b9dd2dea7aef7a6017cd3
         plain_text = self.plain_text
         md = hashlib.sha256()
         md.update(plain_text);
         digest = md.digest();
 
         # import key
+<<<<<<< HEAD
+        imported_key = self._import_test_key(key_id)
+        key_id = keyvaultid.parse_key_id(imported_key.key.kid)
+=======
         imported_key = self._import_test_key(vault, key_id)
         key_id = KeyVaultId.parse_key_id(imported_key.key.kid)
+>>>>>>> 91a4d87dcf30f501115b9dd2dea7aef7a6017cd3
 
         # sign without version
-        signature = self.client.sign(key_id.vault, key_id.name, '', 'RS256', digest).result
+        signature = self.client.sign(key_id.base_id, 'RS256', digest).result
 
         # verify without version
-        result = self.client.verify(key_id.vault, key_id.name, '', 'RS256', digest, signature)
+        result = self.client.verify(key_id.base_id, 'RS256', digest, signature)
         self.assertTrue(result.value)
 
         # sign with version
-        signature = self.client.sign(key_id.vault, key_id.name, '', 'RS256', digest).result
+        signature = self.client.sign(key_id.base_id, 'RS256', digest).result
 
         # verify with version
-        result = self.client.verify(key_id.vault, key_id.name, key_id.version, 'RS256', digest, signature)
+        result = self.client.verify(key_id.id, 'RS256', digest, signature)
         self.assertTrue(result.value)
 
 class KeyVaultSecretTest(AzureKeyVaultTestCase):
@@ -551,6 +631,16 @@ class KeyVaultSecretTest(AzureKeyVaultTestCase):
 
     def tearDown(self):
         super(KeyVaultSecretTest, self).tearDown()
+<<<<<<< HEAD
+        self.cleanup_created_secrets()
+
+    def cleanup_created_secrets(self):
+        if not self.is_playback():
+            for secret in self.client.get_secrets(KEY_VAULT_URI):
+                id = keyvaultid.parse_secret_id(secret.id)
+                self.client.delete_secret(id.vault, id.name)
+=======
+>>>>>>> 91a4d87dcf30f501115b9dd2dea7aef7a6017cd3
 
     def _validate_secret_bundle(self, bundle, vault, secret_name, secret_value):
         prefix = '{}secrets/{}/'.format(vault, secret_name)
@@ -563,6 +653,15 @@ class KeyVaultSecretTest(AzureKeyVaultTestCase):
 
     def _validate_secret_list(self, secrets, expected):
         for secret in secrets:
+<<<<<<< HEAD
+            keyvaultid.parse_secret_id(secret.id)
+            attributes = expected[secret.id]
+            self.assertEqual(attributes, secret.attributes)
+            del expected[secret.id]
+
+    @record
+    def test_secret_crud_operations(self):
+=======
             if secret.id in expected.keys():
                 attributes = expected[secret.id]
                 self.assertEqual(attributes, secret.attributes)
@@ -574,27 +673,32 @@ class KeyVaultSecretTest(AzureKeyVaultTestCase):
         vault_uri = vault.properties.vault_uri
         secret_name = self.get_resource_name('sec')
         secret_value = self.get_resource_name('secVal')
+>>>>>>> 91a4d87dcf30f501115b9dd2dea7aef7a6017cd3
         
         # create secret
         secret_bundle = self.client.set_secret(vault_uri, secret_name, secret_value)
         self._validate_secret_bundle(secret_bundle, vault_uri, secret_name, secret_value)
         created_bundle = secret_bundle
-        secret_id = KeyVaultId.parse_secret_id(created_bundle.id)
+        secret_id = keyvaultid.parse_secret_id(created_bundle.id)
 
         # get secret without version
-        self.assertEqual(created_bundle, self.client.get_secret(secret_id.vault, secret_id.name, ''))
+        self.assertEqual(created_bundle, self.client.get_secret(secret_id.base_id))
 
         # get secret with version
-        self.assertEqual(created_bundle, self.client.get_secret(secret_id.vault, secret_id.name, secret_id.version))
+        self.assertEqual(created_bundle, self.client.get_secret(secret_id.id))
 
         def _update_secret(secret_uri):
             updating_bundle = copy.deepcopy(created_bundle)
             updating_bundle.content_type = 'text/plain'
             updating_bundle.attributes.expires = date_parse.parse('2050-02-02T08:00:00.000Z')
+<<<<<<< HEAD
+            updating_bundle.tags = { 'foo': 'updated tag' }
+=======
             updating_bundle.tags = {'foo': 'updated tag'}
             sid = KeyVaultId.parse_secret_id(secret_uri)
+>>>>>>> 91a4d87dcf30f501115b9dd2dea7aef7a6017cd3
             secret_bundle = self.client.update_secret(
-                sid.vault, sid.name, sid.version, updating_bundle.content_type, updating_bundle.attributes,
+                secret_uri, updating_bundle.content_type, updating_bundle.attributes,
                 updating_bundle.tags)
             self.assertEqual(updating_bundle.tags, secret_bundle.tags)
             self.assertEqual(updating_bundle.id, secret_bundle.id)
@@ -612,7 +716,7 @@ class KeyVaultSecretTest(AzureKeyVaultTestCase):
 
         # get secret returns not found
         try:
-            self.client.get_secret(secret_id.vault, secret_id.name, '')
+            self.client.get_secret(secret_id.base_id)
         except Exception as ex:
             if not hasattr(ex, 'message') or 'Not Found' not in ex.message:
                 raise ex
@@ -633,8 +737,13 @@ class KeyVaultSecretTest(AzureKeyVaultTestCase):
             error_count = 0
             while not secret_bundle:
                 try:
+<<<<<<< HEAD
+                    secret_bundle = self.client.set_secret(KEY_VAULT_URI, secret_name, self.secret_value)
+                    sid = keyvaultid.parse_secret_id(secret_bundle.id).base_id
+=======
                     secret_bundle = self.client.set_secret(vault_uri, secret_name, secret_value)
                     sid = KeyVaultId.parse_secret_id(secret_bundle.id).base_id.strip('/')
+>>>>>>> 91a4d87dcf30f501115b9dd2dea7aef7a6017cd3
                     expected[sid] = secret_bundle.attributes
                 except Exception as ex:
                     if hasattr(ex, 'message') and 'Throttled' in ex.message:
@@ -664,8 +773,13 @@ class KeyVaultSecretTest(AzureKeyVaultTestCase):
             error_count = 0
             while not secret_bundle:
                 try:
+<<<<<<< HEAD
+                    secret_bundle = self.client.set_secret(KEY_VAULT_URI, secret_name, self.secret_value)
+                    sid = keyvaultid.parse_secret_id(secret_bundle.id).id
+=======
                     secret_bundle = self.client.set_secret(vault_uri, secret_name, secret_value)
                     sid = KeyVaultId.parse_secret_id(secret_bundle.id).id.strip('/')
+>>>>>>> 91a4d87dcf30f501115b9dd2dea7aef7a6017cd3
                     expected[sid] = secret_bundle.attributes
                 except Exception as ex:
                     if hasattr(ex, 'message') and 'Throttled' in ex.message:
@@ -760,7 +874,17 @@ class KeyVaultCertificateTest(AzureKeyVaultTestCase):
     def tearDown(self):
         super(KeyVaultCertificateTest, self).tearDown()
 
+<<<<<<< HEAD
+    def cleanup_created_certificates(self):
+        if not self.is_playback():
+            for cert in self.client.get_certificates(KEY_VAULT_URI):
+                id = keyvaultid.parse_certificate_id(cert.id)
+                self.client.delete_certificate(id.vault, id.name)
+
+    def _import_common_certificate(self, cert_name):
+=======
     def _import_common_certificate(self, vault_uri, cert_name):
+>>>>>>> 91a4d87dcf30f501115b9dd2dea7aef7a6017cd3
         cert_content = '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'
         cert_password = '123'
         cert_policy = CertificatePolicy(
@@ -775,6 +899,15 @@ class KeyVaultCertificateTest(AzureKeyVaultTestCase):
         self.assertIsNotNone(pending_cert)
         self.assertIsNotNone(pending_cert.csr)
         self.assertEqual(cert_policy.issuer_parameters.name, pending_cert.issuer_parameters.name)
+<<<<<<< HEAD
+        pending_id = keyvaultid.parse_certificate_operation_id(pending_cert.id)
+        self.assertEqual(pending_id.vault, vault)
+        self.assertEqual(pending_id.name, cert_name)
+
+    def _validate_certificate_bundle(self, cert, vault, cert_name, cert_policy):
+        cert_id = keyvaultid.parse_certificate_id(cert.id)
+        self.assertEqual(cert_id.vault, vault)
+=======
         pending_id = KeyVaultId.parse_certificate_operation_id(pending_cert.id)
         self.assertEqual(pending_id.vault.strip('/'), vault.strip('/'))
         self.assertEqual(pending_id.name, cert_name)
@@ -782,6 +915,7 @@ class KeyVaultCertificateTest(AzureKeyVaultTestCase):
     def _validate_certificate_bundle(self, cert, vault, cert_name, cert_policy):
         cert_id = KeyVaultId.parse_certificate_id(cert.id)
         self.assertEqual(cert_id.vault.strip('/'), vault.strip('/'))
+>>>>>>> 91a4d87dcf30f501115b9dd2dea7aef7a6017cd3
         self.assertEqual(cert_id.name, cert_name)
         self.assertIsNotNone(cert)
         self.assertIsNotNone(cert.x509_thumbprint)
@@ -797,15 +931,22 @@ class KeyVaultCertificateTest(AzureKeyVaultTestCase):
         if cert_policy.x509_certificate_properties:
             self.assertEqual(cert.policy.x509_certificate_properties.validity_in_months,
                              cert_policy.x509_certificate_properties.validity_in_months)
-        KeyVaultId.parse_secret_id(cert.sid)
-        KeyVaultId.parse_key_id(cert.kid)
+        keyvaultid.parse_secret_id(cert.sid)
+        keyvaultid.parse_key_id(cert.kid)
 
     def _validate_certificate_list(self, certificates, expected):
         for cert in certificates:
+<<<<<<< HEAD
+            keyvaultid.parse_certificate_id(cert.id)
+            attributes = expected[cert.id]
+            self.assertEqual(attributes, cert.attributes)
+            del expected[cert.id]
+=======
             if cert.id in expected.keys():
                 attributes = expected[cert.id]
                 self.assertEqual(attributes, cert.attributes)
                 del expected[cert.id]
+>>>>>>> 91a4d87dcf30f501115b9dd2dea7aef7a6017cd3
 
     def _validate_issuer_bundle(self, bundle, vault, name, provider, credentials, org_details):
         self.assertIsNotNone(bundle)
@@ -813,8 +954,13 @@ class KeyVaultCertificateTest(AzureKeyVaultTestCase):
         self.assertIsNotNone(bundle.organization_details)
         self.assertEqual(bundle.provider, provider)
 
+<<<<<<< HEAD
+        issuer_id = keyvaultid.parse_certificate_issuer_id(bundle.id)
+        self.assertEqual(issuer_id.vault, vault)
+=======
         issuer_id = KeyVaultId.parse_certificate_issuer_id(bundle.id)
         self.assertEqual(issuer_id.vault.strip('/'), vault.strip('/'))
+>>>>>>> 91a4d87dcf30f501115b9dd2dea7aef7a6017cd3
         self.assertEqual(issuer_id.name, name)
 
         if credentials:
@@ -824,7 +970,7 @@ class KeyVaultCertificateTest(AzureKeyVaultTestCase):
 
     def _validate_certificate_issuer_list(self, issuers, expected):
         for issuer in issuers:
-            KeyVaultId.parse_certificate_issuer_id(issuer.id)
+            keyvaultid.parse_certificate_issuer_id(issuer.id)
             provider = expected[issuer.id]
             if provider:
                 self.assertEqual(provider, issuer.provider)
@@ -864,24 +1010,33 @@ class KeyVaultCertificateTest(AzureKeyVaultTestCase):
             pending_cert = self.client.get_certificate_operation(vault_uri, cert_name)
             self._validate_certificate_operation(pending_cert, vault_uri, cert_name, cert_policy)
             if pending_cert.status.lower() == 'completed':
-                cert_id = KeyVaultId.parse_certificate_operation_id(pending_cert.target)
+                cert_id = keyvaultid.parse_certificate_operation_id(pending_cert.target)
                 break
             elif pending_cert.status.lower() != 'inprogress':
                 raise Exception('Unknown status code for pending certificate: {}'.format(pending_cert))
             time.sleep(interval_time)
 
         # get certificate
+<<<<<<< HEAD
+        cert_bundle = self.client.get_certificate(cert_id.base_id)
+        self._validate_certificate_bundle(cert_bundle, KEY_VAULT_URI, self.cert_name, cert_policy)
+=======
         cert_bundle = self.client.get_certificate(cert_id.vault, cert_id.name, '')
         self._validate_certificate_bundle(cert_bundle, vault_uri, cert_name, cert_policy)
+>>>>>>> 91a4d87dcf30f501115b9dd2dea7aef7a6017cd3
 
         # get certificate as secret
-        secret_id = KeyVaultId.parse_secret_id(cert_bundle.sid)
-        secret_bundle = self.client.get_secret(secret_id.vault, secret_id.name, secret_id.version)
+        secret_bundle = self.client.get_secret(cert_bundle.sid)
 
         # update certificate
         cert_policy.tags = {'tag1': 'value1'}
+<<<<<<< HEAD
+        cert_bundle = self.client.update_certificate(cert_id.id, cert_policy)
+        self._validate_certificate_bundle(cert_bundle, KEY_VAULT_URI, self.cert_name, cert_policy)
+=======
         cert_bundle = self.client.update_certificate(cert_id.vault, cert_id.name, cert_id.version, cert_policy)
         self._validate_certificate_bundle(cert_bundle, vault_uri, cert_name, cert_policy)
+>>>>>>> 91a4d87dcf30f501115b9dd2dea7aef7a6017cd3
 
         # delete certificate
         cert_bundle = self.client.delete_certificate(vault_uri, cert_name)
@@ -889,7 +1044,7 @@ class KeyVaultCertificateTest(AzureKeyVaultTestCase):
 
         # get certificate returns not found
         try:
-            self.client.get_certificate(cert_id.vault, cert_id.name, '')
+            self.client.get_certificate(cert_id.base_id)
             self.fail('Get should fail')
         except Exception as ex:
             if not hasattr(ex, 'message') or 'Not Found' not in ex.message:
@@ -920,8 +1075,13 @@ class KeyVaultCertificateTest(AzureKeyVaultTestCase):
             error_count = 0
             while not cert_bundle:
                 try:
+<<<<<<< HEAD
+                    cert_bundle = self._import_common_certificate(cert_name)[0]
+                    cid = keyvaultid.parse_certificate_id(cert_bundle.id).base_id
+=======
                     cert_bundle = self._import_common_certificate(vault_uri, cert_name)[0]
                     cid = KeyVaultId.parse_certificate_id(cert_bundle.id).base_id.strip('/')
+>>>>>>> 91a4d87dcf30f501115b9dd2dea7aef7a6017cd3
                     expected[cid] = cert_bundle.attributes
                 except Exception as ex:
                     if hasattr(ex, 'message') and 'Throttled' in ex.message:
@@ -950,8 +1110,13 @@ class KeyVaultCertificateTest(AzureKeyVaultTestCase):
             error_count = 0
             while not cert_bundle:
                 try:
+<<<<<<< HEAD
+                    cert_bundle = self._import_common_certificate(cert_name)[0]
+                    cid = keyvaultid.parse_certificate_id(cert_bundle.id).id
+=======
                     cert_bundle = self._import_common_certificate(vault_uri, cert_name)[0]
                     cid = KeyVaultId.parse_certificate_id(cert_bundle.id).id.strip('/')
+>>>>>>> 91a4d87dcf30f501115b9dd2dea7aef7a6017cd3
                     expected[cid] = cert_bundle.attributes
                 except Exception as ex:
                     if hasattr(ex, 'message') and 'Throttled' in ex.message:
@@ -1220,7 +1385,7 @@ class KeyVaultCertificateTest(AzureKeyVaultTestCase):
         self.assertEqual(len(set(expected.keys()) & set(actual.keys())), len(expected))
 
 
-# ------------------------------------------------------------------------------
+#------------------------------------------------------------------------------
 if __name__ == '__main__':
     unittest.main()
 

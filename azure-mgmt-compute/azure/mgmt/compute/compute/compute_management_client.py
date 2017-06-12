@@ -57,6 +57,31 @@ class ComputeManagementClient(object):
     :ivar config: Configuration for client.
     :vartype config: ComputeManagementClientConfiguration
 
+    :ivar availability_sets: AvailabilitySets operations
+    :vartype availability_sets: .operations.AvailabilitySetsOperations
+    :ivar virtual_machine_extension_images: VirtualMachineExtensionImages operations
+    :vartype virtual_machine_extension_images: .operations.VirtualMachineExtensionImagesOperations
+    :ivar virtual_machine_extensions: VirtualMachineExtensions operations
+    :vartype virtual_machine_extensions: .operations.VirtualMachineExtensionsOperations
+    :ivar virtual_machine_images: VirtualMachineImages operations
+    :vartype virtual_machine_images: .operations.VirtualMachineImagesOperations
+    :ivar usage: Usage operations
+    :vartype usage: .operations.UsageOperations
+    :ivar virtual_machine_sizes: VirtualMachineSizes operations
+    :vartype virtual_machine_sizes: .operations.VirtualMachineSizesOperations
+    :ivar images: Images operations
+    :vartype images: .operations.ImagesOperations
+    :ivar virtual_machines: VirtualMachines operations
+    :vartype virtual_machines: .operations.VirtualMachinesOperations
+    :ivar virtual_machine_scale_sets: VirtualMachineScaleSets operations
+    :vartype virtual_machine_scale_sets: .operations.VirtualMachineScaleSetsOperations
+    :ivar virtual_machine_scale_set_vms: VirtualMachineScaleSetVMs operations
+    :vartype virtual_machine_scale_set_vms: .operations.VirtualMachineScaleSetVMsOperations
+    :ivar disks: Disks operations
+    :vartype disks: .operations.DisksOperations
+    :ivar snapshots: Snapshots operations
+    :vartype snapshots: .operations.SnapshotsOperations
+
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
      object<msrestazure.azure_active_directory>`
@@ -80,145 +105,140 @@ class ComputeManagementClient(object):
 
     @classmethod
     def models(cls, api_version='2016-04-30-preview'):
-        if api_version == '2015-06-15':
-            from .v2015_06_15 import models
-            return models
-        elif api_version == '2016-03-30':
-            from .v2016_03_30 import models
-            return models
-        elif api_version == '2016-04-30-preview':
+        if api_version =='2016-04-30-preview':
             from .v2016_04_30_preview import models
             return models
-        raise NotImplementedError("APIVersion {} is not available".format(api_version))
+        elif api_version =='2015-06-15':
+            from .v2015_06_15 import models
+            return models
+        else:
+            raise NotImplementedError("APIVersion {} is not available".format(api_version))
 
     @property
     def availability_sets(self):
-        if self.api_version == '2015-06-15':
-            from .v2015_06_15.operations import AvailabilitySetsOperations as OperationClass
-        elif self.api_version == '2016-03-30':
-            from .v2016_03_30.operations import AvailabilitySetsOperations as OperationClass
-        elif self.api_version == '2016-04-30-preview':
+        if self.api_version =='2016-04-30-preview':
             from .v2016_04_30_preview.operations import AvailabilitySetsOperations as OperationClass
+        elif self.api_version =='2015-06-15':
+            from .v2015_06_15.operations import AvailabilitySetsOperations as OperationClass
         else:
-            raise NotImplementedError("APIVersion {} is not available".format(self.api_version))
+            raise NotImplementedError("APIVersion {{}} is not available".format(self.api_version))
         return OperationClass(self._client, self.config, self._serialize, self._deserialize)
 
-    @property
-    def disks(self):
-        if self.api_version == '2016-04-30-preview':
-            from .v2016_04_30_preview.operations import DisksOperations as OperationClass
-        else:
-            raise NotImplementedError("APIVersion {} is not available".format(self.api_version))
-        return OperationClass(self._client, self.config, self._serialize, self._deserialize)
-
-    @property
-    def images(self):
-        if self.api_version == '2016-04-30-preview':
-            from .v2016_04_30_preview.operations import ImagesOperations as OperationClass
-        else:
-            raise NotImplementedError("APIVersion {} is not available".format(self.api_version))
-        return OperationClass(self._client, self.config, self._serialize, self._deserialize)
-
-    @property
-    def snapshots(self):
-        if self.api_version == '2016-04-30-preview':
-            from .v2016_04_30_preview.operations import SnapshotsOperations as OperationClass
-        else:
-            raise NotImplementedError("APIVersion {} is not available".format(self.api_version))
-        return OperationClass(self._client, self.config, self._serialize, self._deserialize)
-
-    @property
-    def usage(self):
-        if self.api_version == '2015-06-15':
-            from .v2015_06_15.operations import UsageOperations as OperationClass
-        elif self.api_version == '2016-03-30':
-            from .v2016_03_30.operations import UsageOperations as OperationClass
-        elif self.api_version == '2016-04-30-preview':
-            from .v2016_04_30_preview.operations import UsageOperations as OperationClass
-        else:
-            raise NotImplementedError("APIVersion {} is not available".format(self.api_version))
-        return OperationClass(self._client, self.config, self._serialize, self._deserialize)
+        self.availability_sets = AvailabilitySetsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
 
     @property
     def virtual_machine_extension_images(self):
-        if self.api_version == '2015-06-15':
-            from .v2015_06_15.operations import VirtualMachineExtensionImagesOperations as OperationClass
-        elif self.api_version == '2016-03-30':
-            from .v2016_03_30.operations import VirtualMachineExtensionImagesOperations as OperationClass
-        elif self.api_version == '2016-04-30-preview':
+        if self.api_version =='2016-04-30-preview':
             from .v2016_04_30_preview.operations import VirtualMachineExtensionImagesOperations as OperationClass
+        elif self.api_version =='2015-06-15':
+            from .v2015_06_15.operations import VirtualMachineExtensionImagesOperations as OperationClass
         else:
-            raise NotImplementedError("APIVersion {} is not available".format(self.api_version))
+            raise NotImplementedError("APIVersion {{}} is not available".format(self.api_version))
         return OperationClass(self._client, self.config, self._serialize, self._deserialize)
 
     @property
     def virtual_machine_extensions(self):
-        if self.api_version == '2015-06-15':
-            from .v2015_06_15.operations import VirtualMachineExtensionsOperations as OperationClass
-        elif self.api_version == '2016-03-30':
-            from .v2016_03_30.operations import VirtualMachineExtensionsOperations as OperationClass
-        elif self.api_version == '2016-04-30-preview':
+        if self.api_version =='2016-04-30-preview':
             from .v2016_04_30_preview.operations import VirtualMachineExtensionsOperations as OperationClass
+        elif self.api_version =='2015-06-15':
+            from .v2015_06_15.operations import VirtualMachineExtensionsOperations as OperationClass
         else:
-            raise NotImplementedError("APIVersion {} is not available".format(self.api_version))
+            raise NotImplementedError("APIVersion {{}} is not available".format(self.api_version))
         return OperationClass(self._client, self.config, self._serialize, self._deserialize)
 
+        self.virtual_machine_extensions = VirtualMachineExtensionsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
     @property
     def virtual_machine_images(self):
-        if self.api_version == '2015-06-15':
-            from .v2015_06_15.operations import VirtualMachineImagesOperations as OperationClass
-        elif self.api_version == '2016-03-30':
-            from .v2016_03_30.operations import VirtualMachineImagesOperations as OperationClass
-        elif self.api_version == '2016-04-30-preview':
+        if self.api_version =='2016-04-30-preview':
             from .v2016_04_30_preview.operations import VirtualMachineImagesOperations as OperationClass
+        elif self.api_version =='2015-06-15':
+            from .v2015_06_15.operations import VirtualMachineImagesOperations as OperationClass
         else:
-            raise NotImplementedError("APIVersion {} is not available".format(self.api_version))
+            raise NotImplementedError("APIVersion {{}} is not available".format(self.api_version))
         return OperationClass(self._client, self.config, self._serialize, self._deserialize)
 
-    @property
-    def virtual_machine_scale_set_vms(self):
-        if self.api_version == '2015-06-15':
-            from .v2015_06_15.operations import VirtualMachineScaleSetVMsOperations as OperationClass
-        elif self.api_version == '2016-03-30':
-            from .v2016_03_30.operations import VirtualMachineScaleSetVMsOperations as OperationClass
-        elif self.api_version == '2016-04-30-preview':
-            from .v2016_04_30_preview.operations import VirtualMachineScaleSetVMsOperations as OperationClass
-        else:
-            raise NotImplementedError("APIVersion {} is not available".format(self.api_version))
-        return OperationClass(self._client, self.config, self._serialize, self._deserialize)
 
     @property
-    def virtual_machine_scale_sets(self):
-        if self.api_version == '2015-06-15':
-            from .v2015_06_15.operations import VirtualMachineScaleSetsOperations as OperationClass
-        elif self.api_version == '2016-03-30':
-            from .v2016_03_30.operations import VirtualMachineScaleSetsOperations as OperationClass
-        elif self.api_version == '2016-04-30-preview':
-            from .v2016_04_30_preview.operations import VirtualMachineScaleSetsOperations as OperationClass
+    def usage(self):
+        if self.api_version =='2016-04-30-preview':
+            from .v2016_04_30_preview.operations import UsageOperations as OperationClass
+        elif self.api_version =='2015-06-15':
+            from .v2015_06_15.operations import UsageOperations as OperationClass
         else:
-            raise NotImplementedError("APIVersion {} is not available".format(self.api_version))
+            raise NotImplementedError("APIVersion {{}} is not available".format(self.api_version))
         return OperationClass(self._client, self.config, self._serialize, self._deserialize)
+
+        self.usage = UsageOperations(
+            self._client, self.config, self._serialize, self._deserialize)
 
     @property
     def virtual_machine_sizes(self):
-        if self.api_version == '2015-06-15':
-            from .v2015_06_15.operations import VirtualMachineSizesOperations as OperationClass
-        elif self.api_version == '2016-03-30':
-            from .v2016_03_30.operations import VirtualMachineSizesOperations as OperationClass
-        elif self.api_version == '2016-04-30-preview':
+        if self.api_version =='2016-04-30-preview':
             from .v2016_04_30_preview.operations import VirtualMachineSizesOperations as OperationClass
+        elif self.api_version =='2015-06-15':
+            from .v2015_06_15.operations import VirtualMachineSizesOperations as OperationClass
         else:
-            raise NotImplementedError("APIVersion {} is not available".format(self.api_version))
+            raise NotImplementedError("APIVersion {{}} is not available".format(self.api_version))
+        return OperationClass(self._client, self.config, self._serialize, self._deserialize)
+
+    @property
+    def images(self):
+        if self.api_version =='2016-04-30-preview':
+            from .v2016_04_30_preview.operations import ImagesOperations as OperationClass
+        elif self.api_version =='2015-06-15':
+            from .v2015_06_15.operations import ImagesOperations as OperationClass
+        else:
+            raise NotImplementedError("APIVersion {{}} is not available".format(self.api_version))
         return OperationClass(self._client, self.config, self._serialize, self._deserialize)
 
     @property
     def virtual_machines(self):
-        if self.api_version == '2015-06-15':
-            from .v2015_06_15.operations import VirtualMachinesOperations as OperationClass
-        elif self.api_version == '2016-03-30':
-            from .v2016_03_30.operations import VirtualMachinesOperations as OperationClass
-        elif self.api_version == '2016-04-30-preview':
+        if self.api_version =='2016-04-30-preview':
             from .v2016_04_30_preview.operations import VirtualMachinesOperations as OperationClass
+        elif self.api_version =='2015-06-15':
+            from .v2015_06_15.operations import VirtualMachinesOperations as OperationClass
         else:
-            raise NotImplementedError("APIVersion {} is not available".format(self.api_version))
+            raise NotImplementedError("APIVersion {{}} is not available".format(self.api_version))
+        return OperationClass(self._client, self.config, self._serialize, self._deserialize)
+
+    @property
+    def virtual_machine_scale_sets(self):
+        if self.api_version =='2016-04-30-preview':
+            from .v2016_04_30_preview.operations import VirtualMachineScaleSetsOperations as OperationClass
+        elif self.api_version =='2015-06-15':
+            from .v2015_06_15.operations import VirtualMachineScaleSetsOperations as OperationClass
+        else:
+            raise NotImplementedError("APIVersion {{}} is not available".format(self.api_version))
+        return OperationClass(self._client, self.config, self._serialize, self._deserialize)
+
+    @property
+    def virtual_machine_scale_set_vms(self):
+        if self.api_version =='2016-04-30-preview':
+            from .v2016_04_30_preview.operations import VirtualMachineScaleSetVMsOperations as OperationClass
+        elif self.api_version =='2015-06-15':
+            from .v2015_06_15.operations import VirtualMachineScaleSetVMsOperations as OperationClass
+        else:
+            raise NotImplementedError("APIVersion {{}} is not available".format(self.api_version))
+        return OperationClass(self._client, self.config, self._serialize, self._deserialize)
+
+    @property
+    def disks(self):
+        if self.api_version =='2016-04-30-preview':
+            from .v2016_04_30_preview.operations import DisksOperations as OperationClass
+        elif self.api_version =='2015-06-15':
+            from .v2015_06_15.operations import DisksOperations as OperationClass
+        else:
+            raise NotImplementedError("APIVersion {{}} is not available".format(self.api_version))
+        return OperationClass(self._client, self.config, self._serialize, self._deserialize)
+
+    @property
+    def snapshots(self):
+        if self.api_version =='2016-04-30-preview':
+            from .v2016_04_30_preview.operations import SnapshotsOperations as OperationClass
+        elif self.api_version =='2015-06-15':
+            from .v2015_06_15.operations import SnapshotsOperations as OperationClass
+        else:
+            raise NotImplementedError("APIVersion {{}} is not available".format(self.api_version))
         return OperationClass(self._client, self.config, self._serialize, self._deserialize)

@@ -13,11 +13,11 @@ from msrest.serialization import Model
 
 
 class BatchAccountUpdateParameters(Model):
-    """Parameters for updating an Azure Batch account.
+    """Parameters supplied to the Update operation.
 
-    :param tags: The user-specified tags associated with the account.
+    :param tags: The user specified tags associated with the account.
     :type tags: dict
-    :param auto_storage: The properties related to the auto-storage account.
+    :param auto_storage: The properties related to auto storage account.
     :type auto_storage: :class:`AutoStorageBaseProperties
      <azure.mgmt.batch.models.AutoStorageBaseProperties>`
     """

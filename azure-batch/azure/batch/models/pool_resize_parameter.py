@@ -15,12 +15,8 @@ from msrest.serialization import Model
 class PoolResizeParameter(Model):
     """Options for changing the size of a pool.
 
-    :param target_dedicated_nodes: The desired number of dedicated compute
-     nodes in the pool.
-    :type target_dedicated_nodes: int
-    :param target_low_priority_nodes: The desired number of low-priority
-     compute nodes in the pool.
-    :type target_low_priority_nodes: int
+    :param target_dedicated: The desired number of compute nodes in the pool.
+    :type target_dedicated: int
     :param resize_timeout: The timeout for allocation of compute nodes to the
      pool or removal of compute nodes from the pool. The default value is 15
      minutes. The minimum value is 5 minutes. If you specify a value less than
@@ -36,15 +32,17 @@ class PoolResizeParameter(Model):
      <azure.batch.models.ComputeNodeDeallocationOption>`
     """
 
+    _validation = {
+        'target_dedicated': {'required': True},
+    }
+
     _attribute_map = {
-        'target_dedicated_nodes': {'key': 'targetDedicatedNodes', 'type': 'int'},
-        'target_low_priority_nodes': {'key': 'targetLowPriorityNodes', 'type': 'int'},
+        'target_dedicated': {'key': 'targetDedicated', 'type': 'int'},
         'resize_timeout': {'key': 'resizeTimeout', 'type': 'duration'},
         'node_deallocation_option': {'key': 'nodeDeallocationOption', 'type': 'ComputeNodeDeallocationOption'},
     }
 
-    def __init__(self, target_dedicated_nodes=None, target_low_priority_nodes=None, resize_timeout=None, node_deallocation_option=None):
-        self.target_dedicated_nodes = target_dedicated_nodes
-        self.target_low_priority_nodes = target_low_priority_nodes
+    def __init__(self, target_dedicated, resize_timeout=None, node_deallocation_option=None):
+        self.target_dedicated = target_dedicated
         self.resize_timeout = resize_timeout
         self.node_deallocation_option = node_deallocation_option

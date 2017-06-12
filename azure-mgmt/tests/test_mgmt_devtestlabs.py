@@ -26,7 +26,7 @@ class MgmtDevTestLabsTest(AzureMgmtTestCase):
     def test_devtestlabs(self):
         lab_name = self.get_resource_name('pylab')
 
-        async_lab = self.client.labs.create_or_update(
+        async_lab = self.client.lab.create_or_update_resource(
             self.group_name,
             lab_name,
             {'location': self.region}

@@ -135,7 +135,6 @@ class ConnectionStringType(Enum):
     api_hub = "ApiHub"
     doc_db = "DocDb"
     redis_cache = "RedisCache"
-    postgre_sql = "PostgreSQL"
 
 
 class SslState(Enum):
@@ -255,12 +254,6 @@ class HostNameType(Enum):
     managed = "Managed"
 
 
-class DnsType(Enum):
-
-    azure_dns = "AzureDns"
-    default_domain_registrar_dns = "DefaultDomainRegistrarDns"
-
-
 class DomainType(Enum):
 
     regular = "Regular"
@@ -348,7 +341,6 @@ class DatabaseType(Enum):
     sql_azure = "SqlAzure"
     my_sql = "MySql"
     local_my_sql = "LocalMySql"
-    postgre_sql = "PostgreSql"
 
 
 class FrequencyUnit(Enum):
@@ -408,4 +400,3 @@ class SkuName(Enum):
     standard = "Standard"
     premium = "Premium"
     dynamic = "Dynamic"
-    isolated = "Isolated"

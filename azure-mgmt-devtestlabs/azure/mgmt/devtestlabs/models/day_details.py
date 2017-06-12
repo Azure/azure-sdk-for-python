@@ -15,9 +15,9 @@ from msrest.serialization import Model
 class DayDetails(Model):
     """Properties of a daily schedule.
 
-    :param time: The time of day the schedule will occur.
+    :param time:
     :type time: str
-    """
+    """ 
 
     _attribute_map = {
         'time': {'key': 'time', 'type': 'str'},

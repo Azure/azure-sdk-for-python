@@ -11,8 +11,6 @@ Project("{888888A0-9F3D-457C-B088-3A5042F75D52}") = "msrest", "..\msrest-for-pyt
 EndProject
 Project("{888888A0-9F3D-457C-B088-3A5042F75D52}") = "msrestazure", "..\msrestazure-for-python\msrestazure.pyproj", "{B80E5ECC-DCDC-4D31-B3BE-8C32DEA8E864}"
 EndProject
-Project("{888888A0-9F3D-457C-B088-3A5042F75D52}") = "Python.Tests", "..\autorest\src\generator\AutoRest.Python.Tests\Python.Tests.pyproj", "{312B07BC-A830-4289-91B4-C53A2EC37D58}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,8 +25,6 @@ Global
 		{8523BA22-21D4-4F69-A73E-958B617C9D37}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B80E5ECC-DCDC-4D31-B3BE-8C32DEA8E864}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{B80E5ECC-DCDC-4D31-B3BE-8C32DEA8E864}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{312B07BC-A830-4289-91B4-C53A2EC37D58}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{312B07BC-A830-4289-91B4-C53A2EC37D58}.Release|Any CPU.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

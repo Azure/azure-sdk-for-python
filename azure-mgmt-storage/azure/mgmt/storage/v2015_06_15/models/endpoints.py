@@ -16,13 +16,13 @@ class Endpoints(Model):
     """The URIs that are used to perform a retrieval of a public blob, queue or
     table object.
 
-    :param blob: The blob endpoint.
+    :param blob: Gets the blob endpoint.
     :type blob: str
-    :param queue: The queue endpoint.
+    :param queue: Gets the queue endpoint.
     :type queue: str
-    :param table: The table endpoint.
+    :param table: Gets the table endpoint.
     :type table: str
-    :param file: The file endpoint.
+    :param file: Gets the file endpoint.
     :type file: str
     """
 

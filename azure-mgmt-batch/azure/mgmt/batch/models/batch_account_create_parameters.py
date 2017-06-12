@@ -17,9 +17,9 @@ class BatchAccountCreateParameters(Model):
 
     :param location: The region in which to create the account.
     :type location: str
-    :param tags: The user-specified tags associated with the account.
+    :param tags: The user specified tags associated with the account.
     :type tags: dict
-    :param auto_storage: The properties related to the auto-storage account.
+    :param auto_storage: The properties related to auto storage account.
     :type auto_storage: :class:`AutoStorageBaseProperties
      <azure.mgmt.batch.models.AutoStorageBaseProperties>`
     :param pool_allocation_mode: The allocation mode to use for creating pools

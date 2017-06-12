@@ -3,18 +3,6 @@
 Release History
 ===============
 
-1.0.0 (2017-05-15)
-++++++++++++++++++
-
-- Tag 1.0.0rc3 as stable (same content)
-
-1.0.0rc3 (2017-05-03)
-+++++++++++++++++++++
-
-**Features**
-
-- Added check connectivity api to network watcher
-
 1.0.0rc2 (2017-04-18)
 +++++++++++++++++++++
 

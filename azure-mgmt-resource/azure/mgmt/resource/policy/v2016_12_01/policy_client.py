@@ -59,9 +59,9 @@ class PolicyClient(object):
     :vartype config: PolicyClientConfiguration
 
     :ivar policy_assignments: PolicyAssignments operations
-    :vartype policy_assignments: azure.mgmt.resource.policy.v2016_12_01.operations.PolicyAssignmentsOperations
+    :vartype policy_assignments: .operations.PolicyAssignmentsOperations
     :ivar policy_definitions: PolicyDefinitions operations
-    :vartype policy_definitions: azure.mgmt.resource.policy.v2016_12_01.operations.PolicyDefinitionsOperations
+    :vartype policy_definitions: .operations.PolicyDefinitionsOperations
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials

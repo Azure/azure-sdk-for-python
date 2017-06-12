@@ -21,7 +21,7 @@ class ConnStringInfo(Model):
     :type connection_string: str
     :param type: Type of database. Possible values include: 'MySql',
      'SQLServer', 'SQLAzure', 'Custom', 'NotificationHub', 'ServiceBus',
-     'EventHub', 'ApiHub', 'DocDb', 'RedisCache', 'PostgreSQL'
+     'EventHub', 'ApiHub', 'DocDb', 'RedisCache'
     :type type: str or :class:`ConnectionStringType
      <azure.mgmt.web.models.ConnectionStringType>`
     """

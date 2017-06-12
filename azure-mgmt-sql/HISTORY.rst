@@ -3,6 +3,8 @@
 Release History
 ===============
 
+<<<<<<< HEAD
+=======
 0.5.3 (2017-06-01)
 ++++++++++++++++++
 
@@ -23,6 +25,7 @@ Release History
 
 - Fix return exception in import/export
 
+>>>>>>> 91a4d87dcf30f501115b9dd2dea7aef7a6017cd3
 0.5.0 (2017-04-19)
 ++++++++++++++++++
 

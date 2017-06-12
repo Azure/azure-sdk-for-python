@@ -27,7 +27,7 @@ class CertificateAddParameter(Model):
      size is 10KB.
     :type data: str
     :param certificate_format: The format of the certificate data. Possible
-     values include: 'pfx', 'cer'
+     values include: 'pfx', 'cer', 'unmapped'
     :type certificate_format: str or :class:`CertificateFormat
      <azure.batch.models.CertificateFormat>`
     :param password: The password to access the certificate's private key.

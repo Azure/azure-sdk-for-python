@@ -22,14 +22,20 @@
         "namespace": "azure.mgmt.authorization",
         "package-version": "0.30.0"
       },
-      "output_dir": "azure-mgmt-authorization/azure/mgmt/authorization",
-      "build_dir": "azure-mgmt-authorization"
+      "output_dir": "azure-mgmt-authorization/azure/mgmt/authorization"
     },
     "batch.management": {
+<<<<<<< HEAD
+      "swagger": "arm-batch/2017-01-01/swagger/BatchManagement.json",
+      "autorest_options": {
+        "Namespace": "azure.mgmt.batch",
+        "PackageVersion": "3.0.1"
+=======
       "autorest_options": {
         "input-file": "arm-batch/2017-05-01/swagger/BatchManagement.json",
         "namespace": "azure.mgmt.batch",
         "package-version": "4.0.0"
+>>>>>>> 91a4d87dcf30f501115b9dd2dea7aef7a6017cd3
       },
       "output_dir": "azure-mgmt-batch/azure/mgmt/batch"
     },
@@ -43,9 +49,14 @@
     },
     "cdn": {
       "autorest_options": {
+<<<<<<< HEAD
+        "Namespace": "azure.mgmt.cdn",
+        "PackageVersion": "0.30.2"
+=======
         "input-file": "arm-cdn/2016-10-02/swagger/cdn.json",
         "namespace": "azure.mgmt.cdn",
         "package-version": "0.30.3"
+>>>>>>> 91a4d87dcf30f501115b9dd2dea7aef7a6017cd3
       },
       "output_dir": "azure-mgmt-cdn/azure/mgmt/cdn"
     },
@@ -58,10 +69,16 @@
       "output_dir": "azure-mgmt-consumption/azure/mgmt/consumption"
     },
     "cognitiveservices": {
+<<<<<<< HEAD
+      "swagger": "arm-cognitiveservices/2016-02-01-preview/swagger/cognitiveservices.json",
+      "autorest_options": {
+        "Namespace": "azure.mgmt.cognitiveservices"
+=======
       "autorest_options": {
         "input-file": "arm-cognitiveservices/2017-04-18/swagger/cognitiveservices.json",
         "namespace": "azure.mgmt.cognitiveservices",
         "package-version": "1.0.0"
+>>>>>>> 91a4d87dcf30f501115b9dd2dea7aef7a6017cd3
       },
       "output_dir": "azure-mgmt-cognitiveservices/azure/mgmt/cognitiveservices"
     },
@@ -80,6 +97,8 @@
       "output_dir": "azure-mgmt-compute/azure/mgmt/compute/compute/v2015_06_15",
       "generated_relative_base_directory": "azure/mgmt/compute/compute/v2015_06_15"
     },
+<<<<<<< HEAD
+=======
     "compute.compute.2016-03-30": {
       "autorest_options": {
         "namespace": "azure.mgmt.compute.compute.v2016_03_30",
@@ -89,6 +108,7 @@
       "build_dir": "azure-mgmt-compute/azure/mgmt/compute/compute/v2016_03_30",
       "generated_relative_base_directory": "azure/mgmt/compute/compute/v2016_03_30"
     },
+>>>>>>> 91a4d87dcf30f501115b9dd2dea7aef7a6017cd3
     "compute.compute.2016-04-30-preview": {
       "composite": "arm-compute/compositeComputeClient_2016_04_30_preview.json",
       "autorest_options": {
@@ -115,9 +135,14 @@
     },
     "devtestlabs": {
       "autorest_options": {
+<<<<<<< HEAD
+        "Namespace": "azure.mgmt.devtestlabs",
+        "PackageVersion": "1.0.0"
+=======
         "input-file": "arm-devtestlabs/2016-05-15/swagger/DTL.json",
         "namespace": "azure.mgmt.devtestlabs",
         "package-version": "2.0.0"
+>>>>>>> 91a4d87dcf30f501115b9dd2dea7aef7a6017cd3
       },
       "output_dir": "azure-mgmt-devtestlabs/azure/mgmt/devtestlabs"
     },
@@ -131,9 +156,14 @@
     },
     "documentdb": {
       "autorest_options": {
+<<<<<<< HEAD
+        "Namespace": "azure.mgmt.documentdb",
+        "PackageVersion": "0.1.2"
+=======
         "input-file": "arm-documentdb/2015-04-08/swagger/documentdb.json",
         "namespace": "azure.mgmt.documentdb",
         "package-version": "0.1.3"
+>>>>>>> 91a4d87dcf30f501115b9dd2dea7aef7a6017cd3
       },
       "output_dir": "azure-mgmt-documentdb/azure/mgmt/documentdb"
     },
@@ -172,17 +202,17 @@
     },
     "keyvault.data": {
       "autorest_options": {
+<<<<<<< HEAD
+        "Namespace": "azure.keyvault.generated",
+        "PackageVersion": "0.2.0"
+=======
         "input-file": "keyvault/2016-10-01/swagger/keyvault.json",
         "namespace": "azure.keyvault",
         "package-version": "0.3.4"
+>>>>>>> 91a4d87dcf30f501115b9dd2dea7aef7a6017cd3
       },
-      "wrapper_filesOrDirs": [
-        "custom",
-        "generated",
-        "__init__.py"
-      ],
-      "output_dir": "azure-keyvault/azure/keyvault",
-      "generated_relative_base_directory": "azure/keyvault"
+      "output_dir": "azure-keyvault/azure/keyvault/generated",
+      "generated_relative_base_directory": "azure/keyvault/generated"
     },
     "logic": {
       "autorest_options": {
@@ -272,6 +302,8 @@
       },
       "output_dir": "azure-mgmt-powerbiembedded/azure/mgmt/powerbiembedded"
     },
+<<<<<<< HEAD
+=======
     "rdbms.mysql": {
       "autorest_options": {
         "input-file": "arm-rdbms/2017-04-30-preview/swagger/Rdms.MySQL.json",
@@ -295,6 +327,7 @@
       "generated_relative_base_directory": "Generated/Python/azure/mgmt/recoveryservicesbackup",
       "output_dir":  "azure-mgmt-recoveryservicesbackup/azure/mgmt/recoveryservicesbackup"
     },
+>>>>>>> 91a4d87dcf30f501115b9dd2dea7aef7a6017cd3
     "redis": {
       "autorest_options": {
         "input-file": "arm-redis/2016-04-01/swagger/redis.json",
@@ -303,6 +336,8 @@
       },
       "output_dir": "azure-mgmt-redis/azure/mgmt/redis"
     },
+<<<<<<< HEAD
+=======
     "resources.managedapplications.2016-09-01-preview": {
       "autorest_options": {
         "input-file": "arm-resources/managedapplications/2016-09-01-preview/swagger/managedapplications.json",
@@ -312,6 +347,7 @@
       "generated_relative_base_directory": "azure/mgmt/resource/managedapplications",
       "build_dir": "azure-mgmt-resource"
     },
+>>>>>>> 91a4d87dcf30f501115b9dd2dea7aef7a6017cd3
     "resources.features.2015-12-01": {
       "autorest_options": {
         "input-file": "arm-resources/features/2015-12-01/swagger/features.json",
@@ -360,6 +396,8 @@
       "output_dir": "azure-mgmt-resource/azure/mgmt/resource/resources/v2016_09_01",
       "generated_relative_base_directory": "azure/mgmt/resource/resources/v2016_09_01"
     },
+<<<<<<< HEAD
+=======
     "resources.resources.2017-05-10": {
       "autorest_options": {
         "input-file": "arm-resources/resources/2017-05-10/swagger/resources.json",
@@ -378,6 +416,7 @@
       "build_dir": "azure-mgmt-resource/azure/mgmt/resource/policy/v2015_10_01_preview",
       "generated_relative_base_directory": "azure/mgmt/resource/policy/v2015_10_01_preview"
     },
+>>>>>>> 91a4d87dcf30f501115b9dd2dea7aef7a6017cd3
     "resources.policy.2016-04-01": {
       "autorest_options": {
         "input-file": "arm-resources/policy/2016-04-01/swagger/policy.json",
@@ -426,6 +465,8 @@
       },
       "output_dir": "azure-mgmt-servicebus/azure/mgmt/servicebus"
     },
+<<<<<<< HEAD
+=======
     "servicefabric": {
       "autorest_options": {
         "input-file": "servicefabric/5.6/swagger/servicefabric.json",
@@ -435,6 +476,7 @@
       "output_dir": "azure-servicefabric/azure/servicefabric",
       "generated_relative_base_directory": "azure/servicefabric"
     },
+>>>>>>> 91a4d87dcf30f501115b9dd2dea7aef7a6017cd3
     "scheduler": {
       "autorest_options": {
         "input-file": "arm-scheduler/2016-03-01/swagger/scheduler.json",
@@ -478,19 +520,31 @@
     "web": {
       "composite": "arm-web/compositeWebAppClient.json",
       "autorest_options": {
+<<<<<<< HEAD
+        "Namespace": "azure.mgmt.web",
+        "Modeler": "CompositeSwagger",
+        "PackageVersion": "0.31.1"
+=======
         "namespace": "azure.mgmt.web",
         "package-version": "0.32.0"
+>>>>>>> 91a4d87dcf30f501115b9dd2dea7aef7a6017cd3
       },
       "output_dir": "azure-mgmt-web/azure/mgmt/web/"
     },
     "batch": {
+<<<<<<< HEAD
+      "swagger": "batch/2017-01-01.4.0/swagger/BatchService.json",
+      "autorest_options": {
+        "Namespace": "azure.batch",
+        "PackageVersion": "2.0.1"
+=======
       "autorest_options": {
         "input-file": "batch/2017-05-01.5.0/swagger/BatchService.json",
         "namespace": "azure.batch",
         "package-version": "3.0.0"
+>>>>>>> 91a4d87dcf30f501115b9dd2dea7aef7a6017cd3
       },
       "output_dir": "azure-batch/azure/batch/",
-      "build_dir": "azure-batch",
       "generated_relative_base_directory": "azure/batch",
       "wrapper_filesOrDirs": [
         "batch_auth.py"

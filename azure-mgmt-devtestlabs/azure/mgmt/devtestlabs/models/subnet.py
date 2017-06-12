@@ -13,18 +13,17 @@ from msrest.serialization import Model
 
 
 class Subnet(Model):
-    """Subnet information.
+    """Subnet.
 
-    :param resource_id: The resource ID of the subnet.
+    :param resource_id:
     :type resource_id: str
-    :param lab_subnet_name: The name of the subnet as seen in the lab.
+    :param lab_subnet_name:
     :type lab_subnet_name: str
-    :param allow_public_ip: The permission policy of the subnet for allowing
-     public IP addresses (i.e. Allow, Deny)). Possible values include:
-     'Default', 'Deny', 'Allow'
+    :param allow_public_ip: Possible values include: 'Default', 'Deny',
+     'Allow'
     :type allow_public_ip: str or :class:`UsagePermissionType
      <azure.mgmt.devtestlabs.models.UsagePermissionType>`
-    """
+    """ 
 
     _attribute_map = {
         'resource_id': {'key': 'resourceId', 'type': 'str'},

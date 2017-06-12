@@ -368,9 +368,7 @@ class CatalogOperations(object):
          to execute catalog operations.
         :type account_name: str
         :param database_name: The name of the database in which to create the
-         credential. Note: This is NOT an external database name, but the name
-         of an existing U-SQL database that should contain the new credential
-         object.
+         credential.
         :type database_name: str
         :param credential_name: The name of the credential.
         :type credential_name: str

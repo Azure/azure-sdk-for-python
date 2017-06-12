@@ -19,11 +19,10 @@ class MgmtResourceLocksTest(AzureMgmtTestCase):
         self.locks_client = self.create_mgmt_client(
             azure.mgmt.resource.ManagementLockClient
         )
-        if not self.is_playback():
-            self.create_resource_group()
 
     @record
     def test_locks(self):
+        self.create_resource_group()
         lock_name = 'pylockrg'
 
         lock = self.locks_client.management_locks.create_or_update_at_resource_group_level(

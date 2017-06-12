@@ -36,13 +36,12 @@ from azure.common.credentials import ServicePrincipalCredentials
 
 AZURE_BATCH_ACCOUNT = 'pythonsdktest'
 AZURE_RESOURCE_GROUP = 'python_batch_sdk_test'
-AZURE_LOCATION = 'brazilsouth'
-AZURE_STORAGE_ACCOUNT = 'batchpythonsdktest'
-AZURE_KEY_VAULT = 'batchpythonsdktest'
+AZURE_LOCATION = 'westeurope'
+AZURE_STORAGE_ACCOUNT = 'pythonsdkbatchtest'
+AZURE_KEY_VAULT = 'pythonsdkbatchtest'
 AZURE_TENANT_ID = 'microsoft.onmicrosoft.com'
-OUTPUT_CONTAINER = 'batch-sdk-test-outputs'
-EXISTING_RESOURCES = False
-CLEAN_UP = True
+EXISTING_RESOURCES = True
+CLEAN_UP = False
 
 LOG = logging.getLogger('batch-python-tests')
 LOG.level = logging.WARNING
@@ -76,10 +75,10 @@ def create_mgmt_client(settings, client_class, **kwargs):
 
 
 def create_resource_group(client):
-    group = {
-        'name': AZURE_RESOURCE_GROUP,
-        'location': AZURE_LOCATION
-    }
+    group = azure.mgmt.resource.resources.models.ResourceGroup(
+        name=AZURE_RESOURCE_GROUP,
+        location=AZURE_LOCATION
+    )
     result_create = client.resource_groups.create_or_update(
         AZURE_RESOURCE_GROUP,
         group,
@@ -113,28 +112,19 @@ def create_keyvault(client):
 
 
 def create_storage_account(client):
-    params = {
-        'sku': {'name': 'Standard_LRS'},
-        'kind': 'Storage',
-        'location': AZURE_LOCATION
-    }
+    params = azure.mgmt.storage.models.StorageAccountCreateParameters(
+        sku=azure.mgmt.storage.models.Sku(
+            azure.mgmt.storage.models.SkuName.standard_lrs
+        ),
+        kind=azure.mgmt.storage.models.Kind.storage,
+        location=AZURE_LOCATION
+    )
     result_create = client.storage_accounts.create(
         AZURE_RESOURCE_GROUP,
         AZURE_STORAGE_ACCOUNT,
         params,
     )
-    result_create.result()
-
-
-def create_storage_client(mgmt_client):
-    import azure.storage.blob as storage
-    keys = mgmt_client.storage_accounts.list_keys(
-        AZURE_RESOURCE_GROUP,
-        AZURE_STORAGE_ACCOUNT)
-    account_key = keys.keys[0].value
-    data_client = storage.BlockBlobService(AZURE_STORAGE_ACCOUNT, account_key)
-    data_client.create_container(OUTPUT_CONTAINER, fail_on_exist=False)
-    return data_client
+    return result_create.result()
 
 
 def create_batch_account(client, settings, live):
@@ -200,17 +190,13 @@ class BatchMgmtTestCase(RecordingTestCase):
             cls.batch_mgmt_client = create_mgmt_client(cls.settings,
                 azure.mgmt.batch.BatchManagementClient
             )
-            if cls.live:
-                if not EXISTING_RESOURCES:
-                    LOG.debug('    creating resource group')
-                    create_resource_group(cls.resource_client)
-                    LOG.debug('    creating storage')
-                    create_storage_account(cls.storage_client)
-                    LOG.debug('    creating keyvault')
-                    create_keyvault(cls.keyvault_client)
-                cls.storage_data_client = create_storage_client(cls.storage_client)
-            else:
-                cls.storage_data_client = None
+            if cls.live and not EXISTING_RESOURCES:
+                LOG.debug('    creating resource group')
+                create_resource_group(cls.resource_client)
+                LOG.debug('    creating storage')
+                create_storage_account(cls.storage_client)
+                LOG.debug('    creating keyvault')
+                create_keyvault(cls.keyvault_client)
             LOG.debug('    creating batch account')
             cls.batch_client_sk, cls.batch_client_aad = create_batch_account(cls.batch_mgmt_client, cls.settings, cls.live)
         except Exception as err:
@@ -252,24 +238,6 @@ class BatchMgmtTestCase(RecordingTestCase):
         }
         val = self._scrub_using_dict(val, real_to_fake_dict)
         return val
-
-    def _generate_container_sas_token(self):
-        """Generate a container URL with SAS token."""
-        if self.live:
-            import azure.storage.blob as storage
-            permission=storage.ContainerPermissions(True, True, True, True)
-            sas_token = self.storage_data_client.generate_container_shared_access_signature(
-                OUTPUT_CONTAINER,
-                permission=permission,
-                expiry=datetime.datetime.utcnow() + datetime.timedelta(hours=2))
-            url = '{}://{}/{}?{}'.format(
-                self.storage_data_client.protocol,
-                self.storage_data_client.primary_endpoint,
-                OUTPUT_CONTAINER,
-                sas_token)
-        else:
-            url = 'test_container_sas'
-        return url
 
     def assertBatchError(self, error, message, code, func, *args, **kwargs):
         try:
@@ -343,16 +311,6 @@ class BatchMgmtTestCase(RecordingTestCase):
     @record
     def test_batch_accounts(self):
         _e = {}
-
-        _m = "Test List Batch Operations"
-        LOG.debug(_m)
-        operations = self.assertList(_e, _m, self.batch_mgmt_client.operations.list)
-        self.assertEqual(_e, _m, len(operations), 19)
-        self.assertEqual(_e, _m, operations[0].name, 'Microsoft.Batch/batchAccounts/providers/Microsoft.Insights/diagnosticSettings/read')
-        self.assertEqual(_e, _m, operations[0].origin, 'system')
-        self.assertEqual(_e, _m, operations[0].display.provider, 'Microsoft Batch')
-        self.assertEqual(_e, _m, operations[0].display.operation, 'Read diagnostic setting')
-
         _m = "Test Get Subscription Quota"
         LOG.debug(_m)
         quotas = self.assertRuns(_e, _m, self.batch_mgmt_client.location.get_quotas,
@@ -397,8 +355,7 @@ class BatchMgmtTestCase(RecordingTestCase):
                                   AZURE_RESOURCE_GROUP, AZURE_BATCH_ACCOUNT)
         self.assertTrue(_e, _m, isinstance(account, azure.mgmt.batch.models.BatchAccount))
         if account:
-            self.assertEqual(_e, _m, account.dedicated_core_quota, 20)
-            self.assertEqual(_e, _m, account.low_priority_core_quota, 50)
+            self.assertEqual(_e, _m, account.core_quota, 20)
             self.assertEqual(_e, _m, account.pool_quota, 20)
             self.assertEqual(_e, _m, account.pool_allocation_mode.value, 'BatchService')
 
@@ -413,23 +370,12 @@ class BatchMgmtTestCase(RecordingTestCase):
                                    AZURE_RESOURCE_GROUP)
         self.assertEqual(_e, _m, len(accounts), 2)
 
-        _m = "Test List Account Keys"
-        LOG.debug(_m)
-        keys = self.assertRuns(_e, _m, self.batch_mgmt_client.batch_account.get_keys,
-                               AZURE_RESOURCE_GROUP, AZURE_BATCH_ACCOUNT)
-        self.assertTrue(_e, _m, isinstance(keys, azure.mgmt.batch.models.BatchAccountKeys))
-        secondary = None
-        if keys:
-            self.assertEqual(_e, _m, keys.account_name, AZURE_BATCH_ACCOUNT)
-            secondary = keys.secondary
-
         _m = "Test Regenerate Account Key"
         LOG.debug(_m)
         keys = self.assertRuns(_e, _m, self.batch_mgmt_client.batch_account.regenerate_key,
                                AZURE_RESOURCE_GROUP, AZURE_BATCH_ACCOUNT, 'Secondary')
         self.assertTrue(_e, _m, isinstance(keys, azure.mgmt.batch.models.BatchAccountKeys))
-        self.assertTrue(_e, _m, keys.secondary != secondary)
-        
+
         _m = "Test Sync AutoStorage Keys"
         LOG.debug(_m)
         response = self.assertRuns(_e, _m, self.batch_mgmt_client.batch_account.synchronize_auto_storage_keys,
@@ -507,7 +453,7 @@ class BatchMgmtTestCase(RecordingTestCase):
 
         _m = "Test Update Application"
         LOG.debug(_m)
-        params = azure.mgmt.batch.models.ApplicationUpdateParameters(
+        params = azure.mgmt.batch.models.UpdateApplicationParameters(
             allow_updates=False,
             display_name='my_updated_name',
             default_version='v1.0'
@@ -604,23 +550,13 @@ class BatchMgmtTestCase(RecordingTestCase):
     @record
     def test_batch_pools(self):
         _e = {}
-
-        _m = "Test List Node Agent SKUs"
-        response = self.assertList(_e, _m, self.batch_client_sk.account.list_node_agent_skus)
-        if response:
-            self.assertTrue(_e, _m, len(response) > 1)
-            self.assertEqual(_e, _m, response[-1].id, "batch.node.windows amd64")
-            self.assertEqual(_e, _m, response[-1].os_type.value, "windows")
-            self.assertTrue(_e, _m, len(response[-1].verified_image_references) > 1)
-
         users = [
             {'name': 'test-user-1', 'password': 'kt#_gahr!@aGERDXA'},
             {'name': 'test-user-2', 'password': 'kt#_gahr!@aGERDXA',
              'elevation_level': batch.models.ElevationLevel.admin}
         ]
         with BatchPool(self.live, self.batch_client_sk, 'python_test_pool_1', user_accounts=users) as pool_id:
-            with BatchPool(self.live, self.batch_client_sk, 'python_test_pool_2',
-                           target_low_priority_nodes=2) as pool_id_2:
+            with BatchPool(self.live, self.batch_client_sk, 'python_test_pool_2') as pool_id_2:
 
                 _m = "Test Create Pool with Network Configuration"
                 LOG.debug(_m)
@@ -642,16 +578,6 @@ class BatchMgmtTestCase(RecordingTestCase):
                     'no_pool', 'Standard_A1',
                     virtual_machine_configuration=pool_config)
                 self.assertBatchError(_e, _m, 'InvalidPropertyValue',
-                                      self.batch_client_sk.pool.add,
-                                      pool, batch.models.PoolAddOptions(timeout=45))
-
-                _m = "Test Create Pool with application licenses"
-                LOG.debug(_m)
-                pool_config = batch.models.CloudServiceConfiguration('4')
-                pool = batch.models.PoolAddParameter('no_pool', 'small',
-                    cloud_service_configuration=pool_config,
-                    application_licenses=["maya"])
-                self.assertBatchError(_e, _m, 'Forbidden',
                                       self.batch_client_sk.pool.add,
                                       pool, batch.models.PoolAddOptions(timeout=45))
 
@@ -705,17 +631,16 @@ class BatchMgmtTestCase(RecordingTestCase):
                 LOG.debug(_m)
                 interval = datetime.timedelta(minutes=6)
                 response = self.assertRuns(_e, _m, self.batch_client_sk.pool.enable_auto_scale, pool_id,
-                                           auto_scale_formula='$TargetDedicatedNodes=2',
+                                           auto_scale_formula='$TargetDedicated=2',
                                            auto_scale_evaluation_interval=interval)
                 self.assertIsNone(_e, _m, response)
 
                 _m = "Test Evaluate Autoscale"
                 LOG.debug(_m)
-                result = self.assertRuns(_e, _m, self.batch_client_sk.pool.evaluate_auto_scale,
-                                         pool_id, '$TargetDedicatedNodes=3')
+                result = self.assertRuns(_e, _m, self.batch_client_sk.pool.evaluate_auto_scale, pool_id, '$TargetDedicated=3')
                 if result:
                     self.assertTrue(_e, _m, isinstance(result, batch.models.AutoScaleRun))
-                    self.assertEqual(_e, _m, result.results, '$TargetDedicatedNodes=3;$TargetLowPriorityNodes=0;$NodeDeallocationOption=requeue')
+                    self.assertEqual(_e, _m, result.results, '$TargetDedicated=3;$NodeDeallocationOption=requeue')
 
                 _m = "Test Disable Autoscale"
                 LOG.debug(_m)
@@ -751,12 +676,7 @@ class BatchMgmtTestCase(RecordingTestCase):
 
                 _m = "Test Pool Resize"
                 LOG.debug(_m)
-                pool = self.assertRuns(_e, _m, self.batch_client_sk.pool.get, pool_id_2)
-                self.assertTrue(_e, _m, isinstance(pool, batch.models.CloudPool))
-                if pool:
-                    self.assertEqual(_e, _m, pool.target_dedicated_nodes, 0)
-                    self.assertEqual(_e, _m, pool.target_low_priority_nodes, 2)
-                params = batch.models.PoolResizeParameter(target_dedicated_nodes=3, target_low_priority_nodes=0)
+                params = batch.models.PoolResizeParameter(target_dedicated=3)
                 response = self.assertRuns(_e, _m, self.batch_client_sk.pool.resize, pool_id_2, params)
                 self.assertIsNone(_e, _m, response)
 
@@ -764,11 +684,6 @@ class BatchMgmtTestCase(RecordingTestCase):
                 LOG.debug(_m)
                 response = self.assertRuns(_e, _m, self.batch_client_sk.pool.stop_resize, pool_id_2)
                 self.assertIsNone(_e, _m, response)
-                pool = self.assertRuns(_e, _m, self.batch_client_sk.pool.get, pool_id_2)
-                self.assertTrue(_e, _m, isinstance(pool, batch.models.CloudPool))
-                if pool:
-                    self.assertEqual(_e, _m, pool.target_dedicated_nodes, 3)
-                    self.assertEqual(_e, _m, pool.target_low_priority_nodes, 2)  # TODO: Why?
 
                 _m = "Test Get All Pools Lifetime Statistics"
                 LOG.debug(_m)
@@ -794,7 +709,7 @@ class BatchMgmtTestCase(RecordingTestCase):
         with BatchPool(self.live,
                        self.batch_client_sk,
                        'python_test_pool_3',
-                       target_dedicated_nodes=2) as pool_id:
+                       target_dedicated=2) as pool_id:
 
             _m = "Test List Compute Nodes"
             LOG.debug(_m)
@@ -809,7 +724,6 @@ class BatchMgmtTestCase(RecordingTestCase):
             if node:
                 self.assertEqual(_e, _m, node.state, batch.models.ComputeNodeState.idle)
                 self.assertEqual(_e, _m, node.scheduling_state, batch.models.SchedulingState.enabled)
-                self.assertTrue(_e, _m, node.is_dedicated)
 
             _m = "Test Add User"
             LOG.debug(_m)
@@ -915,18 +829,10 @@ class BatchMgmtTestCase(RecordingTestCase):
             {'name': 'task-user', 'password': 'kt#_gahr!@aGERDXA',
              'elevation_level': batch.models.ElevationLevel.admin}
         ]
-        image = batch.models.VirtualMachineConfiguration(
-            node_agent_sku_id="batch.node.windows amd64",
-            image_reference=batch.models.ImageReference(
-                publisher="MicrosoftWindowsServer",
-                offer="WindowsServer",
-                sku="2016-Datacenter")
-        )
         with BatchPool(self.live,
                        self.batch_client_sk,
                        'python_test_pool_4',
-                       virtual_machine=image,
-                       target_dedicated_nodes=1, user_accounts=users) as pool_id:
+                       target_dedicated=2, user_accounts=users) as pool_id:
 
             _m = "Test Create Job"
             LOG.debug(_m)
@@ -1002,7 +908,7 @@ class BatchMgmtTestCase(RecordingTestCase):
             conditions = batch.models.ExitConditions(default=batch.models.ExitOptions('terminate'),
                                                      exit_codes=[batch.models.ExitCodeMapping(code=1, exit_options=batch.models.ExitOptions('None'))])
             task = batch.models.TaskAddParameter(id='python_task_with_auto_complete',
-                                                 command_line='cmd /c "echo hello world"',
+                                                 command_line='cmd /c echo hello world',
                                                  user_identity={'auto_user': auto_user},
                                                  exit_conditions=conditions,
                                                  authentication_token_settings={'access': ['job']})
@@ -1024,7 +930,7 @@ class BatchMgmtTestCase(RecordingTestCase):
             _m = "Test Create Task with Application Package and Run-As-User"
             LOG.debug(_m)
             task = batch.models.TaskAddParameter('python_task_with_app_package',
-                                                 'cmd /c "echo hello world"',
+                                                 'cmd /c echo hello world',
                                                  user_identity={'user_name': 'task-user'},
                                                  application_package_references=[batch.models.ApplicationPackageReference('my_application_id')])
             response = self.assertRuns(_e, _m, self.batch_client_sk.task.add, 'python_test_job', task)
@@ -1043,47 +949,14 @@ class BatchMgmtTestCase(RecordingTestCase):
             response = self.assertRuns(_e, _m, self.batch_client_sk.task.delete, 'python_test_job', 'python_task_with_app_package')
             self.assertIsNone(_e, _m, response)
 
-            _m = "Test Create Task with Output Files"
+            _m = "Test Create Task"
             LOG.debug(_m)
-            container_url = self._generate_container_sas_token()
-            outputs = [
-                batch.models.OutputFile(
-                    file_pattern="../stdout.txt",
-                    destination=batch.models.OutputFileDestination(
-                        container=batch.models.OutputFileBlobContainerDestination(
-                            container_url=container_url, path="taskLogs/output.txt")),
-                    upload_options=batch.models.OutputFileUploadOptions(
-                        upload_condition=batch.models.OutputFileUploadCondition.task_completion)),
-                batch.models.OutputFile(
-                    file_pattern="../stderr.txt",
-                    destination=batch.models.OutputFileDestination(
-                        container=batch.models.OutputFileBlobContainerDestination(
-                            container_url=container_url, path="taskLogs/error.txt")),
-                    upload_options=batch.models.OutputFileUploadOptions(
-                        upload_condition=batch.models.OutputFileUploadCondition.task_failure)),
-            ]
-
-            task = batch.models.TaskAddParameter('python_task_1', 'cmd /c "echo hello world"',
-                                                 output_files=outputs)
-            response = self.assertRuns(_e, _m, self.batch_client_sk.task.add, 'python_test_job_2', task)
+            task = batch.models.TaskAddParameter('python_task_1', 'cmd /c echo hello world')
+            response = self.assertRuns(_e, _m, self.batch_client_sk.task.add, 'python_test_job', task)
             self.assertIsNone(_e, _m, response)
-
-            _m = "Test for Complete Output Files"
-            LOG.debug(_m)
-            task = self.batch_client_sk.task.get('python_test_job_2', 'python_task_1')
-            if self.live and task:
-                while task.state.value != 'completed':
-                    time.sleep(5)
-                    task = self.batch_client_sk.task.get('python_test_job_2', 'python_task_1')
-                outputs = list(self.storage_data_client.list_blobs(OUTPUT_CONTAINER))
-                self.assertEqual(_e, _m, len(outputs), 1)
-                if outputs:
-                    self.assertEqual(_e, _m, outputs[0].name, "taskLogs/output.txt")
 
             _m = "Test Terminate Task"
             LOG.debug(_m)
-            task = batch.models.TaskAddParameter('python_task_1', 'cmd /c "echo hello world"')
-            response = self.assertRuns(_e, _m, self.batch_client_sk.task.add, 'python_test_job', task)
             response = self.assertRuns(_e, _m, self.batch_client_sk.task.terminate, 
                                        'python_test_job', 'python_task_1')
             self.assertIsNone(_e, _m, response)
@@ -1104,23 +977,10 @@ class BatchMgmtTestCase(RecordingTestCase):
             if task:
                 self.assertEqual(_e, _m, task.state.value, 'active')
 
-            _m = "Test Task Failure"
-            LOG.debug(_m)
-            task = batch.models.TaskAddParameter('python_task_bad', 'bad command')
-            response = self.assertRuns(_e, _m, self.batch_client_sk.task.add, 'python_test_job_2', task)
-            self.assertIsNone(_e, _m, response)
-            task = self.assertRuns(_e, _m, self.batch_client_sk.task.get, 'python_test_job_2', 'python_task_bad')
-            if self.live and task:
-                while task.state.value != 'completed':
-                    time.sleep(5)
-                    task = self.batch_client_sk.task.get('python_test_job_2', 'python_task_bad')
-                self.assertEqual(_e, _m, task.execution_info.result, batch.models.TaskExecutionResult.failure)
-                self.assertEqual(_e, _m, task.execution_info.failure_info.category, batch.models.ErrorCategory.user_error)
-                self.assertEqual(_e, _m, task.execution_info.failure_info.code, 'CommandProgramNotFound')
 
             _m = "Test Update Task"
             LOG.debug(_m)
-            task = batch.models.TaskAddParameter('python_task_2', 'cmd /c "echo hello world"')
+            task = batch.models.TaskAddParameter('python_task_2', 'cmd /c echo hello world')
             response = self.assertRuns(_e, _m, self.batch_client_sk.task.add, 'python_test_job', task)
             constraints = batch.models.TaskConstraints(max_task_retry_count=1)
             response = self.assertRuns(_e, _m, self.batch_client_sk.task.update,
@@ -1131,7 +991,7 @@ class BatchMgmtTestCase(RecordingTestCase):
             LOG.debug(_m)
             tasks = []
             for i in range(3, 6):
-                tasks.append(batch.models.TaskAddParameter('python_task_{}'.format(i), 'cmd /c "echo hello world"'))
+                tasks.append(batch.models.TaskAddParameter('python_task_{}'.format(i), 'cmd /c echo hello world'))
             response = self.assertRuns(_e, _m, self.batch_client_sk.task.add_collection, 'python_test_job', tasks)
             self.assertTrue(_e, _m, isinstance(response, batch.models.TaskAddCollectionResult))
 
@@ -1148,7 +1008,7 @@ class BatchMgmtTestCase(RecordingTestCase):
             if task:
                 self.assertEqual(_e, _m, task.constraints.max_task_retry_count, 1)
                 self.assertEqual(_e, _m, task.id, 'python_task_2')
-                self.assertEqual(_e, _m, task.command_line, 'cmd /c "echo hello world"')
+                self.assertEqual(_e, _m, task.command_line, 'cmd /c echo hello world')
 
             _m = "Test Get Subtasks"  #TODO: Test with actual subtasks
             LOG.debug('TODO: ' + _m)
@@ -1224,7 +1084,7 @@ class BatchMgmtTestCase(RecordingTestCase):
         with BatchPool(self.live,
                        self.batch_client_sk,
                        'python_test_pool_5',
-                       target_dedicated_nodes=2) as pool_id:
+                       target_dedicated=2) as pool_id:
 
             _m = "Test Create Job Schedule"
             LOG.debug(_m)
@@ -1304,19 +1164,15 @@ class BatchPool(object):
         self.client = client
         self.id = id
         self.kwargs = kwargs
-        self.nodes = kwargs.get('target_dedicated_nodes', 0)
+        self.nodes = kwargs.get('target_dedicated', 0)
         self.timeout = datetime.datetime.now() + datetime.timedelta(minutes=20)
 
     def __enter__(self):
         response = None
         if self.live:
             try:
-                try:
-                    pool_config = self.kwargs.pop("virtual_machine")
-                    pool = batch.models.PoolAddParameter(self.id, 'standard_a1', virtual_machine_configuration=pool_config, **self.kwargs)
-                except KeyError:
-                    pool_config = batch.models.CloudServiceConfiguration('4')
-                    pool = batch.models.PoolAddParameter(self.id, 'small', cloud_service_configuration=pool_config, **self.kwargs)
+                pool_config = batch.models.CloudServiceConfiguration('4')
+                pool = batch.models.PoolAddParameter(self.id, 'small', cloud_service_configuration=pool_config, **self.kwargs)
                 response = self.client.pool.add(pool)
                 if self.live:
                     LOG.debug("    waiting for pool to be ready...")

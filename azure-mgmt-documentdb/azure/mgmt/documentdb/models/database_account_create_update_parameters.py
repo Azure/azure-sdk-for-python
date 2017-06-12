@@ -49,11 +49,6 @@ class DatabaseAccountCreateUpdateParameters(Resource):
      as the allowed list of client IPs for a given database account. IP
      addresses/ranges must be comma separated and must not contain any spaces.
     :type ip_range_filter: str
-    :param enable_automatic_failover: Enables automatic failover of the write
-     region in the rare event that the region is unavailable due to an outage.
-     Automatic failover will result in a new write region for the account and
-     is chosen based on the failover priorities configured for the account.
-    :type enable_automatic_failover: bool
     """
 
     _validation = {
@@ -76,15 +71,13 @@ class DatabaseAccountCreateUpdateParameters(Resource):
         'locations': {'key': 'properties.locations', 'type': '[Location]'},
         'database_account_offer_type': {'key': 'properties.databaseAccountOfferType', 'type': 'str'},
         'ip_range_filter': {'key': 'properties.ipRangeFilter', 'type': 'str'},
-        'enable_automatic_failover': {'key': 'properties.enableAutomaticFailover', 'type': 'bool'},
     }
 
     database_account_offer_type = "Standard"
 
-    def __init__(self, location, locations, tags=None, kind="GlobalDocumentDB", consistency_policy=None, ip_range_filter=None, enable_automatic_failover=None):
+    def __init__(self, location, locations, tags=None, kind="GlobalDocumentDB", consistency_policy=None, ip_range_filter=None):
         super(DatabaseAccountCreateUpdateParameters, self).__init__(location=location, tags=tags)
         self.kind = kind
         self.consistency_policy = consistency_policy
         self.locations = locations
         self.ip_range_filter = ip_range_filter
-        self.enable_automatic_failover = enable_automatic_failover

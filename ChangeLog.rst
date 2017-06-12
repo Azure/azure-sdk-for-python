@@ -1,3 +1,5 @@
+<<<<<<< HEAD
+=======
 2017-05-16 azure 2.0.0
 ++++++++++++++++++++++
 
@@ -85,6 +87,7 @@ More packages are available, but they are in preview with not enough tests curre
 http://azure-sdk-for-python.readthedocs.io/en/latest/installation.html
 
 
+>>>>>>> 91a4d87dcf30f501115b9dd2dea7aef7a6017cd3
 2016-08-30 Version 2.0.0rc6 / 0.30.0rc6
 +++++++++++++++++++++++++++++++++++++++
 
