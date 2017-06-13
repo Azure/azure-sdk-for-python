@@ -104,7 +104,7 @@ class VnetFirewallRulesOperations(object):
         return deserialized
 
     def create_or_update(
-            self, resource_group_name, server_name, vnet_firewall_rule_name, parameters, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, server_name, vnet_firewall_rule_name, virtual_network_subnet_id=None, custom_headers=None, raw=False, **operation_config):
         """Creates or updates an existing virtual network rule.
 
         :param resource_group_name: The name of the resource group that
@@ -115,9 +115,8 @@ class VnetFirewallRulesOperations(object):
         :type server_name: str
         :param vnet_firewall_rule_name: The name of the virtual network rule.
         :type vnet_firewall_rule_name: str
-        :param parameters: The requested vnetFirewall Resource state.
-        :type parameters: :class:`VnetFirewallRule
-         <azure.mgmt.sql.models.VnetFirewallRule>`
+        :param virtual_network_subnet_id: The VnetSubnetId
+        :type virtual_network_subnet_id: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -129,6 +128,8 @@ class VnetFirewallRulesOperations(object):
          if raw=true
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
+        parameters = models.VnetFirewallRule(virtual_network_subnet_id=virtual_network_subnet_id)
+
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/virtualNetworkRules/{vnetFirewallRuleName}'
         path_format_arguments = {
