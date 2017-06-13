@@ -37,6 +37,14 @@ class IpFilterActionType(Enum):
     reject = "Reject"
 
 
+class RoutingSource(Enum):
+
+    device_messages = "DeviceMessages"
+    twin_change_events = "TwinChangeEvents"
+    device_lifecycle_events = "DeviceLifecycleEvents"
+    device_job_lifecycle_events = "DeviceJobLifecycleEvents"
+
+
 class OperationMonitoringLevel(Enum):
 
     none = "None"
