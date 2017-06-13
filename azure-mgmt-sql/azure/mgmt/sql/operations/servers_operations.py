@@ -37,12 +37,11 @@ class ServersOperations(object):
         self.config = config
 
     def check_name_availability(
-            self, parameters, custom_headers=None, raw=False, **operation_config):
+            self, name, custom_headers=None, raw=False, **operation_config):
         """Determines whether a resource can be created with the specified name.
 
-        :param parameters: The parameters to request for name availability.
-        :type parameters: :class:`CheckNameAvailabilityRequest
-         <azure.mgmt.sql.models.CheckNameAvailabilityRequest>`
+        :param name: The name whose availability is to be checked.
+        :type name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -54,6 +53,8 @@ class ServersOperations(object):
          if raw=true
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
+        parameters = models.CheckNameAvailabilityRequest(name=name)
+
         api_version = "2014-04-01"
 
         # Construct URL
