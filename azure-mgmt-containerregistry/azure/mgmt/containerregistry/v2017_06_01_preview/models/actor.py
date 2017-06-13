@@ -12,25 +12,18 @@
 from msrest.serialization import Model
 
 
-class StorageAccountParameters(Model):
-    """The parameters of a storage account for a container registry.
+class Actor(Model):
+    """The agent that initiated the event. For most situations, this could be from
+    the authorization context of the request.
 
-    :param name: The name of the storage account.
+    :param name: The subject or username associated with the request context
+     that generated the event.
     :type name: str
-    :param access_key: The access key to the storage account.
-    :type access_key: str
     """
-
-    _validation = {
-        'name': {'required': True},
-        'access_key': {'required': True},
-    }
 
     _attribute_map = {
         'name': {'key': 'name', 'type': 'str'},
-        'access_key': {'key': 'accessKey', 'type': 'str'},
     }
 
-    def __init__(self, name, access_key):
+    def __init__(self, name=None):
         self.name = name
-        self.access_key = access_key

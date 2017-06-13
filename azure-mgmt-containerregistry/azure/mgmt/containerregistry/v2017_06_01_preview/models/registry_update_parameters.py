@@ -18,19 +18,20 @@ class RegistryUpdateParameters(Model):
     :param tags: The tags for the container registry.
     :type tags: dict
     :param admin_user_enabled: The value that indicates whether the admin user
-     is enabled. This value is false by default.
+     is enabled.
     :type admin_user_enabled: bool
     :param storage_account: The parameters of a storage account for the
-     container registry. If specified, the storage account must be in the same
-     physical location as the container registry.
-    :type storage_account: :class:`StorageAccountParameters
-     <azure.mgmt.containerregistry.models.StorageAccountParameters>`
+     container registry. Only applicable to Basic SKU. If specified, the
+     storage account must be in the same physical location as the container
+     registry.
+    :type storage_account: :class:`StorageAccountProperties
+     <azure.mgmt.containerregistry.v2017_06_01_preview.models.StorageAccountProperties>`
     """
 
     _attribute_map = {
         'tags': {'key': 'tags', 'type': '{str}'},
         'admin_user_enabled': {'key': 'properties.adminUserEnabled', 'type': 'bool'},
-        'storage_account': {'key': 'properties.storageAccount', 'type': 'StorageAccountParameters'},
+        'storage_account': {'key': 'properties.storageAccount', 'type': 'StorageAccountProperties'},
     }
 
     def __init__(self, tags=None, admin_user_enabled=None, storage_account=None):
