@@ -3,6 +3,14 @@
 Release History
 ===============
 
+0.3.0 (2017-06-13)
+++++++++++++++++++
+
+**Features**
+
+- New API version 2017-01-19. This is a backward compatible version.
+- Adding "routing" information
+
 0.2.2 (2017-04-20)
 ++++++++++++++++++
 

@@ -166,11 +166,12 @@
     },
     "iothub": {
       "autorest_options": {
-        "input-file": "arm-iothub/2016-02-03/swagger/iothub.json",
+        "input-file": "arm-iothub/2017-01-19/swagger/iothub.json",
         "namespace": "azure.mgmt.iothub",
-        "package-version": "0.2.2"
+        "package-version": "0.3.0"
       },
-      "output_dir": "azure-mgmt-iothub/azure/mgmt/iothub"
+      "output_dir": "azure-mgmt-iothub/azure/mgmt/iothub",
+      "build_dir": "azure-mgmt-iothub"
     },
     "keyvault.mgmt": {
       "autorest_options": {

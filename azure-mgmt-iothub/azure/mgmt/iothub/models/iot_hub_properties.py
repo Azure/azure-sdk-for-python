@@ -35,6 +35,9 @@ class IotHubProperties(Model):
      operationsMonitoringEvents. Both of these keys have to be present in the
      dictionary while making create or update calls for the IoT hub.
     :type event_hub_endpoints: dict
+    :param routing:
+    :type routing: :class:`RoutingProperties
+     <azure.mgmt.iothub.models.RoutingProperties>`
     :param storage_endpoints: The list of Azure Storage endpoints where you
      can upload files. Currently you can configure only one Azure Storage
      account and that MUST have its key as $default. Specifying more than one
@@ -74,6 +77,7 @@ class IotHubProperties(Model):
         'provisioning_state': {'key': 'provisioningState', 'type': 'str'},
         'host_name': {'key': 'hostName', 'type': 'str'},
         'event_hub_endpoints': {'key': 'eventHubEndpoints', 'type': '{EventHubProperties}'},
+        'routing': {'key': 'routing', 'type': 'RoutingProperties'},
         'storage_endpoints': {'key': 'storageEndpoints', 'type': '{StorageEndpointProperties}'},
         'messaging_endpoints': {'key': 'messagingEndpoints', 'type': '{MessagingEndpointProperties}'},
         'enable_file_upload_notifications': {'key': 'enableFileUploadNotifications', 'type': 'bool'},
@@ -83,12 +87,13 @@ class IotHubProperties(Model):
         'features': {'key': 'features', 'type': 'str'},
     }
 
-    def __init__(self, authorization_policies=None, ip_filter_rules=None, event_hub_endpoints=None, storage_endpoints=None, messaging_endpoints=None, enable_file_upload_notifications=None, cloud_to_device=None, comments=None, operations_monitoring_properties=None, features=None):
+    def __init__(self, authorization_policies=None, ip_filter_rules=None, event_hub_endpoints=None, routing=None, storage_endpoints=None, messaging_endpoints=None, enable_file_upload_notifications=None, cloud_to_device=None, comments=None, operations_monitoring_properties=None, features=None):
         self.authorization_policies = authorization_policies
         self.ip_filter_rules = ip_filter_rules
         self.provisioning_state = None
         self.host_name = None
         self.event_hub_endpoints = event_hub_endpoints
+        self.routing = routing
         self.storage_endpoints = storage_endpoints
         self.messaging_endpoints = messaging_endpoints
         self.enable_file_upload_notifications = enable_file_upload_notifications
