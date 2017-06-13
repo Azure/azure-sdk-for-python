@@ -9,6 +9,7 @@ Release History
 
   * Support for Compute Policies on accounts. These will limit specific user and groups to certain job parallelism and priority.
   * Support for job relationship properties. These can be populated in the `related` property when submitting a job and can be retrieved with the `pipeline` and `recurrence` operation methods.
+  * Suport for a basic option when listing catalog tables. When set to true, will only return the table name, schema name, database name and version for each table in the list, instead of all table metadata, improving performance when all information is not required.
 
 0.1.4 (2017-04-20)
 ++++++++++++++++++

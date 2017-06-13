@@ -7,26 +7,26 @@ interactions:
       Connection: [keep-alive]
       Content-Length: ['25']
       Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.5.2 (Windows-10-10.0.14393-SP0) requests/2.9.1 msrest/0.4.4
-          msrest_azure/0.4.7 resourcemanagementclient/1.0.0rc1 Azure-SDK-For-Python]
+      User-Agent: [python/3.5.2 (Windows-10-10.0.15063-SP0) requests/2.9.1 msrest/0.4.4
+          msrest_azure/0.4.7 resourcemanagementclient/1.1.0 Azure-SDK-For-Python]
       accept-language: [en-US]
-      x-ms-client-request-id: [d594679a-260c-11e7-8e80-645106422854]
+      x-ms-client-request-id: [8be16e9e-4fa3-11e7-96d1-645106422854]
     method: PUT
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_mgmt_datalake_analytics_test_adla_catalog_items32e3152c?api-version=2016-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_mgmt_datalake_analytics_test_adla_catalog_items32e3152c?api-version=2017-05-10
   response:
     body: {string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_datalake_analytics_test_adla_catalog_items32e3152c","name":"test_mgmt_datalake_analytics_test_adla_catalog_items32e3152c","location":"eastus2","properties":{"provisioningState":"Succeeded"}}'}
     headers:
       Cache-Control: [no-cache]
       Content-Length: ['274']
       Content-Type: [application/json; charset=utf-8]
-      Date: ['Thu, 20 Apr 2017 21:03:43 GMT']
+      Date: ['Mon, 12 Jun 2017 19:15:51 GMT']
       Expires: ['-1']
       Pragma: [no-cache]
       Strict-Transport-Security: [max-age=31536000; includeSubDomains]
-      x-ms-correlation-request-id: [fcb905b8-1d28-4596-be50-7aadb94938be]
+      x-ms-correlation-request-id: [10dcbfee-52a9-4f78-8d62-b40a032ca1ae]
       x-ms-ratelimit-remaining-subscription-writes: ['1199']
-      x-ms-request-id: [fcb905b8-1d28-4596-be50-7aadb94938be]
-      x-ms-routing-request-id: ['WESTUS2:20170420T210343Z:fcb905b8-1d28-4596-be50-7aadb94938be']
+      x-ms-request-id: [10dcbfee-52a9-4f78-8d62-b40a032ca1ae]
+      x-ms-routing-request-id: ['WESTUS2:20170612T191551Z:10dcbfee-52a9-4f78-8d62-b40a032ca1ae']
     status: {code: 201, message: Created}
 - request:
     body: '{"location": "East US 2"}'
@@ -36,22 +36,22 @@ interactions:
       Connection: [keep-alive]
       Content-Length: ['25']
       Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.5.2 (Windows-10-10.0.14393-SP0) requests/2.9.1 msrest/0.4.4
-          msrest_azure/0.4.7 datalakestoreaccountmanagementclient/0.1.4 Azure-SDK-For-Python]
+      User-Agent: [python/3.5.2 (Windows-10-10.0.15063-SP0) requests/2.9.1 msrest/0.4.4
+          msrest_azure/0.4.7 datalakestoreaccountmanagementclient/0.1.5 Azure-SDK-For-Python]
       accept-language: [en-US]
-      x-ms-client-request-id: [d652c7a2-260c-11e7-9948-645106422854]
+      x-ms-client-request-id: [8ccc3c1c-4fa3-11e7-ad02-645106422854]
     method: PUT
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_datalake_analytics_test_adla_catalog_items32e3152c/providers/Microsoft.DataLakeStore/accounts/pyarmadls232e3152c?api-version=2016-11-01
   response:
-    body: {string: '{"properties":{"provisioningState":"Creating","state":null,"endpoint":null,"accountId":"a49b399b-10cd-4cf8-b2a3-2ea981ec0ba6","creationTime":null,"lastModifiedTime":null},"location":"East
+    body: {string: '{"properties":{"provisioningState":"Creating","state":null,"endpoint":null,"accountId":"f01f8d8c-c091-4c49-ac04-0d243b063bf0","creationTime":null,"lastModifiedTime":null},"location":"East
         US 2","tags":null,"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_datalake_analytics_test_adla_catalog_items32e3152c/providers/Microsoft.DataLakeStore/accounts/pyarmadls232e3152c","name":"pyarmadls232e3152c","type":"Microsoft.DataLakeStore/accounts"}'}
     headers:
-      Azure-AsyncOperation: ['https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DataLakeStore/locations/EastUS2/operationResults/a49b399b-10cd-4cf8-b2a3-2ea981ec0ba60?api-version=2016-11-01&expanded=true']
+      Azure-AsyncOperation: ['https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DataLakeStore/locations/EastUS2/operationResults/f01f8d8c-c091-4c49-ac04-0d243b063bf00?api-version=2016-11-01&expanded=true']
       Cache-Control: [no-cache]
       Connection: [close]
       Content-Length: ['473']
       Content-Type: [application/json]
-      Date: ['Thu, 20 Apr 2017 21:03:45 GMT']
+      Date: ['Mon, 12 Jun 2017 19:15:53 GMT']
       Expires: ['-1']
       Location: ['https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_mgmt_datalake_analytics_test_adla_catalog_items32e3152c/providers/Microsoft.DataLakeStore/accounts/pyarmadls232e3152c/operationresults/0?api-version=2016-11-01']
       Pragma: [no-cache]
@@ -61,10 +61,10 @@ interactions:
       X-AspNet-Version: [4.0.30319]
       X-Content-Type-Options: [nosniff]
       X-Powered-By: [ASP.NET]
-      x-ms-correlation-request-id: [b0fdf70d-3d6b-48c9-a44e-724ac22f841d]
+      x-ms-correlation-request-id: [df625fa9-f36b-4c7a-b101-3309a15678d4]
       x-ms-ratelimit-remaining-subscription-writes: ['1199']
-      x-ms-request-id: [cdff9758-17c3-48f8-ab08-62d8e98e6413]
-      x-ms-routing-request-id: ['WESTUS2:20170420T210346Z:b0fdf70d-3d6b-48c9-a44e-724ac22f841d']
+      x-ms-request-id: [3652838e-8d81-4431-bd5a-5b0ebef745ad]
+      x-ms-routing-request-id: ['WESTUS2:20170612T191553Z:df625fa9-f36b-4c7a-b101-3309a15678d4']
     status: {code: 201, message: Created}
 - request:
     body: null
@@ -73,19 +73,19 @@ interactions:
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
       Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.5.2 (Windows-10-10.0.14393-SP0) requests/2.9.1 msrest/0.4.4
-          msrest_azure/0.4.7 datalakestoreaccountmanagementclient/0.1.4 Azure-SDK-For-Python]
+      User-Agent: [python/3.5.2 (Windows-10-10.0.15063-SP0) requests/2.9.1 msrest/0.4.4
+          msrest_azure/0.4.7 datalakestoreaccountmanagementclient/0.1.5 Azure-SDK-For-Python]
       accept-language: [en-US]
-      x-ms-client-request-id: [d652c7a2-260c-11e7-9948-645106422854]
+      x-ms-client-request-id: [8ccc3c1c-4fa3-11e7-ad02-645106422854]
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DataLakeStore/locations/EastUS2/operationResults/a49b399b-10cd-4cf8-b2a3-2ea981ec0ba60?api-version=2016-11-01&expanded=true
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DataLakeStore/locations/EastUS2/operationResults/f01f8d8c-c091-4c49-ac04-0d243b063bf00?api-version=2016-11-01&expanded=true
   response:
     body: {string: '{"status":"InProgress"}'}
     headers:
       Cache-Control: [no-cache]
       Connection: [close]
       Content-Type: [application/json]
-      Date: ['Thu, 20 Apr 2017 21:03:56 GMT']
+      Date: ['Mon, 12 Jun 2017 19:16:03 GMT']
       Expires: ['-1']
       Pragma: [no-cache]
       Server: [Microsoft-IIS/8.5]
@@ -95,10 +95,10 @@ interactions:
       X-Content-Type-Options: [nosniff]
       X-Powered-By: [ASP.NET]
       content-length: ['23']
-      x-ms-correlation-request-id: [c93d4476-0bb4-40ed-aea3-a92e06e92308]
-      x-ms-ratelimit-remaining-subscription-reads: ['14998']
-      x-ms-request-id: [ce75be62-bdbf-4929-b319-d51ec7abac8c]
-      x-ms-routing-request-id: ['WESTUS2:20170420T210357Z:c93d4476-0bb4-40ed-aea3-a92e06e92308']
+      x-ms-correlation-request-id: [f21b1962-da9b-4988-aa3f-64332b1a90aa]
+      x-ms-ratelimit-remaining-subscription-reads: ['14999']
+      x-ms-request-id: [3fbb66ba-0220-49cd-acc1-a2399f67e173]
+      x-ms-routing-request-id: ['WESTUS2:20170612T191604Z:f21b1962-da9b-4988-aa3f-64332b1a90aa']
     status: {code: 200, message: OK}
 - request:
     body: null
@@ -107,19 +107,19 @@ interactions:
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
       Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.5.2 (Windows-10-10.0.14393-SP0) requests/2.9.1 msrest/0.4.4
-          msrest_azure/0.4.7 datalakestoreaccountmanagementclient/0.1.4 Azure-SDK-For-Python]
+      User-Agent: [python/3.5.2 (Windows-10-10.0.15063-SP0) requests/2.9.1 msrest/0.4.4
+          msrest_azure/0.4.7 datalakestoreaccountmanagementclient/0.1.5 Azure-SDK-For-Python]
       accept-language: [en-US]
-      x-ms-client-request-id: [d652c7a2-260c-11e7-9948-645106422854]
+      x-ms-client-request-id: [8ccc3c1c-4fa3-11e7-ad02-645106422854]
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DataLakeStore/locations/EastUS2/operationResults/a49b399b-10cd-4cf8-b2a3-2ea981ec0ba60?api-version=2016-11-01&expanded=true
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DataLakeStore/locations/EastUS2/operationResults/f01f8d8c-c091-4c49-ac04-0d243b063bf00?api-version=2016-11-01&expanded=true
   response:
     body: {string: '{"status":"Succeeded"}'}
     headers:
       Cache-Control: [no-cache]
       Connection: [close]
       Content-Type: [application/json]
-      Date: ['Thu, 20 Apr 2017 21:04:26 GMT']
+      Date: ['Mon, 12 Jun 2017 19:16:34 GMT']
       Expires: ['-1']
       Pragma: [no-cache]
       Server: [Microsoft-IIS/8.5]
@@ -129,10 +129,10 @@ interactions:
       X-Content-Type-Options: [nosniff]
       X-Powered-By: [ASP.NET]
       content-length: ['22']
-      x-ms-correlation-request-id: [68005467-d1f2-4b42-8f27-a91c9edca598]
-      x-ms-ratelimit-remaining-subscription-reads: ['14997']
-      x-ms-request-id: [d155a31f-8e1d-4dff-b6af-28114e6a4acb]
-      x-ms-routing-request-id: ['WESTUS2:20170420T210427Z:68005467-d1f2-4b42-8f27-a91c9edca598']
+      x-ms-correlation-request-id: [91e83bd1-8dd4-4a76-b28d-8ee7a1a8a7b6]
+      x-ms-ratelimit-remaining-subscription-reads: ['14999']
+      x-ms-request-id: [a4843138-67cc-4cd2-98ac-d7cab2acbd48]
+      x-ms-routing-request-id: ['WESTUS2:20170612T191635Z:91e83bd1-8dd4-4a76-b28d-8ee7a1a8a7b6']
     status: {code: 200, message: OK}
 - request:
     body: null
@@ -141,20 +141,20 @@ interactions:
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
       Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.5.2 (Windows-10-10.0.14393-SP0) requests/2.9.1 msrest/0.4.4
-          msrest_azure/0.4.7 datalakestoreaccountmanagementclient/0.1.4 Azure-SDK-For-Python]
+      User-Agent: [python/3.5.2 (Windows-10-10.0.15063-SP0) requests/2.9.1 msrest/0.4.4
+          msrest_azure/0.4.7 datalakestoreaccountmanagementclient/0.1.5 Azure-SDK-For-Python]
       accept-language: [en-US]
-      x-ms-client-request-id: [d652c7a2-260c-11e7-9948-645106422854]
+      x-ms-client-request-id: [8ccc3c1c-4fa3-11e7-ad02-645106422854]
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_datalake_analytics_test_adla_catalog_items32e3152c/providers/Microsoft.DataLakeStore/accounts/pyarmadls232e3152c?api-version=2016-11-01
   response:
-    body: {string: '{"properties":{"firewallState":"Disabled","firewallRules":[],"trustedIdProviderState":"Disabled","trustedIdProviders":[],"encryptionState":"Enabled","encryptionConfig":{"type":"ServiceManaged"},"currentTier":"Consumption","newTier":"Consumption","provisioningState":"Succeeded","state":"Active","endpoint":"pyarmadls232e3152c.azuredatalakestore.net","accountId":"a49b399b-10cd-4cf8-b2a3-2ea981ec0ba6","creationTime":"2017-04-20T21:03:45.9172677Z","lastModifiedTime":"2017-04-20T21:03:45.9172677Z"},"location":"East
+    body: {string: '{"properties":{"firewallState":"Disabled","firewallAllowAzureIps":"Disabled","firewallRules":[],"trustedIdProviderState":"Disabled","trustedIdProviders":[],"encryptionState":"Enabled","encryptionConfig":{"type":"ServiceManaged"},"currentTier":"Consumption","newTier":"Consumption","provisioningState":"Succeeded","state":"Active","endpoint":"pyarmadls232e3152c.azuredatalakestore.net","accountId":"f01f8d8c-c091-4c49-ac04-0d243b063bf0","creationTime":"2017-06-12T19:15:54.744312Z","lastModifiedTime":"2017-06-12T19:15:54.744312Z"},"location":"East
         US 2","tags":null,"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_datalake_analytics_test_adla_catalog_items32e3152c/providers/Microsoft.DataLakeStore/accounts/pyarmadls232e3152c","name":"pyarmadls232e3152c","type":"Microsoft.DataLakeStore/accounts"}'}
     headers:
       Cache-Control: [no-cache]
       Connection: [close]
       Content-Type: [application/json]
-      Date: ['Thu, 20 Apr 2017 21:04:27 GMT']
+      Date: ['Mon, 12 Jun 2017 19:16:35 GMT']
       Expires: ['-1']
       Pragma: [no-cache]
       Server: [Microsoft-IIS/8.5]
@@ -163,38 +163,38 @@ interactions:
       X-AspNet-Version: [4.0.30319]
       X-Content-Type-Options: [nosniff]
       X-Powered-By: [ASP.NET]
-      content-length: ['800']
-      x-ms-correlation-request-id: [c16b8167-bdf4-435d-8548-a801b248f050]
+      content-length: ['833']
+      x-ms-correlation-request-id: [a9dfd0fa-078f-4abd-87fe-143287d89660]
       x-ms-ratelimit-remaining-subscription-reads: ['14999']
-      x-ms-request-id: [689498b0-758e-4842-be72-0fd04cf42b97]
-      x-ms-routing-request-id: ['WESTUS2:20170420T210428Z:c16b8167-bdf4-435d-8548-a801b248f050']
+      x-ms-request-id: [98ac1cc7-293f-404a-b57b-ce9c1a3d54fa]
+      x-ms-routing-request-id: ['WESTUS2:20170612T191635Z:a9dfd0fa-078f-4abd-87fe-143287d89660']
     status: {code: 200, message: OK}
 - request:
-    body: '{"location": "East US 2", "properties": {"queryStoreRetention": 30, "dataLakeStoreAccounts":
-      [{"name": "pyarmadls232e3152c"}], "defaultDataLakeStoreAccount": "pyarmadls232e3152c",
-      "maxDegreeOfParallelism": 30, "maxJobCount": 3}}'
+    body: '{"location": "East US 2", "properties": {"queryStoreRetention": 30, "maxDegreeOfParallelism":
+      30, "defaultDataLakeStoreAccount": "pyarmadls232e3152c", "maxJobCount": 3, "dataLakeStoreAccounts":
+      [{"name": "pyarmadls232e3152c"}]}}'
     headers:
       Accept: [application/json]
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
       Content-Length: ['228']
       Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.5.2 (Windows-10-10.0.14393-SP0) requests/2.9.1 msrest/0.4.4
-          msrest_azure/0.4.7 datalakeanalyticsaccountmanagementclient/0.1.3 Azure-SDK-For-Python]
+      User-Agent: [python/3.5.2 (Windows-10-10.0.15063-SP0) requests/2.9.1 msrest/0.4.4
+          msrest_azure/0.4.7 datalakeanalyticsaccountmanagementclient/0.1.4 Azure-SDK-For-Python]
       accept-language: [en-US]
-      x-ms-client-request-id: [f1115212-260c-11e7-b34d-645106422854]
+      x-ms-client-request-id: [a6f89108-4fa3-11e7-b16f-645106422854]
     method: PUT
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_datalake_analytics_test_adla_catalog_items32e3152c/providers/Microsoft.DataLakeAnalytics/accounts/pyarmadla232e3152c?api-version=2016-11-01
   response:
-    body: {string: '{"properties":{"defaultDataLakeStoreAccount":"pyarmadls232e3152c","dataLakeStoreAccounts":[{"properties":{"suffix":"azuredatalakestore.net"},"name":"pyarmadls232e3152c"}],"maxDegreeOfParallelism":30,"maxJobCount":3,"queryStoreRetention":30,"provisioningState":"Creating","state":null,"endpoint":null,"accountId":"86c20948-068b-456b-864d-190cca01454d","creationTime":null,"lastModifiedTime":null},"location":"East
+    body: {string: '{"properties":{"defaultDataLakeStoreAccount":"pyarmadls232e3152c","dataLakeStoreAccounts":[{"properties":{"suffix":"azuredatalakestore.net"},"name":"pyarmadls232e3152c"}],"maxDegreeOfParallelism":30,"maxJobCount":3,"queryStoreRetention":30,"provisioningState":"Creating","state":null,"endpoint":null,"accountId":"6e7cd6e8-13e2-461c-948c-6c28ee7b7706","creationTime":null,"lastModifiedTime":null},"location":"East
         US 2","tags":null,"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_datalake_analytics_test_adla_catalog_items32e3152c/providers/Microsoft.DataLakeAnalytics/accounts/pyarmadla232e3152c","name":"pyarmadla232e3152c","type":"Microsoft.DataLakeAnalytics/accounts"}'}
     headers:
-      Azure-AsyncOperation: ['https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DataLakeAnalytics/locations/EastUS2/operationResults/86c20948-068b-456b-864d-190cca01454d0?api-version=2016-11-01&expanded=true']
+      Azure-AsyncOperation: ['https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DataLakeAnalytics/locations/EastUS2/operationResults/6e7cd6e8-13e2-461c-948c-6c28ee7b77060?api-version=2016-11-01&expanded=true']
       Cache-Control: [no-cache]
       Connection: [close]
       Content-Length: ['706']
       Content-Type: [application/json]
-      Date: ['Thu, 20 Apr 2017 21:04:30 GMT']
+      Date: ['Mon, 12 Jun 2017 19:16:37 GMT']
       Expires: ['-1']
       Location: ['https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_mgmt_datalake_analytics_test_adla_catalog_items32e3152c/providers/Microsoft.DataLakeAnalytics/accounts/pyarmadla232e3152c/operationresults/0?api-version=2016-11-01']
       Pragma: [no-cache]
@@ -204,10 +204,10 @@ interactions:
       X-AspNet-Version: [4.0.30319]
       X-Content-Type-Options: [nosniff]
       X-Powered-By: [ASP.NET]
-      x-ms-correlation-request-id: [908d90fc-2ae3-473f-aba9-ab1fa73899c0]
+      x-ms-correlation-request-id: [3654b95a-2a60-4002-bb80-c2e7c68f0a00]
       x-ms-ratelimit-remaining-subscription-writes: ['1199']
-      x-ms-request-id: [38159666-696e-45a0-b2c9-ab3d801de414]
-      x-ms-routing-request-id: ['WESTUS2:20170420T210430Z:908d90fc-2ae3-473f-aba9-ab1fa73899c0']
+      x-ms-request-id: [de06012d-5fbe-4714-bab1-8913d7242408]
+      x-ms-routing-request-id: ['WESTUS2:20170612T191637Z:3654b95a-2a60-4002-bb80-c2e7c68f0a00']
     status: {code: 201, message: Created}
 - request:
     body: null
@@ -216,19 +216,19 @@ interactions:
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
       Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.5.2 (Windows-10-10.0.14393-SP0) requests/2.9.1 msrest/0.4.4
-          msrest_azure/0.4.7 datalakeanalyticsaccountmanagementclient/0.1.3 Azure-SDK-For-Python]
+      User-Agent: [python/3.5.2 (Windows-10-10.0.15063-SP0) requests/2.9.1 msrest/0.4.4
+          msrest_azure/0.4.7 datalakeanalyticsaccountmanagementclient/0.1.4 Azure-SDK-For-Python]
       accept-language: [en-US]
-      x-ms-client-request-id: [f1115212-260c-11e7-b34d-645106422854]
+      x-ms-client-request-id: [a6f89108-4fa3-11e7-b16f-645106422854]
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DataLakeAnalytics/locations/EastUS2/operationResults/86c20948-068b-456b-864d-190cca01454d0?api-version=2016-11-01&expanded=true
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DataLakeAnalytics/locations/EastUS2/operationResults/6e7cd6e8-13e2-461c-948c-6c28ee7b77060?api-version=2016-11-01&expanded=true
   response:
     body: {string: '{"status":"InProgress"}'}
     headers:
       Cache-Control: [no-cache]
       Connection: [close]
       Content-Type: [application/json]
-      Date: ['Thu, 20 Apr 2017 21:04:40 GMT']
+      Date: ['Mon, 12 Jun 2017 19:16:48 GMT']
       Expires: ['-1']
       Pragma: [no-cache]
       Server: [Microsoft-IIS/8.5]
@@ -238,10 +238,10 @@ interactions:
       X-Content-Type-Options: [nosniff]
       X-Powered-By: [ASP.NET]
       content-length: ['23']
-      x-ms-correlation-request-id: [a0e6381b-c6c5-40cd-9c25-3848234152af]
+      x-ms-correlation-request-id: [f2fab39e-29e5-463a-8d5b-9f8e57c89d80]
       x-ms-ratelimit-remaining-subscription-reads: ['14999']
-      x-ms-request-id: [b2bd6e3d-a57d-49e2-bd23-d41540fca238]
-      x-ms-routing-request-id: ['WESTUS2:20170420T210441Z:a0e6381b-c6c5-40cd-9c25-3848234152af']
+      x-ms-request-id: [73289f47-06f4-470d-97e4-aa88b41b0f25]
+      x-ms-routing-request-id: ['WESTUS:20170612T191648Z:f2fab39e-29e5-463a-8d5b-9f8e57c89d80']
     status: {code: 200, message: OK}
 - request:
     body: null
@@ -250,19 +250,19 @@ interactions:
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
       Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.5.2 (Windows-10-10.0.14393-SP0) requests/2.9.1 msrest/0.4.4
-          msrest_azure/0.4.7 datalakeanalyticsaccountmanagementclient/0.1.3 Azure-SDK-For-Python]
+      User-Agent: [python/3.5.2 (Windows-10-10.0.15063-SP0) requests/2.9.1 msrest/0.4.4
+          msrest_azure/0.4.7 datalakeanalyticsaccountmanagementclient/0.1.4 Azure-SDK-For-Python]
       accept-language: [en-US]
-      x-ms-client-request-id: [f1115212-260c-11e7-b34d-645106422854]
+      x-ms-client-request-id: [a6f89108-4fa3-11e7-b16f-645106422854]
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DataLakeAnalytics/locations/EastUS2/operationResults/86c20948-068b-456b-864d-190cca01454d0?api-version=2016-11-01&expanded=true
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DataLakeAnalytics/locations/EastUS2/operationResults/6e7cd6e8-13e2-461c-948c-6c28ee7b77060?api-version=2016-11-01&expanded=true
   response:
     body: {string: '{"status":"Succeeded"}'}
     headers:
       Cache-Control: [no-cache]
       Connection: [close]
       Content-Type: [application/json]
-      Date: ['Thu, 20 Apr 2017 21:05:11 GMT']
+      Date: ['Mon, 12 Jun 2017 19:17:18 GMT']
       Expires: ['-1']
       Pragma: [no-cache]
       Server: [Microsoft-IIS/8.5]
@@ -272,10 +272,10 @@ interactions:
       X-Content-Type-Options: [nosniff]
       X-Powered-By: [ASP.NET]
       content-length: ['22']
-      x-ms-correlation-request-id: [57ee4a9a-9b98-4ba0-81f5-b4d600563e6c]
-      x-ms-ratelimit-remaining-subscription-reads: ['14998']
-      x-ms-request-id: [7ca2ae9c-8256-4ed5-b7ad-c964f1ea141f]
-      x-ms-routing-request-id: ['WESTUS2:20170420T210512Z:57ee4a9a-9b98-4ba0-81f5-b4d600563e6c']
+      x-ms-correlation-request-id: [705a5946-5a90-4846-89d7-2131f2178a5c]
+      x-ms-ratelimit-remaining-subscription-reads: ['14999']
+      x-ms-request-id: [1b70be71-b22b-4791-881a-f3e9e410bb0b]
+      x-ms-routing-request-id: ['WESTUS2:20170612T191719Z:705a5946-5a90-4846-89d7-2131f2178a5c']
     status: {code: 200, message: OK}
 - request:
     body: null
@@ -284,20 +284,20 @@ interactions:
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
       Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.5.2 (Windows-10-10.0.14393-SP0) requests/2.9.1 msrest/0.4.4
-          msrest_azure/0.4.7 datalakeanalyticsaccountmanagementclient/0.1.3 Azure-SDK-For-Python]
+      User-Agent: [python/3.5.2 (Windows-10-10.0.15063-SP0) requests/2.9.1 msrest/0.4.4
+          msrest_azure/0.4.7 datalakeanalyticsaccountmanagementclient/0.1.4 Azure-SDK-For-Python]
       accept-language: [en-US]
-      x-ms-client-request-id: [f1115212-260c-11e7-b34d-645106422854]
+      x-ms-client-request-id: [a6f89108-4fa3-11e7-b16f-645106422854]
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_datalake_analytics_test_adla_catalog_items32e3152c/providers/Microsoft.DataLakeAnalytics/accounts/pyarmadla232e3152c?api-version=2016-11-01
   response:
-    body: {string: '{"properties":{"firewallState":"Disabled","firewallRules":[],"defaultDataLakeStoreAccount":"pyarmadls232e3152c","dataLakeStoreAccounts":[{"properties":{"suffix":"azuredatalakestore.net"},"name":"pyarmadls232e3152c"}],"storageAccounts":[],"maxDegreeOfParallelism":30,"maxJobCount":3,"systemMaxDegreeOfParallelism":250,"systemMaxJobCount":20,"queryStoreRetention":30,"hiveMetastores":[],"currentTier":"Consumption","newTier":"Consumption","provisioningState":"Succeeded","state":"Active","endpoint":"pyarmadla232e3152c.azuredatalakeanalytics.net","accountId":"86c20948-068b-456b-864d-190cca01454d","creationTime":"2017-04-20T21:04:41.5864697Z","lastModifiedTime":"2017-04-20T21:04:41.5864697Z"},"location":"East
+    body: {string: '{"properties":{"firewallState":"Disabled","firewallAllowAzureIps":"Disabled","debugDataAccessLevel":"All","firewallRules":[],"defaultDataLakeStoreAccount":"pyarmadls232e3152c","dataLakeStoreAccounts":[{"properties":{"suffix":"azuredatalakestore.net"},"name":"pyarmadls232e3152c"}],"storageAccounts":[],"maxDegreeOfParallelism":30,"maxJobCount":3,"systemMaxDegreeOfParallelism":250,"systemMaxJobCount":20,"maxDegreeOfParallelismPerJob":30,"minPriorityPerJob":1,"computePolicies":[],"queryStoreRetention":30,"hiveMetastores":[],"currentTier":"Consumption","newTier":"Consumption","provisioningState":"Succeeded","state":"Active","endpoint":"pyarmadla232e3152c.azuredatalakeanalytics.net","accountId":"6e7cd6e8-13e2-461c-948c-6c28ee7b7706","creationTime":"2017-06-12T19:16:39.0482328Z","lastModifiedTime":"2017-06-12T19:16:39.0482328Z"},"location":"East
         US 2","tags":null,"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_datalake_analytics_test_adla_catalog_items32e3152c/providers/Microsoft.DataLakeAnalytics/accounts/pyarmadla232e3152c","name":"pyarmadla232e3152c","type":"Microsoft.DataLakeAnalytics/accounts"}'}
     headers:
       Cache-Control: [no-cache]
       Connection: [close]
       Content-Type: [application/json]
-      Date: ['Thu, 20 Apr 2017 21:05:12 GMT']
+      Date: ['Mon, 12 Jun 2017 19:17:18 GMT']
       Expires: ['-1']
       Pragma: [no-cache]
       Server: [Microsoft-IIS/8.5]
@@ -306,18 +306,18 @@ interactions:
       X-AspNet-Version: [4.0.30319]
       X-Content-Type-Options: [nosniff]
       X-Powered-By: [ASP.NET]
-      content-length: ['1003']
-      x-ms-correlation-request-id: [9a075a63-2968-487c-beeb-9a54b9f066e3]
-      x-ms-ratelimit-remaining-subscription-reads: ['14999']
-      x-ms-request-id: [eee9c858-e5aa-43a6-95d6-fd7b8ad87e88]
-      x-ms-routing-request-id: ['WESTUS2:20170420T210512Z:9a075a63-2968-487c-beeb-9a54b9f066e3']
+      content-length: ['1144']
+      x-ms-correlation-request-id: [dc1ae69c-07d3-44c0-8c25-e0b90c3474d4]
+      x-ms-ratelimit-remaining-subscription-reads: ['14998']
+      x-ms-request-id: [5a039d8f-0a1b-4198-8b43-9c52629a1e91]
+      x-ms-routing-request-id: ['WESTUS2:20170612T191719Z:dc1ae69c-07d3-44c0-8c25-e0b90c3474d4']
     status: {code: 200, message: OK}
 - request:
-    body: '{"degreeOfParallelism": 2, "type": "USql", "properties": {"script": "DROP
-      DATABASE IF EXISTS adladb32e3152c; CREATE DATABASE adladb32e3152c; \nCREATE
-      TABLE adladb32e3152c.dbo.adlatable32e3152c\n(\n        //Define schema of table\n        UserId          int,
-      \n        Start           DateTime, \n        Region          string, \n        Query           string,
-      \n        Duration        int, \n        Urls            string, \n        ClickedUrls     string,\n    INDEX
+    body: '{"type": "USql", "properties": {"script": "DROP DATABASE IF EXISTS adladb32e3152c;
+      CREATE DATABASE adladb32e3152c; \nCREATE TABLE adladb32e3152c.dbo.adlatable32e3152c\n(\n        //Define
+      schema of table\n        UserId          int, \n        Start           DateTime,
+      \n        Region          string, \n        Query           string, \n        Duration        int,
+      \n        Urls            string, \n        ClickedUrls     string,\n    INDEX
       idx1 \n    CLUSTERED (Region ASC) \n    PARTITIONED BY (UserId) HASH (Region)\n);\n\nALTER
       TABLE adladb32e3152c.dbo.adlatable32e3152c ADD IF NOT EXISTS PARTITION (1);\n\nDROP
       FUNCTION IF EXISTS adladb32e3152c.dbo.adlatvf32e3152c;\n\nCREATE FUNCTION adladb32e3152c.dbo.adlatvf32e3152c()\nRETURNS
@@ -337,30 +337,30 @@ interactions:
       \nAS \nT(a, b);\nCREATE PROCEDURE adladb32e3152c.dbo.adlaproc32e3152c()\nAS
       BEGIN\n  CREATE VIEW adladb32e3152c.dbo.adlaview32e3152c \n  AS \n    SELECT
       * FROM \n    (\n        VALUES(1,2),(2,4)\n    ) \n  AS \n  T(a, b);\nEND;",
-      "type": "USql"}, "name": "testjob32e3152c"}'
+      "type": "USql"}, "name": "testjob32e3152c", "degreeOfParallelism": 2}'
     headers:
       Accept: [application/json]
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
       Content-Length: ['2233']
       Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.5.2 (Windows-10-10.0.14393-SP0) requests/2.9.1 msrest/0.4.4
-          msrest_azure/0.4.7 datalakeanalyticsjobmanagementclient/0.1.3 Azure-SDK-For-Python]
+      User-Agent: [python/3.5.2 (Windows-10-10.0.15063-SP0) requests/2.9.1 msrest/0.4.4
+          msrest_azure/0.4.7 datalakeanalyticsjobmanagementclient/0.1.4 Azure-SDK-For-Python]
       accept-language: [en-US]
-      x-ms-client-request-id: [53204ebe-260d-11e7-9d61-645106422854]
+      x-ms-client-request-id: [08ad2b80-4fa4-11e7-b6d4-645106422854]
     method: PUT
     uri: https://pyarmadla232e3152c.azuredatalakeanalytics.net/Jobs/00000000-0000-0000-0000-000000000000?api-version=2016-11-01
   response:
-    body: {string: '{"jobId":"00000000-0000-0000-0000-000000000000","name":"testjob32e3152c","type":"USql","submitter":"adlsvc01@myaddomain.onmicrosoft.com","degreeOfParallelism":2,"priority":1000,"submitTime":"2017-04-20T21:07:15.8828348+00:00","state":"Compiling","result":"None","stateAuditRecords":[{"newState":"New","timeStamp":"2017-04-20T21:07:15.8828348+00:00","details":"userName:;submitMachine:N/A"}],"properties":{"owner":"adlsvc01@myaddomain.onmicrosoft.com","resources":[],"runtimeVersion":"default","rootProcessNodeId":"00000000-0000-0000-0000-000000000000","algebraFilePath":"adl://pyarmadls232e3152c.azuredatalakestore.net/system/jobservice/jobs/Usql/2017/04/20/21/07/00000000-0000-0000-0000-000000000000/algebra.xml","compileMode":"Semantic","errorSource":"Unknown","totalCompilationTime":"PT0S","totalPausedTime":"PT0S","totalQueuedTime":"PT0S","totalRunningTime":"PT0S","expirationTimeUtc":"0001-01-01T00:00:00Z","type":"USql"}}'}
+    body: {string: '{"jobId":"00000000-0000-0000-0000-000000000000","name":"testjob32e3152c","type":"USql","submitter":"adlsvc01@myaddomain.onmicrosoft.com","degreeOfParallelism":2,"priority":1000,"submitTime":"2017-06-12T19:19:20.7680696+00:00","state":"Compiling","result":"None","stateAuditRecords":[{"newState":"New","timeStamp":"2017-06-12T19:19:20.7680696+00:00","details":"userName:;submitMachine:N/A"}],"properties":{"owner":"adlsvc01@myaddomain.onmicrosoft.com","resources":[],"runtimeVersion":"default","rootProcessNodeId":"00000000-0000-0000-0000-000000000000","algebraFilePath":"adl://pyarmadls232e3152c.azuredatalakestore.net/system/jobservice/jobs/Usql/2017/06/12/19/19/00000000-0000-0000-0000-000000000000/algebra.xml","compileMode":"Semantic","errorSource":"Unknown","totalCompilationTime":"PT0S","totalPausedTime":"PT0S","totalQueuedTime":"PT0S","totalRunningTime":"PT0S","expirationTimeUtc":"0001-01-01T00:00:00Z","type":"USql"}}'}
     headers:
       Cache-Control: ['private, no-cache, no-store, max-age=0']
       Content-Type: [application/json; charset=utf-8]
-      Date: ['Thu, 20 Apr 2017 21:07:15 GMT']
+      Date: ['Mon, 12 Jun 2017 19:19:21 GMT']
       Expires: ['-1']
       Strict-Transport-Security: [max-age=15724800; includeSubDomains]
       Transfer-Encoding: [chunked]
       X-Content-Type-Options: [nosniff]
-      x-ms-request-id: [1abdddd9-7bfc-4a63-bd66-337fb955dedd]
+      x-ms-request-id: [6cab9e1b-3f88-4f48-8e7f-4098ac4a5a5c]
     status: {code: 200, message: OK}
 - request:
     body: null
@@ -369,14 +369,15 @@ interactions:
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
       Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.5.2 (Windows-10-10.0.14393-SP0) requests/2.9.1 msrest/0.4.4
-          msrest_azure/0.4.7 datalakeanalyticsjobmanagementclient/0.1.3 Azure-SDK-For-Python]
+      User-Agent: [python/3.5.2 (Windows-10-10.0.15063-SP0) requests/2.9.1 msrest/0.4.4
+          msrest_azure/0.4.7 datalakeanalyticsjobmanagementclient/0.1.4 Azure-SDK-For-Python]
       accept-language: [en-US]
-      x-ms-client-request-id: [55359e7a-260d-11e7-a0d0-645106422854]
+      x-ms-client-request-id: [0a4ca398-4fa4-11e7-bfd8-645106422854]
     method: GET
     uri: https://pyarmadla232e3152c.azuredatalakeanalytics.net/Jobs/00000000-0000-0000-0000-000000000000?api-version=2016-11-01
   response:
-    body: {string: '{"jobId":"00000000-0000-0000-0000-000000000000","name":"testjob32e3152c","type":"USql","submitter":"adlsvc01@myaddomain.onmicrosoft.com","degreeOfParallelism":2,"priority":1000,"submitTime":"2017-04-20T21:07:15.8828348+00:00","state":"Compiling","result":"None","stateAuditRecords":[{"newState":"New","timeStamp":"2017-04-20T21:07:15.8828348+00:00","details":"userName:;submitMachine:N/A"},{"newState":"Compiling","timeStamp":"2017-04-20T21:07:16.3515964+00:00","details":"CcsAttempts:1;Status:Dispatched"}],"properties":{"owner":"adlsvc01@myaddomain.onmicrosoft.com","resources":[{"name":"Profile","resourcePath":"adl://pyarmadls232e3152c.azuredatalakestore.net/system/jobservice/jobs/Usql/2017/04/20/21/07/00000000-0000-0000-0000-000000000000/profile","type":"StatisticsResource"},{"name":"__ScopeRuntimeStatistics__.xml","resourcePath":"adl://pyarmadls232e3152c.azuredatalakestore.net/system/jobservice/jobs/Usql/2017/04/20/21/07/00000000-0000-0000-0000-000000000000/__ScopeRuntimeStatistics__.xml","type":"StatisticsResource"}],"runtimeVersion":"default","rootProcessNodeId":"00000000-0000-0000-0000-000000000000","script":"DROP
+    body: {string: '{"jobId":"00000000-0000-0000-0000-000000000000","name":"testjob32e3152c","type":"USql","submitter":"adlsvc01@myaddomain.onmicrosoft.com","degreeOfParallelism":2,"priority":1000,"submitTime":"2017-06-12T19:19:20.7680696+00:00","state":"Starting","result":"None","stateAuditRecords":[{"newState":"New","timeStamp":"2017-06-12T19:19:20.7680696+00:00","details":"userName:;submitMachine:N/A"},{"newState":"Compiling","timeStamp":"2017-06-12T19:19:22.3462155+00:00","details":"CcsAttempts:1;Status:Dispatched"},{"newState":"Queued","timeStamp":"2017-06-12T19:19:37.2838888+00:00"},{"newState":"Scheduling","timeStamp":"2017-06-12T19:19:37.3307706+00:00","details":"Detail:Dispatching
+        job to cluster.;rootProcessId:10c8d27b-d4a9-47fc-8a46-d017262bf133"},{"newState":"Starting","timeStamp":"2017-06-12T19:19:37.3307706+00:00","details":"runtimeVersion:kobo_vnext_signed_5370780"}],"properties":{"owner":"adlsvc01@myaddomain.onmicrosoft.com","resources":[{"name":"__ScopeCodeGen__.dll","resourcePath":"adl://pyarmadls232e3152c.azuredatalakestore.net/system/jobservice/jobs/Usql/2017/06/12/19/19/00000000-0000-0000-0000-000000000000/__ScopeCodeGen__.dll","type":"VertexResource"},{"name":"__ScopeCodeGen__.pdb","resourcePath":"adl://pyarmadls232e3152c.azuredatalakestore.net/system/jobservice/jobs/Usql/2017/06/12/19/19/00000000-0000-0000-0000-000000000000/__ScopeCodeGen__.pdb","type":"VertexResource"},{"name":"__ScopeCodeGenEngine__.dll","resourcePath":"adl://pyarmadls232e3152c.azuredatalakestore.net/system/jobservice/jobs/Usql/2017/06/12/19/19/00000000-0000-0000-0000-000000000000/__ScopeCodeGenEngine__.dll","type":"VertexResource"},{"name":"__ScopeCodeGenEngine__.pdb","resourcePath":"adl://pyarmadls232e3152c.azuredatalakestore.net/system/jobservice/jobs/Usql/2017/06/12/19/19/00000000-0000-0000-0000-000000000000/__ScopeCodeGenEngine__.pdb","type":"VertexResource"},{"name":"PartitionLastRows.xml","resourcePath":"adl://pyarmadls232e3152c.azuredatalakestore.net/system/jobservice/jobs/Usql/2017/06/12/19/19/00000000-0000-0000-0000-000000000000/PartitionLastRows.xml","type":"VertexResource"},{"name":"ScopeVertexDef.xml","resourcePath":"adl://pyarmadls232e3152c.azuredatalakestore.net/system/jobservice/jobs/Usql/2017/06/12/19/19/00000000-0000-0000-0000-000000000000/ScopeVertexDef.xml","type":"VertexResource"},{"name":"__ScopeCodeGen__.dll.cs","resourcePath":"adl://pyarmadls232e3152c.azuredatalakestore.net/system/jobservice/jobs/Usql/2017/06/12/19/19/00000000-0000-0000-0000-000000000000/__ScopeCodeGen__.dll.cs","type":"StatisticsResource"},{"name":"__ScopeCodeGenEngine__.dll.cpp","resourcePath":"adl://pyarmadls232e3152c.azuredatalakestore.net/system/jobservice/jobs/Usql/2017/06/12/19/19/00000000-0000-0000-0000-000000000000/__ScopeCodeGenEngine__.dll.cpp","type":"StatisticsResource"},{"name":"__ScopeCodeGenCompileOutput__.txt","resourcePath":"adl://pyarmadls232e3152c.azuredatalakestore.net/system/jobservice/jobs/Usql/2017/06/12/19/19/00000000-0000-0000-0000-000000000000/__ScopeCodeGenCompileOutput__.txt","type":"StatisticsResource"},{"name":"__ScopeCodeGenCompileOptions__.txt","resourcePath":"adl://pyarmadls232e3152c.azuredatalakestore.net/system/jobservice/jobs/Usql/2017/06/12/19/19/00000000-0000-0000-0000-000000000000/__ScopeCodeGenCompileOptions__.txt","type":"StatisticsResource"},{"name":"__ScopeCodeGenEngine__.cppresources","resourcePath":"adl://pyarmadls232e3152c.azuredatalakestore.net/system/jobservice/jobs/Usql/2017/06/12/19/19/00000000-0000-0000-0000-000000000000/__ScopeCodeGenEngine__.cppresources","type":"StatisticsResource"},{"name":"__SystemInternalInfo__.xml","resourcePath":"adl://pyarmadls232e3152c.azuredatalakestore.net/system/jobservice/jobs/Usql/2017/06/12/19/19/00000000-0000-0000-0000-000000000000/__SystemInternalInfo__.xml","type":"StatisticsResource"},{"name":"__AST.json","resourcePath":"adl://pyarmadls232e3152c.azuredatalakestore.net/system/jobservice/jobs/Usql/2017/06/12/19/19/00000000-0000-0000-0000-000000000000/__AST.json","type":"StatisticsResource"},{"name":"query.abr","resourcePath":"adl://pyarmadls232e3152c.azuredatalakestore.net/system/jobservice/jobs/Usql/2017/06/12/19/19/00000000-0000-0000-0000-000000000000/query.abr","type":"StatisticsResource"},{"name":"Profile","resourcePath":"adl://pyarmadls232e3152c.azuredatalakestore.net/system/jobservice/jobs/Usql/2017/06/12/19/19/00000000-0000-0000-0000-000000000000/profile","type":"StatisticsResource"},{"name":"__ScopeRuntimeStatistics__.xml","resourcePath":"adl://pyarmadls232e3152c.azuredatalakestore.net/system/jobservice/jobs/Usql/2017/06/12/19/19/00000000-0000-0000-0000-000000000000/__ScopeRuntimeStatistics__.xml","type":"StatisticsResource"}],"runtimeVersion":"kobo_vnext_signed_5370780","rootProcessNodeId":"10c8d27b-d4a9-47fc-8a46-d017262bf133","script":"DROP
         DATABASE IF EXISTS adladb32e3152c; CREATE DATABASE adladb32e3152c; \nCREATE
         TABLE adladb32e3152c.dbo.adlatable32e3152c\n(\n        //Define schema of
         table\n        UserId          int, \n        Start           DateTime, \n        Region          string,
@@ -400,16 +401,16 @@ interactions:
         VIEW adladb32e3152c.dbo.adlaview32e3152c \nAS \n    SELECT * FROM \n    (\n        VALUES(1,2),(2,4)\n    )
         \nAS \nT(a, b);\nCREATE PROCEDURE adladb32e3152c.dbo.adlaproc32e3152c()\nAS
         BEGIN\n  CREATE VIEW adladb32e3152c.dbo.adlaview32e3152c \n  AS \n    SELECT
-        * FROM \n    (\n        VALUES(1,2),(2,4)\n    ) \n  AS \n  T(a, b);\nEND;","algebraFilePath":"adl://pyarmadls232e3152c.azuredatalakestore.net/system/jobservice/jobs/Usql/2017/04/20/21/07/00000000-0000-0000-0000-000000000000/algebra.xml","compileMode":"Semantic","errorSource":"Unknown","totalCompilationTime":"PT1.3079044S","totalPausedTime":"PT0S","totalQueuedTime":"PT0S","totalRunningTime":"PT0S","expirationTimeUtc":"0001-01-01T00:00:00","type":"USql"}}'}
+        * FROM \n    (\n        VALUES(1,2),(2,4)\n    ) \n  AS \n  T(a, b);\nEND;","algebraFilePath":"adl://pyarmadls232e3152c.azuredatalakestore.net/system/jobservice/jobs/Usql/2017/06/12/19/19/00000000-0000-0000-0000-000000000000/algebra.xml","yarnApplicationId":358573,"yarnApplicationTimeStamp":1496985982015,"compileMode":"Semantic","errorSource":"Unknown","totalCompilationTime":"PT14.9376733S","totalPausedTime":"PT0S","totalQueuedTime":"PT0.0468818S","totalRunningTime":"PT0S","expirationTimeUtc":"0001-01-01T00:00:00","type":"USql"}}'}
     headers:
       Cache-Control: ['private, no-cache, no-store, max-age=0']
       Content-Type: [application/json; charset=utf-8]
-      Date: ['Thu, 20 Apr 2017 21:07:17 GMT']
+      Date: ['Mon, 12 Jun 2017 19:19:44 GMT']
       Expires: ['-1']
       Strict-Transport-Security: [max-age=15724800; includeSubDomains]
       Transfer-Encoding: [chunked]
       X-Content-Type-Options: [nosniff]
-      x-ms-request-id: [6aa80a8e-5760-4e0c-89db-12c115218d28]
+      x-ms-request-id: [36fcb050-a206-41e8-b846-c603a8ee44fe]
     status: {code: 200, message: OK}
 - request:
     body: null
@@ -418,14 +419,15 @@ interactions:
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
       Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.5.2 (Windows-10-10.0.14393-SP0) requests/2.9.1 msrest/0.4.4
-          msrest_azure/0.4.7 datalakeanalyticsjobmanagementclient/0.1.3 Azure-SDK-For-Python]
+      User-Agent: [python/3.5.2 (Windows-10-10.0.15063-SP0) requests/2.9.1 msrest/0.4.4
+          msrest_azure/0.4.7 datalakeanalyticsjobmanagementclient/0.1.4 Azure-SDK-For-Python]
       accept-language: [en-US]
-      x-ms-client-request-id: [592793ac-260d-11e7-9cc8-645106422854]
+      x-ms-client-request-id: [1a6247ee-4fa4-11e7-ac2a-645106422854]
     method: GET
     uri: https://pyarmadla232e3152c.azuredatalakeanalytics.net/Jobs/00000000-0000-0000-0000-000000000000?api-version=2016-11-01
   response:
-    body: {string: '{"jobId":"00000000-0000-0000-0000-000000000000","name":"testjob32e3152c","type":"USql","submitter":"adlsvc01@myaddomain.onmicrosoft.com","degreeOfParallelism":2,"priority":1000,"submitTime":"2017-04-20T21:07:15.8828348+00:00","state":"Compiling","result":"None","stateAuditRecords":[{"newState":"New","timeStamp":"2017-04-20T21:07:15.8828348+00:00","details":"userName:;submitMachine:N/A"},{"newState":"Compiling","timeStamp":"2017-04-20T21:07:16.3515964+00:00","details":"CcsAttempts:1;Status:Dispatched"}],"properties":{"owner":"adlsvc01@myaddomain.onmicrosoft.com","resources":[{"name":"Profile","resourcePath":"adl://pyarmadls232e3152c.azuredatalakestore.net/system/jobservice/jobs/Usql/2017/04/20/21/07/00000000-0000-0000-0000-000000000000/profile","type":"StatisticsResource"},{"name":"__ScopeRuntimeStatistics__.xml","resourcePath":"adl://pyarmadls232e3152c.azuredatalakestore.net/system/jobservice/jobs/Usql/2017/04/20/21/07/00000000-0000-0000-0000-000000000000/__ScopeRuntimeStatistics__.xml","type":"StatisticsResource"}],"runtimeVersion":"default","rootProcessNodeId":"00000000-0000-0000-0000-000000000000","script":"DROP
+    body: {string: '{"jobId":"00000000-0000-0000-0000-000000000000","name":"testjob32e3152c","type":"USql","submitter":"adlsvc01@myaddomain.onmicrosoft.com","degreeOfParallelism":2,"priority":1000,"submitTime":"2017-06-12T19:19:20.7680696+00:00","startTime":"2017-06-12T19:19:45.5808519+00:00","endTime":"2017-06-12T19:19:49.1433931+00:00","state":"Ended","result":"Succeeded","stateAuditRecords":[{"newState":"New","timeStamp":"2017-06-12T19:19:20.7680696+00:00","details":"userName:;submitMachine:N/A"},{"newState":"Compiling","timeStamp":"2017-06-12T19:19:22.3462155+00:00","details":"CcsAttempts:1;Status:Dispatched"},{"newState":"Queued","timeStamp":"2017-06-12T19:19:37.2838888+00:00"},{"newState":"Scheduling","timeStamp":"2017-06-12T19:19:37.3307706+00:00","details":"Detail:Dispatching
+        job to cluster.;rootProcessId:10c8d27b-d4a9-47fc-8a46-d017262bf133"},{"newState":"Starting","timeStamp":"2017-06-12T19:19:37.3307706+00:00","details":"runtimeVersion:kobo_vnext_signed_5370780"},{"newState":"Running","timeStamp":"2017-06-12T19:19:45.5808519+00:00","details":"runAttempt:1"},{"newState":"Ended","timeStamp":"2017-06-12T19:19:49.1433931+00:00","details":"result:Succeeded"}],"properties":{"owner":"adlsvc01@myaddomain.onmicrosoft.com","resources":[{"name":"__ScopeCodeGen__.dll","resourcePath":"adl://pyarmadls232e3152c.azuredatalakestore.net/system/jobservice/jobs/Usql/2017/06/12/19/19/00000000-0000-0000-0000-000000000000/__ScopeCodeGen__.dll","type":"VertexResource"},{"name":"__ScopeCodeGen__.pdb","resourcePath":"adl://pyarmadls232e3152c.azuredatalakestore.net/system/jobservice/jobs/Usql/2017/06/12/19/19/00000000-0000-0000-0000-000000000000/__ScopeCodeGen__.pdb","type":"VertexResource"},{"name":"__ScopeCodeGenEngine__.dll","resourcePath":"adl://pyarmadls232e3152c.azuredatalakestore.net/system/jobservice/jobs/Usql/2017/06/12/19/19/00000000-0000-0000-0000-000000000000/__ScopeCodeGenEngine__.dll","type":"VertexResource"},{"name":"__ScopeCodeGenEngine__.pdb","resourcePath":"adl://pyarmadls232e3152c.azuredatalakestore.net/system/jobservice/jobs/Usql/2017/06/12/19/19/00000000-0000-0000-0000-000000000000/__ScopeCodeGenEngine__.pdb","type":"VertexResource"},{"name":"PartitionLastRows.xml","resourcePath":"adl://pyarmadls232e3152c.azuredatalakestore.net/system/jobservice/jobs/Usql/2017/06/12/19/19/00000000-0000-0000-0000-000000000000/PartitionLastRows.xml","type":"VertexResource"},{"name":"ScopeVertexDef.xml","resourcePath":"adl://pyarmadls232e3152c.azuredatalakestore.net/system/jobservice/jobs/Usql/2017/06/12/19/19/00000000-0000-0000-0000-000000000000/ScopeVertexDef.xml","type":"VertexResource"},{"name":"__ScopeCodeGen__.dll.cs","resourcePath":"adl://pyarmadls232e3152c.azuredatalakestore.net/system/jobservice/jobs/Usql/2017/06/12/19/19/00000000-0000-0000-0000-000000000000/__ScopeCodeGen__.dll.cs","type":"StatisticsResource"},{"name":"__ScopeCodeGenEngine__.dll.cpp","resourcePath":"adl://pyarmadls232e3152c.azuredatalakestore.net/system/jobservice/jobs/Usql/2017/06/12/19/19/00000000-0000-0000-0000-000000000000/__ScopeCodeGenEngine__.dll.cpp","type":"StatisticsResource"},{"name":"__ScopeCodeGenCompileOutput__.txt","resourcePath":"adl://pyarmadls232e3152c.azuredatalakestore.net/system/jobservice/jobs/Usql/2017/06/12/19/19/00000000-0000-0000-0000-000000000000/__ScopeCodeGenCompileOutput__.txt","type":"StatisticsResource"},{"name":"__ScopeCodeGenCompileOptions__.txt","resourcePath":"adl://pyarmadls232e3152c.azuredatalakestore.net/system/jobservice/jobs/Usql/2017/06/12/19/19/00000000-0000-0000-0000-000000000000/__ScopeCodeGenCompileOptions__.txt","type":"StatisticsResource"},{"name":"__ScopeCodeGenEngine__.cppresources","resourcePath":"adl://pyarmadls232e3152c.azuredatalakestore.net/system/jobservice/jobs/Usql/2017/06/12/19/19/00000000-0000-0000-0000-000000000000/__ScopeCodeGenEngine__.cppresources","type":"StatisticsResource"},{"name":"__SystemInternalInfo__.xml","resourcePath":"adl://pyarmadls232e3152c.azuredatalakestore.net/system/jobservice/jobs/Usql/2017/06/12/19/19/00000000-0000-0000-0000-000000000000/__SystemInternalInfo__.xml","type":"StatisticsResource"},{"name":"__AST.json","resourcePath":"adl://pyarmadls232e3152c.azuredatalakestore.net/system/jobservice/jobs/Usql/2017/06/12/19/19/00000000-0000-0000-0000-000000000000/__AST.json","type":"StatisticsResource"},{"name":"query.abr","resourcePath":"adl://pyarmadls232e3152c.azuredatalakestore.net/system/jobservice/jobs/Usql/2017/06/12/19/19/00000000-0000-0000-0000-000000000000/query.abr","type":"StatisticsResource"},{"name":"Profile","resourcePath":"adl://pyarmadls232e3152c.azuredatalakestore.net/system/jobservice/jobs/Usql/2017/06/12/19/19/00000000-0000-0000-0000-000000000000/profile","type":"StatisticsResource"},{"name":"__ScopeRuntimeStatistics__.xml","resourcePath":"adl://pyarmadls232e3152c.azuredatalakestore.net/system/jobservice/jobs/Usql/2017/06/12/19/19/00000000-0000-0000-0000-000000000000/__ScopeRuntimeStatistics__.xml","type":"StatisticsResource"}],"runtimeVersion":"kobo_vnext_signed_5370780","rootProcessNodeId":"10c8d27b-d4a9-47fc-8a46-d017262bf133","script":"DROP
         DATABASE IF EXISTS adladb32e3152c; CREATE DATABASE adladb32e3152c; \nCREATE
         TABLE adladb32e3152c.dbo.adlatable32e3152c\n(\n        //Define schema of
         table\n        UserId          int, \n        Start           DateTime, \n        Region          string,
@@ -449,16 +451,16 @@ interactions:
         VIEW adladb32e3152c.dbo.adlaview32e3152c \nAS \n    SELECT * FROM \n    (\n        VALUES(1,2),(2,4)\n    )
         \nAS \nT(a, b);\nCREATE PROCEDURE adladb32e3152c.dbo.adlaproc32e3152c()\nAS
         BEGIN\n  CREATE VIEW adladb32e3152c.dbo.adlaview32e3152c \n  AS \n    SELECT
-        * FROM \n    (\n        VALUES(1,2),(2,4)\n    ) \n  AS \n  T(a, b);\nEND;","algebraFilePath":"adl://pyarmadls232e3152c.azuredatalakestore.net/system/jobservice/jobs/Usql/2017/04/20/21/07/00000000-0000-0000-0000-000000000000/algebra.xml","compileMode":"Semantic","errorSource":"Unknown","totalCompilationTime":"PT7.1845997S","totalPausedTime":"PT0S","totalQueuedTime":"PT0S","totalRunningTime":"PT0S","expirationTimeUtc":"0001-01-01T00:00:00","type":"USql"}}'}
+        * FROM \n    (\n        VALUES(1,2),(2,4)\n    ) \n  AS \n  T(a, b);\nEND;","algebraFilePath":"adl://pyarmadls232e3152c.azuredatalakestore.net/system/jobservice/jobs/Usql/2017/06/12/19/19/00000000-0000-0000-0000-000000000000/algebra.xml","yarnApplicationId":358573,"yarnApplicationTimeStamp":1496985982015,"compileMode":"Semantic","errorSource":"Unknown","totalCompilationTime":"PT14.9376733S","totalPausedTime":"PT0S","totalQueuedTime":"PT0.0468818S","totalRunningTime":"PT3.5625412S","expirationTimeUtc":"0001-01-01T00:00:00","type":"USql"}}'}
     headers:
       Cache-Control: ['private, no-cache, no-store, max-age=0']
       Content-Type: [application/json; charset=utf-8]
-      Date: ['Thu, 20 Apr 2017 21:07:23 GMT']
+      Date: ['Mon, 12 Jun 2017 19:19:50 GMT']
       Expires: ['-1']
       Strict-Transport-Security: [max-age=15724800; includeSubDomains]
       Transfer-Encoding: [chunked]
       X-Content-Type-Options: [nosniff]
-      x-ms-request-id: [fb6970d6-5bfe-4eab-b6ee-30d425aa776f]
+      x-ms-request-id: [0f510ef6-bc66-421c-acfd-6bf066031eef]
     status: {code: 200, message: OK}
 - request:
     body: null
@@ -467,278 +469,29 @@ interactions:
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
       Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.5.2 (Windows-10-10.0.14393-SP0) requests/2.9.1 msrest/0.4.4
-          msrest_azure/0.4.7 datalakeanalyticsjobmanagementclient/0.1.3 Azure-SDK-For-Python]
+      User-Agent: [python/3.5.2 (Windows-10-10.0.15063-SP0) requests/2.9.1 msrest/0.4.4
+          msrest_azure/0.4.7 datalakeanalyticscatalogmanagementclient/0.1.4 Azure-SDK-For-Python]
       accept-language: [en-US]
-      x-ms-client-request-id: [5c867b9c-260d-11e7-9dc9-645106422854]
-    method: GET
-    uri: https://pyarmadla232e3152c.azuredatalakeanalytics.net/Jobs/00000000-0000-0000-0000-000000000000?api-version=2016-11-01
-  response:
-    body: {string: '{"jobId":"00000000-0000-0000-0000-000000000000","name":"testjob32e3152c","type":"USql","submitter":"adlsvc01@myaddomain.onmicrosoft.com","degreeOfParallelism":2,"priority":1000,"submitTime":"2017-04-20T21:07:15.8828348+00:00","state":"Compiling","result":"None","stateAuditRecords":[{"newState":"New","timeStamp":"2017-04-20T21:07:15.8828348+00:00","details":"userName:;submitMachine:N/A"},{"newState":"Compiling","timeStamp":"2017-04-20T21:07:16.3515964+00:00","details":"CcsAttempts:1;Status:Dispatched"}],"properties":{"owner":"adlsvc01@myaddomain.onmicrosoft.com","resources":[{"name":"Profile","resourcePath":"adl://pyarmadls232e3152c.azuredatalakestore.net/system/jobservice/jobs/Usql/2017/04/20/21/07/00000000-0000-0000-0000-000000000000/profile","type":"StatisticsResource"},{"name":"__ScopeRuntimeStatistics__.xml","resourcePath":"adl://pyarmadls232e3152c.azuredatalakestore.net/system/jobservice/jobs/Usql/2017/04/20/21/07/00000000-0000-0000-0000-000000000000/__ScopeRuntimeStatistics__.xml","type":"StatisticsResource"}],"runtimeVersion":"default","rootProcessNodeId":"00000000-0000-0000-0000-000000000000","script":"DROP
-        DATABASE IF EXISTS adladb32e3152c; CREATE DATABASE adladb32e3152c; \nCREATE
-        TABLE adladb32e3152c.dbo.adlatable32e3152c\n(\n        //Define schema of
-        table\n        UserId          int, \n        Start           DateTime, \n        Region          string,
-        \n        Query           string, \n        Duration        int, \n        Urls            string,
-        \n        ClickedUrls     string,\n    INDEX idx1 \n    CLUSTERED (Region
-        ASC) \n    PARTITIONED BY (UserId) HASH (Region)\n);\n\nALTER TABLE adladb32e3152c.dbo.adlatable32e3152c
-        ADD IF NOT EXISTS PARTITION (1);\n\nDROP FUNCTION IF EXISTS adladb32e3152c.dbo.adlatvf32e3152c;\n\nCREATE
-        FUNCTION adladb32e3152c.dbo.adlatvf32e3152c()\nRETURNS @result TABLE\n(\n    s_date
-        DateTime,\n    s_time string,\n    s_sitename string,\n    cs_method string,
-        \n    cs_uristem string,\n    cs_uriquery string,\n    s_port int,\n    cs_username
-        string, \n    c_ip string,\n    cs_useragent string,\n    cs_cookie string,\n    cs_referer
-        string, \n    cs_host string,\n    sc_status int,\n    sc_substatus int,\n    sc_win32status
-        int, \n    sc_bytes int,\n    cs_bytes int,\n    s_timetaken int\n) \nAS\nBEGIN\n\n    @result
-        = EXTRACT\n        s_date DateTime,\n        s_time string,\n        s_sitename
-        string,\n        cs_method string,\n        cs_uristem string,\n        cs_uriquery
-        string,\n        s_port int,\n        cs_username string,\n        c_ip string,\n        cs_useragent
-        string,\n        cs_cookie string,\n        cs_referer string,\n        cs_host
-        string,\n        sc_status int,\n        sc_substatus int,\n        sc_win32status
-        int,\n        sc_bytes int,\n        cs_bytes int,\n        s_timetaken int\n    FROM
-        @\"/Samples/Data/WebLog.log\"\n    USING Extractors.Text(delimiter:'' '');\n\nRETURN;\nEND;\nCREATE
-        VIEW adladb32e3152c.dbo.adlaview32e3152c \nAS \n    SELECT * FROM \n    (\n        VALUES(1,2),(2,4)\n    )
-        \nAS \nT(a, b);\nCREATE PROCEDURE adladb32e3152c.dbo.adlaproc32e3152c()\nAS
-        BEGIN\n  CREATE VIEW adladb32e3152c.dbo.adlaview32e3152c \n  AS \n    SELECT
-        * FROM \n    (\n        VALUES(1,2),(2,4)\n    ) \n  AS \n  T(a, b);\nEND;","algebraFilePath":"adl://pyarmadls232e3152c.azuredatalakestore.net/system/jobservice/jobs/Usql/2017/04/20/21/07/00000000-0000-0000-0000-000000000000/algebra.xml","compileMode":"Semantic","errorSource":"Unknown","totalCompilationTime":"PT12.6889599S","totalPausedTime":"PT0S","totalQueuedTime":"PT0S","totalRunningTime":"PT0S","expirationTimeUtc":"0001-01-01T00:00:00","type":"USql"}}'}
-    headers:
-      Cache-Control: ['private, no-cache, no-store, max-age=0']
-      Content-Type: [application/json; charset=utf-8]
-      Date: ['Thu, 20 Apr 2017 21:07:29 GMT']
-      Expires: ['-1']
-      Strict-Transport-Security: [max-age=15724800; includeSubDomains]
-      Transfer-Encoding: [chunked]
-      X-Content-Type-Options: [nosniff]
-      x-ms-request-id: [851cd014-30bd-40bf-bcc5-f0acd14cf780]
-    status: {code: 200, message: OK}
-- request:
-    body: null
-    headers:
-      Accept: [application/json]
-      Accept-Encoding: ['gzip, deflate']
-      Connection: [keep-alive]
-      Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.5.2 (Windows-10-10.0.14393-SP0) requests/2.9.1 msrest/0.4.4
-          msrest_azure/0.4.7 datalakeanalyticsjobmanagementclient/0.1.3 Azure-SDK-For-Python]
-      accept-language: [en-US]
-      x-ms-client-request-id: [5fca22e2-260d-11e7-b64f-645106422854]
-    method: GET
-    uri: https://pyarmadla232e3152c.azuredatalakeanalytics.net/Jobs/00000000-0000-0000-0000-000000000000?api-version=2016-11-01
-  response:
-    body: {string: '{"jobId":"00000000-0000-0000-0000-000000000000","name":"testjob32e3152c","type":"USql","submitter":"adlsvc01@myaddomain.onmicrosoft.com","degreeOfParallelism":2,"priority":1000,"submitTime":"2017-04-20T21:07:15.8828348+00:00","state":"Starting","result":"None","stateAuditRecords":[{"newState":"New","timeStamp":"2017-04-20T21:07:15.8828348+00:00","details":"userName:;submitMachine:N/A"},{"newState":"Compiling","timeStamp":"2017-04-20T21:07:16.3515964+00:00","details":"CcsAttempts:1;Status:Dispatched"},{"newState":"Queued","timeStamp":"2017-04-20T21:07:31.2267837+00:00"},{"newState":"Scheduling","timeStamp":"2017-04-20T21:07:31.2580525+00:00","details":"Detail:Dispatching
-        job to cluster.;rootProcessId:70de732a-c0d0-459a-abba-2106cef4396a"},{"newState":"Starting","timeStamp":"2017-04-20T21:07:31.3049101+00:00","details":"runtimeVersion:kobo_live_signed_5309115"}],"properties":{"owner":"adlsvc01@myaddomain.onmicrosoft.com","resources":[{"name":"__ScopeCodeGen__.dll","resourcePath":"adl://pyarmadls232e3152c.azuredatalakestore.net/system/jobservice/jobs/Usql/2017/04/20/21/07/00000000-0000-0000-0000-000000000000/__ScopeCodeGen__.dll","type":"VertexResource"},{"name":"__ScopeCodeGen__.pdb","resourcePath":"adl://pyarmadls232e3152c.azuredatalakestore.net/system/jobservice/jobs/Usql/2017/04/20/21/07/00000000-0000-0000-0000-000000000000/__ScopeCodeGen__.pdb","type":"VertexResource"},{"name":"__ScopeCodeGenEngine__.dll","resourcePath":"adl://pyarmadls232e3152c.azuredatalakestore.net/system/jobservice/jobs/Usql/2017/04/20/21/07/00000000-0000-0000-0000-000000000000/__ScopeCodeGenEngine__.dll","type":"VertexResource"},{"name":"__ScopeCodeGenEngine__.pdb","resourcePath":"adl://pyarmadls232e3152c.azuredatalakestore.net/system/jobservice/jobs/Usql/2017/04/20/21/07/00000000-0000-0000-0000-000000000000/__ScopeCodeGenEngine__.pdb","type":"VertexResource"},{"name":"ScopeVertexDef.xml","resourcePath":"adl://pyarmadls232e3152c.azuredatalakestore.net/system/jobservice/jobs/Usql/2017/04/20/21/07/00000000-0000-0000-0000-000000000000/ScopeVertexDef.xml","type":"VertexResource"},{"name":"__ScopeCodeGen__.dll.cs","resourcePath":"adl://pyarmadls232e3152c.azuredatalakestore.net/system/jobservice/jobs/Usql/2017/04/20/21/07/00000000-0000-0000-0000-000000000000/__ScopeCodeGen__.dll.cs","type":"StatisticsResource"},{"name":"__ScopeCodeGenEngine__.dll.cpp","resourcePath":"adl://pyarmadls232e3152c.azuredatalakestore.net/system/jobservice/jobs/Usql/2017/04/20/21/07/00000000-0000-0000-0000-000000000000/__ScopeCodeGenEngine__.dll.cpp","type":"StatisticsResource"},{"name":"__ScopeCodeGenCompileOutput__.txt","resourcePath":"adl://pyarmadls232e3152c.azuredatalakestore.net/system/jobservice/jobs/Usql/2017/04/20/21/07/00000000-0000-0000-0000-000000000000/__ScopeCodeGenCompileOutput__.txt","type":"StatisticsResource"},{"name":"__ScopeCodeGenCompileOptions__.txt","resourcePath":"adl://pyarmadls232e3152c.azuredatalakestore.net/system/jobservice/jobs/Usql/2017/04/20/21/07/00000000-0000-0000-0000-000000000000/__ScopeCodeGenCompileOptions__.txt","type":"StatisticsResource"},{"name":"__ScopeCodeGenEngine__.cppresources","resourcePath":"adl://pyarmadls232e3152c.azuredatalakestore.net/system/jobservice/jobs/Usql/2017/04/20/21/07/00000000-0000-0000-0000-000000000000/__ScopeCodeGenEngine__.cppresources","type":"StatisticsResource"},{"name":"__CompilerTrace.log","resourcePath":"adl://pyarmadls232e3152c.azuredatalakestore.net/system/jobservice/jobs/Usql/2017/04/20/21/07/00000000-0000-0000-0000-000000000000/__CompilerTrace.log","type":"StatisticsResource"},{"name":"__SystemInternalInfo__.xml","resourcePath":"adl://pyarmadls232e3152c.azuredatalakestore.net/system/jobservice/jobs/Usql/2017/04/20/21/07/00000000-0000-0000-0000-000000000000/__SystemInternalInfo__.xml","type":"StatisticsResource"},{"name":"__CompilerPlan.json","resourcePath":"adl://pyarmadls232e3152c.azuredatalakestore.net/system/jobservice/jobs/Usql/2017/04/20/21/07/00000000-0000-0000-0000-000000000000/__CompilerPlan.json","type":"StatisticsResource"},{"name":"__AST.json","resourcePath":"adl://pyarmadls232e3152c.azuredatalakestore.net/system/jobservice/jobs/Usql/2017/04/20/21/07/00000000-0000-0000-0000-000000000000/__AST.json","type":"StatisticsResource"},{"name":"query.abr","resourcePath":"adl://pyarmadls232e3152c.azuredatalakestore.net/system/jobservice/jobs/Usql/2017/04/20/21/07/00000000-0000-0000-0000-000000000000/query.abr","type":"StatisticsResource"},{"name":"Profile","resourcePath":"adl://pyarmadls232e3152c.azuredatalakestore.net/system/jobservice/jobs/Usql/2017/04/20/21/07/00000000-0000-0000-0000-000000000000/profile","type":"StatisticsResource"},{"name":"__ScopeRuntimeStatistics__.xml","resourcePath":"adl://pyarmadls232e3152c.azuredatalakestore.net/system/jobservice/jobs/Usql/2017/04/20/21/07/00000000-0000-0000-0000-000000000000/__ScopeRuntimeStatistics__.xml","type":"StatisticsResource"}],"runtimeVersion":"kobo_live_signed_5309115","rootProcessNodeId":"70de732a-c0d0-459a-abba-2106cef4396a","script":"DROP
-        DATABASE IF EXISTS adladb32e3152c; CREATE DATABASE adladb32e3152c; \nCREATE
-        TABLE adladb32e3152c.dbo.adlatable32e3152c\n(\n        //Define schema of
-        table\n        UserId          int, \n        Start           DateTime, \n        Region          string,
-        \n        Query           string, \n        Duration        int, \n        Urls            string,
-        \n        ClickedUrls     string,\n    INDEX idx1 \n    CLUSTERED (Region
-        ASC) \n    PARTITIONED BY (UserId) HASH (Region)\n);\n\nALTER TABLE adladb32e3152c.dbo.adlatable32e3152c
-        ADD IF NOT EXISTS PARTITION (1);\n\nDROP FUNCTION IF EXISTS adladb32e3152c.dbo.adlatvf32e3152c;\n\nCREATE
-        FUNCTION adladb32e3152c.dbo.adlatvf32e3152c()\nRETURNS @result TABLE\n(\n    s_date
-        DateTime,\n    s_time string,\n    s_sitename string,\n    cs_method string,
-        \n    cs_uristem string,\n    cs_uriquery string,\n    s_port int,\n    cs_username
-        string, \n    c_ip string,\n    cs_useragent string,\n    cs_cookie string,\n    cs_referer
-        string, \n    cs_host string,\n    sc_status int,\n    sc_substatus int,\n    sc_win32status
-        int, \n    sc_bytes int,\n    cs_bytes int,\n    s_timetaken int\n) \nAS\nBEGIN\n\n    @result
-        = EXTRACT\n        s_date DateTime,\n        s_time string,\n        s_sitename
-        string,\n        cs_method string,\n        cs_uristem string,\n        cs_uriquery
-        string,\n        s_port int,\n        cs_username string,\n        c_ip string,\n        cs_useragent
-        string,\n        cs_cookie string,\n        cs_referer string,\n        cs_host
-        string,\n        sc_status int,\n        sc_substatus int,\n        sc_win32status
-        int,\n        sc_bytes int,\n        cs_bytes int,\n        s_timetaken int\n    FROM
-        @\"/Samples/Data/WebLog.log\"\n    USING Extractors.Text(delimiter:'' '');\n\nRETURN;\nEND;\nCREATE
-        VIEW adladb32e3152c.dbo.adlaview32e3152c \nAS \n    SELECT * FROM \n    (\n        VALUES(1,2),(2,4)\n    )
-        \nAS \nT(a, b);\nCREATE PROCEDURE adladb32e3152c.dbo.adlaproc32e3152c()\nAS
-        BEGIN\n  CREATE VIEW adladb32e3152c.dbo.adlaview32e3152c \n  AS \n    SELECT
-        * FROM \n    (\n        VALUES(1,2),(2,4)\n    ) \n  AS \n  T(a, b);\nEND;","algebraFilePath":"adl://pyarmadls232e3152c.azuredatalakestore.net/system/jobservice/jobs/Usql/2017/04/20/21/07/00000000-0000-0000-0000-000000000000/algebra.xml","yarnApplicationId":691025,"yarnApplicationTimeStamp":1491814886043,"compileMode":"Semantic","errorSource":"Unknown","totalCompilationTime":"PT14.8751873S","totalPausedTime":"PT0S","totalQueuedTime":"PT0.0312688S","totalRunningTime":"PT0S","expirationTimeUtc":"0001-01-01T00:00:00","type":"USql"}}'}
-    headers:
-      Cache-Control: ['private, no-cache, no-store, max-age=0']
-      Content-Type: [application/json; charset=utf-8]
-      Date: ['Thu, 20 Apr 2017 21:07:34 GMT']
-      Expires: ['-1']
-      Strict-Transport-Security: [max-age=15724800; includeSubDomains]
-      Transfer-Encoding: [chunked]
-      X-Content-Type-Options: [nosniff]
-      x-ms-request-id: [0e4b1753-c9f0-4ca9-a7d0-88c18e075f62]
-    status: {code: 200, message: OK}
-- request:
-    body: null
-    headers:
-      Accept: [application/json]
-      Accept-Encoding: ['gzip, deflate']
-      Connection: [keep-alive]
-      Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.5.2 (Windows-10-10.0.14393-SP0) requests/2.9.1 msrest/0.4.4
-          msrest_azure/0.4.7 datalakeanalyticsjobmanagementclient/0.1.3 Azure-SDK-For-Python]
-      accept-language: [en-US]
-      x-ms-client-request-id: [637a5a86-260d-11e7-bb11-645106422854]
-    method: GET
-    uri: https://pyarmadla232e3152c.azuredatalakeanalytics.net/Jobs/00000000-0000-0000-0000-000000000000?api-version=2016-11-01
-  response:
-    body: {string: '{"jobId":"00000000-0000-0000-0000-000000000000","name":"testjob32e3152c","type":"USql","submitter":"adlsvc01@myaddomain.onmicrosoft.com","degreeOfParallelism":2,"priority":1000,"submitTime":"2017-04-20T21:07:15.8828348+00:00","state":"Starting","result":"None","stateAuditRecords":[{"newState":"New","timeStamp":"2017-04-20T21:07:15.8828348+00:00","details":"userName:;submitMachine:N/A"},{"newState":"Compiling","timeStamp":"2017-04-20T21:07:16.3515964+00:00","details":"CcsAttempts:1;Status:Dispatched"},{"newState":"Queued","timeStamp":"2017-04-20T21:07:31.2267837+00:00"},{"newState":"Scheduling","timeStamp":"2017-04-20T21:07:31.2580525+00:00","details":"Detail:Dispatching
-        job to cluster.;rootProcessId:70de732a-c0d0-459a-abba-2106cef4396a"},{"newState":"Starting","timeStamp":"2017-04-20T21:07:31.3049101+00:00","details":"runtimeVersion:kobo_live_signed_5309115"}],"properties":{"owner":"adlsvc01@myaddomain.onmicrosoft.com","resources":[{"name":"__ScopeCodeGen__.dll","resourcePath":"adl://pyarmadls232e3152c.azuredatalakestore.net/system/jobservice/jobs/Usql/2017/04/20/21/07/00000000-0000-0000-0000-000000000000/__ScopeCodeGen__.dll","type":"VertexResource"},{"name":"__ScopeCodeGen__.pdb","resourcePath":"adl://pyarmadls232e3152c.azuredatalakestore.net/system/jobservice/jobs/Usql/2017/04/20/21/07/00000000-0000-0000-0000-000000000000/__ScopeCodeGen__.pdb","type":"VertexResource"},{"name":"__ScopeCodeGenEngine__.dll","resourcePath":"adl://pyarmadls232e3152c.azuredatalakestore.net/system/jobservice/jobs/Usql/2017/04/20/21/07/00000000-0000-0000-0000-000000000000/__ScopeCodeGenEngine__.dll","type":"VertexResource"},{"name":"__ScopeCodeGenEngine__.pdb","resourcePath":"adl://pyarmadls232e3152c.azuredatalakestore.net/system/jobservice/jobs/Usql/2017/04/20/21/07/00000000-0000-0000-0000-000000000000/__ScopeCodeGenEngine__.pdb","type":"VertexResource"},{"name":"ScopeVertexDef.xml","resourcePath":"adl://pyarmadls232e3152c.azuredatalakestore.net/system/jobservice/jobs/Usql/2017/04/20/21/07/00000000-0000-0000-0000-000000000000/ScopeVertexDef.xml","type":"VertexResource"},{"name":"__ScopeCodeGen__.dll.cs","resourcePath":"adl://pyarmadls232e3152c.azuredatalakestore.net/system/jobservice/jobs/Usql/2017/04/20/21/07/00000000-0000-0000-0000-000000000000/__ScopeCodeGen__.dll.cs","type":"StatisticsResource"},{"name":"__ScopeCodeGenEngine__.dll.cpp","resourcePath":"adl://pyarmadls232e3152c.azuredatalakestore.net/system/jobservice/jobs/Usql/2017/04/20/21/07/00000000-0000-0000-0000-000000000000/__ScopeCodeGenEngine__.dll.cpp","type":"StatisticsResource"},{"name":"__ScopeCodeGenCompileOutput__.txt","resourcePath":"adl://pyarmadls232e3152c.azuredatalakestore.net/system/jobservice/jobs/Usql/2017/04/20/21/07/00000000-0000-0000-0000-000000000000/__ScopeCodeGenCompileOutput__.txt","type":"StatisticsResource"},{"name":"__ScopeCodeGenCompileOptions__.txt","resourcePath":"adl://pyarmadls232e3152c.azuredatalakestore.net/system/jobservice/jobs/Usql/2017/04/20/21/07/00000000-0000-0000-0000-000000000000/__ScopeCodeGenCompileOptions__.txt","type":"StatisticsResource"},{"name":"__ScopeCodeGenEngine__.cppresources","resourcePath":"adl://pyarmadls232e3152c.azuredatalakestore.net/system/jobservice/jobs/Usql/2017/04/20/21/07/00000000-0000-0000-0000-000000000000/__ScopeCodeGenEngine__.cppresources","type":"StatisticsResource"},{"name":"__CompilerTrace.log","resourcePath":"adl://pyarmadls232e3152c.azuredatalakestore.net/system/jobservice/jobs/Usql/2017/04/20/21/07/00000000-0000-0000-0000-000000000000/__CompilerTrace.log","type":"StatisticsResource"},{"name":"__SystemInternalInfo__.xml","resourcePath":"adl://pyarmadls232e3152c.azuredatalakestore.net/system/jobservice/jobs/Usql/2017/04/20/21/07/00000000-0000-0000-0000-000000000000/__SystemInternalInfo__.xml","type":"StatisticsResource"},{"name":"__CompilerPlan.json","resourcePath":"adl://pyarmadls232e3152c.azuredatalakestore.net/system/jobservice/jobs/Usql/2017/04/20/21/07/00000000-0000-0000-0000-000000000000/__CompilerPlan.json","type":"StatisticsResource"},{"name":"__AST.json","resourcePath":"adl://pyarmadls232e3152c.azuredatalakestore.net/system/jobservice/jobs/Usql/2017/04/20/21/07/00000000-0000-0000-0000-000000000000/__AST.json","type":"StatisticsResource"},{"name":"query.abr","resourcePath":"adl://pyarmadls232e3152c.azuredatalakestore.net/system/jobservice/jobs/Usql/2017/04/20/21/07/00000000-0000-0000-0000-000000000000/query.abr","type":"StatisticsResource"},{"name":"Profile","resourcePath":"adl://pyarmadls232e3152c.azuredatalakestore.net/system/jobservice/jobs/Usql/2017/04/20/21/07/00000000-0000-0000-0000-000000000000/profile","type":"StatisticsResource"},{"name":"__ScopeRuntimeStatistics__.xml","resourcePath":"adl://pyarmadls232e3152c.azuredatalakestore.net/system/jobservice/jobs/Usql/2017/04/20/21/07/00000000-0000-0000-0000-000000000000/__ScopeRuntimeStatistics__.xml","type":"StatisticsResource"}],"runtimeVersion":"kobo_live_signed_5309115","rootProcessNodeId":"70de732a-c0d0-459a-abba-2106cef4396a","script":"DROP
-        DATABASE IF EXISTS adladb32e3152c; CREATE DATABASE adladb32e3152c; \nCREATE
-        TABLE adladb32e3152c.dbo.adlatable32e3152c\n(\n        //Define schema of
-        table\n        UserId          int, \n        Start           DateTime, \n        Region          string,
-        \n        Query           string, \n        Duration        int, \n        Urls            string,
-        \n        ClickedUrls     string,\n    INDEX idx1 \n    CLUSTERED (Region
-        ASC) \n    PARTITIONED BY (UserId) HASH (Region)\n);\n\nALTER TABLE adladb32e3152c.dbo.adlatable32e3152c
-        ADD IF NOT EXISTS PARTITION (1);\n\nDROP FUNCTION IF EXISTS adladb32e3152c.dbo.adlatvf32e3152c;\n\nCREATE
-        FUNCTION adladb32e3152c.dbo.adlatvf32e3152c()\nRETURNS @result TABLE\n(\n    s_date
-        DateTime,\n    s_time string,\n    s_sitename string,\n    cs_method string,
-        \n    cs_uristem string,\n    cs_uriquery string,\n    s_port int,\n    cs_username
-        string, \n    c_ip string,\n    cs_useragent string,\n    cs_cookie string,\n    cs_referer
-        string, \n    cs_host string,\n    sc_status int,\n    sc_substatus int,\n    sc_win32status
-        int, \n    sc_bytes int,\n    cs_bytes int,\n    s_timetaken int\n) \nAS\nBEGIN\n\n    @result
-        = EXTRACT\n        s_date DateTime,\n        s_time string,\n        s_sitename
-        string,\n        cs_method string,\n        cs_uristem string,\n        cs_uriquery
-        string,\n        s_port int,\n        cs_username string,\n        c_ip string,\n        cs_useragent
-        string,\n        cs_cookie string,\n        cs_referer string,\n        cs_host
-        string,\n        sc_status int,\n        sc_substatus int,\n        sc_win32status
-        int,\n        sc_bytes int,\n        cs_bytes int,\n        s_timetaken int\n    FROM
-        @\"/Samples/Data/WebLog.log\"\n    USING Extractors.Text(delimiter:'' '');\n\nRETURN;\nEND;\nCREATE
-        VIEW adladb32e3152c.dbo.adlaview32e3152c \nAS \n    SELECT * FROM \n    (\n        VALUES(1,2),(2,4)\n    )
-        \nAS \nT(a, b);\nCREATE PROCEDURE adladb32e3152c.dbo.adlaproc32e3152c()\nAS
-        BEGIN\n  CREATE VIEW adladb32e3152c.dbo.adlaview32e3152c \n  AS \n    SELECT
-        * FROM \n    (\n        VALUES(1,2),(2,4)\n    ) \n  AS \n  T(a, b);\nEND;","algebraFilePath":"adl://pyarmadls232e3152c.azuredatalakestore.net/system/jobservice/jobs/Usql/2017/04/20/21/07/00000000-0000-0000-0000-000000000000/algebra.xml","yarnApplicationId":691025,"yarnApplicationTimeStamp":1491814886043,"compileMode":"Semantic","errorSource":"Unknown","totalCompilationTime":"PT14.8751873S","totalPausedTime":"PT0S","totalQueuedTime":"PT0.0312688S","totalRunningTime":"PT0S","expirationTimeUtc":"0001-01-01T00:00:00","type":"USql"}}'}
-    headers:
-      Cache-Control: ['private, no-cache, no-store, max-age=0']
-      Content-Type: [application/json; charset=utf-8]
-      Date: ['Thu, 20 Apr 2017 21:07:40 GMT']
-      Expires: ['-1']
-      Strict-Transport-Security: [max-age=15724800; includeSubDomains]
-      Transfer-Encoding: [chunked]
-      X-Content-Type-Options: [nosniff]
-      x-ms-request-id: [8c74408b-6b29-4309-af96-5236826bf2d2]
-    status: {code: 200, message: OK}
-- request:
-    body: null
-    headers:
-      Accept: [application/json]
-      Accept-Encoding: ['gzip, deflate']
-      Connection: [keep-alive]
-      Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.5.2 (Windows-10-10.0.14393-SP0) requests/2.9.1 msrest/0.4.4
-          msrest_azure/0.4.7 datalakeanalyticsjobmanagementclient/0.1.3 Azure-SDK-For-Python]
-      accept-language: [en-US]
-      x-ms-client-request-id: [67555a66-260d-11e7-bc8e-645106422854]
-    method: GET
-    uri: https://pyarmadla232e3152c.azuredatalakeanalytics.net/Jobs/00000000-0000-0000-0000-000000000000?api-version=2016-11-01
-  response:
-    body: {string: '{"jobId":"00000000-0000-0000-0000-000000000000","name":"testjob32e3152c","type":"USql","submitter":"adlsvc01@myaddomain.onmicrosoft.com","degreeOfParallelism":2,"priority":1000,"submitTime":"2017-04-20T21:07:15.8828348+00:00","startTime":"2017-04-20T21:07:42.4613361+00:00","state":"Running","result":"None","stateAuditRecords":[{"newState":"New","timeStamp":"2017-04-20T21:07:15.8828348+00:00","details":"userName:;submitMachine:N/A"},{"newState":"Compiling","timeStamp":"2017-04-20T21:07:16.3515964+00:00","details":"CcsAttempts:1;Status:Dispatched"},{"newState":"Queued","timeStamp":"2017-04-20T21:07:31.2267837+00:00"},{"newState":"Scheduling","timeStamp":"2017-04-20T21:07:31.2580525+00:00","details":"Detail:Dispatching
-        job to cluster.;rootProcessId:70de732a-c0d0-459a-abba-2106cef4396a"},{"newState":"Starting","timeStamp":"2017-04-20T21:07:31.3049101+00:00","details":"runtimeVersion:kobo_live_signed_5309115"},{"newState":"Running","timeStamp":"2017-04-20T21:07:42.4613361+00:00","details":"runAttempt:1"}],"properties":{"owner":"adlsvc01@myaddomain.onmicrosoft.com","resources":[{"name":"__ScopeCodeGen__.dll","resourcePath":"adl://pyarmadls232e3152c.azuredatalakestore.net/system/jobservice/jobs/Usql/2017/04/20/21/07/00000000-0000-0000-0000-000000000000/__ScopeCodeGen__.dll","type":"VertexResource"},{"name":"__ScopeCodeGen__.pdb","resourcePath":"adl://pyarmadls232e3152c.azuredatalakestore.net/system/jobservice/jobs/Usql/2017/04/20/21/07/00000000-0000-0000-0000-000000000000/__ScopeCodeGen__.pdb","type":"VertexResource"},{"name":"__ScopeCodeGenEngine__.dll","resourcePath":"adl://pyarmadls232e3152c.azuredatalakestore.net/system/jobservice/jobs/Usql/2017/04/20/21/07/00000000-0000-0000-0000-000000000000/__ScopeCodeGenEngine__.dll","type":"VertexResource"},{"name":"__ScopeCodeGenEngine__.pdb","resourcePath":"adl://pyarmadls232e3152c.azuredatalakestore.net/system/jobservice/jobs/Usql/2017/04/20/21/07/00000000-0000-0000-0000-000000000000/__ScopeCodeGenEngine__.pdb","type":"VertexResource"},{"name":"ScopeVertexDef.xml","resourcePath":"adl://pyarmadls232e3152c.azuredatalakestore.net/system/jobservice/jobs/Usql/2017/04/20/21/07/00000000-0000-0000-0000-000000000000/ScopeVertexDef.xml","type":"VertexResource"},{"name":"__ScopeCodeGen__.dll.cs","resourcePath":"adl://pyarmadls232e3152c.azuredatalakestore.net/system/jobservice/jobs/Usql/2017/04/20/21/07/00000000-0000-0000-0000-000000000000/__ScopeCodeGen__.dll.cs","type":"StatisticsResource"},{"name":"__ScopeCodeGenEngine__.dll.cpp","resourcePath":"adl://pyarmadls232e3152c.azuredatalakestore.net/system/jobservice/jobs/Usql/2017/04/20/21/07/00000000-0000-0000-0000-000000000000/__ScopeCodeGenEngine__.dll.cpp","type":"StatisticsResource"},{"name":"__ScopeCodeGenCompileOutput__.txt","resourcePath":"adl://pyarmadls232e3152c.azuredatalakestore.net/system/jobservice/jobs/Usql/2017/04/20/21/07/00000000-0000-0000-0000-000000000000/__ScopeCodeGenCompileOutput__.txt","type":"StatisticsResource"},{"name":"__ScopeCodeGenCompileOptions__.txt","resourcePath":"adl://pyarmadls232e3152c.azuredatalakestore.net/system/jobservice/jobs/Usql/2017/04/20/21/07/00000000-0000-0000-0000-000000000000/__ScopeCodeGenCompileOptions__.txt","type":"StatisticsResource"},{"name":"__ScopeCodeGenEngine__.cppresources","resourcePath":"adl://pyarmadls232e3152c.azuredatalakestore.net/system/jobservice/jobs/Usql/2017/04/20/21/07/00000000-0000-0000-0000-000000000000/__ScopeCodeGenEngine__.cppresources","type":"StatisticsResource"},{"name":"__CompilerTrace.log","resourcePath":"adl://pyarmadls232e3152c.azuredatalakestore.net/system/jobservice/jobs/Usql/2017/04/20/21/07/00000000-0000-0000-0000-000000000000/__CompilerTrace.log","type":"StatisticsResource"},{"name":"__SystemInternalInfo__.xml","resourcePath":"adl://pyarmadls232e3152c.azuredatalakestore.net/system/jobservice/jobs/Usql/2017/04/20/21/07/00000000-0000-0000-0000-000000000000/__SystemInternalInfo__.xml","type":"StatisticsResource"},{"name":"__CompilerPlan.json","resourcePath":"adl://pyarmadls232e3152c.azuredatalakestore.net/system/jobservice/jobs/Usql/2017/04/20/21/07/00000000-0000-0000-0000-000000000000/__CompilerPlan.json","type":"StatisticsResource"},{"name":"__AST.json","resourcePath":"adl://pyarmadls232e3152c.azuredatalakestore.net/system/jobservice/jobs/Usql/2017/04/20/21/07/00000000-0000-0000-0000-000000000000/__AST.json","type":"StatisticsResource"},{"name":"query.abr","resourcePath":"adl://pyarmadls232e3152c.azuredatalakestore.net/system/jobservice/jobs/Usql/2017/04/20/21/07/00000000-0000-0000-0000-000000000000/query.abr","type":"StatisticsResource"},{"name":"Profile","resourcePath":"adl://pyarmadls232e3152c.azuredatalakestore.net/system/jobservice/jobs/Usql/2017/04/20/21/07/00000000-0000-0000-0000-000000000000/profile","type":"StatisticsResource"},{"name":"__ScopeRuntimeStatistics__.xml","resourcePath":"adl://pyarmadls232e3152c.azuredatalakestore.net/system/jobservice/jobs/Usql/2017/04/20/21/07/00000000-0000-0000-0000-000000000000/__ScopeRuntimeStatistics__.xml","type":"StatisticsResource"}],"runtimeVersion":"kobo_live_signed_5309115","rootProcessNodeId":"70de732a-c0d0-459a-abba-2106cef4396a","script":"DROP
-        DATABASE IF EXISTS adladb32e3152c; CREATE DATABASE adladb32e3152c; \nCREATE
-        TABLE adladb32e3152c.dbo.adlatable32e3152c\n(\n        //Define schema of
-        table\n        UserId          int, \n        Start           DateTime, \n        Region          string,
-        \n        Query           string, \n        Duration        int, \n        Urls            string,
-        \n        ClickedUrls     string,\n    INDEX idx1 \n    CLUSTERED (Region
-        ASC) \n    PARTITIONED BY (UserId) HASH (Region)\n);\n\nALTER TABLE adladb32e3152c.dbo.adlatable32e3152c
-        ADD IF NOT EXISTS PARTITION (1);\n\nDROP FUNCTION IF EXISTS adladb32e3152c.dbo.adlatvf32e3152c;\n\nCREATE
-        FUNCTION adladb32e3152c.dbo.adlatvf32e3152c()\nRETURNS @result TABLE\n(\n    s_date
-        DateTime,\n    s_time string,\n    s_sitename string,\n    cs_method string,
-        \n    cs_uristem string,\n    cs_uriquery string,\n    s_port int,\n    cs_username
-        string, \n    c_ip string,\n    cs_useragent string,\n    cs_cookie string,\n    cs_referer
-        string, \n    cs_host string,\n    sc_status int,\n    sc_substatus int,\n    sc_win32status
-        int, \n    sc_bytes int,\n    cs_bytes int,\n    s_timetaken int\n) \nAS\nBEGIN\n\n    @result
-        = EXTRACT\n        s_date DateTime,\n        s_time string,\n        s_sitename
-        string,\n        cs_method string,\n        cs_uristem string,\n        cs_uriquery
-        string,\n        s_port int,\n        cs_username string,\n        c_ip string,\n        cs_useragent
-        string,\n        cs_cookie string,\n        cs_referer string,\n        cs_host
-        string,\n        sc_status int,\n        sc_substatus int,\n        sc_win32status
-        int,\n        sc_bytes int,\n        cs_bytes int,\n        s_timetaken int\n    FROM
-        @\"/Samples/Data/WebLog.log\"\n    USING Extractors.Text(delimiter:'' '');\n\nRETURN;\nEND;\nCREATE
-        VIEW adladb32e3152c.dbo.adlaview32e3152c \nAS \n    SELECT * FROM \n    (\n        VALUES(1,2),(2,4)\n    )
-        \nAS \nT(a, b);\nCREATE PROCEDURE adladb32e3152c.dbo.adlaproc32e3152c()\nAS
-        BEGIN\n  CREATE VIEW adladb32e3152c.dbo.adlaview32e3152c \n  AS \n    SELECT
-        * FROM \n    (\n        VALUES(1,2),(2,4)\n    ) \n  AS \n  T(a, b);\nEND;","algebraFilePath":"adl://pyarmadls232e3152c.azuredatalakestore.net/system/jobservice/jobs/Usql/2017/04/20/21/07/00000000-0000-0000-0000-000000000000/algebra.xml","yarnApplicationId":691025,"yarnApplicationTimeStamp":1491814886043,"compileMode":"Semantic","errorSource":"Unknown","totalCompilationTime":"PT14.8751873S","totalPausedTime":"PT0S","totalQueuedTime":"PT0.0312688S","totalRunningTime":"PT4.7045366S","expirationTimeUtc":"0001-01-01T00:00:00","type":"USql"}}'}
-    headers:
-      Cache-Control: ['private, no-cache, no-store, max-age=0']
-      Content-Type: [application/json; charset=utf-8]
-      Date: ['Thu, 20 Apr 2017 21:07:46 GMT']
-      Expires: ['-1']
-      Strict-Transport-Security: [max-age=15724800; includeSubDomains]
-      Transfer-Encoding: [chunked]
-      X-Content-Type-Options: [nosniff]
-      x-ms-request-id: [378d7a33-cba6-4527-81b5-aa03e28eba68]
-    status: {code: 200, message: OK}
-- request:
-    body: null
-    headers:
-      Accept: [application/json]
-      Accept-Encoding: ['gzip, deflate']
-      Connection: [keep-alive]
-      Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.5.2 (Windows-10-10.0.14393-SP0) requests/2.9.1 msrest/0.4.4
-          msrest_azure/0.4.7 datalakeanalyticsjobmanagementclient/0.1.3 Azure-SDK-For-Python]
-      accept-language: [en-US]
-      x-ms-client-request-id: [6a96e058-260d-11e7-a152-645106422854]
-    method: GET
-    uri: https://pyarmadla232e3152c.azuredatalakeanalytics.net/Jobs/00000000-0000-0000-0000-000000000000?api-version=2016-11-01
-  response:
-    body: {string: '{"jobId":"00000000-0000-0000-0000-000000000000","name":"testjob32e3152c","type":"USql","submitter":"adlsvc01@myaddomain.onmicrosoft.com","degreeOfParallelism":2,"priority":1000,"submitTime":"2017-04-20T21:07:15.8828348+00:00","startTime":"2017-04-20T21:07:42.4613361+00:00","endTime":"2017-04-20T21:07:48.5551685+00:00","state":"Ended","result":"Succeeded","stateAuditRecords":[{"newState":"New","timeStamp":"2017-04-20T21:07:15.8828348+00:00","details":"userName:;submitMachine:N/A"},{"newState":"Compiling","timeStamp":"2017-04-20T21:07:16.3515964+00:00","details":"CcsAttempts:1;Status:Dispatched"},{"newState":"Queued","timeStamp":"2017-04-20T21:07:31.2267837+00:00"},{"newState":"Scheduling","timeStamp":"2017-04-20T21:07:31.2580525+00:00","details":"Detail:Dispatching
-        job to cluster.;rootProcessId:70de732a-c0d0-459a-abba-2106cef4396a"},{"newState":"Starting","timeStamp":"2017-04-20T21:07:31.3049101+00:00","details":"runtimeVersion:kobo_live_signed_5309115"},{"newState":"Running","timeStamp":"2017-04-20T21:07:42.4613361+00:00","details":"runAttempt:1"},{"newState":"Ended","timeStamp":"2017-04-20T21:07:48.5551685+00:00","details":"result:Succeeded"}],"properties":{"owner":"adlsvc01@myaddomain.onmicrosoft.com","resources":[{"name":"__ScopeCodeGen__.dll","resourcePath":"adl://pyarmadls232e3152c.azuredatalakestore.net/system/jobservice/jobs/Usql/2017/04/20/21/07/00000000-0000-0000-0000-000000000000/__ScopeCodeGen__.dll","type":"VertexResource"},{"name":"__ScopeCodeGen__.pdb","resourcePath":"adl://pyarmadls232e3152c.azuredatalakestore.net/system/jobservice/jobs/Usql/2017/04/20/21/07/00000000-0000-0000-0000-000000000000/__ScopeCodeGen__.pdb","type":"VertexResource"},{"name":"__ScopeCodeGenEngine__.dll","resourcePath":"adl://pyarmadls232e3152c.azuredatalakestore.net/system/jobservice/jobs/Usql/2017/04/20/21/07/00000000-0000-0000-0000-000000000000/__ScopeCodeGenEngine__.dll","type":"VertexResource"},{"name":"__ScopeCodeGenEngine__.pdb","resourcePath":"adl://pyarmadls232e3152c.azuredatalakestore.net/system/jobservice/jobs/Usql/2017/04/20/21/07/00000000-0000-0000-0000-000000000000/__ScopeCodeGenEngine__.pdb","type":"VertexResource"},{"name":"ScopeVertexDef.xml","resourcePath":"adl://pyarmadls232e3152c.azuredatalakestore.net/system/jobservice/jobs/Usql/2017/04/20/21/07/00000000-0000-0000-0000-000000000000/ScopeVertexDef.xml","type":"VertexResource"},{"name":"__ScopeCodeGen__.dll.cs","resourcePath":"adl://pyarmadls232e3152c.azuredatalakestore.net/system/jobservice/jobs/Usql/2017/04/20/21/07/00000000-0000-0000-0000-000000000000/__ScopeCodeGen__.dll.cs","type":"StatisticsResource"},{"name":"__ScopeCodeGenEngine__.dll.cpp","resourcePath":"adl://pyarmadls232e3152c.azuredatalakestore.net/system/jobservice/jobs/Usql/2017/04/20/21/07/00000000-0000-0000-0000-000000000000/__ScopeCodeGenEngine__.dll.cpp","type":"StatisticsResource"},{"name":"__ScopeCodeGenCompileOutput__.txt","resourcePath":"adl://pyarmadls232e3152c.azuredatalakestore.net/system/jobservice/jobs/Usql/2017/04/20/21/07/00000000-0000-0000-0000-000000000000/__ScopeCodeGenCompileOutput__.txt","type":"StatisticsResource"},{"name":"__ScopeCodeGenCompileOptions__.txt","resourcePath":"adl://pyarmadls232e3152c.azuredatalakestore.net/system/jobservice/jobs/Usql/2017/04/20/21/07/00000000-0000-0000-0000-000000000000/__ScopeCodeGenCompileOptions__.txt","type":"StatisticsResource"},{"name":"__ScopeCodeGenEngine__.cppresources","resourcePath":"adl://pyarmadls232e3152c.azuredatalakestore.net/system/jobservice/jobs/Usql/2017/04/20/21/07/00000000-0000-0000-0000-000000000000/__ScopeCodeGenEngine__.cppresources","type":"StatisticsResource"},{"name":"__CompilerTrace.log","resourcePath":"adl://pyarmadls232e3152c.azuredatalakestore.net/system/jobservice/jobs/Usql/2017/04/20/21/07/00000000-0000-0000-0000-000000000000/__CompilerTrace.log","type":"StatisticsResource"},{"name":"__SystemInternalInfo__.xml","resourcePath":"adl://pyarmadls232e3152c.azuredatalakestore.net/system/jobservice/jobs/Usql/2017/04/20/21/07/00000000-0000-0000-0000-000000000000/__SystemInternalInfo__.xml","type":"StatisticsResource"},{"name":"__CompilerPlan.json","resourcePath":"adl://pyarmadls232e3152c.azuredatalakestore.net/system/jobservice/jobs/Usql/2017/04/20/21/07/00000000-0000-0000-0000-000000000000/__CompilerPlan.json","type":"StatisticsResource"},{"name":"__AST.json","resourcePath":"adl://pyarmadls232e3152c.azuredatalakestore.net/system/jobservice/jobs/Usql/2017/04/20/21/07/00000000-0000-0000-0000-000000000000/__AST.json","type":"StatisticsResource"},{"name":"query.abr","resourcePath":"adl://pyarmadls232e3152c.azuredatalakestore.net/system/jobservice/jobs/Usql/2017/04/20/21/07/00000000-0000-0000-0000-000000000000/query.abr","type":"StatisticsResource"},{"name":"Profile","resourcePath":"adl://pyarmadls232e3152c.azuredatalakestore.net/system/jobservice/jobs/Usql/2017/04/20/21/07/00000000-0000-0000-0000-000000000000/profile","type":"StatisticsResource"},{"name":"__ScopeRuntimeStatistics__.xml","resourcePath":"adl://pyarmadls232e3152c.azuredatalakestore.net/system/jobservice/jobs/Usql/2017/04/20/21/07/00000000-0000-0000-0000-000000000000/__ScopeRuntimeStatistics__.xml","type":"StatisticsResource"}],"runtimeVersion":"kobo_live_signed_5309115","rootProcessNodeId":"70de732a-c0d0-459a-abba-2106cef4396a","script":"DROP
-        DATABASE IF EXISTS adladb32e3152c; CREATE DATABASE adladb32e3152c; \nCREATE
-        TABLE adladb32e3152c.dbo.adlatable32e3152c\n(\n        //Define schema of
-        table\n        UserId          int, \n        Start           DateTime, \n        Region          string,
-        \n        Query           string, \n        Duration        int, \n        Urls            string,
-        \n        ClickedUrls     string,\n    INDEX idx1 \n    CLUSTERED (Region
-        ASC) \n    PARTITIONED BY (UserId) HASH (Region)\n);\n\nALTER TABLE adladb32e3152c.dbo.adlatable32e3152c
-        ADD IF NOT EXISTS PARTITION (1);\n\nDROP FUNCTION IF EXISTS adladb32e3152c.dbo.adlatvf32e3152c;\n\nCREATE
-        FUNCTION adladb32e3152c.dbo.adlatvf32e3152c()\nRETURNS @result TABLE\n(\n    s_date
-        DateTime,\n    s_time string,\n    s_sitename string,\n    cs_method string,
-        \n    cs_uristem string,\n    cs_uriquery string,\n    s_port int,\n    cs_username
-        string, \n    c_ip string,\n    cs_useragent string,\n    cs_cookie string,\n    cs_referer
-        string, \n    cs_host string,\n    sc_status int,\n    sc_substatus int,\n    sc_win32status
-        int, \n    sc_bytes int,\n    cs_bytes int,\n    s_timetaken int\n) \nAS\nBEGIN\n\n    @result
-        = EXTRACT\n        s_date DateTime,\n        s_time string,\n        s_sitename
-        string,\n        cs_method string,\n        cs_uristem string,\n        cs_uriquery
-        string,\n        s_port int,\n        cs_username string,\n        c_ip string,\n        cs_useragent
-        string,\n        cs_cookie string,\n        cs_referer string,\n        cs_host
-        string,\n        sc_status int,\n        sc_substatus int,\n        sc_win32status
-        int,\n        sc_bytes int,\n        cs_bytes int,\n        s_timetaken int\n    FROM
-        @\"/Samples/Data/WebLog.log\"\n    USING Extractors.Text(delimiter:'' '');\n\nRETURN;\nEND;\nCREATE
-        VIEW adladb32e3152c.dbo.adlaview32e3152c \nAS \n    SELECT * FROM \n    (\n        VALUES(1,2),(2,4)\n    )
-        \nAS \nT(a, b);\nCREATE PROCEDURE adladb32e3152c.dbo.adlaproc32e3152c()\nAS
-        BEGIN\n  CREATE VIEW adladb32e3152c.dbo.adlaview32e3152c \n  AS \n    SELECT
-        * FROM \n    (\n        VALUES(1,2),(2,4)\n    ) \n  AS \n  T(a, b);\nEND;","algebraFilePath":"adl://pyarmadls232e3152c.azuredatalakestore.net/system/jobservice/jobs/Usql/2017/04/20/21/07/00000000-0000-0000-0000-000000000000/algebra.xml","yarnApplicationId":691025,"yarnApplicationTimeStamp":1491814886043,"compileMode":"Semantic","errorSource":"Unknown","totalCompilationTime":"PT14.8751873S","totalPausedTime":"PT0S","totalQueuedTime":"PT0.0312688S","totalRunningTime":"PT6.0938324S","expirationTimeUtc":"0001-01-01T00:00:00","type":"USql"}}'}
-    headers:
-      Cache-Control: ['private, no-cache, no-store, max-age=0']
-      Content-Type: [application/json; charset=utf-8]
-      Date: ['Thu, 20 Apr 2017 21:07:52 GMT']
-      Expires: ['-1']
-      Strict-Transport-Security: [max-age=15724800; includeSubDomains]
-      Transfer-Encoding: [chunked]
-      X-Content-Type-Options: [nosniff]
-      x-ms-request-id: [ccdd87f8-cb7c-4e06-9541-5a8601542ed8]
-    status: {code: 200, message: OK}
-- request:
-    body: null
-    headers:
-      Accept: [application/json]
-      Accept-Encoding: ['gzip, deflate']
-      Connection: [keep-alive]
-      Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.5.2 (Windows-10-10.0.14393-SP0) requests/2.9.1 msrest/0.4.4
-          msrest_azure/0.4.7 datalakeanalyticscatalogmanagementclient/0.1.2 Azure-SDK-For-Python]
-      accept-language: [en-US]
-      x-ms-client-request-id: [6ade8df8-260d-11e7-a0e0-645106422854]
+      x-ms-client-request-id: [1b06ede6-4fa4-11e7-8e3e-645106422854]
     method: GET
     uri: https://pyarmadla232e3152c.azuredatalakeanalytics.net/catalog/usql/databases?api-version=2016-11-01
   response:
     body: {string: "{\r\n  \"@odata.context\":\"https://pyarmadla232e3152c.azuredatalakeanalytics.net/sqlip/$metadata#databases\"\
         ,\"value\":[\r\n    {\r\n      \"computeAccountName\":\"pyarmadla232e3152c\"\
-        ,\"databaseName\":\"adladb32e3152c\",\"version\":\"cbdc49f0-d441-476a-85f6-f850cb36290b\"\
+        ,\"databaseName\":\"adladb32e3152c\",\"version\":\"595b89bc-1835-4e65-a3d7-77f80e59a9a9\"\
         \r\n    },{\r\n      \"computeAccountName\":\"pyarmadla232e3152c\",\"databaseName\"\
-        :\"master\",\"version\":\"1c850b7e-dca7-4c6b-987e-d8ed8d62cffd\"\r\n    }\r\
+        :\"master\",\"version\":\"1b8c8625-1ed5-4bb8-b967-1f54e2c4955f\"\r\n    }\r\
         \n  ]\r\n}"}
     headers:
       Cache-Control: ['private, no-cache, no-store, max-age=0']
       Content-Type: [application/json; odata.metadata=minimal]
-      Date: ['Thu, 20 Apr 2017 21:07:53 GMT']
+      Date: ['Mon, 12 Jun 2017 19:19:50 GMT']
       Expires: ['-1']
       OData-Version: ['4.0']
       Strict-Transport-Security: [max-age=15724800; includeSubDomains]
       Transfer-Encoding: [chunked]
       X-Content-Type-Options: [nosniff]
-      x-ms-request-id: [94f5202d-6d3e-4e0d-8b56-ad7e96b21dc4]
+      x-ms-request-id: [f4e40fce-a4b0-4aba-9c6e-e63cd0aefe8f]
     status: {code: 200, message: OK}
 - request:
     body: null
@@ -747,26 +500,26 @@ interactions:
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
       Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.5.2 (Windows-10-10.0.14393-SP0) requests/2.9.1 msrest/0.4.4
-          msrest_azure/0.4.7 datalakeanalyticscatalogmanagementclient/0.1.2 Azure-SDK-For-Python]
+      User-Agent: [python/3.5.2 (Windows-10-10.0.15063-SP0) requests/2.9.1 msrest/0.4.4
+          msrest_azure/0.4.7 datalakeanalyticscatalogmanagementclient/0.1.4 Azure-SDK-For-Python]
       accept-language: [en-US]
-      x-ms-client-request-id: [6b6b520c-260d-11e7-80a4-645106422854]
+      x-ms-client-request-id: [1b4fb468-4fa4-11e7-9eab-645106422854]
     method: GET
     uri: https://pyarmadla232e3152c.azuredatalakeanalytics.net/catalog/usql/databases/adladb32e3152c?api-version=2016-11-01
   response:
     body: {string: "{\r\n  \"@odata.context\":\"https://pyarmadla232e3152c.azuredatalakeanalytics.net/sqlip/$metadata#databases/$entity\"\
         ,\"computeAccountName\":\"pyarmadla232e3152c\",\"databaseName\":\"adladb32e3152c\"\
-        ,\"version\":\"cbdc49f0-d441-476a-85f6-f850cb36290b\"\r\n}"}
+        ,\"version\":\"595b89bc-1835-4e65-a3d7-77f80e59a9a9\"\r\n}"}
     headers:
       Cache-Control: ['private, no-cache, no-store, max-age=0']
       Content-Type: [application/json; odata.metadata=minimal]
-      Date: ['Thu, 20 Apr 2017 21:07:53 GMT']
+      Date: ['Mon, 12 Jun 2017 19:19:51 GMT']
       Expires: ['-1']
       OData-Version: ['4.0']
       Strict-Transport-Security: [max-age=15724800; includeSubDomains]
       Transfer-Encoding: [chunked]
       X-Content-Type-Options: [nosniff]
-      x-ms-request-id: [7a68ba9b-c7d1-4bd3-9b84-48320af493e4]
+      x-ms-request-id: [dfe3b63d-cc74-4868-91d9-acc4521d3eec]
     status: {code: 200, message: OK}
 - request:
     body: null
@@ -775,12 +528,12 @@ interactions:
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
       Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.5.2 (Windows-10-10.0.14393-SP0) requests/2.9.1 msrest/0.4.4
-          msrest_azure/0.4.7 datalakeanalyticscatalogmanagementclient/0.1.2 Azure-SDK-For-Python]
+      User-Agent: [python/3.5.2 (Windows-10-10.0.15063-SP0) requests/2.9.1 msrest/0.4.4
+          msrest_azure/0.4.7 datalakeanalyticscatalogmanagementclient/0.1.4 Azure-SDK-For-Python]
       accept-language: [en-US]
-      x-ms-client-request-id: [6bc3c454-260d-11e7-a5ac-645106422854]
+      x-ms-client-request-id: [1b9e050c-4fa4-11e7-9f77-645106422854]
     method: GET
-    uri: https://pyarmadla232e3152c.azuredatalakeanalytics.net/catalog/usql/databases/adladb32e3152c/schemas/dbo/tables?api-version=2016-11-01
+    uri: https://pyarmadla232e3152c.azuredatalakeanalytics.net/catalog/usql/databases/adladb32e3152c/schemas/dbo/tables?api-version=2016-11-01&basic=false
   response:
     body: {string: "{\r\n  \"@odata.context\":\"https://pyarmadla232e3152c.azuredatalakeanalytics.net/sqlip/$metadata#tables\"\
         ,\"value\":[\r\n    {\r\n      \"computeAccountName\":\"pyarmadla232e3152c\"\
@@ -799,21 +552,21 @@ interactions:
         \r\n          ],\"distributionInfo\":{\r\n            \"type\":2,\"keys\"\
         :[\r\n              {\r\n                \"name\":\"Region\",\"descending\"\
         :false\r\n              }\r\n            ],\"count\":0,\"dynamicCount\":0\r\
-        \n          },\"partitionFunction\":\"d9b79d53-7ee7-407d-821c-650c075485a1\"\
+        \n          },\"partitionFunction\":\"10f6ad7e-30b3-45ee-9c0c-15028fd7c6a4\"\
         ,\"partitionKeyList\":[\r\n            \"UserId\"\r\n          ],\"isColumnstore\"\
         :false,\"indexId\":1,\"isUnique\":false\r\n        }\r\n      ],\"partitionKeyList\"\
         :[\r\n        \r\n      ],\"externalTable\":null,\"distributionInfo\":null,\"\
-        version\":\"659eafba-8c53-4a5c-825a-9c37c22671a5\"\r\n    }\r\n  ]\r\n}"}
+        version\":\"0ce094e2-2b94-48fb-a1e3-b75fbfab72fb\"\r\n    }\r\n  ]\r\n}"}
     headers:
       Cache-Control: ['private, no-cache, no-store, max-age=0']
       Content-Type: [application/json; odata.metadata=minimal]
-      Date: ['Thu, 20 Apr 2017 21:07:54 GMT']
+      Date: ['Mon, 12 Jun 2017 19:19:51 GMT']
       Expires: ['-1']
       OData-Version: ['4.0']
       Strict-Transport-Security: [max-age=15724800; includeSubDomains]
       Transfer-Encoding: [chunked]
       X-Content-Type-Options: [nosniff]
-      x-ms-request-id: [bed01c8e-f44f-4c32-98f7-cb33d9e0e64b]
+      x-ms-request-id: [1ac97fc8-1faa-4305-8ce1-3bf3a7cca755]
     status: {code: 200, message: OK}
 - request:
     body: null
@@ -822,10 +575,42 @@ interactions:
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
       Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.5.2 (Windows-10-10.0.14393-SP0) requests/2.9.1 msrest/0.4.4
-          msrest_azure/0.4.7 datalakeanalyticscatalogmanagementclient/0.1.2 Azure-SDK-For-Python]
+      User-Agent: [python/3.5.2 (Windows-10-10.0.15063-SP0) requests/2.9.1 msrest/0.4.4
+          msrest_azure/0.4.7 datalakeanalyticscatalogmanagementclient/0.1.4 Azure-SDK-For-Python]
       accept-language: [en-US]
-      x-ms-client-request-id: [6c0f9a00-260d-11e7-be55-645106422854]
+      x-ms-client-request-id: [1be6fc3a-4fa4-11e7-8c0a-645106422854]
+    method: GET
+    uri: https://pyarmadla232e3152c.azuredatalakeanalytics.net/catalog/usql/databases/adladb32e3152c/schemas/dbo/tables?api-version=2016-11-01&basic=true
+  response:
+    body: {string: "{\r\n  \"@odata.context\":\"https://pyarmadla232e3152c.azuredatalakeanalytics.net/sqlip/$metadata#tables\"\
+        ,\"value\":[\r\n    {\r\n      \"computeAccountName\":\"pyarmadla232e3152c\"\
+        ,\"databaseName\":\"adladb32e3152c\",\"schemaName\":\"dbo\",\"tableName\"\
+        :\"adlatable32e3152c\",\"columnList\":[\r\n        \r\n      ],\"indexList\"\
+        :[\r\n        \r\n      ],\"partitionKeyList\":[\r\n        \r\n      ],\"\
+        externalTable\":null,\"distributionInfo\":null,\"version\":\"0ce094e2-2b94-48fb-a1e3-b75fbfab72fb\"\
+        \r\n    }\r\n  ]\r\n}"}
+    headers:
+      Cache-Control: ['private, no-cache, no-store, max-age=0']
+      Content-Type: [application/json; odata.metadata=minimal]
+      Date: ['Mon, 12 Jun 2017 19:19:51 GMT']
+      Expires: ['-1']
+      OData-Version: ['4.0']
+      Strict-Transport-Security: [max-age=15724800; includeSubDomains]
+      Transfer-Encoding: [chunked]
+      X-Content-Type-Options: [nosniff]
+      x-ms-request-id: [641d451c-802f-4ad8-ac98-bc2f20275cf5]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.5.2 (Windows-10-10.0.15063-SP0) requests/2.9.1 msrest/0.4.4
+          msrest_azure/0.4.7 datalakeanalyticscatalogmanagementclient/0.1.4 Azure-SDK-For-Python]
+      accept-language: [en-US]
+      x-ms-client-request-id: [1c330bd2-4fa4-11e7-981d-645106422854]
     method: GET
     uri: https://pyarmadla232e3152c.azuredatalakeanalytics.net/catalog/usql/databases/adladb32e3152c/tables?api-version=2016-11-01
   response:
@@ -846,21 +631,21 @@ interactions:
         \r\n          ],\"distributionInfo\":{\r\n            \"type\":2,\"keys\"\
         :[\r\n              {\r\n                \"name\":\"Region\",\"descending\"\
         :false\r\n              }\r\n            ],\"count\":0,\"dynamicCount\":0\r\
-        \n          },\"partitionFunction\":\"d9b79d53-7ee7-407d-821c-650c075485a1\"\
+        \n          },\"partitionFunction\":\"10f6ad7e-30b3-45ee-9c0c-15028fd7c6a4\"\
         ,\"partitionKeyList\":[\r\n            \"UserId\"\r\n          ],\"isColumnstore\"\
         :false,\"indexId\":1,\"isUnique\":false\r\n        }\r\n      ],\"partitionKeyList\"\
         :[\r\n        \r\n      ],\"externalTable\":null,\"distributionInfo\":null,\"\
-        version\":\"659eafba-8c53-4a5c-825a-9c37c22671a5\"\r\n    }\r\n  ]\r\n}"}
+        version\":\"0ce094e2-2b94-48fb-a1e3-b75fbfab72fb\"\r\n    }\r\n  ]\r\n}"}
     headers:
       Cache-Control: ['private, no-cache, no-store, max-age=0']
       Content-Type: [application/json; odata.metadata=minimal]
-      Date: ['Thu, 20 Apr 2017 21:07:54 GMT']
+      Date: ['Mon, 12 Jun 2017 19:19:53 GMT']
       Expires: ['-1']
       OData-Version: ['4.0']
       Strict-Transport-Security: [max-age=15724800; includeSubDomains]
       Transfer-Encoding: [chunked]
       X-Content-Type-Options: [nosniff]
-      x-ms-request-id: [429e7f9a-dc9a-4811-8fd0-3635ddad09c7]
+      x-ms-request-id: [89d781f3-6cfe-43f3-abe0-be89bd684f9b]
     status: {code: 200, message: OK}
 - request:
     body: null
@@ -869,10 +654,10 @@ interactions:
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
       Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.5.2 (Windows-10-10.0.14393-SP0) requests/2.9.1 msrest/0.4.4
-          msrest_azure/0.4.7 datalakeanalyticscatalogmanagementclient/0.1.2 Azure-SDK-For-Python]
+      User-Agent: [python/3.5.2 (Windows-10-10.0.15063-SP0) requests/2.9.1 msrest/0.4.4
+          msrest_azure/0.4.7 datalakeanalyticscatalogmanagementclient/0.1.4 Azure-SDK-For-Python]
       accept-language: [en-US]
-      x-ms-client-request-id: [6c5c6974-260d-11e7-91fc-645106422854]
+      x-ms-client-request-id: [1ce36aa6-4fa4-11e7-aa13-645106422854]
     method: GET
     uri: https://pyarmadla232e3152c.azuredatalakeanalytics.net/catalog/usql/databases/adladb32e3152c/schemas/dbo/tables/adlatable32e3152c?api-version=2016-11-01
   response:
@@ -891,21 +676,21 @@ interactions:
         \      \"Region\",\"UserId\"\r\n      ],\"distributionInfo\":{\r\n       \
         \ \"type\":2,\"keys\":[\r\n          {\r\n            \"name\":\"Region\"\
         ,\"descending\":false\r\n          }\r\n        ],\"count\":0,\"dynamicCount\"\
-        :0\r\n      },\"partitionFunction\":\"d9b79d53-7ee7-407d-821c-650c075485a1\"\
+        :0\r\n      },\"partitionFunction\":\"10f6ad7e-30b3-45ee-9c0c-15028fd7c6a4\"\
         ,\"partitionKeyList\":[\r\n        \"UserId\"\r\n      ],\"isColumnstore\"\
         :false,\"indexId\":1,\"isUnique\":false\r\n    }\r\n  ],\"partitionKeyList\"\
         :[\r\n    \r\n  ],\"externalTable\":null,\"distributionInfo\":null,\"version\"\
-        :\"659eafba-8c53-4a5c-825a-9c37c22671a5\"\r\n}"}
+        :\"0ce094e2-2b94-48fb-a1e3-b75fbfab72fb\"\r\n}"}
     headers:
       Cache-Control: ['private, no-cache, no-store, max-age=0']
       Content-Type: [application/json; odata.metadata=minimal]
-      Date: ['Thu, 20 Apr 2017 21:07:55 GMT']
+      Date: ['Mon, 12 Jun 2017 19:19:53 GMT']
       Expires: ['-1']
       OData-Version: ['4.0']
       Strict-Transport-Security: [max-age=15724800; includeSubDomains]
       Transfer-Encoding: [chunked]
       X-Content-Type-Options: [nosniff]
-      x-ms-request-id: [283acdd2-04c8-4ca8-a20c-5451af284a3c]
+      x-ms-request-id: [a63678e5-8ff7-4ad4-a8bb-14b9253924db]
     status: {code: 200, message: OK}
 - request:
     body: null
@@ -914,10 +699,10 @@ interactions:
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
       Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.5.2 (Windows-10-10.0.14393-SP0) requests/2.9.1 msrest/0.4.4
-          msrest_azure/0.4.7 datalakeanalyticscatalogmanagementclient/0.1.2 Azure-SDK-For-Python]
+      User-Agent: [python/3.5.2 (Windows-10-10.0.15063-SP0) requests/2.9.1 msrest/0.4.4
+          msrest_azure/0.4.7 datalakeanalyticscatalogmanagementclient/0.1.4 Azure-SDK-For-Python]
       accept-language: [en-US]
-      x-ms-client-request-id: [6ca64a7a-260d-11e7-8eac-645106422854]
+      x-ms-client-request-id: [1d2dd166-4fa4-11e7-a056-645106422854]
     method: GET
     uri: https://pyarmadla232e3152c.azuredatalakeanalytics.net/catalog/usql/databases/adladb32e3152c/schemas/dbo/tablevaluedfunctions?api-version=2016-11-01
   response:
@@ -940,18 +725,18 @@ interactions:
         n        sc_substatus int,\\n        sc_win32status int,\\n        sc_bytes\
         \ int,\\n        cs_bytes int,\\n        s_timetaken int\\n    FROM @\\\"\
         /Samples/Data/WebLog.log\\\"\\n    USING Extractors.Text(delimiter:' ');\\\
-        n\\nRETURN;\\nEND;\",\"version\":\"15354b1c-cc33-450b-a349-435904fc618f\"\r\
+        n\\nRETURN;\\nEND;\",\"version\":\"b30401a2-bd52-4724-b560-f3068d2ed162\"\r\
         \n    }\r\n  ]\r\n}"}
     headers:
       Cache-Control: ['private, no-cache, no-store, max-age=0']
       Content-Type: [application/json; odata.metadata=minimal]
-      Date: ['Thu, 20 Apr 2017 21:07:55 GMT']
+      Date: ['Mon, 12 Jun 2017 19:19:53 GMT']
       Expires: ['-1']
       OData-Version: ['4.0']
       Strict-Transport-Security: [max-age=15724800; includeSubDomains]
       Transfer-Encoding: [chunked]
       X-Content-Type-Options: [nosniff]
-      x-ms-request-id: [b717776d-4aa0-432d-9007-c9eeddc77377]
+      x-ms-request-id: [3175677f-a1bd-4ce4-911c-fc54df2153d2]
     status: {code: 200, message: OK}
 - request:
     body: null
@@ -960,10 +745,10 @@ interactions:
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
       Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.5.2 (Windows-10-10.0.14393-SP0) requests/2.9.1 msrest/0.4.4
-          msrest_azure/0.4.7 datalakeanalyticscatalogmanagementclient/0.1.2 Azure-SDK-For-Python]
+      User-Agent: [python/3.5.2 (Windows-10-10.0.15063-SP0) requests/2.9.1 msrest/0.4.4
+          msrest_azure/0.4.7 datalakeanalyticscatalogmanagementclient/0.1.4 Azure-SDK-For-Python]
       accept-language: [en-US]
-      x-ms-client-request-id: [6cef1ac6-260d-11e7-b5ab-645106422854]
+      x-ms-client-request-id: [1d753d3a-4fa4-11e7-bffe-645106422854]
     method: GET
     uri: https://pyarmadla232e3152c.azuredatalakeanalytics.net/catalog/usql/databases/adladb32e3152c/tablevaluedfunctions?api-version=2016-11-01
   response:
@@ -986,18 +771,18 @@ interactions:
         n        sc_substatus int,\\n        sc_win32status int,\\n        sc_bytes\
         \ int,\\n        cs_bytes int,\\n        s_timetaken int\\n    FROM @\\\"\
         /Samples/Data/WebLog.log\\\"\\n    USING Extractors.Text(delimiter:' ');\\\
-        n\\nRETURN;\\nEND;\",\"version\":\"15354b1c-cc33-450b-a349-435904fc618f\"\r\
+        n\\nRETURN;\\nEND;\",\"version\":\"b30401a2-bd52-4724-b560-f3068d2ed162\"\r\
         \n    }\r\n  ]\r\n}"}
     headers:
       Cache-Control: ['private, no-cache, no-store, max-age=0']
       Content-Type: [application/json; odata.metadata=minimal]
-      Date: ['Thu, 20 Apr 2017 21:07:56 GMT']
+      Date: ['Mon, 12 Jun 2017 19:19:54 GMT']
       Expires: ['-1']
       OData-Version: ['4.0']
       Strict-Transport-Security: [max-age=15724800; includeSubDomains]
       Transfer-Encoding: [chunked]
       X-Content-Type-Options: [nosniff]
-      x-ms-request-id: [8eb47fe5-35bd-4958-ac30-6f96bf2109f6]
+      x-ms-request-id: [daadb41b-52d4-4be6-9dbc-16cd27fc31c1]
     status: {code: 200, message: OK}
 - request:
     body: null
@@ -1006,10 +791,10 @@ interactions:
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
       Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.5.2 (Windows-10-10.0.14393-SP0) requests/2.9.1 msrest/0.4.4
-          msrest_azure/0.4.7 datalakeanalyticscatalogmanagementclient/0.1.2 Azure-SDK-For-Python]
+      User-Agent: [python/3.5.2 (Windows-10-10.0.15063-SP0) requests/2.9.1 msrest/0.4.4
+          msrest_azure/0.4.7 datalakeanalyticscatalogmanagementclient/0.1.4 Azure-SDK-For-Python]
       accept-language: [en-US]
-      x-ms-client-request-id: [6d3d8418-260d-11e7-9b93-645106422854]
+      x-ms-client-request-id: [1dc1ad4c-4fa4-11e7-abf3-645106422854]
     method: GET
     uri: https://pyarmadla232e3152c.azuredatalakeanalytics.net/catalog/usql/databases/adladb32e3152c/schemas/dbo/tablevaluedfunctions/adlatvf32e3152c?api-version=2016-11-01
   response:
@@ -1032,17 +817,17 @@ interactions:
         n        sc_win32status int,\\n        sc_bytes int,\\n        cs_bytes int,\\\
         n        s_timetaken int\\n    FROM @\\\"/Samples/Data/WebLog.log\\\"\\n \
         \   USING Extractors.Text(delimiter:' ');\\n\\nRETURN;\\nEND;\",\"version\"\
-        :\"15354b1c-cc33-450b-a349-435904fc618f\"\r\n}"}
+        :\"b30401a2-bd52-4724-b560-f3068d2ed162\"\r\n}"}
     headers:
       Cache-Control: ['private, no-cache, no-store, max-age=0']
       Content-Type: [application/json; odata.metadata=minimal]
-      Date: ['Thu, 20 Apr 2017 21:07:56 GMT']
+      Date: ['Mon, 12 Jun 2017 19:19:54 GMT']
       Expires: ['-1']
       OData-Version: ['4.0']
       Strict-Transport-Security: [max-age=15724800; includeSubDomains]
       Transfer-Encoding: [chunked]
       X-Content-Type-Options: [nosniff]
-      x-ms-request-id: [fae165c7-da69-4beb-84c4-b908cc67fc27]
+      x-ms-request-id: [59772657-5986-4667-aa19-4db576c99589]
     status: {code: 200, message: OK}
 - request:
     body: null
@@ -1051,10 +836,10 @@ interactions:
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
       Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.5.2 (Windows-10-10.0.14393-SP0) requests/2.9.1 msrest/0.4.4
-          msrest_azure/0.4.7 datalakeanalyticscatalogmanagementclient/0.1.2 Azure-SDK-For-Python]
+      User-Agent: [python/3.5.2 (Windows-10-10.0.15063-SP0) requests/2.9.1 msrest/0.4.4
+          msrest_azure/0.4.7 datalakeanalyticscatalogmanagementclient/0.1.4 Azure-SDK-For-Python]
       accept-language: [en-US]
-      x-ms-client-request-id: [6d829010-260d-11e7-8098-645106422854]
+      x-ms-client-request-id: [1e0aa8c2-4fa4-11e7-aa80-645106422854]
     method: GET
     uri: https://pyarmadla232e3152c.azuredatalakeanalytics.net/catalog/usql/databases/adladb32e3152c/schemas/dbo/views?api-version=2016-11-01
   response:
@@ -1063,18 +848,18 @@ interactions:
         ,\"databaseName\":\"adladb32e3152c\",\"schemaName\":\"dbo\",\"viewName\":\"\
         adlaview32e3152c\",\"definition\":\"CREATE VIEW adladb32e3152c.dbo.adlaview32e3152c\
         \ \\nAS \\n    SELECT * FROM \\n    (\\n        VALUES(1,2),(2,4)\\n    )\
-        \ \\nAS \\nT(a, b);\",\"version\":\"f845ffd0-78b2-4da0-a8a3-473180dd01ee\"\
+        \ \\nAS \\nT(a, b);\",\"version\":\"ca2c68b1-f584-41d9-b6dc-d1cea7a22a3d\"\
         \r\n    }\r\n  ]\r\n}"}
     headers:
       Cache-Control: ['private, no-cache, no-store, max-age=0']
       Content-Type: [application/json; odata.metadata=minimal]
-      Date: ['Thu, 20 Apr 2017 21:07:56 GMT']
+      Date: ['Mon, 12 Jun 2017 19:19:56 GMT']
       Expires: ['-1']
       OData-Version: ['4.0']
       Strict-Transport-Security: [max-age=15724800; includeSubDomains]
       Transfer-Encoding: [chunked]
       X-Content-Type-Options: [nosniff]
-      x-ms-request-id: [0f87cf85-021e-440b-a006-ea89d11d06df]
+      x-ms-request-id: [6a50f993-49c4-4929-afef-28c097775371]
     status: {code: 200, message: OK}
 - request:
     body: null
@@ -1083,10 +868,10 @@ interactions:
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
       Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.5.2 (Windows-10-10.0.14393-SP0) requests/2.9.1 msrest/0.4.4
-          msrest_azure/0.4.7 datalakeanalyticscatalogmanagementclient/0.1.2 Azure-SDK-For-Python]
+      User-Agent: [python/3.5.2 (Windows-10-10.0.15063-SP0) requests/2.9.1 msrest/0.4.4
+          msrest_azure/0.4.7 datalakeanalyticscatalogmanagementclient/0.1.4 Azure-SDK-For-Python]
       accept-language: [en-US]
-      x-ms-client-request-id: [6dcda17a-260d-11e7-b6bc-645106422854]
+      x-ms-client-request-id: [1eb00e4c-4fa4-11e7-86d6-645106422854]
     method: GET
     uri: https://pyarmadla232e3152c.azuredatalakeanalytics.net/catalog/usql/databases/adladb32e3152c/views?api-version=2016-11-01
   response:
@@ -1095,18 +880,18 @@ interactions:
         ,\"databaseName\":\"adladb32e3152c\",\"schemaName\":\"dbo\",\"viewName\":\"\
         adlaview32e3152c\",\"definition\":\"CREATE VIEW adladb32e3152c.dbo.adlaview32e3152c\
         \ \\nAS \\n    SELECT * FROM \\n    (\\n        VALUES(1,2),(2,4)\\n    )\
-        \ \\nAS \\nT(a, b);\",\"version\":\"f845ffd0-78b2-4da0-a8a3-473180dd01ee\"\
+        \ \\nAS \\nT(a, b);\",\"version\":\"ca2c68b1-f584-41d9-b6dc-d1cea7a22a3d\"\
         \r\n    }\r\n  ]\r\n}"}
     headers:
       Cache-Control: ['private, no-cache, no-store, max-age=0']
       Content-Type: [application/json; odata.metadata=minimal]
-      Date: ['Thu, 20 Apr 2017 21:07:57 GMT']
+      Date: ['Mon, 12 Jun 2017 19:19:56 GMT']
       Expires: ['-1']
       OData-Version: ['4.0']
       Strict-Transport-Security: [max-age=15724800; includeSubDomains]
       Transfer-Encoding: [chunked]
       X-Content-Type-Options: [nosniff]
-      x-ms-request-id: [1fbfbc19-da6d-41b3-8d13-8ad4d9c8f02a]
+      x-ms-request-id: [d14eef9a-e9d5-45d8-a6aa-6ff5c78b2464]
     status: {code: 200, message: OK}
 - request:
     body: null
@@ -1115,10 +900,10 @@ interactions:
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
       Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.5.2 (Windows-10-10.0.14393-SP0) requests/2.9.1 msrest/0.4.4
-          msrest_azure/0.4.7 datalakeanalyticscatalogmanagementclient/0.1.2 Azure-SDK-For-Python]
+      User-Agent: [python/3.5.2 (Windows-10-10.0.15063-SP0) requests/2.9.1 msrest/0.4.4
+          msrest_azure/0.4.7 datalakeanalyticscatalogmanagementclient/0.1.4 Azure-SDK-For-Python]
       accept-language: [en-US]
-      x-ms-client-request-id: [6e19dafa-260d-11e7-9aa6-645106422854]
+      x-ms-client-request-id: [1ef9c62e-4fa4-11e7-8d07-645106422854]
     method: GET
     uri: https://pyarmadla232e3152c.azuredatalakeanalytics.net/catalog/usql/databases/adladb32e3152c/schemas/dbo/views/adlaview32e3152c?api-version=2016-11-01
   response:
@@ -1127,17 +912,17 @@ interactions:
         ,\"schemaName\":\"dbo\",\"viewName\":\"adlaview32e3152c\",\"definition\":\"\
         CREATE VIEW adladb32e3152c.dbo.adlaview32e3152c \\nAS \\n    SELECT * FROM\
         \ \\n    (\\n        VALUES(1,2),(2,4)\\n    ) \\nAS \\nT(a, b);\",\"version\"\
-        :\"f845ffd0-78b2-4da0-a8a3-473180dd01ee\"\r\n}"}
+        :\"ca2c68b1-f584-41d9-b6dc-d1cea7a22a3d\"\r\n}"}
     headers:
       Cache-Control: ['private, no-cache, no-store, max-age=0']
       Content-Type: [application/json; odata.metadata=minimal]
-      Date: ['Thu, 20 Apr 2017 21:07:58 GMT']
+      Date: ['Mon, 12 Jun 2017 19:19:57 GMT']
       Expires: ['-1']
       OData-Version: ['4.0']
       Strict-Transport-Security: [max-age=15724800; includeSubDomains]
       Transfer-Encoding: [chunked]
       X-Content-Type-Options: [nosniff]
-      x-ms-request-id: [bb9407f7-c6cb-4278-9e53-7c07ce03dd3d]
+      x-ms-request-id: [48c0f449-2d15-4b58-8de7-dbf1943786dd]
     status: {code: 200, message: OK}
 - request:
     body: null
@@ -1146,10 +931,10 @@ interactions:
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
       Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.5.2 (Windows-10-10.0.14393-SP0) requests/2.9.1 msrest/0.4.4
-          msrest_azure/0.4.7 datalakeanalyticscatalogmanagementclient/0.1.2 Azure-SDK-For-Python]
+      User-Agent: [python/3.5.2 (Windows-10-10.0.15063-SP0) requests/2.9.1 msrest/0.4.4
+          msrest_azure/0.4.7 datalakeanalyticscatalogmanagementclient/0.1.4 Azure-SDK-For-Python]
       accept-language: [en-US]
-      x-ms-client-request-id: [6e6e9300-260d-11e7-9e63-645106422854]
+      x-ms-client-request-id: [1f417f50-4fa4-11e7-97f9-645106422854]
     method: GET
     uri: https://pyarmadla232e3152c.azuredatalakeanalytics.net/catalog/usql/databases/adladb32e3152c/schemas/dbo/procedures?api-version=2016-11-01
   response:
@@ -1159,18 +944,18 @@ interactions:
         adlaproc32e3152c\",\"definition\":\"CREATE PROCEDURE adladb32e3152c.dbo.adlaproc32e3152c()\\\
         nAS BEGIN\\n  CREATE VIEW adladb32e3152c.dbo.adlaview32e3152c \\n  AS \\n\
         \    SELECT * FROM \\n    (\\n        VALUES(1,2),(2,4)\\n    ) \\n  AS \\\
-        n  T(a, b);\\nEND;\",\"version\":\"a2675346-4dd1-4674-993e-062a7c02cbb1\"\r\
+        n  T(a, b);\\nEND;\",\"version\":\"28043b44-62e0-47a0-b7b4-f8de15604f21\"\r\
         \n    }\r\n  ]\r\n}"}
     headers:
       Cache-Control: ['private, no-cache, no-store, max-age=0']
       Content-Type: [application/json; odata.metadata=minimal]
-      Date: ['Thu, 20 Apr 2017 21:07:58 GMT']
+      Date: ['Mon, 12 Jun 2017 19:19:57 GMT']
       Expires: ['-1']
       OData-Version: ['4.0']
       Strict-Transport-Security: [max-age=15724800; includeSubDomains]
       Transfer-Encoding: [chunked]
       X-Content-Type-Options: [nosniff]
-      x-ms-request-id: [26f7a041-3d71-47c0-839a-fb4151cbb3a3]
+      x-ms-request-id: [97db0622-a1ec-4607-8590-27e165a99a6c]
     status: {code: 200, message: OK}
 - request:
     body: null
@@ -1179,10 +964,10 @@ interactions:
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
       Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.5.2 (Windows-10-10.0.14393-SP0) requests/2.9.1 msrest/0.4.4
-          msrest_azure/0.4.7 datalakeanalyticscatalogmanagementclient/0.1.2 Azure-SDK-For-Python]
+      User-Agent: [python/3.5.2 (Windows-10-10.0.15063-SP0) requests/2.9.1 msrest/0.4.4
+          msrest_azure/0.4.7 datalakeanalyticscatalogmanagementclient/0.1.4 Azure-SDK-For-Python]
       accept-language: [en-US]
-      x-ms-client-request-id: [6eb48fe8-260d-11e7-8dc7-645106422854]
+      x-ms-client-request-id: [1f8ddb94-4fa4-11e7-83fe-645106422854]
     method: GET
     uri: https://pyarmadla232e3152c.azuredatalakeanalytics.net/catalog/usql/databases/adladb32e3152c/schemas/dbo/procedures/adlaproc32e3152c?api-version=2016-11-01
   response:
@@ -1192,17 +977,17 @@ interactions:
         CREATE PROCEDURE adladb32e3152c.dbo.adlaproc32e3152c()\\nAS BEGIN\\n  CREATE\
         \ VIEW adladb32e3152c.dbo.adlaview32e3152c \\n  AS \\n    SELECT * FROM \\\
         n    (\\n        VALUES(1,2),(2,4)\\n    ) \\n  AS \\n  T(a, b);\\nEND;\"\
-        ,\"version\":\"a2675346-4dd1-4674-993e-062a7c02cbb1\"\r\n}"}
+        ,\"version\":\"28043b44-62e0-47a0-b7b4-f8de15604f21\"\r\n}"}
     headers:
       Cache-Control: ['private, no-cache, no-store, max-age=0']
       Content-Type: [application/json; odata.metadata=minimal]
-      Date: ['Thu, 20 Apr 2017 21:07:59 GMT']
+      Date: ['Mon, 12 Jun 2017 19:19:58 GMT']
       Expires: ['-1']
       OData-Version: ['4.0']
       Strict-Transport-Security: [max-age=15724800; includeSubDomains]
       Transfer-Encoding: [chunked]
       X-Content-Type-Options: [nosniff]
-      x-ms-request-id: [a1ccba6f-cec1-4794-96f8-6bd6acd20338]
+      x-ms-request-id: [1cb5ccea-42e5-4323-9d23-6296102ba70b]
     status: {code: 200, message: OK}
 - request:
     body: null
@@ -1211,32 +996,32 @@ interactions:
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
       Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.5.2 (Windows-10-10.0.14393-SP0) requests/2.9.1 msrest/0.4.4
-          msrest_azure/0.4.7 datalakeanalyticscatalogmanagementclient/0.1.2 Azure-SDK-For-Python]
+      User-Agent: [python/3.5.2 (Windows-10-10.0.15063-SP0) requests/2.9.1 msrest/0.4.4
+          msrest_azure/0.4.7 datalakeanalyticscatalogmanagementclient/0.1.4 Azure-SDK-For-Python]
       accept-language: [en-US]
-      x-ms-client-request-id: [6f02514c-260d-11e7-9259-645106422854]
+      x-ms-client-request-id: [1fda6e18-4fa4-11e7-90b9-645106422854]
     method: GET
     uri: https://pyarmadla232e3152c.azuredatalakeanalytics.net/catalog/usql/databases/adladb32e3152c/schemas/dbo/tables/adlatable32e3152c/partitions?api-version=2016-11-01
   response:
     body: {string: "{\r\n  \"@odata.context\":\"https://pyarmadla232e3152c.azuredatalakeanalytics.net/sqlip/$metadata#partitions\"\
         ,\"value\":[\r\n    {\r\n      \"computeAccountName\":\"pyarmadla232e3152c\"\
         ,\"databaseName\":\"adladb32e3152c\",\"schemaName\":\"dbo\",\"partitionName\"\
-        :\"adlatable32e3152c_Partition_9b053cb2-3005-4b2d-b057-8e960620b90c\",\"indexId\"\
-        :1,\"label\":[\r\n        \"1\"\r\n      ],\"createDate\":\"2017-04-20T21:07:39.047-07:00\"\
-        ,\"parentName\":{\r\n        \"server\":\"86c20948-068b-456b-864d-190cca01454d\"\
+        :\"adlatable32e3152c_Partition_9cba5d09-ca91-451b-800e-e88c3d748417\",\"indexId\"\
+        :1,\"label\":[\r\n        \"1\"\r\n      ],\"createDate\":\"2017-06-12T19:19:45.663-07:00\"\
+        ,\"parentName\":{\r\n        \"server\":\"6e7cd6e8-13e2-461c-948c-6c28ee7b7706\"\
         ,\"firstPart\":\"adladb32e3152c\",\"secondPart\":\"dbo\",\"thirdPart\":\"\
-        adlatable32e3152c\",\"fourthPart\":null\r\n      },\"version\":\"78963242-64d9-4652-83b3-0157012187f9\"\
+        adlatable32e3152c\",\"fourthPart\":null\r\n      },\"version\":\"294fc4b6-119b-4820-a146-0c1b9ac6e05f\"\
         \r\n    }\r\n  ]\r\n}"}
     headers:
       Cache-Control: ['private, no-cache, no-store, max-age=0']
       Content-Type: [application/json; odata.metadata=minimal]
-      Date: ['Thu, 20 Apr 2017 21:07:59 GMT']
+      Date: ['Mon, 12 Jun 2017 19:19:58 GMT']
       Expires: ['-1']
       OData-Version: ['4.0']
       Strict-Transport-Security: [max-age=15724800; includeSubDomains]
       Transfer-Encoding: [chunked]
       X-Content-Type-Options: [nosniff]
-      x-ms-request-id: [8d8586c5-c714-4b1c-b5c0-82f6e74bb742]
+      x-ms-request-id: [e4f58018-6acd-49d4-a5db-ff16a60402ea]
     status: {code: 200, message: OK}
 - request:
     body: null
@@ -1245,31 +1030,31 @@ interactions:
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
       Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.5.2 (Windows-10-10.0.14393-SP0) requests/2.9.1 msrest/0.4.4
-          msrest_azure/0.4.7 datalakeanalyticscatalogmanagementclient/0.1.2 Azure-SDK-For-Python]
+      User-Agent: [python/3.5.2 (Windows-10-10.0.15063-SP0) requests/2.9.1 msrest/0.4.4
+          msrest_azure/0.4.7 datalakeanalyticscatalogmanagementclient/0.1.4 Azure-SDK-For-Python]
       accept-language: [en-US]
-      x-ms-client-request-id: [6f4b1388-260d-11e7-b68c-645106422854]
+      x-ms-client-request-id: [2027e28c-4fa4-11e7-9d72-645106422854]
     method: GET
-    uri: https://pyarmadla232e3152c.azuredatalakeanalytics.net/catalog/usql/databases/adladb32e3152c/schemas/dbo/tables/adlatable32e3152c/partitions/adlatable32e3152c_Partition_9b053cb2-3005-4b2d-b057-8e960620b90c?api-version=2016-11-01
+    uri: https://pyarmadla232e3152c.azuredatalakeanalytics.net/catalog/usql/databases/adladb32e3152c/schemas/dbo/tables/adlatable32e3152c/partitions/adlatable32e3152c_Partition_9cba5d09-ca91-451b-800e-e88c3d748417?api-version=2016-11-01
   response:
     body: {string: "{\r\n  \"@odata.context\":\"https://pyarmadla232e3152c.azuredatalakeanalytics.net/sqlip/$metadata#partitions/$entity\"\
         ,\"computeAccountName\":\"pyarmadla232e3152c\",\"databaseName\":\"adladb32e3152c\"\
-        ,\"schemaName\":\"dbo\",\"partitionName\":\"adlatable32e3152c_Partition_9b053cb2-3005-4b2d-b057-8e960620b90c\"\
-        ,\"indexId\":1,\"label\":[\r\n    \"1\"\r\n  ],\"createDate\":\"2017-04-20T21:07:39.047-07:00\"\
-        ,\"parentName\":{\r\n    \"server\":\"86c20948-068b-456b-864d-190cca01454d\"\
+        ,\"schemaName\":\"dbo\",\"partitionName\":\"adlatable32e3152c_Partition_9cba5d09-ca91-451b-800e-e88c3d748417\"\
+        ,\"indexId\":1,\"label\":[\r\n    \"1\"\r\n  ],\"createDate\":\"2017-06-12T19:19:45.663-07:00\"\
+        ,\"parentName\":{\r\n    \"server\":\"6e7cd6e8-13e2-461c-948c-6c28ee7b7706\"\
         ,\"firstPart\":\"adladb32e3152c\",\"secondPart\":\"dbo\",\"thirdPart\":\"\
-        adlatable32e3152c\",\"fourthPart\":null\r\n  },\"version\":\"78963242-64d9-4652-83b3-0157012187f9\"\
+        adlatable32e3152c\",\"fourthPart\":null\r\n  },\"version\":\"294fc4b6-119b-4820-a146-0c1b9ac6e05f\"\
         \r\n}"}
     headers:
       Cache-Control: ['private, no-cache, no-store, max-age=0']
       Content-Type: [application/json; odata.metadata=minimal]
-      Date: ['Thu, 20 Apr 2017 21:07:59 GMT']
+      Date: ['Mon, 12 Jun 2017 19:19:58 GMT']
       Expires: ['-1']
       OData-Version: ['4.0']
       Strict-Transport-Security: [max-age=15724800; includeSubDomains]
       Transfer-Encoding: [chunked]
       X-Content-Type-Options: [nosniff]
-      x-ms-request-id: [c280e8e5-ba3b-4511-8572-87ddcbf4f764]
+      x-ms-request-id: [7c915361-3987-4376-afa9-a6104397980b]
     status: {code: 200, message: OK}
 - request:
     body: null
@@ -1278,10 +1063,10 @@ interactions:
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
       Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.5.2 (Windows-10-10.0.14393-SP0) requests/2.9.1 msrest/0.4.4
-          msrest_azure/0.4.7 datalakeanalyticscatalogmanagementclient/0.1.2 Azure-SDK-For-Python]
+      User-Agent: [python/3.5.2 (Windows-10-10.0.15063-SP0) requests/2.9.1 msrest/0.4.4
+          msrest_azure/0.4.7 datalakeanalyticscatalogmanagementclient/0.1.4 Azure-SDK-For-Python]
       accept-language: [en-US]
-      x-ms-client-request-id: [6fa0dc52-260d-11e7-8be1-645106422854]
+      x-ms-client-request-id: [207c3f10-4fa4-11e7-a935-645106422854]
     method: GET
     uri: https://pyarmadla232e3152c.azuredatalakeanalytics.net/catalog/usql/databases/adladb32e3152c/schemas/dbo/types?api-version=2016-11-01
   response:
@@ -1590,12 +1375,12 @@ interactions:
     headers:
       Cache-Control: ['private, no-cache, no-store, max-age=0']
       Content-Type: [application/json; odata.metadata=minimal]
-      Date: ['Thu, 20 Apr 2017 21:08:00 GMT']
+      Date: ['Mon, 12 Jun 2017 19:19:59 GMT']
       Expires: ['-1']
       OData-Version: ['4.0']
       Strict-Transport-Security: [max-age=15724800; includeSubDomains]
       Transfer-Encoding: [chunked]
       X-Content-Type-Options: [nosniff]
-      x-ms-request-id: [9c26e744-9c10-4801-9457-5b6b1764755b]
+      x-ms-request-id: [470ea6c1-c297-4446-951a-cc190a462610]
     status: {code: 200, message: OK}
 version: 1
