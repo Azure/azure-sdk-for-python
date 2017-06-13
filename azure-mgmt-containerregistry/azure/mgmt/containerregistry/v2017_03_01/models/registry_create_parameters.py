@@ -21,7 +21,8 @@ class RegistryCreateParameters(Model):
      changed after the resource is created.
     :type location: str
     :param sku: The SKU of the container registry.
-    :type sku: :class:`Sku <azure.mgmt.containerregistry.models.Sku>`
+    :type sku: :class:`Sku
+     <azure.mgmt.containerregistry.v2017_03_01.models.Sku>`
     :param admin_user_enabled: The value that indicates whether the admin user
      is enabled. This value is false by default.
     :type admin_user_enabled: bool
@@ -29,7 +30,7 @@ class RegistryCreateParameters(Model):
      container registry. If specified, the storage account must be in the same
      physical location as the container registry.
     :type storage_account: :class:`StorageAccountParameters
-     <azure.mgmt.containerregistry.models.StorageAccountParameters>`
+     <azure.mgmt.containerregistry.v2017_03_01.models.StorageAccountParameters>`
     """
 
     _validation = {
