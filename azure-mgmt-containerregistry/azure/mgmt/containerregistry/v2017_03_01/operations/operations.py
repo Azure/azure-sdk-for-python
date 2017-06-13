@@ -46,7 +46,7 @@ class Operations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :rtype: :class:`OperationDefinitionPaged
-         <azure.mgmt.containerregistry.models.OperationDefinitionPaged>`
+         <azure.mgmt.containerregistry.v2017_03_01.models.OperationDefinitionPaged>`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):

@@ -9,14 +9,5 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .registries_operations import RegistriesOperations
-from .operations import Operations
-from .replications_operations import ReplicationsOperations
-from .webhooks_operations import WebhooksOperations
+VERSION = "2017-03-01"
 
-__all__ = [
-    'RegistriesOperations',
-    'Operations',
-    'ReplicationsOperations',
-    'WebhooksOperations',
-]

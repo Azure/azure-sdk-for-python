@@ -15,6 +15,8 @@ from msrestazure import AzureConfiguration
 from .version import VERSION
 from .operations.registries_operations import RegistriesOperations
 from .operations.operations import Operations
+from .operations.replications_operations import ReplicationsOperations
+from .operations.webhooks_operations import WebhooksOperations
 from . import models
 
 
@@ -59,9 +61,13 @@ class ContainerRegistryManagementClient(object):
     :vartype config: ContainerRegistryManagementClientConfiguration
 
     :ivar registries: Registries operations
-    :vartype registries: .operations.RegistriesOperations
+    :vartype registries: azure.mgmt.containerregistry.v2017_06_01_preview.operations.RegistriesOperations
     :ivar operations: Operations operations
-    :vartype operations: .operations.Operations
+    :vartype operations: azure.mgmt.containerregistry.v2017_06_01_preview.operations.Operations
+    :ivar replications: Replications operations
+    :vartype replications: azure.mgmt.containerregistry.v2017_06_01_preview.operations.ReplicationsOperations
+    :ivar webhooks: Webhooks operations
+    :vartype webhooks: azure.mgmt.containerregistry.v2017_06_01_preview.operations.WebhooksOperations
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
@@ -78,11 +84,15 @@ class ContainerRegistryManagementClient(object):
         self._client = ServiceClient(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
-        self.api_version = '2017-03-01'
+        self.api_version = '2017-06-01-preview'
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
 
         self.registries = RegistriesOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.operations = Operations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.replications = ReplicationsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.webhooks = WebhooksOperations(
             self._client, self.config, self._serialize, self._deserialize)

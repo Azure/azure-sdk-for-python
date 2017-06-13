@@ -9,14 +9,19 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .registries_operations import RegistriesOperations
-from .operations import Operations
-from .replications_operations import ReplicationsOperations
-from .webhooks_operations import WebhooksOperations
+from msrest.paging import Paged
 
-__all__ = [
-    'RegistriesOperations',
-    'Operations',
-    'ReplicationsOperations',
-    'WebhooksOperations',
-]
+
+class EventPaged(Paged):
+    """
+    A paging container for iterating over a list of Event object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[Event]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(EventPaged, self).__init__(*args, **kwargs)

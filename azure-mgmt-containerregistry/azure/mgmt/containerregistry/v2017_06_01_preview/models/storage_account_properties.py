@@ -13,15 +13,20 @@ from msrest.serialization import Model
 
 
 class StorageAccountProperties(Model):
-    """The properties of a storage account for a container registry.
+    """The properties of a storage account for a container registry. Only
+    applicable to Basic SKU.
 
-    :param name: The name of the storage account.
-    :type name: str
+    :param id: The resource ID of the storage account.
+    :type id: str
     """
 
-    _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
+    _validation = {
+        'id': {'required': True},
     }
 
-    def __init__(self, name=None):
-        self.name = name
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+    }
+
+    def __init__(self, id):
+        self.id = id
