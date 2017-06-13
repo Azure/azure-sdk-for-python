@@ -13,6 +13,11 @@ from msrest.service_client import ServiceClient
 from msrest import Serializer, Deserializer
 from msrestazure import AzureConfiguration
 from .version import VERSION
+from .operations.registries_operations import RegistriesOperations
+from .operations.operations import Operations
+from .operations.replications_operations import ReplicationsOperations
+from .operations.webhooks_operations import WebhooksOperations
+from . import models
 
 
 class ContainerRegistryManagementClientConfiguration(AzureConfiguration):
@@ -55,6 +60,15 @@ class ContainerRegistryManagementClient(object):
     :ivar config: Configuration for client.
     :vartype config: ContainerRegistryManagementClientConfiguration
 
+    :ivar registries: Registries operations
+    :vartype registries: azure.mgmt.containerregistry.v2017_06_01_preview.operations.RegistriesOperations
+    :ivar operations: Operations operations
+    :vartype operations: azure.mgmt.containerregistry.v2017_06_01_preview.operations.Operations
+    :ivar replications: Replications operations
+    :vartype replications: azure.mgmt.containerregistry.v2017_06_01_preview.operations.ReplicationsOperations
+    :ivar webhooks: Webhooks operations
+    :vartype webhooks: azure.mgmt.containerregistry.v2017_06_01_preview.operations.WebhooksOperations
+
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
      object<msrestazure.azure_active_directory>`
@@ -63,61 +77,22 @@ class ContainerRegistryManagementClient(object):
     :param str base_url: Service URL
     """
 
-    DEFAULT_API_VERSION = '2017-03-01'
-
     def __init__(
-            self, credentials, subscription_id, api_version=DEFAULT_API_VERSION, base_url=None):
+            self, credentials, subscription_id, base_url=None):
 
         self.config = ContainerRegistryManagementClientConfiguration(credentials, subscription_id, base_url)
         self._client = ServiceClient(self.config.credentials, self.config)
 
-        client_models = {k: v for k, v in self.models(api_version).__dict__.items() if isinstance(v, type)}
-        self.api_version = api_version
+        client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
+        self.api_version = '2017-06-01-preview'
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
 
-    @classmethod
-    def models(cls, api_version='2017-06-01-preview'):
-        if api_version == '2017-03-01':
-            from .v2017_03_01 import models
-            return models
-        elif api_version == '2017-06-01-preview':
-            from .v2017_06_01_preview import models
-            return models
-        raise NotImplementedError("APIVersion {} is not available".format(api_version))
-
-    @property
-    def operations(self):
-        if self.api_version == '2017-03-01':
-            from .v2017_03_01.operations import Operations as OperationClass
-        elif self.api_version == '2017-06-01-preview':
-            from .v2017_06_01_preview.operations import Operations as OperationClass
-        else:
-            raise NotImplementedError("APIVersion {} is not available".format(self.api_version))
-        return OperationClass(self._client, self.config, self._serialize, self._deserialize)
-
-    @property
-    def registries(self):
-        if self.api_version == '2017-03-01':
-            from .v2017_03_01.operations import RegistriesOperations as OperationClass
-        elif self.api_version == '2017-06-01-preview':
-            from .v2017_06_01_preview.operations import RegistriesOperations as OperationClass
-        else:
-            raise NotImplementedError("APIVersion {} is not available".format(self.api_version))
-        return OperationClass(self._client, self.config, self._serialize, self._deserialize)
-
-    @property
-    def replications(self):
-        if self.api_version == '2017-06-01-preview':
-            from .v2017_06_01_preview.operations import ReplicationsOperations as OperationClass
-        else:
-            raise NotImplementedError("APIVersion {} is not available".format(self.api_version))
-        return OperationClass(self._client, self.config, self._serialize, self._deserialize)
-
-    @property
-    def webhooks(self):
-        if self.api_version == '2017-06-01-preview':
-            from .v2017_06_01_preview.operations import WebhooksOperations as OperationClass
-        else:
-            raise NotImplementedError("APIVersion {} is not available".format(self.api_version))
-        return OperationClass(self._client, self.config, self._serialize, self._deserialize)
+        self.registries = RegistriesOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.operations = Operations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.replications = ReplicationsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.webhooks = WebhooksOperations(
+            self._client, self.config, self._serialize, self._deserialize)

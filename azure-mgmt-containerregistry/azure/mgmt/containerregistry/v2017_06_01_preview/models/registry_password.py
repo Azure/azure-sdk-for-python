@@ -12,22 +12,22 @@
 from msrest.serialization import Model
 
 
-class RegenerateCredentialParameters(Model):
-    """The parameters used to regenerate the login credential.
+class RegistryPassword(Model):
+    """The login password for the container registry.
 
-    :param name: Specifies name of the password which should be regenerated --
-     password or password2. Possible values include: 'password', 'password2'
+    :param name: The password name. Possible values include: 'password',
+     'password2'
     :type name: str or :class:`PasswordName
-     <azure.mgmt.containerregistry.models.PasswordName>`
+     <azure.mgmt.containerregistry.v2017_06_01_preview.models.PasswordName>`
+    :param value: The password value.
+    :type value: str
     """
-
-    _validation = {
-        'name': {'required': True},
-    }
 
     _attribute_map = {
         'name': {'key': 'name', 'type': 'PasswordName'},
+        'value': {'key': 'value', 'type': 'str'},
     }
 
-    def __init__(self, name):
+    def __init__(self, name=None, value=None):
         self.name = name
+        self.value = value

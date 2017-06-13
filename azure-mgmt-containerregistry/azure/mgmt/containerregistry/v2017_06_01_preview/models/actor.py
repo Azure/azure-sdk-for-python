@@ -12,22 +12,18 @@
 from msrest.serialization import Model
 
 
-class OperationDefinition(Model):
-    """The definition of a container registry operation.
+class Actor(Model):
+    """The agent that initiated the event. For most situations, this could be from
+    the authorization context of the request.
 
-    :param name: Operation name: {provider}/{resource}/{operation}.
+    :param name: The subject or username associated with the request context
+     that generated the event.
     :type name: str
-    :param display: The display information for the container registry
-     operation.
-    :type display: :class:`OperationDisplayDefinition
-     <azure.mgmt.containerregistry.models.OperationDisplayDefinition>`
     """
 
     _attribute_map = {
         'name': {'key': 'name', 'type': 'str'},
-        'display': {'key': 'display', 'type': 'OperationDisplayDefinition'},
     }
 
-    def __init__(self, name=None, display=None):
+    def __init__(self, name=None):
         self.name = name
-        self.display = display
