@@ -9,34 +9,37 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.serialization import Model
+from .sub_resource import SubResource
 
 
-class ServerMetric(Model):
-    """Represents server metrics.
+class DatabaseUsage(SubResource):
+    """The database usages.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar name: Name of the server usage metric.
+    :ivar name: Resource name
     :vartype name: str
+    :ivar id: The resource ID.
+    :vartype id: str
     :ivar resource_name: The name of the resource.
     :vartype resource_name: str
-    :ivar display_name: The metric display name.
+    :ivar display_name: The usage metric display name.
     :vartype display_name: str
-    :ivar current_value: The current value of the metric.
+    :ivar current_value: The current value of the usage metric.
     :vartype current_value: float
-    :ivar limit: The current limit of the metric.
+    :ivar limit: The current limit of the usage metric.
     :vartype limit: float
-    :ivar unit: The units of the metric.
+    :ivar unit: The units of the usage metric.
     :vartype unit: str
-    :ivar next_reset_time: The next reset time for the metric (ISO8601
+    :ivar next_reset_time: The next reset time for the usage metric (ISO8601
      format).
     :vartype next_reset_time: datetime
     """
 
     _validation = {
         'name': {'readonly': True},
+        'id': {'readonly': True},
         'resource_name': {'readonly': True},
         'display_name': {'readonly': True},
         'current_value': {'readonly': True},
@@ -47,6 +50,7 @@ class ServerMetric(Model):
 
     _attribute_map = {
         'name': {'key': 'name', 'type': 'str'},
+        'id': {'key': 'id', 'type': 'str'},
         'resource_name': {'key': 'resourceName', 'type': 'str'},
         'display_name': {'key': 'displayName', 'type': 'str'},
         'current_value': {'key': 'currentValue', 'type': 'float'},
@@ -56,7 +60,7 @@ class ServerMetric(Model):
     }
 
     def __init__(self):
-        self.name = None
+        super(DatabaseUsage, self).__init__()
         self.resource_name = None
         self.display_name = None
         self.current_value = None

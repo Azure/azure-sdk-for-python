@@ -9,19 +9,17 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .sub_resource import SubResource
+from msrest.serialization import Model
 
 
-class DatabaseMetric(SubResource):
-    """Represents database metrics.
+class ServerUsage(Model):
+    """Represents server metrics.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar name: Resource name
+    :ivar name: Name of the server usage metric.
     :vartype name: str
-    :ivar id: The resource ID.
-    :vartype id: str
     :ivar resource_name: The name of the resource.
     :vartype resource_name: str
     :ivar display_name: The metric display name.
@@ -39,7 +37,6 @@ class DatabaseMetric(SubResource):
 
     _validation = {
         'name': {'readonly': True},
-        'id': {'readonly': True},
         'resource_name': {'readonly': True},
         'display_name': {'readonly': True},
         'current_value': {'readonly': True},
@@ -50,7 +47,6 @@ class DatabaseMetric(SubResource):
 
     _attribute_map = {
         'name': {'key': 'name', 'type': 'str'},
-        'id': {'key': 'id', 'type': 'str'},
         'resource_name': {'key': 'resourceName', 'type': 'str'},
         'display_name': {'key': 'displayName', 'type': 'str'},
         'current_value': {'key': 'currentValue', 'type': 'float'},
@@ -60,7 +56,7 @@ class DatabaseMetric(SubResource):
     }
 
     def __init__(self):
-        super(DatabaseMetric, self).__init__()
+        self.name = None
         self.resource_name = None
         self.display_name = None
         self.current_value = None
