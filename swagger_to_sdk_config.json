@@ -461,9 +461,10 @@
       "composite": "arm-sql/compositeSql.json",
       "autorest_options": {
         "namespace": "azure.mgmt.sql",
-        "package-version": "0.5.0"
+        "package-version": "0.6.0"
       },
-      "output_dir": "azure-mgmt-sql/azure/mgmt/sql"
+      "output_dir": "azure-mgmt-sql/azure/mgmt/sql",
+      "build_dir": "azure-mgmt-sql"
     },
     "storage.2015-06-15": {
       "autorest_options": {

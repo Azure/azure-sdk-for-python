@@ -3,6 +3,18 @@
 Release History
 ===============
 
+0.6.0 (2017-06-13)
+++++++++++++++++++
+
+- Updated Servers api version from 2014-04-01 to 2015-05-01-preview, which is SDK compatible and includes support for server managed identity
+- Added support for server keys and encryption protectors
+- Added support for check server name availability
+- Added support for virtual network firewall rules
+- Updated server azure ad admin from swagger
+- Minor nonfunctional updates to database blob auditing
+- Breaking changes DatabaseMetrics and ServerMetrics renamed to DatabaseUsage and ServerUsage. These were misleadingly named because metrics is a different API.
+- Added database metrics and elastic pool metrics
+
 0.5.3 (2017-06-01)
 ++++++++++++++++++
 
