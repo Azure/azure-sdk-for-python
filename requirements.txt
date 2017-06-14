@@ -1,6 +1,4 @@
-setuptools-markdown
-ConfigArgParse
-mock
+-e .
+
+mock;python_version<="2.7"
 nose
-six
-vcrpy
