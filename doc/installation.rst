@@ -86,7 +86,7 @@ azure-mgmt-powerbiembedded            0.30.0rc6
 azure-mgmt-recoveryservicesbackup     0.1.0
 azure-mgmt-search                     0.1.0
 azure-mgmt-servicebus                 0.1.0
-azure-mgmt-sql                        0.5.3
+azure-mgmt-sql                        0.6.0
 azure-mgmt-trafficmanager             0.30.0
 azure-mgmt-web                        0.32.0
 ===================================== =========
