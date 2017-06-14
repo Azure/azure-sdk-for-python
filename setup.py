@@ -28,7 +28,6 @@ CLASSIFIERS = [
 
 DEPENDENCIES = [
     'ConfigArgParse',
-    'setuptools-markdown',
     'six',
     'vcrpy',
 ]
@@ -40,7 +39,7 @@ setup(
     name='azure-devtools',
     version=VERSION,
     description='Microsoft Azure Development Tools for SDK',
-    long_description_markdown_file='README.md',
+    long_description=README,
     license='MIT',
     author='Microsoft Corporation',
     author_email='ptvshelp@microsoft.com',
