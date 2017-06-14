@@ -78,7 +78,7 @@ azure-mgmt-datalake-analytics         0.1.4
 azure-mgmt-datalake-store             0.1.3
 azure-mgmt-documentdb                 0.1.3
 azure-mgmt-eventhub                   0.2.0
-azure-mgmt-iothub                     0.2.2
+azure-mgmt-iothub                     0.3.0
 azure-mgmt-media                      0.1.1
 azure-mgmt-monitor                    0.2.1
 azure-mgmt-notificationhubs           0.30.0
