@@ -27,7 +27,7 @@ class MgmtSqlTest(AzureMgmtTestCase):
     def test_server(self):
         server_name = self.get_resource_name('tstpysqlserver')
 
-        server = self.client.servers.create_or_update(
+        async_server_create = self.client.servers.create_or_update(
             self.group_name, # Created by the framework
             server_name,
             {
@@ -37,6 +37,7 @@ class MgmtSqlTest(AzureMgmtTestCase):
                 'administrator_login_password': 'HusH_Sec4et'
             }
         )
+        server = async_server_create.result()
         self.assertEqual(server.name, server_name)
 
         server = self.client.servers.get(
@@ -75,7 +76,7 @@ class MgmtSqlTest(AzureMgmtTestCase):
         server_name = self.get_resource_name('mypysqlserver')
         db_name = self.get_resource_name('pyarmdb')
 
-        server = self.client.servers.create_or_update(
+        async_server_create = self.client.servers.create_or_update(
             self.group_name, # Created by the framework
             server_name,
             {
@@ -85,6 +86,7 @@ class MgmtSqlTest(AzureMgmtTestCase):
                 'administrator_login_password': 'HusH_Sec4et'
             }
         )
+        server = async_server_create.result()
         self.assertEqual(server.name, server_name)
 
         async_db_create = self.client.databases.create_or_update(
@@ -108,15 +110,13 @@ class MgmtSqlTest(AzureMgmtTestCase):
         my_dbs = list(self.client.databases.list_by_server(self.group_name, server_name))
         print([db.name for db in my_dbs])
         self.assertEqual(len(my_dbs), 2)
-        self.assertEqual(my_dbs[0].name, 'master')
-        self.assertEqual(my_dbs[1].name, db_name)
+        self.assertTrue(any(db.name == 'master' for db in my_dbs))
+        self.assertTrue(any(db.name == db_name for db in my_dbs))
 
         usages = list(self.client.databases.list_usages(self.group_name, server_name, db_name))
         # FIXME test content of "usages", not just the call
 
         self.client.databases.delete(self.group_name, server_name, db_name)
-
-
 
 
 #------------------------------------------------------------------------------

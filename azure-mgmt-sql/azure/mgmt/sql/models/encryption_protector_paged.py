@@ -12,16 +12,16 @@
 from msrest.paging import Paged
 
 
-class ServerMetricPaged(Paged):
+class EncryptionProtectorPaged(Paged):
     """
-    A paging container for iterating over a list of ServerMetric object
+    A paging container for iterating over a list of EncryptionProtector object
     """
 
     _attribute_map = {
         'next_link': {'key': 'nextLink', 'type': 'str'},
-        'current_page': {'key': 'value', 'type': '[ServerMetric]'}
+        'current_page': {'key': 'value', 'type': '[EncryptionProtector]'}
     }
 
     def __init__(self, *args, **kwargs):
 
-        super(ServerMetricPaged, self).__init__(*args, **kwargs)
+        super(EncryptionProtectorPaged, self).__init__(*args, **kwargs)

@@ -13,7 +13,7 @@ from msrest.serialization import Model
 
 
 class SloUsageMetric(Model):
-    """Represents a Slo Usage Metric.
+    """A Slo Usage Metric.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
