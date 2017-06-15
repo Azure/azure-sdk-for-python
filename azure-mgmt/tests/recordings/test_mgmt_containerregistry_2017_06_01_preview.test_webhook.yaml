@@ -1,287 +1,5 @@
 interactions:
 - request:
-    body: '{"location": "centraluseuap", "sku": {"name": "Managed_Standard"}, "properties":
-      {"adminUserEnabled": false}}'
-    headers:
-      Accept: [application/json]
-      Accept-Encoding: ['gzip, deflate']
-      Connection: [keep-alive]
-      Content-Length: ['109']
-      Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.6.1 (Windows-10-10.0.14393-SP0) requests/2.17.3 msrest/0.4.9
-          msrest_azure/0.4.8 containerregistrymanagementclient/0.2.1 Azure-SDK-For-Python]
-      accept-language: [en-US]
-      x-ms-client-request-id: [825bf266-5149-11e7-a884-480fcf61db4b]
-    method: PUT
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_containerregistry_2017_06_01_preview_test_webhookb42916bb/providers/Microsoft.ContainerRegistry/registries/pyacrb42916bb?api-version=2017-06-01-preview
-  response:
-    body: {string: '{"sku":{"name":"Managed_Standard","tier":"Managed"},"type":"Microsoft.ContainerRegistry/registries","id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_containerregistry_2017_06_01_preview_test_webhookb42916bb/providers/Microsoft.ContainerRegistry/registries/pyacrb42916bb","name":"pyacrb42916bb","location":"centraluseuap","tags":{},"properties":{"loginServer":"pyacrb42916bb.azurecr.io","creationDate":"2017-06-14T21:36:24.3835674Z","provisioningState":"Succeeded","adminUserEnabled":false}}'}
-    headers:
-      Cache-Control: [no-cache]
-      Content-Type: [application/json; charset=utf-8]
-      Date: ['Wed, 14 Jun 2017 21:36:23 GMT']
-      Expires: ['-1']
-      Pragma: [no-cache]
-      Server: [Microsoft-HTTPAPI/2.0]
-      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
-      Transfer-Encoding: [chunked]
-      Vary: [Accept-Encoding]
-      content-length: ['524']
-      x-ms-correlation-request-id: [9b5d5d18-b58e-457b-8936-7e9eaafdfb6c]
-      x-ms-ratelimit-remaining-subscription-writes: ['1198']
-      x-ms-request-id: [9b5d5d18-b58e-457b-8936-7e9eaafdfb6c]
-      x-ms-routing-request-id: ['WESTUS2:20170614T213624Z:9b5d5d18-b58e-457b-8936-7e9eaafdfb6c']
-    status: {code: 200, message: OK}
-- request:
-    body: '{"location": "centraluseuap", "properties": {"serviceUri": "http://www.microsoft.com",
-      "actions": ["push"]}}'
-    headers:
-      Accept: [application/json]
-      Accept-Encoding: ['gzip, deflate']
-      Connection: [keep-alive]
-      Content-Length: ['108']
-      Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.6.1 (Windows-10-10.0.14393-SP0) requests/2.17.3 msrest/0.4.9
-          msrest_azure/0.4.8 containerregistrymanagementclient/0.2.1 Azure-SDK-For-Python]
-      accept-language: [en-US]
-      x-ms-client-request-id: [83ecc75c-5149-11e7-986d-480fcf61db4b]
-    method: PUT
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_containerregistry_2017_06_01_preview_test_webhookb42916bb/providers/Microsoft.ContainerRegistry/registries/pyacrb42916bb/webhooks/pyacrwebhookb42916bb?api-version=2017-06-01-preview
-  response:
-    body: {string: '{"type":"Microsoft.ContainerRegistry/registries/webhooks","id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_containerregistry_2017_06_01_preview_test_webhookb42916bb/providers/Microsoft.ContainerRegistry/registries/pyacrb42916bb/webhooks/pyacrwebhookb42916bb","name":"pyacrwebhookb42916bb","location":"centraluseuap","tags":{},"properties":{"status":"enabled","actions":["push"],"provisioningState":"Succeeded"}}'}
-    headers:
-      Cache-Control: [no-cache]
-      Content-Type: [application/json; charset=utf-8]
-      Date: ['Wed, 14 Jun 2017 21:36:25 GMT']
-      Expires: ['-1']
-      Pragma: [no-cache]
-      Server: [Microsoft-HTTPAPI/2.0]
-      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
-      Transfer-Encoding: [chunked]
-      Vary: [Accept-Encoding]
-      content-length: ['445']
-      x-ms-correlation-request-id: [d5ad095d-d8e9-480f-8ee0-622c5d33e56b]
-      x-ms-ratelimit-remaining-subscription-writes: ['1198']
-      x-ms-request-id: [d5ad095d-d8e9-480f-8ee0-622c5d33e56b]
-      x-ms-routing-request-id: ['WESTUS2:20170614T213625Z:d5ad095d-d8e9-480f-8ee0-622c5d33e56b']
-    status: {code: 200, message: OK}
-- request:
-    body: '{"properties": {"customHeaders": {"key": "value"}, "scope": "hello-world"}}'
-    headers:
-      Accept: [application/json]
-      Accept-Encoding: ['gzip, deflate']
-      Connection: [keep-alive]
-      Content-Length: ['75']
-      Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.6.1 (Windows-10-10.0.14393-SP0) requests/2.17.3 msrest/0.4.9
-          msrest_azure/0.4.8 containerregistrymanagementclient/0.2.1 Azure-SDK-For-Python]
-      accept-language: [en-US]
-      x-ms-client-request-id: [84c7ea24-5149-11e7-97da-480fcf61db4b]
-    method: PATCH
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_containerregistry_2017_06_01_preview_test_webhookb42916bb/providers/Microsoft.ContainerRegistry/registries/pyacrb42916bb/webhooks/pyacrwebhookb42916bb?api-version=2017-06-01-preview
-  response:
-    body: {string: '{"type":"Microsoft.ContainerRegistry/registries/webhooks","id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_containerregistry_2017_06_01_preview_test_webhookb42916bb/providers/Microsoft.ContainerRegistry/registries/pyacrb42916bb/webhooks/pyacrwebhookb42916bb","name":"pyacrwebhookb42916bb","location":"centraluseuap","tags":{},"properties":{"status":"enabled","scope":"hello-world","actions":["push"],"provisioningState":"Succeeded"}}'}
-    headers:
-      Cache-Control: [no-cache]
-      Content-Type: [application/json; charset=utf-8]
-      Date: ['Wed, 14 Jun 2017 21:36:26 GMT']
-      Expires: ['-1']
-      Pragma: [no-cache]
-      Server: [Microsoft-HTTPAPI/2.0]
-      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
-      Transfer-Encoding: [chunked]
-      Vary: [Accept-Encoding]
-      content-length: ['467']
-      x-ms-correlation-request-id: [a5e95698-aca2-44f1-8991-68d562d567a3]
-      x-ms-ratelimit-remaining-subscription-writes: ['1199']
-      x-ms-request-id: [a5e95698-aca2-44f1-8991-68d562d567a3]
-      x-ms-routing-request-id: ['WESTUS2:20170614T213626Z:a5e95698-aca2-44f1-8991-68d562d567a3']
-    status: {code: 200, message: OK}
-- request:
-    body: null
-    headers:
-      Accept: [application/json]
-      Accept-Encoding: ['gzip, deflate']
-      Connection: [keep-alive]
-      Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.6.1 (Windows-10-10.0.14393-SP0) requests/2.17.3 msrest/0.4.9
-          msrest_azure/0.4.8 containerregistrymanagementclient/0.2.1 Azure-SDK-For-Python]
-      accept-language: [en-US]
-      x-ms-client-request-id: [8523022e-5149-11e7-8086-480fcf61db4b]
-    method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_containerregistry_2017_06_01_preview_test_webhookb42916bb/providers/Microsoft.ContainerRegistry/registries/pyacrb42916bb/webhooks/pyacrwebhookb42916bb?api-version=2017-06-01-preview
-  response:
-    body: {string: '{"type":"Microsoft.ContainerRegistry/registries/webhooks","id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_containerregistry_2017_06_01_preview_test_webhookb42916bb/providers/Microsoft.ContainerRegistry/registries/pyacrb42916bb/webhooks/pyacrwebhookb42916bb","name":"pyacrwebhookb42916bb","location":"centraluseuap","tags":{},"properties":{"status":"enabled","scope":"hello-world","actions":["push"],"provisioningState":"Succeeded"}}'}
-    headers:
-      Cache-Control: [no-cache]
-      Content-Type: [application/json; charset=utf-8]
-      Date: ['Wed, 14 Jun 2017 21:36:26 GMT']
-      Expires: ['-1']
-      Pragma: [no-cache]
-      Server: [Microsoft-HTTPAPI/2.0]
-      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
-      Transfer-Encoding: [chunked]
-      Vary: [Accept-Encoding]
-      content-length: ['467']
-      x-ms-correlation-request-id: [56823894-87cb-46e3-8d86-9f44733b811c]
-      x-ms-ratelimit-remaining-subscription-reads: ['14991']
-      x-ms-request-id: [56823894-87cb-46e3-8d86-9f44733b811c]
-      x-ms-routing-request-id: ['WESTUS2:20170614T213626Z:56823894-87cb-46e3-8d86-9f44733b811c']
-    status: {code: 200, message: OK}
-- request:
-    body: null
-    headers:
-      Accept: [application/json]
-      Accept-Encoding: ['gzip, deflate']
-      Connection: [keep-alive]
-      Content-Length: ['0']
-      Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.6.1 (Windows-10-10.0.14393-SP0) requests/2.17.3 msrest/0.4.9
-          msrest_azure/0.4.8 containerregistrymanagementclient/0.2.1 Azure-SDK-For-Python]
-      accept-language: [en-US]
-      x-ms-client-request-id: [85656234-5149-11e7-936b-480fcf61db4b]
-    method: POST
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_containerregistry_2017_06_01_preview_test_webhookb42916bb/providers/Microsoft.ContainerRegistry/registries/pyacrb42916bb/webhooks/pyacrwebhookb42916bb/getCallbackConfig?api-version=2017-06-01-preview
-  response:
-    body: {string: '{"serviceUri":"http://www.microsoft.com","customHeaders":{"key":"value"}}'}
-    headers:
-      Cache-Control: [no-cache]
-      Content-Type: [application/json; charset=utf-8]
-      Date: ['Wed, 14 Jun 2017 21:36:27 GMT']
-      Expires: ['-1']
-      Pragma: [no-cache]
-      Server: [Microsoft-HTTPAPI/2.0]
-      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
-      Transfer-Encoding: [chunked]
-      Vary: [Accept-Encoding]
-      content-length: ['73']
-      x-ms-correlation-request-id: [068abf6b-2126-451d-b780-0ac9524df261]
-      x-ms-ratelimit-remaining-subscription-writes: ['1198']
-      x-ms-request-id: [068abf6b-2126-451d-b780-0ac9524df261]
-      x-ms-routing-request-id: ['WESTUS2:20170614T213627Z:068abf6b-2126-451d-b780-0ac9524df261']
-    status: {code: 200, message: OK}
-- request:
-    body: null
-    headers:
-      Accept: [application/json]
-      Accept-Encoding: ['gzip, deflate']
-      Connection: [keep-alive]
-      Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.6.1 (Windows-10-10.0.14393-SP0) requests/2.17.3 msrest/0.4.9
-          msrest_azure/0.4.8 containerregistrymanagementclient/0.2.1 Azure-SDK-For-Python]
-      accept-language: [en-US]
-      x-ms-client-request-id: [85cc1274-5149-11e7-88a0-480fcf61db4b]
-    method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_containerregistry_2017_06_01_preview_test_webhookb42916bb/providers/Microsoft.ContainerRegistry/registries/pyacrb42916bb/webhooks?api-version=2017-06-01-preview
-  response:
-    body: {string: '{"value":[{"type":"Microsoft.ContainerRegistry/registries/webhooks","id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_containerregistry_2017_06_01_preview_test_webhookb42916bb/providers/Microsoft.ContainerRegistry/registries/pyacrb42916bb/webhooks/pyacrwebhookb42916bb","name":"pyacrwebhookb42916bb","location":"centraluseuap","tags":{},"properties":{"status":"enabled","scope":"hello-world","actions":["push"],"provisioningState":"Succeeded"}}]}'}
-    headers:
-      Cache-Control: [no-cache]
-      Content-Type: [application/json; charset=utf-8]
-      Date: ['Wed, 14 Jun 2017 21:36:27 GMT']
-      Expires: ['-1']
-      Pragma: [no-cache]
-      Server: [Microsoft-HTTPAPI/2.0]
-      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
-      Transfer-Encoding: [chunked]
-      Vary: [Accept-Encoding]
-      content-length: ['479']
-      x-ms-correlation-request-id: [f975120b-4a76-4aeb-b319-4c2ee37cc2ff]
-      x-ms-ratelimit-remaining-subscription-reads: ['14990']
-      x-ms-request-id: [f975120b-4a76-4aeb-b319-4c2ee37cc2ff]
-      x-ms-routing-request-id: ['WESTUS2:20170614T213628Z:f975120b-4a76-4aeb-b319-4c2ee37cc2ff']
-    status: {code: 200, message: OK}
-- request:
-    body: null
-    headers:
-      Accept: [application/json]
-      Accept-Encoding: ['gzip, deflate']
-      Connection: [keep-alive]
-      Content-Length: ['0']
-      Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.6.1 (Windows-10-10.0.14393-SP0) requests/2.17.3 msrest/0.4.9
-          msrest_azure/0.4.8 containerregistrymanagementclient/0.2.1 Azure-SDK-For-Python]
-      accept-language: [en-US]
-      x-ms-client-request-id: [860d60ac-5149-11e7-9e8f-480fcf61db4b]
-    method: POST
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_containerregistry_2017_06_01_preview_test_webhookb42916bb/providers/Microsoft.ContainerRegistry/registries/pyacrb42916bb/webhooks/pyacrwebhookb42916bb/ping?api-version=2017-06-01-preview
-  response:
-    body: {string: '{"id":"932a5353fe7b4cf3a7b159c1b036705b"}'}
-    headers:
-      Cache-Control: [no-cache]
-      Content-Type: [application/json; charset=utf-8]
-      Date: ['Wed, 14 Jun 2017 21:36:28 GMT']
-      Expires: ['-1']
-      Pragma: [no-cache]
-      Server: [Microsoft-HTTPAPI/2.0]
-      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
-      Transfer-Encoding: [chunked]
-      Vary: [Accept-Encoding]
-      content-length: ['41']
-      x-ms-correlation-request-id: [3dd15a07-97a9-45af-8814-923d369c748d]
-      x-ms-ratelimit-remaining-subscription-writes: ['1199']
-      x-ms-request-id: [3dd15a07-97a9-45af-8814-923d369c748d]
-      x-ms-routing-request-id: ['WESTUS2:20170614T213628Z:3dd15a07-97a9-45af-8814-923d369c748d']
-    status: {code: 200, message: OK}
-- request:
-    body: null
-    headers:
-      Accept: [application/json]
-      Accept-Encoding: ['gzip, deflate']
-      Connection: [keep-alive]
-      Content-Length: ['0']
-      Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.6.1 (Windows-10-10.0.14393-SP0) requests/2.17.3 msrest/0.4.9
-          msrest_azure/0.4.8 containerregistrymanagementclient/0.2.1 Azure-SDK-For-Python]
-      accept-language: [en-US]
-      x-ms-client-request-id: [866cbdbe-5149-11e7-abea-480fcf61db4b]
-    method: DELETE
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_containerregistry_2017_06_01_preview_test_webhookb42916bb/providers/Microsoft.ContainerRegistry/registries/pyacrb42916bb/webhooks/pyacrwebhookb42916bb?api-version=2017-06-01-preview
-  response:
-    body: {string: ''}
-    headers:
-      Cache-Control: [no-cache]
-      Content-Length: ['0']
-      Date: ['Wed, 14 Jun 2017 21:36:30 GMT']
-      Expires: ['-1']
-      Pragma: [no-cache]
-      Server: [Microsoft-HTTPAPI/2.0]
-      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
-      x-ms-correlation-request-id: [9e713655-36e8-464c-8801-bd51daee6fc7]
-      x-ms-ratelimit-remaining-subscription-writes: ['1199']
-      x-ms-request-id: [9e713655-36e8-464c-8801-bd51daee6fc7]
-      x-ms-routing-request-id: ['WESTUS2:20170614T213630Z:9e713655-36e8-464c-8801-bd51daee6fc7']
-    status: {code: 200, message: OK}
-- request:
-    body: null
-    headers:
-      Accept: [application/json]
-      Accept-Encoding: ['gzip, deflate']
-      Connection: [keep-alive]
-      Content-Length: ['0']
-      Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.6.1 (Windows-10-10.0.14393-SP0) requests/2.17.3 msrest/0.4.9
-          msrest_azure/0.4.8 containerregistrymanagementclient/0.2.1 Azure-SDK-For-Python]
-      accept-language: [en-US]
-      x-ms-client-request-id: [875e5c38-5149-11e7-a280-480fcf61db4b]
-    method: DELETE
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_containerregistry_2017_06_01_preview_test_webhookb42916bb/providers/Microsoft.ContainerRegistry/registries/pyacrb42916bb?api-version=2017-06-01-preview
-  response:
-    body: {string: ''}
-    headers:
-      Cache-Control: [no-cache]
-      Content-Length: ['0']
-      Date: ['Wed, 14 Jun 2017 21:36:31 GMT']
-      Expires: ['-1']
-      Pragma: [no-cache]
-      Server: [Microsoft-HTTPAPI/2.0]
-      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
-      x-ms-correlation-request-id: [79dfd45c-73d8-4d56-a763-a443e6aaffff]
-      x-ms-ratelimit-remaining-subscription-writes: ['1197']
-      x-ms-request-id: [79dfd45c-73d8-4d56-a763-a443e6aaffff]
-      x-ms-routing-request-id: ['WESTUS2:20170614T213632Z:79dfd45c-73d8-4d56-a763-a443e6aaffff']
-    status: {code: 200, message: OK}
-- request:
     body: '{"location": "westcentralus", "sku": {"name": "Managed_Standard"}, "properties":
       {"adminUserEnabled": false}}'
     headers:
@@ -293,15 +11,15 @@ interactions:
       User-Agent: [python/3.6.1 (Windows-10-10.0.14393-SP0) requests/2.17.3 msrest/0.4.9
           msrest_azure/0.4.8 containerregistrymanagementclient/0.2.1 Azure-SDK-For-Python]
       accept-language: [en-US]
-      x-ms-client-request-id: [fc45afba-5169-11e7-912f-480fcf61db4b]
+      x-ms-client-request-id: [1d2d18a4-516c-11e7-a97b-480fcf61db4b]
     method: PUT
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_containerregistry_2017_06_01_preview_test_webhookb42916bb/providers/Microsoft.ContainerRegistry/registries/pyacrb42916bb?api-version=2017-06-01-preview
   response:
-    body: {string: '{"sku":{"name":"Managed_Standard","tier":"Managed"},"type":"Microsoft.ContainerRegistry/registries","id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_containerregistry_2017_06_01_preview_test_webhookb42916bb/providers/Microsoft.ContainerRegistry/registries/pyacrb42916bb","name":"pyacrb42916bb","location":"westcentralus","tags":{},"properties":{"loginServer":"pyacrb42916bb.azurecr.io","creationDate":"2017-06-15T01:28:52.1387773Z","provisioningState":"Succeeded","adminUserEnabled":false}}'}
+    body: {string: '{"sku":{"name":"Managed_Standard","tier":"Managed"},"type":"Microsoft.ContainerRegistry/registries","id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_containerregistry_2017_06_01_preview_test_webhookb42916bb/providers/Microsoft.ContainerRegistry/registries/pyacrb42916bb","name":"pyacrb42916bb","location":"westcentralus","tags":{},"properties":{"loginServer":"pyacrb42916bb.azurecr.io","creationDate":"2017-06-15T01:44:05.8743275Z","provisioningState":"Succeeded","adminUserEnabled":false}}'}
     headers:
       Cache-Control: [no-cache]
       Content-Type: [application/json; charset=utf-8]
-      Date: ['Thu, 15 Jun 2017 01:28:51 GMT']
+      Date: ['Thu, 15 Jun 2017 01:44:05 GMT']
       Expires: ['-1']
       Pragma: [no-cache]
       Server: [Microsoft-HTTPAPI/2.0]
@@ -309,10 +27,10 @@ interactions:
       Transfer-Encoding: [chunked]
       Vary: [Accept-Encoding]
       content-length: ['524']
-      x-ms-correlation-request-id: [45124e2f-abae-495b-adbc-4088bb370cce]
-      x-ms-ratelimit-remaining-subscription-writes: ['1199']
-      x-ms-request-id: [45124e2f-abae-495b-adbc-4088bb370cce]
-      x-ms-routing-request-id: ['WESTUS2:20170615T012852Z:45124e2f-abae-495b-adbc-4088bb370cce']
+      x-ms-correlation-request-id: [f691d35d-b242-4b0e-a744-d546cf4140a2]
+      x-ms-ratelimit-remaining-subscription-writes: ['1198']
+      x-ms-request-id: [f691d35d-b242-4b0e-a744-d546cf4140a2]
+      x-ms-routing-request-id: ['WESTUS:20170615T014406Z:f691d35d-b242-4b0e-a744-d546cf4140a2']
     status: {code: 200, message: OK}
 - request:
     body: '{"location": "westcentralus", "properties": {"serviceUri": "http://www.microsoft.com",
@@ -326,7 +44,7 @@ interactions:
       User-Agent: [python/3.6.1 (Windows-10-10.0.14393-SP0) requests/2.17.3 msrest/0.4.9
           msrest_azure/0.4.8 containerregistrymanagementclient/0.2.1 Azure-SDK-For-Python]
       accept-language: [en-US]
-      x-ms-client-request-id: [fd85836c-5169-11e7-a495-480fcf61db4b]
+      x-ms-client-request-id: [1e52861e-516c-11e7-91fd-480fcf61db4b]
     method: PUT
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_containerregistry_2017_06_01_preview_test_webhookb42916bb/providers/Microsoft.ContainerRegistry/registries/pyacrb42916bb/webhooks/pyacrwebhookb42916bb?api-version=2017-06-01-preview
   response:
@@ -334,7 +52,7 @@ interactions:
     headers:
       Cache-Control: [no-cache]
       Content-Type: [application/json; charset=utf-8]
-      Date: ['Thu, 15 Jun 2017 01:28:52 GMT']
+      Date: ['Thu, 15 Jun 2017 01:44:07 GMT']
       Expires: ['-1']
       Pragma: [no-cache]
       Server: [Microsoft-HTTPAPI/2.0]
@@ -342,10 +60,10 @@ interactions:
       Transfer-Encoding: [chunked]
       Vary: [Accept-Encoding]
       content-length: ['445']
-      x-ms-correlation-request-id: [0b1c51d0-8e41-4ddf-8e66-05d5aea915f8]
-      x-ms-ratelimit-remaining-subscription-writes: ['1198']
-      x-ms-request-id: [0b1c51d0-8e41-4ddf-8e66-05d5aea915f8]
-      x-ms-routing-request-id: ['WESTUS2:20170615T012853Z:0b1c51d0-8e41-4ddf-8e66-05d5aea915f8']
+      x-ms-correlation-request-id: [16808de9-7381-4ec6-8924-0f41aeb20a50]
+      x-ms-ratelimit-remaining-subscription-writes: ['1199']
+      x-ms-request-id: [16808de9-7381-4ec6-8924-0f41aeb20a50]
+      x-ms-routing-request-id: ['WESTUS:20170615T014407Z:16808de9-7381-4ec6-8924-0f41aeb20a50']
     status: {code: 200, message: OK}
 - request:
     body: '{"properties": {"customHeaders": {"key": "value"}, "scope": "hello-world"}}'
@@ -358,7 +76,7 @@ interactions:
       User-Agent: [python/3.6.1 (Windows-10-10.0.14393-SP0) requests/2.17.3 msrest/0.4.9
           msrest_azure/0.4.8 containerregistrymanagementclient/0.2.1 Azure-SDK-For-Python]
       accept-language: [en-US]
-      x-ms-client-request-id: [fe3db630-5169-11e7-a608-480fcf61db4b]
+      x-ms-client-request-id: [1f1ed5ba-516c-11e7-a7bc-480fcf61db4b]
     method: PATCH
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_containerregistry_2017_06_01_preview_test_webhookb42916bb/providers/Microsoft.ContainerRegistry/registries/pyacrb42916bb/webhooks/pyacrwebhookb42916bb?api-version=2017-06-01-preview
   response:
@@ -366,7 +84,7 @@ interactions:
     headers:
       Cache-Control: [no-cache]
       Content-Type: [application/json; charset=utf-8]
-      Date: ['Thu, 15 Jun 2017 01:28:53 GMT']
+      Date: ['Thu, 15 Jun 2017 01:44:07 GMT']
       Expires: ['-1']
       Pragma: [no-cache]
       Server: [Microsoft-HTTPAPI/2.0]
@@ -374,10 +92,10 @@ interactions:
       Transfer-Encoding: [chunked]
       Vary: [Accept-Encoding]
       content-length: ['467']
-      x-ms-correlation-request-id: [9306c07e-99d7-458c-8cd1-e23d62ef2739]
-      x-ms-ratelimit-remaining-subscription-writes: ['1193']
-      x-ms-request-id: [9306c07e-99d7-458c-8cd1-e23d62ef2739]
-      x-ms-routing-request-id: ['WESTUS2:20170615T012854Z:9306c07e-99d7-458c-8cd1-e23d62ef2739']
+      x-ms-correlation-request-id: [7606f8e1-0e28-4e58-a899-038d89a351d8]
+      x-ms-ratelimit-remaining-subscription-writes: ['1195']
+      x-ms-request-id: [7606f8e1-0e28-4e58-a899-038d89a351d8]
+      x-ms-routing-request-id: ['WESTUS:20170615T014408Z:7606f8e1-0e28-4e58-a899-038d89a351d8']
     status: {code: 200, message: OK}
 - request:
     body: null
@@ -389,7 +107,7 @@ interactions:
       User-Agent: [python/3.6.1 (Windows-10-10.0.14393-SP0) requests/2.17.3 msrest/0.4.9
           msrest_azure/0.4.8 containerregistrymanagementclient/0.2.1 Azure-SDK-For-Python]
       accept-language: [en-US]
-      x-ms-client-request-id: [feaaf7b6-5169-11e7-a838-480fcf61db4b]
+      x-ms-client-request-id: [1f875c1c-516c-11e7-9026-480fcf61db4b]
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_containerregistry_2017_06_01_preview_test_webhookb42916bb/providers/Microsoft.ContainerRegistry/registries/pyacrb42916bb/webhooks/pyacrwebhookb42916bb?api-version=2017-06-01-preview
   response:
@@ -397,7 +115,7 @@ interactions:
     headers:
       Cache-Control: [no-cache]
       Content-Type: [application/json; charset=utf-8]
-      Date: ['Thu, 15 Jun 2017 01:28:54 GMT']
+      Date: ['Thu, 15 Jun 2017 01:44:08 GMT']
       Expires: ['-1']
       Pragma: [no-cache]
       Server: [Microsoft-HTTPAPI/2.0]
@@ -405,10 +123,10 @@ interactions:
       Transfer-Encoding: [chunked]
       Vary: [Accept-Encoding]
       content-length: ['467']
-      x-ms-correlation-request-id: [9360518c-e204-4113-a84c-9322f4991111]
-      x-ms-ratelimit-remaining-subscription-reads: ['14915']
-      x-ms-request-id: [9360518c-e204-4113-a84c-9322f4991111]
-      x-ms-routing-request-id: ['WESTUS2:20170615T012854Z:9360518c-e204-4113-a84c-9322f4991111']
+      x-ms-correlation-request-id: [53a80839-f91f-4677-b591-e4f4dc40282c]
+      x-ms-ratelimit-remaining-subscription-reads: ['14971']
+      x-ms-request-id: [53a80839-f91f-4677-b591-e4f4dc40282c]
+      x-ms-routing-request-id: ['WESTUS:20170615T014408Z:53a80839-f91f-4677-b591-e4f4dc40282c']
     status: {code: 200, message: OK}
 - request:
     body: null
@@ -421,7 +139,7 @@ interactions:
       User-Agent: [python/3.6.1 (Windows-10-10.0.14393-SP0) requests/2.17.3 msrest/0.4.9
           msrest_azure/0.4.8 containerregistrymanagementclient/0.2.1 Azure-SDK-For-Python]
       accept-language: [en-US]
-      x-ms-client-request-id: [ff03c55c-5169-11e7-8561-480fcf61db4b]
+      x-ms-client-request-id: [1fdad31c-516c-11e7-a94f-480fcf61db4b]
     method: POST
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_containerregistry_2017_06_01_preview_test_webhookb42916bb/providers/Microsoft.ContainerRegistry/registries/pyacrb42916bb/webhooks/pyacrwebhookb42916bb/getCallbackConfig?api-version=2017-06-01-preview
   response:
@@ -429,7 +147,7 @@ interactions:
     headers:
       Cache-Control: [no-cache]
       Content-Type: [application/json; charset=utf-8]
-      Date: ['Thu, 15 Jun 2017 01:28:54 GMT']
+      Date: ['Thu, 15 Jun 2017 01:44:08 GMT']
       Expires: ['-1']
       Pragma: [no-cache]
       Server: [Microsoft-HTTPAPI/2.0]
@@ -437,10 +155,10 @@ interactions:
       Transfer-Encoding: [chunked]
       Vary: [Accept-Encoding]
       content-length: ['73']
-      x-ms-correlation-request-id: [126c1e9a-6d03-4aad-aef3-da9e091a7cc2]
-      x-ms-ratelimit-remaining-subscription-writes: ['1198']
-      x-ms-request-id: [126c1e9a-6d03-4aad-aef3-da9e091a7cc2]
-      x-ms-routing-request-id: ['WESTUS2:20170615T012855Z:126c1e9a-6d03-4aad-aef3-da9e091a7cc2']
+      x-ms-correlation-request-id: [48924be2-84ea-42d6-9c7e-2367de603cc1]
+      x-ms-ratelimit-remaining-subscription-writes: ['1196']
+      x-ms-request-id: [48924be2-84ea-42d6-9c7e-2367de603cc1]
+      x-ms-routing-request-id: ['WESTUS:20170615T014409Z:48924be2-84ea-42d6-9c7e-2367de603cc1']
     status: {code: 200, message: OK}
 - request:
     body: null
@@ -452,7 +170,7 @@ interactions:
       User-Agent: [python/3.6.1 (Windows-10-10.0.14393-SP0) requests/2.17.3 msrest/0.4.9
           msrest_azure/0.4.8 containerregistrymanagementclient/0.2.1 Azure-SDK-For-Python]
       accept-language: [en-US]
-      x-ms-client-request-id: [ff419a36-5169-11e7-b206-480fcf61db4b]
+      x-ms-client-request-id: [2029195c-516c-11e7-a236-480fcf61db4b]
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_containerregistry_2017_06_01_preview_test_webhookb42916bb/providers/Microsoft.ContainerRegistry/registries/pyacrb42916bb/webhooks?api-version=2017-06-01-preview
   response:
@@ -460,7 +178,7 @@ interactions:
     headers:
       Cache-Control: [no-cache]
       Content-Type: [application/json; charset=utf-8]
-      Date: ['Thu, 15 Jun 2017 01:28:55 GMT']
+      Date: ['Thu, 15 Jun 2017 01:44:08 GMT']
       Expires: ['-1']
       Pragma: [no-cache]
       Server: [Microsoft-HTTPAPI/2.0]
@@ -468,10 +186,10 @@ interactions:
       Transfer-Encoding: [chunked]
       Vary: [Accept-Encoding]
       content-length: ['479']
-      x-ms-correlation-request-id: [9e1c3333-aa9b-405d-8b08-96e4fc585573]
-      x-ms-ratelimit-remaining-subscription-reads: ['14764']
-      x-ms-request-id: [9e1c3333-aa9b-405d-8b08-96e4fc585573]
-      x-ms-routing-request-id: ['WESTUS2:20170615T012855Z:9e1c3333-aa9b-405d-8b08-96e4fc585573']
+      x-ms-correlation-request-id: [c1c6e124-e17e-437b-a92a-c4d0c62ea2b7]
+      x-ms-ratelimit-remaining-subscription-reads: ['14877']
+      x-ms-request-id: [c1c6e124-e17e-437b-a92a-c4d0c62ea2b7]
+      x-ms-routing-request-id: ['WESTUS:20170615T014409Z:c1c6e124-e17e-437b-a92a-c4d0c62ea2b7']
     status: {code: 200, message: OK}
 - request:
     body: null
@@ -484,15 +202,15 @@ interactions:
       User-Agent: [python/3.6.1 (Windows-10-10.0.14393-SP0) requests/2.17.3 msrest/0.4.9
           msrest_azure/0.4.8 containerregistrymanagementclient/0.2.1 Azure-SDK-For-Python]
       accept-language: [en-US]
-      x-ms-client-request-id: [ffa1bc52-5169-11e7-8781-480fcf61db4b]
+      x-ms-client-request-id: [206fe646-516c-11e7-9dd7-480fcf61db4b]
     method: POST
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_containerregistry_2017_06_01_preview_test_webhookb42916bb/providers/Microsoft.ContainerRegistry/registries/pyacrb42916bb/webhooks/pyacrwebhookb42916bb/ping?api-version=2017-06-01-preview
   response:
-    body: {string: '{"id":"d621f5c8d29548aa918dc689109d31e8"}'}
+    body: {string: '{"id":"f54ba18fec504500a68ce713383a3a68"}'}
     headers:
       Cache-Control: [no-cache]
       Content-Type: [application/json; charset=utf-8]
-      Date: ['Thu, 15 Jun 2017 01:28:56 GMT']
+      Date: ['Thu, 15 Jun 2017 01:44:09 GMT']
       Expires: ['-1']
       Pragma: [no-cache]
       Server: [Microsoft-HTTPAPI/2.0]
@@ -500,10 +218,10 @@ interactions:
       Transfer-Encoding: [chunked]
       Vary: [Accept-Encoding]
       content-length: ['41']
-      x-ms-correlation-request-id: [49cd6ee4-9cef-4d9e-8bd3-d1a3ced917cf]
-      x-ms-ratelimit-remaining-subscription-writes: ['1198']
-      x-ms-request-id: [49cd6ee4-9cef-4d9e-8bd3-d1a3ced917cf]
-      x-ms-routing-request-id: ['WESTUS2:20170615T012856Z:49cd6ee4-9cef-4d9e-8bd3-d1a3ced917cf']
+      x-ms-correlation-request-id: [c1c31a8a-3706-4cf7-b7f3-107acfff6730]
+      x-ms-ratelimit-remaining-subscription-writes: ['1197']
+      x-ms-request-id: [c1c31a8a-3706-4cf7-b7f3-107acfff6730]
+      x-ms-routing-request-id: ['WESTUS:20170615T014410Z:c1c31a8a-3706-4cf7-b7f3-107acfff6730']
     status: {code: 200, message: OK}
 - request:
     body: null
@@ -516,7 +234,7 @@ interactions:
       User-Agent: [python/3.6.1 (Windows-10-10.0.14393-SP0) requests/2.17.3 msrest/0.4.9
           msrest_azure/0.4.8 containerregistrymanagementclient/0.2.1 Azure-SDK-For-Python]
       accept-language: [en-US]
-      x-ms-client-request-id: [000c8b54-516a-11e7-ac9d-480fcf61db4b]
+      x-ms-client-request-id: [20c55924-516c-11e7-9264-480fcf61db4b]
     method: DELETE
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_containerregistry_2017_06_01_preview_test_webhookb42916bb/providers/Microsoft.ContainerRegistry/registries/pyacrb42916bb/webhooks/pyacrwebhookb42916bb?api-version=2017-06-01-preview
   response:
@@ -524,15 +242,15 @@ interactions:
     headers:
       Cache-Control: [no-cache]
       Content-Length: ['0']
-      Date: ['Thu, 15 Jun 2017 01:28:57 GMT']
+      Date: ['Thu, 15 Jun 2017 01:44:11 GMT']
       Expires: ['-1']
       Pragma: [no-cache]
       Server: [Microsoft-HTTPAPI/2.0]
       Strict-Transport-Security: [max-age=31536000; includeSubDomains]
-      x-ms-correlation-request-id: [fa5f254c-fb71-4e43-ae7e-fed24b785058]
+      x-ms-correlation-request-id: [2dac901d-e7d2-405e-a94b-a17b3a854cd9]
       x-ms-ratelimit-remaining-subscription-writes: ['1199']
-      x-ms-request-id: [fa5f254c-fb71-4e43-ae7e-fed24b785058]
-      x-ms-routing-request-id: ['WESTUS2:20170615T012857Z:fa5f254c-fb71-4e43-ae7e-fed24b785058']
+      x-ms-request-id: [2dac901d-e7d2-405e-a94b-a17b3a854cd9]
+      x-ms-routing-request-id: ['WESTUS:20170615T014411Z:2dac901d-e7d2-405e-a94b-a17b3a854cd9']
     status: {code: 200, message: OK}
 - request:
     body: null
@@ -545,7 +263,7 @@ interactions:
       User-Agent: [python/3.6.1 (Windows-10-10.0.14393-SP0) requests/2.17.3 msrest/0.4.9
           msrest_azure/0.4.8 containerregistrymanagementclient/0.2.1 Azure-SDK-For-Python]
       accept-language: [en-US]
-      x-ms-client-request-id: [00c16934-516a-11e7-8c0e-480fcf61db4b]
+      x-ms-client-request-id: [21a2e790-516c-11e7-b11f-480fcf61db4b]
     method: DELETE
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_containerregistry_2017_06_01_preview_test_webhookb42916bb/providers/Microsoft.ContainerRegistry/registries/pyacrb42916bb?api-version=2017-06-01-preview
   response:
@@ -553,14 +271,14 @@ interactions:
     headers:
       Cache-Control: [no-cache]
       Content-Length: ['0']
-      Date: ['Thu, 15 Jun 2017 01:28:59 GMT']
+      Date: ['Thu, 15 Jun 2017 01:44:13 GMT']
       Expires: ['-1']
       Pragma: [no-cache]
       Server: [Microsoft-HTTPAPI/2.0]
       Strict-Transport-Security: [max-age=31536000; includeSubDomains]
-      x-ms-correlation-request-id: [6e4e2521-380f-4512-afe6-5e139356d823]
+      x-ms-correlation-request-id: [29e4ccc3-7d33-4e6f-9ecc-9ae58ccaa57a]
       x-ms-ratelimit-remaining-subscription-writes: ['1198']
-      x-ms-request-id: [6e4e2521-380f-4512-afe6-5e139356d823]
-      x-ms-routing-request-id: ['WESTUS2:20170615T012859Z:6e4e2521-380f-4512-afe6-5e139356d823']
+      x-ms-request-id: [29e4ccc3-7d33-4e6f-9ecc-9ae58ccaa57a]
+      x-ms-routing-request-id: ['WESTUS:20170615T014413Z:29e4ccc3-7d33-4e6f-9ecc-9ae58ccaa57a']
     status: {code: 200, message: OK}
 version: 1
