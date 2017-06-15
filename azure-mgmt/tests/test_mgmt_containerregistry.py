@@ -16,13 +16,13 @@ from tests.mgmt_testcase import HttpStatusCode, AzureMgmtTestCase
 class MgmtACRTest(AzureMgmtTestCase):
 
     def setUp(self):
-        self.region = 'eastus'
-
         super(MgmtACRTest, self).setUp()
+        self.region = 'westus'
         self.client = self.create_mgmt_client(
             azure.mgmt.containerregistry.ContainerRegistryManagementClient
         )
-        self.storage_name = 'mstopytest'
+        self.storage_name = self.get_resource_name('pyacrstorage')
+        self.storage_key = ''
         if not self.is_playback():
             self.create_resource_group()
 
@@ -30,34 +30,33 @@ class MgmtACRTest(AzureMgmtTestCase):
                 azure.mgmt.storage.StorageManagementClient
             )
 
-            params_create = azure.mgmt.storage.models.StorageAccountCreateParameters(
-                sku=azure.mgmt.storage.models.Sku(azure.mgmt.storage.models.SkuName.standard_lrs),
-                kind=azure.mgmt.storage.models.Kind.storage,
-                location=self.region
-            )
-            result_create = self.storage_client.storage_accounts.create(
+            async_storage_creation = self.storage_client.storage_accounts.create(
                 self.group_name,
                 self.storage_name,
-                params_create,
+                {
+                    'location': self.region,
+                    'sku': {
+                        'name': 'Standard_LRS'
+                    },
+                    'kind': 'Storage'
+                }
             )
-            self.storage_account = result_create.result()
-            storage_keys = self.storage_client.storage_accounts.list_keys(self.group_name, self.storage_name)
+            self.storage_account = async_storage_creation.result()
+            storage_keys = self.storage_client.storage_accounts.list_keys(
+                self.group_name, self.storage_name)
             storage_keys = {v.key_name: v.value for v in storage_keys.keys}
             self.storage_key = storage_keys['key1']
-        else:
-            # If you record this test, change this one by the one in the record
-            self.storage_key = 'BbDRMu3dSOcnBKQKls+ZvJmw1ZWezQ/6k1feiExRDEUHMTForgY6OvWz84yJ5XYlq1Lt4ajnRs7eJq+WUVKkOw=='
 
     @record
-    def test_acr(self):
-        account_name = self.get_resource_name('pyacr')
+    def test_registry(self):
+        registry_name = self.get_resource_name('pyacr')
 
-        name_status = self.client.registries.check_name_availability(account_name)
+        name_status = self.client.registries.check_name_availability(registry_name)
         self.assertTrue(name_status.name_available)
 
         async_registry_creation = self.client.registries.create(
             self.group_name,
-            account_name,
+            registry_name,
             {
                 'location': self.region,
                 'sku': {
@@ -70,31 +69,37 @@ class MgmtACRTest(AzureMgmtTestCase):
             }
         )
         registry = async_registry_creation.result()
-        self.assertEqual(registry.name, account_name)
+        self.assertEqual(registry.name, registry_name)
+        self.assertEqual(registry.location, self.region)
+        self.assertEqual(registry.sku.name, 'Basic')
+        self.assertEqual(registry.sku.tier, 'Basic')
+        self.assertEqual(registry.admin_user_enabled, False)
 
         registry = self.client.registries.update(
             self.group_name,
-            account_name,
+            registry_name,
             {
                 'admin_user_enabled': True
             }
         )
-        self.assertEqual(registry.name, account_name)
+        self.assertEqual(registry.name, registry_name)
+        self.assertEqual(registry.admin_user_enabled, True)
 
-        registry = self.client.registries.get(self.group_name, account_name)
-        self.assertEqual(registry.name, account_name)
+        registry = self.client.registries.get(self.group_name, registry_name)
+        self.assertEqual(registry.name, registry_name)
+        self.assertEqual(registry.admin_user_enabled, True)
 
-        containers = list(self.client.registries.list())
-        self.assertEqual(len(containers), 1)
+        registries = list(self.client.registries.list_by_resource_group(self.group_name))
+        self.assertEqual(len(registries), 1)
 
-        containers = list(self.client.registries.list_by_resource_group(self.group_name))
-        self.assertEqual(len(containers), 1)
+        credentials = self.client.registries.list_credentials(self.group_name, registry_name)
+        self.assertEqual(len(credentials.passwords), 2)
 
-        credentials = self.client.registries.list_credentials(self.group_name, account_name)
+        credentials = self.client.registries.regenerate_credential(
+            self.group_name, registry_name, 'password')
+        self.assertEqual(len(credentials.passwords), 2)
 
-        credentials = self.client.registries.regenerate_credential(self.group_name, account_name, 'password')
-
-        self.client.registries.delete(self.group_name, account_name)
+        self.client.registries.delete(self.group_name, registry_name)
 
 
 #------------------------------------------------------------------------------
