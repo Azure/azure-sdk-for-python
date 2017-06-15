@@ -1,4 +1,4 @@
-# How to write ScenarioTest based VCR test
+# How to write ReplayableTest based VCR tests
 
 The `scenario_tests` package uses the [VCR.py](https://pypi.python.org/pypi/vcrpy) library
 to record the HTTP messages exchanged during a program run
@@ -31,9 +31,9 @@ any tests which cannot be replayed will automatically fail.
 
 ### Sample 1. Basic fixture
 ```Python
-from azure.cli.testsdk import ScenarioTest
+from azure_devtools.scenario_tests import ReplayableTest
 
-class StorageAccountTests(ScenarioTest):
+class StorageAccountTests(ReplayableTest):
     def test_list_storage_account(self):
         self.cmd('az storage account list')
 ```
