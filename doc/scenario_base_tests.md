@@ -204,3 +204,9 @@ Note:
 
 1. Two storage accounts name should be assigned to different function parameters.
 2. The resource group name is not required in test so the function doesn't have to declare a parameter to accept the name. However it doesn't mean that the resource group is not created. Its name is in the keyworded parameter dictionary for all the preparer to consume. It is removed before the test function is actually invoked. 
+
+---
+
+Note: This document's source uses
+[semantic linefeeds](http://rhodesmill.org/brandon/2012/one-sentence-per-line/)
+to make diffs and updates clearer.
