@@ -7,8 +7,6 @@ The `scenario_tests` package uses the [VCR.py](https://pypi.python.org/pypi/vcrp
 
 Tests all derive from the `ReplayableTest` class found in `azure_devtools.scenario_tests.base`. This class exposes the VCR tests using the standard Python `unittest` framework and allows the tests to be discovered by and debugged in Visual Studio.
 
-The majority of tests however inherit from the `ResourceGroupVCRTestBase` class as this handles creating and tearing down the test resource group automatically, helping to ensure that tests can be recorded and cleaned up without manual creation or deletion of resources.
-
 When you run a test, the test driver will automatically detect the test is unrecorded and record the HTTP requests and responses in a .yaml file referred to by VCR.py as a "cassette." If the test succeeds, the cassette will be preserved and future playthroughs of the test will come from the cassette rather than using actual network communication.
 
 If the tests are run on TravisCI, any tests which cannot be replayed will automatically fail. 
