@@ -1,35 +1,17 @@
 ﻿Recording Command Tests with VCR.py
 ========================================
 
-Azure CLI uses the VCR.py library
-to record the HTTP messages exchanged during a program run
-and play them back at a later time,
-making it useful for creating command level scenario tests.
-These tests can be replayed at a later time without any network activity,
-allowing us to detect regressions in the handling of parameters
-and in the compatability between AzureCLI and the PythonSDK.
+Azure CLI uses the VCR.py library to record the HTTP messages exchanged during a program run and play them back at a later time, making it useful for creating command level scenario tests. These tests can be replayed at a later time without any network activity, allowing us to detect regressions in the handling of parameters and in the compatability between AzureCLI and the PythonSDK.
 
 ## Overview
 
-Each command module has a `tests` folder with a file called:
-`test_<module>_commands.py`.
-This is where you will define tests.
+Each command module has a `tests` folder with a file called: `test_<module>_commands.py`. This is where you will define tests.
 
-Tests all derive from the `VCRTestBase` class
-found in `azure.cli.core.test_utils.vcr_test_base`.
-This class exposes the VCR tests using the standard Python `unittest` framework
-and allows the tests to be discovered by and debugged in Visual Studio.
+Tests all derive from the `VCRTestBase` class found in `azure.cli.core.test_utils.vcr_test_base`. This class exposes the VCR tests using the standard Python `unittest` framework and allows the tests to be discovered by and debugged in Visual Studio.
 
-The majority of tests however inherit from the `ResourceGroupVCRTestBase` class
-as this handles creating and tearing down the test resource group automatically,
-helping to ensure that tests can be recorded and cleaned up
-without manual creation or deletion of resources.
+The majority of tests however inherit from the `ResourceGroupVCRTestBase` class as this handles creating and tearing down the test resource group automatically, helping to ensure that tests can be recorded and cleaned up without manual creation or deletion of resources.
 
-After adding your test, run it.
-The test driver will automatically detect the test is unrecorded
-and record the HTTP requests and responses in a cassette .yaml file.
-If the test succeeds,
-the cassette will be preserved and future playthroughs of the test will come from the cassette.
+After adding your test, run it. The test driver will automatically detect the test is unrecorded and record the HTTP requests and responses in a cassette .yaml file. If the test succeeds, the cassette will be preserved and future playthroughs of the test will come from the cassette.
 
 If the tests are run on TravisCI, any tests which cannot be replayed will automatically fail. 
 
