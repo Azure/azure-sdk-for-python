@@ -5,8 +5,6 @@ The `scenario_tests` package uses the [VCR.py](https://pypi.python.org/pypi/vcrp
 
 ## Overview
 
-Each command module has a `tests` folder with a file called: `test_<module>_commands.py`. This is where you will define tests.
-
 Tests all derive from the `VCRTestBase` class found in `azure.cli.core.test_utils.vcr_test_base`. This class exposes the VCR tests using the standard Python `unittest` framework and allows the tests to be discovered by and debugged in Visual Studio.
 
 The majority of tests however inherit from the `ResourceGroupVCRTestBase` class as this handles creating and tearing down the test resource group automatically, helping to ensure that tests can be recorded and cleaned up without manual creation or deletion of resources.
