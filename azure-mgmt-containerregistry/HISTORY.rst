@@ -3,6 +3,11 @@
 Release History
 ===============
 
+0.3.0 (2017-06-15)
+++++++++++++++++++
+
+* This package now supports an additional ApiVersion 2017-06-01-preview
+
 0.2.1 (2017-04-20)
 ++++++++++++++++++
 
