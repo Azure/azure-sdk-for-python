@@ -1,6 +1,33 @@
 # How to write ScenarioTest based VCR test
 
-The `ScenarioTest` class is introduced in pull request [#2393](https://github.com/Azure/azure-cli/pull/2393). It is the preferred base class for and VCR based test cases from now on. The `ScenarioTest` class is designed to be a better and easier test harness for authoring scenario based VCR test.
+The `scenario_tests` package uses the [VCR.py](https://pypi.python.org/pypi/vcrpy) library
+to record the HTTP messages exchanged during a program run
+and play them back at a later time,
+making it useful for creating "scenario tests"
+that interact with Azure (or other) services.
+These tests can be replayed at a later time without any network activity,
+allowing us to detect changes in the Python layers
+between the code being tested and the underlying REST API.
+
+
+## Overview
+
+Tests all derive from the `ReplayableTest` class
+found in `azure_devtools.scenario_tests.base`.
+This class exposes the VCR tests using the standard Python `unittest` framework
+and allows the tests to be discovered by and debugged in Visual Studio.
+
+When you run a test,
+the test driver will automatically detect the test is unrecorded
+and record the HTTP requests and responses in a .yaml file
+(referred to by VCR.py as a "cassette").
+If the test succeeds, the cassette will be preserved
+and future playthroughs of the test will come from the cassette
+rather than using actual network communication.
+
+If the tests are run on TravisCI,
+any tests which cannot be replayed will automatically fail. 
+
 
 ### Sample 1. Basic fixture
 ```Python
