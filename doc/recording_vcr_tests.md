@@ -1,7 +1,7 @@
 ﻿Recording Scenario Tests with VCR.py
 ========================================
 
-The `scenario_tests` package uses the [VCR.py](https://pypi.python.org/pypi/vcrpy) library to record the HTTP messages exchanged during a program run and play them back at a later time, making it useful for creating command level scenario tests. These tests can be replayed at a later time without any network activity, allowing us to detect regressions in the handling of parameters and in the compatability between AzureCLI and the PythonSDK.
+The `scenario_tests` package uses the [VCR.py](https://pypi.python.org/pypi/vcrpy) library to record the HTTP messages exchanged during a program run and play them back at a later time, making it useful for creating "scenario tests" that interact with Azure (or other) services. These tests can be replayed at a later time without any network activity, allowing us to detect changes in the Python layers between the code being tested and the underlying REST API.
 
 ## Overview
 
