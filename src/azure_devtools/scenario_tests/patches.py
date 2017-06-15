@@ -3,8 +3,6 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
 
-import unittest
-
 from .exceptions import AzureTestError
 
 
@@ -24,7 +22,6 @@ def patch_long_run_operation_delay(unit_test):
                       _shortcut_long_run_operation)
 
 
-@unittest.skip("this is a helper, not a unit test")
 def mock_in_unit_test(unit_test, target, replacement):
     import mock
     import unittest
