@@ -41,7 +41,9 @@ and [azure-sdk-for-python](https://github.com/Azure/azure-sdk-for-python).
 Each uses a subclass of `ReplayableTest` to add context-specific functionality
 and preserve backward compatibility with test code
 prior to the existence of `azure-devtools`.
-For example, azure-cli 
+For example, azure-cli's [compatibility layer](https://github.com/Azure/azure-cli/tree/master/src/azure-cli-testsdk) 
+adds methods for running CLI commands and evaluating their output.
+
 
 <!--
 Note: This document's source uses
