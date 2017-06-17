@@ -16,7 +16,8 @@
   ./ref/azure.mgmt.compute.compute.rst
   ./ref/azure.mgmt.compute.containerservice.rst
   ./ref/azure.mgmt.consumption.rst
-  ./ref/azure.mgmt.containerregistry.rst
+  ./ref/azure.mgmt.containerregistry.v2017_03_01.rst
+  ./ref/azure.mgmt.containerregistry.v2017_06_01_preview.rst
   ./ref/azure.mgmt.datalake.analytics.account.rst
   ./ref/azure.mgmt.datalake.analytics.catalog.rst
   ./ref/azure.mgmt.datalake.analytics.job.rst
