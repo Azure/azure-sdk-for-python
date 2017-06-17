@@ -55,9 +55,6 @@ class ManagementLockClient(object):
     :ivar config: Configuration for client.
     :vartype config: ManagementLockClientConfiguration
 
-    :ivar management_locks: ManagementLocks operations
-    :vartype management_locks: .operations.ManagementLocksOperations
-
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
      object<msrestazure.azure_active_directory>`
@@ -78,22 +75,31 @@ class ManagementLockClient(object):
         self._deserialize = Deserializer(client_models)
 
     @classmethod
-    def models(cls, api_version = '2016-09-01'):
-        if api_version =='2016-09-01':
-            from .v2016_09_01 import models
-            return models
-        elif api_version =='2015-01-01':
+    def models(cls, api_version='2016-09-01'):
+        """Module depends on the API version:
+
+           * 2015-01-01: :mod:`v2015_01_01.models<azure.mgmt.resource.locks.v2015_01_01.models>`
+           * 2016-09-01: :mod:`v2016_09_01.models<azure.mgmt.resource.locks.v2016_09_01.models>`
+        """
+        if api_version == '2015-01-01':
             from .v2015_01_01 import models
             return models
-        else:
-            raise NotImplementedError("APIVersion {} is not available".format(api_version))
+        elif api_version == '2016-09-01':
+            from .v2016_09_01 import models
+            return models
+        raise NotImplementedError("APIVersion {} is not available".format(api_version))
 
     @property
     def management_locks(self):
-        if self.api_version =='2016-09-01':
-            from .v2016_09_01.operations.management_locks_operations import ManagementLocksOperations as OperationClass
-        elif self.api_version =='2015-01-01':
-            from .v2015_01_01.operations.management_locks_operations import ManagementLocksOperations as OperationClass
+        """Instance depends on the API version:
+
+           * 2015-01-01: :class:`ManagementLocksOperations<azure.mgmt.resource.locks.v2015_01_01.operations.ManagementLocksOperations>`
+           * 2016-09-01: :class:`ManagementLocksOperations<azure.mgmt.resource.locks.v2016_09_01.operations.ManagementLocksOperations>`
+        """
+        if self.api_version == '2015-01-01':
+            from .v2015_01_01.operations import ManagementLocksOperations as OperationClass
+        elif self.api_version == '2016-09-01':
+            from .v2016_09_01.operations import ManagementLocksOperations as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(self.api_version))
         return OperationClass(self._client, self.config, self._serialize, self._deserialize)

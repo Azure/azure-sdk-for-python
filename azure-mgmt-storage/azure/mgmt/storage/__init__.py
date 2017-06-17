@@ -57,11 +57,6 @@ class StorageManagementClient(object):
     :ivar config: Configuration for client.
     :vartype config: StorageManagementClientConfiguration
 
-    :ivar storage_accounts: StorageAccounts operations
-    :vartype storage_accounts: .operations.StorageAccountsOperations
-    :ivar usage: Usage operations
-    :vartype usage: .operations.UsageOperations
-
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
      object<msrestazure.azure_active_directory>`
@@ -84,32 +79,46 @@ class StorageManagementClient(object):
         self._deserialize = Deserializer(client_models)
 
     @classmethod
-    def models(cls, api_version = '2016-12-01'):
-        if api_version =='2016-12-01':
-            from .v2016_12_01 import models
-            return models
-        elif api_version =='2015-06-15':
+    def models(cls, api_version='2016-12-01'):
+        """Module depends on the API version:
+
+           * 2015-06-15: :mod:`v2015_06_15.models<azure.mgmt.storage.v2015_06_15.models>`
+           * 2016-12-01: :mod:`v2016_12_01.models<azure.mgmt.storage.v2016_12_01.models>`
+        """
+        if api_version == '2015-06-15':
             from .v2015_06_15 import models
             return models
-        else:
-            raise NotImplementedError("APIVersion {} is not available".format(api_version))
+        elif api_version == '2016-12-01':
+            from .v2016_12_01 import models
+            return models
+        raise NotImplementedError("APIVersion {} is not available".format(api_version))
 
     @property
     def storage_accounts(self):
-        if self.api_version =='2016-12-01':
-            from .v2016_12_01.operations import StorageAccountsOperations as OperationClass
-        elif self.api_version =='2015-06-15':
+        """Instance depends on the API version:
+
+           * 2015-06-15: :class:`StorageAccountsOperations<azure.mgmt.storage.v2015_06_15.operations.StorageAccountsOperations>`
+           * 2016-12-01: :class:`StorageAccountsOperations<azure.mgmt.storage.v2016_12_01.operations.StorageAccountsOperations>`
+        """
+        if self.api_version == '2015-06-15':
             from .v2015_06_15.operations import StorageAccountsOperations as OperationClass
+        elif self.api_version == '2016-12-01':
+            from .v2016_12_01.operations import StorageAccountsOperations as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(self.api_version))
         return OperationClass(self._client, self.config, self._serialize, self._deserialize)
 
     @property
     def usage(self):
-        if self.api_version =='2016-12-01':
-            from .v2016_12_01.operations import UsageOperations as OperationClass
-        elif self.api_version =='2015-06-15':
+        """Instance depends on the API version:
+
+           * 2015-06-15: :class:`UsageOperations<azure.mgmt.storage.v2015_06_15.operations.UsageOperations>`
+           * 2016-12-01: :class:`UsageOperations<azure.mgmt.storage.v2016_12_01.operations.UsageOperations>`
+        """
+        if self.api_version == '2015-06-15':
             from .v2015_06_15.operations import UsageOperations as OperationClass
+        elif self.api_version == '2016-12-01':
+            from .v2016_12_01.operations import UsageOperations as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(self.api_version))
         return OperationClass(self._client, self.config, self._serialize, self._deserialize)

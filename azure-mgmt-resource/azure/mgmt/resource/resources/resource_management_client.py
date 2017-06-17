@@ -78,6 +78,12 @@ class ResourceManagementClient(object):
 
     @classmethod
     def models(cls, api_version=LATEST_API_VERSION):
+        """Module depends on the API version:
+
+           * 2016-02-01: :mod:`v2016_02_01.models<azure.mgmt.resource.resources.v2016_02_01.models>`
+           * 2016-09-01: :mod:`v2016_09_01.models<azure.mgmt.resource.resources.v2016_09_01.models>`
+           * 2017-05-10: :mod:`v2017_05_10.models<azure.mgmt.resource.resources.v2017_05_10.models>`
+        """
         if api_version == '2016-02-01':
             from .v2016_02_01 import models
             return models
@@ -91,6 +97,12 @@ class ResourceManagementClient(object):
 
     @property
     def deployment_operations(self):
+        """Instance depends on the API version:
+
+           * 2016-02-01: :class:`DeploymentOperations<azure.mgmt.resource.resources.v2016_02_01.operations.DeploymentOperations>`
+           * 2016-09-01: :class:`DeploymentOperations<azure.mgmt.resource.resources.v2016_09_01.operations.DeploymentOperations>`
+           * 2017-05-10: :class:`DeploymentOperations<azure.mgmt.resource.resources.v2017_05_10.operations.DeploymentOperations>`
+        """
         if self.api_version == '2016-02-01':
             from .v2016_02_01.operations import DeploymentOperations as OperationClass
         elif self.api_version == '2016-09-01':
@@ -103,6 +115,12 @@ class ResourceManagementClient(object):
 
     @property
     def deployments(self):
+        """Instance depends on the API version:
+
+           * 2016-02-01: :class:`DeploymentsOperations<azure.mgmt.resource.resources.v2016_02_01.operations.DeploymentsOperations>`
+           * 2016-09-01: :class:`DeploymentsOperations<azure.mgmt.resource.resources.v2016_09_01.operations.DeploymentsOperations>`
+           * 2017-05-10: :class:`DeploymentsOperations<azure.mgmt.resource.resources.v2017_05_10.operations.DeploymentsOperations>`
+        """
         if self.api_version == '2016-02-01':
             from .v2016_02_01.operations import DeploymentsOperations as OperationClass
         elif self.api_version == '2016-09-01':
@@ -115,6 +133,12 @@ class ResourceManagementClient(object):
 
     @property
     def providers(self):
+        """Instance depends on the API version:
+
+           * 2016-02-01: :class:`ProvidersOperations<azure.mgmt.resource.resources.v2016_02_01.operations.ProvidersOperations>`
+           * 2016-09-01: :class:`ProvidersOperations<azure.mgmt.resource.resources.v2016_09_01.operations.ProvidersOperations>`
+           * 2017-05-10: :class:`ProvidersOperations<azure.mgmt.resource.resources.v2017_05_10.operations.ProvidersOperations>`
+        """
         if self.api_version == '2016-02-01':
             from .v2016_02_01.operations import ProvidersOperations as OperationClass
         elif self.api_version == '2016-09-01':
@@ -127,6 +151,12 @@ class ResourceManagementClient(object):
 
     @property
     def resource_groups(self):
+        """Instance depends on the API version:
+
+           * 2016-02-01: :class:`ResourceGroupsOperations<azure.mgmt.resource.resources.v2016_02_01.operations.ResourceGroupsOperations>`
+           * 2016-09-01: :class:`ResourceGroupsOperations<azure.mgmt.resource.resources.v2016_09_01.operations.ResourceGroupsOperations>`
+           * 2017-05-10: :class:`ResourceGroupsOperations<azure.mgmt.resource.resources.v2017_05_10.operations.ResourceGroupsOperations>`
+        """
         if self.api_version == '2016-02-01':
             from .v2016_02_01.operations import ResourceGroupsOperations as OperationClass
         elif self.api_version == '2016-09-01':
@@ -139,6 +169,12 @@ class ResourceManagementClient(object):
 
     @property
     def resources(self):
+        """Instance depends on the API version:
+
+           * 2016-02-01: :class:`ResourcesOperations<azure.mgmt.resource.resources.v2016_02_01.operations.ResourcesOperations>`
+           * 2016-09-01: :class:`ResourcesOperations<azure.mgmt.resource.resources.v2016_09_01.operations.ResourcesOperations>`
+           * 2017-05-10: :class:`ResourcesOperations<azure.mgmt.resource.resources.v2017_05_10.operations.ResourcesOperations>`
+        """
         if self.api_version == '2016-02-01':
             from .v2016_02_01.operations import ResourcesOperations as OperationClass
         elif self.api_version == '2016-09-01':
@@ -151,6 +187,12 @@ class ResourceManagementClient(object):
 
     @property
     def tags(self):
+        """Instance depends on the API version:
+
+           * 2016-02-01: :class:`TagsOperations<azure.mgmt.resource.resources.v2016_02_01.operations.TagsOperations>`
+           * 2016-09-01: :class:`TagsOperations<azure.mgmt.resource.resources.v2016_09_01.operations.TagsOperations>`
+           * 2017-05-10: :class:`TagsOperations<azure.mgmt.resource.resources.v2017_05_10.operations.TagsOperations>`
+        """
         if self.api_version == '2016-02-01':
             from .v2016_02_01.operations import TagsOperations as OperationClass
         elif self.api_version == '2016-09-01':
