@@ -6,3 +6,5 @@
 # --------------------------------------------------------------------------
 
 from .feature_client import FeatureClient
+
+__all__ = ['FeatureClient']

@@ -6,3 +6,5 @@
 # --------------------------------------------------------------------------
 
 from .management_lock_client import ManagementLockClient
+
+__all__ = ['ManagementLockClient']

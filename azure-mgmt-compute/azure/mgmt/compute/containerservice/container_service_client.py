@@ -57,9 +57,6 @@ class ContainerServiceClient(object):
     :ivar config: Configuration for client.
     :vartype config: ContainerServiceClientConfiguration
 
-    :ivar container_services: ContainerServices operations
-    :vartype container_services: .operations.ContainerServicesOperations
-
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
      object<msrestazure.azure_active_directory>`
@@ -82,17 +79,24 @@ class ContainerServiceClient(object):
         self._deserialize = Deserializer(client_models)
 
     @classmethod
-    def models(cls, api_version = '2017-01-31'):
-        if api_version =='2017-01-31':
+    def models(cls, api_version='2017-01-31'):
+        """Module depends on the API version:
+
+           * 2017-01-31: :mod:`v2017_01_31.models<azure.mgmt.compute.containerservice.v2017_01_31.models>`
+        """
+        if api_version == '2017-01-31':
             from .v2017_01_31 import models
             return models
-        else:
-            raise NotImplementedError("APIVersion {} is not available".format(api_version))
+        raise NotImplementedError("APIVersion {} is not available".format(api_version))
 
     @property
     def container_services(self):
-        if self.api_version =='2017-01-31':
+        """Instance depends on the API version:
+
+           * 2017-01-31: :class:`ContainerServicesOperations<azure.mgmt.compute.containerservice.v2017_01_31.operations.ContainerServicesOperations>`
+        """
+        if self.api_version == '2017-01-31':
             from .v2017_01_31.operations import ContainerServicesOperations as OperationClass
         else:
-            raise NotImplementedError("APIVersion {{}} is not available".format(self.api_version))
+            raise NotImplementedError("APIVersion {} is not available".format(self.api_version))
         return OperationClass(self._client, self.config, self._serialize, self._deserialize)

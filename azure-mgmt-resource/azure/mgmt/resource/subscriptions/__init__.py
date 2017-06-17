@@ -6,3 +6,5 @@
 # --------------------------------------------------------------------------
 
 from .subscription_client import SubscriptionClient
+
+__all__ = ['SubscriptionClient']

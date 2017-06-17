@@ -6,3 +6,5 @@
 # --------------------------------------------------------------------------
 
 from .resource_management_client import ResourceManagementClient
+
+__all__ = ['ResourceManagementClient']

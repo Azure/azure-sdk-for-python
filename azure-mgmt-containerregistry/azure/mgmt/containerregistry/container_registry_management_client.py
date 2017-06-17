@@ -77,7 +77,12 @@ class ContainerRegistryManagementClient(object):
         self._deserialize = Deserializer(client_models)
 
     @classmethod
-    def models(cls, api_version='2017-06-01-preview'):
+    def models(cls, api_version=DEFAULT_API_VERSION):
+        """Module depends on the API version:
+
+           * 2017-03-01: :mod:`v2017_03_01.models<azure.mgmt.containerregistry.v2017_03_01.models>`
+           * 2017-06-01-preview: :mod:`v2017_06_01_preview.models<azure.mgmt.containerregistry.v2017_06_01_preview.models>`
+        """
         if api_version == '2017-03-01':
             from .v2017_03_01 import models
             return models
@@ -88,6 +93,11 @@ class ContainerRegistryManagementClient(object):
 
     @property
     def operations(self):
+        """Instance depends on the API version:
+
+           * 2017-03-01: :class:`Operations<azure.mgmt.containerregistry.v2017_03_01.operations.Operations>`
+           * 2017-06-01-preview: :class:`Operations<azure.mgmt.containerregistry.v2017_06_01_preview.operations.Operations>`
+        """
         if self.api_version == '2017-03-01':
             from .v2017_03_01.operations import Operations as OperationClass
         elif self.api_version == '2017-06-01-preview':
@@ -98,6 +108,11 @@ class ContainerRegistryManagementClient(object):
 
     @property
     def registries(self):
+        """Instance depends on the API version:
+
+           * 2017-03-01: :class:`RegistriesOperations<azure.mgmt.containerregistry.v2017_03_01.operations.RegistriesOperations>`
+           * 2017-06-01-preview: :class:`RegistriesOperations<azure.mgmt.containerregistry.v2017_06_01_preview.operations.RegistriesOperations>`
+        """
         if self.api_version == '2017-03-01':
             from .v2017_03_01.operations import RegistriesOperations as OperationClass
         elif self.api_version == '2017-06-01-preview':
@@ -108,6 +123,10 @@ class ContainerRegistryManagementClient(object):
 
     @property
     def replications(self):
+        """Instance depends on the API version:
+
+           * 2017-06-01-preview: :class:`ReplicationsOperations<azure.mgmt.containerregistry.v2017_06_01_preview.operations.ReplicationsOperations>`
+        """
         if self.api_version == '2017-06-01-preview':
             from .v2017_06_01_preview.operations import ReplicationsOperations as OperationClass
         else:
@@ -116,6 +135,10 @@ class ContainerRegistryManagementClient(object):
 
     @property
     def webhooks(self):
+        """Instance depends on the API version:
+
+           * 2017-06-01-preview: :class:`WebhooksOperations<azure.mgmt.containerregistry.v2017_06_01_preview.operations.WebhooksOperations>`
+        """
         if self.api_version == '2017-06-01-preview':
             from .v2017_06_01_preview.operations import WebhooksOperations as OperationClass
         else:

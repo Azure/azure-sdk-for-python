@@ -55,9 +55,6 @@ class ManagementLinkClient(object):
     :ivar config: Configuration for client.
     :vartype config: ManagementLinkClientConfiguration
 
-    :ivar resource_links: ResourceLinks operations
-    :vartype resource_links: .operations.ResourceLinksOperations
-
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
      object<msrestazure.azure_active_directory>`
@@ -77,17 +74,24 @@ class ManagementLinkClient(object):
         self._deserialize = Deserializer(client_models)
 
     @classmethod
-    def models(cls, api_version = '2016-09-01'):
-        if api_version =='2016-09-01':
+    def models(cls, api_version='2016-09-01'):
+        """Module depends on the API version:
+
+           * 2016-09-01: :mod:`v2016_09_01.models<azure.mgmt.resource.links.v2016_09_01.models>`
+        """
+        if api_version == '2016-09-01':
             from .v2016_09_01 import models
             return models
-        else:
-            raise NotImplementedError("APIVersion {} is not available".format(api_version))
+        raise NotImplementedError("APIVersion {} is not available".format(api_version))
 
     @property
     def resource_links(self):
-        if self.api_version =='2016-09-01':
-            from .v2016_09_01.operations.resource_links_operations import ResourceLinksOperations as OperationClass
+        """Instance depends on the API version:
+
+           * 2016-09-01: :class:`ResourceLinksOperations<azure.mgmt.resource.links.v2016_09_01.operations.ResourceLinksOperations>`
+        """
+        if self.api_version == '2016-09-01':
+            from .v2016_09_01.operations import ResourceLinksOperations as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(self.api_version))
         return OperationClass(self._client, self.config, self._serialize, self._deserialize)
