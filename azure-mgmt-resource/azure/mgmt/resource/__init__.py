@@ -16,3 +16,12 @@ from .managedapplications import ManagedApplicationClient
 from .version import VERSION
 
 __version__ = VERSION
+__all__ = [
+    'FeatureClient',
+    'ManagementLockClient',
+    'PolicyClient',
+    'ResourceManagementClient',
+    'SubscriptionClient',
+    'ManagementLinkClient',
+    'ManagedApplicationClient'
+]

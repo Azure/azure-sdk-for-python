@@ -76,6 +76,12 @@ class PolicyClient(object):
 
     @classmethod
     def models(cls, api_version='2016-12-01'):
+        """Module depends on the API version:
+
+           * 2015-10-01-preview: :mod:`v2015_10_01_preview.models<azure.mgmt.resource.policy.v2015_10_01_preview.models>`
+           * 2016-04-01: :mod:`v2016_04_01.models<azure.mgmt.resource.policy.v2016_04_01.models>`
+           * 2016-12-01: :mod:`v2016_12_01.models<azure.mgmt.resource.policy.v2016_12_01.models>`
+        """
         if api_version == '2015-10-01-preview':
             from .v2015_10_01_preview import models
             return models
@@ -89,6 +95,12 @@ class PolicyClient(object):
 
     @property
     def policy_assignments(self):
+        """Instance depends on the API version:
+
+           * 2015-10-01-preview: :class:`PolicyAssignmentsOperations<azure.mgmt.resource.policy.v2015_10_01_preview.operations.PolicyAssignmentsOperations>`
+           * 2016-04-01: :class:`PolicyAssignmentsOperations<azure.mgmt.resource.policy.v2016_04_01.operations.PolicyAssignmentsOperations>`
+           * 2016-12-01: :class:`PolicyAssignmentsOperations<azure.mgmt.resource.policy.v2016_12_01.operations.PolicyAssignmentsOperations>`
+        """
         if self.api_version == '2015-10-01-preview':
             from .v2015_10_01_preview.operations import PolicyAssignmentsOperations as OperationClass
         elif self.api_version == '2016-04-01':
@@ -101,6 +113,12 @@ class PolicyClient(object):
 
     @property
     def policy_definitions(self):
+        """Instance depends on the API version:
+
+           * 2015-10-01-preview: :class:`PolicyDefinitionsOperations<azure.mgmt.resource.policy.v2015_10_01_preview.operations.PolicyDefinitionsOperations>`
+           * 2016-04-01: :class:`PolicyDefinitionsOperations<azure.mgmt.resource.policy.v2016_04_01.operations.PolicyDefinitionsOperations>`
+           * 2016-12-01: :class:`PolicyDefinitionsOperations<azure.mgmt.resource.policy.v2016_12_01.operations.PolicyDefinitionsOperations>`
+        """
         if self.api_version == '2015-10-01-preview':
             from .v2015_10_01_preview.operations import PolicyDefinitionsOperations as OperationClass
         elif self.api_version == '2016-04-01':
