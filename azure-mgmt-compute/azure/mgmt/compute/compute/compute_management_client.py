@@ -80,6 +80,12 @@ class ComputeManagementClient(object):
 
     @classmethod
     def models(cls, api_version='2016-04-30-preview'):
+        """Module depends on the API version:
+
+           * 2015-06-15: :mod:`v2015_06_15.models<azure.mgmt.compute.compute.v2015_06_15.models>`
+           * 2016-03-30: :mod:`v2016_03_30.models<azure.mgmt.compute.compute.v2016_03_30.models>`
+           * 2016-04-30-preview: :mod:`v2016_04_30_preview.models<azure.mgmt.compute.compute.v2016_04_30_preview.models>`
+        """
         if api_version == '2015-06-15':
             from .v2015_06_15 import models
             return models
@@ -93,6 +99,12 @@ class ComputeManagementClient(object):
 
     @property
     def availability_sets(self):
+        """Instance depends on the API version:
+
+           * 2015-06-15: :class:`AvailabilitySetsOperations<azure.mgmt.compute.compute.v2015_06_15.operations.AvailabilitySetsOperations>`
+           * 2016-03-30: :class:`AvailabilitySetsOperations<azure.mgmt.compute.compute.v2016_03_30.operations.AvailabilitySetsOperations>`
+           * 2016-04-30-preview: :class:`AvailabilitySetsOperations<azure.mgmt.compute.compute.v2016_04_30_preview.operations.AvailabilitySetsOperations>`
+        """
         if self.api_version == '2015-06-15':
             from .v2015_06_15.operations import AvailabilitySetsOperations as OperationClass
         elif self.api_version == '2016-03-30':
@@ -105,6 +117,10 @@ class ComputeManagementClient(object):
 
     @property
     def disks(self):
+        """Instance depends on the API version:
+
+           * 2016-04-30-preview: :class:`DisksOperations<azure.mgmt.compute.compute.v2016_04_30_preview.operations.DisksOperations>`
+        """
         if self.api_version == '2016-04-30-preview':
             from .v2016_04_30_preview.operations import DisksOperations as OperationClass
         else:
@@ -113,6 +129,10 @@ class ComputeManagementClient(object):
 
     @property
     def images(self):
+        """Instance depends on the API version:
+
+           * 2016-04-30-preview: :class:`ImagesOperations<azure.mgmt.compute.compute.v2016_04_30_preview.operations.ImagesOperations>`
+        """
         if self.api_version == '2016-04-30-preview':
             from .v2016_04_30_preview.operations import ImagesOperations as OperationClass
         else:
@@ -121,6 +141,10 @@ class ComputeManagementClient(object):
 
     @property
     def snapshots(self):
+        """Instance depends on the API version:
+
+           * 2016-04-30-preview: :class:`SnapshotsOperations<azure.mgmt.compute.compute.v2016_04_30_preview.operations.SnapshotsOperations>`
+        """
         if self.api_version == '2016-04-30-preview':
             from .v2016_04_30_preview.operations import SnapshotsOperations as OperationClass
         else:
@@ -129,6 +153,12 @@ class ComputeManagementClient(object):
 
     @property
     def usage(self):
+        """Instance depends on the API version:
+
+           * 2015-06-15: :class:`UsageOperations<azure.mgmt.compute.compute.v2015_06_15.operations.UsageOperations>`
+           * 2016-03-30: :class:`UsageOperations<azure.mgmt.compute.compute.v2016_03_30.operations.UsageOperations>`
+           * 2016-04-30-preview: :class:`UsageOperations<azure.mgmt.compute.compute.v2016_04_30_preview.operations.UsageOperations>`
+        """
         if self.api_version == '2015-06-15':
             from .v2015_06_15.operations import UsageOperations as OperationClass
         elif self.api_version == '2016-03-30':
@@ -141,6 +171,12 @@ class ComputeManagementClient(object):
 
     @property
     def virtual_machine_extension_images(self):
+        """Instance depends on the API version:
+
+           * 2015-06-15: :class:`VirtualMachineExtensionImagesOperations<azure.mgmt.compute.compute.v2015_06_15.operations.VirtualMachineExtensionImagesOperations>`
+           * 2016-03-30: :class:`VirtualMachineExtensionImagesOperations<azure.mgmt.compute.compute.v2016_03_30.operations.VirtualMachineExtensionImagesOperations>`
+           * 2016-04-30-preview: :class:`VirtualMachineExtensionImagesOperations<azure.mgmt.compute.compute.v2016_04_30_preview.operations.VirtualMachineExtensionImagesOperations>`
+        """
         if self.api_version == '2015-06-15':
             from .v2015_06_15.operations import VirtualMachineExtensionImagesOperations as OperationClass
         elif self.api_version == '2016-03-30':
@@ -153,6 +189,12 @@ class ComputeManagementClient(object):
 
     @property
     def virtual_machine_extensions(self):
+        """Instance depends on the API version:
+
+           * 2015-06-15: :class:`VirtualMachineExtensionsOperations<azure.mgmt.compute.compute.v2015_06_15.operations.VirtualMachineExtensionsOperations>`
+           * 2016-03-30: :class:`VirtualMachineExtensionsOperations<azure.mgmt.compute.compute.v2016_03_30.operations.VirtualMachineExtensionsOperations>`
+           * 2016-04-30-preview: :class:`VirtualMachineExtensionsOperations<azure.mgmt.compute.compute.v2016_04_30_preview.operations.VirtualMachineExtensionsOperations>`
+        """
         if self.api_version == '2015-06-15':
             from .v2015_06_15.operations import VirtualMachineExtensionsOperations as OperationClass
         elif self.api_version == '2016-03-30':
@@ -165,6 +207,12 @@ class ComputeManagementClient(object):
 
     @property
     def virtual_machine_images(self):
+        """Instance depends on the API version:
+
+           * 2015-06-15: :class:`VirtualMachineImagesOperations<azure.mgmt.compute.compute.v2015_06_15.operations.VirtualMachineImagesOperations>`
+           * 2016-03-30: :class:`VirtualMachineImagesOperations<azure.mgmt.compute.compute.v2016_03_30.operations.VirtualMachineImagesOperations>`
+           * 2016-04-30-preview: :class:`VirtualMachineImagesOperations<azure.mgmt.compute.compute.v2016_04_30_preview.operations.VirtualMachineImagesOperations>`
+        """
         if self.api_version == '2015-06-15':
             from .v2015_06_15.operations import VirtualMachineImagesOperations as OperationClass
         elif self.api_version == '2016-03-30':
@@ -177,6 +225,12 @@ class ComputeManagementClient(object):
 
     @property
     def virtual_machine_scale_set_vms(self):
+        """Instance depends on the API version:
+
+           * 2015-06-15: :class:`VirtualMachineScaleSetVMsOperations<azure.mgmt.compute.compute.v2015_06_15.operations.VirtualMachineScaleSetVMsOperations>`
+           * 2016-03-30: :class:`VirtualMachineScaleSetVMsOperations<azure.mgmt.compute.compute.v2016_03_30.operations.VirtualMachineScaleSetVMsOperations>`
+           * 2016-04-30-preview: :class:`VirtualMachineScaleSetVMsOperations<azure.mgmt.compute.compute.v2016_04_30_preview.operations.VirtualMachineScaleSetVMsOperations>`
+        """
         if self.api_version == '2015-06-15':
             from .v2015_06_15.operations import VirtualMachineScaleSetVMsOperations as OperationClass
         elif self.api_version == '2016-03-30':
@@ -189,6 +243,12 @@ class ComputeManagementClient(object):
 
     @property
     def virtual_machine_scale_sets(self):
+        """Instance depends on the API version:
+
+           * 2015-06-15: :class:`VirtualMachineScaleSetsOperations<azure.mgmt.compute.compute.v2015_06_15.operations.VirtualMachineScaleSetsOperations>`
+           * 2016-03-30: :class:`VirtualMachineScaleSetsOperations<azure.mgmt.compute.compute.v2016_03_30.operations.VirtualMachineScaleSetsOperations>`
+           * 2016-04-30-preview: :class:`VirtualMachineScaleSetsOperations<azure.mgmt.compute.compute.v2016_04_30_preview.operations.VirtualMachineScaleSetsOperations>`
+        """
         if self.api_version == '2015-06-15':
             from .v2015_06_15.operations import VirtualMachineScaleSetsOperations as OperationClass
         elif self.api_version == '2016-03-30':
@@ -201,6 +261,12 @@ class ComputeManagementClient(object):
 
     @property
     def virtual_machine_sizes(self):
+        """Instance depends on the API version:
+
+           * 2015-06-15: :class:`VirtualMachineSizesOperations<azure.mgmt.compute.compute.v2015_06_15.operations.VirtualMachineSizesOperations>`
+           * 2016-03-30: :class:`VirtualMachineSizesOperations<azure.mgmt.compute.compute.v2016_03_30.operations.VirtualMachineSizesOperations>`
+           * 2016-04-30-preview: :class:`VirtualMachineSizesOperations<azure.mgmt.compute.compute.v2016_04_30_preview.operations.VirtualMachineSizesOperations>`
+        """
         if self.api_version == '2015-06-15':
             from .v2015_06_15.operations import VirtualMachineSizesOperations as OperationClass
         elif self.api_version == '2016-03-30':
@@ -213,6 +279,12 @@ class ComputeManagementClient(object):
 
     @property
     def virtual_machines(self):
+        """Instance depends on the API version:
+
+           * 2015-06-15: :class:`VirtualMachinesOperations<azure.mgmt.compute.compute.v2015_06_15.operations.VirtualMachinesOperations>`
+           * 2016-03-30: :class:`VirtualMachinesOperations<azure.mgmt.compute.compute.v2016_03_30.operations.VirtualMachinesOperations>`
+           * 2016-04-30-preview: :class:`VirtualMachinesOperations<azure.mgmt.compute.compute.v2016_04_30_preview.operations.VirtualMachinesOperations>`
+        """
         if self.api_version == '2015-06-15':
             from .v2015_06_15.operations import VirtualMachinesOperations as OperationClass
         elif self.api_version == '2016-03-30':
