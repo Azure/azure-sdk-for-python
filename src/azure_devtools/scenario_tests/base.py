@@ -18,22 +18,18 @@ from .const import ENV_TEST_DIAGNOSE
 from .utilities import create_random_name
 from .decorators import live_only
 
-logger = logging.getLogger('azure_devtools.scenario_tests')
-
 
 class IntegrationTestBase(unittest.TestCase):
     def __init__(self, method_name):
         super(IntegrationTestBase, self).__init__(method_name)
         self.diagnose = os.environ.get(ENV_TEST_DIAGNOSE, None) == 'True'
+        self.logger = logging.getLogger('azure_devtools.scenario_tests')
 
     def create_random_name(self, prefix, length):  # pylint: disable=no-self-use
         return create_random_name(prefix=prefix, length=length)
 
     def create_temp_file(self, size_kb, full_random=False):
-        """
-        Create a temporary file for testing. The test harness will delete the file during tearing
-        down.
-        """
+        """ Create a temporary file for testing. The test harness will delete the file during tearing down. """
         fd, path = tempfile.mkstemp()
         os.close(fd)
         self.addCleanup(lambda: os.remove(path))
@@ -50,8 +46,7 @@ class IntegrationTestBase(unittest.TestCase):
 
     def create_temp_dir(self):
         """
-        Create a temporary directory for testing. The test harness will delete the directory during
-        tearing down.
+        Create a temporary directory for testing. The test harness will delete the directory during tearing down.
         """
         temp_dir = tempfile.mkdtemp()
         self.addCleanup(lambda: shutil.rmtree(temp_dir, ignore_errors=True))
@@ -87,10 +82,9 @@ class ReplayableTest(IntegrationTestBase):  # pylint: disable=too-many-instance-
         'x-ms-served-by',
     ]
 
-    def __init__(self, method_name, config_file=None,
-                 recording_dir=None, recording_name=None,
-                 recording_processors=None, replay_processors=None,
-                 recording_patches=None, replay_patches=None):
+    def __init__(self,  # pylint: disable=too-many-arguments
+                 method_name, config_file=None, recording_dir=None, recording_name=None, recording_processors=None,
+                 replay_processors=None, recording_patches=None, replay_patches=None):
         super(ReplayableTest, self).__init__(method_name)
 
         self.recording_processors = recording_processors or []
@@ -104,8 +98,7 @@ class ReplayableTest(IntegrationTestBase):  # pylint: disable=too-many-instance-
         self.disable_recording = False
 
         test_file_path = inspect.getfile(self.__class__)
-        recording_dir = recording_dir or os.path.join(os.path.dirname(test_file_path),
-                                                      'recordings')
+        recording_dir = recording_dir or os.path.join(os.path.dirname(test_file_path), 'recordings')
         self.is_live = self.config.record_mode
 
         self.vcr = vcr.VCR(

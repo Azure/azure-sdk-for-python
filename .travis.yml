@@ -10,6 +10,7 @@ python:
 install:
   - pip install -r requirements.txt
 script:
+  - pylint src/azure_devtools
   - nosetests
 deploy:
   provider: pypi

@@ -54,7 +54,7 @@ class AbstractPreparer(object):
                 args, _, kw, _ = inspect.getargspec(fn)  # pylint: disable=deprecated-method
                 if kw is None:
                     args = set(args)
-                    for key in [k for k in kwargs.keys() if k not in args]:
+                    for key in [k for k in kwargs if k not in args]:
                         del kwargs[key]
 
             fn(test_class_instance, **kwargs)
@@ -101,7 +101,6 @@ class AbstractPreparer(object):
             self.remove_resource(name, **kwargs)
 
 
-# TODO: replaced by GeneralNameReplacer
 class SingleValueReplacer(RecordingProcessor):
     # pylint: disable=no-member
     def process_request(self, request):
