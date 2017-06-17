@@ -94,3 +94,7 @@ ENV/
 *.pyproj
 *.pyproj.user
 *.sln
+
+# PyCharm / IntelliJ IDEA
+.idea/workspace.xml
+.idea/tasks.xml
