@@ -61,9 +61,6 @@ class FeatureClient(object):
     :ivar config: Configuration for client.
     :vartype config: FeatureClientConfiguration
 
-    :ivar features: Features operations
-    :vartype features: .operations.FeaturesOperations
-
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
      object<msrestazure.azure_active_directory>`
@@ -86,17 +83,24 @@ class FeatureClient(object):
         self._deserialize = Deserializer(client_models)
 
     @classmethod
-    def models(cls, api_version = '2015-12-01'):
-        if api_version =='2015-12-01':
+    def models(cls, api_version='2015-12-01'):
+        """Module depends on the API version:
+
+           * 2015-12-01: :mod:`v2015_12_01.models<azure.mgmt.resource.features.v2015_12_01.models>`
+        """
+        if api_version == '2015-12-01':
             from .v2015_12_01 import models
             return models
-        else:
-            raise NotImplementedError("APIVersion {} is not available".format(api_version))
+        raise NotImplementedError("APIVersion {} is not available".format(api_version))
 
     @property
     def features(self):
-        if self.api_version =='2015-12-01':
-            from .v2015_12_01.operations.features_operations import FeaturesOperations as OperationClass
+        """Instance depends on the API version:
+
+           * 2015-12-01: :class:`FeaturesOperations<azure.mgmt.resource.features.v2015_12_01.operations.FeaturesOperations>`
+        """
+        if self.api_version == '2015-12-01':
+            from .v2015_12_01.operations import FeaturesOperations as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(self.api_version))
         return OperationClass(self._client, self.config, self._serialize, self._deserialize)
