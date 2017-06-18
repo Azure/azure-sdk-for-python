@@ -1,0 +1,8 @@
+[run]
+branch = True
+
+[paths]
+source = src/
+
+[report]
+omit = */tests/*
