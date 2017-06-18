@@ -4,7 +4,14 @@
 # --------------------------------------------------------------------------------------------
 
 import unittest
-from azure_devtools.scenario_tests.recording_processors import RecordingProcessor
+import uuid
+
+try:
+    import unittest.mock as mock
+except ImportError:
+    import mock
+
+from azure_devtools.scenario_tests.recording_processors import RecordingProcessor, SubscriptionRecordingProcessor
 
 
 class TestRecordingProcessors(unittest.TestCase):
@@ -26,3 +33,49 @@ class TestRecordingProcessors(unittest.TestCase):
 
         rp.replace_header_fn(request_sample, 'beta', lambda v: 'customized')
         self.assertSequenceEqual(request_sample['headers']['beta'], ['customized', 'customized'])
+
+    def test_subscription_recording_processor_for_request(self):
+        replaced_subscription_id = str(uuid.uuid4())
+        rp = SubscriptionRecordingProcessor(replaced_subscription_id)
+
+        uri_templates = ['https://management.azure.com/subscriptions/{}/providers/Microsoft.ContainerRegistry/'
+                         'checkNameAvailability?api-version=2017-03-01',
+                         'https://graph.windows.net/{}/applications?api-version=1.6']
+
+        for template in uri_templates:
+            mock_request = mock.Mock()
+            mock_request.uri = template.format(str(uuid.uuid4()))
+
+            rp.process_request(mock_request)
+            self.assertEqual(mock_request.uri, template.format(replaced_subscription_id))
+
+    def test_subscription_recording_processor_for_response(self):
+        replaced_subscription_id = str(uuid.uuid4())
+        rp = SubscriptionRecordingProcessor(replaced_subscription_id)
+
+        uri_templates = ['https://management.azure.com/subscriptions/{}/providers/Microsoft.ContainerRegistry/'
+                         'checkNameAvailability?api-version=2017-03-01',
+                         'https://graph.windows.net/{}/applications?api-version=1.6']
+
+        location_header_template = 'https://graph.windows.net/{}/directoryObjects/' \
+                                   'f604c53a-aa21-44d5-a41f-c1ef0b5304bd/Microsoft.DirectoryServices.Application'
+
+        asyncoperation_header_template = 'https://management.azure.com/subscriptions/{}/resourceGroups/' \
+                                         'clitest.rg000001/providers/Microsoft.Sql/servers/clitestserver000002/' \
+                                         'databases/cliautomationdb01/azureAsyncOperation/' \
+                                         '6ec6196b-fbaa-415f-8c1a-6cb634a96cb2?api-version=2014-04-01-Preview'
+
+        for template in uri_templates:
+            mock_sub_id = str(uuid.uuid4())
+            mock_response = dict({'body': {}})
+            mock_response['body']['string'] = template.format(mock_sub_id)
+            mock_response['headers'] = {'Location': [location_header_template.format(mock_sub_id)],
+                                        'azure-asyncoperation': [asyncoperation_header_template.format(mock_sub_id)]}
+            rp.process_response(mock_response)
+            self.assertEqual(mock_response['body']['string'], template.format(replaced_subscription_id))
+
+            # TODO: Restore after issue https://github.com/Azure/azure-python-devtools/issues/16 is fixed
+            # self.assertSequenceEqual(mock_response['headers']['Location'],
+            #                          [location_header_template.format(replaced_subscription_id)])
+            self.assertSequenceEqual(mock_response['headers']['azure-asyncoperation'],
+                                     [asyncoperation_header_template.format(replaced_subscription_id)])
