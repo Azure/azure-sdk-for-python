@@ -11,12 +11,12 @@ import base64
 
 def create_random_name(prefix='aztest', length=24):
     if len(prefix) > length:
-        raise 'The length of the prefix must not be longer than random name length'
+        raise ValueError('The length of the prefix must not be longer than random name length')
 
     padding_size = length - len(prefix)
     if padding_size < 4:
-        raise 'The randomized part of the name is shorter than 4, which may not be able to offer ' \
-              'enough randomness'
+        raise ValueError('The randomized part of the name is shorter than 4, which may not be able to offer enough '
+                         'randomness')
 
     random_bytes = os.urandom(int(math.ceil(float(padding_size) / 8) * 5))
     random_padding = base64.b32encode(random_bytes)[:padding_size]
