@@ -5,8 +5,9 @@
 
 import os.path
 import unittest
-from nose.tools import ok_
-from azure_devtools.scenario_tests.base import IntegrationTestBase
+
+from azure_devtools.scenario_tests.const import ENV_LIVE_TEST
+from azure_devtools.scenario_tests.base import IntegrationTestBase, LiveTest
 
 
 class TestIntegrationTestBase(unittest.TestCase):
@@ -46,3 +47,13 @@ class TestIntegrationTestBase(unittest.TestCase):
         self.addCleanup(lambda: os.rmdir(random_dir))
         self.assertTrue(os.path.isdir(random_dir))
         self.assertEqual(len(tb._cleanups), 3)
+
+    def test_live_test_default_constructor(self):
+        class MockTest(LiveTest):
+            def __init__(self):
+                super(LiveTest, self).__init__('sample_test')
+
+            def sample_test(self):
+                self.assertFalse(True)
+
+        self.assertIsNone(MockTest().run(), 'The live test is not skipped as expected')
