@@ -166,7 +166,7 @@ class DataLakeStoreAccountsOperations(object):
             return client_raw_response
 
     def add(
-            self, resource_group_name, account_name, data_lake_store_account_name, parameters=None, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, account_name, data_lake_store_account_name, suffix=None, custom_headers=None, raw=False, **operation_config):
         """Updates the specified Data Lake Analytics account to include the
         additional Data Lake Store account.
 
@@ -179,9 +179,8 @@ class DataLakeStoreAccountsOperations(object):
         :param data_lake_store_account_name: The name of the Data Lake Store
          account to add.
         :type data_lake_store_account_name: str
-        :param parameters: The details of the Data Lake Store account.
-        :type parameters: :class:`AddDataLakeStoreParameters
-         <azure.mgmt.datalake.analytics.account.models.AddDataLakeStoreParameters>`
+        :param suffix: the optional suffix for the Data Lake Store account.
+        :type suffix: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -192,6 +191,10 @@ class DataLakeStoreAccountsOperations(object):
          if raw=true
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
+        parameters = None
+        if suffix is not None:
+            parameters = models.AddDataLakeStoreParameters(suffix=suffix)
+
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataLakeAnalytics/accounts/{accountName}/DataLakeStoreAccounts/{dataLakeStoreAccountName}'
         path_format_arguments = {

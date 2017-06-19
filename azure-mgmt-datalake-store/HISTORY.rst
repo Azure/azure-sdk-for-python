@@ -2,6 +2,9 @@
 
 Release History
 ===============
+0.1.6 (2017-06-19)
+++++++++++++++++++
+* Fixing a regression discovered in 0.1.5. Please update to 0.1.6 to avoid any issues caused by that regression.
 
 0.1.5 (2017-06-07)
 ++++++++++++++++++
