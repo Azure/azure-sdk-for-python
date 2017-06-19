@@ -1,8 +1,11 @@
 [run]
 branch = True
+include = src/*
+omit = 
+    */tests/*
+    env/*
 
 [paths]
 source = src/
 
 [report]
-omit = */tests/*
