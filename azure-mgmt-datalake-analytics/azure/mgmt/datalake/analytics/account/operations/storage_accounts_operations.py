@@ -166,7 +166,7 @@ class StorageAccountsOperations(object):
             return client_raw_response
 
     def update(
-            self, resource_group_name, account_name, storage_account_name, parameters=None, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, account_name, storage_account_name, access_key=None, suffix=None, custom_headers=None, raw=False, **operation_config):
         """Updates the Data Lake Analytics account to replace Azure Storage blob
         account details, such as the access key and/or suffix.
 
@@ -178,11 +178,11 @@ class StorageAccountsOperations(object):
         :type account_name: str
         :param storage_account_name: The Azure Storage account to modify
         :type storage_account_name: str
-        :param parameters: The parameters containing the access key and suffix
-         to update the storage account with, if any. Passing nothing results in
-         no change.
-        :type parameters: :class:`UpdateStorageAccountParameters
-         <azure.mgmt.datalake.analytics.account.models.UpdateStorageAccountParameters>`
+        :param access_key: the updated access key associated with this Azure
+         Storage account that will be used to connect to it.
+        :type access_key: str
+        :param suffix: the optional suffix for the storage account.
+        :type suffix: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -193,6 +193,10 @@ class StorageAccountsOperations(object):
          if raw=true
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
+        parameters = None
+        if access_key is not None or suffix is not None:
+            parameters = models.UpdateStorageAccountParameters(access_key=access_key, suffix=suffix)
+
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataLakeAnalytics/accounts/{accountName}/StorageAccounts/{storageAccountName}'
         path_format_arguments = {
@@ -238,7 +242,7 @@ class StorageAccountsOperations(object):
             return client_raw_response
 
     def add(
-            self, resource_group_name, account_name, storage_account_name, parameters, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, account_name, storage_account_name, access_key, suffix=None, custom_headers=None, raw=False, **operation_config):
         """Updates the specified Data Lake Analytics account to add an Azure
         Storage account.
 
@@ -251,10 +255,11 @@ class StorageAccountsOperations(object):
         :param storage_account_name: The name of the Azure Storage account to
          add
         :type storage_account_name: str
-        :param parameters: The parameters containing the access key and
-         optional suffix for the Azure Storage Account.
-        :type parameters: :class:`AddStorageAccountParameters
-         <azure.mgmt.datalake.analytics.account.models.AddStorageAccountParameters>`
+        :param access_key: the access key associated with this Azure Storage
+         account that will be used to connect to it.
+        :type access_key: str
+        :param suffix: the optional suffix for the storage account.
+        :type suffix: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -265,6 +270,8 @@ class StorageAccountsOperations(object):
          if raw=true
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
+        parameters = models.AddStorageAccountParameters(access_key=access_key, suffix=suffix)
+
         # Construct URL
         url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataLakeAnalytics/accounts/{accountName}/StorageAccounts/{storageAccountName}'
         path_format_arguments = {
