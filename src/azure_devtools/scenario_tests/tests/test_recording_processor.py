@@ -3,13 +3,12 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
 
-import unittest
-import uuid
-
 try:
     import unittest.mock as mock
 except ImportError:
     import mock
+import unittest
+import uuid
 
 from azure_devtools.scenario_tests.recording_processors import RecordingProcessor, SubscriptionRecordingProcessor
 

@@ -6,7 +6,7 @@
 # W0511 fixme
 # R0401 Cyclic import (because of https://github.com/PyCQA/pylint/issues/850)
 # R0913 Too many arguments - Due to the nature of the CLI many commands have large arguments set which reflect in large arguments set in corresponding methods.
-disable=C0111, C0103
+disable=C0111, C0103, W0511
 
 [FORMAT]
 max-line-length=120

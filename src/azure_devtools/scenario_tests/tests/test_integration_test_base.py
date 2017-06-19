@@ -6,7 +6,6 @@
 import os.path
 import unittest
 
-from azure_devtools.scenario_tests.const import ENV_LIVE_TEST
 from azure_devtools.scenario_tests.base import IntegrationTestBase, LiveTest
 
 
@@ -14,8 +13,8 @@ class TestIntegrationTestBase(unittest.TestCase):
     def test_integration_test_default_constructor(self):
         class MockTest(IntegrationTestBase):
             def __init__(self):
-                super(IntegrationTestBase, self).__init__('sample_test')
-        
+                super(MockTest, self).__init__('sample_test')
+
             def sample_test(self):
                 pass
 
@@ -29,7 +28,7 @@ class TestIntegrationTestBase(unittest.TestCase):
         self.addCleanup(lambda: os.remove(random_file))
         self.assertTrue(os.path.isfile(random_file))
         self.assertEqual(os.path.getsize(random_file), 16 * 1024)
-        self.assertEqual(len(tb._cleanups), 1)
+        self.assertEqual(len(tb._cleanups), 1)  # pylint: disable=protected-access
         with open(random_file, 'rb') as fq:
             # the file is blank
             self.assertFalse(any(b for b in fq.read(16 * 1024) if b != '\x00'))
@@ -38,7 +37,7 @@ class TestIntegrationTestBase(unittest.TestCase):
         self.addCleanup(lambda: os.remove(random_file_2))
         self.assertTrue(os.path.isfile(random_file_2))
         self.assertEqual(os.path.getsize(random_file_2), 8 * 1024)
-        self.assertEqual(len(tb._cleanups), 2)
+        self.assertEqual(len(tb._cleanups), 2)  # pylint: disable=protected-access
         with open(random_file_2, 'rb') as fq:
             # the file is blank
             self.assertTrue(any(b for b in fq.read(8 * 1024) if b != '\x00'))
@@ -46,14 +45,14 @@ class TestIntegrationTestBase(unittest.TestCase):
         random_dir = tb.create_temp_dir()
         self.addCleanup(lambda: os.rmdir(random_dir))
         self.assertTrue(os.path.isdir(random_dir))
-        self.assertEqual(len(tb._cleanups), 3)
+        self.assertEqual(len(tb._cleanups), 3)  # pylint: disable=protected-access
 
     def test_live_test_default_constructor(self):
         class MockTest(LiveTest):
             def __init__(self):
-                super(LiveTest, self).__init__('sample_test')
+                super(MockTest, self).__init__('sample_test')
 
             def sample_test(self):
-                self.assertFalse(True)
+                pass
 
         self.assertIsNone(MockTest().run(), 'The live test is not skipped as expected')
