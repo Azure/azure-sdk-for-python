@@ -209,7 +209,13 @@ class KeyVaultIdentifier(KeyVaultId):
 
         # add all the keyword arguments as attributes
         for key, value in kwargs.items():
-            self.__dict__[key] = value or ''
+            val = _validate_string_argument(value, key, True)
+            if not val == value:
+                print(val)
+                print(value)
+            self.__dict__[key] = _validate_string_argument(value, key, True)
+
+        self.version = self.version or KeyVaultIdentifier.version_none
 
         # if uri is specified parse the segment values from the specified uri
         if uri:
@@ -252,7 +258,7 @@ class KeyVaultIdentifier(KeyVaultId):
 
                 # if the attribute is specified add the value to the formatted segments
                 if seg_val:
-                    segments.append(seg_val.strip('/'))
+                    segments.append(seg_val.strip('/').strip())
                 # if the attribute is not specified and the substitution is not optional raise an error
                 else:
                     if not fmt_seg.endswith('?'):
@@ -274,7 +280,7 @@ class KeyVaultIdentifier(KeyVaultId):
         :return: None
         """
         def format_error():
-            ValueError('invalid id: The specified uri "{}", does to match the specified format "{}"'.format(uri, self._id_format))
+            return ValueError('invalid id: The specified uri "{}", does to match the specified format "{}"'.format(uri, self._id_format))
 
         uri = _validate_string_argument(uri, 'uri')
         parsed_uri = _parse_uri_argument(uri)
@@ -289,25 +295,30 @@ class KeyVaultIdentifier(KeyVaultId):
         for ix in range(len(fmt_segs)):
             # get the format segment and the id segment
             fmt_seg = fmt_segs[ix]
-            id_seg = id_segs[ix] if ix < len(id_segs) else ''
+            id_seg = id_segs.pop(0) if len(id_segs) > 0 else ''
 
             # if the segment is a substitution element
             if fmt_seg.startswith('{') and fmt_seg.endswith('}'):
                 prop = fmt_seg[1:-1]
+                prop_strip = prop.rstrip('?')
                 # if the segment is not present in the specified uri and is not optional raise an error
                 if not id_seg and not prop.endswith('?'):
                     raise format_error()
-                prop = prop.rstrip('?')
                 # if the segment is in the segments to validate and doesn't match the expected vault raise an error
-                if prop in validation_args and validation_args[prop] and validation_args[prop] != id_seg:
-                    raise ValueError('invalid id: The {} "{}" does not match the expected "{}"'.format(prop, id_seg, validation_args[prop]))
+                if prop_strip in validation_args and validation_args[prop_strip] and validation_args[prop_strip] != id_seg:
+                    if id_seg and not prop.endswith('?'):
+                        raise ValueError('invalid id: The {} "{}" does not match the expected "{}"'.format(prop, id_seg, validation_args[prop_strip]))
                 # set the attribute to the value parsed from the uri
-                self.__dict__[prop] = id_seg
+                self.__dict__[prop_strip] = id_seg
             # otherwise the segment is a literal element
             else:
                 # if the value parsed from the uri doesn't match the literal value from the format string raise an error
                 if not fmt_seg == id_seg:
                     raise format_error()
+
+        # if there are still segments left in the uri which were not accounted for in the format string raise an error
+        if len(id_segs) > 0:
+            raise format_error()
 
 
 class KeyId(KeyVaultIdentifier):
@@ -356,7 +367,7 @@ class CertificateId(KeyVaultIdentifier):
 
 
 class CertificateOperationId(KeyVaultIdentifier):
-    _id_format = '{vault}/{collection}/{name}/pending'
+    _id_format = '{vault}/{collection}/{name}/{version?}'
 
     def __init__(self, uri=None, vault=None, name=None):
         """
@@ -366,7 +377,7 @@ class CertificateOperationId(KeyVaultIdentifier):
         :param vault: The vault uri
         :param name: The certificate name
         """
-        super(CertificateOperationId, self).__init__(uri=uri, collection='certificates', vault=vault, name=name)
+        super(CertificateOperationId, self).__init__(uri=uri, collection='certificates', version='pending', vault=vault, name=name)
 
 
 class CertificateIssuerId(KeyVaultIdentifier):
