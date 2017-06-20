@@ -62,4 +62,4 @@ If you are porting your code from an older version (<1.0), be prepared
 to change some import statements and rename exception classes.
 
 For details on the breaking changes, see the
-`change log <https://github.com/Azure/azure-sdk-for-python/blob/master/ChangeLog.txt>`__.
+`change log <https://github.com/Azure/azure-sdk-for-python/blob/master/ChangeLog.rst>`__.
