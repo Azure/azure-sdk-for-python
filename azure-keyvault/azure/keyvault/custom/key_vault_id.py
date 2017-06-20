@@ -73,7 +73,7 @@ class KeyVaultId(object):
         name = _validate_string_argument(name, 'name')
         version = _validate_string_argument(version, 'version', True)
         _parse_uri_argument(vault)  # check that vault is a valid URI but don't change it
-        return KeyVaultId(collection, vault, name, version)
+        return KeyVaultIdentifier(collection=collection, vault=vault, name=name, version=version)
 
     @staticmethod
     def parse_object_id(collection, id):
@@ -85,30 +85,7 @@ class KeyVaultId(object):
         :rtype: KeyVaultId
         """
         collection = _validate_string_argument(collection, 'collection')
-        id = _validate_string_argument(id, 'id')
-
-        parsed_uri = _parse_uri_argument(id)
-        segments = list(filter(None, parsed_uri.path.split('/')))  # eliminate empty segments
-
-        num_coll_segs = len(collection.split('/'))
-        num_segments = len(segments)
-        name_index = num_coll_segs
-        version_index = name_index + 1
-        min_segments = num_coll_segs + 1  # must have collection and name at minimum
-        max_segments = min_segments + 1  # may also have version
-
-        if num_segments < min_segments or num_segments > max_segments:
-            raise ValueError("invalid id: {}. Bad number of segments: {}".format(id, num_segments))
-
-        expected_collection = '/'.join(segments[0:num_coll_segs])
-        if collection != expected_collection:
-            raise ValueError("invalid id: {}. Collection should be {}, found {}".format(
-                id, collection, expected_collection))
-
-        vault = '{}://{}'.format(parsed_uri.scheme, parsed_uri.hostname)
-        name = segments[name_index]
-        version = segments[version_index] if num_segments == max_segments else None
-        return KeyVaultId(collection, vault, name, version)
+        return KeyVaultIdentifier(uri=id, collection=collection)
 
     @staticmethod
     def create_key_id(vault, name, version=None):
@@ -121,7 +98,7 @@ class KeyVaultId(object):
         :type version: str
         :rtype: KeyVaultId
         """
-        return KeyVaultId.create_object_id(KeyVaultCollectionType.keys.value, vault, name, version)
+        return KeyId(vault=vault, name=name, version=version)
 
     @staticmethod
     def parse_key_id(id):
@@ -130,7 +107,7 @@ class KeyVaultId(object):
         :type id: str
         :rtype: KeyVaultId
         """
-        return KeyVaultId.parse_object_id(KeyVaultCollectionType.keys.value, id)
+        return KeyId(id)
 
     @staticmethod
     def create_secret_id(vault, name, version=None):
@@ -143,7 +120,7 @@ class KeyVaultId(object):
         :type version: str
         :rtype: KeyVaultId
         """
-        return KeyVaultId.create_object_id(KeyVaultCollectionType.secrets.value, vault, name, version)
+        return SecretId(vault=vault, name=name, version=version)
 
     @staticmethod
     def parse_secret_id(id):
@@ -152,7 +129,7 @@ class KeyVaultId(object):
         :type id: str
         :rtype: KeyVaultId
         """
-        return KeyVaultId.parse_object_id(KeyVaultCollectionType.secrets.value, id)
+        return SecretId(id)
 
     @staticmethod
     def create_certificate_id(vault, name, version=None):
@@ -165,7 +142,7 @@ class KeyVaultId(object):
         :type version: str
         :rtype: KeyVaultId
         """
-        return KeyVaultId.create_object_id(KeyVaultCollectionType.certificates.value, vault, name, version)
+        return CertificateId(vault=vault, name=name, verion=version)
 
     @staticmethod
     def parse_certificate_id(id):
@@ -174,7 +151,7 @@ class KeyVaultId(object):
         :type id: str
         :rtype: KeyVaultId
         """
-        return KeyVaultId.parse_object_id(KeyVaultCollectionType.certificates.value, id)
+        return CertificateId(id)
 
     @staticmethod
     def create_certificate_operation_id(vault, name):
@@ -185,8 +162,7 @@ class KeyVaultId(object):
         :type name: str
         :rtype: KeyVaultId
         """
-        obj_id = KeyVaultId.create_object_id(KeyVaultCollectionType.certificates.value, vault, name, 'pending')
-        return obj_id
+        return CertificateOperationId(vault=vault, name=name)
 
     @staticmethod
     def parse_certificate_operation_id(id):
@@ -195,8 +171,7 @@ class KeyVaultId(object):
         :type id: str
         :rtype: KeyVaultId
         """
-        obj_id = KeyVaultId.parse_object_id(KeyVaultCollectionType.certificates.value, id)
-        return obj_id
+        return CertificateOperationId(id)
 
     @staticmethod
     def create_certificate_issuer_id(vault, name):
@@ -207,7 +182,7 @@ class KeyVaultId(object):
         :type name: str
         :rtype: KeyVaultId
         """
-        return KeyVaultId.create_object_id(KeyVaultCollectionType.certificate_issuers.value, vault, name, None)
+        return CertificateIssuerId(vault=vault, name=name)
 
     @staticmethod
     def parse_certificate_issuer_id(id):
@@ -216,7 +191,7 @@ class KeyVaultId(object):
         :type id: str
         :rtype: KeyVaultId
         """
-        return KeyVaultId.parse_object_id(KeyVaultCollectionType.certificate_issuers.value, id)
+        return CertificateIssuerId(id)
 
 
 class KeyVaultIdentifier(object):
