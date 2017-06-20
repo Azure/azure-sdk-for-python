@@ -194,21 +194,18 @@ class KeyVaultId(object):
         return CertificateIssuerId(id)
 
 
-class KeyVaultIdentifier(object):
+class KeyVaultIdentifier(KeyVaultId):
     _id_format = '{vault}/{collection}/{name}/{version?}'
-    _validation = {}
     version_none = ''
 
     def __init__(self, uri=None, **kwargs):
         self.version = KeyVaultIdentifier.version_none
 
-        for key, value in self._validation.items():
-            self.__dict__[key] = value
-
         for key, value in kwargs.items():
-            self.__dict__[key] = value
+            self.__dict__[key] = value or ''
+
         if uri:
-            self._parse(uri)
+            self._parse(uri, kwargs)
 
     @property
     def id(self):
@@ -237,7 +234,7 @@ class KeyVaultIdentifier(object):
 
         return '/'.join(segments)
 
-    def _parse(self, uri):
+    def _parse(self, uri, validation_args):
         def format_error():
             ValueError('invalid id: The specified uri "{}", does to match the specified format "{}"'.format(uri, self._id_format))
 
@@ -258,51 +255,60 @@ class KeyVaultIdentifier(object):
                 if not id_seg and not prop.endswith('?'):
                     raise format_error()
                 prop = prop.rstrip('?')
-                if prop in self._validation and self._validation[prop] != id_seg:
-                    raise ValueError('invalid id: The {} "{}" does not match the expected "{}"'.format(prop, id_seg, self._validation[prop]))
+                if prop in validation_args and validation_args[prop] and validation_args[prop] != id_seg:
+                    raise ValueError('invalid id: The {} "{}" does not match the expected "{}"'.format(prop, id_seg, validation_args[prop]))
                 self.__dict__[prop] = id_seg
             else:
                 if not fmt_seg == id_seg:
                     raise format_error()
 
 
-    def _build(self, **kwargs):
-        pass
-
-
 class KeyId(KeyVaultIdentifier):
     _id_format = '{vault}/{collection}/{name}/{version?}'
-    _validation = {'collection': 'keys'}
 
+    def __init__(self, uri=None, vault=None, name=None, version=None):
+        super(KeyId, self).__init__(uri=uri, collection='keys', vault=vault, name=name, version=version)
 
 class SecretId(KeyVaultIdentifier):
     _id_format = '{vault}/{collection}/{name}/{version?}'
-    _validation = {'collection': 'secrets'}
+
+    def __init__(self, uri=None, vault=None, name=None, version=None):
+        super(SecretId, self).__init__(uri=uri, collection='secrets', vault=vault, name=name, version=version)
 
 
 class CertificateId(KeyVaultIdentifier):
     _id_format = '{vault}/{collection}/{name}/{version?}'
-    _validation = {'collection': 'certificates'}
+
+    def __init__(self, uri=None, vault=None, name=None, version=None):
+        super(CertificateId, self).__init__(uri=uri, collection='certificates', vault=vault, name=name, version=version)
 
 
 class CertificateOperationId(KeyVaultIdentifier):
     _id_format = '{vault}/{collection}/{name}/pending'
-    _validation = {'collection': 'certificates'}
+
+    def __init__(self, uri=None, vault=None, name=None):
+        super(CertificateOperationId, self).__init__(uri=uri, collection='certificates', vault=vault, name=name)
 
 
 class CertificateIssuerId(KeyVaultIdentifier):
     _id_format = '{vault}/{collection}/issuers/{name}'
-    _validation = {'collection': 'certificates'}
+
+    def __init__(self, uri=None, vault=None, name=None):
+        super(CertificateIssuerId, self).__init__(uri=uri, collection='certificates', vault=vault, name=name)
 
 
 class StorageAccountId(KeyVaultIdentifier):
     _id_format = '{vault}/{collection}/{name}'
-    _validation = {'collection': 'storage'}
+
+    def __init__(self, uri=None, vault=None, name=None):
+        super(StorageAccountId, self).__init__(uri=uri, collection='storage', vault=vault, name=name)
 
 
 class StorageSasDefinitionId(KeyVaultIdentifier):
     _id_format = '{vault}/{collection}/{account_name}/sas/{sas_definition}'
-    _validation = {'collection': 'storage'}
+
+    def __init__(self, uri=None, vault=None, account_name=None, sas_definition=None):
+        super(StorageSasDefinitionId, self).__init__(uri=uri, collection='storage', vault=vault, account_name=account_name, sas_definition=sas_definition)
 
 
 def _validate_string_argument(prop, name, nullable=False):
