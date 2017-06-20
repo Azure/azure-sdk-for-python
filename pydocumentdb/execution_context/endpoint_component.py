@@ -30,37 +30,37 @@ from pydocumentdb.execution_context.aggregators import _AverageAggregator, _Coun
 class _QueryExecutionEndpointComponent(object):
     def __init__(self, execution_context):
         self._execution_context = execution_context
-                    
+
     def __iter__(self):
         return self
-    
+
     def next(self):
         return next(self._execution_context)
 
     def __next__(self):
         # supports python 3 iterator
-        return self.next()    
+        return self.next()
 
 class _QueryExecutionOrderByEndpointComponent(_QueryExecutionEndpointComponent):
     """Represents an endpoint in handling an order by query.
-    
+
     For each processed orderby result it returns 'payload' item of the result
     """
     def __init__(self, execution_context):
         super(self.__class__, self).__init__(execution_context)
-        
+
     def next(self):
         return next(self._execution_context)['payload']
-        
+
 class _QueryExecutionTopEndpointComponent(_QueryExecutionEndpointComponent):
     """Represents an endpoint in handling top query.
-    
+
     It only returns as many results as top arg specified.
     """
     def __init__(self, execution_context, top_count):
         super(self.__class__, self).__init__(execution_context)
         self._top_count = top_count
-        
+
     def next(self):
         if (self._top_count > 0):
             res = next(self._execution_context)
@@ -95,7 +95,7 @@ class _QueryExecutionAggregateEndpointComponent(_QueryExecutionEndpointComponent
             for item in res:
                 for operator in self._local_aggregators:
                     if isinstance(item, dict) and len(item.keys()) > 0:
-                        operator.aggregate(item[item.keys()[0]])
+                        operator.aggregate(item[next(iter(item.keys()))])
                     elif isinstance(item, numbers.Number):
                         operator.aggregate(item)
         if self._results is None:
