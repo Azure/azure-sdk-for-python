@@ -209,10 +209,6 @@ class KeyVaultIdentifier(KeyVaultId):
 
         # add all the keyword arguments as attributes
         for key, value in kwargs.items():
-            val = _validate_string_argument(value, key, True)
-            if not val == value:
-                print(val)
-                print(value)
             self.__dict__[key] = _validate_string_argument(value, key, True)
 
         self.version = self.version or KeyVaultIdentifier.version_none
