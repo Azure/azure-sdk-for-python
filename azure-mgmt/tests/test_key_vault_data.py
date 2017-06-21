@@ -147,12 +147,12 @@ class KeyVaultCustomLayerTest(unittest.TestCase):
         self.assertEqual(res.__dict__, expected)
 
     def test_create_certificate_issuer_id(self):
-        expected = self._get_expected('certificates/issuers', 'myvault', 'myissuer')
+        expected = self._get_expected('certificates', 'myvault', 'myissuer')
         res = KeyVaultId.create_certificate_issuer_id('https://myvault.vault.azure.net', 'myissuer')
         self.assertEqual(res.__dict__, expected)
 
     def test_parse_certificate_issuer_id(self):
-        expected = self._get_expected('certificates/issuers', 'myvault', 'myissuer')
+        expected = self._get_expected('certificates', 'myvault', 'myissuer')
         res = KeyVaultId.parse_certificate_issuer_id('https://myvault.vault.azure.net/certificates/issuers/myissuer')
         self.assertEqual(res.__dict__, expected)
 
