@@ -35,22 +35,6 @@ for details on handling Azure Active Directory authentication with the Python SD
 
 Registration
 ------------
-
-Some operations in the ARM APIs require a one-time registration of the
-provider with your subscription.
-
-Use the following code to do the registration. You can use the same
-credentials you created in the previous section.
-
-.. code:: python
-
-    from azure.mgmt.resource.resources import ResourceManagementClient
-
-    resource_client = ResourceManagementClient(
-        credentials,
-        subscription_id
-    )
-    resource_client.providers.register('Microsoft.Insights')
     
 You also might need to add the "Monitoring Contributor Service Role" role
 to your credentials. See here to do it using the Python CLI: 

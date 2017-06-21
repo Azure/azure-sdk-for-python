@@ -33,25 +33,6 @@ for details on handling Azure Active Directory authentication with the Python SD
         subscription_id
     )
 
-Registration
-------------
-
-Some operations in the ARM APIs require a one-time registration of the
-provider with your subscription.
-
-Use the following code to do the registration. You can use the same
-credentials you created in the previous section.
-
-.. code:: python
-
-    from azure.mgmt.resource.resources import ResourceManagementClient
-
-    resource_client = ResourceManagementClient(
-        credentials,
-        subscription_id
-    )
-    resource_client.providers.register('Microsoft.Cdn')
-
 Check name availability
 -----------------------
 
