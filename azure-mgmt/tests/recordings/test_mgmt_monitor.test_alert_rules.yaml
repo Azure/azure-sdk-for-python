@@ -1,0 +1,148 @@
+interactions:
+- request:
+    body: '{"properties": {"actions": [{"odata.type": "Microsoft.Azure.Management.Insights.Models.RuleEmailAction",
+      "sendToServiceOwners": true, "customEmails": ["monitoringemail@microsoft.com"]}],
+      "condition": {"operator": "GreaterThanOrEqual", "timeAggregation": "Average",
+      "dataSource": {"odata.type": "Microsoft.Azure.Management.Insights.Models.RuleMetricDataSource",
+      "resourceUri": "subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/MonitorTestsDoNotDelete/providers/Microsoft.Compute/virtualMachines/MonitorTest",
+      "metricName": "Percentage CPU"}, "odata.type": "Microsoft.Azure.Management.Insights.Models.ThresholdRuleCondition",
+      "threshold": 90.0, "windowSize": "PT5M"}, "isEnabled": true, "description":
+      "Testing Alert rule creation", "name": "MyPyTestAlertRule"}, "location": "westus"}'
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['799']
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.5.1 (Windows-10-10.0.15063-SP0) requests/2.11.1 msrest/0.4.10
+          msrest_azure/0.4.9 monitormanagementclient/0.2.1 Azure-SDK-For-Python]
+      accept-language: [en-US]
+      x-ms-client-request-id: [5fe45cd0-56a6-11e7-87c8-ecb1d756380e]
+    method: PUT
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_mgmt_monitor_test_alert_rulesf82b0e2b/providers/microsoft.insights/alertrules/MyPyTestAlertRule?api-version=2016-03-01
+  response:
+    body: {string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_monitor_test_alert_rulesf82b0e2b/providers/microsoft.insights/alertrules/MyPyTestAlertRule","name":"MyPyTestAlertRule","type":"Microsoft.Insights/alertRules","location":"westus","tags":{"$type":"Microsoft.WindowsAzure.Management.Common.Storage.CasePreservedDictionary,
+        Microsoft.WindowsAzure.Management.Common.Storage"},"properties":{"name":"MyPyTestAlertRule","description":"Testing
+        Alert rule creation","isEnabled":true,"condition":{"$type":"Microsoft.WindowsAzure.Management.Monitoring.Alerts.Models.ThresholdRuleCondition,
+        Microsoft.WindowsAzure.Management.Mon.Client","odata.type":"Microsoft.Azure.Management.Insights.Models.ThresholdRuleCondition","dataSource":{"$type":"Microsoft.WindowsAzure.Management.Monitoring.Alerts.Models.RuleMetricDataSource,
+        Microsoft.WindowsAzure.Management.Mon.Client","odata.type":"Microsoft.Azure.Management.Insights.Models.RuleMetricDataSource","resourceUri":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/MonitorTestsDoNotDelete/providers/Microsoft.Compute/virtualMachines/MonitorTest","metricName":"Percentage
+        CPU"},"operator":"GreaterThanOrEqual","threshold":90.0,"windowSize":"PT5M","timeAggregation":"Average"},"lastUpdatedTime":"2017-06-21T17:23:45.2862043Z","provisioningState":"Succeeded","actions":[{"$type":"Microsoft.WindowsAzure.Management.Monitoring.Alerts.Models.RuleEmailAction,
+        Microsoft.WindowsAzure.Management.Mon.Client","odata.type":"Microsoft.Azure.Management.Insights.Models.RuleEmailAction","sendToServiceOwners":true,"customEmails":["monitoringemail@microsoft.com"]}]}}'}
+    headers:
+      Cache-Control: [no-cache]
+      Content-Length: ['1636']
+      Content-Type: [application/json; charset=utf-8]
+      Date: ['Wed, 21 Jun 2017 17:23:44 GMT']
+      Expires: ['-1']
+      Pragma: [no-cache]
+      Server: [Microsoft-IIS/8.5]
+      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
+      x-ms-correlation-request-id: [2d49db80-3983-4411-971f-bcae2323c8e1]
+      x-ms-ratelimit-remaining-subscription-writes: ['1195']
+      x-ms-request-id: [c1349236-c295-43a6-8f9f-9c6bfbfd9b29]
+      x-ms-routing-request-id: ['WESTUS:20170621T172344Z:2d49db80-3983-4411-971f-bcae2323c8e1']
+    status: {code: 201, message: Created}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.5.1 (Windows-10-10.0.15063-SP0) requests/2.11.1 msrest/0.4.10
+          msrest_azure/0.4.9 monitormanagementclient/0.2.1 Azure-SDK-For-Python]
+      accept-language: [en-US]
+      x-ms-client-request-id: [61092a9e-56a6-11e7-8612-ecb1d756380e]
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_mgmt_monitor_test_alert_rulesf82b0e2b/providers/microsoft.insights/alertrules/MyPyTestAlertRule?api-version=2016-03-01
+  response:
+    body: {string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_monitor_test_alert_rulesf82b0e2b/providers/microsoft.insights/alertrules/MyPyTestAlertRule","name":"MyPyTestAlertRule","type":"Microsoft.Insights/alertRules","location":"westus","tags":{"$type":"Microsoft.WindowsAzure.Management.Common.Storage.CasePreservedDictionary,
+        Microsoft.WindowsAzure.Management.Common.Storage"},"properties":{"name":"MyPyTestAlertRule","description":"Testing
+        Alert rule creation","isEnabled":true,"condition":{"$type":"Microsoft.WindowsAzure.Management.Monitoring.Alerts.Models.ThresholdRuleCondition,
+        Microsoft.WindowsAzure.Management.Mon.Client","odata.type":"Microsoft.Azure.Management.Insights.Models.ThresholdRuleCondition","dataSource":{"$type":"Microsoft.WindowsAzure.Management.Monitoring.Alerts.Models.RuleMetricDataSource,
+        Microsoft.WindowsAzure.Management.Mon.Client","odata.type":"Microsoft.Azure.Management.Insights.Models.RuleMetricDataSource","resourceUri":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/MonitorTestsDoNotDelete/providers/Microsoft.Compute/virtualMachines/MonitorTest","metricName":"Percentage
+        CPU"},"operator":"GreaterThanOrEqual","threshold":90.0,"windowSize":"PT5M","timeAggregation":"Average"},"lastUpdatedTime":"2017-06-21T17:23:45.2862043Z","provisioningState":"Succeeded","actions":[{"$type":"Microsoft.WindowsAzure.Management.Monitoring.Alerts.Models.RuleEmailAction,
+        Microsoft.WindowsAzure.Management.Mon.Client","odata.type":"Microsoft.Azure.Management.Insights.Models.RuleEmailAction","sendToServiceOwners":true,"customEmails":["monitoringemail@microsoft.com"]}]}}'}
+    headers:
+      Cache-Control: [no-cache]
+      Content-Type: [application/json; charset=utf-8]
+      Date: ['Wed, 21 Jun 2017 17:23:44 GMT']
+      Expires: ['-1']
+      Pragma: [no-cache]
+      Server: [Microsoft-IIS/8.5]
+      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
+      Transfer-Encoding: [chunked]
+      Vary: [Accept-Encoding]
+      content-length: ['1636']
+      x-ms-correlation-request-id: [8252b944-d8a6-4cd5-acb0-82cbcbcda502]
+      x-ms-ratelimit-remaining-subscription-reads: ['14997']
+      x-ms-request-id: [89dbec4f-a6e7-41ee-82a0-dcac72ddda94]
+      x-ms-routing-request-id: ['WESTUS:20170621T172345Z:8252b944-d8a6-4cd5-acb0-82cbcbcda502']
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.5.1 (Windows-10-10.0.15063-SP0) requests/2.11.1 msrest/0.4.10
+          msrest_azure/0.4.9 monitormanagementclient/0.2.1 Azure-SDK-For-Python]
+      accept-language: [en-US]
+      x-ms-client-request-id: [613d389c-56a6-11e7-b139-ecb1d756380e]
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_mgmt_monitor_test_alert_rulesf82b0e2b/providers/microsoft.insights/alertrules?api-version=2016-03-01
+  response:
+    body: {string: '{"value":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_monitor_test_alert_rulesf82b0e2b/providers/microsoft.insights/alertrules/MyPyTestAlertRule","name":"MyPyTestAlertRule","type":"Microsoft.Insights/alertRules","location":"westus","tags":{"$type":"Microsoft.WindowsAzure.Management.Common.Storage.CasePreservedDictionary,
+        Microsoft.WindowsAzure.Management.Common.Storage"},"properties":{"name":"MyPyTestAlertRule","description":"Testing
+        Alert rule creation","isEnabled":true,"condition":{"$type":"Microsoft.WindowsAzure.Management.Monitoring.Alerts.Models.ThresholdRuleCondition,
+        Microsoft.WindowsAzure.Management.Mon.Client","odata.type":"Microsoft.Azure.Management.Insights.Models.ThresholdRuleCondition","dataSource":{"$type":"Microsoft.WindowsAzure.Management.Monitoring.Alerts.Models.RuleMetricDataSource,
+        Microsoft.WindowsAzure.Management.Mon.Client","odata.type":"Microsoft.Azure.Management.Insights.Models.RuleMetricDataSource","resourceUri":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/MonitorTestsDoNotDelete/providers/Microsoft.Compute/virtualMachines/MonitorTest","metricName":"Percentage
+        CPU"},"operator":"GreaterThanOrEqual","threshold":90.0,"windowSize":"PT5M","timeAggregation":"Average"},"lastUpdatedTime":"2017-06-21T17:23:45.2862043Z","provisioningState":"Succeeded","actions":[{"$type":"Microsoft.WindowsAzure.Management.Monitoring.Alerts.Models.RuleEmailAction,
+        Microsoft.WindowsAzure.Management.Mon.Client","odata.type":"Microsoft.Azure.Management.Insights.Models.RuleEmailAction","sendToServiceOwners":true,"customEmails":["monitoringemail@microsoft.com"]}]}}]}'}
+    headers:
+      Cache-Control: [no-cache]
+      Content-Type: [application/json; charset=utf-8]
+      Date: ['Wed, 21 Jun 2017 17:23:45 GMT']
+      Expires: ['-1']
+      Pragma: [no-cache]
+      Server: [Microsoft-IIS/8.5]
+      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
+      Transfer-Encoding: [chunked]
+      Vary: [Accept-Encoding]
+      content-length: ['1648']
+      x-ms-correlation-request-id: [9914c9ac-464e-4ac7-ae53-6d0df076d056]
+      x-ms-ratelimit-remaining-subscription-reads: ['14998']
+      x-ms-request-id: [7d0884c3-2821-435d-9d42-37b17f8fca81]
+      x-ms-routing-request-id: ['WESTUS:20170621T172345Z:9914c9ac-464e-4ac7-ae53-6d0df076d056']
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['0']
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.5.1 (Windows-10-10.0.15063-SP0) requests/2.11.1 msrest/0.4.10
+          msrest_azure/0.4.9 monitormanagementclient/0.2.1 Azure-SDK-For-Python]
+      accept-language: [en-US]
+      x-ms-client-request-id: [61668fc8-56a6-11e7-abdc-ecb1d756380e]
+    method: DELETE
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_mgmt_monitor_test_alert_rulesf82b0e2b/providers/microsoft.insights/alertrules/MyPyTestAlertRule?api-version=2016-03-01
+  response:
+    body: {string: ''}
+    headers:
+      Cache-Control: [no-cache]
+      Content-Length: ['0']
+      Date: ['Wed, 21 Jun 2017 17:23:46 GMT']
+      Expires: ['-1']
+      Pragma: [no-cache]
+      Server: [Microsoft-IIS/8.5]
+      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
+      x-ms-correlation-request-id: [a0eb3350-30c2-4082-9be8-32c63721e99d]
+      x-ms-ratelimit-remaining-subscription-writes: ['1199']
+      x-ms-request-id: [3a3540df-929e-4eb8-bba3-7d4fdc9e03ce]
+      x-ms-routing-request-id: ['WESTUS:20170621T172347Z:a0eb3350-30c2-4082-9be8-32c63721e99d']
+    status: {code: 200, message: OK}
+version: 1

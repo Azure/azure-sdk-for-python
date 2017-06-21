@@ -14,6 +14,12 @@ from msrest.version import msrest_version
 from testutils.common_recordingtestcase import record
 from tests.mgmt_testcase import HttpStatusCode, AzureMgmtTestCase
 
+from azure.mgmt.monitor.models import (
+    ThresholdRuleCondition,
+    RuleEmailAction,
+    RuleMetricDataSource
+)
+
 
 class MgmtMonitorTest(AzureMgmtTestCase):
 
@@ -110,6 +116,68 @@ class MgmtMonitorTest(AzureMgmtTestCase):
             print("{} ({})".format(item.name.localized_value, item.unit.name))
             for data in item.data:
                 print("{}: {}".format(data.time_stamp, data.total))
+
+    @record
+    def test_alert_rules(self):
+        # Get the VM or your resource and use "id" attribute, or build the id yourself from RG and name
+        resource_id = (
+            "subscriptions/{}/"
+            "resourceGroups/MonitorTestsDoNotDelete/"
+            "providers/Microsoft.Compute/virtualMachines/MonitorTest"
+        ).format(self.settings.SUBSCRIPTION_ID)
+
+        # I need a subclass of "RuleDataSource"
+        data_source = RuleMetricDataSource(
+            resource_uri = resource_id,
+            metric_name = 'Percentage CPU'
+        )
+
+        # I need a subclasses of "RuleCondition"
+        rule_condition = ThresholdRuleCondition(
+            data_source = data_source,
+            operator = 'GreaterThanOrEqual',
+            threshold = 90,
+            window_size = 'PT5M',
+            time_aggregation = 'Average'
+        )
+
+        # I need a subclass of "RuleAction"
+        rule_action = RuleEmailAction(
+            send_to_service_owners = True,
+            custom_emails = [
+                'monitoringemail@microsoft.com'
+            ]
+        )
+
+        rule_name = 'MyPyTestAlertRule'
+        my_alert = self.mgmt_client.alert_rules.create_or_update(
+            self.group_name,
+            rule_name,
+            {
+                'location': self.region,
+                'alert_rule_resource_name': rule_name,
+                'description': 'Testing Alert rule creation',
+                'is_enabled': True,
+                'condition': rule_condition,
+                'actions': [
+                    rule_action
+                ]
+            }
+        )
+
+        my_alert = self.mgmt_client.alert_rules.get(
+            self.group_name,
+            rule_name
+        )
+
+        my_alerts = list(self.mgmt_client.alert_rules.list_by_resource_group(
+            self.group_name
+        ))
+
+        self.mgmt_client.alert_rules.delete(
+            self.group_name,
+            rule_name
+        )
 
 
     @unittest.skip("Known bug")
