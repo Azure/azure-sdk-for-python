@@ -1220,6 +1220,25 @@ class KeyVaultCertificateTest(AzureKeyVaultTestCase):
         self.assertEqual(len(set(expected.keys()) & set(actual.keys())), len(expected))
 
 
+class KeyVaultMiscTest(AzureKeyVaultTestCase):
+
+    def setUp(self):
+        super(KeyVaultMiscTest, self).setUp()
+
+    def tearDown(self):
+        super(KeyVaultMiscTest, self).tearDown()
+
+    @privatevault()
+    def test_iterate_empty_list_commands(self, vault=None):
+
+        keys = [x for x in self.client.get_keys(vault.properties.vault_uri)]
+        self.assertEqual(len(keys), 0)
+
+        certs = [x for x in self.client.get_certificates(vault.properties.vault_uri)]
+        self.assertEqual(len(certs), 0)
+
+        secrets = [x for x in self.client.get_secrets(vault.properties.vault_uri)]
+        self.assertEqual(len(secrets), 0)
 # ------------------------------------------------------------------------------
 if __name__ == '__main__':
     unittest.main()
